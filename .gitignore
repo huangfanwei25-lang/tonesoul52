@@ -51,3 +51,27 @@ legacy/darlin/¸Ñ¥]/
 *.zip
 __pycache__/
 *.pyc
+# Data & Cache
+data/chromadb/
+memory/vectors/
+*.db
+*.sqlite3
+*.bak
+*.npy
+
+# Binary Tools (use from release)
+tools/AssetStudio/
+*.exe
+*.dll
+# Data & Cache
+data/chromadb/
+memory/vectors/
+*.db
+*.sqlite3
+*.bak
+*.npy
+
+# Binary Tools (use from release)
+tools/AssetStudio/
+*.exe
+*.dll
