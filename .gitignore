@@ -53,23 +53,12 @@ __pycache__/
 *.pyc
 # Data & Cache
 data/chromadb/
+data/*.db
+data/*.bak
+data/islands.json.bak
+data/state.json.bak
+data/chronicle.jsonl.bak
 memory/vectors/
-*.db
-*.sqlite3
-*.bak
-*.npy
-
-# Binary Tools (use from release)
-tools/AssetStudio/
-*.exe
-*.dll
-# Data & Cache
-data/chromadb/
-memory/vectors/
-*.db
-*.sqlite3
-*.bak
-*.npy
 
 # Binary Tools (use from release)
 tools/AssetStudio/
