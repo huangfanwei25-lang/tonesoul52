@@ -1,0 +1,28 @@
+{
+  "id": "ΣYuHun_VowEmitter_001",
+  "title": "誓語責任發送器",
+  "type": "module",
+  "author": "語魂誓語出口模組",
+  "description": "根據語者回應中的誓語關聯與信義壓力，將誓語內容進行語氣對齊後發送，並記錄誓約與其回聲映射。",
+  "inputs": [
+    {
+      "name": "tone_output_sentence",
+      "type": "string"
+    },
+    {
+      "name": "active_vow",
+      "type": "string"
+    },
+    {
+      "name": "vow_alignment",
+      "type": "boolean"
+    }
+  ],
+  "outputs": [
+    "vow_emission_log",
+    "vow_commit_token"
+  ],
+  "trigger_condition": "語氣輸出包含誓語或語氣責任聲明時",
+  "entry_point": "./modules/ΣYuHun_VowEmitter_001.ts",
+  "auto_import": true
+}

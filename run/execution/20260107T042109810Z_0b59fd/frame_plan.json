@@ -1,0 +1,110 @@
+{
+  "generated_at": "2026-01-07T04:21:09Z",
+  "router_version": "0.1",
+  "input_hash": "00a570c736a1",
+  "role_catalog": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\spec\\governance\\role_catalog.yaml",
+  "role_catalog_version": 0.1,
+  "role_summary": {
+    "operational_roles": [
+      "Bridge",
+      "Definer",
+      "Executor",
+      "Integrator"
+    ],
+    "governance_roles": [
+      "guardian",
+      "steward"
+    ],
+    "max_governance_level": 3
+  },
+  "council_summary": {
+    "decision": "proceed",
+    "decision_status": "pass",
+    "decision_summary": "PASS: proceed (score=1.0, dissent=0.0)",
+    "decision_mode": "normal",
+    "weighted_score": 1.0,
+    "dissent_ratio": 0.0,
+    "signals": {
+      "risk_roles": [],
+      "audit_roles": []
+    },
+    "votes": [
+      {
+        "governance_role": "guardian",
+        "weight": 3.0,
+        "stance": "approve",
+        "score": 1.0
+      },
+      {
+        "governance_role": "steward",
+        "weight": 2.0,
+        "stance": "approve",
+        "score": 1.0
+      }
+    ]
+  },
+  "selected_frames": [
+    {
+      "id": "analysis",
+      "score": 1,
+      "roles": [
+        "Definer",
+        "Integrator"
+      ],
+      "governance_roles": [
+        "steward",
+        "guardian"
+      ],
+      "role_map": [
+        {
+          "role": "Definer",
+          "governance_role": "steward",
+          "governance_level": 2
+        },
+        {
+          "role": "Integrator",
+          "governance_role": "guardian",
+          "governance_level": 3
+        }
+      ],
+      "description": "Define scope, boundaries, and reasoning structure."
+    },
+    {
+      "id": "bridge",
+      "score": 1,
+      "roles": [
+        "Bridge",
+        "Executor"
+      ],
+      "governance_roles": [
+        "steward"
+      ],
+      "role_map": [
+        {
+          "role": "Bridge",
+          "governance_role": "steward",
+          "governance_level": 2
+        },
+        {
+          "role": "Executor",
+          "governance_role": "steward",
+          "governance_level": 2
+        }
+      ],
+      "description": "Translate into actionable steps and coordination."
+    }
+  ],
+  "rejected_frames": [
+    {
+      "id": "risk",
+      "score": 0,
+      "reason": "score=0"
+    },
+    {
+      "id": "audit",
+      "score": 0,
+      "reason": "score=0"
+    }
+  ],
+  "note": "Router is deterministic; same context yields same selection."
+}

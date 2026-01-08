@@ -1,0 +1,16 @@
+{
+"default_darlin_gpu":4,
+"default_reasoning_gpu":2,
+
+"Darlin_GPU_Rank0":6,
+"Reasoning_GPU_Rank0":4,
+
+"Darlin_GPU_Rank1":20,
+"Reasoning_GPU_Rank1":8,
+
+"Darlin_GPU_Rank2":36,
+"Reasoning_GPU_Rank2":16,
+
+"Darlin_GPU_Rank3":36,
+"Reasoning_GPU_Rank3":28
+}

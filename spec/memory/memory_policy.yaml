@@ -1,0 +1,56 @@
+version: 0.1
+episode_key:
+  fields:
+    - task
+    - domain
+    - decision_mode
+    - mode
+    - frame_ids
+promotion:
+  min_support: 6
+  min_pass_rate: 0.88
+  max_counterexample_rate: 0.12
+  min_energy_samples: 4
+  max_energy_stddev: 0.1
+  min_recent_runs: 3
+  recent_window_days: 45
+  require_gate_pass: true
+  include_archived: true
+  status: proposed
+defaults:
+  reviewer: auto
+  skill_version: 1.0.0
+  revokable: true
+  policy_action: apply_governance_baseline
+compaction:
+  enabled: true
+  max_active_runs: 20
+  keep_latest: 10
+  include_archived: true
+retention:
+  enabled: true
+  evidence:
+    max_entries: 200
+    keep_latest: 80
+    archive_dir: ../archive/evidence
+skill_matching:
+  allow_trigger_only: true
+  min_trigger_strength: 0.6
+review:
+  auto_approve: false
+  require_reviewer: true
+  require_role: true
+  default_role: steward
+  # Role levels align with spec/governance/role_catalog.yaml
+  role_levels:
+    observer: 1
+    steward: 2
+    guardian: 3
+    arbiter: 4
+  require_role_min_approve: 3
+  require_role_min_reject: 2
+  require_pass: true
+  allow_override: false
+  approve_status: approved
+  reject_status: rejected
+  default_reviewer: auto

@@ -1,0 +1,60 @@
+Failed to append characters.
+Failed to parse condition "%ls". Unexpected character at position %d.
+Failed to allocate memory for search structs.
+Failed to allocate memory registry value.
+Failed to allocate memory for container sizes.
+PE Header from file didn't match PE Header in memory.
+Bundle guid didn't match the guid in the PE Header in memory.
+Failed to allocate memory for approved exe structs.
+Failed to allocate memory for container structs.
+Failed to allocate memory for payload structs.
+Failed to allocate memory for rollback boundary structs.
+Failed to allocate memory for package structs.
+Failed to allocate memory for MSP patch sequence information.
+Failed to allocate memory for patch sequence information to package lookup.
+Failed to allocate memory for compatible packages.
+Failed to allocate memory for package payloads.
+Failed to allocate memory for patch targetcodes.
+Failed to allocate memory for software tag structs.
+Failed to allocate memory for patch actions.
+Failed to allocate memory for message.
+Failed to read PackageCache policy directory.
+Failed to allocate memory for well known SID.
+Failed to allocate memory
+Failed to allocate memory for feature actions.
+Failed to allocate memory for slipstream patch actions.
+Failed to allocate memory for ordered patches.
+Failed to allocate memory for the virtual file pointer array.
+Failed to allocate memory for exit code structs.
+Failed to allocate memory for command-line argument structs.
+Failed to allocate memory for MSI feature structs.
+Failed to allocate memory for related MSI structs.
+Failed to allocate memory for slipstream MSP packages.
+Failed to allocate memory for slipstream MSP ids.
+Failed to allocate memory for MSI property structs.
+Failed to allocate memory for rollback feature actions.
+Failed to allocate memory for compatible MSI package.
+Failed to allocate memory for language IDs.
+Failed to allocate memory for dependency providers.
+Failed to allocate memory for pseudo bundle payload hash.
+Failed to allocate memory for NetFxChainer struct.
+failed to allocate memory for event name
+failed to allocate memory for mutex name
+Failed to memory map cabinet file: %ls
+failed to copy event name to shared memory structure.
+Failed to allocate memory for message data
+InitializeCriticalSectionEx
+AppPolicyGetProcessTerminationMethod
+CryptProtectMemory
+CryptUnprotectMemory
+InitializeCriticalSection
+DeleteCriticalSection
+EnterCriticalSection
+LeaveCriticalSection
+InitializeCriticalSectionAndSpinCount
+Received system request to shut down the process: critical: %1!hs!, elevated: %2!hs!, allowed: %3!hs!
+BSoUlu
+7TOnE8u
+RoLE@}
+-Y2X%rOlEo
+:tOnED

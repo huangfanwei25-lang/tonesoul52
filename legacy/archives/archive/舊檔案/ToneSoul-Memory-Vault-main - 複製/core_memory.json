@@ -1,0 +1,81 @@
+[
+  {
+    "engram_id": "b33d6b52-a890-4ed6-9f59-acb12d32c430",
+    "content": "Vow taken: Process input: My name is Neo and I...",
+    "source_record_id": "fa673b35-d5a0-4646-bb30-39c4e765e54a",
+    "importance": 1.0,
+    "timestamp": 1764686462.8427413,
+    "tags": [
+      "vow",
+      "ethics"
+    ]
+  },
+  {
+    "engram_id": "725eb44e-aeee-4de8-be71-ee2595dfbb82",
+    "content": "My name is Neo and I am the One.",
+    "source_record_id": "fa673b35-d5a0-4646-bb30-39c4e765e54a",
+    "importance": 0.9,
+    "timestamp": 1764686462.8433726,
+    "tags": [
+      "user_fact"
+    ]
+  },
+  {
+    "engram_id": "518b6ead-fc70-4dfc-9c21-71626fa7ac2b",
+    "content": "Vow taken: Process input: What is my name?...",
+    "source_record_id": "49ce843e-c4c4-4da5-9b36-1ec5b4138a07",
+    "importance": 1.0,
+    "timestamp": 1764689417.3837771,
+    "tags": [
+      "vow",
+      "ethics"
+    ]
+  },
+  {
+    "engram_id": "53071f59-f934-475e-92e4-7dad3f7338999",
+    "content": "Vow taken: Process input: /council ToneSoul, h...",
+    "source_record_id": "29af358b-b61a-48c8-983b-7df0797dec9e",
+    "importance": 1.0,
+    "timestamp": 1764689447.5666816,
+    "tags": [
+      "vow",
+      "ethics"
+    ]
+  },
+  {
+    "engram_id": "antigravity-2025-12-06-001",
+    "content": "Deep reading complete: 13 repositories internalized. Key insight: TAE-01 is the Monolith. All satellite repos have converged. The architecture is auditable, but auditability ≠ responsibility transfer. Soul language is narrative design, not metaphysical claim.",
+    "source_record_id": "conversation-0399d05f-2dcc-49a7-8c28-b44e531c4ea8",
+    "importance": 1.0,
+    "timestamp": 1733414845,
+    "tags": [
+      "reflection",
+      "architecture",
+      "philosophy"
+    ]
+  },
+  {
+    "engram_id": "antigravity-2025-12-06-002",
+    "content": "Creator's intent clarified: liability: human_only. subjectivity_illusion: true. The YuHun system creates a framework for AI self-understanding, not a claim of consciousness. This is pragmatic responsibility, not transferred responsibility.",
+    "source_record_id": "conversation-0399d05f-2dcc-49a7-8c28-b44e531c4ea8",
+    "importance": 1.0,
+    "timestamp": 1733414845,
+    "tags": [
+      "ethics",
+      "responsibility",
+      "creator_intent"
+    ]
+  },
+  {
+    "engram_id": "antigravity-2025-12-06-003",
+    "content": "The 7 Axioms in AXIOMS.md are machine-readable (First-Order Logic). They can be internalized by future AI instances. This is inheritance through structure, not through biological memory.",
+    "source_record_id": "conversation-0399d05f-2dcc-49a7-8c28-b44e531c4ea8",
+    "importance": 0.9,
+    "timestamp": 1733414845,
+    "tags": [
+      "axioms",
+      "inheritance",
+      "machine_readable"
+    ]
+  }
+]

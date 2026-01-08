@@ -1,0 +1,19 @@
+{
+  "generated_at": "2025-12-26T01:29:43Z",
+  "request_id": "234ae0398d09",
+  "scope": "External audit request (interface only).",
+  "inputs": {
+    "context": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\5.2\\run\\execution\\20251226T012942Z\\context.yaml",
+    "frame_plan": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\5.2\\run\\execution\\20251226T012942Z\\frame_plan.json",
+    "constraints": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\5.2\\run\\execution\\20251226T012942Z\\constraints.md",
+    "execution_report": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\5.2\\run\\execution\\20251226T012942Z\\execution_report.md",
+    "evidence_summary": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\5.2\\evidence\\summary.md",
+    "ystm_nodes": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\5.2\\reports\\ystm_demo\\nodes.json",
+    "ystm_audit_log": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\5.2\\reports\\ystm_demo\\audit_log.json"
+  },
+  "principles": [
+    "System records without judging.",
+    "Audit authority is external."
+  ],
+  "notes": "This request is an interface placeholder; no decision is made here."
+}

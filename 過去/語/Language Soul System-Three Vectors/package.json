@@ -1,0 +1,27 @@
+{
+  "name": "tone-soul-integrity",
+  "version": "0.1.0-alpha",
+  "description": "A reflective and self-calibrating AI system that ensures honesty and responsibility in generated language, based on the Tone Soul Fusion Kit.",
+  "main": "dist/main.js",
+  "types": "dist/main.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/main.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "AI",
+    "Responsibility",
+    "Honesty",
+    "Ethics",
+    "Self-Calibration",
+    "Generative AI",
+    "TypeScript",
+    "Large Language Model"
+  ],
+  "author": "黃梵威 (Fan Wei Huang) <xsw123zaq1@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

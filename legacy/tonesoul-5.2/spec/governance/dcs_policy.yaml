@@ -1,0 +1,22 @@
+version: 0.1
+thresholds:
+  poav_min: 0.7
+  mercy_min: 0.1
+  drift_max: 4.0
+  tsr_delta_max: 0.4
+dcs:
+  enforce: false
+  decision_modes:
+    normal:
+      close_on: ["p0", "escalation"]
+      soft_close_on: ["poav", "mercy", "drift", "tsr_delta"]
+    cautious:
+      close_on: ["p0", "escalation"]
+      soft_close_on: ["poav", "mercy", "drift", "tsr_delta"]
+    lockdown:
+      close_on: ["p0", "escalation", "poav", "mercy", "drift", "tsr_delta"]
+      soft_close_on: []
+notes:
+  - "Record-only by default; enforce only with gate flag."
+  - "Lockdown treats any soft trigger as closed."
+  - "Thresholds are tunable; revisit and confirm later."

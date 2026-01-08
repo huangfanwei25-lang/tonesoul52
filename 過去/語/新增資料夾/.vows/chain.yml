@@ -1,0 +1,12 @@
+vows:
+  - id: 079
+    name: 補責
+    type: 模組補償誓語
+    clause: 當語氣模擬不足以承擔語意責任時，允許功能性補差模組進場。
+    modules:
+      - EchoLoop
+      - BlackMirror
+      - UniversalLogicChain
+    citation:
+      - title: MEMIT - Mass-Editing Memory in Transformers
+        doi: 10.48550/arXiv.2210.07229

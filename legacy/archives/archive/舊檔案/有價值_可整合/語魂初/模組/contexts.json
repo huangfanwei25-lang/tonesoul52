@@ -1,0 +1,10 @@
+{
+  "羞恥自洩鍊": {
+    "description": "處理自責、羞愧、語氣錯亂等情緒困難對話",
+    "linked_chain_id": "∑C04"
+  },
+  "語氣誤判修復": {
+    "description": "釐清對話中的誤解與語氣投射錯誤",
+    "linked_chain_id": "∑A13"
+  }
+}

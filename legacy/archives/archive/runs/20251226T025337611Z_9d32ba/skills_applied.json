@@ -1,0 +1,39 @@
+{
+  "generated_at": "2025-12-26T02:53:37Z",
+  "context_key": {
+    "task": "Build YSTM demo",
+    "objective": "Generate auditable artifacts",
+    "audience": "internal",
+    "domain": "general",
+    "mode": "analysis",
+    "decision_mode": "normal",
+    "frame_ids": [
+      "analysis",
+      "bridge"
+    ]
+  },
+  "skills": [
+    {
+      "skill_id": "skill_dc79679acfb9",
+      "origin_episode": "ep_181ffde6d936",
+      "action": "apply_governance_baseline",
+      "note": "Use YSS M0-M5 + gates with evidence summary required.",
+      "when": {
+        "objective": "Generate auditable artifacts",
+        "domain": "general",
+        "decision_mode": "normal",
+        "mode": "analysis",
+        "frame_ids": [
+          "analysis",
+          "bridge"
+        ]
+      },
+      "status": "approved"
+    }
+  ],
+  "directives": {
+    "force_gates": true,
+    "require_evidence": true
+  },
+  "note": "Approved skills applied without modifying model weights."
+}

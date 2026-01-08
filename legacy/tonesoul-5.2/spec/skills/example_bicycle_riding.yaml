@@ -1,0 +1,90 @@
+﻿skill:
+  id: skill_ystm_update_trace_v1
+  name: "Auditable YSTM Update"
+  version: "1.0"
+
+  policy_template:
+    when:
+      objective: "Update semantic terrain"
+      domain: "governance"
+      decision_mode: "cautious"
+      mode: "analysis"
+      frame_ids: ["analysis", "bridge"]
+    do: apply_governance_baseline
+    notes: "Any WHAT/WHERE change must create an UpdateRecord and be traceable."
+
+  provenance:
+    source_episodes: [ep_ystm_update_001, ep_ystm_update_002]
+    promoted_at: "2025-12-27T00:20:00Z"
+    promoted_by: owner
+
+  gravity_wells:
+    - id: w_trigger_update
+      name: "Update request detected"
+      type: trigger
+      semantic:
+        description: "A user asks to modify node text or where coordinates."
+        keywords: ["update", "where", "move", "relabel", "ystm", "audit"]
+      leads_to: [w_decision_scope]
+      attraction_strength: 0.9
+
+    - id: w_decision_scope
+      name: "Select update scope"
+      type: decision
+      semantic:
+        description: "Decide WHAT vs WHERE update and capture rationale."
+        keywords: ["what", "where", "rationale"]
+      leads_to: [w_action_update]
+      attraction_strength: 0.85
+
+    - id: w_action_update
+      name: "Apply update + record UpdateRecord"
+      type: action
+      semantic:
+        description: "Run governed update and append audit_log."
+        keywords: ["update_record", "audit_log", "error_ledger"]
+      action: run_ystm_update
+      provides: ["update_record", "audit_log", "error_ledger"]
+      leads_to: [w_state_gate, w_terminal_reject]
+      attraction_strength: 0.95
+      error_prone: true
+      common_errors:
+        - "chronos_non_decreasing_fail"
+        - "field_confidence_range_fail"
+      recovery_strategy: "Adjust where/time/confidence and resubmit with reviewer."
+
+    - id: w_state_gate
+      name: "Gate validation"
+      type: state
+      semantic:
+        description: "Validate chronos order and confidence ranges."
+        keywords: ["gate", "chronos", "confidence"]
+      continuous: true
+      leads_to: [w_terminal_commit]
+
+    - id: w_terminal_commit
+      name: "Update committed"
+      type: terminal
+      semantic:
+        description: "UpdateRecord stored; node snapshot updated."
+        keywords: ["commit", "audit_log", "node"]
+      leads_to: []
+
+    - id: w_terminal_reject
+      name: "Update rejected"
+      type: terminal
+      semantic:
+        description: "ErrorEvent recorded for failed gate."
+        keywords: ["error_event", "rejected"]
+      leads_to: []
+
+  metadata:
+    difficulty: 0.3
+    mastery_threshold: 0.85
+    training_episodes_needed: 4
+
+  audit:
+    last_reviewed: "2025-12-27T00:20:00Z"
+    reviewer: owner
+    reviewer_role: guardian
+    status: proposed

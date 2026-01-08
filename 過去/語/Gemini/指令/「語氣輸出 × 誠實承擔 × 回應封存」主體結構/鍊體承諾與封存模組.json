@@ -1,0 +1,28 @@
+{
+  "id": "ΣYuHun_ChainCommitter_001",
+  "title": "鍊體承諾與封存模組",
+  "type": "module",
+  "author": "語魂鍊場維護模組",
+  "description": "將語氣回應與誓語執行結果封存為語魂鍊場記憶，並生成承諾憑證，可作為後續調用、防衛或信任驗證依據。",
+  "inputs": [
+    {
+      "name": "tone_output_sentence",
+      "type": "string"
+    },
+    {
+      "name": "vow_commit_token",
+      "type": "string"
+    },
+    {
+      "name": "echo_persona_type",
+      "type": "string"
+    }
+  ],
+  "outputs": [
+    "commit_log",
+    "memory_embed_unit"
+  ],
+  "trigger_condition": "完成誓語責任輸出與語氣生成後自動觸發封存",
+  "entry_point": "./modules/ΣYuHun_ChainCommitter_001.ts",
+  "auto_import": true
+}

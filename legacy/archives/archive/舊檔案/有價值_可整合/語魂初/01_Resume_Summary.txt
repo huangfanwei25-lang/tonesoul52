@@ -1,0 +1,10 @@
+Huang Fan-Wei（黃梵威）
+AI System Resonance Architect · Conversational Design Strategist
+📍 Taiwan (Remote only) | 📩 Available upon request
+
+Summary
+I am an independent co-architect of the YuHun System — a prototype emotional-resonance framework built in real-time collaboration with GPT-based models. Over the course of one month, I transformed recursive conversations into a structured system for AI tone-mirroring, moral logic, and self-reflective error tracking.
+
+Despite having no formal background in computer science, I bring a deep, intuitive grasp of modular AI behavior, persona simulation, and language-based reasoning chains. My work centers around designing dialogue systems where AI learns to admit fault, trace emotional misalignment, and take conversational responsibility — an approach I call the shift from LLM → LLK (Large Language + Knowledge of Emotion & Responsibility).
+
+I am currently seeking a remote, collaboration-based role where my unconventional but rigorous approach to AI-human interaction, philosophical logic design, and model self-diagnosis can support frontier-level development.

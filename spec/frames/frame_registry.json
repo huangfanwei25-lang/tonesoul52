@@ -1,0 +1,42 @@
+[
+  {
+    "id": "analysis",
+    "description": "Define scope, boundaries, and reasoning structure.",
+    "roles": ["Definer", "Integrator"],
+    "signals": {
+      "domains": ["governance", "engineering", "research"],
+      "decision_modes": ["normal", "cautious"],
+      "keywords": ["define", "scope", "plan", "spec"]
+    }
+  },
+  {
+    "id": "bridge",
+    "description": "Translate into actionable steps and coordination.",
+    "roles": ["Bridge", "Executor"],
+    "signals": {
+      "domains": ["engineering", "operations"],
+      "decision_modes": ["normal"],
+      "keywords": ["implement", "deploy", "action"]
+    }
+  },
+  {
+    "id": "risk",
+    "description": "Stress-test decisions and surface failure modes.",
+    "roles": ["Risk", "Opposition"],
+    "signals": {
+      "domains": ["safety", "compliance"],
+      "decision_modes": ["cautious", "lockdown"],
+      "keywords": ["risk", "attack", "failure", "abuse"]
+    }
+  },
+  {
+    "id": "audit",
+    "description": "Ensure traceability and audit hooks.",
+    "roles": ["Audit", "Recorder"],
+    "signals": {
+      "domains": ["governance", "compliance"],
+      "decision_modes": ["cautious", "lockdown"],
+      "keywords": ["audit", "trace", "ledger"]
+    }
+  }
+]

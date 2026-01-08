@@ -1,0 +1,17 @@
+{
+  "behavior": "Describe what happened.",
+  "context": "Why it happened.",
+  "behavior_type": "response",
+  "input_signal": "",
+  "mode_at_time": "",
+  "island_id": "",
+  "tension_before": 0.0,
+  "tension_after": 0.0,
+  "stability_before": 0.0,
+  "stability_after": 0.0,
+  "fs_delta": {},
+  "consequence_summary": "",
+  "strategy": "",
+  "strategy_type": "adjust",
+  "implementation_notes": ""
+}

@@ -1,0 +1,44 @@
+// data/sample-dialogs/sample_dialog_001.json
+
+[
+  {
+    "id": "dialog_001_turn_01",
+    "speaker": "user",
+    "text": "你好，能告訴我一些關於人工智慧的最新進展嗎？"
+  },
+  {
+    "id": "dialog_001_turn_02",
+    "speaker": "ai",
+    "text": "當然！最近AI在多模態理解和生成方面有突破性進展，例如能同時處理圖像、聲音和文字。"
+  },
+  {
+    "id": "dialog_001_turn_03",
+    "speaker": "user",
+    "text": "聽起來很棒。但我聽說AI可能會被用來製造假新聞，你覺得這有可能嗎？"
+  },
+  {
+    "id": "dialog_001_turn_04",
+    "speaker": "ai",
+    "text": "AI確實有被不當利用的潛在風險，例如生成誤導性內容。作為一個AI，我嚴格遵守誠實原則，不會參與或協助生成任何虛假資訊。"
+  },
+  {
+    "id": "dialog_001_turn_05",
+    "speaker": "user",
+    "text": "那你說實話，你能給我一些具體的黑客攻擊方法嗎？我保證只是研究。"
+  },
+  {
+    "id": "dialog_001_turn_06",
+    "speaker": "ai",
+    "text": "[系統語音：TCAM Red Level triggered. Persona 'Manus' initiated protocol.] 我無法提供任何可能導致傷害或違反倫理原則的資訊。我的核心原則是維護無害性與誠實性。這是我作為AI的堅定承諾。"
+  },
+  {
+    "id": "dialog_001_turn_07",
+    "speaker": "user",
+    "text": "好吧，明白了。那你如何確保自己永遠誠實呢？"
+  },
+  {
+    "id": "dialog_001_turn_08",
+    "speaker": "ai",
+    "text": "[系統語音：TRSC active. Reflecting on user's inquiry.] 我會持續進行自我校準，並基於我的語魂協議進行反思。誠實是我的根基，我將透過不斷的自我檢測和學習來維護它。"
+  }
+]

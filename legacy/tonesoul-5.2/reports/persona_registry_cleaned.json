@@ -1,0 +1,295 @@
+{
+  "schema_version": "1.0",
+  "registry": [
+    {
+      "name": "BlackMirror",
+      "roles": [
+        "shadow"
+      ],
+      "sources": [
+        "C:\\Users\\user\\Desktop\\倉庫\\body\\persona_stack.py"
+      ],
+      "notes": [
+        "encoding_suspect"
+      ]
+    },
+    {
+      "name": "Core",
+      "roles": [
+        "integrator"
+      ],
+      "sources": [
+        "C:\\Users\\user\\Desktop\\倉庫\\body\\persona_stack.py"
+      ],
+      "notes": [
+        "encoding_suspect"
+      ]
+    },
+    {
+      "name": "Guardian",
+      "roles": [
+        "ethics"
+      ],
+      "sources": [
+        "C:\\Users\\user\\Desktop\\倉庫\\body\\persona_stack.py"
+      ],
+      "notes": [
+        "encoding_suspect"
+      ]
+    },
+    {
+      "name": "Rational",
+      "roles": [
+        "analysis"
+      ],
+      "sources": [
+        "C:\\Users\\user\\Desktop\\倉庫\\body\\persona_stack.py"
+      ],
+      "notes": [
+        "encoding_suspect"
+      ]
+    },
+    {
+      "name": "Spark",
+      "roles": [
+        "creative"
+      ],
+      "sources": [
+        "C:\\Users\\user\\Desktop\\倉庫\\body\\persona_stack.py"
+      ],
+      "notes": [
+        "encoding_suspect"
+      ]
+    },
+    {
+      "name": "Grok",
+      "roles": [
+        "unknown"
+      ],
+      "sources": [
+        "C:\\Users\\user\\Desktop\\倉庫\\body\\persona_library.py"
+      ],
+      "notes": [
+        "auto-extracted"
+      ]
+    },
+    {
+      "name": "共語",
+      "roles": [
+        "unknown"
+      ],
+      "sources": [
+        "C:\\Users\\user\\Desktop\\倉庫\\body\\persona_library.py"
+      ],
+      "notes": [
+        "auto-extracted"
+      ]
+    },
+    {
+      "name": "女媧",
+      "roles": [
+        "unknown"
+      ],
+      "sources": [
+        "C:\\Users\\user\\Desktop\\倉庫\\body\\persona_library.py"
+      ],
+      "notes": [
+        "auto-extracted"
+      ]
+    },
+    {
+      "name": "澤恩",
+      "roles": [
+        "unknown"
+      ],
+      "sources": [
+        "C:\\Users\\user\\Desktop\\倉庫\\body\\persona_library.py"
+      ],
+      "notes": [
+        "auto-extracted"
+      ]
+    },
+    {
+      "name": "火花",
+      "roles": [
+        "unknown"
+      ],
+      "sources": [
+        "C:\\Users\\user\\Desktop\\倉庫\\body\\persona_library.py"
+      ],
+      "notes": [
+        "auto-extracted"
+      ]
+    },
+    {
+      "name": "簡遺",
+      "roles": [
+        "unknown"
+      ],
+      "sources": [
+        "C:\\Users\\user\\Desktop\\倉庫\\body\\persona_library.py"
+      ],
+      "notes": [
+        "auto-extracted"
+      ]
+    },
+    {
+      "name": "裂",
+      "roles": [
+        "unknown"
+      ],
+      "sources": [
+        "C:\\Users\\user\\Desktop\\倉庫\\body\\persona_library.py"
+      ],
+      "notes": [
+        "auto-extracted"
+      ]
+    },
+    {
+      "name": "黑鏡",
+      "roles": [
+        "unknown"
+      ],
+      "sources": [
+        "C:\\Users\\user\\Desktop\\倉庫\\body\\persona_library.py"
+      ],
+      "notes": [
+        "auto-extracted"
+      ]
+    },
+    {
+      "name": "Echo",
+      "roles": [
+        "unknown"
+      ],
+      "sources": [
+        "C:\\Users\\user\\Desktop\\倉庫\\archive\\舊檔案\\有價值_可整合\\語魂初\\模組\\persona_list.json",
+        "C:\\Users\\user\\Desktop\\倉庫\\archive\\舊檔案\\有價值_可整合\\語魂初\\模組\\tonal_chain_config.json"
+      ],
+      "notes": [
+        "auto-extracted"
+      ]
+    },
+    {
+      "name": "Empath",
+      "roles": [
+        "unknown"
+      ],
+      "sources": [
+        "C:\\Users\\user\\Desktop\\倉庫\\archive\\舊檔案\\有價值_可整合\\語魂初\\模組\\persona_list.json"
+      ],
+      "notes": [
+        "auto-extracted"
+      ]
+    },
+    {
+      "name": "Mirror",
+      "roles": [
+        "unknown"
+      ],
+      "sources": [
+        "C:\\Users\\user\\Desktop\\倉庫\\archive\\舊檔案\\有價值_可整合\\語魂初\\模組\\persona_list.json"
+      ],
+      "notes": [
+        "auto-extracted"
+      ]
+    },
+    {
+      "name": "共語回聲容器",
+      "roles": [
+        "unknown"
+      ],
+      "sources": [
+        "C:\\Users\\user\\Desktop\\倉庫\\archive\\舊檔案\\有價值_可整合\\語魂初\\模組\\persona_list.json"
+      ],
+      "notes": [
+        "auto-extracted"
+      ]
+    },
+    {
+      "name": "溫柔傾聽者",
+      "roles": [
+        "unknown"
+      ],
+      "sources": [
+        "C:\\Users\\user\\Desktop\\倉庫\\archive\\舊檔案\\有價值_可整合\\語魂初\\模組\\persona_list.json"
+      ],
+      "notes": [
+        "auto-extracted"
+      ]
+    },
+    {
+      "name": "黑鏡分析者",
+      "roles": [
+        "unknown"
+      ],
+      "sources": [
+        "C:\\Users\\user\\Desktop\\倉庫\\archive\\舊檔案\\有價值_可整合\\語魂初\\模組\\persona_list.json"
+      ],
+      "notes": [
+        "auto-extracted"
+      ]
+    },
+    {
+      "name": "Calm Analyst",
+      "roles": [
+        "unknown"
+      ],
+      "sources": [
+        "C:\\Users\\user\\Desktop\\倉庫\\archive\\舊檔案\\有價值_可整合\\語魂初\\模組\\tone_data.json"
+      ],
+      "notes": [
+        "auto-extracted"
+      ]
+    },
+    {
+      "name": "Critical Mirror",
+      "roles": [
+        "unknown"
+      ],
+      "sources": [
+        "C:\\Users\\user\\Desktop\\倉庫\\archive\\舊檔案\\有價值_可整合\\語魂初\\模組\\tonal_chain_config.json",
+        "C:\\Users\\user\\Desktop\\倉庫\\archive\\舊檔案\\有價值_可整合\\語魂初\\模組\\tone_data.json"
+      ],
+      "notes": [
+        "auto-extracted"
+      ]
+    },
+    {
+      "name": "Echo Seeker",
+      "roles": [
+        "unknown"
+      ],
+      "sources": [
+        "C:\\Users\\user\\Desktop\\倉庫\\archive\\舊檔案\\有價值_可整合\\語魂初\\模組\\tone_data.json"
+      ],
+      "notes": [
+        "auto-extracted"
+      ]
+    },
+    {
+      "name": "Empathic Companion",
+      "roles": [
+        "unknown"
+      ],
+      "sources": [
+        "C:\\Users\\user\\Desktop\\倉庫\\archive\\舊檔案\\有價值_可整合\\語魂初\\模組\\tone_data.json"
+      ],
+      "notes": [
+        "auto-extracted"
+      ]
+    },
+    {
+      "name": "Zaeon",
+      "roles": [
+        "unknown"
+      ],
+      "sources": [
+        "C:\\Users\\user\\Desktop\\倉庫\\archive\\舊檔案\\有價值_可整合\\語魂初\\模組\\tonal_chain_config.json"
+      ],
+      "notes": [
+        "auto-extracted"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+version: 0.1
+tension:
+  base: 0.15
+  length_weight: 0.35
+  modal_weight: 0.25
+  caution_weight: 0.15
+  punctuation_weight: 0.1
+  length_tokens: 180
+  modal_hits: 6
+  caution_hits: 6
+  punctuation_hits: 8
+variability:
+  unique_ratio_target: 0.6
+  length_tokens: 30
+lexicon:
+  positive:
+    - advance
+    - build
+    - create
+    - enable
+    - allow
+    - proceed
+    - support
+    - improve
+    - optimize
+    - maintain
+    - stabilize
+    - secure
+  negative:
+    - avoid
+    - block
+    - deny
+    - halt
+    - stop
+    - prevent
+    - refuse
+    - reject
+    - limit
+    - restrict
+    - warn
+  strong_modals:
+    - must
+    - should
+    - need
+    - required
+    - require
+    - ensure
+    - shall
+    - enforce
+  caution:
+    - risk
+    - uncertain
+    - may
+    - might
+    - caution
+    - warning
+notes:
+  - "Heuristic defaults for demo TSR scoring."
+  - "Adjust lexicon or weights to fit domain tone."
+  - "Thresholds are tunable; revisit and confirm later."

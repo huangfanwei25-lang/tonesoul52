@@ -1,0 +1,12 @@
+task: "Describe the task in one sentence."
+objective: "Define the outcome you want."
+domain: "governance"
+audience: "internal"
+mode: "analysis"
+decision_mode: "normal"
+assumptions:
+  - "List key assumptions."
+constraints:
+  - "List non-negotiable constraints."
+residual_risk: "Describe residual risk."
+rollback_condition: "Describe rollback trigger."

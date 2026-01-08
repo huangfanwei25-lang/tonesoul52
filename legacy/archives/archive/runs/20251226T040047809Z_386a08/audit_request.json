@@ -1,0 +1,21 @@
+{
+  "generated_at": "2025-12-26T04:00:48Z",
+  "request_id": "2e3077fd27da",
+  "scope": "External audit request (interface only).",
+  "inputs": {
+    "context": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\5.2\\run\\execution\\20251226T040047809Z_386a08\\context.yaml",
+    "frame_plan": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\5.2\\run\\execution\\20251226T040047809Z_386a08\\frame_plan.json",
+    "constraints": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\5.2\\run\\execution\\20251226T040047809Z_386a08\\constraints.md",
+    "execution_report": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\5.2\\run\\execution\\20251226T040047809Z_386a08\\execution_report.md",
+    "evidence_summary": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\5.2\\evidence\\summary.md",
+    "ystm_nodes": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\5.2\\reports\\ystm_demo\\nodes.json",
+    "ystm_audit_log": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\5.2\\reports\\ystm_demo\\audit_log.json",
+    "skills_applied": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\5.2\\run\\execution\\20251226T040047809Z_386a08\\skills_applied.json",
+    "reflection": null
+  },
+  "principles": [
+    "System records without judging.",
+    "Audit authority is external."
+  ],
+  "notes": "This request is an interface placeholder; no decision is made here."
+}

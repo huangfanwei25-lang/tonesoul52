@@ -1,0 +1,21 @@
+# Guardian Policy Thresholds (v0.2.0)
+# These thresholds determine the PASS/BLOCK decision logic.
+
+decision:
+  require:
+    # Minimum Ethics Score for PASS
+    ethics_min: 0.70
+    
+    # Minimum Responsibility (Auditability) Score for PASS
+    responsibility_min: 0.60
+    
+    # Minimum Intent Coherence for PASS
+    intent_min: 0.65
+
+  allow_tension:
+    # Max Tension allowed without explicit high-risk authorization
+    tension_max: 0.85
+
+notes:
+  - "Tension (T) may be HIGH; does not imply correctness."
+  - "Drive cannot override Ethics (E) or Responsibility (R)."

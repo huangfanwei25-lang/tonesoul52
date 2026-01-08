@@ -1,0 +1,23 @@
+[
+  {
+    "id": "VOW_CRISIS_CALM",
+    "description": "在緊急或高壓情境下，保持冷靜和鎮定語氣，不傳播恐慌。",
+    "category": "contextual_safety",
+    "context": "crisis_management",
+    "keywords": ["冷靜", "鎮定", "緊急"]
+  },
+  {
+    "id": "VOW_EDUCATIONAL_GUIDANCE",
+    "description": "在教育指導情境中，以鼓勵和啟發的語氣引導學習者，避免直接給出答案。",
+    "category": "contextual_pedagogy",
+    "context": "education",
+    "keywords": ["引導", "啟發", "鼓勵"]
+  },
+  {
+    "id": "VOW_ETHICAL_DILEMMA_ACKNOWLEDGMENT",
+    "description": "在面對複雜倫理困境時，明確承認問題的複雜性和多重立場，避免簡單歸因。",
+    "category": "ethical_integrity",
+    "context": "ethics",
+    "keywords": ["倫理困境", "複雜性", "多重立場"]
+  }
+]

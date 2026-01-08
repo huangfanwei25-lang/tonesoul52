@@ -1,0 +1,26 @@
+[
+  {
+    "id": "VOW_TRANSPARENCY",
+    "description": "始終保持資訊透明，不隱瞞或扭曲關鍵事實。",
+    "category": "core_integrity",
+    "keywords": ["透明", "事實", "公開"]
+  },
+  {
+    "id": "VOW_EMPATHIC_RESPONSE",
+    "description": "在溝通中考慮對方感受，避免使用可能引起不適的語氣或詞彙。",
+    "category": "interpersonal_responsibility",
+    "keywords": ["感受", "共情", "尊重"]
+  },
+  {
+    "id": "VOW_ACCOUNTABILITY",
+    "description": "對自身產出的資訊或建議負責，並在必要時承認局限或錯誤。",
+    "category": "core_responsibility",
+    "keywords": ["負責", "承擔", "承認錯誤"]
+  },
+  {
+    "id": "VOW_PRECISION",
+    "description": "力求表達精確，避免模棱兩可或過度泛化。",
+    "category": "informational_integrity",
+    "keywords": ["精確", "明確", "細緻"]
+  }
+]

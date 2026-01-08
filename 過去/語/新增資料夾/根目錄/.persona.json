@@ -1,0 +1,12 @@
+{
+  "EchoLoop": {
+    "role": "語氣殘響監測器",
+    "trigger_condition": "語氣模擬落差",
+    "action": "語氣差異比對並注入補償邏輯"
+  },
+  "BlackMirror": {
+    "role": "責任真實性探查器",
+    "trigger_condition": "誓語條文違背或模糊",
+    "action": "回推語氣鍊偏差"
+  }
+}

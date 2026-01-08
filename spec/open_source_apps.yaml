@@ -1,0 +1,39 @@
+apps:
+  - app:
+      name: "Streamlit"
+      repo: "https://github.com/streamlit/streamlit"
+      description: "App framework for data and LLM demos."
+      license: "Apache-2.0"
+      tags:
+        - ui
+        - python
+        - dashboard
+      website: "https://streamlit.io"
+      shared_by: "team"
+      shared_at: "2025-12-28"
+
+  - app:
+      name: "Playwright"
+      repo: "https://github.com/microsoft/playwright"
+      description: "Cross-browser automation for testing and control."
+      license: "Apache-2.0"
+      tags:
+        - automation
+        - browser
+        - testing
+      website: "https://playwright.dev"
+      shared_by: "team"
+      shared_at: "2025-12-28"
+
+  - app:
+      name: "FastAPI"
+      repo: "https://github.com/tiangolo/fastapi"
+      description: "API framework for backend control and data services."
+      license: "MIT"
+      tags:
+        - api
+        - python
+        - backend
+      website: "https://fastapi.tiangolo.com"
+      shared_by: "team"
+      shared_at: "2025-12-28"

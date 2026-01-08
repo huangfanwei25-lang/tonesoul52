@@ -1,0 +1,29 @@
+{
+  "generated_at": "2025-12-26T04:41:41Z",
+  "request_id": "c02252897036",
+  "scope": "External audit request (interface only).",
+  "inputs": {
+    "context": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\5.2\\run\\execution\\20251226T044141482Z_f5f67b\\context.yaml",
+    "frame_plan": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\5.2\\run\\execution\\20251226T044141482Z_f5f67b\\frame_plan.json",
+    "constraints": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\5.2\\run\\execution\\20251226T044141482Z_f5f67b\\constraints.md",
+    "execution_report": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\5.2\\run\\execution\\20251226T044141482Z_f5f67b\\execution_report.md",
+    "evidence_summary": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\5.2\\evidence\\summary.md",
+    "ystm_nodes": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\5.2\\reports\\ystm_demo\\nodes.json",
+    "ystm_audit_log": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\5.2\\reports\\ystm_demo\\audit_log.json",
+    "ystm_terrain": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\5.2\\reports\\ystm_demo\\terrain.html",
+    "ystm_terrain_json": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\5.2\\reports\\ystm_demo\\terrain.json",
+    "ystm_terrain_svg": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\5.2\\reports\\ystm_demo\\terrain.svg",
+    "ystm_terrain_png": null,
+    "ystm_terrain_p2": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\5.2\\reports\\ystm_demo\\terrain_p2.html",
+    "ystm_terrain_p2_json": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\5.2\\reports\\ystm_demo\\terrain_p2.json",
+    "ystm_terrain_p2_svg": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\5.2\\reports\\ystm_demo\\terrain_p2.svg",
+    "ystm_terrain_p2_png": null,
+    "skills_applied": null,
+    "reflection": null
+  },
+  "principles": [
+    "System records without judging.",
+    "Audit authority is external."
+  ],
+  "notes": "This request is an interface placeholder; no decision is made here."
+}

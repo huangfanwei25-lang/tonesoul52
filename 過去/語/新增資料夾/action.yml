@@ -1,0 +1,28 @@
+name: Validate YuHun Vows
+description: A GitHub Action to validate YuHun誓語鏈條 and generate responsibility reports.
+
+inputs:
+  vows_file:
+    description: Path to the vows file.
+    required: true
+    default: .vows/chain.yml
+  persona_file:
+    description: Path to the persona file.
+    required: true
+    default: .persona.json
+
+outputs:
+  report_path:
+    description: Path to the generated report.
+    value: artifacts/report.md
+
+runs:
+  using: "docker"
+  image: "docker://python:3.11"
+  args:
+    - ${{ inputs.vows_file }}
+    - ${{ inputs.persona_file }}
+
+branding:
+  icon: "book"
+  color: "blue"

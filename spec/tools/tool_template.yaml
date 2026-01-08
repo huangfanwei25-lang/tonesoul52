@@ -1,0 +1,40 @@
+tool:
+  id: "tool_id"
+  name: "Tool Name"
+  category: "category"
+  icon: "icon_name"
+
+  description: "Short description of what the tool does."
+
+  governance:
+    risk_level: "low"          # low | medium | high
+    requires_confirm: false
+    network_required: false
+    gates: ["p0"]
+    os_support: ["windows", "mac", "linux"]
+
+  input:
+    - name: "input"
+      type: "file"
+      accept: ["png", "jpg"]
+
+  output:
+    - name: "result"
+      type: "file"
+      format: "png"
+
+  implementation:
+    library: "library_name"
+    entrypoint: "module.path:function"
+    code: |
+      def run(input_path, output_path):
+          pass
+
+  dependencies:
+    - "library_name"
+  system_dependencies:
+    - "system_dependency"
+
+  source:
+    type: "built-in"
+    author: "ToneSoul"

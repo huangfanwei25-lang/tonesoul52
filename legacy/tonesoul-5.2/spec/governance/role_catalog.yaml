@@ -1,0 +1,55 @@
+version: 0.1
+governance_roles:
+  observer:
+    level: 1
+    summary: Read-only observer who flags issues.
+    permissions:
+      - observe
+      - flag
+  steward:
+    level: 2
+    summary: Maintains policy alignment and makes recommendations.
+    permissions:
+      - review
+      - recommend
+      - propose
+  guardian:
+    level: 3
+    summary: Approves or rejects changes and can request rollback.
+    permissions:
+      - approve
+      - reject
+      - override
+      - request_rollback
+  arbiter:
+    level: 4
+    summary: Final authority for policy and escalation.
+    permissions:
+      - final_decision
+      - policy_change
+      - escalation
+operational_roles:
+  Definer:
+    aligns_to: steward
+    focus: Define scope and boundaries.
+  Integrator:
+    aligns_to: guardian
+    focus: Integrate outputs and enforce coherence.
+  Bridge:
+    aligns_to: steward
+    focus: Translate analysis into execution.
+  Executor:
+    aligns_to: steward
+    focus: Implement actions and close loops.
+  Risk:
+    aligns_to: guardian
+    focus: Stress-test and surface failure modes.
+  Opposition:
+    aligns_to: guardian
+    focus: Challenge assumptions and track dissent.
+  Audit:
+    aligns_to: arbiter
+    focus: Audit readiness and traceability.
+  Recorder:
+    aligns_to: observer
+    focus: Record and preserve evidence.

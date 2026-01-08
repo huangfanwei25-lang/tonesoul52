@@ -1,0 +1,26 @@
+{
+  "generated_at": "2025-12-26T01:21:27Z",
+  "router_version": "0.1",
+  "input_hash": "e67dab4db8eb",
+  "selected_frames": [
+    {
+      "id": "analysis",
+      "score": 1,
+      "roles": [
+        "Definer",
+        "Integrator"
+      ],
+      "description": "Define scope, boundaries, and reasoning structure."
+    },
+    {
+      "id": "bridge",
+      "score": 1,
+      "roles": [
+        "Bridge",
+        "Executor"
+      ],
+      "description": "Translate into actionable steps and coordination."
+    }
+  ],
+  "note": "Router is deterministic; same context yields same selection."
+}

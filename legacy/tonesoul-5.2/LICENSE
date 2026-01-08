@@ -1,0 +1,61 @@
+# ToneSoul 5.2 License / 語魂 5.2 授權條款
+
+Copyright (c) 2025 黃梵威 (Fan Wei Huang)  
+All Rights Reserved / 版權所有
+
+---
+
+## 授權聲明 / License Statement
+
+本專案採用 **研究與協作授權** (Research & Collaboration License)。
+
+### 您可以 (Permitted Uses):
+- ✅ 閱讀、學習、研究本專案的所有內容
+- ✅ Fork 本專案進行實驗與測試
+- ✅ 在學術論文中引用（需標註出處）
+- ✅ 提出 Pull Request 進行協作貢獻
+- ✅ 基於本專案的概念發展自己的想法（需標註啟發來源）
+
+### 您不可以 (Prohibited Uses):
+- ❌ 將本專案用於商業產品或服務（未經書面授權）
+- ❌ 宣稱本專案的核心概念為您的原創
+- ❌ 移除或修改著作權聲明
+- ❌ 申請與本專案核心概念相衝突的專利
+
+### 專利保留 (Patent Reservation):
+以下核心概念的專利權由原作者保留：
+- ToneSoul 治理架構（MGGI, STREI, TSR）
+- 時間島協定（Time-Island Protocol: Chronos/Kairos/Trace）
+- 語義地形圖（YSTM: What/Where Decoupling）
+- 語魂三軸系統（ΔT, ΔS, ΔR）
+- 語義張力機制（ΔΣ Semantic Tension）
+
+### 協作邀請 (Collaboration Invitation):
+我們正在尋找志同道合的研究者與開發者！
+
+如果您有興趣：
+- 共同發展 AI 治理框架
+- 探索可審計的 AI 系統
+- 研究「語言責任殘留」的工程化
+
+請透過 Issue 或 Discussion 與我們聯繫。
+
+---
+
+## English Summary
+
+This project uses a **Research & Collaboration License**.
+
+**Permitted**: Reading, learning, research, academic citation, collaboration via PR, developing your own ideas (with attribution).
+
+**Prohibited**: Commercial use without written permission, claiming core concepts as original, removing copyright notices, filing conflicting patents.
+
+**Patent Reserved**: Core concepts including ToneSoul architecture (MGGI, STREI, TSR), Time-Island Protocol, YSTM, Tone Schema, and ΔΣ mechanism.
+
+**Looking for Collaborators**: We welcome researchers and developers interested in AI governance, auditable AI systems, and linguistic responsibility residue.
+
+---
+
+Contact: [Open an Issue](https://github.com/Fan1234-1/tonesoul52/issues)
+
+© 2025 黃梵威 | ToneSoul Project

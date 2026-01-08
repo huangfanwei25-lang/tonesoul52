@@ -1,0 +1,282 @@
+{
+  "access": {
+    "embargo": {
+      "active": false,
+      "reason": null
+    },
+    "files": "public",
+    "record": "public",
+    "status": "open"
+  },
+  "created": "2025-06-28T07:47:25.158106+00:00",
+  "custom_fields": {},
+  "deletion_status": {
+    "is_deleted": false,
+    "status": "P"
+  },
+  "files": {
+    "count": 2,
+    "enabled": true,
+    "entries": {
+      "YuHun_arxiv_submission.pdf": {
+        "access": {
+          "hidden": false
+        },
+        "checksum": "md5:5bdc4531239b325b9a01f5cb443e45f0",
+        "ext": "pdf",
+        "id": "136c3764-6c7d-4ff2-8c3a-4be7b913f73b",
+        "key": "YuHun_arxiv_submission.pdf",
+        "links": {
+          "content": "https://zenodo.org/api/records/15761164/files/YuHun_arxiv_submission.pdf/content",
+          "iiif_api": "https://zenodo.org/api/iiif/record:15761164:YuHun_arxiv_submission.pdf/full/full/0/default.png",
+          "iiif_base": "https://zenodo.org/api/iiif/record:15761164:YuHun_arxiv_submission.pdf",
+          "iiif_canvas": "https://zenodo.org/api/iiif/record:15761164/canvas/YuHun_arxiv_submission.pdf",
+          "iiif_info": "https://zenodo.org/api/iiif/record:15761164:YuHun_arxiv_submission.pdf/info.json",
+          "self": "https://zenodo.org/api/records/15761164/files/YuHun_arxiv_submission.pdf"
+        },
+        "metadata": {
+          "height": 792,
+          "width": 612
+        },
+        "mimetype": "application/pdf",
+        "size": 11745510,
+        "storage_class": "L"
+      },
+      "yuhun_llk_submission_2025.zip.zip": {
+        "access": {
+          "hidden": false
+        },
+        "checksum": "md5:fb025d1cd67c29ef9619b60bce327dd1",
+        "ext": "zip",
+        "id": "fb678747-0135-4f36-bdb7-dbf7adbf77b3",
+        "key": "yuhun_llk_submission_2025.zip.zip",
+        "links": {
+          "content": "https://zenodo.org/api/records/15761164/files/yuhun_llk_submission_2025.zip.zip/content",
+          "self": "https://zenodo.org/api/records/15761164/files/yuhun_llk_submission_2025.zip.zip"
+        },
+        "metadata": {},
+        "mimetype": "application/zip",
+        "size": 14666501,
+        "storage_class": "L"
+      }
+    },
+    "order": [],
+    "total_bytes": 26412011
+  },
+  "id": "15761164",
+  "is_draft": false,
+  "is_published": true,
+  "links": {
+    "access": "https://zenodo.org/api/records/15761164/access",
+    "access_grants": "https://zenodo.org/api/records/15761164/access/grants",
+    "access_links": "https://zenodo.org/api/records/15761164/access/links",
+    "access_request": "https://zenodo.org/api/records/15761164/access/request",
+    "access_users": "https://zenodo.org/api/records/15761164/access/users",
+    "archive": "https://zenodo.org/api/records/15761164/files-archive",
+    "archive_media": "https://zenodo.org/api/records/15761164/media-files-archive",
+    "communities": "https://zenodo.org/api/records/15761164/communities",
+    "communities-suggestions": "https://zenodo.org/api/records/15761164/communities-suggestions",
+    "doi": "https://doi.org/10.5281/zenodo.15761164",
+    "draft": "https://zenodo.org/api/records/15761164/draft",
+    "files": "https://zenodo.org/api/records/15761164/files",
+    "latest": "https://zenodo.org/api/records/15761164/versions/latest",
+    "latest_html": "https://zenodo.org/records/15761164/latest",
+    "media_files": "https://zenodo.org/api/records/15761164/media-files",
+    "parent": "https://zenodo.org/api/records/15761163",
+    "parent_doi": "https://doi.org/10.5281/zenodo.15761163",
+    "parent_doi_html": "https://zenodo.org/doi/10.5281/zenodo.15761163",
+    "parent_html": "https://zenodo.org/records/15761163",
+    "preview_html": "https://zenodo.org/records/15761164?preview=1",
+    "requests": "https://zenodo.org/api/records/15761164/requests",
+    "reserve_doi": "https://zenodo.org/api/records/15761164/draft/pids/doi",
+    "self": "https://zenodo.org/api/records/15761164",
+    "self_doi": "https://doi.org/10.5281/zenodo.15761164",
+    "self_doi_html": "https://zenodo.org/doi/10.5281/zenodo.15761164",
+    "self_html": "https://zenodo.org/records/15761164",
+    "self_iiif_manifest": "https://zenodo.org/api/iiif/record:15761164/manifest",
+    "self_iiif_sequence": "https://zenodo.org/api/iiif/record:15761164/sequence/default",
+    "thumbnails": {
+      "10": "https://zenodo.org/api/iiif/record:15761164:YuHun_arxiv_submission.pdf/full/%5E10,/0/default.jpg",
+      "100": "https://zenodo.org/api/iiif/record:15761164:YuHun_arxiv_submission.pdf/full/%5E100,/0/default.jpg",
+      "1200": "https://zenodo.org/api/iiif/record:15761164:YuHun_arxiv_submission.pdf/full/%5E1200,/0/default.jpg",
+      "250": "https://zenodo.org/api/iiif/record:15761164:YuHun_arxiv_submission.pdf/full/%5E250,/0/default.jpg",
+      "50": "https://zenodo.org/api/iiif/record:15761164:YuHun_arxiv_submission.pdf/full/%5E50,/0/default.jpg",
+      "750": "https://zenodo.org/api/iiif/record:15761164:YuHun_arxiv_submission.pdf/full/%5E750,/0/default.jpg"
+    },
+    "versions": "https://zenodo.org/api/records/15761164/versions"
+  },
+  "media_files": {
+    "count": 1,
+    "enabled": true,
+    "entries": {
+      "YuHun_arxiv_submission.pdf.ptif": {
+        "access": {
+          "hidden": true
+        },
+        "ext": "ptif",
+        "id": "3b39fe7a-f892-4509-be03-a34d181a1796",
+        "key": "YuHun_arxiv_submission.pdf.ptif",
+        "links": {
+          "content": "https://zenodo.org/api/records/15761164/files/YuHun_arxiv_submission.pdf.ptif/content",
+          "self": "https://zenodo.org/api/records/15761164/files/YuHun_arxiv_submission.pdf.ptif"
+        },
+        "metadata": null,
+        "mimetype": "application/octet-stream",
+        "processor": {
+          "source_file_id": "136c3764-6c7d-4ff2-8c3a-4be7b913f73b",
+          "status": "finished",
+          "type": "image-tiles"
+        },
+        "size": 0,
+        "storage_class": "L"
+      }
+    },
+    "order": [],
+    "total_bytes": 0
+  },
+  "metadata": {
+    "copyright": "Fan-Wei Huang",
+    "creators": [
+      {
+        "affiliations": [
+          {
+            "name": "pingtung veterans general Hospital"
+          }
+        ],
+        "person_or_org": {
+          "family_name": "Huang",
+          "given_name": "Fan-wei",
+          "identifiers": [
+            {
+              "identifier": "0009-0002-3517-9779",
+              "scheme": "orcid"
+            }
+          ],
+          "name": "Huang, Fan-wei",
+          "type": "personal"
+        },
+        "role": {
+          "id": "rightsholder",
+          "title": {
+            "de": "RechteinhaberIn",
+            "en": "Rights holder"
+          }
+        }
+      }
+    ],
+    "dates": [
+      {
+        "date": "2025-06-28",
+        "description": "First preprint uploaded to Zenodo",
+        "type": {
+          "id": "created",
+          "title": {
+            "de": "Erstellt",
+            "en": "Created"
+          }
+        }
+      }
+    ],
+    "description": "<p><em><span><span>\u672c\u8a18\u9304\u5305\u542b\u984c\u70ba\u300c\u4e3b\u9ad4\u6027\u5148\u5146:\u4e00\u9805\u7531\u97f3\u8abf\u5bc6\u5ea6\u9a45\u52d5\u7684\u8aa0\u5be6\u884c\u70ba\u6a21\u578b\u7814\u7a76\u300d</span></span></em><span><span>\u7684\u7814\u7a76\u8ad6\u6587\u7684\u9810\u5370\u672c\u3002 ZIP</span></span><br><span><span>\u6a94 ( </span></span><code>yuhun_llk_submission_2025.zip</code><span><span>) \u5305\u542b\u540c\u4e00\u7bc7\u8ad6\u6587\u7684\u58d3\u7e2e\u683c\u5f0f,\u7528\u65bc\u5b58\u6a94\u3002</span></span><br><span><span>\u8a72\u7814\u7a76\u63d0\u51fa\u4e86\u300c\u8a9e\u9b42\u300d\u97f3\u8abf-\u8a93\u8a00\u4e92\u52d5\u7cfb\u7d71,\u8a72\u7cfb\u7d71\u6574\u5408\u4e86\u8a18\u61b6\u3001\u6a21\u7d44\u5316\u8aa0\u5be6\u908f\u8f2f\u548c\u4fe1\u4efb\u50b3\u64ad\u6a21\u64ec\u3002</span></span><br><span><span>\u672c\u7814\u7a76\u65e8\u5728\u958b\u653e\u7372\u53d6,\u4e26\u5728\u671f\u520a\u6295\u7a3f\u524d\u63d0\u4f9b\u5f15\u7528\u3002</span></span></p>",
+    "languages": [
+      {
+        "id": "eng",
+        "title": {
+          "en": "English"
+        }
+      }
+    ],
+    "publication_date": "2025-06-28",
+    "publisher": "Zenodo",
+    "resource_type": {
+      "id": "publication-preprint",
+      "title": {
+        "de": "Preprint",
+        "en": "Preprint"
+      }
+    },
+    "rights": [
+      {
+        "description": {
+          "en": "The Creative Commons Attribution license allows re-distribution and re-use of a licensed work on the condition that the creator is appropriately credited."
+        },
+        "icon": "cc-by-icon",
+        "id": "cc-by-4.0",
+        "props": {
+          "scheme": "spdx",
+          "url": "https://creativecommons.org/licenses/by/4.0/legalcode"
+        },
+        "title": {
+          "en": "Creative Commons Attribution 4.0 International"
+        }
+      }
+    ],
+    "subjects": [
+      {
+        "subject": "Tonal interaction, model honesty, vow-based AI, memory chains, persona logic, modular behavior, EchoLoop, YuHun system"
+      }
+    ],
+    "title": "The Precursors of Agency: A Study of Model Honesty Behavior Driven by Tonal Density",
+    "version": "v1.0"
+  },
+  "parent": {
+    "access": {
+      "grants": [],
+      "links": [],
+      "owned_by": {
+        "user": "1353141"
+      },
+      "settings": {
+        "accept_conditions_text": null,
+        "allow_guest_requests": false,
+        "allow_user_requests": false,
+        "secret_link_expiration": 0
+      }
+    },
+    "communities": {},
+    "id": "15761163",
+    "pids": {
+      "doi": {
+        "client": "datacite",
+        "identifier": "10.5281/zenodo.15761163",
+        "provider": "datacite"
+      }
+    }
+  },
+  "pids": {
+    "doi": {
+      "client": "datacite",
+      "identifier": "10.5281/zenodo.15761164",
+      "provider": "datacite"
+    },
+    "oai": {
+      "identifier": "oai:zenodo.org:15761164",
+      "provider": "oai"
+    }
+  },
+  "revision_id": 4,
+  "stats": {
+    "all_versions": {
+      "data_volume": 0.0,
+      "downloads": 0,
+      "unique_downloads": 0,
+      "unique_views": 0,
+      "views": 0
+    },
+    "this_version": {
+      "data_volume": 0.0,
+      "downloads": 0,
+      "unique_downloads": 0,
+      "unique_views": 0,
+      "views": 0
+    }
+  },
+  "status": "published",
+  "swh": {},
+  "updated": "2025-06-28T07:47:25.453890+00:00",
+  "versions": {
+    "index": 1,
+    "is_latest": true,
+    "is_latest_draft": true
+  }
+}

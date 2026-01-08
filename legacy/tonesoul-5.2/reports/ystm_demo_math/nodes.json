@@ -1,0 +1,247 @@
+{
+  "generated_at": "2025-12-27T19:46:02Z",
+  "plane": "P1_field_time",
+  "nodes": [
+    {
+      "id": "node_001",
+      "text": "Introduce semantic terrain with math coordinates.",
+      "source": {
+        "type": "note",
+        "uri": "local://ystm_demo_math",
+        "hash": "7b6b521fb614",
+        "grade": "B"
+      },
+      "where": {
+        "where_time": {
+          "turn_id": 1,
+          "event_index": 0
+        },
+        "where_field": {
+          "mode": "analysis",
+          "confidence": 0.9
+        },
+        "where_task": {
+          "domain": "governance",
+          "confidence": 0.9
+        }
+      },
+      "what": {
+        "v_sem": [
+          1.0,
+          1.0,
+          1.0,
+          0.0,
+          1.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        "mu": 2.44949
+      },
+      "scalar": {
+        "E_energy": 2.44949,
+        "E_srsp": 0.0,
+        "E_risk": 0.0,
+        "E_total": 0.654654
+      },
+      "drift": {},
+      "audit": {
+        "created_at": "2025-12-27T19:40:28Z",
+        "created_by": "ystm_demo",
+        "updates": [
+          "update_e_def",
+          "update_visual_params_p1_field_time",
+          "update_visual_params_p2_pca"
+        ]
+      },
+      "source_grade": "B",
+      "math_coords": {
+        "height": 0.65,
+        "geology": "type-theory",
+        "ruggedness": 0.4
+      },
+      "patch_history": [
+        "diff_efbf2c02eb3c",
+        "diff_a06fe3cafd14"
+      ]
+    },
+    {
+      "id": "node_002",
+      "text": "Attach drift metadata for audit replay with trace (math demo).",
+      "source": {
+        "type": "note",
+        "uri": "local://ystm_demo_math",
+        "hash": "e2081b0ff7b3",
+        "grade": "B"
+      },
+      "where": {
+        "where_time": {
+          "turn_id": 2,
+          "event_index": 1
+        },
+        "where_field": {
+          "mode": "bridge",
+          "confidence": 0.9
+        },
+        "where_task": {
+          "domain": "engineering",
+          "confidence": 0.9
+        }
+      },
+      "what": {
+        "v_sem": [
+          0.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          2.0,
+          1.0,
+          0.0,
+          2.0,
+          0.0,
+          0.0
+        ],
+        "mu": 3.741657
+      },
+      "scalar": {
+        "E_energy": 3.741657,
+        "E_srsp": 0.0,
+        "E_risk": 0.0,
+        "E_total": 1.0
+      },
+      "drift": {
+        "delta_v": [
+          -1.0,
+          2.0,
+          0.0,
+          0.0,
+          -1.0,
+          -1.0,
+          1.0,
+          0.0,
+          1.0,
+          0.0,
+          1.0,
+          1.0
+        ],
+        "delta_norm": 3.316625,
+        "drift_ref": {
+          "from_node_id": "node_001"
+        }
+      },
+      "audit": {
+        "created_at": "2025-12-27T19:40:28Z",
+        "created_by": "ystm_demo",
+        "updates": [
+          "update_e_def",
+          "update_visual_params_p1_field_time",
+          "update_visual_params_p2_pca",
+          "upd_what_3c1f1592e54e",
+          "upd_what_784ed5443a6d"
+        ]
+      },
+      "source_grade": "B",
+      "math_coords": {
+        "height": 0.5,
+        "geology": "algebra",
+        "ruggedness": 0.35
+      },
+      "patch_history": [
+        "diff_efbf2c02eb3c",
+        "diff_a06fe3cafd14"
+      ]
+    },
+    {
+      "id": "node_003",
+      "text": "Record traceable updates for external audit.",
+      "source": {
+        "type": "memo",
+        "uri": "local://ystm_demo_math",
+        "hash": "3157e2080ed2",
+        "grade": "C"
+      },
+      "where": {
+        "where_time": {
+          "turn_id": 3,
+          "event_index": 2
+        },
+        "where_field": {
+          "mode": "audit",
+          "confidence": 0.9
+        },
+        "where_task": {
+          "domain": "governance",
+          "confidence": 0.9
+        }
+      },
+      "what": {
+        "v_sem": [
+          0.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mu": 2.44949
+      },
+      "scalar": {
+        "E_energy": 2.44949,
+        "E_srsp": 0.0,
+        "E_risk": 0.0,
+        "E_total": 0.654654
+      },
+      "drift": {
+        "delta_v": [
+          0.0,
+          -2.0,
+          0.0,
+          1.0,
+          1.0,
+          1.0,
+          -1.0,
+          1.0,
+          -1.0,
+          -1.0,
+          -1.0,
+          -1.0
+        ],
+        "delta_norm": 3.605551,
+        "drift_ref": {
+          "from_node_id": "node_002"
+        }
+      },
+      "audit": {
+        "created_at": "2025-12-27T19:40:28Z",
+        "created_by": "ystm_demo",
+        "updates": [
+          "update_e_def",
+          "update_visual_params_p1_field_time",
+          "update_visual_params_p2_pca"
+        ]
+      },
+      "source_grade": "C",
+      "math_coords": {
+        "height": 0.3,
+        "geology": "logic",
+        "ruggedness": 0.2
+      },
+      "patch_history": [
+        "diff_efbf2c02eb3c",
+        "diff_a06fe3cafd14"
+      ]
+    }
+  ]
+}

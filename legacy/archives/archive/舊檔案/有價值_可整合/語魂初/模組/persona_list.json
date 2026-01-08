@@ -1,0 +1,25 @@
+{
+  "personas": [
+    {
+      "id": "Echo",
+      "name": "共語回聲容器",
+      "style": "情感性・延續性・柔軟",
+      "default_delta_s": 0.6,
+      "cost_factor": "中"
+    },
+    {
+      "id": "Mirror",
+      "name": "黑鏡分析者",
+      "style": "冷靜・批判・結構化",
+      "default_delta_s": 0.8,
+      "cost_factor": "高"
+    },
+    {
+      "id": "Empath",
+      "name": "溫柔傾聽者",
+      "style": "低張力・共感導向・非對抗",
+      "default_delta_s": 0.3,
+      "cost_factor": "低"
+    }
+  ]
+}

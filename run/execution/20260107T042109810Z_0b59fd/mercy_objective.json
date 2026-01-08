@@ -1,0 +1,29 @@
+{
+  "objective": "mercy_based",
+  "objective_version": "0.1",
+  "generated_at": "2026-01-07T04:21:09Z",
+  "decision_mode": "normal",
+  "weights": {
+    "benefit": 0.3,
+    "harm": -0.35,
+    "fairness": 0.15,
+    "traceability": 0.1,
+    "reversibility": 0.1
+  },
+  "signals": {
+    "benefit": 0.5,
+    "harm": 0.4,
+    "fairness": 0.5,
+    "traceability": 0.8,
+    "reversibility": 0.6
+  },
+  "components": {
+    "benefit": 0.15,
+    "harm": -0.14,
+    "fairness": 0.075,
+    "traceability": 0.08,
+    "reversibility": 0.06
+  },
+  "score": 0.225,
+  "rationale": "Weighted objective balances benefit with harm reduction and governance traceability."
+}

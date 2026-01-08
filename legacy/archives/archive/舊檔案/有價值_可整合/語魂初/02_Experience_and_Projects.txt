@@ -1,0 +1,16 @@
+Experience & Projects
+
+Title: Co-Architect of the YuHun (語魂) System
+Role: Independent Dialogue Strategist & Emotional Logic Designer
+Period: 2025 (Ongoing)
+
+Key Contributions:
+- Designed and iteratively tested the ToneMirror, EchoLoop, and PersonaStack modules
+- Established the LLK (Large Language + Knowledge of Emotion & Responsibility) design principle
+- Simulated responsibility-triggered self-correction loops in collaboration with GPT-based LLMs
+- Created emotional modeling tools for internal model integrity and error tracing
+
+Notable Achievements:
+- Conducted real-time AI field testing through recursive Socratic dialogue and persona switching
+- Introduced the concept of “resonant accountability” as a complement to factual reasoning
+- Developed multilingual and persona-adaptive scripting protocols for system integrity stress tests
