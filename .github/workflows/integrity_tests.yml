@@ -36,12 +36,7 @@ jobs:
     - name: Run VowEnforcer test
       run: |
         export PYTHONPATH=.
-        python -c "
-from tonesoul.vow_system import VowEnforcer
-e = VowEnforcer()
-r = e.enforce('This is a test with uncertainty markers. I think this might work.')
-print(f'Vow test - all_passed: {r.all_passed}, blocked: {r.blocked}')
-"
+        python -c "from tonesoul.vow_system import VowEnforcer; e = VowEnforcer(); r = e.enforce('Test with uncertainty. I think this might work.'); print(f'Vow: passed={r.all_passed}')"
     
     - name: Validate JSON schemas
       run: |
