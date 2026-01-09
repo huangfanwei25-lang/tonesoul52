@@ -45,8 +45,8 @@ print(f'Vow test - all_passed: {r.all_passed}, blocked: {r.blocked}')
     
     - name: Validate JSON schemas
       run: |
-        python -c "import json; json.load(open('AXIOMS.json'))"
-        python -c "import json; json.load(open('law/semantic_spine_schema.json'))"
+        python -c "import json; json.load(open('AXIOMS.json', encoding='utf-8'))"
+        python -c "import json; json.load(open('law/semantic_spine_schema.json', encoding='utf-8'))"
     
     - name: Check tonesoul module syntax
       run: |
