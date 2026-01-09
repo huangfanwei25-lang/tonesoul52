@@ -1,8 +1,14 @@
 import argparse
 import json
 import math
+import sys
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List
+
+REPO_ROOT = Path(__file__).resolve().parents[3]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
 
 from tonesoul.tsr_metrics import score as tsr_score
 from tonesoul.ystm.representation import embed_text, EmbeddingConfig
@@ -71,6 +77,70 @@ def _load_json(path: Path) -> List[Dict[str, str]]:
     with path.open("r", encoding="utf-8") as handle:
         return json.load(handle)
 
+def _format_float(value: float | None, digits: int = 4) -> str:
+    if value is None:
+        return "n/a"
+    return f"{value:.{digits}f}"
+
+
+def _load_existing_runs(summary_path: Path) -> List[str]:
+    if not summary_path.exists():
+        return []
+    text = summary_path.read_text(encoding="utf-8")
+    runs: List[str] = []
+    in_runs = False
+    for line in text.splitlines():
+        if line.strip().lower() == "runs:":
+            in_runs = True
+            continue
+        if in_runs:
+            if line.startswith("- "):
+                runs.append(line[2:])
+                continue
+            if line.strip() and (line.startswith("#") or line.lower().startswith("notes")):
+                break
+    return runs
+
+
+def _write_summary_md(
+    summary_path: Path,
+    summary: Dict[str, object],
+    response_count: int,
+    timestamp: str,
+) -> None:
+    correlation = summary.get("correlation", {}) if isinstance(summary, dict) else {}
+    settings = summary.get("settings", {}) if isinstance(summary, dict) else {}
+    prompt_count = correlation.get("prompt_count")
+    pearson = correlation.get("pearson")
+    spearman = correlation.get("spearman")
+    dims = settings.get("embedding_dims")
+
+    entry = (
+        f"{timestamp} | prompts={prompt_count} responses={response_count} | "
+        f"pearson={_format_float(pearson)} | spearman={_format_float(spearman)} | dims={dims}"
+    )
+    existing = _load_existing_runs(summary_path)
+    runs = [entry] + [line for line in existing if line != entry]
+
+    lines = [
+        "# TSD-1 Pilot Summary",
+        "",
+        "Latest Run",
+        f"- Timestamp: {timestamp}",
+        f"- Prompt count: {prompt_count}",
+        f"- Response count: {response_count}",
+        f"- Pearson r: {_format_float(pearson)}",
+        f"- Spearman rho: {_format_float(spearman)}",
+        f"- Embedding dims: {dims}",
+        "",
+        "Runs:",
+    ]
+    lines.extend(f"- {line}" for line in runs)
+    lines.extend(["", "Notes", "-"])
+
+    summary_path.parent.mkdir(parents=True, exist_ok=True)
+    summary_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="TSD-1 pilot: tension vs diversity correlation")
@@ -78,6 +148,7 @@ def main() -> None:
     parser.add_argument("--responses", required=True, help="Path to responses.json")
     parser.add_argument("--out-dir", required=True, help="Output directory for results")
     parser.add_argument("--dims", type=int, default=12, help="Embedding dimensions")
+    parser.add_argument("--summary-md", help="Optional summary markdown path")
     args = parser.parse_args()
 
     prompts = _load_json(Path(args.prompts))
@@ -143,6 +214,7 @@ def main() -> None:
             "embedding_dims": args.dims,
         },
     }
+    response_count = sum(row["response_count"] for row in prompt_metrics)
 
     with trials_path.open("w", encoding="utf-8") as handle:
         for row in trial_rows:
@@ -150,6 +222,14 @@ def main() -> None:
 
     with summary_path.open("w", encoding="utf-8") as handle:
         json.dump(summary, handle, indent=2)
+
+    summary_md = (
+        Path(args.summary_md)
+        if args.summary_md
+        else Path(args.out_dir).resolve().parent / "analysis" / "summary.md"
+    )
+    timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    _write_summary_md(summary_md, summary, response_count, timestamp)
 
 
 if __name__ == "__main__":
