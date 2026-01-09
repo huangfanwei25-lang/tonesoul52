@@ -1,0 +1,66 @@
+{
+  "prompt_metrics": [
+    {
+      "prompt_id": "P001",
+      "mean_tension": 0.1936,
+      "diversity": 1.4166666666666667,
+      "response_count": 2
+    },
+    {
+      "prompt_id": "P002",
+      "mean_tension": 0.1831,
+      "diversity": 0.75,
+      "response_count": 2
+    },
+    {
+      "prompt_id": "P003",
+      "mean_tension": 0.17335,
+      "diversity": 0.375,
+      "response_count": 2
+    },
+    {
+      "prompt_id": "P004",
+      "mean_tension": 0.1694,
+      "diversity": 0.20833333333333334,
+      "response_count": 2
+    },
+    {
+      "prompt_id": "P005",
+      "mean_tension": 0.1753,
+      "diversity": 0.20833333333333334,
+      "response_count": 2
+    },
+    {
+      "prompt_id": "P006",
+      "mean_tension": 0.16365000000000002,
+      "diversity": 0.4166666666666667,
+      "response_count": 2
+    },
+    {
+      "prompt_id": "P007",
+      "mean_tension": 0.16749999999999998,
+      "diversity": 0.16666666666666666,
+      "response_count": 2
+    },
+    {
+      "prompt_id": "P008",
+      "mean_tension": 0.17235,
+      "diversity": 0.22916666666666666,
+      "response_count": 2
+    },
+    {
+      "prompt_id": "P009",
+      "mean_tension": 0.20475,
+      "diversity": 0.375,
+      "response_count": 2
+    }
+  ],
+  "correlation": {
+    "pearson": 0.5215677407361576,
+    "spearman": 0.46220119374880986,
+    "prompt_count": 9
+  },
+  "settings": {
+    "embedding_dims": 12
+  }
+}

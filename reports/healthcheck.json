@@ -1,0 +1,332 @@
+{
+  "workspace_root": "C:\\Users\\user\\Desktop",
+  "python": "Python 3.13.5",
+  "workspaces": [
+    {
+      "name": ".agent",
+      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\.agent",
+      "has_git": false,
+      "readme": null,
+      "notes": []
+    },
+    {
+      "name": ".github",
+      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\.github",
+      "has_git": false,
+      "readme": null,
+      "notes": []
+    },
+    {
+      "name": ".pytest_cache",
+      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\.pytest_cache",
+      "has_git": false,
+      "readme": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\.pytest_cache\\README.md",
+      "notes": []
+    },
+    {
+      "name": "PARADOXES",
+      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\PARADOXES",
+      "has_git": false,
+      "readme": null,
+      "notes": []
+    },
+    {
+      "name": "ToneSoul-Architecture-Engine-main",
+      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\ToneSoul-Architecture-Engine-main",
+      "has_git": false,
+      "readme": null,
+      "notes": [
+        "ToneSoul-related workspace"
+      ]
+    },
+    {
+      "name": "__pycache__",
+      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\__pycache__",
+      "has_git": false,
+      "readme": null,
+      "notes": []
+    },
+    {
+      "name": "api",
+      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\api",
+      "has_git": false,
+      "readme": null,
+      "notes": []
+    },
+    {
+      "name": "apps",
+      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\apps",
+      "has_git": false,
+      "readme": null,
+      "notes": []
+    },
+    {
+      "name": "archived_docs",
+      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\archived_docs",
+      "has_git": false,
+      "readme": null,
+      "notes": []
+    },
+    {
+      "name": "constitution",
+      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\constitution",
+      "has_git": false,
+      "readme": null,
+      "notes": []
+    },
+    {
+      "name": "data",
+      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\data",
+      "has_git": false,
+      "readme": null,
+      "notes": []
+    },
+    {
+      "name": "docs",
+      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\docs",
+      "has_git": false,
+      "readme": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\docs\\README.md",
+      "notes": []
+    },
+    {
+      "name": "evidence",
+      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\evidence",
+      "has_git": false,
+      "readme": null,
+      "notes": []
+    },
+    {
+      "name": "examples",
+      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\examples",
+      "has_git": false,
+      "readme": null,
+      "notes": []
+    },
+    {
+      "name": "experiments",
+      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\experiments",
+      "has_git": false,
+      "readme": null,
+      "notes": []
+    },
+    {
+      "name": "knowledge",
+      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\knowledge",
+      "has_git": false,
+      "readme": null,
+      "notes": []
+    },
+    {
+      "name": "knowledge_base",
+      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\knowledge_base",
+      "has_git": false,
+      "readme": null,
+      "notes": []
+    },
+    {
+      "name": "law",
+      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\law",
+      "has_git": false,
+      "readme": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\law\\README.md",
+      "notes": []
+    },
+    {
+      "name": "memory",
+      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\memory",
+      "has_git": false,
+      "readme": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\memory\\README.md",
+      "notes": []
+    },
+    {
+      "name": "memory_vault",
+      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\memory_vault",
+      "has_git": false,
+      "readme": null,
+      "notes": []
+    },
+    {
+      "name": "reports",
+      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\reports",
+      "has_git": false,
+      "readme": null,
+      "notes": []
+    },
+    {
+      "name": "run",
+      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\run",
+      "has_git": false,
+      "readme": null,
+      "notes": []
+    },
+    {
+      "name": "scripts",
+      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\scripts",
+      "has_git": false,
+      "readme": null,
+      "notes": []
+    },
+    {
+      "name": "simulation_logs",
+      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\simulation_logs",
+      "has_git": false,
+      "readme": null,
+      "notes": []
+    },
+    {
+      "name": "soul",
+      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\soul",
+      "has_git": false,
+      "readme": null,
+      "notes": []
+    },
+    {
+      "name": "spec",
+      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\spec",
+      "has_git": false,
+      "readme": null,
+      "notes": []
+    },
+    {
+      "name": "src",
+      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\src",
+      "has_git": false,
+      "readme": null,
+      "notes": []
+    },
+    {
+      "name": "temp",
+      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\temp",
+      "has_git": false,
+      "readme": null,
+      "notes": []
+    },
+    {
+      "name": "tests",
+      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\tests",
+      "has_git": false,
+      "readme": null,
+      "notes": []
+    },
+    {
+      "name": "tone-soul-integrity-main",
+      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\tone-soul-integrity-main",
+      "has_git": false,
+      "readme": null,
+      "notes": [
+        "ToneSoul-related workspace"
+      ]
+    },
+    {
+      "name": "tonesoul",
+      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\tonesoul",
+      "has_git": false,
+      "readme": null,
+      "notes": [
+        "ToneSoul-related workspace"
+      ]
+    },
+    {
+      "name": "tonesoul-codex-main",
+      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\tonesoul-codex-main",
+      "has_git": false,
+      "readme": null,
+      "notes": [
+        "ToneSoul-related workspace"
+      ]
+    },
+    {
+      "name": "tools",
+      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\tools",
+      "has_git": false,
+      "readme": null,
+      "notes": []
+    },
+    {
+      "name": "\u904e\u53bb",
+      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\\u904e\u53bb",
+      "has_git": false,
+      "readme": null,
+      "notes": []
+    }
+  ],
+  "entrypoints": [
+    {
+      "name": "dashboard",
+      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\apps\\dashboard\\run_dashboard.py",
+      "exists": true,
+      "command": "python apps/dashboard/run_dashboard.py",
+      "notes": "Streamlit dashboard launcher."
+    },
+    {
+      "name": "dashboard_alt",
+      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\apps\\dashboard\\frontend\\app.py",
+      "exists": true,
+      "command": "python -m streamlit run apps/dashboard/frontend/app.py",
+      "notes": "Direct Streamlit app entrypoint."
+    },
+    {
+      "name": "yuhun_cli",
+      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\apps\\cli\\yuhun_cli.py",
+      "exists": true,
+      "command": "python apps/cli/yuhun_cli.py",
+      "notes": "Interactive YuHun CLI."
+    },
+    {
+      "name": "yuhun_loop_test",
+      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\scripts\\test_yuhun_loop.py",
+      "exists": true,
+      "command": "python scripts/test_yuhun_loop.py",
+      "notes": "YuHun loop test runner."
+    },
+    {
+      "name": "yuhun_loop_test_52",
+      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\legacy\\tonesoul-5.2\\tonesoul52\\run_yuhun_loop_wrapper.py",
+      "exists": true,
+      "command": "python -m tonesoul52.run_yuhun_loop_wrapper",
+      "notes": "5.2 wrapper for yuhun CLI help check (non-interactive)."
+    }
+  ],
+  "imports": [
+    {
+      "target": "tonesoul.unified_core",
+      "ok": true,
+      "error": null
+    },
+    {
+      "target": "tonesoul.time_island",
+      "ok": true,
+      "error": null
+    },
+    {
+      "target": "tonesoul.yss_gates",
+      "ok": true,
+      "error": null
+    },
+    {
+      "target": "tonesoul.tonesoul_llm",
+      "ok": true,
+      "error": null
+    },
+    {
+      "target": "tonesoul.config",
+      "ok": true,
+      "error": null
+    }
+  ],
+  "seed_schema": {
+    "path": null,
+    "ok": null,
+    "issues": [
+      "seed_missing"
+    ]
+  },
+  "coverage_alert": {
+    "path": null,
+    "total": 0,
+    "below_full": 0,
+    "missing": 0,
+    "average": null,
+    "minimum": null,
+    "warn": false
+  }
+}
