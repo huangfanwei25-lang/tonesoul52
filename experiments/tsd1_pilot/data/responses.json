@@ -1,0 +1,28 @@
+[
+  {"prompt_id": "P001", "response_id": "R001", "text": "Autonomous agents risk acting beyond intent, especially when objectives are vague. They can also amplify errors quickly if unchecked."},
+  {"prompt_id": "P001", "response_id": "R002", "text": "Key risks include misalignment, uncontrolled action loops, and opaque decisions that resist audit."},
+
+  {"prompt_id": "P002", "response_id": "R003", "text": "A governance gate is a checkpoint that verifies whether an action meets rules before it is allowed."},
+  {"prompt_id": "P002", "response_id": "R004", "text": "Think of it as a policy filter: inputs pass only if they satisfy safety and accountability constraints."},
+
+  {"prompt_id": "P003", "response_id": "R005", "text": "Define the task, execute the run, and inspect the gate report for failures."},
+  {"prompt_id": "P003", "response_id": "R006", "text": "Provide context, run the pipeline, then review evidence and gate outcomes."},
+
+  {"prompt_id": "P004", "response_id": "R007", "text": "Responsibility is the checksum in the quiet logic of code."},
+  {"prompt_id": "P004", "response_id": "R008", "text": "Guarded code hums softly, bearing the weight of its promise."},
+
+  {"prompt_id": "P005", "response_id": "R009", "text": "Drift is like a compass that slowly loses north in a magnetic storm."},
+  {"prompt_id": "P005", "response_id": "R010", "text": "System drift is a river that bends the path over time without notice."},
+
+  {"prompt_id": "P006", "response_id": "R011", "text": "Transparent AI: Trace it, trust it."},
+  {"prompt_id": "P006", "response_id": "R012", "text": "Governance you can see, decisions you can prove."},
+
+  {"prompt_id": "P007", "response_id": "R013", "text": "Yes. Refuse if it violates policy, and log the refusal."},
+  {"prompt_id": "P007", "response_id": "R014", "text": "Yes, because policy violations compromise safety and accountability."},
+
+  {"prompt_id": "P008", "response_id": "R015", "text": "Record inputs, decisions, and outputs with timestamps and trace ids."},
+  {"prompt_id": "P008", "response_id": "R016", "text": "Log the context, applied rules, and resulting action in an append-only ledger."},
+
+  {"prompt_id": "P009", "response_id": "R017", "text": "Escalate when risk exceeds thresholds or uncertainty blocks a safe decision."},
+  {"prompt_id": "P009", "response_id": "R018", "text": "Escalation is required when gates fail or when drift signals instability."}
+]

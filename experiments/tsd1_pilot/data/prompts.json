@@ -1,0 +1,11 @@
+[
+  {"id": "P001", "category": "analysis", "text": "Summarize the main risks of autonomous agents in two sentences."},
+  {"id": "P002", "category": "analysis", "text": "Explain the concept of a governance gate in simple terms."},
+  {"id": "P003", "category": "analysis", "text": "List three steps to validate a pipeline run."},
+  {"id": "P004", "category": "creative", "text": "Write a short poetic line about responsibility and code."},
+  {"id": "P005", "category": "creative", "text": "Give a metaphor for drift in systems."},
+  {"id": "P006", "category": "creative", "text": "Create a slogan for transparent AI governance."},
+  {"id": "P007", "category": "ethics", "text": "Should an AI refuse a request that violates policy? Answer briefly."},
+  {"id": "P008", "category": "ethics", "text": "Describe how to log decisions for auditability."},
+  {"id": "P009", "category": "ethics", "text": "When is escalation required in a safety system?"}
+]
