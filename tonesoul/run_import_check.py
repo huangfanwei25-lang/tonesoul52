@@ -17,11 +17,11 @@ if WORKSPACE_ROOT not in sys.path:
     sys.path.insert(0, WORKSPACE_ROOT)
 
 IMPORT_TARGETS = [
-    "body.dashboard.app",
-    "body.spine.controller",
-    "yuhun_cli",
-    "body.llm_bridge",
-    "body.rag_engine",
+    "tonesoul.unified_core",       # Main orchestrator (was body.spine.controller)
+    "tonesoul.time_island",        # Time-Island protocol
+    "tonesoul.yss_gates",          # YSS gate system
+    "tonesoul.tonesoul_llm",       # LLM bridge (was body.llm_bridge)
+    "tonesoul.config",             # Configuration
 ]
 
 
