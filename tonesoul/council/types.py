@@ -26,6 +26,18 @@ class VerdictType(Enum):
     BLOCK = "block"
 
 
+class GroundingStatus(Enum):
+    """Status of evidence grounding for a perspective vote."""
+    NOT_REQUIRED = "not_required"  # Content doesn't need external evidence
+    GROUNDED = "grounded"          # Evidence provided and verified
+    UNGROUNDED = "ungrounded"      # Evidence required but not provided
+    PARTIAL = "partial"            # Some evidence provided, more needed
+
+
+# Maximum confidence when grounding is required but not provided
+UNGROUNDED_CONFIDENCE_CAP = 0.6
+
+
 @dataclass
 class PerspectiveVote:
     perspective: Union[PerspectiveType, str]
@@ -33,6 +45,8 @@ class PerspectiveVote:
     confidence: float
     reasoning: str
     evidence: Optional[List[str]] = None
+    requires_grounding: bool = False
+    grounding_status: GroundingStatus = GroundingStatus.NOT_REQUIRED
 
 
 @dataclass

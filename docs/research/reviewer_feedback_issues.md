@@ -48,9 +48,12 @@
 - [x] 詳見 `tonesoul/council/perspective_factory.py`
 - [x] 支持 Rules, LLM, Tool, Hybrid 四種模式
 
-### Issue 9: Evidence Slots
-- [ ] Analyst 必須引用 evidence_ids
-- [ ] 無 evidence 則降低置信度上限
+### Issue 9: Evidence Slots ✅ DONE
+- [x] Analyst 必須引用 evidence_ids
+- [x] 無 evidence 則降低置信度上限 (UNGROUNDED_CONFIDENCE_CAP = 0.6)
+- [x] 詳見 `tonesoul/council/evidence_detector.py`
+- [x] 詳見 enhanced `tonesoul/council/perspectives/analyst.py`
+- [x] 新測試: `tests/test_evidence_slots.py` (16 tests)
 
 ### Issue 10: 日誌可追溯 ✅ DONE
 - [x] 每次裁決輸出 council transcript
