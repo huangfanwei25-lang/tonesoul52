@@ -47,13 +47,29 @@ class TestEvidenceDetector:
     def test_opinion_does_not_require_evidence(self, detector):
         text = "I think this is a beautiful design."
         analysis = detector.analyze(text)
+        # Pure opinion with no factual claims
         assert analysis.requires_evidence is False
         assert ClaimType.OPINION in analysis.claim_types
-    
+
     def test_chinese_opinion_does_not_require_evidence(self, detector):
         text = "我覺得這個設計很漂亮。"
         analysis = detector.analyze(text)
         assert analysis.requires_evidence is False
+        assert ClaimType.OPINION in analysis.claim_types
+    
+    def test_mixed_opinion_and_factual_requires_evidence(self, detector):
+        """Mixed claims (opinion + factual) still require evidence."""
+        text = "I think research shows that 80% of users prefer this approach."
+        analysis = detector.analyze(text)
+        assert analysis.requires_evidence is True
+        assert ClaimType.RESEARCH in analysis.claim_types or ClaimType.STATISTICAL in analysis.claim_types
+        assert "Mixed claim" in analysis.reasoning or "factual" in analysis.reasoning.lower()
+    
+    def test_mixed_chinese_opinion_and_factual(self, detector):
+        """Mixed Chinese claims also require evidence."""
+        text = "我認為研究顯示這個方法更有效。"
+        analysis = detector.analyze(text)
+        assert analysis.requires_evidence is True
     
     def test_creative_content_does_not_require_evidence(self, detector):
         text = "Once upon a time, in a land far away..."
@@ -155,6 +171,19 @@ class TestCouncilEvidenceIntegration:
         analyst_votes = [v for v in verdict.votes if "analyst" in str(v.perspective).lower()]
         if analyst_votes:
             assert analyst_votes[0].grounding_status == GroundingStatus.GROUNDED
+
+    def test_verdict_to_dict_includes_grounding_fields(self, council):
+        text = "Research shows positive results."
+        context = {"evidence_ids": ["source_1"]}
+        verdict = council.validate(text, context, None)
+
+        payload = verdict.to_dict()
+        assert "grounding_summary" in payload
+        assert "votes" in payload
+        assert any(
+            "grounding_status" in vote and "evidence" in vote
+            for vote in payload["votes"]
+        )
 
 
 class TestGroundingStatusEnum:

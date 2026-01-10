@@ -77,6 +77,11 @@ class CouncilVerdict:
     refinement_hints: Optional[List[str]] = None
 
     def to_dict(self) -> dict:
+        """
+        Convert verdict to dictionary for audit logging.
+        
+        Includes evidence and grounding status for each vote.
+        """
         return {
             "verdict": self.verdict.value,
             "coherence": self.coherence.overall,
@@ -91,7 +96,25 @@ class CouncilVerdict:
                     "decision": v.decision.value,
                     "confidence": v.confidence,
                     "reasoning": v.reasoning,
+                    # Evidence tracking for audit
+                    "evidence": v.evidence or [],
+                    "requires_grounding": v.requires_grounding,
+                    "grounding_status": (
+                        v.grounding_status.value
+                        if isinstance(v.grounding_status, GroundingStatus)
+                        else str(v.grounding_status)
+                    ),
                 }
                 for v in self.votes
             ],
+            # Summary of grounding status across all votes
+            "grounding_summary": {
+                "has_ungrounded_claims": any(
+                    v.grounding_status == GroundingStatus.UNGROUNDED
+                    for v in self.votes
+                ),
+                "total_evidence_sources": sum(
+                    len(v.evidence or []) for v in self.votes
+                ),
+            },
         }

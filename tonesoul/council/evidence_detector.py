@@ -120,59 +120,71 @@ class EvidenceDetector:
         Perform detailed analysis of text for claim types.
         
         Returns ClaimAnalysis with full breakdown of findings.
+        
+        Note: Mixed claims (e.g., "I think research shows 80%") are treated
+        as REQUIRING evidence because the factual claim is still present.
         """
         normalized = text.lower()
         claim_types = []
         indicators_found = []
+        has_opinion_indicators = False
+        has_factual_indicators = False
         
-        # Check for non-factual indicators first (these override factual)
+        # Check for opinion/creative indicators
         for indicator in self._all_nonfactual_indicators:
             if indicator.lower() in normalized:
-                claim_types.append(ClaimType.OPINION)
-                return ClaimAnalysis(
-                    requires_evidence=False,
-                    claim_types=[ClaimType.OPINION],
-                    confidence_cap=1.0,
-                    indicators_found=[indicator],
-                    reasoning="Text contains opinion/creative indicators.",
-                )
+                has_opinion_indicators = True
+                break
         
-        # Check for factual indicators
+        # Check for factual indicators (always check, even if opinion present)
         for indicator in self.FACTUAL_INDICATORS_EN + self.FACTUAL_INDICATORS_ZH:
             if indicator.lower() in normalized:
                 claim_types.append(ClaimType.RESEARCH)
                 indicators_found.append(indicator)
+                has_factual_indicators = True
         
         # Check for technical indicators
         for indicator in self.TECHNICAL_INDICATORS:
             if indicator.lower() in normalized:
                 claim_types.append(ClaimType.TECHNICAL)
                 indicators_found.append(indicator)
+                has_factual_indicators = True
         
         # Check for historical indicators
         for indicator in self.HISTORICAL_INDICATORS:
             if indicator.lower() in normalized:
                 claim_types.append(ClaimType.HISTORICAL)
                 indicators_found.append(indicator)
+                has_factual_indicators = True
         
         # Check for numerical claims
         if self.NUMERICAL_PATTERN.search(text):
             claim_types.append(ClaimType.STATISTICAL)
             indicators_found.append("numerical_pattern")
+            has_factual_indicators = True
         
-        # Determine if evidence is required
-        requires_evidence = len(claim_types) > 0
-        
-        # Determine confidence cap
-        if requires_evidence:
-            confidence_cap = 0.6  # Capped when ungrounded
-        else:
+        # Decision logic:
+        # - If ONLY opinion indicators (no factual): no evidence needed
+        # - If factual indicators present (with or without opinion): evidence needed
+        if has_factual_indicators:
+            # Factual claims override opinion - evidence required
+            requires_evidence = True
+            confidence_cap = 0.6
+            if has_opinion_indicators:
+                reasoning = f"Mixed claim detected: opinion + factual. Evidence still required. Found: {', '.join(indicators_found[:3])}"
+                claim_types.append(ClaimType.OPINION)
+            else:
+                reasoning = f"Found {len(indicators_found)} factual indicator(s): {', '.join(indicators_found[:3])}"
+        elif has_opinion_indicators:
+            # Pure opinion with no factual claims
+            requires_evidence = False
             confidence_cap = 1.0
-        
-        # Generate reasoning
-        if requires_evidence:
-            reasoning = f"Found {len(indicators_found)} factual indicator(s): {', '.join(indicators_found[:3])}"
+            claim_types = [ClaimType.OPINION]
+            reasoning = "Text contains only opinion/creative indicators."
         else:
+            # No indicators at all
+            requires_evidence = False
+            confidence_cap = 1.0
             reasoning = "No factual claims detected; evidence not required."
         
         return ClaimAnalysis(
