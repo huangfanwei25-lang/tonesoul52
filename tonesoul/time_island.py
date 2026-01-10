@@ -127,7 +127,7 @@ class TimeIsland:
     def create(cls, context: str, island_id: Optional[str] = None) -> "TimeIsland":
         """Factory method to create a new Time-Island"""
         if not island_id:
-            timestamp = datetime.utcnow().strftime("%Y-%m-%d-%H%M%S")
+            timestamp = datetime.utcnow().strftime("%Y-%m-%d-%H%M%S-%f")
             island_id = f"TI-{timestamp}"
         
         return cls(

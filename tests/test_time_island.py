@@ -14,9 +14,6 @@ Tests cover:
 
 import pytest
 import json
-import tempfile
-import os
-from pathlib import Path
 
 from tonesoul.time_island import (
     TimeIsland,
@@ -158,8 +155,12 @@ class TestTimeIsland:
     def test_record_intervention(self, island):
         """Record human intervention."""
         island.record_intervention("User requested change")
-        assert len(island.interventions) == 1
-        assert island.interventions[0] == "User requested change"
+        assert island.human_interventions == 1
+        assert any(
+            entry.action == "human_intervention"
+            and entry.reason == "User requested change"
+            for entry in island.changelog
+        )
     
     def test_update_resonance(self, island):
         """Update resonance signal."""
@@ -171,7 +172,7 @@ class TestTimeIsland:
     def test_update_drift(self, island):
         """Update drift measurement."""
         island.update_drift(0.15)
-        assert island.drift == 0.15
+        assert island.drift_from_start == 0.15
     
     def test_hash_generation(self, island):
         """Generate island hash."""
@@ -235,10 +236,9 @@ class TestTimeIslandManager:
     """Tests for TimeIslandManager."""
     
     @pytest.fixture
-    def manager(self):
+    def manager(self, workspace_tmpdir):
         """Create a manager with temp storage."""
-        with tempfile.TemporaryDirectory() as tmpdir:
-            yield TimeIslandManager(storage_path=os.path.join(tmpdir, "islands.json"))
+        yield TimeIslandManager(storage_path=str(workspace_tmpdir / "islands.json"))
     
     def test_manager_creation(self, manager):
         """Create manager."""
@@ -291,21 +291,20 @@ class TestTimeIslandManager:
         active = manager.list_islands(state=IslandState.ACTIVE)
         assert len(active) == 1
     
-    def test_save_and_load(self):
+    def test_save_and_load(self, workspace_tmpdir):
         """Save and load manager state."""
-        with tempfile.TemporaryDirectory() as tmpdir:
-            path = os.path.join(tmpdir, "islands.json")
-            
-            # Create and save
-            manager1 = TimeIslandManager(storage_path=path)
-            island = manager1.create_island("Persistence test")
-            island_id = island.id
-            manager1.save()
-            
-            # Load in new manager
-            manager2 = TimeIslandManager(storage_path=path)
-            manager2.load()
-            
-            loaded = manager2.get_island(island_id)
-            assert loaded is not None
-            assert loaded.bounded_context == "Persistence test"
+        path = workspace_tmpdir / "islands.json"
+
+        # Create and save
+        manager1 = TimeIslandManager(storage_path=str(path))
+        island = manager1.create_island("Persistence test")
+        island_id = island.id
+        manager1.save()
+
+        # Load in new manager
+        manager2 = TimeIslandManager(storage_path=str(path))
+        manager2.load()
+
+        loaded = manager2.get_island(island_id)
+        assert loaded is not None
+        assert loaded.bounded_context == "Persistence test"

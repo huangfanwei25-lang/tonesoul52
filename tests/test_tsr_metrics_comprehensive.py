@@ -13,9 +13,6 @@ Tests cover:
 
 import pytest
 import json
-import tempfile
-import os
-from pathlib import Path
 
 from tonesoul.tsr_metrics import (
     score,
@@ -50,7 +47,7 @@ class TestTSRScore:
         """Text with positive words should affect score."""
         positive_text = "We will build, create, enable, and advance this project."
         result = score(positive_text)
-        assert "positive_hits" in result or "positive_ratio" in result or "overall" in result
+        assert result["signals"]["positive_hits"] > 0
     
     def test_score_negative_text(self):
         """Text with negative words should affect score."""
@@ -67,11 +64,15 @@ class TestTSRScore:
     def test_score_with_custom_policy(self):
         """Score with custom policy."""
         custom_policy = {
-            "lexicon": DEFAULT_LEXICON,
-            "weights": DEFAULT_WEIGHTS,
+            "lexicon": {
+                "positive": ["build"],
+                "negative": [],
+                "strong_modals": [],
+                "caution": [],
+            },
         }
-        result = score("Test text", policy=custom_policy)
-        assert isinstance(result, dict)
+        result = score("build", policy=custom_policy)
+        assert result["signals"]["positive_hits"] == 1
     
     def test_score_long_text(self):
         """Score with longer text."""
@@ -102,13 +103,14 @@ class TestBuildTSRMetrics:
     
     def test_build_with_source_path(self):
         """Build with source path."""
-        result = build_tsr_metrics("Test", source_path="/path/to/source.md")
-        assert "source_path" in result
+        source_path = "/path/to/source.md"
+        result = build_tsr_metrics("Test", source_path=source_path)
+        assert result["source"]["path"] == source_path
     
     def test_build_creates_timestamp(self):
         """Build creates timestamp."""
         result = build_tsr_metrics("Test")
-        assert "timestamp" in result or "created_at" in result or "run_id" in result
+        assert "generated_at" in result
     
     def test_build_with_baseline(self):
         """Build with baseline entry for delta calculation."""
@@ -155,35 +157,31 @@ class TestTSRPolicy:
 class TestTSRIndexManagement:
     """Tests for index load/update operations."""
     
-    def test_load_index_nonexistent(self):
+    def test_load_index_nonexistent(self, workspace_tmpdir):
         """Load index from nonexistent file."""
-        with tempfile.TemporaryDirectory() as tmpdir:
-            path = os.path.join(tmpdir, "nonexistent.json")
-            result = load_index(path)
-            # Should return empty structure or handle gracefully
-            assert result is not None or result == {}
+        path = workspace_tmpdir / "nonexistent.json"
+        result = load_index(str(path))
+        # Should return empty structure or handle gracefully
+        assert result is not None or result == {}
     
-    def test_update_index(self):
+    def test_update_index(self, workspace_tmpdir):
         """Update index with new entry."""
-        with tempfile.TemporaryDirectory() as tmpdir:
-            path = os.path.join(tmpdir, "index.json")
-            metrics_path = os.path.join(tmpdir, "metrics_001.json")
-            
-            # Create initial empty index
-            with open(path, 'w') as f:
-                json.dump({"entries": []}, f)
-            
-            update_index(
-                path=path,
-                run_id="run_001",
-                metrics_path=metrics_path,
-                payload={"overall": 0.8}
-            )
-            
-            # Verify update
-            with open(path) as f:
-                data = json.load(f)
-            assert "entries" in data
+        path = workspace_tmpdir / "index.json"
+        metrics_path = workspace_tmpdir / "metrics_001.json"
+
+        # Create initial empty index
+        path.write_text(json.dumps({"entries": []}), encoding="utf-8")
+
+        update_index(
+            path=str(path),
+            run_id="run_001",
+            metrics_path=str(metrics_path),
+            payload={"overall": 0.8},
+        )
+
+        # Verify update
+        data = json.loads(path.read_text(encoding="utf-8"))
+        assert "entries" in data
     
     def test_latest_entry(self):
         """Get latest entry from index."""
@@ -200,22 +198,20 @@ class TestTSRIndexManagement:
 class TestWriteTSRMetrics:
     """Tests for writing metrics to file."""
     
-    def test_write_metrics(self):
+    def test_write_metrics(self, workspace_tmpdir):
         """Write metrics to file."""
-        with tempfile.TemporaryDirectory() as tmpdir:
-            path = os.path.join(tmpdir, "metrics.json")
-            payload = {
-                "run_id": "test_001",
-                "overall": 0.75,
-                "scores": {"a": 0.5}
-            }
-            
-            write_tsr_metrics(path, payload)
-            
-            # Verify written
-            with open(path) as f:
-                data = json.load(f)
-            assert data["overall"] == 0.75
+        path = workspace_tmpdir / "metrics.json"
+        payload = {
+            "run_id": "test_001",
+            "overall": 0.75,
+            "scores": {"a": 0.5},
+        }
+
+        write_tsr_metrics(str(path), payload)
+
+        # Verify written
+        data = json.loads(path.read_text(encoding="utf-8"))
+        assert data["overall"] == 0.75
 
 
 class TestDefaultLexicon:

@@ -13,9 +13,7 @@ Tests cover:
 
 import pytest
 import json
-import tempfile
 import os
-from pathlib import Path
 
 from tonesoul.vow_system import (
     Vow,
@@ -109,7 +107,7 @@ class TestVowRegistry:
     @pytest.fixture
     def registry(self):
         """Create empty registry."""
-        return VowRegistry()
+        return VowRegistry(vows=[])
     
     @pytest.fixture
     def sample_vow(self):
@@ -166,17 +164,20 @@ class TestVowRegistry:
     def test_registry_save_and_load(self, registry, sample_vow):
         """Save and load registry from file."""
         registry.register(sample_vow)
-        
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
-            path = f.name
-        
+
+        path = None
+        # Use workspace temp to avoid OS temp permission issues in sandboxed runs.
+        from pathlib import Path as _Path
+        path = _Path.cwd() / "temp" / "pytest" / "vows.json"
+        path.parent.mkdir(parents=True, exist_ok=True)
+
         try:
-            registry.save(path)
-            loaded = VowRegistry.from_file(path)
+            registry.save(str(path))
+            loaded = VowRegistry.from_file(str(path))
             assert loaded.get("sample_001") is not None
             assert loaded.get("sample_001").title == "Sample Vow"
         finally:
-            if os.path.exists(path):
+            if path and os.path.exists(path):
                 os.remove(path)
 
 
@@ -191,7 +192,7 @@ class TestVowEnforcer:
     @pytest.fixture
     def custom_enforcer(self):
         """Create enforcer with custom vows."""
-        registry = VowRegistry()
+        registry = VowRegistry(vows=[])
         registry.register(Vow(
             id="custom_001",
             title="Custom Vow",

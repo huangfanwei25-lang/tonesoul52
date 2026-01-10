@@ -146,12 +146,12 @@ class VowRegistry:
     
     def __init__(self, vows: Optional[List[Vow]] = None):
         self._vows: Dict[str, Vow] = {}
-        if vows:
-            for vow in vows:
-                self.register(vow)
-        else:
+        if vows is None:
             # Load defaults
             for vow in DEFAULT_VOWS:
+                self.register(vow)
+        else:
+            for vow in vows:
                 self.register(vow)
     
     def register(self, vow: Vow) -> None:
