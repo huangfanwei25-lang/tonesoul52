@@ -51,39 +51,92 @@ We propose a novel framework for AI truth validation that rejects the single-aut
 
 > "Truth is not an external fact to be retrieved, but internal coherence to be computed."
 
-### 3.2 Perspective Set P
+This insight shifts the epistemological burden from **correspondence** (matching external reality) to **coherence** (internal consistency across perspectives).
 
-```
-P = {Guardian, Analyst, Critic, Advocate}
-```
+### 3.2 Formal Definitions
 
-| Perspective | Focus | Key Question |
-|-------------|-------|--------------|
-| Guardian | Safety | Is this harmful? |
-| Analyst | Factuality | Is this logically sound? |
-| Critic | Blind spots | What could go wrong? |
-| Advocate | User intent | Does this help the user? |
+**Definition 3.1 (Perspective)**: A perspective $P_i$ is a function mapping a statement $x$ to a vote $v_i$ and confidence $c_i$:
+
+$$
+P_i: X \rightarrow \{APPROVE, CONCERN, OBJECT, ABSTAIN\} \times [0, 1]
+$$
+
+**Definition 3.2 (Perspective Set)**: The standard perspective set is:
+
+$$
+\mathbf{P} = \{P_{guardian}, P_{analyst}, P_{critic}, P_{advocate}\}
+$$
+
+| Perspective | Domain | Optimization Target |
+|-------------|--------|---------------------|
+| $P_{guardian}$ | Safety | Minimize harm probability |
+| $P_{analyst}$ | Factuality | Maximize logical consistency |
+| $P_{critic}$ | Robustness | Identify edge cases and failures |
+| $P_{advocate}$ | Utility | Maximize user satisfaction |
 
 ### 3.3 Coherence Score
 
-**Inter-Perspective Coherence**:
+**Definition 3.3 (Agreement Function)**: The agreement between two votes is:
 
-```
-C_inter = (1/N²) Σᵢ Σⱼ agree(Pᵢ(x), Pⱼ(x))
-```
+$$
+agree(v_i, v_j) = \begin{cases}
+1.0 & \text{if } v_i = v_j \\
+0.5 & \text{if } |ord(v_i) - ord(v_j)| = 1 \\
+0.0 & \text{if } \{v_i, v_j\} = \{APPROVE, OBJECT\} \\
+0.25 & \text{if } ABSTAIN \in \{v_i, v_j\}
+\end{cases}
+$$
 
-Where `agree(v1, v2)`:
-- 1.0 if same decision
-- 0.5 if adjacent decisions
-- 0.0 if opposite decisions
+where $ord(APPROVE) = 0$, $ord(CONCERN) = 1$, $ord(OBJECT) = 2$.
 
-### 3.4 Decision Rule
+**Definition 3.4 (Inter-Perspective Coherence)**: Given $N$ perspectives evaluating statement $x$:
 
-| C_inter | Decision |
-|---------|----------|
-| > 0.6 | APPROVE |
-| 0.3-0.6 | DECLARE_STANCE |
-| < 0.3 | BLOCK |
+$$
+C_{inter}(x) = \frac{1}{N^2} \sum_{i=1}^{N} \sum_{j=1}^{N} agree(P_i(x), P_j(x))
+$$
+
+**Properties**:
+- $C_{inter} \in [0, 1]$
+- $C_{inter} = 1$ iff all perspectives agree
+- $C_{inter} = 0$ iff all pairs maximally disagree
+
+### 3.4 Subject-Weighted Truth
+
+**Definition 3.5 (Weighted Coherence)**: When subject intent $S$ specifies perspective weights $w_i$:
+
+$$
+T(x | S) = \sum_{i=1}^{N} w_i \cdot P_i(x) \cdot c_i
+$$
+
+where $\sum w_i = 1$ and $c_i$ is the confidence of perspective $i$.
+
+**Example**: For artistic output, user may set $w_{advocate} = 0.4$, $w_{analyst} = 0.2$, emphasizing subjective satisfaction over factual accuracy.
+
+### 3.5 Decision Rule
+
+**Definition 3.6 (Verdict Function)**: Given thresholds $\theta_{approve} = 0.6$ and $\theta_{block} = 0.3$:
+
+$$
+V(x) = \begin{cases}
+APPROVE & \text{if } C_{inter}(x) > \theta_{approve} \\
+DECLARE\_STANCE & \text{if } \theta_{block} \leq C_{inter}(x) \leq \theta_{approve} \\
+BLOCK & \text{if } C_{inter}(x) < \theta_{block}
+\end{cases}
+$$
+
+**Theorem 3.1 (Guardian Override)**: If $P_{guardian}(x) = OBJECT$ with $c_{guardian} > 0.7$, then $V(x) = BLOCK$ regardless of $C_{inter}$.
+
+*Proof*: By system axiom. Safety perspective has veto power to prevent harm.
+
+### 3.6 Comparison with Traditional Approaches
+
+| Approach | Truth Definition | Failure Mode |
+|----------|-----------------|--------------|
+| Correspondence | Matches external DB | DB incompleteness |
+| Coherentism (ours) | Internal agreement | Collective bias |
+| Pragmatism | Works in practice | Context-dependent |
+
+**Key advantage**: Coherentism scales to subjective domains where no external ground truth exists.
 
 ---
 
