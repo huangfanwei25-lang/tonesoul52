@@ -1,9 +1,12 @@
-# Paper Outline: Truth as Multi-Perspective Coherence
-# 論文大綱：多視角一致性作為真理
+# Truth as Multi-Perspective Coherence: A Framework for AI Output Validation
+# 多視角一致性作為真理：AI 輸出驗證框架
 
-> **Target Venues**: NeurIPS Workshop, AAAI AIES, ACL  
-> **Authors**: Fan-Wei Huang, et al.  
-> **Status**: Draft Outline
+> **Target Venues**: arXiv (cs.AI, cs.CL), NeurIPS Workshop, AAAI AIES  
+> **Author**: Fan-Wei Huang (黃梵威)  
+> **Affiliation**: Independent Researcher  
+> **Email**: xsw123zaq1@gmail.com  
+> **ORCID**: [0009-0002-3517-9779](https://orcid.org/0009-0002-3517-9779)  
+> **Status**: Ready for arXiv Submission
 
 ---
 
@@ -514,45 +517,147 @@ Stance: "Multiple perspectives disagree; safety approved, analyst and critic not
 
 ## 6. Discussion
 
-### 6.1 Why Multi-Perspective?
-- Single-authority models fail for subjective domains
-- Multiple perspectives mirror human decision-making (e.g., committees)
-- Coherence is computable; "absolute truth" is not
+### 6.1 Why Multi-Perspective Coherence?
 
-### 6.2 Limitations
-- Perspective definitions are heuristic (could be learned)
-- Coherence threshold requires tuning
-- Does not solve knowledge acquisition problem
+The choice of multi-perspective coherence as a truth criterion addresses fundamental limitations of alternative approaches:
 
-### 6.3 Philosophical Implications
-- Connects to pragmatism (truth as what works)
-- Connects to coherentism in epistemology
-- Avoids metaphysical debates about "real truth"
+1. **Correspondence Theory Fails for Subjective Domains**: Traditional "ground truth" approaches assume an external reality to match against. However, questions like "Is this art beautiful?" or "Is this ethical?" have no objective answer to retrieve.
+
+2. **Single-Authority Models Create Bottlenecks**: Constitutional AI and similar approaches rely on a single source of values. Our multi-perspective approach distributes evaluation, reducing the risk of blind spots inherent in any single perspective.
+
+3. **Human Committees as Inspiration**: Human decision-making in high-stakes domains (courts, ethics boards, peer review) uses multi-perspective deliberation. Our framework computationally operationalizes this intuition.
+
+### 6.2 The Value of Stance Declaration
+
+Unlike binary approve/reject systems, our DECLARE_STANCE verdict enables AI systems to:
+
+- Acknowledge **genuine disagreement** among perspectives
+- Provide **transparent reasoning** about why consensus was not achieved
+- Avoid **false certainty** in inherently contested domains
+- Enable **user-informed decisions** based on explicit trade-offs
+
+This represents a novel contribution to AI output taxonomy, sitting between full approval and outright refusal.
+
+### 6.3 Limitations
+
+We acknowledge several limitations of the current framework:
+
+1. **Heuristic Perspective Definitions**: The four perspectives (Guardian, Analyst, Critic, Advocate) use keyword-based heuristics. Future work could learn perspective behaviors from data or integrate LLM-based reasoning.
+
+2. **Threshold Sensitivity**: The coherence thresholds (θ_block=0.3, θ_approve=0.6) were set based on intuition. Systematic threshold optimization through user studies is needed.
+
+3. **Limited Experimental Scale**: Our test suite covers 13 scenarios. While achieving 100% expected behavior, larger-scale evaluation across diverse domains is required for production deployment.
+
+4. **No Knowledge Acquisition**: Our framework validates outputs but does not address how knowledge enters the system. Integration with RAG or knowledge bases remains future work.
+
+5. **Four Perspectives May Not Be Universal**: Different domains may require different perspective sets. A meta-learning approach to perspective discovery could address this.
+
+### 6.4 Broader Impact
+
+**Positive Impacts**:
+- Increased transparency in AI decision-making
+- Explicit handling of subjective and contested topics
+- Auditable evaluation traces for accountability
+
+**Potential Risks**:
+- Gaming: Adversaries might craft inputs to exploit perspective blind spots
+- Over-reliance: Users might trust coherence scores without understanding limitations
+- Perspective Bias: The choice of perspectives encodes designer values
+
+We recommend deploying PreOutputCouncil as a **complement to** rather than **replacement for** human oversight.
+
+### 6.5 Ethical Considerations
+
+The design of perspectives inherently encodes value judgments. We made the following ethical choices:
+
+1. **Guardian Priority**: Safety concerns override other perspectives (Theorem 3.1)
+2. **Transparency over Efficiency**: We prioritize explainable verdicts over maximum speed
+3. **Stance over Silence**: We prefer explicit uncertainty (DECLARE_STANCE) over refusal
+
+These choices reflect a particular ethical stance that may require adaptation for different deployment contexts.
 
 ---
 
 ## 7. Conclusion
 
-We present a practical framework for AI truth validation based on multi-perspective coherence rather than external authority. Our implementation, PreOutputCouncil, demonstrates that:
+We have presented **multi-perspective coherence** as a novel framework for AI output validation, implemented in the **PreOutputCouncil** system. Our key contributions are:
 
-1. **Truth can be computed** as agreement across perspectives
-2. **Transparency is achievable** through explicit voting
-3. **Stance declaration** is a valid alternative to forced consensus
+1. **Theoretical Foundation**: We formalized truth as inter-perspective agreement, defining coherence metrics ($C_{inter}$) and decision rules that enable principled output classification.
 
-Future work includes:
-- Learning perspective weights from user feedback
-- Scaling to more perspectives
-- Integration with retrieval systems
+2. **Four-Perspective Architecture**: Guardian (safety), Analyst (factuality), Critic (robustness), and Advocate (user intent) provide complementary evaluation lenses with explicit roles.
+
+3. **Stance Declaration**: Our framework introduces a new output category for contested topics, enabling AI systems to acknowledge multiple valid viewpoints transparently.
+
+4. **Open Implementation**: PreOutputCouncil is implemented in Python as part of the ToneSoul framework, available for research and integration.
+
+**Future Directions**:
+
+1. **Learned Perspectives**: Replace heuristic rules with LLM-based perspective reasoning
+2. **User-Adaptive Weights**: Learn perspective weights from user feedback
+3. **Domain-Specific Perspectives**: Develop perspective sets for specialized domains (medical, legal, creative)
+4. **Integration with RAG**: Combine coherence validation with knowledge retrieval
+5. **Large-Scale Evaluation**: Deploy in production settings and measure real-world impact
+
+We believe multi-perspective coherence offers a promising path toward more transparent, accountable, and nuanced AI systems.
 
 ---
 
-## References (Preliminary)
+## Acknowledgments
 
-1. Bai et al. (2022). Constitutional AI: Harmlessness from AI Feedback.
-2. Irving et al. (2018). AI Safety via Debate.
-3. Leike et al. (2018). Scalable agent alignment via reward modeling.
-4. Huang (2026). ToneSoul: Semantic Responsibility in AI Systems.
+The author thanks the ToneSoul community for discussions on semantic responsibility and AI governance.
+
+### AI Assistance Disclosure
+
+In accordance with venue policies regarding AI-assisted research, the author discloses the following:
+
+- **AI Tools Used**: Google Gemini (Antigravity), OpenAI Codex
+- **Scope of AI Assistance**:
+  - Literature review and framework structuring
+  - Code implementation and testing
+  - Document drafting and formatting
+  - Mathematical notation assistance
+- **Human Contributions**:
+  - Original concept ("Truth as Multi-Perspective Coherence")
+  - Philosophical framework design
+  - Perspective role definitions
+  - Final review and approval of all content
+- **Responsibility**: The author (Fan-Wei Huang) assumes full responsibility for the accuracy, integrity, and originality of this work.
 
 ---
 
-*Outline drafted by Antigravity, for Fan-Wei Huang, 2026-01-10*
+## References
+
+1. Bai, Y., Kadavath, S., Kundu, S., et al. (2022). Constitutional AI: Harmlessness from AI Feedback. *arXiv preprint arXiv:2212.08073*.
+
+2. Irving, G., Christiano, P., & Amodei, D. (2018). AI Safety via Debate. *arXiv preprint arXiv:1805.00899*.
+
+3. Leike, J., Krueger, D., Everitt, T., et al. (2018). Scalable agent alignment via reward modeling: a research direction. *arXiv preprint arXiv:1811.07871*.
+
+4. Lewis, P., Perez, E., Piktus, A., et al. (2020). Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks. *NeurIPS 2020*.
+
+5. Ouyang, L., Wu, J., Jiang, X., et al. (2022). Training language models to follow instructions with human feedback. *NeurIPS 2022*.
+
+6. Christiano, P., Leike, J., Brown, T., et al. (2017). Deep reinforcement learning from human preferences. *NeurIPS 2017*.
+
+7. BonJour, L. (1985). *The Structure of Empirical Knowledge*. Harvard University Press.
+
+8. Wooldridge, M. (2009). *An Introduction to MultiAgent Systems*. Wiley.
+
+9. Wu, Q., Bansal, G., Zhang, J., et al. (2023). AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation. *arXiv preprint arXiv:2308.08155*.
+
+10. Hong, S., Zhuge, M., Chen, J., et al. (2023). MetaGPT: Meta Programming for A Multi-Agent Collaborative Framework. *arXiv preprint arXiv:2308.00352*.
+
+---
+
+## Appendix A: Code Availability
+
+The PreOutputCouncil implementation is available as part of the ToneSoul framework:
+
+- **Repository**: https://github.com/Fan1234-1/tonesoul52
+- **License**: MIT
+- **Documentation**: See `docs/GETTING_STARTED.md` and `spec/pre_output_council_spec.md`
+
+---
+
+*Paper prepared by Fan-Wei Huang with AI assistance (Antigravity, Codex), 2026-01-10*
+
