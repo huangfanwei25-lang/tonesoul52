@@ -10,9 +10,21 @@ import json
 import os
 import hashlib
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Optional, Any
 from enum import Enum
+
+
+def _utc_now() -> datetime:
+    return datetime.now(timezone.utc)
+
+
+def _utc_iso() -> str:
+    return _utc_now().isoformat().replace("+00:00", "Z")
+
+
+def _utc_id_stamp() -> str:
+    return _utc_now().strftime("%Y-%m-%d-%H%M%S-%f")
 
 
 class IslandState(Enum):
@@ -32,7 +44,7 @@ class SourceTrace:
     
     def __post_init__(self):
         if not self.timestamp:
-            self.timestamp = datetime.utcnow().isoformat() + "Z"
+            self.timestamp = _utc_iso()
     
     def to_dict(self) -> Dict:
         return {
@@ -60,7 +72,7 @@ class ChangelogEntry:
     
     def __post_init__(self):
         if not self.timestamp:
-            self.timestamp = datetime.utcnow().isoformat() + "Z"
+            self.timestamp = _utc_iso()
     
     def to_dict(self) -> Dict:
         return {
@@ -119,7 +131,7 @@ class TimeIsland:
     
     def __post_init__(self):
         if not self.created_at:
-            self.created_at = datetime.utcnow().isoformat() + "Z"
+            self.created_at = _utc_iso()
         if not self.window_start:
             self.window_start = self.created_at
     
@@ -127,13 +139,13 @@ class TimeIsland:
     def create(cls, context: str, island_id: Optional[str] = None) -> "TimeIsland":
         """Factory method to create a new Time-Island"""
         if not island_id:
-            timestamp = datetime.utcnow().strftime("%Y-%m-%d-%H%M%S-%f")
+            timestamp = _utc_id_stamp()
             island_id = f"TI-{timestamp}"
         
         return cls(
             id=island_id,
             bounded_context=context,
-            window_start=datetime.utcnow().isoformat() + "Z",
+            window_start=_utc_iso(),
         )
     
     def activate(self) -> None:
@@ -146,7 +158,7 @@ class TimeIsland:
         """Mark island as completed"""
         if self.state == IslandState.ACTIVE:
             self.state = IslandState.COMPLETED
-            self.window_end = datetime.utcnow().isoformat() + "Z"
+            self.window_end = _utc_iso()
             self.completed_at = self.window_end
             self.add_changelog("completed", "Island processing completed")
     

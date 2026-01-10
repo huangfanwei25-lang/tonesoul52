@@ -9,9 +9,13 @@ Implements explicit AI commitments that can be verified before output.
 import json
 import os
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Optional, Tuple
 from enum import Enum
+
+
+def _utc_iso() -> str:
+    return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
 class VowAction(Enum):
@@ -94,7 +98,7 @@ class VowEnforcementResult:
     
     def __post_init__(self):
         if not self.timestamp:
-            self.timestamp = datetime.utcnow().isoformat() + "Z"
+            self.timestamp = _utc_iso()
     
     def to_dict(self) -> Dict:
         return {
