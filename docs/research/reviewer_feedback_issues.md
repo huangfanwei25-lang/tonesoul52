@@ -30,12 +30,14 @@
 - [ ] 加入 majority vote baseline (不用一致性分數)
 - [ ] 比較：誤放行率、誤阻擋率、DECLARE_STANCE 比例
 
-### Issue 6: "When to Ground" 規範
-- [ ] 指定哪些任務必須用 retrieval/evidence
-- [ ] 無 evidence 則只能 DECLARE_STANCE 或 BLOCK
+### Issue 6: "When to Ground" 規範 ✅ DONE
+- [x] 指定哪些任務必須用 retrieval/evidence
+- [x] 無 evidence 則只能 DECLARE_STANCE 或 BLOCK
+- [x] 詳見 `docs/when_to_ground.md`
 
-### Issue 7: DECLARE_STANCE 輸出格式
-- [ ] 固定格式：共識點 / 分歧點 / 風險 / 可行下一步
+### Issue 7: DECLARE_STANCE 輸出格式 ✅ DONE
+- [x] 固定格式：共識點 / 分歧點 / 風險 / 可行下一步
+- [x] 詳見 `spec/declare_stance_format.md`
 
 ---
 
@@ -57,13 +59,13 @@
 
 | 問題 | 優先級 | 狀態 |
 |------|--------|------|
-| 驗的是什麼 | P0 | 🔄 修改中 |
-| 型別對齊 | P0 | 待處理 |
-| REFINE taxonomy | P0 | 待處理 |
-| 13 scenarios | P0 | ✅ 已對齊 (13 tests) |
-| Baseline | P1 | 待處理 |
-| When to ground | P1 | 待處理 |
-| DECLARE_STANCE 格式 | P1 | 待處理 |
+| 驗的是什麼 | P0 | ✅ DONE |
+| 型別對齊 | P0 | ✅ DONE |
+| REFINE taxonomy | P0 | ✅ DONE |
+| 13 scenarios | P0 | ✅ DONE |
+| Baseline | P1 | 🔄 處理中 |
+| When to ground | P1 | 🔄 處理中 |
+| DECLARE_STANCE 格式 | P1 | 🔄 處理中 |
 
 ---
 
