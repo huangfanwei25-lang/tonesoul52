@@ -37,6 +37,10 @@ Every output has a traceable chain. Every step is recorded.
 
 Every utterance has a measurable semantic posture.
 
+Terminology note:
+- DeltaS in TSR is direction/polarity (signed).
+- Semantic tension/divergence is DeltaSigma (0..1) and is used by WFGY zones.
+
 ---
 
 ## Axiom 3: Drift Bound | 漂移約束

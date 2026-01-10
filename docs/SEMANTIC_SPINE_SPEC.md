@@ -36,7 +36,7 @@ The YuHun Semantic Spine is a 12-layer semantic architecture that provides the s
 
 | Group | Layers | Purpose | ToneSoul Mapping |
 |-------|--------|---------|------------------|
-| **Foundation** | L1-L4 | Semantic base layers | ΔS (Entropy) measurement |
+| **Foundation** | L1-L4 | Semantic base layers | DeltaSigma (Semantic Tension) measurement |
 | **Personal** | L5-L7 | Subject & context | TimeIsland, StepLedger |
 | **Accountability** | L8-L9 | Epistemology & tracking | Audit, Chronicle |
 | **Governance** | L10-L12 | Value & decision | POAV, Gate, P0-P4 |
@@ -145,7 +145,7 @@ The YuHun Semantic Spine is a 12-layer semantic architecture that provides the s
 
 **Characteristics**:
 - Short half-life
-- High ΔS, high ΔT
+- High DeltaSigma, high DeltaT
 - Culture/community dependent
 
 **Design Principles**:
@@ -163,7 +163,7 @@ The YuHun Semantic Spine is a 12-layer semantic architecture that provides the s
         "created_at": "2025-01-15",
         "expires_at": "2026-01-01",
         "community": "taiwan_tech",
-        "ΔS": 0.8
+        "delta_sigma": 0.8
       }
     ]
   }
@@ -205,7 +205,7 @@ The YuHun Semantic Spine is a 12-layer semantic architecture that provides the s
     "island_id": "hospital_eval_project",
     "event_nodes": ["deadline_conflict", "team_decision", "resolution"],
     "concept_nodes": ["responsibility", "integrity", "pressure"],
-    "emotion_vector": { "ΔT": 0.7, "ΔS": 0.3, "ΔR": 0.5 }
+    "emotion_vector": { "delta_t": 0.7, "delta_s": 0.3, "delta_r": 0.5 }
   }
 }
 ```
@@ -413,7 +413,7 @@ POAV < 0.30 → BLOCK
 | ToneSoul Concept | Semantic Spine Layer |
 |------------------|---------------------|
 | **ΔT (Tension)** | L6 Narrative emotion, L10 Value conflict |
-| **ΔS (Entropy)** | L3 Temporal drift, L4 Volatile layer |
+| **DeltaSigma (Semantic Tension)** | L3 Temporal drift, L4 Volatile layer |
 | **ΔR (Risk)** | L8 Epistemic uncertainty, L9 Source reliability |
 | **POAV** | L10 Value calculation, L11 Multi-perspective synthesis |
 | **TimeIsland** | L5-L6 Personal/Narrative storage |
@@ -492,7 +492,7 @@ Where:
 
 **Formula**:
 ```
-D₁ = ∇ΔS = w₁·Novelty(s) + w₂·Uncertainty(s)
+D1 = grad(DeltaSigma) = w1*Novelty(s) + w2*Uncertainty(s)
 ```
 
 **Calculation**:

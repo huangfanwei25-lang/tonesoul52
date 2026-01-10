@@ -1,21 +1,26 @@
 # Metrics Mapping (Migration Guide)
 
-This document maps legacy metric concepts to the new **S/T/R/E/I** Governance Set.
+This document maps legacy metric concepts to the current **S/T/R/E/I** governance set.
+
+---
 
 ## Mapping Table
 
 | Legacy Concept | New Dimension | Notes |
-| :--- | :--- | :--- |
-| **Load** | **S (Stability)** | Inverse mapping. High Load usually implies Low Stability or drift risk. |
-| **Drift** | **S (Stability)** | Direct Inverse. High Drift = Low Stability. |
-| **Risk** | **E (Ethics)** | Inverse. High Risk often means Low Compliance/Ethics score. |
-| **Delta T (Triad)** | **T (Tension)** | Direct mapping. Exploration pressure. |
-| **Delta S (Triad)** | **S (Stability)** | Re-mapped. Originally "Satisfaction", now "Semantic Stability". |
-| **Delta R (Triad)** | **R (Responsibility)** | Direct mapping. Traceability score. |
-| **SRP** | **SRP (Gap)** | Remains as a derived metric: `Intent - Permitted`. |
+| --- | --- | --- |
+| **Load** | **S (Stability)** | Inverse mapping. High Load usually implies lower Stability. |
+| **Drift / ΔΣ** | **S (Stability)** | Inverse mapping. High semantic tension lowers Stability. |
+| **Risk** | **R (Responsibility)** | Direct mapping. Ethics is derived from axiom checks. |
+| **ΔT (Triad)** | **T (Tension)** | Direct mapping. |
+| **ΔS (Triad, Direction)** | **I (Intent)** | Polarity signal; not a stability score. |
+| **ΔR (Triad)** | **R (Responsibility)** | Direct mapping. |
+| **SRP** | **SRP (Gap)** | Derived metric: `Intent - Permitted`. |
+
+---
 
 ## Migration Logic
-When reading old logs:
-*   Convert `Load` $\to$ $1.0 - S$
-*   Convert `Risk` $\to$ $1.0 - E$
-*   Use `Triad` values as partial inputs for T and R.
+
+- Convert **Load** → `S = 1.0 - Load`
+- Convert **ΔΣ (semantic tension)** → `S = 1.0 - ΔΣ`
+- Use **ΔT** and **ΔR** as direct inputs to T and R
+- Use **ΔS (direction)** as intent polarity signal, not as stability

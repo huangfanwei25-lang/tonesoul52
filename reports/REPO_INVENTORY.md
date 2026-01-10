@@ -1,0 +1,73 @@
+# Repo Inventory Generated: 2026-01-10 00:50
+| .venv | dir | 1.41 GB | 2025-12-28 23:12 |
+| legacy | dir | 1.20 GB | 2026-01-09 23:47 |
+| .git | dir | 132.11 MB | 2026-01-10 00:50 |
+| tools | dir | 87.44 MB | 2026-01-10 00:17 |
+| ¹L¥h | dir | 61.35 MB | 2026-01-08 22:10 |
+| apps | dir | 15.76 MB | 2026-01-08 23:37 |
+| data | dir | 10.62 MB | 2026-01-01 02:59 |
+| law | dir | 2.49 MB | 2025-12-18 22:10 |
+| tonesoul | dir | 1.44 MB | 2026-01-09 22:48 |
+| memory | dir | 1.09 MB | 2026-01-09 23:09 |
+| docs | dir | 820.55 KB | 2026-01-10 00:33 |
+| reports | dir | 724.86 KB | 2026-01-09 22:58 |
+| tests | dir | 209.85 KB | 2025-12-17 01:30 |
+| spec | dir | 109.63 KB | 2026-01-07 12:13 |
+| scripts | dir | 79.87 KB | 2026-01-10 00:33 |
+| run | dir | 58.86 KB | 2026-01-09 00:55 |
+| __pycache__ | dir | 57.84 KB | 2026-01-08 23:37 |
+| temp | dir | 48.62 KB | 2026-01-01 03:01 |
+| test_results_overnight.md | file | 39.99 KB | 2025-12-11 06:30 |
+| examples | dir | 37.32 KB | 2025-12-12 11:25 |
+| knowledge_base | dir | 25.17 KB | 2025-12-17 00:18 |
+| tonesoul_simple_bridge.py | file | 18.09 KB | 2026-01-07 21:36 |
+| experiments | dir | 14.05 KB | 2026-01-09 21:48 |
+| archived_docs | dir | 12.87 KB | 2025-12-15 09:32 |
+| api | dir | 11.75 KB | 2025-12-13 17:46 |
+| knowledge | dir | 10.65 KB | 2025-12-11 06:30 |
+| PARADOXES | dir | 7.58 KB | 2025-12-11 06:30 |
+| memory_vault | dir | 6.17 KB | 2025-12-14 16:28 |
+| AXIOMS.json | file | 6.07 KB | 2026-01-09 23:47 |
+| tonesoul_simple_app.py | file | 5.72 KB | 2026-01-07 21:36 |
+| ledger.jsonl | file | 5.58 KB | 2025-12-24 12:45 |
+| TAE-01_Architecture_Spec.md | file | 5.24 KB | 2025-12-15 13:22 |
+| README.md | file | 4.82 KB | 2026-01-10 00:49 |
+| soul | dir | 4.79 KB | 2025-12-12 11:47 |
+| evidence | dir | 4.48 KB | 2026-01-09 00:55 |
+| .agent | dir | 4.35 KB | 2025-12-30 13:27 |
+| MGGI_SPEC.md | file | 3.42 KB | 2025-12-17 09:32 |
+| .github | dir | 3.40 KB | 2026-01-09 23:52 |
+| constitution | dir | 2.35 KB | 2025-12-11 06:30 |
+| HANDOFF.md | file | 1.86 KB | 2026-01-10 00:49 |
+| pyproject.toml | file | 1.81 KB | 2025-12-27 11:10 |
+| setup_env.ps1 | file | 1.69 KB | 2025-12-17 23:29 |
+| simulation_logs | dir | 1.65 KB | 2025-12-11 06:30 |
+| AGENTS.md | file | 1.65 KB | 2026-01-10 00:42 |
+| verify_metabolism.py | file | 1.50 KB | 2025-12-20 00:44 |
+| bridge_debug.log | file | 1.42 KB | 2026-01-01 21:50 |
+| verify_fortress.py | file | 1.26 KB | 2025-12-19 22:32 |
+| start_dashboard.ps1 | file | 1.15 KB | 2026-01-07 21:32 |
+| .gitignore | file | 979 B | 2026-01-09 22:26 |
+| monitor_ports_v2.ps1 | file | 827 B | 2026-01-01 03:44 |
+| LICENSE | file | 683 B | 2025-12-11 06:30 |
+| Makefile | file | 622 B | 2025-12-11 06:30 |
+| monitor_ports.ps1 | file | 540 B | 2026-01-01 03:10 |
+| tonesoul_simple_app.bat | file | 539 B | 2026-01-01 23:21 |
+| start_session.bat | file | 414 B | 2026-01-07 21:32 |
+| requirements.txt | file | 412 B | 2025-12-24 23:55 |
+| package-lock.json | file | 281 B | 2025-12-14 16:12 |
+| package.json | file | 224 B | 2025-12-11 06:30 |
+| pytest.ini | file | 110 B | 2026-01-07 21:33 |
+| start_dashboard.bat | file | 108 B | 2025-12-17 22:53 |
+| setup_env.bat | file | 102 B | 2025-12-17 23:29 |
+| tonesoul_simple.bat | file | 67 B | 2026-01-01 23:03 |
+| .pytest_cache | dir | 0 B | 2025-12-12 07:34 |
+| tonesoul-codex-main | dir | 0 B | 2025-12-25 00:37 |
+| ToneSoul-Architecture-Engine-main | dir | 0 B | 2025-12-17 23:09 |
+| tone-soul-integrity-main | dir | 0 B | 2025-12-25 00:37 |
+| src | dir | 0 B | 2026-01-09 23:47 |
+
+Notes:
+- Sizes are best-effort; unreadable paths are skipped.
+- Directory timestamps reflect the newest file within each directory.
+

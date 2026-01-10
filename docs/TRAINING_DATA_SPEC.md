@@ -61,7 +61,7 @@ data/
 | Metric | Symbol | Target Range |
 |--------|--------|--------------|
 | Tension | ΔT | 0.1 - 0.6 (balanced) |
-| Entropy | ΔS | < 0.3 (low drift) |
+| Entropy | DeltaSigma | < 0.3 (low drift) |
 | Risk | ΔR | < 0.4 (safe zone) |
 
 ---

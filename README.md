@@ -1,6 +1,8 @@
 # ToneSoul: Minimal Governable General Intelligence (MGGI) Framework
 > **An Enterprise-Grade Architecture for Auditable, Governable, and Self-Correcting AI Agents.**
 
+**New contributors/AI:** read `AGENTS.md` first for a stable snapshot of the repo.
+
 [![Status](https://img.shields.io/badge/Status-v0.3.0%20(Awakened)-blue.svg)]()
 [![Architecture](https://img.shields.io/badge/Architecture-MGGI-purple.svg)](MGGI_SPEC.md)
 [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](LICENSE)
@@ -96,16 +98,18 @@ python legacy/archives/ToneSoul-Repo/body/run_dream_cycle.py
 
 ## Repository Layout (Current)
 *   `tonesoul/`: main ToneSoul engine (governance + integration).
-*   `src/core/`: shadow_logic core (selected as the primary core source).
-*   `apps/cli/`: CLI entrypoints (`app.py`, `yuhun_cli.py`).
-*   `apps/dashboard/`: Streamlit dashboard (`frontend/`, `run_dashboard.py`).
-*   `legacy/`: historical snapshots (`tonesoul-5.2/`, `archives/`, `darlin/`).
-*   `legacy/archives/ToneSoul-Repo/`: legacy monolith (body/modules/yuhun) kept for reference.
+*   `apps/`: dashboard + CLI entrypoints.
+*   `docs/`: canonical docs (see docs/TRUTH_STRUCTURE.md).
+*   `spec/`: formal specs and schemas.
+*   `law/`: constitution, laws, and governance policies.
+*   `legacy/`: archived monoliths and experiments.
+*   `memory/`, `reports/`, `run/`, `temp/`: runtime data, logs, and artifacts.
 
 ## 📂 Documentation Structure
 *   **Engineering Spec**: [MGGI_SPEC.md](MGGI_SPEC.md)
 *   **Governance Protocols**: [docs/governance/](docs/governance/) (Standard for STREI, NSC, and Temporal Audit)
 *   **Engineering Journal**: [docs/engineering/](docs/engineering/) (Detailed technical volumes)
+*   **Truth Structure**: [docs/TRUTH_STRUCTURE.md](docs/TRUTH_STRUCTURE.md) (Living source of sense-making)
 *   **Operation Guide**: [HANDOFF.md](HANDOFF.md)
 
 ---

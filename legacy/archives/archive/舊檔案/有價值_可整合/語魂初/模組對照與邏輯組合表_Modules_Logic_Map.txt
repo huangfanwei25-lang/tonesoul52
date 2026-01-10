@@ -1,9 +1,0 @@
-📂《模組對照與邏輯組合表｜Modules & Logic Map》
-
-模組名        | 功能                            | 關聯模組
---------------|----------------------------------|------------------------------
-ToneMirror     | 語氣映照、錯誤追蹤               | EchoLoop、PersonaStack
-EchoLoop       | 語氣回聲追蹤、誓語封存           | ToneMirror、記憶鏈
-PersonaStack   | 責任人格堆疊與人格生成           | 記憶點、語氣主體辨識器
-ResponsibilityChainMonitor | 錯誤歸因追蹤、責任節點生成 | 誠實誓語點、語者語氣密度追蹤器
-ToneConsciousSystem | 情緒與倫理邏輯調節核心       | 誠實模組、模糊防護層、意識模組

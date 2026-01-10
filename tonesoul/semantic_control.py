@@ -94,10 +94,16 @@ class SemanticTension:
     
     def to_dict(self) -> Dict:
         return {
+            "delta_sigma": self.delta_sigma,
             "delta_s": self.delta_s,
             "zone": self.zone.value,
             "timestamp": self.timestamp,
         }
+
+    @property
+    def delta_sigma(self) -> float:
+        """Semantic tension (ΔΣ) alias for delta_s."""
+        return self.delta_s
 
 
 def cosine_similarity(v1: List[float], v2: List[float]) -> float:

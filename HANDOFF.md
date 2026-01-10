@@ -2,6 +2,8 @@
 
 > "She can see, she can remember, and she can heal herself."
 
+If you are new here, read `AGENTS.md` first for a stable repo snapshot.
+
 ## 🚀 Key Upgrades Delivered
 
 ### 1. 👁️ The All-Seeing Eye (Phase 17)

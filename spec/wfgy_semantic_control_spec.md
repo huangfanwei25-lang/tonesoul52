@@ -1,4 +1,7 @@
 # WFGY 2.0 語義控制整合規格
+
+Note (2026-01): This spec historically used delta_s for semantic tension; canonical naming is delta_sigma.
+Mapping: delta_sigma = 1 - cos(I, G).
 # Semantic Control System Integration Specification
 # v0.1 2025-12-31
 
@@ -133,7 +136,7 @@ W_c = clip(B_s * P + Φ, -θ_c, +θ_c)
 ```python
 Bridge = {
     "reason": str,
-    "prior_delta_s": float,
+    "prior_delta_sigma": float,
     "new_path": str
 }
 ```

@@ -2,6 +2,9 @@
 # ToneSoul System Improvement Derivation
 # v0.1 2025-12-31
 
+Note (2026-01): This document uses ?s/delta_sigma to refer to semantic tension.
+Canonical naming is DeltaSigma (delta_sigma).
+
 ---
 
 ## 現狀分析
@@ -163,8 +166,8 @@ class AdaptivePersona:
 **實作**：
 ```python
 class MultiScaleObserver:
-    def observe(self, delta_s):
-        self.instant = delta_s
+    def observe(self, delta_sigma):
+        self.instant = delta_sigma
         self.short_term = rolling_mean(self.history, 5)
         self.long_term = mean(self.history)
         

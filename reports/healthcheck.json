@@ -10,6 +10,13 @@
       "notes": []
     },
     {
+      "name": ".archive",
+      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\.archive",
+      "has_git": false,
+      "readme": null,
+      "notes": []
+    },
+    {
       "name": ".github",
       "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\.github",
       "has_git": false,
@@ -31,15 +38,6 @@
       "notes": []
     },
     {
-      "name": "ToneSoul-Architecture-Engine-main",
-      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\ToneSoul-Architecture-Engine-main",
-      "has_git": false,
-      "readme": null,
-      "notes": [
-        "ToneSoul-related workspace"
-      ]
-    },
-    {
       "name": "__pycache__",
       "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\__pycache__",
       "has_git": false,
@@ -56,13 +54,6 @@
     {
       "name": "apps",
       "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\apps",
-      "has_git": false,
-      "readme": null,
-      "notes": []
-    },
-    {
-      "name": "archived_docs",
-      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\archived_docs",
       "has_git": false,
       "readme": null,
       "notes": []
@@ -138,13 +129,6 @@
       "notes": []
     },
     {
-      "name": "memory_vault",
-      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\memory_vault",
-      "has_git": false,
-      "readme": null,
-      "notes": []
-    },
-    {
       "name": "reports",
       "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\reports",
       "has_git": false,
@@ -208,15 +192,6 @@
       "notes": []
     },
     {
-      "name": "tone-soul-integrity-main",
-      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\tone-soul-integrity-main",
-      "has_git": false,
-      "readme": null,
-      "notes": [
-        "ToneSoul-related workspace"
-      ]
-    },
-    {
       "name": "tonesoul",
       "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\tonesoul",
       "has_git": false,
@@ -226,24 +201,8 @@
       ]
     },
     {
-      "name": "tonesoul-codex-main",
-      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\tonesoul-codex-main",
-      "has_git": false,
-      "readme": null,
-      "notes": [
-        "ToneSoul-related workspace"
-      ]
-    },
-    {
       "name": "tools",
       "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\tools",
-      "has_git": false,
-      "readme": null,
-      "notes": []
-    },
-    {
-      "name": "\u904e\u53bb",
-      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\\u904e\u53bb",
       "has_git": false,
       "readme": null,
       "notes": []

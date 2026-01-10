@@ -24,6 +24,12 @@ AI generates language. Language has consequences. But:
 
 **Answer**: We don't govern intent — we govern **semantic trajectory**.
 
+## Terminology Update (2026-01)
+
+- **DeltaS (TSR)** = Direction/Polarity, range [-1, 1].
+- **DeltaSigma (Sigma)** = Semantic tension/divergence, range [0, 1].
+- Legacy docs that use DeltaS for drift should be read as DeltaSigma.
+
 ---
 
 ## The Three Pillars | 三大支柱
@@ -49,9 +55,9 @@ Three vectors that capture semantic posture:
 
 | Vector | Name | Measures | Range |
 |--------|------|----------|-------|
-| **ΔT** | Tension | Inferential pressure | [0, 1] |
-| **ΔS** | Direction | Pragmatic orientation | [-1, 1] |
-| **ΔR** | Variability | Stability / collapse risk | [0, 1] |
+| **DeltaT** | Tension | Inferential pressure | [0, 1] |
+| **DeltaS** | Direction | Pragmatic orientation | [-1, 1] |
+| **DeltaR** | Variability | Stability / collapse risk | [0, 1] |
 
 ### Pillar 2: Drift
 

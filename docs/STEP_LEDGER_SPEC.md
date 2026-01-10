@@ -153,11 +153,7 @@ class TimeIsland:
 ## 5. Reference Implementation
 
 See:
-- `body/step_ledger.py` — Python implementation
-- `law/step_ledger_schema.json` — JSON Schema
-- `examples/hello_governed_agent.py` — Usage example
+- `law/step_ledger_schema.json` (schema)
+- `docs/engineering/EXAMPLES/step_ledger_example.md` (example format)
+- Legacy reference: `legacy/archives/ToneSoul-Repo/body/step_ledger.py`
 
----
-
-*Version: 1.0*
-*Date: 2025-12-10*
