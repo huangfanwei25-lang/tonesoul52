@@ -15,33 +15,144 @@ We propose a novel framework for AI truth validation that rejects the single-aut
 
 ## 1. Introduction
 
-### Problem Statement
-- Current AI systems either:
-  - Rely on retrieval-augmented generation (RAG) from single-source databases
-  - Use simple safety filters (keyword blocking)
-  - Lack transparency in decision-making
+Large Language Models (LLMs) have achieved remarkable capabilities in generating human-like text, but their deployment in sensitive domains remains constrained by a fundamental epistemological challenge: **How do we validate the "truth" of AI outputs when ground truth is often unavailable, contested, or domain-specific?**
 
-### Our Contribution
-- A **multi-perspective truth model** where truth = internal coherence
-- **PreOutputCouncil**: An implementable validation layer
-- Shift from "is this factually correct?" to "do multiple perspectives agree?"
+### 1.1 Problem Statement
+
+Current approaches to AI truth validation suffer from three critical limitations:
+
+1. **Single-Authority Dependency**: Retrieval-Augmented Generation (RAG) systems (Lewis et al., 2020) rely on external databases as sources of truth. However, these databases are often incomplete, outdated, or inapplicable to subjective domains such as art criticism, ethical reasoning, or cultural interpretation.
+
+2. **Opaque Safety Filters**: Production AI systems employ keyword-based blocking or constitutional rule enforcement (Bai et al., 2022). While effective for clear-cut safety violations, these binary filters fail to handle nuanced cases where multiple valid perspectives exist.
+
+3. **Lack of Epistemic Transparency**: Users cannot understand *why* an AI produces a particular output. When outputs are refused or modified, the reasoning remains hidden, undermining trust and preventing meaningful human oversight.
+
+### 1.2 Motivation: Truth as Coherence
+
+We draw inspiration from **coherentist epistemology** (BonJour, 1985), which defines truth not as correspondence to external reality, but as **internal consistency across a web of beliefs**. Applied to AI systems, we propose:
+
+> **Truth = The degree of agreement across multiple evaluative perspectives**
+
+This shift offers several advantages:
+- Scales to subjective domains where no "ground truth" exists  
+- Provides transparent reasoning through explicit multi-perspective voting
+- Enables nuanced outcomes beyond binary approve/reject decisions
+
+### 1.3 Contributions
+
+This paper makes the following contributions:
+
+1. **Theoretical Framework**: We formalize **multi-perspective coherence** as an alternative to single-authority truth validation, defining formal metrics for inter-perspective agreement ($C_{inter}$) and subject-weighted truth ($T(x|S)$).
+
+2. **PreOutputCouncil System**: We present an implementable architecture that aggregates evaluations from four complementary perspectives—Guardian (safety), Analyst (factuality), Critic (robustness), and Advocate (user intent)—to produce transparent, auditable verdicts.
+
+3. **Novel Decision Taxonomy**: We introduce **stance declaration** as a valid output mode when perspectives diverge, enabling AI systems to acknowledge multiple valid viewpoints rather than forcing false consensus.
+
+4. **Empirical Validation**: We demonstrate the framework's effectiveness through a test suite of 9 scenarios covering safety violations, subjective topics, logical inconsistencies, and boundary conditions, achieving 100% expected behavior alignment.
+
+### 1.4 Paper Overview
+
+The remainder of this paper is organized as follows:
+- **Section 2** surveys related work in constitutional AI, AI debate, and multi-agent systems
+- **Section 3** formalizes our multi-perspective coherence framework with mathematical definitions
+- **Section 4** details the PreOutputCouncil implementation architecture
+- **Section 5** presents experimental results and comparison with baselines
+- **Section 6** discusses implications, limitations, and future directions
+- **Section 7** concludes with a summary of contributions
 
 ---
 
 ## 2. Related Work
 
-### 2.1 Constitutional AI (Anthropic)
-- Rule-based constraints
-- Single-perspective (safety-focused)
-- **Difference**: We use multi-perspective voting, not single constitution
+Our framework draws on and differentiates from several research threads in AI alignment and validation.
 
-### 2.2 Debate and Self-Critique
-- AI debating itself for robustness
-- **Difference**: We formalize perspectives with distinct roles
+### 2.1 Constitutional AI
+
+Bai et al. (2022) introduced **Constitutional AI (CAI)**, where AI systems are trained to follow a set of explicit principles ("constitution") that guide refusal and response generation. CAI represents a significant advance in making AI values explicit and trainable.
+
+**Key Features**:
+- Principles are defined as natural language rules
+- Training uses AI-generated critiques for self-improvement
+- Focus on harmlessness and helpfulness balance
+
+**Comparison with Our Approach**:
+
+| Aspect | Constitutional AI | PreOutputCouncil |
+|--------|------------------|------------------|
+| Truth Source | Single constitution document | Multiple perspectives |
+| Perspective Count | 1 (unified) | 4 (Guardian, Analyst, Critic, Advocate) |
+| Disagreement Handling | Not applicable | Stance declaration |
+| Transparency | Medium (rules visible) | High (votes + reasoning visible) |
+| Subjectivity Support | Limited | Native (via weighted perspectives) |
+
+### 2.2 AI Safety via Debate
+
+Irving et al. (2018) proposed **AI Debate** as an alignment strategy, where two AI agents argue opposing positions before a human judge. The key insight is that deceptive arguments are easier to refute than to construct.
+
+**Key Features**:
+- Two-agent adversarial structure
+- Human as final arbiter
+- Focus on revealing hidden information through argumentation
+
+**Comparison with Our Approach**:
+
+| Aspect | AI Debate | PreOutputCouncil |
+|--------|-----------|------------------|
+| Structure | 2 adversarial agents | 4 collaborative perspectives |
+| Goal | Win argument | Achieve coherence |
+| Human Role | Judge | Optional (system is autonomous) |
+| Output | Single winning answer | Verdict with stance if needed |
+
+Our approach differs in that perspectives *collaborate* toward coherence rather than *compete* to win. We also formalize the roles (safety, facts, blind spots, user intent) rather than allowing emergent argumentation.
 
 ### 2.3 Multi-Agent Systems
-- Multiple agents with different goals
-- **Difference**: We use perspectives within single system, not independent agents
+
+Multi-agent approaches to AI (Wooldridge, 2009) use multiple independent agents with distinct goals to solve complex tasks. Recent work like **AutoGen** (Wu et al., 2023) and **MetaGPT** (Hong et al., 2023) applies this to software development and reasoning.
+
+**Key Features**:
+- Agents have independent state and goals
+- Communication through message passing
+- Emergent behavior from interaction
+
+**Comparison with Our Approach**:
+
+| Aspect | Multi-Agent Systems | PreOutputCouncil |
+|--------|---------------------|------------------|
+| Agent Independence | Full | Perspectives share context |
+| State Management | Per-agent | Unified (CoherenceScore) |
+| Goal | Task completion | Truth validation |
+| Overhead | High (coordination) | Low (single-pass voting) |
+
+Our perspectives are *lenses* on the same input, not independent agents. This enables faster execution (single parallel pass) and avoids coordination overhead.
+
+### 2.4 Reinforcement Learning from Human Feedback (RLHF)
+
+RLHF (Christiano et al., 2017; Ouyang et al., 2022) trains models to align with human preferences by learning a reward model from human comparisons.
+
+**Key Features**:
+- Implicit preference learning
+- Scalable to large models
+- Preferences averaged across annotators
+
+**Limitation Addressed by Our Work**:
+RLHF averages preferences, losing information about *which* perspectives disagree. Our framework makes disagreement **explicit through stance declaration**, preserving the structure of multi-perspective evaluation.
+
+### 2.5 Summary: Positioning Our Contribution
+
+```
+                    Single Perspective ←────────────→ Multi-Perspective
+                           │                                 │
+    Training-Time ─────────┼─────────────────────────────────┼──── RLHF
+                           │                                 │
+  Inference-Time ─────────●───────────────────────────────────●──── Debate
+                     Constitutional AI              PreOutputCouncil
+                           │                                 │
+                    Binary Output ←──────────────────→ Graduated Output
+                    (approve/reject)                   (approve/refine/
+                                                       declare/block)
+```
+
+Our contribution occupies a unique position: **inference-time, multi-perspective, graduated-output validation** that provides transparency without training-time overhead.
 
 ---
 
