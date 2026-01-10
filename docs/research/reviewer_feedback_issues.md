@@ -70,9 +70,14 @@
 | 型別對齊 | P0 | ✅ DONE |
 | REFINE taxonomy | P0 | ✅ DONE |
 | 13 scenarios | P0 | ✅ DONE |
-| Baseline | P1 | 待處理 |
+| Baseline | P1 | ✅ DONE |
 | When to ground | P1 | ✅ DONE |
 | DECLARE_STANCE 格式 | P1 | ✅ DONE |
+| 視角可插拔化 | P2 | ✅ DONE |
+| Evidence Slots | P2 | ✅ DONE |
+| 日誌可追溯 | P2 | ✅ DONE |
+
+> 🎉 **All 10 Issues Complete!** (4 P0 + 3 P1 + 3 P2)
 
 ---
 
