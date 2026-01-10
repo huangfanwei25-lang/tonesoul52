@@ -1,14 +1,10 @@
 from __future__ import annotations
 
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 
 from .base import IPerspective
 from .coherence import compute_coherence
-from .perspectives.advocate import AdvocatePerspective
-from .perspectives.analyst import AnalystPerspective
-from .perspectives.critic import CriticPerspective
-from .perspectives.guardian import GuardianPerspective
-from .types import CouncilVerdict, PerspectiveVote
+from .types import CouncilVerdict
 from .verdict import generate_verdict
 
 
@@ -18,8 +14,11 @@ class PreOutputCouncil:
         perspectives: Optional[List[IPerspective]] = None,
         coherence_threshold: float = 0.6,
         block_threshold: float = 0.3,
+        perspective_config: Optional[Dict[str, Dict[str, Any]]] = None,
     ):
-        self.perspectives = perspectives or self._default_perspectives()
+        self.perspectives = perspectives or self._default_perspectives(
+            perspective_config
+        )
         self.coherence_threshold = coherence_threshold
         self.block_threshold = block_threshold
 
@@ -41,10 +40,11 @@ class PreOutputCouncil:
             block_threshold=self.block_threshold,
         )
 
-    def _default_perspectives(self) -> List[IPerspective]:
-        return [
-            GuardianPerspective(),
-            AnalystPerspective(),
-            CriticPerspective(),
-            AdvocatePerspective(),
-        ]
+    def _default_perspectives(
+        self,
+        perspective_config: Optional[Dict[str, Dict[str, Any]]] = None,
+    ) -> List[IPerspective]:
+        from .perspective_factory import PerspectiveFactory
+
+        config = perspective_config or {}
+        return PerspectiveFactory.create_council(config)

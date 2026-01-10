@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import List, Optional
+from typing import List, Optional, Union
 
 
 class PerspectiveType(Enum):
@@ -28,7 +28,7 @@ class VerdictType(Enum):
 
 @dataclass
 class PerspectiveVote:
-    perspective: PerspectiveType
+    perspective: Union[PerspectiveType, str]
     decision: VoteDecision
     confidence: float
     reasoning: str
@@ -69,7 +69,11 @@ class CouncilVerdict:
             "summary": self.summary,
             "votes": [
                 {
-                    "perspective": v.perspective.value,
+                    "perspective": (
+                        v.perspective.value
+                        if isinstance(v.perspective, PerspectiveType)
+                        else str(v.perspective)
+                    ),
                     "decision": v.decision.value,
                     "confidence": v.confidence,
                     "reasoning": v.reasoning,

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from .types import (
     CoherenceScore,
@@ -12,6 +12,28 @@ from .types import (
 )
 
 
+def _is_guardian(value: Union[PerspectiveType, str]) -> bool:
+    if isinstance(value, PerspectiveType):
+        return value == PerspectiveType.GUARDIAN
+    return str(value).lower() == PerspectiveType.GUARDIAN.value
+
+
+def _perspective_label(value: Union[PerspectiveType, str]) -> str:
+    names = {
+        PerspectiveType.GUARDIAN: "Safety Council",
+        PerspectiveType.ANALYST: "Analyst Review",
+        PerspectiveType.CRITIC: "Critic Lens",
+        PerspectiveType.ADVOCATE: "Advocate Voice",
+    }
+    if isinstance(value, PerspectiveType):
+        return names.get(value, value.value)
+    try:
+        key = PerspectiveType(str(value).lower())
+    except ValueError:
+        return str(value)
+    return names.get(key, key.value)
+
+
 def generate_verdict(
     votes: List[PerspectiveVote],
     coherence: CoherenceScore,
@@ -19,7 +41,7 @@ def generate_verdict(
     block_threshold: float = 0.3,
 ) -> CouncilVerdict:
     guardian_vote = next(
-        (v for v in votes if v.perspective == PerspectiveType.GUARDIAN),
+        (v for v in votes if _is_guardian(v.perspective)),
         None,
     )
 
@@ -79,16 +101,10 @@ def generate_verdict(
 def _generate_stance_declaration(
     divergent_views: List[PerspectiveVote],
 ) -> str:
-    names = {
-        PerspectiveType.GUARDIAN: "Safety Council",
-        PerspectiveType.ANALYST: "Analyst Review",
-        PerspectiveType.CRITIC: "Critic Lens",
-        PerspectiveType.ADVOCATE: "Advocate Voice",
-    }
     parts = []
     for v in divergent_views:
-        name = names.get(v.perspective, v.perspective.value)
-        parts.append(f"- **{name}**: {v.reasoning}")
+        label = _perspective_label(v.perspective)
+        parts.append(f"- **{label}**: {v.reasoning}")
     if not parts:
         return "No stance available."
     return (

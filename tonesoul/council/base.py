@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Optional
+from typing import Optional, Union
 
 from .types import PerspectiveType, PerspectiveVote
 
@@ -9,7 +9,7 @@ from .types import PerspectiveType, PerspectiveVote
 class IPerspective(ABC):
     @property
     @abstractmethod
-    def perspective_type(self) -> PerspectiveType:
+    def perspective_type(self) -> Union[PerspectiveType, str]:
         ...
 
     @abstractmethod
