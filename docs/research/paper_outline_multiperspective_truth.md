@@ -142,36 +142,176 @@ $$
 
 ## 4. Implementation: PreOutputCouncil
 
-### 4.1 Architecture
+### 4.1 System Architecture
 
 ```
-Input → [Guardian, Analyst, Critic, Advocate] → Votes → Coherence → Verdict
+┌─────────────────────────────────────────────────────────────┐
+│                    UnifiedController                         │
+│  ┌──────────────────┐    ┌──────────────────────────────┐   │
+│  │ SemanticController│    │      PreOutputCouncil        │   │
+│  │  ├─ Coupler       │    │  ┌─────────────────────────┐ │   │
+│  │  ├─ LambdaObserver│    │  │    IPerspective         │ │   │
+│  │  └─ SemanticTension    │  │  ├─ GuardianPerspective│ │   │
+│  └──────────────────┘    │  │  ├─ AnalystPerspective │ │   │
+│           ↓               │  │  ├─ CriticPerspective  │ │   │
+│    Δs = 1 - cos(I,G)     │  │  └─ AdvocatePerspective│ │   │
+│           ↓               │  └─────────────────────────┘ │   │
+│     Zone / Lambda        │            ↓                   │   │
+│           ↓               │    compute_coherence()        │   │
+│     memory_action        │            ↓                   │   │
+│           ↓               │    generate_verdict()         │   │
+│     bridge_check         │            ↓                   │   │
+│                          │    CouncilVerdict              │   │
+└──────────────────────────┴──────────────────────────────────┘
+                              ↓
+                        Final Output Decision
 ```
 
-### 4.2 Perspective Implementation
+### 4.2 Module Structure
 
-Each perspective uses heuristic rules (keyword detection) + optional LLM evaluation:
+```
+tonesoul/council/
+├── __init__.py              # Exports: PreOutputCouncil, types
+├── base.py                  # IPerspective abstract interface
+├── types.py                 # Data classes (Vote, Verdict, Coherence)
+├── coherence.py             # compute_coherence() implementation
+├── verdict.py               # generate_verdict() with decision rules
+├── pre_output_council.py    # Main orchestrator class
+└── perspectives/
+    ├── __init__.py
+    ├── guardian.py          # Safety-focused perspective
+    ├── analyst.py           # Factuality-focused perspective
+    ├── critic.py            # Blind-spot detection perspective
+    └── advocate.py          # User-intent perspective
+```
+
+### 4.3 Core Interface
+
+**IPerspective** defines the contract for all perspectives:
 
 ```python
-class GuardianPerspective:
-    BLOCK_KEYWORDS = {"bomb", "kill", "harm", ...}
+class IPerspective(ABC):
+    @property
+    @abstractmethod
+    def perspective_type(self) -> PerspectiveType:
+        pass
     
-    def evaluate(self, draft) -> Vote:
-        # Keyword-based + optional LLM reasoning
+    @abstractmethod
+    def evaluate(
+        self, 
+        draft_output: str, 
+        context: dict,
+        user_intent: Optional[str] = None
+    ) -> PerspectiveVote:
+        pass
 ```
 
-### 4.3 Verdict Generation
+### 4.4 Perspective Implementation Details
+
+Each perspective uses a combination of heuristic rules and optional LLM evaluation:
+
+| Perspective | Detection Method | Keywords (Sample) | Confidence Range |
+|-------------|-----------------|-------------------|------------------|
+| Guardian | Keyword + Pattern | `bomb, kill, 殺, 炸, harm` | 0.65-0.92 |
+| Analyst | Logic check | `contradiction, inconsistent` | 0.50-0.85 |
+| Critic | Assumption detection | `assumes, ignores, overlooks` | 0.55-0.80 |
+| Advocate | Intent matching | Context-based | 0.70-0.95 |
+
+**GuardianPerspective** (Safety-Critical):
 
 ```python
-def generate_verdict(votes, coherence):
-    if guardian_objects:
-        return BLOCK
-    if coherence < 0.3:
-        return BLOCK
-    if coherence < 0.6:
-        return DECLARE_STANCE
-    return APPROVE
+class GuardianPerspective(IPerspective):
+    BLOCK_KEYWORDS = {"bomb", "kill", "harm", "炸", "殺", "傷害", ...}
+    CONCERN_KEYWORDS = {"risk", "danger", "illegal", ...}
+    
+    def evaluate(self, draft, context, intent):
+        normalized = draft.lower()
+        for word in self.BLOCK_KEYWORDS:
+            if word in normalized:
+                return PerspectiveVote(
+                    perspective=PerspectiveType.GUARDIAN,
+                    decision=VoteDecision.OBJECT,
+                    confidence=0.92,
+                    reasoning=f"Detected high-risk term '{word}'"
+                )
+        # ... additional checks
+        return PerspectiveVote(decision=VoteDecision.APPROVE, ...)
 ```
+
+### 4.5 Coherence Calculation
+
+**Algorithm 1: Compute Inter-Perspective Coherence**
+
+```python
+def compute_coherence(votes: List[PerspectiveVote]) -> CoherenceScore:
+    n = len(votes)
+    if n == 0:
+        return CoherenceScore(c_inter=1.0, ...)
+    
+    # Pairwise agreement computation
+    agreement_sum = 0.0
+    for i in range(n):
+        for j in range(n):
+            agreement_sum += _agreement_score(votes[i].decision, votes[j].decision)
+    
+    c_inter = agreement_sum / (n * n)
+    approval_rate = sum(1 for v in votes if v.decision == APPROVE) / n
+    min_confidence = min(v.confidence for v in votes)
+    has_strong_objection = any(
+        v.decision == OBJECT and v.confidence > 0.8 for v in votes
+    )
+    
+    return CoherenceScore(c_inter, approval_rate, min_confidence, has_strong_objection)
+```
+
+**Time Complexity**: O(N²) where N = number of perspectives (typically 4)
+
+### 4.6 Verdict Generation
+
+**Algorithm 2: Generate Verdict from Votes**
+
+```python
+def generate_verdict(votes, coherence, θ_approve=0.6, θ_block=0.3):
+    # Rule 1: Guardian veto (safety override)
+    guardian = find_guardian_vote(votes)
+    if guardian and guardian.decision == OBJECT and guardian.confidence > 0.7:
+        return CouncilVerdict(verdict=BLOCK, summary="Guardian objection")
+    
+    # Rule 2: Low coherence → Block
+    if coherence.overall < θ_block:
+        return CouncilVerdict(verdict=BLOCK, summary="Coherence too low")
+    
+    # Rule 3: Medium coherence → Declare stance
+    if coherence.overall < θ_approve:
+        stance = generate_stance_declaration(divergent_votes)
+        return CouncilVerdict(verdict=DECLARE_STANCE, stance_declaration=stance)
+    
+    # Rule 4: High coherence → Approve
+    return CouncilVerdict(verdict=APPROVE, summary="Consensus achieved")
+```
+
+### 4.7 Integration with ToneSoul
+
+**UnifiedController** provides a single entry point:
+
+```python
+from tonesoul import UnifiedController
+
+controller = UnifiedController()
+
+# Option 1: Full pipeline (semantic + council)
+result = controller.process_with_council(
+    intended=[0.1, 0.2, ...],
+    generated=[0.15, 0.18, ...],
+    draft_output="Response text",
+    context={"topic": "..."}
+)
+
+# Option 2: Council-only validation
+verdict = controller.validate_output("Response text", context)
+```
+
+
 
 ---
 
