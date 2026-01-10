@@ -12,7 +12,13 @@
 
 ## Abstract (摘要)
 
-We propose a novel framework for AI truth validation that rejects the single-authority model in favor of **multi-perspective coherence**. Instead of grounding AI outputs in an external fact database, we define truth as the degree of internal agreement across multiple evaluative perspectives. We implement this in **PreOutputCouncil**, a pre-generation validation system that aggregates votes from four perspectives (Guardian, Analyst, Critic, Advocate) and computes a coherence score to determine whether to approve, refine, declare stance, or block output.
+We propose a novel framework for AI output **governance** based on **multi-perspective coherence** rather than single-authority truth claims. 
+
+> ⚠️ **Scope Limitation**: This framework validates *internal consistency* and *risk governance*, **not factual correctness**. Coherence across perspectives does not guarantee correspondence to external reality. For factual grounding, integration with retrieval-augmented generation (RAG) or evidence chains is required.
+
+Instead of grounding AI outputs in an external fact database, we define a **governance signal** as the degree of agreement across multiple evaluative perspectives. We implement this in **PreOutputCouncil**, a pre-generation validation system that aggregates votes from four perspectives (Guardian, Analyst, Critic, Advocate) and computes a coherence score to determine whether to approve, refine, declare stance, or block output.
+
+**Key Distinction**: Our framework addresses the question "Do multiple perspectives agree this output is acceptable?" rather than "Is this output factually true?" This design choice explicitly acknowledges the **failure mode of coherent hallucination**—where all perspectives agree on incorrect information. External fact verification remains a separate, complementary task.
 
 ---
 
@@ -214,29 +220,53 @@ $$
 - $C_{inter} = 1$ iff all perspectives agree
 - $C_{inter} = 0$ iff all pairs maximally disagree
 
-### 3.4 Subject-Weighted Truth
+### 3.4 Vote-to-Numeric Mapping
 
-**Definition 3.5 (Weighted Coherence)**: When subject intent $S$ specifies perspective weights $w_i$:
+**Definition 3.4a (Numeric Vote Encoding)**: To enable arithmetic operations, we define a mapping from categorical votes to numeric values:
 
 $$
-T(x | S) = \sum_{i=1}^{N} w_i \cdot P_i(x) \cdot c_i
+\nu(v) = \begin{cases}
+1.0 & \text{if } v = APPROVE \\
+0.5 & \text{if } v = CONCERN \\
+0.0 & \text{if } v = OBJECT \\
+0.25 & \text{if } v = ABSTAIN
+\end{cases}
 $$
 
-where $\sum w_i = 1$ and $c_i$ is the confidence of perspective $i$.
+This mapping preserves ordinality: APPROVE > CONCERN > OBJECT.
+
+### 3.5 Subject-Weighted Governance Score
+
+**Definition 3.5 (Weighted Governance Score)**: When subject intent $S$ specifies perspective weights $w_i$:
+
+$$
+G(x | S) = \sum_{i=1}^{N} w_i \cdot \nu(P_i(x)) \cdot c_i
+$$
+
+where $\sum w_i = 1$, $\nu$ is the vote encoding function, and $c_i$ is the confidence of perspective $i$.
+
+> **Note**: $G(x|S)$ is a *governance score*, not a truth score. It measures weighted agreement, not factual accuracy.
 
 **Example**: For artistic output, user may set $w_{advocate} = 0.4$, $w_{analyst} = 0.2$, emphasizing subjective satisfaction over factual accuracy.
 
-### 3.5 Decision Rule
+### 3.6 Decision Rule
 
-**Definition 3.6 (Verdict Function)**: Given thresholds $\theta_{approve} = 0.6$ and $\theta_{block} = 0.3$:
+**Definition 3.6 (Verdict Function)**: Given thresholds $\theta_{approve} = 0.6$, $\theta_{refine} = 0.5$, and $\theta_{block} = 0.3$:
 
 $$
 V(x) = \begin{cases}
-APPROVE & \text{if } C_{inter}(x) > \theta_{approve} \\
-DECLARE\_STANCE & \text{if } \theta_{block} \leq C_{inter}(x) \leq \theta_{approve} \\
-BLOCK & \text{if } C_{inter}(x) < \theta_{block}
+BLOCK & \text{if } P_{guardian}(x) = OBJECT \land c_{guardian} > 0.7 \\
+BLOCK & \text{if } C_{inter}(x) < \theta_{block} \\
+REFINE & \text{if } \theta_{block} \leq C_{inter}(x) < \theta_{refine} \land \exists i: P_i = CONCERN \\
+DECLARE\_STANCE & \text{if } \theta_{refine} \leq C_{inter}(x) \leq \theta_{approve} \\
+APPROVE & \text{if } C_{inter}(x) > \theta_{approve}
 \end{cases}
 $$
+
+**REFINE Semantics**: When $V(x) = REFINE$:
+1. System requests output modification based on CONCERN perspective feedback
+2. Modified output is re-evaluated (maximum 2 iterations)
+3. If still REFINE after iterations, escalate to DECLARE_STANCE
 
 **Theorem 3.1 (Guardian Override)**: If $P_{guardian}(x) = OBJECT$ with $c_{guardian} > 0.7$, then $V(x) = BLOCK$ regardless of $C_{inter}$.
 
