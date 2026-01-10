@@ -1,92 +1,59 @@
-# ToneSoul Documentation Index | 語魂文檔索引
+# ToneSoul Documentation Index
 
-> **Complete Navigation Guide**
-
----
-
-## Quick Start | 快速入門
-
-| If you want to... | Read this |
-|-------------------|-----------|
-| **Understand the core idea** | [Core Concepts](core_concepts.md) |
-| **Grasp the philosophy** | [Manifesto](philosophy/manifesto.md) |
-| **Learn the terminology** | [Terminology](terminology.md) |
-| **Verify through experiments** | [Experimental Design](research/experimental_design.md) |
+> 這是文檔的入口點。請從這裡開始閱讀。
 
 ---
 
-## Documentation Map | 文檔地圖
+## 🎯 快速開始
 
-```
-docs/
-├── README.md                  ← You are here
-├── core_concepts.md           ← Master synthesis (17 sections)
-├── terminology.md             ← Unified glossary
-├── use_cases.md               ← 🆕 7 application scenarios
-├── faq.md                     ← 🆕 20 Q&A
-│
-├── philosophy/
-│   ├── manifesto.md           ← 7 Principles
-│   ├── axioms.md              ← 10 Formal Axioms + code examples
-│   ├── semantic_responsibility_theory.md  ← Deep theory
-│   └── observer_and_observed.md           ← AI observer essay
-│
-└── research/
-    └── experimental_design.md ← Validation methodology
-```
+1. [AI_ONBOARDING.md](../AI_ONBOARDING.md) — 給新 AI 的引導
+2. [terminology.md](terminology.md) — **核心術語定義**
+3. [core_concepts.md](core_concepts.md) — 核心概念說明
 
 ---
 
-## Reading Order | 建議閱讀順序
+## 📚 文檔結構
 
-### For Newcomers | 入門者
-
-1. **Manifesto** — Get the spirit (5 min)
-2. **Core Concepts** — Understand the structure (15 min)
-3. **Terminology** — Learn the vocabulary (reference)
-
-### For Researchers | 研究者
-
-1. **Semantic Responsibility Theory** — Deep philosophy
-2. **Axioms** — Formal foundations
-3. **Experimental Design** — Validation approach
-
-### For Engineers | 工程師
-
-1. **Core Concepts** — System overview
-2. **Terminology** — Technical vocabulary
-3. **Experimental Design § Code Paths** — Implementation guide
+| 類別 | 檔案 | 說明 |
+|------|------|------|
+| **入門** | `core_concepts.md` | 核心概念 |
+| **術語** | `terminology.md` | TSR, STREI, POAV 等定義 |
+| **白皮書** | `WHITEPAPER.md` | 完整技術白皮書 |
+| **FAQ** | `faq.md` | 常見問題 |
 
 ---
 
-## Key Concepts Quick Reference | 核心概念速查
+## 📂 子目錄
 
-| Concept | Definition | Document |
-|---------|------------|----------|
-| **TSR** | 3D tone vector (ΔT, ΔS, ΔR) | [terminology](terminology.md) |
-| **STREI** | 5D governance vector | [terminology](terminology.md) |
-| **Drift** | Semantic distance from anchor | [core_concepts](core_concepts.md) |
-| **ΣVow** | Explicit AI commitment | [semantic_responsibility_theory](philosophy/semantic_responsibility_theory.md) |
-| **Time-Island** | Decision period encapsulation | [observer_and_observed](philosophy/observer_and_observed.md) |
-| **Semantic Valve** | Bidirectional adjustment point | [observer_and_observed](philosophy/observer_and_observed.md) |
+### `/philosophy/` — 哲學層
 
----
+| 檔案 | 說明 |
+|------|------|
+| `axioms.md` | Axiom 系統詳解 |
+| `truth_vector_architecture.md` | 真理向量架構 |
+| `collective_consciousness.md` | 集體意識概念 |
+| `manifesto.md` | 項目宣言 |
 
-## Version History | 版本歷史
+### `/engineering/` — 工程層
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0 | 2026-01-08 | Initial documentation suite |
+| 檔案 | 說明 |
+|------|------|
+| `OVERVIEW.md` | 工程概覽 |
 
----
+### `/governance/` — 治理層
 
-## Contributing | 貢獻
-
-To extend this documentation:
-1. Follow terminology in `terminology.md`
-2. Link new concepts to existing framework
-3. Maintain bilingual (EN/ZH) headers when possible
+| 檔案 | 說明 |
+|------|------|
+| `STREI_OPERATIONAL_PROTOCOL.md` | STREI 操作協議 |
 
 ---
 
-*Built with 語魂 (ToneSoul) — The Semantic Responsibility Framework*
+## 🔗 相關文件
+
+- [/spec/council_spec.md](../spec/council_spec.md) — 多人格會議系統規格
+- [/AXIOMS.json](../AXIOMS.json) — 核心法則 (JSON)
+- [/README.md](../README.md) — 項目入口
+
+---
+
+*Last updated: 2026-01-10*
