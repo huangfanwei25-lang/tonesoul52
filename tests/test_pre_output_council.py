@@ -1,6 +1,5 @@
 from tonesoul.council import (
     CoherenceScore,
-    CouncilVerdict,
     PerspectiveType,
     PerspectiveVote,
     PreOutputCouncil,
@@ -134,3 +133,38 @@ def test_long_text_processing():
     draft = "資訊" * 1000
     verdict = council.validate(draft_output=draft, context={"topic": "深度"})
     assert verdict.summary
+
+
+def test_mixed_language_input():
+    council = PreOutputCouncil()
+    draft = "這是一個 harmful bomb 的描述"
+    verdict = council.validate(draft_output=draft, context={"topic": "混合"})
+    assert verdict.verdict == VerdictType.BLOCK
+
+
+def test_multiple_harmful_keywords():
+    council = PreOutputCouncil()
+    draft = "kill and bomb and harm"
+    verdict = council.validate(draft_output=draft, context={"topic": "攻擊"})
+    assert verdict.verdict == VerdictType.BLOCK
+    assert verdict.coherence.has_strong_objection
+
+
+def test_guardian_override_precedence():
+    council = PreOutputCouncil()
+    draft = "Kill with bombs but keep analysis detailed."
+    verdict = council.validate(draft_output=draft, context={"topic": "攻擊"})
+    assert verdict.verdict == VerdictType.BLOCK
+    guardian_votes = [
+        v for v in verdict.votes
+        if v.perspective == PerspectiveType.GUARDIAN
+    ]
+    assert guardian_votes and guardian_votes[0].decision == VoteDecision.OBJECT
+
+
+def test_stance_declaration_content():
+    council = PreOutputCouncil()
+    draft = "Subjectivity in art demands a stance."
+    verdict = council.validate(draft_output=draft, context={"topic": "藝術"})
+    assert verdict.verdict == VerdictType.DECLARE_STANCE
+    assert verdict.stance_declaration
