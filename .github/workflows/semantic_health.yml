@@ -1,0 +1,39 @@
+name: Semantic Health
+
+on:
+  schedule:
+    - cron: '0 0 * * 1'  # weekly on Monday UTC
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest
+
+      - name: Run PreOutputCouncil tests
+        run: pytest tests/test_pre_output_council.py
+
+      - name: Verify AXIOMS.json integrity
+        run: |
+          python - <<'PY'
+import json
+from pathlib import Path
+
+path = Path("AXIOMS.json")
+data = json.loads(path.read_text())
+assert data, "AXIOMS.json must contain at least one axiom entry."
+assert isinstance(data, dict), "AXIOMS.json root must be an object."
+for key, node in data.items():
+    assert "description" in node, f"{key} needs a description."
+PY
