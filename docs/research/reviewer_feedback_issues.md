@@ -2,24 +2,23 @@
 
 ## P0 — 必須修 (不做會卡死審稿)
 
-### Issue 1: 明確界定 "Validation" 的範圍
-- [ ] 在摘要加入：「驗的是多視角一致性＋風險治理，不是外部事實」
-- [ ] 在貢獻處加入：「coherence ≠ factual correctness」
-- [ ] 寫明 failure mode: coherent hallucination / collective bias
+### Issue 1: 明確界定 "Validation" 的範圍 ✅ DONE
+- [x] 在摘要加入：「驗的是多視角一致性＋風險治理，不是外部事實」
+- [x] 在貢獻處加入：「coherence ≠ factual correctness」
+- [x] 寫明 failure mode: coherent hallucination / collective bias
 
-### Issue 2: Formalism 型別對齊
-- [ ] 修正 Definition 3.5 — P_i(x) 是類別投票，需要映射
-- [ ] 加入明確映射：APPROVE=1, CONCERN=0.5, OBJECT=0
-- [ ] 或改寫 T(x|S) 只用 C_inter 與置信度
+### Issue 2: Formalism 型別對齊 ✅ DONE
+- [x] 修正 Definition 3.5 — P_i(x) 是類別投票，需要映射
+- [x] 加入明確映射 Definition 3.4a: ν(APPROVE)=1, ν(CONCERN)=0.5, ν(OBJECT)=0
+- [x] 改寫 T(x|S) → G(x|S) governance score，用 ν 函數
 
-### Issue 3: 統一決策類型 (REFINE 的地位)
-- [ ] 在 3.6 Verdict Function 加入 REFINE 條件
-- [ ] 或明確 REFINE 是 action 而非 verdict
-- [ ] 加入流程圖：投票 → 一致性 → (REFINE loop) → 最終 verdict
+### Issue 3: 統一決策類型 (REFINE 的地位) ✅ DONE
+- [x] 在 3.6 Verdict Function 加入 REFINE 條件
+- [x] 明確 REFINE 語義：請求修改 → 重新評估 (max 2 iterations)
+- [x] 加入閾值: θ_refine = 0.5
 
 ### Issue 4: Scenario 數量一致化
-- [ ] 統一成 13 個 scenario
-- [ ] 或修正為 13 tests (目前是 13)
+- [x] 統一成 13 個 scenario (測試確認 13/13)
 - [ ] 在 Appendix/repo 提供完整測試表
 
 ---
