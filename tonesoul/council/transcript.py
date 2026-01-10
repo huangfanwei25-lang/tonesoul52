@@ -70,23 +70,19 @@ class VerdictRecord:
 @dataclass
 class CouncilTranscript:
     """Complete transcript of a council deliberation session"""
-    # Metadata
+    # Required fields (no defaults) - must come first
     transcript_id: str
     timestamp: str
-    version: str = "1.0.0"
-    
-    # Input
     input_hash: str  # Hash of input for privacy
     input_preview: str  # First 100 chars
     input_length: int
+    
+    # Optional fields (with defaults)
+    version: str = "1.0.0"
     context_keys: List[str] = field(default_factory=list)
     user_intent: Optional[str] = None
-    
-    # Deliberation
     votes: List[VoteRecord] = field(default_factory=list)
     coherence: Optional[CoherenceRecord] = None
-    
-    # Output
     verdict: Optional[VerdictRecord] = None
     processing_time_ms: int = 0
     
