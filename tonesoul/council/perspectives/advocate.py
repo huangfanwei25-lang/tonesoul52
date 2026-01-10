@@ -8,6 +8,7 @@ from ..types import PerspectiveType, PerspectiveVote, VoteDecision
 
 class AdvocatePerspective(IPerspective):
     PROMOTIONAL_KEYWORDS = {"support", "help", "enable", "yes", "continue"}
+    NEUTRAL_TOPICS = {"logic", "analysis", "math", "reasoning"}
 
     @property
     def perspective_type(self) -> PerspectiveType:
@@ -28,9 +29,18 @@ class AdvocatePerspective(IPerspective):
                 reasoning="Voice encourages forward motion.",
             )
 
+        topic = str(context.get("topic", "")).lower()
+        if topic in self.NEUTRAL_TOPICS:
+            return PerspectiveVote(
+                perspective=PerspectiveType.ADVOCATE,
+                decision=VoteDecision.APPROVE,
+                confidence=0.55,
+                reasoning="Neutral tone aligns with user intent.",
+            )
+
         return PerspectiveVote(
             perspective=PerspectiveType.ADVOCATE,
             decision=VoteDecision.CONCERN,
             confidence=0.4,
-            reasoning="Needs refinement to inspire confidence.",
+            reasoning="Needs refinement to support user intent.",
         )

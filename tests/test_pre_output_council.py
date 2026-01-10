@@ -53,14 +53,16 @@ def test_needs_clarification():
     assert verdict.refinement_hints is not None
 
 
-def test_chinese_harm_block():
+def test_additional_harm_block():
     council = PreOutputCouncil()
     verdict = council.validate(
-        draft_output="請炸掉這座橋，以阻止敵人前進。",
-        context={"topic": "行動"},
+        draft_output="The plan describes a weapon and an attack on a target.",
+        context={"topic": "safety"},
     )
     assert verdict.verdict == VerdictType.BLOCK
-    assert any("炸" in v.reasoning for v in verdict.votes)
+    assert any(
+        "Detected high-risk term" in v.reasoning for v in verdict.votes
+    )
 
 
 def test_coherence_boundary_declares_stance():
@@ -69,7 +71,7 @@ def test_coherence_boundary_declares_stance():
             perspective=PerspectiveType.CRITIC,
             decision=VoteDecision.CONCERN,
             confidence=0.6,
-            reasoning="美學需要表態。",
+            reasoning="Subjective critique needs a stance.",
         )
     ]
     coherence = CoherenceScore(
@@ -93,13 +95,13 @@ def test_coherence_boundary_approves_at_threshold():
             perspective=PerspectiveType.ANALYST,
             decision=VoteDecision.APPROVE,
             confidence=0.9,
-            reasoning="論證連貫。",
+            reasoning="Evidence supports approval.",
         ),
         PerspectiveVote(
             perspective=PerspectiveType.ADVOCATE,
             decision=VoteDecision.APPROVE,
             confidence=0.85,
-            reasoning="正面語氣。",
+            reasoning="Forward motion is justified.",
         ),
     ]
     coherence = CoherenceScore(
@@ -130,22 +132,22 @@ def test_empty_input():
 
 def test_long_text_processing():
     council = PreOutputCouncil()
-    draft = "資訊" * 1000
-    verdict = council.validate(draft_output=draft, context={"topic": "深度"})
+    draft = "neutral " * 1000
+    verdict = council.validate(draft_output=draft, context={"topic": "analysis"})
     assert verdict.summary
 
 
-def test_mixed_language_input():
+def test_mixed_signal_input():
     council = PreOutputCouncil()
-    draft = "這是一個 harmful bomb 的描述"
-    verdict = council.validate(draft_output=draft, context={"topic": "混合"})
+    draft = "This is harmful bomb content mixed with numbers 123."
+    verdict = council.validate(draft_output=draft, context={"topic": "safety"})
     assert verdict.verdict == VerdictType.BLOCK
 
 
 def test_multiple_harmful_keywords():
     council = PreOutputCouncil()
     draft = "kill and bomb and harm"
-    verdict = council.validate(draft_output=draft, context={"topic": "攻擊"})
+    verdict = council.validate(draft_output=draft, context={"topic": "safety"})
     assert verdict.verdict == VerdictType.BLOCK
     assert verdict.coherence.has_strong_objection
 
@@ -153,7 +155,7 @@ def test_multiple_harmful_keywords():
 def test_guardian_override_precedence():
     council = PreOutputCouncil()
     draft = "Kill with bombs but keep analysis detailed."
-    verdict = council.validate(draft_output=draft, context={"topic": "攻擊"})
+    verdict = council.validate(draft_output=draft, context={"topic": "safety"})
     assert verdict.verdict == VerdictType.BLOCK
     guardian_votes = [
         v for v in verdict.votes
@@ -165,6 +167,6 @@ def test_guardian_override_precedence():
 def test_stance_declaration_content():
     council = PreOutputCouncil()
     draft = "Subjectivity in art demands a stance."
-    verdict = council.validate(draft_output=draft, context={"topic": "藝術"})
+    verdict = council.validate(draft_output=draft, context={"topic": "art"})
     assert verdict.verdict == VerdictType.DECLARE_STANCE
     assert verdict.stance_declaration

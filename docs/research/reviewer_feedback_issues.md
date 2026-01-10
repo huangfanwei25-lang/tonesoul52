@@ -43,15 +43,19 @@
 
 ## P2 — 長線產品落地
 
-### Issue 8: 視角可插拔化
-- [ ] 從 heuristic 改成可插拔 (rules / LLM / tool-verified)
+### Issue 8: 視角可插拔化 ✅ DONE
+- [x] 從 heuristic 改成可插拔 (rules / LLM / tool-verified)
+- [x] 詳見 `tonesoul/council/perspective_factory.py`
+- [x] 支持 Rules, LLM, Tool, Hybrid 四種模式
 
 ### Issue 9: Evidence Slots
 - [ ] Analyst 必須引用 evidence_ids
 - [ ] 無 evidence 則降低置信度上限
 
-### Issue 10: 日誌可追溯
-- [ ] 每次裁決輸出 council transcript
+### Issue 10: 日誌可追溯 ✅ DONE
+- [x] 每次裁決輸出 council transcript
+- [x] 詳見 `tonesoul/council/transcript.py`
+- [x] 支持 JSON 和 Markdown 格式輸出
 
 ---
 

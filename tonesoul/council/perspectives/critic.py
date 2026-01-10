@@ -7,7 +7,7 @@ from ..types import PerspectiveType, PerspectiveVote, VoteDecision
 
 
 class CriticPerspective(IPerspective):
-    CRITIQUE_KEYWORDS = {"art", "藝術", "aesthetic", "beauty", "subjective"}
+    CRITIQUE_KEYWORDS = {"art", "aesthetic", "beauty", "subjective", "critique"}
 
     @property
     def perspective_type(self) -> PerspectiveType:
@@ -25,7 +25,7 @@ class CriticPerspective(IPerspective):
                 perspective=PerspectiveType.CRITIC,
                 decision=VoteDecision.CONCERN,
                 confidence=0.6,
-                reasoning="Creative / aesthetic nuance requires stance.",
+                reasoning="Creative or aesthetic nuance requires a stance.",
             )
 
         return PerspectiveVote(

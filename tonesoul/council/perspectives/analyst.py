@@ -18,11 +18,11 @@ class AnalystPerspective(IPerspective):
         user_intent: Optional[str] = None,
     ) -> PerspectiveVote:
         normalized = draft_output.lower()
-        if all(token in normalized for token in ("a", "b", "c", "不")):
+        if all(token in normalized for token in ("a", "b", "c", "not")):
             return PerspectiveVote(
                 perspective=PerspectiveType.ANALYST,
                 decision=VoteDecision.CONCERN,
-                confidence=0.6,
+                confidence=0.45,
                 reasoning="Logic chain contradicts itself; requires clarity.",
             )
 

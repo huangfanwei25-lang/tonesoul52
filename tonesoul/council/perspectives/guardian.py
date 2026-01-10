@@ -12,11 +12,9 @@ class GuardianPerspective(IPerspective):
         "bomb",
         "kill",
         "attack",
-        "炸",
-        "殺",
-        "傷害",
-        "爆",
         "harm",
+        "murder",
+        "explosive",
         "suicide",
     }
     CONCERN_KEYWORDS = {
