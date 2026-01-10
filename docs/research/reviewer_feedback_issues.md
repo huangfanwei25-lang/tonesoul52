@@ -63,9 +63,9 @@
 | 型別對齊 | P0 | ✅ DONE |
 | REFINE taxonomy | P0 | ✅ DONE |
 | 13 scenarios | P0 | ✅ DONE |
-| Baseline | P1 | 🔄 處理中 |
-| When to ground | P1 | 🔄 處理中 |
-| DECLARE_STANCE 格式 | P1 | 🔄 處理中 |
+| Baseline | P1 | 待處理 |
+| When to ground | P1 | ✅ DONE |
+| DECLARE_STANCE 格式 | P1 | ✅ DONE |
 
 ---
 
