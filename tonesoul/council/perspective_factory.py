@@ -44,7 +44,7 @@ class PerspectiveMode(Enum):
 @dataclass
 class PerspectiveConfig:
     """Configuration for creating a perspective"""
-    name: str
+    name: PerspectiveId
     mode: PerspectiveMode = PerspectiveMode.RULES
     model: Optional[str] = None  # For LLM mode
     tool: Optional[Callable] = None  # For TOOL mode
@@ -94,6 +94,21 @@ def _safe_confidence(value: object, default: float = 0.5) -> float:
         return float(value)
     except (TypeError, ValueError):
         return default
+
+
+def _normalize_council_config(
+    config: Optional[Dict[PerspectiveId, Any]],
+) -> Dict[str, Dict[str, Any]]:
+    normalized: Dict[str, Dict[str, Any]] = {}
+    if not config:
+        return normalized
+    for key, value in config.items():
+        normalized_key = _normalize_name(key)
+        if isinstance(value, dict):
+            normalized[normalized_key] = dict(value)
+        else:
+            normalized[normalized_key] = {"mode": "rules"}
+    return normalized
 
 
 class LLMPerspective(IPerspective):
@@ -150,6 +165,7 @@ Also provide confidence (0.0-1.0) and brief reasoning.""",
         the rules-based fallback if present.
         """
         if self.fallback:
+            # Placeholder: LLM integration is not wired; use rules-based fallback.
             return self.fallback.evaluate(draft_output, context, user_intent)
 
         return PerspectiveVote(
@@ -295,25 +311,25 @@ class PerspectiveFactory:
     @classmethod
     def create_council(
         cls,
-        config: Optional[Dict[str, Dict[str, Any]]] = None,
+        config: Optional[Dict[PerspectiveId, Dict[str, Any]]] = None,
     ) -> List[IPerspective]:
         """
         Create a complete set of perspectives for the council.
 
         Args:
-            config: Optional dict mapping perspective names to their configs
+            config: Optional dict mapping perspective names to their configs.
+                    Keys can be PerspectiveType or str; invalid configs fall
+                    back to rules.
                     e.g., {"guardian": {"mode": "llm", "model": "gpt-4"}}
 
         Returns:
             List of IPerspective instances
         """
-        config = config or {}
+        config = _normalize_council_config(config)
         perspectives: List[IPerspective] = []
 
         for name in ["guardian", "analyst", "critic", "advocate"]:
             perspective_config = config.get(name, {"mode": "rules"})
-            if not isinstance(perspective_config, dict):
-                perspective_config = {"mode": "rules"}
             perspectives.append(cls.create(name=name, **perspective_config))
 
         return perspectives

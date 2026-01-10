@@ -29,6 +29,23 @@ def test_create_council_tool_fallback():
     assert vote.decision == VoteDecision.APPROVE
 
 
+def test_create_council_llm_fallback_to_rules():
+    council = PerspectiveFactory.create_council({
+        PerspectiveType.ANALYST: {"mode": "llm"},
+    })
+    analyst = next(
+        (p for p in council if p.perspective_type == PerspectiveType.ANALYST),
+        None,
+    )
+    assert analyst is not None
+    vote = analyst.evaluate(
+        "This response is clear and internally consistent.",
+        context={},
+    )
+    assert vote.perspective == PerspectiveType.ANALYST
+    assert vote.decision == VoteDecision.APPROVE
+
+
 def test_pre_output_council_accepts_factory_perspectives():
     perspectives = PerspectiveFactory.create_council()
     council = PreOutputCouncil(perspectives=perspectives)

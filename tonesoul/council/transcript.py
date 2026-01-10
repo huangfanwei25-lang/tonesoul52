@@ -27,9 +27,10 @@ from dataclasses import dataclass, field, asdict
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 import hashlib
 
+from .types import PerspectiveType
 
 class TranscriptFormat(Enum):
     """Output formats for council transcripts"""
@@ -41,7 +42,7 @@ class TranscriptFormat(Enum):
 @dataclass
 class VoteRecord:
     """Record of a single perspective vote"""
-    perspective_name: str
+    perspective_name: Union[PerspectiveType, str]
     decision: str  # APPROVE, CONCERN, OBJECT, ABSTAIN
     confidence: float
     reasoning: str
@@ -204,8 +205,19 @@ class CouncilTranscriptLogger:
         # Convert votes to records
         vote_records = []
         for v in votes:
+            perspective_value = getattr(
+                v,
+                "perspective",
+                getattr(v, "perspective_name", None),
+            )
+            if isinstance(perspective_value, PerspectiveType):
+                perspective_name = perspective_value.value
+            elif perspective_value is None:
+                perspective_name = str(v)
+            else:
+                perspective_name = str(perspective_value)
             vote_records.append(VoteRecord(
-                perspective_name=getattr(v, 'perspective_name', str(v)),
+                perspective_name=perspective_name,
                 decision=str(getattr(v, 'decision', 'UNKNOWN')).split('.')[-1],
                 confidence=getattr(v, 'confidence', 0.0),
                 reasoning=getattr(v, 'reasoning', ''),
