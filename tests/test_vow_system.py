@@ -23,6 +23,7 @@ from tonesoul.vow_system import (
     VowCheckResult,
     VowEnforcementResult,
     DEFAULT_VOWS,
+    create_enforcer,
 )
 
 
@@ -240,6 +241,49 @@ class TestVowEnforcer:
         assert "all_passed" in data
         assert "results" in data
         assert "timestamp" in data
+
+    def test_custom_evaluator_used(self, custom_enforcer):
+        """Custom evaluators should influence results."""
+        custom_enforcer.register_evaluator(
+            "test_metric",
+            lambda _output, _context: 0.95,
+        )
+        result = custom_enforcer.enforce("Custom evaluator test")
+        assert result.all_passed is True
+        assert result.results[0].details["test_metric"]["actual"] == 0.95
+
+    def test_unknown_metric_defaults_to_pass(self):
+        """Unknown metrics should not fail enforcement."""
+        registry = VowRegistry(vows=[
+            Vow(
+                id="unknown_metric",
+                title="Unknown metric",
+                description="Should default to pass",
+                expected={"mystery_metric": 0.5},
+            )
+        ])
+        enforcer = VowEnforcer(registry=registry)
+        result = enforcer.enforce("Test output")
+        assert result.all_passed is True
+        assert result.results[0].details["mystery_metric"]["actual"] is None
+
+
+class TestVowConvenience:
+    def test_create_enforcer_with_custom_file(self, workspace_tmpdir):
+        path = workspace_tmpdir / "vows.json"
+        payload = {
+            "vows": [
+                {
+                    "id": "file_vow",
+                    "title": "File Vow",
+                    "description": "Loaded from file",
+                    "expected": {"truthfulness": 0.7},
+                }
+            ]
+        }
+        path.write_text(json.dumps(payload), encoding="utf-8")
+        enforcer = create_enforcer(str(path))
+        assert enforcer.registry.get("file_vow") is not None
 
 
 class TestVowCheckResult:

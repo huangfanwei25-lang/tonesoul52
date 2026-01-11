@@ -21,6 +21,8 @@ from tonesoul.time_island import (
     IslandState,
     SourceTrace,
     ChangelogEntry,
+    create_island,
+    wrap_in_island,
 )
 
 
@@ -308,3 +310,32 @@ class TestTimeIslandManager:
         loaded = manager2.get_island(island_id)
         assert loaded is not None
         assert loaded.bounded_context == "Persistence test"
+
+    def test_save_without_path_raises(self):
+        manager = TimeIslandManager()
+        with pytest.raises(ValueError):
+            manager.save()
+
+    def test_load_missing_path_noop(self, workspace_tmpdir):
+        manager = TimeIslandManager()
+        missing_path = workspace_tmpdir / "missing.json"
+        manager.load(str(missing_path))
+        assert manager.islands == {}
+        assert manager.current_island is None
+
+
+class TestTimeIslandConvenience:
+    def test_create_island_defaults(self):
+        island = create_island("quick context")
+        assert island.state == IslandState.DRAFT
+        assert island.window_start
+
+    def test_wrap_in_island_success(self):
+        def _work():
+            return "ok"
+
+        result, island = wrap_in_island("wrap test", _work)
+        assert result == "ok"
+        assert island.state == IslandState.COMPLETED
+        assert "function_result:str" in island.outputs
+        assert island.window_end

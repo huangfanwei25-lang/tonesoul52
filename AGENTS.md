@@ -10,18 +10,17 @@ If you are an AI assistant:
 Current source of truth (filesystem check):
 - Active engine code: tonesoul/ (governance + core services, many run_* scripts).
 - Dashboard entry: apps/dashboard/run_dashboard.py -> apps/dashboard/frontend/app.py
-- CLI entry: apps/cli/app.py (imports yuhun from legacy/archives/ToneSoul-Repo)
+- CLI entry: apps/cli/app.py (imports yuhun from repo root; falls back to legacy/archives/ToneSoul-Repo if present)
 - Constitution/axioms: AXIOMS.json and law/constitution.json
 - Truth structure: docs/TRUTH_STRUCTURE.md captures the living governance + philosophy spine.
 
 Known drift vs docs:
-- README references body/ and src/core/, but there is no body/ and src/ is empty today.
+- Some docs (e.g. docs/ADR-001-dual-track-resolution.md, docs/TRUTH_STRUCTURE.md) reference legacy paths like body/, src/core/, or legacy/ for historical context; those directories are not present in this workspace.
 
 Directory triage (tentative; confirm before deleting/moving):
-- Core code: tonesoul/, apps/, tools/, scripts/, tests/
+- Core code: tonesoul/, apps/, api/, tests/
 - Docs/specs: docs/, law/, spec/, constitution/, knowledge/, knowledge_base/
-- Legacy/archive: legacy/ (non-doc artifacts after duplicates were pruned), experiments/, examples/, ?主悉/, tone-soul-integrity-main/,
-  ToneSoul-Architecture-Engine-main/, tonesoul-codex-main/
+- Legacy/archive: .archive/, experiments/, examples/, PARADOXES/, soul/
 - Data/logs/cache: data/, evidence/, memory/, memory_vault/, simulation_logs/, reports/, temp/, run/,
   __pycache__/, .pytest_cache/, .venv/
 
@@ -30,7 +29,7 @@ Working rules:
 - Do not delete or move files without explicit user approval.
 - If a path seems duplicated, ask which is canonical before changes.
 - Update this file after major structural changes.
-- Use legacy/ (archived_docs/ duplicates were removed) only for drift comparison, not as current canon—point findings back to docs/TRUTH_STRUCTURE.md.
+- Use .archive/ only for drift comparison, not as current canon—point findings back to docs/TRUTH_STRUCTURE.md.
 
 Quick commands:
 - Dashboard: python apps/dashboard/run_dashboard.py

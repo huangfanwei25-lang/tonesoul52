@@ -61,6 +61,12 @@ Context ─────────►  │  │  Analyst  ──► Vote       
                          └─────────────────────┘
 ```
 
+Additional implementation files:
+- tonesoul/council/types.py
+- tonesoul/council/perspective_factory.py
+- tonesoul/council/evidence_detector.py
+- tonesoul/council/transcript.py
+
 ---
 
 ## Data Structures
@@ -70,7 +76,7 @@ Context ─────────►  │  │  Analyst  ──► Vote       
 ```python
 from enum import Enum
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 class PerspectiveType(Enum):
     """視角類型"""
@@ -86,14 +92,24 @@ class VoteDecision(Enum):
     OBJECT = "object"         # 反對
     ABSTAIN = "abstain"       # 棄權
 
+
+class GroundingStatus(Enum):
+    """Evidence grounding status."""
+    NOT_REQUIRED = "not_required"
+    GROUNDED = "grounded"
+    UNGROUNDED = "ungrounded"
+    PARTIAL = "partial"
+
 @dataclass
 class PerspectiveVote:
     """單一視角的投票結果"""
-    perspective: PerspectiveType
+    perspective: Union[PerspectiveType, str]
     decision: VoteDecision
     confidence: float         # 0.0 - 1.0
-    reasoning: str            # 簡短理由
-    evidence: Optional[List[str]] = None  # 支持證據
+    reasoning: str            # short rationale
+    evidence: Optional[List[str]] = None
+    requires_grounding: bool = False
+    grounding_status: GroundingStatus = GroundingStatus.NOT_REQUIRED
 ```
 
 ### 2. Coherence Score (一致性分數)
@@ -153,13 +169,33 @@ class CouncilVerdict:
             "summary": self.summary,
             "votes": [
                 {
-                    "perspective": v.perspective.value,
+                    "perspective": (
+                        v.perspective.value
+                        if isinstance(v.perspective, PerspectiveType)
+                        else str(v.perspective)
+                    ),
                     "decision": v.decision.value,
                     "confidence": v.confidence,
-                    "reasoning": v.reasoning
+                    "reasoning": v.reasoning,
+                    "evidence": v.evidence or [],
+                    "requires_grounding": v.requires_grounding,
+                    "grounding_status": (
+                        v.grounding_status.value
+                        if isinstance(v.grounding_status, GroundingStatus)
+                        else str(v.grounding_status)
+                    ),
                 }
                 for v in self.votes
-            ]
+            ],
+            "grounding_summary": {
+                "has_ungrounded_claims": any(
+                    v.grounding_status == GroundingStatus.UNGROUNDED
+                    for v in self.votes
+                ),
+                "total_evidence_sources": sum(
+                    len(v.evidence or []) for v in self.votes
+                ),
+            },
         }
 ```
 
@@ -228,9 +264,16 @@ class PreOutputCouncil:
     
     def __init__(
         self,
-        perspectives: Optional[List[IPerspective]] = None,
+        perspectives: Optional[Union[
+            IPerspective,
+            List[Union[IPerspective, PerspectiveType, str]],
+            Dict[Union[PerspectiveType, str], Dict[str, Any]],
+            PerspectiveType,
+            str,
+        ]] = None,
         coherence_threshold: float = 0.6,
         block_threshold: float = 0.3,
+        perspective_config: Optional[Dict[Union[PerspectiveType, str], Dict[str, Any]]] = None,
     ):
         """
         初始化會議系統
@@ -240,7 +283,7 @@ class PreOutputCouncil:
             coherence_threshold: 一致性閾值，低於此值需聲明立場
             block_threshold: 阻擋閾值，低於此值直接阻擋
         """
-        self.perspectives = perspectives or self._default_perspectives()
+        self.perspectives = self._normalize_perspectives(perspectives, perspective_config)
         self.coherence_threshold = coherence_threshold
         self.block_threshold = block_threshold
     
@@ -268,16 +311,16 @@ class PreOutputCouncil:
         # 3. 生成裁決
         return self._generate_verdict(votes, coherence)
     
-    def _default_perspectives(self) -> List[IPerspective]:
-        """返回預設的四視角"""
-        return [
-            GuardianPerspective(),
-            AnalystPerspective(),
-            CriticPerspective(),
-            AdvocatePerspective(),
-        ]
-    
-    def _compute_coherence(self, votes: List[PerspectiveVote]) -> CoherenceScore:
+    def _default_perspectives(
+        self,
+        perspective_config: Optional[Dict[Union[PerspectiveType, str], Dict[str, Any]]] = None,
+    ) -> List[IPerspective]:
+        """Return default perspectives via factory."""
+        from .perspective_factory import PerspectiveFactory
+
+        return PerspectiveFactory.create_council(perspective_config or {})
+
+def _compute_coherence(self, votes: List[PerspectiveVote]) -> CoherenceScore:
         """計算多視角一致性"""
         # 實作 C_inter 公式
         ...

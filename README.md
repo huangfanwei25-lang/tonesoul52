@@ -25,12 +25,12 @@ ToneSoul decouples **Intelligence** (The Brain) from **Governance** (The Soul).
 
 | Layer | Component | Function | Engineering Implementation |
 | :--- | :--- | :--- | :--- |
-| **L0** | **Law** | The Constitution | `body/law/AXIOMS.json` (Immutable Rules) |
-| **L1** | **Spine** | State Controller | `body/spine/controller.py` (Orchestrator) |
-| **L2** | **Brain** | Intelligence | `body/brain/llm_client.py` (Local Ollama / OpenAI) |
-| **L3** | **Sensor** | Telemetry | `body/sensors/telemetry.py` (STREI Vector Analysis) |
-| **L4** | **Ledger** | Protocol | `modules/protocol/ledger.py` (Append-Only Log) |
-| **L5** | **Body** | I/O Interface | `body/dashboard/app.py` (Streamlit / API) |
+| **L0** | **Law** | The Constitution | `law/AXIOMS.json` (Immutable Rules) |
+| **L1** | **Spine** | State Controller | `tonesoul/unified_controller.py` (Orchestrator) |
+| **L2** | **Brain** | Intelligence | `tonesoul/tonesoul_llm.py` (LLM Integration) |
+| **L3** | **Sensor** | Telemetry | `tonesoul/tsr_metrics.py` (STREI Vector Analysis) |
+| **L4** | **Ledger** | Protocol | `ledger.jsonl` (Append-Only Log) |
+| **L5** | **Body** | I/O Interface | `apps/dashboard/frontend/app.py` (Streamlit / API) |
 
 ---
 
@@ -65,7 +65,7 @@ Every input is mapped to a 5-dimensional vector space $V \in \mathbb{R}^5$:
 ### 3. 🔪 Test-Driven Autopoiesis (The Surgeon)
 *   **Feature**: Self-Correction Pipeline.
 *   **Benefit**: The agent can edit its own source code to fix bugs.
-*   **Safety**: Uses a **Constitutional Sandbox** (`body/surgeon/sandbox.py`). All edits must pass `pytest` before being applied.
+*   **Safety**: Uses a test-driven sandbox workflow. All edits must pass `pytest` before being applied.
 
 ---
 
@@ -89,10 +89,8 @@ python apps/dashboard/run_dashboard.py
 ```
 Access the interface at `http://localhost:8501`.
 
-### Run the Dream Engine (Legacy Monolith)
-```bash
-python legacy/archives/ToneSoul-Repo/body/run_dream_cycle.py
-```
+### Legacy Monolith
+This workspace does not include the legacy monolith runner. See `.archive/` if you have archived bundles.
 
 ---
 
@@ -102,7 +100,7 @@ python legacy/archives/ToneSoul-Repo/body/run_dream_cycle.py
 *   `docs/`: canonical docs (see docs/TRUTH_STRUCTURE.md).
 *   `spec/`: formal specs and schemas.
 *   `law/`: constitution, laws, and governance policies.
-*   `legacy/`: archived monoliths and experiments.
+*   `.archive/`, `experiments/`, `examples/`: archived monoliths and experiments.
 *   `memory/`, `reports/`, `run/`, `temp/`: runtime data, logs, and artifacts.
 
 ## 📂 Documentation Structure

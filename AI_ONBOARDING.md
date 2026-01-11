@@ -12,8 +12,8 @@
 
 | 類別 | 正典位置 | ⚠️ 不要看 |
 |------|----------|----------|
-| **Code** | `tonesoul/` | `legacy/`, `src/core/`, `body/`, `.archive/` |
-| **Docs** | `docs/` | `legacy/archives/*/docs/` |
+| **Code** | `tonesoul/` | `.archive/`, `experiments/`, `examples/` |
+| **Docs** | `docs/` | `.archive/` |
 | **Specs** | `spec/` | `legacy/tonesoul-5.2/spec/` |
 | **Tests** | `tests/` (only `tonesoul.*` imports) | `tests/legacy/` |
 
@@ -47,7 +47,7 @@
 
 1. **不要使用 `.archive/` 內任何東西** — 那是歷史遺物，不是可用資源
 2. **不要把歷史文件當作「另一個版本」** — 現在只有一個正典版本
-3. **不要用 `body.*` 或 `core.*` 導入** — 已廢棄且已歸檔
+3. **不要用 `.archive/` 內的模組導入** — 已廢棄且已歸檔
 4. **不要重新發明已有的概念** — 先搜尋現有文檔
 5. **不要修改 `AXIOMS.json`** — 這是不可變的
 
@@ -87,7 +87,7 @@
 ```
 
 > [!WARNING]
-> `.archive/` 包含：`legacy/`, `scripts/`, `tools/`, `run/`, `temp/` 等已歸檔目錄。
+> `.archive/` 包含歷史快照與舊版資產，僅供比對，不是目前的實作來源。
 > 這些目錄的內容**已經過時**，可能與現行架構不兼容。
 
 ---
