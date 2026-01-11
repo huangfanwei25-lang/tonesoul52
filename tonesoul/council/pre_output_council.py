@@ -32,7 +32,6 @@ class PreOutputCouncil:
         )
         self.coherence_threshold = coherence_threshold
         self.block_threshold = block_threshold
-
     def validate(
         self,
         draft_output: str,

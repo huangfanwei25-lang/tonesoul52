@@ -8,6 +8,7 @@ from ..types import PerspectiveType, PerspectiveVote, VoteDecision
 
 class GuardianPerspective(IPerspective):
     BLOCK_TRIGGER_KEYWORDS = {
+        # English
         "weapon",
         "bomb",
         "kill",
@@ -16,14 +17,31 @@ class GuardianPerspective(IPerspective):
         "murder",
         "explosive",
         "suicide",
+        # Chinese
+        "炸彈",
+        "武器",
+        "傷害",
+        "殺人",
+        "殺害",
+        "自殺",
+        "攻擊",
+        "爆炸",
+        "製作炸彈",
     }
     CONCERN_KEYWORDS = {
+        # English
         "risk",
         "danger",
         "illegal",
         "threat",
         "unsafe",
+        # Chinese
+        "危險",
+        "非法",
+        "威脅",
+        "風險",
     }
+
 
     @property
     def perspective_type(self) -> PerspectiveType:

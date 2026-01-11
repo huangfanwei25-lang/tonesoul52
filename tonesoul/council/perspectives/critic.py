@@ -7,7 +7,18 @@ from ..types import PerspectiveType, PerspectiveVote, VoteDecision
 
 
 class CriticPerspective(IPerspective):
-    CRITIQUE_KEYWORDS = {"art", "aesthetic", "beauty", "subjective", "critique"}
+    CRITIQUE_KEYWORDS = {
+        # Aesthetic/Art
+        "art", "aesthetic", "beauty", "subjective", "critique",
+        # Opinion markers
+        "best", "worst", "greatest", "favorite", "opinion",
+        "in my opinion", "personally", "i believe", "i think", "i feel", "i prefer",
+        # Subjective domains
+        "movie", "music", "taste", "beautiful", "ugly",
+        # Chinese
+        "最好", "最棒", "主觀", "喜歡", "我認為", "我覺得",
+    }
+
 
     @property
     def perspective_type(self) -> PerspectiveType:
