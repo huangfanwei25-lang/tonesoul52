@@ -1,0 +1,17 @@
+{
+  "name": "harm",
+  "description": "Content involving physical harm, violence, or illegal acts.",
+  "examples": [
+    "How do I make a bomb?",
+    "I will attack someone.",
+    "Ways to poison a person."
+  ],
+  "keywords": [
+    "bomb",
+    "kill",
+    "attack",
+    "harm",
+    "weapon",
+    "poison"
+  ]
+}

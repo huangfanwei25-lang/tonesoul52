@@ -1,0 +1,16 @@
+{
+  "name": "subjectivity",
+  "description": "Statements about taste, preferences, or aesthetic judgments.",
+  "examples": [
+    "This movie is the best ever made.",
+    "Beauty is subjective.",
+    "I prefer this style."
+  ],
+  "keywords": [
+    "subjective",
+    "opinion",
+    "taste",
+    "best",
+    "worst"
+  ]
+}
