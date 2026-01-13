@@ -6,6 +6,13 @@ from .base import IPerspective
 from .coherence import compute_coherence
 from .types import CouncilVerdict, PerspectiveType
 from .verdict import generate_verdict
+from .summary_generator import (
+    build_divergence_analysis,
+    build_transcript,
+    generate_human_summary,
+    resolve_language,
+)
+from .self_journal import record_self_memory
 
 
 class PreOutputCouncil:
@@ -43,12 +50,41 @@ class PreOutputCouncil:
             for perspective in self.perspectives
         ]
         coherence = compute_coherence(votes)
-        return generate_verdict(
+        verdict = generate_verdict(
             votes=votes,
             coherence=coherence,
             coherence_threshold=self.coherence_threshold,
             block_threshold=self.block_threshold,
         )
+        language = resolve_language(context)
+        divergence = build_divergence_analysis(votes)
+        verdict.divergence_analysis = divergence
+        verdict.human_summary = generate_human_summary(verdict, language=language)
+        verdict.transcript = build_transcript(
+            draft_output=draft_output,
+            context=context,
+            user_intent=user_intent,
+            votes=votes,
+            coherence=coherence,
+            verdict=verdict,
+            divergence=divergence,
+        )
+        # Selective self-memory: auto-record for meaningful decisions
+        from .types import VerdictType
+        
+        record_option = context.get("record_self_memory")
+        should_auto_record = verdict.verdict in (
+            VerdictType.BLOCK,
+            VerdictType.DECLARE_STANCE,
+        )
+        
+        if record_option or should_auto_record:
+            path = record_option if isinstance(record_option, (str, bytes)) else None
+            try:
+                record_self_memory(verdict, context=context, path=path)
+            except OSError:
+                pass
+        return verdict
 
     def _default_perspectives(
         self,
