@@ -28,6 +28,7 @@ from .perspectives.guardian import GuardianPerspective
 from .perspectives.analyst import AnalystPerspective
 from .perspectives.critic import CriticPerspective
 from .perspectives.advocate import AdvocatePerspective
+from .perspectives.semantic_analyst import SemanticAnalystPerspective
 from .types import PerspectiveType, PerspectiveVote, VoteDecision
 
 PerspectiveId = Union[PerspectiveType, str]
@@ -243,6 +244,7 @@ class PerspectiveFactory:
         "analyst": AnalystPerspective,
         "critic": CriticPerspective,
         "advocate": AdvocatePerspective,
+        "semantic_analyst": SemanticAnalystPerspective,
     }
 
     @classmethod
