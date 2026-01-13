@@ -75,6 +75,9 @@ class CouncilVerdict:
     summary: str
     stance_declaration: Optional[str] = None
     refinement_hints: Optional[List[str]] = None
+    transcript: Optional[dict] = None
+    human_summary: Optional[str] = None
+    divergence_analysis: Optional[dict] = None
 
     def to_dict(self) -> dict:
         """
@@ -117,4 +120,7 @@ class CouncilVerdict:
                     len(v.evidence or []) for v in self.votes
                 ),
             },
+            "transcript": self.transcript or {},
+            "human_summary": self.human_summary,
+            "divergence_analysis": self.divergence_analysis or {},
         }

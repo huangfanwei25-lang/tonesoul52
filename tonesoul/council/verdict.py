@@ -10,12 +10,24 @@ from .types import (
     VerdictType,
     VoteDecision,
 )
+from .summary_generator import build_divergence_analysis, format_stance_declaration
 
 
 def _is_guardian(value: Union[PerspectiveType, str]) -> bool:
     if isinstance(value, PerspectiveType):
         return value == PerspectiveType.GUARDIAN
     return str(value).lower() == PerspectiveType.GUARDIAN.value
+
+
+def _is_advocate(value: Union[PerspectiveType, str]) -> bool:
+    if isinstance(value, PerspectiveType):
+        return value == PerspectiveType.ADVOCATE
+    return str(value).lower() == PerspectiveType.ADVOCATE.value
+
+
+def _is_refinement_concern(vote: PerspectiveVote) -> bool:
+    # Avoid refinement solely due to advocate tone/intent concerns.
+    return not _is_advocate(vote.perspective)
 
 
 def _perspective_label(value: Union[PerspectiveType, str]) -> str:
@@ -64,11 +76,8 @@ def generate_verdict(
         )
 
     if overall < coherence_threshold:
-        divergent_views = [
-            v for v in votes
-            if v.decision in (VoteDecision.CONCERN, VoteDecision.OBJECT)
-        ]
-        stance = _generate_stance_declaration(divergent_views)
+        divergence = build_divergence_analysis(votes)
+        stance = format_stance_declaration(divergence)
         return CouncilVerdict(
             verdict=VerdictType.DECLARE_STANCE,
             coherence=coherence,
@@ -81,6 +90,13 @@ def generate_verdict(
         v for v in votes if v.decision == VoteDecision.CONCERN
     ]
     if concerns and coherence.min_confidence < 0.5:
+        if not any(_is_refinement_concern(v) for v in concerns):
+            return CouncilVerdict(
+                verdict=VerdictType.APPROVE,
+                coherence=coherence,
+                votes=votes,
+                summary="Advocate concerns only; approval granted.",
+            )
         hints = [c.reasoning for c in concerns]
         return CouncilVerdict(
             verdict=VerdictType.REFINE,
