@@ -259,7 +259,7 @@ async function loadMemories() {
     const container = document.getElementById('memories-container');
     if (!container) return;
 
-    container.innerHTML = '<p class="loading">Loading memories...</p>';
+    container.innerHTML = '<p class="loading">載入記憶中...</p>';
 
     try {
         const response = await fetch('http://localhost:5000/api/memories?limit=10');
@@ -267,7 +267,7 @@ async function loadMemories() {
         displayMemories(data.memories);
     } catch (error) {
         console.error('Failed to load memories:', error);
-        container.innerHTML = '<p class="no-data">Failed to load memories. Is the server running?</p>';
+        container.innerHTML = '<p class="no-data">載入記憶失敗。請確認伺服器是否在運行？</p>';
     }
 }
 
@@ -276,18 +276,18 @@ function displayMemories(memories) {
     if (!container) return;
 
     if (!memories || memories.length === 0) {
-        container.innerHTML = '<p class="no-data">No memories recorded yet. Try validating some content first!</p>';
+        container.innerHTML = '<p class="no-data">尚無記憶記錄。請先審議一些內容！</p>';
         return;
     }
 
     container.innerHTML = memories.map(m => `
         <div class="memory-card verdict-${m.verdict}">
             <div class="memory-header">
-                <span class="memory-verdict">${getVerdictIcon(m.verdict)} ${m.verdict.toUpperCase()}</span>
-                <span class="memory-time">${new Date(m.timestamp).toLocaleString()}</span>
+                <span class="memory-verdict">${getVerdictIcon(m.verdict)} ${getVerdictLabel(m.verdict)}</span>
+                <span class="memory-time">${new Date(m.timestamp).toLocaleString('zh-TW')}</span>
             </div>
-            <p class="memory-statement">${m.self_statement || m.human_summary || 'No summary'}</p>
-            ${m.core_divergence ? `<p class="memory-divergence">Divergence: ${m.core_divergence}</p>` : ''}
+            <p class="memory-statement">${m.self_statement || m.human_summary || '無摘要'}</p>
+            ${m.core_divergence ? `<p class="memory-divergence">分歧來源：${m.core_divergence}</p>` : ''}
         </div>
     `).join('');
 }
@@ -297,7 +297,7 @@ async function loadConsolidation() {
     const container = document.getElementById('consolidation-container');
     if (!container) return;
 
-    container.innerHTML = '<p class="loading">Running memory consolidation...</p>';
+    container.innerHTML = '<p class="loading">正在整合記憶...</p>';
 
     try {
         const response = await fetch('http://localhost:5000/api/consolidate');
@@ -305,7 +305,7 @@ async function loadConsolidation() {
         displayConsolidation(data);
     } catch (error) {
         console.error('Failed to load consolidation:', error);
-        container.innerHTML = '<p class="no-data">Failed to run consolidation. Is the server running?</p>';
+        container.innerHTML = '<p class="no-data">整合記憶失敗。請確認伺服器是否在運行？</p>';
     }
 }
 
@@ -317,31 +317,31 @@ function displayConsolidation(data) {
 
     container.innerHTML = `
         <div class="consolidation-stats">
-            <h4>📊 Statistics</h4>
+            <h4>📊 統計數據</h4>
             <div class="stat-item">
-                <span class="stat-label">Total Memories</span>
+                <span class="stat-label">記憶總數</span>
                 <span class="stat-value">${p.total || 0}</span>
             </div>
             <div class="stat-item">
-                <span class="stat-label">Blocks</span>
+                <span class="stat-label">阻止次數</span>
                 <span class="stat-value">${p.block || 0}</span>
             </div>
             <div class="stat-item">
-                <span class="stat-label">Stances</span>
+                <span class="stat-label">宣告立場次數</span>
                 <span class="stat-value">${p.declare_stance || 0}</span>
             </div>
             <div class="stat-item">
-                <span class="stat-label">Avg Coherence</span>
+                <span class="stat-label">平均一致性</span>
                 <span class="stat-value">${((p.average_coherence || 0) * 100).toFixed(1)}%</span>
             </div>
             <div class="stat-item">
-                <span class="stat-label">Common Divergence</span>
-                <span class="stat-value">${p.most_common_divergence || 'None'}</span>
+                <span class="stat-label">最常見分歧來源</span>
+                <span class="stat-value">${p.most_common_divergence || '無'}</span>
             </div>
         </div>
         <div class="consolidation-reflection">
-            <h4>💭 Self-Reflection</h4>
-            <pre class="reflection-text">${data.meta_reflection || 'No reflection available.'}</pre>
+            <h4>💭 自我反思</h4>
+            <pre class="reflection-text">${data.meta_reflection || '尚無反思可用。'}</pre>
         </div>
     `;
 }
