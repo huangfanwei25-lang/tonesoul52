@@ -29,6 +29,12 @@ def index():
     return app.send_static_file('index.html')
 
 
+@app.route('/chat')
+def chat_page():
+    """Serve the chat frontend."""
+    return app.send_static_file('chat.html')
+
+
 @app.route('/api/validate', methods=['POST'])
 def validate():
     """Run PreOutputCouncil on input text."""
@@ -74,7 +80,78 @@ def get_consolidation():
 @app.route('/api/health', methods=['GET'])
 def health():
     """Health check endpoint."""
-    return jsonify({'status': 'ok', 'version': '0.5.0'})
+    return jsonify({'status': 'ok', 'version': '0.6.0'})
+
+
+# ===== Chat Endpoint with Gemini =====
+gemini_client = None
+
+def get_gemini_client():
+    """Lazy-load Gemini client."""
+    global gemini_client
+    if gemini_client is None:
+        try:
+            from tonesoul.llm import create_gemini_client
+            gemini_client = create_gemini_client()
+        except Exception as e:
+            print(f"Gemini client error: {e}")
+            return None
+    return gemini_client
+
+
+@app.route('/api/chat', methods=['POST'])
+def chat():
+    """Chat endpoint with Gemini + Council oversight."""
+    data = request.get_json()
+    message = data.get('message', '')
+    history = data.get('history', [])
+    generate_reasoning = data.get('generate_reasoning', True)
+    
+    client = get_gemini_client()
+    if client is None:
+        return jsonify({
+            'error': '無法連接 Gemini。請確認 GEMINI_API_KEY 環境變數已設定。',
+            'response': None,
+        }), 500
+    
+    try:
+        # 1. Start chat with history
+        client.start_chat(history)
+        
+        # 2. Generate response
+        response = client.send_message(message)
+        
+        # 3. Council validates
+        verdict = council.validate(response, context={'language': 'zh'})
+        verdict_dict = verdict.to_dict()
+        
+        # 4. Handle verdict
+        final_response = response
+        if verdict.verdict.name == 'BLOCK':
+            final_response = "抱歉，我無法這樣回應。這個請求觸發了我的安全審議。"
+        elif verdict.verdict.name == 'DECLARE_STANCE':
+            final_response = f"[這是我的個人看法]\n\n{response}"
+        
+        # 5. Generate narrative reasoning (optional)
+        inner_reasoning = None
+        if generate_reasoning and verdict.verdict.name in ['DECLARE_STANCE', 'BLOCK', 'REFINE']:
+            try:
+                from tonesoul.llm import generate_narrative_reasoning
+                inner_reasoning = generate_narrative_reasoning(client, verdict_dict)
+            except Exception as e:
+                inner_reasoning = f"(推理生成失敗: {e})"
+        
+        return jsonify({
+            'response': final_response,
+            'verdict': verdict_dict,
+            'inner_reasoning': inner_reasoning,
+        })
+    
+    except Exception as e:
+        return jsonify({
+            'error': f'聊天失敗: {str(e)}',
+            'response': None,
+        }), 500
 
 
 if __name__ == '__main__':
