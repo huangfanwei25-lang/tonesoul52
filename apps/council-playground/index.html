@@ -1,14 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>語魂 Council Playground</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <div class="app">
         <!-- Header -->
@@ -23,6 +27,13 @@
                 <a href="https://github.com/Fan1234-1/tonesoul52" class="nav-link" target="_blank">GitHub</a>
             </nav>
         </header>
+
+        <!-- Tab Navigation -->
+        <div class="tab-nav">
+            <button class="tab-btn active" data-tab="validate">⚡ Validate</button>
+            <button class="tab-btn" data-tab="memories">📖 Memories</button>
+            <button class="tab-btn" data-tab="consolidation">💭 Self-Reflection</button>
+        </div>
 
         <!-- Main Content -->
         <main class="main">
@@ -93,6 +104,24 @@
                     <pre class="transcript-json" id="transcript-json">{}</pre>
                 </details>
             </section>
+
+            <!-- Memory Section -->
+            <section class="memory-section" id="memory-section" style="display: none;">
+                <h2 class="section-title">📖 Self-Memory Journal</h2>
+                <p class="section-desc">These are my recorded memories of meaningful decisions.</p>
+                <div id="memories-container" class="memories-container">
+                    <p class="loading">Loading memories...</p>
+                </div>
+            </section>
+
+            <!-- Consolidation Section -->
+            <section class="consolidation-section" id="consolidation-section" style="display: none;">
+                <h2 class="section-title">💭 Memory Consolidation</h2>
+                <p class="section-desc">My self-reflection based on accumulated memories.</p>
+                <div id="consolidation-container" class="consolidation-container">
+                    <p class="loading">Running memory consolidation...</p>
+                </div>
+            </section>
         </main>
 
         <!-- Footer -->
@@ -103,4 +132,5 @@
 
     <script src="app.js"></script>
 </body>
+
 </html>

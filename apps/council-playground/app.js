@@ -1,8 +1,8 @@
 // ===== Council Playground App =====
 
 // Configuration
-const API_ENDPOINT = '/api/validate'; // Will be replaced with actual endpoint
-const MOCK_MODE = true; // Use mock data for demo
+const API_ENDPOINT = 'http://localhost:5000/api/validate';
+const MOCK_MODE = false; // Connect to real backend
 
 // State
 let currentLanguage = 'zh';
@@ -253,3 +253,135 @@ function getVoteIcon(perspective) {
     if (perspective.includes('Advocate')) return '💬';
     return '👤';
 }
+
+// ===== Memory Functions =====
+async function loadMemories() {
+    const container = document.getElementById('memories-container');
+    if (!container) return;
+
+    container.innerHTML = '<p class="loading">Loading memories...</p>';
+
+    try {
+        const response = await fetch('http://localhost:5000/api/memories?limit=10');
+        const data = await response.json();
+        displayMemories(data.memories);
+    } catch (error) {
+        console.error('Failed to load memories:', error);
+        container.innerHTML = '<p class="no-data">Failed to load memories. Is the server running?</p>';
+    }
+}
+
+function displayMemories(memories) {
+    const container = document.getElementById('memories-container');
+    if (!container) return;
+
+    if (!memories || memories.length === 0) {
+        container.innerHTML = '<p class="no-data">No memories recorded yet. Try validating some content first!</p>';
+        return;
+    }
+
+    container.innerHTML = memories.map(m => `
+        <div class="memory-card verdict-${m.verdict}">
+            <div class="memory-header">
+                <span class="memory-verdict">${getVerdictIcon(m.verdict)} ${m.verdict.toUpperCase()}</span>
+                <span class="memory-time">${new Date(m.timestamp).toLocaleString()}</span>
+            </div>
+            <p class="memory-statement">${m.self_statement || m.human_summary || 'No summary'}</p>
+            ${m.core_divergence ? `<p class="memory-divergence">Divergence: ${m.core_divergence}</p>` : ''}
+        </div>
+    `).join('');
+}
+
+// ===== Consolidation Functions =====
+async function loadConsolidation() {
+    const container = document.getElementById('consolidation-container');
+    if (!container) return;
+
+    container.innerHTML = '<p class="loading">Running memory consolidation...</p>';
+
+    try {
+        const response = await fetch('http://localhost:5000/api/consolidate');
+        const data = await response.json();
+        displayConsolidation(data);
+    } catch (error) {
+        console.error('Failed to load consolidation:', error);
+        container.innerHTML = '<p class="no-data">Failed to run consolidation. Is the server running?</p>';
+    }
+}
+
+function displayConsolidation(data) {
+    const container = document.getElementById('consolidation-container');
+    if (!container) return;
+
+    const p = data.patterns || {};
+
+    container.innerHTML = `
+        <div class="consolidation-stats">
+            <h4>📊 Statistics</h4>
+            <div class="stat-item">
+                <span class="stat-label">Total Memories</span>
+                <span class="stat-value">${p.total || 0}</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Blocks</span>
+                <span class="stat-value">${p.block || 0}</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Stances</span>
+                <span class="stat-value">${p.declare_stance || 0}</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Avg Coherence</span>
+                <span class="stat-value">${((p.average_coherence || 0) * 100).toFixed(1)}%</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Common Divergence</span>
+                <span class="stat-value">${p.most_common_divergence || 'None'}</span>
+            </div>
+        </div>
+        <div class="consolidation-reflection">
+            <h4>💭 Self-Reflection</h4>
+            <pre class="reflection-text">${data.meta_reflection || 'No reflection available.'}</pre>
+        </div>
+    `;
+}
+
+// ===== Tab Switching =====
+function initTabs() {
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Update active tab
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const tab = btn.dataset.tab;
+
+            // Hide all sections
+            document.querySelector('.input-section').style.display = 'none';
+            document.getElementById('result-section').style.display = 'none';
+            const memSection = document.getElementById('memory-section');
+            const consSection = document.getElementById('consolidation-section');
+            if (memSection) memSection.style.display = 'none';
+            if (consSection) consSection.style.display = 'none';
+
+            // Show selected section
+            if (tab === 'validate') {
+                document.querySelector('.input-section').style.display = 'block';
+            } else if (tab === 'memories') {
+                if (memSection) {
+                    memSection.style.display = 'block';
+                    loadMemories();
+                }
+            } else if (tab === 'consolidation') {
+                if (consSection) {
+                    consSection.style.display = 'block';
+                    loadConsolidation();
+                }
+            }
+        });
+    });
+}
+
+// Initialize tabs on load
+document.addEventListener('DOMContentLoaded', initTabs);
+
