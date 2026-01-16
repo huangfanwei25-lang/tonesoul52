@@ -1,6 +1,7 @@
 ﻿import json
 import os
 import subprocess
+import sys
 from dataclasses import asdict
 from typing import Dict, List, Optional
 
@@ -26,7 +27,8 @@ def _check_imports() -> List[Dict[str, object]]:
 
 
 def _python_version() -> str:
-    return subprocess.check_output(["python", "-V"], text=True).strip()
+    # Use sys.executable for security (B607 fix)
+    return subprocess.check_output([sys.executable, "-V"], text=True).strip()
 
 
 def _latest_seed_path(memory_root: str) -> Optional[str]:

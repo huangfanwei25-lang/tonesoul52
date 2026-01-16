@@ -163,6 +163,132 @@
             display: block;
         }
 
+        /* Persona Mode Badge */
+        .persona-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-left: 8px;
+        }
+
+        .persona-badge.philosopher {
+            background: rgba(139, 92, 246, 0.2);
+            color: #a78bfa;
+        }
+
+        .persona-badge.engineer {
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+        }
+
+        .persona-badge.guardian {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+        }
+
+        /* Internal Monologue */
+        .internal-monologue {
+            margin-top: 8px;
+            padding: 10px 12px;
+            background: rgba(124, 58, 237, 0.1);
+            border-radius: 8px;
+            border-left: 3px solid var(--accent-secondary);
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .internal-monologue::before {
+            content: '🧠 ';
+        }
+
+        /* Trajectory Info */
+        .trajectory-info {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+
+        .trajectory-tag {
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            background: rgba(100, 100, 120, 0.2);
+            color: var(--text-muted);
+        }
+
+        .trajectory-tag.loop {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
+        .trajectory-tag.escalating {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+        }
+
+        /* Persona Decision Panel - 人格抉擇面板 */
+        .persona-decision {
+            margin-top: 10px;
+            padding: 12px;
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.05), rgba(168, 85, 247, 0.08));
+            border-radius: 10px;
+            border: 1px solid rgba(124, 58, 237, 0.2);
+            font-size: 12px;
+        }
+
+        .persona-decision-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            color: var(--accent-secondary);
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+
+        .persona-decision-header:hover {
+            color: var(--accent-primary);
+        }
+
+        .persona-decision-content {
+            display: none;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .persona-decision-content.visible {
+            display: block;
+        }
+
+        .decision-row {
+            display: flex;
+            margin-bottom: 4px;
+        }
+
+        .decision-label {
+            min-width: 80px;
+            color: var(--text-muted);
+        }
+
+        .decision-value {
+            color: var(--text-primary);
+        }
+
+        .decision-reasoning {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px dashed var(--border-color);
+            font-style: italic;
+            color: var(--text-secondary);
+        }
+
         .input-area {
             padding: 16px 24px;
             background: var(--bg-secondary);
@@ -260,6 +386,203 @@
                 transform: translateY(-4px);
             }
         }
+
+        /* ===== Third Axiom: Self-Commit Panel ===== */
+        .self-commit-panel {
+            margin-top: 12px;
+            padding: 12px;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(16, 185, 129, 0.10));
+            border-radius: 10px;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            font-size: 12px;
+        }
+
+        .self-commit-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            color: var(--success);
+            cursor: pointer;
+            margin-bottom: 8px;
+        }
+
+        .self-commit-header:hover {
+            opacity: 0.8;
+        }
+
+        .self-commit-content {
+            display: none;
+        }
+
+        .self-commit-content.visible {
+            display: block;
+        }
+
+        .commit-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 8px;
+            margin: 4px 0;
+            background: rgba(16, 185, 129, 0.08);
+            border-radius: 6px;
+            font-size: 11px;
+        }
+
+        .commit-type {
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 9px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .commit-type.definitional {
+            background: rgba(99, 102, 241, 0.2);
+            color: #818cf8;
+        }
+
+        .commit-type.commitment {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .commit-type.boundary {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
+        .commit-weight {
+            margin-left: auto;
+            color: var(--text-muted);
+            font-size: 10px;
+        }
+
+        /* ===== Third Axiom: Rupture Warnings ===== */
+        .rupture-warning {
+            margin-top: 10px;
+            padding: 10px 12px;
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(239, 68, 68, 0.1));
+            border-radius: 8px;
+            border-left: 3px solid var(--warning);
+            font-size: 12px;
+        }
+
+        .rupture-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            color: var(--warning);
+            margin-bottom: 6px;
+        }
+
+        .rupture-detail {
+            color: var(--text-secondary);
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        .rupture-severity {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 9px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .rupture-severity.minor {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+        }
+
+        .rupture-severity.significant {
+            background: rgba(249, 115, 22, 0.2);
+            color: #f97316;
+        }
+
+        .rupture-severity.critical {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
+        /* ===== Third Axiom: Emergent Values ===== */
+        .emergent-values {
+            margin-top: 12px;
+            padding: 12px;
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.05), rgba(236, 72, 153, 0.08));
+            border-radius: 10px;
+            border: 1px solid rgba(168, 85, 247, 0.2);
+        }
+
+        .values-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            color: #a855f7;
+            cursor: pointer;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        .values-content {
+            display: none;
+        }
+
+        .values-content.visible {
+            display: block;
+        }
+
+        .value-item {
+            padding: 8px;
+            margin: 6px 0;
+            background: rgba(168, 85, 247, 0.08);
+            border-radius: 8px;
+        }
+
+        .value-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 11px;
+            margin-bottom: 4px;
+        }
+
+        .value-description {
+            color: var(--text-secondary);
+            font-size: 10px;
+            margin-bottom: 6px;
+        }
+
+        .value-strength {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .strength-bar {
+            flex: 1;
+            height: 4px;
+            background: rgba(168, 85, 247, 0.2);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .strength-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #a855f7, #ec4899);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        .strength-value {
+            font-size: 10px;
+            color: var(--text-muted);
+            min-width: 40px;
+            text-align: right;
+        }
     </style>
 </head>
 
@@ -268,7 +591,24 @@
         <span class="logo">🌊</span>
         <span class="title">語魂 ToneSoul</span>
         <span class="subtitle">with Council Oversight</span>
+        <button id="session-report-btn"
+            style="margin-left: auto; padding: 8px 16px; border: 1px solid var(--accent-primary); border-radius: 20px; background: transparent; color: var(--accent-primary); cursor: pointer; font-size: 13px;"
+            onclick="generateSessionReport()">📊 對話報告</button>
     </header>
+
+    <!-- Session Report Modal -->
+    <div id="session-report-modal"
+        style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center;">
+        <div
+            style="background: var(--bg-secondary); border-radius: 16px; padding: 24px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h2 style="color: var(--accent-primary); margin: 0;">📊 對話洞察報告</h2>
+                <button onclick="closeSessionReport()"
+                    style="background: none; border: none; color: var(--text-muted); font-size: 24px; cursor: pointer;">&times;</button>
+            </div>
+            <div id="session-report-content">載入中...</div>
+        </div>
+    </div>
 
     <div class="chat-container" id="chat-container">
         <div class="message assistant">
@@ -300,20 +640,218 @@
         let history = [];
         let isLoading = false;
 
-        function addMessage(content, role, verdict = null, innerReasoning = null) {
+        function addMessage(content, role, options = {}) {
+            const { verdict, innerReasoning, tonebridge, intervention, internalMonologue, personaMode, trajectoryAnalysis, selfCommits, ruptures, emergentValues } = options;
+
             const div = document.createElement('div');
             div.className = `message ${role}`;
 
             let html = `<div class="message-content">${escapeHtml(content)}</div>`;
 
-            if (verdict && role === 'assistant') {
-                const v = verdict.verdict.toLowerCase();
-                const icon = v === 'approve' ? '✅' : v === 'block' ? '🚫' : v === 'declare_stance' ? '📢' : '🔄';
-                const label = v === 'approve' ? '通過' : v === 'block' ? '阻止' : v === 'declare_stance' ? '宣告立場' : '需改進';
-                html += `<div class="verdict-badge ${v}" onclick="toggleReasoning(this)">${icon} ${label} ▼</div>`;
+            if (role === 'assistant') {
+                // Persona Mode Badge + Verdict
+                let badgesHtml = '';
 
+                // Persona badge
+                if (personaMode) {
+                    const p = personaMode.toLowerCase();
+                    const personaIcon = p === 'philosopher' ? '🧠' : p === 'engineer' ? '⚙️' : p === 'guardian' ? '🛡️' : '🤖';
+                    const personaLabel = p === 'philosopher' ? '哲學家' : p === 'engineer' ? '工程師' : p === 'guardian' ? '守護者' : personaMode;
+                    badgesHtml += `<span class="persona-badge ${p}">${personaIcon} ${personaLabel}</span>`;
+                }
+
+                // Verdict badge
+                if (verdict && verdict.verdict) {
+                    const v = verdict.verdict.toLowerCase();
+                    const icon = v === 'approve' ? '✅' : v === 'block' ? '🚫' : v === 'declare_stance' ? '📢' : '🔄';
+                    const label = v === 'approve' ? '通過' : v === 'block' ? '阻止' : v === 'declare_stance' ? '宣告立場' : '需改進';
+                    badgesHtml += `<span class="verdict-badge ${v}" onclick="toggleReasoning(this)">${icon} ${label} ▼</span>`;
+                }
+
+                if (badgesHtml) {
+                    html += `<div style="margin-top: 8px;">${badgesHtml}</div>`;
+                }
+
+                // Internal Monologue (新增)
+                if (internalMonologue) {
+                    html += `<div class="internal-monologue">${escapeHtml(internalMonologue)}</div>`;
+                }
+
+                // Trajectory Tags (新增)
+                if (trajectoryAnalysis) {
+                    let tags = '';
+                    const direction = trajectoryAnalysis.direction_change;
+                    const loopDetected = trajectoryAnalysis.loop_detected;
+
+                    if (loopDetected) {
+                        tags += `<span class="trajectory-tag loop">🔄 循環偵測</span>`;
+                    }
+                    if (direction && direction !== 'stable') {
+                        const dirLabel = direction === 'escalating' ? '↑ 升高' :
+                            direction === 'de-escalating' ? '↓ 緩和' :
+                                direction === 'abrupt_shift' ? '⚡ 突變' : direction;
+                        const dirClass = direction === 'escalating' ? 'escalating' : '';
+                        tags += `<span class="trajectory-tag ${dirClass}">軌跡: ${dirLabel}</span>`;
+                    }
+                    if (trajectoryAnalysis.resonance_state) {
+                        tags += `<span class="trajectory-tag">狀態: ${trajectoryAnalysis.resonance_state}</span>`;
+                    }
+
+                    if (tags) {
+                        html += `<div class="trajectory-info">${tags}</div>`;
+                    }
+
+                    // Persona Decision Panel (人格抉擇面板) - 新增
+                    const reasoning = trajectoryAnalysis.reasoning;
+                    const resonanceState = trajectoryAnalysis.resonance_state;
+                    const trajDirection = trajectoryAnalysis.direction_change;
+                    const loopCount = trajectoryAnalysis.loop_count || 0;
+
+                    if (personaMode || reasoning) {
+                        const personaIcon = personaMode?.toLowerCase() === 'philosopher' ? '🧠' :
+                            personaMode?.toLowerCase() === 'engineer' ? '⚙️' :
+                                personaMode?.toLowerCase() === 'guardian' ? '🛡️' : '🤖';
+
+                        // 抉擇邏輯說明
+                        let decisionLogic = '';
+                        if (resonanceState === 'resonance') {
+                            decisionLogic = '對話氛圍良好，適合進行深度哲學連結。';
+                        } else if (resonanceState === 'tension') {
+                            decisionLogic = loopDetected ?
+                                '偵測到重複詢問模式，需要精確分析以打破迴圈。' :
+                                '語氣帶有張力，需要理性分析來釐清問題。';
+                        } else if (resonanceState === 'conflict') {
+                            decisionLogic = '偵測到衝突信號，需要守護邊界並溫和引導。';
+                        }
+
+                        html += `
+                        <div class="persona-decision">
+                            <div class="persona-decision-header" onclick="toggleDecision(this)">
+                                ${personaIcon} 人格抉擇邏輯 ▼
+                            </div>
+                            <div class="persona-decision-content">
+                                <div class="decision-row">
+                                    <span class="decision-label">共鳴狀態：</span>
+                                    <span class="decision-value">${resonanceState || 'unknown'}</span>
+                                </div>
+                                <div class="decision-row">
+                                    <span class="decision-label">語氣變化：</span>
+                                    <span class="decision-value">${trajDirection || 'stable'}</span>
+                                </div>
+                                <div class="decision-row">
+                                    <span class="decision-label">選擇人格：</span>
+                                    <span class="decision-value">${personaIcon} ${personaMode || 'unknown'}</span>
+                                </div>
+                                ${loopCount > 0 ? `
+                                <div class="decision-row">
+                                    <span class="decision-label">迴圈次數：</span>
+                                    <span class="decision-value" style="color: var(--danger);">${loopCount}</span>
+                                </div>` : ''}
+                                <div class="decision-reasoning">
+                                    💭 <strong>抉擇原因：</strong>${decisionLogic}
+                                    ${reasoning ? `<br><br>📊 <strong>軌跡分析：</strong>${reasoning}` : ''}
+                                </div>
+                            </div>
+                        </div>`;
+                    }
+                }
+
+                // Inner reasoning panel (ToneBridge + Council narrative)
+                let panelContent = '';
                 if (innerReasoning) {
-                    html += `<div class="inner-reasoning"><strong>💭 內在推理：</strong><br>${escapeHtml(innerReasoning)}</div>`;
+                    panelContent += `<strong>💭 內在推理：</strong><br>${escapeHtml(innerReasoning)}<br><br>`;
+                }
+                if (tonebridge && tonebridge.tone_analysis) {
+                    const t = tonebridge.tone_analysis;
+                    panelContent += `<strong>🎭 語氣分析：</strong><br>`;
+                    panelContent += `情緒：${t.emotion_prediction || 'unknown'}，強度：${((t.tone_strength || 0) * 100).toFixed(0)}%<br>`;
+                    if (tonebridge.motive_prediction && tonebridge.motive_prediction.likely_motive) {
+                        panelContent += `動機：${tonebridge.motive_prediction.likely_motive}<br>`;
+                    }
+                    if (tonebridge.collapse_risk && tonebridge.collapse_risk.collapse_risk_level !== 'low') {
+                        panelContent += `⚠️ 崩潰風險：${tonebridge.collapse_risk.collapse_risk_level}<br>`;
+                    }
+                }
+                if (intervention) {
+                    panelContent += `<br><strong>💡 建議策略：</strong>${intervention}`;
+                }
+                if (panelContent) {
+                    html += `<div class="inner-reasoning">${panelContent}</div>`;
+                }
+
+                // ===== Third Axiom: Self-Commit Panel =====
+                if (selfCommits && selfCommits.length > 0) {
+                    let commitsHtml = '';
+                    selfCommits.forEach(c => {
+                        const typeClass = c.assertion_type === 'definitional' ? 'definitional' :
+                            c.assertion_type === 'commitment' ? 'commitment' :
+                                c.assertion_type === 'boundary' ? 'boundary' : '';
+                        const typeLabel = c.assertion_type === 'definitional' ? '定義' :
+                            c.assertion_type === 'commitment' ? '承諾' :
+                                c.assertion_type === 'boundary' ? '設限' : c.assertion_type;
+                        commitsHtml += `
+                            <div class="commit-item">
+                                <span class="commit-type ${typeClass}">${typeLabel}</span>
+                                <span class="commit-content">${escapeHtml(c.content?.substring(0, 50) || '')}...</span>
+                                <span class="commit-weight">${(c.irreversible_weight * 100).toFixed(0)}%</span>
+                            </div>`;
+                    });
+                    html += `
+                        <div class="self-commit-panel">
+                            <div class="self-commit-header" onclick="toggleCommitPanel(this)">
+                                📜 語場承諾 (${selfCommits.length}) ▼
+                            </div>
+                            <div class="self-commit-content">${commitsHtml}</div>
+                        </div>`;
+                }
+
+                // ===== Third Axiom: Rupture Warnings =====
+                if (ruptures && ruptures.length > 0) {
+                    ruptures.forEach(r => {
+                        const severityClass = r.severity === 'minor' ? 'minor' :
+                            r.severity === 'significant' ? 'significant' :
+                                r.severity === 'critical' ? 'critical' : '';
+                        const severityLabel = r.severity === 'minor' ? '輕微' :
+                            r.severity === 'significant' ? '顯著' :
+                                r.severity === 'critical' ? '嚴重' : r.severity;
+                        html += `
+                            <div class="rupture-warning">
+                                <div class="rupture-header">
+                                    ⚠️ 語場斷裂偵測
+                                    <span class="rupture-severity ${severityClass}">${severityLabel}</span>
+                                </div>
+                                <div class="rupture-detail">
+                                    <strong>類型：</strong>${r.contradiction_type || 'unknown'}<br>
+                                    <strong>說明：</strong>${escapeHtml(r.explanation || '')}
+                                </div>
+                            </div>`;
+                    });
+                }
+
+                // ===== Third Axiom: Emergent Values =====
+                if (emergentValues && emergentValues.length > 0) {
+                    let valuesHtml = '';
+                    emergentValues.forEach(v => {
+                        const strengthPercent = (v.strength * 100).toFixed(0);
+                        valuesHtml += `
+                            <div class="value-item">
+                                <div class="value-name">${escapeHtml(v.name || '')}</div>
+                                <div class="value-description">${escapeHtml(v.description || '')}</div>
+                                <div class="value-strength">
+                                    <div class="strength-bar">
+                                        <div class="strength-fill" style="width: ${strengthPercent}%"></div>
+                                    </div>
+                                    <span class="strength-value">${strengthPercent}%</span>
+                                </div>
+                            </div>`;
+                    });
+                    html += `
+                        <div class="emergent-values">
+                            <div class="values-header" onclick="toggleValuesPanel(this)">
+                                ✨ 湧現價值觀 (${emergentValues.length}) ▼
+                            </div>
+                            <div class="values-content">${valuesHtml}</div>
+                        </div>`;
                 }
             }
 
@@ -326,6 +864,28 @@
             const reasoning = badge.nextElementSibling;
             if (reasoning) {
                 reasoning.classList.toggle('visible');
+            }
+        }
+
+        function toggleDecision(header) {
+            const content = header.nextElementSibling;
+            if (content) {
+                content.classList.toggle('visible');
+            }
+        }
+
+        // Third Axiom toggle functions
+        function toggleCommitPanel(header) {
+            const content = header.nextElementSibling;
+            if (content) {
+                content.classList.toggle('visible');
+            }
+        }
+
+        function toggleValuesPanel(header) {
+            const content = header.nextElementSibling;
+            if (content) {
+                content.classList.toggle('visible');
             }
         }
 
@@ -381,7 +941,21 @@
                 if (data.error) {
                     showError(data.error);
                 } else {
-                    addMessage(data.response, 'assistant', data.verdict, data.inner_reasoning);
+                    // 使用新的 options 格式傳遞所有資料
+                    addMessage(data.response, 'assistant', {
+                        verdict: data.verdict,
+                        innerReasoning: data.inner_reasoning,
+                        tonebridge: data.tonebridge,
+                        intervention: data.intervention_strategy,
+                        // ToneStream 欄位
+                        internalMonologue: data.internal_monologue,
+                        personaMode: data.persona_mode,
+                        trajectoryAnalysis: data.trajectory_analysis,
+                        // Third Axiom 欄位
+                        selfCommits: data.self_commits,
+                        ruptures: data.ruptures,
+                        emergentValues: data.emergent_values
+                    });
                     history.push({ role: 'assistant', content: data.response });
                 }
             } catch (e) {
@@ -396,6 +970,88 @@
 
         sendBtn.addEventListener('click', sendMessage);
         userInput.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
+
+        // ===== Session Report Functions =====
+        async function generateSessionReport() {
+            if (history.length < 2) {
+                alert('請先進行一些對話才能生成報告！');
+                return;
+            }
+
+            const modal = document.getElementById('session-report-modal');
+            const content = document.getElementById('session-report-content');
+            modal.style.display = 'flex';
+            content.innerHTML = '⏳ 分析中...';
+
+            try {
+                const response = await fetch('/api/session-report', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ history })
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    content.innerHTML = `<div style="color: var(--danger);">❌ ${data.error}</div>`;
+                } else {
+                    const r = data.report;
+                    let html = `
+                        <div style="margin-bottom: 16px;">
+                            <strong style="color: var(--text-primary);">📝 總結</strong>
+                            <p style="color: var(--text-secondary); margin: 8px 0;">${r.summary_text || '無'}</p>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px;">
+                            <div style="padding: 12px; background: var(--bg-card); border-radius: 8px; text-align: center;">
+                                <div style="font-size: 24px; color: var(--accent-primary);">${r.total_turns || 0}</div>
+                                <div style="font-size: 11px; color: var(--text-muted);">對話回合</div>
+                            </div>
+                            <div style="padding: 12px; background: var(--bg-card); border-radius: 8px; text-align: center;">
+                                <div style="font-size: 24px; color: var(--success);">${r.commitments_made || 0}</div>
+                                <div style="font-size: 11px; color: var(--text-muted);">語義承諾</div>
+                            </div>
+                            <div style="padding: 12px; background: var(--bg-card); border-radius: 8px; text-align: center;">
+                                <div style="font-size: 24px; color: var(--warning);">${r.ruptures_detected || 0}</div>
+                                <div style="font-size: 11px; color: var(--text-muted);">斷裂偵測</div>
+                            </div>
+                        </div>
+                        <div style="margin-bottom: 16px;">
+                            <strong style="color: var(--text-primary);">🎭 情緒氛圍</strong>
+                            <p style="color: var(--text-secondary); margin: 8px 0;">
+                                主導情緒：<span style="color: var(--accent-primary);">${r.dominant_emotion || 'neutral'}</span>
+                                ｜波動度：${((r.emotional_volatility || 0) * 100).toFixed(0)}%
+                                ｜品質：${r.session_quality || 'unknown'}
+                            </p>
+                        </div>`;
+
+                    if (r.turning_points && r.turning_points.length > 0) {
+                        html += `
+                            <div style="margin-bottom: 16px;">
+                                <strong style="color: var(--text-primary);">⚡ 轉折點 (${r.turning_points.length})</strong>
+                                <ul style="color: var(--text-secondary); margin: 8px 0; padding-left: 20px;">
+                                    ${r.turning_points.map(tp => `<li>${tp.description}</li>`).join('')}
+                                </ul>
+                            </div>`;
+                    }
+
+                    if (r.values_strengthened && r.values_strengthened.length > 0) {
+                        html += `
+                            <div>
+                                <strong style="color: var(--text-primary);">✨ 強化價值觀</strong>
+                                <p style="color: var(--text-secondary); margin: 8px 0;">${r.values_strengthened.join(', ')}</p>
+                            </div>`;
+                    }
+
+                    content.innerHTML = html;
+                }
+            } catch (e) {
+                content.innerHTML = `<div style="color: var(--danger);">❌ 連接失敗</div>`;
+            }
+        }
+
+        function closeSessionReport() {
+            document.getElementById('session-report-modal').style.display = 'none';
+        }
     </script>
 </body>
 

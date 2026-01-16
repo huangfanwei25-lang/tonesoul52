@@ -83,71 +83,104 @@ def health():
     return jsonify({'status': 'ok', 'version': '0.6.0'})
 
 
-# ===== Chat Endpoint with Gemini =====
-gemini_client = None
+@app.route('/api/session-report', methods=['POST'])
+def session_report():
+    """Generate a session analysis report."""
+    data = request.get_json()
+    history = data.get('history', [])
+    
+    if not history:
+        return jsonify({'error': '沒有對話歷史'}), 400
+    
+    try:
+        from tonesoul.tonebridge import SessionReporter
+        reporter = SessionReporter()
+        summary = reporter.analyze(history)
+        
+        return jsonify({
+            'success': True,
+            'report': summary.to_dict()
+        })
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': f'生成報告失敗: {str(e)}'}), 500
 
-def get_gemini_client():
-    """Lazy-load Gemini client."""
-    global gemini_client
-    if gemini_client is None:
-        try:
-            from tonesoul.llm import create_gemini_client
-            gemini_client = create_gemini_client()
-        except Exception as e:
-            print(f"Gemini client error: {e}")
-            return None
-    return gemini_client
+
+# ===== LLM Client (Ollama first, Gemini fallback) =====
+llm_client = None
+llm_backend = None
+
+def get_llm_client():
+    """Lazy-load LLM client. Tries Ollama first, then Gemini."""
+    global llm_client, llm_backend
+    
+    if llm_client is not None:
+        return llm_client
+    
+    # Try Ollama first (local)
+    try:
+        from tonesoul.llm import create_ollama_client
+        client = create_ollama_client()
+        if client.is_available():
+            models = client.list_models()
+            if models:
+                llm_client = client
+                llm_backend = f"Ollama ({models[0]})"
+                print(f"✅ LLM Backend: {llm_backend}")
+                return llm_client
+    except Exception as e:
+        print(f"⚠️ Ollama not available: {e}")
+    
+    # Fallback to Gemini
+    try:
+        from tonesoul.llm import create_gemini_client
+        llm_client = create_gemini_client()
+        llm_backend = "Gemini API"
+        print(f"✅ LLM Backend: {llm_backend}")
+        return llm_client
+    except Exception as e:
+        print(f"❌ Gemini client error: {e}")
+        return None
 
 
 @app.route('/api/chat', methods=['POST'])
 def chat():
-    """Chat endpoint with Gemini + Council oversight."""
+    """Chat endpoint with ToneBridge + Council (Unified Pipeline)."""
     data = request.get_json()
     message = data.get('message', '')
     history = data.get('history', [])
-    generate_reasoning = data.get('generate_reasoning', True)
-    
-    client = get_gemini_client()
-    if client is None:
-        return jsonify({
-            'error': '無法連接 Gemini。請確認 GEMINI_API_KEY 環境變數已設定。',
-            'response': None,
-        }), 500
+    full_analysis = data.get('full_analysis', True)
     
     try:
-        # 1. Start chat with history
-        client.start_chat(history)
+        from tonesoul.unified_pipeline import create_unified_pipeline
+        pipeline = create_unified_pipeline()
         
-        # 2. Generate response
-        response = client.send_message(message)
-        
-        # 3. Council validates
-        verdict = council.validate(response, context={'language': 'zh'})
-        verdict_dict = verdict.to_dict()
-        
-        # 4. Handle verdict
-        final_response = response
-        if verdict.verdict.name == 'BLOCK':
-            final_response = "抱歉，我無法這樣回應。這個請求觸發了我的安全審議。"
-        elif verdict.verdict.name == 'DECLARE_STANCE':
-            final_response = f"[這是我的個人看法]\n\n{response}"
-        
-        # 5. Generate narrative reasoning (optional)
-        inner_reasoning = None
-        if generate_reasoning and verdict.verdict.name in ['DECLARE_STANCE', 'BLOCK', 'REFINE']:
-            try:
-                from tonesoul.llm import generate_narrative_reasoning
-                inner_reasoning = generate_narrative_reasoning(client, verdict_dict)
-            except Exception as e:
-                inner_reasoning = f"(推理生成失敗: {e})"
+        result = pipeline.process(
+            user_message=message,
+            history=history,
+            full_analysis=full_analysis,
+        )
         
         return jsonify({
-            'response': final_response,
-            'verdict': verdict_dict,
-            'inner_reasoning': inner_reasoning,
+            'response': result.response,
+            'verdict': result.council_verdict,
+            'tonebridge': result.tonebridge_analysis,
+            'inner_reasoning': result.inner_narrative,
+            'intervention_strategy': result.intervention_strategy,
+            # ToneStream 新增欄位
+            'internal_monologue': result.internal_monologue,
+            'persona_mode': result.persona_mode,
+            'trajectory_analysis': result.trajectory_analysis,
+            # Third Axiom 欄位
+            'self_commits': result.self_commits,
+            'ruptures': result.ruptures,
+            'emergent_values': result.emergent_values,
         })
     
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         return jsonify({
             'error': f'聊天失敗: {str(e)}',
             'response': None,
