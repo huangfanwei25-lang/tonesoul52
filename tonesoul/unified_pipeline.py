@@ -79,6 +79,8 @@ class UnifiedPipeline:
         self._rupture_detector = None
         self._value_accumulator = None
         self._llm_backend = None
+        # ToneSoul 2.0: Internal Deliberation
+        self._deliberation = None
     
     def _get_gemini(self):
         """Get LLM client (Ollama first, Gemini fallback)."""
@@ -129,6 +131,17 @@ class UnifiedPipeline:
             except Exception:
                 pass
         return self._trajectory
+    
+    # ===== ToneSoul 2.0: Internal Deliberation =====
+    def _get_deliberation(self):
+        """Get or create the Internal Deliberation engine."""
+        if self._deliberation is None:
+            try:
+                from tonesoul.deliberation import InternalDeliberation
+                self._deliberation = InternalDeliberation()
+            except Exception:
+                pass
+        return self._deliberation
     
     # ===== Third Axiom Getters =====
     def _get_commit_stack(self):
@@ -290,38 +303,62 @@ class UnifiedPipeline:
         # ========== 2. Trajectory 分析 ==========
         trajectory = self._get_trajectory()
         trajectory_result = {}
-        persona_mode = "Philosopher"  # 預設
-        internal_monologue = ""
+        tone_strength = 0.5
+        resonance_state = "resonance"
+        loop_detected = False
         
         if trajectory:
             try:
                 # 計算語氣強度（使用 ToneBridge 結果或預設）
-                tone_strength = 0.5
                 if tb_result and tb_result.tone:
                     tone_strength = tb_result.tone.tone_strength
                 
                 # 軌跡分析
                 traj_analysis = trajectory.analyze(user_message, tone_strength)
                 trajectory_result = traj_analysis.to_dict()
-                
-                # 決定人格模式
-                from tonesoul.tonebridge import get_persona_from_resonance
                 resonance_state = traj_analysis.resonance_state.value
-                persona = get_persona_from_resonance(resonance_state)
-                persona_mode = persona.value
-                
-                # 生成 internal_monologue
-                if traj_analysis.loop_detected:
-                    internal_monologue = f"偵測到迴圈查詢，切換為工程師模式執行 Anti-Loop 協議。"
-                elif resonance_state == "tension":
-                    internal_monologue = f"語氣張力升高，切換為工程師模式，冷靜分析問題。"
-                elif resonance_state == "conflict":
-                    internal_monologue = f"偵測到衝突信號，啟動守護者模式，溫和設限。"
-                else:
-                    internal_monologue = f"對話氛圍良好，使用哲學家模式進行深度連結。"
+                loop_detected = traj_analysis.loop_detected
                     
             except Exception as e:
                 print(f"Trajectory analysis error: {e}")
+        
+        # ========== 2.5 ToneSoul 2.0: 內在審議 ==========
+        deliberation = self._get_deliberation()
+        deliberation_result = None
+        persona_mode = "Philosopher"  # 預設
+        internal_monologue = ""
+        
+        if deliberation:
+            try:
+                from tonesoul.deliberation import DeliberationContext
+                context = DeliberationContext(
+                    user_input=user_message,
+                    conversation_history=history,
+                    tone_strength=tone_strength,
+                    resonance_state=resonance_state,
+                    loop_detected=loop_detected
+                )
+                deliberation_result = deliberation.deliberate_sync(context)
+                
+                # 從審議結果獲取 persona 和 monologue
+                if deliberation_result.dominant_voice:
+                    voice_map = {"muse": "Philosopher", "logos": "Engineer", "aegis": "Guardian"}
+                    persona_mode = voice_map.get(deliberation_result.dominant_voice.value, "Philosopher")
+                
+                # 生成 internal monologue 從審議
+                internal_debate = deliberation_result.get_internal_debate()
+                if internal_debate:
+                    dominant = deliberation_result.dominant_voice.value if deliberation_result.dominant_voice else "muse"
+                    if dominant in internal_debate:
+                        internal_monologue = internal_debate[dominant].get("reasoning", "")
+                        
+            except Exception as e:
+                print(f"Deliberation error: {e}")
+                # Fallback to old persona logic
+                from tonesoul.tonebridge import get_persona_from_resonance
+                persona = get_persona_from_resonance(resonance_state)
+                persona_mode = persona.value
+                internal_monologue = "使用舊版人格選擇邏輯。"
         
         # ========== 3. 第三公理：載入承諾堆疊 ==========
         commit_stack = self._get_commit_stack()
