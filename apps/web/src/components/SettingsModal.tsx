@@ -208,23 +208,11 @@ export default function SettingsModal({
                         </div>
                     </div>
 
-                    {/* Test Button */}
+                    {/* Info about testing */}
                     {apiKey && (
-                        <button
-                            onClick={handleTest}
-                            disabled={testStatus === "testing"}
-                            className={`w-full py-2 rounded-xl text-sm font-medium transition-colors ${testStatus === "success"
-                                ? "bg-emerald-100 text-emerald-700"
-                                : testStatus === "error"
-                                    ? "bg-red-100 text-red-700"
-                                    : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-                                }`}
-                        >
-                            {testStatus === "testing" && "測試中..."}
-                            {testStatus === "success" && "✓ 連接成功！"}
-                            {testStatus === "error" && "✗ 連接失敗，請檢查 Key"}
-                            {testStatus === "idle" && "測試連接"}
-                        </button>
+                        <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 text-sm text-blue-700">
+                            💡 儲存後，傳送任何訊息即可測試 API Key 是否有效。
+                        </div>
                     )}
                 </div>
 
