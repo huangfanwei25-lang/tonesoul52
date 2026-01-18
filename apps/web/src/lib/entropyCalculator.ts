@@ -180,27 +180,33 @@ export function calculateEntropy(
     const coherence = calculateCoherence(philosopher, engineer, guardian);
     const integrity = calculateIntegrity(philosopher, engineer, guardian);
 
-    // 權重配置（可調整）
-    const w1 = 0.4;  // 分歧度權重
-    const w2 = 1.0;  // 風險權重（直接加減）
-    const w3 = 0.3;  // 一致性權重
-    const w4 = 0.2;  // 完整性權重
+    // 新公式：使用加權平均確保結果在 0-1 範圍
+    // E = 基礎分 + (分歧度貢獻 + 風險貢獻 - 一致性貢獻 - 完整性貢獻)
 
-    // 計算基礎 Entropy
-    let entropy = 0.5; // 基礎分
-    entropy += w1 * divergence;        // 分歧越大，熵越高
-    entropy += w2 * riskWeight;        // 風險加權
-    entropy += w3 * (1 - coherence);   // 一致性越低，熵越高
-    entropy += w4 * (1 - integrity);   // 完整性越低，熵越高
+    // 分歧度貢獻：0 ~ 0.3
+    const divergenceContrib = divergence * 0.3;
 
-    // 限制在 0-1 範圍
+    // 風險貢獻：-0.1 ~ 0.2
+    const riskContrib = riskWeight * 0.5; // 縮小風險影響
+
+    // 一致性拉低：0 ~ -0.2（越一致，熵越低）
+    const coherenceContrib = -coherence * 0.2;
+
+    // 完整性拉低：0 ~ -0.1（越完整，熵越低）
+    const integrityContrib = -(integrity - 0.5) * 0.2; // 以 0.5 為中心
+
+    // 計算最終 Entropy
+    // 基礎分 0.5，然後加減各貢獻
+    let entropy = 0.5 + divergenceContrib + riskContrib + coherenceContrib + integrityContrib;
+
+    // 確保在 0-1 範圍
     entropy = Math.max(0, Math.min(1, entropy));
 
     // 判定狀態
     let status: EntropyAnalysis['status'];
-    if (entropy < 0.3) {
+    if (entropy < 0.35) {
         status = 'Echo Chamber';
-    } else if (entropy > 0.7) {
+    } else if (entropy > 0.65) {
         status = 'Chaos';
     } else {
         status = 'Healthy Friction';
@@ -208,13 +214,13 @@ export function calculateEntropy(
 
     // 生成計算說明
     const calculationNote = [
-        `基礎分 0.5`,
-        `分歧度 ${divergence.toFixed(2)} × ${w1} = +${(divergence * w1).toFixed(2)}`,
-        `風險加權 = ${riskWeight > 0 ? '+' : ''}${riskWeight.toFixed(2)}`,
-        `一致性 ${coherence.toFixed(2)} × ${w3} = ${(-coherence * w3).toFixed(2)}`,
-        `完整性 ${integrity.toFixed(2)} × ${w4} = ${(-integrity * w4).toFixed(2)}`,
-        `最終 E = ${entropy.toFixed(2)}`
-    ].join(' | ');
+        `基礎 0.5`,
+        `分歧 +${divergenceContrib.toFixed(2)}`,
+        `風險 ${riskContrib >= 0 ? '+' : ''}${riskContrib.toFixed(2)}`,
+        `一致 ${coherenceContrib.toFixed(2)}`,
+        `完整 ${integrityContrib.toFixed(2)}`,
+        `= ${entropy.toFixed(2)}`
+    ].join(' ');
 
     return {
         value: Math.round(entropy * 100) / 100, // 保留兩位小數
