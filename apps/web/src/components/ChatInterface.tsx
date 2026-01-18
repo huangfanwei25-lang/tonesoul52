@@ -116,6 +116,25 @@ ${guardian}
 }
 `;
 
+// ==================== 快速模式 Prompt ====================
+
+const FAST_MODE_PROMPT = (input: string, context: string) => `
+你是 ToneSoul Navigator，一個能進行內在審議的 AI 助手。
+
+【對話脈絡】:
+${context || "無"}
+
+【用戶輸入】:
+"${input}"
+
+請以自然語氣回應用戶，同時簡要說明你的思考過程。
+輸出 JSON (繁體中文):
+{
+  "response": "你的回應內容",
+  "thinking": "你的思考過程（1-2句）"
+}
+`;
+
 // ==================== API 調用函數 ====================
 
 const callGeminiAPI = async (prompt: string, apiKey: string): Promise<string> => {
@@ -157,6 +176,52 @@ const callOpenAIAPI = async (prompt: string, apiKey: string): Promise<string> =>
     if (!response.ok) {
         const error = await response.json();
         throw new Error(error.error?.message || "OpenAI API 錯誤");
+    }
+
+    const data = await response.json();
+    return data.choices?.[0]?.message?.content || "{}";
+};
+
+const callClaudeAPI = async (prompt: string, apiKey: string): Promise<string> => {
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "x-api-key": apiKey,
+            "anthropic-version": "2023-06-01",
+        },
+        body: JSON.stringify({
+            model: "claude-3-haiku-20240307",
+            max_tokens: 2048,
+            messages: [{ role: "user", content: prompt + "\n\n請以 JSON 格式回覆。" }],
+        }),
+    });
+
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error?.message || "Claude API 錯誤");
+    }
+
+    const data = await response.json();
+    return data.content?.[0]?.text || "{}";
+};
+
+const callXaiAPI = async (prompt: string, apiKey: string): Promise<string> => {
+    const response = await fetch("https://api.x.ai/v1/chat/completions", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+            model: "grok-beta",
+            messages: [{ role: "user", content: prompt }],
+        }),
+    });
+
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error?.message || "xAI API 錯誤");
     }
 
     const data = await response.json();
@@ -224,16 +289,47 @@ export default function ChatInterface({ conversation, apiSettings, onConversatio
         ).join('\n');
     };
 
+    // 根據提供者選擇 API 調用函數
+    const getCallAPI = () => {
+        if (!apiSettings?.apiKey) return null;
+        switch (apiSettings.provider) {
+            case "gemini": return (prompt: string) => callGeminiAPI(prompt, apiSettings.apiKey);
+            case "openai": return (prompt: string) => callOpenAIAPI(prompt, apiSettings.apiKey);
+            case "claude": return (prompt: string) => callClaudeAPI(prompt, apiSettings.apiKey);
+            case "xai": return (prompt: string) => callXaiAPI(prompt, apiSettings.apiKey);
+            default: return (prompt: string) => callGeminiAPI(prompt, apiSettings.apiKey);
+        }
+    };
+
+    // ==================== 快速模式：單一調用 ====================
+    const performFastMode = async (userMessage: string): Promise<{
+        response: string;
+        deliberation: undefined;
+    }> => {
+        const callAPI = getCallAPI();
+        if (!callAPI) throw new Error("請先設定 API Key");
+
+        setLoadingPhase("思考中...");
+
+        const context = getHistoryContext();
+        const raw = await callAPI(FAST_MODE_PROMPT(userMessage, context));
+        const parsed = safeJsonParse<{ response: string; thinking: string }>(raw);
+
+        if (!parsed) {
+            // 如果解析失敗，直接使用原始回應
+            return { response: raw, deliberation: undefined };
+        }
+
+        return { response: parsed.response, deliberation: undefined };
+    };
+
     // ==================== 核心：三路並行審議 ====================
     const performMultiPathDeliberation = async (userMessage: string): Promise<{
         response: string;
         deliberation: DeliberationData;
     }> => {
-        if (!apiSettings?.apiKey) throw new Error("請先設定 API Key");
-
-        const callAPI = apiSettings.provider === "gemini"
-            ? (prompt: string) => callGeminiAPI(prompt, apiSettings.apiKey)
-            : (prompt: string) => callOpenAIAPI(prompt, apiSettings.apiKey);
+        const callAPI = getCallAPI();
+        if (!callAPI) throw new Error("請先設定 API Key");
 
         const context = getHistoryContext();
 
@@ -327,17 +423,22 @@ export default function ChatInterface({ conversation, apiSettings, onConversatio
         setMessages(prev => [...prev, userMessage]);
         setInput("");
         setIsLoading(true);
-        setLoadingPhase("啟動審議...");
+        setLoadingPhase(apiSettings?.mode === "fast" ? "思考中..." : "啟動審議...");
 
         try {
             let result: { response: string; deliberation: DeliberationData | undefined };
 
             if (apiSettings?.apiKey) {
-                const deliberationResult = await performMultiPathDeliberation(userMessage.content);
-                result = {
-                    response: deliberationResult.response,
-                    deliberation: deliberationResult.deliberation,
-                };
+                // 根據模式選擇處理方式
+                if (apiSettings.mode === "fast") {
+                    result = await performFastMode(userMessage.content);
+                } else {
+                    const deliberationResult = await performMultiPathDeliberation(userMessage.content);
+                    result = {
+                        response: deliberationResult.response,
+                        deliberation: deliberationResult.deliberation,
+                    };
+                }
             } else {
                 result = {
                     response: "請先設定 API Key 才能使用 AI 對話功能。點擊側邊欄的 API 設定按鈕。",

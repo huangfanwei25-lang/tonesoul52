@@ -1,13 +1,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Settings, X, Key, Check, AlertCircle } from "lucide-react";
+import { Settings, X, Key, Check, AlertCircle, Zap, Users } from "lucide-react";
 
-export type ApiProvider = "gemini" | "openai";
+export type ApiProvider = "gemini" | "openai" | "claude" | "xai";
+export type DeliberationMode = "fast" | "multipath";
 
 export interface ApiSettings {
     provider: ApiProvider;
     apiKey: string;
+    mode: DeliberationMode;
 }
 
 interface SettingsModalProps {
@@ -19,12 +21,22 @@ interface SettingsModalProps {
 
 const STORAGE_KEY = "tonesoul_api_settings";
 
+const PROVIDERS = [
+    { id: "gemini" as ApiProvider, name: "Gemini", icon: "🔷", desc: "Google AI" },
+    { id: "openai" as ApiProvider, name: "OpenAI", icon: "🟢", desc: "GPT-4o" },
+    { id: "claude" as ApiProvider, name: "Claude", icon: "🟠", desc: "Anthropic" },
+    { id: "xai" as ApiProvider, name: "xAI", icon: "⚡", desc: "Grok" },
+];
+
 export function getStoredSettings(): ApiSettings | null {
     if (typeof window === "undefined") return null;
     const stored = localStorage.getItem(STORAGE_KEY);
     if (!stored) return null;
     try {
-        return JSON.parse(stored);
+        const parsed = JSON.parse(stored);
+        // 向下兼容：如果沒有 mode，預設為 multipath
+        if (!parsed.mode) parsed.mode = "multipath";
+        return parsed;
     } catch {
         return null;
     }
@@ -48,81 +60,48 @@ export default function SettingsModal({
         currentSettings?.provider || "gemini"
     );
     const [apiKey, setApiKey] = useState(currentSettings?.apiKey || "");
+    const [mode, setMode] = useState<DeliberationMode>(
+        currentSettings?.mode || "multipath"
+    );
     const [showKey, setShowKey] = useState(false);
-    const [testStatus, setTestStatus] = useState<"idle" | "testing" | "success" | "error">("idle");
 
     useEffect(() => {
         if (currentSettings) {
             setProvider(currentSettings.provider);
             setApiKey(currentSettings.apiKey);
+            setMode(currentSettings.mode || "multipath");
         }
     }, [currentSettings]);
 
     const handleSave = () => {
-        const settings: ApiSettings = { provider, apiKey };
+        const settings: ApiSettings = { provider, apiKey, mode };
         saveSettings(settings);
         onSave(settings);
         onClose();
-    };
-
-    const handleTest = async () => {
-        if (!apiKey.trim()) return;
-        setTestStatus("testing");
-
-        try {
-            let isSuccess = false;
-
-            if (provider === "gemini") {
-                try {
-                    const response = await fetch(
-                        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
-                        {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                contents: [{ parts: [{ text: "Say hello in 5 words or less." }] }],
-                            }),
-                        }
-                    );
-                    isSuccess = response.ok;
-                } catch (fetchError) {
-                    console.error("Gemini test fetch error:", fetchError);
-                    isSuccess = false;
-                }
-            } else if (provider === "openai") {
-                try {
-                    const response = await fetch("https://api.openai.com/v1/models", {
-                        headers: { Authorization: `Bearer ${apiKey}` },
-                    });
-                    isSuccess = response.ok;
-                } catch (fetchError) {
-                    console.error("OpenAI test fetch error:", fetchError);
-                    isSuccess = false;
-                }
-            }
-
-            setTestStatus(isSuccess ? "success" : "error");
-        } catch (error) {
-            console.error("Test connection error:", error);
-            setTestStatus("error");
-        }
-
-        // Reset after 3 seconds
-        setTimeout(() => setTestStatus("idle"), 3000);
     };
 
     const handleClear = () => {
         clearSettings();
         setApiKey("");
         setProvider("gemini");
-        onSave({ provider: "gemini", apiKey: "" });
+        setMode("multipath");
+        onSave({ provider: "gemini", apiKey: "", mode: "multipath" });
+    };
+
+    const getPlaceholder = () => {
+        switch (provider) {
+            case "gemini": return "AIzaSy...";
+            case "openai": return "sk-...";
+            case "claude": return "sk-ant-...";
+            case "xai": return "xai-...";
+        }
     };
 
     if (!isOpen) return null;
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
                 {/* Header */}
                 <div className="p-6 border-b border-slate-100 flex items-center justify-between">
                     <div className="flex items-center gap-3">
@@ -141,32 +120,60 @@ export default function SettingsModal({
 
                 {/* Content */}
                 <div className="p-6 space-y-5">
+                    {/* Mode Selection */}
+                    <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">
+                            審議模式
+                        </label>
+                        <div className="grid grid-cols-2 gap-3">
+                            <button
+                                onClick={() => setMode("fast")}
+                                className={`p-3 rounded-xl border-2 transition-all ${mode === "fast"
+                                    ? "border-emerald-500 bg-emerald-50"
+                                    : "border-slate-200 hover:border-slate-300"
+                                    }`}
+                            >
+                                <div className="flex items-center gap-2 mb-1">
+                                    <Zap className="w-4 h-4 text-emerald-500" />
+                                    <span className="font-bold">快速模式</span>
+                                </div>
+                                <div className="text-xs text-slate-500">1 次 API 調用</div>
+                            </button>
+                            <button
+                                onClick={() => setMode("multipath")}
+                                className={`p-3 rounded-xl border-2 transition-all ${mode === "multipath"
+                                    ? "border-purple-500 bg-purple-50"
+                                    : "border-slate-200 hover:border-slate-300"
+                                    }`}
+                            >
+                                <div className="flex items-center gap-2 mb-1">
+                                    <Users className="w-4 h-4 text-purple-500" />
+                                    <span className="font-bold">多路徑審議</span>
+                                </div>
+                                <div className="text-xs text-slate-500">4 次 API 調用</div>
+                            </button>
+                        </div>
+                    </div>
+
                     {/* Provider Selection */}
                     <div>
                         <label className="block text-sm font-medium text-slate-700 mb-2">
                             API 提供者
                         </label>
-                        <div className="grid grid-cols-2 gap-3">
-                            <button
-                                onClick={() => setProvider("gemini")}
-                                className={`p-3 rounded-xl border-2 transition-all ${provider === "gemini"
-                                    ? "border-indigo-500 bg-indigo-50"
-                                    : "border-slate-200 hover:border-slate-300"
-                                    }`}
-                            >
-                                <div className="text-lg font-bold">🔷 Gemini</div>
-                                <div className="text-xs text-slate-500">Google AI</div>
-                            </button>
-                            <button
-                                onClick={() => setProvider("openai")}
-                                className={`p-3 rounded-xl border-2 transition-all ${provider === "openai"
-                                    ? "border-indigo-500 bg-indigo-50"
-                                    : "border-slate-200 hover:border-slate-300"
-                                    }`}
-                            >
-                                <div className="text-lg font-bold">🟢 OpenAI</div>
-                                <div className="text-xs text-slate-500">GPT-4o</div>
-                            </button>
+                        <div className="grid grid-cols-2 gap-2">
+                            {PROVIDERS.map((p) => (
+                                <button
+                                    key={p.id}
+                                    onClick={() => setProvider(p.id)}
+                                    className={`p-3 rounded-xl border-2 transition-all ${provider === p.id
+                                        ? "border-indigo-500 bg-indigo-50"
+                                        : "border-slate-200 hover:border-slate-300"
+                                        }`}
+                                >
+                                    <div className="text-lg font-bold">{p.icon} {p.name}</div>
+                                    <div className="text-xs text-slate-500">{p.desc}</div>
+                                </button>
+                            ))}
                         </div>
                     </div>
 
@@ -181,11 +188,7 @@ export default function SettingsModal({
                                 type={showKey ? "text" : "password"}
                                 value={apiKey}
                                 onChange={(e) => setApiKey(e.target.value)}
-                                placeholder={
-                                    provider === "gemini"
-                                        ? "AIzaSy..."
-                                        : "sk-..."
-                                }
+                                placeholder={getPlaceholder()}
                                 className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 pr-20"
                             />
                             <button
@@ -194,6 +197,32 @@ export default function SettingsModal({
                             >
                                 {showKey ? "隱藏" : "顯示"}
                             </button>
+                        </div>
+                    </div>
+
+                    {/* Mode Info */}
+                    <div className={`rounded-xl p-4 border ${mode === "multipath" ? "bg-purple-50 border-purple-200" : "bg-emerald-50 border-emerald-200"}`}>
+                        <div className="flex items-start gap-2">
+                            {mode === "multipath" ? (
+                                <Users className="w-4 h-4 text-purple-600 mt-0.5 flex-shrink-0" />
+                            ) : (
+                                <Zap className="w-4 h-4 text-emerald-600 mt-0.5 flex-shrink-0" />
+                            )}
+                            <div className={`text-sm ${mode === "multipath" ? "text-purple-800" : "text-emerald-800"}`}>
+                                {mode === "multipath" ? (
+                                    <>
+                                        <strong>多路徑模式：</strong>每條訊息 4 次 API 調用
+                                        <br />
+                                        Philosopher → Engineer → Guardian → Synthesizer
+                                    </>
+                                ) : (
+                                    <>
+                                        <strong>快速模式：</strong>每條訊息 1 次 API 調用
+                                        <br />
+                                        省錢/快速，但只有單一視角
+                                    </>
+                                )}
+                            </div>
                         </div>
                     </div>
 
@@ -208,7 +237,7 @@ export default function SettingsModal({
                         </div>
                     </div>
 
-                    {/* Info about testing */}
+                    {/* Test Info */}
                     {apiKey && (
                         <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 text-sm text-blue-700">
                             💡 儲存後，傳送任何訊息即可測試 API Key 是否有效。
