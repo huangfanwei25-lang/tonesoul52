@@ -1,119 +1,178 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { Send, Loader2, Sparkles, Brain, Shield, Cpu, Lightbulb, ChevronDown, ChevronUp, AlertTriangle } from "lucide-react";
+import { useState, useRef, useEffect, useCallback } from "react";
+import { Send, Loader2, Brain, ChevronDown, ChevronUp, AlertTriangle, MessageSquare, MoveRight } from "lucide-react";
 import { ApiSettings } from "./SettingsModal";
+import { Message as DBMessage, DeliberationData, Conversation, saveConversation } from "@/lib/db";
+import CouncilChamber from "./CouncilChamber";
+import SoulStateMeter from "./SoulStateMeter";
+import TacticalDashboard from "./TacticalDashboard";
 
-interface Message {
-    id: string;
-    role: "user" | "assistant";
-    content: string;
-    deliberation?: DeliberationData;
+interface Message extends Omit<DBMessage, 'timestamp'> {
     timestamp: Date;
 }
 
-interface DeliberationData {
-    synthesis?: {
-        type: string;
-        dominant_voice: string;
-        weights: {
-            muse: number;
-            logos: number;
-            aegis: number;
-        };
-    };
-    decision_matrix?: {
-        user_hidden_intent: string;
-        strategy_name: string;
-        intended_effect: string;
-        tone_tag: string;
-    };
-    tension_zone?: {
-        zone: string;
-        calculation_note: string;
-    };
-    next_moves?: Array<{ label: string; text: string }>;
-}
-
 interface ChatInterfaceProps {
-    sessionId: string;
-    conversationId: string | null;
-    onNewConversation: () => Promise<string>;
+    conversation: Conversation | null;
     apiSettings: ApiSettings | null;
+    onConversationUpdate: (conv: Conversation) => void;
 }
 
-export default function ChatInterface({ sessionId, conversationId, onNewConversation, apiSettings }: ChatInterfaceProps) {
+// ToneStream v2.5 完整版 Prompt
+const INTERNAL_DELIBERATION_PROMPT = (userMessage: string, historyContext: string) => `
+你是一個具備「內在審議」機制的 AI。你必須時刻監控自己的「認知張力 (Cognitive Tension)」。
+
+【張力運算邏輯模型】:
+E (Entropy) = w1 * |Philosopher - Engineer| + w2 * Guardian_Risk
+- 若觀點一致，E < 0.3 (同溫層)
+- 若觀點互補且有張力，E 在 0.3-0.7 (甜蜜點)
+- 若邏輯互斥或倫理警告，E > 0.7 (混沌)
+
+【歷史脈絡】:
+${historyContext || "無"}
+
+【當前輸入】:
+"${userMessage}"
+
+請執行：
+1. **議會辯論**：三方觀點碰撞。內容請豐富一點，展現思考深度。
+2. **熵值計算**：根據上述公式邏輯估算 E 值。
+3. **戰術決策**：制定回應策略。
+
+輸出 JSON (嚴格遵守格式，使用繁體中文):
+{
+  "council_chamber": {
+    "philosopher": { "stance": "觀點...", "conflict_point": "與其他觀點的摩擦..." },
+    "engineer": { "stance": "觀點...", "conflict_point": "與其他觀點的摩擦..." },
+    "guardian": { "stance": "觀點...", "conflict_point": "潛在風險..." }
+  },
+  "entropy_meter": {
+    "value": 0.5,
+    "status": "Healthy Friction",
+    "calculation_note": "簡述為何判定為此數值..."
+  },
+  "decision_matrix": {
+    "user_hidden_intent": "用戶可能的潛台詞...",
+    "ai_strategy_name": "執行戰術名稱...",
+    "intended_effect": "預期達到的效果...",
+    "tone_tag": "語氣標籤"
+  },
+  "final_synthesis": {
+    "response_text": "最終綜合回應..."
+  },
+  "next_moves": [
+    { "label": "選項A標籤", "text": "建議的跟進問題..." },
+    { "label": "選項B標籤", "text": "另一個跟進問題..." }
+  ]
+}
+`;
+
+// 解析 LLM JSON 回應
+const parseLLMResponse = (text: string): DeliberationData | null => {
+    try {
+        return JSON.parse(text);
+    } catch {
+        // 嘗試提取 JSON
+        const jsonMatch = text.match(/```json\s*([\s\S]*?)\s*```/);
+        if (jsonMatch?.[1]) {
+            try {
+                return JSON.parse(jsonMatch[1]);
+            } catch {
+                return null;
+            }
+        }
+        // 直接嘗試
+        const braceStart = text.indexOf('{');
+        const braceEnd = text.lastIndexOf('}');
+        if (braceStart !== -1 && braceEnd !== -1) {
+            try {
+                return JSON.parse(text.slice(braceStart, braceEnd + 1));
+            } catch {
+                return null;
+            }
+        }
+        return null;
+    }
+};
+
+export default function ChatInterface({ conversation, apiSettings, onConversationUpdate }: ChatInterfaceProps) {
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    const [showDeliberation, setShowDeliberation] = useState<string | null>(null);
+    const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set());
     const messagesEndRef = useRef<HTMLDivElement>(null);
+
+    // 載入對話訊息
+    useEffect(() => {
+        if (conversation) {
+            setMessages(conversation.messages.map(m => ({
+                ...m,
+                timestamp: new Date(m.timestamp)
+            })));
+        } else {
+            setMessages([]);
+        }
+    }, [conversation?.id]);
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
 
-    const callGeminiAPI = async (userMessage: string, history: Message[]): Promise<string> => {
-        if (!apiSettings?.apiKey) throw new Error("No API key");
+    const toggleDeliberation = (nodeId: string) => {
+        setExpandedNodes(prev => {
+            const newSet = new Set(prev);
+            if (newSet.has(nodeId)) {
+                newSet.delete(nodeId);
+            } else {
+                newSet.add(nodeId);
+            }
+            return newSet;
+        });
+    };
 
-        const systemPrompt = `你是 ToneSoul Navigator，一個能進行內在審議的 AI 助手。
+    const getHistoryContext = () => {
+        return messages.slice(-6).map(m => ({
+            role: m.role,
+            content: m.content.slice(0, 200)
+        }));
+    };
 
-你的回應風格：
-1. 誠實 > 討好：不為了讓用戶開心而說違心話
-2. 多視角思考：在回答前考慮不同觀點（Muse 創意、Logos 邏輯、Aegis 安全）
-3. 適度張力：在同理心和挑戰之間取得平衡
+    const callGeminiWithDeliberation = async (userMessage: string): Promise<{ text: string; deliberation: DeliberationData | null }> => {
+        if (!apiSettings?.apiKey) throw new Error("請先設定 API Key");
 
-請用繁體中文回答。保持對話自然、有深度但不說教。`;
-
-        const contents = [
-            { role: "user", parts: [{ text: systemPrompt }] },
-            { role: "model", parts: [{ text: "了解。我會以誠實、多視角的方式回應。" }] },
-            ...history.slice(-10).map(m => ({
-                role: m.role === "user" ? "user" : "model",
-                parts: [{ text: m.content }]
-            })),
-            { role: "user", parts: [{ text: userMessage }] }
-        ];
+        const prompt = INTERNAL_DELIBERATION_PROMPT(userMessage, JSON.stringify(getHistoryContext()));
 
         const response = await fetch(
             `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiSettings.apiKey}`,
             {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ contents }),
+                body: JSON.stringify({
+                    contents: [{ role: "user", parts: [{ text: prompt }] }],
+                    generationConfig: { responseMimeType: "application/json" },
+                }),
             }
         );
 
         if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error?.message || "Gemini API error");
+            const error = await response.json();
+            throw new Error(error.error?.message || "API 錯誤");
         }
 
         const data = await response.json();
-        return data.candidates?.[0]?.content?.parts?.[0]?.text || "抱歉，我無法生成回應。";
+        const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
+        const deliberation = parseLLMResponse(rawText);
+
+        return {
+            text: deliberation?.final_synthesis?.response_text || "抱歉，我無法生成回應。",
+            deliberation,
+        };
     };
 
-    const callOpenAIAPI = async (userMessage: string, history: Message[]): Promise<string> => {
-        if (!apiSettings?.apiKey) throw new Error("No API key");
+    const callOpenAIWithDeliberation = async (userMessage: string): Promise<{ text: string; deliberation: DeliberationData | null }> => {
+        if (!apiSettings?.apiKey) throw new Error("請先設定 API Key");
 
-        const messages = [
-            {
-                role: "system",
-                content: `你是 ToneSoul Navigator，一個能進行內在審議的 AI 助手。
-
-你的回應風格：
-1. 誠實 > 討好：不為了讓用戶開心而說違心話
-2. 多視角思考：在回答前考慮不同觀點（Muse 創意、Logos 邏輯、Aegis 安全）
-3. 適度張力：在同理心和挑戰之間取得平衡
-
-請用繁體中文回答。保持對話自然、有深度但不說教。`
-            },
-            ...history.slice(-10).map(m => ({
-                role: m.role as "user" | "assistant",
-                content: m.content
-            })),
-            { role: "user" as const, content: userMessage }
-        ];
+        const prompt = INTERNAL_DELIBERATION_PROMPT(userMessage, JSON.stringify(getHistoryContext()));
 
         const response = await fetch("https://api.openai.com/v1/chat/completions", {
             method: "POST",
@@ -123,61 +182,28 @@ export default function ChatInterface({ sessionId, conversationId, onNewConversa
             },
             body: JSON.stringify({
                 model: "gpt-4o-mini",
-                messages,
-                max_tokens: 1000,
+                messages: [{ role: "user", content: prompt }],
+                response_format: { type: "json_object" },
             }),
         });
 
         if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error?.message || "OpenAI API error");
+            const error = await response.json();
+            throw new Error(error.error?.message || "API 錯誤");
         }
 
         const data = await response.json();
-        return data.choices?.[0]?.message?.content || "抱歉，我無法生成回應。";
-    };
-
-    const generateMockDeliberation = (): DeliberationData => {
-        const weights = {
-            muse: Math.random() * 0.4 + 0.2,
-            logos: Math.random() * 0.4 + 0.2,
-            aegis: Math.random() * 0.2 + 0.1,
-        };
-        const total = weights.muse + weights.logos + weights.aegis;
-        weights.muse /= total;
-        weights.logos /= total;
-        weights.aegis /= total;
-
-        const zones = ["echo_chamber", "sweet_spot", "chaos"];
-        const strategies = ["直接回應策略", "引導思考策略", "溫和挑戰策略", "資訊補充策略"];
-        const intents = ["尋求認同", "解決問題", "探索可能性", "確認理解"];
+        const rawText = data.choices?.[0]?.message?.content || "{}";
+        const deliberation = parseLLMResponse(rawText);
 
         return {
-            synthesis: {
-                type: "balanced",
-                dominant_voice: weights.muse > weights.logos ? "Muse" : "Logos",
-                weights,
-            },
-            tension_zone: {
-                zone: zones[Math.floor(Math.random() * zones.length)],
-                calculation_note: `entropy=${(Math.random() * 0.5 + 0.3).toFixed(2)}`,
-            },
-            decision_matrix: {
-                user_hidden_intent: intents[Math.floor(Math.random() * intents.length)],
-                strategy_name: strategies[Math.floor(Math.random() * strategies.length)],
-                intended_effect: "促進思考與對話",
-                tone_tag: "thoughtful",
-            },
-            next_moves: [
-                { label: "深入", text: "可以說更多嗎？" },
-                { label: "挑戰", text: "如果反過來想呢？" },
-                { label: "總結", text: "所以你的意思是...？" },
-            ],
+            text: deliberation?.final_synthesis?.response_text || "抱歉，我無法生成回應。",
+            deliberation,
         };
     };
 
-    const sendMessage = async () => {
-        if (!input.trim() || isLoading) return;
+    const sendMessage = useCallback(async () => {
+        if (!input.trim() || isLoading || !conversation) return;
 
         const userMessage: Message = {
             id: `msg_${Date.now()}`,
@@ -186,111 +212,95 @@ export default function ChatInterface({ sessionId, conversationId, onNewConversa
             timestamp: new Date(),
         };
 
-        setMessages((prev) => [...prev, userMessage]);
+        setMessages(prev => [...prev, userMessage]);
         setInput("");
         setIsLoading(true);
 
         try {
-            // Get or create conversation
-            let convId = conversationId;
-            if (!convId) {
-                convId = await onNewConversation();
-            }
+            let result: { text: string; deliberation: DeliberationData | null };
 
-            let responseText: string;
-            let deliberation: DeliberationData | undefined;
-
-            // If user has API key, call real LLM
             if (apiSettings?.apiKey) {
                 if (apiSettings.provider === "gemini") {
-                    responseText = await callGeminiAPI(userMessage.content, messages);
+                    result = await callGeminiWithDeliberation(userMessage.content);
                 } else {
-                    responseText = await callOpenAIAPI(userMessage.content, messages);
+                    result = await callOpenAIWithDeliberation(userMessage.content);
                 }
-                // Generate mock deliberation data for now (real deliberation would need ToneSoul backend)
-                deliberation = generateMockDeliberation();
             } else {
-                // Fallback to mock API
-                const response = await fetch("/api/chat", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        conversation_id: convId,
-                        message: userMessage.content,
-                    }),
-                });
-                const data = await response.json();
-                responseText = data.response || "抱歉，我遇到了一些問題...";
-                deliberation = data.deliberation;
+                // Mock response
+                result = {
+                    text: "請先設定 API Key 才能使用 AI 對話功能。點擊右上角的設定按鈕。",
+                    deliberation: null,
+                };
             }
 
             const assistantMessage: Message = {
                 id: `msg_${Date.now()}_ai`,
                 role: "assistant",
-                content: responseText,
-                deliberation,
+                content: result.text,
+                deliberation: result.deliberation || undefined,
                 timestamp: new Date(),
             };
 
-            setMessages((prev) => [...prev, assistantMessage]);
+            const newMessages = [...messages, userMessage, assistantMessage];
+            setMessages(newMessages.map(m => ({ ...m, timestamp: new Date(m.timestamp) })));
+
+            // 儲存到 IndexedDB
+            const updatedConversation: Conversation = {
+                ...conversation,
+                title: conversation.messages.length === 0
+                    ? userMessage.content.slice(0, 50) + (userMessage.content.length > 50 ? '...' : '')
+                    : conversation.title,
+                updatedAt: Date.now(),
+                messages: newMessages.map(m => ({
+                    ...m,
+                    timestamp: m.timestamp.getTime(),
+                })),
+            };
+            await saveConversation(updatedConversation);
+            onConversationUpdate(updatedConversation);
+
+            // 自動展開最新的審議
+            setExpandedNodes(prev => new Set(prev).add(assistantMessage.id));
+
         } catch (error) {
             console.error("Chat error:", error);
-            const errorMessage = error instanceof Error ? error.message : "連線錯誤";
-            setMessages((prev) => [
-                ...prev,
-                {
-                    id: `msg_${Date.now()}_error`,
-                    role: "assistant",
-                    content: `錯誤：${errorMessage}。請檢查 API Key 是否正確。`,
-                    timestamp: new Date(),
-                },
-            ]);
+            const errorMessage: Message = {
+                id: `msg_${Date.now()}_error`,
+                role: "assistant",
+                content: `錯誤：${error instanceof Error ? error.message : "連線失敗"}`,
+                timestamp: new Date(),
+            };
+            setMessages(prev => [...prev, errorMessage]);
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [input, isLoading, conversation, apiSettings, messages, onConversationUpdate]);
 
     const handleSuggestionClick = (text: string) => {
         setInput(text);
     };
 
-    const getTensionZoneColor = (zone: string) => {
-        switch (zone) {
-            case "echo_chamber":
-                return "bg-blue-100 text-blue-700 border-blue-200";
-            case "sweet_spot":
-                return "bg-purple-100 text-purple-700 border-purple-200";
-            case "chaos":
-                return "bg-red-100 text-red-700 border-red-200";
-            default:
-                return "bg-slate-100 text-slate-700 border-slate-200";
-        }
-    };
-
-    const getZoneLabel = (zone: string) => {
-        switch (zone) {
-            case "echo_chamber":
-                return "同溫層";
-            case "sweet_spot":
-                return "甜蜜點";
-            case "chaos":
-                return "混沌";
-            default:
-                return zone;
-        }
-    };
+    if (!conversation) {
+        return (
+            <div className="flex flex-col h-full bg-slate-50 items-center justify-center text-slate-400">
+                <MessageSquare className="w-16 h-16 mb-4 opacity-30" />
+                <p className="text-lg font-medium">選擇或建立對話</p>
+                <p className="text-sm">從左側選擇現有對話，或點擊「新對話」開始</p>
+            </div>
+        );
+    }
 
     return (
         <div className="flex flex-col h-full bg-slate-50">
-            {/* API Key Reminder */}
+            {/* API Key 提醒 */}
             {!apiSettings?.apiKey && (
                 <div className="bg-amber-50 border-b border-amber-200 px-4 py-2 flex items-center gap-2 text-sm text-amber-800">
                     <AlertTriangle className="w-4 h-4" />
-                    <span>請先設定 API Key 才能使用真正的 AI 對話。點擊右上角 ⚙️ 設定。</span>
+                    <span>請先設定 API Key 才能使用 AI 對話。點擊右上角 ⚙️ 設定。</span>
                 </div>
             )}
 
-            {/* Messages */}
+            {/* 訊息列表 */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {messages.length === 0 && (
                     <div className="flex flex-col items-center justify-center h-64 text-slate-400">
@@ -301,129 +311,94 @@ export default function ChatInterface({ sessionId, conversationId, onNewConversa
                 )}
 
                 {messages.map((message) => (
-                    <div
-                        key={message.id}
-                        className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
-                    >
-                        <div
-                            className={`max-w-[80%] rounded-2xl p-4 ${message.role === "user"
-                                ? "bg-indigo-600 text-white"
-                                : "bg-white border border-slate-200 shadow-sm"
-                                }`}
-                        >
-                            <p className={`leading-relaxed ${message.role === "user" ? "text-white" : "text-slate-800"}`}>
-                                {message.content}
-                            </p>
+                    <div key={message.id} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
+                        <div className={`max-w-[85%] rounded-2xl ${message.role === "user"
+                                ? "bg-indigo-600 text-white p-4"
+                                : "bg-white border border-slate-200 shadow-sm overflow-hidden"
+                            }`}>
+                            {message.role === "user" ? (
+                                <p className="leading-relaxed">{message.content}</p>
+                            ) : (
+                                <>
+                                    {/* AI 回應內容 */}
+                                    <div className="p-5">
+                                        <p className="text-slate-800 leading-relaxed text-lg">
+                                            {message.content}
+                                        </p>
+                                    </div>
 
-                            {/* Deliberation Toggle */}
-                            {message.role === "assistant" && message.deliberation && (
-                                <div className="mt-3 pt-3 border-t border-slate-100">
-                                    <button
-                                        onClick={() =>
-                                            setShowDeliberation(
-                                                showDeliberation === message.id ? null : message.id
-                                            )
-                                        }
-                                        className="flex items-center gap-2 text-xs text-slate-500 hover:text-indigo-600 transition-colors"
-                                    >
-                                        <Sparkles className="w-3 h-3" />
-                                        <span>內在審議</span>
-                                        {showDeliberation === message.id ? (
-                                            <ChevronUp className="w-3 h-3" />
-                                        ) : (
-                                            <ChevronDown className="w-3 h-3" />
-                                        )}
-                                    </button>
-
-                                    {showDeliberation === message.id && (
-                                        <div className="mt-3 space-y-3 animate-in slide-in-from-top-2">
-                                            {/* Tension Zone */}
-                                            {message.deliberation.tension_zone && (
-                                                <div
-                                                    className={`px-3 py-2 rounded-lg border text-xs ${getTensionZoneColor(
-                                                        message.deliberation.tension_zone.zone
-                                                    )}`}
+                                    {/* 內在審議展開區 */}
+                                    {message.deliberation && (
+                                        <>
+                                            <div className="border-t border-slate-100">
+                                                <button
+                                                    onClick={() => toggleDeliberation(message.id)}
+                                                    className="w-full px-5 py-3 flex items-center justify-between text-sm text-slate-500 hover:bg-slate-50 transition-colors"
                                                 >
-                                                    <span className="font-bold">
-                                                        {getZoneLabel(message.deliberation.tension_zone.zone)}
+                                                    <span className="flex items-center gap-2">
+                                                        <Brain className="w-4 h-4" />
+                                                        內在審議 (Council Deliberation)
                                                     </span>
-                                                    <span className="ml-2 opacity-70">
-                                                        {message.deliberation.tension_zone.calculation_note}
-                                                    </span>
-                                                </div>
-                                            )}
-
-                                            {/* Decision Matrix */}
-                                            {message.deliberation.decision_matrix && (
-                                                <div className="grid grid-cols-2 gap-2 text-xs">
-                                                    <div className="bg-slate-50 p-2 rounded-lg">
-                                                        <span className="text-slate-400 block">潛台詞</span>
-                                                        <span className="text-slate-700">
-                                                            {message.deliberation.decision_matrix.user_hidden_intent}
-                                                        </span>
-                                                    </div>
-                                                    <div className="bg-slate-50 p-2 rounded-lg">
-                                                        <span className="text-slate-400 block">戰術</span>
-                                                        <span className="text-slate-700">
-                                                            {message.deliberation.decision_matrix.strategy_name}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            )}
-
-                                            {/* Weights */}
-                                            {message.deliberation.synthesis?.weights && (
-                                                <div className="flex gap-2 text-xs">
-                                                    <div className="flex items-center gap-1 bg-amber-50 px-2 py-1 rounded-full">
-                                                        <Lightbulb className="w-3 h-3 text-amber-500" />
-                                                        <span>
-                                                            {Math.round(
-                                                                message.deliberation.synthesis.weights.muse * 100
-                                                            )}
-                                                            %
-                                                        </span>
-                                                    </div>
-                                                    <div className="flex items-center gap-1 bg-blue-50 px-2 py-1 rounded-full">
-                                                        <Cpu className="w-3 h-3 text-blue-500" />
-                                                        <span>
-                                                            {Math.round(
-                                                                message.deliberation.synthesis.weights.logos * 100
-                                                            )}
-                                                            %
-                                                        </span>
-                                                    </div>
-                                                    <div className="flex items-center gap-1 bg-emerald-50 px-2 py-1 rounded-full">
-                                                        <Shield className="w-3 h-3 text-emerald-500" />
-                                                        <span>
-                                                            {Math.round(
-                                                                message.deliberation.synthesis.weights.aegis * 100
-                                                            )}
-                                                            %
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            )}
-                                        </div>
-                                    )}
-
-                                    {/* Suggested Replies */}
-                                    {message.deliberation.next_moves &&
-                                        message.deliberation.next_moves.length > 0 && (
-                                            <div className="mt-3 flex flex-wrap gap-2">
-                                                {message.deliberation.next_moves.map((move, idx) => (
-                                                    <button
-                                                        key={idx}
-                                                        onClick={() => handleSuggestionClick(move.text)}
-                                                        className="text-xs bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 rounded-lg px-3 py-1.5 transition-colors"
-                                                    >
-                                                        <span className="font-medium text-indigo-600">
-                                                            {move.label}
-                                                        </span>
-                                                    </button>
-                                                ))}
+                                                    {expandedNodes.has(message.id) ? (
+                                                        <ChevronUp className="w-4 h-4" />
+                                                    ) : (
+                                                        <ChevronDown className="w-4 h-4" />
+                                                    )}
+                                                </button>
                                             </div>
-                                        )}
-                                </div>
+
+                                            {expandedNodes.has(message.id) && (
+                                                <div className="bg-slate-50/50 border-t border-slate-100 p-5 space-y-4">
+                                                    {/* 張力儀表 */}
+                                                    {message.deliberation.entropy_meter && (
+                                                        <SoulStateMeter
+                                                            value={message.deliberation.entropy_meter.value}
+                                                            calculationNote={message.deliberation.entropy_meter.calculation_note}
+                                                        />
+                                                    )}
+
+                                                    {/* 議會廳 */}
+                                                    {message.deliberation.council_chamber && (
+                                                        <CouncilChamber
+                                                            philosopher={message.deliberation.council_chamber.philosopher}
+                                                            engineer={message.deliberation.council_chamber.engineer}
+                                                            guardian={message.deliberation.council_chamber.guardian}
+                                                        />
+                                                    )}
+
+                                                    {/* 戰術儀表板 */}
+                                                    {message.deliberation.decision_matrix && (
+                                                        <TacticalDashboard matrix={{
+                                                            user_hidden_intent: message.deliberation.decision_matrix.user_hidden_intent,
+                                                            ai_strategy_name: message.deliberation.decision_matrix.ai_strategy_name,
+                                                            intended_effect: message.deliberation.decision_matrix.intended_effect,
+                                                            tone_tag: message.deliberation.decision_matrix.tone_tag,
+                                                        }} />
+                                                    )}
+                                                </div>
+                                            )}
+
+                                            {/* 建議跟進 */}
+                                            {message.deliberation.next_moves && message.deliberation.next_moves.length > 0 && (
+                                                <div className="px-5 pb-4 flex flex-wrap gap-2 border-t border-slate-100 pt-3">
+                                                    {message.deliberation.next_moves.map((move, idx) => (
+                                                        <button
+                                                            key={idx}
+                                                            onClick={() => handleSuggestionClick(move.text)}
+                                                            className="text-xs flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 hover:bg-indigo-50 text-slate-600 hover:text-indigo-600 transition-colors border border-slate-200 hover:border-indigo-200 group"
+                                                        >
+                                                            <span className="font-bold text-indigo-400 group-hover:text-indigo-600">
+                                                                {move.label}
+                                                            </span>
+                                                            <MoveRight className="w-3 h-3 opacity-30 group-hover:opacity-100" />
+                                                            <span>{move.text}</span>
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </>
+                                    )}
+                                </>
                             )}
                         </div>
                     </div>
@@ -431,9 +406,13 @@ export default function ChatInterface({ sessionId, conversationId, onNewConversa
 
                 {isLoading && (
                     <div className="flex justify-start">
-                        <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex items-center gap-2">
-                            <Loader2 className="w-4 h-4 animate-spin text-indigo-600" />
-                            <span className="text-sm text-slate-500">思考中...</span>
+                        <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex items-center gap-3">
+                            <div className="flex gap-1">
+                                <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+                                <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+                                <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                            </div>
+                            <span className="text-sm text-purple-600 font-medium">議會審議中...</span>
                         </div>
                     </div>
                 )}
@@ -441,15 +420,15 @@ export default function ChatInterface({ sessionId, conversationId, onNewConversa
                 <div ref={messagesEndRef} />
             </div>
 
-            {/* Input */}
+            {/* 輸入區 */}
             <div className="p-4 border-t border-slate-200 bg-white">
                 <div className="flex gap-3">
                     <input
                         type="text"
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
-                        onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-                        placeholder="輸入訊息..."
+                        onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && sendMessage()}
+                        placeholder="輸入訊息以啟動議會..."
                         disabled={isLoading}
                         className="flex-1 px-4 py-3 bg-slate-100 rounded-xl border-0 focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all disabled:opacity-50"
                     />
