@@ -7,14 +7,16 @@ import ConversationList from "@/components/ConversationList";
 import SettingsModal, { ApiSettings, getStoredSettings } from "@/components/SettingsModal";
 import SessionReport from "@/components/SessionReport";
 import EntropyChart from "@/components/EntropyChart";
+import DataManager from "@/components/DataManager";
 import { Conversation, getConversations, createConversation, saveConversation, clearAllConversations } from "@/lib/db";
-import { Brain, Menu, Settings, FileText, LogOut, Key, Layers, BarChart3 } from "lucide-react";
+import { Brain, Menu, Settings, FileText, LogOut, Key, Layers, BarChart3, Database } from "lucide-react";
 
 export default function Home() {
   const [hasConsent, setHasConsent] = useState<boolean>(false);
   const [showSidebar, setShowSidebar] = useState(true);
   const [showSettings, setShowSettings] = useState(false);
   const [showReport, setShowReport] = useState(false);
+  const [showDataManager, setShowDataManager] = useState(false);
   const [apiSettings, setApiSettings] = useState<ApiSettings | null>(null);
 
   // Conversation state
@@ -180,6 +182,15 @@ export default function Home() {
             <span>API 設定</span>
             {apiSettings?.apiKey && <span className="ml-auto text-xs text-emerald-400">✓</span>}
           </button>
+
+          {/* Data Manager Button */}
+          <button
+            onClick={() => setShowDataManager(true)}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 transition-colors"
+          >
+            <Database className="w-5 h-5" />
+            <span>數據管理</span>
+          </button>
         </div>
 
         {/* Footer */}
@@ -255,6 +266,13 @@ export default function Home() {
         messages={currentConversation?.messages.map(m => ({ ...m, timestamp: m.timestamp })) || []}
         apiSettings={apiSettings}
         conversationId={currentConversation?.id || ''}
+      />
+
+      {/* Data Manager Modal */}
+      <DataManager
+        isOpen={showDataManager}
+        onClose={() => setShowDataManager(false)}
+        onDataImported={loadConversations}
       />
 
       {/* Overlay for mobile sidebar */}

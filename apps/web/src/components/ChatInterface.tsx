@@ -34,6 +34,22 @@ ${memories.map((m, i) => `
 `;
 };
 
+// ==================== RE2 Re-Reading Wrapper ====================
+// 基於論文: "Re-Reading Improves Reasoning in Large Language Models" (2024)
+// 核心概念: 重複讀取輸入 2 次以提升理解深度
+
+const applyRE2 = (input: string): string => {
+    return `【第一次閱讀】:
+"${input}"
+
+請再次仔細閱讀上述用戶輸入，確保完全理解其含義。
+
+【第二次閱讀】:
+"${input}"
+
+現在請基於你的深度理解進行分析。`;
+};
+
 // ==================== 3 獨立視角 Prompt ====================
 
 const PHILOSOPHER_PROMPT = (input: string, context: string) => `
