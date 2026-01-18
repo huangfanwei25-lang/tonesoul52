@@ -66,38 +66,44 @@ export default function SettingsModal({
     };
 
     const handleTest = async () => {
-        if (!apiKey) return;
+        if (!apiKey.trim()) return;
         setTestStatus("testing");
 
         try {
-            // Test the API key with a simple request
+            let isSuccess = false;
+
             if (provider === "gemini") {
-                const response = await fetch(
-                    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
-                    {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            contents: [{ parts: [{ text: "Say hello in 5 words or less." }] }],
-                        }),
-                    }
-                );
-                if (response.ok) {
-                    setTestStatus("success");
-                } else {
-                    setTestStatus("error");
+                try {
+                    const response = await fetch(
+                        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+                        {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                contents: [{ parts: [{ text: "Say hello in 5 words or less." }] }],
+                            }),
+                        }
+                    );
+                    isSuccess = response.ok;
+                } catch (fetchError) {
+                    console.error("Gemini test fetch error:", fetchError);
+                    isSuccess = false;
                 }
             } else if (provider === "openai") {
-                const response = await fetch("https://api.openai.com/v1/models", {
-                    headers: { Authorization: `Bearer ${apiKey}` },
-                });
-                if (response.ok) {
-                    setTestStatus("success");
-                } else {
-                    setTestStatus("error");
+                try {
+                    const response = await fetch("https://api.openai.com/v1/models", {
+                        headers: { Authorization: `Bearer ${apiKey}` },
+                    });
+                    isSuccess = response.ok;
+                } catch (fetchError) {
+                    console.error("OpenAI test fetch error:", fetchError);
+                    isSuccess = false;
                 }
             }
-        } catch {
+
+            setTestStatus(isSuccess ? "success" : "error");
+        } catch (error) {
+            console.error("Test connection error:", error);
             setTestStatus("error");
         }
 
@@ -144,8 +150,8 @@ export default function SettingsModal({
                             <button
                                 onClick={() => setProvider("gemini")}
                                 className={`p-3 rounded-xl border-2 transition-all ${provider === "gemini"
-                                        ? "border-indigo-500 bg-indigo-50"
-                                        : "border-slate-200 hover:border-slate-300"
+                                    ? "border-indigo-500 bg-indigo-50"
+                                    : "border-slate-200 hover:border-slate-300"
                                     }`}
                             >
                                 <div className="text-lg font-bold">🔷 Gemini</div>
@@ -154,8 +160,8 @@ export default function SettingsModal({
                             <button
                                 onClick={() => setProvider("openai")}
                                 className={`p-3 rounded-xl border-2 transition-all ${provider === "openai"
-                                        ? "border-indigo-500 bg-indigo-50"
-                                        : "border-slate-200 hover:border-slate-300"
+                                    ? "border-indigo-500 bg-indigo-50"
+                                    : "border-slate-200 hover:border-slate-300"
                                     }`}
                             >
                                 <div className="text-lg font-bold">🟢 OpenAI</div>
@@ -208,10 +214,10 @@ export default function SettingsModal({
                             onClick={handleTest}
                             disabled={testStatus === "testing"}
                             className={`w-full py-2 rounded-xl text-sm font-medium transition-colors ${testStatus === "success"
-                                    ? "bg-emerald-100 text-emerald-700"
-                                    : testStatus === "error"
-                                        ? "bg-red-100 text-red-700"
-                                        : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                                ? "bg-emerald-100 text-emerald-700"
+                                : testStatus === "error"
+                                    ? "bg-red-100 text-red-700"
+                                    : "bg-slate-100 text-slate-700 hover:bg-slate-200"
                                 }`}
                         >
                             {testStatus === "testing" && "測試中..."}
