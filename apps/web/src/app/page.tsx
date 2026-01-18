@@ -254,6 +254,7 @@ export default function Home() {
         onClose={() => setShowReport(false)}
         messages={currentConversation?.messages.map(m => ({ ...m, timestamp: m.timestamp })) || []}
         apiSettings={apiSettings}
+        conversationId={currentConversation?.id || ''}
       />
 
       {/* Overlay for mobile sidebar */}

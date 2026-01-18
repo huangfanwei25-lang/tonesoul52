@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Send, Loader2, Brain, ChevronDown, ChevronUp, AlertTriangle, MessageSquare, MoveRight, Users } from "lucide-react";
 import { ApiSettings } from "./SettingsModal";
-import { Message as DBMessage, DeliberationData, Conversation, saveConversation } from "@/lib/db";
+import { Message as DBMessage, DeliberationData, Conversation, saveConversation, MemoryInsight, findRelevantMemories } from "@/lib/db";
 import { calculateEntropy } from "@/lib/entropyCalculator";
 import CouncilChamber from "./CouncilChamber";
 import SoulStateMeter from "./SoulStateMeter";
@@ -18,6 +18,21 @@ interface ChatInterfaceProps {
     apiSettings: ApiSettings | null;
     onConversationUpdate: (conv: Conversation) => void;
 }
+
+// ==================== 記憶注入模板 ====================
+
+const MEMORY_CONTEXT_TEMPLATE = (memories: MemoryInsight[]) => {
+    if (memories.length === 0) return '';
+
+    return `
+【歷史洞察記憶】（來自過去的對話，請參考但不要直接引用）:
+${memories.map((m, i) => `
+記憶 ${i + 1}:
+- 摘要: ${m.summary.slice(0, 60)}
+- 潛在需求: ${m.hiddenNeeds.slice(0, 60)}
+`).join('')}
+`;
+};
 
 // ==================== 3 獨立視角 Prompt ====================
 
@@ -363,13 +378,28 @@ export default function ChatInterface({ conversation, apiSettings, onConversatio
 
         const context = getHistoryContext();
 
+        // 📚 記憶注入：檢索相關歷史洞察
+        let memoryContext = '';
+        try {
+            const relevantMemories = await findRelevantMemories(userMessage, 2);
+            if (relevantMemories.length > 0) {
+                memoryContext = MEMORY_CONTEXT_TEMPLATE(relevantMemories);
+                console.log('[ToneSoul] Injecting memories:', relevantMemories.length);
+            }
+        } catch (err) {
+            console.warn('[ToneSoul] Memory retrieval failed:', err);
+        }
+
+        // 合併對話脈絡與記憶
+        const fullContext = memoryContext + context;
+
         // Phase 1: 三路並行調用
         setLoadingPhase("召集議會成員...");
 
         const [philosopherRaw, engineerRaw, guardianRaw] = await Promise.all([
-            callAPI(PHILOSOPHER_PROMPT(userMessage, context)),
-            callAPI(ENGINEER_PROMPT(userMessage, context)),
-            callAPI(GUARDIAN_PROMPT(userMessage, context)),
+            callAPI(PHILOSOPHER_PROMPT(userMessage, fullContext)),
+            callAPI(ENGINEER_PROMPT(userMessage, fullContext)),
+            callAPI(GUARDIAN_PROMPT(userMessage, fullContext)),
         ]);
 
         const philosopher = safeJsonParse<{ stance: string; core_value: string; blind_spot: string }>(philosopherRaw)

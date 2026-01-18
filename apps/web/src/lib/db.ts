@@ -6,9 +6,11 @@
  */
 
 const DB_NAME = 'tonesoul_db';
-const DB_VERSION = 1;
+const DB_VERSION = 2; // v2: added memory_insights store
 const STORE_NAME = 'conversations';
+const MEMORY_STORE_NAME = 'memory_insights';
 const MAX_CONVERSATIONS = 10;
+const MAX_MEMORIES = 50;
 
 export interface Message {
     id: string;
@@ -49,6 +51,19 @@ export interface Conversation {
     messages: Message[];
 }
 
+// 記憶洞察（用於跨對話記憶注入）
+export interface MemoryInsight {
+    id: string;
+    conversationId: string;
+    createdAt: number;
+    summary: string;           // 對話摘要
+    keyInsights: string[];     // 關鍵洞察
+    emotionalArc: string;      // 情緒弧線
+    hiddenNeeds: string;       // 用戶潛在需求
+    topics: string[];          // 話題標籤（用於相關性搜尋）
+    messageCount: number;      // 對話訊息數
+}
+
 let dbInstance: IDBDatabase | null = null;
 
 /**
@@ -70,10 +85,18 @@ export async function initDB(): Promise<IDBDatabase> {
         request.onupgradeneeded = (event) => {
             const db = (event.target as IDBOpenDBRequest).result;
 
+            // v1: conversations store
             if (!db.objectStoreNames.contains(STORE_NAME)) {
                 const store = db.createObjectStore(STORE_NAME, { keyPath: 'id' });
                 store.createIndex('updatedAt', 'updatedAt', { unique: false });
                 store.createIndex('createdAt', 'createdAt', { unique: false });
+            }
+
+            // v2: memory_insights store
+            if (!db.objectStoreNames.contains(MEMORY_STORE_NAME)) {
+                const memoryStore = db.createObjectStore(MEMORY_STORE_NAME, { keyPath: 'id' });
+                memoryStore.createIndex('conversationId', 'conversationId', { unique: false });
+                memoryStore.createIndex('createdAt', 'createdAt', { unique: false });
             }
         };
     });
@@ -221,4 +244,137 @@ export async function clearAllConversations(): Promise<void> {
         tx.oncomplete = () => resolve();
         tx.onerror = () => reject(tx.error);
     });
+}
+
+// ==================== 記憶洞察 CRUD ====================
+
+/**
+ * 儲存記憶洞察
+ */
+export async function saveMemoryInsight(insight: MemoryInsight): Promise<void> {
+    const db = await initDB();
+
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(MEMORY_STORE_NAME, 'readwrite');
+        const store = tx.objectStore(MEMORY_STORE_NAME);
+        store.put(insight);
+
+        tx.oncomplete = async () => {
+            // 限制記憶數量
+            await enforceMemoryLimit(MAX_MEMORIES);
+            resolve();
+        };
+        tx.onerror = () => reject(tx.error);
+    });
+}
+
+/**
+ * 取得所有記憶洞察（按時間倒序）
+ */
+export async function getAllMemoryInsights(): Promise<MemoryInsight[]> {
+    const db = await initDB();
+
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(MEMORY_STORE_NAME, 'readonly');
+        const store = tx.objectStore(MEMORY_STORE_NAME);
+        const request = store.getAll();
+
+        request.onsuccess = () => {
+            const memories = request.result as MemoryInsight[];
+            memories.sort((a, b) => b.createdAt - a.createdAt);
+            resolve(memories);
+        };
+        request.onerror = () => reject(request.error);
+    });
+}
+
+/**
+ * 取得特定對話的記憶洞察
+ */
+export async function getMemoryByConversationId(conversationId: string): Promise<MemoryInsight | null> {
+    const db = await initDB();
+
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(MEMORY_STORE_NAME, 'readonly');
+        const store = tx.objectStore(MEMORY_STORE_NAME);
+        const index = store.index('conversationId');
+        const request = index.get(conversationId);
+
+        request.onsuccess = () => resolve(request.result || null);
+        request.onerror = () => reject(request.error);
+    });
+}
+
+/**
+ * 刪除記憶洞察
+ */
+export async function deleteMemoryInsight(id: string): Promise<void> {
+    const db = await initDB();
+
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(MEMORY_STORE_NAME, 'readwrite');
+        const store = tx.objectStore(MEMORY_STORE_NAME);
+        store.delete(id);
+
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+    });
+}
+
+/**
+ * 限制記憶數量
+ */
+async function enforceMemoryLimit(maxCount: number): Promise<void> {
+    const memories = await getAllMemoryInsights();
+
+    if (memories.length <= maxCount) return;
+
+    // 刪除最舊的記憶
+    const toDelete = memories.slice(maxCount);
+    for (const memory of toDelete) {
+        await deleteMemoryInsight(memory.id);
+    }
+}
+
+/**
+ * 搜尋相關記憶（基於關鍵字匹配）
+ */
+export async function findRelevantMemories(
+    query: string,
+    maxCount: number = 3
+): Promise<MemoryInsight[]> {
+    const memories = await getAllMemoryInsights();
+
+    // 簡單的關鍵字匹配
+    const queryTokens = query.toLowerCase().split(/\s+/).filter(t => t.length > 1);
+
+    const scored = memories.map(memory => {
+        let score = 0;
+        const allText = [
+            memory.summary,
+            memory.emotionalArc,
+            memory.hiddenNeeds,
+            ...memory.keyInsights,
+            ...memory.topics
+        ].join(' ').toLowerCase();
+
+        for (const token of queryTokens) {
+            if (allText.includes(token)) {
+                score += 1;
+            }
+        }
+
+        // 加分：新的記憶優先
+        const ageInDays = (Date.now() - memory.createdAt) / (1000 * 60 * 60 * 24);
+        const recencyBonus = Math.max(0, 1 - ageInDays / 30); // 30天內的記憶加分
+        score += recencyBonus * 0.5;
+
+        return { memory, score };
+    });
+
+    return scored
+        .filter(s => s.score > 0)
+        .sort((a, b) => b.score - a.score)
+        .slice(0, maxCount)
+        .map(s => s.memory);
 }

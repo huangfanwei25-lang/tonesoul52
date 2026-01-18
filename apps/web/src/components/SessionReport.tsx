@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { FileText, X, Lightbulb, Shield, TrendingUp, Heart, Activity } from "lucide-react";
-import { Message, DeliberationData } from "@/lib/db";
+import { FileText, X, Lightbulb, Shield, TrendingUp, Heart, Activity, Save, Check } from "lucide-react";
+import { Message, DeliberationData, MemoryInsight, saveMemoryInsight } from "@/lib/db";
 import { ApiSettings } from "./SettingsModal";
 
 interface SessionReportProps {
@@ -10,6 +10,7 @@ interface SessionReportProps {
     onClose: () => void;
     messages: Message[];
     apiSettings: ApiSettings | null;
+    conversationId: string;
 }
 
 interface ReportData {
@@ -42,10 +43,12 @@ ${JSON.stringify(history, null, 2)}
 }
 `;
 
-export default function SessionReport({ isOpen, onClose, messages, apiSettings }: SessionReportProps) {
+export default function SessionReport({ isOpen, onClose, messages, apiSettings, conversationId }: SessionReportProps) {
     const [isLoading, setIsLoading] = useState(false);
     const [reportData, setReportData] = useState<ReportData | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [isSaved, setIsSaved] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
 
     const generateReport = async () => {
         if (!apiSettings?.apiKey) {
@@ -124,6 +127,60 @@ export default function SessionReport({ isOpen, onClose, messages, apiSettings }
         } finally {
             setIsLoading(false);
         }
+    };
+
+    // 保存報告為記憶
+    const saveAsMemory = async () => {
+        if (!reportData || isSaved) return;
+
+        setIsSaving(true);
+        try {
+            // 從報告中提取話題標籤
+            const topics = extractTopics(reportData);
+
+            const memory: MemoryInsight = {
+                id: `memory_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                conversationId,
+                createdAt: Date.now(),
+                summary: reportData.closing_advice.slice(0, 100),
+                keyInsights: reportData.key_insights.slice(0, 3),
+                emotionalArc: reportData.emotional_arc,
+                hiddenNeeds: reportData.hidden_needs,
+                topics,
+                messageCount: messages.length,
+            };
+
+            await saveMemoryInsight(memory);
+            setIsSaved(true);
+            console.log('[ToneSoul] Memory saved:', memory);
+        } catch (err) {
+            console.error('Failed to save memory:', err);
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    // 簡單的話題提取（基於關鍵字）
+    const extractTopics = (report: ReportData): string[] => {
+        const text = [
+            report.emotional_arc,
+            report.hidden_needs,
+            report.closing_advice,
+            ...report.key_insights
+        ].join(' ');
+
+        // 提取中文關鍵詞（簡單版本）
+        const cnWords = text.match(/[一-龥]{2,4}/g) || [];
+        // 計算詞頻
+        const freq: Record<string, number> = {};
+        for (const word of cnWords) {
+            freq[word] = (freq[word] || 0) + 1;
+        }
+        // 取前 5 個高頻詞
+        return Object.entries(freq)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 5)
+            .map(([word]) => word);
     };
 
     if (!isOpen) return null;
@@ -247,6 +304,35 @@ export default function SessionReport({ isOpen, onClose, messages, apiSettings }
                                     Navigator 的最終建議
                                 </h3>
                                 <p className="opacity-90 leading-relaxed">{reportData.closing_advice}</p>
+                            </div>
+
+                            {/* Save as Memory Button */}
+                            <div className="flex justify-center pt-4">
+                                <button
+                                    onClick={saveAsMemory}
+                                    disabled={isSaved || isSaving}
+                                    className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${isSaved
+                                            ? 'bg-emerald-100 text-emerald-700 cursor-default'
+                                            : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                                        }`}
+                                >
+                                    {isSaved ? (
+                                        <>
+                                            <Check className="w-5 h-5" />
+                                            已保存為記憶
+                                        </>
+                                    ) : isSaving ? (
+                                        <>
+                                            <div className="w-5 h-5 border-2 border-slate-300 border-t-slate-600 rounded-full animate-spin" />
+                                            保存中...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Save className="w-5 h-5" />
+                                            保存為記憶（跨對話使用）
+                                        </>
+                                    )}
+                                </button>
                             </div>
                         </>
                     )}
