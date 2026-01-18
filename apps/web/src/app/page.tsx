@@ -6,6 +6,7 @@ import ChatInterface from "@/components/ChatInterface";
 import ConversationList from "@/components/ConversationList";
 import SettingsModal, { ApiSettings, getStoredSettings } from "@/components/SettingsModal";
 import SessionReport from "@/components/SessionReport";
+import EntropyChart from "@/components/EntropyChart";
 import { Conversation, getConversations, createConversation, saveConversation, clearAllConversations } from "@/lib/db";
 import { Brain, Menu, Settings, FileText, LogOut, Key, Layers, BarChart3 } from "lucide-react";
 
@@ -141,14 +142,21 @@ export default function Home() {
         </div>
 
         {/* Conversation List */}
-        <div className="flex-1 overflow-hidden">
-          <ConversationList
-            conversations={conversations}
-            currentId={currentConversation?.id || null}
-            onSelect={handleSelectConversation}
-            onNew={handleNewConversation}
-            onDelete={handleDeleteConversation}
-          />
+        <div className="flex-1 overflow-hidden flex flex-col">
+          <div className="flex-1 overflow-y-auto">
+            <ConversationList
+              conversations={conversations}
+              currentId={currentConversation?.id || null}
+              onSelect={handleSelectConversation}
+              onNew={handleNewConversation}
+              onDelete={handleDeleteConversation}
+            />
+          </div>
+
+          {/* Entropy Chart */}
+          <div className="border-t border-slate-800">
+            <EntropyChart conversation={currentConversation} />
+          </div>
         </div>
 
         {/* Report & Settings Buttons */}

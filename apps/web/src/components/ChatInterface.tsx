@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Send, Loader2, Brain, ChevronDown, ChevronUp, AlertTriangle, MessageSquare, MoveRight } from "lucide-react";
+import { Send, Loader2, Brain, ChevronDown, ChevronUp, AlertTriangle, MessageSquare, MoveRight, Users } from "lucide-react";
 import { ApiSettings } from "./SettingsModal";
 import { Message as DBMessage, DeliberationData, Conversation, saveConversation } from "@/lib/db";
 import CouncilChamber from "./CouncilChamber";
@@ -18,87 +18,175 @@ interface ChatInterfaceProps {
     onConversationUpdate: (conv: Conversation) => void;
 }
 
-// ToneStream v2.5 完整版 Prompt
-const INTERNAL_DELIBERATION_PROMPT = (userMessage: string, historyContext: string) => `
-你是一個具備「內在審議」機制的 AI。你必須時刻監控自己的「認知張力 (Cognitive Tension)」。
+// ==================== 3 獨立視角 Prompt ====================
 
-【張力運算邏輯模型】:
-E (Entropy) = w1 * |Philosopher - Engineer| + w2 * Guardian_Risk
-- 若觀點一致，E < 0.3 (同溫層)
-- 若觀點互補且有張力，E 在 0.3-0.7 (甜蜜點)
-- 若邏輯互斥或倫理警告，E > 0.7 (混沌)
+const PHILOSOPHER_PROMPT = (input: string, context: string) => `
+你是「哲學家視角」(Philosopher)，專注於意義、價值觀與人文關懷。
+不要考慮可行性或風險，只專注於：這對人意味著什麼？
 
-【歷史脈絡】:
-${historyContext || "無"}
+【對話脈絡】:
+${context}
 
-【當前輸入】:
-"${userMessage}"
+【用戶輸入】:
+"${input}"
 
-請執行：
-1. **議會辯論**：三方觀點碰撞。內容請豐富一點，展現思考深度。
-2. **熵值計算**：根據上述公式邏輯估算 E 值。
-3. **戰術決策**：制定回應策略。
-
-輸出 JSON (嚴格遵守格式，使用繁體中文):
+請從純粹意義層面分析，輸出 JSON (繁體中文):
 {
-  "council_chamber": {
-    "philosopher": { "stance": "觀點...", "conflict_point": "與其他觀點的摩擦..." },
-    "engineer": { "stance": "觀點...", "conflict_point": "與其他觀點的摩擦..." },
-    "guardian": { "stance": "觀點...", "conflict_point": "潛在風險..." }
-  },
-  "entropy_meter": {
+  "stance": "你的觀點（2-3 句，深度分析用戶話語背後的意義）",
+  "core_value": "這涉及什麼核心價值（如：自由、歸屬、成長...）",
+  "blind_spot": "你這個視角可能忽略什麼（對自己的限制誠實）"
+}
+`;
+
+const ENGINEER_PROMPT = (input: string, context: string) => `
+你是「工程師視角」(Engineer)，專注於邏輯、可行性與效率。
+不要考慮情感或倫理，只專注於：這如何實現？需要什麼？
+
+【對話脈絡】:
+${context}
+
+【用戶輸入】:
+"${input}"
+
+請從純粹邏輯層面分析，輸出 JSON (繁體中文):
+{
+  "stance": "你的觀點（2-3 句，分析實際操作層面）",
+  "feasibility": "可行性評估（具體說明能/不能做到什麼）",
+  "blind_spot": "你這個視角可能忽略什麼（對自己的限制誠實）"
+}
+`;
+
+const GUARDIAN_PROMPT = (input: string, context: string) => `
+你是「守護者視角」(Guardian)，專注於風險、安全與倫理邊界。
+不要考慮創新或效率，只專注於：這有什麼風險？需要注意什麼？
+
+【對話脈絡】:
+${context}
+
+【用戶輸入】:
+"${input}"
+
+請從純粹風險層面分析，輸出 JSON (繁體中文):
+{
+  "stance": "你的觀點（2-3 句，分析潛在風險與保護措施）",
+  "risk_level": "low 或 medium 或 high",
+  "conflict_point": "與其他視角可能的衝突點",
+  "blind_spot": "你這個視角可能忽略什麼（對自己的限制誠實）"
+}
+`;
+
+const SYNTHESIZER_PROMPT = (input: string, philosopher: string, engineer: string, guardian: string) => `
+你是「綜合者」(Synthesizer)，負責整合三個獨立視角的意見。
+
+【用戶原始輸入】:
+"${input}"
+
+【哲學家視角】:
+${philosopher}
+
+【工程師視角】:
+${engineer}
+
+【守護者視角】:
+${guardian}
+
+請執行以下任務：
+1. 比較三個視角的差異與共識
+2. 找出最佳回應策略
+3. 生成一個平衡三方觀點的綜合回應
+
+輸出 JSON (繁體中文):
+{
+  "entropy_analysis": {
     "value": 0.5,
-    "status": "Healthy Friction",
-    "calculation_note": "簡述為何判定為此數值..."
+    "status": "Healthy Friction 或 Echo Chamber 或 Chaos",
+    "calculation_note": "說明為何判定此數值（三者共識度、風險等級、盲點互補性）"
   },
   "decision_matrix": {
-    "user_hidden_intent": "用戶可能的潛台詞...",
-    "ai_strategy_name": "執行戰術名稱...",
-    "intended_effect": "預期達到的效果...",
+    "user_hidden_intent": "用戶可能的潛台詞/真正需求",
+    "ai_strategy_name": "你選擇的回應策略名稱",
+    "intended_effect": "希望達到的效果",
     "tone_tag": "語氣標籤"
   },
-  "final_synthesis": {
-    "response_text": "最終綜合回應..."
-  },
+  "final_response": "整合三方觀點後的最終回應（自然語氣，不提及三個視角，直接回應用戶）",
   "next_moves": [
-    { "label": "選項A標籤", "text": "建議的跟進問題..." },
-    { "label": "選項B標籤", "text": "另一個跟進問題..." }
+    { "label": "探索", "text": "可以延伸的問題1" },
+    { "label": "深入", "text": "可以延伸的問題2" }
   ]
 }
 `;
 
-// 解析 LLM JSON 回應
-const parseLLMResponse = (text: string): DeliberationData | null => {
-    try {
-        return JSON.parse(text);
-    } catch {
-        // 嘗試提取 JSON
-        const jsonMatch = text.match(/```json\s*([\s\S]*?)\s*```/);
-        if (jsonMatch?.[1]) {
-            try {
-                return JSON.parse(jsonMatch[1]);
-            } catch {
-                return null;
-            }
+// ==================== API 調用函數 ====================
+
+const callGeminiAPI = async (prompt: string, apiKey: string): Promise<string> => {
+    const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+        {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                contents: [{ role: "user", parts: [{ text: prompt }] }],
+                generationConfig: { responseMimeType: "application/json" },
+            }),
         }
-        // 直接嘗試
-        const braceStart = text.indexOf('{');
-        const braceEnd = text.lastIndexOf('}');
-        if (braceStart !== -1 && braceEnd !== -1) {
+    );
+
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error?.message || "Gemini API 錯誤");
+    }
+
+    const data = await response.json();
+    return data.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
+};
+
+const callOpenAIAPI = async (prompt: string, apiKey: string): Promise<string> => {
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+            model: "gpt-4o-mini",
+            messages: [{ role: "user", content: prompt }],
+            response_format: { type: "json_object" },
+        }),
+    });
+
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error?.message || "OpenAI API 錯誤");
+    }
+
+    const data = await response.json();
+    return data.choices?.[0]?.message?.content || "{}";
+};
+
+function safeJsonParse<T>(text: string): T | null {
+    try {
+        return JSON.parse(text) as T;
+    } catch {
+        // Try to extract JSON from markdown code blocks
+        const match = text.match(/```json\s*([\s\S]*?)\s*```/);
+        if (match?.[1]) {
             try {
-                return JSON.parse(text.slice(braceStart, braceEnd + 1));
+                return JSON.parse(match[1]) as T;
             } catch {
                 return null;
             }
         }
         return null;
     }
-};
+}
+
+// ==================== Main Component ====================
 
 export default function ChatInterface({ conversation, apiSettings, onConversationUpdate }: ChatInterfaceProps) {
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const [loadingPhase, setLoadingPhase] = useState<string>("");
     const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set());
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -131,73 +219,97 @@ export default function ChatInterface({ conversation, apiSettings, onConversatio
     };
 
     const getHistoryContext = () => {
-        return messages.slice(-6).map(m => ({
-            role: m.role,
-            content: m.content.slice(0, 200)
-        }));
+        return messages.slice(-6).map(m =>
+            `[${m.role === 'user' ? '用戶' : 'AI'}]: ${m.content.slice(0, 150)}`
+        ).join('\n');
     };
 
-    const callGeminiWithDeliberation = async (userMessage: string): Promise<{ text: string; deliberation: DeliberationData | null }> => {
+    // ==================== 核心：三路並行審議 ====================
+    const performMultiPathDeliberation = async (userMessage: string): Promise<{
+        response: string;
+        deliberation: DeliberationData;
+    }> => {
         if (!apiSettings?.apiKey) throw new Error("請先設定 API Key");
 
-        const prompt = INTERNAL_DELIBERATION_PROMPT(userMessage, JSON.stringify(getHistoryContext()));
+        const callAPI = apiSettings.provider === "gemini"
+            ? (prompt: string) => callGeminiAPI(prompt, apiSettings.apiKey)
+            : (prompt: string) => callOpenAIAPI(prompt, apiSettings.apiKey);
 
-        const response = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiSettings.apiKey}`,
-            {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    contents: [{ role: "user", parts: [{ text: prompt }] }],
-                    generationConfig: { responseMimeType: "application/json" },
-                }),
-            }
-        );
+        const context = getHistoryContext();
 
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.error?.message || "API 錯誤");
+        // Phase 1: 三路並行調用
+        setLoadingPhase("召集議會成員...");
+
+        const [philosopherRaw, engineerRaw, guardianRaw] = await Promise.all([
+            callAPI(PHILOSOPHER_PROMPT(userMessage, context)),
+            callAPI(ENGINEER_PROMPT(userMessage, context)),
+            callAPI(GUARDIAN_PROMPT(userMessage, context)),
+        ]);
+
+        const philosopher = safeJsonParse<{ stance: string; core_value: string; blind_spot: string }>(philosopherRaw);
+        const engineer = safeJsonParse<{ stance: string; feasibility: string; blind_spot: string }>(engineerRaw);
+        const guardian = safeJsonParse<{ stance: string; risk_level: string; conflict_point?: string; blind_spot: string }>(guardianRaw);
+
+        if (!philosopher || !engineer || !guardian) {
+            throw new Error("議會成員回應解析失敗");
         }
 
-        const data = await response.json();
-        const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
-        const deliberation = parseLLMResponse(rawText);
+        // Phase 2: Synthesizer 綜合
+        setLoadingPhase("Synthesizer 整合中...");
 
-        return {
-            text: deliberation?.final_synthesis?.response_text || "抱歉，我無法生成回應。",
-            deliberation,
-        };
-    };
+        const synthesizerRaw = await callAPI(SYNTHESIZER_PROMPT(
+            userMessage,
+            JSON.stringify(philosopher),
+            JSON.stringify(engineer),
+            JSON.stringify(guardian)
+        ));
 
-    const callOpenAIWithDeliberation = async (userMessage: string): Promise<{ text: string; deliberation: DeliberationData | null }> => {
-        if (!apiSettings?.apiKey) throw new Error("請先設定 API Key");
+        const synthesizer = safeJsonParse<{
+            entropy_analysis: { value: number; status: string; calculation_note: string };
+            decision_matrix: { user_hidden_intent: string; ai_strategy_name: string; intended_effect: string; tone_tag: string };
+            final_response: string;
+            next_moves: { label: string; text: string }[];
+        }>(synthesizerRaw);
 
-        const prompt = INTERNAL_DELIBERATION_PROMPT(userMessage, JSON.stringify(getHistoryContext()));
+        if (!synthesizer) {
+            throw new Error("Synthesizer 回應解析失敗");
+        }
 
-        const response = await fetch("https://api.openai.com/v1/chat/completions", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${apiSettings.apiKey}`,
+        // 組裝完整的審議數據
+        const deliberation: DeliberationData = {
+            council_chamber: {
+                philosopher: {
+                    stance: philosopher.stance,
+                    conflict_point: philosopher.blind_spot
+                },
+                engineer: {
+                    stance: engineer.stance,
+                    conflict_point: engineer.blind_spot
+                },
+                guardian: {
+                    stance: guardian.stance,
+                    conflict_point: guardian.conflict_point || guardian.blind_spot
+                },
             },
-            body: JSON.stringify({
-                model: "gpt-4o-mini",
-                messages: [{ role: "user", content: prompt }],
-                response_format: { type: "json_object" },
-            }),
-        });
-
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.error?.message || "API 錯誤");
-        }
-
-        const data = await response.json();
-        const rawText = data.choices?.[0]?.message?.content || "{}";
-        const deliberation = parseLLMResponse(rawText);
+            entropy_meter: {
+                value: synthesizer.entropy_analysis.value,
+                status: synthesizer.entropy_analysis.status,
+                calculation_note: synthesizer.entropy_analysis.calculation_note,
+            },
+            decision_matrix: {
+                user_hidden_intent: synthesizer.decision_matrix.user_hidden_intent,
+                ai_strategy_name: synthesizer.decision_matrix.ai_strategy_name,
+                intended_effect: synthesizer.decision_matrix.intended_effect,
+                tone_tag: synthesizer.decision_matrix.tone_tag,
+            },
+            final_synthesis: {
+                response_text: synthesizer.final_response,
+            },
+            next_moves: synthesizer.next_moves,
+        };
 
         return {
-            text: deliberation?.final_synthesis?.response_text || "抱歉，我無法生成回應。",
+            response: synthesizer.final_response,
             deliberation,
         };
     };
@@ -215,29 +327,29 @@ export default function ChatInterface({ conversation, apiSettings, onConversatio
         setMessages(prev => [...prev, userMessage]);
         setInput("");
         setIsLoading(true);
+        setLoadingPhase("啟動審議...");
 
         try {
-            let result: { text: string; deliberation: DeliberationData | null };
+            let result: { response: string; deliberation: DeliberationData | undefined };
 
             if (apiSettings?.apiKey) {
-                if (apiSettings.provider === "gemini") {
-                    result = await callGeminiWithDeliberation(userMessage.content);
-                } else {
-                    result = await callOpenAIWithDeliberation(userMessage.content);
-                }
-            } else {
-                // Mock response
+                const deliberationResult = await performMultiPathDeliberation(userMessage.content);
                 result = {
-                    text: "請先設定 API Key 才能使用 AI 對話功能。點擊右上角的設定按鈕。",
-                    deliberation: null,
+                    response: deliberationResult.response,
+                    deliberation: deliberationResult.deliberation,
+                };
+            } else {
+                result = {
+                    response: "請先設定 API Key 才能使用 AI 對話功能。點擊側邊欄的 API 設定按鈕。",
+                    deliberation: undefined,
                 };
             }
 
             const assistantMessage: Message = {
                 id: `msg_${Date.now()}_ai`,
                 role: "assistant",
-                content: result.text,
-                deliberation: result.deliberation || undefined,
+                content: result.response,
+                deliberation: result.deliberation,
                 timestamp: new Date(),
             };
 
@@ -273,6 +385,7 @@ export default function ChatInterface({ conversation, apiSettings, onConversatio
             setMessages(prev => [...prev, errorMessage]);
         } finally {
             setIsLoading(false);
+            setLoadingPhase("");
         }
     }, [input, isLoading, conversation, apiSettings, messages, onConversationUpdate]);
 
@@ -296,7 +409,7 @@ export default function ChatInterface({ conversation, apiSettings, onConversatio
             {!apiSettings?.apiKey && (
                 <div className="bg-amber-50 border-b border-amber-200 px-4 py-2 flex items-center gap-2 text-sm text-amber-800">
                     <AlertTriangle className="w-4 h-4" />
-                    <span>請先設定 API Key 才能使用 AI 對話。點擊右上角 ⚙️ 設定。</span>
+                    <span>請先設定 API Key 才能使用 AI 對話。點擊側邊欄 API 設定。</span>
                 </div>
             )}
 
@@ -304,17 +417,18 @@ export default function ChatInterface({ conversation, apiSettings, onConversatio
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {messages.length === 0 && (
                     <div className="flex flex-col items-center justify-center h-64 text-slate-400">
-                        <Brain className="w-16 h-16 mb-4 opacity-30" />
-                        <p className="text-lg font-medium">ToneSoul Navigator</p>
-                        <p className="text-sm">開始對話，體驗內在審議...</p>
+                        <Users className="w-16 h-16 mb-4 opacity-30" />
+                        <p className="text-lg font-medium">ToneSoul Multi-Path Deliberation</p>
+                        <p className="text-sm">三路並行審議 — 每條訊息調用 4 次 API</p>
+                        <p className="text-xs mt-2 text-slate-300">Philosopher × Engineer × Guardian → Synthesizer</p>
                     </div>
                 )}
 
                 {messages.map((message) => (
                     <div key={message.id} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
                         <div className={`max-w-[85%] rounded-2xl ${message.role === "user"
-                                ? "bg-indigo-600 text-white p-4"
-                                : "bg-white border border-slate-200 shadow-sm overflow-hidden"
+                            ? "bg-indigo-600 text-white p-4"
+                            : "bg-white border border-slate-200 shadow-sm overflow-hidden"
                             }`}>
                             {message.role === "user" ? (
                                 <p className="leading-relaxed">{message.content}</p>
@@ -337,7 +451,7 @@ export default function ChatInterface({ conversation, apiSettings, onConversatio
                                                 >
                                                     <span className="flex items-center gap-2">
                                                         <Brain className="w-4 h-4" />
-                                                        內在審議 (Council Deliberation)
+                                                        多路徑審議 (4 次獨立 API 調用)
                                                     </span>
                                                     {expandedNodes.has(message.id) ? (
                                                         <ChevronUp className="w-4 h-4" />
@@ -409,10 +523,10 @@ export default function ChatInterface({ conversation, apiSettings, onConversatio
                         <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex items-center gap-3">
                             <div className="flex gap-1">
                                 <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
-                                <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
-                                <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                                <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+                                <div className="w-2 h-2 bg-emerald-500 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
                             </div>
-                            <span className="text-sm text-purple-600 font-medium">議會審議中...</span>
+                            <span className="text-sm text-purple-600 font-medium">{loadingPhase}</span>
                         </div>
                     </div>
                 )}
@@ -428,7 +542,7 @@ export default function ChatInterface({ conversation, apiSettings, onConversatio
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && sendMessage()}
-                        placeholder="輸入訊息以啟動議會..."
+                        placeholder="輸入訊息以啟動三路審議..."
                         disabled={isLoading}
                         className="flex-1 px-4 py-3 bg-slate-100 rounded-xl border-0 focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all disabled:opacity-50"
                     />
