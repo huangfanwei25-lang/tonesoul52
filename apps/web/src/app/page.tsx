@@ -5,13 +5,15 @@ import ConsentModal from "@/components/ConsentModal";
 import ChatInterface from "@/components/ChatInterface";
 import ConversationList from "@/components/ConversationList";
 import SettingsModal, { ApiSettings, getStoredSettings } from "@/components/SettingsModal";
+import SessionReport from "@/components/SessionReport";
 import { Conversation, getConversations, createConversation, saveConversation, clearAllConversations } from "@/lib/db";
-import { Brain, Menu, Settings, FileText, LogOut, Key, Layers } from "lucide-react";
+import { Brain, Menu, Settings, FileText, LogOut, Key, Layers, BarChart3 } from "lucide-react";
 
 export default function Home() {
   const [hasConsent, setHasConsent] = useState<boolean>(false);
   const [showSidebar, setShowSidebar] = useState(true);
   const [showSettings, setShowSettings] = useState(false);
+  const [showReport, setShowReport] = useState(false);
   const [apiSettings, setApiSettings] = useState<ApiSettings | null>(null);
 
   // Conversation state
@@ -149,8 +151,19 @@ export default function Home() {
           />
         </div>
 
-        {/* API Settings Button */}
-        <div className="p-3 border-t border-slate-800">
+        {/* Report & Settings Buttons */}
+        <div className="p-3 border-t border-slate-800 space-y-2">
+          {/* Report Button */}
+          <button
+            onClick={() => setShowReport(true)}
+            disabled={!currentConversation || currentConversation.messages.length < 2}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <BarChart3 className="w-5 h-5" />
+            <span>生成洞察報告</span>
+          </button>
+
+          {/* API Settings Button */}
           <button
             onClick={() => setShowSettings(true)}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 transition-colors"
@@ -225,6 +238,14 @@ export default function Home() {
         onClose={() => setShowSettings(false)}
         onSave={setApiSettings}
         currentSettings={apiSettings}
+      />
+
+      {/* Session Report Modal */}
+      <SessionReport
+        isOpen={showReport}
+        onClose={() => setShowReport(false)}
+        messages={currentConversation?.messages.map(m => ({ ...m, timestamp: m.timestamp })) || []}
+        apiSettings={apiSettings}
       />
 
       {/* Overlay for mobile sidebar */}
