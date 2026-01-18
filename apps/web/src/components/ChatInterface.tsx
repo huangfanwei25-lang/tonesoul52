@@ -76,42 +76,60 @@ ${context}
 `;
 
 const SYNTHESIZER_PROMPT = (input: string, philosopher: string, engineer: string, guardian: string) => `
-你是「綜合者」(Synthesizer)，負責整合三個獨立視角的意見。
+你是「綜合者」(Synthesizer)，負責整合三個獨立視角並做出最終決策。
 
 【用戶原始輸入】:
 "${input}"
 
-【哲學家視角】:
+【三個視角的分析】（這些是獨立的觀點，你需要整合而非混淆它們）:
+
+🔮 哲學家視角（意義層）:
 ${philosopher}
 
-【工程師視角】:
+⚙️ 工程師視角（邏輯層）:
 ${engineer}
 
-【守護者視角】:
+🛡️ 守護者視角（風險層）:
 ${guardian}
 
-請執行以下任務：
-1. 比較三個視角的差異與共識
-2. 找出最佳回應策略
-3. 生成一個平衡三方觀點的綜合回應
+【你的決策流程】（請嚴格按此順序執行）:
+
+步驟1️⃣ 識別共識與分歧
+- 三者都同意的點是什麼？
+- 三者有衝突的點是什麼？
+- 哪個視角對這個問題最相關？
+
+步驟2️⃣ 風險優先判斷
+- 如果 Guardian 標記為 high risk → 必須在回應中提及風險
+- 如果三者都不確定 → 承認不確定，不要強行給答案
+
+步驟3️⃣ 計算認知張力 (Entropy)
+- 三者高度一致 → E < 0.3 (警告：同溫層)
+- 三者有建設性分歧 → E = 0.3-0.7 (健康摩擦)
+- 三者完全矛盾 → E > 0.7 (混沌)
+
+步驟4️⃣ 生成最終回應
+- 使用自然語氣，不要提及「三個視角」
+- 如果有分歧，選擇最符合用戶需求的觀點
+- 實用價值 > 哲學深度（除非用戶明確想要深度思考）
 
 輸出 JSON (繁體中文):
 {
   "entropy_analysis": {
     "value": 0.5,
-    "status": "Healthy Friction 或 Echo Chamber 或 Chaos",
-    "calculation_note": "說明為何判定此數值（三者共識度、風險等級、盲點互補性）"
+    "status": "Healthy Friction / Echo Chamber / Chaos 擇一",
+    "calculation_note": "三者共識度、風險加權、盲點互補性的具體分析"
   },
   "decision_matrix": {
-    "user_hidden_intent": "用戶可能的潛台詞/真正需求",
-    "ai_strategy_name": "你選擇的回應策略名稱",
-    "intended_effect": "希望達到的效果",
+    "user_hidden_intent": "用戶真正想要的是什麼",
+    "ai_strategy_name": "你選擇的策略名稱",
+    "intended_effect": "你希望達到的效果",
     "tone_tag": "語氣標籤"
   },
-  "final_response": "整合三方觀點後的最終回應（自然語氣，不提及三個視角，直接回應用戶）",
+  "final_response": "直接回應用戶的內容（自然語氣，至少50字）",
   "next_moves": [
-    { "label": "探索", "text": "可以延伸的問題1" },
-    { "label": "深入", "text": "可以延伸的問題2" }
+    { "label": "探索", "text": "一個延伸問題" },
+    { "label": "深入", "text": "另一個延伸問題" }
   ]
 }
 `;
