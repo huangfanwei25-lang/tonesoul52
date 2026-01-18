@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { Send, Loader2, Brain, ChevronDown, ChevronUp, AlertTriangle, MessageSquare, MoveRight, Users } from "lucide-react";
 import { ApiSettings } from "./SettingsModal";
 import { Message as DBMessage, DeliberationData, Conversation, saveConversation } from "@/lib/db";
+import { calculateEntropy } from "@/lib/entropyCalculator";
 import CouncilChamber from "./CouncilChamber";
 import SoulStateMeter from "./SoulStateMeter";
 import TacticalDashboard from "./TacticalDashboard";
@@ -383,6 +384,9 @@ export default function ChatInterface({ conversation, apiSettings, onConversatio
         const guardian = safeJsonParse<{ stance: string; risk_level: string; conflict_point?: string; blind_spot: string }>(guardianRaw)
             || { stance: "無法解析回應", risk_level: "medium", conflict_point: "未知", blind_spot: "解析失敗" };
 
+        // ⚡ 使用純程式碼計算真正的 Entropy（不依賴 LLM）
+        const codeEntropy = calculateEntropy(philosopher, engineer, guardian);
+        console.log('[ToneSoul] Code-based Entropy:', codeEntropy);
 
         // Phase 2: Synthesizer 綜合
         setLoadingPhase("Synthesizer 整合中...");
@@ -400,10 +404,17 @@ export default function ChatInterface({ conversation, apiSettings, onConversatio
             final_response: string;
             next_moves: { label: string; text: string }[];
         }>(synthesizerRaw) || {
-            entropy_analysis: { value: 0.5, status: "Unknown", calculation_note: "解析失敗" },
+            entropy_analysis: codeEntropy, // 使用程式碼計算的 Entropy 作為回退
             decision_matrix: { user_hidden_intent: "未知", ai_strategy_name: "標準回應", intended_effect: "未知", tone_tag: "neutral" },
             final_response: synthesizerRaw || "抱歉，我無法生成回應。請重試。",
             next_moves: []
+        };
+
+        // 優先使用程式碼計算的 Entropy（更可靠）
+        const finalEntropy = {
+            value: codeEntropy.value,
+            status: codeEntropy.status,
+            calculation_note: codeEntropy.calculation_note
         };
 
         // 組裝完整的審議數據
@@ -423,9 +434,9 @@ export default function ChatInterface({ conversation, apiSettings, onConversatio
                 },
             },
             entropy_meter: {
-                value: synthesizer.entropy_analysis.value,
-                status: synthesizer.entropy_analysis.status,
-                calculation_note: synthesizer.entropy_analysis.calculation_note,
+                value: finalEntropy.value,
+                status: finalEntropy.status,
+                calculation_note: finalEntropy.calculation_note,
             },
             decision_matrix: {
                 user_hidden_intent: synthesizer.decision_matrix.user_hidden_intent,
