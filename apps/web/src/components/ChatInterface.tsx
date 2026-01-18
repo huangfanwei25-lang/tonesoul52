@@ -137,16 +137,23 @@ ${context || "無"}
 
 // ==================== API 調用函數 ====================
 
-const callGeminiAPI = async (prompt: string, apiKey: string): Promise<string> => {
+const callGeminiAPI = async (prompt: string, apiKey: string, enableGrounding: boolean = true): Promise<string> => {
+    const requestBody: Record<string, unknown> = {
+        contents: [{ role: "user", parts: [{ text: prompt }] }],
+        generationConfig: { responseMimeType: "application/json" },
+    };
+
+    // 啟用 Grounding with Google Search
+    if (enableGrounding) {
+        requestBody.tools = [{ google_search: {} }];
+    }
+
     const response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
         {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                contents: [{ role: "user", parts: [{ text: prompt }] }],
-                generationConfig: { responseMimeType: "application/json" },
-            }),
+            body: JSON.stringify(requestBody),
         }
     );
 
