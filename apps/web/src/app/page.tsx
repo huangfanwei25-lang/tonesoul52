@@ -3,13 +3,16 @@
 import { useState, useEffect } from "react";
 import ConsentModal from "@/components/ConsentModal";
 import ChatInterface from "@/components/ChatInterface";
-import { Brain, Menu, Settings, FileText, LogOut } from "lucide-react";
+import SettingsModal, { ApiSettings, getStoredSettings } from "@/components/SettingsModal";
+import { Brain, Menu, Settings, FileText, LogOut, Key } from "lucide-react";
 
 export default function Home() {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [hasConsent, setHasConsent] = useState<boolean>(false);
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [showSidebar, setShowSidebar] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [apiSettings, setApiSettings] = useState<ApiSettings | null>(null);
 
   useEffect(() => {
     // Check for existing session
@@ -19,6 +22,12 @@ export default function Home() {
     if (storedSession && storedConsent === "true") {
       setSessionId(storedSession);
       setHasConsent(true);
+    }
+
+    // Load stored API settings
+    const storedApiSettings = getStoredSettings();
+    if (storedApiSettings) {
+      setApiSettings(storedApiSettings);
     }
   }, []);
 
@@ -120,6 +129,14 @@ export default function Home() {
             <Brain className="w-5 h-5" />
             <span>新對話</span>
           </button>
+          <button
+            onClick={() => setShowSettings(true)}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 transition-colors"
+          >
+            <Key className="w-5 h-5" />
+            <span>API 設定</span>
+            {apiSettings?.apiKey && <span className="ml-auto text-xs text-emerald-400">✓</span>}
+          </button>
         </div>
 
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-slate-800 space-y-2">
@@ -156,8 +173,12 @@ export default function Home() {
               {conversationId ? `ID: ${conversationId}` : "新對話"}
             </p>
           </div>
-          <button className="p-2 hover:bg-slate-100 rounded-lg">
-            <Settings className="w-5 h-5 text-slate-500" />
+          <button
+            onClick={() => setShowSettings(true)}
+            className={`p-2 hover:bg-slate-100 rounded-lg ${!apiSettings?.apiKey ? 'animate-pulse' : ''}`}
+            title={apiSettings?.apiKey ? 'API 已設定' : '請設定 API Key'}
+          >
+            <Settings className={`w-5 h-5 ${apiSettings?.apiKey ? 'text-emerald-500' : 'text-amber-500'}`} />
           </button>
         </header>
 
@@ -166,8 +187,17 @@ export default function Home() {
           sessionId={sessionId || ""}
           conversationId={conversationId}
           onNewConversation={handleNewConversation}
+          apiSettings={apiSettings}
         />
       </div>
+
+      {/* Settings Modal */}
+      <SettingsModal
+        isOpen={showSettings}
+        onClose={() => setShowSettings(false)}
+        onSave={setApiSettings}
+        currentSettings={apiSettings}
+      />
 
       {/* Overlay for mobile sidebar */}
       {showSidebar && (
