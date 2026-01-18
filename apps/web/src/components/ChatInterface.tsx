@@ -292,7 +292,7 @@ export default function ChatInterface({ conversation, apiSettings, onConversatio
 
     const getHistoryContext = () => {
         return messages.slice(-6).map(m =>
-            `[${m.role === 'user' ? '用戶' : 'AI'}]: ${m.content.slice(0, 150)}`
+            `[${m.role === 'user' ? '用戶' : 'AI'}]: ${(m.content || '').slice(0, 150)}`
         ).join('\n');
     };
 
@@ -349,13 +349,13 @@ export default function ChatInterface({ conversation, apiSettings, onConversatio
             callAPI(GUARDIAN_PROMPT(userMessage, context)),
         ]);
 
-        const philosopher = safeJsonParse<{ stance: string; core_value: string; blind_spot: string }>(philosopherRaw);
-        const engineer = safeJsonParse<{ stance: string; feasibility: string; blind_spot: string }>(engineerRaw);
-        const guardian = safeJsonParse<{ stance: string; risk_level: string; conflict_point?: string; blind_spot: string }>(guardianRaw);
+        const philosopher = safeJsonParse<{ stance: string; core_value: string; blind_spot: string }>(philosopherRaw)
+            || { stance: "無法解析回應", core_value: "未知", blind_spot: "解析失敗" };
+        const engineer = safeJsonParse<{ stance: string; feasibility: string; blind_spot: string }>(engineerRaw)
+            || { stance: "無法解析回應", feasibility: "未知", blind_spot: "解析失敗" };
+        const guardian = safeJsonParse<{ stance: string; risk_level: string; conflict_point?: string; blind_spot: string }>(guardianRaw)
+            || { stance: "無法解析回應", risk_level: "medium", conflict_point: "未知", blind_spot: "解析失敗" };
 
-        if (!philosopher || !engineer || !guardian) {
-            throw new Error("議會成員回應解析失敗");
-        }
 
         // Phase 2: Synthesizer 綜合
         setLoadingPhase("Synthesizer 整合中...");
@@ -372,11 +372,12 @@ export default function ChatInterface({ conversation, apiSettings, onConversatio
             decision_matrix: { user_hidden_intent: string; ai_strategy_name: string; intended_effect: string; tone_tag: string };
             final_response: string;
             next_moves: { label: string; text: string }[];
-        }>(synthesizerRaw);
-
-        if (!synthesizer) {
-            throw new Error("Synthesizer 回應解析失敗");
-        }
+        }>(synthesizerRaw) || {
+            entropy_analysis: { value: 0.5, status: "Unknown", calculation_note: "解析失敗" },
+            decision_matrix: { user_hidden_intent: "未知", ai_strategy_name: "標準回應", intended_effect: "未知", tone_tag: "neutral" },
+            final_response: synthesizerRaw || "抱歉，我無法生成回應。請重試。",
+            next_moves: []
+        };
 
         // 組裝完整的審議數據
         const deliberation: DeliberationData = {
