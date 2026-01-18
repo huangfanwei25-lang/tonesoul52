@@ -113,12 +113,21 @@ ${guardian}
 - 如果有分歧，選擇最符合用戶需求的觀點
 - 實用價值 > 哲學深度（除非用戶明確想要深度思考）
 
+【Entropy 計算公式】（你必須計算，不要使用固定值）:
+- 基礎分 = 0.5
+- 如果三者觀點高度一致（說法相似）→ -0.3
+- 如果三者有明顯分歧（說法不同但不矛盾）→ +0.1
+- 如果三者完全矛盾（互相衝突）→ +0.3
+- 如果 Guardian 標記 high risk → +0.2
+- 如果 Guardian 標記 low risk → -0.1
+- 最終值必須在 0.0 到 1.0 之間
+
 輸出 JSON (繁體中文):
 {
   "entropy_analysis": {
-    "value": 0.5,
-    "status": "Healthy Friction / Echo Chamber / Chaos 擇一",
-    "calculation_note": "三者共識度、風險加權、盲點互補性的具體分析"
+    "value": [根據上述公式計算，填入 0.0-1.0 的數值，不要使用 0.5],
+    "status": "[根據 value 選擇：value<0.3='Echo Chamber' / 0.3<=value<=0.7='Healthy Friction' / value>0.7='Chaos']",
+    "calculation_note": "說明你的計算過程：基礎分 + 各項調整 = 最終值"
   },
   "decision_matrix": {
     "user_hidden_intent": "用戶真正想要的是什麼",
