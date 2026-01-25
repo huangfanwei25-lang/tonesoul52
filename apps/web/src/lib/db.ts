@@ -22,9 +22,9 @@ export interface Message {
 
 export interface DeliberationData {
     council_chamber?: {
-        philosopher: { stance: string; conflict_point?: string };
-        engineer: { stance: string; conflict_point?: string };
-        guardian: { stance: string; conflict_point?: string };
+        philosopher: { stance: string; conflict_point?: string; benevolence_check?: string };
+        engineer: { stance: string; conflict_point?: string; benevolence_check?: string };
+        guardian: { stance: string; conflict_point?: string; benevolence_check?: string };
     };
     entropy_meter?: {
         value: number;
@@ -36,6 +36,47 @@ export interface DeliberationData {
         ai_strategy_name: string;
         intended_effect: string;
         tone_tag: string;
+    };
+    audit?: {
+        honesty_score: number;
+        responsibility_check: string;
+        audit_verdict: string;
+        // 程式碼驗證（可追溯）
+        code_validation?: {
+            code_honesty_score: number;
+            discrepancy: number;
+            flags: string[];
+            is_valid: boolean;
+        };
+    };
+    // ==================== vMT-2601 Multiplex Thinking ====================
+    // 參考論文：Multiplex Thinking: Reasoning via Token-wise Branch-and-Merge
+    // 公式：h_multiplex = Σ w_i · E(t_i)
+    multiplex_conclusion?: {
+        // 主要路徑（最高權重）
+        primary_path: {
+            source: 'philosopher' | 'engineer' | 'guardian';
+            weight: number;           // w_primary ∈ [0, 1]
+            reasoning: string;        // 為何此路徑獲得最高權重
+        };
+        // 邏輯陰影（被淘汰但保留的路徑）
+        shadows: Array<{
+            source: 'philosopher' | 'engineer' | 'guardian';
+            weight: number;           // w_shadow ∈ [0, 1]
+            conflict_reason: string;  // 與 primary 的衝突點
+            recovery_condition: string; // 什麼情況下此路徑會變正確
+            collapse_cost: string;    // 強行坍縮會犧牲什麼資訊
+        }>;
+        // 張力狀態（自適應熵）
+        tension: {
+            level: 'LOW' | 'MEDIUM' | 'HIGH';
+            // 公式：如果 w_max > 0.7 → LOW, 0.5-0.7 → MEDIUM, < 0.5 → HIGH
+            formula_ref: string;      // 計算公式參照
+            weight_distribution: string; // 例如 "0.5 / 0.3 / 0.2"
+        };
+        // 合併策略
+        merge_strategy: 'COLLAPSE' | 'PRESERVE_SHADOWS' | 'EXPLICIT_CONFLICT';
+        merge_note: string;
     };
     final_synthesis?: {
         response_text: string;
