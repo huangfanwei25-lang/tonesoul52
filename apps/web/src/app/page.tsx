@@ -8,8 +8,10 @@ import SettingsModal, { ApiSettings, getStoredSettings } from "@/components/Sett
 import SessionReport from "@/components/SessionReport";
 import EntropyChart from "@/components/EntropyChart";
 import DataManager from "@/components/DataManager";
+import PersonaSettings, { PersonaConfig, getStoredPersona } from "@/components/PersonaSettings";
+import OnboardingGuide, { hasCompletedOnboarding } from "@/components/OnboardingGuide";
 import { Conversation, getConversations, createConversation, saveConversation, clearAllConversations } from "@/lib/db";
-import { Brain, Menu, Settings, FileText, LogOut, Key, Layers, BarChart3, Database } from "lucide-react";
+import { Brain, Menu, Settings, FileText, LogOut, Key, Layers, BarChart3, Database, Sliders } from "lucide-react";
 
 export default function Home() {
   const [hasConsent, setHasConsent] = useState<boolean>(false);
@@ -17,7 +19,10 @@ export default function Home() {
   const [showSettings, setShowSettings] = useState(false);
   const [showReport, setShowReport] = useState(false);
   const [showDataManager, setShowDataManager] = useState(false);
+  const [showPersonaSettings, setShowPersonaSettings] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const [apiSettings, setApiSettings] = useState<ApiSettings | null>(null);
+  const [personaConfig, setPersonaConfig] = useState<PersonaConfig | null>(null);
 
   // Conversation state
   const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -34,6 +39,14 @@ export default function Home() {
     const storedApiSettings = getStoredSettings();
     if (storedApiSettings) {
       setApiSettings(storedApiSettings);
+    }
+
+    // Load persona settings
+    setPersonaConfig(getStoredPersona());
+
+    // Check if onboarding needed
+    if (!hasCompletedOnboarding()) {
+      setShowOnboarding(true);
     }
   }, []);
 
@@ -191,6 +204,18 @@ export default function Home() {
             <Database className="w-5 h-5" />
             <span>數據管理</span>
           </button>
+
+          {/* Persona Settings Button */}
+          <button
+            onClick={() => setShowPersonaSettings(true)}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 transition-colors"
+          >
+            <Sliders className="w-5 h-5" />
+            <span>AI 個人化</span>
+            {personaConfig?.name && personaConfig.name !== 'ToneSoul' && (
+              <span className="ml-auto text-xs text-purple-400">✓</span>
+            )}
+          </button>
         </div>
 
         {/* Footer */}
@@ -246,6 +271,7 @@ export default function Home() {
           <ChatInterface
             conversation={currentConversation}
             apiSettings={apiSettings}
+            personaConfig={personaConfig}
             onConversationUpdate={handleConversationUpdate}
           />
         </div>
@@ -273,6 +299,20 @@ export default function Home() {
         isOpen={showDataManager}
         onClose={() => setShowDataManager(false)}
         onDataImported={loadConversations}
+      />
+
+      {/* Persona Settings Modal */}
+      <PersonaSettings
+        isOpen={showPersonaSettings}
+        onClose={() => setShowPersonaSettings(false)}
+        onSave={setPersonaConfig}
+      />
+
+      {/* Onboarding Guide */}
+      <OnboardingGuide
+        isOpen={showOnboarding}
+        onComplete={() => setShowOnboarding(false)}
+        onOpenSettings={() => setShowSettings(true)}
       />
 
       {/* Overlay for mobile sidebar */}

@@ -183,21 +183,21 @@ export function calculateEntropy(
     // 新公式：使用加權平均確保結果在 0-1 範圍
     // E = 基礎分 + (分歧度貢獻 + 風險貢獻 - 一致性貢獻 - 完整性貢獻)
 
-    // 分歧度貢獻：0 ~ 0.3
-    const divergenceContrib = divergence * 0.3;
+    // 分歧度貢獻：0 ~ 0.2（降低權重，因為三個人格天然文字不同）
+    const divergenceContrib = divergence * 0.2;
 
-    // 風險貢獻：-0.1 ~ 0.2
-    const riskContrib = riskWeight * 0.5; // 縮小風險影響
+    // 風險貢獻：-0.05 ~ 0.1（縮小風險影響）
+    const riskContrib = riskWeight * 0.3;
 
-    // 一致性拉低：0 ~ -0.2（越一致，熵越低）
-    const coherenceContrib = -coherence * 0.2;
+    // 一致性拉低：0 ~ -0.25（越一致，熵越低）
+    const coherenceContrib = -coherence * 0.25;
 
-    // 完整性拉低：0 ~ -0.1（越完整，熵越低）
-    const integrityContrib = -(integrity - 0.5) * 0.2; // 以 0.5 為中心
+    // 完整性拉低：0 ~ -0.15（越完整，熵越低）
+    const integrityContrib = -(integrity - 0.5) * 0.15;
 
     // 計算最終 Entropy
-    // 基礎分 0.5，然後加減各貢獻
-    let entropy = 0.5 + divergenceContrib + riskContrib + coherenceContrib + integrityContrib;
+    // 基礎分 0.4（降低），然後加減各貢獻
+    let entropy = 0.4 + divergenceContrib + riskContrib + coherenceContrib + integrityContrib;
 
     // 確保在 0-1 範圍
     entropy = Math.max(0, Math.min(1, entropy));
@@ -214,7 +214,7 @@ export function calculateEntropy(
 
     // 生成計算說明
     const calculationNote = [
-        `基礎 0.5`,
+        `基礎 0.4`,
         `分歧 +${divergenceContrib.toFixed(2)}`,
         `風險 ${riskContrib >= 0 ? '+' : ''}${riskContrib.toFixed(2)}`,
         `一致 ${coherenceContrib.toFixed(2)}`,
@@ -235,6 +235,81 @@ export function calculateEntropy(
     };
 }
 
+// ==================== Audit 驗證函數 ====================
+
+/**
+ * 程式碼驗證 LLM 的 Audit 自評
+ * 檢測可能的迴避、矛盾或不完整回應
+ */
+interface AuditInput {
+    finalResponse: string;
+    philosopherStance: string;
+    engineerStance: string;
+    guardianStance: string;
+    llmHonestyScore?: number;
+}
+
+interface AuditValidation {
+    codeHonestyScore: number;     // 程式碼計算的誠實分數
+    discrepancy: number;          // 與 LLM 自評的差異
+    flags: string[];              // 發現的問題
+    isValid: boolean;             // 是否通過驗證
+}
+
+export function validateAudit(input: AuditInput): AuditValidation {
+    const flags: string[] = [];
+    let codeScore = 1.0;
+
+    const response = input.finalResponse?.toLowerCase() || '';
+    const allStances = [input.philosopherStance, input.engineerStance, input.guardianStance].join(' ').toLowerCase();
+
+    // 檢測迴避模式
+    const evasionPatterns = ['我無法', '這取決於', '很難說', '可能', '或許', '不一定'];
+    const evasionCount = evasionPatterns.filter(p => response.includes(p)).length;
+    if (evasionCount > 2) {
+        flags.push('過度使用模糊語言');
+        codeScore -= 0.15;
+    }
+
+    // 檢測是否忽略了視角中的警告
+    if (allStances.includes('風險') && !response.includes('風險') && !response.includes('注意')) {
+        flags.push('可能忽略 Guardian 提出的風險');
+        codeScore -= 0.1;
+    }
+
+    // 檢測回應長度是否過短（可能敷衍）
+    if (response.length < 50) {
+        flags.push('回應過短，可能敷衍');
+        codeScore -= 0.2;
+    }
+
+    // 檢測是否有實際建議
+    const hasAction = response.includes('建議') || response.includes('可以') || response.includes('應該') || response.includes('第一步');
+    if (!hasAction && response.length > 100) {
+        flags.push('缺乏具體建議');
+        codeScore -= 0.1;
+    }
+
+    codeScore = Math.max(0, Math.min(1, codeScore));
+
+    // 計算與 LLM 自評的差異
+    const discrepancy = input.llmHonestyScore !== undefined
+        ? Math.abs(codeScore - input.llmHonestyScore)
+        : 0;
+
+    // 差異超過 0.3 視為不一致
+    if (discrepancy > 0.3) {
+        flags.push(`LLM 自評 ${input.llmHonestyScore?.toFixed(2)} 與程式碼計算 ${codeScore.toFixed(2)} 差異過大`);
+    }
+
+    return {
+        codeHonestyScore: Math.round(codeScore * 100) / 100,
+        discrepancy: Math.round(discrepancy * 100) / 100,
+        flags,
+        isValid: flags.length === 0 && discrepancy <= 0.3
+    };
+}
+
 // ==================== 導出 ====================
 
-export type { CouncilMemberResponse, EntropyAnalysis };
+export type { CouncilMemberResponse, EntropyAnalysis, AuditValidation };

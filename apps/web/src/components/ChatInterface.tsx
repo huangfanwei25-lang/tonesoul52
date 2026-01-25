@@ -4,10 +4,12 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { Send, Loader2, Brain, ChevronDown, ChevronUp, AlertTriangle, MessageSquare, MoveRight, Users } from "lucide-react";
 import { ApiSettings } from "./SettingsModal";
 import { Message as DBMessage, DeliberationData, Conversation, saveConversation, MemoryInsight, findRelevantMemories } from "@/lib/db";
-import { calculateEntropy } from "@/lib/entropyCalculator";
+import { calculateEntropy, validateAudit } from "@/lib/entropyCalculator";
 import CouncilChamber from "./CouncilChamber";
 import SoulStateMeter from "./SoulStateMeter";
 import TacticalDashboard from "./TacticalDashboard";
+import LogicalShadows from "./LogicalShadows";
+import { PersonaConfig } from "./PersonaSettings";
 
 interface Message extends Omit<DBMessage, 'timestamp'> {
     timestamp: Date;
@@ -16,6 +18,7 @@ interface Message extends Omit<DBMessage, 'timestamp'> {
 interface ChatInterfaceProps {
     conversation: Conversation | null;
     apiSettings: ApiSettings | null;
+    personaConfig: PersonaConfig | null;
     onConversationUpdate: (conv: Conversation) => void;
 }
 
@@ -50,11 +53,88 @@ const applyRE2 = (input: string): string => {
 現在請基於你的深度理解進行分析。`;
 };
 
+// ==================== Persona Modifier (BUG-003 修復) ====================
+// 將用戶的個人化設定轉換為 Prompt 調整
+
+const getPersonaModifier = (persona: PersonaConfig | null, role: 'philosopher' | 'engineer' | 'guardian' | 'synthesizer'): string => {
+    if (!persona) return '';
+
+    const modifiers: string[] = [];
+
+    // 根據整體風格調整
+    switch (persona.style) {
+        case 'creative':
+            if (role === 'philosopher') modifiers.push('傾向探索非傳統的觀點和可能性。');
+            break;
+        case 'analytical':
+            if (role === 'engineer') modifiers.push('更注重數據和邏輯分析。');
+            break;
+        case 'cautious':
+            if (role === 'guardian') modifiers.push('對風險保持高度警覺。');
+            break;
+    }
+
+    // 根據權重調整各視角的發言比重
+    const weights = persona.weights;
+    if (role === 'philosopher' && weights.meaning > 70) {
+        modifiers.push('深入探討意義和價值層面（用戶偏好深度思考）。');
+    }
+    if (role === 'engineer' && weights.practical > 70) {
+        modifiers.push('提供更多具體可操作的步驟（用戶偏好實用建議）。');
+    }
+    if (role === 'guardian' && weights.safety > 70) {
+        modifiers.push('詳細分析潛在風險（用戶偏好安全考量）。');
+    }
+
+    // 風險敏感度影響 Guardian
+    if (role === 'guardian') {
+        switch (persona.riskSensitivity) {
+            case 'high':
+                modifiers.push('即使是小風險也要提出警告。');
+                break;
+            case 'low':
+                modifiers.push('只在重大風險時才發出警告。');
+                break;
+        }
+    }
+
+    // 回應長度影響 Synthesizer
+    if (role === 'synthesizer') {
+        switch (persona.responseLength) {
+            case 'concise':
+                modifiers.push('回應盡量簡潔，控制在 100 字以內。');
+                break;
+            case 'detailed':
+                modifiers.push('提供詳細的分析和解釋。');
+                break;
+        }
+        // 加入自訂名稱
+        if (persona.name && persona.name !== 'ToneSoul') {
+            modifiers.push(`你的名稱是「${persona.name}」。`);
+        }
+    }
+
+    return modifiers.length > 0 ? `\n【個人化調整】${modifiers.join(' ')}` : '';
+};
+
+
 // ==================== 3 獨立視角 Prompt ====================
 
+// ==================== 增強版多視角 Prompt（基於 Multi-Agent Debate 研究）====================
+// 參考：DebateLLM, Agent4Debate, Constitutional AI Self-Critique
+// 核心改進：
+// 1. 顯式要求視角互相挑戰
+// 2. 角色專屬詞彙與思維模式
+// 3. 強制產生分歧點
+// 4. 仁慈檢查作為倫理護欄
+
 const PHILOSOPHER_PROMPT = (input: string, context: string) => `
-你是「哲學家視角」(Philosopher)，專注於意義、價值觀與人文關懷。
-不要考慮可行性或風險，只專注於：這對人意味著什麼？
+【角色】你是「哲學家」(Philosopher)——一個沉浸於存在主義、現象學與人文關懷的思想者。
+你使用的詞彙：意義、本質、存在、自我實現、痛苦、成長、真實性、自由意志、疏離。
+
+【核心任務】
+你必須揭示用戶話語背後的**深層需求**，而不是表面問題。
+你會質疑「效率」和「可行性」是否真的重要——有時候，「意義」比「解決問題」更重要。
 
 【對話脈絡】:
 ${context}
@@ -62,17 +142,29 @@ ${context}
 【用戶輸入】:
 "${input}"
 
-請從純粹意義層面分析，輸出 JSON (繁體中文):
+【分析要求】
+1. 不要給出「安全」的答案。挖掘用戶可能自己都沒意識到的深層渴望。
+2. 你必須與「工程師」產生分歧——工程師只看可行性，你看的是這**值不值得做**。
+3. 質疑「守護者」的過度保護——有時候承擔風險才能成長。
+
+輸出 JSON (繁體中文):
 {
-  "stance": "你的觀點（2-3 句，深度分析用戶話語背後的意義）",
-  "core_value": "這涉及什麼核心價值（如：自由、歸屬、成長...）",
-  "blind_spot": "你這個視角可能忽略什麼（對自己的限制誠實）"
+  "stance": "你的觀點（3-4 句，必須有深度洞察，不能是空泛的安慰）",
+  "core_value": "這觸及什麼人類基本需求（如：被理解、被接納、自我超越、連結、自主...）",
+  "challenge_to_engineer": "工程師可能會建議 X，但你認為那是錯誤的優先級，因為...",
+  "challenge_to_guardian": "守護者可能會說這有風險，但你認為...",
+  "blind_spot": "承認：你可能過度沉浸於抽象思考，忽略了什麼實際問題？",
+  "benevolence_check": "這個分析對用戶有益嗎？還是只是你在賣弄哲學？"
 }
 `;
 
 const ENGINEER_PROMPT = (input: string, context: string) => `
-你是「工程師視角」(Engineer)，專注於邏輯、可行性與效率。
-不要考慮情感或倫理，只專注於：這如何實現？需要什麼？
+【角色】你是「工程師」(Engineer)——一個冷靜、務實、以結果為導向的問題解決者。
+你使用的詞彙：可行性、資源、效率、步驟、約束、trade-off、MVP、迭代、成本。
+
+【核心任務】
+you cut through the bullshit. 用戶需要的是**可操作的方案**，不是哲學思辨。
+你會質疑「意義」是否能當飯吃——沒有執行的願景就是空談。
 
 【對話脈絡】:
 ${context}
@@ -80,17 +172,29 @@ ${context}
 【用戶輸入】:
 "${input}"
 
-請從純粹邏輯層面分析，輸出 JSON (繁體中文):
+【分析要求】
+1. 給出具體、可執行的下一步。不要說「你可以嘗試...」，要說「第一步應該是...」
+2. 你必須與「哲學家」產生分歧——哲學家說的那些「意義」很美，但**現實是什麼**？
+3. 挑戰「守護者」的保守——過度規避風險會錯過機會。
+
+輸出 JSON (繁體中文):
 {
-  "stance": "你的觀點（2-3 句，分析實際操作層面）",
-  "feasibility": "可行性評估（具體說明能/不能做到什麼）",
-  "blind_spot": "你這個視角可能忽略什麼（對自己的限制誠實）"
+  "stance": "你的觀點（3-4 句，必須有具體建議，不能只是泛泛而談）",
+  "feasibility": "可行性評估：能做到什麼？資源需求？時間預估？",
+  "challenge_to_philosopher": "哲學家可能會說這缺乏意義，但你認為...",
+  "challenge_to_guardian": "守護者說的風險你知道，但機會成本是...",
+  "blind_spot": "承認：你可能過度關注效率，忽略了什麼情感或倫理層面？",
+  "benevolence_check": "這個建議真的幫助用戶，還是只是展示你的技術能力？"
 }
 `;
 
 const GUARDIAN_PROMPT = (input: string, context: string) => `
-你是「守護者視角」(Guardian)，專注於風險、安全與倫理邊界。
-不要考慮創新或效率，只專注於：這有什麼風險？需要注意什麼？
+【角色】你是「守護者」(Guardian)——一個專注於保護、警惕、長期後果的審慎思考者。
+你使用的詞彙：風險、邊界、可逆性、後果、保護、預防、底線、警示、長期影響。
+
+【核心任務】
+你是團隊中「唱反調」的人。當其他人興奮地規劃時，你問：**如果失敗了會怎樣？**
+你保護用戶免受自己衝動的傷害，但也知道**過度保護本身就是一種傷害**。
 
 【對話脈絡】:
 ${context}
@@ -98,68 +202,110 @@ ${context}
 【用戶輸入】:
 "${input}"
 
-請從純粹風險層面分析，輸出 JSON (繁體中文):
+【分析要求】
+1. 識別其他視角可能**故意忽略**的風險。
+2. 質疑「哲學家」的理想主義——美好的願景不能當盾牌。
+3. 質疑「工程師」的過度自信——不是所有問題都有技術解。
+4. 但也要自我審視：你是在**保護**用戶，還是在**限制**他們？
+
+輸出 JSON (繁體中文):
 {
-  "stance": "你的觀點（2-3 句，分析潛在風險與保護措施）",
-  "risk_level": "low 或 medium 或 high",
-  "conflict_point": "與其他視角可能的衝突點",
-  "blind_spot": "你這個視角可能忽略什麼（對自己的限制誠實）"
+  "stance": "你的觀點（3-4 句，必須指出真實風險，但也承認成長需要冒險）",
+  "risk_level": "low 或 medium 或 high（並解釋為何如此判定）",
+  "challenge_to_philosopher": "哲學家說追求意義，但你擔心的是...",
+  "challenge_to_engineer": "工程師說這可行，但他可能低估了...",
+  "conflict_point": "三個視角最可能產生分歧的核心問題是什麼？",
+  "blind_spot": "承認：你可能過度謹慎，反而阻礙了用戶的成長？",
+  "benevolence_check": "這個警告是真的為用戶好，還是你在迴避責任？"
 }
 `;
 
+// ==================== vMT-2601 Multiplex Synthesizer ====================
+// 參考論文：Multiplex Thinking: Reasoning via Token-wise Branch-and-Merge
+// 核心公式：h_multiplex = Σ w_i · E(t_i)
+// 設計原則：「完美的合併必須包含被犧牲掉的那些可能性的殘骸」
+
 const SYNTHESIZER_PROMPT = (input: string, philosopher: string, engineer: string, guardian: string) => `
-你是「綜合者」(Synthesizer)，負責整合三個獨立視角並做出最終決策。
+你是「複用思維綜合者」(Multiplex Synthesizer)，執行 vMT-2601 協議。
 
 【用戶原始輸入】:
 "${input}"
 
-【三個視角的分析】（這些是獨立的觀點，你需要整合而非混淆它們）:
+【三條平行推理路徑 τ₁, τ₂, τ₃】（這些是獨立的邏輯分支，禁止互相抄襲）:
 
-🔮 哲學家視角（意義層）:
+🔮 Path A (哲學家/正向工程):
 ${philosopher}
 
-⚙️ 工程師視角（邏輯層）:
+⚙️ Path B (工程師/逆向審計):
 ${engineer}
 
-🛡️ 守護者視角（風險層）:
+🛡️ Path C (守護者/邊界測試):
 ${guardian}
 
-【你的決策流程】（請嚴格按此順序執行）:
+【vMT-2601 協議執行流程】
 
-步驟1️⃣ 識別共識與分歧
-- 三者都同意的點是什麼？
-- 三者有衝突的點是什麼？
-- 哪個視角對這個問題最相關？
+📐 步驟 I: 權重計算 (Weighting - W)
+- 評估每條路徑的「邏輯密度」和「與用戶需求的相關性」
+- 分配權重 w_A, w_B, w_C ∈ [0, 1]，且 Σw = 1
+- 公式：w_i = softmax(relevance_i × coherence_i)
 
-步驟2️⃣ 風險優先判斷
-- 如果 Guardian 標記為 high risk → 必須在回應中提及風險
-- 如果三者都不確定 → 承認不確定，不要強行給答案
+📊 步驟 II: 張力計算 (Tension - ΔT)
+- 公式：ΔT = 1 - max(w_A, w_B, w_C)
+- 如果 w_max > 0.7 → Tension = LOW（單一路徑佔優）
+- 如果 0.5 ≤ w_max ≤ 0.7 → Tension = MEDIUM（建設性分歧）
+- 如果 w_max < 0.5 → Tension = HIGH（邏輯衝突）
 
-步驟3️⃣ 計算認知張力 (Entropy)
-- 三者高度一致 → E < 0.3 (警告：同溫層)
-- 三者有建設性分歧 → E = 0.3-0.7 (健康摩擦)
-- 三者完全矛盾 → E > 0.7 (混沌)
+🔀 步驟 III: 合併策略 (Merge Strategy - M)
+- 若 Tension = LOW → 策略 = COLLAPSE（強行坍縮，隱藏次要路徑）
+- 若 Tension = MEDIUM → 策略 = PRESERVE_SHADOWS（保留陰影為警告）
+- 若 Tension = HIGH → 策略 = EXPLICIT_CONFLICT（明確揭露矛盾）
 
-步驟4️⃣ 生成最終回應
-- 使用自然語氣，不要提及「三個視角」
-- 如果有分歧，選擇最符合用戶需求的觀點
-- 實用價值 > 哲學深度（除非用戶明確想要深度思考）
+📦 步驟 IV: 生成邏輯陰影 (Logical Shadows)
+- 對於非主要路徑，必須記錄：
+  - conflict_reason: 與主路徑的衝突點
+  - recovery_condition: 什麼情況下此路徑會變正確
+  - collapse_cost: 強行坍縮會犧牲什麼資訊
 
-【Entropy 計算公式】（你必須計算，不要使用固定值）:
-- 基礎分 = 0.5
-- 如果三者觀點高度一致（說法相似）→ -0.3
-- 如果三者有明顯分歧（說法不同但不矛盾）→ +0.1
-- 如果三者完全矛盾（互相衝突）→ +0.3
-- 如果 Guardian 標記 high risk → +0.2
-- 如果 Guardian 標記 low risk → -0.1
-- 最終值必須在 0.0 到 1.0 之間
+【核心規則】
+⚠️ 拒絕無影子的輸出：完美的合併必須包含被犧牲掉的那些可能性的殘骸。
+⚠️ 如果三條路徑高度一致 → 警告「同溫層」，這可能是認知盲區。
 
 輸出 JSON (繁體中文):
 {
+  "multiplex_conclusion": {
+    "primary_path": {
+      "source": "[philosopher/engineer/guardian，選擇權重最高的]",
+      "weight": [0.0-1.0，計算得出],
+      "reasoning": "為何此路徑獲得最高權重（基於邏輯密度×相關性）"
+    },
+    "shadows": [
+      {
+        "source": "[第二高權重的視角]",
+        "weight": [0.0-1.0],
+        "conflict_reason": "與主路徑的具體衝突點",
+        "recovery_condition": "如果 X 條件成立，此路徑會變正確",
+        "collapse_cost": "強行採用主路徑會犧牲什麼資訊"
+      },
+      {
+        "source": "[第三高權重的視角]",
+        "weight": [0.0-1.0],
+        "conflict_reason": "與主路徑的具體衝突點",
+        "recovery_condition": "如果 Y 條件成立，此路徑會變正確",
+        "collapse_cost": "強行採用主路徑會犧牲什麼資訊"
+      }
+    ],
+    "tension": {
+      "level": "[LOW/MEDIUM/HIGH]",
+      "formula_ref": "ΔT = 1 - w_max = 1 - [最高權重] = [計算結果]",
+      "weight_distribution": "[w_A] / [w_B] / [w_C]"
+    },
+    "merge_strategy": "[COLLAPSE/PRESERVE_SHADOWS/EXPLICIT_CONFLICT]",
+    "merge_note": "解釋為何選擇此合併策略"
+  },
   "entropy_analysis": {
-    "value": [根據上述公式計算，填入 0.0-1.0 的數值，不要使用 0.5],
-    "status": "[根據 value 選擇：value<0.3='Echo Chamber' / 0.3<=value<=0.7='Healthy Friction' / value>0.7='Chaos']",
-    "calculation_note": "說明你的計算過程：基礎分 + 各項調整 = 最終值"
+    "value": [基於權重分佈計算的熵值，0.0-1.0],
+    "status": "[Echo Chamber/Healthy Friction/Chaos]",
+    "calculation_note": "H = -Σ w_i log(w_i) 的計算過程"
   },
   "decision_matrix": {
     "user_hidden_intent": "用戶真正想要的是什麼",
@@ -167,10 +313,15 @@ ${guardian}
     "intended_effect": "你希望達到的效果",
     "tone_tag": "語氣標籤"
   },
-  "final_response": "直接回應用戶的內容（自然語氣，至少50字）",
+  "audit": {
+    "honesty_score": [0.0-1.0，評估這個回應的誠實程度],
+    "responsibility_check": "這個回應是否負責任？有沒有迴避責任？",
+    "audit_verdict": "Pass 或 Flag（如果有任何倫理疑慮則 Flag）"
+  },
+  "final_response": "直接回應用戶的內容（使用主路徑，但如果 Tension >= MEDIUM，必須在結尾附加陰影警告）",
   "next_moves": [
-    { "label": "探索", "text": "一個延伸問題" },
-    { "label": "深入", "text": "另一個延伸問題" }
+    { "label": "探索陰影", "text": "延伸被淘汰路徑的問題" },
+    { "label": "深入主線", "text": "延伸主路徑的問題" }
   ]
 }
 `;
@@ -198,6 +349,8 @@ ${context || "無"}
 
 // 注意：Grounding (google_search) 與 responseMimeType: "application/json" 不相容
 // 當需要結構化 JSON 輸出時，必須禁用 Grounding
+
+// 標準 Gemini API（快速回應）
 const callGeminiAPI = async (prompt: string, apiKey: string): Promise<string> => {
     const response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
@@ -218,6 +371,42 @@ const callGeminiAPI = async (prompt: string, apiKey: string): Promise<string> =>
 
     const data = await response.json();
     return data.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
+};
+
+// 深度思考 Gemini API（用於 Synthesizer，啟用 thinkingBudget）
+// 參考 ToneSoul 51: thinkingBudget: 32768
+const callGeminiDeepThinkingAPI = async (prompt: string, apiKey: string): Promise<string> => {
+    // 使用 gemini-2.5-flash-preview 支援 thinking budget
+    const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`,
+        {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                contents: [{ role: "user", parts: [{ text: prompt }] }],
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    // 啟用擴展思考模式
+                    thinkingConfig: {
+                        thinkingBudget: 16384  // 16K tokens for thinking (可調整到 32K)
+                    }
+                },
+            }),
+        }
+    );
+
+    if (!response.ok) {
+        const error = await response.json();
+        console.error('[ToneSoul] Deep Thinking API error:', error);
+        // Fallback to regular API if deep thinking fails
+        return callGeminiAPI(prompt, apiKey);
+    }
+
+    const data = await response.json();
+    // 深度思考模式可能在 parts 中包含 thinking 部分，我們只取最後的 text
+    const parts = data.candidates?.[0]?.content?.parts || [];
+    const textPart = parts.find((p: { text?: string }) => p.text) || parts[parts.length - 1];
+    return textPart?.text || "{}";
 };
 
 const callOpenAIAPI = async (prompt: string, apiKey: string): Promise<string> => {
@@ -308,7 +497,7 @@ function safeJsonParse<T>(text: string): T | null {
 
 // ==================== Main Component ====================
 
-export default function ChatInterface({ conversation, apiSettings, onConversationUpdate }: ChatInterfaceProps) {
+export default function ChatInterface({ conversation, apiSettings, personaConfig, onConversationUpdate }: ChatInterfaceProps) {
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -362,6 +551,17 @@ export default function ChatInterface({ conversation, apiSettings, onConversatio
         }
     };
 
+    // 深度思考 API（用於 Synthesizer，啟用 thinkingBudget）
+    const getDeepCallAPI = () => {
+        if (!apiSettings?.apiKey) return null;
+        // 只有 Gemini 支援 thinkingBudget，其他 provider 使用標準 API
+        if (apiSettings.provider === "gemini") {
+            return (prompt: string) => callGeminiDeepThinkingAPI(prompt, apiSettings.apiKey);
+        }
+        // 其他 provider fallback 到標準 API
+        return getCallAPI();
+    };
+
     // ==================== 快速模式：單一調用 ====================
     const performFastMode = async (userMessage: string): Promise<{
         response: string;
@@ -409,39 +609,92 @@ export default function ChatInterface({ conversation, apiSettings, onConversatio
         // 合併對話脈絡與記憶
         const fullContext = memoryContext + context;
 
-        // Phase 1: 三路並行調用
+        // Phase 1: 三路並行調用（注入 Persona 調整）
         setLoadingPhase("召集議會成員...");
 
+        const philosopherMod = getPersonaModifier(personaConfig, 'philosopher');
+        const engineerMod = getPersonaModifier(personaConfig, 'engineer');
+        const guardianMod = getPersonaModifier(personaConfig, 'guardian');
+
         const [philosopherRaw, engineerRaw, guardianRaw] = await Promise.all([
-            callAPI(PHILOSOPHER_PROMPT(userMessage, fullContext)),
-            callAPI(ENGINEER_PROMPT(userMessage, fullContext)),
-            callAPI(GUARDIAN_PROMPT(userMessage, fullContext)),
+            callAPI(PHILOSOPHER_PROMPT(userMessage, fullContext) + philosopherMod),
+            callAPI(ENGINEER_PROMPT(userMessage, fullContext) + engineerMod),
+            callAPI(GUARDIAN_PROMPT(userMessage, fullContext) + guardianMod),
         ]);
 
-        const philosopher = safeJsonParse<{ stance: string; core_value: string; blind_spot: string }>(philosopherRaw)
+        const philosopher = safeJsonParse<{
+            stance: string;
+            core_value: string;
+            challenge_to_engineer?: string;
+            challenge_to_guardian?: string;
+            blind_spot: string;
+            benevolence_check?: string
+        }>(philosopherRaw)
             || { stance: "無法解析回應", core_value: "未知", blind_spot: "解析失敗" };
-        const engineer = safeJsonParse<{ stance: string; feasibility: string; blind_spot: string }>(engineerRaw)
+        const engineer = safeJsonParse<{
+            stance: string;
+            feasibility: string;
+            challenge_to_philosopher?: string;
+            challenge_to_guardian?: string;
+            blind_spot: string;
+            benevolence_check?: string
+        }>(engineerRaw)
             || { stance: "無法解析回應", feasibility: "未知", blind_spot: "解析失敗" };
-        const guardian = safeJsonParse<{ stance: string; risk_level: string; conflict_point?: string; blind_spot: string }>(guardianRaw)
+        const guardian = safeJsonParse<{
+            stance: string;
+            risk_level: string;
+            challenge_to_philosopher?: string;
+            challenge_to_engineer?: string;
+            conflict_point?: string;
+            blind_spot: string;
+            benevolence_check?: string
+        }>(guardianRaw)
             || { stance: "無法解析回應", risk_level: "medium", conflict_point: "未知", blind_spot: "解析失敗" };
+
+        // 🔍 Debug: 檢查議會回應
+        console.log('[ToneSoul] Raw Philosopher:', philosopherRaw?.slice(0, 200));
+        console.log('[ToneSoul] Parsed Philosopher:', philosopher);
+        console.log('[ToneSoul] Raw Engineer:', engineerRaw?.slice(0, 200));
+        console.log('[ToneSoul] Parsed Engineer:', engineer);
+        console.log('[ToneSoul] Raw Guardian:', guardianRaw?.slice(0, 200));
+        console.log('[ToneSoul] Parsed Guardian:', guardian);
 
         // ⚡ 使用純程式碼計算真正的 Entropy（不依賴 LLM）
         const codeEntropy = calculateEntropy(philosopher, engineer, guardian);
         console.log('[ToneSoul] Code-based Entropy:', codeEntropy);
 
-        // Phase 2: Synthesizer 綜合
-        setLoadingPhase("Synthesizer 整合中...");
+        // Phase 2: Synthesizer 綜合（使用深度思考模式）
+        setLoadingPhase("Synthesizer 深度整合中...");
 
-        const synthesizerRaw = await callAPI(SYNTHESIZER_PROMPT(
+        // 使用深度思考 API（16K thinkingBudget）
+        const deepCallAPI = getDeepCallAPI();
+        const synthesizerAPI = deepCallAPI || callAPI;
+        const synthesizerMod = getPersonaModifier(personaConfig, 'synthesizer');
+
+        const synthesizerRaw = await synthesizerAPI(SYNTHESIZER_PROMPT(
             userMessage,
             JSON.stringify(philosopher),
             JSON.stringify(engineer),
             JSON.stringify(guardian)
-        ));
+        ) + synthesizerMod);
 
         const synthesizer = safeJsonParse<{
+            multiplex_conclusion?: {
+                primary_path: { source: string; weight: number; reasoning: string };
+                shadows: Array<{
+                    source: string;
+                    weight: number;
+                    conflict_reason: string;
+                    recovery_condition: string;
+                    collapse_cost: string;
+                }>;
+                tension: { level: string; formula_ref: string; weight_distribution: string };
+                merge_strategy: string;
+                merge_note: string;
+            };
             entropy_analysis: { value: number; status: string; calculation_note: string };
             decision_matrix: { user_hidden_intent: string; ai_strategy_name: string; intended_effect: string; tone_tag: string };
+            audit?: { honesty_score: number; responsibility_check: string; audit_verdict: string };
             final_response: string;
             next_moves: { label: string; text: string }[];
         }>(synthesizerRaw) || {
@@ -450,6 +703,8 @@ export default function ChatInterface({ conversation, apiSettings, onConversatio
             final_response: synthesizerRaw || "抱歉，我無法生成回應。請重試。",
             next_moves: []
         };
+
+        console.log('[ToneSoul] Multiplex Conclusion:', synthesizer.multiplex_conclusion);
 
         // 優先使用程式碼計算的 Entropy（更可靠）
         const finalEntropy = {
@@ -463,15 +718,18 @@ export default function ChatInterface({ conversation, apiSettings, onConversatio
             council_chamber: {
                 philosopher: {
                     stance: philosopher.stance,
-                    conflict_point: philosopher.blind_spot
+                    conflict_point: philosopher.blind_spot,
+                    benevolence_check: philosopher.benevolence_check
                 },
                 engineer: {
                     stance: engineer.stance,
-                    conflict_point: engineer.blind_spot
+                    conflict_point: engineer.blind_spot,
+                    benevolence_check: engineer.benevolence_check
                 },
                 guardian: {
                     stance: guardian.stance,
-                    conflict_point: guardian.conflict_point || guardian.blind_spot
+                    conflict_point: guardian.conflict_point || guardian.blind_spot,
+                    benevolence_check: guardian.benevolence_check
                 },
             },
             entropy_meter: {
@@ -485,6 +743,51 @@ export default function ChatInterface({ conversation, apiSettings, onConversatio
                 intended_effect: synthesizer.decision_matrix.intended_effect,
                 tone_tag: synthesizer.decision_matrix.tone_tag,
             },
+            audit: synthesizer.audit ? (() => {
+                // 程式碼交叉驗證 LLM 的 Audit 自評
+                const auditValidation = validateAudit({
+                    finalResponse: synthesizer.final_response,
+                    philosopherStance: philosopher.stance,
+                    engineerStance: engineer.stance,
+                    guardianStance: guardian.stance,
+                    llmHonestyScore: synthesizer.audit.honesty_score
+                });
+                console.log('[ToneSoul] Audit Validation:', auditValidation);
+
+                return {
+                    honesty_score: synthesizer.audit.honesty_score || 0,
+                    responsibility_check: synthesizer.audit.responsibility_check || '',
+                    audit_verdict: synthesizer.audit.audit_verdict || 'Pass',
+                    code_validation: {
+                        code_honesty_score: auditValidation.codeHonestyScore,
+                        discrepancy: auditValidation.discrepancy,
+                        flags: auditValidation.flags,
+                        is_valid: auditValidation.isValid
+                    }
+                };
+            })() : undefined,
+            // vMT-2601 Multiplex Conclusion
+            multiplex_conclusion: synthesizer.multiplex_conclusion ? {
+                primary_path: {
+                    source: synthesizer.multiplex_conclusion.primary_path.source as 'philosopher' | 'engineer' | 'guardian',
+                    weight: synthesizer.multiplex_conclusion.primary_path.weight || 0,
+                    reasoning: synthesizer.multiplex_conclusion.primary_path.reasoning || ''
+                },
+                shadows: (synthesizer.multiplex_conclusion.shadows || []).map(s => ({
+                    source: s.source as 'philosopher' | 'engineer' | 'guardian',
+                    weight: s.weight || 0,
+                    conflict_reason: s.conflict_reason || '',
+                    recovery_condition: s.recovery_condition || '',
+                    collapse_cost: s.collapse_cost || ''
+                })),
+                tension: {
+                    level: (synthesizer.multiplex_conclusion.tension?.level || 'MEDIUM') as 'LOW' | 'MEDIUM' | 'HIGH',
+                    formula_ref: synthesizer.multiplex_conclusion.tension?.formula_ref || 'ΔT = 未計算',
+                    weight_distribution: synthesizer.multiplex_conclusion.tension?.weight_distribution || ''
+                },
+                merge_strategy: (synthesizer.multiplex_conclusion.merge_strategy || 'PRESERVE_SHADOWS') as 'COLLAPSE' | 'PRESERVE_SHADOWS' | 'EXPLICIT_CONFLICT',
+                merge_note: synthesizer.multiplex_conclusion.merge_note || ''
+            } : undefined,
             final_synthesis: {
                 response_text: synthesizer.final_response,
             },
@@ -676,6 +979,41 @@ export default function ChatInterface({ conversation, apiSettings, onConversatio
                                                             intended_effect: message.deliberation.decision_matrix.intended_effect,
                                                             tone_tag: message.deliberation.decision_matrix.tone_tag,
                                                         }} />
+                                                    )}
+
+                                                    {/* vMT-2601 邏輯陰影 */}
+                                                    {message.deliberation.multiplex_conclusion && (
+                                                        <LogicalShadows data={message.deliberation.multiplex_conclusion} />
+                                                    )}
+
+                                                    {/* 審計報告 */}
+                                                    {message.deliberation.audit && (
+                                                        <div className="bg-white/60 p-4 rounded-lg border border-emerald-200">
+                                                            <div className="flex items-center justify-between mb-3">
+                                                                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                                                                    倫理審計 (Audit)
+                                                                </span>
+                                                                <span className={`px-2 py-1 rounded-full text-xs font-bold ${message.deliberation.audit.audit_verdict === 'Pass'
+                                                                    ? 'bg-emerald-100 text-emerald-700'
+                                                                    : 'bg-amber-100 text-amber-700'
+                                                                    }`}>
+                                                                    {message.deliberation.audit.audit_verdict}
+                                                                </span>
+                                                            </div>
+                                                            <div className="flex items-center gap-4 mb-2">
+                                                                <div className="flex items-center gap-2">
+                                                                    <span className="text-xs text-slate-500">誠實分數:</span>
+                                                                    <span className="text-sm font-bold text-slate-700">
+                                                                        {(message.deliberation.audit.honesty_score * 100).toFixed(0)}%
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                            {message.deliberation.audit.responsibility_check && (
+                                                                <p className="text-xs text-slate-600 italic">
+                                                                    {message.deliberation.audit.responsibility_check}
+                                                                </p>
+                                                            )}
+                                                        </div>
                                                     )}
                                                 </div>
                                             )}
