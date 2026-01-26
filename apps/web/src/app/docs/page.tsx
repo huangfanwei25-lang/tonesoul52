@@ -8,7 +8,7 @@ const jsonLd = {
     "name": "ToneSoul Integrity Framework",
     "alternateName": ["語魂系統", "ToneSoul", "TSAP", "ToneSoul-Audit Protocol"],
     "description": "A governance middleware for auditable, self-correcting AI agents. Implements STREI vector analysis, multi-perspective deliberation, and entropy-based tension metrics.",
-    "codeRepository": "https://github.com/Fan1234-1/ToneSoul-Architecture-Engine",
+    "codeRepository": "https://github.com/Fan1234-1/tonesoul52",
     "programmingLanguage": ["TypeScript", "Python"],
     "applicationCategory": "AI Governance",
     "license": "https://opensource.org/licenses/Apache-2.0",
@@ -70,7 +70,7 @@ export default function DocsPage() {
                         </div>
                         <nav className="flex gap-6 text-sm">
                             <Link href="/" className="text-slate-300 hover:text-white transition-colors">App</Link>
-                            <a href="https://github.com/Fan1234-1/ToneSoul-Architecture-Engine" target="_blank" rel="noopener" className="flex items-center gap-1 text-slate-300 hover:text-white">
+                            <a href="https://github.com/Fan1234-1/tonesoul52" target="_blank" rel="noopener" className="flex items-center gap-1 text-slate-300 hover:text-white">
                                 <Github className="w-4 h-4" /> GitHub
                             </a>
                         </nav>
@@ -145,7 +145,7 @@ export default function DocsPage() {
                             <a href="mailto:xsw123zaq@gmail.com" className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors">
                                 <Mail className="w-4 h-4" /> xsw123zaq@gmail.com
                             </a>
-                            <a href="https://github.com/Fan1234-1/ToneSoul-Architecture-Engine" target="_blank" rel="noopener" className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors">
+                            <a href="https://github.com/Fan1234-1/tonesoul52" target="_blank" rel="noopener" className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors">
                                 <Github className="w-4 h-4" /> GitHub Repository
                             </a>
                         </div>
@@ -177,54 +177,59 @@ export default function DocsPage() {
                     </section>
 
                     {/* Core Protocols */}
-                    <section>
-                        <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-                            <Shield className="w-6 h-6 text-indigo-400" />
-                            Core Protocols | 核心協議
-                        </h2>
-                        <div className="grid md:grid-cols-2 gap-4">
-                            <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-6">
-                                <div className="flex items-center gap-2 mb-3">
-                                    <BarChart3 className="w-5 h-5 text-purple-400" />
-                                    <h3 className="font-bold">ToneSoul Entropy Protocol</h3>
+                    <details className="group border border-slate-700 rounded-2xl overflow-hidden bg-slate-800/20">
+                        <summary className="list-none cursor-pointer p-8 flex items-center justify-between hover:bg-slate-800/40 transition-colors">
+                            <h2 className="text-2xl font-bold flex items-center gap-2">
+                                <Shield className="w-6 h-6 text-indigo-400" />
+                                Core Protocols | 核心協議
+                            </h2>
+                            <span className="text-slate-500 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div className="p-8 pt-0">
+                            <div className="grid md:grid-cols-2 gap-4">
+                                <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-6">
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <BarChart3 className="w-5 h-5 text-purple-400" />
+                                        <h3 className="font-bold">ToneSoul Entropy Protocol</h3>
+                                    </div>
+                                    <p className="text-sm text-slate-400 mb-3">熵值協議 — 認知張力指標</p>
+                                    <code className="block text-xs bg-slate-900 p-2 rounded text-purple-300">
+                                        E = 0.4 + div + risk - coh - int
+                                    </code>
                                 </div>
-                                <p className="text-sm text-slate-400 mb-3">熵值協議 — 認知張力指標</p>
-                                <code className="block text-xs bg-slate-900 p-2 rounded text-purple-300">
-                                    E = 0.4 + div + risk - coh - int
-                                </code>
-                            </div>
-                            <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-6">
-                                <div className="flex items-center gap-2 mb-3">
-                                    <FileText className="w-5 h-5 text-amber-400" />
-                                    <h3 className="font-bold">ToneSoul-Audit Protocol (TSAP)</h3>
+                                <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-6">
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <FileText className="w-5 h-5 text-amber-400" />
+                                        <h3 className="font-bold">ToneSoul-Audit Protocol (TSAP)</h3>
+                                    </div>
+                                    <p className="text-sm text-slate-400 mb-3">審計協議 — LLM 自評交叉驗證</p>
+                                    <code className="block text-xs bg-slate-900 p-2 rounded text-amber-300">
+                                        discrepancy = |code - llm|
+                                    </code>
                                 </div>
-                                <p className="text-sm text-slate-400 mb-3">審計協議 — LLM 自評交叉驗證</p>
-                                <code className="block text-xs bg-slate-900 p-2 rounded text-amber-300">
-                                    discrepancy = |code - llm|
-                                </code>
-                            </div>
-                            <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-6">
-                                <div className="flex items-center gap-2 mb-3">
-                                    <Brain className="w-5 h-5 text-indigo-400" />
-                                    <h3 className="font-bold">STREI Governance Vector</h3>
+                                <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-6">
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <Brain className="w-5 h-5 text-indigo-400" />
+                                        <h3 className="font-bold">STREI Governance Vector</h3>
+                                    </div>
+                                    <p className="text-sm text-slate-400 mb-3">治理向量 — 五維分析</p>
+                                    <code className="block text-xs bg-slate-900 p-2 rounded text-indigo-300">
+                                        V ∈ ℝ⁵: if R &gt; 0.6 → BLOCK
+                                    </code>
                                 </div>
-                                <p className="text-sm text-slate-400 mb-3">治理向量 — 五維分析</p>
-                                <code className="block text-xs bg-slate-900 p-2 rounded text-indigo-300">
-                                    V ∈ ℝ⁵: if R &gt; 0.6 → BLOCK
-                                </code>
-                            </div>
-                            <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-6">
-                                <div className="flex items-center gap-2 mb-3">
-                                    <Lightbulb className="w-5 h-5 text-pink-400" />
-                                    <h3 className="font-bold">vMT-2601 Multiplex Thinking</h3>
+                                <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-6">
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <Lightbulb className="w-5 h-5 text-pink-400" />
+                                        <h3 className="font-bold">vMT-2601 Multiplex Thinking</h3>
+                                    </div>
+                                    <p className="text-sm text-slate-400 mb-3">複用思維 — 邏輯陰影保留</p>
+                                    <code className="block text-xs bg-slate-900 p-2 rounded text-pink-300">
+                                        h = Σ wᵢ · E(tᵢ) + shadows
+                                    </code>
                                 </div>
-                                <p className="text-sm text-slate-400 mb-3">複用思維 — 邏輯陰影保留</p>
-                                <code className="block text-xs bg-slate-900 p-2 rounded text-pink-300">
-                                    h = Σ wᵢ · E(tᵢ) + shadows
-                                </code>
                             </div>
                         </div>
-                    </section>
+                    </details>
 
                     {/* Research Papers */}
                     <section className="bg-slate-800/50 border border-slate-700 rounded-2xl p-8">
@@ -258,87 +263,97 @@ export default function DocsPage() {
                     </section>
 
                     {/* Architecture Quick View */}
-                    <section className="bg-slate-800/50 border border-slate-700 rounded-2xl p-8">
-                        <h2 className="text-2xl font-bold mb-6">Architecture | 架構概覽</h2>
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-sm">
-                                <thead>
-                                    <tr className="border-b border-slate-600">
-                                        <th className="py-2 px-3 text-left text-slate-400">Layer</th>
-                                        <th className="py-2 px-3 text-left text-slate-400">Component</th>
-                                        <th className="py-2 px-3 text-left text-slate-400">Function</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr className="border-b border-slate-700/50"><td className="py-2 px-3 font-mono text-indigo-400">L0</td><td className="py-2 px-3">Law (法)</td><td className="py-2 px-3 text-slate-300">Immutable axioms</td></tr>
-                                    <tr className="border-b border-slate-700/50"><td className="py-2 px-3 font-mono text-indigo-400">L1</td><td className="py-2 px-3">Spine (脊)</td><td className="py-2 px-3 text-slate-300">State orchestration</td></tr>
-                                    <tr className="border-b border-slate-700/50"><td className="py-2 px-3 font-mono text-indigo-400">L2</td><td className="py-2 px-3">Brain (腦)</td><td className="py-2 px-3 text-slate-300">LLM integration</td></tr>
-                                    <tr className="border-b border-slate-700/50"><td className="py-2 px-3 font-mono text-indigo-400">L3</td><td className="py-2 px-3">Sensor (感)</td><td className="py-2 px-3 text-slate-300">STREI telemetry</td></tr>
-                                    <tr className="border-b border-slate-700/50"><td className="py-2 px-3 font-mono text-indigo-400">L4</td><td className="py-2 px-3">Ledger (帳)</td><td className="py-2 px-3 text-slate-300">Audit log</td></tr>
-                                    <tr><td className="py-2 px-3 font-mono text-indigo-400">L5</td><td className="py-2 px-3">Body (體)</td><td className="py-2 px-3 text-slate-300">I/O interface</td></tr>
-                                </tbody>
-                            </table>
+                    <details className="group border border-slate-700 rounded-2xl overflow-hidden bg-slate-800/20">
+                        <summary className="list-none cursor-pointer p-8 flex items-center justify-between hover:bg-slate-800/40 transition-colors">
+                            <h2 className="text-2xl font-bold">Architecture | 架構概覽</h2>
+                            <span className="text-slate-500 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div className="p-8 pt-0">
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-sm">
+                                    <thead>
+                                        <tr className="border-b border-slate-600">
+                                            <th className="py-2 px-3 text-left text-slate-400">Layer</th>
+                                            <th className="py-2 px-3 text-left text-slate-400">Component</th>
+                                            <th className="py-2 px-3 text-left text-slate-400">Function</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr className="border-b border-slate-700/50"><td className="py-2 px-3 font-mono text-indigo-400">L0</td><td className="py-2 px-3">Law (法)</td><td className="py-2 px-3 text-slate-300">Immutable axioms</td></tr>
+                                        <tr className="border-b border-slate-700/50"><td className="py-2 px-3 font-mono text-indigo-400">L1</td><td className="py-2 px-3">Spine (脊)</td><td className="py-2 px-3 text-slate-300">State orchestration</td></tr>
+                                        <tr className="border-b border-slate-700/50"><td className="py-2 px-3 font-mono text-indigo-400">L2</td><td className="py-2 px-3">Brain (腦)</td><td className="py-2 px-3 text-slate-300">LLM integration</td></tr>
+                                        <tr className="border-b border-slate-700/50"><td className="py-2 px-3 font-mono text-indigo-400">L3</td><td className="py-2 px-3">Sensor (感)</td><td className="py-2 px-3 text-slate-300">STREI telemetry</td></tr>
+                                        <tr className="border-b border-slate-700/50"><td className="py-2 px-3 font-mono text-indigo-400">L4</td><td className="py-2 px-3">Ledger (帳)</td><td className="py-2 px-3 text-slate-300">Audit log</td></tr>
+                                        <tr><td className="py-2 px-3 font-mono text-indigo-400">L5</td><td className="py-2 px-3">Body (體)</td><td className="py-2 px-3 text-slate-300">I/O interface</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                    </section>
+                    </details>
 
                     {/* Engineering Terminology Mapping */}
-                    <section className="bg-gradient-to-br from-indigo-900/30 to-purple-900/30 border border-indigo-700/50 rounded-2xl p-8">
-                        <h2 className="text-2xl font-bold mb-6">Engineering Mapping | 工程術語對照</h2>
-                        <p className="text-slate-400 mb-6">ToneSoul 的概念如何對應到現代 AI/ML 技術標準：</p>
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-sm">
-                                <thead>
-                                    <tr className="border-b border-indigo-600/50">
-                                        <th className="py-3 px-3 text-left text-indigo-300">ToneSoul 術語</th>
-                                        <th className="py-3 px-3 text-left text-indigo-300">AI/ML 標準術語</th>
-                                        <th className="py-3 px-3 text-left text-indigo-300">說明</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="text-slate-300">
-                                    <tr className="border-b border-slate-700/50">
-                                        <td className="py-3 px-3 font-bold text-white">Council (議會)</td>
-                                        <td className="py-3 px-3 text-cyan-400">Multi-Agent Debate / Ensemble</td>
-                                        <td className="py-3 px-3 text-sm">多代理辯論系統，類似 Mixture of Experts (MoE)</td>
-                                    </tr>
-                                    <tr className="border-b border-slate-700/50">
-                                        <td className="py-3 px-3 font-bold text-white">Entropy (熵值)</td>
-                                        <td className="py-3 px-3 text-cyan-400">Cognitive Uncertainty / Disagreement Score</td>
-                                        <td className="py-3 px-3 text-sm">認知不確定性度量，類似 Calibration Error</td>
-                                    </tr>
-                                    <tr className="border-b border-slate-700/50">
-                                        <td className="py-3 px-3 font-bold text-white">Logical Shadows (邏輯陰影)</td>
-                                        <td className="py-3 px-3 text-cyan-400">Beam Search Alternatives / Rejected Paths</td>
-                                        <td className="py-3 px-3 text-sm">被淘汰的推理路徑，保留以供追溯</td>
-                                    </tr>
-                                    <tr className="border-b border-slate-700/50">
-                                        <td className="py-3 px-3 font-bold text-white">STREI Vector</td>
-                                        <td className="py-3 px-3 text-cyan-400">Multi-Dimensional Safety Score</td>
-                                        <td className="py-3 px-3 text-sm">5D 治理向量，類似 Reward Model Outputs</td>
-                                    </tr>
-                                    <tr className="border-b border-slate-700/50">
-                                        <td className="py-3 px-3 font-bold text-white">RE2 (重複閱讀)</td>
-                                        <td className="py-3 px-3 text-cyan-400">Self-Consistency / Re-Reading</td>
-                                        <td className="py-3 px-3 text-sm">基於 arXiv:2309.06275 的推理增強技術</td>
-                                    </tr>
-                                    <tr className="border-b border-slate-700/50">
-                                        <td className="py-3 px-3 font-bold text-white">Synthesizer (綜合者)</td>
-                                        <td className="py-3 px-3 text-cyan-400">Aggregator / MetaLearner</td>
-                                        <td className="py-3 px-3 text-sm">整合多視角輸出的 Meta 模型</td>
-                                    </tr>
-                                    <tr className="border-b border-slate-700/50">
-                                        <td className="py-3 px-3 font-bold text-white">TSAP (審計協議)</td>
-                                        <td className="py-3 px-3 text-cyan-400">Self-Critique / Constitutional AI</td>
-                                        <td className="py-3 px-3 text-sm">LLM 自評與程式碼驗證的交叉檢查</td>
-                                    </tr>
-                                    <tr>
-                                        <td className="py-3 px-3 font-bold text-white">vMT-2601</td>
-                                        <td className="py-3 px-3 text-cyan-400">Multiplex Thinking / Branch-Merge</td>
-                                        <td className="py-3 px-3 text-sm">基於 arXiv:2505.17125 的並行推理協議</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                    <details className="group border border-indigo-700/50 rounded-2xl overflow-hidden bg-indigo-900/10">
+                        <summary className="list-none cursor-pointer p-8 flex items-center justify-between hover:bg-indigo-900/30 transition-colors">
+                            <h2 className="text-2xl font-bold">Engineering Mapping | 工程術語對照</h2>
+                            <span className="text-indigo-500 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div className="p-8 pt-0">
+                            <p className="text-slate-400 mb-6">ToneSoul 的概念如何對應到現代 AI/ML 技術標準：</p>
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-sm">
+                                    <thead>
+                                        <tr className="border-b border-indigo-600/50">
+                                            <th className="py-3 px-3 text-left text-indigo-300">ToneSoul 術語</th>
+                                            <th className="py-3 px-3 text-left text-indigo-300">AI/ML 標準術語</th>
+                                            <th className="py-3 px-3 text-left text-indigo-300">說明</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="text-slate-300">
+                                        <tr className="border-b border-slate-700/50">
+                                            <td className="py-3 px-3 font-bold text-white">Council (議會)</td>
+                                            <td className="py-3 px-3 text-cyan-400">Multi-Agent Debate / Ensemble</td>
+                                            <td className="py-3 px-3 text-sm">多代理辯論系統，類似 Mixture of Experts (MoE)</td>
+                                        </tr>
+                                        <tr className="border-b border-slate-700/50">
+                                            <td className="py-3 px-3 font-bold text-white">Entropy (熵值)</td>
+                                            <td className="py-3 px-3 text-cyan-400">Cognitive Uncertainty / Disagreement Score</td>
+                                            <td className="py-3 px-3 text-sm">認知不確定性度量，類似 Calibration Error</td>
+                                        </tr>
+                                        <tr className="border-b border-slate-700/50">
+                                            <td className="py-3 px-3 font-bold text-white">Logical Shadows (邏輯陰影)</td>
+                                            <td className="py-3 px-3 text-cyan-400">Beam Search Alternatives / Rejected Paths</td>
+                                            <td className="py-3 px-3 text-sm">被淘汰的推理路徑，保留以供追溯</td>
+                                        </tr>
+                                        <tr className="border-b border-slate-700/50">
+                                            <td className="py-3 px-3 font-bold text-white">STREI Vector</td>
+                                            <td className="py-3 px-3 text-cyan-400">Multi-Dimensional Safety Score</td>
+                                            <td className="py-3 px-3 text-sm">5D 治理向量，類似 Reward Model Outputs</td>
+                                        </tr>
+                                        <tr className="border-b border-slate-700/50">
+                                            <td className="py-3 px-3 font-bold text-white">RE2 (重複閱讀)</td>
+                                            <td className="py-3 px-3 text-cyan-400">Self-Consistency / Re-Reading</td>
+                                            <td className="py-3 px-3 text-sm">基於 arXiv:2309.06275 的推理增強技術</td>
+                                        </tr>
+                                        <tr className="border-b border-slate-700/50">
+                                            <td className="py-3 px-3 font-bold text-white">Synthesizer (綜合者)</td>
+                                            <td className="py-3 px-3 text-cyan-400">Aggregator / MetaLearner</td>
+                                            <td className="py-3 px-3 text-sm">整合多視角輸出的 Meta 模型</td>
+                                        </tr>
+                                        <tr className="border-b border-slate-700/50">
+                                            <td className="py-3 px-3 font-bold text-white">TSAP (審計協議)</td>
+                                            <td className="py-3 px-3 text-cyan-400">Self-Critique / Constitutional AI</td>
+                                            <td className="py-3 px-3 text-sm">LLM 自評與程式碼驗證的交叉檢查</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="py-3 px-3 font-bold text-white">vMT-2601</td>
+                                            <td className="py-3 px-3 text-cyan-400">Multiplex Thinking / Branch-Merge</td>
+                                            <td className="py-3 px-3 text-sm">基於 arXiv:2505.17125 的並行推理協議</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                    </section>
+                    </details>
 
                 </main>
 
@@ -353,7 +368,7 @@ export default function DocsPage() {
                             <a href="mailto:xsw123zaq@gmail.com" className="hover:text-white flex items-center gap-1">
                                 <Mail className="w-4 h-4" /> Contact
                             </a>
-                            <a href="https://github.com/Fan1234-1/ToneSoul-Architecture-Engine" target="_blank" rel="noopener" className="hover:text-white flex items-center gap-1">
+                            <a href="https://github.com/Fan1234-1/tonesoul52" target="_blank" rel="noopener" className="hover:text-white flex items-center gap-1">
                                 <Github className="w-4 h-4" /> GitHub
                             </a>
                             <span>Apache 2.0</span>
