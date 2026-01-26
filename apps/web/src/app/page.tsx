@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
 import ConsentModal from "@/components/ConsentModal";
 import ChatInterface from "@/components/ChatInterface";
 import ConversationList from "@/components/ConversationList";
@@ -11,7 +12,7 @@ import DataManager from "@/components/DataManager";
 import PersonaSettings, { PersonaConfig, getStoredPersona } from "@/components/PersonaSettings";
 import OnboardingGuide, { hasCompletedOnboarding } from "@/components/OnboardingGuide";
 import { Conversation, getConversations, createConversation, saveConversation, clearAllConversations } from "@/lib/db";
-import { Brain, Menu, Settings, FileText, LogOut, Key, Layers, BarChart3, Database, Sliders } from "lucide-react";
+import { Brain, Menu, Settings, FileText, LogOut, Key, Layers, BarChart3, Database, Sliders, BookOpen } from "lucide-react";
 
 export default function Home() {
   const [hasConsent, setHasConsent] = useState<boolean>(false);
