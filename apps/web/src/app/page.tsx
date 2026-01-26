@@ -220,6 +220,13 @@ export default function Home() {
 
         {/* Footer */}
         <div className="p-3 border-t border-slate-800 space-y-1">
+          <Link
+            href="/docs"
+            className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-slate-800 transition-colors text-slate-400 hover:text-white text-sm"
+          >
+            <BookOpen className="w-4 h-4" />
+            <span>關於作者與理論</span>
+          </Link>
           <a
             href="/privacy"
             className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-slate-800 transition-colors text-slate-400 hover:text-white text-sm"
