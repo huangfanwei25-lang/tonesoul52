@@ -281,8 +281,8 @@ class SelfCommitStack:
             self.commits = self.commits[-self.max_size:]
     
     def get_recent(self, n: int = 5) -> List[SelfCommit]:
-        """Get most recent n commits."""
-        return self.commits[-n:]
+        """Get most recent n commits (newest first)."""
+        return list(reversed(self.commits[-n:]))
     
     def get_high_weight(self, threshold: float = 0.6) -> List[SelfCommit]:
         """Get commits with high irreversibility weight."""

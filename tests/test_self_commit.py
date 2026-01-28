@@ -164,7 +164,7 @@ class TestSelfCommitStack:
             )
             self.stack.push(commit)
         
-        high_weight = self.stack.get_by_weight(0.6)
+        high_weight = self.stack.get_high_weight(0.6)
         assert len(high_weight) == 2  # Only 0.7 and 0.9
     
     def test_format_for_prompt(self):

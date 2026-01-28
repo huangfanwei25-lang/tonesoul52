@@ -14,7 +14,7 @@ ToneBridge Persona System
 """
 
 from dataclasses import dataclass
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, Tuple, List
 from enum import Enum
 
 
