@@ -7,9 +7,22 @@ import { Message as DBMessage, DeliberationData, Conversation, saveConversation,
 import { calculateEntropy, validateAudit } from "@/lib/entropyCalculator";
 import CouncilChamber from "./CouncilChamber";
 import SoulStateMeter from "./SoulStateMeter";
+import SoulDriveMeter from "./SoulDriveMeter";
 import TacticalDashboard from "./TacticalDashboard";
 import LogicalShadows from "./LogicalShadows";
 import { PersonaConfig } from "./PersonaSettings";
+import {
+    SoulState,
+    TensionRecord,
+    TensionTensor,
+    loadSoulState,
+    updateSoulState,
+    generateSoulPromptModifier,
+    getInitialSoulState,
+    calculateTensionTensor,
+    getContextWeight,
+    estimateResistance
+} from "@/lib/soulEngine";
 
 interface Message extends Omit<DBMessage, 'timestamp'> {
     timestamp: Date;
@@ -350,9 +363,44 @@ ${context || "無"}
 // 注意：Grounding (google_search) 與 responseMimeType: "application/json" 不相容
 // 當需要結構化 JSON 輸出時，必須禁用 Grounding
 
+// Exponential backoff retry wrapper for 429 errors
+const fetchWithRetry = async (
+    url: string,
+    options: RequestInit,
+    maxRetries: number = 3,
+    baseDelayMs: number = 1000
+): Promise<Response> => {
+    let lastError: Error | null = null;
+
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+        try {
+            const response = await fetch(url, options);
+
+            // If we get a 429, retry with exponential backoff
+            if (response.status === 429 && attempt < maxRetries) {
+                const delay = baseDelayMs * Math.pow(2, attempt) + Math.random() * 500;
+                console.warn(`[ToneSoul] Rate limited (429), retrying in ${Math.round(delay)}ms... (attempt ${attempt + 1}/${maxRetries})`);
+                await new Promise(resolve => setTimeout(resolve, delay));
+                continue;
+            }
+
+            return response;
+        } catch (err) {
+            lastError = err as Error;
+            if (attempt < maxRetries) {
+                const delay = baseDelayMs * Math.pow(2, attempt);
+                console.warn(`[ToneSoul] Network error, retrying in ${delay}ms...`);
+                await new Promise(resolve => setTimeout(resolve, delay));
+            }
+        }
+    }
+
+    throw lastError || new Error('Max retries exceeded');
+};
+
 // 標準 Gemini API（快速回應）
 const callGeminiAPI = async (prompt: string, apiKey: string): Promise<string> => {
-    const response = await fetch(
+    const response = await fetchWithRetry(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
         {
             method: "POST",
@@ -361,7 +409,9 @@ const callGeminiAPI = async (prompt: string, apiKey: string): Promise<string> =>
                 contents: [{ role: "user", parts: [{ text: prompt }] }],
                 generationConfig: { responseMimeType: "application/json" },
             }),
-        }
+        },
+        3,  // max 3 retries
+        2000 // 2 second base delay (rate limits need longer waits)
     );
 
     if (!response.ok) {
@@ -377,7 +427,7 @@ const callGeminiAPI = async (prompt: string, apiKey: string): Promise<string> =>
 // 參考 ToneSoul 51: thinkingBudget: 32768
 const callGeminiDeepThinkingAPI = async (prompt: string, apiKey: string): Promise<string> => {
     // 使用 gemini-2.5-flash-preview 支援 thinking budget
-    const response = await fetch(
+    const response = await fetchWithRetry(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`,
         {
             method: "POST",
@@ -392,7 +442,9 @@ const callGeminiDeepThinkingAPI = async (prompt: string, apiKey: string): Promis
                     }
                 },
             }),
-        }
+        },
+        3,  // max 3 retries
+        2000 // 2 second base delay
     );
 
     if (!response.ok) {
@@ -478,6 +530,40 @@ const callXaiAPI = async (prompt: string, apiKey: string): Promise<string> => {
     return data.choices?.[0]?.message?.content || "{}";
 };
 
+// Ollama 本地模型 API（免費，需要本地運行 Ollama）
+const callOllamaAPI = async (prompt: string, _apiKey: string): Promise<string> => {
+    const OLLAMA_URL = process.env.NEXT_PUBLIC_OLLAMA_URL || "http://localhost:11434";
+    const MODEL_NAME = process.env.NEXT_PUBLIC_OLLAMA_MODEL || "formosa1";
+
+    try {
+        const response = await fetch(`${OLLAMA_URL}/api/generate`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                model: MODEL_NAME,
+                prompt: prompt + "\n\n請以 JSON 格式回覆。",
+                stream: false,
+                options: {
+                    temperature: 0.7,
+                    num_ctx: 4096,
+                }
+            }),
+        });
+
+        if (!response.ok) {
+            throw new Error(`Ollama 錯誤: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data.response || "{}";
+    } catch (error) {
+        if (error instanceof TypeError && error.message.includes('fetch')) {
+            throw new Error("無法連接到 Ollama。請確認 Ollama 正在運行 (ollama serve)");
+        }
+        throw error;
+    }
+};
+
 function safeJsonParse<T>(text: string): T | null {
     try {
         return JSON.parse(text) as T;
@@ -503,7 +589,14 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
     const [isLoading, setIsLoading] = useState(false);
     const [loadingPhase, setLoadingPhase] = useState<string>("");
     const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set());
+    const [soulState, setSoulState] = useState<SoulState>(getInitialSoulState());
     const messagesEndRef = useRef<HTMLDivElement>(null);
+
+    // 載入靈魂狀態
+    useEffect(() => {
+        const loaded = loadSoulState();
+        setSoulState(loaded);
+    }, []);
 
     // 載入對話訊息
     useEffect(() => {
@@ -541,6 +634,10 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
 
     // 根據提供者選擇 API 調用函數
     const getCallAPI = () => {
+        // Ollama 不需要 API Key
+        if (apiSettings?.provider === "ollama") {
+            return (prompt: string) => callOllamaAPI(prompt, "");
+        }
         if (!apiSettings?.apiKey) return null;
         switch (apiSettings.provider) {
             case "gemini": return (prompt: string) => callGeminiAPI(prompt, apiSettings.apiKey);
@@ -609,17 +706,23 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
         // 合併對話脈絡與記憶
         const fullContext = memoryContext + context;
 
-        // Phase 1: 三路並行調用（注入 Persona 調整）
+        // Phase 1: 三路並行調用（注入 Persona 調整 + Soul 狀態）
         setLoadingPhase("召集議會成員...");
+
+        // 🔮 Soul Engine: 生成內在狀態修飾語
+        const soulMod = generateSoulPromptModifier(soulState);
+        if (soulMod) {
+            console.log('[ToneSoul] Soul modifier active:', soulState.soulMode);
+        }
 
         const philosopherMod = getPersonaModifier(personaConfig, 'philosopher');
         const engineerMod = getPersonaModifier(personaConfig, 'engineer');
         const guardianMod = getPersonaModifier(personaConfig, 'guardian');
 
         const [philosopherRaw, engineerRaw, guardianRaw] = await Promise.all([
-            callAPI(PHILOSOPHER_PROMPT(userMessage, fullContext) + philosopherMod),
-            callAPI(ENGINEER_PROMPT(userMessage, fullContext) + engineerMod),
-            callAPI(GUARDIAN_PROMPT(userMessage, fullContext) + guardianMod),
+            callAPI(PHILOSOPHER_PROMPT(userMessage, fullContext) + philosopherMod + soulMod),
+            callAPI(ENGINEER_PROMPT(userMessage, fullContext) + engineerMod + soulMod),
+            callAPI(GUARDIAN_PROMPT(userMessage, fullContext) + guardianMod + soulMod),
         ]);
 
         const philosopher = safeJsonParse<{
@@ -712,6 +815,27 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
             status: codeEntropy.status,
             calculation_note: codeEntropy.calculation_note
         };
+
+        // 🔮 TensionTensor 計算 (Yu-Hun 模型: T = W × E × D)
+        const hasRiskWarning = guardian.risk_level === 'high' ||
+            guardian.stance.includes('風險') ||
+            guardian.stance.includes('危險');
+        const hasLogicalComplexity = philosopher.stance.length > 100 ||
+            engineer.stance.length > 100;
+
+        const resistance = estimateResistance(
+            finalEntropy.value,
+            hasRiskWarning,
+            hasLogicalComplexity
+        );
+        const contextWeight = getContextWeight('default');
+        const tensionTensor = calculateTensionTensor(
+            finalEntropy.value,
+            resistance,
+            contextWeight
+        );
+
+        console.log('[ToneSoul] TensionTensor:', tensionTensor);
 
         // 組裝完整的審議數據
         const deliberation: DeliberationData = {
@@ -862,6 +986,25 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
             await saveConversation(updatedConversation);
             onConversationUpdate(updatedConversation);
 
+            // 更新靈魂狀態（張力積分 + 內在驅動）
+            if (result.deliberation?.entropy_meter) {
+                const tensionRecord: TensionRecord = {
+                    turn: newMessages.length,
+                    timestamp: Date.now(),
+                    value: result.deliberation.entropy_meter.value,
+                    components: {
+                        divergence: 0,
+                        riskWeight: 0,
+                        coherence: 0,
+                        integrity: 0,
+                    },
+                    context: userMessage.content.slice(0, 50),
+                };
+                const newSoulState = updateSoulState(soulState, tensionRecord, result.response);
+                setSoulState(newSoulState);
+                console.log('[ToneSoul] Soul State updated:', newSoulState.soulMode, 'Integral:', newSoulState.tensionIntegral.toFixed(2));
+            }
+
             // 自動展開最新的審議
             setExpandedNodes(prev => new Set(prev).add(assistantMessage.id));
 
@@ -901,6 +1044,16 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
                 <div className="bg-amber-50 border-b border-amber-200 px-4 py-2 flex items-center gap-2 text-sm text-amber-800">
                     <AlertTriangle className="w-4 h-4" />
                     <span>請先設定 API Key 才能使用 AI 對話。點擊側邊欄 API 設定。</span>
+                </div>
+            )}
+
+            {/* 靈魂狀態指示器 */}
+            {soulState.totalTurns > 0 && (
+                <div className="bg-gray-900/5 border-b border-gray-200 px-4 py-2 flex items-center justify-between">
+                    <SoulDriveMeter soulState={soulState} compact />
+                    <div className="text-[10px] text-gray-400">
+                        Tension ∫: {(soulState.tensionIntegral * 100).toFixed(0)}%
+                    </div>
                 </div>
             )}
 

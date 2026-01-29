@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Settings, X, Key, Check, AlertCircle, Zap, Users } from "lucide-react";
 
-export type ApiProvider = "gemini" | "openai" | "claude" | "xai";
+export type ApiProvider = "gemini" | "openai" | "claude" | "xai" | "ollama";
 export type DeliberationMode = "fast" | "multipath";
 
 export interface ApiSettings {
@@ -26,6 +26,7 @@ const PROVIDERS = [
     { id: "openai" as ApiProvider, name: "OpenAI", icon: "🟢", desc: "GPT-4o" },
     { id: "claude" as ApiProvider, name: "Claude", icon: "🟠", desc: "Anthropic" },
     { id: "xai" as ApiProvider, name: "xAI", icon: "⚡", desc: "Grok" },
+    { id: "ollama" as ApiProvider, name: "Ollama", icon: "🦙", desc: "本地模型 (免費)" },
 ];
 
 export function getStoredSettings(): ApiSettings | null {
