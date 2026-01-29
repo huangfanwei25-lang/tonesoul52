@@ -8,8 +8,10 @@ import ConversationList from "@/components/ConversationList";
 import SettingsModal, { ApiSettings, getStoredSettings } from "@/components/SettingsModal";
 import SessionReport from "@/components/SessionReport";
 import EntropyChart from "@/components/EntropyChart";
+import TensionTimeline from "@/components/TensionTimeline";
 import DataManager from "@/components/DataManager";
 import PersonaSettings, { PersonaConfig, getStoredPersona } from "@/components/PersonaSettings";
+import { SoulState, loadSoulState, getInitialSoulState } from "@/lib/soulEngine";
 import OnboardingGuide, { hasCompletedOnboarding } from "@/components/OnboardingGuide";
 import { Conversation, getConversations, createConversation, saveConversation, clearAllConversations } from "@/lib/db";
 import { Brain, Menu, Settings, FileText, LogOut, Key, Layers, BarChart3, Database, Sliders, BookOpen } from "lucide-react";
@@ -24,6 +26,7 @@ export default function Home() {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [apiSettings, setApiSettings] = useState<ApiSettings | null>(null);
   const [personaConfig, setPersonaConfig] = useState<PersonaConfig | null>(null);
+  const [soulState, setSoulState] = useState<SoulState>(getInitialSoulState());
 
   // Conversation state
   const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -44,6 +47,9 @@ export default function Home() {
 
     // Load persona settings
     setPersonaConfig(getStoredPersona());
+
+    // Load soul state
+    setSoulState(loadSoulState());
 
     // Check if onboarding needed
     if (!hasCompletedOnboarding()) {
@@ -172,6 +178,11 @@ export default function Home() {
           {/* Entropy Chart */}
           <div className="border-t border-slate-800">
             <EntropyChart conversation={currentConversation} />
+          </div>
+
+          {/* Tension Timeline */}
+          <div className="border-t border-slate-800 p-3">
+            <TensionTimeline soulState={soulState} />
           </div>
         </div>
 
