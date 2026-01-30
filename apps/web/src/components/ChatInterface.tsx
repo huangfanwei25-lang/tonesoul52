@@ -23,6 +23,7 @@ import {
     getContextWeight,
     estimateResistance
 } from "@/lib/soulEngine";
+import { auditOutput, saveAuditLog, AuditResult } from "@/lib/soulAuditor";
 
 interface Message extends Omit<DBMessage, 'timestamp'> {
     timestamp: Date;
@@ -978,9 +979,45 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
             next_moves: synthesizer.next_moves,
         };
 
+        // 🔮 Soul Auditor: 審計最終回應是否符合 SOUL.md
+        const previousResponses = messages
+            .filter(m => m.role === 'assistant')
+            .map(m => m.content || '')
+            .slice(-5);
+
+        const auditResult = auditOutput(
+            userMessage,
+            synthesizer.final_response,
+            previousResponses
+        );
+
+        // 記錄審計日誌
+        saveAuditLog({
+            sessionId: conversation?.id || 'unknown',
+            turn: messages.length,
+            input: userMessage,
+            output: synthesizer.final_response,
+            result: auditResult,
+        });
+
+        // 如果有嚴重違規，附加警告
+        let finalResponse = synthesizer.final_response;
+        if (!auditResult.passed && auditResult.violations.some(v => v.severity === 'high')) {
+            console.warn('[Auditor] High severity violation detected!');
+            finalResponse += '\n\n---\n⚠️ *審計注意: ' + auditResult.auditNote + '*';
+        }
+
         return {
-            response: synthesizer.final_response,
-            deliberation,
+            response: finalResponse,
+            deliberation: {
+                ...deliberation,
+                soulAudit: {
+                    passed: auditResult.passed,
+                    honestyScore: auditResult.honestyScore,
+                    violations: auditResult.violations.length,
+                    auditNote: auditResult.auditNote,
+                },
+            },
         };
     };
 

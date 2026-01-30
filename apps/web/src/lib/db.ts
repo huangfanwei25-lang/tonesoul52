@@ -82,6 +82,13 @@ export interface DeliberationData {
         response_text: string;
     };
     next_moves?: Array<{ label: string; text: string }>;
+    // Soul Auditor 審計結果
+    soulAudit?: {
+        passed: boolean;
+        honestyScore: number;
+        violations: number;
+        auditNote: string;
+    };
 }
 
 export interface Conversation {
