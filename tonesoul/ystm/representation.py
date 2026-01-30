@@ -34,9 +34,11 @@ def tokenize(text: str) -> List[str]:
 
 
 def simple_embed(text: str, dims: int) -> np.ndarray:
+    """Simple embedding using token hashing (non-cryptographic)."""
     vec = np.zeros(dims, dtype=float)
     for token in tokenize(text):
-        digest = hashlib.md5(token.encode("utf-8")).hexdigest()
+        # MD5 used for deterministic index calculation, not security
+        digest = hashlib.md5(token.encode("utf-8"), usedforsecurity=False).hexdigest()
         idx = int(digest, 16) % dims
         vec[idx] += 1.0
     return vec
