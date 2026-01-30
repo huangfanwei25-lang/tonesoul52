@@ -34,11 +34,26 @@ jobs:
           python -c "
           import json
           from pathlib import Path
+          
           path = Path('AXIOMS.json')
           data = json.loads(path.read_text())
-          assert data, 'AXIOMS.json must contain at least one axiom entry.'
-          assert isinstance(data, dict), 'AXIOMS.json root must be an object.'
-          for key, node in data.items():
-              assert 'description' in node, f'{key} needs a description.'
-          print('AXIOMS.json validation passed!')
+          
+          # Basic structure checks
+          assert data, 'AXIOMS.json must not be empty'
+          assert isinstance(data, dict), 'AXIOMS.json root must be an object'
+          
+          # Check axioms array exists and has entries
+          assert 'axioms' in data, 'AXIOMS.json must have an axioms array'
+          axioms = data['axioms']
+          assert isinstance(axioms, list), 'axioms must be an array'
+          assert len(axioms) > 0, 'axioms array must have at least one entry'
+          
+          # Each axiom should have required fields
+          for i, axiom in enumerate(axioms):
+              assert 'id' in axiom, f'Axiom {i} needs an id'
+              assert 'name' in axiom, f'Axiom {i} needs a name'
+              assert 'fol' in axiom, f'Axiom {i} needs a FOL expression'
+              assert 'natural' in axiom, f'Axiom {i} needs a natural language description'
+          
+          print(f'AXIOMS.json validation passed! ({len(axioms)} axioms verified)')
           "
