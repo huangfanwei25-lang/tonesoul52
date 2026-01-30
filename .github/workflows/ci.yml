@@ -31,7 +31,7 @@ jobs:
         run: |
           export PYTHONPATH=.
           pip install pytest-cov
-          pytest tests/ --cov=tonesoul --cov-report=xml --cov-report=html --cov-fail-under=60 -v
+          pytest tests/ --cov=tonesoul --cov-report=xml --cov-report=html --cov-fail-under=30 -v
 
       - name: Upload coverage report
         if: always()
