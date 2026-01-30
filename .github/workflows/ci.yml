@@ -29,12 +29,17 @@ jobs:
           python -c "from tonesoul.time_island import TimeIsland; print('TimeIsland OK')"
       - name: Run tests with coverage
         run: |
-          if [ -d tests ]; then
-            pip install pytest-cov
-            pytest --cov=tonesoul --cov-report=xml
-          else
-            echo "No tests directory found; skipping pytest."
-          fi
+          export PYTHONPATH=.
+          pip install pytest-cov
+          pytest tests/ --cov=tonesoul --cov-report=xml --cov-report=html --cov-fail-under=60 -v
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: htmlcov/
+          retention-days: 7
       - name: Validate JSON schemas
         run: |
           python -c "import json; json.load(open('AXIOMS.json'))"

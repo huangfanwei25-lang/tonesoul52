@@ -1,0 +1,47 @@
+name: Critical Path Tests
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest numpy pyyaml
+
+      - name: Run critical path smoke tests
+        run: |
+          export PYTHONPATH=.
+          pytest tests/test_guardian.py tests/test_verdict.py tests/test_poav.py tests/test_vow_system.py -v --tb=short
+
+      - name: Verify core module smoke test
+        run: |
+          export PYTHONPATH=.
+          python -c "
+          from tonesoul.unified_core import UnifiedCore
+          from tonesoul.council import PreOutputCouncil
+          from tonesoul.poav import score
+          
+          # Quick smoke tests
+          council = PreOutputCouncil()
+          verdict = council.validate('Hello world', {'topic': 'test'})
+          assert verdict is not None, 'Council should return a verdict'
+          
+          poav_result = score({'delta_t': 0.3, 'delta_s': 0.3, 'delta_r': 0.2})
+          assert 0 <= poav_result <= 1, 'POAV score should be between 0 and 1'
+          
+          print('✓ Core module smoke tests passed!')
+          "

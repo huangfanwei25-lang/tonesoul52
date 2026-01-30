@@ -23,11 +23,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install pytest
 
-      - name: Run PreOutputCouncil tests
-        continue-on-error: true  # Tests need fixing, don't block CI
+      - name: Run Council Tests
+        continue-on-error: true  # Some tests may need fixing
         run: |
           export PYTHONPATH=.
-          pytest tests/test_pre_output_council.py -v
+          pytest tests/test_pre_output_council.py tests/test_verdict.py tests/test_coherence.py tests/test_guardian.py -v --tb=short
 
       - name: Verify AXIOMS.json integrity
         run: |
