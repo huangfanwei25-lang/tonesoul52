@@ -4,6 +4,8 @@ on:
   schedule:
     - cron: '0 0 * * 1'  # weekly on Monday UTC
   workflow_dispatch:
+  push:
+    branches: [master, main]
 
 jobs:
   verify:
@@ -28,14 +30,14 @@ jobs:
 
       - name: Verify AXIOMS.json integrity
         run: |
-          python - <<'PY'
-import json
-from pathlib import Path
-
-path = Path("AXIOMS.json")
-data = json.loads(path.read_text())
-assert data, "AXIOMS.json must contain at least one axiom entry."
-assert isinstance(data, dict), "AXIOMS.json root must be an object."
-for key, node in data.items():
-    assert "description" in node, f"{key} needs a description."
-PY
+          python -c "
+          import json
+          from pathlib import Path
+          path = Path('AXIOMS.json')
+          data = json.loads(path.read_text())
+          assert data, 'AXIOMS.json must contain at least one axiom entry.'
+          assert isinstance(data, dict), 'AXIOMS.json root must be an object.'
+          for key, node in data.items():
+              assert 'description' in node, f'{key} needs a description.'
+          print('AXIOMS.json validation passed!')
+          "
