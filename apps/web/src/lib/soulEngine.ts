@@ -4,11 +4,107 @@
  * 實現靈魂引擎的核心機制：
  * 1. 張力積分 (Tension Integral) - 記憶殘留機制
  * 2. 內在驅動向量 (Intrinsic Drive Vector) - 主動性/Agency
+ * 3. 靈魂配置 (Soul Config) - 從 SOUL.md 載入參數
  * 
  * 公式：
  * S_oul(t) = Σ (T[i] × e^(-α × (t - t[i])))
  * Ī = [I_curiosity, I_coherence, I_integrity]
  */
+
+// ==================== Soul Configuration (SOUL.md) ====================
+
+/**
+ * 靈魂配置 - 可從 SOUL.md 動態載入
+ */
+export interface SoulConfig {
+    // Identity
+    name: string;
+    version: string;
+    language: string;
+
+    // Core Values (權重 0-1)
+    values: {
+        honesty: number;    // 誠實度（固定為 1.0）
+        humility: number;   // 謙遜度
+        curiosity: number;  // 好奇心
+        consistency: number; // 一致性
+    };
+
+    // Tension Parameters
+    tension: {
+        echoChamnber: number;      // < 此值 = 過度順從
+        healthyFriction: number;   // > 此值 = 過度衝突
+        decayRate: number;         // 張力衰減率 α
+    };
+
+    // Contradiction Detection
+    contradiction: {
+        confidenceThreshold: number;  // 最低信心度
+        topicSimilarity: number;      // 最低主題相似度
+    };
+
+    // Mode Thresholds
+    modeThresholds: {
+        dormant: number;    // 驅動力低於此值
+        seeking: number;    // 好奇心高於此值
+        conflicted: number; // 矛盾未解決時
+    };
+}
+
+/**
+ * 預設靈魂配置（對應 SOUL.md v2.0）
+ */
+export const DEFAULT_SOUL_CONFIG: SoulConfig = {
+    name: 'ToneSoul',
+    version: '2.0',
+    language: 'zh-TW',
+    values: {
+        honesty: 1.0,
+        humility: 0.8,
+        curiosity: 0.6,
+        consistency: 0.7,
+    },
+    tension: {
+        echoChamnber: 0.3,
+        healthyFriction: 0.7,
+        decayRate: 0.15,
+    },
+    contradiction: {
+        confidenceThreshold: 0.2,
+        topicSimilarity: 0.15,
+    },
+    modeThresholds: {
+        dormant: 0.1,
+        seeking: 0.7,
+        conflicted: 0.5,
+    },
+};
+
+// 全局靈魂配置（可通過 loadSoulConfig 更新）
+let currentSoulConfig: SoulConfig = { ...DEFAULT_SOUL_CONFIG };
+
+/**
+ * 載入靈魂配置
+ */
+export function loadSoulConfig(config: Partial<SoulConfig>): void {
+    currentSoulConfig = {
+        ...DEFAULT_SOUL_CONFIG,
+        ...config,
+        values: { ...DEFAULT_SOUL_CONFIG.values, ...config.values },
+        tension: { ...DEFAULT_SOUL_CONFIG.tension, ...config.tension },
+        contradiction: { ...DEFAULT_SOUL_CONFIG.contradiction, ...config.contradiction },
+        modeThresholds: { ...DEFAULT_SOUL_CONFIG.modeThresholds, ...config.modeThresholds },
+    };
+    console.log('[Soul] Config loaded:', currentSoulConfig.name, 'v' + currentSoulConfig.version);
+}
+
+/**
+ * 獲取當前靈魂配置
+ */
+export function getSoulConfig(): SoulConfig {
+    return currentSoulConfig;
+}
+
 
 // ==================== 類型定義 ====================
 
