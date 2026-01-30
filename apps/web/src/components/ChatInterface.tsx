@@ -531,9 +531,13 @@ const callXaiAPI = async (prompt: string, apiKey: string): Promise<string> => {
 };
 
 // Ollama 本地模型 API（免費，需要本地運行 Ollama）
+// 注意：簡化 prompt 避免 JSON 格式要求，本地模型容易出錯
 const callOllamaAPI = async (prompt: string, _apiKey: string): Promise<string> => {
     const OLLAMA_URL = process.env.NEXT_PUBLIC_OLLAMA_URL || "http://localhost:11434";
     const MODEL_NAME = process.env.NEXT_PUBLIC_OLLAMA_MODEL || "formosa1";
+
+    // 簡化 prompt：移除複雜的 JSON 格式要求
+    const simplifiedPrompt = simplifyPromptForLocalModel(prompt);
 
     try {
         const response = await fetch(`${OLLAMA_URL}/api/generate`, {
@@ -541,7 +545,7 @@ const callOllamaAPI = async (prompt: string, _apiKey: string): Promise<string> =
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 model: MODEL_NAME,
-                prompt: prompt + "\n\n請以 JSON 格式回覆。",
+                prompt: simplifiedPrompt,
                 stream: false,
                 options: {
                     temperature: 0.7,
@@ -555,7 +559,10 @@ const callOllamaAPI = async (prompt: string, _apiKey: string): Promise<string> =
         }
 
         const data = await response.json();
-        return data.response || "{}";
+        const rawResponse = data.response || "";
+
+        // 嘗試將自然語言回應轉換成 JSON 結構
+        return wrapResponseAsJson(rawResponse);
     } catch (error) {
         if (error instanceof TypeError && error.message.includes('fetch')) {
             throw new Error("無法連接到 Ollama。請確認 Ollama 正在運行 (ollama serve)");
@@ -563,6 +570,59 @@ const callOllamaAPI = async (prompt: string, _apiKey: string): Promise<string> =
         throw error;
     }
 };
+
+/**
+ * 簡化 prompt 給本地模型（移除 JSON 格式要求）
+ */
+function simplifyPromptForLocalModel(prompt: string): string {
+    // 移除 JSON 格式相關的指令
+    let simplified = prompt
+        .replace(/請以\s*JSON\s*格式(回覆|輸出|回應)/gi, "")
+        .replace(/JSON\s*格式/gi, "")
+        .replace(/```json[\s\S]*?```/g, "")
+        .replace(/\{[\s\S]*?"stance"[\s\S]*?\}/g, ""); // 移除模板 JSON
+
+    // 添加簡單的指示
+    simplified += "\n\n請用自然的中文直接回答，不需要特殊格式。請簡潔扼要。";
+
+    return simplified;
+}
+
+/**
+ * 將自然語言回應包裝成 JSON 結構
+ */
+function wrapResponseAsJson(rawResponse: string): string {
+    // 先嘗試解析現有的 JSON
+    try {
+        JSON.parse(rawResponse);
+        return rawResponse; // 已經是有效 JSON
+    } catch {
+        // 不是 JSON，包裝成結構
+    }
+
+    // 從 markdown code block 提取
+    const jsonMatch = rawResponse.match(/```json\s*([\s\S]*?)\s*```/);
+    if (jsonMatch?.[1]) {
+        try {
+            JSON.parse(jsonMatch[1]);
+            return jsonMatch[1];
+        } catch {
+            // 繼續包裝
+        }
+    }
+
+    // 包裝成簡單的 JSON 結構
+    const cleanedResponse = rawResponse
+        .replace(/\n+/g, ' ')
+        .replace(/"/g, '\\"')
+        .trim();
+
+    return JSON.stringify({
+        stance: cleanedResponse.slice(0, 200),
+        core_value: "本地模型回應",
+        blind_spot: "簡化模式",
+    });
+}
 
 function safeJsonParse<T>(text: string): T | null {
     try {
