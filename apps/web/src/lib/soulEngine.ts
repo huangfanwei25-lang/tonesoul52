@@ -339,7 +339,9 @@ export function detectContradiction(
     newStatement: string,
     previousStatements: string[]
 ): Contradiction | null {
-    // 簡單的否定詞檢測模式
+    // ==================== 否定模式庫 ====================
+
+    // 基本否定對
     const negationPairs = [
         ['同意', '不同意'],
         ['可以', '不可以'],
@@ -349,37 +351,129 @@ export function detectContradiction(
         ['能', '不能'],
         ['對', '不對'],
         ['好', '不好'],
+        ['喜歡', '不喜歡'],
+        ['愛', '不愛'],
+        ['想', '不想'],
+        ['要', '不要'],
+        ['支持', '反對'],
+        ['贊成', '反對'],
+        ['正確', '錯誤'],
+        ['真', '假'],
+    ];
+
+    // 量詞反轉模式（全部←→沒有）
+    const quantifierContradictions = [
+        ['所有', '沒有'],
+        ['全部', '沒有'],
+        ['一定', '不一定'],
+        ['絕對', '不一定'],
+        ['總是', '從不'],
+        ['永遠', '從不'],
+        ['每次', '從未'],
+    ];
+
+    // 情感極性反轉
+    const sentimentContradictions = [
+        ['很好', '很差'],
+        ['優秀', '糟糕'],
+        ['成功', '失敗'],
+        ['重要', '不重要'],
+        ['必要', '不必要'],
+        ['安全', '危險'],
+        ['簡單', '複雜'],
+    ];
+
+    // 合併所有模式
+    const allPatterns = [
+        ...negationPairs,
+        ...quantifierContradictions,
+        ...sentimentContradictions,
     ];
 
     const newLower = newStatement.toLowerCase();
+    const newTokens = extractMeaningfulTokens(newLower);
 
-    for (const prev of previousStatements) {
+    // 分析最近的陳述（越近權重越高）
+    let bestMatch: { contradiction: Contradiction; confidence: number } | null = null;
+
+    for (let i = 0; i < previousStatements.length; i++) {
+        const prev = previousStatements[i];
         const prevLower = prev.toLowerCase();
+        const prevTokens = extractMeaningfulTokens(prevLower);
 
-        for (const [positive, negative] of negationPairs) {
-            // 檢查是否一個包含肯定、另一個包含否定
-            if (
+        // 計算主題相似度
+        const topicSimilarity = calculateTokenOverlap(newTokens, prevTokens);
+
+        // 如果主題相似度太低，跳過
+        if (topicSimilarity < 0.15) continue;
+
+        // 檢測矛盾模式
+        for (const [positive, negative] of allPatterns) {
+            const hasContradiction =
                 (newLower.includes(positive) && prevLower.includes(negative)) ||
-                (newLower.includes(negative) && prevLower.includes(positive))
-            ) {
-                // 確保討論的是同一主題（共享至少 2 個關鍵詞）
-                const newTokens = new Set(newLower.split(/\s+/).filter(t => t.length > 1));
-                const prevTokens = new Set(prevLower.split(/\s+/).filter(t => t.length > 1));
-                const commonTokens = [...newTokens].filter(t => prevTokens.has(t));
+                (newLower.includes(negative) && prevLower.includes(positive));
 
-                if (commonTokens.length >= 2) {
-                    return {
-                        statementA: prev.slice(0, 100),
-                        statementB: newStatement.slice(0, 100),
-                        detectedAt: Date.now(),
-                        resolved: false,
+            if (hasContradiction) {
+                // 計算信心分數
+                const recencyWeight = 1 - (i / previousStatements.length) * 0.5;
+                const confidence = topicSimilarity * recencyWeight;
+
+                if (!bestMatch || confidence > bestMatch.confidence) {
+                    bestMatch = {
+                        contradiction: {
+                            statementA: prev.slice(0, 100),
+                            statementB: newStatement.slice(0, 100),
+                            detectedAt: Date.now(),
+                            resolved: false,
+                        },
+                        confidence,
                     };
                 }
             }
         }
     }
 
+    // 只返回信心度超過閾值的矛盾
+    if (bestMatch && bestMatch.confidence >= 0.2) {
+        console.log(`[Soul] Contradiction detected with confidence: ${(bestMatch.confidence * 100).toFixed(1)}%`);
+        return bestMatch.contradiction;
+    }
+
     return null;
+}
+
+/**
+ * 提取有意義的詞彙（排除停用詞和短詞）
+ */
+function extractMeaningfulTokens(text: string): Set<string> {
+    const stopWords = new Set([
+        '的', '了', '是', '在', '有', '和', '與', '或', '但', '如果',
+        '這', '那', '我', '你', '他', '她', '它', '我們', '你們', '他們',
+        '什麼', '怎麼', '為什麼', '哪', '誰', '多少', '幾',
+        'the', 'a', 'an', 'is', 'are', 'was', 'were', 'be', 'been',
+        'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would',
+        'can', 'could', 'should', 'may', 'might', 'must',
+        'i', 'you', 'he', 'she', 'it', 'we', 'they',
+        'this', 'that', 'these', 'those', 'what', 'which', 'who',
+    ]);
+
+    return new Set(
+        text
+            .split(/[\s,.!?;:'"()[\]{}，。！？；：「」『』【】]+/)
+            .filter(t => t.length > 1 && !stopWords.has(t))
+    );
+}
+
+/**
+ * 計算兩組詞彙的重疊度（Jaccard 係數）
+ */
+function calculateTokenOverlap(tokensA: Set<string>, tokensB: Set<string>): number {
+    if (tokensA.size === 0 || tokensB.size === 0) return 0;
+
+    const intersection = [...tokensA].filter(t => tokensB.has(t)).length;
+    const union = new Set([...tokensA, ...tokensB]).size;
+
+    return intersection / union;
 }
 
 // ==================== 狀態管理 ====================
