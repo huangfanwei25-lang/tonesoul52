@@ -150,12 +150,16 @@ class TimeIsland:
     
     def activate(self) -> None:
         """Activate the island"""
+        if self.state != IslandState.DRAFT:
+            raise ValueError(f"Cannot activate island in {self.state} state. Must be DRAFT.")
         if self.state == IslandState.DRAFT:
             self.state = IslandState.ACTIVE
             self.add_changelog("activated", "Island activated for processing")
     
     def complete(self) -> None:
         """Mark island as completed"""
+        if self.state != IslandState.ACTIVE:
+            raise ValueError(f"Cannot complete island in {self.state} state. Must be ACTIVE.")
         if self.state == IslandState.ACTIVE:
             self.state = IslandState.COMPLETED
             self.window_end = _utc_iso()
@@ -164,6 +168,8 @@ class TimeIsland:
     
     def archive(self) -> None:
         """Archive the island"""
+        if self.state not in {IslandState.COMPLETED, IslandState.ACTIVE}:
+            raise ValueError(f"Cannot archive island in {self.state} state. Must be COMPLETED or ACTIVE.")
         if self.state == IslandState.COMPLETED:
             self.state = IslandState.ARCHIVED
             self.add_changelog("archived", "Island archived for long-term storage")

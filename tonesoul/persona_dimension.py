@@ -116,8 +116,8 @@ class PersonaDimension:
 
     def __init__(self, persona_payload: Dict[str, object]) -> None:
         self.persona = persona_payload
-        self.home_vector = persona_payload.get("home_vector") if isinstance(persona_payload, dict) else {}
-        self.tolerance = persona_payload.get("tolerance") if isinstance(persona_payload, dict) else {}
+        self.home_vector = persona_payload.get("home_vector", {}) if isinstance(persona_payload, dict) else {}
+        self.tolerance = persona_payload.get("tolerance", {}) if isinstance(persona_payload, dict) else {}
         self.vector_calculator = VectorCalculator()
         self.patterns = persona_payload.get("patterns", []) if isinstance(persona_payload, dict) else []
         self.mistakes = persona_payload.get("mistakes", []) if isinstance(persona_payload, dict) else []
