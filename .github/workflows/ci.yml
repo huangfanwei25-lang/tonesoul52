@@ -42,7 +42,7 @@ jobs:
           retention-days: 7
       - name: Validate JSON schemas
         run: |
-          python -c "import json; json.load(open('AXIOMS.json'))"
+          python -c "import json; json.load(open('AXIOMS.json', encoding='utf-8'))"
 
   lint:
     runs-on: ubuntu-latest
