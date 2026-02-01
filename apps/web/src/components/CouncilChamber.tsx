@@ -1,10 +1,11 @@
 "use client";
 
-import { Lightbulb, Cpu, Shield, AlertCircle } from "lucide-react";
+import { Lightbulb, Cpu, Shield, AlertCircle, Heart } from "lucide-react";
 
 interface CouncilMember {
     stance: string;
     conflict_point?: string;
+    benevolence_check?: string;
 }
 
 interface CouncilChamberProps {
@@ -60,17 +61,31 @@ const CouncilRow = ({ role, data, icon: Icon, colorClass, bgClass }: CouncilRowP
                         </p>
                     </div>
 
-                    {data.conflict_point && (
-                        <div className="flex items-start gap-2 bg-white/60 p-2.5 rounded-lg border border-white/50">
-                            <AlertCircle className="w-4 h-4 mt-0.5 shrink-0 text-amber-500" />
-                            <div>
-                                <span className="text-[10px] font-bold text-amber-600 uppercase block mb-0.5">
-                                    摩擦點 (Friction)
-                                </span>
-                                <span className="text-xs text-slate-700">{data.conflict_point}</span>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {data.conflict_point && (
+                            <div className="flex items-start gap-2 bg-white/60 p-2.5 rounded-lg border border-white/50">
+                                <AlertCircle className="w-4 h-4 mt-0.5 shrink-0 text-amber-500" />
+                                <div>
+                                    <span className="text-[10px] font-bold text-amber-600 uppercase block mb-0.5">
+                                        摩擦點 (Friction)
+                                    </span>
+                                    <span className="text-xs text-slate-700">{data.conflict_point}</span>
+                                </div>
                             </div>
-                        </div>
-                    )}
+                        )}
+
+                        {data.benevolence_check && (
+                            <div className="flex items-start gap-2 bg-white/60 p-2.5 rounded-lg border border-white/50">
+                                <Heart className="w-4 h-4 mt-0.5 shrink-0 text-pink-500" />
+                                <div>
+                                    <span className="text-[10px] font-bold text-pink-600 uppercase block mb-0.5">
+                                        仁慈檢查 (Benevolence)
+                                    </span>
+                                    <span className="text-xs text-slate-700">{data.benevolence_check}</span>
+                                </div>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>

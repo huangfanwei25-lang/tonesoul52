@@ -9,7 +9,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, AsyncIterator
 import json
 
 # 相對 import（作為模組運行時）
@@ -20,6 +20,7 @@ try:
     from .contract_observer import ContractVerifier, QualityTracker, MultiScaleObserver
     from .council_capability import CouncilWeights, CapabilityBoundary, LongTermQualityMonitor
     from .vow_system import VowEnforcer, VowEnforcementResult, VowAction
+    from .loop import LoopEngine, LoopConfig, LoopEvent, PromiseDetectedEvent, AIResponseEvent
 except ImportError:
     # 直接運行時
     from persona_dimension import PersonaDimension, PersonaVector, VectorCalculator, load_persona
@@ -28,6 +29,7 @@ except ImportError:
     from contract_observer import ContractVerifier, QualityTracker, MultiScaleObserver
     from council_capability import CouncilWeights, CapabilityBoundary, LongTermQualityMonitor
     from vow_system import VowEnforcer, VowEnforcementResult, VowAction
+    from loop import LoopEngine, LoopConfig, LoopEvent, PromiseDetectedEvent, AIResponseEvent
 
 
 class InterventionLevel(Enum):
@@ -391,11 +393,110 @@ class UnifiedCore:
             "alerts": self.long_term_monitor.get_alerts(),
         }
     
+    # =========================================================================
+    # Ralph Integration: Iterative Self-Correction with LoopEngine
+    # =========================================================================
+
+    async def process_with_correction(
+        self,
+        output: str,
+        context: Optional[Dict] = None,
+        max_corrections: int = 3,
+        correction_threshold: float = 0.7,
+    ) -> Dict:
+        """
+        處理輸出並進行迭代自我校正（使用 LoopEngine）
+        
+        這是 Ralph 整合的核心功能：使用 LoopEngine 進行多輪自動校正，
+        直到輸出符合語義約束或達到最大迭代次數。
+        
+        Args:
+            output: 初始 LLM 輸出
+            context: 上下文資訊
+            max_corrections: 最大校正次數
+            correction_threshold: 需要校正的語義張力閾值
+            
+        Returns:
+            Dict 包含:
+                - final_output: 最終輸出
+                - corrections: 校正次數
+                - state: 迴圈狀態 (complete/failed/cancelled)
+                - events: 所有事件列表
+                - correction_history: 每次校正的歷史
+        """
+        correction_history = []
+        current_output = output
+        events_captured = []
+        
+        async def correction_handler(iteration: int, prompt: str) -> AsyncIterator[str]:
+            """每次迭代的處理器"""
+            nonlocal current_output
+
+            # 處理當前輸出
+            result_output, result_report = self.process(current_output, context=context)
+            
+            # 記錄這次校正
+            correction_info = {
+                "iteration": iteration,
+                "semantic_tension": result_report.get("semantic_tension"),
+                "intervention": result_report.get("intervention"),
+                "corrected": result_report.get("correction") is not None, # Check if correction_info exists
+            }
+            correction_history.append(correction_info)
+            
+            # 計算語義張力
+            tension = result_report.get("semantic_tension", {})
+            mean_tension = tension.get("mean", 0)
+            
+            # 如果張力低於閾值或沒有校正，宣告完成
+            if mean_tension < correction_threshold or result_report.get("correction") is None:
+                yield f"{result_output} <promise>校正完成</promise>"
+                current_output = result_output
+            else:
+                # 需要繼續校正
+                current_output = result_output
+                yield result_output
+        
+        # 創建 LoopEngine 配置
+        config = LoopConfig(
+            prompt=output,
+            max_iterations=max_corrections,
+            promise_phrase="校正完成",
+            timeout_ms=60000,  # 60 秒超時
+        )
+        
+        # 創建引擎並啟動
+        engine = LoopEngine(config=config, on_iteration=correction_handler)
+        
+        # 收集事件
+        import asyncio
+        
+        async def collect_events():
+            async for event in engine.events_stream():
+                events_captured.append(event)
+        
+        # 並行執行
+        events_task = asyncio.create_task(collect_events())
+        loop_result = await engine.start()
+        await events_task
+        
+        return {
+            "final_output": current_output,
+            "corrections": loop_result.iterations,
+            "state": loop_result.state,
+            "duration_ms": loop_result.duration_ms,
+            "events": events_captured,
+            "correction_history": correction_history,
+            "success": loop_result.state == "complete",
+        }
+    
     def reset(self):
         """重置狀態"""
         self.semantic_controller.reset()
         self.current_zone = SemanticZone.SAFE
         self.current_lambda = LambdaState.CONVERGENT
+        self.intervention_count = 0
+        self.quality_tracker.reset()
 
 
 def create_core(persona_id: str, base_path: Path) -> UnifiedCore:

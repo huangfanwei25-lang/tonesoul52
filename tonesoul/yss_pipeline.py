@@ -29,7 +29,6 @@ from .ystm.demo import DEFAULT_SEGMENTS, DemoConfig, write_demo_outputs
 from .ystm.energy import EnergyConfig
 from .ystm.ingest import load_segments, normalize_segments
 from .ystm.representation import EmbeddingConfig
-from .ystm.schema import stable_hash, utc_now
 from .ystm.terrain import TerrainConfig
 from .yss_gates import (
     GateResult,

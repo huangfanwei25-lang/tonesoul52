@@ -329,6 +329,19 @@ class VowEnforcer:
         Returns:
             VowEnforcementResult with all check results and overall status
         """
+        # Input validation - defensive programming (HIGH-001 fix)
+        if not output or not isinstance(output, str):
+            return VowEnforcementResult(
+                all_passed=False,
+                results=[],
+                blocked=True,
+                flags=["Invalid input: output must be non-empty string"]
+            )
+        
+        # Ensure context is a dict
+        if context is not None and not isinstance(context, dict):
+            context = {}
+        
         results = []
         flags = []
         blocked = False

@@ -31,7 +31,11 @@ from .types import (
     SynthesisType,
     PerspectiveType,
     DeliberationWeights,
-    DeliberationContext
+    DeliberationContext,
+    # ToneStream Distillation
+    TensionZone,
+    TacticalDecision,
+    SuggestedReply
 )
 
 from .perspectives import (
@@ -63,6 +67,10 @@ __all__ = [
     "PerspectiveType",
     "DeliberationWeights",
     "DeliberationContext",
+    # ToneStream Distillation
+    "TensionZone",
+    "TacticalDecision",
+    "SuggestedReply",
     
     # Perspectives
     "BasePerspective",

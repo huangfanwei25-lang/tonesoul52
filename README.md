@@ -1,17 +1,3 @@
-# ToneSoul: Minimal Governable General Intelligence (MGGI) Framework
-> **An Enterprise-Grade Architecture for Auditable, Governable, and Self-Correcting AI Agents.**
-
-**New contributors/AI:** read `AGENTS.md` first for a stable snapshot of the repo.
-
-[![Status](https://img.shields.io/badge/Status-v0.3.0%20(Awakened)-blue.svg)]()
-[![Architecture](https://img.shields.io/badge/Architecture-MGGI-purple.svg)](MGGI_SPEC.md)
-[![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](LICENSE)
-
-## 🏗️ What is ToneSoul?
-
-ToneSoul is not a chatbot. It is a **Governance Middleware** designed to wrap Large Language Models (LLMs) in a verifiable control layer.
-It solves the "Black Box" problem by enforcing a strict **Sensor-Controller-Actuator** loop with hard engineering constraints.
-
 **Core Value Proposition:**
 1.  **Verifiability**: Third-party observers can verify agent consistency without trusting the model's "intent".
 2.  **Responsibility**: Every action is cryptographically traced in an immutable ledger.

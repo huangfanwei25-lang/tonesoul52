@@ -1,39 +1,62 @@
+# ToneSoul 5.2 - Git Ignore Configuration
+# 🦞 清潔的 Git 就是 AI 的本體
+
+# Binary & Media Files
 *.gguf
 *.wav
 *.mp3
 *.mp4
 *.zip
-gpt*
+*.bak
+
+# Model Files
+gpt*/
+
+# Runtime Directories
 memory/
 temp/
 logs/
-.coverage
-coverage.xml
-__pycache__/
-.pytest_cache/
-.venv/
-node_modules/
-.next/
-.external/
-ledger.jsonl
 simulation_logs/
 reports/
 zenodo_upload/
-.archive/
-bridge_debug.log
-.conversion_checkpoint.json
 
-# Large Files
-*.gguf
-*.wav
-*.mp3
-*.zip
+# Python
+__pycache__/
+.pytest_cache/
+.venv/
+.coverage
+coverage.xml
+
+# Node.js
+node_modules/
+.next/
 
 # Database
 data/chromadb/
 *.sqlite3
-*.bak
 
-# External
+# External Dependencies
 .external/
-gpt*/
+
+# Archive (deprecated)
+.archive/
+
+# Runtime Logs
+ledger.jsonl
+bridge_debug.log
+.conversion_checkpoint.json
+
+# Moltbook Scripts (contains API keys - do not commit)
+.moltbook/
+
+# Temporary/Development Files
+add_reset.py
+fix_nonlocal.py
+moltbook_register.html
+data/yuhun.db
+
+# Test Artifacts
+.hypothesis/
+
+# Local Modelfiles
+Modelfile.*

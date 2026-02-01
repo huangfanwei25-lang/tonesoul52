@@ -91,6 +91,60 @@ class Tension:
         }
 
 
+# ===== ToneStream Distillation: New Types =====
+
+class TensionZone(Enum):
+    """
+    Cognitive tension zones (from ToneStream philosophy).
+    
+    Based on entropy/tension value:
+    - ECHO_CHAMBER: <0.3 - Too comfortable, lacking friction
+    - SWEET_SPOT: 0.3-0.7 - Ideal creative tension
+    - CHAOS: >0.7 - Cognitive overload
+    """
+    ECHO_CHAMBER = "echo_chamber"    # 同溫層 (夢遊)
+    SWEET_SPOT = "sweet_spot"        # 良性摩擦 (甜蜜點)
+    CHAOS = "chaos"                  # 系統混沌 (認知失調)
+
+
+@dataclass
+class TacticalDecision:
+    """
+    Strategic decision matrix (from ToneStream).
+    
+    Captures the AI's tactical reasoning about how to respond.
+    """
+    user_hidden_intent: str = ""      # 潛台詞偵測
+    strategy_name: str = ""           # 執行戰術名稱
+    intended_effect: str = ""         # 預期效果
+    tone_tag: str = "neutral"         # 語氣標籤
+    
+    def to_dict(self) -> dict:
+        return {
+            "user_hidden_intent": self.user_hidden_intent,
+            "strategy_name": self.strategy_name,
+            "intended_effect": self.intended_effect,
+            "tone_tag": self.tone_tag
+        }
+
+
+@dataclass
+class SuggestedReply:
+    """
+    Suggested next move for user (from ToneStream).
+    
+    Provides clickable suggestions for the user to continue.
+    """
+    label: str       # 按鈕標籤 (e.g., "深入探索")
+    text: str        # 建議的用戶回應
+    
+    def to_dict(self) -> dict:
+        return {
+            "label": self.label,
+            "text": self.text
+        }
+
+
 @dataclass
 class DeliberationWeights:
     """Weights assigned to each perspective for synthesis."""
@@ -135,6 +189,12 @@ class SynthesizedResponse:
     deliberation_time_ms: float = 0.0
     timestamp: datetime = field(default_factory=datetime.now)
     
+    # ToneStream Distillation: New fields
+    tactical_decision: Optional["TacticalDecision"] = None
+    suggested_replies: List["SuggestedReply"] = field(default_factory=list)
+    tension_zone: Optional[TensionZone] = None
+    calculation_note: str = ""  # 熵值計算說明
+    
     def get_internal_debate(self) -> Dict[str, Any]:
         """Format internal debate for API output."""
         return {
@@ -149,7 +209,7 @@ class SynthesizedResponse:
     
     def to_api_response(self) -> dict:
         """Format for API output."""
-        return {
+        result = {
             "response": self.response,
             "synthesis": {
                 "type": self.synthesis_type.value,
@@ -163,6 +223,21 @@ class SynthesizedResponse:
                 "timestamp": self.timestamp.isoformat()
             }
         }
+        
+        # ToneStream additions
+        if self.tactical_decision:
+            result["decision_matrix"] = self.tactical_decision.to_dict()
+        
+        if self.suggested_replies:
+            result["next_moves"] = [sr.to_dict() for sr in self.suggested_replies]
+        
+        if self.tension_zone:
+            result["tension_zone"] = {
+                "zone": self.tension_zone.value,
+                "calculation_note": self.calculation_note
+            }
+        
+        return result
 
 
 @dataclass

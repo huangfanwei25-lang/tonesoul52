@@ -10,13 +10,13 @@ from typing import List, Dict, Optional
 class OllamaClient:
     """Wrapper for Ollama local LLM service."""
     
-    def __init__(self, host: str = "http://localhost:11434", model: str = "qwen2.5:7b"):
+    def __init__(self, host: str = "http://localhost:11434", model: str = "formosa1"):
         """
         Initialize Ollama client.
         
         Args:
             host: Ollama service URL (default: http://localhost:11434)
-            model: Model to use (default: qwen2.5:7b, fallback: gemma3:4b)
+            model: Model to use (default: formosa1, fallback: qwen2.5:7b)
         """
         self.host = host.rstrip("/")
         self.model = model
@@ -50,8 +50,8 @@ class OllamaClient:
         if any(self.model in m for m in self._available_models):
             return self.model
         
-        # Fallback order: qwen > gemma > llama > mistral > any
-        fallbacks = ["qwen", "gemma", "llama", "mistral"]
+        # Fallback order: formosa1 > qwen > gemma > llama > mistral > any
+        fallbacks = ["formosa1", "formosa", "qwen", "gemma", "llama", "mistral"]
         for fallback in fallbacks:
             for model in self._available_models:
                 if fallback in model.lower():
@@ -162,4 +162,4 @@ class OllamaClient:
 
 def create_ollama_client(model: Optional[str] = None) -> OllamaClient:
     """Factory function to create an Ollama client."""
-    return OllamaClient(model=model or "qwen2.5:7b")
+    return OllamaClient(model=model or "formosa1")

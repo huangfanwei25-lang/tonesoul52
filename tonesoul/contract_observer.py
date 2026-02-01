@@ -364,6 +364,17 @@ class QualityTracker:
             "alert": self.multi_scale.get_alert(),
         }
 
+    
+    def reset(self):
+        """重置追蹤器"""
+        self.total_outputs = 0
+        self.interventions = 0
+        self.contract_passes = 0
+        self.contract_checks = 0
+        self.delta_s_sum = 0.0
+        self.snapshots.clear()
+        self.multi_scale.reset()
+
 
 # === 測試 ===
 if __name__ == "__main__":

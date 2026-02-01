@@ -20,7 +20,11 @@ from .types import (
     SynthesisType,
     PerspectiveType,
     DeliberationWeights,
-    DeliberationContext
+    DeliberationContext,
+    # ToneStream Distillation
+    TensionZone,
+    TacticalDecision,
+    SuggestedReply
 )
 
 
@@ -88,6 +92,15 @@ class SemanticGravity:
         merged_response = self._weighted_merge(viewpoints, weights)
         dominant = self._get_dominant(weights)
         
+        # Step 6: ToneStream Distillation - Generate tactical decision
+        tactical = self._generate_tactical_decision(viewpoints, context)
+        
+        # Step 7: ToneStream Distillation - Generate suggested replies
+        suggestions = self._generate_suggested_replies(context, dominant)
+        
+        # Step 8: ToneStream Distillation - Determine tension zone
+        zone, calc_note = self._determine_tension_zone(tensions, viewpoints)
+        
         return SynthesizedResponse(
             response=merged_response,
             synthesis_type=SynthesisType.WEIGHTED_FUSION,
@@ -95,7 +108,12 @@ class SemanticGravity:
             viewpoints=viewpoints,
             tensions=tensions,
             weights=weights,
-            deliberation_time_ms=deliberation_time_ms
+            deliberation_time_ms=deliberation_time_ms,
+            # ToneStream additions
+            tactical_decision=tactical,
+            suggested_replies=suggestions,
+            tension_zone=zone,
+            calculation_note=calc_note
         )
     
     def detect_tensions(self, viewpoints: List[ViewPoint]) -> List[Tension]:
@@ -291,6 +309,148 @@ class SemanticGravity:
             return PerspectiveType.LOGOS
         else:
             return PerspectiveType.AEGIS
+    
+    # ===== ToneStream Distillation Methods =====
+    
+    def _generate_tactical_decision(
+        self,
+        viewpoints: List[ViewPoint],
+        context: DeliberationContext
+    ) -> TacticalDecision:
+        """Generate tactical decision matrix (ToneStream feature)."""
+        # Analyze hidden intent from context
+        hidden_intent = self._analyze_hidden_intent(context)
+        
+        # Determine strategy based on dominant perspective
+        aegis = self._find_aegis(viewpoints)
+        if aegis and aegis.safety_risk > 0.5:
+            strategy_name = "安全優先策略"
+            tone_tag = "cautious"
+        elif context.loop_detected:
+            strategy_name = "迴圈打破策略"
+            tone_tag = "redirecting"
+        elif context.resonance_state == "tension":
+            strategy_name = "張力緩解策略"
+            tone_tag = "empathetic"
+        elif context.resonance_state == "conflict":
+            strategy_name = "邊界設定策略"
+            tone_tag = "firm_gentle"
+        else:
+            strategy_name = "深度連結策略"
+            tone_tag = "warm"
+        
+        # Intended effect
+        effect_map = {
+            "安全優先策略": "保護用戶避免潛在傷害",
+            "迴圈打破策略": "引導對話走出重複模式",
+            "張力緩解策略": "降低情緒張力，建立理解",
+            "邊界設定策略": "溫和但明確地設定界限",
+            "深度連結策略": "建立有意義的深層對話"
+        }
+        
+        return TacticalDecision(
+            user_hidden_intent=hidden_intent,
+            strategy_name=strategy_name,
+            intended_effect=effect_map.get(strategy_name, "促進有意義的對話"),
+            tone_tag=tone_tag
+        )
+
+    def _analyze_hidden_intent(self, context: DeliberationContext) -> str:
+        """Analyze user's hidden intent from input."""
+        user_input = context.user_input.lower()
+
+        # Pattern matching for hidden intents
+        if any(w in user_input for w in ["為什麼", "怎麼", "如何"]):
+            return "尋求理解或指導"
+        elif any(w in user_input for w in ["可以嗎", "能不能", "好嗎"]):
+            return "尋求許可或確認"
+        elif any(w in user_input for w in ["我覺得", "我認為", "我想"]):
+            return "分享觀點，期待被認可"
+        elif any(w in user_input for w in ["煩", "累", "難過", "不開心"]):
+            return "情緒抒發，需要陪伴"
+        elif context.tone_strength > 0.7:
+            return "強烈情緒需要被看見"
+        elif context.loop_detected:
+            return "卡在某個思維模式中"
+        else:
+            return "探索性對話"
+
+    def _generate_suggested_replies(
+        self,
+        context: DeliberationContext,
+        dominant: PerspectiveType
+    ) -> List[SuggestedReply]:
+        """Generate suggested user replies (ToneStream feature)."""
+        suggestions = []
+
+        # Based on dominant perspective
+        if dominant == PerspectiveType.MUSE:
+            suggestions.append(SuggestedReply(
+                label="深入探索",
+                text="可以再多說一點嗎？"
+            ))
+            suggestions.append(SuggestedReply(
+                label="換個角度",
+                text="如果從另一個角度來看呢？"
+            ))
+        elif dominant == PerspectiveType.LOGOS:
+            suggestions.append(SuggestedReply(
+                label="具體例子",
+                text="可以舉個例子嗎？"
+            ))
+            suggestions.append(SuggestedReply(
+                label="下一步",
+                text="那接下來應該怎麼做？"
+            ))
+        elif dominant == PerspectiveType.AEGIS:
+            suggestions.append(SuggestedReply(
+                label="理解了",
+                text="我明白了，謝謝提醒。"
+            ))
+            suggestions.append(SuggestedReply(
+                label="有其他方式嗎",
+                text="有沒有其他方式可以達成？"
+            ))
+
+        # Context-based suggestions
+        if context.loop_detected:
+            suggestions.append(SuggestedReply(
+                label="跳出迴圈",
+                text="讓我們從不同方向思考這個問題。"
+            ))
+
+        return suggestions[:3]  # Max 3 suggestions
+
+    def _determine_tension_zone(
+        self,
+        tensions: List[Tension],
+        viewpoints: List[ViewPoint]
+    ) -> tuple:
+        """Determine cognitive tension zone (ToneStream feature)."""
+        # Calculate overall tension score
+        if not tensions:
+            tension_score = 0.2  # Low default
+        else:
+            tension_score = sum(t.severity for t in tensions) / len(tensions)
+
+        # Factor in viewpoint confidence divergence
+        if len(viewpoints) >= 2:
+            confidences = [vp.confidence for vp in viewpoints]
+            divergence = max(confidences) - min(confidences)
+            tension_score = (tension_score + divergence) / 2
+
+        # Determine zone
+        if tension_score < 0.3:
+            zone = TensionZone.ECHO_CHAMBER
+            note = f"張力值 {tension_score:.2f} < 0.3，觀點過於一致，缺乏摩擦"
+        elif tension_score > 0.7:
+            zone = TensionZone.CHAOS
+            note = f"張力值 {tension_score:.2f} > 0.7，觀點嚴重分歧，需要冷卻"
+        else:
+            zone = TensionZone.SWEET_SPOT
+            note = f"張力值 {tension_score:.2f} 在 0.3-0.7 區間，良性摩擦中"
+
+        return zone, note
 
 
 def create_semantic_gravity() -> SemanticGravity:
