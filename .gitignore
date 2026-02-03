@@ -13,11 +13,9 @@
 gpt*/
 
 # Runtime Directories
-memory/
 temp/
 logs/
 simulation_logs/
-reports/
 zenodo_upload/
 
 # Python
@@ -60,3 +58,5 @@ data/yuhun.db
 
 # Local Modelfiles
 Modelfile.*
+
+# Moltbook outputs are archived under .archive/ (ignored)

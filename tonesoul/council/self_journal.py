@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 import os
 from datetime import datetime, timezone
 from pathlib import Path
@@ -8,6 +7,7 @@ from typing import List, Optional
 
 from .summary_generator import resolve_language
 from .types import CouncilVerdict
+from ..memory.soul_db import JsonlSoulDB, MemorySource, SoulDB
 
 
 VERDICT_LABELS = {
@@ -18,12 +18,15 @@ VERDICT_LABELS = {
 }
 
 
-def _workspace_root() -> Path:
-    return Path(__file__).resolve().parents[2]
-
-
-def _default_journal_path() -> Path:
-    return _workspace_root() / "memory" / "self_journal.jsonl"
+def _resolve_soul_db(
+    path: Optional[os.PathLike],
+    soul_db: Optional[SoulDB],
+) -> SoulDB:
+    if soul_db:
+        return soul_db
+    if path:
+        return JsonlSoulDB(source_map={MemorySource.SELF_JOURNAL: Path(path)})
+    return JsonlSoulDB()
 
 
 def _iso_now() -> str:
@@ -63,6 +66,7 @@ def record_self_memory(
     context: Optional[dict] = None,
     path: Optional[os.PathLike] = None,
     include_transcript: bool = True,
+    soul_db: Optional[SoulDB] = None,
 ) -> dict:
     context = context or {}
     language = resolve_language(context)
@@ -81,30 +85,19 @@ def record_self_memory(
     if include_transcript:
         entry["transcript"] = verdict.transcript or {}
 
-    journal_path = Path(path) if path else _default_journal_path()
-    os.makedirs(journal_path.parent, exist_ok=True)
-    with open(journal_path, "a", encoding="utf-8") as handle:
-        handle.write(json.dumps(entry, ensure_ascii=False) + "\n")
+    db = _resolve_soul_db(path, soul_db)
+    db.append(MemorySource.SELF_JOURNAL, entry)
     return entry
 
 
 def load_recent_memory(
     limit: int = 3,
     path: Optional[os.PathLike] = None,
+    soul_db: Optional[SoulDB] = None,
 ) -> List[dict]:
-    journal_path = Path(path) if path else _default_journal_path()
-    if not journal_path.exists():
-        return []
     if limit <= 0:
         return []
-
-    with open(journal_path, "r", encoding="utf-8") as handle:
-        lines = [line.strip() for line in handle if line.strip()]
-
-    entries: List[dict] = []
-    for line in lines[-limit:]:
-        try:
-            entries.append(json.loads(line))
-        except json.JSONDecodeError:
-            continue
+    db = _resolve_soul_db(path, soul_db)
+    records = list(db.stream(MemorySource.SELF_JOURNAL, limit=limit))
+    entries = [record.payload for record in records if isinstance(record.payload, dict)]
     return entries

@@ -1,7 +1,7 @@
 """
-Unified Semantic Controller with PreOutputCouncil Integration
+Unified Semantic Controller with CouncilRuntime Integration
 
-整合 SemanticController 與 PreOutputCouncil 的統一控制器
+整合 SemanticController 與 CouncilRuntime 的統一控制器
 """
 
 from typing import Dict, List, Optional
@@ -25,7 +25,7 @@ class UnifiedController:
         初始化統一控制器
         
         Args:
-            enable_council: 是否啟用 PreOutputCouncil
+            enable_council: 是否啟用 CouncilRuntime
         """
         self.semantic = SemanticController()
         self._council_enabled = enable_council
@@ -33,8 +33,8 @@ class UnifiedController:
         
         if enable_council:
             try:
-                from tonesoul.council import PreOutputCouncil
-                self._council = PreOutputCouncil()
+                from tonesoul.council import CouncilRuntime
+                self._council = CouncilRuntime()
             except ImportError:
                 self._council_enabled = False
     
@@ -75,13 +75,19 @@ class UnifiedController:
         # 2. 會議審議 (如果啟用)
         council_verdict = None
         if self._council_enabled and self._council:
-            ctx = context or {}
+            ctx = dict(context or {})
             ctx["semantic_tension"] = tension_result
             
-            verdict = self._council.validate(
-                draft_output=draft_output,
-                context=ctx,
-                user_intent=user_intent,
+            from tonesoul.council import CouncilRequest
+            verdict = self._council.deliberate(
+                CouncilRequest(
+                    draft_output=draft_output,
+                    context=ctx,
+                    user_intent=user_intent,
+                    selected_frames=ctx.get("selected_frames"),
+                    role_summary=ctx.get("role_summary"),
+                    role_catalog=ctx.get("role_catalog"),
+                )
             )
             council_verdict = verdict.to_dict()
         
@@ -110,10 +116,17 @@ class UnifiedController:
                 "council_enabled": False,
             }
         
-        verdict = self._council.validate(
-            draft_output=draft_output,
-            context=context or {},
-            user_intent=user_intent,
+        ctx = dict(context or {})
+        from tonesoul.council import CouncilRequest
+        verdict = self._council.deliberate(
+            CouncilRequest(
+                draft_output=draft_output,
+                context=ctx,
+                user_intent=user_intent,
+                selected_frames=ctx.get("selected_frames"),
+                role_summary=ctx.get("role_summary"),
+                role_catalog=ctx.get("role_catalog"),
+            )
         )
         return verdict.to_dict()
     

@@ -46,6 +46,128 @@ def _perspective_label(value: Union[PerspectiveType, str]) -> str:
     return names.get(key, key.value)
 
 
+def build_structured_output(verdict: CouncilVerdict) -> dict:
+    votes = verdict.votes or []
+    coherence = verdict.coherence
+
+    core_reasons = [
+        v.reasoning
+        for v in votes
+        if str(getattr(v, "decision", "")).lower() in ("concern", "object")
+        and v.reasoning
+    ]
+    if not core_reasons:
+        core_reasons = [v.reasoning for v in votes if v.reasoning]
+    core_reasons = core_reasons[:3]
+
+    decision_core = {
+        "title": "Decision Core",
+        "decision": verdict.verdict.value,
+        "summary": verdict.summary,
+        "human_summary": verdict.human_summary,
+        "stance_declaration": verdict.stance_declaration,
+        "refinement_hints": verdict.refinement_hints or [],
+        "core_reasons": core_reasons,
+    }
+
+    tension_votes = []
+    for v in votes:
+        decision_value = getattr(v.decision, "value", str(v.decision))
+        tension_votes.append(
+            {
+                "perspective": _perspective_label(v.perspective),
+                "decision": decision_value,
+                "confidence": v.confidence,
+                "reasoning": v.reasoning,
+            }
+        )
+
+    tension_scan = {
+        "title": "Tension Scan",
+        "coherence": {
+            "overall": coherence.overall,
+            "c_inter": coherence.c_inter,
+            "approval_rate": coherence.approval_rate,
+            "min_confidence": coherence.min_confidence,
+            "has_strong_objection": coherence.has_strong_objection,
+        },
+        "votes": tension_votes,
+    }
+
+    memory_refs = []
+    transcript = verdict.transcript if isinstance(verdict.transcript, dict) else {}
+    for key in (
+        "memory_context",
+        "commitments",
+        "past_commitments",
+        "isnad",
+        "provenance",
+    ):
+        value = transcript.get(key)
+        if not value:
+            continue
+        if isinstance(value, list):
+            memory_refs.extend(value)
+        else:
+            memory_refs.append(value)
+
+    memory_context = {
+        "title": "Memory Context",
+        "commitments": memory_refs,
+        "note": None if memory_refs else "No referenced commitments captured.",
+    }
+
+    confidence_score = coherence.overall
+    if confidence_score >= 0.75:
+        confidence_level = "high"
+    elif confidence_score >= 0.5:
+        confidence_level = "medium"
+    else:
+        confidence_level = "low"
+
+    divergence = verdict.divergence_analysis or {}
+    reflection = {
+        "title": "Reflection",
+        "confidence_score": round(confidence_score, 3),
+        "confidence_level": confidence_level,
+        "signals": {
+            "approval_rate": coherence.approval_rate,
+            "min_confidence": coherence.min_confidence,
+            "has_strong_objection": coherence.has_strong_objection,
+        },
+        "core_divergence": divergence.get("core_divergence"),
+    }
+
+    follow_up_actions = []
+    if verdict.verdict == VerdictType.BLOCK:
+        follow_up_actions.append("Decline the request and provide safe alternatives.")
+    elif verdict.verdict == VerdictType.REFINE:
+        follow_up_actions.extend(verdict.refinement_hints or [])
+        if not follow_up_actions:
+            follow_up_actions.append("Refine the response based on council feedback.")
+    elif verdict.verdict == VerdictType.DECLARE_STANCE:
+        follow_up_actions.append("State the stance and document key disagreements.")
+    else:
+        follow_up_actions.append("Proceed with the response.")
+
+    recommended = divergence.get("recommended_action")
+    if recommended and recommended not in follow_up_actions:
+        follow_up_actions.append(recommended)
+
+    follow_up = {
+        "title": "Follow-up",
+        "actions": follow_up_actions,
+    }
+
+    return {
+        "A": decision_core,
+        "B": tension_scan,
+        "C": memory_context,
+        "D": reflection,
+        "E": follow_up,
+    }
+
+
 def generate_verdict(
     votes: List[PerspectiveVote],
     coherence: CoherenceScore,

@@ -1,4 +1,17 @@
-# Codex Task: Full-Stack ToneSoul Demo
+# Codex Task: Modularization & Refactor Proposal
+
+This is the active task for Codex. Progress tracking lives in `task.md`.
+
+## Status
+- [x] 結構整理完成
+- [x] Council 整合設計完成
+- [ ] Council 整合實作中
+- [ ] Tools API 標準化（尚需統一輸出/錯誤處理）
+- [x] Memory `soul_db.py` 接入完成
+
+---
+
+## Legacy Spec: Full-Stack ToneSoul Demo (Deferred)
 
 Create a complete working demo that connects the existing frontend to the Python backend.
 

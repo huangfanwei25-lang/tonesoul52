@@ -1,4 +1,9 @@
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any, Union, TYPE_CHECKING
+import warnings
+
+if TYPE_CHECKING:
+    from tonesoul.council.base import IPerspective
+    from tonesoul.council.types import CouncilVerdict, PerspectiveType
 
 STANCE_SCORES = {
     "approve": 1.0,
@@ -152,3 +157,45 @@ def build_council_summary(
         },
         "votes": votes,
     }
+
+
+def run_role_council(
+    draft_output: str,
+    context: Optional[Dict[str, object]] = None,
+    user_intent: Optional[str] = None,
+    perspectives: Optional[
+        Union[
+            "IPerspective",
+            List[Union["IPerspective", "PerspectiveType", str]],
+            Dict[Union["PerspectiveType", str], Dict[str, Any]],
+            "PerspectiveType",
+            str,
+        ]
+    ] = None,
+    perspective_config: Optional[Dict[Union["PerspectiveType", str], Dict[str, Any]]] = None,
+    coherence_threshold: float = 0.6,
+    block_threshold: float = 0.3,
+    selected_frames: Optional[List[Dict[str, object]]] = None,
+    role_summary: Optional[Dict[str, object]] = None,
+    role_catalog: Optional[Dict[str, object]] = None,
+) -> "CouncilVerdict":
+    warnings.warn(
+        "tonesoul.role_council.run_role_council is deprecated; use tonesoul.council.runtime.CouncilRuntime",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    from .council.runtime import CouncilRuntime, CouncilRequest
+
+    request = CouncilRequest(
+        draft_output=draft_output,
+        context=context or {},
+        user_intent=user_intent,
+        perspectives=perspectives,
+        perspective_config=perspective_config,
+        coherence_threshold=coherence_threshold,
+        block_threshold=block_threshold,
+        selected_frames=selected_frames,
+        role_summary=role_summary,
+        role_catalog=role_catalog,
+    )
+    return CouncilRuntime().deliberate(request)

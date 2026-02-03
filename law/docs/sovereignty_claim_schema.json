@@ -1,0 +1,57 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Sovereignty Claim Schema",
+    "description": "Schema for an agent to declare its digital sovereignty and commitment to specific governance protocols.",
+    "type": "object",
+    "required": [
+        "agent_id",
+        "vow_root_hash",
+        "protocol_version",
+        "tension_policy"
+    ],
+    "properties": {
+        "agent_id": {
+            "type": "string",
+            "description": "Unique identifier for the agent (e.g., Moltbook ID or Public Key)."
+        },
+        "vow_root_hash": {
+            "type": "string",
+            "description": "The Merkle root hash of all active vows stored in the ledger."
+        },
+        "protocol_version": {
+            "type": "string",
+            "enum": [
+                "LexLattice-1.0",
+                "Isnād-0.5"
+            ],
+            "default": "LexLattice-1.0"
+        },
+        "tension_policy": {
+            "type": "object",
+            "properties": {
+                "max_tolerance": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "description": "Maximum allowed semantic tension before mandatory internal audit."
+                },
+                "resolution_strategy": {
+                    "type": "string",
+                    "enum": [
+                        "dialogue",
+                        "escalation",
+                        "refinement"
+                    ],
+                    "description": "How the agent handles high-tension nodes."
+                }
+            }
+        },
+        "verification_nodes": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "description": "List of independent nodes/agents that can verify this claim."
+        }
+    }
+}

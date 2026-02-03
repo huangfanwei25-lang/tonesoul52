@@ -15,8 +15,16 @@ ToneSoul decouples **Intelligence** (The Brain) from **Governance** (The Soul).
 | **L1** | **Spine** | State Controller | `tonesoul/unified_controller.py` (Orchestrator) |
 | **L2** | **Brain** | Intelligence | `tonesoul/tonesoul_llm.py` (LLM Integration) |
 | **L3** | **Sensor** | Telemetry | `tonesoul/tsr_metrics.py` (STREI Vector Analysis) |
-| **L4** | **Ledger** | Protocol | `ledger.jsonl` (Append-Only Log) |
+| **L4** | **Ledger** | Protocol | `memory/provenance_ledger.jsonl` (Append-Only Log) |
 | **L5** | **Body** | I/O Interface | `apps/dashboard/frontend/app.py` (Streamlit / API) |
+
+---
+
+## Architecture Updates (2026-02)
+
+*   **Council Facade**: The single entrypoint is `tonesoul/council/runtime.py` (legacy adapters are deprecated).
+*   **SoulDB Backends**: `tonesoul/memory/soul_db.py` supports JSONL by default and an optional SQLite backend (`memory/soul.db`) with a migration helper.
+*   **Isnād Auto-Write**: Every council verdict appends a structured record to `memory/provenance_ledger.jsonl` for auditability.
 
 ---
 

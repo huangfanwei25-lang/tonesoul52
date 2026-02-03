@@ -117,8 +117,8 @@ class UnifiedPipeline:
     def _get_council(self):
         if self._council is None:
             try:
-                from tonesoul.council import PreOutputCouncil
-                self._council = PreOutputCouncil()
+                from tonesoul.council import CouncilRuntime
+                self._council = CouncilRuntime()
             except Exception:
                 pass
         return self._council
@@ -396,7 +396,13 @@ class UnifiedPipeline:
         verdict_dict = {}
         if council:
             try:
-                verdict = council.validate(response, context={"language": "zh"})
+                from tonesoul.council import CouncilRequest
+
+                request = CouncilRequest(
+                    draft_output=response,
+                    context={"language": "zh"},
+                )
+                verdict = council.deliberate(request)
                 verdict_dict = verdict.to_dict()
                 
                 # 處理判決

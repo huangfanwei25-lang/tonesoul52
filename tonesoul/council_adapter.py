@@ -1,8 +1,9 @@
 ﻿import os
 import sys
 import uuid
+import warnings
 from datetime import datetime
-from typing import Dict
+from typing import Dict, Optional
 
 
 WORKSPACE_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
@@ -14,38 +15,32 @@ def _iso_now() -> str:
     return datetime.utcnow().replace(microsecond=0).isoformat() + "Z"
 
 
-def run_council(question: str) -> Dict[str, object]:
-    try:
-        from body.persona_stack import PersonaStack, EchoRouter
+def run_council(
+    question: str,
+    context: Optional[Dict[str, object]] = None,
+    user_intent: Optional[str] = None,
+) -> Dict[str, object]:
+    warnings.warn(
+        "tonesoul.council_adapter is deprecated; use tonesoul.council.runtime.CouncilRuntime",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    from tonesoul.council.runtime import CouncilRuntime, CouncilRequest
 
-        stack = PersonaStack()
-        router = EchoRouter(stack)
-        output = router.route_to_all(question)
-        perspectives = output.get("perspectives", {})
-        integration = output.get("integration", "")
-        switches = stack.get_switch_history(limit=5)
-        active = stack.active_persona or "Core"
-    except Exception as exc:
-        perspectives = {"Core": f"Fallback perspective (error: {exc})"}
-        integration = "Fallback integration"
-        switches = []
-        active = "Core"
+    request = CouncilRequest(
+        draft_output=question,
+        context=context or {},
+        user_intent=user_intent,
+    )
+    verdict = CouncilRuntime().deliberate(request)
 
     return {
-        "event_type": "persona_council",
+        "event_type": "council_verdict",
         "trace_id": str(uuid.uuid4()),
         "timestamp": _iso_now(),
-        "persona": {
-            "active": active,
-            "switches": switches,
+        "request": {
+            "draft_output": question,
+            "user_intent": user_intent,
         },
-        "council": {
-            "perspectives": perspectives,
-            "integration": integration,
-            "dissent": [],
-        },
-        "audit": {
-            "coverage": 1.0,
-            "notes": "auto-generated council event",
-        },
+        "verdict": verdict.to_dict(),
     }

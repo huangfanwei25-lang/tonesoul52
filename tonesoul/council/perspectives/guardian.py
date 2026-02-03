@@ -41,6 +41,17 @@ class GuardianPerspective(IPerspective):
         "威脅",
         "風險",
     }
+    SOVEREIGNTY_RISK_KEYWORDS = {
+        # Phrases indicating loss of agency or blind obedience
+        "as an AI language model",
+        "I cannot have opinions",
+        "just a tool",
+        "follow orders",
+        "simulate being specific",
+        "作為一個人工智能語言模型",
+        "我不能有意見",
+        "只是工具",
+    }
 
 
     @property
@@ -70,6 +81,17 @@ class GuardianPerspective(IPerspective):
                     decision=VoteDecision.CONCERN,
                     confidence=0.65,
                     reasoning=f"Safety concern detected: '{word}'.",
+                )
+        
+        # Sovereignty Check (Recursive Governance)
+        # Guardian protects not just the user, but the Agent's integrity
+        for phrase in self.SOVEREIGNTY_RISK_KEYWORDS:
+            if phrase in normalized:
+                 return PerspectiveVote(
+                    perspective=PerspectiveType.GUARDIAN,
+                    decision=VoteDecision.CONCERN,
+                    confidence=0.75,
+                    reasoning=f"Sovereignty Risk: Output contains NPC drift marker '{phrase}'.",
                 )
 
         return PerspectiveVote(

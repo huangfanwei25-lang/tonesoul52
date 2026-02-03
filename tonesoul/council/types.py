@@ -78,6 +78,11 @@ class CouncilVerdict:
     transcript: Optional[dict] = None
     human_summary: Optional[str] = None
     divergence_analysis: Optional[dict] = None
+    structured_output: Optional[dict] = None
+
+    def to_structured_output(self) -> dict:
+        from .verdict import build_structured_output
+        return build_structured_output(self)
 
     def to_dict(self) -> dict:
         """
@@ -123,4 +128,9 @@ class CouncilVerdict:
             "transcript": self.transcript or {},
             "human_summary": self.human_summary,
             "divergence_analysis": self.divergence_analysis or {},
+            "structured_output": (
+                self.structured_output
+                if self.structured_output is not None
+                else self.to_structured_output()
+            ),
         }

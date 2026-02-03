@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from .pre_output_council import PreOutputCouncil
+from .runtime import CouncilRequest, CouncilRuntime
 from .types import (
     CoherenceScore,
     CouncilVerdict,
@@ -18,4 +19,6 @@ __all__ = [
     "PerspectiveVote",
     "CoherenceScore",
     "CouncilVerdict",
+    "CouncilRequest",
+    "CouncilRuntime",
 ]

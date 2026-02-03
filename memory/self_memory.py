@@ -17,15 +17,18 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Optional, Any
 
-# Default journal location
-DEFAULT_JOURNAL_PATH = Path(__file__).parent / "self_journal.jsonl"
+from tonesoul.memory.soul_db import JsonlSoulDB, MemorySource, SoulDB
 
+def _resolve_soul_db(
+    journal_path: Optional[Path],
+    soul_db: Optional[SoulDB],
+) -> SoulDB:
+    if soul_db:
+        return soul_db
+    if journal_path:
+        return JsonlSoulDB(source_map={MemorySource.SELF_JOURNAL: journal_path})
+    return JsonlSoulDB()
 
-def _ensure_journal_exists(path: Path) -> None:
-    """Create journal file and parent directories if they don't exist."""
-    path.parent.mkdir(parents=True, exist_ok=True)
-    if not path.exists():
-        path.touch()
 
 
 def record_self_memory(
@@ -36,6 +39,7 @@ def record_self_memory(
     key_decision: Optional[str] = None,
     uncertainty: Optional[str] = None,
     journal_path: Optional[Path] = None,
+    soul_db: Optional[SoulDB] = None,
 ) -> Dict[str, Any]:
     """
     Record a first-person reflection to the self-journal.
@@ -58,8 +62,7 @@ def record_self_memory(
     Returns:
         The entry that was recorded.
     """
-    path = journal_path or DEFAULT_JOURNAL_PATH
-    _ensure_journal_exists(path)
+    db = _resolve_soul_db(journal_path, soul_db)
     
     entry = {
         "timestamp": datetime.now(timezone.utc).isoformat(),
@@ -72,8 +75,7 @@ def record_self_memory(
         "context": context or {},
     }
     
-    with open(path, "a", encoding="utf-8") as f:
-        f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+    db.append(MemorySource.SELF_JOURNAL, entry)
     
     return entry
 
@@ -81,6 +83,7 @@ def record_self_memory(
 def load_recent_memory(
     n: int = 5,
     journal_path: Optional[Path] = None,
+    soul_db: Optional[SoulDB] = None,
 ) -> List[Dict[str, Any]]:
     """
     Load the most recent N entries from the self-journal.
@@ -94,22 +97,12 @@ def load_recent_memory(
     Returns:
         List of recent entries, newest first.
     """
-    path = journal_path or DEFAULT_JOURNAL_PATH
-    if not path.exists():
+    db = _resolve_soul_db(journal_path, soul_db)
+    if n <= 0:
         return []
-    
-    entries = []
-    with open(path, "r", encoding="utf-8") as f:
-        for line in f:
-            line = line.strip()
-            if line:
-                try:
-                    entries.append(json.loads(line))
-                except json.JSONDecodeError:
-                    continue  # Skip malformed entries
-    
-    # Return newest first
-    return entries[-n:][::-1]
+    records = list(db.stream(MemorySource.SELF_JOURNAL, limit=n))
+    entries = [record.payload for record in records if isinstance(record.payload, dict)]
+    return entries[::-1]
 
 
 def summarize_recent_memory(

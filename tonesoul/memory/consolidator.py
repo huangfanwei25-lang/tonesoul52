@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-import json
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional
 
 from .stats import average_coherence, count_by_verdict, most_common_divergence
+from .soul_db import JsonlSoulDB, MemorySource, SoulDB
 
 
 @dataclass
@@ -14,25 +14,18 @@ class ConsolidationResult:
     meta_reflection: str
 
 
-def _default_journal_path() -> Path:
-    return Path(__file__).resolve().parents[2] / "memory" / "self_journal.jsonl"
-
-
-def _load_entries(path: Optional[Path] = None) -> List[dict]:
-    journal_path = path or _default_journal_path()
-    if not journal_path.exists():
-        return []
-    entries: List[dict] = []
-    with journal_path.open("r", encoding="utf-8") as handle:
-        for line in handle:
-            line = line.strip()
-            if not line:
-                continue
-            try:
-                entries.append(json.loads(line))
-            except json.JSONDecodeError:
-                continue
-    return entries
+def _load_entries(
+    path: Optional[Path] = None,
+    soul_db: Optional[SoulDB] = None,
+) -> List[dict]:
+    db = soul_db
+    if db is None:
+        if path:
+            db = JsonlSoulDB(source_map={MemorySource.SELF_JOURNAL: path})
+        else:
+            db = JsonlSoulDB()
+    records = list(db.stream(MemorySource.SELF_JOURNAL))
+    return [record.payload for record in records if isinstance(record.payload, dict)]
 
 
 def identify_patterns(entries: Iterable[dict]) -> Dict[str, object]:
@@ -86,9 +79,10 @@ def generate_meta_reflection(patterns: Dict[str, object]) -> str:
 def consolidate(
     entries: Optional[Iterable[dict]] = None,
     path: Optional[Path] = None,
+    soul_db: Optional[SoulDB] = None,
 ) -> ConsolidationResult:
     if entries is None:
-        entries = _load_entries(path)
+        entries = _load_entries(path, soul_db=soul_db)
     patterns = identify_patterns(list(entries))
     meta_reflection = generate_meta_reflection(patterns)
     return ConsolidationResult(
