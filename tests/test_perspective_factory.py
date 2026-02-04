@@ -4,8 +4,10 @@ from tonesoul.council.perspective_factory import PerspectiveFactory
 
 def test_create_council_default():
     council = PerspectiveFactory.create_council()
-    assert len(council) == 4
+    # Now includes AxiomaticInference perspective (5 total)
+    assert len(council) == 5
     types = {p.perspective_type for p in council}
+    # Core 4 perspective types (Axiomatic reuses GUARDIAN for perspective_type)
     assert PerspectiveType.GUARDIAN in types
     assert PerspectiveType.ANALYST in types
     assert PerspectiveType.CRITIC in types
