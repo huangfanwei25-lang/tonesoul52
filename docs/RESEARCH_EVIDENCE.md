@@ -15,6 +15,20 @@ Selection criteria: Prefer journals and standards. Conference or preprint items 
 | NIST AI RMF 1.0 (NIST AI 100-1, 2023) https://doi.org/10.6028/NIST.AI.100-1 | Standard | Framework for mapping, measuring, managing, and governing AI risk. | Build an RMF crosswalk for AXIOMS, Council, and Observer. |
 | NIST GenAI Profile (NIST AI 600-1, 2024) https://doi.org/10.6028/NIST.AI.600-1 | Standard | GenAI risk profile aligned to RMF 1.0. | Align ToneSoul generative risks (handoff, drift, governance misuse) to RMF categories. |
 
+
+## Second Batch (Peer-reviewed additions: accountability + provenance + audit logs)
+| Source | Type | Key Point | ToneSoul Application |
+| --- | --- | --- | --- |
+| Algorithmic accountability (Philosophical Transactions A 2018) https://doi.org/10.1098/rsta.2017.0362 | Journal | Accountability requires transparency, outcome monitoring, and governance structures. | Support governance narrative for Council + Observer + Isnad as accountable workflow. |
+| Algorithmic Accountability and Public Reason (Philosophy & Technology 2018) https://doi.org/10.1007/s13347-017-0263-5 | Journal | Accountability depends on public-reason justification, not just internal correctness. | Reinforce meaning-transfer positioning: explainable, externally justifiable reasons. |
+| Role of fairness, accountability, and transparency in algorithmic affordance (Computers in Human Behavior 2019) https://doi.org/10.1016/j.chb.2019.04.019 | Journal | FAT perceptions are linked to trust and adoption of algorithmic systems. | Explicitly document fairness/accountability signals in user-facing artifacts. |
+| When is an algorithm transparent? (IEEE Security & Privacy 2018) https://doi.org/10.1109/MSP.2018.2701166 | Journal | Transparency can be achieved without full source disclosure via alternative norms. | Aligns with structured verdicts and audit logs as transparency artifacts. |
+| Provenance in Databases: Why, How, and Where (Foundations and Trends in Databases 2009) https://doi.org/10.1561/1900000006 | Journal | Formalizes why/how/where provenance for database answers. | Map Isnad payloads to why/how/where provenance semantics. |
+| Lineage retrieval for scientific data processing: a survey (ACM Computing Surveys 2005) https://doi.org/10.1145/1057977.1057978 | Journal | Survey of lineage models for scientific data products. | Use lineage concepts to structure SoulDB provenance and memory trails. |
+| Data Provenance: What next? (ACM SIGMOD Record 2019) https://doi.org/10.1145/3316416.3316418 | Journal | Reviews 20 years of provenance research and practical gaps. | Helps define where ToneSoul provenance is strong vs missing. |
+| Secure and transparent audit logs with BlockAudit (JNCA 2019) https://doi.org/10.1016/j.jnca.2019.102406 | Journal | Tamper-evident audit logs mitigate log manipulation attacks. | Supports hash-chained Isnad for auditability. |
+| Provenance-based Intrusion Detection Systems: A Survey (ACM Computing Surveys 2022) https://doi.org/10.1145/3539605 | Journal | Provenance graphs enable better detection and accountability. | Motivates richer provenance graphs beyond linear logs. |
+
 ## Supplementary References (Non-journal but influential)
 | Source | Type | Key Point | ToneSoul Application |
 | --- | --- | --- | --- |
