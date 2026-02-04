@@ -26,7 +26,9 @@ def _summarize_nodes(nodes: List[Dict]) -> Dict[str, object]:
         grade = node.get("source_grade", "unknown")
         grade_counts[grade] = grade_counts.get(grade, 0) + 1
 
-    heights = [node.get("math_coords", {}).get("height") for node in nodes if node.get("math_coords")]
+    heights = [
+        node.get("math_coords", {}).get("height") for node in nodes if node.get("math_coords")
+    ]
     avg_height = sum(heights) / len(heights) if heights else None
     return {
         "count": len(nodes),
@@ -183,7 +185,9 @@ def render():
     with col2:
         st.metric("平均熟悉度", _format_percent(summary["avg_energy"]))
     with col3:
-        grade_text = ", ".join(f"{_grade_label(k)}:{v}" for k, v in summary["grade_counts"].items()) or "無"
+        grade_text = (
+            ", ".join(f"{_grade_label(k)}:{v}" for k, v in summary["grade_counts"].items()) or "無"
+        )
         st.metric("來源分級", grade_text)
     with col4:
         avg_height = summary.get("avg_height")
@@ -192,7 +196,9 @@ def render():
     st.markdown('<div class="ts-section-title">你現在在這裡</div>', unsafe_allow_html=True)
 
     node_labels = [f"{node.get('id')} - {node.get('text', '')[:28]}" for node in nodes]
-    selected = st.selectbox("目前話題", list(range(len(nodes))), format_func=lambda i: node_labels[i])
+    selected = st.selectbox(
+        "目前話題", list(range(len(nodes))), format_func=lambda i: node_labels[i]
+    )
     node = nodes[selected]
 
     detail_col, meta_col = st.columns([1.4, 1], gap="large")

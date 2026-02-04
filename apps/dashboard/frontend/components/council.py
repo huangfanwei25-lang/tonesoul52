@@ -9,11 +9,11 @@ from typing import Dict, Optional
 def render_council(council: Dict[str, str]):
     """
     渲染 Council 討論
-    
+
     Args:
         council: 字典，包含 guardian, analyst, critic, advocate, decision
     """
-    
+
     personas = [
         ("守", "守門者", "guardian", "#2a9d8f"),
         ("析", "分析者", "analyst", "#e9c46a"),
@@ -36,7 +36,7 @@ def render_council(council: Dict[str, str]):
                 """,
                 unsafe_allow_html=True,
             )
-    
+
     # 最終決議
     decision = council.get("decision", "")
     if decision:
@@ -50,14 +50,14 @@ def render_council(council: Dict[str, str]):
 def parse_council_response(response: str) -> tuple[Dict[str, str], str]:
     """
     從 LLM 回應中解析 Council 討論
-    
+
     Args:
         response: LLM 的完整回應
-        
+
     Returns:
         (council_dict, actual_response)
     """
-    
+
     council = {
         "guardian": "",
         "analyst": "",
@@ -65,15 +65,15 @@ def parse_council_response(response: str) -> tuple[Dict[str, str], str]:
         "advocate": "",
         "decision": "",
     }
-    
+
     lines = response.strip().split("\n")
     actual_response_lines = []
     current_key = None
     in_council = False
-    
+
     for line in lines:
         line_lower = line.lower().strip()
-        
+
         if "guardian:" in line_lower:
             current_key = "guardian"
             council[current_key] = line.split(":", 1)[-1].strip()
@@ -99,14 +99,16 @@ def parse_council_response(response: str) -> tuple[Dict[str, str], str]:
             current_key = None
         elif not in_council:
             actual_response_lines.append(line)
-    
+
     actual_response = "\n".join(actual_response_lines).strip()
 
     if not actual_response:
         fallback_lines = []
         for line in lines:
             line_lower = line.lower().strip()
-            if line_lower.startswith(("guardian:", "analyst:", "critic:", "advocate:", "decision:")):
+            if line_lower.startswith(
+                ("guardian:", "analyst:", "critic:", "advocate:", "decision:")
+            ):
                 continue
             if line.strip().startswith("決議:") or line_lower.startswith("response:"):
                 continue
@@ -118,5 +120,5 @@ def parse_council_response(response: str) -> tuple[Dict[str, str], str]:
 
     if not actual_response:
         actual_response = response.strip()
-    
+
     return council, actual_response

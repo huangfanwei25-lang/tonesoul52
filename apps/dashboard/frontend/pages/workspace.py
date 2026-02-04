@@ -100,7 +100,9 @@ def render():
         st.markdown('<div class="ts-section-title">對話工作區</div>', unsafe_allow_html=True)
 
         if not st.session_state.messages:
-            st.info("試試問我：\n- 幫我整理今天進度\n- 我該先處理哪些問題？\n- 把需求拆成可執行步驟")
+            st.info(
+                "試試問我：\n- 幫我整理今天進度\n- 我該先處理哪些問題？\n- 把需求拆成可執行步驟"
+            )
 
         search_col1, search_col2 = st.columns(2)
         with search_col1:

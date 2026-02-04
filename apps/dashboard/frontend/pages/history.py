@@ -180,6 +180,7 @@ def _intent_status_label(status: Optional[str]) -> str:
     }
     return label_map.get(status_text, status_text)
 
+
 def render():
     """渲染回顧頁面"""
 
@@ -294,7 +295,9 @@ def render():
                 with st.form("conversation_mistake_form"):
                     mistake_label = st.selectbox("類型", list(MISTAKE_TYPE_OPTIONS.keys()))
                     mistake_type = MISTAKE_TYPE_OPTIONS[mistake_label]
-                    description = st.text_area("描述", f"對話記錄 {record_id}（{status_label}）", height=80)
+                    description = st.text_area(
+                        "描述", f"對話記錄 {record_id}（{status_label}）", height=80
+                    )
                     context_text = st.text_area("情境", user_message, height=60)
                     lesson = st.text_area("教訓", "", height=60)
                     prevention = st.text_area("防止方式", "", height=60)
@@ -347,8 +350,16 @@ def render():
             rows = []
             for entry in reversed(persona_traces):
                 shadow = entry.get("shadow") if isinstance(entry.get("shadow"), dict) else {}
-                vector = shadow.get("vector_estimate") if isinstance(shadow.get("vector_estimate"), dict) else {}
-                distance = shadow.get("vector_distance") if isinstance(shadow.get("vector_distance"), dict) else {}
+                vector = (
+                    shadow.get("vector_estimate")
+                    if isinstance(shadow.get("vector_estimate"), dict)
+                    else {}
+                )
+                distance = (
+                    shadow.get("vector_distance")
+                    if isinstance(shadow.get("vector_distance"), dict)
+                    else {}
+                )
                 diff = entry.get("diff") if isinstance(entry.get("diff"), dict) else {}
                 rows.append(
                     {
@@ -372,8 +383,16 @@ def render():
             entry = persona_traces[selection]
             shadow = entry.get("shadow") if isinstance(entry.get("shadow"), dict) else {}
             persona_meta = shadow.get("persona") if isinstance(shadow.get("persona"), dict) else {}
-            vector = shadow.get("vector_estimate") if isinstance(shadow.get("vector_estimate"), dict) else {}
-            distance = shadow.get("vector_distance") if isinstance(shadow.get("vector_distance"), dict) else {}
+            vector = (
+                shadow.get("vector_estimate")
+                if isinstance(shadow.get("vector_estimate"), dict)
+                else {}
+            )
+            distance = (
+                shadow.get("vector_distance")
+                if isinstance(shadow.get("vector_distance"), dict)
+                else {}
+            )
             st.markdown(
                 f"""
                 <div class="ts-card">
@@ -394,7 +413,9 @@ def render():
     else:
         st.caption("尚無人格追蹤記錄。")
 
-    selected = st.selectbox("查看單次決策", list(range(len(runs))), format_func=lambda i: runs[i]["id"])
+    selected = st.selectbox(
+        "查看單次決策", list(range(len(runs))), format_func=lambda i: runs[i]["id"]
+    )
     run = runs[selected]
 
     st.markdown(
@@ -411,13 +432,17 @@ def render():
     )
 
     intent_payload = run.get("intent_verification") or {}
-    audit_payload = intent_payload.get("audit") if isinstance(intent_payload.get("audit"), dict) else {}
+    audit_payload = (
+        intent_payload.get("audit") if isinstance(intent_payload.get("audit"), dict) else {}
+    )
     intent_status = audit_payload.get("status") or intent_payload.get("status")
     intent_confidence = audit_payload.get("confidence")
     intent_reason = audit_payload.get("reason")
     if intent_status:
         confidence_text = (
-            f"{float(intent_confidence):.2f}" if isinstance(intent_confidence, (int, float)) else "無"
+            f"{float(intent_confidence):.2f}"
+            if isinstance(intent_confidence, (int, float))
+            else "無"
         )
         st.markdown(
             f"""
@@ -447,5 +472,3 @@ def render():
         st.markdown('<div class="ts-section-title">外部蒐集</div>', unsafe_allow_html=True)
         st.markdown(f"- 擷取: {trace_capture or '無'}")
         st.markdown(f"- 正規化: {trace_normalize or '無'}")
-
-

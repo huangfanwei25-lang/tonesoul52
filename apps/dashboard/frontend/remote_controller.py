@@ -15,6 +15,7 @@ import time
 # 嘗試導入 pyautogui（可能需要安裝）
 try:
     import pyautogui
+
     PYAUTOGUI_AVAILABLE = True
 except ImportError:
     PYAUTOGUI_AVAILABLE = False
@@ -24,30 +25,30 @@ except ImportError:
 
 class RemoteController:
     """遠端控制器"""
-    
+
     def __init__(self, frontend_dir: Path):
         self.frontend_dir = Path(frontend_dir)
         self.runtime_dir = self._resolve_runtime_dir(self.frontend_dir)
         self.runtime_dir.mkdir(parents=True, exist_ok=True)
         self.screenshots_dir = self.runtime_dir / "screenshots"
         self.screenshots_dir.mkdir(parents=True, exist_ok=True)
-        
+
         self.request_path = self.runtime_dir / "control_request.json"
         self.result_path = self.runtime_dir / "control_result.json"
-        
+
         self.running = False
         self._thread: Optional[threading.Thread] = None
-    
+
     def start(self):
         """啟動控制監聽"""
         if self.running:
             return
-        
+
         self.running = True
         self._thread = threading.Thread(target=self._loop, daemon=True)
         self._thread.start()
         print(f"🎮 遠端控制已啟動，監聽: {self.request_path}")
-    
+
     def stop(self):
         """停止控制監聽"""
         self.running = False
@@ -60,24 +61,24 @@ class RemoteController:
         if env_dir:
             return Path(env_dir).expanduser()
         return frontend_dir.parent / "runtime"
-    
+
     def _loop(self):
         """主循環：監聽控制請求"""
         last_mtime = 0
-        
+
         while self.running:
             time.sleep(0.5)  # 每 0.5 秒檢查一次
-            
+
             if not self.request_path.exists():
                 continue
-            
+
             current_mtime = self.request_path.stat().st_mtime
             if current_mtime <= last_mtime:
                 continue
-            
+
             last_mtime = current_mtime
             self._handle_request()
-    
+
     def _handle_request(self):
         """處理控制請求"""
         try:
@@ -85,57 +86,54 @@ class RemoteController:
         except Exception as e:
             self._write_result("failed", f"讀取請求失敗: {e}")
             return
-        
+
         action = request.get("action")
         command = request.get("command", "")
-        
+
         print(f"📥 收到請求: {action} | {command}")
-        
+
         if action == "connect":
             self._write_result("success", "已連接（本地模式）")
-        
+
         elif action == "screenshot":
             self._take_screenshot()
-        
+
         elif action == "execute":
             self._execute_command(command)
-        
+
         elif action == "pause":
             self._write_result("success", "已暫停")
-        
+
         elif action == "resume":
             self._write_result("success", "已恢復")
-        
+
         elif action == "stop":
             self._write_result("success", "已停止")
-        
+
         else:
             self._write_result("failed", f"未知動作: {action}")
-    
+
     def _take_screenshot(self):
         """擷取螢幕截圖"""
         if not PYAUTOGUI_AVAILABLE:
             self._write_result("failed", "pyautogui 未安裝")
             return
-        
+
         try:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             filename = f"screenshot_{timestamp}.png"
             filepath = self.screenshots_dir / filename
-            
+
             screenshot = pyautogui.screenshot()
             screenshot.save(str(filepath))
-            
+
             self._write_result(
-                "success",
-                f"截圖已保存: {filename}",
-                screenshot_path=f"screenshots/{filename}"
+                "success", f"截圖已保存: {filename}", screenshot_path=f"screenshots/{filename}"
             )
             print(f"📸 截圖已保存: {filepath}")
-        
+
         except Exception as e:
             self._write_result("failed", f"截圖失敗: {e}")
-    
 
     def _execute_command(self, command: str):
         """執行指令（基本實作）"""
@@ -152,9 +150,23 @@ class RemoteController:
             # 安全檢查（P0 Gate 簡化版）
             command_lower = command.lower()
             dangerous_keywords = [
-                "del", "rm ", "rm -", "rmdir", "rd /", "format", "mkfs",
-                "shutdown", "reboot", "poweroff", "diskpart", "reg delete",
-                "bcdedit", "格式化", "關機", "重開機", "重啟",
+                "del",
+                "rm ",
+                "rm -",
+                "rmdir",
+                "rd /",
+                "format",
+                "mkfs",
+                "shutdown",
+                "reboot",
+                "poweroff",
+                "diskpart",
+                "reg delete",
+                "bcdedit",
+                "格式化",
+                "關機",
+                "重開機",
+                "重啟",
             ]
             if any(kw in command_lower for kw in dangerous_keywords):
                 self._write_result("failed", f"危險指令被阻擋: {command}")
@@ -268,11 +280,11 @@ class RemoteController:
             pyautogui.typewrite(app_name, interval=0.05)
             time.sleep(0.3)
             pyautogui.press("enter")
-            
+
             self._write_result("success", f"已嘗試打開: {app_name}")
         except Exception as e:
             self._write_result("failed", f"打開失敗: {e}")
-    
+
     def _parse_numbers(self, text: str):
         return [int(value) for value in re.findall(r"-?\d+", text)]
 
@@ -294,25 +306,24 @@ class RemoteController:
         }
         if screenshot_path:
             result["screenshot_path"] = screenshot_path
-        
+
         self.result_path.write_text(
-            json.dumps(result, ensure_ascii=False, indent=2),
-            encoding="utf-8"
+            json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8"
         )
 
 
 def main():
     """主程式：啟動控制器"""
     import sys
-    
+
     # 找到 frontend 目錄
     if len(sys.argv) > 1:
         frontend_dir = Path(sys.argv[1])
     else:
         frontend_dir = Path(__file__).parent
-    
+
     controller = RemoteController(frontend_dir)
-    
+
     try:
         controller.start()
         print("按 Ctrl+C 停止...")
@@ -324,4 +335,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

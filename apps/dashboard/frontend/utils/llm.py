@@ -37,32 +37,30 @@ def log_conversation(
 ) -> str:
     """
     記錄對話到 ledger
-    
+
     Returns:
         record_id
     """
     record_id = datetime.now().strftime("%Y%m%d%H%M%S")
-    
+
     record = {
         "record_id": record_id,
         "timestamp": datetime.now().isoformat(),
         "type": "council_decision",
         "persona_id": persona_id,
-        "context": {
-            "user_message": user_input
-        },
+        "context": {"user_message": user_input},
         "council": council,
         "response": response,
-        "status": status
+        "status": status,
     }
-    
+
     try:
         LEDGER_PATH.parent.mkdir(parents=True, exist_ok=True)
         with LEDGER_PATH.open("a", encoding="utf-8") as f:
             f.write(json.dumps(record, ensure_ascii=False) + "\n")
     except Exception as e:
         print(f"⚠️ 記錄對話失敗: {e}")
-    
+
     return record_id
 
 
@@ -101,10 +99,10 @@ def _load_persona_snapshot(persona_id: str) -> Dict[str, object]:
         return {}
     if not isinstance(payload, dict):
         return {}
-    
+
     # 提取 Big Five 人格（來自 Darlin 整合）
     big_five = payload.get("big_five") if isinstance(payload.get("big_five"), dict) else {}
-    
+
     # Big Five → 三向量轉換建議
     big_five_delta = {}
     if big_five:
@@ -117,7 +115,7 @@ def _load_persona_snapshot(persona_id: str) -> Dict[str, object]:
             "deltaS": round((float(extraversion) + float(agreeableness)) / 2, 3),
             "deltaR": round(float(conscientiousness), 3),
         }
-    
+
     return {
         "id": payload.get("id") or persona_id,
         "name": payload.get("name"),
@@ -131,7 +129,6 @@ def _load_persona_snapshot(persona_id: str) -> Dict[str, object]:
         "communication": payload.get("communication"),
         "top_skills": _top_skills(payload.get("skills")),
     }
-
 
 
 def _count_hits(text: str, markers: List[str]) -> int:
@@ -192,7 +189,9 @@ def _estimate_persona_vector(text: str) -> Dict[str, object]:
     }
 
 
-def _vector_distance(home_vector: object, estimate: Dict[str, object]) -> Optional[Dict[str, object]]:
+def _vector_distance(
+    home_vector: object, estimate: Dict[str, object]
+) -> Optional[Dict[str, object]]:
     if not isinstance(home_vector, dict):
         return None
     diffs = {}
@@ -248,6 +247,7 @@ def log_persona_trace(
         print(f"⚠️ 記錄 persona trace 失敗: {exc}")
 
     return record_id
+
 
 def _next_sequence(directory: Path, prefix: str) -> int:
     if not directory.exists():
@@ -351,15 +351,15 @@ def chat_with_council(
 ) -> Tuple[Dict[str, str], str]:
     """
     與 LLM 對話，包含 Council 模擬
-    
+
     Args:
         user_input: 用戶輸入
         selected_memories: 選擇的記憶檔案路徑
-        
+
     Returns:
         (council_dict, response)
     """
-    
+
     # 載入參考記憶
     memory_context = ""
     if selected_memories:
@@ -367,7 +367,7 @@ def chat_with_council(
             content = load_memory_content(path)
             if content:
                 memory_context += f"\n--- 參考資料 ---\n{content}\n"
-    
+
     if retrieval_context:
         memory_context += f"\n--- 檢索結果 ---\n{retrieval_context}\n"
 
@@ -395,7 +395,7 @@ Advocate: [從用戶角度考慮，用一句話]
 
 用戶問題: {user_input}
 """
-    
+
     try:
         response = requests.post(
             OLLAMA_URL,
@@ -406,7 +406,7 @@ Advocate: [從用戶角度考慮，用一句話]
             },
             timeout=60,
         )
-        
+
         if response.status_code == 200:
             result = response.json()
             full_response = result.get("response", "")
@@ -416,21 +416,25 @@ Advocate: [從用戶角度考慮，用一句話]
                 return {}, error_msg
             council, actual_response = parse_council_response(full_response)
             persona = persona_id or os.getenv("TS_PERSONA_ID", "base")
-            
+
             # 記錄對話
-            record_id = log_conversation(user_input, council, actual_response, "success", persona_id=persona)
-            trace_id = log_persona_trace(persona, user_input, full_response, actual_response, council, "success")
+            record_id = log_conversation(
+                user_input, council, actual_response, "success", persona_id=persona
+            )
+            trace_id = log_persona_trace(
+                persona, user_input, full_response, actual_response, council, "success"
+            )
             try:
                 log_conversation_summary(record_id, persona_id=persona, trace_record_id=trace_id)
             except Exception as exc:
                 print(f"⚠️ 記錄對話摘要失敗: {exc}")
-            
+
             return council, actual_response
         else:
             error_msg = f"LLM 請求失敗: {response.status_code}"
             log_conversation(user_input, {}, error_msg, "error")
             return {}, error_msg
-    
+
     except requests.exceptions.ConnectionError:
         error_msg = "無法連接到 Ollama。請確認 Ollama 已啟動。"
         log_conversation(user_input, {}, error_msg, "connection_error")
@@ -443,7 +447,7 @@ Advocate: [從用戶角度考慮，用一句話]
 
 def simple_chat(user_input: str) -> str:
     """簡單對話（不含 Council）"""
-    
+
     try:
         response = requests.post(
             OLLAMA_URL,
@@ -454,12 +458,12 @@ def simple_chat(user_input: str) -> str:
             },
             timeout=60,
         )
-        
+
         if response.status_code == 200:
             result = response.json()
             return result.get("response", "")
         else:
             return f"LLM 請求失敗: {response.status_code}"
-    
+
     except Exception as e:
         return f"發生錯誤: {e}"

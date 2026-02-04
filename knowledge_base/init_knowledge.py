@@ -26,17 +26,20 @@ CREATE TABLE IF NOT EXISTS concepts (
 );
 """
 
+
 def get_connection():
     """Return a SQLite connection, creating the DB file if needed."""
     conn = sqlite3.connect(DB_PATH)
     conn.execute("PRAGMA foreign_keys = ON;")
     return conn
 
+
 def init_db():
     """Create the database and the concepts table if they do not exist."""
     with get_connection() as conn:
         conn.executescript(SCHEMA)
         conn.commit()
+
 
 def upsert_concept(name: str, definition: str, source_url: str = None, updated_at: str = None):
     """Insert a new concept or update the definition of an existing one.
@@ -58,11 +61,14 @@ def upsert_concept(name: str, definition: str, source_url: str = None, updated_a
         )
         conn.commit()
 
+
 def get_concept(name: str):
     """Retrieve a concept by name. Returns a dict or None if not found."""
     with get_connection() as conn:
         cur = conn.cursor()
-        cur.execute("SELECT name, definition, source_url, updated_at FROM concepts WHERE name = ?", (name,))
+        cur.execute(
+            "SELECT name, definition, source_url, updated_at FROM concepts WHERE name = ?", (name,)
+        )
         row = cur.fetchone()
         if row:
             return {
@@ -73,9 +79,11 @@ def get_concept(name: str):
             }
         return None
 
+
 if __name__ == "__main__":
     # Simple CLI for quick testing
     import argparse
+
     parser = argparse.ArgumentParser(description="Knowledge base utility")
     subparsers = parser.add_subparsers(dest="cmd")
 

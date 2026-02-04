@@ -5,7 +5,12 @@
 from pathlib import Path
 
 import streamlit as st
-from utils.memory import list_conversations, list_memory_entries, list_skills, load_conversation_entry
+from utils.memory import (
+    list_conversations,
+    list_memory_entries,
+    list_skills,
+    load_conversation_entry,
+)
 
 
 def _render_memory_group(
@@ -130,4 +135,3 @@ def load_memory_content(path: str) -> str:
         content = content[:2000] + "\n...(內容過長已截斷)"
 
     return content
-

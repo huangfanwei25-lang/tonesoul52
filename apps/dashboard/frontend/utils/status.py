@@ -154,9 +154,7 @@ def build_status_snapshot(workspace: Path) -> Dict[str, object]:
     control_result = load_latest_control_result(workspace)
 
     persona_id = (
-        (persona_trace_last or {}).get("persona_id")
-        or os.getenv("TS_PERSONA_ID")
-        or "base"
+        (persona_trace_last or {}).get("persona_id") or os.getenv("TS_PERSONA_ID") or "base"
     )
     persona_profile = _load_persona_profile(workspace, persona_id)
 
@@ -243,13 +241,17 @@ def build_conversation_summary(
     trace_record_id: Optional[str] = None,
 ) -> Optional[Dict[str, object]]:
     snapshot = build_status_snapshot(workspace)
-    entry = _find_conversation_entry(workspace, record_id) or snapshot.get("conversation", {}).get("last")
+    entry = _find_conversation_entry(workspace, record_id) or snapshot.get("conversation", {}).get(
+        "last"
+    )
     if not entry:
         return None
 
     convo = _conversation_fields(entry)
     persona_snapshot = snapshot.get("persona", {})
-    persona_trace = persona_snapshot.get("trace") if isinstance(persona_snapshot.get("trace"), dict) else {}
+    persona_trace = (
+        persona_snapshot.get("trace") if isinstance(persona_snapshot.get("trace"), dict) else {}
+    )
     shadow = persona_trace.get("shadow") if isinstance(persona_trace.get("shadow"), dict) else {}
 
     summary = {

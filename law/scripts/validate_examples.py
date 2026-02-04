@@ -4,10 +4,12 @@ import yaml
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 ok = True
 
+
 def fail(msg):
     global ok
     ok = False
     print(f"::error::{msg}")
+
 
 # POAV
 poav_p = ROOT / "EXAMPLES/poav_report.sample.json"

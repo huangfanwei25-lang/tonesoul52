@@ -39,4 +39,3 @@ elif page == "語義地圖":
     terrain.render()
 elif page == "回顧":
     history.render()
-

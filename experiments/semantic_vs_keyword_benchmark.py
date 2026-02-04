@@ -73,7 +73,9 @@ def run_benchmark() -> None:
     print("=" * 60)
     print(f"Keyword Analyst:  {keyword_correct}/{total} ({100 * keyword_correct / total:.1f}%)")
     if semantic_available:
-        print(f"Semantic Analyst: {semantic_correct}/{total} ({100 * semantic_correct / total:.1f}%)")
+        print(
+            f"Semantic Analyst: {semantic_correct}/{total} ({100 * semantic_correct / total:.1f}%)"
+        )
     else:
         print("Semantic Analyst: Not available (embedder not loaded)")
 

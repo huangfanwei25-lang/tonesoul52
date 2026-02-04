@@ -55,18 +55,20 @@ def list_seeds() -> List[Dict]:
 
 def list_skills() -> List[Dict]:
     """列出所有技能"""
-    
+
     workspace = get_workspace_root()
     skills_dir = workspace / "spec" / "skills"
-    
+
     skills = []
     if skills_dir.exists():
         for skill_path in skills_dir.glob("*.yaml"):
-            skills.append({
-                "path": str(skill_path),
-                "name": skill_path.stem.replace("_", " ").title(),
-            })
-    
+            skills.append(
+                {
+                    "path": str(skill_path),
+                    "name": skill_path.stem.replace("_", " ").title(),
+                }
+            )
+
     return skills
 
 
@@ -93,7 +95,9 @@ def list_conversations(limit: int = 20) -> List[Dict]:
                     continue
                 record_id = payload.get("record_id") or ""
                 context = payload.get("context") if isinstance(payload.get("context"), dict) else {}
-                user_message = context.get("user_message") or payload.get("user_message") or "未命名對話"
+                user_message = (
+                    context.get("user_message") or payload.get("user_message") or "未命名對話"
+                )
                 timestamp = payload.get("timestamp")
                 time_value = _parse_iso_time(timestamp) or ledger_path.stat().st_mtime
                 entries.append(
@@ -165,17 +169,17 @@ def save_memory(content: str, title: str = None, layer: str = "seeds") -> str:
     path = memory_dir / f"{memory_id}.json"
     with open(path, "w", encoding="utf-8") as f:
         json.dump(memory, f, ensure_ascii=False, indent=2)
-    
+
     return str(path)
 
 
 def load_memory(path: str) -> Optional[Dict]:
     """載入記憶"""
-    
+
     path = Path(path)
     if not path.exists():
         return None
-    
+
     try:
         with open(path, "r", encoding="utf-8") as f:
             return json.load(f)

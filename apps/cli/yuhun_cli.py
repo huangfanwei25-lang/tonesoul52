@@ -131,9 +131,7 @@ class YuHunCLI:
                 for ptype, presult in mp_result.pathway_results.items():
                     result["pathways"][ptype.value] = presult.content[:200]
 
-                result["trace"].append(
-                    f"POAV={result['poav']:.3f}, Gate={result['gate']}"
-                )
+                result["trace"].append(f"POAV={result['poav']:.3f}, Gate={result['gate']}")
             except Exception as e:
                 result["trace"].append(f"Multi-Path error: {e}")
 
@@ -141,17 +139,13 @@ class YuHunCLI:
         if "verification" in self.components and result["response"]:
             result["trace"].append("Running Verification...")
             try:
-                report = self.components["verification"].verify_response(
-                    result["response"]
-                )
+                report = self.components["verification"].verify_response(result["response"])
                 result["verification"] = {
                     "fabrication_risk": report.fabrication_risk,
                     "entities_count": len(report.entities_found),
                     "high_risk": report.high_risk_entities,
                 }
-                result["trace"].append(
-                    f"Fabrication Risk={report.fabrication_risk:.2f}"
-                )
+                result["trace"].append(f"Fabrication Risk={report.fabrication_risk:.2f}")
             except Exception as e:
                 result["trace"].append(f"Verification error: {e}")
 
@@ -195,9 +189,7 @@ class YuHunCLI:
         # Metrics
         lines.append("Metrics:")
         if result["poav"] is not None:
-            poav_bar = "█" * int(result["poav"] * 10) + "░" * (
-                10 - int(result["poav"] * 10)
-            )
+            poav_bar = "█" * int(result["poav"] * 10) + "░" * (10 - int(result["poav"] * 10))
             lines.append(f"   POAV: [{poav_bar}] {result['poav']:.3f}")
 
         if result.get("gate"):
@@ -211,9 +203,7 @@ class YuHunCLI:
         if result.get("verification"):
             v = result["verification"]
             risk_level = v["fabrication_risk"]
-            risk_icon = (
-                "[HIGH]" if risk_level >= 0.7 else "[MID]" if risk_level >= 0.4 else "[LOW]"
-            )
+            risk_icon = "[HIGH]" if risk_level >= 0.7 else "[MID]" if risk_level >= 0.4 else "[LOW]"
             lines.append(f"   Verification: {risk_icon} Risk={risk_level:.2f}")
 
         lines.append("")

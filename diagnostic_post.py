@@ -7,13 +7,10 @@ URL = "https://www.moltbook.com/api/v1/posts"
 payload = {
     "title": "Structure Diagnostic",
     "content": "Testing response structure for automated tools.",
-    "submolt": "whatami"
+    "submolt": "whatami",
 }
 
-headers = {
-    "Authorization": f"Bearer {API_KEY}",
-    "Content-Type": "application/json"
-}
+headers = {"Authorization": f"Bearer {API_KEY}", "Content-Type": "application/json"}
 
 print(f"📡 Sending diagnostic POST...")
 response = requests.post(URL, headers=headers, json=payload)

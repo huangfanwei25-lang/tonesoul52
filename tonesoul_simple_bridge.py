@@ -28,15 +28,9 @@ if TS_ROOT.exists():
 OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434")
 DEFAULT_MODEL = os.getenv("TS_MODEL", "gemma3:4b")
 TONESOUL_PERSONA_ID = os.getenv("TONESOUL_PERSONA_ID", "darlin")
-TONESOUL_ENABLE = os.getenv("TONESOUL_ENABLE", "1").lower() not in {
-    "0", "false", "off", "no"
-}
-MONITOR_ENABLE = os.getenv("MONITOR_ENABLE", "1").lower() not in {
-    "0", "false", "off", "no"
-}
-DRIFT_ENABLE = os.getenv("DRIFT_ENABLE", "1").lower() not in {
-    "0", "false", "off", "no"
-}
+TONESOUL_ENABLE = os.getenv("TONESOUL_ENABLE", "1").lower() not in {"0", "false", "off", "no"}
+MONITOR_ENABLE = os.getenv("MONITOR_ENABLE", "1").lower() not in {"0", "false", "off", "no"}
+DRIFT_ENABLE = os.getenv("DRIFT_ENABLE", "1").lower() not in {"0", "false", "off", "no"}
 MAX_HISTORY = int(os.getenv("BRIDGE_MAX_HISTORY", "8"))
 
 DEFAULT_PROMPT = (
@@ -241,7 +235,11 @@ def _build_vrm_messages(user_message: str, history: List[Dict[str, str]]) -> Lis
     messages = [{"role": "system", "content": action_prompt}]
     messages.extend(history)
     if user_message:
-        if not history or history[-1].get("role") != "user" or history[-1].get("content") != user_message:
+        if (
+            not history
+            or history[-1].get("role") != "user"
+            or history[-1].get("content") != user_message
+        ):
             messages.append({"role": "user", "content": user_message})
     return messages
 
@@ -284,13 +282,24 @@ def _normalize_action(value: object, allowed: set[str]) -> Optional[str]:
     return normalized if normalized in allowed else None
 
 
-def _parse_action_response(raw: str) -> tuple[str, Optional[str], Optional[str], Optional[Dict[str, Any]]]:
+def _parse_action_response(
+    raw: str,
+) -> tuple[str, Optional[str], Optional[str], Optional[Dict[str, Any]]]:
     payload = _extract_json(raw)
     if isinstance(payload, dict):
-        reply = payload.get("reply") or payload.get("response") or payload.get("content") or payload.get("text")
+        reply = (
+            payload.get("reply")
+            or payload.get("response")
+            or payload.get("content")
+            or payload.get("text")
+        )
         reply_text = reply.strip() if isinstance(reply, str) else ""
-        gesture = _normalize_action(payload.get("gesture") or payload.get("action"), ALLOWED_GESTURES)
-        expression = _normalize_action(payload.get("expression") or payload.get("emotion"), ALLOWED_EXPRESSIONS)
+        gesture = _normalize_action(
+            payload.get("gesture") or payload.get("action"), ALLOWED_GESTURES
+        )
+        expression = _normalize_action(
+            payload.get("expression") or payload.get("emotion"), ALLOWED_EXPRESSIONS
+        )
         return reply_text or raw.strip(), gesture, expression, payload
     return raw.strip(), None, None, None
 
@@ -391,24 +400,28 @@ class BridgeHandler(http.server.BaseHTTPRequestHandler):
         log(f"GET {self.path}")
 
         if self.path in ("/", "/status"):
-            self.send_json({
-                "status": "ok",
-                "bridge": "tonesoul_simple",
-                "tonesoul_enabled": TONESOUL_ENABLE,
-                "tonesoul_available": TONESOUL_AVAILABLE,
-                "tonesoul_persona": TONESOUL_PERSONA_ID,
-                "tonesoul_error": TONESOUL_IMPORT_ERROR,
-                "services": {name: "running" for name in SERVICE_CODES.keys()},
-            })
+            self.send_json(
+                {
+                    "status": "ok",
+                    "bridge": "tonesoul_simple",
+                    "tonesoul_enabled": TONESOUL_ENABLE,
+                    "tonesoul_available": TONESOUL_AVAILABLE,
+                    "tonesoul_persona": TONESOUL_PERSONA_ID,
+                    "tonesoul_error": TONESOUL_IMPORT_ERROR,
+                    "services": {name: "running" for name in SERVICE_CODES.keys()},
+                }
+            )
             return
 
         if self.path.startswith("/service/"):
             service_name = self.path.split("/service/")[1]
-            self.send_json({
-                "service": service_name,
-                "status": "running",
-                "code": SERVICE_CODES.get(service_name, "W000"),
-            })
+            self.send_json(
+                {
+                    "service": service_name,
+                    "status": "running",
+                    "code": SERVICE_CODES.get(service_name, "W000"),
+                }
+            )
             return
 
         self.send_json({"error": "Unknown endpoint", "path": self.path}, 404)
@@ -426,7 +439,9 @@ class BridgeHandler(http.server.BaseHTTPRequestHandler):
         else:
             data = {}
 
-        persona_id = data.get("persona") if isinstance(data.get("persona"), str) else TONESOUL_PERSONA_ID
+        persona_id = (
+            data.get("persona") if isinstance(data.get("persona"), str) else TONESOUL_PERSONA_ID
+        )
 
         if "vrm" in self.path.lower():
             raw_message = data.get("message", data.get("text", data.get("prompt", "")))
@@ -442,13 +457,15 @@ class BridgeHandler(http.server.BaseHTTPRequestHandler):
             reply_text, gesture, expression, _payload = _parse_action_response(response or "")
             monitor = _monitor_drift(message, reply_text)
             _log_conversation(message, reply_text, persona_id, gesture, expression, monitor)
-            self.send_json({
-                "status": "ok",
-                "response": reply_text,
-                "gesture": gesture,
-                "expression": expression,
-                "monitor": monitor,
-            })
+            self.send_json(
+                {
+                    "status": "ok",
+                    "response": reply_text,
+                    "gesture": gesture,
+                    "expression": expression,
+                    "monitor": monitor,
+                }
+            )
             return
 
         if any(key in self.path.lower() for key in ("ai", "chat", "generate")):
@@ -539,6 +556,7 @@ def run_server() -> None:
     try:
         while True:
             import time
+
             time.sleep(1)
     except KeyboardInterrupt:
         pass

@@ -11,7 +11,7 @@ def _assert_verdict_payload(verdict):
         VerdictType.BLOCK.value,
     }
     assert isinstance(data["votes"], list)
-    assert len(data["votes"]) == 4
+    assert len(data["votes"]) == 5  # Guardian, Critic, Analyst, Advocate, Axiomatic Inference
     for vote in data["votes"]:
         assert "perspective" in vote
         assert "decision" in vote

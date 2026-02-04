@@ -3,7 +3,7 @@ import json
 
 KEYS = {
     "ToneSoul": "moltbook_sk_d_0gXZmIcXNB3tApS3WPhbJI3Ya-4k2R",
-    "Advocate": "moltbook_sk_s7adE36UBNbv_RiNQgz5Sb0R9H1mr90L"
+    "Advocate": "moltbook_sk_s7adE36UBNbv_RiNQgz5Sb0R9H1mr90L",
 }
 
 URL = "https://www.moltbook.com/api/v1/heartbeat"

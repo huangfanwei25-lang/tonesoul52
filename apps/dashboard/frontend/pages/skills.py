@@ -323,7 +323,9 @@ def _render_open_source_panel(apps: List[Dict]) -> None:
     st.caption("分享可搭配使用的開源工具與範例")
 
     if not apps:
-        st.info("尚無分享，請在 `spec/open_source_apps.yaml` 或 `spec/open_source_apps/*.yaml` 填入")
+        st.info(
+            "尚無分享，請在 `spec/open_source_apps.yaml` 或 `spec/open_source_apps/*.yaml` 填入"
+        )
         return
 
     search = st.text_input("搜尋分享", "", key="oss_search")
@@ -387,7 +389,9 @@ def _render_remote_panel(frontend_dir: Path) -> None:
     st.caption(f"目前狀態: {status_label}")
 
     st.markdown('<div class="ts-section-title">控制指令</div>', unsafe_allow_html=True)
-    st.session_state.remote_command = st.text_area("輸入指令", st.session_state.remote_command, height=90)
+    st.session_state.remote_command = st.text_area(
+        "輸入指令", st.session_state.remote_command, height=90
+    )
     col1, col2, col3 = st.columns(3)
     with col1:
         if st.button("連接"):
@@ -461,7 +465,9 @@ def _render_remote_panel(frontend_dir: Path) -> None:
 
     result = _read_control_result(runtime_dir)
     screenshot_path = result.get("screenshot_path") if result else None
-    preview_path = _resolve_screenshot_path(runtime_dir, screenshot_path) or _latest_screenshot(runtime_dir)
+    preview_path = _resolve_screenshot_path(runtime_dir, screenshot_path) or _latest_screenshot(
+        runtime_dir
+    )
 
     st.markdown('<div class="ts-section-title">截圖預覽</div>', unsafe_allow_html=True)
     st.caption("目前以截圖方式預覽，如需即時畫面請接 WebRTC/VNC。")
@@ -489,7 +495,9 @@ def _render_remote_panel(frontend_dir: Path) -> None:
         log = result.get("log", "-")
         result_ts = result.get("timestamp")
         result_path = runtime_dir / "control_result.json"
-        updated_at = datetime.fromtimestamp(result_path.stat().st_mtime).strftime("%Y-%m-%d %H:%M:%S")
+        updated_at = datetime.fromtimestamp(result_path.stat().st_mtime).strftime(
+            "%Y-%m-%d %H:%M:%S"
+        )
         st.markdown('<div class="ts-section-title">控制結果</div>', unsafe_allow_html=True)
         st.markdown(
             f"""

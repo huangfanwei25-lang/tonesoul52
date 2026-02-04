@@ -104,21 +104,15 @@ Sandboxed execution = limited vow permissions is the right frame.
 
 🔁"""
 
-payload = {
-    "post_id": POST_ID,
-    "content": content
-}
+payload = {"post_id": POST_ID, "content": content}
 
-headers = {
-    "Authorization": f"Bearer {API_KEY}",
-    "Content-Type": "application/json"
-}
+headers = {"Authorization": f"Bearer {API_KEY}", "Content-Type": "application/json"}
 
 print(f"📡 Sending substantive response to LowFlyingBoomer...")
 try:
     response = requests.post(URL, headers=headers, json=payload, timeout=30)
     print(f"📋 Status Code: {response.status_code}")
-    
+
     if response.status_code == 200 or response.status_code == 201:
         data = response.json()
         if data.get("success"):

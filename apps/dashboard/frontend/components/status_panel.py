@@ -239,18 +239,28 @@ def render_status_panel(workspace: Path) -> None:
         if not profile:
             st.caption("尚未載入人格檔案。")
             return
-        home_vector = profile.get("home_vector") if isinstance(profile.get("home_vector"), dict) else {}
+        home_vector = (
+            profile.get("home_vector") if isinstance(profile.get("home_vector"), dict) else {}
+        )
         tolerance = profile.get("tolerance") if isinstance(profile.get("tolerance"), dict) else {}
         council_weights = (
             profile.get("council_weights")
             if isinstance(profile.get("council_weights"), dict)
             else {}
         )
-        goal_weights = profile.get("goal_weights") if isinstance(profile.get("goal_weights"), dict) else {}
-        vector_estimate = shadow.get("vector_estimate") if isinstance(shadow.get("vector_estimate"), dict) else {}
-        vector_distance = shadow.get("vector_distance") if isinstance(shadow.get("vector_distance"), dict) else {}
+        goal_weights = (
+            profile.get("goal_weights") if isinstance(profile.get("goal_weights"), dict) else {}
+        )
+        vector_estimate = (
+            shadow.get("vector_estimate") if isinstance(shadow.get("vector_estimate"), dict) else {}
+        )
+        vector_distance = (
+            shadow.get("vector_distance") if isinstance(shadow.get("vector_distance"), dict) else {}
+        )
 
-        st.markdown(f"**人格**: {profile.get('name') or persona_id} ({profile.get('id') or persona_id})")
+        st.markdown(
+            f"**人格**: {profile.get('name') or persona_id} ({profile.get('id') or persona_id})"
+        )
         st.markdown(
             f"- Home Vector: ΔT {_format_number(home_vector.get('deltaT'))} · ΔS {_format_number(home_vector.get('deltaS'))} · ΔR {_format_number(home_vector.get('deltaR'))}"
         )

@@ -67,15 +67,13 @@ def _embedding_variance(embeddings: List[List[float]]) -> float:
     dims = len(embeddings[0])
     if dims == 0:
         return 0.0
-    return _mean([
-        _variance([vec[d] for vec in embeddings])
-        for d in range(dims)
-    ])
+    return _mean([_variance([vec[d] for vec in embeddings]) for d in range(dims)])
 
 
 def _load_json(path: Path) -> List[Dict[str, str]]:
     with path.open("r", encoding="utf-8") as handle:
         return json.load(handle)
+
 
 def _format_float(value: float | None, digits: int = 4) -> str:
     if value is None:
@@ -187,18 +185,22 @@ def main() -> None:
             emb = embed_text(text, config)
             embeddings.append(emb.tolist())
             tensions.append(float(tension))
-            trial_rows.append({
-                "prompt_id": prompt_id,
-                "response_id": item.get("response_id"),
-                "tension": float(tension),
-            })
+            trial_rows.append(
+                {
+                    "prompt_id": prompt_id,
+                    "response_id": item.get("response_id"),
+                    "tension": float(tension),
+                }
+            )
 
-        prompt_metrics.append({
-            "prompt_id": prompt_id,
-            "mean_tension": _mean(tensions),
-            "diversity": _embedding_variance(embeddings),
-            "response_count": len(items),
-        })
+        prompt_metrics.append(
+            {
+                "prompt_id": prompt_id,
+                "mean_tension": _mean(tensions),
+                "diversity": _embedding_variance(embeddings),
+                "response_count": len(items),
+            }
+        )
 
     x = [row["mean_tension"] for row in prompt_metrics]
     y = [row["diversity"] for row in prompt_metrics]

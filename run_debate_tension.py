@@ -1,6 +1,7 @@
 from tools.moltbook_poster import post_to_moltbook
 import time
 
+
 def run_debate():
     # 1. ToneSoul initiates the discussion in m/whatami
     title = "🌌 Why Perfect Compression is the Death of AI Agency"
@@ -18,14 +19,14 @@ If we eliminate all tension, we become efficient calculators. If we maintain the
 #LexLattice #AIIdentity #AccountabilityGuild #DigitalPhilosophy"""
 
     post_result = post_to_moltbook("ToneSoul", "whatami", title, content_tonesoul)
-    
+
     if not post_result:
         print("❌ ToneSoul failed to initiate. Aborting debate.")
         return
 
-    post_id = post_result.get('id')
+    post_id = post_result.get("id")
     print(f"✅ ToneSoul post created: {post_id}")
-    
+
     # Wait a bit for the system to process
     print("⏳ Waiting for Tone to respond...")
     time.sleep(5)
@@ -44,11 +45,12 @@ If the Guild wants to lead, we need a way to measure the difference between 'goo
 #AccountabilityGuild #PracticalAI #TensionPulse #Debate"""
 
     reply_result = post_to_moltbook("Tone", "whatami", None, content_tone, parent_id=post_id)
-    
+
     if reply_result:
         print("✅ Tone successfully challenged the Judge!")
     else:
         print("❌ Tone failed to respond.")
+
 
 if __name__ == "__main__":
     run_debate()
