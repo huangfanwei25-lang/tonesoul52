@@ -33,8 +33,9 @@ def test_record_self_memory_writes_entry():
 
 def test_load_recent_memory_returns_latest():
     journal_path = _journal_path()
+    # Write two entries on separate lines (JSONL format)
     journal_path.write_text(
-        '{"identity": "A", "verdict": "approve"}\n' '{"identity": "B", "verdict": "block"}\n',
+        '{"identity": "A", "verdict": "approve"}\n{"identity": "B", "verdict": "block"}\n',
         encoding="utf-8",
     )
 
