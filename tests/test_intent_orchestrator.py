@@ -58,7 +58,9 @@ def test_intent_awareness():
     print(f"Handoff Reason should include AXIOMS mention.")
     print()
 
-    return True
+    # Verify test conditions
+    assert result["status"] in ("switched", "normal"), f"Unexpected status: {result['status']}"
+    assert result["switched"] is True, "Expected handoff to be triggered with low quota"
 
 
 if __name__ == "__main__":

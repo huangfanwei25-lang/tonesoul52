@@ -55,7 +55,7 @@ def test_normal_operation():
     )
     print()
 
-    return result["switched"] == False
+    assert result["switched"] is False, "Normal operation should not trigger switch"
 
 
 def test_quota_exhausted():
@@ -103,7 +103,7 @@ def test_quota_exhausted():
     print(f"Launch Info: {result.get('launch', 'N/A')}")
     print()
 
-    return result["switched"] == True
+    assert result["switched"] is True, "Low quota should trigger handoff"
 
 
 def test_with_observer():
@@ -139,7 +139,7 @@ def test_with_observer():
         print(f"  - {log.get('record_type')}: {log.get('action')}")
     print()
 
-    return True
+    assert len(logs) > 0, "Expected at least one log entry"
 
 
 def main():

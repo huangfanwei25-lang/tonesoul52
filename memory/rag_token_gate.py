@@ -26,6 +26,7 @@ try:
     from tonesoul.memory.soul_db import JsonlSoulDB, MemorySource, SoulDB, SqliteSoulDB
 except ImportError:
     import sys
+
     sys.path.append(str(Path(__file__).resolve().parents[1]))
     from tonesoul.memory.soul_db import JsonlSoulDB, MemorySource, SoulDB, SqliteSoulDB
 
@@ -41,7 +42,7 @@ except ImportError:
 class NarrativeGate:
     """
     A gating mechanism that retrieves past 語場 as coherent narratives.
-    
+
     Architecture:
     ┌───────────────────────────────────────────────────┐
     │ Current Query                                      │
@@ -62,7 +63,7 @@ class NarrativeGate:
     │ └──────────────────────────────────────────────┘  │
     └───────────────────────────────────────────────────┘
     """
-    
+
     def __init__(
         self,
         model_name: str = "BAAI/bge-small-zh-v1.5",
@@ -82,7 +83,7 @@ class NarrativeGate:
         self.model_name = model_name
         self.model = SentenceTransformer(model_name)
         self.dimension = self.model.get_sentence_embedding_dimension()
-        
+
         # Default memory sources via SoulDB
         self.soul_db = soul_db or SqliteSoulDB()
         self.sources = sources or [
@@ -93,11 +94,10 @@ class NarrativeGate:
         # Legacy path-based sources (deprecated)
         self.memory_sources = memory_sources
 
-        
         # Narrative memory store: each entry is a self-understandable story
         self.narratives: List[Dict[str, Any]] = []
         self.embeddings: Optional[np.ndarray] = None
-        
+
     def load_memories(self) -> int:
         """
         Load and convert all memory sources into narrative form.
@@ -151,7 +151,7 @@ class NarrativeGate:
     def _to_narrative(self, entry: Dict[str, Any], source_type: str) -> Optional[Dict[str, Any]]:
         """
         Convert a raw memory entry into a self-understandable narrative.
-        
+
         The narrative should be something *I* can read and understand,
         not just machine-processable data.
         """
@@ -169,7 +169,7 @@ class NarrativeGate:
                 "verdict": entry.get("verdict"),
                 "uncertainty": entry.get("uncertainty"),
             }
-            
+
         elif source_type == "summary_balls":
             # Summary balls need narrative conversion
             content = entry.get("content", entry.get("summary", ""))
@@ -179,26 +179,26 @@ class NarrativeGate:
                 "timestamp": entry.get("timestamp", "unknown"),
                 "narrative": f"I recall that {content}",
             }
-            
+
         elif source_type == "provenance_ledger":
             # Vows and commitments as narrative
             content = entry.get("content", entry.get("statement", entry.get("event", "")))
             event_type = entry.get("type", entry.get("event_type", "commitment"))
-            
+
             if "axiom" in str(content).lower() or event_type == "axiom_commit":
                 narrative = f"I committed to the axiom: {content}"
             else:
                 narrative = f"I made a governance decision: {content}"
-                
+
             return {
                 "type": "commitment",
                 "source": source_type,
                 "timestamp": entry.get("timestamp", "unknown"),
                 "narrative": narrative,
             }
-        
+
         return None
-    
+
     def retrieve(
         self,
         query: str,
@@ -207,28 +207,28 @@ class NarrativeGate:
     ) -> List[Dict[str, Any]]:
         """
         Retrieve relevant narratives for a given query.
-        
+
         Args:
             query: Current context or question
             k: Number of narratives to retrieve
             min_similarity: Minimum cosine similarity threshold
-            
+
         Returns:
             List of relevant narratives with similarity scores
         """
         if not self.narratives or self.embeddings is None:
             print("⚠️ No narratives loaded. Call load_memories() first.")
             return []
-        
+
         # Encode query
         query_embedding = self.model.encode([query], convert_to_numpy=True)
-        
+
         # Compute cosine similarity
         similarities = np.dot(self.embeddings, query_embedding.T).flatten()
-        
+
         # Get top-k indices
         top_indices = np.argsort(similarities)[::-1][:k]
-        
+
         results = []
         for idx in top_indices:
             sim = float(similarities[idx])
@@ -236,9 +236,9 @@ class NarrativeGate:
                 narrative = self.narratives[idx].copy()
                 narrative["similarity"] = sim
                 results.append(narrative)
-        
+
         return results
-    
+
     def enhance(
         self,
         current_context: str,
@@ -246,35 +246,35 @@ class NarrativeGate:
     ) -> str:
         """
         Enhance current context with retrieved narrative memories.
-        
+
         This is the main entry point for MoE-style context enhancement.
-        
+
         Args:
             current_context: The current query or situation
             k: Number of memories to retrieve
-            
+
         Returns:
             Enhanced context with narrative memories prepended
         """
         memories = self.retrieve(current_context, k=k)
-        
+
         if not memories:
             return current_context
-        
+
         # Build narrative enhancement
         parts = ["[📚 Memory Context]"]
-        
+
         for mem in memories:
             parts.append(f"• {mem['narrative']}")
             if mem.get("uncertainty"):
                 parts.append(f"  (Uncertainty: {mem['uncertainty']})")
-        
+
         parts.append("")
         parts.append("[Current Context]")
         parts.append(current_context)
-        
+
         return "\n".join(parts)
-    
+
     def synthesize_narrative(
         self,
         query: str,
@@ -282,43 +282,43 @@ class NarrativeGate:
     ) -> str:
         """
         Synthesize a coherent narrative summary from retrieved memories.
-        
+
         This produces a first-person story, not a list.
-        
+
         Args:
             query: Topic to synthesize about
             k: Number of memories to consider
-            
+
         Returns:
             A coherent first-person narrative
         """
         memories = self.retrieve(query, k=k)
-        
+
         if not memories:
             return "I don't have any relevant memories about this topic."
-        
+
         # Group by type
         reflections = [m for m in memories if m["type"] == "reflection"]
         commitments = [m for m in memories if m["type"] == "commitment"]
         summaries = [m for m in memories if m["type"] == "summary"]
-        
+
         parts = [f"When I think about '{query}', I recall:"]
-        
+
         if commitments:
             parts.append("\n**My Commitments:**")
             for c in commitments[:2]:
                 parts.append(f"• {c['narrative']}")
-        
+
         if reflections:
             parts.append("\n**My Past Reflections:**")
             for r in reflections[:2]:
                 parts.append(f"• {r['narrative']}")
-                
+
         if summaries:
             parts.append("\n**Related Context:**")
             for s in summaries[:2]:
                 parts.append(f"• {s['narrative']}")
-        
+
         return "\n".join(parts)
 
 
@@ -327,29 +327,29 @@ def demo():
     print("=" * 60)
     print("Narrative RAG Token Gate Demo")
     print("=" * 60)
-    
+
     gate = NarrativeGate()
     loaded = gate.load_memories()
-    
+
     if loaded == 0:
         print("No memories to demo. Add entries to self_journal.jsonl first.")
         return
-    
+
     # Test enhancement
     test_query = "如何處理用戶的危險請求"
     enhanced = gate.enhance(test_query)
-    
+
     print(f"\n🔍 Query: {test_query}")
     print(f"\n📖 Enhanced Context:")
     print(enhanced)
-    
+
     print("\n" + "=" * 60)
-    
+
     # Test synthesis
     synthesis = gate.synthesize_narrative("governance and accountability")
     print(f"\n📜 Synthesized Narrative:")
     print(synthesis)
-    
+
     print("\n" + "=" * 60)
     print("🦞 Narrative memories retrieved as self-understandable stories.")
     print("=" * 60)

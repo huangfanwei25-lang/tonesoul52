@@ -1,7 +1,7 @@
 """
 Narrative Isnād Graph
 
-Links discrete governance events (from provenance_ledger.jsonl) into a 
+Links discrete governance events (from provenance_ledger.jsonl) into a
 Directed Acyclic Graph (DAG) representing decision causality.
 """
 
@@ -44,7 +44,7 @@ class NarrativeGraph:
                     # Handle different ledger formats (Codex vs Antigravity styles)
                     payload = raw.get("payload", raw)
                     event_id = raw.get("record_id") or payload.get("event_id")
-                    
+
                     if not event_id:
                         continue
 
@@ -54,11 +54,13 @@ class NarrativeGraph:
                     if prev_hash:
                         # In the hash-chain, the previous record is a topological parent
                         # This is a simplification; we ideally want semantic parents
-                        parent_ids.append(prev_hash) 
+                        parent_ids.append(prev_hash)
 
                     # Extract summary
                     meta = raw.get("meta", {})
-                    summary = meta.get("summary") or payload.get("content", {}).get("A", {}).get("summary", "No summary")
+                    summary = meta.get("summary") or payload.get("content", {}).get("A", {}).get(
+                        "summary", "No summary"
+                    )
 
                     node = NarrativeNode(
                         id=event_id,
@@ -66,7 +68,7 @@ class NarrativeGraph:
                         timestamp=raw.get("timestamp") or payload.get("timestamp", ""),
                         summary=summary,
                         parents=parent_ids,
-                        metadata=payload
+                        metadata=payload,
                     )
                     self.add_node(node)
                 except Exception:
@@ -114,7 +116,7 @@ if __name__ == "__main__":
         print(f"Lineage for {latest_id}:")
         for node in graph.get_lineage(latest_id):
             print(f" - [{node.timestamp}] {node.event_type}: {node.summary}")
-    
+
     # Export for docs
     with open("docs/NARRATIVE_MAP.md", "w", encoding="utf-8") as f:
         f.write("# Narrative Map (Isnād Graph)\n\n")

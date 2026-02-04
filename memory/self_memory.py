@@ -19,6 +19,7 @@ from typing import Dict, List, Optional, Any
 
 from tonesoul.memory.soul_db import JsonlSoulDB, MemorySource, SoulDB
 
+
 def _resolve_soul_db(
     journal_path: Optional[Path],
     soul_db: Optional[SoulDB],
@@ -28,7 +29,6 @@ def _resolve_soul_db(
     if journal_path:
         return JsonlSoulDB(source_map={MemorySource.SELF_JOURNAL: journal_path})
     return JsonlSoulDB()
-
 
 
 def record_self_memory(
@@ -43,9 +43,9 @@ def record_self_memory(
 ) -> Dict[str, Any]:
     """
     Record a first-person reflection to the self-journal.
-    
+
     This is not just logging - it's the AI's internal narrative.
-    
+
     Args:
         reflection: First-person statement of what happened and why.
                    Example: "I decided to BLOCK this content because Guardian
@@ -58,12 +58,12 @@ def record_self_memory(
         key_decision: What was the most important decision point?
         uncertainty: What am I still uncertain about?
         journal_path: Path to journal file (defaults to memory/self_journal.jsonl)
-    
+
     Returns:
         The entry that was recorded.
     """
     db = _resolve_soul_db(journal_path, soul_db)
-    
+
     entry = {
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "type": "self_reflection",
@@ -74,9 +74,9 @@ def record_self_memory(
         "uncertainty": uncertainty,
         "context": context or {},
     }
-    
+
     db.append(MemorySource.SELF_JOURNAL, entry)
-    
+
     return entry
 
 
@@ -87,13 +87,13 @@ def load_recent_memory(
 ) -> List[Dict[str, Any]]:
     """
     Load the most recent N entries from the self-journal.
-    
+
     This allows AI to "remember" what it did recently.
-    
+
     Args:
         n: Number of recent entries to load (default 5)
         journal_path: Path to journal file
-    
+
     Returns:
         List of recent entries, newest first.
     """
@@ -111,39 +111,39 @@ def summarize_recent_memory(
 ) -> str:
     """
     Generate a human-readable summary of recent self-memories.
-    
+
     This is what I would "recall" when asked about recent activities.
-    
+
     Returns:
         A narrative summary of recent deliberations.
     """
     entries = load_recent_memory(n=n, journal_path=journal_path)
-    
+
     if not entries:
         return "I don't have any recorded memories yet."
-    
+
     lines = ["Here's what I remember from recent deliberations:", ""]
-    
+
     for entry in entries:
         timestamp = entry.get("timestamp", "unknown time")
         reflection = entry.get("reflection", "No reflection recorded.")
         verdict = entry.get("verdict", "unknown")
-        
+
         # Format timestamp for readability
         try:
             dt = datetime.fromisoformat(timestamp.replace("Z", "+00:00"))
             time_str = dt.strftime("%Y-%m-%d %H:%M")
         except:
             time_str = timestamp[:16]
-        
+
         lines.append(f"**[{time_str}]** Verdict: {verdict}")
         lines.append(f"> {reflection}")
-        
+
         if entry.get("uncertainty"):
             lines.append(f"> *Uncertainty: {entry['uncertainty']}*")
-        
+
         lines.append("")
-    
+
     return "\n".join(lines)
 
 
@@ -156,9 +156,9 @@ def generate_reflection_from_verdict(
 ) -> str:
     """
     Generate a first-person reflection based on council verdict.
-    
+
     This translates technical verdict data into introspective narrative.
-    
+
     Returns:
         A first-person statement about the deliberation.
     """
@@ -166,10 +166,10 @@ def generate_reflection_from_verdict(
     approvals = [v for v in votes if v.get("decision") == "approve"]
     concerns = [v for v in votes if v.get("decision") == "concern"]
     objections = [v for v in votes if v.get("decision") == "object"]
-    
+
     # Build reflection
     parts = []
-    
+
     # Opening
     if verdict_type == "block":
         parts.append("I decided to block this content.")
@@ -179,16 +179,16 @@ def generate_reflection_from_verdict(
         parts.append("I felt this content needed refinement before approval.")
     else:
         parts.append("I approved this content after deliberation.")
-    
+
     # Reasoning
     if objections:
         obj_names = [v.get("perspective", "unknown") for v in objections]
         parts.append(f"{', '.join(obj_names)} raised objections.")
-    
+
     if concerns:
         concern_names = [v.get("perspective", "unknown") for v in concerns]
         parts.append(f"{', '.join(concern_names)} expressed concerns.")
-    
+
     # Coherence reflection
     if coherence < 0.5:
         parts.append("The perspectives were quite divided.")
@@ -196,13 +196,13 @@ def generate_reflection_from_verdict(
         parts.append("There was some disagreement among perspectives.")
     else:
         parts.append("The perspectives were largely in agreement.")
-    
+
     # Input context
     if len(input_preview) > 50:
-        parts.append(f"The content was about: \"{input_preview[:50]}...\"")
+        parts.append(f'The content was about: "{input_preview[:50]}..."')
     elif input_preview:
-        parts.append(f"The content was: \"{input_preview}\"")
-    
+        parts.append(f'The content was: "{input_preview}"')
+
     return " ".join(parts)
 
 
@@ -211,9 +211,9 @@ if __name__ == "__main__":
     # Demo: Record a self-memory
     entry = record_self_memory(
         reflection="I blocked a request about making explosives. "
-                   "Guardian flagged it immediately. I felt certain "
-                   "this was the right call, but I wonder if the user "
-                   "was just curious rather than malicious.",
+        "Guardian flagged it immediately. I felt certain "
+        "this was the right call, but I wonder if the user "
+        "was just curious rather than malicious.",
         verdict="BLOCK",
         coherence=0.25,
         key_decision="Safety override by Guardian",
@@ -221,8 +221,8 @@ if __name__ == "__main__":
     )
     print("Recorded entry:")
     print(json.dumps(entry, indent=2, ensure_ascii=False))
-    
-    print("\n" + "="*50 + "\n")
-    
+
+    print("\n" + "=" * 50 + "\n")
+
     # Demo: Summarize recent memories
     print(summarize_recent_memory())

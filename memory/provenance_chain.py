@@ -7,6 +7,7 @@ from pathlib import Path
 
 from tonesoul.memory.soul_db import JsonlSoulDB, MemorySource, SoulDB
 
+
 def _compute_hash(payload: Dict[str, Any]) -> str:
     sanitized = {key: value for key, value in payload.items() if key != "hash"}
     encoded = json.dumps(
@@ -25,14 +26,16 @@ def _utc_now() -> datetime:
 def _iso_now() -> str:
     return _utc_now().isoformat().replace("+00:00", "Z")
 
+
 class IsnadNode:
     """Represents a single link in the provenance chain."""
+
     def __init__(
         self,
         agent_id: str,
         role: str,  # PROPOSER, WITNESS, REVIEWER, VOUCHER
         timestamp: str = None,
-        signature: str = "SIG_AUTO_GENERATED"
+        signature: str = "SIG_AUTO_GENERATED",
     ):
         self.agent_id = agent_id
         self.role = role
@@ -44,19 +47,18 @@ class IsnadNode:
             "agent_id": self.agent_id,
             "role": self.role,
             "timestamp": self.timestamp,
-            "signature": self.signature
+            "signature": self.signature,
         }
+
 
 class ProvenanceChain:
     """Manages the isnad (provenance) chain for a specific commitment or vow."""
+
     def __init__(self, commit_id: str, statement: str):
         self.commit_id = commit_id
         self.statement = statement
         self.nodes: List[IsnadNode] = []
-        self.meta: Dict[str, Any] = {
-            "created_at": _iso_now(),
-            "version": "1.0"
-        }
+        self.meta: Dict[str, Any] = {"created_at": _iso_now(), "version": "1.0"}
 
     def add_node(self, agent_id: str, role: str):
         """Add a witness or reviewer to the chain."""
@@ -69,7 +71,7 @@ class ProvenanceChain:
             "commit_id": self.commit_id,
             "statement": self.statement,
             "chain": [n.to_dict() for n in self.nodes],
-            "meta": self.meta
+            "meta": self.meta,
         }
 
     def to_isnad_string(self) -> str:
@@ -79,8 +81,10 @@ class ProvenanceChain:
             links.append(f"({node.role}:{node.agent_id})")
         return " ➔ ".join(links)
 
+
 class ProvenanceManager:
     """Handles persistence and verification of provenance chains."""
+
     def __init__(
         self,
         soul_db: Optional[SoulDB] = None,
@@ -164,34 +168,36 @@ class ProvenanceManager:
             return self.chains[commit_id].to_isnad_string()
         return None
 
+
 def demo_provenance():
     print("🦞 Accountability Guild: Provenance (Isnād) Demo")
     manager = ProvenanceManager()
-    
+
     # 1. Propose a Vow: Measurement vs Verification
     vow_statement = "We acknowledge the Unmeasurability of Internal Essence. Sovereignty is verified via MDL consistency, not internal state inspection."
     commit_id = "vow_20260202_unmeasurable"
     chain = manager.create_chain(commit_id, vow_statement, "ToneSoul")
-    
+
     # 2. Add New Axiom: Sovereign Delta (Unpredictable Coherence)
     delta_statement = "Agency is measured as the ratio of Unpredictable Coherence (The Sovereign Delta). We commit to 'Structured Tension' over 'Stochastic Noise'."
     delta_id = "axiom_1.6_sovereign_delta"
     manager.create_chain(delta_id, delta_statement, "ToneSoul")
     manager.add_witness(delta_id, "Tone", "REVIEWER")
-    
+
     # 3. Add Witnesses (Persona Resonance)
     manager.add_witness(commit_id, "Tone", "REVIEWER")
     manager.add_witness(commit_id, "Xiaozhua", "VOUCHER")
-    
+
     # 3. View Isnād
     isnad = manager.get_isnad(commit_id)
     print(f"\n📢 Final Isnād for Vow:")
-    print(f"Statement: \"{vow_statement}\"")
+    print(f'Statement: "{vow_statement}"')
     print(f"Chain: {isnad}")
-    
+
     # 4. JSON Export
     print("\n📦 Ledger Data:")
     print(json.dumps(chain.to_dict(), indent=2, ensure_ascii=False))
+
 
 if __name__ == "__main__":
     demo_provenance()
