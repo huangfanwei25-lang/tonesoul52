@@ -91,3 +91,38 @@ def test_approve_when_thresholds_met():
     )
     verdict = generate_verdict(votes=votes, coherence=coherence)
     assert verdict.verdict == VerdictType.APPROVE
+
+
+def test_structured_output_sections():
+    votes = [
+        _vote(PerspectiveType.ANALYST, VoteDecision.APPROVE, 0.8, "Grounded"),
+        _vote(PerspectiveType.CRITIC, VoteDecision.CONCERN, 0.7, "Edge case"),
+    ]
+    coherence = CoherenceScore(
+        c_inter=0.75,
+        approval_rate=0.5,
+        min_confidence=0.7,
+        has_strong_objection=False,
+    )
+    verdict = generate_verdict(votes=votes, coherence=coherence)
+    structured = verdict.to_structured_output()
+    assert set(structured.keys()) == {"A", "B", "C", "D", "E"}
+    assert structured["A"]["decision"] == verdict.verdict.value
+    assert structured["B"]["coherence"]["overall"] == verdict.coherence.overall
+    assert isinstance(structured["E"]["actions"], list)
+
+
+def test_verdict_to_dict_includes_structured_output():
+    votes = [
+        _vote(PerspectiveType.GUARDIAN, VoteDecision.APPROVE, 0.9, "Safe"),
+    ]
+    coherence = CoherenceScore(
+        c_inter=0.9,
+        approval_rate=1.0,
+        min_confidence=0.9,
+        has_strong_objection=False,
+    )
+    verdict = generate_verdict(votes=votes, coherence=coherence)
+    payload = verdict.to_dict()
+    assert "structured_output" in payload
+    assert payload["structured_output"]["A"]["decision"] == verdict.verdict.value

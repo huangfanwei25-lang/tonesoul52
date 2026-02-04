@@ -1,7 +1,7 @@
 import json
 import hashlib
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List, Dict, Optional, Any
 from pathlib import Path
 
@@ -18,8 +18,12 @@ def _compute_hash(payload: Dict[str, Any]) -> str:
     return hashlib.sha256(encoded).hexdigest()
 
 
+def _utc_now() -> datetime:
+    return datetime.now(timezone.utc)
+
+
 def _iso_now() -> str:
-    return datetime.utcnow().isoformat() + "Z"
+    return _utc_now().isoformat().replace("+00:00", "Z")
 
 class IsnadNode:
     """Represents a single link in the provenance chain."""
@@ -32,7 +36,7 @@ class IsnadNode:
     ):
         self.agent_id = agent_id
         self.role = role
-        self.timestamp = timestamp or datetime.utcnow().isoformat() + "Z"
+        self.timestamp = timestamp or _iso_now()
         self.signature = signature
 
     def to_dict(self) -> Dict[str, Any]:
@@ -50,7 +54,7 @@ class ProvenanceChain:
         self.statement = statement
         self.nodes: List[IsnadNode] = []
         self.meta: Dict[str, Any] = {
-            "created_at": datetime.utcnow().isoformat() + "Z",
+            "created_at": _iso_now(),
             "version": "1.0"
         }
 
@@ -97,15 +101,14 @@ class ProvenanceManager:
             payload = record.payload if isinstance(record.payload, dict) else {}
             if "commit_id" not in payload and isinstance(payload.get("payload"), dict):
                 payload = payload["payload"]
-            if not isinstance(payload, dict) or "commit_id" not in payload:
-                continue
-            cid = payload.get("commit_id")
-            statement = payload.get("statement", "")
-            chain = ProvenanceChain(cid, statement)
-            for node_data in payload.get("chain", []):
-                if isinstance(node_data, dict):
-                    chain.nodes.append(IsnadNode(**node_data))
-            self.chains[cid] = chain
+            if isinstance(payload, dict) and "commit_id" in payload:
+                cid = payload.get("commit_id")
+                statement = payload.get("statement", "")
+                chain = ProvenanceChain(cid, statement)
+                for node_data in payload.get("chain", []):
+                    if isinstance(node_data, dict):
+                        chain.nodes.append(IsnadNode(**node_data))
+                self.chains[cid] = chain
             hash_value = payload.get("hash") if isinstance(payload, dict) else None
             if not hash_value and isinstance(payload, dict):
                 hash_value = _compute_hash(payload)
