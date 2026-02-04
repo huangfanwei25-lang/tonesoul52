@@ -44,6 +44,8 @@ memory/soul.db
 ledger.jsonl
 bridge_debug.log
 .conversion_checkpoint.json
+memory/provenance_ledger.jsonl
+memory/self_journal.jsonl
 
 # Moltbook Scripts (contains API keys - do not commit)
 .moltbook/
