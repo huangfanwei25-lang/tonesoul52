@@ -12,6 +12,7 @@ from tonesoul.vow_system import (
     VowAction,
     VowRegistry,
     VowEnforcer,
+    VowEnforcementResult,
     VowCheckResult,
 )
 
@@ -106,12 +107,12 @@ class TestVowRegistryProperties:
         # 註冊第一次
         for vow in vows:
             registry.register(vow)
-        count_after_first = len(registry.get_all())
+        count_after_first = len(registry.all_vows())
 
         # 再註冊一次（覆蓋）
         for vow in vows:
             registry.register(vow)
-        count_after_second = len(registry.get_all())
+        count_after_second = len(registry.all_vows())
 
         assert count_after_first == count_after_second
 
@@ -138,9 +139,9 @@ class TestVowRegistryProperties:
         for vow in vows:
             registry.register(vow)
 
-        initial_count = len(registry.get_all())
+        initial_count = len(registry.all_vows())
         registry.unregister(vows[0].id)
-        final_count = len(registry.get_all())
+        final_count = len(registry.all_vows())
 
         assert final_count == initial_count - 1
 
@@ -155,12 +156,11 @@ class TestVowEnforcerProperties:
         enforcer = VowEnforcer()
         result = enforcer.enforce(text)
 
-        assert isinstance(result, dict)
-        assert "allowed" in result
-        assert "action" in result
-        assert "violations" in result
-        assert isinstance(result["violations"], list)
-
+        # enforce() returns VowEnforcementResult object
+        assert isinstance(result, VowEnforcementResult)
+        assert isinstance(result.all_passed, bool)
+        assert isinstance(result.results, list)
+        assert isinstance(result.blocked, bool)
     @settings(max_examples=30)
     @given(st.text(min_size=1, max_size=500))
     def test_enforcer_determinism(self, text):
@@ -171,9 +171,10 @@ class TestVowEnforcerProperties:
         result1 = enforcer1.enforce(text)
         result2 = enforcer2.enforce(text)
 
-        assert result1["allowed"] == result2["allowed"]
-        assert result1["action"] == result2["action"]
-        assert len(result1["violations"]) == len(result2["violations"])
+        # VowEnforcementResult object properties
+        assert result1.all_passed == result2.all_passed
+        assert result1.blocked == result2.blocked
+        assert len(result1.results) == len(result2.results)
 
 
 class TestVowCheckResultProperties:
@@ -181,29 +182,32 @@ class TestVowCheckResultProperties:
 
     @settings(max_examples=50)
     @given(
-        st.booleans(),
-        st.floats(min_value=0.0, max_value=1.0),
-        st.one_of(st.none(), st.text(max_size=100)),
+        st.text(min_size=1, max_size=20),  # vow_id
+        st.booleans(),  # passed
+        st.floats(min_value=0.0, max_value=1.0),  # score
+        st.floats(min_value=0.0, max_value=1.0),  # threshold
     )
-    def test_check_result_score_bounds(self, passed, score, reason):
+    def test_check_result_score_bounds(self, vow_id, passed, score, threshold):
         """屬性: score 必須在 [0, 1] 範圍內"""
-        result = VowCheckResult(passed=passed, score=score, reason=reason)
+        result = VowCheckResult(vow_id=vow_id, passed=passed, score=score, threshold=threshold)
         assert 0.0 <= result.score <= 1.0
 
     @settings(max_examples=50)
     @given(
-        st.booleans(),
-        st.floats(min_value=0.0, max_value=1.0),
-        st.one_of(st.none(), st.text(max_size=100)),
+        st.text(min_size=1, max_size=20),  # vow_id
+        st.booleans(),  # passed
+        st.floats(min_value=0.0, max_value=1.0),  # score
+        st.floats(min_value=0.0, max_value=1.0),  # threshold
     )
-    def test_check_result_to_dict_roundtrip(self, passed, score, reason):
+    def test_check_result_to_dict_roundtrip(self, vow_id, passed, score, threshold):
         """屬性: VowCheckResult 序列化後反序列化應該相等"""
-        result = VowCheckResult(passed=passed, score=score, reason=reason)
+        result = VowCheckResult(vow_id=vow_id, passed=passed, score=score, threshold=threshold)
         result_dict = result.to_dict()
 
+        assert result_dict["vow_id"] == vow_id
         assert result_dict["passed"] == passed
         assert abs(result_dict["score"] - score) < 1e-6
-        assert result_dict["reason"] == reason
+        assert abs(result_dict["threshold"] - threshold) < 1e-6
 
 
 if __name__ == "__main__":

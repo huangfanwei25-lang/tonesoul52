@@ -72,7 +72,7 @@ jobs:
     
     - name: Check formatting with black
       run: |
-        black --check --diff tonesoul tests
+        black --check --diff --line-length 100 tonesoul tests
     
     - name: Lint with ruff
       run: |
