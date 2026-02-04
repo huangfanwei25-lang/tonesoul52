@@ -32,6 +32,7 @@ node_modules/
 # Database
 data/chromadb/
 *.sqlite3
+memory/soul.db
 
 # External Dependencies
 .external/
