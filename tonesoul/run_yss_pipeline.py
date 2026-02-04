@@ -18,12 +18,20 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument("--domain", help="Override domain.")
     parser.add_argument("--decision-mode", help="Override decision mode.")
     parser.add_argument("--skip-ystm", action="store_true", help="Skip YSTM demo generation.")
-    parser.add_argument("--ystm-export-png", action="store_true", help="Export YSTM PNGs if cairosvg is available.")
-    parser.add_argument("--ystm-png-scale", type=float, default=2.0, help="Scale factor for YSTM PNG export.")
+    parser.add_argument(
+        "--ystm-export-png", action="store_true", help="Export YSTM PNGs if cairosvg is available."
+    )
+    parser.add_argument(
+        "--ystm-png-scale", type=float, default=2.0, help="Scale factor for YSTM PNG export."
+    )
     parser.add_argument("--ystm-input", help="Optional YSTM segments JSON.")
-    parser.add_argument("--ystm-diff", help="Optional semantic_diff.json to attach to evidence/audit.")
+    parser.add_argument(
+        "--ystm-diff", help="Optional semantic_diff.json to attach to evidence/audit."
+    )
     parser.add_argument("--tech-trace-capture", help="Optional tech_trace capture JSON to attach.")
-    parser.add_argument("--tech-trace-normalize", help="Optional tech_trace normalized JSON to attach.")
+    parser.add_argument(
+        "--tech-trace-normalize", help="Optional tech_trace normalized JSON to attach."
+    )
     parser.add_argument("--intent-evidence", help="Optional intent evidence JSON for verification.")
     parser.add_argument(
         "--tech-trace-auto",
@@ -118,7 +126,9 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument("--skip-skill-promote", action="store_true", help="Skip skill promotion.")
     parser.add_argument("--skill-policy", help="Override memory promotion policy YAML.")
     parser.add_argument("--skip-skill-review", action="store_true", help="Skip auto skill review.")
-    parser.add_argument("--skip-auto-compact", action="store_true", help="Skip auto run compaction.")
+    parser.add_argument(
+        "--skip-auto-compact", action="store_true", help="Skip auto run compaction."
+    )
     parser.add_argument("--compact-max-runs", type=int, help="Override compaction max active runs.")
     parser.add_argument("--compact-keep-latest", type=int, help="Override compaction keep latest.")
     parser.add_argument("--embedding-dims", type=int, default=12)

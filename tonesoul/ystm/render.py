@@ -49,9 +49,7 @@ def render_svg(
         "</defs>",
     ]
 
-    svg_lines.append(
-        f'<rect x="0" y="0" width="{width}" height="{height}" fill="none" />'
-    )
+    svg_lines.append(f'<rect x="0" y="0" width="{width}" height="{height}" fill="none" />')
 
     field_to_x = field_to_x or {}
     if field_to_x:
@@ -102,9 +100,7 @@ def render_svg(
     svg_lines.append("</g>")
 
     if drift_segments is None:
-        drift_segments = [
-            (points[index - 1], points[index]) for index in range(1, len(points))
-        ]
+        drift_segments = [(points[index - 1], points[index]) for index in range(1, len(points))]
 
     svg_lines.append('<g class="drift-lines">')
     for (x0, y0), (x1, y1) in drift_segments:
@@ -210,9 +206,7 @@ def render_png(
             )
 
     if drift_segments is None:
-        drift_segments = [
-            (points[index - 1], points[index]) for index in range(1, len(points))
-        ]
+        drift_segments = [(points[index - 1], points[index]) for index in range(1, len(points))]
     drift_color = color("#ef6c00")
     for (x0, y0), (x1, y1) in drift_segments:
         px0, py0 = project(x0, y0)

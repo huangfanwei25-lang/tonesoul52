@@ -29,9 +29,7 @@ class PreOutputCouncil:
         ] = None,
         coherence_threshold: float = 0.6,
         block_threshold: float = 0.3,
-        perspective_config: Optional[
-            Dict[Union[PerspectiveType, str], Dict[str, Any]]
-        ] = None,
+        perspective_config: Optional[Dict[Union[PerspectiveType, str], Dict[str, Any]]] = None,
     ):
         self.perspectives = self._normalize_perspectives(
             perspectives,
@@ -39,6 +37,7 @@ class PreOutputCouncil:
         )
         self.coherence_threshold = coherence_threshold
         self.block_threshold = block_threshold
+
     def validate(
         self,
         draft_output: str,
@@ -71,13 +70,13 @@ class PreOutputCouncil:
         )
         # Selective self-memory: auto-record for meaningful decisions
         from .types import VerdictType
-        
+
         record_option = context.get("record_self_memory")
         should_auto_record = verdict.verdict in (
             VerdictType.BLOCK,
             VerdictType.DECLARE_STANCE,
         )
-        
+
         if record_option or should_auto_record:
             path = record_option if isinstance(record_option, (str, bytes)) else None
             try:
@@ -88,9 +87,7 @@ class PreOutputCouncil:
 
     def _default_perspectives(
         self,
-        perspective_config: Optional[
-            Dict[Union[PerspectiveType, str], Dict[str, Any]]
-        ] = None,
+        perspective_config: Optional[Dict[Union[PerspectiveType, str], Dict[str, Any]]] = None,
     ) -> List[IPerspective]:
         from .perspective_factory import PerspectiveFactory
 
@@ -108,9 +105,7 @@ class PreOutputCouncil:
                 str,
             ]
         ],
-        perspective_config: Optional[
-            Dict[Union[PerspectiveType, str], Dict[str, Any]]
-        ],
+        perspective_config: Optional[Dict[Union[PerspectiveType, str], Dict[str, Any]]],
     ) -> List[IPerspective]:
         from .perspective_factory import PerspectiveFactory
 

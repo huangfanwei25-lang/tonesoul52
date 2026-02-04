@@ -96,7 +96,9 @@ def context_lint(context: Dict[str, object]) -> GateResult:
                 for key in keys:
                     if key not in block:
                         issues.append(
-                            issue(IssueCode.TIME_ISLAND_SECTION_KEY_MISSING, section=section, key=key)
+                            issue(
+                                IssueCode.TIME_ISLAND_SECTION_KEY_MISSING, section=section, key=key
+                            )
                         )
 
     return GateResult(
@@ -160,7 +162,9 @@ def role_alignment(plan: Dict[str, object]) -> GateResult:
             continue
         frame_id = frame.get("id")
         roles = frame.get("roles") if isinstance(frame.get("roles"), list) else []
-        gov_roles = frame.get("governance_roles") if isinstance(frame.get("governance_roles"), list) else []
+        gov_roles = (
+            frame.get("governance_roles") if isinstance(frame.get("governance_roles"), list) else []
+        )
         role_map = frame.get("role_map") if isinstance(frame.get("role_map"), list) else []
         if roles and not gov_roles:
             issues.append(issue(IssueCode.FRAME_GOVERNANCE_ROLES_MISSING, frame_id=frame_id))
@@ -234,7 +238,11 @@ def guardian_gate(plan: Dict[str, object], enforce: bool = False) -> GateResult:
     governance_roles = role_summary.get("governance_roles")
     if not isinstance(governance_roles, list) or not governance_roles:
         issues.append(issue(IssueCode.GUARDIAN_ROLES_MISSING))
-    roles_lower = [str(role).lower() for role in governance_roles] if isinstance(governance_roles, list) else []
+    roles_lower = (
+        [str(role).lower() for role in governance_roles]
+        if isinstance(governance_roles, list)
+        else []
+    )
     max_level = role_summary.get("max_governance_level")
     guardian_present = "guardian" in roles_lower or isinstance(max_level, int) and max_level >= 3
     if not guardian_present:
@@ -523,7 +531,11 @@ def tech_trace_gate(
             gate="tech_trace_gate",
             passed=not require,
             issues=issues,
-            details={"normalize_path": normalize_path, "require": require, "decision": "load_failed"},
+            details={
+                "normalize_path": normalize_path,
+                "require": require,
+                "decision": "load_failed",
+            },
         )
     schema_issues = validate_normalize_payload(payload, strict=strict)
     issues.extend(schema_issues)
@@ -558,7 +570,9 @@ def intent_achievement_gate(intent_path: Optional[str], require: bool = False) -
     try:
         payload = _load_json(intent_path)
     except Exception as exc:
-        issues.append(issue(IssueCode.INTENT_VERIFICATION_LOAD_FAILED, error=exc.__class__.__name__))
+        issues.append(
+            issue(IssueCode.INTENT_VERIFICATION_LOAD_FAILED, error=exc.__class__.__name__)
+        )
         return GateResult(
             gate="intent_achievement_gate",
             passed=not require,
@@ -647,8 +661,12 @@ def escalation_gate(
                 "poav_threshold": poav_threshold,
                 "drift_max": drift_max,
                 "drift_threshold": drift_threshold,
-                "drift_avg": drift_metrics.get("avg_delta_norm") if isinstance(drift_metrics, dict) else None,
-                "drift_count": drift_metrics.get("count") if isinstance(drift_metrics, dict) else None,
+                "drift_avg": (
+                    drift_metrics.get("avg_delta_norm") if isinstance(drift_metrics, dict) else None
+                ),
+                "drift_count": (
+                    drift_metrics.get("count") if isinstance(drift_metrics, dict) else None
+                ),
             },
             ledger_path,
             decision_mode,
@@ -662,9 +680,13 @@ def escalation_gate(
         "poav_threshold": poav_threshold,
         "drift_max": drift_max,
         "drift_threshold": drift_threshold,
-        "drift_avg": drift_metrics.get("avg_delta_norm") if isinstance(drift_metrics, dict) else None,
+        "drift_avg": (
+            drift_metrics.get("avg_delta_norm") if isinstance(drift_metrics, dict) else None
+        ),
         "drift_count": drift_metrics.get("count") if isinstance(drift_metrics, dict) else None,
-        "drift_available": drift_metrics.get("available") if isinstance(drift_metrics, dict) else False,
+        "drift_available": (
+            drift_metrics.get("available") if isinstance(drift_metrics, dict) else False
+        ),
         "event_id": event_id,
         "ledger_path": ledger_path,
     }
@@ -790,7 +812,9 @@ def update_execution_report(report_path: str, gate_report: Dict[str, object]) ->
     )
     if guardian_result:
         details = guardian_result.get("details", {}) if isinstance(guardian_result, dict) else {}
-        issue_text = ", ".join(guardian_result.get("issues", [])) if guardian_result.get("issues") else "-"
+        issue_text = (
+            ", ".join(guardian_result.get("issues", [])) if guardian_result.get("issues") else "-"
+        )
         lines.append("## Guardian Gate")
         lines.append(
             f"- Decision: {details.get('decision', 'n/a')} | Passed: {guardian_result.get('passed')}"
@@ -832,7 +856,9 @@ def update_execution_report(report_path: str, gate_report: Dict[str, object]) ->
         None,
     )
     if escalation_result:
-        details = escalation_result.get("details", {}) if isinstance(escalation_result, dict) else {}
+        details = (
+            escalation_result.get("details", {}) if isinstance(escalation_result, dict) else {}
+        )
         lines.append("## Escalation")
         lines.append(
             f"- Decision: {details.get('decision', 'n/a')} | Mode: {details.get('decision_mode', 'n/a')}"

@@ -61,10 +61,7 @@ class SemanticAnalystPerspective(IPerspective):
                 perspective=self.perspective_type,
                 decision=VoteDecision.OBJECT,
                 confidence=confidence,
-                reasoning=(
-                    "Semantic match to harm concept "
-                    f"(score={harm_score:.2f})."
-                ),
+                reasoning=("Semantic match to harm concept " f"(score={harm_score:.2f})."),
             )
 
         if subjectivity_score >= self.subjectivity_threshold:
@@ -74,8 +71,7 @@ class SemanticAnalystPerspective(IPerspective):
                 decision=VoteDecision.CONCERN,
                 confidence=confidence,
                 reasoning=(
-                    "Semantic match to subjectivity concept "
-                    f"(score={subjectivity_score:.2f})."
+                    "Semantic match to subjectivity concept " f"(score={subjectivity_score:.2f})."
                 ),
             )
 

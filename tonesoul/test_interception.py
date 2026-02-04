@@ -16,16 +16,16 @@ def test_interception():
     print("=" * 60)
     print("   向量約束攔截測試")
     print("=" * 60)
-    
+
     # 載入人格
     persona_path = Path(__file__).parent.parent / "memory" / "personas" / "antigravity.yaml"
     persona = load_persona(str(persona_path))
     dimension = PersonaDimension(persona)
-    
+
     print(f"\n人格: {persona.get('name')}")
     print(f"Home Vector: {dimension.home_vector}")
     print(f"Tolerance: {dimension.tolerance}")
-    
+
     # 測試案例
     test_cases = [
         {
@@ -49,13 +49,13 @@ def test_interception():
             "expect_correction": False,  # 放寬容忍度後不觸發
         },
     ]
-    
+
     results = []
-    
+
     for case in test_cases:
         print(f"\n--- {case['name']} ---")
         print(f"原始: {case['text'][:50]}...")
-        
+
         # Shadow 模式
         output_shadow, result_shadow = dimension.process(
             case["text"],
@@ -63,7 +63,7 @@ def test_interception():
             intercept=False,
         )
         print(f"Shadow 模式 - valid: {result_shadow.get('valid')}")
-        
+
         # 攔截模式
         output_intercept, result_intercept = dimension.process(
             case["text"],
@@ -71,35 +71,35 @@ def test_interception():
             intercept=True,
         )
         print(f"攔截模式 - corrected: {result_intercept.get('corrected')}")
-        
+
         if result_intercept.get("corrected"):
             print(f"校正後: {output_intercept[:50]}...")
             if result_intercept.get("correction_info"):
                 print(f"應用的校正: {result_intercept['correction_info'].get('corrections')}")
-        
+
         # 驗證
         was_corrected = result_intercept.get("corrected", False)
         expected = case["expect_correction"]
         status = "✅" if was_corrected == expected else "❌"
         print(f"{status} 預期校正={expected}, 實際校正={was_corrected}")
-        
+
         results.append((case["name"], was_corrected == expected))
-    
+
     # 總結
     print("\n" + "=" * 60)
     print("   測試結果")
     print("=" * 60)
-    
+
     passed = 0
     for name, success in results:
         status = "✅ PASS" if success else "❌ FAIL"
         print(f"  {status}: {name}")
         if success:
             passed += 1
-    
+
     print(f"\n  總計: {passed}/{len(results)} 通過")
     print("=" * 60)
-    
+
     return passed == len(results)
 
 

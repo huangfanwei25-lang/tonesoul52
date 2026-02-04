@@ -10,9 +10,21 @@ REPORTS_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "rep
 SOURCES = [
     os.path.join(WORKSPACE_ROOT, "body", "persona_stack.py"),
     os.path.join(WORKSPACE_ROOT, "body", "persona_library.py"),
-    os.path.join(WORKSPACE_ROOT, "archive", "舊檔案", "有價值_可整合", "語魂初", "模組", "persona_list.json"),
-    os.path.join(WORKSPACE_ROOT, "archive", "舊檔案", "有價值_可整合", "語魂初", "模組", "tone_data.json"),
-    os.path.join(WORKSPACE_ROOT, "archive", "舊檔案", "有價值_可整合", "語魂初", "模組", "tonal_chain_config.json"),
+    os.path.join(
+        WORKSPACE_ROOT, "archive", "舊檔案", "有價值_可整合", "語魂初", "模組", "persona_list.json"
+    ),
+    os.path.join(
+        WORKSPACE_ROOT, "archive", "舊檔案", "有價值_可整合", "語魂初", "模組", "tone_data.json"
+    ),
+    os.path.join(
+        WORKSPACE_ROOT,
+        "archive",
+        "舊檔案",
+        "有價值_可整合",
+        "語魂初",
+        "模組",
+        "tonal_chain_config.json",
+    ),
 ]
 
 ROLE_HINTS = {
@@ -70,12 +82,14 @@ def build_registry() -> List[Dict[str, str]]:
             if key in seen:
                 continue
             seen.add(key)
-            registry.append({
-                "name": name,
-                "source": path,
-                "role": ROLE_HINTS.get(name, "unknown"),
-                "notes": "encoding_suspect" if encoding_issue else "auto-extracted",
-            })
+            registry.append(
+                {
+                    "name": name,
+                    "source": path,
+                    "role": ROLE_HINTS.get(name, "unknown"),
+                    "notes": "encoding_suspect" if encoding_issue else "auto-extracted",
+                }
+            )
     return registry
 
 

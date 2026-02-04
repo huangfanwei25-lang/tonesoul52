@@ -198,9 +198,7 @@ class Orchestrator:
             reason = "Health thresholds triggered."
             if axiom_hits:
                 axiom_names = [
-                    a.get("name") or a.get("name_zh")
-                    for a in axiom_hits
-                    if isinstance(a, dict)
+                    a.get("name") or a.get("name_zh") for a in axiom_hits if isinstance(a, dict)
                 ]
                 reason = f"Intent touches AXIOMS: {axiom_names}"
             packet = self.handoff_builder.build(

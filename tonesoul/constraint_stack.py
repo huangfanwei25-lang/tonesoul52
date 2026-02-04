@@ -23,8 +23,12 @@ def _load_constraints_template(path: str) -> str:
 
 
 def _merge_constraints(context: Dict[str, object]) -> List[str]:
-    constraints = context.get("constraints", []) if isinstance(context.get("constraints"), list) else []
-    assumptions = context.get("assumptions", []) if isinstance(context.get("assumptions"), list) else []
+    constraints = (
+        context.get("constraints", []) if isinstance(context.get("constraints"), list) else []
+    )
+    assumptions = (
+        context.get("assumptions", []) if isinstance(context.get("assumptions"), list) else []
+    )
     merged = ["Context constraints:"] + [f"- {item}" for item in constraints]
     merged.append("")
     merged.append("Assumptions:")
@@ -110,7 +114,9 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--template",
         default=os.path.abspath(
-            os.path.join(os.path.dirname(__file__), "..", "spec", "constraints", "constraints_template.md")
+            os.path.join(
+                os.path.dirname(__file__), "..", "spec", "constraints", "constraints_template.md"
+            )
         ),
         help="Constraint template path.",
     )

@@ -29,21 +29,17 @@ class MemoryRecord:
 
 
 class SoulDB(Protocol):
-    def append(self, source: MemorySource, payload: Dict[str, object]) -> str:
-        ...
+    def append(self, source: MemorySource, payload: Dict[str, object]) -> str: ...
 
     def query(
         self, source: MemorySource, limit: Optional[int] = None
-    ) -> Iterable[MemoryRecord]:
-        ...
+    ) -> Iterable[MemoryRecord]: ...
 
     def stream(
         self, source: MemorySource, limit: Optional[int] = None
-    ) -> Iterable[MemoryRecord]:
-        ...
+    ) -> Iterable[MemoryRecord]: ...
 
-    def list_sources(self) -> List[MemorySource]:
-        ...
+    def list_sources(self) -> List[MemorySource]: ...
 
 
 def _iso_now() -> str:
@@ -98,14 +94,10 @@ class JsonlSoulDB:
             handle.write(json.dumps(record, ensure_ascii=False) + "\n")
         return record_id
 
-    def query(
-        self, source: MemorySource, limit: Optional[int] = None
-    ) -> Iterable[MemoryRecord]:
+    def query(self, source: MemorySource, limit: Optional[int] = None) -> Iterable[MemoryRecord]:
         return self.stream(source, limit=limit)
 
-    def stream(
-        self, source: MemorySource, limit: Optional[int] = None
-    ) -> Iterable[MemoryRecord]:
+    def stream(self, source: MemorySource, limit: Optional[int] = None) -> Iterable[MemoryRecord]:
         path = self._resolve_path(source)
         if not path.exists():
             return []
@@ -199,15 +191,9 @@ class SqliteSoulDB:
             )
             """
         )
-        cursor.execute(
-            "CREATE INDEX IF NOT EXISTS idx_memories_source ON memories(source)"
-        )
-        cursor.execute(
-            "CREATE INDEX IF NOT EXISTS idx_memories_timestamp ON memories(timestamp)"
-        )
-        cursor.execute(
-            "CREATE INDEX IF NOT EXISTS idx_isnad_timestamp ON isnad(timestamp)"
-        )
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_memories_source ON memories(source)")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_memories_timestamp ON memories(timestamp)")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_isnad_timestamp ON isnad(timestamp)")
         cursor.execute(
             """
             CREATE TABLE IF NOT EXISTS action_logs (
@@ -223,9 +209,7 @@ class SqliteSoulDB:
             )
             """
         )
-        cursor.execute(
-            "CREATE INDEX IF NOT EXISTS idx_action_logs_type ON action_logs(type)"
-        )
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_action_logs_type ON action_logs(type)")
         cursor.execute(
             "CREATE INDEX IF NOT EXISTS idx_action_logs_timestamp ON action_logs(timestamp)"
         )
@@ -310,14 +294,10 @@ class SqliteSoulDB:
         conn.close()
         return record_id
 
-    def query(
-        self, source: MemorySource, limit: Optional[int] = None
-    ) -> Iterable[MemoryRecord]:
+    def query(self, source: MemorySource, limit: Optional[int] = None) -> Iterable[MemoryRecord]:
         return self.stream(source, limit=limit)
 
-    def stream(
-        self, source: MemorySource, limit: Optional[int] = None
-    ) -> Iterable[MemoryRecord]:
+    def stream(self, source: MemorySource, limit: Optional[int] = None) -> Iterable[MemoryRecord]:
         if source == MemorySource.PROVENANCE_LEDGER:
             return self._stream_isnad(limit)
         return self._stream_memories(source, limit)

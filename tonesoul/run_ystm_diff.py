@@ -23,7 +23,9 @@ def build_arg_parser() -> argparse.ArgumentParser:
         default="C",
         help="Evidence grade for the semantic diff.",
     )
-    parser.add_argument("--source-patch-id", default=None, help="Optional source patch id for the diff.")
+    parser.add_argument(
+        "--source-patch-id", default=None, help="Optional source patch id for the diff."
+    )
     parser.add_argument(
         "--trace-level",
         choices=["standard", "full"],

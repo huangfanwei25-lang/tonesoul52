@@ -2,7 +2,9 @@ from tonesoul.council.coherence import compute_coherence, _agreement_score
 from tonesoul.council.types import PerspectiveType, PerspectiveVote, VoteDecision
 
 
-def _vote(perspective: PerspectiveType, decision: VoteDecision, confidence: float = 0.8) -> PerspectiveVote:
+def _vote(
+    perspective: PerspectiveType, decision: VoteDecision, confidence: float = 0.8
+) -> PerspectiveVote:
     return PerspectiveVote(
         perspective=perspective,
         decision=decision,

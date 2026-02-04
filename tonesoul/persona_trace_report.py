@@ -51,7 +51,9 @@ def _trace_stats(entries: List[Dict[str, object]]) -> Dict[str, object]:
             delta_lengths.append(delta_len)
 
         shadow = entry.get("shadow") if isinstance(entry.get("shadow"), dict) else {}
-        distance = shadow.get("vector_distance") if isinstance(shadow.get("vector_distance"), dict) else {}
+        distance = (
+            shadow.get("vector_distance") if isinstance(shadow.get("vector_distance"), dict) else {}
+        )
         mean_value = distance.get("mean")
         max_value = distance.get("max")
         if isinstance(mean_value, (int, float)):
@@ -130,7 +132,9 @@ def main() -> Dict[str, object]:
     parser = build_arg_parser()
     args = parser.parse_args()
     trace_path = args.trace or _default_path(os.path.join("memory", "persona_trace.jsonl"))
-    dimension_path = args.dimension or _default_path(os.path.join("memory", "persona_dimension_ledger.jsonl"))
+    dimension_path = args.dimension or _default_path(
+        os.path.join("memory", "persona_dimension_ledger.jsonl")
+    )
 
     report = build_report(load_jsonl(trace_path), load_jsonl(dimension_path))
     if args.output:

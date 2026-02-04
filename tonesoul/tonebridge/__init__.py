@@ -27,6 +27,7 @@ from .personas import (
     build_navigation_prompt,
     NavigatorResponse,
 )
+
 # Third Axiom - Self Commit System
 from .self_commit import (
     SelfCommit,
@@ -44,17 +45,20 @@ from .value_accumulator import (
     CorrectionEvent,
     EmergentValue,
 )
+
 # Session Intelligence
 from .session_reporter import (
     SessionReporter,
     SessionSummary,
     TurningPoint,
 )
+
 # Enhanced Commitment Extraction (NLP)
 from .commitment_extractor import (
     CommitmentExtractor,
     CommitmentStructure,
 )
+
 # Entropy Engine (Self-Observing AI)
 from .entropy_engine import (
     EntropyEngine,
@@ -103,4 +107,3 @@ __all__ = [
     "CommitmentExtractor",
     "CommitmentStructure",
 ]
-

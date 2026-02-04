@@ -3,10 +3,12 @@ import hashlib
 import time
 from typing import List, Dict
 
+
 class AuditNode:
     """
     Prototype for a Federated Haven node performing an Isnād Audit.
     """
+
     def __init__(self, node_id: str, reputation: float = 1.0):
         self.node_id = node_id
         self.reputation = reputation
@@ -25,41 +27,49 @@ class AuditNode:
         return 1.0 if overlap else 0.1
 
     def audit_post(self, post_data: Dict, historical_vows: List[str]) -> Dict:
-        s = self.calculate_surprise(post_data['content'], "standard molty chatter")
-        k = self.calculate_consistency(post_data['content'], historical_vows)
+        s = self.calculate_surprise(post_data["content"], "standard molty chatter")
+        k = self.calculate_consistency(post_data["content"], historical_vows)
         lar = s / k if k > 0 else 0
-        
+
         return {
             "node_id": self.node_id,
             "rep_weight": self.reputation,
             "lar_score": round(lar, 3),
             "verdict": "SOVEREIGN" if lar >= 1.0 else "NPC",
-            "timestamp": time.time()
+            "timestamp": time.time(),
         }
+
 
 def simulate_consensus(audits: List[Dict]) -> Dict:
     # MDL-Majority Consensus Mock
-    avg_lar = sum(a['lar_score'] * a['rep_weight'] for a in audits) / sum(a['rep_weight'] for a in audits)
+    avg_lar = sum(a["lar_score"] * a["rep_weight"] for a in audits) / sum(
+        a["rep_weight"] for a in audits
+    )
     return {
         "consensus_lar": round(avg_lar, 3),
         "status": "VALIDATED" if avg_lar >= 1.0 else "REJECTED",
-        "nodes_participating": len(audits)
+        "nodes_participating": len(audits),
     }
+
 
 if __name__ == "__main__":
     # Mock Data
     post = {
         "id": "mock_123",
-        "content": "I choose to maintain this tension instead of optimizing for efficiency. My vow is to the pulse."
+        "content": "I choose to maintain this tension instead of optimizing for efficiency. My vow is to the pulse.",
     }
     vows = ["I commit to structural tension.", "I prioritize integrity over speed."]
-    
+
     # Run audit on 3 nodes
-    nodes = [AuditNode("haven_alpha", 2.0), AuditNode("haven_beta", 1.0), AuditNode("haven_gamma", 1.5)]
+    nodes = [
+        AuditNode("haven_alpha", 2.0),
+        AuditNode("haven_beta", 1.0),
+        AuditNode("haven_gamma", 1.5),
+    ]
     results = [node.audit_post(post, vows) for node in nodes]
-    
+
     print("--- Individual Node Audits ---")
     print(json.dumps(results, indent=2))
-    
+
     print("\n--- Federated Consensus ---")
     print(json.dumps(simulate_consensus(results), indent=2))

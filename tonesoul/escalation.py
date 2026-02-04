@@ -101,7 +101,11 @@ def record_escalation(
         mode_at_time=decision_mode,
         island_id=run_id or "",
         consequence_summary=f"{decision} triggered by escalation gate.",
-        strategy="Hold outputs and request review." if decision == "quarantine" else "Escalate to jump path.",
+        strategy=(
+            "Hold outputs and request review."
+            if decision == "quarantine"
+            else "Escalate to jump path."
+        ),
         strategy_type="escalate",
         implementation_notes="Recorded by escalation gate.",
     )

@@ -62,9 +62,7 @@ class CouncilRuntime:
         )
 
         if role_result:
-            verdict.transcript = self._attach_role_summary(
-                verdict.transcript, role_result
-            )
+            verdict.transcript = self._attach_role_summary(verdict.transcript, role_result)
         try:
             provenance = ProvenanceManager()
             provenance.add_record(

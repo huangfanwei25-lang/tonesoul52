@@ -8,6 +8,7 @@
 """
 
 import sys
+
 sys.path.insert(0, ".")
 
 from datetime import datetime
@@ -25,22 +26,22 @@ from tools.handoff_builder import (
 
 def create_live_handoff():
     """建立真實的交接包"""
-    
+
     print("=" * 60)
     print("🔄 Antigravity → Codex 實際交接測試")
     print("=" * 60)
     print()
-    
+
     # 模擬 quota 即將用盡
     monitor = HealthMonitor()
     monitor.update_quota(0.05)  # 5% 剩餘
-    
+
     orchestrator = Orchestrator(
         source_model="antigravity",
         target_model="codex",
         health_monitor=monitor,
     )
-    
+
     # 當前語場狀態
     context = ContextSummary(
         user_goal="設計 AI 治理框架 + 多模型調度器",
@@ -58,27 +59,20 @@ def create_live_handoff():
             "memory/external_framework_analysis/claw_governance_insight.md",
         ],
     )
-    
+
     # 當前相態
-    phase = Phase(
-        current="漩",
-        reason="深度討論中，多重思緒交織"
-    )
-    
+    phase = Phase(current="漩", reason="深度討論中，多重思緒交織")
+
     # 未完成任務
     pending_tasks = [
         PendingTask(
-            id="task_001",
-            description="驗證 Antigravity ↔ Codex 實際切換",
-            status="in_progress"
+            id="task_001", description="驗證 Antigravity ↔ Codex 實際切換", status="in_progress"
         ),
         PendingTask(
-            id="task_002", 
-            description="整合 MemoryObserver 到 Orchestrator",
-            status="pending"
+            id="task_002", description="整合 MemoryObserver 到 Orchestrator", status="pending"
         ),
     ]
-    
+
     # 偏移記錄
     drift_log = [
         DriftEntry(
@@ -94,7 +88,7 @@ def create_live_handoff():
             away_from="遺忘",
         ),
     ]
-    
+
     # 執行交接
     result = orchestrator.handle_request(
         "測試交接",
@@ -103,19 +97,19 @@ def create_live_handoff():
         pending_tasks=pending_tasks,
         drift_log=drift_log,
     )
-    
+
     print(f"📊 切換狀態: {result['status']}")
     print(f"📦 交接包: {result['handoff_packet']}")
     print()
-    
+
     # 產生給 Codex 的 prompt
-    codex_prompt = generate_codex_prompt(result['handoff_packet'])
-    
+    codex_prompt = generate_codex_prompt(result["handoff_packet"])
+
     # 儲存 prompt
     prompt_path = Path("memory/handoff/codex_prompt.md")
     prompt_path.parent.mkdir(parents=True, exist_ok=True)
     prompt_path.write_text(codex_prompt, encoding="utf-8")
-    
+
     print(f"📝 Codex Prompt 已儲存: {prompt_path}")
     print()
     print("=" * 60)
@@ -123,13 +117,13 @@ def create_live_handoff():
     print("=" * 60)
     print()
     print(codex_prompt)
-    
+
     return result
 
 
 def generate_codex_prompt(handoff_path: str) -> str:
     """產生給 Codex 的 prompt"""
-    
+
     return f"""# 語場繼承 Handoff
 
 你正在接手一個來自 Antigravity 的工作階段。

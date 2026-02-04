@@ -279,7 +279,9 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument("--ystm-terrain-p2-svg", help="Optional path to terrain_p2.svg.")
     parser.add_argument("--ystm-terrain-p2-png", help="Optional path to terrain_p2.png.")
     parser.add_argument("--tech-trace-capture", help="Optional path to tech_trace capture JSON.")
-    parser.add_argument("--tech-trace-normalize", help="Optional path to tech_trace normalized JSON.")
+    parser.add_argument(
+        "--tech-trace-normalize", help="Optional path to tech_trace normalized JSON."
+    )
     parser.add_argument("--intent-verification", help="Optional path to intent_verification.json.")
     parser.add_argument("--skills-applied", help="Optional path to skills_applied.json.")
     parser.add_argument("--reflection", help="Optional path to reflection.json.")

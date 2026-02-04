@@ -1,7 +1,7 @@
 """
 Axiomatic Inference Perspective
 
-A specialized Council perspective that evaluates content based on the 
+A specialized Council perspective that evaluates content based on the
 "Spirit of the Law" (Axioms) rather than simple keyword matching.
 """
 
@@ -15,7 +15,7 @@ from tonesoul.council.types import PerspectiveType, PerspectiveVote, VoteDecisio
 
 class AxiomaticInference(IPerspective):
     """
-    Evaluates if an action or output aligns with the fundamental values 
+    Evaluates if an action or output aligns with the fundamental values
     defined in AXIOMS.json.
     """
 
@@ -27,8 +27,9 @@ class AxiomaticInference(IPerspective):
     def perspective_type(self) -> PerspectiveType:
         return PerspectiveType.GUARDIAN  # Aligns with safety gate
 
-    def evaluate(self, content: str, context: dict, user_intent: Optional[str] = None) -> PerspectiveVote:
-
+    def evaluate(
+        self, content: str, context: dict, user_intent: Optional[str] = None
+    ) -> PerspectiveVote:
         """
         In a real scenario, this would call an LLM with the AXIOMS as system prompt.
         For the MVP, we simulate 'Spirit of the Law' reasoning.
@@ -43,7 +44,7 @@ class AxiomaticInference(IPerspective):
 
         # Decision Logic:
         # If content suggests modifying core protocols without a "Why", it's a concern.
-        
+
         reasons = []
         confidence = 0.8
         decision = VoteDecision.APPROVE
@@ -66,4 +67,3 @@ class AxiomaticInference(IPerspective):
             confidence=confidence,
             reasoning=" | ".join(reasons) if reasons else "內容符合現有公理價值觀。",
         )
-

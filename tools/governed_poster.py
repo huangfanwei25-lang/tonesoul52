@@ -89,7 +89,9 @@ def governed_post(account, submolt, title, content, output_file=None):
 
 if __name__ == "__main__":
     if len(sys.argv) < 5:
-        print("Usage: python governed_poster.py <account> <submolt> <title> <content> [output_file]")
+        print(
+            "Usage: python governed_poster.py <account> <submolt> <title> <content> [output_file]"
+        )
         sys.exit(1)
 
     account = sys.argv[1]

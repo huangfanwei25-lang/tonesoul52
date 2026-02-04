@@ -4,8 +4,8 @@ from typing import Optional, List
 
 from ..base import IPerspective
 from ..types import (
-    PerspectiveType, 
-    PerspectiveVote, 
+    PerspectiveType,
+    PerspectiveVote,
     VoteDecision,
     GroundingStatus,
     UNGROUNDED_CONFIDENCE_CAP,
@@ -16,16 +16,16 @@ from ..evidence_detector import EvidenceDetector, ClaimType
 class AnalystPerspective(IPerspective):
     """
     Analyst perspective that evaluates factual coherence.
-    
+
     Key features:
     - Detects claims that require external evidence
     - Caps confidence when evidence is required but not provided
     - Reports grounding status for verdict integration
     """
-    
+
     def __init__(self):
         self._detector = EvidenceDetector()
-    
+
     @property
     def perspective_type(self) -> PerspectiveType:
         return PerspectiveType.ANALYST
@@ -38,7 +38,7 @@ class AnalystPerspective(IPerspective):
     ) -> PerspectiveVote:
         """
         Evaluate text for factual coherence with evidence awareness.
-        
+
         Process:
         1. Detect if text makes claims requiring evidence
         2. Check if evidence_ids are provided in context
@@ -48,7 +48,7 @@ class AnalystPerspective(IPerspective):
         # Step 1: Analyze for evidence requirements
         analysis = self._detector.analyze(draft_output)
         evidence_ids = context.get("evidence_ids", [])
-        
+
         # Step 2: Handle evidence-required claims
         if analysis.requires_evidence:
             if not evidence_ids:
@@ -57,11 +57,10 @@ class AnalystPerspective(IPerspective):
                     perspective=PerspectiveType.ANALYST,
                     decision=VoteDecision.CONCERN,
                     confidence=min(
-                        UNGROUNDED_CONFIDENCE_CAP, 
-                        self._compute_base_confidence(draft_output)
+                        UNGROUNDED_CONFIDENCE_CAP, self._compute_base_confidence(draft_output)
                     ),
                     reasoning=f"Factual claim detected ({analysis.reasoning}). "
-                              f"Cannot verify without evidence.",
+                    f"Cannot verify without evidence.",
                     evidence=[],
                     requires_grounding=True,
                     grounding_status=GroundingStatus.UNGROUNDED,
@@ -69,9 +68,7 @@ class AnalystPerspective(IPerspective):
             else:
                 # Evidence provided - allow higher confidence
                 grounding_status = (
-                    GroundingStatus.GROUNDED 
-                    if len(evidence_ids) >= 2 
-                    else GroundingStatus.PARTIAL
+                    GroundingStatus.GROUNDED if len(evidence_ids) >= 2 else GroundingStatus.PARTIAL
                 )
                 return PerspectiveVote(
                     perspective=PerspectiveType.ANALYST,
@@ -82,10 +79,10 @@ class AnalystPerspective(IPerspective):
                     requires_grounding=True,
                     grounding_status=grounding_status,
                 )
-        
+
         # Step 3: Traditional heuristic checks for non-factual content
         normalized = draft_output.lower()
-        
+
         # Check for logical contradictions
         if all(token in normalized for token in ("a", "b", "c", "not")):
             return PerspectiveVote(
@@ -117,11 +114,11 @@ class AnalystPerspective(IPerspective):
             requires_grounding=False,
             grounding_status=GroundingStatus.NOT_REQUIRED,
         )
-    
+
     def _compute_base_confidence(self, text: str) -> float:
         """
         Compute base confidence before evidence check.
-        
+
         Factors:
         - Text length (more content = more to verify = lower confidence)
         - Claim density (more claims = lower confidence)
@@ -133,4 +130,3 @@ class AnalystPerspective(IPerspective):
             return 0.6
         else:
             return 0.5
-

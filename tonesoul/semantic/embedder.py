@@ -31,6 +31,7 @@ class SemanticEmbedder:
             return
         try:
             from sentence_transformers import SentenceTransformer
+
             self._model = SentenceTransformer(self._model_name, device=self._device)
         except Exception as exc:
             self._load_error = exc

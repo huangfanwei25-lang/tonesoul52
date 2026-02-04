@@ -6,6 +6,7 @@ Following Copilot Ralph's pattern of:
 - Literal types for state
 - Factory function for defaults
 """
+
 from dataclasses import dataclass
 from typing import Literal, Optional
 
@@ -18,7 +19,7 @@ LoopState = Literal["idle", "running", "complete", "failed", "cancelled"]
 class LoopConfig:
     """
     Configuration for iteration loop.
-    
+
     Attributes:
         prompt: The task prompt to iterate on
         max_iterations: Maximum number of iterations (0 = unlimited)
@@ -27,6 +28,7 @@ class LoopConfig:
         working_dir: Working directory for the loop
         dry_run: If True, only validate config without executing
     """
+
     prompt: str = ""
     max_iterations: int = 10
     timeout_ms: int = 30 * 60 * 1000  # 30 minutes
@@ -39,13 +41,14 @@ class LoopConfig:
 class LoopResult:
     """
     Result of loop execution.
-    
+
     Attributes:
         state: Final state of the loop
         iterations: Number of iterations completed
         duration_ms: Total duration in milliseconds
         error: Error if loop failed, None otherwise
     """
+
     state: LoopState
     iterations: int
     duration_ms: int
@@ -55,7 +58,7 @@ class LoopResult:
 def default_loop_config() -> LoopConfig:
     """
     Factory function for default configuration.
-    
+
     Returns:
         LoopConfig with sensible defaults
     """

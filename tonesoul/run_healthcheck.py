@@ -36,9 +36,7 @@ def _latest_seed_path(memory_root: str) -> Optional[str]:
     if not os.path.isdir(seeds_dir):
         return None
     candidates = [
-        os.path.join(seeds_dir, name)
-        for name in os.listdir(seeds_dir)
-        if name.endswith(".json")
+        os.path.join(seeds_dir, name) for name in os.listdir(seeds_dir) if name.endswith(".json")
     ]
     if not candidates:
         return None
@@ -93,7 +91,9 @@ def _coverage_alert() -> Dict[str, object]:
             "warn": False,
         }
     entries = _load_ledger(ledger_path)
-    values = [value for value in (_extract_coverage(entry) for entry in entries) if value is not None]
+    values = [
+        value for value in (_extract_coverage(entry) for entry in entries) if value is not None
+    ]
     below_full = sum(1 for value in values if value < 1.0)
     average = sum(values) / len(values) if values else None
     minimum = min(values) if values else None

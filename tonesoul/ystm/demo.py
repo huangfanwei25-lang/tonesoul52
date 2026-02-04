@@ -10,7 +10,13 @@ from .projection import compute_pca_positions
 from .render import render_html, render_png, render_svg
 from .representation import EmbeddingConfig, build_nodes
 from .schema import Node, as_clean_dict, utc_now
-from .terrain import TerrainConfig, build_levels, compute_plane_positions, kde_grid, marching_squares
+from .terrain import (
+    TerrainConfig,
+    build_levels,
+    compute_plane_positions,
+    kde_grid,
+    marching_squares,
+)
 
 
 DEFAULT_SEGMENTS = [

@@ -16,9 +16,7 @@ def _make_tmp_dir() -> Path:
 
 def _build_db(tmp_dir: Path) -> JsonlSoulDB:
     ledger_path = tmp_dir / "provenance_ledger.jsonl"
-    return JsonlSoulDB(
-        source_map={MemorySource.PROVENANCE_LEDGER: ledger_path}
-    )
+    return JsonlSoulDB(source_map={MemorySource.PROVENANCE_LEDGER: ledger_path})
 
 
 def test_provenance_hash_chain():

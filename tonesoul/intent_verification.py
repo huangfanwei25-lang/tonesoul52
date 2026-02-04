@@ -76,7 +76,11 @@ class EvidenceCollector:
             return Evidence()
 
         before = payload.get("before_screenshot") or payload.get("before")
-        after = payload.get("after_screenshot") or payload.get("after") or payload.get("screenshot_path")
+        after = (
+            payload.get("after_screenshot")
+            or payload.get("after")
+            or payload.get("screenshot_path")
+        )
         diff_score = payload.get("diff_score")
         if diff_score is None:
             diff_detected = payload.get("diff_detected")

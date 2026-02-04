@@ -26,13 +26,13 @@ def _list_skill_paths(memory_root: str) -> List[str]:
     if not os.path.isdir(skills_dir):
         return []
     return sorted(
-        os.path.join(skills_dir, name)
-        for name in os.listdir(skills_dir)
-        if name.endswith(".json")
+        os.path.join(skills_dir, name) for name in os.listdir(skills_dir) if name.endswith(".json")
     )
 
 
-def load_skills(memory_root: Optional[str] = None, status: str = "approved") -> List[Dict[str, object]]:
+def load_skills(
+    memory_root: Optional[str] = None, status: str = "approved"
+) -> List[Dict[str, object]]:
     memory_root = memory_root or _default_memory_root()
     skills = []
     for path in _list_skill_paths(memory_root):
@@ -43,9 +43,13 @@ def load_skills(memory_root: Optional[str] = None, status: str = "approved") -> 
     return skills
 
 
-def build_context_key(context: Dict[str, object], frame_plan: Optional[Dict[str, object]]) -> Dict[str, object]:
+def build_context_key(
+    context: Dict[str, object], frame_plan: Optional[Dict[str, object]]
+) -> Dict[str, object]:
     context_block = context.get("context", {}) if isinstance(context.get("context"), dict) else {}
-    time_island = context.get("time_island", {}) if isinstance(context.get("time_island"), dict) else {}
+    time_island = (
+        context.get("time_island", {}) if isinstance(context.get("time_island"), dict) else {}
+    )
     kairos = time_island.get("kairos", {}) if isinstance(time_island, dict) else {}
     frame_ids = []
     if frame_plan and isinstance(frame_plan.get("selected_frames"), list):
@@ -114,7 +118,9 @@ def _trigger_summary(
             strength = float(strength)
         except (TypeError, ValueError):
             strength = 0.0
-        matched = _keyword_matches([item for item in keywords if isinstance(item, str)], context_text)
+        matched = _keyword_matches(
+            [item for item in keywords if isinstance(item, str)], context_text
+        )
         summary.append(
             {
                 "id": well.get("id"),
@@ -189,7 +195,11 @@ def apply_skills(
     directives: Dict[str, bool] = {"force_gates": False, "require_evidence": False}
     constraints_append: List[str] = []
     for skill in load_skills(memory_root):
-        policy = skill.get("policy_template", {}) if isinstance(skill.get("policy_template"), dict) else {}
+        policy = (
+            skill.get("policy_template", {})
+            if isinstance(skill.get("policy_template"), dict)
+            else {}
+        )
         when = policy.get("when", {}) if isinstance(policy.get("when"), dict) else {}
         has_when = bool(when)
         if has_when and not _matches_when(when, context_key):
@@ -197,7 +207,9 @@ def apply_skills(
         if not has_when and not allow_trigger_only:
             continue
         action = policy.get("do")
-        gravity_wells = skill.get("gravity_wells", []) if isinstance(skill.get("gravity_wells"), list) else []
+        gravity_wells = (
+            skill.get("gravity_wells", []) if isinstance(skill.get("gravity_wells"), list) else []
+        )
         action_wells = [
             well
             for well in gravity_wells

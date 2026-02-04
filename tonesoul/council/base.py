@@ -9,8 +9,7 @@ from .types import PerspectiveType, PerspectiveVote
 class IPerspective(ABC):
     @property
     @abstractmethod
-    def perspective_type(self) -> Union[PerspectiveType, str]:
-        ...
+    def perspective_type(self) -> Union[PerspectiveType, str]: ...
 
     @abstractmethod
     def evaluate(
@@ -18,5 +17,4 @@ class IPerspective(ABC):
         draft_output: str,
         context: dict,
         user_intent: Optional[str] = None,
-    ) -> PerspectiveVote:
-        ...
+    ) -> PerspectiveVote: ...

@@ -24,7 +24,13 @@ from .skill_gate import list_skill_paths, review_skills
 from .skill_promoter import promote_skills
 from .tech_trace.capture import capture_record
 from .tech_trace.normalize import normalize_record
-from .tsr_metrics import build_tsr_metrics, latest_entry, load_index, update_index, write_tsr_metrics
+from .tsr_metrics import (
+    build_tsr_metrics,
+    latest_entry,
+    load_index,
+    update_index,
+    write_tsr_metrics,
+)
 from .ystm.demo import DEFAULT_SEGMENTS, DemoConfig, write_demo_outputs
 from .ystm.energy import EnergyConfig
 from .ystm.ingest import load_segments, normalize_segments
@@ -390,7 +396,11 @@ def _auto_generate_tech_trace(
 ) -> Tuple[Optional[str], Optional[str]]:
     if not execution_report.strip():
         return None, None
-    context = context_payload.get("context", {}) if isinstance(context_payload.get("context"), dict) else {}
+    context = (
+        context_payload.get("context", {})
+        if isinstance(context_payload.get("context"), dict)
+        else {}
+    )
     title = context.get("task") or "YSS execution report"
     notes = "auto-generated from execution_report"
     tags = ["auto", "yss", "execution_report"]
@@ -423,7 +433,9 @@ def _auto_generate_tech_trace(
         auto_claim_min_chars=claim_min_chars,
     )
     capture_id = capture_payload.get("capture_id") if isinstance(capture_payload, dict) else None
-    normalize_id = normalize_payload.get("normalize_id") if isinstance(normalize_payload, dict) else None
+    normalize_id = (
+        normalize_payload.get("normalize_id") if isinstance(normalize_payload, dict) else None
+    )
     if not capture_id or not normalize_id:
         return None, None
     output_dir = os.path.join(run_dir, "tech_trace")
@@ -477,7 +489,9 @@ def _build_evidence_artifacts(
     }
 
 
-def _resolve_retention_config(policy: Dict[str, object], workspace: str) -> Optional[Dict[str, object]]:
+def _resolve_retention_config(
+    policy: Dict[str, object], workspace: str
+) -> Optional[Dict[str, object]]:
     retention = policy.get("retention", {}) if isinstance(policy, dict) else {}
     if not retention.get("enabled"):
         return None
@@ -1020,7 +1034,9 @@ def run_pipeline(config: PipelineConfig) -> Dict[str, object]:
         if enabled:
             workspace_root = _workspace_root()
             run_root = os.path.join(workspace_root, "run", "execution")
-            memory_root = os.path.abspath(config.memory_root or os.path.join(workspace_root, "memory"))
+            memory_root = os.path.abspath(
+                config.memory_root or os.path.join(workspace_root, "memory")
+            )
             archive_root = os.path.abspath(
                 config.archive_root or os.path.join(workspace_root, "..", "archive", "runs")
             )
@@ -1068,7 +1084,9 @@ def run_pipeline(config: PipelineConfig) -> Dict[str, object]:
         "gate_report": gate_report_path,
         "dcs_result": gate_artifacts.dcs_result_path,
         "skills_applied": skill_artifacts.skills_path if skill_artifacts.applied_skills else None,
-        "skills_directives": skill_artifacts.skill_directives if skill_artifacts.applied_skills else None,
+        "skills_directives": (
+            skill_artifacts.skill_directives if skill_artifacts.applied_skills else None
+        ),
         "reflection": gate_artifacts.reflection_path,
         "memory_seed": memory_paths.get("seed"),
         "memory_graph": memory_paths.get("graph"),

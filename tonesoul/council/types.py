@@ -28,10 +28,11 @@ class VerdictType(Enum):
 
 class GroundingStatus(Enum):
     """Status of evidence grounding for a perspective vote."""
+
     NOT_REQUIRED = "not_required"  # Content doesn't need external evidence
-    GROUNDED = "grounded"          # Evidence provided and verified
-    UNGROUNDED = "ungrounded"      # Evidence required but not provided
-    PARTIAL = "partial"            # Some evidence provided, more needed
+    GROUNDED = "grounded"  # Evidence provided and verified
+    UNGROUNDED = "ungrounded"  # Evidence required but not provided
+    PARTIAL = "partial"  # Some evidence provided, more needed
 
 
 # Maximum confidence when grounding is required but not provided
@@ -60,11 +61,7 @@ class CoherenceScore:
     def overall(self) -> float:
         if self.has_strong_objection:
             return min(self.c_inter, 0.3)
-        return (
-            self.c_inter * 0.4
-            + self.approval_rate * 0.4
-            + self.min_confidence * 0.2
-        )
+        return self.c_inter * 0.4 + self.approval_rate * 0.4 + self.min_confidence * 0.2
 
 
 @dataclass
@@ -82,12 +79,13 @@ class CouncilVerdict:
 
     def to_structured_output(self) -> dict:
         from .verdict import build_structured_output
+
         return build_structured_output(self)
 
     def to_dict(self) -> dict:
         """
         Convert verdict to dictionary for audit logging.
-        
+
         Includes evidence and grounding status for each vote.
         """
         return {
@@ -118,12 +116,9 @@ class CouncilVerdict:
             # Summary of grounding status across all votes
             "grounding_summary": {
                 "has_ungrounded_claims": any(
-                    v.grounding_status == GroundingStatus.UNGROUNDED
-                    for v in self.votes
+                    v.grounding_status == GroundingStatus.UNGROUNDED for v in self.votes
                 ),
-                "total_evidence_sources": sum(
-                    len(v.evidence or []) for v in self.votes
-                ),
+                "total_evidence_sources": sum(len(v.evidence or []) for v in self.votes),
             },
             "transcript": self.transcript or {},
             "human_summary": self.human_summary,

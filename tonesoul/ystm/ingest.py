@@ -57,9 +57,12 @@ def normalize_segments(segments: Sequence[Dict[str, object]]) -> List[Dict[str, 
             source_grade = _to_optional_str(source.get("grade"))
         source_payload = _prune_none(
             {
-                "type": _to_optional_str(segment.get("source_type")) or _to_optional_str(source.get("type")),
-                "uri": _to_optional_str(segment.get("source_uri")) or _to_optional_str(source.get("uri")),
-                "hash": _to_optional_str(segment.get("source_hash")) or _to_optional_str(source.get("hash")),
+                "type": _to_optional_str(segment.get("source_type"))
+                or _to_optional_str(source.get("type")),
+                "uri": _to_optional_str(segment.get("source_uri"))
+                or _to_optional_str(source.get("uri")),
+                "hash": _to_optional_str(segment.get("source_hash"))
+                or _to_optional_str(source.get("hash")),
                 "grade": source_grade,
                 "retrieved_at": _to_optional_str(segment.get("source_retrieved_at"))
                 or _to_optional_str(source.get("retrieved_at")),
@@ -67,18 +70,26 @@ def normalize_segments(segments: Sequence[Dict[str, object]]) -> List[Dict[str, 
                 or _to_optional_str(source.get("verified_by")),
             }
         )
-        math_coords = segment.get("math_coords") if isinstance(segment.get("math_coords"), dict) else {}
+        math_coords = (
+            segment.get("math_coords") if isinstance(segment.get("math_coords"), dict) else {}
+        )
         math_payload = _prune_none(
             {
-                "height": _to_optional_float(segment.get("math_height"))
-                if segment.get("math_height") is not None
-                else _to_optional_float(math_coords.get("height")),
-                "geology": _to_optional_str(segment.get("math_geology"))
-                if segment.get("math_geology") is not None
-                else _to_optional_str(math_coords.get("geology")),
-                "ruggedness": _to_optional_float(segment.get("math_ruggedness"))
-                if segment.get("math_ruggedness") is not None
-                else _to_optional_float(math_coords.get("ruggedness")),
+                "height": (
+                    _to_optional_float(segment.get("math_height"))
+                    if segment.get("math_height") is not None
+                    else _to_optional_float(math_coords.get("height"))
+                ),
+                "geology": (
+                    _to_optional_str(segment.get("math_geology"))
+                    if segment.get("math_geology") is not None
+                    else _to_optional_str(math_coords.get("geology"))
+                ),
+                "ruggedness": (
+                    _to_optional_float(segment.get("math_ruggedness"))
+                    if segment.get("math_ruggedness") is not None
+                    else _to_optional_float(math_coords.get("ruggedness"))
+                ),
             }
         )
         item = {

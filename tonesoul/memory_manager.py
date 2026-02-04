@@ -112,6 +112,7 @@ def collect_run_dirs(run_roots: Iterable[str]) -> List[str]:
 def build_pointers(run_dir: str, ystm_outputs: Optional[Dict[str, str]] = None) -> RunPointers:
     workspace = _workspace_root()
     run_id = os.path.basename(run_dir)
+
     def path_in_run(filename: str) -> Optional[str]:
         path = os.path.join(run_dir, filename)
         return path if os.path.exists(path) else None
@@ -120,8 +121,12 @@ def build_pointers(run_dir: str, ystm_outputs: Optional[Dict[str, str]] = None) 
     audit_request_path = path_in_run("audit_request.json")
     audit_inputs = _load_audit_inputs(audit_request_path)
     ystm_diff = ystm_outputs.get("diff") or audit_inputs.get("ystm_diff")
-    tech_trace_capture = ystm_outputs.get("tech_trace_capture") or audit_inputs.get("tech_trace_capture")
-    tech_trace_normalize = ystm_outputs.get("tech_trace_normalize") or audit_inputs.get("tech_trace_normalize")
+    tech_trace_capture = ystm_outputs.get("tech_trace_capture") or audit_inputs.get(
+        "tech_trace_capture"
+    )
+    tech_trace_normalize = ystm_outputs.get("tech_trace_normalize") or audit_inputs.get(
+        "tech_trace_normalize"
+    )
     return RunPointers(
         run_id=run_id,
         run_path=run_dir,
@@ -138,10 +143,13 @@ def build_pointers(run_dir: str, ystm_outputs: Optional[Dict[str, str]] = None) 
         evidence_summary=os.path.join(workspace, "evidence", "summary.md"),
         tsr_metrics=path_in_run("tsr_metrics.json"),
         dcs_result=path_in_run("dcs_result.json"),
-        ystm_nodes=ystm_outputs.get("nodes") or os.path.join(workspace, "reports", "ystm_demo", "nodes.json"),
-        ystm_audit=ystm_outputs.get("audit") or os.path.join(workspace, "reports", "ystm_demo", "audit_log.json"),
+        ystm_nodes=ystm_outputs.get("nodes")
+        or os.path.join(workspace, "reports", "ystm_demo", "nodes.json"),
+        ystm_audit=ystm_outputs.get("audit")
+        or os.path.join(workspace, "reports", "ystm_demo", "audit_log.json"),
         ystm_diff=ystm_diff if isinstance(ystm_diff, str) else None,
-        ystm_terrain=ystm_outputs.get("terrain") or os.path.join(workspace, "reports", "ystm_demo", "terrain.html"),
+        ystm_terrain=ystm_outputs.get("terrain")
+        or os.path.join(workspace, "reports", "ystm_demo", "terrain.html"),
         ystm_terrain_svg=ystm_outputs.get("terrain_svg")
         or os.path.join(workspace, "reports", "ystm_demo", "terrain.svg"),
         ystm_terrain_png=ystm_outputs.get("terrain_png")
@@ -157,7 +165,9 @@ def build_pointers(run_dir: str, ystm_outputs: Optional[Dict[str, str]] = None) 
         ystm_terrain_p2_json=ystm_outputs.get("terrain_p2_json")
         or os.path.join(workspace, "reports", "ystm_demo", "terrain_p2.json"),
         tech_trace_capture=tech_trace_capture if isinstance(tech_trace_capture, str) else None,
-        tech_trace_normalize=tech_trace_normalize if isinstance(tech_trace_normalize, str) else None,
+        tech_trace_normalize=(
+            tech_trace_normalize if isinstance(tech_trace_normalize, str) else None
+        ),
     )
 
 
@@ -194,7 +204,9 @@ def _load_context_payload(path: Optional[str]) -> Dict[str, object]:
 
 def _context_fields(payload: Dict[str, object]) -> Dict[str, Optional[str]]:
     context = payload.get("context", {}) if isinstance(payload.get("context"), dict) else {}
-    time_island = payload.get("time_island", {}) if isinstance(payload.get("time_island"), dict) else {}
+    time_island = (
+        payload.get("time_island", {}) if isinstance(payload.get("time_island"), dict) else {}
+    )
     chronos = time_island.get("chronos", {}) if isinstance(time_island.get("chronos"), dict) else {}
     kairos = time_island.get("kairos", {}) if isinstance(time_island.get("kairos"), dict) else {}
     return {
@@ -502,7 +514,9 @@ def record_run(
     }
     graph["generated_at"] = utc_now()
 
-    runs_list = [item for item in run_index.get("runs", []) if item.get("run_id") != pointers.run_id]
+    runs_list = [
+        item for item in run_index.get("runs", []) if item.get("run_id") != pointers.run_id
+    ]
     runs_list.append(
         {
             "run_id": pointers.run_id,
@@ -552,15 +566,15 @@ def build_indexes(
         _add_edge(graph["edges"], {"from": run_node_id, "to": seed_node_id, "rel": "summarized_by"})
 
         file_paths = {
-        "context": pointers.context,
-        "frame_plan": pointers.frame_plan,
-        "constraints": pointers.constraints,
-        "action_set": pointers.action_set,
-        "mercy_objective": pointers.mercy_objective,
-        "council_summary": pointers.council_summary,
-        "execution_report": pointers.execution_report,
-        "audit_request": pointers.audit_request,
-        "gate_report": pointers.gate_report,
+            "context": pointers.context,
+            "frame_plan": pointers.frame_plan,
+            "constraints": pointers.constraints,
+            "action_set": pointers.action_set,
+            "mercy_objective": pointers.mercy_objective,
+            "council_summary": pointers.council_summary,
+            "execution_report": pointers.execution_report,
+            "audit_request": pointers.audit_request,
+            "gate_report": pointers.gate_report,
             "error_ledger": pointers.error_ledger,
             "evidence_summary": pointers.evidence_summary,
             "tsr_metrics": pointers.tsr_metrics,

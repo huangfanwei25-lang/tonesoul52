@@ -37,15 +37,17 @@ PerspectiveId = Union[PerspectiveType, str]
 
 class PerspectiveMode(Enum):
     """Supported perspective evaluation modes"""
-    RULES = "rules"       # Default heuristic rules
-    LLM = "llm"          # LLM-based evaluation
-    TOOL = "tool"        # External tool verification
-    HYBRID = "hybrid"    # Combination of rules + LLM
+
+    RULES = "rules"  # Default heuristic rules
+    LLM = "llm"  # LLM-based evaluation
+    TOOL = "tool"  # External tool verification
+    HYBRID = "hybrid"  # Combination of rules + LLM
 
 
 @dataclass
 class PerspectiveConfig:
     """Configuration for creating a perspective"""
+
     name: PerspectiveId
     mode: PerspectiveMode = PerspectiveMode.RULES
     model: Optional[str] = None  # For LLM mode
@@ -346,10 +348,12 @@ if __name__ == "__main__":
     print(f"Rules-based council: {[p.__class__.__name__ for p in council_rules]}")
 
     # Hybrid council with LLM guardian
-    council_hybrid = PerspectiveFactory.create_council({
-        "guardian": {"mode": "llm", "model": "gpt-4"},
-        "analyst": {"mode": "rules"},
-        "critic": {"mode": "rules"},
-        "advocate": {"mode": "rules"},
-    })
+    council_hybrid = PerspectiveFactory.create_council(
+        {
+            "guardian": {"mode": "llm", "model": "gpt-4"},
+            "analyst": {"mode": "rules"},
+            "critic": {"mode": "rules"},
+            "advocate": {"mode": "rules"},
+        }
+    )
     print(f"Hybrid council: {[type(p).__name__ for p in council_hybrid]}")

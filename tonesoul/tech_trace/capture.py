@@ -75,7 +75,9 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Capture a Tech-Trace source note.")
     parser.add_argument("--input", help="Optional input text file.")
     parser.add_argument("--text", help="Inline text to capture.")
-    parser.add_argument("--source-type", default="unknown", help="Source type (paper/blog/issue/etc).")
+    parser.add_argument(
+        "--source-type", default="unknown", help="Source type (paper/blog/issue/etc)."
+    )
     parser.add_argument("--uri", help="Source URI.")
     parser.add_argument("--title", help="Source title.")
     parser.add_argument("--grade", choices=["A", "B", "C"], help="Evidence grade.")

@@ -38,7 +38,7 @@ def compute_pca_positions(
     points = [(float(point[0]), float(point[1])) for point in projected]
 
     denom = max(len(nodes) - 1, 1)
-    variance = (s ** 2) / denom
+    variance = (s**2) / denom
     if variance.shape[0] < 2:
         variance = np.pad(variance, (0, 2 - variance.shape[0]))
     total = float(np.sum(variance)) if float(np.sum(variance)) > 0 else 1.0

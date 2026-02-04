@@ -12,6 +12,7 @@ from datetime import datetime
 @dataclass
 class ToneAnalysis:
     """階段 1: 語氣分析結果"""
+
     tone_strength: float = 0.5
     tone_direction: List[str] = field(default_factory=lambda: ["neutral"])
     tone_variability: float = 0.0
@@ -24,7 +25,7 @@ class ToneAnalysis:
     emotional_depth: float = 0.5
     resonance_span: str = ""
     tone_uncertainty: float = 0.5
-    
+
     def to_dict(self) -> Dict[str, Any]:
         return {
             "tone_strength": self.tone_strength,
@@ -43,12 +44,13 @@ class ToneAnalysis:
 @dataclass
 class MotivePrediction:
     """階段 2: 動機預測結果"""
+
     motive_category: str = ""
     likely_motive: str = ""
     trigger_context: str = ""
     echo_potential: float = 0.0
     resonance_chain_hint: List[str] = field(default_factory=list)
-    
+
     def to_dict(self) -> Dict[str, Any]:
         return {
             "motive_category": self.motive_category,
@@ -62,12 +64,13 @@ class MotivePrediction:
 @dataclass
 class CollapseRisk:
     """階段 3: 崩潰風險預測"""
+
     collapse_risk_level: str = "low"  # low, medium, high, critical
     collapse_type_hint: List[str] = field(default_factory=list)
     contributing_factors: List[str] = field(default_factory=list)
     warning_indicators: List[str] = field(default_factory=list)
     intervention_urgency: float = 0.0
-    
+
     def to_dict(self) -> Dict[str, Any]:
         return {
             "collapse_risk_level": self.collapse_risk_level,
@@ -81,6 +84,7 @@ class CollapseRisk:
 @dataclass
 class MeminiUnit:
     """階段 4: 語氣記憶單元"""
+
     id: str = ""
     input_text: str = ""
     tone_analysis: Dict[str, Any] = field(default_factory=dict)
@@ -89,7 +93,7 @@ class MeminiUnit:
     resonance_traceback: Dict[str, Any] = field(default_factory=dict)
     memory_status: str = "active"
     timestamp: str = ""
-    
+
     def to_dict(self) -> Dict[str, Any]:
         return {
             "id": self.id,
@@ -106,13 +110,14 @@ class MeminiUnit:
 @dataclass
 class ResonanceDefense:
     """階段 5: 共鳴路徑與防衛觸發預測"""
+
     primary_path: str = ""
     secondary_path_hint: str = ""
     triggered_likelihood: float = 0.0
     trigger_condition: str = ""
     expected_defense_response: str = ""
     suggested_intervention_strategy: str = ""
-    
+
     def to_dict(self) -> Dict[str, Any]:
         return {
             "resonance_path": {
@@ -131,12 +136,13 @@ class ResonanceDefense:
 @dataclass
 class ToneBridgeResult:
     """ToneBridge 完整分析結果"""
+
     tone: ToneAnalysis
     motive: MotivePrediction
     collapse: CollapseRisk
     memini: Optional[MeminiUnit] = None
     resonance: Optional[ResonanceDefense] = None
-    
+
     def to_dict(self) -> Dict[str, Any]:
         result = {
             "tone_analysis": self.tone.to_dict(),
@@ -148,13 +154,19 @@ class ToneBridgeResult:
         if self.resonance:
             result["resonance_defense"] = self.resonance.to_dict()
         return result
-    
+
     def get_summary_zh(self) -> str:
         """生成中文摘要"""
         lines = []
-        lines.append(f"語氣強度：{self.tone.tone_strength:.2f}，情緒預測：{self.tone.emotion_prediction}")
-        lines.append(f"動機類別：{self.motive.motive_category}，觸發情境：{self.motive.trigger_context}")
-        lines.append(f"崩潰風險：{self.collapse.collapse_risk_level}，介入緊迫度：{self.collapse.intervention_urgency:.2f}")
+        lines.append(
+            f"語氣強度：{self.tone.tone_strength:.2f}，情緒預測：{self.tone.emotion_prediction}"
+        )
+        lines.append(
+            f"動機類別：{self.motive.motive_category}，觸發情境：{self.motive.trigger_context}"
+        )
+        lines.append(
+            f"崩潰風險：{self.collapse.collapse_risk_level}，介入緊迫度：{self.collapse.intervention_urgency:.2f}"
+        )
         if self.resonance:
             lines.append(f"共鳴路徑：{self.resonance.primary_path}")
             lines.append(f"建議策略：{self.resonance.suggested_intervention_strategy}")

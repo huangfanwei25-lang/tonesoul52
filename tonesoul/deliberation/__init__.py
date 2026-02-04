@@ -12,12 +12,12 @@ Key Concepts:
 
 Usage:
     from tonesoul.deliberation import deliberate, InternalDeliberation
-    
+
     # Simple usage
     result = deliberate("What is the meaning of life?")
     print(result.response)
     print(result.to_api_response())
-    
+
     # Full control
     engine = InternalDeliberation()
     context = DeliberationContext(user_input="...")
@@ -35,7 +35,7 @@ from .types import (
     # ToneStream Distillation
     TensionZone,
     TacticalDecision,
-    SuggestedReply
+    SuggestedReply,
 )
 
 from .perspectives import (
@@ -43,25 +43,18 @@ from .perspectives import (
     MusePerspective,
     LogosPerspective,
     AegisPerspective,
-    create_perspectives
+    create_perspectives,
 )
 
-from .gravity import (
-    SemanticGravity,
-    create_semantic_gravity
-)
+from .gravity import SemanticGravity, create_semantic_gravity
 
-from .engine import (
-    InternalDeliberation,
-    create_deliberation_engine,
-    deliberate
-)
+from .engine import InternalDeliberation, create_deliberation_engine, deliberate
 
 
 __all__ = [
     # Types
     "ViewPoint",
-    "Tension", 
+    "Tension",
     "SynthesizedResponse",
     "SynthesisType",
     "PerspectiveType",
@@ -71,20 +64,17 @@ __all__ = [
     "TensionZone",
     "TacticalDecision",
     "SuggestedReply",
-    
     # Perspectives
     "BasePerspective",
     "MusePerspective",
     "LogosPerspective",
     "AegisPerspective",
     "create_perspectives",
-    
     # Synthesis
     "SemanticGravity",
     "create_semantic_gravity",
-    
     # Main Engine
     "InternalDeliberation",
     "create_deliberation_engine",
-    "deliberate"
+    "deliberate",
 ]

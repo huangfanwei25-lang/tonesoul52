@@ -17,7 +17,9 @@ def check_entrypoints() -> List[CheckResult]:
     results: List[CheckResult] = []
     for ep in KNOWN_ENTRYPOINTS:
         exists = os.path.exists(ep.path)
-        results.append(CheckResult(name=f"entrypoint:{ep.name}", ok=exists, error=None if exists else ep.path))
+        results.append(
+            CheckResult(name=f"entrypoint:{ep.name}", ok=exists, error=None if exists else ep.path)
+        )
     return results
 
 

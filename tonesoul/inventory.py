@@ -28,13 +28,15 @@ def build_inventory() -> List[Dict[str, object]]:
 def entrypoints_status() -> List[Dict[str, object]]:
     status = []
     for ep in KNOWN_ENTRYPOINTS:
-        status.append({
-            "name": ep.name,
-            "path": ep.path,
-            "exists": os.path.exists(ep.path),
-            "command": ep.command,
-            "notes": ep.notes,
-        })
+        status.append(
+            {
+                "name": ep.name,
+                "path": ep.path,
+                "exists": os.path.exists(ep.path),
+                "command": ep.command,
+                "notes": ep.notes,
+            }
+        )
     return status
 
 

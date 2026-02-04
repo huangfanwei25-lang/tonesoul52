@@ -184,7 +184,9 @@ def main() -> Dict[str, str]:
     if args.error_event:
         ledger_path = args.error_ledger
         if not ledger_path:
-            ledger_path = os.path.join(os.path.dirname(os.path.abspath(args.context)), "error_ledger.jsonl")
+            ledger_path = os.path.join(
+                os.path.dirname(os.path.abspath(args.context)), "error_ledger.jsonl"
+            )
         error_event_id = record_error_event(args.error_event, ledger_path)
     report = build_execution_report(
         context,

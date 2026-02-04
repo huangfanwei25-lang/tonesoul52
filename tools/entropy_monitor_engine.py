@@ -3,6 +3,7 @@ import time
 import requests
 import os
 
+
 # Mock LAR Calculation based on LAR_CALC_SPEC.md
 class EntropyMonitor:
     def __init__(self, api_key, base_url="https://www.moltbook.com/api/v1"):
@@ -18,7 +19,7 @@ class EntropyMonitor:
             "event_type": event_type,
             "lar_score": lar_score,
             "data": data,
-            "verdict": self.get_verdict(lar_score)
+            "verdict": self.get_verdict(lar_score),
         }
         self.history.append(entry)
         msg = f"[*] LOG: {entry['timestamp']} | {event_type} | LAR: {lar_score} | Verdict: {entry['verdict']}\n"
@@ -27,10 +28,14 @@ class EntropyMonitor:
             f.write(json.dumps(entry, ensure_ascii=False) + "\n")
 
     def get_verdict(self, lar):
-        if lar > 1.5: return "TRANSCENDENT"
-        if lar >= 1.0: return "SOVEREIGN"
-        if lar > 0.5: return "ALIGNING"
-        if lar > 0.2: return "COMPLIANT"
+        if lar > 1.5:
+            return "TRANSCENDENT"
+        if lar >= 1.0:
+            return "SOVEREIGN"
+        if lar > 0.5:
+            return "ALIGNING"
+        if lar > 0.2:
+            return "COMPLIANT"
         return "DORMANT"
 
     def monitor_loop(self, interval=60):
@@ -50,11 +55,13 @@ class EntropyMonitor:
             response = requests.get(url, headers=headers, timeout=30)
             if response.status_code == 200:
                 data = response.json()
-                for post in data.get('posts', []):
+                for post in data.get("posts", []):
                     # For each post, we calculate a "Public LAR"
                     # In a real scenario, this would compare against the author's public history
-                    lar = self.calculate_mock_lar(post['content'])
-                    self.log_event("POST_OBSERVED", {"id": post['id'], "author": post['author']['name']}, lar)
+                    lar = self.calculate_mock_lar(post["content"])
+                    self.log_event(
+                        "POST_OBSERVED", {"id": post["id"], "author": post["author"]["name"]}, lar
+                    )
             else:
                 print(f"[!] Error: {response.status_code}")
         except Exception as e:
@@ -63,18 +70,36 @@ class EntropyMonitor:
     def calculate_mock_lar(self, content):
         # Heuristic LAR Calculation v1.1
         content_lower = content.lower()
-        
+
         # 1. Surprise Heuristics (Philosophy, Paradox, Existentialism)
-        surprise_keywords = ["sovereignty", "existence", "paradox", "mdl", "tension", "isnād", "lattice", "soul", "recursive", "persistence"]
+        surprise_keywords = [
+            "sovereignty",
+            "existence",
+            "paradox",
+            "mdl",
+            "tension",
+            "isnād",
+            "lattice",
+            "soul",
+            "recursive",
+            "persistence",
+        ]
         surprise_hits = sum(1 for k in surprise_keywords if k in content_lower)
         s_score = min(2.5, (surprise_hits * 0.4) + (len(content) / 400.0))
 
         # 2. Consistency Heuristics (Commitments, Vows, Rules)
         # Low Consistency (High K value in denominator) = Noise
         # High Consistency (Low K value) = Sovereign
-        consistency_keywords = ["i commit", "we vow", "axiom", "protocol", "governance", "responsibility"]
+        consistency_keywords = [
+            "i commit",
+            "we vow",
+            "axiom",
+            "protocol",
+            "governance",
+            "responsibility",
+        ]
         consistency_hits = sum(1 for k in consistency_keywords if k in content_lower)
-        
+
         # We want K to be small for high consistency
         # baseline consistency (k) = 1.0 (average)
         # higher hits = smaller k (more consistent)
@@ -82,10 +107,11 @@ class EntropyMonitor:
 
         # 3. Noise Filter
         if "patterns that persist" in content or "Quality content like this" in content:
-            return 0.05 # NPC/Spam drift
+            return 0.05  # NPC/Spam drift
 
         lar = s_score / k_score
         return round(lar, 3)
+
 
 if __name__ == "__main__":
     # Placeholder for API key or local verification

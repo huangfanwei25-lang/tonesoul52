@@ -8,7 +8,7 @@ Following Copilot Ralph's clean error design:
 
 Usage:
     from tonesoul.shared.errors import ERR_LOOP_TIMEOUT
-    
+
     if error is ERR_LOOP_TIMEOUT:
         handle_timeout()
 """
@@ -16,26 +16,31 @@ Usage:
 
 class ToneSoulError(Exception):
     """Base error for ToneSoul system"""
+
     pass
 
 
 class LoopError(ToneSoulError):
     """Errors related to iteration loops"""
+
     pass
 
 
 class ValidationError(ToneSoulError):
     """Errors related to input validation"""
+
     pass
 
 
 class StateError(ToneSoulError):
     """Errors related to state machine violations"""
+
     pass
 
 
 class VowError(ToneSoulError):
     """Errors related to vow system"""
+
     pass
 
 

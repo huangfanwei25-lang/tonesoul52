@@ -8,6 +8,7 @@ Events provide:
 - Clean serialization via to_dict()
 - ToneSoul-specific events (VowDeclaration)
 """
+
 from dataclasses import dataclass, field
 from typing import Any, Dict, Optional
 
@@ -17,8 +18,9 @@ from .config import LoopConfig, LoopResult
 @dataclass
 class LoopEvent:
     """Base class for all loop events"""
+
     event_type: str = ""
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Serialize event to dictionary"""
         return {"event_type": self.event_type}
@@ -28,12 +30,14 @@ class LoopEvent:
 # Loop Lifecycle Events
 # =============================================================================
 
+
 @dataclass
 class LoopStartEvent(LoopEvent):
     """Emitted when loop starts"""
+
     config: Optional[LoopConfig] = None
     event_type: str = "loop_start"
-    
+
     def to_dict(self) -> Dict[str, Any]:
         return {
             "event_type": self.event_type,
@@ -45,9 +49,10 @@ class LoopStartEvent(LoopEvent):
 @dataclass
 class LoopCompleteEvent(LoopEvent):
     """Emitted when loop completes successfully"""
+
     result: Optional[LoopResult] = None
     event_type: str = "loop_complete"
-    
+
     def to_dict(self) -> Dict[str, Any]:
         return {
             "event_type": self.event_type,
@@ -59,10 +64,11 @@ class LoopCompleteEvent(LoopEvent):
 @dataclass
 class LoopFailedEvent(LoopEvent):
     """Emitted when loop fails"""
+
     error: Optional[Exception] = None
     result: Optional[LoopResult] = None
     event_type: str = "loop_failed"
-    
+
     def to_dict(self) -> Dict[str, Any]:
         return {
             "event_type": self.event_type,
@@ -74,6 +80,7 @@ class LoopFailedEvent(LoopEvent):
 @dataclass
 class LoopCancelledEvent(LoopEvent):
     """Emitted when loop is cancelled"""
+
     result: Optional[LoopResult] = None
     event_type: str = "loop_cancelled"
 
@@ -82,13 +89,15 @@ class LoopCancelledEvent(LoopEvent):
 # Iteration Events
 # =============================================================================
 
+
 @dataclass
 class IterationStartEvent(LoopEvent):
     """Emitted at start of each iteration"""
+
     iteration: int = 0
     max_iterations: int = 0
     event_type: str = "iteration_start"
-    
+
     def to_dict(self) -> Dict[str, Any]:
         return {
             "event_type": self.event_type,
@@ -100,6 +109,7 @@ class IterationStartEvent(LoopEvent):
 @dataclass
 class IterationCompleteEvent(LoopEvent):
     """Emitted at end of each iteration"""
+
     iteration: int = 0
     duration_ms: int = 0
     event_type: str = "iteration_complete"
@@ -109,9 +119,11 @@ class IterationCompleteEvent(LoopEvent):
 # AI Response Events
 # =============================================================================
 
+
 @dataclass
 class AIResponseEvent(LoopEvent):
     """Emitted for AI text responses"""
+
     text: str = ""
     iteration: int = 0
     event_type: str = "ai_response"
@@ -120,6 +132,7 @@ class AIResponseEvent(LoopEvent):
 @dataclass
 class ToolExecutionStartEvent(LoopEvent):
     """Emitted when tool execution starts"""
+
     tool_name: str = ""
     parameters: Dict[str, Any] = field(default_factory=dict)
     iteration: int = 0
@@ -129,6 +142,7 @@ class ToolExecutionStartEvent(LoopEvent):
 @dataclass
 class ToolExecutionEvent(LoopEvent):
     """Emitted when tool execution completes"""
+
     tool_name: str = ""
     parameters: Dict[str, Any] = field(default_factory=dict)
     result: Optional[str] = None
@@ -142,9 +156,11 @@ class ToolExecutionEvent(LoopEvent):
 # Detection Events
 # =============================================================================
 
+
 @dataclass
 class PromiseDetectedEvent(LoopEvent):
     """Emitted when promise phrase is detected in output"""
+
     phrase: str = ""
     source: str = ""  # "ai_response" or "tool_result"
     iteration: int = 0
@@ -155,9 +171,10 @@ class PromiseDetectedEvent(LoopEvent):
 class VowDeclarationEvent(LoopEvent):
     """
     ToneSoul-specific: AI declares vow compliance.
-    
+
     Similar to promise detection but for semantic vows.
     """
+
     vow_id: str = ""
     declared: bool = False
     iteration: int = 0
@@ -168,14 +185,16 @@ class VowDeclarationEvent(LoopEvent):
 # Error Events
 # =============================================================================
 
+
 @dataclass
 class ErrorEvent(LoopEvent):
     """Emitted for errors during iteration"""
+
     error: Optional[Exception] = None
     iteration: int = 0
     recoverable: bool = True
     event_type: str = "error"
-    
+
     def to_dict(self) -> Dict[str, Any]:
         return {
             "event_type": self.event_type,

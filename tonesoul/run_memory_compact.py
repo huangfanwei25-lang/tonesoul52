@@ -48,7 +48,9 @@ def main() -> Dict[str, object]:
 
     workspace = _workspace_root()
     run_root = os.path.abspath(args.run_root or os.path.join(workspace, "run", "execution"))
-    archive_root = os.path.abspath(args.archive_root or os.path.join(workspace, "..", "archive", "runs"))
+    archive_root = os.path.abspath(
+        args.archive_root or os.path.join(workspace, "..", "archive", "runs")
+    )
     memory_root = os.path.abspath(args.memory_root or os.path.join(workspace, "memory"))
 
     archived: List[str] = []

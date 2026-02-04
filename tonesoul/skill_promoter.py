@@ -79,9 +79,7 @@ def _list_seed_paths(memory_root: str) -> List[str]:
     if not os.path.isdir(seeds_dir):
         return []
     seeds = [
-        os.path.join(seeds_dir, name)
-        for name in os.listdir(seeds_dir)
-        if name.endswith(".json")
+        os.path.join(seeds_dir, name) for name in os.listdir(seeds_dir) if name.endswith(".json")
     ]
     return sorted(seeds)
 
@@ -160,7 +158,9 @@ def _finalize_episode(
     counterexample_rate = counterexample_count / run_count if run_count else 0.0
 
     energy_mean = mean(energy_means) if energy_means else None
-    energy_stdev = pstdev(energy_means) if len(energy_means) > 1 else (0.0 if energy_means else None)
+    energy_stdev = (
+        pstdev(energy_means) if len(energy_means) > 1 else (0.0 if energy_means else None)
+    )
 
     parsed_times = [time for time in (_parse_time(item) for item in created_at) if time]
     first_seen = _format_time(min(parsed_times)) if parsed_times else None

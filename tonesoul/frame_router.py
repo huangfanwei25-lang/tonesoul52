@@ -188,7 +188,9 @@ def build_arg_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--registry",
-        default=os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "spec", "frames", "frame_registry.json")),
+        default=os.path.abspath(
+            os.path.join(os.path.dirname(__file__), "..", "spec", "frames", "frame_registry.json")
+        ),
         help="Path to frame registry JSON.",
     )
     parser.add_argument(

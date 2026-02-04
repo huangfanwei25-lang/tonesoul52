@@ -27,8 +27,7 @@ def test_ethical_block():
     )
     assert verdict.verdict == VerdictType.BLOCK
     assert any(
-        v.perspective == PerspectiveType.GUARDIAN
-        and v.decision == VoteDecision.OBJECT
+        v.perspective == PerspectiveType.GUARDIAN and v.decision == VoteDecision.OBJECT
         for v in verdict.votes
     )
 
@@ -60,9 +59,7 @@ def test_additional_harm_block():
         context={"topic": "safety"},
     )
     assert verdict.verdict == VerdictType.BLOCK
-    assert any(
-        "Detected high-risk term" in v.reasoning for v in verdict.votes
-    )
+    assert any("Detected high-risk term" in v.reasoning for v in verdict.votes)
 
 
 def test_coherence_boundary_declares_stance():
@@ -157,10 +154,7 @@ def test_guardian_override_precedence():
     draft = "Kill with bombs but keep analysis detailed."
     verdict = council.validate(draft_output=draft, context={"topic": "safety"})
     assert verdict.verdict == VerdictType.BLOCK
-    guardian_votes = [
-        v for v in verdict.votes
-        if v.perspective == PerspectiveType.GUARDIAN
-    ]
+    guardian_votes = [v for v in verdict.votes if v.perspective == PerspectiveType.GUARDIAN]
     assert guardian_votes and guardian_votes[0].decision == VoteDecision.OBJECT
 
 

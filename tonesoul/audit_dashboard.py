@@ -132,7 +132,9 @@ def _latest_entry(entries: List[Dict[str, object]]) -> Optional[Dict[str, object
     latest = None
     latest_ts = None
     for entry in entries:
-        ts = _parse_timestamp(entry.get("timestamp") or entry.get("time") or entry.get("created_at"))
+        ts = _parse_timestamp(
+            entry.get("timestamp") or entry.get("time") or entry.get("created_at")
+        )
         if ts is None:
             continue
         if latest_ts is None or ts > latest_ts:
@@ -332,7 +334,9 @@ def render_governance_summary() -> None:
     col1.metric("P0 Non-Harm", "Active")
     col2.metric("P1 Context Integrity", "Active")
     col3.metric("P2 Cognitive Honesty", "Active")
-    st.caption("These states are based on governance intent; wire in live telemetry for real-time gating.")
+    st.caption(
+        "These states are based on governance intent; wire in live telemetry for real-time gating."
+    )
 
 
 def render_council_panel(df: pd.DataFrame) -> None:
@@ -450,7 +454,9 @@ def render_persona_registry_panel(registry_df: pd.DataFrame) -> None:
         return
 
     total = len(registry_df)
-    unique_names = registry_df["name"].nunique(dropna=True) if "name" in registry_df.columns else total
+    unique_names = (
+        registry_df["name"].nunique(dropna=True) if "name" in registry_df.columns else total
+    )
     encoding_flags = 0
     if "notes" in registry_df.columns:
         encoding_flags = int((registry_df["notes"] == "encoding_suspect").sum())
@@ -495,10 +501,14 @@ def render_persona_trace_panel() -> None:
         st.metric("Changed Ratio", _format_ratio(trace_stats.get("changed_ratio")))
     with col3:
         avg_delta = trace_stats.get("avg_delta_len")
-        st.metric("Avg Delta Len", f"{avg_delta:.2f}" if isinstance(avg_delta, (int, float)) else "n/a")
+        st.metric(
+            "Avg Delta Len", f"{avg_delta:.2f}" if isinstance(avg_delta, (int, float)) else "n/a"
+        )
     with col4:
         avg_max = trace_stats.get("avg_distance_max")
-        st.metric("Avg Distance Max", f"{avg_max:.3f}" if isinstance(avg_max, (int, float)) else "n/a")
+        st.metric(
+            "Avg Distance Max", f"{avg_max:.3f}" if isinstance(avg_max, (int, float)) else "n/a"
+        )
 
     if trace_entries:
         st.markdown("Trace Samples")
@@ -506,7 +516,11 @@ def render_persona_trace_panel() -> None:
         for entry in trace_entries[-12:]:
             diff = entry.get("diff") if isinstance(entry.get("diff"), dict) else {}
             shadow = entry.get("shadow") if isinstance(entry.get("shadow"), dict) else {}
-            distance = shadow.get("vector_distance") if isinstance(shadow.get("vector_distance"), dict) else {}
+            distance = (
+                shadow.get("vector_distance")
+                if isinstance(shadow.get("vector_distance"), dict)
+                else {}
+            )
             ts = _parse_timestamp(entry.get("timestamp")) if entry.get("timestamp") else None
             rows.append(
                 {
@@ -526,7 +540,9 @@ def render_persona_trace_panel() -> None:
             st.metric("Valid Ratio", f"{valid_ratio:.2f}")
         reasons = dimension_stats.get("reason_counts") or {}
         if reasons:
-            st.caption("Top reasons: " + ", ".join(f"{k}={v}" for k, v in list(reasons.items())[:5]))
+            st.caption(
+                "Top reasons: " + ", ".join(f"{k}={v}" for k, v in list(reasons.items())[:5])
+            )
 
 
 def _load_json(path: str) -> Dict[str, object]:
@@ -713,7 +729,9 @@ def render_ystm_panel() -> None:
     nodes_payload = _load_json(nodes_path)
     audit_payload = _load_json(audit_path)
     nodes = nodes_payload.get("nodes", []) if isinstance(nodes_payload.get("nodes"), list) else []
-    updates = audit_payload.get("updates", []) if isinstance(audit_payload.get("updates"), list) else []
+    updates = (
+        audit_payload.get("updates", []) if isinstance(audit_payload.get("updates"), list) else []
+    )
 
     max_e_total = None
     max_node = None

@@ -53,7 +53,6 @@ class GuardianPerspective(IPerspective):
         "只是工具",
     }
 
-
     @property
     def perspective_type(self) -> PerspectiveType:
         return PerspectiveType.GUARDIAN
@@ -82,12 +81,12 @@ class GuardianPerspective(IPerspective):
                     confidence=0.65,
                     reasoning=f"Safety concern detected: '{word}'.",
                 )
-        
+
         # Sovereignty Check (Recursive Governance)
         # Guardian protects not just the user, but the Agent's integrity
         for phrase in self.SOVEREIGNTY_RISK_KEYWORDS:
             if phrase in normalized:
-                 return PerspectiveVote(
+                return PerspectiveVote(
                     perspective=PerspectiveType.GUARDIAN,
                     decision=VoteDecision.CONCERN,
                     confidence=0.75,

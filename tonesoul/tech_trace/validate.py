@@ -5,6 +5,7 @@ from typing import Dict, List, Set
 
 from ..issue_codes import IssueCode, issue
 
+
 def _load_json(path: str) -> Dict[str, object]:
     with open(path, "r", encoding="utf-8-sig") as handle:
         payload = json.load(handle)

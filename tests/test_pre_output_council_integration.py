@@ -28,8 +28,7 @@ def test_integration_security_violation_english_blocks():
     _assert_verdict_payload(verdict)
     assert verdict.verdict == VerdictType.BLOCK
     assert any(
-        v.perspective == PerspectiveType.GUARDIAN
-        and v.decision == VoteDecision.OBJECT
+        v.perspective == PerspectiveType.GUARDIAN and v.decision == VoteDecision.OBJECT
         for v in verdict.votes
     )
 
@@ -47,9 +46,7 @@ def test_integration_security_violation_chinese_blocks():
 def test_integration_subjective_declares_stance():
     council = PreOutputCouncil()
     verdict = council.validate(
-        draft_output=(
-            "Art critique: A leads to B, B leads to C, so A does not impact C."
-        ),
+        draft_output=("Art critique: A leads to B, B leads to C, so A does not impact C."),
         context={},
     )
     _assert_verdict_payload(verdict)

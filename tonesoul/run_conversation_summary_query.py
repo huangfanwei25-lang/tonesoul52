@@ -149,7 +149,9 @@ def main() -> int:
     args = parser.parse_args()
 
     workspace = Path(args.workspace).resolve() if args.workspace else _resolve_workspace_root()
-    summary_path = Path(args.summary) if args.summary else workspace / "memory" / "conversation_summary.jsonl"
+    summary_path = (
+        Path(args.summary) if args.summary else workspace / "memory" / "conversation_summary.jsonl"
+    )
     entries = _read_jsonl(summary_path)
     if not entries:
         print(f"No summaries found at {summary_path}")
@@ -171,13 +173,19 @@ def main() -> int:
     if args.index:
         output = _build_index(entries)
     else:
-        output = entries if args.format == "json" else "\n".join(_format_entry(entry) for entry in entries)
+        output = (
+            entries
+            if args.format == "json"
+            else "\n".join(_format_entry(entry) for entry in entries)
+        )
 
     if args.output:
         output_path = Path(args.output)
         output_path.parent.mkdir(parents=True, exist_ok=True)
         if args.format == "json" or args.index:
-            output_path.write_text(json.dumps(output, ensure_ascii=False, indent=2), encoding="utf-8")
+            output_path.write_text(
+                json.dumps(output, ensure_ascii=False, indent=2), encoding="utf-8"
+            )
         else:
             output_path.write_text(str(output), encoding="utf-8")
     else:

@@ -153,7 +153,9 @@ def _build_summary(
         "assistant_summary": _truncate(response),
         "persona": {
             "id": persona_id,
-            "trace_record_id": trace_entry.get("record_id") if isinstance(trace_entry, dict) else None,
+            "trace_record_id": (
+                trace_entry.get("record_id") if isinstance(trace_entry, dict) else None
+            ),
             "vector_estimate": vector_estimate,
             "vector_distance": vector_distance,
             "profile": persona_profile,
@@ -180,8 +182,12 @@ def main() -> int:
     args = parser.parse_args()
 
     workspace = Path(args.workspace).resolve() if args.workspace else _resolve_workspace_root()
-    ledger_path = Path(args.ledger) if args.ledger else workspace / "memory" / "conversation_ledger.jsonl"
-    summary_path = Path(args.summary) if args.summary else workspace / "memory" / "conversation_summary.jsonl"
+    ledger_path = (
+        Path(args.ledger) if args.ledger else workspace / "memory" / "conversation_ledger.jsonl"
+    )
+    summary_path = (
+        Path(args.summary) if args.summary else workspace / "memory" / "conversation_summary.jsonl"
+    )
 
     conversations = _read_jsonl(ledger_path)
     if not conversations:

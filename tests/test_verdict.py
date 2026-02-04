@@ -8,7 +8,9 @@ from tonesoul.council.types import (
 from tonesoul.council.verdict import generate_verdict
 
 
-def _vote(perspective: PerspectiveType, decision: VoteDecision, confidence: float, reasoning: str) -> PerspectiveVote:
+def _vote(
+    perspective: PerspectiveType, decision: VoteDecision, confidence: float, reasoning: str
+) -> PerspectiveVote:
     return PerspectiveVote(
         perspective=perspective,
         decision=decision,

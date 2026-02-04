@@ -8,7 +8,13 @@ from .ingest import normalize_segments
 from .projection import compute_pca_positions
 from .representation import EmbeddingConfig, build_nodes
 from .schema import as_clean_dict, round_floats
-from .terrain import TerrainConfig, build_levels, compute_plane_positions, kde_grid, marching_squares
+from .terrain import (
+    TerrainConfig,
+    build_levels,
+    compute_plane_positions,
+    kde_grid,
+    marching_squares,
+)
 
 
 def test_decoupling() -> None:

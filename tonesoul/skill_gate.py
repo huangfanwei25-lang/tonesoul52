@@ -48,13 +48,13 @@ def list_skill_paths(memory_root: Optional[str] = None) -> List[str]:
     if not os.path.isdir(skills_dir):
         return []
     return sorted(
-        os.path.join(skills_dir, name)
-        for name in os.listdir(skills_dir)
-        if name.endswith(".json")
+        os.path.join(skills_dir, name) for name in os.listdir(skills_dir) if name.endswith(".json")
     )
 
 
-def _score_ratio(actual: Optional[float], threshold: Optional[float], higher_is_better: bool) -> Optional[float]:
+def _score_ratio(
+    actual: Optional[float], threshold: Optional[float], higher_is_better: bool
+) -> Optional[float]:
     if threshold is None:
         return None
     if actual is None:
@@ -76,7 +76,9 @@ def _role_level(role: Optional[str], levels: Dict[str, int]) -> int:
 
 def evaluate_skill(skill: Dict[str, object]) -> Tuple[bool, float, List[str]]:
     criteria = skill.get("criteria", {}) if isinstance(skill.get("criteria"), dict) else {}
-    thresholds = criteria.get("thresholds", {}) if isinstance(criteria.get("thresholds"), dict) else {}
+    thresholds = (
+        criteria.get("thresholds", {}) if isinstance(criteria.get("thresholds"), dict) else {}
+    )
 
     rules: List[Tuple[str, bool]] = []
     scores: List[float] = []
@@ -101,7 +103,10 @@ def evaluate_skill(skill: Dict[str, object]) -> Tuple[bool, float, List[str]]:
     max_counterexample_rate = thresholds.get("max_counterexample_rate")
     if max_counterexample_rate is not None:
         rules.append(
-            ("max_counterexample_rate", counterexample_rate is not None and counterexample_rate <= max_counterexample_rate)
+            (
+                "max_counterexample_rate",
+                counterexample_rate is not None and counterexample_rate <= max_counterexample_rate,
+            )
         )
         ratio = _score_ratio(counterexample_rate, max_counterexample_rate, higher_is_better=False)
         if ratio is not None:
@@ -110,7 +115,12 @@ def evaluate_skill(skill: Dict[str, object]) -> Tuple[bool, float, List[str]]:
     energy_samples = criteria.get("energy_samples")
     min_energy_samples = thresholds.get("min_energy_samples")
     if min_energy_samples is not None:
-        rules.append(("min_energy_samples", energy_samples is not None and energy_samples >= min_energy_samples))
+        rules.append(
+            (
+                "min_energy_samples",
+                energy_samples is not None and energy_samples >= min_energy_samples,
+            )
+        )
         ratio = _score_ratio(energy_samples, min_energy_samples, higher_is_better=True)
         if ratio is not None:
             scores.append(ratio)
@@ -118,7 +128,9 @@ def evaluate_skill(skill: Dict[str, object]) -> Tuple[bool, float, List[str]]:
     energy_stdev = criteria.get("energy_stdev")
     max_energy_stddev = thresholds.get("max_energy_stddev")
     if max_energy_stddev is not None:
-        rules.append(("max_energy_stddev", energy_stdev is not None and energy_stdev <= max_energy_stddev))
+        rules.append(
+            ("max_energy_stddev", energy_stdev is not None and energy_stdev <= max_energy_stddev)
+        )
         ratio = _score_ratio(energy_stdev, max_energy_stddev, higher_is_better=False)
         if ratio is not None:
             scores.append(ratio)
@@ -126,7 +138,9 @@ def evaluate_skill(skill: Dict[str, object]) -> Tuple[bool, float, List[str]]:
     recent_runs = criteria.get("recent_run_count")
     min_recent_runs = thresholds.get("min_recent_runs")
     if min_recent_runs is not None:
-        rules.append(("min_recent_runs", recent_runs is not None and recent_runs >= min_recent_runs))
+        rules.append(
+            ("min_recent_runs", recent_runs is not None and recent_runs >= min_recent_runs)
+        )
         ratio = _score_ratio(recent_runs, min_recent_runs, higher_is_better=True)
         if ratio is not None:
             scores.append(ratio)
@@ -166,7 +180,11 @@ def review_skill(
     review_policy = policy.get("review", {}) if isinstance(policy.get("review"), dict) else {}
     require_reviewer = review_policy.get("require_reviewer", True)
     require_role = review_policy.get("require_role", False)
-    role_levels = review_policy.get("role_levels", {}) if isinstance(review_policy.get("role_levels"), dict) else {}
+    role_levels = (
+        review_policy.get("role_levels", {})
+        if isinstance(review_policy.get("role_levels"), dict)
+        else {}
+    )
     default_role = review_policy.get("default_role")
     min_role_approve = review_policy.get("require_role_min_approve")
     min_role_reject = review_policy.get("require_role_min_reject")

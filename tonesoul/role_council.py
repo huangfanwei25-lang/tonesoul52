@@ -142,7 +142,9 @@ def build_council_summary(
     decision_status = _decision_status(decision)
     score_round = round(normalized_score, 3)
     dissent_round = round(dissent_ratio, 3)
-    decision_summary = f"{decision_status.upper()}: {decision} (score={score_round}, dissent={dissent_round})"
+    decision_summary = (
+        f"{decision_status.upper()}: {decision} (score={score_round}, dissent={dissent_round})"
+    )
 
     return {
         "decision": decision,

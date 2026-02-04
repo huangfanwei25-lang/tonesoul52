@@ -11,9 +11,7 @@ class EntryPoint:
     notes: Optional[str] = None
 
 
-WORKSPACE_ROOT = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "..")
-)
+WORKSPACE_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
 KNOWN_ENTRYPOINTS: List[EntryPoint] = [
     EntryPoint(

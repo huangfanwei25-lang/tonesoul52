@@ -8,6 +8,7 @@ Orchestrator Integration Test - 測試切換機制
 """
 
 import sys
+
 sys.path.insert(0, ".")
 
 from tools.orchestrator import (
@@ -30,28 +31,30 @@ def test_normal_operation():
     print("=" * 50)
     print("Test 1: 正常運行（不切換）")
     print("=" * 50)
-    
+
     orchestrator = Orchestrator(
         source_model="antigravity",
         target_model="codex",
     )
-    
+
     context = ContextSummary(
         user_goal="測試調度器",
         key_concepts=["handoff", "health monitor"],
         current_files=["tests/test_orchestrator.py"],
     )
-    
+
     result = orchestrator.handle_request(
         "這是一個正常的請求",
         context_summary=context,
     )
-    
+
     print(f"Status: {result['status']}")
     print(f"Switched: {result['switched']}")
-    print(f"Health: quota={result['health'].quota_remaining}, failures={result['health'].consecutive_failures}")
+    print(
+        f"Health: quota={result['health'].quota_remaining}, failures={result['health'].consecutive_failures}"
+    )
     print()
-    
+
     return result["switched"] == False
 
 
@@ -60,23 +63,23 @@ def test_quota_exhausted():
     print("=" * 50)
     print("Test 2: Quota 用盡（觸發 handoff）")
     print("=" * 50)
-    
+
     # 建立一個 quota 即將用盡的 monitor
     health_monitor = HealthMonitor()
     health_monitor.update_quota(0.05)  # 只剩 5%
-    
+
     orchestrator = Orchestrator(
         source_model="antigravity",
         target_model="codex",
         health_monitor=health_monitor,
     )
-    
+
     context = ContextSummary(
         user_goal="測試 quota 用盡切換",
         key_concepts=["handoff", "quota", "switch"],
         current_files=["tests/test_orchestrator.py"],
     )
-    
+
     result = orchestrator.handle_request(
         "Quota 即將用盡的請求",
         context_summary=context,
@@ -93,13 +96,13 @@ def test_quota_exhausted():
             )
         ],
     )
-    
+
     print(f"Status: {result['status']}")
     print(f"Switched: {result['switched']}")
     print(f"Handoff Packet: {result.get('handoff_packet', 'N/A')}")
     print(f"Launch Info: {result.get('launch', 'N/A')}")
     print()
-    
+
     return result["switched"] == True
 
 
@@ -108,9 +111,9 @@ def test_with_observer():
     print("=" * 50)
     print("Test 3: MemoryObserver 整合")
     print("=" * 50)
-    
+
     observer = MemoryObserver()
-    
+
     # 記錄一個 action
     action_id = observer.log_action(
         action="handle_request",
@@ -120,7 +123,7 @@ def test_with_observer():
         after_context={"phase": "雪"},
     )
     print(f"Action logged: {action_id}")
-    
+
     # 記錄一個 commitment
     commitment_id = observer.log_commitment(
         vow="語場繼承的目標是延續敘事並承擔責任",
@@ -128,14 +131,14 @@ def test_with_observer():
         measurable_via="drift_log 連續性檢查",
     )
     print(f"Commitment logged: {commitment_id}")
-    
+
     # 查詢最近的記錄
     logs = observer.query(limit=5)
     print(f"Recent logs: {len(logs)} entries")
     for log in logs:
         print(f"  - {log.get('record_type')}: {log.get('action')}")
     print()
-    
+
     return True
 
 
@@ -143,30 +146,30 @@ def main():
     print("\n🎛️ Orchestrator Integration Test")
     print("=" * 50)
     print()
-    
+
     results = []
-    
+
     results.append(("Normal Operation", test_normal_operation()))
     results.append(("Quota Exhausted", test_quota_exhausted()))
     results.append(("MemoryObserver", test_with_observer()))
-    
+
     print("=" * 50)
     print("📊 Test Results")
     print("=" * 50)
-    
+
     all_passed = True
     for name, passed in results:
         status = "✅ PASS" if passed else "❌ FAIL"
         print(f"{status} - {name}")
         if not passed:
             all_passed = False
-    
+
     print()
     if all_passed:
         print("🎉 All tests passed!")
     else:
         print("⚠️ Some tests failed")
-    
+
     return all_passed
 
 

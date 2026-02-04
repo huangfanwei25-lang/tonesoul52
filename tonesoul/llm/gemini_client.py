@@ -8,6 +8,7 @@ from typing import List, Dict, Optional
 
 try:
     import google.generativeai as genai
+
     GEMINI_AVAILABLE = True
 except ImportError:
     GEMINI_AVAILABLE = False
@@ -15,40 +16,37 @@ except ImportError:
 
 class GeminiClient:
     """Wrapper for Google Gemini API."""
-    
+
     def __init__(self, api_key: Optional[str] = None, model: str = "gemini-2.0-flash"):
         if not GEMINI_AVAILABLE:
             raise ImportError("請安裝 google-generativeai: pip install google-generativeai")
-        
+
         self.api_key = api_key or os.environ.get("GEMINI_API_KEY")
         if not self.api_key:
             raise ValueError("請設定 GEMINI_API_KEY 環境變數或傳入 api_key")
-        
+
         genai.configure(api_key=self.api_key)
         self.model = genai.GenerativeModel(model)
         self.chat = None
-    
+
     def start_chat(self, history: Optional[List[Dict]] = None):
         """Start a new chat session."""
         formatted_history = []
         if history:
             for msg in history:
                 role = "user" if msg.get("role") == "user" else "model"
-                formatted_history.append({
-                    "role": role,
-                    "parts": [msg.get("content", "")]
-                })
+                formatted_history.append({"role": role, "parts": [msg.get("content", "")]})
         self.chat = self.model.start_chat(history=formatted_history)
         return self
-    
+
     def send_message(self, message: str) -> str:
         """Send a message and get response."""
         if self.chat is None:
             self.start_chat()
-        
+
         response = self.chat.send_message(message)
         return response.text
-    
+
     def generate(self, prompt: str) -> str:
         """Generate a one-shot response (no chat history)."""
         response = self.model.generate_content(prompt)
@@ -81,13 +79,12 @@ def generate_narrative_reasoning(client: GeminiClient, verdict_dict: dict) -> st
     prompt = NARRATIVE_REASONING_PROMPT.format(
         verdict=verdict_dict.get("verdict", "unknown"),
         coherence=int(verdict_dict.get("coherence", {}).get("overall", 0.5) * 100),
-        votes=", ".join([
-            f"{v['perspective']}: {v['decision']}" 
-            for v in verdict_dict.get("votes", [])
-        ]),
-        divergence=verdict_dict.get("divergence_analysis", {}).get("core_divergence", "無")
+        votes=", ".join(
+            [f"{v['perspective']}: {v['decision']}" for v in verdict_dict.get("votes", [])]
+        ),
+        divergence=verdict_dict.get("divergence_analysis", {}).get("core_divergence", "無"),
     )
-    
+
     try:
         return client.generate(prompt)
     except Exception as e:

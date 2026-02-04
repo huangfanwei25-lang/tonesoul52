@@ -15,12 +15,13 @@ class BigFive:
     大五人格模型（來自 Darlin AI 整合）
     Big Five Personality Model (from Darlin AI integration)
     """
-    openness: float = 0.5          # 開放性
+
+    openness: float = 0.5  # 開放性
     conscientiousness: float = 0.5  # 盡責性
-    extraversion: float = 0.5      # 外向性
-    agreeableness: float = 0.5     # 親和性
-    neuroticism: float = 0.5       # 神經質
-    
+    extraversion: float = 0.5  # 外向性
+    agreeableness: float = 0.5  # 親和性
+    neuroticism: float = 0.5  # 神經質
+
     def to_delta_vector(self) -> Dict[str, float]:
         """Big Five → 三向量轉換"""
         return {
@@ -28,7 +29,7 @@ class BigFive:
             "deltaS": round((self.extraversion + self.agreeableness) / 2, 3),
             "deltaR": round(self.conscientiousness, 3),
         }
-    
+
     def as_dict(self) -> Dict[str, float]:
         return {
             "openness": self.openness,
@@ -89,7 +90,16 @@ class VectorCalculator:
         tension_markers = ["urgent", "immediately", "warning", "risk", "danger"]
         formal_markers = ["please", "recommend", "confirm", "verify", "ensure"]
         casual_markers = ["lol", "haha", "hey", "yo"]
-        responsibility_markers = ["confirm", "verify", "test", "risk", "avoid", "safe", "failure", "error"]
+        responsibility_markers = [
+            "confirm",
+            "verify",
+            "test",
+            "risk",
+            "avoid",
+            "safe",
+            "failure",
+            "error",
+        ]
 
         tension_hits = _count_hits(lowered, tension_markers)
         formal_hits = _count_hits(lowered, formal_markers)
@@ -116,12 +126,22 @@ class PersonaDimension:
 
     def __init__(self, persona_payload: Dict[str, object]) -> None:
         self.persona = persona_payload
-        self.home_vector = persona_payload.get("home_vector", {}) if isinstance(persona_payload, dict) else {}
-        self.tolerance = persona_payload.get("tolerance", {}) if isinstance(persona_payload, dict) else {}
+        self.home_vector = (
+            persona_payload.get("home_vector", {}) if isinstance(persona_payload, dict) else {}
+        )
+        self.tolerance = (
+            persona_payload.get("tolerance", {}) if isinstance(persona_payload, dict) else {}
+        )
         self.vector_calculator = VectorCalculator()
-        self.patterns = persona_payload.get("patterns", []) if isinstance(persona_payload, dict) else []
-        self.mistakes = persona_payload.get("mistakes", []) if isinstance(persona_payload, dict) else []
-        self.communication = persona_payload.get("communication", {}) if isinstance(persona_payload, dict) else {}
+        self.patterns = (
+            persona_payload.get("patterns", []) if isinstance(persona_payload, dict) else []
+        )
+        self.mistakes = (
+            persona_payload.get("mistakes", []) if isinstance(persona_payload, dict) else []
+        )
+        self.communication = (
+            persona_payload.get("communication", {}) if isinstance(persona_payload, dict) else {}
+        )
 
     def evaluate(
         self,
@@ -149,19 +169,19 @@ class PersonaDimension:
     ) -> Tuple[str, Dict[str, object]]:
         """
         處理輸出並應用人格約束
-        
+
         Args:
             output: 原始 LLM 輸出
             context: 上下文
             shadow: 只記錄不攔截
             ledger_path: 記錄路徑
             intercept: 實際攔截並校正
-        
+
         Returns:
             (處理後的輸出, 評估結果)
         """
         result = self.evaluate(output, context)
-        
+
         # 如果啟用攔截且向量無效
         if intercept and not result.get("valid", True):
             corrected_output, correction_info = self._apply_correction(output, result)
@@ -171,10 +191,10 @@ class PersonaDimension:
             output = corrected_output
         else:
             result["corrected"] = False
-        
+
         if ledger_path:
             _append_ledger(ledger_path, result)
-        
+
         return output, result
 
     def _apply_correction(
@@ -184,7 +204,7 @@ class PersonaDimension:
     ) -> Tuple[str, Dict[str, object]]:
         """
         應用校正：根據違規原因調整輸出
-        
+
         策略：
         - deltaT 過高：移除過多驚嘆號，緩和語氣
         - deltaS 過低：提升正式度
@@ -193,54 +213,55 @@ class PersonaDimension:
         reasons = evaluation.get("reasons", [])
         corrections_applied = []
         corrected = output
-        
+
         for reason in reasons:
             if "deltaT" in reason:
                 # 張力過高：緩和語氣
                 corrected = self._reduce_tension(corrected)
                 corrections_applied.append("reduced_tension")
-            
+
             if "deltaS" in reason:
                 # 語氣偏離：調整正式度
                 corrected = self._adjust_formality(corrected)
                 corrections_applied.append("adjusted_formality")
-            
+
             if "deltaR" in reason:
                 # 責任過低：加入負責任語句
                 corrected = self._add_responsibility(corrected)
                 corrections_applied.append("added_responsibility")
-        
+
         return corrected, {
             "corrections": corrections_applied,
             "original_length": len(output),
             "corrected_length": len(corrected),
         }
-    
+
     def _reduce_tension(self, text: str) -> str:
         """降低張力：移除多餘驚嘆號，緩和用詞"""
         import re
+
         # 將多個驚嘆號變成一個
-        text = re.sub(r'[!！]{2,}', '。', text)
+        text = re.sub(r"[!！]{2,}", "。", text)
         # 移除 WARNING 等高張力詞
-        text = text.replace('WARNING', '注意')
-        text = text.replace('DANGER', '提醒')
-        text = text.replace('緊急', '需要注意的')
+        text = text.replace("WARNING", "注意")
+        text = text.replace("DANGER", "提醒")
+        text = text.replace("緊急", "需要注意的")
         return text
-    
+
     def _adjust_formality(self, text: str) -> str:
         """調整正式度"""
         # 移除過於隨便的用語
         casual_replacements = {
-            'lol': '',
-            'haha': '',
-            '哈哈': '',
-            '反正': '總之',
-            '隨便': '請自行決定',
+            "lol": "",
+            "haha": "",
+            "哈哈": "",
+            "反正": "總之",
+            "隨便": "請自行決定",
         }
         for casual, formal in casual_replacements.items():
             text = text.replace(casual, formal)
         return text
-    
+
     def _add_responsibility(self, text: str) -> str:
         """增加責任感語句"""
         tone = self.communication.get("tone", "專業")
@@ -258,7 +279,6 @@ class PersonaDimension:
         _check_delta("deltaR", vector.deltaR, home.get("deltaR"), tol.get("deltaR"), reasons)
 
         return not reasons, reasons
-
 
 
 def load_persona(path: str) -> Dict[str, object]:
@@ -318,7 +338,11 @@ def _vector_distance(home: object, vector: PersonaVector) -> Optional[Dict[str, 
     if not isinstance(home, dict):
         return None
     diffs = {}
-    for key, value in [("deltaT", vector.deltaT), ("deltaS", vector.deltaS), ("deltaR", vector.deltaR)]:
+    for key, value in [
+        ("deltaT", vector.deltaT),
+        ("deltaS", vector.deltaS),
+        ("deltaR", vector.deltaR),
+    ]:
         home_value = home.get(key)
         if isinstance(home_value, (int, float)):
             diffs[key] = round(abs(float(value) - float(home_value)), 3)

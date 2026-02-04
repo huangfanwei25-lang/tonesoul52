@@ -51,14 +51,10 @@ def node_from_dict(data: Dict[str, object]) -> Node:
         where_data.get("where_time", {}) if isinstance(where_data.get("where_time"), dict) else {}
     )
     where_field_data = (
-        where_data.get("where_field", {})
-        if isinstance(where_data.get("where_field"), dict)
-        else {}
+        where_data.get("where_field", {}) if isinstance(where_data.get("where_field"), dict) else {}
     )
     where_task_data = (
-        where_data.get("where_task", {})
-        if isinstance(where_data.get("where_task"), dict)
-        else {}
+        where_data.get("where_task", {}) if isinstance(where_data.get("where_task"), dict) else {}
     )
     what_data = data.get("what", {}) if isinstance(data.get("what"), dict) else {}
     scalar_data = data.get("scalar", {}) if isinstance(data.get("scalar"), dict) else {}

@@ -28,8 +28,7 @@ def compute_coherence(votes: List[PerspectiveVote]) -> CoherenceScore:
     approval_rate = approvals / n
     min_confidence = min(v.confidence for v in votes)
     has_strong_objection = any(
-        v.decision == VoteDecision.OBJECT and v.confidence > 0.8
-        for v in votes
+        v.decision == VoteDecision.OBJECT and v.confidence > 0.8 for v in votes
     )
 
     return CoherenceScore(

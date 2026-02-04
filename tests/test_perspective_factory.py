@@ -16,9 +16,11 @@ def test_create_council_tool_fallback():
     def failing_tool(_output: str, _context: dict) -> dict:
         raise RuntimeError("boom")
 
-    council = PerspectiveFactory.create_council({
-        "guardian": {"mode": "tool", "tool": failing_tool},
-    })
+    council = PerspectiveFactory.create_council(
+        {
+            "guardian": {"mode": "tool", "tool": failing_tool},
+        }
+    )
     guardian = next(
         (p for p in council if p.perspective_type == PerspectiveType.GUARDIAN),
         None,
@@ -30,9 +32,11 @@ def test_create_council_tool_fallback():
 
 
 def test_create_council_llm_fallback_to_rules():
-    council = PerspectiveFactory.create_council({
-        PerspectiveType.ANALYST: {"mode": "llm"},
-    })
+    council = PerspectiveFactory.create_council(
+        {
+            PerspectiveType.ANALYST: {"mode": "llm"},
+        }
+    )
     analyst = next(
         (p for p in council if p.perspective_type == PerspectiveType.ANALYST),
         None,

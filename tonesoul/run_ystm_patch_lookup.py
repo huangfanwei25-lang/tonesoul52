@@ -17,7 +17,9 @@ def build_arg_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--node-id", help="Filter by node id.")
     parser.add_argument("--diff-id", help="Filter by diff id.")
-    parser.add_argument("--include-empty", action="store_true", help="Include nodes with empty patch history.")
+    parser.add_argument(
+        "--include-empty", action="store_true", help="Include nodes with empty patch history."
+    )
     parser.add_argument("--output", help="Optional output JSON path.")
     return parser
 

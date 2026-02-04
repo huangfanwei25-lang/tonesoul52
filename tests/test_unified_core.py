@@ -1,4 +1,5 @@
 """Tests for UnifiedCore - the central orchestration module."""
+
 import pytest
 
 
@@ -8,17 +9,20 @@ class TestUnifiedCoreImport:
     def test_import(self):
         """UnifiedCore module should be importable."""
         from tonesoul.unified_core import UnifiedCore
+
         assert UnifiedCore is not None
 
     def test_default_init(self):
         """UnifiedCore should initialize with default config."""
         from tonesoul.unified_core import UnifiedCore
+
         core = UnifiedCore()
         assert core is not None
 
     def test_init_with_persona_payload(self):
         """UnifiedCore should accept persona_payload."""
         from tonesoul.unified_core import UnifiedCore
+
         persona = {
             "id": "test_persona",
             "home_vector": {"deltaT": 0.5, "deltaS": 0.5, "deltaR": 0.5},
@@ -35,29 +39,33 @@ class TestUnifiedCoreComponents:
     def test_has_persona_dimension(self):
         """UnifiedCore should have PersonaDimension component."""
         from tonesoul.unified_core import UnifiedCore
+
         core = UnifiedCore()
-        assert hasattr(core, 'persona_dimension')
+        assert hasattr(core, "persona_dimension")
         assert core.persona_dimension is not None
 
     def test_has_semantic_controller(self):
         """UnifiedCore should have SemanticController component."""
         from tonesoul.unified_core import UnifiedCore
+
         core = UnifiedCore()
-        assert hasattr(core, 'semantic_controller')
+        assert hasattr(core, "semantic_controller")
         assert core.semantic_controller is not None
 
     def test_has_vow_enforcer(self):
         """UnifiedCore should have VowEnforcer component."""
         from tonesoul.unified_core import UnifiedCore
+
         core = UnifiedCore()
-        assert hasattr(core, 'vow_enforcer')
+        assert hasattr(core, "vow_enforcer")
         assert core.vow_enforcer is not None
 
     def test_has_contract_verifier(self):
         """UnifiedCore should have ContractVerifier component."""
         from tonesoul.unified_core import UnifiedCore
+
         core = UnifiedCore()
-        assert hasattr(core, 'contract_verifier')
+        assert hasattr(core, "contract_verifier")
 
 
 class TestUnifiedCoreStatus:
@@ -66,6 +74,7 @@ class TestUnifiedCoreStatus:
     def test_get_status(self):
         """UnifiedCore.get_status() should return a dict."""
         from tonesoul.unified_core import UnifiedCore
+
         core = UnifiedCore()
         status = core.get_status()
         assert isinstance(status, dict)
@@ -75,6 +84,7 @@ class TestUnifiedCoreStatus:
     def test_reset(self):
         """UnifiedCore.reset() should not raise."""
         from tonesoul.unified_core import UnifiedCore
+
         core = UnifiedCore()
         core.reset()  # Should not raise
         assert core.current_zone.value == "safe"
@@ -87,6 +97,7 @@ class TestUnifiedCoreProcess:
     def valid_core(self):
         """Create a UnifiedCore with valid persona that has home_vector."""
         from tonesoul.unified_core import UnifiedCore
+
         persona = {
             "id": "test_persona",
             "home_vector": {"deltaT": 0.5, "deltaS": 0.5, "deltaR": 0.5},

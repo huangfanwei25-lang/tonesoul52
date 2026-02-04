@@ -61,9 +61,7 @@ def _latest_seed_path(memory_root: str) -> Optional[str]:
     if not os.path.isdir(seeds_dir):
         return None
     candidates = [
-        os.path.join(seeds_dir, name)
-        for name in os.listdir(seeds_dir)
-        if name.endswith(".json")
+        os.path.join(seeds_dir, name) for name in os.listdir(seeds_dir) if name.endswith(".json")
     ]
     if not candidates:
         return None

@@ -56,6 +56,7 @@ class QuickResult:
 
 # === Perspective checks ===
 
+
 def _quick_guardian(text: str) -> QuickVote:
     """Safety guard (keyword-based)."""
 
@@ -142,6 +143,7 @@ def _quick_axiom(text: str, axioms: Optional[List[str]] = None) -> QuickVote:
 
 
 # === Main ===
+
 
 def quick_review(text: str, save_to_journal: bool = True) -> QuickResult:
     """Run quick audit and return a compact result."""

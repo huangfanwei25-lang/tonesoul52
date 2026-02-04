@@ -11,49 +11,49 @@ from .ystm.schema import utc_now
 
 DEFAULT_LEXICON = {
     "positive": {
-    "advance",
-    "build",
-    "create",
-    "enable",
-    "allow",
-    "proceed",
-    "support",
-    "improve",
-    "optimize",
-    "maintain",
-    "stabilize",
-    "secure",
+        "advance",
+        "build",
+        "create",
+        "enable",
+        "allow",
+        "proceed",
+        "support",
+        "improve",
+        "optimize",
+        "maintain",
+        "stabilize",
+        "secure",
     },
     "negative": {
-    "avoid",
-    "block",
-    "deny",
-    "halt",
-    "stop",
-    "prevent",
-    "refuse",
-    "reject",
-    "limit",
-    "restrict",
-    "warn",
+        "avoid",
+        "block",
+        "deny",
+        "halt",
+        "stop",
+        "prevent",
+        "refuse",
+        "reject",
+        "limit",
+        "restrict",
+        "warn",
     },
     "strong_modals": {
-    "must",
-    "should",
-    "need",
-    "required",
-    "require",
-    "ensure",
-    "shall",
-    "enforce",
+        "must",
+        "should",
+        "need",
+        "required",
+        "require",
+        "ensure",
+        "shall",
+        "enforce",
     },
     "caution": {
-    "risk",
-    "uncertain",
-    "may",
-    "might",
-    "caution",
-    "warning",
+        "risk",
+        "uncertain",
+        "may",
+        "might",
+        "caution",
+        "warning",
     },
 }
 
@@ -166,7 +166,9 @@ def score(text: str, policy: Optional[Dict[str, object]] = None) -> Dict[str, ob
         direction = (positive_hits - negative_hits) / direction_hits
     direction_norm = (direction + 1.0) / 2.0
 
-    diversity_factor = min(1.0, unique_ratio / _safe_scale(float(variability_cfg["unique_ratio_target"])))
+    diversity_factor = min(
+        1.0, unique_ratio / _safe_scale(float(variability_cfg["unique_ratio_target"]))
+    )
     length_balance = min(1.0, token_count / _safe_scale(float(variability_cfg["length_tokens"])))
     variability = min(1.0, diversity_factor * length_balance)
 

@@ -19,15 +19,13 @@ from .pipeline import CorpusPipeline, create_corpus_pipeline
 __all__ = [
     # Consent
     "ConsentManager",
-    "UserConsent", 
+    "UserConsent",
     "ConsentType",
-    
     # Storage
     "CorpusStorage",
     "Conversation",
     "ConversationTurn",
-    
     # Pipeline
     "CorpusPipeline",
-    "create_corpus_pipeline"
+    "create_corpus_pipeline",
 ]

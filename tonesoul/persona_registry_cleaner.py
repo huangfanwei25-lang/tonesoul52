@@ -30,12 +30,15 @@ def main() -> int:
         if not name:
             continue
         key = _normalize(name)
-        rec = merged.setdefault(key, {
-            "name": name,
-            "roles": set(),
-            "sources": set(),
-            "notes": set(),
-        })
+        rec = merged.setdefault(
+            key,
+            {
+                "name": name,
+                "roles": set(),
+                "sources": set(),
+                "notes": set(),
+            },
+        )
         role = entry.get("role", "unknown")
         if role:
             rec["roles"].add(role)
@@ -48,15 +51,19 @@ def main() -> int:
 
     cleaned = []
     for rec in merged.values():
-        cleaned.append({
-            "name": rec["name"],
-            "roles": sorted(rec["roles"]),
-            "sources": sorted(rec["sources"]),
-            "notes": sorted(rec["notes"]),
-        })
+        cleaned.append(
+            {
+                "name": rec["name"],
+                "roles": sorted(rec["roles"]),
+                "sources": sorted(rec["sources"]),
+                "notes": sorted(rec["notes"]),
+            }
+        )
 
     with open(OUTPUT_PATH, "w", encoding="utf-8") as handle:
-        json.dump({"schema_version": "1.0", "registry": cleaned}, handle, indent=2, ensure_ascii=False)
+        json.dump(
+            {"schema_version": "1.0", "registry": cleaned}, handle, indent=2, ensure_ascii=False
+        )
 
     role_counter = Counter()
     note_counter = Counter()

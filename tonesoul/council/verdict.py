@@ -53,8 +53,7 @@ def build_structured_output(verdict: CouncilVerdict) -> dict:
     core_reasons = [
         v.reasoning
         for v in votes
-        if str(getattr(v, "decision", "")).lower() in ("concern", "object")
-        and v.reasoning
+        if str(getattr(v, "decision", "")).lower() in ("concern", "object") and v.reasoning
     ]
     if not core_reasons:
         core_reasons = [v.reasoning for v in votes if v.reasoning]
@@ -208,9 +207,7 @@ def generate_verdict(
             stance_declaration=stance,
         )
 
-    concerns = [
-        v for v in votes if v.decision == VoteDecision.CONCERN
-    ]
+    concerns = [v for v in votes if v.decision == VoteDecision.CONCERN]
     if concerns and coherence.min_confidence < 0.5:
         if not any(_is_refinement_concern(v) for v in concerns):
             return CouncilVerdict(
@@ -245,7 +242,4 @@ def _generate_stance_declaration(
         parts.append(f"- **{label}**: {v.reasoning}")
     if not parts:
         return "No stance available."
-    return (
-        "Multiple perspectives disagree; stance summary:\n"
-        + "\n".join(parts)
-    )
+    return "Multiple perspectives disagree; stance summary:\n" + "\n".join(parts)

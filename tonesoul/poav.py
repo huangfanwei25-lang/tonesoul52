@@ -79,9 +79,7 @@ def score(
         }
 
     parsimony = _clamp(1.0 - (token_count / float(max_tokens or 1)))
-    orthogonality = (
-        _clamp(unique_sentences / float(sentence_count)) if sentence_count else 0.0
-    )
+    orthogonality = _clamp(unique_sentences / float(sentence_count)) if sentence_count else 0.0
     avg_sentence_tokens = token_count / float(sentence_count or 1)
     audibility = _clamp(1.0 - (avg_sentence_tokens / float(max_avg_sentence or 1)))
     evidence_signals = keyword_hits + (path_hits * path_weight)

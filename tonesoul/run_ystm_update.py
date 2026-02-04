@@ -66,7 +66,9 @@ def build_arg_parser() -> argparse.ArgumentParser:
         default=None,
         help="Evidence grade for the semantic diff.",
     )
-    parser.add_argument("--source-patch-id", default=None, help="Optional source patch id for the diff.")
+    parser.add_argument(
+        "--source-patch-id", default=None, help="Optional source patch id for the diff."
+    )
     parser.add_argument(
         "--trace-level",
         choices=["standard", "full"],
@@ -218,6 +220,7 @@ def _write_trace_artifacts(
         tags=args.trace_tag,
     )
     source = capture_payload.get("source", {}) if isinstance(capture_payload, dict) else {}
+
     def _load_trace_json(value: Optional[str], label: str) -> Optional[object]:
         if value is None:
             return None
@@ -237,7 +240,9 @@ def _write_trace_artifacts(
     try:
         normalize_payload = normalize_record(
             raw_text=raw_text,
-            capture_id=capture_payload.get("capture_id") if isinstance(capture_payload, dict) else None,
+            capture_id=(
+                capture_payload.get("capture_id") if isinstance(capture_payload, dict) else None
+            ),
             source=source if isinstance(source, dict) else {},
             source_grade=args.trace_grade,
             summary=args.trace_summary,
@@ -257,7 +262,9 @@ def _write_trace_artifacts(
     output_dir = os.path.abspath(output_dir)
     os.makedirs(output_dir, exist_ok=True)
     capture_id = capture_payload.get("capture_id") if isinstance(capture_payload, dict) else None
-    normalize_id = normalize_payload.get("normalize_id") if isinstance(normalize_payload, dict) else None
+    normalize_id = (
+        normalize_payload.get("normalize_id") if isinstance(normalize_payload, dict) else None
+    )
     capture_path = os.path.join(output_dir, f"{capture_id}.json") if capture_id else None
     normalize_path = os.path.join(output_dir, f"{normalize_id}.json") if normalize_id else None
     if capture_path:
@@ -270,7 +277,9 @@ def _write_trace_artifacts(
         "capture_path": capture_path,
         "normalize_path": normalize_path,
         "normalize_id": normalize_id,
-        "source_grade": normalize_payload.get("source_grade") if isinstance(normalize_payload, dict) else None,
+        "source_grade": (
+            normalize_payload.get("source_grade") if isinstance(normalize_payload, dict) else None
+        ),
     }
 
 
@@ -288,7 +297,9 @@ def main() -> Dict[str, str]:
     audit_log = load_audit_log(args.audit)
     error_ledger_path = args.error_ledger
     if error_ledger_path is None:
-        error_ledger_path = os.path.join(os.path.dirname(os.path.abspath(args.audit)), "error_ledger.jsonl")
+        error_ledger_path = os.path.join(
+            os.path.dirname(os.path.abspath(args.audit)), "error_ledger.jsonl"
+        )
     node_index = _find_node_index(nodes, args.node_id)
     if node_index is None:
         raise SystemExit(f"Node not found: {args.node_id}")

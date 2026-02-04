@@ -88,10 +88,18 @@ def _source_from_segment(segment: Dict[str, object], text: str) -> tuple[SourceR
     source = segment.get("source") if isinstance(segment.get("source"), dict) else {}
     source_type = _clean_str(segment.get("source_type")) or _clean_str(source.get("type")) or "demo"
     source_uri = _clean_str(segment.get("source_uri")) or _clean_str(source.get("uri"))
-    source_hash = _clean_str(segment.get("source_hash")) or _clean_str(source.get("hash")) or stable_hash(text)
+    source_hash = (
+        _clean_str(segment.get("source_hash"))
+        or _clean_str(source.get("hash"))
+        or stable_hash(text)
+    )
     source_grade = _clean_str(segment.get("source_grade")) or _clean_str(source.get("grade"))
-    retrieved_at = _clean_str(segment.get("source_retrieved_at")) or _clean_str(source.get("retrieved_at"))
-    verified_by = _clean_str(segment.get("source_verified_by")) or _clean_str(source.get("verified_by"))
+    retrieved_at = _clean_str(segment.get("source_retrieved_at")) or _clean_str(
+        source.get("retrieved_at")
+    )
+    verified_by = _clean_str(segment.get("source_verified_by")) or _clean_str(
+        source.get("verified_by")
+    )
     return (
         SourceRef(
             type=source_type,

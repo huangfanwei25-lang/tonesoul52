@@ -44,7 +44,9 @@ def run_entrypoint(name: str, dry_run: bool = True) -> RunResult:
         return RunResult(name=name, command=[], cwd="", returncode=None, error="Unknown entrypoint")
 
     if not match.command:
-        return RunResult(name=name, command=[], cwd="", returncode=None, error="No command configured")
+        return RunResult(
+            name=name, command=[], cwd="", returncode=None, error="No command configured"
+        )
 
     cmd = match.command.split()
     cwd = os.path.dirname(os.path.abspath(match.path))

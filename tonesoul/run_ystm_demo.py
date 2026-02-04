@@ -31,7 +31,9 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument("--beta", type=float, default=0.0)
     parser.add_argument("--gamma", type=float, default=0.0)
     parser.add_argument("--no-normalize-energy", action="store_true")
-    parser.add_argument("--export-png", action="store_true", help="Export PNG if cairosvg is available.")
+    parser.add_argument(
+        "--export-png", action="store_true", help="Export PNG if cairosvg is available."
+    )
     parser.add_argument("--png-scale", type=float, default=2.0, help="Scale factor for PNG export.")
     return parser
 

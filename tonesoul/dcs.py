@@ -92,12 +92,16 @@ def build_dcs_result(
 
     decision_mode = (decision_mode or "normal").lower()
     dcs_config = policy.get("dcs", {}) if isinstance(policy.get("dcs"), dict) else {}
-    decision_modes = dcs_config.get("decision_modes", {}) if isinstance(
-        dcs_config.get("decision_modes"), dict
-    ) else {}
-    mode_rules = decision_modes.get(decision_mode, {}) if isinstance(
-        decision_modes.get(decision_mode), dict
-    ) else {}
+    decision_modes = (
+        dcs_config.get("decision_modes", {})
+        if isinstance(dcs_config.get("decision_modes"), dict)
+        else {}
+    )
+    mode_rules = (
+        decision_modes.get(decision_mode, {})
+        if isinstance(decision_modes.get(decision_mode), dict)
+        else {}
+    )
     default_close_on = {"p0", "escalation"}
     default_soft_close_on = {"poav", "mercy", "drift", "tsr_delta"}
     if decision_mode == "lockdown":
@@ -109,7 +113,9 @@ def build_dcs_result(
 
     closed_triggers = [key for key, active in triggers.items() if active and key in close_on]
     soft_triggers = [
-        key for key, active in triggers.items() if active and key in soft_close_on and key not in close_on
+        key
+        for key, active in triggers.items()
+        if active and key in soft_close_on and key not in close_on
     ]
 
     if closed_triggers:

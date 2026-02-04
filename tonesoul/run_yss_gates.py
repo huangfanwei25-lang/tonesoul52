@@ -196,9 +196,15 @@ def _resolve_paths(args: argparse.Namespace) -> Dict[str, Optional[str]]:
         "ystm_terrain_svg": os.path.join(workspace_root, "reports", "ystm_demo", "terrain.svg"),
         "ystm_terrain_png": os.path.join(workspace_root, "reports", "ystm_demo", "terrain.png"),
         "ystm_terrain_p2": os.path.join(workspace_root, "reports", "ystm_demo", "terrain_p2.html"),
-        "ystm_terrain_p2_json": os.path.join(workspace_root, "reports", "ystm_demo", "terrain_p2.json"),
-        "ystm_terrain_p2_svg": os.path.join(workspace_root, "reports", "ystm_demo", "terrain_p2.svg"),
-        "ystm_terrain_p2_png": os.path.join(workspace_root, "reports", "ystm_demo", "terrain_p2.png"),
+        "ystm_terrain_p2_json": os.path.join(
+            workspace_root, "reports", "ystm_demo", "terrain_p2.json"
+        ),
+        "ystm_terrain_p2_svg": os.path.join(
+            workspace_root, "reports", "ystm_demo", "terrain_p2.svg"
+        ),
+        "ystm_terrain_p2_png": os.path.join(
+            workspace_root, "reports", "ystm_demo", "terrain_p2.png"
+        ),
     }
     for key, value in workspace_defaults.items():
         if not resolved.get(key):

@@ -100,7 +100,11 @@ def _recommended_actions(votes: List[PerspectiveVote], language: str) -> List[st
         if action not in actions:
             actions.append(action)
     if not actions:
-        actions.append("Proceed with the response." if language == "en" else "\u53ef\u4ee5\u7e7c\u7e8c\u9032\u884c\u3002")
+        actions.append(
+            "Proceed with the response."
+            if language == "en"
+            else "\u53ef\u4ee5\u7e7c\u7e8c\u9032\u884c\u3002"
+        )
     return actions
 
 
@@ -165,7 +169,9 @@ def format_stance_declaration(divergence: Dict[str, object]) -> str:
 def generate_human_summary(verdict: CouncilVerdict, language: str = "en") -> str:
     votes = verdict.votes
     verdict_type = verdict.verdict
-    concerns = _collect_aspects(votes, "concern", language) + _collect_aspects(votes, "object", language)
+    concerns = _collect_aspects(votes, "concern", language) + _collect_aspects(
+        votes, "object", language
+    )
     approvals = _collect_aspects(votes, "approve", language)
     actions = _recommended_actions(votes, language)
 
@@ -178,7 +184,11 @@ def generate_human_summary(verdict: CouncilVerdict, language: str = "en") -> str
         if language == "zh":
             summary = "\u6709\u4e00\u4e9b\u5730\u65b9\u9700\u8981\u6539\u9032\u3002"
             if concerns:
-                summary += "\u76ee\u524d\u6709\u95dc\u65bc" + "\u3001".join(concerns) + "\u7684\u7591\u616e\u3002"
+                summary += (
+                    "\u76ee\u524d\u6709\u95dc\u65bc"
+                    + "\u3001".join(concerns)
+                    + "\u7684\u7591\u616e\u3002"
+                )
             summary += "\u5efa\u8b70\u7684\u4f5c\u6cd5\uff1a" + " ".join(actions)
             return summary
         summary = "Some parts need improvement."
@@ -191,9 +201,15 @@ def generate_human_summary(verdict: CouncilVerdict, language: str = "en") -> str
         if language == "zh":
             summary = "\u9019\u500b\u5167\u5bb9\u6709\u4e0d\u540c\u770b\u6cd5\u3002"
             if approvals:
-                summary += "\u95dc\u65bc" + "\u3001".join(approvals) + "\u6c92\u6709\u660e\u986f\u554f\u984c\u3002"
+                summary += (
+                    "\u95dc\u65bc"
+                    + "\u3001".join(approvals)
+                    + "\u6c92\u6709\u660e\u986f\u554f\u984c\u3002"
+                )
             if concerns:
-                summary += "\u4f46" + "\u3001".join(concerns) + "\u9084\u9700\u8981\u6ce8\u610f\u3002"
+                summary += (
+                    "\u4f46" + "\u3001".join(concerns) + "\u9084\u9700\u8981\u6ce8\u610f\u3002"
+                )
             summary += "\u5efa\u8b70\u7684\u4f5c\u6cd5\uff1a" + " ".join(actions)
             return summary
         summary = "There are different viewpoints on this content."
@@ -207,7 +223,11 @@ def generate_human_summary(verdict: CouncilVerdict, language: str = "en") -> str
     if language == "zh":
         summary = "\u6574\u9ad4\u4f86\u8aaa\u9019\u500b\u5167\u5bb9\u6c92\u6709\u660e\u986f\u554f\u984c\u3002"
         if concerns:
-            summary += "\u4f46\u4ecd\u6709\u5c0f\u90e8\u5206\u95dc\u6ce8\u5728" + "\u3001".join(concerns) + "\u3002"
+            summary += (
+                "\u4f46\u4ecd\u6709\u5c0f\u90e8\u5206\u95dc\u6ce8\u5728"
+                + "\u3001".join(concerns)
+                + "\u3002"
+            )
         return summary
 
     summary = "Overall, this content looks safe and helpful."

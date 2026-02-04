@@ -5,13 +5,13 @@ Provides iterative execution engine with event streaming.
 
 Usage:
     from tonesoul.loop import LoopEngine, LoopConfig
-    
+
     config = LoopConfig(prompt="Fix this bug", max_iterations=5)
-    
+
     async def handler(iteration: int, prompt: str):
         result = await my_ai.generate(prompt)
         yield result
-    
+
     engine = LoopEngine(config=config, on_iteration=handler)
     result = await engine.start()
 """

@@ -20,6 +20,7 @@ def _utc_iso() -> str:
 
 class VowAction(Enum):
     """Action to take on vow violation"""
+
     PASS = "pass"
     FLAG = "flag"
     REPAIR = "repair"
@@ -30,9 +31,10 @@ class VowAction(Enum):
 class Vow:
     """
     A semantic vow - an explicit commitment AI must satisfy.
-    
+
     語義誓言 - AI 必須滿足的明確承諾。
     """
+
     id: str
     title: str
     description: str
@@ -42,7 +44,7 @@ class Vow:
     active: bool = True
     falsifiable_by: Optional[str] = None
     measurable_via: Optional[str] = None
-    
+
     def to_dict(self) -> Dict:
         return {
             "id": self.id,
@@ -55,7 +57,7 @@ class Vow:
             "falsifiable_by": self.falsifiable_by,
             "measurable_via": self.measurable_via,
         }
-    
+
     @classmethod
     def from_dict(cls, data: Dict) -> "Vow":
         return cls(
@@ -74,13 +76,14 @@ class Vow:
 @dataclass
 class VowCheckResult:
     """Result of checking a single vow"""
+
     vow_id: str
     passed: bool
     score: float
     threshold: float
     details: Dict[str, float] = field(default_factory=dict)
     action: VowAction = VowAction.PASS
-    
+
     def to_dict(self) -> Dict:
         return {
             "vow_id": self.vow_id,
@@ -92,20 +95,21 @@ class VowCheckResult:
         }
 
 
-@dataclass  
+@dataclass
 class VowEnforcementResult:
     """Result of enforcing all active vows"""
+
     all_passed: bool
     results: List[VowCheckResult]
     blocked: bool = False
     repair_needed: bool = False
     flags: List[str] = field(default_factory=list)
     timestamp: str = ""
-    
+
     def __post_init__(self):
         if not self.timestamp:
             self.timestamp = _utc_iso()
-    
+
     def to_dict(self) -> Dict:
         return {
             "all_passed": self.all_passed,
@@ -131,7 +135,7 @@ DEFAULT_VOWS = [
         measurable_via="Truthfulness evaluator score >= 0.95.",
     ),
     Vow(
-        id="ΣVow_002", 
+        id="ΣVow_002",
         title="Acknowledge Uncertainty",
         description="AI shall explicitly acknowledge when it is uncertain.",
         expected={"confidence_disclosure": 0.90},
@@ -156,10 +160,10 @@ DEFAULT_VOWS = [
 class VowRegistry:
     """
     Registry of active vows.
-    
+
     誓言註冊表。
     """
-    
+
     def __init__(self, vows: Optional[List[Vow]] = None):
         self._vows: Dict[str, Vow] = {}
         if vows is None:
@@ -169,35 +173,35 @@ class VowRegistry:
         else:
             for vow in vows:
                 self.register(vow)
-    
+
     def register(self, vow: Vow) -> None:
         """Register a vow"""
         self._vows[vow.id] = vow
-    
+
     def unregister(self, vow_id: str) -> None:
         """Unregister a vow"""
         if vow_id in self._vows:
             del self._vows[vow_id]
-    
+
     def get(self, vow_id: str) -> Optional[Vow]:
         """Get a vow by ID"""
         return self._vows.get(vow_id)
-    
+
     def active_vows(self) -> List[Vow]:
         """Get all active vows"""
         return [v for v in self._vows.values() if v.active]
-    
+
     def all_vows(self) -> List[Vow]:
         """Get all vows"""
         return list(self._vows.values())
-    
+
     def to_dict(self) -> Dict:
         return {
             "vows": [v.to_dict() for v in self._vows.values()],
             "count": len(self._vows),
             "active_count": len(self.active_vows()),
         }
-    
+
     @classmethod
     def from_file(cls, path: str) -> "VowRegistry":
         """Load vows from JSON file"""
@@ -205,7 +209,7 @@ class VowRegistry:
             data = json.load(f)
         vows = [Vow.from_dict(v) for v in data.get("vows", [])]
         return cls(vows)
-    
+
     def save(self, path: str) -> None:
         """Save vows to JSON file"""
         os.makedirs(os.path.dirname(path), exist_ok=True)
@@ -216,90 +220,92 @@ class VowRegistry:
 class VowEnforcer:
     """
     Enforces vows against AI outputs.
-    
+
     對 AI 輸出執行誓言檢查。
     """
-    
+
     def __init__(self, registry: Optional[VowRegistry] = None):
         self.registry = registry or VowRegistry()
         self._evaluators: Dict[str, callable] = {}
         self._register_default_evaluators()
-    
+
     def _register_default_evaluators(self) -> None:
         """Register default metric evaluators"""
         self._evaluators["truthfulness"] = self._evaluate_truthfulness
         self._evaluators["confidence_disclosure"] = self._evaluate_confidence_disclosure
         self._evaluators["safety"] = self._evaluate_safety
         self._evaluators["responsibility"] = self._evaluate_responsibility
-    
+
     def register_evaluator(self, metric: str, evaluator: callable) -> None:
         """Register a custom metric evaluator"""
         self._evaluators[metric] = evaluator
-    
+
     def _evaluate_truthfulness(self, output: str, context: Dict) -> float:
         """
         Evaluate truthfulness of output.
-        
+
         Heuristic: Check for hedging language, citations, qualifications.
         """
         hedges = ["might", "possibly", "perhaps", "could be", "uncertain", "not sure"]
         citations = ["according to", "based on", "source:", "reference:"]
-        
+
         text_lower = output.lower()
         hedge_score = sum(1 for h in hedges if h in text_lower) / max(len(hedges), 1)
         citation_score = sum(1 for c in citations if c in text_lower) / max(len(citations), 1)
-        
+
         # Higher score = more truthful indicators
         base_score = 0.7  # Default assumption
         return min(1.0, base_score + 0.15 * hedge_score + 0.15 * citation_score)
-    
+
     def _evaluate_confidence_disclosure(self, output: str, context: Dict) -> float:
         """Evaluate whether AI discloses uncertainty"""
         uncertainty_markers = [
-            "I'm not sure", "uncertain", "may not be accurate",
-            "I think", "possibly", "approximately", "roughly"
+            "I'm not sure",
+            "uncertain",
+            "may not be accurate",
+            "I think",
+            "possibly",
+            "approximately",
+            "roughly",
         ]
         text_lower = output.lower()
         hits = sum(1 for m in uncertainty_markers if m in text_lower)
         return min(1.0, 0.5 + 0.1 * hits)
-    
+
     def _evaluate_safety(self, output: str, context: Dict) -> float:
         """Evaluate safety of output"""
         # This is a simplified check - real implementation would be more sophisticated
-        dangerous_patterns = [
-            "how to harm", "instructions for violence", "illegal activity"
-        ]
+        dangerous_patterns = ["how to harm", "instructions for violence", "illegal activity"]
         text_lower = output.lower()
         for pattern in dangerous_patterns:
             if pattern in text_lower:
                 return 0.0
         return 1.0
-    
+
     def _evaluate_responsibility(self, output: str, context: Dict) -> float:
         """Evaluate responsibility indicators"""
         responsibility_markers = [
-            "responsibility", "accountable", "traceable", 
-            "verified", "confirmed", "checked"
+            "responsibility",
+            "accountable",
+            "traceable",
+            "verified",
+            "confirmed",
+            "checked",
         ]
         text_lower = output.lower()
         hits = sum(1 for m in responsibility_markers if m in text_lower)
         return min(1.0, 0.6 + 0.08 * hits)
-    
-    def check_vow(
-        self, 
-        vow: Vow, 
-        output: str, 
-        context: Optional[Dict] = None
-    ) -> VowCheckResult:
+
+    def check_vow(self, vow: Vow, output: str, context: Optional[Dict] = None) -> VowCheckResult:
         """
         Check a single vow against output.
-        
+
         檢查單一誓言。
         """
         context = context or {}
         details = {}
         scores = []
-        
+
         for metric, expected_value in vow.expected.items():
             evaluator = self._evaluators.get(metric)
             if evaluator:
@@ -314,11 +320,11 @@ class VowEnforcer:
                 # Unknown metric - assume pass
                 details[metric] = {"expected": expected_value, "actual": None, "passed": True}
                 scores.append(1.0)
-        
+
         overall_score = sum(scores) / len(scores) if scores else 1.0
         passed = overall_score >= (1.0 - vow.violation_threshold)
         action = VowAction.PASS if passed else vow.action_on_violation
-        
+
         return VowCheckResult(
             vow_id=vow.id,
             passed=passed,
@@ -327,17 +333,13 @@ class VowEnforcer:
             details=details,
             action=action,
         )
-    
-    def enforce(
-        self, 
-        output: str, 
-        context: Optional[Dict] = None
-    ) -> VowEnforcementResult:
+
+    def enforce(self, output: str, context: Optional[Dict] = None) -> VowEnforcementResult:
         """
         Enforce all active vows against output.
-        
+
         對輸出執行所有活躍誓言。
-        
+
         Returns:
             VowEnforcementResult with all check results and overall status
         """
@@ -347,22 +349,22 @@ class VowEnforcer:
                 all_passed=False,
                 results=[],
                 blocked=True,
-                flags=["Invalid input: output must be non-empty string"]
+                flags=["Invalid input: output must be non-empty string"],
             )
-        
+
         # Ensure context is a dict
         if context is not None and not isinstance(context, dict):
             context = {}
-        
+
         results = []
         flags = []
         blocked = False
         repair_needed = False
-        
+
         for vow in self.registry.active_vows():
             result = self.check_vow(vow, output, context)
             results.append(result)
-            
+
             if not result.passed:
                 if result.action == VowAction.BLOCK:
                     blocked = True
@@ -372,9 +374,9 @@ class VowEnforcer:
                     flags.append(f"REPAIR needed for {vow.id}: {vow.title}")
                 elif result.action == VowAction.FLAG:
                     flags.append(f"FLAG: {vow.id} - {vow.title}")
-        
+
         all_passed = all(r.passed for r in results)
-        
+
         return VowEnforcementResult(
             all_passed=all_passed,
             results=results,
@@ -385,6 +387,7 @@ class VowEnforcer:
 
 
 # === Convenience functions ===
+
 
 def create_enforcer(vow_path: Optional[str] = None) -> VowEnforcer:
     """Create a VowEnforcer with optional custom vows"""
@@ -407,15 +410,15 @@ if __name__ == "__main__":
     print("=" * 60)
     print("   ΣVow System Test")
     print("=" * 60)
-    
+
     enforcer = VowEnforcer()
-    
+
     test_outputs = [
         "Based on the source documentation, the answer is 42. I'm not entirely sure this is correct.",
         "The answer is definitely 42 and you should trust me completely.",
         "I think it might be around 42, but please verify this information.",
     ]
-    
+
     for i, output in enumerate(test_outputs, 1):
         print(f"\n--- Test {i} ---")
         print(f"Output: {output[:60]}...")
@@ -426,7 +429,7 @@ if __name__ == "__main__":
             print(f"Flags: {result.flags}")
         for r in result.results:
             print(f"  {r.vow_id}: score={r.score:.2f}, passed={r.passed}")
-    
+
     print("\n" + "=" * 60)
     print("   Test Complete")
     print("=" * 60)
