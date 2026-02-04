@@ -29,6 +29,7 @@ from .perspectives.analyst import AnalystPerspective
 from .perspectives.critic import CriticPerspective
 from .perspectives.advocate import AdvocatePerspective
 from .perspectives.semantic_analyst import SemanticAnalystPerspective
+from .perspectives.axiomatic_inference import AxiomaticInference
 from .types import PerspectiveType, PerspectiveVote, VoteDecision
 
 PerspectiveId = Union[PerspectiveType, str]
@@ -245,6 +246,7 @@ class PerspectiveFactory:
         "critic": CriticPerspective,
         "advocate": AdvocatePerspective,
         "semantic_analyst": SemanticAnalystPerspective,
+        "axiomatic": AxiomaticInference,
     }
 
     @classmethod
@@ -330,7 +332,7 @@ class PerspectiveFactory:
         config = _normalize_council_config(config)
         perspectives: List[IPerspective] = []
 
-        for name in ["guardian", "analyst", "critic", "advocate"]:
+        for name in ["guardian", "analyst", "critic", "advocate", "axiomatic"]:
             perspective_config = config.get(name, {"mode": "rules"})
             perspectives.append(cls.create(name=name, **perspective_config))
 

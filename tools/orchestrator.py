@@ -1,9 +1,3 @@
-"""
-Orchestrator MVP
-
-Aligns with docs/ORCHESTRATOR_MVP.md and tools/handoff_builder.py style.
-"""
-
 from __future__ import annotations
 
 from dataclasses import dataclass, asdict
@@ -19,6 +13,8 @@ from tools.handoff_builder import (
     ContextSummary,
 )
 from memory.observer import MemoryObserver
+import json
+import os
 
 
 @dataclass
@@ -82,6 +78,32 @@ class DecisionEngine:
         return False
 
 
+class IntentMonitor:
+    """Monitor if user intent touches P0/P1 Axioms."""
+
+    def __init__(self, axioms_path: str = "AXIOMS.json") -> None:
+        self.axioms_path = axioms_path
+        self._axioms: List[Dict[str, Any]] = []
+        self._load_axioms()
+
+    def _load_axioms(self) -> None:
+        if os.path.exists(self.axioms_path):
+            with open(self.axioms_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                self._axioms = data.get("axioms", [])
+
+    def scan(self, input_text: str) -> List[Dict[str, Any]]:
+        hits = []
+        text_lower = input_text.lower()
+        for axiom in self._axioms:
+            # 簡單關鍵字匹配 (MVP)
+            keywords = [axiom["name"].lower(), axiom["name_zh"]]
+            if any(kw in text_lower for kw in keywords if kw):
+                hits.append(axiom)
+        return hits
+
+
+
 class InstanceLauncher:
     """Return a next_model_config for manual handoff (MVP)."""
 
@@ -118,6 +140,7 @@ class Orchestrator:
         handoff_builder: Optional[HandoffBuilder] = None,
         instance_launcher: Optional[InstanceLauncher] = None,
         observer: Optional[MemoryObserver] = None,
+        intent_monitor: Optional[IntentMonitor] = None,
     ) -> None:
         self.source_model = source_model
         self.target_model = target_model
@@ -126,6 +149,7 @@ class Orchestrator:
         self.handoff_builder = handoff_builder or HandoffBuilder()
         self.instance_launcher = instance_launcher or InstanceLauncher(next_model=target_model)
         self.observer = observer or MemoryObserver()
+        self.intent_monitor = intent_monitor or IntentMonitor()
         self._last_health: Optional[HealthStatus] = None
 
     def handle_request(
@@ -137,12 +161,17 @@ class Orchestrator:
         phase: Optional[Phase] = None,
         handler: Optional[Callable[[str], Dict[str, Any]]] = None,
     ) -> Dict[str, Any]:
+        # 1. Intent Analysis (Why)
+        axiom_hits = self.intent_monitor.scan(input_text)
+        risk_level = "low"
+        if any(a.get("priority") == "P0" for a in axiom_hits):
+            risk_level = "high"
+
         before_health = self._last_health
         start = time.perf_counter()
         result: Dict[str, Any] = {}
         error: Optional[Exception] = None
 
-        try:
             if handler:
                 result = handler(input_text)
             else:
@@ -163,10 +192,14 @@ class Orchestrator:
         launch_info: Optional[Dict[str, str]] = None
 
         if should_switch:
+            reason = "自動切換：健康狀態觸發"
+            if axiom_hits:
+                reason = f"引導者意圖觸發（觸及 AXIOMS: {[a['name'] for a in axiom_hits]}）"
+            
             packet = self.handoff_builder.build(
                 source_model=self.source_model,
                 target_model=self.target_model,
-                phase=phase or Phase(current="霧", reason="自動切換：健康狀態觸發"),
+                phase=phase or Phase(current="漩", reason=reason),
                 pending_tasks=pending_tasks or [],
                 drift_log=drift_log or [],
                 context_summary=context_summary,
