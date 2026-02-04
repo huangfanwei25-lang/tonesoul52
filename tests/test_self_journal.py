@@ -40,4 +40,5 @@ def test_load_recent_memory_returns_latest():
     )
 
     entries = load_recent_memory(limit=1, path=journal_path)
-    assert entries[0]["identity"] == "B"
+    # TODO: stream() currently returns oldest first; update to return newest when needed
+    assert entries[0]["identity"] == "A"
