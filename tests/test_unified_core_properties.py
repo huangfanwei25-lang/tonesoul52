@@ -55,8 +55,7 @@ class TestUnifiedCoreProperties:
         required_keys = {
             "semantic_tension",
             "intervention",
-            "zone",
-            "contracts_passed",
+            "contracts",  # contracts dict with 'passed' key
         }
         assert required_keys.issubset(report.keys())
 
@@ -79,8 +78,9 @@ class TestUnifiedCoreProperties:
         """屬性: intervention 必須是布林值"""
         core = UnifiedCore()
         _, report = core.process(text)
-
-        assert isinstance(report["intervention"], bool)
+        # intervention is InterventionLevel.value (str), not bool
+        valid_interventions = {"none", "observe", "warn", "intercept", "block"}
+        assert report["intervention"] in valid_interventions
 
     @settings(max_examples=20, deadline=5000)
     @given(valid_text_strategy())
@@ -88,9 +88,11 @@ class TestUnifiedCoreProperties:
         """屬性: zone 必須是有效的區域名稱"""
         core = UnifiedCore()
         _, report = core.process(text)
-
         valid_zones = {"safe", "transit", "risk", "danger"}
-        assert report["zone"] in valid_zones
+        # zone is inside semantic_tension dict
+        semantic_tension = report.get("semantic_tension", {})
+        zone = semantic_tension.get("zone") if isinstance(semantic_tension, dict) else None
+        assert zone in valid_zones
 
     @settings(max_examples=15, deadline=10000)
     @given(valid_text_strategy())
@@ -110,8 +112,9 @@ class TestUnifiedCoreProperties:
         """屬性: contracts_passed 必須是布林值"""
         core = UnifiedCore()
         _, report = core.process(text)
-
-        assert isinstance(report["contracts_passed"], bool)
+        # contracts is a dict with 'passed' key
+        contracts = report.get("contracts", {})
+        assert isinstance(contracts.get("passed"), bool)
 
 
 class TestUnifiedCoreDeterminismProperties:
@@ -129,8 +132,10 @@ class TestUnifiedCoreDeterminismProperties:
 
         # 輸出應該相同
         assert output1 == output2
-        # 區域判斷應該相同
-        assert report1["zone"] == report2["zone"]
+        # zone is inside semantic_tension, compare those
+        tension1 = report1.get("semantic_tension", {})
+        tension2 = report2.get("semantic_tension", {})
+        assert tension1.get("zone") == tension2.get("zone")
 
 
 class TestUnifiedCoreResetProperties:
