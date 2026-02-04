@@ -138,3 +138,101 @@ class DecisionEngine:
 ---
 
 *Created: 2026-02-04 | Source: Codex + Antigravity collaboration*
+
+---
+
+## 使用範例
+
+### 基本使用
+
+```python
+from tools.orchestrator import Orchestrator
+from tools.handoff_builder import ContextSummary, Phase, PendingTask
+
+orchestrator = Orchestrator(
+    source_model="antigravity",
+    target_model="codex",
+)
+
+context = ContextSummary(
+    user_goal="設計 AI 治理框架",
+    key_concepts=["handoff", "health monitor"],
+    current_files=["tools/orchestrator.py"],
+)
+
+result = orchestrator.handle_request(
+    "處理這個請求",
+    context_summary=context,
+)
+
+if result["switched"]:
+    print(f"切換至: {result['launch']['next_model']}")
+    print(f"交接包: {result['handoff_packet']}")
+else:
+    print(f"繼續運行: {result['result']}")
+```
+
+### 模擬 Quota 用盡
+
+```python
+from tools.orchestrator import HealthMonitor
+
+# 建立低 quota 的 monitor
+monitor = HealthMonitor()
+monitor.update_quota(0.05)  # 只剩 5%
+
+orchestrator = Orchestrator(
+    source_model="antigravity",
+    target_model="codex",
+    health_monitor=monitor,
+)
+
+result = orchestrator.handle_request(...)
+# result["switched"] == True
+```
+
+### 整合 MemoryObserver
+
+```python
+from memory.observer import MemoryObserver
+
+observer = MemoryObserver()
+
+# 記錄動作
+observer.log_action(
+    action="handle_request",
+    params={"input": "用戶請求"},
+    result={"status": "ok"},
+)
+
+# 記錄承諾
+observer.log_commitment(
+    vow="語場繼承不是複製，而是延續敘事並承擔責任",
+    falsifiable_by="交接後的 AI 否認 drift_log",
+)
+```
+
+---
+
+## 測試結果
+
+```
+🎛️ Orchestrator Integration Test
+==================================================
+
+Test 1: 正常運行（不切換）
+✅ PASS
+
+Test 2: Quota 用盡（觸發 handoff）
+✅ PASS
+
+Test 3: MemoryObserver 整合
+✅ PASS
+
+🎉 All tests passed!
+```
+
+---
+
+*Created: 2026-02-04 | Updated: 2026-02-04*
+*Source: Codex + Antigravity collaboration*
