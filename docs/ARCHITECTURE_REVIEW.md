@@ -82,6 +82,25 @@
 
 ---
 
+
+## Addendum (2026-02-04): Meaning Transfer Positioning
+
+### Summary
+- Positioning shifts from "rule enforcement" to "meaning transfer".
+- Axioms should encode values; behaviors are derived and testable.
+- Audit artifacts (Isnad, drift_log, structured verdicts) should capture "why", not only "what".
+
+### Risks to Watch
+- Surface compliance without understanding.
+- Handoff that transfers instructions but drops reasons.
+- Responsibility breaks when outputs lack rationale.
+
+### Suggested Updates
+- README should state the positioning clearly and list concrete risks.
+- Provide 2-3 user-facing use cases to align with intent.
+
+---
+
 ## Action Items (Priority Order)
 
 1. [ ] Auto-write Council verdict to Isnād (close the audit loop)

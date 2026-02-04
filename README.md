@@ -5,6 +5,30 @@
 
 ---
 
+
+## Positioning: Meaning Transfer Protocol
+ToneSoul is not a rulebook. It is a meaning-transfer protocol.
+
+* **Axioms encode values, not behaviors**: behaviors are derived, not prescribed.
+* **Council forces multi-perspective reasoning** and exports structured, auditable output.
+* **Isnad + drift_log capture "why"**: Council verdicts record reasoning, and handoff drift records why deviations occurred.
+
+---
+
+## Concrete Risk Model (Design Intent)
+* **Governance misuse**: surface compliance without understanding.
+* **Meaning loss at handoff**: instructions without reasons.
+* **Responsibility breaks**: outputs without rationale or trace.
+
+Design intent mitigations:
+* Council issues `REFINE` / `DECLARE_STANCE` when rationale is weak.
+* Isnad hash chain stores structured verdicts (including reasons).
+* drift_log preserves continuity of choices across handoffs.
+
+---
+
+
+
 ## 📐 System Architecture (L0-L5)
 
 ToneSoul decouples **Intelligence** (The Brain) from **Governance** (The Soul).
