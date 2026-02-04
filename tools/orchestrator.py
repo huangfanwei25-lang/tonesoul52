@@ -6,7 +6,7 @@ Aligns with docs/ORCHESTRATOR_MVP.md and tools/handoff_builder.py style.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 from datetime import datetime
 from typing import Callable, Dict, Optional, Any, List
 import time
@@ -18,6 +18,7 @@ from tools.handoff_builder import (
     DriftEntry,
     ContextSummary,
 )
+from memory.observer import MemoryObserver
 
 
 @dataclass
@@ -95,6 +96,16 @@ class InstanceLauncher:
         }
 
 
+@dataclass
+class DecisionSnapshot:
+    verdict: str
+    summary: str
+    structured: Dict[str, Any]
+
+    def to_structured_output(self) -> Dict[str, Any]:
+        return self.structured
+
+
 class Orchestrator:
     """Main orchestrator that stitches monitor, decision, handoff, and launch."""
 
@@ -106,6 +117,7 @@ class Orchestrator:
         decision_engine: Optional[DecisionEngine] = None,
         handoff_builder: Optional[HandoffBuilder] = None,
         instance_launcher: Optional[InstanceLauncher] = None,
+        observer: Optional[MemoryObserver] = None,
     ) -> None:
         self.source_model = source_model
         self.target_model = target_model
@@ -113,6 +125,8 @@ class Orchestrator:
         self.decision_engine = decision_engine or DecisionEngine()
         self.handoff_builder = handoff_builder or HandoffBuilder()
         self.instance_launcher = instance_launcher or InstanceLauncher(next_model=target_model)
+        self.observer = observer or MemoryObserver()
+        self._last_health: Optional[HealthStatus] = None
 
     def handle_request(
         self,
@@ -123,6 +137,7 @@ class Orchestrator:
         phase: Optional[Phase] = None,
         handler: Optional[Callable[[str], Dict[str, Any]]] = None,
     ) -> Dict[str, Any]:
+        before_health = self._last_health
         start = time.perf_counter()
         result: Dict[str, Any] = {}
         error: Optional[Exception] = None
@@ -142,36 +157,78 @@ class Orchestrator:
             self.health_monitor.record_latency(latency_ms)
 
         health = self.health_monitor.snapshot()
+        self._last_health = health
         should_switch = self.decision_engine.should_switch(health)
+        packet_path = None
+        launch_info: Optional[Dict[str, str]] = None
 
-        if not should_switch:
-            return {
-                "status": "continue",
-                "result": result,
-                "health": health,
-                "switched": False,
-            }
+        if should_switch:
+            packet = self.handoff_builder.build(
+                source_model=self.source_model,
+                target_model=self.target_model,
+                phase=phase or Phase(current="霧", reason="自動切換：健康狀態觸發"),
+                pending_tasks=pending_tasks or [],
+                drift_log=drift_log or [],
+                context_summary=context_summary,
+            )
+            packet_path = str(self.handoff_builder.persist(packet))
+            launch_info = self.instance_launcher.launch(packet_path)
 
-        packet = self.handoff_builder.build(
-            source_model=self.source_model,
-            target_model=self.target_model,
-            phase=phase or Phase(current="?", reason="???????????"),
-            pending_tasks=pending_tasks or [],
-            drift_log=drift_log or [],
-            context_summary=context_summary,
+        decision_payload = {
+            "source_model": self.source_model,
+            "target_model": self.target_model,
+            "switched": should_switch,
+            "handoff_packet": packet_path,
+            "health": asdict(health),
+        }
+        decision = DecisionSnapshot(
+            verdict="handoff" if should_switch else "continue",
+            summary="Handoff triggered by health thresholds."
+            if should_switch
+            else "Continue on current model.",
+            structured=decision_payload,
         )
-        packet_path = self.handoff_builder.persist(packet)
-        launch_info = self.instance_launcher.launch(str(packet_path))
+        try:
+            self.observer.log_action(
+                action="handle_request",
+                params={
+                    "input_length": len(input_text),
+                    "has_handler": bool(handler),
+                    "source_model": self.source_model,
+                    "target_model": self.target_model,
+                },
+                result={
+                    "status": "error" if error else "ok",
+                    "switched": should_switch,
+                    "latency_ms": health.latency_ms,
+                    "error": str(error) if error else None,
+                },
+                before_context={
+                    "health": asdict(before_health) if before_health else None,
+                },
+                after_context={
+                    "health": asdict(health),
+                },
+                isnad_link=None,
+            )
+            self.observer.log_decision(
+                decision,
+                context={"decision_context": decision_payload},
+            )
+        except Exception as exc:
+            result["observer_error"] = str(exc)
 
-        return {
-            "status": "handoff",
+        response = {
+            "status": "handoff" if should_switch else "continue",
             "result": result,
             "health": health,
-            "switched": True,
-            "handoff_packet": str(packet_path),
-            "launch": launch_info,
+            "switched": should_switch,
             "error": str(error) if error else None,
         }
+        if should_switch:
+            response["handoff_packet"] = packet_path
+            response["launch"] = launch_info
+        return response
 
 
 if __name__ == "__main__":
@@ -181,7 +238,7 @@ if __name__ == "__main__":
     )
 
     context = ContextSummary(
-        user_goal="????????",
+        user_goal="建立多模型調度器",
         key_concepts=["handoff", "health monitor", "decision engine"],
         current_files=["tools/orchestrator.py"],
     )
@@ -190,7 +247,7 @@ if __name__ == "__main__":
         "hello",
         context_summary=context,
         pending_tasks=[
-            PendingTask(id="task_001", description="?? handoff", status="in_progress")
+            PendingTask(id="task_001", description="驗證 handoff", status="in_progress")
         ],
     )
     print(output)
