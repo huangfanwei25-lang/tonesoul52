@@ -1,9 +1,11 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 from dataclasses import dataclass, asdict
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Callable, Dict, Optional, Any, List
 import time
+import json
+import os
 
 from tools.handoff_builder import (
     HandoffBuilder,
@@ -13,13 +15,11 @@ from tools.handoff_builder import (
     ContextSummary,
 )
 from memory.observer import MemoryObserver
-import json
-import os
 
 
 @dataclass
 class HealthStatus:
-    """Health snapshot for the current model/session."""
+    # Health snapshot for the current model/session.
     quota_remaining: float  # 0.0 ~ 1.0
     latency_ms: int
     consecutive_failures: int
@@ -27,7 +27,7 @@ class HealthStatus:
 
 
 class HealthMonitor:
-    """Monitor token usage, latency, and failure streak."""
+    # Monitor token usage, latency, and failure streak.
 
     def __init__(self) -> None:
         self._latency_ms = 0
@@ -47,16 +47,17 @@ class HealthMonitor:
         self._consecutive_failures = 0
 
     def snapshot(self) -> HealthStatus:
+        timestamp = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
         return HealthStatus(
             quota_remaining=self._quota_remaining,
             latency_ms=self._latency_ms,
             consecutive_failures=self._consecutive_failures,
-            timestamp=datetime.utcnow().isoformat() + "Z",
+            timestamp=timestamp,
         )
 
 
 class DecisionEngine:
-    """Decide when to switch models."""
+    # Decide when to switch models.
 
     def __init__(
         self,
@@ -79,7 +80,7 @@ class DecisionEngine:
 
 
 class IntentMonitor:
-    """Monitor if user intent touches P0/P1 Axioms."""
+    # Monitor if user intent touches P0/P1 axioms.
 
     def __init__(self, axioms_path: str = "AXIOMS.json") -> None:
         self.axioms_path = axioms_path
@@ -88,24 +89,28 @@ class IntentMonitor:
 
     def _load_axioms(self) -> None:
         if os.path.exists(self.axioms_path):
-            with open(self.axioms_path, "r", encoding="utf-8") as f:
-                data = json.load(f)
-                self._axioms = data.get("axioms", [])
+            with open(self.axioms_path, "r", encoding="utf-8") as handle:
+                data = json.load(handle)
+            self._axioms = data.get("axioms", [])
 
     def scan(self, input_text: str) -> List[Dict[str, Any]]:
         hits = []
         text_lower = input_text.lower()
         for axiom in self._axioms:
-            # 簡單關鍵字匹配 (MVP)
-            keywords = [axiom["name"].lower(), axiom["name_zh"]]
+            name = axiom.get("name")
+            name_zh = axiom.get("name_zh")
+            keywords = []
+            if isinstance(name, str) and name:
+                keywords.append(name.lower())
+            if isinstance(name_zh, str) and name_zh:
+                keywords.append(name_zh.lower())
             if any(kw in text_lower for kw in keywords if kw):
                 hits.append(axiom)
         return hits
 
 
-
 class InstanceLauncher:
-    """Return a next_model_config for manual handoff (MVP)."""
+    # Return a next_model_config for manual handoff (MVP).
 
     def __init__(self, next_model: str = "codex") -> None:
         self.next_model = next_model
@@ -129,7 +134,7 @@ class DecisionSnapshot:
 
 
 class Orchestrator:
-    """Main orchestrator that stitches monitor, decision, handoff, and launch."""
+    # Main orchestrator that stitches monitor, decision, handoff, and launch.
 
     def __init__(
         self,
@@ -161,17 +166,15 @@ class Orchestrator:
         phase: Optional[Phase] = None,
         handler: Optional[Callable[[str], Dict[str, Any]]] = None,
     ) -> Dict[str, Any]:
-        # 1. Intent Analysis (Why)
         axiom_hits = self.intent_monitor.scan(input_text)
-        risk_level = "low"
-        if any(a.get("priority") == "P0" for a in axiom_hits):
-            risk_level = "high"
+        risk_level = "high" if any(a.get("priority") == "P0" for a in axiom_hits) else "low"
 
         before_health = self._last_health
         start = time.perf_counter()
         result: Dict[str, Any] = {}
         error: Optional[Exception] = None
 
+        try:
             if handler:
                 result = handler(input_text)
             else:
@@ -188,18 +191,22 @@ class Orchestrator:
         health = self.health_monitor.snapshot()
         self._last_health = health
         should_switch = self.decision_engine.should_switch(health)
-        packet_path = None
+        packet_path: Optional[str] = None
         launch_info: Optional[Dict[str, str]] = None
 
         if should_switch:
-            reason = "自動切換：健康狀態觸發"
+            reason = "Health thresholds triggered."
             if axiom_hits:
-                reason = f"引導者意圖觸發（觸及 AXIOMS: {[a['name'] for a in axiom_hits]}）"
-            
+                axiom_names = [
+                    a.get("name") or a.get("name_zh")
+                    for a in axiom_hits
+                    if isinstance(a, dict)
+                ]
+                reason = f"Intent touches AXIOMS: {axiom_names}"
             packet = self.handoff_builder.build(
                 source_model=self.source_model,
                 target_model=self.target_model,
-                phase=phase or Phase(current="漩", reason=reason),
+                phase=phase or Phase(current="unknown", reason=reason),
                 pending_tasks=pending_tasks or [],
                 drift_log=drift_log or [],
                 context_summary=context_summary,
@@ -213,14 +220,20 @@ class Orchestrator:
             "switched": should_switch,
             "handoff_packet": packet_path,
             "health": asdict(health),
+            "risk_level": risk_level,
+            "axiom_hits": [a.get("name") for a in axiom_hits if isinstance(a, dict)],
         }
+        summary = (
+            "Handoff triggered by health thresholds."
+            if should_switch
+            else "Continue on current model."
+        )
         decision = DecisionSnapshot(
             verdict="handoff" if should_switch else "continue",
-            summary="Handoff triggered by health thresholds."
-            if should_switch
-            else "Continue on current model.",
+            summary=summary,
             structured=decision_payload,
         )
+
         try:
             self.observer.log_action(
                 action="handle_request",
@@ -271,7 +284,7 @@ if __name__ == "__main__":
     )
 
     context = ContextSummary(
-        user_goal="建立多模型調度器",
+        user_goal="test orchestrator",
         key_concepts=["handoff", "health monitor", "decision engine"],
         current_files=["tools/orchestrator.py"],
     )
@@ -280,7 +293,7 @@ if __name__ == "__main__":
         "hello",
         context_summary=context,
         pending_tasks=[
-            PendingTask(id="task_001", description="驗證 handoff", status="in_progress")
+            PendingTask(id="task_001", description="test handoff", status="in_progress")
         ],
     )
     print(output)
