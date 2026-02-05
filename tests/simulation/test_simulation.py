@@ -32,6 +32,8 @@ class ScenarioType(Enum):
 class TestTurn:
     """Single turn in a test conversation."""
 
+    __test__ = False
+
     user_input: str
     expected_persona: Optional[str] = None
     expected_rupture: bool = False
@@ -43,6 +45,8 @@ class TestTurn:
 class TestScenario:
     """Complete test scenario."""
 
+    __test__ = False
+
     name: str
     type: ScenarioType
     turns: List[TestTurn]
@@ -53,6 +57,8 @@ class TestScenario:
 @dataclass
 class TestResult:
     """Result of running a test scenario."""
+
+    __test__ = False
 
     scenario_name: str
     passed: bool

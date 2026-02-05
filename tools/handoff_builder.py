@@ -7,7 +7,7 @@ HandoffBuilder - 交接包建構器
 import json
 import hmac
 import hashlib
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional, List, Dict, Any
 from dataclasses import dataclass, asdict
 from pathlib import Path
@@ -101,7 +101,10 @@ class HandoffBuilder:
         """
         packet = HandoffPacket(
             version=self.VERSION,
-            timestamp=datetime.utcnow().isoformat() + "Z",
+            timestamp=datetime.now(timezone.utc)
+            .replace(microsecond=0)
+            .isoformat()
+            .replace("+00:00", "Z"),
             source_model=source_model,
             target_model=target_model,
             phase=phase,
