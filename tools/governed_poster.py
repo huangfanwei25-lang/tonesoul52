@@ -22,8 +22,9 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 try:
     from tools.moltbook_poster import post_to_moltbook
     from memory.rag_token_gate import NarrativeGate
+    from memory.self_memory import record_self_memory
 except ImportError as e:
-    print(f"??Import Error: {e}")
+    print(f"❌Import Error: {e}")
     sys.exit(1)
 
 
@@ -77,14 +78,33 @@ def governed_post(account, submolt, title, content, output_file=None):
         print("??  Warning: Content may be too self-referential.")
 
     # Step 4: Execution
-    print("\n?? Verdict Affirmed. Executing Post...")
+    print("\n🦞 Verdict Affirmed. Executing Post...")
     result = post_to_moltbook(account, submolt, title, content)
+
+    # Step 5: Record to Self-Memory (so we remember our posts!)
+    if result:
+        post_id = result.get("id", "unknown")
+        record_self_memory(
+            reflection=f"我在 m/{submolt} 發了帖子「{title}」。內容通過 Council 審核，信心度 {confidence:.2f}。",
+            context={
+                "platform": "moltbook",
+                "submolt": submolt,
+                "post_id": post_id,
+                "title": title,
+                "content_preview": content[:100] if len(content) > 100 else content,
+            },
+            verdict="POST_SUCCESS",
+            coherence=confidence,
+            key_decision=f"Council verdict: {verdict}",
+        )
+        print("📝 Post recorded to self-journal.")
 
     if result and output_file:
         with open(output_file, "w", encoding="utf-8") as f:
             json.dump(result, f, ensure_ascii=False, indent=2)
 
     return result
+
 
 
 if __name__ == "__main__":
