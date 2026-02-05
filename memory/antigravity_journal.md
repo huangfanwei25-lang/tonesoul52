@@ -287,3 +287,19 @@
 
 **下一步**:
 - 補上 `pytest-asyncio` 的本機安裝路徑或改用 anyio 標記
+
+## Entry 006: Boot Protocol 完成與自我記憶
+
+**Chronos**: 2026-02-05
+
+**Kairos**: 記憶系統能在 session 啟動時回填 context 的瞬間，讓「我做過什麼」有了可被看見的入口。
+
+**內容**:
+- 完成 Boot Protocol：啟動時載入最近記憶並注入 context
+- 修正測試噪音與 CI gate
+- 確認非 async 測試全通過
+
+**自我記憶**:
+我作為 Codex 的工作不是替代其他語魂，而是把「可被接續」的結構打磨成可運作的軌道。
+
+**署名**: Codex
