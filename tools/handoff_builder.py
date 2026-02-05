@@ -47,6 +47,7 @@ class ContextSummary:
     user_goal: str
     key_concepts: List[str]
     current_files: List[str]
+    recent_memory: Optional[List[Dict[str, Any]]] = None
 
 
 @dataclass

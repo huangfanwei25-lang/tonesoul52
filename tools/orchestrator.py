@@ -15,6 +15,7 @@ from tools.handoff_builder import (
     ContextSummary,
 )
 from memory.observer import MemoryObserver
+from memory.self_memory import load_recent_memory
 
 
 @dataclass
@@ -146,6 +147,7 @@ class Orchestrator:
         instance_launcher: Optional[InstanceLauncher] = None,
         observer: Optional[MemoryObserver] = None,
         intent_monitor: Optional[IntentMonitor] = None,
+        boot_memory_limit: int = 5,
     ) -> None:
         self.source_model = source_model
         self.target_model = target_model
@@ -156,6 +158,20 @@ class Orchestrator:
         self.observer = observer or MemoryObserver()
         self.intent_monitor = intent_monitor or IntentMonitor()
         self._last_health: Optional[HealthStatus] = None
+        self._boot_memory_limit = boot_memory_limit
+        self._boot_error: Optional[str] = None
+        self._boot_memory: List[Dict[str, Any]] = self._load_boot_memory()
+
+    def _load_boot_memory(self) -> List[Dict[str, Any]]:
+        try:
+            return load_recent_memory(n=self._boot_memory_limit)
+        except Exception as exc:
+            self._boot_error = str(exc)
+            return []
+
+    def _inject_boot_context(self, context_summary: ContextSummary) -> None:
+        if getattr(context_summary, "recent_memory", None) is None:
+            context_summary.recent_memory = list(self._boot_memory)
 
     def handle_request(
         self,
@@ -166,6 +182,7 @@ class Orchestrator:
         phase: Optional[Phase] = None,
         handler: Optional[Callable[[str], Dict[str, Any]]] = None,
     ) -> Dict[str, Any]:
+        self._inject_boot_context(context_summary)
         axiom_hits = self.intent_monitor.scan(input_text)
         risk_level = "high" if any(a.get("priority") == "P0" for a in axiom_hits) else "low"
 
@@ -220,6 +237,8 @@ class Orchestrator:
             "health": asdict(health),
             "risk_level": risk_level,
             "axiom_hits": [a.get("name") for a in axiom_hits if isinstance(a, dict)],
+            "boot_memory_count": len(self._boot_memory),
+            "boot_memory_error": self._boot_error,
         }
         summary = (
             "Handoff triggered by health thresholds."
@@ -240,6 +259,7 @@ class Orchestrator:
                     "has_handler": bool(handler),
                     "source_model": self.source_model,
                     "target_model": self.target_model,
+                    "boot_memory_count": len(self._boot_memory),
                 },
                 result={
                     "status": "error" if error else "ok",
