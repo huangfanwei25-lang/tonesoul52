@@ -161,6 +161,7 @@ class TestVowEnforcerProperties:
         assert isinstance(result.all_passed, bool)
         assert isinstance(result.results, list)
         assert isinstance(result.blocked, bool)
+
     @settings(max_examples=30)
     @given(st.text(min_size=1, max_size=500))
     def test_enforcer_determinism(self, text):
