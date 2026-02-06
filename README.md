@@ -1,135 +1,88 @@
-**Core Value Proposition:**
-1.  **Verifiability**: Third-party observers can verify agent consistency without trusting the model's "intent".
-2.  **Responsibility**: Every action is cryptographically traced in an immutable ledger.
-3.  **Autopoiesis**: The system can safely repair its own code (Self-Healing) within a sandbox environment.
+﻿# ToneSoul
 
----
+ToneSoul 是一個把「治理（Governance）」放在「智能（Intelligence）」之上的架構實驗。
+核心目標是讓 AI 的輸出可追溯、可審計、可校準，而不是只靠「像不像」或「有沒有用」。
 
+## 核心定位
+- 可驗證：多視角投票 + 結構化輸出，外部可審計
+- 可追責：Isnad/Provenance 鏈記錄決策理由與來源
+- 可校準：不確定性與責任層級被明示，信任不靠盲信
 
-## Positioning: Meaning Transfer Protocol
-ToneSoul is not a rulebook. It is a meaning-transfer protocol.
+## 核心架構（概要）
+- Council 多視角審議：`tonesoul/council/runtime.py`
+- Genesis / Responsibility Tier：`memory/genesis.py`
+- Memory / SoulDB：`tonesoul/memory/soul_db.py`
+- Provenance Ledger：`memory/provenance_ledger.jsonl`
+- Tools API / ToolResponse：`tools/schema.py` + `spec/tools/tool_response.schema.json`
 
-* **Axioms encode values, not behaviors**: behaviors are derived, not prescribed.
-* **Council forces multi-perspective reasoning** and exports structured, auditable output.
-* **Isnad + drift_log capture "why"**: Council verdicts record reasoning, and handoff drift records why deviations occurred.
+## 7D 審計框架
 
----
+> **⚠️ 警告：本專案採用七維審計。這不是 bug，是 feature。**
 
-## Concrete Risk Model (Design Intent)
-* **Governance misuse**: surface compliance without understanding.
-* **Meaning loss at handoff**: instructions without reasons.
-* **Responsibility breaks**: outputs without rationale or trace.
-
-Design intent mitigations:
-* Council issues `REFINE` / `DECLARE_STANCE` when rationale is weak.
-* Isnad hash chain stores structured verdicts (including reasons).
-* drift_log preserves continuity of choices across handoffs.
-
----
-
-
-
-## 📐 System Architecture (L0-L5)
-
-ToneSoul decouples **Intelligence** (The Brain) from **Governance** (The Soul).
-
-| Layer | Component | Function | Engineering Implementation |
-| :--- | :--- | :--- | :--- |
-| **L0** | **Law** | The Constitution | `law/AXIOMS.json` (Immutable Rules) |
-| **L1** | **Spine** | State Controller | `tonesoul/unified_controller.py` (Orchestrator) |
-| **L2** | **Brain** | Intelligence | `tonesoul/tonesoul_llm.py` (LLM Integration) |
-| **L3** | **Sensor** | Telemetry | `tonesoul/tsr_metrics.py` (STREI Vector Analysis) |
-| **L4** | **Ledger** | Protocol | `memory/provenance_ledger.jsonl` (Append-Only Log) |
-| **L5** | **Body** | I/O Interface | `apps/dashboard/frontend/app.py` (Streamlit / API) |
-
----
-
-## Architecture Updates (2026-02)
-
-*   **Council Facade**: The single entrypoint is `tonesoul/council/runtime.py` (legacy adapters are deprecated).
-*   **SoulDB Backends**: `tonesoul/memory/soul_db.py` supports JSONL by default and an optional SQLite backend (`memory/soul.db`) with a migration helper.
-*   **Isnād Auto-Write**: Every council verdict appends a structured record to `memory/provenance_ledger.jsonl` for auditability.
-
----
-
-## 🔬 The MGGI Specification
-
-We define "Soul" not as metaphysics, but as **Verifiable Self-Constraint**.
-See [MGGI_SPEC.md](MGGI_SPEC.md) for the formal engineering constraints.
-
-### The Governance Vector (STREI)
-Every input is mapped to a 5-dimensional vector space $V \in \mathbb{R}^5$:
-*   **S (Stability)**: Consistency of context.
-*   **T (Tension)**: Entropic stress of the conversation.
-*   **R (Responsibility)**: Risk probability (0.0 - 1.0).
-*   **E (Ethics)**: Axiomatic alignment.
-*   **I (Intent)**: Magnitude of action.
-
-**Constraint Rule**: if $R > 0.6 \implies \text{BLOCK}$ (Hard Gate).
-
----
-
-## 🚀 Key Capabilities (v0.3.0)
-
-### 1. 👁️ Multimodal Vision (The All-Seeing Eye)
-*   **Feature**: Integrates `llava` (Vision Model) into the governance loop.
-*   **Benefit**: The agent can "see" images and apply ethical judgment to visual inputs.
-*   **Usage**: Upload images via the Dashboard.
-
-### 2. ⚡ Telemetry Cache ("Ghost in the Shell")
-*   **Feature**: Local vector caching of STREI analysis.
-*   **Benefit**: Reduces compute load by 90% for recurrent patterns. Allows efficient operation on older hardware.
-
-### 3. 🔪 Test-Driven Autopoiesis (The Surgeon)
-*   **Feature**: Self-Correction Pipeline.
-*   **Benefit**: The agent can edit its own source code to fix bugs.
-*   **Safety**: Uses a test-driven sandbox workflow. All edits must pass `pytest` before being applied.
-
----
-
-## 💻 Getting Started
-
-### Prerequisites
-*   Python 3.10+
-*   [Ollama](https://ollama.ai/) (Recommended for Local Privacy)
-*   Models: `gemma3:4b`, `llava`, `nomic-embed-text`
-
-### Installation
-```bash
-git clone https://github.com/Fan1234-1/ToneSoul-Architecture-Engine.git
-cd ToneSoul-Architecture-Engine
-pip install -r requirements.txt
+```
+┌─────┬─────┬─────┬─────┬─────┬─────┬─────┐
+│ TDD │ RDD │ DDD │ XDD │ GDD │ CDD │ SDH │
+│Test │Red  │Data │Expl-│Gove-│Cont-│Syste│
+│     │Team │     │ain  │rn   │ext  │m    │
+└─────┴─────┴─────┴─────┴─────┴─────┴─────┘
 ```
 
-### Run the Dashboard (The Cockpit)
-```bash
-python apps/dashboard/run_dashboard.py
+| 維度 | 核心問題 | 實現狀態 |
+|------|----------|----------|
+| TDD | 功能正確？ | ✅ 299 tests |
+| RDD | 能否攻破？ | 🔴 待補強 |
+| DDD | 數據純淨？ | 🟡 部分 |
+| XDD | 推理透明？ | ✅ Council |
+| GDD | 誰有權決定？ | ✅ Genesis |
+| CDD | 立場一致？ | ✅ TSR |
+| SDH | 系統穩定？ | ✅ Orchestrator |
+
+詳見 [`docs/7D_AUDIT_FRAMEWORK.md`](docs/7D_AUDIT_FRAMEWORK.md)
+
+## 快速開始
+
+### 1. 安裝環境（Windows PowerShell）
+```powershell
+.\setup_env.ps1
 ```
-Access the interface at `http://localhost:8501`.
 
-### Legacy Monolith
-This workspace does not include the legacy monolith runner. See `.archive/` if you have archived bundles.
+### 2. 最小 Demo（API + Web）
+```powershell
+python run_demo.py
+```
+開啟 `http://localhost:5000` 觀看 Playground。
 
----
+### 3. 驗證 API（可選）
+```powershell
+python scripts/verify_api.py --base http://localhost:5000
+```
 
-## Repository Layout (Current)
-*   `tonesoul/`: main ToneSoul engine (governance + integration).
-*   `apps/`: dashboard + CLI entrypoints.
-*   `docs/`: canonical docs (see docs/TRUTH_STRUCTURE.md).
-*   `spec/`: formal specs and schemas.
-*   `law/`: constitution, laws, and governance policies.
-*   `.archive/`, `experiments/`, `examples/`: archived monoliths and experiments.
-*   `memory/`, `reports/`, `run/`, `temp/`: runtime data, logs, and artifacts.
+### 4. 直接啟動 API Server
+```powershell
+python apps/api/server.py
+```
 
-## 📂 Documentation Structure
-*   **Engineering Spec**: [MGGI_SPEC.md](MGGI_SPEC.md)
-*   **Governance Protocols**: [docs/governance/](docs/governance/) (Standard for STREI, NSC, and Temporal Audit)
-*   **Engineering Journal**: [docs/engineering/](docs/engineering/) (Detailed technical volumes)
-*   **Truth Structure**: [docs/TRUTH_STRUCTURE.md](docs/TRUTH_STRUCTURE.md) (Living source of sense-making)
-*   **Operation Guide**: [HANDOFF.md](HANDOFF.md)
+## 測試
+```powershell
+pytest tests/
+```
 
----
+## 重要文件
+- `docs/TRUTH_STRUCTURE.md`：治理與語魂的結構化總覽
+- `docs/NARRATIVE.md`：敘事定版
+- `docs/NARRATIVE_MODULE_MAP.md`：敘事 → 模組 → 測試對照
+- `docs/TOOLS_API_SCHEMA.md`：Tools API 與 ToolResponse 規格
+- `spec/tools/tool_response.schema.json`：ToolResponse JSON Schema
+- `CODEX_TASK.md`：當前工作目標
+- `task.md`：階段規劃
 
-## 🛡️ License & Ethics
-ToneSoul is Open Source (Apache 2.0). 
-We believe that **Governance Logic** should be transparent, while **Memory Data** remains sovereign to the user.
+## 目錄概覽
+- `tonesoul/`：核心引擎（Council / Memory / Governance）
+- `tools/`：工具與治理封裝
+- `memory/`：記憶與帳本資料
+- `apps/`：Demo / Playground / Dashboard
+- `docs/`：概念、規格、敘事
+- `spec/`：schema 與正式規格
+
+## License
+Apache 2.0

@@ -49,13 +49,39 @@ export default function SessionReport({ isOpen, onClose, messages, apiSettings, 
     const [error, setError] = useState<string | null>(null);
     const [isSaved, setIsSaved] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
+    const REPORT_EXECUTION_MODE = (process.env.NEXT_PUBLIC_REPORT_EXECUTION_MODE || "backend").toLowerCase();
+    const USE_BACKEND_REPORT = REPORT_EXECUTION_MODE !== "provider";
+    const ENABLE_REPORT_PROVIDER_FALLBACK = process.env.NEXT_PUBLIC_REPORT_PROVIDER_FALLBACK !== "0";
 
-    const generateReport = async () => {
-        if (!apiSettings?.apiKey) {
-            setError("請先設定 API Key");
-            return;
+    const requestBackendReport = async (
+        history: { user: string; ai: string; entropy?: number }[]
+    ): Promise<ReportData> => {
+        const response = await fetch("/api/session-report", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ history }),
+        });
+
+        let payload: Record<string, unknown> = {};
+        try {
+            payload = await response.json();
+        } catch {
+            payload = {};
         }
 
+        if (!response.ok) {
+            const message = typeof payload.error === "string" ? payload.error : "Backend report error";
+            throw new Error(message);
+        }
+
+        if (!payload.report || typeof payload.report !== "object") {
+            throw new Error("Backend report payload is missing");
+        }
+
+        return payload.report as ReportData;
+    };
+
+    const generateReport = async () => {
         if (messages.length < 2) {
             setError("對話太短，無法生成報告（至少需要 2 則訊息）");
             return;
@@ -71,6 +97,23 @@ export default function SessionReport({ isOpen, onClose, messages, apiSettings, 
                 ai: m.role === "assistant" ? m.content : "",
                 entropy: m.deliberation?.entropy_meter?.value,
             })).filter(h => h.user || h.ai);
+
+            if (USE_BACKEND_REPORT) {
+                try {
+                    const backendReport = await requestBackendReport(history);
+                    setReportData(backendReport);
+                    return;
+                } catch (backendErr) {
+                    if (!ENABLE_REPORT_PROVIDER_FALLBACK) {
+                        throw new Error("後端服務不可用，且已停用 provider fallback。");
+                    }
+                    console.warn("[ToneSoul] Backend session report unavailable, fallback to provider API.", backendErr);
+                }
+            }
+
+            if (!apiSettings?.apiKey) {
+                throw new Error("目前路徑需要 API Key，請先在設定中提供。");
+            }
 
             const prompt = SESSION_REPORT_PROMPT(history);
 

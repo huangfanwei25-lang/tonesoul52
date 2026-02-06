@@ -1,5 +1,7 @@
 $ErrorActionPreference = "Stop"
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+$env:PYTHONUTF8 = "1"
+$env:PYTHONIOENCODING = "utf-8"
 
 Write-Host "[ToneSoul] Environment Setup" -ForegroundColor Cyan
 Write-Host "Rebuilding virtual environment in Root..." -ForegroundColor Gray

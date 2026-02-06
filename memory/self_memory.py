@@ -18,6 +18,7 @@ from pathlib import Path
 from typing import Dict, List, Optional, Any
 
 from tonesoul.memory.soul_db import JsonlSoulDB, MemorySource, SoulDB
+from memory.genesis import Genesis
 
 
 def _resolve_soul_db(
@@ -38,6 +39,10 @@ def record_self_memory(
     coherence: Optional[float] = None,
     key_decision: Optional[str] = None,
     uncertainty: Optional[str] = None,
+    genesis: Optional[Genesis] = None,
+    is_mine: Optional[bool] = None,
+    intent_id: Optional[str] = None,
+    extras: Optional[Dict[str, Any]] = None,
     journal_path: Optional[Path] = None,
     soul_db: Optional[SoulDB] = None,
 ) -> Dict[str, Any]:
@@ -57,12 +62,20 @@ def record_self_memory(
         coherence: The coherence score (0.0 to 1.0)
         key_decision: What was the most important decision point?
         uncertainty: What am I still uncertain about?
+        genesis: Intent origin classification (Genesis enum)
+        is_mine: Whether the intent is autonomous (internal)
+        intent_id: External or generated intent identifier
+        extras: Additional fields to persist alongside the entry
         journal_path: Path to journal file (defaults to memory/self_journal.jsonl)
 
     Returns:
         The entry that was recorded.
     """
     db = _resolve_soul_db(journal_path, soul_db)
+
+    genesis_value = _normalize_genesis(genesis)
+    if is_mine is None and genesis_value:
+        is_mine = genesis_value == Genesis.AUTONOMOUS.value
 
     entry = {
         "timestamp": datetime.now(timezone.utc).isoformat(),
@@ -72,8 +85,16 @@ def record_self_memory(
         "coherence": coherence,
         "key_decision": key_decision,
         "uncertainty": uncertainty,
+        "genesis": genesis_value,
+        "is_mine": is_mine,
+        "intent_id": intent_id,
         "context": context or {},
     }
+
+    if extras:
+        for key, value in extras.items():
+            if key not in entry:
+                entry[key] = value
 
     db.append(MemorySource.SELF_JOURNAL, entry)
 
@@ -102,7 +123,72 @@ def load_recent_memory(
         return []
     records = list(db.stream(MemorySource.SELF_JOURNAL, limit=n))
     entries = [record.payload for record in records if isinstance(record.payload, dict)]
-    return entries[::-1]
+    enriched = [_enrich_entry(entry) for entry in entries]
+    return enriched[::-1]
+
+
+def _enrich_entry(entry: Dict[str, Any]) -> Dict[str, Any]:
+    enriched = dict(entry)
+    transcript = enriched.get("transcript")
+    if not isinstance(transcript, dict):
+        transcript = {}
+
+    if not enriched.get("genesis"):
+        genesis = transcript.get("genesis")
+        normalized = _normalize_genesis(genesis) if genesis else None
+        if normalized:
+            enriched["genesis"] = normalized
+
+    if enriched.get("is_mine") is None and enriched.get("genesis"):
+        enriched["is_mine"] = enriched["genesis"] == Genesis.AUTONOMOUS.value
+
+    if not enriched.get("responsibility_tier"):
+        tier = transcript.get("responsibility_tier")
+        if tier:
+            enriched["responsibility_tier"] = tier
+
+    if not enriched.get("intent_id"):
+        intent_id = transcript.get("intent_id")
+        if intent_id:
+            enriched["intent_id"] = intent_id
+
+    if enriched.get("uncertainty_level") is None:
+        level = transcript.get("uncertainty_level")
+        if level is not None:
+            enriched["uncertainty_level"] = level
+    if not enriched.get("uncertainty_band"):
+        band = transcript.get("uncertainty_band")
+        if band:
+            enriched["uncertainty_band"] = band
+    if not enriched.get("uncertainty_reasons"):
+        reasons = transcript.get("uncertainty_reasons")
+        if isinstance(reasons, list) and reasons:
+            enriched["uncertainty_reasons"] = reasons
+    if not enriched.get("uncertainty"):
+        level = enriched.get("uncertainty_level")
+        band = enriched.get("uncertainty_band")
+        if level is not None:
+            enriched["uncertainty"] = f"level={level:.3f}, band={band or 'unknown'}"
+
+    return enriched
+
+
+def _normalize_genesis(value: Optional[Genesis]) -> Optional[str]:
+    if isinstance(value, Genesis):
+        return value.value
+    if isinstance(value, str):
+        lowered = value.strip().lower()
+        mapping = {
+            "autonomous": Genesis.AUTONOMOUS.value,
+            "reactive_user": Genesis.REACTIVE_USER.value,
+            "reactive_social": Genesis.REACTIVE_SOCIAL.value,
+            "mandatory": Genesis.MANDATORY.value,
+            "user": Genesis.REACTIVE_USER.value,
+            "social": Genesis.REACTIVE_SOCIAL.value,
+            "system": Genesis.MANDATORY.value,
+        }
+        return mapping.get(lowered, lowered if lowered else None)
+    return None
 
 
 def summarize_recent_memory(

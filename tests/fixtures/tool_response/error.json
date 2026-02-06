@@ -1,0 +1,14 @@
+{
+  "success": false,
+  "data": null,
+  "error": {
+    "code": "E003",
+    "message": "Network error.",
+    "details": {
+      "status": 503
+    }
+  },
+  "genesis": "reactive_social",
+  "responsibility_tier": "TIER_2",
+  "intent_id": null
+}

@@ -172,9 +172,12 @@ class MemoryConsolidator:
             "action_types": Counter(),
             "topics": Counter(),
             "hour_distribution": Counter(),
+            "genesis": Counter(),
         }
-        
+
         for episode in episodes:
+            if episode.get("is_mine") is False:
+                continue
             ctx = episode.get("context", {})
             
             # Platform patterns
@@ -191,6 +194,9 @@ class MemoryConsolidator:
             verdict = episode.get("verdict")
             if verdict:
                 patterns["verdicts"][verdict] += 1
+
+            genesis = episode.get("genesis") or "unknown"
+            patterns["genesis"][genesis] += 1
             
             # Time patterns
             timestamp = episode.get("timestamp", "")

@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tonesoul.dev/schemas/tools/tool_response.schema.json",
+  "title": "ToolResponse",
+  "description": "Standard output envelope for tools.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "success": {
+      "type": "boolean",
+      "description": "Whether the tool executed successfully."
+    },
+    "data": {
+      "type": [
+        "object",
+        "array",
+        "null"
+      ],
+      "description": "Payload when success is true."
+    },
+    "error": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Error object when success is false."
+    },
+    "genesis": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Origin of intent (e.g. autonomous, reactive_user, reactive_social, mandatory)."
+    },
+    "responsibility_tier": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "TIER_1",
+        "TIER_2",
+        "TIER_3",
+        null
+      ],
+      "description": "Responsibility tier derived from genesis."
+    },
+    "intent_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Identifier for the intent or event."
+    }
+  },
+  "required": [
+    "success",
+    "data",
+    "error",
+    "genesis",
+    "responsibility_tier",
+    "intent_id"
+  ],
+  "$defs": {
+    "tool_error": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "type": "string",
+          "pattern": "^E\\d{3}$",
+          "description": "Error code (E001-E999)."
+        },
+        "message": {
+          "type": "string",
+          "description": "Human-readable error message."
+        },
+        "details": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "Optional error details."
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ]
+    }
+  },
+  "oneOf": [
+    {
+      "properties": {
+        "success": {
+          "const": true
+        },
+        "error": {
+          "type": "null"
+        }
+      },
+      "required": [
+        "data"
+      ]
+    },
+    {
+      "properties": {
+        "success": {
+          "const": false
+        },
+        "data": {
+          "type": "null"
+        },
+        "error": {
+          "$ref": "#/$defs/tool_error"
+        }
+      },
+      "required": [
+        "error"
+      ]
+    }
+  ]
+}

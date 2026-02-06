@@ -2,6 +2,13 @@ import json
 import time
 import requests
 import os
+import sys
+
+# Ensure we can import from repository root
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from memory.genesis import Genesis
+from tools.schema import ToolErrorCode, tool_error, tool_success
 
 
 # Mock LAR Calculation based on LAR_CALC_SPEC.md
@@ -26,6 +33,7 @@ class EntropyMonitor:
         print(msg, end="")
         with open("entropy_monitor_log.jsonl", "a", encoding="utf-8") as f:
             f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+        return entry
 
     def get_verdict(self, lar):
         if lar > 1.5:
@@ -51,6 +59,7 @@ class EntropyMonitor:
         # Use existing moltbook_reader logic (simplified)
         headers = {"Authorization": f"Bearer {self.api_key}"}
         url = f"{self.base_url}/posts?submolt={submolt}&sort=new"
+        events = []
         try:
             response = requests.get(url, headers=headers, timeout=30)
             if response.status_code == 200:
@@ -59,13 +68,38 @@ class EntropyMonitor:
                     # For each post, we calculate a "Public LAR"
                     # In a real scenario, this would compare against the author's public history
                     lar = self.calculate_mock_lar(post["content"])
-                    self.log_event(
+                    entry = self.log_event(
                         "POST_OBSERVED", {"id": post["id"], "author": post["author"]["name"]}, lar
                     )
+                    events.append(entry)
+                intent_id = f"moltbook:list:{submolt}" if submolt else None
+                return tool_success(
+                    data={"processed": len(events), "submolt": submolt, "events": events},
+                    genesis=Genesis.REACTIVE_SOCIAL,
+                    intent_id=intent_id,
+                )
             else:
                 print(f"[!] Error: {response.status_code}")
+                return tool_error(
+                    code=ToolErrorCode.UPSTREAM_ERROR,
+                    message="Upstream API error.",
+                    genesis=Genesis.REACTIVE_SOCIAL,
+                    details={"status": response.status_code, "body": response.text[:200]},
+                )
+        except requests.RequestException as e:
+            print(f"[!] Exception: {e}")
+            return tool_error(
+                code=ToolErrorCode.NETWORK_ERROR,
+                message=str(e),
+                genesis=Genesis.REACTIVE_SOCIAL,
+            )
         except Exception as e:
             print(f"[!] Exception: {e}")
+            return tool_error(
+                code=ToolErrorCode.INTERNAL_ERROR,
+                message=str(e),
+                genesis=Genesis.REACTIVE_SOCIAL,
+            )
 
     def calculate_mock_lar(self, content):
         # Heuristic LAR Calculation v1.1

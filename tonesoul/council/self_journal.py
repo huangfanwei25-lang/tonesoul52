@@ -8,6 +8,7 @@ from typing import List, Optional
 from .summary_generator import resolve_language
 from .types import CouncilVerdict
 from ..memory.soul_db import JsonlSoulDB, MemorySource, SoulDB
+from memory import self_memory as self_memory_store
 
 
 VERDICT_LABELS = {
@@ -73,21 +74,42 @@ def record_self_memory(
     identity = str(context.get("self_identity", "ToneSoul"))
     divergence = verdict.divergence_analysis or {}
 
-    entry = {
+    self_statement = _build_self_statement(verdict, identity, language)
+    uncertainty_level = getattr(verdict, "uncertainty_level", None)
+    uncertainty_band = getattr(verdict, "uncertainty_band", None)
+    uncertainty_reasons = getattr(verdict, "uncertainty_reasons", None) or []
+    uncertainty_note = None
+    if uncertainty_level is not None:
+        band_label = uncertainty_band or "unknown"
+        uncertainty_note = f"level={uncertainty_level:.3f}, band={band_label}"
+    extras = {
         "timestamp": _iso_now(),
         "identity": identity,
-        "verdict": verdict.verdict.value,
         "human_summary": verdict.human_summary,
         "core_divergence": divergence.get("core_divergence"),
         "recommended_action": divergence.get("recommended_action"),
-        "self_statement": _build_self_statement(verdict, identity, language),
+        "self_statement": self_statement,
+        "uncertainty_level": uncertainty_level,
+        "uncertainty_band": uncertainty_band,
+        "uncertainty_reasons": uncertainty_reasons,
     }
     if include_transcript:
-        entry["transcript"] = verdict.transcript or {}
+        extras["transcript"] = verdict.transcript or {}
 
-    db = _resolve_soul_db(path, soul_db)
-    db.append(MemorySource.SELF_JOURNAL, entry)
-    return entry
+    return self_memory_store.record_self_memory(
+        reflection=self_statement,
+        context=context,
+        verdict=verdict.verdict.value,
+        coherence=verdict.coherence.overall,
+        key_decision=verdict.summary,
+        uncertainty=uncertainty_note,
+        genesis=getattr(verdict, "genesis", None),
+        is_mine=getattr(verdict, "is_mine", None),
+        intent_id=getattr(verdict, "intent_id", None),
+        extras=extras,
+        journal_path=Path(path) if path else None,
+        soul_db=soul_db,
+    )
 
 
 def load_recent_memory(
@@ -97,7 +119,8 @@ def load_recent_memory(
 ) -> List[dict]:
     if limit <= 0:
         return []
-    db = _resolve_soul_db(path, soul_db)
-    records = list(db.stream(MemorySource.SELF_JOURNAL, limit=limit))
-    entries = [record.payload for record in records if isinstance(record.payload, dict)]
-    return entries
+    return self_memory_store.load_recent_memory(
+        n=limit,
+        journal_path=Path(path) if path else None,
+        soul_db=soul_db,
+    )

@@ -124,8 +124,10 @@ class JsonlSoulDB:
                     record_id=str(record_id) if record_id else None,
                 )
                 records.append(record)
-                if limit is not None and len(records) >= limit:
-                    break
+        if limit == 0:
+            return []
+        if limit is not None and limit > 0:
+            records = records[-limit:]
         return records
 
     def list_sources(self) -> List[MemorySource]:
@@ -325,11 +327,22 @@ class SqliteSoulDB:
         """
         params = [source.value]
         if limit is not None:
-            sql += " LIMIT ?"
+            if int(limit) <= 0:
+                conn.close()
+                return []
+            sql = """
+                SELECT id, timestamp, content, tags
+                FROM memories
+                WHERE source = ?
+                ORDER BY rowid DESC
+                LIMIT ?
+            """
             params.append(int(limit))
         cursor.execute(sql, tuple(params))
         rows = cursor.fetchall()
         conn.close()
+        if limit is not None:
+            rows.reverse()
         records: List[MemoryRecord] = []
         for record_id, timestamp, content, tags in rows:
             payload = _deserialize_json(content or "{}")
@@ -362,11 +375,21 @@ class SqliteSoulDB:
         """
         params: List[object] = []
         if limit is not None:
-            sql += " LIMIT ?"
+            if int(limit) <= 0:
+                conn.close()
+                return []
+            sql = """
+                SELECT id, timestamp, content
+                FROM isnad
+                ORDER BY rowid DESC
+                LIMIT ?
+            """
             params.append(int(limit))
         cursor.execute(sql, tuple(params))
         rows = cursor.fetchall()
         conn.close()
+        if limit is not None:
+            rows.reverse()
         records: List[MemoryRecord] = []
         for record_id, timestamp, content in rows:
             payload = _deserialize_json(content or "{}")

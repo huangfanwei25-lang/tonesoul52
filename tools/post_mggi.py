@@ -24,10 +24,12 @@ def post_mggi():
     print(f"[*] Broadcasting MGGI Manifesto from {file_path}...")
     result = post_to_moltbook(account, submolt, title, content)
 
-    if result:
+    if result and result.get("success"):
         print("[*] MGGI Manifesto broadcast successfully.")
         with open("mggi_post_result.json", "w", encoding="utf-8") as f:
             json.dump(result, f, ensure_ascii=False, indent=2)
+    elif result:
+        print(f"[!] Broadcast failed: {result.get('error', {}).get('message')}")
 
 
 if __name__ == "__main__":

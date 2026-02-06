@@ -1,0 +1,17 @@
+{
+  "success": true,
+  "data": [
+    {
+      "id": "row_1",
+      "value": 10
+    },
+    {
+      "id": "row_2",
+      "value": 20
+    }
+  ],
+  "error": null,
+  "genesis": "autonomous",
+  "responsibility_tier": "TIER_1",
+  "intent_id": "intent-456"
+}

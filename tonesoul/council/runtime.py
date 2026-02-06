@@ -5,7 +5,10 @@ from typing import Any, Dict, List, Optional, Union, Tuple
 
 from .base import IPerspective
 from .pre_output_council import PreOutputCouncil
+from .self_journal import record_self_memory
 from .types import CouncilVerdict, PerspectiveType
+from .verdict import apply_uncertainty
+from .intent_reconstructor import infer_genesis
 from ..role_council import build_council_summary
 from memory.provenance_chain import ProvenanceManager
 
@@ -59,10 +62,61 @@ class CouncilRuntime:
             draft_output=request.draft_output,
             context=context,
             user_intent=request.user_intent,
+            auto_record_self_memory=False,
         )
+
+        try:
+            genesis_decision = infer_genesis(
+                draft_output=request.draft_output,
+                context=context,
+                user_intent=request.user_intent,
+            )
+            verdict.genesis = genesis_decision.genesis
+            verdict.responsibility_tier = genesis_decision.responsibility_tier
+            verdict.intent_id = genesis_decision.intent_id
+            verdict.is_mine = genesis_decision.is_mine
+            verdict.tsr_delta_norm = genesis_decision.tsr_delta_norm
+            verdict.collapse_warning = genesis_decision.collapse_warning
+            transcript = verdict.transcript if isinstance(verdict.transcript, dict) else {}
+            transcript["genesis"] = (
+                genesis_decision.genesis.value
+                if getattr(genesis_decision.genesis, "value", None)
+                else str(genesis_decision.genesis)
+            )
+            transcript["responsibility_tier"] = genesis_decision.responsibility_tier
+            transcript["intent_id"] = genesis_decision.intent_id
+            transcript["is_mine"] = genesis_decision.is_mine
+            transcript["tsr_delta_norm"] = genesis_decision.tsr_delta_norm
+            transcript["collapse_warning"] = genesis_decision.collapse_warning
+            verdict.transcript = transcript
+            apply_uncertainty(verdict, verdict.responsibility_tier)
+            transcript = verdict.transcript if isinstance(verdict.transcript, dict) else {}
+            transcript["uncertainty_level"] = verdict.uncertainty_level
+            transcript["uncertainty_band"] = verdict.uncertainty_band
+            transcript["uncertainty_reasons"] = verdict.uncertainty_reasons
+            verdict.transcript = transcript
+        except Exception as exc:
+            transcript = verdict.transcript if isinstance(verdict.transcript, dict) else {}
+            transcript["genesis_error"] = str(exc)
+            verdict.transcript = transcript
 
         if role_result:
             verdict.transcript = self._attach_role_summary(verdict.transcript, role_result)
+
+        from .types import VerdictType
+
+        record_option = context.get("record_self_memory")
+        should_auto_record = verdict.verdict in (
+            VerdictType.BLOCK,
+            VerdictType.DECLARE_STANCE,
+        )
+        if record_option or should_auto_record:
+            path = record_option if isinstance(record_option, (str, bytes)) else None
+            try:
+                record_self_memory(verdict, context=context, path=path)
+            except OSError:
+                pass
+
         try:
             provenance = ProvenanceManager()
             provenance.add_record(
@@ -71,6 +125,16 @@ class CouncilRuntime:
                 metadata={
                     "verdict": verdict.verdict.value,
                     "summary": verdict.summary,
+                    "genesis": (
+                        verdict.genesis.value
+                        if hasattr(verdict.genesis, "value")
+                        else verdict.genesis
+                    ),
+                    "responsibility_tier": verdict.responsibility_tier,
+                    "intent_id": verdict.intent_id,
+                    "is_mine": verdict.is_mine,
+                    "tsr_delta_norm": verdict.tsr_delta_norm,
+                    "collapse_warning": verdict.collapse_warning,
                 },
             )
         except Exception as exc:

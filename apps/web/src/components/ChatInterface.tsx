@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Send, Loader2, Brain, ChevronDown, ChevronUp, AlertTriangle, MessageSquare, MoveRight, Users } from "lucide-react";
@@ -694,6 +694,57 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
     };
 
     // 根據提供者選擇 API 調用函數
+    const CHAT_EXECUTION_MODE =
+        (process.env.NEXT_PUBLIC_CHAT_EXECUTION_MODE || "").toLowerCase()
+        || (process.env.NEXT_PUBLIC_BACKEND_CHAT_FIRST === "0" ? "legacy_provider" : "backend");
+    const USE_BACKEND_CHAT = CHAT_EXECUTION_MODE !== "legacy_provider";
+    const ENABLE_PROVIDER_FALLBACK = process.env.NEXT_PUBLIC_ENABLE_PROVIDER_FALLBACK === "1";
+    const SHOULD_SHOW_API_KEY_HINT = !USE_BACKEND_CHAT;
+
+    const callBackendChat = async (
+        userMessage: string,
+        fullAnalysis: boolean
+    ): Promise<{ response: string; deliberation: DeliberationData | undefined }> => {
+        const history = messages.slice(-12).map(m => ({
+            role: m.role,
+            content: m.content,
+            timestamp: m.timestamp.toISOString(),
+        }));
+
+        const response = await fetch("/api/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                conversation_id: conversation?.id,
+                message: userMessage,
+                history,
+                full_analysis: fullAnalysis,
+            }),
+        });
+
+        let payload: Record<string, unknown> = {};
+        try {
+            payload = await response.json();
+        } catch {
+            payload = {};
+        }
+
+        if (!response.ok) {
+            const errorMessage = typeof payload.error === "string" ? payload.error : "Chat backend error";
+            throw new Error(errorMessage);
+        }
+
+        const responseText =
+            typeof payload.response === "string"
+                ? payload.response
+                : "Backend did not return response text.";
+        const deliberation =
+            payload.deliberation && typeof payload.deliberation === "object"
+                ? (payload.deliberation as DeliberationData)
+                : undefined;
+
+        return { response: responseText, deliberation };
+    };
     const getCallAPI = () => {
         // Ollama 不需要 API Key
         if (apiSettings?.provider === "ollama") {
@@ -1021,6 +1072,26 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
         };
     };
 
+    const runLegacyProviderFlow = async (
+        userMessage: string
+    ): Promise<{ response: string; deliberation: DeliberationData | undefined }> => {
+        if (!apiSettings?.apiKey) {
+            return {
+                response: "請先設定 API Key 才能使用 AI 對話功能。點擊側邊欄的 API 設定按鈕。",
+                deliberation: undefined,
+            };
+        }
+
+        if (apiSettings.mode === "fast") {
+            return await performFastMode(userMessage);
+        }
+        const deliberationResult = await performMultiPathDeliberation(userMessage);
+        return {
+            response: deliberationResult.response,
+            deliberation: deliberationResult.deliberation,
+        };
+    };
+
     const sendMessage = useCallback(async () => {
         if (!input.trim() || isLoading || !conversation) return;
 
@@ -1034,27 +1105,25 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
         setMessages(prev => [...prev, userMessage]);
         setInput("");
         setIsLoading(true);
-        setLoadingPhase(apiSettings?.mode === "fast" ? "思考中..." : "啟動審議...");
+        setLoadingPhase(USE_BACKEND_CHAT ? "同步後端中..." : (apiSettings?.mode === "fast" ? "思考中..." : "啟動審議..."));
 
         try {
             let result: { response: string; deliberation: DeliberationData | undefined };
 
-            if (apiSettings?.apiKey) {
-                // 根據模式選擇處理方式
-                if (apiSettings.mode === "fast") {
-                    result = await performFastMode(userMessage.content);
-                } else {
-                    const deliberationResult = await performMultiPathDeliberation(userMessage.content);
-                    result = {
-                        response: deliberationResult.response,
-                        deliberation: deliberationResult.deliberation,
-                    };
+            if (USE_BACKEND_CHAT) {
+                const fullAnalysis = apiSettings?.mode !== "fast";
+                try {
+                    result = await callBackendChat(userMessage.content, fullAnalysis);
+                } catch (backendErr) {
+                    if (ENABLE_PROVIDER_FALLBACK) {
+                        console.warn("[ToneSoul] Backend chat unavailable, fallback to legacy provider flow.", backendErr);
+                        result = await runLegacyProviderFlow(userMessage.content);
+                    } else {
+                        throw backendErr;
+                    }
                 }
             } else {
-                result = {
-                    response: "請先設定 API Key 才能使用 AI 對話功能。點擊側邊欄的 API 設定按鈕。",
-                    deliberation: undefined,
-                };
+                result = await runLegacyProviderFlow(userMessage.content);
             }
 
             const assistantMessage: Message = {
@@ -1137,7 +1206,7 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
     return (
         <div className="flex flex-col h-full bg-slate-50">
             {/* API Key 提醒 */}
-            {!apiSettings?.apiKey && (
+            {SHOULD_SHOW_API_KEY_HINT && !apiSettings?.apiKey && (
                 <div className="bg-amber-50 border-b border-amber-200 px-4 py-2 flex items-center gap-2 text-sm text-amber-800">
                     <AlertTriangle className="w-4 h-4" />
                     <span>請先設定 API Key 才能使用 AI 對話。點擊側邊欄 API 設定。</span>
@@ -1338,3 +1407,4 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
         </div>
     );
 }
+

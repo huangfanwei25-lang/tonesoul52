@@ -46,6 +46,16 @@ bridge_debug.log
 .conversion_checkpoint.json
 memory/provenance_ledger.jsonl
 memory/self_journal.jsonl
+memory/agent_discussion.jsonl
+memory/semantic_memory.jsonl
+memory/.consolidation_state.json
+memory/handoff/
+memory/external_framework_analysis/
+memory/vectors/
+memory/.semantic_index/
+memory/.hierarchical_index/
+memory/moltbook_logs/
+memory/narrative/
 
 # Moltbook Scripts (contains API keys - do not commit)
 .moltbook/

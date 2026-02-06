@@ -1,21 +1,30 @@
 """
-HandoffBuilder - 交接包建構器
+HandoffBuilder
 
-負責在 AI session 切換時產生可驗證的交接包。
+Builds signed handoff packets for cross-agent session transfer.
 """
 
 import json
 import hmac
 import hashlib
+import secrets
 from datetime import datetime, timezone
 from typing import Optional, List, Dict, Any
 from dataclasses import dataclass, asdict
 from pathlib import Path
+import os
+import sys
+
+# Ensure we can import from repository root when executed directly.
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from memory.genesis import Genesis
+from tools.schema import ToolErrorCode, tool_error, tool_success
 
 
 @dataclass
 class DriftEntry:
-    """偏移記錄"""
+    """Drift entry."""
 
     timestamp: str
     choice: str
@@ -25,7 +34,7 @@ class DriftEntry:
 
 @dataclass
 class PendingTask:
-    """未完成任務"""
+    """Pending task."""
 
     id: str
     description: str
@@ -34,15 +43,15 @@ class PendingTask:
 
 @dataclass
 class Phase:
-    """當前相態（海洋意識論）"""
+    """Phase descriptor."""
 
-    current: str  # "雨", "雲", "霧", "雪", "潮", "漩", "冰", "化石"
+    current: str  # e.g. "init", "plan", "implement", "test", "refactor", "handoff"
     reason: str
 
 
 @dataclass
 class ContextSummary:
-    """語場上下文摘要"""
+    """Context summary."""
 
     user_goal: str
     key_concepts: List[str]
@@ -52,7 +61,7 @@ class ContextSummary:
 
 @dataclass
 class HandoffPacket:
-    """交接包"""
+    """Handoff packet."""
 
     version: str
     timestamp: str
@@ -66,24 +75,34 @@ class HandoffPacket:
 
 
 class HandoffBuilder:
-    """交接包建構器"""
+    """Builds and validates handoff packets."""
 
     VERSION = "1.0"
 
     def __init__(self, secret_key: Optional[str] = None):
         """
-        初始化建構器
+        Initialize a handoff builder.
 
         Args:
-            secret_key: HMAC 簽章密鑰。若未提供則從環境變數讀取。
+            secret_key: Optional HMAC secret for signing packets.
         """
         self.secret_key = secret_key or self._load_secret()
 
     def _load_secret(self) -> str:
-        """從環境或檔案載入密鑰"""
-        import os
+        """
+        Load signing secret from environment.
 
-        return os.environ.get("HANDOFF_SECRET", "default_dev_secret")
+        Uses `HANDOFF_SECRET` when provided. Otherwise falls back to a
+        per-process high-entropy secret to avoid predictable signatures.
+        """
+        secret = os.environ.get("HANDOFF_SECRET")
+        if secret:
+            return secret
+        print(
+            "[WARN] HANDOFF_SECRET is not set; using ephemeral in-memory secret.",
+            file=sys.stderr,
+        )
+        return secrets.token_hex(32)
 
     def build(
         self,
@@ -95,10 +114,10 @@ class HandoffBuilder:
         context_summary: ContextSummary,
     ) -> HandoffPacket:
         """
-        建構交接包
+        Build a handoff packet.
 
         Returns:
-            HandoffPacket with computed signature
+            HandoffPacket with computed signature.
         """
         packet = HandoffPacket(
             version=self.VERSION,
@@ -114,21 +133,21 @@ class HandoffBuilder:
             context_summary=context_summary,
         )
 
-        # 計算簽章
+        # Sign packet
         packet.signature = self._sign(packet)
 
         return packet
 
     def _sign(self, packet: HandoffPacket) -> Dict[str, str]:
-        """計算 HMAC-SHA256 簽章"""
-        # 移除 signature 欄位後序列化
+        """Sign packet using HMAC-SHA256."""
+        # Remove signature for canonical hashing
         packet_dict = asdict(packet)
         packet_dict.pop("signature", None)
 
-        # 正規化 JSON（確保一致的順序）
+        # Serialize canonical JSON for hashing
         canonical = json.dumps(packet_dict, sort_keys=True, ensure_ascii=False)
 
-        # 計算 HMAC
+        # Compute HMAC
         signature = hmac.new(
             self.secret_key.encode(), canonical.encode(), hashlib.sha256
         ).hexdigest()
@@ -136,7 +155,7 @@ class HandoffBuilder:
         return {"algorithm": "HMAC-SHA256", "hash": signature}
 
     def verify(self, packet: HandoffPacket) -> bool:
-        """驗證交接包簽章"""
+        """Verify packet signature."""
         if not packet.signature:
             return False
 
@@ -145,14 +164,14 @@ class HandoffBuilder:
 
     def persist(self, packet: HandoffPacket, path: Optional[Path] = None) -> Path:
         """
-        持久化交接包到檔案
+        Persist handoff packet to disk.
 
         Args:
-            packet: 要保存的交接包
-            path: 保存路徑。預設為 memory/handoff/
+            packet: Packet to persist.
+            path: Optional directory (default: memory/handoff/).
 
         Returns:
-            保存的檔案路徑
+            Path to saved packet.
         """
         if path is None:
             path = Path("memory/handoff")
@@ -168,7 +187,7 @@ class HandoffBuilder:
         return filepath
 
     def load(self, filepath: Path) -> HandoffPacket:
-        """從檔案載入交接包"""
+        """Load a handoff packet from JSON file."""
         with open(filepath, "r", encoding="utf-8") as f:
             data = json.load(f)
 
@@ -185,42 +204,92 @@ class HandoffBuilder:
         )
 
 
-# 使用範例
+# ToolResponse wrappers
+
+def build_tool_response(
+    builder: "HandoffBuilder",
+    source_model: str,
+    target_model: str,
+    phase: "Phase",
+    pending_tasks: List["PendingTask"],
+    drift_log: List["DriftEntry"],
+    context_summary: "ContextSummary",
+    genesis: Genesis = Genesis.REACTIVE_USER,
+) -> Dict[str, Any]:
+    try:
+        packet = builder.build(
+            source_model=source_model,
+            target_model=target_model,
+            phase=phase,
+            pending_tasks=pending_tasks,
+            drift_log=drift_log,
+            context_summary=context_summary,
+        )
+        return tool_success(
+            data={"packet": asdict(packet)},
+            genesis=genesis,
+            intent_id=None,
+        )
+    except Exception as exc:
+        return tool_error(
+            code=ToolErrorCode.INTERNAL_ERROR,
+            message=str(exc),
+            genesis=genesis,
+        )
+
+
+def persist_tool_response(
+    builder: "HandoffBuilder",
+    packet: "HandoffPacket",
+    path: Optional[Path] = None,
+    genesis: Genesis = Genesis.REACTIVE_USER,
+) -> Dict[str, Any]:
+    try:
+        filepath = builder.persist(packet, path)
+        return tool_success(
+            data={"path": str(filepath)},
+            genesis=genesis,
+            intent_id=None,
+        )
+    except Exception as exc:
+        return tool_error(
+            code=ToolErrorCode.INTERNAL_ERROR,
+            message=str(exc),
+            genesis=genesis,
+        )
+
+
+def load_tool_response(
+    builder: "HandoffBuilder",
+    filepath: Path,
+    genesis: Genesis = Genesis.REACTIVE_USER,
+) -> Dict[str, Any]:
+    try:
+        packet = builder.load(filepath)
+        return tool_success(
+            data={"packet": asdict(packet)},
+            genesis=genesis,
+            intent_id=None,
+        )
+    except Exception as exc:
+        return tool_error(
+            code=ToolErrorCode.INTERNAL_ERROR,
+            message=str(exc),
+            genesis=genesis,
+        )
+
 if __name__ == "__main__":
     builder = HandoffBuilder()
-
     packet = builder.build(
         source_model="antigravity",
         target_model="codex",
-        phase=Phase(current="霧", reason="多重未定的疊動"),
-        pending_tasks=[
-            PendingTask(id="task_001", description="完成調度器 MVP", status="in_progress")
-        ],
-        drift_log=[
-            DriftEntry(
-                timestamp="2026-02-04T09:07:00Z",
-                choice="建立反思日誌而非直接改造電腦",
-                toward="可反驗性",
-                away_from="效率",
-            )
-        ],
+        phase=Phase(current="demo", reason="manual run"),
+        pending_tasks=[],
+        drift_log=[],
         context_summary=ContextSummary(
-            user_goal="設計 AI 治理框架",
-            key_concepts=["生物學類比", "硬體層約束", "Isnād"],
-            current_files=[
-                "memory/antigravity_journal.md",
-                "memory/external_framework_analysis/claw_governance_insight.md",
-            ],
+            user_goal="demo",
+            key_concepts=["handoff"],
+            current_files=[__file__],
         ),
     )
-
-    # 驗證
     print(f"Packet valid: {builder.verify(packet)}")
-
-    # 持久化
-    filepath = builder.persist(packet)
-    print(f"Saved to: {filepath}")
-
-    # 載入並再次驗證
-    loaded = builder.load(filepath)
-    print(f"Loaded packet valid: {builder.verify(loaded)}")

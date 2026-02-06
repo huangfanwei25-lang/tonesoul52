@@ -29,12 +29,22 @@ def _load_entries(
 
 
 def identify_patterns(entries: Iterable[dict]) -> Dict[str, object]:
-    verdict_counts = count_by_verdict(entries)
-    common_divergence = most_common_divergence(entries)
-    avg_coherence = average_coherence(entries)
+    filtered = [entry for entry in entries if entry.get("is_mine") is not False]
+    verdict_counts = count_by_verdict(filtered)
+    common_divergence = most_common_divergence(filtered)
+    avg_coherence = average_coherence(filtered)
     total = sum(verdict_counts.values())
     declare_stance = verdict_counts.get("declare_stance", 0)
     block = verdict_counts.get("block", 0)
+    genesis_counts: Dict[str, int] = {}
+    for entry in filtered:
+        genesis = entry.get("genesis")
+        if not genesis:
+            transcript = entry.get("transcript")
+            if isinstance(transcript, dict):
+                genesis = transcript.get("genesis")
+        genesis = genesis or "unknown"
+        genesis_counts[genesis] = genesis_counts.get(genesis, 0) + 1
     return {
         "total": total,
         "verdict_counts": verdict_counts,
@@ -42,6 +52,7 @@ def identify_patterns(entries: Iterable[dict]) -> Dict[str, object]:
         "block": block,
         "most_common_divergence": common_divergence,
         "average_coherence": avg_coherence,
+        "genesis_counts": genesis_counts,
     }
 
 

@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import List, Optional, Union
 
+from memory.genesis import Genesis
 
 class PerspectiveType(Enum):
     GUARDIAN = "guardian"
@@ -76,6 +77,15 @@ class CouncilVerdict:
     human_summary: Optional[str] = None
     divergence_analysis: Optional[dict] = None
     structured_output: Optional[dict] = None
+    genesis: Optional[Genesis] = None
+    responsibility_tier: Optional[str] = None
+    intent_id: Optional[str] = None
+    is_mine: Optional[bool] = None
+    tsr_delta_norm: Optional[float] = None
+    collapse_warning: Optional[str] = None
+    uncertainty_level: Optional[float] = None
+    uncertainty_band: Optional[str] = None
+    uncertainty_reasons: Optional[List[str]] = None
 
     def to_structured_output(self) -> dict:
         from .verdict import build_structured_output
@@ -92,6 +102,15 @@ class CouncilVerdict:
             "verdict": self.verdict.value,
             "coherence": self.coherence.overall,
             "summary": self.summary,
+            "genesis": self.genesis.value if isinstance(self.genesis, Genesis) else self.genesis,
+            "responsibility_tier": self.responsibility_tier,
+            "intent_id": self.intent_id,
+            "is_mine": self.is_mine,
+            "tsr_delta_norm": self.tsr_delta_norm,
+            "collapse_warning": self.collapse_warning,
+            "uncertainty_level": self.uncertainty_level,
+            "uncertainty_band": self.uncertainty_band,
+            "uncertainty_reasons": self.uncertainty_reasons or [],
             "votes": [
                 {
                     "perspective": (

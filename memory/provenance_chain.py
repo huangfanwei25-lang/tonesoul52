@@ -4,6 +4,7 @@ import uuid
 from datetime import datetime, timezone
 from typing import List, Dict, Optional, Any
 from pathlib import Path
+from enum import Enum
 
 from tonesoul.memory.soul_db import JsonlSoulDB, MemorySource, SoulDB
 
@@ -17,6 +18,18 @@ def _compute_hash(payload: Dict[str, Any]) -> str:
         separators=(",", ":"),
     ).encode("utf-8")
     return hashlib.sha256(encoded).hexdigest()
+
+
+def _normalize_metadata(metadata: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+    if not isinstance(metadata, dict):
+        return {}
+    normalized: Dict[str, Any] = {}
+    for key, value in metadata.items():
+        if isinstance(value, Enum):
+            normalized[key] = value.value
+        else:
+            normalized[key] = value
+    return normalized
 
 
 def _utc_now() -> datetime:
@@ -143,6 +156,7 @@ class ProvenanceManager:
         metadata: Optional[Dict[str, Any]] = None,
         event_id: Optional[str] = None,
     ) -> str:
+        metadata = _normalize_metadata(metadata)
         payload = {
             "event_id": event_id or str(uuid.uuid4()),
             "event_type": event_type,

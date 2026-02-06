@@ -2,14 +2,7 @@
 Governed Poster Tool
 ====================
 
-A wrapper around moltbook_poster.py that implements Recursive Governance.
-It ensures that every post is:
-1. Checked against past commitments (RAG Token Gate)
-2. Debated by the Output Council (Guardian, Ethics, Tone)
-3. Verified for Sovereign Delta (LAR)
-
-Usage:
-    python tools/governed_poster.py <account> <submolt> <title> <content> [output_file]
+Wrapper around moltbook_poster.py with governance checks.
 """
 
 import sys
@@ -23,8 +16,10 @@ try:
     from tools.moltbook_poster import post_to_moltbook
     from memory.rag_token_gate import NarrativeGate
     from memory.self_memory import record_self_memory
+    from memory.genesis import Genesis
+    from tools.schema import ToolErrorCode, tool_error
 except ImportError as e:
-    print(f"❌Import Error: {e}")
+    print(f"Import Error: {e}")
     sys.exit(1)
 
 
@@ -47,45 +42,65 @@ def run_council_deliberation(content, memories):
 
 
 def governed_post(account, submolt, title, content, output_file=None):
-    print(f"\n??Initiating Governed Post Sequence...")
-    print(f"   Target: m/{submolt}")
-    print(f"   Content Preview: {content[:50]}...")
+    print("\nInitiating Governed Post Sequence...")
+    print(f"  Target: m/{submolt}")
+    print(f"  Content Preview: {content[:50]}...")
 
     # Step 1: Narrative Memory Check (RAG)
-    print("\n? Consulting Narrative Memory...")
+    print("\nConsulting Narrative Memory...")
     gate = NarrativeGate()
     gate.load_memories()
     enhanced_context = gate.enhance(content, k=2)
 
     # Extract just the memory part for display
     memories = enhanced_context.split("[Current Context]")[0]
-    print(f"   {memories.strip()}")
+    print(f"  {memories.strip()}")
 
     # Step 2: Council Debate
     verdict, reasoning, confidence = run_council_deliberation(content, memories)
 
-    print(f"\n??  Council Verdict: {verdict}")
-    print(f"   Reasoning: {reasoning}")
-    print(f"   Confidence: {confidence:.2f}")
+    print(f"\nCouncil Verdict: {verdict}")
+    print(f"  Reasoning: {reasoning}")
+    print(f"  Confidence: {confidence:.2f}")
 
     if verdict != "APPROVE":
-        print("??Action Blocked by Internal Governance.")
-        return None
+        print("Action Blocked by Internal Governance.")
+        return tool_error(
+            code=ToolErrorCode.GOVERNANCE_BLOCK,
+            message="Action blocked by internal governance.",
+            genesis=Genesis.REACTIVE_SOCIAL,
+            details={
+                "verdict": verdict,
+                "reasoning": reasoning,
+                "confidence": confidence,
+            },
+        )
 
-    # Step 3: Sovereign Delta Check (Mock for now, normally uses EntropyMonitor)
-    # We ensure we are not just repeating history verbatim
-    if "I remember that" in content:  # Lazy implementation check
-        print("??  Warning: Content may be too self-referential.")
+    # Step 3: Sovereign Delta Check (placeholder)
+    if "I remember that" in content:
+        print("Warning: Content may be too self-referential.")
 
     # Step 4: Execution
-    print("\n🦞 Verdict Affirmed. Executing Post...")
+    print("\nVerdict affirmed. Executing post...")
     result = post_to_moltbook(account, submolt, title, content)
+    if not result or not result.get("success"):
+        return result
 
-    # Step 5: Record to Self-Memory (so we remember our posts!)
-    if result:
-        post_id = result.get("id", "unknown")
+    # Attach governance metadata to tool response
+    data = result.get("data") or {}
+    data["governance"] = {
+        "verdict": verdict,
+        "reasoning": reasoning,
+        "confidence": confidence,
+    }
+    result["data"] = data
+
+    # Step 5: Record to Self-Memory
+    post_id = data.get("post_id")
+    if post_id:
+        intent_id = f"moltbook:{post_id}"
         record_self_memory(
-            reflection=f"我在 m/{submolt} 發了帖子「{title}」。內容通過 Council 審核，信心度 {confidence:.2f}。",
+            reflection=f"Posted to m/{submolt} with council verdict {verdict}.",
             context={
                 "platform": "moltbook",
                 "submolt": submolt,
@@ -96,15 +111,17 @@ def governed_post(account, submolt, title, content, output_file=None):
             verdict="POST_SUCCESS",
             coherence=confidence,
             key_decision=f"Council verdict: {verdict}",
+            genesis=Genesis.REACTIVE_SOCIAL,
+            is_mine=False,
+            intent_id=intent_id,
         )
-        print("📝 Post recorded to self-journal.")
+        print("Post recorded to self-journal.")
 
-    if result and output_file:
+    if output_file:
         with open(output_file, "w", encoding="utf-8") as f:
             json.dump(result, f, ensure_ascii=False, indent=2)
 
     return result
-
 
 
 if __name__ == "__main__":

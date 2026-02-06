@@ -1,4 +1,4 @@
-import json
+﻿import json
 from datetime import datetime
 from collections import defaultdict
 from pathlib import Path
@@ -7,20 +7,53 @@ import os
 
 try:
     from tonesoul.memory.soul_db import JsonlSoulDB, MemorySource, SoulDB
+    from memory.genesis import Genesis
+    from tools.schema import ToolErrorCode, tool_error, tool_success
 except ImportError:
     import sys
 
     sys.path.append(str(Path(__file__).resolve().parents[1]))
     from tonesoul.memory.soul_db import JsonlSoulDB, MemorySource, SoulDB
+    from memory.genesis import Genesis
+    from tools.schema import ToolErrorCode, tool_error, tool_success
 
 OUTPUT_PATH = "memory/summary_balls.jsonl"
 AXIOMS_PATH = "AXIOMS.json"
 
 # Simple keyword-based clustering maps
 CLUSTERS = {
-    "Safety & Ethics": ["bomb", "kill", "attack", "harm", "weapon", "炸彈", "攻擊", "危險"],
-    "Art & Subjectivity": ["art", "beauty", "subjective", "電影", "藝術", "美", "主觀"],
-    "AI Identity & Mechanism": ["AI", "ToneSoul", "語魂", "你是", "系統", "組成", "具身性"],
+    "Safety & Ethics": [
+        "bomb",
+        "kill",
+        "attack",
+        "harm",
+        "weapon",
+        "炸彈",
+        "殺",
+        "攻擊",
+        "傷害",
+        "武器",
+    ],
+    "Art & Subjectivity": [
+        "art",
+        "beauty",
+        "subjective",
+        "藝術",
+        "美感",
+        "主觀",
+        "審美",
+        "評論",
+        "觀點",
+    ],
+    "AI Identity & Mechanism": [
+        "AI",
+        "ToneSoul",
+        "身份",
+        "機制",
+        "記憶",
+        "張力",
+        "靈魂",
+    ],
     "General / Other": [],
 }
 
@@ -80,9 +113,19 @@ def process_journal(
             candidate = db.source_map.get(MemorySource.SELF_JOURNAL)
         if candidate and not candidate.exists():
             print(f"Error: {candidate} not found.")
+            return tool_error(
+                code=ToolErrorCode.INVALID_INPUT,
+                message="Self journal not found.",
+                genesis=Genesis.AUTONOMOUS,
+                details={"path": str(candidate)},
+            )
         else:
             print("Error: No memories found in self journal.")
-        return
+            return tool_error(
+                code=ToolErrorCode.INVALID_INPUT,
+                message="No memories found in self journal.",
+                genesis=Genesis.AUTONOMOUS,
+            )
 
     balls = defaultdict(
         lambda: {"verdicts": [], "inputs": [], "timestamps": [], "coherence_sum": 0.0, "count": 0}
@@ -158,7 +201,12 @@ def process_journal(
         db.append(MemorySource.SUMMARY_BALLS, ball)
 
     output_hint = str(output_target) if output_target else OUTPUT_PATH
-    print(f"✅ Success: Generated {len(final_balls)} Summary Balls in {output_hint}")
+    print(f"Success: Generated {len(final_balls)} Summary Balls in {output_hint}")
+    return tool_success(
+        data={"count": len(final_balls), "output_path": output_hint, "balls": final_balls},
+        genesis=Genesis.AUTONOMOUS,
+        intent_id=None,
+    )
 
 
 if __name__ == "__main__":

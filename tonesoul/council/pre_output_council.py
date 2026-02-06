@@ -43,6 +43,7 @@ class PreOutputCouncil:
         draft_output: str,
         context: dict,
         user_intent: Optional[str] = None,
+        auto_record_self_memory: bool = True,
     ) -> CouncilVerdict:
         votes = [
             perspective.evaluate(draft_output, context, user_intent)
@@ -77,7 +78,7 @@ class PreOutputCouncil:
             VerdictType.DECLARE_STANCE,
         )
 
-        if record_option or should_auto_record:
+        if auto_record_self_memory and (record_option or should_auto_record):
             path = record_option if isinstance(record_option, (str, bytes)) else None
             try:
                 record_self_memory(verdict, context=context, path=path)

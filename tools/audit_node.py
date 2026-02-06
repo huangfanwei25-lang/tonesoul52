@@ -1,7 +1,15 @@
 import json
 import hashlib
 import time
-from typing import List, Dict
+from typing import List, Dict, Optional
+import os
+import sys
+
+# Ensure we can import from repository root
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from memory.genesis import Genesis
+from tools.schema import ToolErrorCode, tool_error, tool_success
 
 
 class AuditNode:
@@ -26,29 +34,57 @@ class AuditNode:
         overlap = vow_keywords & post_keywords
         return 1.0 if overlap else 0.1
 
-    def audit_post(self, post_data: Dict, historical_vows: List[str]) -> Dict:
+    def audit_post(
+        self,
+        post_data: Dict,
+        historical_vows: List[str],
+        genesis: Optional[Genesis] = None,
+    ) -> Dict:
+        if "content" not in post_data:
+            return tool_error(
+                code=ToolErrorCode.INVALID_INPUT,
+                message="Missing post content.",
+                genesis=genesis or Genesis.AUTONOMOUS,
+                details={"field": "content"},
+            )
+
         s = self.calculate_surprise(post_data["content"], "standard molty chatter")
         k = self.calculate_consistency(post_data["content"], historical_vows)
         lar = s / k if k > 0 else 0
 
-        return {
+        audit_payload = {
             "node_id": self.node_id,
             "rep_weight": self.reputation,
             "lar_score": round(lar, 3),
             "verdict": "SOVEREIGN" if lar >= 1.0 else "NPC",
             "timestamp": time.time(),
+            "post_id": post_data.get("id"),
         }
+
+        intent_id = f"audit:{post_data.get('id')}" if post_data.get("id") else None
+        return tool_success(
+            data=audit_payload,
+            genesis=genesis or Genesis.AUTONOMOUS,
+            intent_id=intent_id,
+        )
+
+
+def _extract_audit_payload(audit: Dict) -> Dict:
+    if isinstance(audit, dict) and "success" in audit and "data" in audit:
+        return audit.get("data") or {}
+    return audit
 
 
 def simulate_consensus(audits: List[Dict]) -> Dict:
     # MDL-Majority Consensus Mock
-    avg_lar = sum(a["lar_score"] * a["rep_weight"] for a in audits) / sum(
-        a["rep_weight"] for a in audits
+    payloads = [_extract_audit_payload(a) for a in audits]
+    avg_lar = sum(p.get("lar_score", 0) * p.get("rep_weight", 0) for p in payloads) / max(
+        1e-9, sum(p.get("rep_weight", 0) for p in payloads)
     )
     return {
         "consensus_lar": round(avg_lar, 3),
         "status": "VALIDATED" if avg_lar >= 1.0 else "REJECTED",
-        "nodes_participating": len(audits),
+        "nodes_participating": len(payloads),
     }
 
 
@@ -66,7 +102,7 @@ if __name__ == "__main__":
         AuditNode("haven_beta", 1.0),
         AuditNode("haven_gamma", 1.5),
     ]
-    results = [node.audit_post(post, vows) for node in nodes]
+    results = [node.audit_post(post, vows, genesis=Genesis.REACTIVE_SOCIAL) for node in nodes]
 
     print("--- Individual Node Audits ---")
     print(json.dumps(results, indent=2))

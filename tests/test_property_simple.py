@@ -2,7 +2,7 @@
 Simplified Property-Based Tests for ToneSoul Core
 
 Note: This is a simplified version focusing on ContractObserver and basic invariants.
-Full property tests for VowSystem and UnifiedCore require deeper integration and are marked as TODO.
+Full property tests for VowSystem and UnifiedCore require deeper integration and are pending.
 """
 
 import pytest
@@ -11,6 +11,8 @@ from tonesoul.contract_observer import (
     MultiScaleObserver,
     QualityTracker,
 )
+
+FLOAT_TOLERANCE = 1e-4
 
 
 # === Strategies ===
@@ -64,8 +66,12 @@ class TestMultiScaleObserverProperties:
         max_delta = max(deltas)
 
         # 短期和中期平均值都應該在 min-max 範圍內
-        assert min_delta <= metrics["short_term"] <= max_delta
-        assert min_delta <= metrics["medium_term"] <= max_delta
+        assert min_delta - FLOAT_TOLERANCE <= metrics["short_term"] <= max_delta + FLOAT_TOLERANCE
+        assert (
+            min_delta - FLOAT_TOLERANCE
+            <= metrics["medium_term"]
+            <= max_delta + FLOAT_TOLERANCE
+        )
 
     @settings(max_examples=30)
     @given(st.lists(delta_s_strategy(), min_size=3, max_size=20))

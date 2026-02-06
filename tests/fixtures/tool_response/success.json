@@ -1,0 +1,17 @@
+{
+  "success": true,
+  "data": {
+    "payload": {
+      "id": "example_001",
+      "status": "ok"
+    },
+    "items": [
+      "alpha",
+      "beta"
+    ]
+  },
+  "error": null,
+  "genesis": "reactive_user",
+  "responsibility_tier": "TIER_2",
+  "intent_id": "intent-123"
+}

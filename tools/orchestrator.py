@@ -16,6 +16,8 @@ from tools.handoff_builder import (
 )
 from memory.observer import MemoryObserver
 from memory.self_memory import load_recent_memory
+from memory.genesis import Genesis
+from tools.schema import tool_success
 
 
 @dataclass
@@ -63,17 +65,17 @@ class DecisionEngine:
     def __init__(
         self,
         quota_threshold: float = 0.10,
-        failure_threshold: int = 3,
+        failure_threshold: int = 1,
         latency_threshold_ms: int = 30000,
     ) -> None:
         self.quota_threshold = quota_threshold
-        self.failure_threshold = failure_threshold
+        self.failure_threshold = max(1, failure_threshold)
         self.latency_threshold_ms = latency_threshold_ms
 
     def should_switch(self, health: HealthStatus) -> bool:
         if health.quota_remaining < self.quota_threshold:
             return True
-        if health.consecutive_failures > self.failure_threshold:
+        if health.consecutive_failures >= self.failure_threshold:
             return True
         if health.latency_ms > self.latency_threshold_ms:
             return True
@@ -173,6 +175,26 @@ class Orchestrator:
         if getattr(context_summary, "recent_memory", None) is None:
             context_summary.recent_memory = list(self._boot_memory)
 
+    @staticmethod
+    def _is_error_result(result: Dict[str, Any]) -> bool:
+        status = result.get("status")
+        return isinstance(status, str) and status.lower() == "error"
+
+    @staticmethod
+    def _has_final_audit_intent(input_text: str) -> bool:
+        lowered = input_text.lower()
+        if "audit" in lowered and any(
+            token in lowered for token in ("final", "full", "complete", "comprehensive")
+        ):
+            return True
+        if "最後" in input_text and "審計" in input_text:
+            return True
+        if "最終" in input_text and "審計" in input_text:
+            return True
+        if "完整" in input_text and "審計" in input_text:
+            return True
+        return False
+
     def handle_request(
         self,
         input_text: str,
@@ -207,17 +229,28 @@ class Orchestrator:
 
         health = self.health_monitor.snapshot()
         self._last_health = health
-        should_switch = self.decision_engine.should_switch(health)
+        health_switch = self.decision_engine.should_switch(health)
+        bug_escalation = error is not None or self._is_error_result(result)
+        final_audit_request = self._has_final_audit_intent(input_text)
+        should_switch = health_switch or bug_escalation or final_audit_request
+        switch_reason = ""
+        if final_audit_request:
+            switch_reason = "Final audit requested."
+        elif bug_escalation:
+            switch_reason = "Bug detected; escalate on first failure."
+        elif health_switch:
+            switch_reason = "Health thresholds triggered."
+
         packet_path: Optional[str] = None
         launch_info: Optional[Dict[str, str]] = None
 
         if should_switch:
-            reason = "Health thresholds triggered."
+            reason = switch_reason or "Switch requested."
             if axiom_hits:
                 axiom_names = [
                     a.get("name") or a.get("name_zh") for a in axiom_hits if isinstance(a, dict)
                 ]
-                reason = f"Intent touches AXIOMS: {axiom_names}"
+                reason = f"{reason} Intent touches AXIOMS: {axiom_names}"
             packet = self.handoff_builder.build(
                 source_model=self.source_model,
                 target_model=self.target_model,
@@ -235,13 +268,19 @@ class Orchestrator:
             "switched": should_switch,
             "handoff_packet": packet_path,
             "health": asdict(health),
+            "switch_reason": switch_reason if should_switch else None,
+            "switch_triggers": {
+                "health": health_switch,
+                "bug": bug_escalation,
+                "final_audit": final_audit_request,
+            },
             "risk_level": risk_level,
             "axiom_hits": [a.get("name") for a in axiom_hits if isinstance(a, dict)],
             "boot_memory_count": len(self._boot_memory),
             "boot_memory_error": self._boot_error,
         }
         summary = (
-            "Handoff triggered by health thresholds."
+            f"Handoff triggered. {switch_reason}"
             if should_switch
             else "Continue on current model."
         )
@@ -285,14 +324,24 @@ class Orchestrator:
         response = {
             "status": "handoff" if should_switch else "continue",
             "result": result,
-            "health": health,
+            "health": asdict(health),
             "switched": should_switch,
             "error": str(error) if error else None,
+            "switch_reason": switch_reason if should_switch else None,
+            "switch_triggers": {
+                "health": health_switch,
+                "bug": bug_escalation,
+                "final_audit": final_audit_request,
+            },
         }
         if should_switch:
             response["handoff_packet"] = packet_path
             response["launch"] = launch_info
-        return response
+        return tool_success(
+            data=response,
+            genesis=Genesis.REACTIVE_USER,
+            intent_id=None,
+        )
 
 
 if __name__ == "__main__":
