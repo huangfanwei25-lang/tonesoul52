@@ -1,57 +1,38 @@
-## Completed: 結構整理
-- [x] 確認目錄優先級與歸檔政策
-- [x] 根目錄日誌輸出移至 `.archive/logs/`
-- [x] 報告類 `.md` 歸檔至 `reports/`
-- [x] `ledger.jsonl` 合併到 `memory/provenance_ledger.jsonl`
-- [x] 更新 `.gitignore` 與新增 `docs/STRUCTURE.md`
-- [x] 新增根目錄 `task.md` 並更新 `CODEX_TASK.md`
-**成功標準**: 結構清晰、日誌/報告歸位、規範文件齊備
+﻿# Task
 
-## Phase 1: Council 整合設計
-- [x] 盤點 `tonesoul/` 內 Council 相關入口與重複實作
-- [x] 定義 Council 統一介面（輸入/輸出/記錄）
-- [x] 產出 Council 整合設計與 Facade 介面草案
-**成功標準**: Council 整合設計與遷移清單完成
+## Phase 17: 收尾三部曲
+- [x] README 更新（反映 Council / Genesis / Memory / Tools API + 快速啟動）
+- [x] 記憶總結（寫入 `memory/self_journal.jsonl`，含 Phase 14-16 與亂碼修復）
+- [x] 誠實機制設計（Phase 18 預告，草案：docs/HONESTY_MECHANISM.md）
+**成功標準**: README 完整更新、self_journal 有新紀錄、誠實機制有可討論的設計草案。
 
-## Phase 2: Council 整合實作
-- [x] 建立 Council 統一入口（Facade）
-- [x] 逐步替換舊入口（`role_council.py`、`council_adapter.py`、`simulate_council.py` 等）
-- [x] 更新 `append_council_event.py` 等舊腳本的 Council 呼叫
-- [ ] 補齊 Council 測試
-**成功標準**: 所有 Council 呼叫統一經由新入口
+## Phase 18: 誠實機制設計（草案）
+- [x] 在 verdict 設計加入 `uncertainty_level`
+- [x] 定義「我不知道」的正式輸出格式
+- [x] 提出測試/驗證方向（不需立即實作）
+**成功標準**: 產出一份可評審的設計草案（文件或規格），可進入下一輪討論。
 
-## Phase 3: Tools API 標準化
-- [x] 建立共用 API Client 與設定載入方式草案
-- [x] `tools/moltbook_poster.py` 改用 `api_client.py` 並移除硬編碼金鑰
-- [x] `tools/moltbook_reader.py` 改用 `api_client.py`
-- [x] `tools/post_mggi.py` 改用 `api_client.py`
-- [ ] 統一 `tools/` 工具輸出格式與錯誤處理
-**成功標準**: tools 介面一致且無硬編碼憑證
+## Phase 19: 誠實機制實作
+- [x] `CouncilVerdict` 新增不確定性欄位
+- [x] `verdict` 結構化輸出加入不確定性
+- [x] `CouncilRuntime` 依 `responsibility_tier` 調整不確定性
+- [x] 測試覆蓋基礎不確定性計算
+**成功標準**: 產出可運行的不確定性欄位與結構化輸出，並有基礎測試。
 
-## Phase 4: Memory 架構與 soul_db.py 鋪路
-- [x] 定義 `soul_db.py` 介面與資料模型草案
-- [x] 提供 JSONL/檔案系統的暫時實作
-- [x] `memory/rag_token_gate.py` 改走 `soul_db` 介面
-- [x] 將 `memory/` 與相關入口讀寫統一改走 `soul_db`
-**成功標準**: memory 存取可替換且新架構可延伸
+## Phase 21: API 統一與 Runtime Drift 修正
+- [x] Flask 補齊 conversation/consent 契約並與 web 對齊
+- [x] Next API routes 改為 backend-first，fallback 僅限 transport failure
+- [x] 路由每次請求動態解析 `TONESOUL_BACKEND_URL`
+- [x] `verify_web_api.py` + CI `web_api_smoke` 完成整鏈 smoke（含 `--require-backend`）
+- [x] 審計文件更新（`reports/api_unification_audit_2026-02-06.md`、`reports/facade_runtime_audit_2026-02-06.md`）
+**成功標準**: web/backend 契約可重現驗證，且 fallback 不再遮蔽 backend 異常。
 
-## Phase 7: Hash-Verified Isnād
-- [x] `append_council_event.py` 改寫為 `CouncilRuntime` 並統一 ledger 路徑
-- [x] `memory/provenance_chain.py` 加入 `hash` 與 `prev_hash`
-- [x] Structured Verdict Output（`tonesoul/council/verdict.py`）
-- [x] Falsifiability Anchors（`tonesoul/vow_system.py`）
-- [x] Boot Protocol for Skills（`.agent/skills/SKILL_TEMPLATE.md`）
- - [x] Council verdict 自動寫入 Isnād（`tonesoul/council/runtime.py`）
-**成功標準**: Isnād 記錄可雜湊驗證，後續輸出/誓約擴展就緒
-
-## Phase 6: SQLite 遷移
-- [x] `SqliteSoulDB` 骨架與 schema
-- [x] `migrate_from_jsonl` 遷移函數
-- [x] `memory/rag_token_gate.py` 改用 SQLite backend
-**成功標準**: SoulDB 可切換至 SQLite，JSONL 可匯入
-
-## Phase 8: Memory Observer Integration
-- [x] `memory/observer.py` 新增 MemoryObserver
-- [x] `memory/protocols.py` 定義記錄型別
-- [x] `tonesoul/memory/soul_db.py` 新增 `action_logs` 表
-**成功標準**: 行為/決策/誓言可被記錄與查詢
+## 已完成（摘要）
+- [x] Phase 1-2: Council 設計與整合
+- [x] Phase 3/10/16: Tools API schema + ToolResponse 標準化
+- [x] Phase 4/6/8/15: Memory wiring / SQLite / Observer
+- [x] Phase 11-13: Demo API Server + Playground + run_demo
+- [x] Phase 14: Genesis Intent + is_mine
+- [x] 敘事對照表與敘事定版文件
+- [x] 亂碼清理與 UTF-8 統一
+**參考**: `CODEX_TASK.md`, `memory/handoff/2026-02-06_phase16_tools_progress.md`

@@ -1,17 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const BACKEND_URL = process.env.TONESOUL_BACKEND_URL || "http://localhost:8000";
+const DEFAULT_BACKEND_URL = "http://127.0.0.1:5000";
+const REQUEST_TIMEOUT_MS = 15000;
 
-// Mock deliberation response for demo
+function getBackendUrl(): string {
+    const url = process.env["TONESOUL_BACKEND_URL"];
+    return typeof url === "string" && url.trim() ? url.trim() : DEFAULT_BACKEND_URL;
+}
+
 function generateMockDeliberation(message: string) {
-    const isQuestion = message.includes("?") || message.includes("？");
-    const isEmotional = /[煩累難過不開心憂傷焦慮]/.test(message);
+    const text = String(message || "");
+    const isQuestion = text.includes("?") || text.includes("？");
+    const isEmotional = /(sad|afraid|angry|anxious|失落|難過|焦慮|害怕)/i.test(text);
 
     let tensionZone = "sweet_spot";
     let dominantVoice = "muse";
 
     if (isEmotional) {
-        tensionZone = "sweet_spot";
         dominantVoice = "aegis";
     } else if (isQuestion) {
         dominantVoice = "logos";
@@ -22,75 +27,94 @@ function generateMockDeliberation(message: string) {
             type: "weighted_fusion",
             dominant_voice: dominantVoice,
             weights: {
-                muse: dominantVoice === "muse" ? 0.45 : 0.30,
+                muse: dominantVoice === "muse" ? 0.45 : 0.3,
                 logos: dominantVoice === "logos" ? 0.45 : 0.35,
                 aegis: dominantVoice === "aegis" ? 0.45 : 0.25,
             },
         },
         decision_matrix: {
-            user_hidden_intent: isEmotional ? "情緒抒發，需要陪伴" : "探索性對話",
-            strategy_name: isEmotional ? "張力緩解策略" : "深度連結策略",
-            intended_effect: isEmotional ? "降低情緒張力，建立理解" : "建立有意義的深層對話",
+            user_hidden_intent: isEmotional ? "Need for emotional containment" : "Need for clearer direction",
+            strategy_name: isEmotional ? "Stabilize then plan" : "Clarify and structure",
+            intended_effect: isEmotional ? "Lower distress and increase trust" : "Increase clarity and momentum",
             tone_tag: isEmotional ? "empathetic" : "warm",
         },
         tension_zone: {
             zone: tensionZone,
-            calculation_note: `張力值計算中，觀點${tensionZone === "sweet_spot" ? "適度摩擦" : "過於一致"}`,
+            calculation_note: `Current zone is ${tensionZone}`,
         },
         next_moves: [
-            { label: "深入探索", text: "可以再多說一點嗎？" },
-            { label: "換個角度", text: "如果從另一個角度來看呢？" },
+            { label: "Clarify goal", text: "Summarize the user intent in one sentence." },
+            { label: "Offer options", text: "Provide two concrete next actions." },
         ],
     };
 }
 
-// Mock AI response
 function generateMockResponse(message: string): string {
-    const responses: { [key: string]: string } = {
-        default: "我理解你的想法。能讓我更深入了解一下你的思考嗎？",
-        question: "這是一個很好的問題。讓我從幾個角度來思考...",
-        emotional: "我聽到了你的感受。在這種時刻，最重要的是先讓自己安定下來。",
-    };
+    const text = String(message || "");
+    if (/(sad|afraid|angry|anxious|失落|難過|焦慮|害怕)/i.test(text)) {
+        return "I hear the emotional pressure in this. We can first stabilize, then decide the next concrete step together.";
+    }
+    if (text.includes("?") || text.includes("？")) {
+        return "Good question. I will break this down into assumptions, constraints, and a direct recommendation.";
+    }
+    return "I understand. Let me respond with a clear and practical next-step proposal.";
+}
 
-    const isQuestion = message.includes("?") || message.includes("？");
-    const isEmotional = /[煩累難過不開心憂傷焦慮]/.test(message);
-
-    if (isEmotional) return responses.emotional;
-    if (isQuestion) return responses.question;
-    return responses.default;
+async function forwardToBackend(body: unknown): Promise<Response> {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+    try {
+        return await fetch(`${getBackendUrl()}/api/chat`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+            signal: controller.signal,
+        });
+    } finally {
+        clearTimeout(timeout);
+    }
 }
 
 export async function POST(request: NextRequest) {
+    let body: Record<string, unknown>;
     try {
-        const body = await request.json();
-        const { conversation_id, message } = body;
+        body = (await request.json()) as Record<string, unknown>;
+    } catch {
+        return NextResponse.json({ error: "Invalid JSON payload" }, { status: 400 });
+    }
 
-        // In production, call Python backend
-        // const response = await fetch(`${BACKEND_URL}/api/chat`, {
-        //   method: "POST",
-        //   headers: { "Content-Type": "application/json" },
-        //   body: JSON.stringify({ conversation_id, message }),
-        // });
-        // return NextResponse.json(await response.json());
+    let backendResponse: Response;
+    try {
+        backendResponse = await forwardToBackend(body);
+    } catch {
+        const message = String(body.message || "");
+        const conversationId =
+            typeof body.conversation_id === "string" ? body.conversation_id : "mock-conversation";
 
-        // Mock response for demo
         const mockResponse = generateMockResponse(message);
         const mockDeliberation = generateMockDeliberation(message);
 
-        // Simulate processing delay
-        await new Promise((resolve) => setTimeout(resolve, 500 + Math.random() * 1000));
-
         return NextResponse.json({
             response: mockResponse,
-            conversation_id: conversation_id,
+            conversation_id: conversationId,
             deliberation: mockDeliberation,
             timestamp: new Date().toISOString(),
+            backend_mode: "mock_fallback",
         });
-    } catch (error) {
-        console.error("Chat API error:", error);
+    }
+
+    const text = await backendResponse.text();
+    if (!text) {
+        return NextResponse.json({}, { status: backendResponse.status });
+    }
+
+    try {
+        const payload = JSON.parse(text);
+        return NextResponse.json(payload, { status: backendResponse.status });
+    } catch {
         return NextResponse.json(
-            { error: "Failed to process message" },
-            { status: 500 }
+            { error: "Backend returned invalid JSON", backend_status: backendResponse.status },
+            { status: 502 }
         );
     }
 }

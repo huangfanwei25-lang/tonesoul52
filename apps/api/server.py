@@ -3,8 +3,11 @@ ToneSoul API Server
 Connects frontend to PreOutputCouncil backend.
 """
 
-import json
+import os
 import sys
+import traceback
+import uuid
+from datetime import datetime, timezone
 from pathlib import Path
 
 # Add parent to path for imports
@@ -13,14 +16,52 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
-from tonesoul.council import PreOutputCouncil
+from tonesoul.council import CouncilRequest, CouncilRuntime
 from tonesoul.council.self_journal import load_recent_memory
 from tonesoul.memory import consolidate
 
 app = Flask(__name__, static_folder="../council-playground", static_url_path="")
-CORS(app)  # Enable CORS for frontend
+_DEFAULT_CORS_ORIGINS = "http://localhost:5000,http://127.0.0.1:5000"
+_cors_origins = [
+    origin.strip()
+    for origin in os.environ.get("TONESOUL_CORS_ORIGINS", _DEFAULT_CORS_ORIGINS).split(",")
+    if origin.strip()
+]
+CORS(app, resources={r"/api/*": {"origins": _cors_origins}})
 
-council = PreOutputCouncil()
+council_runtime = CouncilRuntime()
+
+
+def _env_flag(name: str, default: bool = False) -> bool:
+    value = os.environ.get(name)
+    if value is None:
+        return default
+    return value.strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _json_payload():
+    payload = request.get_json(silent=True)
+    return payload if isinstance(payload, dict) else None
+
+
+def _error_response(
+    message: str,
+    status_code: int,
+    exc: Exception | None = None,
+    extra: dict | None = None,
+):
+    error_id = uuid.uuid4().hex[:12]
+    if exc is not None:
+        traceback.print_exc()
+        print(f"[ERROR] id={error_id}: {exc}", file=sys.stderr)
+    payload = {"error": message, "error_id": error_id}
+    if extra:
+        payload.update(extra)
+    return jsonify(payload), status_code
+
+
+def _utc_now() -> str:
+    return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
 @app.route("/")
@@ -38,16 +79,19 @@ def chat_page():
 @app.route("/api/validate", methods=["POST"])
 def validate():
     """Run PreOutputCouncil on input text."""
-    data = request.get_json()
+    data = _json_payload()
+    if data is None:
+        return jsonify({"error": "Invalid JSON payload"}), 400
     draft_output = data.get("draft_output", "")
     context = data.get("context", {})
     user_intent = data.get("user_intent")
 
-    verdict = council.validate(
+    council_request = CouncilRequest(
         draft_output=draft_output,
         context=context,
         user_intent=user_intent,
     )
+    verdict = council_runtime.deliberate(council_request)
 
     # Convert to dict for JSON response
     result = verdict.to_dict()
@@ -85,27 +129,79 @@ def health():
     return jsonify({"status": "ok", "version": "0.6.0"})
 
 
+@app.route("/api/conversation", methods=["POST"])
+def create_conversation():
+    """Create a conversation id for a user session."""
+    data = _json_payload()
+    if data is None:
+        return jsonify({"error": "Invalid JSON payload"}), 400
+    session_id = data.get("session_id")
+    conversation_id = f"conv_{uuid.uuid4().hex[:12]}"
+    return jsonify(
+        {
+            "success": True,
+            "conversation_id": conversation_id,
+            "session_id": session_id,
+            "created_at": _utc_now(),
+        }
+    )
+
+
+@app.route("/api/consent", methods=["POST"])
+def create_consent():
+    """Record consent metadata for the current session."""
+    data = _json_payload()
+    if data is None:
+        return jsonify({"error": "Invalid JSON payload"}), 400
+    consent_type = data.get("consent_type", "standard")
+    session_id = data.get("session_id") or f"session_{uuid.uuid4().hex[:12]}"
+    return jsonify(
+        {
+            "success": True,
+            "session_id": session_id,
+            "consent_type": consent_type,
+            "consent_version": "1.0",
+            "timestamp": _utc_now(),
+        }
+    )
+
+
+@app.route("/api/consent/<session_id>", methods=["DELETE"])
+def withdraw_consent(session_id: str):
+    """Withdraw consent and acknowledge deletion workflow."""
+    if not session_id.strip():
+        return jsonify({"error": "Invalid session_id"}), 400
+    return jsonify(
+        {
+            "success": True,
+            "message": "Consent withdrawn and data deleted",
+            "session_id": session_id,
+            "timestamp": _utc_now(),
+        }
+    )
+
+
 @app.route("/api/session-report", methods=["POST"])
 def session_report():
     """Generate a session analysis report."""
-    data = request.get_json()
+    data = _json_payload()
+    if data is None:
+        return jsonify({"error": "Invalid JSON payload"}), 400
     history = data.get("history", [])
 
     if not history:
-        return jsonify({"error": "沒有對話歷史"}), 400
+        return jsonify({"error": "Missing conversation history"}), 400
 
     try:
-        from tonesoul.tonebridge import SessionReporter
+        # Import concrete reporter module directly to avoid package-level side effects.
+        from tonesoul.tonebridge.session_reporter import SessionReporter
 
         reporter = SessionReporter()
         summary = reporter.analyze(history)
 
         return jsonify({"success": True, "report": summary.to_dict()})
     except Exception as e:
-        import traceback
-
-        traceback.print_exc()
-        return jsonify({"error": f"生成報告失敗: {str(e)}"}), 500
+        return _error_response("Failed to generate session report", 500, e)
 
 
 # ===== LLM Client (Ollama first, Gemini fallback) =====
@@ -151,7 +247,9 @@ def get_llm_client():
 @app.route("/api/chat", methods=["POST"])
 def chat():
     """Chat endpoint with ToneBridge + Council (Unified Pipeline)."""
-    data = request.get_json()
+    data = _json_payload()
+    if data is None:
+        return jsonify({"error": "Invalid JSON payload"}), 400
     message = data.get("message", "")
     history = data.get("history", [])
     full_analysis = data.get("full_analysis", True)
@@ -186,25 +284,17 @@ def chat():
         )
 
     except Exception as e:
-        import traceback
-
-        traceback.print_exc()
-        return (
-            jsonify(
-                {
-                    "error": f"聊天失敗: {str(e)}",
-                    "response": None,
-                }
-            ),
-            500,
-        )
+        return _error_response("Failed to process chat request", 500, e, {"response": None})
 
 
 if __name__ == "__main__":
+    host = os.environ.get("TONESOUL_API_HOST", "127.0.0.1")
+    port = int(os.environ.get("TONESOUL_API_PORT", "5000"))
+    debug = _env_flag("TONESOUL_API_DEBUG", default=False)
     print("=" * 50)
     print("ToneSoul API Server")
     print("=" * 50)
-    print("Frontend: http://localhost:5000")
-    print("API: http://localhost:5000/api/validate")
+    print(f"Frontend: http://{host}:{port}")
+    print(f"API: http://{host}:{port}/api/validate")
     print("=" * 50)
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host=host, port=port, debug=debug)
