@@ -18,6 +18,14 @@
 
 ## 快速使用
 
+### 0) Runtime Bridge（單一入口）
+
+```powershell
+python -m integrations.openclaw.runtime --dry-run list-skills
+python -m integrations.openclaw.runtime --dry-run invoke-skill --name benevolence_audit --payload-json "{\"proposed_action\":\"verify before answer\"}"
+python -m integrations.openclaw.runtime --dry-run heartbeat-once --cycle 1
+```
+
 ### 1) 調用 Skills
 
 ```python
@@ -54,4 +62,10 @@ asyncio.run(main())
 
 ```powershell
 pytest tests/test_gateway_integration.py tests/test_openclaw_skills.py tests/test_openclaw_auditor.py tests/test_heartbeat.py -q
+```
+
+Runtime smoke:
+
+```powershell
+pytest tests/test_openclaw_runtime.py -q
 ```
