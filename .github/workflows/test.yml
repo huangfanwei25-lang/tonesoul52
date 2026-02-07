@@ -2,9 +2,9 @@ name: ToneSoul CI
 
 on:
   push:
-    branches: [main, dev]
+    branches: [main, master, dev]
   pull_request:
-    branches: [main]
+    branches: [main, master, dev]
   workflow_dispatch:
 
 jobs:
@@ -37,7 +37,7 @@ jobs:
     
     - name: Run property-based tests
       run: |
-        pytest tests/test_*_properties.py -v --hypothesis-show-statistics
+        pytest tests/test_contract_observer_properties.py tests/test_unified_core_properties.py tests/test_vow_system_properties.py -v --hypothesis-show-statistics
     
     - name: Generate coverage report
       if: matrix.python-version == '3.12'
@@ -70,12 +70,16 @@ jobs:
         python -m pip install --upgrade pip
         pip install 'black>=25.1.0' ruff
     
-    - name: Check formatting with black
-      continue-on-error: true  # Allow warning for format differences between environments
+    - name: Run critical lint gate (blocking)
+      run: |
+        python -m ruff check tonesoul tests --select E9,F63,F7,F82
+    
+    - name: Check formatting with black (advisory)
+      continue-on-error: true
       run: |
         black --check --diff --line-length 100 tonesoul tests
-    
-    - name: Lint with ruff
-      continue-on-error: true  # Pre-existing lint issues need separate cleanup
+
+    - name: Lint with ruff (advisory)
+      continue-on-error: true
       run: |
         ruff check tonesoul tests

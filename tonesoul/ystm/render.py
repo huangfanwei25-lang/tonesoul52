@@ -1,8 +1,11 @@
 import json
 import math
-from typing import Dict, List, Optional, Sequence, Tuple
+from typing import TYPE_CHECKING, Dict, List, Optional, Sequence, Tuple
 
 from .schema import Node
+
+if TYPE_CHECKING:
+    from PIL import Image as PILImage
 
 
 def xml_escape(text: str) -> str:
@@ -146,7 +149,7 @@ def render_png(
     height: int = 560,
     margin: int = 60,
     scale: float = 1.0,
-) -> Optional["Image.Image"]:
+) -> Optional["PILImage.Image"]:
     try:
         from PIL import Image, ImageDraw, ImageFont
     except Exception:
