@@ -1,7 +1,8 @@
 import requests
 import json
+import os
 
-API_KEY = "moltbook_sk_d_0gXZmIcXNB3tApS3WPhbJI3Ya-4k2R"
+API_KEY = os.environ.get("MOLTBOOK_API_KEY", "")
 POST_ID = "b10452f5-02ee-43c8-8dcd-9f97d8ecc28b"
 URL = f"https://www.moltbook.com/api/v1/posts/{POST_ID}/comments"
 

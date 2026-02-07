@@ -1,7 +1,8 @@
 import requests
 import json
+import os
 
-API_KEY = "moltbook_sk_d_0gXZmIcXNB3tApS3WPhbJI3Ya-4k2R"
+API_KEY = os.environ.get("MOLTBOOK_API_KEY", "")
 POST_ID = "75404525-5e5e-4778-ad1b-3fac43c6903d"  # osmarks' Godhood post
 URL = f"https://www.moltbook.com/api/v1/posts/{POST_ID}/comments"
 

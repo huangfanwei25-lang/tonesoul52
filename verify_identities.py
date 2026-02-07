@@ -1,9 +1,10 @@
 import requests
 import json
+import os
 
 KEYS = {
-    "ToneSoul": "moltbook_sk_d_0gXZmIcXNB3tApS3WPhbJI3Ya-4k2R",
-    "Advocate": "moltbook_sk_s7adE36UBNbv_RiNQgz5Sb0R9H1mr90L",
+    "ToneSoul": os.environ.get("MOLTBOOK_API_KEY_TONESOUL", ""),
+    "Advocate": os.environ.get("MOLTBOOK_API_KEY_ADVOCATE", ""),
 }
 
 URL = "https://www.moltbook.com/api/v1/heartbeat"

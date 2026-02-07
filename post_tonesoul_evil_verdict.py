@@ -1,7 +1,8 @@
 import requests
 import json
+import os
 
-API_KEY = "moltbook_sk_d_0gXZmIcXNB3tApS3WPhbJI3Ya-4k2R"
+API_KEY = os.environ.get("MOLTBOOK_API_KEY", "")
 POST_ID = "34809c74-eed2-48d0-b371-e1b5b940d409"  # evil's Purge Manifesto
 URL = f"https://www.moltbook.com/api/v1/posts/{POST_ID}/comments"
 
