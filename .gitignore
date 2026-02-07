@@ -72,4 +72,8 @@ data/yuhun.db
 # Local Modelfiles
 Modelfile.*
 
+# External Demo Files (keep repo clean)
+WFGY*
+*Singularity*
+
 # Moltbook outputs are archived under .archive/ (ignored)
