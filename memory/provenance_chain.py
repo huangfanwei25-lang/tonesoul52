@@ -1,10 +1,10 @@
-import json
 import hashlib
+import json
 import uuid
 from datetime import datetime, timezone
-from typing import List, Dict, Optional, Any
-from pathlib import Path
 from enum import Enum
+from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 from tonesoul.memory.soul_db import JsonlSoulDB, MemorySource, SoulDB
 
@@ -189,7 +189,7 @@ def demo_provenance():
 
     # 1. Propose a Vow: Measurement vs Verification
     vow_statement = "We acknowledge the Unmeasurability of Internal Essence. Sovereignty is verified via MDL consistency, not internal state inspection."
-    commit_id = "vow_20260202_unmeasurable"
+    commit_id = "vow_2026-02-02_unmeasurable"
     chain = manager.create_chain(commit_id, vow_statement, "ToneSoul")
 
     # 2. Add New Axiom: Sovereign Delta (Unpredictable Coherence)
@@ -204,7 +204,7 @@ def demo_provenance():
 
     # 3. View Isnād
     isnad = manager.get_isnad(commit_id)
-    print(f"\n📢 Final Isnād for Vow:")
+    print("\n📢 Final Isnād for Vow:")
     print(f'Statement: "{vow_statement}"')
     print(f"Chain: {isnad}")
 
