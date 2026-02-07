@@ -63,6 +63,30 @@ class OpenClawRuntimeBridge:
         result = await self.heartbeat.emit_once(cycle=cycle, session=session)
         return result.to_dict()
 
+    async def probe_gateway(self, *, timeout_seconds: float = 5.0) -> dict[str, Any]:
+        timeout = max(0.1, float(timeout_seconds))
+        payload = {"type": "probe", "source": "openclaw-runtime-bridge"}
+        try:
+            await asyncio.wait_for(self.gateway_client.connect(), timeout=timeout)
+            envelope = await asyncio.wait_for(
+                self.gateway_client.send("heartbeat", payload),
+                timeout=timeout,
+            )
+            return {
+                "ok": True,
+                "gateway_uri": self.gateway_client.uri,
+                "route": envelope.get("route"),
+                "channel": envelope.get("channel"),
+                "sent": True,
+            }
+        except Exception as exc:
+            return {
+                "ok": False,
+                "gateway_uri": self.gateway_client.uri,
+                "error_type": exc.__class__.__name__,
+                "error": str(exc),
+            }
+
     async def close(self) -> None:
         await self.heartbeat.close()
 
@@ -92,6 +116,9 @@ def build_parser() -> argparse.ArgumentParser:
     hb.add_argument("--cycle", type=int, default=1)
     hb.add_argument("--session-id", default=None)
 
+    probe = sub.add_parser("probe-gateway", help="Probe gateway connectivity with one send operation.")
+    probe.add_argument("--timeout", type=float, default=5.0)
+
     return parser
 
 
@@ -112,6 +139,11 @@ async def _run_async(args: argparse.Namespace) -> int:
             result = await runtime.heartbeat_once(cycle=max(1, int(args.cycle)), session_id=args.session_id)
             print(json.dumps(result, ensure_ascii=False, indent=2))
             return 0
+
+        if args.command == "probe-gateway":
+            result = await runtime.probe_gateway(timeout_seconds=float(args.timeout))
+            print(json.dumps(result, ensure_ascii=False, indent=2))
+            return 0 if result.get("ok", False) else 1
 
         print(json.dumps({"error": f"Unknown command: {args.command}"}, ensure_ascii=False))
         return 1
