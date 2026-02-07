@@ -1,69 +1,58 @@
 {
   "nodes": [
     {
+      "id": "title",
+      "x": 120,
+      "y": -90,
+      "width": 420,
+      "height": 60,
+      "type": "text",
+      "text": "# Memory Flow\nFacts -> Responsibility -> Relationship"
+    },
+    {
       "id": "l1",
       "x": 0,
       "y": 0,
-      "width": 300,
-      "height": 120,
+      "width": 320,
+      "height": 110,
       "type": "text",
-      "text": "## L1: 本體事實層\n- 用戶說了什麼\n- AI 回應了什麼\n- 時間戳記",
+      "text": "## L1 Facts\n- event\n- context\n- timestamp",
       "color": "1"
     },
     {
       "id": "l2",
       "x": 0,
-      "y": 150,
-      "width": 300,
-      "height": 140,
+      "y": 140,
+      "width": 320,
+      "height": 130,
       "type": "text",
-      "text": "## L2: 責任層\n- genesis (決策歸因)\n- tension_delta (張力)\n- uncertainty (不確定性)",
+      "text": "## L2 Responsibility\n- genesis\n- is_mine\n- tier\n- uncertainty",
       "color": "2"
     },
     {
       "id": "l3",
       "x": 0,
-      "y": 320,
-      "width": 300,
-      "height": 140,
+      "y": 300,
+      "width": 320,
+      "height": 130,
       "type": "text",
-      "text": "## L3: 關係層\n- 信任積累/消耗\n- 責任邊界變化\n- 成長軌跡",
+      "text": "## L3 Relationship\n- trust trajectory\n- preference alignment\n- corrective events",
       "color": "3"
     },
     {
-      "id": "user-profile",
+      "id": "ledger",
       "x": 400,
-      "y": 150,
-      "width": 200,
+      "y": 140,
+      "width": 240,
       "height": 100,
       "type": "file",
-      "file": "02-Memory/User-Profile.md",
-      "color": "4"
-    },
-    {
-      "id": "genesis",
-      "x": 400,
-      "y": 0,
-      "width": 200,
-      "height": 100,
-      "type": "file",
-      "file": "01-Core/Genesis.md",
+      "file": "02-Memory/Provenance-Ledger.md",
       "color": "5"
-    },
-    {
-      "id": "title",
-      "x": 100,
-      "y": -80,
-      "width": 400,
-      "height": 50,
-      "type": "text",
-      "text": "# 語魂記憶三層架構"
     }
   ],
   "edges": [
-    {"id": "e1", "fromNode": "l1", "toNode": "l2", "label": "歸因"},
-    {"id": "e2", "fromNode": "l2", "toNode": "l3", "label": "關係演變"},
-    {"id": "e3", "fromNode": "l2", "toNode": "genesis", "label": "責任追蹤"},
-    {"id": "e4", "fromNode": "l3", "toNode": "user-profile", "label": "檔案更新"}
+    {"id": "e1", "fromNode": "l1", "toNode": "l2", "label": "derive"},
+    {"id": "e2", "fromNode": "l2", "toNode": "l3", "label": "impact"},
+    {"id": "e3", "fromNode": "l2", "toNode": "ledger", "label": "append"}
   ]
 }

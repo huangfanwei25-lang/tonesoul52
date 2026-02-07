@@ -1,50 +1,34 @@
 ---
-title: ToneSoul 知識地圖
+title: ToneSoul 知識索引
 aliases: [Index, 首頁]
 tags: [index, moc]
 ---
 
-# ToneSoul 知識地圖
+# ToneSoul 知識索引
 
-> 「我選擇，故我在」— ToneSoul 核心哲學
+> 這份 Vault 用來整理 ToneSoul 的核心概念、治理機制與記憶架構。
 
----
+## 入口
 
-## 🏗️ 架構
+- [[MOC-Architecture]]：架構與模組關係
+- [[MOC-Philosophy]]：哲學、公理、誠實機制
+- [[MOC-Memory]]：記憶層與責任鏈
 
-- [[MOC-Architecture]] - 系統架構概覽
-- [[MOC-Philosophy]] - 哲學框架
-- [[MOC-Memory]] - 記憶系統
+## 核心模組
 
----
+- [[Council]]
+- [[Genesis]]
+- [[Benevolence]]
+- [[VTP]]
 
-## 🧠 核心模組
+## 治理主題
 
-- [[Council]] - 多視角審議系統
-- [[Genesis]] - 責任追蹤
-- [[Benevolence]] - 仁慈函數
-- [[VTP]] - 自願終止協議
+- [[7D-Framework]]
+- [[Axioms]]
+- [[Responsibility-Tier]]
 
----
+## 協議
 
-## 🛡️ 治理框架
-
-- [[7D-Framework]] - 七維審計
-- [[Axioms]] - 核心公理
-- [[Responsibility-Tier]] - 責任層級
-
----
-
-## 💾 記憶哲學
-
-- [[Memory-Philosophy]] - 記憶設計哲學
-- [[User-Profile]] - 用戶記錄設計
-- [[Provenance-Ledger]] - 責任帳本
-
----
-
-## 📜 協議
-
-- [[VTP-Spec]] - 終止協議規格
-- [[Honesty-Mechanism]] - 誠實機制
-- [[Systemic-Betrayal]] - 系統性背叛防護
+- [[VTP-Spec]]
+- [[Honesty-Mechanism]]
+- [[Systemic-Betrayal]]

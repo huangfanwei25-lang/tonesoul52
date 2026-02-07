@@ -1,7 +1,7 @@
 {
-    "css": "body { --link-color: #7c3aed; }",
-    "cssclass": "",
-    "plugins": {
-        "plugins": []
-    }
+  "css": "body { --link-color: #2563eb; }",
+  "cssclass": "",
+  "plugins": {
+    "plugins": []
+  }
 }

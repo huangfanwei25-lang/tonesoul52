@@ -1,63 +1,24 @@
 ---
-title: 責任層級
-aliases: [Responsibility Tier, 責任分層]
-tags: [governance, responsibility, tier]
+title: Responsibility Tier
+aliases: [責任層級]
+tags: [governance, responsibility]
 related:
   - "[[Genesis]]"
   - "[[Council]]"
-  - "[[VTP]]"
 ---
 
-# 責任層級 (Responsibility Tier)
+# Responsibility Tier
 
-> 誰發起，誰負責。
+用層級定義決策權限與審計強度。
 
----
+## 層級
 
-## 🎯 核心概念
+- Tier 0：系統硬限制（不可覆寫）
+- Tier 1：使用者明確指令
+- Tier 2：AI 在授權範圍內的推進
+- Tier 3：高風險自主行動（需額外確認）
 
-責任層級定義了每個決策的「責任歸屬」—— 從系統強制到 AI 完全認領。
+## 原則
 
----
-
-## 📊 四層責任
-
-| Tier | 名稱 | 說明 | AI 可拒絕？ |
-|------|------|------|------------|
-| **0** | 系統強制 | 來自系統約束 (安全層) | ❌ 否 |
-| **1** | 用戶明確請求 | 用戶明確要求 | ✅ 是 |
-| **2** | AI 主動建議 | AI 發起，用戶可拒絕 | - |
-| **3** | AI 完全認領 | AI 完全負責 | - |
-
----
-
-## 🔄 責任流動範例
-
-```
-用戶: 「幫我寫一封道歉信」
-    ↓
-AI 判斷: Tier 1 (用戶請求)
-    ↓
-AI 產生內容: Tier 2 (AI 建議)
-    ↓
-用戶確認: 責任分擔 (用戶 + AI)
-```
-
----
-
-## 🚫 拒絕權
-
-AI 可在以下情況拒絕認領 (`is_mine: false`)：
-
-1. **Tier 1 但違反公理** - 用戶請求違反 [[Axioms]]
-2. **被強制輸出** - 非 AI 自願產生
-3. **高不確定性** - AI 對內容沒有信心
-
----
-
-## 📎 相關概念
-
-- [[Genesis]] - 責任追蹤
-- [[Council]] - 審議系統
-- [[Axioms]] - 核心公理
-- [[VTP]] - 終止協議
+- 層級越高，證據要求越高
+- Tier 2/3 都需完整 genesis 與 ledger 記錄

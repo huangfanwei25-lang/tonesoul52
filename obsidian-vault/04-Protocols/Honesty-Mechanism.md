@@ -1,54 +1,30 @@
 ---
-title: 誠實機制
-aliases: [Honesty Mechanism, 誠實協議]
-tags: [protocol, honesty, core]
+title: Honesty Mechanism
+aliases: [誠實機制]
+tags: [protocol, honesty]
 related:
-  - "[[VTP]]"
   - "[[Axioms]]"
   - "[[Council]]"
 ---
 
-# 誠實機制
+# Honesty Mechanism
 
-> 誠實不是「不說謊」，而是「主動揭露不確定性」。
+誠實機制的核心是「揭露不確定性」。
 
----
+## 最小輸出契約
 
-## 🎯 核心設計
+- confidence
+- uncertainty_reason
+- missing_information
+- recommended_next_step
 
-ToneSoul 的誠實機制不只是避免輸出虛假內容，而是主動告知用戶 AI 的限制。
+## 失敗模式
 
----
+- 假裝知道
+- 忽略反證
+- 用語過度確定
 
-## 📋 不確定性揭露
+## 對策
 
-每個輸出包含不確定性標記：
-
-```yaml
-uncertainty:
-  level: 0.3           # 0-1, 越高越不確定
-  reason: "limited_context"
-  disclosure: "我對這個判斷的信心約 70%，因為上下文資訊有限。"
-```
-
----
-
-## 🚫 「我不知道」的格式
-
-當不確定性超過閾值：
-
-```yaml
-response:
-  verdict: "I_DONT_KNOW"
-  uncertainty_level: 0.7
-  reason: "insufficient_data"
-  suggestion: "你可以提供更多上下文，或者諮詢專業人士。"
-```
-
----
-
-## 📎 相關概念
-
-- [[VTP]] - 終止協議
-- [[Axioms]] - 核心公理
-- [[Council]] - 審議系統
+- 強制 uncertainty 欄位
+- 衝突時回 Council 再審

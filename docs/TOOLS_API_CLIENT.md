@@ -21,8 +21,8 @@
    ```json
    {
      "accounts": {
-       "ToneSoul": { "api_key": "moltbook_sk_...", "name": "ToneSoul" },
-       "Tone": { "api_key": "moltbook_sk_...", "name": "Tone (Advocate)" }
+       "ToneSoul": { "api_key": "<MOLTBOOK_API_KEY>", "name": "ToneSoul" },
+       "Tone": { "api_key": "<MOLTBOOK_API_KEY>", "name": "Tone (Advocate)" }
      }
    }
    ```
@@ -57,3 +57,4 @@ class MoltbookClient:
 - 遇到非 2xx 回應需回傳結構化錯誤 `{ "error": "...", "status": <code> }`
 - 不直接 `print` 未處理的 token 或內容
 - 工具腳本應回傳資料給呼叫者，由上層決定輸出格式
+

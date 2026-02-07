@@ -1,4 +1,8 @@
-﻿# ToneSoul
+# ToneSoul
+
+[![CI](https://github.com/Fan1234-1/tonesoul52/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/Fan1234-1/tonesoul52/actions/workflows/ci.yml)
+[![ToneSoul CI](https://github.com/Fan1234-1/tonesoul52/actions/workflows/test.yml/badge.svg?branch=master)](https://github.com/Fan1234-1/tonesoul52/actions/workflows/test.yml)
+[![Coverage](https://codecov.io/gh/Fan1234-1/tonesoul52/branch/master/graph/badge.svg)](https://codecov.io/gh/Fan1234-1/tonesoul52)
 
 ToneSoul 是一個把「治理（Governance）」放在「智能（Intelligence）」之上的架構實驗。
 核心目標是讓 AI 的輸出可追溯、可審計、可校準，而不是只靠「像不像」或「有沒有用」。
@@ -79,8 +83,16 @@ python apps/api/server.py
 pytest tests/
 ```
 
+CI 會自動產出以下報告：
+- `test-results-py<version>`：每個 Python 版本的 JUnit 測試報告
+- `coverage.xml` + Codecov：測試覆蓋率報告
+
 ## 重要文件
 - `docs/API_SPEC.md`：Web/Backend 統一 API 契約
+- `docs/RELEASE_v0.1.0_PLAN.md`：v0.1.0 發版清單與風險控管
+- `docs/TECH_ARTICLE_DRAFT_v0.1.0.md`：技術文章草稿
+- `docs/DEMO_SHOWCASE.md`：錄製與互動展示流程
+- `docs/FILE_PURPOSE_MAP.md`：檔案類型用途地圖
 - `docs/VERCEL_DEPLOY.md`：Vercel 部署與環境變數設定
 - `docs/TRUTH_STRUCTURE.md`：治理與語魂的結構化總覽
 - `docs/NARRATIVE.md`：敘事定版
@@ -89,6 +101,7 @@ pytest tests/
 - `spec/tools/tool_response.schema.json`：ToolResponse JSON Schema
 - `CODEX_TASK.md`：當前工作目標
 - `task.md`：階段規劃
+- `SCRIPTS_README.md`：根目錄腳本用途與命名對照
 - `integrations/openclaw/README.md`：OpenClaw 整合入口與使用方式
 - `integrations/openclaw/SOUL.md`：ToneSoul x OpenClaw 治理身份與誓約
 
