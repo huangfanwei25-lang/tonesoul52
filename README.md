@@ -63,6 +63,12 @@ python scripts/verify_api.py --base http://localhost:5000
 python scripts/verify_7d.py
 ```
 
+### 4.1 執行 7D 全量審計（隔離埠，自動啟停）
+```powershell
+python scripts/run_7d_isolated.py
+```
+預設使用 backend `127.0.0.1:5001`、web `127.0.0.1:3002`，避免被本機既有 `:5000/:3000` 服務污染。
+
 ### 5. 直接啟動 API Server
 ```powershell
 python apps/api/server.py
@@ -83,6 +89,8 @@ pytest tests/
 - `spec/tools/tool_response.schema.json`：ToolResponse JSON Schema
 - `CODEX_TASK.md`：當前工作目標
 - `task.md`：階段規劃
+- `integrations/openclaw/README.md`：OpenClaw 整合入口與使用方式
+- `integrations/openclaw/SOUL.md`：ToneSoul x OpenClaw 治理身份與誓約
 
 ## 目錄概覽
 - `tonesoul/`：核心引擎（Council / Memory / Governance）
@@ -91,6 +99,7 @@ pytest tests/
 - `apps/`：Demo / Playground / Dashboard
 - `docs/`：概念、規格、敘事
 - `spec/`：schema 與正式規格
+- `integrations/openclaw/`：Gateway/Skills/Auditor/Heartbeat 整合層
 
 ## License
 Apache 2.0
