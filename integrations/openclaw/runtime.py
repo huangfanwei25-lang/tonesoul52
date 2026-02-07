@@ -30,16 +30,22 @@ class OpenClawRuntimeBridge:
     heartbeat: ResponsibilityHeartbeat
 
     @classmethod
-    def build(cls, *, dry_run: bool = False, interval_seconds: float = 60.0) -> "OpenClawRuntimeBridge":
+    def build(
+        cls,
+        *,
+        dry_run: bool = False,
+        interval_seconds: float = 60.0,
+        gateway_uri: str = "ws://127.0.0.1:18789",
+    ) -> "OpenClawRuntimeBridge":
         if dry_run:
             mem_ws = _MemoryWebSocket()
 
             async def _connect(_uri: str):
                 return mem_ws
 
-            gateway_client = GatewayClient(connect_func=_connect)
+            gateway_client = GatewayClient(uri=gateway_uri, connect_func=_connect)
         else:
-            gateway_client = GatewayClient()
+            gateway_client = GatewayClient(uri=gateway_uri)
         heartbeat = ResponsibilityHeartbeat(
             gateway_client=gateway_client,
             auditor=OpenClawAuditor(persist_to_ledger=True),
@@ -104,6 +110,11 @@ def _parse_json_payload(payload_text: str) -> dict[str, Any]:
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="OpenClaw runtime bridge for ToneSoul integrations.")
     parser.add_argument("--dry-run", action="store_true", help="Use in-memory gateway transport.")
+    parser.add_argument(
+        "--gateway-uri",
+        default="ws://127.0.0.1:18789",
+        help="Gateway websocket URI (default: ws://127.0.0.1:18789).",
+    )
     sub = parser.add_subparsers(dest="command", required=True)
 
     sub.add_parser("list-skills", help="List available ToneSoul OpenClaw skills.")
@@ -123,7 +134,10 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 async def _run_async(args: argparse.Namespace) -> int:
-    runtime = OpenClawRuntimeBridge.build(dry_run=bool(args.dry_run))
+    runtime = OpenClawRuntimeBridge.build(
+        dry_run=bool(args.dry_run),
+        gateway_uri=str(args.gateway_uri),
+    )
     try:
         if args.command == "list-skills":
             print(json.dumps({"skills": runtime.list_skills()}, ensure_ascii=False, indent=2))

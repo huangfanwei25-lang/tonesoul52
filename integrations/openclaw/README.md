@@ -25,6 +25,7 @@ python -m integrations.openclaw.runtime --dry-run list-skills
 python -m integrations.openclaw.runtime --dry-run invoke-skill --name benevolence_audit --payload-json "{\"proposed_action\":\"verify before answer\"}"
 python -m integrations.openclaw.runtime --dry-run heartbeat-once --cycle 1
 python -m integrations.openclaw.runtime probe-gateway --timeout 3
+python scripts/verify_openclaw_probe.py --host 127.0.0.1 --port 18789 --timeout 3
 ```
 
 ### 1) 調用 Skills

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import asyncio
 
-from integrations.openclaw.runtime import OpenClawRuntimeBridge
+from integrations.openclaw.runtime import OpenClawRuntimeBridge, build_parser
 from tonesoul.gateway import GatewayClient
 from tonesoul.heartbeat import ResponsibilityHeartbeat
 from tonesoul.openclaw_auditor import OpenClawAuditor
@@ -72,3 +72,17 @@ def test_openclaw_runtime_probe_gateway_handles_failure():
 
     assert result["ok"] is False
     assert result["error_type"] in {"ConnectionError", "TimeoutError"}
+
+
+def test_openclaw_runtime_build_applies_gateway_uri():
+    bridge = OpenClawRuntimeBridge.build(dry_run=True, gateway_uri="ws://127.0.0.1:19999")
+    try:
+        assert bridge.gateway_client.uri == "ws://127.0.0.1:19999"
+    finally:
+        asyncio.run(bridge.close())
+
+
+def test_openclaw_runtime_parser_accepts_gateway_uri():
+    parser = build_parser()
+    args = parser.parse_args(["--gateway-uri", "ws://127.0.0.1:19999", "list-skills"])
+    assert args.gateway_uri == "ws://127.0.0.1:19999"
