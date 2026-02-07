@@ -436,7 +436,9 @@ class UnifiedPipeline:
                 if ruptures:
                     rupture_detector.format_rupture_warning(ruptures)
                     # 將斷裂記錄到 internal_monologue
-                    internal_monologue += f"\n\n⚠️ 語場斷裂風險：偵測到 {len(ruptures)} 個潛在矛盾。"
+                    internal_monologue += (
+                        f"\n\n⚠️ 語場斷裂風險：偵測到 {len(ruptures)} 個潛在矛盾。"
+                    )
             except Exception as e:
                 print(f"Rupture detection error: {e}")
 

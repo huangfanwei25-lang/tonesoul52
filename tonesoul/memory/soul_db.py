@@ -152,8 +152,7 @@ class SqliteSoulDB:
     def _init_db(self) -> None:
         conn = self._connect()
         cursor = conn.cursor()
-        cursor.execute(
-            """
+        cursor.execute("""
             CREATE TABLE IF NOT EXISTS memories (
                 id TEXT PRIMARY KEY,
                 type TEXT NOT NULL,
@@ -164,10 +163,8 @@ class SqliteSoulDB:
                 parent_id TEXT,
                 tags TEXT
             )
-            """
-        )
-        cursor.execute(
-            """
+            """)
+        cursor.execute("""
             CREATE TABLE IF NOT EXISTS vows (
                 id TEXT PRIMARY KEY,
                 statement TEXT,
@@ -178,10 +175,8 @@ class SqliteSoulDB:
                 falsifiable_by TEXT,
                 measurable_via TEXT
             )
-            """
-        )
-        cursor.execute(
-            """
+            """)
+        cursor.execute("""
             CREATE TABLE IF NOT EXISTS isnad (
                 id TEXT PRIMARY KEY,
                 event_type TEXT,
@@ -191,13 +186,11 @@ class SqliteSoulDB:
                 timestamp TEXT,
                 verified INTEGER
             )
-            """
-        )
+            """)
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_memories_source ON memories(source)")
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_memories_timestamp ON memories(timestamp)")
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_isnad_timestamp ON isnad(timestamp)")
-        cursor.execute(
-            """
+        cursor.execute("""
             CREATE TABLE IF NOT EXISTS action_logs (
                 id TEXT PRIMARY KEY,
                 type TEXT,
@@ -209,8 +202,7 @@ class SqliteSoulDB:
                 isnad_link TEXT,
                 timestamp TEXT
             )
-            """
-        )
+            """)
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_action_logs_type ON action_logs(type)")
         cursor.execute(
             "CREATE INDEX IF NOT EXISTS idx_action_logs_timestamp ON action_logs(timestamp)"

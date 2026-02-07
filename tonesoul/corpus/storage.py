@@ -112,8 +112,7 @@ class CorpusStorage:
         cursor = conn.cursor()
 
         # Conversations table
-        cursor.execute(
-            """
+        cursor.execute("""
             CREATE TABLE IF NOT EXISTS conversations (
                 id TEXT PRIMARY KEY,
                 session_id TEXT NOT NULL,
@@ -125,12 +124,10 @@ class CorpusStorage:
                 turn_count INTEGER DEFAULT 0,
                 created_at TEXT DEFAULT CURRENT_TIMESTAMP
             )
-        """
-        )
+        """)
 
         # Turns table
-        cursor.execute(
-            """
+        cursor.execute("""
             CREATE TABLE IF NOT EXISTS turns (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 conversation_id TEXT NOT NULL,
@@ -142,22 +139,17 @@ class CorpusStorage:
                 feedback TEXT,
                 FOREIGN KEY (conversation_id) REFERENCES conversations(id)
             )
-        """
-        )
+        """)
 
         # Indexes
-        cursor.execute(
-            """
+        cursor.execute("""
             CREATE INDEX IF NOT EXISTS idx_conv_session
             ON conversations(session_id)
-        """
-        )
-        cursor.execute(
-            """
+        """)
+        cursor.execute("""
             CREATE INDEX IF NOT EXISTS idx_turns_conv
             ON turns(conversation_id)
-        """
-        )
+        """)
 
         conn.commit()
         conn.close()

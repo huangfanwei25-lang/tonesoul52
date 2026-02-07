@@ -74,8 +74,7 @@ class ConsentManager:
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
 
-        cursor.execute(
-            """
+        cursor.execute("""
             CREATE TABLE IF NOT EXISTS consents (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 session_id TEXT UNIQUE NOT NULL,
@@ -88,15 +87,12 @@ class ConsentManager:
                 withdrawn_at TEXT,
                 created_at TEXT DEFAULT CURRENT_TIMESTAMP
             )
-        """
-        )
+        """)
 
-        cursor.execute(
-            """
+        cursor.execute("""
             CREATE INDEX IF NOT EXISTS idx_session
             ON consents(session_id)
-        """
-        )
+        """)
 
         conn.commit()
         conn.close()
@@ -224,13 +220,11 @@ class ConsentManager:
             cursor.execute("SELECT COUNT(*) FROM consents WHERE withdrawn = 1")
             withdrawn = cursor.fetchone()[0]
 
-            cursor.execute(
-                """
+            cursor.execute("""
                 SELECT consent_type, COUNT(*) as cnt
                 FROM consents WHERE withdrawn = 0
                 GROUP BY consent_type
-            """
-            )
+            """)
             by_type = {row[0]: row[1] for row in cursor.fetchall()}
 
             return {"active_consents": active, "withdrawn_consents": withdrawn, "by_type": by_type}

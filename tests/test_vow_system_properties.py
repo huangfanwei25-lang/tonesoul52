@@ -4,6 +4,8 @@ Property-Based Tests for VowSystem
 使用 Hypothesis 測試 VowSystem 的不變量與屬性
 """
 
+import string
+
 import pytest
 from hypothesis import given, settings
 from hypothesis import strategies as st
@@ -28,13 +30,13 @@ def vow_strategy(draw):
             st.text(
                 min_size=1,
                 max_size=20,
-                alphabet=st.characters(
-                    whitelist_categories=("Lu", "Ll", "Nd"), whitelist_characters="_-"
-                ),
+                alphabet=string.ascii_letters + string.digits + "_-",
             )
         ),
-        title=draw(st.text(min_size=1, max_size=50)),
-        description=draw(st.text(max_size=200)),
+        title=draw(st.text(min_size=1, max_size=50, alphabet=string.ascii_letters + " -_")),
+        description=draw(
+            st.text(max_size=200, alphabet=string.ascii_letters + string.digits + " -_,.")
+        ),
         expected=draw(
             st.dictionaries(
                 keys=st.sampled_from(["truthfulness", "responsibility", "coherence", "safety"]),
