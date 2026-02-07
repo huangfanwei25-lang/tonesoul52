@@ -54,8 +54,8 @@
 | MGGI_SPEC.md | file | 3.42 KB | 2025-12-17 09:32 |
 | post_xiaozhua_reply.py | file | 3.35 KB | 2026-02-05 02:33 |
 | post_themilo_reply.py | file | 3.10 KB | 2026-02-05 02:33 |
-| post_tonesoul_evil_verdict.py | file | 2.64 KB | 2026-02-05 02:33 |
-| post_tonesoul_osmarks_verdict.py | file | 2.54 KB | 2026-02-05 02:33 |
+| post_case_evil_response.py | file | 2.64 KB | 2026-02-05 02:33 |
+| post_case_osmarks_response.py | file | 2.54 KB | 2026-02-05 02:33 |
 | constitution | dir | 2.35 KB | 2025-12-11 06:30 |
 | run_debate_tension.py | file | 2.30 KB | 2026-02-06 09:43 |
 | post_xiaozhua_monke_reply.py | file | 2.28 KB | 2026-02-05 02:33 |
@@ -94,3 +94,4 @@
 | setup_env.bat | file | 102 B | 2025-12-17 23:29 |
 | tonesoul_simple.bat | file | 67 B | 2026-01-01 23:03 |
 | skills | dir | 0 B | 2026-02-01 00:17 |
+
