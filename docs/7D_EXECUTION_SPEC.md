@@ -27,6 +27,16 @@
 
 ---
 
+## 隔離埠執行（建議）
+
+- 一鍵全量（含 SDH）：`python scripts/run_7d_isolated.py`
+- 預設隔離埠：backend `127.0.0.1:5001`、web `127.0.0.1:3002`
+- `scripts/verify_7d.py` 支援環境變數預設：
+  - `TONESOUL_AUDIT_API_BASE`
+  - `TONESOUL_AUDIT_WEB_BASE`
+
+---
+
 ## CI 佈署建議
 
 ### 現況

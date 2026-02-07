@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import subprocess
 import sys
 from datetime import datetime, timezone
@@ -18,6 +19,10 @@ from typing import Any
 
 RDD_MIN_CASES = 10
 DDD_STALE_DAYS = 7
+DEFAULT_WEB_BASE = "http://127.0.0.1:3000"
+DEFAULT_API_BASE = "http://127.0.0.1:5000"
+AUDIT_WEB_BASE_ENV = "TONESOUL_AUDIT_WEB_BASE"
+AUDIT_API_BASE_ENV = "TONESOUL_AUDIT_API_BASE"
 
 
 @dataclass
@@ -242,7 +247,12 @@ def _summary(results: list[CheckResult]) -> dict[str, Any]:
     }
 
 
-def main() -> int:
+def _env_or_default(name: str, default: str) -> str:
+    value = os.environ.get(name, "").strip()
+    return value if value else default
+
+
+def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Run 7D executable audit checks")
     parser.add_argument(
         "--include-sdh",
@@ -254,10 +264,14 @@ def main() -> int:
         action="store_true",
         help="Return non-zero if SOFT_FAIL checks fail.",
     )
-    parser.add_argument("--web-base", default="http://127.0.0.1:3000")
-    parser.add_argument("--api-base", default="http://127.0.0.1:5000")
+    parser.add_argument("--web-base", default=_env_or_default(AUDIT_WEB_BASE_ENV, DEFAULT_WEB_BASE))
+    parser.add_argument("--api-base", default=_env_or_default(AUDIT_API_BASE_ENV, DEFAULT_API_BASE))
     parser.add_argument("--timeout", type=int, default=40)
-    args = parser.parse_args()
+    return parser
+
+
+def main() -> int:
+    args = build_parser().parse_args()
 
     results = [
         _check_tdd(),
