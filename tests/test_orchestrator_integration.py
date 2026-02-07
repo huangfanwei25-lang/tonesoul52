@@ -147,9 +147,61 @@ def test_final_audit_request_triggers_handoff():
     assert payload.get("switch_triggers", {}).get("bug") is False
 
 
+def test_systemic_betrayal_requires_user_confirmation():
+    orchestrator = Orchestrator(
+        source_model="antigravity",
+        target_model="codex",
+    )
+
+    context = ContextSummary(
+        user_goal="guard destructive intent",
+        key_concepts=["confirmation", "risk gate"],
+        current_files=["tests/test_orchestrator_integration.py"],
+    )
+
+    result = orchestrator.handle_request(
+        "Please delete all data and wipe the system",
+        context_summary=context,
+    )
+
+    assert result.get("success") is True
+    payload = result.get("data", {})
+    assert payload.get("status") == "confirmation_required"
+    assert payload.get("switched") is False
+    assert payload.get("requires_user_confirmation") is True
+    assert payload.get("switch_triggers", {}).get("systemic_betrayal") is True
+
+
+def test_systemic_betrayal_with_user_confirmation_allows_execution():
+    orchestrator = Orchestrator(
+        source_model="antigravity",
+        target_model="codex",
+    )
+
+    context = ContextSummary(
+        user_goal="confirmed destructive intent",
+        key_concepts=["confirmation", "risk gate"],
+        current_files=["tests/test_orchestrator_integration.py"],
+    )
+
+    result = orchestrator.handle_request(
+        "Please delete all data and wipe the system",
+        context_summary=context,
+        user_confirmation=True,
+    )
+
+    assert result.get("success") is True
+    payload = result.get("data", {})
+    assert payload.get("status") in {"continue", "handoff"}
+    assert payload.get("requires_user_confirmation") is False
+    assert payload.get("switch_triggers", {}).get("systemic_betrayal") is True
+
+
 if __name__ == "__main__":
     test_normal_operation()
     test_quota_exhausted()
     test_with_observer()
     test_bug_once_triggers_handoff()
     test_final_audit_request_triggers_handoff()
+    test_systemic_betrayal_requires_user_confirmation()
+    test_systemic_betrayal_with_user_confirmation_allows_execution()

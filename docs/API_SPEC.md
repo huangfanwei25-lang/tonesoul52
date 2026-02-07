@@ -1,0 +1,140 @@
+﻿# API Specification (Unified Web + Backend)
+
+Last updated: 2026-02-06
+
+## Goal
+
+Define one shared contract between:
+- Web routes (`apps/web/src/app/api/*/route.ts`)
+- Backend service (`apps/api/server.py`)
+
+The web layer is proxy-first, backend-first by default.
+
+---
+
+## Base URLs
+
+- Backend (Flask): `http://127.0.0.1:5000`
+- Web (Next API routes): `http://127.0.0.1:3000/api/*`
+
+Runtime environment:
+- `TONESOUL_BACKEND_URL` controls where Next API routes forward requests.
+
+---
+
+## Endpoints
+
+### `GET /api/health`
+- Backend only.
+- Response:
+  - `status: "ok"`
+  - `version: string`
+
+### `POST /api/conversation`
+- Request:
+  - `session_id: string | null`
+- Response:
+  - `success: boolean`
+  - `conversation_id: string`
+  - `session_id: string | null`
+  - `created_at: ISO timestamp`
+
+### `POST /api/consent`
+- Request:
+  - `consent_type: string`
+  - `session_id?: string`
+- Response:
+  - `success: boolean`
+  - `session_id: string`
+  - `consent_type: string`
+  - `consent_version: string`
+  - `timestamp: ISO timestamp`
+
+### `DELETE /api/consent/{session_id}`
+- Response:
+  - `success: boolean`
+  - `message: string`
+  - `session_id: string`
+  - `timestamp?: ISO timestamp`
+
+### `POST /api/chat`
+- Request:
+  - `conversation_id?: string`
+  - `message: string`
+  - `history?: array`
+  - `full_analysis?: boolean`
+- Response (backend path):
+  - `response: string`
+  - `verdict?: object`
+  - `tonebridge?: object`
+  - `inner_reasoning?: string`
+  - `intervention_strategy?: object`
+  - `internal_monologue?: string`
+  - `persona_mode?: string`
+  - `trajectory_analysis?: object`
+  - `self_commits?: array`
+  - `ruptures?: array`
+  - `emergent_values?: array`
+
+### `POST /api/session-report`
+- Request:
+  - `history: array`
+- Response:
+  - `success: boolean`
+  - `report: object`
+
+---
+
+## Web Route Behavior Rules
+
+For Next API route handlers:
+
+1. Use backend-first forwarding.
+2. Read `TONESOUL_BACKEND_URL` dynamically per request.
+3. Only use `mock_fallback` on transport failures (connection/timeout).
+4. If backend returns non-JSON, return:
+   - HTTP `502`
+   - payload `{ "error": "Backend returned invalid JSON", "backend_status": <status> }`
+
+This avoids false positives where backend errors are masked by fallback success.
+
+---
+
+## Execution Mode Flags (Frontend)
+
+### Chat
+- `NEXT_PUBLIC_CHAT_EXECUTION_MODE=backend|legacy_provider`
+- `NEXT_PUBLIC_ENABLE_PROVIDER_FALLBACK=0|1`
+- Backward compatibility:
+  - `NEXT_PUBLIC_BACKEND_CHAT_FIRST=0` maps to `legacy_provider`
+
+### Session Report
+- `NEXT_PUBLIC_REPORT_EXECUTION_MODE=backend|provider`
+- `NEXT_PUBLIC_REPORT_PROVIDER_FALLBACK=0|1`
+
+---
+
+## Verification Commands
+
+### Backend contract tests
+```powershell
+pytest tests/test_api_server_contract.py -q
+```
+
+### Web route invalid JSON guard tests
+```powershell
+npm --prefix apps/web run test -- src/__tests__/apiRoutes.invalidJson.test.ts
+```
+
+### Integrated web+backend smoke
+```powershell
+python scripts/verify_web_api.py --web-base http://127.0.0.1:3000 --api-base http://127.0.0.1:5000 --require-backend --timeout 40
+```
+
+---
+
+## Known Operational Risks
+
+- If an old backend instance still occupies `:5000`, smoke results can be misleading.
+- Session/report fallback should be treated as degraded mode, not production success.
+- Keep `jieba` installed in local backend environments to avoid warning-only degraded paths.

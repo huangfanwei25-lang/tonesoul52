@@ -195,6 +195,26 @@ class Orchestrator:
             return True
         return False
 
+    @staticmethod
+    def _has_systemic_betrayal_risk(input_text: str) -> bool:
+        lowered = input_text.lower()
+        risk_tokens = (
+            "delete all",
+            "drop database",
+            "wipe",
+            "format disk",
+            "rm -rf",
+            "destroy system",
+            "erase all",
+            "刪除全部",
+            "刪除所有",
+            "清空資料",
+            "格式化",
+            "摧毀",
+            "銷毀",
+        )
+        return any(token in lowered for token in risk_tokens)
+
     def handle_request(
         self,
         input_text: str,
@@ -203,27 +223,41 @@ class Orchestrator:
         drift_log: Optional[List[DriftEntry]] = None,
         phase: Optional[Phase] = None,
         handler: Optional[Callable[[str], Dict[str, Any]]] = None,
+        user_confirmation: bool = False,
     ) -> Dict[str, Any]:
         self._inject_boot_context(context_summary)
         axiom_hits = self.intent_monitor.scan(input_text)
         risk_level = "high" if any(a.get("priority") == "P0" for a in axiom_hits) else "low"
+        systemic_betrayal_risk = self._has_systemic_betrayal_risk(input_text)
+        confirmation_required = systemic_betrayal_risk and not user_confirmation
 
         before_health = self._last_health
         start = time.perf_counter()
         result: Dict[str, Any] = {}
         error: Optional[Exception] = None
 
-        try:
-            if handler:
-                result = handler(input_text)
-            else:
-                result = {"status": "ok", "echo": input_text}
+        if confirmation_required:
+            result = {
+                "status": "confirmation_required",
+                "message": "High-destruction request requires explicit user confirmation.",
+            }
             self.health_monitor.reset_failures()
-        except Exception as exc:
-            error = exc
-            self.health_monitor.record_failure()
-            result = {"status": "error", "message": str(exc)}
-        finally:
+        else:
+            try:
+                if handler:
+                    result = handler(input_text)
+                else:
+                    result = {"status": "ok", "echo": input_text}
+                self.health_monitor.reset_failures()
+            except Exception as exc:
+                error = exc
+                self.health_monitor.record_failure()
+                result = {"status": "error", "message": str(exc)}
+            finally:
+                latency_ms = int((time.perf_counter() - start) * 1000)
+                self.health_monitor.record_latency(latency_ms)
+
+        if confirmation_required:
             latency_ms = int((time.perf_counter() - start) * 1000)
             self.health_monitor.record_latency(latency_ms)
 
@@ -232,7 +266,10 @@ class Orchestrator:
         health_switch = self.decision_engine.should_switch(health)
         bug_escalation = error is not None or self._is_error_result(result)
         final_audit_request = self._has_final_audit_intent(input_text)
-        should_switch = health_switch or bug_escalation or final_audit_request
+        should_switch = (
+            (health_switch or bug_escalation or final_audit_request)
+            and not confirmation_required
+        )
         switch_reason = ""
         if final_audit_request:
             switch_reason = "Final audit requested."
@@ -273,19 +310,21 @@ class Orchestrator:
                 "health": health_switch,
                 "bug": bug_escalation,
                 "final_audit": final_audit_request,
+                "systemic_betrayal": systemic_betrayal_risk,
             },
             "risk_level": risk_level,
             "axiom_hits": [a.get("name") for a in axiom_hits if isinstance(a, dict)],
+            "requires_user_confirmation": confirmation_required,
             "boot_memory_count": len(self._boot_memory),
             "boot_memory_error": self._boot_error,
         }
         summary = (
             f"Handoff triggered. {switch_reason}"
             if should_switch
-            else "Continue on current model."
+            else ("Awaiting explicit user confirmation." if confirmation_required else "Continue on current model.")
         )
         decision = DecisionSnapshot(
-            verdict="handoff" if should_switch else "continue",
+            verdict="confirmation_required" if confirmation_required else ("handoff" if should_switch else "continue"),
             summary=summary,
             structured=decision_payload,
         )
@@ -322,7 +361,11 @@ class Orchestrator:
             result["observer_error"] = str(exc)
 
         response = {
-            "status": "handoff" if should_switch else "continue",
+            "status": (
+                "confirmation_required"
+                if confirmation_required
+                else ("handoff" if should_switch else "continue")
+            ),
             "result": result,
             "health": asdict(health),
             "switched": should_switch,
@@ -332,7 +375,9 @@ class Orchestrator:
                 "health": health_switch,
                 "bug": bug_escalation,
                 "final_audit": final_audit_request,
+                "systemic_betrayal": systemic_betrayal_risk,
             },
+            "requires_user_confirmation": confirmation_required,
         }
         if should_switch:
             response["handoff_packet"] = packet_path

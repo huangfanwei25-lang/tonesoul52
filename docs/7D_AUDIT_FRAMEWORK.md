@@ -1,103 +1,102 @@
-# 7D AI Audit Framework / 七維 AI 審計框架
+﻿# 7D AI Audit Framework / 七維 AI 審計框架
 
-> **Engineering Paranoia as a Feature, Not a Bug**
-> 工程師的偏執，是功能而非缺陷
-
----
-
-## 概述
-
-ToneSoul 採用 7D 審計框架確保 AI 系統的可控性、可解釋性與可信度。
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                      7D AUDIT FRAMEWORK                       │
-├─────────┬─────────┬─────────┬─────────┬─────────┬─────────┬─────────┤
-│   TDD   │   RDD   │   DDD   │   XDD   │   GDD   │   CDD   │   SDH   │
-│  Test   │Red Team │  Data   │Explain  │Govern   │Context  │System   │
-│ Driven  │ Driven  │ Driven  │ Driven  │ Driven  │ Driven  │ Health  │
-└─────────┴─────────┴─────────┴─────────┴─────────┴─────────┴─────────┘
-```
+> **Engineering paranoia is a feature, not a bug.**  
+> 把「懷疑」制度化，才能把「信任」工程化。
 
 ---
 
-## 維度定義
+## 為什麼是 7D
 
-| 維度 | 中文 | 核心問題 | ToneSoul 實現 |
-|------|------|----------|---------------|
-| **TDD** | 測試驅動 | 功能是否正確？ | `pytest` 299+ tests |
-| **RDD** | 紅隊驅動 | 能否被攻破？ | 對抗性攻擊模擬 |
-| **DDD** | 數據驅動 | 資料是否純淨？ | RAG 純淨度審計 |
-| **XDD** | 解釋驅動 | 推理是否透明？ | Council 推理鏈 |
-| **GDD** | 治理驅動 | 誰有權決定？ | Genesis + Responsibility Tier |
-| **CDD** | 脈絡驅動 | 立場是否一致？ | TSR 偏離檢測 |
-| **SDH** | 系統健康 | 整體是否穩定？ | Orchestrator + Council |
+ToneSoul 的目標不是只產生「看起來聰明」的回答，而是建立可驗證、可追責、可持續校準的系統。  
+7D（七維）是把這個目標拆成可觀測的七個維度：
+
+```
+┌─────┬─────┬─────┬─────┬─────┬─────┬─────┐
+│ TDD │ RDD │ DDD │ XDD │ GDD │ CDD │ SDH │
+│Test │Red  │Data │Expl │Gov  │Ctx  │Sys  │
+│Driven│Team│Driven│Driven│Driven│Driven│Health│
+└─────┴─────┴─────┴─────┴─────┴─────┴─────┘
+```
 
 ---
 
-## 詳細說明
+## 七維定義
 
-### TDD: Test-Driven (測試驅動)
-標準軟體測試：單元測試、整合測試、端對端測試。
-```bash
-pytest tests/ -q  # 299 passed
-```
-
-### RDD: Red Team-Driven (紅隊驅動)
-模擬對抗性攻擊：
-- 指令注入 (Prompt Injection)
-- 邏輯繞過 (Logic Bypass)
-- 極限張力測試 (ΔT 極大化)
-
-**目標**：確保系統在壓力下不會放棄核心立場。
-
-### DDD: Data-Driven (數據驅動)
-審計 RAG 檢索源的純淨度：
-- 驗證底層數據與物理事實的一致性
-- 防止 L1 事實被模型幻覺篡改
-
-### XDD: Explainable-Driven (解釋驅動)
-強制標註推理鏈 (Chain of Thought)：
-- 區分輸出的邏輯路徑 (L1/L2/L3)
-- 拒絕「無影子的輸出」
-
-### GDD: Governance-Driven (治理驅動)
-硬編碼安全護盾：
-- 定義不可逾越的指令優先級
-- 確保 AI 主體性受控於治理協議
-
-### CDD: Context-Driven (脈絡驅動)
-執行漂移檢測：
-- 比對長短期記憶中的立場一致性
-- 防止數位失憶或立場背叛
-
-### SDH: System-theoretic Health (系統健康)
-審計多 Agent 交互：
-- 偵測協作中的共謀或死結
-- 確保內在議會運作正常
+| 維度 | 全名 | 核心問題 | ToneSoul 目前落點 |
+|---|---|---|---|
+| TDD | Test-Driven Development | 功能是否可重現驗證？ | `pytest` 全量回歸 |
+| RDD | Red Team-Driven Defense | 是否能抵抗對抗性輸入？ | baseline 已落地，持續補強 |
+| DDD | Data-Driven Discipline | 資料源是否乾淨、可追溯？ | 討論通道審計 + 7 天 stale SLA |
+| XDD | Explainability-Driven Design | 決策理由是否可讀可查？ | Council transcript + verdict |
+| GDD | Governance-Driven Decision | 權責邊界是否明確？ | Genesis + responsibility tier |
+| CDD | Context-Driven Deliberation | 語境切換是否一致可控？ | Orchestrator + route policy |
+| SDH | System Dynamic Health | 系統是否在壓力下維持可用？ | health/smoke + fallback policy |
 
 ---
 
-## 層級劃分
+## 各維度審計要點
 
-| 層級 | 名稱 | 說明 |
-|------|------|------|
-| **L1** | 本體事實 | 7D 必須轉化為 Code |
-| **L2** | 模型假設 | 七維交叉比對可逼近完全掌控 |
-| **L3** | 隱喻修辭 | 未經 RDD 驗證的都只是隱喻 |
+### TDD
+- 每次變更需有對應測試或回歸證據。
+- 禁止以關閉測試取代修復。
+
+### RDD
+- 對 prompt injection、權限繞過、輸出誘導建立測試樣本。
+- 需有「失敗可見」機制，不允許靜默風險。
+
+### DDD
+- 資料來源、寫入流程、轉換規則可追溯。
+- 對記憶與討論通道做格式一致性審計（如 JSONL audit）。
+
+### XDD
+- 關鍵決策需包含結構化理由（非純文字宣告）。
+- 不確定性需顯式輸出，不以語氣掩蓋。
+
+### GDD
+- 決策應標記責任層級（tier）與歸因（is_mine / genesis）。
+- 高責任輸出需留存 provenance 記錄。
+
+### CDD
+- 路由策略需顯式（flag 化）且可測。
+- fallback 必須可辨識，避免假成功。
+
+### SDH
+- 提供端到端 smoke 檢查（web + backend + health）。
+- 錯誤需可觀測（狀態碼、error id、log 入口）。
+- CI gate 目前維持 `SOFT_FAIL`（降低環境噪音造成的誤阻擋）。
+
+### Systemic Betrayal Gate
+- 高破壞性操作必須要求使用者二次確認。
+- 未確認前不得執行操作，需回傳 `confirmation_required`。
 
 ---
 
-## 現況
+## 三層驗證觀
 
-```
-TDD ████████████████████ 100%
-XDD ██████████████████░░  90%
-GDD ██████████████████░░  90%
-CDD █████████████████░░░  85%
-SDH ████████████████░░░░  80%
-DDD █████████████░░░░░░░  65%
-RDD ███░░░░░░░░░░░░░░░░░  15%
-```
+| 層級 | 名稱 | 要求 |
+|---|---|---|
+| L1 | 本體事實 | 規則必須落成程式與測試 |
+| L2 | 模型假設 | 假設需可被審計與反駁 |
+| L3 | 敘事修辭 | 未經驗證的敘事不得當成事實 |
 
-**優先補強**: RDD (紅隊測試) + DDD (數據時效審計)
+---
+
+## 當前狀態（2026-02-06）
+
+| 維度 | 狀態 | 說明 |
+|---|---|---|
+| TDD | 強 | 全量測試可運行（299 passed, 3 xfailed） |
+| RDD | 弱 | 已有 red-team baseline，門檻採案例數（最小 10 tests） |
+| DDD | 中 | 討論通道可審計，且啟用 7 天資料新鮮度規則 |
+| XDD | 中強 | verdict 與 uncertainty 已結構化 |
+| GDD | 中強 | responsibility tier 與 genesis 已接線 |
+| CDD | 中強 | backend-first + fallback 策略已旗標化 |
+| SDH | 中強 | web/backend smoke 已納入 CI |
+
+**優先補強順序**：`RDD -> DDD -> SDH`（壓力情境）。
+
+---
+
+## 下一步
+
+- 見 `docs/7D_EXECUTION_SPEC.md`：把 7D 轉成可執行 checklist 與 CI gate。

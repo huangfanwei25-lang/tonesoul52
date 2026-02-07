@@ -27,6 +27,25 @@
 - [x] 審計文件更新（`reports/api_unification_audit_2026-02-06.md`、`reports/facade_runtime_audit_2026-02-06.md`）
 **成功標準**: web/backend 契約可重現驗證，且 fallback 不再遮蔽 backend 異常。
 
+## Phase 22: 前端整合（進行中）
+- [x] 新增 `docs/API_SPEC.md`（統一後 API 規格）
+- [x] 驗證 `apps/web` dev 連線 `localhost:5000`（整鏈 smoke）
+- [x] 驗證 ChatInterface -> backend -> Council 流程（`/api/chat` 整鏈 smoke）
+- [x] 驗證 SessionReport -> backend 流程（`/api/session-report` 整鏈 smoke）
+- [x] 更新 Vercel 環境變數與部署說明（`docs/VERCEL_DEPLOY.md`，待平台套用）
+**成功標準**: Navigator 前端在本地走統一 API 契約，且部署設定文件可直接套用到 Vercel。
+
+## Phase 24: 7D 落地（提案）
+- [x] 重寫 `docs/7D_AUDIT_FRAMEWORK.md`（UTF-8 可讀版本）
+- [x] 新增 `docs/7D_EXECUTION_SPEC.md`（7D -> checklist -> gate）
+- [x] 新增 `scripts/verify_7d.py`（7D 聚合入口）
+- [x] 建立 `tests/red_team/` 最小對抗測試集（RDD）
+- [x] 決議 `SDH` 先維持 soft-fail（非 blocking）
+- [x] 設定 `DDD` 資料新鮮度 SLA（7 天 stale 規則）
+- [x] 設計 `systemic betrayal user confirmation gate`（高破壞性風險需二次確認）
+- [x] 將 RDD 擴充至 10+ 對抗案例（目前 11）
+**成功標準**: 七維皆有可執行檢查，且 gate 策略在 CI 層可明確解釋。
+
 ## 已完成（摘要）
 - [x] Phase 1-2: Council 設計與整合
 - [x] Phase 3/10/16: Tools API schema + ToolResponse 標準化
