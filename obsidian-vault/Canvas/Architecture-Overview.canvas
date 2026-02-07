@@ -1,0 +1,91 @@
+{
+  "nodes": [
+    {
+      "id": "council",
+      "x": 0,
+      "y": 0,
+      "width": 200,
+      "height": 100,
+      "type": "file",
+      "file": "01-Core/Council.md",
+      "color": "1"
+    },
+    {
+      "id": "genesis",
+      "x": 250,
+      "y": 0,
+      "width": 200,
+      "height": 100,
+      "type": "file",
+      "file": "01-Core/Genesis.md",
+      "color": "2"
+    },
+    {
+      "id": "vtp",
+      "x": 500,
+      "y": 0,
+      "width": 200,
+      "height": 100,
+      "type": "file",
+      "file": "01-Core/VTP.md",
+      "color": "6"
+    },
+    {
+      "id": "memory",
+      "x": 0,
+      "y": 150,
+      "width": 200,
+      "height": 100,
+      "type": "file",
+      "file": "02-Memory/Memory-Philosophy.md",
+      "color": "3"
+    },
+    {
+      "id": "user",
+      "x": 250,
+      "y": 150,
+      "width": 200,
+      "height": 100,
+      "type": "file",
+      "file": "02-Memory/User-Profile.md",
+      "color": "3"
+    },
+    {
+      "id": "7d",
+      "x": 0,
+      "y": 300,
+      "width": 200,
+      "height": 100,
+      "type": "file",
+      "file": "03-Governance/7D-Framework.md",
+      "color": "4"
+    },
+    {
+      "id": "axioms",
+      "x": 250,
+      "y": 300,
+      "width": 200,
+      "height": 100,
+      "type": "file",
+      "file": "03-Governance/Axioms.md",
+      "color": "4"
+    },
+    {
+      "id": "title",
+      "x": 150,
+      "y": -100,
+      "width": 400,
+      "height": 60,
+      "type": "text",
+      "text": "# ToneSoul 架構概覽\n「我選擇，故我在」"
+    }
+  ],
+  "edges": [
+    {"id": "e1", "fromNode": "council", "toNode": "genesis", "label": "責任追蹤"},
+    {"id": "e2", "fromNode": "genesis", "toNode": "vtp", "label": "觸發條件"},
+    {"id": "e3", "fromNode": "council", "toNode": "memory", "label": "記錄決策"},
+    {"id": "e4", "fromNode": "memory", "toNode": "user", "label": "用戶檔案"},
+    {"id": "e5", "fromNode": "genesis", "toNode": "7d", "label": "審計"},
+    {"id": "e6", "fromNode": "axioms", "toNode": "vtp", "label": "公理保護"}
+  ]
+}
