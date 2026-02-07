@@ -14,8 +14,8 @@ ToneBridge Persona System
 """
 
 from dataclasses import dataclass
-from typing import Dict, Any, Optional, Tuple, List
 from enum import Enum
+from typing import Any, Dict, List, Optional, Tuple
 
 
 class PersonaMode(Enum):
@@ -350,7 +350,7 @@ def build_hardened_prompt(
 
 1. **internal_monologue**: 在回應前，先用一句話對自己說出當前的策略
    例如：「使用者陷入迴圈，我必須切換為工程師模式打斷他」
-   
+
 2. **direct_response**: 最終給使用者的回應，必須嚴格遵守人格模式規範
 """
 
@@ -367,7 +367,7 @@ def generate_internal_monologue_prompt(
 
     讓 AI 先「想」再「說」，啟動 Chain-of-Thought
     """
-    persona = get_persona_from_resonance(resonance_state)
+    get_persona_from_resonance(resonance_state)
     direction = trajectory_analysis.get("direction_change", "stable")
     loop_detected = trajectory_analysis.get("loop_detected", False)
 

@@ -5,31 +5,30 @@ Unified Core - Integrating PersonaDimension + SemanticController
 這是語魂 5.3 的核心整合層
 """
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple, AsyncIterator
-import json
+from typing import AsyncIterator, Dict, List, Optional, Tuple
 
 # 相對 import（作為模組運行時）
 try:
-    from .persona_dimension import PersonaDimension, PersonaVector, VectorCalculator, load_persona
-    from .semantic_control import SemanticController, SemanticZone, LambdaState, SemanticTension
-    from .service_manager import ServiceManager, ServiceCode, record_service_call
-    from .contract_observer import ContractVerifier, QualityTracker, MultiScaleObserver
-    from .council_capability import CouncilWeights, CapabilityBoundary, LongTermQualityMonitor
-    from .vow_system import VowEnforcer, VowEnforcementResult, VowAction
-    from .loop import LoopEngine, LoopConfig, LoopEvent, PromiseDetectedEvent, AIResponseEvent
+    from .contract_observer import ContractVerifier, QualityTracker
+    from .council_capability import CapabilityBoundary, CouncilWeights, LongTermQualityMonitor
+    from .loop import LoopConfig, LoopEngine
+    from .persona_dimension import PersonaDimension, PersonaVector, load_persona
+    from .semantic_control import LambdaState, SemanticController, SemanticTension, SemanticZone
+    from .service_manager import ServiceCode, record_service_call
+    from .vow_system import VowEnforcer
 except ImportError:
     # 直接運行時
-    from persona_dimension import PersonaDimension, PersonaVector, VectorCalculator, load_persona
-    from semantic_control import SemanticController, SemanticZone, LambdaState, SemanticTension
-    from service_manager import ServiceManager, ServiceCode, record_service_call
-    from contract_observer import ContractVerifier, QualityTracker, MultiScaleObserver
-    from council_capability import CouncilWeights, CapabilityBoundary, LongTermQualityMonitor
-    from vow_system import VowEnforcer, VowEnforcementResult, VowAction
-    from loop import LoopEngine, LoopConfig, LoopEvent, PromiseDetectedEvent, AIResponseEvent
+    from contract_observer import ContractVerifier, QualityTracker
+    from council_capability import CapabilityBoundary, CouncilWeights, LongTermQualityMonitor
+    from loop import LoopConfig, LoopEngine
+    from persona_dimension import PersonaDimension, PersonaVector, load_persona
+    from semantic_control import LambdaState, SemanticController, SemanticTension, SemanticZone
+    from service_manager import ServiceCode, record_service_call
+    from vow_system import VowEnforcer
 
 
 class InterventionLevel(Enum):

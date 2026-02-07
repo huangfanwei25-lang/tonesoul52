@@ -15,21 +15,18 @@ from pathlib import Path
 # 確保可以 import tonesoul52
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from tonesoul52.service_manager import (
-    ServiceManager,
-    ServiceCode,
-    Priority,
-    ResourceLevel,
-    get_service_manager,
-    record_service_call,
-)
 from tonesoul52.persona_dimension import (
-    PersonaDimension,
-    PersonaVector,
-    VectorCalculator,
     BigFive,
+    PersonaDimension,
+    VectorCalculator,
     extract_big_five,
     load_persona,
+)
+from tonesoul52.service_manager import (
+    ResourceLevel,
+    ServiceCode,
+    get_service_manager,
+    record_service_call,
 )
 
 
@@ -51,7 +48,7 @@ def test_service_manager():
 
     # 記錄調用
     record_service_call(ServiceCode.TS003, success=True)
-    print(f"✅ 服務調用記錄成功")
+    print("✅ 服務調用記錄成功")
 
     return True
 
@@ -82,7 +79,7 @@ def test_big_five_conversion():
     assert abs(delta["deltaS"] - expected_deltaS) < 0.01, "deltaS 轉換錯誤"
     assert abs(delta["deltaR"] - expected_deltaR) < 0.01, "deltaR 轉換錯誤"
 
-    print(f"✅ 轉換驗證通過")
+    print("✅ 轉換驗證通過")
 
     return True
 
@@ -143,7 +140,7 @@ def test_vector_validation():
     persona_path = Path(__file__).parent.parent / "memory" / "personas" / "antigravity.yaml"
 
     if not persona_path.exists():
-        print(f"⚠️ 人格檔案不存在")
+        print("⚠️ 人格檔案不存在")
         return False
 
     persona = load_persona(str(persona_path))
@@ -181,7 +178,7 @@ def test_integration():
     persona_path = Path(__file__).parent.parent / "memory" / "personas" / "antigravity.yaml"
 
     if not persona_path.exists():
-        print(f"⚠️ 人格檔案不存在")
+        print("⚠️ 人格檔案不存在")
         return False
 
     persona = load_persona(str(persona_path))

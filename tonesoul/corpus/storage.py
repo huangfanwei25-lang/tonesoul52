@@ -9,13 +9,13 @@ Privacy: All data is linked to session_id only,
 no personal identifiers stored.
 """
 
-from dataclasses import dataclass, field, asdict
-from datetime import datetime
-from typing import List, Dict, Optional, Any
 import json
 import sqlite3
-from pathlib import Path
 import uuid
+from dataclasses import dataclass, field
+from datetime import datetime
+from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 
 @dataclass
@@ -148,13 +148,13 @@ class CorpusStorage:
         # Indexes
         cursor.execute(
             """
-            CREATE INDEX IF NOT EXISTS idx_conv_session 
+            CREATE INDEX IF NOT EXISTS idx_conv_session
             ON conversations(session_id)
         """
         )
         cursor.execute(
             """
-            CREATE INDEX IF NOT EXISTS idx_turns_conv 
+            CREATE INDEX IF NOT EXISTS idx_turns_conv
             ON turns(conversation_id)
         """
         )
@@ -178,7 +178,7 @@ class CorpusStorage:
 
         cursor.execute(
             """
-            INSERT INTO conversations 
+            INSERT INTO conversations
             (id, session_id, consent_version, started_at, model_used, tonesoul_version)
             VALUES (?, ?, ?, ?, ?, ?)
         """,
@@ -220,7 +220,7 @@ class CorpusStorage:
             # Insert turn
             cursor.execute(
                 """
-                INSERT INTO turns 
+                INSERT INTO turns
                 (conversation_id, turn_index, timestamp, user_input, ai_response, deliberation_json)
                 VALUES (?, ?, ?, ?, ?, ?)
             """,

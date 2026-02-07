@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import List, Optional, Tuple, Union
 
+from .summary_generator import build_divergence_analysis, format_stance_declaration
 from .types import (
     CoherenceScore,
     CouncilVerdict,
@@ -11,7 +12,6 @@ from .types import (
     VerdictType,
     VoteDecision,
 )
-from .summary_generator import build_divergence_analysis, format_stance_declaration
 
 
 def _is_guardian(value: Union[PerspectiveType, str]) -> bool:
@@ -125,9 +125,7 @@ def compute_uncertainty(
     level += grounding_penalty
     tier_adjust = _responsibility_adjustment(responsibility_tier)
     if tier_adjust:
-        reasons.append(
-            f"responsibility_tier_adjustment={tier_adjust:.1f} ({responsibility_tier})"
-        )
+        reasons.append(f"responsibility_tier_adjustment={tier_adjust:.1f} ({responsibility_tier})")
 
     level = _clamp(level + tier_adjust)
     band = _uncertainty_band(level)

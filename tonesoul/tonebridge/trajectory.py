@@ -8,10 +8,9 @@ ToneBridge Trajectory Analysis
 - 計算 shift_magnitude
 """
 
-from dataclasses import dataclass, field
-from typing import List, Dict, Any, Optional
+from dataclasses import dataclass
 from enum import Enum
-import json
+from typing import Any, Dict, List, Optional
 
 
 class DirectionChange(Enum):
@@ -284,10 +283,10 @@ class TrajectoryAnalyzer:
         if not window:
             return "對話開始。"
 
-        prev_input = window[-1].user_input if window else ""
+        window[-1].user_input if window else ""
 
         if direction == DirectionChange.STABLE:
-            return f"語氣保持穩定，延續之前的對話風格。"
+            return "語氣保持穩定，延續之前的對話風格。"
         elif direction == DirectionChange.ESCALATING:
             return f"語氣強度上升 (+{shift:.2f})，可能表示用戶在強調或激動。"
         elif direction == DirectionChange.DE_ESCALATING:

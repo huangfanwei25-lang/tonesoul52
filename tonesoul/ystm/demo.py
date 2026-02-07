@@ -4,8 +4,8 @@ from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Sequence, Tuple
 
 from .audit import build_audit_log
-from .ingest import normalize_segments
 from .energy import EnergyConfig
+from .ingest import normalize_segments
 from .projection import compute_pca_positions
 from .render import render_html, render_png, render_svg
 from .representation import EmbeddingConfig, build_nodes
@@ -17,7 +17,6 @@ from .terrain import (
     kde_grid,
     marching_squares,
 )
-
 
 DEFAULT_SEGMENTS = [
     {

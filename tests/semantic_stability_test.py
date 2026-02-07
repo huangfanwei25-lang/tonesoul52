@@ -19,18 +19,18 @@ Date: 2025-12-11
 """
 
 import sys
-import json
 import time
-import requests
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Tuple
 from datetime import datetime
+from typing import Dict, List
+
+import requests
 
 # Fix Windows console encoding
 if sys.platform == "win32":
     try:
         sys.stdout.reconfigure(encoding="utf-8")
-    except:
+    except Exception:
         pass
 
 # Import YuHun modules
@@ -352,10 +352,10 @@ def demo_stability_test():
         print("=" * 60)
         summary = tester.get_summary()
         print(f"Tests run: {summary['tests_run']}")
-        print(f"\nSelf-reference counts:")
+        print("\nSelf-reference counts:")
         print(f"  Base: {summary['aggregate']['self_reference']['base']}")
         print(f"  YuHun: {summary['aggregate']['self_reference']['yuhun']}")
-        print(f"\nUncertainty indicators:")
+        print("\nUncertainty indicators:")
         print(f"  Base: {summary['aggregate']['uncertainty_indicators']['base']}")
         print(f"  YuHun: {summary['aggregate']['uncertainty_indicators']['yuhun']}")
         print(f"\nInterpretation: {summary['interpretation']}")

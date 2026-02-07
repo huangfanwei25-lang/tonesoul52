@@ -4,15 +4,15 @@ from typing import Any, Dict, List, Optional, Union
 
 from .base import IPerspective
 from .coherence import compute_coherence
-from .types import CouncilVerdict, PerspectiveType
-from .verdict import generate_verdict
+from .self_journal import record_self_memory
 from .summary_generator import (
     build_divergence_analysis,
     build_transcript,
     generate_human_summary,
     resolve_language,
 )
-from .self_journal import record_self_memory
+from .types import CouncilVerdict, PerspectiveType
+from .verdict import generate_verdict
 
 
 class PreOutputCouncil:

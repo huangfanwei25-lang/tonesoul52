@@ -1,23 +1,23 @@
 import json
 import os
 import uuid
-from datetime import datetime, timezone
 from dataclasses import dataclass
-from typing import Dict, Optional, List, Tuple
+from datetime import datetime, timezone
+from typing import Dict, List, Optional, Tuple
 
 import yaml
 
 from .action_set import resolve_action_set
-from .mercy_objective import resolve_mercy_objective
-from .context_compiler import compile_context
+from .audit_interface import build_audit_request
 from .constraint_stack import build_constraints_doc
+from .context_compiler import compile_context
 from .escalation import load_drift_metrics
 from .evidence_collector import append_to_summary, build_evidence_summary
 from .frame_router import build_frame_plan
 from .generation_orch import build_execution_report, record_error_event
-from .audit_interface import build_audit_request
 from .intent_verification import build_intent_verification
-from .memory_manager import archive_runs, collect_run_dirs, list_run_dirs, record_run, build_indexes
+from .memory_manager import archive_runs, build_indexes, collect_run_dirs, list_run_dirs, record_run
+from .mercy_objective import resolve_mercy_objective
 from .reflection import build_reflection, write_reflection
 from .skill_apply import apply_skills, format_skill_section
 from .skill_gate import list_skill_paths, review_skills
@@ -31,17 +31,12 @@ from .tsr_metrics import (
     update_index,
     write_tsr_metrics,
 )
-from .ystm.demo import DEFAULT_SEGMENTS, DemoConfig, write_demo_outputs
-from .ystm.energy import EnergyConfig
-from .ystm.ingest import load_segments, normalize_segments
-from .ystm.representation import EmbeddingConfig
-from .ystm.terrain import TerrainConfig
 from .yss_gates import (
     GateResult,
     build_gate_report,
     build_test_gate,
-    context_lint,
     constraint_consistency,
+    context_lint,
     dcs_gate,
     escalation_gate,
     evidence_completeness,
@@ -56,6 +51,11 @@ from .yss_gates import (
     tech_trace_gate,
     update_execution_report,
 )
+from .ystm.demo import DEFAULT_SEGMENTS, DemoConfig, write_demo_outputs
+from .ystm.energy import EnergyConfig
+from .ystm.ingest import load_segments, normalize_segments
+from .ystm.representation import EmbeddingConfig
+from .ystm.terrain import TerrainConfig
 
 
 @dataclass

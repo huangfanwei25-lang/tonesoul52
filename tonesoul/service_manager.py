@@ -8,11 +8,11 @@ Service Manager with Darlin-inspired patterns
 - 資源分級
 """
 
-from dataclasses import dataclass, field
+import json
+from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
 from typing import Dict, List, Optional
-import json
 
 
 class ServiceCode(Enum):

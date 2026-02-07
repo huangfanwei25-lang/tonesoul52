@@ -11,21 +11,20 @@ Tests cover:
 5. Index management
 """
 
-import pytest
 import json
 
 from tonesoul.tsr_metrics import (
-    score,
-    build_tsr_metrics,
-    load_tsr_policy,
-    resolve_tsr_policy,
-    load_index,
-    update_index,
-    latest_entry,
-    write_tsr_metrics,
     DEFAULT_LEXICON,
     DEFAULT_TENSION,
     DEFAULT_VARIABILITY,
+    build_tsr_metrics,
+    latest_entry,
+    load_index,
+    load_tsr_policy,
+    resolve_tsr_policy,
+    score,
+    update_index,
+    write_tsr_metrics,
 )
 
 

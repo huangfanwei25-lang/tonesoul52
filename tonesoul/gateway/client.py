@@ -81,7 +81,9 @@ class GatewayClient:
         await ws.send(json.dumps(envelope, ensure_ascii=False))
         return envelope
 
-    async def send_session(self, session: GatewaySession, event_type: str = "session_open") -> dict[str, Any]:
+    async def send_session(
+        self, session: GatewaySession, event_type: str = "session_open"
+    ) -> dict[str, Any]:
         return await self.send(session.channel, session.to_gateway_payload(event_type=event_type))
 
 

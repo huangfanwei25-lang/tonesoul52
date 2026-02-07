@@ -4,9 +4,9 @@ import sys
 
 sys.path.insert(0, ".")
 
-from tools.orchestrator import Orchestrator, HealthMonitor
-from tools.handoff_builder import Phase, PendingTask, DriftEntry, ContextSummary
 from memory.observer import MemoryObserver
+from tools.handoff_builder import ContextSummary, DriftEntry, PendingTask, Phase
+from tools.orchestrator import HealthMonitor, Orchestrator
 
 
 def test_normal_operation():
@@ -51,14 +51,12 @@ def test_quota_exhausted():
         "quota low",
         context_summary=context,
         phase=Phase(current="run", reason="low quota"),
-        pending_tasks=[
-            PendingTask(id="task_001", description="handoff", status="in_progress")
-        ],
+        pending_tasks=[PendingTask(id="task_001", description="handoff", status="in_progress")],
         drift_log=[
             DriftEntry(
                 timestamp="2026-02-04T18:00:00Z",
-                choice="switch", 
-                toward="handoff", 
+                choice="switch",
+                toward="handoff",
                 away_from="stay",
             )
         ],

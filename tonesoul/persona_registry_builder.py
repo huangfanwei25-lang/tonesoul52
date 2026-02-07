@@ -3,7 +3,6 @@ import os
 import re
 from typing import Dict, List
 
-
 WORKSPACE_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 REPORTS_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "reports"))
 

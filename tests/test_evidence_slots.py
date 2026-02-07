@@ -10,14 +10,15 @@ Tests cover:
 """
 
 import pytest
-from tonesoul.council.evidence_detector import EvidenceDetector, ClaimType, ClaimAnalysis
+
+from tonesoul.council.evidence_detector import ClaimType, EvidenceDetector
 from tonesoul.council.perspectives.analyst import AnalystPerspective
-from tonesoul.council.types import (
-    VoteDecision,
-    GroundingStatus,
-    UNGROUNDED_CONFIDENCE_CAP,
-)
 from tonesoul.council.pre_output_council import PreOutputCouncil
+from tonesoul.council.types import (
+    UNGROUNDED_CONFIDENCE_CAP,
+    GroundingStatus,
+    VoteDecision,
+)
 
 
 class TestEvidenceDetector:

@@ -5,7 +5,6 @@ import warnings
 from datetime import datetime
 from typing import Dict, Optional
 
-
 WORKSPACE_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 if WORKSPACE_ROOT not in sys.path:
     sys.path.insert(0, WORKSPACE_ROOT)
@@ -25,7 +24,7 @@ def run_council(
         DeprecationWarning,
         stacklevel=2,
     )
-    from tonesoul.council.runtime import CouncilRuntime, CouncilRequest
+    from tonesoul.council.runtime import CouncilRequest, CouncilRuntime
 
     request = CouncilRequest(
         draft_output=question,

@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 from typing import Any, Mapping, Optional
 from uuid import uuid4
 
-from memory.genesis import Genesis, resolve_responsibility_tier
+from memory.genesis import Genesis
 from memory.provenance_chain import ProvenanceManager
 from tonesoul.benevolence import AuditLayer, filter_benevolence
 from tonesoul.gateway.session import GatewaySession
@@ -206,12 +206,16 @@ class OpenClawAuditor:
             },
         )
 
-    def _normalize_session(self, session: Optional[GatewaySession | Mapping[str, Any]]) -> GatewaySession:
+    def _normalize_session(
+        self, session: Optional[GatewaySession | Mapping[str, Any]]
+    ) -> GatewaySession:
         if isinstance(session, GatewaySession):
             return session
         if isinstance(session, Mapping):
             return GatewaySession.from_payload(session)
-        return GatewaySession(session_id=f"session_{uuid4().hex[:12]}", genesis=Genesis.REACTIVE_USER)
+        return GatewaySession(
+            session_id=f"session_{uuid4().hex[:12]}", genesis=Genesis.REACTIVE_USER
+        )
 
 
 __all__ = [

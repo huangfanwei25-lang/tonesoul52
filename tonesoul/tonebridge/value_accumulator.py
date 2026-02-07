@@ -13,14 +13,12 @@ Values are not pre-programmed. They emerge from:
 4. Pattern crystallizes into a value
 """
 
-from dataclasses import dataclass, field
-from datetime import datetime
-from typing import Optional, List, Dict
 from collections import defaultdict
-import json
+from dataclasses import dataclass
+from datetime import datetime
+from typing import Dict, List, Optional
 
-from .self_commit import AssertionType
-from .rupture_detector import SemanticRupture, RuptureSeverity
+from .rupture_detector import SemanticRupture
 
 
 @dataclass
@@ -253,7 +251,6 @@ class ValueAccumulator:
         description = descriptions.get(pattern, f"從 {domain} 領域的修正模式中湧現的價值取向")
 
         # Find supporting corrections
-        pattern_key = f"{domain}:{pattern}"
         supporting = [
             c.id for c in self.corrections if c.correction_pattern == pattern and c.domain == domain
         ]

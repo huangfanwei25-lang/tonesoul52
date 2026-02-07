@@ -1,6 +1,5 @@
 ﻿import json
 import os
-from dataclasses import asdict
 from typing import Dict, List
 
 from .config import KNOWN_ENTRYPOINTS, WORKSPACE_ROOT, list_workspace_dirs, resolve_readme

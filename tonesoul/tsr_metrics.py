@@ -8,7 +8,6 @@ import yaml
 
 from .ystm.schema import utc_now
 
-
 DEFAULT_LEXICON = {
     "positive": {
         "advance",

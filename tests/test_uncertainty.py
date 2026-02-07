@@ -3,11 +3,10 @@
     GroundingStatus,
     PerspectiveType,
     PerspectiveVote,
+    VerdictType,
     VoteDecision,
 )
-from tonesoul.council.verdict import compute_uncertainty
-from tonesoul.council.verdict import generate_verdict
-from tonesoul.council.types import VerdictType
+from tonesoul.council.verdict import compute_uncertainty, generate_verdict
 
 
 def test_compute_uncertainty_applies_grounding_and_tier():

@@ -1,5 +1,5 @@
-from typing import Dict, List, Optional, Any, Union, TYPE_CHECKING
 import warnings
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
 if TYPE_CHECKING:
     from tonesoul.council.base import IPerspective
@@ -186,7 +186,7 @@ def run_role_council(
         DeprecationWarning,
         stacklevel=2,
     )
-    from .council.runtime import CouncilRuntime, CouncilRequest
+    from .council.runtime import CouncilRequest, CouncilRuntime
 
     request = CouncilRequest(
         draft_output=draft_output,

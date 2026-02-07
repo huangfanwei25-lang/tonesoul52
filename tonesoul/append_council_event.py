@@ -1,12 +1,11 @@
+import hashlib
 import json
 import os
 import uuid
-import hashlib
 from datetime import datetime
 from typing import Dict, Optional
 
 from tonesoul.council.runtime import CouncilRequest, CouncilRuntime
-
 
 WORKSPACE_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 LEDGER_PATH = os.path.join(WORKSPACE_ROOT, "memory", "provenance_ledger.jsonl")

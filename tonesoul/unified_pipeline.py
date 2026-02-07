@@ -4,9 +4,9 @@ Combines ToneBridge psychological analysis with Council deliberation.
 """
 
 from __future__ import annotations
+
 from dataclasses import dataclass, field
-from typing import Dict, Any, List, Optional
-import json
+from typing import Any, Dict, List, Optional
 
 
 @dataclass
@@ -429,13 +429,12 @@ class UnifiedPipeline:
                 verdict_dict = {"error": str(e)}
 
         # ========== 7. 第三公理：語場斷裂偵測 ==========
-        rupture_warning = ""
         rupture_detector = self._get_rupture_detector()
         if rupture_detector and commit_stack:
             try:
                 ruptures = rupture_detector.detect(response, commit_stack)
                 if ruptures:
-                    rupture_warning = rupture_detector.format_rupture_warning(ruptures)
+                    rupture_detector.format_rupture_warning(ruptures)
                     # 將斷裂記錄到 internal_monologue
                     internal_monologue += f"\n\n⚠️ 語場斷裂風險：偵測到 {len(ruptures)} 個潛在矛盾。"
             except Exception as e:

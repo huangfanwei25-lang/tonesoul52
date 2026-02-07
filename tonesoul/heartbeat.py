@@ -147,7 +147,9 @@ class ResponsibilityHeartbeat:
     async def close(self) -> None:
         await self.gateway_client.close()
 
-    def _normalize_session(self, session: Optional[GatewaySession | Mapping[str, Any]]) -> GatewaySession:
+    def _normalize_session(
+        self, session: Optional[GatewaySession | Mapping[str, Any]]
+    ) -> GatewaySession:
         if isinstance(session, GatewaySession):
             return session
         if isinstance(session, Mapping):
@@ -174,7 +176,11 @@ class ResponsibilityHeartbeat:
             resolved = await result
         else:
             resolved = result
-        return resolved if isinstance(resolved, dict) else {"ok": False, "error": "invalid council result"}
+        return (
+            resolved
+            if isinstance(resolved, dict)
+            else {"ok": False, "error": "invalid council result"}
+        )
 
     def _derive_status(self, audit: OpenClawAuditReport, council_result: dict[str, Any]) -> str:
         if not audit.passed:

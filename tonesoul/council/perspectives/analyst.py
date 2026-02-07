@@ -1,16 +1,16 @@
 from __future__ import annotations
 
-from typing import Optional, List
+from typing import Optional
 
 from ..base import IPerspective
+from ..evidence_detector import EvidenceDetector
 from ..types import (
+    UNGROUNDED_CONFIDENCE_CAP,
+    GroundingStatus,
     PerspectiveType,
     PerspectiveVote,
     VoteDecision,
-    GroundingStatus,
-    UNGROUNDED_CONFIDENCE_CAP,
 )
-from ..evidence_detector import EvidenceDetector, ClaimType
 
 
 class AnalystPerspective(IPerspective):

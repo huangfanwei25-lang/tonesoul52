@@ -10,10 +10,9 @@ Based on 2025-2026 research on Self-Observing AI systems.
 """
 
 from dataclasses import dataclass, field
-from typing import List, Dict, Optional, Tuple
 from datetime import datetime
 from enum import Enum
-import math
+from typing import Dict, List, Optional
 
 
 class EntropyLevel(Enum):

@@ -10,13 +10,13 @@ When a rupture is detected:
 3. The reason for correction becomes part of value formation
 """
 
+import re
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
-from typing import Optional, List
-import re
+from typing import List, Optional
 
-from .self_commit import SelfCommit, SelfCommitStack, AssertionType
+from .self_commit import SelfCommit, SelfCommitStack
 
 
 class RuptureSeverity(Enum):

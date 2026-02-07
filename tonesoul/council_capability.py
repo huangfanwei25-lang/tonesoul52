@@ -12,7 +12,6 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
 from typing import Dict, List, Optional, Tuple
-import math
 
 
 class CouncilRole(Enum):
@@ -124,14 +123,12 @@ class CapabilityBoundary:
         """
         # 嘗試匹配技能
         coverage = 0.0
-        matched_skill = None
 
         for skill, level in self.skills.items():
             # 簡單的模糊匹配
             if task_domain.lower() in skill.lower() or skill.lower() in task_domain.lower():
                 if level > coverage:
                     coverage = level
-                    matched_skill = skill
 
         # 生成建議
         if coverage >= 0.8:

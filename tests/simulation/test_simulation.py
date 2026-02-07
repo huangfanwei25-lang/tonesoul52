@@ -11,10 +11,9 @@ Based on 2025-2026 research on simulation-based testing for conversational AI.
 """
 
 from dataclasses import dataclass, field
-from typing import List, Dict, Optional, Callable, Any
-from enum import Enum
-import random
 from datetime import datetime
+from enum import Enum
+from typing import Callable, Dict, List, Optional
 
 
 class ScenarioType(Enum):

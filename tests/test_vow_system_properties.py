@@ -5,17 +5,17 @@ Property-Based Tests for VowSystem
 """
 
 import pytest
-from hypothesis import given, settings, strategies as st
-from hypothesis import assume
+from hypothesis import given, settings
+from hypothesis import strategies as st
+
 from tonesoul.vow_system import (
     Vow,
     VowAction,
-    VowRegistry,
-    VowEnforcer,
-    VowEnforcementResult,
     VowCheckResult,
+    VowEnforcementResult,
+    VowEnforcer,
+    VowRegistry,
 )
-
 
 # === Strategies ===
 

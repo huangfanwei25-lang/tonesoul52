@@ -11,13 +11,14 @@ ToneSoul + LLM Integration
 
 import json
 import os
-import requests
-from datetime import datetime
-from pathlib import Path
-from typing import Dict, List, Optional, Tuple, Generator
 
 # Import UnifiedCore
 import sys
+from datetime import datetime
+from pathlib import Path
+from typing import Dict, List, Optional, Tuple
+
+import requests
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 

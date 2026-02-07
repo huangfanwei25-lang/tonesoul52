@@ -8,12 +8,11 @@ Each output generates a SelfCommit that becomes part of the semantic field.
          且該輸出對未來具有不可被忽略的約束力。
 """
 
+import hashlib
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from typing import Optional, List
-import hashlib
-import json
+from typing import List, Optional
 
 
 class AssertionType(Enum):

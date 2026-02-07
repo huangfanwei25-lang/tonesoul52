@@ -11,11 +11,11 @@ The model doesn't just 'get better', it knows WHY it became what it is.
 Happened → Seen → Tagged → Remembered
 """
 
-from dataclasses import dataclass, field, asdict
-from datetime import datetime, timezone
-from typing import Optional, List, Dict, Any
-import json
 import hashlib
+import json
+from dataclasses import asdict, dataclass, field
+from datetime import datetime, timezone
+from typing import Any, Dict, List
 
 
 @dataclass

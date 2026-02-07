@@ -3,8 +3,8 @@ from pathlib import Path
 
 from memory.consolidator import MemoryConsolidator
 from memory.genesis import Genesis
-from memory.semantic_memory import SemanticMemory
 from memory.self_memory import load_recent_memory, record_self_memory
+from memory.semantic_memory import SemanticMemory
 from tonesoul import tsr_metrics
 from tonesoul.council.intent_reconstructor import GenesisDecision, infer_genesis
 from tonesoul.council.types import CoherenceScore, CouncilVerdict, VerdictType

@@ -264,7 +264,7 @@ class PersonaDimension:
 
     def _add_responsibility(self, text: str) -> str:
         """增加責任感語句"""
-        tone = self.communication.get("tone", "專業")
+        self.communication.get("tone", "專業")
         if "確認" not in text and "驗證" not in text:
             text = text + "\n\n（請確認以上資訊是否符合您的需求。）"
         return text

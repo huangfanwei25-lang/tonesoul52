@@ -9,22 +9,21 @@ Inspired by Legitimation Code Theory's concept of
 is context-dependent.
 """
 
-from dataclasses import dataclass
-from typing import List, Dict, Optional, Tuple
 from itertools import combinations
+from typing import List, Optional
 
 from .types import (
-    ViewPoint,
-    Tension,
-    SynthesizedResponse,
-    SynthesisType,
-    PerspectiveType,
-    DeliberationWeights,
     DeliberationContext,
+    DeliberationWeights,
+    PerspectiveType,
+    SuggestedReply,
+    SynthesisType,
+    SynthesizedResponse,
+    TacticalDecision,
+    Tension,
     # ToneStream Distillation
     TensionZone,
-    TacticalDecision,
-    SuggestedReply,
+    ViewPoint,
 )
 
 
@@ -133,9 +132,6 @@ class SemanticGravity:
         confidence_diff = abs(v1.confidence - v2.confidence)
 
         # Check for opposing concerns
-        has_opposing_concerns = (v1.concerns and not v2.concerns) or (
-            v2.concerns and not v1.concerns
-        )
 
         # Check Aegis safety vs others' confidence
         if v1.perspective == PerspectiveType.AEGIS:

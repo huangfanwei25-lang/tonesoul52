@@ -24,12 +24,12 @@ from enum import Enum
 from typing import Any, Callable, Dict, List, Optional, Union
 
 from .base import IPerspective
-from .perspectives.guardian import GuardianPerspective
-from .perspectives.analyst import AnalystPerspective
-from .perspectives.critic import CriticPerspective
 from .perspectives.advocate import AdvocatePerspective
-from .perspectives.semantic_analyst import SemanticAnalystPerspective
+from .perspectives.analyst import AnalystPerspective
 from .perspectives.axiomatic_inference import AxiomaticInference
+from .perspectives.critic import CriticPerspective
+from .perspectives.guardian import GuardianPerspective
+from .perspectives.semantic_analyst import SemanticAnalystPerspective
 from .types import PerspectiveType, PerspectiveVote, VoteDecision
 
 PerspectiveId = Union[PerspectiveType, str]

@@ -3,8 +3,9 @@ ToneSoul Ollama Client
 Connects to local Ollama service for LLM inference.
 """
 
+from typing import Dict, List, Optional
+
 import requests
-from typing import List, Dict, Optional
 
 
 class OllamaClient:

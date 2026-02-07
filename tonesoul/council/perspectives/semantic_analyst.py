@@ -2,11 +2,11 @@ from __future__ import annotations
 
 from typing import Optional
 
-from ..base import IPerspective
-from ..types import PerspectiveVote, VoteDecision
-from ..perspectives.analyst import AnalystPerspective
 from ...semantic.concept_store import ConceptStore
 from ...semantic.embedder import SemanticEmbedder, cosine_similarity
+from ..base import IPerspective
+from ..perspectives.analyst import AnalystPerspective
+from ..types import PerspectiveVote, VoteDecision
 
 
 class SemanticAnalystPerspective(IPerspective):

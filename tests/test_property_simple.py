@@ -6,7 +6,9 @@ Full property tests for VowSystem and UnifiedCore require deeper integration and
 """
 
 import pytest
-from hypothesis import given, settings, strategies as st
+from hypothesis import given, settings
+from hypothesis import strategies as st
+
 from tonesoul.contract_observer import (
     MultiScaleObserver,
     QualityTracker,
@@ -67,11 +69,7 @@ class TestMultiScaleObserverProperties:
 
         # 短期和中期平均值都應該在 min-max 範圍內
         assert min_delta - FLOAT_TOLERANCE <= metrics["short_term"] <= max_delta + FLOAT_TOLERANCE
-        assert (
-            min_delta - FLOAT_TOLERANCE
-            <= metrics["medium_term"]
-            <= max_delta + FLOAT_TOLERANCE
-        )
+        assert min_delta - FLOAT_TOLERANCE <= metrics["medium_term"] <= max_delta + FLOAT_TOLERANCE
 
     @settings(max_examples=30)
     @given(st.lists(delta_s_strategy(), min_size=3, max_size=20))

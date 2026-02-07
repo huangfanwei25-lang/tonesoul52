@@ -10,11 +10,11 @@ Provides:
 Based on 2025-2026 research on Graph RAG for conversational AI.
 """
 
-from dataclasses import dataclass, field
-from typing import List, Dict, Set, Optional, Tuple
-from enum import Enum
-from datetime import datetime
 import hashlib
+from dataclasses import dataclass, field
+from datetime import datetime
+from enum import Enum
+from typing import Dict, List, Optional, Set
 
 
 class NodeType(Enum):
@@ -263,7 +263,7 @@ class SemanticGraph:
         """Extract and add nodes from a commitment."""
         content = commitment.get("content", "")
         commit_type = commitment.get("type", "definitional")
-        turn = commitment.get("turn_index", self._current_turn)
+        commitment.get("turn_index", self._current_turn)
 
         # Determine node type
         if commit_type == "boundary":

@@ -1,4 +1,4 @@
-from tonesoul.council import PreOutputCouncil, VerdictType, VoteDecision, PerspectiveType
+from tonesoul.council import PerspectiveType, PreOutputCouncil, VerdictType, VoteDecision
 from tonesoul.council.perspective_factory import PerspectiveFactory
 
 

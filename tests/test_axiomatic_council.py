@@ -9,7 +9,6 @@ import sys
 sys.path.insert(0, ".")
 
 from tonesoul.council.pre_output_council import PreOutputCouncil
-from tonesoul.council.perspective_factory import PerspectiveFactory
 
 
 def test_axiomatic_voting():

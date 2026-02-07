@@ -10,7 +10,6 @@ from typing import Any, Dict, List, Literal, Optional
 
 from .schema import Node, as_clean_dict, stable_hash, utc_now
 
-
 # Source grades for evidence tracking
 SourceGrade = Literal["A", "B", "C"]
 # Trace level for retention behavior

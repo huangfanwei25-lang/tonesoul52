@@ -4,8 +4,8 @@ import sys
 
 sys.path.insert(0, ".")
 
-from tools.orchestrator import Orchestrator, HealthMonitor
 from tools.handoff_builder import ContextSummary
+from tools.orchestrator import HealthMonitor, Orchestrator
 
 
 def test_intent_awareness():

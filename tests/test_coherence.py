@@ -1,4 +1,4 @@
-from tonesoul.council.coherence import compute_coherence, _agreement_score
+from tonesoul.council.coherence import _agreement_score, compute_coherence
 from tonesoul.council.types import PerspectiveType, PerspectiveVote, VoteDecision
 
 

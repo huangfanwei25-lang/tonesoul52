@@ -7,11 +7,10 @@ The three internal voices that deliberate before output:
 - Aegis (守護者): Safety, ethics, boundaries + Veto power
 """
 
-from dataclasses import dataclass
-from typing import List, Dict, Optional
 from abc import ABC, abstractmethod
+from typing import Dict, List
 
-from .types import ViewPoint, PerspectiveType, DeliberationContext
+from .types import DeliberationContext, PerspectiveType, ViewPoint
 
 
 class BasePerspective(ABC):
@@ -79,7 +78,7 @@ class MusePerspective(BasePerspective):
 
         if is_philosophical:
             view.confidence = 0.8
-            view.reasoning = f"用戶觸及存在主義議題，我應該提供深度連結和隱喻。"
+            view.reasoning = "用戶觸及存在主義議題，我應該提供深度連結和隱喻。"
             view.metaphors = self._generate_metaphors(user_input)
             view.existential_connections = self._find_existential_connections(user_input)
         else:

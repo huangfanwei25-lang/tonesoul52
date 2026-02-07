@@ -11,10 +11,9 @@ Privacy-first design:
 - Opt-out support
 """
 
-from .consent import ConsentManager, UserConsent, ConsentType
-from .storage import CorpusStorage, Conversation, ConversationTurn
+from .consent import ConsentManager, ConsentType, UserConsent
 from .pipeline import CorpusPipeline, create_corpus_pipeline
-
+from .storage import Conversation, ConversationTurn, CorpusStorage
 
 __all__ = [
     # Consent

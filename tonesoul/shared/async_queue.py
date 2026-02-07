@@ -24,7 +24,7 @@ Usage:
 """
 
 import asyncio
-from typing import TypeVar, Generic, List, Optional
+from typing import Generic, List, TypeVar
 
 T = TypeVar("T")
 

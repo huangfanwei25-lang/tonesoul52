@@ -4,11 +4,13 @@ import os
 from typing import Dict, Optional
 
 from .escalation import load_drift_metrics
+from .yss_gates import _load_json as load_json
+from .yss_gates import _load_yaml as load_yaml
 from .yss_gates import (
     build_gate_report,
     build_test_gate,
-    context_lint,
     constraint_consistency,
+    context_lint,
     dcs_gate,
     escalation_gate,
     evidence_completeness,
@@ -23,8 +25,6 @@ from .yss_gates import (
     tech_trace_gate,
     update_execution_report,
 )
-from .yss_gates import _load_json as load_json
-from .yss_gates import _load_yaml as load_yaml
 
 
 def build_arg_parser() -> argparse.ArgumentParser:

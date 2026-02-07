@@ -1,6 +1,4 @@
-﻿import os
-
-from tools.handoff_builder import HandoffBuilder
+﻿from tools.handoff_builder import HandoffBuilder
 
 
 def test_handoff_builder_uses_env_secret(monkeypatch):

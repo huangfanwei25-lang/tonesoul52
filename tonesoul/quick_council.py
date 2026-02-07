@@ -13,7 +13,7 @@ import re
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Optional, List, Dict
+from typing import List, Optional
 
 # Journal path (runtime log, ignored by git)
 JOURNAL_PATH = Path(__file__).resolve().parents[2] / "memory" / "self_journal.jsonl"

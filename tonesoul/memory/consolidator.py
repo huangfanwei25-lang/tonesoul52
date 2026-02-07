@@ -4,8 +4,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional
 
-from .stats import average_coherence, count_by_verdict, most_common_divergence
 from .soul_db import JsonlSoulDB, MemorySource, SoulDB
+from .stats import average_coherence, count_by_verdict, most_common_divergence
 
 
 @dataclass
@@ -57,7 +57,7 @@ def identify_patterns(entries: Iterable[dict]) -> Dict[str, object]:
 
 
 def generate_meta_reflection(patterns: Dict[str, object]) -> str:
-    verdict_counts = patterns.get("verdict_counts", {}) or {}
+    patterns.get("verdict_counts", {}) or {}
     block_count = int(patterns.get("block", 0) or 0)
     stance_count = int(patterns.get("declare_stance", 0) or 0)
     common_divergence = patterns.get("most_common_divergence")

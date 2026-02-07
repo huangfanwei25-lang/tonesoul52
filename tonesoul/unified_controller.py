@@ -4,12 +4,11 @@ Unified Semantic Controller with CouncilRuntime Integration
 整合 SemanticController 與 CouncilRuntime 的統一控制器
 """
 
-from typing import Dict, List, Optional
 from datetime import datetime
+from typing import Dict, List, Optional
 
 from tonesoul.semantic_control import (
     SemanticController,
-    SemanticTension,
 )
 
 

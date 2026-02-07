@@ -1,7 +1,7 @@
 import argparse
 import json
 import os
-from typing import Dict, Optional
+from typing import Dict
 
 from .ystm.diff import compute_batch_diff
 from .ystm.schema import as_clean_dict

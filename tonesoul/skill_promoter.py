@@ -333,7 +333,7 @@ def promote_skills(
             for episode in episodes
         ],
     }
-    skill_index = {
+    {
         "generated_at": utc_now(),
         "skills": [
             {

@@ -8,11 +8,11 @@ Phase B 實作：
 - QualityTracker：長期品質追蹤
 """
 
-from dataclasses import dataclass, field
+import re
+from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
 from typing import Callable, Dict, List, Optional, Tuple
-import re
 
 
 class ContractSeverity(Enum):
@@ -93,7 +93,6 @@ def check_uncertainty_disclosure(output: str) -> bool:
         "我猜",
         "應該是",
     ]
-    hedging_patterns = ["但需要確認", "請驗證", "建議確認", "仍需", "可能需要"]
 
     # 如果有不確定指標，檢查是否有適當的緩和語句
     has_uncertainty = any(u in output for u in uncertainty_indicators)

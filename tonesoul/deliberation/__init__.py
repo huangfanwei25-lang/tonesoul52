@@ -24,32 +24,28 @@ Usage:
     result = engine.deliberate_sync(context)
 """
 
-from .types import (
-    ViewPoint,
-    Tension,
-    SynthesizedResponse,
-    SynthesisType,
-    PerspectiveType,
-    DeliberationWeights,
-    DeliberationContext,
-    # ToneStream Distillation
-    TensionZone,
-    TacticalDecision,
-    SuggestedReply,
-)
-
+from .engine import InternalDeliberation, create_deliberation_engine, deliberate
+from .gravity import SemanticGravity, create_semantic_gravity
 from .perspectives import (
-    BasePerspective,
-    MusePerspective,
-    LogosPerspective,
     AegisPerspective,
+    BasePerspective,
+    LogosPerspective,
+    MusePerspective,
     create_perspectives,
 )
-
-from .gravity import SemanticGravity, create_semantic_gravity
-
-from .engine import InternalDeliberation, create_deliberation_engine, deliberate
-
+from .types import (
+    DeliberationContext,
+    DeliberationWeights,
+    PerspectiveType,
+    SuggestedReply,
+    SynthesisType,
+    SynthesizedResponse,
+    TacticalDecision,
+    Tension,
+    # ToneStream Distillation
+    TensionZone,
+    ViewPoint,
+)
 
 __all__ = [
     # Types

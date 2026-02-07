@@ -1,7 +1,6 @@
 ﻿import json
 from typing import Dict
 
-
 REQUIRED_FIELDS = [
     "event_type",
     "trace_id",

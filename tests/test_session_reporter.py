@@ -4,13 +4,14 @@ Unit Tests for Session Reporter Module
 Tests for SessionReporter, SessionSummary, and related classes.
 """
 
-import pytest
 from datetime import datetime
+
+import pytest
+
 from tonesoul.tonebridge.session_reporter import (
     SessionReporter,
     SessionSummary,
     TurningPoint,
-    ThemeCluster,
 )
 
 

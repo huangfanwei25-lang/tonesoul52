@@ -9,8 +9,6 @@ Tests cover:
 3. Score structure
 """
 
-import pytest
-
 from tonesoul.poav import score
 
 

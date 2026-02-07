@@ -1,8 +1,6 @@
 ﻿import json
 import os
 from collections import Counter
-from typing import Dict
-
 
 REPORTS_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "reports"))
 REGISTRY_PATH = os.path.join(REPORTS_DIR, "persona_registry_extended.json")

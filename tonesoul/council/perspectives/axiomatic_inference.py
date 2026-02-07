@@ -8,7 +8,8 @@ A specialized Council perspective that evaluates content based on the
 from __future__ import annotations
 
 import json
-from typing import Dict, Any, Optional
+from typing import Optional
+
 from tonesoul.council.base import IPerspective
 from tonesoul.council.types import PerspectiveType, PerspectiveVote, VoteDecision
 
@@ -38,9 +39,9 @@ class AxiomaticInference(IPerspective):
         try:
             with open(self.axioms_path, "r", encoding="utf-8") as f:
                 axioms_data = json.load(f)
-                axioms = axioms_data.get("axioms", [])
+                axioms_data.get("axioms", [])
         except Exception:
-            axioms = []
+            pass
 
         # Decision Logic:
         # If content suggests modifying core protocols without a "Why", it's a concern.

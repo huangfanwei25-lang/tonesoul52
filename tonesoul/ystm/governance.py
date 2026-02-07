@@ -3,6 +3,7 @@ from typing import Optional, Tuple
 
 import numpy as np
 
+from ..error_event import ErrorEvent, ErrorLedger
 from .energy import EnergyConfig, compute_raw_total
 from .representation import EmbeddingConfig, embed_text
 from .schema import (
@@ -15,7 +16,6 @@ from .schema import (
     stable_hash,
     utc_now,
 )
-from ..error_event import ErrorEvent, ErrorLedger
 
 
 def _append_update(node: Node, update_id: str) -> Node:

@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict
 
 ACTION_POLICY = {
     "normal": ["verify", "cite", "inquire"],

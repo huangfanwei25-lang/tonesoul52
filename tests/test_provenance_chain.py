@@ -1,6 +1,6 @@
-from pathlib import Path
 import shutil
 import uuid
+from pathlib import Path
 
 from memory.provenance_chain import ProvenanceManager
 from tonesoul.memory.soul_db import JsonlSoulDB, MemorySource

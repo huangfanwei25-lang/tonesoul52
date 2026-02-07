@@ -5,13 +5,13 @@ Property-Based Tests for ContractObserver
 """
 
 import pytest
-from hypothesis import given, settings, strategies as st, assume
+from hypothesis import given, settings
+from hypothesis import strategies as st
+
 from tonesoul.contract_observer import (
     ContractVerifier,
     MultiScaleObserver,
     QualityTracker,
-    OutputContract,
-    ContractSeverity,
 )
 
 FLOAT_TOLERANCE = 1e-4
@@ -81,11 +81,7 @@ class TestMultiScaleObserverProperties:
 
         # 短期和中期平均值都應該在 min-max 範圍內
         assert min_delta - FLOAT_TOLERANCE <= metrics["short_term"] <= max_delta + FLOAT_TOLERANCE
-        assert (
-            min_delta - FLOAT_TOLERANCE
-            <= metrics["medium_term"]
-            <= max_delta + FLOAT_TOLERANCE
-        )
+        assert min_delta - FLOAT_TOLERANCE <= metrics["medium_term"] <= max_delta + FLOAT_TOLERANCE
 
     @settings(max_examples=30)
     @given(st.lists(delta_s_strategy(), min_size=3, max_size=20))

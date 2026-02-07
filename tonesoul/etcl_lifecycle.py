@@ -1,9 +1,8 @@
 import json
 import os
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, Optional, Tuple
 
 from .ystm.schema import utc_now
-
 
 STATES = ["T0", "T1", "T2", "T3", "T4", "T5", "T6"]
 EVENT_TO_STATE = {

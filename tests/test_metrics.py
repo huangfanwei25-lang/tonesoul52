@@ -1,5 +1,4 @@
-from tonesoul import poav
-from tonesoul import tsr_metrics
+from tonesoul import poav, tsr_metrics
 
 
 def test_poav_score_empty():

@@ -22,23 +22,22 @@ Usage:
 
 import asyncio
 import time
-from typing import Optional, Callable, AsyncIterator, Union
+from typing import AsyncIterator, Callable, Optional
 
 from ..shared.async_queue import AsyncQueue
-from ..shared.errors import ERR_LOOP_CANCELLED, ERR_LOOP_TIMEOUT, ERR_ALREADY_RUNNING
+from ..shared.errors import ERR_ALREADY_RUNNING, ERR_LOOP_CANCELLED, ERR_LOOP_TIMEOUT
 from .config import LoopConfig, LoopResult, LoopState, default_loop_config
 from .events import (
-    LoopEvent,
-    LoopStartEvent,
-    LoopCompleteEvent,
-    LoopFailedEvent,
-    LoopCancelledEvent,
-    IterationStartEvent,
-    IterationCompleteEvent,
-    PromiseDetectedEvent,
     ErrorEvent,
+    IterationCompleteEvent,
+    IterationStartEvent,
+    LoopCancelledEvent,
+    LoopCompleteEvent,
+    LoopEvent,
+    LoopFailedEvent,
+    LoopStartEvent,
+    PromiseDetectedEvent,
 )
-
 
 # Type for iteration handler
 IterationHandler = Callable[[int, str], AsyncIterator[str]]

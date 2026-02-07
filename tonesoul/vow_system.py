@@ -10,8 +10,8 @@ import json
 import os
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from typing import Dict, List, Optional, Tuple
 from enum import Enum
+from typing import Dict, List, Optional
 
 
 def _utc_iso() -> str:

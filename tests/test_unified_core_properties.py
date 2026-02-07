@@ -5,9 +5,10 @@ Property-Based Tests for UnifiedCore
 """
 
 import pytest
-from hypothesis import given, settings, strategies as st, assume
-from tonesoul.unified_core import UnifiedCore
+from hypothesis import assume, given, settings
+from hypothesis import strategies as st
 
+from tonesoul.unified_core import UnifiedCore
 
 # === Strategies ===
 

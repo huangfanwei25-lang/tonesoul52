@@ -9,7 +9,6 @@ from memory.genesis import Genesis, resolve_responsibility_tier
 from memory.self_memory import load_recent_memory
 from tonesoul import tsr_metrics
 
-
 DELTA_WARNING_THRESHOLD = 0.8
 DEFAULT_BASELINE_SAMPLES = 10
 NO_TRIGGER_VALUES = {"self_reflection", "scheduled_task"}

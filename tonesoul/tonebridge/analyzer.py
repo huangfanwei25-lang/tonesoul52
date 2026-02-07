@@ -5,17 +5,17 @@ Based on 語魂論文 ToneBridge architecture.
 """
 
 from __future__ import annotations
+
 import json
-import os
 from datetime import datetime
-from typing import Optional, Dict, Any
+from typing import Any, Dict, Optional
 
 from .types import (
-    ToneAnalysis,
-    MotivePrediction,
     CollapseRisk,
     MeminiUnit,
+    MotivePrediction,
     ResonanceDefense,
+    ToneAnalysis,
     ToneBridgeResult,
 )
 
@@ -130,7 +130,7 @@ tone_direction: 最多兩個描述語氣方向的詞，如 "questioning", "asser
                 emotional_depth=float(data.get("emotional_depth", 0.5)),
                 tone_uncertainty=float(data.get("tone_uncertainty", 0.5)),
             )
-        except Exception as e:
+        except Exception:
             # Fallback to basic analysis
             return ToneAnalysis(emotion_prediction="unknown")
 

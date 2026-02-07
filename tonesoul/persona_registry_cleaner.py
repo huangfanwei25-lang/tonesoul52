@@ -3,7 +3,6 @@ import os
 from collections import Counter
 from typing import List
 
-
 REPORTS_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "reports"))
 SOURCE_PATH = os.path.join(REPORTS_DIR, "persona_registry_extended.json")
 OUTPUT_PATH = os.path.join(REPORTS_DIR, "persona_registry_cleaned.json")

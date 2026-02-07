@@ -13,14 +13,13 @@ Tests cover:
 """
 
 import pytest
-import json
 
 from tonesoul.time_island import (
-    TimeIsland,
-    TimeIslandManager,
+    ChangelogEntry,
     IslandState,
     SourceTrace,
-    ChangelogEntry,
+    TimeIsland,
+    TimeIslandManager,
     create_island,
     wrap_in_island,
 )

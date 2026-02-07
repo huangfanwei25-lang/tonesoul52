@@ -6,13 +6,13 @@ Encapsulates decision periods with bounded context, inputs, outputs, and audit t
 封裝決策週期，包含有界上下文、輸入、輸出和審計軌跡。
 """
 
+import hashlib
 import json
 import os
-import hashlib
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from typing import Dict, List, Optional, Any
 from enum import Enum
+from typing import Dict, List, Optional
 
 
 def _utc_now() -> datetime:
@@ -414,7 +414,7 @@ if __name__ == "__main__":
     print(f"   Hash: {island.hash()}")
 
     # Print YAML
-    print(f"\n--- YAML Output ---")
+    print("\n--- YAML Output ---")
     print(island.to_yaml())
 
     print("\n" + "=" * 60)

@@ -9,13 +9,13 @@ High-level interface that combines:
 Provides a simple API for the web frontend.
 """
 
+import uuid
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Optional, Dict, Any, List
-import uuid
+from typing import Any, Dict, List, Optional
 
 from .consent import ConsentManager, ConsentType, UserConsent
-from .storage import CorpusStorage, Conversation, ConversationTurn
+from .storage import CorpusStorage
 
 
 @dataclass

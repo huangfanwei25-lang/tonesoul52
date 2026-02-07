@@ -5,10 +5,10 @@ Generates insights and reports about the conversation session.
 Analyzes emotional trajectory, key turning points, and theme distribution.
 """
 
-from dataclasses import dataclass, field
-from datetime import datetime
-from typing import List, Dict, Any, Optional
 from collections import defaultdict
+from dataclasses import dataclass
+from datetime import datetime
+from typing import Dict, List, Optional
 
 
 @dataclass

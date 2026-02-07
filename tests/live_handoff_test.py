@@ -7,8 +7,8 @@ sys.path.insert(0, ".")
 from datetime import datetime
 from pathlib import Path
 
-from tools.orchestrator import Orchestrator, HealthMonitor
-from tools.handoff_builder import Phase, PendingTask, DriftEntry, ContextSummary
+from tools.handoff_builder import ContextSummary, DriftEntry, PendingTask, Phase
+from tools.orchestrator import HealthMonitor, Orchestrator
 
 
 def create_live_handoff():
@@ -41,14 +41,14 @@ def create_live_handoff():
     drift_log = [
         DriftEntry(
             timestamp="2026-02-04T09:07:00Z",
-            choice="switch", 
-            toward="handoff", 
+            choice="switch",
+            toward="handoff",
             away_from="stay",
         ),
         DriftEntry(
             timestamp="2026-02-04T18:15:00Z",
-            choice="log", 
-            toward="trace", 
+            choice="log",
+            toward="trace",
             away_from="ignore",
         ),
     ]

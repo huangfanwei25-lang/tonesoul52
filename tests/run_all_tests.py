@@ -12,7 +12,6 @@ Runs:
 """
 
 import sys
-import traceback
 from typing import List, Tuple
 
 
@@ -52,7 +51,7 @@ def run_all_tests() -> List[Tuple[str, bool, str]]:
         results.append(result)
 
         if result[1]:
-            print(f"✅ PASSED")
+            print("✅ PASSED")
         else:
             print(f"❌ FAILED: {result[2]}")
 

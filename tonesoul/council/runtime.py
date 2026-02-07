@@ -1,16 +1,17 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Union, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
+from memory.provenance_chain import ProvenanceManager
+
+from ..role_council import build_council_summary
 from .base import IPerspective
+from .intent_reconstructor import infer_genesis
 from .pre_output_council import PreOutputCouncil
 from .self_journal import record_self_memory
 from .types import CouncilVerdict, PerspectiveType
 from .verdict import apply_uncertainty
-from .intent_reconstructor import infer_genesis
-from ..role_council import build_council_summary
-from memory.provenance_chain import ProvenanceManager
 
 
 @dataclass

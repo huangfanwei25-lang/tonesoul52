@@ -6,6 +6,7 @@ from typing import List, Optional, Union
 
 from memory.genesis import Genesis
 
+
 class PerspectiveType(Enum):
     GUARDIAN = "guardian"
     ANALYST = "analyst"

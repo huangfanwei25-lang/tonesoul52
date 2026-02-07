@@ -9,7 +9,6 @@ import yaml
 
 from .ystm.schema import stable_hash, utc_now
 
-
 DEFAULT_CONTEXT_SEED = {
     "task": "Build a minimal, auditable YSTM demo.",
     "objective": "Produce traceable outputs with clear audit hooks.",

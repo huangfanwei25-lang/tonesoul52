@@ -6,7 +6,6 @@ import yaml
 from .issue_codes import IssueCode, issue
 from .ystm.schema import utc_now
 
-
 TSR_DELTA_THRESHOLD = 0.4
 
 

@@ -4,13 +4,15 @@ Unit Tests for Self-Commit Module
 Tests for SelfCommit dataclass, SelfCommitExtractor, and SelfCommitStack.
 """
 
-import pytest
 from datetime import datetime
+
+import pytest
+
 from tonesoul.tonebridge.self_commit import (
+    AssertionType,
     SelfCommit,
     SelfCommitExtractor,
     SelfCommitStack,
-    AssertionType,
 )
 
 

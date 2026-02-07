@@ -10,7 +10,6 @@ Following Copilot Ralph's pattern of:
 from dataclasses import dataclass
 from typing import Literal, Optional
 
-
 # State machine type
 LoopState = Literal["idle", "running", "complete", "failed", "cancelled"]
 

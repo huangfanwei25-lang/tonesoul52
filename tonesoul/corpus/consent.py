@@ -8,14 +8,13 @@ Handles user consent for data collection with:
 - GDPR-friendly design
 """
 
+import hashlib
+import sqlite3
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from typing import Optional, Dict, Any
-import hashlib
-import json
-import sqlite3
 from pathlib import Path
+from typing import Any, Dict, Optional
 
 
 class ConsentType(Enum):
@@ -94,7 +93,7 @@ class ConsentManager:
 
         cursor.execute(
             """
-            CREATE INDEX IF NOT EXISTS idx_session 
+            CREATE INDEX IF NOT EXISTS idx_session
             ON consents(session_id)
         """
         )
@@ -131,8 +130,8 @@ class ConsentManager:
         try:
             cursor.execute(
                 """
-                INSERT OR REPLACE INTO consents 
-                (session_id, consent_type, consent_version, agreed_at, 
+                INSERT OR REPLACE INTO consents
+                (session_id, consent_type, consent_version, agreed_at,
                  ip_hash, user_agent_hash, withdrawn, withdrawn_at)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             """,
@@ -200,7 +199,7 @@ class ConsentManager:
         try:
             cursor.execute(
                 """
-                UPDATE consents 
+                UPDATE consents
                 SET withdrawn = 1, withdrawn_at = ?
                 WHERE session_id = ?
             """,
@@ -227,7 +226,7 @@ class ConsentManager:
 
             cursor.execute(
                 """
-                SELECT consent_type, COUNT(*) as cnt 
+                SELECT consent_type, COUNT(*) as cnt
                 FROM consents WHERE withdrawn = 0
                 GROUP BY consent_type
             """

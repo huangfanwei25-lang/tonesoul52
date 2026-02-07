@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from .embedder import SemanticEmbedder, embed, similarity
 from .concept_store import Concept, ConceptStore
+from .embedder import SemanticEmbedder, embed, similarity
 
 __all__ = [
     "SemanticEmbedder",

@@ -9,11 +9,11 @@ Semantic Control System
 - LambdaObserve：狀態追蹤
 """
 
+import math
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from typing import Dict, List, Optional, Tuple
-import math
+from typing import Dict, List, Optional
 
 
 class SemanticZone(Enum):

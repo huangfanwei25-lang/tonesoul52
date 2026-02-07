@@ -5,7 +5,8 @@ These tests verify defensive programming for invalid inputs.
 """
 
 import pytest
-from tonesoul.vow_system import VowEnforcer, VowEnforcementResult
+
+from tonesoul.vow_system import VowEnforcementResult, VowEnforcer
 
 
 class TestVowEnforcerInputValidation:

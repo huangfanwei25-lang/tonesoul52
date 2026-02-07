@@ -13,25 +13,19 @@ pre-output internal deliberation.
 
 import asyncio
 import time
-from typing import List, Dict, Optional, Any
-from dataclasses import dataclass
+from typing import Any, Dict, List, Optional
 
-from .types import (
-    ViewPoint,
-    Tension,
-    SynthesizedResponse,
-    DeliberationContext,
-    PerspectiveType,
-    SynthesisType,
-)
+from .gravity import create_semantic_gravity
 from .perspectives import (
     BasePerspective,
-    MusePerspective,
-    LogosPerspective,
-    AegisPerspective,
     create_perspectives,
 )
-from .gravity import SemanticGravity, create_semantic_gravity
+from .types import (
+    DeliberationContext,
+    PerspectiveType,
+    SynthesizedResponse,
+    ViewPoint,
+)
 
 
 class InternalDeliberation:

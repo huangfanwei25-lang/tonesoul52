@@ -4,7 +4,6 @@ from typing import Optional
 
 import numpy as np
 
-
 DEFAULT_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 
 

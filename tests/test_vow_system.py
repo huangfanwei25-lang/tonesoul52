@@ -11,18 +11,19 @@ Tests cover:
 5. Custom evaluator registration
 """
 
-import pytest
 import json
 import os
 
+import pytest
+
 from tonesoul.vow_system import (
+    DEFAULT_VOWS,
     Vow,
     VowAction,
-    VowRegistry,
-    VowEnforcer,
     VowCheckResult,
     VowEnforcementResult,
-    DEFAULT_VOWS,
+    VowEnforcer,
+    VowRegistry,
     create_enforcer,
 )
 

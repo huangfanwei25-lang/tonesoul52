@@ -3,8 +3,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
 
-from .types import CouncilVerdict, PerspectiveType, PerspectiveVote, VoteDecision, VerdictType
-
+from .types import CouncilVerdict, PerspectiveType, PerspectiveVote, VerdictType, VoteDecision
 
 PERSPECTIVE_LABELS = {
     "guardian": "Safety Council",

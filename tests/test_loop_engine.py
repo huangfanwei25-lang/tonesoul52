@@ -11,19 +11,18 @@ Tests cover:
 """
 
 import asyncio
+
 import pytest
 
-from tonesoul.loop import (
-    LoopEngine,
-    LoopConfig,
-    PromiseDetectedEvent,
-    IterationStartEvent,
-    LoopCompleteEvent,
-)
-from tonesoul.shared.errors import ERR_LOOP_CANCELLED, ERR_LOOP_TIMEOUT
 from tests.helpers import build_config, drain_events
 from tests.mocks import MockLLMClient, SlowMockLLMClient
-
+from tonesoul.loop import (
+    IterationStartEvent,
+    LoopCompleteEvent,
+    LoopEngine,
+    PromiseDetectedEvent,
+)
+from tonesoul.shared.errors import ERR_LOOP_CANCELLED, ERR_LOOP_TIMEOUT
 
 # =============================================================================
 # Promise Detection Tests

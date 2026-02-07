@@ -22,13 +22,13 @@ Usage:
     print(transcript.to_markdown())
 """
 
+import hashlib
 import json
-from dataclasses import dataclass, field, asdict
+from dataclasses import asdict, dataclass, field
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
-import hashlib
+from typing import Any, List, Optional, Union
 
 from .types import PerspectiveType
 

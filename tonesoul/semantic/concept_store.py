@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Tuple
 
-from .embedder import cosine_similarity, SemanticEmbedder
+from .embedder import SemanticEmbedder, cosine_similarity
 
 
 @dataclass
