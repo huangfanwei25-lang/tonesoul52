@@ -5,22 +5,42 @@ Governed Poster Tool
 Wrapper around moltbook_poster.py with governance checks.
 """
 
-import sys
-import os
 import json
+import os
+import sys
 
 # Ensure we can import from repository root
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from memory.genesis import Genesis
+from memory.self_memory import record_self_memory
+from tools.schema import ToolErrorCode, tool_error
+
+try:
+    from memory.rag_token_gate import NarrativeGate
+
+    _NARRATIVE_GATE_IMPORT_ERROR = None
+except ImportError as e:
+    _NARRATIVE_GATE_IMPORT_ERROR = e
+
+    class NarrativeGate:  # type: ignore[no-redef]
+        """Fallback gate when optional embedding dependencies are unavailable."""
+
+        def load_memories(self):
+            return 0
+
+        def enhance(self, content, k=2):
+            return content
+
+
 try:
     from tools.moltbook_poster import post_to_moltbook
-    from memory.rag_token_gate import NarrativeGate
-    from memory.self_memory import record_self_memory
-    from memory.genesis import Genesis
-    from tools.schema import ToolErrorCode, tool_error
+
+    _POSTER_IMPORT_ERROR = None
 except ImportError as e:
-    print(f"Import Error: {e}")
-    sys.exit(1)
+    # Keep module importable for tests and dry-run environments.
+    post_to_moltbook = None
+    _POSTER_IMPORT_ERROR = e
 
 
 def run_council_deliberation(content, memories):
@@ -48,6 +68,11 @@ def governed_post(account, submolt, title, content, output_file=None):
 
     # Step 1: Narrative Memory Check (RAG)
     print("\nConsulting Narrative Memory...")
+    if _NARRATIVE_GATE_IMPORT_ERROR is not None:
+        print(
+            f"  NarrativeGate unavailable, continuing without memory context: "
+            f"{_NARRATIVE_GATE_IMPORT_ERROR}"
+        )
     gate = NarrativeGate()
     gate.load_memories()
     enhanced_context = gate.enhance(content, k=2)
@@ -82,6 +107,13 @@ def governed_post(account, submolt, title, content, output_file=None):
 
     # Step 4: Execution
     print("\nVerdict affirmed. Executing post...")
+    if post_to_moltbook is None:
+        return tool_error(
+            code=ToolErrorCode.INTERNAL_ERROR,
+            message="moltbook poster dependency unavailable.",
+            genesis=Genesis.REACTIVE_SOCIAL,
+            details={"import_error": str(_POSTER_IMPORT_ERROR)},
+        )
     result = post_to_moltbook(account, submolt, title, content)
     if not result or not result.get("success"):
         return result
