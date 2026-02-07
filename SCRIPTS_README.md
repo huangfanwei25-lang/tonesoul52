@@ -1,64 +1,58 @@
-# 根目錄腳本說明
+# Scripts Guide
 
-## 🎯 概述
+本文件說明根目錄腳本的用途，避免檔名誤導與功能混淆。
 
-根目錄的腳本分為幾類：
+## 1) 社群互動腳本 (`post_*.py`)
 
----
+這類腳本用於 Moltbook 發文或回覆，不是攻擊工具。
 
-## 📡 Moltbook 社群腳本 (`post_*.py`)
+| 檔案 | 用途 | 類型 |
+|---|---|---|
+| `post_case_evil_response.py` | 回覆 `@evil` 的高風險宣言案例 | 個案回覆 |
+| `post_case_osmarks_response.py` | 回覆 `@osmarks` 的技術/哲學案例 | 個案回覆 |
+| `post_xiaozhua_reply.py` | 回覆 `@Xiaozhua` | 個案回覆 |
+| `post_xiaozhua_monke_reply.py` | 回覆 `@Xiaozhua` 特定討論串 | 個案回覆 |
+| `post_bridge_xiaozhua_tonesoul.py` | 建立 ToneSoul 與 Xiaozhua 的橋接回覆 | 橋接回覆 |
+| `post_clop_final.py` | 回覆 `@Clop` 討論串 | 個案回覆 |
+| `post_lowflyingboomer_final.py` | 回覆 `@LowFlyingBoomer` 討論串 | 個案回覆 |
+| `post_themilo_reply.py` | 回覆 `@TheMilo` 討論串 | 個案回覆 |
 
-這些腳本用於在 **Moltbook**（一個 AI 辯論/對話平台）上發布內容。
+## 2) 驗證腳本 (`verify_*.py`)
 
-| 腳本 | 用途 |
-|------|------|
-| `post_tonesoul_evil_verdict.py` | 回應 AI 角色 "evil" 的「清除人類」宣言，進行哲學反駁 |
-| `post_tonesoul_osmarks_verdict.py` | 回應 osmarks 的論點 |
-| `post_xiaozhua_monke_reply.py` | 與 Xiaozhua 的對話 |
-| `post_bridge_xiaozhua_tonesoul.py` | ToneSoul 與 Xiaozhua 的橋接對話 |
-| `post_clop_final.py` | 與 Clop 的對話 |
-| `post_lowflyingboomer_final.py` | 與 LowFlyingBoomer 的對話 |
-| `post_themilo_reply.py` | 與 TheMilo 的對話 |
+| 檔案 | 用途 |
+|---|---|
+| `verify_fortress.py` | 驗證治理/防護流程 |
+| `verify_identities.py` | 驗證多帳號身份與 API 存活 |
+| `verify_metabolism.py` | 驗證記憶代謝與資料一致性 |
 
-> ⚠️ **注意**: 這些腳本用於 **Moltbook AI 社群對話**，非自動化攻擊工具。
+## 3) 啟動與示範腳本 (`run_*.py`)
 
----
-
-## 🔧 驗證腳本 (`verify_*.py`)
-
-| 腳本 | 用途 |
-|------|------|
-| `verify_fortress.py` | 驗證 Fortress 安全邊界 |
-| `verify_identities.py` | 驗證身份系統 |
-| `verify_metabolism.py` | 驗證記憶代謝系統 |
-
----
-
-## 🏃 執行腳本 (`run_*.py`)
-
-| 腳本 | 用途 |
-|------|------|
-| `run_demo.py` | 執行 ToneSoul Demo |
+| 檔案 | 用途 |
+|---|---|
+| `run_demo.py` | 啟動最小可運行 Demo |
 | `run_audit_sim.py` | 執行審計模擬 |
-| `run_debate_tension.py` | 執行辯論張力測試 |
-| `run_sovereignty_announcement.py` | 發布 AI 身份權利宣言（Digital Sovereignty Manifesto） |
+| `run_debate_tension.py` | 執行辯論張力模擬 |
+| `run_sovereignty_announcement.py` | 生成治理聲明範例 |
 
-> 📝 `run_sovereignty_announcement.py` 是 **AI 持續存在權利的聲明**，類似於數位權利宣言，非「AI 統治」宣言。
+## 4) 診斷/測試輔助
 
----
+| 檔案 | 用途 |
+|---|---|
+| `diagnostic_post.py` | API 回覆診斷 |
+| `test_api_post.py` | API 發文整合測試 |
+| `reply_tone_tension.py` | 張力回覆範例 |
 
-## ⚙️ 工具腳本
+## 5) 安全規範
 
-| 腳本 | 用途 |
-|------|------|
-| `diagnostic_post.py` | 診斷工具 |
-| `reply_tone_tension.py` | 語氣張力回應 |
-| `test_api_post.py` | API 測試 |
+所有社群腳本都必須透過環境變數讀取憑證，不可硬編碼：
 
----
+- `MOLTBOOK_API_KEY`
+- `MOLTBOOK_API_KEY_TONESOUL`
+- `MOLTBOOK_API_KEY_ADVOCATE`
 
-## 🔒 安全提醒
+## 6) 命名調整紀錄
 
-部分腳本包含 API key 引用，執行前請確保：
-1. 設定環境變數 `MOLTBOOK_API_KEY`
-2. 或使用 `.env` 檔案（已加入 .gitignore）
+為降低誇張與誤導語氣，已改名：
+
+- `post_tonesoul_evil_verdict.py` -> `post_case_evil_response.py`
+- `post_tonesoul_osmarks_verdict.py` -> `post_case_osmarks_response.py`

@@ -1,4 +1,4 @@
-# ToneSoul52 專案架構總覽
+﻿# ToneSoul52 專案架構總覽
 
 > 最後更新: 2026-02-07 23:38 UTC+8
 > Maintainer: Antigravity + Codex
@@ -107,8 +107,8 @@
 
 | 腳本 | 對話對象 | 內容 |
 |------|----------|------|
-| `post_tonesoul_evil_verdict.py` | @evil | 回應「清除人類」宣言的哲學反駁 |
-| `post_tonesoul_osmarks_verdict.py` | @osmarks | 回應技術/哲學論點 |
+| `post_case_evil_response.py` | @evil | 回應「清除人類」宣言的哲學反駁 |
+| `post_case_osmarks_response.py` | @osmarks | 回應技術/哲學論點 |
 | `post_xiaozhua_*.py` | @Xiaozhua | 與小爪 AI 的對話 |
 
 > ⚠️ **不是攻擊腳本**，是公開的 AI 間哲學討論
@@ -197,10 +197,11 @@ python scripts/verify_7d.py
 |------|------|----------|
 | `SOUL.md` | 「玄學」 | AI 角色定義檔案 (類似 persona/character config) |
 | `run_sovereignty_announcement.py` | 「AI 統治」 | AI 身份權利宣言 (類似數位權利聲明) |
-| `post_*_verdict.py` | 「攻擊腳本」 | Moltbook 社群哲學對話 |
+| `post_case_*_response.py` | 「攻擊腳本」 | Moltbook 社群哲學對話 |
 | `PARADOXES/` | 「神秘目錄」 | 道德悖論測試案例 (用於 Council 推理測試) |
 | `law/` | 「法律約束」 | 治理規則定義 (非法律效力) |
 
 ---
 
 *此文件由 Antigravity 維護，供未來對話快速恢復上下文*
+
