@@ -78,6 +78,38 @@ jobs:
       run: |
         ruff check tonesoul tests
 
+  architecture_boundaries:
+    name: Architecture Boundary Contract
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+
+    - name: Verify layer boundaries (blocking)
+      run: |
+        python scripts/verify_layer_boundaries.py
+
+  docs_consistency:
+    name: Docs Consistency Contract
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+
+    - name: Verify docs consistency (blocking)
+      run: |
+        python scripts/verify_docs_consistency.py
+
   red_team_rdd:
     name: Red Team RDD Gate
     runs-on: ubuntu-latest

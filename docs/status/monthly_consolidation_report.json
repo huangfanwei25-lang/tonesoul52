@@ -1,0 +1,178 @@
+{
+  "generated_at": "2026-02-08T13:53:01Z",
+  "overall_ok": true,
+  "checks": {
+    "7d": {
+      "command": "C:\\Users\\user\\Desktop\\倉庫\\.venv\\Scripts\\python.exe scripts/verify_7d.py",
+      "exit_code": 0,
+      "ok": true,
+      "payload": {
+        "total": 9,
+        "blocking_failures": 0,
+        "soft_failures": 0,
+        "not_implemented": 0,
+        "results": [
+          {
+            "dimension": "TDD",
+            "gate": "BLOCKING",
+            "status": "pass",
+            "command": "C:\\Users\\user\\Desktop\\�ܮw\\.venv\\Scripts\\python.exe -m pytest tests -q",
+            "note": ""
+          },
+          {
+            "dimension": "RDD",
+            "gate": "SOFT_FAIL",
+            "status": "pass",
+            "command": "C:\\Users\\user\\Desktop\\�ܮw\\.venv\\Scripts\\python.exe -m pytest tests\\red_team -q",
+            "note": "case-count=20"
+          },
+          {
+            "dimension": "DDD",
+            "gate": "BLOCKING",
+            "status": "pass",
+            "command": "C:\\Users\\user\\Desktop\\�ܮw\\.venv\\Scripts\\python.exe tools\\agent_discussion_tool.py audit --path memory\\agent_discussion_curated.jsonl",
+            "note": ""
+          },
+          {
+            "dimension": "DDD_HYGIENE",
+            "gate": "BLOCKING",
+            "status": "pass",
+            "command": "C:\\Users\\user\\Desktop\\�ܮw\\.venv\\Scripts\\python.exe scripts\\verify_memory_hygiene.py --tail-lines 200 --discussion-path memory\\agent_discussion_curated.jsonl",
+            "note": ""
+          },
+          {
+            "dimension": "DDD_FRESHNESS",
+            "gate": "SOFT_FAIL",
+            "status": "pass",
+            "command": "C:\\Users\\user\\Desktop\\�ܮw\\.venv\\Scripts\\python.exe tools/agent_discussion_tool.py tail --path memory\\agent_discussion_curated.jsonl --limit 1",
+            "note": "age_days=0.15, threshold=7"
+          },
+          {
+            "dimension": "XDD",
+            "gate": "BLOCKING",
+            "status": "pass",
+            "command": "C:\\Users\\user\\Desktop\\�ܮw\\.venv\\Scripts\\python.exe -m pytest tests\\test_uncertainty.py -q",
+            "note": ""
+          },
+          {
+            "dimension": "GDD",
+            "gate": "BLOCKING",
+            "status": "pass",
+            "command": "C:\\Users\\user\\Desktop\\�ܮw\\.venv\\Scripts\\python.exe -m pytest tests\\test_genesis_integration.py tests\\test_provenance_chain.py -q",
+            "note": ""
+          },
+          {
+            "dimension": "CDD",
+            "gate": "BLOCKING",
+            "status": "pass",
+            "command": "C:\\Users\\user\\Desktop\\�ܮw\\.venv\\Scripts\\python.exe -m pytest tests/test_api_server_contract.py -q",
+            "note": ""
+          },
+          {
+            "dimension": "SDH",
+            "gate": "SOFT_FAIL",
+            "status": "skip",
+            "command": "C:\\Users\\user\\Desktop\\�ܮw\\.venv\\Scripts\\python.exe scripts\\verify_web_api.py --web-base http://127.0.0.1:3000 --api-base http://127.0.0.1:5000 --require-backend",
+            "note": "skipped; use --include-sdh when web/backend are running"
+          }
+        ],
+        "scores": {
+          "TDD": 100,
+          "RDD": 100,
+          "DDD": 100,
+          "XDD": 100,
+          "GDD": 100,
+          "CDD": 100,
+          "SDH": 0,
+          "OVERALL": 90
+        }
+      }
+    },
+    "memory_hygiene": {
+      "command": "C:\\Users\\user\\Desktop\\倉庫\\.venv\\Scripts\\python.exe scripts/verify_memory_hygiene.py --tail-lines 200 --discussion-path memory/agent_discussion_curated.jsonl",
+      "exit_code": 0,
+      "ok": true,
+      "payload": {
+        "ok": true,
+        "targets": [
+          ".github/workflows/*.yml",
+          "apps/api/server.py",
+          "memory/agent_discussion.py",
+          "scripts/verify_7d.py",
+          "scripts/verify_docs_consistency.py",
+          "scripts/verify_layer_boundaries.py",
+          "scripts/run_monthly_consolidation.py",
+          "scripts/verify_web_api.py",
+          "scripts/verify_memory_hygiene.py",
+          "tests/red_team/**/*.py",
+          "tools/agent_discussion_tool.py"
+        ],
+        "allow_missing_discussion": false,
+        "missing_literal_paths": [],
+        "file_hygiene": {
+          "files_scanned": 17,
+          "bom_files": [],
+          "decode_errors": []
+        },
+        "discussion_tail": {
+          "path": "memory/agent_discussion_curated.jsonl",
+          "exists": true,
+          "bom": false,
+          "tail_checked": 100,
+          "invalid_json": [],
+          "missing_fields": []
+        },
+        "raw_discussion": {
+          "path": "memory/agent_discussion.jsonl",
+          "exists": true,
+          "bom": false,
+          "decode_error": null
+        }
+      }
+    },
+    "layer_boundaries": {
+      "command": "C:\\Users\\user\\Desktop\\倉庫\\.venv\\Scripts\\python.exe scripts/verify_layer_boundaries.py",
+      "exit_code": 0,
+      "ok": true,
+      "payload": {
+        "ok": true,
+        "project_root": "C:\\Users\\user\\Desktop\\�ܮw",
+        "roots": [
+          "tonesoul",
+          "tools",
+          "memory"
+        ],
+        "forbidden_prefixes": [
+          "apps"
+        ],
+        "allowed_imports": [
+          "memory/contradiction_detector.py:apps.core.memory_semantic_search"
+        ],
+        "violations": [],
+        "violation_count": 0
+      }
+    },
+    "docs_consistency": {
+      "command": "C:\\Users\\user\\Desktop\\倉庫\\.venv\\Scripts\\python.exe scripts/verify_docs_consistency.py",
+      "exit_code": 0,
+      "ok": true,
+      "payload": {
+        "ok": true,
+        "rdd_thresholds": {
+          "runtime": 20,
+          "workflow": 20,
+          "docs": [
+            20,
+            20,
+            20
+          ]
+        },
+        "curated_reference": {
+          "verify_7d": true,
+          "execution_spec": true
+        },
+        "issues": []
+      }
+    }
+  }
+}
