@@ -65,7 +65,32 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Return non-zero if any consolidation check fails.",
     )
+    parser.add_argument(
+        "--allow-missing-discussion",
+        action="store_true",
+        help="Allow missing discussion files for memory hygiene checks (CI-friendly).",
+    )
     return parser
+
+
+def _build_check_commands(allow_missing_discussion: bool) -> dict[str, list[str]]:
+    memory_hygiene_cmd = [
+        sys.executable,
+        "scripts/verify_memory_hygiene.py",
+        "--tail-lines",
+        "200",
+        "--discussion-path",
+        "memory/agent_discussion_curated.jsonl",
+    ]
+    if allow_missing_discussion:
+        memory_hygiene_cmd.append("--allow-missing-discussion")
+
+    return {
+        "7d": [sys.executable, "scripts/verify_7d.py"],
+        "memory_hygiene": memory_hygiene_cmd,
+        "layer_boundaries": [sys.executable, "scripts/verify_layer_boundaries.py"],
+        "docs_consistency": [sys.executable, "scripts/verify_docs_consistency.py"],
+    }
 
 
 def main() -> int:
@@ -73,22 +98,8 @@ def main() -> int:
     repo_root = Path(args.repo_root).resolve()
     out_dir = (repo_root / args.out_dir).resolve()
 
-    checks = {
-        "7d": _run_json([sys.executable, "scripts/verify_7d.py"], repo_root),
-        "memory_hygiene": _run_json(
-            [
-                sys.executable,
-                "scripts/verify_memory_hygiene.py",
-                "--tail-lines",
-                "200",
-                "--discussion-path",
-                "memory/agent_discussion_curated.jsonl",
-            ],
-            repo_root,
-        ),
-        "layer_boundaries": _run_json([sys.executable, "scripts/verify_layer_boundaries.py"], repo_root),
-        "docs_consistency": _run_json([sys.executable, "scripts/verify_docs_consistency.py"], repo_root),
-    }
+    check_commands = _build_check_commands(allow_missing_discussion=args.allow_missing_discussion)
+    checks = {name: _run_json(cmd, repo_root) for name, cmd in check_commands.items()}
 
     overall_ok = all(item.get("ok", False) for item in checks.values())
     generated_at = _iso_now()
@@ -100,6 +111,9 @@ def main() -> int:
     }
     consolidation_report = {
         "generated_at": generated_at,
+        "config": {
+            "allow_missing_discussion": bool(args.allow_missing_discussion),
+        },
         "overall_ok": overall_ok,
         "checks": checks,
     }

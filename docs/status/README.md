@@ -21,6 +21,12 @@ This folder is the repository status source for machine-generated governance sna
 python scripts/run_monthly_consolidation.py --strict
 ```
 
+CI-friendly mode (when discussion files are absent in clean checkout):
+
+```bash
+python scripts/run_monthly_consolidation.py --strict --allow-missing-discussion
+```
+
 ## Automation
 
 - GitHub Actions workflow: `.github/workflows/monthly_consolidation.yml`

@@ -31,7 +31,7 @@ jobs:
 
       - name: Run monthly consolidation (blocking)
         run: |
-          python scripts/run_monthly_consolidation.py --strict
+          python scripts/run_monthly_consolidation.py --strict --allow-missing-discussion
 
       - name: Upload status artifacts
         if: always()

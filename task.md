@@ -54,6 +54,15 @@
 - [x] 更新 `docs/status/README.md` 說明自動化來源與 artifact 產出
 **成功標準**: `verify_docs_consistency` 與 `run_monthly_consolidation --strict` 可穩定通過，且 status 來源具備自動化排程。
 
+## Phase 26: 月度整合 CI 可重現性修補
+- [x] `scripts/run_monthly_consolidation.py` 新增 `--allow-missing-discussion` 參數（CI 乾淨環境可重現）
+- [x] 月度 workflow 執行改為 `--strict --allow-missing-discussion`
+- [x] `scripts/verify_docs_consistency.py` 新增檢查月度 workflow 是否帶 `--allow-missing-discussion`
+- [x] 新增 `tests/test_run_monthly_consolidation.py`，鎖定 memory hygiene 命令旗標行為
+- [x] 擴充 `tests/test_verify_docs_consistency.py`，覆蓋缺失旗標時的阻擋情境
+- [x] 更新 `docs/status/README.md` 加入 CI-friendly 執行範例
+**成功標準**: 月度 workflow 在無 `memory/agent_discussion*.jsonl` 的乾淨 checkout 仍可通過契約檢查與整合檢查。
+
 ## 已完成（摘要）
 - [x] Phase 1-2: Council 設計與整合
 - [x] Phase 3/10/16: Tools API schema + ToolResponse 標準化

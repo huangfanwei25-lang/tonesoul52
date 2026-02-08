@@ -87,14 +87,18 @@ def build_report(repo_root: Path) -> dict[str, Any]:
     monthly_exists = monthly_workflow.exists()
     monthly_has_schedule = False
     monthly_has_runner = False
+    monthly_has_allow_missing_discussion = False
     if monthly_exists:
         monthly_text = _read(monthly_workflow)
         monthly_has_schedule = "schedule:" in monthly_text
         monthly_has_runner = "scripts/run_monthly_consolidation.py" in monthly_text
+        monthly_has_allow_missing_discussion = "--allow-missing-discussion" in monthly_text
         if not monthly_has_schedule:
             issues.append("monthly consolidation workflow missing schedule trigger")
         if not monthly_has_runner:
             issues.append("monthly consolidation workflow missing run_monthly_consolidation invocation")
+        if not monthly_has_allow_missing_discussion:
+            issues.append("monthly consolidation workflow missing --allow-missing-discussion")
     else:
         issues.append("missing .github/workflows/monthly_consolidation.yml")
 
@@ -113,6 +117,7 @@ def build_report(repo_root: Path) -> dict[str, Any]:
             "workflow_exists": monthly_exists,
             "has_schedule": monthly_has_schedule,
             "has_runner": monthly_has_runner,
+            "has_allow_missing_discussion": monthly_has_allow_missing_discussion,
         },
         "issues": issues,
     }
