@@ -77,3 +77,52 @@ jobs:
     - name: Lint with ruff (blocking)
       run: |
         ruff check tonesoul tests
+
+  red_team_rdd:
+    name: Red Team RDD Gate
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e ".[dev]"
+
+    - name: Enforce RDD case-count threshold
+      run: |
+        python - <<'PY'
+        import re
+        import subprocess
+        import sys
+
+        threshold = 20
+        command = [sys.executable, "-m", "pytest", "tests/red_team", "--collect-only", "-q"]
+        proc = subprocess.run(
+            command,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+        )
+        output = f"{proc.stdout}\n{proc.stderr}"
+        if proc.returncode not in (0, 5):
+            print(output)
+            raise SystemExit(proc.returncode)
+
+        match = re.search(r"collected\s+(\d+)\s+items", output)
+        case_count = int(match.group(1)) if match else output.count("<Function ")
+        print(f"RDD case-count: {case_count} (threshold={threshold})")
+        if case_count < threshold:
+            raise SystemExit(1)
+        PY
+
+    - name: Run red-team suite
+      run: |
+        pytest tests/red_team -q

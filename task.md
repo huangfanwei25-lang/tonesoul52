@@ -43,7 +43,7 @@
 - [x] 決議 `SDH` 先維持 soft-fail（非 blocking）
 - [x] 設定 `DDD` 資料新鮮度 SLA（7 天 stale 規則）
 - [x] 設計 `systemic betrayal user confirmation gate`（高破壞性風險需二次確認）
-- [x] 將 RDD 擴充至 10+ 對抗案例（目前 11）
+- [x] 將 RDD 擴充至 10+ 對抗案例（目前 20）
 **成功標準**: 七維皆有可執行檢查，且 gate 策略在 CI 層可明確解釋。
 
 ## 已完成（摘要）

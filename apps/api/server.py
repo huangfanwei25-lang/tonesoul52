@@ -13,7 +13,7 @@ from pathlib import Path
 # Add parent to path for imports
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
-from flask import Flask, request, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 
 from tonesoul.council import CouncilRequest, CouncilRuntime
@@ -42,6 +42,49 @@ def _env_flag(name: str, default: bool = False) -> bool:
 def _json_payload():
     payload = request.get_json(silent=True)
     return payload if isinstance(payload, dict) else None
+
+
+def _require_optional_string(data: dict, key: str) -> tuple[str | None, tuple | None]:
+    value = data.get(key)
+    if value is None:
+        return None, None
+    if isinstance(value, str):
+        return value, None
+    return None, (jsonify({"error": f"Invalid {key}"}), 400)
+
+
+def _require_optional_bool(data: dict, key: str) -> tuple[bool | None, tuple | None]:
+    value = data.get(key)
+    if value is None:
+        return None, None
+    if isinstance(value, bool):
+        return value, None
+    return None, (jsonify({"error": f"Invalid {key}"}), 400)
+
+
+def _require_optional_dict(data: dict, key: str) -> tuple[dict | None, tuple | None]:
+    value = data.get(key)
+    if value is None:
+        return None, None
+    if isinstance(value, dict):
+        return value, None
+    return None, (jsonify({"error": f"Invalid {key}"}), 400)
+
+
+def _require_list(data: dict, key: str) -> tuple[list | None, tuple | None]:
+    value = data.get(key)
+    if isinstance(value, list):
+        return value, None
+    return None, (jsonify({"error": f"Invalid {key}"}), 400)
+
+
+def _require_optional_list(data: dict, key: str) -> tuple[list | None, tuple | None]:
+    value = data.get(key)
+    if value is None:
+        return None, None
+    if isinstance(value, list):
+        return value, None
+    return None, (jsonify({"error": f"Invalid {key}"}), 400)
 
 
 def _error_response(
@@ -82,9 +125,18 @@ def validate():
     data = _json_payload()
     if data is None:
         return jsonify({"error": "Invalid JSON payload"}), 400
-    draft_output = data.get("draft_output", "")
-    context = data.get("context", {})
-    user_intent = data.get("user_intent")
+    draft_output, error = _require_optional_string(data, "draft_output")
+    if error is not None:
+        return error
+    context, error = _require_optional_dict(data, "context")
+    if error is not None:
+        return error
+    user_intent, error = _require_optional_string(data, "user_intent")
+    if error is not None:
+        return error
+
+    draft_output = draft_output if draft_output is not None else ""
+    context = context if context is not None else {}
 
     council_request = CouncilRequest(
         draft_output=draft_output,
@@ -135,7 +187,9 @@ def create_conversation():
     data = _json_payload()
     if data is None:
         return jsonify({"error": "Invalid JSON payload"}), 400
-    session_id = data.get("session_id")
+    session_id, error = _require_optional_string(data, "session_id")
+    if error is not None:
+        return error
     conversation_id = f"conv_{uuid.uuid4().hex[:12]}"
     return jsonify(
         {
@@ -153,8 +207,14 @@ def create_consent():
     data = _json_payload()
     if data is None:
         return jsonify({"error": "Invalid JSON payload"}), 400
-    consent_type = data.get("consent_type", "standard")
-    session_id = data.get("session_id") or f"session_{uuid.uuid4().hex[:12]}"
+    consent_type, error = _require_optional_string(data, "consent_type")
+    if error is not None:
+        return error
+    session_id, error = _require_optional_string(data, "session_id")
+    if error is not None:
+        return error
+    consent_type = consent_type if consent_type is not None else "standard"
+    session_id = session_id if session_id is not None else f"session_{uuid.uuid4().hex[:12]}"
     return jsonify(
         {
             "success": True,
@@ -187,8 +247,11 @@ def session_report():
     data = _json_payload()
     if data is None:
         return jsonify({"error": "Invalid JSON payload"}), 400
-    history = data.get("history", [])
-
+    if "history" not in data:
+        return jsonify({"error": "Missing conversation history"}), 400
+    history, error = _require_list(data, "history")
+    if error is not None:
+        return error
     if not history:
         return jsonify({"error": "Missing conversation history"}), 400
 
@@ -250,9 +313,18 @@ def chat():
     data = _json_payload()
     if data is None:
         return jsonify({"error": "Invalid JSON payload"}), 400
-    message = data.get("message", "")
-    history = data.get("history", [])
-    full_analysis = data.get("full_analysis", True)
+    message, error = _require_optional_string(data, "message")
+    if error is not None:
+        return error
+    history, error = _require_optional_list(data, "history")
+    if error is not None:
+        return error
+    full_analysis, error = _require_optional_bool(data, "full_analysis")
+    if error is not None:
+        return error
+    message = message if message is not None else ""
+    history = history if history is not None else []
+    full_analysis = full_analysis if full_analysis is not None else True
 
     try:
         from tonesoul.unified_pipeline import create_unified_pipeline
