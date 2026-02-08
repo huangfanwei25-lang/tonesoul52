@@ -126,3 +126,19 @@ jobs:
     - name: Run red-team suite
       run: |
         pytest tests/red_team -q
+
+  memory_hygiene:
+    name: Memory Hygiene Gate
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+
+    - name: Run memory hygiene checks
+      run: |
+        python scripts/verify_memory_hygiene.py --tail-lines 200

@@ -9,12 +9,11 @@ from __future__ import annotations
 import argparse
 import json
 import os
-import subprocess
-import sys
-from datetime import datetime, timezone
-from dataclasses import dataclass
-from pathlib import Path
 import re
+import subprocess
+from dataclasses import dataclass
+from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any
 
 RDD_MIN_CASES = 10
@@ -47,7 +46,9 @@ def _run(command: list[str], timeout: int = 1200) -> tuple[bool, str, str, int]:
     return ok, proc.stdout, proc.stderr, proc.returncode
 
 
-def _result(dimension: str, gate: str, status: str, command: list[str], note: str = "") -> CheckResult:
+def _result(
+    dimension: str, gate: str, status: str, command: list[str], note: str = ""
+) -> CheckResult:
     return CheckResult(
         dimension=dimension,
         gate=gate,
@@ -126,7 +127,13 @@ def _check_tdd() -> CheckResult:
 
 
 def _check_ddd() -> CheckResult:
-    cmd = ["python", "tools/agent_discussion_tool.py", "audit", "--path", "memory/agent_discussion.jsonl"]
+    cmd = [
+        "python",
+        "tools/agent_discussion_tool.py",
+        "audit",
+        "--path",
+        "memory/agent_discussion.jsonl",
+    ]
     ok, stdout, stderr, code = _run(cmd)
     if not ok:
         return _result("DDD", "BLOCKING", "fail", cmd, f"exit={code}; {stderr[-300:]}")
@@ -138,6 +145,19 @@ def _check_ddd() -> CheckResult:
     if invalid == 0:
         return _result("DDD", "BLOCKING", "pass", cmd)
     return _result("DDD", "BLOCKING", "fail", cmd, f"invalid_entries={invalid}")
+
+
+def _check_ddd_hygiene() -> CheckResult:
+    cmd = [
+        "python",
+        "scripts/verify_memory_hygiene.py",
+        "--tail-lines",
+        "200",
+    ]
+    ok, _, stderr, code = _run(cmd)
+    if ok:
+        return _result("DDD_HYGIENE", "BLOCKING", "pass", cmd)
+    return _result("DDD_HYGIENE", "BLOCKING", "fail", cmd, f"exit={code}; {stderr[-300:]}")
 
 
 def _check_xdd() -> CheckResult:
@@ -277,6 +297,7 @@ def main() -> int:
         _check_tdd(),
         _check_rdd(),
         _check_ddd(),
+        _check_ddd_hygiene(),
         _check_ddd_freshness(Path("memory/agent_discussion.jsonl"), DDD_STALE_DAYS),
         _check_xdd(),
         _check_gdd(),
