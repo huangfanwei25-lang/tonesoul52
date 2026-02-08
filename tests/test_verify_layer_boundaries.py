@@ -23,7 +23,10 @@ def test_find_violations_detects_forbidden_apps_import(tmp_path: Path) -> None:
 
 
 def test_find_violations_ignores_apps_layer_files(tmp_path: Path) -> None:
-    _write(tmp_path / "apps" / "api" / "server.py", "from tonesoul.council.runtime import CouncilRuntime\n")
+    _write(
+        tmp_path / "apps" / "api" / "server.py",
+        "from tonesoul.council.runtime import CouncilRuntime\n",
+    )
 
     violations = boundaries.find_violations(
         project_root=tmp_path,
@@ -35,7 +38,10 @@ def test_find_violations_ignores_apps_layer_files(tmp_path: Path) -> None:
 
 
 def test_find_violations_respects_allowed_import_exceptions(tmp_path: Path) -> None:
-    _write(tmp_path / "memory" / "contradiction_detector.py", "from apps.core.memory_semantic_search import SemanticMemorySearch\n")
+    _write(
+        tmp_path / "memory" / "contradiction_detector.py",
+        "from apps.core.memory_semantic_search import SemanticMemorySearch\n",
+    )
 
     violations = boundaries.find_violations(
         project_root=tmp_path,

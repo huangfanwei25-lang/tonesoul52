@@ -144,7 +144,9 @@ def test_append_entry_can_mirror_to_curated(tmp_path: Path):
     )
 
     assert len(load_entries(path=raw)) == 1
-    curated_lines = [line for line in curated.read_text(encoding="utf-8").splitlines() if line.strip()]
+    curated_lines = [
+        line for line in curated.read_text(encoding="utf-8").splitlines() if line.strip()
+    ]
     assert len(curated_lines) == 1
     curated_payload = json.loads(curated_lines[0])
     assert curated_payload["topic"] == "sync-test"
@@ -182,5 +184,7 @@ def test_rebuild_curated_drops_invalid_status_entries(tmp_path: Path):
     assert report["curated_entries"] == 1
     assert report["dropped_entries"] == 1
 
-    curated_lines = [line for line in curated.read_text(encoding="utf-8").splitlines() if line.strip()]
+    curated_lines = [
+        line for line in curated.read_text(encoding="utf-8").splitlines() if line.strip()
+    ]
     assert len(curated_lines) == 1

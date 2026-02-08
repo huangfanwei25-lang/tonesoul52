@@ -10,8 +10,7 @@ def test_sqlite_soul_db_migrates_legacy_action_logs_schema(tmp_path: Path) -> No
     db_path = tmp_path / "legacy_soul.db"
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
-    cursor.execute(
-        """
+    cursor.execute("""
         CREATE TABLE action_logs (
             id TEXT PRIMARY KEY,
             type TEXT,
@@ -23,8 +22,7 @@ def test_sqlite_soul_db_migrates_legacy_action_logs_schema(tmp_path: Path) -> No
             isnad_link TEXT,
             timestamp TEXT
         )
-        """
-    )
+        """)
     conn.commit()
     conn.close()
 

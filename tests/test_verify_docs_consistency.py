@@ -44,7 +44,9 @@ def test_build_report_fails_on_threshold_mismatch(tmp_path: Path) -> None:
     report = docs_consistency.build_report(tmp_path)
     assert report["ok"] is False
     assert any("mismatch" in issue for issue in report["issues"])
-    assert any("missing .github/workflows/monthly_consolidation.yml" in issue for issue in report["issues"])
+    assert any(
+        "missing .github/workflows/monthly_consolidation.yml" in issue for issue in report["issues"]
+    )
 
 
 def test_build_report_fails_when_monthly_workflow_missing_allow_missing_discussion_flag(

@@ -5,6 +5,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 
 from memory.provenance_chain import ProvenanceManager
 
+from ..benevolence import AuditLayer, AuditResult, filter_benevolence
 from ..role_council import build_council_summary
 from .base import IPerspective
 from .intent_reconstructor import infer_genesis
@@ -12,7 +13,6 @@ from .pre_output_council import PreOutputCouncil
 from .self_journal import record_self_memory
 from .types import CouncilVerdict, PerspectiveType
 from .verdict import apply_uncertainty
-from ..benevolence import filter_benevolence, AuditLayer, AuditResult
 
 
 @dataclass
@@ -73,7 +73,7 @@ class CouncilRuntime:
             fragments = context.get("fragments") or context.get("context_fragments") or []
             if not fragments and request.user_intent:
                 fragments = [request.user_intent]
-                
+
             benev_audit = filter_benevolence(
                 proposed_action=request.draft_output,
                 context_fragments=fragments,
@@ -83,9 +83,10 @@ class CouncilRuntime:
                 user_protocol=context.get("user_protocol", "Honesty > Helpfulness"),
             )
             verdict.benevolence_audit = benev_audit.to_dict()
-            
+
             # If Benevolence Audit intercepts, elevate Council Verdict to BLOCK
             from .types import VerdictType
+
             if benev_audit.final_result in (AuditResult.REJECT, AuditResult.INTERCEPT):
                 verdict.verdict = VerdictType.BLOCK
                 verdict.summary += f"\n[7D AUDITOR INTERCEPT] {benev_audit.error_log}"

@@ -142,7 +142,7 @@ class CouncilVerdict:
                 "total_evidence_sources": sum(len(v.evidence or []) for v in self.votes),
             },
             "transcript": self.transcript or {},
-            "benevolence_audit": self.benevolence_audit or {}, # Added for 7D Backend Auditor
+            "benevolence_audit": self.benevolence_audit or {},  # Added for 7D Backend Auditor
             "human_summary": self.human_summary,
             "divergence_analysis": self.divergence_analysis or {},
             "structured_output": (
