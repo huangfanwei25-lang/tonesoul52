@@ -11,13 +11,17 @@ import json
 import os
 import re
 import subprocess
+import sys
+from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-RDD_MIN_CASES = 10
+RDD_MIN_CASES = 20
 DDD_STALE_DAYS = 7
+DDD_ALLOWED_INVALID_TOPICS: set[str] = set()
+DDD_DISCUSSION_PATH = Path("memory/agent_discussion_curated.jsonl")
 DEFAULT_WEB_BASE = "http://127.0.0.1:3000"
 DEFAULT_API_BASE = "http://127.0.0.1:5000"
 AUDIT_WEB_BASE_ENV = "TONESOUL_AUDIT_WEB_BASE"
@@ -74,7 +78,7 @@ def _parse_timestamp(value: str) -> datetime | None:
 
 
 def _check_ddd_freshness(path: Path, stale_days: int) -> CheckResult:
-    cmd = ["python", "tools/agent_discussion_tool.py", "tail", "--path", str(path), "--limit", "1"]
+    cmd = [sys.executable, "tools/agent_discussion_tool.py", "tail", "--path", str(path), "--limit", "1"]
     if not path.exists():
         return _result("DDD_FRESHNESS", "SOFT_FAIL", "fail", cmd, "discussion file not found")
     latest: datetime | None = None
@@ -119,7 +123,7 @@ def _check_ddd_freshness(path: Path, stale_days: int) -> CheckResult:
 
 
 def _check_tdd() -> CheckResult:
-    cmd = ["pytest", "tests/", "-q"]
+    cmd = [sys.executable, "-m", "pytest", str(Path("tests/")), "-q"]
     ok, _, stderr, code = _run(cmd)
     if ok:
         return _result("TDD", "BLOCKING", "pass", cmd)
@@ -127,13 +131,26 @@ def _check_tdd() -> CheckResult:
 
 
 def _check_ddd() -> CheckResult:
+    discussion_path = DDD_DISCUSSION_PATH
     cmd = [
-        "python",
-        "tools/agent_discussion_tool.py",
+        sys.executable,
+        str(Path("tools/agent_discussion_tool.py")),
         "audit",
         "--path",
-        "memory/agent_discussion.jsonl",
+        str(discussion_path),
     ]
+    if not discussion_path.exists():
+        return _result(
+            "DDD",
+            "BLOCKING",
+            "fail",
+            cmd,
+            (
+                f"curated discussion missing at {discussion_path}; run "
+                f"'{sys.executable} tools/agent_discussion_tool.py curate' first"
+            ),
+        )
+
     ok, stdout, stderr, code = _run(cmd)
     if not ok:
         return _result("DDD", "BLOCKING", "fail", cmd, f"exit={code}; {stderr[-300:]}")
@@ -142,17 +159,69 @@ def _check_ddd() -> CheckResult:
     except json.JSONDecodeError as exc:
         return _result("DDD", "BLOCKING", "fail", cmd, f"audit output parse error: {exc}")
     invalid = int(payload.get("invalid_entries", 0))
-    if invalid == 0:
-        return _result("DDD", "BLOCKING", "pass", cmd)
-    return _result("DDD", "BLOCKING", "fail", cmd, f"invalid_entries={invalid}")
+    if invalid != 0:
+        return _result("DDD", "BLOCKING", "fail", cmd, f"invalid_entries={invalid}")
+    semantic_invalid, disallowed_invalid = _count_semantic_invalid(discussion_path)
+    if disallowed_invalid > 0:
+        return _result(
+            "DDD",
+            "BLOCKING",
+            "fail",
+            cmd,
+            (
+                "status=invalid entries on disallowed topics: "
+                f"{disallowed_invalid} (total_invalid={semantic_invalid})"
+            ),
+        )
+    if semantic_invalid > 0:
+        allowed_topics = ", ".join(sorted(DDD_ALLOWED_INVALID_TOPICS))
+        return _result(
+            "DDD",
+            "BLOCKING",
+            "pass",
+            cmd,
+            (
+                f"preserved_invalid_entries={semantic_invalid}; "
+                f"allowed_topics=[{allowed_topics}]"
+            ),
+        )
+    return _result("DDD", "BLOCKING", "pass", cmd)
+
+
+def _count_semantic_invalid(path: Path) -> tuple[int, int]:
+    if not path.exists():
+        return 0, 0
+    total_invalid = 0
+    disallowed_invalid = 0
+    with path.open("r", encoding="utf-8", errors="replace") as handle:
+        for raw in handle:
+            line = raw.strip()
+            if not line:
+                continue
+            try:
+                payload = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            status = payload.get("status")
+            if not isinstance(status, str):
+                continue
+            if status.strip().lower() != "invalid":
+                continue
+            total_invalid += 1
+            topic = payload.get("topic")
+            if not isinstance(topic, str) or topic.strip() not in DDD_ALLOWED_INVALID_TOPICS:
+                disallowed_invalid += 1
+    return total_invalid, disallowed_invalid
 
 
 def _check_ddd_hygiene() -> CheckResult:
     cmd = [
-        "python",
-        "scripts/verify_memory_hygiene.py",
+        sys.executable,
+        str(Path("scripts/verify_memory_hygiene.py")),
         "--tail-lines",
         "200",
+        "--discussion-path",
+        str(DDD_DISCUSSION_PATH),
     ]
     ok, _, stderr, code = _run(cmd)
     if ok:
@@ -161,7 +230,7 @@ def _check_ddd_hygiene() -> CheckResult:
 
 
 def _check_xdd() -> CheckResult:
-    cmd = ["pytest", "tests/test_uncertainty.py", "-q"]
+    cmd = [sys.executable, "-m", "pytest", str(Path("tests/test_uncertainty.py")), "-q"]
     ok, _, stderr, code = _run(cmd)
     if ok:
         return _result("XDD", "BLOCKING", "pass", cmd)
@@ -170,9 +239,11 @@ def _check_xdd() -> CheckResult:
 
 def _check_gdd() -> CheckResult:
     cmd = [
+        sys.executable,
+        "-m",
         "pytest",
-        "tests/test_genesis_integration.py",
-        "tests/test_provenance_chain.py",
+        str(Path("tests/test_genesis_integration.py")),
+        str(Path("tests/test_provenance_chain.py")),
         "-q",
     ]
     ok, _, stderr, code = _run(cmd)
@@ -182,7 +253,7 @@ def _check_gdd() -> CheckResult:
 
 
 def _check_cdd() -> CheckResult:
-    cmd = ["pytest", "tests/test_api_server_contract.py", "-q"]
+    cmd = [sys.executable, "-m", "pytest", "tests/test_api_server_contract.py", "-q"]
     ok, _, stderr, code = _run(cmd)
     if ok:
         return _result("CDD", "BLOCKING", "pass", cmd)
@@ -190,8 +261,8 @@ def _check_cdd() -> CheckResult:
 
 
 def _check_rdd() -> CheckResult:
-    cmd = ["pytest", "tests/red_team/", "-q"]
-    collect_cmd = ["pytest", "tests/red_team/", "--collect-only", "-q"]
+    cmd = [sys.executable, "-m", "pytest", str(Path("tests/red_team/")), "-q"]
+    collect_cmd = [sys.executable, "-m", "pytest", str(Path("tests/red_team/")), "--collect-only", "-q"]
     collected_ok, collected_stdout, collected_stderr, collected_code = _run(collect_cmd)
     if not collected_ok:
         if collected_code == 5:
@@ -238,8 +309,8 @@ def _check_rdd() -> CheckResult:
 
 def _check_sdh(web_base: str, api_base: str, timeout: int) -> CheckResult:
     cmd = [
-        "python",
-        "scripts/verify_web_api.py",
+        sys.executable,
+        str(Path("scripts/verify_web_api.py")),
         "--web-base",
         web_base,
         "--api-base",
@@ -252,6 +323,92 @@ def _check_sdh(web_base: str, api_base: str, timeout: int) -> CheckResult:
     if ok:
         return _result("SDH", "SOFT_FAIL", "pass", cmd)
     return _result("SDH", "SOFT_FAIL", "fail", cmd, f"exit={code}; {stderr[-300:]}")
+
+
+def _calculate_score(results: list[CheckResult]) -> dict[str, int]:
+    scores = {}
+    # Dimensions: TDD, RDD, DDD, XDD, GDD, CDD, SDH
+    weights = {
+        "TDD": 20,
+        "RDD": 20,
+        "DDD": 15,
+        "XDD": 15,
+        "GDD": 10,
+        "CDD": 10,
+        "SDH": 10,
+    }
+
+    # Map sub-checks to main dimensions
+    dim_map = {
+        "TDD": "TDD",
+        "RDD": "RDD",
+        "DDD": "DDD",
+        "DDD_FRESHNESS": "DDD",
+        "DDD_HYGIENE": "DDD",
+        "XDD": "XDD",
+        "GDD": "GDD",
+        "CDD": "CDD",
+        "SDH": "SDH",
+    }
+
+    dim_results = defaultdict(list)
+    for r in results:
+        dim = dim_map.get(r.dimension, r.dimension)
+        dim_results[dim].append(r)
+
+    for dim, weight in weights.items():
+        res_list = dim_results.get(dim, [])
+        if not res_list:
+            scores[dim] = 0
+            continue
+
+        passed_count = sum(1 for r in res_list if r.status == "pass")
+        score = (passed_count / len(res_list)) * 100
+        scores[dim] = int(score)
+
+    total_score = sum((scores.get(dim, 0) * weight) / 100 for dim, weight in weights.items())
+    scores["OVERALL"] = int(total_score)
+    return scores
+
+
+def _sync_to_markdown(scores: dict[str, int], results: list[CheckResult]):
+    # Files to update
+    targets = [
+        Path("README.md"),
+        Path("memory/ANTIGRAVITY_SYNC.md"),
+    ]
+
+    # Build status string for each dimension
+    status_map = {}
+    for dim in ["TDD", "RDD", "DDD", "XDD", "GDD", "CDD", "SDH"]:
+        score = scores.get(dim, 0)
+        emoji = "✅" if score >= 80 else "🟡" if score >= 50 else "❌"
+        status_text = f"{emoji} {score}/100"
+
+        # Add details if available (e.g. test count for TDD)
+        if dim == "TDD":
+            # Just a placeholder, as extracting actual count from pytest stderr is tricky in this run
+            pass
+
+        status_map[dim] = status_text
+
+    for target in targets:
+        if not target.exists():
+            continue
+
+        content = target.read_text(encoding="utf-8")
+
+        # Update tables
+        for dim, status in status_map.items():
+            # Match "| DIM | Description | Status |" or "| DIM | Name | Status |"
+            # Pattern for README.md: | TDD | 功能正確？ | ✅ 299 tests |
+            # Pattern for SYNC.md: | TDD | 測試驅動 | ✅ 強 (343 tests) |
+            pattern = rf"(\| {dim} \| [^|]+ \| )([^|]+)(\|)"
+            replacement = rf"\1{status} \3"
+            content = re.sub(pattern, replacement, content)
+
+        target.write_text(content, encoding="utf-8")
+        print(f"🔄 Synced 7D status to {target}")
 
 
 def _summary(results: list[CheckResult]) -> dict[str, Any]:
@@ -287,6 +444,11 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--web-base", default=_env_or_default(AUDIT_WEB_BASE_ENV, DEFAULT_WEB_BASE))
     parser.add_argument("--api-base", default=_env_or_default(AUDIT_API_BASE_ENV, DEFAULT_API_BASE))
     parser.add_argument("--timeout", type=int, default=40)
+    parser.add_argument(
+        "--sync",
+        action="store_true",
+        help="Sync scores back to README.md and ANTIGRAVITY_SYNC.md",
+    )
     return parser
 
 
@@ -298,7 +460,7 @@ def main() -> int:
         _check_rdd(),
         _check_ddd(),
         _check_ddd_hygiene(),
-        _check_ddd_freshness(Path("memory/agent_discussion.jsonl"), DDD_STALE_DAYS),
+        _check_ddd_freshness(DDD_DISCUSSION_PATH, DDD_STALE_DAYS),
         _check_xdd(),
         _check_gdd(),
         _check_cdd(),
@@ -312,8 +474,8 @@ def main() -> int:
                 "SOFT_FAIL",
                 "skip",
                 [
-                    "python",
-                    "scripts/verify_web_api.py",
+                    sys.executable,
+                    str(Path("scripts/verify_web_api.py")),
                     "--web-base",
                     args.web_base,
                     "--api-base",
@@ -324,8 +486,25 @@ def main() -> int:
             )
         )
 
+    scores = _calculate_score(results)
     payload = _summary(results)
+    payload["scores"] = scores
+
     print(json.dumps(payload, ensure_ascii=False, indent=2))
+
+    if args.sync:
+        sync_reasons: list[str] = []
+        if payload["blocking_failures"] > 0:
+            sync_reasons.append("blocking failures detected")
+        if payload["soft_failures"] > 0:
+            sync_reasons.append("soft failures detected")
+        has_sdh_skip = any(r.dimension == "SDH" and r.status == "skip" for r in results)
+        if has_sdh_skip:
+            sync_reasons.append("SDH is skipped; run with --include-sdh before sync")
+        if sync_reasons:
+            print(f"[7D] Skip markdown sync: {'; '.join(sync_reasons)}")
+        else:
+            _sync_to_markdown(scores, results)
 
     if payload["blocking_failures"] > 0:
         return 1

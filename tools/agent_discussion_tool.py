@@ -11,11 +11,13 @@ from typing import Any, Dict, List
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from memory.agent_discussion import (
+    DEFAULT_DISCUSSION_CURATED_PATH,
     DEFAULT_DISCUSSION_PATH,
     append_entry,
     audit_file,
     load_entries,
     normalize_file,
+    rebuild_curated,
 )
 
 
@@ -30,6 +32,11 @@ def _build_parser() -> argparse.ArgumentParser:
     normalize = sub.add_parser("normalize", help="Normalize discussion JSONL.")
     normalize.add_argument("--path", default=str(DEFAULT_DISCUSSION_PATH))
     normalize.add_argument(
+        "--curated-path",
+        default=str(DEFAULT_DISCUSSION_CURATED_PATH),
+        help="Curated discussion path to rebuild after normalize.",
+    )
+    normalize.add_argument(
         "--no-backup",
         action="store_true",
         help="Do not write backup file before rewrite.",
@@ -42,10 +49,28 @@ def _build_parser() -> argparse.ArgumentParser:
 
     append = sub.add_parser("append", help="Append one normalized discussion entry.")
     append.add_argument("--path", default=str(DEFAULT_DISCUSSION_PATH))
+    append.add_argument(
+        "--curated-path",
+        default=str(DEFAULT_DISCUSSION_CURATED_PATH),
+        help="Curated discussion path for mirrored writes.",
+    )
     append.add_argument("--author", required=True)
     append.add_argument("--topic", required=True)
     append.add_argument("--status", default="noted")
     append.add_argument("--message", required=True)
+
+    curate = sub.add_parser("curate", help="Rebuild curated stream from raw discussion.")
+    curate.add_argument("--path", default=str(DEFAULT_DISCUSSION_PATH))
+    curate.add_argument(
+        "--curated-path",
+        default=str(DEFAULT_DISCUSSION_CURATED_PATH),
+        help="Destination path for curated stream.",
+    )
+    curate.add_argument(
+        "--no-backup",
+        action="store_true",
+        help="Do not write backup for curated file before rewrite.",
+    )
 
     tail = sub.add_parser("tail", help="Show recent discussion entries.")
     tail.add_argument("--path", default=str(DEFAULT_DISCUSSION_PATH))
@@ -73,26 +98,48 @@ def _cmd_audit(path: Path, sample_limit: int) -> int:
     return _emit(payload)
 
 
-def _cmd_normalize(path: Path, no_backup: bool, drop_invalid: bool) -> int:
+def _cmd_normalize(path: Path, curated_path: Path, no_backup: bool, drop_invalid: bool) -> int:
     payload = normalize_file(
         path=path,
         create_backup=not no_backup,
         keep_invalid=not drop_invalid,
+        curated_path=curated_path,
     )
     return _emit(payload)
 
 
-def _cmd_append(path: Path, author: str, topic: str, status: str, message: str) -> int:
-    entry = append_entry(
-        {
-            "author": author,
-            "topic": topic,
-            "status": status,
-            "message": message,
-        },
-        path=path,
+def _cmd_append(
+    path: Path,
+    curated_path: Path,
+    author: str,
+    topic: str,
+    status: str,
+    message: str,
+) -> int:
+    try:
+        entry = append_entry(
+            {
+                "author": author,
+                "topic": topic,
+                "status": status,
+                "message": message,
+            },
+            path=path,
+            curated_path=curated_path,
+        )
+    except (TypeError, ValueError) as exc:
+        _emit({"path": str(path), "error": str(exc)})
+        return 1
+    return _emit({"path": str(path), "curated_path": str(curated_path), "appended": entry})
+
+
+def _cmd_curate(path: Path, curated_path: Path, no_backup: bool) -> int:
+    payload = rebuild_curated(
+        raw_path=path,
+        curated_path=curated_path,
+        create_backup=not no_backup,
     )
-    return _emit({"path": str(path), "appended": entry})
+    return _emit(payload)
 
 
 def _cmd_tail(path: Path, limit: int, include_invalid: bool) -> int:
@@ -114,14 +161,26 @@ def main() -> int:
     if command == "audit":
         return _cmd_audit(path=path, sample_limit=args.sample_limit)
     if command == "normalize":
-        return _cmd_normalize(path=path, no_backup=args.no_backup, drop_invalid=args.drop_invalid)
+        return _cmd_normalize(
+            path=path,
+            curated_path=Path(args.curated_path),
+            no_backup=args.no_backup,
+            drop_invalid=args.drop_invalid,
+        )
     if command == "append":
         return _cmd_append(
             path=path,
+            curated_path=Path(args.curated_path),
             author=args.author,
             topic=args.topic,
             status=args.status,
             message=args.message,
+        )
+    if command == "curate":
+        return _cmd_curate(
+            path=path,
+            curated_path=Path(args.curated_path),
+            no_backup=args.no_backup,
         )
     if command == "tail":
         return _cmd_tail(path=path, limit=args.limit, include_invalid=args.include_invalid)

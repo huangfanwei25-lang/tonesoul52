@@ -48,6 +48,7 @@ bridge_debug.log
 memory/provenance_ledger.jsonl
 memory/self_journal.jsonl
 memory/agent_discussion.jsonl
+memory/agent_discussion_curated.jsonl
 memory/semantic_memory.jsonl
 memory/.consolidation_state.json
 memory/handoff/

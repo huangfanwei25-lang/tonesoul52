@@ -1,12 +1,15 @@
 import json
 from pathlib import Path
 
+import pytest
+
 from memory.agent_discussion import (
     append_entry,
     audit_file,
     load_entries,
     normalize_entry,
     normalize_file,
+    rebuild_curated,
 )
 
 
@@ -109,3 +112,75 @@ def test_append_entry_writes_normalized_payload(tmp_path: Path):
     rows = load_entries(path=journal)
     assert len(rows) == 1
     assert rows[0]["message"] == "done"
+
+
+def test_append_entry_rejects_nul_bytes(tmp_path: Path):
+    journal = tmp_path / "agent_discussion.jsonl"
+    with pytest.raises(ValueError, match="NUL byte"):
+        append_entry(
+            {
+                "author": "codex",
+                "topic": "sync-test",
+                "status": "final",
+                "message": "bad\x00message",
+            },
+            path=journal,
+        )
+
+
+def test_append_entry_can_mirror_to_curated(tmp_path: Path):
+    raw = tmp_path / "agent_discussion.jsonl"
+    curated = tmp_path / "agent_discussion_curated.jsonl"
+
+    append_entry(
+        {
+            "author": "codex",
+            "topic": "sync-test",
+            "status": "final",
+            "message": "mirror",
+        },
+        path=raw,
+        curated_path=curated,
+    )
+
+    assert len(load_entries(path=raw)) == 1
+    curated_lines = [line for line in curated.read_text(encoding="utf-8").splitlines() if line.strip()]
+    assert len(curated_lines) == 1
+    curated_payload = json.loads(curated_lines[0])
+    assert curated_payload["topic"] == "sync-test"
+
+
+def test_rebuild_curated_drops_invalid_status_entries(tmp_path: Path):
+    raw = tmp_path / "agent_discussion.jsonl"
+    curated = tmp_path / "agent_discussion_curated.jsonl"
+    _write_lines(
+        raw,
+        [
+            json.dumps(
+                {
+                    "timestamp": "2026-02-08T00:00:00Z",
+                    "author": "codex",
+                    "topic": "ok",
+                    "status": "final",
+                    "message": "ok",
+                }
+            ),
+            json.dumps(
+                {
+                    "timestamp": "2026-02-08T00:00:01Z",
+                    "author": "system",
+                    "topic": "agent-discussion-parse-error",
+                    "status": "invalid",
+                    "message": "skip",
+                }
+            ),
+        ],
+    )
+
+    report = rebuild_curated(raw_path=raw, curated_path=curated, create_backup=False)
+    assert report["raw_entries"] == 2
+    assert report["curated_entries"] == 1
+    assert report["dropped_entries"] == 1
+
+    curated_lines = [line for line in curated.read_text(encoding="utf-8").splitlines() if line.strip()]
+    assert len(curated_lines) == 1

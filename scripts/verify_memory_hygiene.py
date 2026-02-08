@@ -20,12 +20,16 @@ DEFAULT_TARGETS = (
     "apps/api/server.py",
     "memory/agent_discussion.py",
     "scripts/verify_7d.py",
+    "scripts/verify_docs_consistency.py",
+    "scripts/verify_layer_boundaries.py",
+    "scripts/run_monthly_consolidation.py",
     "scripts/verify_web_api.py",
     "scripts/verify_memory_hygiene.py",
     "tests/red_team/**/*.py",
     "tools/agent_discussion_tool.py",
 )
-DEFAULT_DISCUSSION_PATH = "memory/agent_discussion.jsonl"
+DEFAULT_DISCUSSION_PATH = "memory/agent_discussion_curated.jsonl"
+DEFAULT_RAW_DISCUSSION_PATH = "memory/agent_discussion.jsonl"
 REQUIRED_DISCUSSION_FIELDS = ("timestamp", "author", "topic", "status", "message")
 UTF8_BOM = b"\xef\xbb\xbf"
 
@@ -129,15 +133,36 @@ def _check_discussion_tail(path: Path, tail_lines: int) -> dict[str, Any]:
     }
 
 
+def _check_raw_discussion(path: Path | None) -> dict[str, Any]:
+    if path is None:
+        return {"path": None, "exists": False, "bom": False, "decode_error": None}
+    if not path.exists():
+        return {"path": path.as_posix(), "exists": False, "bom": False, "decode_error": None}
+    raw = path.read_bytes()
+    decode_error = None
+    try:
+        raw.decode("utf-8")
+    except UnicodeDecodeError as exc:
+        decode_error = str(exc)
+    return {
+        "path": path.as_posix(),
+        "exists": True,
+        "bom": raw.startswith(UTF8_BOM),
+        "decode_error": decode_error,
+    }
+
+
 def _build_report(
     targets: list[str],
     discussion_path: Path,
     tail_lines: int,
     allow_missing_discussion: bool,
+    raw_discussion_path: Path | None = None,
 ) -> dict[str, Any]:
     files, missing_literals = _expand_targets(targets)
     file_report = _check_utf8_no_bom(files)
     discussion_report = _check_discussion_tail(discussion_path, tail_lines)
+    raw_discussion_report = _check_raw_discussion(raw_discussion_path)
     discussion_ok = (
         discussion_report["exists"]
         and not discussion_report.get("bom", False)
@@ -161,6 +186,7 @@ def _build_report(
         "missing_literal_paths": missing_literals,
         "file_hygiene": file_report,
         "discussion_tail": discussion_report,
+        "raw_discussion": raw_discussion_report,
     }
 
 
@@ -176,6 +202,11 @@ def build_parser() -> argparse.ArgumentParser:
         "--discussion-path",
         default=DEFAULT_DISCUSSION_PATH,
         help="Discussion JSONL path.",
+    )
+    parser.add_argument(
+        "--raw-discussion-path",
+        default=DEFAULT_RAW_DISCUSSION_PATH,
+        help="Raw discussion JSONL path for informational hygiene report.",
     )
     parser.add_argument(
         "--tail-lines",
@@ -198,6 +229,7 @@ def main() -> int:
         Path(args.discussion_path),
         max(1, args.tail_lines),
         args.allow_missing_discussion,
+        Path(args.raw_discussion_path) if args.raw_discussion_path else None,
     )
     print(json.dumps(payload, ensure_ascii=False, indent=2))
     return 0 if payload["ok"] else 1

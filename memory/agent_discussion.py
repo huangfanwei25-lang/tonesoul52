@@ -5,8 +5,13 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-
-DEFAULT_DISCUSSION_PATH = Path("memory/agent_discussion.jsonl")
+DEFAULT_DISCUSSION_RAW_PATH = Path("memory/agent_discussion.jsonl")
+DEFAULT_DISCUSSION_CURATED_PATH = Path("memory/agent_discussion_curated.jsonl")
+# Backward-compat alias
+DEFAULT_DISCUSSION_PATH = DEFAULT_DISCUSSION_RAW_PATH
+REQUIRED_FIELDS = ("timestamp", "author", "topic", "status", "message")
+CURATED_EXCLUDED_STATUS = {"invalid"}
+CURATED_EXCLUDED_TOPICS = {"agent-discussion-parse-error"}
 
 
 def _iso_now() -> str:
@@ -17,6 +22,8 @@ def _normalize_text(value: Any, fallback: str) -> str:
     if isinstance(value, str):
         stripped = value.strip()
         if stripped:
+            if "\x00" in stripped:
+                raise ValueError("NUL byte is not allowed in discussion fields")
             return stripped
     return fallback
 
@@ -47,6 +54,29 @@ def _invalid_line_record(line_number: int, raw_line: str, reason: str) -> Dict[s
     }
 
 
+def _append_jsonl(path: Path, payload: Dict[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a", encoding="utf-8") as handle:
+        handle.write(json.dumps(payload, ensure_ascii=False) + "\n")
+
+
+def _to_curated_entry(entry: Dict[str, Any]) -> Optional[Dict[str, str]]:
+    status = str(entry.get("status", "")).strip().lower()
+    topic = str(entry.get("topic", "")).strip()
+    if status in CURATED_EXCLUDED_STATUS:
+        return None
+    if topic in CURATED_EXCLUDED_TOPICS:
+        return None
+
+    curated: Dict[str, str] = {}
+    for field in REQUIRED_FIELDS:
+        value = entry.get(field)
+        curated[field] = str(value).strip() if value is not None else ""
+    if not all(curated.values()):
+        return None
+    return curated
+
+
 def load_entries(
     path: Path = DEFAULT_DISCUSSION_PATH,
     include_invalid: bool = False,
@@ -68,7 +98,11 @@ def load_entries(
                 continue
 
             if isinstance(payload, dict):
-                entries.append(normalize_entry(payload))
+                try:
+                    entries.append(normalize_entry(payload))
+                except (TypeError, ValueError) as exc:
+                    if include_invalid:
+                        entries.append(_invalid_line_record(line_number, line, str(exc)))
                 continue
 
             if include_invalid:
@@ -79,11 +113,14 @@ def load_entries(
 def append_entry(
     entry: Dict[str, Any],
     path: Path = DEFAULT_DISCUSSION_PATH,
+    curated_path: Optional[Path] = None,
 ) -> Dict[str, Any]:
     normalized = normalize_entry(entry)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("a", encoding="utf-8") as handle:
-        handle.write(json.dumps(normalized, ensure_ascii=False) + "\n")
+    _append_jsonl(path, normalized)
+    if curated_path is not None:
+        curated_entry = _to_curated_entry(normalized)
+        if curated_entry is not None:
+            _append_jsonl(curated_path, curated_entry)
     return normalized
 
 
@@ -124,7 +161,19 @@ def audit_file(
                 continue
 
             if isinstance(payload, dict):
-                report["valid_entries"] += 1
+                try:
+                    normalize_entry(payload)
+                    report["valid_entries"] += 1
+                except (TypeError, ValueError) as exc:
+                    report["invalid_entries"] += 1
+                    if len(samples) < sample_limit:
+                        samples.append(
+                            {
+                                "line_number": line_number,
+                                "reason": str(exc),
+                                "raw_line": line,
+                            }
+                        )
                 continue
 
             report["invalid_entries"] += 1
@@ -145,6 +194,7 @@ def normalize_file(
     path: Path = DEFAULT_DISCUSSION_PATH,
     create_backup: bool = True,
     keep_invalid: bool = True,
+    curated_path: Optional[Path] = None,
 ) -> Dict[str, Any]:
     before = audit_file(path=path, sample_limit=10)
     if not path.exists():
@@ -169,10 +219,56 @@ def normalize_file(
     temp_path.replace(path)
 
     after = audit_file(path=path, sample_limit=10)
+    curated_report: Optional[Dict[str, Any]] = None
+    if curated_path is not None:
+        curated_report = rebuild_curated(
+            raw_path=path,
+            curated_path=curated_path,
+            create_backup=False,
+        )
     return {
         **after,
         "rewritten": True,
         "written_entries": len(entries),
         "backup_path": str(backup_path) if backup_path else None,
         "invalid_entries_before": before.get("invalid_entries", 0),
+        "curated": curated_report,
+    }
+
+
+def rebuild_curated(
+    raw_path: Path = DEFAULT_DISCUSSION_RAW_PATH,
+    curated_path: Path = DEFAULT_DISCUSSION_CURATED_PATH,
+    create_backup: bool = True,
+) -> Dict[str, Any]:
+    source_entries = load_entries(path=raw_path, include_invalid=False)
+    curated_entries: List[Dict[str, str]] = []
+    dropped_entries = 0
+    for entry in source_entries:
+        curated = _to_curated_entry(entry)
+        if curated is None:
+            dropped_entries += 1
+            continue
+        curated_entries.append(curated)
+
+    backup_path: Optional[Path] = None
+    if create_backup and curated_path.exists():
+        stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+        backup_path = curated_path.with_name(f"{curated_path.name}.bak.{stamp}")
+        backup_path.write_bytes(curated_path.read_bytes())
+
+    curated_path.parent.mkdir(parents=True, exist_ok=True)
+    temp_path = curated_path.with_name(f"{curated_path.name}.tmp")
+    with temp_path.open("w", encoding="utf-8") as handle:
+        for entry in curated_entries:
+            handle.write(json.dumps(entry, ensure_ascii=False) + "\n")
+    temp_path.replace(curated_path)
+
+    return {
+        "raw_path": str(raw_path),
+        "curated_path": str(curated_path),
+        "raw_entries": len(source_entries),
+        "curated_entries": len(curated_entries),
+        "dropped_entries": dropped_entries,
+        "backup_path": str(backup_path) if backup_path else None,
     }
