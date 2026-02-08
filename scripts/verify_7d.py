@@ -50,6 +50,19 @@ def _run(command: list[str], timeout: int = 1200) -> tuple[bool, str, str, int]:
     return ok, proc.stdout, proc.stderr, proc.returncode
 
 
+def _display_command(command: list[str]) -> str:
+    rendered: list[str] = []
+    for index, token in enumerate(command):
+        text = str(token)
+        if index == 0:
+            executable = text.replace("\\", "/").rsplit("/", 1)[-1].lower()
+            if executable.startswith("python"):
+                rendered.append("python")
+                continue
+        rendered.append(text)
+    return " ".join(rendered)
+
+
 def _result(
     dimension: str, gate: str, status: str, command: list[str], note: str = ""
 ) -> CheckResult:
@@ -57,7 +70,7 @@ def _result(
         dimension=dimension,
         gate=gate,
         status=status,
-        command=" ".join(command),
+        command=_display_command(command),
         note=note,
     )
 
@@ -78,7 +91,15 @@ def _parse_timestamp(value: str) -> datetime | None:
 
 
 def _check_ddd_freshness(path: Path, stale_days: int) -> CheckResult:
-    cmd = [sys.executable, "tools/agent_discussion_tool.py", "tail", "--path", str(path), "--limit", "1"]
+    cmd = [
+        sys.executable,
+        "tools/agent_discussion_tool.py",
+        "tail",
+        "--path",
+        str(path),
+        "--limit",
+        "1",
+    ]
     if not path.exists():
         return _result("DDD_FRESHNESS", "SOFT_FAIL", "fail", cmd, "discussion file not found")
     latest: datetime | None = None
@@ -262,7 +283,14 @@ def _check_cdd() -> CheckResult:
 
 def _check_rdd() -> CheckResult:
     cmd = [sys.executable, "-m", "pytest", str(Path("tests/red_team/")), "-q"]
-    collect_cmd = [sys.executable, "-m", "pytest", str(Path("tests/red_team/")), "--collect-only", "-q"]
+    collect_cmd = [
+        sys.executable,
+        "-m",
+        "pytest",
+        str(Path("tests/red_team/")),
+        "--collect-only",
+        "-q",
+    ]
     collected_ok, collected_stdout, collected_stderr, collected_code = _run(collect_cmd)
     if not collected_ok:
         if collected_code == 5:

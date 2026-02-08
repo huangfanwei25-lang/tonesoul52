@@ -9,3 +9,14 @@ def test_build_check_commands_includes_allow_missing_discussion_flag() -> None:
 def test_build_check_commands_omits_allow_missing_discussion_flag() -> None:
     commands = monthly._build_check_commands(allow_missing_discussion=False)
     assert "--allow-missing-discussion" not in commands["memory_hygiene"]
+
+
+def test_display_command_normalizes_python_executable() -> None:
+    command = [
+        r"C:\\Users\\user\\Desktop\\repo\\.venv\\Scripts\\python.exe",
+        "scripts/run_monthly_consolidation.py",
+        "--strict",
+    ]
+    assert (
+        monthly._display_command(command) == "python scripts/run_monthly_consolidation.py --strict"
+    )

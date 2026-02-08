@@ -5,7 +5,7 @@ Property-Based Tests for ContractObserver
 """
 
 import pytest
-from hypothesis import given, settings
+from hypothesis import given, settings, HealthCheck
 from hypothesis import strategies as st
 
 from tonesoul.contract_observer import (
@@ -44,7 +44,7 @@ def valid_output_strategy(draw):
 class TestMultiScaleObserverProperties:
     """測試 MultiScaleObserver 的不變量"""
 
-    @settings(max_examples=50)
+    @settings(max_examples=50, suppress_health_check=[HealthCheck.too_slow])
     @given(st.lists(delta_s_strategy(), min_size=1, max_size=100))
     def test_observe_maintains_history(self, deltas):
         """屬性: observe() 會累積歷史記錄"""

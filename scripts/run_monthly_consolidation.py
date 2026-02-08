@@ -17,6 +17,19 @@ def _iso_now() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
+def _display_command(cmd: list[str]) -> str:
+    rendered: list[str] = []
+    for index, token in enumerate(cmd):
+        text = str(token)
+        if index == 0:
+            executable = text.replace("\\", "/").rsplit("/", 1)[-1].lower()
+            if executable.startswith("python"):
+                rendered.append("python")
+                continue
+        rendered.append(text)
+    return " ".join(rendered)
+
+
 def _run_json(cmd: list[str], cwd: Path) -> dict[str, Any]:
     proc = subprocess.run(
         cmd,
@@ -32,7 +45,7 @@ def _run_json(cmd: list[str], cwd: Path) -> dict[str, Any]:
     except json.JSONDecodeError:
         payload = {"raw_stdout": proc.stdout.strip(), "raw_stderr": proc.stderr.strip()}
     return {
-        "command": " ".join(cmd),
+        "command": _display_command(cmd),
         "exit_code": int(proc.returncode),
         "ok": proc.returncode == 0,
         "payload": payload,

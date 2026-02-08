@@ -34,3 +34,12 @@ def test_cli_overrides_env_defaults(monkeypatch):
 
     assert args.web_base == "http://127.0.0.1:3010"
     assert args.api_base == "http://127.0.0.1:5010"
+
+
+def test_display_command_normalizes_python_executable() -> None:
+    command = [
+        r"C:\\Users\\user\\Desktop\\repo\\.venv\\Scripts\\python.exe",
+        "scripts/verify_7d.py",
+        "--strict-soft-fail",
+    ]
+    assert verify_7d._display_command(command) == "python scripts/verify_7d.py --strict-soft-fail"

@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-02-08T14:50:53Z",
+  "generated_at": "2026-02-08T16:48:04Z",
   "source": "scripts/verify_7d.py",
   "result": {
-    "command": "C:\\Users\\user\\Desktop\\倉庫\\.venv\\Scripts\\python.exe scripts/verify_7d.py",
+    "command": "python scripts/verify_7d.py",
     "exit_code": 0,
     "ok": true,
     "payload": {
@@ -15,63 +15,63 @@
           "dimension": "TDD",
           "gate": "BLOCKING",
           "status": "pass",
-          "command": "C:\\Users\\user\\Desktop\\�ܮw\\.venv\\Scripts\\python.exe -m pytest tests -q",
+          "command": "python -m pytest tests -q",
           "note": ""
         },
         {
           "dimension": "RDD",
           "gate": "SOFT_FAIL",
           "status": "pass",
-          "command": "C:\\Users\\user\\Desktop\\�ܮw\\.venv\\Scripts\\python.exe -m pytest tests\\red_team -q",
-          "note": "case-count=20"
+          "command": "python -m pytest tests\\red_team -q",
+          "note": "case-count=22"
         },
         {
           "dimension": "DDD",
           "gate": "BLOCKING",
           "status": "pass",
-          "command": "C:\\Users\\user\\Desktop\\�ܮw\\.venv\\Scripts\\python.exe tools\\agent_discussion_tool.py audit --path memory\\agent_discussion_curated.jsonl",
+          "command": "python tools\\agent_discussion_tool.py audit --path memory\\agent_discussion_curated.jsonl",
           "note": ""
         },
         {
           "dimension": "DDD_HYGIENE",
           "gate": "BLOCKING",
           "status": "pass",
-          "command": "C:\\Users\\user\\Desktop\\�ܮw\\.venv\\Scripts\\python.exe scripts\\verify_memory_hygiene.py --tail-lines 200 --discussion-path memory\\agent_discussion_curated.jsonl",
+          "command": "python scripts\\verify_memory_hygiene.py --tail-lines 200 --discussion-path memory\\agent_discussion_curated.jsonl",
           "note": ""
         },
         {
           "dimension": "DDD_FRESHNESS",
           "gate": "SOFT_FAIL",
           "status": "pass",
-          "command": "C:\\Users\\user\\Desktop\\�ܮw\\.venv\\Scripts\\python.exe tools/agent_discussion_tool.py tail --path memory\\agent_discussion_curated.jsonl --limit 1",
-          "note": "age_days=0.00, threshold=7"
+          "command": "python tools/agent_discussion_tool.py tail --path memory\\agent_discussion_curated.jsonl --limit 1",
+          "note": "age_days=0.02, threshold=7"
         },
         {
           "dimension": "XDD",
           "gate": "BLOCKING",
           "status": "pass",
-          "command": "C:\\Users\\user\\Desktop\\�ܮw\\.venv\\Scripts\\python.exe -m pytest tests\\test_uncertainty.py -q",
+          "command": "python -m pytest tests\\test_uncertainty.py -q",
           "note": ""
         },
         {
           "dimension": "GDD",
           "gate": "BLOCKING",
           "status": "pass",
-          "command": "C:\\Users\\user\\Desktop\\�ܮw\\.venv\\Scripts\\python.exe -m pytest tests\\test_genesis_integration.py tests\\test_provenance_chain.py -q",
+          "command": "python -m pytest tests\\test_genesis_integration.py tests\\test_provenance_chain.py -q",
           "note": ""
         },
         {
           "dimension": "CDD",
           "gate": "BLOCKING",
           "status": "pass",
-          "command": "C:\\Users\\user\\Desktop\\�ܮw\\.venv\\Scripts\\python.exe -m pytest tests/test_api_server_contract.py -q",
+          "command": "python -m pytest tests/test_api_server_contract.py -q",
           "note": ""
         },
         {
           "dimension": "SDH",
           "gate": "SOFT_FAIL",
           "status": "skip",
-          "command": "C:\\Users\\user\\Desktop\\�ܮw\\.venv\\Scripts\\python.exe scripts\\verify_web_api.py --web-base http://127.0.0.1:3000 --api-base http://127.0.0.1:5000 --require-backend",
+          "command": "python scripts\\verify_web_api.py --web-base http://127.0.0.1:3000 --api-base http://127.0.0.1:5000 --require-backend",
           "note": "skipped; use --include-sdh when web/backend are running"
         }
       ],

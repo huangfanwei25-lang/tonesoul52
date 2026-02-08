@@ -85,6 +85,13 @@
 - [x] 新增 red-team 測試：untrusted seed 無法強制觸發、trusted seed 上限生效
 **成功標準**: 預設外部輸入無法強制 Escape Valve，且觸發/忽略路徑有可觀測指標與對抗測試覆蓋。
 
+## Phase 30: 狀態報告穩定化（命令顯示）
+- [x] `scripts/verify_7d.py` 命令輸出改為穩定顯示（`python ...`，避免環境路徑亂碼）
+- [x] `scripts/run_monthly_consolidation.py` 命令輸出改為穩定顯示（`python ...`）
+- [x] 補齊命令顯示正規化單元測試
+- [x] 重新生成 `docs/status/*.json` 並驗證可讀性
+**成功標準**: 月度報告中的 `command` 與 7D 結果命令欄位在跨環境（含非 ASCII 路徑）仍維持可讀、可比對。 
+
 ## 已完成（摘要）
 - [x] Phase 1-2: Council 設計與整合
 - [x] Phase 3/10/16: Tools API schema + ToolResponse 標準化
