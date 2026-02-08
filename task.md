@@ -92,6 +92,12 @@
 - [x] 重新生成 `docs/status/*.json` 並驗證可讀性
 **成功標準**: 月度報告中的 `command` 與 7D 結果命令欄位在跨環境（含非 ASCII 路徑）仍維持可讀、可比對。 
 
+## Phase 31: SDH 編碼穩定性修復（ToneBridge）
+- [x] 修復 `tonesoul/tonebridge/commitment_extractor.py` 在缺少 `jieba` 時的 cp950 編碼崩潰
+- [x] 新增 cp950 import 回歸測試，避免再次因 import-time 輸出造成 `UnicodeEncodeError`
+- [x] 驗證 `scripts/run_7d_isolated.py`（含 SDH）回歸全綠
+**成功標準**: 在無 `jieba` 的環境下不再因編碼錯誤導致 `/api/session-report` 500，且 7D 隔離整鏈（含 SDH）可重現全綠。
+
 ## 已完成（摘要）
 - [x] Phase 1-2: Council 設計與整合
 - [x] Phase 3/10/16: Tools API schema + ToolResponse 標準化

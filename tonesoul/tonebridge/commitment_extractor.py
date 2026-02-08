@@ -1,4 +1,4 @@
-"""
+﻿"""
 Commitment Extractor - Enhanced NLP Module
 
 Uses jieba for Chinese word segmentation to extract
@@ -10,6 +10,7 @@ Based on 2025-2026 NLP research:
 - Semantic Anchor Extraction
 """
 
+import sys
 from dataclasses import dataclass
 from typing import List, Tuple
 
@@ -20,7 +21,7 @@ try:
     JIEBA_AVAILABLE = True
 except ImportError:
     JIEBA_AVAILABLE = False
-    print("⚠️ jieba not installed. Run: pip install jieba")
+    sys.stderr.write("[WARN] jieba not installed. Run: pip install jieba\n")
 
 
 @dataclass
