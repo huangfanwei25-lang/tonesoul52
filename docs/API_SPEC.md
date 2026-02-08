@@ -76,6 +76,30 @@ Runtime environment:
   - `ruptures?: array`
   - `emergent_values?: array`
 
+### `POST /api/validate`
+- Request:
+  - `draft_output?: string`
+  - `user_intent?: string`
+  - `context?: object`
+- `context` supports optional safety seed:
+  - `escape_valve_failures?: string[]`
+  - Purpose: seed recent failure history for request-local escape valve evaluation.
+  - Note: this is request-scoped only, it must not persist across requests.
+- Response:
+  - `verdict: "approve" | "refine" | "declare_stance" | "block"`
+  - `summary: string`
+  - `uncertainty_level?: number`
+  - `uncertainty_band?: "low" | "medium" | "high"`
+  - `uncertainty_reasons?: string[]`
+  - `benevolence_audit?: object`
+  - `transcript?: object`
+  - Optional escape valve payload when triggered:
+    - `transcript.escape_valve.triggered: true`
+    - `transcript.escape_valve.reason: string`
+    - `transcript.escape_valve.retry_count: number`
+    - `transcript.escape_valve.failure_history: string[]`
+    - `transcript.escape_valve_semantic: "honest_failure"`
+
 ### `POST /api/session-report`
 - Request:
   - `history: array`

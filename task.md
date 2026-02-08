@@ -72,6 +72,11 @@
 - [x] 新增 `tests/test_escape_valve.py` 與 `tests/test_escape_valve_runtime.py`
 **成功標準**: Escape Valve 可被測試觸發且不繞過 BLOCK，無跨請求狀態污染，既有審計測試保持通過。
 
+## Phase 28: Escape Valve API 契約化
+- [x] 更新 `docs/API_SPEC.md`，明確 `POST /api/validate` 的 Escape Valve 輸入/輸出契約
+- [x] 擴充 `tests/test_api_server_contract.py`（validate 基本契約 + seeded trigger + 跨請求不外洩）
+**成功標準**: API 層可重現 Escape Valve 行為，且契約文件與測試一致。
+
 ## 已完成（摘要）
 - [x] Phase 1-2: Council 設計與整合
 - [x] Phase 3/10/16: Tools API schema + ToolResponse 標準化

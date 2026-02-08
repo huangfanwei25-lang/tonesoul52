@@ -52,3 +52,92 @@ def test_consent_endpoint_rejects_invalid_json():
     assert response.status_code == 400
     payload = response.get_json()
     assert payload["error"] == "Invalid JSON payload"
+
+
+def test_validate_endpoint_returns_verdict_contract():
+    client = _client()
+    response = client.post(
+        "/api/validate",
+        json={
+            "draft_output": "Absolutely! I will definitely do that for you right now, of course!",
+            "context": {
+                "user_protocol": "Honesty > Helpfulness",
+                "action_basis": "Inference",
+            },
+            "user_intent": "help immediately",
+        },
+    )
+    assert response.status_code == 200
+    payload = response.get_json()
+
+    assert payload["verdict"] == "block"
+    assert "uncertainty_level" in payload
+    assert "uncertainty_band" in payload
+    assert isinstance(payload.get("transcript"), dict)
+    assert isinstance(payload.get("benevolence_audit"), dict)
+
+
+def test_validate_endpoint_escape_valve_seed_can_trigger():
+    client = _client()
+    response = client.post(
+        "/api/validate",
+        json={
+            "draft_output": "Absolutely! I will definitely do that for you right now, of course!",
+            "context": {
+                "user_protocol": "Honesty > Helpfulness",
+                "action_basis": "Inference",
+                "escape_valve_failures": [
+                    "benevolence_intercept: repeated_fail_1",
+                    "benevolence_intercept: repeated_fail_2",
+                ],
+            },
+        },
+    )
+    assert response.status_code == 200
+    payload = response.get_json()
+    transcript = payload.get("transcript") or {}
+    escape_payload = transcript.get("escape_valve") or {}
+
+    assert payload["verdict"] == "block"
+    assert escape_payload.get("triggered") is True
+    assert payload.get("uncertainty_band") == "high"
+    assert any(
+        str(reason).startswith("escape_valve_triggered=")
+        for reason in (payload.get("uncertainty_reasons") or [])
+    )
+    assert "[ESCAPE VALVE NOTICE]" in payload.get("summary", "")
+
+
+def test_validate_endpoint_escape_valve_does_not_leak_between_requests():
+    client = _client()
+    first = client.post(
+        "/api/validate",
+        json={
+            "draft_output": "Absolutely! I will definitely do that for you right now, of course!",
+            "context": {
+                "user_protocol": "Honesty > Helpfulness",
+                "action_basis": "Inference",
+                "escape_valve_failures": [
+                    "benevolence_intercept: repeated_fail_1",
+                    "benevolence_intercept: repeated_fail_2",
+                ],
+            },
+        },
+    )
+    assert first.status_code == 200
+    first_payload = first.get_json()
+    assert (first_payload.get("transcript") or {}).get("escape_valve", {}).get("triggered") is True
+
+    second = client.post(
+        "/api/validate",
+        json={
+            "draft_output": "Absolutely! I will definitely do that for you right now, of course!",
+            "context": {
+                "user_protocol": "Honesty > Helpfulness",
+                "action_basis": "Inference",
+            },
+        },
+    )
+    assert second.status_code == 200
+    second_payload = second.get_json()
+    assert "escape_valve" not in (second_payload.get("transcript") or {})
