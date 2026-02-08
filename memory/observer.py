@@ -19,6 +19,8 @@ class MemoryObserver:
         before_context: Optional[Dict[str, Any]] = None,
         after_context: Optional[Dict[str, Any]] = None,
         isnad_link: Optional[str] = None,
+        stream: str = "raw",
+        metadata: Optional[Dict[str, Any]] = None,
     ) -> str:
         record = ActionRecord(
             action=action,
@@ -26,6 +28,8 @@ class MemoryObserver:
             result=result,
             before=before_context,
             after=after_context,
+            stream=stream,
+            metadata=metadata,
         )
         payload = asdict(record)
         return self._write_log(
@@ -37,12 +41,15 @@ class MemoryObserver:
             after_context=payload.get("after"),
             isnad_link=isnad_link,
             timestamp=record.timestamp,
+            stream=payload.get("stream"),
+            metadata=payload.get("metadata"),
         )
 
     def log_decision(
         self,
         council_verdict: Any,
         context: Optional[Dict[str, Any]] = None,
+        stream: str = "raw",
     ) -> str:
         verdict_value = getattr(council_verdict, "verdict", None)
         verdict_str = getattr(verdict_value, "value", verdict_value) or "unknown"
@@ -53,6 +60,8 @@ class MemoryObserver:
             verdict=str(verdict_str),
             reasoning=str(reasoning),
             isnad_link=(context or {}).get("isnad_link"),
+            stream=stream,
+            metadata=(context or {}).get("metadata"),
         )
         payload = asdict(record)
         extra = {
@@ -72,6 +81,8 @@ class MemoryObserver:
             after_context=None,
             isnad_link=record.isnad_link,
             timestamp=record.timestamp,
+            stream=payload.get("stream"),
+            metadata=payload.get("metadata"),
         )
 
     def log_commitment(
@@ -80,11 +91,15 @@ class MemoryObserver:
         falsifiable_by: Optional[str] = None,
         measurable_via: Optional[str] = None,
         isnad_link: Optional[str] = None,
+        stream: str = "raw",
+        metadata: Optional[Dict[str, Any]] = None,
     ) -> str:
         record = CommitmentRecord(
             vow=vow,
             falsifiable_by=falsifiable_by,
             measurable_via=measurable_via,
+            stream=stream,
+            metadata=metadata,
         )
         payload = asdict(record)
         return self._write_log(
@@ -96,6 +111,8 @@ class MemoryObserver:
             after_context=None,
             isnad_link=isnad_link,
             timestamp=record.timestamp,
+            stream=payload.get("stream"),
+            metadata=payload.get("metadata"),
         )
 
     def query(self, type: Optional[str] = None, limit: int = 10) -> List[Dict[str, Any]]:
@@ -111,6 +128,8 @@ class MemoryObserver:
         after_context: Optional[Dict[str, Any]],
         isnad_link: Optional[str],
         timestamp: str,
+        stream: Optional[str] = None,
+        metadata: Optional[Dict[str, Any]] = None,
     ) -> str:
         return self.soul_db.append_action_log(
             record_type=record_type,
@@ -121,4 +140,6 @@ class MemoryObserver:
             after_context=after_context,
             isnad_link=isnad_link,
             timestamp=timestamp,
+            stream=stream,
+            metadata=metadata,
         )

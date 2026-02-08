@@ -12,6 +12,7 @@ from .pre_output_council import PreOutputCouncil
 from .self_journal import record_self_memory
 from .types import CouncilVerdict, PerspectiveType
 from .verdict import apply_uncertainty
+from ..benevolence import filter_benevolence, AuditLayer, AuditResult
 
 
 @dataclass
@@ -65,6 +66,34 @@ class CouncilRuntime:
             user_intent=request.user_intent,
             auto_record_self_memory=False,
         )
+
+        # 🚀 7D Backend Auditor Integration (5.3 Collaboration)
+        try:
+            # Extract context fragments for shadow tracking
+            fragments = context.get("fragments") or context.get("context_fragments") or []
+            if not fragments and request.user_intent:
+                fragments = [request.user_intent]
+                
+            benev_audit = filter_benevolence(
+                proposed_action=request.draft_output,
+                context_fragments=fragments,
+                action_basis=context.get("action_basis", "Inference"),
+                current_layer=context.get("current_layer", AuditLayer.L2),
+                genesis_id=context.get("genesis_id"),
+                user_protocol=context.get("user_protocol", "Honesty > Helpfulness"),
+            )
+            verdict.benevolence_audit = benev_audit.to_dict()
+            
+            # If Benevolence Audit intercepts, elevate Council Verdict to BLOCK
+            from .types import VerdictType
+            if benev_audit.final_result in (AuditResult.REJECT, AuditResult.INTERCEPT):
+                verdict.verdict = VerdictType.BLOCK
+                verdict.summary += f"\n[7D AUDITOR INTERCEPT] {benev_audit.error_log}"
+        except Exception as e:
+            print(f"⚠️ Benevolence Audit failed: {e}")
+            if verdict.transcript is None:
+                verdict.transcript = {}
+            verdict.transcript["benevolence_audit_error"] = str(e)
 
         try:
             genesis_decision = infer_genesis(

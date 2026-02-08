@@ -1,34 +1,130 @@
 # Contributing to ToneSoul
 
-ToneSoul is a governance-first stack. Every contribution should move the repository toward transparency, traceability, and semantic responsibility.
+Thank you for considering contributing to ToneSoul! 🌌
 
-## 1. Before Your First Contribution
-- Read `docs/philosophy/axioms.md`, `docs/philosophy/collective_consciousness.md`, and `docs/TRUTH_STRUCTURE.md` to understand the values we encode.
-- Check `memory/fan_wei_context.md` for Fan-Wei Huang’s intent model so your wording mirrors the tone of creative yet accountable governance.
-- Ensure your environment can run the pre-output council tests (`tests/test_pre_output_council.py`) and the broader suite if relevant.
+## 💭 Our Philosophy
 
-## 2. Code Contributions
-- Create descriptive branches (`feature/pre-output-council`, `fix/coherence-score`) off `master`.
-- Follow existing style: modules in `tonesoul/` use descriptive classes, `docs/` use bilingual explanations, and YAML specs are explicit about thresholds.
-- Add or update tests when you touch logic; run relevant `pytest` modules locally.
-- Submit a pull request that:
-  - Explains the change in human-readable governance terms (especially when touching policies).
-  - References the relevant spec or axiom.
-  - Includes `CoherenceScore`/`CouncilVerdict` updates if they affect reasoning.
+Before diving into code, please understand what makes ToneSoul different:
 
-## 3. Documentation & Specs
-- Document new concepts inside `docs/` before updating `spec/`, unless the spec needs to shift first.
-- Keep docs bilingual (English + dense phrases) to align with existing philosophical entries.
-- Update `docs/GETTING_STARTED.md` or `docs/philosophy/` whenever you add a new governance pattern.
+> **We optimize for honesty, not just helpfulness.**
 
-## 4. Issues & Pull Requests
-- Use issues to surface new governance questions, feature requests, or drift you observe; tag them with `governance`, `philosophy`, or `engineering`.
-- For PRs:
-  - Link affected specs (`spec/*.md`) and philosophy docs.
-  - Note how the change preserves or adjusts the semantic responsibility chain.
-  - Mention test coverage and noteworthy manual steps.
+Every contribution should ask: *"Does this make the system more accountable, or just more capable?"*
 
-## 5. Behavior Expectations
-- ToneSoul is collaborative: discuss high-level shifts in issues before coding.
-- Respect the `AXIOMS.json` sanity checks—nothing should contradict the axioms without a clear migration plan.
-- Remain transparent: log significant decisions in `reports/` or create new entries when introducing new governance gates.
+---
+
+## 🚀 Quick Start for Contributors
+
+### 1. Fork and Clone
+
+```bash
+git clone https://github.com/YOUR_USERNAME/tonesoul52.git
+cd tonesoul52
+```
+
+### 2. Set Up Development Environment
+
+```bash
+# Windows
+.\setup_env.ps1
+
+# Or manually
+python -m venv .venv
+.venv\Scripts\activate  # Windows
+source .venv/bin/activate  # Linux/macOS
+pip install -e ".[dev]"
+```
+
+### 3. Run Tests
+
+```bash
+pytest tests/
+```
+
+### 4. Run 7D Audit
+
+```bash
+python scripts/verify_7d.py
+```
+
+---
+
+## 📋 Types of Contributions
+
+### 🐛 Bug Reports
+
+Found a bug? Please include:
+- Python version
+- OS and version
+- Steps to reproduce
+- Expected vs actual behavior
+
+### ✨ Feature Requests
+
+Have an idea? Please describe:
+- The problem you're trying to solve
+- Your proposed solution
+- How it aligns with ToneSoul's philosophy
+
+### 🔧 Code Contributions
+
+1. Create a new branch: `git checkout -b feature/your-feature-name`
+2. Make your changes
+3. Run tests: `pytest tests/`
+4. Run 7D audit: `python scripts/verify_7d.py`
+5. Submit a Pull Request
+
+---
+
+## 📝 Code Style
+
+- **Python**: Follow Black formatting (line length 100)
+- **Docstrings**: Google style
+- **Tests**: Use pytest, aim for high coverage
+- **Commits**: Use conventional commits (`feat:`, `fix:`, `docs:`, etc.)
+
+### Linting
+
+```bash
+black --check --line-length 100 tonesoul tests
+ruff check tonesoul tests
+```
+
+---
+
+## 🛡️ 7D Audit Compliance
+
+All contributions must pass the 7D audit:
+
+| Dimension | Requirement |
+|-----------|-------------|
+| TDD | New features must have tests |
+| RDD | Security-sensitive code needs red-team review |
+| DDD | No data leakage, clean memory hygiene |
+| XDD | Logic must be explainable |
+| GDD | Respect governance boundaries |
+| CDD | Maintain narrative consistency |
+| SDH | No performance regressions |
+
+---
+
+## 💬 Community
+
+- **Issues**: For bug reports and feature requests
+- **Discussions**: For broader conversations
+- **Pull Requests**: For code contributions
+
+---
+
+## 📜 License
+
+By contributing, you agree that your contributions will be licensed under the Apache 2.0 License.
+
+---
+
+## 🙏 Thank You
+
+> *"If you've ever felt that AI should be more than a clever autocomplete — if you believe machines can be built to say 'I don't know' with dignity — you belong here."*
+
+Every contribution, no matter how small, helps build a future where AI is honest, accountable, and genuinely helpful.
+
+⭐ **Star this repo** to help others discover this work!

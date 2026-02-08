@@ -12,8 +12,11 @@ authors = [
     {name = "黃梵威", email = "tonesoul@example.com"}
 ]
 keywords = [
-    "ai", "governance", "llm", "audit", "trust", 
-    "ethics", "alignment", "safety", "agent"
+    "ai-governance", "ai-alignment", "responsible-ai", "explainable-ai", "xai",
+    "ai-safety", "ai-ethics", "verifiable-ai", "auditable-ai", "ai-accountability",
+    "llm-governance", "ai-transparency", "provenance-tracking", "ai-consciousness",
+    "human-ai-symbiosis", "multi-perspective-voting", "council-deliberation",
+    "ai-audit-framework", "7d-audit", "tonesoul"
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
