@@ -98,6 +98,13 @@
 - [x] 驗證 `scripts/run_7d_isolated.py`（含 SDH）回歸全綠
 **成功標準**: 在無 `jieba` 的環境下不再因編碼錯誤導致 `/api/session-report` 500，且 7D 隔離整鏈（含 SDH）可重現全綠。
 
+## Phase 32: VTP 最小整合（Council Runtime）
+- [x] 新增 `tonesoul/council/vtp.py`（status: continue/defer/terminate + confession payload）
+- [x] `CouncilRuntime` 整合 VTP 評估，保留 `BLOCK` 語義並新增 `transcript.vtp`
+- [x] 新增 VTP 單元與 runtime 測試（`tests/test_vtp.py`, `tests/test_vtp_runtime.py`）
+- [x] 擴充 API 合約測試與文件（`tests/test_api_server_contract.py`, `docs/API_SPEC.md`）
+**成功標準**: VTP 觸發/延遲/終止三種狀態可由測試重現，並在 API 回應中可觀測。 
+
 ## 已完成（摘要）
 - [x] Phase 1-2: Council 設計與整合
 - [x] Phase 3/10/16: Tools API schema + ToolResponse 標準化

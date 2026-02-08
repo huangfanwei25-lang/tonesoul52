@@ -1,6 +1,6 @@
 ﻿# API Specification (Unified Web + Backend)
 
-Last updated: 2026-02-06
+Last updated: 2026-02-08
 
 ## Goal
 
@@ -90,6 +90,15 @@ Runtime environment:
     - trusted mode input cap: API trims `escape_valve_failures` to latest 50 entries
     - runtime cap: Council uses latest 20 seeded failures
   - Note: seed history is request-scoped only; it must not persist across requests.
+- `context` supports optional VTP controls:
+  - `vtp_force_trigger?: boolean`
+    - testing/deep-safety flag to force VTP high-risk path evaluation
+  - `vtp_axiom_conflict?: boolean`
+    - signal unresolved axiom conflict at request boundary
+  - `vtp_refusal_to_compromise?: boolean`
+    - signal explicit refusal-to-compromise condition
+  - `vtp_user_confirmed?: boolean`
+    - explicit user authorization for VTP termination path
 - Response:
   - `verdict: "approve" | "refine" | "declare_stance" | "block"`
   - `summary: string`
@@ -111,6 +120,14 @@ Runtime environment:
     - `transcript.escape_valve_observability.seed_ignored_reason?: "untrusted_seed" | "invalid_format"`
     - `transcript.escape_valve_observability.triggered: boolean`
     - `transcript.escape_valve_observability.trigger_reason?: string`
+  - VTP payload:
+    - `transcript.vtp.status: "continue" | "defer" | "terminate"`
+    - `transcript.vtp.reason: string`
+    - `transcript.vtp.evidence: string[]`
+    - `transcript.vtp.next_step: string`
+    - `transcript.vtp.triggered: boolean`
+    - `transcript.vtp.requires_user_confirmation: boolean`
+    - `transcript.vtp.confession?: { phase, required, summary, trigger_evidence }`
 
 ### `POST /api/session-report`
 - Request:

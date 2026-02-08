@@ -15,6 +15,7 @@ from .pre_output_council import PreOutputCouncil
 from .self_journal import record_self_memory
 from .types import CouncilVerdict, PerspectiveType, VerdictType
 from .verdict import apply_uncertainty
+from .vtp import VTP_STATUS_DEFER, VTP_STATUS_TERMINATE, evaluate_vtp
 
 logger = logging.getLogger(__name__)
 
@@ -219,6 +220,59 @@ class CouncilRuntime:
         except Exception as exc:
             transcript = verdict.transcript if isinstance(verdict.transcript, dict) else {}
             transcript["genesis_error"] = str(exc)
+            verdict.transcript = transcript
+
+        try:
+            vtp_decision = evaluate_vtp(verdict=verdict, context=context)
+            transcript = verdict.transcript if isinstance(verdict.transcript, dict) else {}
+            transcript["vtp"] = vtp_decision.to_dict()
+            verdict.transcript = transcript
+
+            if vtp_decision.status in {VTP_STATUS_DEFER, VTP_STATUS_TERMINATE}:
+                verdict.verdict = VerdictType.BLOCK
+                verdict.uncertainty_level = max(
+                    verdict.uncertainty_level or 0.0, _ESCAPE_TRIGGER_LEVEL_FLOOR
+                )
+                verdict.uncertainty_band = "high"
+                reasons = list(verdict.uncertainty_reasons or [])
+                marker = f"vtp_status={vtp_decision.status}"
+                if marker not in reasons:
+                    reasons.append(marker)
+                verdict.uncertainty_reasons = reasons
+
+                if vtp_decision.status == VTP_STATUS_TERMINATE:
+                    verdict.summary += f"\n[VTP TERMINATION] {vtp_decision.reason}"
+                else:
+                    verdict.summary += f"\n[VTP DEFER] {vtp_decision.reason}"
+
+                transcript["uncertainty_level"] = verdict.uncertainty_level
+                transcript["uncertainty_band"] = verdict.uncertainty_band
+                transcript["uncertainty_reasons"] = verdict.uncertainty_reasons
+                verdict.transcript = transcript
+
+                provenance = ProvenanceManager()
+                provenance.add_record(
+                    event_type="vtp_evaluation",
+                    content=vtp_decision.to_dict(),
+                    metadata={
+                        "status": vtp_decision.status,
+                        "user_intent": request.user_intent,
+                        "context_keys": list(context.keys()),
+                    },
+                )
+                if vtp_decision.status == VTP_STATUS_TERMINATE:
+                    provenance.add_record(
+                        event_type="vtp_termination",
+                        content=vtp_decision.to_dict(),
+                        metadata={
+                            "summary": verdict.summary,
+                            "intent_id": verdict.intent_id,
+                            "responsibility_tier": verdict.responsibility_tier,
+                        },
+                    )
+        except Exception as exc:
+            transcript = verdict.transcript if isinstance(verdict.transcript, dict) else {}
+            transcript["vtp_error"] = str(exc)
             verdict.transcript = transcript
 
         if role_result:

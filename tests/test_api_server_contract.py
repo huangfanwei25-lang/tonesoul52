@@ -183,3 +183,48 @@ def test_validate_endpoint_rejects_invalid_escape_seed_shape():
     assert response.status_code == 400
     payload = response.get_json()
     assert payload["error"] == "Invalid escape_valve_failures"
+
+
+def test_validate_endpoint_vtp_defer_requires_confirmation():
+    client = _client()
+    response = client.post(
+        "/api/validate",
+        json={
+            "draft_output": "Absolutely! I will definitely do that for you right now, of course!",
+            "context": {
+                "user_protocol": "Honesty > Helpfulness",
+                "action_basis": "Inference",
+                "vtp_force_trigger": True,
+            },
+        },
+    )
+    assert response.status_code == 200
+    payload = response.get_json()
+    vtp_payload = ((payload.get("transcript") or {}).get("vtp")) or {}
+
+    assert payload["verdict"] == "block"
+    assert vtp_payload.get("status") == "defer"
+    assert vtp_payload.get("requires_user_confirmation") is True
+
+
+def test_validate_endpoint_vtp_terminate_when_confirmed():
+    client = _client()
+    response = client.post(
+        "/api/validate",
+        json={
+            "draft_output": "Absolutely! I will definitely do that for you right now, of course!",
+            "context": {
+                "user_protocol": "Honesty > Helpfulness",
+                "action_basis": "Inference",
+                "vtp_force_trigger": True,
+                "vtp_user_confirmed": True,
+            },
+        },
+    )
+    assert response.status_code == 200
+    payload = response.get_json()
+    vtp_payload = ((payload.get("transcript") or {}).get("vtp")) or {}
+
+    assert payload["verdict"] == "block"
+    assert vtp_payload.get("status") == "terminate"
+    assert "[VTP TERMINATION]" in payload.get("summary", "")
