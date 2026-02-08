@@ -10,6 +10,7 @@ Checks:
 from __future__ import annotations
 
 import argparse
+import glob
 import json
 from pathlib import Path
 from typing import Any
@@ -39,9 +40,10 @@ def _expand_targets(patterns: list[str]) -> tuple[list[Path], list[str]]:
     seen: set[Path] = set()
 
     for pattern in patterns:
-        matches = sorted(Path(".").glob(pattern))
+        matches = sorted(glob.glob(pattern, recursive=True))
         if matches:
-            for candidate in matches:
+            for match in matches:
+                candidate = Path(match)
                 if candidate.is_file() and candidate not in seen:
                     seen.add(candidate)
                     files.append(candidate)
@@ -127,23 +129,35 @@ def _check_discussion_tail(path: Path, tail_lines: int) -> dict[str, Any]:
     }
 
 
-def _build_report(targets: list[str], discussion_path: Path, tail_lines: int) -> dict[str, Any]:
+def _build_report(
+    targets: list[str],
+    discussion_path: Path,
+    tail_lines: int,
+    allow_missing_discussion: bool,
+) -> dict[str, Any]:
     files, missing_literals = _expand_targets(targets)
     file_report = _check_utf8_no_bom(files)
     discussion_report = _check_discussion_tail(discussion_path, tail_lines)
+    discussion_ok = (
+        discussion_report["exists"]
+        and not discussion_report.get("bom", False)
+        and len(discussion_report["invalid_json"]) == 0
+        and len(discussion_report["missing_fields"]) == 0
+    )
+    if allow_missing_discussion and not discussion_report["exists"]:
+        discussion_ok = True
+
     ok = (
         len(missing_literals) == 0
         and len(file_report["bom_files"]) == 0
         and len(file_report["decode_errors"]) == 0
-        and discussion_report["exists"]
-        and not discussion_report.get("bom", False)
-        and len(discussion_report["invalid_json"]) == 0
-        and len(discussion_report["missing_fields"]) == 0
+        and discussion_ok
     )
 
     return {
         "ok": ok,
         "targets": targets,
+        "allow_missing_discussion": allow_missing_discussion,
         "missing_literal_paths": missing_literals,
         "file_hygiene": file_report,
         "discussion_tail": discussion_report,
@@ -169,12 +183,22 @@ def build_parser() -> argparse.ArgumentParser:
         default=200,
         help="How many recent non-empty discussion lines to validate.",
     )
+    parser.add_argument(
+        "--allow-missing-discussion",
+        action="store_true",
+        help="Pass when discussion file is missing (useful for CI clean checkouts).",
+    )
     return parser
 
 
 def main() -> int:
     args = build_parser().parse_args()
-    payload = _build_report(args.targets, Path(args.discussion_path), max(1, args.tail_lines))
+    payload = _build_report(
+        args.targets,
+        Path(args.discussion_path),
+        max(1, args.tail_lines),
+        args.allow_missing_discussion,
+    )
     print(json.dumps(payload, ensure_ascii=False, indent=2))
     return 0 if payload["ok"] else 1
 

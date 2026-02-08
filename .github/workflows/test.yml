@@ -141,4 +141,4 @@ jobs:
 
     - name: Run memory hygiene checks
       run: |
-        python scripts/verify_memory_hygiene.py --tail-lines 200
+        python scripts/verify_memory_hygiene.py --tail-lines 200 --allow-missing-discussion

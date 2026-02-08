@@ -89,3 +89,19 @@ def test_discussion_tail_fails_for_recent_invalid_or_missing_fields(tmp_path: Pa
     assert len(report["invalid_json"]) == 1
     assert len(report["missing_fields"]) == 1
     assert report["missing_fields"][0]["missing_fields"] == ["message"]
+
+
+def test_build_report_can_allow_missing_discussion(tmp_path: Path):
+    target = tmp_path / "ok.py"
+    target.write_text("print('ok')\n", encoding="utf-8")
+    missing_discussion = tmp_path / "missing.jsonl"
+
+    report = hygiene._build_report(
+        targets=[target.as_posix()],
+        discussion_path=missing_discussion,
+        tail_lines=20,
+        allow_missing_discussion=True,
+    )
+
+    assert report["ok"] is True
+    assert report["discussion_tail"]["exists"] is False
