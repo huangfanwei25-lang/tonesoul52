@@ -101,7 +101,7 @@ tonesoul52/
 |------|--------|------|
 | **單元測試** | ~50 | `test_council_runtime.py`, `test_benevolence.py` |
 | **整合測試** | ~10 | `test_genesis_integration.py` |
-| **紅隊測試** | 2 | `tests/red_team/` (11 cases) |
+| **紅隊測試** | 2 | `tests/red_team/` (20 cases) |
 | **屬性測試** | 5 | `test_property_simple.py` |
 
 ---
@@ -175,4 +175,4 @@ tonesoul52/
 | **文件** | 78 files |
 | **測試** | 59 files |
 | **測試案例** | 343+ tests |
-| **紅隊案例** | 11 cases |
+| **紅隊案例** | 20 cases |

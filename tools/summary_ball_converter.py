@@ -1,20 +1,20 @@
 ﻿import json
-from datetime import datetime
+import os
 from collections import defaultdict
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
-import os
 
 try:
-    from tonesoul.memory.soul_db import JsonlSoulDB, MemorySource, SoulDB
     from memory.genesis import Genesis
+    from tonesoul.memory.soul_db import JsonlSoulDB, MemorySource, SoulDB
     from tools.schema import ToolErrorCode, tool_error, tool_success
 except ImportError:
     import sys
 
     sys.path.append(str(Path(__file__).resolve().parents[1]))
-    from tonesoul.memory.soul_db import JsonlSoulDB, MemorySource, SoulDB
     from memory.genesis import Genesis
+    from tonesoul.memory.soul_db import JsonlSoulDB, MemorySource, SoulDB
     from tools.schema import ToolErrorCode, tool_error, tool_success
 
 OUTPUT_PATH = "memory/summary_balls.jsonl"
@@ -165,14 +165,12 @@ def process_journal(
                 balls["General / Other"]["coherence_sum"] += coherence
                 balls["General / Other"]["count"] += 1
 
-        except Exception as e:
+        except Exception:
             # print(f"Skipping line due to error: {e}")
             pass
 
     # Finalize balls
     final_balls = []
-    axioms = load_axioms()
-
     for name, stats in balls.items():
         if stats["count"] == 0:
             continue
@@ -186,7 +184,7 @@ def process_journal(
             "tension": round(tension, 2),
             "resonance": round(avg_coherence, 2),  # Simple proxy for resonance for now
             "volume": stats["count"],
-            "last_updated": datetime.utcnow().isoformat() + "Z",
+            "last_updated": datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z"),
             "metadata": {
                 "verdict_distribution": {
                     v: stats["verdicts"].count(v) for v in set(stats["verdicts"])

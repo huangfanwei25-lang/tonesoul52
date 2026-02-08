@@ -32,7 +32,7 @@ export interface SoulConfig {
 
     // Tension Parameters
     tension: {
-        echoChamnber: number;      // < 此值 = 過度順從
+        echoChamber: number;       // < 此值 = 過度順從
         healthyFriction: number;   // > 此值 = 過度衝突
         decayRate: number;         // 張力衰減率 α
     };
@@ -65,7 +65,7 @@ export const DEFAULT_SOUL_CONFIG: SoulConfig = {
         consistency: 0.7,
     },
     tension: {
-        echoChamnber: 0.3,
+        echoChamber: 0.3,
         healthyFriction: 0.7,
         decayRate: 0.15,
     },
@@ -83,15 +83,34 @@ export const DEFAULT_SOUL_CONFIG: SoulConfig = {
 // 全局靈魂配置（可通過 loadSoulConfig 更新）
 let currentSoulConfig: SoulConfig = { ...DEFAULT_SOUL_CONFIG };
 
+type LegacyTensionConfig = Partial<SoulConfig["tension"]> & {
+    echoChamnber?: number;
+};
+
+type SoulConfigInput = Partial<Omit<SoulConfig, "tension">> & {
+    tension?: LegacyTensionConfig;
+};
+
+function normalizeTension(tension?: LegacyTensionConfig): SoulConfig["tension"] {
+    const normalized = { ...DEFAULT_SOUL_CONFIG.tension, ...tension };
+    if (
+        typeof tension?.echoChamnber === "number" &&
+        typeof tension?.echoChamber !== "number"
+    ) {
+        normalized.echoChamber = tension.echoChamnber;
+    }
+    return normalized;
+}
+
 /**
  * 載入靈魂配置
  */
-export function loadSoulConfig(config: Partial<SoulConfig>): void {
+export function loadSoulConfig(config: SoulConfigInput): void {
     currentSoulConfig = {
         ...DEFAULT_SOUL_CONFIG,
         ...config,
         values: { ...DEFAULT_SOUL_CONFIG.values, ...config.values },
-        tension: { ...DEFAULT_SOUL_CONFIG.tension, ...config.tension },
+        tension: normalizeTension(config.tension),
         contradiction: { ...DEFAULT_SOUL_CONFIG.contradiction, ...config.contradiction },
         modeThresholds: { ...DEFAULT_SOUL_CONFIG.modeThresholds, ...config.modeThresholds },
     };

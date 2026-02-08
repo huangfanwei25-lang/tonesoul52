@@ -4,7 +4,7 @@ import json
 import sqlite3
 import uuid
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Protocol
@@ -43,7 +43,7 @@ class SoulDB(Protocol):
 
 
 def _iso_now() -> str:
-    return datetime.utcnow().replace(microsecond=0).isoformat() + "Z"
+    return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
 def _default_memory_root() -> Path:
@@ -200,15 +200,28 @@ class SqliteSoulDB:
                 before_context TEXT,
                 after_context TEXT,
                 isnad_link TEXT,
-                timestamp TEXT
+                timestamp TEXT,
+                stream TEXT,
+                metadata TEXT
             )
             """)
+        self._ensure_action_logs_columns(cursor)
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_action_logs_type ON action_logs(type)")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_action_logs_stream ON action_logs(stream)")
         cursor.execute(
             "CREATE INDEX IF NOT EXISTS idx_action_logs_timestamp ON action_logs(timestamp)"
         )
         conn.commit()
         conn.close()
+
+    def _ensure_action_logs_columns(self, cursor: sqlite3.Cursor) -> None:
+        cursor.execute("PRAGMA table_info(action_logs)")
+        columns = {str(row[1]) for row in cursor.fetchall()}
+        if "stream" not in columns:
+            cursor.execute("ALTER TABLE action_logs ADD COLUMN stream TEXT DEFAULT 'raw'")
+            cursor.execute("UPDATE action_logs SET stream='raw' WHERE stream IS NULL OR stream=''")
+        if "metadata" not in columns:
+            cursor.execute("ALTER TABLE action_logs ADD COLUMN metadata TEXT")
 
     def append(self, source: MemorySource, payload: Dict[str, object]) -> str:
         record_id = None
@@ -405,6 +418,8 @@ class SqliteSoulDB:
         after_context: Optional[Dict[str, object]],
         isnad_link: Optional[str],
         timestamp: Optional[str] = None,
+        stream: Optional[str] = "raw",
+        metadata: Optional[Dict[str, object]] = None,
     ) -> str:
         record_id = str(uuid.uuid4())
         ts_value = timestamp or _iso_now()
@@ -413,8 +428,8 @@ class SqliteSoulDB:
         cursor.execute(
             """
             INSERT INTO action_logs
-            (id, type, action, params, result, before_context, after_context, isnad_link, timestamp)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            (id, type, action, params, result, before_context, after_context, isnad_link, timestamp, stream, metadata)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 record_id,
@@ -426,6 +441,8 @@ class SqliteSoulDB:
                 _serialize_json(after_context) if after_context is not None else None,
                 isnad_link,
                 ts_value,
+                stream,
+                _serialize_json(metadata) if metadata is not None else None,
             ),
         )
         conn.commit()
@@ -435,18 +452,27 @@ class SqliteSoulDB:
     def query_action_logs(
         self,
         record_type: Optional[str] = None,
+        stream: Optional[str] = None,
         limit: int = 10,
     ) -> List[Dict[str, object]]:
         conn = self._connect()
         cursor = conn.cursor()
         sql = """
-            SELECT id, type, action, params, result, before_context, after_context, isnad_link, timestamp
+            SELECT id, type, action, params, result, before_context, after_context, isnad_link, timestamp, stream, metadata
             FROM action_logs
         """
+        conditions = []
         params: List[object] = []
         if record_type:
-            sql += " WHERE type = ?"
+            conditions.append("type = ?")
             params.append(record_type)
+        if stream:
+            conditions.append("stream = ?")
+            params.append(stream)
+
+        if conditions:
+            sql += " WHERE " + " AND ".join(conditions)
+
         sql += " ORDER BY rowid DESC"
         if limit:
             sql += " LIMIT ?"
@@ -466,6 +492,8 @@ class SqliteSoulDB:
                 after_json,
                 isnad_link,
                 timestamp,
+                stream_val,
+                metadata_json,
             ) = row
             logs.append(
                 {
@@ -478,6 +506,8 @@ class SqliteSoulDB:
                     "after_context": _deserialize_json(after_json) if after_json else {},
                     "isnad_link": isnad_link,
                     "timestamp": timestamp,
+                    "stream": stream_val,
+                    "metadata": _deserialize_json(metadata_json) if metadata_json else {},
                 }
             )
         return logs

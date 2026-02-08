@@ -2,7 +2,7 @@ import hashlib
 import json
 import os
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, Optional
 
 from tonesoul.council.runtime import CouncilRequest, CouncilRuntime
@@ -12,7 +12,7 @@ LEDGER_PATH = os.path.join(WORKSPACE_ROOT, "memory", "provenance_ledger.jsonl")
 
 
 def _iso_now() -> str:
-    return datetime.utcnow().replace(microsecond=0).isoformat() + "Z"
+    return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
 def _compute_hash(payload: Dict[str, object]) -> str:

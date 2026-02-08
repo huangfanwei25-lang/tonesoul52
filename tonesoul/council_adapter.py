@@ -2,7 +2,7 @@
 import sys
 import uuid
 import warnings
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, Optional
 
 WORKSPACE_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
@@ -11,7 +11,7 @@ if WORKSPACE_ROOT not in sys.path:
 
 
 def _iso_now() -> str:
-    return datetime.utcnow().replace(microsecond=0).isoformat() + "Z"
+    return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
 def run_council(
