@@ -21,6 +21,14 @@ This folder is the repository status source for machine-generated governance sna
 python scripts/run_monthly_consolidation.py --strict
 ```
 
+## Automation
+
+- GitHub Actions workflow: `.github/workflows/monthly_consolidation.yml`
+- Trigger modes:
+  - monthly schedule (`30 3 1 * *`, UTC)
+  - manual dispatch (`workflow_dispatch`)
+- Workflow uploads `docs/status/*.json` as build artifacts for audit/review.
+
 ## Notes
 
 - These artifacts are intended as operational truth for CI/review workflows.

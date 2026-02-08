@@ -4,6 +4,7 @@ Documentation consistency verifier.
 Checks selected source-of-truth values against docs/workflow:
 - RDD threshold consistency across `scripts/verify_7d.py`, workflow, and 7D docs.
 - Curated discussion path references in DDD documentation and runtime gate.
+- Monthly consolidation automation contract.
 """
 
 from __future__ import annotations
@@ -28,12 +29,12 @@ def _extract_single_int(pattern: str, text: str) -> int | None:
 
 def _extract_doc_thresholds(text: str) -> list[int]:
     patterns = (
-        r"最小\s*(\d+)\s*tests",
-        r"至少\s*(\d+)\s*cases",
+        r"(\d+)\s*tests?",
+        r"(\d+)\s*cases?",
     )
     values: list[int] = []
     for pattern in patterns:
-        values.extend(int(v) for v in re.findall(pattern, text))
+        values.extend(int(v) for v in re.findall(pattern, text, flags=re.IGNORECASE))
     return values
 
 
@@ -44,6 +45,7 @@ def _has_curated_reference(text: str) -> bool:
 def build_report(repo_root: Path) -> dict[str, Any]:
     verify_7d = repo_root / "scripts" / "verify_7d.py"
     workflow = repo_root / ".github" / "workflows" / "test.yml"
+    monthly_workflow = repo_root / ".github" / "workflows" / "monthly_consolidation.yml"
     framework_doc = repo_root / "docs" / "7D_AUDIT_FRAMEWORK.md"
     exec_doc = repo_root / "docs" / "7D_EXECUTION_SPEC.md"
 
@@ -82,6 +84,20 @@ def build_report(repo_root: Path) -> dict[str, Any]:
     if not _has_curated_reference(exec_text):
         issues.append("7D execution spec missing curated discussion path reference")
 
+    monthly_exists = monthly_workflow.exists()
+    monthly_has_schedule = False
+    monthly_has_runner = False
+    if monthly_exists:
+        monthly_text = _read(monthly_workflow)
+        monthly_has_schedule = "schedule:" in monthly_text
+        monthly_has_runner = "scripts/run_monthly_consolidation.py" in monthly_text
+        if not monthly_has_schedule:
+            issues.append("monthly consolidation workflow missing schedule trigger")
+        if not monthly_has_runner:
+            issues.append("monthly consolidation workflow missing run_monthly_consolidation invocation")
+    else:
+        issues.append("missing .github/workflows/monthly_consolidation.yml")
+
     return {
         "ok": len(issues) == 0,
         "rdd_thresholds": {
@@ -92,6 +108,11 @@ def build_report(repo_root: Path) -> dict[str, Any]:
         "curated_reference": {
             "verify_7d": _has_curated_reference(verify_7d_text),
             "execution_spec": _has_curated_reference(exec_text),
+        },
+        "monthly_consolidation": {
+            "workflow_exists": monthly_exists,
+            "has_schedule": monthly_has_schedule,
+            "has_runner": monthly_has_runner,
         },
         "issues": issues,
     }

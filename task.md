@@ -46,6 +46,14 @@
 - [x] 將 RDD 擴充至 10+ 對抗案例（目前 20）
 **成功標準**: 七維皆有可執行檢查，且 gate 策略在 CI 層可明確解釋。
 
+## Phase 25: 月度整合自動化與文件契約強化
+- [x] 新增 `.github/workflows/monthly_consolidation.yml`（每月排程 + 手動觸發）
+- [x] `scripts/verify_docs_consistency.py` 納入月度 workflow 契約檢查
+- [x] 修正 docs threshold 正則抽取（移除亂碼 pattern，採穩定 `tests/cases` 解析）
+- [x] 更新 `tests/test_verify_docs_consistency.py` 覆蓋月度 workflow 存在/缺失情境
+- [x] 更新 `docs/status/README.md` 說明自動化來源與 artifact 產出
+**成功標準**: `verify_docs_consistency` 與 `run_monthly_consolidation --strict` 可穩定通過，且 status 來源具備自動化排程。
+
 ## 已完成（摘要）
 - [x] Phase 1-2: Council 設計與整合
 - [x] Phase 3/10/16: Tools API schema + ToolResponse 標準化

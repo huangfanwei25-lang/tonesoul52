@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-02-08T13:53:01Z",
+  "generated_at": "2026-02-08T14:45:23Z",
   "overall_ok": true,
   "checks": {
     "7d": {
@@ -45,7 +45,7 @@
             "gate": "SOFT_FAIL",
             "status": "pass",
             "command": "C:\\Users\\user\\Desktop\\�ܮw\\.venv\\Scripts\\python.exe tools/agent_discussion_tool.py tail --path memory\\agent_discussion_curated.jsonl --limit 1",
-            "note": "age_days=0.15, threshold=7"
+            "note": "age_days=0.00, threshold=7"
           },
           {
             "dimension": "XDD",
@@ -110,7 +110,7 @@
         "allow_missing_discussion": false,
         "missing_literal_paths": [],
         "file_hygiene": {
-          "files_scanned": 17,
+          "files_scanned": 18,
           "bom_files": [],
           "decode_errors": []
         },
@@ -118,7 +118,7 @@
           "path": "memory/agent_discussion_curated.jsonl",
           "exists": true,
           "bom": false,
-          "tail_checked": 100,
+          "tail_checked": 103,
           "invalid_json": [],
           "missing_fields": []
         },
@@ -170,6 +170,11 @@
         "curated_reference": {
           "verify_7d": true,
           "execution_spec": true
+        },
+        "monthly_consolidation": {
+          "workflow_exists": true,
+          "has_schedule": true,
+          "has_runner": true
         },
         "issues": []
       }
