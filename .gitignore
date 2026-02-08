@@ -70,6 +70,8 @@ data/yuhun.db
 
 # Test Artifacts
 .hypothesis/
+.tmp_tests/
+memory/.tmp_tests/
 
 # Local Modelfiles
 Modelfile.*
