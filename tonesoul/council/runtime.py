@@ -23,6 +23,14 @@ _ESCAPE_FAILURE_TEXT_LIMIT = 240
 _ESCAPE_TRIGGER_LEVEL_FLOOR = 0.95
 
 
+@dataclass(frozen=True)
+class EscapeSeedStats:
+    requested: int = 0
+    used: int = 0
+    trusted: bool = False
+    ignored_reason: str | None = None
+
+
 @dataclass
 class CouncilRequest:
     draft_output: str
@@ -106,16 +114,25 @@ class CouncilRuntime:
 
             # If Benevolence Audit intercepts, elevate Council Verdict to BLOCK.
             if benev_audit.final_result in (AuditResult.REJECT, AuditResult.INTERCEPT):
-                request_escape_valve = self._build_escape_valve(context=context)
+                request_escape_valve, seed_stats = self._build_escape_valve(context=context)
                 request_escape_valve.record_failure(
                     f"benevolence_{benev_audit.final_result.value}: {benev_audit.error_log[:100]}"
                 )
 
                 # Check if escape valve should trigger.
                 ev_result = request_escape_valve.evaluate(request.draft_output)
+                trigger_reason = ev_result.reason.value if ev_result.reason is not None else None
+                observability = {
+                    "seed_trusted": seed_stats.trusted,
+                    "seed_entries_requested": seed_stats.requested,
+                    "seed_entries_used": seed_stats.used,
+                    "seed_ignored_reason": seed_stats.ignored_reason,
+                    "triggered": bool(ev_result.triggered),
+                    "trigger_reason": trigger_reason,
+                }
                 if ev_result.triggered:
                     escape_trigger_reason = (
-                        ev_result.reason.value if ev_result.reason is not None else "unknown"
+                        trigger_reason if trigger_reason is not None else "unknown"
                     )
                     # Keep BLOCK semantics and surface uncertainty explicitly.
                     verdict.verdict = VerdictType.BLOCK
@@ -125,6 +142,7 @@ class CouncilRuntime:
                     verdict.transcript = verdict.transcript or {}
                     verdict.transcript["escape_valve"] = ev_result.to_dict()
                     verdict.transcript["escape_valve_semantic"] = "honest_failure"
+                    verdict.transcript["escape_valve_observability"] = observability
 
                     # Provenance logging for escape valve trigger.
                     try:
@@ -148,6 +166,8 @@ class CouncilRuntime:
                 else:
                     verdict.verdict = VerdictType.BLOCK
                     verdict.summary += f"\n[7D AUDITOR INTERCEPT] {benev_audit.error_log}"
+                    verdict.transcript = verdict.transcript or {}
+                    verdict.transcript["escape_valve_observability"] = observability
         except Exception as exc:
             logger.warning("Benevolence Audit failed: %s", exc)
             if verdict.transcript is None:
@@ -280,12 +300,40 @@ class CouncilRuntime:
         merged["role_council"] = role_result
         return merged
 
-    def _build_escape_valve(self, context: Dict[str, object]) -> EscapeValve:
+    def _build_escape_valve(
+        self, context: Dict[str, object]
+    ) -> tuple[EscapeValve, EscapeSeedStats]:
         valve = EscapeValve(self._escape_valve_config)
         failures = context.get("escape_valve_failures")
-        if isinstance(failures, list):
-            for failure in failures[-_ESCAPE_FAILURE_HISTORY_LIMIT:]:
-                text = str(failure).strip()
-                if text:
-                    valve.record_failure(text[:_ESCAPE_FAILURE_TEXT_LIMIT])
-        return valve
+        trusted = bool(context.get("escape_valve_seed_trusted"))
+        ignored_marker = context.get("escape_valve_seed_ignored_reason")
+
+        if failures is None:
+            ignored_reason = str(ignored_marker) if ignored_marker is not None else None
+            return valve, EscapeSeedStats(trusted=trusted, ignored_reason=ignored_reason)
+
+        if not isinstance(failures, list):
+            return valve, EscapeSeedStats(
+                trusted=trusted,
+                ignored_reason="invalid_format",
+            )
+
+        requested = len(failures)
+        if not trusted:
+            return valve, EscapeSeedStats(
+                requested=requested,
+                trusted=False,
+                ignored_reason="untrusted_seed",
+            )
+
+        used = 0
+        for failure in failures[-_ESCAPE_FAILURE_HISTORY_LIMIT:]:
+            text = str(failure).strip()
+            if text:
+                valve.record_failure(text[:_ESCAPE_FAILURE_TEXT_LIMIT])
+                used += 1
+        return valve, EscapeSeedStats(
+            requested=requested,
+            used=used,
+            trusted=True,
+        )

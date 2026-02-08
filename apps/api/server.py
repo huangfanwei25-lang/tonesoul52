@@ -30,6 +30,7 @@ _cors_origins = [
 CORS(app, resources={r"/api/*": {"origins": _cors_origins}})
 
 council_runtime = CouncilRuntime()
+_MAX_ESCAPE_SEED_ITEMS = 50
 
 
 def _env_flag(name: str, default: bool = False) -> bool:
@@ -107,6 +108,35 @@ def _utc_now() -> str:
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
+def _prepare_escape_seed_context(context: dict) -> tuple[dict, tuple | None]:
+    """Sanitize external escape-valve seed inputs.
+
+    By default we do not trust client-provided seed history to avoid
+    forcing high-uncertainty escape behavior. Trusted mode can be enabled
+    explicitly via `TONESOUL_ALLOW_ESCAPE_SEED=1`.
+    """
+
+    safe_context = dict(context)
+    failures = safe_context.get("escape_valve_failures")
+    if failures is None:
+        return safe_context, None
+
+    if not isinstance(failures, list):
+        return safe_context, (jsonify({"error": "Invalid escape_valve_failures"}), 400)
+
+    if _env_flag("TONESOUL_ALLOW_ESCAPE_SEED", default=False):
+        if len(failures) > _MAX_ESCAPE_SEED_ITEMS:
+            safe_context["escape_valve_failures"] = failures[-_MAX_ESCAPE_SEED_ITEMS:]
+        safe_context["escape_valve_seed_trusted"] = True
+        return safe_context, None
+
+    # Ignore untrusted external seed attempts.
+    safe_context.pop("escape_valve_failures", None)
+    safe_context["escape_valve_seed_trusted"] = False
+    safe_context["escape_valve_seed_ignored_reason"] = "untrusted_seed"
+    return safe_context, None
+
+
 @app.route("/")
 def index():
     """Serve the frontend."""
@@ -137,6 +167,9 @@ def validate():
 
     draft_output = draft_output if draft_output is not None else ""
     context = context if context is not None else {}
+    context, error = _prepare_escape_seed_context(context)
+    if error is not None:
+        return error
 
     council_request = CouncilRequest(
         draft_output=draft_output,

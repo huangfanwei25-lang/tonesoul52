@@ -84,7 +84,12 @@ Runtime environment:
 - `context` supports optional safety seed:
   - `escape_valve_failures?: string[]`
   - Purpose: seed recent failure history for request-local escape valve evaluation.
-  - Note: this is request-scoped only, it must not persist across requests.
+  - Security model:
+    - default behavior: untrusted client seeds are ignored
+    - trusted mode: set `TONESOUL_ALLOW_ESCAPE_SEED=1` on backend
+    - trusted mode input cap: API trims `escape_valve_failures` to latest 50 entries
+    - runtime cap: Council uses latest 20 seeded failures
+  - Note: seed history is request-scoped only; it must not persist across requests.
 - Response:
   - `verdict: "approve" | "refine" | "declare_stance" | "block"`
   - `summary: string`
@@ -99,6 +104,13 @@ Runtime environment:
     - `transcript.escape_valve.retry_count: number`
     - `transcript.escape_valve.failure_history: string[]`
     - `transcript.escape_valve_semantic: "honest_failure"`
+  - Observability payload (when benevolence intercept path runs):
+    - `transcript.escape_valve_observability.seed_trusted: boolean`
+    - `transcript.escape_valve_observability.seed_entries_requested: number`
+    - `transcript.escape_valve_observability.seed_entries_used: number`
+    - `transcript.escape_valve_observability.seed_ignored_reason?: "untrusted_seed" | "invalid_format"`
+    - `transcript.escape_valve_observability.triggered: boolean`
+    - `transcript.escape_valve_observability.trigger_reason?: string`
 
 ### `POST /api/session-report`
 - Request:

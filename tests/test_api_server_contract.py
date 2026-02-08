@@ -77,7 +77,8 @@ def test_validate_endpoint_returns_verdict_contract():
     assert isinstance(payload.get("benevolence_audit"), dict)
 
 
-def test_validate_endpoint_escape_valve_seed_can_trigger():
+def test_validate_endpoint_escape_valve_seed_can_trigger_when_trusted(monkeypatch):
+    monkeypatch.setenv("TONESOUL_ALLOW_ESCAPE_SEED", "1")
     client = _client()
     response = client.post(
         "/api/validate",
@@ -108,7 +109,34 @@ def test_validate_endpoint_escape_valve_seed_can_trigger():
     assert "[ESCAPE VALVE NOTICE]" in payload.get("summary", "")
 
 
-def test_validate_endpoint_escape_valve_does_not_leak_between_requests():
+def test_validate_endpoint_untrusted_escape_seed_is_ignored():
+    client = _client()
+    response = client.post(
+        "/api/validate",
+        json={
+            "draft_output": "Absolutely! I will definitely do that for you right now, of course!",
+            "context": {
+                "user_protocol": "Honesty > Helpfulness",
+                "action_basis": "Inference",
+                "escape_valve_failures": [
+                    "benevolence_intercept: repeated_fail_1",
+                    "benevolence_intercept: repeated_fail_2",
+                ],
+            },
+        },
+    )
+    assert response.status_code == 200
+    payload = response.get_json()
+    transcript = payload.get("transcript") or {}
+    observability = transcript.get("escape_valve_observability") or {}
+
+    assert "escape_valve" not in transcript
+    assert observability.get("seed_trusted") is False
+    assert observability.get("seed_ignored_reason") == "untrusted_seed"
+
+
+def test_validate_endpoint_escape_valve_does_not_leak_between_requests(monkeypatch):
+    monkeypatch.setenv("TONESOUL_ALLOW_ESCAPE_SEED", "1")
     client = _client()
     first = client.post(
         "/api/validate",
@@ -141,3 +169,17 @@ def test_validate_endpoint_escape_valve_does_not_leak_between_requests():
     assert second.status_code == 200
     second_payload = second.get_json()
     assert "escape_valve" not in (second_payload.get("transcript") or {})
+
+
+def test_validate_endpoint_rejects_invalid_escape_seed_shape():
+    client = _client()
+    response = client.post(
+        "/api/validate",
+        json={
+            "draft_output": "test",
+            "context": {"escape_valve_failures": "not-a-list"},
+        },
+    )
+    assert response.status_code == 400
+    payload = response.get_json()
+    assert payload["error"] == "Invalid escape_valve_failures"

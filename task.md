@@ -77,6 +77,14 @@
 - [x] 擴充 `tests/test_api_server_contract.py`（validate 基本契約 + seeded trigger + 跨請求不外洩）
 **成功標準**: API 層可重現 Escape Valve 行為，且契約文件與測試一致。
 
+## Phase 29: Escape Valve 防濫用與觀測強化
+- [x] 新增 seed trust 機制（`escape_valve_seed_trusted`）與 untrusted seed 忽略策略
+- [x] API 新增 `TONESOUL_ALLOW_ESCAPE_SEED` 開關（預設拒絕外部 seed）
+- [x] API 對 trusted seed 加入輸入上限（最新 50）+ runtime 使用上限（最新 20）
+- [x] transcript 新增 `escape_valve_observability` 指標
+- [x] 新增 red-team 測試：untrusted seed 無法強制觸發、trusted seed 上限生效
+**成功標準**: 預設外部輸入無法強制 Escape Valve，且觸發/忽略路徑有可觀測指標與對抗測試覆蓋。
+
 ## 已完成（摘要）
 - [x] Phase 1-2: Council 設計與整合
 - [x] Phase 3/10/16: Tools API schema + ToolResponse 標準化

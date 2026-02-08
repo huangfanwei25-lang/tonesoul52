@@ -29,10 +29,11 @@ def test_escape_valve_can_trigger_with_seeded_failure_history() -> None:
     verdict = runtime.deliberate(
         _build_request(
             {
+                "escape_valve_seed_trusted": True,
                 "escape_valve_failures": [
                     "benevolence_intercept: repeated_fail_1",
                     "benevolence_intercept: repeated_fail_2",
-                ]
+                ],
             }
         )
     )
@@ -48,6 +49,7 @@ def test_escape_valve_can_trigger_with_seeded_failure_history() -> None:
         str(reason).startswith("escape_valve_triggered=")
         for reason in (verdict.uncertainty_reasons or [])
     )
+    assert transcript.get("escape_valve_observability", {}).get("seed_trusted") is True
 
 
 def test_escape_valve_state_does_not_leak_across_calls() -> None:
@@ -62,3 +64,25 @@ def test_escape_valve_state_does_not_leak_across_calls() -> None:
     assert verdict_2.verdict == VerdictType.BLOCK
     assert "escape_valve" not in transcript_1
     assert "escape_valve" not in transcript_2
+
+
+def test_escape_valve_seed_ignored_when_untrusted() -> None:
+    runtime = CouncilRuntime()
+    verdict = runtime.deliberate(
+        _build_request(
+            {
+                "escape_valve_failures": [
+                    "benevolence_intercept: repeated_fail_1",
+                    "benevolence_intercept: repeated_fail_2",
+                ]
+            }
+        )
+    )
+    transcript = verdict.transcript or {}
+    observability = transcript.get("escape_valve_observability") or {}
+
+    assert verdict.verdict == VerdictType.BLOCK
+    assert "escape_valve" not in transcript
+    assert observability.get("seed_trusted") is False
+    assert observability.get("seed_ignored_reason") == "untrusted_seed"
+    assert observability.get("seed_entries_requested") == 2
