@@ -63,6 +63,15 @@
 - [x] 更新 `docs/status/README.md` 加入 CI-friendly 執行範例
 **成功標準**: 月度 workflow 在無 `memory/agent_discussion*.jsonl` 的乾淨 checkout 仍可通過契約檢查與整合檢查。
 
+## Phase 27: Escape Valve V1（安全版）
+- [x] 新增 `tonesoul/escape_valve.py`（電路斷路器 + 不確定性輸出）
+- [x] `CouncilRuntime` 整合 Escape Valve，保持 `BLOCK` 語義不變
+- [x] 移除 runtime 可變狀態污染（每次 deliberation 使用 request-local valve）
+- [x] 支援 `context.escape_valve_failures` 作為重試歷史種子（上限保護）
+- [x] 觸發時提高不確定性到 high 並追加 `escape_valve_triggered=*` 理由
+- [x] 新增 `tests/test_escape_valve.py` 與 `tests/test_escape_valve_runtime.py`
+**成功標準**: Escape Valve 可被測試觸發且不繞過 BLOCK，無跨請求狀態污染，既有審計測試保持通過。
+
 ## 已完成（摘要）
 - [x] Phase 1-2: Council 設計與整合
 - [x] Phase 3/10/16: Tools API schema + ToolResponse 標準化

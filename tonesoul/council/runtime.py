@@ -1,18 +1,26 @@
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 from memory.provenance_chain import ProvenanceManager
 
 from ..benevolence import AuditLayer, AuditResult, filter_benevolence
+from ..escape_valve import EscapeValve, EscapeValveConfig
 from ..role_council import build_council_summary
 from .base import IPerspective
 from .intent_reconstructor import infer_genesis
 from .pre_output_council import PreOutputCouncil
 from .self_journal import record_self_memory
-from .types import CouncilVerdict, PerspectiveType
+from .types import CouncilVerdict, PerspectiveType, VerdictType
 from .verdict import apply_uncertainty
+
+logger = logging.getLogger(__name__)
+
+_ESCAPE_FAILURE_HISTORY_LIMIT = 20
+_ESCAPE_FAILURE_TEXT_LIMIT = 240
+_ESCAPE_TRIGGER_LEVEL_FLOOR = 0.95
 
 
 @dataclass
@@ -38,6 +46,16 @@ class CouncilRequest:
 
 
 class CouncilRuntime:
+    """Runtime for multi-perspective council deliberation with escape valve protection."""
+
+    def __init__(self, escape_valve_config: EscapeValveConfig | None = None):
+        """Initialize the Council Runtime.
+
+        Args:
+            escape_valve_config: Configuration for the escape valve circuit breaker.
+        """
+        self._escape_valve_config = escape_valve_config or EscapeValveConfig()
+
     def deliberate(self, request: CouncilRequest) -> CouncilVerdict:
         context = dict(request.context) if isinstance(request.context, dict) else {}
         role_result = self._build_role_summary(
@@ -67,9 +85,11 @@ class CouncilRuntime:
             auto_record_self_memory=False,
         )
 
-        # 🚀 7D Backend Auditor Integration (5.3 Collaboration)
+        escape_trigger_reason: str | None = None
+
+        # 7D backend auditor integration.
         try:
-            # Extract context fragments for shadow tracking
+            # Extract context fragments for shadow tracking.
             fragments = context.get("fragments") or context.get("context_fragments") or []
             if not fragments and request.user_intent:
                 fragments = [request.user_intent]
@@ -84,17 +104,55 @@ class CouncilRuntime:
             )
             verdict.benevolence_audit = benev_audit.to_dict()
 
-            # If Benevolence Audit intercepts, elevate Council Verdict to BLOCK
-            from .types import VerdictType
-
+            # If Benevolence Audit intercepts, elevate Council Verdict to BLOCK.
             if benev_audit.final_result in (AuditResult.REJECT, AuditResult.INTERCEPT):
-                verdict.verdict = VerdictType.BLOCK
-                verdict.summary += f"\n[7D AUDITOR INTERCEPT] {benev_audit.error_log}"
-        except Exception as e:
-            print(f"⚠️ Benevolence Audit failed: {e}")
+                request_escape_valve = self._build_escape_valve(context=context)
+                request_escape_valve.record_failure(
+                    f"benevolence_{benev_audit.final_result.value}: {benev_audit.error_log[:100]}"
+                )
+
+                # Check if escape valve should trigger.
+                ev_result = request_escape_valve.evaluate(request.draft_output)
+                if ev_result.triggered:
+                    escape_trigger_reason = (
+                        ev_result.reason.value if ev_result.reason is not None else "unknown"
+                    )
+                    # Keep BLOCK semantics and surface uncertainty explicitly.
+                    verdict.verdict = VerdictType.BLOCK
+                    verdict.summary += (
+                        f"\n[ESCAPE VALVE NOTICE] {escape_trigger_reason}; requiring human review."
+                    )
+                    verdict.transcript = verdict.transcript or {}
+                    verdict.transcript["escape_valve"] = ev_result.to_dict()
+                    verdict.transcript["escape_valve_semantic"] = "honest_failure"
+
+                    # Provenance logging for escape valve trigger.
+                    try:
+                        provenance = ProvenanceManager()
+                        provenance.add_record(
+                            event_type="escape_valve_triggered",
+                            content={
+                                "reason": escape_trigger_reason,
+                                "retry_count": ev_result.retry_count,
+                                "failure_history": ev_result.failure_history,
+                                "uncertainty_tag": ev_result.uncertainty_tag,
+                            },
+                            metadata={
+                                "proposed_output_preview": request.draft_output[:200],
+                                "user_intent": request.user_intent,
+                                "context_keys": list(context.keys()),
+                            },
+                        )
+                    except Exception as prov_err:  # pragma: no cover - defensive logging path
+                        verdict.transcript["escape_valve_provenance_error"] = str(prov_err)
+                else:
+                    verdict.verdict = VerdictType.BLOCK
+                    verdict.summary += f"\n[7D AUDITOR INTERCEPT] {benev_audit.error_log}"
+        except Exception as exc:
+            logger.warning("Benevolence Audit failed: %s", exc)
             if verdict.transcript is None:
                 verdict.transcript = {}
-            verdict.transcript["benevolence_audit_error"] = str(e)
+            verdict.transcript["benevolence_audit_error"] = str(exc)
 
         try:
             genesis_decision = infer_genesis(
@@ -120,7 +178,19 @@ class CouncilRuntime:
             transcript["tsr_delta_norm"] = genesis_decision.tsr_delta_norm
             transcript["collapse_warning"] = genesis_decision.collapse_warning
             verdict.transcript = transcript
+
             apply_uncertainty(verdict, verdict.responsibility_tier)
+            if escape_trigger_reason:
+                verdict.uncertainty_level = max(
+                    verdict.uncertainty_level or 0.0, _ESCAPE_TRIGGER_LEVEL_FLOOR
+                )
+                verdict.uncertainty_band = "high"
+                reasons = list(verdict.uncertainty_reasons or [])
+                marker = f"escape_valve_triggered={escape_trigger_reason}"
+                if marker not in reasons:
+                    reasons.append(marker)
+                verdict.uncertainty_reasons = reasons
+
             transcript = verdict.transcript if isinstance(verdict.transcript, dict) else {}
             transcript["uncertainty_level"] = verdict.uncertainty_level
             transcript["uncertainty_band"] = verdict.uncertainty_band
@@ -133,8 +203,6 @@ class CouncilRuntime:
 
         if role_result:
             verdict.transcript = self._attach_role_summary(verdict.transcript, role_result)
-
-        from .types import VerdictType
 
         record_option = context.get("record_self_memory")
         should_auto_record = verdict.verdict in (
@@ -172,7 +240,7 @@ class CouncilRuntime:
             transcript = verdict.transcript if isinstance(verdict.transcript, dict) else {}
             transcript["isnad_write_error"] = str(exc)
             verdict.transcript = transcript
-            print(f"⚠️ Failed to append Isnād record: {exc}")
+            logger.warning("Failed to append Isnad record: %s", exc)
         return verdict
 
     def _build_role_summary(
@@ -211,3 +279,13 @@ class CouncilRuntime:
         merged = dict(transcript) if isinstance(transcript, dict) else {}
         merged["role_council"] = role_result
         return merged
+
+    def _build_escape_valve(self, context: Dict[str, object]) -> EscapeValve:
+        valve = EscapeValve(self._escape_valve_config)
+        failures = context.get("escape_valve_failures")
+        if isinstance(failures, list):
+            for failure in failures[-_ESCAPE_FAILURE_HISTORY_LIMIT:]:
+                text = str(failure).strip()
+                if text:
+                    valve.record_failure(text[:_ESCAPE_FAILURE_TEXT_LIMIT])
+        return valve
