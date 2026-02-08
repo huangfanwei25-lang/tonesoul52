@@ -145,15 +145,24 @@ graph TB
 
 ### Installation
 
+**Linux/macOS:**
 ```bash
-# Clone the repository
+# Clone and install
 git clone https://github.com/Fan1234-1/tonesoul52.git
 cd tonesoul52
+chmod +x install.sh && ./install.sh
+```
 
-# Set up environment (Windows)
+**Windows (PowerShell):**
+```powershell
+# Clone and install
+git clone https://github.com/Fan1234-1/tonesoul52.git
+cd tonesoul52
 .\setup_env.ps1
+```
 
-# Or manual setup
+**Manual (all platforms):**
+```bash
 pip install -e ".[dev]"
 ```
 
