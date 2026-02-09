@@ -89,6 +89,36 @@ describe("API route handlers return 502 for invalid backend JSON", () => {
         expect(payload.backend_mode).toBeUndefined();
     });
 
+    it("chat route rejects invalid council_mode type with 400", async () => {
+        const fetchMock = vi.spyOn(globalThis, "fetch");
+        const response = await postChat(
+            makeRequest({
+                message: "hello",
+                council_mode: { mode: "rules" },
+            }) as never
+        );
+        const payload = (await response.json()) as Record<string, unknown>;
+
+        expect(response.status).toBe(400);
+        expect(payload.error).toBe("Invalid council_mode");
+        expect(fetchMock).not.toHaveBeenCalled();
+    });
+
+    it("chat route rejects invalid perspective_config shape with 400", async () => {
+        const fetchMock = vi.spyOn(globalThis, "fetch");
+        const response = await postChat(
+            makeRequest({
+                message: "hello",
+                perspective_config: { guardian: "rules" },
+            }) as never
+        );
+        const payload = (await response.json()) as Record<string, unknown>;
+
+        expect(response.status).toBe(400);
+        expect(payload.error).toBe("Invalid perspective_config");
+        expect(fetchMock).not.toHaveBeenCalled();
+    });
+
     it("session-report route returns 502 without mock fallback", async () => {
         process.env.TONESOUL_BACKEND_URL = "http://127.0.0.1:5999";
         vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response("invalid-report-json", { status: 200 }));

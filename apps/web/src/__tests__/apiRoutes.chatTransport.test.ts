@@ -79,5 +79,29 @@ describe("chat route transport fallback behavior", () => {
         expect(payload.error).toBe("Backend configuration invalid for Vercel runtime");
         expect(fetchMock).not.toHaveBeenCalled();
     });
-});
 
+    it("normalizes rules_only council_mode before forwarding", async () => {
+        process.env.TONESOUL_BACKEND_URL = "http://127.0.0.1:5000";
+        const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(
+            new Response(JSON.stringify({ response: "ok" }), { status: 200 })
+        );
+
+        const response = await postChat(
+            makeRequest({
+                conversation_id: "c1",
+                message: "hello",
+                history: [],
+                full_analysis: false,
+                council_mode: "rules_only",
+            }) as never
+        );
+        const payload = (await response.json()) as Record<string, unknown>;
+
+        expect(response.status).toBe(200);
+        expect(payload.response).toBe("ok");
+        expect(fetchMock).toHaveBeenCalledTimes(1);
+        const [, requestInit] = fetchMock.mock.calls[0] as [string, RequestInit];
+        const parsedBody = JSON.parse(String(requestInit.body)) as Record<string, unknown>;
+        expect(parsedBody.council_mode).toBe("rules");
+    });
+});

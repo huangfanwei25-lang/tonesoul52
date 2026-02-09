@@ -174,6 +174,12 @@
 - [x] 補齊 API 合約與紅隊型別混淆測試，更新 `docs/API_SPEC.md`
 **成功標準**: 使用者可在前端切換 `rules/hybrid/full_llm` 並透過 `/api/chat` 生效，且不合法輸入會被 API 明確阻擋。 
 
+## Phase 43: Web Chat Route 契約防呆
+- [x] `apps/web/src/app/api/chat/route.ts` 新增 `council_mode` / `perspective_config` 型別驗證與 alias 正規化
+- [x] 清理 route 中既有亂碼判斷字串，統一為可維護的問題/情緒判定
+- [x] 補齊 route 測試（invalid payload 阻擋 + `rules_only -> rules` 轉換）
+**成功標準**: Next route 在進入 backend 前可攔截無效 payload，且 council mode 轉換行為有測試鎖定。 
+
 ## 已完成（摘要）
 - [x] Phase 1-2: Council 設計與整合
 - [x] Phase 3/10/16: Tools API schema + ToolResponse 標準化

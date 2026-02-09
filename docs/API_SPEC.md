@@ -68,6 +68,7 @@ Runtime environment:
   - `history?: array`
   - `full_analysis?: boolean`
   - `council_mode?: "rules" | "hybrid" | "full_llm"`
+    - compatibility: `"rules_only"` is accepted and normalized to `"rules"`
   - `perspective_config?: object`
     - optional explicit per-perspective config
     - when provided, backend uses this config and ignores `council_mode`

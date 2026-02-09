@@ -1,8 +1,18 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 
 const DEFAULT_BACKEND_URL = "http://127.0.0.1:5000";
 const REQUEST_TIMEOUT_MS = 15000;
 const MOCK_FALLBACK_ENV = "TONESOUL_ENABLE_CHAT_MOCK_FALLBACK";
+const ALLOWED_COUNCIL_MODES = new Set(["rules", "rules_only", "hybrid", "full_llm"]);
+
+type ChatRequestPayload = {
+    conversation_id?: string;
+    message?: string;
+    history?: unknown[];
+    full_analysis?: boolean;
+    council_mode?: "rules" | "hybrid" | "full_llm";
+    perspective_config?: Record<string, Record<string, unknown>>;
+};
 
 function getConfiguredBackendUrl(): string | null {
     const url = process.env["TONESOUL_BACKEND_URL"];
@@ -41,10 +51,90 @@ function shouldAllowMockFallback(): boolean {
     return envFlag(MOCK_FALLBACK_ENV, false);
 }
 
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+    return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function badRequest(field: string): NextResponse {
+    return NextResponse.json({ error: `Invalid ${field}` }, { status: 400 });
+}
+
+function parseChatBody(raw: unknown): { body?: ChatRequestPayload; error?: NextResponse } {
+    if (!isPlainObject(raw)) {
+        return {
+            error: NextResponse.json({ error: "Invalid JSON payload" }, { status: 400 }),
+        };
+    }
+
+    const parsed: ChatRequestPayload = {};
+
+    const conversationId = raw.conversation_id;
+    if (conversationId !== undefined) {
+        if (typeof conversationId !== "string") {
+            return { error: badRequest("conversation_id") };
+        }
+        parsed.conversation_id = conversationId;
+    }
+
+    const message = raw.message;
+    if (message !== undefined) {
+        if (typeof message !== "string") {
+            return { error: badRequest("message") };
+        }
+        parsed.message = message;
+    }
+
+    const history = raw.history;
+    if (history !== undefined) {
+        if (!Array.isArray(history)) {
+            return { error: badRequest("history") };
+        }
+        parsed.history = history;
+    }
+
+    const fullAnalysis = raw.full_analysis;
+    if (fullAnalysis !== undefined) {
+        if (typeof fullAnalysis !== "boolean") {
+            return { error: badRequest("full_analysis") };
+        }
+        parsed.full_analysis = fullAnalysis;
+    }
+
+    const councilMode = raw.council_mode;
+    if (councilMode !== undefined) {
+        if (typeof councilMode !== "string") {
+            return { error: badRequest("council_mode") };
+        }
+        const normalized = councilMode.trim().toLowerCase();
+        if (!ALLOWED_COUNCIL_MODES.has(normalized)) {
+            return { error: badRequest("council_mode") };
+        }
+        parsed.council_mode =
+            normalized === "rules_only"
+                ? "rules"
+                : (normalized as ChatRequestPayload["council_mode"]);
+    }
+
+    const perspectiveConfig = raw.perspective_config;
+    if (perspectiveConfig !== undefined) {
+        if (!isPlainObject(perspectiveConfig)) {
+            return { error: badRequest("perspective_config") };
+        }
+        for (const [key, value] of Object.entries(perspectiveConfig)) {
+            if (!key.trim() || !isPlainObject(value)) {
+                return { error: badRequest("perspective_config") };
+            }
+        }
+        parsed.perspective_config = perspectiveConfig as ChatRequestPayload["perspective_config"];
+    }
+
+    return { body: parsed };
+}
+
 function generateMockDeliberation(message: string) {
     const text = String(message || "");
-    const isQuestion = text.includes("?") || text.includes("？");
-    const isEmotional = /(sad|afraid|angry|anxious|失落|難過|焦慮|害怕)/i.test(text);
+    const isQuestion = /[?？]/.test(text);
+    const isEmotional = /(sad|afraid|angry|anxious|悲傷|焦慮|害怕|生氣)/i.test(text);
 
     const tensionZone = "sweet_spot";
     let dominantVoice = "muse";
@@ -84,16 +174,16 @@ function generateMockDeliberation(message: string) {
 
 function generateMockResponse(message: string): string {
     const text = String(message || "");
-    if (/(sad|afraid|angry|anxious|失落|難過|焦慮|害怕)/i.test(text)) {
+    if (/(sad|afraid|angry|anxious|悲傷|焦慮|害怕|生氣)/i.test(text)) {
         return "I hear the emotional pressure in this. We can first stabilize, then decide the next concrete step together.";
     }
-    if (text.includes("?") || text.includes("？")) {
+    if (/[?？]/.test(text)) {
         return "Good question. I will break this down into assumptions, constraints, and a direct recommendation.";
     }
     return "I understand. Let me respond with a clear and practical next-step proposal.";
 }
 
-async function forwardToBackend(body: unknown): Promise<Response> {
+async function forwardToBackend(body: ChatRequestPayload): Promise<Response> {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
     const backendUrl = getBackendUrl();
@@ -110,12 +200,18 @@ async function forwardToBackend(body: unknown): Promise<Response> {
 }
 
 export async function POST(request: NextRequest) {
-    let body: Record<string, unknown>;
+    let rawBody: unknown;
     try {
-        body = (await request.json()) as Record<string, unknown>;
+        rawBody = await request.json();
     } catch {
         return NextResponse.json({ error: "Invalid JSON payload" }, { status: 400 });
     }
+
+    const parsed = parseChatBody(rawBody);
+    if (parsed.error) {
+        return parsed.error;
+    }
+    const body = parsed.body as ChatRequestPayload;
 
     const backendUrl = getBackendUrl();
     const configuredBackendUrl = getConfiguredBackendUrl();
