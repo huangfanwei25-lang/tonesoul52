@@ -46,6 +46,14 @@
 |------|------|
 | `STREI_OPERATIONAL_PROTOCOL.md` | STREI 操作協議 |
 
+### `/research/` — 研究與外部對照
+
+| 檔案 | 說明 |
+|------|------|
+| `RESEARCH_CONTEXT_2.0.md` | 2.0 研究脈絡與演進背景 |
+| `experimental_design.md` | 指標驗證與實驗設計 |
+| `multi_agent_architecture_patterns.md` | OpenClaw 與主流框架對照、導入 CP 評估 |
+
 ---
 
 ## 🔗 相關文件
