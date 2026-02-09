@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useSyncExternalStore } from "react";
 import Link from "next/link";
 import ConsentModal from "@/components/ConsentModal";
 import ChatInterface from "@/components/ChatInterface";
@@ -17,6 +17,11 @@ import { Conversation, getConversations, createConversation, saveConversation, c
 import { Menu, Settings, FileText, LogOut, Key, Layers, BarChart3, Database, Sliders, BookOpen } from "lucide-react";
 
 export default function Home() {
+  const isHydrated = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
   const [hasConsent, setHasConsent] = useState<boolean>(() => {
     if (typeof window === "undefined") return false;
     return localStorage.getItem("tonesoul_consent") === "true";
@@ -47,12 +52,12 @@ export default function Home() {
 
   // Load conversations from IndexedDB
   useEffect(() => {
-    if (!hasConsent) return;
+    if (!isHydrated || !hasConsent) return;
     const timer = setTimeout(() => {
       void loadConversations();
     }, 0);
     return () => clearTimeout(timer);
-  }, [hasConsent, loadConversations]);
+  }, [isHydrated, hasConsent, loadConversations]);
 
   const handleAcceptConsent = async () => {
     setHasConsent(true);
@@ -106,6 +111,10 @@ export default function Home() {
       console.error("Withdraw consent error:", error);
     }
   };
+
+  if (!isHydrated) {
+    return <div className="min-h-screen bg-slate-50" />;
+  }
 
   // Show consent modal if no consent
   if (!hasConsent) {
