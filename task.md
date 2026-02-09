@@ -194,6 +194,13 @@
 - [x] 更新 7D / API 文件中的 smoke 指令
 **成功標準**: `include-sdh` 與 CI smoke 都會驗證 mode switch，不再只驗證基本連通。 
 
+## Phase 46: Healthcheck 與 SDH 旗標對齊
+- [x] `run_repo_healthcheck.py` 新增 `--[no-]check-council-modes` 並傳遞到 `verify_7d`
+- [x] `verify_7d.py` 新增 `--[no-]check-council-modes`（預設啟用）
+- [x] 補齊 `tests/test_run_repo_healthcheck.py` / `tests/test_verify_7d.py` 旗標測試
+- [x] 更新 `docs/status/README.md` 的 live SDH 執行範例
+**成功標準**: healthcheck 可顯式開關 mode-switch smoke，且預設行為維持啟用並有測試保護。 
+
 ## 已完成（摘要）
 - [x] Phase 1-2: Council 設計與整合
 - [x] Phase 3/10/16: Tools API schema + ToolResponse 標準化

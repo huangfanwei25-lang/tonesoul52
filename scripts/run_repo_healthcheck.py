@@ -95,6 +95,7 @@ def _skip_check(name: str, command: list[str], reason: str) -> dict[str, Any]:
 def _build_check_specs(
     python_executable: str,
     include_sdh: bool,
+    check_council_modes: bool,
     strict_soft_fail: bool,
     allow_missing_discussion: bool,
     discussion_path: Path,
@@ -102,6 +103,10 @@ def _build_check_specs(
     verify_7d_cmd = [python_executable, "scripts/verify_7d.py"]
     if include_sdh:
         verify_7d_cmd.append("--include-sdh")
+        if check_council_modes:
+            verify_7d_cmd.append("--check-council-modes")
+        else:
+            verify_7d_cmd.append("--no-check-council-modes")
     if strict_soft_fail:
         verify_7d_cmd.append("--strict-soft-fail")
 
@@ -223,6 +228,12 @@ def build_parser() -> argparse.ArgumentParser:
         help="Pass --include-sdh to verify_7d (requires web/backend services).",
     )
     parser.add_argument(
+        "--check-council-modes",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Pass council mode switch checks to verify_7d SDH smoke.",
+    )
+    parser.add_argument(
         "--strict-soft-fail",
         action="store_true",
         help="Pass --strict-soft-fail to verify_7d.",
@@ -244,6 +255,7 @@ def main() -> int:
     specs = _build_check_specs(
         python_executable=sys.executable,
         include_sdh=bool(args.include_sdh),
+        check_council_modes=bool(args.check_council_modes),
         strict_soft_fail=bool(args.strict_soft_fail),
         allow_missing_discussion=bool(args.allow_missing_discussion),
         discussion_path=discussion_path,
@@ -263,6 +275,7 @@ def main() -> int:
         "overall_ok": overall_ok,
         "config": {
             "include_sdh": bool(args.include_sdh),
+            "check_council_modes": bool(args.check_council_modes),
             "strict_soft_fail": bool(args.strict_soft_fail),
             "allow_missing_discussion": bool(args.allow_missing_discussion),
         },

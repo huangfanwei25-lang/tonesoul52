@@ -335,7 +335,12 @@ def _check_rdd() -> CheckResult:
     return _result("RDD", "SOFT_FAIL", "fail", cmd, f"exit={code}; {stderr[-300:]}")
 
 
-def _check_sdh(web_base: str, api_base: str, timeout: int) -> CheckResult:
+def _check_sdh(
+    web_base: str,
+    api_base: str,
+    timeout: int,
+    check_council_modes: bool = True,
+) -> CheckResult:
     cmd = [
         sys.executable,
         str(Path("scripts/verify_web_api.py")),
@@ -344,10 +349,11 @@ def _check_sdh(web_base: str, api_base: str, timeout: int) -> CheckResult:
         "--api-base",
         api_base,
         "--require-backend",
-        "--check-council-modes",
         "--timeout",
         str(timeout),
     ]
+    if check_council_modes:
+        cmd.append("--check-council-modes")
     ok, _, stderr, code = _run(cmd)
     if ok:
         return _result("SDH", "SOFT_FAIL", "pass", cmd)
@@ -470,6 +476,12 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Return non-zero if SOFT_FAIL checks fail.",
     )
+    parser.add_argument(
+        "--check-council-modes",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Enable council mode switch checks in SDH web/api smoke.",
+    )
     parser.add_argument("--web-base", default=_env_or_default(AUDIT_WEB_BASE_ENV, DEFAULT_WEB_BASE))
     parser.add_argument("--api-base", default=_env_or_default(AUDIT_API_BASE_ENV, DEFAULT_API_BASE))
     parser.add_argument("--timeout", type=int, default=40)
@@ -495,23 +507,32 @@ def main() -> int:
         _check_cdd(),
     ]
     if args.include_sdh:
-        results.append(_check_sdh(args.web_base, args.api_base, max(1, args.timeout)))
+        results.append(
+            _check_sdh(
+                args.web_base,
+                args.api_base,
+                max(1, args.timeout),
+                check_council_modes=bool(args.check_council_modes),
+            )
+        )
     else:
+        skip_cmd = [
+            sys.executable,
+            str(Path("scripts/verify_web_api.py")),
+            "--web-base",
+            args.web_base,
+            "--api-base",
+            args.api_base,
+            "--require-backend",
+        ]
+        if args.check_council_modes:
+            skip_cmd.append("--check-council-modes")
         results.append(
             _result(
                 "SDH",
                 "SOFT_FAIL",
                 "skip",
-                [
-                    sys.executable,
-                    str(Path("scripts/verify_web_api.py")),
-                    "--web-base",
-                    args.web_base,
-                    "--api-base",
-                    args.api_base,
-                    "--require-backend",
-                    "--check-council-modes",
-                ],
+                skip_cmd,
                 "skipped; use --include-sdh when web/backend are running",
             )
         )

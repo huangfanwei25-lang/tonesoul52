@@ -49,6 +49,12 @@ CI-friendly mode (skip `verify_7d` when discussion file is absent):
 python scripts/run_repo_healthcheck.py --strict --allow-missing-discussion
 ```
 
+Live SDH mode-switch smoke (requires running web/backend services):
+
+```bash
+python scripts/run_repo_healthcheck.py --strict --include-sdh --check-council-modes
+```
+
 ## Automation
 
 - GitHub Actions workflow: `.github/workflows/monthly_consolidation.yml`

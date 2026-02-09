@@ -17,6 +17,7 @@ def test_build_parser_reads_env_defaults(monkeypatch):
 
     assert args.web_base == "http://127.0.0.1:3002"
     assert args.api_base == "http://127.0.0.1:5001"
+    assert args.check_council_modes is True
 
 
 def test_cli_overrides_env_defaults(monkeypatch):
@@ -34,6 +35,12 @@ def test_cli_overrides_env_defaults(monkeypatch):
 
     assert args.web_base == "http://127.0.0.1:3010"
     assert args.api_base == "http://127.0.0.1:5010"
+
+
+def test_cli_can_disable_council_mode_checks():
+    parser = verify_7d.build_parser()
+    args = parser.parse_args(["--no-check-council-modes"])
+    assert args.check_council_modes is False
 
 
 def test_display_command_normalizes_python_executable() -> None:
@@ -60,4 +67,27 @@ def test_check_sdh_includes_council_mode_switch_flag(monkeypatch):
     assert isinstance(command, list)
     assert "--check-council-modes" in command
     assert "--check-council-modes" in result.command
+    assert result.status == "pass"
+
+
+def test_check_sdh_can_skip_council_mode_switch_flag(monkeypatch):
+    captured: dict[str, object] = {}
+
+    def fake_run(command: list[str], timeout: int = 1200):
+        captured["command"] = command
+        captured["timeout"] = timeout
+        return True, "", "", 0
+
+    monkeypatch.setattr(verify_7d, "_run", fake_run)
+    result = verify_7d._check_sdh(
+        "http://127.0.0.1:3000",
+        "http://127.0.0.1:5000",
+        40,
+        check_council_modes=False,
+    )
+
+    command = captured["command"]
+    assert isinstance(command, list)
+    assert "--check-council-modes" not in command
+    assert "--check-council-modes" not in result.command
     assert result.status == "pass"
