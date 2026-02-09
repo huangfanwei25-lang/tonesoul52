@@ -89,6 +89,31 @@ black --check --line-length 100 tonesoul tests
 ruff check tonesoul tests
 ```
 
+### Multi-Agent Commit Attribution
+
+When multiple agents share the same Git author identity, add trailers to every
+commit message for traceability:
+
+```text
+Agent: codex-gpt5 | antigravity | human
+Trace-Topic: short-topic-id
+```
+
+Example:
+
+```text
+feat(council): integrate VTP runtime guard
+
+Agent: codex-gpt5
+Trace-Topic: phase32-vtp-runtime-integration
+```
+
+You can verify the latest commit message with:
+
+```bash
+python scripts/verify_commit_attribution.py --rev HEAD
+```
+
 ---
 
 ## 🛡️ 7D Audit Compliance

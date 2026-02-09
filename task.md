@@ -111,6 +111,12 @@
 - [x] 驗證偽造完整終止 payload 仍被 trust gate 忽略
 **成功標準**: 外部未授權請求無法用 VTP flags 強制進入終止流程，且行為有測試覆蓋。 
 
+## Phase 34: 多代理提交歸屬規範
+- [x] 新增 `scripts/verify_commit_attribution.py`（檢查 `Agent` / `Trace-Topic` trailers）
+- [x] 新增 `tests/test_verify_commit_attribution.py`
+- [x] 更新 `CONTRIBUTING.md` 提交歸屬格式與驗證指令
+**成功標準**: 共享作者身份下，commit message 能附帶代理與議題來源，降低跨代理責任歸屬歧義。 
+
 ## 已完成（摘要）
 - [x] Phase 1-2: Council 設計與整合
 - [x] Phase 3/10/16: Tools API schema + ToolResponse 標準化
