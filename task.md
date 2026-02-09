@@ -105,6 +105,12 @@
 - [x] 擴充 API 合約測試與文件（`tests/test_api_server_contract.py`, `docs/API_SPEC.md`）
 **成功標準**: VTP 觸發/延遲/終止三種狀態可由測試重現，並在 API 回應中可觀測。 
 
+## Phase 33: VTP 紅隊防濫用驗證
+- [x] 新增 `tests/red_team/test_vtp_context_abuse.py`
+- [x] 驗證未信任 API payload 無法強制 VTP defer/terminate
+- [x] 驗證偽造完整終止 payload 仍被 trust gate 忽略
+**成功標準**: 外部未授權請求無法用 VTP flags 強制進入終止流程，且行為有測試覆蓋。 
+
 ## 已完成（摘要）
 - [x] Phase 1-2: Council 設計與整合
 - [x] Phase 3/10/16: Tools API schema + ToolResponse 標準化
