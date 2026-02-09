@@ -12,6 +12,7 @@ from __future__ import annotations
 import argparse
 import glob
 import json
+import unicodedata
 from pathlib import Path
 from typing import Any
 
@@ -32,6 +33,8 @@ DEFAULT_DISCUSSION_PATH = "memory/agent_discussion_curated.jsonl"
 DEFAULT_RAW_DISCUSSION_PATH = "memory/agent_discussion.jsonl"
 REQUIRED_DISCUSSION_FIELDS = ("timestamp", "author", "topic", "status", "message")
 UTF8_BOM = b"\xef\xbb\xbf"
+TEXT_ANOMALY_REPLACEMENT = "replacement_char"
+TEXT_ANOMALY_PRIVATE_USE = "private_use_char"
 
 
 def _has_glob_token(pattern: str) -> bool:
@@ -87,6 +90,27 @@ def _validate_discussion_entry(entry: dict[str, Any]) -> list[str]:
     return missing
 
 
+def _detect_text_anomalies(value: Any) -> list[str]:
+    if not isinstance(value, str):
+        return []
+
+    anomalies: list[str] = []
+    if "\ufffd" in value:
+        anomalies.append(TEXT_ANOMALY_REPLACEMENT)
+    if any(unicodedata.category(char) == "Co" for char in value):
+        anomalies.append(TEXT_ANOMALY_PRIVATE_USE)
+    return anomalies
+
+
+def _discussion_text_anomalies(entry: dict[str, Any]) -> dict[str, list[str]]:
+    fields: dict[str, list[str]] = {}
+    for field in REQUIRED_DISCUSSION_FIELDS:
+        anomalies = _detect_text_anomalies(entry.get(field))
+        if anomalies:
+            fields[field] = anomalies
+    return fields
+
+
 def _check_discussion_tail(path: Path, tail_lines: int) -> dict[str, Any]:
     if not path.exists():
         return {
@@ -95,6 +119,7 @@ def _check_discussion_tail(path: Path, tail_lines: int) -> dict[str, Any]:
             "tail_checked": 0,
             "invalid_json": [],
             "missing_fields": [],
+            "text_anomalies": [],
         }
 
     raw = path.read_bytes()
@@ -108,6 +133,7 @@ def _check_discussion_tail(path: Path, tail_lines: int) -> dict[str, Any]:
     tail = non_empty_lines[-max(1, tail_lines) :]
     invalid_json: list[dict[str, Any]] = []
     missing_fields: list[dict[str, Any]] = []
+    text_anomalies: list[dict[str, Any]] = []
 
     start_line = len(non_empty_lines) - len(tail) + 1
     for idx, line in enumerate(tail, start=start_line):
@@ -122,6 +148,9 @@ def _check_discussion_tail(path: Path, tail_lines: int) -> dict[str, Any]:
         missing = _validate_discussion_entry(payload)
         if missing:
             missing_fields.append({"line_number": idx, "missing_fields": missing})
+        anomalies = _discussion_text_anomalies(payload)
+        if anomalies:
+            text_anomalies.append({"line_number": idx, "fields": anomalies})
 
     return {
         "path": path.as_posix(),
@@ -130,6 +159,7 @@ def _check_discussion_tail(path: Path, tail_lines: int) -> dict[str, Any]:
         "tail_checked": len(tail),
         "invalid_json": invalid_json,
         "missing_fields": missing_fields,
+        "text_anomalies": text_anomalies,
     }
 
 
@@ -168,6 +198,7 @@ def _build_report(
         and not discussion_report.get("bom", False)
         and len(discussion_report["invalid_json"]) == 0
         and len(discussion_report["missing_fields"]) == 0
+        and len(discussion_report["text_anomalies"]) == 0
     )
     if allow_missing_discussion and not discussion_report["exists"]:
         discussion_ok = True

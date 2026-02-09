@@ -160,6 +160,13 @@
 - [x] 新增 runtime/model registry 測試覆蓋（預設、alias、invalid fallback、request override）
 **成功標準**: 後端可透過環境變數切換 council 模式，且顯式 request 設定優先級高於環境變數，行為有測試保護。 
 
+## Phase 41: 討論通道文字完整性防呆
+- [x] `memory/agent_discussion.py` 新增文字異常偵測（`replacement_char` / `private_use_char`）
+- [x] curated stream 過濾異常訊息，保留 raw 歷史但避免污染共用閱讀流
+- [x] `scripts/verify_memory_hygiene.py` 新增 `text_anomalies` 檢查並納入 blocking gate
+- [x] 補齊回歸測試（`tests/test_agent_discussion.py`, `tests/test_verify_memory_hygiene.py`）
+**成功標準**: 討論檔可維持 JSON 結構 + 文字可讀性雙重契約，且新的亂碼訊息不會進入 curated 記憶流。 
+
 ## 已完成（摘要）
 - [x] Phase 1-2: Council 設計與整合
 - [x] Phase 3/10/16: Tools API schema + ToolResponse 標準化

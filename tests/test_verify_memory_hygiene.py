@@ -105,3 +105,56 @@ def test_build_report_can_allow_missing_discussion(tmp_path: Path):
 
     assert report["ok"] is True
     assert report["discussion_tail"]["exists"] is False
+
+
+def test_discussion_tail_detects_text_anomaly(tmp_path: Path):
+    discussion = tmp_path / "discussion.jsonl"
+    discussion.write_text(
+        json.dumps(
+            {
+                "timestamp": "2026-02-09T00:00:00Z",
+                "author": "codex",
+                "topic": "encoding-check",
+                "status": "final",
+                "message": "bad\ue000payload",
+            },
+            ensure_ascii=False,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+    report = hygiene._check_discussion_tail(discussion, tail_lines=10)
+    assert len(report["text_anomalies"]) == 1
+    assert report["text_anomalies"][0]["line_number"] == 1
+    assert "message" in report["text_anomalies"][0]["fields"]
+
+
+def test_build_report_fails_on_text_anomaly(tmp_path: Path):
+    target = tmp_path / "ok.py"
+    target.write_text("print('ok')\n", encoding="utf-8")
+    discussion = tmp_path / "discussion.jsonl"
+    discussion.write_text(
+        json.dumps(
+            {
+                "timestamp": "2026-02-09T00:00:00Z",
+                "author": "codex",
+                "topic": "encoding-check",
+                "status": "final",
+                "message": "bad\ue000payload",
+            },
+            ensure_ascii=False,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+    report = hygiene._build_report(
+        targets=[target.as_posix()],
+        discussion_path=discussion,
+        tail_lines=20,
+        allow_missing_discussion=False,
+    )
+
+    assert report["ok"] is False
+    assert len(report["discussion_tail"]["text_anomalies"]) == 1

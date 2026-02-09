@@ -188,3 +188,36 @@ def test_rebuild_curated_drops_invalid_status_entries(tmp_path: Path):
         line for line in curated.read_text(encoding="utf-8").splitlines() if line.strip()
     ]
     assert len(curated_lines) == 1
+
+
+def test_rebuild_curated_drops_text_anomaly_entries(tmp_path: Path):
+    raw = tmp_path / "agent_discussion.jsonl"
+    curated = tmp_path / "agent_discussion_curated.jsonl"
+    _write_lines(
+        raw,
+        [
+            json.dumps(
+                {
+                    "timestamp": "2026-02-09T00:00:00Z",
+                    "author": "codex",
+                    "topic": "ok",
+                    "status": "final",
+                    "message": "clean",
+                }
+            ),
+            json.dumps(
+                {
+                    "timestamp": "2026-02-09T00:00:01Z",
+                    "author": "codex",
+                    "topic": "bad",
+                    "status": "final",
+                    "message": "bad\ue000payload",
+                }
+            ),
+        ],
+    )
+
+    report = rebuild_curated(raw_path=raw, curated_path=curated, create_backup=False)
+    assert report["raw_entries"] == 2
+    assert report["curated_entries"] == 1
+    assert report["dropped_entries"] == 1

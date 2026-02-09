@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import unicodedata
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -12,6 +13,8 @@ DEFAULT_DISCUSSION_PATH = DEFAULT_DISCUSSION_RAW_PATH
 REQUIRED_FIELDS = ("timestamp", "author", "topic", "status", "message")
 CURATED_EXCLUDED_STATUS = {"invalid"}
 CURATED_EXCLUDED_TOPICS = {"agent-discussion-parse-error"}
+TEXT_ANOMALY_REPLACEMENT = "replacement_char"
+TEXT_ANOMALY_PRIVATE_USE = "private_use_char"
 
 
 def _iso_now() -> str:
@@ -60,6 +63,27 @@ def _append_jsonl(path: Path, payload: Dict[str, Any]) -> None:
         handle.write(json.dumps(payload, ensure_ascii=False) + "\n")
 
 
+def _detect_text_anomalies(value: Any) -> List[str]:
+    if not isinstance(value, str):
+        return []
+
+    anomalies: List[str] = []
+    if "\ufffd" in value:
+        anomalies.append(TEXT_ANOMALY_REPLACEMENT)
+    if any(unicodedata.category(char) == "Co" for char in value):
+        anomalies.append(TEXT_ANOMALY_PRIVATE_USE)
+    return anomalies
+
+
+def _entry_text_anomalies(entry: Dict[str, Any]) -> Dict[str, List[str]]:
+    result: Dict[str, List[str]] = {}
+    for field in REQUIRED_FIELDS:
+        anomalies = _detect_text_anomalies(entry.get(field))
+        if anomalies:
+            result[field] = anomalies
+    return result
+
+
 def _to_curated_entry(entry: Dict[str, Any]) -> Optional[Dict[str, str]]:
     status = str(entry.get("status", "")).strip().lower()
     topic = str(entry.get("topic", "")).strip()
@@ -73,6 +97,8 @@ def _to_curated_entry(entry: Dict[str, Any]) -> Optional[Dict[str, str]]:
         value = entry.get(field)
         curated[field] = str(value).strip() if value is not None else ""
     if not all(curated.values()):
+        return None
+    if _entry_text_anomalies(curated):
         return None
     return curated
 
@@ -106,7 +132,9 @@ def load_entries(
                 continue
 
             if include_invalid:
-                entries.append(_invalid_line_record(line_number, line, "JSON root is not an object"))
+                entries.append(
+                    _invalid_line_record(line_number, line, "JSON root is not an object")
+                )
     return entries
 
 
@@ -135,11 +163,14 @@ def audit_file(
         "valid_entries": 0,
         "invalid_entries": 0,
         "invalid_samples": [],
+        "text_anomaly_entries": 0,
+        "text_anomaly_samples": [],
     }
     if not path.exists():
         return report
 
     samples: List[Dict[str, Any]] = []
+    text_anomaly_samples: List[Dict[str, Any]] = []
     with path.open("r", encoding="utf-8") as handle:
         for line_number, raw_line in enumerate(handle, start=1):
             line = raw_line.strip()
@@ -162,8 +193,18 @@ def audit_file(
 
             if isinstance(payload, dict):
                 try:
-                    normalize_entry(payload)
+                    normalized = normalize_entry(payload)
                     report["valid_entries"] += 1
+                    anomalies = _entry_text_anomalies(normalized)
+                    if anomalies:
+                        report["text_anomaly_entries"] += 1
+                        if len(text_anomaly_samples) < sample_limit:
+                            text_anomaly_samples.append(
+                                {
+                                    "line_number": line_number,
+                                    "fields": anomalies,
+                                }
+                            )
                 except (TypeError, ValueError) as exc:
                     report["invalid_entries"] += 1
                     if len(samples) < sample_limit:
@@ -187,6 +228,7 @@ def audit_file(
                 )
 
     report["invalid_samples"] = samples
+    report["text_anomaly_samples"] = text_anomaly_samples
     return report
 
 
