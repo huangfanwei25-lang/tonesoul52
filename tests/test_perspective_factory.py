@@ -75,6 +75,7 @@ def test_llm_default_model_is_gemini():
 def test_llm_client_cache_is_model_aware(monkeypatch):
     calls = []
     LLMPerspective._gemini_clients = {}
+    monkeypatch.setenv("GEMINI_API_KEY", "dummy-key")
 
     def fake_build(cls, model: str):
         calls.append(model)
@@ -89,3 +90,19 @@ def test_llm_client_cache_is_model_aware(monkeypatch):
     assert first is second
     assert third is not first
     assert calls == ["gemini-2.0-flash", "gemini-1.5-pro"]
+
+
+def test_llm_without_api_key_skips_client_initialization(monkeypatch):
+    LLMPerspective._gemini_clients = {}
+    monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+    calls = []
+
+    def fake_build(cls, model: str):
+        calls.append(model)
+        return {"model": model}
+
+    monkeypatch.setattr(LLMPerspective, "_build_gemini_client", classmethod(fake_build))
+    client = LLMPerspective._get_gemini_client(DEFAULT_LLM_MODEL)
+
+    assert client is None
+    assert calls == []

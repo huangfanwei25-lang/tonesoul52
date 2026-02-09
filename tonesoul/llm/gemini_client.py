@@ -6,25 +6,24 @@ Connects to Google Gemini API for chat.
 import os
 from typing import Dict, List, Optional
 
-try:
-    import google.generativeai as genai
 
-    GEMINI_AVAILABLE = True
-except ImportError:
-    GEMINI_AVAILABLE = False
+def _load_genai():
+    try:
+        import google.generativeai as genai  # type: ignore
+    except ImportError as exc:
+        raise ImportError("請安裝 google-generativeai: pip install google-generativeai") from exc
+    return genai
 
 
 class GeminiClient:
     """Wrapper for Google Gemini API."""
 
     def __init__(self, api_key: Optional[str] = None, model: str = "gemini-2.0-flash"):
-        if not GEMINI_AVAILABLE:
-            raise ImportError("請安裝 google-generativeai: pip install google-generativeai")
-
         self.api_key = api_key or os.environ.get("GEMINI_API_KEY")
         if not self.api_key:
             raise ValueError("請設定 GEMINI_API_KEY 環境變數或傳入 api_key")
 
+        genai = _load_genai()
         genai.configure(api_key=self.api_key)
         self.model = genai.GenerativeModel(model)
         self.chat = None

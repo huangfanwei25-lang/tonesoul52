@@ -21,6 +21,7 @@ Usage:
 
 import json
 import logging
+import os
 import re
 from dataclasses import dataclass
 from enum import Enum
@@ -145,6 +146,11 @@ class LLMPerspective(IPerspective):
         self._perspective = _to_perspective(self.name)
 
     @classmethod
+    def _has_gemini_credentials(cls) -> bool:
+        api_key = os.environ.get("GEMINI_API_KEY")
+        return bool(api_key and api_key.strip())
+
+    @classmethod
     def _build_gemini_client(cls, model: str):
         from ..llm.gemini_client import GeminiClient
 
@@ -156,6 +162,9 @@ class LLMPerspective(IPerspective):
         cached = cls._gemini_clients.get(model)
         if cached is not None:
             return cached
+        if not cls._has_gemini_credentials():
+            logger.debug("GEMINI_API_KEY not set; skip Gemini client initialization.")
+            return None
         try:
             client = cls._build_gemini_client(model=model)
             cls._gemini_clients[model] = client
