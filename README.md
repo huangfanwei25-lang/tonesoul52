@@ -49,6 +49,8 @@ ToneSoul is **not** another AI wrapper. It's a **governance-first architecture**
 | **AI-Assisted Decisions** | Explicit uncertainty disclosure prevents over-reliance |
 | **Regulatory Compliance** | 7D audit trail satisfies explainability requirements |
 
+📖 **See real examples:** [Case Studies](docs/CASE_STUDIES.md) | 📹 [Demo Video](https://youtu.be/_DkRXtdytUQ)
+
 ---
 
 ## 💭 Philosophy
