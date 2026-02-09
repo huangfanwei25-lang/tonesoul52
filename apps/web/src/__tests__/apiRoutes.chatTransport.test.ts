@@ -80,6 +80,27 @@ describe("chat route transport fallback behavior", () => {
         expect(fetchMock).not.toHaveBeenCalled();
     });
 
+    it("returns 503 on vercel when backend url is malformed", async () => {
+        process.env.VERCEL = "1";
+        process.env.TONESOUL_BACKEND_URL = "mock";
+
+        const fetchMock = vi.spyOn(globalThis, "fetch");
+        const response = await postChat(
+            makeRequest({
+                conversation_id: "c1",
+                message: "hello",
+                history: [{ role: "user", content: "hello" }],
+                full_analysis: false,
+            }) as never
+        );
+        const payload = (await response.json()) as Record<string, unknown>;
+
+        expect(response.status).toBe(503);
+        expect(payload.error).toBe("Backend configuration invalid for Vercel runtime");
+        expect(payload.config_issue).toBe("invalid_url");
+        expect(fetchMock).not.toHaveBeenCalled();
+    });
+
     it("normalizes rules_only council_mode before forwarding", async () => {
         process.env.TONESOUL_BACKEND_URL = "http://127.0.0.1:5000";
         const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(

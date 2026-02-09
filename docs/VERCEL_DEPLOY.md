@@ -96,7 +96,7 @@ python scripts/verify_vercel_preflight.py --strict --probe-health
 ```
 
 Preflight checks:
-- `TONESOUL_BACKEND_URL` exists, is absolute, and is not localhost
+- `TONESOUL_BACKEND_URL` exists, is absolute HTTPS, and is not localhost
 - production policy keeps chat mock fallback disabled
 - frontend execution/fallback flags match backend-first contract
 - backend `/api/health` is reachable (when `--probe-health` is enabled)
@@ -112,6 +112,7 @@ Manual GitHub Action entrypoint:
 If you see fallback behavior in production:
 1. Check `TONESOUL_BACKEND_URL` value in Vercel env.
    - It must be a reachable HTTPS backend, never `localhost`/`127.0.0.1`.
+   - It must be a valid URL string (do not use placeholders like `mock`).
 2. Check backend CORS includes Vercel domain.
 3. Confirm backend health endpoint is reachable over HTTPS.
 4. Re-run `verify_web_api.py --require-backend`.

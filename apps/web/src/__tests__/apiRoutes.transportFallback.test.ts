@@ -138,4 +138,18 @@ describe("route transport fallback policy", () => {
         expect(payload.error).toBe("Backend configuration invalid for Vercel runtime");
         expect(fetchMock).not.toHaveBeenCalled();
     });
+
+    it("routes return 503 on vercel when backend url is malformed", async () => {
+        process.env.VERCEL = "1";
+        process.env.TONESOUL_BACKEND_URL = "mock";
+        const fetchMock = vi.spyOn(globalThis, "fetch");
+
+        const response = await postConversation(makeRequest({ session_id: "s1" }) as never);
+        const payload = (await response.json()) as Record<string, unknown>;
+
+        expect(response.status).toBe(503);
+        expect(payload.error).toBe("Backend configuration invalid for Vercel runtime");
+        expect(payload.config_issue).toBe("invalid_url");
+        expect(fetchMock).not.toHaveBeenCalled();
+    });
 });

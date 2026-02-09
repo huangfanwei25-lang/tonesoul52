@@ -1,4 +1,4 @@
-﻿# API Specification (Unified Web + Backend)
+# API Specification (Unified Web + Backend)
 
 Last updated: 2026-02-09
 
@@ -96,8 +96,9 @@ Runtime environment:
 - Error behavior:
   - transport failure + fallback disabled: HTTP `502`
     - payload includes `error: "Backend unavailable"`
-  - Vercel runtime + missing/localhost backend config: HTTP `503`
+  - Vercel runtime + invalid backend config: HTTP `503`
     - payload includes `error: "Backend configuration invalid for Vercel runtime"`
+    - payload includes `config_issue: "missing" | "invalid_url" | "local_address" | "insecure_protocol"`
 
 ### `POST /api/validate`
 - Request:
