@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { LineChart, Line, XAxis, YAxis, ReferenceLine, ResponsiveContainer, Tooltip, Area, AreaChart } from "recharts";
+import { XAxis, YAxis, ReferenceLine, ResponsiveContainer, Tooltip, Area, AreaChart } from "recharts";
 import { Activity } from "lucide-react";
 import { Conversation } from "@/lib/db";
 

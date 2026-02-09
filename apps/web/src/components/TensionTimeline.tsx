@@ -2,7 +2,7 @@
 
 import React, { useMemo } from 'react';
 import { Activity, TrendingUp, AlertCircle } from 'lucide-react';
-import type { SoulState, SoulMode, TensionRecord } from '@/lib/soulEngine';
+import type { SoulState, SoulMode } from '@/lib/soulEngine';
 
 interface TensionTimelineProps {
     soulState: SoulState;

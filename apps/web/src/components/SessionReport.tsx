@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { FileText, X, Lightbulb, Shield, TrendingUp, Heart, Activity, Save, Check } from "lucide-react";
-import { Message, DeliberationData, MemoryInsight, saveMemoryInsight } from "@/lib/db";
+import { Message, MemoryInsight, saveMemoryInsight } from "@/lib/db";
 import { ApiSettings } from "./SettingsModal";
 
 interface SessionReportProps {

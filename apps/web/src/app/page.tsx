@@ -14,72 +14,45 @@ import PersonaSettings, { PersonaConfig, getStoredPersona } from "@/components/P
 import { SoulState, loadSoulState, getInitialSoulState } from "@/lib/soulEngine";
 import OnboardingGuide, { hasCompletedOnboarding } from "@/components/OnboardingGuide";
 import { Conversation, getConversations, createConversation, saveConversation, clearAllConversations } from "@/lib/db";
-import { Brain, Menu, Settings, FileText, LogOut, Key, Layers, BarChart3, Database, Sliders, BookOpen } from "lucide-react";
+import { Menu, Settings, FileText, LogOut, Key, Layers, BarChart3, Database, Sliders, BookOpen } from "lucide-react";
 
 export default function Home() {
-  const [hasConsent, setHasConsent] = useState<boolean>(false);
+  const [hasConsent, setHasConsent] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    return localStorage.getItem("tonesoul_consent") === "true";
+  });
   const [showSidebar, setShowSidebar] = useState(true);
   const [showSettings, setShowSettings] = useState(false);
   const [showReport, setShowReport] = useState(false);
   const [showDataManager, setShowDataManager] = useState(false);
   const [showPersonaSettings, setShowPersonaSettings] = useState(false);
-  const [showOnboarding, setShowOnboarding] = useState(false);
-  const [apiSettings, setApiSettings] = useState<ApiSettings | null>(null);
-  const [personaConfig, setPersonaConfig] = useState<PersonaConfig | null>(null);
-  const [soulState, setSoulState] = useState<SoulState>(getInitialSoulState());
+  const [showOnboarding, setShowOnboarding] = useState(() => !hasCompletedOnboarding());
+  const [apiSettings, setApiSettings] = useState<ApiSettings | null>(() => getStoredSettings());
+  const [personaConfig, setPersonaConfig] = useState<PersonaConfig | null>(() => getStoredPersona());
+  const [soulState] = useState<SoulState>(() => loadSoulState() || getInitialSoulState());
 
   // Conversation state
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [currentConversation, setCurrentConversation] = useState<Conversation | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
 
-  // Load consent and API settings
-  useEffect(() => {
-    const storedConsent = localStorage.getItem("tonesoul_consent");
-    if (storedConsent === "true") {
-      setHasConsent(true);
-    }
-
-    const storedApiSettings = getStoredSettings();
-    if (storedApiSettings) {
-      setApiSettings(storedApiSettings);
-    }
-
-    // Load persona settings
-    setPersonaConfig(getStoredPersona());
-
-    // Load soul state
-    setSoulState(loadSoulState());
-
-    // Check if onboarding needed
-    if (!hasCompletedOnboarding()) {
-      setShowOnboarding(true);
+  const loadConversations = useCallback(async () => {
+    try {
+      const convs = await getConversations();
+      setConversations(convs);
+      setCurrentConversation(prev => prev ?? convs[0] ?? null);
+    } catch (error) {
+      console.error("Failed to load conversations:", error);
     }
   }, []);
 
   // Load conversations from IndexedDB
   useEffect(() => {
-    if (hasConsent) {
-      loadConversations();
-    }
-  }, [hasConsent]);
-
-  const loadConversations = async () => {
-    setIsLoading(true);
-    try {
-      const convs = await getConversations();
-      setConversations(convs);
-
-      // Select the most recent conversation if exists
-      if (convs.length > 0 && !currentConversation) {
-        setCurrentConversation(convs[0]);
-      }
-    } catch (error) {
-      console.error("Failed to load conversations:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    if (!hasConsent) return;
+    const timer = setTimeout(() => {
+      void loadConversations();
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [hasConsent, loadConversations]);
 
   const handleAcceptConsent = async () => {
     setHasConsent(true);

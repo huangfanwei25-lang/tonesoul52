@@ -8,8 +8,7 @@ import {
     getConversations,
     getAllMemoryInsights,
     saveConversation,
-    saveMemoryInsight,
-    clearAllConversations
+    saveMemoryInsight
 } from "@/lib/db";
 
 interface DataManagerProps {

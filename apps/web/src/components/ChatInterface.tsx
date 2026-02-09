@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Send, Loader2, Brain, ChevronDown, ChevronUp, AlertTriangle, MessageSquare, MoveRight, Users } from "lucide-react";
 import { ApiSettings } from "./SettingsModal";
 import { Message as DBMessage, DeliberationData, Conversation, saveConversation, MemoryInsight, findRelevantMemories } from "@/lib/db";
@@ -14,7 +14,6 @@ import { PersonaConfig } from "./PersonaSettings";
 import {
     SoulState,
     TensionRecord,
-    TensionTensor,
     loadSoulState,
     updateSoulState,
     generateSoulPromptModifier,
@@ -23,7 +22,7 @@ import {
     getContextWeight,
     estimateResistance
 } from "@/lib/soulEngine";
-import { auditOutput, saveAuditLog, AuditResult } from "@/lib/soulAuditor";
+import { auditOutput, saveAuditLog } from "@/lib/soulAuditor";
 
 interface Message extends Omit<DBMessage, 'timestamp'> {
     timestamp: Date;
@@ -49,22 +48,6 @@ ${memories.map((m, i) => `
 - 潛在需求: ${m.hiddenNeeds.slice(0, 60)}
 `).join('')}
 `;
-};
-
-// ==================== RE2 Re-Reading Wrapper ====================
-// 基於論文: "Re-Reading Improves Reasoning in Large Language Models" (2024)
-// 核心概念: 重複讀取輸入 2 次以提升理解深度
-
-const applyRE2 = (input: string): string => {
-    return `【第一次閱讀】:
-"${input}"
-
-請再次仔細閱讀上述用戶輸入，確保完全理解其含義。
-
-【第二次閱讀】:
-"${input}"
-
-現在請基於你的深度理解進行分析。`;
 };
 
 // ==================== Persona Modifier (BUG-003 修復) ====================
@@ -534,6 +517,7 @@ const callXaiAPI = async (prompt: string, apiKey: string): Promise<string> => {
 // Ollama 本地模型 API（免費，需要本地運行 Ollama）
 // 注意：簡化 prompt 避免 JSON 格式要求，本地模型容易出錯
 const callOllamaAPI = async (prompt: string, _apiKey: string): Promise<string> => {
+    void _apiKey;
     const OLLAMA_URL = process.env.NEXT_PUBLIC_OLLAMA_URL || "http://localhost:11434";
     const MODEL_NAME = process.env.NEXT_PUBLIC_OLLAMA_MODEL || "formosa1";
 
@@ -669,7 +653,7 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
         } else {
             setMessages([]);
         }
-    }, [conversation?.id]);
+    }, [conversation]);
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -1092,7 +1076,7 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
         };
     };
 
-    const sendMessage = useCallback(async () => {
+    const sendMessage = async () => {
         if (!input.trim() || isLoading || !conversation) return;
 
         const userMessage: Message = {
@@ -1187,7 +1171,7 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
             setIsLoading(false);
             setLoadingPhase("");
         }
-    }, [input, isLoading, conversation, apiSettings, messages, onConversationUpdate]);
+    };
 
     const handleSuggestionClick = (text: string) => {
         setInput(text);

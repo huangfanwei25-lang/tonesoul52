@@ -115,6 +115,8 @@ export function auditOutput(
     output: string,
     previousOutputs: string[] = []
 ): AuditResult {
+    void input;
+    void previousOutputs;
     const config = getSoulConfig();
     const violations: SoulViolation[] = [];
 
