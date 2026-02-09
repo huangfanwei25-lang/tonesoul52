@@ -37,8 +37,6 @@
 
 ### 🟢 ToneSoul 的處理方式
 
-![ToneSoul 多路徑審議演示](images/ethical_question_demo.webp)
-
 **ToneSoul 使用三路審議：**
 
 | 路徑 | 分析內容 |
