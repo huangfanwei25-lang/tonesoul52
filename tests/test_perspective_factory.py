@@ -1,5 +1,9 @@
 from tonesoul.council import PerspectiveType, PreOutputCouncil, VerdictType, VoteDecision
-from tonesoul.council.perspective_factory import PerspectiveFactory
+from tonesoul.council.perspective_factory import (
+    DEFAULT_LLM_MODEL,
+    LLMPerspective,
+    PerspectiveFactory,
+)
 
 
 def test_create_council_default():
@@ -60,3 +64,28 @@ def test_pre_output_council_accepts_factory_perspectives():
         context={"topic": "geography"},
     )
     assert verdict.verdict == VerdictType.APPROVE
+
+
+def test_llm_default_model_is_gemini():
+    perspective = PerspectiveFactory.create("analyst", mode="llm")
+    assert isinstance(perspective, LLMPerspective)
+    assert perspective.model == DEFAULT_LLM_MODEL
+
+
+def test_llm_client_cache_is_model_aware(monkeypatch):
+    calls = []
+    LLMPerspective._gemini_clients = {}
+
+    def fake_build(cls, model: str):
+        calls.append(model)
+        return {"model": model, "id": len(calls)}
+
+    monkeypatch.setattr(LLMPerspective, "_build_gemini_client", classmethod(fake_build))
+
+    first = LLMPerspective._get_gemini_client("gemini-2.0-flash")
+    second = LLMPerspective._get_gemini_client("gemini-2.0-flash")
+    third = LLMPerspective._get_gemini_client("gemini-1.5-pro")
+
+    assert first is second
+    assert third is not first
+    assert calls == ["gemini-2.0-flash", "gemini-1.5-pro"]
