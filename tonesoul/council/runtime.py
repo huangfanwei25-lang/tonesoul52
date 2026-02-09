@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import os
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Tuple, Union
 
@@ -11,6 +12,7 @@ from ..escape_valve import EscapeValve, EscapeValveConfig
 from ..role_council import build_council_summary
 from .base import IPerspective
 from .intent_reconstructor import infer_genesis
+from .model_registry import get_council_config
 from .pre_output_council import PreOutputCouncil
 from .self_journal import record_self_memory
 from .types import CouncilVerdict, PerspectiveType, VerdictType
@@ -22,6 +24,7 @@ logger = logging.getLogger(__name__)
 _ESCAPE_FAILURE_HISTORY_LIMIT = 20
 _ESCAPE_FAILURE_TEXT_LIMIT = 240
 _ESCAPE_TRIGGER_LEVEL_FLOOR = 0.95
+_COUNCIL_MODE_ENV = "TONESOUL_COUNCIL_MODE"
 
 
 @dataclass(frozen=True)
@@ -80,11 +83,13 @@ class CouncilRuntime:
             role_result,
         )
 
+        resolved_perspective_config = self._resolve_perspective_config(request)
+
         council = PreOutputCouncil(
             perspectives=request.perspectives,
             coherence_threshold=coherence_threshold,
             block_threshold=block_threshold,
-            perspective_config=request.perspective_config,
+            perspective_config=resolved_perspective_config,
         )
 
         verdict = council.validate(
@@ -321,6 +326,31 @@ class CouncilRuntime:
             verdict.transcript = transcript
             logger.warning("Failed to append Isnad record: %s", exc)
         return verdict
+
+    def _resolve_perspective_config(
+        self,
+        request: CouncilRequest,
+    ) -> Optional[Dict[Union[PerspectiveType, str], Dict[str, Any]]]:
+        if request.perspective_config is not None:
+            return request.perspective_config
+
+        if request.perspectives is not None:
+            return None
+
+        raw_mode = os.environ.get(_COUNCIL_MODE_ENV, "hybrid")
+        mode = raw_mode.strip().lower() if isinstance(raw_mode, str) else "hybrid"
+        if mode == "rules":
+            mode = "rules_only"
+
+        if mode not in {"rules_only", "hybrid", "full_llm"}:
+            logger.warning(
+                "Unsupported %s=%r; fallback to hybrid",
+                _COUNCIL_MODE_ENV,
+                raw_mode,
+            )
+            mode = "hybrid"
+
+        return get_council_config(mode)
 
     def _build_role_summary(
         self,

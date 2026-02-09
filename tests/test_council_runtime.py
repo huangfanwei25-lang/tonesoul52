@@ -1,6 +1,7 @@
 import uuid
 from pathlib import Path
 
+from tonesoul.council.model_registry import get_council_config
 from tonesoul.council.runtime import CouncilRequest, CouncilRuntime
 from tonesoul.council.self_journal import load_recent_memory
 
@@ -89,3 +90,62 @@ def test_council_runtime_auto_record_contains_genesis_metadata():
     assert latest.get("genesis") is not None
     assert latest.get("responsibility_tier") in {"TIER_1", "TIER_2", "TIER_3"}
     assert latest.get("intent_id")
+
+
+def test_runtime_resolve_perspective_config_defaults_to_hybrid(monkeypatch):
+    monkeypatch.delenv("TONESOUL_COUNCIL_MODE", raising=False)
+    runtime = CouncilRuntime()
+    request = CouncilRequest(draft_output="test", context={})
+
+    resolved = runtime._resolve_perspective_config(request)
+
+    assert resolved == get_council_config("hybrid")
+
+
+def test_runtime_resolve_perspective_config_supports_rules_alias(monkeypatch):
+    monkeypatch.setenv("TONESOUL_COUNCIL_MODE", "rules")
+    runtime = CouncilRuntime()
+    request = CouncilRequest(draft_output="test", context={})
+
+    resolved = runtime._resolve_perspective_config(request)
+
+    assert resolved == get_council_config("rules")
+
+
+def test_runtime_resolve_perspective_config_invalid_env_falls_back(monkeypatch):
+    monkeypatch.setenv("TONESOUL_COUNCIL_MODE", "unknown_mode")
+    runtime = CouncilRuntime()
+    request = CouncilRequest(draft_output="test", context={})
+
+    resolved = runtime._resolve_perspective_config(request)
+
+    assert resolved == get_council_config("hybrid")
+
+
+def test_runtime_resolve_perspective_config_respects_request_override(monkeypatch):
+    monkeypatch.setenv("TONESOUL_COUNCIL_MODE", "full_llm")
+    runtime = CouncilRuntime()
+    custom = {"guardian": {"mode": "rules"}}
+    request = CouncilRequest(
+        draft_output="test",
+        context={},
+        perspective_config=custom,
+    )
+
+    resolved = runtime._resolve_perspective_config(request)
+
+    assert resolved is custom
+
+
+def test_runtime_resolve_perspective_config_skips_when_perspectives_explicit(monkeypatch):
+    monkeypatch.setenv("TONESOUL_COUNCIL_MODE", "full_llm")
+    runtime = CouncilRuntime()
+    request = CouncilRequest(
+        draft_output="test",
+        context={},
+        perspectives=["guardian", "analyst"],
+    )
+
+    resolved = runtime._resolve_perspective_config(request)
+
+    assert resolved is None

@@ -20,6 +20,9 @@ The web layer is proxy-first, backend-first by default.
 Runtime environment:
 - `TONESOUL_BACKEND_URL` controls where Next API routes forward requests.
 - `TONESOUL_ENABLE_CHAT_MOCK_FALLBACK=1` explicitly enables `/api/chat` transport fallback mock mode.
+- `TONESOUL_COUNCIL_MODE` controls backend council perspective config when request does not override it.
+  - Supported values: `rules`, `hybrid`, `full_llm`
+  - Default: `hybrid`
 
 ---
 

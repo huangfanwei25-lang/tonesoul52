@@ -32,6 +32,12 @@ def test_get_council_config_rules_only_shape():
         assert value["mode"] == "rules"
 
 
+def test_get_council_config_rules_alias_shape():
+    config = get_council_config("rules")
+    for value in config.values():
+        assert value["mode"] == "rules"
+
+
 def test_get_council_config_custom_map_normalizes_keys():
     config = get_council_config("hybrid", custom_map={"GUARDIAN": "gemini-1.5-pro"})
     assert config["guardian"] == {"mode": "llm", "model": "gemini-1.5-pro"}

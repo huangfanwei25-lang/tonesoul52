@@ -153,6 +153,13 @@
 - [x] 更新 `docs/VERCEL_DEPLOY.md` 與 `docs/API_SPEC.md` 的 preflight 指令
 **成功標準**: 部署前可用單一指令阻擋高風險配置（localhost backend、mock fallback 開啟、report provider fallback 未關閉），並可在需要時加做 `/api/health` 連通檢查。 
 
+## Phase 40: Multi-Model Council Runtime Wiring
+- [x] `CouncilRuntime` 在未顯式傳入視角配置時接入 `get_council_config()`
+- [x] 新增 `TONESOUL_COUNCIL_MODE` 環境變數（支援 `rules | hybrid | full_llm`，預設 `hybrid`）
+- [x] `model_registry` 支援 `rules` 別名並保持 `rules_only` 相容
+- [x] 新增 runtime/model registry 測試覆蓋（預設、alias、invalid fallback、request override）
+**成功標準**: 後端可透過環境變數切換 council 模式，且顯式 request 設定優先級高於環境變數，行為有測試保護。 
+
 ## 已完成（摘要）
 - [x] Phase 1-2: Council 設計與整合
 - [x] Phase 3/10/16: Tools API schema + ToolResponse 標準化

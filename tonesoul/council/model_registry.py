@@ -84,7 +84,7 @@ def get_council_config(
     Get council configuration by mode.
 
     Args:
-        mode: "full_llm", "hybrid", or "rules_only"
+        mode: "full_llm", "hybrid", "rules", or "rules_only"
         custom_map: Optional custom perspective-to-model mapping
 
     Returns:
@@ -93,7 +93,7 @@ def get_council_config(
     normalized_mode = _normalize_name(mode)
     if normalized_mode == "full_llm":
         config = deepcopy(MULTI_MODEL_COUNCIL_CONFIG)
-    elif normalized_mode == "rules_only":
+    elif normalized_mode in {"rules", "rules_only"}:
         config = deepcopy(RULES_ONLY_COUNCIL_CONFIG)
     else:
         config = deepcopy(HYBRID_COUNCIL_CONFIG)
