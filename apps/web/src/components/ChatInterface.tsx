@@ -658,22 +658,27 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
     const [loadingPhase, setLoadingPhase] = useState<string>("");
     const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set());
     const [soulState, setSoulState] = useState<SoulState>(getInitialSoulState());
-    const [councilMode, setCouncilMode] = useState<CouncilMode>(
-        normalizeCouncilMode(process.env.NEXT_PUBLIC_COUNCIL_MODE_DEFAULT)
-    );
+    const [councilMode, setCouncilMode] = useState<CouncilMode>("hybrid"); // Always start with default for SSR
+    const [isMounted, setIsMounted] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
+    // Only load from localStorage after mount (client-side only)
     useEffect(() => {
+        setIsMounted(true);
         const persistedMode = loadPersistedCouncilMode();
         if (persistedMode) {
             setCouncilMode(persistedMode);
+        } else {
+            // Use env default if no persisted value
+            const envDefault = normalizeCouncilMode(process.env.NEXT_PUBLIC_COUNCIL_MODE_DEFAULT);
+            setCouncilMode(envDefault);
         }
     }, []);
 
     useEffect(() => {
-        if (typeof window === "undefined") return;
+        if (!isMounted) return; // Don't save during SSR or before mount
         window.localStorage.setItem(COUNCIL_MODE_STORAGE_KEY, councilMode);
-    }, [councilMode]);
+    }, [councilMode, isMounted]);
 
     // 載入靈魂狀態
     useEffect(() => {
