@@ -30,6 +30,25 @@ ToneSoul is **not** another AI wrapper. It's a **governance-first architecture**
 
 > *"Most AI systems optimize for 'sounding right'. ToneSoul optimizes for 'being honest about what it doesn't know'."*
 
+### 📸 Live Demo
+
+<p align="center">
+  <img src="docs/images/dashboard_preview.png" alt="ToneSoul Dashboard" width="800"/>
+  <br/>
+  <em>Multi-path deliberation with cognitive tension measurement</em>
+</p>
+
+🔗 **Try it live:** [tonesoul52.vercel.app](https://tonesoul52.vercel.app)
+
+### 💡 Use Cases
+
+| Scenario | How ToneSoul Helps |
+|----------|-------------------|
+| **AI Chatbot Audit** | Track why the AI said what it said, with full provenance chain |
+| **Content Moderation** | Multi-perspective Council votes on edge cases before action |
+| **AI-Assisted Decisions** | Explicit uncertainty disclosure prevents over-reliance |
+| **Regulatory Compliance** | 7D audit trail satisfies explainability requirements |
+
 ---
 
 ## 💭 Philosophy

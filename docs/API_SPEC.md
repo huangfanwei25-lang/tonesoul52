@@ -99,6 +99,10 @@ Runtime environment:
     - signal explicit refusal-to-compromise condition
   - `vtp_user_confirmed?: boolean`
     - explicit user authorization for VTP termination path
+  - Security model:
+    - default behavior: VTP context flags from external API payload are ignored
+    - trusted mode: set `TONESOUL_ALLOW_VTP_CONTEXT=1` on backend
+    - invalid flag type returns HTTP 400 (for example `"vtp_force_trigger": "yes"`)
 - Response:
   - `verdict: "approve" | "refine" | "declare_stance" | "block"`
   - `summary: string`
@@ -128,6 +132,8 @@ Runtime environment:
     - `transcript.vtp.triggered: boolean`
     - `transcript.vtp.requires_user_confirmation: boolean`
     - `transcript.vtp.confession?: { phase, required, summary, trigger_evidence }`
+    - `transcript.vtp_context_trusted?: boolean`
+    - `transcript.vtp_context_ignored_reason?: "untrusted_vtp_context"`
 
 ### `POST /api/session-report`
 - Request:

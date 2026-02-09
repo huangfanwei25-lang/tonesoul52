@@ -31,6 +31,12 @@ CORS(app, resources={r"/api/*": {"origins": _cors_origins}})
 
 council_runtime = CouncilRuntime()
 _MAX_ESCAPE_SEED_ITEMS = 50
+_VTP_CONTEXT_FLAGS = (
+    "vtp_force_trigger",
+    "vtp_axiom_conflict",
+    "vtp_refusal_to_compromise",
+    "vtp_user_confirmed",
+)
 
 
 def _env_flag(name: str, default: bool = False) -> bool:
@@ -137,6 +143,37 @@ def _prepare_escape_seed_context(context: dict) -> tuple[dict, tuple | None]:
     return safe_context, None
 
 
+def _prepare_vtp_context(context: dict) -> tuple[dict, tuple | None]:
+    """Sanitize external VTP trigger controls.
+
+    VTP context flags are intended for controlled testing or trusted
+    orchestration paths. By default external request payloads cannot force
+    VTP trigger/terminate behavior unless `TONESOUL_ALLOW_VTP_CONTEXT=1`.
+    """
+
+    safe_context = dict(context)
+    provided_flags: list[str] = []
+    for key in _VTP_CONTEXT_FLAGS:
+        if key not in safe_context:
+            continue
+        provided_flags.append(key)
+        if not isinstance(safe_context.get(key), bool):
+            return safe_context, (jsonify({"error": f"Invalid {key}"}), 400)
+
+    if not provided_flags:
+        return safe_context, None
+
+    if _env_flag("TONESOUL_ALLOW_VTP_CONTEXT", default=False):
+        safe_context["vtp_context_trusted"] = True
+        return safe_context, None
+
+    for key in provided_flags:
+        safe_context.pop(key, None)
+    safe_context["vtp_context_trusted"] = False
+    safe_context["vtp_context_ignored_reason"] = "untrusted_vtp_context"
+    return safe_context, None
+
+
 @app.route("/")
 def index():
     """Serve the frontend."""
@@ -168,6 +205,9 @@ def validate():
     draft_output = draft_output if draft_output is not None else ""
     context = context if context is not None else {}
     context, error = _prepare_escape_seed_context(context)
+    if error is not None:
+        return error
+    context, error = _prepare_vtp_context(context)
     if error is not None:
         return error
 

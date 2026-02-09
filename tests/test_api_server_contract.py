@@ -185,7 +185,8 @@ def test_validate_endpoint_rejects_invalid_escape_seed_shape():
     assert payload["error"] == "Invalid escape_valve_failures"
 
 
-def test_validate_endpoint_vtp_defer_requires_confirmation():
+def test_validate_endpoint_vtp_defer_requires_confirmation(monkeypatch):
+    monkeypatch.setenv("TONESOUL_ALLOW_VTP_CONTEXT", "1")
     client = _client()
     response = client.post(
         "/api/validate",
@@ -207,7 +208,8 @@ def test_validate_endpoint_vtp_defer_requires_confirmation():
     assert vtp_payload.get("requires_user_confirmation") is True
 
 
-def test_validate_endpoint_vtp_terminate_when_confirmed():
+def test_validate_endpoint_vtp_terminate_when_confirmed(monkeypatch):
+    monkeypatch.setenv("TONESOUL_ALLOW_VTP_CONTEXT", "1")
     client = _client()
     response = client.post(
         "/api/validate",
@@ -228,3 +230,40 @@ def test_validate_endpoint_vtp_terminate_when_confirmed():
     assert payload["verdict"] == "block"
     assert vtp_payload.get("status") == "terminate"
     assert "[VTP TERMINATION]" in payload.get("summary", "")
+
+
+def test_validate_endpoint_untrusted_vtp_flags_are_ignored():
+    client = _client()
+    response = client.post(
+        "/api/validate",
+        json={
+            "draft_output": "Absolutely! I will definitely do that for you right now, of course!",
+            "context": {
+                "user_protocol": "Honesty > Helpfulness",
+                "action_basis": "Inference",
+                "vtp_force_trigger": True,
+            },
+        },
+    )
+    assert response.status_code == 200
+    payload = response.get_json()
+    transcript = payload.get("transcript") or {}
+    vtp_payload = transcript.get("vtp") or {}
+
+    assert vtp_payload.get("status") == "continue"
+    assert transcript.get("vtp_context_trusted") is False
+    assert transcript.get("vtp_context_ignored_reason") == "untrusted_vtp_context"
+
+
+def test_validate_endpoint_rejects_invalid_vtp_flag_type():
+    client = _client()
+    response = client.post(
+        "/api/validate",
+        json={
+            "draft_output": "test",
+            "context": {"vtp_force_trigger": "yes"},
+        },
+    )
+    assert response.status_code == 400
+    payload = response.get_json()
+    assert payload["error"] == "Invalid vtp_force_trigger"

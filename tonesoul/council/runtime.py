@@ -226,6 +226,11 @@ class CouncilRuntime:
             vtp_decision = evaluate_vtp(verdict=verdict, context=context)
             transcript = verdict.transcript if isinstance(verdict.transcript, dict) else {}
             transcript["vtp"] = vtp_decision.to_dict()
+            if "vtp_context_trusted" in context:
+                transcript["vtp_context_trusted"] = bool(context.get("vtp_context_trusted"))
+            ignored_reason = context.get("vtp_context_ignored_reason")
+            if ignored_reason is not None:
+                transcript["vtp_context_ignored_reason"] = str(ignored_reason)
             verdict.transcript = transcript
 
             if vtp_decision.status in {VTP_STATUS_DEFER, VTP_STATUS_TERMINATE}:
