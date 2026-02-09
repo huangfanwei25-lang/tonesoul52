@@ -117,6 +117,12 @@
 - [x] 更新 `CONTRIBUTING.md` 提交歸屬格式與驗證指令
 **成功標準**: 共享作者身份下，commit message 能附帶代理與議題來源，降低跨代理責任歸屬歧義。 
 
+## Phase 35: CI 可見性整合（Commit Attribution）
+- [x] `ToneSoul CI` 新增 `commit_attribution` job
+- [x] 每次 push 自動輸出 HEAD attribution 解析結果
+- [x] 缺失 trailers 先以 warning 呈現（不阻斷 CI）
+**成功標準**: 歸屬資訊可在 CI 日誌直接追蹤，且不影響現有交付節奏。 
+
 ## 已完成（摘要）
 - [x] Phase 1-2: Council 設計與整合
 - [x] Phase 3/10/16: Tools API schema + ToolResponse 標準化

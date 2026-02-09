@@ -159,6 +159,33 @@ jobs:
       run: |
         pytest tests/red_team -q
 
+  commit_attribution:
+    name: Commit Attribution Check
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 2
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+
+    - name: Evaluate commit attribution trailers
+      run: |
+        python scripts/verify_commit_attribution.py --rev HEAD > commit_attribution.json
+        python - <<'PY'
+        import json
+        from pathlib import Path
+
+        payload = json.loads(Path("commit_attribution.json").read_text(encoding="utf-8"))
+        print(json.dumps(payload, ensure_ascii=False, indent=2))
+        if not payload.get("ok", False):
+            print("::warning::Missing Agent/Trace-Topic trailers in HEAD commit message.")
+        PY
+
   memory_hygiene:
     name: Memory Hygiene Gate
     runs-on: ubuntu-latest
