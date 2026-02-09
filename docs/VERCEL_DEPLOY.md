@@ -1,6 +1,6 @@
 ﻿# Vercel Deploy Guide (Navigator / apps/web)
 
-Last updated: 2026-02-07
+Last updated: 2026-02-09
 
 ## Scope
 
@@ -33,6 +33,7 @@ Set in Vercel Project -> Settings -> Environment Variables.
 | `NEXT_PUBLIC_ENABLE_PROVIDER_FALLBACK` | `0` | Production | Disable provider fallback in production UI |
 | `NEXT_PUBLIC_REPORT_EXECUTION_MODE` | `backend` | Production + Preview | Force session report to backend |
 | `NEXT_PUBLIC_REPORT_PROVIDER_FALLBACK` | `0` | Production | Disable provider fallback in production UI |
+| `TONESOUL_ENABLE_CHAT_MOCK_FALLBACK` | `0` (or unset) | Production + Preview | Keep `/api/chat` transport fallback disabled unless explicitly needed |
 
 Optional (legacy/provider mode only):
 - `NEXT_PUBLIC_OLLAMA_URL`
@@ -64,6 +65,7 @@ Recommended production policy:
 2. Keep backend on a stable host (VM/container/PaaS).
 3. Point `TONESOUL_BACKEND_URL` to backend HTTPS endpoint.
 4. Disable provider fallback in production (`NEXT_PUBLIC_*_FALLBACK=0`).
+5. Keep chat mock fallback disabled in production (`TONESOUL_ENABLE_CHAT_MOCK_FALLBACK=0`).
 
 Why:
 - Prevent "mock/provider fallback appears successful" in production.
@@ -89,6 +91,7 @@ Success criteria:
 
 If you see fallback behavior in production:
 1. Check `TONESOUL_BACKEND_URL` value in Vercel env.
+   - It must be a reachable HTTPS backend, never `localhost`/`127.0.0.1`.
 2. Check backend CORS includes Vercel domain.
 3. Confirm backend health endpoint is reachable over HTTPS.
 4. Re-run `verify_web_api.py --require-backend`.

@@ -123,6 +123,14 @@
 - [x] 缺失 trailers 先以 warning 呈現（不阻斷 CI）
 **成功標準**: 歸屬資訊可在 CI 日誌直接追蹤，且不影響現有交付節奏。 
 
+## Phase 36: Vercel 輸出異常修補（Chat Route）
+- [x] 重現線上異常（`tonesoul52.vercel.app/api/chat` 回 `backend_mode=mock_fallback`）
+- [x] `apps/web/src/app/api/chat/route.ts` 改為預設禁用 transport mock fallback（需顯式 `TONESOUL_ENABLE_CHAT_MOCK_FALLBACK=1`）
+- [x] 新增 Vercel 防呆：若 `TONESOUL_BACKEND_URL` 缺失或指向 localhost，直接回 `503` 配置錯誤
+- [x] 新增測試 `apps/web/src/__tests__/apiRoutes.chatTransport.test.ts`（disabled fallback / explicit fallback / vercel misconfig）
+- [x] 更新 `docs/API_SPEC.md` 與 `docs/VERCEL_DEPLOY.md` 的 fallback 契約與部署變數
+**成功標準**: production 不再因後端失聯而靜默回 mock 內容，Vercel 配置錯誤可即時暴露，且 web build+tests 全通過。
+
 ## 已完成（摘要）
 - [x] Phase 1-2: Council 設計與整合
 - [x] Phase 3/10/16: Tools API schema + ToolResponse 標準化

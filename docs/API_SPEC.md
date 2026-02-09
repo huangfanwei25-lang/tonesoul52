@@ -1,6 +1,6 @@
 ﻿# API Specification (Unified Web + Backend)
 
-Last updated: 2026-02-08
+Last updated: 2026-02-09
 
 ## Goal
 
@@ -19,6 +19,7 @@ The web layer is proxy-first, backend-first by default.
 
 Runtime environment:
 - `TONESOUL_BACKEND_URL` controls where Next API routes forward requests.
+- `TONESOUL_ENABLE_CHAT_MOCK_FALLBACK=1` explicitly enables `/api/chat` transport fallback mock mode.
 
 ---
 
@@ -75,6 +76,16 @@ Runtime environment:
   - `self_commits?: array`
   - `ruptures?: array`
   - `emergent_values?: array`
+- Response (explicit mock fallback path, opt-in):
+  - `response: string`
+  - `deliberation: object`
+  - `backend_mode: "mock_fallback"`
+  - `fallback_reason: "transport_failure"`
+- Error behavior:
+  - transport failure + fallback disabled: HTTP `502`
+    - payload includes `error: "Backend unavailable"`
+  - Vercel runtime + missing/localhost backend config: HTTP `503`
+    - payload includes `error: "Backend configuration invalid for Vercel runtime"`
 
 ### `POST /api/validate`
 - Request:
@@ -150,7 +161,7 @@ For Next API route handlers:
 
 1. Use backend-first forwarding.
 2. Read `TONESOUL_BACKEND_URL` dynamically per request.
-3. Only use `mock_fallback` on transport failures (connection/timeout).
+3. `/api/chat` may use `mock_fallback` only on transport failures and only when `TONESOUL_ENABLE_CHAT_MOCK_FALLBACK=1` is set.
 4. If backend returns non-JSON, return:
    - HTTP `502`
    - payload `{ "error": "Backend returned invalid JSON", "backend_status": <status> }`
