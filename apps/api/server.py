@@ -138,6 +138,41 @@ def _utc_now() -> str:
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
+def _resolve_bind_host() -> str:
+    host = os.environ.get("TONESOUL_API_HOST")
+    if isinstance(host, str) and host.strip():
+        return host.strip()
+    # Render and similar platforms provide PORT and expect 0.0.0.0 binding.
+    if os.environ.get("PORT"):
+        return "0.0.0.0"
+    return "127.0.0.1"
+
+
+def _resolve_bind_port() -> int:
+    for var_name in ("TONESOUL_API_PORT", "PORT"):
+        raw = os.environ.get(var_name)
+        if raw is None:
+            continue
+        text = str(raw).strip()
+        if not text:
+            continue
+        try:
+            port = int(text)
+        except ValueError:
+            print(
+                f"[WARN] Invalid {var_name}={raw!r}; expected integer port",
+                file=sys.stderr,
+            )
+            continue
+        if 1 <= port <= 65535:
+            return port
+        print(
+            f"[WARN] Out-of-range {var_name}={raw!r}; expected 1..65535",
+            file=sys.stderr,
+        )
+    return 5000
+
+
 def _prepare_escape_seed_context(context: dict) -> tuple[dict, tuple | None]:
     """Sanitize external escape-valve seed inputs.
 
@@ -469,8 +504,8 @@ def chat():
 
 
 if __name__ == "__main__":
-    host = os.environ.get("TONESOUL_API_HOST", "127.0.0.1")
-    port = int(os.environ.get("TONESOUL_API_PORT", "5000"))
+    host = _resolve_bind_host()
+    port = _resolve_bind_port()
     debug = _env_flag("TONESOUL_API_DEBUG", default=False)
     print("=" * 50)
     print("ToneSoul API Server")
