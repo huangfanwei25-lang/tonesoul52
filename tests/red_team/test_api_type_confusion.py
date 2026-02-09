@@ -14,6 +14,16 @@ def _client():
         ("/api/chat", {"message": {"text": "inject"}}, "Invalid message"),
         ("/api/chat", {"message": "hello", "history": {"role": "user"}}, "Invalid history"),
         ("/api/chat", {"message": "hello", "full_analysis": "yes"}, "Invalid full_analysis"),
+        (
+            "/api/chat",
+            {"message": "hello", "council_mode": {"mode": "rules"}},
+            "Invalid council_mode",
+        ),
+        (
+            "/api/chat",
+            {"message": "hello", "perspective_config": ["guardian"]},
+            "Invalid perspective_config",
+        ),
         ("/api/validate", {"context": "not-a-dict"}, "Invalid context"),
         ("/api/validate", {"user_intent": ["leak"]}, "Invalid user_intent"),
         ("/api/conversation", {"session_id": {"id": "session"}}, "Invalid session_id"),

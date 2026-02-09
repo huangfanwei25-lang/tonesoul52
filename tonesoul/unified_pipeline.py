@@ -276,6 +276,8 @@ class UnifiedPipeline:
         user_message: str,
         history: Optional[List[Dict]] = None,
         full_analysis: bool = True,
+        council_mode: Optional[str] = None,
+        perspective_config: Optional[Dict[str, Dict[str, Any]]] = None,
     ) -> UnifiedResponse:
         """
         處理用戶訊息的完整管線
@@ -412,10 +414,16 @@ class UnifiedPipeline:
         if council:
             try:
                 from tonesoul.council import CouncilRequest
+                from tonesoul.council.model_registry import get_council_config
+
+                resolved_perspective_config = perspective_config
+                if resolved_perspective_config is None and council_mode:
+                    resolved_perspective_config = get_council_config(council_mode)
 
                 request = CouncilRequest(
                     draft_output=response,
                     context={"language": "zh"},
+                    perspective_config=resolved_perspective_config,
                 )
                 verdict = council.deliberate(request)
                 verdict_dict = verdict.to_dict()

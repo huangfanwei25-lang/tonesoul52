@@ -37,6 +37,7 @@ _VTP_CONTEXT_FLAGS = (
     "vtp_refusal_to_compromise",
     "vtp_user_confirmed",
 )
+_ALLOWED_COUNCIL_MODES = {"rules", "rules_only", "hybrid", "full_llm"}
 
 
 def _env_flag(name: str, default: bool = False) -> bool:
@@ -76,6 +77,29 @@ def _require_optional_dict(data: dict, key: str) -> tuple[dict | None, tuple | N
     if isinstance(value, dict):
         return value, None
     return None, (jsonify({"error": f"Invalid {key}"}), 400)
+
+
+def _require_optional_council_mode(data: dict, key: str) -> tuple[str | None, tuple | None]:
+    value = data.get(key)
+    if value is None:
+        return None, None
+    if not isinstance(value, str):
+        return None, (jsonify({"error": f"Invalid {key}"}), 400)
+    mode = value.strip().lower()
+    if mode not in _ALLOWED_COUNCIL_MODES:
+        return None, (jsonify({"error": f"Invalid {key}"}), 400)
+    if mode == "rules_only":
+        mode = "rules"
+    return mode, None
+
+
+def _validate_perspective_config(config: dict) -> tuple[dict | None, tuple | None]:
+    for perspective_name, perspective_options in config.items():
+        if not isinstance(perspective_name, str) or not perspective_name.strip():
+            return None, (jsonify({"error": "Invalid perspective_config"}), 400)
+        if not isinstance(perspective_options, dict):
+            return None, (jsonify({"error": "Invalid perspective_config"}), 400)
+    return config, None
 
 
 def _require_list(data: dict, key: str) -> tuple[list | None, tuple | None]:
@@ -395,6 +419,16 @@ def chat():
     full_analysis, error = _require_optional_bool(data, "full_analysis")
     if error is not None:
         return error
+    council_mode, error = _require_optional_council_mode(data, "council_mode")
+    if error is not None:
+        return error
+    perspective_config, error = _require_optional_dict(data, "perspective_config")
+    if error is not None:
+        return error
+    if perspective_config is not None:
+        perspective_config, error = _validate_perspective_config(perspective_config)
+        if error is not None:
+            return error
     message = message if message is not None else ""
     history = history if history is not None else []
     full_analysis = full_analysis if full_analysis is not None else True
@@ -408,6 +442,8 @@ def chat():
             user_message=message,
             history=history,
             full_analysis=full_analysis,
+            council_mode=council_mode,
+            perspective_config=perspective_config,
         )
 
         return jsonify(

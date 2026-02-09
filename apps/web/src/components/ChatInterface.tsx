@@ -35,6 +35,21 @@ interface ChatInterfaceProps {
     onConversationUpdate: (conv: Conversation) => void;
 }
 
+type CouncilMode = "rules" | "hybrid" | "full_llm";
+
+const COUNCIL_MODE_OPTIONS: Array<{ value: CouncilMode; label: string }> = [
+    { value: "rules", label: "Rules" },
+    { value: "hybrid", label: "Hybrid" },
+    { value: "full_llm", label: "Full LLM" },
+];
+
+const normalizeCouncilMode = (raw: string | undefined): CouncilMode => {
+    const value = (raw || "").trim().toLowerCase();
+    if (value === "rules" || value === "rules_only") return "rules";
+    if (value === "full_llm") return "full_llm";
+    return "hybrid";
+};
+
 // ==================== 記憶注入模板 ====================
 
 const MEMORY_CONTEXT_TEMPLATE = (memories: MemoryInsight[]) => {
@@ -635,6 +650,9 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
     const [loadingPhase, setLoadingPhase] = useState<string>("");
     const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set());
     const [soulState, setSoulState] = useState<SoulState>(getInitialSoulState());
+    const [councilMode, setCouncilMode] = useState<CouncilMode>(
+        normalizeCouncilMode(process.env.NEXT_PUBLIC_COUNCIL_MODE_DEFAULT)
+    );
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     // 載入靈魂狀態
@@ -703,6 +721,7 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
                 message: userMessage,
                 history,
                 full_analysis: fullAnalysis,
+                council_mode: councilMode,
             }),
         });
 
@@ -1365,6 +1384,23 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
 
             {/* 輸入區 */}
             <div className="p-4 border-t border-slate-200 bg-white">
+                {USE_BACKEND_CHAT && (
+                    <div className="mb-3 flex items-center justify-end gap-2">
+                        <span className="text-xs text-slate-500">Council 模式</span>
+                        <select
+                            value={councilMode}
+                            onChange={(event) => setCouncilMode(normalizeCouncilMode(event.target.value))}
+                            disabled={isLoading}
+                            className="text-xs px-2 py-1 rounded-md border border-slate-300 bg-white text-slate-700 disabled:opacity-50"
+                        >
+                            {COUNCIL_MODE_OPTIONS.map((option) => (
+                                <option key={option.value} value={option.value}>
+                                    {option.label}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                )}
                 <div className="flex gap-3">
                     <input
                         type="text"

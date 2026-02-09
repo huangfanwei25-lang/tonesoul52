@@ -167,6 +167,13 @@
 - [x] 補齊回歸測試（`tests/test_agent_discussion.py`, `tests/test_verify_memory_hygiene.py`）
 **成功標準**: 討論檔可維持 JSON 結構 + 文字可讀性雙重契約，且新的亂碼訊息不會進入 curated 記憶流。 
 
+## Phase 42: Council 模式前端可切換
+- [x] `/api/chat` 支援 `council_mode` 與 `perspective_config`（含輸入驗證）
+- [x] `UnifiedPipeline.process(...)` 串接 council mode override 到 `CouncilRequest.perspective_config`
+- [x] ChatInterface 新增 backend chat 的 council mode 下拉選單並帶入請求
+- [x] 補齊 API 合約與紅隊型別混淆測試，更新 `docs/API_SPEC.md`
+**成功標準**: 使用者可在前端切換 `rules/hybrid/full_llm` 並透過 `/api/chat` 生效，且不合法輸入會被 API 明確阻擋。 
+
 ## 已完成（摘要）
 - [x] Phase 1-2: Council 設計與整合
 - [x] Phase 3/10/16: Tools API schema + ToolResponse 標準化

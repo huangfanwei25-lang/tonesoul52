@@ -67,6 +67,11 @@ Runtime environment:
   - `message: string`
   - `history?: array`
   - `full_analysis?: boolean`
+  - `council_mode?: "rules" | "hybrid" | "full_llm"`
+  - `perspective_config?: object`
+    - optional explicit per-perspective config
+    - when provided, backend uses this config and ignores `council_mode`
+    - values must be objects, e.g. `{ "guardian": { "mode": "rules" } }`
 - Response (backend path):
   - `response: string`
   - `verdict?: object`
