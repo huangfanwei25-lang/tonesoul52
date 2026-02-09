@@ -38,7 +38,10 @@ ToneSoul is **not** another AI wrapper. It's a **governance-first architecture**
   <em>Multi-path deliberation with cognitive tension measurement</em>
 </p>
 
-🔗 **Try it live:** [tonesoul52.vercel.app](https://tonesoul52.vercel.app)
+**Quick Links**
+- Frontend: [https://tonesoul52.vercel.app](https://tonesoul52.vercel.app)
+- Backend: [https://tonesoul52.onrender.com](https://tonesoul52.onrender.com)
+- Setup Guide: [`docs/環境設定.md`](docs/環境設定.md)
 
 ### 💡 Use Cases
 
