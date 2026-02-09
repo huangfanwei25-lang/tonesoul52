@@ -87,6 +87,26 @@ Success criteria:
 
 ---
 
+## 5.1 Pre-Deploy Guard (Recommended)
+
+Run preflight before promoting production settings:
+
+```powershell
+python scripts/verify_vercel_preflight.py --strict --probe-health
+```
+
+Preflight checks:
+- `TONESOUL_BACKEND_URL` exists, is absolute, and is not localhost
+- production policy keeps chat mock fallback disabled
+- frontend execution/fallback flags match backend-first contract
+- backend `/api/health` is reachable (when `--probe-health` is enabled)
+
+Manual GitHub Action entrypoint:
+- `.github/workflows/vercel_preflight.yml`
+- `workflow_dispatch` input: `backend_url`
+
+---
+
 ## 6. Failure Patterns
 
 If you see fallback behavior in production:

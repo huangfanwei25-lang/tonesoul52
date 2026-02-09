@@ -1,0 +1,56 @@
+name: Vercel Preflight
+
+on:
+  workflow_dispatch:
+    inputs:
+      backend_url:
+        description: "Public backend origin, e.g. https://api.example.com"
+        required: true
+        type: string
+      probe_health:
+        description: "Probe <backend>/api/health"
+        required: false
+        default: true
+        type: boolean
+      allow_http:
+        description: "Allow non-HTTPS backend URL (debug only)"
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  preflight:
+    name: Production Preflight Guard
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      TONESOUL_BACKEND_URL: ${{ inputs.backend_url }}
+      TONESOUL_ENABLE_CHAT_MOCK_FALLBACK: "0"
+      NEXT_PUBLIC_CHAT_EXECUTION_MODE: "backend"
+      NEXT_PUBLIC_ENABLE_PROVIDER_FALLBACK: "0"
+      NEXT_PUBLIC_REPORT_EXECUTION_MODE: "backend"
+      NEXT_PUBLIC_REPORT_PROVIDER_FALLBACK: "0"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run Vercel preflight guard
+        run: |
+          CMD="python scripts/verify_vercel_preflight.py --strict"
+          if [ "${{ inputs.probe_health }}" = "true" ]; then
+            CMD="$CMD --probe-health"
+          fi
+          if [ "${{ inputs.allow_http }}" = "true" ]; then
+            CMD="$CMD --allow-http"
+          fi
+          echo "Running: $CMD"
+          eval "$CMD"

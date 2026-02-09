@@ -201,6 +201,11 @@ npm --prefix apps/web run test -- src/__tests__/apiRoutes.invalidJson.test.ts
 python scripts/verify_web_api.py --web-base http://127.0.0.1:3000 --api-base http://127.0.0.1:5000 --require-backend --timeout 40
 ```
 
+### Vercel preflight guard
+```powershell
+python scripts/verify_vercel_preflight.py --strict --probe-health
+```
+
 ---
 
 ## Known Operational Risks

@@ -146,6 +146,13 @@
 - [x] 更新 `docs/status/README.md` 的產物說明與執行方式
 **成功標準**: 本地可一鍵取得健康檢查快照，CI 可上傳可讀/可機器解析 artifact，且缺 discussion 檔時可用 `--allow-missing-discussion` 走 CI-friendly 路徑。 
 
+## Phase 39: Vercel Preflight Guard
+- [x] 新增 `scripts/verify_vercel_preflight.py`（backend URL、fallback policy、可選 health probe）
+- [x] 新增 `tests/test_verify_vercel_preflight.py`（URL/fallback/health probe 判斷）
+- [x] 新增 `.github/workflows/vercel_preflight.yml`（`workflow_dispatch` 手動 preflight）
+- [x] 更新 `docs/VERCEL_DEPLOY.md` 與 `docs/API_SPEC.md` 的 preflight 指令
+**成功標準**: 部署前可用單一指令阻擋高風險配置（localhost backend、mock fallback 開啟、report provider fallback 未關閉），並可在需要時加做 `/api/health` 連通檢查。 
+
 ## 已完成（摘要）
 - [x] Phase 1-2: Council 設計與整合
 - [x] Phase 3/10/16: Tools API schema + ToolResponse 標準化
