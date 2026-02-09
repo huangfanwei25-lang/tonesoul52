@@ -138,6 +138,14 @@
 - [x] 更新 `REPO_CONSOLIDATION.md`（工程/哲學/現實/AI 多角度審計 + 高 CP 路線）
 **成功標準**: 腳本層品質債務清空、7D 阻斷維度維持 0 失敗，且整合審計文件反映最新可重演結果。
 
+## Phase 38: 一鍵健康檢查與 CI 可見性
+- [x] 新增 `scripts/run_repo_healthcheck.py`（整合 ruff/black/pytest/web lint+test/verify_7d）
+- [x] 輸出 `docs/status/repo_healthcheck_latest.json` + `docs/status/repo_healthcheck_latest.md`
+- [x] 新增 `tests/test_run_repo_healthcheck.py`（命令構建、skip 條件、Markdown 輸出）
+- [x] 新增 `.github/workflows/repo_healthcheck.yml`（blocking + artifact upload）
+- [x] 更新 `docs/status/README.md` 的產物說明與執行方式
+**成功標準**: 本地可一鍵取得健康檢查快照，CI 可上傳可讀/可機器解析 artifact，且缺 discussion 檔時可用 `--allow-missing-discussion` 走 CI-friendly 路徑。 
+
 ## 已完成（摘要）
 - [x] Phase 1-2: Council 設計與整合
 - [x] Phase 3/10/16: Tools API schema + ToolResponse 標準化
