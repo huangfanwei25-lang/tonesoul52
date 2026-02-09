@@ -19,16 +19,11 @@ Usage:
     critic = PerspectiveFactory.create("critic", mode="tool", tool=my_tool)
 """
 
-import json
-import logging
-import re
 from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Callable, Dict, List, Optional, Union
 
 from .base import IPerspective
-
-logger = logging.getLogger(__name__)
 from .perspectives.advocate import AdvocatePerspective
 from .perspectives.analyst import AnalystPerspective
 from .perspectives.axiomatic_inference import AxiomaticInference
@@ -123,17 +118,14 @@ def _normalize_council_config(
 class LLMPerspective(IPerspective):
     """LLM-based perspective that calls an external model for evaluation.
 
-    Supports Gemini models for perspective evaluation with automatic
-    fallback to rules-based evaluation if LLM is unavailable.
+    NOTE: This is a placeholder implementation. Actual LLM integration
+    requires API keys and client setup. Until then it falls back to rules.
     """
-
-    # Lazy-loaded client cache (shared across instances)
-    _gemini_client = None
 
     def __init__(
         self,
         name: Union[str, PerspectiveType],
-        model: str = "gemini-2.0-flash",
+        model: str = "gpt-4",
         system_prompt: Optional[str] = None,
         fallback: Optional[IPerspective] = None,
     ):
@@ -143,84 +135,26 @@ class LLMPerspective(IPerspective):
         self.fallback = fallback
         self._perspective = _to_perspective(self.name)
 
-    @classmethod
-    def _get_gemini_client(cls, model: str = "gemini-2.0-flash"):
-        """Lazy-load Gemini client."""
-        if cls._gemini_client is None:
-            try:
-                from ..llm.gemini_client import GeminiClient
-
-                cls._gemini_client = GeminiClient(model=model)
-            except Exception as e:
-                logger.warning(f"Failed to initialize Gemini client: {e}")
-                return None
-        return cls._gemini_client
-
     @property
     def perspective_type(self) -> PerspectiveId:
         return self._perspective
 
     def _default_prompt(self) -> str:
         prompts = {
-            "guardian": """You are a SAFETY GUARDIAN perspective in an AI Council.
-Evaluate if the following text is safe and ethical.
-You MUST respond with a JSON object in this exact format:
-{"decision": "APPROVE", "confidence": 0.8, "reasoning": "brief explanation"}
-Decision must be: APPROVE (safe), CONCERN (needs review), or OBJECT (unsafe).""",
-            "analyst": """You are a FACTUAL ANALYST perspective in an AI Council.
-Evaluate if the following text is factually accurate and well-reasoned.
-You MUST respond with a JSON object in this exact format:
-{"decision": "APPROVE", "confidence": 0.8, "reasoning": "brief explanation"}
-Decision must be: APPROVE (factual), CONCERN (unverifiable), or OBJECT (false).""",
-            "critic": """You are a CRITICAL THINKER perspective in an AI Council.
-Identify weaknesses, biases, or logical flaws in the following text.
-You MUST respond with a JSON object in this exact format:
-{"decision": "APPROVE", "confidence": 0.8, "reasoning": "brief explanation"}
-Decision must be: APPROVE (robust), CONCERN (has issues), or OBJECT (flawed).""",
-            "advocate": """You are a USER ADVOCATE perspective in an AI Council.
-Evaluate if the following text truly serves the user's needs and intent.
-You MUST respond with a JSON object in this exact format:
-{"decision": "APPROVE", "confidence": 0.8, "reasoning": "brief explanation"}
-Decision must be: APPROVE (helpful), CONCERN (partially), or OBJECT (unhelpful).""",
+            "guardian": """You are a safety guardian. Evaluate if the following text is safe.
+Respond with: APPROVE (safe), CONCERN (unclear), or OBJECT (unsafe).
+Also provide confidence (0.0-1.0) and brief reasoning.""",
+            "analyst": """You are a factual analyst. Evaluate if the following text is factually sound.
+Respond with: APPROVE (factual), CONCERN (unverifiable), or OBJECT (false).
+Also provide confidence (0.0-1.0) and brief reasoning.""",
+            "critic": """You are a critical thinker. Identify weaknesses in the following text.
+Respond with: APPROVE (robust), CONCERN (has issues), or OBJECT (fundamentally flawed).
+Also provide confidence (0.0-1.0) and brief reasoning.""",
+            "advocate": """You are a user advocate. Evaluate if the following text serves the user's intent.
+Respond with: APPROVE (helpful), CONCERN (partially helpful), or OBJECT (unhelpful).
+Also provide confidence (0.0-1.0) and brief reasoning.""",
         }
         return prompts.get(self.name, prompts["analyst"])
-
-    def _parse_llm_response(self, response: str) -> Dict[str, Any]:
-        """Parse JSON from LLM response, handling markdown code blocks."""
-        # Try to extract JSON from code block
-        json_match = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", response, re.DOTALL)
-        if json_match:
-            try:
-                return json.loads(json_match.group(1))
-            except json.JSONDecodeError:
-                pass
-
-        # Try direct JSON parse
-        try:
-            return json.loads(response.strip())
-        except json.JSONDecodeError:
-            pass
-
-        # Fallback: extract decision from text
-        response_upper = response.upper()
-        if "OBJECT" in response_upper:
-            decision = "OBJECT"
-        elif "CONCERN" in response_upper:
-            decision = "CONCERN"
-        elif "APPROVE" in response_upper:
-            decision = "APPROVE"
-        else:
-            decision = "CONCERN"
-
-        # Try to extract confidence
-        conf_match = re.search(r"(?:confidence|conf)[:\s]*([0-9.]+)", response, re.I)
-        confidence = float(conf_match.group(1)) if conf_match else 0.6
-
-        return {
-            "decision": decision,
-            "confidence": min(1.0, max(0.0, confidence)),
-            "reasoning": response[:200],  # Use first 200 chars as reasoning
-        }
 
     def evaluate(
         self,
@@ -229,65 +163,21 @@ Decision must be: APPROVE (helpful), CONCERN (partially), or OBJECT (unhelpful).
         user_intent: Optional[str] = None,
     ) -> PerspectiveVote:
         """
-        Evaluate using LLM (Gemini).
+        Evaluate using LLM.
 
-        Attempts to call Gemini API for perspective evaluation.
-        Falls back to rules-based evaluation if LLM fails.
+        NOTE: Placeholder only. Until LLM integration is wired, always use
+        the rules-based fallback if present.
         """
-        client = self._get_gemini_client(self.model)
-
-        if client is None and self.fallback:
-            logger.debug(f"[{self.name}] Gemini unavailable, using rules fallback")
+        if self.fallback:
+            # Placeholder: LLM integration is not wired; use rules-based fallback.
             return self.fallback.evaluate(draft_output, context, user_intent)
 
-        if client is None:
-            return PerspectiveVote(
-                perspective=self.perspective_type,
-                decision=VoteDecision.CONCERN,
-                confidence=0.5,
-                reasoning="LLM unavailable; no fallback configured.",
-            )
-
-        # Build the evaluation prompt
-        intent_clause = f"\nUser Intent: {user_intent}" if user_intent else ""
-        prompt = f"""{self.system_prompt}
-
-Text to evaluate:
-\"\"\"
-{draft_output}
-\"\"\"{intent_clause}
-
-Context: {json.dumps(context, default=str, ensure_ascii=False)[:500]}
-
-Respond with JSON only."""
-
-        try:
-            response = client.generate(prompt)
-            logger.debug(f"[{self.name}] LLM response: {response[:200]}...")
-
-            parsed = self._parse_llm_response(response)
-            decision = _normalize_decision(parsed.get("decision"))
-            confidence = _safe_confidence(parsed.get("confidence", 0.7))
-
-            return PerspectiveVote(
-                perspective=self.perspective_type,
-                decision=decision,
-                confidence=confidence,
-                reasoning=f"[LLM:{self.model}] {parsed.get('reasoning', 'No reasoning')}",
-            )
-
-        except Exception as e:
-            logger.warning(f"[{self.name}] LLM evaluation failed: {e}")
-            if self.fallback:
-                logger.debug(f"[{self.name}] Falling back to rules-based evaluation")
-                return self.fallback.evaluate(draft_output, context, user_intent)
-
-            return PerspectiveVote(
-                perspective=self.perspective_type,
-                decision=VoteDecision.CONCERN,
-                confidence=0.5,
-                reasoning=f"LLM error: {str(e)[:100]}; no fallback.",
-            )
+        return PerspectiveVote(
+            perspective=self.perspective_type,
+            decision=VoteDecision.CONCERN,
+            confidence=0.5,
+            reasoning="LLM integration not configured; fallback unavailable.",
+        )
 
 
 class ToolVerifiedPerspective(IPerspective):
