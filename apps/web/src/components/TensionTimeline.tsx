@@ -164,14 +164,14 @@ export default function TensionTimeline({ soulState, maxPoints = 20 }: TensionTi
         // 取最近的 N 筆記錄
         const recentHistory = tensionHistory.slice(-maxPoints);
 
-        // 計算每個點的累積張力積分
-        let runningIntegral = 0;
         const alpha = 0.15;
 
         return recentHistory.map((record, index) => {
             // 簡化版的張力積分計算
-            const decay = Math.exp(-alpha * (recentHistory.length - 1 - index));
-            runningIntegral += record.value * decay;
+            const tensionIntegral = recentHistory.slice(0, index + 1).reduce((sum, item, itemIndex) => {
+                const decay = Math.exp(-alpha * (recentHistory.length - 1 - itemIndex));
+                return sum + item.value * decay;
+            }, 0);
 
             // 檢查這個時間點是否有矛盾
             const hasContradiction = contradictions.some(
@@ -180,7 +180,7 @@ export default function TensionTimeline({ soulState, maxPoints = 20 }: TensionTi
 
             return {
                 turn: index + 1,
-                tensionIntegral: Math.min(1, runningIntegral),
+                tensionIntegral: Math.min(1, tensionIntegral),
                 entropy: record.value,
                 mode: soulMode,
                 hasContradiction,

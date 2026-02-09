@@ -297,12 +297,14 @@ export default function Home() {
       </div>
 
       {/* Settings Modal */}
-      <SettingsModal
-        isOpen={showSettings}
-        onClose={() => setShowSettings(false)}
-        onSave={setApiSettings}
-        currentSettings={apiSettings}
-      />
+      {showSettings && (
+        <SettingsModal
+          isOpen={showSettings}
+          onClose={() => setShowSettings(false)}
+          onSave={setApiSettings}
+          currentSettings={apiSettings}
+        />
+      )}
 
       {/* Session Report Modal */}
       <SessionReport
@@ -321,11 +323,13 @@ export default function Home() {
       />
 
       {/* Persona Settings Modal */}
-      <PersonaSettings
-        isOpen={showPersonaSettings}
-        onClose={() => setShowPersonaSettings(false)}
-        onSave={setPersonaConfig}
-      />
+      {showPersonaSettings && (
+        <PersonaSettings
+          isOpen={showPersonaSettings}
+          onClose={() => setShowPersonaSettings(false)}
+          onSave={setPersonaConfig}
+        />
+      )}
 
       {/* Onboarding Guide */}
       <OnboardingGuide

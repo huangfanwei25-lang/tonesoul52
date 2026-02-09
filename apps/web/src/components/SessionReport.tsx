@@ -336,7 +336,7 @@ export default function SessionReport({ isOpen, onClose, messages, apiSettings, 
                             <div>
                                 <h3 className="text-lg font-bold text-slate-800 mb-3">潛在需求</h3>
                                 <p className="text-slate-600 bg-slate-50 p-4 rounded-lg italic border-l-4 border-slate-300">
-                                    "{reportData.hidden_needs}"
+                                    {reportData.hidden_needs}
                                 </p>
                             </div>
 

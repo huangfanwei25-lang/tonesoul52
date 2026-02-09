@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Sliders, X, Save, RotateCcw, User, Shield, Lightbulb, Wrench } from "lucide-react";
 
 // ==================== 人格設定介面 ====================
@@ -60,13 +60,7 @@ interface PersonaSettingsProps {
 }
 
 export default function PersonaSettings({ isOpen, onClose, onSave }: PersonaSettingsProps) {
-    const [config, setConfig] = useState<PersonaConfig>(DEFAULT_PERSONA);
-
-    useEffect(() => {
-        if (isOpen) {
-            setConfig(getStoredPersona());
-        }
-    }, [isOpen]);
+    const [config, setConfig] = useState<PersonaConfig>(() => getStoredPersona());
 
     const handleSave = () => {
         savePersona(config);

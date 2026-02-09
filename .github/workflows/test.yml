@@ -78,6 +78,32 @@ jobs:
       run: |
         ruff check tonesoul tests
 
+  web_quality:
+    name: Web Quality Gate
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: "20"
+        cache: "npm"
+        cache-dependency-path: apps/web/package-lock.json
+
+    - name: Install web dependencies
+      run: npm --prefix apps/web ci
+
+    - name: Lint web app (blocking)
+      run: npm --prefix apps/web run lint
+
+    - name: Run web tests
+      run: npm --prefix apps/web run test
+
+    - name: Build web app
+      run: npm --prefix apps/web run build
+
   architecture_boundaries:
     name: Architecture Boundary Contract
     runs-on: ubuntu-latest

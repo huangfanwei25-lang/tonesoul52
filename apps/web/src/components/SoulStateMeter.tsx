@@ -86,7 +86,7 @@ export default function SoulStateMeter({ value, calculationNote }: SoulStateMete
                         {zone.status}
                     </div>
                     <p className="text-[11px] text-slate-600 leading-relaxed font-medium">
-                        "{zone.description}"
+                        {zone.description}
                     </p>
                     {calculationNote && (
                         <div className="mt-2 pt-2 border-t border-black/5 text-[10px] text-slate-500 italic flex items-start gap-1">

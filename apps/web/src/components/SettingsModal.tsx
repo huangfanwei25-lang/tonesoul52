@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Settings, X, Key, Check, AlertCircle, Zap, Users } from "lucide-react";
 
 export type ApiProvider = "gemini" | "openai" | "claude" | "xai" | "ollama";
@@ -57,22 +57,13 @@ export default function SettingsModal({
     onSave,
     currentSettings,
 }: SettingsModalProps) {
-    const [provider, setProvider] = useState<ApiProvider>(
-        currentSettings?.provider || "gemini"
-    );
-    const [apiKey, setApiKey] = useState(currentSettings?.apiKey || "");
-    const [mode, setMode] = useState<DeliberationMode>(
-        currentSettings?.mode || "multipath"
-    );
+    const initialProvider = currentSettings?.provider || "gemini";
+    const initialApiKey = currentSettings?.apiKey || "";
+    const initialMode = currentSettings?.mode || "multipath";
+    const [provider, setProvider] = useState<ApiProvider>(initialProvider);
+    const [apiKey, setApiKey] = useState(initialApiKey);
+    const [mode, setMode] = useState<DeliberationMode>(initialMode);
     const [showKey, setShowKey] = useState(false);
-
-    useEffect(() => {
-        if (currentSettings) {
-            setProvider(currentSettings.provider);
-            setApiKey(currentSettings.apiKey);
-            setMode(currentSettings.mode || "multipath");
-        }
-    }, [currentSettings]);
 
     const handleSave = () => {
         const settings: ApiSettings = { provider, apiKey, mode };

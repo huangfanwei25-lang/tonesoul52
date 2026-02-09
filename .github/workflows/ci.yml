@@ -89,6 +89,9 @@ jobs:
       - name: Install web dependencies
         run: npm --prefix apps/web ci
 
+      - name: Lint web app
+        run: npm --prefix apps/web run lint
+
       - name: Build web app
         run: npm --prefix apps/web run build
 

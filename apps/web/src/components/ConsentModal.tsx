@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Shield, Check, X } from "lucide-react";
 
 interface ConsentModalProps {
@@ -9,16 +8,9 @@ interface ConsentModalProps {
 }
 
 export default function ConsentModal({ onAccept, onDecline }: ConsentModalProps) {
-    const [isVisible, setIsVisible] = useState(false);
-
-    useEffect(() => {
-        // Animate in
-        setIsVisible(true);
-    }, []);
-
     return (
-        <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-300 ${isVisible ? 'bg-slate-900/60 backdrop-blur-sm' : 'bg-transparent'}`}>
-            <div className={`bg-white rounded-2xl shadow-2xl w-full max-w-lg transform transition-all duration-500 ${isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-300 bg-slate-900/60 backdrop-blur-sm">
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg transform transition-all duration-500 scale-100 opacity-100">
 
                 {/* Header */}
                 <div className="p-6 border-b border-slate-100 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-t-2xl">
