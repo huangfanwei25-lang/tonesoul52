@@ -17,7 +17,9 @@ from integrations.openclaw.runtime import OpenClawRuntimeBridge
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Verify OpenClaw gateway probe with local mock server.")
+    parser = argparse.ArgumentParser(
+        description="Verify OpenClaw gateway probe with local mock server."
+    )
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=18789)
     parser.add_argument("--timeout", type=float, default=3.0)

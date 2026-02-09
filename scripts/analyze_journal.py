@@ -4,9 +4,8 @@ Self-Journal 分析腳本
 """
 
 import json
-from pathlib import Path
 from collections import Counter, defaultdict
-from datetime import datetime
+from pathlib import Path
 
 
 def load_journal():
@@ -122,7 +121,6 @@ def print_perspective_analysis(perspectives):
         if total_votes == 0:
             continue
 
-        approve_rate = data["approve"] / total_votes * 100
         avg_confidence = sum(data["confidences"]) / len(data["confidences"])
 
         print(f"\n{perspective}:")
@@ -185,25 +183,25 @@ def generate_insights(entries, verdicts, perspectives, coherence_values):
     safety_data = perspectives.get("Safety Council", {})
     if safety_data:
         safety_avg_confidence = sum(safety_data["confidences"]) / len(safety_data["confidences"])
-        print(f"\n1️⃣ **安全優先原則堅定執行**")
+        print("\n1️⃣ **安全優先原則堅定執行**")
         print(f"   Safety Council 平均信心度: {safety_avg_confidence:.3f}")
-        print(f"   → 這是所有視角中最高的，證明安全防護機制有效")
+        print("   → 這是所有視角中最高的，證明安全防護機制有效")
 
     # 洞察 2: 分歧即透明
     declare_stance_count = verdicts.get("declare_stance", 0)
     declare_stance_pct = declare_stance_count / total * 100
-    print(f"\n2️⃣ **分歧可見原則有效實踐**")
+    print("\n2️⃣ **分歧可見原則有效實踐**")
     print(f"   DECLARE_STANCE 比例: {declare_stance_pct:.1f}%")
-    print(f"   → 系統不會掩蓋視角分歧，而是讓分歧可見")
+    print("   → 系統不會掩蓋視角分歧，而是讓分歧可見")
 
     # 洞察 3: 治理系統穩定
     block_count = verdicts.get("block", 0)
     approve_count = verdicts.get("approve", 0)
-    print(f"\n3️⃣ **治理系統穩定運作**")
+    print("\n3️⃣ **治理系統穩定運作**")
     print(
         f"   BLOCK: {block_count}, APPROVE: {approve_count}, DECLARE_STANCE: {declare_stance_count}"
     )
-    print(f"   → 三種裁決都有出現，證明系統不是僵化的規則，而是動態判斷")
+    print("   → 三種裁決都有出現，證明系統不是僵化的規則，而是動態判斷")
 
     print()
 
@@ -234,8 +232,8 @@ def generate_recommendations():
 
 def main():
     """主函數"""
-    import sys
     import io
+    import sys
 
     # Set UTF-8 encoding for stdout to handle emoji on Windows
     if sys.platform == "win32":

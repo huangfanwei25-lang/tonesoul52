@@ -15,7 +15,9 @@ from typing import Any, Dict, Optional, Tuple
 import requests
 
 
-def request_json(method: str, url: str, timeout: int = 10, **kwargs: Any) -> Tuple[bool, int, Any, str]:
+def request_json(
+    method: str, url: str, timeout: int = 10, **kwargs: Any
+) -> Tuple[bool, int, Any, str]:
     try:
         response = requests.request(method, url, timeout=timeout, **kwargs)
     except requests.RequestException as exc:
@@ -213,7 +215,9 @@ def main() -> int:
         },
     )
     print_result("POST web /api/session-report", ok, status, payload, verbose)
-    if not ok or not _require_backend_check("POST web /api/session-report", payload, require_backend):
+    if not ok or not _require_backend_check(
+        "POST web /api/session-report", payload, require_backend
+    ):
         all_ok = False
     payload_dict = _expect_dict(payload, "POST web /api/session-report")
     if payload_dict and not isinstance(payload_dict.get("report"), dict):

@@ -153,8 +153,12 @@ def _cleanup_logs(handles: list[ProcessHandle]) -> None:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Run full 7D audit on isolated local ports.")
-    parser.add_argument("--api-base", default=DEFAULT_API_BASE, help="Backend base URL with explicit port.")
-    parser.add_argument("--web-base", default=DEFAULT_WEB_BASE, help="Web base URL with explicit port.")
+    parser.add_argument(
+        "--api-base", default=DEFAULT_API_BASE, help="Backend base URL with explicit port."
+    )
+    parser.add_argument(
+        "--web-base", default=DEFAULT_WEB_BASE, help="Web base URL with explicit port."
+    )
     parser.add_argument(
         "--startup-timeout",
         type=int,
@@ -223,7 +227,16 @@ def main() -> int:
         web_env["TONESOUL_BACKEND_URL"] = args.api_base
         web = _start_process(
             "7d_web",
-            [_npm_executable(), "--prefix", "apps/web", "run", args.web_script, "--", "--port", str(web_port)],
+            [
+                _npm_executable(),
+                "--prefix",
+                "apps/web",
+                "run",
+                args.web_script,
+                "--",
+                "--port",
+                str(web_port),
+            ],
             web_env,
             repo_root,
             log_dir,

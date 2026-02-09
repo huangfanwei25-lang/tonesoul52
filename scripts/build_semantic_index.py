@@ -9,17 +9,17 @@ Usage:
     python scripts/build_semantic_index.py
 """
 
-from pathlib import Path
 import sys
+from pathlib import Path
 
 # Add project root to path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from apps.core.memory_semantic_search import SemanticMemorySearch
-
 
 def main():
+    from apps.core.memory_semantic_search import SemanticMemorySearch
+
     print("=" * 60)
     print("ToneSoul - Building Semantic Memory Index")
     print("=" * 60)
@@ -36,7 +36,7 @@ def main():
     # Verify
     print("\n✅ Index built successfully!")
     print(f"📊 Indexed {len(searcher.memories)} memories")
-    print(f"📂 Index saved to: memory/.semantic_index/")
+    print("📂 Index saved to: memory/.semantic_index/")
 
     # Quick test
     print("\n🔍 Testing semantic search...")

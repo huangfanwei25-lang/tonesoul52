@@ -131,6 +131,13 @@
 - [x] 更新 `docs/API_SPEC.md` 與 `docs/VERCEL_DEPLOY.md` 的 fallback 契約與部署變數
 **成功標準**: production 不再因後端失聯而靜默回 mock 內容，Vercel 配置錯誤可即時暴露，且 web build+tests 全通過。
 
+## Phase 37: 全倉庫健康檢查與多觀點整合
+- [x] 修復 `scripts/` 既存 lint/format 債務（`analyze_journal.py`, `build_semantic_index.py` + black 格式化）
+- [x] 全域品質檢查（`ruff/black/pytest/web lint+test`）重跑並確認全綠
+- [x] 重跑 `verify_7d --include-sdh` 並補跑 live-service `verify_web_api` 驗證 SDH 路徑
+- [x] 更新 `REPO_CONSOLIDATION.md`（工程/哲學/現實/AI 多角度審計 + 高 CP 路線）
+**成功標準**: 腳本層品質債務清空、7D 阻斷維度維持 0 失敗，且整合審計文件反映最新可重演結果。
+
 ## 已完成（摘要）
 - [x] Phase 1-2: Council 設計與整合
 - [x] Phase 3/10/16: Tools API schema + ToolResponse 標準化

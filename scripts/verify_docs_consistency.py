@@ -96,7 +96,9 @@ def build_report(repo_root: Path) -> dict[str, Any]:
         if not monthly_has_schedule:
             issues.append("monthly consolidation workflow missing schedule trigger")
         if not monthly_has_runner:
-            issues.append("monthly consolidation workflow missing run_monthly_consolidation invocation")
+            issues.append(
+                "monthly consolidation workflow missing run_monthly_consolidation invocation"
+            )
         if not monthly_has_allow_missing_discussion:
             issues.append("monthly consolidation workflow missing --allow-missing-discussion")
     else:
@@ -124,7 +126,9 @@ def build_report(repo_root: Path) -> dict[str, Any]:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Verify documentation consistency with runtime gates.")
+    parser = argparse.ArgumentParser(
+        description="Verify documentation consistency with runtime gates."
+    )
     parser.add_argument("--repo-root", default=".", help="Repository root path.")
     return parser
 
