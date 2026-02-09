@@ -23,7 +23,7 @@
 | XDD | 不確定性與 verdict 輸出契約 | `pytest tests/test_uncertainty.py -q` | BLOCKING |
 | GDD | genesis/provenance 行為 | `pytest tests/test_genesis_integration.py tests/test_provenance_chain.py -q` | BLOCKING |
 | CDD | API 契約一致性 | `pytest tests/test_api_server_contract.py -q` | BLOCKING |
-| SDH | Web + Backend smoke | `python scripts/verify_web_api.py --require-backend --timeout 40` | SOFT_FAIL（視環境） |
+| SDH | Web + Backend smoke | `python scripts/verify_web_api.py --require-backend --check-council-modes --timeout 40` | SOFT_FAIL（視環境） |
 
 ---
 

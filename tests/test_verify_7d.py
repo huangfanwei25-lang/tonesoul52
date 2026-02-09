@@ -43,3 +43,21 @@ def test_display_command_normalizes_python_executable() -> None:
         "--strict-soft-fail",
     ]
     assert verify_7d._display_command(command) == "python scripts/verify_7d.py --strict-soft-fail"
+
+
+def test_check_sdh_includes_council_mode_switch_flag(monkeypatch):
+    captured: dict[str, object] = {}
+
+    def fake_run(command: list[str], timeout: int = 1200):
+        captured["command"] = command
+        captured["timeout"] = timeout
+        return True, "", "", 0
+
+    monkeypatch.setattr(verify_7d, "_run", fake_run)
+    result = verify_7d._check_sdh("http://127.0.0.1:3000", "http://127.0.0.1:5000", 40)
+
+    command = captured["command"]
+    assert isinstance(command, list)
+    assert "--check-council-modes" in command
+    assert "--check-council-modes" in result.command
+    assert result.status == "pass"

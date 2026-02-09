@@ -210,7 +210,7 @@ npm --prefix apps/web run test -- src/__tests__/apiRoutes.invalidJson.test.ts
 
 ### Integrated web+backend smoke
 ```powershell
-python scripts/verify_web_api.py --web-base http://127.0.0.1:3000 --api-base http://127.0.0.1:5000 --require-backend --timeout 40
+python scripts/verify_web_api.py --web-base http://127.0.0.1:3000 --api-base http://127.0.0.1:5000 --require-backend --check-council-modes --timeout 40
 ```
 
 ### Vercel preflight guard

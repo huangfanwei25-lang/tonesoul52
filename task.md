@@ -187,6 +187,13 @@
 - [x] 補齊測試（runtime / verify_web_api helpers）
 **成功標準**: 重整頁面後保留使用者 council mode，且可用單一 smoke 指令驗證 web->backend mode 切換與觀測欄位。 
 
+## Phase 45: SDH 自動化升級（Mode Switch Gate）
+- [x] `scripts/verify_7d.py` 的 SDH 檢查預設加入 `--check-council-modes`
+- [x] CI `web_api_smoke` 改為強制驗證 council mode 切換
+- [x] 補齊 `tests/test_verify_7d.py`，鎖定 SDH 命令旗標
+- [x] 更新 7D / API 文件中的 smoke 指令
+**成功標準**: `include-sdh` 與 CI smoke 都會驗證 mode switch，不再只驗證基本連通。 
+
 ## 已完成（摘要）
 - [x] Phase 1-2: Council 設計與整合
 - [x] Phase 3/10/16: Tools API schema + ToolResponse 標準化

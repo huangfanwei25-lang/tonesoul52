@@ -344,6 +344,7 @@ def _check_sdh(web_base: str, api_base: str, timeout: int) -> CheckResult:
         "--api-base",
         api_base,
         "--require-backend",
+        "--check-council-modes",
         "--timeout",
         str(timeout),
     ]
@@ -509,6 +510,7 @@ def main() -> int:
                     "--api-base",
                     args.api_base,
                     "--require-backend",
+                    "--check-council-modes",
                 ],
                 "skipped; use --include-sdh when web/backend are running",
             )
