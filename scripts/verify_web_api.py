@@ -48,12 +48,19 @@ def _summarize_payload(label: str, payload: Any, verbose: bool) -> Any:
     if label == "POST web /api/chat":
         verdict = payload.get("verdict")
         verdict_name = verdict.get("verdict") if isinstance(verdict, dict) else None
+        transcript = verdict.get("transcript") if isinstance(verdict, dict) else None
+        mode_observability = (
+            transcript.get("council_mode_observability") if isinstance(transcript, dict) else None
+        )
         response_preview = str(payload.get("response") or "")[:160]
         return {
             "response_preview": response_preview,
             "has_verdict": isinstance(verdict, dict),
             "verdict": verdict_name,
             "backend_mode": payload.get("backend_mode", "backend"),
+            "council_mode": (
+                mode_observability.get("mode") if isinstance(mode_observability, dict) else None
+            ),
         }
 
     if label == "POST web /api/session-report":
@@ -103,6 +110,35 @@ def _expect_dict(payload: Any, label: str) -> Optional[Dict[str, Any]]:
     return payload
 
 
+def _validate_chat_council_mode(payload: Any, requested_mode: str) -> bool:
+    payload_dict = _expect_dict(payload, "POST web /api/chat (mode check)")
+    if payload_dict is None:
+        return False
+    verdict = payload_dict.get("verdict")
+    if not isinstance(verdict, dict):
+        print("[FAIL] POST web /api/chat (mode check): missing object field 'verdict'.")
+        return False
+    transcript = verdict.get("transcript")
+    if not isinstance(transcript, dict):
+        print("[FAIL] POST web /api/chat (mode check): missing object field 'verdict.transcript'.")
+        return False
+    mode_observability = transcript.get("council_mode_observability")
+    if not isinstance(mode_observability, dict):
+        print(
+            "[FAIL] POST web /api/chat (mode check): missing object field "
+            "'verdict.transcript.council_mode_observability'."
+        )
+        return False
+    mode = mode_observability.get("mode")
+    if mode != requested_mode:
+        print(
+            "[FAIL] POST web /api/chat (mode check): "
+            f"expected mode={requested_mode!r}, got {mode!r}."
+        )
+        return False
+    return True
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="ToneSoul web API smoke check")
     parser.add_argument(
@@ -131,6 +167,11 @@ def main() -> int:
         action="store_true",
         help="Print full payload instead of summarized payload for large endpoints.",
     )
+    parser.add_argument(
+        "--check-council-modes",
+        action="store_true",
+        help="Run extra /api/chat checks for council_mode switching and observability.",
+    )
     args = parser.parse_args()
 
     web_base = args.web_base.rstrip("/")
@@ -138,6 +179,7 @@ def main() -> int:
     timeout = max(1, args.timeout)
     require_backend = bool(args.require_backend)
     verbose = bool(args.verbose)
+    check_council_modes = bool(args.check_council_modes)
 
     all_ok = True
 
@@ -199,6 +241,30 @@ def main() -> int:
     if payload_dict and not isinstance(payload_dict.get("response"), str):
         print("[FAIL] POST web /api/chat: missing string field 'response'.")
         all_ok = False
+    if payload_dict and check_council_modes:
+        for mode in ("rules", "full_llm"):
+            check_ok, check_status, check_payload, _ = request_json(
+                "POST",
+                f"{web_base}/api/chat",
+                timeout=timeout,
+                json={
+                    "conversation_id": conversation_id,
+                    "message": f"Web API council mode smoke ({mode})",
+                    "history": [{"role": "user", "content": "hello"}],
+                    "full_analysis": False,
+                    "council_mode": mode,
+                },
+            )
+            print_result(
+                f"POST web /api/chat mode={mode}", check_ok, check_status, check_payload, verbose
+            )
+            if not check_ok or not _require_backend_check(
+                f"POST web /api/chat mode={mode}", check_payload, require_backend
+            ):
+                all_ok = False
+                continue
+            if not _validate_chat_council_mode(check_payload, mode):
+                all_ok = False
 
     # 5) Web session report
     ok, status, payload, _ = request_json(

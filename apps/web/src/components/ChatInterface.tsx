@@ -36,6 +36,7 @@ interface ChatInterfaceProps {
 }
 
 type CouncilMode = "rules" | "hybrid" | "full_llm";
+const COUNCIL_MODE_STORAGE_KEY = "tonesoul.chat.council_mode";
 
 const COUNCIL_MODE_OPTIONS: Array<{ value: CouncilMode; label: string }> = [
     { value: "rules", label: "Rules" },
@@ -48,6 +49,13 @@ const normalizeCouncilMode = (raw: string | undefined): CouncilMode => {
     if (value === "rules" || value === "rules_only") return "rules";
     if (value === "full_llm") return "full_llm";
     return "hybrid";
+};
+
+const loadPersistedCouncilMode = (): CouncilMode | null => {
+    if (typeof window === "undefined") return null;
+    const raw = window.localStorage.getItem(COUNCIL_MODE_STORAGE_KEY);
+    if (!raw) return null;
+    return normalizeCouncilMode(raw);
 };
 
 // ==================== 記憶注入模板 ====================
@@ -654,6 +662,18 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
         normalizeCouncilMode(process.env.NEXT_PUBLIC_COUNCIL_MODE_DEFAULT)
     );
     const messagesEndRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const persistedMode = loadPersistedCouncilMode();
+        if (persistedMode) {
+            setCouncilMode(persistedMode);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (typeof window === "undefined") return;
+        window.localStorage.setItem(COUNCIL_MODE_STORAGE_KEY, councilMode);
+    }, [councilMode]);
 
     // 載入靈魂狀態
     useEffect(() => {

@@ -76,6 +76,9 @@ Runtime environment:
 - Response (backend path):
   - `response: string`
   - `verdict?: object`
+    - `verdict.transcript.council_mode_observability?: object`
+      - `source: "request_perspective_config" | "explicit_perspectives" | "env_default"`
+      - `mode: "rules" | "hybrid" | "full_llm" | "custom" | null`
   - `tonebridge?: object`
   - `inner_reasoning?: string`
   - `intervention_strategy?: object`

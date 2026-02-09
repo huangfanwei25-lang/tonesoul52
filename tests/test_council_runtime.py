@@ -149,3 +149,31 @@ def test_runtime_resolve_perspective_config_skips_when_perspectives_explicit(mon
     resolved = runtime._resolve_perspective_config(request)
 
     assert resolved is None
+
+
+def test_runtime_resolve_perspective_config_with_meta_env_default(monkeypatch):
+    monkeypatch.setenv("TONESOUL_COUNCIL_MODE", "rules")
+    runtime = CouncilRuntime()
+    request = CouncilRequest(draft_output="test", context={})
+
+    resolved, meta = runtime._resolve_perspective_config_with_meta(request)
+
+    assert resolved == get_council_config("rules")
+    assert meta["source"] == "env_default"
+    assert meta["mode"] == "rules"
+
+
+def test_runtime_deliberate_attaches_council_mode_observability():
+    runtime = CouncilRuntime()
+    request = CouncilRequest(
+        draft_output="Simple response with clear intent.",
+        context={"council_mode_override": "full_llm"},
+        perspective_config={"guardian": {"mode": "rules"}},
+    )
+
+    verdict = runtime.deliberate(request)
+    observability = (verdict.transcript or {}).get("council_mode_observability")
+
+    assert isinstance(observability, dict)
+    assert observability.get("source") == "request_perspective_config"
+    assert observability.get("mode") == "full_llm"

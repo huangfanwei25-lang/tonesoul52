@@ -25,6 +25,7 @@ _ESCAPE_FAILURE_HISTORY_LIMIT = 20
 _ESCAPE_FAILURE_TEXT_LIMIT = 240
 _ESCAPE_TRIGGER_LEVEL_FLOOR = 0.95
 _COUNCIL_MODE_ENV = "TONESOUL_COUNCIL_MODE"
+_COUNCIL_MODE_VALUES = {"rules", "rules_only", "hybrid", "full_llm"}
 
 
 @dataclass(frozen=True)
@@ -83,7 +84,9 @@ class CouncilRuntime:
             role_result,
         )
 
-        resolved_perspective_config = self._resolve_perspective_config(request)
+        resolved_perspective_config, perspective_meta = self._resolve_perspective_config_with_meta(
+            request
+        )
 
         council = PreOutputCouncil(
             perspectives=request.perspectives,
@@ -98,6 +101,9 @@ class CouncilRuntime:
             user_intent=request.user_intent,
             auto_record_self_memory=False,
         )
+        transcript = verdict.transcript if isinstance(verdict.transcript, dict) else {}
+        transcript["council_mode_observability"] = perspective_meta
+        verdict.transcript = transcript
 
         escape_trigger_reason: str | None = None
 
@@ -331,14 +337,36 @@ class CouncilRuntime:
         self,
         request: CouncilRequest,
     ) -> Optional[Dict[Union[PerspectiveType, str], Dict[str, Any]]]:
+        resolved, _ = self._resolve_perspective_config_with_meta(request)
+        return resolved
+
+    def _resolve_perspective_config_with_meta(
+        self,
+        request: CouncilRequest,
+    ) -> tuple[Optional[Dict[Union[PerspectiveType, str], Dict[str, Any]]], Dict[str, Any]]:
+        context = request.context if isinstance(request.context, dict) else {}
+        mode_override = context.get("council_mode_override")
+        normalized_override: Optional[str] = None
+        if isinstance(mode_override, str):
+            candidate = mode_override.strip().lower()
+            if candidate in _COUNCIL_MODE_VALUES:
+                normalized_override = "rules" if candidate == "rules_only" else candidate
+
         if request.perspective_config is not None:
-            return request.perspective_config
+            return request.perspective_config, {
+                "source": "request_perspective_config",
+                "mode": normalized_override or "custom",
+            }
 
         if request.perspectives is not None:
-            return None
+            return None, {
+                "source": "explicit_perspectives",
+                "mode": None,
+            }
 
         raw_mode = os.environ.get(_COUNCIL_MODE_ENV, "hybrid")
         mode = raw_mode.strip().lower() if isinstance(raw_mode, str) else "hybrid"
+        invalid_fallback = False
         if mode == "rules":
             mode = "rules_only"
 
@@ -349,8 +377,15 @@ class CouncilRuntime:
                 raw_mode,
             )
             mode = "hybrid"
+            invalid_fallback = True
 
-        return get_council_config(mode)
+        normalized_mode = "rules" if mode == "rules_only" else mode
+        return get_council_config(mode), {
+            "source": "env_default",
+            "mode": normalized_mode,
+            "raw_mode": raw_mode,
+            "invalid_fallback": invalid_fallback,
+        }
 
     def _build_role_summary(
         self,

@@ -180,6 +180,13 @@
 - [x] 補齊 route 測試（invalid payload 阻擋 + `rules_only -> rules` 轉換）
 **成功標準**: Next route 在進入 backend 前可攔截無效 payload，且 council mode 轉換行為有測試鎖定。 
 
+## Phase 44: Council Mode 持久化與 E2E Smoke
+- [x] ChatInterface `council_mode` 選擇持久化（localStorage）
+- [x] CouncilRuntime transcript 新增 `council_mode_observability`
+- [x] `scripts/verify_web_api.py` 新增 `--check-council-modes`（驗證 mode 切換生效）
+- [x] 補齊測試（runtime / verify_web_api helpers）
+**成功標準**: 重整頁面後保留使用者 council mode，且可用單一 smoke 指令驗證 web->backend mode 切換與觀測欄位。 
+
 ## 已完成（摘要）
 - [x] Phase 1-2: Council 設計與整合
 - [x] Phase 3/10/16: Tools API schema + ToolResponse 標準化

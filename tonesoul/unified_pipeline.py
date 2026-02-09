@@ -419,10 +419,13 @@ class UnifiedPipeline:
                 resolved_perspective_config = perspective_config
                 if resolved_perspective_config is None and council_mode:
                     resolved_perspective_config = get_council_config(council_mode)
+                council_context = {"language": "zh"}
+                if council_mode:
+                    council_context["council_mode_override"] = council_mode
 
                 request = CouncilRequest(
                     draft_output=response,
-                    context={"language": "zh"},
+                    context=council_context,
                     perspective_config=resolved_perspective_config,
                 )
                 verdict = council.deliberate(request)
