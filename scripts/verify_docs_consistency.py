@@ -48,6 +48,7 @@ def build_report(repo_root: Path) -> dict[str, Any]:
     monthly_workflow = repo_root / ".github" / "workflows" / "monthly_consolidation.yml"
     git_hygiene_workflow = repo_root / ".github" / "workflows" / "git_hygiene.yml"
     repo_healthcheck_workflow = repo_root / ".github" / "workflows" / "repo_healthcheck.yml"
+    repo_healthcheck_dispatch_script = repo_root / "scripts" / "run_repo_healthcheck_dispatch.sh"
     status_readme = repo_root / "docs" / "status" / "README.md"
     framework_doc = repo_root / "docs" / "7D_AUDIT_FRAMEWORK.md"
     exec_doc = repo_root / "docs" / "7D_EXECUTION_SPEC.md"
@@ -130,9 +131,12 @@ def build_report(repo_root: Path) -> dict[str, Any]:
     repo_healthcheck_has_dispatch_inputs = False
     repo_healthcheck_has_default_runner = False
     repo_healthcheck_has_dispatch_runner = False
-    repo_healthcheck_has_timeout_validation = False
-    repo_healthcheck_has_ignore_warning = False
-    repo_healthcheck_has_single_side_warnings = False
+    repo_healthcheck_has_dispatch_env_bridge = False
+    repo_healthcheck_script_exists = repo_healthcheck_dispatch_script.exists()
+    repo_healthcheck_script_has_base_command = False
+    repo_healthcheck_script_has_timeout_validation = False
+    repo_healthcheck_script_has_ignore_warning = False
+    repo_healthcheck_script_has_single_side_warnings = False
     if repo_healthcheck_exists:
         repo_healthcheck_text = _read(repo_healthcheck_workflow)
         repo_healthcheck_has_dispatch = "workflow_dispatch:" in repo_healthcheck_text
@@ -159,20 +163,17 @@ def build_report(repo_root: Path) -> dict[str, Any]:
             for token in (
                 "Run repository healthcheck (blocking, workflow_dispatch)",
                 "github.event_name == 'workflow_dispatch'",
-                "CMD=(python scripts/run_repo_healthcheck.py --strict --allow-missing-discussion)",
+                "bash scripts/run_repo_healthcheck_dispatch.sh",
             )
         )
-        repo_healthcheck_has_timeout_validation = (
-            "::error::sdh_timeout must be a positive integer" in repo_healthcheck_text
-        )
-        repo_healthcheck_has_ignore_warning = (
-            "SDH inputs were provided but include_sdh=false" in repo_healthcheck_text
-        )
-        repo_healthcheck_has_single_side_warnings = all(
+        repo_healthcheck_has_dispatch_env_bridge = all(
             token in repo_healthcheck_text
             for token in (
-                "include_sdh=true and web_base is set but api_base is empty",
-                "include_sdh=true and api_base is set but web_base is empty",
+                "TS_INCLUDE_SDH:",
+                "TS_WEB_BASE:",
+                "TS_API_BASE:",
+                "TS_SDH_TIMEOUT:",
+                "TS_CHECK_COUNCIL_MODES:",
             )
         )
 
@@ -184,14 +185,40 @@ def build_report(repo_root: Path) -> dict[str, Any]:
             issues.append("repo healthcheck workflow missing push/pr default runner")
         if not repo_healthcheck_has_dispatch_runner:
             issues.append("repo healthcheck workflow missing workflow_dispatch runner")
-        if not repo_healthcheck_has_timeout_validation:
-            issues.append("repo healthcheck workflow missing sdh_timeout validation")
-        if not repo_healthcheck_has_ignore_warning:
-            issues.append("repo healthcheck workflow missing include_sdh=false warning")
-        if not repo_healthcheck_has_single_side_warnings:
-            issues.append("repo healthcheck workflow missing single-side endpoint warnings")
+        if not repo_healthcheck_has_dispatch_env_bridge:
+            issues.append("repo healthcheck workflow missing dispatch env bridge")
     else:
         issues.append("missing .github/workflows/repo_healthcheck.yml")
+
+    if repo_healthcheck_script_exists:
+        repo_healthcheck_script_text = _read(repo_healthcheck_dispatch_script)
+        repo_healthcheck_script_has_base_command = (
+            "python scripts/run_repo_healthcheck.py --strict --allow-missing-discussion"
+            in repo_healthcheck_script_text
+        )
+        repo_healthcheck_script_has_timeout_validation = (
+            "::error::sdh_timeout must be a positive integer" in repo_healthcheck_script_text
+        )
+        repo_healthcheck_script_has_ignore_warning = (
+            "SDH inputs were provided but include_sdh=false" in repo_healthcheck_script_text
+        )
+        repo_healthcheck_script_has_single_side_warnings = all(
+            token in repo_healthcheck_script_text
+            for token in (
+                "include_sdh=true and web_base is set but api_base is empty",
+                "include_sdh=true and api_base is set but web_base is empty",
+            )
+        )
+        if not repo_healthcheck_script_has_base_command:
+            issues.append("repo healthcheck dispatch script missing base command")
+        if not repo_healthcheck_script_has_timeout_validation:
+            issues.append("repo healthcheck dispatch script missing sdh_timeout validation")
+        if not repo_healthcheck_script_has_ignore_warning:
+            issues.append("repo healthcheck dispatch script missing include_sdh=false warning")
+        if not repo_healthcheck_script_has_single_side_warnings:
+            issues.append("repo healthcheck dispatch script missing single-side endpoint warnings")
+    else:
+        issues.append("missing scripts/run_repo_healthcheck_dispatch.sh")
 
     status_readme_has_git_hygiene = False
     status_readme_has_repo_healthcheck_dispatch_inputs = False
@@ -258,9 +285,12 @@ def build_report(repo_root: Path) -> dict[str, Any]:
             "has_dispatch_inputs": repo_healthcheck_has_dispatch_inputs,
             "has_default_runner": repo_healthcheck_has_default_runner,
             "has_dispatch_runner": repo_healthcheck_has_dispatch_runner,
-            "has_timeout_validation": repo_healthcheck_has_timeout_validation,
-            "has_ignore_warning": repo_healthcheck_has_ignore_warning,
-            "has_single_side_warnings": repo_healthcheck_has_single_side_warnings,
+            "has_dispatch_env_bridge": repo_healthcheck_has_dispatch_env_bridge,
+            "script_exists": repo_healthcheck_script_exists,
+            "script_has_base_command": repo_healthcheck_script_has_base_command,
+            "script_has_timeout_validation": repo_healthcheck_script_has_timeout_validation,
+            "script_has_ignore_warning": repo_healthcheck_script_has_ignore_warning,
+            "script_has_single_side_warnings": repo_healthcheck_script_has_single_side_warnings,
             "status_readme_inputs": status_readme_has_repo_healthcheck_dispatch_inputs,
             "status_readme_validation_notes": status_readme_has_repo_healthcheck_validation_notes,
         },

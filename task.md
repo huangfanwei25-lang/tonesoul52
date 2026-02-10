@@ -75,6 +75,12 @@
 - [x] 新增 dispatch validation/warning 關鍵守門測試
 **成功標準**: workflow 契約不只靠 docs 字串檢查，並有獨立測試在回歸時直接失敗。
 
+## Phase 57: Dispatch 邏輯腳本化
+- [x] 新增 `scripts/run_repo_healthcheck_dispatch.sh`，承接 workflow_dispatch 的 SDH 判斷與驗證邏輯
+- [x] `.github/workflows/repo_healthcheck.yml` 改為 env bridge + 腳本薄入口
+- [x] 調整 workflow/docs consistency 契約與測試，驗證改為檢查腳本 + workflow 連接點
+**成功標準**: dispatch 規則集中於單一腳本，workflow YAML 維持薄入口且契約測試可防回歸。
+
 ## Phase 17: 收尾三部曲
 - [x] README 更新（反映 Council / Genesis / Memory / Tools API + 快速啟動）
 - [x] 記憶總結（寫入 `memory/self_journal.jsonl`，含 Phase 14-16 與亂碼修復）

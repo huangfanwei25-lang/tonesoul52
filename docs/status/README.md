@@ -96,6 +96,7 @@ python scripts/verify_git_hygiene.py --strict --max-loose-count 5000 --max-dangl
   - `include_sdh` (boolean)
   - `web_base`, `api_base`, `sdh_timeout`
   - `check_council_modes` (boolean)
+  - Dispatch orchestration script: `scripts/run_repo_healthcheck_dispatch.sh`
   - Validation behavior:
     - invalid `sdh_timeout` (non-positive integer) blocks run
     - SDH inputs with `include_sdh=false` emit warning and are ignored
