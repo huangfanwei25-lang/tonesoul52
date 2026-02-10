@@ -82,3 +82,5 @@ WFGY*
 *Singularity*
 
 # Moltbook outputs are archived under .archive/ (ignored)
+.vercel
+.env*.local
