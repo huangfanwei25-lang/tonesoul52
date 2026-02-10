@@ -15,6 +15,8 @@ import re
 from pathlib import Path
 from typing import Any
 
+import yaml
+
 
 def _read(path: Path) -> str:
     return path.read_text(encoding="utf-8", errors="replace")
@@ -40,6 +42,52 @@ def _extract_doc_thresholds(text: str) -> list[int]:
 
 def _has_curated_reference(text: str) -> bool:
     return "memory/agent_discussion_curated.jsonl" in text
+
+
+def _load_yaml_mapping(path: Path) -> dict[str, Any] | None:
+    try:
+        payload = yaml.safe_load(_read(path))
+    except yaml.YAMLError:
+        return None
+    if not isinstance(payload, dict):
+        return None
+    return payload
+
+
+def _workflow_on_section(payload: dict[str, Any]) -> dict[str, Any]:
+    # PyYAML under YAML 1.1 may parse bare "on" as boolean True.
+    if "on" in payload:
+        value = payload["on"]
+    else:
+        value = payload.get(True, {})
+    if not isinstance(value, dict):
+        return {}
+    return value
+
+
+def _workflow_steps(payload: dict[str, Any]) -> list[dict[str, Any]]:
+    jobs = payload.get("jobs", {})
+    if not isinstance(jobs, dict):
+        return []
+
+    steps: list[dict[str, Any]] = []
+    for job in jobs.values():
+        if not isinstance(job, dict):
+            continue
+        job_steps = job.get("steps", [])
+        if not isinstance(job_steps, list):
+            continue
+        for step in job_steps:
+            if isinstance(step, dict):
+                steps.append(step)
+    return steps
+
+
+def _find_step_by_name(steps: list[dict[str, Any]], name: str) -> dict[str, Any] | None:
+    for step in steps:
+        if step.get("name") == name:
+            return step
+    return None
 
 
 def build_report(repo_root: Path) -> dict[str, Any]:
@@ -138,44 +186,64 @@ def build_report(repo_root: Path) -> dict[str, Any]:
     repo_healthcheck_script_has_ignore_warning = False
     repo_healthcheck_script_has_single_side_warnings = False
     if repo_healthcheck_exists:
-        repo_healthcheck_text = _read(repo_healthcheck_workflow)
-        repo_healthcheck_has_dispatch = "workflow_dispatch:" in repo_healthcheck_text
-        required_input_tokens = (
-            "include_sdh:",
-            "web_base:",
-            "api_base:",
-            "sdh_timeout:",
-            "check_council_modes:",
-        )
-        repo_healthcheck_has_dispatch_inputs = all(
-            token in repo_healthcheck_text for token in required_input_tokens
-        )
-        repo_healthcheck_has_default_runner = all(
-            token in repo_healthcheck_text
-            for token in (
-                "Run repository healthcheck (blocking, push/pr default)",
-                "github.event_name != 'workflow_dispatch'",
-                "python scripts/run_repo_healthcheck.py --strict --allow-missing-discussion",
+        repo_healthcheck_payload = _load_yaml_mapping(repo_healthcheck_workflow)
+        if repo_healthcheck_payload is not None:
+            on_section = _workflow_on_section(repo_healthcheck_payload)
+            repo_healthcheck_has_dispatch = "workflow_dispatch" in on_section
+
+            dispatch_section = on_section.get("workflow_dispatch", {})
+            dispatch_inputs: dict[str, Any] = {}
+            if isinstance(dispatch_section, dict):
+                maybe_inputs = dispatch_section.get("inputs", {})
+                if isinstance(maybe_inputs, dict):
+                    dispatch_inputs = maybe_inputs
+            required_input_names = {
+                "include_sdh",
+                "web_base",
+                "api_base",
+                "sdh_timeout",
+                "check_council_modes",
+            }
+            repo_healthcheck_has_dispatch_inputs = required_input_names.issubset(
+                dispatch_inputs.keys()
             )
-        )
-        repo_healthcheck_has_dispatch_runner = all(
-            token in repo_healthcheck_text
-            for token in (
-                "Run repository healthcheck (blocking, workflow_dispatch)",
-                "github.event_name == 'workflow_dispatch'",
-                "python scripts/run_repo_healthcheck_dispatch.py",
+
+            steps = _workflow_steps(repo_healthcheck_payload)
+
+            default_step = _find_step_by_name(
+                steps, "Run repository healthcheck (blocking, push/pr default)"
             )
-        )
-        repo_healthcheck_has_dispatch_env_bridge = all(
-            token in repo_healthcheck_text
-            for token in (
-                "TS_INCLUDE_SDH:",
-                "TS_WEB_BASE:",
-                "TS_API_BASE:",
-                "TS_SDH_TIMEOUT:",
-                "TS_CHECK_COUNCIL_MODES:",
+            default_run = default_step.get("run", "") if default_step else ""
+            repo_healthcheck_has_default_runner = bool(
+                default_step is not None
+                and default_step.get("if") == "github.event_name != 'workflow_dispatch'"
+                and isinstance(default_run, str)
+                and "python scripts/run_repo_healthcheck.py --strict --allow-missing-discussion"
+                in default_run
             )
-        )
+
+            dispatch_step = _find_step_by_name(
+                steps, "Run repository healthcheck (blocking, workflow_dispatch)"
+            )
+            dispatch_run = dispatch_step.get("run", "") if dispatch_step else ""
+            repo_healthcheck_has_dispatch_runner = bool(
+                dispatch_step is not None
+                and dispatch_step.get("if") == "github.event_name == 'workflow_dispatch'"
+                and isinstance(dispatch_run, str)
+                and dispatch_run.strip() == "python scripts/run_repo_healthcheck_dispatch.py"
+            )
+
+            dispatch_env = dispatch_step.get("env", {}) if dispatch_step else {}
+            required_env_names = {
+                "TS_INCLUDE_SDH",
+                "TS_WEB_BASE",
+                "TS_API_BASE",
+                "TS_SDH_TIMEOUT",
+                "TS_CHECK_COUNCIL_MODES",
+            }
+            repo_healthcheck_has_dispatch_env_bridge = isinstance(dispatch_env, dict) and (
+                required_env_names.issubset(dispatch_env.keys())
+            )
 
         if not repo_healthcheck_has_dispatch:
             issues.append("repo healthcheck workflow missing workflow_dispatch trigger")

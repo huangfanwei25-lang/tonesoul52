@@ -94,6 +94,12 @@
 - [x] 驗證 docs consistency / workflow contracts 無回歸
 **成功標準**: repo healthcheck dispatch 入口單一化，減少跨語言同步風險與維運噪音。
 
+## Phase 60: Docs Consistency 結構化解析（Step 1）
+- [x] `verify_docs_consistency` 的 repo healthcheck workflow 契約改為 YAML 結構解析
+- [x] 新增假陽性回歸測試（token 僅存在於 notes/字串時不得視為契約成立）
+- [x] 維持既有 report key 與 issue 文案，避免外部治理流程破壞
+**成功標準**: repo healthcheck 契約不再僅靠字串包含判斷，並能阻擋 token-based false positive。
+
 ## Phase 17: 收尾三部曲
 - [x] README 更新（反映 Council / Genesis / Memory / Tools API + 快速啟動）
 - [x] 記憶總結（寫入 `memory/self_journal.jsonl`，含 Phase 14-16 與亂碼修復）
