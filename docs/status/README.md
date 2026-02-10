@@ -92,6 +92,10 @@ python scripts/verify_git_hygiene.py --strict --max-loose-count 5000 --max-dangl
   - monthly schedule (`30 3 1 * *`, UTC)
   - weekly schedule (`15 3 * * 1`, UTC)
   - manual dispatch (`workflow_dispatch`)
+- Repo healthcheck manual dispatch supports SDH inputs:
+  - `include_sdh` (boolean)
+  - `web_base`, `api_base`, `sdh_timeout`
+  - `check_council_modes` (boolean)
 - Workflow uploads `docs/status/*.json` as build artifacts for audit/review.
 
 ## Convergence Cadence

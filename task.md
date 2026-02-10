@@ -44,6 +44,12 @@
 - [x] 更新 `docs/status/README.md`，提供隔離端口執行範例
 **成功標準**: healthcheck 在 `--include-sdh` 模式可顯式指定 web/api 端點與 timeout，避免固定依賴 3000/5000。
 
+## Phase 52: Repo Healthcheck CI 手動輸入收斂
+- [x] `.github/workflows/repo_healthcheck.yml` 新增 `workflow_dispatch` SDH 參數（include_sdh/web_base/api_base/sdh_timeout/check_council_modes）
+- [x] 保持 push/PR 預設路徑不變，手動觸發時才套用 SDH 參數
+- [x] 更新 `docs/status/README.md` 說明 manual dispatch 可用輸入
+**成功標準**: CI 手動觸發可用參數化 SDH smoke，且不影響既有 push/PR blocking 流程。
+
 ## Phase 17: 收尾三部曲
 - [x] README 更新（反映 Council / Genesis / Memory / Tools API + 快速啟動）
 - [x] 記憶總結（寫入 `memory/self_journal.jsonl`，含 Phase 14-16 與亂碼修復）

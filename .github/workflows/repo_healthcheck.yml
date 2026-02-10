@@ -6,6 +6,29 @@ on:
   pull_request:
     branches: [master, dev]
   workflow_dispatch:
+    inputs:
+      include_sdh:
+        description: "Run SDH live smoke checks (requires reachable web/api)."
+        type: boolean
+        required: true
+        default: false
+      web_base:
+        description: "Optional web base for SDH, e.g. http://127.0.0.1:3002"
+        type: string
+        required: false
+      api_base:
+        description: "Optional api base for SDH, e.g. http://127.0.0.1:5001"
+        type: string
+        required: false
+      sdh_timeout:
+        description: "Optional SDH timeout seconds."
+        type: string
+        required: false
+      check_council_modes:
+        description: "Check council mode switches during SDH smoke."
+        type: boolean
+        required: true
+        default: true
 
 permissions:
   contents: read
@@ -41,9 +64,37 @@ jobs:
       - name: Install web dependencies
         run: npm --prefix apps/web ci
 
-      - name: Run repository healthcheck (blocking)
+      - name: Run repository healthcheck (blocking, push/pr default)
+        if: github.event_name != 'workflow_dispatch'
         run: |
           python scripts/run_repo_healthcheck.py --strict --allow-missing-discussion
+
+      - name: Run repository healthcheck (blocking, workflow_dispatch)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          CMD=(python scripts/run_repo_healthcheck.py --strict --allow-missing-discussion)
+
+          if [[ "${{ github.event.inputs.include_sdh }}" == "true" ]]; then
+            CMD+=(--include-sdh)
+
+            if [[ "${{ github.event.inputs.check_council_modes }}" == "false" ]]; then
+              CMD+=(--no-check-council-modes)
+            else
+              CMD+=(--check-council-modes)
+            fi
+
+            if [[ -n "${{ github.event.inputs.web_base }}" ]]; then
+              CMD+=(--web-base "${{ github.event.inputs.web_base }}")
+            fi
+            if [[ -n "${{ github.event.inputs.api_base }}" ]]; then
+              CMD+=(--api-base "${{ github.event.inputs.api_base }}")
+            fi
+            if [[ -n "${{ github.event.inputs.sdh_timeout }}" ]]; then
+              CMD+=(--sdh-timeout "${{ github.event.inputs.sdh_timeout }}")
+            fi
+          fi
+
+          "${CMD[@]}"
 
       - name: Upload healthcheck artifacts
         if: always()
