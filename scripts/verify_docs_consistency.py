@@ -286,10 +286,23 @@ def build_report(repo_root: Path) -> dict[str, Any]:
     monthly_has_runner = False
     monthly_has_allow_missing_discussion = False
     if monthly_exists:
-        monthly_text = _read(monthly_workflow)
-        monthly_has_schedule = "schedule:" in monthly_text
-        monthly_has_runner = "scripts/run_monthly_consolidation.py" in monthly_text
-        monthly_has_allow_missing_discussion = "--allow-missing-discussion" in monthly_text
+        monthly_payload = _load_yaml_mapping(monthly_workflow)
+        if monthly_payload is not None:
+            monthly_on_section = _workflow_on_section(monthly_payload)
+            monthly_schedule = monthly_on_section.get("schedule")
+            monthly_has_schedule = isinstance(monthly_schedule, list) and bool(monthly_schedule)
+
+            monthly_steps = _workflow_steps(monthly_payload)
+            monthly_run_commands = [
+                run_text for step in monthly_steps if isinstance((run_text := step.get("run")), str)
+            ]
+            monthly_has_runner = any(
+                "python scripts/run_monthly_consolidation.py" in run_text
+                for run_text in monthly_run_commands
+            )
+            monthly_has_allow_missing_discussion = any(
+                "--allow-missing-discussion" in run_text for run_text in monthly_run_commands
+            )
         if not monthly_has_schedule:
             issues.append("monthly consolidation workflow missing schedule trigger")
         if not monthly_has_runner:
@@ -306,10 +319,29 @@ def build_report(repo_root: Path) -> dict[str, Any]:
     git_hygiene_has_runner = False
     git_hygiene_has_artifact_upload = False
     if git_hygiene_exists:
-        git_hygiene_text = _read(git_hygiene_workflow)
-        git_hygiene_has_schedule = "schedule:" in git_hygiene_text
-        git_hygiene_has_runner = "scripts/verify_git_hygiene.py" in git_hygiene_text
-        git_hygiene_has_artifact_upload = "actions/upload-artifact" in git_hygiene_text
+        git_hygiene_payload = _load_yaml_mapping(git_hygiene_workflow)
+        if git_hygiene_payload is not None:
+            git_hygiene_on_section = _workflow_on_section(git_hygiene_payload)
+            git_hygiene_schedule = git_hygiene_on_section.get("schedule")
+            git_hygiene_has_schedule = isinstance(git_hygiene_schedule, list) and bool(
+                git_hygiene_schedule
+            )
+
+            git_hygiene_steps = _workflow_steps(git_hygiene_payload)
+            git_hygiene_run_commands = [
+                run_text
+                for step in git_hygiene_steps
+                if isinstance((run_text := step.get("run")), str)
+            ]
+            git_hygiene_has_runner = any(
+                "python scripts/verify_git_hygiene.py" in run_text
+                for run_text in git_hygiene_run_commands
+            )
+            git_hygiene_has_artifact_upload = any(
+                isinstance(step.get("uses"), str)
+                and step["uses"].startswith("actions/upload-artifact@")
+                for step in git_hygiene_steps
+            )
         if not git_hygiene_has_schedule:
             issues.append("git hygiene workflow missing schedule trigger")
         if not git_hygiene_has_runner:

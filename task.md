@@ -106,6 +106,12 @@
 - [x] 維持 report key 與既有失敗訊息不變，降低治理介面破壞
 **成功標準**: dispatch 契約不再耦合特定 log token 字串，改以可執行行為作為守門依據。
 
+## Phase 62: Docs Consistency 結構化解析（Step 3）
+- [x] `monthly_consolidation` 契約改為 YAML 結構解析（schedule + runner + allow flag）
+- [x] `git_hygiene` 契約改為 YAML 結構解析（schedule + runner + artifact upload）
+- [x] 新增 monthly/git_hygiene token-in-notes 假陽性回歸測試
+**成功標準**: monthly / git_hygiene 契約不再因字串碰巧命中而誤判通過，僅接受工作流程結構上的真實配置。
+
 ## Phase 17: 收尾三部曲
 - [x] README 更新（反映 Council / Genesis / Memory / Tools API + 快速啟動）
 - [x] 記憶總結（寫入 `memory/self_journal.jsonl`，含 Phase 14-16 與亂碼修復）

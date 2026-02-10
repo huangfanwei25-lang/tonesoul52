@@ -242,6 +242,51 @@ def test_build_report_fails_when_monthly_workflow_missing_allow_missing_discussi
     assert any("--allow-missing-discussion" in issue for issue in report["issues"])
 
 
+def test_build_report_fails_when_monthly_tokens_only_exist_in_notes(tmp_path: Path) -> None:
+    _write(
+        tmp_path / "scripts" / "verify_7d.py",
+        "RDD_MIN_CASES = 20\nDDD_DISCUSSION_PATH='memory/agent_discussion_curated.jsonl'\n",
+    )
+    _write(tmp_path / ".github" / "workflows" / "test.yml", "threshold = 20\n")
+    _write(
+        tmp_path / ".github" / "workflows" / "monthly_consolidation.yml",
+        (
+            "on:\n"
+            "  push:\n"
+            "    branches: [master]\n"
+            "notes: |\n"
+            "  schedule:\n"
+            "    - cron: '30 3 1 * *'\n"
+            "  python scripts/run_monthly_consolidation.py --strict --allow-missing-discussion\n"
+            "jobs:\n"
+            "  c:\n"
+            "    steps:\n"
+            "      - run: echo placeholder\n"
+        ),
+    )
+    _write(
+        tmp_path / ".github" / "workflows" / "git_hygiene.yml",
+        "on:\n  schedule:\n    - cron: '0 4 * * 1'\njobs:\n  g:\n    steps:\n      - run: python scripts/verify_git_hygiene.py\n      - uses: actions/upload-artifact@v4\n",
+    )
+    _write_repo_healthcheck_workflow(tmp_path / ".github" / "workflows" / "repo_healthcheck.yml")
+    _write_repo_healthcheck_dispatch_script(
+        tmp_path / "scripts" / "run_repo_healthcheck_dispatch.py"
+    )
+    _write(tmp_path / "docs" / "7D_AUDIT_FRAMEWORK.md", "minimum 20 tests\n")
+    _write(
+        tmp_path / "docs" / "7D_EXECUTION_SPEC.md",
+        "at least 20 cases\npython tools/agent_discussion_tool.py audit --path memory/agent_discussion_curated.jsonl\n",
+    )
+    _write_status_readme(tmp_path / "docs" / "status" / "README.md")
+
+    report = docs_consistency.build_report(tmp_path)
+    assert report["ok"] is False
+    assert any(
+        "monthly consolidation workflow missing schedule trigger" in issue
+        for issue in report["issues"]
+    )
+
+
 def test_build_report_fails_when_git_hygiene_readme_reference_missing(tmp_path: Path) -> None:
     _write(
         tmp_path / "scripts" / "verify_7d.py",
@@ -270,6 +315,51 @@ def test_build_report_fails_when_git_hygiene_readme_reference_missing(tmp_path: 
     report = docs_consistency.build_report(tmp_path)
     assert report["ok"] is False
     assert any("git hygiene artifact reference" in issue for issue in report["issues"])
+
+
+def test_build_report_fails_when_git_hygiene_tokens_only_exist_in_notes(tmp_path: Path) -> None:
+    _write(
+        tmp_path / "scripts" / "verify_7d.py",
+        "RDD_MIN_CASES = 20\nDDD_DISCUSSION_PATH='memory/agent_discussion_curated.jsonl'\n",
+    )
+    _write(tmp_path / ".github" / "workflows" / "test.yml", "threshold = 20\n")
+    _write(
+        tmp_path / ".github" / "workflows" / "monthly_consolidation.yml",
+        "on:\n  schedule:\n    - cron: '30 3 1 * *'\njobs:\n  c:\n    steps:\n      - run: python scripts/run_monthly_consolidation.py --strict --allow-missing-discussion\n",
+    )
+    _write(
+        tmp_path / ".github" / "workflows" / "git_hygiene.yml",
+        (
+            "on:\n"
+            "  push:\n"
+            "    branches: [master]\n"
+            "notes: |\n"
+            "  schedule:\n"
+            "    - cron: '0 4 * * 1'\n"
+            "  python scripts/verify_git_hygiene.py\n"
+            "  actions/upload-artifact@v4\n"
+            "jobs:\n"
+            "  g:\n"
+            "    steps:\n"
+            "      - run: echo placeholder\n"
+        ),
+    )
+    _write_repo_healthcheck_workflow(tmp_path / ".github" / "workflows" / "repo_healthcheck.yml")
+    _write_repo_healthcheck_dispatch_script(
+        tmp_path / "scripts" / "run_repo_healthcheck_dispatch.py"
+    )
+    _write(tmp_path / "docs" / "7D_AUDIT_FRAMEWORK.md", "minimum 20 tests\n")
+    _write(
+        tmp_path / "docs" / "7D_EXECUTION_SPEC.md",
+        "at least 20 cases\npython tools/agent_discussion_tool.py audit --path memory/agent_discussion_curated.jsonl\n",
+    )
+    _write_status_readme(tmp_path / "docs" / "status" / "README.md")
+
+    report = docs_consistency.build_report(tmp_path)
+    assert report["ok"] is False
+    assert any(
+        "git hygiene workflow missing schedule trigger" in issue for issue in report["issues"]
+    )
 
 
 def test_build_report_fails_when_repo_healthcheck_missing_timeout_validation(
