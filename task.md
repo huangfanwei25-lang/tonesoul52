@@ -100,6 +100,12 @@
 - [x] 維持既有 report key 與 issue 文案，避免外部治理流程破壞
 **成功標準**: repo healthcheck 契約不再僅靠字串包含判斷，並能阻擋 token-based false positive。
 
+## Phase 61: Docs Consistency 結構化解析（Step 2）
+- [x] dispatch script 契約檢查改為載入模組並驗證 `build_command` 行為
+- [x] 測試 fixture 改為 Python dispatch 模組，避免 shell token 假通過
+- [x] 維持 report key 與既有失敗訊息不變，降低治理介面破壞
+**成功標準**: dispatch 契約不再耦合特定 log token 字串，改以可執行行為作為守門依據。
+
 ## Phase 17: 收尾三部曲
 - [x] README 更新（反映 Council / Genesis / Memory / Tools API + 快速啟動）
 - [x] 記憶總結（寫入 `memory/self_journal.jsonl`，含 Phase 14-16 與亂碼修復）

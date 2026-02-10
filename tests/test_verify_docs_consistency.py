@@ -70,27 +70,54 @@ def _write_repo_healthcheck_dispatch_script(
     include_single_side_warnings: bool = True,
 ) -> None:
     base_command = (
-        "CMD=(python scripts/run_repo_healthcheck.py --strict --allow-missing-discussion)\n"
+        '    command = ["python", "scripts/run_repo_healthcheck.py", "--strict", "--allow-missing-discussion"]\n'
         if include_base_command
-        else ""
+        else '    command = ["python"]\n'
     )
     timeout_validation = (
-        'echo "::error::sdh_timeout must be a positive integer"\n'
+        "    if config.sdh_timeout:\n"
+        "        if not config.sdh_timeout.isdigit() or int(config.sdh_timeout) < 1:\n"
+        '            error = "sdh_timeout must be a positive integer"\n'
         if include_timeout_validation
         else ""
     )
     ignore_warning = (
-        'echo "::warning::SDH inputs were provided but include_sdh=false"\n'
+        "        if config.web_base or config.api_base or config.sdh_timeout:\n"
+        '            warnings.append("SDH inputs were provided but include_sdh=false")\n'
         if include_ignore_warning
         else ""
     )
     single_side_warnings = (
-        'echo "::warning::include_sdh=true and web_base is set but api_base is empty"\n'
-        'echo "::warning::include_sdh=true and api_base is set but web_base is empty"\n'
+        "        if config.web_base and not config.api_base:\n"
+        '            warnings.append("include_sdh=true and web_base is set but api_base is empty")\n'
+        "        if config.api_base and not config.web_base:\n"
+        '            warnings.append("include_sdh=true and api_base is set but web_base is empty")\n'
         if include_single_side_warnings
         else ""
     )
-    _write(path, base_command + timeout_validation + ignore_warning + single_side_warnings)
+    _write(
+        path,
+        (
+            "from dataclasses import dataclass\n\n"
+            "@dataclass(frozen=True)\n"
+            "class DispatchConfig:\n"
+            "    include_sdh: bool\n"
+            "    web_base: str\n"
+            "    api_base: str\n"
+            "    sdh_timeout: str\n"
+            "    check_council_modes: bool\n\n"
+            "def build_command(config: DispatchConfig):\n"
+            f"{base_command}"
+            "    warnings = []\n"
+            "    error = None\n"
+            f"{timeout_validation}"
+            "    if config.include_sdh:\n"
+            f"{single_side_warnings}"
+            "    else:\n"
+            f"{ignore_warning}"
+            "    return command, warnings, error\n"
+        ),
+    )
 
 
 def _write_status_readme(path: Path, *, include_dispatch_notes: bool = True) -> None:

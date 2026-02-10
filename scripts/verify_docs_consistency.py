@@ -10,8 +10,10 @@ Checks selected source-of-truth values against docs/workflow:
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import json
 import re
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -88,6 +90,149 @@ def _find_step_by_name(steps: list[dict[str, Any]], name: str) -> dict[str, Any]
         if step.get("name") == name:
             return step
     return None
+
+
+def _load_python_module(path: Path, module_name: str) -> Any | None:
+    spec = importlib.util.spec_from_file_location(module_name, path)
+    if spec is None or spec.loader is None:
+        return None
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[module_name] = module
+    try:
+        spec.loader.exec_module(module)
+    except Exception:
+        sys.modules.pop(module_name, None)
+        return None
+    return module
+
+
+def _evaluate_dispatch_script_contract(script_path: Path) -> dict[str, bool]:
+    result = {
+        "has_base_command": False,
+        "has_timeout_validation": False,
+        "has_ignore_warning": False,
+        "has_single_side_warnings": False,
+    }
+
+    module = _load_python_module(
+        script_path,
+        f"_docs_consistency_dispatch_{abs(hash(str(script_path.resolve())))}",
+    )
+    if module is None:
+        return result
+
+    dispatch_config = getattr(module, "DispatchConfig", None)
+    build_command = getattr(module, "build_command", None)
+    if dispatch_config is None or not callable(build_command):
+        return result
+
+    def _call(
+        *,
+        include_sdh: bool,
+        web_base: str,
+        api_base: str,
+        sdh_timeout: str,
+        check_council_modes: bool,
+    ) -> tuple[list[str], list[str], str | None] | None:
+        try:
+            config = dispatch_config(
+                include_sdh=include_sdh,
+                web_base=web_base,
+                api_base=api_base,
+                sdh_timeout=sdh_timeout,
+                check_council_modes=check_council_modes,
+            )
+        except Exception:
+            return None
+
+        try:
+            output = build_command(config)
+        except Exception:
+            return None
+
+        if not isinstance(output, tuple) or len(output) != 3:
+            return None
+        command, warnings, error = output
+
+        if not isinstance(command, list) or not all(isinstance(token, str) for token in command):
+            return None
+        if not isinstance(warnings, list) or not all(isinstance(item, str) for item in warnings):
+            return None
+        if error is not None and not isinstance(error, str):
+            return None
+        return command, warnings, error
+
+    base_output = _call(
+        include_sdh=False,
+        web_base="",
+        api_base="",
+        sdh_timeout="",
+        check_council_modes=True,
+    )
+    if base_output is not None:
+        command, _, error = base_output
+        result["has_base_command"] = (
+            command[:2] == ["python", "scripts/run_repo_healthcheck.py"]
+            and "--strict" in command
+            and "--allow-missing-discussion" in command
+            and error is None
+        )
+
+    timeout_output = _call(
+        include_sdh=True,
+        web_base="http://127.0.0.1:3002",
+        api_base="http://127.0.0.1:5001",
+        sdh_timeout="0",
+        check_council_modes=True,
+    )
+    if timeout_output is not None:
+        _, _, error = timeout_output
+        result["has_timeout_validation"] = isinstance(error, str) and (
+            "sdh_timeout" in error and "positive integer" in error
+        )
+
+    ignore_output = _call(
+        include_sdh=False,
+        web_base="http://127.0.0.1:3002",
+        api_base="",
+        sdh_timeout="40",
+        check_council_modes=True,
+    )
+    if ignore_output is not None:
+        _, warnings, error = ignore_output
+        result["has_ignore_warning"] = error is None and any(
+            "include_sdh=false" in warning for warning in warnings
+        )
+
+    left_output = _call(
+        include_sdh=True,
+        web_base="http://127.0.0.1:3002",
+        api_base="",
+        sdh_timeout="",
+        check_council_modes=True,
+    )
+    right_output = _call(
+        include_sdh=True,
+        web_base="",
+        api_base="http://127.0.0.1:5001",
+        sdh_timeout="",
+        check_council_modes=True,
+    )
+    left_ok = False
+    right_ok = False
+    if left_output is not None:
+        _, warnings, error = left_output
+        left_ok = error is None and any(
+            "web_base is set but api_base is empty" in warning for warning in warnings
+        )
+    if right_output is not None:
+        _, warnings, error = right_output
+        right_ok = error is None and any(
+            "api_base is set but web_base is empty" in warning for warning in warnings
+        )
+    result["has_single_side_warnings"] = left_ok and right_ok
+
+    return result
 
 
 def build_report(repo_root: Path) -> dict[str, Any]:
@@ -259,28 +404,13 @@ def build_report(repo_root: Path) -> dict[str, Any]:
         issues.append("missing .github/workflows/repo_healthcheck.yml")
 
     if repo_healthcheck_script_exists:
-        repo_healthcheck_script_text = _read(repo_healthcheck_dispatch_script)
-        repo_healthcheck_script_has_base_command = all(
-            token in repo_healthcheck_script_text
-            for token in (
-                "scripts/run_repo_healthcheck.py",
-                "--strict",
-                "--allow-missing-discussion",
-            )
-        )
-        repo_healthcheck_script_has_timeout_validation = (
-            "::error::sdh_timeout must be a positive integer" in repo_healthcheck_script_text
-        )
-        repo_healthcheck_script_has_ignore_warning = (
-            "SDH inputs were provided but include_sdh=false" in repo_healthcheck_script_text
-        )
-        repo_healthcheck_script_has_single_side_warnings = all(
-            token in repo_healthcheck_script_text
-            for token in (
-                "include_sdh=true and web_base is set but api_base is empty",
-                "include_sdh=true and api_base is set but web_base is empty",
-            )
-        )
+        script_contract = _evaluate_dispatch_script_contract(repo_healthcheck_dispatch_script)
+        repo_healthcheck_script_has_base_command = script_contract["has_base_command"]
+        repo_healthcheck_script_has_timeout_validation = script_contract["has_timeout_validation"]
+        repo_healthcheck_script_has_ignore_warning = script_contract["has_ignore_warning"]
+        repo_healthcheck_script_has_single_side_warnings = script_contract[
+            "has_single_side_warnings"
+        ]
         if not repo_healthcheck_script_has_base_command:
             issues.append("repo healthcheck dispatch script missing base command")
         if not repo_healthcheck_script_has_timeout_validation:
