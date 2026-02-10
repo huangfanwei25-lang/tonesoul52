@@ -46,12 +46,6 @@ const researchPapers = [
         url: "https://arxiv.org/abs/2305.14859",
         relevance: "多視角審議的設計參考",
         year: 2023
-    },
-    {
-        title: "Chain-of-Thought Prompting Elicits Reasoning",
-        url: "https://arxiv.org/abs/2201.11903",
-        relevance: "思維鏈的基礎研究",
-        year: 2022
     }
 ];
 
