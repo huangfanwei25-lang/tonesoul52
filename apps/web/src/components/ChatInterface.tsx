@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Send, Loader2, Brain, ChevronDown, ChevronUp, AlertTriangle, MessageSquare, MoveRight, Users } from "lucide-react";
+import { Send, Loader2, Brain, ChevronDown, ChevronUp, AlertTriangle, MessageSquare, MoveRight, Users, Server, Zap, WifiOff } from "lucide-react";
 import { ApiSettings } from "./SettingsModal";
 import { Message as DBMessage, DeliberationData, Conversation, saveConversation, MemoryInsight, findRelevantMemories } from "@/lib/db";
 import { calculateEntropy, validateAudit } from "@/lib/entropyCalculator";
@@ -23,6 +23,11 @@ import {
     estimateResistance
 } from "@/lib/soulEngine";
 import { auditOutput, saveAuditLog } from "@/lib/soulAuditor";
+import {
+    BACKEND_FALLBACK_REASON_LABEL,
+    BackendFallbackReasonCode,
+    classifyBackendFallbackReason,
+} from "@/lib/chatFallback";
 
 interface Message extends Omit<DBMessage, 'timestamp'> {
     timestamp: Date;
@@ -36,7 +41,14 @@ interface ChatInterfaceProps {
 }
 
 type CouncilMode = "rules" | "hybrid" | "full_llm";
+type ChatActiveMode = "backend" | "legacy_provider" | "fallback";
 const COUNCIL_MODE_STORAGE_KEY = "tonesoul.chat.council_mode";
+const CHAT_EXECUTION_MODE =
+    (process.env.NEXT_PUBLIC_CHAT_EXECUTION_MODE || "").toLowerCase()
+    || (process.env.NEXT_PUBLIC_BACKEND_CHAT_FIRST === "0" ? "legacy_provider" : "backend");
+const USE_BACKEND_CHAT = CHAT_EXECUTION_MODE !== "legacy_provider";
+const ENABLE_PROVIDER_FALLBACK = process.env.NEXT_PUBLIC_ENABLE_PROVIDER_FALLBACK === "1";
+const SHOULD_SHOW_API_KEY_HINT = !USE_BACKEND_CHAT;
 
 const COUNCIL_MODE_OPTIONS: Array<{ value: CouncilMode; label: string }> = [
     { value: "rules", label: "Rules" },
@@ -660,6 +672,10 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
     const [soulState, setSoulState] = useState<SoulState>(getInitialSoulState());
     const [councilMode, setCouncilMode] = useState<CouncilMode>("hybrid"); // Always start with default for SSR
     const [isMounted, setIsMounted] = useState(false);
+    const [chatActiveMode, setChatActiveMode] = useState<ChatActiveMode>(
+        USE_BACKEND_CHAT ? "backend" : "legacy_provider"
+    );
+    const [fallbackReasonCode, setFallbackReasonCode] = useState<BackendFallbackReasonCode | null>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     // Only load from localStorage after mount (client-side only)
@@ -719,14 +735,6 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
             `[${m.role === 'user' ? '用戶' : 'AI'}]: ${(m.content || '').slice(0, 150)}`
         ).join('\n');
     };
-
-    // 根據提供者選擇 API 調用函數
-    const CHAT_EXECUTION_MODE =
-        (process.env.NEXT_PUBLIC_CHAT_EXECUTION_MODE || "").toLowerCase()
-        || (process.env.NEXT_PUBLIC_BACKEND_CHAT_FIRST === "0" ? "legacy_provider" : "backend");
-    const USE_BACKEND_CHAT = CHAT_EXECUTION_MODE !== "legacy_provider";
-    const ENABLE_PROVIDER_FALLBACK = process.env.NEXT_PUBLIC_ENABLE_PROVIDER_FALLBACK === "1";
-    const SHOULD_SHOW_API_KEY_HINT = !USE_BACKEND_CHAT;
 
     const callBackendChat = async (
         userMessage: string,
@@ -1142,15 +1150,25 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
                 const fullAnalysis = apiSettings?.mode !== "fast";
                 try {
                     result = await callBackendChat(userMessage.content, fullAnalysis);
+                    setChatActiveMode("backend");
+                    setFallbackReasonCode(null);
                 } catch (backendErr) {
+                    const reasonCode = classifyBackendFallbackReason(backendErr);
+                    console.warn("[ToneSoul] Backend chat unavailable, fallback to legacy provider flow.", backendErr);
                     if (ENABLE_PROVIDER_FALLBACK) {
-                        console.warn("[ToneSoul] Backend chat unavailable, fallback to legacy provider flow.", backendErr);
+                        setChatActiveMode("fallback");
+                        setFallbackReasonCode(reasonCode);
+                        setLoadingPhase("後端不可用，切換至直接 API...");
                         result = await runLegacyProviderFlow(userMessage.content);
                     } else {
+                        setChatActiveMode("backend");
+                        setFallbackReasonCode(reasonCode);
                         throw backendErr;
                     }
                 }
             } else {
+                setChatActiveMode("legacy_provider");
+                setFallbackReasonCode(null);
                 result = await runLegacyProviderFlow(userMessage.content);
             }
 
@@ -1233,6 +1251,37 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
 
     return (
         <div className="flex flex-col h-full bg-slate-50">
+            {/* 聊天模式狀態指示器 */}
+            <div className="bg-slate-900/5 border-b border-slate-200 px-4 py-1.5 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                    {chatActiveMode === "backend" ? (
+                        <span className="flex items-center gap-1.5 text-[11px] font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                            <Server className="w-3 h-3" />
+                            語魂後端議會
+                        </span>
+                    ) : chatActiveMode === "fallback" ? (
+                        <span className="flex items-center gap-1.5 text-[11px] font-medium text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
+                            <Zap className="w-3 h-3" />
+                            直接 API（後端不可用）
+                        </span>
+                    ) : (
+                        <span className="flex items-center gap-1.5 text-[11px] font-medium text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
+                            <Zap className="w-3 h-3" />
+                            直接 API 人格會議
+                        </span>
+                    )}
+                    {fallbackReasonCode && (
+                        <span className="text-[10px] text-amber-600 flex items-center gap-1">
+                            <WifiOff className="w-3 h-3" />
+                            {BACKEND_FALLBACK_REASON_LABEL[fallbackReasonCode]}
+                        </span>
+                    )}
+                </div>
+                <div className="text-[10px] text-slate-400">
+                    {USE_BACKEND_CHAT ? (ENABLE_PROVIDER_FALLBACK ? "後端優先 + Fallback" : "僅後端") : "僅直接 API"}
+                </div>
+            </div>
+
             {/* API Key 提醒 */}
             {SHOULD_SHOW_API_KEY_HINT && !apiSettings?.apiKey && (
                 <div className="bg-amber-50 border-b border-amber-200 px-4 py-2 flex items-center gap-2 text-sm text-amber-800">
