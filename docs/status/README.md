@@ -96,6 +96,10 @@ python scripts/verify_git_hygiene.py --strict --max-loose-count 5000 --max-dangl
   - `include_sdh` (boolean)
   - `web_base`, `api_base`, `sdh_timeout`
   - `check_council_modes` (boolean)
+  - Validation behavior:
+    - invalid `sdh_timeout` (non-positive integer) blocks run
+    - SDH inputs with `include_sdh=false` emit warning and are ignored
+    - only one of `web_base` / `api_base` emits warning; missing side falls back to `verify_7d` default
 - Workflow uploads `docs/status/*.json` as build artifacts for audit/review.
 
 ## Convergence Cadence

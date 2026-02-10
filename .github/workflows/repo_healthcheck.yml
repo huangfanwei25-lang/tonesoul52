@@ -74,7 +74,20 @@ jobs:
         run: |
           CMD=(python scripts/run_repo_healthcheck.py --strict --allow-missing-discussion)
 
+          if [[ -n "${{ github.event.inputs.sdh_timeout }}" ]]; then
+            if ! [[ "${{ github.event.inputs.sdh_timeout }}" =~ ^[0-9]+$ ]] || [[ "${{ github.event.inputs.sdh_timeout }}" -lt 1 ]]; then
+              echo "::error::sdh_timeout must be a positive integer. got='${{ github.event.inputs.sdh_timeout }}'"
+              exit 1
+            fi
+          fi
+
           if [[ "${{ github.event.inputs.include_sdh }}" == "true" ]]; then
+            if [[ -n "${{ github.event.inputs.web_base }}" && -z "${{ github.event.inputs.api_base }}" ]]; then
+              echo "::warning::include_sdh=true and web_base is set but api_base is empty; api_base will fallback to verify_7d default."
+            fi
+            if [[ -z "${{ github.event.inputs.web_base }}" && -n "${{ github.event.inputs.api_base }}" ]]; then
+              echo "::warning::include_sdh=true and api_base is set but web_base is empty; web_base will fallback to verify_7d default."
+            fi
             CMD+=(--include-sdh)
 
             if [[ "${{ github.event.inputs.check_council_modes }}" == "false" ]]; then
@@ -91,6 +104,10 @@ jobs:
             fi
             if [[ -n "${{ github.event.inputs.sdh_timeout }}" ]]; then
               CMD+=(--sdh-timeout "${{ github.event.inputs.sdh_timeout }}")
+            fi
+          else
+            if [[ -n "${{ github.event.inputs.web_base }}" || -n "${{ github.event.inputs.api_base }}" || -n "${{ github.event.inputs.sdh_timeout }}" ]]; then
+              echo "::warning::SDH inputs were provided but include_sdh=false; web/api/timeout inputs will be ignored."
             fi
           fi
 

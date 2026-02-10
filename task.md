@@ -50,6 +50,13 @@
 - [x] 更新 `docs/status/README.md` 說明 manual dispatch 可用輸入
 **成功標準**: CI 手動觸發可用參數化 SDH smoke，且不影響既有 push/PR blocking 流程。
 
+## Phase 53: Repo Healthcheck Dispatch 參數驗證
+- [x] workflow_dispatch 新增 `sdh_timeout` 正整數驗證（非法即阻擋）
+- [x] `include_sdh=false` 但提供 SDH 參數時發出 warning 並忽略輸入
+- [x] `include_sdh=true` 且僅提供單邊 `web_base/api_base` 時發出 warning
+- [x] 更新 `docs/status/README.md` 記錄上述驗證行為
+**成功標準**: 手動觸發輸入錯誤能在 CI 日誌即時可見，避免靜默誤判。
+
 ## Phase 17: 收尾三部曲
 - [x] README 更新（反映 Council / Genesis / Memory / Tools API + 快速啟動）
 - [x] 記憶總結（寫入 `memory/self_journal.jsonl`，含 Phase 14-16 與亂碼修復）
