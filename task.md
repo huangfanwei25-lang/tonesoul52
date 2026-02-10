@@ -69,6 +69,12 @@
 - [x] 維持 docs consistency 與單測全綠
 **成功標準**: repo healthcheck 的兩條執行路徑都受契約守門，避免只剩 input 檢查但遺失執行步驟。
 
+## Phase 56: Workflow 契約獨立測試
+- [x] 新增 `tests/test_workflow_contracts.py`，以 YAML 解析檢查 `repo_healthcheck.yml` dispatch inputs 契約
+- [x] 新增雙路徑 runner 存在測試（push/pr default + workflow_dispatch）
+- [x] 新增 dispatch validation/warning 關鍵守門測試
+**成功標準**: workflow 契約不只靠 docs 字串檢查，並有獨立測試在回歸時直接失敗。
+
 ## Phase 17: 收尾三部曲
 - [x] README 更新（反映 Council / Genesis / Memory / Tools API + 快速啟動）
 - [x] 記憶總結（寫入 `memory/self_journal.jsonl`，含 Phase 14-16 與亂碼修復）
