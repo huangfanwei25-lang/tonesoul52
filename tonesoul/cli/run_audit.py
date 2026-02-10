@@ -1,7 +1,7 @@
 ﻿import os
 from typing import Dict
 
-from .inventory import write_inventory_report
+from ..inventory import write_inventory_report
 
 
 def main() -> Dict[str, str]:

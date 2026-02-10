@@ -2,7 +2,7 @@
 import os
 from typing import Dict
 
-from .persona_ledger_validator import validate_event
+from ..persona_ledger_validator import validate_event
 
 
 def load_latest_event(path: str) -> Dict[str, object]:
@@ -14,7 +14,7 @@ def load_latest_event(path: str) -> Dict[str, object]:
 
 
 def main() -> int:
-    from .config import WORKSPACE_ROOT
+    from ..config import WORKSPACE_ROOT
 
     ledger_path = None
     for candidate in (

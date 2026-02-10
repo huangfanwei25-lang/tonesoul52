@@ -1,7 +1,7 @@
-import argparse
+﻿import argparse
 from typing import Dict
 
-from .skill_promoter import promote_skills
+from ..skill_promoter import promote_skills
 
 
 def build_arg_parser() -> argparse.ArgumentParser:

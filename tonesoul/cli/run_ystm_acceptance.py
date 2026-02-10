@@ -1,6 +1,6 @@
-from typing import Dict, List
+﻿from typing import Dict, List
 
-from .ystm.acceptance import run_acceptance
+from ..ystm.acceptance import run_acceptance
 
 
 def main() -> List[Dict[str, str]]:

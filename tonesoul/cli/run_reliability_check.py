@@ -3,7 +3,7 @@ import socket
 from dataclasses import dataclass
 from typing import List, Optional
 
-from .config import KNOWN_ENTRYPOINTS
+from ..config import KNOWN_ENTRYPOINTS
 
 
 @dataclass

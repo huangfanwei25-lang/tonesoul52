@@ -1,6 +1,6 @@
-from typing import Dict
+﻿from typing import Dict
 
-from .evidence_collector import main
+from ..evidence_collector import main
 
 if __name__ == "__main__":
     paths: Dict[str, str] = main()

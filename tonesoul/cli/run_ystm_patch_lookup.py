@@ -1,9 +1,9 @@
-import argparse
+﻿import argparse
 import json
 import os
 from typing import Dict, List
 
-from .ystm.storage import load_nodes_payload
+from ..ystm.storage import load_nodes_payload
 
 
 def build_arg_parser() -> argparse.ArgumentParser:

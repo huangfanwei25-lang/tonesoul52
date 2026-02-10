@@ -1,16 +1,16 @@
-import argparse
+﻿import argparse
 import copy
 import json
 import os
 from typing import Dict, Optional
 
-from .tech_trace.capture import capture_record, load_text
-from .tech_trace.normalize import normalize_record
-from .ystm.diff import compute_batch_diff
-from .ystm.energy import EnergyConfig, apply_energy_totals
-from .ystm.governance import update_what, update_where
-from .ystm.representation import EmbeddingConfig
-from .ystm.schema import (
+from ..tech_trace.capture import capture_record, load_text
+from ..tech_trace.normalize import normalize_record
+from ..ystm.diff import compute_batch_diff
+from ..ystm.energy import EnergyConfig, apply_energy_totals
+from ..ystm.governance import update_what, update_where
+from ..ystm.representation import EmbeddingConfig
+from ..ystm.schema import (
     UpdateGate,
     UpdateRecord,
     Where,
@@ -21,7 +21,7 @@ from .ystm.schema import (
     stable_hash,
     utc_now,
 )
-from .ystm.storage import load_audit_log, load_nodes_payload, save_audit_log, save_nodes_payload
+from ..ystm.storage import load_audit_log, load_nodes_payload, save_audit_log, save_nodes_payload
 
 
 def build_arg_parser() -> argparse.ArgumentParser:

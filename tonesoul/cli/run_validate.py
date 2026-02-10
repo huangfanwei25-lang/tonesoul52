@@ -1,8 +1,8 @@
 ﻿import os
 from typing import List
 
-from .adapters import list_entrypoints, run_entrypoint
-from .config import KNOWN_ENTRYPOINTS
+from ..adapters import list_entrypoints, run_entrypoint
+from ..config import KNOWN_ENTRYPOINTS
 
 
 def validate_entrypoints() -> List[str]:

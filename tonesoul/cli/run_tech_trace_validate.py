@@ -1,4 +1,4 @@
-from .seed_schema_check import main
+﻿from ..tech_trace.validate import main
 
 if __name__ == "__main__":
     raise SystemExit(main())

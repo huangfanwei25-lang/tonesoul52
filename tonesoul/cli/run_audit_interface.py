@@ -1,6 +1,6 @@
-from typing import Dict
+﻿from typing import Dict
 
-from .audit_interface import main
+from ..audit_interface import main
 
 if __name__ == "__main__":
     paths: Dict[str, str] = main()

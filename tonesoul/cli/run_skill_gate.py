@@ -1,8 +1,8 @@
-import argparse
+﻿import argparse
 import os
 from typing import Dict, Optional
 
-from .skill_gate import list_skill_paths, review_skills
+from ..skill_gate import list_skill_paths, review_skills
 
 
 def build_arg_parser() -> argparse.ArgumentParser:

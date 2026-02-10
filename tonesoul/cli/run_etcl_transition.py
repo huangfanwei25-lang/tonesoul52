@@ -1,8 +1,8 @@
-import argparse
+﻿import argparse
 import os
 from typing import Dict
 
-from .etcl_lifecycle import load_seed, save_seed, seed_path_for_run, transition
+from ..etcl_lifecycle import load_seed, save_seed, seed_path_for_run, transition
 
 
 def build_arg_parser() -> argparse.ArgumentParser:

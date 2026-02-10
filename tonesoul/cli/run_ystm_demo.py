@@ -1,12 +1,12 @@
-import argparse
+﻿import argparse
 import os
 from typing import Dict
 
-from .ystm.demo import DEFAULT_SEGMENTS, DemoConfig, write_demo_outputs
-from .ystm.energy import EnergyConfig
-from .ystm.ingest import load_segments
-from .ystm.representation import EmbeddingConfig
-from .ystm.terrain import TerrainConfig
+from ..ystm.demo import DEFAULT_SEGMENTS, DemoConfig, write_demo_outputs
+from ..ystm.energy import EnergyConfig
+from ..ystm.ingest import load_segments
+from ..ystm.representation import EmbeddingConfig
+from ..ystm.terrain import TerrainConfig
 
 
 def build_arg_parser() -> argparse.ArgumentParser:
