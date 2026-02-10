@@ -38,6 +38,12 @@
 - [x] 補齊格式與 CLI 寫入測試，確保模板輸出一致
 **成功標準**: 可用單一指令將「錯過事項歸納」寫成一致模板，並由測試鎖定欄位結構。
 
+## Phase 51: Healthcheck SDH 端點可配置化
+- [x] `scripts/run_repo_healthcheck.py` 新增 `--web-base/--api-base/--sdh-timeout` 並轉傳給 `verify_7d`
+- [x] 擴充 `tests/test_run_repo_healthcheck.py`，鎖定 SDH 端點與 timeout 旗標傳遞
+- [x] 更新 `docs/status/README.md`，提供隔離端口執行範例
+**成功標準**: healthcheck 在 `--include-sdh` 模式可顯式指定 web/api 端點與 timeout，避免固定依賴 3000/5000。
+
 ## Phase 17: 收尾三部曲
 - [x] README 更新（反映 Council / Genesis / Memory / Tools API + 快速啟動）
 - [x] 記憶總結（寫入 `memory/self_journal.jsonl`，含 Phase 14-16 與亂碼修復）

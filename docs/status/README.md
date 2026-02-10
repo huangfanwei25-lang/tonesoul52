@@ -67,6 +67,12 @@ Live SDH mode-switch smoke (requires running web/backend services):
 python scripts/run_repo_healthcheck.py --strict --include-sdh --check-council-modes
 ```
 
+Isolated-port variant (useful with `scripts/run_7d_isolated.py` defaults):
+
+```bash
+python scripts/run_repo_healthcheck.py --strict --include-sdh --check-council-modes --web-base http://127.0.0.1:3002 --api-base http://127.0.0.1:5001 --sdh-timeout 40
+```
+
 ```bash
 python scripts/verify_git_hygiene.py
 ```

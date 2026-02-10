@@ -35,6 +35,9 @@ def test_build_check_specs_includes_verify_7d_flags(tmp_path: Path) -> None:
         include_sdh=True,
         check_council_modes=True,
         strict_soft_fail=True,
+        web_base=None,
+        api_base=None,
+        sdh_timeout=None,
         allow_missing_discussion=False,
         discussion_path=discussion_path,
     )
@@ -58,6 +61,9 @@ def test_build_check_specs_skips_7d_if_discussion_missing_and_allowed(tmp_path: 
         include_sdh=False,
         check_council_modes=True,
         strict_soft_fail=False,
+        web_base=None,
+        api_base=None,
+        sdh_timeout=None,
         allow_missing_discussion=True,
         discussion_path=discussion_path,
     )
@@ -77,6 +83,9 @@ def test_build_check_specs_can_disable_council_mode_checks(tmp_path: Path) -> No
         include_sdh=True,
         check_council_modes=False,
         strict_soft_fail=False,
+        web_base=None,
+        api_base=None,
+        sdh_timeout=None,
         allow_missing_discussion=False,
         discussion_path=discussion_path,
     )
@@ -84,6 +93,31 @@ def test_build_check_specs_can_disable_council_mode_checks(tmp_path: Path) -> No
     assert "--include-sdh" in audit_7d["command"]
     assert "--no-check-council-modes" in audit_7d["command"]
     assert "--check-council-modes" not in audit_7d["command"]
+
+
+def test_build_check_specs_passes_sdh_endpoint_overrides(tmp_path: Path) -> None:
+    discussion_path = tmp_path / "agent_discussion_curated.jsonl"
+    discussion_path.write_text('{"status":"final"}\n', encoding="utf-8")
+
+    specs = healthcheck._build_check_specs(
+        python_executable=r"C:\\repo\\.venv\\Scripts\\python.exe",
+        include_sdh=True,
+        check_council_modes=True,
+        strict_soft_fail=False,
+        web_base="http://127.0.0.1:3002",
+        api_base="http://127.0.0.1:5001",
+        sdh_timeout=55,
+        allow_missing_discussion=False,
+        discussion_path=discussion_path,
+    )
+
+    audit_7d = next(item for item in specs if item["name"] == "audit_7d")
+    assert "--web-base" in audit_7d["command"]
+    assert "http://127.0.0.1:3002" in audit_7d["command"]
+    assert "--api-base" in audit_7d["command"]
+    assert "http://127.0.0.1:5001" in audit_7d["command"]
+    assert "--timeout" in audit_7d["command"]
+    assert "55" in audit_7d["command"]
 
 
 def test_render_markdown_contains_summary_and_failures() -> None:

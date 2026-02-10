@@ -97,12 +97,21 @@ def _build_check_specs(
     include_sdh: bool,
     check_council_modes: bool,
     strict_soft_fail: bool,
+    web_base: str | None,
+    api_base: str | None,
+    sdh_timeout: int | None,
     allow_missing_discussion: bool,
     discussion_path: Path,
 ) -> list[dict[str, Any]]:
     verify_7d_cmd = [python_executable, "scripts/verify_7d.py"]
     if include_sdh:
         verify_7d_cmd.append("--include-sdh")
+        if web_base:
+            verify_7d_cmd.extend(["--web-base", web_base])
+        if api_base:
+            verify_7d_cmd.extend(["--api-base", api_base])
+        if sdh_timeout is not None:
+            verify_7d_cmd.extend(["--timeout", str(max(1, sdh_timeout))])
         if check_council_modes:
             verify_7d_cmd.append("--check-council-modes")
         else:
@@ -232,6 +241,22 @@ def build_parser() -> argparse.ArgumentParser:
         help="Pass --include-sdh to verify_7d (requires web/backend services).",
     )
     parser.add_argument(
+        "--web-base",
+        default=None,
+        help="Optional web base passed to verify_7d when --include-sdh is enabled.",
+    )
+    parser.add_argument(
+        "--api-base",
+        default=None,
+        help="Optional api base passed to verify_7d when --include-sdh is enabled.",
+    )
+    parser.add_argument(
+        "--sdh-timeout",
+        type=int,
+        default=None,
+        help="Optional timeout seconds passed to verify_7d when --include-sdh is enabled.",
+    )
+    parser.add_argument(
         "--check-council-modes",
         action=argparse.BooleanOptionalAction,
         default=True,
@@ -261,6 +286,9 @@ def main() -> int:
         include_sdh=bool(args.include_sdh),
         check_council_modes=bool(args.check_council_modes),
         strict_soft_fail=bool(args.strict_soft_fail),
+        web_base=args.web_base,
+        api_base=args.api_base,
+        sdh_timeout=args.sdh_timeout,
         allow_missing_discussion=bool(args.allow_missing_discussion),
         discussion_path=discussion_path,
     )
@@ -279,6 +307,9 @@ def main() -> int:
         "overall_ok": overall_ok,
         "config": {
             "include_sdh": bool(args.include_sdh),
+            "web_base": args.web_base,
+            "api_base": args.api_base,
+            "sdh_timeout": args.sdh_timeout,
             "check_council_modes": bool(args.check_council_modes),
             "strict_soft_fail": bool(args.strict_soft_fail),
             "allow_missing_discussion": bool(args.allow_missing_discussion),
