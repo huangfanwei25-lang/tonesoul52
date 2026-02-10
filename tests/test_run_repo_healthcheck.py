@@ -39,6 +39,11 @@ def test_build_check_specs_includes_verify_7d_flags(tmp_path: Path) -> None:
         discussion_path=discussion_path,
     )
     audit_7d = next(item for item in specs if item["name"] == "audit_7d")
+    git_hygiene = next(item for item in specs if item["name"] == "git_hygiene")
+    assert git_hygiene["command"] == [
+        r"C:\\repo\\.venv\\Scripts\\python.exe",
+        "scripts/verify_git_hygiene.py",
+    ]
     assert "--include-sdh" in audit_7d["command"]
     assert "--check-council-modes" in audit_7d["command"]
     assert "--strict-soft-fail" in audit_7d["command"]
@@ -57,8 +62,10 @@ def test_build_check_specs_skips_7d_if_discussion_missing_and_allowed(tmp_path: 
         discussion_path=discussion_path,
     )
     audit_7d = next(item for item in specs if item["name"] == "audit_7d")
+    git_hygiene = next(item for item in specs if item["name"] == "git_hygiene")
     assert audit_7d["command"] == [r"C:\\repo\\.venv\\Scripts\\python.exe", "scripts/verify_7d.py"]
     assert audit_7d["skip_reason"] == f"missing discussion file: {discussion_path}"
+    assert "skip_reason" not in git_hygiene
 
 
 def test_build_check_specs_can_disable_council_mode_checks(tmp_path: Path) -> None:

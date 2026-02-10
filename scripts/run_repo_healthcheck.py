@@ -140,6 +140,10 @@ def _build_check_specs(
             "command": [_npm_executable(), "--prefix", "apps/web", "run", "test"],
         },
         {
+            "name": "git_hygiene",
+            "command": [python_executable, "scripts/verify_git_hygiene.py"],
+        },
+        {
             "name": "audit_7d",
             "command": verify_7d_cmd,
         },

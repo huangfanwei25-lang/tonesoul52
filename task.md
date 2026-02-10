@@ -21,6 +21,12 @@
 - [x] 將收斂週規則寫入維運文件（避免再次框架擴張造成 drift）
 **成功標準**: 有文件化的例行保養節奏，且不增加日常交付負擔。
 
+## Phase 48: Healthcheck × Git Hygiene 收斂
+- [x] 將 `scripts/verify_git_hygiene.py` 納入 `scripts/run_repo_healthcheck.py` 預設檢查清單
+- [x] 擴充 `tests/test_run_repo_healthcheck.py`，鎖定 git hygiene 檢查存在
+- [x] 更新 `docs/status/README.md`，對齊健康檢查聚合項目
+**成功標準**: 一鍵健康檢查可同時覆蓋程式品質與 git object-store 健康度，且文件與測試契約一致。
+
 ## Phase 17: 收尾三部曲
 - [x] README 更新（反映 Council / Genesis / Memory / Tools API + 快速啟動）
 - [x] 記憶總結（寫入 `memory/self_journal.jsonl`，含 Phase 14-16 與亂碼修復）
