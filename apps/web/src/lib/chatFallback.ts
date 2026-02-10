@@ -4,6 +4,7 @@ const TIMEOUT_PATTERNS = ["timeout", "timed out", "abort", "aborted"];
 const UNREACHABLE_PATTERNS = [
     "failed to fetch",
     "network",
+    "transport",
     "econnrefused",
     "enotfound",
     "unavailable",

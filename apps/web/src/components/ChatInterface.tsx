@@ -40,6 +40,12 @@ interface ChatInterfaceProps {
     onConversationUpdate: (conv: Conversation) => void;
 }
 
+type BackendHealthProbePayload = {
+    ok?: boolean;
+    reason?: string;
+    config_issue?: string;
+};
+
 type CouncilMode = "rules" | "hybrid" | "full_llm";
 type ChatActiveMode = "backend" | "legacy_provider" | "fallback";
 const COUNCIL_MODE_STORAGE_KEY = "tonesoul.chat.council_mode";
@@ -717,6 +723,55 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
+
+    useEffect(() => {
+        if (!USE_BACKEND_CHAT) return;
+
+        let cancelled = false;
+        const probeBackendHealth = async () => {
+            try {
+                const response = await fetch("/api/backend-health", {
+                    method: "GET",
+                    cache: "no-store",
+                });
+
+                let payload: BackendHealthProbePayload | null = null;
+                try {
+                    payload = (await response.json()) as BackendHealthProbePayload;
+                } catch {
+                    payload = null;
+                }
+
+                if (cancelled) return;
+
+                if (response.ok && payload?.ok) {
+                    setChatActiveMode("backend");
+                    setFallbackReasonCode(null);
+                    return;
+                }
+
+                const reasonCode = classifyBackendFallbackReason(
+                    payload?.reason ?? payload?.config_issue ?? `backend status ${response.status}`
+                );
+                setFallbackReasonCode(reasonCode);
+                if (ENABLE_PROVIDER_FALLBACK) {
+                    setChatActiveMode("fallback");
+                }
+            } catch (error) {
+                if (cancelled) return;
+                setFallbackReasonCode(classifyBackendFallbackReason(error));
+                if (ENABLE_PROVIDER_FALLBACK) {
+                    setChatActiveMode("fallback");
+                }
+            }
+        };
+
+        void probeBackendHealth();
+
+        return () => {
+            cancelled = true;
+        };
+    }, []);
 
     const toggleDeliberation = (nodeId: string) => {
         setExpandedNodes(prev => {

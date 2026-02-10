@@ -1,0 +1,85 @@
+import { NextResponse } from "next/server";
+import {
+    getBackendUrl,
+    getConfiguredBackendUrl,
+    isVercelRuntime,
+    validateVercelBackendConfig,
+} from "../_shared/backendConfig";
+
+const PROBE_TIMEOUT_MS = 4000;
+
+type BackendProbeFailureReason =
+    | "backend_health_timeout"
+    | "backend_health_transport_error"
+    | "backend_health_http_error";
+
+type BackendProbeResult =
+    | { ok: true; status: number }
+    | { ok: false; reason: BackendProbeFailureReason; status?: number };
+
+async function probeBackendHealth(backendUrl: string): Promise<BackendProbeResult> {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), PROBE_TIMEOUT_MS);
+    try {
+        const response = await fetch(`${backendUrl}/api/health`, {
+            method: "GET",
+            headers: { Accept: "application/json" },
+            signal: controller.signal,
+            cache: "no-store",
+        });
+
+        if (!response.ok) {
+            return { ok: false, reason: "backend_health_http_error", status: response.status };
+        }
+
+        return { ok: true, status: response.status };
+    } catch (error) {
+        if (error instanceof Error && error.name === "AbortError") {
+            return { ok: false, reason: "backend_health_timeout" };
+        }
+        return { ok: false, reason: "backend_health_transport_error" };
+    } finally {
+        clearTimeout(timeout);
+    }
+}
+
+export async function GET() {
+    const backendUrl = getBackendUrl();
+    const configuredBackendUrl = getConfiguredBackendUrl();
+
+    if (isVercelRuntime()) {
+        const validation = validateVercelBackendConfig(backendUrl, configuredBackendUrl);
+        if (!validation.valid) {
+            return NextResponse.json(
+                {
+                    ok: false,
+                    backend_url: backendUrl,
+                    config_issue: validation.issue,
+                    reason: "backend_config_invalid",
+                    hint: "Set TONESOUL_BACKEND_URL to a reachable HTTPS backend endpoint.",
+                },
+                { status: 503 }
+            );
+        }
+    }
+
+    const probe = await probeBackendHealth(backendUrl);
+    if (!probe.ok) {
+        return NextResponse.json(
+            {
+                ok: false,
+                backend_url: backendUrl,
+                reason: probe.reason,
+                backend_status: probe.status ?? null,
+            },
+            { status: 503 }
+        );
+    }
+
+    return NextResponse.json({
+        ok: true,
+        backend_url: backendUrl,
+        backend_status: probe.status,
+        checked_at: new Date().toISOString(),
+    });
+}

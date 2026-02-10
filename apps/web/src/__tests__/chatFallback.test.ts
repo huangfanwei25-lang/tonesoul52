@@ -14,6 +14,7 @@ describe("classifyBackendFallbackReason", () => {
     it("classifies transport errors as unreachable", () => {
         expect(classifyBackendFallbackReason(new Error("Failed to fetch"))).toBe("backend_unreachable");
         expect(classifyBackendFallbackReason(new Error("connect ECONNREFUSED"))).toBe("backend_unreachable");
+        expect(classifyBackendFallbackReason("backend_health_transport_error")).toBe("backend_unreachable");
     });
 
     it("falls back to backend_error for unknown failures", () => {
