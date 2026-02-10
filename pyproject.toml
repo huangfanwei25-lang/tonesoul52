@@ -7,7 +7,7 @@ name = "tonesoul52"
 version = "0.1.0"
 description = "AI Governance Toolkit - Make LLM decisions auditable, traceable, and trustworthy"
 readme = "README.md"
-license = {text = "MIT"}
+license = {text = "Apache-2.0"}
 authors = [
     {name = "黃梵威", email = "tonesoul@example.com"}
 ]
@@ -21,7 +21,7 @@ keywords = [
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
+    "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
@@ -59,9 +59,9 @@ ystm_viz = [
 ]
 
 [project.scripts]
-ts52-healthcheck = "tonesoul52.run_healthcheck:main"
-ts52-audit = "tonesoul52.run_audit:main"
-ts52-council = "tonesoul52.run_council_healthcheck:main"
+ts52-healthcheck = "tonesoul.cli.run_healthcheck:main"
+ts52-audit = "tonesoul.cli.run_audit:main"
+ts52-council = "tonesoul.cli.run_council_healthcheck:main"
 
 [project.urls]
 Homepage = "https://github.com/Fan1234-1/tonesoul52"

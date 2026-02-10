@@ -1,6 +1,8 @@
-This repository uses a split licensing approach:
+This repository uses a unified licensing approach:
 
-- Documentation (docs/, governance/): CC-BY-4.0. See LICENSE-CC-BY-4.0 for the human-readable note and link to the full license text.
-- Code and schemas (schemas/, any code): MIT. See LICENSE-MIT for the full MIT text.
+- All code and documentation: Apache License 2.0. See the root LICENSE file.
+- Philosophy texts (TONESOUL_PHILOSOPHY.txt, TONESOUL_THEORY.txt, TONESOUL_NARRATIVE.txt): CC-BY-4.0.
+  See LICENSE-CC-BY-4.0 for the human-readable note.
 
-If a file explicitly names its license, the file-level license takes precedence. For questions about licensing, contact the maintainers at xsw123zaq@gmail.com.
+If a file explicitly names its license, the file-level license takes precedence.
+For questions about licensing, contact: huangfanwei25@gmail.com

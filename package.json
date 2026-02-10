@@ -3,8 +3,8 @@
     "version": "1.0.0",
     "description": "ToneSoul Architecture Engine",
     "scripts": {
-        "test": "python verify_all.py"
+        "test": "python -m pytest tests/ -q"
     },
-    "author": "",
-    "license": "ISC"
+    "author": "黃梵威 (Fan-Wei Huang)",
+    "license": "Apache-2.0"
 }
