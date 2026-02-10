@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Brain, Mail, Github, ExternalLink, BookOpen, Shield, BarChart3, FileText, Lightbulb, Heart } from "lucide-react";
+import SevenDimensionCards from "@/components/SevenDimensionCards";
 
 // Schema.org JSON-LD for AI Search Optimization
 const jsonLd = {
@@ -372,6 +373,9 @@ export default function DocsPage() {
                             </div>
                         </div>
                     </details>
+
+                    {/* 7D Audit Framework */}
+                    <SevenDimensionCards />
 
                     {/* Research Papers */}
                     <section className="bg-slate-800/50 border border-slate-700 rounded-2xl p-8">
