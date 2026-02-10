@@ -46,6 +46,8 @@ def build_report(repo_root: Path) -> dict[str, Any]:
     verify_7d = repo_root / "scripts" / "verify_7d.py"
     workflow = repo_root / ".github" / "workflows" / "test.yml"
     monthly_workflow = repo_root / ".github" / "workflows" / "monthly_consolidation.yml"
+    git_hygiene_workflow = repo_root / ".github" / "workflows" / "git_hygiene.yml"
+    status_readme = repo_root / "docs" / "status" / "README.md"
     framework_doc = repo_root / "docs" / "7D_AUDIT_FRAMEWORK.md"
     exec_doc = repo_root / "docs" / "7D_EXECUTION_SPEC.md"
 
@@ -104,6 +106,33 @@ def build_report(repo_root: Path) -> dict[str, Any]:
     else:
         issues.append("missing .github/workflows/monthly_consolidation.yml")
 
+    git_hygiene_exists = git_hygiene_workflow.exists()
+    git_hygiene_has_schedule = False
+    git_hygiene_has_runner = False
+    git_hygiene_has_artifact_upload = False
+    if git_hygiene_exists:
+        git_hygiene_text = _read(git_hygiene_workflow)
+        git_hygiene_has_schedule = "schedule:" in git_hygiene_text
+        git_hygiene_has_runner = "scripts/verify_git_hygiene.py" in git_hygiene_text
+        git_hygiene_has_artifact_upload = "actions/upload-artifact" in git_hygiene_text
+        if not git_hygiene_has_schedule:
+            issues.append("git hygiene workflow missing schedule trigger")
+        if not git_hygiene_has_runner:
+            issues.append("git hygiene workflow missing verify_git_hygiene invocation")
+        if not git_hygiene_has_artifact_upload:
+            issues.append("git hygiene workflow missing artifact upload step")
+    else:
+        issues.append("missing .github/workflows/git_hygiene.yml")
+
+    status_readme_has_git_hygiene = False
+    if status_readme.exists():
+        status_readme_text = _read(status_readme)
+        status_readme_has_git_hygiene = "git_hygiene_latest.json" in status_readme_text
+        if not status_readme_has_git_hygiene:
+            issues.append("docs/status/README.md missing git hygiene artifact reference")
+    else:
+        issues.append("missing docs/status/README.md")
+
     return {
         "ok": len(issues) == 0,
         "rdd_thresholds": {
@@ -120,6 +149,13 @@ def build_report(repo_root: Path) -> dict[str, Any]:
             "has_schedule": monthly_has_schedule,
             "has_runner": monthly_has_runner,
             "has_allow_missing_discussion": monthly_has_allow_missing_discussion,
+        },
+        "git_hygiene": {
+            "workflow_exists": git_hygiene_exists,
+            "has_schedule": git_hygiene_has_schedule,
+            "has_runner": git_hygiene_has_runner,
+            "has_artifact_upload": git_hygiene_has_artifact_upload,
+            "status_readme_reference": status_readme_has_git_hygiene,
         },
         "issues": issues,
     }

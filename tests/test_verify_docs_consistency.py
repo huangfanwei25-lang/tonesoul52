@@ -18,10 +18,18 @@ def test_build_report_passes_when_thresholds_and_curated_refs_align(tmp_path: Pa
         tmp_path / ".github" / "workflows" / "monthly_consolidation.yml",
         "on:\n  schedule:\n    - cron: '30 3 1 * *'\njobs:\n  c:\n    steps:\n      - run: python scripts/run_monthly_consolidation.py --strict --allow-missing-discussion\n",
     )
+    _write(
+        tmp_path / ".github" / "workflows" / "git_hygiene.yml",
+        "on:\n  schedule:\n    - cron: '0 4 * * 1'\njobs:\n  g:\n    steps:\n      - run: python scripts/verify_git_hygiene.py\n      - uses: actions/upload-artifact@v4\n",
+    )
     _write(tmp_path / "docs" / "7D_AUDIT_FRAMEWORK.md", "minimum 20 tests\n")
     _write(
         tmp_path / "docs" / "7D_EXECUTION_SPEC.md",
         "at least 20 cases\npython tools/agent_discussion_tool.py audit --path memory/agent_discussion_curated.jsonl\n",
+    )
+    _write(
+        tmp_path / "docs" / "status" / "README.md",
+        "- git_hygiene_latest.json\n",
     )
 
     report = docs_consistency.build_report(tmp_path)
@@ -32,6 +40,13 @@ def test_build_report_passes_when_thresholds_and_curated_refs_align(tmp_path: Pa
         "has_schedule": True,
         "has_runner": True,
         "has_allow_missing_discussion": True,
+    }
+    assert report["git_hygiene"] == {
+        "workflow_exists": True,
+        "has_schedule": True,
+        "has_runner": True,
+        "has_artifact_upload": True,
+        "status_readme_reference": True,
     }
 
 
@@ -61,12 +76,46 @@ def test_build_report_fails_when_monthly_workflow_missing_allow_missing_discussi
         tmp_path / ".github" / "workflows" / "monthly_consolidation.yml",
         "on:\n  schedule:\n    - cron: '30 3 1 * *'\njobs:\n  c:\n    steps:\n      - run: python scripts/run_monthly_consolidation.py --strict\n",
     )
+    _write(
+        tmp_path / ".github" / "workflows" / "git_hygiene.yml",
+        "on:\n  schedule:\n    - cron: '0 4 * * 1'\njobs:\n  g:\n    steps:\n      - run: python scripts/verify_git_hygiene.py\n      - uses: actions/upload-artifact@v4\n",
+    )
     _write(tmp_path / "docs" / "7D_AUDIT_FRAMEWORK.md", "minimum 20 tests\n")
     _write(
         tmp_path / "docs" / "7D_EXECUTION_SPEC.md",
         "at least 20 cases\npython tools/agent_discussion_tool.py audit --path memory/agent_discussion_curated.jsonl\n",
     )
+    _write(
+        tmp_path / "docs" / "status" / "README.md",
+        "- git_hygiene_latest.json\n",
+    )
 
     report = docs_consistency.build_report(tmp_path)
     assert report["ok"] is False
     assert any("--allow-missing-discussion" in issue for issue in report["issues"])
+
+
+def test_build_report_fails_when_git_hygiene_readme_reference_missing(tmp_path: Path) -> None:
+    _write(
+        tmp_path / "scripts" / "verify_7d.py",
+        "RDD_MIN_CASES = 20\nDDD_DISCUSSION_PATH='memory/agent_discussion_curated.jsonl'\n",
+    )
+    _write(tmp_path / ".github" / "workflows" / "test.yml", "threshold = 20\n")
+    _write(
+        tmp_path / ".github" / "workflows" / "monthly_consolidation.yml",
+        "on:\n  schedule:\n    - cron: '30 3 1 * *'\njobs:\n  c:\n    steps:\n      - run: python scripts/run_monthly_consolidation.py --strict --allow-missing-discussion\n",
+    )
+    _write(
+        tmp_path / ".github" / "workflows" / "git_hygiene.yml",
+        "on:\n  schedule:\n    - cron: '0 4 * * 1'\njobs:\n  g:\n    steps:\n      - run: python scripts/verify_git_hygiene.py\n      - uses: actions/upload-artifact@v4\n",
+    )
+    _write(tmp_path / "docs" / "7D_AUDIT_FRAMEWORK.md", "minimum 20 tests\n")
+    _write(
+        tmp_path / "docs" / "7D_EXECUTION_SPEC.md",
+        "at least 20 cases\npython tools/agent_discussion_tool.py audit --path memory/agent_discussion_curated.jsonl\n",
+    )
+    _write(tmp_path / "docs" / "status" / "README.md", "- repo_healthcheck_latest.json\n")
+
+    report = docs_consistency.build_report(tmp_path)
+    assert report["ok"] is False
+    assert any("git hygiene artifact reference" in issue for issue in report["issues"])
