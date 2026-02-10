@@ -81,6 +81,13 @@
 - [x] 調整 workflow/docs consistency 契約與測試，驗證改為檢查腳本 + workflow 連接點
 **成功標準**: dispatch 規則集中於單一腳本，workflow YAML 維持薄入口且契約測試可防回歸。
 
+## Phase 58: Dispatch Python 化與行為測試
+- [x] 新增 `scripts/run_repo_healthcheck_dispatch.py`（env -> command 組裝 + validation/warning）
+- [x] workflow dispatch 改為直接呼叫 Python dispatch script
+- [x] 新增 `tests/test_run_repo_healthcheck_dispatch.py`，鎖定 timeout/error、warning、flag 組裝行為
+- [x] docs consistency / workflow contracts 同步對齊新腳本路徑
+**成功標準**: dispatch 行為可在本地以 Python 單測重演，降低 shell 環境相依造成的測試盲區。
+
 ## Phase 17: 收尾三部曲
 - [x] README 更新（反映 Council / Genesis / Memory / Tools API + 快速啟動）
 - [x] 記憶總結（寫入 `memory/self_journal.jsonl`，含 Phase 14-16 與亂碼修復）

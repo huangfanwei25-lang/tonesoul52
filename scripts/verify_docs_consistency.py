@@ -48,7 +48,7 @@ def build_report(repo_root: Path) -> dict[str, Any]:
     monthly_workflow = repo_root / ".github" / "workflows" / "monthly_consolidation.yml"
     git_hygiene_workflow = repo_root / ".github" / "workflows" / "git_hygiene.yml"
     repo_healthcheck_workflow = repo_root / ".github" / "workflows" / "repo_healthcheck.yml"
-    repo_healthcheck_dispatch_script = repo_root / "scripts" / "run_repo_healthcheck_dispatch.sh"
+    repo_healthcheck_dispatch_script = repo_root / "scripts" / "run_repo_healthcheck_dispatch.py"
     status_readme = repo_root / "docs" / "status" / "README.md"
     framework_doc = repo_root / "docs" / "7D_AUDIT_FRAMEWORK.md"
     exec_doc = repo_root / "docs" / "7D_EXECUTION_SPEC.md"
@@ -163,7 +163,7 @@ def build_report(repo_root: Path) -> dict[str, Any]:
             for token in (
                 "Run repository healthcheck (blocking, workflow_dispatch)",
                 "github.event_name == 'workflow_dispatch'",
-                "bash scripts/run_repo_healthcheck_dispatch.sh",
+                "python scripts/run_repo_healthcheck_dispatch.py",
             )
         )
         repo_healthcheck_has_dispatch_env_bridge = all(
@@ -192,9 +192,13 @@ def build_report(repo_root: Path) -> dict[str, Any]:
 
     if repo_healthcheck_script_exists:
         repo_healthcheck_script_text = _read(repo_healthcheck_dispatch_script)
-        repo_healthcheck_script_has_base_command = (
-            "python scripts/run_repo_healthcheck.py --strict --allow-missing-discussion"
-            in repo_healthcheck_script_text
+        repo_healthcheck_script_has_base_command = all(
+            token in repo_healthcheck_script_text
+            for token in (
+                "scripts/run_repo_healthcheck.py",
+                "--strict",
+                "--allow-missing-discussion",
+            )
         )
         repo_healthcheck_script_has_timeout_validation = (
             "::error::sdh_timeout must be a positive integer" in repo_healthcheck_script_text
@@ -218,7 +222,7 @@ def build_report(repo_root: Path) -> dict[str, Any]:
         if not repo_healthcheck_script_has_single_side_warnings:
             issues.append("repo healthcheck dispatch script missing single-side endpoint warnings")
     else:
-        issues.append("missing scripts/run_repo_healthcheck_dispatch.sh")
+        issues.append("missing scripts/run_repo_healthcheck_dispatch.py")
 
     status_readme_has_git_hygiene = False
     status_readme_has_repo_healthcheck_dispatch_inputs = False

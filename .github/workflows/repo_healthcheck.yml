@@ -77,7 +77,7 @@ jobs:
           TS_API_BASE: ${{ github.event.inputs.api_base }}
           TS_SDH_TIMEOUT: ${{ github.event.inputs.sdh_timeout }}
           TS_CHECK_COUNCIL_MODES: ${{ github.event.inputs.check_council_modes }}
-        run: bash scripts/run_repo_healthcheck_dispatch.sh
+        run: python scripts/run_repo_healthcheck_dispatch.py
 
       - name: Upload healthcheck artifacts
         if: always()

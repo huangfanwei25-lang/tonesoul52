@@ -6,7 +6,7 @@ from typing import Any
 import yaml
 
 WORKFLOW_PATH = Path(".github/workflows/repo_healthcheck.yml")
-DISPATCH_SCRIPT_PATH = Path("scripts/run_repo_healthcheck_dispatch.sh")
+DISPATCH_SCRIPT_PATH = Path("scripts/run_repo_healthcheck_dispatch.py")
 
 
 def _load_workflow() -> dict[str, Any]:
@@ -78,7 +78,7 @@ def test_repo_healthcheck_workflow_has_default_and_dispatch_runners() -> None:
     assert dispatch_step.get("if") == "github.event_name == 'workflow_dispatch'"
     dispatch_run = dispatch_step.get("run", "")
     assert isinstance(dispatch_run, str)
-    assert dispatch_run == "bash scripts/run_repo_healthcheck_dispatch.sh"
+    assert dispatch_run == "python scripts/run_repo_healthcheck_dispatch.py"
 
     dispatch_env = dispatch_step.get("env", {})
     assert isinstance(dispatch_env, dict)
@@ -94,8 +94,13 @@ def test_repo_healthcheck_workflow_has_default_and_dispatch_runners() -> None:
 
 def test_repo_healthcheck_workflow_dispatch_validation_guards_present() -> None:
     script_text = DISPATCH_SCRIPT_PATH.read_text(encoding="utf-8")
-    assert (
-        "python scripts/run_repo_healthcheck.py --strict --allow-missing-discussion" in script_text
+    assert all(
+        token in script_text
+        for token in (
+            "scripts/run_repo_healthcheck.py",
+            "--strict",
+            "--allow-missing-discussion",
+        )
     )
     assert "::error::sdh_timeout must be a positive integer" in script_text
     assert "SDH inputs were provided but include_sdh=false" in script_text

@@ -37,7 +37,7 @@ def _write_repo_healthcheck_workflow(
         "      - name: Run repository healthcheck (blocking, workflow_dispatch)\n"
         "        if: github.event_name == 'workflow_dispatch'\n"
         f"{dispatch_env}"
-        "        run: bash scripts/run_repo_healthcheck_dispatch.sh\n"
+        "        run: python scripts/run_repo_healthcheck_dispatch.py\n"
         if include_dispatch_runner
         else ""
     )
@@ -127,7 +127,7 @@ def test_build_report_passes_when_thresholds_and_curated_refs_align(tmp_path: Pa
     )
     _write_repo_healthcheck_workflow(tmp_path / ".github" / "workflows" / "repo_healthcheck.yml")
     _write_repo_healthcheck_dispatch_script(
-        tmp_path / "scripts" / "run_repo_healthcheck_dispatch.sh"
+        tmp_path / "scripts" / "run_repo_healthcheck_dispatch.py"
     )
     _write(tmp_path / "docs" / "7D_AUDIT_FRAMEWORK.md", "minimum 20 tests\n")
     _write(
@@ -201,7 +201,7 @@ def test_build_report_fails_when_monthly_workflow_missing_allow_missing_discussi
     )
     _write_repo_healthcheck_workflow(tmp_path / ".github" / "workflows" / "repo_healthcheck.yml")
     _write_repo_healthcheck_dispatch_script(
-        tmp_path / "scripts" / "run_repo_healthcheck_dispatch.sh"
+        tmp_path / "scripts" / "run_repo_healthcheck_dispatch.py"
     )
     _write(tmp_path / "docs" / "7D_AUDIT_FRAMEWORK.md", "minimum 20 tests\n")
     _write(
@@ -231,7 +231,7 @@ def test_build_report_fails_when_git_hygiene_readme_reference_missing(tmp_path: 
     )
     _write_repo_healthcheck_workflow(tmp_path / ".github" / "workflows" / "repo_healthcheck.yml")
     _write_repo_healthcheck_dispatch_script(
-        tmp_path / "scripts" / "run_repo_healthcheck_dispatch.sh"
+        tmp_path / "scripts" / "run_repo_healthcheck_dispatch.py"
     )
     _write(tmp_path / "docs" / "7D_AUDIT_FRAMEWORK.md", "minimum 20 tests\n")
     _write(
@@ -263,7 +263,7 @@ def test_build_report_fails_when_repo_healthcheck_missing_timeout_validation(
     )
     _write_repo_healthcheck_workflow(tmp_path / ".github" / "workflows" / "repo_healthcheck.yml")
     _write_repo_healthcheck_dispatch_script(
-        tmp_path / "scripts" / "run_repo_healthcheck_dispatch.sh",
+        tmp_path / "scripts" / "run_repo_healthcheck_dispatch.py",
         include_timeout_validation=False,
     )
     _write(tmp_path / "docs" / "7D_AUDIT_FRAMEWORK.md", "minimum 20 tests\n")
@@ -297,7 +297,7 @@ def test_build_report_fails_when_repo_healthcheck_missing_default_runner(tmp_pat
         include_default_runner=False,
     )
     _write_repo_healthcheck_dispatch_script(
-        tmp_path / "scripts" / "run_repo_healthcheck_dispatch.sh"
+        tmp_path / "scripts" / "run_repo_healthcheck_dispatch.py"
     )
     _write(tmp_path / "docs" / "7D_AUDIT_FRAMEWORK.md", "minimum 20 tests\n")
     _write(
