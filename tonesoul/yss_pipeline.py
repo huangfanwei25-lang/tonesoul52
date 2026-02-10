@@ -142,6 +142,45 @@ class GateArtifacts:
     dcs_result_path: Optional[str]
 
 
+@dataclass
+class PipelineContext:
+    """Runtime state flowing through the gate pipeline.
+
+    Encapsulates all paths, payloads, and computed values that
+    previously required 25+ individual function parameters.
+    """
+
+    config: PipelineConfig
+    workspace: str
+    run_dir: str
+
+    # --- payloads ---
+    context_payload: Dict[str, object]
+    registry: List[Dict[str, object]]
+    frame_plan: Dict[str, object]
+    constraints_doc: str
+    execution_report: str
+    mercy_objective: Dict[str, object]
+    skill_directives: Dict[str, bool]
+    ystm_outputs: Dict[str, str]
+
+    # --- paths ---
+    context_path: str
+    action_set_path: str
+    mercy_objective_path: str
+    execution_report_path: str
+    evidence_summary_path: str
+    error_ledger_path: str
+    gate_report_path: str
+    council_summary_path: Optional[str] = None
+    tsr_metrics_path: Optional[str] = None
+    skills_path: Optional[str] = None
+    ystm_diff_path: Optional[str] = None
+    tech_trace_capture_path: Optional[str] = None
+    tech_trace_normalize_path: Optional[str] = None
+    intent_verification_path: Optional[str] = None
+
+
 def _load_seed(path: str) -> Dict[str, object]:
     ext = os.path.splitext(path)[1].lower()
     with open(path, "r", encoding="utf-8") as handle:
@@ -538,99 +577,62 @@ def _extract_gate_result(
     return None
 
 
-def _build_required_files(
-    context_path: str,
-    execution_report_path: str,
-    action_set_path: str,
-    mercy_objective_path: str,
-    council_summary_path: Optional[str],
-    tsr_metrics_path: Optional[str],
-    ystm_outputs: Dict[str, str],
-    skills_path: Optional[str],
-    ystm_diff_path: Optional[str],
-    tech_trace_capture_path: Optional[str],
-    tech_trace_normalize_path: Optional[str],
-    intent_verification_path: Optional[str],
-) -> Dict[str, Optional[str]]:
+def _build_required_files(ctx: PipelineContext) -> Dict[str, Optional[str]]:
     required_files = {
-        "context": context_path,
-        "execution_report": execution_report_path,
-        "action_set": action_set_path,
-        "mercy_objective": mercy_objective_path,
-        "council_summary": council_summary_path,
-        "tsr_metrics": tsr_metrics_path,
-        "ystm_nodes": ystm_outputs.get("nodes"),
-        "ystm_audit": ystm_outputs.get("audit"),
-        "ystm_terrain": ystm_outputs.get("terrain"),
-        "ystm_terrain_json": ystm_outputs.get("terrain_json"),
-        "ystm_terrain_svg": ystm_outputs.get("terrain_svg"),
-        "ystm_terrain_p2": ystm_outputs.get("terrain_p2"),
-        "ystm_terrain_p2_json": ystm_outputs.get("terrain_p2_json"),
-        "ystm_terrain_p2_svg": ystm_outputs.get("terrain_p2_svg"),
+        "context": ctx.context_path,
+        "execution_report": ctx.execution_report_path,
+        "action_set": ctx.action_set_path,
+        "mercy_objective": ctx.mercy_objective_path,
+        "council_summary": ctx.council_summary_path,
+        "tsr_metrics": ctx.tsr_metrics_path,
+        "ystm_nodes": ctx.ystm_outputs.get("nodes"),
+        "ystm_audit": ctx.ystm_outputs.get("audit"),
+        "ystm_terrain": ctx.ystm_outputs.get("terrain"),
+        "ystm_terrain_json": ctx.ystm_outputs.get("terrain_json"),
+        "ystm_terrain_svg": ctx.ystm_outputs.get("terrain_svg"),
+        "ystm_terrain_p2": ctx.ystm_outputs.get("terrain_p2"),
+        "ystm_terrain_p2_json": ctx.ystm_outputs.get("terrain_p2_json"),
+        "ystm_terrain_p2_svg": ctx.ystm_outputs.get("terrain_p2_svg"),
     }
-    if skills_path:
-        required_files["skills_applied"] = skills_path
-    if ystm_diff_path:
-        required_files["ystm_diff"] = ystm_diff_path
-    if tech_trace_capture_path:
-        required_files["tech_trace_capture"] = tech_trace_capture_path
-    if tech_trace_normalize_path:
-        required_files["tech_trace_normalize"] = tech_trace_normalize_path
-    if intent_verification_path:
-        required_files["intent_verification"] = intent_verification_path
+    if ctx.skills_path:
+        required_files["skills_applied"] = ctx.skills_path
+    if ctx.ystm_diff_path:
+        required_files["ystm_diff"] = ctx.ystm_diff_path
+    if ctx.tech_trace_capture_path:
+        required_files["tech_trace_capture"] = ctx.tech_trace_capture_path
+    if ctx.tech_trace_normalize_path:
+        required_files["tech_trace_normalize"] = ctx.tech_trace_normalize_path
+    if ctx.intent_verification_path:
+        required_files["intent_verification"] = ctx.intent_verification_path
     return required_files
 
 
-def _collect_gate_results(
-    config: PipelineConfig,
-    workspace: str,
-    run_dir: str,
-    context_payload: Dict[str, object],
-    registry: List[Dict[str, object]],
-    frame_plan: Dict[str, object],
-    constraints_doc: str,
-    execution_report: str,
-    mercy_objective: Dict[str, object],
-    action_set_path: str,
-    mercy_objective_path: str,
-    council_summary_path: Optional[str],
-    tsr_metrics_path: Optional[str],
-    skills_path: Optional[str],
-    skill_directives: Dict[str, bool],
-    ystm_outputs: Dict[str, str],
-    ystm_diff_path: Optional[str],
-    tech_trace_capture_path: Optional[str],
-    tech_trace_normalize_path: Optional[str],
-    intent_verification_path: Optional[str],
-    evidence_summary_path: str,
-    context_path: str,
-    execution_report_path: str,
-    error_ledger_path: str,
-) -> List[GateResult]:
+def _collect_gate_results(ctx: PipelineContext) -> List[GateResult]:
+    config = ctx.config
     skip_gates = config.skip_gates
-    if skill_directives.get("force_gates") or skill_directives.get("require_evidence"):
+    if ctx.skill_directives.get("force_gates") or ctx.skill_directives.get("require_evidence"):
         skip_gates = False
 
-    p0_result_gate = p0_gate(constraints_doc)
+    p0_result_gate = p0_gate(ctx.constraints_doc)
     if skip_gates:
         return [p0_result_gate]
 
     poav_result_gate = poav_gate(
-        execution_report,
+        ctx.execution_report,
         threshold=config.poav_threshold,
         enforce=config.poav_enforce,
         source="execution_report",
     )
     mercy_result_gate = mercy_gate(
-        mercy_objective,
+        ctx.mercy_objective,
         threshold=config.mercy_threshold,
         enforce=config.mercy_enforce,
     )
-    drift_metrics = load_drift_metrics(ystm_outputs.get("nodes"))
+    drift_metrics = load_drift_metrics(ctx.ystm_outputs.get("nodes"))
     tsr_delta_norm = None
-    if tsr_metrics_path and os.path.exists(tsr_metrics_path):
+    if ctx.tsr_metrics_path and os.path.exists(ctx.tsr_metrics_path):
         try:
-            with open(tsr_metrics_path, "r", encoding="utf-8") as handle:
+            with open(ctx.tsr_metrics_path, "r", encoding="utf-8") as handle:
                 tsr_payload = json.load(handle)
             delta = tsr_payload.get("delta") if isinstance(tsr_payload, dict) else None
             if isinstance(delta, dict):
@@ -640,35 +642,35 @@ def _collect_gate_results(
         except (OSError, json.JSONDecodeError):
             tsr_delta_norm = None
     escalation_result_gate = escalation_gate(
-        context_payload,
+        ctx.context_payload,
         poav_result_gate,
         drift_metrics,
         poav_threshold=config.poav_threshold,
         drift_threshold=config.drift_threshold,
-        ledger_path=error_ledger_path,
-        run_id=os.path.basename(run_dir),
+        ledger_path=ctx.error_ledger_path,
+        run_id=os.path.basename(ctx.run_dir),
     )
     results = [
-        context_lint(context_payload),
-        router_replay(context_payload, registry, frame_plan),
-        role_alignment(frame_plan),
-        guardian_gate(frame_plan, enforce=config.guardian_enforce),
-        constraint_consistency(constraints_doc),
+        context_lint(ctx.context_payload),
+        router_replay(ctx.context_payload, ctx.registry, ctx.frame_plan),
+        role_alignment(ctx.frame_plan),
+        guardian_gate(ctx.frame_plan, enforce=config.guardian_enforce),
+        constraint_consistency(ctx.constraints_doc),
         p0_result_gate,
         poav_result_gate,
         mercy_result_gate,
         tech_trace_gate(
-            tech_trace_normalize_path,
+            ctx.tech_trace_normalize_path,
             require=config.tech_trace_require,
             strict=config.tech_trace_strict,
         ),
         intent_achievement_gate(
-            intent_verification_path,
+            ctx.intent_verification_path,
             require=config.intent_require,
         ),
         escalation_result_gate,
         dcs_gate(
-            context_payload,
+            ctx.context_payload,
             p0_result_gate,
             poav_result_gate,
             mercy_result_gate,
@@ -679,33 +681,20 @@ def _collect_gate_results(
             mercy_threshold=config.mercy_threshold,
             drift_threshold=config.drift_threshold,
         ),
-        build_test_gate(workspace),
+        build_test_gate(ctx.workspace),
     ]
     evidence_text = ""
-    if os.path.exists(evidence_summary_path):
-        with open(evidence_summary_path, "r", encoding="utf-8") as handle:
+    if os.path.exists(ctx.evidence_summary_path):
+        with open(ctx.evidence_summary_path, "r", encoding="utf-8") as handle:
             evidence_text = handle.read()
-    required_files = _build_required_files(
-        context_path,
-        execution_report_path,
-        action_set_path,
-        mercy_objective_path,
-        council_summary_path,
-        tsr_metrics_path,
-        ystm_outputs,
-        skills_path,
-        ystm_diff_path,
-        tech_trace_capture_path,
-        tech_trace_normalize_path,
-        intent_verification_path,
-    )
+    required_files = _build_required_files(ctx)
     results.append(
         evidence_completeness(
             evidence_text,
-            context_path,
-            execution_report_path,
+            ctx.context_path,
+            ctx.execution_report_path,
             required_files,
-            require_listed=bool(skill_directives.get("require_evidence")),
+            require_listed=bool(ctx.skill_directives.get("require_evidence")),
         )
     )
     return results
@@ -729,64 +718,13 @@ def _write_gate_outputs(
     return gate_report, reflection_path
 
 
-def _run_gates(
-    config: PipelineConfig,
-    workspace: str,
-    run_dir: str,
-    context_payload: Dict[str, object],
-    registry: List[Dict[str, object]],
-    frame_plan: Dict[str, object],
-    constraints_doc: str,
-    execution_report: str,
-    mercy_objective: Dict[str, object],
-    action_set_path: str,
-    mercy_objective_path: str,
-    council_summary_path: Optional[str],
-    tsr_metrics_path: Optional[str],
-    skills_path: Optional[str],
-    skill_directives: Dict[str, bool],
-    ystm_outputs: Dict[str, str],
-    ystm_diff_path: Optional[str],
-    tech_trace_capture_path: Optional[str],
-    tech_trace_normalize_path: Optional[str],
-    intent_verification_path: Optional[str],
-    evidence_summary_path: str,
-    context_path: str,
-    execution_report_path: str,
-    error_ledger_path: str,
-    gate_report_path: str,
-) -> GateArtifacts:
-    gate_results = _collect_gate_results(
-        config,
-        workspace,
-        run_dir,
-        context_payload,
-        registry,
-        frame_plan,
-        constraints_doc,
-        execution_report,
-        mercy_objective,
-        action_set_path,
-        mercy_objective_path,
-        council_summary_path,
-        tsr_metrics_path,
-        skills_path,
-        skill_directives,
-        ystm_outputs,
-        ystm_diff_path,
-        tech_trace_capture_path,
-        tech_trace_normalize_path,
-        intent_verification_path,
-        evidence_summary_path,
-        context_path,
-        execution_report_path,
-        error_ledger_path,
-    )
+def _run_gates(ctx: PipelineContext) -> GateArtifacts:
+    gate_results = _collect_gate_results(ctx)
     gate_report, reflection_path = _write_gate_outputs(
-        gate_report_path,
-        execution_report_path,
+        ctx.gate_report_path,
+        ctx.execution_report_path,
         gate_results,
-        skill_directives,
+        ctx.skill_directives,
     )
     dcs_result = _extract_gate_result(gate_report, "dcs_gate")
     dcs_result_path = None
@@ -797,7 +735,9 @@ def _run_gates(
             payload["gate"] = dcs_result.get("gate", "dcs_gate")
             payload["passed"] = dcs_result.get("passed")
             payload["issues"] = dcs_result.get("issues", [])
-            dcs_result_path = os.path.join(os.path.dirname(gate_report_path), "dcs_result.json")
+            dcs_result_path = os.path.join(
+                os.path.dirname(ctx.gate_report_path), "dcs_result.json"
+            )
             with open(dcs_result_path, "w", encoding="utf-8") as handle:
                 json.dump(payload, handle, indent=2)
     return GateArtifacts(
@@ -915,33 +855,34 @@ def run_pipeline(config: PipelineConfig) -> Dict[str, object]:
     )
 
     gate_report_path = os.path.join(run_dir, "gate_report.json")
-    gate_artifacts = _run_gates(
-        config,
-        workspace,
-        run_dir,
-        context_artifacts.context_payload,
-        context_artifacts.registry,
-        context_artifacts.frame_plan,
-        skill_artifacts.constraints_doc,
-        execution_report,
-        context_artifacts.mercy_objective,
-        context_artifacts.action_set_path,
-        context_artifacts.mercy_objective_path,
-        context_artifacts.council_summary_path,
-        tsr_metrics_path,
-        skill_artifacts.skills_path,
-        skill_artifacts.skill_directives,
-        ystm_outputs,
-        ystm_diff_path,
-        tech_trace_capture_path,
-        tech_trace_normalize_path,
-        intent_verification_path,
-        evidence_summary_path,
-        context_artifacts.context_path,
-        execution_report_path,
-        error_ledger_path,
-        gate_report_path,
+    pipeline_ctx = PipelineContext(
+        config=config,
+        workspace=workspace,
+        run_dir=run_dir,
+        context_payload=context_artifacts.context_payload,
+        registry=context_artifacts.registry,
+        frame_plan=context_artifacts.frame_plan,
+        constraints_doc=skill_artifacts.constraints_doc,
+        execution_report=execution_report,
+        mercy_objective=context_artifacts.mercy_objective,
+        skill_directives=skill_artifacts.skill_directives,
+        ystm_outputs=ystm_outputs,
+        context_path=context_artifacts.context_path,
+        action_set_path=context_artifacts.action_set_path,
+        mercy_objective_path=context_artifacts.mercy_objective_path,
+        execution_report_path=execution_report_path,
+        evidence_summary_path=evidence_summary_path,
+        error_ledger_path=error_ledger_path,
+        gate_report_path=gate_report_path,
+        council_summary_path=context_artifacts.council_summary_path,
+        tsr_metrics_path=tsr_metrics_path,
+        skills_path=skill_artifacts.skills_path,
+        ystm_diff_path=ystm_diff_path,
+        tech_trace_capture_path=tech_trace_capture_path,
+        tech_trace_normalize_path=tech_trace_normalize_path,
+        intent_verification_path=intent_verification_path,
     )
+    gate_artifacts = _run_gates(pipeline_ctx)
 
     audit_request_path = os.path.join(run_dir, "audit_request.json")
     gate_report_ref = gate_report_path
