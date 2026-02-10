@@ -18,9 +18,6 @@ const allowIndexing = isVercelProduction();
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  alternates: {
-    canonical: "/",
-  },
   title: "ToneSoul Integrity Framework | AI Governance Middleware",
   description: "ToneSoul is a governance middleware for auditable, self-correcting AI agents. Implements STREI vector analysis, entropy-based tension metrics, and cryptographic responsibility ledger.",
   keywords: ["ToneSoul", "AI Governance", "MGGI", "STREI Vector", "AI Audit", "LLM Safety"],
