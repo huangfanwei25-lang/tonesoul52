@@ -63,6 +63,12 @@
 - [x] 保持 docs consistency gate 可重現通過
 **成功標準**: repo healthcheck dispatch 規則被 docs consistency gate 固定，回歸變更會在本地/CI 立即失敗。
 
+## Phase 55: Healthcheck 雙路徑執行契約
+- [x] `verify_docs_consistency` 納入 repo healthcheck 的 push/pr default runner 與 dispatch runner 檢查
+- [x] 擴充 `tests/test_verify_docs_consistency.py`，新增缺失 default runner 的失敗案例
+- [x] 維持 docs consistency 與單測全綠
+**成功標準**: repo healthcheck 的兩條執行路徑都受契約守門，避免只剩 input 檢查但遺失執行步驟。
+
 ## Phase 17: 收尾三部曲
 - [x] README 更新（反映 Council / Genesis / Memory / Tools API + 快速啟動）
 - [x] 記憶總結（寫入 `memory/self_journal.jsonl`，含 Phase 14-16 與亂碼修復）

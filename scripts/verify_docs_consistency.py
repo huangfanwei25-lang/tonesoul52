@@ -128,6 +128,8 @@ def build_report(repo_root: Path) -> dict[str, Any]:
     repo_healthcheck_exists = repo_healthcheck_workflow.exists()
     repo_healthcheck_has_dispatch = False
     repo_healthcheck_has_dispatch_inputs = False
+    repo_healthcheck_has_default_runner = False
+    repo_healthcheck_has_dispatch_runner = False
     repo_healthcheck_has_timeout_validation = False
     repo_healthcheck_has_ignore_warning = False
     repo_healthcheck_has_single_side_warnings = False
@@ -143,6 +145,22 @@ def build_report(repo_root: Path) -> dict[str, Any]:
         )
         repo_healthcheck_has_dispatch_inputs = all(
             token in repo_healthcheck_text for token in required_input_tokens
+        )
+        repo_healthcheck_has_default_runner = all(
+            token in repo_healthcheck_text
+            for token in (
+                "Run repository healthcheck (blocking, push/pr default)",
+                "github.event_name != 'workflow_dispatch'",
+                "python scripts/run_repo_healthcheck.py --strict --allow-missing-discussion",
+            )
+        )
+        repo_healthcheck_has_dispatch_runner = all(
+            token in repo_healthcheck_text
+            for token in (
+                "Run repository healthcheck (blocking, workflow_dispatch)",
+                "github.event_name == 'workflow_dispatch'",
+                "CMD=(python scripts/run_repo_healthcheck.py --strict --allow-missing-discussion)",
+            )
         )
         repo_healthcheck_has_timeout_validation = (
             "::error::sdh_timeout must be a positive integer" in repo_healthcheck_text
@@ -162,6 +180,10 @@ def build_report(repo_root: Path) -> dict[str, Any]:
             issues.append("repo healthcheck workflow missing workflow_dispatch trigger")
         if not repo_healthcheck_has_dispatch_inputs:
             issues.append("repo healthcheck workflow missing dispatch SDH inputs")
+        if not repo_healthcheck_has_default_runner:
+            issues.append("repo healthcheck workflow missing push/pr default runner")
+        if not repo_healthcheck_has_dispatch_runner:
+            issues.append("repo healthcheck workflow missing workflow_dispatch runner")
         if not repo_healthcheck_has_timeout_validation:
             issues.append("repo healthcheck workflow missing sdh_timeout validation")
         if not repo_healthcheck_has_ignore_warning:
@@ -234,6 +256,8 @@ def build_report(repo_root: Path) -> dict[str, Any]:
             "workflow_exists": repo_healthcheck_exists,
             "has_dispatch": repo_healthcheck_has_dispatch,
             "has_dispatch_inputs": repo_healthcheck_has_dispatch_inputs,
+            "has_default_runner": repo_healthcheck_has_default_runner,
+            "has_dispatch_runner": repo_healthcheck_has_dispatch_runner,
             "has_timeout_validation": repo_healthcheck_has_timeout_validation,
             "has_ignore_warning": repo_healthcheck_has_ignore_warning,
             "has_single_side_warnings": repo_healthcheck_has_single_side_warnings,
