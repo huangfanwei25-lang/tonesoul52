@@ -47,6 +47,7 @@ def build_report(repo_root: Path) -> dict[str, Any]:
     workflow = repo_root / ".github" / "workflows" / "test.yml"
     monthly_workflow = repo_root / ".github" / "workflows" / "monthly_consolidation.yml"
     git_hygiene_workflow = repo_root / ".github" / "workflows" / "git_hygiene.yml"
+    repo_healthcheck_workflow = repo_root / ".github" / "workflows" / "repo_healthcheck.yml"
     status_readme = repo_root / "docs" / "status" / "README.md"
     framework_doc = repo_root / "docs" / "7D_AUDIT_FRAMEWORK.md"
     exec_doc = repo_root / "docs" / "7D_EXECUTION_SPEC.md"
@@ -124,12 +125,84 @@ def build_report(repo_root: Path) -> dict[str, Any]:
     else:
         issues.append("missing .github/workflows/git_hygiene.yml")
 
+    repo_healthcheck_exists = repo_healthcheck_workflow.exists()
+    repo_healthcheck_has_dispatch = False
+    repo_healthcheck_has_dispatch_inputs = False
+    repo_healthcheck_has_timeout_validation = False
+    repo_healthcheck_has_ignore_warning = False
+    repo_healthcheck_has_single_side_warnings = False
+    if repo_healthcheck_exists:
+        repo_healthcheck_text = _read(repo_healthcheck_workflow)
+        repo_healthcheck_has_dispatch = "workflow_dispatch:" in repo_healthcheck_text
+        required_input_tokens = (
+            "include_sdh:",
+            "web_base:",
+            "api_base:",
+            "sdh_timeout:",
+            "check_council_modes:",
+        )
+        repo_healthcheck_has_dispatch_inputs = all(
+            token in repo_healthcheck_text for token in required_input_tokens
+        )
+        repo_healthcheck_has_timeout_validation = (
+            "::error::sdh_timeout must be a positive integer" in repo_healthcheck_text
+        )
+        repo_healthcheck_has_ignore_warning = (
+            "SDH inputs were provided but include_sdh=false" in repo_healthcheck_text
+        )
+        repo_healthcheck_has_single_side_warnings = all(
+            token in repo_healthcheck_text
+            for token in (
+                "include_sdh=true and web_base is set but api_base is empty",
+                "include_sdh=true and api_base is set but web_base is empty",
+            )
+        )
+
+        if not repo_healthcheck_has_dispatch:
+            issues.append("repo healthcheck workflow missing workflow_dispatch trigger")
+        if not repo_healthcheck_has_dispatch_inputs:
+            issues.append("repo healthcheck workflow missing dispatch SDH inputs")
+        if not repo_healthcheck_has_timeout_validation:
+            issues.append("repo healthcheck workflow missing sdh_timeout validation")
+        if not repo_healthcheck_has_ignore_warning:
+            issues.append("repo healthcheck workflow missing include_sdh=false warning")
+        if not repo_healthcheck_has_single_side_warnings:
+            issues.append("repo healthcheck workflow missing single-side endpoint warnings")
+    else:
+        issues.append("missing .github/workflows/repo_healthcheck.yml")
+
     status_readme_has_git_hygiene = False
+    status_readme_has_repo_healthcheck_dispatch_inputs = False
+    status_readme_has_repo_healthcheck_validation_notes = False
     if status_readme.exists():
         status_readme_text = _read(status_readme)
         status_readme_has_git_hygiene = "git_hygiene_latest.json" in status_readme_text
         if not status_readme_has_git_hygiene:
             issues.append("docs/status/README.md missing git hygiene artifact reference")
+        status_readme_has_repo_healthcheck_dispatch_inputs = all(
+            token in status_readme_text
+            for token in (
+                "include_sdh",
+                "web_base",
+                "api_base",
+                "sdh_timeout",
+                "check_council_modes",
+            )
+        )
+        status_readme_has_repo_healthcheck_validation_notes = all(
+            token in status_readme_text
+            for token in (
+                "invalid `sdh_timeout`",
+                "include_sdh=false",
+                "`web_base` / `api_base`",
+            )
+        )
+        if not status_readme_has_repo_healthcheck_dispatch_inputs:
+            issues.append("docs/status/README.md missing repo healthcheck dispatch inputs")
+        if not status_readme_has_repo_healthcheck_validation_notes:
+            issues.append(
+                "docs/status/README.md missing repo healthcheck dispatch validation notes"
+            )
     else:
         issues.append("missing docs/status/README.md")
 
@@ -156,6 +229,16 @@ def build_report(repo_root: Path) -> dict[str, Any]:
             "has_runner": git_hygiene_has_runner,
             "has_artifact_upload": git_hygiene_has_artifact_upload,
             "status_readme_reference": status_readme_has_git_hygiene,
+        },
+        "repo_healthcheck_dispatch": {
+            "workflow_exists": repo_healthcheck_exists,
+            "has_dispatch": repo_healthcheck_has_dispatch,
+            "has_dispatch_inputs": repo_healthcheck_has_dispatch_inputs,
+            "has_timeout_validation": repo_healthcheck_has_timeout_validation,
+            "has_ignore_warning": repo_healthcheck_has_ignore_warning,
+            "has_single_side_warnings": repo_healthcheck_has_single_side_warnings,
+            "status_readme_inputs": status_readme_has_repo_healthcheck_dispatch_inputs,
+            "status_readme_validation_notes": status_readme_has_repo_healthcheck_validation_notes,
         },
         "issues": issues,
     }

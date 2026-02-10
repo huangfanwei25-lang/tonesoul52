@@ -57,6 +57,12 @@
 - [x] 更新 `docs/status/README.md` 記錄上述驗證行為
 **成功標準**: 手動觸發輸入錯誤能在 CI 日誌即時可見，避免靜默誤判。
 
+## Phase 54: Dispatch 契約自動守門
+- [x] `scripts/verify_docs_consistency.py` 新增 repo healthcheck dispatch 契約檢查（inputs + validation + warning）
+- [x] 擴充 `tests/test_verify_docs_consistency.py` 覆蓋 pass 與 timeout-validation 缺失失敗案例
+- [x] 保持 docs consistency gate 可重現通過
+**成功標準**: repo healthcheck dispatch 規則被 docs consistency gate 固定，回歸變更會在本地/CI 立即失敗。
+
 ## Phase 17: 收尾三部曲
 - [x] README 更新（反映 Council / Genesis / Memory / Tools API + 快速啟動）
 - [x] 記憶總結（寫入 `memory/self_journal.jsonl`，含 Phase 14-16 與亂碼修復）
