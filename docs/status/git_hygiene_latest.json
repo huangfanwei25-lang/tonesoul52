@@ -1,15 +1,15 @@
 {
-  "generated_at": "2026-02-10T10:11:31Z",
+  "generated_at": "2026-02-10T10:52:49Z",
   "overall_ok": true,
   "config": {
     "max_dangling": 50,
     "max_loose_count": 5000
   },
   "metrics": {
-    "loose_count": 90,
+    "loose_count": 173,
     "in_pack": 4508,
     "packs": 1,
-    "size": "177.73 KiB",
+    "size": "353.39 KiB",
     "size_pack": "3.53 GiB",
     "dangling_count": 1,
     "fsck_prefix_counts": {
@@ -25,7 +25,7 @@
       "exit_code": 0,
       "duration_seconds": 0.04,
       "command": "git count-objects -vH",
-      "stdout_tail": "count: 90\nsize: 177.73 KiB\nin-pack: 4508\npacks: 1\nsize-pack: 3.53 GiB\nprune-packable: 0\ngarbage: 0\nsize-garbage: 0 bytes",
+      "stdout_tail": "count: 173\nsize: 353.39 KiB\nin-pack: 4508\npacks: 1\nsize-pack: 3.53 GiB\nprune-packable: 0\ngarbage: 0\nsize-garbage: 0 bytes",
       "stderr_tail": ""
     },
     {
@@ -33,7 +33,7 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 37.83,
+      "duration_seconds": 38.06,
       "command": "git fsck --no-reflogs",
       "stdout_tail": "dangling commit 3140ca159747167c98494c0274c638f967c90683",
       "stderr_tail": ""

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-02-10T10:12:21Z",
+  "generated_at": "2026-02-10T10:53:43Z",
   "overall_ok": true,
   "config": {
     "include_sdh": false,
@@ -16,7 +16,7 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 0.13,
+      "duration_seconds": 0.1,
       "command": "python -m ruff check tonesoul tests scripts",
       "stdout_tail": "All checks passed!",
       "stderr_tail": ""
@@ -26,19 +26,19 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 1.64,
+      "duration_seconds": 0.65,
       "command": "python -m black --check tonesoul tests scripts",
       "stdout_tail": "",
-      "stderr_tail": "All done! ✨ 🍰 ✨\n278 files would be left unchanged."
+      "stderr_tail": "All done! ✨ 🍰 ✨\n281 files would be left unchanged."
     },
     {
       "name": "python_tests",
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 39.24,
+      "duration_seconds": 37.24,
       "command": "python -m pytest tests -q",
-      "stdout_tail": "be.py .                                    [ 90%]\ntests\\test_verify_vercel_preflight.py ......                             [ 91%]\ntests\\test_verify_web_api.py ...                                         [ 91%]\ntests\\test_vow_input_validation.py .........                             [ 93%]\ntests\\test_vow_system.py .........................                       [ 97%]\ntests\\test_vow_system_properties.py ..........                           [ 98%]\ntests\\test_vtp.py ....                                                   [ 99%]\ntests\\test_vtp_runtime.py ...                                            [100%]\n\n============================== warnings summary ===============================\n.venv\\Lib\\site-packages\\_hypothesis_pytestplugin.py:481\n  C:\\Users\\user\\Desktop\\倉庫\\.venv\\Lib\\site-packages\\_hypothesis_pytestplugin.py:481: UserWarning: Skipping collection of '.hypothesis' directory - this usually means you've explicitly set the `norecursedirs` pytest config option, replacing rather than extending the default ignores.\n    warnings.warn(\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n================= 607 passed, 3 xfailed, 1 warning in 37.09s ==================",
+      "stdout_tail": "ight.py ......                             [ 90%]\ntests\\test_verify_web_api.py ...                                         [ 91%]\ntests\\test_vow_input_validation.py .........                             [ 92%]\ntests\\test_vow_system.py .........................                       [ 96%]\ntests\\test_vow_system_properties.py ..........                           [ 98%]\ntests\\test_vtp.py ....                                                   [ 99%]\ntests\\test_vtp_runtime.py ...                                            [ 99%]\ntests\\test_workflow_contracts.py ...                                     [100%]\n\n============================== warnings summary ===============================\n.venv\\Lib\\site-packages\\_hypothesis_pytestplugin.py:481\n  C:\\Users\\user\\Desktop\\倉庫\\.venv\\Lib\\site-packages\\_hypothesis_pytestplugin.py:481: UserWarning: Skipping collection of '.hypothesis' directory - this usually means you've explicitly set the `norecursedirs` pytest config option, replacing rather than extending the default ignores.\n    warnings.warn(\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n================= 616 passed, 3 xfailed, 1 warning in 35.24s ==================",
       "stderr_tail": ""
     },
     {
@@ -46,7 +46,7 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 5.69,
+      "duration_seconds": 5.26,
       "command": "npm --prefix apps/web run lint",
       "stdout_tail": "> web@0.1.0 lint\n> eslint",
       "stderr_tail": ""
@@ -56,9 +56,9 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 1.41,
+      "duration_seconds": 1.35,
       "command": "npm --prefix apps/web run test",
-      "stdout_tail": "> web@0.1.0 test\n> vitest run\n\n\n RUN  v4.0.17 C:/Users/user/Desktop/倉庫/apps/web\n\n ✓ src/__tests__/entropyCalculator.test.ts (9 tests) 10ms\n ✓ src/__tests__/personaSettings.test.ts (7 tests) 8ms\n ✓ src/__tests__/apiRoutes.transportFallback.test.ts (9 tests) 21ms\n ✓ src/__tests__/apiRoutes.invalidJson.test.ts (7 tests) 22ms\n ✓ src/__tests__/apiRoutes.chatTransport.test.ts (5 tests) 21ms\n\n Test Files  5 passed (5)\n      Tests  37 passed (37)\n   Start at  18:10:52\n   Duration  574ms (transform 330ms, setup 0ms, import 796ms, tests 83ms, environment 1ms)",
+      "stdout_tail": "> web@0.1.0 test\n> vitest run\n\n\n RUN  v4.0.17 C:/Users/user/Desktop/倉庫/apps/web\n\n ✓ src/__tests__/personaSettings.test.ts (7 tests) 9ms\n ✓ src/__tests__/entropyCalculator.test.ts (9 tests) 11ms\n ✓ src/__tests__/apiRoutes.chatTransport.test.ts (5 tests) 18ms\n ✓ src/__tests__/apiRoutes.invalidJson.test.ts (7 tests) 23ms\n ✓ src/__tests__/apiRoutes.transportFallback.test.ts (9 tests) 23ms\n\n Test Files  5 passed (5)\n      Tests  37 passed (37)\n   Start at  18:52:11\n   Duration  563ms (transform 584ms, setup 0ms, import 1.00s, tests 84ms, environment 1ms)",
       "stderr_tail": ""
     },
     {
@@ -66,9 +66,9 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 37.95,
+      "duration_seconds": 38.2,
       "command": "python scripts/verify_git_hygiene.py",
-      "stdout_tail": "{\n  \"generated_at\": \"2026-02-10T10:11:31Z\",\n  \"overall_ok\": true,\n  \"config\": {\n    \"max_dangling\": 50,\n    \"max_loose_count\": 5000\n  },\n  \"metrics\": {\n    \"loose_count\": 90,\n    \"in_pack\": 4508,\n    \"packs\": 1,\n    \"size\": \"177.73 KiB\",\n    \"size_pack\": \"3.53 GiB\",\n    \"dangling_count\": 1,\n    \"fsck_prefix_counts\": {\n      \"dangling\": 1\n    },\n    \"fsck_unexpected_count\": 0\n  },\n  \"checks\": [\n    {\n      \"name\": \"count_objects\",\n      \"status\": \"pass\",\n      \"ok\": true,\n      \"exit_code\": 0,\n      \"duration_seconds\": 0.04,\n      \"command\": \"git count-objects -vH\",\n      \"stdout_tail\": \"count: 90\\nsize: 177.73 KiB\\nin-pack: 4508\\npacks: 1\\nsize-pack: 3.53 GiB\\nprune-packable: 0\\ngarbage: 0\\nsize-garbage: 0 bytes\",\n      \"stderr_tail\": \"\"\n    },\n    {\n      \"name\": \"fsck\",\n      \"status\": \"pass\",\n      \"ok\": true,\n      \"exit_code\": 0,\n      \"duration_seconds\": 37.83,\n      \"command\": \"git fsck --no-reflogs\",\n      \"stdout_tail\": \"dangling commit 3140ca159747167c98494c0274c638f967c90683\",\n      \"stderr_tail\": \"\"\n    }\n  ],\n  \"issues\": [],\n  \"fsck_unexpected_lines\": []\n}",
+      "stdout_tail": "{\n  \"generated_at\": \"2026-02-10T10:52:49Z\",\n  \"overall_ok\": true,\n  \"config\": {\n    \"max_dangling\": 50,\n    \"max_loose_count\": 5000\n  },\n  \"metrics\": {\n    \"loose_count\": 173,\n    \"in_pack\": 4508,\n    \"packs\": 1,\n    \"size\": \"353.39 KiB\",\n    \"size_pack\": \"3.53 GiB\",\n    \"dangling_count\": 1,\n    \"fsck_prefix_counts\": {\n      \"dangling\": 1\n    },\n    \"fsck_unexpected_count\": 0\n  },\n  \"checks\": [\n    {\n      \"name\": \"count_objects\",\n      \"status\": \"pass\",\n      \"ok\": true,\n      \"exit_code\": 0,\n      \"duration_seconds\": 0.04,\n      \"command\": \"git count-objects -vH\",\n      \"stdout_tail\": \"count: 173\\nsize: 353.39 KiB\\nin-pack: 4508\\npacks: 1\\nsize-pack: 3.53 GiB\\nprune-packable: 0\\ngarbage: 0\\nsize-garbage: 0 bytes\",\n      \"stderr_tail\": \"\"\n    },\n    {\n      \"name\": \"fsck\",\n      \"status\": \"pass\",\n      \"ok\": true,\n      \"exit_code\": 0,\n      \"duration_seconds\": 38.06,\n      \"command\": \"git fsck --no-reflogs\",\n      \"stdout_tail\": \"dangling commit 3140ca159747167c98494c0274c638f967c90683\",\n      \"stderr_tail\": \"\"\n    }\n  ],\n  \"issues\": [],\n  \"fsck_unexpected_lines\": []\n}",
       "stderr_tail": ""
     },
     {
@@ -76,7 +76,7 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 50.29,
+      "duration_seconds": 53.87,
       "command": "python scripts/verify_7d.py",
       "stdout_tail": "ommand\": \"python tools/agent_discussion_tool.py tail --path memory\\\\agent_discussion_curated.jsonl --limit 1\",\n      \"note\": \"age_days=0.00, threshold=7\"\n    },\n    {\n      \"dimension\": \"XDD\",\n      \"gate\": \"BLOCKING\",\n      \"status\": \"pass\",\n      \"command\": \"python -m pytest tests\\\\test_uncertainty.py -q\",\n      \"note\": \"\"\n    },\n    {\n      \"dimension\": \"GDD\",\n      \"gate\": \"BLOCKING\",\n      \"status\": \"pass\",\n      \"command\": \"python -m pytest tests\\\\test_genesis_integration.py tests\\\\test_provenance_chain.py -q\",\n      \"note\": \"\"\n    },\n    {\n      \"dimension\": \"CDD\",\n      \"gate\": \"BLOCKING\",\n      \"status\": \"pass\",\n      \"command\": \"python -m pytest tests/test_api_server_contract.py -q\",\n      \"note\": \"\"\n    },\n    {\n      \"dimension\": \"SDH\",\n      \"gate\": \"SOFT_FAIL\",\n      \"status\": \"skip\",\n      \"command\": \"python scripts\\\\verify_web_api.py --web-base http://127.0.0.1:3000 --api-base http://127.0.0.1:5000 --require-backend --check-council-modes\",\n      \"note\": \"skipped; use --include-sdh when web/backend are running\"\n    }\n  ],\n  \"scores\": {\n    \"TDD\": 100,\n    \"RDD\": 100,\n    \"DDD\": 100,\n    \"XDD\": 100,\n    \"GDD\": 100,\n    \"CDD\": 100,\n    \"SDH\": 0,\n    \"OVERALL\": 90\n  }\n}",
       "stderr_tail": ""
