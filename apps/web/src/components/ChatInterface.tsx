@@ -3,7 +3,15 @@
 import { useState, useRef, useEffect } from "react";
 import { Send, Loader2, Brain, ChevronDown, ChevronUp, AlertTriangle, MessageSquare, MoveRight, Users, Server, Zap, WifiOff } from "lucide-react";
 import { ApiSettings } from "./SettingsModal";
-import { Message as DBMessage, DeliberationData, Conversation, saveConversation, MemoryInsight, findRelevantMemories } from "@/lib/db";
+import {
+    Message as DBMessage,
+    DeliberationData,
+    Conversation,
+    getConversation,
+    saveConversation,
+    MemoryInsight,
+    findRelevantMemories,
+} from "@/lib/db";
 import { calculateEntropy, validateAudit } from "@/lib/entropyCalculator";
 import CouncilChamber from "./CouncilChamber";
 import SoulStateMeter from "./SoulStateMeter";
@@ -1250,8 +1258,24 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
                     timestamp: m.timestamp.getTime(),
                 })),
             };
-            await saveConversation(updatedConversation);
-            onConversationUpdate(updatedConversation);
+            // Guard against resurrecting a conversation that the user deleted while a request was in-flight.
+            // If it no longer exists in IndexedDB, we skip persistence + state update for that conversation.
+            let shouldPersist = true;
+            try {
+                shouldPersist = (await getConversation(updatedConversation.id)) !== null;
+            } catch (error) {
+                // If the existence check fails, we still attempt to persist to avoid data loss.
+                console.error("[ToneSoul] Conversation existence check failed:", error);
+            }
+
+            if (!shouldPersist) {
+                console.warn(
+                    "[ToneSoul] Conversation deleted during in-flight update; skipping persistence."
+                );
+            } else {
+                await saveConversation(updatedConversation);
+                onConversationUpdate(updatedConversation);
+            }
 
             // 更新靈魂狀態（張力積分 + 內在驅動）
             if (result.deliberation?.entropy_meter) {

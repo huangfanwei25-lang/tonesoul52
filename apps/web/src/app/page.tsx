@@ -13,7 +13,14 @@ import DataManager from "@/components/DataManager";
 import PersonaSettings, { PersonaConfig, getStoredPersona } from "@/components/PersonaSettings";
 import { SoulState, loadSoulState, getInitialSoulState } from "@/lib/soulEngine";
 import OnboardingGuide, { hasCompletedOnboarding } from "@/components/OnboardingGuide";
-import { Conversation, getConversations, createConversation, saveConversation, clearAllConversations } from "@/lib/db";
+import {
+  Conversation,
+  getConversations,
+  createConversation,
+  saveConversation,
+  deleteConversation,
+  clearAllConversations,
+} from "@/lib/db";
 import { Menu, Settings, FileText, LogOut, Key, Layers, BarChart3, Database, Sliders, BookOpen } from "lucide-react";
 
 export default function Home() {
@@ -44,7 +51,11 @@ export default function Home() {
     try {
       const convs = await getConversations();
       setConversations(convs);
-      setCurrentConversation(prev => prev ?? convs[0] ?? null);
+      setCurrentConversation((prev) => {
+        if (!prev) return convs[0] ?? null;
+        const match = convs.find((c) => c.id === prev.id);
+        return match ?? convs[0] ?? null;
+      });
     } catch (error) {
       console.error("Failed to load conversations:", error);
     }
@@ -81,12 +92,18 @@ export default function Home() {
     setShowSidebar(false); // Close sidebar on mobile
   }, []);
 
-  const handleDeleteConversation = useCallback((id: string) => {
-    setConversations(prev => prev.filter(c => c.id !== id));
-    if (currentConversation?.id === id) {
-      setCurrentConversation(conversations.find(c => c.id !== id) || null);
-    }
-  }, [currentConversation, conversations]);
+  const handleDeleteConversation = useCallback(
+    async (id: string) => {
+      try {
+        await deleteConversation(id);
+        await loadConversations();
+      } catch (error) {
+        console.error("Failed to delete conversation:", error);
+        alert("刪除對話失敗，請稍後再試。");
+      }
+    },
+    [loadConversations],
+  );
 
   const handleConversationUpdate = useCallback((updatedConv: Conversation) => {
     setConversations(prev =>

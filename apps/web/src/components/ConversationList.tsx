@@ -2,14 +2,14 @@
 
 import { useState } from "react";
 import { MessageSquare, Plus, Trash2, MoreVertical } from "lucide-react";
-import { Conversation, deleteConversation } from "@/lib/db";
+import { Conversation } from "@/lib/db";
 
 interface ConversationListProps {
     conversations: Conversation[];
     currentId: string | null;
     onSelect: (conv: Conversation) => void;
     onNew: () => void;
-    onDelete: (id: string) => void;
+    onDelete: (id: string) => Promise<void>;
 }
 
 export default function ConversationList({
@@ -34,9 +34,16 @@ export default function ConversationList({
 
     const handleDelete = async (id: string, e: React.MouseEvent) => {
         e.stopPropagation();
-        if (confirm("確定要刪除這個對話嗎？")) {
-            await deleteConversation(id);
-            onDelete(id);
+        if (!confirm("確定要刪除這個對話嗎？此操作無法復原。")) {
+            setMenuOpen(null);
+            return;
+        }
+
+        try {
+            await onDelete(id);
+        } catch (error) {
+            console.error("Failed to delete conversation:", error);
+            alert("刪除對話失敗，請稍後再試。");
         }
         setMenuOpen(null);
     };
