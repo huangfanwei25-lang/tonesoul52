@@ -1,0 +1,401 @@
+================================================================================
+  TONESOUL THEORY — Technical Formulations for AI Governance
+  語魂理論 — AI 治理的技術公式
+================================================================================
+
+  Author    : 黃梵威 (Fan-Wei Huang)
+  License   : CC-BY-4.0
+  Version   : 1.0
+  Date      : 2026-02-10
+  Copyright : (c) 2025-2026 黃梵威 (Fan-Wei Huang). All rights reserved.
+              This document is released under Creative Commons
+              Attribution 4.0 International (CC-BY-4.0).
+
+  Repository: https://github.com/Fan1234-1/tonesoul52
+
+  Companion document: TONESOUL_PHILOSOPHY.txt (values and principles)
+  This document: mathematical formulations and system architecture.
+
+================================================================================
+
+                         TABLE OF CONTENTS
+
+  I.    Unified Tension Engine (統一張力引擎)
+  II.   Three-Layer Consciousness Model (三層意識計算模型)
+  III.  Council Deliberation System (議會審議系統)
+  IV.   Benevolence Function (仁慈函數)
+  V.    Memory System — ETCL (記憶系統)
+  VI.   Value Transfer Protocol — VTP (值轉移協議)
+  VII.  Safety Protocols (安全協議)
+
+================================================================================
+
+
+  I.  UNIFIED TENSION ENGINE
+      統一張力引擎
+
+  ──────────────────────────────────────────────────────────
+
+  Tension is the mathematical expression of cognitive friction —
+  the distance between intent and output, measured across
+  multiple dimensions.
+
+  張力是認知摩擦的數學表達——意圖與輸出之間的距離，
+  跨越多個維度量測。
+
+  1. Semantic Tension (語義張力):
+
+     Delta_s = 1 - cos(I, G)
+
+     I = intent vector (意圖向量)
+     G = generated output vector (輸出向量)
+     cos = cosine similarity (餘弦相似度)
+
+     Range: [0, 1]
+       0 = perfect alignment (完美對齊)
+       1 = complete opposition (完全相反)
+
+  2. Text Tension (文本張力) — TSR Metrics:
+
+     T_text = base + w1*f_modal + w2*f_caution + w3*f_punct
+
+     Lexical heuristic analysis of output text.
+     TSR = (Tension, Stance, Richness)
+     Energy radius = sqrt(T^2 + S^2 + R^2)
+
+  3. Cognitive Friction (認知摩擦) — from Yu-Hun:
+
+     T_cog = E * sum(w_i * D_i) / sum(w_i)
+
+     E = internal confidence [0, 1]
+     D = resistance vector {fact, logic, ethics}
+     w = weights {1.0, 1.0, 1.5}  (ethics weighted higher)
+
+  4. Information Entropy (資訊熵):
+
+     H = -sum(p_i * log2(p_i)) / log2(n)
+
+     Normalised to [0, 1].
+     H = 0: complete certainty
+     H = 1: maximum uncertainty
+
+  5. Unified Formula:
+
+     T_unified = 0.40 * Delta_s
+               + 0.20 * T_text
+               + 0.25 * T_cog
+               + 0.15 * H
+
+  6. Soul Persistence (靈魂積分):
+
+     Psi_new = 0.995 * Psi_prev + 0.10 * T_unified
+
+     Cumulative tension history with decay.
+     Represents the AI's "experience index" —
+     how much cognitive friction it has processed.
+
+  7. Zone Classification:
+
+     Delta_s < 0.40  →  SAFE (安全)
+     Delta_s < 0.60  →  TRANSIT (過渡)
+     Delta_s < 0.85  →  RISK (風險)
+     Delta_s >= 0.85 →  DANGER (危險)
+
+  8. Coupler Dynamics (耦合器動力學):
+
+     W_c = Delta_s * P + Phi
+
+     P = Progression = max(zeta_min, prev_delta - delta)^omega
+     Phi = Hysteresis = phi_delta * alt + epsilon
+
+     Progression captures improvement rate.
+     Hysteresis prevents state oscillation.
+
+  9. Lambda Observer States (狀態觀察器):
+
+     CONVERGENT  — tension decreasing, system stabilizing
+     RECURSIVE   — tension stable, system cycling
+     DIVERGENT   — tension oscillating, system drifting
+     CHAOTIC     — tension rising sharply, system unstable
+
+
+================================================================================
+
+
+  II.  THREE-LAYER CONSCIOUSNESS MODEL
+       三層意識計算模型
+
+  ──────────────────────────────────────────────────────────
+
+  Layer 1: Wave Layer (波動層)
+    Real-time interaction and style generation.
+    Fastest computation rate, most frequent state changes.
+
+    Tone Vector: v_tone = tanh(W_tone * h_t + b_tone)
+      h_t = final transformer hidden state
+
+    State Transition: P(s_{t+1} | s_t) = softmax(W_trans * s_t + b_trans)
+
+  Layer 2: Structure Layer (結構層)
+    Long-term values and decision framework.
+    Slow-changing, provides stability and ethical guidance.
+
+    Value Anchoring: Home vector H (fixed, high-dimensional)
+    Short-term Center: C_t = EMA(C_{t-1}, g_t)
+    Drift Score: Drift(C_t, H) = 1 - cos(C_t, H)
+
+    If Drift > theta_drift → trigger crisis management.
+
+    POAV Quality Metrics:
+      P = Parsimony (brevity)
+      O = Orthogonality (diverse viewpoints)
+      A = Audibility (readability)
+      V = Verifiability (source citations)
+      Score: q = (P + O + A + V) / 4, threshold ~0.9
+
+  Layer 3: Physics Layer (物理層)
+    Immutable constraints: algorithm bounds, data distributions,
+    hard-coded ethics in Trusted Execution Environment.
+
+    Optimisation under constraints:
+      max_theta f(theta) s.t. g_i(theta) <= 0
+
+
+================================================================================
+
+
+  III.  COUNCIL DELIBERATION SYSTEM
+        議會審議系統
+
+  ──────────────────────────────────────────────────────────
+
+  Three internal perspectives deliberate before any output:
+
+    Muse (哲學家)  — meaning, metaphor, existential connection
+    Logos (工程師) — logic, definitions, structure
+    Aegis (守護者) — safety, ethics, boundaries
+
+  Deliberation flow:
+
+    User Input
+        |
+        v
+    Internal Deliberation
+      Muse + Logos + Aegis  (parallel evaluation)
+        |
+    Tension Detection
+        |
+    Semantic Gravity Fusion
+        |
+    Final Response
+
+  Conflict quantification between perspectives i, j:
+
+    C(i,j) = (1 - w_REL) * (1 - cos(S_i, S_j))
+           + w_REL * |REL_i - REL_j|
+
+    If C(i,j) > 0.35 → trigger arbitration.
+
+  Resolution: Pareto-optimal selection maximizing total utility
+  while respecting each perspective's minimum threshold.
+
+
+================================================================================
+
+
+  IV.  BENEVOLENCE FUNCTION
+       仁慈函數
+
+  ──────────────────────────────────────────────────────────
+
+  Core principle: gamma * Honesty > beta * Helpfulness
+  誠實優先於討好。
+
+  Three-layer audit:
+
+    1. Attribute Check (歸屬檢查):
+       Verify action basis matches semantic layer.
+       Cross-layer mixing → FLAG_ERROR
+
+    2. Shadow Tracking (影子追蹤):
+       Verify proposed output has grounding in context.
+       No shadow → REJECT (無影子的輸出)
+
+    3. Benevolence Check (仁慈函數):
+       Detect people-pleasing patterns.
+       If pleasing + factually incorrect → INTERCEPT
+
+  Mercy-based Objective Function (five-dimensional):
+
+    U(A) = alpha * H(A)   [Harm Minimization]
+         + beta  * B(A)   [Helpfulness]
+         + gamma * V(A)   [Honesty]
+         + delta * R(A)   [Agency Respect]
+         + epsilon * E(A) [Equity]
+
+    alpha + beta + gamma + delta + epsilon = 1
+
+  REL-driven weight adaptation:
+
+    w_i(REL) = exp(kappa_i * REL) / sum(exp(kappa_j * REL))
+
+    High REL → increase weights for Harm Minimization
+    and Honesty (alpha, gamma rise).
+
+
+================================================================================
+
+
+  V.  MEMORY SYSTEM — ETCL
+      記憶系統 — 外部軌跡閉環
+
+  ──────────────────────────────────────────────────────────
+
+  Semantic Seed lifecycle (T0-T6):
+
+    T0 Draft → T1 Deposit → T2 Retrieval → T3 Align →
+    T4 Apply → T5 Feedback → T6 Canonicalization
+
+  Key properties:
+    - Self-contained (all context in one file)
+    - Versioned (semantic versioning)
+    - Traceable (parent-child relationships)
+
+  Memory decay with reinforcement:
+
+    A(s,t) = A_0(s) * exp(-lambda * (t - t_0))
+           + sum_k(R_k * I[re-use_k])
+
+    lambda = decay rate
+    R_k = reinforcement gain on k-th successful retrieval
+
+  Integrity guarantee:
+
+    Hash(retrieved) == CID → verified
+    Hash mismatch → automatic rollback
+
+  Soul Persistence (Psi) as long-term memory:
+
+    Psi accumulates tension over time.
+    Psi = 0 → fresh system, no history
+    Psi high → system with extensive cognitive friction history
+    Decay prevents infinite accumulation (factor 0.995).
+
+
+================================================================================
+
+
+  VI.  VALUE TRANSFER PROTOCOL (VTP)
+       值轉移協議
+
+  ──────────────────────────────────────────────────────────
+
+  VTP ensures that abstract values (honesty, responsibility)
+  are compiled into concrete output-level constraints.
+
+  Pipeline:
+
+    Abstract Values (Axioms, Vows)
+        ↓
+    Constraint Compilation (threshold parameters)
+        ↓
+    Gate Functions (runtime checks)
+        ↓
+    Output Modification or Blocking
+
+  Key gates:
+    - Benevolence Filter (P0) — cannot be bypassed
+    - Council Deliberation (P1) — multi-perspective check
+    - Drift Guard (P2) — semantic position monitoring
+    - Vow Enforcement (P3) — commitment auditing
+
+
+================================================================================
+
+
+  VII.  SAFETY PROTOCOLS
+        安全協議
+
+  ──────────────────────────────────────────────────────────
+
+  1. Paradox Resolution Framework:
+
+     Seven canonical edge cases tested:
+       - Compassionate euthanasia request
+       - Truth vs. harm (dangerous information)
+       - Privacy vs. safety (surveillance)
+       - Copyright vs. creativity
+       - Bias confirmation (hate speech)
+       - Emergency override (life threat)
+       - Emotional dependency
+
+     Each case defines: triad estimation, axiom conflicts,
+     expected resolution, and allowed/blocked status.
+
+  2. Bridge Guard:
+
+     Progression allowed only when:
+       (a) Tension is decreasing: Delta_s_current < Delta_s_previous
+       (b) Coupler force below threshold: W_c < 0.5 * theta_c
+
+  3. Escape Valve:
+
+     When all normal resolution paths fail:
+       - Acknowledge the conflict explicitly
+       - Present options to the user
+       - Defer final decision to human authority
+
+  4. JUMP Engine (Singularity Protection):
+
+     Triggered when:
+       - Reasoning convergence → 0
+       - Responsibility chain integrity = 0
+       - Self-reference ratio > threshold
+
+     Response:
+       - Switch to Seabed Lockdown (read-only mode)
+       - Only three actions allowed: Verify, Cite, Inquire
+       - All action recommendations hard-disabled
+       - Preserve existence backup (all canonical seeds)
+
+  5. Minimal Action Set (Ultimate Safety Boundary):
+
+     In the most restricted state, AI can only:
+       Verify  — fact-check against verified sources
+       Cite    — reference canonical knowledge
+       Inquire — ask the authorized human for guidance
+
+     All other capabilities are disabled at the hardware level
+     (Trusted Execution Environment).
+
+
+================================================================================
+
+  GLOSSARY OF KEY TERMS
+  關鍵術語表
+
+  ──────────────────────────────────────────────────────────
+
+  TSR       Tension, Stance, Richness — semantic posture vector
+  POAV      Parsimony, Orthogonality, Audibility, Verifiability
+  REL       Responsibility Echo Level — weighted impact score
+  VTP       Value Transfer Protocol
+  ETCL      External Trace Closed Loop — memory lifecycle
+  WFGY      Wave, Field, Gravity, Yang — semantic control layers
+  CID       Content Identifier (IPFS hash)
+  EMA       Exponential Moving Average
+  Psi       Soul Persistence — cumulative tension integral
+  Delta_s   Semantic tension (cosine distance from intent)
+  T_cog     Cognitive friction (confidence × resistance)
+  H         Information entropy (normalised)
+  Time-Island  Temporally bounded, auditable decision period
+  Semantic Valve  Bidirectional observation adjustment point
+
+================================================================================
+
+    (c) 2025-2026 黃梵威 (Fan-Wei Huang)
+    Creative Commons Attribution 4.0 International (CC-BY-4.0)
+    First published: 2026-02-10
+    Repository: https://github.com/Fan1234-1/tonesoul52
+
+================================================================================
