@@ -1,0 +1,39 @@
+name: Git Hygiene
+
+on:
+  schedule:
+    - cron: "15 3 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  hygiene:
+    name: Git Hygiene Snapshot (non-blocking)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run git hygiene snapshot (non-blocking)
+        run: |
+          python scripts/verify_git_hygiene.py
+
+      - name: Upload git hygiene artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: git-hygiene-status-${{ github.run_id }}
+          path: |
+            docs/status/git_hygiene_latest.json
+            docs/status/git_hygiene_latest.md
+          if-no-files-found: error
+          retention-days: 90

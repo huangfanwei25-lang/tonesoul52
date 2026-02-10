@@ -26,6 +26,7 @@ DEFAULT_TARGETS = (
     "scripts/run_monthly_consolidation.py",
     "scripts/verify_web_api.py",
     "scripts/verify_memory_hygiene.py",
+    "scripts/verify_git_hygiene.py",
     "tests/red_team/**/*.py",
     "tools/agent_discussion_tool.py",
 )

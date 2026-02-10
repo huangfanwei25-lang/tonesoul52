@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-02-10T06:03:31Z",
+  "generated_at": "2026-02-10T08:14:32Z",
   "overall_ok": true,
   "config": {
     "include_sdh": false,
@@ -23,19 +23,19 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 0.59,
+      "duration_seconds": 0.62,
       "command": "python -m black --check tonesoul tests scripts",
       "stdout_tail": "",
-      "stderr_tail": "All done! ✨ 🍰 ✨\n275 files would be left unchanged."
+      "stderr_tail": "All done! ✨ 🍰 ✨\n277 files would be left unchanged."
     },
     {
       "name": "python_tests",
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 30.41,
+      "duration_seconds": 32.69,
       "command": "python -m pytest tests -q",
-      "stdout_tail": "be.py .                                    [ 89%]\ntests\\test_verify_vercel_preflight.py ......                             [ 90%]\ntests\\test_verify_web_api.py ...                                         [ 91%]\ntests\\test_vow_input_validation.py .........                             [ 92%]\ntests\\test_vow_system.py .........................                       [ 97%]\ntests\\test_vow_system_properties.py ..........                           [ 98%]\ntests\\test_vtp.py ....                                                   [ 99%]\ntests\\test_vtp_runtime.py ...                                            [100%]\n\n============================== warnings summary ===============================\n.venv\\Lib\\site-packages\\_hypothesis_pytestplugin.py:481\n  C:\\Users\\user\\Desktop\\倉庫\\.venv\\Lib\\site-packages\\_hypothesis_pytestplugin.py:481: UserWarning: Skipping collection of '.hypothesis' directory - this usually means you've explicitly set the `norecursedirs` pytest config option, replacing rather than extending the default ignores.\n    warnings.warn(\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n================= 594 passed, 3 xfailed, 1 warning in 28.49s ==================",
+      "stdout_tail": "be.py .                                    [ 90%]\ntests\\test_verify_vercel_preflight.py ......                             [ 91%]\ntests\\test_verify_web_api.py ...                                         [ 91%]\ntests\\test_vow_input_validation.py .........                             [ 93%]\ntests\\test_vow_system.py .........................                       [ 97%]\ntests\\test_vow_system_properties.py ..........                           [ 98%]\ntests\\test_vtp.py ....                                                   [ 99%]\ntests\\test_vtp_runtime.py ...                                            [100%]\n\n============================== warnings summary ===============================\n.venv\\Lib\\site-packages\\_hypothesis_pytestplugin.py:481\n  C:\\Users\\user\\Desktop\\倉庫\\.venv\\Lib\\site-packages\\_hypothesis_pytestplugin.py:481: UserWarning: Skipping collection of '.hypothesis' directory - this usually means you've explicitly set the `norecursedirs` pytest config option, replacing rather than extending the default ignores.\n    warnings.warn(\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n================= 599 passed, 3 xfailed, 1 warning in 30.66s ==================",
       "stderr_tail": ""
     },
     {
@@ -43,7 +43,7 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 5.13,
+      "duration_seconds": 5.27,
       "command": "npm --prefix apps/web run lint",
       "stdout_tail": "> web@0.1.0 lint\n> eslint",
       "stderr_tail": ""
@@ -53,9 +53,9 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 1.32,
+      "duration_seconds": 1.47,
       "command": "npm --prefix apps/web run test",
-      "stdout_tail": "> web@0.1.0 test\n> vitest run\n\n\n RUN  v4.0.17 C:/Users/user/Desktop/倉庫/apps/web\n\n ✓ src/__tests__/personaSettings.test.ts (7 tests) 6ms\n ✓ src/__tests__/entropyCalculator.test.ts (9 tests) 13ms\n ✓ src/__tests__/apiRoutes.chatTransport.test.ts (5 tests) 15ms\n ✓ src/__tests__/apiRoutes.invalidJson.test.ts (7 tests) 19ms\n ✓ src/__tests__/apiRoutes.transportFallback.test.ts (9 tests) 21ms\n\n Test Files  5 passed (5)\n      Tests  37 passed (37)\n   Start at  14:02:45\n   Duration  535ms (transform 517ms, setup 0ms, import 897ms, tests 73ms, environment 1ms)",
+      "stdout_tail": "> web@0.1.0 test\n> vitest run\n\n\n RUN  v4.0.17 C:/Users/user/Desktop/倉庫/apps/web\n\n ✓ src/__tests__/personaSettings.test.ts (7 tests) 9ms\n ✓ src/__tests__/entropyCalculator.test.ts (9 tests) 10ms\n ✓ src/__tests__/apiRoutes.chatTransport.test.ts (5 tests) 17ms\n ✓ src/__tests__/apiRoutes.invalidJson.test.ts (7 tests) 19ms\n ✓ src/__tests__/apiRoutes.transportFallback.test.ts (9 tests) 25ms\n\n Test Files  5 passed (5)\n      Tests  37 passed (37)\n   Start at  16:13:44\n   Duration  690ms (transform 414ms, setup 0ms, import 943ms, tests 81ms, environment 1ms)",
       "stderr_tail": ""
     },
     {
@@ -63,9 +63,9 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 45.54,
+      "duration_seconds": 47.75,
       "command": "python scripts/verify_7d.py",
-      "stdout_tail": "ommand\": \"python tools/agent_discussion_tool.py tail --path memory\\\\agent_discussion_curated.jsonl --limit 1\",\n      \"note\": \"age_days=0.00, threshold=7\"\n    },\n    {\n      \"dimension\": \"XDD\",\n      \"gate\": \"BLOCKING\",\n      \"status\": \"pass\",\n      \"command\": \"python -m pytest tests\\\\test_uncertainty.py -q\",\n      \"note\": \"\"\n    },\n    {\n      \"dimension\": \"GDD\",\n      \"gate\": \"BLOCKING\",\n      \"status\": \"pass\",\n      \"command\": \"python -m pytest tests\\\\test_genesis_integration.py tests\\\\test_provenance_chain.py -q\",\n      \"note\": \"\"\n    },\n    {\n      \"dimension\": \"CDD\",\n      \"gate\": \"BLOCKING\",\n      \"status\": \"pass\",\n      \"command\": \"python -m pytest tests/test_api_server_contract.py -q\",\n      \"note\": \"\"\n    },\n    {\n      \"dimension\": \"SDH\",\n      \"gate\": \"SOFT_FAIL\",\n      \"status\": \"skip\",\n      \"command\": \"python scripts\\\\verify_web_api.py --web-base http://127.0.0.1:3000 --api-base http://127.0.0.1:5000 --require-backend --check-council-modes\",\n      \"note\": \"skipped; use --include-sdh when web/backend are running\"\n    }\n  ],\n  \"scores\": {\n    \"TDD\": 100,\n    \"RDD\": 100,\n    \"DDD\": 100,\n    \"XDD\": 100,\n    \"GDD\": 100,\n    \"CDD\": 100,\n    \"SDH\": 0,\n    \"OVERALL\": 90\n  }\n}",
+      "stdout_tail": "ommand\": \"python tools/agent_discussion_tool.py tail --path memory\\\\agent_discussion_curated.jsonl --limit 1\",\n      \"note\": \"age_days=0.03, threshold=7\"\n    },\n    {\n      \"dimension\": \"XDD\",\n      \"gate\": \"BLOCKING\",\n      \"status\": \"pass\",\n      \"command\": \"python -m pytest tests\\\\test_uncertainty.py -q\",\n      \"note\": \"\"\n    },\n    {\n      \"dimension\": \"GDD\",\n      \"gate\": \"BLOCKING\",\n      \"status\": \"pass\",\n      \"command\": \"python -m pytest tests\\\\test_genesis_integration.py tests\\\\test_provenance_chain.py -q\",\n      \"note\": \"\"\n    },\n    {\n      \"dimension\": \"CDD\",\n      \"gate\": \"BLOCKING\",\n      \"status\": \"pass\",\n      \"command\": \"python -m pytest tests/test_api_server_contract.py -q\",\n      \"note\": \"\"\n    },\n    {\n      \"dimension\": \"SDH\",\n      \"gate\": \"SOFT_FAIL\",\n      \"status\": \"skip\",\n      \"command\": \"python scripts\\\\verify_web_api.py --web-base http://127.0.0.1:3000 --api-base http://127.0.0.1:5000 --require-backend --check-council-modes\",\n      \"note\": \"skipped; use --include-sdh when web/backend are running\"\n    }\n  ],\n  \"scores\": {\n    \"TDD\": 100,\n    \"RDD\": 100,\n    \"DDD\": 100,\n    \"XDD\": 100,\n    \"GDD\": 100,\n    \"CDD\": 100,\n    \"SDH\": 0,\n    \"OVERALL\": 90\n  }\n}",
       "stderr_tail": ""
     }
   ]
