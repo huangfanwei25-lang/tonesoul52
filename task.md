@@ -27,6 +27,11 @@
 - [x] 更新 `docs/status/README.md`，對齊健康檢查聚合項目
 **成功標準**: 一鍵健康檢查可同時覆蓋程式品質與 git object-store 健康度，且文件與測試契約一致。
 
+## Phase 49: SDH 失敗可觀測性修補
+- [x] 修正 `scripts/verify_7d.py` 在 SDH 失敗時可回退顯示 stdout 錯誤摘要（stderr 為空時）
+- [x] 新增 `tests/test_verify_7d.py` 回歸測試，避免 SDH 失敗 note 再次空白
+**成功標準**: `verify_7d` 的 SDH 失敗 note 可包含可讀錯誤線索（至少一個來源：stderr 或 stdout）。
+
 ## Phase 17: 收尾三部曲
 - [x] README 更新（反映 Council / Genesis / Memory / Tools API + 快速啟動）
 - [x] 記憶總結（寫入 `memory/self_journal.jsonl`，含 Phase 14-16 與亂碼修復）

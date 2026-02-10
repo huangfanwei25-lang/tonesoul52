@@ -91,3 +91,14 @@ def test_check_sdh_can_skip_council_mode_switch_flag(monkeypatch):
     assert "--check-council-modes" not in command
     assert "--check-council-modes" not in result.command
     assert result.status == "pass"
+
+
+def test_check_sdh_uses_stdout_tail_when_stderr_empty(monkeypatch):
+    def fake_run(command: list[str], timeout: int = 1200):
+        return False, "[FAIL] backend /api/health connection refused", "", 1
+
+    monkeypatch.setattr(verify_7d, "_run", fake_run)
+    result = verify_7d._check_sdh("http://127.0.0.1:3000", "http://127.0.0.1:5000", 40)
+
+    assert result.status == "fail"
+    assert "connection refused" in result.note.lower()

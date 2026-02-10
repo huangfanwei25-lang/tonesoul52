@@ -354,10 +354,13 @@ def _check_sdh(
     ]
     if check_council_modes:
         cmd.append("--check-council-modes")
-    ok, _, stderr, code = _run(cmd)
+    ok, stdout, stderr, code = _run(cmd)
     if ok:
         return _result("SDH", "SOFT_FAIL", "pass", cmd)
-    return _result("SDH", "SOFT_FAIL", "fail", cmd, f"exit={code}; {stderr[-300:]}")
+    stderr_tail = stderr.strip()[-300:]
+    stdout_tail = stdout.strip()[-300:]
+    detail = stderr_tail or stdout_tail
+    return _result("SDH", "SOFT_FAIL", "fail", cmd, f"exit={code}; {detail}")
 
 
 def _calculate_score(results: list[CheckResult]) -> dict[str, int]:
