@@ -88,6 +88,12 @@
 - [x] docs consistency / workflow contracts 同步對齊新腳本路徑
 **成功標準**: dispatch 行為可在本地以 Python 單測重演，降低 shell 環境相依造成的測試盲區。
 
+## Phase 59: Dispatch Shell Wrapper 退場
+- [x] 移除 `scripts/run_repo_healthcheck_dispatch.sh`，避免雙入口維護成本
+- [x] 保持 workflow 僅使用 `python scripts/run_repo_healthcheck_dispatch.py`
+- [x] 驗證 docs consistency / workflow contracts 無回歸
+**成功標準**: repo healthcheck dispatch 入口單一化，減少跨語言同步風險與維運噪音。
+
 ## Phase 17: 收尾三部曲
 - [x] README 更新（反映 Council / Genesis / Memory / Tools API + 快速啟動）
 - [x] 記憶總結（寫入 `memory/self_journal.jsonl`，含 Phase 14-16 與亂碼修復）
