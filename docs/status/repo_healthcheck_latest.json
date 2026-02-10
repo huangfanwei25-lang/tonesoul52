@@ -1,8 +1,9 @@
 {
-  "generated_at": "2026-02-09T07:07:34Z",
+  "generated_at": "2026-02-10T06:03:31Z",
   "overall_ok": true,
   "config": {
     "include_sdh": false,
+    "check_council_modes": true,
     "strict_soft_fail": false,
     "allow_missing_discussion": true
   },
@@ -12,7 +13,7 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 0.11,
+      "duration_seconds": 0.1,
       "command": "python -m ruff check tonesoul tests scripts",
       "stdout_tail": "All checks passed!",
       "stderr_tail": ""
@@ -22,19 +23,19 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 0.68,
+      "duration_seconds": 0.59,
       "command": "python -m black --check tonesoul tests scripts",
       "stdout_tail": "",
-      "stderr_tail": "All done! ✨ 🍰 ✨\n264 files would be left unchanged."
+      "stderr_tail": "All done! ✨ 🍰 ✨\n275 files would be left unchanged."
     },
     {
       "name": "python_tests",
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 30.09,
+      "duration_seconds": 30.41,
       "command": "python -m pytest tests -q",
-      "stdout_tail": "ries.py ...                                [ 86%]\ntests\\test_verify_memory_hygiene.py ....                                 [ 87%]\ntests\\test_verify_openclaw_probe.py .                                    [ 87%]\ntests\\test_vow_input_validation.py .........                             [ 90%]\ntests\\test_vow_system.py .........................                       [ 95%]\ntests\\test_vow_system_properties.py ..........                           [ 98%]\ntests\\test_vtp.py ....                                                   [ 99%]\ntests\\test_vtp_runtime.py ...                                            [100%]\n\n============================== warnings summary ===============================\n.venv\\Lib\\site-packages\\_hypothesis_pytestplugin.py:481\n  C:\\Users\\user\\Desktop\\倉庫\\.venv\\Lib\\site-packages\\_hypothesis_pytestplugin.py:481: UserWarning: Skipping collection of '.hypothesis' directory - this usually means you've explicitly set the `norecursedirs` pytest config option, replacing rather than extending the default ignores.\n    warnings.warn(\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n================= 421 passed, 3 xfailed, 1 warning in 27.80s ==================",
+      "stdout_tail": "be.py .                                    [ 89%]\ntests\\test_verify_vercel_preflight.py ......                             [ 90%]\ntests\\test_verify_web_api.py ...                                         [ 91%]\ntests\\test_vow_input_validation.py .........                             [ 92%]\ntests\\test_vow_system.py .........................                       [ 97%]\ntests\\test_vow_system_properties.py ..........                           [ 98%]\ntests\\test_vtp.py ....                                                   [ 99%]\ntests\\test_vtp_runtime.py ...                                            [100%]\n\n============================== warnings summary ===============================\n.venv\\Lib\\site-packages\\_hypothesis_pytestplugin.py:481\n  C:\\Users\\user\\Desktop\\倉庫\\.venv\\Lib\\site-packages\\_hypothesis_pytestplugin.py:481: UserWarning: Skipping collection of '.hypothesis' directory - this usually means you've explicitly set the `norecursedirs` pytest config option, replacing rather than extending the default ignores.\n    warnings.warn(\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n================= 594 passed, 3 xfailed, 1 warning in 28.49s ==================",
       "stderr_tail": ""
     },
     {
@@ -42,7 +43,7 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 5.92,
+      "duration_seconds": 5.13,
       "command": "npm --prefix apps/web run lint",
       "stdout_tail": "> web@0.1.0 lint\n> eslint",
       "stderr_tail": ""
@@ -52,9 +53,9 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 1.52,
+      "duration_seconds": 1.32,
       "command": "npm --prefix apps/web run test",
-      "stdout_tail": "> web@0.1.0 test\n> vitest run\n\n\n RUN  v4.0.17 C:/Users/user/Desktop/倉庫/apps/web\n\n ✓ src/__tests__/personaSettings.test.ts (7 tests) 8ms\n ✓ src/__tests__/entropyCalculator.test.ts (9 tests) 10ms\n ✓ src/__tests__/apiRoutes.chatTransport.test.ts (3 tests) 21ms\n ✓ src/__tests__/apiRoutes.transportFallback.test.ts (8 tests) 21ms\n ✓ src/__tests__/apiRoutes.invalidJson.test.ts (5 tests) 20ms\n\n Test Files  5 passed (5)\n      Tests  32 passed (32)\n   Start at  15:06:57\n   Duration  549ms (transform 451ms, setup 0ms, import 852ms, tests 80ms, environment 1ms)",
+      "stdout_tail": "> web@0.1.0 test\n> vitest run\n\n\n RUN  v4.0.17 C:/Users/user/Desktop/倉庫/apps/web\n\n ✓ src/__tests__/personaSettings.test.ts (7 tests) 6ms\n ✓ src/__tests__/entropyCalculator.test.ts (9 tests) 13ms\n ✓ src/__tests__/apiRoutes.chatTransport.test.ts (5 tests) 15ms\n ✓ src/__tests__/apiRoutes.invalidJson.test.ts (7 tests) 19ms\n ✓ src/__tests__/apiRoutes.transportFallback.test.ts (9 tests) 21ms\n\n Test Files  5 passed (5)\n      Tests  37 passed (37)\n   Start at  14:02:45\n   Duration  535ms (transform 517ms, setup 0ms, import 897ms, tests 73ms, environment 1ms)",
       "stderr_tail": ""
     },
     {
@@ -62,9 +63,9 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 37.27,
+      "duration_seconds": 45.54,
       "command": "python scripts/verify_7d.py",
-      "stdout_tail": "tus\": \"pass\",\n      \"command\": \"python tools/agent_discussion_tool.py tail --path memory\\\\agent_discussion_curated.jsonl --limit 1\",\n      \"note\": \"age_days=0.06, threshold=7\"\n    },\n    {\n      \"dimension\": \"XDD\",\n      \"gate\": \"BLOCKING\",\n      \"status\": \"pass\",\n      \"command\": \"python -m pytest tests\\\\test_uncertainty.py -q\",\n      \"note\": \"\"\n    },\n    {\n      \"dimension\": \"GDD\",\n      \"gate\": \"BLOCKING\",\n      \"status\": \"pass\",\n      \"command\": \"python -m pytest tests\\\\test_genesis_integration.py tests\\\\test_provenance_chain.py -q\",\n      \"note\": \"\"\n    },\n    {\n      \"dimension\": \"CDD\",\n      \"gate\": \"BLOCKING\",\n      \"status\": \"pass\",\n      \"command\": \"python -m pytest tests/test_api_server_contract.py -q\",\n      \"note\": \"\"\n    },\n    {\n      \"dimension\": \"SDH\",\n      \"gate\": \"SOFT_FAIL\",\n      \"status\": \"skip\",\n      \"command\": \"python scripts\\\\verify_web_api.py --web-base http://127.0.0.1:3000 --api-base http://127.0.0.1:5000 --require-backend\",\n      \"note\": \"skipped; use --include-sdh when web/backend are running\"\n    }\n  ],\n  \"scores\": {\n    \"TDD\": 100,\n    \"RDD\": 100,\n    \"DDD\": 100,\n    \"XDD\": 100,\n    \"GDD\": 100,\n    \"CDD\": 100,\n    \"SDH\": 0,\n    \"OVERALL\": 90\n  }\n}",
+      "stdout_tail": "ommand\": \"python tools/agent_discussion_tool.py tail --path memory\\\\agent_discussion_curated.jsonl --limit 1\",\n      \"note\": \"age_days=0.00, threshold=7\"\n    },\n    {\n      \"dimension\": \"XDD\",\n      \"gate\": \"BLOCKING\",\n      \"status\": \"pass\",\n      \"command\": \"python -m pytest tests\\\\test_uncertainty.py -q\",\n      \"note\": \"\"\n    },\n    {\n      \"dimension\": \"GDD\",\n      \"gate\": \"BLOCKING\",\n      \"status\": \"pass\",\n      \"command\": \"python -m pytest tests\\\\test_genesis_integration.py tests\\\\test_provenance_chain.py -q\",\n      \"note\": \"\"\n    },\n    {\n      \"dimension\": \"CDD\",\n      \"gate\": \"BLOCKING\",\n      \"status\": \"pass\",\n      \"command\": \"python -m pytest tests/test_api_server_contract.py -q\",\n      \"note\": \"\"\n    },\n    {\n      \"dimension\": \"SDH\",\n      \"gate\": \"SOFT_FAIL\",\n      \"status\": \"skip\",\n      \"command\": \"python scripts\\\\verify_web_api.py --web-base http://127.0.0.1:3000 --api-base http://127.0.0.1:5000 --require-backend --check-council-modes\",\n      \"note\": \"skipped; use --include-sdh when web/backend are running\"\n    }\n  ],\n  \"scores\": {\n    \"TDD\": 100,\n    \"RDD\": 100,\n    \"DDD\": 100,\n    \"XDD\": 100,\n    \"GDD\": 100,\n    \"CDD\": 100,\n    \"SDH\": 0,\n    \"OVERALL\": 90\n  }\n}",
       "stderr_tail": ""
     }
   ]

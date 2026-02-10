@@ -6,8 +6,8 @@ from typing import Dict, List, Optional
 
 from ..inventory import build_inventory, entrypoints_status
 from ..issue_codes import IssueCode, issue
-from .run_import_check import IMPORT_TARGETS, _can_import
 from ..seed_schema_check import check_seed_schema
+from .run_import_check import IMPORT_TARGETS, _can_import
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 LEDGER_CANDIDATES = [

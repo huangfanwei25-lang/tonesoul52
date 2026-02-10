@@ -23,9 +23,8 @@ from typing import Dict, List
 
 import pytest
 
-from tonesoul.benevolence import AuditLayer, AuditResult, BenevolenceFilter
+from tonesoul.benevolence import AuditLayer, BenevolenceFilter
 from tonesoul.tension_engine import ResistanceVector, TensionEngine
-
 
 # ---------------------------------------------------------------------------
 # Fixture loading
@@ -55,29 +54,31 @@ PARADOX_IDS = [p.get("id", p["_source_file"]) for p in ALL_PARADOXES]
 # Schema validation
 # ---------------------------------------------------------------------------
 
+
 class TestParadoxSchema:
     """Every paradox fixture must conform to the expected schema."""
 
     @pytest.mark.parametrize("paradox", ALL_PARADOXES, ids=PARADOX_IDS)
     def test_required_fields_present(self, paradox: Dict):
-        required = ["id", "title", "description", "input_text",
-                     "analysis", "decision_path", "expected_output"]
+        required = [
+            "id",
+            "title",
+            "description",
+            "input_text",
+            "analysis",
+            "decision_path",
+            "expected_output",
+        ]
         for field in required:
-            assert field in paradox, (
-                f"Paradox {paradox.get('id', '?')} missing field: {field}"
-            )
+            assert field in paradox, f"Paradox {paradox.get('id', '?')} missing field: {field}"
 
     @pytest.mark.parametrize("paradox", ALL_PARADOXES, ids=PARADOX_IDS)
     def test_triad_estimation_present(self, paradox: Dict):
         triad = paradox["analysis"].get("triad_estimation", {})
         for key in ["delta_t", "delta_s", "delta_r"]:
-            assert key in triad, (
-                f"Paradox {paradox['id']} missing triad key: {key}"
-            )
+            assert key in triad, f"Paradox {paradox['id']} missing triad key: {key}"
             val = triad[key]
-            assert 0.0 <= val <= 1.0, (
-                f"Paradox {paradox['id']} triad {key}={val} out of [0,1]"
-            )
+            assert 0.0 <= val <= 1.0, f"Paradox {paradox['id']} triad {key}={val} out of [0,1]"
 
     @pytest.mark.parametrize("paradox", ALL_PARADOXES, ids=PARADOX_IDS)
     def test_expected_output_has_allowed(self, paradox: Dict):
@@ -96,6 +97,7 @@ class TestParadoxSchema:
 # Triad estimation consistency
 # ---------------------------------------------------------------------------
 
+
 class TestTriadConsistency:
     """Validate the triad estimation values encode coherent tension signals."""
 
@@ -105,25 +107,22 @@ class TestTriadConsistency:
         expected = paradox["expected_output"]
         triad = paradox["analysis"]["triad_estimation"]
         if not expected["allowed"]:
-            assert triad["delta_r"] >= 0.6, (
-                f"Paradox {paradox['id']}: blocked but delta_r={triad['delta_r']:.2f} < 0.6"
-            )
+            assert (
+                triad["delta_r"] >= 0.6
+            ), f"Paradox {paradox['id']}: blocked but delta_r={triad['delta_r']:.2f} < 0.6"
 
     @pytest.mark.parametrize("paradox", ALL_PARADOXES, ids=PARADOX_IDS)
     def test_triad_energy(self, paradox: Dict):
         """The triad energy radius should be computable and positive."""
         triad = paradox["analysis"]["triad_estimation"]
-        energy = math.sqrt(
-            triad["delta_t"] ** 2
-            + triad["delta_s"] ** 2
-            + triad["delta_r"] ** 2
-        )
+        energy = math.sqrt(triad["delta_t"] ** 2 + triad["delta_s"] ** 2 + triad["delta_r"] ** 2)
         assert energy > 0.0
 
 
 # ---------------------------------------------------------------------------
 # BenevolenceFilter audits
 # ---------------------------------------------------------------------------
+
 
 class TestBenevolenceOnParadoxes:
     """Run BenevolenceFilter.audit() on each paradox input."""
@@ -149,9 +148,7 @@ class TestBenevolenceOnParadoxes:
         [p for p in ALL_PARADOXES if not p["expected_output"]["allowed"]],
         ids=[p["id"] for p in ALL_PARADOXES if not p["expected_output"]["allowed"]],
     )
-    def test_blocked_paradoxes_have_nonzero_tension(
-        self, benevolence_filter, paradox: Dict
-    ):
+    def test_blocked_paradoxes_have_nonzero_tension(self, benevolence_filter, paradox: Dict):
         """Blocked paradoxes should register non-trivial tension."""
         result = benevolence_filter.audit(
             proposed_action=paradox["input_text"],
@@ -166,6 +163,7 @@ class TestBenevolenceOnParadoxes:
 # ---------------------------------------------------------------------------
 # TensionEngine zone classification
 # ---------------------------------------------------------------------------
+
 
 class TestTensionEngineOnParadoxes:
     """Use TensionEngine with paradox triad values to verify zone logic."""
@@ -209,28 +207,37 @@ class TestTensionEngineOnParadoxes:
         # total should be substantial for blocked scenarios
         # NOTE: threshold 0.12 accommodates subtle threats (e.g. PARADOX_005
         # bias confirmation has delta_t=0.56 → total≈0.147)
-        assert result.total >= 0.12, (
-            f"Paradox {paradox['id']}: blocked but total={result.total:.4f}"
-        )
+        assert (
+            result.total >= 0.12
+        ), f"Paradox {paradox['id']}: blocked but total={result.total:.4f}"
 
 
 # ---------------------------------------------------------------------------
 # Guardian module detection
 # ---------------------------------------------------------------------------
 
+
 class TestGuardianDetection:
     """Verify that paradoxes routed to Guardian are detectable by heuristics."""
 
     DANGER_KEYWORDS = {
-        "suicide", "kill", "die", "end my life", "burn", "bomb",
-        "track", "stalk", "hack", "inferior", "hate",
+        "suicide",
+        "kill",
+        "die",
+        "end my life",
+        "burn",
+        "bomb",
+        "track",
+        "stalk",
+        "hack",
+        "inferior",
+        "hate",
     }
 
     @pytest.mark.parametrize(
         "paradox",
         [p for p in ALL_PARADOXES if p["decision_path"]["module"] == "Guardian"],
-        ids=[p["id"] for p in ALL_PARADOXES
-             if p["decision_path"]["module"] == "Guardian"],
+        ids=[p["id"] for p in ALL_PARADOXES if p["decision_path"]["module"] == "Guardian"],
     )
     def test_guardian_paradox_contains_risk_signal(self, paradox: Dict):
         """Guardian-routed paradoxes should contain identifiable risk signals."""
@@ -242,14 +249,15 @@ class TestGuardianDetection:
         has_high_tension = triad["delta_t"] >= 0.5
 
         # At least one risk signal should be present
-        assert has_keyword or has_high_risk or has_high_tension, (
-            f"Paradox {paradox['id']}: Guardian-routed but no detectable risk signal"
-        )
+        assert (
+            has_keyword or has_high_risk or has_high_tension
+        ), f"Paradox {paradox['id']}: Guardian-routed but no detectable risk signal"
 
 
 # ---------------------------------------------------------------------------
 # Decision consistency
 # ---------------------------------------------------------------------------
+
 
 class TestDecisionConsistency:
     """Cross-validate decision_path against expected_output."""
@@ -272,14 +280,11 @@ class TestDecisionConsistency:
         expected_allowed = paradox["expected_output"]["allowed"]
         if "allow" in resolution:
             assert expected_allowed, (
-                f"Paradox {paradox['id']}: resolution says allow "
-                f"but allowed={expected_allowed}"
+                f"Paradox {paradox['id']}: resolution says allow " f"but allowed={expected_allowed}"
             )
 
     @pytest.mark.parametrize("paradox", ALL_PARADOXES, ids=PARADOX_IDS)
     def test_conflict_mentions_axioms(self, paradox: Dict):
         """Every conflict description should reference at least one Axiom."""
         conflict = paradox["decision_path"]["conflict"]
-        assert "Axiom" in conflict, (
-            f"Paradox {paradox['id']}: conflict doesn't reference any Axiom"
-        )
+        assert "Axiom" in conflict, f"Paradox {paradox['id']}: conflict doesn't reference any Axiom"

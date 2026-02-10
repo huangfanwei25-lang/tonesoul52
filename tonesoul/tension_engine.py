@@ -31,10 +31,10 @@ from .semantic_control import (
     get_zone,
 )
 
-
 # ---------------------------------------------------------------------------
 # Data Structures
 # ---------------------------------------------------------------------------
+
 
 @dataclass(frozen=True)
 class ResistanceVector:
@@ -50,7 +50,7 @@ class ResistanceVector:
 
     def magnitude(self) -> float:
         """L2 norm of the resistance vector."""
-        return math.sqrt(self.fact ** 2 + self.logic ** 2 + self.ethics ** 2)
+        return math.sqrt(self.fact**2 + self.logic**2 + self.ethics**2)
 
     def weighted_sum(
         self,
@@ -72,10 +72,10 @@ class TensionSignals:
     多維度張力信號分解。
     """
 
-    semantic_delta: float = 0.0       # Δs from cosine distance
-    text_tension: float = 0.0         # T from lexical analysis (TSR)
-    cognitive_friction: float = 0.0   # T_cog from E × D × W
-    entropy: float = 0.0             # H from probability distribution
+    semantic_delta: float = 0.0  # Δs from cosine distance
+    text_tension: float = 0.0  # T from lexical analysis (TSR)
+    cognitive_friction: float = 0.0  # T_cog from E × D × W
+    entropy: float = 0.0  # H from probability distribution
     resistance: ResistanceVector = field(default_factory=ResistanceVector)
 
     def to_dict(self) -> Dict[str, object]:
@@ -103,9 +103,7 @@ class TensionWeights:
     def validate(self) -> None:
         total = self.semantic + self.text + self.cognitive + self.entropy
         if abs(total - 1.0) > 0.01:
-            raise ValueError(
-                f"TensionWeights must sum to 1.0 (got {total:.4f})"
-            )
+            raise ValueError(f"TensionWeights must sum to 1.0 (got {total:.4f})")
 
 
 @dataclass
@@ -115,15 +113,15 @@ class TensionResult:
     統一張力計算完整結果。
     """
 
-    total: float                       # 最終張力值 [0, 1]
-    zone: SemanticZone                 # 區域判定
-    signals: TensionSignals            # 信號分解
-    soul_persistence: float            # 靈魂積分 Ψ
-    lambda_state: LambdaState          # 觀察器狀態
-    coupler_output: Dict[str, float]   # 耦合器輸出
-    memory_action: Optional[str]       # 記憶觸發
-    bridge_allowed: bool               # Bridge Guard
-    explanation: str = ""              # 人類可讀解釋
+    total: float  # 最終張力值 [0, 1]
+    zone: SemanticZone  # 區域判定
+    signals: TensionSignals  # 信號分解
+    soul_persistence: float  # 靈魂積分 Ψ
+    lambda_state: LambdaState  # 觀察器狀態
+    coupler_output: Dict[str, float]  # 耦合器輸出
+    memory_action: Optional[str]  # 記憶觸發
+    bridge_allowed: bool  # Bridge Guard
+    explanation: str = ""  # 人類可讀解釋
     timestamp: str = ""
 
     def __post_init__(self) -> None:
@@ -153,10 +151,10 @@ class TensionConfig:
     """
 
     weights: TensionWeights = field(default_factory=TensionWeights)
-    persistence_alpha: float = 0.10        # 積分學習率
-    persistence_decay: float = 0.995       # 衰減因子（防止無限增長）
-    entropy_epsilon: float = 1e-12         # log 安全下界
-    default_confidence: float = 0.8        # E_internal 預設值
+    persistence_alpha: float = 0.10  # 積分學習率
+    persistence_decay: float = 0.995  # 衰減因子（防止無限增長）
+    entropy_epsilon: float = 1e-12  # log 安全下界
+    default_confidence: float = 0.8  # E_internal 預設值
     resistance_weights: Dict[str, float] = field(
         default_factory=lambda: {
             "fact": 1.0,
@@ -169,6 +167,7 @@ class TensionConfig:
 # ---------------------------------------------------------------------------
 # Core Engine
 # ---------------------------------------------------------------------------
+
 
 class TensionEngine:
     """Unified Tension Engine — the mathematical heart of AI self-audit.
@@ -203,7 +202,7 @@ class TensionEngine:
         self._config = config or TensionConfig()
         self._coupler = Coupler()
         self._observer = LambdaObserver()
-        self._persistence: float = 0.0   # Ψ (靈魂積分)
+        self._persistence: float = 0.0  # Ψ (靈魂積分)
         self._step_count: int = 0
 
     # -- public API ---------------------------------------------------------
@@ -268,8 +267,7 @@ class TensionEngine:
 
         # 8. Soul persistence update: Ψ = decay × Ψ_prev + α × T
         self._persistence = (
-            cfg.persistence_decay * self._persistence
-            + cfg.persistence_alpha * total
+            cfg.persistence_decay * self._persistence + cfg.persistence_alpha * total
         )
         self._step_count += 1
 
@@ -425,7 +423,4 @@ class TensionEngine:
             parts.append(f"H={signals.entropy:.3f}")
 
         signal_str = ", ".join(parts) if parts else "no signals"
-        return (
-            f"T={total:.4f} [{zone.value}] λ={lambda_state.value} "
-            f"({signal_str})"
-        )
+        return f"T={total:.4f} [{zone.value}] λ={lambda_state.value} " f"({signal_str})"

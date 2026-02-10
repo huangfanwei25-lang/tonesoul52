@@ -735,9 +735,7 @@ def _run_gates(ctx: PipelineContext) -> GateArtifacts:
             payload["gate"] = dcs_result.get("gate", "dcs_gate")
             payload["passed"] = dcs_result.get("passed")
             payload["issues"] = dcs_result.get("issues", [])
-            dcs_result_path = os.path.join(
-                os.path.dirname(ctx.gate_report_path), "dcs_result.json"
-            )
+            dcs_result_path = os.path.join(os.path.dirname(ctx.gate_report_path), "dcs_result.json")
             with open(dcs_result_path, "w", encoding="utf-8") as handle:
                 json.dump(payload, handle, indent=2)
     return GateArtifacts(

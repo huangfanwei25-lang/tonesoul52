@@ -66,7 +66,17 @@ def _wait_for_url(url: str, timeout_seconds: int) -> bool:
             with urllib.request.urlopen(url, timeout=2) as response:
                 if 200 <= int(response.status) < 500:
                     return True
-        except (urllib.error.URLError, TimeoutError, ValueError):
+        # Startup probes can intermittently reset connections before the web
+        # server is fully ready; treat these as retryable signals.
+        except (
+            urllib.error.URLError,
+            TimeoutError,
+            ValueError,
+            ConnectionResetError,
+            ConnectionAbortedError,
+            ConnectionRefusedError,
+            OSError,
+        ):
             pass
         time.sleep(1)
     return False

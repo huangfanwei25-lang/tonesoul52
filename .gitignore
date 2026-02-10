@@ -29,6 +29,7 @@ coverage.xml
 # Node.js
 node_modules/
 .next/
+apps/showcase/
 
 # Database
 data/chromadb/

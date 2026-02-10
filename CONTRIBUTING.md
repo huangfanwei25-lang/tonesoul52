@@ -114,6 +114,13 @@ You can verify the latest commit message with:
 python scripts/verify_commit_attribution.py --rev HEAD
 ```
 
+CI policy (incremental blocking):
+- `pull_request`: check only commits in `base..head`
+- `push`: check only newly pushed commits in `before..after`
+- legacy history is not blocked retroactively
+
+If any incremental commit misses `Agent` or `Trace-Topic`, CI fails.
+
 ---
 
 ## 🛡️ 7D Audit Compliance

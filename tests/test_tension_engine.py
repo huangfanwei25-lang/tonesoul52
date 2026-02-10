@@ -16,9 +16,9 @@ Covers:
 - Backward compatibility with SemanticController patterns
 """
 
-import math
 import pytest
 
+from tonesoul.semantic_control import LambdaState, SemanticZone
 from tonesoul.tension_engine import (
     ResistanceVector,
     TensionConfig,
@@ -27,12 +27,11 @@ from tonesoul.tension_engine import (
     TensionSignals,
     TensionWeights,
 )
-from tonesoul.semantic_control import LambdaState, SemanticZone
-
 
 # ---------------------------------------------------------------------------
 # ResistanceVector
 # ---------------------------------------------------------------------------
+
 
 class TestResistanceVector:
     def test_defaults_are_zero(self):
@@ -74,6 +73,7 @@ class TestResistanceVector:
 # TensionSignals
 # ---------------------------------------------------------------------------
 
+
 class TestTensionSignals:
     def test_defaults(self):
         ts = TensionSignals()
@@ -101,6 +101,7 @@ class TestTensionSignals:
 # TensionWeights
 # ---------------------------------------------------------------------------
 
+
 class TestTensionWeights:
     def test_defaults_sum_to_one(self):
         tw = TensionWeights()
@@ -120,6 +121,7 @@ class TestTensionWeights:
 # ---------------------------------------------------------------------------
 # TensionEngine — Entropy
 # ---------------------------------------------------------------------------
+
 
 class TestEntropy:
     def test_uniform_distribution_max_entropy(self):
@@ -155,6 +157,7 @@ class TestEntropy:
 # TensionEngine — Cognitive Friction
 # ---------------------------------------------------------------------------
 
+
 class TestCognitiveFriction:
     def test_zero_resistance_gives_zero(self):
         engine = TensionEngine()
@@ -181,6 +184,7 @@ class TestCognitiveFriction:
 # ---------------------------------------------------------------------------
 # TensionEngine — Compute (integration)
 # ---------------------------------------------------------------------------
+
 
 class TestTensionEngineCompute:
     def test_minimal_call(self):
@@ -273,6 +277,7 @@ class TestTensionEngineCompute:
 # TensionEngine — Soul Persistence
 # ---------------------------------------------------------------------------
 
+
 class TestSoulPersistence:
     def test_persistence_starts_at_zero(self):
         engine = TensionEngine()
@@ -292,14 +297,14 @@ class TestSoulPersistence:
         engine = TensionEngine(config=cfg)
 
         # First step: Ψ = 0.5 * 0 + 0.1 * T = 0.1 * T
-        r1 = engine.compute(
+        engine.compute(
             intended=[1.0, 0.0, 0.0],
             generated=[0.5, 0.5, 0.0],
         )
         psi_after_1 = engine.persistence
 
         # Second step with zero tension: Ψ = 0.5 * psi_after_1 + 0.1 * 0
-        r2 = engine.compute()  # zero signals
+        engine.compute()  # zero signals
         psi_after_2 = engine.persistence
 
         assert psi_after_2 == pytest.approx(0.5 * psi_after_1, abs=0.001)
@@ -330,6 +335,7 @@ class TestSoulPersistence:
 # TensionEngine — Zone classification
 # ---------------------------------------------------------------------------
 
+
 class TestZoneClassification:
     def test_safe_zone(self):
         engine = TensionEngine()
@@ -351,6 +357,7 @@ class TestZoneClassification:
 # ---------------------------------------------------------------------------
 # TensionEngine — Memory triggers
 # ---------------------------------------------------------------------------
+
 
 class TestMemoryTriggers:
     def test_high_delta_triggers_record_hard(self):
@@ -381,6 +388,7 @@ class TestMemoryTriggers:
 # TensionEngine — Reset
 # ---------------------------------------------------------------------------
 
+
 class TestReset:
     def test_reset_clears_persistence(self):
         engine = TensionEngine()
@@ -397,6 +405,7 @@ class TestReset:
 # ---------------------------------------------------------------------------
 # TensionEngine — Backward Compatibility
 # ---------------------------------------------------------------------------
+
 
 class TestBackwardCompatibility:
     """Ensure the engine produces results compatible with SemanticController."""
@@ -437,12 +446,11 @@ class TestBackwardCompatibility:
 # TensionConfig
 # ---------------------------------------------------------------------------
 
+
 class TestTensionConfig:
     def test_custom_config(self):
         cfg = TensionConfig(
-            weights=TensionWeights(
-                semantic=0.5, text=0.2, cognitive=0.2, entropy=0.1
-            ),
+            weights=TensionWeights(semantic=0.5, text=0.2, cognitive=0.2, entropy=0.1),
             persistence_alpha=0.2,
         )
         engine = TensionEngine(config=cfg)

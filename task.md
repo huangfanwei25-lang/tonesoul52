@@ -1,5 +1,26 @@
 ﻿# Task
 
+## Phase 47: 收斂衝刺（P0 / P1 / P2）
+
+### P0（先做，阻塞交付）
+- [x] 清除 lint/format drift（ruff + black --check 全綠）
+- [x] scripts/run_repo_healthcheck.py --allow-missing-discussion 回到 overall_ok=true
+- [x] root npm test 可執行（對齊 python -m pytest tests/ -q）
+- [x] live SDH 端到端可重現（scripts/run_7d_isolated.py + --include-sdh pass）
+- [x] 新增 ConnectionResetError 啟動抖動回歸測試（tests/test_run_7d_isolated.py）
+**成功標準**: 阻塞性品質門檻恢復可重現全綠，且 SDH live smoke 有可重演證據。
+
+### P1（本週收斂，降低維護風險）
+- [x] 決議 commit attribution 策略（僅檢查 HEAD / 檢查 N 筆歷史 / 僅 PR 增量）
+- [x] 將 attribution 決策落地到 CI（warning 或 blocking 一致化）
+- [x] apps/showcase/ 追蹤策略先收斂（暫採 .gitignore，避免工作樹噪音）
+**成功標準**: 歸屬規範有單一可執行策略，CI 行為與團隊預期一致。
+
+### P2（可延後，保持倉庫乾淨）
+- [ ] 規劃 Git object hygiene 定期策略（count-objects / fsck 例行檢查）
+- [ ] 將收斂週規則寫入維運文件（避免再次框架擴張造成 drift）
+**成功標準**: 有文件化的例行保養節奏，且不增加日常交付負擔。
+
 ## Phase 17: 收尾三部曲
 - [x] README 更新（反映 Council / Genesis / Memory / Tools API + 快速啟動）
 - [x] 記憶總結（寫入 `memory/self_journal.jsonl`，含 Phase 14-16 與亂碼修復）
@@ -210,3 +231,6 @@
 - [x] 敘事對照表與敘事定版文件
 - [x] 亂碼清理與 UTF-8 統一
 **參考**: `CODEX_TASK.md`, `memory/handoff/2026-02-06_phase16_tools_progress.md`
+
+
+
