@@ -39,9 +39,9 @@ const dimensions: DimensionData[] = [
         nameZh: "測試驅動",
         oneLiner: "功能是否可重現驗證？",
         icon: <FlaskConical className="w-6 h-6" />,
-        color: "from-emerald-500/20 to-emerald-900/10",
-        borderColor: "border-emerald-500/40",
-        accentColor: "text-emerald-400",
+        color: "from-sky-500/20 to-sky-900/10",
+        borderColor: "border-sky-500/40",
+        accentColor: "text-sky-300",
         definition:
             "每一個治理規則、每一條約束都必須有對應的自動化測試。不是「相信它會 work」，而是「證明它在 work」。禁止以關閉測試取代修復。",
         context:
@@ -51,7 +51,7 @@ const dimensions: DimensionData[] = [
         toneSoulRelation:
             "語魂的三公理之一是「輸出即事件」(Output is Event)——不可撤回。如果不可撤回，那在輸出之前就必須有驗證機制。TDD 就是這個機制。593 個測試是語魂系統的「良心檢查站」。",
         status: "✅ 強 (593 tests)",
-        statusColor: "text-emerald-400",
+        statusColor: "text-sky-300",
     },
     {
         id: "rdd",
@@ -60,9 +60,9 @@ const dimensions: DimensionData[] = [
         nameZh: "紅隊防禦",
         oneLiner: "是否能抵抗對抗性輸入？",
         icon: <Swords className="w-6 h-6" />,
-        color: "from-red-500/20 to-red-900/10",
-        borderColor: "border-red-500/40",
-        accentColor: "text-red-400",
+        color: "from-rose-500/20 to-rose-900/10",
+        borderColor: "border-rose-500/40",
+        accentColor: "text-rose-300",
         definition:
             "主動用對抗性輸入攻擊自己的系統——prompt injection、權限繞過、情感操縱、邏輯誘導。需有「失敗可見」機制，不允許靜默失敗。",
         context:
@@ -72,7 +72,7 @@ const dimensions: DimensionData[] = [
         toneSoulRelation:
             "語魂系統的七大悖論測試（PARADOXES/）就是 RDD 的核心實踐。從安樂死請求到情感依賴迴路，每個悖論都是紅隊的子彈。語魂不迴避矛盾——它把矛盾變成測試案例。",
         status: "🟡 中強 (20 cases)",
-        statusColor: "text-amber-400",
+        statusColor: "text-slate-300",
     },
     {
         id: "ddd",
@@ -123,9 +123,9 @@ const dimensions: DimensionData[] = [
         nameZh: "治理驅動",
         oneLiner: "權責邊界是否明確？",
         icon: <Scale className="w-6 h-6" />,
-        color: "from-amber-500/20 to-amber-900/10",
-        borderColor: "border-amber-500/40",
-        accentColor: "text-amber-400",
+        color: "from-sky-500/20 to-sky-900/10",
+        borderColor: "border-sky-500/40",
+        accentColor: "text-sky-300",
         definition:
             "決策應標記責任層級（tier）與歸因（is_mine / genesis）。高責任輸出需留存 provenance 記錄。每個決策都有一個「是誰做的、為什麼」的標籤。",
         context:
@@ -135,7 +135,7 @@ const dimensions: DimensionData[] = [
         toneSoulRelation:
             "語魂的核心身份就是治理中介層——不是聊天機器人，不是知識庫，而是讓 AI 對自己說過的話負責的框架。Genesis 模組追蹤每個決策的出生證明。仁慈函數 (Benevolence Function) 在輸出前進行三層審計。這就是 GDD 的工程實現。",
         status: "✅ 中強",
-        statusColor: "text-amber-400",
+        statusColor: "text-sky-300",
     },
     {
         id: "cdd",
@@ -288,9 +288,9 @@ function DetailBlock({
 
 export default function SevenDimensionCards() {
     return (
-        <section className="bg-gradient-to-br from-slate-800/60 to-indigo-900/30 border border-indigo-700/40 rounded-2xl p-8">
+        <section className="bg-gradient-to-r from-sky-500/10 to-rose-500/10 border border-slate-700/45 rounded-2xl p-8">
             <h2 className="text-2xl font-bold mb-2 flex items-center gap-2">
-                <Sparkles className="w-6 h-6 text-indigo-400" />
+                <Sparkles className="w-6 h-6 text-sky-300" />
                 7D Audit Framework | 七維審計框架
             </h2>
             <p className="text-slate-400 mb-2 text-sm">
@@ -307,9 +307,9 @@ export default function SevenDimensionCards() {
             </div>
 
             {/* Bottom quote */}
-            <div className="mt-8 p-5 bg-slate-900/40 rounded-xl border border-indigo-700/20">
+            <div className="mt-8 p-5 bg-slate-900/40 rounded-xl border border-slate-700/55">
                 <p className="text-sm text-slate-400 leading-relaxed">
-                    <strong className="text-indigo-300">為什麼是 7 個維度？</strong>{" "}
+                    <strong className="text-sky-200">為什麼是 7 個維度？</strong>{" "}
                     ToneSoul 的目標不是只產生「看起來聰明」的回答，而是建立<strong className="text-white">可驗證、可追責、可持續校準</strong>的系統。
                     7D 是把這個目標拆成可觀測的七個軸——每一軸都可以獨立量化、獨立改進，合在一起就是 AI 治理的完整雷達圖。
                 </p>
