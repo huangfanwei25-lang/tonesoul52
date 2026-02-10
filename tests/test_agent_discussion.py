@@ -4,8 +4,10 @@ from pathlib import Path
 import pytest
 
 from memory.agent_discussion import (
+    LESSONS_TEMPLATE_VERSION,
     append_entry,
     audit_file,
+    format_lessons_message,
     load_entries,
     normalize_entry,
     normalize_file,
@@ -28,6 +30,50 @@ def test_normalize_entry_applies_required_defaults():
     assert entry["status"] == "noted"
     assert isinstance(entry["timestamp"], str)
     assert entry["timestamp"]
+
+
+def test_format_lessons_message_outputs_standard_sections():
+    message = format_lessons_message(
+        summary="SDH fail root cause clarified",
+        missed=["interpreted overall_ok too optimistically"],
+        causes=["soft-fail semantics not separated in report"],
+        corrections=["split blocking and soft-fail interpretations"],
+        guardrails=["check backend /api/health before live smoke"],
+        evidence=["run_repo_healthcheck --strict --include-sdh"],
+        signature="signed_by=codex(gpt-5)",
+    )
+
+    assert message.startswith(f"[{LESSONS_TEMPLATE_VERSION}]")
+    assert "summary: SDH fail root cause clarified" in message
+    assert "missed:\n- interpreted overall_ok too optimistically" in message
+    assert "causes:\n- soft-fail semantics not separated in report" in message
+    assert "corrections:\n- split blocking and soft-fail interpretations" in message
+    assert "guardrails:\n- check backend /api/health before live smoke" in message
+    assert "evidence:\n- run_repo_healthcheck --strict --include-sdh" in message
+    assert "signature: signed_by=codex(gpt-5)" in message
+
+
+def test_format_lessons_message_requires_summary_and_items():
+    with pytest.raises(ValueError, match="summary"):
+        format_lessons_message(
+            summary="",
+            missed=["x"],
+            corrections=["y"],
+        )
+
+    with pytest.raises(ValueError, match="missed"):
+        format_lessons_message(
+            summary="ok",
+            missed=[],
+            corrections=["y"],
+        )
+
+    with pytest.raises(ValueError, match="corrections"):
+        format_lessons_message(
+            summary="ok",
+            missed=["x"],
+            corrections=[],
+        )
 
 
 def test_load_entries_can_include_invalid_lines(tmp_path: Path):

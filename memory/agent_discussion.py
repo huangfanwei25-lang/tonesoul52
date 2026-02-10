@@ -4,7 +4,7 @@ import json
 import unicodedata
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Sequence
 
 DEFAULT_DISCUSSION_RAW_PATH = Path("memory/agent_discussion.jsonl")
 DEFAULT_DISCUSSION_CURATED_PATH = Path("memory/agent_discussion_curated.jsonl")
@@ -15,6 +15,7 @@ CURATED_EXCLUDED_STATUS = {"invalid"}
 CURATED_EXCLUDED_TOPICS = {"agent-discussion-parse-error"}
 TEXT_ANOMALY_REPLACEMENT = "replacement_char"
 TEXT_ANOMALY_PRIVATE_USE = "private_use_char"
+LESSONS_TEMPLATE_VERSION = "LESSONS_V1"
 
 
 def _iso_now() -> str:
@@ -29,6 +30,75 @@ def _normalize_text(value: Any, fallback: str) -> str:
                 raise ValueError("NUL byte is not allowed in discussion fields")
             return stripped
     return fallback
+
+
+def _normalize_items(items: Sequence[str], field_name: str) -> List[str]:
+    normalized: List[str] = []
+    for item in items:
+        text = _normalize_text(item, "")
+        if text:
+            normalized.append(text)
+    if not normalized:
+        raise ValueError(f"{field_name} requires at least one non-empty item")
+    return normalized
+
+
+def format_lessons_message(
+    *,
+    summary: str,
+    missed: Sequence[str],
+    corrections: Sequence[str],
+    causes: Sequence[str] | None = None,
+    guardrails: Sequence[str] | None = None,
+    evidence: Sequence[str] | None = None,
+    signature: str | None = None,
+) -> str:
+    summary_text = _normalize_text(summary, "")
+    if not summary_text:
+        raise ValueError("summary requires a non-empty value")
+    missed_items = _normalize_items(missed, "missed")
+    correction_items = _normalize_items(corrections, "corrections")
+
+    def _optional_items(values: Sequence[str] | None) -> List[str]:
+        if not values:
+            return []
+        return [_normalize_text(item, "") for item in values if _normalize_text(item, "")]
+
+    cause_items = _optional_items(causes)
+    guardrail_items = _optional_items(guardrails)
+    evidence_items = _optional_items(evidence)
+    signature_text = _normalize_text(signature, "") if signature is not None else ""
+
+    lines: List[str] = [
+        f"[{LESSONS_TEMPLATE_VERSION}]",
+        f"summary: {summary_text}",
+        "missed:",
+    ]
+    lines.extend(f"- {item}" for item in missed_items)
+
+    lines.append("causes:")
+    if cause_items:
+        lines.extend(f"- {item}" for item in cause_items)
+    else:
+        lines.append("- (none)")
+
+    lines.append("corrections:")
+    lines.extend(f"- {item}" for item in correction_items)
+
+    lines.append("guardrails:")
+    if guardrail_items:
+        lines.extend(f"- {item}" for item in guardrail_items)
+    else:
+        lines.append("- (none)")
+
+    lines.append("evidence:")
+    if evidence_items:
+        lines.extend(f"- {item}" for item in evidence_items)
+    else:
+        lines.append("- (none)")
+
+    lines.append(f"signature: {signature_text if signature_text else '(none)'}")
+    return "\n".join(lines)
 
 
 def normalize_entry(entry: Dict[str, Any]) -> Dict[str, Any]:

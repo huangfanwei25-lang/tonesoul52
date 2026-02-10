@@ -32,6 +32,12 @@
 - [x] 新增 `tests/test_verify_7d.py` 回歸測試，避免 SDH 失敗 note 再次空白
 **成功標準**: `verify_7d` 的 SDH 失敗 note 可包含可讀錯誤線索（至少一個來源：stderr 或 stdout）。
 
+## Phase 50: 記憶通道 Lessons 模板化
+- [x] 新增 `LESSONS_V1` 標準欄位格式（summary/missed/causes/corrections/guardrails/evidence/signature）
+- [x] 新增 `tools/agent_discussion_tool.py append-lessons`，固定模板寫入流程
+- [x] 補齊格式與 CLI 寫入測試，確保模板輸出一致
+**成功標準**: 可用單一指令將「錯過事項歸納」寫成一致模板，並由測試鎖定欄位結構。
+
 ## Phase 17: 收尾三部曲
 - [x] README 更新（反映 Council / Genesis / Memory / Tools API + 快速啟動）
 - [x] 記憶總結（寫入 `memory/self_journal.jsonl`，含 Phase 14-16 與亂碼修復）

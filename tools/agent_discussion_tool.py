@@ -15,6 +15,7 @@ from memory.agent_discussion import (
     DEFAULT_DISCUSSION_PATH,
     append_entry,
     audit_file,
+    format_lessons_message,
     load_entries,
     normalize_file,
     rebuild_curated,
@@ -58,6 +59,56 @@ def _build_parser() -> argparse.ArgumentParser:
     append.add_argument("--topic", required=True)
     append.add_argument("--status", default="noted")
     append.add_argument("--message", required=True)
+
+    append_lessons = sub.add_parser(
+        "append-lessons",
+        help="Append one standardized lessons-learned entry (LESSONS_V1).",
+    )
+    append_lessons.add_argument("--path", default=str(DEFAULT_DISCUSSION_PATH))
+    append_lessons.add_argument(
+        "--curated-path",
+        default=str(DEFAULT_DISCUSSION_CURATED_PATH),
+        help="Curated discussion path for mirrored writes.",
+    )
+    append_lessons.add_argument("--author", required=True)
+    append_lessons.add_argument("--topic", required=True)
+    append_lessons.add_argument("--status", default="done")
+    append_lessons.add_argument("--summary", required=True)
+    append_lessons.add_argument(
+        "--missed",
+        action="append",
+        required=True,
+        help="Missed item. Repeat the flag for multiple items.",
+    )
+    append_lessons.add_argument(
+        "--cause",
+        action="append",
+        default=[],
+        help="Root cause item. Repeat the flag for multiple items.",
+    )
+    append_lessons.add_argument(
+        "--correction",
+        action="append",
+        required=True,
+        help="Correction item. Repeat the flag for multiple items.",
+    )
+    append_lessons.add_argument(
+        "--guardrail",
+        action="append",
+        default=[],
+        help="Guardrail rule. Repeat the flag for multiple items.",
+    )
+    append_lessons.add_argument(
+        "--evidence",
+        action="append",
+        default=[],
+        help="Evidence item. Repeat the flag for multiple items.",
+    )
+    append_lessons.add_argument(
+        "--signature",
+        default="",
+        help="Optional signature string, e.g. signed_by=codex(gpt-5).",
+    )
 
     curate = sub.add_parser("curate", help="Rebuild curated stream from raw discussion.")
     curate.add_argument("--path", default=str(DEFAULT_DISCUSSION_PATH))
@@ -133,6 +184,43 @@ def _cmd_append(
     return _emit({"path": str(path), "curated_path": str(curated_path), "appended": entry})
 
 
+def _cmd_append_lessons(
+    path: Path,
+    curated_path: Path,
+    author: str,
+    topic: str,
+    status: str,
+    summary: str,
+    missed: List[str],
+    cause: List[str],
+    correction: List[str],
+    guardrail: List[str],
+    evidence: List[str],
+    signature: str,
+) -> int:
+    try:
+        message = format_lessons_message(
+            summary=summary,
+            missed=missed,
+            causes=cause,
+            corrections=correction,
+            guardrails=guardrail,
+            evidence=evidence,
+            signature=signature,
+        )
+    except ValueError as exc:
+        _emit({"path": str(path), "error": str(exc)})
+        return 1
+    return _cmd_append(
+        path=path,
+        curated_path=curated_path,
+        author=author,
+        topic=topic,
+        status=status,
+        message=message,
+    )
+
+
 def _cmd_curate(path: Path, curated_path: Path, no_backup: bool) -> int:
     payload = rebuild_curated(
         raw_path=path,
@@ -175,6 +263,21 @@ def main() -> int:
             topic=args.topic,
             status=args.status,
             message=args.message,
+        )
+    if command == "append-lessons":
+        return _cmd_append_lessons(
+            path=path,
+            curated_path=Path(args.curated_path),
+            author=args.author,
+            topic=args.topic,
+            status=args.status,
+            summary=args.summary,
+            missed=args.missed,
+            cause=args.cause,
+            correction=args.correction,
+            guardrail=args.guardrail,
+            evidence=args.evidence,
+            signature=args.signature,
         )
     if command == "curate":
         return _cmd_curate(
