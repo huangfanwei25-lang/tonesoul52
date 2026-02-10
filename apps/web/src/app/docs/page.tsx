@@ -98,8 +98,8 @@ export default function DocsPage() {
                         <div className="grid md:grid-cols-3 gap-6">
                             <div className="bg-slate-900/50 rounded-xl p-5">
                                 <div className="text-3xl font-bold text-emerald-400 mb-2">1</div>
-                                <h3 className="font-bold mb-2">取得 API Key</h3>
-                                <p className="text-sm text-slate-400 mb-3">前往 Google AI Studio 取得免費的 Gemini API Key</p>
+                                <h3 className="font-bold mb-2">選配：設定 API Key</h3>
+                                <p className="text-sm text-slate-400 mb-3">取得 Gemini API Key，以便後端不可用時啟用 fallback（可選）</p>
                                 <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" className="text-xs text-emerald-400 hover:underline">
                                     aistudio.google.com →
                                 </a>
@@ -107,7 +107,7 @@ export default function DocsPage() {
                             <div className="bg-slate-900/50 rounded-xl p-5">
                                 <div className="text-3xl font-bold text-emerald-400 mb-2">2</div>
                                 <h3 className="font-bold mb-2">開啟 App</h3>
-                                <p className="text-sm text-slate-400 mb-3">訪問 ToneSoul Web App，在設定中輸入你的 API Key</p>
+                                <p className="text-sm text-slate-400 mb-3">訪問 ToneSoul Web App；可在設定中輸入 API Key（選配）</p>
                                 <Link href="/" className="text-xs text-emerald-400 hover:underline">
                                     開啟 App →
                                 </Link>
@@ -116,13 +116,13 @@ export default function DocsPage() {
                                 <div className="text-3xl font-bold text-emerald-400 mb-2">3</div>
                                 <h3 className="font-bold mb-2">開始對話</h3>
                                 <p className="text-sm text-slate-400 mb-3">建立新對話，體驗多視角審議和熵值計算</p>
-                                <span className="text-xs text-slate-500">你的數據只存在你的瀏覽器</span>
+                                <span className="text-xs text-slate-500">右上角會顯示 Backend / Fallback 狀態</span>
                             </div>
                         </div>
                         <div className="mt-6 p-4 bg-slate-900/30 rounded-lg border border-slate-700">
                             <p className="text-sm text-slate-400">
-                                <strong className="text-white">🔒 隱私承諾：</strong>
-                                ToneSoul 不收集任何用戶數據。API Key 和對話記錄只存在你的瀏覽器 localStorage 和 IndexedDB 中。
+                                <strong className="text-white">🔒 隱私說明：</strong>
+                                對話清單與歷史會儲存在你的瀏覽器（IndexedDB）。產生回覆時，訊息會送到 ToneSoul 後端（Council）或在後端不可用時改由你提供的 Gemini API Key 直接呼叫供應商。請避免輸入高度敏感資訊。
                             </p>
                         </div>
                     </section>
