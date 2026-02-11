@@ -7,7 +7,8 @@ import {
     validateVercelBackendConfig,
 } from "../_shared/backendConfig";
 
-const REQUEST_TIMEOUT_MS = 15000;
+const REQUEST_TIMEOUT_ENV = "TONESOUL_BACKEND_CHAT_TIMEOUT_MS";
+const DEFAULT_REQUEST_TIMEOUT_MS = 25000;
 const MOCK_FALLBACK_ENV = "TONESOUL_ENABLE_CHAT_MOCK_FALLBACK";
 const ALLOWED_COUNCIL_MODES = new Set(["rules", "rules_only", "hybrid", "full_llm"]);
 
@@ -20,8 +21,26 @@ type ChatRequestPayload = {
     perspective_config?: Record<string, Record<string, unknown>>;
 };
 
+function resolveRequestTimeoutMs(): number {
+    const raw = process.env[REQUEST_TIMEOUT_ENV];
+    if (!raw) return DEFAULT_REQUEST_TIMEOUT_MS;
+
+    const parsed = Number(raw);
+    if (!Number.isFinite(parsed) || parsed <= 0) {
+        return DEFAULT_REQUEST_TIMEOUT_MS;
+    }
+
+    return Math.floor(parsed);
+}
+
+const REQUEST_TIMEOUT_MS = resolveRequestTimeoutMs();
+
 function shouldAllowMockFallback(): boolean {
     return envFlag(MOCK_FALLBACK_ENV, false);
+}
+
+function isAbortError(error: unknown): boolean {
+    return error instanceof Error && error.name === "AbortError";
 }
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {
@@ -206,15 +225,19 @@ export async function POST(request: NextRequest) {
     try {
         backendResponse = await forwardToBackend(backendUrl, body);
     } catch (error) {
+        const timeoutError = isAbortError(error);
         if (!shouldAllowMockFallback()) {
             return NextResponse.json(
                 {
-                    error: "Backend unavailable",
+                    error: timeoutError
+                        ? `Backend request timed out after ${REQUEST_TIMEOUT_MS}ms`
+                        : "Backend unavailable",
                     backend_url: backendUrl,
                     backend_error: error instanceof Error ? error.message : "Transport failure",
+                    backend_timeout_ms: REQUEST_TIMEOUT_MS,
                     hint: `Set ${MOCK_FALLBACK_ENV}=1 to enable explicit mock fallback.`,
                 },
-                { status: 502 }
+                { status: timeoutError ? 504 : 502 }
             );
         }
 

@@ -6,7 +6,20 @@ import {
     validateVercelBackendConfig,
 } from "../_shared/backendConfig";
 
-const PROBE_TIMEOUT_MS = 4000;
+const PROBE_TIMEOUT_ENV = "TONESOUL_BACKEND_HEALTH_TIMEOUT_MS";
+const DEFAULT_PROBE_TIMEOUT_MS = 6000;
+
+function resolveProbeTimeoutMs(): number {
+    const raw = process.env[PROBE_TIMEOUT_ENV];
+    if (!raw) return DEFAULT_PROBE_TIMEOUT_MS;
+    const parsed = Number(raw);
+    if (!Number.isFinite(parsed) || parsed <= 0) {
+        return DEFAULT_PROBE_TIMEOUT_MS;
+    }
+    return Math.floor(parsed);
+}
+
+const PROBE_TIMEOUT_MS = resolveProbeTimeoutMs();
 
 type BackendProbeFailureReason =
     | "backend_health_timeout"

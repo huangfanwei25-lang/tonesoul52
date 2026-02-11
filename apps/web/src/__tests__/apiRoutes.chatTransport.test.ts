@@ -61,6 +61,28 @@ describe("chat route transport fallback behavior", () => {
         expect(typeof payload.response).toBe("string");
     });
 
+    it("returns 504 with timeout details when backend request aborts", async () => {
+        process.env.TONESOUL_BACKEND_URL = "http://127.0.0.1:5999";
+        const abortError = new Error("The operation was aborted.");
+        abortError.name = "AbortError";
+        vi.spyOn(globalThis, "fetch").mockRejectedValue(abortError);
+
+        const response = await postChat(
+            makeRequest({
+                conversation_id: "c1",
+                message: "hello",
+                history: [{ role: "user", content: "hello" }],
+                full_analysis: false,
+            }) as never
+        );
+        const payload = (await response.json()) as Record<string, unknown>;
+
+        expect(response.status).toBe(504);
+        expect(typeof payload.error).toBe("string");
+        expect(String(payload.error)).toContain("timed out");
+        expect(payload.backend_timeout_ms).toBeTypeOf("number");
+    });
+
     it("returns 503 on vercel when backend url is missing or localhost", async () => {
         process.env.VERCEL = "1";
 

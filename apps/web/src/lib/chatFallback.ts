@@ -1,6 +1,14 @@
 export type BackendFallbackReasonCode = "timeout" | "backend_unreachable" | "backend_error";
 
-const TIMEOUT_PATTERNS = ["timeout", "timed out", "abort", "aborted"];
+const TIMEOUT_PATTERNS = [
+    "timeout",
+    "timed out",
+    "request timeout",
+    "gateway timeout",
+    "deadline exceeded",
+    "abort",
+    "aborted",
+];
 const UNREACHABLE_PATTERNS = [
     "failed to fetch",
     "network",
