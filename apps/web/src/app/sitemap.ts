@@ -16,6 +16,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
             priority: 1,
         },
         {
+            url: `${siteUrl}/showcase`,
+            lastModified,
+            changeFrequency: "monthly",
+            priority: 0.7,
+        },
+        {
             url: `${siteUrl}/docs`,
             lastModified,
             changeFrequency: "monthly",
@@ -31,4 +37,3 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
     return entries;
 }
-
