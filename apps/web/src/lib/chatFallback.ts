@@ -1,4 +1,4 @@
-export type BackendFallbackReasonCode = "timeout" | "backend_unreachable" | "backend_error";
+﻿export type BackendFallbackReasonCode = "timeout" | "backend_unreachable" | "backend_error";
 
 const TIMEOUT_PATTERNS = [
     "timeout",
@@ -9,6 +9,7 @@ const TIMEOUT_PATTERNS = [
     "abort",
     "aborted",
 ];
+
 const UNREACHABLE_PATTERNS = [
     "failed to fetch",
     "network",
@@ -19,12 +20,27 @@ const UNREACHABLE_PATTERNS = [
     "unreachable",
     "connection refused",
 ];
+
 const BACKEND_DEGRADED_RESPONSE_PATTERNS = [
-    "llm 服務不可用",
-    "llm服務不可用",
     "llm service unavailable",
     "model service unavailable",
+    "llm unavailable",
+    "llm 服務不可用",
+    "llm服务不可用",
     "模型服務不可用",
+    "模型服务不可用",
+    "模型不可用",
+    "抱歉 llm 服務不可用",
+    "抱歉 llm服务不可用",
+    "抱歉 模型服務不可用",
+    "抱歉 模型服务不可用",
+];
+
+const BACKEND_DEGRADED_RESPONSE_REGEXES = [
+    /\bllm\b.*\b(service|model)?\s*unavailable\b/i,
+    /\bmodel\b.*\bservice\b.*\bunavailable\b/i,
+    /\bllm\b.*(不可用|無法使用|无法使用)/i,
+    /(模型|model).*(服務|服务|service).*(不可用|無法使用|无法使用|unavailable)/i,
 ];
 
 export const BACKEND_FALLBACK_REASON_LABEL: Record<BackendFallbackReasonCode, string> = {
@@ -52,15 +68,22 @@ export const isBackendDegradedResponse = (responseText: unknown): boolean => {
         return false;
     }
 
-    const message = responseText.trim().toLowerCase();
-    if (!message) {
+    const rawMessage = responseText.trim();
+    if (!rawMessage) {
         return false;
     }
+
+    const message = rawMessage.toLowerCase();
+    const normalized = message.replace(/[，。,.!?！？:：\s]+/g, " ").trim();
 
     // Keep the heuristic conservative to avoid false positives on long normal answers.
-    if (message.length > 220) {
+    if (normalized.length > 220) {
         return false;
     }
 
-    return BACKEND_DEGRADED_RESPONSE_PATTERNS.some(pattern => message.includes(pattern));
+    if (BACKEND_DEGRADED_RESPONSE_PATTERNS.some(pattern => normalized.includes(pattern))) {
+        return true;
+    }
+
+    return BACKEND_DEGRADED_RESPONSE_REGEXES.some(regex => regex.test(normalized));
 };

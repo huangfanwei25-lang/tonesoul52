@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+﻿import { describe, expect, it } from "vitest";
 
 import {
     BACKEND_FALLBACK_REASON_LABEL,
@@ -33,13 +33,14 @@ describe("BACKEND_FALLBACK_REASON_LABEL", () => {
 });
 
 describe("isBackendDegradedResponse", () => {
-    it("detects model unavailable responses", () => {
+    it("detects model unavailable responses in Chinese and English", () => {
         expect(isBackendDegradedResponse("抱歉，LLM 服務不可用。")).toBe(true);
         expect(isBackendDegradedResponse("LLM service unavailable")).toBe(true);
+        expect(isBackendDegradedResponse("Model service unavailable")).toBe(true);
     });
 
     it("does not flag normal responses", () => {
-        expect(isBackendDegradedResponse("這是正常回覆，提供可行步驟。")).toBe(false);
+        expect(isBackendDegradedResponse("我可以幫你整理這個問題，先從需求開始。")).toBe(false);
         expect(isBackendDegradedResponse("")).toBe(false);
         expect(isBackendDegradedResponse(null)).toBe(false);
     });
