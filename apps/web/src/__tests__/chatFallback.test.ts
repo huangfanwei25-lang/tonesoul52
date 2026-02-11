@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
     BACKEND_FALLBACK_REASON_LABEL,
     classifyBackendFallbackReason,
+    isBackendDegradedResponse,
 } from "../lib/chatFallback";
 
 describe("classifyBackendFallbackReason", () => {
@@ -28,5 +29,18 @@ describe("BACKEND_FALLBACK_REASON_LABEL", () => {
         expect(BACKEND_FALLBACK_REASON_LABEL.timeout).toBeTruthy();
         expect(BACKEND_FALLBACK_REASON_LABEL.backend_unreachable).toBeTruthy();
         expect(BACKEND_FALLBACK_REASON_LABEL.backend_error).toBeTruthy();
+    });
+});
+
+describe("isBackendDegradedResponse", () => {
+    it("detects model unavailable responses", () => {
+        expect(isBackendDegradedResponse("抱歉，LLM 服務不可用。")).toBe(true);
+        expect(isBackendDegradedResponse("LLM service unavailable")).toBe(true);
+    });
+
+    it("does not flag normal responses", () => {
+        expect(isBackendDegradedResponse("這是正常回覆，提供可行步驟。")).toBe(false);
+        expect(isBackendDegradedResponse("")).toBe(false);
+        expect(isBackendDegradedResponse(null)).toBe(false);
     });
 });

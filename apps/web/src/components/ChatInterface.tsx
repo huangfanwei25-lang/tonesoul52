@@ -35,6 +35,7 @@ import {
     BACKEND_FALLBACK_REASON_LABEL,
     BackendFallbackReasonCode,
     classifyBackendFallbackReason,
+    isBackendDegradedResponse,
 } from "@/lib/chatFallback";
 
 interface Message extends Omit<DBMessage, 'timestamp'> {
@@ -693,7 +694,10 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
 
     const shouldShowApiKeyHint =
         !apiSettings?.apiKey
-        && (!USE_BACKEND_CHAT || (ENABLE_PROVIDER_FALLBACK && chatActiveMode === "fallback"));
+        && (
+            !USE_BACKEND_CHAT
+            || (ENABLE_PROVIDER_FALLBACK && (chatActiveMode === "fallback" || fallbackReasonCode !== null))
+        );
 
     // Only load from localStorage after mount (client-side only)
     useEffect(() => {
@@ -1230,9 +1234,24 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
                     result = await runLegacyProviderFlow(userMessage.content);
                 } else {
                     try {
-                        result = await callBackendChat(userMessage.content, fullAnalysis);
-                        setChatActiveMode("backend");
-                        setFallbackReasonCode(null);
+                        const backendResult = await callBackendChat(userMessage.content, fullAnalysis);
+                        if (isBackendDegradedResponse(backendResult.response)) {
+                            if (ENABLE_PROVIDER_FALLBACK && hasApiKey) {
+                                setChatActiveMode("fallback");
+                                setFallbackReasonCode("backend_error");
+                                setLoadingPhase("後端模型不可用，切換至直接 API...");
+                                result = await runLegacyProviderFlow(userMessage.content);
+                            } else {
+                                // No key (or fallback disabled): surface backend degraded state directly.
+                                setChatActiveMode("backend");
+                                setFallbackReasonCode("backend_error");
+                                result = backendResult;
+                            }
+                        } else {
+                            result = backendResult;
+                            setChatActiveMode("backend");
+                            setFallbackReasonCode(null);
+                        }
                     } catch (backendErr) {
                         const reasonCode = classifyBackendFallbackReason(backendErr);
                         console.warn("[ToneSoul] Backend chat unavailable, fallback to legacy provider flow.", backendErr);

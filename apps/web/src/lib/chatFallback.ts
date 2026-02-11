@@ -11,6 +11,13 @@ const UNREACHABLE_PATTERNS = [
     "unreachable",
     "connection refused",
 ];
+const BACKEND_DEGRADED_RESPONSE_PATTERNS = [
+    "llm 服務不可用",
+    "llm服務不可用",
+    "llm service unavailable",
+    "model service unavailable",
+    "模型服務不可用",
+];
 
 export const BACKEND_FALLBACK_REASON_LABEL: Record<BackendFallbackReasonCode, string> = {
     timeout: "Backend timeout",
@@ -30,4 +37,22 @@ export const classifyBackendFallbackReason = (error: unknown): BackendFallbackRe
     }
 
     return "backend_error";
+};
+
+export const isBackendDegradedResponse = (responseText: unknown): boolean => {
+    if (typeof responseText !== "string") {
+        return false;
+    }
+
+    const message = responseText.trim().toLowerCase();
+    if (!message) {
+        return false;
+    }
+
+    // Keep the heuristic conservative to avoid false positives on long normal answers.
+    if (message.length > 220) {
+        return false;
+    }
+
+    return BACKEND_DEGRADED_RESPONSE_PATTERNS.some(pattern => message.includes(pattern));
 };
