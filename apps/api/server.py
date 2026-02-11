@@ -19,6 +19,7 @@ from flask_cors import CORS
 from tonesoul.council import CouncilRequest, CouncilRuntime
 from tonesoul.council.self_journal import load_recent_memory
 from tonesoul.memory import consolidate
+from tonesoul.supabase_persistence import SupabasePersistence
 
 app = Flask(__name__, static_folder="../council-playground", static_url_path="")
 _DEFAULT_CORS_ORIGINS = "http://localhost:5000,http://127.0.0.1:5000"
@@ -38,6 +39,7 @@ _VTP_CONTEXT_FLAGS = (
     "vtp_user_confirmed",
 )
 _ALLOWED_COUNCIL_MODES = {"rules", "rules_only", "hybrid", "full_llm"}
+supabase_persistence = SupabasePersistence.from_env()
 
 
 def _env_flag(name: str, default: bool = False) -> bool:
@@ -310,7 +312,13 @@ def get_consolidation():
 @app.route("/api/health", methods=["GET"])
 def health():
     """Health check endpoint."""
-    return jsonify({"status": "ok", "version": "0.6.0"})
+    return jsonify(
+        {
+            "status": "ok",
+            "version": "0.6.0",
+            "persistence": supabase_persistence.status_dict(),
+        }
+    )
 
 
 @app.route("/api/conversation", methods=["POST"])
@@ -323,6 +331,8 @@ def create_conversation():
     if error is not None:
         return error
     conversation_id = f"conv_{uuid.uuid4().hex[:12]}"
+    if supabase_persistence.enabled:
+        supabase_persistence.ensure_conversation(conversation_id, session_id=session_id)
     return jsonify(
         {
             "success": True,
@@ -347,6 +357,8 @@ def create_consent():
         return error
     consent_type = consent_type if consent_type is not None else "standard"
     session_id = session_id if session_id is not None else f"session_{uuid.uuid4().hex[:12]}"
+    if supabase_persistence.enabled:
+        supabase_persistence.record_consent(session_id=session_id, consent_type=consent_type)
     return jsonify(
         {
             "success": True,
@@ -363,12 +375,16 @@ def withdraw_consent(session_id: str):
     """Withdraw consent and acknowledge deletion workflow."""
     if not session_id.strip():
         return jsonify({"error": "Invalid session_id"}), 400
+    deletion_report = None
+    if supabase_persistence.enabled:
+        deletion_report = supabase_persistence.withdraw_consent(session_id)
     return jsonify(
         {
             "success": True,
             "message": "Consent withdrawn and data deleted",
             "session_id": session_id,
             "timestamp": _utc_now(),
+            **({"deletion_report": deletion_report} if deletion_report is not None else {}),
         }
     )
 
@@ -384,6 +400,9 @@ def session_report():
     history, error = _require_list(data, "history")
     if error is not None:
         return error
+    conversation_id, error = _require_optional_string(data, "conversation_id")
+    if error is not None:
+        return error
     if not history:
         return jsonify({"error": "Missing conversation history"}), 400
 
@@ -393,8 +412,15 @@ def session_report():
 
         reporter = SessionReporter()
         summary = reporter.analyze(history)
+        summary_dict = summary.to_dict()
 
-        return jsonify({"success": True, "report": summary.to_dict()})
+        if supabase_persistence.enabled:
+            supabase_persistence.record_session_report(
+                conversation_id=conversation_id,
+                report=summary_dict,
+            )
+
+        return jsonify({"success": True, "report": summary_dict})
     except Exception as e:
         return _error_response("Failed to generate session report", 500, e)
 
@@ -454,6 +480,12 @@ def chat():
     full_analysis, error = _require_optional_bool(data, "full_analysis")
     if error is not None:
         return error
+    conversation_id, error = _require_optional_string(data, "conversation_id")
+    if error is not None:
+        return error
+    session_id, error = _require_optional_string(data, "session_id")
+    if error is not None:
+        return error
     council_mode, error = _require_optional_council_mode(data, "council_mode")
     if error is not None:
         return error
@@ -480,6 +512,22 @@ def chat():
             council_mode=council_mode,
             perspective_config=perspective_config,
         )
+
+        if supabase_persistence.enabled and conversation_id:
+            supabase_persistence.record_chat_exchange(
+                conversation_id=conversation_id,
+                user_message=message,
+                assistant_message=result.response,
+                deliberation=(
+                    result.council_verdict if isinstance(result.council_verdict, dict) else None
+                ),
+                session_id=session_id,
+            )
+            if isinstance(result.council_verdict, dict):
+                supabase_persistence.record_chat_audit(
+                    conversation_id=conversation_id,
+                    verdict=result.council_verdict,
+                )
 
         return jsonify(
             {
