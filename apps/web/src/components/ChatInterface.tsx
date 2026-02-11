@@ -1220,9 +1220,13 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
 
                 // If we already know the backend is unavailable and we can fallback, skip the backend call
                 // to avoid waiting for request timeouts on every turn.
-                if (ENABLE_PROVIDER_FALLBACK && chatActiveMode === "fallback" && hasApiKey) {
-                    setLoadingPhase("後端不可用，使用直接 API...");
+                if (ENABLE_PROVIDER_FALLBACK && chatActiveMode === "fallback") {
                     setChatActiveMode("fallback");
+                    if (hasApiKey) {
+                        setLoadingPhase("後端不可用，使用直接 API...");
+                    } else {
+                        setLoadingPhase("後端不可用，請先設定 API Key...");
+                    }
                     result = await runLegacyProviderFlow(userMessage.content);
                 } else {
                     try {
