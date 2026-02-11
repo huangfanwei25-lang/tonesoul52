@@ -62,7 +62,6 @@ const CHAT_EXECUTION_MODE =
     || (process.env.NEXT_PUBLIC_BACKEND_CHAT_FIRST === "0" ? "legacy_provider" : "backend");
 const USE_BACKEND_CHAT = CHAT_EXECUTION_MODE !== "legacy_provider";
 const ENABLE_PROVIDER_FALLBACK = process.env.NEXT_PUBLIC_ENABLE_PROVIDER_FALLBACK === "1";
-const SHOULD_SHOW_API_KEY_HINT = !USE_BACKEND_CHAT;
 
 const COUNCIL_MODE_OPTIONS: Array<{ value: CouncilMode; label: string }> = [
     { value: "rules", label: "Rules" },
@@ -692,6 +691,10 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
     const [fallbackReasonCode, setFallbackReasonCode] = useState<BackendFallbackReasonCode | null>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
+    const shouldShowApiKeyHint =
+        !apiSettings?.apiKey
+        && (!USE_BACKEND_CHAT || (ENABLE_PROVIDER_FALLBACK && chatActiveMode === "fallback"));
+
     // Only load from localStorage after mount (client-side only)
     useEffect(() => {
         setIsMounted(true);
@@ -775,9 +778,11 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
         };
 
         void probeBackendHealth();
+        const interval = window.setInterval(probeBackendHealth, 30_000);
 
         return () => {
             cancelled = true;
+            window.clearInterval(interval);
         };
     }, []);
 
@@ -1211,22 +1216,32 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
 
             if (USE_BACKEND_CHAT) {
                 const fullAnalysis = apiSettings?.mode !== "fast";
-                try {
-                    result = await callBackendChat(userMessage.content, fullAnalysis);
-                    setChatActiveMode("backend");
-                    setFallbackReasonCode(null);
-                } catch (backendErr) {
-                    const reasonCode = classifyBackendFallbackReason(backendErr);
-                    console.warn("[ToneSoul] Backend chat unavailable, fallback to legacy provider flow.", backendErr);
-                    if (ENABLE_PROVIDER_FALLBACK) {
-                        setChatActiveMode("fallback");
-                        setFallbackReasonCode(reasonCode);
-                        setLoadingPhase("後端不可用，切換至直接 API...");
-                        result = await runLegacyProviderFlow(userMessage.content);
-                    } else {
+                const hasApiKey = Boolean(apiSettings?.apiKey);
+
+                // If we already know the backend is unavailable and we can fallback, skip the backend call
+                // to avoid waiting for request timeouts on every turn.
+                if (ENABLE_PROVIDER_FALLBACK && chatActiveMode === "fallback" && hasApiKey) {
+                    setLoadingPhase("後端不可用，使用直接 API...");
+                    setChatActiveMode("fallback");
+                    result = await runLegacyProviderFlow(userMessage.content);
+                } else {
+                    try {
+                        result = await callBackendChat(userMessage.content, fullAnalysis);
                         setChatActiveMode("backend");
-                        setFallbackReasonCode(reasonCode);
-                        throw backendErr;
+                        setFallbackReasonCode(null);
+                    } catch (backendErr) {
+                        const reasonCode = classifyBackendFallbackReason(backendErr);
+                        console.warn("[ToneSoul] Backend chat unavailable, fallback to legacy provider flow.", backendErr);
+                        if (ENABLE_PROVIDER_FALLBACK) {
+                            setChatActiveMode("fallback");
+                            setFallbackReasonCode(reasonCode);
+                            setLoadingPhase("後端不可用，切換至直接 API...");
+                            result = await runLegacyProviderFlow(userMessage.content);
+                        } else {
+                            setChatActiveMode("backend");
+                            setFallbackReasonCode(reasonCode);
+                            throw backendErr;
+                        }
                     }
                 }
             } else {
@@ -1362,7 +1377,7 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
             </div>
 
             {/* API Key 提醒 */}
-            {SHOULD_SHOW_API_KEY_HINT && !apiSettings?.apiKey && (
+            {shouldShowApiKeyHint && (
                 <div className="bg-amber-50 border-b border-amber-200 px-4 py-2 flex items-center gap-2 text-sm text-amber-800">
                     <AlertTriangle className="w-4 h-4" />
                     <span>請先設定 API Key 才能使用 AI 對話。點擊側邊欄 API 設定。</span>
