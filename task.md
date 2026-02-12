@@ -402,7 +402,7 @@
 - [x] 亂碼清理與 UTF-8 統一
 **參考**: `CODEX_TASK.md`, `memory/handoff/2026-02-06_phase16_tools_progress.md`
 
-## Phase 47: Ollama 無 Key Fallback 收斂
+## Phase 48: Ollama 無 Key Fallback 收斂
 - [x] `SettingsModal`：Ollama 顯示為 API Key 選填，修正 Test Info 顯示條件
 - [x] `ChatInterface`：用 `isApiKeyRequired` 套用提示與 fallback 憑證判斷，避免 Ollama 被誤判缺 key
 - [x] 新增 `apps/web/src/__tests__/settingsModal.test.ts`，鎖定 provider key requirement 規則
