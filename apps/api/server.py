@@ -449,6 +449,7 @@ def status():
         {
             "persistence": persistence_status,
             "llm_backend": llm_backend or "unavailable",
+            "llm_mode": _resolve_llm_mode(),
             "llm_error": llm_last_error,
             "memory_count": counts.get("memory_count", 0),
             "conversation_count": counts.get("conversation_count", 0),
@@ -683,16 +684,70 @@ llm_backend = None
 llm_last_error = None
 
 
+def _resolve_llm_mode() -> str:
+    """Return the configured LLM mode for frontend display."""
+    raw = os.environ.get("LLM_BACKEND")
+    if not isinstance(raw, str) or not raw.strip():
+        return "auto"
+    mode = raw.strip().lower()
+    if mode == "gemini":
+        return "cloud"
+    if mode == "ollama":
+        return "local"
+    return "auto"
+
+
 def get_llm_client():
-    """Lazy-load LLM client. Tries Ollama first, then Gemini."""
+    """Lazy-load LLM client based on LLM_BACKEND env var.
+
+    Supported values:
+      - 'gemini'  -> Cloud mode, skip Ollama entirely
+      - 'ollama'  -> Local mode, skip Gemini entirely
+      - 'auto'    -> (default) Try Ollama first, Gemini fallback
+    """
     global llm_client, llm_backend, llm_last_error
 
     if llm_client is not None:
         return llm_client
 
-    ollama_error = None
+    llm_mode = (os.environ.get("LLM_BACKEND") or "auto").strip().lower()
 
-    # Try Ollama first (local)
+    if llm_mode == "gemini":
+        try:
+            from tonesoul.llm import create_gemini_client
+
+            llm_client = create_gemini_client()
+            llm_backend = "Gemini API"
+            llm_last_error = None
+            print(f"[INFO] LLM backend: {llm_backend} (cloud mode)")
+            return llm_client
+        except Exception as e:
+            llm_last_error = f"gemini={e.__class__.__name__}: {e}"
+            print(f"[ERROR] Gemini client error: {e}")
+            return None
+
+    if llm_mode == "ollama":
+        try:
+            from tonesoul.llm import create_ollama_client
+
+            client = create_ollama_client()
+            if client.is_available():
+                models = client.list_models()
+                if models:
+                    llm_client = client
+                    llm_backend = f"Ollama ({models[0]})"
+                    llm_last_error = None
+                    print(f"[INFO] LLM backend: {llm_backend} (local mode)")
+                    return llm_client
+            llm_last_error = "ollama=not available or no models"
+            return None
+        except Exception as e:
+            llm_last_error = f"ollama={e.__class__.__name__}: {e}"
+            print(f"[ERROR] Ollama client error: {e}")
+            return None
+
+    # Auto mode: Ollama first, Gemini fallback
+    ollama_error = None
     try:
         from tonesoul.llm import create_ollama_client
 
@@ -703,20 +758,19 @@ def get_llm_client():
                 llm_client = client
                 llm_backend = f"Ollama ({models[0]})"
                 llm_last_error = None
-                print(f"[INFO] LLM backend: {llm_backend}")
+                print(f"[INFO] LLM backend: {llm_backend} (auto mode)")
                 return llm_client
     except Exception as e:
         ollama_error = f"{e.__class__.__name__}: {e}"
         print(f"[WARN] Ollama not available: {e}")
 
-    # Fallback to Gemini
     try:
         from tonesoul.llm import create_gemini_client
 
         llm_client = create_gemini_client()
         llm_backend = "Gemini API"
         llm_last_error = None
-        print(f"[INFO] LLM backend: {llm_backend}")
+        print(f"[INFO] LLM backend: {llm_backend} (auto mode)")
         return llm_client
     except Exception as e:
         gemini_error = f"{e.__class__.__name__}: {e}"
@@ -727,6 +781,91 @@ def get_llm_client():
         )
         print(f"[ERROR] Gemini client error: {e}")
         return None
+
+
+@app.route("/api/llm/models", methods=["GET"])
+def llm_models():
+    """List locally available Ollama models."""
+    try:
+        from tonesoul.llm import create_ollama_client
+
+        client = create_ollama_client()
+        if client.is_available():
+            models = client.list_models()
+            return jsonify({"available": True, "models": models})
+        return jsonify({"available": False, "models": [], "reason": "Ollama not running"})
+    except Exception as e:
+        return jsonify({"available": False, "models": [], "reason": str(e)})
+
+
+@app.route("/api/llm/switch", methods=["POST"])
+def llm_switch():
+    """Switch the active LLM backend at runtime."""
+    global llm_client, llm_backend, llm_last_error
+
+    data = _json_payload()
+    if data is None:
+        return jsonify({"error": "Invalid JSON payload"}), 400
+
+    mode = data.get("mode", "").strip().lower()
+    if mode not in ("gemini", "ollama"):
+        return jsonify({"error": "mode must be 'gemini' or 'ollama'"}), 400
+
+    # Reset current client
+    llm_client = None
+    llm_backend = None
+    llm_last_error = None
+
+    if mode == "gemini":
+        try:
+            from tonesoul.llm import create_gemini_client
+
+            llm_client = create_gemini_client()
+            llm_backend = "Gemini API"
+            print(f"[INFO] LLM switched to: {llm_backend}")
+        except Exception as e:
+            llm_last_error = f"gemini={e.__class__.__name__}: {e}"
+            return jsonify({
+                "success": False,
+                "error": llm_last_error,
+                "llm_backend": "unavailable",
+                "llm_mode": "cloud",
+            })
+    else:
+        # Ollama with optional model selection
+        model = data.get("model", "").strip() or None
+        try:
+            from tonesoul.llm import create_ollama_client
+
+            client = create_ollama_client(model=model) if model else create_ollama_client()
+            if client.is_available():
+                models = client.list_models()
+                if models:
+                    llm_client = client
+                    display_model = model or models[0]
+                    llm_backend = f"Ollama ({display_model})"
+                    print(f"[INFO] LLM switched to: {llm_backend}")
+                else:
+                    llm_last_error = "No models available in Ollama"
+            else:
+                llm_last_error = "Ollama service not running"
+        except Exception as e:
+            llm_last_error = f"ollama={e.__class__.__name__}: {e}"
+
+        if llm_client is None and llm_last_error:
+            return jsonify({
+                "success": False,
+                "error": llm_last_error,
+                "llm_backend": "unavailable",
+                "llm_mode": "local",
+            })
+
+    return jsonify({
+        "success": True,
+        "llm_backend": llm_backend or "unavailable",
+        "llm_mode": "cloud" if mode == "gemini" else "local",
+    })
+
 
 
 @app.route("/api/chat", methods=["POST"])

@@ -583,6 +583,187 @@
             min-width: 40px;
             text-align: right;
         }
+
+        /* LLM Mode Switcher */
+        .llm-switcher {
+            position: relative;
+            display: inline-flex;
+        }
+
+        .llm-switcher-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            outline: none;
+        }
+
+        .llm-switcher-btn.cloud {
+            background: rgba(124, 58, 237, 0.2);
+            color: #a78bfa;
+            border: 1px solid rgba(124, 58, 237, 0.3);
+        }
+
+        .llm-switcher-btn.local {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .llm-switcher-btn.auto {
+            background: rgba(100, 100, 120, 0.2);
+            color: #a0a0b0;
+            border: 1px solid rgba(100, 100, 120, 0.3);
+        }
+
+        .llm-switcher-btn.unavailable {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .llm-switcher-btn:hover {
+            filter: brightness(1.2);
+        }
+
+        .llm-switcher-btn .arrow {
+            font-size: 10px;
+            transition: transform 0.2s;
+        }
+
+        .llm-switcher.open .llm-switcher-btn .arrow {
+            transform: rotate(180deg);
+        }
+
+        .llm-dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 8px 0;
+            min-width: 240px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            z-index: 200;
+            display: none;
+            animation: dropdownIn 0.2s ease;
+        }
+
+        @keyframes dropdownIn {
+            from {
+                opacity: 0;
+                transform: translateY(-6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .llm-switcher.open .llm-dropdown {
+            display: block;
+        }
+
+        .llm-dropdown-header {
+            padding: 6px 14px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+        }
+
+        .llm-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            cursor: pointer;
+            transition: background 0.15s;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .llm-dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .llm-dropdown-item.active {
+            color: var(--accent-primary);
+            background: rgba(124, 58, 237, 0.1);
+        }
+
+        .llm-dropdown-item.disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .llm-dropdown-item .item-icon {
+            font-size: 16px;
+            width: 24px;
+            text-align: center;
+        }
+
+        .llm-dropdown-item .item-label {
+            flex: 1;
+        }
+
+        .llm-dropdown-item .item-sub {
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        .llm-dropdown-item .item-check {
+            font-size: 14px;
+            color: var(--success);
+        }
+
+        .llm-dropdown-divider {
+            height: 1px;
+            background: var(--border-color);
+            margin: 4px 0;
+        }
+
+        .llm-models-list {
+            max-height: 160px;
+            overflow-y: auto;
+            padding: 0 4px;
+        }
+
+        .llm-model-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 10px;
+            margin: 2px 0;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            color: var(--text-secondary);
+            transition: background 0.15s;
+        }
+
+        .llm-model-item:hover {
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .llm-model-item.active {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+        }
+
+        .llm-switching {
+            opacity: 0.6;
+            pointer-events: none;
+        }
     </style>
 </head>
 
@@ -591,9 +772,35 @@
         <span class="logo">🌊</span>
         <span class="title">語魂 ToneSoul</span>
         <span class="subtitle">with Council Oversight</span>
-        <button id="session-report-btn"
-            style="margin-left: auto; padding: 8px 16px; border: 1px solid var(--accent-primary); border-radius: 20px; background: transparent; color: var(--accent-primary); cursor: pointer; font-size: 13px;"
-            onclick="generateSessionReport()">📊 對話報告</button>
+        <div style="margin-left: auto; display: flex; align-items: center; gap: 10px;">
+            <div id="llm-switcher" class="llm-switcher">
+                <button id="llm-switcher-btn" class="llm-switcher-btn auto" onclick="toggleLlmDropdown()">
+                    ⏳ 偵測中... <span class="arrow">▼</span>
+                </button>
+                <div class="llm-dropdown" id="llm-dropdown">
+                    <div class="llm-dropdown-header">選擇模式 Select Mode</div>
+                    <div class="llm-dropdown-item" onclick="switchLlm('gemini')">
+                        <span class="item-icon">☁️</span>
+                        <span class="item-label">雲端模式 Cloud<br><span class="item-sub">Gemini API</span></span>
+                        <span class="item-check" id="check-cloud"></span>
+                    </div>
+                    <div class="llm-dropdown-item" id="local-option" onclick="switchLlm('ollama')">
+                        <span class="item-icon">🖥️</span>
+                        <span class="item-label">本地模式 Local<br><span class="item-sub"
+                                id="local-sub">Ollama</span></span>
+                        <span class="item-check" id="check-local"></span>
+                    </div>
+                    <div id="local-models-section" style="display: none;">
+                        <div class="llm-dropdown-divider"></div>
+                        <div class="llm-dropdown-header">本地模型 Local Models</div>
+                        <div class="llm-models-list" id="local-models-list"></div>
+                    </div>
+                </div>
+            </div>
+            <button id="session-report-btn"
+                style="padding: 8px 16px; border: 1px solid var(--accent-primary); border-radius: 20px; background: transparent; color: var(--accent-primary); cursor: pointer; font-size: 13px;"
+                onclick="generateSessionReport()">📊 對話報告</button>
+        </div>
     </header>
 
     <!-- Session Report Modal -->
@@ -971,6 +1178,127 @@
         sendBtn.addEventListener('click', sendMessage);
         userInput.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
 
+        // ===== LLM Mode Switcher =====
+        let currentLlmMode = 'auto';
+        let localModels = [];
+
+        function toggleLlmDropdown() {
+            const switcher = document.getElementById('llm-switcher');
+            const isOpen = switcher.classList.toggle('open');
+            if (isOpen) {
+                fetchLocalModels();
+                document.addEventListener('click', closeLlmDropdownOutside);
+            } else {
+                document.removeEventListener('click', closeLlmDropdownOutside);
+            }
+        }
+
+        function closeLlmDropdownOutside(e) {
+            const switcher = document.getElementById('llm-switcher');
+            if (!switcher.contains(e.target)) {
+                switcher.classList.remove('open');
+                document.removeEventListener('click', closeLlmDropdownOutside);
+            }
+        }
+
+        async function fetchLocalModels() {
+            const list = document.getElementById('local-models-list');
+            const section = document.getElementById('local-models-section');
+            const localOption = document.getElementById('local-option');
+            const localSub = document.getElementById('local-sub');
+            try {
+                const res = await fetch('/api/llm/models');
+                const data = await res.json();
+                if (data.available && data.models.length > 0) {
+                    localModels = data.models;
+                    localOption.classList.remove('disabled');
+                    localSub.textContent = `Ollama \u00b7 ${data.models.length} models`;
+                    section.style.display = 'block';
+                    list.innerHTML = data.models.map(m =>
+                        `<div class="llm-model-item" onclick="event.stopPropagation(); switchLlm('ollama', '${m}')">
+                            <span>🧠</span> <span>${m}</span>
+                        </div>`
+                    ).join('');
+                } else {
+                    localOption.classList.add('disabled');
+                    localSub.textContent = '未偵測到 Not detected';
+                    section.style.display = 'none';
+                    localModels = [];
+                }
+            } catch (e) {
+                localOption.classList.add('disabled');
+                localSub.textContent = '無法連接 Offline';
+                section.style.display = 'none';
+            }
+        }
+
+        async function switchLlm(mode, model) {
+            const btn = document.getElementById('llm-switcher-btn');
+            const switcher = document.getElementById('llm-switcher');
+            if (mode === 'ollama' && document.getElementById('local-option').classList.contains('disabled')) return;
+
+            btn.classList.add('llm-switching');
+            btn.innerHTML = '⏳ 切換中 Switching... <span class="arrow">▼</span>';
+
+            try {
+                const body = { mode };
+                if (model) body.model = model;
+                const res = await fetch('/api/llm/switch', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                const data = await res.json();
+                if (data.success) {
+                    currentLlmMode = data.llm_mode;
+                    updateSwitcherDisplay(data.llm_mode, data.llm_backend);
+                } else {
+                    showError(data.error || '切換失敗 Switch failed');
+                    await refreshLlmStatus();
+                }
+            } catch (e) {
+                showError('無法連接伺服器');
+                await refreshLlmStatus();
+            }
+            btn.classList.remove('llm-switching');
+            switcher.classList.remove('open');
+            document.removeEventListener('click', closeLlmDropdownOutside);
+        }
+
+        function updateSwitcherDisplay(mode, backend) {
+            const btn = document.getElementById('llm-switcher-btn');
+            const checkCloud = document.getElementById('check-cloud');
+            const checkLocal = document.getElementById('check-local');
+            const configs = {
+                cloud: { icon: '☁️', label: '雲端 Cloud', cls: 'cloud' },
+                local: { icon: '🖥️', label: '本地 Local', cls: 'local' },
+                auto: { icon: '⚡', label: '自動 Auto', cls: 'auto' },
+            };
+            const unavailable = backend === 'unavailable';
+            const cfg = unavailable
+                ? { icon: '❌', label: '不可用', cls: 'unavailable' }
+                : (configs[mode] || configs.auto);
+            btn.className = `llm-switcher-btn ${cfg.cls}`;
+            btn.innerHTML = `${cfg.icon} ${cfg.label} <span class="arrow">▼</span>`;
+            btn.title = `Model: ${backend}`;
+            checkCloud.textContent = mode === 'cloud' ? '✓' : '';
+            checkLocal.textContent = mode === 'local' ? '✓' : '';
+        }
+
+        async function refreshLlmStatus() {
+            try {
+                const res = await fetch('/api/status');
+                const data = await res.json();
+                const backend = data.llm_backend || 'unavailable';
+                const mode = data.llm_mode || 'auto';
+                currentLlmMode = mode;
+                updateSwitcherDisplay(mode, backend);
+            } catch (e) {
+                updateSwitcherDisplay('auto', 'unavailable');
+            }
+        }
+        refreshLlmStatus();
+
         // ===== Session Report Functions =====
         async function generateSessionReport() {
             if (history.length < 2) {
@@ -985,18 +1313,18 @@
 
             try {
                 const response = await fetch('/api/session-report', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ history })
-                });
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ history })
+            });
 
-                const data = await response.json();
+            const data = await response.json();
 
-                if (data.error) {
-                    content.innerHTML = `<div style="color: var(--danger);">❌ ${data.error}</div>`;
-                } else {
-                    const r = data.report;
-                    let html = `
+            if (data.error) {
+                content.innerHTML = `<div style="color: var(--danger);">❌ ${data.error}</div>`;
+            } else {
+                const r = data.report;
+                let html = `
                         <div style="margin-bottom: 16px;">
                             <strong style="color: var(--text-primary);">📝 總結</strong>
                             <p style="color: var(--text-secondary); margin: 8px 0;">${r.summary_text || '無'}</p>
@@ -1024,29 +1352,29 @@
                             </p>
                         </div>`;
 
-                    if (r.turning_points && r.turning_points.length > 0) {
-                        html += `
+                if (r.turning_points && r.turning_points.length > 0) {
+                    html += `
                             <div style="margin-bottom: 16px;">
                                 <strong style="color: var(--text-primary);">⚡ 轉折點 (${r.turning_points.length})</strong>
                                 <ul style="color: var(--text-secondary); margin: 8px 0; padding-left: 20px;">
                                     ${r.turning_points.map(tp => `<li>${tp.description}</li>`).join('')}
                                 </ul>
                             </div>`;
-                    }
+                }
 
-                    if (r.values_strengthened && r.values_strengthened.length > 0) {
-                        html += `
+                if (r.values_strengthened && r.values_strengthened.length > 0) {
+                    html += `
                             <div>
                                 <strong style="color: var(--text-primary);">✨ 強化價值觀</strong>
                                 <p style="color: var(--text-secondary); margin: 8px 0;">${r.values_strengthened.join(', ')}</p>
                             </div>`;
-                    }
-
-                    content.innerHTML = html;
                 }
-            } catch (e) {
-                content.innerHTML = `<div style="color: var(--danger);">❌ 連接失敗</div>`;
+
+                content.innerHTML = html;
             }
+        } catch (e) {
+            content.innerHTML = `<div style="color: var(--danger);">❌ 連接失敗</div>`;
+        }
         }
 
         function closeSessionReport() {
