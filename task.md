@@ -1,5 +1,13 @@
 # Task
 
+## Phase 73: 前端話題刪除可用性修補（Mobile / Touch）
+- [x] 修復 `ConversationList` 操作按鈕依賴 hover 導致手機難以刪除對話的問題
+- [x] 新增對話操作選單外部點擊自動收合，避免選單殘留
+- [x] 補齊按鈕語意屬性（`type="button"` / `aria-label`）提升操作穩定性
+- [x] 修復聊天輸入框在 IME（中文選字）期間按 Enter 可能誤送出的問題
+- [x] 驗證 `apps/web` 測試與 lint 全綠
+**成功標準**: 新建立對話在桌機與手機皆可打開操作選單並刪除，且前端測試/靜態檢查維持通過。 
+
 ## Phase 72: Open-Source 倉庫清理與對外敘事對齊
 - [x] 移除誤入庫暫存快照 `temp_commit_page.html`（含不必要頁面資料）
 - [x] `.gitignore` 補上 `temp_commit_page.html`，避免再次誤提交

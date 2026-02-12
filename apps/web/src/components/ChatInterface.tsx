@@ -1597,7 +1597,14 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
                         type="text"
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
-                        onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && sendMessage()}
+                        onKeyDown={(e) => {
+                            // Keep IME composition (e.g. 中文輸入法選字) from triggering send.
+                            if (e.nativeEvent.isComposing) return;
+                            if (e.key === "Enter") {
+                                e.preventDefault();
+                                void sendMessage();
+                            }
+                        }}
                         placeholder="輸入訊息以啟動三路審議..."
                         disabled={isLoading}
                         className="flex-1 px-4 py-3 bg-slate-100 rounded-xl border-0 focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all disabled:opacity-50"

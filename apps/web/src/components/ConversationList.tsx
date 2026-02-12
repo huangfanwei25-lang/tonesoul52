@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MessageSquare, Plus, Trash2, MoreVertical } from "lucide-react";
 import { Conversation } from "@/lib/db";
 
@@ -20,6 +20,24 @@ export default function ConversationList({
     onDelete,
 }: ConversationListProps) {
     const [menuOpen, setMenuOpen] = useState<string | null>(null);
+    const rootRef = useRef<HTMLDivElement | null>(null);
+
+    useEffect(() => {
+        if (!menuOpen) return;
+
+        const handleOutsideClick = (event: MouseEvent) => {
+            const target = event.target;
+            if (!(target instanceof Node)) return;
+            if (!rootRef.current?.contains(target)) {
+                setMenuOpen(null);
+            }
+        };
+
+        document.addEventListener("mousedown", handleOutsideClick);
+        return () => {
+            document.removeEventListener("mousedown", handleOutsideClick);
+        };
+    }, [menuOpen]);
 
     const formatDate = (timestamp: number) => {
         const date = new Date(timestamp);
@@ -49,10 +67,11 @@ export default function ConversationList({
     };
 
     return (
-        <div className="flex flex-col h-full">
+        <div ref={rootRef} className="flex flex-col h-full">
             {/* 新對話按鈕 */}
             <div className="p-3">
                 <button
+                    type="button"
                     onClick={onNew}
                     className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-medium transition-colors"
                 >
@@ -94,11 +113,16 @@ export default function ConversationList({
 
                                 {/* 更多選項按鈕 */}
                                 <button
+                                    type="button"
+                                    aria-label="打開對話操作選單"
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         setMenuOpen(menuOpen === conv.id ? null : conv.id);
                                     }}
-                                    className="opacity-0 group-hover:opacity-100 p-1 hover:bg-slate-700 rounded transition-all"
+                                    className={`p-1 rounded transition-all ${menuOpen === conv.id
+                                            ? "opacity-100 bg-slate-700"
+                                            : "opacity-100 md:opacity-0 md:group-hover:opacity-100 hover:bg-slate-700"
+                                        }`}
                                 >
                                     <MoreVertical className="w-4 h-4 text-slate-400" />
                                 </button>
@@ -108,6 +132,8 @@ export default function ConversationList({
                             {menuOpen === conv.id && (
                                 <div className="absolute right-2 top-10 z-10 bg-slate-800 border border-slate-700 rounded-lg shadow-xl py-1 min-w-[120px]">
                                     <button
+                                        type="button"
+                                        aria-label="刪除對話"
                                         onClick={(e) => handleDelete(conv.id, e)}
                                         className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-400 hover:bg-red-500/10 transition-colors"
                                     >
