@@ -1,6 +1,6 @@
 # API Specification (Unified Web + Backend)
 
-Last updated: 2026-02-09
+Last updated: 2026-02-12
 
 ## Goal
 
@@ -23,6 +23,8 @@ Runtime environment:
 - `TONESOUL_COUNCIL_MODE` controls backend council perspective config when request does not override it.
   - Supported values: `rules`, `hybrid`, `full_llm`
   - Default: `hybrid`
+- `TONESOUL_READ_API_TOKEN` enables optional protection for persistence read endpoints
+  - if set, clients must provide `Authorization: Bearer <token>` or `X-ToneSoul-Read-Token: <token>`
 
 ---
 
@@ -33,6 +35,89 @@ Runtime environment:
 - Response:
   - `status: "ok"`
   - `version: string`
+
+### `GET /api/status`
+- Backend only.
+- Response:
+  - `persistence: object`
+  - `llm_backend: string`
+  - `llm_error: string | null`
+  - `memory_count: number`
+  - `conversation_count: number`
+  - `audit_log_count: number`
+  - `message_count: number`
+  - `timestamp: ISO timestamp`
+
+### `GET /api/memories`
+- Backend only.
+- Query:
+  - `limit?: number` (default 10, max 200)
+  - `session_id?: string` (optional session-scoped filter)
+- Response:
+  - `memories: array`
+  - `session_id?: string`
+
+### `GET /api/conversations`
+- Backend only.
+- Query:
+  - `limit?: number` (default 20, max 200)
+  - `offset?: number` (default 0)
+  - `session_id?: string` (optional session-scoped filter)
+- Response:
+  - `conversations: array`
+  - `total: number`
+  - `limit: number`
+  - `offset: number`
+  - `session_id?: string`
+  - `persistence_enabled: boolean`
+
+### `GET /api/conversations/{conversation_id}`
+- Backend only.
+- Response:
+  - `conversation: object` (includes `messages`)
+- Errors:
+  - `404` when conversation not found
+  - `503` when persistence is disabled
+
+### `DELETE /api/conversations/{conversation_id}`
+- Backend only.
+- Response:
+  - `success: boolean`
+  - `conversation_id: string`
+  - `deleted: boolean`
+  - `timestamp: ISO timestamp`
+
+### `GET /api/audit-logs`
+- Backend only.
+- Query:
+  - `limit?: number` (default 20, max 200)
+  - `offset?: number` (default 0)
+  - `conversation_id?: string` (filters logs for one external conversation id)
+  - `session_id?: string` (filters logs by session-linked conversations)
+    - precedence: when both `conversation_id` and `session_id` are provided, `conversation_id` takes priority
+- Response:
+  - `logs: array`
+  - `total: number`
+  - `limit: number`
+  - `offset: number`
+  - `conversation_id?: string`
+  - `session_id?: string`
+  - `persistence_enabled: boolean`
+
+### Read Endpoint Auth (Optional)
+- Applies when backend env `TONESOUL_READ_API_TOKEN` is configured.
+- Protected routes:
+  - `GET /api/memories`
+  - `GET /api/conversations`
+  - `GET /api/conversations/{conversation_id}`
+  - `DELETE /api/conversations/{conversation_id}`
+  - `GET /api/audit-logs`
+- Accepted auth headers:
+  - `Authorization: Bearer <token>`
+  - `X-ToneSoul-Read-Token: <token>`
+- Unauthorized response:
+  - HTTP `401`
+  - payload includes `error: "Unauthorized read access"`
 
 ### `POST /api/conversation`
 - Request:

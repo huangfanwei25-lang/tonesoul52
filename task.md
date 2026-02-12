@@ -1,5 +1,35 @@
 # Task
 
+## Phase 72: Open-Source 倉庫清理與對外敘事對齊
+- [x] 移除誤入庫暫存快照 `temp_commit_page.html`（含不必要頁面資料）
+- [x] `.gitignore` 補上 `temp_commit_page.html`，避免再次誤提交
+- [x] 將文件中的 `file:///c:/...` 本機絕對連結改為 repo 相對連結
+- [x] README 新增 `Lingua-Animus Protocol (LAP)` 區塊，對齊治理敘事
+- [x] 修正 `docs/status/monthly_consolidation_report.json` 的 `project_root` 亂碼字串
+**成功標準**: 倉庫無明顯臨時快照污染、文件連結可在 GitHub 直接開啟、核心治理敘事與 README 一致、亂碼可讀性問題收斂。 
+
+## Phase 71: Session 級讀取篩選（Memories / Audit Logs）
+- [x] `/api/memories` 支援 `session_id` query，回傳 payload 含 `session_id`
+- [x] `/api/audit-logs` 支援 `session_id` query（並保留 `conversation_id` 優先）
+- [x] `SupabasePersistence` 新增 session filter：`list_memories(..., session_id)`、`list_audit_logs(..., session_id)`
+- [x] 文件同步（`docs/API_SPEC.md`）
+- [x] 回歸測試擴充與通過
+**成功標準**: 管理讀取可切 session 範圍，且不破壞既有 conversation 與全域查詢行為。
+
+## Phase 70: Read Auth 可操作性與 Session 篩選
+- [x] Playground 新增 Read Token 管理（儲存/清除/localStorage）
+- [x] `/api/conversations` 新增 `session_id` 篩選（server + Supabase adapter）
+- [x] API/驗收文件對齊（`session_id` query、`--read-token` 使用方式）
+- [x] 補齊後端測試（session filter 轉發與 Supabase 查詢過濾）
+**成功標準**: 啟用讀取 token 後 Playground 可持續操作，且對話列表可用 session 做最小範圍檢視。
+
+## Phase 69: 後端安全化與感官記憶鏈落地（Stepwise）
+- [x] 讀取路由授權保護：`/api/conversations*`、`/api/audit-logs`、`/api/memories`
+- [x] `prior_tension` 注入：`/api/chat` 讀取最近高張力審計並傳入 pipeline/council context
+- [x] 文件對齊：修正 tri-persona 計畫檔路徑漂移與 API 授權契約說明
+- [x] 回歸測試：新增授權與記憶鏈測試，既有 persistence 測試維持全綠
+**成功標準**: 後端敏感讀取路由可控、感官記憶鏈有最小可運行版本，且測試可重現通過。
+
 ## Phase 68: Backend Persistence 驗收與亂碼收斂
 - [x] 修復 `apps/api/server.py` 亂碼字串與註解，並維持 API 行為不變
 - [x] 重寫 `docs/plans/backend_persistent_storage_plan.md`（UTF-8 可讀版）

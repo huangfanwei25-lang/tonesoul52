@@ -17,6 +17,14 @@
 python scripts/verify_backend_persistence.py --base https://tonesoul52.onrender.com
 ```
 
+若有設定 `TONESOUL_READ_API_TOKEN`（讀取路由保護）：
+
+```bash
+python scripts/verify_backend_persistence.py \
+  --base https://tonesoul52.onrender.com \
+  --read-token "<TONESOUL_READ_API_TOKEN>"
+```
+
 可選：
 
 ```bash
@@ -81,4 +89,3 @@ curl https://tonesoul52.onrender.com/api/memories
 - [ ] `/api/conversations/<conversation_id>` 含 `messages`
 - [ ] `/api/audit-logs` 有最新記錄或 `total` 可讀
 - [ ] `/api/status` 內含 `memory_count`、`conversation_count`、`audit_log_count`
-

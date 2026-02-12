@@ -195,6 +195,37 @@ body {
     gap: 10px;
 }
 
+.read-auth-row {
+    margin-top: 12px;
+    display: grid;
+    grid-template-columns: auto 1fr auto auto;
+    gap: 8px;
+    align-items: center;
+}
+
+.read-auth-label {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+}
+
+.read-auth-input {
+    width: 100%;
+    border-radius: 10px;
+    border: 1px solid rgba(148, 163, 184, 0.28);
+    background: rgba(7, 14, 32, 0.68);
+    color: var(--text);
+    padding: 8px 10px;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+}
+
+.read-auth-note {
+    margin: 0;
+    grid-column: 1 / -1;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+}
+
 .status-card {
     padding: 14px;
     border-radius: var(--radius-sm);
@@ -553,6 +584,16 @@ body {
     font-weight: 600;
 }
 
+.api-note {
+    margin: 12px 0 0;
+    font-size: 0.84rem;
+    color: var(--text-muted);
+}
+
+.api-note code {
+    color: #d7ecff;
+}
+
 .footer {
     position: relative;
     z-index: 1;
@@ -599,6 +640,10 @@ body {
 
     .status-grid,
     .feature-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .read-auth-row {
         grid-template-columns: 1fr;
     }
 

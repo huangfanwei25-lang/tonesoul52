@@ -270,12 +270,27 @@ Decision must be: APPROVE (helpful), CONCERN (partially), or OBJECT (unhelpful).
 
         # Build the evaluation prompt
         intent_clause = f"\nUser Intent: {user_intent}" if user_intent else ""
+        prior_tension_clause = ""
+        prior_tension = context.get("prior_tension")
+        if isinstance(prior_tension, dict) and prior_tension:
+            delta_t = prior_tension.get("delta_t")
+            gate_decision = prior_tension.get("gate_decision")
+            rationale = str(prior_tension.get("rationale") or "").strip()
+            if len(rationale) > 240:
+                rationale = f"{rationale[:240]}..."
+            prior_tension_clause = (
+                "\nPrior Tension Memory:"
+                f"\n- delta_t: {delta_t}"
+                f"\n- gate_decision: {gate_decision}"
+                f"\n- rationale: {rationale or 'n/a'}"
+                "\nUse this as historical context; do not expose raw metrics to end users."
+            )
         prompt = f"""{self.system_prompt}
 
 Text to evaluate:
 \"\"\"
 {draft_output}
-\"\"\"{intent_clause}
+\"\"\"{intent_clause}{prior_tension_clause}
 
 Context: {json.dumps(context, default=str, ensure_ascii=False)[:500]}
 

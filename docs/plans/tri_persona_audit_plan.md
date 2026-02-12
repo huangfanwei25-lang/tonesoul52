@@ -1,8 +1,9 @@
 # 語魂三人格審計架構 — 後端實作計畫
 
-> **版本**：v0.1（設計草案）
-> **狀態**：待實作（基礎設施已就緒）
+> **版本**：v0.2（設計草案）
+> **狀態**：部分實作（Persistence + prior_tension 注入已上線）
 > **前置條件**：Supabase 持久化 ✅、audit_logs 表 ✅
+> **理論參照**：`docs/philosophy/sensory_analysis_references.md`
 
 ---
 
@@ -169,30 +170,29 @@ council_context["prior_tension"] = {
 |------|------|
 | Supabase `audit_logs` 表 | ✅ 已建立 |
 | `/api/chat` 寫入 audit | ✅ 已整合 |
-| 讀取歷史 audit 注入 context | ❌ 待實作 |
-| Perspective prompt 支援 prior_tension | ❌ 待實作 |
+| 讀取歷史 audit 注入 context | ✅ 已整合（`/api/chat` → `prior_tension`） |
+| Perspective prompt 支援 prior_tension | ✅ 已整合（LLM perspective prompt） |
 
 ---
 
 ## 實作計畫
 
-### Phase 1：重命名 Perspectives（低風險）
+### Phase 1：對齊雙審議系統命名（低風險）
 
 | 檔案 | 改動 |
 |------|------|
-| `tonesoul/council/perspectives/muse.py` | 名稱不變，但 prompt 加入心理學家審計問題 |
-| `tonesoul/council/perspectives/aegis.py` | 名稱不變，但 prompt 加入社會學家審計問題 |
-| `tonesoul/council/perspectives/logos.py` | 名稱不變，但 prompt 加入責任鏈審計問題 |
+| `tonesoul/deliberation/perspectives.py` | `Muse/Logos/Aegis`（內在審議）語意對齊：心理/責任/社會映射 |
+| `tonesoul/council/perspective_factory.py` | `Guardian/Analyst/Critic/Advocate`（輸出審議）prompt 對齊三人格語意 |
 
-> 不改檔名和 class 名——避免破壞現有引用。只改 system prompt 內容。
+> 不強行統一為單一命名，保留「內在審議（deliberation）」與「輸出審議（council）」雙軌，僅做語意映射。
 
 ### Phase 2：感官記憶鏈（中風險）
 
 | 檔案 | 改動 |
 |------|------|
-| `tonesoul/supabase_persistence.py` | 新增 `list_audit_logs(limit)` 讀取方法 |
-| `apps/api/server.py` `/api/chat` | 審議前讀取最近 audit logs 並注入 context |
-| `tonesoul/council/council_runtime.py` | `CouncilRequest` 支援 `prior_tension` 欄位 |
+| `tonesoul/supabase_persistence.py` | `list_audit_logs(limit, offset, conversation_id)` 支援 conversation 過濾 |
+| `apps/api/server.py` `/api/chat` | 審議前讀取最近 audit logs，選最大 `delta_t` 注入 `prior_tension` |
+| `tonesoul/council/runtime.py` | 透過 `CouncilRequest.context` 傳遞 `prior_tension`（無需新增 dataclass 欄位） |
 
 ### Phase 3：張力選擇器（高風險，需實驗）
 

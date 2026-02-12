@@ -67,6 +67,7 @@ memory/narrative/
 add_reset.py
 fix_nonlocal.py
 moltbook_register.html
+temp_commit_page.html
 data/yuhun.db
 
 # Test Artifacts

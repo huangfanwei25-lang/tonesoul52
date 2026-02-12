@@ -77,24 +77,53 @@ class SupabasePersistence:
             "last_error": self._last_error,
         }
 
-    def list_conversations(self, limit: int = 20, offset: int = 0) -> dict[str, Any]:
+    def list_conversations(
+        self,
+        limit: int = 20,
+        offset: int = 0,
+        session_id: str | None = None,
+    ) -> dict[str, Any]:
         if not self.enabled:
             return {"conversations": [], "total": 0}
 
         page_limit = _sanitize_limit(limit)
         page_offset = max(0, int(offset or 0))
+        query_params = {
+            "select": "id,title,created_at,updated_at",
+            "order": "created_at.desc",
+            "limit": str(page_limit),
+            "offset": str(page_offset),
+        }
+        count_params: dict[str, str] | None = None
+        if session_id is not None:
+            session_value = str(session_id).strip()
+            if not session_value:
+                return {"conversations": [], "total": 0}
+            session_conversation_ids = self._list_session_conversation_ids(session_value)
+            if not session_conversation_ids:
+                return {"conversations": [], "total": 0}
+            # PostgREST `in` operator supports quoted strings: in.("a","b")
+            quoted_ids = ",".join(
+                json.dumps(str(external_id), ensure_ascii=False)
+                for external_id in session_conversation_ids
+                if str(external_id).strip()
+            )
+            if not quoted_ids:
+                return {"conversations": [], "total": 0}
+            in_clause = f"in.({quoted_ids})"
+            query_params["title"] = in_clause
+            count_params = {"title": in_clause}
+
         ok, payload = self._request(
             method="GET",
             table="conversations",
-            params={
-                "select": "id,title,created_at,updated_at",
-                "order": "created_at.desc",
-                "limit": str(page_limit),
-                "offset": str(page_offset),
-            },
+            params=query_params,
         )
         if not ok or not isinstance(payload, list):
-            return {"conversations": [], "total": self._count_table_rows("conversations") or 0}
+            return {
+                "conversations": [],
+                "total": self._count_table_rows("conversations", params=count_params) or 0,
+            }
 
         conversations: list[dict[str, Any]] = []
         for row in payload:
@@ -115,7 +144,7 @@ class SupabasePersistence:
 
         return {
             "conversations": conversations,
-            "total": self._count_table_rows("conversations") or 0,
+            "total": self._count_table_rows("conversations", params=count_params) or 0,
         }
 
     def get_conversation(self, external_id: str) -> dict[str, Any] | None:
@@ -200,43 +229,78 @@ class SupabasePersistence:
         )
         return ok
 
-    def list_audit_logs(self, limit: int = 20, offset: int = 0) -> dict[str, Any]:
+    def list_audit_logs(
+        self,
+        limit: int = 20,
+        offset: int = 0,
+        conversation_id: str | None = None,
+        session_id: str | None = None,
+    ) -> dict[str, Any]:
         if not self.enabled:
             return {"logs": [], "total": 0}
         page_limit = _sanitize_limit(limit)
         page_offset = max(0, int(offset or 0))
+        query_params = {
+            "select": (
+                "id,conversation_id,gate_decision,p_level_triggered,poav_score,"
+                "delta_t,delta_s,delta_sigma,delta_r,rationale,created_at"
+            ),
+            "order": "created_at.desc",
+            "limit": str(page_limit),
+            "offset": str(page_offset),
+        }
+        count_params: dict[str, str] | None = None
+        if conversation_id is not None:
+            external_conversation_id = str(conversation_id).strip()
+            if not external_conversation_id:
+                return {"logs": [], "total": 0}
+            internal_id = self._resolve_internal_conversation_id(external_conversation_id)
+            if not internal_id:
+                return {"logs": [], "total": 0}
+            query_params["conversation_id"] = f"eq.{internal_id}"
+            count_params = {"conversation_id": f"eq.{internal_id}"}
+        elif session_id is not None:
+            session_value = str(session_id).strip()
+            if not session_value:
+                return {"logs": [], "total": 0}
+            internal_ids = self._list_session_internal_conversation_ids(session_value)
+            if not internal_ids:
+                return {"logs": [], "total": 0}
+            in_values = ",".join(json.dumps(value, ensure_ascii=False) for value in internal_ids)
+            in_clause = f"in.({in_values})"
+            query_params["conversation_id"] = in_clause
+            count_params = {"conversation_id": in_clause}
+
         ok, payload = self._request(
             method="GET",
             table="audit_logs",
-            params={
-                "select": (
-                    "id,conversation_id,gate_decision,p_level_triggered,poav_score,"
-                    "delta_t,delta_s,delta_sigma,delta_r,rationale,created_at"
-                ),
-                "order": "created_at.desc",
-                "limit": str(page_limit),
-                "offset": str(page_offset),
-            },
+            params=query_params,
         )
         logs = payload if ok and isinstance(payload, list) else []
         return {
             "logs": logs,
-            "total": self._count_table_rows("audit_logs") or 0,
+            "total": self._count_table_rows("audit_logs", params=count_params) or 0,
         }
 
-    def list_memories(self, limit: int = 10) -> list[dict[str, Any]]:
+    def list_memories(self, limit: int = 10, session_id: str | None = None) -> list[dict[str, Any]]:
         if not self.enabled:
             return []
         page_limit = _sanitize_limit(limit)
+        query_params = {
+            "select": "id,source,payload,tags,created_at",
+            "order": "created_at.desc",
+            "limit": str(page_limit),
+            "offset": "0",
+        }
+        if session_id is not None:
+            session_value = str(session_id).strip()
+            if not session_value:
+                return []
+            query_params["tags"] = f"cs.{{session:{session_value}}}"
         ok, payload = self._request(
             method="GET",
             table="soul_memories",
-            params={
-                "select": "id,source,payload,tags,created_at",
-                "order": "created_at.desc",
-                "limit": str(page_limit),
-                "offset": "0",
-            },
+            params=query_params,
         )
         if not ok or not isinstance(payload, list):
             return []
@@ -588,7 +652,23 @@ class SupabasePersistence:
             ordered.append(external_id)
         return ordered
 
-    def _count_table_rows(self, table: str) -> int | None:
+    def _list_session_internal_conversation_ids(self, session_id: str) -> list[str]:
+        external_ids = self._list_session_conversation_ids(session_id)
+        internal_ids: list[str] = []
+        seen_internal: set[str] = set()
+        for external_id in external_ids:
+            internal_id = self._resolve_internal_conversation_id(external_id)
+            if not internal_id or internal_id in seen_internal:
+                continue
+            seen_internal.add(internal_id)
+            internal_ids.append(internal_id)
+        return internal_ids
+
+    def _count_table_rows(
+        self,
+        table: str,
+        params: dict[str, str] | None = None,
+    ) -> int | None:
         if not self.enabled:
             return 0
 
@@ -600,10 +680,13 @@ class SupabasePersistence:
         }
         url = f"{self.url}/rest/v1/{table}"
         try:
+            query_params = {"select": "id", "limit": "1"}
+            if params:
+                query_params.update(params)
             response = self._session.request(
                 method="GET",
                 url=url,
-                params={"select": "id", "limit": "1"},
+                params=query_params,
                 json=None,
                 headers=headers,
                 timeout=self.timeout,

@@ -278,6 +278,7 @@ class UnifiedPipeline:
         full_analysis: bool = True,
         council_mode: Optional[str] = None,
         perspective_config: Optional[Dict[str, Dict[str, Any]]] = None,
+        prior_tension: Optional[Dict[str, Any]] = None,
     ) -> UnifiedResponse:
         """
         處理用戶訊息的完整管線
@@ -420,6 +421,8 @@ class UnifiedPipeline:
                 if resolved_perspective_config is None and council_mode:
                     resolved_perspective_config = get_council_config(council_mode)
                 council_context = {"language": "zh"}
+                if isinstance(prior_tension, dict) and prior_tension:
+                    council_context["prior_tension"] = prior_tension
                 if council_mode:
                     council_context["council_mode_override"] = council_mode
 

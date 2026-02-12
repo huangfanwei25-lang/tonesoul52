@@ -168,6 +168,40 @@ def test_list_conversations_returns_paged_rows_and_total():
     assert result["conversations"][0]["id"] == "conv_abc"
 
 
+def test_list_conversations_can_filter_by_session_id():
+    fake_session = _FakeSession(
+        responses=[
+            _FakeResponse(
+                payload=[
+                    {"payload": {"session_id": "session_demo", "conversation_id": "conv_abc"}},
+                    {"payload": {"session_id": "session_demo", "conversation_id": "conv_xyz"}},
+                    {"payload": {"session_id": "other", "conversation_id": "conv_ignored"}},
+                ]
+            ),
+            _FakeResponse(
+                payload=[
+                    {
+                        "id": "uuid-1",
+                        "title": "conv_abc",
+                        "created_at": "2026-02-11T00:00:00Z",
+                        "updated_at": "2026-02-11T00:00:05Z",
+                    }
+                ]
+            ),
+            _FakeResponse(payload=[{"id": "uuid-1"}], headers={"Content-Range": "0-0/1"}),
+        ]
+    )
+    store = SupabasePersistence(url="https://example.supabase.co", key="k", session=fake_session)
+
+    result = store.list_conversations(limit=20, offset=0, session_id="session_demo")
+
+    assert result["total"] == 1
+    assert len(result["conversations"]) == 1
+    assert result["conversations"][0]["id"] == "conv_abc"
+    assert "title" in fake_session.calls[1]["params"]
+    assert fake_session.calls[2]["params"]["title"] == fake_session.calls[1]["params"]["title"]
+
+
 def test_get_conversation_returns_messages():
     fake_session = _FakeSession(
         responses=[
@@ -242,6 +276,80 @@ def test_list_audit_logs_returns_rows_and_total():
     assert result["total"] == 7
     assert len(result["logs"]) == 1
     assert result["logs"][0]["id"] == "a1"
+
+
+def test_list_audit_logs_can_filter_by_conversation_id():
+    fake_session = _FakeSession(
+        responses=[
+            _FakeResponse(payload=[{"id": "uuid-1", "title": "conv_abc"}]),  # resolve external id
+            _FakeResponse(payload=[{"id": "a1", "gate_decision": "approve"}]),  # logs
+            _FakeResponse(payload=[{"id": "a1"}], headers={"Content-Range": "0-0/1"}),  # count
+        ]
+    )
+    store = SupabasePersistence(url="https://example.supabase.co", key="k", session=fake_session)
+
+    result = store.list_audit_logs(limit=10, offset=0, conversation_id="conv_abc")
+
+    assert result["total"] == 1
+    assert len(result["logs"]) == 1
+    assert result["logs"][0]["id"] == "a1"
+    assert fake_session.calls[1]["params"]["conversation_id"] == "eq.uuid-1"
+    assert fake_session.calls[2]["params"]["conversation_id"] == "eq.uuid-1"
+
+
+def test_list_audit_logs_can_filter_by_session_id():
+    fake_session = _FakeSession(
+        responses=[
+            _FakeResponse(  # list session conversation links
+                payload=[
+                    {"payload": {"session_id": "session_demo", "conversation_id": "conv_a"}},
+                    {"payload": {"session_id": "session_demo", "conversation_id": "conv_b"}},
+                    {"payload": {"session_id": "other", "conversation_id": "conv_ignored"}},
+                ]
+            ),
+            _FakeResponse(payload=[{"id": "uuid-a", "title": "conv_a"}]),  # resolve conv_a
+            _FakeResponse(payload=[{"id": "uuid-b", "title": "conv_b"}]),  # resolve conv_b
+            _FakeResponse(payload=[{"id": "a1", "gate_decision": "approve"}]),  # logs
+            _FakeResponse(payload=[{"id": "a1"}], headers={"Content-Range": "0-0/1"}),  # count
+        ]
+    )
+    store = SupabasePersistence(url="https://example.supabase.co", key="k", session=fake_session)
+
+    result = store.list_audit_logs(limit=10, offset=0, session_id="session_demo")
+
+    assert result["total"] == 1
+    assert len(result["logs"]) == 1
+    assert result["logs"][0]["id"] == "a1"
+    logs_filter = fake_session.calls[3]["params"]["conversation_id"]
+    count_filter = fake_session.calls[4]["params"]["conversation_id"]
+    assert logs_filter.startswith("in.(")
+    assert "uuid-a" in logs_filter and "uuid-b" in logs_filter
+    assert count_filter == logs_filter
+
+
+def test_list_memories_can_filter_by_session_id():
+    fake_session = _FakeSession(
+        responses=[
+            _FakeResponse(
+                payload=[
+                    {
+                        "id": "m1",
+                        "source": "consent_event",
+                        "payload": {"session_id": "session_demo"},
+                        "tags": ["session:session_demo"],
+                        "created_at": "2026-02-11T00:00:00Z",
+                    }
+                ]
+            )
+        ]
+    )
+    store = SupabasePersistence(url="https://example.supabase.co", key="k", session=fake_session)
+
+    memories = store.list_memories(limit=5, session_id="session_demo")
+
+    assert len(memories) == 1
+    assert memories[0]["id"] == "m1"
+    assert fake_session.calls[0]["params"]["tags"] == "cs.{session:session_demo}"
 
 
 def test_list_memories_and_get_counts():

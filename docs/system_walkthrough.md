@@ -275,7 +275,7 @@ ToneSoul draws from peer-reviewed research:
 2. **Irving et al. (2018)** — AI Safety via Debate
 3. **Bai et al. (2022)** — Constitutional AI
 
-See [academic_grounding.md](file:///c:/Users/user/Desktop/倉庫/docs/philosophy/academic_grounding.md) for full citations.
+See [academic_grounding.md](philosophy/academic_grounding.md) for full citations.
 
 ---
 

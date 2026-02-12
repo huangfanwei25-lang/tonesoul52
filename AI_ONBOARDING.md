@@ -94,11 +94,11 @@
 
 ## 🔗 重要文件連結
 
-- [README.md](file:///c:/Users/user/Desktop/倉庫/README.md)
-- [AXIOMS.json](file:///c:/Users/user/Desktop/倉庫/AXIOMS.json)
-- [docs/terminology.md](file:///c:/Users/user/Desktop/倉庫/docs/terminology.md)
-- [spec/council_spec.md](file:///c:/Users/user/Desktop/倉庫/spec/council_spec.md)
-- [docs/philosophy/truth_vector_architecture.md](file:///c:/Users/user/Desktop/倉庫/docs/philosophy/truth_vector_architecture.md)
+- [README.md](README.md)
+- [AXIOMS.json](AXIOMS.json)
+- [docs/terminology.md](docs/terminology.md)
+- [spec/council_spec.md](spec/council_spec.md)
+- [docs/philosophy/truth_vector_architecture.md](docs/philosophy/truth_vector_architecture.md)
 
 ---
 

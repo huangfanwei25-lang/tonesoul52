@@ -89,6 +89,40 @@ When past commitments conflict with present truth, the system:
 
 ---
 
+## 🧭 Lingua-Animus Protocol (LAP)
+
+**Beyond Generation, Toward Cognitive Governance**
+
+In the agent era, the bottleneck is no longer model capability alone.  
+The harder problem is traceability: who said what, based on which reasoning, under which constraints.
+
+LAP is the governance protocol used in ToneSoul to preserve an auditable chain from facts to interface.
+
+### 1) Three-Layer Decoupling (TLD)
+
+- **L1 Ontological Layer**: Anchor claims to stable facts, constraints, and verifiable evidence.
+- **L2 Reasoning Architecture**: Expose deliberation structure (council roles, constraints, tradeoffs).
+- **L3 Interface Layer**: Separate metaphor and rhetoric from factual commitments.
+
+### 2) Dynamic Tension Control (ΔT)
+
+- **Resonance Mode**: Lower tension for exploration, ideation, and hypothesis generation.
+- **Tension Mode**: Higher audit rigor for engineering, safety, and high-stakes decisions.
+
+### 3) Currency Audit + Occam Gate
+
+When lexical inflation or pseudo-precision appears, LAP triggers a compactness audit:
+
+- Strip unverifiable narrative fragments.
+- Keep only claims with evidence, logic, or explicit uncertainty tags.
+
+### 4) Objective
+
+LAP is not a creativity limiter.  
+It is governance infrastructure that keeps humans as the first verifiers in human-AI collaboration.
+
+---
+
 ## 🏗️ Architecture
 
 ```mermaid

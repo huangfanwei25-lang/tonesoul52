@@ -4,6 +4,7 @@ Connects frontend to PreOutputCouncil backend.
 """
 
 import os
+import secrets
 import sys
 import traceback
 import uuid
@@ -33,6 +34,7 @@ CORS(app, resources={r"/api/*": {"origins": _cors_origins}})
 council_runtime = CouncilRuntime()
 _MAX_ESCAPE_SEED_ITEMS = 50
 _MAX_PAGINATION_LIMIT = 200
+_READ_API_TOKEN_ENV = "TONESOUL_READ_API_TOKEN"
 _VTP_CONTEXT_FLAGS = (
     "vtp_force_trigger",
     "vtp_axiom_conflict",
@@ -48,6 +50,42 @@ def _env_flag(name: str, default: bool = False) -> bool:
     if value is None:
         return default
     return value.strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _read_api_token() -> str:
+    value = os.environ.get(_READ_API_TOKEN_ENV)
+    if not isinstance(value, str):
+        return ""
+    return value.strip()
+
+
+def _extract_bearer_token(authorization_header: str | None) -> str:
+    if not isinstance(authorization_header, str):
+        return ""
+    header = authorization_header.strip()
+    if not header:
+        return ""
+    parts = header.split(" ", 1)
+    if len(parts) != 2:
+        return ""
+    scheme, token = parts
+    if scheme.lower() != "bearer":
+        return ""
+    return token.strip()
+
+
+def _require_read_api_auth():
+    required_token = _read_api_token()
+    if not required_token:
+        return None
+
+    provided_token = _extract_bearer_token(request.headers.get("Authorization"))
+    if not provided_token:
+        provided_token = str(request.headers.get("X-ToneSoul-Read-Token") or "").strip()
+
+    if not provided_token or not secrets.compare_digest(provided_token, required_token):
+        return jsonify({"error": "Unauthorized read access"}), 401
+    return None
 
 
 def _json_payload():
@@ -153,6 +191,48 @@ def _parse_pagination(default_limit: int = 20) -> tuple[int, int]:
 
 def _utc_now() -> str:
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+
+
+def _build_prior_tension(conversation_id: str | None) -> dict | None:
+    if not supabase_persistence.enabled:
+        return None
+    external_conversation_id = (conversation_id or "").strip()
+    if not external_conversation_id:
+        return None
+
+    page = supabase_persistence.list_audit_logs(
+        limit=5,
+        offset=0,
+        conversation_id=external_conversation_id,
+    )
+    logs = page.get("logs") if isinstance(page, dict) else None
+    if not isinstance(logs, list) or not logs:
+        return None
+
+    highest_row = None
+    highest_delta_t = float("-inf")
+    for row in logs:
+        if not isinstance(row, dict):
+            continue
+        raw_delta_t = row.get("delta_t")
+        try:
+            delta_t = float(raw_delta_t)
+        except (TypeError, ValueError):
+            continue
+        if delta_t > highest_delta_t:
+            highest_delta_t = delta_t
+            highest_row = row
+
+    if highest_row is None:
+        return None
+
+    return {
+        "conversation_id": external_conversation_id,
+        "delta_t": highest_delta_t,
+        "gate_decision": highest_row.get("gate_decision"),
+        "rationale": highest_row.get("rationale"),
+        "created_at": highest_row.get("created_at"),
+    }
 
 
 def _resolve_bind_host() -> str:
@@ -307,13 +387,21 @@ def validate():
 @app.route("/api/memories", methods=["GET"])
 def get_memories():
     """Get recent memories from self-journal."""
+    auth_error = _require_read_api_auth()
+    if auth_error is not None:
+        return auth_error
     limit = request.args.get("limit", 10, type=int)
     limit = 10 if limit is None or limit <= 0 else min(limit, _MAX_PAGINATION_LIMIT)
+    session_id = request.args.get("session_id", type=str)
+    session_id = session_id.strip() if isinstance(session_id, str) and session_id.strip() else None
     if supabase_persistence.enabled:
-        memories = supabase_persistence.list_memories(limit=limit)
+        memories = supabase_persistence.list_memories(limit=limit, session_id=session_id)
     else:
         memories = load_recent_memory(limit=limit)
-    return jsonify({"memories": memories})
+    payload = {"memories": memories}
+    if session_id:
+        payload["session_id"] = session_id
+    return jsonify(payload)
 
 
 @app.route("/api/consolidate", methods=["GET"])
@@ -396,7 +484,12 @@ def create_conversation():
 @app.route("/api/conversations", methods=["GET"])
 def list_conversations():
     """List conversations with pagination."""
+    auth_error = _require_read_api_auth()
+    if auth_error is not None:
+        return auth_error
     limit, offset = _parse_pagination(default_limit=20)
+    session_id = request.args.get("session_id", type=str)
+    session_id = session_id.strip() if isinstance(session_id, str) and session_id.strip() else None
     if not supabase_persistence.enabled:
         return jsonify(
             {
@@ -407,9 +500,15 @@ def list_conversations():
                 "persistence_enabled": False,
             }
         )
-    result = supabase_persistence.list_conversations(limit=limit, offset=offset)
+    result = supabase_persistence.list_conversations(
+        limit=limit,
+        offset=offset,
+        session_id=session_id,
+    )
     result["limit"] = limit
     result["offset"] = offset
+    if session_id:
+        result["session_id"] = session_id
     result["persistence_enabled"] = True
     return jsonify(result)
 
@@ -417,6 +516,9 @@ def list_conversations():
 @app.route("/api/conversations/<conversation_id>", methods=["GET"])
 def get_conversation(conversation_id: str):
     """Get one conversation and all messages by external conversation id."""
+    auth_error = _require_read_api_auth()
+    if auth_error is not None:
+        return auth_error
     if not conversation_id.strip():
         return jsonify({"error": "Invalid conversation_id"}), 400
     if not supabase_persistence.enabled:
@@ -430,6 +532,9 @@ def get_conversation(conversation_id: str):
 @app.route("/api/conversations/<conversation_id>", methods=["DELETE"])
 def delete_conversation(conversation_id: str):
     """Delete one conversation and cascade related rows."""
+    auth_error = _require_read_api_auth()
+    if auth_error is not None:
+        return auth_error
     if not conversation_id.strip():
         return jsonify({"error": "Invalid conversation_id"}), 400
     if not supabase_persistence.enabled:
@@ -477,7 +582,14 @@ def create_consent():
 @app.route("/api/audit-logs", methods=["GET"])
 def list_audit_logs():
     """List audit logs with pagination."""
+    auth_error = _require_read_api_auth()
+    if auth_error is not None:
+        return auth_error
     limit, offset = _parse_pagination(default_limit=20)
+    conversation_id = request.args.get("conversation_id", type=str)
+    conversation_id = conversation_id.strip() if isinstance(conversation_id, str) else None
+    session_id = request.args.get("session_id", type=str)
+    session_id = session_id.strip() if isinstance(session_id, str) else None
     if not supabase_persistence.enabled:
         return jsonify(
             {
@@ -488,9 +600,24 @@ def list_audit_logs():
                 "persistence_enabled": False,
             }
         )
-    result = supabase_persistence.list_audit_logs(limit=limit, offset=offset)
+    if conversation_id:
+        result = supabase_persistence.list_audit_logs(
+            limit=limit,
+            offset=offset,
+            conversation_id=conversation_id,
+        )
+    else:
+        result = supabase_persistence.list_audit_logs(
+            limit=limit,
+            offset=offset,
+            session_id=session_id,
+        )
     result["limit"] = limit
     result["offset"] = offset
+    if conversation_id:
+        result["conversation_id"] = conversation_id
+    if session_id:
+        result["session_id"] = session_id
     result["persistence_enabled"] = True
     return jsonify(result)
 
@@ -641,6 +768,7 @@ def chat():
         from tonesoul.unified_pipeline import create_unified_pipeline
 
         pipeline = create_unified_pipeline()
+        prior_tension = _build_prior_tension(conversation_id)
 
         result = pipeline.process(
             user_message=message,
@@ -648,6 +776,7 @@ def chat():
             full_analysis=full_analysis,
             council_mode=council_mode,
             perspective_config=perspective_config,
+            prior_tension=prior_tension,
         )
 
         if supabase_persistence.enabled and conversation_id:

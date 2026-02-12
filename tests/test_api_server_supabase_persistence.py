@@ -38,6 +38,41 @@ class _FakePersistence:
         self.calls.append(("record_chat_audit", tuple(), kwargs))
         return True
 
+    def list_audit_logs(
+        self,
+        limit: int,
+        offset: int,
+        conversation_id: str | None = None,
+    ):
+        self.calls.append(
+            (
+                "list_audit_logs",
+                tuple(),
+                {
+                    "limit": limit,
+                    "offset": offset,
+                    "conversation_id": conversation_id,
+                },
+            )
+        )
+        return {
+            "logs": [
+                {
+                    "delta_t": 0.41,
+                    "gate_decision": "refine",
+                    "rationale": "low tension",
+                    "created_at": "2026-02-12T00:00:00Z",
+                },
+                {
+                    "delta_t": 0.87,
+                    "gate_decision": "block",
+                    "rationale": "high tension memory",
+                    "created_at": "2026-02-12T00:05:00Z",
+                },
+            ],
+            "total": 2,
+        }
+
     def record_session_report(self, **kwargs):
         self.calls.append(("record_session_report", tuple(), kwargs))
         return True
@@ -59,9 +94,11 @@ def test_chat_endpoint_records_exchange_and_audit(monkeypatch):
 
     fake = _FakePersistence()
     monkeypatch.setattr(server, "supabase_persistence", fake)
+    captured: dict = {}
 
     class _Pipeline:
         def process(self, **kwargs):
+            captured["kwargs"] = kwargs
             return SimpleNamespace(
                 response="ok",
                 council_verdict={"verdict": "approve", "summary": "ok", "transcript": {}},
@@ -93,6 +130,9 @@ def test_chat_endpoint_records_exchange_and_audit(monkeypatch):
     assert response.status_code == 200
     assert any(name == "record_chat_exchange" for name, _, _ in fake.calls)
     assert any(name == "record_chat_audit" for name, _, _ in fake.calls)
+    assert any(name == "list_audit_logs" for name, _, _ in fake.calls)
+    assert captured["kwargs"]["prior_tension"]["delta_t"] == 0.87
+    assert captured["kwargs"]["prior_tension"]["gate_decision"] == "block"
 
 
 def test_session_report_endpoint_records_persistence(monkeypatch):

@@ -7,6 +7,10 @@ const ENDPOINTS = {
     conversations: "/api/conversations?limit=20&offset=0",
     auditLogs: "/api/audit-logs?limit=20&offset=0",
 };
+const READ_TOKEN_STORAGE_KEY = "tonesoul_playground_read_token";
+const state = {
+    readToken: "",
+};
 
 const panelLoaders = {
     "panel-memories": fetchMemories,
@@ -47,6 +51,10 @@ const nodes = {
     loadConsolidationBtn: document.getElementById("load-consolidation-btn"),
     loadAuditBtn: document.getElementById("load-audit-btn"),
     loadConversationsBtn: document.getElementById("load-conversations-btn"),
+    readTokenInput: document.getElementById("read-token-input"),
+    saveReadTokenBtn: document.getElementById("save-read-token-btn"),
+    clearReadTokenBtn: document.getElementById("clear-read-token-btn"),
+    readTokenNote: document.getElementById("read-token-note"),
 };
 
 function setBusy(button, isBusy, busyText = "處理中...") {
@@ -59,9 +67,17 @@ function setBusy(button, isBusy, busyText = "處理中...") {
 }
 
 async function requestJson(url, options = {}) {
+    const headers = { ...(options.headers || {}) };
+    if (options.body !== undefined && !headers["Content-Type"]) {
+        headers["Content-Type"] = "application/json";
+    }
+    if (state.readToken && !headers.Authorization && !headers["X-ToneSoul-Read-Token"]) {
+        headers.Authorization = `Bearer ${state.readToken}`;
+    }
+
     const response = await fetch(url, {
-        headers: { "Content-Type": "application/json" },
         ...options,
+        headers,
     });
     const text = await response.text();
     let payload = {};
@@ -99,6 +115,63 @@ function setDot(dot, healthy) {
         return;
     }
     dot.classList.add("dot-neutral");
+}
+
+function _safeGetStoredReadToken() {
+    try {
+        return localStorage.getItem(READ_TOKEN_STORAGE_KEY) || "";
+    } catch (_err) {
+        return "";
+    }
+}
+
+function _safeSetStoredReadToken(value) {
+    try {
+        if (value) {
+            localStorage.setItem(READ_TOKEN_STORAGE_KEY, value);
+            return;
+        }
+        localStorage.removeItem(READ_TOKEN_STORAGE_KEY);
+    } catch (_err) {
+        // no-op: localStorage may be unavailable in restricted contexts
+    }
+}
+
+function renderReadTokenNote() {
+    if (!nodes.readTokenNote) return;
+    nodes.readTokenNote.textContent = state.readToken
+        ? "Read Token 已設定（僅保存在此瀏覽器 localStorage）。"
+        : "未設定 Read Token（可讀取端點可能會被 401 拒絕）。";
+}
+
+function saveReadToken() {
+    const value = String(nodes.readTokenInput?.value || "").trim();
+    state.readToken = value;
+    _safeSetStoredReadToken(value);
+    renderReadTokenNote();
+}
+
+function clearReadToken() {
+    state.readToken = "";
+    if (nodes.readTokenInput) {
+        nodes.readTokenInput.value = "";
+    }
+    _safeSetStoredReadToken("");
+    renderReadTokenNote();
+}
+
+function initializeReadToken() {
+    const urlToken = new URLSearchParams(window.location.search).get("read_token");
+    if (typeof urlToken === "string" && urlToken.trim()) {
+        state.readToken = urlToken.trim();
+        _safeSetStoredReadToken(state.readToken);
+    } else {
+        state.readToken = _safeGetStoredReadToken().trim();
+    }
+    if (nodes.readTokenInput) {
+        nodes.readTokenInput.value = state.readToken;
+    }
+    renderReadTokenNote();
 }
 
 function activatePanel(panelId) {
@@ -428,6 +501,20 @@ function bindEvents() {
     nodes.loadConsolidationBtn.addEventListener("click", fetchConsolidation);
     nodes.loadAuditBtn.addEventListener("click", fetchAuditLogs);
     nodes.loadConversationsBtn.addEventListener("click", fetchConversations);
+    nodes.saveReadTokenBtn?.addEventListener("click", async () => {
+        saveReadToken();
+        await fetchStatus();
+    });
+    nodes.clearReadTokenBtn?.addEventListener("click", async () => {
+        clearReadToken();
+        await fetchStatus();
+    });
+    nodes.readTokenInput?.addEventListener("keydown", async (event) => {
+        if (event.key === "Enter") {
+            saveReadToken();
+            await fetchStatus();
+        }
+    });
 
     nodes.draftInput.addEventListener("keydown", (event) => {
         if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
@@ -437,6 +524,7 @@ function bindEvents() {
 }
 
 async function initialize() {
+    initializeReadToken();
     bindEvents();
     await fetchStatus();
 }

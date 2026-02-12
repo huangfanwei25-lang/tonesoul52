@@ -97,11 +97,21 @@ def main() -> int:
         action="store_true",
         help="Delete the generated conversation at the end",
     )
+    parser.add_argument(
+        "--read-token",
+        default="",
+        help="Optional read API token for protected read endpoints",
+    )
     args = parser.parse_args()
 
     base = args.base.rstrip("/")
     timeout = max(3, int(args.timeout))
     require_persistence = not args.allow_disabled_persistence
+    read_headers = (
+        {"Authorization": f"Bearer {args.read_token.strip()}"}
+        if isinstance(args.read_token, str) and args.read_token.strip()
+        else {}
+    )
 
     session_id = f"acceptance_{int(time.time())}"
     conversation_id = ""
@@ -164,6 +174,7 @@ def main() -> int:
         "GET",
         f"{base}/api/conversations?limit=50&offset=0",
         timeout=timeout,
+        headers=read_headers,
     )
     print_result("GET /api/conversations", ok, status, payload)
     payload_dict = _expect_dict(payload, "GET /api/conversations")
@@ -191,6 +202,7 @@ def main() -> int:
         "GET",
         f"{base}/api/conversations/{conversation_id}",
         timeout=timeout,
+        headers=read_headers,
     )
     print_result("GET /api/conversations/<id>", ok, status, payload)
     payload_dict = _expect_dict(payload, "GET /api/conversations/<id>")
@@ -219,6 +231,7 @@ def main() -> int:
         "GET",
         f"{base}/api/audit-logs?limit=20&offset=0",
         timeout=timeout,
+        headers=read_headers,
     )
     print_result("GET /api/audit-logs", ok, status, payload)
     payload_dict = _expect_dict(payload, "GET /api/audit-logs")
@@ -246,6 +259,7 @@ def main() -> int:
         "GET",
         f"{base}/api/memories?limit=10",
         timeout=timeout,
+        headers=read_headers,
     )
     print_result("GET /api/memories", ok, status, payload)
     payload_dict = _expect_dict(payload, "GET /api/memories")
@@ -261,6 +275,7 @@ def main() -> int:
             "DELETE",
             f"{base}/api/conversations/{conversation_id}",
             timeout=timeout,
+            headers=read_headers,
         )
         print_result("DELETE /api/conversations/<id>", ok, status, payload)
         if not ok:

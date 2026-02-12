@@ -45,6 +45,19 @@
                 <h2>系統狀態</h2>
                 <button id="refresh-status-btn" class="btn btn-secondary" type="button">重新整理</button>
             </div>
+            <div class="read-auth-row">
+                <label for="read-token-input" class="read-auth-label">Read Token</label>
+                <input
+                    id="read-token-input"
+                    class="read-auth-input"
+                    type="password"
+                    autocomplete="off"
+                    placeholder="可選：TONESOUL_READ_API_TOKEN"
+                />
+                <button id="save-read-token-btn" class="btn btn-secondary" type="button">儲存</button>
+                <button id="clear-read-token-btn" class="btn btn-secondary" type="button">清除</button>
+                <p id="read-token-note" class="read-auth-note">未設定 Read Token（可讀取端點可能會被 401 拒絕）。</p>
+            </div>
             <div class="status-grid">
                 <article class="status-card">
                     <p class="status-label">DB / Persistence</p>
@@ -202,6 +215,10 @@
                     <tr><td>POST</td><td>/api/chat</td><td>聊天與治理結果</td></tr>
                 </tbody>
             </table>
+            <p class="api-note">
+                若後端已設定 <code>TONESOUL_READ_API_TOKEN</code>，請先在上方輸入 Read Token，否則
+                <code>/api/memories</code>、<code>/api/conversations*</code>、<code>/api/audit-logs</code> 會回傳 401。
+            </p>
         </section>
     </main>
 
