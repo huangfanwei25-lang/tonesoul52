@@ -73,7 +73,7 @@ export default function OnboardingGuide({ isOpen, onComplete, onOpenSettings }: 
                                 </div>
                             </div>
                         </div>
-                        <button
+                        <button type="button"
                             onClick={() => setStep(2)}
                             className="w-full py-3 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2"
                         >
@@ -104,13 +104,13 @@ export default function OnboardingGuide({ isOpen, onComplete, onOpenSettings }: 
                             取得 Gemini API Key <ExternalLink className="w-4 h-4" />
                         </a>
                         <div className="space-y-3">
-                            <button
+                            <button type="button"
                                 onClick={handleGetStarted}
                                 className="w-full py-3 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2"
                             >
                                 <Key className="w-4 h-4" /> 前往設定 API Key
                             </button>
-                            <button
+                            <button type="button"
                                 onClick={handleSkip}
                                 className="w-full py-2 text-slate-500 hover:text-slate-700 text-sm"
                             >
@@ -123,3 +123,4 @@ export default function OnboardingGuide({ isOpen, onComplete, onOpenSettings }: 
         </div>
     );
 }
+

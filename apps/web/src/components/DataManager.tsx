@@ -130,7 +130,7 @@ export default function DataManager({ isOpen, onClose, onDataImported }: DataMan
                         <Database className="w-5 h-5 text-indigo-600" />
                         <h2 className="text-xl font-bold text-slate-800">數據管理</h2>
                     </div>
-                    <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-full transition-colors">
+                    <button type="button" onClick={onClose} className="p-2 hover:bg-slate-100 rounded-full transition-colors">
                         <X className="w-5 h-5 text-slate-500" />
                     </button>
                 </div>
@@ -146,7 +146,7 @@ export default function DataManager({ isOpen, onClose, onDataImported }: DataMan
                         <p className="text-sm text-slate-500 mb-4">
                             將所有對話記錄和記憶洞察導出為 JSON 文件
                         </p>
-                        <button
+                        <button type="button"
                             onClick={handleExport}
                             disabled={isExporting}
                             className="w-full py-2 px-4 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
@@ -220,3 +220,4 @@ export default function DataManager({ isOpen, onClose, onDataImported }: DataMan
         </div>
     );
 }
+

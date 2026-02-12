@@ -215,7 +215,7 @@ function ParadoxCard({ p }: { p: ParadoxData }) {
             ${isExpanded ? "border-sky-400/30" : "hover:border-slate-500"}
         `}>
             {/* Header — always visible */}
-            <button
+            <button type="button"
                 onClick={() => setIsExpanded(!isExpanded)}
                 className="w-full text-left p-5 cursor-pointer group"
             >
@@ -381,3 +381,4 @@ export default function SevenParadoxCards() {
         </section>
     );
 }
+

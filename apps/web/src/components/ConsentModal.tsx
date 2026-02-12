@@ -56,14 +56,14 @@ export default function ConsentModal({ onAccept, onDecline }: ConsentModalProps)
 
                 {/* Footer */}
                 <div className="p-6 border-t border-slate-100 flex gap-3">
-                    <button
+                    <button type="button"
                         onClick={onDecline}
                         className="flex-1 px-4 py-3 rounded-xl border border-slate-300 text-slate-600 font-medium hover:bg-slate-50 transition-colors flex items-center justify-center gap-2"
                     >
                         <X className="w-4 h-4" />
                         拒絕
                     </button>
-                    <button
+                    <button type="button"
                         onClick={() => onAccept("research")}
                         className="flex-1 px-4 py-3 rounded-xl bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2 shadow-lg shadow-indigo-200"
                     >
@@ -75,3 +75,4 @@ export default function ConsentModal({ onAccept, onDecline }: ConsentModalProps)
         </div>
     );
 }
+

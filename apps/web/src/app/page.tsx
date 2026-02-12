@@ -188,7 +188,7 @@ export default function Home() {
         {/* Report & Settings Buttons */}
         <div className="p-3 border-t border-slate-800 space-y-2">
           {/* Report Button */}
-          <button
+          <button type="button"
             onClick={() => setShowReport(true)}
             disabled={!currentConversation || currentConversation.messages.length < 2}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -198,7 +198,7 @@ export default function Home() {
           </button>
 
           {/* API Settings Button */}
-          <button
+          <button type="button"
             onClick={() => setShowSettings(true)}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 transition-colors"
           >
@@ -208,7 +208,7 @@ export default function Home() {
           </button>
 
           {/* Data Manager Button */}
-          <button
+          <button type="button"
             onClick={() => setShowDataManager(true)}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 transition-colors"
           >
@@ -217,7 +217,7 @@ export default function Home() {
           </button>
 
           {/* Persona Settings Button */}
-          <button
+          <button type="button"
             onClick={() => setShowPersonaSettings(true)}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 transition-colors"
           >
@@ -245,7 +245,7 @@ export default function Home() {
             <FileText className="w-4 h-4" />
             <span>隱私政策</span>
           </a>
-          <button
+          <button type="button"
             onClick={handleWithdrawConsent}
             className="w-full flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-red-900/50 transition-colors text-slate-400 hover:text-red-300 text-sm"
           >
@@ -259,7 +259,7 @@ export default function Home() {
       <div className="flex-1 flex flex-col h-screen">
         {/* Header */}
         <header className="bg-white border-b border-slate-200 px-4 py-3 flex items-center gap-4 shrink-0">
-          <button
+          <button type="button"
             onClick={() => setShowSidebar(!showSidebar)}
             className="md:hidden p-2 hover:bg-slate-100 rounded-lg"
           >
@@ -275,7 +275,7 @@ export default function Home() {
                 : "選擇或建立對話"}
             </p>
           </div>
-          <button
+          <button type="button"
             onClick={() => setShowSettings(true)}
             className={`p-2 hover:bg-slate-100 rounded-lg ${!apiSettings?.apiKey ? 'animate-pulse' : ''}`}
             title={apiSettings?.apiKey ? 'API 已設定' : '請設定 API Key'}
@@ -347,3 +347,4 @@ export default function Home() {
     </div>
   );
 }
+

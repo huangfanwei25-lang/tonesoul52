@@ -237,7 +237,7 @@ export default function SessionReport({ isOpen, onClose, messages, apiSettings, 
                         <FileText className="w-5 h-5 text-indigo-600" />
                         <h2 className="text-xl font-bold text-slate-800">深度洞察報告</h2>
                     </div>
-                    <button onClick={onClose} className="p-2 hover:bg-slate-200 rounded-full transition-colors">
+                    <button type="button" onClick={onClose} className="p-2 hover:bg-slate-200 rounded-full transition-colors">
                         <X className="w-5 h-5 text-slate-500" />
                     </button>
                 </div>
@@ -248,7 +248,7 @@ export default function SessionReport({ isOpen, onClose, messages, apiSettings, 
                         <div className="text-center py-8">
                             <Activity className="w-12 h-12 mx-auto mb-4 text-slate-300" />
                             <p className="text-slate-500 mb-4">分析 {messages.length} 則訊息的對話模式</p>
-                            <button
+                            <button type="button"
                                 onClick={generateReport}
                                 disabled={messages.length < 2}
                                 className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -268,7 +268,7 @@ export default function SessionReport({ isOpen, onClose, messages, apiSettings, 
                     {error && (
                         <div className="text-center py-8">
                             <p className="text-red-500 mb-4">{error}</p>
-                            <button
+                            <button type="button"
                                 onClick={generateReport}
                                 className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors"
                             >
@@ -351,7 +351,7 @@ export default function SessionReport({ isOpen, onClose, messages, apiSettings, 
 
                             {/* Save as Memory Button */}
                             <div className="flex justify-center pt-4">
-                                <button
+                                <button type="button"
                                     onClick={saveAsMemory}
                                     disabled={isSaved || isSaving}
                                     className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${isSaved
@@ -384,3 +384,4 @@ export default function SessionReport({ isOpen, onClose, messages, apiSettings, 
         </div>
     );
 }
+

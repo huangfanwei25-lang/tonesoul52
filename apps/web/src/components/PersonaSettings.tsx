@@ -83,7 +83,7 @@ export default function PersonaSettings({ isOpen, onClose, onSave }: PersonaSett
                         <Sliders className="w-5 h-5 text-indigo-600" />
                         <h2 className="text-xl font-bold text-slate-800">AI 個人化設定</h2>
                     </div>
-                    <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-full transition-colors">
+                    <button type="button" onClick={onClose} className="p-2 hover:bg-slate-100 rounded-full transition-colors">
                         <X className="w-5 h-5 text-slate-500" />
                     </button>
                 </div>
@@ -126,7 +126,7 @@ export default function PersonaSettings({ isOpen, onClose, onSave }: PersonaSett
                                 { value: 'analytical', label: '分析', desc: '邏輯與數據導向' },
                                 { value: 'cautious', label: '謹慎', desc: '更注重風險提醒' },
                             ].map(({ value, label, desc }) => (
-                                <button
+                                <button type="button"
                                     key={value}
                                     onClick={() => setConfig({ ...config, style: value as PersonaConfig['style'] })}
                                     className={`p-3 rounded-lg border-2 text-left transition-all ${config.style === value
@@ -223,7 +223,7 @@ export default function PersonaSettings({ isOpen, onClose, onSave }: PersonaSett
                                 { value: 'medium', label: '中', color: 'bg-amber-100 text-amber-700 border-amber-300' },
                                 { value: 'high', label: '高', color: 'bg-red-100 text-red-700 border-red-300' },
                             ].map(({ value, label, color }) => (
-                                <button
+                                <button type="button"
                                     key={value}
                                     onClick={() => setConfig({ ...config, riskSensitivity: value as PersonaConfig['riskSensitivity'] })}
                                     className={`flex-1 py-2 px-4 rounded-lg border-2 font-bold transition-all ${config.riskSensitivity === value
@@ -246,7 +246,7 @@ export default function PersonaSettings({ isOpen, onClose, onSave }: PersonaSett
                                 { value: 'balanced', label: '適中' },
                                 { value: 'detailed', label: '詳細' },
                             ].map(({ value, label }) => (
-                                <button
+                                <button type="button"
                                     key={value}
                                     onClick={() => setConfig({ ...config, responseLength: value as PersonaConfig['responseLength'] })}
                                     className={`flex-1 py-2 px-4 rounded-lg border-2 font-bold transition-all ${config.responseLength === value
@@ -263,14 +263,14 @@ export default function PersonaSettings({ isOpen, onClose, onSave }: PersonaSett
 
                 {/* Footer */}
                 <div className="p-6 border-t border-slate-100 flex justify-between sticky bottom-0 bg-white">
-                    <button
+                    <button type="button"
                         onClick={handleReset}
                         className="flex items-center gap-2 px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
                     >
                         <RotateCcw className="w-4 h-4" />
                         重設預設
                     </button>
-                    <button
+                    <button type="button"
                         onClick={handleSave}
                         className="flex items-center gap-2 px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-bold"
                     >
@@ -282,3 +282,4 @@ export default function PersonaSettings({ isOpen, onClose, onSave }: PersonaSett
         </div>
     );
 }
+

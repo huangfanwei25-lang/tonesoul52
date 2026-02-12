@@ -194,7 +194,7 @@ function DimensionCard({ dim }: { dim: DimensionData }) {
             `}
         >
             {/* Header — always visible */}
-            <button
+            <button type="button"
                 onClick={() => setIsExpanded(!isExpanded)}
                 className="w-full text-left p-6 flex items-start gap-4 group cursor-pointer"
             >
@@ -320,3 +320,4 @@ export default function SevenDimensionCards() {
         </section>
     );
 }
+

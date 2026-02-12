@@ -102,7 +102,7 @@ export default function SettingsModal({
                         </div>
                         <h2 className="text-lg font-bold text-slate-800">API 設定</h2>
                     </div>
-                    <button
+                    <button type="button"
                         onClick={onClose}
                         className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
                     >
@@ -118,7 +118,7 @@ export default function SettingsModal({
                             審議模式
                         </label>
                         <div className="grid grid-cols-2 gap-3">
-                            <button
+                            <button type="button"
                                 onClick={() => setMode("fast")}
                                 className={`p-3 rounded-xl border-2 transition-all ${mode === "fast"
                                     ? "border-emerald-500 bg-emerald-50"
@@ -131,7 +131,7 @@ export default function SettingsModal({
                                 </div>
                                 <div className="text-xs text-slate-500">1 次 API 調用</div>
                             </button>
-                            <button
+                            <button type="button"
                                 onClick={() => setMode("multipath")}
                                 className={`p-3 rounded-xl border-2 transition-all ${mode === "multipath"
                                     ? "border-purple-500 bg-purple-50"
@@ -154,7 +154,7 @@ export default function SettingsModal({
                         </label>
                         <div className="grid grid-cols-2 gap-2">
                             {PROVIDERS.map((p) => (
-                                <button
+                                <button type="button"
                                     key={p.id}
                                     onClick={() => setProvider(p.id)}
                                     className={`p-3 rounded-xl border-2 transition-all ${provider === p.id
@@ -183,7 +183,7 @@ export default function SettingsModal({
                                 placeholder={getPlaceholder()}
                                 className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 pr-20"
                             />
-                            <button
+                            <button type="button"
                                 onClick={() => setShowKey(!showKey)}
                                 className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500 hover:text-slate-700"
                             >
@@ -239,20 +239,20 @@ export default function SettingsModal({
 
                 {/* Footer */}
                 <div className="p-6 border-t border-slate-100 flex gap-3">
-                    <button
+                    <button type="button"
                         onClick={handleClear}
                         className="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
                     >
                         清除設定
                     </button>
                     <div className="flex-1" />
-                    <button
+                    <button type="button"
                         onClick={onClose}
                         className="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
                     >
                         取消
                     </button>
-                    <button
+                    <button type="button"
                         onClick={handleSave}
                         disabled={!apiKey}
                         className="px-6 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
@@ -265,3 +265,4 @@ export default function SettingsModal({
         </div>
     );
 }
+

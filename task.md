@@ -1,5 +1,12 @@
 # Task
 
+## Phase 74: 前端按鍵一致性巡檢（Button Safety Baseline）
+- [x] 盤點 `apps/web` 所有 `<button>` 事件綁定與觸發路徑
+- [x] 統一補上缺失的 `type="button"`，避免未來 form 容器下誤觸 submit
+- [x] 保持新話題刪除流程（含 mobile/touch）可操作，避免 hover-only 依賴
+- [x] 以 `test + lint + build` 完整驗證前端可用性
+**成功標準**: 前端主要操作按鍵在桌機/手機行為一致，且 `apps/web` 測試、靜態檢查與建置皆通過。 
+
 ## Phase 73: 前端話題刪除可用性修補（Mobile / Touch）
 - [x] 修復 `ConversationList` 操作按鈕依賴 hover 導致手機難以刪除對話的問題
 - [x] 新增對話操作選單外部點擊自動收合，避免選單殘留

@@ -37,7 +37,7 @@ const FormulaTooltip = ({ formula, explanation }: { formula: string; explanation
 
     return (
         <span className="relative inline-block">
-            <button
+            <button type="button"
                 onClick={() => setShow(!show)}
                 className="text-purple-400 hover:text-purple-300 underline decoration-dotted cursor-help text-[10px] font-mono"
             >
@@ -52,7 +52,7 @@ const FormulaTooltip = ({ formula, explanation }: { formula: string; explanation
                             <p className="text-[11px] text-slate-300">{explanation}</p>
                         </div>
                     </div>
-                    <button
+                    <button type="button"
                         onClick={() => setShow(false)}
                         className="absolute top-1 right-1 text-slate-500 hover:text-slate-300"
                     >
@@ -103,7 +103,7 @@ export default function LogicalShadows({ data }: LogicalShadowsProps) {
     return (
         <div className="mt-3 border border-slate-700 rounded-xl overflow-hidden bg-slate-800/50">
             {/* Header */}
-            <button
+            <button type="button"
                 onClick={() => setExpanded(!expanded)}
                 className="w-full px-4 py-3 flex items-center justify-between bg-gradient-to-r from-purple-900/30 to-slate-800/50 hover:from-purple-900/40 transition-colors"
             >
@@ -229,3 +229,4 @@ export default function LogicalShadows({ data }: LogicalShadowsProps) {
         </div>
     );
 }
+
