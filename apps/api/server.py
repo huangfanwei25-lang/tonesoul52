@@ -32,6 +32,7 @@ CORS(app, resources={r"/api/*": {"origins": _cors_origins}})
 
 council_runtime = CouncilRuntime()
 _MAX_ESCAPE_SEED_ITEMS = 50
+_MAX_PAGINATION_LIMIT = 200
 _VTP_CONTEXT_FLAGS = (
     "vtp_force_trigger",
     "vtp_axiom_conflict",
@@ -134,6 +135,20 @@ def _error_response(
     if extra:
         payload.update(extra)
     return jsonify(payload), status_code
+
+
+def _parse_pagination(default_limit: int = 20) -> tuple[int, int]:
+    raw_limit = request.args.get("limit", default_limit, type=int)
+    raw_offset = request.args.get("offset", 0, type=int)
+    limit = default_limit if raw_limit is None else raw_limit
+    offset = 0 if raw_offset is None else raw_offset
+    if limit <= 0:
+        limit = default_limit
+    if limit > _MAX_PAGINATION_LIMIT:
+        limit = _MAX_PAGINATION_LIMIT
+    if offset < 0:
+        offset = 0
+    return limit, offset
 
 
 def _utc_now() -> str:
@@ -293,7 +308,11 @@ def validate():
 def get_memories():
     """Get recent memories from self-journal."""
     limit = request.args.get("limit", 10, type=int)
-    memories = load_recent_memory(limit=limit)
+    limit = 10 if limit is None or limit <= 0 else min(limit, _MAX_PAGINATION_LIMIT)
+    if supabase_persistence.enabled:
+        memories = supabase_persistence.list_memories(limit=limit)
+    else:
+        memories = load_recent_memory(limit=limit)
     return jsonify({"memories": memories})
 
 
@@ -321,6 +340,36 @@ def health():
     )
 
 
+@app.route("/api/status", methods=["GET"])
+def status():
+    """System status overview."""
+    persistence_status = supabase_persistence.status_dict()
+    counts = (
+        supabase_persistence.get_counts()
+        if supabase_persistence.enabled
+        else {
+            "memory_count": len(load_recent_memory(limit=50)),
+            "conversation_count": 0,
+            "audit_log_count": 0,
+            "message_count": 0,
+        }
+    )
+
+    if llm_backend is None:
+        get_llm_client()
+    return jsonify(
+        {
+            "persistence": persistence_status,
+            "llm_backend": llm_backend or "unavailable",
+            "memory_count": counts.get("memory_count", 0),
+            "conversation_count": counts.get("conversation_count", 0),
+            "audit_log_count": counts.get("audit_log_count", 0),
+            "message_count": counts.get("message_count", 0),
+            "timestamp": _utc_now(),
+        }
+    )
+
+
 @app.route("/api/conversation", methods=["POST"])
 def create_conversation():
     """Create a conversation id for a user session."""
@@ -339,6 +388,60 @@ def create_conversation():
             "conversation_id": conversation_id,
             "session_id": session_id,
             "created_at": _utc_now(),
+        }
+    )
+
+
+@app.route("/api/conversations", methods=["GET"])
+def list_conversations():
+    """List conversations with pagination."""
+    limit, offset = _parse_pagination(default_limit=20)
+    if not supabase_persistence.enabled:
+        return jsonify(
+            {
+                "conversations": [],
+                "total": 0,
+                "limit": limit,
+                "offset": offset,
+                "persistence_enabled": False,
+            }
+        )
+    result = supabase_persistence.list_conversations(limit=limit, offset=offset)
+    result["limit"] = limit
+    result["offset"] = offset
+    result["persistence_enabled"] = True
+    return jsonify(result)
+
+
+@app.route("/api/conversations/<conversation_id>", methods=["GET"])
+def get_conversation(conversation_id: str):
+    """Get one conversation and all messages by external conversation id."""
+    if not conversation_id.strip():
+        return jsonify({"error": "Invalid conversation_id"}), 400
+    if not supabase_persistence.enabled:
+        return jsonify({"error": "Persistence not enabled"}), 503
+    conversation = supabase_persistence.get_conversation(conversation_id)
+    if conversation is None:
+        return jsonify({"error": "Conversation not found"}), 404
+    return jsonify({"conversation": conversation})
+
+
+@app.route("/api/conversations/<conversation_id>", methods=["DELETE"])
+def delete_conversation(conversation_id: str):
+    """Delete one conversation and cascade related rows."""
+    if not conversation_id.strip():
+        return jsonify({"error": "Invalid conversation_id"}), 400
+    if not supabase_persistence.enabled:
+        return jsonify({"error": "Persistence not enabled"}), 503
+    deleted = supabase_persistence.delete_conversation(conversation_id)
+    if deleted is None:
+        return jsonify({"error": "Conversation not found"}), 404
+    return jsonify(
+        {
+            "success": bool(deleted),
+            "conversation_id": conversation_id,
+            "deleted": bool(deleted),
+            "timestamp": _utc_now(),
         }
     )
 
@@ -368,6 +471,27 @@ def create_consent():
             "timestamp": _utc_now(),
         }
     )
+
+
+@app.route("/api/audit-logs", methods=["GET"])
+def list_audit_logs():
+    """List audit logs with pagination."""
+    limit, offset = _parse_pagination(default_limit=20)
+    if not supabase_persistence.enabled:
+        return jsonify(
+            {
+                "logs": [],
+                "total": 0,
+                "limit": limit,
+                "offset": offset,
+                "persistence_enabled": False,
+            }
+        )
+    result = supabase_persistence.list_audit_logs(limit=limit, offset=offset)
+    result["limit"] = limit
+    result["offset"] = offset
+    result["persistence_enabled"] = True
+    return jsonify(result)
 
 
 @app.route("/api/consent/<session_id>", methods=["DELETE"])
@@ -447,10 +571,10 @@ def get_llm_client():
             if models:
                 llm_client = client
                 llm_backend = f"Ollama ({models[0]})"
-                print(f"✅ LLM Backend: {llm_backend}")
+                print(f"[INFO] LLM backend: {llm_backend}")
                 return llm_client
     except Exception as e:
-        print(f"⚠️ Ollama not available: {e}")
+        print(f"[WARN] Ollama not available: {e}")
 
     # Fallback to Gemini
     try:
@@ -458,10 +582,10 @@ def get_llm_client():
 
         llm_client = create_gemini_client()
         llm_backend = "Gemini API"
-        print(f"✅ LLM Backend: {llm_backend}")
+        print(f"[INFO] LLM backend: {llm_backend}")
         return llm_client
     except Exception as e:
-        print(f"❌ Gemini client error: {e}")
+        print(f"[ERROR] Gemini client error: {e}")
         return None
 
 
@@ -536,11 +660,11 @@ def chat():
                 "tonebridge": result.tonebridge_analysis,
                 "inner_reasoning": result.inner_narrative,
                 "intervention_strategy": result.intervention_strategy,
-                # ToneStream 新增欄位
+                # ToneStream fields
                 "internal_monologue": result.internal_monologue,
                 "persona_mode": result.persona_mode,
                 "trajectory_analysis": result.trajectory_analysis,
-                # Third Axiom 欄位
+                # Third Axiom fields
                 "self_commits": result.self_commits,
                 "ruptures": result.ruptures,
                 "emergent_values": result.emergent_values,

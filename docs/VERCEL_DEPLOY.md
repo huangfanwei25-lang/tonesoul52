@@ -51,10 +51,13 @@ Your backend host (not Vercel) should allow Vercel origins:
 | Variable | Example |
 |---|---|
 | `TONESOUL_CORS_ORIGINS` | `https://tonesoul.example.com,https://tonesoul-git-main-xxx.vercel.app` |
+| `SUPABASE_URL` | `https://<project-ref>.supabase.co` |
+| `SUPABASE_KEY` | `<service_role_key>` |
 
 Notes:
 - Include both production domain and preview domain patterns you actually use.
 - Avoid overly broad wildcard origins for production.
+- `SUPABASE_KEY` should use service role key on backend only (never expose to frontend env).
 
 ---
 

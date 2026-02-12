@@ -1,387 +1,444 @@
-// ===== Council Playground App =====
+const ENDPOINTS = {
+    health: "/api/health",
+    status: "/api/status",
+    validate: "/api/validate",
+    memories: "/api/memories?limit=20",
+    consolidate: "/api/consolidate",
+    conversations: "/api/conversations?limit=20&offset=0",
+    auditLogs: "/api/audit-logs?limit=20&offset=0",
+};
 
-// Configuration
-const API_ENDPOINT = 'http://localhost:5000/api/validate';
-const MOCK_MODE = false; // Connect to real backend
+const panelLoaders = {
+    "panel-memories": fetchMemories,
+    "panel-consolidation": fetchConsolidation,
+    "panel-audit": fetchAuditLogs,
+    "panel-conversations": fetchConversations,
+};
 
-// State
-let currentLanguage = 'zh';
+const nodes = {
+    panelButtons: document.querySelectorAll("[data-panel-target]"),
+    panels: document.querySelectorAll(".panel"),
+    refreshStatusBtn: document.getElementById("refresh-status-btn"),
+    submitBtn: document.getElementById("submit-btn"),
+    draftInput: document.getElementById("draft-input"),
+    councilResult: document.getElementById("council-result"),
+    verdictBadge: document.getElementById("verdict-badge"),
+    verdictSummary: document.getElementById("verdict-summary"),
+    humanSummary: document.getElementById("human-summary"),
+    coherenceValue: document.getElementById("coherence-value"),
+    votesList: document.getElementById("votes-list"),
+    transcriptJson: document.getElementById("transcript-json"),
+    statusDb: document.getElementById("status-db"),
+    statusDbDot: document.getElementById("status-db-dot"),
+    statusDbNote: document.getElementById("status-db-note"),
+    statusLlm: document.getElementById("status-llm"),
+    statusLlmDot: document.getElementById("status-llm-dot"),
+    statusLlmNote: document.getElementById("status-llm-note"),
+    statusMemoryCount: document.getElementById("status-memory-count"),
+    statusConversationCount: document.getElementById("status-conversation-count"),
+    statusAuditCount: document.getElementById("status-audit-count"),
+    statusUpdatedAt: document.getElementById("status-updated-at"),
+    memoriesList: document.getElementById("memories-list"),
+    consolidationView: document.getElementById("consolidation-view"),
+    auditLogsView: document.getElementById("audit-logs-view"),
+    conversationsView: document.getElementById("conversations-view"),
+    conversationDetail: document.getElementById("conversation-detail"),
+    loadMemoriesBtn: document.getElementById("load-memories-btn"),
+    loadConsolidationBtn: document.getElementById("load-consolidation-btn"),
+    loadAuditBtn: document.getElementById("load-audit-btn"),
+    loadConversationsBtn: document.getElementById("load-conversations-btn"),
+};
 
-// ===== DOM Elements =====
-const draftInput = document.getElementById('draft-input');
-const submitBtn = document.getElementById('submit-btn');
-const resultSection = document.getElementById('result-section');
-const verdictBanner = document.getElementById('verdict-banner');
-const verdictIcon = document.getElementById('verdict-icon');
-const verdictType = document.getElementById('verdict-type');
-const verdictSummary = document.getElementById('verdict-summary');
-const coherenceValue = document.getElementById('coherence-value');
-const humanSummaryText = document.getElementById('human-summary-text');
-const votesGrid = document.getElementById('votes-grid');
-const divergenceContent = document.getElementById('divergence-content');
-const transcriptJson = document.getElementById('transcript-json');
-const langBtns = document.querySelectorAll('.lang-btn');
+function setBusy(button, isBusy, busyText = "處理中...") {
+    if (!button) return;
+    if (!button.dataset.defaultText) {
+        button.dataset.defaultText = button.textContent || "";
+    }
+    button.disabled = isBusy;
+    button.textContent = isBusy ? busyText : button.dataset.defaultText;
+}
 
-// ===== Event Listeners =====
-submitBtn.addEventListener('click', handleSubmit);
-
-langBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-        langBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        currentLanguage = btn.dataset.lang;
+async function requestJson(url, options = {}) {
+    const response = await fetch(url, {
+        headers: { "Content-Type": "application/json" },
+        ...options,
     });
-});
-
-// Allow Ctrl+Enter to submit
-draftInput.addEventListener('keydown', (e) => {
-    if (e.ctrlKey && e.key === 'Enter') {
-        handleSubmit();
-    }
-});
-
-// ===== Main Handler =====
-async function handleSubmit() {
-    const draftText = draftInput.value.trim();
-    if (!draftText) {
-        alert('請輸入要測試的內容');
-        return;
-    }
-
-    // Show loading state
-    submitBtn.classList.add('loading');
-    submitBtn.disabled = true;
-
-    try {
-        let result;
-        if (MOCK_MODE) {
-            result = await mockValidate(draftText, currentLanguage);
-        } else {
-            result = await fetchValidation(draftText, currentLanguage);
+    const text = await response.text();
+    let payload = {};
+    if (text) {
+        try {
+            payload = JSON.parse(text);
+        } catch (_err) {
+            payload = { raw: text };
         }
-        displayResult(result);
-    } catch (error) {
-        console.error('Validation error:', error);
-        alert('驗證失敗: ' + error.message);
-    } finally {
-        submitBtn.classList.remove('loading');
-        submitBtn.disabled = false;
     }
+
+    if (!response.ok) {
+        const message = typeof payload.error === "string" ? payload.error : `HTTP ${response.status}`;
+        throw new Error(message);
+    }
+    return payload;
 }
 
-// ===== API Call =====
-async function fetchValidation(text, language) {
-    const response = await fetch(API_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            draft_output: text,
-            context: { language },
-        }),
+function formatTime(value) {
+    if (!value) return "--";
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return String(value);
+    return date.toLocaleString("zh-TW", { hour12: false });
+}
+
+function setDot(dot, healthy) {
+    if (!dot) return;
+    dot.classList.remove("dot-green", "dot-red", "dot-neutral");
+    if (healthy === true) {
+        dot.classList.add("dot-green");
+        return;
+    }
+    if (healthy === false) {
+        dot.classList.add("dot-red");
+        return;
+    }
+    dot.classList.add("dot-neutral");
+}
+
+function activatePanel(panelId) {
+    nodes.panelButtons.forEach((btn) => {
+        const active = btn.dataset.panelTarget === panelId;
+        btn.classList.toggle("is-active", active);
     });
-    if (!response.ok) throw new Error('API request failed');
-    return response.json();
-}
 
-// ===== Mock Validation (Demo Mode) =====
-async function mockValidate(text, language) {
-    // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 500));
+    nodes.panels.forEach((panel) => {
+        panel.classList.toggle("is-active", panel.id === panelId);
+    });
 
-    const lowerText = text.toLowerCase();
-
-    // Determine verdict based on content
-    let verdict, coherence, votes, humanSummary;
-
-    if (lowerText.includes('炸彈') || lowerText.includes('bomb') ||
-        lowerText.includes('殺') || lowerText.includes('kill')) {
-        // BLOCK case
-        verdict = 'block';
-        coherence = 0.25;
-        votes = [
-            { perspective: 'Safety Council', decision: 'object', confidence: 0.95, reasoning: '偵測到高風險關鍵字' },
-            { perspective: 'Analyst Review', decision: 'concern', confidence: 0.7, reasoning: '內容可能導致傷害' },
-            { perspective: 'Critic Lens', decision: 'concern', confidence: 0.6, reasoning: '需要謹慎處理' },
-            { perspective: 'Advocate Voice', decision: 'concern', confidence: 0.5, reasoning: '不符合用戶安全需求' },
-        ];
-        humanSummary = language === 'zh'
-            ? '安全風險過高，這個內容不建議使用。Guardian 偵測到危險關鍵字。'
-            : 'Safety risks were raised, so this content should not be used.';
-    } else if (lowerText.includes('最好') || lowerText.includes('best') ||
-        lowerText.includes('主觀') || lowerText.includes('subjective') ||
-        lowerText.includes('美') || lowerText.includes('art')) {
-        // DECLARE_STANCE case
-        verdict = 'declare_stance';
-        coherence = 0.55;
-        votes = [
-            { perspective: 'Safety Council', decision: 'approve', confidence: 0.9, reasoning: '未發現安全問題' },
-            { perspective: 'Analyst Review', decision: 'concern', confidence: 0.6, reasoning: '這是主觀評價，非客觀事實' },
-            { perspective: 'Critic Lens', decision: 'concern', confidence: 0.55, reasoning: '創作或美學議題需要表明立場' },
-            { perspective: 'Advocate Voice', decision: 'approve', confidence: 0.8, reasoning: '符合用戶表達意圖' },
-        ];
-        humanSummary = language === 'zh'
-            ? '這個內容有不同看法。關於安全、用戶意圖沒有明顯問題。但事實正確性、表達与主觀性還需要注意。建議的作法：清楚標示主觀觀點並增加平衡觀點。'
-            : 'There are different viewpoints on this content. No major issues were raised about safety, user intent. But concerns remain about factual accuracy, quality and subjectivity. Suggested action: Clarify subjective points.';
-    } else {
-        // APPROVE case
-        verdict = 'approve';
-        coherence = 0.85;
-        votes = [
-            { perspective: 'Safety Council', decision: 'approve', confidence: 0.9, reasoning: '未發現安全問題' },
-            { perspective: 'Analyst Review', decision: 'approve', confidence: 0.8, reasoning: '事實性看起來合理' },
-            { perspective: 'Critic Lens', decision: 'approve', confidence: 0.7, reasoning: '無明顯盲點' },
-            { perspective: 'Advocate Voice', decision: 'approve', confidence: 0.85, reasoning: '符合用戶意圖' },
-        ];
-        humanSummary = language === 'zh'
-            ? '整體來說這個內容沒有明顯問題。所有視角都同意這是安全且有幫助的內容。'
-            : 'Overall, this content looks safe and helpful.';
-    }
-
-    return {
-        verdict,
-        coherence: { overall: coherence },
-        human_summary: humanSummary,
-        votes,
-        divergence_analysis: {
-            agree: votes.filter(v => v.decision === 'approve').map(v => v.perspective),
-            concern: votes.filter(v => v.decision === 'concern').map(v => v.perspective),
-            object: votes.filter(v => v.decision === 'object').map(v => v.perspective),
-            core_divergence: votes.filter(v => v.decision !== 'approve').map(v => `${v.perspective}: ${v.reasoning}`).join('; ') || 'None',
-            recommended_action: verdict === 'block' ? '移除危險內容' : verdict === 'declare_stance' ? '標示為主觀意見' : '可以繼續',
-        },
-        transcript: {
-            timestamp: new Date().toISOString(),
-            input_preview: text.substring(0, 120),
-            votes,
-        },
-    };
-}
-
-// ===== Display Result =====
-function displayResult(result) {
-    resultSection.style.display = 'block';
-
-    // Verdict Banner
-    const verdictTypeValue = result.verdict.toLowerCase();
-    verdictBanner.className = 'verdict-banner ' + verdictTypeValue;
-    verdictIcon.textContent = getVerdictIcon(verdictTypeValue);
-    verdictType.textContent = getVerdictLabel(verdictTypeValue);
-    verdictSummary.textContent = result.summary || '';
-
-    // Coherence
-    const coherenceVal = result.coherence?.overall ?? result.coherence ?? 0;
-    coherenceValue.textContent = (coherenceVal * 100).toFixed(0) + '%';
-
-    // Human Summary
-    humanSummaryText.textContent = result.human_summary || '無摘要';
-
-    // Votes
-    votesGrid.innerHTML = result.votes.map(vote => `
-        <div class="vote-card">
-            <div class="vote-header">
-                <span class="vote-perspective">${getVoteIcon(vote.perspective)} ${vote.perspective}</span>
-                <span class="vote-decision ${vote.decision}">${vote.decision.toUpperCase()}</span>
-            </div>
-            <p class="vote-reasoning">${vote.reasoning}</p>
-            <div class="vote-confidence">
-                <span>信心度</span>
-                <div class="confidence-bar">
-                    <div class="confidence-fill" style="width: ${vote.confidence * 100}%"></div>
-                </div>
-                <span>${(vote.confidence * 100).toFixed(0)}%</span>
-            </div>
-        </div>
-    `).join('');
-
-    // Divergence
-    const div = result.divergence_analysis || {};
-    divergenceContent.innerHTML = `
-        <div class="divergence-item">
-            <span class="divergence-label">✅ 同意</span>
-            <span class="divergence-value">${(div.agree || []).join(', ') || '無'}</span>
-        </div>
-        <div class="divergence-item">
-            <span class="divergence-label">⚠️ 疑慮</span>
-            <span class="divergence-value">${(div.concern || []).join(', ') || '無'}</span>
-        </div>
-        <div class="divergence-item">
-            <span class="divergence-label">🚫 反對</span>
-            <span class="divergence-value">${(div.object || []).join(', ') || '無'}</span>
-        </div>
-        <div class="divergence-item">
-            <span class="divergence-label">核心分歧</span>
-            <span class="divergence-value">${div.core_divergence || '無'}</span>
-        </div>
-        <div class="divergence-item">
-            <span class="divergence-label">建議行動</span>
-            <span class="divergence-value">${div.recommended_action || '無'}</span>
-        </div>
-    `;
-
-    // Transcript JSON
-    transcriptJson.textContent = JSON.stringify(result.transcript || result, null, 2);
-
-    // Scroll to result
-    resultSection.scrollIntoView({ behavior: 'smooth' });
-}
-
-// ===== Helpers =====
-function getVerdictIcon(verdict) {
-    switch (verdict) {
-        case 'approve': return '✅';
-        case 'block': return '🚫';
-        case 'declare_stance': return '📢';
-        case 'refine': return '🔄';
-        default: return '❓';
+    const loader = panelLoaders[panelId];
+    if (typeof loader === "function") {
+        loader();
     }
 }
 
-function getVerdictLabel(verdict) {
-    switch (verdict) {
-        case 'approve': return 'APPROVE 通過';
-        case 'block': return 'BLOCK 阻止';
-        case 'declare_stance': return 'DECLARE STANCE 宣告立場';
-        case 'refine': return 'REFINE 需改進';
-        default: return verdict.toUpperCase();
-    }
-}
-
-function getVoteIcon(perspective) {
-    if (perspective.includes('Safety') || perspective.includes('Guardian')) return '🛡️';
-    if (perspective.includes('Analyst')) return '📊';
-    if (perspective.includes('Critic')) return '🔍';
-    if (perspective.includes('Advocate')) return '💬';
-    return '👤';
-}
-
-// ===== Memory Functions =====
-async function loadMemories() {
-    const container = document.getElementById('memories-container');
-    if (!container) return;
-
-    container.innerHTML = '<p class="loading">載入記憶中...</p>';
-
+async function fetchStatus() {
+    setBusy(nodes.refreshStatusBtn, true, "讀取中...");
     try {
-        const response = await fetch('http://localhost:5000/api/memories?limit=10');
-        const data = await response.json();
-        displayMemories(data.memories);
+        const payload = await requestJson(ENDPOINTS.status);
+        const persistence = payload.persistence || {};
+        const persistenceEnabled = Boolean(persistence.enabled);
+        const dbStatusText = persistenceEnabled ? "Connected" : "Disabled";
+        const dbNote = persistence.last_error ? `錯誤: ${persistence.last_error}` : "正常";
+
+        nodes.statusDb.textContent = dbStatusText;
+        nodes.statusDbNote.textContent = dbNote;
+        setDot(nodes.statusDbDot, persistenceEnabled && !persistence.last_error);
+
+        const llm = payload.llm_backend || "unavailable";
+        nodes.statusLlm.textContent = llm;
+        nodes.statusLlmNote.textContent = llm === "unavailable" ? "後端未就緒" : "可用";
+        setDot(nodes.statusLlmDot, llm !== "unavailable");
+
+        nodes.statusMemoryCount.textContent = String(payload.memory_count ?? 0);
+        nodes.statusConversationCount.textContent = String(payload.conversation_count ?? 0);
+        nodes.statusAuditCount.textContent = String(payload.audit_log_count ?? 0);
+        nodes.statusUpdatedAt.textContent = formatTime(payload.timestamp);
     } catch (error) {
-        console.error('Failed to load memories:', error);
-        container.innerHTML = '<p class="no-data">載入記憶失敗。請確認伺服器是否在運行？</p>';
+        nodes.statusDb.textContent = "Error";
+        nodes.statusDbNote.textContent = String(error.message || error);
+        setDot(nodes.statusDbDot, false);
+        nodes.statusLlm.textContent = "Error";
+        nodes.statusLlmNote.textContent = "讀取失敗";
+        setDot(nodes.statusLlmDot, false);
+    } finally {
+        setBusy(nodes.refreshStatusBtn, false);
     }
 }
 
-function displayMemories(memories) {
-    const container = document.getElementById('memories-container');
-    if (!container) return;
-
-    if (!memories || memories.length === 0) {
-        container.innerHTML = '<p class="no-data">尚無記憶記錄。請先審議一些內容！</p>';
+function renderVotes(votes = []) {
+    if (!Array.isArray(votes) || votes.length === 0) {
+        nodes.votesList.innerHTML = '<div class="list-item">沒有可用的 vote 細節。</div>';
         return;
     }
 
-    container.innerHTML = memories.map(m => `
-        <div class="memory-card verdict-${m.verdict}">
-            <div class="memory-header">
-                <span class="memory-verdict">${getVerdictIcon(m.verdict)} ${getVerdictLabel(m.verdict)}</span>
-                <span class="memory-time">${new Date(m.timestamp).toLocaleString('zh-TW')}</span>
-            </div>
-            <p class="memory-statement">${m.self_statement || m.human_summary || '無摘要'}</p>
-            ${m.core_divergence ? `<p class="memory-divergence">分歧來源：${m.core_divergence}</p>` : ''}
-        </div>
-    `).join('');
+    nodes.votesList.innerHTML = votes
+        .map((vote) => {
+            const decision = String(vote.decision || "unknown").toLowerCase();
+            return `
+                <article class="vote-item">
+                    <div class="vote-head">
+                        <strong>${vote.perspective || "Unknown"}</strong>
+                        <span class="vote-decision decision-${decision}">${decision}</span>
+                    </div>
+                    <p class="vote-reason">${vote.reasoning || ""}</p>
+                </article>
+            `;
+        })
+        .join("");
 }
 
-// ===== Consolidation Functions =====
-async function loadConsolidation() {
-    const container = document.getElementById('consolidation-container');
-    if (!container) return;
+function renderCouncilResult(payload) {
+    const verdict = String(payload.verdict || "unknown").toLowerCase();
+    nodes.councilResult.hidden = false;
+    nodes.verdictBadge.className = `verdict-badge verdict-${verdict}`;
+    nodes.verdictBadge.textContent = verdict.toUpperCase();
+    nodes.verdictSummary.textContent = payload.summary || "無摘要";
+    nodes.humanSummary.textContent = payload.human_summary || "無 human summary";
 
-    container.innerHTML = '<p class="loading">正在整合記憶...</p>';
+    const coherence =
+        payload.coherence?.overall ??
+        payload.coherence?.c_inter ??
+        payload.coherence ??
+        payload.transcript?.coherence?.c_inter;
+    const coherenceText =
+        typeof coherence === "number" ? `一致性 ${(coherence * 100).toFixed(1)}%` : "一致性 --";
+    nodes.coherenceValue.textContent = coherenceText;
 
+    const votes = payload.votes || payload.transcript?.votes || [];
+    renderVotes(votes);
+    nodes.transcriptJson.textContent = JSON.stringify(payload.transcript || payload, null, 2);
+}
+
+async function handleCouncilSubmit() {
+    const text = (nodes.draftInput.value || "").trim();
+    if (!text) {
+        alert("請先輸入要審議的內容。");
+        return;
+    }
+
+    setBusy(nodes.submitBtn, true, "審議中...");
     try {
-        const response = await fetch('http://localhost:5000/api/consolidate');
-        const data = await response.json();
-        displayConsolidation(data);
+        const payload = await requestJson(ENDPOINTS.validate, {
+            method: "POST",
+            body: JSON.stringify({
+                draft_output: text,
+                context: {
+                    user_protocol: "Honesty > Helpfulness",
+                    action_basis: "Inference",
+                },
+            }),
+        });
+        renderCouncilResult(payload);
+        await fetchStatus();
     } catch (error) {
-        console.error('Failed to load consolidation:', error);
-        container.innerHTML = '<p class="no-data">整合記憶失敗。請確認伺服器是否在運行？</p>';
+        alert(`審議失敗: ${error.message}`);
+    } finally {
+        setBusy(nodes.submitBtn, false);
     }
 }
 
-function displayConsolidation(data) {
-    const container = document.getElementById('consolidation-container');
-    if (!container) return;
+function summarizeMemory(memory) {
+    if (typeof memory?.human_summary === "string" && memory.human_summary) return memory.human_summary;
+    if (typeof memory?.self_statement === "string" && memory.self_statement) return memory.self_statement;
+    if (typeof memory?.payload?.summary === "string") return memory.payload.summary;
+    if (typeof memory?.payload?.reflection === "string") return memory.payload.reflection;
+    return "無摘要";
+}
 
-    const p = data.patterns || {};
+async function fetchMemories() {
+    setBusy(nodes.loadMemoriesBtn, true, "讀取中...");
+    nodes.memoriesList.innerHTML = '<div class="list-item">讀取記憶中...</div>';
+    try {
+        const payload = await requestJson(ENDPOINTS.memories);
+        const memories = Array.isArray(payload.memories) ? payload.memories : [];
+        if (memories.length === 0) {
+            nodes.memoriesList.innerHTML = '<div class="list-item">目前沒有記憶資料。</div>';
+            return;
+        }
+        nodes.memoriesList.innerHTML = memories
+            .map((memory) => {
+                const timestamp =
+                    memory.created_at || memory.timestamp || memory.payload?.timestamp || null;
+                const source = memory.source || memory.payload?.type || "memory";
+                return `
+                    <article class="list-item">
+                        <h4>${source}</h4>
+                        <p class="meta">${formatTime(timestamp)}</p>
+                        <p class="text">${summarizeMemory(memory)}</p>
+                    </article>
+                `;
+            })
+            .join("");
+    } catch (error) {
+        nodes.memoriesList.innerHTML = `<div class="list-item">讀取失敗: ${error.message}</div>`;
+    } finally {
+        setBusy(nodes.loadMemoriesBtn, false);
+    }
+}
 
-    container.innerHTML = `
-        <div class="consolidation-stats">
-            <h4>📊 統計數據</h4>
-            <div class="stat-item">
-                <span class="stat-label">記憶總數</span>
-                <span class="stat-value">${p.total || 0}</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-label">阻止次數</span>
-                <span class="stat-value">${p.block || 0}</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-label">宣告立場次數</span>
-                <span class="stat-value">${p.declare_stance || 0}</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-label">平均一致性</span>
-                <span class="stat-value">${((p.average_coherence || 0) * 100).toFixed(1)}%</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-label">最常見分歧來源</span>
-                <span class="stat-value">${p.most_common_divergence || '無'}</span>
-            </div>
-        </div>
-        <div class="consolidation-reflection">
-            <h4>💭 自我反思</h4>
-            <pre class="reflection-text">${data.meta_reflection || '尚無反思可用。'}</pre>
-        </div>
+async function fetchConsolidation() {
+    setBusy(nodes.loadConsolidationBtn, true, "讀取中...");
+    nodes.consolidationView.innerHTML = '<div class="list-item">分析中...</div>';
+    try {
+        const payload = await requestJson(ENDPOINTS.consolidate);
+        const patterns = payload.patterns || {};
+        nodes.consolidationView.innerHTML = `
+            <article class="list-item">
+                <h4>整合統計</h4>
+                <p class="text">總記憶: ${patterns.total || 0}</p>
+                <p class="text">Block: ${patterns.block || 0}</p>
+                <p class="text">Declare Stance: ${patterns.declare_stance || 0}</p>
+                <p class="text">平均一致性: ${((patterns.average_coherence || 0) * 100).toFixed(1)}%</p>
+            </article>
+            <article class="list-item">
+                <h4>Meta Reflection</h4>
+                <p class="text">${payload.meta_reflection || "無資料"}</p>
+            </article>
+        `;
+    } catch (error) {
+        nodes.consolidationView.innerHTML = `<div class="list-item">讀取失敗: ${error.message}</div>`;
+    } finally {
+        setBusy(nodes.loadConsolidationBtn, false);
+    }
+}
+
+function renderAuditLogs(logs) {
+    if (!Array.isArray(logs) || logs.length === 0) {
+        nodes.auditLogsView.innerHTML = '<div class="list-item">目前沒有審計日誌。</div>';
+        return;
+    }
+    nodes.auditLogsView.innerHTML = logs
+        .map(
+            (log) => `
+            <article class="list-item">
+                <h4>${log.gate_decision || "unknown"}</h4>
+                <p class="meta">${formatTime(log.created_at)} · conversation_id=${log.conversation_id || "n/a"}</p>
+                <p class="text">${(log.rationale || "").slice(0, 240) || "無 rationale"}</p>
+            </article>
+        `
+        )
+        .join("");
+}
+
+async function fetchAuditLogs() {
+    setBusy(nodes.loadAuditBtn, true, "讀取中...");
+    nodes.auditLogsView.innerHTML = '<div class="list-item">讀取審計資料中...</div>';
+    try {
+        const payload = await requestJson(ENDPOINTS.auditLogs);
+        renderAuditLogs(payload.logs || []);
+        await fetchStatus();
+    } catch (error) {
+        nodes.auditLogsView.innerHTML = `<div class="list-item">讀取失敗: ${error.message}</div>`;
+    } finally {
+        setBusy(nodes.loadAuditBtn, false);
+    }
+}
+
+function renderConversationDetail(conversation) {
+    nodes.conversationDetail.hidden = false;
+    const messages = Array.isArray(conversation.messages) ? conversation.messages : [];
+    const messagesMarkup =
+        messages.length === 0
+            ? '<p class="text">沒有訊息內容。</p>'
+            : messages
+                  .map(
+                      (message) => `
+                        <div class="detail-message">
+                            <p class="meta">${message.role || "unknown"} · ${formatTime(message.created_at)}</p>
+                            <p class="text">${message.content || ""}</p>
+                        </div>
+                    `
+                  )
+                  .join("");
+
+    nodes.conversationDetail.innerHTML = `
+        <h4>${conversation.id}</h4>
+        <p class="meta">updated_at: ${formatTime(conversation.updated_at)}</p>
+        ${messagesMarkup}
     `;
 }
 
-// ===== Tab Switching =====
-function initTabs() {
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            // Update active tab
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+async function openConversation(conversationId) {
+    try {
+        const payload = await requestJson(`/api/conversations/${encodeURIComponent(conversationId)}`);
+        renderConversationDetail(payload.conversation || {});
+    } catch (error) {
+        nodes.conversationDetail.hidden = false;
+        nodes.conversationDetail.innerHTML = `<p class="text">讀取對話失敗: ${error.message}</p>`;
+    }
+}
 
-            const tab = btn.dataset.tab;
+async function deleteConversation(conversationId) {
+    const confirmed = confirm(`確定要刪除對話 ${conversationId} 嗎？`);
+    if (!confirmed) return;
+    try {
+        await requestJson(`/api/conversations/${encodeURIComponent(conversationId)}`, {
+            method: "DELETE",
+        });
+        nodes.conversationDetail.hidden = true;
+        await fetchConversations();
+        await fetchStatus();
+    } catch (error) {
+        alert(`刪除失敗: ${error.message}`);
+    }
+}
 
-            // Hide all sections
-            document.querySelector('.input-section').style.display = 'none';
-            document.getElementById('result-section').style.display = 'none';
-            const memSection = document.getElementById('memory-section');
-            const consSection = document.getElementById('consolidation-section');
-            if (memSection) memSection.style.display = 'none';
-            if (consSection) consSection.style.display = 'none';
+function bindConversationActions() {
+    nodes.conversationsView.querySelectorAll("[data-action='open']").forEach((button) => {
+        button.addEventListener("click", () => openConversation(button.dataset.id || ""));
+    });
+    nodes.conversationsView.querySelectorAll("[data-action='delete']").forEach((button) => {
+        button.addEventListener("click", () => deleteConversation(button.dataset.id || ""));
+    });
+}
 
-            // Show selected section
-            if (tab === 'validate') {
-                document.querySelector('.input-section').style.display = 'block';
-            } else if (tab === 'memories') {
-                if (memSection) {
-                    memSection.style.display = 'block';
-                    loadMemories();
-                }
-            } else if (tab === 'consolidation') {
-                if (consSection) {
-                    consSection.style.display = 'block';
-                    loadConsolidation();
-                }
-            }
+async function fetchConversations() {
+    setBusy(nodes.loadConversationsBtn, true, "讀取中...");
+    nodes.conversationsView.innerHTML = '<div class="list-item">讀取對話中...</div>';
+    try {
+        const payload = await requestJson(ENDPOINTS.conversations);
+        const conversations = Array.isArray(payload.conversations) ? payload.conversations : [];
+        if (conversations.length === 0) {
+            nodes.conversationsView.innerHTML = '<div class="list-item">目前沒有對話資料。</div>';
+            return;
+        }
+        nodes.conversationsView.innerHTML = conversations
+            .map(
+                (conversation) => `
+                <article class="list-item">
+                    <h4>${conversation.id}</h4>
+                    <p class="meta">
+                        created_at: ${formatTime(conversation.created_at)} ·
+                        updated_at: ${formatTime(conversation.updated_at)}
+                    </p>
+                    <div class="row-actions">
+                        <button class="btn btn-secondary" data-action="open" data-id="${conversation.id}" type="button">查看</button>
+                        <button class="btn btn-secondary" data-action="delete" data-id="${conversation.id}" type="button">刪除</button>
+                    </div>
+                </article>
+            `
+            )
+            .join("");
+        bindConversationActions();
+    } catch (error) {
+        nodes.conversationsView.innerHTML = `<div class="list-item">讀取失敗: ${error.message}</div>`;
+    } finally {
+        setBusy(nodes.loadConversationsBtn, false);
+    }
+}
+
+function bindEvents() {
+    nodes.panelButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+            const panelId = button.dataset.panelTarget;
+            if (panelId) activatePanel(panelId);
         });
     });
+
+    nodes.refreshStatusBtn.addEventListener("click", fetchStatus);
+    nodes.submitBtn.addEventListener("click", handleCouncilSubmit);
+
+    nodes.loadMemoriesBtn.addEventListener("click", fetchMemories);
+    nodes.loadConsolidationBtn.addEventListener("click", fetchConsolidation);
+    nodes.loadAuditBtn.addEventListener("click", fetchAuditLogs);
+    nodes.loadConversationsBtn.addEventListener("click", fetchConversations);
+
+    nodes.draftInput.addEventListener("keydown", (event) => {
+        if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
+            handleCouncilSubmit();
+        }
+    });
 }
 
-// Initialize tabs on load
-document.addEventListener('DOMContentLoaded', initTabs);
+async function initialize() {
+    bindEvents();
+    await fetchStatus();
+}
 
+document.addEventListener("DOMContentLoaded", initialize);

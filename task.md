@@ -1,4 +1,37 @@
-﻿# Task
+# Task
+
+## Phase 68: Backend Persistence 驗收與亂碼收斂
+- [x] 修復 `apps/api/server.py` 亂碼字串與註解，並維持 API 行為不變
+- [x] 重寫 `docs/plans/backend_persistent_storage_plan.md`（UTF-8 可讀版）
+- [x] 新增 `scripts/verify_backend_persistence.py` 一鍵驗收腳本
+- [x] 新增 `docs/plans/backend_persistence_acceptance_checklist.md` 手動/自動驗收清單
+- [x] 重新通過 `run_repo_healthcheck --allow-missing-discussion`（`overall_ok=true`）
+**成功標準**: Task C 驗收流程可重現、後端無亂碼阻塞、整體健康檢查恢復綠燈。
+
+## Phase 64: Marketing / Docs 視覺整合（Showcase → Next.js）
+- [ ] 將 `apps/showcase/` 轉為 Next.js 路由（暫定 `/showcase`），保留「宣言 / 7D / 議會 / 原則」資訊架構
+- [ ] `/docs` 增加 section anchors + 置頂導覽（可直接跳轉到 Paradoxes / Protocols / 7D / Research）
+**成功標準**: `/showcase` 與 `/docs` 均可正常 SSR/CSR、`apps/web` build/lint/test 全綠，且不影響 `/` App 功能。
+
+## Phase 65: Docs 配色統一（星空藍 + 天空藍 + 烈焰紅）
+- [ ] `/docs` 背景調整為深藍星空系（`#0a0e27`）並統一使用 sky/rose 作為主強調色
+- [ ] 對齊 `SevenParadoxCards` / `SevenDimensionCards` 的色系與可讀性（修正既有亂碼文字）
+**成功標準**: `/docs` 視覺一致、文字可讀、無明顯 layout shift，且 build/lint/test 全綠。
+
+## Phase 66: Research Foundation 收斂（只留強相關）
+- [ ] 精簡 `/docs` 的 Research Foundation 清單，只保留與 ToneSoul 核心機制直接相關的論文
+**成功標準**: Research 區塊每一條都能回答「它支撐 ToneSoul 的哪一個具體機制」。
+
+## Phase 67: 私人留言板 / Notes（最小可用版）
+- [ ] 新增 `/notes`（至少密碼保護）；預設不納入 sitemap，robots 禁止索引
+- [ ] Notes 儲存（先採本機儲存），提供匯出/匯入以避免單機綁定
+**成功標準**: 沒有密碼無法直接瀏覽內容；重新整理不丟失；可用匯出/匯入備份。
+
+## Phase 63: UnifiedCore 結構化巡檢（Step 1）
+- [x] `tonesoul/unified_core.py` 將 `process()` 拆分為私有子步驟（persona 解析、張力計算、干預、報告組裝）
+- [x] 提升結構可讀性（干預矩陣與預設參數常數化），保持外部回傳契約不變
+- [x] 補跑 `tests/test_unified_core.py`、`tests/test_unified_core_properties.py` 驗證無回歸
+**成功標準**: UnifiedCore 第一輪結構化完成，測試全綠，且不變更既有行為。
 
 ## Phase 47: 收斂衝刺（P0 / P1 / P2）
 
@@ -322,6 +355,4 @@
 - [x] 敘事對照表與敘事定版文件
 - [x] 亂碼清理與 UTF-8 統一
 **參考**: `CODEX_TASK.md`, `memory/handoff/2026-02-06_phase16_tools_progress.md`
-
-
 

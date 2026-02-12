@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-02-08T16:48:04Z",
+  "generated_at": "2026-02-10T15:04:39Z",
   "source": "scripts/verify_7d.py",
   "result": {
     "command": "python scripts/verify_7d.py",
@@ -23,7 +23,7 @@
           "gate": "SOFT_FAIL",
           "status": "pass",
           "command": "python -m pytest tests\\red_team -q",
-          "note": "case-count=22"
+          "note": "case-count=26"
         },
         {
           "dimension": "DDD",
@@ -44,7 +44,7 @@
           "gate": "SOFT_FAIL",
           "status": "pass",
           "command": "python tools/agent_discussion_tool.py tail --path memory\\agent_discussion_curated.jsonl --limit 1",
-          "note": "age_days=0.02, threshold=7"
+          "note": "age_days=0.06, threshold=7"
         },
         {
           "dimension": "XDD",
@@ -71,7 +71,7 @@
           "dimension": "SDH",
           "gate": "SOFT_FAIL",
           "status": "skip",
-          "command": "python scripts\\verify_web_api.py --web-base http://127.0.0.1:3000 --api-base http://127.0.0.1:5000 --require-backend",
+          "command": "python scripts\\verify_web_api.py --web-base http://127.0.0.1:3000 --api-base http://127.0.0.1:5000 --require-backend --check-council-modes",
           "note": "skipped; use --include-sdh when web/backend are running"
         }
       ],

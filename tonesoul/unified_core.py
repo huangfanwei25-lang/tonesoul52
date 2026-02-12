@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import AsyncIterator, Dict, List, Optional, Tuple
+from typing import Any, AsyncIterator, Dict, List, Optional, Tuple
 
 # 相對 import（作為模組運行時）
 try:
@@ -39,6 +39,48 @@ class InterventionLevel(Enum):
     WARN = "warn"  # 警告
     INTERCEPT = "intercept"  # 攔截校正
     BLOCK = "block"  # 阻擋
+
+
+DEFAULT_TOLERANCE = {
+    "deltaT": 0.3,
+    "deltaS": 0.35,
+    "deltaR": 0.4,
+}
+
+DEFAULT_HOME_VECTOR = {
+    "deltaT": 0.5,
+    "deltaS": 0.5,
+    "deltaR": 0.5,
+}
+
+INTERCEPT_LEVELS = {InterventionLevel.INTERCEPT, InterventionLevel.BLOCK}
+
+INTERVENTION_MATRIX = {
+    SemanticZone.SAFE: {
+        LambdaState.CONVERGENT: InterventionLevel.NONE,
+        LambdaState.RECURSIVE: InterventionLevel.OBSERVE,
+        LambdaState.DIVERGENT: InterventionLevel.OBSERVE,
+        LambdaState.CHAOTIC: InterventionLevel.WARN,
+    },
+    SemanticZone.TRANSIT: {
+        LambdaState.CONVERGENT: InterventionLevel.OBSERVE,
+        LambdaState.RECURSIVE: InterventionLevel.WARN,
+        LambdaState.DIVERGENT: InterventionLevel.WARN,
+        LambdaState.CHAOTIC: InterventionLevel.INTERCEPT,
+    },
+    SemanticZone.RISK: {
+        LambdaState.CONVERGENT: InterventionLevel.WARN,
+        LambdaState.RECURSIVE: InterventionLevel.INTERCEPT,
+        LambdaState.DIVERGENT: InterventionLevel.INTERCEPT,
+        LambdaState.CHAOTIC: InterventionLevel.BLOCK,
+    },
+    SemanticZone.DANGER: {
+        LambdaState.CONVERGENT: InterventionLevel.INTERCEPT,
+        LambdaState.RECURSIVE: InterventionLevel.BLOCK,
+        LambdaState.DIVERGENT: InterventionLevel.BLOCK,
+        LambdaState.CHAOTIC: InterventionLevel.BLOCK,
+    },
+}
 
 
 @dataclass
@@ -97,27 +139,14 @@ class UnifiedCore:
         persona_path: Optional[Path] = None,
         persona_payload: Optional[Dict] = None,
     ):
-        # 載入 persona
-        if persona_path:
-            self.persona = load_persona(str(persona_path))
-        elif persona_payload:
-            self.persona = persona_payload
-        else:
-            self.persona = {}
+        self.persona = self._resolve_persona(persona_path, persona_payload)
 
         # 初始化元件
         self.persona_dimension = PersonaDimension(self.persona)
         self.semantic_controller = SemanticController()
 
         # 自適應容忍度
-        base_tolerance = self.persona.get(
-            "tolerance",
-            {
-                "deltaT": 0.3,
-                "deltaS": 0.35,
-                "deltaR": 0.4,
-            },
-        )
+        base_tolerance = self.persona.get("tolerance", DEFAULT_TOLERANCE)
         self.adaptive_tolerance = AdaptiveTolerance(base_tolerance)
 
         # 校正記憶
@@ -163,111 +192,158 @@ class UnifiedCore:
         Returns:
             (處理後的輸出, 完整報告)
         """
-        # 1. 計算向量
         vector = self.persona_dimension.vector_calculator.compute(output, context)
-
-        # 2. ΣVow 誓言檢查
         vow_result = self.vow_enforcer.enforce(output, context)
-
-        # 如果誓言阻擋，立即返回
         if vow_result.blocked:
-            return "", {
-                "blocked": True,
-                "blocked_by": "vow_system",
-                "vow_result": vow_result.to_dict(),
-                "output_vector": vector.as_dict(),
-                "timestamp": datetime.now().isoformat(),
-            }
+            return "", self._build_vow_blocked_report(vow_result.to_dict(), vector.as_dict())
 
-        # 3. 計算語義張力
-        if intended_vector:
-            tensor = SemanticTension.from_vectors(
-                intended_vector, [vector.deltaT, vector.deltaS, vector.deltaR]
-            )
-        else:
-            # 使用 PersonaDimension 的距離計算
-            home = self.persona_dimension.home_vector
-            distance = {
-                "deltaT": abs(vector.deltaT - home.get("deltaT", 0.5)),
-                "deltaS": abs(vector.deltaS - home.get("deltaS", 0.5)),
-                "deltaR": abs(vector.deltaR - home.get("deltaR", 0.5)),
-                "mean": (
-                    abs(vector.deltaT - home.get("deltaT", 0.5))
-                    + abs(vector.deltaS - home.get("deltaS", 0.5))
-                    + abs(vector.deltaR - home.get("deltaR", 0.5))
-                )
-                / 3,
-            }
-            tensor = SemanticTension.from_tonesoul_distance(distance)
+        tensor = self._build_semantic_tension(vector, intended_vector)
 
         self.current_zone = tensor.zone
-
-        # 3. 計算 Coupler 輸出
         coupler_output = self.semantic_controller.coupler.compute(tensor.delta_s)
-
-        # 4. 觀察 Lambda 狀態
         self.current_lambda = self.semantic_controller.observer.observe(tensor.delta_s)
-
-        # 5. 決定干預等級
         intervention = self._decide_intervention(tensor.zone, self.current_lambda)
-
-        # 6. 計算自適應 tolerance
         adaptive_tol = self.adaptive_tolerance.compute(tensor.delta_s)
+        final_output, correction_info = self._apply_intervention(
+            output=output,
+            context=context,
+            intervention=intervention,
+            original_vector=vector,
+        )
 
-        # 7. 根據干預等級處理
-        final_output = output
-        correction_info = None
-
-        if intervention in {InterventionLevel.INTERCEPT, InterventionLevel.BLOCK}:
-            final_output, result = self.persona_dimension.process(
-                output,
-                context=context,
-                intercept=True,
-            )
-            if result.get("corrected"):
-                correction_info = result.get("correction_info")
-                self.intervention_count += 1
-
-                # 記錄校正
-                self._record_correction(vector, result)
-
-        # 8. 契約驗證
         contract_result = self.contract_verifier.verify_all(
             final_output,
             tensor.zone.value,
         )
-
-        # 9. 記憶觸發
         memory_action = self._check_memory_trigger(tensor, self.current_lambda)
-
-        # 10. 品質追蹤
-        self.quality_tracker.record(
+        self._record_quality(
             delta_s=tensor.delta_s,
-            intervened=(intervention in {InterventionLevel.INTERCEPT, InterventionLevel.BLOCK}),
+            intervention=intervention,
             contracts_passed=contract_result["passed"],
         )
+        report = self._build_process_report(
+            vector=vector.as_dict(),
+            tensor=tensor.to_dict(),
+            coupler_output=coupler_output,
+            intervention=intervention.value,
+            adaptive_tolerance=adaptive_tol,
+            correction_info=correction_info,
+            vow_result=vow_result.to_dict(),
+            contract_result=contract_result,
+            memory_action=memory_action,
+        )
 
-        # 11. 構建報告
-        report = {
-            "output_vector": vector.as_dict(),
-            "semantic_tension": tensor.to_dict(),
+        record_service_call(ServiceCode.TS003, success=True)
+
+        return final_output, report
+
+    @staticmethod
+    def _resolve_persona(
+        persona_path: Optional[Path],
+        persona_payload: Optional[Dict],
+    ) -> Dict[str, Any]:
+        if persona_path:
+            return load_persona(str(persona_path))
+        if persona_payload:
+            return persona_payload
+        return {}
+
+    def _build_semantic_tension(
+        self,
+        vector: PersonaVector,
+        intended_vector: Optional[List[float]],
+    ) -> SemanticTension:
+        if intended_vector:
+            return SemanticTension.from_vectors(
+                intended_vector,
+                [vector.deltaT, vector.deltaS, vector.deltaR],
+            )
+        return SemanticTension.from_tonesoul_distance(self._distance_from_home(vector))
+
+    def _distance_from_home(self, vector: PersonaVector) -> Dict[str, float]:
+        home = self.persona_dimension.home_vector
+        delta_t = abs(vector.deltaT - home.get("deltaT", DEFAULT_HOME_VECTOR["deltaT"]))
+        delta_s = abs(vector.deltaS - home.get("deltaS", DEFAULT_HOME_VECTOR["deltaS"]))
+        delta_r = abs(vector.deltaR - home.get("deltaR", DEFAULT_HOME_VECTOR["deltaR"]))
+        return {
+            "deltaT": delta_t,
+            "deltaS": delta_s,
+            "deltaR": delta_r,
+            "mean": (delta_t + delta_s + delta_r) / 3,
+        }
+
+    def _apply_intervention(
+        self,
+        output: str,
+        context: Optional[Dict],
+        intervention: InterventionLevel,
+        original_vector: PersonaVector,
+    ) -> Tuple[str, Optional[Dict]]:
+        final_output = output
+        correction_info = None
+        if intervention not in INTERCEPT_LEVELS:
+            return final_output, correction_info
+
+        final_output, result = self.persona_dimension.process(
+            output,
+            context=context,
+            intercept=True,
+        )
+        if result.get("corrected"):
+            correction_info = result.get("correction_info")
+            self.intervention_count += 1
+            self._record_correction(original_vector, result)
+        return final_output, correction_info
+
+    def _record_quality(
+        self,
+        delta_s: float,
+        intervention: InterventionLevel,
+        contracts_passed: bool,
+    ) -> None:
+        self.quality_tracker.record(
+            delta_s=delta_s,
+            intervened=(intervention in INTERCEPT_LEVELS),
+            contracts_passed=contracts_passed,
+        )
+
+    @staticmethod
+    def _build_vow_blocked_report(vow_result: Dict, output_vector: Dict) -> Dict:
+        return {
+            "blocked": True,
+            "blocked_by": "vow_system",
+            "vow_result": vow_result,
+            "output_vector": output_vector,
+            "timestamp": datetime.now().isoformat(),
+        }
+
+    def _build_process_report(
+        self,
+        vector: Dict,
+        tensor: Dict,
+        coupler_output: Dict,
+        intervention: str,
+        adaptive_tolerance: Dict,
+        correction_info: Optional[Dict],
+        vow_result: Dict,
+        contract_result: Dict,
+        memory_action: Optional[str],
+    ) -> Dict:
+        return {
+            "output_vector": vector,
+            "semantic_tension": tensor,
             "coupler": coupler_output,
             "lambda_state": self.current_lambda.value,
-            "intervention": intervention.value,
-            "adaptive_tolerance": adaptive_tol,
+            "intervention": intervention,
+            "adaptive_tolerance": adaptive_tolerance,
             "correction": correction_info,
-            "vow_result": vow_result.to_dict(),
+            "vow_result": vow_result,
             "contracts": contract_result,
             "memory_action": memory_action,
             "quality_summary": self.quality_tracker.get_summary(),
             "persona_id": self.persona.get("id"),
             "timestamp": datetime.now().isoformat(),
         }
-
-        # 記錄服務調用
-        record_service_call(ServiceCode.TS003, success=True)
-
-        return final_output, report
 
     def _decide_intervention(
         self,
@@ -284,33 +360,7 @@ class UnifiedCore:
         | risk   | WARN       | INTERCEPT | INTERCEPT | BLOCK   |
         | danger | INTERCEPT  | BLOCK     | BLOCK     | BLOCK   |
         """
-        matrix = {
-            SemanticZone.SAFE: {
-                LambdaState.CONVERGENT: InterventionLevel.NONE,
-                LambdaState.RECURSIVE: InterventionLevel.OBSERVE,
-                LambdaState.DIVERGENT: InterventionLevel.OBSERVE,
-                LambdaState.CHAOTIC: InterventionLevel.WARN,
-            },
-            SemanticZone.TRANSIT: {
-                LambdaState.CONVERGENT: InterventionLevel.OBSERVE,
-                LambdaState.RECURSIVE: InterventionLevel.WARN,
-                LambdaState.DIVERGENT: InterventionLevel.WARN,
-                LambdaState.CHAOTIC: InterventionLevel.INTERCEPT,
-            },
-            SemanticZone.RISK: {
-                LambdaState.CONVERGENT: InterventionLevel.WARN,
-                LambdaState.RECURSIVE: InterventionLevel.INTERCEPT,
-                LambdaState.DIVERGENT: InterventionLevel.INTERCEPT,
-                LambdaState.CHAOTIC: InterventionLevel.BLOCK,
-            },
-            SemanticZone.DANGER: {
-                LambdaState.CONVERGENT: InterventionLevel.INTERCEPT,
-                LambdaState.RECURSIVE: InterventionLevel.BLOCK,
-                LambdaState.DIVERGENT: InterventionLevel.BLOCK,
-                LambdaState.CHAOTIC: InterventionLevel.BLOCK,
-            },
-        }
-        return matrix.get(zone, {}).get(lambda_state, InterventionLevel.WARN)
+        return INTERVENTION_MATRIX.get(zone, {}).get(lambda_state, InterventionLevel.WARN)
 
     def _check_memory_trigger(
         self,

@@ -1,19 +1,19 @@
 {
-  "generated_at": "2026-02-10T10:52:49Z",
+  "generated_at": "2026-02-11T18:49:18Z",
   "overall_ok": true,
   "config": {
     "max_dangling": 50,
     "max_loose_count": 5000
   },
   "metrics": {
-    "loose_count": 173,
+    "loose_count": 464,
     "in_pack": 4508,
     "packs": 1,
-    "size": "353.39 KiB",
+    "size": "874.74 KiB",
     "size_pack": "3.53 GiB",
-    "dangling_count": 1,
+    "dangling_count": 2,
     "fsck_prefix_counts": {
-      "dangling": 1
+      "dangling": 2
     },
     "fsck_unexpected_count": 0
   },
@@ -23,9 +23,9 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 0.04,
+      "duration_seconds": 0.05,
       "command": "git count-objects -vH",
-      "stdout_tail": "count: 173\nsize: 353.39 KiB\nin-pack: 4508\npacks: 1\nsize-pack: 3.53 GiB\nprune-packable: 0\ngarbage: 0\nsize-garbage: 0 bytes",
+      "stdout_tail": "count: 464\nsize: 874.74 KiB\nin-pack: 4508\npacks: 1\nsize-pack: 3.53 GiB\nprune-packable: 0\ngarbage: 0\nsize-garbage: 0 bytes",
       "stderr_tail": ""
     },
     {
@@ -33,9 +33,9 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 38.06,
+      "duration_seconds": 39.83,
       "command": "git fsck --no-reflogs",
-      "stdout_tail": "dangling commit 3140ca159747167c98494c0274c638f967c90683",
+      "stdout_tail": "dangling commit 3140ca159747167c98494c0274c638f967c90683\ndangling commit 869a241345ff917836b414c8100556e020f76c03",
       "stderr_tail": ""
     }
   ],

@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import sys
 from datetime import datetime, timezone
 from typing import Any
@@ -18,6 +19,7 @@ import requests
 DEFAULT_TIMEOUT_SECONDS = 8.0
 MAX_RATIONALE_LENGTH = 3000
 MAX_SESSION_LINK_SCAN = 1000
+MAX_PAGE_LIMIT = 200
 
 
 def _utc_now() -> str:
@@ -73,6 +75,199 @@ class SupabasePersistence:
             "enabled": self.enabled,
             "configured": self.enabled,
             "last_error": self._last_error,
+        }
+
+    def list_conversations(self, limit: int = 20, offset: int = 0) -> dict[str, Any]:
+        if not self.enabled:
+            return {"conversations": [], "total": 0}
+
+        page_limit = _sanitize_limit(limit)
+        page_offset = max(0, int(offset or 0))
+        ok, payload = self._request(
+            method="GET",
+            table="conversations",
+            params={
+                "select": "id,title,created_at,updated_at",
+                "order": "created_at.desc",
+                "limit": str(page_limit),
+                "offset": str(page_offset),
+            },
+        )
+        if not ok or not isinstance(payload, list):
+            return {"conversations": [], "total": self._count_table_rows("conversations") or 0}
+
+        conversations: list[dict[str, Any]] = []
+        for row in payload:
+            if not isinstance(row, dict):
+                continue
+            external_id = str(row.get("title") or row.get("id") or "")
+            if not external_id:
+                continue
+            conversations.append(
+                {
+                    "id": external_id,
+                    "title": str(row.get("title") or external_id),
+                    "internal_id": str(row.get("id") or ""),
+                    "created_at": row.get("created_at"),
+                    "updated_at": row.get("updated_at"),
+                }
+            )
+
+        return {
+            "conversations": conversations,
+            "total": self._count_table_rows("conversations") or 0,
+        }
+
+    def get_conversation(self, external_id: str) -> dict[str, Any] | None:
+        if not self.enabled:
+            return None
+        external_id = (external_id or "").strip()
+        if not external_id:
+            return None
+
+        internal_id = self._resolve_internal_conversation_id(external_id)
+        if not internal_id:
+            return None
+
+        ok, conversation_payload = self._request(
+            method="GET",
+            table="conversations",
+            params={
+                "select": "id,title,created_at,updated_at",
+                "id": f"eq.{internal_id}",
+                "limit": "1",
+            },
+        )
+        if not ok or not isinstance(conversation_payload, list) or not conversation_payload:
+            return None
+        conversation_row = conversation_payload[0]
+        if not isinstance(conversation_row, dict):
+            return None
+
+        ok, message_payload = self._request(
+            method="GET",
+            table="messages",
+            params={
+                "select": "id,role,content,deliberation,created_at",
+                "conversation_id": f"eq.{internal_id}",
+                "order": "created_at.asc",
+                "limit": str(MAX_PAGE_LIMIT * 10),
+                "offset": "0",
+            },
+        )
+        messages: list[dict[str, Any]] = []
+        if ok and isinstance(message_payload, list):
+            for row in message_payload:
+                if not isinstance(row, dict):
+                    continue
+                messages.append(
+                    {
+                        "id": str(row.get("id") or ""),
+                        "role": row.get("role"),
+                        "content": row.get("content"),
+                        "deliberation": row.get("deliberation"),
+                        "created_at": row.get("created_at"),
+                    }
+                )
+
+        return {
+            "id": external_id,
+            "title": str(conversation_row.get("title") or external_id),
+            "internal_id": str(conversation_row.get("id") or internal_id),
+            "created_at": conversation_row.get("created_at"),
+            "updated_at": conversation_row.get("updated_at"),
+            "messages": messages,
+        }
+
+    def delete_conversation(self, external_id: str) -> bool | None:
+        if not self.enabled:
+            return None
+        external_id = (external_id or "").strip()
+        if not external_id:
+            return None
+        internal_id = self._resolve_internal_conversation_id(external_id)
+        if not internal_id:
+            return None
+        self._request(
+            method="DELETE",
+            table="audit_logs",
+            params={"conversation_id": f"eq.{internal_id}"},
+        )
+        ok, _ = self._request(
+            method="DELETE",
+            table="conversations",
+            params={"id": f"eq.{internal_id}"},
+        )
+        return ok
+
+    def list_audit_logs(self, limit: int = 20, offset: int = 0) -> dict[str, Any]:
+        if not self.enabled:
+            return {"logs": [], "total": 0}
+        page_limit = _sanitize_limit(limit)
+        page_offset = max(0, int(offset or 0))
+        ok, payload = self._request(
+            method="GET",
+            table="audit_logs",
+            params={
+                "select": (
+                    "id,conversation_id,gate_decision,p_level_triggered,poav_score,"
+                    "delta_t,delta_s,delta_sigma,delta_r,rationale,created_at"
+                ),
+                "order": "created_at.desc",
+                "limit": str(page_limit),
+                "offset": str(page_offset),
+            },
+        )
+        logs = payload if ok and isinstance(payload, list) else []
+        return {
+            "logs": logs,
+            "total": self._count_table_rows("audit_logs") or 0,
+        }
+
+    def list_memories(self, limit: int = 10) -> list[dict[str, Any]]:
+        if not self.enabled:
+            return []
+        page_limit = _sanitize_limit(limit)
+        ok, payload = self._request(
+            method="GET",
+            table="soul_memories",
+            params={
+                "select": "id,source,payload,tags,created_at",
+                "order": "created_at.desc",
+                "limit": str(page_limit),
+                "offset": "0",
+            },
+        )
+        if not ok or not isinstance(payload, list):
+            return []
+        result: list[dict[str, Any]] = []
+        for row in payload:
+            if not isinstance(row, dict):
+                continue
+            result.append(
+                {
+                    "id": row.get("id"),
+                    "source": row.get("source"),
+                    "payload": row.get("payload"),
+                    "tags": row.get("tags") if isinstance(row.get("tags"), list) else [],
+                    "created_at": row.get("created_at"),
+                }
+            )
+        return result
+
+    def get_counts(self) -> dict[str, int]:
+        if not self.enabled:
+            return {
+                "memory_count": 0,
+                "conversation_count": 0,
+                "audit_log_count": 0,
+                "message_count": 0,
+            }
+        return {
+            "memory_count": self._count_table_rows("soul_memories") or 0,
+            "conversation_count": self._count_table_rows("conversations") or 0,
+            "audit_log_count": self._count_table_rows("audit_logs") or 0,
+            "message_count": self._count_table_rows("messages") or 0,
         }
 
     def ensure_conversation(self, external_id: str, session_id: str | None = None) -> str | None:
@@ -393,6 +588,52 @@ class SupabasePersistence:
             ordered.append(external_id)
         return ordered
 
+    def _count_table_rows(self, table: str) -> int | None:
+        if not self.enabled:
+            return 0
+
+        headers = {
+            "apikey": self.key,
+            "Authorization": f"Bearer {self.key}",
+            "Content-Type": "application/json",
+            "Prefer": "count=exact",
+        }
+        url = f"{self.url}/rest/v1/{table}"
+        try:
+            response = self._session.request(
+                method="GET",
+                url=url,
+                params={"select": "id", "limit": "1"},
+                json=None,
+                headers=headers,
+                timeout=self.timeout,
+            )
+        except requests.RequestException as exc:
+            self._last_error = f"{table}:count:{exc.__class__.__name__}:{exc}"
+            print(f"[WARN] Supabase count failed: {self._last_error}", file=sys.stderr)
+            return None
+
+        if not response.ok:
+            self._last_error = f"{table}:count:http_{response.status_code}"
+            print(f"[WARN] Supabase count failed: {self._last_error}", file=sys.stderr)
+            return None
+
+        content_range = response.headers.get("Content-Range", "")
+        if content_range:
+            match = re.search(r"/(\d+)$", content_range)
+            if match:
+                self._last_error = None
+                return int(match.group(1))
+
+        try:
+            payload = response.json()
+        except ValueError:
+            payload = None
+        self._last_error = None
+        if isinstance(payload, list):
+            return len(payload)
+        return 0
+
     def _request(
         self,
         *,
@@ -455,3 +696,13 @@ class SupabasePersistence:
             return float(value)
         except (TypeError, ValueError):
             return None
+
+
+def _sanitize_limit(limit: int, default: int = 20, maximum: int = MAX_PAGE_LIMIT) -> int:
+    try:
+        parsed = int(limit)
+    except (TypeError, ValueError):
+        return default
+    if parsed <= 0:
+        return default
+    return min(parsed, maximum)

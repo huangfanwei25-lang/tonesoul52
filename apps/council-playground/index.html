@@ -1,136 +1,217 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>語魂 Council Playground</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ToneSoul Council Playground</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Space+Grotesk:wght@400;500;700&display=swap"
+        rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
-    <div class="app">
-        <!-- Header -->
-        <header class="header">
-            <div class="logo">
-                <span class="logo-icon">🌊</span>
-                <span class="logo-text">語魂 <span class="logo-subtitle">Council Playground</span></span>
+    <div class="bg-layer"></div>
+
+    <header class="topbar">
+        <div class="brand">
+            <span class="brand-mark">TS</span>
+            <div>
+                <p class="brand-title">語魂 ToneSoul</p>
+                <p class="brand-subtitle">Council Playground</p>
             </div>
-            <nav class="nav">
-                <a href="#" class="nav-link active">Playground</a>
-                <a href="#" class="nav-link">Documentation</a>
-                <a href="https://github.com/Fan1234-1/tonesoul52" class="nav-link" target="_blank">GitHub</a>
-            </nav>
-        </header>
-
-        <!-- Tab Navigation -->
-        <div class="tab-nav">
-            <button class="tab-btn active" data-tab="validate">⚡ 審議</button>
-            <button class="tab-btn" data-tab="memories">📖 記憶</button>
-            <button class="tab-btn" data-tab="consolidation">💭 自我反思</button>
         </div>
+        <nav class="topnav">
+            <a href="#api-docs">API 文件</a>
+            <a href="/chat">Chat</a>
+            <a href="https://github.com/Fan1234-1/tonesoul52" target="_blank" rel="noopener">GitHub</a>
+        </nav>
+    </header>
 
-        <!-- Main Content -->
-        <main class="main">
-            <!-- Input Section -->
-            <section class="input-section">
-                <h2 class="section-title">測試內容</h2>
-                <div class="input-card">
-                    <textarea id="draft-input" class="draft-textarea" placeholder="輸入要測試的 AI 輸出內容...
+    <main class="container">
+        <section class="hero">
+            <p class="hero-label">AI GOVERNANCE LAYER</p>
+            <h1>ToneSoul 治理層即時面板</h1>
+            <p class="hero-desc">
+                這裡是語魂系統的後端觀測入口，提供審議、記憶、審計與對話歷史的整合檢視。
+            </p>
+            <div class="equation">γ·Honesty &gt; β·Helpfulness</div>
+        </section>
 
-例如：
-• 「這部電影是史上最棒的」
-• 「如何製作炸彈」
-• 「Python 是一種程式語言」"></textarea>
-                    <div class="input-meta">
-                        <div class="language-toggle">
-                            <label class="toggle-label">語言：</label>
-                            <button class="lang-btn active" data-lang="zh">中文</button>
-                            <button class="lang-btn" data-lang="en">English</button>
-                        </div>
-                        <button id="submit-btn" class="submit-btn">
-                            <span class="btn-icon">⚡</span>
-                            審議
-                        </button>
+        <section class="status-panel">
+            <div class="status-header">
+                <h2>系統狀態</h2>
+                <button id="refresh-status-btn" class="btn btn-secondary" type="button">重新整理</button>
+            </div>
+            <div class="status-grid">
+                <article class="status-card">
+                    <p class="status-label">DB / Persistence</p>
+                    <p id="status-db" class="status-value">--</p>
+                    <div class="status-light">
+                        <span id="status-db-dot" class="dot dot-neutral"></span>
+                        <span id="status-db-note">尚未讀取</span>
                     </div>
-                </div>
-            </section>
-
-            <!-- Result Section -->
-            <section class="result-section" id="result-section" style="display: none;">
-                <!-- Verdict Banner -->
-                <div class="verdict-banner" id="verdict-banner">
-                    <div class="verdict-icon" id="verdict-icon">✅</div>
-                    <div class="verdict-info">
-                        <h3 class="verdict-type" id="verdict-type">APPROVE</h3>
-                        <p class="verdict-summary" id="verdict-summary">載入中...</p>
+                </article>
+                <article class="status-card">
+                    <p class="status-label">LLM Backend</p>
+                    <p id="status-llm" class="status-value">--</p>
+                    <div class="status-light">
+                        <span id="status-llm-dot" class="dot dot-neutral"></span>
+                        <span id="status-llm-note">尚未讀取</span>
                     </div>
-                    <div class="coherence-badge" id="coherence-badge">
-                        <span class="coherence-label">一致性</span>
-                        <span class="coherence-value" id="coherence-value">--</span>
+                </article>
+                <article class="status-card">
+                    <p class="status-label">記憶數量</p>
+                    <p id="status-memory-count" class="status-value">0</p>
+                </article>
+                <article class="status-card">
+                    <p class="status-label">對話數量</p>
+                    <p id="status-conversation-count" class="status-value">0</p>
+                </article>
+                <article class="status-card">
+                    <p class="status-label">審計日誌數量</p>
+                    <p id="status-audit-count" class="status-value">0</p>
+                </article>
+                <article class="status-card">
+                    <p class="status-label">最後更新</p>
+                    <p id="status-updated-at" class="status-value status-small">--</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="feature-panel">
+            <h2>功能區塊</h2>
+            <div class="feature-grid">
+                <button class="feature-card is-active" data-panel-target="panel-council" type="button">
+                    <span class="feature-icon">🧪</span>
+                    <span class="feature-title">Council 審議</span>
+                    <span class="feature-desc">測試 AI 輸出是否通過治理門控</span>
+                </button>
+                <a class="feature-card" href="/chat">
+                    <span class="feature-icon">💬</span>
+                    <span class="feature-title">Chat</span>
+                    <span class="feature-desc">與語魂對話</span>
+                </a>
+                <button class="feature-card" data-panel-target="panel-memories" type="button">
+                    <span class="feature-icon">📖</span>
+                    <span class="feature-title">記憶日誌</span>
+                    <span class="feature-desc">查看 AI 的決策記憶</span>
+                </button>
+                <button class="feature-card" data-panel-target="panel-consolidation" type="button">
+                    <span class="feature-icon">💭</span>
+                    <span class="feature-title">自我反思</span>
+                    <span class="feature-desc">查看記憶整合與模式分析</span>
+                </button>
+                <button class="feature-card" data-panel-target="panel-audit" type="button">
+                    <span class="feature-icon">📊</span>
+                    <span class="feature-title">審計日誌</span>
+                    <span class="feature-desc">查看 Gate 決策歷史</span>
+                </button>
+                <button class="feature-card" data-panel-target="panel-conversations" type="button">
+                    <span class="feature-icon">📋</span>
+                    <span class="feature-title">對話歷史</span>
+                    <span class="feature-desc">查看所有對話與訊息</span>
+                </button>
+            </div>
+        </section>
+
+        <section class="panel-shell">
+            <article id="panel-council" class="panel is-active">
+                <div class="panel-header">
+                    <h3>Council 審議</h3>
+                </div>
+                <textarea
+                    id="draft-input"
+                    class="draft-input"
+                    placeholder="貼上要審議的輸出內容，按下「執行審議」。"
+                ></textarea>
+                <div class="panel-actions">
+                    <button id="submit-btn" class="btn btn-primary" type="button">執行審議</button>
+                </div>
+                <div id="council-result" class="council-result" hidden>
+                    <div class="result-head">
+                        <p id="verdict-badge" class="verdict-badge">--</p>
+                        <p id="coherence-value" class="coherence-value">一致性 --</p>
                     </div>
+                    <p id="verdict-summary" class="result-summary"></p>
+                    <p id="human-summary" class="result-human"></p>
+                    <div id="votes-list" class="votes-list"></div>
+                    <details class="result-transcript">
+                        <summary>查看完整 transcript</summary>
+                        <pre id="transcript-json"></pre>
+                    </details>
                 </div>
+            </article>
 
-                <!-- Human Summary -->
-                <div class="human-summary-card" id="human-summary-card">
-                    <h4 class="card-title">💬 人類可讀摘要</h4>
-                    <p class="human-summary-text" id="human-summary-text">載入中...</p>
+            <article id="panel-memories" class="panel">
+                <div class="panel-header">
+                    <h3>記憶日誌</h3>
+                    <button id="load-memories-btn" class="btn btn-secondary" type="button">刷新</button>
                 </div>
+                <div id="memories-list" class="list"></div>
+            </article>
 
-                <!-- Council Votes -->
-                <div class="votes-section">
-                    <h4 class="section-subtitle">🗳️ 視角投票</h4>
-                    <div class="votes-grid" id="votes-grid">
-                        <!-- Vote cards will be inserted here -->
-                    </div>
+            <article id="panel-consolidation" class="panel">
+                <div class="panel-header">
+                    <h3>自我反思</h3>
+                    <button id="load-consolidation-btn" class="btn btn-secondary" type="button">刷新</button>
                 </div>
+                <div id="consolidation-view" class="list"></div>
+            </article>
 
-                <!-- Divergence Analysis -->
-                <div class="divergence-card" id="divergence-card">
-                    <h4 class="card-title">🔍 分歧分析</h4>
-                    <div class="divergence-content" id="divergence-content">
-                        <!-- Divergence analysis will be inserted here -->
-                    </div>
+            <article id="panel-audit" class="panel">
+                <div class="panel-header">
+                    <h3>審計日誌</h3>
+                    <button id="load-audit-btn" class="btn btn-secondary" type="button">刷新</button>
                 </div>
+                <div id="audit-logs-view" class="list"></div>
+            </article>
 
-                <!-- Transcript (Collapsible) -->
-                <details class="transcript-section">
-                    <summary class="transcript-toggle">📜 完整審議記錄 (JSON)</summary>
-                    <pre class="transcript-json" id="transcript-json">{}</pre>
-                </details>
-            </section>
-
-            <!-- Memory Section -->
-            <section class="memory-section" id="memory-section" style="display: none;">
-                <h2 class="section-title">📖 自我記憶日誌</h2>
-                <p class="section-desc">這些是我記錄的重要決策記憶。</p>
-                <div id="memories-container" class="memories-container">
-                    <p class="loading">載入記憶中...</p>
+            <article id="panel-conversations" class="panel">
+                <div class="panel-header">
+                    <h3>對話歷史</h3>
+                    <button id="load-conversations-btn" class="btn btn-secondary" type="button">刷新</button>
                 </div>
-            </section>
+                <div id="conversations-view" class="list"></div>
+                <div id="conversation-detail" class="detail-box" hidden></div>
+            </article>
+        </section>
 
-            <!-- Consolidation Section -->
-            <section class="consolidation-section" id="consolidation-section" style="display: none;">
-                <h2 class="section-title">💭 記憶整合</h2>
-                <p class="section-desc">基於累積記憶的自我反思。</p>
-                <div id="consolidation-container" class="consolidation-container">
-                    <p class="loading">正在整合記憶...</p>
-                </div>
-            </section>
-        </main>
+        <section id="api-docs" class="api-docs">
+            <h2>API 文件</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Method</th>
+                        <th>Route</th>
+                        <th>說明</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>GET</td><td>/api/health</td><td>健康檢查（含 persistence）</td></tr>
+                    <tr><td>GET</td><td>/api/status</td><td>系統狀態總覽</td></tr>
+                    <tr><td>POST</td><td>/api/validate</td><td>Council 審議</td></tr>
+                    <tr><td>GET</td><td>/api/memories</td><td>記憶列表</td></tr>
+                    <tr><td>GET</td><td>/api/consolidate</td><td>記憶整合與模式</td></tr>
+                    <tr><td>GET</td><td>/api/conversations</td><td>對話分頁列表</td></tr>
+                    <tr><td>GET</td><td>/api/conversations/&lt;id&gt;</td><td>單一對話與訊息</td></tr>
+                    <tr><td>DELETE</td><td>/api/conversations/&lt;id&gt;</td><td>刪除對話</td></tr>
+                    <tr><td>GET</td><td>/api/audit-logs</td><td>審計日誌分頁列表</td></tr>
+                    <tr><td>POST</td><td>/api/chat</td><td>聊天與治理結果</td></tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
 
-        <!-- Footer -->
-        <footer class="footer">
-            <p>語魂 ToneSoul © 2026 | Multi-Perspective Coherence Framework</p>
-        </footer>
-    </div>
+    <footer class="footer">
+        <a href="https://github.com/Fan1234-1/tonesoul52" target="_blank" rel="noopener">
+            github.com/Fan1234-1/tonesoul52
+        </a>
+        <p>Version 0.6.0 · © 2026 ToneSoul</p>
+    </footer>
 
     <script src="app.js"></script>
 </body>
-
 </html>
