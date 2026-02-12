@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Send, Loader2, Brain, ChevronDown, ChevronUp, AlertTriangle, MessageSquare, MoveRight, Users, Server, Zap, WifiOff } from "lucide-react";
-import { ApiSettings } from "./SettingsModal";
+import { ApiSettings, isApiKeyRequired } from "./SettingsModal";
 import {
     Message as DBMessage,
     DeliberationData,
@@ -691,9 +691,12 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
     );
     const [fallbackReasonCode, setFallbackReasonCode] = useState<BackendFallbackReasonCode | null>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const providerRequiresApiKey = apiSettings ? isApiKeyRequired(apiSettings.provider) : true;
+    const hasProviderCredential = Boolean(apiSettings?.apiKey?.trim()) || apiSettings?.provider === "ollama";
 
     const shouldShowApiKeyHint =
-        !apiSettings?.apiKey
+        providerRequiresApiKey
+        && !apiSettings?.apiKey?.trim()
         && (
             !USE_BACKEND_CHAT
             || (ENABLE_PROVIDER_FALLBACK && (chatActiveMode === "fallback" || fallbackReasonCode !== null))
@@ -1183,14 +1186,14 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
     const runLegacyProviderFlow = async (
         userMessage: string
     ): Promise<{ response: string; deliberation: DeliberationData | undefined }> => {
-        if (!apiSettings?.apiKey) {
+        if (providerRequiresApiKey && !hasProviderCredential) {
             return {
                 response: "請先設定 API Key 才能使用 AI 對話功能。點擊側邊欄的 API 設定按鈕。",
                 deliberation: undefined,
             };
         }
 
-        if (apiSettings.mode === "fast") {
+        if (apiSettings?.mode === "fast") {
             return await performFastMode(userMessage);
         }
         const deliberationResult = await performMultiPathDeliberation(userMessage);
@@ -1220,13 +1223,12 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
 
             if (USE_BACKEND_CHAT) {
                 const fullAnalysis = apiSettings?.mode !== "fast";
-                const hasApiKey = Boolean(apiSettings?.apiKey);
 
                 // If we already know the backend is unavailable and we can fallback, skip the backend call
                 // to avoid waiting for request timeouts on every turn.
                 if (ENABLE_PROVIDER_FALLBACK && chatActiveMode === "fallback") {
                     setChatActiveMode("fallback");
-                    if (hasApiKey) {
+                    if (hasProviderCredential) {
                         setLoadingPhase("後端不可用，使用直接 API...");
                     } else {
                         setLoadingPhase("後端不可用，請先設定 API Key...");
@@ -1236,7 +1238,7 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
                     try {
                         const backendResult = await callBackendChat(userMessage.content, fullAnalysis);
                         if (isBackendDegradedResponse(backendResult.response)) {
-                            if (ENABLE_PROVIDER_FALLBACK && hasApiKey) {
+                            if (ENABLE_PROVIDER_FALLBACK && hasProviderCredential) {
                                 setChatActiveMode("fallback");
                                 setFallbackReasonCode("backend_error");
                                 setLoadingPhase("後端模型不可用，切換至直接 API...");

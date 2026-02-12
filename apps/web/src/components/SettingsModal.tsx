@@ -21,6 +21,10 @@ interface SettingsModalProps {
 
 const STORAGE_KEY = "tonesoul_api_settings";
 
+export function isApiKeyRequired(provider: ApiProvider): boolean {
+    return provider !== "ollama";
+}
+
 const PROVIDERS = [
     { id: "gemini" as ApiProvider, name: "Gemini", icon: "🔷", desc: "Google AI" },
     { id: "openai" as ApiProvider, name: "OpenAI", icon: "🟢", desc: "GPT-4o" },
@@ -64,9 +68,11 @@ export default function SettingsModal({
     const [apiKey, setApiKey] = useState(initialApiKey);
     const [mode, setMode] = useState<DeliberationMode>(initialMode);
     const [showKey, setShowKey] = useState(false);
+    const shouldShowTestInfo = isApiKeyRequired(provider) ? apiKey.trim().length > 0 : true;
 
     const handleSave = () => {
-        const settings: ApiSettings = { provider, apiKey, mode };
+        const normalizedApiKey = apiKey.trim();
+        const settings: ApiSettings = { provider, apiKey: normalizedApiKey, mode };
         saveSettings(settings);
         onSave(settings);
         onClose();
@@ -86,6 +92,7 @@ export default function SettingsModal({
             case "openai": return "sk-...";
             case "claude": return "sk-ant-...";
             case "xai": return "xai-...";
+            case "ollama": return "Ollama 不需要 API Key";
         }
     };
 
@@ -173,7 +180,7 @@ export default function SettingsModal({
                     <div>
                         <label className="block text-sm font-medium text-slate-700 mb-2">
                             <Key className="w-4 h-4 inline mr-1" />
-                            API Key
+                            API Key {isApiKeyRequired(provider) ? "" : "(選填)"}
                         </label>
                         <div className="relative">
                             <input
@@ -230,11 +237,13 @@ export default function SettingsModal({
                     </div>
 
                     {/* Test Info */}
-                    {apiKey && (
+                    {shouldShowTestInfo ? (
                         <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 text-sm text-blue-700">
-                            💡 儲存後，傳送任何訊息即可測試 API Key 是否有效。
+                            {isApiKeyRequired(provider)
+                                ? "💡 儲存後，傳送任何訊息即可測試 API Key 是否有效。"
+                                : "💡 Ollama 使用本機服務（預設 http://localhost:11434），不需要 API Key。"}
                         </div>
-                    )}
+                    ) : null}
                 </div>
 
                 {/* Footer */}
@@ -254,7 +263,7 @@ export default function SettingsModal({
                     </button>
                     <button type="button"
                         onClick={handleSave}
-                        disabled={!apiKey}
+                        disabled={isApiKeyRequired(provider) && !apiKey.trim()}
                         className="px-6 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                     >
                         <Check className="w-4 h-4" />

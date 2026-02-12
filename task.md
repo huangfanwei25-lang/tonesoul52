@@ -402,3 +402,9 @@
 - [x] 亂碼清理與 UTF-8 統一
 **參考**: `CODEX_TASK.md`, `memory/handoff/2026-02-06_phase16_tools_progress.md`
 
+## Phase 47: Ollama 無 Key Fallback 收斂
+- [x] `SettingsModal`：Ollama 顯示為 API Key 選填，修正 Test Info 顯示條件
+- [x] `ChatInterface`：用 `isApiKeyRequired` 套用提示與 fallback 憑證判斷，避免 Ollama 被誤判缺 key
+- [x] 新增 `apps/web/src/__tests__/settingsModal.test.ts`，鎖定 provider key requirement 規則
+- [x] 驗收：`npm --prefix apps/web test`、`npm --prefix apps/web run lint`、`npm --prefix apps/web run build` 全數通過
+**成功標準**: Ollama 在無 API Key 下可正常作為 fallback provider，且 UI 不再顯示錯誤 API Key 警示。
