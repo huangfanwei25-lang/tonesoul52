@@ -12,6 +12,14 @@ const DEFAULT_REQUEST_TIMEOUT_MS = 25000;
 const MOCK_FALLBACK_ENV = "TONESOUL_ENABLE_CHAT_MOCK_FALLBACK";
 const ALLOWED_COUNCIL_MODES = new Set(["rules", "rules_only", "hybrid", "full_llm"]);
 
+type PersonaPayload = {
+    name?: string;
+    style?: string;
+    weights?: { meaning?: number; practical?: number; safety?: number };
+    risk_sensitivity?: string;
+    response_length?: string;
+};
+
 type ChatRequestPayload = {
     conversation_id?: string;
     message?: string;
@@ -19,6 +27,7 @@ type ChatRequestPayload = {
     full_analysis?: boolean;
     council_mode?: "rules" | "hybrid" | "full_llm";
     perspective_config?: Record<string, Record<string, unknown>>;
+    persona?: PersonaPayload;
 };
 
 function resolveRequestTimeoutMs(): number {
@@ -118,6 +127,14 @@ function parseChatBody(raw: unknown): { body?: ChatRequestPayload; error?: NextR
             }
         }
         parsed.perspective_config = perspectiveConfig as ChatRequestPayload["perspective_config"];
+    }
+
+    const persona = raw.persona;
+    if (persona !== undefined) {
+        if (!isPlainObject(persona)) {
+            return { error: badRequest("persona") };
+        }
+        parsed.persona = persona as PersonaPayload;
     }
 
     return { body: parsed };

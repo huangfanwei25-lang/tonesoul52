@@ -830,6 +830,13 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
                 history,
                 full_analysis: fullAnalysis,
                 council_mode: councilMode,
+                persona: personaConfig ? {
+                    name: personaConfig.name,
+                    style: personaConfig.style,
+                    weights: personaConfig.weights,
+                    risk_sensitivity: personaConfig.riskSensitivity,
+                    response_length: personaConfig.responseLength,
+                } : undefined,
             }),
         });
 

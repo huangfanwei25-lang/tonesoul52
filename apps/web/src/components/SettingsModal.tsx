@@ -154,6 +154,20 @@ export default function SettingsModal({
                         </div>
                     </div>
 
+                    {/* Backend Mode Notice */}
+                    {process.env.NEXT_PUBLIC_CHAT_EXECUTION_MODE === "backend" && (
+                        <div className="bg-sky-50 border border-sky-200 rounded-xl p-4">
+                            <div className="flex items-start gap-2">
+                                <span className="text-sky-600 mt-0.5 flex-shrink-0">🔗</span>
+                                <div className="text-sm text-sky-800">
+                                    <strong>目前連線後端伺服器。</strong>
+                                    <br />
+                                    下方 API 提供者設定僅在後端不可用時作為備用。
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                     {/* Provider Selection */}
                     <div>
                         <label className="block text-sm font-medium text-slate-700 mb-2">

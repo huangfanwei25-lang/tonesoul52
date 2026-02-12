@@ -84,21 +84,21 @@ class UnifiedPipeline:
         self._deliberation = None
 
     def _get_gemini(self):
-        """Get LLM client (Ollama first, Gemini fallback)."""
-        if self._gemini is None:
-            # Try Ollama first
-            try:
-                from tonesoul.llm import create_ollama_client
+        """Get LLM client based on LLM_BACKEND env var.
 
-                client = create_ollama_client()
-                if client.is_available() and client.list_models():
-                    self._gemini = client
-                    self._llm_backend = "Ollama"
-                    return self._gemini
-            except Exception:
-                pass
+        Supported values:
+          - 'gemini'  -> Cloud mode, skip Ollama entirely
+          - 'ollama'  -> Local mode, skip Gemini entirely
+          - 'auto'    -> (default) Try Ollama first, Gemini fallback
+        """
+        if self._gemini is not None:
+            return self._gemini
 
-            # Fallback to Gemini
+        import os
+
+        llm_mode = (os.environ.get("LLM_BACKEND") or "auto").strip().lower()
+
+        if llm_mode == "gemini":
             try:
                 from tonesoul.llm import create_gemini_client
 
@@ -106,6 +106,39 @@ class UnifiedPipeline:
                 self._llm_backend = "Gemini"
             except Exception:
                 pass
+            return self._gemini
+
+        if llm_mode == "ollama":
+            try:
+                from tonesoul.llm import create_ollama_client
+
+                client = create_ollama_client()
+                if client.is_available() and client.list_models():
+                    self._gemini = client
+                    self._llm_backend = "Ollama"
+            except Exception:
+                pass
+            return self._gemini
+
+        # Auto mode: Ollama first, Gemini fallback
+        try:
+            from tonesoul.llm import create_ollama_client
+
+            client = create_ollama_client()
+            if client.is_available() and client.list_models():
+                self._gemini = client
+                self._llm_backend = "Ollama"
+                return self._gemini
+        except Exception:
+            pass
+
+        try:
+            from tonesoul.llm import create_gemini_client
+
+            self._gemini = create_gemini_client()
+            self._llm_backend = "Gemini"
+        except Exception:
+            pass
         return self._gemini
 
     def _get_tonebridge(self):
@@ -279,6 +312,7 @@ class UnifiedPipeline:
         council_mode: Optional[str] = None,
         perspective_config: Optional[Dict[str, Dict[str, Any]]] = None,
         prior_tension: Optional[Dict[str, Any]] = None,
+        persona_config: Optional[Dict[str, Any]] = None,
     ) -> UnifiedResponse:
         """
         處理用戶訊息的完整管線
@@ -292,6 +326,24 @@ class UnifiedPipeline:
             UnifiedResponse 包含回應和所有分析
         """
         history = history or []
+
+        # ========== Persona Config 注入 ==========
+        if persona_config:
+            persona_parts = []
+            if persona_config.get("style"):
+                persona_parts.append(f"回應風格: {persona_config['style']}")
+            weights = persona_config.get("weights", {})
+            if weights:
+                persona_parts.append(f"意義探索權重: {weights.get('meaning', 50)}%")
+                persona_parts.append(f"實用導向權重: {weights.get('practical', 50)}%")
+                persona_parts.append(f"安全考量權重: {weights.get('safety', 50)}%")
+            if persona_config.get("risk_sensitivity"):
+                persona_parts.append(f"風險敏感度: {persona_config['risk_sensitivity']}")
+            if persona_config.get("response_length"):
+                persona_parts.append(f"回應長度: {persona_config['response_length']}")
+            if persona_parts:
+                persona_context = " | ".join(persona_parts)
+                user_message = f"[用戶偏好: {persona_context}]\n\n{user_message}"
 
         # ========== 0. 重建 Third Axiom 狀態 ==========
         # 從對話歷史中恢復 commit_stack，確保跨 request 持久化

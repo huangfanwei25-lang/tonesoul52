@@ -899,6 +899,9 @@ def chat():
         perspective_config, error = _validate_perspective_config(perspective_config)
         if error is not None:
             return error
+    persona_config, error = _require_optional_dict(data, "persona")
+    if error is not None:
+        return error
     message = message if message is not None else ""
     history = history if history is not None else []
     full_analysis = full_analysis if full_analysis is not None else True
@@ -916,6 +919,7 @@ def chat():
             council_mode=council_mode,
             perspective_config=perspective_config,
             prior_tension=prior_tension,
+            persona_config=persona_config,
         )
 
         if supabase_persistence.enabled and conversation_id:
