@@ -95,6 +95,7 @@ def test_llm_client_cache_is_model_aware(monkeypatch):
 def test_llm_without_api_key_skips_client_initialization(monkeypatch):
     LLMPerspective._gemini_clients = {}
     monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+    monkeypatch.delenv("GOOGLE_API_KEY", raising=False)
     calls = []
 
     def fake_build(cls, model: str):
@@ -106,3 +107,20 @@ def test_llm_without_api_key_skips_client_initialization(monkeypatch):
 
     assert client is None
     assert calls == []
+
+
+def test_llm_with_google_api_key_initializes_client(monkeypatch):
+    calls = []
+    LLMPerspective._gemini_clients = {}
+    monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+    monkeypatch.setenv("GOOGLE_API_KEY", "dummy-google-key")
+
+    def fake_build(cls, model: str):
+        calls.append(model)
+        return {"model": model, "id": len(calls)}
+
+    monkeypatch.setattr(LLMPerspective, "_build_gemini_client", classmethod(fake_build))
+
+    client = LLMPerspective._get_gemini_client(DEFAULT_LLM_MODEL)
+    assert client is not None
+    assert calls == [DEFAULT_LLM_MODEL]

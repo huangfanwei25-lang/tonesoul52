@@ -128,6 +128,7 @@ def test_status_route_exposes_counts_and_backend(monkeypatch):
     fake = _FakePersistence(enabled=True)
     monkeypatch.setattr(server, "supabase_persistence", fake)
     monkeypatch.setattr(server, "llm_backend", "Gemini API")
+    monkeypatch.setattr(server, "llm_last_error", None)
     monkeypatch.setattr(server, "get_llm_client", lambda: None)
 
     client = _client()
@@ -137,6 +138,7 @@ def test_status_route_exposes_counts_and_backend(monkeypatch):
     assert response.status_code == 200
     assert payload["persistence"]["enabled"] is True
     assert payload["llm_backend"] == "Gemini API"
+    assert "llm_error" in payload
     assert payload["memory_count"] == 11
     assert payload["conversation_count"] == 12
     assert payload["audit_log_count"] == 13

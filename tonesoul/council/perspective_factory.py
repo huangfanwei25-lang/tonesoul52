@@ -147,8 +147,11 @@ class LLMPerspective(IPerspective):
 
     @classmethod
     def _has_gemini_credentials(cls) -> bool:
-        api_key = os.environ.get("GEMINI_API_KEY")
-        return bool(api_key and api_key.strip())
+        for key_name in ("GEMINI_API_KEY", "GOOGLE_API_KEY"):
+            api_key = os.environ.get(key_name)
+            if isinstance(api_key, str) and api_key.strip():
+                return True
+        return False
 
     @classmethod
     def _build_gemini_client(cls, model: str):

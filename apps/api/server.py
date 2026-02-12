@@ -361,6 +361,7 @@ def status():
         {
             "persistence": persistence_status,
             "llm_backend": llm_backend or "unavailable",
+            "llm_error": llm_last_error,
             "memory_count": counts.get("memory_count", 0),
             "conversation_count": counts.get("conversation_count", 0),
             "audit_log_count": counts.get("audit_log_count", 0),
@@ -552,14 +553,17 @@ def session_report():
 # ===== LLM Client (Ollama first, Gemini fallback) =====
 llm_client = None
 llm_backend = None
+llm_last_error = None
 
 
 def get_llm_client():
     """Lazy-load LLM client. Tries Ollama first, then Gemini."""
-    global llm_client, llm_backend
+    global llm_client, llm_backend, llm_last_error
 
     if llm_client is not None:
         return llm_client
+
+    ollama_error = None
 
     # Try Ollama first (local)
     try:
@@ -571,9 +575,11 @@ def get_llm_client():
             if models:
                 llm_client = client
                 llm_backend = f"Ollama ({models[0]})"
+                llm_last_error = None
                 print(f"[INFO] LLM backend: {llm_backend}")
                 return llm_client
     except Exception as e:
+        ollama_error = f"{e.__class__.__name__}: {e}"
         print(f"[WARN] Ollama not available: {e}")
 
     # Fallback to Gemini
@@ -582,9 +588,16 @@ def get_llm_client():
 
         llm_client = create_gemini_client()
         llm_backend = "Gemini API"
+        llm_last_error = None
         print(f"[INFO] LLM backend: {llm_backend}")
         return llm_client
     except Exception as e:
+        gemini_error = f"{e.__class__.__name__}: {e}"
+        llm_last_error = (
+            f"ollama={ollama_error}; gemini={gemini_error}"
+            if ollama_error
+            else f"gemini={gemini_error}"
+        )
         print(f"[ERROR] Gemini client error: {e}")
         return None
 

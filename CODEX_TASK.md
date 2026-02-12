@@ -227,4 +227,5 @@ curl https://tonesoul52.onrender.com/api/memories
 以下已設定在 Render：
 - `SUPABASE_URL` = `https://sjtoyjsnykstclcbktoo.supabase.co`
 - `SUPABASE_KEY` = （service_role key，已設定）
-- `GOOGLE_API_KEY` = （Gemini API key）
+- `GEMINI_API_KEY` = （Gemini API key，建議）
+- `GOOGLE_API_KEY` = （相容別名，可與 `GEMINI_API_KEY` 擇一）
