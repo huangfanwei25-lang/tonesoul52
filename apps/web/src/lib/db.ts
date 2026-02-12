@@ -294,6 +294,22 @@ export async function clearAllConversations(): Promise<void> {
     });
 }
 
+/**
+ * 清除所有記憶洞察
+ */
+export async function clearAllMemoryInsights(): Promise<void> {
+    const db = await initDB();
+
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(MEMORY_STORE_NAME, 'readwrite');
+        const store = tx.objectStore(MEMORY_STORE_NAME);
+        store.clear();
+
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+    });
+}
+
 // ==================== 記憶洞察 CRUD ====================
 
 /**

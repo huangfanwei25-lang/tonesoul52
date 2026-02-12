@@ -20,8 +20,20 @@ import {
   saveConversation,
   deleteConversation,
   clearAllConversations,
+  clearAllMemoryInsights,
 } from "@/lib/db";
 import { Menu, Settings, FileText, LogOut, Key, Layers, BarChart3, Database, Sliders, BookOpen } from "lucide-react";
+
+const RESETTABLE_LOCAL_STORAGE_KEYS = [
+  "tonesoul_consent",
+  "tonesoul_api_settings",
+  "tonesoul_persona",
+  "tonesoul_onboarded",
+  "tonesoul_soul_state",
+  "tonesoul_audit_log",
+  "tonesoul.private_notes.v1",
+  "tonesoul.chat.council_mode",
+] as const;
 
 export default function Home() {
   const isHydrated = useSyncExternalStore(
@@ -119,9 +131,15 @@ export default function Home() {
     }
 
     try {
-      await clearAllConversations();
-      localStorage.removeItem("tonesoul_consent");
+      await Promise.all([
+        clearAllConversations(),
+        clearAllMemoryInsights(),
+      ]);
+      RESETTABLE_LOCAL_STORAGE_KEYS.forEach((key) => {
+        localStorage.removeItem(key);
+      });
       setHasConsent(false);
+      setShowOnboarding(true);
       setConversations([]);
       setCurrentConversation(null);
     } catch (error) {

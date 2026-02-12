@@ -4,6 +4,7 @@
 - [x] 盤點 `apps/web` 所有 `<button>` 事件綁定與觸發路徑
 - [x] 統一補上缺失的 `type="button"`，避免未來 form 容器下誤觸 submit
 - [x] 保持新話題刪除流程（含 mobile/touch）可操作，避免 hover-only 依賴
+- [x] 修復「撤回同意 & 刪除資料」僅清 conversations 的缺口，補齊 memory insights 與本機 key 清除
 - [x] 以 `test + lint + build` 完整驗證前端可用性
 **成功標準**: 前端主要操作按鍵在桌機/手機行為一致，且 `apps/web` 測試、靜態檢查與建置皆通過。 
 
