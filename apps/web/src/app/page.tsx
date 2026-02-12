@@ -6,6 +6,7 @@ import ConsentModal from "@/components/ConsentModal";
 import ChatInterface from "@/components/ChatInterface";
 import ConversationList from "@/components/ConversationList";
 import SettingsModal, { ApiSettings, getStoredSettings } from "@/components/SettingsModal";
+import LlmSwitcher from "@/components/LlmSwitcher";
 import SessionReport from "@/components/SessionReport";
 import EntropyChart from "@/components/EntropyChart";
 import TensionTimeline from "@/components/TensionTimeline";
@@ -37,7 +38,7 @@ const RESETTABLE_LOCAL_STORAGE_KEYS = [
 
 export default function Home() {
   const isHydrated = useSyncExternalStore(
-    () => () => {},
+    () => () => { },
     () => true,
     () => false,
   );
@@ -293,6 +294,7 @@ export default function Home() {
                 : "選擇或建立對話"}
             </p>
           </div>
+          <LlmSwitcher />
           <button type="button"
             onClick={() => setShowSettings(true)}
             className={`p-2 hover:bg-slate-100 rounded-lg ${!apiSettings?.apiKey ? 'animate-pulse' : ''}`}
