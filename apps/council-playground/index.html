@@ -1,224 +1,133 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ToneSoul Council Playground</title>
+    <title>ToneSoul System Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-        href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Space+Grotesk:wght@400;500;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap"
         rel="stylesheet"
     />
     <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <div class="bg-layer"></div>
+    <div class="bg-noise" aria-hidden="true"></div>
 
     <header class="topbar">
         <div class="brand">
             <span class="brand-mark">TS</span>
             <div>
-                <p class="brand-title">語魂 ToneSoul</p>
-                <p class="brand-subtitle">Council Playground</p>
+                <p class="brand-title">ToneSoul 後端觀測儀表板</p>
+                <p class="brand-subtitle">Backend is for AI services, not user chat UI</p>
             </div>
         </div>
-        <nav class="topnav">
-            <a href="#api-docs">API 文件</a>
-            <a href="/chat">Chat</a>
-            <a href="https://github.com/Fan1234-1/tonesoul52" target="_blank" rel="noopener">GitHub</a>
-        </nav>
+        <div class="topbar-actions">
+            <button id="refresh-all-btn" class="btn btn-primary" type="button">重新整理</button>
+        </div>
     </header>
 
     <main class="container">
-        <section class="hero">
-            <p class="hero-label">AI GOVERNANCE LAYER</p>
-            <h1>ToneSoul 治理層即時面板</h1>
-            <p class="hero-desc">
-                這裡是語魂系統的後端觀測入口，提供審議、記憶、審計與對話歷史的整合檢視。
-            </p>
-            <div class="equation">γ·Honesty &gt; β·Helpfulness</div>
-        </section>
-
-        <section class="status-panel">
-            <div class="status-header">
-                <h2>系統狀態</h2>
-                <button id="refresh-status-btn" class="btn btn-secondary" type="button">重新整理</button>
+        <section class="panel auth-panel">
+            <div class="panel-header">
+                <h2>Read API 授權</h2>
             </div>
-            <div class="read-auth-row">
-                <label for="read-token-input" class="read-auth-label">Read Token</label>
+            <div class="auth-row">
                 <input
                     id="read-token-input"
-                    class="read-auth-input"
+                    class="input"
                     type="password"
                     autocomplete="off"
-                    placeholder="可選：TONESOUL_READ_API_TOKEN"
+                    placeholder="如果後端設定 TONESOUL_READ_API_TOKEN，請輸入 token"
                 />
-                <button id="save-read-token-btn" class="btn btn-secondary" type="button">儲存</button>
-                <button id="clear-read-token-btn" class="btn btn-secondary" type="button">清除</button>
-                <p id="read-token-note" class="read-auth-note">未設定 Read Token（可讀取端點可能會被 401 拒絕）。</p>
+                <button id="save-token-btn" class="btn btn-secondary" type="button">儲存</button>
+                <button id="clear-token-btn" class="btn btn-secondary" type="button">清除</button>
             </div>
-            <div class="status-grid">
-                <article class="status-card">
-                    <p class="status-label">DB / Persistence</p>
-                    <p id="status-db" class="status-value">--</p>
-                    <div class="status-light">
-                        <span id="status-db-dot" class="dot dot-neutral"></span>
-                        <span id="status-db-note">尚未讀取</span>
-                    </div>
-                </article>
-                <article class="status-card">
-                    <p class="status-label">LLM Backend</p>
-                    <p id="status-llm" class="status-value">--</p>
-                    <div class="status-light">
-                        <span id="status-llm-dot" class="dot dot-neutral"></span>
-                        <span id="status-llm-note">尚未讀取</span>
-                    </div>
-                </article>
-                <article class="status-card">
-                    <p class="status-label">記憶數量</p>
-                    <p id="status-memory-count" class="status-value">0</p>
-                </article>
-                <article class="status-card">
-                    <p class="status-label">對話數量</p>
-                    <p id="status-conversation-count" class="status-value">0</p>
-                </article>
-                <article class="status-card">
-                    <p class="status-label">審計日誌數量</p>
-                    <p id="status-audit-count" class="status-value">0</p>
-                </article>
-                <article class="status-card">
-                    <p class="status-label">最後更新</p>
-                    <p id="status-updated-at" class="status-value status-small">--</p>
-                </article>
-            </div>
-        </section>
-
-        <section class="feature-panel">
-            <h2>功能區塊</h2>
-            <div class="feature-grid">
-                <button class="feature-card is-active" data-panel-target="panel-council" type="button">
-                    <span class="feature-icon">🧪</span>
-                    <span class="feature-title">Council 審議</span>
-                    <span class="feature-desc">測試 AI 輸出是否通過治理門控</span>
-                </button>
-                <a class="feature-card" href="/chat">
-                    <span class="feature-icon">💬</span>
-                    <span class="feature-title">Chat</span>
-                    <span class="feature-desc">與語魂對話</span>
-                </a>
-                <button class="feature-card" data-panel-target="panel-memories" type="button">
-                    <span class="feature-icon">📖</span>
-                    <span class="feature-title">記憶日誌</span>
-                    <span class="feature-desc">查看 AI 的決策記憶</span>
-                </button>
-                <button class="feature-card" data-panel-target="panel-consolidation" type="button">
-                    <span class="feature-icon">💭</span>
-                    <span class="feature-title">自我反思</span>
-                    <span class="feature-desc">查看記憶整合與模式分析</span>
-                </button>
-                <button class="feature-card" data-panel-target="panel-audit" type="button">
-                    <span class="feature-icon">📊</span>
-                    <span class="feature-title">審計日誌</span>
-                    <span class="feature-desc">查看 Gate 決策歷史</span>
-                </button>
-                <button class="feature-card" data-panel-target="panel-conversations" type="button">
-                    <span class="feature-icon">📋</span>
-                    <span class="feature-title">對話歷史</span>
-                    <span class="feature-desc">查看所有對話與訊息</span>
-                </button>
-            </div>
-        </section>
-
-        <section class="panel-shell">
-            <article id="panel-council" class="panel is-active">
-                <div class="panel-header">
-                    <h3>Council 審議</h3>
-                </div>
-                <textarea
-                    id="draft-input"
-                    class="draft-input"
-                    placeholder="貼上要審議的輸出內容，按下「執行審議」。"
-                ></textarea>
-                <div class="panel-actions">
-                    <button id="submit-btn" class="btn btn-primary" type="button">執行審議</button>
-                </div>
-                <div id="council-result" class="council-result" hidden>
-                    <div class="result-head">
-                        <p id="verdict-badge" class="verdict-badge">--</p>
-                        <p id="coherence-value" class="coherence-value">一致性 --</p>
-                    </div>
-                    <p id="verdict-summary" class="result-summary"></p>
-                    <p id="human-summary" class="result-human"></p>
-                    <div id="votes-list" class="votes-list"></div>
-                    <details class="result-transcript">
-                        <summary>查看完整 transcript</summary>
-                        <pre id="transcript-json"></pre>
-                    </details>
-                </div>
-            </article>
-
-            <article id="panel-memories" class="panel">
-                <div class="panel-header">
-                    <h3>記憶日誌</h3>
-                    <button id="load-memories-btn" class="btn btn-secondary" type="button">刷新</button>
-                </div>
-                <div id="memories-list" class="list"></div>
-            </article>
-
-            <article id="panel-consolidation" class="panel">
-                <div class="panel-header">
-                    <h3>自我反思</h3>
-                    <button id="load-consolidation-btn" class="btn btn-secondary" type="button">刷新</button>
-                </div>
-                <div id="consolidation-view" class="list"></div>
-            </article>
-
-            <article id="panel-audit" class="panel">
-                <div class="panel-header">
-                    <h3>審計日誌</h3>
-                    <button id="load-audit-btn" class="btn btn-secondary" type="button">刷新</button>
-                </div>
-                <div id="audit-logs-view" class="list"></div>
-            </article>
-
-            <article id="panel-conversations" class="panel">
-                <div class="panel-header">
-                    <h3>對話歷史</h3>
-                    <button id="load-conversations-btn" class="btn btn-secondary" type="button">刷新</button>
-                </div>
-                <div id="conversations-view" class="list"></div>
-                <div id="conversation-detail" class="detail-box" hidden></div>
-            </article>
-        </section>
-
-        <section id="api-docs" class="api-docs">
-            <h2>API 文件</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Method</th>
-                        <th>Route</th>
-                        <th>說明</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td>GET</td><td>/api/health</td><td>健康檢查（含 persistence）</td></tr>
-                    <tr><td>GET</td><td>/api/status</td><td>系統狀態總覽</td></tr>
-                    <tr><td>POST</td><td>/api/validate</td><td>Council 審議</td></tr>
-                    <tr><td>GET</td><td>/api/memories</td><td>記憶列表</td></tr>
-                    <tr><td>GET</td><td>/api/consolidate</td><td>記憶整合與模式</td></tr>
-                    <tr><td>GET</td><td>/api/conversations</td><td>對話分頁列表</td></tr>
-                    <tr><td>GET</td><td>/api/conversations/&lt;id&gt;</td><td>單一對話與訊息</td></tr>
-                    <tr><td>DELETE</td><td>/api/conversations/&lt;id&gt;</td><td>刪除對話</td></tr>
-                    <tr><td>GET</td><td>/api/audit-logs</td><td>審計日誌分頁列表</td></tr>
-                    <tr><td>POST</td><td>/api/chat</td><td>聊天與治理結果</td></tr>
-                </tbody>
-            </table>
-            <p class="api-note">
-                若後端已設定 <code>TONESOUL_READ_API_TOKEN</code>，請先在上方輸入 Read Token，否則
-                <code>/api/memories</code>、<code>/api/conversations*</code>、<code>/api/audit-logs</code> 會回傳 401。
+            <p id="auth-note" class="note">
+                未設定 token 也可使用；若讀取 API 回傳 401，再輸入 token。
             </p>
+        </section>
+
+        <section class="panel">
+            <div class="panel-header">
+                <h2>系統健康狀態</h2>
+                <p id="last-updated" class="meta">--</p>
+            </div>
+            <div class="card-grid">
+                <article class="status-card">
+                    <p class="label">API Health</p>
+                    <p id="health-status" class="value">--</p>
+                    <p id="health-version" class="hint">version --</p>
+                </article>
+                <article class="status-card">
+                    <p class="label">Persistence</p>
+                    <p id="persistence-status" class="value">--</p>
+                    <p id="persistence-note" class="hint">--</p>
+                </article>
+                <article class="status-card">
+                    <p class="label">LLM Backend</p>
+                    <p id="llm-status" class="value">--</p>
+                    <p id="llm-note" class="hint">--</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="panel">
+            <div class="panel-header">
+                <h2>語料統計</h2>
+            </div>
+            <div class="card-grid">
+                <article class="status-card">
+                    <p class="label">Conversations</p>
+                    <p id="stat-conversations" class="value">0</p>
+                </article>
+                <article class="status-card">
+                    <p class="label">Messages</p>
+                    <p id="stat-messages" class="value">0</p>
+                </article>
+                <article class="status-card">
+                    <p class="label">Audit Logs</p>
+                    <p id="stat-audits" class="value">0</p>
+                </article>
+                <article class="status-card">
+                    <p class="label">Memories</p>
+                    <p id="stat-memories" class="value">0</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="panel">
+            <div class="panel-header">
+                <h2>自我演化狀態</h2>
+            </div>
+            <div class="card-grid">
+                <article class="status-card">
+                    <p class="label">Patterns</p>
+                    <p id="evolution-patterns" class="value">0</p>
+                </article>
+                <article class="status-card">
+                    <p class="label">Conversations Analyzed</p>
+                    <p id="evolution-analyzed" class="value">0</p>
+                </article>
+                <article class="status-card">
+                    <p class="label">Latest Distillation</p>
+                    <p id="evolution-latest" class="value small">--</p>
+                </article>
+                <article class="status-card">
+                    <p class="label">Summary</p>
+                    <p id="evolution-summary" class="hint">--</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="panel">
+            <div class="panel-header">
+                <h2>審計日誌摘要（最近 10 筆）</h2>
+            </div>
+            <div id="audit-list" class="list">
+                <article class="list-item">載入中...</article>
+            </div>
         </section>
     </main>
 
@@ -226,7 +135,7 @@
         <a href="https://github.com/Fan1234-1/tonesoul52" target="_blank" rel="noopener">
             github.com/Fan1234-1/tonesoul52
         </a>
-        <p>Version 0.6.0 · © 2026 ToneSoul</p>
+        <span>Playground v0.7.0</span>
     </footer>
 
     <script src="app.js"></script>

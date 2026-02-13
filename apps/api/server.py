@@ -19,6 +19,7 @@ from flask_cors import CORS
 
 from tonesoul.council import CouncilRequest, CouncilRuntime
 from tonesoul.council.self_journal import load_recent_memory
+from tonesoul.evolution import ContextDistiller
 from tonesoul.memory import consolidate
 from tonesoul.supabase_persistence import SupabasePersistence
 
@@ -43,6 +44,7 @@ _VTP_CONTEXT_FLAGS = (
 )
 _ALLOWED_COUNCIL_MODES = {"rules", "rules_only", "hybrid", "full_llm"}
 supabase_persistence = SupabasePersistence.from_env()
+_context_distiller: ContextDistiller | None = None
 
 
 def _env_flag(name: str, default: bool = False) -> bool:
@@ -193,6 +195,27 @@ def _utc_now() -> str:
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
+def _get_context_distiller() -> ContextDistiller:
+    global _context_distiller
+    if _context_distiller is None or _context_distiller.persistence is not supabase_persistence:
+        _context_distiller = ContextDistiller(supabase_persistence)
+    return _context_distiller
+
+
+def _get_evolution_summary_payload() -> dict:
+    try:
+        return _get_context_distiller().get_summary()
+    except Exception:
+        return {
+            "total_patterns": 0,
+            "conversations_analyzed": 0,
+            "last_distilled_at": None,
+            "time_range": [None, None],
+            "pattern_breakdown": {},
+            "summary": "Evolution summary unavailable.",
+        }
+
+
 def _build_prior_tension(conversation_id: str | None) -> dict | None:
     if not supabase_persistence.enabled:
         return None
@@ -336,12 +359,6 @@ def index():
     return app.send_static_file("index.html")
 
 
-@app.route("/chat")
-def chat_page():
-    """Serve the chat frontend."""
-    return app.send_static_file("chat.html")
-
-
 @app.route("/api/validate", methods=["POST"])
 def validate():
     """Run PreOutputCouncil on input text."""
@@ -455,9 +472,67 @@ def status():
             "conversation_count": counts.get("conversation_count", 0),
             "audit_log_count": counts.get("audit_log_count", 0),
             "message_count": counts.get("message_count", 0),
+            "evolution": _get_evolution_summary_payload(),
             "timestamp": _utc_now(),
         }
     )
+
+
+@app.route("/api/evolution/distill", methods=["POST"])
+def evolution_distill():
+    """Run one context-distillation pass."""
+    auth_error = _require_read_api_auth()
+    if auth_error is not None:
+        return auth_error
+
+    data = _json_payload() or {}
+    raw_limit = data.get("limit", 100)
+    if not isinstance(raw_limit, int):
+        return jsonify({"error": "Invalid limit"}), 400
+    limit = max(1, min(raw_limit, _MAX_PAGINATION_LIMIT * 5))
+
+    try:
+        result = _get_context_distiller().distill(limit=limit)
+    except Exception as exc:
+        return _error_response("Failed to distill context patterns", 500, exc)
+
+    payload = result.to_dict()
+    payload["success"] = True
+    payload["limit"] = limit
+    return jsonify(payload)
+
+
+@app.route("/api/evolution/patterns", methods=["GET"])
+def evolution_patterns():
+    """List distilled context patterns."""
+    auth_error = _require_read_api_auth()
+    if auth_error is not None:
+        return auth_error
+
+    pattern_type = request.args.get("pattern_type", type=str)
+    normalized_type = (
+        pattern_type.strip().lower() if isinstance(pattern_type, str) and pattern_type.strip() else None
+    )
+    distiller = _get_context_distiller()
+    patterns = distiller.get_patterns(pattern_type=normalized_type)
+    summary = distiller.get_summary()
+    return jsonify(
+        {
+            "patterns": [pattern.to_dict() for pattern in patterns],
+            "total": len(patterns),
+            "pattern_type": normalized_type,
+            "last_distilled_at": summary.get("last_distilled_at"),
+        }
+    )
+
+
+@app.route("/api/evolution/summary", methods=["GET"])
+def evolution_summary():
+    """Get latest self-evolution summary."""
+    auth_error = _require_read_api_auth()
+    if auth_error is not None:
+        return auth_error
+    return jsonify(_get_evolution_summary_payload())
 
 
 @app.route("/api/conversation", methods=["POST"])
