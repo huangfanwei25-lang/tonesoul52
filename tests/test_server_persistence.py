@@ -114,7 +114,10 @@ def test_list_conversations_route_forwards_session_id_filter(monkeypatch):
 
     assert response.status_code == 200
     assert payload["session_id"] == "session_demo"
-    assert ("list_conversations", {"limit": 20, "offset": 0, "session_id": "session_demo"}) in fake.calls
+    assert (
+        "list_conversations",
+        {"limit": 20, "offset": 0, "session_id": "session_demo"},
+    ) in fake.calls
 
 
 def test_get_conversation_route_returns_404_when_missing(monkeypatch):

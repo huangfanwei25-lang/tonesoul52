@@ -408,7 +408,9 @@ class ContextDistiller:
                     extracted_at=extracted_at,
                     metadata={
                         "tracked_conversations": tracked,
-                        "positive_shift_conversations": len(_unique_preserve_order(positive_shift_ids)),
+                        "positive_shift_conversations": len(
+                            _unique_preserve_order(positive_shift_ids)
+                        ),
                     },
                 )
             )
@@ -425,7 +427,9 @@ class ContextDistiller:
                     extracted_at=extracted_at,
                     metadata={
                         "tracked_conversations": tracked,
-                        "negative_shift_conversations": len(_unique_preserve_order(negative_shift_ids)),
+                        "negative_shift_conversations": len(
+                            _unique_preserve_order(negative_shift_ids)
+                        ),
                     },
                 )
             )
@@ -461,7 +465,9 @@ class ContextDistiller:
             if first_negative_index < 0:
                 continue
 
-            recovered = any(_tone_score(text) >= 1.0 for text in user_texts[first_negative_index + 1 :])
+            recovered = any(
+                _tone_score(text) >= 1.0 for text in user_texts[first_negative_index + 1 :]
+            )
             if recovered and conversation_id:
                 resolved_ids.append(conversation_id)
             elif conversation_id:
@@ -490,7 +496,9 @@ class ContextDistiller:
                     evidence=_unique_preserve_order(unresolved_ids)[:10],
                     confidence=confidence,
                     extracted_at=extracted_at,
-                    metadata={"unresolved_conversations": len(_unique_preserve_order(unresolved_ids))},
+                    metadata={
+                        "unresolved_conversations": len(_unique_preserve_order(unresolved_ids))
+                    },
                 )
             )
         return patterns

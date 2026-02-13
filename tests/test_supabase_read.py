@@ -128,7 +128,12 @@ def test_memories_route_falls_back_to_local_when_persistence_disabled(monkeypatc
         enabled = False
 
         def status_dict(self):
-            return {"provider": "supabase", "enabled": False, "configured": False, "last_error": None}
+            return {
+                "provider": "supabase",
+                "enabled": False,
+                "configured": False,
+                "last_error": None,
+            }
 
     monkeypatch.setattr(server, "supabase_persistence", _DisabledPersistence())
     monkeypatch.setattr(server, "load_recent_memory", lambda limit=10: [{"id": "local_1"}])

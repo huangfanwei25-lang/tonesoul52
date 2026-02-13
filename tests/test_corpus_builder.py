@@ -46,9 +46,18 @@ class _FakePersistence:
                         "emergent_values": ["safety", "clarity"],
                         "transcript": {
                             "votes": [
-                                {"perspective": "Philosopher", "reasoning": "Stay honest about limits."},
-                                {"perspective": "Engineer", "reasoning": "Use incremental implementation."},
-                                {"perspective": "Guardian", "reasoning": "Avoid unsafe escalation."},
+                                {
+                                    "perspective": "Philosopher",
+                                    "reasoning": "Stay honest about limits.",
+                                },
+                                {
+                                    "perspective": "Engineer",
+                                    "reasoning": "Use incremental implementation.",
+                                },
+                                {
+                                    "perspective": "Guardian",
+                                    "reasoning": "Avoid unsafe escalation.",
+                                },
                             ]
                         },
                     },

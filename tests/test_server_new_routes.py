@@ -42,18 +42,29 @@ class _FakeEvolutionPersistence:
                             "emergent_values": ["honesty"],
                         },
                     },
-                    {"role": "user", "content": "Thanks, better now", "created_at": "2026-02-12T00:00:02Z"},
+                    {
+                        "role": "user",
+                        "content": "Thanks, better now",
+                        "created_at": "2026-02-12T00:00:02Z",
+                    },
                 ],
             }
         return {
             "id": "conv_2",
             "messages": [
-                {"role": "user", "content": "Can we do this safely?", "created_at": "2026-02-12T01:00:00Z"},
+                {
+                    "role": "user",
+                    "content": "Can we do this safely?",
+                    "created_at": "2026-02-12T01:00:00Z",
+                },
                 {
                     "role": "assistant",
                     "content": "Yes, with constraints.",
                     "created_at": "2026-02-12T01:00:01Z",
-                    "deliberation": {"self_commits": ["bounded help"], "emergent_values": ["safety"]},
+                    "deliberation": {
+                        "self_commits": ["bounded help"],
+                        "emergent_values": ["safety"],
+                    },
                 },
             ],
         }

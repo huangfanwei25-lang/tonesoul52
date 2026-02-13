@@ -47,7 +47,11 @@ class _FakePersistence:
             "created_at": "2026-02-11T00:00:00Z",
             "updated_at": "2026-02-11T00:05:00Z",
             "messages": [
-                {"role": "user", "content": "Can you help me plan this safely?", "created_at": "2026-02-11T00:00:01Z"},
+                {
+                    "role": "user",
+                    "content": "Can you help me plan this safely?",
+                    "created_at": "2026-02-11T00:00:01Z",
+                },
                 {
                     "role": "assistant",
                     "content": "Yes. I will provide a bounded plan.",
@@ -57,7 +61,11 @@ class _FakePersistence:
                         "emergent_values": ["clarity"],
                     },
                 },
-                {"role": "user", "content": "Great, this is clear now.", "created_at": "2026-02-11T00:00:03Z"},
+                {
+                    "role": "user",
+                    "content": "Great, this is clear now.",
+                    "created_at": "2026-02-11T00:00:03Z",
+                },
             ],
         }
 

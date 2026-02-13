@@ -27,6 +27,7 @@ jobs:
           python -c "from tonesoul.poav import score; print('POAV OK')"
           python -c "from tonesoul.vow_system import VowEnforcer; print('VowSystem OK')"
           python -c "from tonesoul.time_island import TimeIsland; print('TimeIsland OK')"
+          python -c "from tonesoul.evolution import ContextDistiller, CorpusBuilder; print('Evolution OK')"
       - name: Run tests with coverage
         run: |
           export PYTHONPATH=.
