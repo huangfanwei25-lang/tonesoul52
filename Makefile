@@ -1,27 +1,25 @@
-.PHONY: test verify clean
+.PHONY: test verify clean lint
 
 PYTHON = python
-TEST_DIR = body
 
+# Canonical test command — matches CI (test.yml) and README
 test:
-	@echo "Running Unit Tests..."
-	$(PYTHON) $(TEST_DIR)/test_ledger.py
-	$(PYTHON) $(TEST_DIR)/test_guardian.py
-	$(PYTHON) $(TEST_DIR)/test_sensor.py
-	$(PYTHON) $(TEST_DIR)/test_constitution.py
+	@echo "Running Tests (pytest)..."
+	$(PYTHON) -m pytest tests/ -x -q
 
+# Full verification: tests + architecture boundary + doc consistency
 verify: test
-	@echo "Running Integration Verification..."
-	$(PYTHON) $(TEST_DIR)/test_integration.py
+	@echo "Running Architecture Verification..."
+	$(PYTHON) scripts/verify_layer_boundaries.py
+	$(PYTHON) scripts/verify_docs_consistency.py
+
+# Lint check
+lint:
+	@echo "Running Lint..."
+	$(PYTHON) -m ruff check tonesoul/ tests/
 
 clean:
 	@echo "Cleaning artifacts..."
-	rm -f $(TEST_DIR)/ledger.jsonl
 	rm -rf __pycache__
-
-test-ts:
-	@echo "Running TypeScript Spine Tests..."
-	cd modules/spine-ts && npm install && npm test
-
-test-all: verify test-ts
-	@echo "All Systems (Python + TS) Verified."
+	find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true
+	find . -type f -name "*.pyc" -delete 2>/dev/null || true
