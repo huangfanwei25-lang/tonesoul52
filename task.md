@@ -1,5 +1,13 @@
 # Task
 
+## Phase 76: 多人格全域架構審查（日期化脈絡）
+- [x] 以多角色觀點（Architect / Quality / Guardian / Git）完成全專案掃描
+- [x] 執行 `run_repo_healthcheck --strict --allow-missing-discussion` 取得量化基線（739 tests）
+- [x] 盤點架構弱點與優化點，按 P0/P1/P2 分級
+- [x] 產出日期化審查報告 `docs/ARCHITECTURE_REVIEW_2026-02-13.md`
+- [ ] 依報告執行 Phase A（邊界硬化）首批修復
+**成功標準**: 架構審查有固定日期、可追溯證據與明確優先序，後續修復可直接對應 Phase A/B/C 執行。
+
 ## Phase 75: 記憶回顧反思 + AI Sleep 固化（Level 2b + 2d）
 - [x] 在 `tonesoul/memory/decay.py` 新增 `retrospective_score()` 與 `apply_retrospective()` 啟發式反思流程
 - [x] 在 `tonesoul/memory/soul_db.py` 的 `query()` 新增 `apply_reflection/current_topics/active_commitments` 參數（Jsonl/Sqlite/Protocol 同步）
