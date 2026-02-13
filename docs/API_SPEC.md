@@ -1,6 +1,6 @@
 # API Specification (Unified Web + Backend)
 
-Last updated: 2026-02-12
+Last updated: 2026-02-13
 
 ## Goal
 
@@ -25,6 +25,12 @@ Runtime environment:
   - Default: `hybrid`
 - `TONESOUL_READ_API_TOKEN` enables optional protection for persistence read endpoints
   - if set, clients must provide `Authorization: Bearer <token>` or `X-ToneSoul-Read-Token: <token>`
+- `TONESOUL_VISUAL_CHAIN_ENABLED` controls automatic visual frame capture in backend pipeline
+  - default: enabled
+- `TONESOUL_VISUAL_CHAIN_SAMPLE_EVERY` captures every Nth turn (`>=1`)
+  - default: `1` (capture every turn)
+- `TONESOUL_VISUAL_CHAIN_MAX_FRAMES` hard-caps persisted visual frame count (`>=1`)
+  - default: `500`
 
 ---
 
@@ -173,6 +179,12 @@ Runtime environment:
   - `self_commits?: array`
   - `ruptures?: array`
   - `emergent_values?: array`
+  - `semantic_contradictions?: array`
+    - stable top-level contract for frontend consumption
+    - mirrors `verdict.metadata.semantic_contradictions` for backward compatibility
+  - `semantic_graph_summary?: object`
+    - stable top-level graph summary contract
+    - mirrors `verdict.metadata.semantic_graph` for backward compatibility
 - Response (explicit mock fallback path, opt-in):
   - `response: string`
   - `deliberation: object`

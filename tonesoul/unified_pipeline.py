@@ -5,8 +5,27 @@ Combines ToneBridge psychological analysis with Council deliberation.
 
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
+
+
+def _read_bool_env(name: str, default: bool = False) -> bool:
+    value = os.environ.get(name)
+    if value is None:
+        return default
+    return value.strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _read_positive_int_env(name: str, default: int) -> int:
+    value = os.environ.get(name)
+    if value is None:
+        return max(1, int(default))
+    try:
+        parsed = int(value)
+    except (TypeError, ValueError):
+        return max(1, int(default))
+    return max(1, parsed)
 
 
 @dataclass
@@ -27,6 +46,8 @@ class UnifiedResponse:
     self_commits: List[Dict[str, Any]] = field(default_factory=list)
     ruptures: List[Dict[str, Any]] = field(default_factory=list)
     emergent_values: List[Dict[str, Any]] = field(default_factory=list)
+    semantic_contradictions: List[Dict[str, Any]] = field(default_factory=list)
+    semantic_graph_summary: Dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -43,6 +64,8 @@ class UnifiedResponse:
             "self_commits": self.self_commits,
             "ruptures": self.ruptures,
             "emergent_values": self.emergent_values,
+            "semantic_contradictions": self.semantic_contradictions,
+            "semantic_graph_summary": self.semantic_graph_summary,
         }
 
 
@@ -85,6 +108,13 @@ class UnifiedPipeline:
         # Memory layer integrations
         self._semantic_graph = None
         self._visual_chain = None
+        self._visual_chain_enabled = _read_bool_env("TONESOUL_VISUAL_CHAIN_ENABLED", default=True)
+        self._visual_chain_sample_every = _read_positive_int_env(
+            "TONESOUL_VISUAL_CHAIN_SAMPLE_EVERY", default=1
+        )
+        self._visual_chain_max_frames = _read_positive_int_env(
+            "TONESOUL_VISUAL_CHAIN_MAX_FRAMES", default=500
+        )
 
     def _get_gemini(self):
         """Get LLM client based on LLM_BACKEND env var.
@@ -254,6 +284,22 @@ class UnifiedPipeline:
             except Exception:
                 pass
         return self._visual_chain
+
+    def _should_capture_visual_frame(self, chain: Any) -> bool:
+        """Gate automatic visual capture with env-configurable controls."""
+        if chain is None or not self._visual_chain_enabled:
+            return False
+        try:
+            frame_count = int(getattr(chain, "frame_count", 0))
+        except (TypeError, ValueError):
+            frame_count = 0
+        if frame_count >= self._visual_chain_max_frames:
+            return False
+        if self._visual_chain_sample_every > 1:
+            next_index = frame_count + 1
+            if next_index % self._visual_chain_sample_every != 0:
+                return False
+        return True
 
     def _rebuild_stack_from_history(self, history: List[Dict]) -> None:
         """
@@ -464,6 +510,7 @@ class UnifiedPipeline:
         new_commit = None
         semantic_topics: List[str] = []
         semantic_contradictions: List[Dict[str, Any]] = []
+        semantic_graph_summary: Dict[str, Any] = {}
         if commit_stack:
             commitment_prompt = commit_stack.format_for_prompt(n=3)
 
@@ -587,6 +634,7 @@ class UnifiedPipeline:
                     graph.extract_from_response(response, semantic_topics)
                 graph.increment_turn()
                 semantic_contradictions = [c.to_dict() for c in graph.detect_contradictions()]
+                semantic_graph_summary = graph.get_summary()
             except Exception as e:
                 print(f"Semantic graph error: {e}")
 
@@ -644,16 +692,13 @@ class UnifiedPipeline:
             if not isinstance(verdict_metadata, dict):
                 verdict_metadata = {}
             verdict_metadata["semantic_contradictions"] = semantic_contradictions
-            if graph:
-                try:
-                    verdict_metadata["semantic_graph"] = graph.get_summary()
-                except Exception:
-                    pass
+            if semantic_graph_summary:
+                verdict_metadata["semantic_graph"] = semantic_graph_summary
             verdict_dict["metadata"] = verdict_metadata
 
         # 自動拍攝 visual chain frame，不影響主流程
         chain = self._get_visual_chain()
-        if chain:
+        if self._should_capture_visual_frame(chain):
             try:
                 from tonesoul.memory.visual_chain import FrameType
 
@@ -702,6 +747,8 @@ class UnifiedPipeline:
             self_commits=self_commits_data,
             ruptures=ruptures_data,
             emergent_values=emergent_values_data,
+            semantic_contradictions=semantic_contradictions,
+            semantic_graph_summary=semantic_graph_summary,
         )
 
     def _build_context_prompt(

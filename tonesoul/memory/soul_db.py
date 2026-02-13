@@ -9,6 +9,8 @@ from enum import Enum
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Protocol
 
+from .decay import FORGET_THRESHOLD, calculate_decay
+
 
 class MemorySource(Enum):
     SELF_JOURNAL = "self_journal"
@@ -35,7 +37,13 @@ class SoulDB(Protocol):
     def append(self, source: MemorySource, payload: Dict[str, object]) -> str: ...
 
     def query(
-        self, source: MemorySource, limit: Optional[int] = None
+        self,
+        source: MemorySource,
+        limit: Optional[int] = None,
+        *,
+        apply_decay: bool = False,
+        now: Optional[datetime] = None,
+        forget_threshold: Optional[float] = None,
     ) -> Iterable[MemoryRecord]: ...
 
     def stream(
@@ -79,6 +87,60 @@ def _coerce_int(value: object, default: int = 0) -> int:
         return int(default)
 
 
+def _parse_timestamp(value: object) -> Optional[datetime]:
+    if isinstance(value, datetime):
+        dt = value
+    elif isinstance(value, str):
+        text = value.strip()
+        if not text:
+            return None
+        if text.endswith("Z"):
+            text = f"{text[:-1]}+00:00"
+        try:
+            dt = datetime.fromisoformat(text)
+        except ValueError:
+            return None
+    else:
+        return None
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    return dt.astimezone(timezone.utc)
+
+
+def _resolve_decay_threshold(forget_threshold: Optional[float]) -> float:
+    if forget_threshold is None:
+        return FORGET_THRESHOLD
+    return max(0.0, min(1.0, _coerce_float(forget_threshold, FORGET_THRESHOLD)))
+
+
+def _decay_records(
+    records: List[MemoryRecord],
+    *,
+    now: Optional[datetime] = None,
+    forget_threshold: Optional[float] = None,
+) -> List[MemoryRecord]:
+    if not records:
+        return []
+    current = _parse_timestamp(now) or datetime.now(timezone.utc)
+    threshold = _resolve_decay_threshold(forget_threshold)
+    decayed_records: List[MemoryRecord] = []
+    for record in records:
+        anchor = _parse_timestamp(record.last_accessed) or _parse_timestamp(record.timestamp)
+        days_elapsed = 0.0
+        if anchor is not None:
+            elapsed_seconds = max(0.0, (current - anchor).total_seconds())
+            days_elapsed = elapsed_seconds / 86400.0
+        score = calculate_decay(
+            record.relevance_score, days_elapsed, access_count=record.access_count
+        )
+        if score < threshold:
+            continue
+        record.relevance_score = score
+        decayed_records.append(record)
+    decayed_records.sort(key=lambda item: (item.relevance_score, item.timestamp), reverse=True)
+    return decayed_records
+
+
 class JsonlSoulDB:
     def __init__(
         self,
@@ -111,8 +173,24 @@ class JsonlSoulDB:
             handle.write(json.dumps(record, ensure_ascii=False) + "\n")
         return record_id
 
-    def query(self, source: MemorySource, limit: Optional[int] = None) -> Iterable[MemoryRecord]:
-        return self.stream(source, limit=limit)
+    def query(
+        self,
+        source: MemorySource,
+        limit: Optional[int] = None,
+        *,
+        apply_decay: bool = False,
+        now: Optional[datetime] = None,
+        forget_threshold: Optional[float] = None,
+    ) -> Iterable[MemoryRecord]:
+        if not apply_decay:
+            return self.stream(source, limit=limit)
+        if limit is not None and int(limit) <= 0:
+            return []
+        records = list(self.stream(source, limit=None))
+        decayed = _decay_records(records, now=now, forget_threshold=forget_threshold)
+        if limit is not None:
+            return decayed[: int(limit)]
+        return decayed
 
     def stream(self, source: MemorySource, limit: Optional[int] = None) -> Iterable[MemoryRecord]:
         path = self._resolve_path(source)
@@ -325,8 +403,24 @@ class SqliteSoulDB:
         conn.close()
         return record_id
 
-    def query(self, source: MemorySource, limit: Optional[int] = None) -> Iterable[MemoryRecord]:
-        return self.stream(source, limit=limit)
+    def query(
+        self,
+        source: MemorySource,
+        limit: Optional[int] = None,
+        *,
+        apply_decay: bool = False,
+        now: Optional[datetime] = None,
+        forget_threshold: Optional[float] = None,
+    ) -> Iterable[MemoryRecord]:
+        if not apply_decay:
+            return self.stream(source, limit=limit)
+        if limit is not None and int(limit) <= 0:
+            return []
+        records = list(self.stream(source, limit=None))
+        decayed = _decay_records(records, now=now, forget_threshold=forget_threshold)
+        if limit is not None:
+            return decayed[: int(limit)]
+        return decayed
 
     def stream(self, source: MemorySource, limit: Optional[int] = None) -> Iterable[MemoryRecord]:
         if source == MemorySource.PROVENANCE_LEDGER:

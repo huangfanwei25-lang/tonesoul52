@@ -513,7 +513,9 @@ def evolution_patterns():
 
     pattern_type = request.args.get("pattern_type", type=str)
     normalized_type = (
-        pattern_type.strip().lower() if isinstance(pattern_type, str) and pattern_type.strip() else None
+        pattern_type.strip().lower()
+        if isinstance(pattern_type, str) and pattern_type.strip()
+        else None
     )
     distiller = _get_context_distiller()
     patterns = distiller.get_patterns(pattern_type=normalized_type)
@@ -902,12 +904,14 @@ def llm_switch():
             print(f"[INFO] LLM switched to: {llm_backend}")
         except Exception as e:
             llm_last_error = f"gemini={e.__class__.__name__}: {e}"
-            return jsonify({
-                "success": False,
-                "error": llm_last_error,
-                "llm_backend": "unavailable",
-                "llm_mode": "cloud",
-            })
+            return jsonify(
+                {
+                    "success": False,
+                    "error": llm_last_error,
+                    "llm_backend": "unavailable",
+                    "llm_mode": "cloud",
+                }
+            )
     else:
         # Ollama with optional model selection
         model = data.get("model", "").strip() or None
@@ -930,19 +934,22 @@ def llm_switch():
             llm_last_error = f"ollama={e.__class__.__name__}: {e}"
 
         if llm_client is None and llm_last_error:
-            return jsonify({
-                "success": False,
-                "error": llm_last_error,
-                "llm_backend": "unavailable",
-                "llm_mode": "local",
-            })
+            return jsonify(
+                {
+                    "success": False,
+                    "error": llm_last_error,
+                    "llm_backend": "unavailable",
+                    "llm_mode": "local",
+                }
+            )
 
-    return jsonify({
-        "success": True,
-        "llm_backend": llm_backend or "unavailable",
-        "llm_mode": "cloud" if mode == "gemini" else "local",
-    })
-
+    return jsonify(
+        {
+            "success": True,
+            "llm_backend": llm_backend or "unavailable",
+            "llm_mode": "cloud" if mode == "gemini" else "local",
+        }
+    )
 
 
 @app.route("/api/chat", methods=["POST"])
@@ -1030,6 +1037,8 @@ def chat():
                 "self_commits": result.self_commits,
                 "ruptures": result.ruptures,
                 "emergent_values": result.emergent_values,
+                "semantic_contradictions": getattr(result, "semantic_contradictions", []),
+                "semantic_graph_summary": getattr(result, "semantic_graph_summary", {}),
             }
         )
 

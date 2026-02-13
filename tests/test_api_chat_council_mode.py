@@ -97,3 +97,54 @@ def test_chat_rejects_invalid_perspective_config_shape():
     assert response.status_code == 400
     payload = response.get_json()
     assert payload["error"] == "Invalid perspective_config"
+
+
+def test_chat_exposes_default_semantic_fields_when_pipeline_omits_them(monkeypatch):
+    import tonesoul.unified_pipeline as unified_pipeline
+
+    captured: dict = {}
+    monkeypatch.setattr(
+        unified_pipeline,
+        "create_unified_pipeline",
+        lambda: _mock_pipeline(captured),
+    )
+
+    client = _client()
+    response = client.post("/api/chat", json={"message": "hello"})
+    payload = response.get_json()
+
+    assert response.status_code == 200
+    assert payload["semantic_contradictions"] == []
+    assert payload["semantic_graph_summary"] == {}
+
+
+def test_chat_exposes_semantic_fields_when_pipeline_provides_them(monkeypatch):
+    import tonesoul.unified_pipeline as unified_pipeline
+
+    class _Pipeline:
+        def process(self, **kwargs):
+            return SimpleNamespace(
+                response="ok",
+                council_verdict={},
+                tonebridge_analysis={},
+                inner_narrative="",
+                intervention_strategy="",
+                internal_monologue="",
+                persona_mode="",
+                trajectory_analysis={},
+                self_commits=[],
+                ruptures=[],
+                emergent_values=[],
+                semantic_contradictions=[{"found": True, "description": "test"}],
+                semantic_graph_summary={"total_nodes": 2, "contradictions": 1},
+            )
+
+    monkeypatch.setattr(unified_pipeline, "create_unified_pipeline", lambda: _Pipeline())
+
+    client = _client()
+    response = client.post("/api/chat", json={"message": "hello"})
+    payload = response.get_json()
+
+    assert response.status_code == 200
+    assert payload["semantic_contradictions"] == [{"found": True, "description": "test"}]
+    assert payload["semantic_graph_summary"] == {"total_nodes": 2, "contradictions": 1}
