@@ -13,17 +13,21 @@
 gpt*/
 
 # Runtime Directories
+tmp/
 temp/
+temp_ci_*/
 logs/
 simulation_logs/
 zenodo_upload/
 
 # Python
 __pycache__/
+*.pyc
 .pytest_cache/
 .venv/
 .coverage
 coverage.xml
+htmlcov/
 *.egg-info/
 
 # Node.js
@@ -32,6 +36,7 @@ node_modules/
 apps/showcase/
 
 # Database
+data/
 data/chromadb/
 data/evolution_latest.json
 *.sqlite3

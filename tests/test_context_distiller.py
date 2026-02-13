@@ -166,3 +166,15 @@ def test_distiller_loads_cached_result_after_recreation(tmp_path: Path):
     assert summary["total_patterns"] == len(first_result.patterns)
     assert summary["conversations_analyzed"] == first_result.conversations_analyzed
     assert summary["last_distilled_at"] == first_result.distilled_at
+
+
+def test_distiller_handles_corrupted_cache_file(tmp_path: Path):
+    cache_path = tmp_path / "evolution_latest.json"
+    cache_path.write_text("{not-valid-json", encoding="utf-8")
+
+    distiller = ContextDistiller(_FakePersistence(), cache_path=cache_path)
+    summary = distiller.get_summary()
+
+    assert distiller.get_latest_result() is None
+    assert summary["total_patterns"] == 0
+    assert summary["summary"] == "No distillation has been run yet."
