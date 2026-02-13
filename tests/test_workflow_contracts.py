@@ -8,6 +8,7 @@ import yaml
 WORKFLOW_PATH = Path(".github/workflows/repo_healthcheck.yml")
 DISPATCH_SCRIPT_PATH = Path("scripts/run_repo_healthcheck_dispatch.py")
 SEMANTIC_HEALTH_WORKFLOW_PATH = Path(".github/workflows/semantic_health.yml")
+PERSONA_SWARM_WORKFLOW_PATH = Path(".github/workflows/persona_swarm.yml")
 
 
 def _load_yaml(path: Path) -> dict[str, Any]:
@@ -146,3 +147,48 @@ def test_semantic_health_workflow_is_blocking_and_has_required_dependencies() ->
     artifact_with = artifact_step.get("with", {})
     assert isinstance(artifact_with, dict)
     assert artifact_with.get("path") == "semantic_council.log"
+
+
+def test_persona_swarm_workflow_dispatch_inputs_and_triggers() -> None:
+    payload = _load_yaml(PERSONA_SWARM_WORKFLOW_PATH)
+    on_section = _on_section(payload)
+    assert "push" in on_section
+    assert "pull_request" in on_section
+    assert "workflow_dispatch" in on_section
+
+    dispatch = on_section["workflow_dispatch"]
+    assert isinstance(dispatch, dict)
+    inputs = dispatch.get("inputs", {})
+    assert isinstance(inputs, dict)
+    assert {"strict", "input_path"}.issubset(inputs.keys())
+
+
+def test_persona_swarm_workflow_is_blocking_and_uploads_artifacts() -> None:
+    payload = _load_yaml(PERSONA_SWARM_WORKFLOW_PATH)
+    steps = _job_steps(payload, "evaluate")
+
+    install_step = _find_step(steps, "Install dependencies")
+    install_run = install_step.get("run", "")
+    assert isinstance(install_run, str)
+    assert 'pip install -e ".[dev]"' in install_run
+
+    default_step = _find_step(steps, "Run persona swarm (blocking, push/pr default)")
+    default_run = default_step.get("run", "")
+    assert isinstance(default_run, str)
+    assert "python scripts/run_persona_swarm_framework.py --strict" in default_run
+
+    dispatch_step = _find_step(steps, "Run persona swarm (workflow_dispatch)")
+    dispatch_env = dispatch_step.get("env", {})
+    assert isinstance(dispatch_env, dict)
+    assert {"TS_SWARM_STRICT", "TS_SWARM_INPUT_PATH"}.issubset(dispatch_env.keys())
+    dispatch_run = dispatch_step.get("run", "")
+    assert isinstance(dispatch_run, str)
+    assert "python scripts/run_persona_swarm_framework.py" in dispatch_run
+
+    artifact_step = _find_step(steps, "Upload persona swarm artifacts")
+    artifact_with = artifact_step.get("with", {})
+    assert isinstance(artifact_with, dict)
+    path_value = artifact_with.get("path", "")
+    assert isinstance(path_value, str)
+    assert "docs/status/persona_swarm_framework_latest.json" in path_value
+    assert "persona_swarm.log" in path_value

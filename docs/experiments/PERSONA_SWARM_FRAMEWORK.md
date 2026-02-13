@@ -93,6 +93,14 @@ Output fields:
 
 In `--strict` mode, gate failure returns non-zero.
 
+## CI Automation
+
+- workflow: `.github/workflows/persona_swarm.yml`
+- modes:
+  - push/pull_request: blocking strict run
+  - workflow_dispatch: optional `strict` + optional `input_path`
+  - schedule: weekly drift snapshot
+
 ## Run
 
 ```bash

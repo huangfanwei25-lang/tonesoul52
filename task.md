@@ -14,6 +14,7 @@
 - [x] Phase 83: Swarm decision contract hardening (input schema + validation)
 - [x] Phase 84: Swarm fail-fast + cost-tier governance
 - [x] Phase 85: Swarm budget execution planner
+- [x] Phase 86: Swarm CI automation and contracts
 **Latest validation**: `pytest -q` => `769 passed, 3 xfailed` (2026-02-13). Level 3 implementation tracked in `CODEX_TASK.md` v7.
 
 ## Phase 77: Level 3 Experimental
@@ -51,6 +52,12 @@
 - [x] Gate now includes `execution_budget_respected` check
 **Result**: Cost tier is no longer advisory only; it actively constrains swarm execution.
 
+## Phase 86: Swarm CI Automation and Contracts
+- [x] Added `.github/workflows/persona_swarm.yml` (push/pr + dispatch + schedule)
+- [x] Uploads `docs/status/persona_swarm_framework_latest.json` and `persona_swarm.log`
+- [x] Added workflow contract tests for persona swarm workflow
+**Result**: Swarm governance artifact is now CI-generated and auditable.
+
 ## Execution Log (2026-02-13)
 - [x] Phase A complete
 - [x] Production read auth fail-closed
@@ -86,6 +93,9 @@
 - [x] Phase 85 complete
 - [x] Added execution planner with baseline/budgeted dual evaluation in swarm runner
 - [x] Validation: `pytest tests/test_swarm_framework.py tests/test_run_persona_swarm_framework.py tests/test_verify_docs_consistency.py -q` => `31 passed`
+- [x] Phase 86 complete
+- [x] Added persona swarm CI workflow and workflow contract coverage
+- [x] Validation: `pytest tests/test_workflow_contracts.py tests/test_verify_docs_consistency.py tests/test_run_persona_swarm_framework.py tests/test_swarm_framework.py -q` => `39 passed`
 ## Phase 79-81: Legacy Duplicates (Closed)
 - [x] Legacy duplicate tracking blocks for Phase A/B/C removed from active queue.
 - [x] Canonical status is tracked in Program Board + Execution Log above.

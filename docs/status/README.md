@@ -104,6 +104,7 @@ python scripts/run_persona_swarm_framework.py --strict
 - GitHub Actions workflow: `.github/workflows/monthly_consolidation.yml`
 - GitHub Actions workflow: `.github/workflows/repo_healthcheck.yml`
 - GitHub Actions workflow: `.github/workflows/git_hygiene.yml`
+- GitHub Actions workflow: `.github/workflows/persona_swarm.yml`
 - Trigger modes:
   - monthly schedule (`30 3 1 * *`, UTC)
   - weekly schedule (`15 3 * * 1`, UTC)
