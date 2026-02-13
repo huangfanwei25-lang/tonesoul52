@@ -60,3 +60,35 @@ def test_consolidate_returns_meta_reflection():
     entries = _sample_entries()
     result = consolidate(entries)
     assert result.meta_reflection.startswith("Based on my remembered decisions")
+
+
+def test_identify_patterns_excludes_promoted_working_duplicates_by_default():
+    entries = [
+        {"verdict": "approve", "layer": "working", "is_mine": True},
+        {
+            "verdict": "approve",
+            "layer": "factual",
+            "promoted_from": "working",
+            "is_mine": True,
+        },
+    ]
+
+    patterns = identify_patterns(entries)
+    assert patterns["total"] == 1
+    assert patterns["verdict_counts"]["approve"] == 1
+
+
+def test_identify_patterns_can_include_promoted_when_requested():
+    entries = [
+        {"verdict": "approve", "layer": "working", "is_mine": True},
+        {
+            "verdict": "approve",
+            "layer": "factual",
+            "promoted_from": "working",
+            "is_mine": True,
+        },
+    ]
+
+    patterns = identify_patterns(entries, exclude_promoted=False)
+    assert patterns["total"] == 2
+    assert patterns["verdict_counts"]["approve"] == 2

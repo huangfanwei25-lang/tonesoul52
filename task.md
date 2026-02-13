@@ -22,6 +22,14 @@
 - [ ] A/B/C comparison protocol
 - [ ] Five metrics: Task Quality / Safety Pass Rate / Consistency@Session / Disagreement Utility / Token+Latency Cost
 - [ ] Cost gate and promotion criteria
+
+## Execution Log (2026-02-13)
+- [x] Phase A complete
+- [x] Production read auth fail-closed
+- [x] `/api/chat` and `/api/validate` throttling
+- [x] Production debug lock (`TONESOUL_API_DEBUG` ignored in production)
+- [x] AI Sleep stats dedup: `identify_patterns(..., exclude_promoted=True)` default enabled
+- [x] Validation: `pytest -q` => `763 passed, 3 xfailed` (2026-02-13)
 ## Phase 79: Phase A嚗? 憭抬???蝖砍?
 - [ ] Read API auth ?寧 production fail-closed
 - [ ] `/api/chat`?/api/validate` ?????瘚???- [ ] production 撘瑕?? debug ??

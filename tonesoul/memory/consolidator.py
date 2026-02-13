@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Dict, Iterable, List, Optional
+from typing import Dict, Iterable, List, Optional, Sequence
 
 from .soul_db import JsonlSoulDB, MemorySource, SoulDB
 from .stats import average_coherence, count_by_verdict, most_common_divergence
@@ -55,8 +55,25 @@ def _load_entries(
     return [record.payload for record in records if isinstance(record.payload, dict)]
 
 
-def identify_patterns(entries: Iterable[dict]) -> Dict[str, object]:
-    filtered = [entry for entry in entries if entry.get("is_mine") is not False]
+def identify_patterns(
+    entries: Iterable[dict],
+    *,
+    layers: Optional[Sequence[str]] = None,
+    exclude_promoted: bool = True,
+) -> Dict[str, object]:
+    allowed_layers = {str(layer).strip().lower() for layer in (layers or []) if str(layer).strip()}
+    filtered = []
+    for entry in entries:
+        if entry.get("is_mine") is False:
+            continue
+        if exclude_promoted and entry.get("promoted_from") == "working":
+            continue
+        if allowed_layers:
+            layer_name = str(entry.get("layer", "")).strip().lower()
+            if layer_name not in allowed_layers:
+                continue
+        filtered.append(entry)
+
     verdict_counts = count_by_verdict(filtered)
     common_divergence = most_common_divergence(filtered)
     avg_coherence = average_coherence(filtered)

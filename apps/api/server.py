@@ -10,6 +10,7 @@ import traceback
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
+from threading import Lock
 
 # Add parent to path for imports
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
@@ -38,6 +39,11 @@ _MAX_ESCAPE_SEED_ITEMS = 50
 _MAX_PAGINATION_LIMIT = 200
 _READ_API_TOKEN_ENV = "TONESOUL_READ_API_TOKEN"
 _EVOLUTION_CACHE_PATH_ENV = "TONESOUL_EVOLUTION_CACHE_PATH"
+_AUTH_FAIL_CLOSED_ENV = "TONESOUL_AUTH_FAIL_CLOSED"
+_RATE_LIMIT_ENABLED_ENV = "TONESOUL_ENABLE_RATE_LIMIT"
+_RATE_LIMIT_CHAT_ENV = "TONESOUL_RATE_LIMIT_CHAT_PER_MINUTE"
+_RATE_LIMIT_VALIDATE_ENV = "TONESOUL_RATE_LIMIT_VALIDATE_PER_MINUTE"
+_RATE_LIMIT_WINDOW_SECONDS_ENV = "TONESOUL_RATE_LIMIT_WINDOW_SECONDS"
 _VTP_CONTEXT_FLAGS = (
     "vtp_force_trigger",
     "vtp_axiom_conflict",
@@ -48,6 +54,8 @@ _ALLOWED_COUNCIL_MODES = {"rules", "rules_only", "hybrid", "full_llm"}
 supabase_persistence = SupabasePersistence.from_env()
 _context_distiller: ContextDistiller | None = None
 _soul_db: SoulDB | None = None
+_rate_limit_lock = Lock()
+_rate_limit_state: dict[tuple[str, str], list[float]] = {}
 
 
 def _env_flag(name: str, default: bool = False) -> bool:
@@ -62,6 +70,89 @@ def _read_api_token() -> str:
     if not isinstance(value, str):
         return ""
     return value.strip()
+
+
+def _is_production_env() -> bool:
+    if _env_flag("TONESOUL_PRODUCTION", default=False):
+        return True
+    env_name = (os.environ.get("TONESOUL_ENV") or os.environ.get("FLASK_ENV") or "").strip().lower()
+    return env_name == "production"
+
+
+def _read_positive_int_env(name: str, default: int) -> int:
+    raw = os.environ.get(name)
+    if raw is None:
+        return max(1, int(default))
+    try:
+        parsed = int(str(raw).strip())
+    except (TypeError, ValueError):
+        return max(1, int(default))
+    return max(1, parsed)
+
+
+def _is_rate_limit_enabled() -> bool:
+    if _RATE_LIMIT_ENABLED_ENV in os.environ:
+        return _env_flag(_RATE_LIMIT_ENABLED_ENV, default=False)
+    return _is_production_env()
+
+
+def _client_identifier() -> str:
+    forwarded = str(request.headers.get("X-Forwarded-For") or "").strip()
+    if forwarded:
+        first = forwarded.split(",")[0].strip()
+        if first:
+            return first
+    return str(request.remote_addr or "unknown")
+
+
+def _rate_limit_for_endpoint(endpoint_name: str) -> int:
+    if endpoint_name == "chat":
+        return _read_positive_int_env(_RATE_LIMIT_CHAT_ENV, default=60)
+    if endpoint_name == "validate":
+        return _read_positive_int_env(_RATE_LIMIT_VALIDATE_ENV, default=120)
+    return _read_positive_int_env(_RATE_LIMIT_VALIDATE_ENV, default=120)
+
+
+def _rate_limit_window_seconds() -> int:
+    return _read_positive_int_env(_RATE_LIMIT_WINDOW_SECONDS_ENV, default=60)
+
+
+def _reset_rate_limit_state() -> None:
+    with _rate_limit_lock:
+        _rate_limit_state.clear()
+
+
+def _apply_rate_limit(endpoint_name: str):
+    if not _is_rate_limit_enabled():
+        return None
+    if app.config.get("TESTING"):
+        return None
+
+    limit = _rate_limit_for_endpoint(endpoint_name)
+    window = _rate_limit_window_seconds()
+    now = datetime.now(timezone.utc).timestamp()
+    client_id = _client_identifier()
+    bucket_key = (endpoint_name, client_id)
+
+    with _rate_limit_lock:
+        history = _rate_limit_state.get(bucket_key, [])
+        threshold = now - float(window)
+        history = [ts for ts in history if ts >= threshold]
+        if len(history) >= limit:
+            retry_after = max(1, int(history[0] + float(window) - now))
+            response = jsonify(
+                {
+                    "error": "Too Many Requests",
+                    "endpoint": endpoint_name,
+                    "retry_after_seconds": retry_after,
+                }
+            )
+            response.headers["Retry-After"] = str(retry_after)
+            _rate_limit_state[bucket_key] = history
+            return response, 429
+        history.append(now)
+        _rate_limit_state[bucket_key] = history
+    return None
 
 
 def _extract_bearer_token(authorization_header: str | None) -> str:
@@ -81,7 +172,10 @@ def _extract_bearer_token(authorization_header: str | None) -> str:
 
 def _require_read_api_auth():
     required_token = _read_api_token()
+    fail_closed = _env_flag(_AUTH_FAIL_CLOSED_ENV, default=_is_production_env())
     if not required_token:
+        if fail_closed:
+            return jsonify({"error": "Read API token not configured"}), 503
         return None
 
     provided_token = _extract_bearer_token(request.headers.get("Authorization"))
@@ -373,6 +467,10 @@ def index():
 @app.route("/api/validate", methods=["POST"])
 def validate():
     """Run PreOutputCouncil on input text."""
+    rate_limit_error = _apply_rate_limit("validate")
+    if rate_limit_error is not None:
+        return rate_limit_error
+
     data = _json_payload()
     if data is None:
         return jsonify({"error": "Invalid JSON payload"}), 400
@@ -985,6 +1083,10 @@ def llm_switch():
 @app.route("/api/chat", methods=["POST"])
 def chat():
     """Chat endpoint with ToneBridge + Council (Unified Pipeline)."""
+    rate_limit_error = _apply_rate_limit("chat")
+    if rate_limit_error is not None:
+        return rate_limit_error
+
     data = _json_payload()
     if data is None:
         return jsonify({"error": "Invalid JSON payload"}), 400
@@ -1076,10 +1178,18 @@ def chat():
         return _error_response("Failed to process chat request", 500, e, {"response": None})
 
 
+def _resolve_debug_mode() -> bool:
+    requested = _env_flag("TONESOUL_API_DEBUG", default=False)
+    if requested and _is_production_env():
+        print("[WARN] TONESOUL_API_DEBUG ignored in production.", file=sys.stderr)
+        return False
+    return requested
+
+
 if __name__ == "__main__":
     host = _resolve_bind_host()
     port = _resolve_bind_port()
-    debug = _env_flag("TONESOUL_API_DEBUG", default=False)
+    debug = _resolve_debug_mode()
     print("=" * 50)
     print("ToneSoul API Server")
     print("=" * 50)
