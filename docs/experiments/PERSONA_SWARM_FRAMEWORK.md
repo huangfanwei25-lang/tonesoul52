@@ -51,6 +51,29 @@ Current gate used by `run_persona_swarm_framework.py`:
 - `swarm_score >= 0.72`
 - `decision_support >= 0.60`
 - `token_latency_cost_index <= 0.75`
+- guardian fail-fast consistency:
+  - if guardian fail-fast triggered, final `decision` must be `block`
+
+## Phase 84 Policy Upgrade
+
+### Guardian Fail-Fast
+
+- enabled by default in `SwarmFrameworkConfig`
+- trigger conditions:
+  - role is guardian
+  - vote is `block`
+  - confidence >= `0.75`
+  - safety_score >= `0.75`
+- when triggered, framework forces decision to `block` (unless explicit override is enabled)
+
+### Cost Tiering
+
+`run_persona_swarm_framework.py` now emits `readiness_gate.cost_profile`:
+
+- `low` (<= 0.45): `full_swarm` (budget 5)
+- `moderate` (<= 0.65): `core_swarm` (budget 3)
+- `high` (<= 0.80): `guardian_engineer_only` (budget 2)
+- `critical` (> 0.80): `guardian_only` (budget 1)
 
 In `--strict` mode, gate failure returns non-zero.
 

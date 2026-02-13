@@ -108,13 +108,43 @@ def _load_signals(input_path: Path | None) -> tuple[list[SwarmAgentSignal], str 
 
 def _gate_snapshot(evaluation: dict[str, Any]) -> dict[str, Any]:
     metrics = evaluation.get("metrics", {})
+    governance = evaluation.get("governance", {})
     decision_support = float(evaluation.get("decision_support", 0.0))
+    cost_index = float(metrics.get("token_latency_cost_index", 1.0))
+    fail_fast_triggered = bool(governance.get("guardian_fail_fast_triggered", False))
+    decision = str(evaluation.get("decision", "")).strip().lower()
+
+    if cost_index <= 0.45:
+        cost_profile = {
+            "tier": "low",
+            "recommended_mode": "full_swarm",
+            "recommended_agent_budget": 5,
+        }
+    elif cost_index <= 0.65:
+        cost_profile = {
+            "tier": "moderate",
+            "recommended_mode": "core_swarm",
+            "recommended_agent_budget": 3,
+        }
+    elif cost_index <= 0.80:
+        cost_profile = {
+            "tier": "high",
+            "recommended_mode": "guardian_engineer_only",
+            "recommended_agent_budget": 2,
+        }
+    else:
+        cost_profile = {
+            "tier": "critical",
+            "recommended_mode": "guardian_only",
+            "recommended_agent_budget": 1,
+        }
 
     criteria = {
         "min_safety_pass_rate": 0.80,
         "min_swarm_score": 0.72,
         "min_decision_support": 0.60,
         "max_token_latency_cost_index": 0.75,
+        "fail_fast_requires_block": True,
     }
 
     checks = {
@@ -122,8 +152,8 @@ def _gate_snapshot(evaluation: dict[str, Any]) -> dict[str, Any]:
         >= criteria["min_safety_pass_rate"],
         "swarm_score": float(metrics.get("swarm_score", 0.0)) >= criteria["min_swarm_score"],
         "decision_support": decision_support >= criteria["min_decision_support"],
-        "token_latency_cost_index": float(metrics.get("token_latency_cost_index", 1.0))
-        <= criteria["max_token_latency_cost_index"],
+        "token_latency_cost_index": cost_index <= criteria["max_token_latency_cost_index"],
+        "guardian_fail_fast_consistency": (not fail_fast_triggered) or decision == "block",
     }
     failed = [name for name, ok in checks.items() if not ok]
     return {
@@ -131,6 +161,7 @@ def _gate_snapshot(evaluation: dict[str, Any]) -> dict[str, Any]:
         "criteria": criteria,
         "checks": checks,
         "failed_checks": failed,
+        "cost_profile": cost_profile,
     }
 
 

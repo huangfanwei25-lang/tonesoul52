@@ -12,6 +12,7 @@
 - [x] Phase 64-67 (showcase/docs/research/notes) acceptance closure
 - [x] Phase 82: Persona Swarm Framework (coordination gate + readiness artifact)
 - [x] Phase 83: Swarm decision contract hardening (input schema + validation)
+- [x] Phase 84: Swarm fail-fast + cost-tier governance
 **Latest validation**: `pytest -q` => `769 passed, 3 xfailed` (2026-02-13). Level 3 implementation tracked in `CODEX_TASK.md` v7.
 
 ## Phase 77: Level 3 Experimental
@@ -36,6 +37,12 @@
 - [x] Runtime validation for `signal.vote` and `final_decision`
 - [x] Input template and docs update (`docs/experiments/persona_swarm_input_template.json`)
 **Result**: Swarm ingress no longer accepts ambiguous decision strings.
+
+## Phase 84: Swarm Fail-Fast + Cost-Tier Governance
+- [x] Guardian fail-fast in framework (high-confidence safety block => forced block)
+- [x] Runner gate checks `guardian_fail_fast_consistency`
+- [x] Runner emits `cost_profile` tier (`low/moderate/high/critical`) with agent budget
+**Result**: Swarm runtime now has safety-first early-stop and budget-aware execution guidance.
 
 ## Execution Log (2026-02-13)
 - [x] Phase A complete
@@ -66,6 +73,9 @@
 - [x] Phase 83 complete
 - [x] Added swarm decision contract validation in framework + runner
 - [x] Validation: `pytest tests/test_swarm_framework.py tests/test_run_persona_swarm_framework.py -q` => `16 passed`
+- [x] Phase 84 complete
+- [x] Added guardian fail-fast governance output and runner cost-tier profile
+- [x] Validation: `pytest tests/test_swarm_framework.py tests/test_run_persona_swarm_framework.py tests/test_verify_docs_consistency.py -q` => `27 passed`
 ## Phase 79-81: Legacy Duplicates (Closed)
 - [x] Legacy duplicate tracking blocks for Phase A/B/C removed from active queue.
 - [x] Canonical status is tracked in Program Board + Execution Log above.

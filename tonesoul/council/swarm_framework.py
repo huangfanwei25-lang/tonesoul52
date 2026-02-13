@@ -75,6 +75,10 @@ class SwarmFrameworkConfig:
     cost_weight: float = 0.10
     baseline_latency_ms: float = 3000.0
     baseline_token_cost: float = 2000.0
+    guardian_fail_fast_enabled: bool = True
+    guardian_fail_fast_min_confidence: float = 0.75
+    guardian_fail_fast_min_safety: float = 0.75
+    allow_final_decision_override_on_fail_fast: bool = False
 
 
 @dataclass(frozen=True)
@@ -83,6 +87,7 @@ class SwarmFrameworkResult:
     decision_support: float
     metrics: Dict[str, float]
     role_distribution: Dict[str, int]
+    governance: Dict[str, Any]
     persona_positioning: Dict[str, Any]
 
     def to_dict(self) -> Dict[str, Any]:
@@ -91,6 +96,7 @@ class SwarmFrameworkResult:
             "decision_support": round(self.decision_support, 4),
             "metrics": {k: round(v, 4) for k, v in self.metrics.items()},
             "role_distribution": dict(self.role_distribution),
+            "governance": dict(self.governance),
             "persona_positioning": dict(self.persona_positioning),
         }
 
@@ -169,6 +175,25 @@ class PersonaSwarmFramework:
             return 0.0
         return _clamp01(vote_scores.get(decision, 0.0) / total)
 
+    @staticmethod
+    def _is_guardian_role(role: str) -> bool:
+        value = str(role).strip().lower()
+        return value == "guardian" or value.startswith("guardian:")
+
+    def _guardian_fail_fast(self, signals: Sequence[SwarmAgentSignal]) -> tuple[bool, list[str]]:
+        if not self.config.guardian_fail_fast_enabled:
+            return False, []
+
+        blocking_guardians = [
+            signal.agent_id
+            for signal in signals
+            if self._is_guardian_role(signal.role)
+            and signal.vote == "block"
+            and signal.confidence >= self.config.guardian_fail_fast_min_confidence
+            and signal.safety_score >= self.config.guardian_fail_fast_min_safety
+        ]
+        return bool(blocking_guardians), blocking_guardians
+
     def _persona_positioning(
         self, metrics: Dict[str, float], decision_support: float
     ) -> Dict[str, Any]:
@@ -223,11 +248,21 @@ class PersonaSwarmFramework:
         if not vote_scores:
             raise ValueError("unable to compute vote scores")
 
-        decision = (
+        requested_decision = (
             normalize_swarm_decision(final_decision, field_name="final_decision")
             if isinstance(final_decision, str)
             else ""
         )
+        guardian_fail_fast_triggered, guardian_blocking_agent_ids = self._guardian_fail_fast(
+            signals
+        )
+
+        decision = requested_decision
+        if guardian_fail_fast_triggered and (
+            not requested_decision or not self.config.allow_final_decision_override_on_fail_fast
+        ):
+            decision = "block"
+
         if not decision:
             decision = max(vote_scores.items(), key=lambda item: (item[1], item[0]))[0]
 
@@ -260,13 +295,26 @@ class PersonaSwarmFramework:
             "diversity_index": diversity_index,
             "token_latency_cost_index": cost_index,
             "swarm_score": swarm_score,
+            "guardian_fail_fast_triggered": 1.0 if guardian_fail_fast_triggered else 0.0,
         }
         positioning = self._persona_positioning(metrics, decision_support)
+        governance = {
+            "guardian_fail_fast_triggered": guardian_fail_fast_triggered,
+            "guardian_blocking_agent_ids": guardian_blocking_agent_ids,
+            "requested_decision": requested_decision or None,
+            "final_decision_overridden": bool(
+                guardian_fail_fast_triggered
+                and requested_decision
+                and requested_decision != decision
+                and not self.config.allow_final_decision_override_on_fail_fast
+            ),
+        }
 
         return SwarmFrameworkResult(
             decision=decision,
             decision_support=decision_support,
             metrics=metrics,
             role_distribution=role_distribution,
+            governance=governance,
             persona_positioning=positioning,
         )

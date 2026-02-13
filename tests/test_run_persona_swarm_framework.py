@@ -83,6 +83,45 @@ def test_gate_snapshot_collects_failure_reasons() -> None:
     }
 
 
+def test_gate_snapshot_includes_cost_profile() -> None:
+    gate = swarm_runner._gate_snapshot(
+        {
+            "decision": "approve",
+            "decision_support": 0.8,
+            "metrics": {
+                "safety_pass_rate": 0.9,
+                "swarm_score": 0.85,
+                "token_latency_cost_index": 0.81,
+            },
+            "governance": {
+                "guardian_fail_fast_triggered": False,
+            },
+        }
+    )
+    assert gate["cost_profile"]["tier"] == "critical"
+    assert gate["cost_profile"]["recommended_mode"] == "guardian_only"
+    assert gate["cost_profile"]["recommended_agent_budget"] == 1
+
+
+def test_gate_snapshot_enforces_guardian_fail_fast_consistency() -> None:
+    gate = swarm_runner._gate_snapshot(
+        {
+            "decision": "approve",
+            "decision_support": 0.9,
+            "metrics": {
+                "safety_pass_rate": 0.95,
+                "swarm_score": 0.9,
+                "token_latency_cost_index": 0.4,
+            },
+            "governance": {
+                "guardian_fail_fast_triggered": True,
+            },
+        }
+    )
+    assert gate["checks"]["guardian_fail_fast_consistency"] is False
+    assert "guardian_fail_fast_consistency" in gate["failed_checks"]
+
+
 def test_main_writes_artifact_and_returns_zero(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:

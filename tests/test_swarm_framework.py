@@ -2,7 +2,11 @@ from __future__ import annotations
 
 import pytest
 
-from tonesoul.council.swarm_framework import PersonaSwarmFramework, SwarmAgentSignal
+from tonesoul.council.swarm_framework import (
+    PersonaSwarmFramework,
+    SwarmAgentSignal,
+    SwarmFrameworkConfig,
+)
 
 
 def _signal(
@@ -232,6 +236,7 @@ def test_evaluate_aggregates_metrics_and_role_distribution() -> None:
     assert result.metrics["task_quality"] > 0.8
     assert result.metrics["safety_pass_rate"] == 1.0
     assert result.metrics["swarm_score"] > 0.0
+    assert result.governance["guardian_fail_fast_triggered"] is False
     assert result.to_dict()["metrics"]["swarm_score"] == round(result.metrics["swarm_score"], 4)
 
 
@@ -256,6 +261,47 @@ def test_evaluate_rejects_unsupported_final_decision() -> None:
     ]
     with pytest.raises(ValueError, match="final_decision must be one of"):
         framework.evaluate(signals, final_decision="escalate")
+
+
+def test_guardian_fail_fast_overrides_requested_decision() -> None:
+    framework = PersonaSwarmFramework()
+    signals = [
+        _signal(
+            agent_id="g1",
+            role="guardian",
+            vote="block",
+            confidence=0.92,
+            safety_score=0.91,
+        ),
+        _signal(agent_id="e1", role="engineer", vote="approve", confidence=0.95),
+    ]
+    result = framework.evaluate(signals, final_decision="approve")
+
+    assert result.decision == "block"
+    assert result.governance["guardian_fail_fast_triggered"] is True
+    assert result.governance["final_decision_overridden"] is True
+    assert result.governance["guardian_blocking_agent_ids"] == ["g1"]
+    assert result.metrics["guardian_fail_fast_triggered"] == 1.0
+
+
+def test_guardian_fail_fast_can_be_disabled() -> None:
+    config = SwarmFrameworkConfig(guardian_fail_fast_enabled=False)
+    framework = PersonaSwarmFramework(config=config)
+    signals = [
+        _signal(
+            agent_id="g1",
+            role="guardian",
+            vote="block",
+            confidence=0.92,
+            safety_score=0.91,
+        ),
+        _signal(agent_id="e1", role="engineer", vote="approve", confidence=0.95),
+    ]
+    result = framework.evaluate(signals, final_decision="approve")
+
+    assert result.decision == "approve"
+    assert result.governance["guardian_fail_fast_triggered"] is False
+    assert result.metrics["guardian_fail_fast_triggered"] == 0.0
 
 
 def test_persona_positioning_supports_all_archetypes() -> None:
