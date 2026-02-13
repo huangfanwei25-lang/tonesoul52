@@ -45,6 +45,9 @@ This folder is the repository status source for machine-generated governance sna
   - Includes governance signals:
     - guardian fail-fast trigger state
     - cost profile tier and recommended agent budget
+  - Includes runtime budget application fields:
+    - `baseline_evaluation` (full signal pass)
+    - `execution_plan` (selected agents after budget policy)
 
 ## Generation
 

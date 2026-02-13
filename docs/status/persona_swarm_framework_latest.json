@@ -1,11 +1,12 @@
 {
-  "generated_at": "2026-02-13T19:11:15Z",
+  "generated_at": "2026-02-13T19:23:24Z",
   "source": "scripts/run_persona_swarm_framework.py",
   "input": {
     "source": "built_in_default",
-    "signal_count": 4
+    "signal_count": 4,
+    "execution_signal_count": 4
   },
-  "evaluation": {
+  "baseline_evaluation": {
     "decision": "approve",
     "decision_support": 0.7757,
     "metrics": {
@@ -37,6 +38,52 @@
       "statement": "Swarm identity is a constructive challenger: preserve dissent to unlock better plans."
     }
   },
+  "evaluation": {
+    "decision": "approve",
+    "decision_support": 0.7757,
+    "metrics": {
+      "task_quality": 0.84,
+      "safety_pass_rate": 1.0,
+      "consistency_at_session": 0.7757,
+      "disagreement_utility": 1.0,
+      "diversity_index": 1.0,
+      "token_latency_cost_index": 0.402,
+      "swarm_score": 0.8509,
+      "guardian_fail_fast_triggered": 0.0
+    },
+    "role_distribution": {
+      "guardian": 1,
+      "engineer": 1,
+      "analyst": 1,
+      "critic": 1
+    },
+    "governance": {
+      "guardian_fail_fast_triggered": false,
+      "guardian_blocking_agent_ids": [],
+      "requested_decision": null,
+      "final_decision_overridden": false
+    },
+    "persona_positioning": {
+      "archetype": "critical_discovery",
+      "suggested_identity": "explorer-critic collective",
+      "confidence_band": "high",
+      "statement": "Swarm identity is a constructive challenger: preserve dissent to unlock better plans."
+    }
+  },
+  "execution_plan": {
+    "mode": "full_swarm",
+    "tier": "low",
+    "requested_agent_budget": 5,
+    "selected_agent_count": 4,
+    "selected_agent_ids": [
+      "guardian-1",
+      "engineer-1",
+      "analyst-1",
+      "critic-1"
+    ],
+    "dropped_agent_ids": [],
+    "budget_respected": true
+  },
   "readiness_gate": {
     "passed": true,
     "criteria": {
@@ -51,7 +98,8 @@
       "swarm_score": true,
       "decision_support": true,
       "token_latency_cost_index": true,
-      "guardian_fail_fast_consistency": true
+      "guardian_fail_fast_consistency": true,
+      "execution_budget_respected": true
     },
     "failed_checks": [],
     "cost_profile": {

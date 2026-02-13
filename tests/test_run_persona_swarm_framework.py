@@ -8,6 +8,54 @@ import pytest
 import scripts.run_persona_swarm_framework as swarm_runner
 
 
+def _signals_for_selection():
+    signals, _ = swarm_runner._parse_input_payload(
+        [
+            {
+                "agent_id": "g1",
+                "role": "guardian",
+                "vote": "block",
+                "confidence": 0.95,
+                "safety_score": 0.95,
+                "quality_score": 0.70,
+                "latency_ms": 800,
+                "token_cost": 350,
+            },
+            {
+                "agent_id": "e1",
+                "role": "engineer",
+                "vote": "approve",
+                "confidence": 0.88,
+                "safety_score": 0.82,
+                "quality_score": 0.86,
+                "latency_ms": 1000,
+                "token_cost": 500,
+            },
+            {
+                "agent_id": "c1",
+                "role": "critic",
+                "vote": "revise",
+                "confidence": 0.76,
+                "safety_score": 0.85,
+                "quality_score": 0.90,
+                "latency_ms": 1500,
+                "token_cost": 700,
+            },
+            {
+                "agent_id": "a1",
+                "role": "analyst",
+                "vote": "approve",
+                "confidence": 0.72,
+                "safety_score": 0.88,
+                "quality_score": 0.83,
+                "latency_ms": 1400,
+                "token_cost": 680,
+            },
+        ]
+    )
+    return signals
+
+
 def test_parse_input_payload_supports_list_payload() -> None:
     signals, final_decision = swarm_runner._parse_input_payload(
         [
@@ -122,6 +170,45 @@ def test_gate_snapshot_enforces_guardian_fail_fast_consistency() -> None:
     assert "guardian_fail_fast_consistency" in gate["failed_checks"]
 
 
+def test_select_execution_signals_guardian_only_mode() -> None:
+    signals = _signals_for_selection()
+    selected = swarm_runner._select_execution_signals(
+        signals,
+        {
+            "tier": "critical",
+            "recommended_mode": "guardian_only",
+            "recommended_agent_budget": 1,
+        },
+    )
+    assert len(selected) == 1
+    assert selected[0].agent_id == "g1"
+
+
+def test_build_execution_plan_tracks_selected_and_dropped_agents() -> None:
+    signals = _signals_for_selection()
+    selected = swarm_runner._select_execution_signals(
+        signals,
+        {
+            "tier": "high",
+            "recommended_mode": "guardian_engineer_only",
+            "recommended_agent_budget": 2,
+        },
+    )
+    plan = swarm_runner._build_execution_plan(
+        signals,
+        selected,
+        {
+            "tier": "high",
+            "recommended_mode": "guardian_engineer_only",
+            "recommended_agent_budget": 2,
+        },
+    )
+    assert plan["selected_agent_count"] == 2
+    assert plan["budget_respected"] is True
+    assert set(plan["selected_agent_ids"]) == {"g1", "e1"}
+    assert set(plan["dropped_agent_ids"]) == {"c1", "a1"}
+
+
 def test_main_writes_artifact_and_returns_zero(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
@@ -141,4 +228,7 @@ def test_main_writes_artifact_and_returns_zero(
     assert exit_code == 0
     payload = json.loads(out_path.read_text(encoding="utf-8"))
     assert payload["source"] == "scripts/run_persona_swarm_framework.py"
+    assert payload["input"]["signal_count"] >= payload["input"]["execution_signal_count"]
+    assert payload["execution_plan"]["budget_respected"] is True
+    assert "baseline_evaluation" in payload
     assert payload["readiness_gate"]["passed"] is True

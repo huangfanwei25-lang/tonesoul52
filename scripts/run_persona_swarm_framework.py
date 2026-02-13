@@ -106,6 +106,113 @@ def _load_signals(input_path: Path | None) -> tuple[list[SwarmAgentSignal], str 
     return _parse_input_payload(payload)
 
 
+def _signal_rank(signal: SwarmAgentSignal) -> tuple[float, float, float]:
+    reliability = (signal.confidence + signal.safety_score + signal.quality_score) / 3.0
+    return reliability, -signal.latency_ms, -signal.token_cost
+
+
+def _is_guardian_role(role: str) -> bool:
+    value = str(role).strip().lower()
+    return value == "guardian" or value.startswith("guardian:")
+
+
+def _is_engineer_role(role: str) -> bool:
+    value = str(role).strip().lower()
+    return value == "engineer" or value.startswith("engineer:")
+
+
+def _select_execution_signals(
+    signals: list[SwarmAgentSignal], cost_profile: dict[str, Any]
+) -> list[SwarmAgentSignal]:
+    if not signals:
+        return []
+
+    ordered = sorted(signals, key=_signal_rank, reverse=True)
+    budget = max(1, int(cost_profile.get("recommended_agent_budget", len(ordered))))
+    mode = str(cost_profile.get("recommended_mode", "full_swarm")).strip().lower()
+
+    if mode == "full_swarm":
+        return ordered[:budget]
+
+    def _take_preferred(predicate: Any) -> list[SwarmAgentSignal]:
+        selected = [signal for signal in ordered if predicate(signal)]
+        selected = selected[:budget]
+        if len(selected) < budget:
+            for signal in ordered:
+                if signal in selected:
+                    continue
+                selected.append(signal)
+                if len(selected) >= budget:
+                    break
+        return selected[:budget]
+
+    if mode == "guardian_only":
+        return _take_preferred(lambda signal: _is_guardian_role(signal.role))
+
+    if mode == "guardian_engineer_only":
+        return _take_preferred(
+            lambda signal: _is_guardian_role(signal.role) or _is_engineer_role(signal.role)
+        )
+
+    if mode == "core_swarm":
+        selected: list[SwarmAgentSignal] = []
+        for predicate in (
+            lambda signal: _is_guardian_role(signal.role),
+            lambda signal: _is_engineer_role(signal.role),
+        ):
+            for signal in ordered:
+                if signal in selected:
+                    continue
+                if predicate(signal):
+                    selected.append(signal)
+                    break
+            if len(selected) >= budget:
+                return selected[:budget]
+
+        seen_roles = {signal.role for signal in selected}
+        for signal in ordered:
+            if signal in selected:
+                continue
+            if signal.role in seen_roles:
+                continue
+            selected.append(signal)
+            seen_roles.add(signal.role)
+            if len(selected) >= budget:
+                return selected[:budget]
+
+        for signal in ordered:
+            if signal in selected:
+                continue
+            selected.append(signal)
+            if len(selected) >= budget:
+                return selected[:budget]
+        return selected[:budget]
+
+    return ordered[:budget]
+
+
+def _build_execution_plan(
+    all_signals: list[SwarmAgentSignal],
+    selected_signals: list[SwarmAgentSignal],
+    cost_profile: dict[str, Any],
+) -> dict[str, Any]:
+    requested_budget = max(1, int(cost_profile.get("recommended_agent_budget", len(all_signals))))
+    selected_ids = [signal.agent_id for signal in selected_signals]
+    selected_id_set = set(selected_ids)
+    dropped_ids = [
+        signal.agent_id for signal in all_signals if signal.agent_id not in selected_id_set
+    ]
+    return {
+        "mode": str(cost_profile.get("recommended_mode", "full_swarm")),
+        "tier": str(cost_profile.get("tier", "unknown")),
+        "requested_agent_budget": requested_budget,
+        "selected_agent_count": len(selected_signals),
+        "selected_agent_ids": selected_ids,
+        "dropped_agent_ids": dropped_ids,
+        "budget_respected": len(selected_signals) <= requested_budget,
+    }
+
+
 def _gate_snapshot(evaluation: dict[str, Any]) -> dict[str, Any]:
     metrics = evaluation.get("metrics", {})
     governance = evaluation.get("governance", {})
@@ -169,8 +276,11 @@ def _build_payload(
     *,
     source_input: str,
     signal_count: int,
+    execution_signal_count: int,
+    baseline_evaluation: dict[str, Any],
     evaluation: dict[str, Any],
     readiness_gate: dict[str, Any],
+    execution_plan: dict[str, Any],
 ) -> dict[str, Any]:
     return {
         "generated_at": _iso_now(),
@@ -178,8 +288,11 @@ def _build_payload(
         "input": {
             "source": source_input,
             "signal_count": signal_count,
+            "execution_signal_count": execution_signal_count,
         },
+        "baseline_evaluation": baseline_evaluation,
         "evaluation": evaluation,
+        "execution_plan": execution_plan,
         "readiness_gate": readiness_gate,
     }
 
@@ -230,15 +343,34 @@ def main() -> int:
 
         signals, final_decision = _load_signals(input_path)
         framework = PersonaSwarmFramework()
-        result = framework.evaluate(signals, final_decision=final_decision)
+        baseline_result = framework.evaluate(signals, final_decision=final_decision)
+        baseline_evaluation = baseline_result.to_dict()
+        baseline_gate = _gate_snapshot(baseline_evaluation)
+
+        execution_signals = _select_execution_signals(signals, baseline_gate["cost_profile"])
+        if not execution_signals:
+            raise ValueError("execution planner selected no signals")
+        execution_plan = _build_execution_plan(
+            signals, execution_signals, baseline_gate["cost_profile"]
+        )
+
+        result = framework.evaluate(execution_signals, final_decision=final_decision)
         evaluation = result.to_dict()
         readiness_gate = _gate_snapshot(evaluation)
+        readiness_gate.setdefault("checks", {})
+        readiness_gate["checks"]["execution_budget_respected"] = execution_plan["budget_respected"]
+        if not execution_plan["budget_respected"]:
+            readiness_gate["failed_checks"].append("execution_budget_respected")
+            readiness_gate["passed"] = False
 
         payload = _build_payload(
             source_input=str(input_path) if input_path else "built_in_default",
             signal_count=len(signals),
+            execution_signal_count=len(execution_signals),
+            baseline_evaluation=baseline_evaluation,
             evaluation=evaluation,
             readiness_gate=readiness_gate,
+            execution_plan=execution_plan,
         )
     except Exception as exc:
         payload = {

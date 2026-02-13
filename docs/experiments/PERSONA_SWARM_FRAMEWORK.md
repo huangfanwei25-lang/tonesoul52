@@ -75,6 +75,22 @@ Current gate used by `run_persona_swarm_framework.py`:
 - `high` (<= 0.80): `guardian_engineer_only` (budget 2)
 - `critical` (> 0.80): `guardian_only` (budget 1)
 
+## Phase 85 Runtime Budget Application
+
+Runner now executes in two passes:
+
+1. Baseline evaluation on full signal set (for cost-tier inference)
+2. Budgeted execution evaluation on selected signals
+
+Output fields:
+
+- `baseline_evaluation`: full-swarm snapshot
+- `execution_plan`:
+  - selected/dropped agent IDs
+  - requested budget
+  - budget respected flag
+- `evaluation`: budgeted execution result (authoritative gate input)
+
 In `--strict` mode, gate failure returns non-zero.
 
 ## Run

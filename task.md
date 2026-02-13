@@ -13,6 +13,7 @@
 - [x] Phase 82: Persona Swarm Framework (coordination gate + readiness artifact)
 - [x] Phase 83: Swarm decision contract hardening (input schema + validation)
 - [x] Phase 84: Swarm fail-fast + cost-tier governance
+- [x] Phase 85: Swarm budget execution planner
 **Latest validation**: `pytest -q` => `769 passed, 3 xfailed` (2026-02-13). Level 3 implementation tracked in `CODEX_TASK.md` v7.
 
 ## Phase 77: Level 3 Experimental
@@ -43,6 +44,12 @@
 - [x] Runner gate checks `guardian_fail_fast_consistency`
 - [x] Runner emits `cost_profile` tier (`low/moderate/high/critical`) with agent budget
 **Result**: Swarm runtime now has safety-first early-stop and budget-aware execution guidance.
+
+## Phase 85: Swarm Budget Execution Planner
+- [x] Two-pass runner flow: baseline full-signal eval -> budgeted execution eval
+- [x] Cost-tier recommendation now maps to actual signal selection and execution plan
+- [x] Gate now includes `execution_budget_respected` check
+**Result**: Cost tier is no longer advisory only; it actively constrains swarm execution.
 
 ## Execution Log (2026-02-13)
 - [x] Phase A complete
@@ -76,6 +83,9 @@
 - [x] Phase 84 complete
 - [x] Added guardian fail-fast governance output and runner cost-tier profile
 - [x] Validation: `pytest tests/test_swarm_framework.py tests/test_run_persona_swarm_framework.py tests/test_verify_docs_consistency.py -q` => `27 passed`
+- [x] Phase 85 complete
+- [x] Added execution planner with baseline/budgeted dual evaluation in swarm runner
+- [x] Validation: `pytest tests/test_swarm_framework.py tests/test_run_persona_swarm_framework.py tests/test_verify_docs_consistency.py -q` => `31 passed`
 ## Phase 79-81: Legacy Duplicates (Closed)
 - [x] Legacy duplicate tracking blocks for Phase A/B/C removed from active queue.
 - [x] Canonical status is tracked in Program Board + Execution Log above.
