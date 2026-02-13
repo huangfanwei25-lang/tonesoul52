@@ -6,6 +6,7 @@ Combines ToneBridge psychological analysis with Council deliberation.
 from __future__ import annotations
 
 import os
+import re
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 
@@ -380,6 +381,56 @@ class UnifiedPipeline:
             f"{contradiction_hints}]\n\n{user_message}"
         )
 
+    @staticmethod
+    def _collect_graph_query_terms(user_message: str, tb_result: Any = None) -> List[str]:
+        """Collect retrieval terms from analysis hints and user text."""
+        terms: List[str] = []
+        if tb_result and getattr(tb_result, "tone", None):
+            trigger_keywords = getattr(tb_result.tone, "trigger_keywords", None) or []
+            terms.extend(
+                str(keyword).strip() for keyword in trigger_keywords if str(keyword).strip()
+            )
+        if tb_result and getattr(tb_result, "motive", None):
+            likely_motive = getattr(tb_result.motive, "likely_motive", None)
+            if likely_motive:
+                terms.append(str(likely_motive).strip())
+        words = [token for token in re.split(r"\s+", user_message) if token]
+        cleaned_words = [
+            word.strip("，。！？,.!?；;:：()[]{}\"'")
+            for word in words[:10]
+            if len(word.strip("，。！？,.!?；;:：()[]{}\"'")) > 2
+        ]
+        terms.extend(cleaned_words[:5])
+
+        deduped: List[str] = []
+        seen = set()
+        for term in terms:
+            normalized = term.lower()
+            if normalized in seen:
+                continue
+            seen.add(normalized)
+            deduped.append(term)
+        return deduped
+
+    def _inject_graph_rag_context(self, user_message: str, tb_result: Any = None) -> str:
+        """Inject GraphRAG retrieval summary into prompt context."""
+        try:
+            graph = self._get_semantic_graph()
+            if not graph:
+                return user_message
+            query_terms = self._collect_graph_query_terms(user_message, tb_result)
+            if not query_terms:
+                return user_message
+            graph_context = graph.retrieve_relevant(
+                query_terms=query_terms, max_hops=2, max_results=10
+            )
+            context_summary = str(graph_context.get("context_summary", "")).strip()
+            if context_summary:
+                return f"[語義脈絡: {context_summary}]\n\n{user_message}"
+        except Exception:
+            return user_message
+        return user_message
+
     def build_injection_context(
         self, user_message: str, persona_config: Optional[Dict[str, Any]] = None
     ) -> str:
@@ -594,6 +645,9 @@ class UnifiedPipeline:
 
         # ========== 3.5 回應前矛盾檢查 ==========
         user_message = self._inject_early_contradiction_warning(user_message)
+
+        # ========== 3.6 GraphRAG Context Retrieval ==========
+        user_message = self._inject_graph_rag_context(user_message, tb_result=tb_result)
 
         # ========== 4. 生成增強 prompt ==========
         system_context = self._build_context_prompt(

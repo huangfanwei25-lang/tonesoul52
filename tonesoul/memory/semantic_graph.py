@@ -14,7 +14,7 @@ import hashlib
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from typing import Dict, List, Optional, Set
+from typing import Any, Dict, List, Optional, Set
 
 
 class NodeType(Enum):
@@ -258,6 +258,123 @@ class SemanticGraph:
                     )
 
         return contradictions
+
+    def retrieve_relevant(
+        self,
+        query_terms: List[str],
+        max_hops: int = 2,
+        max_results: int = 10,
+    ) -> Dict[str, Any]:
+        """
+        GraphRAG-style multi-hop retrieval.
+
+        Finds directly matched nodes from query terms, then performs BFS expansion
+        to discover related context up to ``max_hops``.
+        """
+        if not query_terms:
+            return {
+                "matched_nodes": [],
+                "related_nodes": [],
+                "paths": [],
+                "commitments_in_scope": [],
+                "context_summary": "",
+            }
+        if not self._nodes:
+            return {
+                "matched_nodes": [],
+                "related_nodes": [],
+                "paths": [],
+                "commitments_in_scope": [],
+                "context_summary": "No matching concepts found in semantic graph.",
+            }
+
+        query_lower = [str(term).strip().lower() for term in query_terms if str(term).strip()]
+        if not query_lower:
+            return {
+                "matched_nodes": [],
+                "related_nodes": [],
+                "paths": [],
+                "commitments_in_scope": [],
+                "context_summary": "",
+            }
+
+        matched: List[SemanticNode] = []
+        for node in self._nodes.values():
+            label_lower = node.label.lower()
+            for term in query_lower:
+                if term in label_lower or label_lower in term:
+                    matched.append(node)
+                    break
+
+        if not matched:
+            return {
+                "matched_nodes": [],
+                "related_nodes": [],
+                "paths": [],
+                "commitments_in_scope": [],
+                "context_summary": "No matching concepts found in semantic graph.",
+            }
+
+        max_hops = max(0, int(max_hops))
+        max_results = max(1, int(max_results))
+
+        visited = {node.id for node in matched}
+        frontier = [node.id for node in matched]
+        related_map: Dict[str, SemanticNode] = {}
+        paths: List[Dict[str, Any]] = []
+
+        for hop in range(max_hops):
+            next_frontier: List[str] = []
+            for node_id in frontier:
+                neighbors = self.get_neighbors(node_id)
+                for neighbor in neighbors:
+                    if neighbor.id in visited:
+                        continue
+                    visited.add(neighbor.id)
+                    next_frontier.append(neighbor.id)
+                    related_map[neighbor.id] = neighbor
+                    for edge in self.get_edges_between(node_id, neighbor.id):
+                        paths.append(
+                            {
+                                "from": (
+                                    self._nodes[node_id].label
+                                    if node_id in self._nodes
+                                    else node_id
+                                ),
+                                "to": neighbor.label,
+                                "relation": edge.edge_type.value,
+                                "hop": hop + 1,
+                            }
+                        )
+            frontier = next_frontier
+            if not frontier:
+                break
+
+        related = list(related_map.values())
+        all_in_scope = {node.id for node in matched} | {node.id for node in related}
+        commitments = [
+            self._nodes[node_id]
+            for node_id in all_in_scope
+            if node_id in self._nodes and self._nodes[node_id].node_type == NodeType.COMMITMENT
+        ]
+
+        summary_parts: List[str] = []
+        if matched:
+            labels = ", ".join(node.label for node in matched[:5])
+            summary_parts.append(f"直接相關: {labels}")
+        if commitments:
+            labels = ", ".join(node.label for node in commitments[:3])
+            summary_parts.append(f"相關承諾: {labels}")
+        if paths:
+            summary_parts.append(f"發現 {len(paths)} 條關聯路徑 ({max_hops}-hop)")
+
+        return {
+            "matched_nodes": [node.to_dict() for node in matched[:max_results]],
+            "related_nodes": [node.to_dict() for node in related[:max_results]],
+            "paths": paths[:20],
+            "commitments_in_scope": [node.to_dict() for node in commitments],
+            "context_summary": " | ".join(summary_parts) if summary_parts else "",
+        }
 
     def extract_from_commitment(self, commitment: Dict) -> SemanticNode:
         """Extract and add nodes from a commitment."""

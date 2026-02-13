@@ -21,6 +21,14 @@ class MemorySource(Enum):
     CUSTOM = "custom"
 
 
+class MemoryLayer(Enum):
+    """Functional memory layers."""
+
+    FACTUAL = "factual"
+    EXPERIENTIAL = "experiential"
+    WORKING = "working"
+
+
 @dataclass
 class MemoryRecord:
     source: MemorySource
@@ -31,6 +39,7 @@ class MemoryRecord:
     relevance_score: float = 1.0
     access_count: int = 0
     last_accessed: Optional[str] = None
+    layer: str = MemoryLayer.EXPERIENTIAL.value
 
 
 class SoulDB(Protocol):
@@ -44,6 +53,7 @@ class SoulDB(Protocol):
         apply_decay: bool = False,
         now: Optional[datetime] = None,
         forget_threshold: Optional[float] = None,
+        layer: Optional[str] = None,
     ) -> Iterable[MemoryRecord]: ...
 
     def stream(
@@ -120,6 +130,18 @@ def _resolve_decay_threshold(forget_threshold: Optional[float]) -> float:
     return max(0.0, min(1.0, _coerce_float(forget_threshold, FORGET_THRESHOLD)))
 
 
+def _normalize_memory_layer(layer: Optional[str]) -> Optional[str]:
+    if layer is None:
+        return None
+    text = str(layer).strip().lower()
+    if not text:
+        return None
+    try:
+        return MemoryLayer(text).value
+    except ValueError:
+        return text
+
+
 def _decay_records(
     records: List[MemoryRecord],
     *,
@@ -188,16 +210,27 @@ class JsonlSoulDB:
         apply_decay: bool = False,
         now: Optional[datetime] = None,
         forget_threshold: Optional[float] = None,
+        layer: Optional[str] = None,
     ) -> Iterable[MemoryRecord]:
-        if not apply_decay:
+        normalized_layer = _normalize_memory_layer(layer)
+        if not apply_decay and normalized_layer is None:
             return self.stream(source, limit=limit)
         if limit is not None and int(limit) <= 0:
             return []
         records = list(self.stream(source, limit=None))
-        decayed = _decay_records(records, now=now, forget_threshold=forget_threshold)
+        if normalized_layer is not None:
+            records = [
+                record
+                for record in records
+                if _normalize_memory_layer(getattr(record, "layer", None)) == normalized_layer
+            ]
+        if apply_decay:
+            records = _decay_records(records, now=now, forget_threshold=forget_threshold)
         if limit is not None:
-            return decayed[: int(limit)]
-        return decayed
+            if apply_decay:
+                return records[: int(limit)]
+            return records[-int(limit) :]
+        return records
 
     def stream(self, source: MemorySource, limit: Optional[int] = None) -> Iterable[MemoryRecord]:
         path = self._resolve_path(source)
@@ -231,6 +264,8 @@ class JsonlSoulDB:
                         if record_payload.get("last_accessed")
                         else None
                     ),
+                    layer=_normalize_memory_layer(record_payload.get("layer"))
+                    or MemoryLayer.EXPERIENTIAL.value,
                 )
                 records.append(record)
         if limit == 0:
@@ -429,16 +464,27 @@ class SqliteSoulDB:
         apply_decay: bool = False,
         now: Optional[datetime] = None,
         forget_threshold: Optional[float] = None,
+        layer: Optional[str] = None,
     ) -> Iterable[MemoryRecord]:
-        if not apply_decay:
+        normalized_layer = _normalize_memory_layer(layer)
+        if not apply_decay and normalized_layer is None:
             return self.stream(source, limit=limit)
         if limit is not None and int(limit) <= 0:
             return []
         records = list(self.stream(source, limit=None))
-        decayed = _decay_records(records, now=now, forget_threshold=forget_threshold)
+        if normalized_layer is not None:
+            records = [
+                record
+                for record in records
+                if _normalize_memory_layer(getattr(record, "layer", None)) == normalized_layer
+            ]
+        if apply_decay:
+            records = _decay_records(records, now=now, forget_threshold=forget_threshold)
         if limit is not None:
-            return decayed[: int(limit)]
-        return decayed
+            if apply_decay:
+                return records[: int(limit)]
+            return records[-int(limit) :]
+        return records
 
     def stream(self, source: MemorySource, limit: Optional[int] = None) -> Iterable[MemoryRecord]:
         if source == MemorySource.PROVENANCE_LEDGER:
@@ -518,6 +564,8 @@ class SqliteSoulDB:
                     last_accessed=(
                         str(payload.get("last_accessed")) if payload.get("last_accessed") else None
                     ),
+                    layer=_normalize_memory_layer(payload.get("layer"))
+                    or MemoryLayer.EXPERIENTIAL.value,
                 )
             )
         return records
@@ -561,6 +609,8 @@ class SqliteSoulDB:
                     last_accessed=(
                         str(payload.get("last_accessed")) if payload.get("last_accessed") else None
                     ),
+                    layer=_normalize_memory_layer(payload.get("layer"))
+                    or MemoryLayer.EXPERIENTIAL.value,
                 )
             )
         return records
