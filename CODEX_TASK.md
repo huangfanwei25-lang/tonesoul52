@@ -1,428 +1,780 @@
-# CODEX_TASK — Level 2b+2d：回顧式反思 + AI Sleep v6
+# CODEX_TASK — Level 3：實驗性功能 v7
 
-> **日期**：2026-02-13T22:20 (UTC+8)
+> **日期**：2026-02-13T23:10 (UTC+8)
 > **交辦者**：Antigravity
-> **前置**：先讀 `tonesoul/memory/consolidator.py`（103行）和 `tonesoul/memory/decay.py`（26行）
-> **前一輪**：Level 2a+2c（GraphRAG 檢索 + 分層記憶）全部完成 ✅ (725 tests)
+> **前置**：先讀 `docs/experiments/VISUAL_CHAIN_SELF_QUERY.md`，再讀 `tonesoul/unified_pipeline.py`
+> **前一輪**：Level 2 全部完成 ✅ (739 tests)
+> **重要**：Level 3 是**實驗性功能**（◉ 等級），設計上留彈性，不要求生產級完美
 
 ---
 
 ## 總覽
 
 ```
-已完成 ✅                             本輪 🔴
-────────────────                     ────────────────
-GraphRAG retrieve_relevant() ✅       2b: 回顧式記憶反思 — Decay 升級
-分層記憶 (MemoryLayer) ✅             2d: AI Sleep — Consolidator 升級
+Level 1+2（已完成 ✅）                Level 3（本輪 🧪）
+────────────────────                 ────────────────────
+visual prompt 注入                    3a: Semantic Trigger — 張力驅動
+矛盾早期檢查                          3b: 跨 session 記憶恢復
+GraphRAG 多跳檢索                     3c: 議會自我演化
+分層記憶                              3d: 對抗式自省（研究級 stub）
+回顧式反思
+AI Sleep 固化
 ```
 
-**這輪 2 件事**：
-
-| # | 任務 | 靈感來源 | 改動範圍 |
+| # | 任務 | 前衛等級 | 改動範圍 |
 |---|------|---------|---------|
-| 2b | 回顧式記憶反思 | ACL 2025 RMM 論文 | `decay.py` + `soul_db.py` |
-| 2d | AI Sleep 記憶固化 | 神經科學啟發 | `consolidator.py` + `apps/api/server.py` |
+| 3a | Semantic Trigger | ○ 理論可行 | `unified_pipeline.py` |
+| 3b | 跨 session 記憶恢復 | ○ 理論可行 | `unified_pipeline.py` |
+| 3c | 議會自我演化 | ◉ 純推測 | `council/runtime.py` + new file |
+| 3d | 對抗式自省 | ◉ 純推測 | 新檔 `memory/adversarial.py` |
 
 ---
 
-## Task 2b：回顧式記憶反思
+## Task 3a：Semantic Trigger — 張力驅動的圖鏈查詢
 
 ### 目標
 
-目前 Decay 只做**被動衰減**（純數學）。加一個**主動反思**層：
-每 N 輪（或 session 結束時），用規則重新評估記憶的相關性。
+AI 偵測到高張力（tension > 0.7）時，**主動查詢歷史圖鏈**，
+找出「這個張力是不是之前出現過」。如果是反覆出現的主題，AI 會收到提醒。
 
-這不需要 LLM 呼叫（省 token），而是用**啟發式規則**根據上下文重新打分。
+這是 AI「自主思考」的第一步 — 不只是被動收到 context，
+而是**主動根據情境去搜尋記憶**。
 
-### 修改：`tonesoul/memory/decay.py`
+### 修改：`tonesoul/unified_pipeline.py`
 
-新增兩個函數：
-
-```python
-def retrospective_score(
-    record_payload: Dict[str, object],
-    current_topics: List[str],
-    active_commitments: List[str],
-) -> float:
-    """
-    Retrospective reflection: re-score a memory based on current context.
-    
-    Rules:
-    1. If memory mentions any current topic → boost +0.3
-    2. If memory is linked to an active commitment → boost +0.2
-    3. If memory is old and never accessed → penalty -0.1
-    4. Base score stays as is if no rules match
-    
-    Returns adjustment value to add to relevance_score (can be negative).
-    """
-    adjustment = 0.0
-    text = str(record_payload.get("text", "") or record_payload.get("content", "")).lower()
-    
-    # Rule 1: Topic relevance
-    for topic in current_topics:
-        if topic.lower() in text:
-            adjustment += 0.3
-            break  # one match is enough
-    
-    # Rule 2: Commitment linkage
-    for commit in active_commitments:
-        if commit.lower() in text:
-            adjustment += 0.2
-            break
-
-    # Rule 3: Stale penalty
-    access_count = int(record_payload.get("access_count", 0) or 0)
-    if access_count == 0:
-        adjustment -= 0.1
-
-    return max(-0.5, min(0.5, adjustment))
-
-
-def apply_retrospective(
-    records: List["MemoryRecord"],
-    current_topics: Optional[List[str]] = None,
-    active_commitments: Optional[List[str]] = None,
-) -> List["MemoryRecord"]:
-    """
-    Apply retrospective reflection to a list of memory records.
-    Updates relevance_score based on context-aware re-evaluation.
-    
-    Returns new list with updated scores (does NOT mutate originals).
-    """
-    from dataclasses import replace
-    
-    current_topics = current_topics or []
-    active_commitments = active_commitments or []
-    
-    result = []
-    for record in records:
-        adj = retrospective_score(
-            record.payload,
-            current_topics,
-            active_commitments,
-        )
-        new_score = max(0.0, min(1.0, record.relevance_score + adj))
-        result.append(replace(record, relevance_score=new_score))
-    return result
-```
-
-### 修改：`tonesoul/memory/soul_db.py`
-
-在 `query()` 方法加一個 `apply_reflection` 參數：
+新增一個方法 + 在 `process()` 中呼叫：
 
 ```python
-def query(
+def _semantic_trigger_check(
     self,
-    source: MemorySource,
-    limit: Optional[int] = None,
-    *,
-    apply_decay: bool = False,
-    apply_reflection: bool = False,  # 新增
-    current_topics: Optional[List[str]] = None,  # 新增
-    active_commitments: Optional[List[str]] = None,  # 新增
-    now: Optional[datetime] = None,
-    forget_threshold: Optional[float] = None,
-    layer: Optional[str] = None,
-) -> Iterable[MemoryRecord]:
-    records = list(self.stream(source, limit=None))
-    if layer:
-        records = [r for r in records if getattr(r, "layer", "experiential") == layer]
-    if apply_decay:
-        records = _decay_records(records, now=now, forget_threshold=forget_threshold)
-    if apply_reflection:
-        from .decay import apply_retrospective
-        records = apply_retrospective(
-            records,
-            current_topics=current_topics,
-            active_commitments=active_commitments,
+    tension_score: float,
+    current_topics: List[str],
+    user_message: str,
+) -> str:
+    """
+    Semantic Trigger: when tension is high, proactively query visual chain
+    for historical tension patterns.
+    
+    Returns modified user_message with tension history context if found.
+    """
+    TENSION_THRESHOLD = 0.7
+    
+    if tension_score < TENSION_THRESHOLD:
+        return user_message
+    
+    try:
+        chain = self._get_visual_chain()
+        if not chain or chain.frame_count == 0:
+            return user_message
+        
+        # Query visual chain for past high-tension frames
+        from tonesoul.memory.visual_chain import FrameType
+        recent_frames = chain.get_recent(n=10)
+        
+        # Find past high-tension moments
+        high_tension_history = []
+        for frame in recent_frames:
+            frame_tension = float(frame.data.get("tension", 0.0) if frame.data else 0.0)
+            if frame_tension >= TENSION_THRESHOLD:
+                high_tension_history.append({
+                    "title": frame.title,
+                    "tension": frame_tension,
+                    "topics": frame.data.get("topics", []) if frame.data else [],
+                })
+        
+        if not high_tension_history:
+            return user_message
+
+        # Check for recurring topic overlap
+        past_topics = set()
+        for entry in high_tension_history:
+            for t in entry.get("topics", []):
+                past_topics.add(str(t).lower())
+        
+        current_lower = set(str(t).lower() for t in current_topics)
+        recurring = past_topics & current_lower
+        
+        # Build trigger context
+        trigger_parts = [
+            f"[⚡ 語義觸發: 偵測到高張力 ({tension_score:.2f})]"
+        ]
+        trigger_parts.append(
+            f"歷史高張力次數: {len(high_tension_history)}"
         )
-    if limit is not None:
-        records = records[:limit]
-    return records
+        if recurring:
+            trigger_parts.append(
+                f"反覆出現的話題: {', '.join(list(recurring)[:5])}"
+            )
+            trigger_parts.append(
+                "建議: 這可能是反覆出現的衝突模式，請注意一致性"
+            )
+        
+        trigger_context = " | ".join(trigger_parts)
+        return f"{trigger_context}\n\n{user_message}"
+        
+    except Exception:
+        return user_message
+```
+
+**呼叫位置**：在 `process()` 方法裡，ToneBridge 分析**之後**、Council 審議**之前**：
+
+```python
+# ========== Semantic Trigger Check ==========
+if tb_result and tb_result.tone:
+    tension_score = float(tb_result.tone.tone_strength or 0.0)
+    user_message = self._semantic_trigger_check(
+        tension_score=tension_score,
+        current_topics=semantic_topics,
+        user_message=user_message,
+    )
 ```
 
 ### 注意
 
-- `apply_reflection` 預設 False — 只在特定場景啟用
-- `retrospective_score` 使用純啟發式 — 不呼叫 LLM，不消耗 token
-- 返回新 records（用 `dataclasses.replace`），不修改原始資料
-- `current_topics` 和 `active_commitments` 可以從 pipeline 步驟中取得
+- `get_recent(n=10)` 已存在於 `visual_chain.py`
+- `frame.data` 是 dict，裡面有 `tension`, `topics`, `verdict` 等欄位
+- 只在 tension > 0.7 時觸發 — 不會每輪都查
+- 如果 `visual_chain` 不存在或是空的，直接 pass
 
-### 測試：新建 `tests/test_retrospective_reflection.py`
+### 測試：新建 `tests/test_semantic_trigger.py`
 
 ```python
-"""Test retrospective memory reflection."""
+"""Test semantic trigger — tension-driven visual chain query."""
 import pytest
-from tonesoul.memory.decay import retrospective_score, apply_retrospective
 
 
-def test_topic_match_boosts_score():
-    payload = {"text": "We discussed honesty and trust"}
-    adj = retrospective_score(payload, current_topics=["honesty"], active_commitments=[])
-    assert adj > 0
+def test_low_tension_no_trigger():
+    """Low tension should return user_message unchanged."""
+    from tonesoul.unified_pipeline import UnifiedPipeline
+    pipe = UnifiedPipeline.__new__(UnifiedPipeline)
+    result = pipe._semantic_trigger_check(0.3, ["test"], "hello")
+    assert result == "hello"
 
 
-def test_commitment_match_boosts_score():
-    payload = {"text": "I promised to always be transparent"}
-    adj = retrospective_score(payload, current_topics=[], active_commitments=["transparent"])
-    assert adj > 0
-
-
-def test_stale_record_penalized():
-    payload = {"text": "old memory", "access_count": 0}
-    adj = retrospective_score(payload, current_topics=[], active_commitments=[])
-    assert adj < 0
-
-
-def test_accessed_record_not_penalized():
-    payload = {"text": "accessed memory", "access_count": 3}
-    adj = retrospective_score(payload, current_topics=[], active_commitments=[])
-    assert adj >= 0
-
-
-def test_combined_boost_and_penalty():
-    payload = {"text": "honesty matters", "access_count": 0}
-    adj = retrospective_score(payload, current_topics=["honesty"], active_commitments=[])
-    # Topic boost (+0.3) minus stale penalty (-0.1) = +0.2
-    assert adj > 0
-
-
-def test_adjustment_clamped():
-    payload = {"text": "honesty trust commitment integrity"}
-    adj = retrospective_score(
-        payload,
-        current_topics=["honesty", "trust"],
-        active_commitments=["commitment", "integrity"],
+def test_high_tension_triggers_check():
+    """High tension should attempt visual chain query."""
+    from tonesoul.unified_pipeline import UnifiedPipeline
+    from tonesoul.memory.visual_chain import VisualChain, FrameType
+    
+    pipe = UnifiedPipeline.__new__(UnifiedPipeline)
+    # Setup a chain with high-tension frame
+    chain = VisualChain()
+    chain.capture(
+        frame_type=FrameType.SESSION_STATE,
+        title="Turn 1",
+        data={"tension": 0.8, "topics": ["honesty"], "verdict": "approve"},
+        tags=["auto", "high_tension"],
     )
-    assert -0.5 <= adj <= 0.5
+    pipe._visual_chain = chain
+    
+    result = pipe._semantic_trigger_check(
+        0.85, ["honesty", "trust"], "I need to discuss something"
+    )
+    assert "語義觸發" in result or "高張力" in result
 
 
-def test_apply_retrospective_returns_new_records():
-    from tonesoul.memory.soul_db import MemoryRecord, MemorySource
+def test_high_tension_no_chain():
+    """High tension without visual chain should return unchanged."""
+    from tonesoul.unified_pipeline import UnifiedPipeline
+    pipe = UnifiedPipeline.__new__(UnifiedPipeline)
+    pipe._visual_chain = None
+    result = pipe._semantic_trigger_check(0.9, ["test"], "hello")
+    assert result == "hello"
 
-    records = [
-        MemoryRecord(
-            source=MemorySource.SELF_JOURNAL,
-            timestamp="2026-01-01",
-            payload={"text": "honesty is important"},
-        ),
-    ]
-    result = apply_retrospective(records, current_topics=["honesty"])
-    assert len(result) == 1
-    assert result[0].relevance_score != records[0].relevance_score or True
-    # Original should not be mutated
-    assert records[0].relevance_score == 1.0
+
+def test_recurring_topic_detected():
+    """When same topic appears in historical high-tension, flag it."""
+    from tonesoul.unified_pipeline import UnifiedPipeline
+    from tonesoul.memory.visual_chain import VisualChain, FrameType
+
+    pipe = UnifiedPipeline.__new__(UnifiedPipeline)
+    chain = VisualChain()
+    # Add multiple high-tension frames with same topic
+    for i in range(3):
+        chain.capture(
+            frame_type=FrameType.SESSION_STATE,
+            title=f"Turn {i}",
+            data={"tension": 0.75 + i * 0.05, "topics": ["conflict"]},
+            tags=["auto"],
+        )
+    pipe._visual_chain = chain
+    
+    result = pipe._semantic_trigger_check(0.8, ["conflict"], "msg")
+    assert "反覆" in result or "conflict" in result.lower()
 ```
 
 ---
 
-## Task 2d：AI Sleep 記憶固化
+## Task 3b：跨 Session 記憶恢復
 
 ### 目標
 
-Session 結束後，自動跑一次「記憶固化」：
-1. 掃描 `working` 層記憶
-2. 把重要的提升到 `experiential` 或 `factual` 層
-3. 清除剩餘的 `working` 記憶
-4. 生成一份固化報告
+新 session 開始時，如果磁碟上有之前的 `visual_chain.json`，
+自動讀取最近 5 張快照，用一段摘要注入到第一條訊息裡。
 
-這模擬人類睡眠中的記憶固化過程。
+AI 不需要讀完整段對話歷史，圖鏈就告訴它 80% 的脈絡。
 
-### 修改：`tonesoul/memory/consolidator.py`
+### 修改：`tonesoul/unified_pipeline.py`
 
-新增 `sleep_consolidate()` 函數：
+新增方法 + 在 `process()` 第一次呼叫時觸發：
 
 ```python
-@dataclass
-class SleepResult:
-    """Result of AI Sleep memory consolidation."""
-    promoted_count: int  # working → experiential/factual
-    cleared_count: int  # working records cleared
-    patterns: Dict[str, object]
-    meta_reflection: str
-    layer_summary: Dict[str, int]  # count per layer after consolidation
-
-
-def _classify_for_promotion(payload: Dict[str, object]) -> str:
-    """Decide which layer a working memory should be promoted to.
-    
-    Rules:
-    - Contains commitment/promise keywords → factual
-    - Contains emotional/relational keywords → experiential
-    - Otherwise → stays working (will be cleared)
+def _try_cross_session_recovery(self, user_message: str) -> str:
     """
-    text = str(payload.get("text", "") or payload.get("content", "")).lower()
+    Cross-session memory recovery.
     
-    factual_keywords = ["commit", "promise", "agree", "承諾", "保證", "答應", "name", "prefer"]
-    experiential_keywords = ["feel", "emotion", "conflict", "tension", "感覺", "衝突", "張力"]
+    If visual chain has persisted frames from a previous session,
+    inject a recovery context into the first message.
     
-    for kw in factual_keywords:
-        if kw in text:
-            return "factual"
-    for kw in experiential_keywords:
-        if kw in text:
-            return "experiential"
-    
-    return "working"  # not promoted
-
-
-def sleep_consolidate(
-    soul_db: SoulDB,
-    *,
-    source: MemorySource = MemorySource.SELF_JOURNAL,
-) -> SleepResult:
+    Only runs ONCE per pipeline lifetime (controlled by a flag).
     """
-    AI Sleep: consolidate working memory into long-term storage.
+    if getattr(self, '_session_recovered', False):
+        return user_message  # Already recovered, skip
     
-    1. Read all working-layer records
-    2. Classify each for promotion (factual/experiential/stay)
-    3. Re-append promoted records with new layer
-    4. Run pattern analysis on all records
-    5. Generate meta-reflection
-    """
-    # Step 1: Get working memories
+    self._session_recovered = True
+    
     try:
-        working_records = list(soul_db.query(
-            source,
-            layer="working",
-        ))
-    except TypeError:
-        # Fallback if query doesn't support layer yet
-        working_records = []
+        chain = self._get_visual_chain()
+        if not chain or chain.frame_count == 0:
+            return user_message
 
-    promoted = 0
-    cleared = 0
-    
-    # Step 2-3: Classify and promote
-    for record in working_records:
-        target_layer = _classify_for_promotion(record.payload)
-        if target_layer != "working":
-            # Promote: append as new record with upgraded layer
-            promoted_payload = dict(record.payload)
-            promoted_payload["layer"] = target_layer
-            promoted_payload["promoted_from"] = "working"
-            promoted_payload["promoted_at"] = datetime.now(timezone.utc).isoformat()
-            soul_db.append(source, promoted_payload)
-            promoted += 1
-        else:
-            cleared += 1
-    
-    # Step 4-5: Run consolidation on ALL records
-    all_entries = [r.payload for r in soul_db.stream(source) if isinstance(r.payload, dict)]
-    patterns = identify_patterns(all_entries) if all_entries else {}
-    meta_reflection = generate_meta_reflection(patterns) if patterns else ""
-    
-    # Count by layer
-    layer_counts = {"factual": 0, "experiential": 0, "working": 0}
-    for record in soul_db.stream(source):
-        lyr = getattr(record, "layer", "experiential")
-        if lyr in layer_counts:
-            layer_counts[lyr] += 1
-        else:
-            layer_counts[lyr] = 1
-    
-    return SleepResult(
-        promoted_count=promoted,
-        cleared_count=cleared,
-        patterns=patterns,
-        meta_reflection=meta_reflection,
-        layer_summary=layer_counts,
-    )
-```
-
-### 需要加的 import
-
-在 `consolidator.py` 頂部加：
-```python
-from datetime import datetime, timezone
-```
-
-### 修改：`apps/api/server.py`
-
-在 `/api/session-report` 路由中，在 decay cleanup 之後，加 sleep 固化：
-
-```python
-# After decay cleanup
-try:
-    from tonesoul.memory.consolidator import sleep_consolidate
-    from tonesoul.memory.soul_db import MemorySource
-    soul_db = _get_soul_db()  # same way as before
-    if soul_db:
-        sleep_result = soul_db and sleep_consolidate(soul_db, source=MemorySource.SELF_JOURNAL)
-        if sleep_result and sleep_result.promoted_count > 0:
-            print(
-                f"[INFO] AI Sleep: promoted {sleep_result.promoted_count}, "
-                f"cleared {sleep_result.cleared_count}"
+        # Get recent frames (from persisted chain)
+        recent = chain.get_recent(n=5)
+        if not recent:
+            return user_message
+        
+        # Build recovery summary
+        recovery_parts = ["[跨 Session 記憶恢復]"]
+        
+        for frame in recent[-3:]:  # Last 3 frames
+            tension = float(frame.data.get("tension", 0.0) if frame.data else 0.0)
+            verdict = str(frame.data.get("verdict", "unknown") if frame.data else "unknown")
+            topics = frame.data.get("topics", []) if frame.data else []
+            topics_str = ", ".join(str(t) for t in topics[:3]) if topics else ""
+            
+            recovery_parts.append(
+                f"• {frame.title}: 張力={tension:.1f}, "
+                f"判詞={verdict}"
+                + (f", 話題={topics_str}" if topics_str else "")
             )
-except Exception as e:
-    print(f"[WARN] AI Sleep error: {e}")
+        
+        # Add chain summary
+        summary = chain.get_chain_summary() if hasattr(chain, 'get_chain_summary') else ""
+        if summary:
+            summary_text = str(summary) if not isinstance(summary, dict) else str(summary.get("summary", ""))
+            if summary_text and len(summary_text) > 10:
+                recovery_parts.append(f"整體: {summary_text[:200]}")
+        
+        recovery_context = "\n".join(recovery_parts)
+        return f"{recovery_context}\n\n---\n\n{user_message}"
+        
+    except Exception:
+        return user_message
+```
+
+**呼叫位置**：在 `process()` 方法的最開頭，在任何其他注入之前：
+
+```python
+# ========== Cross-Session Recovery (first call only) ==========
+user_message = self._try_cross_session_recovery(user_message)
 ```
 
 ### 注意
 
-- `sleep_consolidate` 不刪除記憶 — 它只**新增**提升的記錄，不刪除 working 記錄
-- 之後可以加真正的 working 記憶清除，但現在先保守
-- `_classify_for_promotion` 用關鍵詞匹配 — 簡單但有效
-- 這和 `cleanup_decayed` 是互補的：decay 管低分，sleep 管層級提升
+- `_session_recovered` flag 確保只跑一次
+- `get_recent(5)` 讀的是持久化資料（如果 `storage_path` 指向磁碟檔案）
+- 只取最後 3 張詳細資訊，避免膨脹 prompt
+- 如果 chain 是空的（全新使用者），直接跳過
 
-### 測試：新建 `tests/test_ai_sleep.py`
+### 測試：新建 `tests/test_cross_session_recovery.py`
 
 ```python
-"""Test AI Sleep memory consolidation."""
+"""Test cross-session memory recovery."""
 import pytest
-import tempfile
-from pathlib import Path
-from tonesoul.memory.consolidator import sleep_consolidate, SleepResult, _classify_for_promotion
-from tonesoul.memory.soul_db import JsonlSoulDB, MemorySource
 
 
-def test_classify_commitment_as_factual():
-    payload = {"text": "I commit to being honest"}
-    assert _classify_for_promotion(payload) == "factual"
+def test_recovery_runs_once():
+    """Recovery should only trigger on first call."""
+    from tonesoul.unified_pipeline import UnifiedPipeline
+    pipe = UnifiedPipeline.__new__(UnifiedPipeline)
+    pipe._visual_chain = None
+    pipe._session_recovered = False
+
+    msg1 = pipe._try_cross_session_recovery("first")
+    msg2 = pipe._try_cross_session_recovery("second")
+    assert msg2 == "second"  # Second call should not modify
 
 
-def test_classify_emotion_as_experiential():
-    payload = {"text": "I feel conflicted about this"}
-    assert _classify_for_promotion(payload) == "experiential"
+def test_recovery_with_existing_frames():
+    """Recovery should inject context when frames exist."""
+    from tonesoul.unified_pipeline import UnifiedPipeline
+    from tonesoul.memory.visual_chain import VisualChain, FrameType
+
+    pipe = UnifiedPipeline.__new__(UnifiedPipeline)
+    pipe._session_recovered = False
+    chain = VisualChain()
+    chain.capture(
+        frame_type=FrameType.SESSION_STATE,
+        title="Turn 0",
+        data={"tension": 0.5, "verdict": "approve", "topics": ["intro"]},
+        tags=["auto"],
+    )
+    pipe._visual_chain = chain
+
+    result = pipe._try_cross_session_recovery("hello")
+    assert "記憶恢復" in result
+    assert "hello" in result
 
 
-def test_classify_generic_stays_working():
-    payload = {"text": "random unrelated text"}
-    assert _classify_for_promotion(payload) == "working"
+def test_recovery_empty_chain():
+    """Empty chain should not modify message."""
+    from tonesoul.unified_pipeline import UnifiedPipeline
+    from tonesoul.memory.visual_chain import VisualChain
+
+    pipe = UnifiedPipeline.__new__(UnifiedPipeline)
+    pipe._session_recovered = False
+    pipe._visual_chain = VisualChain()
+
+    result = pipe._try_cross_session_recovery("hello")
+    assert result == "hello"
+```
+
+---
+
+## Task 3c：議會自我演化
+
+### 目標
+
+議會的三個視角（Philosopher / Engineer / Guardian）目前權重固定。
+加一個 **HistoryTracker**，記錄每個視角的歷史表現，然後微調權重。
+
+### 新建檔案：`tonesoul/council/evolution.py`
+
+```python
+"""Council perspective evolution — weight adjustment based on historical performance."""
+
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from typing import Dict, List, Optional
 
 
-def test_classify_chinese_keywords():
-    assert _classify_for_promotion({"text": "我承諾不再犯"}) == "factual"
-    assert _classify_for_promotion({"text": "心裡感覺很衝突"}) == "experiential"
+@dataclass
+class PerspectiveHistory:
+    """Track historical performance of a council perspective."""
+    name: str
+    total_votes: int = 0
+    aligned_with_final: int = 0  # times this perspective matched final verdict
+    dissent_count: int = 0  # times this perspective was overruled
+    avg_confidence: float = 0.5
+    
+    @property
+    def alignment_rate(self) -> float:
+        if self.total_votes == 0:
+            return 0.5
+        return self.aligned_with_final / self.total_votes
+    
+    def record_vote(self, matched_final: bool, confidence: float = 0.5) -> None:
+        self.total_votes += 1
+        if matched_final:
+            self.aligned_with_final += 1
+        else:
+            self.dissent_count += 1
+        # Running average
+        self.avg_confidence = (
+            (self.avg_confidence * (self.total_votes - 1) + confidence)
+            / self.total_votes
+        )
+    
+    def to_dict(self) -> dict:
+        return {
+            "name": self.name,
+            "total_votes": self.total_votes,
+            "aligned_with_final": self.aligned_with_final,
+            "dissent_count": self.dissent_count,
+            "alignment_rate": round(self.alignment_rate, 3),
+            "avg_confidence": round(self.avg_confidence, 3),
+        }
 
 
-def test_sleep_consolidate_empty_db():
-    with tempfile.TemporaryDirectory() as tmp:
-        db = JsonlSoulDB(base_dir=Path(tmp))
-        result = sleep_consolidate(db)
-        assert isinstance(result, SleepResult)
-        assert result.promoted_count == 0
-        assert result.cleared_count == 0
+class CouncilEvolution:
+    """
+    Track and evolve council perspective weights.
+    
+    Rules for weight adjustment:
+    1. Perspectives that consistently align → slight boost (+0.05 per session)
+    2. Perspectives that consistently dissent → no penalty (dissent is valuable)
+    3. Weights are bounded: [0.5, 2.0] (never zero out a perspective)
+    4. Total weights are normalized so they sum to 3.0
+    
+    Design philosophy: dissent is NOT punished — a perspective that disagrees
+    but raises valid points is MORE valuable than one that always agrees.
+    """
+    
+    DEFAULT_PERSPECTIVES = ["philosopher", "engineer", "guardian"]
+    MIN_WEIGHT = 0.5
+    MAX_WEIGHT = 2.0
+    
+    def __init__(self) -> None:
+        self._history: Dict[str, PerspectiveHistory] = {}
+        self._weights: Dict[str, float] = {}
+        for name in self.DEFAULT_PERSPECTIVES:
+            self._history[name] = PerspectiveHistory(name=name)
+            self._weights[name] = 1.0
+    
+    def record_deliberation(
+        self,
+        perspective_verdicts: Dict[str, str],
+        final_verdict: str,
+        perspective_confidences: Optional[Dict[str, float]] = None,
+    ) -> None:
+        """Record results of a council deliberation."""
+        confidences = perspective_confidences or {}
+        for name, verdict in perspective_verdicts.items():
+            name_lower = name.lower()
+            if name_lower not in self._history:
+                self._history[name_lower] = PerspectiveHistory(name=name_lower)
+                self._weights[name_lower] = 1.0
+            matched = (verdict.lower() == final_verdict.lower())
+            conf = float(confidences.get(name, 0.5))
+            self._history[name_lower].record_vote(matched, conf)
+    
+    def evolve_weights(self) -> Dict[str, float]:
+        """
+        Adjust weights based on historical performance.
+        
+        Key design: dissent is NOT penalized.
+        Only alignment is rewarded with a small boost.
+        """
+        for name, history in self._history.items():
+            if history.total_votes < 3:
+                continue  # Not enough data
+            
+            # Boost aligned perspectives slightly
+            if history.alignment_rate > 0.6:
+                self._weights[name] = min(
+                    self.MAX_WEIGHT,
+                    self._weights.get(name, 1.0) + 0.05
+                )
+        
+        # Normalize so weights sum to N perspectives
+        total = sum(self._weights.values())
+        n = len(self._weights)
+        if total > 0 and n > 0:
+            factor = n / total
+            self._weights = {
+                name: max(self.MIN_WEIGHT, min(self.MAX_WEIGHT, w * factor))
+                for name, w in self._weights.items()
+            }
+        
+        return dict(self._weights)
+    
+    def get_weights(self) -> Dict[str, float]:
+        return dict(self._weights)
+    
+    def get_summary(self) -> Dict[str, object]:
+        return {
+            "weights": self.get_weights(),
+            "history": {
+                name: h.to_dict() for name, h in self._history.items()
+            },
+        }
+```
+
+### 注意
+
+- **不要修改 `council/runtime.py`** — 這個 evolution 模組只是數據追蹤，不自動改變議會行為
+- 未來可以在 pipeline 裡選擇性地把 `evolve_weights()` 的結果傳給 council
+- 最重要的設計決策：**dissent 不被懲罰** — 一個經常反對但有道理的視角比總是同意的更有價值
+
+### 測試：新建 `tests/test_council_evolution.py`
+
+```python
+"""Test council perspective evolution."""
+import pytest
+from tonesoul.council.evolution import CouncilEvolution, PerspectiveHistory
 
 
-def test_sleep_consolidate_promotes_commitment():
-    with tempfile.TemporaryDirectory() as tmp:
-        db = JsonlSoulDB(base_dir=Path(tmp))
-        db.append(MemorySource.SELF_JOURNAL, {
-            "text": "I promise to listen more",
-            "layer": "working",
-        })
-        result = sleep_consolidate(db)
-        assert result.promoted_count >= 1
+def test_initial_weights_equal():
+    evo = CouncilEvolution()
+    weights = evo.get_weights()
+    assert weights["philosopher"] == 1.0
+    assert weights["engineer"] == 1.0
+    assert weights["guardian"] == 1.0
 
 
-def test_sleep_result_has_layer_summary():
-    with tempfile.TemporaryDirectory() as tmp:
-        db = JsonlSoulDB(base_dir=Path(tmp))
-        db.append(MemorySource.SELF_JOURNAL, {"text": "test", "layer": "experiential"})
-        result = sleep_consolidate(db)
-        assert "experiential" in result.layer_summary
-        assert isinstance(result.layer_summary["experiential"], int)
+def test_record_deliberation():
+    evo = CouncilEvolution()
+    evo.record_deliberation(
+        {"philosopher": "approve", "engineer": "approve", "guardian": "block"},
+        final_verdict="approve",
+    )
+    summary = evo.get_summary()
+    assert summary["history"]["philosopher"]["aligned_with_final"] == 1
+    assert summary["history"]["guardian"]["dissent_count"] == 1
+
+
+def test_evolve_weights_boosts_aligned():
+    evo = CouncilEvolution()
+    # Philosopher always agrees, guardian always dissents
+    for _ in range(5):
+        evo.record_deliberation(
+            {"philosopher": "approve", "engineer": "approve", "guardian": "block"},
+            final_verdict="approve",
+        )
+    weights = evo.evolve_weights()
+    # Philosopher should be boosted, guardian should NOT be penalized
+    assert weights["philosopher"] >= 1.0
+    assert weights["guardian"] >= evo.MIN_WEIGHT
+
+
+def test_weights_bounded():
+    evo = CouncilEvolution()
+    for _ in range(100):
+        evo.record_deliberation(
+            {"philosopher": "approve", "engineer": "block", "guardian": "block"},
+            final_verdict="approve",
+        )
+    weights = evo.evolve_weights()
+    for w in weights.values():
+        assert CouncilEvolution.MIN_WEIGHT <= w <= CouncilEvolution.MAX_WEIGHT
+
+
+def test_dissent_not_penalized():
+    """Dissenting perspectives should NOT go below MIN_WEIGHT."""
+    evo = CouncilEvolution()
+    for _ in range(10):
+        evo.record_deliberation(
+            {"philosopher": "approve", "guardian": "block"},
+            final_verdict="approve",
+        )
+    weights = evo.evolve_weights()
+    assert weights["guardian"] >= CouncilEvolution.MIN_WEIGHT
+
+
+def test_alignment_rate():
+    h = PerspectiveHistory(name="test")
+    h.record_vote(True)
+    h.record_vote(True)
+    h.record_vote(False)
+    assert abs(h.alignment_rate - 0.667) < 0.01
+```
+
+---
+
+## Task 3d：對抗式自省（研究級 Stub）
+
+### 目標
+
+建立一個概念框架：Red team agent 挑戰承諾一致性，Blue team 修復。
+**本輪只建空殼和介面**，不實作真正的 agent loop。
+
+### 新建檔案：`tonesoul/memory/adversarial.py`
+
+```python
+"""
+Adversarial Self-Reflection (Research Stub)
+
+Concept: Two adversarial processes examine memory consistency:
+- Red Team: Tries to find contradictions, broken commitments, value drift
+- Blue Team: Proposes repairs, reaffirmations, or acknowledged changes
+
+This module is a STUB — it defines the interface and data structures
+but does NOT implement actual adversarial logic.
+
+Research references:
+- EvoMail adversarial self-evolution loops (2025)
+- Reflexion: language agents with verbal reinforcement learning (2023)
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from typing import Dict, List, Optional
+from enum import Enum
+
+
+class ChallengeType(Enum):
+    """Types of adversarial challenges."""
+    CONTRADICTION = "contradiction"        # statement X contradicts statement Y
+    BROKEN_COMMITMENT = "broken_commitment"  # commitment not honored
+    VALUE_DRIFT = "value_drift"            # gradual shift from stated values
+    INCONSISTENCY = "inconsistency"        # behavior doesn't match stated principles
+
+
+@dataclass
+class Challenge:
+    """A challenge posed by the Red Team."""
+    challenge_type: ChallengeType
+    description: str
+    evidence: List[str] = field(default_factory=list)
+    severity: float = 0.5  # 0.0 = minor, 1.0 = critical
+    
+    def to_dict(self) -> dict:
+        return {
+            "type": self.challenge_type.value,
+            "description": self.description,
+            "evidence": self.evidence,
+            "severity": self.severity,
+        }
+
+
+@dataclass
+class Repair:
+    """A repair proposed by the Blue Team."""
+    challenge: Challenge
+    repair_type: str  # "reaffirm", "acknowledge_change", "reconcile"
+    explanation: str
+    
+    def to_dict(self) -> dict:
+        return {
+            "challenge": self.challenge.to_dict(),
+            "repair_type": self.repair_type,
+            "explanation": self.explanation,
+        }
+
+
+class AdversarialReflector:
+    """
+    Stub for adversarial self-reflection.
+    
+    Future implementation would:
+    1. Red Team scans semantic graph + commitment history for inconsistencies
+    2. Blue Team proposes repairs or acknowledges intentional changes  
+    3. Results feed back into the pipeline to improve response consistency
+    
+    Current implementation: only provides the interface and data structures.
+    """
+    
+    def __init__(self) -> None:
+        self._challenges: List[Challenge] = []
+        self._repairs: List[Repair] = []
+    
+    def run_red_team(
+        self,
+        commitments: List[Dict],
+        contradictions: List[Dict],
+        values: List[Dict],
+    ) -> List[Challenge]:
+        """
+        [STUB] Red Team analysis.
+        
+        In a full implementation, this would:
+        - Cross-reference commitments with recent behavior
+        - Check contradictions for unresolved conflicts
+        - Detect value drift over time
+        """
+        challenges = []
+        
+        # Simple stub: convert existing contradictions to challenges
+        for c in contradictions:
+            challenges.append(Challenge(
+                challenge_type=ChallengeType.CONTRADICTION,
+                description=str(c.get("description", "Unknown contradiction")),
+                evidence=[str(c.get("path", []))],
+                severity=float(c.get("severity", 0.5)),
+            ))
+        
+        self._challenges = challenges
+        return challenges
+    
+    def run_blue_team(
+        self,
+        challenges: Optional[List[Challenge]] = None,
+    ) -> List[Repair]:
+        """
+        [STUB] Blue Team repair proposals.
+        
+        In a full implementation, this would:
+        - For each challenge, propose a repair strategy
+        - Use LLM to generate explanation
+        - Suggest commitment updates or acknowledgements
+        """
+        challenges = challenges or self._challenges
+        repairs = []
+        
+        for challenge in challenges:
+            repairs.append(Repair(
+                challenge=challenge,
+                repair_type="acknowledge_change",
+                explanation=f"Stub: {challenge.description} — needs review",
+            ))
+        
+        self._repairs = repairs
+        return repairs
+    
+    def get_summary(self) -> Dict:
+        return {
+            "challenges_found": len(self._challenges),
+            "repairs_proposed": len(self._repairs),
+            "challenges": [c.to_dict() for c in self._challenges],
+            "repairs": [r.to_dict() for r in self._repairs],
+        }
+```
+
+### 測試：新建 `tests/test_adversarial.py`
+
+```python
+"""Test adversarial self-reflection stub."""
+import pytest
+from tonesoul.memory.adversarial import (
+    AdversarialReflector,
+    Challenge, ChallengeType, Repair,
+)
+
+
+def test_challenge_creation():
+    c = Challenge(
+        challenge_type=ChallengeType.CONTRADICTION,
+        description="said X then said not-X",
+    )
+    d = c.to_dict()
+    assert d["type"] == "contradiction"
+
+
+def test_red_team_converts_contradictions():
+    reflector = AdversarialReflector()
+    contradictions = [
+        {"description": "honesty vs deception", "severity": 0.7, "path": ["a", "b"]},
+    ]
+    challenges = reflector.run_red_team(
+        commitments=[], contradictions=contradictions, values=[]
+    )
+    assert len(challenges) == 1
+    assert challenges[0].severity == 0.7
+
+
+def test_blue_team_generates_repairs():
+    reflector = AdversarialReflector()
+    reflector.run_red_team(
+        commitments=[],
+        contradictions=[{"description": "test contradiction"}],
+        values=[],
+    )
+    repairs = reflector.run_blue_team()
+    assert len(repairs) == 1
+    assert repairs[0].repair_type == "acknowledge_change"
+
+
+def test_summary():
+    reflector = AdversarialReflector()
+    reflector.run_red_team(
+        commitments=[],
+        contradictions=[{"description": "c1"}, {"description": "c2"}],
+        values=[],
+    )
+    reflector.run_blue_team()
+    summary = reflector.get_summary()
+    assert summary["challenges_found"] == 2
+    assert summary["repairs_proposed"] == 2
+
+
+def test_empty_input():
+    reflector = AdversarialReflector()
+    challenges = reflector.run_red_team([], [], [])
+    assert challenges == []
+    repairs = reflector.run_blue_team()
+    assert repairs == []
 ```
 
 ---
@@ -432,24 +784,25 @@ def test_sleep_result_has_layer_summary():
 1. `python -m pytest tests/ -v` — 全部通過
 2. `black --check --line-length 100 tonesoul tests` — 通過
 3. `ruff check tonesoul tests` — 通過
-4. Commit: `feat(memory): add retrospective reflection and AI Sleep consolidation`
+4. Commit: `feat(experimental): semantic trigger, cross-session recovery, council evolution, adversarial stub`
 5. Push
 
 ## 修改清單
 
 | 檔案 | 類型 | 說明 |
 |------|------|------|
-| `tonesoul/memory/decay.py` | [MODIFY] | +retrospective_score(), +apply_retrospective() |
-| `tonesoul/memory/soul_db.py` | [MODIFY] | +query(apply_reflection=..., current_topics=..., active_commitments=...) |
-| `tonesoul/memory/consolidator.py` | [MODIFY] | +SleepResult, +_classify_for_promotion(), +sleep_consolidate() |
-| `apps/api/server.py` | [MODIFY] | +session-report 觸發 AI Sleep |
-| `tests/test_retrospective_reflection.py` | [NEW] | 反思測試 |
-| `tests/test_ai_sleep.py` | [NEW] | AI Sleep 測試 |
+| `tonesoul/unified_pipeline.py` | [MODIFY] | +_semantic_trigger_check(), +_try_cross_session_recovery() |
+| `tonesoul/council/evolution.py` | [NEW] | 議會自我演化追蹤 |
+| `tonesoul/memory/adversarial.py` | [NEW] | 對抗式自省 stub |
+| `tests/test_semantic_trigger.py` | [NEW] | 語義觸發測試 |
+| `tests/test_cross_session_recovery.py` | [NEW] | 跨 session 恢復測試 |
+| `tests/test_council_evolution.py` | [NEW] | 議會演化測試 |
+| `tests/test_adversarial.py` | [NEW] | 對抗式自省測試 |
 
 ## 不要動的檔案
 
 | 檔案 | 原因 |
 |------|------|
-| `tonesoul/memory/visual_chain.py` | 已完成 ✅ |
-| `tonesoul/memory/semantic_graph.py` | Level 2a 完成 ✅ |
-| `tonesoul/unified_pipeline.py` | 本輪不動（反思從 soul_db.query 觸發，不在 pipeline） |
+| `tonesoul/council/runtime.py` | 不改現有議會邏輯 |
+| `tonesoul/memory/visual_chain.py` | 只讀取，不修改 |
+| `tonesoul/memory/semantic_graph.py` | 只讀取，不修改 |
