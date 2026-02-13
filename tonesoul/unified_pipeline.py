@@ -1,4 +1,4 @@
-"""
+﻿"""
 ToneSoul Unified Pipeline
 Combines ToneBridge psychological analysis with Council deliberation.
 """
@@ -116,6 +116,7 @@ class UnifiedPipeline:
         self._visual_chain_max_frames = _read_positive_int_env(
             "TONESOUL_VISUAL_CHAIN_MAX_FRAMES", default=500
         )
+        self._session_recovered = False
 
     def _get_gemini(self):
         """Get LLM client based on LLM_BACKEND env var.
@@ -431,6 +432,138 @@ class UnifiedPipeline:
             return user_message
         return user_message
 
+    @staticmethod
+    def _collect_semantic_topics(tb_result: Any = None) -> List[str]:
+        """Collect candidate semantic topics from ToneBridge result."""
+        if not tb_result:
+            return []
+        topics: List[str] = []
+        motive = getattr(tb_result, "motive", None)
+        tone = getattr(tb_result, "tone", None)
+        if motive and getattr(motive, "likely_motive", None):
+            topics.append(str(motive.likely_motive))
+        if motive and getattr(motive, "resonance_chain_hint", None):
+            topics.extend(str(topic) for topic in motive.resonance_chain_hint)
+        if tone and getattr(tone, "trigger_keywords", None):
+            topics.extend(str(keyword) for keyword in tone.trigger_keywords)
+
+        deduped: List[str] = []
+        seen = set()
+        for topic in topics:
+            normalized = topic.strip()
+            if not normalized:
+                continue
+            key = normalized.lower()
+            if key in seen:
+                continue
+            seen.add(key)
+            deduped.append(normalized)
+        return deduped
+
+    def _semantic_trigger_check(
+        self,
+        tension_score: float,
+        current_topics: List[str],
+        user_message: str,
+    ) -> str:
+        """Inject high-tension recurrence hints from visual chain history."""
+        tension_threshold = 0.7
+        if float(tension_score) < tension_threshold:
+            return user_message
+        try:
+            chain = self._get_visual_chain()
+            if not chain or getattr(chain, "frame_count", 0) <= 0:
+                return user_message
+            recent_frames = chain.get_recent(n=10)
+            high_tension_history: List[Dict[str, Any]] = []
+            for frame in recent_frames:
+                frame_data = frame.data if isinstance(frame.data, dict) else {}
+                try:
+                    frame_tension = float(frame_data.get("tension", 0.0) or 0.0)
+                except (TypeError, ValueError):
+                    frame_tension = 0.0
+                if frame_tension < tension_threshold:
+                    continue
+                raw_topics = frame_data.get("topics", [])
+                frame_topics = raw_topics if isinstance(raw_topics, list) else []
+                high_tension_history.append(
+                    {
+                        "title": frame.title,
+                        "tension": frame_tension,
+                        "topics": frame_topics,
+                    }
+                )
+            if not high_tension_history:
+                return user_message
+
+            past_topics = set()
+            for entry in high_tension_history:
+                for topic in entry.get("topics", []):
+                    normalized = str(topic).strip().lower()
+                    if normalized:
+                        past_topics.add(normalized)
+            current_lower = {
+                str(topic).strip().lower() for topic in current_topics if str(topic).strip()
+            }
+            recurring = sorted(past_topics & current_lower)
+
+            trigger_parts = [
+                f"[Semantic Trigger: high tension detected ({float(tension_score):.2f})]"
+            ]
+            trigger_parts.append(f"High-tension history frames: {len(high_tension_history)}")
+            if recurring:
+                trigger_parts.append(f"Recurring topics: {', '.join(recurring[:5])}")
+                trigger_parts.append(
+                    "Suggestion: acknowledge repeated pattern before proposing next step."
+                )
+            trigger_context = " | ".join(trigger_parts)
+            return f"{trigger_context}\n\n{user_message}"
+        except Exception:
+            return user_message
+
+    def _try_cross_session_recovery(self, user_message: str) -> str:
+        """Inject compact recovery context from persisted visual chain once."""
+        if self._session_recovered:
+            return user_message
+        self._session_recovered = True
+        try:
+            chain = self._get_visual_chain()
+            if not chain or getattr(chain, "frame_count", 0) <= 0:
+                return user_message
+
+            recent = chain.get_recent(n=5)
+            if not recent:
+                return user_message
+
+            recovery_parts = ["[Cross-Session Recovery]"]
+            for frame in recent[-3:]:
+                frame_data = frame.data if isinstance(frame.data, dict) else {}
+                try:
+                    tension = float(frame_data.get("tension", 0.0) or 0.0)
+                except (TypeError, ValueError):
+                    tension = 0.0
+                verdict = str(frame_data.get("verdict", "unknown"))
+                raw_topics = frame_data.get("topics", [])
+                topics = raw_topics if isinstance(raw_topics, list) else []
+                topics_text = ", ".join(str(topic) for topic in topics[:3]) if topics else ""
+                detail = f"- {frame.title}: tension={tension:.1f}, verdict={verdict}"
+                if topics_text:
+                    detail = f"{detail}, topics={topics_text}"
+                recovery_parts.append(detail)
+
+            chain_summary = chain.get_chain_summary() if hasattr(chain, "get_chain_summary") else {}
+            if isinstance(chain_summary, dict):
+                total_frames = chain_summary.get("total_frames")
+                latest_turn = chain_summary.get("latest_turn")
+                recovery_parts.append(
+                    f"Summary: total_frames={total_frames}, latest_turn={latest_turn}"
+                )
+
+            recovery_context = "\n".join(recovery_parts)
+            return f"{recovery_context}\n\n---\n\n{user_message}"
+        except Exception:
+            return user_message
+
     def build_injection_context(
         self, user_message: str, persona_config: Optional[Dict[str, Any]] = None
     ) -> str:
@@ -544,6 +677,9 @@ class UnifiedPipeline:
         """
         history = history or []
 
+        # ========== Cross-Session Recovery (first call only) ==========
+        user_message = self._try_cross_session_recovery(user_message)
+
         # ========== 記憶注入 Adapter（persona + context） ==========
         user_message = self.build_injection_context(user_message, persona_config=persona_config)
 
@@ -637,7 +773,7 @@ class UnifiedPipeline:
         commitment_prompt = ""
         detected_ruptures: List[Any] = []
         new_commit = None
-        semantic_topics: List[str] = []
+        semantic_topics: List[str] = self._collect_semantic_topics(tb_result)
         semantic_contradictions: List[Dict[str, Any]] = []
         semantic_graph_summary: Dict[str, Any] = {}
         if commit_stack:
@@ -648,6 +784,13 @@ class UnifiedPipeline:
 
         # ========== 3.6 GraphRAG Context Retrieval ==========
         user_message = self._inject_graph_rag_context(user_message, tb_result=tb_result)
+
+        # ========== 3.7 Semantic Trigger (high-tension recurrence check) ==========
+        user_message = self._semantic_trigger_check(
+            tension_score=tone_strength,
+            current_topics=semantic_topics,
+            user_message=user_message,
+        )
 
         # ========== 4. 生成增強 prompt ==========
         system_context = self._build_context_prompt(
@@ -754,17 +897,6 @@ class UnifiedPipeline:
                         }
                     )
 
-                if tb_result:
-                    if tb_result.motive and tb_result.motive.likely_motive:
-                        semantic_topics.append(tb_result.motive.likely_motive)
-                    if tb_result.motive and tb_result.motive.resonance_chain_hint:
-                        semantic_topics.extend(tb_result.motive.resonance_chain_hint)
-                    if tb_result.tone and tb_result.tone.trigger_keywords:
-                        semantic_topics.extend(tb_result.tone.trigger_keywords)
-
-                semantic_topics = [
-                    str(topic).strip() for topic in semantic_topics if str(topic).strip()
-                ]
                 if response:
                     graph.extract_from_response(response, semantic_topics)
                 graph.increment_turn()

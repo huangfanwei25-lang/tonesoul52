@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from .evolution import CouncilEvolution, PerspectiveHistory
 from .pre_output_council import PreOutputCouncil
 from .runtime import CouncilRequest, CouncilRuntime
 from .types import (
@@ -12,6 +13,8 @@ from .types import (
 )
 
 __all__ = [
+    "PerspectiveHistory",
+    "CouncilEvolution",
     "PreOutputCouncil",
     "PerspectiveType",
     "VoteDecision",

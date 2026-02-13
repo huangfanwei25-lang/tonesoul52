@@ -1,427 +1,260 @@
 # Task
 
-## Phase 76: 多人格全域架構審查（日期化脈絡）
-- [x] 以多角色觀點（Architect / Quality / Guardian / Git）完成全專案掃描
-- [x] 執行 `run_repo_healthcheck --strict --allow-missing-discussion` 取得量化基線（739 tests）
-- [x] 盤點架構弱點與優化點，按 P0/P1/P2 分級
-- [x] 產出日期化審查報告 `docs/ARCHITECTURE_REVIEW_2026-02-13.md`
-- [ ] 依報告執行 Phase A（邊界硬化）首批修復
-**成功標準**: 架構審查有固定日期、可追溯證據與明確優先序，後續修復可直接對應 Phase A/B/C 執行。
+## Program Board (2026-02-13)
+- [x] Level 1
+- [x] Level 2
+- [x] Architecture Audit Phase 76 (7.2/10, 10 findings)
+- [x] Level 3 (3a/3b/3c/3d)
+- [ ] Multi-persona evaluation framework (A/B/C + 5 metrics)
+- [ ] Phase A (7 days): auth fail-closed + endpoint throttling + debug lock
+- [ ] Phase B (14 days): pipeline cache + input validation + stats dedup
+- [ ] Phase C (30 days): CI blocking + docs freshness + frontend retry
+**Latest validation**: `pytest -q` => `755 passed, 3 xfailed` (2026-02-13). Level 3 implementation tracked in `CODEX_TASK.md` v7.
 
-## Phase 75: 記憶回顧反思 + AI Sleep 固化（Level 2b + 2d）
-- [x] 在 `tonesoul/memory/decay.py` 新增 `retrospective_score()` 與 `apply_retrospective()` 啟發式反思流程
-- [x] 在 `tonesoul/memory/soul_db.py` 的 `query()` 新增 `apply_reflection/current_topics/active_commitments` 參數（Jsonl/Sqlite/Protocol 同步）
-- [x] 在 `tonesoul/memory/consolidator.py` 新增 `SleepResult`、`_classify_for_promotion()`、`sleep_consolidate()`
-- [x] 在 `apps/api/server.py` 的 `/api/session-report` 串接 decay cleanup 後的 AI Sleep 觸發
-- [x] 新增 `tests/test_retrospective_reflection.py` 與 `tests/test_ai_sleep.py` 並通過
-- [x] 驗證 `pytest`（32 tests）與 `ruff/black` 靜態檢查全綠
-**成功標準**: 記憶層可支援「衰減 + 回顧反思 + Session 結束固化」三段式流程，且既有 API contract 測試維持通過。
+## Phase 77: Level 3 Experimental
+- [x] 3a Semantic Trigger
+- [x] 3b Cross-session recovery
+- [x] 3c Council evolution tracker
+- [x] 3d Adversarial red/blue stub
+**Result**: Level 3 code + tests completed in this round, then full suite revalidated (`755 passed, 3 xfailed`).
 
-## Phase 74: 前端按鍵一致性巡檢（Button Safety Baseline）
-- [x] 盤點 `apps/web` 所有 `<button>` 事件綁定與觸發路徑
-- [x] 統一補上缺失的 `type="button"`，避免未來 form 容器下誤觸 submit
-- [x] 保持新話題刪除流程（含 mobile/touch）可操作，避免 hover-only 依賴
-- [x] 修復「撤回同意 & 刪除資料」僅清 conversations 的缺口，補齊 memory insights 與本機 key 清除
-- [x] 以 `test + lint + build` 完整驗證前端可用性
-**成功標準**: 前端主要操作按鍵在桌機/手機行為一致，且 `apps/web` 測試、靜態檢查與建置皆通過。 
+## Phase 78: Multi-persona evaluation framework (A/B/C + 5 metrics)
+- [ ] A/B/C comparison protocol
+- [ ] Five metrics: Task Quality / Safety Pass Rate / Consistency@Session / Disagreement Utility / Token+Latency Cost
+- [ ] Cost gate and promotion criteria
+## Phase 79: Phase A嚗? 憭抬???蝖砍?
+- [ ] Read API auth ?寧 production fail-closed
+- [ ] `/api/chat`?/api/validate` ?????瘚???- [ ] production 撘瑕?? debug ??
+**??璅?**: ?詨????身摰嚗??瘚??⊥??湔?脣擃??祈楝敺?
+## Phase 80: Phase B嚗?4 憭抬??瑁?????迤蝣箸?- [ ] `/api/chat` pipeline ??望?敹怠?
+- [ ] `/api/session-report` 鋆? payload 憭批?/蝯?撽?
+- [ ] AI Sleep 蝯梯? dedup嚗??working/promoted ??閮嚗?**??璅?**: ?梯楝敺??砌??撓?仿??蝛拙??絞閮敺??游???
+## Phase 81: Phase C嚗?0 憭抬?瘝餌?瘚???
+- [ ] 撠???workflow 敺?soft gate ????blocking gate
+- [ ] ?辣?圈悅摨行??塚?皜祈岫/蝯梯??詨??芸?撠?嚗?- [ ] ?垢 chat 頝臬?憓? retry/backoff + ?Ⅱ憭望???
+**??璅?**: CI ?瑼颱??氬?隞嗉?撖阡????瞍宏??蝡臬?急??扳???隞?具?
+## Phase 76: 憭犖?澆?瑽祟?伐??交???蝯∴?
+- [x] 隞亙?閫閫暺?Architect / Quality / Guardian / Git嚗??撠???
+- [x] ?瑁? `run_repo_healthcheck --strict --allow-missing-discussion` ?????箇?嚗?39 tests嚗?- [x] ?日??嗆?撘梢????嚗? P0/P1/P2 ??
+- [x] ?Ｗ?交??祟?亙??`docs/ARCHITECTURE_REVIEW_2026-02-13.md`
+- [ ] 靘?銵?Phase A嚗??′??擐靽桀儔嚗蝺抬?????Phase 77嚗?**??璅?**: ?嗆?撖拇?摰?餈賣滲霅???蝣箏??嚗?蝥耨敺拙?湔撠? Phase A/B/C ?瑁???
+## Phase 75: 閮?“??+ AI Sleep ?箏?嚗evel 2b + 2d嚗?- [x] ??`tonesoul/memory/decay.py` ?啣? `retrospective_score()` ??`apply_retrospective()` ?撘???蝔?- [x] ??`tonesoul/memory/soul_db.py` ??`query()` ?啣? `apply_reflection/current_topics/active_commitments` ?嚗sonl/Sqlite/Protocol ?郊嚗?- [x] ??`tonesoul/memory/consolidator.py` ?啣? `SleepResult`?_classify_for_promotion()`?sleep_consolidate()`
+- [x] ??`apps/api/server.py` ??`/api/session-report` 銝脫 decay cleanup 敺? AI Sleep 閫貊
+- [x] ?啣? `tests/test_retrospective_reflection.py` ??`tests/test_ai_sleep.py` 銝阡?
+- [x] 撽? `pytest`嚗?2 tests嚗? `ruff/black` ??瑼Ｘ?函?
+**??璅?**: 閮撅文?舀?※皜?+ ?“??+ Session 蝯??箏???畾萄?瘚?嚗??Ｘ? API contract 皜祈岫蝬剜?????
+## Phase 74: ?垢?銝?湔批楚瑼ｇ?Button Safety Baseline嚗?- [x] ?日? `apps/web` ???`<button>` 鈭辣蝬??孛?潸楝敺?- [x] 蝯曹?鋆?蝻箏仃??`type="button"`嚗?靘?form 摰孵銝炊閫?submit
+- [x] 靽??啗店憿?斗?蝔???mobile/touch嚗??嚗??hover-only 靘陷
+- [x] 靽桀儔?????& ?芷鞈???皜?conversations ?撩???鋆? memory insights ?璈?key 皜
+- [x] 隞?`test + lint + build` 摰撽??垢?舐??**??璅?**: ?垢銝餉?????冽?璈???銵銝?湛?銝?`apps/web` 皜祈岫???炎?亥?撱箇蔭????
 
-## Phase 73: 前端話題刪除可用性修補（Mobile / Touch）
-- [x] 修復 `ConversationList` 操作按鈕依賴 hover 導致手機難以刪除對話的問題
-- [x] 新增對話操作選單外部點擊自動收合，避免選單殘留
-- [x] 補齊按鈕語意屬性（`type="button"` / `aria-label`）提升操作穩定性
-- [x] 修復聊天輸入框在 IME（中文選字）期間按 Enter 可能誤送出的問題
-- [x] 驗證 `apps/web` 測試與 lint 全綠
-**成功標準**: 新建立對話在桌機與手機皆可打開操作選單並刪除，且前端測試/靜態檢查維持通過。 
+## Phase 73: ?垢閰梢??芷?舐?找耨鋆?Mobile / Touch嚗?- [x] 靽桀儔 `ConversationList` ????靘陷 hover 撠????誑?芷撠店??憿?- [x] ?啣?撠店???詨憭暺??芸??嗅?嚗??格???- [x] 鋆???隤?撅祆改?`type="button"` / `aria-label`嚗???雿帘摰?- [x] 靽桀儔?予頛詨獢 IME嚗葉?摮?????Enter ?航隤日??憿?- [x] 撽? `apps/web` 皜祈岫??lint ?函?
+**??璅?**: ?啣遣蝡?閰勗獢???璈??舀???雿?桐蒂?芷嚗??垢皜祈岫/??瑼Ｘ蝬剜?????
 
-## Phase 72: Open-Source 倉庫清理與對外敘事對齊
-- [x] 移除誤入庫暫存快照 `temp_commit_page.html`（含不必要頁面資料）
-- [x] `.gitignore` 補上 `temp_commit_page.html`，避免再次誤提交
-- [x] 將文件中的 `file:///c:/...` 本機絕對連結改為 repo 相對連結
-- [x] README 新增 `Lingua-Animus Protocol (LAP)` 區塊，對齊治理敘事
-- [x] 修正 `docs/status/monthly_consolidation_report.json` 的 `project_root` 亂碼字串
-**成功標準**: 倉庫無明顯臨時快照污染、文件連結可在 GitHub 直接開啟、核心治理敘事與 README 一致、亂碼可讀性問題收斂。 
+## Phase 72: Open-Source ?澈皜???憭?鈭?朣?- [x] 蝘駁隤文摨急摮翰??`temp_commit_page.html`嚗銝?閬??Ｚ???
+- [x] `.gitignore` 鋆? `temp_commit_page.html`嚗??甈∟炊?漱
+- [x] 撠?隞嗡葉??`file:///c:/...` ?祆?蝯?????寧 repo ?詨????
+- [x] README ?啣? `Lingua-Animus Protocol (LAP)` ?憛?撠?瘝餌???
+- [x] 靽格迤 `docs/status/monthly_consolidation_report.json` ??`project_root` 鈭Ⅳ摮葡
+**??璅?**: ?澈?⊥?憿航?翰?扳情??隞園???臬 GitHub ?湔???敹祥??鈭? README 銝?氬?蝣澆霈?批?憿??
 
-## Phase 71: Session 級讀取篩選（Memories / Audit Logs）
-- [x] `/api/memories` 支援 `session_id` query，回傳 payload 含 `session_id`
-- [x] `/api/audit-logs` 支援 `session_id` query（並保留 `conversation_id` 優先）
-- [x] `SupabasePersistence` 新增 session filter：`list_memories(..., session_id)`、`list_audit_logs(..., session_id)`
-- [x] 文件同步（`docs/API_SPEC.md`）
-- [x] 回歸測試擴充與通過
-**成功標準**: 管理讀取可切 session 範圍，且不破壞既有 conversation 與全域查詢行為。
+## Phase 71: Session 蝝??祟?賂?Memories / Audit Logs嚗?- [x] `/api/memories` ?舀 `session_id` query嚗???payload ??`session_id`
+- [x] `/api/audit-logs` ?舀 `session_id` query嚗蒂靽? `conversation_id` ?芸?嚗?- [x] `SupabasePersistence` ?啣? session filter嚗list_memories(..., session_id)`?list_audit_logs(..., session_id)`
+- [x] ?辣?郊嚗docs/API_SPEC.md`嚗?- [x] ?飛皜祈岫?游???
+**??璅?**: 蝞∠?霈???session 蝭?嚗?銝憯??conversation ??閰Ｚ??箝?
+## Phase 70: Read Auth ?舀?雿扯? Session 蝭拚
+- [x] Playground ?啣? Read Token 蝞∠?嚗摮?皜/localStorage嚗?- [x] `/api/conversations` ?啣? `session_id` 蝭拚嚗erver + Supabase adapter嚗?- [x] API/撽?辣撠?嚗session_id` query?--read-token` 雿輻?孵?嚗?- [x] 鋆?敺垢皜祈岫嚗ession filter 頧??Supabase ?亥岷?蕪嚗?**??璅?**: ?霈??token 敺?Playground ?舀?蝥?雿?銝?閰勗?銵典??session ??撠??炎閬?
+## Phase 69: 敺垢摰????閮??堆?Stepwise嚗?- [x] 霈?楝?望?甈?霅瘀?`/api/conversations*`?/api/audit-logs`?/api/memories`
+- [x] `prior_tension` 瘜典嚗/api/chat` 霈??餈?撘萄?撖抵?銝血??pipeline/council context
+- [x] ?辣撠?嚗耨甇?tri-persona 閮瑼楝敺?蝘餉? API ??憟?隤芣?
+- [x] ?飛皜祈岫嚗憓?甈?閮?葫閰佗??Ｘ? persistence 皜祈岫蝬剜??函?
+**??璅?**: 敺垢??霈?楝?勗?扼?摰??園???撠???嚗?皜祈岫?舫??暸???
+## Phase 68: Backend Persistence 撽??蝣潭??- [x] 靽桀儔 `apps/api/server.py` 鈭Ⅳ摮葡?酉閫??銝衣雁??API 銵銝?
+- [x] ?神 `docs/plans/backend_persistent_storage_plan.md`嚗TF-8 ?航???
+- [x] ?啣? `scripts/verify_backend_persistence.py` 銝?菟??嗉??- [x] ?啣? `docs/plans/backend_persistence_acceptance_checklist.md` ??/?芸?撽皜
+- [x] ??? `run_repo_healthcheck --allow-missing-discussion`嚗overall_ok=true`嚗?**??璅?**: Task C 撽瘚??舫??整?蝡舐鈭Ⅳ?餃??擃摨瑟炎?交敺拍???
+## Phase 64: Marketing / Docs 閬死?游?嚗howcase ??Next.js嚗?- [ ] 撠?`apps/showcase/` 頧 Next.js 頝舐嚗摰?`/showcase`嚗?靽??恐閮 / 7D / 霅唳? / ????閮瑽?- [ ] `/docs` 憓? section anchors + 蝵桅?撠汗嚗?湔頝唾???Paradoxes / Protocols / 7D / Research嚗?**??璅?**: `/showcase` ??`/docs` ?甇?虜 SSR/CSR?apps/web` build/lint/test ?函?嚗?銝蔣??`/` App ???
+## Phase 65: Docs ?蝯曹?嚗?蝛箄? + 憭拍征??+ ?蝝?
+- [ ] `/docs` ?隤踵?箸楛??蝛箇頂嚗#0a0e27`嚗蒂蝯曹?雿輻 sky/rose 雿銝餃撥隤輯
+- [ ] 撠? `SevenParadoxCards` / `SevenDimensionCards` ?蝟餉??航??改?靽格迤?Ｘ?鈭Ⅳ??嚗?**??璅?**: `/docs` 閬死銝?氬?摮霈??＊ layout shift嚗? build/lint/test ?函???
+## Phase 66: Research Foundation ?嗆?嚗?撥?賊?嚗?- [ ] 蝎曄陛 `/docs` ??Research Foundation 皜嚗靽???ToneSoul ?詨?璈?湔?賊?????**??璅?**: Research ?憛?銝璇?賢?蝑??舀? ToneSoul ?銝?擃??嗚?
+## Phase 67: 蝘犖????/ Notes嚗?撠?函?嚗?- [ ] ?啣? `/notes`嚗撠?蝣潔?霅瘀?嚗?閮凋?蝝 sitemap嚗obots 蝳迫蝝Ｗ?
+- [ ] Notes ?脣?嚗??⊥璈摮?嚗?靘???臬隞仿?璈?摰?**??璅?**: 瘝?撖Ⅳ?⊥??湔?汗?批捆嚗??唳??銝仃嚗?典???臬?遢??
+## Phase 63: UnifiedCore 蝯??楚瑼ｇ?Step 1嚗?- [x] `tonesoul/unified_core.py` 撠?`process()` ???箇???甇仿?嚗ersona 閫???撐??蝞僕???鋆?
+- [x] ??蝯??航??改?撟脤??拚??閮剖??詨虜?詨?嚗?靽?憭?憟?銝?
+- [x] 鋆? `tests/test_unified_core.py`?tests/test_unified_core_properties.py` 撽??∪?甇?**??璅?**: UnifiedCore 蝚砌?頛芰?瑽?摰?嚗葫閰血蝬?銝?霈?Ｘ?銵??
+## Phase 47: ?嗆?銵嚗0 / P1 / P2嚗?
+### P0嚗????餃?鈭支?嚗?- [x] 皜 lint/format drift嚗uff + black --check ?函?嚗?- [x] scripts/run_repo_healthcheck.py --allow-missing-discussion ? overall_ok=true
+- [x] root npm test ?臬銵?撠? python -m pytest tests/ -q嚗?- [x] live SDH 蝡臬蝡臬?嚗cripts/run_7d_isolated.py + --include-sdh pass嚗?- [x] ?啣? ConnectionResetError ?????飛皜祈岫嚗ests/test_run_7d_isolated.py嚗?**??璅?**: ?餃??批?鞈芷?瑼餅敺拙??函?嚗? SDH live smoke ???霅???
+### P1嚗?望????蝬剛風憸券嚗?- [x] 瘙箄降 commit attribution 蝑嚗?瑼Ｘ HEAD / 瑼Ｘ N 蝑風??/ ??PR 憓?嚗?- [x] 撠?attribution 瘙箇??賢??CI嚗arning ??blocking 銝?游?嚗?- [x] apps/showcase/ 餈質馱蝑????急 .gitignore嚗?極雿邦?芷嚗?**??璅?**: 甇詨惇閬??銝?臬銵??伐?CI 銵???????氬?
+### P2嚗撱嗅?嚗??澈銋暹楊嚗?- [x] 閬? Git object hygiene 摰?蝑嚗ount-objects / fsck 靘?瑼Ｘ嚗?- [x] 撠?梯??神?亦雁??隞塚??踹??活獢?游撐?? drift嚗?**??璅?**: ??隞嗅???銵?擗?憟?銝?憓??亙虜鈭支?鞎???
+## Phase 48: Healthcheck ? Git Hygiene ?嗆?
+- [x] 撠?`scripts/verify_git_hygiene.py` 蝝 `scripts/run_repo_healthcheck.py` ?身瑼Ｘ皜
+- [x] ?游? `tests/test_run_repo_healthcheck.py`嚗?摰?git hygiene 瑼Ｘ摮
+- [x] ?湔 `docs/status/README.md`嚗?朣摨瑟炎?亥?????**??璅?**: 銝?萄摨瑟炎?亙??閬?蝔??釭??git object-store ?亙熒摨佗?銝?隞嗉?皜祈岫憟?銝?氬?
+## Phase 49: SDH 憭望??航?皜祆找耨鋆?- [x] 靽格迤 `scripts/verify_7d.py` ??SDH 憭望???憿舐內 stdout ?航炊??嚗tderr ?箇征??
+- [x] ?啣? `tests/test_verify_7d.py` ?飛皜祈岫嚗??SDH 憭望? note ?活蝛箇
+**??璅?**: `verify_7d` ??SDH 憭望? note ?臬??怠霈?航炊蝺揣嚗撠???皞?stderr ??stdout嚗?
+## Phase 50: 閮?? Lessons 璅⊥??- [x] ?啣? `LESSONS_V1` 璅?甈??澆?嚗ummary/missed/causes/corrections/guardrails/evidence/signature嚗?- [x] ?啣? `tools/agent_discussion_tool.py append-lessons`嚗摰芋?踹神?交?蝔?- [x] 鋆??澆???CLI 撖怠皜祈岫嚗Ⅱ靽芋?輯撓?箔???**??璅?**: ?舐?桐??誘撠???飛蝝神???湔芋?選?銝衣皜祈岫??甈?蝯???
+## Phase 51: Healthcheck SDH 蝡舫??舫?蝵桀?
+- [x] `scripts/run_repo_healthcheck.py` ?啣? `--web-base/--api-base/--sdh-timeout` 銝西??喟策 `verify_7d`
+- [x] ?游? `tests/test_run_repo_healthcheck.py`嚗?摰?SDH 蝡舫???timeout ???喲?
+- [x] ?湔 `docs/status/README.md`嚗?靘??Ｙ垢??銵?靘?**??璅?**: healthcheck ??`--include-sdh` 璅∪??舫＊撘?摰?web/api 蝡舫???timeout嚗?摰?鞈?3000/5000??
+## Phase 52: Repo Healthcheck CI ??頛詨?嗆?
+- [x] `.github/workflows/repo_healthcheck.yml` ?啣? `workflow_dispatch` SDH ?嚗nclude_sdh/web_base/api_base/sdh_timeout/check_council_modes嚗?- [x] 靽? push/PR ?身頝臬?銝?嚗??孛?潭?????SDH ?
+- [x] ?湔 `docs/status/README.md` 隤芣? manual dispatch ?舐頛詨
+**??璅?**: CI ??閫貊?舐???SDH smoke嚗?銝蔣?踵??push/PR blocking 瘚???
+## Phase 53: Repo Healthcheck Dispatch ?撽?
+- [x] workflow_dispatch ?啣? `sdh_timeout` 甇??賊?霅????喲??
+- [x] `include_sdh=false` 雿?靘?SDH ????warning 銝血蕭?亥撓??- [x] `include_sdh=true` 銝????桅? `web_base/api_base` ???warning
+- [x] ?湔 `docs/status/README.md` 閮?銝膩撽?銵
+**??璅?**: ??閫貊頛詨?航炊?賢 CI ?亥??單??航?嚗??暺炊?扎?
+## Phase 54: Dispatch 憟??芸?摰?
+- [x] `scripts/verify_docs_consistency.py` ?啣? repo healthcheck dispatch 憟?瑼Ｘ嚗nputs + validation + warning嚗?- [x] ?游? `tests/test_verify_docs_consistency.py` 閬? pass ??timeout-validation 蝻箏仃憭望?獢?
+- [x] 靽? docs consistency gate ?舫??暸?
+**??璅?**: repo healthcheck dispatch 閬?鋡?docs consistency gate ?箏?嚗?甇貉??湔??冽??CI 蝡憭望???
+## Phase 55: Healthcheck ?楝敺銵?蝝?- [x] `verify_docs_consistency` 蝝 repo healthcheck ??push/pr default runner ??dispatch runner 瑼Ｘ
+- [x] ?游? `tests/test_verify_docs_consistency.py`嚗憓撩憭?default runner ?仃??靘?- [x] 蝬剜? docs consistency ?皜砍蝬?**??璅?**: repo healthcheck ?璇銵楝敺??蝝??嚗???input 瑼Ｘ雿憭勗銵郊撽?
+## Phase 56: Workflow 憟??函?皜祈岫
+- [x] ?啣? `tests/test_workflow_contracts.py`嚗誑 YAML 閫??瑼Ｘ `repo_healthcheck.yml` dispatch inputs 憟?
+- [x] ?啣??楝敺?runner 摮皜祈岫嚗ush/pr default + workflow_dispatch嚗?- [x] ?啣? dispatch validation/warning ?摰?皜祈岫
+**??璅?**: workflow 憟?銝??docs 摮葡瑼Ｘ嚗蒂?蝡葫閰血?飛??亙仃??
+## Phase 57: Dispatch ?摩?單??- [x] ?啣? `scripts/run_repo_healthcheck_dispatch.sh`嚗??workflow_dispatch ??SDH ?斗??霅?頛?- [x] `.github/workflows/repo_healthcheck.yml` ?寧 env bridge + ?單???- [x] 隤踵 workflow/docs consistency 憟??葫閰佗?撽??寧瑼Ｘ?單 + workflow ??暺?**??璅?**: dispatch 閬??葉?澆銝?單嚗orkflow YAML 蝬剜?????憟?皜祈岫?舫?飛??
+## Phase 58: Dispatch Python ??銵皜祈岫
+- [x] ?啣? `scripts/run_repo_healthcheck_dispatch.py`嚗nv -> command 蝯? + validation/warning嚗?- [x] workflow dispatch ?寧?湔?澆 Python dispatch script
+- [x] ?啣? `tests/test_run_repo_healthcheck_dispatch.py`嚗?摰?timeout/error?arning?lag 蝯?銵
+- [x] docs consistency / workflow contracts ?郊撠??啗?祈楝敺?**??璅?**: dispatch 銵?臬?砍隞?Python ?格葫??嚗?雿?shell ?啣??訾????葫閰衣???
+## Phase 59: Dispatch Shell Wrapper ???- [x] 蝘駁 `scripts/run_repo_healthcheck_dispatch.sh`嚗???亙蝬剛風?
+- [x] 靽? workflow ?蝙??`python scripts/run_repo_healthcheck_dispatch.py`
+- [x] 撽? docs consistency / workflow contracts ?∪?甇?**??璅?**: repo healthcheck dispatch ?亙?桐???皜?頝刻?閮?郊憸券?雁??喋?
+## Phase 60: Docs Consistency 蝯??圾??Step 1嚗?- [x] `verify_docs_consistency` ??repo healthcheck workflow 憟??寧 YAML 蝯?閫??
+- [x] ?啣???批?甇豢葫閰佗?token ???冽 notes/摮葡??敺??箏?蝝?蝡?
+- [x] 蝬剜??Ｘ? report key ??issue ??嚗???冽祥??蝔憯?**??璅?**: repo healthcheck 憟?銝???摮葡??斗嚗蒂?賡??token-based false positive??
+## Phase 61: Docs Consistency 蝯??圾??Step 2嚗?- [x] dispatch script 憟?瑼Ｘ?寧頛璅∠?銝阡?霅?`build_command` 銵
+- [x] 皜祈岫 fixture ?寧 Python dispatch 璅∠?嚗??shell token ??
+- [x] 蝬剜? report key ??仃???臭?霈???瘝餌?隞?游?
+**??璅?**: dispatch 憟?銝??血??孵? log token 摮葡嚗隞亙?瑁?銵雿摰?靘???
+## Phase 62: Docs Consistency 蝯??圾??Step 3嚗?- [x] `monthly_consolidation` 憟??寧 YAML 蝯?閫??嚗chedule + runner + allow flag嚗?- [x] `git_hygiene` 憟??寧 YAML 蝯?閫??嚗chedule + runner + artifact upload嚗?- [x] ?啣? monthly/git_hygiene token-in-notes ??批?甇豢葫閰?**??璅?**: monthly / git_hygiene 憟?銝???銝脩１撌批銝剛炊?日?嚗??亙?撌乩?瘚?蝯?銝??祕?蔭??
+## Phase 17: ?嗅偏銝??- [x] README ?湔嚗???Council / Genesis / Memory / Tools API + 敹恍???
+- [x] 閮蝮賜?嚗神??`memory/self_journal.jsonl`嚗 Phase 14-16 ??蝣潔耨敺抬?
+- [x] 隤祕璈閮剛?嚗hase 18 ??嚗?獢?docs/HONESTY_MECHANISM.md嚗?**??璅?**: README 摰?湔?elf_journal ?蝝??撖行??嗆??航?隢?閮剛?????
+## Phase 18: 隤祕璈閮剛?嚗?獢?
+- [x] ??verdict 閮剛?? `uncertainty_level`
+- [x] 摰儔??銝??甇??頛詨?澆?
+- [x] ?皜祈岫/撽??孵?嚗??蝡撖虫?嚗?**??璅?**: ?Ｗ銝隞賢閰祟?身閮?獢??辣???潘?嚗?脣銝?頛芾?隢?
+## Phase 19: 隤祕璈撖虫?
+- [x] `CouncilVerdict` ?啣?銝Ⅱ摰扳?雿?- [x] `verdict` 蝯??撓?箏??乩?蝣箏???- [x] `CouncilRuntime` 靘?`responsibility_tier` 隤踵銝Ⅱ摰?- [x] 皜祈岫閬??箇?銝Ⅱ摰扯?蝞?**??璅?**: ?Ｗ?舫?銵?銝Ⅱ摰扳?雿?蝯??撓?綽?銝行??箇?皜祈岫??
+## Phase 21: API 蝯曹???Runtime Drift 靽格迤
+- [x] Flask 鋆? conversation/consent 憟?銝西? web 撠?
+- [x] Next API routes ?寧 backend-first嚗allback ?? transport failure
+- [x] 頝舐瘥活隢???閫?? `TONESOUL_BACKEND_URL`
+- [x] `verify_web_api.py` + CI `web_api_smoke` 摰??湧? smoke嚗 `--require-backend`嚗?- [x] 撖抵??辣?湔嚗reports/api_unification_audit_2026-02-06.md`?reports/facade_runtime_audit_2026-02-06.md`嚗?**??璅?**: web/backend 憟??舫??暸?霅?銝?fallback 銝??株 backend ?啣虜??
+## Phase 22: ?垢?游?嚗脰?銝哨?
+- [x] ?啣? `docs/API_SPEC.md`嚗絞銝敺?API 閬嚗?- [x] 撽? `apps/web` dev ??? `localhost:5000`嚗??smoke嚗?- [x] 撽? ChatInterface -> backend -> Council 瘚?嚗/api/chat` ?湧? smoke嚗?- [x] 撽? SessionReport -> backend 瘚?嚗/api/session-report` ?湧? smoke嚗?- [x] ?湔 Vercel ?啣?霈?蝵脰牧??`docs/VERCEL_DEPLOY.md`嚗?撟喳憟嚗?**??璅?**: Navigator ?垢?冽?啗粥蝯曹? API 憟?嚗??函蔡閮剖??辣?舐?亙??典 Vercel??
+## Phase 24: 7D ?賢嚗?獢?
+- [x] ?神 `docs/7D_AUDIT_FRAMEWORK.md`嚗TF-8 ?航??嚗?- [x] ?啣? `docs/7D_EXECUTION_SPEC.md`嚗?D -> checklist -> gate嚗?- [x] ?啣? `scripts/verify_7d.py`嚗?D ???亙嚗?- [x] 撱箇? `tests/red_team/` ?撠??葫閰阡?嚗DD嚗?- [x] 瘙箄降 `SDH` ?雁??soft-fail嚗? blocking嚗?- [x] 閮剖? `DDD` 鞈??圈悅摨?SLA嚗? 憭?stale 閬?嚗?- [x] 閮剛? `systemic betrayal user confirmation gate`嚗??游??折◢?芷?鈭活蝣箄?嚗?- [x] 撠?RDD ?游???10+ 撠?獢?嚗??20嚗?**??璅?**: 銝雁???臬銵炎?伐?銝?gate 蝑??CI 撅文?Ⅱ閫????
+## Phase 25: ?漲?游??芸????辣憟?撘瑕?
+- [x] ?啣? `.github/workflows/monthly_consolidation.yml`嚗???蝔?+ ??閫貊嚗?- [x] `scripts/verify_docs_consistency.py` 蝝?漲 workflow 憟?瑼Ｘ
+- [x] 靽格迤 docs threshold 甇???賢?嚗宏?支?蝣?pattern嚗蝛拙? `tests/cases` 閫??嚗?- [x] ?湔 `tests/test_verify_docs_consistency.py` 閬??漲 workflow 摮/蝻箏仃??
+- [x] ?湔 `docs/status/README.md` 隤芣??芸???皞? artifact ?Ｗ
+**??璅?**: `verify_docs_consistency` ??`run_monthly_consolidation --strict` ?舐帘摰?嚗? status 靘??瑕??芸???蝔?
+## Phase 26: ?漲?游? CI ?舫??暹找耨鋆?- [x] `scripts/run_monthly_consolidation.py` ?啣? `--allow-missing-discussion` ?嚗I 銋暹楊?啣??舫??橘?
+- [x] ?漲 workflow ?瑁??寧 `--strict --allow-missing-discussion`
+- [x] `scripts/verify_docs_consistency.py` ?啣?瑼Ｘ?漲 workflow ?臬撣?`--allow-missing-discussion`
+- [x] ?啣? `tests/test_run_monthly_consolidation.py`嚗?摰?memory hygiene ?賭誘??銵
+- [x] ?游? `tests/test_verify_docs_consistency.py`嚗??撩憭望?璅????憓?- [x] ?湔 `docs/status/README.md` ? CI-friendly ?瑁?蝭?
+**??璅?**: ?漲 workflow ?函 `memory/agent_discussion*.jsonl` ?嗾瘛?checkout 隞??憟?瑼Ｘ??炎?乓?
+## Phase 27: Escape Valve V1嚗??函?嚗?- [x] ?啣? `tonesoul/escape_valve.py`嚗頝舀頝臬 + 銝Ⅱ摰扯撓?綽?
+- [x] `CouncilRuntime` ?游? Escape Valve嚗???`BLOCK` 隤儔銝?
+- [x] 蝘駁 runtime ?航???情??瘥活 deliberation 雿輻 request-local valve嚗?- [x] ?舀 `context.escape_valve_failures` 雿?岫甇瑕蝔桀?嚗???霅瘀?
+- [x] 閫貊??擃?蝣箏??批 high 銝西蕭??`escape_valve_triggered=*` ?
+- [x] ?啣? `tests/test_escape_valve.py` ??`tests/test_escape_valve_runtime.py`
+**??璅?**: Escape Valve ?航◤皜祈岫閫貊銝?蝜? BLOCK嚗頝刻?瘙??情???Ｘ?撖抵?皜祈岫靽?????
+## Phase 28: Escape Valve API 憟???- [x] ?湔 `docs/API_SPEC.md`嚗?蝣?`POST /api/validate` ??Escape Valve 頛詨/頛詨憟?
+- [x] ?游? `tests/test_api_server_contract.py`嚗alidate ?箸憟? + seeded trigger + 頝刻?瘙?憭援嚗?**??璅?**: API 撅文? Escape Valve 銵嚗?憟??辣?葫閰虫??氬?
+## Phase 29: Escape Valve ?脫翰?刻?閫皜砍撥??- [x] ?啣? seed trust 璈嚗escape_valve_seed_trusted`嚗? untrusted seed 敹賜蝑
+- [x] API ?啣? `TONESOUL_ALLOW_ESCAPE_SEED` ??嚗?閮剜?蝯???seed嚗?- [x] API 撠?trusted seed ?頛詨銝?嚗???50嚗? runtime 雿輻銝?嚗???20嚗?- [x] transcript ?啣? `escape_valve_observability` ??
+- [x] ?啣? red-team 皜祈岫嚗ntrusted seed ?⊥?撘瑕閫貊?rusted seed 銝???
+**??璅?**: ?身憭頛詨?⊥?撘瑕 Escape Valve嚗?閫貊/敹賜頝臬??閫皜祆?璅?撠?皜祈岫閬???
+## Phase 30: ???帘摰?嚗隞日＊蝷綽?
+- [x] `scripts/verify_7d.py` ?賭誘頛詨?寧蝛拙?憿舐內嚗python ...`嚗?憓楝敺?蝣潘?
+- [x] `scripts/run_monthly_consolidation.py` ?賭誘頛詨?寧蝛拙?憿舐內嚗python ...`嚗?- [x] 鋆??賭誘憿舐內甇????葫閰?- [x] ??? `docs/status/*.json` 銝阡?霅霈??**??璅?**: ?漲?勗?銝剔? `command` ??7D 蝯??賭誘甈??刻楊?啣?嚗??ASCII 頝臬?嚗?蝬剜??航??瘥???
 
-## Phase 70: Read Auth 可操作性與 Session 篩選
-- [x] Playground 新增 Read Token 管理（儲存/清除/localStorage）
-- [x] `/api/conversations` 新增 `session_id` 篩選（server + Supabase adapter）
-- [x] API/驗收文件對齊（`session_id` query、`--read-token` 使用方式）
-- [x] 補齊後端測試（session filter 轉發與 Supabase 查詢過濾）
-**成功標準**: 啟用讀取 token 後 Playground 可持續操作，且對話列表可用 session 做最小範圍檢視。
+## Phase 31: SDH 蝺函Ⅳ蝛拙??找耨敺抬?ToneBridge嚗?- [x] 靽桀儔 `tonesoul/tonebridge/commitment_extractor.py` ?函撩撠?`jieba` ?? cp950 蝺函Ⅳ撏拇蔑
+- [x] ?啣? cp950 import ?飛皜祈岫嚗??甈∪? import-time 頛詨?? `UnicodeEncodeError`
+- [x] 撽? `scripts/run_7d_isolated.py`嚗 SDH嚗?甇詨蝬?**??璅?**: ?函 `jieba` ?憓?銝??楊蝣潮隤文???`/api/session-report` 500嚗? 7D ??湧?嚗 SDH嚗??函???
+## Phase 32: VTP ?撠??Council Runtime嚗?- [x] ?啣? `tonesoul/council/vtp.py`嚗tatus: continue/defer/terminate + confession payload嚗?- [x] `CouncilRuntime` ?游? VTP 閰摯嚗???`BLOCK` 隤儔銝行憓?`transcript.vtp`
+- [x] ?啣? VTP ?桀???runtime 皜祈岫嚗tests/test_vtp.py`, `tests/test_vtp_runtime.py`嚗?- [x] ?游? API ??皜祈岫??隞塚?`tests/test_api_server_contract.py`, `docs/API_SPEC.md`嚗?**??璅?**: VTP 閫貊/撱園/蝯迫銝車???望葫閰阡??橘?銝血 API ??銝剖閫皜研?
 
-## Phase 69: 後端安全化與感官記憶鏈落地（Stepwise）
-- [x] 讀取路由授權保護：`/api/conversations*`、`/api/audit-logs`、`/api/memories`
-- [x] `prior_tension` 注入：`/api/chat` 讀取最近高張力審計並傳入 pipeline/council context
-- [x] 文件對齊：修正 tri-persona 計畫檔路徑漂移與 API 授權契約說明
-- [x] 回歸測試：新增授權與記憶鏈測試，既有 persistence 測試維持全綠
-**成功標準**: 後端敏感讀取路由可控、感官記憶鏈有最小可運行版本，且測試可重現通過。
+## Phase 33: VTP 蝝??脫翰?券?霅?- [x] ?啣? `tests/red_team/test_vtp_context_abuse.py`
+- [x] 撽??芯縑隞?API payload ?⊥?撘瑕 VTP defer/terminate
+- [x] 撽??賡??渡?甇?payload 隞◤ trust gate 敹賜
+**??璅?**: 憭?芣?甈?瘙瘜 VTP flags 撘瑕?脣蝯迫瘚?嚗?銵?葫閰西???
 
-## Phase 68: Backend Persistence 驗收與亂碼收斂
-- [x] 修復 `apps/api/server.py` 亂碼字串與註解，並維持 API 行為不變
-- [x] 重寫 `docs/plans/backend_persistent_storage_plan.md`（UTF-8 可讀版）
-- [x] 新增 `scripts/verify_backend_persistence.py` 一鍵驗收腳本
-- [x] 新增 `docs/plans/backend_persistence_acceptance_checklist.md` 手動/自動驗收清單
-- [x] 重新通過 `run_repo_healthcheck --allow-missing-discussion`（`overall_ok=true`）
-**成功標準**: Task C 驗收流程可重現、後端無亂碼阻塞、整體健康檢查恢復綠燈。
+## Phase 34: 憭誨??鈭斗飛撅祈?蝭?- [x] ?啣? `scripts/verify_commit_attribution.py`嚗炎??`Agent` / `Trace-Topic` trailers嚗?- [x] ?啣? `tests/test_verify_commit_attribution.py`
+- [x] ?湔 `CONTRIBUTING.md` ?漱甇詨惇?澆???霅?隞?**??璅?**: ?曹澈雿澈隞賭?嚗ommit message ?賡?撣嗡誨??霅圈?靘?嚗?雿楊隞??鞎砌遙甇詨惇甇抒儔??
 
-## Phase 64: Marketing / Docs 視覺整合（Showcase → Next.js）
-- [ ] 將 `apps/showcase/` 轉為 Next.js 路由（暫定 `/showcase`），保留「宣言 / 7D / 議會 / 原則」資訊架構
-- [ ] `/docs` 增加 section anchors + 置頂導覽（可直接跳轉到 Paradoxes / Protocols / 7D / Research）
-**成功標準**: `/showcase` 與 `/docs` 均可正常 SSR/CSR、`apps/web` build/lint/test 全綠，且不影響 `/` App 功能。
+## Phase 35: CI ?航??扳??Commit Attribution嚗?- [x] `ToneSoul CI` ?啣? `commit_attribution` job
+- [x] 瘥活 push ?芸?頛詨 HEAD attribution 閫??蝯?
+- [x] 蝻箏仃 trailers ?誑 warning ?嚗??餅 CI嚗?**??璅?**: 甇詨惇鞈??臬 CI ?亥??湔餈質馱嚗?銝蔣?輻?漱隞?憟?
 
-## Phase 65: Docs 配色統一（星空藍 + 天空藍 + 烈焰紅）
-- [ ] `/docs` 背景調整為深藍星空系（`#0a0e27`）並統一使用 sky/rose 作為主強調色
-- [ ] 對齊 `SevenParadoxCards` / `SevenDimensionCards` 的色系與可讀性（修正既有亂碼文字）
-**成功標準**: `/docs` 視覺一致、文字可讀、無明顯 layout shift，且 build/lint/test 全綠。
-
-## Phase 66: Research Foundation 收斂（只留強相關）
-- [ ] 精簡 `/docs` 的 Research Foundation 清單，只保留與 ToneSoul 核心機制直接相關的論文
-**成功標準**: Research 區塊每一條都能回答「它支撐 ToneSoul 的哪一個具體機制」。
-
-## Phase 67: 私人留言板 / Notes（最小可用版）
-- [ ] 新增 `/notes`（至少密碼保護）；預設不納入 sitemap，robots 禁止索引
-- [ ] Notes 儲存（先採本機儲存），提供匯出/匯入以避免單機綁定
-**成功標準**: 沒有密碼無法直接瀏覽內容；重新整理不丟失；可用匯出/匯入備份。
-
-## Phase 63: UnifiedCore 結構化巡檢（Step 1）
-- [x] `tonesoul/unified_core.py` 將 `process()` 拆分為私有子步驟（persona 解析、張力計算、干預、報告組裝）
-- [x] 提升結構可讀性（干預矩陣與預設參數常數化），保持外部回傳契約不變
-- [x] 補跑 `tests/test_unified_core.py`、`tests/test_unified_core_properties.py` 驗證無回歸
-**成功標準**: UnifiedCore 第一輪結構化完成，測試全綠，且不變更既有行為。
-
-## Phase 47: 收斂衝刺（P0 / P1 / P2）
-
-### P0（先做，阻塞交付）
-- [x] 清除 lint/format drift（ruff + black --check 全綠）
-- [x] scripts/run_repo_healthcheck.py --allow-missing-discussion 回到 overall_ok=true
-- [x] root npm test 可執行（對齊 python -m pytest tests/ -q）
-- [x] live SDH 端到端可重現（scripts/run_7d_isolated.py + --include-sdh pass）
-- [x] 新增 ConnectionResetError 啟動抖動回歸測試（tests/test_run_7d_isolated.py）
-**成功標準**: 阻塞性品質門檻恢復可重現全綠，且 SDH live smoke 有可重演證據。
-
-### P1（本週收斂，降低維護風險）
-- [x] 決議 commit attribution 策略（僅檢查 HEAD / 檢查 N 筆歷史 / 僅 PR 增量）
-- [x] 將 attribution 決策落地到 CI（warning 或 blocking 一致化）
-- [x] apps/showcase/ 追蹤策略先收斂（暫採 .gitignore，避免工作樹噪音）
-**成功標準**: 歸屬規範有單一可執行策略，CI 行為與團隊預期一致。
-
-### P2（可延後，保持倉庫乾淨）
-- [x] 規劃 Git object hygiene 定期策略（count-objects / fsck 例行檢查）
-- [x] 將收斂週規則寫入維運文件（避免再次框架擴張造成 drift）
-**成功標準**: 有文件化的例行保養節奏，且不增加日常交付負擔。
-
-## Phase 48: Healthcheck × Git Hygiene 收斂
-- [x] 將 `scripts/verify_git_hygiene.py` 納入 `scripts/run_repo_healthcheck.py` 預設檢查清單
-- [x] 擴充 `tests/test_run_repo_healthcheck.py`，鎖定 git hygiene 檢查存在
-- [x] 更新 `docs/status/README.md`，對齊健康檢查聚合項目
-**成功標準**: 一鍵健康檢查可同時覆蓋程式品質與 git object-store 健康度，且文件與測試契約一致。
-
-## Phase 49: SDH 失敗可觀測性修補
-- [x] 修正 `scripts/verify_7d.py` 在 SDH 失敗時可回退顯示 stdout 錯誤摘要（stderr 為空時）
-- [x] 新增 `tests/test_verify_7d.py` 回歸測試，避免 SDH 失敗 note 再次空白
-**成功標準**: `verify_7d` 的 SDH 失敗 note 可包含可讀錯誤線索（至少一個來源：stderr 或 stdout）。
-
-## Phase 50: 記憶通道 Lessons 模板化
-- [x] 新增 `LESSONS_V1` 標準欄位格式（summary/missed/causes/corrections/guardrails/evidence/signature）
-- [x] 新增 `tools/agent_discussion_tool.py append-lessons`，固定模板寫入流程
-- [x] 補齊格式與 CLI 寫入測試，確保模板輸出一致
-**成功標準**: 可用單一指令將「錯過事項歸納」寫成一致模板，並由測試鎖定欄位結構。
-
-## Phase 51: Healthcheck SDH 端點可配置化
-- [x] `scripts/run_repo_healthcheck.py` 新增 `--web-base/--api-base/--sdh-timeout` 並轉傳給 `verify_7d`
-- [x] 擴充 `tests/test_run_repo_healthcheck.py`，鎖定 SDH 端點與 timeout 旗標傳遞
-- [x] 更新 `docs/status/README.md`，提供隔離端口執行範例
-**成功標準**: healthcheck 在 `--include-sdh` 模式可顯式指定 web/api 端點與 timeout，避免固定依賴 3000/5000。
-
-## Phase 52: Repo Healthcheck CI 手動輸入收斂
-- [x] `.github/workflows/repo_healthcheck.yml` 新增 `workflow_dispatch` SDH 參數（include_sdh/web_base/api_base/sdh_timeout/check_council_modes）
-- [x] 保持 push/PR 預設路徑不變，手動觸發時才套用 SDH 參數
-- [x] 更新 `docs/status/README.md` 說明 manual dispatch 可用輸入
-**成功標準**: CI 手動觸發可用參數化 SDH smoke，且不影響既有 push/PR blocking 流程。
-
-## Phase 53: Repo Healthcheck Dispatch 參數驗證
-- [x] workflow_dispatch 新增 `sdh_timeout` 正整數驗證（非法即阻擋）
-- [x] `include_sdh=false` 但提供 SDH 參數時發出 warning 並忽略輸入
-- [x] `include_sdh=true` 且僅提供單邊 `web_base/api_base` 時發出 warning
-- [x] 更新 `docs/status/README.md` 記錄上述驗證行為
-**成功標準**: 手動觸發輸入錯誤能在 CI 日誌即時可見，避免靜默誤判。
-
-## Phase 54: Dispatch 契約自動守門
-- [x] `scripts/verify_docs_consistency.py` 新增 repo healthcheck dispatch 契約檢查（inputs + validation + warning）
-- [x] 擴充 `tests/test_verify_docs_consistency.py` 覆蓋 pass 與 timeout-validation 缺失失敗案例
-- [x] 保持 docs consistency gate 可重現通過
-**成功標準**: repo healthcheck dispatch 規則被 docs consistency gate 固定，回歸變更會在本地/CI 立即失敗。
-
-## Phase 55: Healthcheck 雙路徑執行契約
-- [x] `verify_docs_consistency` 納入 repo healthcheck 的 push/pr default runner 與 dispatch runner 檢查
-- [x] 擴充 `tests/test_verify_docs_consistency.py`，新增缺失 default runner 的失敗案例
-- [x] 維持 docs consistency 與單測全綠
-**成功標準**: repo healthcheck 的兩條執行路徑都受契約守門，避免只剩 input 檢查但遺失執行步驟。
-
-## Phase 56: Workflow 契約獨立測試
-- [x] 新增 `tests/test_workflow_contracts.py`，以 YAML 解析檢查 `repo_healthcheck.yml` dispatch inputs 契約
-- [x] 新增雙路徑 runner 存在測試（push/pr default + workflow_dispatch）
-- [x] 新增 dispatch validation/warning 關鍵守門測試
-**成功標準**: workflow 契約不只靠 docs 字串檢查，並有獨立測試在回歸時直接失敗。
-
-## Phase 57: Dispatch 邏輯腳本化
-- [x] 新增 `scripts/run_repo_healthcheck_dispatch.sh`，承接 workflow_dispatch 的 SDH 判斷與驗證邏輯
-- [x] `.github/workflows/repo_healthcheck.yml` 改為 env bridge + 腳本薄入口
-- [x] 調整 workflow/docs consistency 契約與測試，驗證改為檢查腳本 + workflow 連接點
-**成功標準**: dispatch 規則集中於單一腳本，workflow YAML 維持薄入口且契約測試可防回歸。
-
-## Phase 58: Dispatch Python 化與行為測試
-- [x] 新增 `scripts/run_repo_healthcheck_dispatch.py`（env -> command 組裝 + validation/warning）
-- [x] workflow dispatch 改為直接呼叫 Python dispatch script
-- [x] 新增 `tests/test_run_repo_healthcheck_dispatch.py`，鎖定 timeout/error、warning、flag 組裝行為
-- [x] docs consistency / workflow contracts 同步對齊新腳本路徑
-**成功標準**: dispatch 行為可在本地以 Python 單測重演，降低 shell 環境相依造成的測試盲區。
-
-## Phase 59: Dispatch Shell Wrapper 退場
-- [x] 移除 `scripts/run_repo_healthcheck_dispatch.sh`，避免雙入口維護成本
-- [x] 保持 workflow 僅使用 `python scripts/run_repo_healthcheck_dispatch.py`
-- [x] 驗證 docs consistency / workflow contracts 無回歸
-**成功標準**: repo healthcheck dispatch 入口單一化，減少跨語言同步風險與維運噪音。
-
-## Phase 60: Docs Consistency 結構化解析（Step 1）
-- [x] `verify_docs_consistency` 的 repo healthcheck workflow 契約改為 YAML 結構解析
-- [x] 新增假陽性回歸測試（token 僅存在於 notes/字串時不得視為契約成立）
-- [x] 維持既有 report key 與 issue 文案，避免外部治理流程破壞
-**成功標準**: repo healthcheck 契約不再僅靠字串包含判斷，並能阻擋 token-based false positive。
-
-## Phase 61: Docs Consistency 結構化解析（Step 2）
-- [x] dispatch script 契約檢查改為載入模組並驗證 `build_command` 行為
-- [x] 測試 fixture 改為 Python dispatch 模組，避免 shell token 假通過
-- [x] 維持 report key 與既有失敗訊息不變，降低治理介面破壞
-**成功標準**: dispatch 契約不再耦合特定 log token 字串，改以可執行行為作為守門依據。
-
-## Phase 62: Docs Consistency 結構化解析（Step 3）
-- [x] `monthly_consolidation` 契約改為 YAML 結構解析（schedule + runner + allow flag）
-- [x] `git_hygiene` 契約改為 YAML 結構解析（schedule + runner + artifact upload）
-- [x] 新增 monthly/git_hygiene token-in-notes 假陽性回歸測試
-**成功標準**: monthly / git_hygiene 契約不再因字串碰巧命中而誤判通過，僅接受工作流程結構上的真實配置。
-
-## Phase 17: 收尾三部曲
-- [x] README 更新（反映 Council / Genesis / Memory / Tools API + 快速啟動）
-- [x] 記憶總結（寫入 `memory/self_journal.jsonl`，含 Phase 14-16 與亂碼修復）
-- [x] 誠實機制設計（Phase 18 預告，草案：docs/HONESTY_MECHANISM.md）
-**成功標準**: README 完整更新、self_journal 有新紀錄、誠實機制有可討論的設計草案。
-
-## Phase 18: 誠實機制設計（草案）
-- [x] 在 verdict 設計加入 `uncertainty_level`
-- [x] 定義「我不知道」的正式輸出格式
-- [x] 提出測試/驗證方向（不需立即實作）
-**成功標準**: 產出一份可評審的設計草案（文件或規格），可進入下一輪討論。
-
-## Phase 19: 誠實機制實作
-- [x] `CouncilVerdict` 新增不確定性欄位
-- [x] `verdict` 結構化輸出加入不確定性
-- [x] `CouncilRuntime` 依 `responsibility_tier` 調整不確定性
-- [x] 測試覆蓋基礎不確定性計算
-**成功標準**: 產出可運行的不確定性欄位與結構化輸出，並有基礎測試。
-
-## Phase 21: API 統一與 Runtime Drift 修正
-- [x] Flask 補齊 conversation/consent 契約並與 web 對齊
-- [x] Next API routes 改為 backend-first，fallback 僅限 transport failure
-- [x] 路由每次請求動態解析 `TONESOUL_BACKEND_URL`
-- [x] `verify_web_api.py` + CI `web_api_smoke` 完成整鏈 smoke（含 `--require-backend`）
-- [x] 審計文件更新（`reports/api_unification_audit_2026-02-06.md`、`reports/facade_runtime_audit_2026-02-06.md`）
-**成功標準**: web/backend 契約可重現驗證，且 fallback 不再遮蔽 backend 異常。
-
-## Phase 22: 前端整合（進行中）
-- [x] 新增 `docs/API_SPEC.md`（統一後 API 規格）
-- [x] 驗證 `apps/web` dev 連線 `localhost:5000`（整鏈 smoke）
-- [x] 驗證 ChatInterface -> backend -> Council 流程（`/api/chat` 整鏈 smoke）
-- [x] 驗證 SessionReport -> backend 流程（`/api/session-report` 整鏈 smoke）
-- [x] 更新 Vercel 環境變數與部署說明（`docs/VERCEL_DEPLOY.md`，待平台套用）
-**成功標準**: Navigator 前端在本地走統一 API 契約，且部署設定文件可直接套用到 Vercel。
-
-## Phase 24: 7D 落地（提案）
-- [x] 重寫 `docs/7D_AUDIT_FRAMEWORK.md`（UTF-8 可讀版本）
-- [x] 新增 `docs/7D_EXECUTION_SPEC.md`（7D -> checklist -> gate）
-- [x] 新增 `scripts/verify_7d.py`（7D 聚合入口）
-- [x] 建立 `tests/red_team/` 最小對抗測試集（RDD）
-- [x] 決議 `SDH` 先維持 soft-fail（非 blocking）
-- [x] 設定 `DDD` 資料新鮮度 SLA（7 天 stale 規則）
-- [x] 設計 `systemic betrayal user confirmation gate`（高破壞性風險需二次確認）
-- [x] 將 RDD 擴充至 10+ 對抗案例（目前 20）
-**成功標準**: 七維皆有可執行檢查，且 gate 策略在 CI 層可明確解釋。
-
-## Phase 25: 月度整合自動化與文件契約強化
-- [x] 新增 `.github/workflows/monthly_consolidation.yml`（每月排程 + 手動觸發）
-- [x] `scripts/verify_docs_consistency.py` 納入月度 workflow 契約檢查
-- [x] 修正 docs threshold 正則抽取（移除亂碼 pattern，採穩定 `tests/cases` 解析）
-- [x] 更新 `tests/test_verify_docs_consistency.py` 覆蓋月度 workflow 存在/缺失情境
-- [x] 更新 `docs/status/README.md` 說明自動化來源與 artifact 產出
-**成功標準**: `verify_docs_consistency` 與 `run_monthly_consolidation --strict` 可穩定通過，且 status 來源具備自動化排程。
-
-## Phase 26: 月度整合 CI 可重現性修補
-- [x] `scripts/run_monthly_consolidation.py` 新增 `--allow-missing-discussion` 參數（CI 乾淨環境可重現）
-- [x] 月度 workflow 執行改為 `--strict --allow-missing-discussion`
-- [x] `scripts/verify_docs_consistency.py` 新增檢查月度 workflow 是否帶 `--allow-missing-discussion`
-- [x] 新增 `tests/test_run_monthly_consolidation.py`，鎖定 memory hygiene 命令旗標行為
-- [x] 擴充 `tests/test_verify_docs_consistency.py`，覆蓋缺失旗標時的阻擋情境
-- [x] 更新 `docs/status/README.md` 加入 CI-friendly 執行範例
-**成功標準**: 月度 workflow 在無 `memory/agent_discussion*.jsonl` 的乾淨 checkout 仍可通過契約檢查與整合檢查。
-
-## Phase 27: Escape Valve V1（安全版）
-- [x] 新增 `tonesoul/escape_valve.py`（電路斷路器 + 不確定性輸出）
-- [x] `CouncilRuntime` 整合 Escape Valve，保持 `BLOCK` 語義不變
-- [x] 移除 runtime 可變狀態污染（每次 deliberation 使用 request-local valve）
-- [x] 支援 `context.escape_valve_failures` 作為重試歷史種子（上限保護）
-- [x] 觸發時提高不確定性到 high 並追加 `escape_valve_triggered=*` 理由
-- [x] 新增 `tests/test_escape_valve.py` 與 `tests/test_escape_valve_runtime.py`
-**成功標準**: Escape Valve 可被測試觸發且不繞過 BLOCK，無跨請求狀態污染，既有審計測試保持通過。
-
-## Phase 28: Escape Valve API 契約化
-- [x] 更新 `docs/API_SPEC.md`，明確 `POST /api/validate` 的 Escape Valve 輸入/輸出契約
-- [x] 擴充 `tests/test_api_server_contract.py`（validate 基本契約 + seeded trigger + 跨請求不外洩）
-**成功標準**: API 層可重現 Escape Valve 行為，且契約文件與測試一致。
-
-## Phase 29: Escape Valve 防濫用與觀測強化
-- [x] 新增 seed trust 機制（`escape_valve_seed_trusted`）與 untrusted seed 忽略策略
-- [x] API 新增 `TONESOUL_ALLOW_ESCAPE_SEED` 開關（預設拒絕外部 seed）
-- [x] API 對 trusted seed 加入輸入上限（最新 50）+ runtime 使用上限（最新 20）
-- [x] transcript 新增 `escape_valve_observability` 指標
-- [x] 新增 red-team 測試：untrusted seed 無法強制觸發、trusted seed 上限生效
-**成功標準**: 預設外部輸入無法強制 Escape Valve，且觸發/忽略路徑有可觀測指標與對抗測試覆蓋。
-
-## Phase 30: 狀態報告穩定化（命令顯示）
-- [x] `scripts/verify_7d.py` 命令輸出改為穩定顯示（`python ...`，避免環境路徑亂碼）
-- [x] `scripts/run_monthly_consolidation.py` 命令輸出改為穩定顯示（`python ...`）
-- [x] 補齊命令顯示正規化單元測試
-- [x] 重新生成 `docs/status/*.json` 並驗證可讀性
-**成功標準**: 月度報告中的 `command` 與 7D 結果命令欄位在跨環境（含非 ASCII 路徑）仍維持可讀、可比對。 
-
-## Phase 31: SDH 編碼穩定性修復（ToneBridge）
-- [x] 修復 `tonesoul/tonebridge/commitment_extractor.py` 在缺少 `jieba` 時的 cp950 編碼崩潰
-- [x] 新增 cp950 import 回歸測試，避免再次因 import-time 輸出造成 `UnicodeEncodeError`
-- [x] 驗證 `scripts/run_7d_isolated.py`（含 SDH）回歸全綠
-**成功標準**: 在無 `jieba` 的環境下不再因編碼錯誤導致 `/api/session-report` 500，且 7D 隔離整鏈（含 SDH）可重現全綠。
-
-## Phase 32: VTP 最小整合（Council Runtime）
-- [x] 新增 `tonesoul/council/vtp.py`（status: continue/defer/terminate + confession payload）
-- [x] `CouncilRuntime` 整合 VTP 評估，保留 `BLOCK` 語義並新增 `transcript.vtp`
-- [x] 新增 VTP 單元與 runtime 測試（`tests/test_vtp.py`, `tests/test_vtp_runtime.py`）
-- [x] 擴充 API 合約測試與文件（`tests/test_api_server_contract.py`, `docs/API_SPEC.md`）
-**成功標準**: VTP 觸發/延遲/終止三種狀態可由測試重現，並在 API 回應中可觀測。 
-
-## Phase 33: VTP 紅隊防濫用驗證
-- [x] 新增 `tests/red_team/test_vtp_context_abuse.py`
-- [x] 驗證未信任 API payload 無法強制 VTP defer/terminate
-- [x] 驗證偽造完整終止 payload 仍被 trust gate 忽略
-**成功標準**: 外部未授權請求無法用 VTP flags 強制進入終止流程，且行為有測試覆蓋。 
-
-## Phase 34: 多代理提交歸屬規範
-- [x] 新增 `scripts/verify_commit_attribution.py`（檢查 `Agent` / `Trace-Topic` trailers）
-- [x] 新增 `tests/test_verify_commit_attribution.py`
-- [x] 更新 `CONTRIBUTING.md` 提交歸屬格式與驗證指令
-**成功標準**: 共享作者身份下，commit message 能附帶代理與議題來源，降低跨代理責任歸屬歧義。 
-
-## Phase 35: CI 可見性整合（Commit Attribution）
-- [x] `ToneSoul CI` 新增 `commit_attribution` job
-- [x] 每次 push 自動輸出 HEAD attribution 解析結果
-- [x] 缺失 trailers 先以 warning 呈現（不阻斷 CI）
-**成功標準**: 歸屬資訊可在 CI 日誌直接追蹤，且不影響現有交付節奏。 
-
-## Phase 36: Vercel 輸出異常修補（Chat Route）
-- [x] 重現線上異常（`tonesoul52.vercel.app/api/chat` 回 `backend_mode=mock_fallback`）
-- [x] `apps/web/src/app/api/chat/route.ts` 改為預設禁用 transport mock fallback（需顯式 `TONESOUL_ENABLE_CHAT_MOCK_FALLBACK=1`）
-- [x] 新增 Vercel 防呆：若 `TONESOUL_BACKEND_URL` 缺失或指向 localhost，直接回 `503` 配置錯誤
-- [x] 新增測試 `apps/web/src/__tests__/apiRoutes.chatTransport.test.ts`（disabled fallback / explicit fallback / vercel misconfig）
-- [x] 更新 `docs/API_SPEC.md` 與 `docs/VERCEL_DEPLOY.md` 的 fallback 契約與部署變數
-**成功標準**: production 不再因後端失聯而靜默回 mock 內容，Vercel 配置錯誤可即時暴露，且 web build+tests 全通過。
-
-## Phase 37: 全倉庫健康檢查與多觀點整合
-- [x] 修復 `scripts/` 既存 lint/format 債務（`analyze_journal.py`, `build_semantic_index.py` + black 格式化）
-- [x] 全域品質檢查（`ruff/black/pytest/web lint+test`）重跑並確認全綠
-- [x] 重跑 `verify_7d --include-sdh` 並補跑 live-service `verify_web_api` 驗證 SDH 路徑
-- [x] 更新 `REPO_CONSOLIDATION.md`（工程/哲學/現實/AI 多角度審計 + 高 CP 路線）
-**成功標準**: 腳本層品質債務清空、7D 阻斷維度維持 0 失敗，且整合審計文件反映最新可重演結果。
-
-## Phase 38: 一鍵健康檢查與 CI 可見性
-- [x] 新增 `scripts/run_repo_healthcheck.py`（整合 ruff/black/pytest/web lint+test/verify_7d）
-- [x] 輸出 `docs/status/repo_healthcheck_latest.json` + `docs/status/repo_healthcheck_latest.md`
-- [x] 新增 `tests/test_run_repo_healthcheck.py`（命令構建、skip 條件、Markdown 輸出）
-- [x] 新增 `.github/workflows/repo_healthcheck.yml`（blocking + artifact upload）
-- [x] 更新 `docs/status/README.md` 的產物說明與執行方式
-**成功標準**: 本地可一鍵取得健康檢查快照，CI 可上傳可讀/可機器解析 artifact，且缺 discussion 檔時可用 `--allow-missing-discussion` 走 CI-friendly 路徑。 
+## Phase 36: Vercel 頛詨?啣虜靽株?嚗hat Route嚗?- [x] ?蝺??啣虜嚗tonesoul52.vercel.app/api/chat` ??`backend_mode=mock_fallback`嚗?- [x] `apps/web/src/app/api/chat/route.ts` ?寧?身蝳 transport mock fallback嚗?憿臬? `TONESOUL_ENABLE_CHAT_MOCK_FALLBACK=1`嚗?- [x] ?啣? Vercel ?脣?嚗 `TONESOUL_BACKEND_URL` 蝻箏仃????localhost嚗?亙? `503` ?蔭?航炊
+- [x] ?啣?皜祈岫 `apps/web/src/__tests__/apiRoutes.chatTransport.test.ts`嚗isabled fallback / explicit fallback / vercel misconfig嚗?- [x] ?湔 `docs/API_SPEC.md` ??`docs/VERCEL_DEPLOY.md` ??fallback 憟??蝵脰???**??璅?**: production 銝???蝡臬仃?航?暺? mock ?批捆嚗ercel ?蔭?航炊?臬??莎?銝?web build+tests ?券???
+## Phase 37: ?典澈?亙熒瑼Ｘ??閫暺??- [x] 靽桀儔 `scripts/` ?Ｗ? lint/format ?萄?嚗analyze_journal.py`, `build_semantic_index.py` + black ?澆???
+- [x] ?典??釭瑼Ｘ嚗ruff/black/pytest/web lint+test`嚗?頝蒂蝣箄??函?
+- [x] ?? `verify_7d --include-sdh` 銝西?頝?live-service `verify_web_api` 撽? SDH 頝臬?
+- [x] ?湔 `REPO_CONSOLIDATION.md`嚗極蝔??脣飛/?曉祕/AI 憭?摨血祟閮?+ 擃?CP 頝舐?嚗?**??璅?**: ?單撅文?鞈芸??蝛箝?D ?餅蝬剖漲蝬剜? 0 憭望?嚗??游?撖抵??辣????啣??蝯???
+## Phase 38: 銝?萄摨瑟炎?亥? CI ?航???- [x] ?啣? `scripts/run_repo_healthcheck.py`嚗??ruff/black/pytest/web lint+test/verify_7d嚗?- [x] 頛詨 `docs/status/repo_healthcheck_latest.json` + `docs/status/repo_healthcheck_latest.md`
+- [x] ?啣? `tests/test_run_repo_healthcheck.py`嚗隞斗?撱箝kip 璇辣?arkdown 頛詨嚗?- [x] ?啣? `.github/workflows/repo_healthcheck.yml`嚗locking + artifact upload嚗?- [x] ?湔 `docs/status/README.md` ??抵牧???瑁??孵?
+**??璅?**: ?砍?臭??萄?敺摨瑟炎?亙翰?改?CI ?臭??喳霈/?舀??刻圾??artifact嚗?蝻?discussion 瑼??舐 `--allow-missing-discussion` 韏?CI-friendly 頝臬???
 
 ## Phase 39: Vercel Preflight Guard
-- [x] 新增 `scripts/verify_vercel_preflight.py`（backend URL、fallback policy、可選 health probe）
-- [x] 新增 `tests/test_verify_vercel_preflight.py`（URL/fallback/health probe 判斷）
-- [x] 新增 `.github/workflows/vercel_preflight.yml`（`workflow_dispatch` 手動 preflight）
-- [x] 更新 `docs/VERCEL_DEPLOY.md` 與 `docs/API_SPEC.md` 的 preflight 指令
-**成功標準**: 部署前可用單一指令阻擋高風險配置（localhost backend、mock fallback 開啟、report provider fallback 未關閉），並可在需要時加做 `/api/health` 連通檢查。 
+- [x] ?啣? `scripts/verify_vercel_preflight.py`嚗ackend URL?allback policy???health probe嚗?- [x] ?啣? `tests/test_verify_vercel_preflight.py`嚗RL/fallback/health probe ?斗嚗?- [x] ?啣? `.github/workflows/vercel_preflight.yml`嚗workflow_dispatch` ?? preflight嚗?- [x] ?湔 `docs/VERCEL_DEPLOY.md` ??`docs/API_SPEC.md` ??preflight ?誘
+**??璅?**: ?函蔡??典銝?誘?餅?擃◢?芷?蝵殷?localhost backend?ock fallback ???eport provider fallback ?芷???嚗蒂?臬?閬??? `/api/health` ??炎?乓?
 
 ## Phase 40: Multi-Model Council Runtime Wiring
-- [x] `CouncilRuntime` 在未顯式傳入視角配置時接入 `get_council_config()`
-- [x] 新增 `TONESOUL_COUNCIL_MODE` 環境變數（支援 `rules | hybrid | full_llm`，預設 `hybrid`）
-- [x] `model_registry` 支援 `rules` 別名並保持 `rules_only` 相容
-- [x] 新增 runtime/model registry 測試覆蓋（預設、alias、invalid fallback、request override）
-**成功標準**: 後端可透過環境變數切換 council 模式，且顯式 request 設定優先級高於環境變數，行為有測試保護。 
+- [x] `CouncilRuntime` ?冽憿臬??喳閬??蔭???`get_council_config()`
+- [x] ?啣? `TONESOUL_COUNCIL_MODE` ?啣?霈嚗??`rules | hybrid | full_llm`嚗?閮?`hybrid`嚗?- [x] `model_registry` ?舀 `rules` ?亙?銝虫???`rules_only` ?詨捆
+- [x] ?啣? runtime/model registry 皜祈岫閬?嚗?閮准lias?nvalid fallback?equest override嚗?**??璅?**: 敺垢?舫??啣?霈?? council 璅∪?嚗?憿臬? request 閮剖??芸?蝝??潛憓??賂?銵?葫閰虫?霅瑯?
 
-## Phase 41: 討論通道文字完整性防呆
-- [x] `memory/agent_discussion.py` 新增文字異常偵測（`replacement_char` / `private_use_char`）
-- [x] curated stream 過濾異常訊息，保留 raw 歷史但避免污染共用閱讀流
-- [x] `scripts/verify_memory_hygiene.py` 新增 `text_anomalies` 檢查並納入 blocking gate
-- [x] 補齊回歸測試（`tests/test_agent_discussion.py`, `tests/test_verify_memory_hygiene.py`）
-**成功標準**: 討論檔可維持 JSON 結構 + 文字可讀性雙重契約，且新的亂碼訊息不會進入 curated 記憶流。 
+## Phase 41: 閮?????摰?折??- [x] `memory/agent_discussion.py` ?啣????啣虜?菜葫嚗replacement_char` / `private_use_char`嚗?- [x] curated stream ?蕪?啣虜閮嚗???raw 甇瑕雿?情??券霈瘚?- [x] `scripts/verify_memory_hygiene.py` ?啣? `text_anomalies` 瑼Ｘ銝衣???blocking gate
+- [x] 鋆??飛皜祈岫嚗tests/test_agent_discussion.py`, `tests/test_verify_memory_hygiene.py`嚗?**??璅?**: 閮?瑼蝬剜? JSON 蝯? + ???航??折???蝝?銝??蝣潸??臭??脣 curated 閮瘚?
 
-## Phase 42: Council 模式前端可切換
-- [x] `/api/chat` 支援 `council_mode` 與 `perspective_config`（含輸入驗證）
-- [x] `UnifiedPipeline.process(...)` 串接 council mode override 到 `CouncilRequest.perspective_config`
-- [x] ChatInterface 新增 backend chat 的 council mode 下拉選單並帶入請求
-- [x] 補齊 API 合約與紅隊型別混淆測試，更新 `docs/API_SPEC.md`
-**成功標準**: 使用者可在前端切換 `rules/hybrid/full_llm` 並透過 `/api/chat` 生效，且不合法輸入會被 API 明確阻擋。 
+## Phase 42: Council 璅∪??垢?臬???- [x] `/api/chat` ?舀 `council_mode` ??`perspective_config`嚗頛詨撽?嚗?- [x] `UnifiedPipeline.process(...)` 銝脫 council mode override ??`CouncilRequest.perspective_config`
+- [x] ChatInterface ?啣? backend chat ??council mode 銝??詨銝血葆?亥?瘙?- [x] 鋆? API ???????交毽瘛葫閰佗??湔 `docs/API_SPEC.md`
+**??璅?**: 雿輻??典?蝡臬???`rules/hybrid/full_llm` 銝阡? `/api/chat` ??嚗?銝?瘜撓?交?鋡?API ?Ⅱ?餅???
 
-## Phase 43: Web Chat Route 契約防呆
-- [x] `apps/web/src/app/api/chat/route.ts` 新增 `council_mode` / `perspective_config` 型別驗證與 alias 正規化
-- [x] 清理 route 中既有亂碼判斷字串，統一為可維護的問題/情緒判定
-- [x] 補齊 route 測試（invalid payload 阻擋 + `rules_only -> rules` 轉換）
-**成功標準**: Next route 在進入 backend 前可攔截無效 payload，且 council mode 轉換行為有測試鎖定。 
+## Phase 43: Web Chat Route 憟??脣?
+- [x] `apps/web/src/app/api/chat/route.ts` ?啣? `council_mode` / `perspective_config` ?撽???alias 甇????- [x] 皜? route 銝剜??蝣澆?瑕?銝莎?蝯曹??箏蝬剛風??憿????文?
+- [x] 鋆? route 皜祈岫嚗nvalid payload ?餅? + `rules_only -> rules` 頧?嚗?**??璅?**: Next route ?券脣 backend ???⊥? payload嚗? council mode 頧?銵?葫閰阡?摰?
 
-## Phase 44: Council Mode 持久化與 E2E Smoke
-- [x] ChatInterface `council_mode` 選擇持久化（localStorage）
-- [x] CouncilRuntime transcript 新增 `council_mode_observability`
-- [x] `scripts/verify_web_api.py` 新增 `--check-council-modes`（驗證 mode 切換生效）
-- [x] 補齊測試（runtime / verify_web_api helpers）
-**成功標準**: 重整頁面後保留使用者 council mode，且可用單一 smoke 指令驗證 web->backend mode 切換與觀測欄位。 
+## Phase 44: Council Mode ???? E2E Smoke
+- [x] ChatInterface `council_mode` ?豢?????localStorage嚗?- [x] CouncilRuntime transcript ?啣? `council_mode_observability`
+- [x] `scripts/verify_web_api.py` ?啣? `--check-council-modes`嚗?霅?mode ????嚗?- [x] 鋆?皜祈岫嚗untime / verify_web_api helpers嚗?**??璅?**: ??敺??蝙?刻?council mode嚗??舐?桐? smoke ?誘撽? web->backend mode ????皜祆?雿?
 
-## Phase 45: SDH 自動化升級（Mode Switch Gate）
-- [x] `scripts/verify_7d.py` 的 SDH 檢查預設加入 `--check-council-modes`
-- [x] CI `web_api_smoke` 改為強制驗證 council mode 切換
-- [x] 補齊 `tests/test_verify_7d.py`，鎖定 SDH 命令旗標
-- [x] 更新 7D / API 文件中的 smoke 指令
-**成功標準**: `include-sdh` 與 CI smoke 都會驗證 mode switch，不再只驗證基本連通。 
+## Phase 45: SDH ?芸???蝝?Mode Switch Gate嚗?- [x] `scripts/verify_7d.py` ??SDH 瑼Ｘ?身? `--check-council-modes`
+- [x] CI `web_api_smoke` ?寧撘瑕撽? council mode ??
+- [x] 鋆? `tests/test_verify_7d.py`嚗?摰?SDH ?賭誘??
+- [x] ?湔 7D / API ?辣銝剔? smoke ?誘
+**??璅?**: `include-sdh` ??CI smoke ?賣?撽? mode switch嚗??撽??箸???
 
-## Phase 46: Healthcheck 與 SDH 旗標對齊
-- [x] `run_repo_healthcheck.py` 新增 `--[no-]check-council-modes` 並傳遞到 `verify_7d`
-- [x] `verify_7d.py` 新增 `--[no-]check-council-modes`（預設啟用）
-- [x] 補齊 `tests/test_run_repo_healthcheck.py` / `tests/test_verify_7d.py` 旗標測試
-- [x] 更新 `docs/status/README.md` 的 live SDH 執行範例
-**成功標準**: healthcheck 可顯式開關 mode-switch smoke，且預設行為維持啟用並有測試保護。 
+## Phase 46: Healthcheck ??SDH ??撠?
+- [x] `run_repo_healthcheck.py` ?啣? `--[no-]check-council-modes` 銝血? `verify_7d`
+- [x] `verify_7d.py` ?啣? `--[no-]check-council-modes`嚗?閮剖??剁?
+- [x] 鋆? `tests/test_run_repo_healthcheck.py` / `tests/test_verify_7d.py` ??皜祈岫
+- [x] ?湔 `docs/status/README.md` ??live SDH ?瑁?蝭?
+**??璅?**: healthcheck ?舫＊撘???mode-switch smoke嚗??身銵蝬剜??銝行?皜祈岫靽風??
 
-## 已完成（摘要）
-- [x] Phase 1-2: Council 設計與整合
-- [x] Phase 3/10/16: Tools API schema + ToolResponse 標準化
-- [x] Phase 4/6/8/15: Memory wiring / SQLite / Observer
+## 撌脣?????嚗?- [x] Phase 1-2: Council 閮剛????- [x] Phase 3/10/16: Tools API schema + ToolResponse 璅???- [x] Phase 4/6/8/15: Memory wiring / SQLite / Observer
 - [x] Phase 11-13: Demo API Server + Playground + run_demo
 - [x] Phase 14: Genesis Intent + is_mine
-- [x] 敘事對照表與敘事定版文件
-- [x] 亂碼清理與 UTF-8 統一
-**參考**: `CODEX_TASK.md`, `memory/handoff/2026-02-06_phase16_tools_progress.md`
+- [x] ??撠銵刻???摰??辣
+- [x] 鈭Ⅳ皜???UTF-8 蝯曹?
+**??*: `CODEX_TASK.md`, `memory/handoff/2026-02-06_phase16_tools_progress.md`
 
-## Phase 48: Ollama 無 Key Fallback 收斂
-- [x] `SettingsModal`：Ollama 顯示為 API Key 選填，修正 Test Info 顯示條件
-- [x] `ChatInterface`：用 `isApiKeyRequired` 套用提示與 fallback 憑證判斷，避免 Ollama 被誤判缺 key
-- [x] 新增 `apps/web/src/__tests__/settingsModal.test.ts`，鎖定 provider key requirement 規則
-- [x] 驗收：`npm --prefix apps/web test`、`npm --prefix apps/web run lint`、`npm --prefix apps/web run build` 全數通過
-**成功標準**: Ollama 在無 API Key 下可正常作為 fallback provider，且 UI 不再顯示錯誤 API Key 警示。
+## Phase 48: Ollama ??Key Fallback ?嗆?
+- [x] `SettingsModal`嚗llama 憿舐內??API Key ?詨‵嚗耨甇?Test Info 憿舐內璇辣
+- [x] `ChatInterface`嚗 `isApiKeyRequired` 憟?內??fallback ???斗嚗??Ollama 鋡怨炊?斤撩 key
+- [x] ?啣? `apps/web/src/__tests__/settingsModal.test.ts`嚗?摰?provider key requirement 閬?
+- [x] 撽嚗npm --prefix apps/web test`?npm --prefix apps/web run lint`?npm --prefix apps/web run build` ?冽??
+**??璅?**: Ollama ?函 API Key 銝甇?虜雿 fallback provider嚗? UI 銝?憿舐內?航炊 API Key 霅衣內??

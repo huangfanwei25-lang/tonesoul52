@@ -1,0 +1,75 @@
+"""Tests for experimental council perspective evolution."""
+
+from __future__ import annotations
+
+from tonesoul.council.evolution import CouncilEvolution, PerspectiveHistory
+
+
+def test_initial_weights_are_balanced():
+    evolution = CouncilEvolution()
+    weights = evolution.get_weights()
+
+    assert weights["philosopher"] == 1.0
+    assert weights["engineer"] == 1.0
+    assert weights["guardian"] == 1.0
+
+
+def test_record_deliberation_updates_history():
+    evolution = CouncilEvolution()
+    evolution.record_deliberation(
+        perspective_verdicts={
+            "philosopher": "approve",
+            "engineer": "approve",
+            "guardian": "block",
+        },
+        final_verdict="approve",
+    )
+
+    summary = evolution.get_summary()
+    history = summary["history"]
+    assert history["philosopher"]["aligned_with_final"] == 1
+    assert history["guardian"]["dissent_count"] == 1
+
+
+def test_evolve_weights_rewards_alignment_without_zeroing_dissent():
+    evolution = CouncilEvolution()
+    for _ in range(5):
+        evolution.record_deliberation(
+            perspective_verdicts={
+                "philosopher": "approve",
+                "engineer": "approve",
+                "guardian": "block",
+            },
+            final_verdict="approve",
+        )
+
+    weights = evolution.evolve_weights()
+    assert weights["philosopher"] > 1.0
+    assert weights["guardian"] >= CouncilEvolution.MIN_WEIGHT
+
+
+def test_evolve_weights_remains_bounded_for_all_perspectives():
+    evolution = CouncilEvolution()
+    for _ in range(100):
+        evolution.record_deliberation(
+            perspective_verdicts={
+                "philosopher": "approve",
+                "engineer": "block",
+                "guardian": "block",
+            },
+            final_verdict="approve",
+        )
+        evolution.evolve_weights()
+
+    weights = evolution.get_weights()
+    for weight in weights.values():
+        assert CouncilEvolution.MIN_WEIGHT <= weight <= CouncilEvolution.MAX_WEIGHT
+
+
+def test_alignment_rate_computation():
+    history = PerspectiveHistory(name="test")
+    history.record_vote(matched_final=True)
+    history.record_vote(matched_final=True)
+    history.record_vote(matched_final=False)
+
+    assert abs(history.alignment_rate - (2 / 3)) < 1e-6
