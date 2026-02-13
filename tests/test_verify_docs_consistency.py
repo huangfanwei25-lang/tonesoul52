@@ -138,6 +138,49 @@ def _write_status_readme(path: Path, *, include_dispatch_notes: bool = True) -> 
     _write(path, content)
 
 
+def _write_semantic_health_workflow(
+    path: Path,
+    *,
+    include_pull_request: bool = True,
+    blocking_council_tests: bool = True,
+) -> None:
+    pull_request = (
+        "  pull_request:\n    branches: [master, main, dev]\n" if include_pull_request else ""
+    )
+    continue_on_error = "" if blocking_council_tests else "        continue-on-error: true\n"
+    _write(
+        path,
+        (
+            "on:\n"
+            "  schedule:\n"
+            "    - cron: '0 0 * * 1'\n"
+            "  workflow_dispatch:\n"
+            "  push:\n"
+            "    branches: [master, main, dev]\n"
+            f"{pull_request}"
+            "jobs:\n"
+            "  verify:\n"
+            "    steps:\n"
+            "      - name: Run Council Tests (blocking)\n"
+            f"{continue_on_error}"
+            "        run: |\n"
+            "          pytest tests/test_pre_output_council.py -v --tb=short\n"
+        ),
+    )
+
+
+def _write_repo_structure_doc(path: Path, *, dynamic_reference: bool) -> None:
+    test_entry = (
+        "dynamic: docs/status/repo_healthcheck_latest.json (python_tests)"
+        if dynamic_reference
+        else "343+ tests"
+    )
+    _write(
+        path,
+        ("## Metrics\n" "| item | value |\n" "| --- | --- |\n" f"| tests | {test_entry} |\n"),
+    )
+
+
 def test_build_report_passes_when_thresholds_and_curated_refs_align(tmp_path: Path) -> None:
     _write(
         tmp_path / "scripts" / "verify_7d.py",
@@ -150,8 +193,22 @@ def test_build_report_passes_when_thresholds_and_curated_refs_align(tmp_path: Pa
     )
     _write(
         tmp_path / ".github" / "workflows" / "git_hygiene.yml",
-        "on:\n  schedule:\n    - cron: '0 4 * * 1'\njobs:\n  g:\n    steps:\n      - run: python scripts/verify_git_hygiene.py\n      - uses: actions/upload-artifact@v4\n",
+        (
+            "on:\n"
+            "  schedule:\n"
+            "    - cron: '0 4 * * 1'\n"
+            "  push:\n"
+            "    branches: [master, dev]\n"
+            "  pull_request:\n"
+            "    branches: [master, dev]\n"
+            "jobs:\n"
+            "  g:\n"
+            "    steps:\n"
+            "      - run: python scripts/verify_git_hygiene.py --strict\n"
+            "      - uses: actions/upload-artifact@v4\n"
+        ),
     )
+    _write_semantic_health_workflow(tmp_path / ".github" / "workflows" / "semantic_health.yml")
     _write_repo_healthcheck_workflow(tmp_path / ".github" / "workflows" / "repo_healthcheck.yml")
     _write_repo_healthcheck_dispatch_script(
         tmp_path / "scripts" / "run_repo_healthcheck_dispatch.py"
@@ -162,6 +219,11 @@ def test_build_report_passes_when_thresholds_and_curated_refs_align(tmp_path: Pa
         "at least 20 cases\npython tools/agent_discussion_tool.py audit --path memory/agent_discussion_curated.jsonl\n",
     )
     _write_status_readme(tmp_path / "docs" / "status" / "README.md")
+    _write_repo_structure_doc(tmp_path / "docs" / "REPOSITORY_STRUCTURE.md", dynamic_reference=True)
+    _write(
+        tmp_path / "docs" / "status" / "repo_healthcheck_latest.json",
+        '{"checks":[{"name":"python_tests","stdout_tail":"739 passed, 3 xfailed","stderr_tail":""}]}',
+    )
 
     report = docs_consistency.build_report(tmp_path)
     assert report["ok"] is True
@@ -176,8 +238,17 @@ def test_build_report_passes_when_thresholds_and_curated_refs_align(tmp_path: Pa
         "workflow_exists": True,
         "has_schedule": True,
         "has_runner": True,
+        "has_push": True,
+        "has_pull_request": True,
+        "has_strict_runner": True,
         "has_artifact_upload": True,
         "status_readme_reference": True,
+    }
+    assert report["semantic_health"] == {
+        "workflow_exists": True,
+        "has_push": True,
+        "has_pull_request": True,
+        "has_blocking_council_tests": True,
     }
     assert report["repo_healthcheck_dispatch"] == {
         "workflow_exists": True,
@@ -193,6 +264,14 @@ def test_build_report_passes_when_thresholds_and_curated_refs_align(tmp_path: Pa
         "script_has_single_side_warnings": True,
         "status_readme_inputs": True,
         "status_readme_validation_notes": True,
+    }
+    assert report["docs_freshness"] == {
+        "repo_structure_exists": True,
+        "repo_structure_dynamic_test_reference": True,
+        "repo_structure_static_test_counts": [],
+        "repo_structure_stale_static_test_count": False,
+        "repo_healthcheck_status_exists": True,
+        "latest_python_tests_passed": 739,
     }
 
 
@@ -490,3 +569,109 @@ def test_build_report_fails_when_repo_healthcheck_tokens_only_exist_in_notes(
     assert any(
         "repo healthcheck workflow missing workflow_dispatch trigger" in i for i in report["issues"]
     )
+
+
+def test_build_report_fails_when_semantic_health_council_tests_are_non_blocking(
+    tmp_path: Path,
+) -> None:
+    _write(
+        tmp_path / "scripts" / "verify_7d.py",
+        "RDD_MIN_CASES = 20\nDDD_DISCUSSION_PATH='memory/agent_discussion_curated.jsonl'\n",
+    )
+    _write(tmp_path / ".github" / "workflows" / "test.yml", "threshold = 20\n")
+    _write(
+        tmp_path / ".github" / "workflows" / "monthly_consolidation.yml",
+        "on:\n  schedule:\n    - cron: '30 3 1 * *'\njobs:\n  c:\n    steps:\n      - run: python scripts/run_monthly_consolidation.py --strict --allow-missing-discussion\n",
+    )
+    _write(
+        tmp_path / ".github" / "workflows" / "git_hygiene.yml",
+        (
+            "on:\n"
+            "  schedule:\n"
+            "    - cron: '0 4 * * 1'\n"
+            "  push:\n"
+            "    branches: [master, dev]\n"
+            "  pull_request:\n"
+            "    branches: [master, dev]\n"
+            "jobs:\n"
+            "  g:\n"
+            "    steps:\n"
+            "      - run: python scripts/verify_git_hygiene.py --strict\n"
+            "      - uses: actions/upload-artifact@v4\n"
+        ),
+    )
+    _write_semantic_health_workflow(
+        tmp_path / ".github" / "workflows" / "semantic_health.yml",
+        blocking_council_tests=False,
+    )
+    _write_repo_healthcheck_workflow(tmp_path / ".github" / "workflows" / "repo_healthcheck.yml")
+    _write_repo_healthcheck_dispatch_script(
+        tmp_path / "scripts" / "run_repo_healthcheck_dispatch.py"
+    )
+    _write(tmp_path / "docs" / "7D_AUDIT_FRAMEWORK.md", "minimum 20 tests\n")
+    _write(
+        tmp_path / "docs" / "7D_EXECUTION_SPEC.md",
+        "at least 20 cases\npython tools/agent_discussion_tool.py audit --path memory/agent_discussion_curated.jsonl\n",
+    )
+    _write_status_readme(tmp_path / "docs" / "status" / "README.md")
+    _write_repo_structure_doc(tmp_path / "docs" / "REPOSITORY_STRUCTURE.md", dynamic_reference=True)
+
+    report = docs_consistency.build_report(tmp_path)
+    assert report["ok"] is False
+    assert any(
+        "semantic health workflow council tests are not blocking" in i for i in report["issues"]
+    )
+
+
+def test_build_report_fails_when_repo_structure_has_stale_static_test_count(
+    tmp_path: Path,
+) -> None:
+    _write(
+        tmp_path / "scripts" / "verify_7d.py",
+        "RDD_MIN_CASES = 20\nDDD_DISCUSSION_PATH='memory/agent_discussion_curated.jsonl'\n",
+    )
+    _write(tmp_path / ".github" / "workflows" / "test.yml", "threshold = 20\n")
+    _write(
+        tmp_path / ".github" / "workflows" / "monthly_consolidation.yml",
+        "on:\n  schedule:\n    - cron: '30 3 1 * *'\njobs:\n  c:\n    steps:\n      - run: python scripts/run_monthly_consolidation.py --strict --allow-missing-discussion\n",
+    )
+    _write(
+        tmp_path / ".github" / "workflows" / "git_hygiene.yml",
+        (
+            "on:\n"
+            "  schedule:\n"
+            "    - cron: '0 4 * * 1'\n"
+            "  push:\n"
+            "    branches: [master, dev]\n"
+            "  pull_request:\n"
+            "    branches: [master, dev]\n"
+            "jobs:\n"
+            "  g:\n"
+            "    steps:\n"
+            "      - run: python scripts/verify_git_hygiene.py --strict\n"
+            "      - uses: actions/upload-artifact@v4\n"
+        ),
+    )
+    _write_semantic_health_workflow(tmp_path / ".github" / "workflows" / "semantic_health.yml")
+    _write_repo_healthcheck_workflow(tmp_path / ".github" / "workflows" / "repo_healthcheck.yml")
+    _write_repo_healthcheck_dispatch_script(
+        tmp_path / "scripts" / "run_repo_healthcheck_dispatch.py"
+    )
+    _write(tmp_path / "docs" / "7D_AUDIT_FRAMEWORK.md", "minimum 20 tests\n")
+    _write(
+        tmp_path / "docs" / "7D_EXECUTION_SPEC.md",
+        "at least 20 cases\npython tools/agent_discussion_tool.py audit --path memory/agent_discussion_curated.jsonl\n",
+    )
+    _write_status_readme(tmp_path / "docs" / "status" / "README.md")
+    _write_repo_structure_doc(
+        tmp_path / "docs" / "REPOSITORY_STRUCTURE.md", dynamic_reference=False
+    )
+    _write(
+        tmp_path / "docs" / "status" / "repo_healthcheck_latest.json",
+        '{"checks":[{"name":"python_tests","stdout_tail":"739 passed, 3 xfailed","stderr_tail":""}]}',
+    )
+
+    report = docs_consistency.build_report(tmp_path)
+    assert report["ok"] is False
+    assert any("missing dynamic python test reference" in i for i in report["issues"])
+    assert any("stale static test count" in i for i in report["issues"])

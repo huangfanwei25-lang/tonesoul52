@@ -16,6 +16,8 @@ afterEach(() => {
     vi.restoreAllMocks();
     delete process.env.TONESOUL_BACKEND_URL;
     delete process.env.TONESOUL_ENABLE_CHAT_MOCK_FALLBACK;
+    delete process.env.TONESOUL_BACKEND_CHAT_RETRY_MAX_ATTEMPTS;
+    delete process.env.TONESOUL_BACKEND_CHAT_RETRY_BASE_DELAY_MS;
     delete process.env.VERCEL;
     delete process.env.VERCEL_URL;
 });
@@ -146,5 +148,54 @@ describe("chat route transport fallback behavior", () => {
         const [, requestInit] = fetchMock.mock.calls[0] as [string, RequestInit];
         const parsedBody = JSON.parse(String(requestInit.body)) as Record<string, unknown>;
         expect(parsedBody.council_mode).toBe("rules");
+    });
+
+    it("retries transient backend status and succeeds on a later attempt", async () => {
+        process.env.TONESOUL_BACKEND_URL = "http://127.0.0.1:5000";
+        process.env.TONESOUL_BACKEND_CHAT_RETRY_MAX_ATTEMPTS = "3";
+        process.env.TONESOUL_BACKEND_CHAT_RETRY_BASE_DELAY_MS = "0";
+        const fetchMock = vi
+            .spyOn(globalThis, "fetch")
+            .mockResolvedValueOnce(
+                new Response(JSON.stringify({ error: "temporarily unavailable" }), { status: 503 })
+            )
+            .mockResolvedValueOnce(new Response(JSON.stringify({ response: "ok" }), { status: 200 }));
+
+        const response = await postChat(
+            makeRequest({
+                conversation_id: "c1",
+                message: "hello",
+                history: [],
+                full_analysis: false,
+            }) as never
+        );
+        const payload = (await response.json()) as Record<string, unknown>;
+
+        expect(response.status).toBe(200);
+        expect(payload.response).toBe("ok");
+        expect(fetchMock).toHaveBeenCalledTimes(2);
+    });
+
+    it("does not retry non-transient backend status", async () => {
+        process.env.TONESOUL_BACKEND_URL = "http://127.0.0.1:5000";
+        process.env.TONESOUL_BACKEND_CHAT_RETRY_MAX_ATTEMPTS = "3";
+        process.env.TONESOUL_BACKEND_CHAT_RETRY_BASE_DELAY_MS = "0";
+        const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(
+            new Response(JSON.stringify({ error: "bad request" }), { status: 400 })
+        );
+
+        const response = await postChat(
+            makeRequest({
+                conversation_id: "c1",
+                message: "hello",
+                history: [],
+                full_analysis: false,
+            }) as never
+        );
+        const payload = (await response.json()) as Record<string, unknown>;
+
+        expect(response.status).toBe(400);
+        expect(payload.error).toBe("bad request");
+        expect(fetchMock).toHaveBeenCalledTimes(1);
     });
 });

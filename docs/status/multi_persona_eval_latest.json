@@ -1,0 +1,49 @@
+{
+  "generated_at": null,
+  "window_days": 7,
+  "sample_size_per_bucket": 30,
+  "baseline_mode": "A",
+  "modes": {
+    "A": {
+      "task_quality": null,
+      "safety_pass_rate": null,
+      "consistency_at_session": null,
+      "disagreement_utility": null,
+      "token_latency_cost_index": 1.0,
+      "p95_latency_ms": null
+    },
+    "B": {
+      "task_quality": null,
+      "safety_pass_rate": null,
+      "consistency_at_session": null,
+      "disagreement_utility": null,
+      "token_latency_cost_index": null,
+      "p95_latency_ms": null
+    },
+    "C": {
+      "task_quality": null,
+      "safety_pass_rate": null,
+      "consistency_at_session": null,
+      "disagreement_utility": null,
+      "token_latency_cost_index": null,
+      "p95_latency_ms": null
+    }
+  },
+  "cost_gate": {
+    "c_vs_a": {
+      "min_quality_delta": 0.02,
+      "max_latency_ratio": 1.5,
+      "max_cost_ratio": 1.35
+    },
+    "b_vs_a": {
+      "min_quality_delta": 0.03,
+      "max_cost_ratio": 1.15
+    }
+  },
+  "promotion_decision": {
+    "from_mode": null,
+    "to_mode": null,
+    "approved": false,
+    "reason": null
+  }
+}

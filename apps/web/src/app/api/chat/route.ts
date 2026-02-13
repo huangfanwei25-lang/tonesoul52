@@ -9,8 +9,13 @@ import {
 
 const REQUEST_TIMEOUT_ENV = "TONESOUL_BACKEND_CHAT_TIMEOUT_MS";
 const DEFAULT_REQUEST_TIMEOUT_MS = 25000;
+const RETRY_MAX_ATTEMPTS_ENV = "TONESOUL_BACKEND_CHAT_RETRY_MAX_ATTEMPTS";
+const RETRY_BASE_DELAY_MS_ENV = "TONESOUL_BACKEND_CHAT_RETRY_BASE_DELAY_MS";
+const DEFAULT_RETRY_MAX_ATTEMPTS = 3;
+const DEFAULT_RETRY_BASE_DELAY_MS = process.env.NODE_ENV === "test" ? 0 : 300;
 const MOCK_FALLBACK_ENV = "TONESOUL_ENABLE_CHAT_MOCK_FALLBACK";
 const ALLOWED_COUNCIL_MODES = new Set(["rules", "rules_only", "hybrid", "full_llm"]);
+const TRANSIENT_STATUS_CODES = new Set([429, 502, 503, 504]);
 
 type PersonaPayload = {
     name?: string;
@@ -44,12 +49,67 @@ function resolveRequestTimeoutMs(): number {
 
 const REQUEST_TIMEOUT_MS = resolveRequestTimeoutMs();
 
+function resolveRetryMaxAttempts(): number {
+    const raw = process.env[RETRY_MAX_ATTEMPTS_ENV];
+    if (!raw) return DEFAULT_RETRY_MAX_ATTEMPTS;
+    const parsed = Number(raw);
+    if (!Number.isFinite(parsed) || parsed < 1) {
+        return DEFAULT_RETRY_MAX_ATTEMPTS;
+    }
+    return Math.floor(parsed);
+}
+
+function resolveRetryBaseDelayMs(): number {
+    const raw = process.env[RETRY_BASE_DELAY_MS_ENV];
+    if (!raw) return DEFAULT_RETRY_BASE_DELAY_MS;
+    const parsed = Number(raw);
+    if (!Number.isFinite(parsed) || parsed < 0) {
+        return DEFAULT_RETRY_BASE_DELAY_MS;
+    }
+    return Math.floor(parsed);
+}
+
 function shouldAllowMockFallback(): boolean {
     return envFlag(MOCK_FALLBACK_ENV, false);
 }
 
 function isAbortError(error: unknown): boolean {
     return error instanceof Error && error.name === "AbortError";
+}
+
+function isTransientStatus(status: number): boolean {
+    return TRANSIENT_STATUS_CODES.has(status);
+}
+
+function parseRetryAfterMs(headerValue: string | null): number | null {
+    if (!headerValue) return null;
+    const trimmed = headerValue.trim();
+    if (!trimmed) return null;
+    const seconds = Number(trimmed);
+    if (Number.isFinite(seconds) && seconds > 0) {
+        return Math.floor(seconds * 1000);
+    }
+    const timestamp = Date.parse(trimmed);
+    if (!Number.isNaN(timestamp)) {
+        const deltaMs = timestamp - Date.now();
+        if (deltaMs > 0) return Math.floor(deltaMs);
+    }
+    return null;
+}
+
+function retryDelayMs(
+    attempt: number,
+    retryBaseDelayMs: number,
+    retryAfterMs: number | null = null
+): number {
+    const exponentialMs = retryBaseDelayMs * (2 ** attempt);
+    if (retryAfterMs == null) return exponentialMs;
+    return Math.max(exponentialMs, retryAfterMs);
+}
+
+async function sleep(ms: number): Promise<void> {
+    if (ms <= 0) return;
+    await new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {
@@ -193,18 +253,48 @@ function generateMockResponse(message: string): string {
 }
 
 async function forwardToBackend(backendUrl: string, body: ChatRequestPayload): Promise<Response> {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
-    try {
-        return await fetch(`${backendUrl}/api/chat`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(body),
-            signal: controller.signal,
-        });
-    } finally {
-        clearTimeout(timeout);
+    const retryMaxAttempts = resolveRetryMaxAttempts();
+    const retryBaseDelayMs = resolveRetryBaseDelayMs();
+    let lastTransportError: unknown = null;
+
+    for (let attempt = 0; attempt < retryMaxAttempts; attempt++) {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+        try {
+            const response = await fetch(`${backendUrl}/api/chat`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(body),
+                signal: controller.signal,
+            });
+
+            if (isTransientStatus(response.status) && attempt < retryMaxAttempts - 1) {
+                const retryAfterMs = parseRetryAfterMs(response.headers.get("Retry-After"));
+                const delayMs = retryDelayMs(attempt, retryBaseDelayMs, retryAfterMs);
+                if (response.body) {
+                    void response.body.cancel().catch(() => {
+                        // Ignore body-cancel errors during retry path.
+                    });
+                }
+                await sleep(delayMs);
+                continue;
+            }
+
+            return response;
+        } catch (error) {
+            lastTransportError = error;
+            if (attempt < retryMaxAttempts - 1) {
+                await sleep(retryDelayMs(attempt, retryBaseDelayMs));
+                continue;
+            }
+        } finally {
+            clearTimeout(timeout);
+        }
     }
+
+    throw (lastTransportError instanceof Error
+        ? lastTransportError
+        : new Error("Backend unavailable"));
 }
 
 export async function POST(request: NextRequest) {

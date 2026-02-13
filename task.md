@@ -1,15 +1,15 @@
-# Task
+﻿# Task
 
 ## Program Board (2026-02-13)
 - [x] Level 1
 - [x] Level 2
 - [x] Architecture Audit Phase 76 (7.2/10, 10 findings)
 - [x] Level 3 (3a/3b/3c/3d)
-- [ ] Multi-persona evaluation framework (A/B/C + 5 metrics)
+- [x] Multi-persona evaluation framework (A/B/C + 5 metrics)
 - [x] Phase A (7 days): auth fail-closed + endpoint throttling + debug lock
 - [x] Phase B (14 days): pipeline cache + input validation + stats dedup
-- [ ] Phase C (30 days): CI blocking + docs freshness + frontend retry
-**Latest validation**: `pytest -q` => `767 passed, 3 xfailed` (2026-02-13). Level 3 implementation tracked in `CODEX_TASK.md` v7.
+- [x] Phase C (30 days): CI blocking + docs freshness + frontend retry
+**Latest validation**: `pytest -q` => `769 passed, 3 xfailed` (2026-02-13). Level 3 implementation tracked in `CODEX_TASK.md` v7.
 
 ## Phase 77: Level 3 Experimental
 - [x] 3a Semantic Trigger
@@ -19,9 +19,9 @@
 **Result**: Level 3 code + tests completed in this round, then full suite revalidated (`755 passed, 3 xfailed`).
 
 ## Phase 78: Multi-persona evaluation framework (A/B/C + 5 metrics)
-- [ ] A/B/C comparison protocol
-- [ ] Five metrics: Task Quality / Safety Pass Rate / Consistency@Session / Disagreement Utility / Token+Latency Cost
-- [ ] Cost gate and promotion criteria
+- [x] A/B/C comparison protocol
+- [x] Five metrics: Task Quality / Safety Pass Rate / Consistency@Session / Disagreement Utility / Token+Latency Cost
+- [x] Cost gate and promotion criteria
 
 ## Execution Log (2026-02-13)
 - [x] Phase A complete
@@ -32,7 +32,13 @@
 - [x] Phase B complete
 - [x] `/api/chat` pipeline cache (TTL + max-items + deterministic key)
 - [x] `/api/session-report` and `/api/chat` history payload deep validation
-- [x] Validation: `pytest -q` => `767 passed, 3 xfailed` (2026-02-13)
+- [x] Validation: `pytest -q` => `769 passed, 3 xfailed` (2026-02-13)
+- [x] Phase C complete
+- [x] CI blocking upgrades: `semantic_health` blocking council tests + `git_hygiene --strict` on push/PR
+- [x] Docs freshness checks: `verify_docs_consistency` now enforces dynamic test-count reference in `docs/REPOSITORY_STRUCTURE.md`
+- [x] Frontend retry/backoff: `/api/chat` route transient retry (`429/502/503/504`) with exponential delay
+- [x] Phase 78 complete
+- [x] Added `docs/experiments/MULTI_PERSONA_EVALUATION_FRAMEWORK.md` and `docs/status/multi_persona_eval_latest.json`
 ## Phase 79: Phase A嚗? 憭抬???蝖砍?
 - [ ] Read API auth ?寧 production fail-closed
 - [ ] `/api/chat`?/api/validate` ?????瘚???- [ ] production 撘瑕?? debug ??
@@ -269,3 +275,4 @@
 - [x] ?啣? `apps/web/src/__tests__/settingsModal.test.ts`嚗?摰?provider key requirement 閬?
 - [x] 撽嚗npm --prefix apps/web test`?npm --prefix apps/web run lint`?npm --prefix apps/web run build` ?冽??
 **??璅?**: Ollama ?函 API Key 銝甇?虜雿 fallback provider嚗? UI 銝?憿舐內?航炊 API Key 霅衣內??
+

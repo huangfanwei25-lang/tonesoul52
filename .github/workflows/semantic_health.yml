@@ -5,7 +5,9 @@ on:
     - cron: '0 0 * * 1'  # weekly on Monday UTC
   workflow_dispatch:
   push:
-    branches: [master, main]
+    branches: [master, main, dev]
+  pull_request:
+    branches: [master, main, dev]
 
 jobs:
   verify:
@@ -23,8 +25,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install pytest
 
-      - name: Run Council Tests
-        continue-on-error: true  # Some tests may need fixing
+      - name: Run Council Tests (blocking)
         run: |
           export PYTHONPATH=.
           pytest tests/test_pre_output_council.py tests/test_verdict.py tests/test_coherence.py tests/test_guardian.py -v --tb=short

@@ -42,6 +42,34 @@ def _extract_doc_thresholds(text: str) -> list[int]:
     return values
 
 
+def _extract_test_count_mentions(text: str) -> list[int]:
+    values = re.findall(r"(\d+)\s*\+?\s*tests?\b", text, flags=re.IGNORECASE)
+    return [int(value) for value in values]
+
+
+def _extract_python_tests_passed(status_payload: dict[str, Any]) -> int | None:
+    checks = status_payload.get("checks", [])
+    if not isinstance(checks, list):
+        return None
+
+    for check in checks:
+        if not isinstance(check, dict):
+            continue
+        if check.get("name") != "python_tests":
+            continue
+        stdout_tail = check.get("stdout_tail", "")
+        stderr_tail = check.get("stderr_tail", "")
+        if not isinstance(stdout_tail, str):
+            stdout_tail = ""
+        if not isinstance(stderr_tail, str):
+            stderr_tail = ""
+        summary = f"{stdout_tail}\n{stderr_tail}"
+        match = re.search(r"(\d+)\s+passed\b", summary)
+        if match:
+            return int(match.group(1))
+    return None
+
+
 def _has_curated_reference(text: str) -> bool:
     return "memory/agent_discussion_curated.jsonl" in text
 
@@ -238,10 +266,13 @@ def _evaluate_dispatch_script_contract(script_path: Path) -> dict[str, bool]:
 def build_report(repo_root: Path) -> dict[str, Any]:
     verify_7d = repo_root / "scripts" / "verify_7d.py"
     workflow = repo_root / ".github" / "workflows" / "test.yml"
+    semantic_health_workflow = repo_root / ".github" / "workflows" / "semantic_health.yml"
     monthly_workflow = repo_root / ".github" / "workflows" / "monthly_consolidation.yml"
     git_hygiene_workflow = repo_root / ".github" / "workflows" / "git_hygiene.yml"
     repo_healthcheck_workflow = repo_root / ".github" / "workflows" / "repo_healthcheck.yml"
     repo_healthcheck_dispatch_script = repo_root / "scripts" / "run_repo_healthcheck_dispatch.py"
+    repo_healthcheck_status = repo_root / "docs" / "status" / "repo_healthcheck_latest.json"
+    repo_structure_doc = repo_root / "docs" / "REPOSITORY_STRUCTURE.md"
     status_readme = repo_root / "docs" / "status" / "README.md"
     framework_doc = repo_root / "docs" / "7D_AUDIT_FRAMEWORK.md"
     exec_doc = repo_root / "docs" / "7D_EXECUTION_SPEC.md"
@@ -318,6 +349,9 @@ def build_report(repo_root: Path) -> dict[str, Any]:
     git_hygiene_has_schedule = False
     git_hygiene_has_runner = False
     git_hygiene_has_artifact_upload = False
+    git_hygiene_has_push = False
+    git_hygiene_has_pull_request = False
+    git_hygiene_has_strict_runner = False
     if git_hygiene_exists:
         git_hygiene_payload = _load_yaml_mapping(git_hygiene_workflow)
         if git_hygiene_payload is not None:
@@ -326,6 +360,8 @@ def build_report(repo_root: Path) -> dict[str, Any]:
             git_hygiene_has_schedule = isinstance(git_hygiene_schedule, list) and bool(
                 git_hygiene_schedule
             )
+            git_hygiene_has_push = "push" in git_hygiene_on_section
+            git_hygiene_has_pull_request = "pull_request" in git_hygiene_on_section
 
             git_hygiene_steps = _workflow_steps(git_hygiene_payload)
             git_hygiene_run_commands = [
@@ -335,6 +371,10 @@ def build_report(repo_root: Path) -> dict[str, Any]:
             ]
             git_hygiene_has_runner = any(
                 "python scripts/verify_git_hygiene.py" in run_text
+                for run_text in git_hygiene_run_commands
+            )
+            git_hygiene_has_strict_runner = any(
+                "python scripts/verify_git_hygiene.py" in run_text and "--strict" in run_text
                 for run_text in git_hygiene_run_commands
             )
             git_hygiene_has_artifact_upload = any(
@@ -348,8 +388,48 @@ def build_report(repo_root: Path) -> dict[str, Any]:
             issues.append("git hygiene workflow missing verify_git_hygiene invocation")
         if not git_hygiene_has_artifact_upload:
             issues.append("git hygiene workflow missing artifact upload step")
+        if not git_hygiene_has_push:
+            issues.append("git hygiene workflow missing push trigger")
+        if not git_hygiene_has_pull_request:
+            issues.append("git hygiene workflow missing pull_request trigger")
+        if not git_hygiene_has_strict_runner:
+            issues.append("git hygiene workflow missing strict runner (--strict)")
     else:
         issues.append("missing .github/workflows/git_hygiene.yml")
+
+    semantic_health_exists = semantic_health_workflow.exists()
+    semantic_health_has_push = False
+    semantic_health_has_pull_request = False
+    semantic_health_has_blocking_council_tests = False
+    if semantic_health_exists:
+        semantic_health_payload = _load_yaml_mapping(semantic_health_workflow)
+        if semantic_health_payload is not None:
+            semantic_health_on_section = _workflow_on_section(semantic_health_payload)
+            semantic_health_has_push = "push" in semantic_health_on_section
+            semantic_health_has_pull_request = "pull_request" in semantic_health_on_section
+
+            semantic_steps = _workflow_steps(semantic_health_payload)
+            council_step = None
+            for step in semantic_steps:
+                name = step.get("name")
+                if isinstance(name, str) and "Run Council Tests" in name:
+                    council_step = step
+                    break
+            council_run = council_step.get("run", "") if council_step else ""
+            semantic_health_has_blocking_council_tests = bool(
+                council_step is not None
+                and council_step.get("continue-on-error") is not True
+                and isinstance(council_run, str)
+                and "pytest" in council_run
+            )
+        if not semantic_health_has_push:
+            issues.append("semantic health workflow missing push trigger")
+        if not semantic_health_has_pull_request:
+            issues.append("semantic health workflow missing pull_request trigger")
+        if not semantic_health_has_blocking_council_tests:
+            issues.append("semantic health workflow council tests are not blocking")
+    else:
+        issues.append("missing .github/workflows/semantic_health.yml")
 
     repo_healthcheck_exists = repo_healthcheck_workflow.exists()
     repo_healthcheck_has_dispatch = False
@@ -489,6 +569,44 @@ def build_report(repo_root: Path) -> dict[str, Any]:
     else:
         issues.append("missing docs/status/README.md")
 
+    repo_structure_exists = repo_structure_doc.exists()
+    repo_structure_has_dynamic_tests_reference = False
+    repo_structure_static_test_counts: list[int] = []
+    repo_structure_has_stale_static_test_count = False
+    repo_healthcheck_status_exists = repo_healthcheck_status.exists()
+    latest_python_tests_passed = None
+
+    if repo_healthcheck_status_exists:
+        try:
+            status_payload = json.loads(_read(repo_healthcheck_status))
+        except json.JSONDecodeError:
+            issues.append("docs/status/repo_healthcheck_latest.json is invalid JSON")
+        else:
+            if isinstance(status_payload, dict):
+                latest_python_tests_passed = _extract_python_tests_passed(status_payload)
+
+    if repo_structure_exists:
+        repo_structure_text = _read(repo_structure_doc)
+        repo_structure_has_dynamic_tests_reference = all(
+            token in repo_structure_text
+            for token in ("docs/status/repo_healthcheck_latest.json", "python_tests")
+        )
+        repo_structure_static_test_counts = _extract_test_count_mentions(repo_structure_text)
+        if not repo_structure_has_dynamic_tests_reference:
+            issues.append("docs/REPOSITORY_STRUCTURE.md missing dynamic python test reference")
+        if (
+            not repo_structure_has_dynamic_tests_reference
+            and latest_python_tests_passed is not None
+            and repo_structure_static_test_counts
+            and max(repo_structure_static_test_counts) < latest_python_tests_passed
+        ):
+            repo_structure_has_stale_static_test_count = True
+            issues.append(
+                "docs/REPOSITORY_STRUCTURE.md has stale static test count "
+                f"(max={max(repo_structure_static_test_counts)}, "
+                f"latest_python_tests={latest_python_tests_passed})"
+            )
+
     return {
         "ok": len(issues) == 0,
         "rdd_thresholds": {
@@ -510,8 +628,17 @@ def build_report(repo_root: Path) -> dict[str, Any]:
             "workflow_exists": git_hygiene_exists,
             "has_schedule": git_hygiene_has_schedule,
             "has_runner": git_hygiene_has_runner,
+            "has_push": git_hygiene_has_push,
+            "has_pull_request": git_hygiene_has_pull_request,
+            "has_strict_runner": git_hygiene_has_strict_runner,
             "has_artifact_upload": git_hygiene_has_artifact_upload,
             "status_readme_reference": status_readme_has_git_hygiene,
+        },
+        "semantic_health": {
+            "workflow_exists": semantic_health_exists,
+            "has_push": semantic_health_has_push,
+            "has_pull_request": semantic_health_has_pull_request,
+            "has_blocking_council_tests": semantic_health_has_blocking_council_tests,
         },
         "repo_healthcheck_dispatch": {
             "workflow_exists": repo_healthcheck_exists,
@@ -527,6 +654,14 @@ def build_report(repo_root: Path) -> dict[str, Any]:
             "script_has_single_side_warnings": repo_healthcheck_script_has_single_side_warnings,
             "status_readme_inputs": status_readme_has_repo_healthcheck_dispatch_inputs,
             "status_readme_validation_notes": status_readme_has_repo_healthcheck_validation_notes,
+        },
+        "docs_freshness": {
+            "repo_structure_exists": repo_structure_exists,
+            "repo_structure_dynamic_test_reference": repo_structure_has_dynamic_tests_reference,
+            "repo_structure_static_test_counts": repo_structure_static_test_counts,
+            "repo_structure_stale_static_test_count": repo_structure_has_stale_static_test_count,
+            "repo_healthcheck_status_exists": repo_healthcheck_status_exists,
+            "latest_python_tests_passed": latest_python_tests_passed,
         },
         "issues": issues,
     }

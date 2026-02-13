@@ -1,4 +1,4 @@
-# ToneSoul52 完整倉庫結構
+﻿# ToneSoul52 完整倉庫結構
 
 > 最後更新: 2026-02-08
 > 用途: 提供完整路徑關係和模組用途，供開發者和審計者參考
@@ -174,5 +174,6 @@ tonesoul52/
 | **核心模組** | 106 files |
 | **文件** | 78 files |
 | **測試** | 59 files |
-| **測試案例** | 343+ tests |
+| **測試案例** | dynamic: docs/status/repo_healthcheck_latest.json (python_tests) |
 | **紅隊案例** | 20 cases |
+
