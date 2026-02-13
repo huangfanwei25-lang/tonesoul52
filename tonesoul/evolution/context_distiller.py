@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-_DEFAULT_CACHE_PATH = Path("data") / "evolution_latest.json"
+_CACHE_PATH = Path("data") / "evolution_latest.json"
 
 
 def _utc_now() -> str:
@@ -145,7 +145,7 @@ class ContextDistiller:
 
     def __init__(self, persistence: Any, cache_path: str | Path | None = None):
         self.persistence = persistence
-        self._cache_path = Path(cache_path) if cache_path is not None else _DEFAULT_CACHE_PATH
+        self._cache_path = Path(cache_path) if cache_path is not None else _CACHE_PATH
         self._latest_result: DistillationResult | None = self._load_cached_result()
 
     def get_latest_result(self) -> DistillationResult | None:
@@ -165,11 +165,11 @@ class ContextDistiller:
             return None
         return self._deserialize_result(payload)
 
-    def _persist_result(self, result: DistillationResult) -> None:
+    def _save_cached_result(self, result: DistillationResult) -> None:
         try:
             self._cache_path.parent.mkdir(parents=True, exist_ok=True)
             self._cache_path.write_text(
-                json.dumps(result.to_dict(), ensure_ascii=False),
+                json.dumps(result.to_dict(), ensure_ascii=False, indent=2),
                 encoding="utf-8",
             )
         except Exception:
@@ -287,7 +287,7 @@ class ContextDistiller:
             summary=self._build_summary(patterns, len(conversations)),
         )
         self._latest_result = result
-        self._persist_result(result)
+        self._save_cached_result(result)
         return result
 
     def extract_decision_patterns(self, audit_logs: list[dict[str, Any]]) -> list[ContextPattern]:

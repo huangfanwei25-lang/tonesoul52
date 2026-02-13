@@ -144,6 +144,23 @@ def test_tone_score_respects_word_boundaries():
     assert _tone_score("This is safer now") == 0.0
 
 
+def test_distiller_persists_result_to_cache(tmp_path: Path, monkeypatch):
+    import tonesoul.evolution.context_distiller as mod
+
+    cache_file = tmp_path / "evolution_latest.json"
+    monkeypatch.setattr(mod, "_CACHE_PATH", cache_file)
+
+    first = ContextDistiller(_FakePersistence())
+    first.distill(limit=10)
+
+    assert cache_file.exists()
+
+    second = ContextDistiller(_FakePersistence())
+    summary = second.get_summary()
+    assert summary["conversations_analyzed"] >= 0
+    assert summary["last_distilled_at"] is not None
+
+
 def test_distiller_loads_cached_result_after_recreation(tmp_path: Path):
     cache_path = tmp_path / "evolution_latest.json"
     distiller = ContextDistiller(_FakePersistence(), cache_path=cache_path)
