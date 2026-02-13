@@ -79,6 +79,7 @@ target-version = ["py310"]
 
 [tool.ruff]
 line-length = 100
+extend-exclude = ["scripts/legacy"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I"]
