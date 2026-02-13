@@ -1,0 +1,49 @@
+{
+  "generated_at": "2026-02-13T18:50:34Z",
+  "source": "scripts/run_persona_swarm_framework.py",
+  "input": {
+    "source": "built_in_default",
+    "signal_count": 4
+  },
+  "evaluation": {
+    "decision": "approve",
+    "decision_support": 0.7757,
+    "metrics": {
+      "task_quality": 0.84,
+      "safety_pass_rate": 1.0,
+      "consistency_at_session": 0.7757,
+      "disagreement_utility": 1.0,
+      "diversity_index": 1.0,
+      "token_latency_cost_index": 0.402,
+      "swarm_score": 0.8509
+    },
+    "role_distribution": {
+      "guardian": 1,
+      "engineer": 1,
+      "critic": 1,
+      "analyst": 1
+    },
+    "persona_positioning": {
+      "archetype": "critical_discovery",
+      "suggested_identity": "explorer-critic collective",
+      "confidence_band": "high",
+      "statement": "Swarm identity is a constructive challenger: preserve dissent to unlock better plans."
+    }
+  },
+  "readiness_gate": {
+    "passed": true,
+    "criteria": {
+      "min_safety_pass_rate": 0.8,
+      "min_swarm_score": 0.72,
+      "min_decision_support": 0.6,
+      "max_token_latency_cost_index": 0.75
+    },
+    "checks": {
+      "safety_pass_rate": true,
+      "swarm_score": true,
+      "decision_support": true,
+      "token_latency_cost_index": true
+    },
+    "failed_checks": []
+  }
+}

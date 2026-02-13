@@ -10,6 +10,7 @@
 - [x] Phase B (14 days): pipeline cache + input validation + stats dedup
 - [x] Phase C (30 days): CI blocking + docs freshness + frontend retry
 - [x] Phase 64-67 (showcase/docs/research/notes) acceptance closure
+- [x] Phase 82: Persona Swarm Framework (coordination gate + readiness artifact)
 **Latest validation**: `pytest -q` => `769 passed, 3 xfailed` (2026-02-13). Level 3 implementation tracked in `CODEX_TASK.md` v7.
 
 ## Phase 77: Level 3 Experimental
@@ -23,6 +24,11 @@
 - [x] A/B/C comparison protocol
 - [x] Five metrics: Task Quality / Safety Pass Rate / Consistency@Session / Disagreement Utility / Token+Latency Cost
 - [x] Cost gate and promotion criteria
+
+## Phase 82: Persona Swarm Framework
+- [x] Persona swarm coordination harness + metric definitions
+- [x] Persona swarm artifact and gate snapshot (`docs/status/persona_swarm_framework_latest.json`)
+**Result**: Persona swarm readiness artifact published and referenced in convergence tracking.
 
 ## Execution Log (2026-02-13)
 - [x] Phase A complete
@@ -47,6 +53,9 @@
 - [x] `semantic_health.yml` fixed: install `-e .[dev]`, blocking council log artifact, UTF-8 AXIOMS read
 - [x] Validation: `npm --prefix apps/web run lint && npm --prefix apps/web run test && npm --prefix apps/web run build` (pass)
 - [x] Validation: `pytest tests/test_workflow_contracts.py tests/test_verify_docs_consistency.py -q` => `14 passed`
+- [x] Phase 82 complete
+- [x] Added persona swarm framework artifact `docs/status/persona_swarm_framework_latest.json`
+- [x] Validation: `python scripts/run_persona_swarm_framework.py --strict` => `pass`
 ## Phase 79-81: Legacy Duplicates (Closed)
 - [x] Legacy duplicate tracking blocks for Phase A/B/C removed from active queue.
 - [x] Canonical status is tracked in Program Board + Execution Log above.
