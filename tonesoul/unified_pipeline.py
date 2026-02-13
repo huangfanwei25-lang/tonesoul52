@@ -301,6 +301,62 @@ class UnifiedPipeline:
                 return False
         return True
 
+    @staticmethod
+    def _extract_contradiction_description(contradiction: Any) -> str:
+        """Normalize contradiction descriptions from object/dict variants."""
+        if isinstance(contradiction, dict):
+            return str(contradiction.get("description", "")).strip()
+        description = str(getattr(contradiction, "description", "")).strip()
+        if description:
+            return description
+        to_dict = getattr(contradiction, "to_dict", None)
+        if callable(to_dict):
+            try:
+                raw = to_dict()
+            except Exception:
+                return ""
+            if isinstance(raw, dict):
+                return str(raw.get("description", "")).strip()
+        return ""
+
+    def _inject_visual_context(self, user_message: str) -> str:
+        """Inject recent visual chain snapshots into the message context."""
+        try:
+            chain = self._get_visual_chain()
+            if chain and chain.frame_count > 0:
+                visual_context = chain.render_recent_as_markdown(n=3)
+                if visual_context and len(visual_context) > 50:
+                    return (
+                        f"[脈絡記憶 — 最近視覺快照]\n{visual_context}\n\n" f"---\n\n{user_message}"
+                    )
+        except Exception:
+            pass
+        return user_message
+
+    def _inject_early_contradiction_warning(self, user_message: str) -> str:
+        """Inject contradiction hints before prompt generation."""
+        try:
+            graph = self._get_semantic_graph()
+            if not graph:
+                return user_message
+            pre_contradictions = graph.detect_contradictions()
+        except Exception:
+            return user_message
+
+        if not pre_contradictions:
+            return user_message
+
+        hints: List[str] = []
+        for contradiction in pre_contradictions[:3]:
+            description = self._extract_contradiction_description(contradiction)
+            if description:
+                hints.append(description[:60])
+        contradiction_hints = "; ".join(hints) or "請檢查近期承諾與邊界的一致性"
+        return (
+            f"[內在一致性提醒: 偵測到 {len(pre_contradictions)} 個潛在矛盾 — "
+            f"{contradiction_hints}]\n\n{user_message}"
+        )
+
     def _rebuild_stack_from_history(self, history: List[Dict]) -> None:
         """
         Rebuild the commit stack from conversation history.
@@ -418,6 +474,9 @@ class UnifiedPipeline:
                 persona_context = " | ".join(persona_parts)
                 user_message = f"[用戶偏好: {persona_context}]\n\n{user_message}"
 
+        # ========== Visual Memory Context 注入 ==========
+        user_message = self._inject_visual_context(user_message)
+
         # ========== 0. 重建 Third Axiom 狀態 ==========
         # 從對話歷史中恢復 commit_stack，確保跨 request 持久化
         self._rebuild_stack_from_history(history)
@@ -513,6 +572,9 @@ class UnifiedPipeline:
         semantic_graph_summary: Dict[str, Any] = {}
         if commit_stack:
             commitment_prompt = commit_stack.format_for_prompt(n=3)
+
+        # ========== 3.5 回應前矛盾檢查 ==========
+        user_message = self._inject_early_contradiction_warning(user_message)
 
         # ========== 4. 生成增強 prompt ==========
         system_context = self._build_context_prompt(

@@ -52,6 +52,13 @@ class SoulDB(Protocol):
 
     def list_sources(self) -> List[MemorySource]: ...
 
+    def cleanup_decayed(
+        self,
+        source: MemorySource,
+        *,
+        forget_threshold: Optional[float] = None,
+    ) -> int: ...
+
 
 def _iso_now() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
@@ -234,6 +241,17 @@ class JsonlSoulDB:
 
     def list_sources(self) -> List[MemorySource]:
         return list(self.source_map.keys())
+
+    def cleanup_decayed(
+        self,
+        source: MemorySource,
+        *,
+        forget_threshold: Optional[float] = None,
+    ) -> int:
+        """Return how many records would be filtered by decay gating."""
+        all_records = list(self.stream(source))
+        surviving = _decay_records(all_records, forget_threshold=forget_threshold)
+        return max(0, len(all_records) - len(surviving))
 
     def _resolve_path(self, source: MemorySource) -> Path:
         path = self.source_map.get(source)
@@ -436,6 +454,17 @@ class SqliteSoulDB:
             MemorySource.SCAN_LOG,
             MemorySource.CUSTOM,
         ]
+
+    def cleanup_decayed(
+        self,
+        source: MemorySource,
+        *,
+        forget_threshold: Optional[float] = None,
+    ) -> int:
+        """Return how many records would be filtered by decay gating."""
+        all_records = list(self.stream(source))
+        surviving = _decay_records(all_records, forget_threshold=forget_threshold)
+        return max(0, len(all_records) - len(surviving))
 
     def _stream_memories(
         self, source: MemorySource, limit: Optional[int]

@@ -21,6 +21,7 @@ from tonesoul.council import CouncilRequest, CouncilRuntime
 from tonesoul.council.self_journal import load_recent_memory
 from tonesoul.evolution import ContextDistiller
 from tonesoul.memory import consolidate
+from tonesoul.memory.soul_db import JsonlSoulDB, MemorySource, SoulDB
 from tonesoul.supabase_persistence import SupabasePersistence
 
 app = Flask(__name__, static_folder="../council-playground", static_url_path="")
@@ -46,6 +47,7 @@ _VTP_CONTEXT_FLAGS = (
 _ALLOWED_COUNCIL_MODES = {"rules", "rules_only", "hybrid", "full_llm"}
 supabase_persistence = SupabasePersistence.from_env()
 _context_distiller: ContextDistiller | None = None
+_soul_db: SoulDB | None = None
 
 
 def _env_flag(name: str, default: bool = False) -> bool:
@@ -202,6 +204,13 @@ def _get_context_distiller() -> ContextDistiller:
     if _context_distiller is None or _context_distiller.persistence is not supabase_persistence:
         _context_distiller = ContextDistiller(supabase_persistence, cache_path=cache_path)
     return _context_distiller
+
+
+def _get_soul_db() -> SoulDB:
+    global _soul_db
+    if _soul_db is None:
+        _soul_db = JsonlSoulDB()
+    return _soul_db
 
 
 def _get_evolution_summary_payload() -> dict:
@@ -751,6 +760,13 @@ def session_report():
                 conversation_id=conversation_id,
                 report=summary_dict,
             )
+
+        try:
+            cleaned = _get_soul_db().cleanup_decayed(MemorySource.SELF_JOURNAL)
+            if cleaned > 0:
+                print(f"[INFO] Decay cleanup: {cleaned} memories below threshold")
+        except Exception as cleanup_error:
+            print(f"[WARN] Decay cleanup error: {cleanup_error}")
 
         return jsonify({"success": True, "report": summary_dict})
     except Exception as e:

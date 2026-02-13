@@ -3,6 +3,7 @@ from __future__ import annotations
 from types import SimpleNamespace
 
 import apps.api.server as server
+from tonesoul.memory.soul_db import MemorySource
 
 
 def _client():
@@ -162,6 +163,43 @@ def test_session_report_endpoint_records_persistence(monkeypatch):
 
     assert response.status_code == 200
     assert any(name == "record_session_report" for name, _, _ in fake.calls)
+
+
+def test_session_report_endpoint_runs_decay_cleanup(monkeypatch):
+    import tonesoul.tonebridge.session_reporter as session_reporter
+
+    fake = _FakePersistence()
+    monkeypatch.setattr(server, "supabase_persistence", fake)
+    cleaned: dict[str, object] = {}
+
+    class _Summary:
+        def to_dict(self):
+            return {"summary_text": "ok"}
+
+    class _Reporter:
+        def analyze(self, history):
+            return _Summary()
+
+    class _FakeSoulDB:
+        def cleanup_decayed(self, source, *, forget_threshold=None):
+            cleaned["source"] = source
+            cleaned["forget_threshold"] = forget_threshold
+            return 1
+
+    monkeypatch.setattr(session_reporter, "SessionReporter", _Reporter)
+    monkeypatch.setattr(server, "_get_soul_db", lambda: _FakeSoulDB())
+
+    client = _client()
+    response = client.post(
+        "/api/session-report",
+        json={
+            "conversation_id": "conv_demo",
+            "history": [{"role": "user", "content": "hello"}],
+        },
+    )
+
+    assert response.status_code == 200
+    assert cleaned["source"] == MemorySource.SELF_JOURNAL
 
 
 def test_withdraw_consent_includes_deletion_report_when_enabled(monkeypatch):
