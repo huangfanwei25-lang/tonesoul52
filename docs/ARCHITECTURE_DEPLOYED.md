@@ -1,6 +1,7 @@
 # ToneSoul 系統架構 — 架構師級全局文件
 
-> **版本**：v2.0 · **審計者**：Antigravity (Gemini) · **日期**：2026-02-13
+> **版本**：v2.1 · **審計者**：Antigravity (Gemini) · **日期**：2026-02-13
+> **v2.1 更新**：記憶架構強化（動態遺忘、語義圖譜管線串接、視覺記憶鏈、採樣策略）
 > **方法**：Meta-Prompt 逐模組深度掃描 + 介面/依賴/資料流整合
 
 ---
@@ -121,24 +122,38 @@ graph TB
 ```
 用戶訊息
     ↓
-[0] _rebuild_stack_from_history()  — 重建第三公理狀態
+[0]  _rebuild_stack_from_history()  — 重建第三公理狀態
     ↓
 [0.5] _rebuild_trajectory_from_history()  — 重建語氣軌跡
     ↓
-[1] ToneBridge.analyze()  — 語氣/動機/崩潰風險分析
+[1]  ToneBridge.analyze()  — 語氣/動機/崩潰風險分析
     ↓
-[2] Trajectory.analyze()  — 5-turn 語氣軌跡
+[2]  Trajectory.analyze()  — 5-turn 語氣軌跡
     ↓
-[3] Council.deliberate()  — 三視角議會審議
+[3]  Council.deliberate()  — 三視角議會審議
     ↓
-[4] Deliberation.reason()  — 內在推理鏈
+[4]  Deliberation.reason()  — 內在推理鏈
     ↓
-[5] CommitmentExtractor + RuptureDetector + ValueAccumulator  — 第三公理
+[5]  RuptureDetector  — 斷裂偵測
+    ↓
+[8]  CommitmentExtractor  — 第三公理承諾提取
+    ↓
+[9]  SemanticGraph  — 語義圖譜更新（承諾→回應→矛盾偵測）【v2.1 新增】
+    ↓
+[10] 更新記憶單元  — council_verdict 回寫
+    ↓
+[11] Trajectory.add_turn()  — 語氣軌跡更新
+    ↓
+[12] 內在推理敘事生成
+    ↓
+[13] Third Axiom 數據收集（承諾/斷裂/價值）
+    ↓
+VisualChain.capture()  — 自動拍攝視覺快照（可配置採樣）【v2.1 新增】
     ↓
 UnifiedResponse → 回傳前端
 ```
 
-**9 個延遲初始化子系統**：
+**11 個延遲初始化子系統**：
 
 | # | 方法 | 子系統 | 來源 |
 |---|------|--------|------|
@@ -151,6 +166,8 @@ UnifiedResponse → 回傳前端
 | 7 | `_get_commit_extractor()` | 承諾提取器 | `tonebridge/commitment_extractor.py` |
 | 8 | `_get_rupture_detector()` | 斷裂偵測器 | `tonebridge/rupture_detector.py` |
 | 9 | `_get_value_accumulator()` | 價值累積器 | `tonebridge/value_accumulator.py` |
+| 10 | `_get_semantic_graph()` | 語義圖譜 | `memory/semantic_graph.py` 【v2.1】|
+| 11 | `_get_visual_chain()` | 視覺記憶鏈 | `memory/visual_chain.py` 【v2.1】|
 
 ---
 
@@ -258,14 +275,57 @@ UnifiedResponse → 回傳前端
 
 ---
 
-### 4.6 記憶系統 `tonesoul/memory/`（5 檔案）
+### 4.6 記憶系統 `tonesoul/memory/`（7 檔案）
 
 | 檔案 | 職責 |
 |------|------|
-| `soul_db.py` (20726) | **靈魂資料庫** — 記憶存取核心 |
-| `semantic_graph.py` (11354) | 語義圖譜 — 概念間關係映射 |
+| `soul_db.py` (22228) | **靈魂資料庫** — 記憶存取核心（含 decay query gating）|
+| `semantic_graph.py` (11354) | 語義圖譜 — 概念間關係映射（已串接管線）|
+| `visual_chain.py` (400+) | **視覺記憶鏈** — 圖像式快照記憶【v2.1 新增】|
+| `decay.py` (26) | **動態遺忘引擎** — 指數衰減 + 存取加強【v2.1 新增】|
 | `consolidator.py` (3495) | 記憶固化 — 短期 → 長期轉換 |
 | `stats.py` (3352) | 記憶統計 |
+
+#### 視覺記憶鏈（Visual Memory Chain）【v2.1 新增】
+
+**核心概念**：每幀 = Mermaid 圖（AI 看圖）+ JSON sidecar（AI 讀數），鏈起來就是完整脈絡。
+
+**7 種幀類型**：session_state, tension_map, commitment_tree, value_landscape, council_verdict, rupture_timeline, conversation_arc
+
+**設計原則**：每張圖只編碼 3-4 個維度（拓撲+色彩+文字），避免層間干擾。多幀 × 少維度 > 單幀 × 多維度。
+
+```
+VisualChain
+├── capture()          → 拍一幀存入鏈
+├── get_recent(n)      → AI 讀最近 N 幀
+├── query(tags, type)  → 按標籤/類型查詢
+├── fork_branch()      → 分支（實驗性對話路線）
+└── render_recent_as_markdown() → 轉成 AI 可讀的 Mermaid
+```
+
+**採樣策略**（環境變數控制）：
+
+| 變數 | 預設 | 作用 |
+|------|------|------|
+| `TONESOUL_VISUAL_CHAIN_ENABLED` | `true` | 開/關自動拍攝 |
+| `TONESOUL_VISUAL_CHAIN_SAMPLE_EVERY` | `1` | 每 N 輪拍一幀 |
+| `TONESOUL_VISUAL_CHAIN_MAX_FRAMES` | `500` | 硬上限 |
+
+#### 動態遺忘（Memory Decay）【v2.1 新增】
+
+```
+relevance = initial × e^(-λt) + access_count × boost
+                     ↓
+            < FORGET_THRESHOLD (0.1)?
+                   ↓ Yes
+              軟性遺忘（查詢時過濾）
+```
+
+| 參數 | 值 | 說明 |
+|------|-----|------|
+| `HALF_LIFE_DAYS` | 7.0 | 7 天半衰期 |
+| `FORGET_THRESHOLD` | 0.1 | 低於此值被過濾 |
+| `ACCESS_BOOST` | 0.15 | 每次存取加分 |
 
 ---
 
@@ -503,15 +563,22 @@ from tonesoul.evolution import ContextDistiller, CorpusBuilder  # Evolution OK
 │         └──────────┼──────────────┘              │
 │                    ↓                             │
 │         Third Axiom (第三公理)                    │
-│         • 承諾提取                               │
-│         • 斷裂偵測                               │
-│         • 價值累積                               │
+│         • 承諾提取 → 斷裂偵測 → 價值累積          │
+│                    │                             │
+│                    ↓                             │
+│         記憶層 【v2.1 強化】                      │
+│         ┌─────────────────────────────┐          │
+│         │ SemanticGraph（語義圖譜）    │          │
+│         │  • 承諾→回應→矛盾偵測       │          │
+│         │ VisualChain（視覺記憶鏈）    │          │
+│         │  • 自動拍攝 session 快照     │          │
+│         │ Decay Engine（動態遺忘）     │          │
+│         │  • 指數衰減 + 存取加強       │          │
+│         └─────────────────────────────┘          │
 │                    │                             │
 │                    ↓                             │
 │         Supabase 持久化                          │
-│         • conversations                          │
-│         • messages (含 deliberation JSONB)        │
-│         • audit_logs (含 delta_t, poav_score)     │
+│         • conversations / messages / audit_logs   │
 │         • soul_memories                          │
 │                    │                             │
 │                    ↓                             │
@@ -560,6 +627,12 @@ graph LR
         CB["corpus_builder"]
     end
 
+    subgraph "Memory【v2.1】"
+        SG["semantic_graph"]
+        VC["visual_chain"]
+        DK["decay"]
+    end
+
     subgraph "Infra"
         SP["supabase_persistence"]
         LLM["tonesoul_llm"]
@@ -577,6 +650,9 @@ graph LR
     UP --> RD
     UP --> VA
     UP --> SC
+    UP --> SG
+    UP --> VC
+    MEM --> DK
     CR --> PF
     CR --> VD
     CR --> TR
@@ -594,9 +670,11 @@ graph LR
 | Council | ~60+ | runtime, verdict, transcript, VTP |
 | ToneBridge | ~40+ | analyzer, commitment, rupture, trajectory |
 | Evolution | ~30+ | context_distiller, corpus_builder |
-| Server routes | ~20+ | validate, conversations, audit-logs |
+| Memory | ~25+ | visual_chain, decay, soul_db_decay_query 【v2.1】|
+| Server routes | ~20+ | validate, conversations, audit-logs, council_mode |
+| Pipeline gates | ~37+ | visual chain sampling gates 【v2.1】|
 | Properties | ~20+ | hypothesis-based property testing |
-| **總計** | **671 passed** | 3 xfailed, 0 failures |
+| **總計** | **705 passed** | 3 xfailed, 0 failures |
 
 ---
 
@@ -638,20 +716,30 @@ Gemini ──→ Claude ──→ 未來模型 ──→ 本地蒸餾模型
 ### 已修復 ✅
 - [x] audit log 索引排序（corpus_builder 已加 `created_at` ASC sort）
 - [x] `_tone_score` substring 衝突（改用 word boundary `re.findall`）
+- [x] 演化摘要持久化（`ContextDistiller` cache 機制）
+- [x] CI 加 Evolution import 驗證（`ci.yml` 新增 `Evolution OK` 步驟）
+- [x] `/privacy` 頁面（已上線）
+- [x] 動態遺忘引擎（`memory/decay.py` + `soul_db` decay query gating）【v2.1】
+- [x] 語義圖譜管線串接（`SemanticGraph` → `unified_pipeline.py`）【v2.1】
+- [x] 視覺記憶鏈（`visual_chain.py` + 自動拍攝 + 採樣策略）【v2.1】
+- [x] `semantic_contradictions` API 契約（前端可讀矛盾偵測結果）【v2.1】
 
 ### 待修 🟡
-- [ ] 演化摘要持久化（目前只在記憶體，restart 歸零）
-- [ ] CI 加 Evolution import 驗證
-- [ ] `/privacy` 頁面 404
 - [ ] `tmp/` 臨時腳本清理
+- [ ] Decay 目前在 Python 應用層過濾，大量 record 時效能可能不足
 
 ### 未來路線 🔮
 - [ ] 本地 JSON → Supabase `evolution_results` 表
 - [ ] 語料自動蒸餾排程（cron / webhook）
 - [ ] 本地模型蒸餾 PoC（LoRA / QLoRA）
-- [ ] 前端審議視覺化強化
+- [ ] 前端顯示 `semantic_contradictions` + `semantic_graph_summary`
+- [ ] 前端顯示 visual chain 快照（Mermaid 視覺化）
+- [ ] 更多 FrameType 自動拍攝（tension_map, commitment_tree 等）
+- [ ] 圖鏈 AI 自主查詢（讓 AI 在推理時主動讀圖鏈）  🧪 實驗性
+- [ ] 跨 session 記憶恢復（decay + visual chain 聯合查詢）  🧪 實驗性
 
 ---
 
 *此文件由 Antigravity (Gemini) 於 2026-02-13 以架構師級 Meta-Prompt 方法深度審計後產出。*
-*涵蓋 62 個核心模組、30+ API 端點、671 個測試、4 個應用層。*
+*v2.1 更新：記憶架構強化（動態遺忘、語義圖譜串接、視覺記憶鏈）。*
+*涵蓋 64 個核心模組、30+ API 端點、705 個測試、4 個應用層。*
