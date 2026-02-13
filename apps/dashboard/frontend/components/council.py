@@ -2,8 +2,9 @@
 內在會議顯示元件 - 人性化內在會議討論
 """
 
+from typing import Dict
+
 import streamlit as st
-from typing import Dict, Optional
 
 
 def render_council(council: Dict[str, str]):

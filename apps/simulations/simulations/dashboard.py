@@ -5,19 +5,17 @@ Real-time observability for the Quantum Soul.
 Displays Free Energy, Entropy, Tension, and Quantum State.
 """
 
-import time
 import json
 import os
-from typing import Dict, Any, List
+import time
+from typing import Any, Dict
 
-from rich.console import Console
+from rich import box
 from rich.layout import Layout
-from rich.panel import Panel
 from rich.live import Live
+from rich.panel import Panel
 from rich.table import Table
 from rich.text import Text
-from rich.align import Align
-from rich import box
 
 LEDGER_FILE = os.path.join(os.path.dirname(__file__), "../ledger.jsonl")
 
@@ -66,7 +64,6 @@ def make_header() -> Panel:
 
 def make_metrics_table(step: Dict[str, Any]) -> Table:
     triad = step.get("triad", {})
-    decision = step.get("decision", {})
 
     table = Table(title="Soul Metrics", box=box.SIMPLE)
     table.add_column("Metric", style="cyan")
@@ -158,7 +155,6 @@ def update_layout(layout: Layout, step: Dict[str, Any]):
 
 
 def run_dashboard():
-    console = Console()
     layout = make_layout()
 
     with Live(layout, refresh_per_second=4, screen=True):

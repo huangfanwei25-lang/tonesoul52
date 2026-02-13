@@ -2,15 +2,14 @@
 語魂 - 對話 + 技能 + 遠端畫面佔位
 """
 
-from datetime import datetime
 import json
 import os
+from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional
 
 import streamlit as st
 import yaml
-
 from components.council import render_council
 from utils.llm import chat_with_council
 from utils.search import build_search_context, default_search_roots

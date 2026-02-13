@@ -9,7 +9,6 @@ from typing import Dict, List, Optional
 
 import requests
 
-
 ALLOWED_EXTENSIONS = {".md", ".txt", ".json", ".yaml", ".yml", ".py"}
 LOCAL_ENDPOINT_FILE = Path(__file__).parent.parent.parent / "runtime" / "local_search_endpoint.json"
 

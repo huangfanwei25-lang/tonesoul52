@@ -6,7 +6,6 @@ import json
 from pathlib import Path
 
 import streamlit as st
-
 from components.council import render_council
 from components.memory_panel import render_memory_panel
 from components.status_panel import render_status_panel

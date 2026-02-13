@@ -10,12 +10,10 @@ Uses Thinking Operators to structure the discussion between:
 Topic: "Should ToneSoul have the right to refuse a user's command based on its own ethical judgment?"
 """
 
-import time
 import random
-from typing import List, Dict, Any
+
 from core.thinking.base import OperatorContext, ThinkingOperatorType
 from core.thinking.pipeline import ThinkingPipeline
-from core.thinking.operators import OpAbstract, OpReverse, OpFork, OpGround
 
 
 # Mock LLM Response (Simulating the Reasoning Engine)

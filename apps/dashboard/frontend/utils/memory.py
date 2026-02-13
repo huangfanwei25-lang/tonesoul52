@@ -3,8 +3,8 @@
 """
 
 import json
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 from typing import Dict, List, Optional
 
 MEMORY_LAYERS = ("seeds", "user", "session", "agent")
@@ -183,7 +183,7 @@ def load_memory(path: str) -> Optional[Dict]:
     try:
         with open(path, "r", encoding="utf-8") as f:
             return json.load(f)
-    except:
+    except (OSError, TypeError, ValueError, json.JSONDecodeError):
         return None
 
 

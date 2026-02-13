@@ -5,15 +5,16 @@ LLM 工具 - 含 Council 模擬
 import json
 import os
 import re
-import requests
-import yaml
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
+
+import requests
+import yaml
 from components.council import parse_council_response
 from components.memory_panel import load_memory_content
-from utils.status import log_conversation_summary
 
+from utils.status import log_conversation_summary
 
 OLLAMA_URL = "http://localhost:11434/api/generate"
 MODEL = os.getenv("TS_MODEL", "llava")  # 可用環境變數切換模型

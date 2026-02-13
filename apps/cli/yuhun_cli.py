@@ -21,9 +21,9 @@ Date: 2025-12-08
 
 import argparse
 import os
-from pathlib import Path
 import sys
 from datetime import datetime
+from pathlib import Path
 
 # Ensure UTF-8 output (Windows consoles may default to cp950)
 try:
@@ -97,7 +97,7 @@ class YuHunCLI:
 
         # StepLedger
         try:
-            from body.step_ledger import StepLedger, Event
+            from body.step_ledger import Event, StepLedger
 
             ledger_path = os.path.join(str(REPO_ROOT), "memory", "yuhun_cli_ledger.jsonl")
             self.components["ledger"] = StepLedger(storage_path=ledger_path)

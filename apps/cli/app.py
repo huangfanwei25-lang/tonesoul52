@@ -1,8 +1,8 @@
-from datetime import datetime, timezone
-import os
-from pathlib import Path
+# ruff: noqa: E402
 import sys
 import uuid
+from datetime import datetime, timezone
+from pathlib import Path
 
 # Ensure we can import the local yuhun package.
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -15,6 +15,11 @@ for candidate in (
     if path not in sys.path and candidate.exists():
         sys.path.insert(0, path)
 
+from yuhun.gate import build_plan
+from yuhun.meta_parser import extract_meta
+from yuhun.models import ChronicleEntry, FSVector
+from yuhun.ollama_client import generate
+from yuhun.prompt_builder import build_prompt
 from yuhun.state_store import (
     append_chronicle,
     load_island,
@@ -22,11 +27,6 @@ from yuhun.state_store import (
     save_island,
     save_state,
 )
-from yuhun.ollama_client import generate
-from yuhun.gate import build_plan
-from yuhun.prompt_builder import build_prompt
-from yuhun.meta_parser import extract_meta
-from yuhun.models import ChronicleEntry, FSVector
 
 MAX_INPUT_LEN = 2000
 MAX_SUMMARY_LEN = 200

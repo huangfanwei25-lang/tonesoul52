@@ -19,8 +19,7 @@ Usage:
 
 import json
 from pathlib import Path
-from typing import List, Dict, Any, Optional
-import numpy as np
+from typing import Any, Dict, List, Optional
 
 # Local imports
 try:
@@ -33,8 +32,8 @@ except ImportError:
 
 # Check if we have the dependencies
 try:
-    from sentence_transformers import SentenceTransformer
     import faiss
+    from sentence_transformers import SentenceTransformer
 except ImportError:
     print("❌ Missing dependencies. Install with:")
     print("   pip install sentence-transformers faiss-cpu")

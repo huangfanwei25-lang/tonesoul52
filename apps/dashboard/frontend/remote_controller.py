@@ -6,11 +6,11 @@
 import json
 import os
 import re
+import threading
+import time
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
-import threading
-import time
 
 # 嘗試導入 pyautogui（可能需要安裝）
 try:

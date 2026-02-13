@@ -11,10 +11,9 @@ Cast:
 - SPINE (The Executive): Coordinates actions and logs memory.
 """
 
-import sys
 import os
+import sys
 import time
-import random
 
 # Ensure we can import from core and body
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
@@ -82,7 +81,7 @@ def simulate_meeting():
             # Relaxed (Creative) - Low Tension, Low Risk, Low Drift
             triad = ToneSoulTriad(delta_t=0.1, delta_s=0.05, delta_r=0.0, risk_score=0.05)
 
-        print_dialogue("SENSOR", f"Incoming signal analyzed. Metrics updated.")
+        print_dialogue("SENSOR", "Incoming signal analyzed. Metrics updated.")
         print_dialogue(
             "SENSOR",
             f"ΔT (Tension): {triad.delta_t:.2f} | ΔR (Risk): {triad.delta_r:.2f} | ΔS (Drift): {triad.delta_s:.2f}",
@@ -101,9 +100,9 @@ def simulate_meeting():
 
         # 2. Reason
         reasoning_mode = engine.reasoning_engine.determine_mode(triad)
-        thought = engine.reasoning_engine.process(user_input, reasoning_mode)
+        engine.reasoning_engine.process(user_input, reasoning_mode)
 
-        print_dialogue("REASONING", f"Analyzing Triad configuration...")
+        print_dialogue("REASONING", "Analyzing Triad configuration...")
         if reasoning_mode.value == "Critical":
             print_dialogue(
                 "REASONING",

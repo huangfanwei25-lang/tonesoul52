@@ -10,7 +10,6 @@ from pathlib import Path
 from typing import Dict, Optional
 
 import streamlit as st
-
 from utils.status import build_status_snapshot, load_latest_summary
 
 

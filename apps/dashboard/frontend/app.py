@@ -7,10 +7,8 @@ ToneSoul 5.2 Frontend
 """
 
 import streamlit as st
-
+from pages import history, memory, skills, terrain, workspace
 from utils.theme import apply_theme
-from pages import workspace, memory, terrain, history, skills
-
 
 st.set_page_config(
     page_title="語魂工作區",

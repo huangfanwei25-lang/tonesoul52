@@ -1,3 +1,4 @@
 """Components package"""
 
-from . import council, memory_panel
+from . import council as council
+from . import memory_panel as memory_panel

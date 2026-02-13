@@ -5,9 +5,8 @@ Reads the ledger.jsonl and generates a Mermaid diagram representing
 the Time-Islands, Steps, and their connections.
 """
 
-import sys
 import os
-import json
+import sys
 
 # Ensure we can import from core and body
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
@@ -34,7 +33,7 @@ def generate_mermaid():
         mermaid_lines.append(
             f"    subgraph {island_node} [Time-Island: {island.island_id[:8]} {status_icon}]"
         )
-        mermaid_lines.append(f"        direction TB")
+        mermaid_lines.append("        direction TB")
 
         prev_step_id = None
         for step in island.steps:
