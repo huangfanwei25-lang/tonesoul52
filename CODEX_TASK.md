@@ -1,151 +1,258 @@
-# CODEX_TASK — CI 驗證 + 整合測試 + 缺口修補
+# CODEX_TASK — Level 1：記憶接線 v4
 
-> **上次更新**：2026-02-13T09:25 (UTC+8)
+> **日期**：2026-02-13T17:40 (UTC+8)
 > **交辦者**：Antigravity
-> **前置作業**：先確認上一輪改動已 push 到 master
+> **前置**：先讀 `docs/ARCHITECTURE_DEPLOYED.md`（v2.1），再讀本文件
+> **前一輪**：v2（decay engine + graph/visual hooks）、v3（decay gating + contradictions API + sampling）全部完成 ✅
 
 ---
 
-## 0) 先讀這份文件（必要）
+## 總覽
 
-- `docs/ARCHITECTURE_DEPLOYED.md` — 系統全貌
-- `.github/workflows/ci.yml` — CI 設定（3 個 job：test, lint, web_api_smoke）
+v2/v3 把零件做好了。v4 的目標 = **把零件的能力接到實際使用的地方**。
+
+```
+已完成 ✅                             本輪接線 🔌
+────────────────────────────────────────────────
+SemanticGraph 已在 pipeline 更新    → 1b: 回應前查矛盾，違反時警示
+VisualChain 已在 pipeline 拍攝      → 1a: 注入到 LLM prompt 給 AI 看
+Decay 已在 query() 支援             → 1c: session 結束時自動清理
+```
+
+**這輪 3 件事**：
+
+| # | 任務 | 改動範圍 | 難度 |
+|---|------|---------|------|
+| 1a | Visual Chain → Prompt 注入 | `unified_pipeline.py` | 🟢 低 |
+| 1b | SemanticGraph → 回應前矛盾檢查 | `unified_pipeline.py` | 🟢 低 |
+| 1c | Decay → Session 結束自動清理 | `apps/api/server.py` + `soul_db.py` | 🟡 中 |
 
 ---
 
-## 任務清單
+## Task 1a：Visual Chain → Prompt 注入
 
-| Task | 內容 | 優先級 |
-|------|------|--------|
-| 1 | CI 格式化 + Lint 修復 | 🔴 高 |
-| 2 | CI 測試相容性 | 🔴 高 |
-| 3 | 演化模組 import 驗證加入 CI | 🟡 中 |
-| 4 | Supabase 讀取方法補齊 | 🟡 中 |
-| 5 | 整合測試腳本 | 🟢 低 |
+### 目標
 
----
+讓 AI 在生成回應前，能**看到最近 3 張圖鏈快照**。
+這相當於讓 AI「回顧」最近的對話脈絡，只用 ~300 tokens。
 
-## Task 1：CI 格式化 + Lint 修復
+### 修改：`tonesoul/unified_pipeline.py`
 
-CI 會執行：
-```bash
-black --check --line-length 100 tonesoul tests
-ruff check tonesoul tests
-```
+在 `process()` 方法裡，找到 `# ========== Persona Config 注入 ==========` 區塊（約 L403），**在它之後、ToneBridge 分析之前**，加入：
 
-**做法**：
-1. 在本地執行 `black --line-length 100 tonesoul tests` 自動格式化
-2. 執行 `ruff check tonesoul tests` 查看 lint 問題
-3. 修復所有 ruff 報錯
-4. **特別注意**：新的 `tonesoul/evolution/` 目錄下的所有 `.py` 檔案
-
-**驗證**：
-```bash
-black --check --line-length 100 tonesoul tests
-ruff check tonesoul tests
-```
-兩者都應 exit 0。
-
----
-
-## Task 2：CI 測試相容性
-
-CI 使用 **Python 3.11**。確認以下不會出問題：
-
-1. `tonesoul/evolution/corpus_schema.py` 用了 `@dataclass(slots=True)` — Python 3.10+ OK
-2. `list[str]` type hints — Python 3.9+ OK（因為有 `from __future__ import annotations`）
-3. 執行所有測試確認通過：
-```bash
-PYTHONPATH=. pytest tests/ -v --tb=short
-```
-
-**特別注意**：CI 會跑 `tests/` 目錄下**所有**測試，不只是新的。確認新的測試檔不會因為缺少依賴而 fail。
-
-檢查 `tests/test_context_distiller.py` 和 `tests/test_corpus_builder.py` 不依賴任何 CI 沒有安裝的套件。CI 安裝的套件見 `.github/workflows/ci.yml` Line 21：
-```
-pip install pytest numpy pyyaml
-```
-加上 `requirements.txt` 裡的套件。
-
-如果新測試需要額外依賴，加到 `requirements.txt`。
-
----
-
-## Task 3：演化模組 import 驗證加入 CI
-
-CI 目前的 "Verify core imports" 步驟（`.github/workflows/ci.yml` Line 23-29）只有驗證：
-- `tonesoul.tsr_metrics`
-- `tonesoul.poav`
-- `tonesoul.vow_system`
-- `tonesoul.time_island`
-
-**需要新增**：
-```yaml
-python -c "from tonesoul.evolution import ContextDistiller, CorpusBuilder; print('Evolution OK')"
-```
-
-加在 Line 29 之後。
-
----
-
-## Task 4：Supabase 讀取方法補齊
-
-檢查 `tonesoul/supabase_persistence.py`，確認以下讀取方法存在且可用：
-
-| 方法 | 用途 | 被誰呼叫 |
-|------|------|---------|
-| `list_conversations(limit, offset)` | 對話列表 | `server.py` `list_conversations()` |
-| `get_conversation(id)` | 取單一對話 | `server.py` `get_conversation()` |
-| `delete_conversation(id)` | 刪對話 | `server.py` `delete_conversation()` |
-| `list_audit_logs(limit, offset)` | 審計日誌 | `server.py` `list_audit_logs()` |
-| `get_counts()` | 各表 COUNT | `server.py` `/api/status` |
-
-如果任何方法不存在，需要新增。
-
-**驗證方式**：
 ```python
-from tonesoul.supabase_persistence import SupabasePersistence
-p = SupabasePersistence("", "")  # 空字串，不會真的連 Supabase
-hasattr(p, "list_conversations")  # 應該是 True
-hasattr(p, "get_conversation")     # 應該是 True
-hasattr(p, "delete_conversation")  # 應該是 True
-hasattr(p, "list_audit_logs")      # 應該是 True
-hasattr(p, "get_counts")           # 應該是 True
+# ========== Visual Memory Context 注入 ==========
+try:
+    chain = self._get_visual_chain()
+    if chain and chain.frame_count > 0:
+        visual_context = chain.render_recent_as_markdown(n=3)
+        if visual_context and len(visual_context) > 50:
+            user_message = (
+                f"[脈絡記憶 — 最近視覺快照]\n{visual_context}\n\n"
+                f"---\n\n{user_message}"
+            )
+except Exception:
+    pass  # 圖鏈讀取錯誤不影響主流程
+```
+
+### 注意
+
+- `render_recent_as_markdown(n=3)` 已存在於 `visual_chain.py`，直接呼叫
+- 注入位置必須在 persona 注入**之後**（因為 persona 也改 user_message）
+- 用 `len(visual_context) > 50` 過濾空白 / 無意義返回
+
+### 測試：新建 `tests/test_visual_chain_prompt_injection.py`
+
+```python
+"""Test visual chain context injection into pipeline prompt."""
+import pytest
+
+def test_visual_context_injected_when_frames_exist():
+    """Verify user_message is prefixed with visual context."""
+    from tonesoul.memory.visual_chain import VisualChain, FrameType
+
+    chain = VisualChain()
+    chain.capture(
+        frame_type=FrameType.SESSION_STATE,
+        title="Turn 0",
+        data={"tension": 0.3, "verdict": "approve", "council_mode": "hybrid"},
+        tags=["auto"],
+    )
+    md = chain.render_recent_as_markdown(n=3)
+    assert "Visual Memory Chain" in md
+    assert "session_state" in md
+    assert len(md) > 50
+
+def test_visual_context_empty_chain_returns_short():
+    """Empty chain should produce short output that won't be injected."""
+    from tonesoul.memory.visual_chain import VisualChain
+
+    chain = VisualChain()
+    md = chain.render_recent_as_markdown(n=3)
+    # Should be short (just header, no frames)
+    assert "No frames" in md or len(md) < 100
 ```
 
 ---
 
-## Task 5：整合測試腳本
+## Task 1b：SemanticGraph → 回應前矛盾警示
 
-確認 `scripts/verify_web_api.py` 仍然可以正常跑（CI 的 `web_api_smoke` job 依賴它）。
+### 目標
 
-如果 server.py 新增了路由但 `verify_web_api.py` 沒有對應更新，可能會造成問題。
-檢查 `scripts/verify_web_api.py` 是否有 hard-coded 的路由清單需要更新。
+目前矛盾偵測在回應**之後**才跑。把它移到回應**之前**，如果偵測到矛盾，就在 user_message 裡加一個提醒，讓 AI 知道要注意一致性。
+
+### 修改：`tonesoul/unified_pipeline.py`
+
+在 `process()` 方法裡，找到目前的語義圖譜區塊（`# ========== 9. 語義圖譜更新 ==========`，約 L597）。
+
+**不要刪除現有的圖譜更新邏輯**。而是在步驟 [3] Council.deliberate() **之前**，加一個 early contradiction check：
+
+```python
+# ========== 2.8 Early Contradiction Check ==========
+pre_contradictions = []
+try:
+    graph = self._get_semantic_graph()
+    if graph:
+        pre_contradictions = graph.detect_contradictions()
+        if pre_contradictions:
+            contradiction_hints = "; ".join(
+                str(c.description)[:60] for c in pre_contradictions[:3]
+            )
+            user_message = (
+                f"[內在一致性提醒: 偵測到 {len(pre_contradictions)} 個潛在矛盾 — "
+                f"{contradiction_hints}]\n\n{user_message}"
+            )
+except Exception:
+    pass
+```
+
+### 注意
+
+- `detect_contradictions()` 已存在於 `semantic_graph.py`
+- 每個 `Contradiction` 物件有 `.description` 屬性 — 如果是 `.to_dict()` 格式則用 `c.get("description", "")`
+- 只取前 3 個矛盾，每個截斷 60 字，避免膨脹 prompt
+- 步驟 9 的原有矛盾偵測**保持不變**（那是回應後的完整偵測）
+
+### 測試：新建 `tests/test_early_contradiction_check.py`
+
+```python
+"""Test early contradiction check injects hints before response generation."""
+import pytest
+
+def test_contradiction_description_accessible():
+    """Verify Contradiction objects have description field."""
+    from tonesoul.memory.semantic_graph import SemanticGraph
+
+    graph = SemanticGraph()
+    # Add conflicting nodes manually
+    graph.add_node("honesty", "value")
+    graph.add_node("deception", "value")
+    graph.add_edge("honesty", "deception", "contradicts")
+    contradictions = graph.detect_contradictions()
+    # May or may not detect — this tests the interface
+    for c in contradictions:
+        # Either has .description or .to_dict() with "description"
+        desc = getattr(c, "description", None) or c.to_dict().get("description", "")
+        assert isinstance(desc, str)
+```
 
 ---
 
-## 執行順序
+## Task 1c：Decay → Session 結束自動清理
 
+### 目標
+
+Session 結束（或 session report 生成）時，跑一次 decay query 清理低分記憶。
+
+### 修改：`tonesoul/memory/soul_db.py`
+
+加一個新方法 `cleanup_decayed()`：
+
+```python
+def cleanup_decayed(
+    self,
+    source: MemorySource,
+    *,
+    forget_threshold: Optional[float] = None,
+) -> int:
+    """Remove records that have decayed below threshold. Returns count removed."""
+    all_records = list(self.stream(source))
+    now_str = datetime.now(timezone.utc).isoformat()
+    # Use _decay_records to get surviving records
+    surviving = _decay_records(all_records, forget_threshold=forget_threshold)
+    removed_count = len(all_records) - len(surviving)
+    # For now: log the count. Actual deletion depends on backend.
+    return removed_count
 ```
-Task 1 (格式化) → Task 2 (測試) → Task 3 (CI import) → Task 4 (Supabase 方法) → Task 5 (整合腳本)
+
+### 修改：`apps/api/server.py`
+
+在 `/api/session-report` 路由中，成功生成報告後，加清理呼叫：
+
+```python
+# After report generation
+try:
+    from tonesoul.memory.soul_db import JsonlSoulDB, MemorySource
+    soul_db = _get_soul_db()  # or however soul_db is accessed
+    if soul_db and hasattr(soul_db, 'cleanup_decayed'):
+        cleaned = soul_db.cleanup_decayed(MemorySource.SELF_JOURNAL)
+        if cleaned > 0:
+            print(f"[INFO] Decay cleanup: {cleaned} memories below threshold")
+except Exception as e:
+    print(f"[WARN] Decay cleanup error: {e}")
 ```
+
+### 注意
+
+- `cleanup_decayed()` 目前只是返回計數。**不要真的刪除記憶** — 先做 soft cleanup（只計數），等確認安全再加真正刪除
+- `_get_soul_db()` — 找到 server.py 裡怎麼取得 soul_db 實例，用同樣的方式
+- 只在 `session-report` 觸發，不是每次 chat 都清理
+
+### 測試：新建 `tests/test_decay_cleanup.py`
+
+```python
+"""Test session-end decay cleanup."""
+import pytest
+
+def test_cleanup_returns_count():
+    """cleanup_decayed should return integer count."""
+    from tonesoul.memory.soul_db import JsonlSoulDB, MemorySource
+    import tempfile, pathlib
+
+    with tempfile.TemporaryDirectory() as tmp:
+        db = JsonlSoulDB(base_dir=pathlib.Path(tmp))
+        db.append(MemorySource.SELF_JOURNAL, {"text": "test"})
+        result = db.cleanup_decayed(MemorySource.SELF_JOURNAL)
+        assert isinstance(result, int)
+        assert result >= 0
+```
+
+---
 
 ## 完成後
 
-1. Commit 所有修改
-2. Push 到 master
-3. 等 GitHub Actions CI 跑完
-4. 回報 CI 結果（哪些 pass/fail）
+1. `python -m pytest tests/ -v` — 全部通過
+2. `black --check --line-length 100 tonesoul tests apps` — 通過
+3. `ruff check tonesoul tests apps` — 通過
+4. Commit: `feat(memory): wire visual prompt injection, early contradiction check, decay cleanup`
+5. Push
 
-## 重要檔案
+## 修改清單
 
-| 檔案 | 說明 |
+| 檔案 | 類型 | 說明 |
+|------|------|------|
+| `tonesoul/unified_pipeline.py` | [MODIFY] | +visual context 注入 +early contradiction check |
+| `tonesoul/memory/soul_db.py` | [MODIFY] | +cleanup_decayed() 方法 |
+| `apps/api/server.py` | [MODIFY] | +session-report 清理呼叫 |
+| `tests/test_visual_chain_prompt_injection.py` | [NEW] | 圖鏈注入測試 |
+| `tests/test_early_contradiction_check.py` | [NEW] | 早期矛盾檢查測試 |
+| `tests/test_decay_cleanup.py` | [NEW] | 衰減清理測試 |
+
+## 不要動的檔案
+
+| 檔案 | 原因 |
 |------|------|
-| `.github/workflows/ci.yml` | CI 設定（156 行） |
-| `tonesoul/evolution/*.py` | 演化模組（新增） |
-| `tests/test_context_distiller.py` | 蒸餾器測試（新增） |
-| `tests/test_corpus_builder.py` | 語料建構器測試（新增） |
-| `apps/api/server.py` | Flask 後端（已有新路由） |
-| `tonesoul/supabase_persistence.py` | Supabase 模組（可能需補方法） |
-| `scripts/verify_web_api.py` | 整合測試腳本 |
-| `requirements.txt` | Python 依賴 |
+| `tonesoul/memory/visual_chain.py` | 已完成 ✅ |
+| `tonesoul/memory/semantic_graph.py` | 已完成 ✅ |
+| `tonesoul/memory/decay.py` | 已完成 ✅ |
+| `docs/` | 文件不動 |
