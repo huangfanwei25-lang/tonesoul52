@@ -11,6 +11,15 @@ def test_build_check_commands_omits_allow_missing_discussion_flag() -> None:
     assert "--allow-missing-discussion" not in commands["memory_hygiene"]
 
 
+def test_build_check_commands_includes_persona_swarm_strict_check() -> None:
+    commands = monthly._build_check_commands(allow_missing_discussion=False)
+    assert commands["persona_swarm"] == [
+        monthly.sys.executable,
+        "scripts/run_persona_swarm_framework.py",
+        "--strict",
+    ]
+
+
 def test_display_command_normalizes_python_executable() -> None:
     command = [
         r"C:\\Users\\user\\Desktop\\repo\\.venv\\Scripts\\python.exe",

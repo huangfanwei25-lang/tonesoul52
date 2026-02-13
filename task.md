@@ -16,6 +16,7 @@
 - [x] Phase 85: Swarm budget execution planner
 - [x] Phase 86: Swarm CI automation and contracts
 - [x] Phase 87: Swarm dispatch script hardening
+- [x] Phase 88: Monthly consolidation includes swarm readiness
 **Latest validation**: `pytest -q` => `769 passed, 3 xfailed` (2026-02-13). Level 3 implementation tracked in `CODEX_TASK.md` v7.
 
 ## Phase 77: Level 3 Experimental
@@ -65,6 +66,12 @@
 - [x] Workflow now calls dispatch script instead of inline shell branching
 **Result**: Manual swarm runs now have deterministic validation and clearer CI errors.
 
+## Phase 88: Monthly Consolidation Includes Swarm Readiness
+- [x] `run_monthly_consolidation.py` now runs `run_persona_swarm_framework.py --strict`
+- [x] Added monthly consolidation contract test for `persona_swarm` check command
+- [x] Updated status docs to reflect swarm readiness in monthly aggregate
+**Result**: Monthly governance report now includes swarm readiness gate health.
+
 ## Execution Log (2026-02-13)
 - [x] Phase A complete
 - [x] Production read auth fail-closed
@@ -106,6 +113,9 @@
 - [x] Phase 87 complete
 - [x] Added persona swarm dispatch runner + contract tests
 - [x] Validation: `pytest tests/test_run_persona_swarm_dispatch.py tests/test_workflow_contracts.py tests/test_verify_docs_consistency.py -q` => `22 passed`
+- [x] Phase 88 complete
+- [x] Added `persona_swarm` check to monthly consolidation pipeline
+- [x] Validation: `pytest tests/test_run_monthly_consolidation.py tests/test_verify_docs_consistency.py -q` => `15 passed`
 ## Phase 79-81: Legacy Duplicates (Closed)
 - [x] Legacy duplicate tracking blocks for Phase A/B/C removed from active queue.
 - [x] Canonical status is tracked in Program Board + Execution Log above.

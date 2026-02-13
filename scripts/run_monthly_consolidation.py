@@ -103,6 +103,7 @@ def _build_check_commands(allow_missing_discussion: bool) -> dict[str, list[str]
         "memory_hygiene": memory_hygiene_cmd,
         "layer_boundaries": [sys.executable, "scripts/verify_layer_boundaries.py"],
         "docs_consistency": [sys.executable, "scripts/verify_docs_consistency.py"],
+        "persona_swarm": [sys.executable, "scripts/run_persona_swarm_framework.py", "--strict"],
     }
 
 
