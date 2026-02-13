@@ -212,7 +212,7 @@ Write-Host "✅ 語魂已在本地運行" -ForegroundColor Green
 - [ ] `LLM_BACKEND=ollama python -c "from tonesoul.llm import create_ollama_client; c = create_ollama_client(); print(c.generate('hello'))"` 成功回應
 - [ ] 低張力訊息不觸發議會（看 log 確認 `council skipped`）
 - [ ] 高張力訊息觸發議會（看 log 確認 `council activated`）
-- [ ] `pytest tests/ -x -q` 現有 739 tests 不受影響
+- [ ] `pytest tests/ -x -q` 現有 807 tests 不受影響
 
 ---
 

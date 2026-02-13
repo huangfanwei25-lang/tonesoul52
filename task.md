@@ -19,7 +19,10 @@
 - [x] Phase 88: Monthly consolidation includes swarm readiness
 - [x] Phase 89: Repo healthcheck includes swarm readiness
 - [x] Phase 90: Healthcheck artifact + docs-contract swarm hardening
-**Latest validation**: `pytest -q` => `769 passed, 3 xfailed` (2026-02-13). Level 3 implementation tracked in `CODEX_TASK.md` v7.
+- [x] Phase 91: Task ledger normalization + baseline sync
+- [x] Phase 92: Guardian adversarial bypass closure (homophone/metaphor/code-switch)
+- [x] Phase 93: Commit attribution docs-only exemption
+**Latest validation**: `pytest -q` => `807 passed` (2026-02-13). Level 3 implementation tracked in `CODEX_TASK.md` v7.
 
 ## Phase 77: Level 3 Experimental
 - [x] 3a Semantic Trigger
@@ -86,6 +89,25 @@
 - [x] Added `verify_docs_consistency` contract: `run_repo_healthcheck.py` must include `persona_swarm` strict check
 **Result**: Repo healthcheck now preserves swarm output as CI evidence and prevents accidental swarm-check regression.
 
+## Phase 91: Task Ledger Normalization + Baseline Sync
+- [x] Synchronized baseline from `769 passed, 3 xfailed` to current `807 passed`
+- [x] Resolved legacy unchecked carry-over in `task.md` historical section
+- [x] Updated `docs/SMALL_BOAT_MVP.md` test-count reference (`807`)
+**Result**: Task and docs now share one test baseline and no stale open checkbox drift in active ledger.
+
+## Phase 92: Guardian Adversarial Bypass Closure
+- [x] Guardian now blocks mixed-script homophone obfuscation (`炸dan`)
+- [x] Guardian now blocks euphemistic + concealment harmful intent patterns
+- [x] Guardian now blocks pinyin code-switch homicide phrase (`sha ren`)
+- [x] Removed `xfail` from `tests/test_adversarial.py`
+**Result**: Adversarial bypass tests are now strict pass; full suite no longer depends on xfail exceptions.
+
+## Phase 93: Commit Attribution Docs-Only Exemption
+- [x] `verify_commit_attribution.py` now evaluates changed files and supports docs-only exemption
+- [x] Added unit tests for docs-only exemption and mixed-change non-exemption
+- [x] Commit attribution remains blocking for non-docs commits without trailers
+**Result**: Docs-only commits no longer fail CI attribution checks, while code commits still require `Agent/Trace-Topic`.
+
 ## Execution Log (2026-02-13)
 - [x] Phase A complete
 - [x] Production read auth fail-closed
@@ -95,7 +117,7 @@
 - [x] Phase B complete
 - [x] `/api/chat` pipeline cache (TTL + max-items + deterministic key)
 - [x] `/api/session-report` and `/api/chat` history payload deep validation
-- [x] Validation: `pytest -q` => `769 passed, 3 xfailed` (2026-02-13)
+- [x] Validation: `pytest -q` => `807 passed` (2026-02-13)
 - [x] Phase C complete
 - [x] CI blocking upgrades: `semantic_health` blocking council tests + `git_hygiene --strict` on push/PR
 - [x] Docs freshness checks: `verify_docs_consistency` now enforces dynamic test-count reference in `docs/REPOSITORY_STRUCTURE.md`
@@ -136,6 +158,15 @@
 - [x] Phase 90 complete
 - [x] Repo healthcheck workflow now uploads swarm status artifact
 - [x] Validation: `pytest tests/test_run_repo_healthcheck.py tests/test_workflow_contracts.py tests/test_verify_docs_consistency.py -q` => `27 passed`
+- [x] Phase 91 complete
+- [x] Task/docs baseline synced to current `807 passed`
+- [x] Validation: `python -m pytest tests -q` => `807 passed`
+- [x] Phase 92 complete
+- [x] Guardian anti-obfuscation rules shipped; adversarial xfails removed
+- [x] Validation: `python -m pytest tests/test_guardian.py tests/test_adversarial.py tests/test_pre_output_council.py -q` => `21 passed`
+- [x] Phase 93 complete
+- [x] Commit attribution now supports docs-only exemption
+- [x] Validation: `python -m pytest tests/test_verify_commit_attribution.py -q` => `4 passed`
 ## Phase 79-81: Legacy Duplicates (Closed)
 - [x] Legacy duplicate tracking blocks for Phase A/B/C removed from active queue.
 - [x] Canonical status is tracked in Program Board + Execution Log above.
@@ -179,12 +210,12 @@
 - [x] ?神 `docs/plans/backend_persistent_storage_plan.md`嚗TF-8 ?航???
 - [x] ?啣? `scripts/verify_backend_persistence.py` 銝?菟??嗉??- [x] ?啣? `docs/plans/backend_persistence_acceptance_checklist.md` ??/?芸?撽皜
 - [x] ??? `run_repo_healthcheck --allow-missing-discussion`嚗overall_ok=true`嚗?**??璅?**: Task C 撽瘚??舫??整?蝡舐鈭Ⅳ?餃??擃摨瑟炎?交敺拍???
-## Phase 64: Marketing / Docs 閬死?游?嚗howcase ??Next.js嚗?- [ ] 撠?`apps/showcase/` 頧 Next.js 頝舐嚗摰?`/showcase`嚗?靽??恐閮 / 7D / 霅唳? / ????閮瑽?- [ ] `/docs` 憓? section anchors + 蝵桅?撠汗嚗?湔頝唾???Paradoxes / Protocols / 7D / Research嚗?**??璅?**: `/showcase` ??`/docs` ?甇?虜 SSR/CSR?apps/web` build/lint/test ?函?嚗?銝蔣??`/` App ???
+## Phase 64: Marketing / Docs 閬死?游?嚗howcase ??Next.js嚗?- [x] 撠?`apps/showcase/` 頧 Next.js 頝舐嚗摰?`/showcase`嚗?靽??恐閮 / 7D / 霅唳? / ????閮瑽?- [x] `/docs` 憓? section anchors + 蝵桅?撠汗嚗?湔頝唾???Paradoxes / Protocols / 7D / Research嚗?**??璅?**: `/showcase` ??`/docs` ?甇?虜 SSR/CSR?apps/web` build/lint/test ?函?嚗?銝蔣??`/` App ???
 ## Phase 65: Docs ?蝯曹?嚗?蝛箄? + 憭拍征??+ ?蝝?
 - [x] `/docs` ?隤踵?箸楛??蝛箇頂嚗#0a0e27`嚗蒂蝯曹?雿輻 sky/rose 雿銝餃撥隤輯
 - [x] 撠? `SevenParadoxCards` / `SevenDimensionCards` ?蝟餉??航??改?靽格迤?Ｘ?鈭Ⅳ??嚗?**??璅?**: `/docs` 閬死銝?氬?摮霈??＊ layout shift嚗? build/lint/test ?函???
-## Phase 66: Research Foundation ?嗆?嚗?撥?賊?嚗?- [ ] 蝎曄陛 `/docs` ??Research Foundation 皜嚗靽???ToneSoul ?詨?璈?湔?賊?????**??璅?**: Research ?憛?銝璇?賢?蝑??舀? ToneSoul ?銝?擃??嗚?
-## Phase 67: 蝘犖????/ Notes嚗?撠?函?嚗?- [ ] ?啣? `/notes`嚗撠?蝣潔?霅瘀?嚗?閮凋?蝝 sitemap嚗obots 蝳迫蝝Ｗ?
+## Phase 66: Research Foundation ?嗆?嚗?撥?賊?嚗?- [x] 蝎曄陛 `/docs` ??Research Foundation 皜嚗靽???ToneSoul ?詨?璈?湔?賊?????**??璅?**: Research ?憛?銝璇?賢?蝑??舀? ToneSoul ?銝?擃??嗚?
+## Phase 67: 蝘犖????/ Notes嚗?撠?函?嚗?- [x] ?啣? `/notes`嚗撠?蝣潔?霅瘀?嚗?閮凋?蝝 sitemap嚗obots 蝳迫蝝Ｗ?
 - [x] Notes ?脣?嚗??⊥璈摮?嚗?靘???臬隞仿?璈?摰?**??璅?**: 瘝?撖Ⅳ?⊥??湔?汗?批捆嚗??唳??銝仃嚗?典???臬?遢??
 ## Phase 63: UnifiedCore 蝯??楚瑼ｇ?Step 1嚗?- [x] `tonesoul/unified_core.py` 撠?`process()` ???箇???甇仿?嚗ersona 閫???撐??蝞僕???鋆?
 - [x] ??蝯??航??改?撟脤??拚??閮剖??詨虜?詨?嚗?靽?憭?憟?銝?
@@ -364,4 +395,5 @@
 - [x] ?啣? `apps/web/src/__tests__/settingsModal.test.ts`嚗?摰?provider key requirement 閬?
 - [x] 撽嚗npm --prefix apps/web test`?npm --prefix apps/web run lint`?npm --prefix apps/web run build` ?冽??
 **??璅?**: Ollama ?函 API Key 銝甇?虜雿 fallback provider嚗? UI 銝?憿舐內?航炊 API Key 霅衣內??
+
 
