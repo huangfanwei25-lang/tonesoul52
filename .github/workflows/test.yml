@@ -33,11 +33,24 @@ jobs:
     
     - name: Run all tests
       run: |
-        pytest -v --tb=short --maxfail=5
+        set -o pipefail
+        pytest -v --tb=short --maxfail=5 | tee pytest_all_${{ matrix.python-version }}.log
     
     - name: Run property-based tests
       run: |
-        pytest tests/test_contract_observer_properties.py tests/test_unified_core_properties.py tests/test_vow_system_properties.py -v --hypothesis-show-statistics
+        set -o pipefail
+        pytest tests/test_contract_observer_properties.py tests/test_unified_core_properties.py tests/test_vow_system_properties.py -v --hypothesis-show-statistics | tee pytest_properties_${{ matrix.python-version }}.log
+
+    - name: Upload pytest logs
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: pytest-logs-${{ matrix.python-version }}-${{ github.run_id }}
+        path: |
+          pytest_all_${{ matrix.python-version }}.log
+          pytest_properties_${{ matrix.python-version }}.log
+        if-no-files-found: ignore
+        retention-days: 14
     
     - name: Generate coverage report
       if: matrix.python-version == '3.12'
@@ -295,8 +308,20 @@ jobs:
         print(json.dumps(report, ensure_ascii=False, indent=2))
         if missing:
             print("::error::Missing Agent/Trace-Topic trailers in incremental commits.")
+            print("::error::Add commit trailers, for example:")
+            print("::error::Agent: Codex")
+            print("::error::Trace-Topic: <topic-name>")
             raise SystemExit(1)
         PY
+
+    - name: Upload commit attribution report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: commit-attribution-${{ github.run_id }}
+        path: commit_attribution.json
+        if-no-files-found: ignore
+        retention-days: 30
 
   memory_hygiene:
     name: Memory Hygiene Gate
