@@ -44,6 +44,7 @@
 - [x] Added `apps/web/src/__tests__/publicSurface.contract.test.ts` (docs/showcase/notes)
 - [x] Added `apps/web/src/__tests__/metadataRoutes.contract.test.ts` (sitemap/robots)
 - [x] CI diagnostics upgrade in `.github/workflows/test.yml` (pytest logs + commit attribution artifact)
+- [x] `semantic_health.yml` fixed: install `-e .[dev]`, blocking council log artifact, UTF-8 AXIOMS read
 - [x] Validation: `npm --prefix apps/web run lint && npm --prefix apps/web run test && npm --prefix apps/web run build` (pass)
 - [x] Validation: `pytest tests/test_workflow_contracts.py tests/test_verify_docs_consistency.py -q` => `14 passed`
 ## Phase 79-81: Legacy Duplicates (Closed)

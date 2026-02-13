@@ -7,12 +7,17 @@ import yaml
 
 WORKFLOW_PATH = Path(".github/workflows/repo_healthcheck.yml")
 DISPATCH_SCRIPT_PATH = Path("scripts/run_repo_healthcheck_dispatch.py")
+SEMANTIC_HEALTH_WORKFLOW_PATH = Path(".github/workflows/semantic_health.yml")
+
+
+def _load_yaml(path: Path) -> dict[str, Any]:
+    payload = yaml.safe_load(path.read_text(encoding="utf-8"))
+    assert isinstance(payload, dict)
+    return payload
 
 
 def _load_workflow() -> dict[str, Any]:
-    payload = yaml.safe_load(WORKFLOW_PATH.read_text(encoding="utf-8"))
-    assert isinstance(payload, dict)
-    return payload
+    return _load_yaml(WORKFLOW_PATH)
 
 
 def _on_section(payload: dict[str, Any]) -> dict[str, Any]:
@@ -40,6 +45,16 @@ def _find_step(steps: list[dict[str, Any]], name: str) -> dict[str, Any]:
         if step.get("name") == name:
             return step
     raise AssertionError(f"missing step: {name}")
+
+
+def _job_steps(payload: dict[str, Any], job_name: str) -> list[dict[str, Any]]:
+    jobs = payload.get("jobs", {})
+    assert isinstance(jobs, dict)
+    job = jobs.get(job_name, {})
+    assert isinstance(job, dict)
+    steps = job.get("steps", [])
+    assert isinstance(steps, list)
+    return [step for step in steps if isinstance(step, dict)]
 
 
 def test_repo_healthcheck_workflow_dispatch_inputs_contract() -> None:
@@ -106,3 +121,28 @@ def test_repo_healthcheck_workflow_dispatch_validation_guards_present() -> None:
     assert "SDH inputs were provided but include_sdh=false" in script_text
     assert "include_sdh=true and web_base is set but api_base is empty" in script_text
     assert "include_sdh=true and api_base is set but web_base is empty" in script_text
+
+
+def test_semantic_health_workflow_is_blocking_and_has_required_dependencies() -> None:
+    payload = _load_yaml(SEMANTIC_HEALTH_WORKFLOW_PATH)
+    on_section = _on_section(payload)
+    assert "push" in on_section
+    assert "pull_request" in on_section
+
+    steps = _job_steps(payload, "verify")
+    install_step = _find_step(steps, "Install dependencies")
+    install_run = install_step.get("run", "")
+    assert isinstance(install_run, str)
+    assert 'pip install -e ".[dev]"' in install_run
+
+    council_step = _find_step(steps, "Run Council Tests (blocking)")
+    council_run = council_step.get("run", "")
+    assert isinstance(council_run, str)
+    assert "pytest tests/test_pre_output_council.py" in council_run
+    assert "semantic_council.log" in council_run
+    assert council_step.get("continue-on-error") is not True
+
+    artifact_step = _find_step(steps, "Upload semantic health logs")
+    artifact_with = artifact_step.get("with", {})
+    assert isinstance(artifact_with, dict)
+    assert artifact_with.get("path") == "semantic_council.log"
