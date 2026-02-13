@@ -2,18 +2,12 @@
 
 from __future__ import annotations
 
-import json
-from pathlib import Path
-
-import pytest
-
 from tonesoul.memory.visual_chain import (
     FrameType,
     VisualChain,
     VisualFrame,
     render_frame,
 )
-
 
 # ---------------------------------------------------------------------------
 # render_frame tests
@@ -124,7 +118,14 @@ class TestVisualFrame:
         assert restored.branch == "main"
 
     def test_from_dict_handles_unknown_type(self):
-        raw = {"frame_type": "nonexistent", "frame_id": "x", "title": "t", "mermaid": "", "data": {}, "created_at": ""}
+        raw = {
+            "frame_type": "nonexistent",
+            "frame_id": "x",
+            "title": "t",
+            "mermaid": "",
+            "data": {},
+            "created_at": "",
+        }
         frame = VisualFrame.from_dict(raw)
         assert frame.frame_type == FrameType.CUSTOM
 

@@ -39,27 +39,28 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence
 
-
 # ---------------------------------------------------------------------------
 # Frame Types
 # ---------------------------------------------------------------------------
 
+
 class FrameType(Enum):
     """Types of visual memory frames."""
 
-    SESSION_STATE = "session_state"       # Overall session snapshot
-    TENSION_MAP = "tension_map"           # Tension distribution across topics
-    COMMITMENT_TREE = "commitment_tree"   # Active commitments + status
-    VALUE_LANDSCAPE = "value_landscape"   # Emergent values heatmap
-    COUNCIL_VERDICT = "council_verdict"   # Council deliberation outcome
-    RUPTURE_TIMELINE = "rupture_timeline" # Commitment ruptures over time
-    CONVERSATION_ARC = "conversation_arc" # Emotional/tonal arc of a session
+    SESSION_STATE = "session_state"  # Overall session snapshot
+    TENSION_MAP = "tension_map"  # Tension distribution across topics
+    COMMITMENT_TREE = "commitment_tree"  # Active commitments + status
+    VALUE_LANDSCAPE = "value_landscape"  # Emergent values heatmap
+    COUNCIL_VERDICT = "council_verdict"  # Council deliberation outcome
+    RUPTURE_TIMELINE = "rupture_timeline"  # Commitment ruptures over time
+    CONVERSATION_ARC = "conversation_arc"  # Emotional/tonal arc of a session
     CUSTOM = "custom"
 
 
 # ---------------------------------------------------------------------------
 # Data Classes
 # ---------------------------------------------------------------------------
+
 
 @dataclass
 class VisualFrame:
@@ -72,12 +73,12 @@ class VisualFrame:
     frame_id: str
     frame_type: FrameType
     title: str
-    mermaid: str                        # The visual representation
-    data: Dict[str, Any]                # Exact values (JSON sidecar)
+    mermaid: str  # The visual representation
+    data: Dict[str, Any]  # Exact values (JSON sidecar)
     created_at: str
     tags: List[str] = field(default_factory=list)
     branch: str = "main"
-    parent_id: Optional[str] = None     # For branching
+    parent_id: Optional[str] = None  # For branching
     turn_index: int = 0
     metadata: Dict[str, Any] = field(default_factory=dict)
 
@@ -121,6 +122,7 @@ class VisualFrame:
 # ---------------------------------------------------------------------------
 # Mermaid Renderers — one per FrameType
 # ---------------------------------------------------------------------------
+
 
 def _render_session_state(data: Dict[str, Any]) -> str:
     """Render a session state as a Mermaid flowchart."""
@@ -324,6 +326,7 @@ def render_frame(frame_type: FrameType, data: Dict[str, Any]) -> str:
 # ---------------------------------------------------------------------------
 # Visual Chain — the chain itself
 # ---------------------------------------------------------------------------
+
 
 class VisualChain:
     """A chain of visual memory frames with branching and tagging.

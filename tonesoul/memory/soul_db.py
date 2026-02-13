@@ -26,6 +26,9 @@ class MemoryRecord:
     payload: Dict[str, object]
     tags: List[str] = field(default_factory=list)
     record_id: Optional[str] = None
+    relevance_score: float = 1.0
+    access_count: int = 0
+    last_accessed: Optional[str] = None
 
 
 class SoulDB(Protocol):
@@ -60,6 +63,20 @@ def _deserialize_json(payload: str) -> Dict[str, object]:
     except json.JSONDecodeError:
         return {}
     return parsed if isinstance(parsed, dict) else {}
+
+
+def _coerce_float(value: object, default: float = 0.0) -> float:
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return float(default)
+
+
+def _coerce_int(value: object, default: int = 0) -> int:
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return int(default)
 
 
 class JsonlSoulDB:
@@ -122,6 +139,13 @@ class JsonlSoulDB:
                     timestamp=str(timestamp),
                     payload=record_payload,
                     record_id=str(record_id) if record_id else None,
+                    relevance_score=_coerce_float(record_payload.get("relevance_score"), 1.0),
+                    access_count=max(0, _coerce_int(record_payload.get("access_count"), 0)),
+                    last_accessed=(
+                        str(record_payload.get("last_accessed"))
+                        if record_payload.get("last_accessed")
+                        else None
+                    ),
                 )
                 records.append(record)
         if limit == 0:
@@ -366,6 +390,11 @@ class SqliteSoulDB:
                     payload=payload,
                     tags=tag_list,
                     record_id=str(record_id) if record_id else None,
+                    relevance_score=_coerce_float(payload.get("relevance_score"), 1.0),
+                    access_count=max(0, _coerce_int(payload.get("access_count"), 0)),
+                    last_accessed=(
+                        str(payload.get("last_accessed")) if payload.get("last_accessed") else None
+                    ),
                 )
             )
         return records
@@ -404,6 +433,11 @@ class SqliteSoulDB:
                     timestamp=str(timestamp) if timestamp else "",
                     payload=payload,
                     record_id=str(record_id) if record_id else None,
+                    relevance_score=_coerce_float(payload.get("relevance_score"), 1.0),
+                    access_count=max(0, _coerce_int(payload.get("access_count"), 0)),
+                    last_accessed=(
+                        str(payload.get("last_accessed")) if payload.get("last_accessed") else None
+                    ),
                 )
             )
         return records

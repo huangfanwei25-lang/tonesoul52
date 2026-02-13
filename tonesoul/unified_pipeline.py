@@ -82,6 +82,9 @@ class UnifiedPipeline:
         self._llm_backend = None
         # ToneSoul 2.0: Internal Deliberation
         self._deliberation = None
+        # Memory layer integrations
+        self._semantic_graph = None
+        self._visual_chain = None
 
     def _get_gemini(self):
         """Get LLM client based on LLM_BACKEND env var.
@@ -227,6 +230,30 @@ class UnifiedPipeline:
             except Exception:
                 pass
         return self._value_accumulator
+
+    def _get_semantic_graph(self):
+        """Get or create a session-level semantic graph."""
+        if self._semantic_graph is None:
+            try:
+                from tonesoul.memory.semantic_graph import SemanticGraph
+
+                self._semantic_graph = SemanticGraph()
+            except Exception:
+                pass
+        return self._semantic_graph
+
+    def _get_visual_chain(self):
+        """Get or create visual chain for lightweight scene snapshots."""
+        if self._visual_chain is None:
+            try:
+                from pathlib import Path
+
+                from tonesoul.memory.visual_chain import VisualChain
+
+                self._visual_chain = VisualChain(storage_path=Path("data/visual_chain.json"))
+            except Exception:
+                pass
+        return self._visual_chain
 
     def _rebuild_stack_from_history(self, history: List[Dict]) -> None:
         """
@@ -433,6 +460,10 @@ class UnifiedPipeline:
         # ========== 3. 第三公理：載入承諾堆疊 ==========
         commit_stack = self._get_commit_stack()
         commitment_prompt = ""
+        detected_ruptures: List[Any] = []
+        new_commit = None
+        semantic_topics: List[str] = []
+        semantic_contradictions: List[Dict[str, Any]] = []
         if commit_stack:
             commitment_prompt = commit_stack.format_for_prompt(n=3)
 
@@ -498,12 +529,12 @@ class UnifiedPipeline:
         rupture_detector = self._get_rupture_detector()
         if rupture_detector and commit_stack:
             try:
-                ruptures = rupture_detector.detect(response, commit_stack)
-                if ruptures:
-                    rupture_detector.format_rupture_warning(ruptures)
+                detected_ruptures = rupture_detector.detect(response, commit_stack)
+                if detected_ruptures:
+                    rupture_detector.format_rupture_warning(detected_ruptures)
                     # 將斷裂記錄到 internal_monologue
                     internal_monologue += (
-                        f"\n\n⚠️ 語場斷裂風險：偵測到 {len(ruptures)} 個潛在矛盾。"
+                        f"\n\n⚠️ 語場斷裂風險：偵測到 {len(detected_ruptures)} 個潛在矛盾。"
                     )
             except Exception as e:
                 print(f"Rupture detection error: {e}")
@@ -524,7 +555,42 @@ class UnifiedPipeline:
             except Exception as e:
                 print(f"Commit extraction error: {e}")
 
-        # ========== 9. 更新記憶單元 ==========
+        # ========== 9. 語義圖譜更新 ==========
+        graph = self._get_semantic_graph()
+        if graph:
+            try:
+                if new_commit:
+                    graph.extract_from_commitment(
+                        {
+                            "content": getattr(new_commit, "content", ""),
+                            "type": getattr(
+                                getattr(new_commit, "assertion_type", None),
+                                "value",
+                                "commitment",
+                            ),
+                            "turn_index": turn_index,
+                        }
+                    )
+
+                if tb_result:
+                    if tb_result.motive and tb_result.motive.likely_motive:
+                        semantic_topics.append(tb_result.motive.likely_motive)
+                    if tb_result.motive and tb_result.motive.resonance_chain_hint:
+                        semantic_topics.extend(tb_result.motive.resonance_chain_hint)
+                    if tb_result.tone and tb_result.tone.trigger_keywords:
+                        semantic_topics.extend(tb_result.tone.trigger_keywords)
+
+                semantic_topics = [
+                    str(topic).strip() for topic in semantic_topics if str(topic).strip()
+                ]
+                if response:
+                    graph.extract_from_response(response, semantic_topics)
+                graph.increment_turn()
+                semantic_contradictions = [c.to_dict() for c in graph.detect_contradictions()]
+            except Exception as e:
+                print(f"Semantic graph error: {e}")
+
+        # ========== 10. 更新記憶單元 ==========
         if tb_result and tb_result.memini and tonebridge:
             try:
                 # 更新記憶單元的 council_verdict
@@ -536,12 +602,12 @@ class UnifiedPipeline:
             except Exception:
                 pass
 
-        # ========== 10. 更新 Trajectory 歷史 ==========
+        # ========== 11. 更新 Trajectory 歷史 ==========
         if trajectory:
             tone_state = trajectory_result.get("resonance_state", "resonance")
             trajectory.add_turn(user_message, response, tone_state)
 
-        # ========== 11. 生成內在推理敘事 ==========
+        # ========== 12. 生成內在推理敘事 ==========
         inner_narrative = self._generate_narrative(tb_result, verdict_dict)
 
         # 介入策略
@@ -549,7 +615,7 @@ class UnifiedPipeline:
         if tb_result and tb_result.resonance:
             intervention = tb_result.resonance.suggested_intervention_strategy
 
-        # ========== 12. 收集 Third Axiom 數據 ==========
+        # ========== 13. 收集 Third Axiom 數據 ==========
         self_commits_data = []
         ruptures_data = []
         emergent_values_data = []
@@ -559,11 +625,66 @@ class UnifiedPipeline:
                 self_commits_data = [c.to_dict() for c in commit_stack.get_recent(5)]
             except Exception:
                 pass
+        if detected_ruptures:
+            try:
+                ruptures_data = [r.to_dict() for r in detected_ruptures]
+            except Exception:
+                ruptures_data = [{"summary": str(r)} for r in detected_ruptures]
 
         value_acc = self._get_value_accumulator()
         if value_acc:
             try:
                 emergent_values_data = [v.to_dict() for v in value_acc.get_active_values(0.3)]
+            except Exception:
+                pass
+
+        # 將語義矛盾資訊放入 verdict metadata，避免破壞既有回傳結構
+        if isinstance(verdict_dict, dict):
+            verdict_metadata = verdict_dict.get("metadata")
+            if not isinstance(verdict_metadata, dict):
+                verdict_metadata = {}
+            verdict_metadata["semantic_contradictions"] = semantic_contradictions
+            if graph:
+                try:
+                    verdict_metadata["semantic_graph"] = graph.get_summary()
+                except Exception:
+                    pass
+            verdict_dict["metadata"] = verdict_metadata
+
+        # 自動拍攝 visual chain frame，不影響主流程
+        chain = self._get_visual_chain()
+        if chain:
+            try:
+                from tonesoul.memory.visual_chain import FrameType
+
+                tension_score = (
+                    float(tb_result.tone.tone_strength) if tb_result and tb_result.tone else 0.0
+                )
+                frame_tags = ["auto"]
+                if tension_score >= 0.7:
+                    frame_tags.append("high_tension")
+                if semantic_contradictions:
+                    frame_tags.append("contradiction")
+                verdict_name = (
+                    str(verdict_dict.get("verdict", "unknown"))
+                    if isinstance(verdict_dict, dict)
+                    else "unknown"
+                )
+                chain.capture(
+                    frame_type=FrameType.SESSION_STATE,
+                    title=f"Turn {chain.frame_count}",
+                    data={
+                        "tension": tension_score,
+                        "verdict": verdict_name,
+                        "council_mode": council_mode or "hybrid",
+                        "topics": semantic_topics,
+                        "commitments_active": len(self_commits_data),
+                        "ruptures": len(ruptures_data),
+                        "values_count": len(emergent_values_data),
+                    },
+                    tags=frame_tags,
+                    branch="main",
+                )
             except Exception:
                 pass
 
