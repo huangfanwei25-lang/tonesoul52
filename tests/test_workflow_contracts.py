@@ -108,6 +108,15 @@ def test_repo_healthcheck_workflow_has_default_and_dispatch_runners() -> None:
     }
     assert required_env_keys.issubset(dispatch_env.keys())
 
+    artifact_step = _find_step(steps, "Upload healthcheck artifacts")
+    artifact_with = artifact_step.get("with", {})
+    assert isinstance(artifact_with, dict)
+    path_value = artifact_with.get("path", "")
+    assert isinstance(path_value, str)
+    assert "docs/status/repo_healthcheck_latest.json" in path_value
+    assert "docs/status/repo_healthcheck_latest.md" in path_value
+    assert "docs/status/persona_swarm_framework_latest.json" in path_value
+
 
 def test_repo_healthcheck_workflow_dispatch_validation_guards_present() -> None:
     script_text = DISPATCH_SCRIPT_PATH.read_text(encoding="utf-8")

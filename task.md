@@ -18,6 +18,7 @@
 - [x] Phase 87: Swarm dispatch script hardening
 - [x] Phase 88: Monthly consolidation includes swarm readiness
 - [x] Phase 89: Repo healthcheck includes swarm readiness
+- [x] Phase 90: Healthcheck artifact + docs-contract swarm hardening
 **Latest validation**: `pytest -q` => `769 passed, 3 xfailed` (2026-02-13). Level 3 implementation tracked in `CODEX_TASK.md` v7.
 
 ## Phase 77: Level 3 Experimental
@@ -79,6 +80,12 @@
 - [x] Updated status docs to reflect swarm readiness in repo healthcheck aggregate
 **Result**: Push/PR healthcheck now enforces swarm readiness in the blocking governance loop.
 
+## Phase 90: Healthcheck Artifact + Docs-Contract Swarm Hardening
+- [x] `repo_healthcheck.yml` artifact now uploads `docs/status/persona_swarm_framework_latest.json`
+- [x] Added workflow contract coverage for healthcheck artifact path
+- [x] Added `verify_docs_consistency` contract: `run_repo_healthcheck.py` must include `persona_swarm` strict check
+**Result**: Repo healthcheck now preserves swarm output as CI evidence and prevents accidental swarm-check regression.
+
 ## Execution Log (2026-02-13)
 - [x] Phase A complete
 - [x] Production read auth fail-closed
@@ -126,6 +133,9 @@
 - [x] Phase 89 complete
 - [x] Added `persona_swarm` check to repo healthcheck pipeline
 - [x] Validation: `pytest tests/test_run_repo_healthcheck.py tests/test_verify_docs_consistency.py tests/test_workflow_contracts.py -q` => `26 passed`
+- [x] Phase 90 complete
+- [x] Repo healthcheck workflow now uploads swarm status artifact
+- [x] Validation: `pytest tests/test_run_repo_healthcheck.py tests/test_workflow_contracts.py tests/test_verify_docs_consistency.py -q` => `27 passed`
 ## Phase 79-81: Legacy Duplicates (Closed)
 - [x] Legacy duplicate tracking blocks for Phase A/B/C removed from active queue.
 - [x] Canonical status is tracked in Program Board + Execution Log above.

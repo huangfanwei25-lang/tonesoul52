@@ -263,6 +263,57 @@ def _evaluate_dispatch_script_contract(script_path: Path) -> dict[str, bool]:
     return result
 
 
+def _evaluate_repo_healthcheck_runner_contract(script_path: Path) -> dict[str, bool]:
+    result = {
+        "has_persona_swarm_check": False,
+    }
+
+    module = _load_python_module(
+        script_path,
+        f"_docs_consistency_healthcheck_runner_{abs(hash(str(script_path.resolve())))}",
+    )
+    if module is None:
+        return result
+
+    build_check_specs = getattr(module, "_build_check_specs", None)
+    if not callable(build_check_specs):
+        return result
+
+    try:
+        specs = build_check_specs(
+            python_executable="python",
+            include_sdh=False,
+            check_council_modes=True,
+            strict_soft_fail=False,
+            web_base=None,
+            api_base=None,
+            sdh_timeout=None,
+            allow_missing_discussion=False,
+            discussion_path=Path("memory/agent_discussion_curated.jsonl"),
+        )
+    except Exception:
+        return result
+
+    if not isinstance(specs, list):
+        return result
+
+    for spec in specs:
+        if not isinstance(spec, dict):
+            continue
+        if spec.get("name") != "persona_swarm":
+            continue
+        command = spec.get("command")
+        if not isinstance(command, list) or not all(isinstance(token, str) for token in command):
+            continue
+        result["has_persona_swarm_check"] = (
+            command[:2] == ["python", "scripts/run_persona_swarm_framework.py"]
+            and "--strict" in command
+        )
+        break
+
+    return result
+
+
 def build_report(repo_root: Path) -> dict[str, Any]:
     verify_7d = repo_root / "scripts" / "verify_7d.py"
     workflow = repo_root / ".github" / "workflows" / "test.yml"
@@ -271,6 +322,7 @@ def build_report(repo_root: Path) -> dict[str, Any]:
     git_hygiene_workflow = repo_root / ".github" / "workflows" / "git_hygiene.yml"
     repo_healthcheck_workflow = repo_root / ".github" / "workflows" / "repo_healthcheck.yml"
     repo_healthcheck_dispatch_script = repo_root / "scripts" / "run_repo_healthcheck_dispatch.py"
+    repo_healthcheck_runner_script = repo_root / "scripts" / "run_repo_healthcheck.py"
     repo_healthcheck_status = repo_root / "docs" / "status" / "repo_healthcheck_latest.json"
     repo_structure_doc = repo_root / "docs" / "REPOSITORY_STRUCTURE.md"
     status_readme = repo_root / "docs" / "status" / "README.md"
@@ -442,6 +494,8 @@ def build_report(repo_root: Path) -> dict[str, Any]:
     repo_healthcheck_script_has_timeout_validation = False
     repo_healthcheck_script_has_ignore_warning = False
     repo_healthcheck_script_has_single_side_warnings = False
+    repo_healthcheck_runner_exists = repo_healthcheck_runner_script.exists()
+    repo_healthcheck_runner_has_persona_swarm_check = False
     if repo_healthcheck_exists:
         repo_healthcheck_payload = _load_yaml_mapping(repo_healthcheck_workflow)
         if repo_healthcheck_payload is not None:
@@ -533,6 +587,14 @@ def build_report(repo_root: Path) -> dict[str, Any]:
             issues.append("repo healthcheck dispatch script missing single-side endpoint warnings")
     else:
         issues.append("missing scripts/run_repo_healthcheck_dispatch.py")
+
+    if repo_healthcheck_runner_exists:
+        runner_contract = _evaluate_repo_healthcheck_runner_contract(repo_healthcheck_runner_script)
+        repo_healthcheck_runner_has_persona_swarm_check = runner_contract["has_persona_swarm_check"]
+        if not repo_healthcheck_runner_has_persona_swarm_check:
+            issues.append("repo healthcheck runner missing persona swarm check")
+    else:
+        issues.append("missing scripts/run_repo_healthcheck.py")
 
     status_readme_has_git_hygiene = False
     status_readme_has_repo_healthcheck_dispatch_inputs = False
@@ -654,6 +716,10 @@ def build_report(repo_root: Path) -> dict[str, Any]:
             "script_has_single_side_warnings": repo_healthcheck_script_has_single_side_warnings,
             "status_readme_inputs": status_readme_has_repo_healthcheck_dispatch_inputs,
             "status_readme_validation_notes": status_readme_has_repo_healthcheck_validation_notes,
+        },
+        "repo_healthcheck_runner": {
+            "script_exists": repo_healthcheck_runner_exists,
+            "has_persona_swarm_check": repo_healthcheck_runner_has_persona_swarm_check,
         },
         "docs_freshness": {
             "repo_structure_exists": repo_structure_exists,
