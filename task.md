@@ -1,5 +1,14 @@
 # Task
 
+## Phase 75: 記憶回顧反思 + AI Sleep 固化（Level 2b + 2d）
+- [x] 在 `tonesoul/memory/decay.py` 新增 `retrospective_score()` 與 `apply_retrospective()` 啟發式反思流程
+- [x] 在 `tonesoul/memory/soul_db.py` 的 `query()` 新增 `apply_reflection/current_topics/active_commitments` 參數（Jsonl/Sqlite/Protocol 同步）
+- [x] 在 `tonesoul/memory/consolidator.py` 新增 `SleepResult`、`_classify_for_promotion()`、`sleep_consolidate()`
+- [x] 在 `apps/api/server.py` 的 `/api/session-report` 串接 decay cleanup 後的 AI Sleep 觸發
+- [x] 新增 `tests/test_retrospective_reflection.py` 與 `tests/test_ai_sleep.py` 並通過
+- [x] 驗證 `pytest`（32 tests）與 `ruff/black` 靜態檢查全綠
+**成功標準**: 記憶層可支援「衰減 + 回顧反思 + Session 結束固化」三段式流程，且既有 API contract 測試維持通過。
+
 ## Phase 74: 前端按鍵一致性巡檢（Button Safety Baseline）
 - [x] 盤點 `apps/web` 所有 `<button>` 事件綁定與觸發路徑
 - [x] 統一補上缺失的 `type="button"`，避免未來 form 容器下誤觸 submit

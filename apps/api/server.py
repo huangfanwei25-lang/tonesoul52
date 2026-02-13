@@ -768,6 +768,20 @@ def session_report():
         except Exception as cleanup_error:
             print(f"[WARN] Decay cleanup error: {cleanup_error}")
 
+        try:
+            from tonesoul.memory.consolidator import sleep_consolidate
+
+            soul_db = _get_soul_db()
+            if soul_db:
+                sleep_result = sleep_consolidate(soul_db, source=MemorySource.SELF_JOURNAL)
+                if sleep_result.promoted_count > 0:
+                    print(
+                        f"[INFO] AI Sleep: promoted {sleep_result.promoted_count}, "
+                        f"cleared {sleep_result.cleared_count}"
+                    )
+        except Exception as sleep_error:
+            print(f"[WARN] AI Sleep error: {sleep_error}")
+
         return jsonify({"success": True, "report": summary_dict})
     except Exception as e:
         return _error_response("Failed to generate session report", 500, e)

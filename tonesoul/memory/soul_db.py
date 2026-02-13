@@ -51,6 +51,9 @@ class SoulDB(Protocol):
         limit: Optional[int] = None,
         *,
         apply_decay: bool = False,
+        apply_reflection: bool = False,
+        current_topics: Optional[List[str]] = None,
+        active_commitments: Optional[List[str]] = None,
         now: Optional[datetime] = None,
         forget_threshold: Optional[float] = None,
         layer: Optional[str] = None,
@@ -208,12 +211,15 @@ class JsonlSoulDB:
         limit: Optional[int] = None,
         *,
         apply_decay: bool = False,
+        apply_reflection: bool = False,
+        current_topics: Optional[List[str]] = None,
+        active_commitments: Optional[List[str]] = None,
         now: Optional[datetime] = None,
         forget_threshold: Optional[float] = None,
         layer: Optional[str] = None,
     ) -> Iterable[MemoryRecord]:
         normalized_layer = _normalize_memory_layer(layer)
-        if not apply_decay and normalized_layer is None:
+        if not apply_decay and not apply_reflection and normalized_layer is None:
             return self.stream(source, limit=limit)
         if limit is not None and int(limit) <= 0:
             return []
@@ -226,6 +232,14 @@ class JsonlSoulDB:
             ]
         if apply_decay:
             records = _decay_records(records, now=now, forget_threshold=forget_threshold)
+        if apply_reflection:
+            from .decay import apply_retrospective
+
+            records = apply_retrospective(
+                records,
+                current_topics=current_topics,
+                active_commitments=active_commitments,
+            )
         if limit is not None:
             if apply_decay:
                 return records[: int(limit)]
@@ -462,12 +476,15 @@ class SqliteSoulDB:
         limit: Optional[int] = None,
         *,
         apply_decay: bool = False,
+        apply_reflection: bool = False,
+        current_topics: Optional[List[str]] = None,
+        active_commitments: Optional[List[str]] = None,
         now: Optional[datetime] = None,
         forget_threshold: Optional[float] = None,
         layer: Optional[str] = None,
     ) -> Iterable[MemoryRecord]:
         normalized_layer = _normalize_memory_layer(layer)
-        if not apply_decay and normalized_layer is None:
+        if not apply_decay and not apply_reflection and normalized_layer is None:
             return self.stream(source, limit=limit)
         if limit is not None and int(limit) <= 0:
             return []
@@ -480,6 +497,14 @@ class SqliteSoulDB:
             ]
         if apply_decay:
             records = _decay_records(records, now=now, forget_threshold=forget_threshold)
+        if apply_reflection:
+            from .decay import apply_retrospective
+
+            records = apply_retrospective(
+                records,
+                current_topics=current_topics,
+                active_commitments=active_commitments,
+            )
         if limit is not None:
             if apply_decay:
                 return records[: int(limit)]

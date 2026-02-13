@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional
 
@@ -12,6 +13,32 @@ from .stats import average_coherence, count_by_verdict, most_common_divergence
 class ConsolidationResult:
     patterns: Dict[str, object]
     meta_reflection: str
+
+
+@dataclass
+class SleepResult:
+    """Result of AI Sleep memory consolidation."""
+
+    promoted_count: int
+    cleared_count: int
+    patterns: Dict[str, object]
+    meta_reflection: str
+    layer_summary: Dict[str, int]
+
+
+def _classify_for_promotion(payload: Dict[str, object]) -> str:
+    """Classify working memory into factual/experiential/working."""
+    text = str(payload.get("text", "") or payload.get("content", "")).lower()
+    factual_keywords = ["commit", "promise", "agree", "承諾", "保證", "答應", "name", "prefer"]
+    experiential_keywords = ["feel", "emotion", "conflict", "tension", "感覺", "衝突", "張力"]
+
+    for keyword in factual_keywords:
+        if keyword in text:
+            return "factual"
+    for keyword in experiential_keywords:
+        if keyword in text:
+            return "experiential"
+    return "working"
 
 
 def _load_entries(
@@ -99,4 +126,53 @@ def consolidate(
     return ConsolidationResult(
         patterns=patterns,
         meta_reflection=meta_reflection,
+    )
+
+
+def sleep_consolidate(
+    soul_db: SoulDB,
+    *,
+    source: MemorySource = MemorySource.SELF_JOURNAL,
+) -> SleepResult:
+    """Promote selected working memories into long-term layers."""
+    try:
+        working_records = list(soul_db.query(source, layer="working"))
+    except TypeError:
+        working_records = []
+
+    promoted = 0
+    cleared = 0
+
+    for record in working_records:
+        target_layer = _classify_for_promotion(record.payload)
+        if target_layer == "working":
+            cleared += 1
+            continue
+        promoted_payload = dict(record.payload)
+        promoted_payload["layer"] = target_layer
+        promoted_payload["promoted_from"] = "working"
+        promoted_payload["promoted_at"] = datetime.now(timezone.utc).isoformat()
+        soul_db.append(source, promoted_payload)
+        promoted += 1
+
+    all_entries = [
+        record.payload for record in soul_db.stream(source) if isinstance(record.payload, dict)
+    ]
+    patterns = identify_patterns(all_entries) if all_entries else {}
+    meta_reflection = generate_meta_reflection(patterns) if patterns else ""
+
+    layer_summary: Dict[str, int] = {"factual": 0, "experiential": 0, "working": 0}
+    for record in soul_db.stream(source):
+        layer = getattr(record, "layer", "experiential")
+        if layer in layer_summary:
+            layer_summary[layer] += 1
+        else:
+            layer_summary[layer] = 1
+
+    return SleepResult(
+        promoted_count=promoted,
+        cleared_count=cleared,
+        patterns=patterns,
+        meta_reflection=meta_reflection,
+        layer_summary=layer_summary,
     )
