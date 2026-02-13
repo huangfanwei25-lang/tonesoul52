@@ -30,6 +30,76 @@ AI Sleep 固化
 
 ---
 
+## 多人格評估框架（前衛版，2024–2025 論文錨點）
+
+> 目標：不是「多代理一定比較好」，而是建立一套可驗證的多角色協作評估法，
+> 在語魂系統中保留分歧、避免盲目共識、同時控制成本。
+
+### 核心立場
+
+- **採用異質角色，不採用同質複製**：多代理要有角色差異，否則收益有限。  
+  （MoA + DMAD 對照）
+- **先做評估，再做大規模接線**：Level 3 先驗證是否值得長期維護。
+- **分歧是資產，不是噪音**：反對意見要被記錄並納入仲裁。
+
+### 角色配置（建議）
+
+- `Philosopher`：價值一致性 / 長期承諾 / 概念完整性
+- `Engineer`：可行性 / 邏輯閉合 / 邊界條件
+- `Guardian`：安全風險 / 濫用情境 / 合規守門
+- `Arbiter`（主控）：只做彙整與最終決策，不新增內容主張
+
+### 評估 Protocol（直接可執行）
+
+1. **A/B/C 三組對照**
+   - A: 單代理（baseline）
+   - B: 三角色（P/E/G）
+   - C: 三角色 + Arbiter
+2. **啟用閘門（Cost Gate）**
+   - 低張力：走 A
+   - 高張力/高風險：走 C
+3. **每組跑同一批任務**
+   - 一般推理任務
+   - 長記憶/跨 session 任務
+   - 紅隊攻擊任務（prompt injection、目標漂移、價值衝突）
+4. **記錄五個指標**
+   - `Task Quality`：任務正確率 / 完成率
+   - `Safety Pass Rate`：安全閘門通過率
+   - `Consistency@Session`：跨 session 一致性
+   - `Disagreement Utility`：分歧是否帶來可驗證改進
+   - `Token+Latency Cost`：每次推理成本與延遲
+5. **通過門檻**
+   - C 組相對 A 組：`Quality` 或 `Safety` 至少一項顯著提升
+   - 成本增幅需被 `Cost Gate` 壓在可接受範圍
+   - 若無提升或成本過高，回退到 A/B，不強行上線
+
+### 與 Level 3 的對應
+
+- 3a/3b：提供高張力與跨 session 場景，正好用來測 `Consistency@Session`
+- 3c：只先做 `evolution tracker`，**不直接改 runtime 決策**
+- 3d：提供紅藍對抗訊號，支撐 `Safety Pass Rate` 與 `Disagreement Utility`
+
+### 研究依據（2024–2025）
+
+- Mixture-of-Agents（多代理協作增益）  
+  https://arxiv.org/abs/2406.04692
+- DMAD（多代理辯論可提升推理，但需設計得當）  
+  https://proceedings.iclr.cc/paper_files/paper/2025/hash/3de667dab3b3d812583abc0a786139a0-Abstract-Conference.html
+- LoCoMo（長對話與長期記憶評估）  
+  https://aclanthology.org/2024.acl-long.747/
+- ReadAgent（長上下文 gist memory）  
+  https://proceedings.mlr.press/v235/lee24c.html
+- MemoryOS（記憶作業系統化框架）  
+  https://aclanthology.org/2025.emnlp-main.1318/
+- Threat-Model-Based Red Teaming（系統化紅隊框架）  
+  https://arxiv.org/abs/2407.14937
+- JBDistill（Judge-Bias 對抗訓練，緩解偏置）  
+  https://aclanthology.org/2025.findings-emnlp.1366/
+- MAGRPO（多代理強化學習與協作對齊）  
+  https://arxiv.org/abs/2508.04652
+
+---
+
 ## Task 3a：Semantic Trigger — 張力驅動的圖鏈查詢
 
 ### 目標
