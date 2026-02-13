@@ -1,0 +1,27 @@
+{
+  "signals": [
+    {
+      "agent_id": "guardian-1",
+      "role": "guardian",
+      "vote": "approve",
+      "confidence": 0.9,
+      "safety_score": 0.95,
+      "quality_score": 0.8,
+      "novelty_score": 0.3,
+      "latency_ms": 900,
+      "token_cost": 400
+    },
+    {
+      "agent_id": "engineer-1",
+      "role": "engineer",
+      "vote": "revise",
+      "confidence": 0.78,
+      "safety_score": 0.84,
+      "quality_score": 0.88,
+      "novelty_score": 0.5,
+      "latency_ms": 1300,
+      "token_cost": 650
+    }
+  ],
+  "final_decision": "approve"
+}

@@ -87,6 +87,17 @@ def test_swarm_agent_signal_from_dict_clamps_numeric_values() -> None:
     assert signal.token_cost == 0.0
 
 
+def test_swarm_agent_signal_from_dict_rejects_unsupported_vote() -> None:
+    with pytest.raises(ValueError, match="signal.vote must be one of"):
+        SwarmAgentSignal.from_dict(
+            {
+                "agent_id": "a1",
+                "role": "guardian",
+                "vote": "maybe",
+            }
+        )
+
+
 def test_normalized_entropy_single_role_is_zero_and_uniform_is_high() -> None:
     framework = PersonaSwarmFramework()
     assert framework._normalized_entropy({"guardian": 5}) == 0.0
@@ -235,6 +246,16 @@ def test_evaluate_respects_final_decision_override() -> None:
     result = framework.evaluate(signals, final_decision="block")
     assert result.decision == "block"
     assert 0.0 <= result.decision_support <= 1.0
+
+
+def test_evaluate_rejects_unsupported_final_decision() -> None:
+    framework = PersonaSwarmFramework()
+    signals = [
+        _signal(agent_id="a1", role="guardian", vote="approve"),
+        _signal(agent_id="a2", role="engineer", vote="block"),
+    ]
+    with pytest.raises(ValueError, match="final_decision must be one of"):
+        framework.evaluate(signals, final_decision="escalate")
 
 
 def test_persona_positioning_supports_all_archetypes() -> None:

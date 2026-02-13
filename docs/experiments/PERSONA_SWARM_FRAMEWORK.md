@@ -17,6 +17,11 @@ Input signal schema (per agent):
 - `confidence`, `safety_score`, `quality_score`, `novelty_score`
 - `latency_ms`, `token_cost`
 
+Decision contract:
+
+- allowed `vote`: `approve | block | revise | defer`
+- optional `final_decision`: `approve | block | revise | defer`
+
 ## Metrics
 
 - `task_quality`
@@ -58,5 +63,5 @@ python scripts/run_persona_swarm_framework.py --strict
 Optional custom input:
 
 ```bash
-python scripts/run_persona_swarm_framework.py --input path/to/swarm_signals.json --strict
+python scripts/run_persona_swarm_framework.py --input docs/experiments/persona_swarm_input_template.json --strict
 ```

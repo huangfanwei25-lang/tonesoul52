@@ -4,10 +4,12 @@ from .evolution import CouncilEvolution, PerspectiveHistory
 from .pre_output_council import PreOutputCouncil
 from .runtime import CouncilRequest, CouncilRuntime
 from .swarm_framework import (
+    SWARM_DECISIONS,
     PersonaSwarmFramework,
     SwarmAgentSignal,
     SwarmFrameworkConfig,
     SwarmFrameworkResult,
+    normalize_swarm_decision,
 )
 from .types import (
     CoherenceScore,
@@ -34,4 +36,6 @@ __all__ = [
     "SwarmFrameworkConfig",
     "SwarmFrameworkResult",
     "PersonaSwarmFramework",
+    "SWARM_DECISIONS",
+    "normalize_swarm_decision",
 ]

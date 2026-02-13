@@ -47,6 +47,22 @@ def test_parse_input_payload_rejects_invalid_shape() -> None:
         swarm_runner._parse_input_payload("bad")  # type: ignore[arg-type]
 
 
+def test_parse_input_payload_rejects_invalid_final_decision() -> None:
+    with pytest.raises(ValueError, match="final_decision must be one of"):
+        swarm_runner._parse_input_payload(
+            {
+                "signals": [
+                    {
+                        "agent_id": "a1",
+                        "role": "guardian",
+                        "vote": "approve",
+                    }
+                ],
+                "final_decision": "escalate",
+            }
+        )
+
+
 def test_gate_snapshot_collects_failure_reasons() -> None:
     gate = swarm_runner._gate_snapshot(
         {

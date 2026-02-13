@@ -73,7 +73,7 @@ def _default_signal_payloads() -> list[dict[str, Any]]:
 
 
 def _parse_input_payload(payload: Any) -> tuple[list[SwarmAgentSignal], str | None]:
-    from tonesoul.council.swarm_framework import SwarmAgentSignal
+    from tonesoul.council.swarm_framework import SwarmAgentSignal, normalize_swarm_decision
 
     records: Any
     final_decision: str | None = None
@@ -83,7 +83,11 @@ def _parse_input_payload(payload: Any) -> tuple[list[SwarmAgentSignal], str | No
     elif isinstance(payload, dict):
         records = payload.get("signals")
         value = payload.get("final_decision")
-        final_decision = str(value).strip().lower() if isinstance(value, str) else None
+        final_decision = (
+            normalize_swarm_decision(value, field_name="final_decision")
+            if isinstance(value, str)
+            else None
+        )
     else:
         raise ValueError("input payload must be a list or object")
 

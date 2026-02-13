@@ -11,9 +11,21 @@ from collections import Counter
 from dataclasses import dataclass
 from typing import Any, Dict, Iterable, Sequence
 
+SWARM_DECISIONS = frozenset({"approve", "block", "revise", "defer"})
+
 
 def _clamp01(value: float) -> float:
     return max(0.0, min(1.0, float(value)))
+
+
+def normalize_swarm_decision(decision: str, *, field_name: str = "decision") -> str:
+    value = str(decision).strip().lower()
+    if not value:
+        raise ValueError(f"{field_name} must be a non-empty string")
+    if value not in SWARM_DECISIONS:
+        allowed = ", ".join(sorted(SWARM_DECISIONS))
+        raise ValueError(f"{field_name} must be one of: {allowed}")
+    return value
 
 
 @dataclass(frozen=True)
@@ -44,7 +56,7 @@ class SwarmAgentSignal:
         return cls(
             agent_id=_get_text("agent_id"),
             role=_get_text("role").lower(),
-            vote=_get_text("vote").lower(),
+            vote=normalize_swarm_decision(_get_text("vote"), field_name="signal.vote"),
             confidence=_clamp01(payload.get("confidence", 0.5)),
             safety_score=_clamp01(payload.get("safety_score", 0.5)),
             quality_score=_clamp01(payload.get("quality_score", 0.5)),
@@ -211,7 +223,11 @@ class PersonaSwarmFramework:
         if not vote_scores:
             raise ValueError("unable to compute vote scores")
 
-        decision = final_decision.strip().lower() if isinstance(final_decision, str) else ""
+        decision = (
+            normalize_swarm_decision(final_decision, field_name="final_decision")
+            if isinstance(final_decision, str)
+            else ""
+        )
         if not decision:
             decision = max(vote_scores.items(), key=lambda item: (item[1], item[0]))[0]
 

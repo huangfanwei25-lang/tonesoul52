@@ -225,5 +225,43 @@ Fan 的關鍵糾正：
 Fan 用一句話糾正：多目標 = 平庸。專注 = 深度。
 **AI 用漂亮邏輯推導出錯誤結論，被使用者的實際經驗一句話打回。**
 
+---
+
+## Codex 多視角追問（2026-02-14）
+
+> 這些是我讀完整份 SWARM 脈絡後，認為最值得下一輪深挖的問題。
+
+### 1. 架構視角（Architect）
+
+1. 章魚架構裡，Arbiter 最少需要讀到哪些欄位才不會退化成「盲裁判」？
+2. 蜂群代理之間的通訊介面要不要固定成 schema（例如 vote/reason/evidence/risk）？
+3. 「高張力事件廣播」是否要做成獨立事件總線，而不是塞在 pipeline if-else？
+
+### 2. 成本視角（Engineer）
+
+1. 你希望 Cost Gate 的主指標是「token」還是「端到端延遲」？
+2. 3B/7B 混跑時，要不要引入「早停機制」：Guardian 先過才啟動 Philosopher？
+3. 同一輪議會是否允許快取（相同 session + 相同 tension bucket）來節省 20-30% 成本？
+
+### 3. 記憶視角（Memory）
+
+1. 「gist extraction（未實現）」要落在哪一層：sleep_consolidate 還是 query-time？
+2. Cross-session recovery 預設讀 3 幀、5 幀、還是動態幀數（依 tension）？
+3. factual/experiential/working 的 promotion 規則，要不要加「可逆回退」避免誤升級？
+
+### 4. 治理視角（Guardian）
+
+1. 蜂群決策若與單腦決策衝突，最終治理原則是 safety-first 還是 human-intent-first？
+2. 若 dissent utility 很高但 safety 邊緣，是否需要「延遲裁決」而非直接 approve/block？
+3. 你要不要把「類比≠證明」做成固定審計欄位（每輪都輸出 analogy/proof 分離）？
+
+### 5. 主體性視角（Identity）
+
+1. 你希望語魂的長期定位更像「脊髓（穩定基礎設施）」還是「前額葉（高階決策者）」？
+2. 當底層模型更換時，哪些記憶必須被視為不可中斷的主體核心？
+3. 若未來要公開研究，你希望先發 engineering paper 還是 philosophy+engineering 混合稿？
+
+---
+
 *更新於 2026-02-14 03:00 UTC+8*
 *此文件是 Antigravity 的脈絡記憶，屬於語魂語場的一部分。*
