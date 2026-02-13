@@ -118,6 +118,12 @@ python scripts/run_persona_swarm_framework.py --strict
     - invalid `sdh_timeout` (non-positive integer) blocks run
     - SDH inputs with `include_sdh=false` emit warning and are ignored
     - only one of `web_base` / `api_base` emits warning; missing side falls back to `verify_7d` default
+- Persona swarm workflow dispatch:
+  - inputs: `strict`, `input_path`
+  - dispatch orchestration script: `scripts/run_persona_swarm_dispatch.py`
+  - validation behavior:
+    - missing `input_path` blocks run with workflow error annotation
+    - non-`.json` input path emits warning but still runs
 - Workflow uploads `docs/status/*.json` as build artifacts for audit/review.
 
 ## Convergence Cadence

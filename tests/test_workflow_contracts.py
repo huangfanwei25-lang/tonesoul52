@@ -9,6 +9,7 @@ WORKFLOW_PATH = Path(".github/workflows/repo_healthcheck.yml")
 DISPATCH_SCRIPT_PATH = Path("scripts/run_repo_healthcheck_dispatch.py")
 SEMANTIC_HEALTH_WORKFLOW_PATH = Path(".github/workflows/semantic_health.yml")
 PERSONA_SWARM_WORKFLOW_PATH = Path(".github/workflows/persona_swarm.yml")
+PERSONA_SWARM_DISPATCH_SCRIPT_PATH = Path("scripts/run_persona_swarm_dispatch.py")
 
 
 def _load_yaml(path: Path) -> dict[str, Any]:
@@ -183,7 +184,7 @@ def test_persona_swarm_workflow_is_blocking_and_uploads_artifacts() -> None:
     assert {"TS_SWARM_STRICT", "TS_SWARM_INPUT_PATH"}.issubset(dispatch_env.keys())
     dispatch_run = dispatch_step.get("run", "")
     assert isinstance(dispatch_run, str)
-    assert "python scripts/run_persona_swarm_framework.py" in dispatch_run
+    assert "python scripts/run_persona_swarm_dispatch.py" in dispatch_run
 
     artifact_step = _find_step(steps, "Upload persona swarm artifacts")
     artifact_with = artifact_step.get("with", {})
@@ -192,3 +193,12 @@ def test_persona_swarm_workflow_is_blocking_and_uploads_artifacts() -> None:
     assert isinstance(path_value, str)
     assert "docs/status/persona_swarm_framework_latest.json" in path_value
     assert "persona_swarm.log" in path_value
+
+
+def test_persona_swarm_dispatch_validation_guards_present() -> None:
+    script_text = PERSONA_SWARM_DISPATCH_SCRIPT_PATH.read_text(encoding="utf-8")
+    assert "scripts/run_persona_swarm_framework.py" in script_text
+    assert "INPUT_PATH_VALIDATION_ERROR_PREFIX" in script_text
+    assert "::error::input_path does not exist" in script_text
+    assert "TS_SWARM_STRICT" in script_text
+    assert "TS_SWARM_INPUT_PATH" in script_text

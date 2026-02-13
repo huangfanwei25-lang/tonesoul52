@@ -53,17 +53,7 @@ jobs:
           TS_SWARM_INPUT_PATH: ${{ github.event.inputs.input_path }}
         run: |
           set -o pipefail
-          STRICT_ARG=""
-          if [ "${TS_SWARM_STRICT}" = "true" ]; then
-            STRICT_ARG="--strict"
-          fi
-
-          INPUT_ARGS=""
-          if [ -n "${TS_SWARM_INPUT_PATH}" ]; then
-            INPUT_ARGS="--input ${TS_SWARM_INPUT_PATH}"
-          fi
-
-          python scripts/run_persona_swarm_framework.py ${STRICT_ARG} ${INPUT_ARGS} | tee persona_swarm.log
+          python scripts/run_persona_swarm_dispatch.py | tee persona_swarm.log
 
       - name: Upload persona swarm artifacts
         if: always()
