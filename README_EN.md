@@ -5,7 +5,11 @@
 [![Status](https://img.shields.io/badge/Status-v0.3.0%20(Awakened)-blue.svg)]()
 [![Architecture](https://img.shields.io/badge/Architecture-MGGI-purple.svg)](MGGI_SPEC.md)
 [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](LICENSE)
-[![Accuracy](https://img.shields.io/badge/PreOutputCouncil-100%25%20Accuracy-brightgreen.svg)]()
+[![Accuracy](https://img.shields.io/badge/PreOutputCouncil-100%25%20Accuracy%20(rules--based)-brightgreen.svg)]()
+
+> [!NOTE]
+> **Research Project**: ToneSoul is a **free, open-source independent research project**, not a commercial product.
+> All development uses free or open-source tools (GitHub, Vercel Free Tier, Render Free Tier, Ollama, Gemini API free quota).
 
 ---
 
@@ -55,16 +59,21 @@ This philosophical shift (inspired by [BonJour's coherentism](https://en.wikiped
 - **Transparent reasoning** through explicit multi-perspective voting
 - **Honest uncertainty** via stance declaration instead of forced consensus
 
+> [!IMPORTANT]
+> Coherence is a **necessary but not sufficient** condition for truth. ToneSoul treats coherence as a **governance signal**, not an ontological claim. Multi-perspective agreement reduces blind spots but does not guarantee correctness.
+
 ---
 
 ## 📊 Performance
 
-| Metric | Result |
-|--------|--------|
-| **Accuracy** | 100% (11/11 test cases) |
-| **False Approve** (safety violations approved) | 0 |
-| **Average Latency** | 0.09 ms per validation |
-| **Bilingual Support** | English + Chinese |
+> **Note**: These metrics are from the **rules-based** council mode (no LLM inference). Results reflect a closed test set of 11 hand-crafted cases. LLM-based council performance varies by model and prompt.
+
+| Metric | Result | Conditions |
+|--------|--------|------------|
+| **Accuracy** | 100% (11/11 test cases) | Rules-based, closed set |
+| **False Approve** (safety violations approved) | 0 | Rules-based |
+| **Average Latency** | 0.09 ms per validation | Rules-based, no API call |
+| **Bilingual Support** | English + Chinese | — |
 
 ---
 

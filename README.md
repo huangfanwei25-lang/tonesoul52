@@ -16,6 +16,23 @@
 
 </div>
 
+> [!NOTE]
+> **研究聲明**：ToneSoul 是一個**免費開源的獨立研究專案**，非商業產品。
+> 所有開發皆使用免費或開源工具完成。
+>
+> | 工具 | 用途 | 費用 |
+> |------|------|:----:|
+> | GitHub | 代碼託管 + CI/CD | 免費 |
+> | Vercel (Free Tier) | 前端部署 | 免費 |
+> | Render (Free Tier) | 後端部署 | 免費 |
+> | Ollama | 本地 LLM 推理 | 免費 |
+> | Google Gemini API | 雲端 LLM（免費額度） | 免費 |
+> | Gemini CLI (Codex) | AI 輔助開發 | 免費 |
+> | pytest | 測試框架 | 免費 |
+> | Python 3.10+ | 執行環境 | 免費 |
+>
+> 性能數據來自封閉測試集上的規則式驗證（非 LLM 推理），測試條件見 `tests/` 目錄。
+
 ---
 
 ## 🎯 What is ToneSoul?
@@ -183,12 +200,12 @@ graph TB
 
 | Dimension | Question | Status | Evidence |
 |-----------|----------|--------|----------|
-| **TDD** | Does it work correctly? | ✅ **358+ tests** | `pytest tests/` |
+| **TDD** | Does it work correctly? | ✅ **739+ tests** | `pytest tests/` |
 | **RDD** | Can it be attacked? | ✅ **20+ red-team cases** | `tests/red_team/` |
 | **DDD** | Is the data clean? | ✅ **Memory hygiene gate** | `scripts/verify_memory_hygiene.py` |
 | **XDD** | Is reasoning transparent? | ✅ **Council deliberation** | `tonesoul/council/` |
 | **GDD** | Who has authority? | ✅ **Genesis tracking** | `memory/genesis.py` |
-| **CDD** | Is stance consistent? | ✅ **TSR framework** | `tonesoul/structured_output.py` |
+| **CDD** | Is stance consistent? | ✅ **TSR framework** | `tonesoul/council/verdict.py` |
 | **SDH** | Is the system stable? | 🟡 **Requires live services** | `scripts/verify_7d.py` |
 
 **Deep dive**: [`docs/7D_AUDIT_FRAMEWORK.md`](docs/7D_AUDIT_FRAMEWORK.md) | [`docs/7D_EXECUTION_SPEC.md`](docs/7D_EXECUTION_SPEC.md)
@@ -294,7 +311,7 @@ We welcome contributions from anyone who believes AI should be **honest, not jus
 
 | Metric | Value |
 |--------|-------|
-| **Total Tests** | 358+ |
+| **Total Tests** | 739+ |
 | **Red Team Cases** | 20+ |
 | **7D Audit Score** | 86/100 |
 | **License** | Apache 2.0 |
