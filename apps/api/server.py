@@ -3,11 +3,14 @@ ToneSoul API Server
 Connects frontend to PreOutputCouncil backend.
 """
 
+import hashlib
+import json
 import os
 import secrets
 import sys
 import traceback
 import uuid
+from copy import deepcopy
 from datetime import datetime, timezone
 from pathlib import Path
 from threading import Lock
@@ -44,6 +47,11 @@ _RATE_LIMIT_ENABLED_ENV = "TONESOUL_ENABLE_RATE_LIMIT"
 _RATE_LIMIT_CHAT_ENV = "TONESOUL_RATE_LIMIT_CHAT_PER_MINUTE"
 _RATE_LIMIT_VALIDATE_ENV = "TONESOUL_RATE_LIMIT_VALIDATE_PER_MINUTE"
 _RATE_LIMIT_WINDOW_SECONDS_ENV = "TONESOUL_RATE_LIMIT_WINDOW_SECONDS"
+_CHAT_CACHE_ENABLED_ENV = "TONESOUL_CHAT_CACHE_ENABLED"
+_CHAT_CACHE_TTL_SECONDS_ENV = "TONESOUL_CHAT_CACHE_TTL_SECONDS"
+_CHAT_CACHE_MAX_ITEMS_ENV = "TONESOUL_CHAT_CACHE_MAX_ITEMS"
+_CHAT_CACHE_SCHEMA_VERSION = "v1"
+_MAX_HISTORY_ITEMS = 500
 _VTP_CONTEXT_FLAGS = (
     "vtp_force_trigger",
     "vtp_axiom_conflict",
@@ -56,6 +64,9 @@ _context_distiller: ContextDistiller | None = None
 _soul_db: SoulDB | None = None
 _rate_limit_lock = Lock()
 _rate_limit_state: dict[tuple[str, str], list[float]] = {}
+_chat_cache_lock = Lock()
+_chat_cache_state: dict[str, tuple[float, dict]] = {}
+_ALLOWED_HISTORY_ROLES = {"user", "assistant", "system"}
 
 
 def _env_flag(name: str, default: bool = False) -> bool:
@@ -153,6 +164,122 @@ def _apply_rate_limit(endpoint_name: str):
         history.append(now)
         _rate_limit_state[bucket_key] = history
     return None
+
+
+def _is_chat_cache_enabled() -> bool:
+    if _CHAT_CACHE_ENABLED_ENV in os.environ:
+        return _env_flag(_CHAT_CACHE_ENABLED_ENV, default=False)
+    return not bool(app.config.get("TESTING"))
+
+
+def _chat_cache_ttl_seconds() -> int:
+    return _read_positive_int_env(_CHAT_CACHE_TTL_SECONDS_ENV, default=60)
+
+
+def _chat_cache_max_items() -> int:
+    return _read_positive_int_env(_CHAT_CACHE_MAX_ITEMS_ENV, default=256)
+
+
+def _build_chat_cache_key(
+    *,
+    message: str,
+    history: list,
+    full_analysis: bool,
+    council_mode: str | None,
+    perspective_config: dict | None,
+    persona_config: dict | None,
+    prior_tension: dict | None,
+) -> str:
+    canonical_payload = {
+        "schema_version": _CHAT_CACHE_SCHEMA_VERSION,
+        "message": message,
+        "history": history,
+        "full_analysis": full_analysis,
+        "council_mode": council_mode,
+        "perspective_config": perspective_config,
+        "persona_config": persona_config,
+        "prior_tension": prior_tension,
+    }
+    canonical = json.dumps(
+        canonical_payload,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    )
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
+
+def _prune_chat_cache(now_ts: float) -> None:
+    expired_keys = [
+        key for key, (expires_at, _) in _chat_cache_state.items() if expires_at <= now_ts
+    ]
+    for key in expired_keys:
+        _chat_cache_state.pop(key, None)
+
+    max_items = _chat_cache_max_items()
+    if len(_chat_cache_state) <= max_items:
+        return
+
+    overflow = len(_chat_cache_state) - max_items
+    eviction_order = sorted(_chat_cache_state.items(), key=lambda item: item[1][0])
+    for key, _ in eviction_order[:overflow]:
+        _chat_cache_state.pop(key, None)
+
+
+def _chat_cache_get(cache_key: str) -> dict | None:
+    if not _is_chat_cache_enabled():
+        return None
+    now_ts = datetime.now(timezone.utc).timestamp()
+    with _chat_cache_lock:
+        _prune_chat_cache(now_ts)
+        entry = _chat_cache_state.get(cache_key)
+        if entry is None:
+            return None
+        expires_at, payload = entry
+        if expires_at <= now_ts:
+            _chat_cache_state.pop(cache_key, None)
+            return None
+        return deepcopy(payload)
+
+
+def _chat_cache_set(cache_key: str, payload: dict) -> None:
+    if not _is_chat_cache_enabled():
+        return
+    now_ts = datetime.now(timezone.utc).timestamp()
+    expires_at = now_ts + float(_chat_cache_ttl_seconds())
+    with _chat_cache_lock:
+        _chat_cache_state[cache_key] = (expires_at, deepcopy(payload))
+        _prune_chat_cache(now_ts)
+
+
+def _reset_chat_cache_state() -> None:
+    with _chat_cache_lock:
+        _chat_cache_state.clear()
+
+
+def _persist_chat_side_effects(
+    *,
+    conversation_id: str | None,
+    session_id: str | None,
+    user_message: str,
+    assistant_message: str,
+    verdict: dict | None,
+) -> None:
+    if not (supabase_persistence.enabled and conversation_id):
+        return
+
+    supabase_persistence.record_chat_exchange(
+        conversation_id=conversation_id,
+        user_message=user_message,
+        assistant_message=assistant_message,
+        deliberation=verdict if isinstance(verdict, dict) else None,
+        session_id=session_id,
+    )
+    if isinstance(verdict, dict):
+        supabase_persistence.record_chat_audit(
+            conversation_id=conversation_id,
+            verdict=verdict,
+        )
 
 
 def _extract_bearer_token(authorization_header: str | None) -> str:
@@ -256,6 +383,23 @@ def _require_optional_list(data: dict, key: str) -> tuple[list | None, tuple | N
     if isinstance(value, list):
         return value, None
     return None, (jsonify({"error": f"Invalid {key}"}), 400)
+
+
+def _validate_history_entries(history: list, *, field_name: str = "history") -> tuple | None:
+    if len(history) > _MAX_HISTORY_ITEMS:
+        return jsonify({"error": f"{field_name} too long"}), 400
+
+    for item in history:
+        if not isinstance(item, dict):
+            return jsonify({"error": f"Invalid {field_name} item"}), 400
+
+        role = item.get("role")
+        content = item.get("content")
+        if not isinstance(role, str) or role.strip().lower() not in _ALLOWED_HISTORY_ROLES:
+            return jsonify({"error": f"Invalid {field_name} item"}), 400
+        if not isinstance(content, str) or not content.strip():
+            return jsonify({"error": f"Invalid {field_name} item"}), 400
+    return None
 
 
 def _error_response(
@@ -844,6 +988,9 @@ def session_report():
         return error
     if not history:
         return jsonify({"error": "Missing conversation history"}), 400
+    history_error = _validate_history_entries(history)
+    if history_error is not None:
+        return history_error
 
     try:
         # Import concrete reporter module directly to avoid package-level side effects.
@@ -1121,12 +1268,39 @@ def chat():
     message = message if message is not None else ""
     history = history if history is not None else []
     full_analysis = full_analysis if full_analysis is not None else True
+    history_error = _validate_history_entries(history)
+    if history_error is not None:
+        return history_error
 
     try:
         from tonesoul.unified_pipeline import create_unified_pipeline
 
-        pipeline = create_unified_pipeline()
         prior_tension = _build_prior_tension(conversation_id)
+        cache_key = _build_chat_cache_key(
+            message=message,
+            history=history,
+            full_analysis=full_analysis,
+            council_mode=council_mode,
+            perspective_config=perspective_config,
+            persona_config=persona_config,
+            prior_tension=prior_tension,
+        )
+        cached_payload = _chat_cache_get(cache_key)
+        if cached_payload is not None:
+            _persist_chat_side_effects(
+                conversation_id=conversation_id,
+                session_id=session_id,
+                user_message=message,
+                assistant_message=str(cached_payload.get("response", "")),
+                verdict=(
+                    cached_payload.get("verdict")
+                    if isinstance(cached_payload.get("verdict"), dict)
+                    else None
+                ),
+            )
+            return jsonify(cached_payload)
+
+        pipeline = create_unified_pipeline()
 
         result = pipeline.process(
             user_message=message,
@@ -1138,41 +1312,33 @@ def chat():
             persona_config=persona_config,
         )
 
-        if supabase_persistence.enabled and conversation_id:
-            supabase_persistence.record_chat_exchange(
-                conversation_id=conversation_id,
-                user_message=message,
-                assistant_message=result.response,
-                deliberation=(
-                    result.council_verdict if isinstance(result.council_verdict, dict) else None
-                ),
-                session_id=session_id,
-            )
-            if isinstance(result.council_verdict, dict):
-                supabase_persistence.record_chat_audit(
-                    conversation_id=conversation_id,
-                    verdict=result.council_verdict,
-                )
-
-        return jsonify(
-            {
-                "response": result.response,
-                "verdict": result.council_verdict,
-                "tonebridge": result.tonebridge_analysis,
-                "inner_reasoning": result.inner_narrative,
-                "intervention_strategy": result.intervention_strategy,
-                # ToneStream fields
-                "internal_monologue": result.internal_monologue,
-                "persona_mode": result.persona_mode,
-                "trajectory_analysis": result.trajectory_analysis,
-                # Third Axiom fields
-                "self_commits": result.self_commits,
-                "ruptures": result.ruptures,
-                "emergent_values": result.emergent_values,
-                "semantic_contradictions": getattr(result, "semantic_contradictions", []),
-                "semantic_graph_summary": getattr(result, "semantic_graph_summary", {}),
-            }
+        response_payload = {
+            "response": result.response,
+            "verdict": result.council_verdict,
+            "tonebridge": result.tonebridge_analysis,
+            "inner_reasoning": result.inner_narrative,
+            "intervention_strategy": result.intervention_strategy,
+            # ToneStream fields
+            "internal_monologue": result.internal_monologue,
+            "persona_mode": result.persona_mode,
+            "trajectory_analysis": result.trajectory_analysis,
+            # Third Axiom fields
+            "self_commits": result.self_commits,
+            "ruptures": result.ruptures,
+            "emergent_values": result.emergent_values,
+            "semantic_contradictions": getattr(result, "semantic_contradictions", []),
+            "semantic_graph_summary": getattr(result, "semantic_graph_summary", {}),
+        }
+        _persist_chat_side_effects(
+            conversation_id=conversation_id,
+            session_id=session_id,
+            user_message=message,
+            assistant_message=result.response,
+            verdict=result.council_verdict if isinstance(result.council_verdict, dict) else None,
         )
+        _chat_cache_set(cache_key, response_payload)
+
+        return jsonify(response_payload)
 
     except Exception as e:
         return _error_response("Failed to process chat request", 500, e, {"response": None})

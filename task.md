@@ -6,10 +6,10 @@
 - [x] Architecture Audit Phase 76 (7.2/10, 10 findings)
 - [x] Level 3 (3a/3b/3c/3d)
 - [ ] Multi-persona evaluation framework (A/B/C + 5 metrics)
-- [ ] Phase A (7 days): auth fail-closed + endpoint throttling + debug lock
-- [ ] Phase B (14 days): pipeline cache + input validation + stats dedup
+- [x] Phase A (7 days): auth fail-closed + endpoint throttling + debug lock
+- [x] Phase B (14 days): pipeline cache + input validation + stats dedup
 - [ ] Phase C (30 days): CI blocking + docs freshness + frontend retry
-**Latest validation**: `pytest -q` => `755 passed, 3 xfailed` (2026-02-13). Level 3 implementation tracked in `CODEX_TASK.md` v7.
+**Latest validation**: `pytest -q` => `767 passed, 3 xfailed` (2026-02-13). Level 3 implementation tracked in `CODEX_TASK.md` v7.
 
 ## Phase 77: Level 3 Experimental
 - [x] 3a Semantic Trigger
@@ -29,7 +29,10 @@
 - [x] `/api/chat` and `/api/validate` throttling
 - [x] Production debug lock (`TONESOUL_API_DEBUG` ignored in production)
 - [x] AI Sleep stats dedup: `identify_patterns(..., exclude_promoted=True)` default enabled
-- [x] Validation: `pytest -q` => `763 passed, 3 xfailed` (2026-02-13)
+- [x] Phase B complete
+- [x] `/api/chat` pipeline cache (TTL + max-items + deterministic key)
+- [x] `/api/session-report` and `/api/chat` history payload deep validation
+- [x] Validation: `pytest -q` => `767 passed, 3 xfailed` (2026-02-13)
 ## Phase 79: Phase A嚗? 憭抬???蝖砍?
 - [ ] Read API auth ?寧 production fail-closed
 - [ ] `/api/chat`?/api/validate` ?????瘚???- [ ] production 撘瑕?? debug ??
