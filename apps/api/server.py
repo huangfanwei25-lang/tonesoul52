@@ -36,6 +36,7 @@ council_runtime = CouncilRuntime()
 _MAX_ESCAPE_SEED_ITEMS = 50
 _MAX_PAGINATION_LIMIT = 200
 _READ_API_TOKEN_ENV = "TONESOUL_READ_API_TOKEN"
+_EVOLUTION_CACHE_PATH_ENV = "TONESOUL_EVOLUTION_CACHE_PATH"
 _VTP_CONTEXT_FLAGS = (
     "vtp_force_trigger",
     "vtp_axiom_conflict",
@@ -197,8 +198,9 @@ def _utc_now() -> str:
 
 def _get_context_distiller() -> ContextDistiller:
     global _context_distiller
+    cache_path = os.environ.get(_EVOLUTION_CACHE_PATH_ENV)
     if _context_distiller is None or _context_distiller.persistence is not supabase_persistence:
-        _context_distiller = ContextDistiller(supabase_persistence)
+        _context_distiller = ContextDistiller(supabase_persistence, cache_path=cache_path)
     return _context_distiller
 
 
@@ -665,7 +667,7 @@ def list_audit_logs():
     conversation_id = request.args.get("conversation_id", type=str)
     conversation_id = conversation_id.strip() if isinstance(conversation_id, str) else None
     session_id = request.args.get("session_id", type=str)
-    session_id = session_id.strip() if isinstance(session_id, str) else None
+    session_id = session_id.strip() if isinstance(session_id, str) and session_id.strip() else None
     if not supabase_persistence.enabled:
         return jsonify(
             {

@@ -130,3 +130,57 @@ def test_export_jsonl_writes_serialized_entries(tmp_path: Path):
     lines = output.read_text(encoding="utf-8").strip().splitlines()
     assert len(lines) == len(entries)
     assert "conv_with_audit" in lines[0]
+
+
+def test_build_from_conversation_aligns_descending_audit_logs_by_timestamp():
+    class _DescendingAuditPersistence:
+        def get_conversation(self, conversation_id: str):
+            return {
+                "id": conversation_id,
+                "messages": [
+                    {"role": "user", "content": "u1", "created_at": "2026-02-11T01:00:00Z"},
+                    {
+                        "role": "assistant",
+                        "content": "a1",
+                        "created_at": "2026-02-11T01:00:02Z",
+                        "deliberation": {},
+                    },
+                    {"role": "user", "content": "u2", "created_at": "2026-02-11T01:01:00Z"},
+                    {
+                        "role": "assistant",
+                        "content": "a2",
+                        "created_at": "2026-02-11T01:01:02Z",
+                        "deliberation": {},
+                    },
+                ],
+            }
+
+        def list_audit_logs(
+            self,
+            limit: int = 20,
+            offset: int = 0,
+            conversation_id: str | None = None,
+            **_kwargs,
+        ):
+            return {
+                "logs": [
+                    {
+                        "conversation_id": conversation_id,
+                        "delta_t": 0.9,
+                        "created_at": "2026-02-11T01:01:02Z",
+                    },
+                    {
+                        "conversation_id": conversation_id,
+                        "delta_t": 0.2,
+                        "created_at": "2026-02-11T01:00:02Z",
+                    },
+                ],
+                "total": 2,
+            }
+
+    builder = CorpusBuilder(_DescendingAuditPersistence())
+    entries = builder.build_from_conversation("conv_desc")
+
+    assert len(entries) == 2
+    assert entries[0].tension_level == 0.2
+    assert entries[1].tension_level == 0.9

@@ -2,9 +2,14 @@
 
 from __future__ import annotations
 
+import json
+import re
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any
+
+_DEFAULT_CACHE_PATH = Path("data") / "evolution_latest.json"
 
 
 def _utc_now() -> str:
@@ -56,7 +61,7 @@ def _unique_preserve_order(values: list[str]) -> list[str]:
 
 
 def _tone_score(text: str) -> float:
-    lower = text.lower()
+    words = set(re.findall(r"\b\w+\b", text.lower()))
     positive_tokens = (
         "thank",
         "appreciate",
@@ -85,10 +90,10 @@ def _tone_score(text: str) -> float:
 
     score = 0.0
     for token in positive_tokens:
-        if token in lower:
+        if token in words:
             score += 1.0
     for token in negative_tokens:
-        if token in lower:
+        if token in words:
             score -= 1.0
     return score
 
@@ -138,12 +143,97 @@ class DistillationResult:
 class ContextDistiller:
     """Distill useful context patterns from historical conversation data."""
 
-    def __init__(self, persistence: Any):
+    def __init__(self, persistence: Any, cache_path: str | Path | None = None):
         self.persistence = persistence
-        self._latest_result: DistillationResult | None = None
+        self._cache_path = Path(cache_path) if cache_path is not None else _DEFAULT_CACHE_PATH
+        self._latest_result: DistillationResult | None = self._load_cached_result()
 
     def get_latest_result(self) -> DistillationResult | None:
         return self._latest_result
+
+    def _load_cached_result(self) -> DistillationResult | None:
+        try:
+            raw = self._cache_path.read_text(encoding="utf-8")
+        except FileNotFoundError:
+            return None
+        except Exception:
+            return None
+
+        try:
+            payload = json.loads(raw)
+        except ValueError:
+            return None
+        return self._deserialize_result(payload)
+
+    def _persist_result(self, result: DistillationResult) -> None:
+        try:
+            self._cache_path.parent.mkdir(parents=True, exist_ok=True)
+            self._cache_path.write_text(
+                json.dumps(result.to_dict(), ensure_ascii=False),
+                encoding="utf-8",
+            )
+        except Exception:
+            return
+
+    def _deserialize_result(self, payload: Any) -> DistillationResult | None:
+        if not isinstance(payload, dict):
+            return None
+
+        raw_patterns = payload.get("patterns")
+        patterns: list[ContextPattern] = []
+        if isinstance(raw_patterns, list):
+            for row in raw_patterns:
+                pattern = self._deserialize_pattern(row)
+                if pattern is not None:
+                    patterns.append(pattern)
+
+        conversations_analyzed = _to_float(payload.get("conversations_analyzed"))
+        analyzed_count = max(0, int(conversations_analyzed or 0))
+        raw_time_range = payload.get("time_range")
+        start: str | None = None
+        end: str | None = None
+        if isinstance(raw_time_range, (list, tuple)) and len(raw_time_range) >= 2:
+            start_value = raw_time_range[0]
+            end_value = raw_time_range[1]
+            start = (
+                str(start_value).strip()
+                if isinstance(start_value, str) and start_value.strip()
+                else None
+            )
+            end = (
+                str(end_value).strip() if isinstance(end_value, str) and end_value.strip() else None
+            )
+
+        summary = str(payload.get("summary") or "").strip()
+        distilled_at = str(payload.get("distilled_at") or "").strip() or _utc_now()
+        return DistillationResult(
+            patterns=patterns,
+            conversations_analyzed=analyzed_count,
+            time_range=(start, end),
+            summary=summary or "No distillation has been run yet.",
+            distilled_at=distilled_at,
+        )
+
+    def _deserialize_pattern(self, payload: Any) -> ContextPattern | None:
+        if not isinstance(payload, dict):
+            return None
+        pattern_type = str(payload.get("pattern_type") or "").strip().lower()
+        if not pattern_type:
+            return None
+        description = str(payload.get("description") or "").strip()
+        confidence = _to_float(payload.get("confidence"))
+        metadata = payload.get("metadata")
+        if not isinstance(metadata, dict):
+            metadata = {}
+        extracted_at = str(payload.get("extracted_at") or "").strip() or _utc_now()
+        return ContextPattern(
+            pattern_type=pattern_type,
+            description=description or "No description",
+            evidence=_normalize_string_list(payload.get("evidence")),
+            confidence=max(0.0, min(float(confidence or 0.0), 1.0)),
+            extracted_at=extracted_at,
+            metadata=metadata,
+        )
 
     def get_patterns(self, pattern_type: str | None = None) -> list[ContextPattern]:
         if self._latest_result is None:
@@ -197,6 +287,7 @@ class ContextDistiller:
             summary=self._build_summary(patterns, len(conversations)),
         )
         self._latest_result = result
+        self._persist_result(result)
         return result
 
     def extract_decision_patterns(self, audit_logs: list[dict[str, Any]]) -> list[ContextPattern]:

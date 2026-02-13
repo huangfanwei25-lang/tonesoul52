@@ -33,6 +33,7 @@ apps/showcase/
 
 # Database
 data/chromadb/
+data/evolution_latest.json
 *.sqlite3
 memory/soul.db
 

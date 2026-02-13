@@ -236,7 +236,9 @@ class CorpusBuilder:
         rows = page.get("logs") if isinstance(page, dict) else None
         if not isinstance(rows, list):
             return []
-        return [row for row in rows if isinstance(row, dict)]
+        audit_rows = [row for row in rows if isinstance(row, dict)]
+        audit_rows.sort(key=lambda row: _normalize_str(row.get("created_at")))
+        return audit_rows
 
     def _has_audit_logs(self, conversation_id: str) -> bool:
         list_fn = getattr(self.persistence, "list_audit_logs", None)

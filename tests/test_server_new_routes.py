@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import pytest
+
 import apps.api.server as server
 
 
@@ -8,9 +10,15 @@ def _client():
     return server.app.test_client()
 
 
+@pytest.fixture(autouse=True)
+def _isolated_evolution_cache(monkeypatch, tmp_path):
+    monkeypatch.setenv("TONESOUL_EVOLUTION_CACHE_PATH", str(tmp_path / "evolution_latest.json"))
+
+
 class _FakeEvolutionPersistence:
     def __init__(self):
         self.enabled = True
+        self.last_audit_call: dict | None = None
 
     def status_dict(self):
         return {"provider": "supabase", "enabled": True, "configured": True, "last_error": None}
@@ -76,6 +84,12 @@ class _FakeEvolutionPersistence:
         conversation_id: str | None = None,
         session_id: str | None = None,
     ):
+        self.last_audit_call = {
+            "limit": limit,
+            "offset": offset,
+            "conversation_id": conversation_id,
+            "session_id": session_id,
+        }
         logs = [
             {
                 "id": "a1",
@@ -170,3 +184,39 @@ def test_status_includes_evolution_summary(monkeypatch):
     assert status.status_code == 200
     assert "evolution" in payload
     assert payload["evolution"]["total_patterns"] >= 1
+
+
+def test_evolution_summary_survives_distiller_recreation(monkeypatch, tmp_path):
+    monkeypatch.delenv("TONESOUL_READ_API_TOKEN", raising=False)
+    monkeypatch.setenv("TONESOUL_EVOLUTION_CACHE_PATH", str(tmp_path / "evolution_latest.json"))
+    fake = _FakeEvolutionPersistence()
+    monkeypatch.setattr(server, "supabase_persistence", fake)
+    monkeypatch.setattr(server, "_context_distiller", None)
+
+    client = _client()
+    first = client.post("/api/evolution/distill", json={"limit": 20})
+    assert first.status_code == 200
+
+    monkeypatch.setattr(server, "_context_distiller", None)
+    summary = client.get("/api/evolution/summary")
+    payload = summary.get_json()
+
+    assert summary.status_code == 200
+    assert payload["total_patterns"] >= 1
+    assert payload["conversations_analyzed"] == 2
+
+
+def test_audit_logs_blank_session_id_is_treated_as_none(monkeypatch):
+    monkeypatch.delenv("TONESOUL_READ_API_TOKEN", raising=False)
+    fake = _FakeEvolutionPersistence()
+    monkeypatch.setattr(server, "supabase_persistence", fake)
+    monkeypatch.setattr(server, "_context_distiller", None)
+
+    client = _client()
+    response = client.get("/api/audit-logs?limit=10&offset=0&session_id=   ")
+    payload = response.get_json()
+
+    assert response.status_code == 200
+    assert fake.last_audit_call is not None
+    assert fake.last_audit_call["session_id"] is None
+    assert "session_id" not in payload

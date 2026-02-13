@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from tonesoul.evolution.context_distiller import ContextDistiller
+from pathlib import Path
+
+from tonesoul.evolution.context_distiller import ContextDistiller, _tone_score
 
 
 class _FakePersistence:
@@ -89,8 +91,8 @@ class _FakePersistence:
         }
 
 
-def test_distill_returns_patterns_with_expected_types():
-    distiller = ContextDistiller(_FakePersistence())
+def test_distill_returns_patterns_with_expected_types(tmp_path: Path):
+    distiller = ContextDistiller(_FakePersistence(), cache_path=tmp_path / "evolution_latest.json")
     result = distiller.distill(limit=50)
 
     pattern_types = {pattern.pattern_type for pattern in result.patterns}
@@ -102,8 +104,8 @@ def test_distill_returns_patterns_with_expected_types():
     assert "Distilled" in result.summary
 
 
-def test_distiller_summary_and_filtering():
-    distiller = ContextDistiller(_FakePersistence())
+def test_distiller_summary_and_filtering(tmp_path: Path):
+    distiller = ContextDistiller(_FakePersistence(), cache_path=tmp_path / "evolution_latest.json")
     distiller.distill(limit=20)
 
     value_patterns = distiller.get_patterns(pattern_type="value")
@@ -115,7 +117,7 @@ def test_distiller_summary_and_filtering():
     assert summary["last_distilled_at"] is not None
 
 
-def test_distiller_handles_missing_data_gracefully():
+def test_distiller_handles_missing_data_gracefully(tmp_path: Path):
     class _EmptyPersistence:
         def list_conversations(self, limit: int = 20, offset: int = 0):
             return {"conversations": [], "total": 0}
@@ -126,10 +128,41 @@ def test_distiller_handles_missing_data_gracefully():
         def list_audit_logs(self, limit: int = 20, offset: int = 0, **_kwargs):
             return {"logs": [], "total": 0}
 
-    distiller = ContextDistiller(_EmptyPersistence())
+    distiller = ContextDistiller(_EmptyPersistence(), cache_path=tmp_path / "evolution_latest.json")
     result = distiller.distill(limit=10)
     summary = distiller.get_summary()
 
     assert result.patterns == []
     assert result.conversations_analyzed == 0
     assert summary["total_patterns"] == 0
+
+
+def test_tone_score_respects_word_boundaries():
+    assert _tone_score("unsafe") < 0
+    assert _tone_score("safe") > 0
+    assert _tone_score("I feel unsafe and confused") < 0
+    assert _tone_score("This is safer now") == 0.0
+
+
+def test_distiller_loads_cached_result_after_recreation(tmp_path: Path):
+    cache_path = tmp_path / "evolution_latest.json"
+    distiller = ContextDistiller(_FakePersistence(), cache_path=cache_path)
+    first_result = distiller.distill(limit=20)
+    assert cache_path.exists()
+
+    class _EmptyPersistence:
+        def list_conversations(self, limit: int = 20, offset: int = 0):
+            return {"conversations": [], "total": 0}
+
+        def get_conversation(self, conversation_id: str):
+            return None
+
+        def list_audit_logs(self, limit: int = 20, offset: int = 0, **_kwargs):
+            return {"logs": [], "total": 0}
+
+    reloaded = ContextDistiller(_EmptyPersistence(), cache_path=cache_path)
+    summary = reloaded.get_summary()
+
+    assert summary["total_patterns"] == len(first_result.patterns)
+    assert summary["conversations_analyzed"] == first_result.conversations_analyzed
+    assert summary["last_distilled_at"] == first_result.distilled_at
