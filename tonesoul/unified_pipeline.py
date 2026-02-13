@@ -319,6 +319,29 @@ class UnifiedPipeline:
                 return str(raw.get("description", "")).strip()
         return ""
 
+    def _inject_persona_memory(
+        self, user_message: str, persona_config: Optional[Dict[str, Any]] = None
+    ) -> str:
+        """Inject persona-oriented preference memory into the prompt input."""
+        if not persona_config:
+            return user_message
+        persona_parts: List[str] = []
+        if persona_config.get("style"):
+            persona_parts.append(f"回應風格: {persona_config['style']}")
+        weights = persona_config.get("weights", {})
+        if weights:
+            persona_parts.append(f"意義探索權重: {weights.get('meaning', 50)}%")
+            persona_parts.append(f"實用導向權重: {weights.get('practical', 50)}%")
+            persona_parts.append(f"安全考量權重: {weights.get('safety', 50)}%")
+        if persona_config.get("risk_sensitivity"):
+            persona_parts.append(f"風險敏感度: {persona_config['risk_sensitivity']}")
+        if persona_config.get("response_length"):
+            persona_parts.append(f"回應長度: {persona_config['response_length']}")
+        if not persona_parts:
+            return user_message
+        persona_context = " | ".join(persona_parts)
+        return f"[用戶偏好: {persona_context}]\n\n{user_message}"
+
     def _inject_visual_context(self, user_message: str) -> str:
         """Inject recent visual chain snapshots into the message context."""
         try:
@@ -356,6 +379,20 @@ class UnifiedPipeline:
             f"[內在一致性提醒: 偵測到 {len(pre_contradictions)} 個潛在矛盾 — "
             f"{contradiction_hints}]\n\n{user_message}"
         )
+
+    def build_injection_context(
+        self, user_message: str, persona_config: Optional[Dict[str, Any]] = None
+    ) -> str:
+        """
+        Build injection context from one canonical source without data duplication.
+
+        The adapter splits views into:
+        - persona slice: stable user preference memory
+        - context slice: recent visual memory chain
+        """
+        injected = self._inject_persona_memory(user_message, persona_config)
+        injected = self._inject_visual_context(injected)
+        return injected
 
     def _rebuild_stack_from_history(self, history: List[Dict]) -> None:
         """
@@ -456,26 +493,8 @@ class UnifiedPipeline:
         """
         history = history or []
 
-        # ========== Persona Config 注入 ==========
-        if persona_config:
-            persona_parts = []
-            if persona_config.get("style"):
-                persona_parts.append(f"回應風格: {persona_config['style']}")
-            weights = persona_config.get("weights", {})
-            if weights:
-                persona_parts.append(f"意義探索權重: {weights.get('meaning', 50)}%")
-                persona_parts.append(f"實用導向權重: {weights.get('practical', 50)}%")
-                persona_parts.append(f"安全考量權重: {weights.get('safety', 50)}%")
-            if persona_config.get("risk_sensitivity"):
-                persona_parts.append(f"風險敏感度: {persona_config['risk_sensitivity']}")
-            if persona_config.get("response_length"):
-                persona_parts.append(f"回應長度: {persona_config['response_length']}")
-            if persona_parts:
-                persona_context = " | ".join(persona_parts)
-                user_message = f"[用戶偏好: {persona_context}]\n\n{user_message}"
-
-        # ========== Visual Memory Context 注入 ==========
-        user_message = self._inject_visual_context(user_message)
+        # ========== 記憶注入 Adapter（persona + context） ==========
+        user_message = self.build_injection_context(user_message, persona_config=persona_config)
 
         # ========== 0. 重建 Third Axiom 狀態 ==========
         # 從對話歷史中恢復 commit_stack，確保跨 request 持久化

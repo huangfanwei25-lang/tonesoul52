@@ -45,3 +45,20 @@ def test_pipeline_skips_visual_context_when_chain_is_empty():
     updated = pipeline._inject_visual_context(original)
 
     assert updated == original
+
+
+def test_build_injection_context_splits_persona_and_context_views():
+    pipeline = UnifiedPipeline()
+    pipeline._visual_chain = _build_chain_with_frame()
+    persona_config = {
+        "style": "concise",
+        "weights": {"meaning": 60, "practical": 30, "safety": 10},
+        "response_length": "short",
+    }
+
+    original = "主訊息"
+    updated = pipeline.build_injection_context(original, persona_config=persona_config)
+
+    assert updated.count("[脈絡記憶 — 最近視覺快照]") == 1
+    assert updated.count("[用戶偏好:") == 1
+    assert updated.endswith(original)
