@@ -153,6 +153,10 @@ def _build_check_specs(
             "command": [python_executable, "scripts/verify_git_hygiene.py"],
         },
         {
+            "name": "persona_swarm",
+            "command": [python_executable, "scripts/run_persona_swarm_framework.py", "--strict"],
+        },
+        {
             "name": "audit_7d",
             "command": verify_7d_cmd,
         },

@@ -120,6 +120,31 @@ def test_build_check_specs_passes_sdh_endpoint_overrides(tmp_path: Path) -> None
     assert "55" in audit_7d["command"]
 
 
+def test_build_check_specs_includes_persona_swarm_strict_check(tmp_path: Path) -> None:
+    discussion_path = tmp_path / "agent_discussion_curated.jsonl"
+    discussion_path.write_text('{"status":"final"}\n', encoding="utf-8")
+
+    python_executable = r"C:\\repo\\.venv\\Scripts\\python.exe"
+    specs = healthcheck._build_check_specs(
+        python_executable=python_executable,
+        include_sdh=False,
+        check_council_modes=True,
+        strict_soft_fail=False,
+        web_base=None,
+        api_base=None,
+        sdh_timeout=None,
+        allow_missing_discussion=False,
+        discussion_path=discussion_path,
+    )
+
+    persona_swarm = next(item for item in specs if item["name"] == "persona_swarm")
+    assert persona_swarm["command"] == [
+        python_executable,
+        "scripts/run_persona_swarm_framework.py",
+        "--strict",
+    ]
+
+
 def test_render_markdown_contains_summary_and_failures() -> None:
     payload = {
         "generated_at": "2026-02-09T00:00:00Z",
