@@ -65,6 +65,12 @@ pip install -e ".[dev]"
 npm --prefix apps/web ci
 ```
 
+或直接使用 bootstrap 腳本：
+
+```bash
+bash scripts/vm/bootstrap_antigravity_vm.sh
+```
+
 ---
 
 ## 6) Antigravity 執行基線
@@ -74,6 +80,18 @@ npm --prefix apps/web ci
 ```bash
 python -m pytest tests/test_verify_docs_consistency.py -q
 python scripts/run_repo_healthcheck.py --strict --allow-missing-discussion
+```
+
+或直接使用 smoke 腳本：
+
+```bash
+bash scripts/vm/run_antigravity_smoke.sh
+```
+
+完整回歸（含全測試）：
+
+```bash
+bash scripts/vm/run_antigravity_smoke.sh --full
 ```
 
 若要完整回歸：
@@ -130,4 +148,3 @@ git status
 
 - 確認無敏感檔案（`.env`, key 檔）被加入版本控制。
 - 若是高風險實驗，直接銷毀 VM 並從 snapshot 重建。
-
