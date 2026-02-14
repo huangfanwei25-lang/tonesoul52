@@ -56,6 +56,11 @@ from .ystm.energy import EnergyConfig
 from .ystm.ingest import load_segments, normalize_segments
 from .ystm.representation import EmbeddingConfig
 from .ystm.terrain import TerrainConfig
+from .yss_unified_adapter import (
+    build_multi_persona_eval_snapshot,
+    build_unified_seed,
+    write_multi_persona_eval_snapshot,
+)
 
 
 @dataclass
@@ -750,6 +755,39 @@ def _run_gates(ctx: PipelineContext) -> GateArtifacts:
     )
 
 
+def _extract_dispatch_trace_from_context(context_payload: Dict[str, object]) -> Optional[Dict[str, object]]:
+    inputs = context_payload.get("inputs") if isinstance(context_payload, dict) else None
+    if not isinstance(inputs, dict):
+        return None
+    payload = inputs.get("payload")
+    if not isinstance(payload, dict):
+        return None
+    dispatch_trace = payload.get("dispatch_trace")
+    return dispatch_trace if isinstance(dispatch_trace, dict) else None
+
+
+def run_pipeline_from_unified_request(
+    unified_request: Dict[str, object],
+    config: Optional[PipelineConfig] = None,
+) -> Dict[str, object]:
+    """Run YSS pipeline using UnifiedPipeline-style request schema."""
+    seed = build_unified_seed(unified_request if isinstance(unified_request, dict) else {})
+    cfg = config if config is not None else PipelineConfig()
+
+    if not cfg.task:
+        cfg.task = str(seed.get("task") or "")
+    if not cfg.objective:
+        cfg.objective = str(seed.get("objective") or "")
+    if not cfg.domain:
+        cfg.domain = str(seed.get("domain") or "")
+    if not cfg.decision_mode:
+        cfg.decision_mode = str(seed.get("decision_mode") or "normal")
+
+    paths = run_pipeline(cfg)
+    paths["unified_seed"] = seed
+    return paths
+
+
 def run_pipeline(config: PipelineConfig) -> Dict[str, object]:
     workspace = _workspace_root()
     _apply_trace_level(config)
@@ -881,6 +919,15 @@ def run_pipeline(config: PipelineConfig) -> Dict[str, object]:
         intent_verification_path=intent_verification_path,
     )
     gate_artifacts = _run_gates(pipeline_ctx)
+    dispatch_trace = _extract_dispatch_trace_from_context(context_artifacts.context_payload)
+    multi_persona_eval_payload = build_multi_persona_eval_snapshot(
+        gate_report=gate_artifacts.gate_report,
+        dispatch_trace=dispatch_trace,
+    )
+    multi_persona_eval_path = write_multi_persona_eval_snapshot(
+        os.path.join(run_dir, "multi_persona_eval.json"),
+        multi_persona_eval_payload,
+    )
 
     audit_request_path = os.path.join(run_dir, "audit_request.json")
     gate_report_ref = gate_report_path
@@ -1022,6 +1069,7 @@ def run_pipeline(config: PipelineConfig) -> Dict[str, object]:
         "audit_request": audit_request_path,
         "gate_report": gate_report_path,
         "dcs_result": gate_artifacts.dcs_result_path,
+        "multi_persona_eval": multi_persona_eval_path,
         "skills_applied": skill_artifacts.skills_path if skill_artifacts.applied_skills else None,
         "skills_directives": (
             skill_artifacts.skill_directives if skill_artifacts.applied_skills else None

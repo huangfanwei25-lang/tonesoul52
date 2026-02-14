@@ -1375,6 +1375,7 @@ def chat():
             "emergent_values": result.emergent_values,
             "semantic_contradictions": getattr(result, "semantic_contradictions", []),
             "semantic_graph_summary": getattr(result, "semantic_graph_summary", {}),
+            "dispatch_trace": getattr(result, "dispatch_trace", {}),
         }
         _persist_chat_side_effects(
             conversation_id=conversation_id,

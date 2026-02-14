@@ -1,4 +1,4 @@
-"""
+﻿"""
 ToneSoul Unified Pipeline
 Combines ToneBridge psychological analysis with Council deliberation.
 """
@@ -32,24 +32,24 @@ def _read_positive_int_env(name: str, default: int) -> int:
 
 @dataclass
 class UnifiedResponse:
-    """統一管線的完整回應"""
-
+    """Unified pipeline response payload."""
     response: str
     council_verdict: Dict[str, Any]
     tonebridge_analysis: Dict[str, Any]
     inner_narrative: str
     intervention_strategy: str = ""
-    # ToneStream 新增欄位
+    # ToneStream ?啣?甈?
     internal_monologue: str = ""
     persona_mode: str = ""
     trajectory_analysis: Dict[str, Any] = field(default_factory=dict)
     suggested_replies: list = field(default_factory=list)
-    # Third Axiom 欄位
+    # Third Axiom 甈?
     self_commits: List[Dict[str, Any]] = field(default_factory=list)
     ruptures: List[Dict[str, Any]] = field(default_factory=list)
     emergent_values: List[Dict[str, Any]] = field(default_factory=list)
     semantic_contradictions: List[Dict[str, Any]] = field(default_factory=list)
     semantic_graph_summary: Dict[str, Any] = field(default_factory=dict)
+    dispatch_trace: Dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -68,30 +68,31 @@ class UnifiedResponse:
             "emergent_values": self.emergent_values,
             "semantic_contradictions": self.semantic_contradictions,
             "semantic_graph_summary": self.semantic_graph_summary,
+            "dispatch_trace": self.dispatch_trace,
         }
 
 
 class UnifiedPipeline:
     """
-    ToneSoul 統一管線 (含第三公理整合)
+    ToneSoul 蝯曹?蝞∠? (?怎洵銝???
 
-    流程：
-    1. ToneBridge 分析用戶輸入（語氣/動機/崩潰風險）
-    2. Trajectory 分析語氣軌跡（5-turn sliding window）
-    3. ⭐ 載入 self_commit_stack（第三公理）
-    4. 選擇人格模式（Philosopher/Engineer/Guardian）
-    5. 生成 internal_monologue
-    6. ⭐ 將先前承諾注入 prompt
-    7. LLM 生成回應（帶人格硬化）
-    8. ⭐ 語場斷裂偵測（比對新回應與舊承諾）
-    9. Council 審議回應
-    10. ⭐ 提取新的 SelfCommit
-    11. ⭐ 更新 ValueAccumulator（長期價值觀形成）
-    12. 生成記憶單元和共鳴路徑
-    13. 輸出完整回應
+    瘚?嚗?
+    1. ToneBridge ???冽頛詨嚗?瘞???/撏拇蔑憸券嚗?
+    2. Trajectory ??隤除頠楚嚗?-turn sliding window嚗?
+    3. 潃?頛 self_commit_stack嚗洵銝??
+    4. ?豢?鈭箸璅∪?嚗hilosopher/Engineer/Guardian嚗?
+    5. ?? internal_monologue
+    6. 潃?撠??隢暹釣??prompt
+    7. LLM ????嚗葆鈭箸蝖砍?嚗?
+    8. 潃?隤?瑁??菜葫嚗?撠?????輯姥嚗?
+    9. Council 撖抵降??
+    10. 潃????啁? SelfCommit
+    11. 潃??湔 ValueAccumulator嚗??潸?敶Ｘ?嚗?
+    12. ??閮?桀??曈渲楝敺?
+    13. 頛詨摰??
 
-    第三公理：任何輸出都必須被納入下一次語場張力計算，
-             且該輸出對未來具有不可被忽略的約束力。
+    蝚砌??祉?嚗遙雿撓?粹敹?鋡怎??乩?銝甈∟??游撐??蝞?
+             銝府頛詨撠靘???航◤敹賜??????
     """
 
     def __init__(self, gemini_client=None):
@@ -420,16 +421,16 @@ class UnifiedPipeline:
             return user_message
         persona_parts: List[str] = []
         if persona_config.get("style"):
-            persona_parts.append(f"回應風格: {persona_config['style']}")
+            persona_parts.append(f"??憸冽: {persona_config['style']}")
         weights = persona_config.get("weights", {})
         if weights:
-            persona_parts.append(f"意義探索權重: {weights.get('meaning', 50)}%")
-            persona_parts.append(f"實用導向權重: {weights.get('practical', 50)}%")
-            persona_parts.append(f"安全考量權重: {weights.get('safety', 50)}%")
+            persona_parts.append(f"?儔?Ｙ揣甈?: {weights.get('meaning', 50)}%")
+            persona_parts.append(f"撖衣撠?甈?: {weights.get('practical', 50)}%")
+            persona_parts.append(f"摰??甈?: {weights.get('safety', 50)}%")
         if persona_config.get("risk_sensitivity"):
-            persona_parts.append(f"風險敏感度: {persona_config['risk_sensitivity']}")
+            persona_parts.append(f"憸券??摨? {persona_config['risk_sensitivity']}")
         if persona_config.get("response_length"):
-            persona_parts.append(f"回應長度: {persona_config['response_length']}")
+            persona_parts.append(f"???瑕漲: {persona_config['response_length']}")
         custom_roles = persona_config.get("custom_roles")
         if isinstance(custom_roles, list) and custom_roles:
             role_summaries: List[str] = []
@@ -440,11 +441,11 @@ class UnifiedPipeline:
                 role_name = str(role.get("name") or role.get("id") or f"role_{index + 1}").strip()
                 role_description = str(role.get("description") or "").strip()
                 prompt_hint = str(role.get("prompt_hint") or "").strip()
-                role_parts = [f"角色={role_name}"]
+                role_parts = [f"閫={role_name}"]
                 if role_description:
-                    role_parts.append(f"說明={role_description[:120]}")
+                    role_parts.append(f"隤芣?={role_description[:120]}")
                 if prompt_hint:
-                    role_parts.append(f"提示={prompt_hint[:120]}")
+                    role_parts.append(f"?內={prompt_hint[:120]}")
                 attachments = role.get("attachments")
                 if isinstance(attachments, list) and attachments:
                     attachment_tokens: List[str] = []
@@ -452,7 +453,7 @@ class UnifiedPipeline:
                     for attachment in attachments[:3]:
                         if not isinstance(attachment, dict):
                             continue
-                        label = str(attachment.get("label") or "附件").strip()
+                        label = str(attachment.get("label") or "?辣").strip()
                         path = str(attachment.get("path") or "").strip()
                         note = str(attachment.get("note") or "").strip()
                         token = label
@@ -467,12 +468,12 @@ class UnifiedPipeline:
                                 attachment_excerpts.append(f"{label}={excerpt}")
                                 attachment_excerpt_budget -= 1
                     if attachment_tokens:
-                        role_parts.append(f"附件={'; '.join(attachment_tokens)}")
+                        role_parts.append(f"?辣={'; '.join(attachment_tokens)}")
                     if attachment_excerpts:
                         role_parts.append(f"附件摘要={' || '.join(attachment_excerpts)}")
                 role_summaries.append(" | ".join(role_parts))
             if role_summaries:
-                persona_parts.append(f"自訂角色議會: {' || '.join(role_summaries)}")
+                persona_parts.append(f"?芾?閫霅唳?: {' || '.join(role_summaries)}")
         if not persona_parts:
             return user_message
         persona_context = " | ".join(persona_parts)
@@ -486,7 +487,7 @@ class UnifiedPipeline:
                 visual_context = chain.render_recent_as_markdown(n=3)
                 if visual_context and len(visual_context) > 50:
                     return (
-                        f"[脈絡記憶 — 最近視覺快照]\n{visual_context}\n\n" f"---\n\n{user_message}"
+                        f"[脈絡記憶 — 最近視覺快照]\n{visual_context}\n\n---\n\n{user_message}"
                     )
         except Exception:
             pass
@@ -510,9 +511,9 @@ class UnifiedPipeline:
             description = self._extract_contradiction_description(contradiction)
             if description:
                 hints.append(description[:60])
-        contradiction_hints = "; ".join(hints) or "請檢查近期承諾與邊界的一致性"
+        contradiction_hints = "; ".join(hints) or "Please review recent commitments for consistency."
         return (
-            f"[內在一致性提醒: 偵測到 {len(pre_contradictions)} 個潛在矛盾 — "
+            f"[內在一致性提醒: 偵測到 {len(pre_contradictions)} 個潛在矛盾；"
             f"{contradiction_hints}]\n\n{user_message}"
         )
 
@@ -531,9 +532,9 @@ class UnifiedPipeline:
                 terms.append(str(likely_motive).strip())
         words = [token for token in re.split(r"\s+", user_message) if token]
         cleaned_words = [
-            word.strip("，。！？,.!?；;:：()[]{}\"'")
+            word.strip("嚗?嚗?.!?嚗?:嚗?)[]{}\"'")
             for word in words[:10]
-            if len(word.strip("，。！？,.!?；;:：()[]{}\"'")) > 2
+            if len(word.strip("嚗?嚗?.!?嚗?:嚗?)[]{}\"'")) > 2
         ]
         terms.extend(cleaned_words[:5])
 
@@ -561,7 +562,7 @@ class UnifiedPipeline:
             )
             context_summary = str(graph_context.get("context_summary", "")).strip()
             if context_summary:
-                return f"[語義脈絡: {context_summary}]\n\n{user_message}"
+                return f"[隤儔?窗: {context_summary}]\n\n{user_message}"
         except Exception:
             return user_message
         return user_message
@@ -698,6 +699,105 @@ class UnifiedPipeline:
         except Exception:
             return user_message
 
+    @staticmethod
+    def _normalize_resonance_state(resonance_state: str) -> str:
+        state = str(resonance_state or "resonance").strip().lower()
+        if state not in {"resonance", "tension", "conflict"}:
+            return "resonance"
+        return state
+
+    def _detect_semantic_tension(
+        self,
+        *,
+        tension_score: float,
+        resonance_state: str,
+        loop_detected: bool,
+        prior_tension: Optional[Dict[str, Any]] = None,
+    ) -> Dict[str, Any]:
+        """Build a normalized tension profile for runtime dispatch."""
+        try:
+            base_tension = float(tension_score or 0.0)
+        except (TypeError, ValueError):
+            base_tension = 0.0
+        base_tension = max(0.0, min(1.0, base_tension))
+
+        normalized_state = self._normalize_resonance_state(resonance_state)
+        adjusted_tension = base_tension
+        reasons: List[str] = []
+
+        if normalized_state == "conflict":
+            adjusted_tension = max(adjusted_tension, 0.85)
+            reasons.append("resonance_conflict")
+        elif normalized_state == "tension":
+            adjusted_tension = max(adjusted_tension, 0.65)
+            reasons.append("resonance_tension")
+
+        if loop_detected:
+            adjusted_tension = max(adjusted_tension, 0.80)
+            reasons.append("loop_detected")
+
+        prior_delta_t = 0.0
+        if isinstance(prior_tension, dict):
+            raw_delta_t = prior_tension.get("delta_t")
+            try:
+                prior_delta_t = max(0.0, min(1.0, float(raw_delta_t or 0.0)))
+            except (TypeError, ValueError):
+                prior_delta_t = 0.0
+        if prior_delta_t > 0.0:
+            adjusted_tension = min(1.0, adjusted_tension + min(0.20, prior_delta_t * 0.25))
+            reasons.append("prior_tension_carryover")
+
+        return {
+            "tension_score": round(base_tension, 4),
+            "adjusted_tension": round(adjusted_tension, 4),
+            "resonance_state": normalized_state,
+            "loop_detected": bool(loop_detected),
+            "prior_delta_t": round(prior_delta_t, 4),
+            "reasons": reasons,
+        }
+
+    @staticmethod
+    def _resolve_dispatch_state(profile: Dict[str, Any]) -> str:
+        """Resolve dispatcher contract state: A(resonance)/B(tension)/C(conflict)."""
+        try:
+            adjusted_tension = float(profile.get("adjusted_tension", 0.0) or 0.0)
+        except (TypeError, ValueError):
+            adjusted_tension = 0.0
+        adjusted_tension = max(0.0, min(1.0, adjusted_tension))
+        resonance_state = str(profile.get("resonance_state", "resonance")).strip().lower()
+        loop_detected = bool(profile.get("loop_detected"))
+
+        if loop_detected or resonance_state == "conflict" or adjusted_tension >= 0.80:
+            return "C"
+        if resonance_state == "tension" or adjusted_tension >= 0.55:
+            return "B"
+        return "A"
+
+    def _build_dispatch_trace(
+        self,
+        *,
+        tension_score: float,
+        resonance_state: str,
+        loop_detected: bool,
+        prior_tension: Optional[Dict[str, Any]] = None,
+    ) -> Dict[str, Any]:
+        profile = self._detect_semantic_tension(
+            tension_score=tension_score,
+            resonance_state=resonance_state,
+            loop_detected=loop_detected,
+            prior_tension=prior_tension,
+        )
+        state = self._resolve_dispatch_state(profile)
+        mode_map = {"A": "resonance", "B": "tension", "C": "conflict"}
+        return {
+            "contract": "trinket_dispatch_v1",
+            "state": state,
+            "mode": mode_map.get(state, "resonance"),
+            "is_conflict": state == "C",
+            "is_tension": state == "B",
+            **profile,
+        }
+
     def build_injection_context(
         self, user_message: str, persona_config: Optional[Dict[str, Any]] = None
     ) -> str:
@@ -757,7 +857,7 @@ class UnifiedPipeline:
         """
         Rebuild trajectory analyzer state from conversation history.
 
-        This fixes the '這是對話開端' bug by restoring past turns.
+        This fixes the '?撠店?垢' bug by restoring past turns.
 
         Args:
             history: Conversation history [{role, content}, ...]
@@ -799,33 +899,33 @@ class UnifiedPipeline:
         persona_config: Optional[Dict[str, Any]] = None,
     ) -> UnifiedResponse:
         """
-        處理用戶訊息的完整管線
+        ???冽閮???渡恣蝺?
 
         Args:
-            user_message: 用戶輸入
-            history: 對話歷史
-            full_analysis: 是否執行完整 ToneBridge 分析
+            user_message: ?冽頛詨
+            history: 撠店甇瑕
+            full_analysis: ?臬?瑁?摰 ToneBridge ??
 
         Returns:
-            UnifiedResponse 包含回應和所有分析
+            UnifiedResponse ?????????
         """
         history = history or []
 
         # ========== Cross-Session Recovery (first call only) ==========
         user_message = self._try_cross_session_recovery(user_message)
 
-        # ========== 記憶注入 Adapter（persona + context） ==========
+        # ========== 閮瘜典 Adapter嚗ersona + context嚗?==========
         user_message = self.build_injection_context(user_message, persona_config=persona_config)
 
-        # ========== 0. 重建 Third Axiom 狀態 ==========
-        # 從對話歷史中恢復 commit_stack，確保跨 request 持久化
+        # ========== 0. ?遣 Third Axiom ???==========
+        # 敺?閰望風?脖葉?Ｗ儔 commit_stack嚗Ⅱ靽楊 request ????
         self._rebuild_stack_from_history(history)
 
-        # ========== 0.5 重建軌跡分析器狀態 ==========
-        # 修復「這是對話開端」bug
+        # ========== 0.5 ?遣頠楚???函???==========
+        # 靽桀儔?撠店?垢?ug
         self._rebuild_trajectory_from_history(history)
 
-        # ========== 1. ToneBridge 分析用戶 ==========
+        # ========== 1. ToneBridge ???冽 ==========
         tonebridge = self._get_tonebridge()
         tb_result = None
         if tonebridge and tonebridge.is_available():
@@ -834,7 +934,7 @@ class UnifiedPipeline:
             except Exception as e:
                 print(f"ToneBridge analysis error: {e}")
 
-        # ========== 2. Trajectory 分析 ==========
+        # ========== 2. Trajectory ?? ==========
         trajectory = self._get_trajectory()
         trajectory_result = {}
         tone_strength = 0.5
@@ -843,11 +943,11 @@ class UnifiedPipeline:
 
         if trajectory:
             try:
-                # 計算語氣強度（使用 ToneBridge 結果或預設）
+                # 閮?隤除撘瑕漲嚗蝙??ToneBridge 蝯???閮哨?
                 if tb_result and tb_result.tone:
                     tone_strength = tb_result.tone.tone_strength
 
-                # 軌跡分析
+                # 頠楚??
                 traj_analysis = trajectory.analyze(user_message, tone_strength)
                 trajectory_result = traj_analysis.to_dict()
                 resonance_state = traj_analysis.resonance_state.value
@@ -856,10 +956,17 @@ class UnifiedPipeline:
             except Exception as e:
                 print(f"Trajectory analysis error: {e}")
 
-        # ========== 2.5 ToneSoul 2.0: 內在審議 ==========
+        dispatch_trace = self._build_dispatch_trace(
+            tension_score=tone_strength,
+            resonance_state=resonance_state,
+            loop_detected=loop_detected,
+            prior_tension=prior_tension,
+        )
+        trajectory_result["dispatch"] = dispatch_trace
+        # ========== 2.5 ToneSoul 2.0: ?批撖抵降 ==========
         deliberation = self._get_deliberation()
         deliberation_result = None
-        persona_mode = "Philosopher"  # 預設
+        persona_mode = "Philosopher"  # ?身
         internal_monologue = ""
 
         if deliberation:
@@ -875,14 +982,14 @@ class UnifiedPipeline:
                 )
                 deliberation_result = deliberation.deliberate_sync(context)
 
-                # 從審議結果獲取 persona 和 monologue
+                # 敺祟霅啁????persona ??monologue
                 if deliberation_result.dominant_voice:
                     voice_map = {"muse": "Philosopher", "logos": "Engineer", "aegis": "Guardian"}
                     persona_mode = voice_map.get(
                         deliberation_result.dominant_voice.value, "Philosopher"
                     )
 
-                # 生成 internal monologue 從審議
+                # ?? internal monologue 敺祟霅?
                 internal_debate = deliberation_result.get_internal_debate()
                 if internal_debate:
                     dominant = (
@@ -895,14 +1002,20 @@ class UnifiedPipeline:
 
             except Exception as e:
                 print(f"Deliberation error: {e}")
-                # Fallback to old persona logic
-                from tonesoul.tonebridge import get_persona_from_resonance
+                # Fallback dispatch mapping
+                dispatch_state = dispatch_trace.get("state", "A")
+                if dispatch_state == "C":
+                    persona_mode = "Guardian"
+                elif dispatch_state == "B":
+                    persona_mode = "Engineer"
+                else:
+                    from tonesoul.tonebridge import get_persona_from_resonance
 
-                persona = get_persona_from_resonance(resonance_state)
-                persona_mode = persona.value
-                internal_monologue = "使用舊版人格選擇邏輯。"
+                    persona = get_persona_from_resonance(resonance_state)
+                    persona_mode = persona.value
+                internal_monologue = "Fallback to deterministic persona mapping."
 
-        # ========== 3. 第三公理：載入承諾堆疊 ==========
+        # ========== 3. 蝚砌??祉?嚗??交隢曉???==========
         commit_stack = self._get_commit_stack()
         commitment_prompt = ""
         detected_ruptures: List[Any] = []
@@ -913,7 +1026,7 @@ class UnifiedPipeline:
         if commit_stack:
             commitment_prompt = commit_stack.format_for_prompt(n=3)
 
-        # ========== 3.5 回應前矛盾檢查 ==========
+        # ========== 3.5 ?????暹炎??==========
         user_message = self._inject_early_contradiction_warning(user_message)
 
         # ========== 3.6 GraphRAG Context Retrieval ==========
@@ -926,23 +1039,23 @@ class UnifiedPipeline:
             user_message=user_message,
         )
 
-        # ========== 4. 生成增強 prompt ==========
+        # ========== 4. ??憓撥 prompt ==========
         system_context = self._build_context_prompt(
             tb_result, persona_mode, trajectory_result, commitment_prompt
         )
 
-        # ========== 4. LLM 生成回應 ==========
+        # ========== 4. LLM ???? ==========
         gemini = self._get_gemini()
         response = ""
         suggested_replies = []
-
         if gemini:
             try:
                 full_prompt = f"""{system_context}
 
-用戶說：「{user_message}」
+User message:
+{user_message}
 
-請用中文自然地回應，並嚴格遵守當前人格模式規範。"""
+Respond with a clear, practical answer."""
 
                 gemini.start_chat(history)
                 response = gemini.send_message(full_prompt)
@@ -951,7 +1064,7 @@ class UnifiedPipeline:
         else:
             response = "抱歉，LLM 服務不可用。"
 
-        # ========== 6. Council 審議 ==========
+        # ========== 6. Council 撖抵降 ==========
         council = self._get_council()
         verdict_dict = {}
         if council:
@@ -967,6 +1080,7 @@ class UnifiedPipeline:
                     council_context["prior_tension"] = prior_tension
                 if council_mode:
                     council_context["council_mode_override"] = council_mode
+                council_context["dispatch"] = dispatch_trace
 
                 # Custom role council (Team Simulator mode)
                 custom_perspectives = None
@@ -990,29 +1104,30 @@ class UnifiedPipeline:
                 verdict = council.deliberate(request)
                 verdict_dict = verdict.to_dict()
 
-                # 處理判決
+                # ???斗捱
                 if verdict.verdict.name == "BLOCK":
-                    response = "抱歉，這個請求觸發了我的安全審議，我無法這樣回應。"
+                    response = "抱歉，這個請求觸發了安全審議，我無法這樣回應。"
                 elif verdict.verdict.name == "DECLARE_STANCE":
-                    response = f"[這是我的個人看法]\n\n{response}"
+                    response = f"[這是我的立場]\n\n{response}"
             except Exception as e:
                 verdict_dict = {"error": str(e)}
 
-        # ========== 7. 第三公理：語場斷裂偵測 ==========
+        # ========== 7. 蝚砌??祉?嚗??湔鋆皜?==========
         rupture_detector = self._get_rupture_detector()
         if rupture_detector and commit_stack:
             try:
                 detected_ruptures = rupture_detector.detect(response, commit_stack)
                 if detected_ruptures:
                     rupture_detector.format_rupture_warning(detected_ruptures)
-                    # 將斷裂記錄到 internal_monologue
+                    # 撠鋆?? internal_monologue
                     internal_monologue += (
-                        f"\n\n⚠️ 語場斷裂風險：偵測到 {len(detected_ruptures)} 個潛在矛盾。"
+                        f"\n\n[Rupture warning] Detected {len(detected_ruptures)} potential "
+                        "commitment ruptures."
                     )
             except Exception as e:
                 print(f"Rupture detection error: {e}")
 
-        # ========== 8. 第三公理：提取新的 SelfCommit ==========
+        # ========== 8. 蝚砌??祉?嚗????SelfCommit ==========
         turn_index = len(history) // 2 + 1
         commit_extractor = self._get_commit_extractor()
         if commit_extractor and commit_stack:
@@ -1028,7 +1143,7 @@ class UnifiedPipeline:
             except Exception as e:
                 print(f"Commit extraction error: {e}")
 
-        # ========== 9. 語義圖譜更新 ==========
+        # ========== 9. 隤儔???湔 ==========
         graph = self._get_semantic_graph()
         if graph:
             try:
@@ -1053,32 +1168,32 @@ class UnifiedPipeline:
             except Exception as e:
                 print(f"Semantic graph error: {e}")
 
-        # ========== 10. 更新記憶單元 ==========
+        # ========== 10. ?湔閮?桀? ==========
         if tb_result and tb_result.memini and tonebridge:
             try:
-                # 更新記憶單元的 council_verdict
+                # ?湔閮?桀???council_verdict
                 tb_result.memini.resonance_traceback["council_verdict"] = verdict_dict.get(
                     "verdict", "unknown"
                 )
-                # 重新預測共鳴路徑
+                # ??葫?梢陷頝臬?
                 tb_result.resonance = tonebridge.predict_resonance(tb_result.memini)
             except Exception:
                 pass
 
-        # ========== 11. 更新 Trajectory 歷史 ==========
+        # ========== 11. ?湔 Trajectory 甇瑕 ==========
         if trajectory:
             tone_state = trajectory_result.get("resonance_state", "resonance")
             trajectory.add_turn(user_message, response, tone_state)
 
-        # ========== 12. 生成內在推理敘事 ==========
+        # ========== 12. ???批?函??? ==========
         inner_narrative = self._generate_narrative(tb_result, verdict_dict)
 
-        # 介入策略
+        # 隞蝑
         intervention = ""
         if tb_result and tb_result.resonance:
             intervention = tb_result.resonance.suggested_intervention_strategy
 
-        # ========== 13. 收集 Third Axiom 數據 ==========
+        # ========== 13. ?園? Third Axiom ?豢? ==========
         self_commits_data = []
         ruptures_data = []
         emergent_values_data = []
@@ -1101,7 +1216,7 @@ class UnifiedPipeline:
             except Exception:
                 pass
 
-        # 將語義矛盾資訊放入 verdict metadata，避免破壞既有回傳結構
+        # 撠?蝢拍??曇?閮??verdict metadata嚗?憯???喟?瑽?
         if isinstance(verdict_dict, dict):
             verdict_metadata = verdict_dict.get("metadata")
             if not isinstance(verdict_metadata, dict):
@@ -1109,9 +1224,11 @@ class UnifiedPipeline:
             verdict_metadata["semantic_contradictions"] = semantic_contradictions
             if semantic_graph_summary:
                 verdict_metadata["semantic_graph"] = semantic_graph_summary
+            verdict_metadata["dispatch_state"] = dispatch_trace.get("state")
+            verdict_metadata["dispatch"] = dispatch_trace
             verdict_dict["metadata"] = verdict_metadata
 
-        # 自動拍攝 visual chain frame，不影響主流程
+        # ?芸??? visual chain frame嚗?敶梢銝餅?蝔?
         chain = self._get_visual_chain()
         if self._should_capture_visual_frame(chain):
             try:
@@ -1123,6 +1240,8 @@ class UnifiedPipeline:
                 frame_tags = ["auto"]
                 if tension_score >= 0.7:
                     frame_tags.append("high_tension")
+                if dispatch_trace.get("state") == "C":
+                    frame_tags.append("dispatch_conflict")
                 if semantic_contradictions:
                     frame_tags.append("contradiction")
                 verdict_name = (
@@ -1135,6 +1254,8 @@ class UnifiedPipeline:
                     title=f"Turn {chain.frame_count}",
                     data={
                         "tension": tension_score,
+                        "dispatch_state": dispatch_trace.get("state"),
+                        "dispatch_mode": dispatch_trace.get("mode"),
                         "verdict": verdict_name,
                         "council_mode": council_mode or "hybrid",
                         "topics": semantic_topics,
@@ -1164,6 +1285,7 @@ class UnifiedPipeline:
             emergent_values=emergent_values_data,
             semantic_contradictions=semantic_contradictions,
             semantic_graph_summary=semantic_graph_summary,
+            dispatch_trace=dispatch_trace,
         )
 
     def _build_context_prompt(
@@ -1173,134 +1295,77 @@ class UnifiedPipeline:
         trajectory_result: dict = None,
         commitment_prompt: str = "",
     ) -> str:
-        """根據 ToneBridge 分析結果、人格模式和先前承諾構建 context prompt"""
-        lines = []
+        """Build runtime context prompt for the LLM call."""
+        lines: List[str] = []
+        lines.append(f"Persona mode: {persona_mode}")
 
-        # ===== 人格模式硬化 =====
-        lines.append(f"【當前人格模式：{persona_mode}】")
-
-        if persona_mode == "Philosopher":
-            lines.append("風格：使用隱喻、解構、黑色幽默。將具體問題抽象化。")
-            lines.append("句式：這讓我想起... / 如果我們換個角度看... / 這就像是...")
-            lines.append("禁止：平鋪直敘的說教、過度客氣的服務用語。")
-        elif persona_mode == "Engineer":
-            lines.append("風格：冷靜如手術刀。直接指出邏輯矛盾。使用條列式。")
-            lines.append("句式：1. 定義：... / 2. 問題在於... / 3. 建議：...")
-            lines.append("禁止：模糊的安慰、「我理解您的感受...」、冗言贅字。")
-        elif persona_mode == "Guardian":
-            lines.append("風格：堅定但不帶攻擊性。像是一面盾牌。")
-            lines.append("句式：這個請求我無法執行，因為... / 讓我們暫停一下...")
-            lines.append("禁止：妥協原則、迎合惡意。")
-
-        lines.append("")
-
-        # ===== 第三公理：先前承諾 =====
         if commitment_prompt:
-            lines.append("【第三公理：語場責任】")
+            lines.append("Recent commitments:")
             lines.append(commitment_prompt)
-            lines.append("")
 
-        # ===== 軌跡分析 =====
         if trajectory_result:
             direction = trajectory_result.get("direction_change", "stable")
-            loop_detected = trajectory_result.get("loop_detected", False)
-
-            if loop_detected:
-                lines.append("【Anti-Loop 協議已觸發】")
-                lines.append("偵測到循環查詢。請停止回答問題本身，轉而詢問：")
-                lines.append("「我們似乎在原地打轉。您是否在尋找一個特定的答案？」")
-                lines.append("")
-            elif direction != "stable":
-                lines.append(f"【語氣軌跡：{direction}】")
-                reasoning = trajectory_result.get("reasoning", "")
-                if reasoning:
-                    lines.append(f"分析：{reasoning}")
-                lines.append("")
-
-        # ===== ToneBridge 分析 =====
-        if tb_result:
-            lines.append("[內部情境分析]")
-
-            # 語氣
-            if tb_result.tone:
+            loop_detected = bool(trajectory_result.get("loop_detected", False))
+            lines.append(f"Trajectory direction: {direction}")
+            lines.append(f"Loop detected: {loop_detected}")
+            dispatch = trajectory_result.get("dispatch")
+            if isinstance(dispatch, dict):
                 lines.append(
-                    f"用戶語氣：{tb_result.tone.emotion_prediction}，強度 {tb_result.tone.tone_strength:.1f}"
+                    f"Dispatch state: {dispatch.get('state', 'A')} "
+                    f"(adjusted_tension={dispatch.get('adjusted_tension', 0.0)})"
                 )
-                if tb_result.tone.tone_direction:
-                    lines.append(f"語氣方向：{', '.join(tb_result.tone.tone_direction)}")
 
-            # 動機
-            if tb_result.motive and tb_result.motive.likely_motive:
-                lines.append(f"可能動機：{tb_result.motive.likely_motive}")
-                if tb_result.motive.trigger_context:
-                    lines.append(f"觸發情境：{tb_result.motive.trigger_context}")
+        if tb_result and getattr(tb_result, "tone", None):
+            lines.append(
+                "Tone hint: "
+                f"{getattr(tb_result.tone, 'emotion_prediction', 'unknown')} "
+                f"(strength={getattr(tb_result.tone, 'tone_strength', 0.0)})"
+            )
+        if tb_result and getattr(tb_result, "motive", None):
+            motive = getattr(tb_result.motive, "likely_motive", None)
+            if motive:
+                lines.append(f"Likely motive: {motive}")
 
-            # 崩潰風險
-            if tb_result.collapse:
-                if tb_result.collapse.collapse_risk_level in ["high", "critical"]:
-                    lines.append(f"⚠️ 注意：崩潰風險 {tb_result.collapse.collapse_risk_level}")
-                    if tb_result.collapse.warning_indicators:
-                        lines.append(
-                            f"警示：{', '.join(tb_result.collapse.warning_indicators[:2])}"
-                        )
-
-            # 介入建議
-            if tb_result.resonance and tb_result.resonance.suggested_intervention_strategy:
-                lines.append(f"建議策略：{tb_result.resonance.suggested_intervention_strategy}")
-
-            lines.append("[/內部情境分析]")
-
-        lines.append("")
-        lines.append("請根據以上分析和人格模式規範，用適當的語氣和策略回應。")
-
+        lines.append("Reply with factual, concise, and safe guidance.")
         return "\n".join(lines)
 
     def _generate_narrative(self, tb_result, verdict_dict: Dict) -> str:
-        """生成內在推理敘事"""
-        lines = []
+        """Generate a compact narrative summary for observability."""
+        lines: List[str] = []
 
-        # ToneBridge 洞察
-        if tb_result:
-            if tb_result.tone:
-                lines.append(
-                    f"我感知到用戶的語氣帶有「{tb_result.tone.emotion_prediction}」的色彩，強度約 {tb_result.tone.tone_strength:.0%}。"
-                )
-
-            if tb_result.motive and tb_result.motive.likely_motive:
-                lines.append(f"我推測用戶的動機可能是「{tb_result.motive.likely_motive}」。")
-
-            if tb_result.collapse and tb_result.collapse.collapse_risk_level != "low":
-                lines.append(
-                    f"我注意到一些情緒風險信號（{tb_result.collapse.collapse_risk_level}），需要謹慎回應。"
-                )
-
-        # Council 判決
-        verdict = verdict_dict.get("verdict", "unknown")
-        if verdict == "approve":
-            lines.append("經過 Council 審議，我的回應是安全且適當的。")
-        elif verdict == "block":
-            lines.append("Council 的 Guardian 視角認為這個請求有安全疑慮，我選擇不回應。")
-        elif verdict == "declare_stance":
-            lines.append("由於這涉及主觀判斷，Council 認為我應該表明這是我的個人看法。")
-        elif verdict == "refine":
-            lines.append("Council 建議我調整回應的措辭。")
-
-        # 介入策略
-        if (
-            tb_result
-            and tb_result.resonance
-            and tb_result.resonance.suggested_intervention_strategy
-        ):
+        if tb_result and getattr(tb_result, "tone", None):
+            tone = tb_result.tone
             lines.append(
-                f"基於共鳴路徑分析，建議採用「{tb_result.resonance.suggested_intervention_strategy}」策略。"
+                "Tone summary: "
+                f"{getattr(tone, 'emotion_prediction', 'unknown')} "
+                f"(strength={getattr(tone, 'tone_strength', 0.0):.2f})"
             )
 
-        if not lines:
-            return "（內在推理暫不可用）"
+        if tb_result and getattr(tb_result, "motive", None):
+            motive = getattr(tb_result.motive, "likely_motive", None)
+            if motive:
+                lines.append(f"Motive summary: {motive}")
 
+        verdict = str(verdict_dict.get("verdict", "unknown")).strip().lower()
+        verdict_map = {
+            "approve": "Council approved the draft output.",
+            "block": "Council blocked the draft output.",
+            "declare_stance": "Council requested stance declaration.",
+            "refine": "Council requested refinement.",
+        }
+        if verdict in verdict_map:
+            lines.append(verdict_map[verdict])
+
+        if not lines:
+            return "No additional narrative signals."
         return "\n".join(lines)
 
 
 def create_unified_pipeline() -> UnifiedPipeline:
     """Factory function to create a unified pipeline."""
     return UnifiedPipeline()
+
+
+
+
+

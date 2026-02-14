@@ -3,4 +3,9 @@
 
 from ..tsr_metrics import *  # noqa: F401,F403  backward compat
 from ..yss_gates import *  # noqa: F401,F403  backward compat
-from ..yss_pipeline import PipelineConfig, PipelineContext, run_pipeline  # noqa: F401
+from ..yss_pipeline import (  # noqa: F401
+    PipelineConfig,
+    PipelineContext,
+    run_pipeline,
+    run_pipeline_from_unified_request,
+)

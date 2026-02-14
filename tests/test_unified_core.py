@@ -32,6 +32,14 @@ class TestUnifiedCoreImport:
         assert core is not None
         assert core.persona.get("id") == "test_persona"
 
+    def test_runtime_boundary_metadata(self):
+        """UnifiedCore should expose legacy/runtime boundary metadata."""
+        from tonesoul.unified_core import UnifiedCore
+
+        boundary = UnifiedCore.runtime_boundary()
+        assert boundary["status"] == "legacy_non_runtime"
+        assert boundary["replacement"] == "tonesoul.unified_pipeline.UnifiedPipeline"
+
 
 class TestUnifiedCoreComponents:
     """Test UnifiedCore component initialization."""

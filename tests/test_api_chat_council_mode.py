@@ -116,6 +116,7 @@ def test_chat_exposes_default_semantic_fields_when_pipeline_omits_them(monkeypat
     assert response.status_code == 200
     assert payload["semantic_contradictions"] == []
     assert payload["semantic_graph_summary"] == {}
+    assert payload["dispatch_trace"] == {}
 
 
 def test_chat_exposes_semantic_fields_when_pipeline_provides_them(monkeypatch):
@@ -137,6 +138,7 @@ def test_chat_exposes_semantic_fields_when_pipeline_provides_them(monkeypatch):
                 emergent_values=[],
                 semantic_contradictions=[{"found": True, "description": "test"}],
                 semantic_graph_summary={"total_nodes": 2, "contradictions": 1},
+                dispatch_trace={"state": "B", "mode": "tension"},
             )
 
     monkeypatch.setattr(unified_pipeline, "create_unified_pipeline", lambda: _Pipeline())
@@ -148,3 +150,4 @@ def test_chat_exposes_semantic_fields_when_pipeline_provides_them(monkeypatch):
     assert response.status_code == 200
     assert payload["semantic_contradictions"] == [{"found": True, "description": "test"}]
     assert payload["semantic_graph_summary"] == {"total_nodes": 2, "contradictions": 1}
+    assert payload["dispatch_trace"]["state"] == "B"

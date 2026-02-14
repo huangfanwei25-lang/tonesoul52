@@ -5,6 +5,7 @@ Unified Core - Integrating PersonaDimension + SemanticController
 這是語魂 5.3 的核心整合層
 """
 
+import warnings
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
@@ -128,6 +129,29 @@ class CorrectionMemory:
 
 
 class UnifiedCore:
+    RUNTIME_STATUS = "legacy_non_runtime"
+    RUNTIME_REPLACEMENT = "tonesoul.unified_pipeline.UnifiedPipeline"
+    _boundary_warning_emitted = False
+
+    @classmethod
+    def runtime_boundary(cls) -> Dict[str, str]:
+        return {
+            "status": cls.RUNTIME_STATUS,
+            "replacement": cls.RUNTIME_REPLACEMENT,
+            "note": "UnifiedCore remains for compatibility/testing; chat runtime is UnifiedPipeline.",
+        }
+
+    @classmethod
+    def _warn_runtime_boundary(cls) -> None:
+        if cls._boundary_warning_emitted:
+            return
+        warnings.warn(
+            "UnifiedCore is in maintenance mode; use tonesoul.unified_pipeline.UnifiedPipeline "
+            "for production chat runtime.",
+            category=DeprecationWarning,
+            stacklevel=3,
+        )
+        cls._boundary_warning_emitted = True
     """
     語魂統一核心
 
@@ -139,6 +163,7 @@ class UnifiedCore:
         persona_path: Optional[Path] = None,
         persona_payload: Optional[Dict] = None,
     ):
+        self._warn_runtime_boundary()
         self.persona = self._resolve_persona(persona_path, persona_payload)
 
         # 初始化元件

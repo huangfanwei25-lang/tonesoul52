@@ -424,7 +424,14 @@ class PerspectiveFactory:
         # Get the rules-based fallback
         rules_class = cls._default_perspectives.get(normalized_name)
         if not rules_class:
-            raise ValueError(f"Unknown perspective: {name}")
+            # Unknown name — treat as custom LLM perspective
+            system_prompt = kwargs.pop("system_prompt", None)
+            return LLMPerspective(
+                name=normalized_name,
+                model=model or DEFAULT_LLM_MODEL,
+                system_prompt=system_prompt,
+                fallback=None,
+            )
 
         rules_perspective = rules_class()
         fallback_to_rules = kwargs.pop("fallback_to_rules", True)
@@ -458,6 +465,74 @@ class PerspectiveFactory:
             )
 
         raise ValueError(f"Unsupported mode: {mode}")
+
+    @classmethod
+    def create_from_custom_role(
+        cls,
+        role: Dict[str, Any],
+        model: Optional[str] = None,
+    ) -> IPerspective:
+        """Create an LLMPerspective from a user-defined custom role.
+
+        Args:
+            role: Dict with keys:
+                - name (str): Role name, e.g. "財務長"
+                - description (str, optional): Role description
+                - prompt_hint (str, optional): Behaviour guidance
+            model: LLM model override
+
+        Returns:
+            LLMPerspective configured with the custom role's system prompt.
+        """
+        name = str(role.get("name", "custom")).strip() or "custom"
+        description = str(role.get("description", "")).strip()
+        prompt_hint = str(role.get("prompt_hint", "")).strip()
+
+        parts = [f"你是「{name}」。"]
+        if description:
+            parts.append(description)
+        if prompt_hint:
+            parts.append(f"評估指引：{prompt_hint}")
+        parts.append(
+            "請以此角色的專業立場評估以下內容。\n"
+            "你必須回覆 JSON 格式：\n"
+            '{"decision": "APPROVE", "confidence": 0.8, "reasoning": "簡要說明"}\n'
+            "decision 必須是：APPROVE（認同）、CONCERN（有疑慮）、OBJECT（反對）。"
+        )
+
+        system_prompt = "\n".join(parts)
+        return LLMPerspective(
+            name=_normalize_name(name),
+            model=model or DEFAULT_LLM_MODEL,
+            system_prompt=system_prompt,
+            fallback=None,
+        )
+
+    @classmethod
+    def create_custom_council(
+        cls,
+        custom_roles: List[Dict[str, Any]],
+        model: Optional[str] = None,
+    ) -> List[IPerspective]:
+        """Create a council from user-defined custom roles.
+
+        Args:
+            custom_roles: List of role dicts (see create_from_custom_role).
+            model: Default LLM model for all roles.
+
+        Returns:
+            List of IPerspective instances (one per role).
+        """
+        if not custom_roles:
+            return cls.create_council()
+        perspectives: List[IPerspective] = []
+        for role in custom_roles:
+            if not isinstance(role, dict):
+                continue
+            perspectives.append(cls.create_from_custom_role(role, model=model))
+        if not perspectives:
+            return cls.create_council()
+        return perspectives
 
     @classmethod
     def create_council(
@@ -502,3 +577,11 @@ if __name__ == "__main__":
         }
     )
     print(f"Hybrid council: {[type(p).__name__ for p in council_hybrid]}")
+
+    # Custom role council (Team Simulator)
+    custom = PerspectiveFactory.create_custom_council([
+        {"name": "財務長", "description": "保守型，重視 ROI"},
+        {"name": "工程主管", "description": "務實型，重視可行性"},
+        {"name": "CEO", "description": "策略型，重視長期價值"},
+    ])
+    print(f"Custom council: {[p.name for p in custom]}")

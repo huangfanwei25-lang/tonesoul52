@@ -28,7 +28,25 @@
 - [x] Phase 97: Persona attachment file excerpt loader (allowlist + traversal guard + prompt budget)
 - [x] Phase 98: Persona payload schema validation (web route + backend API fail-closed)
 - [x] Phase 99: Custom-role council contract coverage (factory + fallback semantics)
-**Latest validation**: `pytest -q` => `841 passed` (2026-02-14). Level 3 implementation tracked in `CODEX_TASK.md` v7.
+- [x] Phase 100: Architecture convergence v2 (Trinket protocol + swarm dispatcher + YSS alignment)
+**Latest validation**: `pytest -q` => `849 passed` (2026-02-14). Level 3 implementation tracked in `CODEX_TASK.md` v7.
+
+## Backlog Radar (Original Specs/Docs, 2026-02-14)
+- [ ] Sync and close pending Chat UI checklist in `spec/chat_ui_improvement_spec.md` (4 unchecked items)
+- [ ] Execute/verify backend persistence acceptance list in `docs/plans/backend_persistence_acceptance_checklist.md` (16 unchecked items)
+- [ ] Reconcile stale roadmap checkboxes in `docs/ARCHITECTURE_DEPLOYED.md` against implemented Phase 77-99 features
+- [ ] Prioritize semantic-control derivation backlog in `spec/tonesoul_improvement_derivation.md` and `spec/wfgy_semantic_control_spec.md`
+- [ ] Stage release/readiness checklists from `docs/RELEASE_v0.1.0_PLAN.md` and `docs/SMALL_BOAT_MVP.md`
+
+## Phase 100: Architecture Convergence v2 (Trinket + Swarm)
+- [x] Consolidated legacy RFC/draft into verified plan: `docs/ARCHITECTURE_CONVERGENCE_PLAN.md`
+- [x] Added current-state correction (`UnifiedCore` is non-prod but still referenced; not immediate delete)
+- [x] Added 841-test landscape + multi-persona audit baseline in convergence doc
+- [x] Spec-first: define `TRINKET_PROTOCOL_SPEC` (Layer Decoupling / Is-Ought / Currency Audit / Responsibility Trace)
+- [x] Runtime: add dispatcher state machine (`Resonance/Tension/Conflict`) with auditable metadata in `UnifiedPipeline`
+- [x] Evolution alignment: bridge `yss_pipeline` context schema to unified runtime contract and populate non-null A/B/C evaluation artifacts
+- [x] Zombie boundary: mark `UnifiedCore` as `legacy_non_runtime` with explicit replacement target
+**Success Criteria**: v2 convergence plan is executable, testable, and reflected in blocking governance checks.
 
 ## Phase 77: Level 3 Experimental
 - [x] 3a Semantic Trigger
@@ -239,6 +257,15 @@
 - [x] Added dedicated custom-role council contract tests for custom perspective creation and fallback semantics
 - [x] Validation: `python -m pytest tests/test_custom_role_council.py -q` => `19 passed`
 - [x] Validation: `python -m pytest -q` => `841 passed`
+- [x] Phase 100 kickoff complete
+- [x] Published verified convergence plan: `docs/ARCHITECTURE_CONVERGENCE_PLAN.md` (replaces legacy RFC-002 assumptions)
+- [x] Convergence plan now includes runtime/evolution boundary corrections + test landscape + actionable roadmap
+- [x] Phase 100 complete
+- [x] Added `docs/governance/TRINKET_PROTOCOL_SPEC.md` (A/B/C dispatch + layer/trace contract)
+- [x] `UnifiedPipeline` now emits auditable `dispatch_trace` into trajectory/verdict/API payload
+- [x] Added YSS unified adapter (`build_unified_seed`, `run_pipeline_from_unified_request`) and `multi_persona_eval.json` artifact generation
+- [x] Added `UnifiedCore.runtime_boundary()` and maintenance-mode deprecation warning (zombie-code boundaryization)
+- [x] Validation: `python -m pytest -q` => `849 passed`
 ## Phase 79-81: Legacy Duplicates (Closed)
 - [x] Legacy duplicate tracking blocks for Phase A/B/C removed from active queue.
 - [x] Canonical status is tracked in Program Board + Execution Log above.
