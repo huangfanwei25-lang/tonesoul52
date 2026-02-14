@@ -27,8 +27,8 @@ ToneSoul 目前不是單一「聊天模型包裝器」，而是三層結構：
 
 - Program Board：Level 1 / 2 / 3、Phase A/B/C、Phase 82-100 均已完成。
 - 最新測試：`849 passed`。
-- Backlog Radar 目前僅剩 1 個阻塞：
-  - Backend persistence 外部驗收，受 `https://tonesoul52.onrender.com/api/health` timeout/HTTP 502 影響。
+- Backlog Radar 主要項目已收斂，原先 backend persistence 阻塞已在 2026-02-14 重跑驗收解除：
+  - `python scripts/verify_backend_persistence.py --base https://tonesoul52.onrender.com --timeout 40` => pass。
 - 其他 backlog（Chat UI、roadmap 勾選、semantic-control 優先序、release staging）已收斂。
 
 ---
@@ -139,13 +139,9 @@ ToneSoul 目前不是單一「聊天模型包裝器」，而是三層結構：
 
 ## 9. 當前待辦（真正未完成）
 
-1. Backend persistence 外部驗收（受遠端 502 阻塞）
-   - 文件：`docs/plans/backend_persistence_acceptance_checklist.md`
-   - 重跑：
-     - `python scripts/verify_backend_persistence.py --base https://tonesoul52.onrender.com`
-     - `python scripts/verify_backend_persistence.py --base https://tonesoul52.onrender.com --timeout 40`
-2. Release v0.1.0 staging 清單尚未全勾
+1. Release v0.1.0 打版
    - 文件：`docs/plans/release_readiness_staging.md`
+   - 狀態：Stage 3 僅剩 `Git tag v0.1.0` 尚未執行
 
 ---
 

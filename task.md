@@ -33,7 +33,7 @@
 
 ## Backlog Radar (Original Specs/Docs, 2026-02-14)
 - [x] Sync and close pending Chat UI checklist in `spec/chat_ui_improvement_spec.md` (4/4 completed on 2026-02-14)
-- [ ] Execute/verify backend persistence acceptance list in `docs/plans/backend_persistence_acceptance_checklist.md` (blocked 2026-02-14: Render `GET /api/health` timeout/HTTP 502)
+- [x] Execute/verify backend persistence acceptance list in `docs/plans/backend_persistence_acceptance_checklist.md` (passed 2026-02-14: `python scripts/verify_backend_persistence.py --base https://tonesoul52.onrender.com --timeout 40`)
 - [x] Reconcile stale roadmap checkboxes in `docs/ARCHITECTURE_DEPLOYED.md` against implemented Phase 77-99 features
 - [x] Prioritize semantic-control derivation backlog in `spec/tonesoul_improvement_derivation.md` and `spec/wfgy_semantic_control_spec.md`
 - [x] Stage release/readiness checklists from `docs/RELEASE_v0.1.0_PLAN.md` and `docs/SMALL_BOAT_MVP.md` (`docs/plans/release_readiness_staging.md`)
@@ -41,6 +41,8 @@
 - [x] Generate vulnerability assessment artifact (`reports/security_vulnerability_assessment_latest.md`) on 2026-02-14
 - [x] Sync README + deploy walkthrough docs (`README.md`, `docs/VERCEL_DEPLOY.md`) on 2026-02-14
 - [x] Verify Stage 2 local Ollama baseline (`ollama list`, `LLM_BACKEND=ollama` smoke, `pytest tests/ -x -q`) on 2026-02-14
+- [x] Prepare Stage 3 release artifacts (`docs/RELEASE_NOTES_v0.1.0.md`, `reports/coverage_latest.*`, `reports/test_coverage_latest.md`) on 2026-02-14
+- [ ] Final release action: create Git tag `v0.1.0` after final push confirmation
 
 ## Phase 100: Architecture Convergence v2 (Trinket + Swarm)
 - [x] Consolidated legacy RFC/draft into verified plan: `docs/ARCHITECTURE_CONVERGENCE_PLAN.md`

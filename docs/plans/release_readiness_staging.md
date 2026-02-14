@@ -47,13 +47,21 @@ Stage 2 最新驗證（2026-02-14）：
 ## Stage 3: 發布產物
 
 - [ ] Git tag `v0.1.0`
-- [ ] GitHub Release notes
-- [ ] 測試與覆蓋率 artifact
-- [ ] 安全報告 artifact
+- [x] GitHub Release notes
+- [x] 測試與覆蓋率 artifact
+- [x] 安全報告 artifact
+
+Stage 3 最新進度（2026-02-14）：
+- Release notes 草稿：`docs/RELEASE_NOTES_v0.1.0.md`
+- 測試與覆蓋率：`reports/coverage_latest.json`、`reports/coverage_latest.xml`、`reports/test_coverage_latest.md`
+- 安全報告：`reports/security_vulnerability_assessment_latest.md`
+- 尚未執行：Git tag `v0.1.0`（待最終發佈確認）
 
 ## 當前阻塞與重跑指令
 
-- Backend persistence 外部驗收目前阻塞：`https://tonesoul52.onrender.com/api/health` 在 2026-02-14 驗證時回應 HTTP 502/timeout。
-- 重跑指令：
+- Backend persistence 外部驗收已恢復（2026-02-14）：
+  - `python scripts/verify_backend_persistence.py --base https://tonesoul52.onrender.com --timeout 40` => pass
+  - `/api/health` 回傳 `status=ok` 且 `persistence.enabled=true`
+- 若後續出現間歇性 502/timeout，重跑指令：
   - `python scripts/verify_backend_persistence.py --base https://tonesoul52.onrender.com`
   - `python scripts/verify_backend_persistence.py --base https://tonesoul52.onrender.com --timeout 40`

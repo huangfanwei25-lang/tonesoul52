@@ -1,21 +1,21 @@
 # Backend Persistence 驗收清單
 
-最後更新：2026-02-12
+最後更新：2026-02-14
 
 ## 近期執行紀錄（2026-02-14）
 
-- 已嘗試執行：
+- 已執行：
   - `python scripts/verify_backend_persistence.py --base https://tonesoul52.onrender.com`
   - `python scripts/verify_backend_persistence.py --base https://tonesoul52.onrender.com --timeout 40`
-- 結果：`GET /api/health` 出現 timeout 與 HTTP 502，暫時無法完成遠端驗收勾選。
-- 待服務恢復後，請依本清單重跑第 1 節與第 2 節。
+- 結果：驗收腳本完整通過（exit code 0），`/api/health`、`/api/conversation`、`/api/chat`、`/api/conversations/<id>`、`/api/audit-logs`、`/api/status`、`/api/memories` 全部成功回應。
+- 備註：本次驗收確認 `persistence.enabled=true` 且 provider=`supabase`，阻塞解除。
 
 ## 0. 前置條件
 
-- [ ] Supabase SQL 已執行：`docs/plans/supabase_migration.sql`
-- [ ] Render 已設定 `SUPABASE_URL`
-- [ ] Render 已設定 `SUPABASE_KEY`（service role）
-- [ ] 後端已重啟
+- [x] Supabase SQL 已執行：`docs/plans/supabase_migration.sql`（由寫入與讀取驗收結果反證）
+- [x] Render 已設定 `SUPABASE_URL`（`/api/health` 回傳 `persistence.configured=true`）
+- [x] Render 已設定 `SUPABASE_KEY`（service role）（`/api/health` 回傳 `persistence.enabled=true`）
+- [x] 後端已重啟（本次遠端驗收可正常建立與讀取資料）
 
 ## 1. 一鍵驗收（建議）
 
@@ -43,13 +43,13 @@ python scripts/verify_backend_persistence.py \
 
 通過標準：
 
-- [ ] `GET /api/health` 回傳 `persistence.enabled=true`
-- [ ] `POST /api/conversation` 可建立 `conversation_id`
-- [ ] `POST /api/chat` 成功並有 `response`
-- [ ] `GET /api/conversations/<id>` 可讀到 `user` + `assistant` 訊息
-- [ ] `GET /api/audit-logs` 成功回傳
-- [ ] `GET /api/status` 回傳計數欄位
-- [ ] `GET /api/memories` 成功回傳
+- [x] `GET /api/health` 回傳 `persistence.enabled=true`
+- [x] `POST /api/conversation` 可建立 `conversation_id`
+- [x] `POST /api/chat` 成功並有 `response`
+- [x] `GET /api/conversations/<id>` 可讀到 `user` + `assistant` 訊息
+- [x] `GET /api/audit-logs` 成功回傳
+- [x] `GET /api/status` 回傳計數欄位
+- [x] `GET /api/memories` 成功回傳
 
 ## 2. 手動驗收（必要時）
 
@@ -61,8 +61,8 @@ curl https://tonesoul52.onrender.com/api/health
 
 預期：
 
-- [ ] `status = ok`
-- [ ] `persistence.enabled = true`
+- [x] `status = ok`
+- [x] `persistence.enabled = true`
 
 ### 2.2 建立對話
 
@@ -94,6 +94,6 @@ curl https://tonesoul52.onrender.com/api/memories
 
 預期：
 
-- [ ] `/api/conversations/<conversation_id>` 含 `messages`
-- [ ] `/api/audit-logs` 有最新記錄或 `total` 可讀
-- [ ] `/api/status` 內含 `memory_count`、`conversation_count`、`audit_log_count`
+- [x] `/api/conversations/<conversation_id>` 含 `messages`
+- [x] `/api/audit-logs` 有最新記錄或 `total` 可讀
+- [x] `/api/status` 內含 `memory_count`、`conversation_count`、`audit_log_count`

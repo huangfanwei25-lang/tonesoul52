@@ -8,8 +8,6 @@ When those modules are unavailable, the script exits with SKIP by default.
 from __future__ import annotations
 
 import argparse
-import os
-import sys
 from pathlib import Path
 from typing import Any
 
@@ -40,10 +38,7 @@ def main() -> int:
 
     spine_cls, error = _resolve_spine_controller()
     if spine_cls is None:
-        message = (
-            "[SKIP] legacy runtime unavailable: body.spine.controller "
-            f"(reason: {error})"
-        )
+        message = f"[SKIP] legacy runtime unavailable: body.spine.controller (reason: {error})"
         if args.strict_missing_runtime:
             print(message.replace("[SKIP]", "[FAIL]"))
             return 1

@@ -32,10 +32,7 @@ def main() -> int:
 
     sandbox_cls, error = _resolve_sandbox()
     if sandbox_cls is None:
-        message = (
-            "[SKIP] legacy runtime unavailable: body.surgeon.sandbox "
-            f"(reason: {error})"
-        )
+        message = f"[SKIP] legacy runtime unavailable: body.surgeon.sandbox (reason: {error})"
         if args.strict_missing_runtime:
             print(message.replace("[SKIP]", "[FAIL]"))
             return 1

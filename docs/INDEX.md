@@ -156,6 +156,7 @@
 | 文件 | 說明 |
 |------|------|
 | [RELEASE_v0.1.0_PLAN.md](RELEASE_v0.1.0_PLAN.md) | 發布計畫 v0.1.0 |
+| [RELEASE_NOTES_v0.1.0.md](RELEASE_NOTES_v0.1.0.md) | 發布說明草稿 v0.1.0 |
 | [GOLDEN_LOG.md](GOLDEN_LOG.md) | 黃金日誌 |
 | [ADR-001-dual-track-resolution.md](ADR-001-dual-track-resolution.md) | ADR: 雙軌解析 |
 | [failure_analysis.md](failure_analysis.md) | 失敗分析 |
