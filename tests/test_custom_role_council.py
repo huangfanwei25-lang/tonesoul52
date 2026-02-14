@@ -7,13 +7,10 @@ with correct system prompts.
 
 from __future__ import annotations
 
-import pytest
-
 from tonesoul.council.perspective_factory import (
     LLMPerspective,
     PerspectiveFactory,
 )
-
 
 # ── create_from_custom_role ──────────────────────────────────
 
@@ -62,9 +59,7 @@ class TestCreateFromCustomRole:
 
     def test_model_override(self):
         role = {"name": "分析師"}
-        perspective = PerspectiveFactory.create_from_custom_role(
-            role, model="qwen2.5:7b"
-        )
+        perspective = PerspectiveFactory.create_from_custom_role(role, model="qwen2.5:7b")
         assert perspective.model == "qwen2.5:7b"
 
     def test_fallback_is_none(self):
@@ -119,9 +114,7 @@ class TestCreateCustomCouncil:
             {"name": "A"},
             {"name": "B"},
         ]
-        perspectives = PerspectiveFactory.create_custom_council(
-            roles, model="custom-model"
-        )
+        perspectives = PerspectiveFactory.create_custom_council(roles, model="custom-model")
         for p in perspectives:
             assert p.model == "custom-model"
 

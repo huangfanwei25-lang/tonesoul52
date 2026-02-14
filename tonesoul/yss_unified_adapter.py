@@ -222,6 +222,7 @@ def build_multi_persona_eval_snapshot(
 def write_multi_persona_eval_snapshot(path: str | Path, payload: Dict[str, Any]) -> str:
     output_path = Path(path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    output_path.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     return str(output_path)
-

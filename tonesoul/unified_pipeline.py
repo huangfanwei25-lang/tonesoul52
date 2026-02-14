@@ -33,6 +33,7 @@ def _read_positive_int_env(name: str, default: int) -> int:
 @dataclass
 class UnifiedResponse:
     """Unified pipeline response payload."""
+
     response: str
     council_verdict: Dict[str, Any]
     tonebridge_analysis: Dict[str, Any]
@@ -486,9 +487,7 @@ class UnifiedPipeline:
             if chain and chain.frame_count > 0:
                 visual_context = chain.render_recent_as_markdown(n=3)
                 if visual_context and len(visual_context) > 50:
-                    return (
-                        f"[脈絡記憶 — 最近視覺快照]\n{visual_context}\n\n---\n\n{user_message}"
-                    )
+                    return f"[脈絡記憶 — 最近視覺快照]\n{visual_context}\n\n---\n\n{user_message}"
         except Exception:
             pass
         return user_message
@@ -511,7 +510,9 @@ class UnifiedPipeline:
             description = self._extract_contradiction_description(contradiction)
             if description:
                 hints.append(description[:60])
-        contradiction_hints = "; ".join(hints) or "Please review recent commitments for consistency."
+        contradiction_hints = (
+            "; ".join(hints) or "Please review recent commitments for consistency."
+        )
         return (
             f"[內在一致性提醒: 偵測到 {len(pre_contradictions)} 個潛在矛盾；"
             f"{contradiction_hints}]\n\n{user_message}"
@@ -1091,9 +1092,7 @@ Respond with a clear, practical answer."""
                             PerspectiveFactory,
                         )
 
-                        custom_perspectives = (
-                            PerspectiveFactory.create_custom_council(custom_roles)
-                        )
+                        custom_perspectives = PerspectiveFactory.create_custom_council(custom_roles)
 
                 request = CouncilRequest(
                     draft_output=response,
@@ -1364,8 +1363,3 @@ Respond with a clear, practical answer."""
 def create_unified_pipeline() -> UnifiedPipeline:
     """Factory function to create a unified pipeline."""
     return UnifiedPipeline()
-
-
-
-
-

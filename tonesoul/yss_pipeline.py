@@ -51,16 +51,16 @@ from .yss_gates import (
     tech_trace_gate,
     update_execution_report,
 )
-from .ystm.demo import DEFAULT_SEGMENTS, DemoConfig, write_demo_outputs
-from .ystm.energy import EnergyConfig
-from .ystm.ingest import load_segments, normalize_segments
-from .ystm.representation import EmbeddingConfig
-from .ystm.terrain import TerrainConfig
 from .yss_unified_adapter import (
     build_multi_persona_eval_snapshot,
     build_unified_seed,
     write_multi_persona_eval_snapshot,
 )
+from .ystm.demo import DEFAULT_SEGMENTS, DemoConfig, write_demo_outputs
+from .ystm.energy import EnergyConfig
+from .ystm.ingest import load_segments, normalize_segments
+from .ystm.representation import EmbeddingConfig
+from .ystm.terrain import TerrainConfig
 
 
 @dataclass
@@ -755,7 +755,9 @@ def _run_gates(ctx: PipelineContext) -> GateArtifacts:
     )
 
 
-def _extract_dispatch_trace_from_context(context_payload: Dict[str, object]) -> Optional[Dict[str, object]]:
+def _extract_dispatch_trace_from_context(
+    context_payload: Dict[str, object],
+) -> Optional[Dict[str, object]]:
     inputs = context_payload.get("inputs") if isinstance(context_payload, dict) else None
     if not isinstance(inputs, dict):
         return None

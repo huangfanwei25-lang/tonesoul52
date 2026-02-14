@@ -37,6 +37,10 @@
 - [x] Reconcile stale roadmap checkboxes in `docs/ARCHITECTURE_DEPLOYED.md` against implemented Phase 77-99 features
 - [x] Prioritize semantic-control derivation backlog in `spec/tonesoul_improvement_derivation.md` and `spec/wfgy_semantic_control_spec.md`
 - [x] Stage release/readiness checklists from `docs/RELEASE_v0.1.0_PLAN.md` and `docs/SMALL_BOAT_MVP.md` (`docs/plans/release_readiness_staging.md`)
+- [x] Execute Release Stage 0 baseline gates (`pytest -v`, `black --check`, `ruff check`, `pytest tests/red_team -q`) on 2026-02-14
+- [x] Generate vulnerability assessment artifact (`reports/security_vulnerability_assessment_latest.md`) on 2026-02-14
+- [x] Sync README + deploy walkthrough docs (`README.md`, `docs/VERCEL_DEPLOY.md`) on 2026-02-14
+- [x] Verify Stage 2 local Ollama baseline (`ollama list`, `LLM_BACKEND=ollama` smoke, `pytest tests/ -x -q`) on 2026-02-14
 
 ## Phase 100: Architecture Convergence v2 (Trinket + Swarm)
 - [x] Consolidated legacy RFC/draft into verified plan: `docs/ARCHITECTURE_CONVERGENCE_PLAN.md`

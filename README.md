@@ -12,7 +12,7 @@
 
 *An AI Governance Framework that puts Accountability before Intelligence.*
 
-[Quick Start](#-quick-start) · [Philosophy](#-philosophy) · [Architecture](#-architecture) · [7D Audit](#%EF%B8%8F-7d-audit-framework) · [Contributing](#-contributing)
+[Quick Start](#-quick-start) · [System Walkthrough](docs/system_walkthrough.md) · [Philosophy](#-philosophy) · [Architecture](#-architecture) · [7D Audit](#%EF%B8%8F-7d-audit-framework) · [Contributing](#-contributing)
 
 </div>
 
@@ -200,7 +200,7 @@ graph TB
 
 | Dimension | Question | Status | Evidence |
 |-----------|----------|--------|----------|
-| **TDD** | Does it work correctly? | ✅ **739+ tests** | `pytest tests/` |
+| **TDD** | Does it work correctly? | ✅ **849 tests** | `pytest tests/` |
 | **RDD** | Can it be attacked? | ✅ **20+ red-team cases** | `tests/red_team/` |
 | **DDD** | Is the data clean? | ✅ **Memory hygiene gate** | `scripts/verify_memory_hygiene.py` |
 | **XDD** | Is reasoning transparent? | ✅ **Council deliberation** | `tonesoul/council/` |
@@ -276,6 +276,7 @@ pytest tests/
 
 ### Getting Started
 - [`docs/DEMO_SHOWCASE.md`](docs/DEMO_SHOWCASE.md) — Recording and demo walkthrough
+- [`docs/system_walkthrough.md`](docs/system_walkthrough.md) — Current architecture walkthrough
 - [`docs/VERCEL_DEPLOY.md`](docs/VERCEL_DEPLOY.md) — Cloud deployment guide
 
 ---
@@ -311,7 +312,7 @@ We welcome contributions from anyone who believes AI should be **honest, not jus
 
 | Metric | Value |
 |--------|-------|
-| **Total Tests** | 739+ |
+| **Total Tests** | 849 |
 | **Red Team Cases** | 20+ |
 | **7D Audit Score** | 86/100 |
 | **License** | Apache 2.0 |

@@ -579,9 +579,11 @@ if __name__ == "__main__":
     print(f"Hybrid council: {[type(p).__name__ for p in council_hybrid]}")
 
     # Custom role council (Team Simulator)
-    custom = PerspectiveFactory.create_custom_council([
-        {"name": "財務長", "description": "保守型，重視 ROI"},
-        {"name": "工程主管", "description": "務實型，重視可行性"},
-        {"name": "CEO", "description": "策略型，重視長期價值"},
-    ])
+    custom = PerspectiveFactory.create_custom_council(
+        [
+            {"name": "財務長", "description": "保守型，重視 ROI"},
+            {"name": "工程主管", "description": "務實型，重視可行性"},
+            {"name": "CEO", "description": "策略型，重視長期價值"},
+        ]
+    )
     print(f"Custom council: {[p.name for p in custom]}")

@@ -1,6 +1,6 @@
 ﻿# Vercel Deploy Guide (Navigator / apps/web)
 
-Last updated: 2026-02-09
+Last updated: 2026-02-14
 
 ## Scope
 
@@ -128,3 +128,22 @@ If you see fallback behavior in production:
 - `RDD` threshold: case-count first (`>=10`) (approved).
 - `DDD` freshness SLA: 7 days (approved).
 - `Systemic betrayal` operations require explicit user confirmation (approved).
+
+---
+
+## 8. Walkthrough Alignment (2026-02-14)
+
+To keep deployment docs aligned with current runtime/governance:
+
+- System walkthrough: `docs/system_walkthrough.md`
+- Release staging checklist: `docs/plans/release_readiness_staging.md`
+- Task board: `task.md`
+
+Recommended minimum release gate before deployment:
+
+```powershell
+python -m pytest -v --tb=short --maxfail=5
+python -m black --check --line-length 100 tonesoul tests
+python -m ruff check tonesoul tests
+python -m pytest tests/red_team -q
+```

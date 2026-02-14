@@ -152,6 +152,7 @@ class UnifiedCore:
             stacklevel=3,
         )
         cls._boundary_warning_emitted = True
+
     """
     語魂統一核心
 
