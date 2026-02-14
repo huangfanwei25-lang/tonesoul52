@@ -1,0 +1,46 @@
+name: External Source Registry
+
+on:
+  schedule:
+    - cron: "20 2 * * 3" # weekly on Wednesday UTC
+  workflow_dispatch:
+  push:
+    branches: [master, main, dev]
+  pull_request:
+    branches: [master, main, dev]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Run external source registry check (blocking)
+        run: |
+          python scripts/run_external_source_registry_check.py --strict
+
+      - name: Upload external source artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: external-source-registry-${{ github.run_id }}
+          path: |
+            docs/status/external_source_registry_latest.json
+            docs/status/external_source_registry_latest.md
+          if-no-files-found: error
+          retention-days: 30

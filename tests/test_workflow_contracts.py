@@ -10,6 +10,7 @@ DISPATCH_SCRIPT_PATH = Path("scripts/run_repo_healthcheck_dispatch.py")
 SEMANTIC_HEALTH_WORKFLOW_PATH = Path(".github/workflows/semantic_health.yml")
 PERSONA_SWARM_WORKFLOW_PATH = Path(".github/workflows/persona_swarm.yml")
 PERSONA_SWARM_DISPATCH_SCRIPT_PATH = Path("scripts/run_persona_swarm_dispatch.py")
+EXTERNAL_SOURCE_WORKFLOW_PATH = Path(".github/workflows/external_source_registry.yml")
 
 
 def _load_yaml(path: Path) -> dict[str, Any]:
@@ -211,3 +212,30 @@ def test_persona_swarm_dispatch_validation_guards_present() -> None:
     assert "::error::input_path does not exist" in script_text
     assert "TS_SWARM_STRICT" in script_text
     assert "TS_SWARM_INPUT_PATH" in script_text
+
+
+def test_external_source_workflow_triggers_and_blocking_runner() -> None:
+    payload = _load_yaml(EXTERNAL_SOURCE_WORKFLOW_PATH)
+    on_section = _on_section(payload)
+    assert "schedule" in on_section
+    assert "push" in on_section
+    assert "pull_request" in on_section
+    assert "workflow_dispatch" in on_section
+
+    steps = _job_steps(payload, "verify")
+    run_step = _find_step(steps, "Run external source registry check (blocking)")
+    run_cmd = run_step.get("run", "")
+    assert isinstance(run_cmd, str)
+    assert "python scripts/run_external_source_registry_check.py --strict" in run_cmd
+
+
+def test_external_source_workflow_uploads_status_artifacts() -> None:
+    payload = _load_yaml(EXTERNAL_SOURCE_WORKFLOW_PATH)
+    steps = _job_steps(payload, "verify")
+    artifact_step = _find_step(steps, "Upload external source artifacts")
+    artifact_with = artifact_step.get("with", {})
+    assert isinstance(artifact_with, dict)
+    path_value = artifact_with.get("path", "")
+    assert isinstance(path_value, str)
+    assert "docs/status/external_source_registry_latest.json" in path_value
+    assert "docs/status/external_source_registry_latest.md" in path_value

@@ -23,7 +23,8 @@
 - [x] Phase 92: Guardian adversarial bypass closure (homophone/metaphor/code-switch)
 - [x] Phase 93: Commit attribution docs-only exemption
 - [x] Phase 94: External source trust policy + allowlist gate
-**Latest validation**: `pytest -q` => `814 passed` (2026-02-14). Level 3 implementation tracked in `CODEX_TASK.md` v7.
+- [x] Phase 95: External source registry CI workflow + status artifact automation
+**Latest validation**: `pytest -q` => `819 passed` (2026-02-14). Level 3 implementation tracked in `CODEX_TASK.md` v7.
 
 ## Phase 77: Level 3 Experimental
 - [x] 3a Semantic Trigger
@@ -116,6 +117,14 @@
 - [x] Added tests for source registry verifier and wired strict check into `run_repo_healthcheck.py`
 **Result**: External source usage now follows a default-deny posture with enforceable CI gate.
 
+## Phase 95: External Source Registry CI + Status Artifact
+- [x] Added `scripts/run_external_source_registry_check.py` to publish JSON + Markdown status artifacts
+- [x] Added `.github/workflows/external_source_registry.yml` (push/pr + dispatch + schedule)
+- [x] Added workflow contracts in `tests/test_workflow_contracts.py`
+- [x] Added script coverage in `tests/test_run_external_source_registry_check.py`
+- [x] Updated `docs/status/README.md` with new artifact and workflow references
+**Result**: External source trust checks now run as a standalone CI lane with auditable artifacts.
+
 ## Execution Log (2026-02-14)
 - [x] Phase A complete
 - [x] Production read auth fail-closed
@@ -178,6 +187,9 @@
 - [x] Phase 94 complete
 - [x] External source registry strict gate integrated into repo healthcheck runner
 - [x] Validation: `python -m pytest tests -q` => `814 passed`
+- [x] Phase 95 complete
+- [x] External source registry standalone workflow + status artifact lane added
+- [x] Validation: `python -m pytest tests -q` => `819 passed`
 ## Phase 79-81: Legacy Duplicates (Closed)
 - [x] Legacy duplicate tracking blocks for Phase A/B/C removed from active queue.
 - [x] Canonical status is tracked in Program Board + Execution Log above.

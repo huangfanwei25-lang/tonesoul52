@@ -1,0 +1,199 @@
+{
+  "generated_at": "2026-02-14T06:55:50Z",
+  "ok": true,
+  "failed_count": 0,
+  "warning_count": 0,
+  "checks": [
+    {
+      "name": "policy.allowed_hosts",
+      "status": "pass",
+      "detail": "allowlist loaded (21 hosts)"
+    },
+    {
+      "name": "policy.review_cycle_days",
+      "status": "pass",
+      "detail": "review cycle set to 120 days"
+    },
+    {
+      "name": "registries",
+      "status": "pass",
+      "detail": "11 registry entries found"
+    },
+    {
+      "name": "registry:osv:url[0]",
+      "status": "pass",
+      "detail": "URL accepted"
+    },
+    {
+      "name": "registry:osv:url[1]",
+      "status": "pass",
+      "detail": "URL accepted"
+    },
+    {
+      "name": "registry:osv:reviewed_at",
+      "status": "pass",
+      "detail": "review age ok: 0 days"
+    },
+    {
+      "name": "registry:scorecard:url[0]",
+      "status": "pass",
+      "detail": "URL accepted"
+    },
+    {
+      "name": "registry:scorecard:url[1]",
+      "status": "pass",
+      "detail": "URL accepted"
+    },
+    {
+      "name": "registry:scorecard:reviewed_at",
+      "status": "pass",
+      "detail": "review age ok: 0 days"
+    },
+    {
+      "name": "registry:sigstore:url[0]",
+      "status": "pass",
+      "detail": "URL accepted"
+    },
+    {
+      "name": "registry:sigstore:url[1]",
+      "status": "pass",
+      "detail": "URL accepted"
+    },
+    {
+      "name": "registry:sigstore:reviewed_at",
+      "status": "pass",
+      "detail": "review age ok: 0 days"
+    },
+    {
+      "name": "registry:tuf:url[0]",
+      "status": "pass",
+      "detail": "URL accepted"
+    },
+    {
+      "name": "registry:tuf:reviewed_at",
+      "status": "pass",
+      "detail": "review age ok: 0 days"
+    },
+    {
+      "name": "registry:nvd:url[0]",
+      "status": "pass",
+      "detail": "URL accepted"
+    },
+    {
+      "name": "registry:nvd:reviewed_at",
+      "status": "pass",
+      "detail": "review age ok: 0 days"
+    },
+    {
+      "name": "registry:huggingface_datasets:url[0]",
+      "status": "pass",
+      "detail": "URL accepted"
+    },
+    {
+      "name": "registry:huggingface_datasets:reviewed_at",
+      "status": "pass",
+      "detail": "review age ok: 0 days"
+    },
+    {
+      "name": "registry:zenodo:url[0]",
+      "status": "pass",
+      "detail": "URL accepted"
+    },
+    {
+      "name": "registry:zenodo:reviewed_at",
+      "status": "pass",
+      "detail": "review age ok: 0 days"
+    },
+    {
+      "name": "registry:openalex:url[0]",
+      "status": "pass",
+      "detail": "URL accepted"
+    },
+    {
+      "name": "registry:openalex:url[1]",
+      "status": "pass",
+      "detail": "URL accepted"
+    },
+    {
+      "name": "registry:openalex:reviewed_at",
+      "status": "pass",
+      "detail": "review age ok: 0 days"
+    },
+    {
+      "name": "registry:aclanthology:url[0]",
+      "status": "pass",
+      "detail": "URL accepted"
+    },
+    {
+      "name": "registry:aclanthology:reviewed_at",
+      "status": "pass",
+      "detail": "review age ok: 0 days"
+    },
+    {
+      "name": "registry:arxiv:url[0]",
+      "status": "pass",
+      "detail": "URL accepted"
+    },
+    {
+      "name": "registry:arxiv:reviewed_at",
+      "status": "pass",
+      "detail": "review age ok: 0 days"
+    },
+    {
+      "name": "registry:pmlr:url[0]",
+      "status": "pass",
+      "detail": "URL accepted"
+    },
+    {
+      "name": "registry:pmlr:reviewed_at",
+      "status": "pass",
+      "detail": "review age ok: 0 days"
+    },
+    {
+      "name": "open_source_apps",
+      "status": "pass",
+      "detail": "3 app entries found"
+    },
+    {
+      "name": "app:Streamlit:repo",
+      "status": "pass",
+      "detail": "URL accepted"
+    },
+    {
+      "name": "app:Streamlit:website",
+      "status": "pass",
+      "detail": "URL accepted"
+    },
+    {
+      "name": "app:Playwright:repo",
+      "status": "pass",
+      "detail": "URL accepted"
+    },
+    {
+      "name": "app:Playwright:website",
+      "status": "pass",
+      "detail": "URL accepted"
+    },
+    {
+      "name": "app:FastAPI:repo",
+      "status": "pass",
+      "detail": "URL accepted"
+    },
+    {
+      "name": "app:FastAPI:website",
+      "status": "pass",
+      "detail": "URL accepted"
+    }
+  ],
+  "policy": {
+    "review_cycle_days": 120,
+    "allowed_hosts_count": 21,
+    "blocked_hosts_count": 5
+  },
+  "source": "scripts/run_external_source_registry_check.py",
+  "inputs": {
+    "registry": "spec/external_source_registry.yaml",
+    "open_source_apps": "spec/open_source_apps.yaml",
+    "today": "2026-02-14"
+  }
+}
