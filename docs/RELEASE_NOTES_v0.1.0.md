@@ -1,7 +1,7 @@
 # ToneSoul v0.1.0 Release Notes (Draft)
 
 日期：2026-02-14
-狀態：Draft（待打 tag `v0.1.0`）
+狀態：Published（tag `v0.1.0` 已建立）
 
 ## 本版重點
 
@@ -30,5 +30,4 @@
 
 ## 已知待辦
 
-- 尚未建立 Git tag：`v0.1.0`
-
+- 無（發版主要門檻已完成）
