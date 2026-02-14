@@ -266,6 +266,7 @@ def _evaluate_dispatch_script_contract(script_path: Path) -> dict[str, bool]:
 def _evaluate_repo_healthcheck_runner_contract(script_path: Path) -> dict[str, bool]:
     result = {
         "has_persona_swarm_check": False,
+        "has_external_source_registry_check": False,
     }
 
     module = _load_python_module(
@@ -300,16 +301,19 @@ def _evaluate_repo_healthcheck_runner_contract(script_path: Path) -> dict[str, b
     for spec in specs:
         if not isinstance(spec, dict):
             continue
-        if spec.get("name") != "persona_swarm":
-            continue
         command = spec.get("command")
         if not isinstance(command, list) or not all(isinstance(token, str) for token in command):
             continue
-        result["has_persona_swarm_check"] = (
-            command[:2] == ["python", "scripts/run_persona_swarm_framework.py"]
-            and "--strict" in command
-        )
-        break
+        if spec.get("name") == "persona_swarm":
+            result["has_persona_swarm_check"] = (
+                command[:2] == ["python", "scripts/run_persona_swarm_framework.py"]
+                and "--strict" in command
+            )
+        if spec.get("name") == "external_source_registry":
+            result["has_external_source_registry_check"] = (
+                command[:2] == ["python", "scripts/verify_external_source_registry.py"]
+                and "--strict" in command
+            )
 
     return result
 
@@ -496,6 +500,7 @@ def build_report(repo_root: Path) -> dict[str, Any]:
     repo_healthcheck_script_has_single_side_warnings = False
     repo_healthcheck_runner_exists = repo_healthcheck_runner_script.exists()
     repo_healthcheck_runner_has_persona_swarm_check = False
+    repo_healthcheck_runner_has_external_source_registry_check = False
     if repo_healthcheck_exists:
         repo_healthcheck_payload = _load_yaml_mapping(repo_healthcheck_workflow)
         if repo_healthcheck_payload is not None:
@@ -591,8 +596,13 @@ def build_report(repo_root: Path) -> dict[str, Any]:
     if repo_healthcheck_runner_exists:
         runner_contract = _evaluate_repo_healthcheck_runner_contract(repo_healthcheck_runner_script)
         repo_healthcheck_runner_has_persona_swarm_check = runner_contract["has_persona_swarm_check"]
+        repo_healthcheck_runner_has_external_source_registry_check = runner_contract[
+            "has_external_source_registry_check"
+        ]
         if not repo_healthcheck_runner_has_persona_swarm_check:
             issues.append("repo healthcheck runner missing persona swarm check")
+        if not repo_healthcheck_runner_has_external_source_registry_check:
+            issues.append("repo healthcheck runner missing external source registry check")
     else:
         issues.append("missing scripts/run_repo_healthcheck.py")
 
@@ -720,6 +730,9 @@ def build_report(repo_root: Path) -> dict[str, Any]:
         "repo_healthcheck_runner": {
             "script_exists": repo_healthcheck_runner_exists,
             "has_persona_swarm_check": repo_healthcheck_runner_has_persona_swarm_check,
+            "has_external_source_registry_check": (
+                repo_healthcheck_runner_has_external_source_registry_check
+            ),
         },
         "docs_freshness": {
             "repo_structure_exists": repo_structure_exists,

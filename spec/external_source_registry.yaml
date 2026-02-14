@@ -1,0 +1,125 @@
+policy:
+  owner: "ToneSoul Guardian Council"
+  updated_at: "2026-02-14"
+  review_cycle_days: 120
+  blocked_hosts:
+    - "bit.ly"
+    - "tinyurl.com"
+    - "t.co"
+    - "goo.gl"
+    - "rebrand.ly"
+  allowed_hosts:
+    - "github.com"
+    - "streamlit.io"
+    - "playwright.dev"
+    - "fastapi.tiangolo.com"
+    - "osv.dev"
+    - "api.osv.dev"
+    - "google.github.io"
+    - "scorecard.dev"
+    - "openssf.org"
+    - "sigstore.dev"
+    - "docs.sigstore.dev"
+    - "theupdateframework.io"
+    - "nvd.nist.gov"
+    - "nist.gov"
+    - "huggingface.co"
+    - "zenodo.org"
+    - "openalex.org"
+    - "docs.openalex.org"
+    - "aclanthology.org"
+    - "arxiv.org"
+    - "proceedings.mlr.press"
+
+registries:
+  - id: "osv"
+    name: "OSV (Open Source Vulnerabilities)"
+    category: "vulnerability-intel"
+    urls:
+      - "https://osv.dev/"
+      - "https://google.github.io/osv.dev/data/"
+    reviewed_at: "2026-02-14"
+    rationale: "Open source vulnerability aggregation and schema-backed feeds."
+
+  - id: "scorecard"
+    name: "OpenSSF Scorecard"
+    category: "supply-chain-risk"
+    urls:
+      - "https://scorecard.dev/"
+      - "https://openssf.org/projects/scorecard/"
+    reviewed_at: "2026-02-14"
+    rationale: "Repository security posture scoring for dependency intake."
+
+  - id: "sigstore"
+    name: "Sigstore"
+    category: "artifact-signing"
+    urls:
+      - "https://sigstore.dev/"
+      - "https://docs.sigstore.dev/"
+    reviewed_at: "2026-02-14"
+    rationale: "Transparent signing and verification for release artifacts."
+
+  - id: "tuf"
+    name: "The Update Framework"
+    category: "supply-chain-hardening"
+    urls:
+      - "https://theupdateframework.io/"
+    reviewed_at: "2026-02-14"
+    rationale: "Compromise-resilient update metadata model."
+
+  - id: "nvd"
+    name: "NVD"
+    category: "vulnerability-intel"
+    urls:
+      - "https://nvd.nist.gov/"
+    reviewed_at: "2026-02-14"
+    rationale: "Authoritative CVE enrichment source from NIST."
+
+  - id: "huggingface_datasets"
+    name: "Hugging Face Datasets"
+    category: "open-datasets"
+    urls:
+      - "https://huggingface.co/datasets"
+    reviewed_at: "2026-02-14"
+    rationale: "Large open dataset hub with dataset cards and licensing metadata."
+
+  - id: "zenodo"
+    name: "Zenodo"
+    category: "research-archive"
+    urls:
+      - "https://zenodo.org/"
+    reviewed_at: "2026-02-14"
+    rationale: "Citable open research repository with DOI support."
+
+  - id: "openalex"
+    name: "OpenAlex"
+    category: "scholarly-graph"
+    urls:
+      - "https://openalex.org/"
+      - "https://docs.openalex.org/"
+    reviewed_at: "2026-02-14"
+    rationale: "Open scholarly metadata graph and API."
+
+  - id: "aclanthology"
+    name: "ACL Anthology"
+    category: "research-archive"
+    urls:
+      - "https://aclanthology.org/"
+    reviewed_at: "2026-02-14"
+    rationale: "Primary NLP venue archive."
+
+  - id: "arxiv"
+    name: "arXiv"
+    category: "research-preprint"
+    urls:
+      - "https://arxiv.org/"
+    reviewed_at: "2026-02-14"
+    rationale: "Primary preprint archive for rapid technical discovery."
+
+  - id: "pmlr"
+    name: "Proceedings of Machine Learning Research"
+    category: "research-archive"
+    urls:
+      - "https://proceedings.mlr.press/"
+    reviewed_at: "2026-02-14"
+    rationale: "Peer-reviewed ML conference proceedings host."

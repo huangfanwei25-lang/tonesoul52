@@ -1,6 +1,6 @@
 ﻿# Task
 
-## Program Board (2026-02-13)
+## Program Board (2026-02-14)
 - [x] Level 1
 - [x] Level 2
 - [x] Architecture Audit Phase 76 (7.2/10, 10 findings)
@@ -22,7 +22,8 @@
 - [x] Phase 91: Task ledger normalization + baseline sync
 - [x] Phase 92: Guardian adversarial bypass closure (homophone/metaphor/code-switch)
 - [x] Phase 93: Commit attribution docs-only exemption
-**Latest validation**: `pytest -q` => `807 passed` (2026-02-13). Level 3 implementation tracked in `CODEX_TASK.md` v7.
+- [x] Phase 94: External source trust policy + allowlist gate
+**Latest validation**: `pytest -q` => `814 passed` (2026-02-14). Level 3 implementation tracked in `CODEX_TASK.md` v7.
 
 ## Phase 77: Level 3 Experimental
 - [x] 3a Semantic Trigger
@@ -108,7 +109,14 @@
 - [x] Commit attribution remains blocking for non-docs commits without trailers
 **Result**: Docs-only commits no longer fail CI attribution checks, while code commits still require `Agent/Trace-Topic`.
 
-## Execution Log (2026-02-13)
+## Phase 94: External Source Trust Policy + Allowlist Gate
+- [x] Added `spec/external_source_registry.yaml` with blocked short-link hosts + curated allowlist
+- [x] Added `scripts/verify_external_source_registry.py` (`https` / host allowlist / review freshness / app URL checks)
+- [x] Added `docs/EXTERNAL_SOURCE_TRUST_POLICY.md` and indexed it in `docs/INDEX.md`
+- [x] Added tests for source registry verifier and wired strict check into `run_repo_healthcheck.py`
+**Result**: External source usage now follows a default-deny posture with enforceable CI gate.
+
+## Execution Log (2026-02-14)
 - [x] Phase A complete
 - [x] Production read auth fail-closed
 - [x] `/api/chat` and `/api/validate` throttling
@@ -167,6 +175,9 @@
 - [x] Phase 93 complete
 - [x] Commit attribution now supports docs-only exemption
 - [x] Validation: `python -m pytest tests/test_verify_commit_attribution.py -q` => `4 passed`
+- [x] Phase 94 complete
+- [x] External source registry strict gate integrated into repo healthcheck runner
+- [x] Validation: `python -m pytest tests -q` => `814 passed`
 ## Phase 79-81: Legacy Duplicates (Closed)
 - [x] Legacy duplicate tracking blocks for Phase A/B/C removed from active queue.
 - [x] Canonical status is tracked in Program Board + Execution Log above.

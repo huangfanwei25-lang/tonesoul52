@@ -157,6 +157,14 @@ def _build_check_specs(
             "command": [python_executable, "scripts/run_persona_swarm_framework.py", "--strict"],
         },
         {
+            "name": "external_source_registry",
+            "command": [
+                python_executable,
+                "scripts/verify_external_source_registry.py",
+                "--strict",
+            ],
+        },
+        {
             "name": "audit_7d",
             "command": verify_7d_cmd,
         },
