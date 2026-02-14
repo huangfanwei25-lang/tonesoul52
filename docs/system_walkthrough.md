@@ -139,9 +139,9 @@ ToneSoul 目前不是單一「聊天模型包裝器」，而是三層結構：
 
 ## 9. 當前待辦（真正未完成）
 
-1. Release v0.1.0 打版
+1. 發布後續維運（非阻塞）
    - 文件：`docs/plans/release_readiness_staging.md`
-   - 狀態：Stage 3 僅剩 `Git tag v0.1.0` 尚未執行
+   - 狀態：v0.1.0 tag 與發版產物已完成，後續以例行回歸與監控為主
 
 ---
 

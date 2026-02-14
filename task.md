@@ -42,7 +42,7 @@
 - [x] Sync README + deploy walkthrough docs (`README.md`, `docs/VERCEL_DEPLOY.md`) on 2026-02-14
 - [x] Verify Stage 2 local Ollama baseline (`ollama list`, `LLM_BACKEND=ollama` smoke, `pytest tests/ -x -q`) on 2026-02-14
 - [x] Prepare Stage 3 release artifacts (`docs/RELEASE_NOTES_v0.1.0.md`, `reports/coverage_latest.*`, `reports/test_coverage_latest.md`) on 2026-02-14
-- [ ] Final release action: create Git tag `v0.1.0` after final push confirmation
+- [x] Final release action: create and push Git tag `v0.1.0` (2026-02-14)
 
 ## Phase 100: Architecture Convergence v2 (Trinket + Swarm)
 - [x] Consolidated legacy RFC/draft into verified plan: `docs/ARCHITECTURE_CONVERGENCE_PLAN.md`

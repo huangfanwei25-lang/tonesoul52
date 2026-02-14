@@ -46,7 +46,7 @@ Stage 2 最新驗證（2026-02-14）：
 
 ## Stage 3: 發布產物
 
-- [ ] Git tag `v0.1.0`
+- [x] Git tag `v0.1.0`
 - [x] GitHub Release notes
 - [x] 測試與覆蓋率 artifact
 - [x] 安全報告 artifact
@@ -55,7 +55,7 @@ Stage 3 最新進度（2026-02-14）：
 - Release notes 草稿：`docs/RELEASE_NOTES_v0.1.0.md`
 - 測試與覆蓋率：`reports/coverage_latest.json`、`reports/coverage_latest.xml`、`reports/test_coverage_latest.md`
 - 安全報告：`reports/security_vulnerability_assessment_latest.md`
-- 尚未執行：Git tag `v0.1.0`（待最終發佈確認）
+- Git tag：`v0.1.0` 已建立並推送（2026-02-14）
 
 ## 當前阻塞與重跑指令
 
