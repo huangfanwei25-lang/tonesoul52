@@ -735,8 +735,8 @@ Gemini ──→ Claude ──→ 未來模型 ──→ 本地蒸餾模型
 - [ ] 前端顯示 `semantic_contradictions` + `semantic_graph_summary`
 - [ ] 前端顯示 visual chain 快照（Mermaid 視覺化）
 - [ ] 更多 FrameType 自動拍攝（tension_map, commitment_tree 等）
-- [ ] 圖鏈 AI 自主查詢（讓 AI 在推理時主動讀圖鏈）  🧪 實驗性
-- [ ] 跨 session 記憶恢復（decay + visual chain 聯合查詢）  🧪 實驗性
+- [x] 圖鏈 AI 自主查詢（讓 AI 在推理時主動讀圖鏈）  🧪 實驗性（Phase 77 / 3a）
+- [x] 跨 session 記憶恢復（decay + visual chain 聯合查詢）  🧪 實驗性（Phase 77 / 3b）
 
 ---
 

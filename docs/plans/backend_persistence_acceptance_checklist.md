@@ -2,6 +2,14 @@
 
 最後更新：2026-02-12
 
+## 近期執行紀錄（2026-02-14）
+
+- 已嘗試執行：
+  - `python scripts/verify_backend_persistence.py --base https://tonesoul52.onrender.com`
+  - `python scripts/verify_backend_persistence.py --base https://tonesoul52.onrender.com --timeout 40`
+- 結果：`GET /api/health` 出現 timeout 與 HTTP 502，暫時無法完成遠端驗收勾選。
+- 待服務恢復後，請依本清單重跑第 1 節與第 2 節。
+
 ## 0. 前置條件
 
 - [ ] Supabase SQL 已執行：`docs/plans/supabase_migration.sql`

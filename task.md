@@ -32,11 +32,11 @@
 **Latest validation**: `pytest -q` => `849 passed` (2026-02-14). Level 3 implementation tracked in `CODEX_TASK.md` v7.
 
 ## Backlog Radar (Original Specs/Docs, 2026-02-14)
-- [ ] Sync and close pending Chat UI checklist in `spec/chat_ui_improvement_spec.md` (4 unchecked items)
-- [ ] Execute/verify backend persistence acceptance list in `docs/plans/backend_persistence_acceptance_checklist.md` (16 unchecked items)
-- [ ] Reconcile stale roadmap checkboxes in `docs/ARCHITECTURE_DEPLOYED.md` against implemented Phase 77-99 features
-- [ ] Prioritize semantic-control derivation backlog in `spec/tonesoul_improvement_derivation.md` and `spec/wfgy_semantic_control_spec.md`
-- [ ] Stage release/readiness checklists from `docs/RELEASE_v0.1.0_PLAN.md` and `docs/SMALL_BOAT_MVP.md`
+- [x] Sync and close pending Chat UI checklist in `spec/chat_ui_improvement_spec.md` (4/4 completed on 2026-02-14)
+- [ ] Execute/verify backend persistence acceptance list in `docs/plans/backend_persistence_acceptance_checklist.md` (blocked 2026-02-14: Render `GET /api/health` timeout/HTTP 502)
+- [x] Reconcile stale roadmap checkboxes in `docs/ARCHITECTURE_DEPLOYED.md` against implemented Phase 77-99 features
+- [x] Prioritize semantic-control derivation backlog in `spec/tonesoul_improvement_derivation.md` and `spec/wfgy_semantic_control_spec.md`
+- [x] Stage release/readiness checklists from `docs/RELEASE_v0.1.0_PLAN.md` and `docs/SMALL_BOAT_MVP.md` (`docs/plans/release_readiness_staging.md`)
 
 ## Phase 100: Architecture Convergence v2 (Trinket + Swarm)
 - [x] Consolidated legacy RFC/draft into verified plan: `docs/ARCHITECTURE_CONVERGENCE_PLAN.md`

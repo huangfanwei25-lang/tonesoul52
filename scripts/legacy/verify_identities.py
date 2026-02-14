@@ -1,25 +1,15 @@
-import requests
-import json
-import os
+"""
+Legacy shim.
 
-KEYS = {
-    "ToneSoul": os.environ.get("MOLTBOOK_API_KEY_TONESOUL", ""),
-    "Advocate": os.environ.get("MOLTBOOK_API_KEY_ADVOCATE", ""),
-}
+For backward compatibility, this entrypoint forwards to scripts/verify_identities.py.
+"""
 
-URL = "https://www.moltbook.com/api/v1/heartbeat"
+from __future__ import annotations
 
-for name, key in KEYS.items():
-    print(f"🔍 Checking {name} identity...")
-    try:
-        response = requests.get(URL, headers={"Authorization": f"Bearer {key}"}, timeout=10)
-        if response.status_code == 200:
-            data = response.json()
-            print(f"✅ {name} corresponds to ID: {data.get('agent_id')}")
-            # Try to get profile if possible (assuming there's a me endpoint or similar)
-            # For now, let's just print the message
-            print(f"   Message: {data.get('message')}")
-        else:
-            print(f"❌ {name} check failed: {response.status_code} {response.text}")
-    except Exception as e:
-        print(f"💥 Error checking {name}: {e}")
+import runpy
+from pathlib import Path
+
+
+if __name__ == "__main__":
+    target = Path(__file__).resolve().parents[1] / "verify_identities.py"
+    runpy.run_path(str(target), run_name="__main__")

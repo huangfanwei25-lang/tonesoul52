@@ -13,6 +13,9 @@ from utils.llm import chat_with_council
 from utils.memory import list_seeds, list_skills
 from utils.search import build_search_context, default_search_roots
 
+WORKSPACE_PANEL_HEIGHT = 680
+CHAT_CONTAINER_HEIGHT = 420
+
 
 def _latest_run_summary() -> dict:
     run_root = Path(__file__).parent.parent.parent / "run" / "execution"
@@ -96,32 +99,34 @@ def render():
     col_main, col_side = st.columns([3, 1.1], gap="large")
 
     with col_main:
-        st.markdown('<div class="ts-section-title">對話工作區</div>', unsafe_allow_html=True)
+        main_panel = st.container(height=WORKSPACE_PANEL_HEIGHT)
+        with main_panel:
+            st.markdown('<div class="ts-section-title">對話工作區</div>', unsafe_allow_html=True)
 
-        if not st.session_state.messages:
-            st.info(
-                "試試問我：\n- 幫我整理今天進度\n- 我該先處理哪些問題？\n- 把需求拆成可執行步驟"
-            )
+            if not st.session_state.messages:
+                st.info(
+                    "試試問我：\n- 幫我整理今天進度\n- 我該先處理哪些問題？\n- 把需求拆成可執行步驟"
+                )
 
-        search_col1, search_col2 = st.columns(2)
-        with search_col1:
-            use_local_search = st.checkbox("本地檢索", value=False, key="workspace_local_search")
-        with search_col2:
-            use_web_search = st.checkbox("網路檢索", value=False, key="workspace_web_search")
+            search_col1, search_col2 = st.columns(2)
+            with search_col1:
+                use_local_search = st.checkbox("本地檢索", value=False, key="workspace_local_search")
+            with search_col2:
+                use_web_search = st.checkbox("網路檢索", value=False, key="workspace_web_search")
 
-        if st.session_state.council_discussion:
-            with st.expander("🧠 我在想...", expanded=False):
-                render_council(st.session_state.council_discussion)
+            if st.session_state.council_discussion:
+                with st.expander("🧠 我在想...", expanded=False):
+                    render_council(st.session_state.council_discussion)
 
-        chat_container = st.container(height=400)
-        with chat_container:
-            for msg in st.session_state.messages:
-                with st.chat_message(msg["role"]):
-                    st.markdown(msg["content"])
+            chat_container = st.container(height=CHAT_CONTAINER_HEIGHT)
+            with chat_container:
+                for msg in st.session_state.messages:
+                    with st.chat_message(msg["role"]):
+                        st.markdown(msg["content"])
 
-        with st.form("workspace_chat_form", clear_on_submit=True):
-            user_input = st.text_area("輸入訊息", "", height=90)
-            submitted = st.form_submit_button("送出")
+            with st.form("workspace_chat_form", clear_on_submit=True):
+                user_input = st.text_area("輸入訊息", "", height=90)
+                submitted = st.form_submit_button("送出")
         if submitted and user_input:
             search_context = ""
             if use_local_search or use_web_search:
@@ -147,8 +152,10 @@ def render():
             st.rerun()
 
     with col_side:
-        tab_status, tab_memory = st.tabs(["系統狀態", "參考資料"])
-        with tab_status:
-            render_status_panel(workspace)
-        with tab_memory:
-            render_memory_panel()
+        side_panel = st.container(height=WORKSPACE_PANEL_HEIGHT)
+        with side_panel:
+            tab_status, tab_memory = st.tabs(["系統狀態", "參考資料"])
+            with tab_status:
+                render_status_panel(workspace)
+            with tab_memory:
+                render_memory_panel()

@@ -245,6 +245,16 @@ E_res = rolling_mean(Δs, min(t, 5))  # 殘差能量
 - [ ] 記憶觸發規則
 - [ ] Bridge Guard
 
+## 2026-02-14 優先順序（Backlog Radar 對齊）
+
+- [ ] P0（先做）: Phase 1 全部完成，先確立 `delta_sigma`、Zone、PersonaDimension 對齊。
+- [ ] P1（第二階段）: Phase 2 全部完成，讓 Coupler/Progression/Hysteresis 可以穩定驅動。
+- [ ] P2（第三階段）: Phase 3 全部完成，補齊 Lambda 狀態機與 Bridge/Memory 觸發。
+
+執行原則：
+- 先有可計算、可判定的核心量，再開放動力學參數調整。
+- 先把動力學固定，再把狀態機掛上去，降低 debug 維度。
+
 ---
 
 ## 十一、本質總結

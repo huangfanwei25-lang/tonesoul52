@@ -25,6 +25,8 @@
 | `verify_identities.py` | 驗證多帳號身份與 API 存活 |
 | `verify_metabolism.py` | 驗證記憶代謝與資料一致性 |
 
+> 相容性說明：`scripts/legacy/` 保留同名 shim，舊路徑仍可執行並轉送到根目錄腳本。
+
 ## 3) 啟動與示範腳本 (`run_*.py`)
 
 | 檔案 | 用途 |

@@ -14,7 +14,7 @@
 
 ## 影響範圍
 
-`C:\Users\user\Desktop\倉庫\5.2\frontend\pages\workspace.py`
+`C:\Users\user\Desktop\倉庫\apps\dashboard\frontend\pages\workspace.py`
 
 ---
 
@@ -117,10 +117,12 @@ def render():
 
 ## 驗收項目
 
-- [ ] Council 區塊可收合。
-- [ ] 對話區固定高度、可捲動。
-- [ ] 輸入區可固定在下方，不遮擋訊息。
-- [ ] 右側狀態/參考資料不影響對話區。
+- [x] Council 區塊可收合。
+- [x] 對話區固定高度、可捲動。
+- [x] 輸入區可固定在下方，不遮擋訊息。
+- [x] 右側狀態/參考資料不影響對話區。
+
+驗收完成時間：2026-02-14（依 `apps/dashboard/frontend/pages/workspace.py` 實作）
 
 ---
 

@@ -126,6 +126,8 @@ tonesoul52/
 | `verify_identities.py` | 身份驗證 |
 | `verify_metabolism.py` | 記憶代謝驗證 |
 
+註：`scripts/legacy/` 內有同名相容 shim，可支援舊指令路徑。
+
 ### 執行腳本 (`run_*.py`)
 
 | 腳本 | 用途 |
