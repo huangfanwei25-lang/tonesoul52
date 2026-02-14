@@ -1,4 +1,4 @@
-﻿"""
+"""
 ToneSoul Unified Pipeline
 Combines ToneBridge psychological analysis with Council deliberation.
 """
@@ -8,6 +8,7 @@ from __future__ import annotations
 import os
 import re
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 
@@ -116,6 +117,23 @@ class UnifiedPipeline:
         self._visual_chain_max_frames = _read_positive_int_env(
             "TONESOUL_VISUAL_CHAIN_MAX_FRAMES", default=500
         )
+        self._repo_root = Path(__file__).resolve().parents[1]
+        self._persona_attachment_max_chars = _read_positive_int_env(
+            "TONESOUL_PERSONA_ATTACHMENT_MAX_CHARS", default=360
+        )
+        self._persona_attachment_max_files = _read_positive_int_env(
+            "TONESOUL_PERSONA_ATTACHMENT_MAX_FILES", default=4
+        )
+        allow_prefixes_raw = os.environ.get(
+            "TONESOUL_PERSONA_ATTACHMENT_ALLOW_PREFIXES",
+            "docs/,spec/,task.md,CODEX_TASK.md",
+        )
+        self._persona_attachment_allow_prefixes = tuple(
+            token.strip().replace("\\", "/")
+            for token in allow_prefixes_raw.split(",")
+            if token.strip()
+        )
+        self._persona_attachment_cache: Dict[str, Optional[str]] = {}
         self._session_recovered = False
 
     def _get_gemini(self):
@@ -321,6 +339,79 @@ class UnifiedPipeline:
                 return str(raw.get("description", "")).strip()
         return ""
 
+    @staticmethod
+    def _normalize_attachment_path(path_value: str) -> str:
+        normalized = str(path_value or "").strip().replace("\\", "/")
+        while normalized.startswith("./"):
+            normalized = normalized[2:]
+        return normalized
+
+    def _is_attachment_path_allowed(self, normalized_path: str) -> bool:
+        if not normalized_path:
+            return False
+        if normalized_path.startswith("/") or normalized_path.startswith("../"):
+            return False
+        if "/../" in normalized_path:
+            return False
+
+        for prefix in self._persona_attachment_allow_prefixes:
+            if prefix.endswith("/"):
+                if normalized_path.startswith(prefix):
+                    return True
+            elif normalized_path == prefix:
+                return True
+        return False
+
+    @staticmethod
+    def _is_textual_attachment(candidate: Path) -> bool:
+        allowed_suffixes = {
+            ".md",
+            ".txt",
+            ".json",
+            ".yaml",
+            ".yml",
+            ".toml",
+            ".py",
+            ".ts",
+            ".tsx",
+            ".js",
+            ".jsx",
+        }
+        return candidate.suffix.lower() in allowed_suffixes
+
+    def _read_attachment_excerpt(self, path_value: str) -> Optional[str]:
+        normalized = self._normalize_attachment_path(path_value)
+        if normalized in self._persona_attachment_cache:
+            return self._persona_attachment_cache[normalized]
+        if not self._is_attachment_path_allowed(normalized):
+            self._persona_attachment_cache[normalized] = None
+            return None
+
+        try:
+            repo_root = self._repo_root.resolve()
+            candidate = (repo_root / normalized).resolve()
+            if candidate != repo_root and repo_root not in candidate.parents:
+                self._persona_attachment_cache[normalized] = None
+                return None
+            if not candidate.is_file() or not self._is_textual_attachment(candidate):
+                self._persona_attachment_cache[normalized] = None
+                return None
+
+            max_chars = max(80, int(self._persona_attachment_max_chars))
+            max_bytes = max(1024, max_chars * 8)
+            with candidate.open("rb") as handle:
+                raw = handle.read(max_bytes)
+            excerpt = raw.decode("utf-8", errors="ignore")
+            excerpt = " ".join(excerpt.split())
+            if len(excerpt) > max_chars:
+                excerpt = excerpt[:max_chars].rstrip() + "..."
+            excerpt = excerpt.strip()
+            self._persona_attachment_cache[normalized] = excerpt or None
+            return self._persona_attachment_cache[normalized]
+        except Exception:
+            self._persona_attachment_cache[normalized] = None
+            return None
+
     def _inject_persona_memory(
         self, user_message: str, persona_config: Optional[Dict[str, Any]] = None
     ) -> str:
@@ -339,6 +430,49 @@ class UnifiedPipeline:
             persona_parts.append(f"風險敏感度: {persona_config['risk_sensitivity']}")
         if persona_config.get("response_length"):
             persona_parts.append(f"回應長度: {persona_config['response_length']}")
+        custom_roles = persona_config.get("custom_roles")
+        if isinstance(custom_roles, list) and custom_roles:
+            role_summaries: List[str] = []
+            attachment_excerpt_budget = max(1, int(self._persona_attachment_max_files))
+            for index, role in enumerate(custom_roles[:4]):
+                if not isinstance(role, dict):
+                    continue
+                role_name = str(role.get("name") or role.get("id") or f"role_{index + 1}").strip()
+                role_description = str(role.get("description") or "").strip()
+                prompt_hint = str(role.get("prompt_hint") or "").strip()
+                role_parts = [f"角色={role_name}"]
+                if role_description:
+                    role_parts.append(f"說明={role_description[:120]}")
+                if prompt_hint:
+                    role_parts.append(f"提示={prompt_hint[:120]}")
+                attachments = role.get("attachments")
+                if isinstance(attachments, list) and attachments:
+                    attachment_tokens: List[str] = []
+                    attachment_excerpts: List[str] = []
+                    for attachment in attachments[:3]:
+                        if not isinstance(attachment, dict):
+                            continue
+                        label = str(attachment.get("label") or "附件").strip()
+                        path = str(attachment.get("path") or "").strip()
+                        note = str(attachment.get("note") or "").strip()
+                        token = label
+                        if path:
+                            token = f"{token}({path})"
+                        if note:
+                            token = f"{token}:{note[:60]}"
+                        attachment_tokens.append(token)
+                        if path and attachment_excerpt_budget > 0:
+                            excerpt = self._read_attachment_excerpt(path)
+                            if excerpt:
+                                attachment_excerpts.append(f"{label}={excerpt}")
+                                attachment_excerpt_budget -= 1
+                    if attachment_tokens:
+                        role_parts.append(f"附件={'; '.join(attachment_tokens)}")
+                    if attachment_excerpts:
+                        role_parts.append(f"附件摘要={' || '.join(attachment_excerpts)}")
+                role_summaries.append(" | ".join(role_parts))
+            if role_summaries:
+                persona_parts.append(f"自訂角色議會: {' || '.join(role_summaries)}")
         if not persona_parts:
             return user_message
         persona_context = " | ".join(persona_parts)
@@ -834,9 +968,23 @@ class UnifiedPipeline:
                 if council_mode:
                     council_context["council_mode_override"] = council_mode
 
+                # Custom role council (Team Simulator mode)
+                custom_perspectives = None
+                if isinstance(persona_config, dict):
+                    custom_roles = persona_config.get("custom_roles")
+                    if isinstance(custom_roles, list) and custom_roles:
+                        from tonesoul.council.perspective_factory import (
+                            PerspectiveFactory,
+                        )
+
+                        custom_perspectives = (
+                            PerspectiveFactory.create_custom_council(custom_roles)
+                        )
+
                 request = CouncilRequest(
                     draft_output=response,
                     context=council_context,
+                    perspectives=custom_perspectives,
                     perspective_config=resolved_perspective_config,
                 )
                 verdict = council.deliberate(request)

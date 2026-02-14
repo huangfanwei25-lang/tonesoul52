@@ -1,4 +1,4 @@
-﻿# Task
+# Task
 
 ## Program Board (2026-02-14)
 - [x] Level 1
@@ -24,7 +24,11 @@
 - [x] Phase 93: Commit attribution docs-only exemption
 - [x] Phase 94: External source trust policy + allowlist gate
 - [x] Phase 95: External source registry CI workflow + status artifact automation
-**Latest validation**: `pytest -q` => `819 passed` (2026-02-14). Level 3 implementation tracked in `CODEX_TASK.md` v7.
+- [x] Phase 96: User-defined persona roles + attachment-aware persona memory injection
+- [x] Phase 97: Persona attachment file excerpt loader (allowlist + traversal guard + prompt budget)
+- [x] Phase 98: Persona payload schema validation (web route + backend API fail-closed)
+- [x] Phase 99: Custom-role council contract coverage (factory + fallback semantics)
+**Latest validation**: `pytest -q` => `841 passed` (2026-02-14). Level 3 implementation tracked in `CODEX_TASK.md` v7.
 
 ## Phase 77: Level 3 Experimental
 - [x] 3a Semantic Trigger
@@ -125,6 +129,36 @@
 - [x] Updated `docs/status/README.md` with new artifact and workflow references
 **Result**: External source trust checks now run as a standalone CI lane with auditable artifacts.
 
+## Phase 96: User-Defined Persona Roles + Attachment Context
+- [x] Expanded `PersonaConfig` with `customRoles[]` (name/description/promptHint/attachments)
+- [x] Added persona role templates and editable role/attachment UI in `apps/web/src/components/PersonaSettings.tsx`
+- [x] Forwarded `persona.custom_roles` in chat transport payload from `apps/web/src/components/ChatInterface.tsx`
+- [x] Extended backend persona memory injection in `tonesoul/unified_pipeline.py` to include custom role context
+- [x] Added/updated tests: `apps/web/src/__tests__/personaSettings.test.ts`, `apps/web/src/__tests__/apiRoutes.chatTransport.test.ts`, `tests/test_visual_chain_prompt_injection.py`
+**Result**: Persona roles are no longer fixed; users can define role cards and attach file paths as runtime context hints.
+
+## Phase 97: Persona Attachment Excerpt Loader Hardening
+- [x] Added attachment path normalization + allowlist check (`TONESOUL_PERSONA_ATTACHMENT_ALLOW_PREFIXES`)
+- [x] Added path traversal/absolute-path rejection and repo-root containment guard
+- [x] Added text-only extension filter + excerpt byte/char budget
+- [x] Added per-request attachment excerpt budget (`TONESOUL_PERSONA_ATTACHMENT_MAX_FILES`) and cache
+- [x] Added tests for allowed excerpt inclusion and disallowed path blocking
+**Result**: Persona attachment paths can enrich prompt context safely without becoming arbitrary file-read exfiltration.
+
+## Phase 98: Persona Payload Schema Validation
+- [x] Added `persona` deep-shape validation in `apps/web/src/app/api/chat/route.ts`
+- [x] Added backend fail-closed persona validator in `apps/api/server.py`
+- [x] Enforced limits (`custom_roles <= 8`, `attachments <= 6` per role)
+- [x] Added tests for invalid `persona.custom_roles` shape in web route and backend contract
+**Result**: malformed persona payloads are now rejected early with `400 Invalid persona` instead of entering runtime.
+
+## Phase 99: Custom-Role Council Contract Coverage
+- [x] Added `tests/test_custom_role_council.py` to lock custom-role council semantics
+- [x] Covered `create_from_custom_role` (name normalization, prompt hint, model override, fallback behavior)
+- [x] Covered `create_custom_council` (invalid-entry skip, empty fallback to default council, model fanout)
+- [x] Covered unknown-name `PerspectiveFactory.create(...)` fallback semantics and evaluation baseline
+**Result**: custom-role council behavior is now regression-protected by dedicated contract tests.
+
 ## Execution Log (2026-02-14)
 - [x] Phase A complete
 - [x] Production read auth fail-closed
@@ -190,6 +224,21 @@
 - [x] Phase 95 complete
 - [x] External source registry standalone workflow + status artifact lane added
 - [x] Validation: `python -m pytest tests -q` => `819 passed`
+- [x] Phase 96 complete
+- [x] User-defined persona roles now support role descriptions and attachment metadata in settings + transport
+- [x] Validation: `npm --prefix apps/web run lint && npm --prefix apps/web run test` => `pass`
+- [x] Validation: `python -m pytest tests/test_visual_chain_prompt_injection.py tests/test_unified_core.py -q` => `16 passed`
+- [x] Phase 97 complete
+- [x] Attachment excerpt loader now enforces allowlist + traversal guard + prompt budget
+- [x] Validation: `python -m pytest tests/test_visual_chain_prompt_injection.py -q` => `6 passed`
+- [x] Phase 98 complete
+- [x] Persona payload validation now fail-closed in both Next route and Flask API
+- [x] Validation: `npm --prefix apps/web run test -- src/__tests__/apiRoutes.invalidJson.test.ts src/__tests__/apiRoutes.chatTransport.test.ts src/__tests__/personaSettings.test.ts` => `23 passed`
+- [x] Validation: `python -m pytest tests/test_api_server_contract.py tests/test_visual_chain_prompt_injection.py -q` => `20 passed`
+- [x] Phase 99 complete
+- [x] Added dedicated custom-role council contract tests for custom perspective creation and fallback semantics
+- [x] Validation: `python -m pytest tests/test_custom_role_council.py -q` => `19 passed`
+- [x] Validation: `python -m pytest -q` => `841 passed`
 ## Phase 79-81: Legacy Duplicates (Closed)
 - [x] Legacy duplicate tracking blocks for Phase A/B/C removed from active queue.
 - [x] Canonical status is tracked in Program Board + Execution Log above.

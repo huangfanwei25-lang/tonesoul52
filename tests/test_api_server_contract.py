@@ -267,3 +267,18 @@ def test_validate_endpoint_rejects_invalid_vtp_flag_type():
     assert response.status_code == 400
     payload = response.get_json()
     assert payload["error"] == "Invalid vtp_force_trigger"
+
+
+def test_chat_endpoint_rejects_invalid_persona_custom_roles_shape():
+    client = _client()
+    response = client.post(
+        "/api/chat",
+        json={
+            "message": "hello",
+            "history": [],
+            "persona": {"custom_roles": "invalid"},
+        },
+    )
+    assert response.status_code == 400
+    payload = response.get_json()
+    assert payload["error"] == "Invalid persona"

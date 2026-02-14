@@ -150,6 +150,46 @@ describe("chat route transport fallback behavior", () => {
         expect(parsedBody.council_mode).toBe("rules");
     });
 
+    it("forwards persona custom_roles payload", async () => {
+        process.env.TONESOUL_BACKEND_URL = "http://127.0.0.1:5000";
+        const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(
+            new Response(JSON.stringify({ response: "ok" }), { status: 200 })
+        );
+
+        const response = await postChat(
+            makeRequest({
+                conversation_id: "c1",
+                message: "hello",
+                history: [],
+                full_analysis: false,
+                persona: {
+                    name: "ToneSoul-X",
+                    custom_roles: [
+                        {
+                            name: "Risk Auditor",
+                            description: "Check high-risk outcomes",
+                            prompt_hint: "Fail closed when uncertain",
+                            attachments: [
+                                { label: "policy", path: "docs/policy.md", note: "baseline" },
+                            ],
+                        },
+                    ],
+                },
+            }) as never
+        );
+        const payload = (await response.json()) as Record<string, unknown>;
+
+        expect(response.status).toBe(200);
+        expect(payload.response).toBe("ok");
+        expect(fetchMock).toHaveBeenCalledTimes(1);
+        const [, requestInit] = fetchMock.mock.calls[0] as [string, RequestInit];
+        const parsedBody = JSON.parse(String(requestInit.body)) as Record<string, unknown>;
+        const persona = parsedBody.persona as Record<string, unknown>;
+        expect(Array.isArray(persona.custom_roles)).toBe(true);
+        const role = (persona.custom_roles as Array<Record<string, unknown>>)[0];
+        expect(role.name).toBe("Risk Auditor");
+    });
+
     it("retries transient backend status and succeeds on a later attempt", async () => {
         process.env.TONESOUL_BACKEND_URL = "http://127.0.0.1:5000";
         process.env.TONESOUL_BACKEND_CHAT_RETRY_MAX_ATTEMPTS = "3";

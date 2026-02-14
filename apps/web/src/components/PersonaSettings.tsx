@@ -1,57 +1,171 @@
 "use client";
 
 import { useState } from "react";
-import { Sliders, X, Save, RotateCcw, User, Shield, Lightbulb, Wrench } from "lucide-react";
+import { Sliders, X, Save, RotateCcw, Shield, Lightbulb, Wrench, Plus, Trash2, Paperclip } from "lucide-react";
 
-// ==================== 人格設定介面 ====================
+export type PersonaStyle = "balanced" | "creative" | "analytical" | "cautious";
+export type PersonaRiskSensitivity = "low" | "medium" | "high";
+export type PersonaResponseLength = "concise" | "balanced" | "detailed";
 
-export interface PersonaConfig {
-    name: string;                    // AI 名稱
-    greeting: string;                // 開場語
-    style: 'balanced' | 'creative' | 'analytical' | 'cautious';  // 整體風格
-    // 三視角權重 (總和不需要 = 1，只是相對比例)
-    weights: {
-        meaning: number;             // 意義探索 (0-100)
-        practical: number;           // 實用導向 (0-100)
-        safety: number;              // 安全考量 (0-100)
-    };
-    riskSensitivity: 'low' | 'medium' | 'high';  // 風險敏感度
-    responseLength: 'concise' | 'balanced' | 'detailed';  // 回應長度傾向
+export interface PersonaRoleAttachment {
+    id: string;
+    label: string;
+    path: string;
+    note: string;
 }
 
-// 預設設定
+export interface PersonaRoleConfig {
+    id: string;
+    name: string;
+    description: string;
+    promptHint: string;
+    attachments: PersonaRoleAttachment[];
+}
+
+export interface PersonaRoleTemplate {
+    id: string;
+    name: string;
+    description: string;
+    promptHint: string;
+    defaultAttachments: Array<{ label: string; path: string; note: string }>;
+}
+
+export interface PersonaConfig {
+    name: string;
+    greeting: string;
+    style: PersonaStyle;
+    weights: {
+        meaning: number;
+        practical: number;
+        safety: number;
+    };
+    riskSensitivity: PersonaRiskSensitivity;
+    responseLength: PersonaResponseLength;
+    customRoles: PersonaRoleConfig[];
+}
+
+export const PERSONA_ROLE_TEMPLATES: PersonaRoleTemplate[] = [
+    {
+        id: "strategy",
+        name: "策略長",
+        description: "聚焦目標拆解與路線選擇。",
+        promptHint: "先比較方案，再給執行順序。",
+        defaultAttachments: [{ label: "策略文件", path: "docs/STRATEGY_CONSENSUS_2026Q1.md", note: "路線參考" }],
+    },
+    {
+        id: "guardrail",
+        name: "風險稽核",
+        description: "主動找資安與治理缺口。",
+        promptHint: "先列高風險，再給 fail-closed 修補。",
+        defaultAttachments: [{ label: "架構邊界", path: "docs/ARCHITECTURE_BOUNDARIES.md", note: "邊界檢查" }],
+    },
+    {
+        id: "story",
+        name: "敘事總編",
+        description: "維持語魂一致性，避免漂移。",
+        promptHint: "保留張力，不做空泛抹平。",
+        defaultAttachments: [{ label: "語境記憶", path: "docs/ANTIGRAVITY_CONTEXT_MEMORY_SWARM.md", note: "語境對齊" }],
+    },
+];
+
 export const DEFAULT_PERSONA: PersonaConfig = {
     name: "ToneSoul",
-    greeting: "你好！有什麼我可以幫你的嗎？",
-    style: 'balanced',
-    weights: {
-        meaning: 50,
-        practical: 50,
-        safety: 50,
-    },
-    riskSensitivity: 'medium',
-    responseLength: 'balanced',
+    greeting: "你好，我會以語義責任與實務可行性一起回應你。",
+    style: "balanced",
+    weights: { meaning: 50, practical: 50, safety: 50 },
+    riskSensitivity: "medium",
+    responseLength: "balanced",
+    customRoles: [],
 };
 
-// localStorage 存取
-const PERSONA_KEY = 'tonesoul_persona';
+const PERSONA_KEY = "tonesoul_persona";
+
+function asObject(value: unknown): Record<string, unknown> | null {
+    if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+    return value as Record<string, unknown>;
+}
+
+function asString(value: unknown, fallback = ""): string {
+    return typeof value === "string" ? value : fallback;
+}
+
+function asPercent(value: unknown, fallback: number): number {
+    if (typeof value !== "number" || !Number.isFinite(value)) return fallback;
+    return Math.max(0, Math.min(100, Math.round(value)));
+}
+
+function asRole(raw: unknown, idx: number): PersonaRoleConfig | null {
+    const role = asObject(raw);
+    if (!role) return null;
+    const attachmentsRaw = Array.isArray(role.attachments) ? role.attachments : [];
+    const attachments: PersonaRoleAttachment[] = attachmentsRaw
+        .map((item, attachIdx) => {
+            const attachment = asObject(item);
+            if (!attachment) return null;
+            const label = asString(attachment.label).trim();
+            const path = asString(attachment.path).trim();
+            const note = asString(attachment.note).trim();
+            if (!label && !path && !note) return null;
+            return {
+                id: asString(attachment.id) || `attach_${idx}_${attachIdx}_${Date.now()}`,
+                label,
+                path,
+                note,
+            };
+        })
+        .filter((item): item is PersonaRoleAttachment => item !== null);
+    const name = asString(role.name).trim();
+    const description = asString(role.description).trim();
+    const promptHint = asString(role.promptHint).trim();
+    if (!name && !description && !promptHint && attachments.length === 0) return null;
+    return {
+        id: asString(role.id) || `role_${idx}_${Date.now()}`,
+        name,
+        description,
+        promptHint,
+        attachments,
+    };
+}
+
+export function normalizePersonaConfig(raw: unknown): PersonaConfig {
+    const source = asObject(raw);
+    if (!source) return { ...DEFAULT_PERSONA };
+    const weights = asObject(source.weights) || {};
+    const style = asString(source.style);
+    const risk = asString(source.riskSensitivity);
+    const length = asString(source.responseLength);
+    const customRolesRaw = Array.isArray(source.customRoles) ? source.customRoles : [];
+    return {
+        name: asString(source.name, DEFAULT_PERSONA.name),
+        greeting: asString(source.greeting, DEFAULT_PERSONA.greeting),
+        style: (style === "balanced" || style === "creative" || style === "analytical" || style === "cautious")
+            ? style
+            : DEFAULT_PERSONA.style,
+        weights: {
+            meaning: asPercent(weights.meaning, DEFAULT_PERSONA.weights.meaning),
+            practical: asPercent(weights.practical, DEFAULT_PERSONA.weights.practical),
+            safety: asPercent(weights.safety, DEFAULT_PERSONA.weights.safety),
+        },
+        riskSensitivity: (risk === "low" || risk === "medium" || risk === "high") ? risk : DEFAULT_PERSONA.riskSensitivity,
+        responseLength: (length === "concise" || length === "balanced" || length === "detailed") ? length : DEFAULT_PERSONA.responseLength,
+        customRoles: customRolesRaw.map((item, idx) => asRole(item, idx)).filter((item): item is PersonaRoleConfig => item !== null),
+    };
+}
 
 export function getStoredPersona(): PersonaConfig {
-    if (typeof window === 'undefined') return DEFAULT_PERSONA;
+    if (typeof window === "undefined") return { ...DEFAULT_PERSONA };
     const stored = localStorage.getItem(PERSONA_KEY);
-    if (!stored) return DEFAULT_PERSONA;
+    if (!stored) return { ...DEFAULT_PERSONA };
     try {
-        return { ...DEFAULT_PERSONA, ...JSON.parse(stored) };
+        return normalizePersonaConfig(JSON.parse(stored));
     } catch {
-        return DEFAULT_PERSONA;
+        return { ...DEFAULT_PERSONA };
     }
 }
 
 export function savePersona(config: PersonaConfig): void {
-    localStorage.setItem(PERSONA_KEY, JSON.stringify(config));
+    localStorage.setItem(PERSONA_KEY, JSON.stringify(normalizePersonaConfig(config)));
 }
-
-// ==================== 設定元件 ====================
 
 interface PersonaSettingsProps {
     isOpen: boolean;
@@ -59,227 +173,131 @@ interface PersonaSettingsProps {
     onSave: (config: PersonaConfig) => void;
 }
 
+function buildRoleFromTemplate(template: PersonaRoleTemplate, idx: number): PersonaRoleConfig {
+    return {
+        id: `role_tpl_${template.id}_${Date.now()}_${idx}`,
+        name: template.name,
+        description: template.description,
+        promptHint: template.promptHint,
+        attachments: template.defaultAttachments.map((item, attachIdx) => ({
+            id: `attach_tpl_${template.id}_${attachIdx}_${Date.now()}`,
+            label: item.label,
+            path: item.path,
+            note: item.note,
+        })),
+    };
+}
+
 export default function PersonaSettings({ isOpen, onClose, onSave }: PersonaSettingsProps) {
     const [config, setConfig] = useState<PersonaConfig>(() => getStoredPersona());
 
-    const handleSave = () => {
-        savePersona(config);
-        onSave(config);
+    const save = () => {
+        const normalized = normalizePersonaConfig(config);
+        savePersona(normalized);
+        onSave(normalized);
         onClose();
     };
 
-    const handleReset = () => {
-        setConfig(DEFAULT_PERSONA);
+    const addRole = () => {
+        setConfig((prev) => ({
+            ...prev,
+            customRoles: [...prev.customRoles, { id: `role_${Date.now()}`, name: "", description: "", promptHint: "", attachments: [] }],
+        }));
     };
 
     if (!isOpen) return null;
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-                {/* Header */}
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
                 <div className="p-6 border-b border-slate-100 flex justify-between items-center sticky top-0 bg-white z-10">
-                    <div className="flex items-center gap-2">
-                        <Sliders className="w-5 h-5 text-indigo-600" />
-                        <h2 className="text-xl font-bold text-slate-800">AI 個人化設定</h2>
-                    </div>
-                    <button type="button" onClick={onClose} className="p-2 hover:bg-slate-100 rounded-full transition-colors">
-                        <X className="w-5 h-5 text-slate-500" />
-                    </button>
+                    <div className="flex items-center gap-2"><Sliders className="w-5 h-5 text-indigo-600" /><h2 className="text-xl font-bold text-slate-800">AI Persona 設定</h2></div>
+                    <button type="button" onClick={onClose} className="p-2 hover:bg-slate-100 rounded-full transition-colors"><X className="w-5 h-5 text-slate-500" /></button>
                 </div>
 
                 <div className="p-6 space-y-6">
-                    {/* 名稱與開場語 */}
                     <div className="space-y-4">
-                        <div>
-                            <label className="flex items-center gap-2 text-sm font-bold text-slate-700 mb-2">
-                                <User className="w-4 h-4" />
-                                AI 名稱
-                            </label>
-                            <input
-                                type="text"
-                                value={config.name}
-                                onChange={(e) => setConfig({ ...config, name: e.target.value })}
-                                className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                                placeholder="例如：小助手"
-                            />
-                        </div>
-                        <div>
-                            <label className="text-sm font-bold text-slate-700 mb-2 block">開場語</label>
-                            <input
-                                type="text"
-                                value={config.greeting}
-                                onChange={(e) => setConfig({ ...config, greeting: e.target.value })}
-                                className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                                placeholder="例如：嗨！有什麼需要幫忙的嗎？"
-                            />
-                        </div>
+                        <label className="text-sm font-bold text-slate-700 block">AI 名稱</label>
+                        <input type="text" value={config.name} onChange={(event) => setConfig({ ...config, name: event.target.value })} className="w-full px-4 py-2 border border-slate-200 rounded-lg" />
+                        <label className="text-sm font-bold text-slate-700 block">開場語</label>
+                        <input type="text" value={config.greeting} onChange={(event) => setConfig({ ...config, greeting: event.target.value })} className="w-full px-4 py-2 border border-slate-200 rounded-lg" />
                     </div>
 
-                    {/* 整體風格 */}
-                    <div>
-                        <label className="text-sm font-bold text-slate-700 mb-3 block">回應風格</label>
+                    <div className="space-y-2">
+                        <label className="text-sm font-bold text-slate-700 block">回應風格</label>
                         <div className="grid grid-cols-2 gap-2">
                             {[
-                                { value: 'balanced', label: '均衡', desc: '各方面平衡考量' },
-                                { value: 'creative', label: '創意', desc: '更多想像與可能性' },
-                                { value: 'analytical', label: '分析', desc: '邏輯與數據導向' },
-                                { value: 'cautious', label: '謹慎', desc: '更注重風險提醒' },
-                            ].map(({ value, label, desc }) => (
-                                <button type="button"
-                                    key={value}
-                                    onClick={() => setConfig({ ...config, style: value as PersonaConfig['style'] })}
-                                    className={`p-3 rounded-lg border-2 text-left transition-all ${config.style === value
-                                            ? 'border-indigo-500 bg-indigo-50'
-                                            : 'border-slate-200 hover:border-slate-300'
-                                        }`}
+                                { value: "balanced", label: "均衡" },
+                                { value: "creative", label: "創意" },
+                                { value: "analytical", label: "分析" },
+                                { value: "cautious", label: "謹慎" },
+                            ].map((item) => (
+                                <button
+                                    type="button"
+                                    key={item.value}
+                                    onClick={() => setConfig({ ...config, style: item.value as PersonaStyle })}
+                                    className={`p-2 rounded-lg border ${config.style === item.value ? "border-indigo-500 bg-indigo-50" : "border-slate-200"}`}
                                 >
-                                    <div className="font-bold text-slate-800">{label}</div>
-                                    <div className="text-xs text-slate-500">{desc}</div>
+                                    {item.label}
                                 </button>
                             ))}
                         </div>
                     </div>
 
-                    {/* 三視角權重 */}
-                    <div className="space-y-4">
-                        <label className="text-sm font-bold text-slate-700 block">思考傾向調整</label>
-
-                        <div className="space-y-3">
-                            <div>
-                                <div className="flex items-center justify-between mb-1">
-                                    <span className="flex items-center gap-2 text-sm text-slate-600">
-                                        <Lightbulb className="w-4 h-4 text-purple-500" />
-                                        探索意義
-                                    </span>
-                                    <span className="text-sm font-mono text-purple-600">{config.weights.meaning}%</span>
-                                </div>
-                                <input
-                                    type="range"
-                                    min="0"
-                                    max="100"
-                                    value={config.weights.meaning}
-                                    onChange={(e) => setConfig({
-                                        ...config,
-                                        weights: { ...config.weights, meaning: Number(e.target.value) }
-                                    })}
-                                    className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-purple-500"
-                                />
-                                <p className="text-xs text-slate-400 mt-1">較高：更多深度思考與價值探討</p>
-                            </div>
-
-                            <div>
-                                <div className="flex items-center justify-between mb-1">
-                                    <span className="flex items-center gap-2 text-sm text-slate-600">
-                                        <Wrench className="w-4 h-4 text-blue-500" />
-                                        實用導向
-                                    </span>
-                                    <span className="text-sm font-mono text-blue-600">{config.weights.practical}%</span>
-                                </div>
-                                <input
-                                    type="range"
-                                    min="0"
-                                    max="100"
-                                    value={config.weights.practical}
-                                    onChange={(e) => setConfig({
-                                        ...config,
-                                        weights: { ...config.weights, practical: Number(e.target.value) }
-                                    })}
-                                    className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-500"
-                                />
-                                <p className="text-xs text-slate-400 mt-1">較高：更多可行性分析與步驟建議</p>
-                            </div>
-
-                            <div>
-                                <div className="flex items-center justify-between mb-1">
-                                    <span className="flex items-center gap-2 text-sm text-slate-600">
-                                        <Shield className="w-4 h-4 text-amber-500" />
-                                        安全考量
-                                    </span>
-                                    <span className="text-sm font-mono text-amber-600">{config.weights.safety}%</span>
-                                </div>
-                                <input
-                                    type="range"
-                                    min="0"
-                                    max="100"
-                                    value={config.weights.safety}
-                                    onChange={(e) => setConfig({
-                                        ...config,
-                                        weights: { ...config.weights, safety: Number(e.target.value) }
-                                    })}
-                                    className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-amber-500"
-                                />
-                                <p className="text-xs text-slate-400 mt-1">較高：更多風險提醒與邊界考量</p>
-                            </div>
-                        </div>
+                    <div className="space-y-2">
+                        <label className="text-sm font-bold text-slate-700 block">三軸權重</label>
+                        <div className="flex items-center gap-2 text-sm"><Lightbulb className="w-4 h-4 text-purple-500" />意義 {config.weights.meaning}%</div>
+                        <input type="range" min="0" max="100" value={config.weights.meaning} onChange={(event) => setConfig({ ...config, weights: { ...config.weights, meaning: Number(event.target.value) } })} className="w-full" />
+                        <div className="flex items-center gap-2 text-sm"><Wrench className="w-4 h-4 text-blue-500" />實務 {config.weights.practical}%</div>
+                        <input type="range" min="0" max="100" value={config.weights.practical} onChange={(event) => setConfig({ ...config, weights: { ...config.weights, practical: Number(event.target.value) } })} className="w-full" />
+                        <div className="flex items-center gap-2 text-sm"><Shield className="w-4 h-4 text-amber-500" />安全 {config.weights.safety}%</div>
+                        <input type="range" min="0" max="100" value={config.weights.safety} onChange={(event) => setConfig({ ...config, weights: { ...config.weights, safety: Number(event.target.value) } })} className="w-full" />
                     </div>
 
-                    {/* 風險敏感度 */}
-                    <div>
-                        <label className="text-sm font-bold text-slate-700 mb-3 block">風險提醒敏感度</label>
-                        <div className="flex gap-2">
-                            {[
-                                { value: 'low', label: '低', color: 'bg-green-100 text-green-700 border-green-300' },
-                                { value: 'medium', label: '中', color: 'bg-amber-100 text-amber-700 border-amber-300' },
-                                { value: 'high', label: '高', color: 'bg-red-100 text-red-700 border-red-300' },
-                            ].map(({ value, label, color }) => (
-                                <button type="button"
-                                    key={value}
-                                    onClick={() => setConfig({ ...config, riskSensitivity: value as PersonaConfig['riskSensitivity'] })}
-                                    className={`flex-1 py-2 px-4 rounded-lg border-2 font-bold transition-all ${config.riskSensitivity === value
-                                            ? color
-                                            : 'border-slate-200 text-slate-500 hover:border-slate-300'
-                                        }`}
+                    <section className="space-y-3 border border-slate-200 rounded-xl p-4 bg-slate-50/50">
+                        <div className="flex items-center justify-between"><h3 className="text-sm font-bold text-slate-800">自訂角色議會</h3><button type="button" onClick={addRole} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-indigo-600 text-white text-xs"><Plus className="w-3.5 h-3.5" />新增角色</button></div>
+                        <p className="text-xs text-slate-500">角色不固定，可由使用者定義並附掛檔案路徑。</p>
+                        <div className="flex flex-wrap gap-2">
+                            {PERSONA_ROLE_TEMPLATES.map((template, idx) => (
+                                <button
+                                    type="button"
+                                    key={template.id}
+                                    onClick={() => setConfig((prev) => ({ ...prev, customRoles: [...prev.customRoles, buildRoleFromTemplate(template, idx)] }))}
+                                    className="px-3 py-1 rounded-full text-xs border border-slate-300 bg-white"
                                 >
-                                    {label}
+                                    套用 {template.name}
                                 </button>
                             ))}
                         </div>
-                    </div>
-
-                    {/* 回應長度 */}
-                    <div>
-                        <label className="text-sm font-bold text-slate-700 mb-3 block">回應長度偏好</label>
-                        <div className="flex gap-2">
-                            {[
-                                { value: 'concise', label: '簡潔' },
-                                { value: 'balanced', label: '適中' },
-                                { value: 'detailed', label: '詳細' },
-                            ].map(({ value, label }) => (
-                                <button type="button"
-                                    key={value}
-                                    onClick={() => setConfig({ ...config, responseLength: value as PersonaConfig['responseLength'] })}
-                                    className={`flex-1 py-2 px-4 rounded-lg border-2 font-bold transition-all ${config.responseLength === value
-                                            ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
-                                            : 'border-slate-200 text-slate-500 hover:border-slate-300'
-                                        }`}
-                                >
-                                    {label}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
+                        {config.customRoles.map((role) => (
+                            <div key={role.id} className="bg-white border border-slate-200 rounded-lg p-3 space-y-2">
+                                <div className="flex justify-between"><span className="text-xs font-bold text-slate-500">角色</span><button type="button" onClick={() => setConfig((prev) => ({ ...prev, customRoles: prev.customRoles.filter((item) => item.id !== role.id) }))} className="text-xs text-red-600 inline-flex items-center gap-1"><Trash2 className="w-3.5 h-3.5" />刪除</button></div>
+                                <input type="text" value={role.name} onChange={(event) => setConfig((prev) => ({ ...prev, customRoles: prev.customRoles.map((item) => item.id === role.id ? { ...item, name: event.target.value } : item) }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="角色名稱" />
+                                <textarea value={role.description} onChange={(event) => setConfig((prev) => ({ ...prev, customRoles: prev.customRoles.map((item) => item.id === role.id ? { ...item, description: event.target.value } : item) }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm min-h-[64px]" placeholder="角色說明" />
+                                <textarea value={role.promptHint} onChange={(event) => setConfig((prev) => ({ ...prev, customRoles: prev.customRoles.map((item) => item.id === role.id ? { ...item, promptHint: event.target.value } : item) }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm min-h-[52px]" placeholder="提示詞補充（可選）" />
+                                <div className="space-y-2">
+                                    <div className="flex items-center justify-between text-xs text-slate-500"><span className="inline-flex items-center gap-1"><Paperclip className="w-3 h-3" />附件</span><button type="button" className="text-indigo-600" onClick={() => setConfig((prev) => ({ ...prev, customRoles: prev.customRoles.map((item) => item.id === role.id ? { ...item, attachments: [...item.attachments, { id: `attach_${Date.now()}`, label: "", path: "", note: "" }] } : item) }))}>+ 新增附件</button></div>
+                                    {role.attachments.map((attachment) => (
+                                        <div key={attachment.id} className="grid grid-cols-1 md:grid-cols-[1fr,1.2fr,auto] gap-2">
+                                            <input type="text" value={attachment.label} onChange={(event) => setConfig((prev) => ({ ...prev, customRoles: prev.customRoles.map((item) => item.id === role.id ? { ...item, attachments: item.attachments.map((att) => att.id === attachment.id ? { ...att, label: event.target.value } : att) } : item) }))} className="px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="附件名稱" />
+                                            <div className="space-y-2">
+                                                <input type="text" value={attachment.path} onChange={(event) => setConfig((prev) => ({ ...prev, customRoles: prev.customRoles.map((item) => item.id === role.id ? { ...item, attachments: item.attachments.map((att) => att.id === attachment.id ? { ...att, path: event.target.value } : att) } : item) }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="檔案路徑，例如 docs/ARCHITECTURE_BOUNDARIES.md" />
+                                                <input type="text" value={attachment.note} onChange={(event) => setConfig((prev) => ({ ...prev, customRoles: prev.customRoles.map((item) => item.id === role.id ? { ...item, attachments: item.attachments.map((att) => att.id === attachment.id ? { ...att, note: event.target.value } : att) } : item) }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="用途備註（可選）" />
+                                            </div>
+                                            <button type="button" onClick={() => setConfig((prev) => ({ ...prev, customRoles: prev.customRoles.map((item) => item.id === role.id ? { ...item, attachments: item.attachments.filter((att) => att.id !== attachment.id) } : item) }))} className="px-2 py-2 text-xs text-red-600">刪除</button>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
+                    </section>
                 </div>
 
-                {/* Footer */}
                 <div className="p-6 border-t border-slate-100 flex justify-between sticky bottom-0 bg-white">
-                    <button type="button"
-                        onClick={handleReset}
-                        className="flex items-center gap-2 px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
-                    >
-                        <RotateCcw className="w-4 h-4" />
-                        重設預設
-                    </button>
-                    <button type="button"
-                        onClick={handleSave}
-                        className="flex items-center gap-2 px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-bold"
-                    >
-                        <Save className="w-4 h-4" />
-                        儲存設定
-                    </button>
+                    <button type="button" onClick={() => setConfig({ ...DEFAULT_PERSONA })} className="flex items-center gap-2 px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg"><RotateCcw className="w-4 h-4" />重置設定</button>
+                    <button type="button" onClick={save} className="flex items-center gap-2 px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-bold"><Save className="w-4 h-4" />儲存設定</button>
                 </div>
             </div>
         </div>
     );
 }
-

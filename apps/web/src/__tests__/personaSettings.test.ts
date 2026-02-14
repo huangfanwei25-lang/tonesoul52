@@ -1,144 +1,112 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { beforeEach, describe, expect, it } from "vitest";
 
-// Mock localStorage 
+import {
+    DEFAULT_PERSONA,
+    getStoredPersona,
+    normalizePersonaConfig,
+    savePersona,
+    type PersonaConfig,
+} from "../components/PersonaSettings";
+
 const localStorageMock = (() => {
-    let store: Record<string, string> = {}
+    let store: Record<string, string> = {};
     return {
         getItem: (key: string) => store[key] || null,
-        setItem: (key: string, value: string) => { store[key] = value },
-        removeItem: (key: string) => { delete store[key] },
-        clear: () => { store = {} }
-    }
-})()
-
-Object.defineProperty(globalThis, 'localStorage', { value: localStorageMock })
-
-// Note: PersonaConfig type for testing
-interface PersonaConfig {
-    name: string;
-    greeting: string;
-    style: 'balanced' | 'creative' | 'analytical' | 'cautious';
-    weights: {
-        meaning: number;
-        practical: number;
-        safety: number;
+        setItem: (key: string, value: string) => {
+            store[key] = value;
+        },
+        removeItem: (key: string) => {
+            delete store[key];
+        },
+        clear: () => {
+            store = {};
+        },
     };
-    riskSensitivity: 'low' | 'medium' | 'high';
-    responseLength: 'concise' | 'balanced' | 'detailed';
-}
+})();
 
-const DEFAULT_PERSONA: PersonaConfig = {
-    name: "ToneSoul",
-    greeting: "你好！有什麼我可以幫你的嗎？",
-    style: 'balanced',
-    weights: {
-        meaning: 50,
-        practical: 50,
-        safety: 50,
-    },
-    riskSensitivity: 'medium',
-    responseLength: 'balanced',
-};
+Object.defineProperty(globalThis, "localStorage", { value: localStorageMock });
+Object.defineProperty(globalThis, "window", {
+    value: { localStorage: localStorageMock },
+    configurable: true,
+});
 
-const PERSONA_KEY = 'tonesoul_persona';
+const PERSONA_KEY = "tonesoul_persona";
 
-// Pure functions for testing (mirroring PersonaSettings.tsx logic)
-function getStoredPersona(): PersonaConfig {
-    const stored = localStorage.getItem(PERSONA_KEY);
-    if (!stored) return DEFAULT_PERSONA;
-    try {
-        return { ...DEFAULT_PERSONA, ...JSON.parse(stored) };
-    } catch {
-        return DEFAULT_PERSONA;
-    }
-}
-
-function savePersona(config: PersonaConfig): void {
-    localStorage.setItem(PERSONA_KEY, JSON.stringify(config));
-}
-
-describe('PersonaSettings', () => {
+describe("PersonaSettings storage", () => {
     beforeEach(() => {
-        localStorageMock.clear()
-    })
+        localStorageMock.clear();
+    });
 
-    describe('DEFAULT_PERSONA', () => {
-        it('should have correct default values', () => {
-            expect(DEFAULT_PERSONA.name).toBe('ToneSoul')
-            expect(DEFAULT_PERSONA.style).toBe('balanced')
-            expect(DEFAULT_PERSONA.weights.meaning).toBe(50)
-            expect(DEFAULT_PERSONA.weights.practical).toBe(50)
-            expect(DEFAULT_PERSONA.weights.safety).toBe(50)
-            expect(DEFAULT_PERSONA.riskSensitivity).toBe('medium')
-            expect(DEFAULT_PERSONA.responseLength).toBe('balanced')
-        })
-    })
+    it("keeps default persona shape with customRoles", () => {
+        expect(DEFAULT_PERSONA.name).toBe("ToneSoul");
+        expect(DEFAULT_PERSONA.customRoles).toEqual([]);
+    });
 
-    describe('getStoredPersona', () => {
-        it('should return default persona when no stored value', () => {
-            const result = getStoredPersona()
-            expect(result).toEqual(DEFAULT_PERSONA)
-        })
+    it("returns defaults when storage is empty", () => {
+        const result = getStoredPersona();
+        expect(result).toEqual(DEFAULT_PERSONA);
+    });
 
-        it('should return stored persona when available', () => {
-            const customPersona: PersonaConfig = {
-                name: '小助手',
-                greeting: '嗨！',
-                style: 'creative',
-                weights: { meaning: 80, practical: 30, safety: 40 },
-                riskSensitivity: 'low',
-                responseLength: 'concise'
-            }
-            localStorageMock.setItem(PERSONA_KEY, JSON.stringify(customPersona))
+    it("normalizes stored payload and keeps custom roles", () => {
+        localStorageMock.setItem(
+            PERSONA_KEY,
+            JSON.stringify({
+                name: "Custom",
+                weights: { meaning: 101, practical: -1, safety: 66 },
+                customRoles: [
+                    {
+                        name: "Risk Auditor",
+                        description: "Find failure paths",
+                        promptHint: "Fail closed first",
+                        attachments: [{ label: "policy", path: "docs/policy.md", note: "baseline" }],
+                    },
+                ],
+            })
+        );
 
-            const result = getStoredPersona()
-            expect(result.name).toBe('小助手')
-            expect(result.style).toBe('creative')
-            expect(result.weights.meaning).toBe(80)
-        })
+        const result = getStoredPersona();
+        expect(result.name).toBe("Custom");
+        expect(result.weights.meaning).toBe(100);
+        expect(result.weights.practical).toBe(0);
+        expect(result.weights.safety).toBe(66);
+        expect(result.customRoles).toHaveLength(1);
+        expect(result.customRoles[0].name).toBe("Risk Auditor");
+        expect(result.customRoles[0].attachments[0].path).toBe("docs/policy.md");
+    });
 
-        it('should merge with defaults for partial stored config', () => {
-            localStorageMock.setItem(PERSONA_KEY, JSON.stringify({ name: '自訂名稱' }))
+    it("returns default payload on invalid JSON", () => {
+        localStorageMock.setItem(PERSONA_KEY, "not-json");
+        const result = getStoredPersona();
+        expect(result).toEqual(DEFAULT_PERSONA);
+    });
 
-            const result = getStoredPersona()
-            expect(result.name).toBe('自訂名稱')
-            expect(result.style).toBe('balanced')  // from default
-            expect(result.weights.meaning).toBe(50)  // from default
-        })
+    it("savePersona persists normalized config", () => {
+        const payload: PersonaConfig = {
+            ...DEFAULT_PERSONA,
+            name: "Persona-X",
+            customRoles: [
+                {
+                    id: "r1",
+                    name: "Planner",
+                    description: "Action oriented",
+                    promptHint: "Sequence by risk",
+                    attachments: [
+                        { id: "a1", label: "task", path: "task.md", note: "main queue" },
+                    ],
+                },
+            ],
+        };
+        savePersona(payload);
+        const raw = JSON.parse(String(localStorageMock.getItem(PERSONA_KEY)));
+        expect(raw.name).toBe("Persona-X");
+        expect(raw.customRoles[0].attachments[0].path).toBe("task.md");
+    });
 
-        it('should return default for invalid JSON', () => {
-            localStorageMock.setItem(PERSONA_KEY, 'invalid json{{{')
-
-            const result = getStoredPersona()
-            expect(result).toEqual(DEFAULT_PERSONA)
-        })
-    })
-
-    describe('savePersona', () => {
-        it('should save persona to localStorage', () => {
-            const customPersona: PersonaConfig = {
-                ...DEFAULT_PERSONA,
-                name: '測試AI',
-                style: 'analytical'
-            }
-
-            savePersona(customPersona)
-
-            const stored = JSON.parse(localStorageMock.getItem(PERSONA_KEY)!)
-            expect(stored.name).toBe('測試AI')
-            expect(stored.style).toBe('analytical')
-        })
-    })
-})
-
-describe('PersonaConfig weights validation', () => {
-    it('should have weights in valid range 0-100', () => {
-        const { weights } = DEFAULT_PERSONA
-        expect(weights.meaning).toBeGreaterThanOrEqual(0)
-        expect(weights.meaning).toBeLessThanOrEqual(100)
-        expect(weights.practical).toBeGreaterThanOrEqual(0)
-        expect(weights.practical).toBeLessThanOrEqual(100)
-        expect(weights.safety).toBeGreaterThanOrEqual(0)
-        expect(weights.safety).toBeLessThanOrEqual(100)
-    })
-})
+    it("normalizePersonaConfig drops empty custom roles", () => {
+        const result = normalizePersonaConfig({
+            ...DEFAULT_PERSONA,
+            customRoles: [{ name: "", description: "", promptHint: "", attachments: [] }],
+        });
+        expect(result.customRoles).toEqual([]);
+    });
+});

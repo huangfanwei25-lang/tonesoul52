@@ -16,6 +16,8 @@ const DEFAULT_RETRY_BASE_DELAY_MS = process.env.NODE_ENV === "test" ? 0 : 300;
 const MOCK_FALLBACK_ENV = "TONESOUL_ENABLE_CHAT_MOCK_FALLBACK";
 const ALLOWED_COUNCIL_MODES = new Set(["rules", "rules_only", "hybrid", "full_llm"]);
 const TRANSIENT_STATUS_CODES = new Set([429, 502, 503, 504]);
+const MAX_PERSONA_ROLES = 8;
+const MAX_PERSONA_ATTACHMENTS_PER_ROLE = 6;
 
 type PersonaPayload = {
     name?: string;
@@ -23,6 +25,18 @@ type PersonaPayload = {
     weights?: { meaning?: number; practical?: number; safety?: number };
     risk_sensitivity?: string;
     response_length?: string;
+    custom_roles?: Array<{
+        id?: string;
+        name?: string;
+        description?: string;
+        prompt_hint?: string;
+        attachments?: Array<{
+            id?: string;
+            label?: string;
+            path?: string;
+            note?: string;
+        }>;
+    }>;
 };
 
 type ChatRequestPayload = {
@@ -193,6 +207,71 @@ function parseChatBody(raw: unknown): { body?: ChatRequestPayload; error?: NextR
     if (persona !== undefined) {
         if (!isPlainObject(persona)) {
             return { error: badRequest("persona") };
+        }
+        const name = persona.name;
+        if (name !== undefined && typeof name !== "string") {
+            return { error: badRequest("persona") };
+        }
+        const style = persona.style;
+        if (style !== undefined && typeof style !== "string") {
+            return { error: badRequest("persona") };
+        }
+        const riskSensitivity = persona.risk_sensitivity;
+        if (riskSensitivity !== undefined && typeof riskSensitivity !== "string") {
+            return { error: badRequest("persona") };
+        }
+        const responseLength = persona.response_length;
+        if (responseLength !== undefined && typeof responseLength !== "string") {
+            return { error: badRequest("persona") };
+        }
+        const weights = persona.weights;
+        if (weights !== undefined) {
+            if (!isPlainObject(weights)) {
+                return { error: badRequest("persona") };
+            }
+            for (const key of ["meaning", "practical", "safety"] as const) {
+                const value = weights[key];
+                if (value !== undefined && typeof value !== "number") {
+                    return { error: badRequest("persona") };
+                }
+            }
+        }
+        const customRoles = persona.custom_roles;
+        if (customRoles !== undefined) {
+            if (!Array.isArray(customRoles) || customRoles.length > MAX_PERSONA_ROLES) {
+                return { error: badRequest("persona") };
+            }
+            for (const role of customRoles) {
+                if (!isPlainObject(role)) {
+                    return { error: badRequest("persona") };
+                }
+                for (const key of ["id", "name", "description", "prompt_hint"] as const) {
+                    const value = role[key];
+                    if (value !== undefined && typeof value !== "string") {
+                        return { error: badRequest("persona") };
+                    }
+                }
+                const attachments = role.attachments;
+                if (attachments !== undefined) {
+                    if (
+                        !Array.isArray(attachments)
+                        || attachments.length > MAX_PERSONA_ATTACHMENTS_PER_ROLE
+                    ) {
+                        return { error: badRequest("persona") };
+                    }
+                    for (const attachment of attachments) {
+                        if (!isPlainObject(attachment)) {
+                            return { error: badRequest("persona") };
+                        }
+                        for (const key of ["id", "label", "path", "note"] as const) {
+                            const value = attachment[key];
+                            if (value !== undefined && typeof value !== "string") {
+                                return { error: badRequest("persona") };
+                            }
+                        }
+                    }
+                }
+            }
         }
         parsed.persona = persona as PersonaPayload;
     }

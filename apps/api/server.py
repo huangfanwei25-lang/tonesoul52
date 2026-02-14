@@ -369,6 +369,49 @@ def _validate_perspective_config(config: dict) -> tuple[dict | None, tuple | Non
     return config, None
 
 
+def _validate_persona_config(config: dict) -> tuple[dict | None, tuple | None]:
+    scalar_keys = ("name", "style", "risk_sensitivity", "response_length")
+    for key in scalar_keys:
+        value = config.get(key)
+        if value is not None and not isinstance(value, str):
+            return None, (jsonify({"error": "Invalid persona"}), 400)
+
+    weights = config.get("weights")
+    if weights is not None:
+        if not isinstance(weights, dict):
+            return None, (jsonify({"error": "Invalid persona"}), 400)
+        for key in ("meaning", "practical", "safety"):
+            value = weights.get(key)
+            if value is not None and not isinstance(value, (int, float)):
+                return None, (jsonify({"error": "Invalid persona"}), 400)
+
+    custom_roles = config.get("custom_roles")
+    if custom_roles is not None:
+        if not isinstance(custom_roles, list) or len(custom_roles) > 8:
+            return None, (jsonify({"error": "Invalid persona"}), 400)
+        for role in custom_roles:
+            if not isinstance(role, dict):
+                return None, (jsonify({"error": "Invalid persona"}), 400)
+            for key in ("id", "name", "description", "prompt_hint"):
+                value = role.get(key)
+                if value is not None and not isinstance(value, str):
+                    return None, (jsonify({"error": "Invalid persona"}), 400)
+
+            attachments = role.get("attachments")
+            if attachments is not None:
+                if not isinstance(attachments, list) or len(attachments) > 6:
+                    return None, (jsonify({"error": "Invalid persona"}), 400)
+                for attachment in attachments:
+                    if not isinstance(attachment, dict):
+                        return None, (jsonify({"error": "Invalid persona"}), 400)
+                    for key in ("id", "label", "path", "note"):
+                        value = attachment.get(key)
+                        if value is not None and not isinstance(value, str):
+                            return None, (jsonify({"error": "Invalid persona"}), 400)
+
+    return config, None
+
+
 def _require_list(data: dict, key: str) -> tuple[list | None, tuple | None]:
     value = data.get(key)
     if isinstance(value, list):
@@ -1265,6 +1308,10 @@ def chat():
     persona_config, error = _require_optional_dict(data, "persona")
     if error is not None:
         return error
+    if persona_config is not None:
+        persona_config, error = _validate_persona_config(persona_config)
+        if error is not None:
+            return error
     message = message if message is not None else ""
     history = history if history is not None else []
     full_analysis = full_analysis if full_analysis is not None else True
