@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-02-14T11:45:26Z",
+  "generated_at": "2026-02-20T17:50:16Z",
   "overall_ok": true,
   "config": {
     "include_sdh": false,
@@ -8,7 +8,7 @@
     "sdh_timeout": null,
     "check_council_modes": true,
     "strict_soft_fail": false,
-    "allow_missing_discussion": false
+    "allow_missing_discussion": true
   },
   "checks": [
     {
@@ -26,19 +26,19 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 0.69,
+      "duration_seconds": 0.75,
       "command": "python -m black --check tonesoul tests scripts",
       "stdout_tail": "",
-      "stderr_tail": "All done! ✨ 🍰 ✨\n348 files would be left unchanged."
+      "stderr_tail": "All done! ✨ 🍰 ✨\n349 files would be left unchanged."
     },
     {
       "name": "python_tests",
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 74.73,
+      "duration_seconds": 75.16,
       "command": "python -m pytest tests -q",
-      "stdout_tail": " 97%]\ntests\\test_vtp.py ....                                                   [ 98%]\ntests\\test_vtp_runtime.py ...                                            [ 98%]\ntests\\test_workflow_contracts.py .........                               [ 99%]\ntests\\test_yss_unified_adapter.py ....                                   [100%]\n\n============================== warnings summary ===============================\n.venv\\Lib\\site-packages\\_hypothesis_pytestplugin.py:481\n  C:\\Users\\user\\Desktop\\倉庫\\.venv\\Lib\\site-packages\\_hypothesis_pytestplugin.py:481: UserWarning: Skipping collection of '.hypothesis' directory - this usually means you've explicitly set the `norecursedirs` pytest config option, replacing rather than extending the default ignores.\n    warnings.warn(\n\ntests/test_unified_core.py::TestUnifiedCoreImport::test_default_init\n  C:\\Users\\user\\Desktop\\倉庫\\tests\\test_unified_core.py:19: DeprecationWarning: UnifiedCore is in maintenance mode; use tonesoul.unified_pipeline.UnifiedPipeline for production chat runtime.\n    core = UnifiedCore()\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n================= 849 passed, 2 warnings in 72.66s (0:01:12) ==================",
+      "stdout_tail": " 97%]\ntests\\test_vtp.py ....                                                   [ 98%]\ntests\\test_vtp_runtime.py ...                                            [ 98%]\ntests\\test_workflow_contracts.py .........                               [ 99%]\ntests\\test_yss_unified_adapter.py ....                                   [100%]\n\n============================== warnings summary ===============================\n.venv\\Lib\\site-packages\\_hypothesis_pytestplugin.py:481\n  C:\\Users\\user\\Desktop\\倉庫\\.venv\\Lib\\site-packages\\_hypothesis_pytestplugin.py:481: UserWarning: Skipping collection of '.hypothesis' directory - this usually means you've explicitly set the `norecursedirs` pytest config option, replacing rather than extending the default ignores.\n    warnings.warn(\n\ntests/test_unified_core.py::TestUnifiedCoreImport::test_default_init\n  C:\\Users\\user\\Desktop\\倉庫\\tests\\test_unified_core.py:19: DeprecationWarning: UnifiedCore is in maintenance mode; use tonesoul.unified_pipeline.UnifiedPipeline for production chat runtime.\n    core = UnifiedCore()\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n================= 849 passed, 2 warnings in 72.92s (0:01:12) ==================",
       "stderr_tail": ""
     },
     {
@@ -46,7 +46,7 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 6.49,
+      "duration_seconds": 6.09,
       "command": "npm --prefix apps/web run lint",
       "stdout_tail": "> web@0.1.0 lint\n> eslint",
       "stderr_tail": ""
@@ -56,9 +56,9 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 2.13,
+      "duration_seconds": 1.99,
       "command": "npm --prefix apps/web run test",
-      "stdout_tail": "> web@0.1.0 test\n> vitest run\n\n\n RUN  v4.0.17 C:/Users/user/Desktop/倉庫/apps/web\n\n ✓ src/__tests__/entropyCalculator.test.ts (9 tests) 10ms\n ✓ src/__tests__/privateNotesCrypto.test.ts (2 tests) 60ms\n ✓ src/__tests__/apiRoutes.backendHealth.test.ts (4 tests) 22ms\n ✓ src/__tests__/apiRoutes.chatTransport.test.ts (9 tests) 28ms\n ✓ src/__tests__/apiRoutes.invalidJson.test.ts (8 tests) 25ms\n ✓ src/__tests__/apiRoutes.transportFallback.test.ts (9 tests) 25ms\n ✓ src/__tests__/publicSurface.contract.test.ts (3 tests) 376ms\n     ✓ notes page exports noindex metadata  370ms\n ✓ src/__tests__/chatFallback.test.ts (6 tests) 8ms\n ✓ src/__tests__/metadataRoutes.contract.test.ts (3 tests) 6ms\n ✓ src/__tests__/personaSettings.test.ts (6 tests) 9ms\n ✓ src/__tests__/settingsModal.test.ts (2 tests) 3ms\n\n Test Files  11 passed (11)\n      Tests  61 passed (61)\n   Start at  19:43:45\n   Duration  1.25s (transform 1.13s, setup 0ms, import 2.23s, tests 573ms, environment 3ms)",
+      "stdout_tail": "> web@0.1.0 test\n> vitest run\n\n\n RUN  v4.0.17 C:/Users/user/Desktop/倉庫/apps/web\n\n ✓ src/__tests__/privateNotesCrypto.test.ts (2 tests) 40ms\n ✓ src/__tests__/entropyCalculator.test.ts (9 tests) 11ms\n ✓ src/__tests__/apiRoutes.backendHealth.test.ts (4 tests) 21ms\n ✓ src/__tests__/apiRoutes.chatTransport.test.ts (9 tests) 27ms\n ✓ src/__tests__/apiRoutes.transportFallback.test.ts (9 tests) 27ms\n ✓ src/__tests__/apiRoutes.invalidJson.test.ts (8 tests) 28ms\n ✓ src/__tests__/publicSurface.contract.test.ts (3 tests) 398ms\n     ✓ notes page exports noindex metadata  392ms\n ✓ src/__tests__/chatFallback.test.ts (6 tests) 7ms\n ✓ src/__tests__/metadataRoutes.contract.test.ts (3 tests) 6ms\n ✓ src/__tests__/personaSettings.test.ts (6 tests) 9ms\n ✓ src/__tests__/settingsModal.test.ts (2 tests) 3ms\n\n Test Files  11 passed (11)\n      Tests  61 passed (61)\n   Start at  01:48:34\n   Duration  1.20s (transform 1.07s, setup 0ms, import 2.06s, tests 576ms, environment 3ms)",
       "stderr_tail": ""
     },
     {
@@ -66,9 +66,9 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 1.81,
+      "duration_seconds": 1.9,
       "command": "python scripts/verify_git_hygiene.py",
-      "stdout_tail": " 768,\n    \"in_pack\": 5907,\n    \"packs\": 2,\n    \"size\": \"2.02 MiB\",\n    \"size_pack\": \"98.13 MiB\",\n    \"dangling_count\": 6,\n    \"fsck_prefix_counts\": {\n      \"dangling\": 6\n    },\n    \"fsck_unexpected_count\": 0\n  },\n  \"checks\": [\n    {\n      \"name\": \"count_objects\",\n      \"status\": \"pass\",\n      \"ok\": true,\n      \"exit_code\": 0,\n      \"duration_seconds\": 0.07,\n      \"command\": \"git count-objects -vH\",\n      \"stdout_tail\": \"count: 768\\nsize: 2.02 MiB\\nin-pack: 5907\\npacks: 2\\nsize-pack: 98.13 MiB\\nprune-packable: 0\\ngarbage: 0\\nsize-garbage: 0 bytes\",\n      \"stderr_tail\": \"\"\n    },\n    {\n      \"name\": \"fsck\",\n      \"status\": \"pass\",\n      \"ok\": true,\n      \"exit_code\": 0,\n      \"duration_seconds\": 1.65,\n      \"command\": \"git fsck --no-reflogs\",\n      \"stdout_tail\": \"dangling tree b4577d122cd9b4958ee5e2e0bdaa406d40fb0b1c\\ndangling commit e59a81aa2266179f70aa6047bc77970012d73242\\ndangling commit 9fa2a803b7f83baf810add35c740af0a366f2cac\\ndangling commit 8427354ea93ed07306090def111958d2dc37577f\\ndangling commit 762dc646d3aa5293b22ec3e8f3bd4f5910b9b281\\ndangling blob a0bb8c57a438237b00a843a53d052118e0d1ec87\",\n      \"stderr_tail\": \"\"\n    }\n  ],\n  \"issues\": [],\n  \"fsck_unexpected_lines\": []\n}",
+      "stdout_tail": "46\\\\234\\\\200\\\\347\\\\265\\\\202\\\\347\\\\211\\\\210_v1.3.json\\\"\",\n    \"experiments/tsd1_pilot/data/prompts.json\",\n    \"experiments/tsd1_pilot/data/responses.json\",\n    \"memory/.hierarchical_index/hierarchical.index\",\n    \"memory/.hierarchical_index/vows_meta.json\",\n    \"memory/.semantic_index/faiss.index\",\n    \"memory/.semantic_index/metadata.json\",\n    \"memory/external_framework_analysis/claw_governance_insight.md\",\n    \"memory/external_framework_analysis/wfgy_3.0_analysis.md\",\n    \"memory/handoff/codex_prompt.md\",\n    \"memory/handoff/note_antigravity_to_codex_20260204.md\",\n    \"memory/narrative/README.md\",\n    \"memory/narrative/synthesis.md\",\n    \"memory/narrative/threads/academic_grounding.md\",\n    \"memory/narrative/threads/infinite_game.md\",\n    \"memory/narrative/threads/meaning_transfer.md\",\n    \"memory/narrative/threads/multi_voice.md\",\n    \"memory/narrative/threads/value_root.md\",\n    \"memory/vectors/metadata.json\",\n    \"memory/vectors/vectors.npy\",\n    \"simulation_logs/hero_journey.jsonl\",\n    \"spec/wfgy_semantic_control_spec.md\",\n    \"zenodo_upload/paper_outline_multiperspective_truth.md\",\n    \"\\\"zenodo_upload/\\\\344\\\\270\\\\212\\\\345\\\\202\\\\263\\\\346\\\\214\\\\207\\\\345\\\\215\\\\227.md\\\"\"\n  ]\n}",
       "stderr_tail": ""
     },
     {
@@ -86,9 +86,9 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 0.13,
+      "duration_seconds": 0.12,
       "command": "python scripts/verify_external_source_registry.py --strict",
-      "stdout_tail": ":url[0]\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"registry:pmlr:reviewed_at\",\n      \"status\": \"pass\",\n      \"detail\": \"review age ok: 0 days\"\n    },\n    {\n      \"name\": \"open_source_apps\",\n      \"status\": \"pass\",\n      \"detail\": \"3 app entries found\"\n    },\n    {\n      \"name\": \"app:Streamlit:repo\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"app:Streamlit:website\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"app:Playwright:repo\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"app:Playwright:website\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"app:FastAPI:repo\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"app:FastAPI:website\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    }\n  ],\n  \"policy\": {\n    \"review_cycle_days\": 120,\n    \"allowed_hosts_count\": 21,\n    \"blocked_hosts_count\": 5\n  },\n  \"inputs\": {\n    \"registry\": \"spec\\\\external_source_registry.yaml\",\n    \"open_source_apps\": \"spec\\\\open_source_apps.yaml\",\n    \"today\": \"2026-02-14\"\n  }\n}",
+      "stdout_tail": ":url[0]\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"registry:pmlr:reviewed_at\",\n      \"status\": \"pass\",\n      \"detail\": \"review age ok: 7 days\"\n    },\n    {\n      \"name\": \"open_source_apps\",\n      \"status\": \"pass\",\n      \"detail\": \"3 app entries found\"\n    },\n    {\n      \"name\": \"app:Streamlit:repo\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"app:Streamlit:website\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"app:Playwright:repo\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"app:Playwright:website\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"app:FastAPI:repo\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"app:FastAPI:website\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    }\n  ],\n  \"policy\": {\n    \"review_cycle_days\": 120,\n    \"allowed_hosts_count\": 21,\n    \"blocked_hosts_count\": 5\n  },\n  \"inputs\": {\n    \"registry\": \"spec\\\\external_source_registry.yaml\",\n    \"open_source_apps\": \"spec\\\\open_source_apps.yaml\",\n    \"today\": \"2026-02-21\"\n  }\n}",
       "stderr_tail": ""
     },
     {
@@ -96,9 +96,9 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 97.33,
+      "duration_seconds": 98.13,
       "command": "python scripts/verify_7d.py",
-      "stdout_tail": "ommand\": \"python tools/agent_discussion_tool.py tail --path memory\\\\agent_discussion_curated.jsonl --limit 1\",\n      \"note\": \"age_days=1.17, threshold=7\"\n    },\n    {\n      \"dimension\": \"XDD\",\n      \"gate\": \"BLOCKING\",\n      \"status\": \"pass\",\n      \"command\": \"python -m pytest tests\\\\test_uncertainty.py -q\",\n      \"note\": \"\"\n    },\n    {\n      \"dimension\": \"GDD\",\n      \"gate\": \"BLOCKING\",\n      \"status\": \"pass\",\n      \"command\": \"python -m pytest tests\\\\test_genesis_integration.py tests\\\\test_provenance_chain.py -q\",\n      \"note\": \"\"\n    },\n    {\n      \"dimension\": \"CDD\",\n      \"gate\": \"BLOCKING\",\n      \"status\": \"pass\",\n      \"command\": \"python -m pytest tests/test_api_server_contract.py -q\",\n      \"note\": \"\"\n    },\n    {\n      \"dimension\": \"SDH\",\n      \"gate\": \"SOFT_FAIL\",\n      \"status\": \"skip\",\n      \"command\": \"python scripts\\\\verify_web_api.py --web-base http://127.0.0.1:3000 --api-base http://127.0.0.1:5000 --require-backend --check-council-modes\",\n      \"note\": \"skipped; use --include-sdh when web/backend are running\"\n    }\n  ],\n  \"scores\": {\n    \"TDD\": 100,\n    \"RDD\": 100,\n    \"DDD\": 100,\n    \"XDD\": 100,\n    \"GDD\": 100,\n    \"CDD\": 100,\n    \"SDH\": 0,\n    \"OVERALL\": 90\n  }\n}",
+      "stdout_tail": "ython tools/agent_discussion_tool.py tail --path memory\\\\agent_discussion_curated.jsonl --limit 1\",\n      \"note\": \"stale data: age_days=7.42, threshold=7\"\n    },\n    {\n      \"dimension\": \"XDD\",\n      \"gate\": \"BLOCKING\",\n      \"status\": \"pass\",\n      \"command\": \"python -m pytest tests\\\\test_uncertainty.py -q\",\n      \"note\": \"\"\n    },\n    {\n      \"dimension\": \"GDD\",\n      \"gate\": \"BLOCKING\",\n      \"status\": \"pass\",\n      \"command\": \"python -m pytest tests\\\\test_genesis_integration.py tests\\\\test_provenance_chain.py -q\",\n      \"note\": \"\"\n    },\n    {\n      \"dimension\": \"CDD\",\n      \"gate\": \"BLOCKING\",\n      \"status\": \"pass\",\n      \"command\": \"python -m pytest tests/test_api_server_contract.py -q\",\n      \"note\": \"\"\n    },\n    {\n      \"dimension\": \"SDH\",\n      \"gate\": \"SOFT_FAIL\",\n      \"status\": \"skip\",\n      \"command\": \"python scripts\\\\verify_web_api.py --web-base http://127.0.0.1:3000 --api-base http://127.0.0.1:5000 --require-backend --check-council-modes\",\n      \"note\": \"skipped; use --include-sdh when web/backend are running\"\n    }\n  ],\n  \"scores\": {\n    \"TDD\": 100,\n    \"RDD\": 100,\n    \"DDD\": 66,\n    \"XDD\": 100,\n    \"GDD\": 100,\n    \"CDD\": 100,\n    \"SDH\": 0,\n    \"OVERALL\": 84\n  }\n}",
       "stderr_tail": ""
     }
   ]
