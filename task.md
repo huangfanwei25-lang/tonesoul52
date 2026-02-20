@@ -29,6 +29,8 @@
 - [x] Phase 98: Persona payload schema validation (web route + backend API fail-closed)
 - [x] Phase 99: Custom-role council contract coverage (factory + fallback semantics)
 - [x] Phase 100: Architecture convergence v2 (Trinket protocol + swarm dispatcher + YSS alignment)
+- [x] Phase 101: YuHun 1.0 multi-persona audit profile scaffold
+- [x] Phase 102: Git/local repository stabilization planning baseline
 **Latest validation**: `pytest -q` => `849 passed` (2026-02-14). Level 3 implementation tracked in `CODEX_TASK.md` v7.
 
 ## Backlog Radar (Original Specs/Docs, 2026-02-14)
@@ -54,6 +56,23 @@
 - [x] Evolution alignment: bridge `yss_pipeline` context schema to unified runtime contract and populate non-null A/B/C evaluation artifacts
 - [x] Zombie boundary: mark `UnifiedCore` as `legacy_non_runtime` with explicit replacement target
 **Success Criteria**: v2 convergence plan is executable, testable, and reflected in blocking governance checks.
+
+## Phase 101: YuHun 1.0 multi-persona audit profile scaffold
+- [x] Added `spec/personas/yuhun_v1_multi_persona_audit.yaml`
+- [x] Defined professional split across architecture/security/reliability/evidence/product stances
+- [x] Included runtime-compatible `custom_roles` payload and swarm seed schema
+**Success Criteria**: YuHun 1.0 has a reusable multi-persona audit profile with role-level professional differentiation.
+
+## Phase 102: Git/local repository stabilization planning baseline
+- [x] Captured current git baseline (`branch/head/dirty tree/recent additions`)
+- [x] Added executable plan: `docs/plans/git_local_repo_stabilization_plan_2026-02-20.md`
+- [x] Published Phase 1 artifacts:
+  - `reports/git_local_baseline_2026-02-20.md`
+  - `reports/git_worktree_classification_2026-02-20.md`
+- [x] Started Phase 2 dry-run batch design:
+  - `reports/git_phase2_commit_batch_draft_2026-02-20.md`
+- [ ] Execute Phase 1-4 cleanup and validation flow from plan
+**Success Criteria**: repository state is auditable by category and cleanup can proceed phase-by-phase without mixing concerns.
 
 ## Phase 77: Level 3 Experimental
 - [x] 3a Semantic Trigger

@@ -27,6 +27,18 @@ future:
   龍蝦帳號: "待定 - 等有免費方案時設置"
 ```
 
+### 🛠️ 共用技能庫 (Shared Skills)
+
+| 路徑 | 擁有者 | 已安裝技能 |
+|------|--------|-----------|
+| `C:\Users\user\.codex\skills\` | Codex (OpenAI) | `playwright` — 瀏覽器自動化 CLI |
+| `C:\Users\user\.gemini\` | Antigravity (Gemini) | 對話腦、工作流 |
+| `c:\Users\user\Desktop\倉庫\.agent\skills\` | 專案層級 | `SKILL_TEMPLATE.md`（模板） |
+| `c:\Users\user\Desktop\倉庫\.agent\workflows\` | 專案層級 | `antigravity`, `fullstack-engineer`, `vibe_mode` |
+
+> **注意**: `.codex/skills/playwright/` 有安全機制：HTTPS only、域名白名單、禁止 eval。
+> 使用前先讀 `SECURITY.md`。
+
 ---
 
 ## 💭 核心哲學 (2026-02-08 對話)
