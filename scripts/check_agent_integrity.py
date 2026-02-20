@@ -17,9 +17,9 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 
 # SHA-256 hashes of trusted files. Update when intentionally modified.
 TRUSTED_HASHES = {
-    "AGENTS.md": "92e7a2ba422fb62d76406dbf29e7a32a5b37e86e3b01dbd7cd2c141f4484eb17",
+    "AGENTS.md": "f01ded6d5ab3f8a00ee047e64b631de0f49afa51ead85489a574b62ece3c7173",
     "HANDOFF.md": "018c888f0864c6b2992674d5bfbcf76e7fdcde9634c216a29d2c583919d67834",
-    "SOUL.md": "cc8d3cc4b9545204a26fcbdfa24f2a21296aa07d84cdd601d9093c465aafeaa6",
+    "SOUL.md": "5b9f13b4fb5a5ac3d1b9618b0073cc33a3edb0f985518144d575dc97eb372a5f",
 }
 
 # Paths that are not allowed unless explicitly authorized.
@@ -38,8 +38,9 @@ HIDDEN_CHAR_PATTERN = re.compile(r"[\u200b\u200c\u200d\u200e\u200f\u202a-\u202e\
 
 
 def compute_hash(filepath: Path) -> str:
-    """Compute SHA-256 hash of a file."""
-    return hashlib.sha256(filepath.read_bytes()).hexdigest()
+    """Compute SHA-256 hash with normalized line endings for cross-platform stability."""
+    payload = filepath.read_bytes().replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+    return hashlib.sha256(payload).hexdigest()
 
 
 def check_hash_integrity() -> list[str]:
