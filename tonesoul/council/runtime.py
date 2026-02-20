@@ -331,6 +331,39 @@ class CouncilRuntime:
             transcript["isnad_write_error"] = str(exc)
             verdict.transcript = transcript
             logger.warning("Failed to append Isnad record: %s", exc)
+
+        # ========== Council Evolution Tracking ==========
+        try:
+            from .evolution import CouncilEvolution
+
+            if not hasattr(self, "_evolution"):
+                self._evolution = CouncilEvolution()
+            signals = transcript.get("signals") if isinstance(transcript, dict) else {}
+            if isinstance(signals, dict) and signals:
+                perspective_verdicts = {}
+                perspective_confidences = {}
+                for name, signal in signals.items():
+                    if isinstance(signal, dict):
+                        perspective_verdicts[name] = str(signal.get("vote", "unknown"))
+                        conf = signal.get("confidence")
+                        if conf is not None:
+                            try:
+                                perspective_confidences[name] = float(conf)
+                            except (TypeError, ValueError):
+                                pass
+                final_verdict_str = verdict.verdict.value if verdict.verdict else "unknown"
+                self._evolution.record_deliberation(
+                    perspective_verdicts=perspective_verdicts,
+                    final_verdict=final_verdict_str,
+                    perspective_confidences=perspective_confidences or None,
+                )
+                # Attach evolution summary to transcript for observability
+                transcript = verdict.transcript if isinstance(verdict.transcript, dict) else {}
+                transcript["council_evolution"] = self._evolution.get_summary()
+                verdict.transcript = transcript
+        except Exception as exc:
+            logger.debug("Council evolution tracking skipped: %s", exc)
+
         return verdict
 
     def _resolve_perspective_config(

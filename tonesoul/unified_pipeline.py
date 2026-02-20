@@ -137,6 +137,9 @@ class UnifiedPipeline:
         )
         self._persona_attachment_cache: Dict[str, Optional[str]] = {}
         self._session_recovered = False
+        # Phase I wiring: TensionEngine + PersonaDimension
+        self._tension_engine = None
+        self._persona_dimension = None
 
     def _get_gemini(self):
         """Get LLM client based on LLM_BACKEND env var.
@@ -306,6 +309,17 @@ class UnifiedPipeline:
             except Exception:
                 pass
         return self._visual_chain
+
+    def _get_tension_engine(self):
+        """Get or create the unified tension engine."""
+        if self._tension_engine is None:
+            try:
+                from tonesoul.tension_engine import TensionEngine
+
+                self._tension_engine = TensionEngine()
+            except Exception:
+                pass
+        return self._tension_engine
 
     def _should_capture_visual_frame(self, chain: Any) -> bool:
         """Gate automatic visual capture with env-configurable controls."""
@@ -957,12 +971,32 @@ class UnifiedPipeline:
             except Exception as e:
                 print(f"Trajectory analysis error: {e}")
 
+        # ========== 2.1 Unified Tension Computation ==========
+        tension_result = None
+        tension_engine = self._get_tension_engine()
+        if tension_engine:
+            try:
+                tension_result = tension_engine.compute(
+                    text_tension=tone_strength,
+                    confidence=(getattr(tb_result, "confidence", 0.8) if tb_result else 0.8),
+                )
+                # Enrich dispatch with multi-signal tension
+                tone_strength = tension_result.total
+            except Exception as e:
+                print(f"TensionEngine error: {e}")
+
         dispatch_trace = self._build_dispatch_trace(
             tension_score=tone_strength,
             resonance_state=resonance_state,
             loop_detected=loop_detected,
             prior_tension=prior_tension,
         )
+        # Attach TensionEngine detail to dispatch trace
+        if tension_result is not None:
+            try:
+                dispatch_trace["tension_engine"] = tension_result.to_dict()
+            except Exception:
+                pass
         trajectory_result["dispatch"] = dispatch_trace
         # ========== 2.5 ToneSoul 2.0: ?批撖抵降 ==========
         deliberation = self._get_deliberation()
@@ -1267,6 +1301,30 @@ Respond with a clear, practical answer."""
                 )
             except Exception:
                 pass
+
+        # ========== 8.5 PersonaDimension Post-Processing ==========
+        try:
+            from tonesoul.persona_dimension import PersonaDimension
+
+            pd_config = persona_config or {}
+            pd = PersonaDimension(pd_config)
+            dispatch_mode = dispatch_trace.get("mode", "resonance")
+            pd_result = pd.process(
+                output=response,
+                context={
+                    "tension": tone_strength,
+                    "zone": dispatch_mode,
+                    "delta_sigma": (
+                        tension_result.signals.semantic_delta if tension_result else 0.0
+                    ),
+                },
+                shadow=(dispatch_mode == "resonance"),
+                intercept=(dispatch_mode in ("tension", "conflict")),
+            )
+            if pd_result.get("corrected"):
+                response = pd_result["output"]
+        except Exception:
+            pass
 
         return UnifiedResponse(
             response=response,

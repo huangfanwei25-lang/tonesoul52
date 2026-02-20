@@ -143,13 +143,36 @@ class PersonaDimension:
             persona_payload.get("communication", {}) if isinstance(persona_payload, dict) else {}
         )
 
+    # Phase II adaptive tolerance sensitivity coefficient
+    ADAPTIVE_K = 0.3
+    ADAPTIVE_FLOOR = 0.5
+    DEFAULT_TOLERANCE = 0.3
+
     def evaluate(
         self,
         output: str,
         context: Optional[Dict[str, object]] = None,
     ) -> Dict[str, object]:
         vector = self.vector_calculator.compute(output, context)
-        valid, reasons = self._check_validity(vector)
+
+        # Phase II: Adaptive tolerance based on semantic delta
+        delta_sigma = 0.0
+        if isinstance(context, dict):
+            try:
+                delta_sigma = float(context.get("delta_sigma", 0.0))
+            except (TypeError, ValueError):
+                pass
+        adaptive_factor = max(
+            self.ADAPTIVE_FLOOR,
+            1.0 - self.ADAPTIVE_K * delta_sigma,
+        )
+        effective_tolerance = {
+            "deltaT": (self.tolerance.get("deltaT") or self.DEFAULT_TOLERANCE) * adaptive_factor,
+            "deltaS": (self.tolerance.get("deltaS") or self.DEFAULT_TOLERANCE) * adaptive_factor,
+            "deltaR": (self.tolerance.get("deltaR") or self.DEFAULT_TOLERANCE) * adaptive_factor,
+        }
+
+        valid, reasons = self._check_validity(vector, effective_tolerance)
         distance = _vector_distance(self.home_vector, vector)
         return {
             "persona_id": self.persona.get("id"),
@@ -157,6 +180,11 @@ class PersonaDimension:
             "valid": valid,
             "reasons": reasons,
             "distance": distance,
+            "adaptive": {
+                "delta_sigma": round(delta_sigma, 4),
+                "factor": round(adaptive_factor, 4),
+                "effective_tolerance": {k: round(v, 4) for k, v in effective_tolerance.items()},
+            },
         }
 
     def process(
@@ -269,10 +297,15 @@ class PersonaDimension:
             text = text + "\n\n（請確認以上資訊是否符合您的需求。）"
         return text
 
-    def _check_validity(self, vector: PersonaVector) -> Tuple[bool, List[str]]:
+    def _check_validity(
+        self,
+        vector: PersonaVector,
+        effective_tolerance: Optional[Dict[str, float]] = None,
+    ) -> Tuple[bool, List[str]]:
         reasons: List[str] = []
         home = self.home_vector if isinstance(self.home_vector, dict) else {}
-        tol = self.tolerance if isinstance(self.tolerance, dict) else {}
+        # Phase II: use adaptive tolerance if provided, else fall back to static
+        tol = effective_tolerance or (self.tolerance if isinstance(self.tolerance, dict) else {})
 
         _check_delta("deltaT", vector.deltaT, home.get("deltaT"), tol.get("deltaT"), reasons)
         _check_delta("deltaS", vector.deltaS, home.get("deltaS"), tol.get("deltaS"), reasons)
