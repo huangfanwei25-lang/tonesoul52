@@ -17,7 +17,7 @@
 ## 日期規則
 
 - 報告檔名一律使用 `YYYY-MM-DD`
-- 範例：`session_summary_2026-02-02_pm.md`
+- 範例：`git_local_baseline_2026-02-20.md`
 
 ## 禁止命名
 
