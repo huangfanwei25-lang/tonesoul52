@@ -61,6 +61,7 @@
 - [x] Added `spec/personas/yuhun_v1_multi_persona_audit.yaml`
 - [x] Defined professional split across architecture/security/reliability/evidence/product stances
 - [x] Included runtime-compatible `custom_roles` payload and swarm seed schema
+- [x] Added discussion report: `reports/multi_persona_audit_discussion_2026-02-20.md`
 **Success Criteria**: YuHun 1.0 has a reusable multi-persona audit profile with role-level professional differentiation.
 
 ## Phase 102: Git/local repository stabilization planning baseline
@@ -71,7 +72,7 @@
   - `reports/git_worktree_classification_2026-02-20.md`
 - [x] Started Phase 2 dry-run batch design:
   - `reports/git_phase2_commit_batch_draft_2026-02-20.md`
-- [ ] Execute Phase 1-4 cleanup and validation flow from plan
+- [x] Execute Phase 1-4 cleanup and validation flow from plan
 **Success Criteria**: repository state is auditable by category and cleanup can proceed phase-by-phase without mixing concerns.
 
 ## Phase 77: Level 3 Experimental
