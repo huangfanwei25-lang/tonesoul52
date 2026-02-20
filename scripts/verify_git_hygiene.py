@@ -22,6 +22,7 @@ JSON_FILENAME = "git_hygiene_latest.json"
 MARKDOWN_FILENAME = "git_hygiene_latest.md"
 DEFAULT_MAX_DANGLING = 50
 DEFAULT_MAX_LOOSE_COUNT = 5000
+DEFAULT_MAX_TRACKED_IGNORED = 0
 
 
 def _iso_now() -> str:
@@ -112,10 +113,15 @@ def _summarize_fsck(stdout: str) -> dict[str, Any]:
     }
 
 
+def _parse_tracked_ignored(stdout: str) -> list[str]:
+    return [line.strip() for line in stdout.splitlines() if line.strip()]
+
+
 def build_report(
     repo_root: Path,
     max_dangling: int = DEFAULT_MAX_DANGLING,
     max_loose_count: int = DEFAULT_MAX_LOOSE_COUNT,
+    max_tracked_ignored: int = DEFAULT_MAX_TRACKED_IGNORED,
     runner=_run_command,
 ) -> dict[str, Any]:
     issues: list[str] = []
@@ -183,6 +189,35 @@ def build_report(
         }
     )
 
+    tracked_cmd = ["git", "ls-files", "-ci", "--exclude-standard"]
+    started = time.perf_counter()
+    tracked_exit, tracked_stdout, tracked_stderr = runner(tracked_cmd, repo_root)
+    tracked_duration = round(time.perf_counter() - started, 2)
+    tracked_ignored_paths = _parse_tracked_ignored(tracked_stdout)
+    tracked_ignored_count = len(tracked_ignored_paths)
+    tracked_ok = tracked_exit == 0
+
+    if tracked_exit != 0:
+        issues.append("git ls-files -ci --exclude-standard failed")
+    if tracked_ignored_count > max_tracked_ignored:
+        tracked_ok = False
+        issues.append(
+            f"tracked-ignored files {tracked_ignored_count} exceeds threshold {max_tracked_ignored}"
+        )
+
+    checks.append(
+        {
+            "name": "tracked_ignored",
+            "status": "pass" if tracked_ok else "fail",
+            "ok": tracked_ok,
+            "exit_code": tracked_exit,
+            "duration_seconds": tracked_duration,
+            "command": _display_command(tracked_cmd),
+            "stdout_tail": _tail(tracked_stdout),
+            "stderr_tail": _tail(tracked_stderr),
+        }
+    )
+
     overall_ok = all(item["ok"] for item in checks)
     return {
         "generated_at": _iso_now(),
@@ -190,6 +225,7 @@ def build_report(
         "config": {
             "max_dangling": max_dangling,
             "max_loose_count": max_loose_count,
+            "max_tracked_ignored": max_tracked_ignored,
         },
         "metrics": {
             "loose_count": loose_count,
@@ -200,10 +236,12 @@ def build_report(
             "dangling_count": dangling_count,
             "fsck_prefix_counts": fsck_summary["prefix_counts"],
             "fsck_unexpected_count": len(fsck_summary["unexpected_lines"]),
+            "tracked_ignored_count": tracked_ignored_count,
         },
         "checks": checks,
         "issues": issues,
         "fsck_unexpected_lines": fsck_summary["unexpected_lines"],
+        "tracked_ignored_paths": tracked_ignored_paths,
     }
 
 
@@ -215,6 +253,7 @@ def _render_markdown(payload: dict[str, Any]) -> str:
         f"- overall_ok: {str(payload['overall_ok']).lower()}",
         f"- max_dangling: {payload['config']['max_dangling']}",
         f"- max_loose_count: {payload['config']['max_loose_count']}",
+        f"- max_tracked_ignored: {payload['config']['max_tracked_ignored']}",
         "",
         "| check | status | exit | duration_s | command |",
         "| --- | --- | ---: | ---: | --- |",
@@ -238,6 +277,7 @@ def _render_markdown(payload: dict[str, Any]) -> str:
             f"- size_pack: {metrics['size_pack']}",
             f"- dangling_count: {metrics['dangling_count']}",
             f"- fsck_unexpected_count: {metrics['fsck_unexpected_count']}",
+            f"- tracked_ignored_count: {metrics['tracked_ignored_count']}",
         ]
     )
 
@@ -252,6 +292,12 @@ def _render_markdown(payload: dict[str, Any]) -> str:
         lines.append("## Unexpected Fsck Lines")
         for line in payload["fsck_unexpected_lines"][:20]:
             lines.append(f"- `{line}`")
+
+    if payload["tracked_ignored_paths"]:
+        lines.append("")
+        lines.append("## Tracked Ignored Files")
+        for path in payload["tracked_ignored_paths"][:20]:
+            lines.append(f"- `{path}`")
 
     return "\n".join(lines) + "\n"
 
@@ -291,6 +337,12 @@ def build_parser() -> argparse.ArgumentParser:
         help="Maximum allowed loose-object count.",
     )
     parser.add_argument(
+        "--max-tracked-ignored",
+        type=int,
+        default=DEFAULT_MAX_TRACKED_IGNORED,
+        help="Maximum allowed tracked files that match ignore rules.",
+    )
+    parser.add_argument(
         "--strict",
         action="store_true",
         help="Return non-zero when hygiene checks do not pass.",
@@ -307,6 +359,7 @@ def main() -> int:
         repo_root=repo_root,
         max_dangling=max(0, int(args.max_dangling)),
         max_loose_count=max(0, int(args.max_loose_count)),
+        max_tracked_ignored=max(0, int(args.max_tracked_ignored)),
     )
     _write_json(out_dir / JSON_FILENAME, payload)
     _write_markdown(out_dir / MARKDOWN_FILENAME, payload)

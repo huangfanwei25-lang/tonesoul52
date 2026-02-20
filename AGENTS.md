@@ -208,4 +208,27 @@ data/chromadb/ (資料庫)
 
 ---
 
-*最後更新: 2026-01-30*
+*最後更新: 2026-02-21*
+
+---
+
+## ⚠️ Security Notice — Agent File Integrity
+
+> [!CAUTION]
+> This file is **cryptographically tracked** via CI and pre-commit hooks.
+> Any modification triggers an automated integrity alert.
+>
+> - **CI Workflow**: `.github/workflows/agent-integrity-check.yml`
+> - **Pre-commit**: `scripts/check_agent_integrity.py --pre-commit`
+> - **Hidden character scan**: Zero-width Unicode injection detection
+>
+> If you intentionally modify this file, update the expected hash in both locations.
+
+| Property | Value |
+|----------|-------|
+| **Algorithm** | SHA-256 |
+| **Last Verified** | 2026-02-21 |
+| **Verified By** | Antigravity |
+
+**Protected files**: `AGENTS.md`, `HANDOFF.md`
+**Watched directories**: `skills/`, `.agent/`, `.agents/`
