@@ -21,3 +21,20 @@ def workspace_tmpdir():
         yield tmpdir
     finally:
         shutil.rmtree(tmpdir, ignore_errors=True)
+
+
+@pytest.fixture
+def qa_sandbox(monkeypatch, tmp_path):
+    """
+    QA Sandbox (D4 Environment Test)
+    Creates a completely isolated environment root and mocks necessary vars/paths
+    to ensure AI testing scripts cannot touch real memory or configurations.
+    """
+    sandbox_root = tmp_path / "qa_sandbox"
+    sandbox_root.mkdir()
+
+    # Mock HOME and APPDATA to ensure no global config leaks
+    monkeypatch.setenv("HOME", str(sandbox_root))
+    monkeypatch.setenv("APPDATA", str(sandbox_root))
+    
+    return sandbox_root

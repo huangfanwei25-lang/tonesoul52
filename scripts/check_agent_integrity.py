@@ -17,7 +17,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 
 # SHA-256 hashes of trusted files. Update when intentionally modified.
 TRUSTED_HASHES = {
-    "AGENTS.md": "f01ded6d5ab3f8a00ee047e64b631de0f49afa51ead85489a574b62ece3c7173",
+    "AGENTS.md": "1012e4cc430f309d0749f5c6879659ea435864b5c2d2ddccf997b4635705db02",
     "HANDOFF.md": "018c888f0864c6b2992674d5bfbcf76e7fdcde9634c216a29d2c583919d67834",
     "SOUL.md": "5b9f13b4fb5a5ac3d1b9618b0073cc33a3edb0f985518144d575dc97eb372a5f",
 }

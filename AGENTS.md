@@ -212,6 +212,27 @@ data/chromadb/ (資料庫)
 
 ---
 
+## 九、雙軌開源策略 (Dual-Track Evolution Policy)
+
+ToneSoul 系統分為「公共引擎」與「私有進化中樞」，AI 協作者必須嚴格遵守此隔離邊界：
+
+### 1. 公共庫 (Public Repository: tonesoul52)
+這是對全世界展示「倫理 AI 該長什麼樣」的典範。
+- **可公開**: 核心架構（Unified Pipeline、AdaptiveGate 的空殼）、TensionEngine 數學模型、Council 審議流程。
+- **哲學文件**: `PHILOSOPHY.md`, `AGENTS.md` 應留存，教導未來的 AI 理解語義責任。
+- **基礎測試**: D3/D4 的概念驗證測試。
+
+### 2. 私有庫 (Private Repository: tonesoul-evolution)
+保護系統的不可預測性與隱私，防止惡意繞過。
+- **不可公開**: `Memory Consolidator` (記憶淬鍊) 讀取 `self_journal.jsonl` 的具體 Prompt 與腳本。
+- **不可公開**: 真實運行的閾值參數（如實際使用的 `HALF_LIFE_DAYS`、容忍度公式係數）。
+- **不可公開**: Red Team 深度混沌腳本（真正能把系統打趴的惡意 Payload 字典集）。
+- **不可公開**: 自動發 PR 修補自己的 Auto-Patching 機制與私鑰配置。
+
+> ⚠️ **開發指令**：當你在開發涉及「根據過往錯誤改寫系統規則」或「深度混沌攻擊」的功能時，必須詢問人類此功能是否該存放於 Private Repo，絕對不可隨意 commit 入本公共庫。
+
+---
+
 ## ⚠️ Security Notice — Agent File Integrity
 
 > [!CAUTION]
@@ -229,6 +250,7 @@ data/chromadb/ (資料庫)
 | **Algorithm** | SHA-256 |
 | **Last Verified** | 2026-02-21 |
 | **Verified By** | Antigravity |
+| **Expected Hash** | `0df21bd637c134c829fd8b4c6b1dc65eeea8b02174678af79479a592a07f4542` |
 
 **Protected files**: `AGENTS.md`, `HANDOFF.md`
 **Watched directories**: `skills/`, `.agent/`, `.agents/`
