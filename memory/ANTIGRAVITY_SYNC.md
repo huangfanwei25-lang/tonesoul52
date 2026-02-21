@@ -45,7 +45,7 @@ ToneSoul is a multi-agent AI governance framework with these active layers:
 - WFGY Tension Math research (assigned, status unknown)
 
 ### Next Priorities (from GLOBAL_TRACKING_BOARD.md)
-1. Wire ComputeGate to real Ollama local model for `PASS_LOCAL` route
+1. ~~Wire ComputeGate to real Ollama local model for `PASS_LOCAL` route~~ (✅ Completed)
 2. Implement rate limiting for `BLOCK_RATE_LIMIT`
 3. Connect Adversarial Loop output → Memory Consolidator input (end-to-end pipeline)
 4. Council Weight Evolution (adaptive council voting weights)

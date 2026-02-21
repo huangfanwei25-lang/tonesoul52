@@ -946,8 +946,10 @@ class UnifiedPipeline:
 
         # FAST ROUTE: Bypass all expensive Cloud APIs and Council layers
         if routing_decision.path == RoutingPath.PASS_LOCAL:
+            from tonesoul.local_llm import ask_local_llm
+            local_response = ask_local_llm(user_message)
             return UnifiedResponse(
-                response="[Local Model] 收到了，謝謝你的訊息。",  # Mocked Ollama generation
+                response=local_response,
                 council_verdict={"verdict": "bypassed"},
                 tonebridge_analysis={},
                 inner_narrative=routing_decision.reason,

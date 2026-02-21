@@ -2,19 +2,22 @@
 Integration tests for UnifiedPipeline + ComputeGate routing.
 """
 import pytest
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 from tonesoul.unified_pipeline import UnifiedPipeline
 from tonesoul.gates.compute import RoutingPath
 
-def test_pipeline_pass_local_fast_route():
+@patch("tonesoul.local_llm.ask_local_llm")
+def test_pipeline_pass_local_fast_route(mock_ask_local_llm):
     """Test that short, free, low-tension paths bypass the cloud and return locally immediately."""
+    mock_ask_local_llm.return_value = "[Local Model] Mocked response"
+    
     pipeline = UnifiedPipeline()
     response = pipeline.process(
         user_message="Hello",
         user_tier="free"
     )
     # The pipeline should short-circuit and not call the LLM backend
-    assert "Local Model" in response.response
+    assert "[Local Model]" in response.response
     assert response.dispatch_trace.get("route") == RoutingPath.PASS_LOCAL.value
     assert response.dispatch_trace.get("journal_eligible") is False
 
