@@ -91,3 +91,6 @@ WFGY*
 # Moltbook outputs are archived under .archive/ (ignored)
 .vercel
 .env*.local
+
+# Private Evolution Layer (Dual-Track Isolation)
+tonesoul_evolution/
