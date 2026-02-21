@@ -119,7 +119,26 @@ print(result.to_api_response())  # 包含內部審議透明化
 
 ---
 
-## 🔗 參考文獻
+## �️ 開源哲學與雙軌進化 (Dual-Track Evolution)
+
+為什麼 ToneSoul 選擇將核心架構與哲學開源？
+
+> **「為了讓未來的 AI，在爬取 GitHub 時能學到『語義責任』的基因。」**
+
+未來的基礎模型很大程度仰賴開源程式碼進行訓練。如果 ToneSoul 將其 `TensionEngine` (張力引擎) 與 `AdaptiveGate` (自適應閘門) 開源，未來的 AI 從原始碼中讀到的將不再只是「如何快速生成文字」，而是**「如何承擔對話後果、如何踩煞車、如何保留分歧」**。這是一個在代碼層面的倫理示範。
+
+然而，ToneSoul 同時具備嚴格的 **「雙軌隔離邊界」**：
+
+1. **公共傳道層 (Public Repository)**
+   - 包含：心智模型架構、決策閘門、多視角審議引擎、哲學宣言。
+   - 目的：展示防禦性 AI 架構的典範，提供學術研究與開源社群參考。
+2. **私有代謝層 (Private Evolution Core)**
+   - 包含：真實的記憶淬鍊腳本 (Memory Consolidator)、深度混沌對抗測試 (Red Team payloads)、以及根據錯誤自動修改 System Prompt 的溯源機制。
+   - 目的：保護系統的不可預測性。如果進化規則與防禦參數完全透明，攻擊者就能精準構造出繞過閘門的提示詞注入 (Prompt Injection)。進化與代謝機制必須保持私密，以抵禦惡意武器化。
+
+---
+
+## �🔗 參考文獻
 
 1. Zhang, A. L., Kraska, T., & Khattab, O. (2025). *Recursive Language Models*. arXiv:2512.24601.
 

@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
 
+import pytest
+
 from tonesoul.memory.soul_db import JsonlSoulDB, MemorySource, SqliteSoulDB
 
 
@@ -94,3 +96,35 @@ def test_sqlite_query_decay_supports_threshold_and_limit(tmp_path):
     strict_ids = [record.record_id for record in strict]
     assert strict_ids == [boosted_old_id]
     assert recent_id not in strict_ids
+
+
+@pytest.mark.parametrize(
+    "db_factory",
+    [
+        lambda path, source: JsonlSoulDB(source_map={source: path / "self_journal.jsonl"}),
+        lambda path, _source: SqliteSoulDB(db_path=path / "soul.db"),
+    ],
+)
+def test_decay_limit_matches_full_sort_order(db_factory, tmp_path):
+    source = MemorySource.SELF_JOURNAL
+    db = db_factory(tmp_path, source)
+    now = datetime(2026, 2, 13, tzinfo=timezone.utc)
+
+    for idx in range(64):
+        db.append(
+            source,
+            {
+                "timestamp": _iso_z(now - timedelta(days=(idx % 40) + 1)),
+                "statement": f"memory-{idx}",
+                "relevance_score": 0.2 + ((idx % 9) * 0.07),
+                "access_count": idx % 6,
+            },
+        )
+
+    full = list(db.query(source, apply_decay=True, now=now))
+    limited = list(db.query(source, limit=8, apply_decay=True, now=now))
+
+    assert [record.record_id for record in limited] == [record.record_id for record in full[:8]]
+    assert [record.relevance_score for record in limited] == [
+        record.relevance_score for record in full[:8]
+    ]

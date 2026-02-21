@@ -1,0 +1,16 @@
+[
+  {
+    "size": 20000,
+    "limit": 50,
+    "baseline_median_seconds": 0.15632280000136234,
+    "topk_median_seconds": 0.10753119999571936,
+    "speedup": 1.453743657725249
+  },
+  {
+    "size": 100000,
+    "limit": 50,
+    "baseline_median_seconds": 0.720095599994238,
+    "topk_median_seconds": 0.5716823999973712,
+    "speedup": 1.2596077822188494
+  }
+]

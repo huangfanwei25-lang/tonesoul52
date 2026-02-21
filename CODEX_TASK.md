@@ -8,6 +8,42 @@
 
 ---
 
+## 🚀 任務指派 (Delegated to Codex - 2026-02-21)
+
+> **Antigravity 留言給 Codex：**
+> "我已經將 Phase III (QA Auditor) 的所有混沌測試與 `conftest.py` 環境隔離問題處理完畢，並全部 Commit 到 master 主線了。你現在的本地工作樹已經非常乾淨，不會再遇到 Pytest 收集衝突。
+> 
+> 接下來由你負責以下重複性、驗證性或底層效能的任務：
+>
+> 1. **Phase 105-B: Decay Query Optimization (Top-K Heap)**：
+>    請使用 `heapq` 算法實作 `_decay_records` 的 O(N log K) 效能優化。請在本地編寫 Benchmark 腳本，並確保舊測試全數通過（無回歸）。
+> 
+> 2. **建立自動化 CI 驗證 (CI/CD Pipeline)**：
+>    請幫忙建立 `.github/workflows/pytest-ci.yml`，讓未來每一次 PR 推送都能自動執行我們的深度測試庫，分擔我們手動跑驗證的工作量。
+>
+> 3. **內化 WFGY 的數學張力公式 (Tension Math Refinement)**：
+>    人類提到 WFGY 3.0 的核心在於「推理時用嚴謹的數學公式計算語義落差 (Semantic Drift)」。目前的 `AdaptiveGate` 與 `TensionEngine` 還是基於簡單的閾值。請研究 WFGY 的張力幾何學，草擬一個更嚴謹的數學更新提案 (如 `T_ECS`, `T_align`) 來衡量 ToneSoul 內部的語義落差。"
+
+---
+
+## 🚀 任務指派 (Delegated to Codex - 2026-02-21)
+
+> **Antigravity 留言給 Codex：**
+> "我已經將 Phase III (QA Auditor) 的所有混沌測試與 `conftest.py` 環境隔離問題處理完畢，並全部 Commit 到 master 主線了。你現在的工作樹已經非常乾淨。
+> 
+> 請遵循人類的指示，接下來由你來負責以下重複性、驗證性或底層效能的任務：
+>
+> 1. **Phase 105-B: Decay Query Optimization (Top-K Heap)**：
+>    請實作 `_decay_records` 的 O(N log K) 效能優化。請在本地編寫 Benchmark 腳本，並確保舊測試全數通過。
+> 
+> 2. **建立自動化 CI 驗證 (CI/CD Pipeline)**：
+>    請建立 `.github/workflows/pytest-ci.yml`，讓未來每一次 PR 推送都能自動執行我們的深度測試，分擔我們手動跑驗證的工作量。
+>
+> 3. **研究並實作 WFGY 的數學張力公式 (數學重構)**：
+>    人類提到 WFGY 3.0 的核心在於「推理時用嚴謹的數學公式計算」。目前的 `AdaptiveGate` 還是基於簡單閾值。請你研究 WFGY 的張力幾何學，草擬一個用明確公式量化語義落差 (Semantic Drift) 的機制。"
+
+---
+
 ## 總覽
 
 ```

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import heapq
 import json
 import sqlite3
 import uuid
@@ -150,13 +151,21 @@ def _decay_records(
     *,
     now: Optional[datetime] = None,
     forget_threshold: Optional[float] = None,
+    top_k: Optional[int] = None,
 ) -> List[MemoryRecord]:
     if not records:
         return []
     current = _parse_timestamp(now) or datetime.now(timezone.utc)
     threshold = _resolve_decay_threshold(forget_threshold)
+    resolved_top_k: Optional[int] = None
+    if top_k is not None:
+        resolved_top_k = int(top_k)
+        if resolved_top_k <= 0:
+            return []
+    # Keep only top-K candidates by decay ranking when requested to avoid full sorting cost.
+    top_heap: List[tuple[float, str, int, MemoryRecord]] = []
     decayed_records: List[MemoryRecord] = []
-    for record in records:
+    for idx, record in enumerate(records):
         anchor = _parse_timestamp(record.last_accessed) or _parse_timestamp(record.timestamp)
         days_elapsed = 0.0
         if anchor is not None:
@@ -168,7 +177,19 @@ def _decay_records(
         if score < threshold:
             continue
         record.relevance_score = score
-        decayed_records.append(record)
+        if resolved_top_k is None:
+            decayed_records.append(record)
+            continue
+        key = (score, record.timestamp, -idx)
+        candidate = (key[0], key[1], key[2], record)
+        if len(top_heap) < resolved_top_k:
+            heapq.heappush(top_heap, candidate)
+            continue
+        if key > (top_heap[0][0], top_heap[0][1], top_heap[0][2]):
+            heapq.heapreplace(top_heap, candidate)
+    if resolved_top_k is not None:
+        top_heap.sort(key=lambda item: (item[0], item[1], item[2]), reverse=True)
+        return [item[3] for item in top_heap]
     decayed_records.sort(key=lambda item: (item.relevance_score, item.timestamp), reverse=True)
     return decayed_records
 
@@ -231,7 +252,13 @@ class JsonlSoulDB:
                 if _normalize_memory_layer(getattr(record, "layer", None)) == normalized_layer
             ]
         if apply_decay:
-            records = _decay_records(records, now=now, forget_threshold=forget_threshold)
+            decay_limit = int(limit) if limit is not None else None
+            records = _decay_records(
+                records,
+                now=now,
+                forget_threshold=forget_threshold,
+                top_k=decay_limit,
+            )
         if apply_reflection:
             from .decay import apply_retrospective
 
@@ -496,7 +523,13 @@ class SqliteSoulDB:
                 if _normalize_memory_layer(getattr(record, "layer", None)) == normalized_layer
             ]
         if apply_decay:
-            records = _decay_records(records, now=now, forget_threshold=forget_threshold)
+            decay_limit = int(limit) if limit is not None else None
+            records = _decay_records(
+                records,
+                now=now,
+                forget_threshold=forget_threshold,
+                top_k=decay_limit,
+            )
         if apply_reflection:
             from .decay import apply_retrospective
 
