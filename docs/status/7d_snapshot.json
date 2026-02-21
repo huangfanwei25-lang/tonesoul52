@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-02-10T15:04:39Z",
+  "generated_at": "2026-02-21T04:08:11Z",
   "source": "scripts/verify_7d.py",
   "result": {
     "command": "python scripts/verify_7d.py",
@@ -8,7 +8,7 @@
     "payload": {
       "total": 9,
       "blocking_failures": 0,
-      "soft_failures": 0,
+      "soft_failures": 1,
       "not_implemented": 0,
       "results": [
         {
@@ -42,9 +42,9 @@
         {
           "dimension": "DDD_FRESHNESS",
           "gate": "SOFT_FAIL",
-          "status": "pass",
+          "status": "fail",
           "command": "python tools/agent_discussion_tool.py tail --path memory\\agent_discussion_curated.jsonl --limit 1",
-          "note": "age_days=0.06, threshold=7"
+          "note": "stale data: age_days=7.85, threshold=7"
         },
         {
           "dimension": "XDD",
@@ -78,12 +78,12 @@
       "scores": {
         "TDD": 100,
         "RDD": 100,
-        "DDD": 100,
+        "DDD": 66,
         "XDD": 100,
         "GDD": 100,
         "CDD": 100,
         "SDH": 0,
-        "OVERALL": 90
+        "OVERALL": 84
       }
     }
   }

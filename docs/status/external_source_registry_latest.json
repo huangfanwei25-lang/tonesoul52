@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-02-14T06:55:50Z",
+  "generated_at": "2026-02-21T04:06:29Z",
   "ok": true,
   "failed_count": 0,
   "warning_count": 0,
@@ -32,7 +32,7 @@
     {
       "name": "registry:osv:reviewed_at",
       "status": "pass",
-      "detail": "review age ok: 0 days"
+      "detail": "review age ok: 7 days"
     },
     {
       "name": "registry:scorecard:url[0]",
@@ -47,7 +47,7 @@
     {
       "name": "registry:scorecard:reviewed_at",
       "status": "pass",
-      "detail": "review age ok: 0 days"
+      "detail": "review age ok: 7 days"
     },
     {
       "name": "registry:sigstore:url[0]",
@@ -62,7 +62,7 @@
     {
       "name": "registry:sigstore:reviewed_at",
       "status": "pass",
-      "detail": "review age ok: 0 days"
+      "detail": "review age ok: 7 days"
     },
     {
       "name": "registry:tuf:url[0]",
@@ -72,7 +72,7 @@
     {
       "name": "registry:tuf:reviewed_at",
       "status": "pass",
-      "detail": "review age ok: 0 days"
+      "detail": "review age ok: 7 days"
     },
     {
       "name": "registry:nvd:url[0]",
@@ -82,7 +82,7 @@
     {
       "name": "registry:nvd:reviewed_at",
       "status": "pass",
-      "detail": "review age ok: 0 days"
+      "detail": "review age ok: 7 days"
     },
     {
       "name": "registry:huggingface_datasets:url[0]",
@@ -92,7 +92,7 @@
     {
       "name": "registry:huggingface_datasets:reviewed_at",
       "status": "pass",
-      "detail": "review age ok: 0 days"
+      "detail": "review age ok: 7 days"
     },
     {
       "name": "registry:zenodo:url[0]",
@@ -102,7 +102,7 @@
     {
       "name": "registry:zenodo:reviewed_at",
       "status": "pass",
-      "detail": "review age ok: 0 days"
+      "detail": "review age ok: 7 days"
     },
     {
       "name": "registry:openalex:url[0]",
@@ -117,7 +117,7 @@
     {
       "name": "registry:openalex:reviewed_at",
       "status": "pass",
-      "detail": "review age ok: 0 days"
+      "detail": "review age ok: 7 days"
     },
     {
       "name": "registry:aclanthology:url[0]",
@@ -127,7 +127,7 @@
     {
       "name": "registry:aclanthology:reviewed_at",
       "status": "pass",
-      "detail": "review age ok: 0 days"
+      "detail": "review age ok: 7 days"
     },
     {
       "name": "registry:arxiv:url[0]",
@@ -137,7 +137,7 @@
     {
       "name": "registry:arxiv:reviewed_at",
       "status": "pass",
-      "detail": "review age ok: 0 days"
+      "detail": "review age ok: 7 days"
     },
     {
       "name": "registry:pmlr:url[0]",
@@ -147,7 +147,7 @@
     {
       "name": "registry:pmlr:reviewed_at",
       "status": "pass",
-      "detail": "review age ok: 0 days"
+      "detail": "review age ok: 7 days"
     },
     {
       "name": "open_source_apps",
@@ -194,6 +194,6 @@
   "inputs": {
     "registry": "spec/external_source_registry.yaml",
     "open_source_apps": "spec/open_source_apps.yaml",
-    "today": "2026-02-14"
+    "today": "2026-02-21"
   }
 }
