@@ -49,17 +49,18 @@ class PreOutputCouncil:
             perspective.evaluate(draft_output, context, user_intent)
             for perspective in self.perspectives
         ]
-        
+
         # Apply evolved voting weights if available
         weights = None
         try:
             from tonesoul.council.evolution import CouncilEvolution
-            if not hasattr(self, '_evolution'):
+
+            if not hasattr(self, "_evolution"):
                 self._evolution = CouncilEvolution()
             weights = self._evolution.get_weights()
         except Exception:
             pass
-            
+
         coherence = compute_coherence(votes, weights=weights)
         verdict = generate_verdict(
             votes=votes,

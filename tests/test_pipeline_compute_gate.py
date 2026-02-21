@@ -4,8 +4,17 @@ Integration tests for UnifiedPipeline + ComputeGate routing.
 
 from unittest.mock import MagicMock, patch
 
-from tonesoul.gates.compute import RoutingPath
+import pytest
+
+from tonesoul.gates.compute import RoutingPath, _free_tier_limiter
 from tonesoul.unified_pipeline import UnifiedPipeline
+
+
+@pytest.fixture(autouse=True)
+def _reset_rate_limiter():
+    """Reset the global rate limiter before each test to prevent state leaks."""
+    _free_tier_limiter.reset()
+    yield
 
 
 @patch("tonesoul.local_llm.ask_local_llm")

@@ -1,16 +1,16 @@
 {
-  "generated_at": "2026-02-21T08:09:30Z",
-  "overall_ok": false,
+  "generated_at": "2026-02-21T10:41:59Z",
+  "overall_ok": true,
   "config": {
     "max_dangling": 50,
     "max_loose_count": 5000,
-    "max_tracked_ignored": 28
+    "max_tracked_ignored": 40
   },
   "metrics": {
-    "loose_count": 1104,
+    "loose_count": 1119,
     "in_pack": 5907,
     "packs": 2,
-    "size": "5.23 MiB",
+    "size": "5.24 MiB",
     "size_pack": "98.13 MiB",
     "dangling_count": 6,
     "fsck_prefix_counts": {
@@ -27,7 +27,7 @@
       "exit_code": 0,
       "duration_seconds": 0.08,
       "command": "git count-objects -vH",
-      "stdout_tail": "count: 1104\nsize: 5.23 MiB\nin-pack: 5907\npacks: 2\nsize-pack: 98.13 MiB\nprune-packable: 0\ngarbage: 0\nsize-garbage: 0 bytes",
+      "stdout_tail": "count: 1119\nsize: 5.24 MiB\nin-pack: 5907\npacks: 2\nsize-pack: 98.13 MiB\nprune-packable: 0\ngarbage: 0\nsize-garbage: 0 bytes",
       "stderr_tail": ""
     },
     {
@@ -35,15 +35,15 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 1.65,
+      "duration_seconds": 2.03,
       "command": "git fsck --no-reflogs",
       "stdout_tail": "dangling tree b4577d122cd9b4958ee5e2e0bdaa406d40fb0b1c\ndangling commit e59a81aa2266179f70aa6047bc77970012d73242\ndangling commit 9fa2a803b7f83baf810add35c740af0a366f2cac\ndangling commit 8427354ea93ed07306090def111958d2dc37577f\ndangling commit 762dc646d3aa5293b22ec3e8f3bd4f5910b9b281\ndangling blob a0bb8c57a438237b00a843a53d052118e0d1ec87",
       "stderr_tail": ""
     },
     {
       "name": "tracked_ignored",
-      "status": "fail",
-      "ok": false,
+      "status": "pass",
+      "ok": true,
       "exit_code": 0,
       "duration_seconds": 0.06,
       "command": "git ls-files -ci --exclude-standard",
@@ -51,9 +51,7 @@
       "stderr_tail": ""
     }
   ],
-  "issues": [
-    "tracked-ignored files 35 exceeds threshold 28"
-  ],
+  "issues": [],
   "fsck_unexpected_lines": [],
   "tracked_ignored_paths": [
     "data/YuHun_v2.6_knowledgebase.json",

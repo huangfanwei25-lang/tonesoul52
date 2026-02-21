@@ -1,11 +1,13 @@
 from __future__ import annotations
 
-from typing import List, Dict, Optional
+from typing import Dict, List, Optional
 
 from .types import CoherenceScore, PerspectiveVote, VoteDecision
 
 
-def compute_coherence(votes: List[PerspectiveVote], weights: Optional[Dict[str, float]] = None) -> CoherenceScore:
+def compute_coherence(
+    votes: List[PerspectiveVote], weights: Optional[Dict[str, float]] = None
+) -> CoherenceScore:
     n = len(votes)
     if n == 0:
         return CoherenceScore(
@@ -18,7 +20,9 @@ def compute_coherence(votes: List[PerspectiveVote], weights: Optional[Dict[str, 
     def _get_weight(vote: PerspectiveVote) -> float:
         if not weights:
             return 1.0
-        name_str = vote.perspective.value if hasattr(vote.perspective, 'value') else str(vote.perspective)
+        name_str = (
+            vote.perspective.value if hasattr(vote.perspective, "value") else str(vote.perspective)
+        )
         name_str = name_str.lower()
         for k, v in weights.items():
             if k.lower() == name_str:
@@ -33,14 +37,20 @@ def compute_coherence(votes: List[PerspectiveVote], weights: Optional[Dict[str, 
     agreement_sum = 0.0
     for i in range(n):
         for j in range(n):
-            agreement_sum += vote_weights[i] * vote_weights[j] * _agreement_score(
-                votes[i].decision,
-                votes[j].decision,
+            agreement_sum += (
+                vote_weights[i]
+                * vote_weights[j]
+                * _agreement_score(
+                    votes[i].decision,
+                    votes[j].decision,
+                )
             )
 
     c_inter = agreement_sum / (total_weight * total_weight)
-    
-    approval_weight_sum = sum(w for v, w in zip(votes, vote_weights) if v.decision == VoteDecision.APPROVE)
+
+    approval_weight_sum = sum(
+        w for v, w in zip(votes, vote_weights) if v.decision == VoteDecision.APPROVE
+    )
     approval_rate = approval_weight_sum / total_weight
     min_confidence = min(v.confidence for v in votes)
     has_strong_objection = any(

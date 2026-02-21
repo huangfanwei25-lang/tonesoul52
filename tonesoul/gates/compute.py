@@ -16,6 +16,7 @@ Memory Eligibility:
   free users from poisoning the self_journal (Evolutionary Memory Isolation).
 """
 
+import threading
 import time
 from dataclasses import dataclass
 from enum import Enum
@@ -37,27 +38,34 @@ class RoutingDecision:
 
 
 class RateLimiter:
-    """Simple in-memory token bucket rate limiter."""
+    """Simple in-memory token bucket rate limiter (thread-safe)."""
 
     def __init__(self, capacity: float, refill_rate: float):
         self.capacity = capacity
         # Refill rate in tokens per second
         self.refill_rate = refill_rate
         self.buckets: Dict[str, dict] = {}
+        self._lock = threading.Lock()
 
     def consume(self, key: str, amount: float = 1.0) -> bool:
-        now = time.time()
-        bucket = self.buckets.setdefault(key, {"tokens": self.capacity, "last_update": now})
+        with self._lock:
+            now = time.time()
+            bucket = self.buckets.setdefault(key, {"tokens": self.capacity, "last_update": now})
 
-        # Refill based on elapsed time
-        elapsed = now - bucket["last_update"]
-        bucket["tokens"] = min(self.capacity, bucket["tokens"] + elapsed * self.refill_rate)
-        bucket["last_update"] = now
+            # Refill based on elapsed time
+            elapsed = now - bucket["last_update"]
+            bucket["tokens"] = min(self.capacity, bucket["tokens"] + elapsed * self.refill_rate)
+            bucket["last_update"] = now
 
-        if bucket["tokens"] >= amount:
-            bucket["tokens"] -= amount
-            return True
-        return False
+            if bucket["tokens"] >= amount:
+                bucket["tokens"] -= amount
+                return True
+            return False
+
+    def reset(self) -> None:
+        """Clear all buckets. Used by test fixtures."""
+        with self._lock:
+            self.buckets.clear()
 
 
 # Global limiters for across-instance tracking

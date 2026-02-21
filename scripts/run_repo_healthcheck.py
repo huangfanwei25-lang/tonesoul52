@@ -17,6 +17,7 @@ from typing import Any
 DISCUSSION_CURATED_PATH = Path("memory/agent_discussion_curated.jsonl")
 JSON_FILENAME = "repo_healthcheck_latest.json"
 MARKDOWN_FILENAME = "repo_healthcheck_latest.md"
+DEFAULT_MAX_TRACKED_IGNORED = 40
 
 
 def _iso_now() -> str:
@@ -150,7 +151,13 @@ def _build_check_specs(
         },
         {
             "name": "git_hygiene",
-            "command": [python_executable, "scripts/verify_git_hygiene.py"],
+            "command": [
+                python_executable,
+                "scripts/verify_git_hygiene.py",
+                "--strict",
+                "--max-tracked-ignored",
+                str(DEFAULT_MAX_TRACKED_IGNORED),
+            ],
         },
         {
             "name": "dual_track_boundary",

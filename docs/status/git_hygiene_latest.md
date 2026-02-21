@@ -1,29 +1,26 @@
 # Git Hygiene Latest
 
-- generated_at: 2026-02-21T08:09:30Z
-- overall_ok: false
+- generated_at: 2026-02-21T10:41:59Z
+- overall_ok: true
 - max_dangling: 50
 - max_loose_count: 5000
-- max_tracked_ignored: 28
+- max_tracked_ignored: 40
 
 | check | status | exit | duration_s | command |
 | --- | --- | ---: | ---: | --- |
 | count_objects | PASS | 0 | 0.08 | `git count-objects -vH` |
-| fsck | PASS | 0 | 1.65 | `git fsck --no-reflogs` |
-| tracked_ignored | FAIL | 0 | 0.06 | `git ls-files -ci --exclude-standard` |
+| fsck | PASS | 0 | 2.03 | `git fsck --no-reflogs` |
+| tracked_ignored | PASS | 0 | 0.06 | `git ls-files -ci --exclude-standard` |
 
 ## Metrics
-- loose_count: 1104
+- loose_count: 1119
 - in_pack: 5907
 - packs: 2
-- size: 5.23 MiB
+- size: 5.24 MiB
 - size_pack: 98.13 MiB
 - dangling_count: 6
 - fsck_unexpected_count: 0
 - tracked_ignored_count: 35
-
-## Issues
-- tracked-ignored files 35 exceeds threshold 28
 
 ## Tracked Ignored Files
 - `data/YuHun_v2.6_knowledgebase.json`

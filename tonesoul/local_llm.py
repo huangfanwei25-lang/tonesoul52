@@ -1,11 +1,17 @@
-import requests
 import logging
+
+import requests
 
 logger = logging.getLogger(__name__)
 
-def ask_local_llm(prompt: str, system: str = "你是 ToneSoul 的前線代理，請給予簡潔有禮貌的回應。", model: str = "qwen3:4b") -> str:
+
+def ask_local_llm(
+    prompt: str,
+    system: str = "你是 ToneSoul 的前線代理，請給予簡潔有禮貌的回應。",
+    model: str = "qwen3:4b",
+) -> str:
     """呼叫本地 Qwen3 模型。
-    
+
     用於處理低張力、短小且免費用戶的訊息。
     重要限制：必須使用 chat API + think=False，否則 qwen3 會把額度全花在思考而回傳空字串。
     """
@@ -13,7 +19,7 @@ def ask_local_llm(prompt: str, system: str = "你是 ToneSoul 的前線代理，
     MAX_PROMPT_LEN = 2000
     if len(prompt) > MAX_PROMPT_LEN:
         prompt = prompt[:MAX_PROMPT_LEN]
-        
+
     try:
         response = requests.post(
             "http://localhost:11434/api/chat",

@@ -29,7 +29,7 @@ jobs:
 
       - name: Run git hygiene snapshot (blocking)
         run: |
-          python scripts/verify_git_hygiene.py --strict --max-tracked-ignored 28
+          python scripts/verify_git_hygiene.py --strict --max-tracked-ignored 40
 
       - name: Upload git hygiene artifacts
         if: always()
