@@ -912,3 +912,16 @@ def test_empty_input():
 | `tonesoul/council/runtime.py` | 不改現有議會邏輯 |
 | `tonesoul/memory/visual_chain.py` | 只讀取，不修改 |
 | `tonesoul/memory/semantic_graph.py` | 只讀取，不修改 |
+
+## 2026-02-21 Codex Mainline Update (Phase 105-B)
+
+- Implemented decay query optimization in `tonesoul/memory/soul_db.py`.
+- Added top-k heap path in `_decay_records(..., top_k=...)`.
+- Wired `JsonlSoulDB.query` and `SqliteSoulDB.query` to pass `limit` as `top_k` when `apply_decay=True`.
+- Added regression coverage in `tests/test_soul_db_decay_query.py` for JSONL and SQLite parity.
+- Added benchmark tooling:
+  - `scripts/benchmark_decay_query.py`
+  - `reports/decay_query_benchmark_latest.json`
+  - `reports/decay_query_benchmark_latest.md`
+- Full regression status:
+  - `pytest -q` => `885 passed` (2026-02-21)
