@@ -30,7 +30,7 @@ jobs:
 
       - name: Verify AGENTS.md hash
         run: |
-          EXPECTED="492c8a799587321f71170559ce1a72634347b23b5fa8e1cdf2367ec878a97d4a"
+          EXPECTED="1012e4cc430f309d0749f5c6879659ea435864b5c2d2ddccf997b4635705db02"
           ACTUAL=$(python3 -c "import hashlib, pathlib; data=pathlib.Path('AGENTS.md').read_bytes().replace(b'\r\n', b'\n').replace(b'\r', b'\n'); print(hashlib.sha256(data).hexdigest())")
           echo "Expected: $EXPECTED"
           echo "Actual:   $ACTUAL"

@@ -1,4 +1,5 @@
 """Quick Ollama connectivity test."""
+
 import sys
 import time
 

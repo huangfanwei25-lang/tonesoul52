@@ -1,7 +1,9 @@
 """Delegation Test v6: use think=false to disable qwen3 thinking mode."""
-import requests
-import time
+
 import json
+import time
+
+import requests
 
 with open("tonesoul/adaptive_gate.py", "r", encoding="utf-8") as f:
     code = f.read()
@@ -37,9 +39,7 @@ r = requests.post(
     "http://localhost:11434/api/chat",
     json={
         "model": "qwen3:4b",
-        "messages": [
-            {"role": "user", "content": PROMPT}
-        ],
+        "messages": [{"role": "user", "content": PROMPT}],
         "stream": False,
         "think": False,
         "options": {"temperature": 0.3, "num_predict": 300},
