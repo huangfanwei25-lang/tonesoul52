@@ -1,6 +1,6 @@
 # ToneSoul Documentation Index
 
-> 自動生成於 2026-02-10。按主題分類，方便快速導航。
+> 自動更新於 2026-02-21。按主題分類，方便快速導航。
 
 ---
 
@@ -27,6 +27,7 @@
 | [ARCHITECTURE_REVIEW.md](ARCHITECTURE_REVIEW.md) | 架構審查 |
 | [REPOSITORY_STRUCTURE.md](REPOSITORY_STRUCTURE.md) | 倉庫結構說明 |
 | [STRUCTURE.md](STRUCTURE.md) | 系統結構 |
+| [SPEC_LAW_CROSSWALK.md](SPEC_LAW_CROSSWALK.md) | `spec/` 與 `law/` 一頁式對照 |
 | [FILE_PURPOSE_MAP.md](FILE_PURPOSE_MAP.md) | 檔案用途對照 |
 | [architecture-notes.md](architecture-notes.md) | 架構筆記 |
 | [system_structure_overview.txt](system_structure_overview.txt) | 系統總覽 (text) |
@@ -158,12 +159,15 @@
 | [RELEASE_v0.1.0_PLAN.md](RELEASE_v0.1.0_PLAN.md) | 發布計畫 v0.1.0 |
 | [RELEASE_NOTES_v0.1.0.md](RELEASE_NOTES_v0.1.0.md) | 發布說明草稿 v0.1.0 |
 | [plans/ANTIGRAVITY_VM_RUNBOOK.md](plans/ANTIGRAVITY_VM_RUNBOOK.md) | Antigravity 虛擬機安全執行手冊 |
+| [plans/git_local_repo_stabilization_plan_2026-02-20.md](plans/git_local_repo_stabilization_plan_2026-02-20.md) | Git/本地倉庫穩定化計畫 |
+| [../reports/project_audit_report_2026-02-21.md](../reports/project_audit_report_2026-02-21.md) | 最新專案審計報告 |
+| [../reports/multi_persona_audit_discussion_2026-02-20.md](../reports/multi_persona_audit_discussion_2026-02-20.md) | 多人格審計討論報告 |
 | [GOLDEN_LOG.md](GOLDEN_LOG.md) | 黃金日誌 |
 | [ADR-001-dual-track-resolution.md](ADR-001-dual-track-resolution.md) | ADR: 雙軌解析 |
 | [failure_analysis.md](failure_analysis.md) | 失敗分析 |
 | [privacy_policy.md](privacy_policy.md) | 隱私政策 |
 | [engineering/](engineering/) | 工程子目錄 (16 files) |
-| [status/](status/) | 狀態子目錄 (5 files) |
+| [status/](status/) | 狀態子目錄 (11 files) |
 
 ---
 
@@ -175,7 +179,7 @@
 | `engineering/` | 16 | 工程規格、實作細節 |
 | `research/` | 9 | 學術研究、對比分析 |
 | `governance/` | 3 | 治理規則、合規 |
-| `status/` | 5 | 專案狀態追蹤 |
+| `status/` | 11 | 專案狀態追蹤 |
 | `notes/` | 1 | 備註 |
 | `architecture/` | 1 | 架構圖 |
 | `images/` | 1 | 圖片資源 |

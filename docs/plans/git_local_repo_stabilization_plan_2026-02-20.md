@@ -99,24 +99,26 @@
 **成功標準**
 - 任一檔案都能回答：為何修改、屬於哪一類、由哪個階段處理。
 
-## Phase 2：Git 整理（待執行）
-- [ ] 以主題切分提交，避免單次提交混 runtime + docs + status。
-- [ ] 對 `docs/status/*` 採固定策略（由 CI 更新，或手動更新需附檢查證據）。
-- [ ] 對 untracked 檔案逐一決策：納入版本、延後、或排除。
+## Phase 2：Git 整理（已完成，2026-02-21）
+- [x] 以主題切分提交，避免單次提交混 runtime + docs + status。
+- [x] 對 `docs/status/*` 採固定策略（由 CI 更新，或手動更新需附檢查證據）。
+- [x] 對 untracked 檔案逐一決策：納入版本、延後、或排除。
 **成功標準**
 - `git log --name-only` 呈現清楚的一次一責任提交序列。
+  - 已完成批次提交序列：runtime / governance / docs / status。
+  - 已決策支線檔案：`.agent/skills/local_llm/`、`tonesoul/adaptive_gate.py`、`tests/test_adaptive_gate.py` 目前保留未提交。
 
-## Phase 3：文件架構收斂（待執行）
-- [ ] 以 `docs/INDEX.md` 作為單一入口，補齊新規格與新企畫索引。
-- [ ] 明確切分 `docs/REPOSITORY_STRUCTURE.md` 與 `docs/STRUCTURE.md` 的定位（地圖 vs 命名規則）。
-- [ ] 建立 `docs/spec/law` 一頁式對照，降低重複敘述。
+## Phase 3：文件架構收斂（已完成，2026-02-21）
+- [x] 以 `docs/INDEX.md` 作為單一入口，補齊新規格與新企畫索引。
+- [x] 明確切分 `docs/REPOSITORY_STRUCTURE.md` 與 `docs/STRUCTURE.md` 的定位（地圖 vs 命名規則）。
+- [x] 建立 `docs/spec/law` 一頁式對照，降低重複敘述。
 **成功標準**
 - 新人可在 5 分鐘內定位「規格、實作、治理」三條主線。
 
-## Phase 4：驗證關卡（待執行）
-- [ ] `python scripts/verify_git_hygiene.py`
-- [ ] `python scripts/verify_docs_consistency.py`
-- [ ] `python scripts/run_repo_healthcheck.py --allow-missing-discussion`
+## Phase 4：驗證關卡（已完成，2026-02-21）
+- [x] `python scripts/verify_git_hygiene.py --strict --max-tracked-ignored 28`
+- [x] `python scripts/verify_docs_consistency.py`
+- [x] `python scripts/run_repo_healthcheck.py --allow-missing-discussion`
 **成功標準**
 - 三項檢查可重現，且輸出可審計結果。
 

@@ -2,6 +2,12 @@
 
 本文件定義 ToneSoul 倉庫的目錄用途、命名規則與新增模組流程，確保結構清晰可維護。
 
+## 與其他結構文件的分工
+
+- 本文件（`STRUCTURE.md`）：規範與政策（命名、目錄責任、新增模組流程）。
+- `docs/REPOSITORY_STRUCTURE.md`：全倉庫地圖與路徑導覽。
+- `docs/SPEC_LAW_CROSSWALK.md`：`spec/` 與 `law/` 的一頁式對照。
+
 **目錄用途**
 
 | 目錄 | 用途 | 優先級 |
