@@ -31,6 +31,7 @@
 - [x] Phase 100: Architecture convergence v2 (Trinket protocol + swarm dispatcher + YSS alignment)
 - [x] Phase 101: YuHun 1.0 multi-persona audit profile scaffold
 - [x] Phase 102: Git/local repository stabilization planning baseline
+- [x] Phase 103: Side-branch isolation playbook and local hygiene guard
 **Latest validation**: `pytest -q` => `849 passed` (2026-02-14). Level 3 implementation tracked in `CODEX_TASK.md` v7.
 
 ## Backlog Radar (Original Specs/Docs, 2026-02-14)
@@ -74,6 +75,12 @@
   - `reports/git_phase2_commit_batch_draft_2026-02-20.md`
 - [x] Execute Phase 1-4 cleanup and validation flow from plan
 **Success Criteria**: repository state is auditable by category and cleanup can proceed phase-by-phase without mixing concerns.
+
+## Phase 103: Side-branch isolation playbook and local hygiene guard
+- [x] Added `docs/plans/side_branch_isolation_playbook_2026-02-21.md`
+- [x] Documented side-branch decisions for `.agent/skills/local_llm/`, `tonesoul/adaptive_gate.py`, `tests/test_adaptive_gate.py`
+- [x] Added local hygiene guard flow (`.git/info/exclude` + temporary isolation before mainline healthcheck)
+**Success Criteria**: side-branch work can continue without causing false-negative mainline healthcheck failures.
 
 ## Phase 77: Level 3 Experimental
 - [x] 3a Semantic Trigger

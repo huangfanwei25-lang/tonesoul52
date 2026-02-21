@@ -160,6 +160,7 @@
 | [RELEASE_NOTES_v0.1.0.md](RELEASE_NOTES_v0.1.0.md) | 發布說明草稿 v0.1.0 |
 | [plans/ANTIGRAVITY_VM_RUNBOOK.md](plans/ANTIGRAVITY_VM_RUNBOOK.md) | Antigravity 虛擬機安全執行手冊 |
 | [plans/git_local_repo_stabilization_plan_2026-02-20.md](plans/git_local_repo_stabilization_plan_2026-02-20.md) | Git/本地倉庫穩定化計畫 |
+| [plans/side_branch_isolation_playbook_2026-02-21.md](plans/side_branch_isolation_playbook_2026-02-21.md) | 支線隔離操作手冊 |
 | [../reports/project_audit_report_2026-02-21.md](../reports/project_audit_report_2026-02-21.md) | 最新專案審計報告 |
 | [../reports/multi_persona_audit_discussion_2026-02-20.md](../reports/multi_persona_audit_discussion_2026-02-20.md) | 多人格審計討論報告 |
 | [GOLDEN_LOG.md](GOLDEN_LOG.md) | 黃金日誌 |
