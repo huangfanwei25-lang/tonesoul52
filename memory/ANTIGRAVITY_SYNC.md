@@ -46,9 +46,9 @@ ToneSoul is a multi-agent AI governance framework with these active layers:
 
 ### Next Priorities (from GLOBAL_TRACKING_BOARD.md)
 1. ~~Wire ComputeGate to real Ollama local model for `PASS_LOCAL` route~~ (✅ Completed)
-2. Implement rate limiting for `BLOCK_RATE_LIMIT`
-3. Connect Adversarial Loop output → Memory Consolidator input (end-to-end pipeline)
-4. Council Weight Evolution (adaptive council voting weights)
+2. ~~Implement rate limiting for `BLOCK_RATE_LIMIT`~~ (✅ Completed)
+3. ~~Connect Adversarial Loop output → Memory Consolidator input (end-to-end pipeline)~~ (✅ Completed)
+4. ~~Council Weight Evolution (adaptive council voting weights)~~ (✅ Completed)
 
 ## Self-Optimization Notes
 - When editing `unified_pipeline.py`, use `view_file` with specific line ranges — the file is 1460+ lines
