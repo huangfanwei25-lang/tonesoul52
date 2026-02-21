@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-02-21T10:42:12Z",
+  "generated_at": "2026-02-21T11:07:09Z",
   "overall_ok": true,
   "repo_root": "C:\\Users\\user\\Desktop\\倉庫",
   "config": {
@@ -22,28 +22,22 @@
   },
   "collection": {
     "ok": true,
-    "mode": "explicit",
-    "command": null,
+    "mode": "git",
+    "command": "git diff --name-only --cached --diff-filter=ACMRD",
     "exit_code": 0,
-    "stdout_tail": "",
+    "duration_seconds": 0.03,
+    "stdout_tail": "docs/context_engineering_reference.md\nscripts/test_delegation.py\nscripts/test_ollama.py\ntests/test_adaptive_gate.py\ntonesoul/adaptive_gate.py",
     "stderr_tail": "",
     "paths": [
-      ".github/workflows/git_hygiene.yml",
-      "scripts/run_repo_healthcheck.py",
-      "docs/status/README.md",
-      "tests/test_run_repo_healthcheck.py",
-      "tonesoul/gates/compute.py",
-      "tonesoul/unified_pipeline.py",
-      "tonesoul/local_llm.py",
-      "tonesoul/council/coherence.py",
-      "tonesoul/council/pre_output_council.py",
-      "tests/test_compute_gate.py",
-      "tests/test_local_llm.py",
-      "tests/test_pipeline_compute_gate.py"
+      "docs/context_engineering_reference.md",
+      "scripts/test_delegation.py",
+      "scripts/test_ollama.py",
+      "tests/test_adaptive_gate.py",
+      "tonesoul/adaptive_gate.py"
     ]
   },
   "metrics": {
-    "changed_path_count": 12,
+    "changed_path_count": 5,
     "violation_count": 0
   },
   "violations": [],

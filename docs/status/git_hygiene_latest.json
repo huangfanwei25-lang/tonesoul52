@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-02-21T10:41:59Z",
+  "generated_at": "2026-02-21T11:07:09Z",
   "overall_ok": true,
   "config": {
     "max_dangling": 50,
@@ -7,10 +7,10 @@
     "max_tracked_ignored": 40
   },
   "metrics": {
-    "loose_count": 1119,
+    "loose_count": 1153,
     "in_pack": 5907,
     "packs": 2,
-    "size": "5.24 MiB",
+    "size": "5.29 MiB",
     "size_pack": "98.13 MiB",
     "dangling_count": 6,
     "fsck_prefix_counts": {
@@ -27,7 +27,7 @@
       "exit_code": 0,
       "duration_seconds": 0.08,
       "command": "git count-objects -vH",
-      "stdout_tail": "count: 1119\nsize: 5.24 MiB\nin-pack: 5907\npacks: 2\nsize-pack: 98.13 MiB\nprune-packable: 0\ngarbage: 0\nsize-garbage: 0 bytes",
+      "stdout_tail": "count: 1153\nsize: 5.29 MiB\nin-pack: 5907\npacks: 2\nsize-pack: 98.13 MiB\nprune-packable: 0\ngarbage: 0\nsize-garbage: 0 bytes",
       "stderr_tail": ""
     },
     {
@@ -35,7 +35,7 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 2.03,
+      "duration_seconds": 1.67,
       "command": "git fsck --no-reflogs",
       "stdout_tail": "dangling tree b4577d122cd9b4958ee5e2e0bdaa406d40fb0b1c\ndangling commit e59a81aa2266179f70aa6047bc77970012d73242\ndangling commit 9fa2a803b7f83baf810add35c740af0a366f2cac\ndangling commit 8427354ea93ed07306090def111958d2dc37577f\ndangling commit 762dc646d3aa5293b22ec3e8f3bd4f5910b9b281\ndangling blob a0bb8c57a438237b00a843a53d052118e0d1ec87",
       "stderr_tail": ""
@@ -45,7 +45,7 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 0.06,
+      "duration_seconds": 0.05,
       "command": "git ls-files -ci --exclude-standard",
       "stdout_tail": "\nexperiments/tsd1_pilot/data/responses.json\nmemory/.hierarchical_index/hierarchical.index\nmemory/.hierarchical_index/vows_meta.json\nmemory/.semantic_index/faiss.index\nmemory/.semantic_index/metadata.json\nmemory/external_framework_analysis/claw_governance_insight.md\nmemory/external_framework_analysis/wfgy_3.0_analysis.md\nmemory/handoff/codex_prompt.md\nmemory/handoff/note_antigravity_to_codex_20260204.md\nmemory/narrative/README.md\nmemory/narrative/synthesis.md\nmemory/narrative/threads/academic_grounding.md\nmemory/narrative/threads/infinite_game.md\nmemory/narrative/threads/meaning_transfer.md\nmemory/narrative/threads/multi_voice.md\nmemory/narrative/threads/value_root.md\nmemory/vectors/metadata.json\nmemory/vectors/vectors.npy\nsimulation_logs/hero_journey.jsonl\nspec/wfgy_semantic_control_spec.md\ntonesoul_evolution/__init__.py\ntonesoul_evolution/adversarial/__init__.py\ntonesoul_evolution/adversarial/loop.py\ntonesoul_evolution/adversarial/prompts.py\ntonesoul_evolution/consolidator/__init__.py\ntonesoul_evolution/consolidator/core.py\ntonesoul_evolution/test_journal.jsonl\nzenodo_upload/paper_outline_multiperspective_truth.md\n\"zenodo_upload/\\344\\270\\212\\345\\202\\263\\346\\214\\207\\345\\215\\227.md\"",
       "stderr_tail": ""
