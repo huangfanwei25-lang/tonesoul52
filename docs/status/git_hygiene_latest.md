@@ -1,6 +1,6 @@
 # Git Hygiene Latest
 
-- generated_at: 2026-02-21T04:23:53Z
+- generated_at: 2026-02-21T04:29:37Z
 - overall_ok: true
 - max_dangling: 50
 - max_loose_count: 5000
@@ -8,15 +8,15 @@
 
 | check | status | exit | duration_s | command |
 | --- | --- | ---: | ---: | --- |
-| count_objects | PASS | 0 | 0.08 | `git count-objects -vH` |
-| fsck | PASS | 0 | 1.91 | `git fsck --no-reflogs` |
+| count_objects | PASS | 0 | 0.07 | `git count-objects -vH` |
+| fsck | PASS | 0 | 1.72 | `git fsck --no-reflogs` |
 | tracked_ignored | PASS | 0 | 0.05 | `git ls-files -ci --exclude-standard` |
 
 ## Metrics
-- loose_count: 935
+- loose_count: 946
 - in_pack: 5907
 - packs: 2
-- size: 2.56 MiB
+- size: 2.61 MiB
 - size_pack: 98.13 MiB
 - dangling_count: 6
 - fsck_unexpected_count: 0

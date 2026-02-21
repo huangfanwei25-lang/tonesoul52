@@ -33,6 +33,7 @@
 - [x] Phase 102: Git/local repository stabilization planning baseline
 - [x] Phase 103: Side-branch isolation playbook and local hygiene guard
 - [x] Phase 104: Temporary script cleanup in mainline
+- [x] Phase 105: Mainline audit refresh and execution planning baseline
 **Latest validation**: `pytest -q` => `849 passed` (2026-02-21). Level 3 implementation tracked in `CODEX_TASK.md` v7.
 
 ## Backlog Radar (Original Specs/Docs, 2026-02-14)
@@ -88,6 +89,12 @@
 - [x] Updated script and inventory docs (`SCRIPTS_README.md`, `reports/REPO_INVENTORY.md`)
 - [x] Synced architecture backlog item (`docs/ARCHITECTURE_DEPLOYED.md` tmp-script cleanup)
 **Success Criteria**: temporary one-off scripts no longer remain in tracked mainline root, and docs reflect current script surface.
+
+## Phase 105: Mainline audit refresh and execution planning baseline
+- [x] Added follow-up audit report (`reports/project_audit_report_2026-02-21_mainline_followup.md`)
+- [x] Added mainline execution plan (`docs/plans/mainline_phase105_execution_plan_2026-02-21.md`)
+- [x] Revalidated mainline command set under side-branch isolation constraints
+**Success Criteria**: 主線下一階段任務有明確優先級、邊界、驗收標準，且不與支線工作混批。
 
 ## Phase 77: Level 3 Experimental
 - [x] 3a Semantic Trigger
