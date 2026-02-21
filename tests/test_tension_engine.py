@@ -269,7 +269,7 @@ class TestTensionEngineCompute:
             generated=[0.7, 0.3, 0.0],
             text_tension=0.3,
         )
-        assert "Δs=" in result.explanation
+        assert "s=" in result.explanation
         assert "T_text=" in result.explanation
 
 

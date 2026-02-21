@@ -4,13 +4,14 @@ Organic 4D QA Auditor Tests
 D3: Time Travel — deep coverage (concurrent writes, decay edge cases, extreme jumps)
 D4: Environment — path isolation, missing env vars
 """
+
 import threading
+
 import pytest
-from datetime import datetime
 from freezegun import freeze_time
 
-from tonesoul.memory.soul_db import SqliteSoulDB, MemorySource
-from tonesoul.memory.decay import calculate_decay, HALF_LIFE_DAYS, FORGET_THRESHOLD
+from tonesoul.memory.decay import FORGET_THRESHOLD, HALF_LIFE_DAYS, calculate_decay
+from tonesoul.memory.soul_db import MemorySource, SqliteSoulDB
 
 
 @pytest.fixture
@@ -23,6 +24,7 @@ def isolated_db(qa_sandbox):
 # =====================================================================
 # D3: Time Travel — Basic
 # =====================================================================
+
 
 class TestD3_TimeTravel_Basic:
     """Validate timestamp correctness across day boundaries."""
@@ -47,6 +49,7 @@ class TestD3_TimeTravel_Basic:
 # D3: Time Travel — Decay Edge Cases
 # =====================================================================
 
+
 class TestD3_TimeTravel_Decay:
     """
     The REAL 隔日 Bug tests.
@@ -68,18 +71,18 @@ class TestD3_TimeTravel_Decay:
         """After enough time, memories should be forgotten (score < 0.1)."""
         # log(0.1) / -DECAY_CONSTANT ≈ 23.25 days
         score = calculate_decay(1.0, 30, access_count=0)
-        assert score < FORGET_THRESHOLD, (
-            f"Memory at 30 days should be below forget threshold {FORGET_THRESHOLD}, got {score}"
-        )
+        assert (
+            score < FORGET_THRESHOLD
+        ), f"Memory at 30 days should be below forget threshold {FORGET_THRESHOLD}, got {score}"
 
     def test_access_boost_prevents_forgetting(self):
         """Frequently accessed memory should survive longer due to ACCESS_BOOST."""
         score_no_access = calculate_decay(1.0, 30, access_count=0)
         score_with_access = calculate_decay(1.0, 30, access_count=3)
         assert score_with_access > score_no_access
-        assert score_with_access >= FORGET_THRESHOLD, (
-            "3 accesses should rescue a 30-day-old memory from forgetting"
-        )
+        assert (
+            score_with_access >= FORGET_THRESHOLD
+        ), "3 accesses should rescue a 30-day-old memory from forgetting"
 
     def test_extreme_time_jump_ten_years(self):
         """
@@ -87,14 +90,15 @@ class TestD3_TimeTravel_Decay:
         Note: IEEE 754 exp(-huge) returns a tiny positive float, not exactly 0.0.
         """
         score = calculate_decay(1.0, 3650, access_count=0)
-        assert score < FORGET_THRESHOLD, (
-            f"10-year-old memory should be forgotten (< {FORGET_THRESHOLD}), got {score}"
-        )
+        assert (
+            score < FORGET_THRESHOLD
+        ), f"10-year-old memory should be forgotten (< {FORGET_THRESHOLD}), got {score}"
 
 
 # =====================================================================
 # D3: Time Travel — Concurrent Writes
 # =====================================================================
+
 
 class TestD3_Concurrent:
     """
@@ -125,14 +129,15 @@ class TestD3_Concurrent:
             pytest.fail(f"Concurrent writes raised {len(errors)} errors: {errors[:3]}")
 
         all_records = list(isolated_db.stream(MemorySource.CUSTOM))
-        assert len(all_records) == 50, (
-            f"Expected 50 records after concurrent writes, got {len(all_records)}"
-        )
+        assert (
+            len(all_records) == 50
+        ), f"Expected 50 records after concurrent writes, got {len(all_records)}"
 
 
 # =====================================================================
 # D4: Environment — Path & Variable Isolation
 # =====================================================================
+
 
 class TestD4_Environment:
     """Environment hostility tests."""

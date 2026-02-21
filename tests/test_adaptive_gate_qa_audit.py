@@ -75,9 +75,9 @@ def test_persona_eval_with_wrong_types():
         total = 0.2
 
     weird_persona = {
-        "valid": "yes",      # should be bool
-        "adaptive": 42,      # should be dict
-        "distance": "far",   # should be float
+        "valid": "yes",  # should be bool
+        "adaptive": 42,  # should be dict
+        "distance": "far",  # should be float
     }
 
     decision = gate.evaluate(FakeTension(), weird_persona)

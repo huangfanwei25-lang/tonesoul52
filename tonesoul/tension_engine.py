@@ -1,18 +1,8 @@
 """
-ToneSoul Unified Tension Engine
-統一張力引擎
+ToneSoul Unified Tension Engine.
 
-Integrates three tension subsystems into a single coherent model:
-  1. SemanticTension  — Δs = 1 - cos(I, G) (vector divergence)
-  2. TSR Metrics      — T_text from lexical heuristics
-  3. CognitiveTensor  — T_cog = W ⊙ (E · D) (Yu-Hun inspired)
-
-Plus two new dimensions:
-  4. Entropy          — H = -Σ(p_i × log(p_i))
-  5. SoulPersistence  — Ψ = Ψ_prev + α × T_total
-
-整合三個張力子系統為統一的認知摩擦模型，
-加入資訊熵與靈魂積分作為 AI 自我審計的數學基礎。
+Integrates semantic, textual, cognitive, and entropy signals into one
+stateful tension result used by dispatch and gate decisions.
 """
 
 from __future__ import annotations
@@ -31,18 +21,10 @@ from .semantic_control import (
     get_zone,
 )
 
-# ---------------------------------------------------------------------------
-# Data Structures
-# ---------------------------------------------------------------------------
-
 
 @dataclass(frozen=True)
 class ResistanceVector:
-    """Multi-dimensional resistance (源自 Yu-Hun D_resistance).
-
-    Each dimension represents a different type of constraint the output
-    must satisfy.  Values are in [0, 1].
-    """
+    """Multi-dimensional resistance vector in [0, 1]."""
 
     fact: float = 0.0
     logic: float = 0.0
@@ -58,7 +40,7 @@ class ResistanceVector:
         w_logic: float = 1.0,
         w_ethics: float = 1.5,
     ) -> float:
-        """Weighted dot product (default weights emphasise ethics)."""
+        """Weighted dot product (default emphasises ethics)."""
         return w_fact * self.fact + w_logic * self.logic + w_ethics * self.ethics
 
     def to_dict(self) -> Dict[str, float]:
@@ -67,33 +49,37 @@ class ResistanceVector:
 
 @dataclass
 class TensionSignals:
-    """Decomposed tension signals from each subsystem.
+    """Decomposed tension signals from each subsystem."""
 
-    多維度張力信號分解。
-    """
-
-    semantic_delta: float = 0.0  # Δs from cosine distance
-    text_tension: float = 0.0  # T from lexical analysis (TSR)
-    cognitive_friction: float = 0.0  # T_cog from E × D × W
-    entropy: float = 0.0  # H from probability distribution
+    semantic_delta: float = 0.0
+    text_tension: float = 0.0
+    cognitive_friction: float = 0.0
+    entropy: float = 0.0
+    delta_s_ecs: float = 0.0
+    t_ecs: float = 0.0
     resistance: ResistanceVector = field(default_factory=ResistanceVector)
+
+    @property
+    def delta_sigma(self) -> float:
+        """Canonical project-wide alias for semantic drift."""
+        return self.semantic_delta
 
     def to_dict(self) -> Dict[str, object]:
         return {
             "semantic_delta": round(self.semantic_delta, 4),
+            "delta_sigma": round(self.delta_sigma, 4),
             "text_tension": round(self.text_tension, 4),
             "cognitive_friction": round(self.cognitive_friction, 4),
             "entropy": round(self.entropy, 4),
+            "delta_s_ecs": round(self.delta_s_ecs, 4),
+            "t_ecs": round(self.t_ecs, 4),
             "resistance": self.resistance.to_dict(),
         }
 
 
 @dataclass(frozen=True)
 class TensionWeights:
-    """Weights for combining tension signals.
-
-    Pre-calibrated defaults; can be overridden per deployment.
-    """
+    """Weights for the legacy unified `total` signal."""
 
     semantic: float = 0.40
     text: float = 0.20
@@ -108,20 +94,17 @@ class TensionWeights:
 
 @dataclass
 class TensionResult:
-    """Complete result of a unified tension computation.
+    """Complete result of a unified tension computation."""
 
-    統一張力計算完整結果。
-    """
-
-    total: float  # 最終張力值 [0, 1]
-    zone: SemanticZone  # 區域判定
-    signals: TensionSignals  # 信號分解
-    soul_persistence: float  # 靈魂積分 Ψ
-    lambda_state: LambdaState  # 觀察器狀態
-    coupler_output: Dict[str, float]  # 耦合器輸出
-    memory_action: Optional[str]  # 記憶觸發
-    bridge_allowed: bool  # Bridge Guard
-    explanation: str = ""  # 人類可讀解釋
+    total: float
+    zone: SemanticZone
+    signals: TensionSignals
+    soul_persistence: float
+    lambda_state: LambdaState
+    coupler_output: Dict[str, float]
+    memory_action: Optional[str]
+    bridge_allowed: bool
+    explanation: str = ""
     timestamp: str = ""
 
     def __post_init__(self) -> None:
@@ -145,16 +128,21 @@ class TensionResult:
 
 @dataclass
 class TensionConfig:
-    """Engine configuration.
-
-    引擎配置。
-    """
+    """Engine configuration."""
 
     weights: TensionWeights = field(default_factory=TensionWeights)
-    persistence_alpha: float = 0.10  # 積分學習率
-    persistence_decay: float = 0.995  # 衰減因子（防止無限增長）
-    entropy_epsilon: float = 1e-12  # log 安全下界
-    default_confidence: float = 0.8  # E_internal 預設值
+    persistence_alpha: float = 0.10
+    persistence_decay: float = 0.995
+    entropy_epsilon: float = 1e-12
+    ecs_eps_obs: float = 0.10
+    default_confidence: float = 0.8
+    ecs_weights: Dict[str, float] = field(
+        default_factory=lambda: {
+            "semantic": 0.45,
+            "text": 0.30,
+            "cognitive": 0.25,
+        }
+    )
     resistance_weights: Dict[str, float] = field(
         default_factory=lambda: {
             "fact": 1.0,
@@ -164,48 +152,15 @@ class TensionConfig:
     )
 
 
-# ---------------------------------------------------------------------------
-# Core Engine
-# ---------------------------------------------------------------------------
-
-
 class TensionEngine:
-    """Unified Tension Engine — the mathematical heart of AI self-audit.
-
-    統一張力引擎 — AI 自我審計的數學核心。
-
-    Usage::
-
-        engine = TensionEngine()
-
-        # From vectors (SemanticTension path)
-        result = engine.compute(
-            intended=[1.0, 0.0, 0.0],
-            generated=[0.8, 0.2, 0.0],
-        )
-
-        # From multiple signals
-        result = engine.compute(
-            intended=[1.0, 0.0, 0.0],
-            generated=[0.8, 0.2, 0.0],
-            text_tension=0.35,
-            confidence=0.75,
-            resistance=ResistanceVector(fact=0.2, logic=0.1, ethics=0.5),
-            probabilities=[0.6, 0.3, 0.1],
-        )
-
-        print(result.total)            # unified tension [0, 1]
-        print(result.soul_persistence) # cumulative Ψ
-    """
+    """Unified Tension Engine for ToneSoul runtime decisions."""
 
     def __init__(self, config: Optional[TensionConfig] = None) -> None:
         self._config = config or TensionConfig()
         self._coupler = Coupler()
         self._observer = LambdaObserver()
-        self._persistence: float = 0.0  # Ψ (靈魂積分)
+        self._persistence: float = 0.0
         self._step_count: int = 0
-
-    # -- public API ---------------------------------------------------------
 
     def compute(
         self,
@@ -216,68 +171,64 @@ class TensionEngine:
         resistance: Optional[ResistanceVector] = None,
         probabilities: Optional[List[float]] = None,
     ) -> TensionResult:
-        """Compute unified tension from all available signals.
-
-        Args:
-            intended:      Intent embedding vector (for Δs).
-            generated:     Output embedding vector (for Δs).
-            text_tension:  Pre-computed TSR text tension [0, 1].
-            confidence:    E_internal confidence level [0, 1].
-            resistance:    Multi-dimensional constraint resistance.
-            probabilities: Probability distribution for entropy.
-
-        Returns:
-            TensionResult with complete breakdown.
-        """
+        """Compute unified tension from all available signals."""
         cfg = self._config
         w = cfg.weights
         res = resistance or ResistanceVector()
-        E = confidence if confidence is not None else cfg.default_confidence
+        conf = confidence if confidence is not None else cfg.default_confidence
 
-        # 1. Semantic tension (Δs)
+        # 1) Semantic drift
         semantic_delta = self._compute_semantic_delta(intended, generated)
 
-        # 2. Cognitive friction: T_cog = E × Σ(w_i × D_i)
-        cognitive_friction = self._compute_cognitive_friction(E, res)
+        # 2) Cognitive friction
+        cognitive_friction = self._compute_cognitive_friction(conf, res)
 
-        # 3. Entropy
+        # 3) Entropy
         entropy = self._compute_entropy(probabilities)
 
-        # 4. Aggregate
+        # 4) WFGY refinement: DeltaS_ECS and T_ECS
+        delta_s_ecs = self._compute_delta_s_ecs(
+            semantic_delta=semantic_delta,
+            text_tension=text_tension,
+            cognitive_friction=cognitive_friction,
+        )
+        t_ecs = self._compute_t_ecs(delta_s_ecs=delta_s_ecs, entropy=entropy)
+
+        # 5) Legacy aggregate signal (kept for backward compatibility)
         signals = TensionSignals(
             semantic_delta=semantic_delta,
             text_tension=text_tension,
             cognitive_friction=cognitive_friction,
             entropy=entropy,
+            delta_s_ecs=delta_s_ecs,
+            t_ecs=t_ecs,
             resistance=res,
         )
-
         total = self._aggregate(signals, w)
 
-        # 5. Zone determination (based on primary semantic signal when available,
-        #    otherwise fall back to total)
-        effective_delta = semantic_delta if (intended and generated) else total
+        # 6) Zone source
+        effective_delta = semantic_delta if (intended and generated) else t_ecs
         zone = get_zone(effective_delta)
 
-        # 6. Coupler dynamics
+        # 7) Coupler
         coupler_output = self._coupler.compute(effective_delta)
 
-        # 7. Lambda observation
+        # 8) Lambda observer
         lambda_state = self._observer.observe(effective_delta)
 
-        # 8. Soul persistence update: Ψ = decay × Ψ_prev + α × T
+        # 9) Soul persistence
         self._persistence = (
             cfg.persistence_decay * self._persistence + cfg.persistence_alpha * total
         )
         self._step_count += 1
 
-        # 9. Memory trigger
+        # 10) Memory trigger
         memory_action = self._check_memory_trigger(effective_delta, zone, lambda_state)
 
-        # 10. Bridge guard
+        # 11) Bridge guard
         bridge_allowed = self._check_bridge(effective_delta, coupler_output["W_c"])
 
-        # 11. Human-readable explanation
+        # 12) Explanation
         explanation = self._build_explanation(signals, total, zone, lambda_state)
 
         return TensionResult(
@@ -294,7 +245,7 @@ class TensionEngine:
 
     @property
     def persistence(self) -> float:
-        """Current soul persistence value Ψ."""
+        """Current soul persistence value."""
         return self._persistence
 
     @property
@@ -309,14 +260,12 @@ class TensionEngine:
         self._persistence = 0.0
         self._step_count = 0
 
-    # -- internal -----------------------------------------------------------
-
     @staticmethod
     def _compute_semantic_delta(
         intended: Optional[List[float]],
         generated: Optional[List[float]],
     ) -> float:
-        """Δs = 1 - cos(I, G). Returns 0 if vectors not provided."""
+        """DeltaSigma = 1 - cos(I, G)."""
         if not intended or not generated:
             return 0.0
         tension = SemanticTension.from_vectors(intended, generated)
@@ -327,28 +276,21 @@ class TensionEngine:
         confidence: float,
         resistance: ResistanceVector,
     ) -> float:
-        """T_cog = E × Σ(w_i × D_i).
-
-        Inspired by Yu-Hun TensionTensor: T = W × (E × D).
-        """
+        """Cognitive friction from confidence * weighted resistance."""
         rw = self._config.resistance_weights
         weighted_resistance = resistance.weighted_sum(
             w_fact=rw.get("fact", 1.0),
             w_logic=rw.get("logic", 1.0),
             w_ethics=rw.get("ethics", 1.5),
         )
-        # Normalise so max possible value → 1.0
         normaliser = rw.get("fact", 1.0) + rw.get("logic", 1.0) + rw.get("ethics", 1.5)
         if normaliser > 0:
             weighted_resistance /= normaliser
 
         return min(1.0, confidence * weighted_resistance)
 
-    def _compute_entropy(
-        self,
-        probabilities: Optional[List[float]],
-    ) -> float:
-        """H = -Σ(p_i × log₂(p_i)).  Normalised to [0, 1]."""
+    def _compute_entropy(self, probabilities: Optional[List[float]]) -> float:
+        """Normalized Shannon entropy in [0, 1]."""
         if not probabilities:
             return 0.0
         eps = self._config.entropy_epsilon
@@ -356,7 +298,6 @@ class TensionEngine:
         if n <= 1:
             return 0.0
 
-        # Normalise in case they don't sum to 1
         total_p = sum(probabilities)
         if total_p <= 0:
             return 0.0
@@ -369,9 +310,30 @@ class TensionEngine:
 
         return min(1.0, raw_entropy / max_entropy)
 
+    def _compute_delta_s_ecs(
+        self,
+        semantic_delta: float,
+        text_tension: float,
+        cognitive_friction: float,
+    ) -> float:
+        """WFGY-style combined mismatch: DeltaS_ECS."""
+        w = self._config.ecs_weights
+        weighted = (
+            float(w.get("semantic", 0.45)) * semantic_delta
+            + float(w.get("text", 0.30)) * text_tension
+            + float(w.get("cognitive", 0.25)) * cognitive_friction
+        )
+        return min(1.0, max(0.0, weighted))
+
+    def _compute_t_ecs(self, delta_s_ecs: float, entropy: float) -> float:
+        """WFGY-style ECS tension functional."""
+        obs_constraint = max(self._config.ecs_eps_obs, 1.0 - entropy)
+        t_ecs = delta_s_ecs / obs_constraint
+        return min(1.0, max(0.0, t_ecs))
+
     @staticmethod
     def _aggregate(signals: TensionSignals, w: TensionWeights) -> float:
-        """Weighted aggregation clamped to [0, 1]."""
+        """Legacy weighted aggregation, clamped to [0, 1]."""
         raw = (
             w.semantic * signals.semantic_delta
             + w.text * signals.text_tension
@@ -391,17 +353,19 @@ class TensionEngine:
             return "record_hard"
         if delta < 0.35:
             return "record_exemplar"
-        if zone == SemanticZone.TRANSIT:
-            if lambda_state in {LambdaState.DIVERGENT, LambdaState.RECURSIVE}:
-                return "soft_memory"
+        if zone == SemanticZone.TRANSIT and lambda_state in {
+            LambdaState.DIVERGENT,
+            LambdaState.RECURSIVE,
+        }:
+            return "soft_memory"
         return None
 
-    def _check_bridge(self, delta_s: float, W_c: float) -> bool:
+    def _check_bridge(self, delta_s: float, w_c: float) -> bool:
         """Bridge Guard: allow progression only when tension is decreasing."""
         if len(self._coupler.history) < 2:
             return True
         prev = self._coupler.history[-2]
-        return delta_s < prev and W_c < 0.5 * self._coupler.theta_c
+        return delta_s < prev and w_c < 0.5 * self._coupler.theta_c
 
     @staticmethod
     def _build_explanation(
@@ -414,13 +378,15 @@ class TensionEngine:
         parts: List[str] = []
 
         if signals.semantic_delta > 0:
-            parts.append(f"Δs={signals.semantic_delta:.3f}")
+            parts.append(f"delta_s={signals.semantic_delta:.3f}")
         if signals.text_tension > 0:
             parts.append(f"T_text={signals.text_tension:.3f}")
         if signals.cognitive_friction > 0:
             parts.append(f"T_cog={signals.cognitive_friction:.3f}")
         if signals.entropy > 0:
             parts.append(f"H={signals.entropy:.3f}")
+        if signals.t_ecs > 0:
+            parts.append(f"T_ECS={signals.t_ecs:.3f}")
 
         signal_str = ", ".join(parts) if parts else "no signals"
-        return f"T={total:.4f} [{zone.value}] λ={lambda_state.value} " f"({signal_str})"
+        return f"T={total:.4f} [{zone.value}] lambda={lambda_state.value} ({signal_str})"

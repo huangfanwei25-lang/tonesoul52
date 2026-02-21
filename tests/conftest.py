@@ -36,5 +36,5 @@ def qa_sandbox(monkeypatch, tmp_path):
     # Mock HOME and APPDATA to ensure no global config leaks
     monkeypatch.setenv("HOME", str(sandbox_root))
     monkeypatch.setenv("APPDATA", str(sandbox_root))
-    
+
     return sandbox_root
