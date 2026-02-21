@@ -43,9 +43,11 @@ jobs:
             git diff --name-only --diff-filter=ACMRD "$base_ref...HEAD" > changed_files.txt
           elif [ "${{ github.event_name }}" = "push" ]; then
             before_sha="${{ github.event.before }}"
-            if [ -n "$before_sha" ] && [ "$before_sha" != "0000000000000000000000000000000000000000" ]; then
+            if [ -n "$before_sha" ] && [ "$before_sha" != "0000000000000000000000000000000000000000" ] && git cat-file -t "$before_sha" >/dev/null 2>&1; then
               git diff --name-only --diff-filter=ACMRD "$before_sha...HEAD" > changed_files.txt
             else
+              # Fallback: before_sha missing (force-push) or initial push
+              echo "::warning::before_sha ($before_sha) not found in history (force-push?). Falling back to HEAD-only diff."
               git show --pretty=format: --name-only --diff-filter=ACMRD HEAD > changed_files.txt
             fi
           else

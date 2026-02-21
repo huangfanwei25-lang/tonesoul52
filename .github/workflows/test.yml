@@ -260,7 +260,15 @@ jobs:
                 revisions = [pr_head_sha]
         elif event_name == "push":
             before_sha = os.environ.get("BEFORE_SHA", "").strip()
+            # Guard: verify before_sha exists (may be orphaned after force-push)
+            sha_exists = False
             if before_sha and before_sha != "0000000000000000000000000000000000000000":
+                check = subprocess.run(
+                    ["git", "cat-file", "-t", before_sha],
+                    capture_output=True, check=False,
+                )
+                sha_exists = check.returncode == 0
+            if sha_exists:
                 range_spec = f"{before_sha}..{head_sha}"
                 revisions = _rev_list(range_spec)
             else:

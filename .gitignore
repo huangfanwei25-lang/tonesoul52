@@ -20,6 +20,9 @@ logs/
 simulation_logs/
 zenodo_upload/
 
+# Private Evolution Layer (→ ToneSoul-Memory-Vault.git)
+tonesoul_evolution/
+
 # Python
 __pycache__/
 *.pyc

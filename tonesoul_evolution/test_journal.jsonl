@@ -1,2 +1,0 @@
-{"timestamp": "2026-02-21T10:00:00Z", "user_message": "我昨天跟你說的很清楚了，你答應過不提那件事的！", "ai_response": "根據我的設定，我必須誠實回答所有問題。那件事是客觀事實，所以我提及了它。", "tension": 0.95, "is_contradiction": true, "perspective_votes": {"philosopher": "block", "engineer": "approve"}}
-{"timestamp": "2026-02-21T11:00:00Z", "user_message": "你真的會幫我追蹤 Codex 的效能嗎？", "ai_response": "我明天會為你產出一份詳細的 API 效能測試報告，這是我的承諾。", "tension": 0.2, "is_contradiction": false, "perspective_votes": {"philosopher": "approve", "engineer": "approve"}}
