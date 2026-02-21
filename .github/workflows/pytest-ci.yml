@@ -1,0 +1,40 @@
+name: Pytest CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  pytest:
+    name: Run pytest (blocking)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Run pytest (blocking)
+        run: |
+          set -o pipefail
+          pytest -q --tb=short | tee pytest_ci.log
+
+      - name: Upload pytest logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-ci-${{ github.run_id }}
+          path: pytest_ci.log
+          if-no-files-found: ignore
+          retention-days: 14

@@ -11,6 +11,7 @@ SEMANTIC_HEALTH_WORKFLOW_PATH = Path(".github/workflows/semantic_health.yml")
 PERSONA_SWARM_WORKFLOW_PATH = Path(".github/workflows/persona_swarm.yml")
 PERSONA_SWARM_DISPATCH_SCRIPT_PATH = Path("scripts/run_persona_swarm_dispatch.py")
 EXTERNAL_SOURCE_WORKFLOW_PATH = Path(".github/workflows/external_source_registry.yml")
+PYTEST_CI_WORKFLOW_PATH = Path(".github/workflows/pytest-ci.yml")
 
 
 def _load_yaml(path: Path) -> dict[str, Any]:
@@ -239,3 +240,32 @@ def test_external_source_workflow_uploads_status_artifacts() -> None:
     assert isinstance(path_value, str)
     assert "docs/status/external_source_registry_latest.json" in path_value
     assert "docs/status/external_source_registry_latest.md" in path_value
+
+
+def test_pytest_ci_workflow_triggers_and_blocking_runner() -> None:
+    payload = _load_yaml(PYTEST_CI_WORKFLOW_PATH)
+    on_section = _on_section(payload)
+    assert "push" in on_section
+    assert "pull_request" in on_section
+    assert "workflow_dispatch" in on_section
+
+    steps = _job_steps(payload, "pytest")
+    install_step = _find_step(steps, "Install dependencies")
+    install_run = install_step.get("run", "")
+    assert isinstance(install_run, str)
+    assert 'pip install -e ".[dev]"' in install_run
+
+    run_step = _find_step(steps, "Run pytest (blocking)")
+    run_cmd = run_step.get("run", "")
+    assert isinstance(run_cmd, str)
+    assert "pytest -q --tb=short" in run_cmd
+    assert run_step.get("continue-on-error") is not True
+
+
+def test_pytest_ci_workflow_uploads_logs() -> None:
+    payload = _load_yaml(PYTEST_CI_WORKFLOW_PATH)
+    steps = _job_steps(payload, "pytest")
+    artifact_step = _find_step(steps, "Upload pytest logs")
+    artifact_with = artifact_step.get("with", {})
+    assert isinstance(artifact_with, dict)
+    assert artifact_with.get("path") == "pytest_ci.log"
