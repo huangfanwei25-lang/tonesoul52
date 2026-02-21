@@ -11,7 +11,6 @@ Prompts for the next day/batch.
 
 import json
 import logging
-import os
 from datetime import datetime
 from pathlib import Path
 from typing import List, Dict
@@ -31,6 +30,8 @@ class MemoryConsolidator:
     Reads daily episodic memory and converts high-tension/contradictory events 
     into permanent, semantic rules (Prompts) anchored in the 3 Axioms.
     """
+    
+    CRITICAL_TENSION_THRESHOLD = 0.7  # Production value; do NOT lower for testing
     
     def __init__(self, journal_path: str, prompt_output_dir: str):
         self.journal_path = Path(journal_path)
@@ -53,7 +54,7 @@ class MemoryConsolidator:
                     tension = float(record.get('tension', 0.0))
                     is_contradiction = bool(record.get('is_contradiction', False))
                     
-                    if tension > 0.1 or is_contradiction:
+                    if tension > self.CRITICAL_TENSION_THRESHOLD or is_contradiction:
                         events.append(record)
                 except json.JSONDecodeError:
                     pass
