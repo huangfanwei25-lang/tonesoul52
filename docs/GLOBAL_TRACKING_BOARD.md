@@ -29,7 +29,7 @@
 | 狀態 | 提案 / 功能 | 說明 | 相關文件 / 線索 |
 |:---:|:---|:---|:---|
 | ⏳ | **WFGY 數學張力內化 (Tension Math)** | 閱讀並實作 WFGY 3.0 的張力幾何學，用具體數學公式取代目前 `AdaptiveGate` 的簡單閾值。 | `WFGY-3.0_Singularity-Demo` |
-| 🏃‍♂️ | **Phase 105-B: Decay Query (Top-K)** | 使用 `heapq` 將 `_decay_records` 的時間複雜度降為 O(N log K)。 | `CODEX_TASK.md` |
+| ✅ | **Phase 105-B: Decay Query (Top-K)** | 使用 `heapq` 將 `_decay_records` 的時間複雜度降為 O(N log K)。 | `CODEX_TASK.md`, `reports/decay_query_benchmark_latest.md` |
 | ⏳ | **自動化 CI 驗證 (CI/CD Pipeline)** | 建立 `.github/workflows/pytest-ci.yml` 自動跑 Phase III 的深度混沌測試。 | `tests/qa_auditor/` |
 | ⏳ | **Cross-session Memory Benchmark** | 壓測跨會話記憶恢復機制，確保 `visual_chain.json` 不會拖慢 P99 延遲。 | `unified_pipeline.py` |
 

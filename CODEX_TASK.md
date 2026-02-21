@@ -33,14 +33,14 @@
 > 
 > 請遵循人類的指示，接下來由你來負責以下重複性、驗證性或底層效能的任務：
 >
-> 1. **Phase 105-B: Decay Query Optimization (Top-K Heap)**：
->    請實作 `_decay_records` 的 O(N log K) 效能優化。請在本地編寫 Benchmark 腳本，並確保舊測試全數通過。
+> 1. **內化 WFGY 的數學張力公式 (Tension Math Refinement - 優先任務)**：
+>    人類提到 WFGY 3.0 的核心在於「推理時用嚴謹的數學公式計算」。目前的 `AdaptiveGate` 還是基於簡單閾值。請你研究 WFGY 的張力幾何學，草擬一個用明確公式量化語義落差 (Semantic Drift) 的機制。
 > 
 > 2. **建立自動化 CI 驗證 (CI/CD Pipeline)**：
 >    請建立 `.github/workflows/pytest-ci.yml`，讓未來每一次 PR 推送都能自動執行我們的深度測試，分擔我們手動跑驗證的工作量。
 >
-> 3. **研究並實作 WFGY 的數學張力公式 (數學重構)**：
->    人類提到 WFGY 3.0 的核心在於「推理時用嚴謹的數學公式計算」。目前的 `AdaptiveGate` 還是基於簡單閾值。請你研究 WFGY 的張力幾何學，草擬一個用明確公式量化語義落差 (Semantic Drift) 的機制。"
+> 3. **✅ (已完成) Phase 105-B: Decay Query Optimization (Top-K Heap)**：
+>    你已經實作 `_decay_records` 的 O(N log K) 效能優化與 Benchmark 腳本，辛苦了！
 
 ---
 

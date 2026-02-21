@@ -912,6 +912,7 @@ class UnifiedPipeline:
         perspective_config: Optional[Dict[str, Dict[str, Any]]] = None,
         prior_tension: Optional[Dict[str, Any]] = None,
         persona_config: Optional[Dict[str, Any]] = None,
+        user_tier: str = "free",
     ) -> UnifiedResponse:
         """
         ???冽閮???渡恣蝺?
@@ -929,6 +930,34 @@ class UnifiedPipeline:
         # ========== Cross-Session Recovery (first call only) ==========
         user_message = self._try_cross_session_recovery(user_message)
 
+        # ========== Phase V: Compute Gate (Revenue / API Protection) ==========
+        from tonesoul.gates.compute import ComputeGate, RoutingPath
+        compute_gate = ComputeGate(local_model_enabled=True)
+        
+        # Estimate initial tension from prior history to aid routing
+        initial_tension = 0.0
+        if prior_tension and "delta_t" in prior_tension:
+            try:
+                initial_tension = float(prior_tension.get("delta_t", 0.0) or 0.0)
+            except (TypeError, ValueError):
+                pass
+
+        routing_decision = compute_gate.evaluate(user_tier, user_message, initial_tension)
+
+        # FAST ROUTE: Bypass all expensive Cloud APIs and Council layers
+        if routing_decision.path == RoutingPath.PASS_LOCAL:
+            return UnifiedResponse(
+                response="[Local Model] 收到了，謝謝你的訊息。",  # Mocked Ollama generation
+                council_verdict={"verdict": "bypassed"},
+                tonebridge_analysis={},
+                inner_narrative=routing_decision.reason,
+                dispatch_trace={
+                    "route": routing_decision.path.value,
+                    "journal_eligible": routing_decision.journal_eligible,
+                    "reason": routing_decision.reason
+                }
+            )
+
         # ========== 閮瘜典 Adapter嚗ersona + context嚗?==========
         user_message = self.build_injection_context(user_message, persona_config=persona_config)
 
@@ -937,7 +966,7 @@ class UnifiedPipeline:
         self._rebuild_stack_from_history(history)
 
         # ========== 0.5 ?遣頠楚???函???==========
-        # 靽桀儔?撠店?垢?ug
+        # 靽桀儔?€撠店?垢?ug
         self._rebuild_trajectory_from_history(history)
 
         # ========== 1. ToneBridge ???冽 ==========
@@ -997,6 +1026,8 @@ class UnifiedPipeline:
                 dispatch_trace["tension_engine"] = tension_result.to_dict()
             except Exception:
                 pass
+        dispatch_trace["route"] = routing_decision.path.value
+        dispatch_trace["journal_eligible"] = routing_decision.journal_eligible
         trajectory_result["dispatch"] = dispatch_trace
         # ========== 2.5 ToneSoul 2.0: ?批撖抵降 ==========
         deliberation = self._get_deliberation()
@@ -1299,6 +1330,16 @@ Respond with a clear, practical answer."""
                     tags=frame_tags,
                     branch="main",
                 )
+            
+                # Evolutionary Memory Isolation (Phase V)
+                # Only write standard interactions to journal if they are eligible
+                if routing_decision.journal_eligible:
+                    chain.capture(
+                        frame_type=FrameType.SESSION_STATE,
+                        title=f"Premium Journal Eligible Turn {chain.frame_count}",
+                        data={"journal_commit": True, "reason": routing_decision.reason},
+                        tags=["journal_eligible"]
+                    )
             except Exception:
                 pass
 
