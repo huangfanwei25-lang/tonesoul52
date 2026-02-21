@@ -9,6 +9,11 @@ def ask_local_llm(prompt: str, system: str = "你是 ToneSoul 的前線代理，
     用於處理低張力、短小且免費用戶的訊息。
     重要限制：必須使用 chat API + think=False，否則 qwen3 會把額度全花在思考而回傳空字串。
     """
+    # Guard: truncate excessively long prompts to protect 4B model context window
+    MAX_PROMPT_LEN = 2000
+    if len(prompt) > MAX_PROMPT_LEN:
+        prompt = prompt[:MAX_PROMPT_LEN]
+        
     try:
         response = requests.post(
             "http://localhost:11434/api/chat",

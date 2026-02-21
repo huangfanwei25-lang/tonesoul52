@@ -9,7 +9,6 @@ evaluate them against ToneSoul's strict 3 Axioms, and write new System
 Prompts for the next day/batch.
 """
 
-import json
 import logging
 from datetime import datetime
 from pathlib import Path
@@ -30,8 +29,6 @@ class MemoryConsolidator:
     Reads daily episodic memory and converts high-tension/contradictory events 
     into permanent, semantic rules (Prompts) anchored in the 3 Axioms.
     """
-    
-    CRITICAL_TENSION_THRESHOLD = 0.7  # Production value; do NOT lower for testing
     
     def __init__(self, journal_path: str, prompt_output_dir: str):
         self.journal_path = Path(journal_path)

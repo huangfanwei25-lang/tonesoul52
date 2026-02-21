@@ -54,8 +54,9 @@ class PreOutputCouncil:
         weights = None
         try:
             from tonesoul.council.evolution import CouncilEvolution
-            evolution = CouncilEvolution()
-            weights = evolution.get_weights()
+            if not hasattr(self, '_evolution'):
+                self._evolution = CouncilEvolution()
+            weights = self._evolution.get_weights()
         except Exception:
             pass
             

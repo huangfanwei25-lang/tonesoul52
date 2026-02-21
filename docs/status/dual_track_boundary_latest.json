@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-02-21T07:12:17Z",
-  "overall_ok": true,
+  "generated_at": "2026-02-21T08:09:29Z",
+  "overall_ok": false,
   "repo_root": "C:\\Users\\user\\Desktop\\倉庫",
   "config": {
     "allow_private_paths": false,
@@ -23,18 +23,72 @@
   "collection": {
     "ok": true,
     "mode": "git",
-    "command": "git diff --name-only --cached --diff-filter=ACMRD",
+    "command": "git diff --name-only --diff-filter=ACMRD 218b309...HEAD",
     "exit_code": 0,
-    "duration_seconds": 0.03,
-    "stdout_tail": "",
+    "duration_seconds": 0.04,
+    "stdout_tail": ".github/workflows/dual_track_boundary.yml\n.github/workflows/repo_healthcheck.yml\nCODEX_TASK.md\ndocs/GLOBAL_TRACKING_BOARD.md\ndocs/plans/dual_repo_boundary_manifest_2026-02-21.md\ndocs/plans/dual_repo_guardrails_2026-02-21.md\ndocs/plans/dual_repo_migration_runbook_2026-02-21.md\ndocs/status/README.md\ndocs/status/dual_track_boundary_latest.json\ndocs/status/dual_track_boundary_latest.md\nmemory/ANTIGRAVITY_SYNC.md\nscripts/run_repo_healthcheck.py\nscripts/verify_dual_track_boundary.py\ntemp_wfgy.txt\ntests/test_compute_gate.py\ntests/test_local_llm.py\ntests/test_pipeline_compute_gate.py\ntests/test_run_repo_healthcheck.py\ntests/test_verify_dual_track_boundary.py\ntests/test_workflow_contracts.py\ntonesoul/council/coherence.py\ntonesoul/council/pre_output_council.py\ntonesoul/gates/__init__.py\ntonesoul/gates/compute.py\ntonesoul/local_llm.py\ntonesoul/unified_pipeline.py\ntonesoul_evolution/__init__.py\ntonesoul_evolution/adversarial/__init__.py\ntonesoul_evolution/consolidator/__init__.py\ntonesoul_evolution/consolidator/core.py",
     "stderr_tail": "",
-    "paths": []
+    "paths": [
+      ".github/workflows/dual_track_boundary.yml",
+      ".github/workflows/repo_healthcheck.yml",
+      "CODEX_TASK.md",
+      "docs/GLOBAL_TRACKING_BOARD.md",
+      "docs/plans/dual_repo_boundary_manifest_2026-02-21.md",
+      "docs/plans/dual_repo_guardrails_2026-02-21.md",
+      "docs/plans/dual_repo_migration_runbook_2026-02-21.md",
+      "docs/status/README.md",
+      "docs/status/dual_track_boundary_latest.json",
+      "docs/status/dual_track_boundary_latest.md",
+      "memory/ANTIGRAVITY_SYNC.md",
+      "scripts/run_repo_healthcheck.py",
+      "scripts/verify_dual_track_boundary.py",
+      "temp_wfgy.txt",
+      "tests/test_compute_gate.py",
+      "tests/test_local_llm.py",
+      "tests/test_pipeline_compute_gate.py",
+      "tests/test_run_repo_healthcheck.py",
+      "tests/test_verify_dual_track_boundary.py",
+      "tests/test_workflow_contracts.py",
+      "tonesoul/council/coherence.py",
+      "tonesoul/council/pre_output_council.py",
+      "tonesoul/gates/__init__.py",
+      "tonesoul/gates/compute.py",
+      "tonesoul/local_llm.py",
+      "tonesoul/unified_pipeline.py",
+      "tonesoul_evolution/__init__.py",
+      "tonesoul_evolution/adversarial/__init__.py",
+      "tonesoul_evolution/consolidator/__init__.py",
+      "tonesoul_evolution/consolidator/core.py"
+    ]
   },
   "metrics": {
-    "changed_path_count": 0,
-    "violation_count": 0
+    "changed_path_count": 30,
+    "violation_count": 4
   },
-  "violations": [],
-  "issues": [],
+  "violations": [
+    {
+      "path": "tonesoul_evolution/__init__.py",
+      "rule_type": "prefix",
+      "rule": "tonesoul_evolution/"
+    },
+    {
+      "path": "tonesoul_evolution/adversarial/__init__.py",
+      "rule_type": "prefix",
+      "rule": "tonesoul_evolution/"
+    },
+    {
+      "path": "tonesoul_evolution/consolidator/__init__.py",
+      "rule_type": "prefix",
+      "rule": "tonesoul_evolution/"
+    },
+    {
+      "path": "tonesoul_evolution/consolidator/core.py",
+      "rule_type": "prefix",
+      "rule": "tonesoul_evolution/"
+    }
+  ],
+  "issues": [
+    "detected 4 changed paths that violate dual-track boundary policy"
+  ],
   "warnings": []
 }
