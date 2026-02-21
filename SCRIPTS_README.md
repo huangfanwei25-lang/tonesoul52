@@ -38,11 +38,8 @@
 
 ## 4) 診斷/測試輔助
 
-| 檔案 | 用途 |
-|---|---|
-| `diagnostic_post.py` | API 回覆診斷 |
-| `test_api_post.py` | API 發文整合測試 |
-| `reply_tone_tension.py` | 張力回覆範例 |
+此區原先的三個一次性腳本已於 2026-02-21 清理（`diagnostic_post.py`、`test_api_post.py`、`reply_tone_tension.py`）。
+後續若需要臨時診斷腳本，請放在本機支線流程，不直接進主線。
 
 ## 5) 安全規範
 

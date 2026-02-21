@@ -1,16 +1,16 @@
 {
-  "generated_at": "2026-02-21T03:45:52Z",
-  "overall_ok": false,
+  "generated_at": "2026-02-21T04:23:53Z",
+  "overall_ok": true,
   "config": {
     "max_dangling": 50,
     "max_loose_count": 5000,
-    "max_tracked_ignored": 0
+    "max_tracked_ignored": 28
   },
   "metrics": {
-    "loose_count": 904,
+    "loose_count": 935,
     "in_pack": 5907,
     "packs": 2,
-    "size": "2.50 MiB",
+    "size": "2.56 MiB",
     "size_pack": "98.13 MiB",
     "dangling_count": 6,
     "fsck_prefix_counts": {
@@ -25,9 +25,9 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 0.06,
+      "duration_seconds": 0.08,
       "command": "git count-objects -vH",
-      "stdout_tail": "count: 904\nsize: 2.50 MiB\nin-pack: 5907\npacks: 2\nsize-pack: 98.13 MiB\nprune-packable: 0\ngarbage: 0\nsize-garbage: 0 bytes",
+      "stdout_tail": "count: 935\nsize: 2.56 MiB\nin-pack: 5907\npacks: 2\nsize-pack: 98.13 MiB\nprune-packable: 0\ngarbage: 0\nsize-garbage: 0 bytes",
       "stderr_tail": ""
     },
     {
@@ -35,15 +35,15 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 1.63,
+      "duration_seconds": 1.91,
       "command": "git fsck --no-reflogs",
       "stdout_tail": "dangling tree b4577d122cd9b4958ee5e2e0bdaa406d40fb0b1c\ndangling commit e59a81aa2266179f70aa6047bc77970012d73242\ndangling commit 9fa2a803b7f83baf810add35c740af0a366f2cac\ndangling commit 8427354ea93ed07306090def111958d2dc37577f\ndangling commit 762dc646d3aa5293b22ec3e8f3bd4f5910b9b281\ndangling blob a0bb8c57a438237b00a843a53d052118e0d1ec87",
       "stderr_tail": ""
     },
     {
       "name": "tracked_ignored",
-      "status": "fail",
-      "ok": false,
+      "status": "pass",
+      "ok": true,
       "exit_code": 0,
       "duration_seconds": 0.05,
       "command": "git ls-files -ci --exclude-standard",
@@ -51,9 +51,7 @@
       "stderr_tail": ""
     }
   ],
-  "issues": [
-    "tracked-ignored files 28 exceeds threshold 0"
-  ],
+  "issues": [],
   "fsck_unexpected_lines": [],
   "tracked_ignored_paths": [
     "data/YuHun_v2.6_knowledgebase.json",

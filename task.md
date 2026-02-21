@@ -32,7 +32,8 @@
 - [x] Phase 101: YuHun 1.0 multi-persona audit profile scaffold
 - [x] Phase 102: Git/local repository stabilization planning baseline
 - [x] Phase 103: Side-branch isolation playbook and local hygiene guard
-**Latest validation**: `pytest -q` => `849 passed` (2026-02-14). Level 3 implementation tracked in `CODEX_TASK.md` v7.
+- [x] Phase 104: Temporary script cleanup in mainline
+**Latest validation**: `pytest -q` => `849 passed` (2026-02-21). Level 3 implementation tracked in `CODEX_TASK.md` v7.
 
 ## Backlog Radar (Original Specs/Docs, 2026-02-14)
 - [x] Sync and close pending Chat UI checklist in `spec/chat_ui_improvement_spec.md` (4/4 completed on 2026-02-14)
@@ -81,6 +82,12 @@
 - [x] Documented side-branch decisions for `.agent/skills/local_llm/`, `tonesoul/adaptive_gate.py`, `tests/test_adaptive_gate.py`
 - [x] Added local hygiene guard flow (`.git/info/exclude` + temporary isolation before mainline healthcheck)
 **Success Criteria**: side-branch work can continue without causing false-negative mainline healthcheck failures.
+
+## Phase 104: Temporary script cleanup in mainline
+- [x] Removed stale one-off root scripts (`diagnostic_post.py`, `reply_tone_tension.py`, `test_api_post.py`)
+- [x] Updated script and inventory docs (`SCRIPTS_README.md`, `reports/REPO_INVENTORY.md`)
+- [x] Synced architecture backlog item (`docs/ARCHITECTURE_DEPLOYED.md` tmp-script cleanup)
+**Success Criteria**: temporary one-off scripts no longer remain in tracked mainline root, and docs reflect current script surface.
 
 ## Phase 77: Level 3 Experimental
 - [x] 3a Semantic Trigger

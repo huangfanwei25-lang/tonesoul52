@@ -725,7 +725,7 @@ Gemini ──→ Claude ──→ 未來模型 ──→ 本地蒸餾模型
 - [x] `semantic_contradictions` API 契約（前端可讀矛盾偵測結果）【v2.1】
 
 ### 待修 🟡
-- [ ] `tmp/` 臨時腳本清理
+- [x] `tmp/` 臨時腳本清理（主線一次性腳本已移除；支線臨時檔改走本機隔離）
 - [ ] Decay 目前在 Python 應用層過濾，大量 record 時效能可能不足
 
 ### 未來路線 🔮
