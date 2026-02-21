@@ -153,6 +153,15 @@ def _build_check_specs(
             "command": [python_executable, "scripts/verify_git_hygiene.py"],
         },
         {
+            "name": "dual_track_boundary",
+            "command": [
+                python_executable,
+                "scripts/verify_dual_track_boundary.py",
+                "--strict",
+                "--staged",
+            ],
+        },
+        {
             "name": "persona_swarm",
             "command": [python_executable, "scripts/run_persona_swarm_framework.py", "--strict"],
         },

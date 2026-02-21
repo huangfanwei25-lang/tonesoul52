@@ -913,6 +913,7 @@ class UnifiedPipeline:
         prior_tension: Optional[Dict[str, Any]] = None,
         persona_config: Optional[Dict[str, Any]] = None,
         user_tier: str = "free",
+        user_id: str = "anonymous",
     ) -> UnifiedResponse:
         """
         ???冽閮???渡恣蝺?
@@ -926,14 +927,13 @@ class UnifiedPipeline:
             UnifiedResponse ?????????
         """
         history = history or []
-
-        # ========== Cross-Session Recovery (first call only) ==========
-        user_message = self._try_cross_session_recovery(user_message)
+        raw_user_message = user_message
 
         # ========== Phase V: Compute Gate (Revenue / API Protection) ==========
         from tonesoul.gates.compute import ComputeGate, RoutingPath
+
         compute_gate = ComputeGate(local_model_enabled=True)
-        
+
         # Estimate initial tension from prior history to aid routing
         initial_tension = 0.0
         if prior_tension and "delta_t" in prior_tension:
@@ -942,12 +942,20 @@ class UnifiedPipeline:
             except (TypeError, ValueError):
                 pass
 
-        routing_decision = compute_gate.evaluate(user_tier, user_message, initial_tension)
+        # Route based on the raw user message. Recovery context can expand token
+        # length significantly and should not affect fast-path eligibility.
+        routing_decision = compute_gate.evaluate(
+            user_tier,
+            raw_user_message,
+            initial_tension,
+            user_id=user_id,
+        )
 
         # FAST ROUTE: Bypass all expensive Cloud APIs and Council layers
         if routing_decision.path == RoutingPath.PASS_LOCAL:
             from tonesoul.local_llm import ask_local_llm
-            local_response = ask_local_llm(user_message)
+
+            local_response = ask_local_llm(raw_user_message)
             return UnifiedResponse(
                 response=local_response,
                 council_verdict={"verdict": "bypassed"},
@@ -956,9 +964,24 @@ class UnifiedPipeline:
                 dispatch_trace={
                     "route": routing_decision.path.value,
                     "journal_eligible": routing_decision.journal_eligible,
-                    "reason": routing_decision.reason
-                }
+                    "reason": routing_decision.reason,
+                },
             )
+        elif routing_decision.path == RoutingPath.BLOCK_RATE_LIMIT:
+            return UnifiedResponse(
+                response="[系統防護] 請求頻率過高，已觸發速率限制，請稍後再試。",
+                council_verdict={"verdict": "blocked_by_gate"},
+                tonebridge_analysis={},
+                inner_narrative=routing_decision.reason,
+                dispatch_trace={
+                    "route": routing_decision.path.value,
+                    "journal_eligible": routing_decision.journal_eligible,
+                    "reason": routing_decision.reason,
+                },
+            )
+
+        # ========== Cross-Session Recovery (first non-fast path call only) ==========
+        user_message = self._try_cross_session_recovery(raw_user_message)
 
         # ========== 閮瘜典 Adapter嚗ersona + context嚗?==========
         user_message = self.build_injection_context(user_message, persona_config=persona_config)
@@ -1332,7 +1355,7 @@ Respond with a clear, practical answer."""
                     tags=frame_tags,
                     branch="main",
                 )
-            
+
                 # Evolutionary Memory Isolation (Phase V)
                 # Only write standard interactions to journal if they are eligible
                 if routing_decision.journal_eligible:
@@ -1340,7 +1363,7 @@ Respond with a clear, practical answer."""
                         frame_type=FrameType.SESSION_STATE,
                         title=f"Premium Journal Eligible Turn {chain.frame_count}",
                         data={"journal_commit": True, "reason": routing_decision.reason},
-                        tags=["journal_eligible"]
+                        tags=["journal_eligible"],
                     )
             except Exception:
                 pass

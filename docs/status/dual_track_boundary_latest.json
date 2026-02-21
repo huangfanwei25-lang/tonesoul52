@@ -1,0 +1,40 @@
+{
+  "generated_at": "2026-02-21T07:12:17Z",
+  "overall_ok": true,
+  "repo_root": "C:\\Users\\user\\Desktop\\倉庫",
+  "config": {
+    "allow_private_paths": false,
+    "blocked_prefixes": [
+      ".moltbook/",
+      "memory/.hierarchical_index/",
+      "memory/.semantic_index/",
+      "memory/external_framework_analysis/",
+      "memory/handoff/",
+      "memory/narrative/",
+      "memory/vectors/",
+      "tonesoul_evolution/"
+    ],
+    "blocked_files": [
+      "memory/agent_discussion.jsonl",
+      "memory/agent_discussion_curated.jsonl",
+      "memory/self_journal.jsonl"
+    ]
+  },
+  "collection": {
+    "ok": true,
+    "mode": "git",
+    "command": "git diff --name-only --cached --diff-filter=ACMRD",
+    "exit_code": 0,
+    "duration_seconds": 0.03,
+    "stdout_tail": "",
+    "stderr_tail": "",
+    "paths": []
+  },
+  "metrics": {
+    "changed_path_count": 0,
+    "violation_count": 0
+  },
+  "violations": [],
+  "issues": [],
+  "warnings": []
+}

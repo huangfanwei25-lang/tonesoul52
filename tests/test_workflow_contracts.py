@@ -12,6 +12,7 @@ PERSONA_SWARM_WORKFLOW_PATH = Path(".github/workflows/persona_swarm.yml")
 PERSONA_SWARM_DISPATCH_SCRIPT_PATH = Path("scripts/run_persona_swarm_dispatch.py")
 EXTERNAL_SOURCE_WORKFLOW_PATH = Path(".github/workflows/external_source_registry.yml")
 PYTEST_CI_WORKFLOW_PATH = Path(".github/workflows/pytest-ci.yml")
+DUAL_TRACK_BOUNDARY_WORKFLOW_PATH = Path(".github/workflows/dual_track_boundary.yml")
 
 
 def _load_yaml(path: Path) -> dict[str, Any]:
@@ -118,6 +119,8 @@ def test_repo_healthcheck_workflow_has_default_and_dispatch_runners() -> None:
     assert "docs/status/repo_healthcheck_latest.json" in path_value
     assert "docs/status/repo_healthcheck_latest.md" in path_value
     assert "docs/status/persona_swarm_framework_latest.json" in path_value
+    assert "docs/status/dual_track_boundary_latest.json" in path_value
+    assert "docs/status/dual_track_boundary_latest.md" in path_value
 
 
 def test_repo_healthcheck_workflow_dispatch_validation_guards_present() -> None:
@@ -269,3 +272,39 @@ def test_pytest_ci_workflow_uploads_logs() -> None:
     artifact_with = artifact_step.get("with", {})
     assert isinstance(artifact_with, dict)
     assert artifact_with.get("path") == "pytest_ci.log"
+
+
+def test_dual_track_boundary_workflow_triggers_and_blocking_runner() -> None:
+    payload = _load_yaml(DUAL_TRACK_BOUNDARY_WORKFLOW_PATH)
+    on_section = _on_section(payload)
+    assert "push" in on_section
+    assert "pull_request" in on_section
+    assert "workflow_dispatch" in on_section
+
+    steps = _job_steps(payload, "verify")
+    resolve_step = _find_step(steps, "Resolve changed files")
+    resolve_cmd = resolve_step.get("run", "")
+    assert isinstance(resolve_cmd, str)
+    assert "git diff --name-only --diff-filter=ACMRD" in resolve_cmd
+    assert "changed_files.txt" in resolve_cmd
+
+    run_step = _find_step(steps, "Run dual-track boundary check (blocking)")
+    run_cmd = run_step.get("run", "")
+    assert isinstance(run_cmd, str)
+    assert (
+        "python scripts/verify_dual_track_boundary.py --strict --changed-file-list changed_files.txt"
+        in run_cmd
+    )
+
+
+def test_dual_track_boundary_workflow_uploads_artifacts() -> None:
+    payload = _load_yaml(DUAL_TRACK_BOUNDARY_WORKFLOW_PATH)
+    steps = _job_steps(payload, "verify")
+    artifact_step = _find_step(steps, "Upload dual-track artifacts")
+    artifact_with = artifact_step.get("with", {})
+    assert isinstance(artifact_with, dict)
+    path_value = artifact_with.get("path", "")
+    assert isinstance(path_value, str)
+    assert "changed_files.txt" in path_value
+    assert "docs/status/dual_track_boundary_latest.json" in path_value
+    assert "docs/status/dual_track_boundary_latest.md" in path_value

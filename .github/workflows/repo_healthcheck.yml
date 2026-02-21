@@ -88,5 +88,7 @@ jobs:
             docs/status/repo_healthcheck_latest.json
             docs/status/repo_healthcheck_latest.md
             docs/status/persona_swarm_framework_latest.json
+            docs/status/dual_track_boundary_latest.json
+            docs/status/dual_track_boundary_latest.md
           if-no-files-found: error
           retention-days: 90

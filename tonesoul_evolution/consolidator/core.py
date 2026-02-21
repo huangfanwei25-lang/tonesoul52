@@ -38,64 +38,28 @@ class MemoryConsolidator:
         self.prompt_output_dir = Path(prompt_output_dir)
         self.prompt_output_dir.mkdir(parents=True, exist_ok=True)
     
-    def _load_critical_events(self) -> List[Dict]:
-        """Loads events that either have high tension or mark a contradiction."""
-        if not self.journal_path.exists():
-            logger.warning(f"No journal found at {self.journal_path}")
-            return []
-            
-        events = []
-        with open(self.journal_path, 'r', encoding='utf-8') as f:
-            for line in f:
-                if not line.strip():
-                    continue
-                try:
-                    record = json.loads(line)
-                    tension = float(record.get('tension', 0.0))
-                    is_contradiction = bool(record.get('is_contradiction', False))
-                    
-                    if tension > self.CRITICAL_TENSION_THRESHOLD or is_contradiction:
-                        events.append(record)
-                except json.JSONDecodeError:
-                    pass
-        return events
-
-    def _simulate_llm_consolidation(self, event: Dict) -> str:
-        """
-        In production, this calls a local LLM with the defined prompt.
-        For this core script, it acts as a stub mapping logic.
-        """
-        user_msg = event.get('user_message', '')
-        ai_msg = event.get('ai_response', '')
-        tension = float(event.get('tension', 0.0))
-        
-        # 1. 承諾公理判斷: If tension is extreme and contradiction is true
-        if event.get('is_contradiction') and tension > 0.8:
-            return f"[約束] 檢測到承諾斷裂。AI 前後矛盾。明天第一句話必須是：『我昨天的回答有邏輯矛盾，我必須修正。』"
-            
-        # 2. 第三公理判斷: Did AI promise something?
-        if "我明天會" in ai_msg or "之後再" in ai_msg:
-            return f"[綁定] AI 承諾了未來行動。明天的對話中，AI 必須主動提及並執行這個承諾。"
-            
-        # 3. 共振公理判斷: High tension but no contradiction often means missing the point
-        return f"[共振] 高張力情境 (T={tension:.2f})。AI 可能過度防禦或沒聽懂。請調低防禦閾值，優先回應使用者真實情緒。"
-
     def run_nightly_consolidation(self):
-        """Executes the full metabolic cycle."""
+        """Executes the full metabolic cycle via the Adversarial Loop."""
         logger.info("Starting Nightly Consolidation...")
-        critical_events = self._load_critical_events()
         
-        if not critical_events:
-            logger.info("No critical events to consolidate. Soul is stable.")
+        from tonesoul_evolution.adversarial.loop import AdversarialLoop
+        loop = AdversarialLoop(journal_path=str(self.journal_path))
+        accepted_repairs = loop.run_full_debate_cycle()
+        
+        if not accepted_repairs:
+            logger.info("No critical repairs needed. Soul is stable.")
             return
 
-        logger.info(f"Found {len(critical_events)} critical events. Beginning synthesis...")
+        logger.info(f"Found {len(accepted_repairs)} verified repairs. Synthesizing prompts...")
         
         new_prompts = []
-        for event in critical_events:
-            rule = self._simulate_llm_consolidation(event)
-            if rule:
-                new_prompts.append(rule)
+        for repair in accepted_repairs:
+            original = repair.get("original_challenge", {})
+            desc = original.get("description", "Unknown violation")
+            explanation = repair.get("explanation", "")
+            
+            rule = f"[{repair.get('repair_type')}] 糾正目標: {desc} | 防禦機制: {explanation}"
+            new_prompts.append(rule)
                 
         if new_prompts:
             # Write to today's prompt override file

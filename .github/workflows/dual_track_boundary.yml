@@ -1,0 +1,76 @@
+name: Dual-Track Boundary
+
+on:
+  push:
+    branches: [master, dev]
+  pull_request:
+    branches: [master, dev]
+  workflow_dispatch:
+    inputs:
+      allow_private_paths:
+        description: "Break-glass bypass (logs warning, does not block)."
+        type: boolean
+        required: true
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Dual-Track Boundary Gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Resolve changed files
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            base_ref="origin/${{ github.base_ref }}"
+            git fetch origin "${{ github.base_ref }}" --depth=1
+            git diff --name-only --diff-filter=ACMRD "$base_ref...HEAD" > changed_files.txt
+          elif [ "${{ github.event_name }}" = "push" ]; then
+            before_sha="${{ github.event.before }}"
+            if [ -n "$before_sha" ] && [ "$before_sha" != "0000000000000000000000000000000000000000" ]; then
+              git diff --name-only --diff-filter=ACMRD "$before_sha...HEAD" > changed_files.txt
+            else
+              git show --pretty=format: --name-only --diff-filter=ACMRD HEAD > changed_files.txt
+            fi
+          else
+            git show --pretty=format: --name-only --diff-filter=ACMRD HEAD > changed_files.txt
+          fi
+          wc -l changed_files.txt
+
+      - name: Run dual-track boundary check (blocking)
+        if: github.event_name != 'workflow_dispatch' || github.event.inputs.allow_private_paths != 'true'
+        run: |
+          python scripts/verify_dual_track_boundary.py --strict --changed-file-list changed_files.txt
+
+      - name: Run dual-track boundary check (break-glass)
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.allow_private_paths == 'true'
+        run: |
+          python scripts/verify_dual_track_boundary.py --strict --changed-file-list changed_files.txt --allow-private-paths
+
+      - name: Upload dual-track artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dual-track-boundary-${{ github.run_id }}
+          path: |
+            changed_files.txt
+            docs/status/dual_track_boundary_latest.json
+            docs/status/dual_track_boundary_latest.md
+          if-no-files-found: error
+          retention-days: 90
