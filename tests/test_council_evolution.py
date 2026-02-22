@@ -2,11 +2,18 @@
 
 from __future__ import annotations
 
+import pytest
+
 from tonesoul.council.evolution import CouncilEvolution, PerspectiveHistory
 
 
-def test_initial_weights_are_balanced():
-    evolution = CouncilEvolution()
+@pytest.fixture
+def evolution(tmp_path) -> CouncilEvolution:
+    state_path = tmp_path / "council_evolution.json"
+    return CouncilEvolution(state_path=state_path)
+
+
+def test_initial_weights_are_balanced(evolution: CouncilEvolution):
     weights = evolution.get_weights()
 
     assert weights["philosopher"] == 1.0
@@ -14,8 +21,7 @@ def test_initial_weights_are_balanced():
     assert weights["guardian"] == 1.0
 
 
-def test_record_deliberation_updates_history():
-    evolution = CouncilEvolution()
+def test_record_deliberation_updates_history(evolution: CouncilEvolution):
     evolution.record_deliberation(
         perspective_verdicts={
             "philosopher": "approve",
@@ -31,8 +37,9 @@ def test_record_deliberation_updates_history():
     assert history["guardian"]["dissent_count"] == 1
 
 
-def test_evolve_weights_rewards_alignment_without_zeroing_dissent():
-    evolution = CouncilEvolution()
+def test_evolve_weights_rewards_alignment_without_zeroing_dissent(
+    evolution: CouncilEvolution,
+):
     for _ in range(5):
         evolution.record_deliberation(
             perspective_verdicts={
@@ -48,8 +55,9 @@ def test_evolve_weights_rewards_alignment_without_zeroing_dissent():
     assert weights["guardian"] >= CouncilEvolution.MIN_WEIGHT
 
 
-def test_evolve_weights_remains_bounded_for_all_perspectives():
-    evolution = CouncilEvolution()
+def test_evolve_weights_remains_bounded_for_all_perspectives(
+    evolution: CouncilEvolution,
+):
     for _ in range(100):
         evolution.record_deliberation(
             perspective_verdicts={
