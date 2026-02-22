@@ -20,6 +20,7 @@ export default function ConversationList({
     onDelete,
 }: ConversationListProps) {
     const [menuOpen, setMenuOpen] = useState<string | null>(null);
+    const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
     const rootRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
@@ -50,20 +51,26 @@ export default function ConversationList({
         return date.toLocaleDateString("zh-TW", { month: "short", day: "numeric" });
     };
 
-    const handleDelete = async (id: string, e: React.MouseEvent) => {
+    const handleDeleteClick = (id: string, e: React.MouseEvent) => {
         e.stopPropagation();
-        if (!confirm("確定要刪除這個對話嗎？此操作無法復原。")) {
-            setMenuOpen(null);
-            return;
-        }
+        setConfirmDeleteId(id);
+        setMenuOpen(null);
+    };
 
+    const confirmDelete = async (id: string, e: React.MouseEvent) => {
+        e.stopPropagation();
         try {
             await onDelete(id);
         } catch (error) {
             console.error("Failed to delete conversation:", error);
             alert("刪除對話失敗，請稍後再試。");
         }
-        setMenuOpen(null);
+        setConfirmDeleteId(null);
+    };
+
+    const cancelDelete = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        setConfirmDeleteId(null);
     };
 
     return (
@@ -93,8 +100,8 @@ export default function ConversationList({
                             key={conv.id}
                             onClick={() => onSelect(conv)}
                             className={`relative group p-3 rounded-xl cursor-pointer transition-all ${currentId === conv.id
-                                    ? "bg-indigo-600/20 border border-indigo-500/30"
-                                    : "hover:bg-slate-800/50 border border-transparent"
+                                ? "bg-indigo-600/20 border border-indigo-500/30"
+                                : "hover:bg-slate-800/50 border border-transparent"
                                 }`}
                         >
                             <div className="flex items-start gap-3">
@@ -120,21 +127,44 @@ export default function ConversationList({
                                         setMenuOpen(menuOpen === conv.id ? null : conv.id);
                                     }}
                                     className={`p-1 rounded transition-all ${menuOpen === conv.id
-                                            ? "opacity-100 bg-slate-700"
-                                            : "opacity-100 md:opacity-0 md:group-hover:opacity-100 hover:bg-slate-700"
+                                        ? "opacity-100 bg-slate-700"
+                                        : "opacity-100 md:opacity-0 md:group-hover:opacity-100 hover:bg-slate-700"
                                         }`}
                                 >
                                     <MoreVertical className="w-4 h-4 text-slate-400" />
                                 </button>
                             </div>
 
+                            {/* 刪除確認對話框 */}
+                            {confirmDeleteId === conv.id && (
+                                <div className="absolute right-2 top-10 z-20 bg-slate-800 border border-slate-700 rounded-lg shadow-xl p-3 min-w-[200px]">
+                                    <p className="text-sm text-slate-300 mb-3 text-center">確定要刪除這個對話嗎？</p>
+                                    <div className="flex gap-2">
+                                        <button
+                                            type="button"
+                                            onClick={cancelDelete}
+                                            className="flex-1 px-2 py-1.5 text-xs text-slate-400 hover:bg-slate-700 rounded transition-colors"
+                                        >
+                                            取消
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={(e) => confirmDelete(conv.id, e)}
+                                            className="flex-1 px-2 py-1.5 text-xs text-white bg-red-500/80 hover:bg-red-500 rounded transition-colors"
+                                        >
+                                            刪除
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+
                             {/* 下拉選單 */}
-                            {menuOpen === conv.id && (
+                            {menuOpen === conv.id && !confirmDeleteId && (
                                 <div className="absolute right-2 top-10 z-10 bg-slate-800 border border-slate-700 rounded-lg shadow-xl py-1 min-w-[120px]">
                                     <button
                                         type="button"
                                         aria-label="刪除對話"
-                                        onClick={(e) => handleDelete(conv.id, e)}
+                                        onClick={(e) => handleDeleteClick(conv.id, e)}
                                         className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-400 hover:bg-red-500/10 transition-colors"
                                     >
                                         <Trash2 className="w-3.5 h-3.5" />

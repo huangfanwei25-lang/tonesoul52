@@ -35,6 +35,7 @@ class RoutingDecision:
     path: RoutingPath
     journal_eligible: bool
     reason: str
+    risk_level: str = "low"
 
 
 class RateLimiter:
@@ -148,8 +149,15 @@ class ComputeGate:
             )
 
         # Default standard processing
+        risk_level = "low"
+        if initial_tension >= 0.8:
+            risk_level = "high"
+        elif initial_tension >= self.MIN_COUNCIL_TENSION:
+            risk_level = "medium"
+
         return RoutingDecision(
             path=RoutingPath.PASS_SINGLE,
             journal_eligible=journal_eligible,
             reason="Standard complexity. Routing to single cloud agent.",
+            risk_level=risk_level,
         )

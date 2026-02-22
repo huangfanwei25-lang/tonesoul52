@@ -383,3 +383,26 @@ def test_list_memories_and_get_counts():
     assert counts["conversation_count"] == 8
     assert counts["audit_log_count"] == 7
     assert counts["message_count"] == 6
+
+
+def test_record_evolution_result_writes_payload_to_evolution_results():
+    fake_session = _FakeSession(
+        responses=[
+            _FakeResponse(payload=[{"id": "uuid-1", "title": "conv_abc"}]),  # resolve conversation
+            _FakeResponse(payload=None),  # insert evolution_results row
+        ]
+    )
+    store = SupabasePersistence(url="https://example.supabase.co", key="k", session=fake_session)
+
+    ok = store.record_evolution_result(
+        conversation_id="conv_abc",
+        result_type="chat_semantic_state",
+        payload={"semantic_contradictions": [], "semantic_graph_summary": {"nodes": 2}},
+    )
+
+    assert ok is True
+    insert_call = fake_session.calls[-1]
+    assert insert_call["url"].endswith("/rest/v1/evolution_results")
+    assert insert_call["json"]["conversation_id"] == "uuid-1"
+    assert insert_call["json"]["result_type"] == "chat_semantic_state"
+    assert insert_call["json"]["payload"]["semantic_graph_summary"] == {"nodes": 2}

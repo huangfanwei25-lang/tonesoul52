@@ -36,6 +36,14 @@
 - [x] Phase 105: Mainline audit refresh and execution planning baseline
 **Latest validation**: `pytest -q` => `849 passed` (2026-02-21). Level 3 implementation tracked in `CODEX_TASK.md` v7.
 
+## Phase 106: Foundation Debt Burn-down (2026-02-22)
+- [x] Decay query pre-filter：將 SQLite decay 查詢改為 DB 先過濾 + Python 精排，降低大資料集負擔
+- [x] Evolution sync：新增 `evolution_results` 持久化路徑（Supabase migration + backend 寫入）
+- [x] Frontend observability：在聊天審議面板顯示 `semantic_contradictions` / `semantic_graph_summary` / visual snapshot
+- [x] Contract tests：補齊 API/DB 測試覆蓋上述路徑，避免回歸
+- [x] Docs sync：同步 `docs/ARCHITECTURE_DEPLOYED.md` 與部署 schema 文檔狀態
+**成功標準**: 相關測試綠燈，文件中的對應 TODO/checklist 改為已落地或可驗證狀態，且不破壞既有 chat/persistence 合約。
+
 ## Backlog Radar (Original Specs/Docs, 2026-02-14)
 - [x] Sync and close pending Chat UI checklist in `spec/chat_ui_improvement_spec.md` (4/4 completed on 2026-02-14)
 - [x] Execute/verify backend persistence acceptance list in `docs/plans/backend_persistence_acceptance_checklist.md` (passed 2026-02-14: `python scripts/verify_backend_persistence.py --base https://tonesoul52.onrender.com --timeout 40`)
@@ -544,3 +552,17 @@
 **??璅?**: Ollama ?函 API Key 銝甇?虜雿 fallback provider嚗? UI 銝?憿舐內?航炊 API Key 霅衣內??
 
 
+
+## Phase 107: Same-Origin Backend Recovery + Ollama MVP Gate
+- [x] Added same-origin backend prefix routing in web API config (`/api/_backend`) to avoid Vercel self-recursion.
+- [x] Added Python same-origin backend alias endpoints under `apps/web/api/_backend/**` with prefix-strip WSGI middleware.
+- [x] Added missing web API routes: `/api/health`, `/api/conversations`, `/api/conversations/[id]`.
+- [x] Updated Vercel-route tests for same-origin behavior (`apiRoutes.chatTransport`, `apiRoutes.transportFallback`, `apiRoutes.backendHealth`).
+- [x] Updated preflight logic to support same-origin mode (`scripts/verify_vercel_preflight.py --same-origin`) with tests.
+- [x] Added `scripts/verify_ollama_mvp.py` to validate model list, handshake, low/high tension routing, and regression gate.
+- [x] Validation:
+- [x] `npm --prefix apps/web run test -- src/__tests__/apiRoutes.chatTransport.test.ts src/__tests__/apiRoutes.transportFallback.test.ts src/__tests__/apiRoutes.backendHealth.test.ts`
+- [x] `npm --prefix apps/web run build`
+- [x] `pytest tests/test_verify_vercel_preflight.py -q`
+- [x] `python scripts/verify_ollama_mvp.py --run-regression`
+**成功標準**: Vercel same-origin backend path is code-complete (pending deploy verification), and Ollama MVP release checklist is executable + passing via one command.

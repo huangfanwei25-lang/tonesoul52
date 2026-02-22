@@ -1,0 +1,163 @@
+{
+  "generated_at": "2026-01-08T16:55:00Z",
+  "updates": [
+    {
+      "id": "update_e_def",
+      "target": "system",
+      "change_type": "E_DEF_UPDATE",
+      "after": {
+        "formula": "alpha*E_energy + beta*E_srsp + gamma*E_risk",
+        "alpha": 1.0,
+        "beta": 0.0,
+        "gamma": 0.0,
+        "normalize": true
+      },
+      "rationale": "E_total definition captured for replay (v0.1 demo).",
+      "gate": {
+        "passed": true,
+        "rule_ids": [
+          "R1",
+          "R3"
+        ]
+      },
+      "timestamp": "2026-01-08T16:55:00Z",
+      "reversible": true,
+      "vetoable": true
+    },
+    {
+      "id": "update_visual_params_p1_field_time",
+      "target": "visualization",
+      "change_type": "VISUAL_PARAM_UPDATE",
+      "after": {
+        "plane": "P1_field_time",
+        "note": "Contours show E_total, arrows show drift between adjacent nodes.",
+        "energy_note": "E_total = normalize(1*E_energy + 0*E_srsp + 0*E_risk)",
+        "drift_note": "arrows = drift_ref",
+        "grid_width": 80,
+        "grid_height": 60,
+        "sigma": 0.75,
+        "contour_levels": 5,
+        "axis_labels": [
+          "field",
+          "time"
+        ],
+        "field_to_x": {
+          "analysis": 0,
+          "bridge": 1,
+          "action": 2,
+          "risk": 3,
+          "audit": 4
+        },
+        "bounds": {
+          "x_min": -0.5,
+          "x_max": 4.5,
+          "y_min": -0.5,
+          "y_max": 5.5
+        }
+      },
+      "rationale": "Terrain interpolation parameters captured for replay.",
+      "gate": {
+        "passed": true,
+        "rule_ids": [
+          "R2",
+          "R3"
+        ]
+      },
+      "timestamp": "2026-01-08T16:55:00Z",
+      "reversible": true,
+      "vetoable": true
+    },
+    {
+      "id": "update_visual_params_p2_pca",
+      "target": "visualization",
+      "change_type": "VISUAL_PARAM_UPDATE",
+      "after": {
+        "plane": "P2_pca",
+        "note": "PCA projection (observational plane only).",
+        "energy_note": "E_total = normalize(1*E_energy + 0*E_srsp + 0*E_risk)",
+        "drift_note": "arrows = drift_ref",
+        "grid_width": 80,
+        "grid_height": 60,
+        "sigma": 0.75,
+        "contour_levels": 5,
+        "axis_labels": [
+          "PCA1",
+          "PCA2"
+        ],
+        "bounds": {
+          "x_min": -0.5,
+          "x_max": 2.729826,
+          "y_min": -0.5,
+          "y_max": 2.586869
+        },
+        "projection": {
+          "mean": [
+            0.333333,
+            0.666667,
+            0.333333,
+            1.166667,
+            0.833333,
+            0.666667,
+            1.166667,
+            0.0,
+            1.5,
+            0.666667,
+            0.5,
+            0.166667
+          ],
+          "components": [
+            [
+              -0.244784,
+              0.257138,
+              0.089414,
+              -0.270801,
+              0.03024,
+              -0.049862,
+              0.407881,
+              0.0,
+              -0.549201,
+              0.479409,
+              -0.275024,
+              0.12559
+            ],
+            [
+              -0.067979,
+              0.604385,
+              -0.029513,
+              -0.185026,
+              -0.328426,
+              0.100573,
+              -0.590413,
+              0.0,
+              0.012461,
+              0.244905,
+              0.260447,
+              -0.021414
+            ]
+          ],
+          "explained_variance": [
+            2.322375,
+            1.270829
+          ],
+          "explained_variance_ratio": [
+            0.430069,
+            0.235339
+          ],
+          "note": "P2 projection is observational; do not write back to governance."
+        },
+        "governance_note": "Visualization only; do not write back to where or v_sem."
+      },
+      "rationale": "Terrain interpolation parameters captured for replay.",
+      "gate": {
+        "passed": true,
+        "rule_ids": [
+          "R2",
+          "R3"
+        ]
+      },
+      "timestamp": "2026-01-08T16:55:00Z",
+      "reversible": true,
+      "vetoable": true
+    }
+  ]
+}

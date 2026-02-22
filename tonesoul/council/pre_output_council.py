@@ -93,6 +93,7 @@ class PreOutputCouncil:
         if auto_record_self_memory and (record_option or should_auto_record):
             path = record_option if isinstance(record_option, (str, bytes)) else None
             try:
+                context["user_intent"] = user_intent
                 record_self_memory(verdict, context=context, path=path)
             except OSError:
                 pass

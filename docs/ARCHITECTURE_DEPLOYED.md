@@ -726,14 +726,14 @@ Gemini ──→ Claude ──→ 未來模型 ──→ 本地蒸餾模型
 
 ### 待修 🟡
 - [x] `tmp/` 臨時腳本清理（主線一次性腳本已移除；支線臨時檔改走本機隔離）
-- [ ] Decay 目前在 Python 應用層過濾，大量 record 時效能可能不足
+- [x] Decay query 先做 SQLite 候選預過濾，再進入 Python 精排（降低大量 record 掃描成本）
 
 ### 未來路線 🔮
-- [ ] 本地 JSON → Supabase `evolution_results` 表
+- [x] 本地 JSON / chat semantic 狀態 → Supabase `evolution_results` 表
 - [ ] 語料自動蒸餾排程（cron / webhook）
 - [ ] 本地模型蒸餾 PoC（LoRA / QLoRA）
-- [ ] 前端顯示 `semantic_contradictions` + `semantic_graph_summary`
-- [ ] 前端顯示 visual chain 快照（Mermaid 視覺化）
+- [x] 前端顯示 `semantic_contradictions` + `semantic_graph_summary`
+- [x] 前端顯示 visual chain 快照（Mermaid 文字快照）
 - [ ] 更多 FrameType 自動拍攝（tension_map, commitment_tree 等）
 - [x] 圖鏈 AI 自主查詢（讓 AI 在推理時主動讀圖鏈）  🧪 實驗性（Phase 77 / 3a）
 - [x] 跨 session 記憶恢復（decay + visual chain 聯合查詢）  🧪 實驗性（Phase 77 / 3b）

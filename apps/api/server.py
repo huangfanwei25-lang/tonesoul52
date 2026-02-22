@@ -264,6 +264,7 @@ def _persist_chat_side_effects(
     user_message: str,
     assistant_message: str,
     verdict: dict | None,
+    evolution_payload: dict | None = None,
 ) -> None:
     if not (supabase_persistence.enabled and conversation_id):
         return
@@ -280,6 +281,14 @@ def _persist_chat_side_effects(
             conversation_id=conversation_id,
             verdict=verdict,
         )
+    if isinstance(evolution_payload, dict) and evolution_payload:
+        record_evolution = getattr(supabase_persistence, "record_evolution_result", None)
+        if callable(record_evolution):
+            record_evolution(
+                conversation_id=conversation_id,
+                result_type="chat_semantic_state",
+                payload=evolution_payload,
+            )
 
 
 def _extract_bearer_token(authorization_header: str | None) -> str:
@@ -573,6 +582,55 @@ def _as_list(value) -> list:
     return value if isinstance(value, list) else []
 
 
+def _load_visual_chain_snapshot(max_mermaid_chars: int = 2000) -> dict:
+    if app.config.get("TESTING"):
+        return {}
+
+    chain_path = Path("data") / "visual_chain.json"
+    try:
+        raw = json.loads(chain_path.read_text(encoding="utf-8"))
+    except (FileNotFoundError, ValueError, OSError):
+        return {}
+
+    frames = raw.get("frames") if isinstance(raw, dict) else None
+    if not isinstance(frames, list) or not frames:
+        return {}
+
+    latest = frames[-1]
+    if not isinstance(latest, dict):
+        return {}
+
+    tags_raw = latest.get("tags")
+    tags = [str(tag).strip() for tag in tags_raw] if isinstance(tags_raw, list) else []
+    tags = [tag for tag in tags if tag]
+    data_payload = latest.get("data")
+    mermaid = str(latest.get("mermaid") or "")
+    snapshot = {
+        "frame_id": str(latest.get("frame_id") or ""),
+        "frame_type": str(latest.get("frame_type") or ""),
+        "title": str(latest.get("title") or ""),
+        "created_at": latest.get("created_at"),
+        "branch": str(latest.get("branch") or ""),
+        "tags": tags,
+        "data": data_payload if isinstance(data_payload, dict) else {},
+        "mermaid": mermaid[:max_mermaid_chars],
+    }
+    if not snapshot["frame_id"] and not snapshot["title"] and not snapshot["mermaid"]:
+        return {}
+    return snapshot
+
+
+def _build_chat_evolution_payload(response_payload: dict) -> dict:
+    deliberation = _as_dict(response_payload.get("deliberation"))
+    return {
+        "semantic_contradictions": _as_list(response_payload.get("semantic_contradictions")),
+        "semantic_graph_summary": _as_dict(response_payload.get("semantic_graph_summary")),
+        "dispatch_trace": _as_dict(response_payload.get("dispatch_trace")),
+        "visual_chain_snapshot": _as_dict(deliberation.get("visual_chain_snapshot")),
+        "captured_at": _utc_now(),
+    }
+
+
 def _map_perspective_to_chamber_role(perspective_name: str) -> str | None:
     normalized = perspective_name.strip().lower()
     if not normalized:
@@ -788,6 +846,8 @@ def _build_deliberation_payload(result) -> dict:
 
     intervention_strategy = str(getattr(result, "intervention_strategy", "") or "").strip()
     semantic_contradictions = _as_list(getattr(result, "semantic_contradictions", []))
+    semantic_graph_summary = _as_dict(getattr(result, "semantic_graph_summary", {}))
+    visual_chain_snapshot = _load_visual_chain_snapshot()
     contradiction_count = len(semantic_contradictions)
     verdict_name = str(verdict.get("verdict") or "").strip().lower()
 
@@ -864,6 +924,9 @@ def _build_deliberation_payload(result) -> dict:
         "entropy_meter": entropy_meter,
         "decision_matrix": decision_matrix,
         "audit": audit_payload,
+        "semantic_contradictions": semantic_contradictions,
+        "semantic_graph_summary": semantic_graph_summary,
+        "visual_chain_snapshot": visual_chain_snapshot,
         "multiplex_conclusion": multiplex,
         "final_synthesis": {"response_text": response_text},
         "next_moves": next_moves,
@@ -1121,6 +1184,14 @@ def evolution_distill():
     payload = result.to_dict()
     payload["success"] = True
     payload["limit"] = limit
+    if supabase_persistence.enabled:
+        record_evolution = getattr(supabase_persistence, "record_evolution_result", None)
+        if callable(record_evolution):
+            record_evolution(
+                conversation_id=None,
+                result_type="distillation_summary",
+                payload=payload,
+            )
     return jsonify(payload)
 
 
@@ -1670,6 +1741,7 @@ def chat():
                     if isinstance(cached_payload.get("verdict"), dict)
                     else None
                 ),
+                evolution_payload=_build_chat_evolution_payload(cached_payload),
             )
             return jsonify(cached_payload)
 
@@ -1710,6 +1782,7 @@ def chat():
             user_message=message,
             assistant_message=result.response,
             verdict=result.council_verdict if isinstance(result.council_verdict, dict) else None,
+            evolution_payload=_build_chat_evolution_payload(response_payload),
         )
         _chat_cache_set(cache_key, response_payload)
 

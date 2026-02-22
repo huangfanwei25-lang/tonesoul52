@@ -94,6 +94,14 @@ SUPABASE_KEY=<existing>
 - [ ] Council Chamber 能顯示三視角審議結果
 - [ ] 對話歷史能正常儲存和讀取
 
+### 2026-02-22 進度（程式已修，待部署驗收）
+
+- 已完成 same-origin backend 基礎：`apps/web/src/app/api/_shared/backendConfig.ts` 會在 Vercel 無外部 backend URL 時改走 `/api/_backend` 前綴。
+- 已新增 Python alias 入口：`apps/web/api/_backend/**`（含 WSGI prefix-strip middleware），避免 `/api/chat -> /api/chat` 遞迴。
+- 已補齊缺漏路由：`/api/health`、`/api/conversations`、`/api/conversations/[id]`。
+- 已通過相關測試：`apiRoutes.chatTransport`、`apiRoutes.transportFallback`、`apiRoutes.backendHealth`。
+- 尚未在 `https://tonesoul52-one.vercel.app/` 完成 redeploy + 實站 smoke，故上面 4 個驗收 checkbox 先保留未勾選。
+
 ## 注意事項
 
 > ⚠️ Vercel Serverless 有 10 秒執行時間限制 (免費版)。

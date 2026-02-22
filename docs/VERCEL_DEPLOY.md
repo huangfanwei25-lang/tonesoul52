@@ -28,7 +28,7 @@ Set in Vercel Project -> Settings -> Environment Variables.
 
 | Variable | Recommended Value | Scope | Purpose |
 |---|---|---|---|
-| `TONESOUL_BACKEND_URL` | `https://<your-backend-domain>` | Production + Preview | Next API route proxy target |
+| `TONESOUL_BACKEND_URL` | `https://<your-backend-domain>` or `same-origin` | Production + Preview | Next API route proxy target (external backend or same-origin backend alias) |
 | `NEXT_PUBLIC_CHAT_EXECUTION_MODE` | `backend` | Production + Preview | Force chat to backend-first |
 | `NEXT_PUBLIC_ENABLE_PROVIDER_FALLBACK` | `0` | Production | Disable provider fallback in production UI |
 | `NEXT_PUBLIC_REPORT_EXECUTION_MODE` | `backend` | Production + Preview | Force session report to backend |
@@ -65,10 +65,11 @@ Notes:
 
 Recommended production policy:
 1. Keep frontend on Vercel.
-2. Keep backend on a stable host (VM/container/PaaS).
-3. Point `TONESOUL_BACKEND_URL` to backend HTTPS endpoint.
-4. Disable provider fallback in production (`NEXT_PUBLIC_*_FALLBACK=0`).
-5. Keep chat mock fallback disabled in production (`TONESOUL_ENABLE_CHAT_MOCK_FALLBACK=0`).
+2. Choose backend mode:
+   - External backend: keep backend on a stable host (VM/container/PaaS), set `TONESOUL_BACKEND_URL=https://<backend-domain>`.
+   - Same-origin backend: set `TONESOUL_BACKEND_URL=same-origin` (or leave unset on Vercel) and use in-project Python aliases under `/api/_backend`.
+3. Disable provider fallback in production (`NEXT_PUBLIC_*_FALLBACK=0`).
+4. Keep chat mock fallback disabled in production (`TONESOUL_ENABLE_CHAT_MOCK_FALLBACK=0`).
 
 Why:
 - Prevent "mock/provider fallback appears successful" in production.
@@ -81,7 +82,7 @@ Why:
 From local or CI:
 
 ```powershell
-python scripts/verify_web_api.py --web-base https://<your-vercel-domain> --api-base https://<your-backend-domain> --require-backend --timeout 40
+python scripts/verify_web_api.py --web-base https://<your-vercel-domain> --api-base https://<your-backend-domain-or-same-vercel-domain> --require-backend --timeout 40
 ```
 
 Success criteria:
@@ -96,13 +97,17 @@ Run preflight before promoting production settings:
 
 ```powershell
 python scripts/verify_vercel_preflight.py --strict --probe-health
+
+# Same-origin backend mode
+python scripts/verify_vercel_preflight.py --strict --same-origin
 ```
 
 Preflight checks:
-- `TONESOUL_BACKEND_URL` exists, is absolute HTTPS, and is not localhost
+- external mode: `TONESOUL_BACKEND_URL` exists, is absolute HTTPS, and is not localhost
+- same-origin mode: `TONESOUL_BACKEND_URL` may be unset / `self` / `same-origin`
 - production policy keeps chat mock fallback disabled
 - frontend execution/fallback flags match backend-first contract
-- backend `/api/health` is reachable (when `--probe-health` is enabled)
+- backend `/api/health` is reachable (when `--probe-health` is enabled and a probe URL is provided)
 
 Manual GitHub Action entrypoint:
 - `.github/workflows/vercel_preflight.yml`
@@ -114,8 +119,9 @@ Manual GitHub Action entrypoint:
 
 If you see fallback behavior in production:
 1. Check `TONESOUL_BACKEND_URL` value in Vercel env.
-   - It must be a reachable HTTPS backend, never `localhost`/`127.0.0.1`.
-   - It must be a valid URL string (do not use placeholders like `mock`).
+   - External mode: must be a reachable HTTPS backend, never `localhost`/`127.0.0.1`.
+   - Same-origin mode: use `same-origin`/`self` or leave unset on Vercel.
+   - Avoid invalid placeholders like `mock`.
 2. Check backend CORS includes Vercel domain.
 3. Confirm backend health endpoint is reachable over HTTPS.
 4. Re-run `verify_web_api.py --require-backend`.

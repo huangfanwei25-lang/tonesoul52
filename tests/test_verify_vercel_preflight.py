@@ -9,19 +9,31 @@ def _status(payload: dict, name: str) -> str:
 
 
 def test_validate_backend_url_rejects_localhost() -> None:
-    ok, detail = preflight._validate_backend_url("http://127.0.0.1:5000", allow_http=False)
+    ok, detail = preflight._validate_backend_url(
+        "http://127.0.0.1:5000",
+        allow_http=False,
+        same_origin=False,
+    )
     assert ok is False
     assert "local host" in detail
 
 
 def test_validate_backend_url_requires_https_by_default() -> None:
-    ok, detail = preflight._validate_backend_url("http://api.example.com", allow_http=False)
+    ok, detail = preflight._validate_backend_url(
+        "http://api.example.com",
+        allow_http=False,
+        same_origin=False,
+    )
     assert ok is False
     assert "HTTPS" in detail
 
 
 def test_validate_backend_url_allows_http_with_flag() -> None:
-    ok, detail = preflight._validate_backend_url("http://api.example.com", allow_http=True)
+    ok, detail = preflight._validate_backend_url(
+        "http://api.example.com",
+        allow_http=True,
+        same_origin=False,
+    )
     assert ok is True
     assert "valid" in detail
 
@@ -39,6 +51,7 @@ def test_evaluate_preflight_fails_when_report_provider_fallback_unset() -> None:
         },
         allow_http=False,
         allow_chat_mock_fallback=False,
+        same_origin=False,
         probe_health=False,
         timeout=5,
     )
@@ -59,6 +72,7 @@ def test_evaluate_preflight_fails_when_chat_mock_fallback_enabled() -> None:
         },
         allow_http=False,
         allow_chat_mock_fallback=False,
+        same_origin=False,
         probe_health=False,
         timeout=5,
     )
@@ -82,9 +96,32 @@ def test_evaluate_preflight_passes_with_health_probe() -> None:
         },
         allow_http=False,
         allow_chat_mock_fallback=False,
+        same_origin=False,
         probe_health=True,
         timeout=5,
         health_probe_fn=fake_probe,
     )
     assert payload["ok"] is True
     assert _status(payload, "backend_health_probe") == "pass"
+
+
+def test_evaluate_preflight_allows_same_origin_without_backend_url() -> None:
+    payload = preflight.evaluate_preflight(
+        backend_url=None,
+        env_values={
+            "TONESOUL_ENABLE_CHAT_MOCK_FALLBACK": "0",
+            "NEXT_PUBLIC_CHAT_EXECUTION_MODE": "backend",
+            "NEXT_PUBLIC_BACKEND_CHAT_FIRST": None,
+            "NEXT_PUBLIC_ENABLE_PROVIDER_FALLBACK": "0",
+            "NEXT_PUBLIC_REPORT_EXECUTION_MODE": "backend",
+            "NEXT_PUBLIC_REPORT_PROVIDER_FALLBACK": "0",
+        },
+        allow_http=False,
+        allow_chat_mock_fallback=False,
+        same_origin=True,
+        probe_health=True,
+        timeout=5,
+    )
+    assert payload["ok"] is True
+    assert _status(payload, "backend_url") == "pass"
+    assert _status(payload, "backend_health_probe") == "skip"

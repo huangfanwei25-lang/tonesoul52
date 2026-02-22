@@ -1,0 +1,58 @@
+{
+  "nodes": [
+    {
+      "id": "title",
+      "x": 120,
+      "y": -90,
+      "width": 420,
+      "height": 60,
+      "type": "text",
+      "text": "# Memory Flow\nFacts -> Responsibility -> Relationship"
+    },
+    {
+      "id": "l1",
+      "x": 0,
+      "y": 0,
+      "width": 320,
+      "height": 110,
+      "type": "text",
+      "text": "## L1 Facts\n- event\n- context\n- timestamp",
+      "color": "1"
+    },
+    {
+      "id": "l2",
+      "x": 0,
+      "y": 140,
+      "width": 320,
+      "height": 130,
+      "type": "text",
+      "text": "## L2 Responsibility\n- genesis\n- is_mine\n- tier\n- uncertainty",
+      "color": "2"
+    },
+    {
+      "id": "l3",
+      "x": 0,
+      "y": 300,
+      "width": 320,
+      "height": 130,
+      "type": "text",
+      "text": "## L3 Relationship\n- trust trajectory\n- preference alignment\n- corrective events",
+      "color": "3"
+    },
+    {
+      "id": "ledger",
+      "x": 400,
+      "y": 140,
+      "width": 240,
+      "height": 100,
+      "type": "file",
+      "file": "02-Memory/Provenance-Ledger.md",
+      "color": "5"
+    }
+  ],
+  "edges": [
+    {"id": "e1", "fromNode": "l1", "toNode": "l2", "label": "derive"},
+    {"id": "e2", "fromNode": "l2", "toNode": "l3", "label": "impact"},
+    {"id": "e3", "fromNode": "l2", "toNode": "ledger", "label": "append"}
+  ]
+}

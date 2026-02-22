@@ -1,0 +1,41 @@
+{
+  "generated_at": "2026-02-22T11:26:21Z",
+  "overall_ok": true,
+  "inputs": {
+    "journal_path": "C:/Users/user/Desktop/倉庫/memory/self_journal.jsonl"
+  },
+  "metrics": {
+    "entry_count": 9173,
+    "failure_case_count": 9167,
+    "learning_sample_count": 9167,
+    "invalid_json_line_count": 0,
+    "high_risk_failure_count": 8836,
+    "verdict_counts": {
+      "block": 8836,
+      "declare_stance": 331,
+      "approve": 3,
+      "note": 2,
+      "summary": 1
+    },
+    "risk_level_counts": {
+      "high": 8836,
+      "medium": 327,
+      "low": 4
+    },
+    "uncertainty_band_counts": {
+      "unknown": 233,
+      "high": 5617,
+      "medium": 3317
+    },
+    "average_failure_coherence": 0.635
+  },
+  "quality_signals": {
+    "failure_case_rate": 0.9993,
+    "provenance_coverage_rate": 0.7312,
+    "divergence_coverage_rate": 0.9999,
+    "contract_coverage_rate": 0.0169,
+    "contract_evidence_coverage_rate": 0.0
+  },
+  "issues": [],
+  "warnings": []
+}

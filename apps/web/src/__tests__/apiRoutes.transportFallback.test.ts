@@ -127,8 +127,34 @@ describe("route transport fallback policy", () => {
         expect(payload.report).toBeTruthy();
     });
 
+    it("routes use same-origin backend on vercel when backend url is missing", async () => {
+        process.env.VERCEL = "1";
+        process.env.VERCEL_URL = "tonesoul52-one.vercel.app";
+        const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(
+            new Response(
+                JSON.stringify({
+                    success: true,
+                    conversation_id: "conv_same_origin",
+                    session_id: "s1",
+                }),
+                { status: 200 }
+            )
+        );
+
+        const response = await postConversation(makeRequest({ session_id: "s1" }) as never);
+        const payload = (await response.json()) as Record<string, unknown>;
+
+        expect(response.status).toBe(200);
+        expect(payload.success).toBe(true);
+        expect(fetchMock).toHaveBeenCalledTimes(1);
+        expect(fetchMock.mock.calls[0]?.[0]).toBe(
+            "https://tonesoul52-one.vercel.app/api/_backend/api/conversation"
+        );
+    });
+
     it("routes return 503 on vercel when backend points to localhost", async () => {
         process.env.VERCEL = "1";
+        process.env.TONESOUL_BACKEND_URL = "http://127.0.0.1:5000";
         const fetchMock = vi.spyOn(globalThis, "fetch");
 
         const response = await postConversation(makeRequest({ session_id: "s1" }) as never);
@@ -136,6 +162,7 @@ describe("route transport fallback policy", () => {
 
         expect(response.status).toBe(503);
         expect(payload.error).toBe("Backend configuration invalid for Vercel runtime");
+        expect(payload.config_issue).toBe("local_address");
         expect(fetchMock).not.toHaveBeenCalled();
     });
 

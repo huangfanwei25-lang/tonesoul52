@@ -85,8 +85,34 @@ describe("chat route transport fallback behavior", () => {
         expect(payload.backend_timeout_ms).toBeTypeOf("number");
     });
 
-    it("returns 503 on vercel when backend url is missing or localhost", async () => {
+    it("uses same-origin backend on vercel when backend url is missing", async () => {
         process.env.VERCEL = "1";
+        process.env.VERCEL_URL = "tonesoul52-one.vercel.app";
+        const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(
+            new Response(JSON.stringify({ response: "ok" }), { status: 200 })
+        );
+
+        const response = await postChat(
+            makeRequest({
+                conversation_id: "c1",
+                message: "hello",
+                history: [{ role: "user", content: "hello" }],
+                full_analysis: false,
+            }) as never
+        );
+        const payload = (await response.json()) as Record<string, unknown>;
+
+        expect(response.status).toBe(200);
+        expect(payload.response).toBe("ok");
+        expect(fetchMock).toHaveBeenCalledTimes(1);
+        expect(fetchMock.mock.calls[0]?.[0]).toBe(
+            "https://tonesoul52-one.vercel.app/api/_backend/api/chat"
+        );
+    });
+
+    it("returns 503 on vercel when backend url is localhost", async () => {
+        process.env.VERCEL = "1";
+        process.env.TONESOUL_BACKEND_URL = "http://127.0.0.1:5000";
 
         const fetchMock = vi.spyOn(globalThis, "fetch");
         const response = await postChat(
@@ -101,6 +127,7 @@ describe("chat route transport fallback behavior", () => {
 
         expect(response.status).toBe(503);
         expect(payload.error).toBe("Backend configuration invalid for Vercel runtime");
+        expect(payload.config_issue).toBe("local_address");
         expect(fetchMock).not.toHaveBeenCalled();
     });
 

@@ -141,6 +141,12 @@ def identify_patterns(
     declare_stance = verdict_counts.get("declare_stance", 0)
     block = verdict_counts.get("block", 0)
     genesis_counts: Dict[str, int] = {}
+    actor_type_counts: Dict[str, int] = {}
+
+    risk_weights = {"low": 1.0, "medium": 1.5, "high": 2.5, "critical": 4.0}
+    total_weighted_tension = 0.0
+    weighted_tension_count = 0
+
     for entry in filtered:
         genesis = entry.get("genesis")
         if not genesis:
@@ -149,6 +155,22 @@ def identify_patterns(
                 genesis = transcript.get("genesis")
         genesis = genesis or "unknown"
         genesis_counts[genesis] = genesis_counts.get(genesis, 0) + 1
+
+        actor_type = str(entry.get("actor_type", "unknown")).strip().lower()
+        actor_type_counts[actor_type] = actor_type_counts.get(actor_type, 0) + 1
+
+        try:
+            tension = float(entry.get("tension", 0.0))
+        except (TypeError, ValueError):
+            tension = 0.0
+
+        risk_level = str(entry.get("risk_level", "low")).strip().lower()
+        weight = risk_weights.get(risk_level, 1.0)
+        total_weighted_tension += tension * weight
+        weighted_tension_count += 1
+
+    avg_weighted_tension = total_weighted_tension / max(1, weighted_tension_count)
+
     return {
         "total": total,
         "verdict_counts": verdict_counts,
@@ -157,6 +179,8 @@ def identify_patterns(
         "most_common_divergence": common_divergence,
         "average_coherence": avg_coherence,
         "genesis_counts": genesis_counts,
+        "actor_type_counts": actor_type_counts,
+        "average_weighted_tension": avg_weighted_tension,
     }
 
 
@@ -260,9 +284,9 @@ def sleep_consolidate(
     return SleepResult(
         promoted_count=promoted,
         cleared_count=cleared,
+        gated_count=gated,
         patterns=patterns,
         meta_reflection=meta_reflection,
         layer_summary=layer_summary,
-        gated_count=gated,
         gate_failures=gate_failures,
     )

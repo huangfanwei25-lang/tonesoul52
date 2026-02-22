@@ -1,0 +1,53 @@
+{
+  "generated_at": "2026-02-22T12:17:30Z",
+  "mode": "dry_run",
+  "cutoff_utc": "2026-02-01T00:00:00Z",
+  "targets": {
+    "self_journal": "memory/self_journal.jsonl",
+    "provenance_ledger": "memory/provenance_ledger.jsonl",
+    "handoff_dir": "memory/handoff"
+  },
+  "results": {
+    "self_journal": {
+      "exists": true,
+      "total_lines": 9032,
+      "kept_lines": 9032,
+      "archived_lines": 0,
+      "invalid_timestamp_lines": 0,
+      "archive_path": "memory/archive/retention/jsonl/self_journal.before_20260201.jsonl",
+      "backup_path": null,
+      "applied": false
+    },
+    "provenance_ledger": {
+      "exists": true,
+      "total_lines": 12399,
+      "kept_lines": 12399,
+      "archived_lines": 0,
+      "invalid_timestamp_lines": 7,
+      "archive_path": "memory/archive/retention/jsonl/provenance_ledger.before_20260201.jsonl",
+      "backup_path": null,
+      "applied": false
+    },
+    "handoff": {
+      "exists": true,
+      "total_files": 663,
+      "candidate_files": 0,
+      "moved_files": 0,
+      "moved_mb": 0.0,
+      "archive_root": "memory/handoff/archive",
+      "applied": false
+    }
+  },
+  "summary": {
+    "archived_jsonl_lines": 0,
+    "moved_handoff_files": 0,
+    "overall_ok": true
+  },
+  "artifacts": {
+    "latest_json": "memory/archive/retention/memory_retention_latest.json",
+    "latest_md": "memory/archive/retention/memory_retention_latest.md",
+    "dated_json": "memory/archive/retention/memory_retention_20260222T121730Z.json",
+    "dated_md": "memory/archive/retention/memory_retention_20260222T121730Z.md",
+    "history_jsonl": "memory/archive/retention/memory_retention_history.jsonl"
+  }
+}

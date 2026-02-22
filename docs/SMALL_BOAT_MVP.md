@@ -208,11 +208,14 @@ Write-Host "✅ 語魂已在本地運行" -ForegroundColor Green
 
 ## 9. 驗證清單
 
-- [ ] `ollama list` 確認模型已下載
-- [ ] `LLM_BACKEND=ollama python -c "from tonesoul.llm import create_ollama_client; c = create_ollama_client(); print(c.generate('hello'))"` 成功回應
-- [ ] 低張力訊息不觸發議會（看 log 確認 `council skipped`）
-- [ ] 高張力訊息觸發議會（看 log 確認 `council activated`）
-- [ ] `pytest tests/ -x -q` 現有 849 tests 不受影響
+- [x] `ollama list` 確認模型已下載
+- [x] `LLM_BACKEND=ollama python -c "from tonesoul.llm import create_ollama_client; c = create_ollama_client(); print(c.generate('hello'))"` 成功回應
+- [x] 低張力訊息不觸發議會（看 log 確認 `council skipped`）
+- [x] 高張力訊息觸發議會（看 log 確認 `council activated`）
+- [x] `pytest tests/ -x -q` 現有 849 tests 不受影響
+
+建議改用單一指令驗證以上 5 項：
+`python scripts/verify_ollama_mvp.py --run-regression`
 
 ---
 

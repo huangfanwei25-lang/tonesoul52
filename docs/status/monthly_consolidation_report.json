@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-02-21T04:08:11Z",
+  "generated_at": "2026-02-22T11:26:22Z",
   "config": {
     "allow_missing_discussion": true
   },
@@ -48,7 +48,7 @@
             "gate": "SOFT_FAIL",
             "status": "fail",
             "command": "python tools/agent_discussion_tool.py tail --path memory\\agent_discussion_curated.jsonl --limit 1",
-            "note": "stale data: age_days=7.85, threshold=7"
+            "note": "stale data: age_days=9.16, threshold=7"
           },
           {
             "dimension": "XDD",
@@ -114,7 +114,7 @@
         "allow_missing_discussion": true,
         "missing_literal_paths": [],
         "file_hygiene": {
-          "files_scanned": 27,
+          "files_scanned": 29,
           "bom_files": [],
           "decode_errors": []
         },
@@ -133,6 +133,52 @@
           "bom": false,
           "decode_error": null
         }
+      }
+    },
+    "memory_quality": {
+      "command": "python scripts/run_memory_quality_report.py --strict",
+      "exit_code": 0,
+      "ok": true,
+      "payload": {
+        "generated_at": "2026-02-22T11:26:21Z",
+        "overall_ok": true,
+        "inputs": {
+          "journal_path": "C:/Users/user/Desktop/倉庫/memory/self_journal.jsonl"
+        },
+        "metrics": {
+          "entry_count": 9173,
+          "failure_case_count": 9167,
+          "learning_sample_count": 9167,
+          "invalid_json_line_count": 0,
+          "high_risk_failure_count": 8836,
+          "verdict_counts": {
+            "block": 8836,
+            "declare_stance": 331,
+            "approve": 3,
+            "note": 2,
+            "summary": 1
+          },
+          "risk_level_counts": {
+            "high": 8836,
+            "medium": 327,
+            "low": 4
+          },
+          "uncertainty_band_counts": {
+            "unknown": 233,
+            "high": 5617,
+            "medium": 3317
+          },
+          "average_failure_coherence": 0.635
+        },
+        "quality_signals": {
+          "failure_case_rate": 0.9993,
+          "provenance_coverage_rate": 0.7312,
+          "divergence_coverage_rate": 0.9999,
+          "contract_coverage_rate": 0.0169,
+          "contract_evidence_coverage_rate": 0.0
+        },
+        "issues": [],
+        "warnings": []
       }
     },
     "layer_boundaries": {
@@ -216,7 +262,9 @@
         "repo_healthcheck_runner": {
           "script_exists": true,
           "has_persona_swarm_check": true,
-          "has_external_source_registry_check": true
+          "has_external_source_registry_check": true,
+          "has_multi_agent_divergence_check": true,
+          "has_memory_quality_check": true
         },
         "docs_freshness": {
           "repo_structure_exists": true,
@@ -234,7 +282,7 @@
       "exit_code": 0,
       "ok": true,
       "payload": {
-        "generated_at": "2026-02-21T04:08:11Z",
+        "generated_at": "2026-02-22T11:26:22Z",
         "source": "scripts/run_persona_swarm_framework.py",
         "input": {
           "source": "built_in_default",

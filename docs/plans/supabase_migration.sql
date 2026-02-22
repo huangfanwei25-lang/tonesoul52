@@ -47,14 +47,28 @@ CREATE TABLE audit_logs (
 );
 CREATE INDEX idx_audit_created ON audit_logs(created_at DESC);
 
+-- Table: evolution results (semantic graph / contradiction snapshots / distillation outputs)
+CREATE TABLE evolution_results (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    conversation_id UUID REFERENCES conversations(id) ON DELETE SET NULL,
+    result_type TEXT NOT NULL,
+    payload JSONB NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT now()
+);
+CREATE INDEX idx_evolution_results_created ON evolution_results(created_at DESC);
+CREATE INDEX idx_evolution_results_type ON evolution_results(result_type);
+CREATE INDEX idx_evolution_results_conversation ON evolution_results(conversation_id);
+
 -- Enable Row Level Security (RLS)
 ALTER TABLE soul_memories ENABLE ROW LEVEL SECURITY;
 ALTER TABLE conversations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE messages ENABLE ROW LEVEL SECURITY;
 ALTER TABLE audit_logs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE evolution_results ENABLE ROW LEVEL SECURITY;
 
 -- Allow backend service role full access (Render backend uses service key)
 CREATE POLICY "Service role full access" ON soul_memories FOR ALL USING (true);
 CREATE POLICY "Service role full access" ON conversations FOR ALL USING (true);
 CREATE POLICY "Service role full access" ON messages FOR ALL USING (true);
 CREATE POLICY "Service role full access" ON audit_logs FOR ALL USING (true);
+CREATE POLICY "Service role full access" ON evolution_results FOR ALL USING (true);

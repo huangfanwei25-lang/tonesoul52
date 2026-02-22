@@ -41,17 +41,25 @@ describe("backend health route", () => {
         expect(payload.reason).toBe("backend_health_transport_error");
     });
 
-    it("returns 503 on Vercel when backend url is missing", async () => {
+    it("returns same-origin health on Vercel when backend url is missing", async () => {
         process.env.VERCEL = "1";
-        const fetchMock = vi.spyOn(globalThis, "fetch");
+        process.env.VERCEL_URL = "tonesoul52-one.vercel.app";
+        const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(
+            new Response(JSON.stringify({ status: "ok" }), { status: 200 })
+        );
 
         const response = await getBackendHealth();
         const payload = (await response.json()) as Record<string, unknown>;
 
-        expect(response.status).toBe(503);
-        expect(payload.ok).toBe(false);
-        expect(payload.config_issue).toBe("missing");
-        expect(fetchMock).not.toHaveBeenCalled();
+        expect(response.status).toBe(200);
+        expect(payload.ok).toBe(true);
+        expect(payload.backend_mode).toBe("same_origin");
+        expect(payload.backend_url).toBe("same-origin");
+        expect(fetchMock).toHaveBeenCalledTimes(1);
+        expect(fetchMock).toHaveBeenCalledWith(
+            "https://tonesoul52-one.vercel.app/api/_backend/api/health",
+            expect.objectContaining({ method: "GET" })
+        );
     });
 
     it("returns 503 when backend health endpoint is not ok", async () => {

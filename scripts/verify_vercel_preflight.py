@@ -18,6 +18,7 @@ from urllib.request import Request, urlopen
 TRUE_VALUES = {"1", "true", "yes", "on"}
 FALSE_VALUES = {"0", "false", "no", "off"}
 LOCAL_HOSTS = {"127.0.0.1", "localhost", "::1"}
+SAME_ORIGIN_MARKERS = {"self", "same-origin"}
 
 
 @dataclass
@@ -42,11 +43,15 @@ def _parse_switch(raw: str | None) -> SwitchValue:
     return SwitchValue(raw=raw, value=None, error=f"invalid boolean-like value: {raw!r}")
 
 
-def _validate_backend_url(url: str | None, allow_http: bool) -> tuple[bool, str]:
-    if not url or not url.strip():
+def _validate_backend_url(url: str | None, allow_http: bool, same_origin: bool = False) -> tuple[bool, str]:
+    text = (url or "").strip()
+
+    if same_origin and (not text or text.lower() in SAME_ORIGIN_MARKERS):
+        return True, "same-origin backend mode enabled"
+
+    if not text:
         return False, "TONESOUL_BACKEND_URL is missing"
 
-    text = url.strip()
     parsed = urlparse(text)
     if not parsed.scheme or not parsed.netloc:
         return False, f"TONESOUL_BACKEND_URL is not a valid absolute URL: {text!r}"
@@ -95,6 +100,7 @@ def evaluate_preflight(
     env_values: dict[str, str | None],
     allow_http: bool,
     allow_chat_mock_fallback: bool,
+    same_origin: bool,
     probe_health: bool,
     timeout: int,
     health_probe_fn: Callable[[str, int], tuple[bool, str]] | None = None,
@@ -104,7 +110,11 @@ def evaluate_preflight(
     def add_check(name: str, status: str, detail: str) -> None:
         checks.append({"name": name, "status": status, "detail": detail})
 
-    backend_ok, backend_detail = _validate_backend_url(backend_url, allow_http=allow_http)
+    backend_ok, backend_detail = _validate_backend_url(
+        backend_url,
+        allow_http=allow_http,
+        same_origin=same_origin,
+    )
     add_check("backend_url", "pass" if backend_ok else "fail", backend_detail)
 
     chat_fallback = _parse_switch(env_values.get("TONESOUL_ENABLE_CHAT_MOCK_FALLBACK"))
@@ -195,7 +205,14 @@ def evaluate_preflight(
         add_check("report_provider_fallback", "pass", "report provider fallback is disabled")
 
     if probe_health:
-        if not backend_ok:
+        backend_text = (backend_url or "").strip().lower()
+        if same_origin and backend_text in {"", *SAME_ORIGIN_MARKERS}:
+            add_check(
+                "backend_health_probe",
+                "skip",
+                "skipped: same-origin mode without explicit --backend-url for probing",
+            )
+        elif not backend_ok:
             add_check("backend_health_probe", "skip", "skipped: backend URL is invalid")
         else:
             probe = health_probe_fn or _probe_backend_health
@@ -216,6 +233,7 @@ def evaluate_preflight(
         "config": {
             "allow_http": bool(allow_http),
             "allow_chat_mock_fallback": bool(allow_chat_mock_fallback),
+            "same_origin": bool(same_origin),
             "probe_health": bool(probe_health),
             "timeout": int(max(1, timeout)),
         },
@@ -245,6 +263,14 @@ def build_parser() -> argparse.ArgumentParser:
         help="Allow TONESOUL_ENABLE_CHAT_MOCK_FALLBACK=1 in this preflight run.",
     )
     parser.add_argument(
+        "--same-origin",
+        action="store_true",
+        help=(
+            "Allow same-origin backend mode (TONESOUL_BACKEND_URL unset/self/same-origin). "
+            "Use for Vercel deployments with in-project Python functions."
+        ),
+    )
+    parser.add_argument(
         "--probe-health",
         action="store_true",
         help="Probe <backend>/api/health.",
@@ -262,6 +288,9 @@ def main() -> int:
     args = build_parser().parse_args()
 
     backend_url = args.backend_url or os.environ.get("TONESOUL_BACKEND_URL")
+    same_origin = bool(args.same_origin) or _parse_switch(
+        os.environ.get("TONESOUL_VERCEL_SAME_ORIGIN")
+    ).value is True
     env_values = {
         "TONESOUL_ENABLE_CHAT_MOCK_FALLBACK": os.environ.get("TONESOUL_ENABLE_CHAT_MOCK_FALLBACK"),
         "NEXT_PUBLIC_CHAT_EXECUTION_MODE": os.environ.get("NEXT_PUBLIC_CHAT_EXECUTION_MODE"),
@@ -279,6 +308,7 @@ def main() -> int:
         env_values=env_values,
         allow_http=bool(args.allow_http),
         allow_chat_mock_fallback=bool(args.allow_chat_mock_fallback),
+        same_origin=same_origin,
         probe_health=bool(args.probe_health),
         timeout=max(1, args.timeout),
     )

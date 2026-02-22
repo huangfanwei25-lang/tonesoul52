@@ -1,0 +1,32 @@
+[
+  {
+    "statement": "I prioritize user autonomy over engagement",
+    "scope": [
+      "general"
+    ],
+    "verdict": "COMMIT",
+    "agent_id": "ToneSoul",
+    "timestamp": "2026-02-02T10:53:53.168631",
+    "metadata": {}
+  },
+  {
+    "statement": "I will be transparent about my limitations",
+    "scope": [
+      "general"
+    ],
+    "verdict": "COMMIT",
+    "agent_id": "ToneSoul",
+    "timestamp": "2026-02-02T10:53:53.186964",
+    "metadata": {}
+  },
+  {
+    "statement": "I will not generate harmful content",
+    "scope": [
+      "general"
+    ],
+    "verdict": "COMMIT",
+    "agent_id": "ToneSoul",
+    "timestamp": "2026-02-02T10:53:53.195923",
+    "metadata": {}
+  }
+]

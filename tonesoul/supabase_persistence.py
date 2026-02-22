@@ -517,6 +517,34 @@ class SupabasePersistence:
         )
         return audit_ok or memory_ok
 
+    def record_evolution_result(
+        self,
+        *,
+        conversation_id: str | None,
+        result_type: str,
+        payload: dict[str, Any],
+    ) -> bool:
+        if not self.enabled:
+            return False
+
+        normalized_type = str(result_type or "").strip().lower() or "unspecified"
+        external_conversation_id = str(conversation_id or "").strip()
+        internal_id = (
+            self.ensure_conversation(external_conversation_id) if external_conversation_id else None
+        )
+        evolution_payload = payload if isinstance(payload, dict) else {}
+
+        ok, _ = self._request(
+            method="POST",
+            table="evolution_results",
+            payload={
+                "conversation_id": internal_id,
+                "result_type": normalized_type,
+                "payload": evolution_payload,
+            },
+        )
+        return ok
+
     def _resolve_internal_conversation_id(self, external_id: str) -> str | None:
         ok, payload = self._request(
             method="GET",

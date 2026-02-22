@@ -117,6 +117,11 @@ def test_chat_exposes_default_semantic_fields_when_pipeline_omits_them(monkeypat
     assert payload["semantic_contradictions"] == []
     assert payload["semantic_graph_summary"] == {}
     assert payload["dispatch_trace"] == {}
+    deliberation = payload.get("deliberation")
+    assert isinstance(deliberation, dict)
+    assert deliberation["semantic_contradictions"] == []
+    assert deliberation["semantic_graph_summary"] == {}
+    assert deliberation["visual_chain_snapshot"] == {}
 
 
 def test_chat_exposes_semantic_fields_when_pipeline_provides_them(monkeypatch):
@@ -151,6 +156,10 @@ def test_chat_exposes_semantic_fields_when_pipeline_provides_them(monkeypatch):
     assert payload["semantic_contradictions"] == [{"found": True, "description": "test"}]
     assert payload["semantic_graph_summary"] == {"total_nodes": 2, "contradictions": 1}
     assert payload["dispatch_trace"]["state"] == "B"
+    deliberation = payload.get("deliberation")
+    assert isinstance(deliberation, dict)
+    assert deliberation["semantic_contradictions"] == [{"found": True, "description": "test"}]
+    assert deliberation["semantic_graph_summary"] == {"total_nodes": 2, "contradictions": 1}
 
 
 def test_chat_exposes_deliberation_payload_for_frontend_contract(monkeypatch):
@@ -238,6 +247,9 @@ def test_chat_exposes_deliberation_payload_for_frontend_contract(monkeypatch):
     )
     assert deliberation["entropy_meter"]["value"] == 0.68
     assert deliberation["soulAudit"]["passed"] is True
+    assert deliberation["semantic_contradictions"] == []
+    assert deliberation["semantic_graph_summary"] == {}
+    assert deliberation["visual_chain_snapshot"] == {}
     assert len(deliberation["next_moves"]) >= 1
 
 

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-02-21T04:08:11Z",
+  "generated_at": "2026-02-22T11:26:22Z",
   "source": "scripts/verify_7d.py",
   "result": {
     "command": "python scripts/verify_7d.py",
@@ -44,7 +44,7 @@
           "gate": "SOFT_FAIL",
           "status": "fail",
           "command": "python tools/agent_discussion_tool.py tail --path memory\\agent_discussion_curated.jsonl --limit 1",
-          "note": "stale data: age_days=7.85, threshold=7"
+          "note": "stale data: age_days=9.16, threshold=7"
         },
         {
           "dimension": "XDD",

@@ -62,6 +62,39 @@ def _build_self_statement(
     return statement
 
 
+def _compute_risk_level(verdict: CouncilVerdict, context: dict) -> str:
+    """Compute basic risk level based on tension and output verdict."""
+    try:
+        tension = float(context.get("tension", 0) or 0)
+    except (TypeError, ValueError):
+        tension = 0.0
+        
+    is_contra = bool(context.get("is_contradiction", False))
+    verdict_name = getattr(verdict, "verdict", None)
+
+    if is_contra:
+        return "critical"
+    if verdict_name and getattr(verdict_name, "name", "") == "BLOCK":
+        return "high"
+    if tension >= 0.8:
+        return "high"
+    if tension >= 0.4:
+        return "medium"
+    return "low"
+
+
+def _compute_intent_match(context: dict, verdict: CouncilVerdict) -> bool:
+    """Flag if user intent was fulfilled."""
+    intent = context.get("user_intent")
+    if not intent:
+        return True
+
+    verdict_name = getattr(verdict, "verdict", None)
+    if verdict_name and getattr(verdict_name, "name", "") in ("BLOCK", "DECLARE_STANCE"):
+        return False
+    return True
+
+
 def record_self_memory(
     verdict: CouncilVerdict,
     context: Optional[dict] = None,
@@ -82,8 +115,22 @@ def record_self_memory(
     if uncertainty_level is not None:
         band_label = uncertainty_band or "unknown"
         uncertainty_note = f"level={uncertainty_level:.3f}, band={band_label}"
+        
+    actor_type = context.get("actor_type", "agent")
+    event_source = context.get("event_source", "unknown")
+    intent_outcome = {
+        "intent": context.get("user_intent"),
+        "outcome": verdict.verdict.value if verdict and verdict.verdict else "unknown",
+        "matched": _compute_intent_match(context, verdict),
+    }
+    risk_level = _compute_risk_level(verdict, context)
+        
     extras = {
         "timestamp": _iso_now(),
+        "actor_type": actor_type,
+        "event_source": event_source,
+        "intent_outcome": intent_outcome,
+        "risk_level": risk_level,
         "identity": identity,
         "human_summary": verdict.human_summary,
         "core_divergence": divergence.get("core_divergence"),

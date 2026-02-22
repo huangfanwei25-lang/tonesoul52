@@ -2,15 +2,16 @@ from __future__ import annotations
 
 import heapq
 import json
+import math
 import sqlite3
 import uuid
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from enum import Enum
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Protocol
 
-from .decay import FORGET_THRESHOLD, calculate_decay
+from .decay import DECAY_CONSTANT, FORGET_THRESHOLD, calculate_decay
 
 
 class MemorySource(Enum):
@@ -497,6 +498,103 @@ class SqliteSoulDB:
         conn.close()
         return record_id
 
+    def _count_memories_by_source(self, source: MemorySource) -> int:
+        if source == MemorySource.PROVENANCE_LEDGER:
+            conn = self._connect()
+            cursor = conn.cursor()
+            cursor.execute("SELECT COUNT(*) FROM isnad")
+            row = cursor.fetchone()
+            conn.close()
+            return int(row[0]) if row else 0
+        conn = self._connect()
+        cursor = conn.cursor()
+        cursor.execute("SELECT COUNT(*) FROM memories WHERE source = ?", (source.value,))
+        row = cursor.fetchone()
+        conn.close()
+        return int(row[0]) if row else 0
+
+    def _rows_to_memory_records(
+        self,
+        source: MemorySource,
+        rows: List[tuple[object, object, object, object]],
+    ) -> List[MemoryRecord]:
+        records: List[MemoryRecord] = []
+        for record_id, timestamp, content, tags in rows:
+            payload = _deserialize_json(str(content or "{}"))
+            tag_list: List[str] = []
+            if tags:
+                try:
+                    parsed_tags = json.loads(str(tags))
+                except json.JSONDecodeError:
+                    parsed_tags = None
+                if isinstance(parsed_tags, list):
+                    tag_list = [str(tag) for tag in parsed_tags]
+            records.append(
+                MemoryRecord(
+                    source=source,
+                    timestamp=str(timestamp) if timestamp else "",
+                    payload=payload,
+                    tags=tag_list,
+                    record_id=str(record_id) if record_id else None,
+                    relevance_score=_coerce_float(payload.get("relevance_score"), 1.0),
+                    access_count=max(0, _coerce_int(payload.get("access_count"), 0)),
+                    last_accessed=(
+                        str(payload.get("last_accessed")) if payload.get("last_accessed") else None
+                    ),
+                    layer=_normalize_memory_layer(payload.get("layer"))
+                    or MemoryLayer.EXPERIENTIAL.value,
+                )
+            )
+        return records
+
+    def _stream_memories_decay_candidates(
+        self,
+        source: MemorySource,
+        *,
+        now: Optional[datetime] = None,
+        forget_threshold: Optional[float] = None,
+    ) -> List[MemoryRecord]:
+        # Provenance entries are stored in `isnad`, keep legacy full stream behavior.
+        if source == MemorySource.PROVENANCE_LEDGER:
+            return list(self.stream(source, limit=None))
+
+        current = _parse_timestamp(now) or datetime.now(timezone.utc)
+        threshold = _resolve_decay_threshold(forget_threshold)
+        if threshold <= 0.0:
+            return list(self._stream_memories(source, limit=None))
+
+        if threshold >= 1.0:
+            min_anchor = current
+        else:
+            max_days_without_access = math.log(1.0 / threshold) / DECAY_CONSTANT
+            min_anchor = current - timedelta(days=max_days_without_access)
+        min_anchor_iso = min_anchor.replace(microsecond=0).isoformat().replace("+00:00", "Z")
+
+        conn = self._connect()
+        cursor = conn.cursor()
+        try:
+            cursor.execute(
+                """
+                SELECT id, timestamp, content, tags
+                FROM memories
+                WHERE source = ?
+                  AND (
+                    COALESCE(CAST(json_extract(content, '$.access_count') AS INTEGER), 0) > 0
+                    OR timestamp IS NULL
+                    OR timestamp = ''
+                    OR timestamp >= ?
+                  )
+                ORDER BY rowid ASC
+                """,
+                (source.value, min_anchor_iso),
+            )
+            rows = cursor.fetchall()
+        except sqlite3.OperationalError:
+            conn.close()
+            return list(self._stream_memories(source, limit=None))
+        conn.close()
+        return self._rows_to_memory_records(source, rows)
+
     def query(
         self,
         source: MemorySource,
@@ -515,7 +613,14 @@ class SqliteSoulDB:
             return self.stream(source, limit=limit)
         if limit is not None and int(limit) <= 0:
             return []
-        records = list(self.stream(source, limit=None))
+        if apply_decay:
+            records = self._stream_memories_decay_candidates(
+                source,
+                now=now,
+                forget_threshold=forget_threshold,
+            )
+        else:
+            records = list(self.stream(source, limit=None))
         if normalized_layer is not None:
             records = [
                 record
@@ -566,9 +671,19 @@ class SqliteSoulDB:
         forget_threshold: Optional[float] = None,
     ) -> int:
         """Return how many records would be filtered by decay gating."""
-        all_records = list(self.stream(source))
-        surviving = _decay_records(all_records, forget_threshold=forget_threshold)
-        return max(0, len(all_records) - len(surviving))
+        current = datetime.now(timezone.utc)
+        total_records = self._count_memories_by_source(source)
+        candidates = self._stream_memories_decay_candidates(
+            source,
+            now=current,
+            forget_threshold=forget_threshold,
+        )
+        surviving = _decay_records(
+            candidates,
+            now=current,
+            forget_threshold=forget_threshold,
+        )
+        return max(0, total_records - len(surviving))
 
     def _stream_memories(
         self, source: MemorySource, limit: Optional[int]
@@ -599,34 +714,7 @@ class SqliteSoulDB:
         conn.close()
         if limit is not None:
             rows.reverse()
-        records: List[MemoryRecord] = []
-        for record_id, timestamp, content, tags in rows:
-            payload = _deserialize_json(content or "{}")
-            tag_list = []
-            if tags:
-                try:
-                    parsed_tags = json.loads(tags)
-                except json.JSONDecodeError:
-                    parsed_tags = None
-                if isinstance(parsed_tags, list):
-                    tag_list = parsed_tags
-            records.append(
-                MemoryRecord(
-                    source=source,
-                    timestamp=str(timestamp) if timestamp else "",
-                    payload=payload,
-                    tags=tag_list,
-                    record_id=str(record_id) if record_id else None,
-                    relevance_score=_coerce_float(payload.get("relevance_score"), 1.0),
-                    access_count=max(0, _coerce_int(payload.get("access_count"), 0)),
-                    last_accessed=(
-                        str(payload.get("last_accessed")) if payload.get("last_accessed") else None
-                    ),
-                    layer=_normalize_memory_layer(payload.get("layer"))
-                    or MemoryLayer.EXPERIENTIAL.value,
-                )
-            )
-        return records
+        return self._rows_to_memory_records(source, rows)
 
     def _stream_isnad(self, limit: Optional[int]) -> Iterable[MemoryRecord]:
         conn = self._connect()

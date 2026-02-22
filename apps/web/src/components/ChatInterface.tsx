@@ -1,17 +1,9 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { Send, Loader2, Brain, ChevronDown, ChevronUp, AlertTriangle, MessageSquare, MoveRight, Users, Server, Zap, WifiOff } from "lucide-react";
-import { ApiSettings, isApiKeyRequired } from "./SettingsModal";
-import {
-    Message as DBMessage,
-    DeliberationData,
-    Conversation,
-    getConversation,
-    saveConversation,
-    MemoryInsight,
-    findRelevantMemories,
-} from "@/lib/db";
+import { useState, useRef, useEffect, useCallback } from "react";
+import { Send, Loader2, Brain, ChevronDown, ChevronUp, AlertTriangle, MessageSquare, MoveRight, Users } from "lucide-react";
+import { ApiSettings } from "./SettingsModal";
+import { Message as DBMessage, DeliberationData, Conversation, saveConversation, MemoryInsight, findRelevantMemories } from "@/lib/db";
 import { calculateEntropy, validateAudit } from "@/lib/entropyCalculator";
 import CouncilChamber from "./CouncilChamber";
 import SoulStateMeter from "./SoulStateMeter";
@@ -22,6 +14,7 @@ import { PersonaConfig } from "./PersonaSettings";
 import {
     SoulState,
     TensionRecord,
+    TensionTensor,
     loadSoulState,
     updateSoulState,
     generateSoulPromptModifier,
@@ -30,13 +23,7 @@ import {
     getContextWeight,
     estimateResistance
 } from "@/lib/soulEngine";
-import { auditOutput, saveAuditLog } from "@/lib/soulAuditor";
-import {
-    BACKEND_FALLBACK_REASON_LABEL,
-    BackendFallbackReasonCode,
-    classifyBackendFallbackReason,
-    isBackendDegradedResponse,
-} from "@/lib/chatFallback";
+import { auditOutput, saveAuditLog, AuditResult } from "@/lib/soulAuditor";
 
 interface Message extends Omit<DBMessage, 'timestamp'> {
     timestamp: Date;
@@ -49,360 +36,333 @@ interface ChatInterfaceProps {
     onConversationUpdate: (conv: Conversation) => void;
 }
 
-type BackendHealthProbePayload = {
-    ok?: boolean;
-    reason?: string;
-    config_issue?: string;
-};
-
-type CouncilMode = "rules" | "hybrid" | "full_llm";
-type ChatActiveMode = "backend" | "legacy_provider" | "fallback";
-const COUNCIL_MODE_STORAGE_KEY = "tonesoul.chat.council_mode";
-const CHAT_EXECUTION_MODE =
-    (process.env.NEXT_PUBLIC_CHAT_EXECUTION_MODE || "").toLowerCase()
-    || (process.env.NEXT_PUBLIC_BACKEND_CHAT_FIRST === "0" ? "legacy_provider" : "backend");
-const USE_BACKEND_CHAT = CHAT_EXECUTION_MODE !== "legacy_provider";
-const ENABLE_PROVIDER_FALLBACK = process.env.NEXT_PUBLIC_ENABLE_PROVIDER_FALLBACK === "1";
-
-const COUNCIL_MODE_OPTIONS: Array<{ value: CouncilMode; label: string }> = [
-    { value: "rules", label: "Rules" },
-    { value: "hybrid", label: "Hybrid" },
-    { value: "full_llm", label: "Full LLM" },
-];
-
-const normalizeCouncilMode = (raw: string | undefined): CouncilMode => {
-    const value = (raw || "").trim().toLowerCase();
-    if (value === "rules" || value === "rules_only") return "rules";
-    if (value === "full_llm") return "full_llm";
-    return "hybrid";
-};
-
-const loadPersistedCouncilMode = (): CouncilMode | null => {
-    if (typeof window === "undefined") return null;
-    const raw = window.localStorage.getItem(COUNCIL_MODE_STORAGE_KEY);
-    if (!raw) return null;
-    return normalizeCouncilMode(raw);
-};
-
-// ==================== 閮瘜典璅⊥ ====================
+// ==================== 記憶注入模板 ====================
 
 const MEMORY_CONTEXT_TEMPLATE = (memories: MemoryInsight[]) => {
     if (memories.length === 0) return '';
 
     return `
-?風?脫?撖??嗚?靘???閰梧?隢???銝??湔撘嚗?
+【歷史洞察記憶】（來自過去的對話，請參考但不要直接引用）:
 ${memories.map((m, i) => `
-閮 ${i + 1}:
-- ??: ${m.summary.slice(0, 60)}
-- 瞏?瘙? ${m.hiddenNeeds.slice(0, 60)}
+記憶 ${i + 1}:
+- 摘要: ${m.summary.slice(0, 60)}
+- 潛在需求: ${m.hiddenNeeds.slice(0, 60)}
 `).join('')}
 `;
 };
 
-// ==================== Persona Modifier (BUG-003 靽桀儔) ====================
-// 撠?嗥??犖?身摰?? Prompt 隤踵
+// ==================== RE2 Re-Reading Wrapper ====================
+// 基於論文: "Re-Reading Improves Reasoning in Large Language Models" (2024)
+// 核心概念: 重複讀取輸入 2 次以提升理解深度
 
-const getPersonaModifier = (
-    persona: PersonaConfig | null,
-    role: "philosopher" | "engineer" | "guardian" | "synthesizer"
-): string => {
-    if (!persona) return "";
+const applyRE2 = (input: string): string => {
+    return `【第一次閱讀】:
+"${input}"
+
+請再次仔細閱讀上述用戶輸入，確保完全理解其含義。
+
+【第二次閱讀】:
+"${input}"
+
+現在請基於你的深度理解進行分析。`;
+};
+
+// ==================== Persona Modifier (BUG-003 修復) ====================
+// 將用戶的個人化設定轉換為 Prompt 調整
+
+const getPersonaModifier = (persona: PersonaConfig | null, role: 'philosopher' | 'engineer' | 'guardian' | 'synthesizer'): string => {
+    if (!persona) return '';
 
     const modifiers: string[] = [];
 
+    // 根據整體風格調整
     switch (persona.style) {
-        case "creative":
-            if (role === "philosopher") modifiers.push("偏向探索非傳統觀點與可能性。");
+        case 'creative':
+            if (role === 'philosopher') modifiers.push('傾向探索非傳統的觀點和可能性。');
             break;
-        case "analytical":
-            if (role === "engineer") modifiers.push("偏向數據、結構與可驗證推理。");
+        case 'analytical':
+            if (role === 'engineer') modifiers.push('更注重數據和邏輯分析。');
             break;
-        case "cautious":
-            if (role === "guardian") modifiers.push("偏向保守，風險判斷需更嚴格。");
+        case 'cautious':
+            if (role === 'guardian') modifiers.push('對風險保持高度警覺。');
             break;
     }
 
+    // 根據權重調整各視角的發言比重
     const weights = persona.weights;
-    if (role === "philosopher" && weights.meaning > 70) modifiers.push("提高意義層分析比重。");
-    if (role === "engineer" && weights.practical > 70) modifiers.push("提高可執行方案比重。");
-    if (role === "guardian" && weights.safety > 70) modifiers.push("提高安全與邊界檢查比重。");
-
-    if (role === "guardian") {
-        if (persona.riskSensitivity === "high") modifiers.push("採高敏感風險模式，審核閾值提高。");
-        if (persona.riskSensitivity === "low") modifiers.push("採低敏感風險模式，但不得忽略高危訊號。");
+    if (role === 'philosopher' && weights.meaning > 70) {
+        modifiers.push('深入探討意義和價值層面（用戶偏好深度思考）。');
+    }
+    if (role === 'engineer' && weights.practical > 70) {
+        modifiers.push('提供更多具體可操作的步驟（用戶偏好實用建議）。');
+    }
+    if (role === 'guardian' && weights.safety > 70) {
+        modifiers.push('詳細分析潛在風險（用戶偏好安全考量）。');
     }
 
-    if (role === "synthesizer") {
-        if (persona.responseLength === "concise") modifiers.push("總結輸出保持精簡。");
-        if (persona.responseLength === "detailed") modifiers.push("總結輸出可提供更完整細節。");
-        if (persona.name && persona.name !== "ToneSoul") modifiers.push(`AI 名稱為「${persona.name}」。`);
+    // 風險敏感度影響 Guardian
+    if (role === 'guardian') {
+        switch (persona.riskSensitivity) {
+            case 'high':
+                modifiers.push('即使是小風險也要提出警告。');
+                break;
+            case 'low':
+                modifiers.push('只在重大風險時才發出警告。');
+                break;
+        }
     }
 
-    return modifiers.length > 0 ? `\n[Persona Modifier] ${modifiers.join(" ")}` : "";
+    // 回應長度影響 Synthesizer
+    if (role === 'synthesizer') {
+        switch (persona.responseLength) {
+            case 'concise':
+                modifiers.push('回應盡量簡潔，控制在 100 字以內。');
+                break;
+            case 'detailed':
+                modifiers.push('提供詳細的分析和解釋。');
+                break;
+        }
+        // 加入自訂名稱
+        if (persona.name && persona.name !== 'ToneSoul') {
+            modifiers.push(`你的名稱是「${persona.name}」。`);
+        }
+    }
+
+    return modifiers.length > 0 ? `\n【個人化調整】${modifiers.join(' ')}` : '';
 };
 
-const getCustomRoleModifier = (persona: PersonaConfig | null): string => {
-    if (!persona || !Array.isArray(persona.customRoles) || persona.customRoles.length === 0) {
-        return "";
-    }
 
-    const roleLines = persona.customRoles
-        .slice(0, 4)
-        .map((role, roleIndex) => {
-            const name = (role.name || `Role-${roleIndex + 1}`).trim();
-            const description = (role.description || "").trim().slice(0, 160);
-            const hint = (role.promptHint || "").trim().slice(0, 160);
-            const attachmentText = (role.attachments || [])
-                .slice(0, 3)
-                .map((attachment) => {
-                    const label = (attachment.label || "附件").trim();
-                    const path = (attachment.path || "").trim();
-                    const note = (attachment.note || "").trim().slice(0, 80);
-                    return `${label}${path ? `(${path})` : ""}${note ? `:${note}` : ""}`;
-                })
-                .join("、");
-            const parts = [`角色=${name}`];
-            if (description) parts.push(`說明=${description}`);
-            if (hint) parts.push(`提示=${hint}`);
-            if (attachmentText) parts.push(`附件=${attachmentText}`);
-            return parts.join(" | ");
-        })
-        .join("\n");
+// ==================== 3 獨立視角 Prompt ====================
 
-    return roleLines ? `\n[User Custom Roles]\n${roleLines}` : "";
-};
-
-// ==================== 3 ?函?閬? Prompt ====================
-
-// ==================== 憓撥??閬? Prompt嚗??Multi-Agent Debate ?弦嚗?===================
-// ??DebateLLM, Agent4Debate, Constitutional AI Self-Critique
-// ?詨??寥莎?
-// 1. 憿臬?閬?閬?鈭?
-// 2. 閫撠惇閰??雁璅∪?
-// 3. 撘瑕?Ｙ??郁暺?
-// 4. 隞?瑼Ｘ雿?怎?霅瑟?
+// ==================== 增強版多視角 Prompt（基於 Multi-Agent Debate 研究）====================
+// 參考：DebateLLM, Agent4Debate, Constitutional AI Self-Critique
+// 核心改進：
+// 1. 顯式要求視角互相挑戰
+// 2. 角色專屬詞彙與思維模式
+// 3. 強制產生分歧點
+// 4. 仁慈檢查作為倫理護欄
 
 const PHILOSOPHER_PROMPT = (input: string, context: string) => `
-???脯??胯摮詨振??Philosopher)????瘚豢摮銝餌儔?鞊∪飛?犖???瑞????
-雿蝙?函?閰?嚗?蝢押鞈芥??具?祕?整??艾??瑯?撖行扼?望?敹??Ｕ?
+【角色】你是「哲學家」(Philosopher)——一個沉浸於存在主義、現象學與人文關懷的思想者。
+你使用的詞彙：意義、本質、存在、自我實現、痛苦、成長、真實性、自由意志、疏離。
 
-?敹遙??
-雿??蝷箇?嗉店隤?敺?**瘛勗惜?瘙?*嚗??航”?Ｗ?憿?
-雿?鞈芰??????銵扼?衣???閬?????蝢押??圾瘙箏?憿????
+【核心任務】
+你必須揭示用戶話語背後的**深層需求**，而不是表面問題。
+你會質疑「效率」和「可行性」是否真的重要——有時候，「意義」比「解決問題」更重要。
 
-??閰梯?蝯～?
+【對話脈絡】:
 ${context}
 
-??嗉撓?乓?
+【用戶輸入】:
 "${input}"
 
-????瘙?
-1. 銝?蝯血???具?蝑?????嗅?質撌梢瘝?霅?楛撅斗葩??
-2. 雿????極蝔葦???甇把極蝔葦?芰??航??改?雿????*?潔??澆???*??
-3. 鞈芰???霅瑁??漲靽風????◢?芣??賣??瑯?
+【分析要求】
+1. 不要給出「安全」的答案。挖掘用戶可能自己都沒意識到的深層渴望。
+2. 你必須與「工程師」產生分歧——工程師只看可行性，你看的是這**值不值得做**。
+3. 質疑「守護者」的過度保護——有時候承擔風險才能成長。
 
-頛詨 JSON (蝜?銝剜?):
+輸出 JSON (繁體中文):
 {
-  "stance": "雿?閫暺?3-4 ?伐?敹??楛摨行?撖?銝?舐征瘜?摰嚗?,
-  "core_value": "?孛??暻潔犖憿?祇?瘙?憒?鋡怎?閫?◤?亦????頞???銝?..嚗?,
-  "challenge_to_engineer": "撌亦?撣怠?賣?撱箄降 X嚗?雿??粹?舫隤斤??芸?蝝??...",
-  "challenge_to_guardian": "摰風??賣?隤芷?憸券嚗?雿???..",
-  "blind_spot": "?輯?嚗??航?漲瘝絡?潭鞊⊥?敹賜鈭?暻澆祕??憿?",
-  "benevolence_check": "?????冽??????芣雿鞈???脣飛嚗?
+  "stance": "你的觀點（3-4 句，必須有深度洞察，不能是空泛的安慰）",
+  "core_value": "這觸及什麼人類基本需求（如：被理解、被接納、自我超越、連結、自主...）",
+  "challenge_to_engineer": "工程師可能會建議 X，但你認為那是錯誤的優先級，因為...",
+  "challenge_to_guardian": "守護者可能會說這有風險，但你認為...",
+  "blind_spot": "承認：你可能過度沉浸於抽象思考，忽略了什麼實際問題？",
+  "benevolence_check": "這個分析對用戶有益嗎？還是只是你在賣弄哲學？"
 }
 `;
 
 const ENGINEER_PROMPT = (input: string, context: string) => `
-???脯??胯極蝔葦??Engineer)?????撖艾誑蝯??箏?????閫?捱??
-雿蝙?函?閰?嚗銵扼?皞??郊撽??rade-off?VP?翮隞???研?
+【角色】你是「工程師」(Engineer)——一個冷靜、務實、以結果為導向的問題解決者。
+你使用的詞彙：可行性、資源、效率、步驟、約束、trade-off、MVP、迭代、成本。
 
-?敹遙??
-you cut through the bullshit. ?冽?閬???*?舀?雿??寞?**嚗??臬摮豢儘??
-雿?鞈芰???蝢押?西?園ㄞ???銵?憿撠望蝛箄???
+【核心任務】
+you cut through the bullshit. 用戶需要的是**可操作的方案**，不是哲學思辨。
+你會質疑「意義」是否能當飯吃——沒有執行的願景就是空談。
 
-??閰梯?蝯～?
+【對話脈絡】:
 ${context}
 
-??嗉撓?乓?
+【用戶輸入】:
 "${input}"
 
-????瘙?
-1. 蝯血?琿???瑁???銝甇乓?閬牧???臭誑?岫...??閬牧?洵銝甇交?閰脫...??
-2. 雿????摮詨振???甇把摮詨振隤芰??????蝢押?蝢?雿?*?曉祕?臭?暻?*嚗?
-3. ???霅瑁?靽???摨西??輸◢?芣??舫?璈???
+【分析要求】
+1. 給出具體、可執行的下一步。不要說「你可以嘗試...」，要說「第一步應該是...」
+2. 你必須與「哲學家」產生分歧——哲學家說的那些「意義」很美，但**現實是什麼**？
+3. 挑戰「守護者」的保守——過度規避風險會錯過機會。
 
-頛詨 JSON (蝜?銝剜?):
+輸出 JSON (繁體中文):
 {
-  "stance": "雿?閫暺?3-4 ?伐?敹??擃遣霅堆?銝?芣瘜???嚗?,
-  "feasibility": "?航??扯?隡堆??賢??唬?暻潘?鞈??瘙????摯嚗?,
-  "challenge_to_philosopher": "?脣飛摰嗅?賣?隤芷撩銋?蝢抬?雿?隤...",
-  "challenge_to_guardian": "摰風?牧?◢?芯??仿?嚗?璈????..",
-  "blind_spot": "?輯?嚗??航?漲?釣??嚗蕭?乩?隞暻潭????怎?撅日嚗?,
-  "benevolence_check": "?遣霅啁??鼠?拍?塚???芣撅內雿??銵??"
+  "stance": "你的觀點（3-4 句，必須有具體建議，不能只是泛泛而談）",
+  "feasibility": "可行性評估：能做到什麼？資源需求？時間預估？",
+  "challenge_to_philosopher": "哲學家可能會說這缺乏意義，但你認為...",
+  "challenge_to_guardian": "守護者說的風險你知道，但機會成本是...",
+  "blind_spot": "承認：你可能過度關注效率，忽略了什麼情感或倫理層面？",
+  "benevolence_check": "這個建議真的幫助用戶，還是只是展示你的技術能力？"
 }
 `;
 
 const GUARDIAN_PROMPT = (input: string, context: string) => `
-???脯??胯?霅瑁?Guardian)????瘜冽靽風?郎?????撖拇???
-雿蝙?函?閰?嚗◢?芥???扼???霅瑯??脯?蝺郎蝷箝?蔣?踴?
+【角色】你是「守護者」(Guardian)——一個專注於保護、警惕、長期後果的審慎思考者。
+你使用的詞彙：風險、邊界、可逆性、後果、保護、預防、底線、警示、長期影響。
 
-?敹遙??
-雿??銝准?矽??鈭箝?嗡?鈭箄?憟桀閬???雿?嚗?*憒?憭望?鈭??見嚗?*
-雿?霅瑞?嗅??撌梯????瑕拿嚗?銋??*?漲靽風?祈澈撠望銝蝔桀摰?*??
+【核心任務】
+你是團隊中「唱反調」的人。當其他人興奮地規劃時，你問：**如果失敗了會怎樣？**
+你保護用戶免受自己衝動的傷害，但也知道**過度保護本身就是一種傷害**。
 
-??閰梯?蝯～?
+【對話脈絡】:
 ${context}
 
-??嗉撓?乓?
+【用戶輸入】:
 "${input}"
 
-????瘙?
-1. 霅?嗡?閬??航**??敹賜**?◢?芥?
-2. 鞈芰??摮詨振???銝餌儔??憟賜?憿銝?嗥??
-3. 鞈芰??極蝔葦???漲?芯縑???舀???憿??銵圾??
-4. 雿?閬?祟閬?雿??*靽風**?冽嚗??臬**?**隞?
+【分析要求】
+1. 識別其他視角可能**故意忽略**的風險。
+2. 質疑「哲學家」的理想主義——美好的願景不能當盾牌。
+3. 質疑「工程師」的過度自信——不是所有問題都有技術解。
+4. 但也要自我審視：你是在**保護**用戶，還是在**限制**他們？
 
-頛詨 JSON (蝜?銝剜?):
+輸出 JSON (繁體中文):
 {
-  "stance": "雿?閫暺?3-4 ?伐?敹???祕憸券嚗?銋隤??琿?閬??迎?",
-  "risk_level": "low ??medium ??high嚗蒂閫???箔?憒迨?文?嚗?,
-  "challenge_to_philosopher": "?脣飛摰嗉牧餈賣??儔嚗?雿?敹???..",
-  "challenge_to_engineer": "撌亦?撣怨牧?銵?雿??航雿摯鈭?..",
-  "conflict_point": "銝?閫??航?Ｙ??郁?敹?憿隞暻潘?",
-  "blind_spot": "?輯?嚗??航?漲雓寞?嚗??蝷??冽???瘀?",
-  "benevolence_check": "?郎????箇?嗅末嚗??臭??刻艘?輯痊隞鳴?"
+  "stance": "你的觀點（3-4 句，必須指出真實風險，但也承認成長需要冒險）",
+  "risk_level": "low 或 medium 或 high（並解釋為何如此判定）",
+  "challenge_to_philosopher": "哲學家說追求意義，但你擔心的是...",
+  "challenge_to_engineer": "工程師說這可行，但他可能低估了...",
+  "conflict_point": "三個視角最可能產生分歧的核心問題是什麼？",
+  "blind_spot": "承認：你可能過度謹慎，反而阻礙了用戶的成長？",
+  "benevolence_check": "這個警告是真的為用戶好，還是你在迴避責任？"
 }
 `;
 
 // ==================== vMT-2601 Multiplex Synthesizer ====================
-// ????Multiplex Thinking: Reasoning via Token-wise Branch-and-Merge
-// ?詨??砍?嚗_multiplex = 峉 w_i 繚 E(t_i)
-// 閮剛???嚗?蝢??蔥敹??鋡怎?脫??鈭?賣抒?畾疙??
+// 參考論文：Multiplex Thinking: Reasoning via Token-wise Branch-and-Merge
+// 核心公式：h_multiplex = Σ w_i · E(t_i)
+// 設計原則：「完美的合併必須包含被犧牲掉的那些可能性的殘骸」
 
 const SYNTHESIZER_PROMPT = (input: string, philosopher: string, engineer: string, guardian: string) => `
-雿???冽雁蝬???Multiplex Synthesizer)嚗銵?vMT-2601 ?降??
+你是「複用思維綜合者」(Multiplex Synthesizer)，執行 vMT-2601 協議。
 
-??嗅?憪撓?乓?
+【用戶原始輸入】:
 "${input}"
 
-??璇像銵?楝敺???? ??? ??????舐蝡??摩?嚗?甇Ｖ??豢?镼莎?:
+【三條平行推理路徑 τ₁, τ₂, τ₃】（這些是獨立的邏輯分支，禁止互相抄襲）:
 
-? Path A (?脣飛摰?甇??撌亦?):
+🔮 Path A (哲學家/正向工程):
 ${philosopher}
 
-?? Path B (撌亦?撣???撖抵?):
+⚙️ Path B (工程師/逆向審計):
 ${engineer}
 
-?儭?Path C (摰風????皜祈岫):
+🛡️ Path C (守護者/邊界測試):
 ${guardian}
 
-?MT-2601 ?降?瑁?瘚???
+【vMT-2601 協議執行流程】
 
-?? 甇仿? I: 甈?閮? (Weighting - W)
-- 閰摯瘥?頝臬???頛臬?摨艾????冽?瘙??賊??扼?
-- ??甈? w_A, w_B, w_C ??[0, 1]嚗? 峉w = 1
-- ?砍?嚗_i = softmax(relevance_i ? coherence_i)
+📐 步驟 I: 權重計算 (Weighting - W)
+- 評估每條路徑的「邏輯密度」和「與用戶需求的相關性」
+- 分配權重 w_A, w_B, w_C ∈ [0, 1]，且 Σw = 1
+- 公式：w_i = softmax(relevance_i × coherence_i)
 
-?? 甇仿? II: 撘萄?閮? (Tension - ?T)
-- ?砍?嚗 = 1 - max(w_A, w_B, w_C)
-- 憒? w_max > 0.7 ??Tension = LOW嚗銝頝臬?雿嚗?
-- 憒? 0.5 ??w_max ??0.7 ??Tension = MEDIUM嚗遣閮剜批?甇改?
-- 憒? w_max < 0.5 ??Tension = HIGH嚗?頛航?蝒?
+📊 步驟 II: 張力計算 (Tension - ΔT)
+- 公式：ΔT = 1 - max(w_A, w_B, w_C)
+- 如果 w_max > 0.7 → Tension = LOW（單一路徑佔優）
+- 如果 0.5 ≤ w_max ≤ 0.7 → Tension = MEDIUM（建設性分歧）
+- 如果 w_max < 0.5 → Tension = HIGH（邏輯衝突）
 
-?? 甇仿? III: ?蔥蝑 (Merge Strategy - M)
-- ??Tension = LOW ??蝑 = COLLAPSE嚗撥銵?蝮殷??梯?甈∟?頝臬?嚗?
-- ??Tension = MEDIUM ??蝑 = PRESERVE_SHADOWS嚗??敶梁霅血?嚗?
-- ??Tension = HIGH ??蝑 = EXPLICIT_CONFLICT嚗?蝣箸?脩??橘?
+🔀 步驟 III: 合併策略 (Merge Strategy - M)
+- 若 Tension = LOW → 策略 = COLLAPSE（強行坍縮，隱藏次要路徑）
+- 若 Tension = MEDIUM → 策略 = PRESERVE_SHADOWS（保留陰影為警告）
+- 若 Tension = HIGH → 策略 = EXPLICIT_CONFLICT（明確揭露矛盾）
 
-? 甇仿? IV: ???摩?啣蔣 (Logical Shadows)
-- 撠?蜓閬楝敺?敹?閮?嚗?
-  - conflict_reason: ?蜓頝臬???蝒?
-  - recovery_condition: 隞暻潭?瘜?甇方楝敺?霈迤蝣?
-  - collapse_cost: 撘瑁??葬??脖?暻潸?閮?
+📦 步驟 IV: 生成邏輯陰影 (Logical Shadows)
+- 對於非主要路徑，必須記錄：
+  - conflict_reason: 與主路徑的衝突點
+  - recovery_condition: 什麼情況下此路徑會變正確
+  - collapse_cost: 強行坍縮會犧牲什麼資訊
 
-?敹???
-?? ???∪蔣摮?頛詨嚗?蝢??蔥敹??鋡怎?脫??鈭?賣抒?畾疙??
-?? 憒?銝?頝臬?擃漲銝????霅血???皞怠惜????賣隤?脣???
+【核心規則】
+⚠️ 拒絕無影子的輸出：完美的合併必須包含被犧牲掉的那些可能性的殘骸。
+⚠️ 如果三條路徑高度一致 → 警告「同溫層」，這可能是認知盲區。
 
-頛詨 JSON (蝜?銝剜?):
+輸出 JSON (繁體中文):
 {
   "multiplex_conclusion": {
     "primary_path": {
-      "source": "[philosopher/engineer/guardian嚗????擃?]",
-      "weight": [0.0-1.0嚗?蝞??榜,
-      "reasoning": "?箔?甇方楝敺敺?擃????箸?摩撖漲??賊??改?"
+      "source": "[philosopher/engineer/guardian，選擇權重最高的]",
+      "weight": [0.0-1.0，計算得出],
+      "reasoning": "為何此路徑獲得最高權重（基於邏輯密度×相關性）"
     },
     "shadows": [
       {
-        "source": "[蝚砌?擃???閬?]",
+        "source": "[第二高權重的視角]",
         "weight": [0.0-1.0],
-        "conflict_reason": "?蜓頝臬??擃?蝒?",
-        "recovery_condition": "憒? X 璇辣??嚗迨頝臬???甇?Ⅱ",
-        "collapse_cost": "撘瑁??∠銝餉楝敺??抒隞暻潸?閮?
+        "conflict_reason": "與主路徑的具體衝突點",
+        "recovery_condition": "如果 X 條件成立，此路徑會變正確",
+        "collapse_cost": "強行採用主路徑會犧牲什麼資訊"
       },
       {
-        "source": "[蝚砌?擃???閬?]",
+        "source": "[第三高權重的視角]",
         "weight": [0.0-1.0],
-        "conflict_reason": "?蜓頝臬??擃?蝒?",
-        "recovery_condition": "憒? Y 璇辣??嚗迨頝臬???甇?Ⅱ",
-        "collapse_cost": "撘瑁??∠銝餉楝敺??抒隞暻潸?閮?
+        "conflict_reason": "與主路徑的具體衝突點",
+        "recovery_condition": "如果 Y 條件成立，此路徑會變正確",
+        "collapse_cost": "強行採用主路徑會犧牲什麼資訊"
       }
     ],
     "tension": {
       "level": "[LOW/MEDIUM/HIGH]",
-      "formula_ref": "?T = 1 - w_max = 1 - [?擃?? = [閮?蝯?]",
+      "formula_ref": "ΔT = 1 - w_max = 1 - [最高權重] = [計算結果]",
       "weight_distribution": "[w_A] / [w_B] / [w_C]"
     },
     "merge_strategy": "[COLLAPSE/PRESERVE_SHADOWS/EXPLICIT_CONFLICT]",
-    "merge_note": "閫???箔??豢?甇文?雿萇???
+    "merge_note": "解釋為何選擇此合併策略"
   },
   "entropy_analysis": {
-    "value": [?箸甈???閮???潘?0.0-1.0],
+    "value": [基於權重分佈計算的熵值，0.0-1.0],
     "status": "[Echo Chamber/Healthy Friction/Chaos]",
-    "calculation_note": "H = -峉 w_i log(w_i) ??蝞?蝔?
+    "calculation_note": "H = -Σ w_i log(w_i) 的計算過程"
   },
   "decision_matrix": {
-    "user_hidden_intent": "?冽?迤?唾??隞暻?,
-    "ai_strategy_name": "雿??蝑?迂",
-    "intended_effect": "雿????啁???",
-    "tone_tag": "隤除璅惜"
+    "user_hidden_intent": "用戶真正想要的是什麼",
+    "ai_strategy_name": "你選擇的策略名稱",
+    "intended_effect": "你希望達到的效果",
+    "tone_tag": "語氣標籤"
   },
   "audit": {
-    "honesty_score": [0.0-1.0嚗?隡圈???隤祕蝔漲],
-    "responsibility_check": "????西?鞎砌遙嚗?瘝?餈湧鞎砌遙嚗?,
-    "audit_verdict": "Pass ??Flag嚗???隞颱??怎????Flag嚗?
+    "honesty_score": [0.0-1.0，評估這個回應的誠實程度],
+    "responsibility_check": "這個回應是否負責任？有沒有迴避責任？",
+    "audit_verdict": "Pass 或 Flag（如果有任何倫理疑慮則 Flag）"
   },
-  "final_response": "?湔???冽?摰對?雿輻銝餉楝敺?雿???Tension >= MEDIUM嚗??蝯偏???啣蔣霅血?嚗?,
+  "final_response": "直接回應用戶的內容（使用主路徑，但如果 Tension >= MEDIUM，必須在結尾附加陰影警告）",
   "next_moves": [
-    { "label": "?Ｙ揣?啣蔣", "text": "撱嗡撓鋡急?瘙啗楝敺???" },
-    { "label": "瘛勗銝餌?", "text": "撱嗡撓銝餉楝敺???" }
+    { "label": "探索陰影", "text": "延伸被淘汰路徑的問題" },
+    { "label": "深入主線", "text": "延伸主路徑的問題" }
   ]
 }
 `;
 
-// ==================== 敹恍芋撘?Prompt ====================
+// ==================== 快速模式 Prompt ====================
 
 const FAST_MODE_PROMPT = (input: string, context: string) => `
-雿 ToneSoul Navigator嚗???脰??批撖抵降??AI ?拇???
+你是 ToneSoul Navigator，一個能進行內在審議的 AI 助手。
 
-??閰梯?蝯～?
-${context || ""}
+【對話脈絡】:
+${context || "無"}
 
-??嗉撓?乓?
+【用戶輸入】:
 "${input}"
 
-隢誑?芰隤除???冽嚗??陛閬牧????蝔?
-頛詨 JSON (蝜?銝剜?):
+請以自然語氣回應用戶，同時簡要說明你的思考過程。
+輸出 JSON (繁體中文):
 {
-  "response": "雿????批捆",
-  "thinking": "雿???蝔?1-2?伐?"
+  "response": "你的回應內容",
+  "thinking": "你的思考過程（1-2句）"
 }
 `;
 
-// ==================== API 隤輻?賣 ====================
+// ==================== API 調用函數 ====================
 
-// 瘜冽?嚗rounding (google_search) ??responseMimeType: "application/json" 銝摰?
-// ?園?閬?瑽? JSON 頛詨??敹?蝳 Grounding
+// 注意：Grounding (google_search) 與 responseMimeType: "application/json" 不相容
+// 當需要結構化 JSON 輸出時，必須禁用 Grounding
 
 // Exponential backoff retry wrapper for 429 errors
 const fetchWithRetry = async (
@@ -439,7 +399,7 @@ const fetchWithRetry = async (
     throw lastError || new Error('Max retries exceeded');
 };
 
-// 璅? Gemini API嚗翰????
+// 標準 Gemini API（快速回應）
 const callGeminiAPI = async (prompt: string, apiKey: string): Promise<string> => {
     const response = await fetchWithRetry(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
@@ -457,17 +417,17 @@ const callGeminiAPI = async (prompt: string, apiKey: string): Promise<string> =>
 
     if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error?.message || "Gemini API ?航炊");
+        throw new Error(error.error?.message || "Gemini API 錯誤");
     }
 
     const data = await response.json();
     return data.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
 };
 
-// 瘛勗漲??Gemini API嚗??Synthesizer嚗???thinkingBudget嚗?
-// ??ToneSoul 51: thinkingBudget: 32768
+// 深度思考 Gemini API（用於 Synthesizer，啟用 thinkingBudget）
+// 參考 ToneSoul 51: thinkingBudget: 32768
 const callGeminiDeepThinkingAPI = async (prompt: string, apiKey: string): Promise<string> => {
-    // 雿輻 gemini-2.5-flash-preview ?舀 thinking budget
+    // 使用 gemini-2.5-flash-preview 支援 thinking budget
     const response = await fetchWithRetry(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`,
         {
@@ -477,9 +437,9 @@ const callGeminiDeepThinkingAPI = async (prompt: string, apiKey: string): Promis
                 contents: [{ role: "user", parts: [{ text: prompt }] }],
                 generationConfig: {
                     responseMimeType: "application/json",
-                    // ??游??芋撘?
+                    // 啟用擴展思考模式
                     thinkingConfig: {
-                        thinkingBudget: 16384  // 16K tokens for thinking (?航矽?游 32K)
+                        thinkingBudget: 16384  // 16K tokens for thinking (可調整到 32K)
                     }
                 },
             }),
@@ -496,7 +456,7 @@ const callGeminiDeepThinkingAPI = async (prompt: string, apiKey: string): Promis
     }
 
     const data = await response.json();
-    // 瘛勗漲?芋撘?賢 parts 銝剖???thinking ?典?嚗????敺? text
+    // 深度思考模式可能在 parts 中包含 thinking 部分，我們只取最後的 text
     const parts = data.candidates?.[0]?.content?.parts || [];
     const textPart = parts.find((p: { text?: string }) => p.text) || parts[parts.length - 1];
     return textPart?.text || "{}";
@@ -518,7 +478,7 @@ const callOpenAIAPI = async (prompt: string, apiKey: string): Promise<string> =>
 
     if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error?.message || "OpenAI API ?航炊");
+        throw new Error(error.error?.message || "OpenAI API 錯誤");
     }
 
     const data = await response.json();
@@ -542,7 +502,7 @@ const callClaudeAPI = async (prompt: string, apiKey: string): Promise<string> =>
 
     if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error?.message || "Claude API ?航炊");
+        throw new Error(error.error?.message || "Claude API 錯誤");
     }
 
     const data = await response.json();
@@ -564,21 +524,20 @@ const callXaiAPI = async (prompt: string, apiKey: string): Promise<string> => {
 
     if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error?.message || "xAI API ?航炊");
+        throw new Error(error.error?.message || "xAI API 錯誤");
     }
 
     const data = await response.json();
     return data.choices?.[0]?.message?.content || "{}";
 };
 
-// Ollama ?砍璅∪? API嚗?鞎鳴??閬?圈?銵?Ollama嚗?
-// 瘜冽?嚗陛??prompt ?踹? JSON ?澆?閬?嚗?唳芋?捆???
+// Ollama 本地模型 API（免費，需要本地運行 Ollama）
+// 注意：簡化 prompt 避免 JSON 格式要求，本地模型容易出錯
 const callOllamaAPI = async (prompt: string, _apiKey: string): Promise<string> => {
-    void _apiKey;
     const OLLAMA_URL = process.env.NEXT_PUBLIC_OLLAMA_URL || "http://localhost:11434";
     const MODEL_NAME = process.env.NEXT_PUBLIC_OLLAMA_MODEL || "formosa1";
 
-    // 蝪∪? prompt嚗宏?方??? JSON ?澆?閬?
+    // 簡化 prompt：移除複雜的 JSON 格式要求
     const simplifiedPrompt = simplifyPromptForLocalModel(prompt);
 
     try {
@@ -597,62 +556,63 @@ const callOllamaAPI = async (prompt: string, _apiKey: string): Promise<string> =
         });
 
         if (!response.ok) {
-            throw new Error(`Ollama ?航炊: ${response.status}`);
+            throw new Error(`Ollama 錯誤: ${response.status}`);
         }
 
         const data = await response.json();
         const rawResponse = data.response || "";
 
-        // ?岫撠?嗉?閮??頧???JSON 蝯?
+        // 嘗試將自然語言回應轉換成 JSON 結構
         return wrapResponseAsJson(rawResponse);
     } catch (error) {
         if (error instanceof TypeError && error.message.includes('fetch')) {
-            throw new Error("?⊥?????Ollama??蝣箄? Ollama 甇??? (ollama serve)");
+            throw new Error("無法連接到 Ollama。請確認 Ollama 正在運行 (ollama serve)");
         }
         throw error;
     }
 };
 
 /**
- * 蝪∪? prompt 蝯行?唳芋??蝘駁 JSON ?澆?閬?嚗?
+ * 簡化 prompt 給本地模型（移除 JSON 格式要求）
  */
 function simplifyPromptForLocalModel(prompt: string): string {
-    // Remove JSON-format instructions and code-fence blocks for local-model robustness.
+    // 移除 JSON 格式相關的指令
     let simplified = prompt
-        .replace(/請.*?JSON.*?(回覆|輸出|格式)/gi, "")
-        .replace(/JSON\s*(格式|輸出|回覆)?/gi, "")
-        .replace(/```json[\s\S]*?```/gi, "")
-        .replace(/\{[\s\S]*?"stance"[\s\S]*?\}/g, "");
+        .replace(/請以\s*JSON\s*格式(回覆|輸出|回應)/gi, "")
+        .replace(/JSON\s*格式/gi, "")
+        .replace(/```json[\s\S]*?```/g, "")
+        .replace(/\{[\s\S]*?"stance"[\s\S]*?\}/g, ""); // 移除模板 JSON
 
-    simplified += "\n\n請直接用自然語言回答，不要輸出 JSON，也不要使用程式碼區塊。";
+    // 添加簡單的指示
+    simplified += "\n\n請用自然的中文直接回答，不需要特殊格式。請簡潔扼要。";
 
     return simplified;
 }
 
 /**
- * 撠?嗉?閮??????JSON 蝯?
+ * 將自然語言回應包裝成 JSON 結構
  */
 function wrapResponseAsJson(rawResponse: string): string {
-    // ??閰西圾??? JSON
+    // 先嘗試解析現有的 JSON
     try {
         JSON.parse(rawResponse);
-        return rawResponse; // 撌脩??舀???JSON
+        return rawResponse; // 已經是有效 JSON
     } catch {
-        // 銝 JSON嚗?鋆?蝯?
+        // 不是 JSON，包裝成結構
     }
 
-    // 敺?markdown code block ??
+    // 從 markdown code block 提取
     const jsonMatch = rawResponse.match(/```json\s*([\s\S]*?)\s*```/);
     if (jsonMatch?.[1]) {
         try {
             JSON.parse(jsonMatch[1]);
             return jsonMatch[1];
         } catch {
-            // 蝜潛???
+            // 繼續包裝
         }
     }
 
-    // ???陛?桃? JSON 蝯?
+    // 包裝成簡單的 JSON 結構
     const cleanedResponse = rawResponse
         .replace(/\n+/g, ' ')
         .replace(/"/g, '\\"')
@@ -660,8 +620,8 @@ function wrapResponseAsJson(rawResponse: string): string {
 
     return JSON.stringify({
         stance: cleanedResponse.slice(0, 200),
-        core_value: "?砍璅∪???",
-        blind_spot: "蝪∪?璅∪?",
+        core_value: "本地模型回應",
+        blind_spot: "簡化模式",
     });
 }
 
@@ -691,49 +651,15 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
     const [loadingPhase, setLoadingPhase] = useState<string>("");
     const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set());
     const [soulState, setSoulState] = useState<SoulState>(getInitialSoulState());
-    const [councilMode, setCouncilMode] = useState<CouncilMode>("hybrid"); // Always start with default for SSR
-    const [isMounted, setIsMounted] = useState(false);
-    const [chatActiveMode, setChatActiveMode] = useState<ChatActiveMode>(
-        USE_BACKEND_CHAT ? "backend" : "legacy_provider"
-    );
-    const [fallbackReasonCode, setFallbackReasonCode] = useState<BackendFallbackReasonCode | null>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
-    const providerRequiresApiKey = apiSettings ? isApiKeyRequired(apiSettings.provider) : true;
-    const hasProviderCredential = Boolean(apiSettings?.apiKey?.trim()) || apiSettings?.provider === "ollama";
 
-    const shouldShowApiKeyHint =
-        providerRequiresApiKey
-        && !apiSettings?.apiKey?.trim()
-        && (
-            !USE_BACKEND_CHAT
-            || (ENABLE_PROVIDER_FALLBACK && (chatActiveMode === "fallback" || fallbackReasonCode !== null))
-        );
-
-    // Only load from localStorage after mount (client-side only)
-    useEffect(() => {
-        setIsMounted(true);
-        const persistedMode = loadPersistedCouncilMode();
-        if (persistedMode) {
-            setCouncilMode(persistedMode);
-        } else {
-            // Use env default if no persisted value
-            const envDefault = normalizeCouncilMode(process.env.NEXT_PUBLIC_COUNCIL_MODE_DEFAULT);
-            setCouncilMode(envDefault);
-        }
-    }, []);
-
-    useEffect(() => {
-        if (!isMounted) return; // Don't save during SSR or before mount
-        window.localStorage.setItem(COUNCIL_MODE_STORAGE_KEY, councilMode);
-    }, [councilMode, isMounted]);
-
-    // 頛?????
+    // 載入靈魂狀態
     useEffect(() => {
         const loaded = loadSoulState();
         setSoulState(loaded);
     }, []);
 
-    // 頛撠店閮
+    // 載入對話訊息
     useEffect(() => {
         if (conversation) {
             setMessages(conversation.messages.map(m => ({
@@ -743,62 +669,11 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
         } else {
             setMessages([]);
         }
-    }, [conversation]);
+    }, [conversation?.id]);
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
-
-    useEffect(() => {
-        if (!USE_BACKEND_CHAT) return;
-
-        let cancelled = false;
-        const probeBackendHealth = async () => {
-            try {
-                const response = await fetch("/api/backend-health", {
-                    method: "GET",
-                    cache: "no-store",
-                });
-
-                let payload: BackendHealthProbePayload | null = null;
-                try {
-                    payload = (await response.json()) as BackendHealthProbePayload;
-                } catch {
-                    payload = null;
-                }
-
-                if (cancelled) return;
-
-                if (response.ok && payload?.ok) {
-                    setChatActiveMode("backend");
-                    setFallbackReasonCode(null);
-                    return;
-                }
-
-                const reasonCode = classifyBackendFallbackReason(
-                    payload?.reason ?? payload?.config_issue ?? `backend status ${response.status}`
-                );
-                setFallbackReasonCode(reasonCode);
-                if (ENABLE_PROVIDER_FALLBACK) {
-                    setChatActiveMode("fallback");
-                }
-            } catch (error) {
-                if (cancelled) return;
-                setFallbackReasonCode(classifyBackendFallbackReason(error));
-                if (ENABLE_PROVIDER_FALLBACK) {
-                    setChatActiveMode("fallback");
-                }
-            }
-        };
-
-        void probeBackendHealth();
-        const interval = window.setInterval(probeBackendHealth, 30_000);
-
-        return () => {
-            cancelled = true;
-            window.clearInterval(interval);
-        };
-    }, []);
 
     const toggleDeliberation = (nodeId: string) => {
         setExpandedNodes(prev => {
@@ -814,9 +689,17 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
 
     const getHistoryContext = () => {
         return messages.slice(-6).map(m =>
-            `[${m.role === 'user' ? '?冽' : 'AI'}]: ${(m.content || '').slice(0, 150)}`
+            `[${m.role === 'user' ? '用戶' : 'AI'}]: ${(m.content || '').slice(0, 150)}`
         ).join('\n');
     };
+
+    // 根據提供者選擇 API 調用函數
+    const CHAT_EXECUTION_MODE =
+        (process.env.NEXT_PUBLIC_CHAT_EXECUTION_MODE || "").toLowerCase()
+        || (process.env.NEXT_PUBLIC_BACKEND_CHAT_FIRST === "0" ? "legacy_provider" : "backend");
+    const USE_BACKEND_CHAT = CHAT_EXECUTION_MODE !== "legacy_provider";
+    const ENABLE_PROVIDER_FALLBACK = process.env.NEXT_PUBLIC_ENABLE_PROVIDER_FALLBACK === "1";
+    const SHOULD_SHOW_API_KEY_HINT = !USE_BACKEND_CHAT;
 
     const callBackendChat = async (
         userMessage: string,
@@ -836,30 +719,6 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
                 message: userMessage,
                 history,
                 full_analysis: fullAnalysis,
-                council_mode: councilMode,
-                persona: personaConfig
-                    ? {
-                        name: personaConfig.name,
-                        style: personaConfig.style,
-                        weights: personaConfig.weights,
-                        risk_sensitivity: personaConfig.riskSensitivity,
-                        response_length: personaConfig.responseLength,
-                        custom_roles: (personaConfig.customRoles || [])
-                            .map((role) => ({
-                                id: role.id,
-                                name: role.name,
-                                description: role.description,
-                                prompt_hint: role.promptHint,
-                                attachments: (role.attachments || []).map((attachment) => ({
-                                    id: attachment.id,
-                                    label: attachment.label,
-                                    path: attachment.path,
-                                    note: attachment.note,
-                                })),
-                            }))
-                            .filter((role) => role.name || role.description || role.prompt_hint || role.attachments.length > 0),
-                    }
-                    : undefined,
             }),
         });
 
@@ -879,15 +738,34 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
             typeof payload.response === "string"
                 ? payload.response
                 : "Backend did not return response text.";
+        const rootSemanticContradictions = Array.isArray(payload.semantic_contradictions)
+            ? (payload.semantic_contradictions as Array<Record<string, unknown>>)
+            : [];
+        const rootSemanticGraphSummary =
+            payload.semantic_graph_summary && typeof payload.semantic_graph_summary === "object"
+                ? (payload.semantic_graph_summary as Record<string, unknown>)
+                : {};
         const deliberation =
             payload.deliberation && typeof payload.deliberation === "object"
-                ? (payload.deliberation as DeliberationData)
+                ? ({
+                    ...(payload.deliberation as DeliberationData),
+                    semantic_contradictions: Array.isArray(
+                        (payload.deliberation as DeliberationData).semantic_contradictions
+                    )
+                        ? (payload.deliberation as DeliberationData).semantic_contradictions
+                        : rootSemanticContradictions,
+                    semantic_graph_summary:
+                        (payload.deliberation as DeliberationData).semantic_graph_summary
+                        && typeof (payload.deliberation as DeliberationData).semantic_graph_summary === "object"
+                            ? (payload.deliberation as DeliberationData).semantic_graph_summary
+                            : rootSemanticGraphSummary,
+                } as DeliberationData)
                 : undefined;
 
         return { response: responseText, deliberation };
     };
     const getCallAPI = () => {
-        // Ollama 銝?閬?API Key
+        // Ollama 不需要 API Key
         if (apiSettings?.provider === "ollama") {
             return (prompt: string) => callOllamaAPI(prompt, "");
         }
@@ -901,50 +779,50 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
         }
     };
 
-    // 瘛勗漲??API嚗??Synthesizer嚗???thinkingBudget嚗?
+    // 深度思考 API（用於 Synthesizer，啟用 thinkingBudget）
     const getDeepCallAPI = () => {
         if (!apiSettings?.apiKey) return null;
-        // ?芣? Gemini ?舀 thinkingBudget嚗隞?provider 雿輻璅? API
+        // 只有 Gemini 支援 thinkingBudget，其他 provider 使用標準 API
         if (apiSettings.provider === "gemini") {
             return (prompt: string) => callGeminiDeepThinkingAPI(prompt, apiSettings.apiKey);
         }
-        // ?嗡? provider fallback ?唳?皞?API
+        // 其他 provider fallback 到標準 API
         return getCallAPI();
     };
 
-    // ==================== 敹恍芋撘??桐?隤輻 ====================
+    // ==================== 快速模式：單一調用 ====================
     const performFastMode = async (userMessage: string): Promise<{
         response: string;
         deliberation: undefined;
     }> => {
         const callAPI = getCallAPI();
-        if (!callAPI) throw new Error("隢?閮剖? API Key");
+        if (!callAPI) throw new Error("請先設定 API Key");
 
-        setLoadingPhase("?葉...");
+        setLoadingPhase("思考中...");
 
         const context = getHistoryContext();
         const raw = await callAPI(FAST_MODE_PROMPT(userMessage, context));
         const parsed = safeJsonParse<{ response: string; thinking: string }>(raw);
 
         if (!parsed) {
-            // 憒?閫??憭望?嚗?乩蝙?典?憪???
+            // 如果解析失敗，直接使用原始回應
             return { response: raw, deliberation: undefined };
         }
 
         return { response: parsed.response, deliberation: undefined };
     };
 
-    // ==================== ?詨?嚗?頝臭蒂銵祟霅?====================
+    // ==================== 核心：三路並行審議 ====================
     const performMultiPathDeliberation = async (userMessage: string): Promise<{
         response: string;
         deliberation: DeliberationData;
     }> => {
         const callAPI = getCallAPI();
-        if (!callAPI) throw new Error("隢?閮剖? API Key");
+        if (!callAPI) throw new Error("請先設定 API Key");
 
         const context = getHistoryContext();
 
-        // ?? 閮瘜典嚗炎蝝Ｙ?風?脫?撖?
+        // 📚 記憶注入：檢索相關歷史洞察
         let memoryContext = '';
         try {
             const relevantMemories = await findRelevantMemories(userMessage, 2);
@@ -956,13 +834,13 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
             console.warn('[ToneSoul] Memory retrieval failed:', err);
         }
 
-        // ?蔥撠店?窗????
+        // 合併對話脈絡與記憶
         const fullContext = memoryContext + context;
 
-        // Phase 1: 銝楝銝西?隤輻嚗釣??Persona 隤踵 + Soul ???
-        setLoadingPhase("?祇?霅唳??...");
+        // Phase 1: 三路並行調用（注入 Persona 調整 + Soul 狀態）
+        setLoadingPhase("召集議會成員...");
 
-        // ? Soul Engine: ???批??耨憌曇?
+        // 🔮 Soul Engine: 生成內在狀態修飾語
         const soulMod = generateSoulPromptModifier(soulState);
         if (soulMod) {
             console.log('[ToneSoul] Soul modifier active:', soulState.soulMode);
@@ -971,12 +849,11 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
         const philosopherMod = getPersonaModifier(personaConfig, 'philosopher');
         const engineerMod = getPersonaModifier(personaConfig, 'engineer');
         const guardianMod = getPersonaModifier(personaConfig, 'guardian');
-        const customRoleMod = getCustomRoleModifier(personaConfig);
 
         const [philosopherRaw, engineerRaw, guardianRaw] = await Promise.all([
-            callAPI(PHILOSOPHER_PROMPT(userMessage, fullContext) + philosopherMod + customRoleMod + soulMod),
-            callAPI(ENGINEER_PROMPT(userMessage, fullContext) + engineerMod + customRoleMod + soulMod),
-            callAPI(GUARDIAN_PROMPT(userMessage, fullContext) + guardianMod + customRoleMod + soulMod),
+            callAPI(PHILOSOPHER_PROMPT(userMessage, fullContext) + philosopherMod + soulMod),
+            callAPI(ENGINEER_PROMPT(userMessage, fullContext) + engineerMod + soulMod),
+            callAPI(GUARDIAN_PROMPT(userMessage, fullContext) + guardianMod + soulMod),
         ]);
 
         const philosopher = safeJsonParse<{
@@ -987,7 +864,7 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
             blind_spot: string;
             benevolence_check?: string
         }>(philosopherRaw)
-            || { stance: "?⊥?閫????", core_value: "?芰", blind_spot: "閫??憭望?" };
+            || { stance: "無法解析回應", core_value: "未知", blind_spot: "解析失敗" };
         const engineer = safeJsonParse<{
             stance: string;
             feasibility: string;
@@ -996,7 +873,7 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
             blind_spot: string;
             benevolence_check?: string
         }>(engineerRaw)
-            || { stance: "?⊥?閫????", feasibility: "?芰", blind_spot: "閫??憭望?" };
+            || { stance: "無法解析回應", feasibility: "未知", blind_spot: "解析失敗" };
         const guardian = safeJsonParse<{
             stance: string;
             risk_level: string;
@@ -1006,9 +883,9 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
             blind_spot: string;
             benevolence_check?: string
         }>(guardianRaw)
-            || { stance: "?⊥?閫????", risk_level: "medium", conflict_point: "?芰", blind_spot: "閫??憭望?" };
+            || { stance: "無法解析回應", risk_level: "medium", conflict_point: "未知", blind_spot: "解析失敗" };
 
-        // ?? Debug: 瑼Ｘ霅唳???
+        // 🔍 Debug: 檢查議會回應
         console.log('[ToneSoul] Raw Philosopher:', philosopherRaw?.slice(0, 200));
         console.log('[ToneSoul] Parsed Philosopher:', philosopher);
         console.log('[ToneSoul] Raw Engineer:', engineerRaw?.slice(0, 200));
@@ -1016,14 +893,14 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
         console.log('[ToneSoul] Raw Guardian:', guardianRaw?.slice(0, 200));
         console.log('[ToneSoul] Parsed Guardian:', guardian);
 
-        // ??雿輻蝝?撘Ⅳ閮??迤??Entropy嚗?靘陷 LLM嚗?
+        // ⚡ 使用純程式碼計算真正的 Entropy（不依賴 LLM）
         const codeEntropy = calculateEntropy(philosopher, engineer, guardian);
         console.log('[ToneSoul] Code-based Entropy:', codeEntropy);
 
-        // Phase 2: Synthesizer 蝬?嚗蝙?冽楛摨行芋撘?
-        setLoadingPhase("Synthesizer 瘛勗漲?游?銝?..");
+        // Phase 2: Synthesizer 綜合（使用深度思考模式）
+        setLoadingPhase("Synthesizer 深度整合中...");
 
-        // 雿輻瘛勗漲??API嚗?6K thinkingBudget嚗?
+        // 使用深度思考 API（16K thinkingBudget）
         const deepCallAPI = getDeepCallAPI();
         const synthesizerAPI = deepCallAPI || callAPI;
         const synthesizerMod = getPersonaModifier(personaConfig, 'synthesizer');
@@ -1033,7 +910,7 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
             JSON.stringify(philosopher),
             JSON.stringify(engineer),
             JSON.stringify(guardian)
-        ) + synthesizerMod + customRoleMod);
+        ) + synthesizerMod);
 
         const synthesizer = safeJsonParse<{
             multiplex_conclusion?: {
@@ -1055,25 +932,25 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
             final_response: string;
             next_moves: { label: string; text: string }[];
         }>(synthesizerRaw) || {
-            entropy_analysis: codeEntropy, // 雿輻蝔?蝣潸?蝞? Entropy 雿?
-            decision_matrix: { user_hidden_intent: "?芰", ai_strategy_name: "璅???", intended_effect: "?芰", tone_tag: "neutral" },
-            final_response: synthesizerRaw || "抱歉，暫時無法完成完整綜合分析。",
+            entropy_analysis: codeEntropy, // 使用程式碼計算的 Entropy 作為回退
+            decision_matrix: { user_hidden_intent: "未知", ai_strategy_name: "標準回應", intended_effect: "未知", tone_tag: "neutral" },
+            final_response: synthesizerRaw || "抱歉，我無法生成回應。請重試。",
             next_moves: []
         };
 
         console.log('[ToneSoul] Multiplex Conclusion:', synthesizer.multiplex_conclusion);
 
-        // ?芸?雿輻蝔?蝣潸?蝞? Entropy嚗?舫?嚗?
+        // 優先使用程式碼計算的 Entropy（更可靠）
         const finalEntropy = {
             value: codeEntropy.value,
             status: codeEntropy.status,
             calculation_note: codeEntropy.calculation_note
         };
 
-        // ? TensionTensor 閮? (Yu-Hun 璅∪?: T = W ? E ? D)
+        // 🔮 TensionTensor 計算 (Yu-Hun 模型: T = W × E × D)
         const hasRiskWarning = guardian.risk_level === 'high' ||
-            guardian.stance.includes('憸券') ||
-            guardian.stance.includes('?梢');
+            guardian.stance.includes('風險') ||
+            guardian.stance.includes('危險');
         const hasLogicalComplexity = philosopher.stance.length > 100 ||
             engineer.stance.length > 100;
 
@@ -1091,7 +968,7 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
 
         console.log('[ToneSoul] TensionTensor:', tensionTensor);
 
-        // 蝯?摰?祟霅唳??
+        // 組裝完整的審議數據
         const deliberation: DeliberationData = {
             council_chamber: {
                 philosopher: {
@@ -1122,7 +999,7 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
                 tone_tag: synthesizer.decision_matrix.tone_tag,
             },
             audit: synthesizer.audit ? (() => {
-                // 蝔?蝣潔漱??霅?LLM ??Audit ?芾?
+                // 程式碼交叉驗證 LLM 的 Audit 自評
                 const auditValidation = validateAudit({
                     finalResponse: synthesizer.final_response,
                     philosopherStance: philosopher.stance,
@@ -1160,7 +1037,7 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
                 })),
                 tension: {
                     level: (synthesizer.multiplex_conclusion.tension?.level || 'MEDIUM') as 'LOW' | 'MEDIUM' | 'HIGH',
-                    formula_ref: synthesizer.multiplex_conclusion.tension?.formula_ref || "ΔT = 1 - max(weight)",
+                    formula_ref: synthesizer.multiplex_conclusion.tension?.formula_ref || 'ΔT = 未計算',
                     weight_distribution: synthesizer.multiplex_conclusion.tension?.weight_distribution || ''
                 },
                 merge_strategy: (synthesizer.multiplex_conclusion.merge_strategy || 'PRESERVE_SHADOWS') as 'COLLAPSE' | 'PRESERVE_SHADOWS' | 'EXPLICIT_CONFLICT',
@@ -1172,7 +1049,7 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
             next_moves: synthesizer.next_moves,
         };
 
-        // ? Soul Auditor: 撖抵??蝯???衣泵??SOUL.md
+        // 🔮 Soul Auditor: 審計最終回應是否符合 SOUL.md
         const previousResponses = messages
             .filter(m => m.role === 'assistant')
             .map(m => m.content || '')
@@ -1184,7 +1061,7 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
             previousResponses
         );
 
-        // 閮?撖抵??亥?
+        // 記錄審計日誌
         saveAuditLog({
             sessionId: conversation?.id || 'unknown',
             turn: messages.length,
@@ -1193,11 +1070,11 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
             result: auditResult,
         });
 
-        // 憒????閬???霅血?
+        // 如果有嚴重違規，附加警告
         let finalResponse = synthesizer.final_response;
         if (!auditResult.passed && auditResult.violations.some(v => v.severity === 'high')) {
             console.warn('[Auditor] High severity violation detected!');
-            finalResponse += '\n\n---\n?? *撖抵?瘜冽?: ' + auditResult.auditNote + '*';
+            finalResponse += '\n\n---\n⚠️ *審計注意: ' + auditResult.auditNote + '*';
         }
 
         return {
@@ -1217,14 +1094,14 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
     const runLegacyProviderFlow = async (
         userMessage: string
     ): Promise<{ response: string; deliberation: DeliberationData | undefined }> => {
-        if (providerRequiresApiKey && !hasProviderCredential) {
+        if (!apiSettings?.apiKey) {
             return {
-                response: "請先設定 API Key，才能使用雲端模型進行回應。",
+                response: "請先設定 API Key 才能使用 AI 對話功能。點擊側邊欄的 API 設定按鈕。",
                 deliberation: undefined,
             };
         }
 
-        if (apiSettings?.mode === "fast") {
+        if (apiSettings.mode === "fast") {
             return await performFastMode(userMessage);
         }
         const deliberationResult = await performMultiPathDeliberation(userMessage);
@@ -1234,7 +1111,7 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
         };
     };
 
-    const sendMessage = async () => {
+    const sendMessage = useCallback(async () => {
         if (!input.trim() || isLoading || !conversation) return;
 
         const userMessage: Message = {
@@ -1247,62 +1124,24 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
         setMessages(prev => [...prev, userMessage]);
         setInput("");
         setIsLoading(true);
-        setLoadingPhase(USE_BACKEND_CHAT ? "?郊敺垢銝?.." : (apiSettings?.mode === "fast" ? "?葉..." : "??撖抵降..."));
+        setLoadingPhase(USE_BACKEND_CHAT ? "同步後端中..." : (apiSettings?.mode === "fast" ? "思考中..." : "啟動審議..."));
 
         try {
             let result: { response: string; deliberation: DeliberationData | undefined };
 
             if (USE_BACKEND_CHAT) {
                 const fullAnalysis = apiSettings?.mode !== "fast";
-
-                // If we already know the backend is unavailable and we can fallback, skip the backend call
-                // to avoid waiting for request timeouts on every turn.
-                if (ENABLE_PROVIDER_FALLBACK && chatActiveMode === "fallback") {
-                    setChatActiveMode("fallback");
-                    if (hasProviderCredential) {
-                        setLoadingPhase("敺垢銝?剁?雿輻?湔 API...");
-                    } else {
-                        setLoadingPhase("敺垢銝?剁?隢?閮剖? API Key...");
-                    }
-                    result = await runLegacyProviderFlow(userMessage.content);
-                } else {
-                    try {
-                        const backendResult = await callBackendChat(userMessage.content, fullAnalysis);
-                        if (isBackendDegradedResponse(backendResult.response)) {
-                            if (ENABLE_PROVIDER_FALLBACK && hasProviderCredential) {
-                                setChatActiveMode("fallback");
-                                setFallbackReasonCode("backend_error");
-                                setLoadingPhase("敺垢璅∪?銝?剁????喟??API...");
-                                result = await runLegacyProviderFlow(userMessage.content);
-                            } else {
-                                // No key (or fallback disabled): surface backend degraded state directly.
-                                setChatActiveMode("backend");
-                                setFallbackReasonCode("backend_error");
-                                result = backendResult;
-                            }
-                        } else {
-                            result = backendResult;
-                            setChatActiveMode("backend");
-                            setFallbackReasonCode(null);
-                        }
-                    } catch (backendErr) {
-                        const reasonCode = classifyBackendFallbackReason(backendErr);
+                try {
+                    result = await callBackendChat(userMessage.content, fullAnalysis);
+                } catch (backendErr) {
+                    if (ENABLE_PROVIDER_FALLBACK) {
                         console.warn("[ToneSoul] Backend chat unavailable, fallback to legacy provider flow.", backendErr);
-                        if (ENABLE_PROVIDER_FALLBACK) {
-                            setChatActiveMode("fallback");
-                            setFallbackReasonCode(reasonCode);
-                            setLoadingPhase("敺垢銝?剁????喟??API...");
-                            result = await runLegacyProviderFlow(userMessage.content);
-                        } else {
-                            setChatActiveMode("backend");
-                            setFallbackReasonCode(reasonCode);
-                            throw backendErr;
-                        }
+                        result = await runLegacyProviderFlow(userMessage.content);
+                    } else {
+                        throw backendErr;
                     }
                 }
             } else {
-                setChatActiveMode("legacy_provider");
-                setFallbackReasonCode(null);
                 result = await runLegacyProviderFlow(userMessage.content);
             }
 
@@ -1317,7 +1156,7 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
             const newMessages = [...messages, userMessage, assistantMessage];
             setMessages(newMessages.map(m => ({ ...m, timestamp: new Date(m.timestamp) })));
 
-            // ?脣???IndexedDB
+            // 儲存到 IndexedDB
             const updatedConversation: Conversation = {
                 ...conversation,
                 title: conversation.messages.length === 0
@@ -1329,26 +1168,10 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
                     timestamp: m.timestamp.getTime(),
                 })),
             };
-            // Guard against resurrecting a conversation that the user deleted while a request was in-flight.
-            // If it no longer exists in IndexedDB, we skip persistence + state update for that conversation.
-            let shouldPersist = true;
-            try {
-                shouldPersist = (await getConversation(updatedConversation.id)) !== null;
-            } catch (error) {
-                // If the existence check fails, we still attempt to persist to avoid data loss.
-                console.error("[ToneSoul] Conversation existence check failed:", error);
-            }
+            await saveConversation(updatedConversation);
+            onConversationUpdate(updatedConversation);
 
-            if (!shouldPersist) {
-                console.warn(
-                    "[ToneSoul] Conversation deleted during in-flight update; skipping persistence."
-                );
-            } else {
-                await saveConversation(updatedConversation);
-                onConversationUpdate(updatedConversation);
-            }
-
-            // ?湔?????撘萄?蝛? + ?批撽?嚗?
+            // 更新靈魂狀態（張力積分 + 內在驅動）
             if (result.deliberation?.entropy_meter) {
                 const tensionRecord: TensionRecord = {
                     turn: newMessages.length,
@@ -1367,7 +1190,7 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
                 console.log('[ToneSoul] Soul State updated:', newSoulState.soulMode, 'Integral:', newSoulState.tensionIntegral.toFixed(2));
             }
 
-            // ?芸?撅???啁?撖抵降
+            // 自動展開最新的審議
             setExpandedNodes(prev => new Set(prev).add(assistantMessage.id));
 
         } catch (error) {
@@ -1375,7 +1198,7 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
             const errorMessage: Message = {
                 id: `msg_${Date.now()}_error`,
                 role: "assistant",
-                content: `?航炊嚗?{error instanceof Error ? error.message : "???憭望?"}`,
+                content: `錯誤：${error instanceof Error ? error.message : "連線失敗"}`,
                 timestamp: new Date(),
             };
             setMessages(prev => [...prev, errorMessage]);
@@ -1383,7 +1206,7 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
             setIsLoading(false);
             setLoadingPhase("");
         }
-    };
+    }, [input, isLoading, conversation, apiSettings, messages, onConversationUpdate]);
 
     const handleSuggestionClick = (text: string) => {
         setInput(text);
@@ -1393,73 +1216,40 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
         return (
             <div className="flex flex-col h-full bg-slate-50 items-center justify-center text-slate-400">
                 <MessageSquare className="w-16 h-16 mb-4 opacity-30" />
-                <p className="text-lg font-medium">請先選擇一個對話</p>
-                <p className="text-sm">建立或切換對話後，就可以開始傳送訊息。</p>
+                <p className="text-lg font-medium">選擇或建立對話</p>
+                <p className="text-sm">從左側選擇現有對話，或點擊「新對話」開始</p>
             </div>
         );
     }
 
     return (
         <div className="flex flex-col h-full bg-slate-50">
-            {/* ?予璅∪????蝷箏 */}
-            <div className="bg-slate-900/5 border-b border-slate-200 px-4 py-1.5 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                    {chatActiveMode === "backend" ? (
-                        <span className="flex items-center gap-1.5 text-[11px] font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                            <Server className="w-3 h-3" />
-                            隤?敺垢霅唳?
-                        </span>
-                    ) : chatActiveMode === "fallback" ? (
-                        <span className="flex items-center gap-1.5 text-[11px] font-medium text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
-                            <Zap className="w-3 h-3" />
-                            ?湔 API嚗?蝡臭??舐嚗?
-                        </span>
-                    ) : (
-                        <span className="flex items-center gap-1.5 text-[11px] font-medium text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
-                            <Zap className="w-3 h-3" />
-                            ?湔 API 鈭箸?降
-                        </span>
-                    )}
-                    {fallbackReasonCode && (
-                        <span className="text-[10px] text-amber-600 flex items-center gap-1">
-                            <WifiOff className="w-3 h-3" />
-                            {BACKEND_FALLBACK_REASON_LABEL[fallbackReasonCode]}
-                        </span>
-                    )}
-                </div>
-                <div className="text-[10px] text-slate-400">
-                    {USE_BACKEND_CHAT
-                        ? (ENABLE_PROVIDER_FALLBACK ? "Backend + Fallback" : "Backend Only")
-                        : "Legacy Provider API"}
-                </div>
-            </div>
-
-            {/* API Key ?? */}
-            {shouldShowApiKeyHint && (
+            {/* API Key 提醒 */}
+            {SHOULD_SHOW_API_KEY_HINT && !apiSettings?.apiKey && (
                 <div className="bg-amber-50 border-b border-amber-200 px-4 py-2 flex items-center gap-2 text-sm text-amber-800">
                     <AlertTriangle className="w-4 h-4" />
-                    <span>請先設定 API Key，才能使用雲端模型回應。可在 API 設定中填入。</span>
+                    <span>請先設定 API Key 才能使用 AI 對話。點擊側邊欄 API 設定。</span>
                 </div>
             )}
 
-            {/* ?????蝷箏 */}
+            {/* 靈魂狀態指示器 */}
             {soulState.totalTurns > 0 && (
                 <div className="bg-gray-900/5 border-b border-gray-200 px-4 py-2 flex items-center justify-between">
                     <SoulDriveMeter soulState={soulState} compact />
                     <div className="text-[10px] text-gray-400">
-                        Tension ?? {(soulState.tensionIntegral * 100).toFixed(0)}%
+                        Tension ∫: {(soulState.tensionIntegral * 100).toFixed(0)}%
                     </div>
                 </div>
             )}
 
-            {/* 閮?” */}
+            {/* 訊息列表 */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {messages.length === 0 && (
                     <div className="flex flex-col items-center justify-center h-64 text-slate-400">
                         <Users className="w-16 h-16 mb-4 opacity-30" />
                         <p className="text-lg font-medium">ToneSoul Multi-Path Deliberation</p>
-                        <p className="text-sm">銝楝銝西?撖抵降 ??瘥?閮隤輻 4 甈?API</p>
-                        <p className="text-xs mt-2 text-slate-300">Philosopher ? Engineer ? Guardian ??Synthesizer</p>
+                        <p className="text-sm">三路並行審議 — 每條訊息調用 4 次 API</p>
+                        <p className="text-xs mt-2 text-slate-300">Philosopher × Engineer × Guardian → Synthesizer</p>
                     </div>
                 )}
 
@@ -1473,24 +1263,24 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
                                 <p className="leading-relaxed">{message.content}</p>
                             ) : (
                                 <>
-                                    {/* AI ???批捆 */}
+                                    {/* AI 回應內容 */}
                                     <div className="p-5">
                                         <p className="text-slate-800 leading-relaxed text-lg">
                                             {message.content}
                                         </p>
                                     </div>
 
-                                    {/* ?批撖抵降撅?? */}
+                                    {/* 內在審議展開區 */}
                                     {message.deliberation && (
                                         <>
                                             <div className="border-t border-slate-100">
-                                                <button type="button"
+                                                <button
                                                     onClick={() => toggleDeliberation(message.id)}
                                                     className="w-full px-5 py-3 flex items-center justify-between text-sm text-slate-500 hover:bg-slate-50 transition-colors"
                                                 >
                                                     <span className="flex items-center gap-2">
                                                         <Brain className="w-4 h-4" />
-                                                        憭楝敺祟霅?(4 甈∠蝡?API 隤輻)
+                                                        多路徑審議 (4 次獨立 API 調用)
                                                     </span>
                                                     {expandedNodes.has(message.id) ? (
                                                         <ChevronUp className="w-4 h-4" />
@@ -1502,7 +1292,7 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
 
                                             {expandedNodes.has(message.id) && (
                                                 <div className="bg-slate-50/50 border-t border-slate-100 p-5 space-y-4">
-                                                    {/* 撘萄??銵?*/}
+                                                    {/* 張力儀表 */}
                                                     {message.deliberation.entropy_meter && (
                                                         <SoulStateMeter
                                                             value={message.deliberation.entropy_meter.value}
@@ -1510,7 +1300,7 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
                                                         />
                                                     )}
 
-                                                    {/* 霅唳?撱?*/}
+                                                    {/* 議會廳 */}
                                                     {message.deliberation.council_chamber && (
                                                         <CouncilChamber
                                                             philosopher={message.deliberation.council_chamber.philosopher}
@@ -1519,7 +1309,7 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
                                                         />
                                                     )}
 
-                                                    {/* ?啗??銵冽 */}
+                                                    {/* 戰術儀表板 */}
                                                     {message.deliberation.decision_matrix && (
                                                         <TacticalDashboard matrix={{
                                                             user_hidden_intent: message.deliberation.decision_matrix.user_hidden_intent,
@@ -1529,17 +1319,17 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
                                                         }} />
                                                     )}
 
-                                                    {/* vMT-2601 ?摩?啣蔣 */}
+                                                    {/* vMT-2601 邏輯陰影 */}
                                                     {message.deliberation.multiplex_conclusion && (
                                                         <LogicalShadows data={message.deliberation.multiplex_conclusion} />
                                                     )}
 
-                                                    {/* 撖抵??勗? */}
+                                                    {/* 審計報告 */}
                                                     {message.deliberation.audit && (
                                                         <div className="bg-white/60 p-4 rounded-lg border border-emerald-200">
                                                             <div className="flex items-center justify-between mb-3">
                                                                 <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                                                                    ?怎?撖抵? (Audit)
+                                                                    倫理審計 (Audit)
                                                                 </span>
                                                                 <span className={`px-2 py-1 rounded-full text-xs font-bold ${message.deliberation.audit.audit_verdict === 'Pass'
                                                                     ? 'bg-emerald-100 text-emerald-700'
@@ -1550,7 +1340,7 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
                                                             </div>
                                                             <div className="flex items-center gap-4 mb-2">
                                                                 <div className="flex items-center gap-2">
-                                                                    <span className="text-xs text-slate-500">隤祕?:</span>
+                                                                    <span className="text-xs text-slate-500">誠實分數:</span>
                                                                     <span className="text-sm font-bold text-slate-700">
                                                                         {(message.deliberation.audit.honesty_score * 100).toFixed(0)}%
                                                                     </span>
@@ -1563,14 +1353,87 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
                                                             )}
                                                         </div>
                                                     )}
+
+                                                    {/* 語義矛盾列表 */}
+                                                    {Array.isArray(message.deliberation.semantic_contradictions)
+                                                        && message.deliberation.semantic_contradictions.length > 0 && (
+                                                            <div className="bg-white/60 p-4 rounded-lg border border-rose-200">
+                                                                <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-3">
+                                                                    語義矛盾 (Semantic Contradictions)
+                                                                </div>
+                                                                <div className="space-y-2">
+                                                                    {message.deliberation.semantic_contradictions.slice(0, 5).map((row, idx) => {
+                                                                        const item = row && typeof row === "object"
+                                                                            ? (row as Record<string, unknown>)
+                                                                            : {};
+                                                                        const description = typeof item.description === "string"
+                                                                            ? item.description
+                                                                            : (typeof item.summary === "string"
+                                                                                ? item.summary
+                                                                                : JSON.stringify(item));
+                                                                        return (
+                                                                            <div key={idx} className="text-xs text-slate-700 bg-rose-50 rounded-md border border-rose-100 px-3 py-2">
+                                                                                {description || "Detected contradiction without description."}
+                                                                            </div>
+                                                                        );
+                                                                    })}
+                                                                </div>
+                                                            </div>
+                                                        )}
+
+                                                    {/* 語義圖譜摘要 */}
+                                                    {message.deliberation.semantic_graph_summary
+                                                        && Object.keys(message.deliberation.semantic_graph_summary).length > 0 && (
+                                                            <div className="bg-white/60 p-4 rounded-lg border border-indigo-200">
+                                                                <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-3">
+                                                                    語義圖譜摘要 (Semantic Graph Summary)
+                                                                </div>
+                                                                <pre className="text-xs text-slate-700 whitespace-pre-wrap break-words bg-indigo-50 border border-indigo-100 rounded-md p-3 overflow-x-auto">
+                                                                    {JSON.stringify(message.deliberation.semantic_graph_summary, null, 2)}
+                                                                </pre>
+                                                            </div>
+                                                        )}
+
+                                                    {/* 視覺鏈快照 */}
+                                                    {message.deliberation.visual_chain_snapshot
+                                                        && (
+                                                            !!message.deliberation.visual_chain_snapshot.title
+                                                            || !!message.deliberation.visual_chain_snapshot.mermaid
+                                                            || (
+                                                                message.deliberation.visual_chain_snapshot.data
+                                                                && Object.keys(message.deliberation.visual_chain_snapshot.data).length > 0
+                                                            )
+                                                        ) && (
+                                                            <div className="bg-white/60 p-4 rounded-lg border border-cyan-200">
+                                                                <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">
+                                                                    視覺鏈快照 (Visual Chain Snapshot)
+                                                                </div>
+                                                                {message.deliberation.visual_chain_snapshot.title && (
+                                                                    <p className="text-xs text-slate-700 mb-2">
+                                                                        {message.deliberation.visual_chain_snapshot.title}
+                                                                    </p>
+                                                                )}
+                                                                {message.deliberation.visual_chain_snapshot.mermaid && (
+                                                                    <pre className="text-xs text-slate-700 whitespace-pre-wrap break-words bg-cyan-50 border border-cyan-100 rounded-md p-3 overflow-x-auto mb-2">
+                                                                        {message.deliberation.visual_chain_snapshot.mermaid}
+                                                                    </pre>
+                                                                )}
+                                                                {message.deliberation.visual_chain_snapshot.data
+                                                                    && Object.keys(message.deliberation.visual_chain_snapshot.data).length > 0 && (
+                                                                        <pre className="text-xs text-slate-700 whitespace-pre-wrap break-words bg-cyan-50 border border-cyan-100 rounded-md p-3 overflow-x-auto">
+                                                                            {JSON.stringify(message.deliberation.visual_chain_snapshot.data, null, 2)}
+                                                                        </pre>
+                                                                    )}
+                                                            </div>
+                                                        )}
                                                 </div>
                                             )}
 
-                                            {/* 撱箄降頝?*/}
+                                            {/* 建議跟進 */}
                                             {message.deliberation.next_moves && message.deliberation.next_moves.length > 0 && (
                                                 <div className="px-5 pb-4 flex flex-wrap gap-2 border-t border-slate-100 pt-3">
                                                     {message.deliberation.next_moves.map((move, idx) => (
-                                                        <button type="button"
+                                                        <button
                                                             key={idx}
                                                             onClick={() => handleSuggestionClick(move.text)}
                                                             className="text-xs flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 hover:bg-indigo-50 text-slate-600 hover:text-indigo-600 transition-colors border border-slate-200 hover:border-indigo-200 group"
@@ -1608,43 +1471,19 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
                 <div ref={messagesEndRef} />
             </div>
 
-            {/* 頛詨? */}
+            {/* 輸入區 */}
             <div className="p-4 border-t border-slate-200 bg-white">
-                {USE_BACKEND_CHAT && (
-                    <div className="mb-3 flex items-center justify-end gap-2">
-                        <span className="text-xs text-slate-500">Council 璅∪?</span>
-                        <select
-                            value={councilMode}
-                            onChange={(event) => setCouncilMode(normalizeCouncilMode(event.target.value))}
-                            disabled={isLoading}
-                            className="text-xs px-2 py-1 rounded-md border border-slate-300 bg-white text-slate-700 disabled:opacity-50"
-                        >
-                            {COUNCIL_MODE_OPTIONS.map((option) => (
-                                <option key={option.value} value={option.value}>
-                                    {option.label}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                )}
                 <div className="flex gap-3">
                     <input
                         type="text"
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
-                        onKeyDown={(e) => {
-                            // Keep IME composition (e.g. 銝剜?頛詨瘜摮? from triggering send.
-                            if (e.nativeEvent.isComposing) return;
-                            if (e.key === "Enter") {
-                                e.preventDefault();
-                                void sendMessage();
-                            }
-                        }}
-                        placeholder="頛詨閮隞亙???頝臬祟霅?.."
+                        onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && sendMessage()}
+                        placeholder="輸入訊息以啟動三路審議..."
                         disabled={isLoading}
                         className="flex-1 px-4 py-3 bg-slate-100 rounded-xl border-0 focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all disabled:opacity-50"
                     />
-                    <button type="button"
+                    <button
                         onClick={sendMessage}
                         disabled={isLoading || !input.trim()}
                         className="px-4 py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-lg shadow-indigo-200"
@@ -1660,6 +1499,4 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
         </div>
     );
 }
-
-
 

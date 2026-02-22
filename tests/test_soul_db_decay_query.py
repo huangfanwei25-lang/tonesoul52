@@ -98,6 +98,37 @@ def test_sqlite_query_decay_supports_threshold_and_limit(tmp_path):
     assert recent_id not in strict_ids
 
 
+def test_sqlite_decay_prefilter_keeps_old_accessed_records(tmp_path):
+    source = MemorySource.SELF_JOURNAL
+    db = SqliteSoulDB(db_path=tmp_path / "soul.db")
+    now = datetime(2026, 2, 13, tzinfo=timezone.utc)
+
+    old_accessed_id = db.append(
+        source,
+        {
+            "timestamp": _iso_z(now - timedelta(days=180)),
+            "statement": "very old but reinforced by access",
+            "relevance_score": 0.05,
+            "access_count": 3,
+        },
+    )
+    old_stale_id = db.append(
+        source,
+        {
+            "timestamp": _iso_z(now - timedelta(days=180)),
+            "statement": "very old and stale",
+            "relevance_score": 0.2,
+            "access_count": 0,
+        },
+    )
+
+    decayed = list(db.query(source, apply_decay=True, now=now))
+    decayed_ids = [record.record_id for record in decayed]
+
+    assert old_accessed_id in decayed_ids
+    assert old_stale_id not in decayed_ids
+
+
 @pytest.mark.parametrize(
     "db_factory",
     [

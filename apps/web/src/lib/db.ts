@@ -78,6 +78,18 @@ export interface DeliberationData {
         merge_strategy: 'COLLAPSE' | 'PRESERVE_SHADOWS' | 'EXPLICIT_CONFLICT';
         merge_note: string;
     };
+    semantic_contradictions?: Array<Record<string, unknown>>;
+    semantic_graph_summary?: Record<string, unknown>;
+    visual_chain_snapshot?: {
+        frame_id?: string;
+        frame_type?: string;
+        title?: string;
+        created_at?: string;
+        branch?: string;
+        tags?: string[];
+        data?: Record<string, unknown>;
+        mermaid?: string;
+    };
     final_synthesis?: {
         response_text: string;
     };
