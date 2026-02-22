@@ -20,6 +20,15 @@ def test_build_check_commands_includes_persona_swarm_strict_check() -> None:
     ]
 
 
+def test_build_check_commands_includes_memory_quality_strict_check() -> None:
+    commands = monthly._build_check_commands(allow_missing_discussion=False)
+    assert commands["memory_quality"] == [
+        monthly.sys.executable,
+        "scripts/run_memory_quality_report.py",
+        "--strict",
+    ]
+
+
 def test_display_command_normalizes_python_executable() -> None:
     command = [
         r"C:\\Users\\user\\Desktop\\repo\\.venv\\Scripts\\python.exe",

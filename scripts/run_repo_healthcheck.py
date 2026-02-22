@@ -189,6 +189,14 @@ def _build_check_specs(
             ],
         },
         {
+            "name": "memory_quality",
+            "command": [
+                python_executable,
+                "scripts/run_memory_quality_report.py",
+                "--strict",
+            ],
+        },
+        {
             "name": "audit_7d",
             "command": verify_7d_cmd,
         },

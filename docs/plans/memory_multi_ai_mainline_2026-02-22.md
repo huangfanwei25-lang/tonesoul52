@@ -95,8 +95,8 @@ ToneSoul 後續主線：
 - 成功標準：每次主線流程可看到分歧來源與處理結果
 
 ## Phase M4: 失敗可學習
-- [ ] 將 block/declare_stance 個案自動回寫到學習樣本
-- [ ] 定期輸出 memory quality 報告
+- [x] 將 block/declare_stance 個案自動回寫到學習樣本
+- [x] 定期輸出 memory quality 報告
 - 成功標準：失敗案例能系統化降低重犯率
 
 ---

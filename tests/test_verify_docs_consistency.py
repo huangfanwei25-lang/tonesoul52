@@ -126,6 +126,7 @@ def _write_repo_healthcheck_runner_script(
     include_persona_swarm_check: bool = True,
     include_external_source_registry_check: bool = True,
     include_multi_agent_divergence_check: bool = True,
+    include_memory_quality_check: bool = True,
 ) -> None:
     persona_swarm_block = (
         "    specs.append(\n"
@@ -157,6 +158,16 @@ def _write_repo_healthcheck_runner_script(
         if include_multi_agent_divergence_check
         else ""
     )
+    memory_quality_block = (
+        "    specs.append(\n"
+        "        {\n"
+        '            "name": "memory_quality",\n'
+        '            "command": [python_executable, "scripts/run_memory_quality_report.py", "--strict"],\n'
+        "        }\n"
+        "    )\n"
+        if include_memory_quality_check
+        else ""
+    )
     _write(
         path,
         (
@@ -177,6 +188,7 @@ def _write_repo_healthcheck_runner_script(
             f"{persona_swarm_block}"
             f"{source_registry_block}"
             f"{divergence_block}"
+            f"{memory_quality_block}"
             "    return specs\n"
         ),
     )
@@ -333,6 +345,7 @@ def test_build_report_passes_when_thresholds_and_curated_refs_align(tmp_path: Pa
         "has_persona_swarm_check": True,
         "has_external_source_registry_check": True,
         "has_multi_agent_divergence_check": True,
+        "has_memory_quality_check": True,
     }
     assert report["docs_freshness"] == {
         "repo_structure_exists": True,
@@ -684,6 +697,42 @@ def test_build_report_fails_when_repo_healthcheck_runner_missing_multi_agent_div
     report = docs_consistency.build_report(tmp_path)
     assert report["ok"] is False
     assert any("runner missing multi-agent divergence check" in issue for issue in report["issues"])
+
+
+def test_build_report_fails_when_repo_healthcheck_runner_missing_memory_quality_check(
+    tmp_path: Path,
+) -> None:
+    _write(
+        tmp_path / "scripts" / "verify_7d.py",
+        "RDD_MIN_CASES = 20\nDDD_DISCUSSION_PATH='memory/agent_discussion_curated.jsonl'\n",
+    )
+    _write(tmp_path / ".github" / "workflows" / "test.yml", "threshold = 20\n")
+    _write(
+        tmp_path / ".github" / "workflows" / "monthly_consolidation.yml",
+        "on:\n  schedule:\n    - cron: '30 3 1 * *'\njobs:\n  c:\n    steps:\n      - run: python scripts/run_monthly_consolidation.py --strict --allow-missing-discussion\n",
+    )
+    _write(
+        tmp_path / ".github" / "workflows" / "git_hygiene.yml",
+        "on:\n  schedule:\n    - cron: '0 4 * * 1'\njobs:\n  g:\n    steps:\n      - run: python scripts/verify_git_hygiene.py\n      - uses: actions/upload-artifact@v4\n",
+    )
+    _write_repo_healthcheck_workflow(tmp_path / ".github" / "workflows" / "repo_healthcheck.yml")
+    _write_repo_healthcheck_dispatch_script(
+        tmp_path / "scripts" / "run_repo_healthcheck_dispatch.py"
+    )
+    _write_repo_healthcheck_runner_script(
+        tmp_path / "scripts" / "run_repo_healthcheck.py",
+        include_memory_quality_check=False,
+    )
+    _write(tmp_path / "docs" / "7D_AUDIT_FRAMEWORK.md", "minimum 20 tests\n")
+    _write(
+        tmp_path / "docs" / "7D_EXECUTION_SPEC.md",
+        "at least 20 cases\npython tools/agent_discussion_tool.py audit --path memory/agent_discussion_curated.jsonl\n",
+    )
+    _write_status_readme(tmp_path / "docs" / "status" / "README.md")
+
+    report = docs_consistency.build_report(tmp_path)
+    assert report["ok"] is False
+    assert any("runner missing memory quality check" in issue for issue in report["issues"])
 
 
 def test_build_report_fails_when_repo_healthcheck_tokens_only_exist_in_notes(

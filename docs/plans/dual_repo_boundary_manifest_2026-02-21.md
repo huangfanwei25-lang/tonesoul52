@@ -31,6 +31,8 @@
   - `external_source_registry_latest.json` / `external_source_registry_latest.md`
   - `dual_track_boundary_latest.json` / `dual_track_boundary_latest.md`
   - `multi_agent_divergence_latest.json` / `multi_agent_divergence_latest.md`
+  - `memory_quality_latest.json` / `memory_quality_latest.md`
+  - `memory_learning_samples_latest.jsonl`（脫敏樣本）
 - `.github/workflows/`（公開 CI）
 
 ### B. 私有倉必留（Private-only）

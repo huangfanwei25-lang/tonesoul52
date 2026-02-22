@@ -122,6 +122,9 @@ def test_repo_healthcheck_workflow_has_default_and_dispatch_runners() -> None:
     assert "docs/status/persona_swarm_framework_latest.json" in path_value
     assert "docs/status/multi_agent_divergence_latest.json" in path_value
     assert "docs/status/multi_agent_divergence_latest.md" in path_value
+    assert "docs/status/memory_quality_latest.json" in path_value
+    assert "docs/status/memory_quality_latest.md" in path_value
+    assert "docs/status/memory_learning_samples_latest.jsonl" in path_value
     assert "docs/status/dual_track_boundary_latest.json" in path_value
     assert "docs/status/dual_track_boundary_latest.md" in path_value
 
