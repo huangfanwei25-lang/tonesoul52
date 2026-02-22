@@ -3,6 +3,7 @@ import {
     envFlag,
     getBackendUrl,
     getConfiguredBackendUrl,
+    isSameOriginMode,
     isVercelRuntime,
     validateVercelBackendConfig,
 } from "../_shared/backendConfig";
@@ -84,6 +85,8 @@ function resolveRetryBaseDelayMs(): number {
 }
 
 function shouldAllowMockFallback(): boolean {
+    // In same-origin mode, always allow mock fallback as the primary response mode
+    if (isSameOriginMode()) return true;
     return envFlag(MOCK_FALLBACK_ENV, false);
 }
 

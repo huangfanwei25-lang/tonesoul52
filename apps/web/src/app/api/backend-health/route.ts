@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import {
     getBackendUrl,
     getConfiguredBackendUrl,
+    isSameOriginMode,
     isVercelRuntime,
     validateVercelBackendConfig,
 } from "../_shared/backendConfig";
@@ -57,6 +58,7 @@ async function probeBackendHealth(backendUrl: string): Promise<BackendProbeResul
 }
 
 export async function GET() {
+    const sameOrigin = isSameOriginMode();
     const backendUrl = getBackendUrl();
     const configuredBackendUrl = getConfiguredBackendUrl();
 
@@ -91,7 +93,8 @@ export async function GET() {
 
     return NextResponse.json({
         ok: true,
-        backend_url: backendUrl,
+        backend_url: sameOrigin ? "same-origin" : backendUrl,
+        backend_mode: sameOrigin ? "same_origin" : "external_backend",
         backend_status: probe.status,
         checked_at: new Date().toISOString(),
     });
