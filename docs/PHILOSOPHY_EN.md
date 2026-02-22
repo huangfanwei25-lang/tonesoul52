@@ -121,11 +121,11 @@ print(result.to_api_response())  # Includes internal debate transparency
 
 ## 🔗 References
 
-1. Zhang, A. L., Kraska, T., & Khattab, O. (2025). *Recursive Language Models*. arXiv:2512.24601.
+1. Zhang, A. L., Kraska, T., & Khattab, O. (2025). *Recursive Language Models*. arXiv:2512.24601. [Concept / Not peer-reviewed]
 
-2. Liang, X., et al. (2024). *Encouraging Divergent Thinking in Large Language Models through Multi-Agent Debate*. arXiv:2305.19118.
+2. Liang, X., et al. (2024). *Encouraging Divergent Thinking in Large Language Models through Multi-Agent Debate*. arXiv:2305.19118. [Concept / Not peer-reviewed]
 
-3. Van Oijen, J. A., & Bhulai, S. (2024). *Prompting LLMs to Compose Meta-CoT Prompts by Leveraging Multi-Perspective Perspectives*. arXiv:2411.18654.
+3. Yu, S., Xu, X., Deng, K., Li, L., & Tian, L. (2025). *Tree of Agents: Improving Long-Context Capabilities of Large Language Models through Multi-Perspective Reasoning*. Findings of EMNLP 2025. https://aclanthology.org/2025.findings-emnlp.246/
 
 ---
 
