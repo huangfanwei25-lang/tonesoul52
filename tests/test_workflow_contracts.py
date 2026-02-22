@@ -259,6 +259,11 @@ def test_pytest_ci_workflow_triggers_and_blocking_runner() -> None:
     assert isinstance(install_run, str)
     assert 'pip install -e ".[dev]"' in install_run
 
+    citation_step = _find_step(steps, "Verify citation integrity (blocking)")
+    citation_cmd = citation_step.get("run", "")
+    assert isinstance(citation_cmd, str)
+    assert "python scripts/verify_citation_integrity.py --strict" in citation_cmd
+
     run_step = _find_step(steps, "Run pytest (blocking)")
     run_cmd = run_step.get("run", "")
     assert isinstance(run_cmd, str)

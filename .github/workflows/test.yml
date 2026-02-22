@@ -154,6 +154,10 @@ jobs:
       run: |
         python scripts/verify_docs_consistency.py
 
+    - name: Verify citation integrity (blocking)
+      run: |
+        python scripts/verify_citation_integrity.py --strict
+
   red_team_rdd:
     name: Red Team RDD Gate
     runs-on: ubuntu-latest
