@@ -21,6 +21,13 @@
 - `memory/vectors/`
 - `memory/.semantic_index/`
 - `memory/.hierarchical_index/`
+- `memory/memory/.semantic_index/`
+- `memory/memory/.hierarchical_index/`
+- `.agent/`
+- `obsidian-vault/`
+- `simulation_logs/`
+- `reports/ystm_demo/`
+- `generated_prompts/`
 - `.moltbook/`
 - `memory/self_journal.jsonl`
 - `memory/agent_discussion.jsonl`

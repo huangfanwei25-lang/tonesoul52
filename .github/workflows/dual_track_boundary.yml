@@ -40,18 +40,18 @@ jobs:
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             base_ref="origin/${{ github.base_ref }}"
             git fetch origin "${{ github.base_ref }}" --depth=1
-            git diff --name-status --diff-filter=ACMRD "$base_ref...HEAD" > changed_files.txt
+            git -c core.quotepath=off diff --name-status --diff-filter=ACMRD "$base_ref...HEAD" > changed_files.txt
           elif [ "${{ github.event_name }}" = "push" ]; then
             before_sha="${{ github.event.before }}"
             if [ -n "$before_sha" ] && [ "$before_sha" != "0000000000000000000000000000000000000000" ] && git cat-file -t "$before_sha" >/dev/null 2>&1; then
-              git diff --name-status --diff-filter=ACMRD "$before_sha...HEAD" > changed_files.txt
+              git -c core.quotepath=off diff --name-status --diff-filter=ACMRD "$before_sha...HEAD" > changed_files.txt
             else
               # Fallback: before_sha missing (force-push) or initial push
               echo "::warning::before_sha ($before_sha) not found in history (force-push?). Falling back to HEAD-only diff."
-              git show --pretty=format: --name-status --diff-filter=ACMRD HEAD > changed_files.txt
+              git -c core.quotepath=off show --pretty=format: --name-status --diff-filter=ACMRD HEAD > changed_files.txt
             fi
           else
-            git show --pretty=format: --name-status --diff-filter=ACMRD HEAD > changed_files.txt
+            git -c core.quotepath=off show --pretty=format: --name-status --diff-filter=ACMRD HEAD > changed_files.txt
           fi
           wc -l changed_files.txt
 

@@ -39,6 +39,13 @@
 - `memory/vectors/`
 - `memory/.semantic_index/`
 - `memory/.hierarchical_index/`
+- `memory/memory/.semantic_index/`
+- `memory/memory/.hierarchical_index/`
+- `.agent/`
+- `obsidian-vault/`
+- `simulation_logs/`
+- `reports/ystm_demo/`
+- `generated_prompts/`
 - `.moltbook/`
 
 ### C. 介面層（公開保留介面，私有保留實作）

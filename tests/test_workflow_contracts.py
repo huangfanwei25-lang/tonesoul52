@@ -286,7 +286,7 @@ def test_dual_track_boundary_workflow_triggers_and_blocking_runner() -> None:
     resolve_step = _find_step(steps, "Resolve changed files")
     resolve_cmd = resolve_step.get("run", "")
     assert isinstance(resolve_cmd, str)
-    assert "git diff --name-status --diff-filter=ACMRD" in resolve_cmd
+    assert "core.quotepath=off diff --name-status --diff-filter=ACMRD" in resolve_cmd
     assert "changed_files.txt" in resolve_cmd
 
     run_step = _find_step(steps, "Run dual-track boundary check (blocking)")

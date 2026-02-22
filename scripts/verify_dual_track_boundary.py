@@ -7,6 +7,7 @@ Blocks public-repo changes that touch private-track paths.
 from __future__ import annotations
 
 import argparse
+import codecs
 import json
 import os
 import subprocess
@@ -26,6 +27,13 @@ DEFAULT_BLOCKED_PREFIXES = (
     "memory/vectors/",
     "memory/.semantic_index/",
     "memory/.hierarchical_index/",
+    "memory/memory/.semantic_index/",
+    "memory/memory/.hierarchical_index/",
+    ".agent/",
+    "obsidian-vault/",
+    "simulation_logs/",
+    "reports/ystm_demo/",
+    "generated_prompts/",
     ".moltbook/",
 )
 DEFAULT_BLOCKED_FILES = (
@@ -76,7 +84,21 @@ def _run_command(command: list[str], cwd: Path) -> tuple[int, str, str]:
 
 
 def _normalize_path(path: str) -> str:
-    normalized = path.replace("\\", "/").strip()
+    normalized = path.strip()
+    if len(normalized) >= 2 and normalized.startswith('"') and normalized.endswith('"'):
+        unquoted = normalized[1:-1]
+        try:
+            # Git may quote non-ascii paths as C-style octal escapes when core.quotepath=true.
+            decoded = codecs.decode(unquoted, "unicode_escape")
+            try:
+                decoded = decoded.encode("latin-1").decode("utf-8")
+            except UnicodeError:
+                # Keep partially decoded output if utf-8 roundtrip is unavailable.
+                pass
+            normalized = decoded
+        except Exception:
+            normalized = unquoted
+    normalized = normalized.replace("\\", "/").strip()
     while normalized.startswith("./"):
         normalized = normalized[2:]
     return normalized
@@ -215,12 +237,30 @@ def _collect_changed_paths(
         }
 
     if staged:
-        command = ["git", "diff", "--name-status", "--cached", "--diff-filter=ACMRD"]
+        command = [
+            "git",
+            "-c",
+            "core.quotepath=off",
+            "diff",
+            "--name-status",
+            "--cached",
+            "--diff-filter=ACMRD",
+        ]
     elif base_ref:
-        command = ["git", "diff", "--name-status", "--diff-filter=ACMRD", f"{base_ref}...HEAD"]
+        command = [
+            "git",
+            "-c",
+            "core.quotepath=off",
+            "diff",
+            "--name-status",
+            "--diff-filter=ACMRD",
+            f"{base_ref}...HEAD",
+        ]
     else:
         command = [
             "git",
+            "-c",
+            "core.quotepath=off",
             "show",
             "--pretty=format:",
             "--name-status",

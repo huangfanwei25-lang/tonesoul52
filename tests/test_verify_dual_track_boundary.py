@@ -3,6 +3,22 @@ from pathlib import Path
 import scripts.verify_dual_track_boundary as boundary
 
 
+def test_default_blocked_prefixes_cover_private_surfaces() -> None:
+    prefixes = set(boundary.DEFAULT_BLOCKED_PREFIXES)
+    assert ".agent/" in prefixes
+    assert "obsidian-vault/" in prefixes
+    assert "simulation_logs/" in prefixes
+    assert "reports/ystm_demo/" in prefixes
+    assert "generated_prompts/" in prefixes
+
+
+def test_normalize_path_decodes_git_quoted_octal_path() -> None:
+    normalized = boundary._normalize_path('"obsidian-vault/\\350\\252\\236\\351\\255\\202.md"')
+    assert normalized.startswith("obsidian-vault/")
+    assert normalized.endswith(".md")
+    assert '"' not in normalized
+
+
 def test_match_block_rule_supports_exact_file_and_prefix() -> None:
     blocked_prefixes = ["memory/handoff/", "tonesoul_evolution/"]
     blocked_files = ["memory/agent_discussion.jsonl"]
@@ -222,3 +238,22 @@ def test_build_report_allows_break_glass_but_emits_warning() -> None:
     assert report["metrics"]["violation_count"] == 1
     assert report["issues"] == []
     assert any("break-glass mode" in warning for warning in report["warnings"])
+
+
+def test_build_report_blocks_obsidian_vault_paths() -> None:
+    collection = {
+        "ok": True,
+        "mode": "explicit",
+        "paths": ["obsidian-vault/00-Index/Index.md"],
+    }
+    report = boundary.build_report(
+        repo_root=Path("."),
+        collection=collection,
+        blocked_prefixes=["obsidian-vault/"],
+        blocked_files=[],
+        allow_private_paths=False,
+    )
+
+    assert report["overall_ok"] is False
+    assert report["metrics"]["violation_count"] == 1
+    assert report["violations"][0]["path"] == "obsidian-vault/00-Index/Index.md"
