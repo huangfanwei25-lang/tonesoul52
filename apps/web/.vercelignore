@@ -2,3 +2,7 @@
 # We currently run Next.js-only deployment with same-origin + mock fallback.
 api/
 requirements.txt
+node_modules/
+.next/
+.vercel/
+.vercel.bak/

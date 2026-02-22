@@ -39,15 +39,21 @@ export function isSameOriginMode(): boolean {
 
 /**
  * Resolve the backend URL.
- * - On Vercel with same-origin mode: use the deployment's own HTTPS URL + backend prefix
+ * - On Vercel with same-origin mode: prefer project production URL + backend prefix
  * - With explicit TONESOUL_BACKEND_URL: use that
  * - Local development fallback: http://127.0.0.1:5000
  */
 export function getBackendUrl(): string {
     if (isSameOriginMode()) {
+        const productionUrl = (process.env["VERCEL_PROJECT_PRODUCTION_URL"] || "").trim();
+        if (productionUrl) {
+            return `https://${productionUrl}${SAME_ORIGIN_BACKEND_PREFIX}`;
+        }
         const vercelUrl = (process.env["VERCEL_URL"] || "").trim();
-        const host = vercelUrl || "vercel.local";
-        return `https://${host}${SAME_ORIGIN_BACKEND_PREFIX}`;
+        if (vercelUrl) {
+            return `https://${vercelUrl}${SAME_ORIGIN_BACKEND_PREFIX}`;
+        }
+        return SAME_ORIGIN_BACKEND_PREFIX;
     }
     return getConfiguredBackendUrl() ?? LOCAL_FALLBACK_URL;
 }

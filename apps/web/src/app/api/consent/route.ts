@@ -3,6 +3,7 @@ import {
     envFlag,
     getBackendUrl,
     getConfiguredBackendUrl,
+    isSameOriginMode,
     isVercelRuntime,
     validateVercelBackendConfig,
 } from "../_shared/backendConfig";
@@ -11,7 +12,41 @@ const REQUEST_TIMEOUT_MS = 10000;
 const MOCK_FALLBACK_ENV = "TONESOUL_ENABLE_CONSENT_MOCK_FALLBACK";
 
 function shouldAllowMockFallback(): boolean {
+    if (isSameOriginMode()) return true;
     return envFlag(MOCK_FALLBACK_ENV, false);
+}
+
+function buildConsentPostFallback(
+    body: Record<string, unknown>,
+    fallbackReason: string
+): Record<string, unknown> {
+    const consentType = typeof body.consent_type === "string" ? body.consent_type : "standard";
+    const sessionId =
+        typeof body.session_id === "string" && body.session_id.trim()
+            ? body.session_id
+            : `session_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
+    return {
+        success: true,
+        session_id: sessionId,
+        consent_type: consentType,
+        consent_version: "1.0",
+        timestamp: new Date().toISOString(),
+        backend_mode: "mock_fallback",
+        fallback_reason: fallbackReason,
+    };
+}
+
+function buildConsentDeleteFallback(
+    sessionId: string,
+    fallbackReason: string
+): Record<string, unknown> {
+    return {
+        success: true,
+        message: "Consent withdrawn and data deleted",
+        session_id: sessionId,
+        backend_mode: "mock_fallback",
+        fallback_reason: fallbackReason,
+    };
 }
 
 async function forwardToBackend(
@@ -75,17 +110,11 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const consentType = typeof body.consent_type === "string" ? body.consent_type : "standard";
-        const sessionId = `session_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
-        return NextResponse.json({
-            success: true,
-            session_id: sessionId,
-            consent_type: consentType,
-            consent_version: "1.0",
-            timestamp: new Date().toISOString(),
-            backend_mode: "mock_fallback",
-            fallback_reason: "transport_failure",
-        });
+        return NextResponse.json(buildConsentPostFallback(body, "transport_failure"));
+    }
+
+    if (!backendResponse.ok && shouldAllowMockFallback()) {
+        return NextResponse.json(buildConsentPostFallback(body, `backend_http_${backendResponse.status}`));
     }
 
     const text = await backendResponse.text();
@@ -97,6 +126,9 @@ export async function POST(request: NextRequest) {
         const payload = JSON.parse(text);
         return NextResponse.json(payload, { status: backendResponse.status });
     } catch {
+        if (shouldAllowMockFallback()) {
+            return NextResponse.json(buildConsentPostFallback(body, "invalid_backend_json"));
+        }
         return NextResponse.json(
             { error: "Backend returned invalid JSON", backend_status: backendResponse.status },
             { status: 502 }
@@ -155,13 +187,13 @@ export async function DELETE(request: NextRequest) {
             );
         }
 
-        return NextResponse.json({
-            success: true,
-            message: "Consent withdrawn and data deleted",
-            session_id: sessionId,
-            backend_mode: "mock_fallback",
-            fallback_reason: "transport_failure",
-        });
+        return NextResponse.json(buildConsentDeleteFallback(sessionId, "transport_failure"));
+    }
+
+    if (!backendResponse.ok && shouldAllowMockFallback()) {
+        return NextResponse.json(
+            buildConsentDeleteFallback(sessionId, `backend_http_${backendResponse.status}`)
+        );
     }
 
     const text = await backendResponse.text();
@@ -173,6 +205,9 @@ export async function DELETE(request: NextRequest) {
         const payload = JSON.parse(text);
         return NextResponse.json(payload, { status: backendResponse.status });
     } catch {
+        if (shouldAllowMockFallback()) {
+            return NextResponse.json(buildConsentDeleteFallback(sessionId, "invalid_backend_json"));
+        }
         return NextResponse.json(
             { error: "Backend returned invalid JSON", backend_status: backendResponse.status },
             { status: 502 }

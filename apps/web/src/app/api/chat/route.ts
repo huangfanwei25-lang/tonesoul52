@@ -334,6 +334,24 @@ function generateMockResponse(message: string): string {
     return "I understand. Let me respond with a clear and practical next-step proposal.";
 }
 
+function buildChatFallbackPayload(
+    body: ChatRequestPayload,
+    fallbackReason: string
+): Record<string, unknown> {
+    const message = String(body.message || "");
+    const conversationId =
+        typeof body.conversation_id === "string" ? body.conversation_id : "mock-conversation";
+
+    return {
+        response: generateMockResponse(message),
+        conversation_id: conversationId,
+        deliberation: generateMockDeliberation(message),
+        timestamp: new Date().toISOString(),
+        backend_mode: "mock_fallback",
+        fallback_reason: fallbackReason,
+    };
+}
+
 async function forwardToBackend(backendUrl: string, body: ChatRequestPayload): Promise<Response> {
     const retryMaxAttempts = resolveRetryMaxAttempts();
     const retryBaseDelayMs = resolveRetryBaseDelayMs();
@@ -430,25 +448,18 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const message = String(body.message || "");
-        const conversationId =
-            typeof body.conversation_id === "string" ? body.conversation_id : "mock-conversation";
+        return NextResponse.json(buildChatFallbackPayload(body, "transport_failure"));
+    }
 
-        const mockResponse = generateMockResponse(message);
-        const mockDeliberation = generateMockDeliberation(message);
-
-        return NextResponse.json({
-            response: mockResponse,
-            conversation_id: conversationId,
-            deliberation: mockDeliberation,
-            timestamp: new Date().toISOString(),
-            backend_mode: "mock_fallback",
-            fallback_reason: "transport_failure",
-        });
+    if (!backendResponse.ok && shouldAllowMockFallback()) {
+        return NextResponse.json(buildChatFallbackPayload(body, `backend_http_${backendResponse.status}`));
     }
 
     const text = await backendResponse.text();
     if (!text) {
+        if (shouldAllowMockFallback()) {
+            return NextResponse.json(buildChatFallbackPayload(body, "empty_backend_body"));
+        }
         return NextResponse.json({}, { status: backendResponse.status });
     }
 
@@ -456,6 +467,9 @@ export async function POST(request: NextRequest) {
         const payload = JSON.parse(text);
         return NextResponse.json(payload, { status: backendResponse.status });
     } catch {
+        if (shouldAllowMockFallback()) {
+            return NextResponse.json(buildChatFallbackPayload(body, "invalid_backend_json"));
+        }
         return NextResponse.json(
             { error: "Backend returned invalid JSON", backend_status: backendResponse.status },
             { status: 502 }

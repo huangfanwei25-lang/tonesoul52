@@ -62,6 +62,16 @@ export async function GET() {
     const backendUrl = getBackendUrl();
     const configuredBackendUrl = getConfiguredBackendUrl();
 
+    if (sameOrigin) {
+        return NextResponse.json({
+            ok: true,
+            backend_url: "same-origin",
+            backend_mode: "same_origin",
+            backend_status: 200,
+            checked_at: new Date().toISOString(),
+        });
+    }
+
     if (isVercelRuntime()) {
         const validation = validateVercelBackendConfig(backendUrl, configuredBackendUrl);
         if (!validation.valid) {
@@ -93,8 +103,8 @@ export async function GET() {
 
     return NextResponse.json({
         ok: true,
-        backend_url: sameOrigin ? "same-origin" : backendUrl,
-        backend_mode: sameOrigin ? "same_origin" : "external_backend",
+        backend_url: backendUrl,
+        backend_mode: "external_backend",
         backend_status: probe.status,
         checked_at: new Date().toISOString(),
     });

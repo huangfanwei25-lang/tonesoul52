@@ -3,6 +3,7 @@ import {
     envFlag,
     getBackendUrl,
     getConfiguredBackendUrl,
+    isSameOriginMode,
     isVercelRuntime,
     validateVercelBackendConfig,
 } from "../_shared/backendConfig";
@@ -11,6 +12,7 @@ const REQUEST_TIMEOUT_MS = 12000;
 const MOCK_FALLBACK_ENV = "TONESOUL_ENABLE_SESSION_REPORT_MOCK_FALLBACK";
 
 function shouldAllowMockFallback(): boolean {
+    if (isSameOriginMode()) return true;
     return envFlag(MOCK_FALLBACK_ENV, false);
 }
 
@@ -135,6 +137,16 @@ export async function POST(request: NextRequest) {
         });
     }
 
+    if (!backendResponse.ok && shouldAllowMockFallback()) {
+        const report = buildFallbackReport(history);
+        return NextResponse.json({
+            success: true,
+            report,
+            backend_mode: "mock_fallback",
+            fallback_reason: `backend_http_${backendResponse.status}`,
+        });
+    }
+
     const text = await backendResponse.text();
     if (!text) {
         return NextResponse.json({}, { status: backendResponse.status });
@@ -144,6 +156,15 @@ export async function POST(request: NextRequest) {
         const payload = JSON.parse(text);
         return NextResponse.json(payload, { status: backendResponse.status });
     } catch {
+        if (shouldAllowMockFallback()) {
+            const report = buildFallbackReport(history);
+            return NextResponse.json({
+                success: true,
+                report,
+                backend_mode: "mock_fallback",
+                fallback_reason: "invalid_backend_json",
+            });
+        }
         return NextResponse.json(
             { error: "Backend returned invalid JSON", backend_status: backendResponse.status },
             { status: 502 }
