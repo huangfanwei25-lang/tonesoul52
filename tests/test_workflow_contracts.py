@@ -13,6 +13,7 @@ PERSONA_SWARM_DISPATCH_SCRIPT_PATH = Path("scripts/run_persona_swarm_dispatch.py
 EXTERNAL_SOURCE_WORKFLOW_PATH = Path(".github/workflows/external_source_registry.yml")
 PYTEST_CI_WORKFLOW_PATH = Path(".github/workflows/pytest-ci.yml")
 DUAL_TRACK_BOUNDARY_WORKFLOW_PATH = Path(".github/workflows/dual_track_boundary.yml")
+GIT_HYGIENE_WORKFLOW_PATH = Path(".github/workflows/git_hygiene.yml")
 
 
 def _load_yaml(path: Path) -> dict[str, Any]:
@@ -285,7 +286,7 @@ def test_dual_track_boundary_workflow_triggers_and_blocking_runner() -> None:
     resolve_step = _find_step(steps, "Resolve changed files")
     resolve_cmd = resolve_step.get("run", "")
     assert isinstance(resolve_cmd, str)
-    assert "git diff --name-only --diff-filter=ACMRD" in resolve_cmd
+    assert "git diff --name-status --diff-filter=ACMRD" in resolve_cmd
     assert "changed_files.txt" in resolve_cmd
 
     run_step = _find_step(steps, "Run dual-track boundary check (blocking)")
@@ -308,3 +309,12 @@ def test_dual_track_boundary_workflow_uploads_artifacts() -> None:
     assert "changed_files.txt" in path_value
     assert "docs/status/dual_track_boundary_latest.json" in path_value
     assert "docs/status/dual_track_boundary_latest.md" in path_value
+
+
+def test_git_hygiene_workflow_uses_strict_threshold_28() -> None:
+    payload = _load_yaml(GIT_HYGIENE_WORKFLOW_PATH)
+    steps = _job_steps(payload, "hygiene")
+    run_step = _find_step(steps, "Run git hygiene snapshot (blocking)")
+    run_cmd = run_step.get("run", "")
+    assert isinstance(run_cmd, str)
+    assert "python scripts/verify_git_hygiene.py --strict --max-tracked-ignored 28" in run_cmd

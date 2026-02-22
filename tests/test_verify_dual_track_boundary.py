@@ -62,6 +62,58 @@ def test_collect_changed_paths_supports_file_list(tmp_path: Path) -> None:
     assert payload["paths"] == ["memory/handoff/a.md", "tonesoul/council/runtime.py"]
 
 
+def test_collect_changed_paths_supports_name_status_file_list(tmp_path: Path) -> None:
+    changed_file_list = tmp_path / "changed.txt"
+    changed_file_list.write_text(
+        "D\tmemory/handoff/old.md\n"
+        "R100\tmemory/handoff/private.md\tdocs/public.md\n"
+        "M\ttonesoul/council/runtime.py\n",
+        encoding="utf-8",
+    )
+
+    payload = boundary._collect_changed_paths(
+        repo_root=tmp_path,
+        staged=False,
+        base_ref=None,
+        changed_file_list=changed_file_list,
+        changed_files=[],
+    )
+
+    assert payload["ok"] is True
+    assert payload["mode"] == "file_list"
+    entries = payload["entries"]
+    assert entries[0]["status"] == "D"
+    assert entries[0]["paths"] == ["memory/handoff/old.md"]
+    assert entries[1]["status"] == "R"
+    assert entries[1]["paths"] == ["memory/handoff/private.md", "docs/public.md"]
+    assert entries[2]["status"] == "M"
+    assert entries[2]["paths"] == ["tonesoul/council/runtime.py"]
+
+
+def test_collect_changed_paths_supports_utf16_name_status_file_list(tmp_path: Path) -> None:
+    changed_file_list = tmp_path / "changed_utf16.txt"
+    changed_file_list.write_text(
+        "D\tmemory/handoff/old.md\nM\ttonesoul/council/runtime.py\n",
+        encoding="utf-16",
+    )
+
+    payload = boundary._collect_changed_paths(
+        repo_root=tmp_path,
+        staged=False,
+        base_ref=None,
+        changed_file_list=changed_file_list,
+        changed_files=[],
+    )
+
+    assert payload["ok"] is True
+    assert payload["mode"] == "file_list"
+    entries = payload["entries"]
+    assert entries[0]["status"] == "D"
+    assert entries[0]["paths"] == ["memory/handoff/old.md"]
+    assert entries[1]["status"] == "M"
+    assert entries[1]["paths"] == ["tonesoul/council/runtime.py"]
+
+
 def test_build_report_passes_when_no_blocked_paths() -> None:
     collection = {
         "ok": True,
@@ -99,6 +151,57 @@ def test_build_report_fails_when_blocked_paths_detected() -> None:
     assert report["metrics"]["violation_count"] == 1
     assert report["violations"][0]["path"] == "memory/handoff/codex_prompt.md"
     assert any("violate dual-track boundary policy" in issue for issue in report["issues"])
+
+
+def test_build_report_allows_private_path_deletion_cleanup() -> None:
+    collection = {
+        "ok": True,
+        "mode": "file_list",
+        "entries": [
+            {"status_code": "D", "status": "D", "paths": ["memory/handoff/codex_prompt.md"]},
+            {"status_code": "M", "status": "M", "paths": ["tonesoul/council/runtime.py"]},
+        ],
+        "paths": ["memory/handoff/codex_prompt.md", "tonesoul/council/runtime.py"],
+    }
+    report = boundary.build_report(
+        repo_root=Path("."),
+        collection=collection,
+        blocked_prefixes=["memory/handoff/"],
+        blocked_files=["memory/agent_discussion.jsonl"],
+        allow_private_paths=False,
+    )
+
+    assert report["overall_ok"] is True
+    assert report["metrics"]["violation_count"] == 0
+    assert report["metrics"]["private_deletion_count"] == 1
+    assert any("allowed cleanup" in warning for warning in report["warnings"])
+
+
+def test_build_report_blocks_rename_that_touches_private_path() -> None:
+    collection = {
+        "ok": True,
+        "mode": "file_list",
+        "entries": [
+            {
+                "status_code": "R100",
+                "status": "R",
+                "paths": ["memory/handoff/codex_prompt.md", "docs/public.md"],
+            }
+        ],
+        "paths": ["memory/handoff/codex_prompt.md", "docs/public.md"],
+    }
+    report = boundary.build_report(
+        repo_root=Path("."),
+        collection=collection,
+        blocked_prefixes=["memory/handoff/"],
+        blocked_files=[],
+        allow_private_paths=False,
+    )
+
+    assert report["overall_ok"] is False
+    assert report["metrics"]["violation_count"] == 1
+    assert report["violations"][0]["path"] == "memory/handoff/codex_prompt.md"
+    assert report["violations"][0]["status"] == "R"
 
 
 def test_build_report_allows_break_glass_but_emits_warning() -> None:

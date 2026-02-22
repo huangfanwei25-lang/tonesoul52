@@ -48,7 +48,7 @@ def test_build_check_specs_includes_verify_7d_flags(tmp_path: Path) -> None:
         "scripts/verify_git_hygiene.py",
         "--strict",
         "--max-tracked-ignored",
-        "40",
+        "28",
     ]
     assert "--include-sdh" in audit_7d["command"]
     assert "--check-council-modes" in audit_7d["command"]
@@ -80,7 +80,7 @@ def test_build_check_specs_skips_7d_if_discussion_missing_and_allowed(tmp_path: 
         "scripts/verify_git_hygiene.py",
         "--strict",
         "--max-tracked-ignored",
-        "40",
+        "28",
     ]
 
 

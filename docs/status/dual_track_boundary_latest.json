@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-02-21T11:07:09Z",
+  "generated_at": "2026-02-21T15:13:43Z",
   "overall_ok": true,
   "repo_root": "C:\\Users\\user\\Desktop\\倉庫",
   "config": {
@@ -22,25 +22,104 @@
   },
   "collection": {
     "ok": true,
-    "mode": "git",
-    "command": "git diff --name-only --cached --diff-filter=ACMRD",
+    "mode": "file_list",
+    "command": "temp/ci_audit/real_failed_range.txt",
     "exit_code": 0,
-    "duration_seconds": 0.03,
-    "stdout_tail": "docs/context_engineering_reference.md\nscripts/test_delegation.py\nscripts/test_ollama.py\ntests/test_adaptive_gate.py\ntonesoul/adaptive_gate.py",
+    "stdout_tail": "",
     "stderr_tail": "",
+    "entries": [
+      {
+        "status_code": "M",
+        "status": "M",
+        "paths": [
+          ".github/workflows/dual_track_boundary.yml"
+        ]
+      },
+      {
+        "status_code": "M",
+        "status": "M",
+        "paths": [
+          ".github/workflows/test.yml"
+        ]
+      },
+      {
+        "status_code": "M",
+        "status": "M",
+        "paths": [
+          ".gitignore"
+        ]
+      },
+      {
+        "status_code": "D",
+        "status": "D",
+        "paths": [
+          "tonesoul_evolution/__init__.py"
+        ]
+      },
+      {
+        "status_code": "D",
+        "status": "D",
+        "paths": [
+          "tonesoul_evolution/adversarial/__init__.py"
+        ]
+      },
+      {
+        "status_code": "D",
+        "status": "D",
+        "paths": [
+          "tonesoul_evolution/adversarial/loop.py"
+        ]
+      },
+      {
+        "status_code": "D",
+        "status": "D",
+        "paths": [
+          "tonesoul_evolution/adversarial/prompts.py"
+        ]
+      },
+      {
+        "status_code": "D",
+        "status": "D",
+        "paths": [
+          "tonesoul_evolution/consolidator/__init__.py"
+        ]
+      },
+      {
+        "status_code": "D",
+        "status": "D",
+        "paths": [
+          "tonesoul_evolution/consolidator/core.py"
+        ]
+      },
+      {
+        "status_code": "D",
+        "status": "D",
+        "paths": [
+          "tonesoul_evolution/test_journal.jsonl"
+        ]
+      }
+    ],
     "paths": [
-      "docs/context_engineering_reference.md",
-      "scripts/test_delegation.py",
-      "scripts/test_ollama.py",
-      "tests/test_adaptive_gate.py",
-      "tonesoul/adaptive_gate.py"
+      ".github/workflows/dual_track_boundary.yml",
+      ".github/workflows/test.yml",
+      ".gitignore",
+      "tonesoul_evolution/__init__.py",
+      "tonesoul_evolution/adversarial/__init__.py",
+      "tonesoul_evolution/adversarial/loop.py",
+      "tonesoul_evolution/adversarial/prompts.py",
+      "tonesoul_evolution/consolidator/__init__.py",
+      "tonesoul_evolution/consolidator/core.py",
+      "tonesoul_evolution/test_journal.jsonl"
     ]
   },
   "metrics": {
-    "changed_path_count": 5,
-    "violation_count": 0
+    "changed_path_count": 10,
+    "violation_count": 0,
+    "private_deletion_count": 7
   },
   "violations": [],
   "issues": [],
-  "warnings": []
+  "warnings": [
+    "detected 7 deletions under blocked private paths (allowed cleanup)"
+  ]
 }

@@ -116,7 +116,7 @@ python scripts/verify_git_hygiene.py
 Strict mode (optional, fail when thresholds are exceeded):
 
 ```bash
-python scripts/verify_git_hygiene.py --strict --max-loose-count 5000 --max-dangling 50 --max-tracked-ignored 40
+python scripts/verify_git_hygiene.py --strict --max-loose-count 5000 --max-dangling 50 --max-tracked-ignored 28
 ```
 
 ```bash

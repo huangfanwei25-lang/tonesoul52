@@ -93,7 +93,7 @@ def _parse_paths(text: str) -> list[str]:
     seen: set[str] = set()
     results: list[str] = []
     for raw in text.splitlines():
-        path = _normalize_path(raw)
+        path = _normalize_path(raw.lstrip("\ufeff"))
         if not path or path in seen:
             continue
         seen.add(path)
@@ -101,10 +101,82 @@ def _parse_paths(text: str) -> list[str]:
     return results
 
 
-def _load_changed_file_list(path: Path) -> list[str]:
+def _is_status_token(token: str) -> bool:
+    if not token:
+        return False
+    return token[0].upper() in {"A", "C", "M", "R", "D", "T", "U", "X", "B"}
+
+
+def _parse_changed_entries(text: str) -> list[dict[str, Any]]:
+    entries: list[dict[str, Any]] = []
+    seen: set[tuple[str, tuple[str, ...]]] = set()
+    for raw_line in text.splitlines():
+        line = raw_line.lstrip("\ufeff").strip()
+        if not line:
+            continue
+
+        status_code = "UNSPECIFIED"
+        status = "UNSPECIFIED"
+        raw_paths: list[str] = [line]
+
+        parts = line.split("\t")
+        if len(parts) >= 2 and _is_status_token(parts[0].strip()):
+            status_code = parts[0].strip().upper()
+            status = status_code[0]
+            raw_paths = parts[1:]
+
+        paths: list[str] = []
+        seen_path: set[str] = set()
+        for raw_path in raw_paths:
+            normalized = _normalize_path(raw_path)
+            if not normalized or normalized in seen_path:
+                continue
+            seen_path.add(normalized)
+            paths.append(normalized)
+
+        if not paths:
+            continue
+
+        dedupe_key = (status_code, tuple(paths))
+        if dedupe_key in seen:
+            continue
+        seen.add(dedupe_key)
+        entries.append({"status_code": status_code, "status": status, "paths": paths})
+
+    return entries
+
+
+def _collect_paths_from_entries(entries: list[dict[str, Any]]) -> list[str]:
+    paths: list[str] = []
+    seen: set[str] = set()
+    for entry in entries:
+        for path in entry.get("paths", []):
+            normalized = _normalize_path(str(path))
+            if not normalized or normalized in seen:
+                continue
+            seen.add(normalized)
+            paths.append(normalized)
+    return paths
+
+
+def _read_text_with_fallback(path: Path) -> str:
+    data = path.read_bytes()
+    if b"\x00" in data:
+        for encoding in ("utf-16", "utf-16-le", "utf-16-be"):
+            try:
+                return data.decode(encoding)
+            except UnicodeDecodeError:
+                continue
+    try:
+        return data.decode("utf-8-sig")
+    except UnicodeDecodeError:
+        return data.decode("utf-8", errors="replace")
+
+
+def _load_changed_file_list(path: Path) -> list[dict[str, Any]]:
     if not path.exists():
         return []
-    return _parse_paths(path.read_text(encoding="utf-8", errors="replace"))
+    return _parse_changed_entries(_read_text_with_fallback(path))
 
 
 def _collect_changed_paths(
@@ -117,7 +189,7 @@ def _collect_changed_paths(
     runner: Callable[[list[str], Path], tuple[int, str, str]] = _run_command,
 ) -> dict[str, Any]:
     if changed_files:
-        parsed = _parse_paths("\n".join(changed_files))
+        parsed_entries = _parse_changed_entries("\n".join(changed_files))
         return {
             "ok": True,
             "mode": "explicit",
@@ -125,11 +197,12 @@ def _collect_changed_paths(
             "exit_code": 0,
             "stdout_tail": "",
             "stderr_tail": "",
-            "paths": parsed,
+            "entries": parsed_entries,
+            "paths": _collect_paths_from_entries(parsed_entries),
         }
 
     if changed_file_list is not None:
-        parsed = _load_changed_file_list(changed_file_list)
+        parsed_entries = _load_changed_file_list(changed_file_list)
         return {
             "ok": True,
             "mode": "file_list",
@@ -137,19 +210,28 @@ def _collect_changed_paths(
             "exit_code": 0,
             "stdout_tail": "",
             "stderr_tail": "",
-            "paths": parsed,
+            "entries": parsed_entries,
+            "paths": _collect_paths_from_entries(parsed_entries),
         }
 
     if staged:
-        command = ["git", "diff", "--name-only", "--cached", "--diff-filter=ACMRD"]
+        command = ["git", "diff", "--name-status", "--cached", "--diff-filter=ACMRD"]
     elif base_ref:
-        command = ["git", "diff", "--name-only", "--diff-filter=ACMRD", f"{base_ref}...HEAD"]
+        command = ["git", "diff", "--name-status", "--diff-filter=ACMRD", f"{base_ref}...HEAD"]
     else:
-        command = ["git", "show", "--pretty=format:", "--name-only", "--diff-filter=ACMRD", "HEAD"]
+        command = [
+            "git",
+            "show",
+            "--pretty=format:",
+            "--name-status",
+            "--diff-filter=ACMRD",
+            "HEAD",
+        ]
 
     started = time.perf_counter()
     exit_code, stdout, stderr = runner(command, repo_root)
     duration = round(time.perf_counter() - started, 2)
+    parsed_entries = _parse_changed_entries(stdout)
     return {
         "ok": exit_code == 0,
         "mode": "git",
@@ -158,7 +240,8 @@ def _collect_changed_paths(
         "duration_seconds": duration,
         "stdout_tail": _tail(stdout),
         "stderr_tail": _tail(stderr),
-        "paths": _parse_paths(stdout),
+        "entries": parsed_entries,
+        "paths": _collect_paths_from_entries(parsed_entries),
     }
 
 
@@ -187,15 +270,50 @@ def build_report(
     allow_private_paths: bool,
 ) -> dict[str, Any]:
     violations: list[dict[str, str]] = []
-    for path in collection.get("paths", []):
-        matched = _match_block_rule(
-            path,
-            blocked_prefixes=blocked_prefixes,
-            blocked_files=blocked_files,
-        )
-        if matched is None:
+    private_deletion_count = 0
+
+    entries = collection.get("entries")
+    if not isinstance(entries, list):
+        legacy_paths = collection.get("paths", [])
+        if isinstance(legacy_paths, list):
+            entries = [
+                {"status_code": "UNSPECIFIED", "status": "UNSPECIFIED", "paths": [str(path)]}
+                for path in legacy_paths
+            ]
+        else:
+            entries = []
+
+    for entry in entries:
+        if not isinstance(entry, dict):
             continue
-        violations.append({"path": path, **matched})
+        status = str(entry.get("status") or "UNSPECIFIED").strip().upper()
+        paths = entry.get("paths", [])
+        if not isinstance(paths, list):
+            continue
+
+        matched_blocked_paths: list[dict[str, str]] = []
+        for raw_path in paths:
+            path = _normalize_path(str(raw_path))
+            if not path:
+                continue
+            matched = _match_block_rule(
+                path,
+                blocked_prefixes=blocked_prefixes,
+                blocked_files=blocked_files,
+            )
+            if matched is None:
+                continue
+            matched_blocked_paths.append({"path": path, **matched})
+
+        if not matched_blocked_paths:
+            continue
+
+        if status == "D":
+            private_deletion_count += len(matched_blocked_paths)
+            continue
+
+        for item in matched_blocked_paths:
+            violations.append({**item, "status": status})
 
     issues: list[str] = []
     warnings: list[str] = []
@@ -212,6 +330,11 @@ def build_report(
             issues.append(
                 f"detected {len(violations)} changed paths that violate dual-track boundary policy"
             )
+    if private_deletion_count:
+        warnings.append(
+            f"detected {private_deletion_count} deletions under blocked private paths "
+            "(allowed cleanup)"
+        )
 
     overall_ok = collection.get("ok", False) and (allow_private_paths or len(violations) == 0)
     return {
@@ -227,6 +350,7 @@ def build_report(
         "metrics": {
             "changed_path_count": len(collection.get("paths", [])),
             "violation_count": len(violations),
+            "private_deletion_count": private_deletion_count,
         },
         "violations": violations,
         "issues": issues,
@@ -242,6 +366,7 @@ def _render_markdown(payload: dict[str, Any]) -> str:
         f"- overall_ok: {str(payload['overall_ok']).lower()}",
         f"- changed_path_count: {payload['metrics']['changed_path_count']}",
         f"- violation_count: {payload['metrics']['violation_count']}",
+        f"- private_deletion_count: {payload['metrics'].get('private_deletion_count', 0)}",
         f"- allow_private_paths: {str(payload['config']['allow_private_paths']).lower()}",
         "",
         "## Collection",
@@ -259,10 +384,13 @@ def _render_markdown(payload: dict[str, Any]) -> str:
     if payload["violations"]:
         lines.append("")
         lines.append("## Violations")
-        lines.append("| path | rule_type | rule |")
-        lines.append("| --- | --- | --- |")
+        lines.append("| path | status | rule_type | rule |")
+        lines.append("| --- | --- | --- | --- |")
         for item in payload["violations"]:
-            lines.append(f"| `{item['path']}` | {item['rule_type']} | `{item['rule']}` |")
+            lines.append(
+                f"| `{item['path']}` | {item.get('status', 'UNSPECIFIED')} | "
+                f"{item['rule_type']} | `{item['rule']}` |"
+            )
 
     if payload["issues"]:
         lines.append("")

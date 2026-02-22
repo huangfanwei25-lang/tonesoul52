@@ -17,7 +17,7 @@ from typing import Any
 DISCUSSION_CURATED_PATH = Path("memory/agent_discussion_curated.jsonl")
 JSON_FILENAME = "repo_healthcheck_latest.json"
 MARKDOWN_FILENAME = "repo_healthcheck_latest.md"
-DEFAULT_MAX_TRACKED_IGNORED = 40
+DEFAULT_MAX_TRACKED_IGNORED = 28
 
 
 def _iso_now() -> str:
