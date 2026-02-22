@@ -357,6 +357,8 @@ class CouncilRuntime:
                     final_verdict=final_verdict_str,
                     perspective_confidences=perspective_confidences or None,
                 )
+                # Evolve weights based on accumulated vote history
+                self._evolution.evolve_weights()
                 # Attach evolution summary to transcript for observability
                 transcript = verdict.transcript if isinstance(verdict.transcript, dict) else {}
                 transcript["council_evolution"] = self._evolution.get_summary()

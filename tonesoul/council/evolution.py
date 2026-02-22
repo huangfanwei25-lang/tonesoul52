@@ -1,9 +1,25 @@
-"""Council perspective evolution tracker (experimental)."""
+"""Council perspective evolution tracker (experimental).
+
+Tracks how each perspective (Philosopher / Engineer / Guardian) votes
+relative to the final verdict, and slowly adjusts weights to reward
+reliable alignment without penalizing healthy dissent.
+
+State is persisted to ``memory/council_evolution.json`` so that
+weights survive across process restarts.
+"""
 
 from __future__ import annotations
 
+import json
+import logging
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Dict, Optional
+
+logger = logging.getLogger(__name__)
+
+# Persistence path (relative to project root)
+_DEFAULT_STATE_PATH = Path("memory") / "council_evolution.json"
 
 
 @dataclass
@@ -51,12 +67,14 @@ class CouncilEvolution:
     MIN_WEIGHT = 0.5
     MAX_WEIGHT = 2.0
 
-    def __init__(self) -> None:
+    def __init__(self, state_path: Path | str | None = None) -> None:
+        self._state_path = Path(state_path) if state_path else _DEFAULT_STATE_PATH
         self._history: Dict[str, PerspectiveHistory] = {}
         self._weights: Dict[str, float] = {}
         for name in self.DEFAULT_PERSPECTIVES:
             self._history[name] = PerspectiveHistory(name=name)
             self._weights[name] = 1.0
+        self._load_state()
 
     def record_deliberation(
         self,
@@ -100,6 +118,7 @@ class CouncilEvolution:
                 adjusted = weight * factor
                 normalized[name] = max(self.MIN_WEIGHT, min(self.MAX_WEIGHT, adjusted))
             self._weights = normalized
+        self._save_state()
         return dict(self._weights)
 
     def get_weights(self) -> Dict[str, float]:
@@ -110,3 +129,41 @@ class CouncilEvolution:
             "weights": self.get_weights(),
             "history": {name: history.to_dict() for name, history in self._history.items()},
         }
+
+    # ------------------------------------------------------------------ #
+    #  Persistence
+    # ------------------------------------------------------------------ #
+
+    def _load_state(self) -> None:
+        """Restore weights and vote counts from disk (if available)."""
+        if not self._state_path.exists():
+            return
+        try:
+            raw = json.loads(self._state_path.read_text(encoding="utf-8"))
+            saved_weights = raw.get("weights", {})
+            saved_history = raw.get("history", {})
+            for name, w in saved_weights.items():
+                self._weights[name] = float(w)
+            for name, h in saved_history.items():
+                if name not in self._history:
+                    self._history[name] = PerspectiveHistory(name=name)
+                self._history[name].total_votes = int(h.get("total_votes", 0))
+                self._history[name].aligned_with_final = int(h.get("aligned_with_final", 0))
+                self._history[name].dissent_count = int(h.get("dissent_count", 0))
+                self._history[name].avg_confidence = float(h.get("avg_confidence", 0.5))
+            logger.debug("Council evolution state loaded from %s", self._state_path)
+        except Exception as exc:
+            logger.warning("Failed to load council evolution state: %s", exc)
+
+    def _save_state(self) -> None:
+        """Persist current weights and vote counts to disk."""
+        try:
+            self._state_path.parent.mkdir(parents=True, exist_ok=True)
+            payload = self.get_summary()
+            self._state_path.write_text(
+                json.dumps(payload, ensure_ascii=False, indent=2),
+                encoding="utf-8",
+            )
+            logger.debug("Council evolution state saved to %s", self._state_path)
+        except Exception as exc:
+            logger.warning("Failed to save council evolution state: %s", exc)
