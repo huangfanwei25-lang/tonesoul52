@@ -80,18 +80,18 @@ ToneSoul 後續主線：
 ## 6. 近期執行階段
 
 ## Phase M1: 協作訊息格式化
-- [ ] 定義多代理共通輸出 schema（role/claim/evidence/risk/handoff）
-- [ ] 在 council transcript 中加入 schema 檢查
+- [x] 定義多代理共通輸出 schema（role/claim/evidence/risk/handoff）
+- [x] 在 council transcript 中加入 schema 檢查
 - 成功標準：多代理輸出可被程式驗證，不靠人工理解
 
 ## Phase M2: 記憶升格守門
-- [ ] 在 consolidator 前加入 evidence + provenance 檢查
-- [ ] 不符合條件的記憶留在 working 層
+- [x] 在 consolidator 前加入 evidence + provenance 檢查
+- [x] 不符合條件的記憶留在 working 層
 - 成功標準：長期記憶只保留可追溯內容
 
 ## Phase M3: 衝突可視化
-- [ ] 產出「代理分歧報告」與「衝突解決狀態」
-- [ ] 把衝突統計接到 status artifacts
+- [x] 產出「代理分歧報告」與「衝突解決狀態」
+- [x] 把衝突統計接到 status artifacts
 - 成功標準：每次主線流程可看到分歧來源與處理結果
 
 ## Phase M4: 失敗可學習

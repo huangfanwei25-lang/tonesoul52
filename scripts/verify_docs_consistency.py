@@ -267,6 +267,7 @@ def _evaluate_repo_healthcheck_runner_contract(script_path: Path) -> dict[str, b
     result = {
         "has_persona_swarm_check": False,
         "has_external_source_registry_check": False,
+        "has_multi_agent_divergence_check": False,
     }
 
     module = _load_python_module(
@@ -312,6 +313,11 @@ def _evaluate_repo_healthcheck_runner_contract(script_path: Path) -> dict[str, b
         if spec.get("name") == "external_source_registry":
             result["has_external_source_registry_check"] = (
                 command[:2] == ["python", "scripts/verify_external_source_registry.py"]
+                and "--strict" in command
+            )
+        if spec.get("name") == "multi_agent_divergence":
+            result["has_multi_agent_divergence_check"] = (
+                command[:2] == ["python", "scripts/run_multi_agent_divergence_report.py"]
                 and "--strict" in command
             )
 
@@ -501,6 +507,7 @@ def build_report(repo_root: Path) -> dict[str, Any]:
     repo_healthcheck_runner_exists = repo_healthcheck_runner_script.exists()
     repo_healthcheck_runner_has_persona_swarm_check = False
     repo_healthcheck_runner_has_external_source_registry_check = False
+    repo_healthcheck_runner_has_multi_agent_divergence_check = False
     if repo_healthcheck_exists:
         repo_healthcheck_payload = _load_yaml_mapping(repo_healthcheck_workflow)
         if repo_healthcheck_payload is not None:
@@ -599,10 +606,15 @@ def build_report(repo_root: Path) -> dict[str, Any]:
         repo_healthcheck_runner_has_external_source_registry_check = runner_contract[
             "has_external_source_registry_check"
         ]
+        repo_healthcheck_runner_has_multi_agent_divergence_check = runner_contract[
+            "has_multi_agent_divergence_check"
+        ]
         if not repo_healthcheck_runner_has_persona_swarm_check:
             issues.append("repo healthcheck runner missing persona swarm check")
         if not repo_healthcheck_runner_has_external_source_registry_check:
             issues.append("repo healthcheck runner missing external source registry check")
+        if not repo_healthcheck_runner_has_multi_agent_divergence_check:
+            issues.append("repo healthcheck runner missing multi-agent divergence check")
     else:
         issues.append("missing scripts/run_repo_healthcheck.py")
 
@@ -732,6 +744,9 @@ def build_report(repo_root: Path) -> dict[str, Any]:
             "has_persona_swarm_check": repo_healthcheck_runner_has_persona_swarm_check,
             "has_external_source_registry_check": (
                 repo_healthcheck_runner_has_external_source_registry_check
+            ),
+            "has_multi_agent_divergence_check": (
+                repo_healthcheck_runner_has_multi_agent_divergence_check
             ),
         },
         "docs_freshness": {

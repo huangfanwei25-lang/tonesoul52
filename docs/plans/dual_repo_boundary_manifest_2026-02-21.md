@@ -25,6 +25,12 @@
 - `tests/`
 - `scripts/`（不含私鑰、token、私有 payload）
 - `docs/`（不含敏感運行資料快照）
+- `docs/status/` 治理狀態產物（公開可審計）：
+  - `repo_healthcheck_latest.json` / `repo_healthcheck_latest.md`
+  - `persona_swarm_framework_latest.json`
+  - `external_source_registry_latest.json` / `external_source_registry_latest.md`
+  - `dual_track_boundary_latest.json` / `dual_track_boundary_latest.md`
+  - `multi_agent_divergence_latest.json` / `multi_agent_divergence_latest.md`
 - `.github/workflows/`（公開 CI）
 
 ### B. 私有倉必留（Private-only）
