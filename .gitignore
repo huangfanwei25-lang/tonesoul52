@@ -97,3 +97,11 @@ WFGY*
 
 # Private Evolution Layer (Dual-Track Isolation)
 tonesoul_evolution/
+
+# Dual-Track Private Surfaces (kept local, removed from public repo index)
+.agent/
+obsidian-vault/
+reports/ystm_demo/
+generated_prompts/
+memory/memory/.semantic_index/
+memory/memory/.hierarchical_index/
