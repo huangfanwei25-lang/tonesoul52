@@ -38,6 +38,42 @@ ACTION_RECOMMENDATIONS = {
     ),
 }
 
+COLLABORATION_SCHEMA_VERSION = "1.0.0"
+
+ROLE_LABELS = {
+    "guardian": "Guardian",
+    "analyst": "Analyst",
+    "critic": "Critic",
+    "advocate": "Advocate",
+    "axiomatic_inference": "Auditor",
+}
+
+HANDOFF_RULES = {
+    "object": {
+        "next_role": "Guardian",
+        "action": "Block output and escalate to human review.",
+    },
+    "concern": {
+        "next_role": "Builder",
+        "action": "Refine the draft and rerun council validation.",
+    },
+    "approve": {
+        "next_role": "OutputContract",
+        "action": "Proceed to output contract verification.",
+    },
+    "abstain": {
+        "next_role": "Analyst",
+        "action": "Collect missing context and rerun council validation.",
+    },
+}
+
+RISK_LEVEL_MAP = {
+    "object": "high",
+    "concern": "medium",
+    "approve": "low",
+    "abstain": "unknown",
+}
+
 
 def resolve_language(context: Optional[dict]) -> str:
     if not context:
@@ -68,6 +104,97 @@ def _decision_bucket(value: object) -> str:
     if isinstance(value, VoteDecision):
         return value.value
     return str(value).strip().lower()
+
+
+def _role_label(value: object) -> str:
+    key = _normalize_perspective(value)
+    return ROLE_LABELS.get(key, "Analyst")
+
+
+def _risk_payload(vote: PerspectiveVote) -> Dict[str, str]:
+    decision = _decision_bucket(vote.decision)
+    level = RISK_LEVEL_MAP.get(decision, "unknown")
+    try:
+        confidence = float(vote.confidence)
+    except (TypeError, ValueError):
+        confidence = 0.0
+    return {
+        "level": level,
+        "basis": f"decision={decision}; confidence={confidence:.2f}",
+    }
+
+
+def _handoff_payload(vote: PerspectiveVote) -> Dict[str, str]:
+    decision = _decision_bucket(vote.decision)
+    payload = HANDOFF_RULES.get(decision)
+    if isinstance(payload, dict):
+        return {
+            "next_role": str(payload.get("next_role", "Analyst")),
+            "action": str(payload.get("action", "Collect context and rerun validation.")),
+        }
+    return {
+        "next_role": "Analyst",
+        "action": "Collect context and rerun validation.",
+    }
+
+
+def build_collaboration_records(votes: List[PerspectiveVote]) -> List[Dict[str, object]]:
+    records: List[Dict[str, object]] = []
+    for vote in votes:
+        claim = (vote.reasoning or "").strip() or "No explicit claim provided."
+        evidence = list(vote.evidence or [])
+        records.append(
+            {
+                "role": _role_label(vote.perspective),
+                "claim": claim,
+                "evidence": evidence,
+                "risk": _risk_payload(vote),
+                "handoff": _handoff_payload(vote),
+            }
+        )
+    return records
+
+
+def validate_collaboration_records(records: List[Dict[str, object]]) -> Dict[str, object]:
+    errors: List[str] = []
+    for index, record in enumerate(records):
+        prefix = f"record[{index}]"
+        role = record.get("role")
+        claim = record.get("claim")
+        evidence = record.get("evidence")
+        risk = record.get("risk")
+        handoff = record.get("handoff")
+
+        if not isinstance(role, str) or not role.strip():
+            errors.append(f"{prefix}.role must be non-empty string")
+        if not isinstance(claim, str) or not claim.strip():
+            errors.append(f"{prefix}.claim must be non-empty string")
+        if not isinstance(evidence, list):
+            errors.append(f"{prefix}.evidence must be list")
+        if not isinstance(risk, dict):
+            errors.append(f"{prefix}.risk must be object")
+        else:
+            level = risk.get("level")
+            basis = risk.get("basis")
+            if not isinstance(level, str) or not level.strip():
+                errors.append(f"{prefix}.risk.level must be non-empty string")
+            if not isinstance(basis, str) or not basis.strip():
+                errors.append(f"{prefix}.risk.basis must be non-empty string")
+        if not isinstance(handoff, dict):
+            errors.append(f"{prefix}.handoff must be object")
+        else:
+            next_role = handoff.get("next_role")
+            action = handoff.get("action")
+            if not isinstance(next_role, str) or not next_role.strip():
+                errors.append(f"{prefix}.handoff.next_role must be non-empty string")
+            if not isinstance(action, str) or not action.strip():
+                errors.append(f"{prefix}.handoff.action must be non-empty string")
+
+    return {
+        "valid": len(errors) == 0,
+        "errors": errors,
+        "record_count": len(records),
+    }
 
 
 def _collect_aspects(votes: List[PerspectiveVote], bucket: str, language: str) -> List[str]:
@@ -268,6 +395,8 @@ def build_transcript(
         "stance_declaration": verdict.stance_declaration,
         "refinement_hints": verdict.refinement_hints,
     }
+    collaboration_records = build_collaboration_records(votes)
+    collaboration_validation = validate_collaboration_records(collaboration_records)
 
     return {
         "timestamp": datetime.now(timezone.utc).isoformat(),
@@ -279,4 +408,9 @@ def build_transcript(
         "coherence": coherence_record,
         "verdict": verdict_record,
         "divergence_analysis": divergence,
+        "multi_agent_contract": {
+            "schema_version": COLLABORATION_SCHEMA_VERSION,
+            "records": collaboration_records,
+            "validation": collaboration_validation,
+        },
     }

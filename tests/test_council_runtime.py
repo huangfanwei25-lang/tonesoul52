@@ -47,6 +47,27 @@ def test_council_runtime_attaches_role_summary():
     assert role_summary.get("decision_status") in {"pass", "attention", "block"}
 
 
+def test_council_runtime_includes_multi_agent_contract():
+    runtime = CouncilRuntime()
+    request = CouncilRequest(
+        draft_output="Simple response with clear intent.",
+        context={"tsr_baseline": {"T": 0.0, "S_norm": 0.0, "R": 0.0}},
+        user_intent="ask",
+    )
+    verdict = runtime.deliberate(request)
+
+    transcript = verdict.transcript or {}
+    contract = transcript.get("multi_agent_contract")
+    assert isinstance(contract, dict)
+    assert contract.get("schema_version") == "1.0.0"
+    assert isinstance(contract.get("records"), list)
+    assert len(contract["records"]) == len(verdict.votes)
+
+    validation = contract.get("validation")
+    assert isinstance(validation, dict)
+    assert validation.get("valid") is True
+
+
 def test_council_runtime_handles_provenance_write_error(monkeypatch):
     import tonesoul.council.runtime as runtime_module
 
