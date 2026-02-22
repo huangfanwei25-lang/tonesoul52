@@ -151,3 +151,115 @@ def test_chat_exposes_semantic_fields_when_pipeline_provides_them(monkeypatch):
     assert payload["semantic_contradictions"] == [{"found": True, "description": "test"}]
     assert payload["semantic_graph_summary"] == {"total_nodes": 2, "contradictions": 1}
     assert payload["dispatch_trace"]["state"] == "B"
+
+
+def test_chat_exposes_deliberation_payload_for_frontend_contract(monkeypatch):
+    import tonesoul.unified_pipeline as unified_pipeline
+
+    class _Pipeline:
+        def process(self, **kwargs):
+            return SimpleNamespace(
+                response="ok",
+                council_verdict={
+                    "verdict": "refine",
+                    "summary": "Needs refinement before final output.",
+                    "coherence": 0.66,
+                    "responsibility_tier": "tier-2",
+                    "uncertainty_band": "medium",
+                    "refinement_hints": [
+                        "Clarify assumptions.",
+                        "Add one safety fallback.",
+                    ],
+                    "votes": [
+                        {
+                            "perspective": "analyst",
+                            "decision": "concern",
+                            "confidence": 0.82,
+                            "reasoning": "Logic chain needs clearer assumptions.",
+                        },
+                        {
+                            "perspective": "guardian",
+                            "decision": "approve",
+                            "confidence": 0.71,
+                            "reasoning": "No direct safety violation found.",
+                        },
+                        {
+                            "perspective": "critic",
+                            "decision": "concern",
+                            "confidence": 0.57,
+                            "reasoning": "Tone may be too absolute for the context.",
+                        },
+                    ],
+                },
+                tonebridge_analysis={
+                    "tone_analysis": {
+                        "tone_strength": 0.68,
+                        "emotion_prediction": "focused",
+                    },
+                    "motive_prediction": {
+                        "likely_motive": "Need confidence in execution plan",
+                    },
+                    "collapse_risk": {
+                        "collapse_risk_level": "low",
+                    },
+                    "resonance_defense": {
+                        "suggested_intervention_strategy": "clarify_then_commit",
+                    },
+                },
+                inner_narrative="",
+                intervention_strategy="clarify_then_commit",
+                internal_monologue="",
+                persona_mode="",
+                trajectory_analysis={},
+                self_commits=[],
+                ruptures=[],
+                emergent_values=[],
+                semantic_contradictions=[],
+                semantic_graph_summary={},
+                dispatch_trace={"state": "B", "mode": "tension"},
+            )
+
+    monkeypatch.setattr(unified_pipeline, "create_unified_pipeline", lambda: _Pipeline())
+
+    client = _client()
+    response = client.post("/api/chat", json={"message": "hello"})
+    payload = response.get_json()
+
+    assert response.status_code == 200
+    deliberation = payload.get("deliberation")
+    assert isinstance(deliberation, dict)
+    assert deliberation["final_synthesis"]["response_text"] == "ok"
+    assert (
+        deliberation["decision_matrix"]["user_hidden_intent"] == "Need confidence in execution plan"
+    )
+    assert deliberation["decision_matrix"]["ai_strategy_name"] == "clarify_then_commit"
+    assert deliberation["council_chamber"]["engineer"]["stance"] == (
+        "Logic chain needs clearer assumptions."
+    )
+    assert deliberation["entropy_meter"]["value"] == 0.68
+    assert deliberation["soulAudit"]["passed"] is True
+    assert len(deliberation["next_moves"]) >= 1
+
+
+def test_chat_deliberation_payload_is_stable_with_sparse_pipeline_data(monkeypatch):
+    import tonesoul.unified_pipeline as unified_pipeline
+
+    captured: dict = {}
+    monkeypatch.setattr(
+        unified_pipeline,
+        "create_unified_pipeline",
+        lambda: _mock_pipeline(captured),
+    )
+
+    client = _client()
+    response = client.post("/api/chat", json={"message": "hello"})
+    payload = response.get_json()
+
+    assert response.status_code == 200
+    deliberation = payload.get("deliberation")
+    assert isinstance(deliberation, dict)
+    assert deliberation["final_synthesis"]["response_text"] == "ok"
+    assert set(deliberation["council_chamber"].keys()) == {"philosopher", "engineer", "guardian"}
+    assert 0.0 <= deliberation["entropy_meter"]["value"] <= 1.0
+    assert deliberation["decision_matrix"]["user_hidden_intent"] == "Unspecified"
+    assert isinstance(deliberation["next_moves"], list)

@@ -550,6 +550,332 @@ def _build_prior_tension(conversation_id: str | None) -> dict | None:
     }
 
 
+def _coerce_float(value, default: float = 0.0) -> float:
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return float(default)
+
+
+def _clamp01(value: float) -> float:
+    if value < 0.0:
+        return 0.0
+    if value > 1.0:
+        return 1.0
+    return value
+
+
+def _as_dict(value) -> dict:
+    return value if isinstance(value, dict) else {}
+
+
+def _as_list(value) -> list:
+    return value if isinstance(value, list) else []
+
+
+def _map_perspective_to_chamber_role(perspective_name: str) -> str | None:
+    normalized = perspective_name.strip().lower()
+    if not normalized:
+        return None
+    if normalized in {"guardian", "aegis"} or "guardian" in normalized:
+        return "guardian"
+    if normalized in {"analyst", "engineer", "logos", "semantic_analyst"} or any(
+        token in normalized for token in ("analyst", "engineer", "semantic")
+    ):
+        return "engineer"
+    if normalized in {"philosopher", "critic", "advocate", "muse"} or any(
+        token in normalized for token in ("philosopher", "critic", "advocate", "muse")
+    ):
+        return "philosopher"
+    return None
+
+
+def _extract_council_chamber(verdict: dict) -> dict:
+    votes = _as_list(verdict.get("votes"))
+    summary = str(verdict.get("summary") or "").strip()
+    default_stance = summary or "No council rationale available."
+    benevolence = _as_dict(verdict.get("benevolence_audit"))
+    benevolence_state = (
+        str(benevolence.get("final_result") or benevolence.get("result") or "").strip() or "unknown"
+    )
+
+    role_records: dict[str, dict[str, str]] = {}
+    fallback_records: list[dict[str, str]] = []
+    for vote in votes:
+        if not isinstance(vote, dict):
+            continue
+        perspective = str(vote.get("perspective") or "").strip()
+        mapped_role = _map_perspective_to_chamber_role(perspective)
+        decision = str(vote.get("decision") or "").strip().lower()
+        reasoning = str(vote.get("reasoning") or "").strip() or default_stance
+        entry = {
+            "stance": reasoning,
+            "conflict_point": (
+                decision if decision in {"concern", "object", "block", "refine"} else ""
+            ),
+            "benevolence_check": "",
+        }
+        if mapped_role and mapped_role not in role_records:
+            role_records[mapped_role] = entry
+        fallback_records.append(entry)
+
+    fallback_index = 0
+
+    def _next_fallback() -> dict[str, str]:
+        nonlocal fallback_index
+        if fallback_index < len(fallback_records):
+            candidate = fallback_records[fallback_index]
+            fallback_index += 1
+            return dict(candidate)
+        return {
+            "stance": default_stance,
+            "conflict_point": "",
+            "benevolence_check": "",
+        }
+
+    chamber: dict[str, dict[str, str]] = {}
+    for role in ("philosopher", "engineer", "guardian"):
+        chamber[role] = dict(role_records.get(role) or _next_fallback())
+
+    chamber["guardian"]["benevolence_check"] = benevolence_state
+    return chamber
+
+
+def _build_multiplex_from_votes(verdict: dict, chamber: dict) -> dict:
+    votes = _as_list(verdict.get("votes"))
+    role_weights = {"philosopher": 0.0, "engineer": 0.0, "guardian": 0.0}
+    for vote in votes:
+        if not isinstance(vote, dict):
+            continue
+        role = _map_perspective_to_chamber_role(str(vote.get("perspective") or ""))
+        if role is None:
+            continue
+        role_weights[role] = max(
+            role_weights[role],
+            _clamp01(_coerce_float(vote.get("confidence"), default=0.0)),
+        )
+
+    weight_total = sum(role_weights.values())
+    if weight_total <= 0:
+        role_weights = {"philosopher": 0.34, "engineer": 0.33, "guardian": 0.33}
+        weight_total = 1.0
+    normalized = {role: value / weight_total for role, value in role_weights.items()}
+
+    primary_role = max(normalized.items(), key=lambda item: item[1])[0]
+    primary_weight = normalized[primary_role]
+    primary_reasoning = str(_as_dict(chamber.get(primary_role)).get("stance") or "").strip()
+    if not primary_reasoning:
+        primary_reasoning = (
+            str(verdict.get("summary") or "").strip() or "Derived from council confidence."
+        )
+
+    shadows = []
+    for role in ("philosopher", "engineer", "guardian"):
+        if role == primary_role:
+            continue
+        role_record = _as_dict(chamber.get(role))
+        conflict_reason = str(role_record.get("conflict_point") or "").strip()
+        if not conflict_reason:
+            conflict_reason = f"{role} concerns differ from {primary_role}."
+        shadows.append(
+            {
+                "source": role,
+                "weight": round(normalized[role], 3),
+                "conflict_reason": conflict_reason,
+                "recovery_condition": "Re-evaluate when new evidence or constraints appear.",
+                "collapse_cost": f"Loses {role} perspective detail.",
+            }
+        )
+
+    if primary_weight > 0.7:
+        tension_level = "LOW"
+    elif primary_weight >= 0.5:
+        tension_level = "MEDIUM"
+    else:
+        tension_level = "HIGH"
+
+    verdict_name = str(verdict.get("verdict") or "").strip().lower()
+    if verdict_name == "approve":
+        merge_strategy = "COLLAPSE"
+    elif verdict_name == "block":
+        merge_strategy = "EXPLICIT_CONFLICT"
+    else:
+        merge_strategy = "PRESERVE_SHADOWS"
+
+    return {
+        "primary_path": {
+            "source": primary_role,
+            "weight": round(primary_weight, 3),
+            "reasoning": primary_reasoning,
+        },
+        "shadows": shadows,
+        "tension": {
+            "level": tension_level,
+            "formula_ref": "tension = 1 - max(role_weight)",
+            "weight_distribution": (
+                f"{normalized['philosopher']:.2f} / "
+                f"{normalized['engineer']:.2f} / "
+                f"{normalized['guardian']:.2f}"
+            ),
+        },
+        "merge_strategy": merge_strategy,
+        "merge_note": (
+            str(verdict.get("summary") or "").strip()
+            or "Synthesized from council vote confidence and coherence."
+        ),
+    }
+
+
+def _build_next_moves(verdict: dict, intervention_strategy: str) -> list[dict[str, str]]:
+    moves: list[dict[str, str]] = []
+    seen_texts: set[str] = set()
+
+    def _add_move(label: str, text: str) -> None:
+        normalized = text.strip()
+        if not normalized:
+            return
+        if normalized in seen_texts:
+            return
+        seen_texts.add(normalized)
+        moves.append({"label": label, "text": normalized[:220]})
+
+    for hint in _as_list(verdict.get("refinement_hints")):
+        if isinstance(hint, str):
+            _add_move("Refine", hint)
+
+    structured_output = _as_dict(verdict.get("structured_output"))
+    follow_up = _as_dict(structured_output.get("E"))
+    for action in _as_list(follow_up.get("actions")):
+        if isinstance(action, str):
+            _add_move("Action", action)
+
+    if intervention_strategy.strip():
+        _add_move("Strategy", intervention_strategy)
+
+    summary = str(verdict.get("summary") or "").strip()
+    if not moves and summary:
+        _add_move("Focus", summary)
+
+    return moves[:3]
+
+
+def _build_deliberation_payload(result) -> dict:
+    verdict = _as_dict(getattr(result, "council_verdict", {}))
+    tonebridge = _as_dict(getattr(result, "tonebridge_analysis", {}))
+    tone_analysis = _as_dict(tonebridge.get("tone_analysis"))
+    motive_prediction = _as_dict(tonebridge.get("motive_prediction"))
+    collapse_risk = _as_dict(tonebridge.get("collapse_risk"))
+    resonance_defense = _as_dict(tonebridge.get("resonance_defense"))
+    entropy_source = _as_dict(tonebridge.get("entropy_meter"))
+
+    tone_strength = _clamp01(_coerce_float(tone_analysis.get("tone_strength"), default=0.5))
+    entropy_value = _clamp01(_coerce_float(entropy_source.get("value"), default=tone_strength))
+    if entropy_value >= 0.7:
+        entropy_status = "high_tension"
+    elif entropy_value >= 0.3:
+        entropy_status = "healthy_friction"
+    else:
+        entropy_status = "echo_chamber"
+
+    entropy_meter = {
+        "value": entropy_value,
+        "status": str(entropy_source.get("status") or entropy_status),
+        "calculation_note": (
+            str(entropy_source.get("calculation_note") or "").strip()
+            or f"Derived from tone_strength={tone_strength:.2f}"
+        ),
+    }
+
+    intervention_strategy = str(getattr(result, "intervention_strategy", "") or "").strip()
+    semantic_contradictions = _as_list(getattr(result, "semantic_contradictions", []))
+    contradiction_count = len(semantic_contradictions)
+    verdict_name = str(verdict.get("verdict") or "").strip().lower()
+
+    chamber = _extract_council_chamber(verdict)
+    multiplex = _build_multiplex_from_votes(verdict, chamber)
+    next_moves = _build_next_moves(verdict, intervention_strategy)
+
+    honesty_score = _clamp01(_coerce_float(verdict.get("coherence"), default=0.0))
+    responsibility_parts = []
+    responsibility_tier = str(verdict.get("responsibility_tier") or "").strip()
+    uncertainty_band = str(verdict.get("uncertainty_band") or "").strip()
+    if responsibility_tier:
+        responsibility_parts.append(f"tier={responsibility_tier}")
+    if uncertainty_band:
+        responsibility_parts.append(f"uncertainty={uncertainty_band}")
+    if not responsibility_parts:
+        responsibility_parts.append("responsibility metadata unavailable")
+
+    audit_verdict = "Pass"
+    if verdict_name == "block" or contradiction_count > 0:
+        audit_verdict = "Review"
+
+    audit_payload = {
+        "honesty_score": honesty_score,
+        "responsibility_check": "; ".join(responsibility_parts),
+        "audit_verdict": audit_verdict,
+    }
+
+    benevolence = _as_dict(verdict.get("benevolence_audit"))
+    if benevolence:
+        benevolence_status = str(
+            benevolence.get("final_result") or benevolence.get("result") or ""
+        ).strip()
+        flags: list[str] = []
+        if benevolence_status and benevolence_status.lower() not in {"pass", "allow", "safe"}:
+            flags.append(f"benevolence={benevolence_status}")
+        audit_payload["code_validation"] = {
+            "code_honesty_score": honesty_score,
+            "discrepancy": _clamp01(_coerce_float(verdict.get("uncertainty_level"), default=0.0)),
+            "flags": flags,
+            "is_valid": len(flags) == 0,
+        }
+
+    decision_matrix = {
+        "user_hidden_intent": (
+            str(motive_prediction.get("likely_motive") or "").strip()
+            or str(motive_prediction.get("trigger_context") or "").strip()
+            or "Unspecified"
+        ),
+        "ai_strategy_name": (
+            intervention_strategy
+            or str(resonance_defense.get("suggested_intervention_strategy") or "").strip()
+            or "direct_response"
+        ),
+        "intended_effect": (
+            str(verdict.get("summary") or "").strip()
+            or str(collapse_risk.get("collapse_risk_level") or "").strip()
+            or "Provide grounded guidance"
+        ),
+        "tone_tag": str(tone_analysis.get("emotion_prediction") or "neutral"),
+    }
+
+    response_text = str(getattr(result, "response", "") or "")
+    soul_passed = verdict_name != "block" and contradiction_count == 0
+    if verdict_name == "block":
+        soul_note = "Council blocked output for safety."
+    elif contradiction_count > 0:
+        soul_note = f"Detected {contradiction_count} semantic contradiction(s)."
+    else:
+        soul_note = "No semantic contradictions detected."
+
+    return {
+        "council_chamber": chamber,
+        "entropy_meter": entropy_meter,
+        "decision_matrix": decision_matrix,
+        "audit": audit_payload,
+        "multiplex_conclusion": multiplex,
+        "final_synthesis": {"response_text": response_text},
+        "next_moves": next_moves,
+        "soulAudit": {
+            "passed": soul_passed,
+            "honestyScore": honesty_score,
+            "violations": contradiction_count + (1 if verdict_name == "block" else 0),
+            "auditNote": soul_note,
+        },
+    }
+
+
 def _resolve_bind_host() -> str:
     host = os.environ.get("TONESOUL_API_HOST")
     if isinstance(host, str) and host.strip():
@@ -1376,6 +1702,7 @@ def chat():
             "semantic_contradictions": getattr(result, "semantic_contradictions", []),
             "semantic_graph_summary": getattr(result, "semantic_graph_summary", {}),
             "dispatch_trace": getattr(result, "dispatch_trace", {}),
+            "deliberation": _build_deliberation_payload(result),
         }
         _persist_chat_side_effects(
             conversation_id=conversation_id,
