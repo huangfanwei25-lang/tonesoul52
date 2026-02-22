@@ -29,6 +29,7 @@
 - `reports/ystm_demo/`
 - `generated_prompts/`
 - `.moltbook/`
+- `memory/` 私有運行產物（例如 `ANTIGRAVITY_SYNC.md`、`antigravity_journal.md`、`summary_balls.jsonl`、`web_chat_debug.md`）
 - `memory/self_journal.jsonl`
 - `memory/agent_discussion.jsonl`
 - `memory/agent_discussion_curated.jsonl`

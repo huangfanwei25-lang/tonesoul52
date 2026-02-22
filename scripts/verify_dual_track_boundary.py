@@ -40,6 +40,22 @@ DEFAULT_BLOCKED_FILES = (
     "memory/self_journal.jsonl",
     "memory/agent_discussion.jsonl",
     "memory/agent_discussion_curated.jsonl",
+    "memory/agent_discussion.jsonl.bak.20260206T145513Z",
+    "memory/agent_discussion_antigravity_response.jsonl",
+    "memory/summary_balls.jsonl",
+    "memory/ANTIGRAVITY_SYNC.md",
+    "memory/BOOTSTRAP.md",
+    "memory/antigravity_journal.md",
+    "memory/antigravity_memory_20260129.md",
+    "memory/dawn_protocol_v10.md",
+    "memory/guild_recruitment_post.md",
+    "memory/moltbook_exploration.md",
+    "memory/persona_synthesis_v5.md",
+    "memory/persona_synthesis_v8.md",
+    "memory/resonance_drafts.md",
+    "memory/resonance_report_v1.md",
+    "memory/silence_of_xiaozhua_v7.md",
+    "memory/web_chat_debug.md",
 )
 
 

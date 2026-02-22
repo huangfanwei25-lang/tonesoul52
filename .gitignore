@@ -59,6 +59,9 @@ memory/provenance_ledger.jsonl
 memory/self_journal.jsonl
 memory/agent_discussion.jsonl
 memory/agent_discussion_curated.jsonl
+memory/agent_discussion.jsonl.bak.*
+memory/agent_discussion_antigravity_response.jsonl
+memory/summary_balls.jsonl
 memory/semantic_memory.jsonl
 memory/.consolidation_state.json
 memory/handoff/
@@ -68,6 +71,19 @@ memory/.semantic_index/
 memory/.hierarchical_index/
 memory/moltbook_logs/
 memory/narrative/
+memory/ANTIGRAVITY_SYNC.md
+memory/BOOTSTRAP.md
+memory/antigravity_journal.md
+memory/antigravity_memory_20260129.md
+memory/dawn_protocol_v10.md
+memory/guild_recruitment_post.md
+memory/moltbook_exploration.md
+memory/persona_synthesis_v5.md
+memory/persona_synthesis_v8.md
+memory/resonance_drafts.md
+memory/resonance_report_v1.md
+memory/silence_of_xiaozhua_v7.md
+memory/web_chat_debug.md
 
 # Moltbook Scripts (contains API keys - do not commit)
 .moltbook/

@@ -12,6 +12,13 @@ def test_default_blocked_prefixes_cover_private_surfaces() -> None:
     assert "generated_prompts/" in prefixes
 
 
+def test_default_blocked_files_cover_private_memory_artifacts() -> None:
+    blocked_files = set(boundary.DEFAULT_BLOCKED_FILES)
+    assert "memory/summary_balls.jsonl" in blocked_files
+    assert "memory/web_chat_debug.md" in blocked_files
+    assert "memory/ANTIGRAVITY_SYNC.md" in blocked_files
+
+
 def test_normalize_path_decodes_git_quoted_octal_path() -> None:
     normalized = boundary._normalize_path('"obsidian-vault/\\350\\252\\236\\351\\255\\202.md"')
     assert normalized.startswith("obsidian-vault/")
