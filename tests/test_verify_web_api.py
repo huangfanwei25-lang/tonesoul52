@@ -1,4 +1,8 @@
-from scripts.verify_web_api import _summarize_payload, _validate_chat_council_mode
+from scripts.verify_web_api import (
+    _summarize_payload,
+    _validate_chat_council_mode,
+    _validate_same_origin_backend_health,
+)
 
 
 def _chat_payload(mode: str):
@@ -31,3 +35,13 @@ def test_summarize_chat_payload_includes_council_mode():
     summary = _summarize_payload("POST web /api/chat", payload, verbose=False)
     assert summary["council_mode"] == "full_llm"
     assert summary["has_verdict"] is True
+
+
+def test_validate_same_origin_backend_health_passes():
+    payload = {"ok": True, "backend_mode": "same_origin"}
+    assert _validate_same_origin_backend_health(payload, "backend health") is True
+
+
+def test_validate_same_origin_backend_health_fails_on_wrong_mode():
+    payload = {"ok": True, "backend_mode": "external_backend"}
+    assert _validate_same_origin_backend_health(payload, "backend health") is False

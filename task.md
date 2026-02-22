@@ -560,6 +560,8 @@
 - [x] Updated Vercel-route tests for same-origin behavior (`apiRoutes.chatTransport`, `apiRoutes.transportFallback`, `apiRoutes.backendHealth`).
 - [x] Updated preflight logic to support same-origin mode (`scripts/verify_vercel_preflight.py --same-origin`) with tests.
 - [x] Added `scripts/verify_ollama_mvp.py` to validate model list, handshake, low/high tension routing, and regression gate.
+- [x] Synced semantic-control implementation status in `spec/wfgy_semantic_control_spec.md` (Phase 1/2/3 + P0/P1/P2 all checked).
+- [x] Synced derivation roadmap status in `spec/tonesoul_improvement_derivation.md` (Phase A/B/C + P0/P1/P2 all checked; CorrectionMemory marked simplified implementation).
 - [x] Validation:
 - [x] `npm --prefix apps/web run test -- src/__tests__/apiRoutes.chatTransport.test.ts src/__tests__/apiRoutes.transportFallback.test.ts src/__tests__/apiRoutes.backendHealth.test.ts`
 - [x] `npm --prefix apps/web run build`

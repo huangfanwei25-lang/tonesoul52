@@ -229,27 +229,27 @@ E_res = rolling_mean(Δs, min(t, 5))  # 殘差能量
 
 ### Phase 1：基礎整合
 
-- [ ] `SemanticTension` 類別
-- [ ] Zone 判斷邏輯
-- [ ] 與 PersonaDimension 整合
+- [x] `SemanticTension` 類別
+- [x] Zone 判斷邏輯
+- [x] 與 PersonaDimension 整合
 
 ### Phase 2：動力學
 
-- [ ] `Coupler` 類別
-- [ ] Progression 計算
-- [ ] Hysteresis 防抖
+- [x] `Coupler` 類別
+- [x] Progression 計算
+- [x] Hysteresis 防抖
 
 ### Phase 3：狀態機
 
-- [ ] `LambdaObserve` 狀態追蹤
-- [ ] 記憶觸發規則
-- [ ] Bridge Guard
+- [x] `LambdaObserve` 狀態追蹤
+- [x] 記憶觸發規則
+- [x] Bridge Guard
 
 ## 2026-02-14 優先順序（Backlog Radar 對齊）
 
-- [ ] P0（先做）: Phase 1 全部完成，先確立 `delta_sigma`、Zone、PersonaDimension 對齊。
-- [ ] P1（第二階段）: Phase 2 全部完成，讓 Coupler/Progression/Hysteresis 可以穩定驅動。
-- [ ] P2（第三階段）: Phase 3 全部完成，補齊 Lambda 狀態機與 Bridge/Memory 觸發。
+- [x] P0（先做）: Phase 1 全部完成，先確立 `delta_sigma`、Zone、PersonaDimension 對齊。
+- [x] P1（第二階段）: Phase 2 全部完成，讓 Coupler/Progression/Hysteresis 可以穩定驅動。
+- [x] P2（第三階段）: Phase 3 全部完成，補齊 Lambda 狀態機與 Bridge/Memory 觸發。
 
 執行原則：
 - 先有可計算、可判定的核心量，再開放動力學參數調整。

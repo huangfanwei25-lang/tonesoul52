@@ -257,25 +257,25 @@ effective_zone_threshold = base_threshold + sum(
 ## 實作優先級
 
 ### Phase A：核心整合
-- [ ] PersonaDimension + SemanticController 整合
-- [ ] 自適應 tolerance
-- [ ] Lambda State → 攔截行為映射
+- [x] PersonaDimension + SemanticController 整合
+- [x] 自適應 tolerance
+- [x] Lambda State → 攔截行為映射
 
 ### Phase B：反饋系統
-- [ ] CorrectionMemory 類別
-- [ ] 多尺度觀察
-- [ ] 輸出契約驗證
+- [x] CorrectionMemory 類別（目前為簡化記錄版）
+- [x] 多尺度觀察
+- [x] 輸出契約驗證
 
 ### Phase C：進階功能
-- [ ] Council 權重影響
-- [ ] 能力邊界偵測
-- [ ] 長期品質追蹤
+- [x] Council 權重影響
+- [x] 能力邊界偵測
+- [x] 長期品質追蹤
 
 ## 2026-02-14 優先順序（Backlog Radar 對齊）
 
-- [ ] P0（先做）: 完成 Phase A 三項，先打通「張力 -> 控制 -> 攔截」閉環。
-- [ ] P1（第二階段）: 完成 Phase B 三項，補齊「校正學習 + 契約驗證」能力。
-- [ ] P2（第三階段）: 完成 Phase C 三項，最後再做權重細化與長期追蹤。
+- [x] P0（先做）: 完成 Phase A 三項，先打通「張力 -> 控制 -> 攔截」閉環。
+- [x] P1（第二階段）: 完成 Phase B 三項，補齊「校正學習 + 契約驗證」能力。
+- [x] P2（第三階段）: 完成 Phase C 三項，最後再做權重細化與長期追蹤。
 
 執行原則：
 - P0 未完成前不進 P1，避免補了學習層卻沒有穩定控制核心。

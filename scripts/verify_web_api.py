@@ -139,6 +139,24 @@ def _validate_chat_council_mode(payload: Any, requested_mode: str) -> bool:
     return True
 
 
+def _validate_same_origin_backend_health(payload: Any, label: str) -> bool:
+    payload_dict = _expect_dict(payload, label)
+    if payload_dict is None:
+        return False
+
+    if payload_dict.get("ok") is not True:
+        print(f"[FAIL] {label}: expected payload.ok=true.")
+        return False
+
+    backend_mode = payload_dict.get("backend_mode")
+    if backend_mode != "same_origin":
+        print(
+            f"[FAIL] {label}: expected backend_mode='same_origin', got {backend_mode!r}."
+        )
+        return False
+    return True
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="ToneSoul web API smoke check")
     parser.add_argument(
@@ -172,6 +190,14 @@ def main() -> int:
         action="store_true",
         help="Run extra /api/chat checks for council_mode switching and observability.",
     )
+    parser.add_argument(
+        "--same-origin",
+        action="store_true",
+        help=(
+            "Expect same-origin backend mode and verify via /api/backend-health "
+            "(requires backend_mode=same_origin)."
+        ),
+    )
     args = parser.parse_args()
 
     web_base = args.web_base.rstrip("/")
@@ -180,16 +206,48 @@ def main() -> int:
     require_backend = bool(args.require_backend)
     verbose = bool(args.verbose)
     check_council_modes = bool(args.check_council_modes)
+    same_origin = bool(args.same_origin)
 
     all_ok = True
 
     # 1) Backend health
-    ok, status, payload, _ = request_json("GET", f"{api_base}/api/health", timeout=timeout)
-    print_result("GET backend /api/health", ok, status, payload, verbose)
-    if not ok and require_backend:
-        return 1
-    if not ok:
-        all_ok = False
+    if same_origin:
+        ok, status, payload, _ = request_json(
+            "GET", f"{web_base}/api/backend-health", timeout=timeout
+        )
+        print_result("GET web /api/backend-health", ok, status, payload, verbose)
+        if not ok or not _validate_same_origin_backend_health(
+            payload, "GET web /api/backend-health"
+        ):
+            all_ok = False
+    else:
+        ok, status, payload, _ = request_json("GET", f"{api_base}/api/health", timeout=timeout)
+        print_result("GET backend /api/health", ok, status, payload, verbose)
+        if not ok:
+            # Auto-detect same-origin deployments where /api/health may not exist yet.
+            fallback_ok, fallback_status, fallback_payload, _ = request_json(
+                "GET",
+                f"{web_base}/api/backend-health",
+                timeout=timeout,
+            )
+            print_result(
+                "GET web /api/backend-health (same-origin fallback)",
+                fallback_ok,
+                fallback_status,
+                fallback_payload,
+                verbose,
+            )
+            fallback_valid = fallback_ok and _validate_same_origin_backend_health(
+                fallback_payload,
+                "GET web /api/backend-health (same-origin fallback)",
+            )
+            if fallback_valid:
+                ok = True
+
+        if not ok and require_backend:
+            return 1
+        if not ok:
+            all_ok = False
 
     # 2) Web conversation create
     ok, status, payload, _ = request_json(
