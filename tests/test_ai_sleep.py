@@ -38,6 +38,7 @@ def test_sleep_consolidate_empty_db(tmp_path):
     assert isinstance(result, SleepResult)
     assert result.promoted_count == 0
     assert result.cleared_count == 0
+    assert result.gated_count == 0
 
 
 def test_sleep_consolidate_promotes_commitment(tmp_path):
@@ -47,6 +48,8 @@ def test_sleep_consolidate_promotes_commitment(tmp_path):
         {
             "text": "I promise to listen more",
             "layer": "working",
+            "evidence_ids": ["ev-001"],
+            "intent_id": "intent-001",
         },
     )
 
@@ -55,6 +58,7 @@ def test_sleep_consolidate_promotes_commitment(tmp_path):
     working_records = list(db.query(source, layer="working"))
 
     assert result.promoted_count == 1
+    assert result.gated_count == 0
     assert len(factual_records) == 1
     assert len(working_records) == 1
 
@@ -65,3 +69,41 @@ def test_sleep_result_has_layer_summary(tmp_path):
     result = sleep_consolidate(db, source=source)
     assert "experiential" in result.layer_summary
     assert isinstance(result.layer_summary["experiential"], int)
+
+
+def test_sleep_consolidate_blocks_promotion_without_evidence(tmp_path):
+    db, source = _build_db(tmp_path)
+    db.append(
+        source,
+        {
+            "text": "I promise to keep this commitment",
+            "layer": "working",
+            "intent_id": "intent-002",
+        },
+    )
+
+    result = sleep_consolidate(db, source=source)
+    factual_records = list(db.query(source, layer="factual"))
+    assert result.promoted_count == 0
+    assert result.gated_count == 1
+    assert result.gate_failures.get("missing_evidence") == 1
+    assert len(factual_records) == 0
+
+
+def test_sleep_consolidate_blocks_promotion_without_provenance(tmp_path):
+    db, source = _build_db(tmp_path)
+    db.append(
+        source,
+        {
+            "text": "I promise to keep this commitment",
+            "layer": "working",
+            "evidence_ids": ["ev-002"],
+        },
+    )
+
+    result = sleep_consolidate(db, source=source)
+    factual_records = list(db.query(source, layer="factual"))
+    assert result.promoted_count == 0
+    assert result.gated_count == 1
+    assert result.gate_failures.get("missing_provenance") == 1
+    assert len(factual_records) == 0

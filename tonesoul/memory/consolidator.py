@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Sequence
@@ -24,6 +24,8 @@ class SleepResult:
     patterns: Dict[str, object]
     meta_reflection: str
     layer_summary: Dict[str, int]
+    gated_count: int = 0
+    gate_failures: Dict[str, int] = field(default_factory=dict)
 
 
 def _classify_for_promotion(payload: Dict[str, object]) -> str:
@@ -39,6 +41,64 @@ def _classify_for_promotion(payload: Dict[str, object]) -> str:
         if keyword in text:
             return "experiential"
     return "working"
+
+
+def _has_evidence(payload: Dict[str, object]) -> bool:
+    evidence_ids = payload.get("evidence_ids")
+    if isinstance(evidence_ids, list) and any(str(item).strip() for item in evidence_ids):
+        return True
+
+    evidence = payload.get("evidence")
+    if isinstance(evidence, list) and any(str(item).strip() for item in evidence):
+        return True
+
+    transcript = payload.get("transcript")
+    if not isinstance(transcript, dict):
+        return False
+
+    contract = transcript.get("multi_agent_contract")
+    if isinstance(contract, dict):
+        records = contract.get("records")
+        if isinstance(records, list):
+            for record in records:
+                if not isinstance(record, dict):
+                    continue
+                record_evidence = record.get("evidence")
+                if isinstance(record_evidence, list) and any(
+                    str(item).strip() for item in record_evidence
+                ):
+                    return True
+    return False
+
+
+def _has_provenance(payload: Dict[str, object]) -> bool:
+    for key in ("intent_id", "genesis", "provenance", "isnad"):
+        value = payload.get(key)
+        if isinstance(value, str) and value.strip():
+            return True
+        if isinstance(value, (list, dict)) and value:
+            return True
+
+    transcript = payload.get("transcript")
+    if not isinstance(transcript, dict):
+        return False
+
+    for key in ("intent_id", "genesis", "provenance", "isnad"):
+        value = transcript.get(key)
+        if isinstance(value, str) and value.strip():
+            return True
+        if isinstance(value, (list, dict)) and value:
+            return True
+    return False
+
+
+def _promotion_gate(payload: Dict[str, object]) -> tuple[bool, List[str]]:
+    reasons: List[str] = []
+    if not _has_evidence(payload):
+        reasons.append("missing_evidence")
+    if not _has_provenance(payload):
+        reasons.append("missing_provenance")
+    return len(reasons) == 0, reasons
 
 
 def _load_entries(
@@ -159,12 +219,23 @@ def sleep_consolidate(
 
     promoted = 0
     cleared = 0
+    gated = 0
+    gate_failures: Dict[str, int] = {}
 
     for record in working_records:
         target_layer = _classify_for_promotion(record.payload)
         if target_layer == "working":
             cleared += 1
             continue
+
+        gate_ok, reasons = _promotion_gate(record.payload)
+        if not gate_ok:
+            gated += 1
+            cleared += 1
+            for reason in reasons:
+                gate_failures[reason] = gate_failures.get(reason, 0) + 1
+            continue
+
         promoted_payload = dict(record.payload)
         promoted_payload["layer"] = target_layer
         promoted_payload["promoted_from"] = "working"
@@ -192,4 +263,6 @@ def sleep_consolidate(
         patterns=patterns,
         meta_reflection=meta_reflection,
         layer_summary=layer_summary,
+        gated_count=gated,
+        gate_failures=gate_failures,
     )
