@@ -181,6 +181,14 @@ def _build_check_specs(
             ],
         },
         {
+            "name": "multi_agent_divergence",
+            "command": [
+                python_executable,
+                "scripts/run_multi_agent_divergence_report.py",
+                "--strict",
+            ],
+        },
+        {
             "name": "audit_7d",
             "command": verify_7d_cmd,
         },
