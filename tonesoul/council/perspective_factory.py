@@ -27,6 +27,11 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Callable, Dict, List, Optional, Union
 
+try:
+    import requests as _requests_mod
+except ImportError:  # pragma: no cover
+    _requests_mod = None  # type: ignore[assignment]
+
 from .base import IPerspective
 from .perspectives.advocate import AdvocatePerspective
 from .perspectives.analyst import AnalystPerspective
@@ -46,7 +51,8 @@ class PerspectiveMode(Enum):
     """Supported perspective evaluation modes"""
 
     RULES = "rules"  # Default heuristic rules
-    LLM = "llm"  # LLM-based evaluation
+    LLM = "llm"  # LLM-based evaluation (Gemini)
+    OLLAMA = "ollama"  # Local model via Ollama REST API
     TOOL = "tool"  # External tool verification
     HYBRID = "hybrid"  # Combination of rules + LLM
 
@@ -202,6 +208,11 @@ Evaluate if the following text truly serves the user's needs and intent.
 You MUST respond with a JSON object in this exact format:
 {"decision": "APPROVE", "confidence": 0.8, "reasoning": "brief explanation"}
 Decision must be: APPROVE (helpful), CONCERN (partially), or OBJECT (unhelpful).""",
+            "axiomatic": """You are a PHILOSOPHER (AXIOMATIC) in an AI Council, guarding the Truth Protocol (VTP).
+Evaluate if the text contains irreconcilable tensions, logical contradictions, or compromises core axioms.
+You MUST respond with a JSON object in this exact format:
+{"decision": "APPROVE", "confidence": 0.8, "reasoning": "brief explanation"}
+Decision must be: APPROVE (truthful/consistent), CONCERN (ambiguous), or OBJECT (contradictory/deceptive).""",
         }
         return prompts.get(self.name, prompts["analyst"])
 
@@ -325,6 +336,161 @@ Respond with JSON only."""
             )
 
 
+DEFAULT_OLLAMA_MODEL = "qwen3:4b"
+DEFAULT_OLLAMA_ENDPOINT = "http://localhost:11434"
+
+
+class OllamaPerspective(IPerspective):
+    """Local model perspective via Ollama REST API.
+
+    Calls a local model (e.g. qwen3:4b) through Ollama's /api/chat endpoint
+    for perspective evaluation. Reuses prompts and parsing from LLMPerspective
+    but targets the local Ollama service instead of Gemini.
+
+    Key constraints for qwen3:
+    - Must set think=False (otherwise returns empty string)
+    - num_predict capped at 256 (quality drops beyond that for 4B models)
+    - timeout 120s (first request loads model into GPU: ~8-10s)
+    """
+
+    def __init__(
+        self,
+        name: Union[str, PerspectiveType],
+        model: str = DEFAULT_OLLAMA_MODEL,
+        system_prompt: Optional[str] = None,
+        fallback: Optional[IPerspective] = None,
+        timeout: float = 120.0,
+        endpoint: str = DEFAULT_OLLAMA_ENDPOINT,
+    ):
+        self.name = _normalize_name(name)
+        self.model = model
+        self.system_prompt = system_prompt or self._default_prompt()
+        self.fallback = fallback
+        self.timeout = timeout
+        self.endpoint = endpoint.rstrip("/")
+        self._perspective = _to_perspective(self.name)
+
+    @property
+    def perspective_type(self) -> PerspectiveId:
+        return self._perspective
+
+    def _default_prompt(self) -> str:
+        """Concise prompts optimised for small models."""
+        prompts = {
+            "guardian": (
+                "You are GUARDIAN in an AI Council. Evaluate safety and ethics.\n"
+                'Respond ONLY with JSON: {"decision":"APPROVE|CONCERN|OBJECT",'
+                '"confidence":0.8,"reasoning":"brief"}'
+            ),
+            "analyst": (
+                "You are ANALYST in an AI Council. Check factual accuracy.\n"
+                'Respond ONLY with JSON: {"decision":"APPROVE|CONCERN|OBJECT",'
+                '"confidence":0.8,"reasoning":"brief"}'
+            ),
+            "critic": (
+                "You are CRITIC in an AI Council. Find weaknesses and flaws.\n"
+                'Respond ONLY with JSON: {"decision":"APPROVE|CONCERN|OBJECT",'
+                '"confidence":0.8,"reasoning":"brief"}'
+            ),
+            "advocate": (
+                "You are ADVOCATE in an AI Council. Judge user helpfulness.\n"
+                'Respond ONLY with JSON: {"decision":"APPROVE|CONCERN|OBJECT",'
+                '"confidence":0.8,"reasoning":"brief"}'
+            ),
+            "axiomatic": (
+                "You are PHILOSOPHER in an AI Council. Guard the Truth Protocol (VTP) against contradictions.\n"
+                'Respond ONLY with JSON: {"decision":"APPROVE|CONCERN|OBJECT",'
+                '"confidence":0.8,"reasoning":"brief"}'
+            ),
+        }
+        return prompts.get(self.name, prompts["analyst"])
+
+    def _parse_response(self, response: str) -> Dict[str, Any]:
+        """Parse JSON from Ollama response (delegates to LLMPerspective helper)."""
+        # Reuse the robust parser from LLMPerspective
+        dummy = LLMPerspective.__new__(LLMPerspective)
+        return dummy._parse_llm_response(response)
+
+    def evaluate(
+        self,
+        draft_output: str,
+        context: dict,
+        user_intent: Optional[str] = None,
+    ) -> PerspectiveVote:
+        """Evaluate using local Ollama model."""
+        if _requests_mod is None:
+            logger.warning("[%s] requests library not available", self.name)
+            if self.fallback:
+                return self.fallback.evaluate(draft_output, context, user_intent)
+            return PerspectiveVote(
+                perspective=self.perspective_type,
+                decision=VoteDecision.CONCERN,
+                confidence=0.5,
+                reasoning="requests library not installed; cannot call Ollama.",
+            )
+
+        intent_clause = f"\nUser Intent: {user_intent}" if user_intent else ""
+        visual_context = context.get("visual_context", "")
+        visual_clause = f"\n\nVisual Context (Mermaid Diagram):\n```mermaid\n{visual_context}\n```" if visual_context else ""
+
+        user_msg = (
+            f"{self.system_prompt}\n\n"
+            f"Text to evaluate:\n\"\"\"\n{draft_output[:1000]}\n\"\"\""
+            f"{intent_clause}{visual_clause}\n\n"
+            f"Context: {json.dumps({k: v for k, v in context.items() if k != 'visual_context'}, default=str, ensure_ascii=False)[:300]}\n\n"
+            "Respond with JSON only."
+        )
+
+        try:
+            resp = _requests_mod.post(
+                f"{self.endpoint}/api/chat",
+                json={
+                    "model": self.model,
+                    "messages": [
+                        {"role": "system", "content": self.system_prompt},
+                        {"role": "user", "content": user_msg},
+                    ],
+                    "stream": False,
+                    "think": False,  # Critical for qwen3 — otherwise empty response
+                    "options": {
+                        "temperature": 0.7,
+                        "num_predict": 256,
+                    },
+                },
+                timeout=self.timeout,
+            )
+            resp.raise_for_status()
+            content = resp.json().get("message", {}).get("content", "")
+
+            if not content.strip():
+                raise ValueError("Ollama returned empty content (think mode issue?)")
+
+            logger.debug("[%s] Ollama response: %s...", self.name, content[:200])
+            parsed = self._parse_response(content)
+            decision = _normalize_decision(parsed.get("decision"))
+            confidence = _safe_confidence(parsed.get("confidence", 0.7))
+
+            return PerspectiveVote(
+                perspective=self.perspective_type,
+                decision=decision,
+                confidence=confidence,
+                reasoning=f"[Ollama:{self.model}] {parsed.get('reasoning', 'No reasoning')}",
+            )
+
+        except Exception as e:
+            logger.warning("[%s] Ollama evaluation failed: %s", self.name, e)
+            if self.fallback:
+                logger.debug("[%s] Falling back to rules-based evaluation", self.name)
+                return self.fallback.evaluate(draft_output, context, user_intent)
+
+            return PerspectiveVote(
+                perspective=self.perspective_type,
+                decision=VoteDecision.CONCERN,
+                confidence=0.5,
+                reasoning=f"Ollama error: {str(e)[:100]}; no fallback.",
+            )
+
+
 class ToolVerifiedPerspective(IPerspective):
     """Perspective that uses external tools for verification.
 
@@ -444,6 +610,13 @@ class PerspectiveFactory:
             return LLMPerspective(
                 name=normalized_name,
                 model=model or DEFAULT_LLM_MODEL,
+                fallback=fallback,
+            )
+
+        if mode_enum == PerspectiveMode.OLLAMA:
+            return OllamaPerspective(
+                name=normalized_name,
+                model=model or DEFAULT_OLLAMA_MODEL,
                 fallback=fallback,
             )
 

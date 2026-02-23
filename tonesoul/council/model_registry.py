@@ -66,6 +66,17 @@ RULES_ONLY_COUNCIL_CONFIG: Dict[str, Dict[str, str]] = {
     "axiomatic": {"mode": "rules"},
 }
 
+# Local model configuration (Ollama + qwen3:4b)
+# Strategy: Only Guardian and Critic use LLM — they produce the most
+# meaningful divergence. Others stay rules-based for cost/speed.
+LOCAL_COUNCIL_CONFIG: Dict[str, Dict[str, str]] = {
+    "guardian": {"mode": "ollama", "model": "qwen3:4b"},
+    "analyst": {"mode": "rules"},
+    "critic": {"mode": "ollama", "model": "qwen3:4b"},
+    "advocate": {"mode": "rules"},
+    "axiomatic": {"mode": "ollama", "model": "qwen3:4b"},
+}
+
 
 def _normalize_name(value: object) -> str:
     return str(value).strip().lower()
@@ -95,6 +106,8 @@ def get_council_config(
         config = deepcopy(MULTI_MODEL_COUNCIL_CONFIG)
     elif normalized_mode in {"rules", "rules_only"}:
         config = deepcopy(RULES_ONLY_COUNCIL_CONFIG)
+    elif normalized_mode == "local":
+        config = deepcopy(LOCAL_COUNCIL_CONFIG)
     else:
         config = deepcopy(HYBRID_COUNCIL_CONFIG)
 
@@ -127,5 +140,11 @@ MODEL_CHARACTERISTICS = {
         "best_for": ["analyst", "advocate"],
         "cost": "low",
         "speed": "fast",
+    },
+    "qwen3:4b": {
+        "style": "concise, independent, local-only",
+        "best_for": ["guardian", "critic"],
+        "cost": "free",
+        "speed": "medium (32-37 tok/s)",
     },
 }
