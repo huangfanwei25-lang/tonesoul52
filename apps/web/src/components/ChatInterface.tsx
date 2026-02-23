@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Send, Loader2, Brain, ChevronDown, ChevronUp, AlertTriangle, MessageSquare, MoveRight, Users } from "lucide-react";
 import { ApiSettings } from "./SettingsModal";
 import { Message as DBMessage, DeliberationData, Conversation, saveConversation, MemoryInsight, findRelevantMemories } from "@/lib/db";
@@ -669,7 +669,7 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
         } else {
             setMessages([]);
         }
-    }, [conversation?.id]);
+    }, [conversation]);
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -1111,7 +1111,7 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
         };
     };
 
-    const sendMessage = useCallback(async () => {
+    const sendMessage = async () => {
         if (!input.trim() || isLoading || !conversation) return;
 
         const userMessage: Message = {
@@ -1206,7 +1206,7 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
             setIsLoading(false);
             setLoadingPhase("");
         }
-    }, [input, isLoading, conversation, apiSettings, messages, onConversationUpdate]);
+    };
 
     const handleSuggestionClick = (text: string) => {
         setInput(text);

@@ -51,6 +51,11 @@ def _npm_executable() -> str:
     return "npm.cmd" if os.name == "nt" else "npm"
 
 
+def _is_ci_environment() -> bool:
+    raw = str(os.environ.get("CI", "")).strip().lower()
+    return raw in {"1", "true", "yes", "on"}
+
+
 def _run_check(name: str, command: list[str], cwd: Path) -> dict[str, Any]:
     started = time.perf_counter()
     env = os.environ.copy()
@@ -324,6 +329,7 @@ def main() -> int:
     repo_root = Path(args.repo_root).resolve()
     out_dir = (repo_root / args.out_dir).resolve()
     discussion_path = (repo_root / args.discussion_path).resolve()
+    allow_missing_discussion = bool(args.allow_missing_discussion) or _is_ci_environment()
 
     specs = _build_check_specs(
         python_executable=sys.executable,
@@ -333,7 +339,7 @@ def main() -> int:
         web_base=args.web_base,
         api_base=args.api_base,
         sdh_timeout=args.sdh_timeout,
-        allow_missing_discussion=bool(args.allow_missing_discussion),
+        allow_missing_discussion=allow_missing_discussion,
         discussion_path=discussion_path,
     )
 
@@ -356,7 +362,7 @@ def main() -> int:
             "sdh_timeout": args.sdh_timeout,
             "check_council_modes": bool(args.check_council_modes),
             "strict_soft_fail": bool(args.strict_soft_fail),
-            "allow_missing_discussion": bool(args.allow_missing_discussion),
+            "allow_missing_discussion": allow_missing_discussion,
         },
         "checks": checks,
     }

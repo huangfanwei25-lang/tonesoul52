@@ -3,6 +3,22 @@ from pathlib import Path
 import scripts.run_repo_healthcheck as healthcheck
 
 
+def test_is_ci_environment_detects_truthy_values(monkeypatch) -> None:
+    monkeypatch.setenv("CI", "true")
+    assert healthcheck._is_ci_environment() is True
+
+    monkeypatch.setenv("CI", "1")
+    assert healthcheck._is_ci_environment() is True
+
+
+def test_is_ci_environment_detects_falsey_values(monkeypatch) -> None:
+    monkeypatch.delenv("CI", raising=False)
+    assert healthcheck._is_ci_environment() is False
+
+    monkeypatch.setenv("CI", "0")
+    assert healthcheck._is_ci_environment() is False
+
+
 def test_display_command_normalizes_python_executable() -> None:
     command = [
         r"C:\\Users\\user\\Desktop\\repo\\.venv\\Scripts\\python.exe",
