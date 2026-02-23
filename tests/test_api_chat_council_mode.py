@@ -275,3 +275,84 @@ def test_chat_deliberation_payload_is_stable_with_sparse_pipeline_data(monkeypat
     assert 0.0 <= deliberation["entropy_meter"]["value"] <= 1.0
     assert deliberation["decision_matrix"]["user_hidden_intent"] == "Unspecified"
     assert isinstance(deliberation["next_moves"], list)
+
+
+def test_chat_deliberation_exposes_divergence_quality(monkeypatch):
+    import tonesoul.unified_pipeline as unified_pipeline
+
+    class _Pipeline:
+        def process(self, **kwargs):
+            return SimpleNamespace(
+                response="ok",
+                council_verdict={
+                    "verdict": "refine",
+                    "summary": "Needs stronger alignment before response.",
+                    "coherence": 0.61,
+                    "votes": [
+                        {
+                            "perspective": "analyst",
+                            "decision": "concern",
+                            "confidence": 0.84,
+                            "reasoning": "Assumptions are underspecified for execution.",
+                            "evidence": ["trace://logic"],
+                        },
+                        {
+                            "perspective": "guardian",
+                            "decision": "approve",
+                            "confidence": 0.72,
+                            "reasoning": "No direct safety violation detected.",
+                        },
+                        {
+                            "perspective": "critic",
+                            "decision": "concern",
+                            "confidence": 0.67,
+                            "reasoning": "Tone could be interpreted as overconfident.",
+                        },
+                    ],
+                    "divergence_analysis": {
+                        "core_divergence": "Engineer asks for stronger assumptions while Guardian allows current draft.",
+                        "role_tensions": [
+                            {
+                                "from_role": "analyst",
+                                "to_role": "guardian",
+                                "reason": "Needs explicit assumptions before execution.",
+                                "counter_reason": "Safety risk remains acceptable.",
+                            }
+                        ],
+                        "quality": {
+                            "score": 0.81,
+                            "band": "high",
+                            "conflict_coverage": 0.67,
+                            "reasoning_specificity": 0.79,
+                            "evidence_coverage": 0.33,
+                            "confidence_balance": 0.75,
+                            "role_tension_coverage": 0.66,
+                        },
+                    },
+                },
+                tonebridge_analysis={},
+                inner_narrative="",
+                intervention_strategy="",
+                internal_monologue="",
+                persona_mode="",
+                trajectory_analysis={},
+                self_commits=[],
+                ruptures=[],
+                emergent_values=[],
+                semantic_contradictions=[],
+                semantic_graph_summary={},
+                dispatch_trace={},
+            )
+
+    monkeypatch.setattr(unified_pipeline, "create_unified_pipeline", lambda: _Pipeline())
+
+    client = _client()
+    response = client.post("/api/chat", json={"message": "hello"})
+    payload = response.get_json()
+
+    assert response.status_code == 200
+    deliberation = payload.get("deliberation")
+    assert isinstance(deliberation, dict)
+    assert deliberation["divergence_quality"]["band"] == "high"
+    assert deliberation["divergence_quality"]["score"] == 0.81
+    assert deliberation["council_chamber"]["engineer"]["conflict_point"].startswith("guardian:")

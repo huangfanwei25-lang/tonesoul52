@@ -234,6 +234,189 @@ def _recommended_actions(votes: List[PerspectiveVote], language: str) -> List[st
     return actions
 
 
+def _decision_distribution(votes: List[PerspectiveVote]) -> Dict[str, int]:
+    distribution = {
+        "approve": 0,
+        "concern": 0,
+        "object": 0,
+        "abstain": 0,
+    }
+    for vote in votes:
+        bucket = _decision_bucket(vote.decision)
+        if bucket in distribution:
+            distribution[bucket] += 1
+    return distribution
+
+
+def _reasoning_specificity_score(text: str) -> float:
+    cleaned = text.strip()
+    if not cleaned:
+        return 0.0
+    if " " in cleaned:
+        tokens = [token for token in cleaned.split() if token]
+        return min(1.0, len(tokens) / 16.0)
+    return min(1.0, len(cleaned) / 48.0)
+
+
+def _reasoning_specificity(votes: List[PerspectiveVote]) -> float:
+    target_votes = [
+        vote for vote in votes if _decision_bucket(vote.decision) in {"concern", "object"}
+    ]
+    if not target_votes:
+        target_votes = votes
+    if not target_votes:
+        return 0.0
+
+    scores = [_reasoning_specificity_score(vote.reasoning or "") for vote in target_votes]
+    return sum(scores) / float(len(scores))
+
+
+def _evidence_coverage(votes: List[PerspectiveVote]) -> float:
+    if not votes:
+        return 0.0
+    covered = 0
+    for vote in votes:
+        if isinstance(vote.evidence, list) and any(str(item).strip() for item in vote.evidence):
+            covered += 1
+    return covered / float(len(votes))
+
+
+def _confidence_balance(votes: List[PerspectiveVote]) -> float:
+    confidences: List[float] = []
+    for vote in votes:
+        try:
+            confidences.append(float(vote.confidence))
+        except (TypeError, ValueError):
+            continue
+    if not confidences:
+        return 0.0
+    spread = max(confidences) - min(confidences)
+    ideal_spread = 0.35
+    return max(0.0, min(1.0, 1.0 - abs(spread - ideal_spread) / ideal_spread))
+
+
+def _build_role_tensions(votes: List[PerspectiveVote]) -> List[Dict[str, object]]:
+    records: List[Dict[str, object]] = []
+    for vote in votes:
+        key = _normalize_perspective(vote.perspective)
+        bucket = _decision_bucket(vote.decision)
+        if bucket not in {"approve", "concern", "object", "abstain"}:
+            continue
+        try:
+            confidence = float(vote.confidence)
+        except (TypeError, ValueError):
+            confidence = 0.0
+        records.append(
+            {
+                "key": key,
+                "label": _perspective_label(vote.perspective),
+                "bucket": bucket,
+                "reasoning": (vote.reasoning or "").strip(),
+                "confidence": confidence,
+            }
+        )
+
+    if len(records) < 2:
+        return []
+
+    tensions: List[Dict[str, object]] = []
+    seen_pairs: set[tuple[str, str, str, str]] = set()
+
+    for source in records:
+        source_bucket = str(source["bucket"])
+        if source_bucket not in {"concern", "object"}:
+            continue
+
+        candidates = [
+            candidate
+            for candidate in records
+            if candidate["key"] != source["key"] and candidate["bucket"] != source_bucket
+        ]
+        if not candidates:
+            continue
+
+        def _target_priority(candidate: Dict[str, object]) -> tuple[int, float]:
+            bucket = str(candidate.get("bucket") or "")
+            if bucket == "approve":
+                rank = 3
+            elif bucket == "concern":
+                rank = 2
+            elif bucket == "object":
+                rank = 1
+            else:
+                rank = 0
+            confidence = float(candidate.get("confidence") or 0.0)
+            return rank, confidence
+
+        target = max(candidates, key=_target_priority)
+        pair_key = (
+            str(source["key"]),
+            str(target["key"]),
+            source_bucket,
+            str(target["bucket"]),
+        )
+        if pair_key in seen_pairs:
+            continue
+        seen_pairs.add(pair_key)
+
+        source_reason = str(source.get("reasoning") or "").strip() or "No explicit rationale."
+        target_reason = str(target.get("reasoning") or "").strip() or "No explicit rationale."
+        tensions.append(
+            {
+                "from": source["label"],
+                "from_role": source["key"],
+                "from_decision": source_bucket,
+                "to": target["label"],
+                "to_role": target["key"],
+                "to_decision": target["bucket"],
+                "reason": source_reason,
+                "counter_reason": target_reason,
+            }
+        )
+
+    return tensions[:4]
+
+
+def _build_divergence_quality(
+    votes: List[PerspectiveVote],
+    decision_distribution: Dict[str, int],
+    role_tensions: List[Dict[str, object]],
+) -> Dict[str, object]:
+    total_votes = max(1, len(votes))
+    conflict_coverage = (
+        decision_distribution.get("concern", 0) + decision_distribution.get("object", 0)
+    ) / float(total_votes)
+    reasoning_specificity = _reasoning_specificity(votes)
+    evidence_coverage = _evidence_coverage(votes)
+    confidence_balance = _confidence_balance(votes)
+    tension_coverage = min(1.0, len(role_tensions) / 3.0)
+
+    score = (
+        conflict_coverage * 0.32
+        + reasoning_specificity * 0.28
+        + evidence_coverage * 0.15
+        + confidence_balance * 0.10
+        + tension_coverage * 0.15
+    )
+
+    if score >= 0.7:
+        band = "high"
+    elif score >= 0.45:
+        band = "medium"
+    else:
+        band = "low"
+
+    return {
+        "score": round(score, 3),
+        "band": band,
+        "conflict_coverage": round(conflict_coverage, 3),
+        "reasoning_specificity": round(reasoning_specificity, 3),
+        "evidence_coverage": round(evidence_coverage, 3),
+        "confidence_balance": round(confidence_balance, 3),
+        "role_tension_coverage": round(tension_coverage, 3),
+    }
+
+
 def build_divergence_analysis(votes: List[PerspectiveVote]) -> Dict[str, object]:
     agree: List[str] = []
     concerns: List[str] = []
@@ -261,6 +444,9 @@ def build_divergence_analysis(votes: List[PerspectiveVote]) -> Dict[str, object]
         core_divergence = "No specific conflict identified."
 
     recommended_action = " ".join(_recommended_actions(votes, "en"))
+    decision_distribution = _decision_distribution(votes)
+    role_tensions = _build_role_tensions(votes)
+    quality = _build_divergence_quality(votes, decision_distribution, role_tensions)
 
     return {
         "agree": agree,
@@ -269,6 +455,9 @@ def build_divergence_analysis(votes: List[PerspectiveVote]) -> Dict[str, object]
         "abstain": abstain,
         "core_divergence": core_divergence,
         "recommended_action": recommended_action,
+        "decision_distribution": decision_distribution,
+        "role_tensions": role_tensions,
+        "quality": quality,
     }
 
 

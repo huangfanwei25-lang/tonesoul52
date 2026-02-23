@@ -648,6 +648,141 @@ def _map_perspective_to_chamber_role(perspective_name: str) -> str | None:
     return None
 
 
+def _normalize_chamber_role(value: str) -> str | None:
+    normalized = value.strip().lower()
+    if normalized in {"philosopher", "engineer", "guardian"}:
+        return normalized
+    return _map_perspective_to_chamber_role(normalized)
+
+
+def _extract_role_friction(verdict: dict) -> dict[str, str]:
+    divergence = _as_dict(verdict.get("divergence_analysis"))
+    role_tensions = _as_list(divergence.get("role_tensions"))
+    friction: dict[str, str] = {}
+
+    for item in role_tensions:
+        if not isinstance(item, dict):
+            continue
+        source_role = _normalize_chamber_role(str(item.get("from_role") or item.get("from") or ""))
+        target_role = _normalize_chamber_role(str(item.get("to_role") or item.get("to") or ""))
+        if source_role is None or target_role is None or source_role in friction:
+            continue
+
+        reason = str(item.get("reason") or "").strip()
+        counter_reason = str(item.get("counter_reason") or "").strip()
+        if reason and counter_reason:
+            summary = f"{target_role}: {reason[:90]} | counter: {counter_reason[:90]}"
+        elif reason:
+            summary = f"{target_role}: {reason[:140]}"
+        elif counter_reason:
+            summary = f"{target_role}: {counter_reason[:140]}"
+        else:
+            continue
+        friction[source_role] = summary
+
+    return friction
+
+
+def _build_divergence_quality_payload(verdict: dict) -> dict:
+    divergence = _as_dict(verdict.get("divergence_analysis"))
+    quality = _as_dict(divergence.get("quality"))
+    if quality:
+        return {
+            "score": _clamp01(_coerce_float(quality.get("score"), default=0.0)),
+            "band": str(quality.get("band") or "unknown"),
+            "conflict_coverage": _clamp01(
+                _coerce_float(quality.get("conflict_coverage"), default=0.0)
+            ),
+            "reasoning_specificity": _clamp01(
+                _coerce_float(quality.get("reasoning_specificity"), default=0.0)
+            ),
+            "evidence_coverage": _clamp01(
+                _coerce_float(quality.get("evidence_coverage"), default=0.0)
+            ),
+            "confidence_balance": _clamp01(
+                _coerce_float(quality.get("confidence_balance"), default=0.0)
+            ),
+            "role_tension_coverage": _clamp01(
+                _coerce_float(quality.get("role_tension_coverage"), default=0.0)
+            ),
+            "core_divergence": str(divergence.get("core_divergence") or ""),
+            "role_tensions": _as_list(divergence.get("role_tensions")),
+        }
+
+    votes = _as_list(verdict.get("votes"))
+    if not votes:
+        return {
+            "score": 0.0,
+            "band": "unknown",
+            "conflict_coverage": 0.0,
+            "reasoning_specificity": 0.0,
+            "evidence_coverage": 0.0,
+            "confidence_balance": 0.0,
+            "role_tension_coverage": 0.0,
+            "core_divergence": str(divergence.get("core_divergence") or ""),
+            "role_tensions": [],
+        }
+
+    conflicts = 0
+    confidences: list[float] = []
+    specificity_scores: list[float] = []
+    evidence_votes = 0
+    for vote in votes:
+        if not isinstance(vote, dict):
+            continue
+        decision = str(vote.get("decision") or "").strip().lower()
+        if decision in {"concern", "object", "block", "refine"}:
+            conflicts += 1
+        confidence = _clamp01(_coerce_float(vote.get("confidence"), default=0.0))
+        confidences.append(confidence)
+        reasoning = str(vote.get("reasoning") or "").strip()
+        if reasoning:
+            if " " in reasoning:
+                specificity_scores.append(min(1.0, len([w for w in reasoning.split() if w]) / 16.0))
+            else:
+                specificity_scores.append(min(1.0, len(reasoning) / 48.0))
+        evidence = vote.get("evidence")
+        if isinstance(evidence, list) and any(str(item).strip() for item in evidence):
+            evidence_votes += 1
+
+    total_votes = max(1, len(votes))
+    conflict_coverage = conflicts / float(total_votes)
+    evidence_coverage = evidence_votes / float(total_votes)
+    reasoning_specificity = (
+        sum(specificity_scores) / float(len(specificity_scores)) if specificity_scores else 0.0
+    )
+    if confidences:
+        spread = max(confidences) - min(confidences)
+        confidence_balance = max(0.0, min(1.0, 1.0 - abs(spread - 0.35) / 0.35))
+    else:
+        confidence_balance = 0.0
+
+    score = (
+        conflict_coverage * 0.4
+        + reasoning_specificity * 0.35
+        + evidence_coverage * 0.1
+        + confidence_balance * 0.15
+    )
+    if score >= 0.7:
+        band = "high"
+    elif score >= 0.45:
+        band = "medium"
+    else:
+        band = "low"
+
+    return {
+        "score": round(_clamp01(score), 3),
+        "band": band,
+        "conflict_coverage": round(_clamp01(conflict_coverage), 3),
+        "reasoning_specificity": round(_clamp01(reasoning_specificity), 3),
+        "evidence_coverage": round(_clamp01(evidence_coverage), 3),
+        "confidence_balance": round(_clamp01(confidence_balance), 3),
+        "role_tension_coverage": 0.0,
+        "core_divergence": str(divergence.get("core_divergence") or ""),
+        "role_tensions": [],
+    }
+
+
 def _extract_council_chamber(verdict: dict) -> dict:
     votes = _as_list(verdict.get("votes"))
     summary = str(verdict.get("summary") or "").strip()
@@ -657,6 +792,7 @@ def _extract_council_chamber(verdict: dict) -> dict:
         str(benevolence.get("final_result") or benevolence.get("result") or "").strip() or "unknown"
     )
 
+    role_friction = _extract_role_friction(verdict)
     role_records: dict[str, dict[str, str]] = {}
     fallback_records: list[dict[str, str]] = []
     for vote in votes:
@@ -668,11 +804,14 @@ def _extract_council_chamber(verdict: dict) -> dict:
         reasoning = str(vote.get("reasoning") or "").strip() or default_stance
         entry = {
             "stance": reasoning,
-            "conflict_point": (
-                decision if decision in {"concern", "object", "block", "refine"} else ""
-            ),
+            "conflict_point": "",
             "benevolence_check": "",
         }
+        default_conflict = decision if decision in {"concern", "object", "block", "refine"} else ""
+        if mapped_role:
+            entry["conflict_point"] = role_friction.get(mapped_role, default_conflict)
+        else:
+            entry["conflict_point"] = default_conflict
         if mapped_role and mapped_role not in role_records:
             role_records[mapped_role] = entry
         fallback_records.append(entry)
@@ -694,6 +833,8 @@ def _extract_council_chamber(verdict: dict) -> dict:
     chamber: dict[str, dict[str, str]] = {}
     for role in ("philosopher", "engineer", "guardian"):
         chamber[role] = dict(role_records.get(role) or _next_fallback())
+        if role in role_friction and not str(chamber[role].get("conflict_point") or "").strip():
+            chamber[role]["conflict_point"] = role_friction[role]
 
     chamber["guardian"]["benevolence_check"] = benevolence_state
     return chamber
@@ -922,6 +1063,7 @@ def _build_deliberation_payload(result) -> dict:
     return {
         "council_chamber": chamber,
         "entropy_meter": entropy_meter,
+        "divergence_quality": _build_divergence_quality_payload(verdict),
         "decision_matrix": decision_matrix,
         "audit": audit_payload,
         "semantic_contradictions": semantic_contradictions,
@@ -1667,6 +1809,22 @@ def llm_switch():
     )
 
 
+def _should_skip_live_chat_pipeline_for_tests(pipeline) -> bool:
+    """Avoid flaky external LLM calls when Flask test mode uses the real pipeline."""
+    if not app.config.get("TESTING"):
+        return False
+    if _env_flag("TONESOUL_ALLOW_LIVE_CHAT_PIPELINE_TESTS", default=False):
+        return False
+
+    pipeline_cls = getattr(pipeline, "__class__", None)
+    if pipeline_cls is None:
+        return False
+    return (
+        getattr(pipeline_cls, "__module__", "") == "tonesoul.unified_pipeline"
+        and getattr(pipeline_cls, "__name__", "") == "UnifiedPipeline"
+    )
+
+
 @app.route("/api/chat", methods=["POST"])
 def chat():
     """Chat endpoint with ToneBridge + Council (Unified Pipeline)."""
@@ -1746,6 +1904,11 @@ def chat():
             return jsonify(cached_payload)
 
         pipeline = create_unified_pipeline()
+        if _should_skip_live_chat_pipeline_for_tests(pipeline):
+            raise RuntimeError(
+                "Live UnifiedPipeline disabled in test mode. "
+                "Set TONESOUL_ALLOW_LIVE_CHAT_PIPELINE_TESTS=1 to enable."
+            )
 
         result = pipeline.process(
             user_message=message,
