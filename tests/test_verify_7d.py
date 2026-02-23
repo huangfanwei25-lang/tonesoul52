@@ -102,3 +102,18 @@ def test_check_sdh_uses_stdout_tail_when_stderr_empty(monkeypatch):
 
     assert result.status == "fail"
     assert "connection refused" in result.note.lower()
+
+
+def test_check_tdd_uses_extended_pytest_timeout(monkeypatch):
+    captured: dict[str, object] = {}
+
+    def fake_run(command: list[str], timeout: int = 1200):
+        captured["command"] = command
+        captured["timeout"] = timeout
+        return True, "", "", 0
+
+    monkeypatch.setattr(verify_7d, "_run", fake_run)
+    result = verify_7d._check_tdd()
+
+    assert result.status == "pass"
+    assert captured["timeout"] == verify_7d.TDD_PYTEST_TIMEOUT
