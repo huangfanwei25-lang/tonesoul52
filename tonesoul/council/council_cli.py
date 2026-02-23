@@ -23,6 +23,11 @@ from typing import Any, Dict
 logging.basicConfig(level=logging.WARNING, stream=sys.stderr)
 
 _VALID_MODES = {"local", "hybrid", "rules", "full_llm"}
+_FALLBACK_REASON_MARKERS = (
+    "[fallback_to_rules]",
+    "vtp philosopher fallback to rules",
+    "fallback to rules",
+)
 
 
 def _build_council_request(
@@ -50,6 +55,19 @@ def _build_council_request(
     )
 
 
+def _fallback_triggered_from_votes(votes: Any) -> bool:
+    if not isinstance(votes, list):
+        return False
+    for vote in votes:
+        reasoning = getattr(vote, "reasoning", "")
+        if not isinstance(reasoning, str):
+            continue
+        normalized = reasoning.lower()
+        if any(marker in normalized for marker in _FALLBACK_REASON_MARKERS):
+            return True
+    return False
+
+
 def _run_council(draft: str, intent: str, mode: str, visual_context: str = "") -> Dict[str, Any]:
     """Execute council deliberation and return a serialisable result dict."""
     from .runtime import CouncilRuntime
@@ -57,6 +75,7 @@ def _run_council(draft: str, intent: str, mode: str, visual_context: str = "") -
     runtime = CouncilRuntime()
     request = _build_council_request(draft, intent, mode, visual_context)
     verdict = runtime.deliberate(request)
+    fallback_triggered = _fallback_triggered_from_votes(getattr(verdict, "votes", []))
 
     # Extract quality from divergence_analysis
     divergence = verdict.divergence_analysis or {}
@@ -80,6 +99,7 @@ def _run_council(draft: str, intent: str, mode: str, visual_context: str = "") -
         "tension": tension,
         "quality_band": quality_band,
         "quality_score": round(float(quality_score), 3),
+        "fallback_triggered": fallback_triggered,
         "divergence": {
             "agree": divergence.get("agree", []),
             "concern": divergence.get("concern", []),
@@ -133,6 +153,7 @@ def main() -> None:
             "tension": 0.5,
             "quality_band": "low",
             "quality_score": 0.0,
+            "fallback_triggered": False,
             "divergence": {
                 "agree": [],
                 "concern": [],

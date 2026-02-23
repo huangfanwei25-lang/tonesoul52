@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import unicodedata
 from datetime import datetime, timezone
@@ -16,6 +17,8 @@ CURATED_EXCLUDED_TOPICS = {"agent-discussion-parse-error"}
 TEXT_ANOMALY_REPLACEMENT = "replacement_char"
 TEXT_ANOMALY_PRIVATE_USE = "private_use_char"
 LESSONS_TEMPLATE_VERSION = "LESSONS_V1"
+INTEGRITY_HASH_FIELD = "integrity_hash"
+INTEGRITY_SUSPECT_FIELD = "integrity_suspect"
 
 
 def _iso_now() -> str:
@@ -41,6 +44,10 @@ def _normalize_items(items: Sequence[str], field_name: str) -> List[str]:
     if not normalized:
         raise ValueError(f"{field_name} requires at least one non-empty item")
     return normalized
+
+
+def _message_integrity_hash(message: str) -> str:
+    return hashlib.sha256(message.encode("utf-8")).hexdigest()
 
 
 def format_lessons_message(
@@ -111,6 +118,12 @@ def normalize_entry(entry: Dict[str, Any]) -> Dict[str, Any]:
     normalized["topic"] = _normalize_text(normalized.get("topic"), "general")
     normalized["status"] = _normalize_text(normalized.get("status"), "noted")
     normalized["message"] = _normalize_text(normalized.get("message"), "(empty message)")
+    raw_integrity_hash = normalized.get(INTEGRITY_HASH_FIELD)
+    normalized[INTEGRITY_HASH_FIELD] = (
+        str(raw_integrity_hash).strip().lower()
+        if isinstance(raw_integrity_hash, str) and raw_integrity_hash.strip()
+        else _message_integrity_hash(normalized["message"])
+    )
     return normalized
 
 
@@ -154,7 +167,7 @@ def _entry_text_anomalies(entry: Dict[str, Any]) -> Dict[str, List[str]]:
     return result
 
 
-def _to_curated_entry(entry: Dict[str, Any]) -> Optional[Dict[str, str]]:
+def _to_curated_entry(entry: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     status = str(entry.get("status", "")).strip().lower()
     topic = str(entry.get("topic", "")).strip()
     if status in CURATED_EXCLUDED_STATUS:
@@ -162,7 +175,7 @@ def _to_curated_entry(entry: Dict[str, Any]) -> Optional[Dict[str, str]]:
     if topic in CURATED_EXCLUDED_TOPICS:
         return None
 
-    curated: Dict[str, str] = {}
+    curated: Dict[str, Any] = {}
     for field in REQUIRED_FIELDS:
         value = entry.get(field)
         curated[field] = str(value).strip() if value is not None else ""
@@ -170,6 +183,10 @@ def _to_curated_entry(entry: Dict[str, Any]) -> Optional[Dict[str, str]]:
         return None
     if _entry_text_anomalies(curated):
         return None
+    expected_hash = _message_integrity_hash(curated["message"])
+    provided_hash = str(entry.get(INTEGRITY_HASH_FIELD, "")).strip().lower()
+    if provided_hash and provided_hash != expected_hash:
+        curated[INTEGRITY_SUSPECT_FIELD] = True
     return curated
 
 
@@ -354,13 +371,16 @@ def rebuild_curated(
     create_backup: bool = True,
 ) -> Dict[str, Any]:
     source_entries = load_entries(path=raw_path, include_invalid=False)
-    curated_entries: List[Dict[str, str]] = []
+    curated_entries: List[Dict[str, Any]] = []
     dropped_entries = 0
+    integrity_suspect_entries = 0
     for entry in source_entries:
         curated = _to_curated_entry(entry)
         if curated is None:
             dropped_entries += 1
             continue
+        if curated.get(INTEGRITY_SUSPECT_FIELD):
+            integrity_suspect_entries += 1
         curated_entries.append(curated)
 
     backup_path: Optional[Path] = None
@@ -382,5 +402,6 @@ def rebuild_curated(
         "raw_entries": len(source_entries),
         "curated_entries": len(curated_entries),
         "dropped_entries": dropped_entries,
+        "integrity_suspect_entries": integrity_suspect_entries,
         "backup_path": str(backup_path) if backup_path else None,
     }

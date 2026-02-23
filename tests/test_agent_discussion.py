@@ -1,3 +1,4 @@
+import hashlib
 import json
 from pathlib import Path
 
@@ -154,10 +155,12 @@ def test_append_entry_writes_normalized_payload(tmp_path: Path):
     )
     assert entry["author"] == "codex"
     assert entry["topic"] == "sync-test"
+    assert entry["integrity_hash"] == hashlib.sha256("done".encode("utf-8")).hexdigest()
 
     rows = load_entries(path=journal)
     assert len(rows) == 1
     assert rows[0]["message"] == "done"
+    assert rows[0]["integrity_hash"] == hashlib.sha256("done".encode("utf-8")).hexdigest()
 
 
 def test_append_entry_rejects_nul_bytes(tmp_path: Path):
@@ -267,3 +270,47 @@ def test_rebuild_curated_drops_text_anomaly_entries(tmp_path: Path):
     assert report["raw_entries"] == 2
     assert report["curated_entries"] == 1
     assert report["dropped_entries"] == 1
+
+
+def test_rebuild_curated_marks_integrity_suspect_entries(tmp_path: Path):
+    raw = tmp_path / "agent_discussion.jsonl"
+    curated = tmp_path / "agent_discussion_curated.jsonl"
+    expected_ok_hash = hashlib.sha256("safe".encode("utf-8")).hexdigest()
+    _write_lines(
+        raw,
+        [
+            json.dumps(
+                {
+                    "timestamp": "2026-02-09T00:00:00Z",
+                    "author": "codex",
+                    "topic": "ok",
+                    "status": "final",
+                    "message": "safe",
+                    "integrity_hash": expected_ok_hash,
+                }
+            ),
+            json.dumps(
+                {
+                    "timestamp": "2026-02-09T00:00:01Z",
+                    "author": "codex",
+                    "topic": "tampered",
+                    "status": "final",
+                    "message": "tampered-message",
+                    "integrity_hash": "0" * 64,
+                }
+            ),
+        ],
+    )
+
+    report = rebuild_curated(raw_path=raw, curated_path=curated, create_backup=False)
+    assert report["raw_entries"] == 2
+    assert report["curated_entries"] == 2
+    assert report["integrity_suspect_entries"] == 1
+
+    curated_lines = [
+        line for line in curated.read_text(encoding="utf-8").splitlines() if line.strip()
+    ]
+    payloads = [json.loads(line) for line in curated_lines]
+    suspects = [entry for entry in payloads if entry.get("integrity_suspect") is True]
+    assert len(suspects) == 1
+    assert suspects[0]["topic"] == "tampered"

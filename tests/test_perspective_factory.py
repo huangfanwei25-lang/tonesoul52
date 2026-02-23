@@ -2,8 +2,10 @@ from tonesoul.council import PerspectiveType, PreOutputCouncil, VerdictType, Vot
 from tonesoul.council.perspective_factory import (
     DEFAULT_LLM_MODEL,
     LLMPerspective,
+    OllamaPerspective,
     PerspectiveFactory,
 )
+from tonesoul.council.types import PerspectiveVote
 
 
 def test_create_council_default():
@@ -124,3 +126,66 @@ def test_llm_with_google_api_key_initializes_client(monkeypatch):
     client = LLMPerspective._get_gemini_client(DEFAULT_LLM_MODEL)
     assert client is not None
     assert calls == [DEFAULT_LLM_MODEL]
+
+
+def test_ollama_visual_context_truncation_adds_safety_note(monkeypatch):
+    captured = {}
+
+    class _FakeResponse:
+        def raise_for_status(self):
+            return None
+
+        def json(self):
+            return {
+                "message": {"content": '{"decision":"APPROVE","confidence":0.8,"reasoning":"ok"}'}
+            }
+
+    class _FakeRequests:
+        @staticmethod
+        def post(url, json, timeout):
+            captured["url"] = url
+            captured["json"] = json
+            captured["timeout"] = timeout
+            return _FakeResponse()
+
+    monkeypatch.setattr("tonesoul.council.perspective_factory._requests_mod", _FakeRequests)
+
+    perspective = OllamaPerspective(name="axiomatic", timeout=1.0)
+    long_visual_context = "X" * 1200
+    vote = perspective.evaluate(
+        draft_output="draft text",
+        context={"visual_context": long_visual_context},
+        user_intent="intent",
+    )
+    user_msg = captured["json"]["messages"][1]["content"]
+
+    assert vote.decision == VoteDecision.APPROVE
+    assert "[visual context truncated for safety]" in user_msg
+    assert "X" * 800 in user_msg
+    assert "X" * 900 not in user_msg
+
+
+def test_ollama_fallback_adds_marker_and_logs_warning(monkeypatch, caplog):
+    class _FailingRequests:
+        @staticmethod
+        def post(url, json, timeout):
+            raise RuntimeError("ollama unavailable")
+
+    class _RulesFallback:
+        def evaluate(self, draft_output, context, user_intent=None):
+            return PerspectiveVote(
+                perspective=PerspectiveType.GUARDIAN,
+                decision=VoteDecision.CONCERN,
+                confidence=0.7,
+                reasoning="rules based reasoning",
+            )
+
+    monkeypatch.setattr("tonesoul.council.perspective_factory._requests_mod", _FailingRequests)
+    perspective = OllamaPerspective(name="axiomatic", fallback=_RulesFallback(), timeout=1.0)
+
+    with caplog.at_level("WARNING"):
+        vote = perspective.evaluate("draft", {}, "intent")
+
+    assert "[fallback_to_rules]" in vote.reasoning
+    assert "VTP Philosopher fallback to rules" in vote.reasoning
+    assert any("VTP Philosopher fallback to rules" in rec.message for rec in caplog.records)

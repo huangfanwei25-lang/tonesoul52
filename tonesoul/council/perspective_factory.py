@@ -45,6 +45,9 @@ logger = logging.getLogger(__name__)
 
 PerspectiveId = Union[PerspectiveType, str]
 DEFAULT_LLM_MODEL = "gemini-2.0-flash"
+FALLBACK_REASON_MARKER = "[fallback_to_rules]"
+VISUAL_CONTEXT_LIMIT = 800
+VISUAL_CONTEXT_TRUNCATION_NOTE = "[visual context truncated for safety]"
 
 
 class PerspectiveMode(Enum):
@@ -421,7 +424,20 @@ class OllamaPerspective(IPerspective):
         if _requests_mod is None:
             logger.warning("[%s] requests library not available", self.name)
             if self.fallback:
-                return self.fallback.evaluate(draft_output, context, user_intent)
+                fallback_reason = (
+                    "VTP Philosopher fallback to rules"
+                    if self.name == "axiomatic"
+                    else f"{self.name} fallback to rules"
+                )
+                if self.name == "axiomatic":
+                    logger.warning(fallback_reason)
+                else:
+                    logger.warning("[%s] Ollama fallback to rules", self.name)
+                fallback_vote = self.fallback.evaluate(draft_output, context, user_intent)
+                fallback_vote.reasoning = (
+                    f"{FALLBACK_REASON_MARKER} {fallback_reason}; " f"{fallback_vote.reasoning}"
+                )
+                return fallback_vote
             return PerspectiveVote(
                 perspective=self.perspective_type,
                 decision=VoteDecision.CONCERN,
@@ -430,9 +446,13 @@ class OllamaPerspective(IPerspective):
             )
 
         intent_clause = f"\nUser Intent: {user_intent}" if user_intent else ""
-        visual_context = context.get("visual_context", "")
+        visual_context_raw = str(context.get("visual_context", "") or "")
+        visual_context_truncated = len(visual_context_raw) > VISUAL_CONTEXT_LIMIT
+        visual_context = visual_context_raw[:VISUAL_CONTEXT_LIMIT]
+        truncation_note = f"\n{VISUAL_CONTEXT_TRUNCATION_NOTE}" if visual_context_truncated else ""
         visual_clause = (
             f"\n\nVisual Context (Mermaid Diagram):\n```mermaid\n{visual_context}\n```"
+            f"{truncation_note}"
             if visual_context
             else ""
         )
@@ -484,8 +504,21 @@ class OllamaPerspective(IPerspective):
         except Exception as e:
             logger.warning("[%s] Ollama evaluation failed: %s", self.name, e)
             if self.fallback:
+                fallback_reason = (
+                    "VTP Philosopher fallback to rules"
+                    if self.name == "axiomatic"
+                    else f"{self.name} fallback to rules"
+                )
+                if self.name == "axiomatic":
+                    logger.warning(fallback_reason)
+                else:
+                    logger.warning("[%s] Ollama fallback to rules", self.name)
                 logger.debug("[%s] Falling back to rules-based evaluation", self.name)
-                return self.fallback.evaluate(draft_output, context, user_intent)
+                fallback_vote = self.fallback.evaluate(draft_output, context, user_intent)
+                fallback_vote.reasoning = (
+                    f"{FALLBACK_REASON_MARKER} {fallback_reason}; " f"{fallback_vote.reasoning}"
+                )
+                return fallback_vote
 
             return PerspectiveVote(
                 perspective=self.perspective_type,
