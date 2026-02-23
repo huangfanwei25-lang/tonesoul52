@@ -30,6 +30,16 @@ Phase 1 focuses on **non-breaking convergence**:
    - `tests/test_unified_core_properties.py`
    - legacy helper usage (`tonesoul/tonesoul_llm.py`, `tonesoul/self_test.py`)
 
+## What Changed in Phase 2
+
+1. Created `tonesoul/_legacy/` and moved compatibility wrapper logic into:
+   - `tonesoul/_legacy/unified_core_compat.py`
+2. `tonesoul/unified_core.py` now keeps public API shape but delegates:
+   - `process_with_domain()` -> `process_with_domain_compat()`
+   - `process_with_correction()` -> `process_with_correction_compat()`
+   - `create_core()` -> `create_core_compat()`
+3. Marked `tonesoul/tonesoul_llm.py` as legacy with runtime deprecation warning.
+
 ## High-Risk Areas Not Moved Yet
 
 - `UnifiedCore.process` path is still used by compatibility tests.

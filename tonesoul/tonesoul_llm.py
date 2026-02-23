@@ -11,6 +11,7 @@ ToneSoul + LLM Integration
 
 import json
 import os
+import warnings
 
 # Import UnifiedCore
 import sys
@@ -31,6 +32,19 @@ except ImportError:
 OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434/api/generate")
 OLLAMA_CHAT_URL = os.getenv("OLLAMA_URL", "http://localhost:11434/api/chat")
 DEFAULT_MODEL = os.getenv("TS_MODEL", "gemma3:4b")
+_LEGACY_WARNING_EMITTED = False
+
+
+def _warn_legacy_tonesoul_llm_once() -> None:
+    global _LEGACY_WARNING_EMITTED
+    if _LEGACY_WARNING_EMITTED:
+        return
+    warnings.warn(
+        "tonesoul.tonesoul_llm is a legacy compatibility module; prefer tonesoul.unified_pipeline.UnifiedPipeline.",
+        category=DeprecationWarning,
+        stacklevel=3,
+    )
+    _LEGACY_WARNING_EMITTED = True
 
 
 class ToneSoulLLM:
@@ -46,6 +60,7 @@ class ToneSoulLLM:
         model: str = None,
         base_path: Path = None,
     ):
+        _warn_legacy_tonesoul_llm_once()
         self.model = model or DEFAULT_MODEL
         self.base_path = base_path or Path(__file__).parent.parent
         self.persona_id = persona_id

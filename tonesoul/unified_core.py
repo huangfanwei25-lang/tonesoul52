@@ -27,6 +27,11 @@ except ImportError:  # pragma: no cover - Python < 3.13 compatibility
 try:
     from .contract_observer import ContractVerifier, QualityTracker
     from .council_capability import CapabilityBoundary, CouncilWeights, LongTermQualityMonitor
+    from ._legacy.unified_core_compat import (
+        create_core_compat,
+        process_with_correction_compat,
+        process_with_domain_compat,
+    )
     from .loop import LoopConfig, LoopEngine
     from .persona_dimension import PersonaDimension, PersonaVector, load_persona
     from .semantic_control import LambdaState, SemanticController, SemanticTension, SemanticZone
@@ -36,6 +41,11 @@ except ImportError:
     # 直接運行時
     from contract_observer import ContractVerifier, QualityTracker
     from council_capability import CapabilityBoundary, CouncilWeights, LongTermQualityMonitor
+    from _legacy.unified_core_compat import (
+        create_core_compat,
+        process_with_correction_compat,
+        process_with_domain_compat,
+    )
     from loop import LoopConfig, LoopEngine
     from persona_dimension import PersonaDimension, PersonaVector, load_persona
     from semantic_control import LambdaState, SemanticController, SemanticTension, SemanticZone
@@ -434,38 +444,13 @@ class UnifiedCore:
         task_domain: str,
         context: Optional[Dict] = None,
     ) -> Tuple[str, Dict]:
-        """
-        處理輸出（帶任務領域）
-
-        會根據能力邊界調整 tolerance 並可能加上前綴
-        """
-        # 檢查能力覆蓋度
-        warnings.warn(
-            "UnifiedCore.process_with_domain is deprecated; use UnifiedPipeline + council capability routing.",
-            category=DeprecationWarning,
-            stacklevel=2,
+        """Legacy compatibility wrapper delegated to _legacy.unified_core_compat."""
+        return process_with_domain_compat(
+            self,
+            output=output,
+            task_domain=task_domain,
+            context=context,
         )
-        coverage, suggestion = self.capability_boundary.check_coverage(task_domain)
-        capability_prefix = self.capability_boundary.generate_prefix(coverage)
-        tolerance_multiplier = self.capability_boundary.get_tolerance_multiplier(coverage)
-
-        # 處理輸出
-        final_output, report = self.process(output, context)
-
-        # 加入能力資訊
-        report["capability"] = {
-            "domain": task_domain,
-            "coverage": coverage,
-            "suggestion": suggestion,
-            "tolerance_multiplier": tolerance_multiplier,
-        }
-
-        # 如果需要前綴，加上
-        if capability_prefix and not report.get("correction"):
-            final_output = capability_prefix + "\n\n" + final_output
-            report["capability"]["prefix_added"] = True
-
-        return final_output, report
 
     def get_status(self) -> Dict:
         """取得當前狀態"""
@@ -502,97 +487,14 @@ class UnifiedCore:
         max_corrections: int = 3,
         correction_threshold: float = 0.7,
     ) -> Dict:
-        """
-        處理輸出並進行迭代自我校正（使用 LoopEngine）
-
-        這是 Ralph 整合的核心功能：使用 LoopEngine 進行多輪自動校正，
-        直到輸出符合語義約束或達到最大迭代次數。
-
-        Args:
-            output: 初始 LLM 輸出
-            context: 上下文資訊
-            max_corrections: 最大校正次數
-            correction_threshold: 需要校正的語義張力閾值
-
-        Returns:
-            Dict 包含:
-                - final_output: 最終輸出
-                - corrections: 校正次數
-                - state: 迴圈狀態 (complete/failed/cancelled)
-                - events: 所有事件列表
-                - correction_history: 每次校正的歷史
-        """
-        warnings.warn(
-            "UnifiedCore.process_with_correction is deprecated; use UnifiedPipeline internal deliberation flow.",
-            category=DeprecationWarning,
-            stacklevel=2,
+        """Legacy compatibility wrapper delegated to _legacy.unified_core_compat."""
+        return await process_with_correction_compat(
+            self,
+            output=output,
+            context=context,
+            max_corrections=max_corrections,
+            correction_threshold=correction_threshold,
         )
-        correction_history = []
-        current_output = output
-        events_captured = []
-
-        async def correction_handler(iteration: int, prompt: str) -> AsyncIterator[str]:
-            """每次迭代的處理器"""
-            nonlocal current_output
-
-            # 處理當前輸出
-            result_output, result_report = self.process(current_output, context=context)
-
-            # 記錄這次校正
-            correction_info = {
-                "iteration": iteration,
-                "semantic_tension": result_report.get("semantic_tension"),
-                "intervention": result_report.get("intervention"),
-                "corrected": result_report.get("correction")
-                is not None,  # Check if correction_info exists
-            }
-            correction_history.append(correction_info)
-
-            # 計算語義張力
-            tension = result_report.get("semantic_tension", {})
-            mean_tension = tension.get("mean", 0)
-
-            # 如果張力低於閾值或沒有校正，宣告完成
-            if mean_tension < correction_threshold or result_report.get("correction") is None:
-                yield f"{result_output} <promise>校正完成</promise>"
-                current_output = result_output
-            else:
-                # 需要繼續校正
-                current_output = result_output
-                yield result_output
-
-        # 創建 LoopEngine 配置
-        config = LoopConfig(
-            prompt=output,
-            max_iterations=max_corrections,
-            promise_phrase="校正完成",
-            timeout_ms=60000,  # 60 秒超時
-        )
-
-        # 創建引擎並啟動
-        engine = LoopEngine(config=config, on_iteration=correction_handler)
-
-        # 收集事件
-        import asyncio
-
-        async def collect_events():
-            async for event in engine.events_stream():
-                events_captured.append(event)
-
-        # 並行執行
-        events_task = asyncio.create_task(collect_events())
-        loop_result = await engine.start()
-        await events_task
-
-        return {
-            "final_output": current_output,
-            "corrections": loop_result.iterations,
-            "state": loop_result.state,
-            "duration_ms": loop_result.duration_ms,
-            "events": events_captured,
-            "correction_history": correction_history,
-            "success": loop_result.state == "complete",
-        }
 
     def reset(self):
         """重置狀態"""
@@ -608,9 +510,8 @@ class UnifiedCore:
     category=None,
 )
 def create_core(persona_id: str, base_path: Path) -> UnifiedCore:
-    """便捷函數：創建 UnifiedCore"""
-    persona_path = base_path / "memory" / "personas" / f"{persona_id}.yaml"
-    return UnifiedCore(persona_path=persona_path)
+    """Create a legacy UnifiedCore instance (deprecated)."""
+    return create_core_compat(UnifiedCore, persona_id=persona_id, base_path=base_path)
 
 
 # === 測試 ===
