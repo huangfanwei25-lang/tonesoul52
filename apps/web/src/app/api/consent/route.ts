@@ -10,6 +10,7 @@ import {
 
 const REQUEST_TIMEOUT_MS = 10000;
 const MOCK_FALLBACK_ENV = "TONESOUL_ENABLE_CONSENT_MOCK_FALLBACK";
+const SAME_ORIGIN_PRIMARY_FALLBACK_REASON = "same_origin_primary";
 
 function shouldAllowMockFallback(): boolean {
     if (isSameOriginMode()) return true;
@@ -75,6 +76,12 @@ export async function POST(request: NextRequest) {
         body = (await request.json()) as Record<string, unknown>;
     } catch {
         return NextResponse.json({ error: "Invalid JSON payload" }, { status: 400 });
+    }
+
+    if (isSameOriginMode()) {
+        return NextResponse.json(
+            buildConsentPostFallback(body, SAME_ORIGIN_PRIMARY_FALLBACK_REASON)
+        );
     }
 
     const backendUrl = getBackendUrl();
@@ -147,6 +154,12 @@ export async function DELETE(request: NextRequest) {
     const sessionId = typeof body.session_id === "string" ? body.session_id.trim() : "";
     if (!sessionId) {
         return NextResponse.json({ error: "session_id is required" }, { status: 400 });
+    }
+
+    if (isSameOriginMode()) {
+        return NextResponse.json(
+            buildConsentDeleteFallback(sessionId, SAME_ORIGIN_PRIMARY_FALLBACK_REASON)
+        );
     }
 
     const backendUrl = getBackendUrl();

@@ -127,29 +127,48 @@ describe("route transport fallback policy", () => {
         expect(payload.report).toBeTruthy();
     });
 
-    it("routes use same-origin backend on vercel when backend url is missing", async () => {
+    it("routes use same-origin primary mocks on vercel when backend url is missing", async () => {
         process.env.VERCEL = "1";
         process.env.VERCEL_URL = "tonesoul52-one.vercel.app";
-        const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(
-            new Response(
-                JSON.stringify({
-                    success: true,
-                    conversation_id: "conv_same_origin",
-                    session_id: "s1",
-                }),
-                { status: 200 }
-            )
-        );
+        const fetchMock = vi.spyOn(globalThis, "fetch");
 
-        const response = await postConversation(makeRequest({ session_id: "s1" }) as never);
-        const payload = (await response.json()) as Record<string, unknown>;
-
-        expect(response.status).toBe(200);
-        expect(payload.success).toBe(true);
-        expect(fetchMock).toHaveBeenCalledTimes(1);
-        expect(fetchMock.mock.calls[0]?.[0]).toBe(
-            "https://tonesoul52-one.vercel.app/api/_backend/api/conversation"
+        const conversationResponse = await postConversation(makeRequest({ session_id: "s1" }) as never);
+        const conversationPayload = (await conversationResponse.json()) as Record<string, unknown>;
+        const consentPostResponse = await postConsent(
+            makeRequest({ session_id: "s1", consent_type: "analysis" }) as never
         );
+        const consentPostPayload = (await consentPostResponse.json()) as Record<string, unknown>;
+        const consentDeleteResponse = await deleteConsent(makeRequest({ session_id: "s1" }) as never);
+        const consentDeletePayload = (await consentDeleteResponse.json()) as Record<string, unknown>;
+        const reportResponse = await postSessionReport(
+            makeRequest({
+                history: [
+                    { role: "user", content: "hello" },
+                    { role: "assistant", content: "hi" },
+                ],
+            }) as never
+        );
+        const reportPayload = (await reportResponse.json()) as Record<string, unknown>;
+
+        expect(conversationResponse.status).toBe(200);
+        expect(conversationPayload.success).toBe(true);
+        expect(conversationPayload.backend_mode).toBe("mock_fallback");
+        expect(conversationPayload.fallback_reason).toBe("same_origin_primary");
+
+        expect(consentPostResponse.status).toBe(200);
+        expect(consentPostPayload.backend_mode).toBe("mock_fallback");
+        expect(consentPostPayload.fallback_reason).toBe("same_origin_primary");
+
+        expect(consentDeleteResponse.status).toBe(200);
+        expect(consentDeletePayload.backend_mode).toBe("mock_fallback");
+        expect(consentDeletePayload.fallback_reason).toBe("same_origin_primary");
+
+        expect(reportResponse.status).toBe(200);
+        expect(reportPayload.backend_mode).toBe("mock_fallback");
+        expect(reportPayload.fallback_reason).toBe("same_origin_primary");
+        expect(reportPayload.report).toBeTruthy();
+
+        expect(fetchMock).not.toHaveBeenCalled();
     });
 
     it("routes return 503 on vercel when backend points to localhost", async () => {

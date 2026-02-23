@@ -10,6 +10,7 @@ import {
 
 const REQUEST_TIMEOUT_MS = 12000;
 const MOCK_FALLBACK_ENV = "TONESOUL_ENABLE_SESSION_REPORT_MOCK_FALLBACK";
+const SAME_ORIGIN_PRIMARY_FALLBACK_REASON = "same_origin_primary";
 
 function shouldAllowMockFallback(): boolean {
     if (isSameOriginMode()) return true;
@@ -93,6 +94,15 @@ export async function POST(request: NextRequest) {
     const history = Array.isArray(body.history) ? (body.history as Turn[]) : [];
     if (history.length === 0) {
         return NextResponse.json({ error: "Missing conversation history" }, { status: 400 });
+    }
+
+    if (isSameOriginMode()) {
+        return NextResponse.json({
+            success: true,
+            report: buildFallbackReport(history),
+            backend_mode: "mock_fallback",
+            fallback_reason: SAME_ORIGIN_PRIMARY_FALLBACK_REASON,
+        });
     }
 
     const backendUrl = getBackendUrl();

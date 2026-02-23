@@ -10,6 +10,7 @@ import {
 
 const REQUEST_TIMEOUT_MS = 10000;
 const MOCK_FALLBACK_ENV = "TONESOUL_ENABLE_CONVERSATION_MOCK_FALLBACK";
+const SAME_ORIGIN_PRIMARY_FALLBACK_REASON = "same_origin_primary";
 
 function shouldAllowMockFallback(): boolean {
     if (isSameOriginMode()) return true;
@@ -54,6 +55,12 @@ export async function POST(request: NextRequest) {
         body = (await request.json()) as Record<string, unknown>;
     } catch {
         return NextResponse.json({ error: "Invalid JSON payload" }, { status: 400 });
+    }
+
+    if (isSameOriginMode()) {
+        return NextResponse.json(
+            buildConversationFallback(body, SAME_ORIGIN_PRIMARY_FALLBACK_REASON)
+        );
     }
 
     const backendUrl = getBackendUrl();

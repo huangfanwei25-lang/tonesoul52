@@ -19,6 +19,7 @@ const ALLOWED_COUNCIL_MODES = new Set(["rules", "rules_only", "hybrid", "full_ll
 const TRANSIENT_STATUS_CODES = new Set([429, 502, 503, 504]);
 const MAX_PERSONA_ROLES = 8;
 const MAX_PERSONA_ATTACHMENTS_PER_ROLE = 6;
+const SAME_ORIGIN_PRIMARY_FALLBACK_REASON = "same_origin_primary";
 
 type PersonaPayload = {
     name?: string;
@@ -410,6 +411,14 @@ export async function POST(request: NextRequest) {
         return parsed.error;
     }
     const body = parsed.body as ChatRequestPayload;
+
+    // In same-origin mode we intentionally serve the built-in mock layer directly.
+    // This avoids probing /api/_backend paths that may not be deployed.
+    if (isSameOriginMode()) {
+        return NextResponse.json(
+            buildChatFallbackPayload(body, SAME_ORIGIN_PRIMARY_FALLBACK_REASON)
+        );
+    }
 
     const backendUrl = getBackendUrl();
     const configuredBackendUrl = getConfiguredBackendUrl();

@@ -85,12 +85,10 @@ describe("chat route transport fallback behavior", () => {
         expect(payload.backend_timeout_ms).toBeTypeOf("number");
     });
 
-    it("uses same-origin backend on vercel when backend url is missing", async () => {
+    it("uses same-origin primary mock on vercel when backend url is missing", async () => {
         process.env.VERCEL = "1";
         process.env.VERCEL_URL = "tonesoul52-one.vercel.app";
-        const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(
-            new Response(JSON.stringify({ response: "ok" }), { status: 200 })
-        );
+        const fetchMock = vi.spyOn(globalThis, "fetch");
 
         const response = await postChat(
             makeRequest({
@@ -103,11 +101,10 @@ describe("chat route transport fallback behavior", () => {
         const payload = (await response.json()) as Record<string, unknown>;
 
         expect(response.status).toBe(200);
-        expect(payload.response).toBe("ok");
-        expect(fetchMock).toHaveBeenCalledTimes(1);
-        expect(fetchMock.mock.calls[0]?.[0]).toBe(
-            "https://tonesoul52-one.vercel.app/api/_backend/api/chat"
-        );
+        expect(payload.backend_mode).toBe("mock_fallback");
+        expect(payload.fallback_reason).toBe("same_origin_primary");
+        expect(typeof payload.response).toBe("string");
+        expect(fetchMock).not.toHaveBeenCalled();
     });
 
     it("returns 503 on vercel when backend url is localhost", async () => {
