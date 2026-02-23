@@ -12,6 +12,17 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, AsyncIterator, Dict, List, Optional, Tuple
 
+try:
+    from warnings import deprecated as _deprecated
+except ImportError:  # pragma: no cover - Python < 3.13 compatibility
+    def _deprecated(
+        message: str, /, *, category: type[Warning] | None = DeprecationWarning, stacklevel: int = 1
+    ):
+        def _wrap(obj):
+            return obj
+
+        return _wrap
+
 # 相對 import（作為模組運行時）
 try:
     from .contract_observer import ContractVerifier, QualityTracker
@@ -128,6 +139,10 @@ class CorrectionMemory:
         }
 
 
+@_deprecated(
+    "UnifiedCore is in compatibility mode. Use tonesoul.unified_pipeline.UnifiedPipeline for runtime chat.",
+    category=None,
+)
 class UnifiedCore:
     RUNTIME_STATUS = "legacy_non_runtime"
     RUNTIME_REPLACEMENT = "tonesoul.unified_pipeline.UnifiedPipeline"
@@ -425,6 +440,11 @@ class UnifiedCore:
         會根據能力邊界調整 tolerance 並可能加上前綴
         """
         # 檢查能力覆蓋度
+        warnings.warn(
+            "UnifiedCore.process_with_domain is deprecated; use UnifiedPipeline + council capability routing.",
+            category=DeprecationWarning,
+            stacklevel=2,
+        )
         coverage, suggestion = self.capability_boundary.check_coverage(task_domain)
         capability_prefix = self.capability_boundary.generate_prefix(coverage)
         tolerance_multiplier = self.capability_boundary.get_tolerance_multiplier(coverage)
@@ -502,6 +522,11 @@ class UnifiedCore:
                 - events: 所有事件列表
                 - correction_history: 每次校正的歷史
         """
+        warnings.warn(
+            "UnifiedCore.process_with_correction is deprecated; use UnifiedPipeline internal deliberation flow.",
+            category=DeprecationWarning,
+            stacklevel=2,
+        )
         correction_history = []
         current_output = output
         events_captured = []
@@ -578,6 +603,10 @@ class UnifiedCore:
         self.quality_tracker.reset()
 
 
+@_deprecated(
+    "create_core() is deprecated. Use tonesoul.unified_pipeline.create_unified_pipeline().",
+    category=None,
+)
 def create_core(persona_id: str, base_path: Path) -> UnifiedCore:
     """便捷函數：創建 UnifiedCore"""
     persona_path = base_path / "memory" / "personas" / f"{persona_id}.yaml"

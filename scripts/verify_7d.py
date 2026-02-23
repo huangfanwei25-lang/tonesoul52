@@ -358,6 +358,7 @@ def _check_sdh(
     timeout: int,
     check_council_modes: bool = True,
 ) -> CheckResult:
+    same_origin_mode = web_base.rstrip("/") == api_base.rstrip("/")
     cmd = [
         sys.executable,
         str(Path("scripts/verify_web_api.py")),
@@ -365,11 +366,14 @@ def _check_sdh(
         web_base,
         "--api-base",
         api_base,
-        "--require-backend",
         "--timeout",
         str(timeout),
     ]
-    if check_council_modes:
+    if same_origin_mode:
+        cmd.append("--same-origin")
+    else:
+        cmd.append("--require-backend")
+    if check_council_modes and not same_origin_mode:
         cmd.append("--check-council-modes")
     ok, stdout, stderr, code = _run(cmd)
     if ok:
@@ -463,7 +467,7 @@ def _sync_to_markdown(scores: dict[str, int], results: list[CheckResult]):
             content = re.sub(pattern, replacement, content)
 
         target.write_text(content, encoding="utf-8")
-        print(f"🔄 Synced 7D status to {target}")
+        print(f"[7D] Synced status to {target}")
 
 
 def _summary(results: list[CheckResult]) -> dict[str, Any]:
