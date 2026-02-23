@@ -68,7 +68,7 @@ def _compute_risk_level(verdict: CouncilVerdict, context: dict) -> str:
         tension = float(context.get("tension", 0) or 0)
     except (TypeError, ValueError):
         tension = 0.0
-        
+
     is_contra = bool(context.get("is_contradiction", False))
     verdict_name = getattr(verdict, "verdict", None)
 
@@ -115,7 +115,7 @@ def record_self_memory(
     if uncertainty_level is not None:
         band_label = uncertainty_band or "unknown"
         uncertainty_note = f"level={uncertainty_level:.3f}, band={band_label}"
-        
+
     actor_type = context.get("actor_type", "agent")
     event_source = context.get("event_source", "unknown")
     intent_outcome = {
@@ -124,7 +124,7 @@ def record_self_memory(
         "matched": _compute_intent_match(context, verdict),
     }
     risk_level = _compute_risk_level(verdict, context)
-        
+
     extras = {
         "timestamp": _iso_now(),
         "actor_type": actor_type,

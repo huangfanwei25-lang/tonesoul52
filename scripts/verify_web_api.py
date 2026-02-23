@@ -150,9 +150,7 @@ def _validate_same_origin_backend_health(payload: Any, label: str) -> bool:
 
     backend_mode = payload_dict.get("backend_mode")
     if backend_mode != "same_origin":
-        print(
-            f"[FAIL] {label}: expected backend_mode='same_origin', got {backend_mode!r}."
-        )
+        print(f"[FAIL] {label}: expected backend_mode='same_origin', got {backend_mode!r}.")
         return False
     return True
 

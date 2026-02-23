@@ -73,7 +73,9 @@ def _run_council(draft: str, intent: str, mode: str, visual_context: str = "") -
     tension = round((n_obj * 1.0 + n_con * 0.5) / total, 3)
 
     return {
-        "verdict": verdict.verdict.value if hasattr(verdict.verdict, "value") else str(verdict.verdict),
+        "verdict": (
+            verdict.verdict.value if hasattr(verdict.verdict, "value") else str(verdict.verdict)
+        ),
         "summary": verdict.summary or "",
         "tension": tension,
         "quality_band": quality_band,

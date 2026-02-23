@@ -15,6 +15,7 @@ from typing import Any, AsyncIterator, Dict, List, Optional, Tuple
 try:
     from warnings import deprecated as _deprecated
 except ImportError:  # pragma: no cover - Python < 3.13 compatibility
+
     def _deprecated(
         message: str, /, *, category: type[Warning] | None = DeprecationWarning, stacklevel: int = 1
     ):
@@ -22,6 +23,7 @@ except ImportError:  # pragma: no cover - Python < 3.13 compatibility
             return obj
 
         return _wrap
+
 
 # 相對 import（作為模組運行時）
 try:

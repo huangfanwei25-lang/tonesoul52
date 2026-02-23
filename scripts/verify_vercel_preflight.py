@@ -43,7 +43,9 @@ def _parse_switch(raw: str | None) -> SwitchValue:
     return SwitchValue(raw=raw, value=None, error=f"invalid boolean-like value: {raw!r}")
 
 
-def _validate_backend_url(url: str | None, allow_http: bool, same_origin: bool = False) -> tuple[bool, str]:
+def _validate_backend_url(
+    url: str | None, allow_http: bool, same_origin: bool = False
+) -> tuple[bool, str]:
     text = (url or "").strip()
 
     if same_origin and (not text or text.lower() in SAME_ORIGIN_MARKERS):
@@ -288,9 +290,10 @@ def main() -> int:
     args = build_parser().parse_args()
 
     backend_url = args.backend_url or os.environ.get("TONESOUL_BACKEND_URL")
-    same_origin = bool(args.same_origin) or _parse_switch(
-        os.environ.get("TONESOUL_VERCEL_SAME_ORIGIN")
-    ).value is True
+    same_origin = (
+        bool(args.same_origin)
+        or _parse_switch(os.environ.get("TONESOUL_VERCEL_SAME_ORIGIN")).value is True
+    )
     env_values = {
         "TONESOUL_ENABLE_CHAT_MOCK_FALLBACK": os.environ.get("TONESOUL_ENABLE_CHAT_MOCK_FALLBACK"),
         "NEXT_PUBLIC_CHAT_EXECUTION_MODE": os.environ.get("NEXT_PUBLIC_CHAT_EXECUTION_MODE"),

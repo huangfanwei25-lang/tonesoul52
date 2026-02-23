@@ -72,4 +72,3 @@ def test_divergence_analysis_marks_low_quality_when_no_real_conflict():
     assert quality.get("band") == "low"
     assert float(quality.get("conflict_coverage", 1.0)) == 0.0
     assert divergence.get("role_tensions") == []
-

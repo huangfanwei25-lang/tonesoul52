@@ -431,11 +431,15 @@ class OllamaPerspective(IPerspective):
 
         intent_clause = f"\nUser Intent: {user_intent}" if user_intent else ""
         visual_context = context.get("visual_context", "")
-        visual_clause = f"\n\nVisual Context (Mermaid Diagram):\n```mermaid\n{visual_context}\n```" if visual_context else ""
+        visual_clause = (
+            f"\n\nVisual Context (Mermaid Diagram):\n```mermaid\n{visual_context}\n```"
+            if visual_context
+            else ""
+        )
 
         user_msg = (
             f"{self.system_prompt}\n\n"
-            f"Text to evaluate:\n\"\"\"\n{draft_output[:1000]}\n\"\"\""
+            f'Text to evaluate:\n"""\n{draft_output[:1000]}\n"""'
             f"{intent_clause}{visual_clause}\n\n"
             f"Context: {json.dumps({k: v for k, v in context.items() if k != 'visual_context'}, default=str, ensure_ascii=False)[:300]}\n\n"
             "Respond with JSON only."
