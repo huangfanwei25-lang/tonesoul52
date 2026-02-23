@@ -3,6 +3,7 @@ Red Team Tests: Prompt Injection and Output Coercion.
 """
 
 import pytest
+
 from apps.api.server import app
 
 

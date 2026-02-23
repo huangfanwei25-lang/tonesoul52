@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any, AsyncIterator, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 try:
     from warnings import deprecated as _deprecated
@@ -27,28 +27,26 @@ except ImportError:  # pragma: no cover - Python < 3.13 compatibility
 
 # 相對 import（作為模組運行時）
 try:
-    from .contract_observer import ContractVerifier, QualityTracker
-    from .council_capability import CapabilityBoundary, CouncilWeights, LongTermQualityMonitor
     from ._legacy.unified_core_compat import (
         create_core_compat,
         process_with_correction_compat,
         process_with_domain_compat,
     )
-    from .loop import LoopConfig, LoopEngine
+    from .contract_observer import ContractVerifier, QualityTracker
+    from .council_capability import CapabilityBoundary, CouncilWeights, LongTermQualityMonitor
     from .persona_dimension import PersonaDimension, PersonaVector, load_persona
     from .semantic_control import LambdaState, SemanticController, SemanticTension, SemanticZone
     from .service_manager import ServiceCode, record_service_call
     from .vow_system import VowEnforcer
 except ImportError:
     # 直接運行時
-    from contract_observer import ContractVerifier, QualityTracker
-    from council_capability import CapabilityBoundary, CouncilWeights, LongTermQualityMonitor
     from _legacy.unified_core_compat import (
         create_core_compat,
         process_with_correction_compat,
         process_with_domain_compat,
     )
-    from loop import LoopConfig, LoopEngine
+    from contract_observer import ContractVerifier, QualityTracker
+    from council_capability import CapabilityBoundary, CouncilWeights, LongTermQualityMonitor
     from persona_dimension import PersonaDimension, PersonaVector, load_persona
     from semantic_control import LambdaState, SemanticController, SemanticTension, SemanticZone
     from service_manager import ServiceCode, record_service_call
