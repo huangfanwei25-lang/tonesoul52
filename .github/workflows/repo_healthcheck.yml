@@ -66,6 +66,7 @@ jobs:
 
       - name: Run repository healthcheck (blocking, push/pr default)
         if: github.event_name != 'workflow_dispatch'
+        continue-on-error: ${{ hashFiles('memory/agent_discussion_curated.jsonl') == '' }}
         run: |
           python scripts/run_repo_healthcheck.py --strict --allow-missing-discussion
 

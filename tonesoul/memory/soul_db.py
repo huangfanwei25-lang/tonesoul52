@@ -3,6 +3,7 @@ from __future__ import annotations
 import heapq
 import json
 import math
+import re
 import sqlite3
 import uuid
 from dataclasses import dataclass, field
@@ -73,6 +74,12 @@ class SoulDB(Protocol):
         *,
         forget_threshold: Optional[float] = None,
     ) -> int: ...
+
+    def search(self, query: str, limit: int) -> List[Dict[str, object]]: ...
+
+    def timeline(self, record_id: str, window: int) -> List[Dict[str, object]]: ...
+
+    def detail(self, ids: List[str]) -> List[Dict[str, object]]: ...
 
 
 def _iso_now() -> str:
@@ -145,6 +152,128 @@ def _normalize_memory_layer(layer: Optional[str]) -> Optional[str]:
         return MemoryLayer(text).value
     except ValueError:
         return text
+
+
+def _record_title(record: MemoryRecord) -> str:
+    payload = record.payload if isinstance(record.payload, dict) else {}
+    title_keys = ("title", "summary", "statement", "text", "content", "note", "intent")
+    for key in title_keys:
+        value = payload.get(key)
+        if isinstance(value, str):
+            text = value.strip()
+            if text:
+                return text[:120]
+    return f"{record.source.value}:{record.timestamp}"[:120]
+
+
+def _record_text(record: MemoryRecord) -> str:
+    title = _record_title(record)
+    payload_text = _serialize_json(record.payload).lower()
+    tags_text = " ".join(record.tags).lower() if record.tags else ""
+    return f"{title.lower()} {payload_text} {tags_text}".strip()
+
+
+def _record_identifier(record: MemoryRecord, fallback_index: int) -> str:
+    if record.record_id:
+        return str(record.record_id)
+    return f"{record.source.value}:{record.timestamp}:{fallback_index}"
+
+
+def _full_record(record: MemoryRecord, fallback_index: int) -> Dict[str, object]:
+    return {
+        "id": _record_identifier(record, fallback_index),
+        "source": record.source.value,
+        "timestamp": record.timestamp,
+        "title": _record_title(record),
+        "tags": list(record.tags),
+        "layer": record.layer,
+        "relevance_score": float(record.relevance_score),
+        "access_count": int(record.access_count),
+        "last_accessed": record.last_accessed,
+        "payload": dict(record.payload),
+    }
+
+
+def _iter_all_records(db: SoulDB) -> List[MemoryRecord]:
+    records: List[MemoryRecord] = []
+    for source in db.list_sources():
+        records.extend(list(db.stream(source, limit=None)))
+    return records
+
+
+def _search_records(db: SoulDB, query: str, limit: int) -> List[Dict[str, object]]:
+    resolved_limit = int(limit)
+    if resolved_limit <= 0:
+        return []
+    raw_query = str(query or "").strip().lower()
+    if not raw_query:
+        return []
+    terms = [term for term in re.findall(r"[^\s]+", raw_query) if term]
+    if not terms:
+        return []
+
+    ranked: List[tuple[float, str, int, Dict[str, object]]] = []
+    for idx, record in enumerate(_iter_all_records(db)):
+        haystack = _record_text(record)
+        title = _record_title(record)
+        body_hits = sum(haystack.count(term) for term in terms)
+        title_hits = sum(title.lower().count(term) for term in terms)
+        if body_hits <= 0 and title_hits <= 0:
+            continue
+        score = round(((title_hits * 2.0) + body_hits) / float(len(terms)), 4)
+        ranked.append(
+            (
+                score,
+                record.timestamp,
+                idx,
+                {
+                    "id": _record_identifier(record, idx),
+                    "title": title,
+                    "score": score,
+                },
+            )
+        )
+    ranked.sort(key=lambda item: (item[0], item[1], item[2]), reverse=True)
+    return [item[3] for item in ranked[:resolved_limit]]
+
+
+def _timeline_records(db: SoulDB, record_id: str, window: int) -> List[Dict[str, object]]:
+    target_id = str(record_id or "").strip()
+    if not target_id:
+        return []
+    resolved_window = max(0, int(window))
+    for source in db.list_sources():
+        records = list(db.stream(source, limit=None))
+        if not records:
+            continue
+        for idx, record in enumerate(records):
+            if _record_identifier(record, idx) != target_id:
+                continue
+            start = max(0, idx - resolved_window)
+            end = min(len(records), idx + resolved_window + 1)
+            timeline_slice = records[start:end]
+            return [
+                {
+                    "id": _record_identifier(item, start + offset),
+                    "title": _record_title(item),
+                    "timestamp": item.timestamp,
+                }
+                for offset, item in enumerate(timeline_slice)
+            ]
+    return []
+
+
+def _detail_records(db: SoulDB, ids: List[str]) -> List[Dict[str, object]]:
+    wanted = [str(item).strip() for item in ids if str(item).strip()]
+    if not wanted:
+        return []
+    by_id: Dict[str, Dict[str, object]] = {}
+    for idx, record in enumerate(_iter_all_records(db)):
+        key = _record_identifier(record, idx)
+        if key in by_id:
+            continue
+        by_id[key] = _full_record(record, idx)
+    return [by_id[item] for item in wanted if item in by_id]
 
 
 def _decay_records(
@@ -329,6 +458,15 @@ class JsonlSoulDB:
         all_records = list(self.stream(source))
         surviving = _decay_records(all_records, forget_threshold=forget_threshold)
         return max(0, len(all_records) - len(surviving))
+
+    def search(self, query: str, limit: int) -> List[Dict[str, object]]:
+        return _search_records(self, query=query, limit=limit)
+
+    def timeline(self, record_id: str, window: int) -> List[Dict[str, object]]:
+        return _timeline_records(self, record_id=record_id, window=window)
+
+    def detail(self, ids: List[str]) -> List[Dict[str, object]]:
+        return _detail_records(self, ids=ids)
 
     def _resolve_path(self, source: MemorySource) -> Path:
         path = self.source_map.get(source)
@@ -684,6 +822,15 @@ class SqliteSoulDB:
             forget_threshold=forget_threshold,
         )
         return max(0, total_records - len(surviving))
+
+    def search(self, query: str, limit: int) -> List[Dict[str, object]]:
+        return _search_records(self, query=query, limit=limit)
+
+    def timeline(self, record_id: str, window: int) -> List[Dict[str, object]]:
+        return _timeline_records(self, record_id=record_id, window=window)
+
+    def detail(self, ids: List[str]) -> List[Dict[str, object]]:
+        return _detail_records(self, ids=ids)
 
     def _stream_memories(
         self, source: MemorySource, limit: Optional[int]

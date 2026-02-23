@@ -14,7 +14,6 @@ import { PersonaConfig } from "./PersonaSettings";
 import {
     SoulState,
     TensionRecord,
-    TensionTensor,
     loadSoulState,
     updateSoulState,
     generateSoulPromptModifier,
@@ -23,7 +22,7 @@ import {
     getContextWeight,
     estimateResistance
 } from "@/lib/soulEngine";
-import { auditOutput, saveAuditLog, AuditResult } from "@/lib/soulAuditor";
+import { auditOutput, saveAuditLog } from "@/lib/soulAuditor";
 
 interface Message extends Omit<DBMessage, 'timestamp'> {
     timestamp: Date;
@@ -55,6 +54,7 @@ ${memories.map((m, i) => `
 // 基於論文: "Re-Reading Improves Reasoning in Large Language Models" (2024)
 // 核心概念: 重複讀取輸入 2 次以提升理解深度
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const applyRE2 = (input: string): string => {
     return `【第一次閱讀】:
 "${input}"
@@ -533,7 +533,7 @@ const callXaiAPI = async (prompt: string, apiKey: string): Promise<string> => {
 
 // Ollama 本地模型 API（免費，需要本地運行 Ollama）
 // 注意：簡化 prompt 避免 JSON 格式要求，本地模型容易出錯
-const callOllamaAPI = async (prompt: string, _apiKey: string): Promise<string> => {
+const callOllamaAPI = async (prompt: string): Promise<string> => {
     const OLLAMA_URL = process.env.NEXT_PUBLIC_OLLAMA_URL || "http://localhost:11434";
     const MODEL_NAME = process.env.NEXT_PUBLIC_OLLAMA_MODEL || "formosa1";
 
@@ -767,7 +767,7 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
     const getCallAPI = () => {
         // Ollama 不需要 API Key
         if (apiSettings?.provider === "ollama") {
-            return (prompt: string) => callOllamaAPI(prompt, "");
+            return (prompt: string) => callOllamaAPI(prompt);
         }
         if (!apiSettings?.apiKey) return null;
         switch (apiSettings.provider) {
