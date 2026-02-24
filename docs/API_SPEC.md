@@ -275,6 +275,26 @@ Runtime environment:
   - `success: boolean`
   - `report: object`
 
+### `GET /api/governance-status`
+- Web route (Next API layer).
+- Purpose:
+  - Provide a compact governance readiness surface for IDE/operator preflight.
+  - Expose whether runtime is in `mock_only` or `runtime_ready` mode.
+- Response:
+  - `status: "ok" | "degraded"`
+  - `backend_mode: "same_origin" | "external_backend"`
+  - `governance_capability: "mock_only" | "runtime_ready" | "unavailable"`
+  - `deliberation_level: "mock" | "runtime" | "unavailable"`
+  - `backend_status: number | null`
+  - `reason?: string`
+  - `checked_at: ISO timestamp`
+  - `elisa: object`
+    - `integration_ready: boolean`
+    - `contract_version: string`
+    - `payload_profile: string`
+    - `smoke_command: string`
+    - `checked_at: ISO timestamp`
+
 ---
 
 ## Web Route Behavior Rules
@@ -331,6 +351,11 @@ python scripts/verify_web_api.py --web-base http://127.0.0.1:3000 --api-base htt
 ### Vercel preflight guard
 ```powershell
 python scripts/verify_vercel_preflight.py --strict --probe-health
+```
+
+### Vercel preflight guard (with governance status probe)
+```powershell
+python scripts/verify_vercel_preflight.py --strict --probe-health --probe-governance-status --web-base https://your-web-domain
 ```
 
 ---

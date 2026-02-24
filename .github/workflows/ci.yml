@@ -147,7 +147,7 @@ jobs:
           wait_post("http://127.0.0.1:3000/api/conversation", {"session_id": "ci_ready"})
           PY
 
-          if ! python scripts/verify_web_api.py --web-base http://127.0.0.1:3000 --api-base http://127.0.0.1:5000 --require-backend --check-council-modes --timeout 40; then
+          if ! python scripts/verify_web_api.py --web-base http://127.0.0.1:3000 --api-base http://127.0.0.1:5000 --require-backend --check-council-modes --elisa-scenario --timeout 40; then
             echo "=== backend.log ==="
             cat backend.log || true
             echo "=== web.log ==="

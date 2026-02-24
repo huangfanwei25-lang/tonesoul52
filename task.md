@@ -575,8 +575,8 @@
 - [x] Defined integration boundary using existing governance APIs (`/api/chat`, `/api/consent`, `/api/session-report`, `/api/backend-health`) with `council_mode` and `perspective_config`.
 - [x] Defined fail-closed governance controls (preflight, policy gate, consent gate, audit trail) for Elisa IDE integration.
 - [x] P0 implementation: Elisa payload profile + route contract tests + `verify_web_api.py` integration scenario.
-- [ ] P1 implementation: preflight Elisa checks + governance status surface.
-- [ ] P2 implementation: CI blocking smoke for Elisa integration contract.
+- [x] P1 implementation: preflight Elisa checks + governance status surface.
+- [x] P2 implementation: CI blocking smoke for Elisa integration contract.
 - [ ] P3 implementation: operational hardening (runbook/rollback/release checklist).
 **Success Criteria**: A reproducible P0-P3 execution path exists with blocking CI gates and same-origin governance behavior preserved.
 

@@ -125,3 +125,53 @@ def test_evaluate_preflight_allows_same_origin_without_backend_url() -> None:
     assert payload["ok"] is True
     assert _status(payload, "backend_url") == "pass"
     assert _status(payload, "backend_health_probe") == "skip"
+
+
+def test_evaluate_preflight_governance_status_probe_passes() -> None:
+    def fake_probe(_web_base: str, _timeout: int) -> tuple[bool, str]:
+        return True, "governance status probe passed"
+
+    payload = preflight.evaluate_preflight(
+        backend_url="https://api.example.com",
+        env_values={
+            "TONESOUL_ENABLE_CHAT_MOCK_FALLBACK": "0",
+            "NEXT_PUBLIC_CHAT_EXECUTION_MODE": "backend",
+            "NEXT_PUBLIC_BACKEND_CHAT_FIRST": None,
+            "NEXT_PUBLIC_ENABLE_PROVIDER_FALLBACK": "0",
+            "NEXT_PUBLIC_REPORT_EXECUTION_MODE": "backend",
+            "NEXT_PUBLIC_REPORT_PROVIDER_FALLBACK": "0",
+        },
+        allow_http=False,
+        allow_chat_mock_fallback=False,
+        same_origin=False,
+        probe_health=False,
+        web_base="https://tonesoul52-ruby.vercel.app",
+        probe_governance_status=True,
+        timeout=5,
+        governance_probe_fn=fake_probe,
+    )
+    assert payload["ok"] is True
+    assert _status(payload, "governance_status_probe") == "pass"
+
+
+def test_evaluate_preflight_governance_status_probe_fails_without_web_base() -> None:
+    payload = preflight.evaluate_preflight(
+        backend_url="https://api.example.com",
+        env_values={
+            "TONESOUL_ENABLE_CHAT_MOCK_FALLBACK": "0",
+            "NEXT_PUBLIC_CHAT_EXECUTION_MODE": "backend",
+            "NEXT_PUBLIC_BACKEND_CHAT_FIRST": None,
+            "NEXT_PUBLIC_ENABLE_PROVIDER_FALLBACK": "0",
+            "NEXT_PUBLIC_REPORT_EXECUTION_MODE": "backend",
+            "NEXT_PUBLIC_REPORT_PROVIDER_FALLBACK": "0",
+        },
+        allow_http=False,
+        allow_chat_mock_fallback=False,
+        same_origin=False,
+        probe_health=False,
+        web_base=None,
+        probe_governance_status=True,
+        timeout=5,
+    )
+    assert payload["ok"] is False
+    assert _status(payload, "governance_status_probe") == "fail"

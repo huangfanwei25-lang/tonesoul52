@@ -96,6 +96,45 @@ def _probe_backend_health(backend_url: str, timeout: int) -> tuple[bool, str]:
     return True, "health probe passed"
 
 
+def _probe_governance_status(web_base: str, timeout: int) -> tuple[bool, str]:
+    endpoint = web_base.rstrip("/") + "/api/governance-status"
+    request = Request(endpoint, method="GET", headers={"User-Agent": "tonesoul-vercel-preflight"})
+    try:
+        with urlopen(request, timeout=max(1, timeout)) as response:
+            status_code = int(response.getcode())
+            payload_text = response.read().decode("utf-8", errors="replace")
+    except HTTPError as exc:
+        return False, f"governance status probe HTTP error: status={exc.code}"
+    except URLError as exc:
+        return False, f"governance status probe transport error: {exc.reason}"
+
+    if status_code != 200:
+        return False, f"governance status probe unexpected status: {status_code}"
+
+    try:
+        payload = json.loads(payload_text) if payload_text.strip() else {}
+    except json.JSONDecodeError:
+        return False, "governance status probe returned non-JSON payload"
+
+    status = payload.get("status")
+    if status != "ok":
+        return False, f"governance status payload status is not ok: {status!r}"
+
+    capability = payload.get("governance_capability")
+    if capability not in {"mock_only", "runtime_ready"}:
+        return False, f"governance capability is invalid: {capability!r}"
+
+    elisa = payload.get("elisa")
+    if not isinstance(elisa, dict):
+        return False, "governance status payload missing object field 'elisa'"
+
+    integration_ready = elisa.get("integration_ready")
+    if integration_ready is not True:
+        return False, f"elisa.integration_ready must be true, got {integration_ready!r}"
+
+    return True, "governance status probe passed"
+
+
 def evaluate_preflight(
     *,
     backend_url: str | None,
@@ -104,8 +143,11 @@ def evaluate_preflight(
     allow_chat_mock_fallback: bool,
     same_origin: bool,
     probe_health: bool,
+    web_base: str | None = None,
+    probe_governance_status: bool = False,
     timeout: int,
     health_probe_fn: Callable[[str, int], tuple[bool, str]] | None = None,
+    governance_probe_fn: Callable[[str, int], tuple[bool, str]] | None = None,
 ) -> dict[str, Any]:
     checks: list[dict[str, str]] = []
 
@@ -206,6 +248,39 @@ def evaluate_preflight(
     else:
         add_check("report_provider_fallback", "pass", "report provider fallback is disabled")
 
+    if probe_governance_status:
+        web_base_text = (web_base or "").strip()
+        if not web_base_text:
+            add_check(
+                "governance_status_probe",
+                "fail",
+                "web base URL is required when --probe-governance-status is enabled",
+            )
+        else:
+            parsed_web = urlparse(web_base_text)
+            if not parsed_web.scheme or not parsed_web.netloc:
+                add_check(
+                    "governance_status_probe",
+                    "fail",
+                    f"web base URL is not a valid absolute URL: {web_base_text!r}",
+                )
+            elif parsed_web.scheme.lower() != "https" and not allow_http:
+                add_check(
+                    "governance_status_probe",
+                    "fail",
+                    "web base URL must use HTTPS in production preflight",
+                )
+            else:
+                probe = governance_probe_fn or _probe_governance_status
+                probe_ok, probe_detail = probe(web_base_text, timeout)
+                add_check(
+                    "governance_status_probe",
+                    "pass" if probe_ok else "fail",
+                    probe_detail,
+                )
+    else:
+        add_check("governance_status_probe", "skip", "skipped: governance probe disabled")
+
     if probe_health:
         backend_text = (backend_url or "").strip().lower()
         if same_origin and backend_text in {"", *SAME_ORIGIN_MARKERS}:
@@ -237,6 +312,8 @@ def evaluate_preflight(
             "allow_chat_mock_fallback": bool(allow_chat_mock_fallback),
             "same_origin": bool(same_origin),
             "probe_health": bool(probe_health),
+            "web_base": (web_base or "").strip(),
+            "probe_governance_status": bool(probe_governance_status),
             "timeout": int(max(1, timeout)),
         },
     }
@@ -277,6 +354,16 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Probe <backend>/api/health.",
     )
+    parser.add_argument(
+        "--web-base",
+        default=None,
+        help="Web base URL override used by governance status probe.",
+    )
+    parser.add_argument(
+        "--probe-governance-status",
+        action="store_true",
+        help="Probe <web-base>/api/governance-status for Elisa/governance readiness.",
+    )
     parser.add_argument("--timeout", type=int, default=8, help="Health probe timeout seconds.")
     parser.add_argument(
         "--strict",
@@ -290,6 +377,7 @@ def main() -> int:
     args = build_parser().parse_args()
 
     backend_url = args.backend_url or os.environ.get("TONESOUL_BACKEND_URL")
+    web_base = args.web_base or os.environ.get("TONESOUL_WEB_BASE_URL")
     same_origin = (
         bool(args.same_origin)
         or _parse_switch(os.environ.get("TONESOUL_VERCEL_SAME_ORIGIN")).value is True
@@ -313,6 +401,8 @@ def main() -> int:
         allow_chat_mock_fallback=bool(args.allow_chat_mock_fallback),
         same_origin=same_origin,
         probe_health=bool(args.probe_health),
+        web_base=web_base,
+        probe_governance_status=bool(args.probe_governance_status),
         timeout=max(1, args.timeout),
     )
     _emit(payload)

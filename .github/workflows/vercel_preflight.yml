@@ -12,6 +12,16 @@ on:
         required: false
         default: true
         type: boolean
+      web_base:
+        description: "Optional web origin for governance status probe, e.g. https://tonesoul52-ruby.vercel.app"
+        required: false
+        default: ""
+        type: string
+      probe_governance_status:
+        description: "Probe <web_base>/api/governance-status"
+        required: false
+        default: false
+        type: boolean
       allow_http:
         description: "Allow non-HTTPS backend URL (debug only)"
         required: false
@@ -33,6 +43,7 @@ jobs:
       NEXT_PUBLIC_ENABLE_PROVIDER_FALLBACK: "0"
       NEXT_PUBLIC_REPORT_EXECUTION_MODE: "backend"
       NEXT_PUBLIC_REPORT_PROVIDER_FALLBACK: "0"
+      TONESOUL_WEB_BASE_URL: ${{ inputs.web_base }}
 
     steps:
       - name: Checkout code
@@ -48,6 +59,12 @@ jobs:
           CMD="python scripts/verify_vercel_preflight.py --strict"
           if [ "${{ inputs.probe_health }}" = "true" ]; then
             CMD="$CMD --probe-health"
+          fi
+          if [ "${{ inputs.probe_governance_status }}" = "true" ]; then
+            CMD="$CMD --probe-governance-status"
+          fi
+          if [ -n "${{ inputs.web_base }}" ]; then
+            CMD="$CMD --web-base '${{ inputs.web_base }}'"
           fi
           if [ "${{ inputs.allow_http }}" = "true" ]; then
             CMD="$CMD --allow-http"
