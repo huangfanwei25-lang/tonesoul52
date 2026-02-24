@@ -1,60 +1,6 @@
-# Keep Vercel CLI deployments small. The Vercel Project root is `apps/web`,
-# but CLI deploys from repo root by default, so we must ignore large non-web
-# folders to stay under upload file limits.
-
-# VCS / tooling
-.git/
-.github/
-.agent/
-.archive/
-.external/
-.moltbook/
-.pytest_cache/
-.hypothesis/
-.ruff_cache/
-.venv/
-.vercel/
-
-# Data / private / heavy
-memory/
-reports/
+apps/web/
 docs/
-data/
-obsidian-vault/
-zenodo_upload/
-simulation_logs/
-logs/
-temp/
-tmp/
-temp_ci_*/
-temp_ci_lint*/
-temp_ci_memory_hygiene*/
-
-# Non-web source trees
-tonesoul/
-integrations/
 experiments/
-knowledge/
-knowledge_base/
-law/
-spec/
-skills/
-examples/
-evidence/
-PARADOXES/
-
-# Legacy HTML showcase (kept in repo but not deployed)
-apps/showcase/
-
-# Node artifacts
-**/node_modules/
-**/.next/
-apps/web/node_modules/
-apps/web/.next/
-
-# Common binaries/media
-*.gguf
-*.zip
-*.mp3
-*.mp4
-*.wav
+.cursor/
+.github/
+.vscode/
