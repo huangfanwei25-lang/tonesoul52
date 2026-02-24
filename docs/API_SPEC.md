@@ -164,6 +164,18 @@ Runtime environment:
     - optional explicit per-perspective config
     - when provided, backend uses this config and ignores `council_mode`
     - values must be objects, e.g. `{ "guardian": { "mode": "rules" } }`
+  - `session_id?: string`
+    - optional session correlation id for IDE-origin traffic
+  - `elisa_context?: object`
+    - optional Elisa IDE envelope for governance traceability
+    - shape:
+      - `source?: "elisa_ide"`
+      - `session_id?: string`
+      - `trigger?: string`
+      - `workspace?: { project_id?: string, repo?: string, branch?: string, changed_files?: string[] }`
+    - validation notes:
+      - `workspace.changed_files` max 64 items
+      - each `changed_files` entry must be a string
 - Response (backend path):
   - `response: string`
   - `verdict?: object`
@@ -309,6 +321,11 @@ npm --prefix apps/web run test -- src/__tests__/apiRoutes.invalidJson.test.ts
 ### Integrated web+backend smoke
 ```powershell
 python scripts/verify_web_api.py --web-base http://127.0.0.1:3000 --api-base http://127.0.0.1:5000 --require-backend --check-council-modes --timeout 40
+```
+
+### Elisa integration smoke (P0)
+```powershell
+python scripts/verify_web_api.py --web-base http://127.0.0.1:3000 --api-base http://127.0.0.1:5000 --require-backend --elisa-scenario --timeout 40
 ```
 
 ### Vercel preflight guard

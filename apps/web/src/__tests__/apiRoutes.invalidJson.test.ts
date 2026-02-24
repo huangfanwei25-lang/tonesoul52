@@ -136,6 +136,41 @@ describe("API route handlers return 502 for invalid backend JSON", () => {
         expect(fetchMock).not.toHaveBeenCalled();
     });
 
+    it("chat route rejects non-object elisa_context with 400", async () => {
+        const fetchMock = vi.spyOn(globalThis, "fetch");
+        const response = await postChat(
+            makeRequest({
+                message: "hello",
+                elisa_context: "elisa_ide",
+            }) as never
+        );
+        const payload = (await response.json()) as Record<string, unknown>;
+
+        expect(response.status).toBe(400);
+        expect(payload.error).toBe("Invalid elisa_context");
+        expect(fetchMock).not.toHaveBeenCalled();
+    });
+
+    it("chat route rejects invalid elisa_context workspace.changed_files with 400", async () => {
+        const fetchMock = vi.spyOn(globalThis, "fetch");
+        const response = await postChat(
+            makeRequest({
+                message: "hello",
+                elisa_context: {
+                    source: "elisa_ide",
+                    workspace: {
+                        changed_files: ["apps/web/src/app/api/chat/route.ts", 123],
+                    },
+                },
+            }) as never
+        );
+        const payload = (await response.json()) as Record<string, unknown>;
+
+        expect(response.status).toBe(400);
+        expect(payload.error).toBe("Invalid elisa_context");
+        expect(fetchMock).not.toHaveBeenCalled();
+    });
+
     it("session-report route returns 502 without mock fallback", async () => {
         process.env.TONESOUL_BACKEND_URL = "http://127.0.0.1:5999";
         vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response("invalid-report-json", { status: 200 }));

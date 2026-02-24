@@ -19,6 +19,7 @@ const ALLOWED_COUNCIL_MODES = new Set(["rules", "rules_only", "hybrid", "full_ll
 const TRANSIENT_STATUS_CODES = new Set([429, 502, 503, 504]);
 const MAX_PERSONA_ROLES = 8;
 const MAX_PERSONA_ATTACHMENTS_PER_ROLE = 6;
+const MAX_ELISA_CHANGED_FILES = 64;
 const SAME_ORIGIN_PRIMARY_FALLBACK_REASON = "same_origin_primary";
 
 type PersonaPayload = {
@@ -41,14 +42,28 @@ type PersonaPayload = {
     }>;
 };
 
+type ElisaContextPayload = {
+    source?: string;
+    session_id?: string;
+    trigger?: string;
+    workspace?: {
+        project_id?: string;
+        repo?: string;
+        branch?: string;
+        changed_files?: string[];
+    };
+};
+
 type ChatRequestPayload = {
     conversation_id?: string;
+    session_id?: string;
     message?: string;
     history?: unknown[];
     full_analysis?: boolean;
     council_mode?: "rules" | "hybrid" | "full_llm";
     perspective_config?: Record<string, Record<string, unknown>>;
     persona?: PersonaPayload;
+    elisa_context?: ElisaContextPayload;
 };
 
 function resolveRequestTimeoutMs(): number {
@@ -161,6 +176,14 @@ function parseChatBody(raw: unknown): { body?: ChatRequestPayload; error?: NextR
             return { error: badRequest("message") };
         }
         parsed.message = message;
+    }
+
+    const sessionId = raw.session_id;
+    if (sessionId !== undefined) {
+        if (typeof sessionId !== "string") {
+            return { error: badRequest("session_id") };
+        }
+        parsed.session_id = sessionId;
     }
 
     const history = raw.history;
@@ -278,6 +301,62 @@ function parseChatBody(raw: unknown): { body?: ChatRequestPayload; error?: NextR
             }
         }
         parsed.persona = persona as PersonaPayload;
+    }
+
+    const elisaContext = raw.elisa_context;
+    if (elisaContext !== undefined) {
+        if (!isPlainObject(elisaContext)) {
+            return { error: badRequest("elisa_context") };
+        }
+
+        const source = elisaContext.source;
+        if (source !== undefined) {
+            if (typeof source !== "string" || source.trim().toLowerCase() !== "elisa_ide") {
+                return { error: badRequest("elisa_context") };
+            }
+        }
+
+        const contextSessionId = elisaContext.session_id;
+        if (contextSessionId !== undefined && typeof contextSessionId !== "string") {
+            return { error: badRequest("elisa_context") };
+        }
+
+        const trigger = elisaContext.trigger;
+        if (trigger !== undefined && typeof trigger !== "string") {
+            return { error: badRequest("elisa_context") };
+        }
+
+        const workspace = elisaContext.workspace;
+        if (workspace !== undefined) {
+            if (!isPlainObject(workspace)) {
+                return { error: badRequest("elisa_context") };
+            }
+
+            for (const key of ["project_id", "repo", "branch"] as const) {
+                const value = workspace[key];
+                if (value !== undefined && typeof value !== "string") {
+                    return { error: badRequest("elisa_context") };
+                }
+            }
+
+            const changedFiles = workspace.changed_files;
+            if (changedFiles !== undefined) {
+                if (
+                    !Array.isArray(changedFiles)
+                    || changedFiles.length > MAX_ELISA_CHANGED_FILES
+                ) {
+                    return { error: badRequest("elisa_context") };
+                }
+
+                for (const file of changedFiles) {
+                    if (typeof file !== "string") {
+                        return { error: badRequest("elisa_context") };
+                    }
+                }
+            }
+        }
+
+        parsed.elisa_context = elisaContext as ElisaContextPayload;
     }
 
     return { body: parsed };

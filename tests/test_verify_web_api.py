@@ -1,4 +1,5 @@
 from scripts.verify_web_api import (
+    _build_elisa_chat_payload,
     _summarize_payload,
     _validate_chat_council_mode,
     _validate_same_origin_backend_health,
@@ -45,3 +46,20 @@ def test_validate_same_origin_backend_health_passes():
 def test_validate_same_origin_backend_health_fails_on_wrong_mode():
     payload = {"ok": True, "backend_mode": "external_backend"}
     assert _validate_same_origin_backend_health(payload, "backend health") is False
+
+
+def test_build_elisa_chat_payload_contains_expected_envelope():
+    payload = _build_elisa_chat_payload("conv_123", "session_abc")
+    assert payload["conversation_id"] == "conv_123"
+    assert payload["session_id"] == "session_abc"
+    assert payload["council_mode"] == "rules"
+
+    elisa_context = payload["elisa_context"]
+    assert isinstance(elisa_context, dict)
+    assert elisa_context["source"] == "elisa_ide"
+    assert elisa_context["session_id"] == "session_abc"
+
+    workspace = elisa_context["workspace"]
+    assert isinstance(workspace, dict)
+    assert workspace["repo"] == "Fan1234-1/tonesoul52"
+    assert isinstance(workspace["changed_files"], list)

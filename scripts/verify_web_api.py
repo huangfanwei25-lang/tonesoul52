@@ -178,6 +178,35 @@ def _validate_external_backend_health(payload: Any, label: str) -> bool:
     return True
 
 
+def _build_elisa_chat_payload(conversation_id: str, session_id: str) -> Dict[str, Any]:
+    return {
+        "conversation_id": conversation_id,
+        "session_id": session_id,
+        "message": "Elisa integration smoke: assess governance risk for this patch.",
+        "history": [{"role": "user", "content": "Review this code change for risk."}],
+        "full_analysis": False,
+        "council_mode": "rules",
+        "perspective_config": {
+            "guardian": {"mode": "rules"},
+            "engineer": {"mode": "hybrid"},
+        },
+        "elisa_context": {
+            "source": "elisa_ide",
+            "session_id": session_id,
+            "trigger": "post_codegen_review",
+            "workspace": {
+                "project_id": "tonesoul52",
+                "repo": "Fan1234-1/tonesoul52",
+                "branch": "master",
+                "changed_files": [
+                    "apps/web/src/app/api/chat/route.ts",
+                    "scripts/verify_web_api.py",
+                ],
+            },
+        },
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="ToneSoul web API smoke check")
     parser.add_argument(
@@ -219,6 +248,14 @@ def main() -> int:
             "(requires backend_mode=same_origin)."
         ),
     )
+    parser.add_argument(
+        "--elisa-scenario",
+        action="store_true",
+        help=(
+            "Run additional Elisa integration payload scenario against /api/chat "
+            "(session/file envelope + council settings)."
+        ),
+    )
     args = parser.parse_args()
 
     web_base = args.web_base.rstrip("/")
@@ -228,6 +265,7 @@ def main() -> int:
     verbose = bool(args.verbose)
     check_council_modes = bool(args.check_council_modes)
     same_origin = bool(args.same_origin)
+    elisa_scenario = bool(args.elisa_scenario)
 
     all_ok = True
 
@@ -344,6 +382,34 @@ def main() -> int:
                 continue
             if not _validate_chat_council_mode(check_payload, mode):
                 all_ok = False
+
+    if elisa_scenario:
+        elisa_payload = _build_elisa_chat_payload(conversation_id, session_id)
+        elisa_ok, elisa_status, elisa_response, _ = request_json(
+            "POST",
+            f"{web_base}/api/chat",
+            timeout=timeout,
+            json=elisa_payload,
+        )
+        print_result(
+            "POST web /api/chat (elisa scenario)",
+            elisa_ok,
+            elisa_status,
+            elisa_response,
+            verbose,
+        )
+        if not elisa_ok or not _require_backend_check(
+            "POST web /api/chat (elisa scenario)",
+            elisa_response,
+            require_backend,
+        ):
+            all_ok = False
+        elisa_response_dict = _expect_dict(elisa_response, "POST web /api/chat (elisa scenario)")
+        if elisa_response_dict and not isinstance(elisa_response_dict.get("response"), str):
+            print(
+                "[FAIL] POST web /api/chat (elisa scenario): missing string field 'response'."
+            )
+            all_ok = False
 
     # 5) Web session report
     ok, status, payload, _ = request_json(

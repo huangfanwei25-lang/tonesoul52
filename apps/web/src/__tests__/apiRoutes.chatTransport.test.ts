@@ -214,6 +214,54 @@ describe("chat route transport fallback behavior", () => {
         expect(role.name).toBe("Risk Auditor");
     });
 
+    it("accepts and forwards Elisa payload profile envelope", async () => {
+        process.env.TONESOUL_BACKEND_URL = "http://127.0.0.1:5000";
+        const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(
+            new Response(JSON.stringify({ response: "ok" }), { status: 200 })
+        );
+
+        const response = await postChat(
+            makeRequest({
+                conversation_id: "c1",
+                session_id: "elisa_session_001",
+                message: "Review this auth patch and identify governance risks.",
+                history: [],
+                full_analysis: false,
+                council_mode: "rules",
+                perspective_config: {
+                    guardian: { mode: "rules" },
+                },
+                elisa_context: {
+                    source: "elisa_ide",
+                    session_id: "elisa_session_001",
+                    trigger: "post_codegen_review",
+                    workspace: {
+                        project_id: "tonesoul52",
+                        repo: "Fan1234-1/tonesoul52",
+                        branch: "master",
+                        changed_files: [
+                            "apps/web/src/app/api/chat/route.ts",
+                            "scripts/verify_web_api.py",
+                        ],
+                    },
+                },
+            }) as never
+        );
+        const payload = (await response.json()) as Record<string, unknown>;
+
+        expect(response.status).toBe(200);
+        expect(payload.response).toBe("ok");
+        expect(fetchMock).toHaveBeenCalledTimes(1);
+        const [, requestInit] = fetchMock.mock.calls[0] as [string, RequestInit];
+        const parsedBody = JSON.parse(String(requestInit.body)) as Record<string, unknown>;
+        expect(parsedBody.session_id).toBe("elisa_session_001");
+        const elisaContext = parsedBody.elisa_context as Record<string, unknown>;
+        expect(elisaContext.source).toBe("elisa_ide");
+        const workspace = elisaContext.workspace as Record<string, unknown>;
+        expect(workspace.branch).toBe("master");
+        expect(Array.isArray(workspace.changed_files)).toBe(true);
+    });
+
     it("retries transient backend status and succeeds on a later attempt", async () => {
         process.env.TONESOUL_BACKEND_URL = "http://127.0.0.1:5000";
         process.env.TONESOUL_BACKEND_CHAT_RETRY_MAX_ATTEMPTS = "3";
