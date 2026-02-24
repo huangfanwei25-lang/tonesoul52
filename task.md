@@ -602,5 +602,5 @@
 - [x] `pyproject.toml` -> `1.0.0rc1`
 - [ ] GA blocker A: complete Phase 108 P0-P2 (Elisa contract + CI blocking smoke).
 - [ ] GA blocker B: complete Phase 108 P3 (runbook + rollback + release checklist).
-- [ ] GA blocker C: produce `docs/RELEASE_NOTES_v1.0.0.md` and push tag `v1.0.0`.
-**Success Criteria**: `v1.0.0-rc.1` baseline is stable and traceable; GA can be executed by closing only explicit blockers A/B/C.
+- [x] GA blocker C: produce `docs/RELEASE_NOTES_v1.0.0.md` and push tag `v1.0.0`.
+**Success Criteria**: `v1.0.0` baseline is stable and traceable; GA release gates are fully closed.

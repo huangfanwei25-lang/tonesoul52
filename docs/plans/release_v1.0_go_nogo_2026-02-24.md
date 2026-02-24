@@ -63,3 +63,10 @@
    - `python scripts/verify_web_api.py --web-base https://tonesoul52-ruby.vercel.app --api-base https://tonesoul52-ruby.vercel.app --same-origin`
    - `npm --prefix apps/web run build`
 
+## GA Status Update (2026-02-24)
+
+- Decision update: `GA-GO`
+- Resolution summary:
+  - Phase 108 P0-P3 all completed (payload contract, preflight checks, CI blocking smoke, runbook/rollback).
+  - v1.0.0 release artifact created: `docs/RELEASE_NOTES_v1.0.0.md`.
+  - Release tag `v1.0.0` is published.
