@@ -196,6 +196,31 @@ def test_build_check_specs_includes_external_source_registry_check(tmp_path: Pat
     ]
 
 
+def test_build_check_specs_includes_skill_registry_check(tmp_path: Path) -> None:
+    discussion_path = tmp_path / "agent_discussion_curated.jsonl"
+    discussion_path.write_text('{"status":"final"}\n', encoding="utf-8")
+
+    python_executable = r"C:\\repo\\.venv\\Scripts\\python.exe"
+    specs = healthcheck._build_check_specs(
+        python_executable=python_executable,
+        include_sdh=False,
+        check_council_modes=True,
+        strict_soft_fail=False,
+        web_base=None,
+        api_base=None,
+        sdh_timeout=None,
+        allow_missing_discussion=False,
+        discussion_path=discussion_path,
+    )
+
+    skill_registry = next(item for item in specs if item["name"] == "skill_registry")
+    assert skill_registry["command"] == [
+        python_executable,
+        "scripts/verify_skill_registry.py",
+        "--strict",
+    ]
+
+
 def test_build_check_specs_includes_multi_agent_divergence_check(tmp_path: Path) -> None:
     discussion_path = tmp_path / "agent_discussion_curated.jsonl"
     discussion_path.write_text('{"status":"final"}\n', encoding="utf-8")

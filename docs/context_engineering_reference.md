@@ -173,3 +173,21 @@ Level 3: 附屬檔案 (reference.md, forms.md 等)
 2. **Red Team Skill** — 角色切換到「破壞者」，對 pipeline 做對抗式測試
 3. **Context Compressor** — 自動摘要過長的 conversation history
 4. **Structured AGENTS.md** — 加入 build/test commands 和 security section
+
+---
+
+## Skill Registry Contract (Phase 113)
+
+- Registry file: `skills/registry.json`
+- Schema file: `skills/registry.schema.json`
+- Verification command:
+
+```bash
+python scripts/verify_skill_registry.py --strict
+```
+
+- Contract goals:
+  - skills are machine-enumerable (`id`, `path`, `version`, `triggers`)
+  - trust metadata is explicit (`tier`, `review_owner`, `reviewed_at`)
+  - integrity is auditable (`sha256` hash per skill file)
+  - discovered `.agent/skills/*/SKILL.md` files must be covered by registry

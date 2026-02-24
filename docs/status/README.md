@@ -27,6 +27,7 @@ This folder is the repository status source for machine-generated governance sna
     - git hygiene (`scripts/verify_git_hygiene.py`)
     - dual-track boundary (`scripts/verify_dual_track_boundary.py --strict --staged`)
     - persona swarm readiness (`scripts/run_persona_swarm_framework.py --strict`)
+    - skill registry contract (`scripts/verify_skill_registry.py --strict`)
     - multi-agent divergence (`scripts/run_multi_agent_divergence_report.py --strict`)
     - memory quality (`scripts/run_memory_quality_report.py --strict`)
     - 7D audit (`scripts/verify_7d.py`)
@@ -151,6 +152,10 @@ python scripts/run_persona_swarm_framework.py --strict
 
 ```bash
 python scripts/run_external_source_registry_check.py --strict
+```
+
+```bash
+python scripts/verify_skill_registry.py --strict
 ```
 
 ```bash

@@ -186,6 +186,14 @@ def _build_check_specs(
             ],
         },
         {
+            "name": "skill_registry",
+            "command": [
+                python_executable,
+                "scripts/verify_skill_registry.py",
+                "--strict",
+            ],
+        },
+        {
             "name": "multi_agent_divergence",
             "command": [
                 python_executable,

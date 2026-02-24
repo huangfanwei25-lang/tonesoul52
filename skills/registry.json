@@ -1,0 +1,73 @@
+{
+  "$schema": "./registry.schema.json",
+  "registry_version": "1.0.0",
+  "max_review_age_days": 180,
+  "skills": [
+    {
+      "id": "local_llm",
+      "name": "Local LLM",
+      "path": ".agent/skills/local_llm/SKILL.md",
+      "version": "1.0.0",
+      "license": "Internal-Project",
+      "compatibility": {
+        "runtime": [
+          "codex",
+          "claude-code",
+          "gemini-cli"
+        ],
+        "os": [
+          "windows",
+          "linux",
+          "macos"
+        ]
+      },
+      "triggers": [
+        "local llm",
+        "ollama",
+        "qwen3",
+        "offline model"
+      ],
+      "trust": {
+        "tier": "reviewed",
+        "review_owner": "codex",
+        "reviewed_at": "2026-02-24"
+      },
+      "integrity": {
+        "sha256": "2f84d5a31686be00c3bdce9707b6f2a780d9c9470aea65cb6ad231a6d55ccbcc"
+      }
+    },
+    {
+      "id": "qa_auditor",
+      "name": "QA Auditor",
+      "path": ".agent/skills/qa_auditor/SKILL.md",
+      "version": "1.0.0",
+      "license": "Internal-Project",
+      "compatibility": {
+        "runtime": [
+          "codex",
+          "claude-code",
+          "gemini-cli"
+        ],
+        "os": [
+          "windows",
+          "linux",
+          "macos"
+        ]
+      },
+      "triggers": [
+        "qa audit",
+        "red team",
+        "chaos testing",
+        "adversarial test"
+      ],
+      "trust": {
+        "tier": "reviewed",
+        "review_owner": "codex",
+        "reviewed_at": "2026-02-24"
+      },
+      "integrity": {
+        "sha256": "e7faba70aa69c5ea74b47e7c32cb88c59279c76205e4833b7bf1f5eae44f2a37"
+      }
+    }
+  ]
+}

@@ -639,3 +639,11 @@
 - [x] `npm --prefix apps/web run test -- src/__tests__/apiRoutes.invalidJson.test.ts src/__tests__/apiRoutes.chatTransport.test.ts`
 - [x] `python -m pytest tests/test_api_chat_council_mode.py tests/red_team/test_api_type_confusion.py tests/test_verify_web_api.py -q`
 **Success Criteria**: interactive/engineering profile is first-class in chat contract and deterministically maps to speed/quality defaults without breaking explicit overrides.
+
+## Phase 113: Skill Contract Registry (2026-02-24)
+- [x] Added `skills/registry.json` and `skills/registry.schema.json` as machine-readable skill metadata contract.
+- [x] Added `scripts/verify_skill_registry.py` for registry/schema/frontmatter/hash/review-freshness validation.
+- [x] Added regression tests in `tests/test_verify_skill_registry.py`.
+- [x] Integrated skill-registry strict check into `scripts/run_repo_healthcheck.py`.
+- [x] Synced docs references (`docs/status/README.md`, `docs/context_engineering_reference.md`).
+**Success Criteria**: skill assets are enumerated, versioned, and integrity-verified in blocking governance checks.
