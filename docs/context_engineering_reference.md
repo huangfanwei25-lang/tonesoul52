@@ -191,3 +191,21 @@ python scripts/verify_skill_registry.py --strict
   - trust metadata is explicit (`tier`, `review_owner`, `reviewed_at`)
   - integrity is auditable (`sha256` hash per skill file)
   - discovered `.agent/skills/*/SKILL.md` files must be covered by registry
+
+## Skill Routing and Safety Gate (Phase 114)
+
+- Verification command:
+
+```bash
+python scripts/verify_skill_registry.py --strict
+```
+
+- New fail-closed checks:
+  - reserved namespace guard: skill id/frontmatter name cannot include `claude` or `anthropic`
+  - prompt-markup guard: frontmatter/triggers cannot include `<` or `>`
+  - routing precision: frontmatter description must include at least one registry trigger term
+  - description quality: frontmatter description length must be `>= 40`
+
+- Why this matters:
+  - keeps progressive disclosure routing deterministic instead of "best-effort"
+  - blocks common prompt-injection vectors before skills are loaded into agent context

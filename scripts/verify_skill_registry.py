@@ -20,6 +20,8 @@ SEMVER_PATTERN = re.compile(r"^\d+\.\d+\.\d+$")
 DATE_PATTERN = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 SHA256_PATTERN = re.compile(r"^[0-9a-f]{64}$")
 TRUST_TIERS = {"trusted", "reviewed", "experimental"}
+RESERVED_NAMESPACE_TERMS = ("claude", "anthropic")
+FRONTMATTER_DESCRIPTION_MIN_LEN = 40
 
 
 def _iso_now() -> str:
@@ -84,6 +86,32 @@ def _as_string_list(value: Any) -> list[str]:
         if isinstance(item, str) and item.strip():
             result.append(item.strip())
     return result
+
+
+def _contains_prompt_markup(value: str) -> bool:
+    return "<" in value or ">" in value
+
+
+def _contains_reserved_namespace(value: str) -> str | None:
+    lowered = value.lower()
+    for term in RESERVED_NAMESPACE_TERMS:
+        if term in lowered:
+            return term
+    return None
+
+
+def _normalize_for_match(value: str) -> str:
+    return re.sub(r"[^a-z0-9]+", " ", value.lower()).strip()
+
+
+def _matched_triggers_in_description(triggers: list[str], description: str) -> list[str]:
+    normalized_description = _normalize_for_match(description)
+    matched: list[str] = []
+    for trigger in triggers:
+        normalized_trigger = _normalize_for_match(trigger)
+        if normalized_trigger and normalized_trigger in normalized_description:
+            matched.append(trigger)
+    return matched
 
 
 def _discover_skill_files(skills_root: Path, repo_root: Path) -> set[str]:
@@ -179,6 +207,15 @@ def evaluate_registry(
             continue
         registry_ids.add(entry_id)
         add_check(f"{label}.id", "pass", entry_id)
+        reserved_id_term = _contains_reserved_namespace(entry_id)
+        if reserved_id_term:
+            add_check(
+                f"{label}.id.namespace",
+                "fail",
+                f"id must not use reserved namespace term: {reserved_id_term!r}",
+            )
+        else:
+            add_check(f"{label}.id.namespace", "pass", "no reserved namespace term")
 
         version = str(entry.get("version") or "")
         if not SEMVER_PATTERN.match(version):
@@ -197,6 +234,19 @@ def evaluate_registry(
             add_check(f"{label}.triggers", "fail", "triggers must contain at least one string")
         else:
             add_check(f"{label}.triggers", "pass", f"{len(triggers)} trigger(s)")
+            if len({item.casefold() for item in triggers}) != len(triggers):
+                add_check(f"{label}.triggers.unique", "fail", "duplicate trigger values are not allowed")
+            else:
+                add_check(f"{label}.triggers.unique", "pass", "trigger values are unique")
+            invalid_markup_triggers = [item for item in triggers if _contains_prompt_markup(item)]
+            if invalid_markup_triggers:
+                add_check(
+                    f"{label}.triggers.prompt_safety",
+                    "fail",
+                    f"triggers contain prompt-markup tokens: {invalid_markup_triggers}",
+                )
+            else:
+                add_check(f"{label}.triggers.prompt_safety", "pass", "no prompt-markup tokens")
 
         compatibility = entry.get("compatibility")
         if not isinstance(compatibility, dict):
@@ -311,12 +361,66 @@ def evaluate_registry(
             )
         else:
             add_check(f"{label}.frontmatter.name", "pass", frontmatter_name)
+        if _contains_prompt_markup(frontmatter_name):
+            add_check(
+                f"{label}.frontmatter.name.prompt_safety",
+                "fail",
+                "frontmatter.name must not include < or >",
+            )
+        else:
+            add_check(f"{label}.frontmatter.name.prompt_safety", "pass", "safe")
+        reserved_name_term = _contains_reserved_namespace(frontmatter_name)
+        if reserved_name_term:
+            add_check(
+                f"{label}.frontmatter.name.namespace",
+                "fail",
+                f"frontmatter.name must not use reserved namespace term: {reserved_name_term!r}",
+            )
+        else:
+            add_check(f"{label}.frontmatter.name.namespace", "pass", "no reserved namespace term")
 
         frontmatter_description = str(frontmatter.get("description") or "").strip()
         if not frontmatter_description:
             add_check(f"{label}.frontmatter.description", "fail", "description must be non-empty")
         else:
             add_check(f"{label}.frontmatter.description", "pass", "description present")
+            if _contains_prompt_markup(frontmatter_description):
+                add_check(
+                    f"{label}.frontmatter.description.prompt_safety",
+                    "fail",
+                    "frontmatter.description must not include < or >",
+                )
+            else:
+                add_check(f"{label}.frontmatter.description.prompt_safety", "pass", "safe")
+            if len(frontmatter_description) < FRONTMATTER_DESCRIPTION_MIN_LEN:
+                add_check(
+                    f"{label}.frontmatter.description.length",
+                    "fail",
+                    (
+                        "description must be at least "
+                        f"{FRONTMATTER_DESCRIPTION_MIN_LEN} characters for routing precision"
+                    ),
+                )
+            else:
+                add_check(
+                    f"{label}.frontmatter.description.length",
+                    "pass",
+                    f"length={len(frontmatter_description)}",
+                )
+            if triggers:
+                matched = _matched_triggers_in_description(triggers, frontmatter_description)
+                if not matched:
+                    add_check(
+                        f"{label}.routing.trigger_coverage",
+                        "fail",
+                        "description must contain at least one trigger term",
+                    )
+                else:
+                    add_check(
+                        f"{label}.routing.trigger_coverage",
+                        "pass",
+                        f"matched={matched[0]!r}",
+                    )
 
     missing_registry_entries = sorted(discovered - registry_paths)
     for missing_path in missing_registry_entries:

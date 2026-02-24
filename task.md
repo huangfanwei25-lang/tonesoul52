@@ -647,3 +647,15 @@
 - [x] Integrated skill-registry strict check into `scripts/run_repo_healthcheck.py`.
 - [x] Synced docs references (`docs/status/README.md`, `docs/context_engineering_reference.md`).
 **Success Criteria**: skill assets are enumerated, versioned, and integrity-verified in blocking governance checks.
+
+## Phase 114: Skill Routing Precision + Prompt-Safety Gate (2026-02-24)
+- [x] Strengthened `scripts/verify_skill_registry.py` with skill-id namespace guard (`claude` / `anthropic` reserved terms).
+- [x] Added trigger quality checks (dedupe + prompt-markup ban + description trigger coverage).
+- [x] Added frontmatter prompt-safety checks (`name` / `description` must not include `<` / `>`).
+- [x] Added frontmatter description minimum length gate (`>= 40`) for routing precision.
+- [x] Expanded regression tests in `tests/test_verify_skill_registry.py` for new fail-closed scenarios.
+- [x] Validation:
+- [x] `python -m pytest tests/test_verify_skill_registry.py -q`
+- [x] `python -m ruff check scripts/verify_skill_registry.py tests/test_verify_skill_registry.py`
+- [x] `python scripts/verify_skill_registry.py --strict`
+**Success Criteria**: skill routing metadata is both integrity-checked and injection-hardened before entering blocking governance flow.

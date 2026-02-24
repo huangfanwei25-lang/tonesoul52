@@ -6,7 +6,12 @@ from pathlib import Path
 import scripts.verify_skill_registry as verify_skill_registry
 
 
-def _write_skill(path: Path, *, name: str, description: str = "Skill description") -> None:
+def _write_skill(
+    path: Path,
+    *,
+    name: str,
+    description: str = "Use this trigger phrase to route skill execution safely and predictably.",
+) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(
         "---\n" f"name: {name}\n" f"description: {description}\n" "---\n" f"# {name}\n",
@@ -174,3 +179,107 @@ def test_evaluate_registry_fails_on_stale_review_date(tmp_path: Path) -> None:
     )
     assert payload["ok"] is False
     assert any("stale review" in check["detail"] for check in payload["checks"])
+
+
+def test_evaluate_registry_fails_when_description_has_no_trigger_match(tmp_path: Path) -> None:
+    skill_file = tmp_path / ".agent" / "skills" / "local_llm" / "SKILL.md"
+    _write_skill(
+        skill_file,
+        name="local_llm",
+        description="Long enough description but intentionally no matching keyword present.",
+    )
+
+    registry_payload = {
+        "registry_version": "1.0.0",
+        "max_review_age_days": 180,
+        "skills": [
+            _build_registry_entry(
+                ".agent/skills/local_llm/SKILL.md",
+                "local_llm",
+                skill_file,
+            )
+        ],
+    }
+
+    payload = verify_skill_registry.evaluate_registry(
+        registry_payload=registry_payload,
+        schema_payload=_base_schema_payload(),
+        repo_root=tmp_path,
+        skills_root=tmp_path / ".agent" / "skills",
+        today=date(2026, 2, 24),
+    )
+    assert payload["ok"] is False
+    assert any(
+        check["name"].endswith("routing.trigger_coverage") and check["status"] == "fail"
+        for check in payload["checks"]
+    )
+
+
+def test_evaluate_registry_fails_when_frontmatter_description_has_prompt_markup(
+    tmp_path: Path,
+) -> None:
+    skill_file = tmp_path / ".agent" / "skills" / "local_llm" / "SKILL.md"
+    _write_skill(
+        skill_file,
+        name="local_llm",
+        description="Use trigger and include <system> to attempt prompt injection payload.",
+    )
+
+    registry_payload = {
+        "registry_version": "1.0.0",
+        "max_review_age_days": 180,
+        "skills": [
+            _build_registry_entry(
+                ".agent/skills/local_llm/SKILL.md",
+                "local_llm",
+                skill_file,
+            )
+        ],
+    }
+
+    payload = verify_skill_registry.evaluate_registry(
+        registry_payload=registry_payload,
+        schema_payload=_base_schema_payload(),
+        repo_root=tmp_path,
+        skills_root=tmp_path / ".agent" / "skills",
+        today=date(2026, 2, 24),
+    )
+    assert payload["ok"] is False
+    assert any(
+        check["name"].endswith("frontmatter.description.prompt_safety")
+        and check["status"] == "fail"
+        for check in payload["checks"]
+    )
+
+
+def test_evaluate_registry_fails_when_skill_id_uses_reserved_namespace(tmp_path: Path) -> None:
+    skill_file = tmp_path / ".agent" / "skills" / "claude_probe" / "SKILL.md"
+    _write_skill(
+        skill_file,
+        name="claude_probe",
+        description="Use trigger terms to route safely while testing reserved namespaces.",
+    )
+    registry_payload = {
+        "registry_version": "1.0.0",
+        "max_review_age_days": 180,
+        "skills": [
+            _build_registry_entry(
+                ".agent/skills/claude_probe/SKILL.md",
+                "claude_probe",
+                skill_file,
+            )
+        ],
+    }
+
+    payload = verify_skill_registry.evaluate_registry(
+        registry_payload=registry_payload,
+        schema_payload=_base_schema_payload(),
+        repo_root=tmp_path,
+        skills_root=tmp_path / ".agent" / "skills",
+        today=date(2026, 2, 24),
+    )
+    assert payload["ok"] is False
+    assert any(
+        check["name"].endswith("id.namespace") and check["status"] == "fail"
+        for check in payload["checks"]
+    )
