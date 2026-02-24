@@ -49,6 +49,8 @@ apps/showcase/
 # Node artifacts
 **/node_modules/
 **/.next/
+apps/web/node_modules/
+apps/web/.next/
 
 # Common binaries/media
 *.gguf
