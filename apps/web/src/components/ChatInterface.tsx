@@ -756,7 +756,7 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
                         : rootSemanticContradictions,
                     semantic_graph_summary:
                         (payload.deliberation as DeliberationData).semantic_graph_summary
-                        && typeof (payload.deliberation as DeliberationData).semantic_graph_summary === "object"
+                            && typeof (payload.deliberation as DeliberationData).semantic_graph_summary === "object"
                             ? (payload.deliberation as DeliberationData).semantic_graph_summary
                             : rootSemanticGraphSummary,
                 } as DeliberationData)
@@ -1292,6 +1292,46 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
 
                                             {expandedNodes.has(message.id) && (
                                                 <div className="bg-slate-50/50 border-t border-slate-100 p-5 space-y-4">
+                                                    {/* Governance Status Bar (Phase 109) */}
+                                                    <div className="bg-white/60 p-4 rounded-lg border border-slate-200 shadow-sm flex flex-col gap-2">
+                                                        <div className="flex items-center justify-between">
+                                                            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1">
+                                                                <AlertTriangle className="w-3 h-3" />
+                                                                治理狀態 (Governance Visibility)
+                                                            </span>
+                                                            {message.deliberation_level === "mock" ? (
+                                                                <span className="px-2 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-700 border border-amber-200">
+                                                                    Mock Fallback
+                                                                </span>
+                                                            ) : (
+                                                                <span className="px-2 py-1 rounded-full text-xs font-bold bg-indigo-100 text-indigo-700 border border-indigo-200">
+                                                                    Runtime Deliberation
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                        <div className="flex items-center gap-4 text-xs text-slate-600">
+                                                            <div>
+                                                                <span className="text-slate-400">Mode: </span>
+                                                                <span className="font-medium">{message.backend_mode || "unknown"}</span>
+                                                            </div>
+                                                            {message.fallback_metadata?.triggered && (
+                                                                <div>
+                                                                    <span className="text-slate-400">Fallback Reason: </span>
+                                                                    <span className="font-medium text-amber-600">
+                                                                        {message.fallback_metadata.reason || "unknown"}
+                                                                    </span>
+                                                                </div>
+                                                            )}
+                                                            {message.deliberation?.quality && (
+                                                                <div>
+                                                                    <span className="text-slate-400">Quality: </span>
+                                                                    <span className={`font-medium ${message.deliberation.quality.band === 'high' ? 'text-emerald-600' : 'text-amber-600'}`}>
+                                                                        {message.deliberation.quality.score} ({message.deliberation.quality.band})
+                                                                    </span>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </div>
                                                     {/* 張力儀表 */}
                                                     {message.deliberation.entropy_meter && (
                                                         <SoulStateMeter

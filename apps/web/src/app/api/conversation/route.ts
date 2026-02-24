@@ -29,8 +29,13 @@ function buildConversationFallback(
         conversation_id: conversationId,
         session_id: sessionId,
         created_at: new Date().toISOString(),
+        deliberation_level: "mock",
         backend_mode: "mock_fallback",
         fallback_reason: fallbackReason,
+        fallback_metadata: {
+            triggered: true,
+            reason: fallbackReason,
+        },
     };
 }
 
@@ -112,6 +117,9 @@ export async function POST(request: NextRequest) {
 
     try {
         const payload = JSON.parse(text);
+        if (typeof payload === 'object' && payload !== null) {
+            payload.deliberation_level = "runtime";
+        }
         return NextResponse.json(payload, { status: backendResponse.status });
     } catch {
         if (shouldAllowMockFallback()) {

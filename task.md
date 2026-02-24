@@ -568,3 +568,23 @@
 - [x] `pytest tests/test_verify_vercel_preflight.py -q`
 - [x] `python scripts/verify_ollama_mvp.py --run-regression`
 **成功標準**: Vercel same-origin backend path is code-complete (pending deploy verification), and Ollama MVP release checklist is executable + passing via one command.
+
+## Phase 108: Elisa x ToneSoul Governance Integration Blueprint (2026-02-22)
+- [x] Published integration blueprint: `docs/plans/elisa_tonesoul_governance_integration_2026-02-22.md`
+- [x] Completed swarm multi-persona analysis (architecture/security/IDE UX/delivery) and merged into one execution plan.
+- [x] Defined integration boundary using existing governance APIs (`/api/chat`, `/api/consent`, `/api/session-report`, `/api/backend-health`) with `council_mode` and `perspective_config`.
+- [x] Defined fail-closed governance controls (preflight, policy gate, consent gate, audit trail) for Elisa IDE integration.
+- [ ] P0 implementation: Elisa payload profile + route contract tests + `verify_web_api.py` integration scenario.
+- [ ] P1 implementation: preflight Elisa checks + governance status surface.
+- [ ] P2 implementation: CI blocking smoke for Elisa integration contract.
+- [ ] P3 implementation: operational hardening (runbook/rollback/release checklist).
+**Success Criteria**: A reproducible P0-P3 execution path exists with blocking CI gates and same-origin governance behavior preserved.
+
+## Phase 109: Council Divergence Quality Baseline (2026-02-22)
+- [x] Upgraded `build_divergence_analysis()` with structured quality metrics (score/band/conflict coverage/reasoning specificity/evidence coverage/confidence balance/role tension coverage).
+- [x] Added role-level tension extraction (`role_tensions`) and decision distribution to prevent "fake disagreement" outputs.
+- [x] Wired divergence quality into `/api/chat` deliberation payload (`deliberation.divergence_quality`) and improved chamber friction mapping using role tensions.
+- [x] Added regression tests:
+- [x] `tests/test_council_divergence_quality.py`
+- [x] `tests/test_api_chat_council_mode.py::test_chat_deliberation_exposes_divergence_quality`
+**Success Criteria**: Three-role chamber output includes machine-checkable dissent quality signals and API contract remains stable.

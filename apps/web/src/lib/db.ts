@@ -17,6 +17,12 @@ export interface Message {
     role: 'user' | 'assistant';
     content: string;
     deliberation?: DeliberationData;
+    deliberation_level?: 'mock' | 'runtime';
+    backend_mode?: string;
+    fallback_metadata?: {
+        triggered: boolean;
+        reason: string;
+    };
     timestamp: number;
 }
 
@@ -25,6 +31,10 @@ export interface DeliberationData {
         philosopher: { stance: string; conflict_point?: string; benevolence_check?: string };
         engineer: { stance: string; conflict_point?: string; benevolence_check?: string };
         guardian: { stance: string; conflict_point?: string; benevolence_check?: string };
+    };
+    quality?: {
+        score: number;
+        band: 'low' | 'medium' | 'high';
     };
     entropy_meter?: {
         value: number;

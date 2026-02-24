@@ -67,6 +67,7 @@ export async function GET() {
             ok: true,
             backend_url: "same-origin",
             backend_mode: "same_origin",
+            governance_capability: "mock_only",
             backend_status: 200,
             checked_at: new Date().toISOString(),
         });
@@ -105,6 +106,7 @@ export async function GET() {
         ok: true,
         backend_url: backendUrl,
         backend_mode: "external_backend",
+        governance_capability: "runtime_ready",
         backend_status: probe.status,
         checked_at: new Date().toISOString(),
     });

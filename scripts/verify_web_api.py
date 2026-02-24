@@ -152,6 +152,29 @@ def _validate_same_origin_backend_health(payload: Any, label: str) -> bool:
     if backend_mode != "same_origin":
         print(f"[FAIL] {label}: expected backend_mode='same_origin', got {backend_mode!r}.")
         return False
+
+    cap = payload_dict.get("governance_capability")
+    if cap is not None and cap != "mock_only":
+        print(f"[FAIL] {label}: expected governance_capability='mock_only', got {cap!r}.")
+        return False
+
+    return True
+
+
+def _validate_external_backend_health(payload: Any, label: str) -> bool:
+    payload_dict = _expect_dict(payload, label)
+    if payload_dict is None:
+        return False
+
+    if payload_dict.get("ok") is not True:
+        print(f"[FAIL] {label}: expected payload.ok=true.")
+        return False
+
+    cap = payload_dict.get("governance_capability")
+    if cap is not None and cap != "runtime_ready":
+        print(f"[FAIL] {label}: expected governance_capability='runtime_ready', got {cap!r}.")
+        return False
+
     return True
 
 
@@ -221,7 +244,7 @@ def main() -> int:
     else:
         ok, status, payload, _ = request_json("GET", f"{api_base}/api/health", timeout=timeout)
         print_result("GET backend /api/health", ok, status, payload, verbose)
-        if not ok:
+        if not ok or not _validate_external_backend_health(payload, "GET backend /api/health"):
             # Auto-detect same-origin deployments where /api/health may not exist yet.
             fallback_ok, fallback_status, fallback_payload, _ = request_json(
                 "GET",
