@@ -82,7 +82,7 @@ describe("chat route transport fallback behavior", () => {
         expect(response.status).toBe(504);
         expect(typeof payload.error).toBe("string");
         expect(String(payload.error)).toContain("timed out");
-        expect(payload.backend_timeout_ms).toBe(12000);
+        expect(payload.backend_timeout_ms).toBe(55000);
         expect(payload.execution_profile).toBe("interactive");
     });
 
@@ -103,7 +103,7 @@ describe("chat route transport fallback behavior", () => {
         const payload = (await response.json()) as Record<string, unknown>;
 
         expect(response.status).toBe(504);
-        expect(payload.backend_timeout_ms).toBe(30000);
+        expect(payload.backend_timeout_ms).toBe(58000);
         expect(payload.execution_profile).toBe("engineering");
     });
 
