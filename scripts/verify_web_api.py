@@ -52,6 +52,7 @@ def _summarize_payload(label: str, payload: Any, verbose: bool) -> Any:
         mode_observability = (
             transcript.get("council_mode_observability") if isinstance(transcript, dict) else None
         )
+        distillation_guard = payload.get("distillation_guard")
         response_preview = str(payload.get("response") or "")[:160]
         return {
             "response_preview": response_preview,
@@ -59,6 +60,14 @@ def _summarize_payload(label: str, payload: Any, verbose: bool) -> Any:
             "verdict": verdict_name,
             "backend_mode": payload.get("backend_mode", "backend"),
             "execution_profile": payload.get("execution_profile"),
+            "distillation_guard_level": (
+                distillation_guard.get("level") if isinstance(distillation_guard, dict) else None
+            ),
+            "distillation_guard_policy": (
+                distillation_guard.get("policy_action")
+                if isinstance(distillation_guard, dict)
+                else None
+            ),
             "council_mode": (
                 mode_observability.get("mode") if isinstance(mode_observability, dict) else None
             ),
@@ -148,6 +157,41 @@ def _validate_execution_profile(payload: Any, expected_profile: str, label: str)
     if profile != expected_profile:
         print(f"[FAIL] {label}: expected execution_profile={expected_profile!r}, got {profile!r}.")
         return False
+    return True
+
+
+def _validate_distillation_guard(payload: Any, label: str) -> bool:
+    payload_dict = _expect_dict(payload, label)
+    if payload_dict is None:
+        return False
+
+    guard = payload_dict.get("distillation_guard")
+    if guard is None:
+        return True
+    if not isinstance(guard, dict):
+        print(f"[FAIL] {label}: distillation_guard must be an object when present.")
+        return False
+
+    level = guard.get("level")
+    if level not in {"low", "medium", "high"}:
+        print(f"[FAIL] {label}: invalid distillation_guard.level={level!r}.")
+        return False
+
+    policy_action = guard.get("policy_action")
+    if policy_action not in {"normal", "reduce_detail", "constrain_reasoning"}:
+        print(f"[FAIL] {label}: invalid distillation_guard.policy_action={policy_action!r}.")
+        return False
+
+    score = guard.get("score")
+    if not isinstance(score, (int, float)):
+        print(f"[FAIL] {label}: distillation_guard.score must be numeric.")
+        return False
+
+    signals = guard.get("signals")
+    if not isinstance(signals, list) or any(not isinstance(signal, str) for signal in signals):
+        print(f"[FAIL] {label}: distillation_guard.signals must be string list.")
+        return False
+
     return True
 
 
@@ -371,6 +415,14 @@ def main() -> int:
     if payload_dict and not isinstance(payload_dict.get("response"), str):
         print("[FAIL] POST web /api/chat: missing string field 'response'.")
         all_ok = False
+    if payload_dict and not _validate_execution_profile(
+        payload,
+        "interactive",
+        "POST web /api/chat",
+    ):
+        all_ok = False
+    if payload_dict and not _validate_distillation_guard(payload, "POST web /api/chat"):
+        all_ok = False
     if payload_dict and check_council_modes:
         for mode in ("rules", "full_llm"):
             check_ok, check_status, check_payload, _ = request_json(
@@ -424,6 +476,11 @@ def main() -> int:
         if elisa_response_dict and not _validate_execution_profile(
             elisa_response,
             "engineering",
+            "POST web /api/chat (elisa scenario)",
+        ):
+            all_ok = False
+        if elisa_response_dict and not _validate_distillation_guard(
+            elisa_response,
             "POST web /api/chat (elisa scenario)",
         ):
             all_ok = False

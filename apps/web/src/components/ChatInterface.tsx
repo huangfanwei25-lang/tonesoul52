@@ -48,6 +48,27 @@ type GovernanceStatus = {
     };
 };
 
+type BackendExecutionProfile = "interactive" | "engineering";
+
+type ChatRunResult = {
+    response: string;
+    deliberation: DeliberationData | undefined;
+    backendMode?: string;
+    deliberationLevel?: "mock" | "runtime";
+    executionProfile?: BackendExecutionProfile;
+    fallbackMetadata?: {
+        triggered: boolean;
+        reason: string;
+        execution_profile?: BackendExecutionProfile;
+    };
+    distillationGuard?: {
+        score: number;
+        level: "low" | "medium" | "high";
+        policy_action: "normal" | "reduce_detail" | "constrain_reasoning";
+        signals: string[];
+    };
+};
+
 // ==================== 記憶注入模板 ====================
 
 const MEMORY_CONTEXT_TEMPLATE = (memories: MemoryInsight[]) => {
@@ -769,8 +790,9 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
 
     const callBackendChat = async (
         userMessage: string,
-        fullAnalysis: boolean
-    ): Promise<{ response: string; deliberation: DeliberationData | undefined }> => {
+        fullAnalysis: boolean,
+        executionProfile: BackendExecutionProfile
+    ): Promise<ChatRunResult> => {
         const history = messages.slice(-12).map(m => ({
             role: m.role,
             content: m.content,
@@ -785,6 +807,7 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
                 message: userMessage,
                 history,
                 full_analysis: fullAnalysis,
+                execution_profile: executionProfile,
             }),
         });
 
@@ -827,8 +850,67 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
                             : rootSemanticGraphSummary,
                 } as DeliberationData)
                 : undefined;
+        const backendMode = typeof payload.backend_mode === "string" ? payload.backend_mode : undefined;
+        const deliberationLevel =
+            payload.deliberation_level === "mock" || payload.deliberation_level === "runtime"
+                ? payload.deliberation_level
+                : undefined;
+        const resolvedExecutionProfile =
+            payload.execution_profile === "interactive" || payload.execution_profile === "engineering"
+                ? payload.execution_profile
+                : executionProfile;
+        const fallbackMetadata = payload.fallback_metadata;
+        const normalizedFallbackMetadata =
+            fallbackMetadata && typeof fallbackMetadata === "object"
+                ? {
+                    triggered: (fallbackMetadata as Record<string, unknown>).triggered === true,
+                    reason:
+                        typeof (fallbackMetadata as Record<string, unknown>).reason === "string"
+                            ? ((fallbackMetadata as Record<string, unknown>).reason as string)
+                            : "unknown",
+                    execution_profile:
+                        (fallbackMetadata as Record<string, unknown>).execution_profile === "interactive"
+                        || (fallbackMetadata as Record<string, unknown>).execution_profile === "engineering"
+                            ? ((fallbackMetadata as Record<string, unknown>).execution_profile as BackendExecutionProfile)
+                            : undefined,
+                }
+                : undefined;
+        const distillationGuard = payload.distillation_guard;
+        const normalizedDistillationGuard =
+            distillationGuard && typeof distillationGuard === "object"
+                ? {
+                    score:
+                        typeof (distillationGuard as Record<string, unknown>).score === "number"
+                            ? ((distillationGuard as Record<string, unknown>).score as number)
+                            : 0,
+                    level:
+                        (distillationGuard as Record<string, unknown>).level === "low"
+                        || (distillationGuard as Record<string, unknown>).level === "medium"
+                        || (distillationGuard as Record<string, unknown>).level === "high"
+                            ? ((distillationGuard as Record<string, unknown>).level as "low" | "medium" | "high")
+                            : "low",
+                    policy_action:
+                        (distillationGuard as Record<string, unknown>).policy_action === "normal"
+                        || (distillationGuard as Record<string, unknown>).policy_action === "reduce_detail"
+                        || (distillationGuard as Record<string, unknown>).policy_action === "constrain_reasoning"
+                            ? ((distillationGuard as Record<string, unknown>).policy_action as "normal" | "reduce_detail" | "constrain_reasoning")
+                            : "normal",
+                    signals: Array.isArray((distillationGuard as Record<string, unknown>).signals)
+                        ? ((distillationGuard as Record<string, unknown>).signals as unknown[])
+                            .filter((signal): signal is string => typeof signal === "string")
+                        : [],
+                }
+                : undefined;
 
-        return { response: responseText, deliberation };
+        return {
+            response: responseText,
+            deliberation,
+            backendMode,
+            deliberationLevel,
+            executionProfile: resolvedExecutionProfile,
+            fallbackMetadata: normalizedFallbackMetadata,
+            distillationGuard: normalizedDistillationGuard,
+        };
     };
     const getCallAPI = () => {
         // Ollama 不需要 API Key
@@ -1159,21 +1241,27 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
 
     const runLegacyProviderFlow = async (
         userMessage: string
-    ): Promise<{ response: string; deliberation: DeliberationData | undefined }> => {
+    ): Promise<ChatRunResult> => {
         if (!apiSettings?.apiKey) {
             return {
                 response: "請先設定 API Key 才能使用 AI 對話功能。點擊側邊欄的 API 設定按鈕。",
                 deliberation: undefined,
+                executionProfile: apiSettings?.mode === "fast" ? "interactive" : "engineering",
             };
         }
 
         if (apiSettings.mode === "fast") {
-            return await performFastMode(userMessage);
+            const fastResult = await performFastMode(userMessage);
+            return {
+                ...fastResult,
+                executionProfile: "interactive",
+            };
         }
         const deliberationResult = await performMultiPathDeliberation(userMessage);
         return {
             response: deliberationResult.response,
             deliberation: deliberationResult.deliberation,
+            executionProfile: "engineering",
         };
     };
 
@@ -1193,12 +1281,18 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
         setLoadingPhase(USE_BACKEND_CHAT ? "同步後端中..." : (apiSettings?.mode === "fast" ? "思考中..." : "啟動審議..."));
 
         try {
-            let result: { response: string; deliberation: DeliberationData | undefined };
+            let result: ChatRunResult;
 
             if (USE_BACKEND_CHAT) {
                 const fullAnalysis = apiSettings?.mode !== "fast";
+                const executionProfile: BackendExecutionProfile =
+                    apiSettings?.mode === "fast" ? "interactive" : "engineering";
                 try {
-                    result = await callBackendChat(userMessage.content, fullAnalysis);
+                    result = await callBackendChat(
+                        userMessage.content,
+                        fullAnalysis,
+                        executionProfile
+                    );
                 } catch (backendErr) {
                     if (ENABLE_PROVIDER_FALLBACK) {
                         console.warn("[ToneSoul] Backend chat unavailable, fallback to legacy provider flow.", backendErr);
@@ -1216,6 +1310,11 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
                 role: "assistant",
                 content: result.response,
                 deliberation: result.deliberation,
+                backend_mode: result.backendMode,
+                deliberation_level: result.deliberationLevel,
+                execution_profile: result.executionProfile,
+                fallback_metadata: result.fallbackMetadata,
+                distillation_guard: result.distillationGuard,
                 timestamp: new Date(),
             };
 
@@ -1436,6 +1535,21 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
                                                                 <span className="text-slate-400">Mode: </span>
                                                                 <span className="font-medium">{message.backend_mode || "unknown"}</span>
                                                             </div>
+                                                            <div>
+                                                                <span className="text-slate-400">Profile: </span>
+                                                                <span className="font-medium">
+                                                                    {message.execution_profile || "interactive"}
+                                                                </span>
+                                                            </div>
+                                                            {message.distillation_guard && (
+                                                                <div>
+                                                                    <span className="text-slate-400">Guard: </span>
+                                                                    <span className="font-medium">
+                                                                        {message.distillation_guard.level}/
+                                                                        {message.distillation_guard.policy_action}
+                                                                    </span>
+                                                                </div>
+                                                            )}
                                                             {message.fallback_metadata?.triggered && (
                                                                 <div>
                                                                     <span className="text-slate-400">Fallback Reason: </span>

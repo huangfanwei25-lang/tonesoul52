@@ -19,9 +19,17 @@ export interface Message {
     deliberation?: DeliberationData;
     deliberation_level?: 'mock' | 'runtime';
     backend_mode?: string;
+    execution_profile?: 'interactive' | 'engineering';
     fallback_metadata?: {
         triggered: boolean;
         reason: string;
+        execution_profile?: 'interactive' | 'engineering';
+    };
+    distillation_guard?: {
+        score: number;
+        level: 'low' | 'medium' | 'high';
+        policy_action: 'normal' | 'reduce_detail' | 'constrain_reasoning';
+        signals: string[];
     };
     timestamp: number;
 }

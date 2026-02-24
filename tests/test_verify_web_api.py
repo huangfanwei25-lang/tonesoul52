@@ -2,6 +2,7 @@ from scripts.verify_web_api import (
     _build_elisa_chat_payload,
     _summarize_payload,
     _validate_chat_council_mode,
+    _validate_distillation_guard,
     _validate_execution_profile,
     _validate_same_origin_backend_health,
 )
@@ -59,6 +60,32 @@ def test_validate_same_origin_backend_health_passes():
 def test_validate_same_origin_backend_health_fails_on_wrong_mode():
     payload = {"ok": True, "backend_mode": "external_backend"}
     assert _validate_same_origin_backend_health(payload, "backend health") is False
+
+
+def test_validate_distillation_guard_accepts_valid_shape():
+    payload = {
+        "response": "ok",
+        "distillation_guard": {
+            "score": 65,
+            "level": "high",
+            "policy_action": "constrain_reasoning",
+            "signals": ["system_prompt_extraction", "reasoning_extraction"],
+        },
+    }
+    assert _validate_distillation_guard(payload, "chat") is True
+
+
+def test_validate_distillation_guard_rejects_invalid_policy_action():
+    payload = {
+        "response": "ok",
+        "distillation_guard": {
+            "score": 10,
+            "level": "low",
+            "policy_action": "invalid",
+            "signals": [],
+        },
+    }
+    assert _validate_distillation_guard(payload, "chat") is False
 
 
 def test_build_elisa_chat_payload_contains_expected_envelope():

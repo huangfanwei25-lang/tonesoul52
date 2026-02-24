@@ -187,6 +187,13 @@ Runtime environment:
 - Response (backend path):
   - `response: string`
   - `execution_profile: "interactive" | "engineering"`
+  - `distillation_guard?: object`
+    - web-layer anti-distillation guard signal (minimal executable layer-4 control)
+    - shape:
+      - `score: number` (`0..100`)
+      - `level: "low" | "medium" | "high"`
+      - `policy_action: "normal" | "reduce_detail" | "constrain_reasoning"`
+      - `signals: string[]`
   - `verdict?: object`
     - `verdict.transcript.council_mode_observability?: object`
       - `source: "request_perspective_config" | "explicit_perspectives" | "env_default"`
@@ -209,12 +216,14 @@ Runtime environment:
 - Response (explicit mock fallback path, opt-in):
   - `response: string`
   - `execution_profile: "interactive" | "engineering"`
+  - `distillation_guard?: object` (same shape as backend path)
   - `deliberation: object`
   - `backend_mode: "mock_fallback"`
   - `fallback_reason: "transport_failure"`
 - Error behavior:
   - transport failure + fallback disabled: HTTP `502`
     - payload includes `error: "Backend unavailable"`
+    - payload includes `distillation_guard` for observability when guard policy triggered
   - Vercel runtime + invalid backend config: HTTP `503`
     - payload includes `error: "Backend configuration invalid for Vercel runtime"`
     - payload includes `config_issue: "missing" | "invalid_url" | "local_address" | "insecure_protocol"`

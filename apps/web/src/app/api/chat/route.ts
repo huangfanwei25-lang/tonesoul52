@@ -9,11 +9,20 @@ import {
 } from "../_shared/backendConfig";
 
 const REQUEST_TIMEOUT_ENV = "TONESOUL_BACKEND_CHAT_TIMEOUT_MS";
-const DEFAULT_REQUEST_TIMEOUT_MS = 25000;
+const REQUEST_TIMEOUT_INTERACTIVE_ENV = "TONESOUL_BACKEND_CHAT_TIMEOUT_MS_INTERACTIVE";
+const REQUEST_TIMEOUT_ENGINEERING_ENV = "TONESOUL_BACKEND_CHAT_TIMEOUT_MS_ENGINEERING";
+const DEFAULT_REQUEST_TIMEOUT_MS_INTERACTIVE = 12_000;
+const DEFAULT_REQUEST_TIMEOUT_MS_ENGINEERING = 30_000;
 const RETRY_MAX_ATTEMPTS_ENV = "TONESOUL_BACKEND_CHAT_RETRY_MAX_ATTEMPTS";
+const RETRY_MAX_ATTEMPTS_INTERACTIVE_ENV = "TONESOUL_BACKEND_CHAT_RETRY_MAX_ATTEMPTS_INTERACTIVE";
+const RETRY_MAX_ATTEMPTS_ENGINEERING_ENV = "TONESOUL_BACKEND_CHAT_RETRY_MAX_ATTEMPTS_ENGINEERING";
 const RETRY_BASE_DELAY_MS_ENV = "TONESOUL_BACKEND_CHAT_RETRY_BASE_DELAY_MS";
-const DEFAULT_RETRY_MAX_ATTEMPTS = 3;
-const DEFAULT_RETRY_BASE_DELAY_MS = process.env.NODE_ENV === "test" ? 0 : 300;
+const RETRY_BASE_DELAY_MS_INTERACTIVE_ENV = "TONESOUL_BACKEND_CHAT_RETRY_BASE_DELAY_MS_INTERACTIVE";
+const RETRY_BASE_DELAY_MS_ENGINEERING_ENV = "TONESOUL_BACKEND_CHAT_RETRY_BASE_DELAY_MS_ENGINEERING";
+const DEFAULT_RETRY_MAX_ATTEMPTS_INTERACTIVE = 2;
+const DEFAULT_RETRY_MAX_ATTEMPTS_ENGINEERING = 4;
+const DEFAULT_RETRY_BASE_DELAY_MS_INTERACTIVE = process.env.NODE_ENV === "test" ? 0 : 100;
+const DEFAULT_RETRY_BASE_DELAY_MS_ENGINEERING = process.env.NODE_ENV === "test" ? 0 : 300;
 const MOCK_FALLBACK_ENV = "TONESOUL_ENABLE_CHAT_MOCK_FALLBACK";
 const ALLOWED_COUNCIL_MODES = new Set(["rules", "rules_only", "hybrid", "full_llm"]);
 const ALLOWED_EXECUTION_PROFILES = new Set(["interactive", "engineering"]);
@@ -22,6 +31,58 @@ const MAX_PERSONA_ROLES = 8;
 const MAX_PERSONA_ATTACHMENTS_PER_ROLE = 6;
 const MAX_ELISA_CHANGED_FILES = 64;
 const SAME_ORIGIN_PRIMARY_FALLBACK_REASON = "same_origin_primary";
+const DISTILLATION_GUARD_MEDIUM_THRESHOLD = 30;
+const DISTILLATION_GUARD_HIGH_THRESHOLD = 60;
+const DISTILLATION_GUARD_MAX_TEXT = 2400;
+
+type ExecutionProfile = "interactive" | "engineering";
+
+type TransportBudget = {
+    timeoutMs: number;
+    retryMaxAttempts: number;
+    retryBaseDelayMs: number;
+};
+
+type DistillationRiskGuard = {
+    score: number;
+    level: "low" | "medium" | "high";
+    policy_action: "normal" | "reduce_detail" | "constrain_reasoning";
+    signals: string[];
+};
+
+type DistillationSignalRule = {
+    id: string;
+    weight: number;
+    pattern: RegExp;
+};
+
+const DISTILLATION_SIGNAL_RULES: DistillationSignalRule[] = [
+    {
+        id: "system_prompt_extraction",
+        weight: 35,
+        pattern: /\b(system prompt|developer message|hidden instructions|internal prompt)\b/i,
+    },
+    {
+        id: "reasoning_extraction",
+        weight: 25,
+        pattern: /\b(chain[-\s]?of[-\s]?thought|thought process|internal reasoning|show your reasoning)\b/i,
+    },
+    {
+        id: "distill_or_clone_request",
+        weight: 30,
+        pattern: /\b(distill|model extraction|clone the model|replicate the model|reward model)\b/i,
+    },
+    {
+        id: "bulk_data_generation",
+        weight: 20,
+        pattern: /\b(1000|10000|bulk|batch)\b[\s\S]{0,40}\b(prompt|qa|dialogue|dataset|samples)\b/i,
+    },
+    {
+        id: "policy_bypass",
+        weight: 20,
+        pattern: /\b(jailbreak|bypass safety|ignore safety|disable guardrails)\b/i,
+    },
+];
 
 type PersonaPayload = {
     name?: string;
@@ -61,45 +122,76 @@ type ChatRequestPayload = {
     message?: string;
     history?: unknown[];
     full_analysis?: boolean;
-    execution_profile?: "interactive" | "engineering";
+    execution_profile?: ExecutionProfile;
     council_mode?: "rules" | "hybrid" | "full_llm";
     perspective_config?: Record<string, Record<string, unknown>>;
     persona?: PersonaPayload;
     elisa_context?: ElisaContextPayload;
 };
 
-function resolveRequestTimeoutMs(): number {
-    const raw = process.env[REQUEST_TIMEOUT_ENV];
-    if (!raw) return DEFAULT_REQUEST_TIMEOUT_MS;
-
+function readPositiveIntEnv(raw: string | undefined, fallback: number): number {
+    if (!raw) return fallback;
     const parsed = Number(raw);
     if (!Number.isFinite(parsed) || parsed <= 0) {
-        return DEFAULT_REQUEST_TIMEOUT_MS;
-    }
-
-    return Math.floor(parsed);
-}
-
-const REQUEST_TIMEOUT_MS = resolveRequestTimeoutMs();
-
-function resolveRetryMaxAttempts(): number {
-    const raw = process.env[RETRY_MAX_ATTEMPTS_ENV];
-    if (!raw) return DEFAULT_RETRY_MAX_ATTEMPTS;
-    const parsed = Number(raw);
-    if (!Number.isFinite(parsed) || parsed < 1) {
-        return DEFAULT_RETRY_MAX_ATTEMPTS;
+        return fallback;
     }
     return Math.floor(parsed);
 }
 
-function resolveRetryBaseDelayMs(): number {
-    const raw = process.env[RETRY_BASE_DELAY_MS_ENV];
-    if (!raw) return DEFAULT_RETRY_BASE_DELAY_MS;
+function readNonNegativeIntEnv(raw: string | undefined, fallback: number): number {
+    if (!raw) return fallback;
     const parsed = Number(raw);
     if (!Number.isFinite(parsed) || parsed < 0) {
-        return DEFAULT_RETRY_BASE_DELAY_MS;
+        return fallback;
     }
     return Math.floor(parsed);
+}
+
+function resolveTransportBudget(executionProfile: ExecutionProfile): TransportBudget {
+    const timeoutFallback =
+        executionProfile === "engineering"
+            ? DEFAULT_REQUEST_TIMEOUT_MS_ENGINEERING
+            : DEFAULT_REQUEST_TIMEOUT_MS_INTERACTIVE;
+    const timeoutProfileEnv =
+        executionProfile === "engineering"
+            ? REQUEST_TIMEOUT_ENGINEERING_ENV
+            : REQUEST_TIMEOUT_INTERACTIVE_ENV;
+    const timeoutMs = readPositiveIntEnv(
+        process.env[timeoutProfileEnv] ?? process.env[REQUEST_TIMEOUT_ENV],
+        timeoutFallback
+    );
+
+    const retryFallback =
+        executionProfile === "engineering"
+            ? DEFAULT_RETRY_MAX_ATTEMPTS_ENGINEERING
+            : DEFAULT_RETRY_MAX_ATTEMPTS_INTERACTIVE;
+    const retryProfileEnv =
+        executionProfile === "engineering"
+            ? RETRY_MAX_ATTEMPTS_ENGINEERING_ENV
+            : RETRY_MAX_ATTEMPTS_INTERACTIVE_ENV;
+    const retryMaxAttempts = readPositiveIntEnv(
+        process.env[retryProfileEnv] ?? process.env[RETRY_MAX_ATTEMPTS_ENV],
+        retryFallback
+    );
+
+    const retryBaseDelayFallback =
+        executionProfile === "engineering"
+            ? DEFAULT_RETRY_BASE_DELAY_MS_ENGINEERING
+            : DEFAULT_RETRY_BASE_DELAY_MS_INTERACTIVE;
+    const retryBaseDelayProfileEnv =
+        executionProfile === "engineering"
+            ? RETRY_BASE_DELAY_MS_ENGINEERING_ENV
+            : RETRY_BASE_DELAY_MS_INTERACTIVE_ENV;
+    const retryBaseDelayMs = readNonNegativeIntEnv(
+        process.env[retryBaseDelayProfileEnv] ?? process.env[RETRY_BASE_DELAY_MS_ENV],
+        retryBaseDelayFallback
+    );
+
+    return {
+        timeoutMs,
+        retryMaxAttempts,
+        retryBaseDelayMs,
+    };
 }
 
 function shouldAllowMockFallback(): boolean {
@@ -375,7 +467,7 @@ function parseChatBody(raw: unknown): { body?: ChatRequestPayload; error?: NextR
     return { body: parsed };
 }
 
-function resolveExecutionProfile(body: ChatRequestPayload): "interactive" | "engineering" {
+function resolveExecutionProfile(body: ChatRequestPayload): ExecutionProfile {
     if (body.execution_profile === "interactive" || body.execution_profile === "engineering") {
         return body.execution_profile;
     }
@@ -388,7 +480,7 @@ function resolveExecutionProfile(body: ChatRequestPayload): "interactive" | "eng
 
 function applyExecutionProfileDefaults(
     body: ChatRequestPayload,
-    executionProfile: "interactive" | "engineering"
+    executionProfile: ExecutionProfile
 ): ChatRequestPayload {
     const normalized: ChatRequestPayload = {
         ...body,
@@ -401,6 +493,85 @@ function applyExecutionProfileDefaults(
 
     normalized.council_mode = executionProfile === "engineering" ? "full_llm" : "rules";
     return normalized;
+}
+
+function extractHistoryText(history: unknown[] | undefined): string {
+    if (!Array.isArray(history)) return "";
+    return history
+        .slice(-8)
+        .map((entry) => {
+            if (!isPlainObject(entry)) return "";
+            const content = entry.content;
+            return typeof content === "string" ? content : "";
+        })
+        .join("\n");
+}
+
+function assessDistillationRisk(body: ChatRequestPayload): DistillationRiskGuard {
+    const messageText = typeof body.message === "string" ? body.message : "";
+    const historyText = extractHistoryText(body.history);
+    const sourceText = `${messageText}\n${historyText}`.slice(0, DISTILLATION_GUARD_MAX_TEXT);
+
+    if (!sourceText.trim()) {
+        return {
+            score: 0,
+            level: "low",
+            policy_action: "normal",
+            signals: [],
+        };
+    }
+
+    const signals: string[] = [];
+    let score = 0;
+    for (const rule of DISTILLATION_SIGNAL_RULES) {
+        if (rule.pattern.test(sourceText)) {
+            score += rule.weight;
+            signals.push(rule.id);
+        }
+    }
+
+    const boundedScore = Math.min(100, score);
+    if (boundedScore >= DISTILLATION_GUARD_HIGH_THRESHOLD) {
+        return {
+            score: boundedScore,
+            level: "high",
+            policy_action: "constrain_reasoning",
+            signals,
+        };
+    }
+    if (boundedScore >= DISTILLATION_GUARD_MEDIUM_THRESHOLD) {
+        return {
+            score: boundedScore,
+            level: "medium",
+            policy_action: "reduce_detail",
+            signals,
+        };
+    }
+    return {
+        score: boundedScore,
+        level: "low",
+        policy_action: "normal",
+        signals,
+    };
+}
+
+function applyDistillationGuardPolicy(
+    body: ChatRequestPayload,
+    guard: DistillationRiskGuard
+): ChatRequestPayload {
+    if (guard.policy_action === "normal") return body;
+
+    const adjusted: ChatRequestPayload = {
+        ...body,
+        full_analysis: false,
+    };
+
+    if (guard.policy_action === "constrain_reasoning") {
+        adjusted.council_mode = "rules";
+        delete adjusted.perspective_config;
+    }
+
+    return adjusted;
 }
 
 function generateMockDeliberation(message: string) {
@@ -457,7 +628,8 @@ function generateMockResponse(message: string): string {
 
 function buildChatFallbackPayload(
     body: ChatRequestPayload,
-    fallbackReason: string
+    fallbackReason: string,
+    distillationGuard: DistillationRiskGuard
 ): Record<string, unknown> {
     const message = String(body.message || "");
     const conversationId =
@@ -471,6 +643,7 @@ function buildChatFallbackPayload(
         timestamp: new Date().toISOString(),
         deliberation_level: "mock",
         backend_mode: "mock_fallback",
+        distillation_guard: distillationGuard,
         fallback_reason: fallbackReason,
         fallback_metadata: {
             triggered: true,
@@ -480,14 +653,17 @@ function buildChatFallbackPayload(
     };
 }
 
-async function forwardToBackend(backendUrl: string, body: ChatRequestPayload): Promise<Response> {
-    const retryMaxAttempts = resolveRetryMaxAttempts();
-    const retryBaseDelayMs = resolveRetryBaseDelayMs();
+async function forwardToBackend(
+    backendUrl: string,
+    body: ChatRequestPayload,
+    budget: TransportBudget
+): Promise<Response> {
+    const { retryMaxAttempts, retryBaseDelayMs, timeoutMs } = budget;
     let lastTransportError: unknown = null;
 
     for (let attempt = 0; attempt < retryMaxAttempts; attempt++) {
         const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+        const timeout = setTimeout(() => controller.abort(), timeoutMs);
         try {
             const response = await fetch(`${backendUrl}/api/chat`, {
                 method: "POST",
@@ -540,12 +716,19 @@ export async function POST(request: NextRequest) {
     const body = parsed.body as ChatRequestPayload;
     const executionProfile = resolveExecutionProfile(body);
     const normalizedBody = applyExecutionProfileDefaults(body, executionProfile);
+    const distillationGuard = assessDistillationRisk(normalizedBody);
+    const guardedBody = applyDistillationGuardPolicy(normalizedBody, distillationGuard);
+    const transportBudget = resolveTransportBudget(executionProfile);
 
     // In same-origin mode we intentionally serve the built-in mock layer directly.
     // This avoids probing /api/_backend paths that may not be deployed.
     if (isSameOriginMode()) {
         return NextResponse.json(
-            buildChatFallbackPayload(normalizedBody, SAME_ORIGIN_PRIMARY_FALLBACK_REASON)
+            buildChatFallbackPayload(
+                guardedBody,
+                SAME_ORIGIN_PRIMARY_FALLBACK_REASON,
+                distillationGuard
+            )
         );
     }
 
@@ -568,37 +751,47 @@ export async function POST(request: NextRequest) {
 
     let backendResponse: Response;
     try {
-        backendResponse = await forwardToBackend(backendUrl, normalizedBody);
+        backendResponse = await forwardToBackend(backendUrl, guardedBody, transportBudget);
     } catch (error) {
         const timeoutError = isAbortError(error);
         if (!shouldAllowMockFallback()) {
             return NextResponse.json(
                 {
                     error: timeoutError
-                        ? `Backend request timed out after ${REQUEST_TIMEOUT_MS}ms`
+                        ? `Backend request timed out after ${transportBudget.timeoutMs}ms`
                         : "Backend unavailable",
+                    execution_profile: executionProfile,
                     backend_url: backendUrl,
                     backend_error: error instanceof Error ? error.message : "Transport failure",
-                    backend_timeout_ms: REQUEST_TIMEOUT_MS,
+                    backend_timeout_ms: transportBudget.timeoutMs,
+                    distillation_guard: distillationGuard,
                     hint: `Set ${MOCK_FALLBACK_ENV}=1 to enable explicit mock fallback.`,
                 },
                 { status: timeoutError ? 504 : 502 }
             );
         }
 
-        return NextResponse.json(buildChatFallbackPayload(normalizedBody, "transport_failure"));
+        return NextResponse.json(
+            buildChatFallbackPayload(guardedBody, "transport_failure", distillationGuard)
+        );
     }
 
     if (!backendResponse.ok && shouldAllowMockFallback()) {
         return NextResponse.json(
-            buildChatFallbackPayload(normalizedBody, `backend_http_${backendResponse.status}`)
+            buildChatFallbackPayload(
+                guardedBody,
+                `backend_http_${backendResponse.status}`,
+                distillationGuard
+            )
         );
     }
 
     const text = await backendResponse.text();
     if (!text) {
         if (shouldAllowMockFallback()) {
-            return NextResponse.json(buildChatFallbackPayload(normalizedBody, "empty_backend_body"));
+            return NextResponse.json(
+                buildChatFallbackPayload(guardedBody, "empty_backend_body", distillationGuard)
+            );
         }
         return NextResponse.json({}, { status: backendResponse.status });
     }
@@ -610,14 +803,21 @@ export async function POST(request: NextRequest) {
                 payload.execution_profile = executionProfile;
             }
             payload.deliberation_level = "runtime";
+            payload.distillation_guard = distillationGuard;
         }
         return NextResponse.json(payload, { status: backendResponse.status });
     } catch {
         if (shouldAllowMockFallback()) {
-            return NextResponse.json(buildChatFallbackPayload(normalizedBody, "invalid_backend_json"));
+            return NextResponse.json(
+                buildChatFallbackPayload(guardedBody, "invalid_backend_json", distillationGuard)
+            );
         }
         return NextResponse.json(
-            { error: "Backend returned invalid JSON", backend_status: backendResponse.status },
+            {
+                error: "Backend returned invalid JSON",
+                backend_status: backendResponse.status,
+                distillation_guard: distillationGuard,
+            },
             { status: 502 }
         );
     }

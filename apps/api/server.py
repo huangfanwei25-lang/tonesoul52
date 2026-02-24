@@ -1916,7 +1916,9 @@ def chat():
     )
     message = message if message is not None else ""
     history = history if history is not None else []
-    full_analysis = full_analysis if full_analysis is not None else True
+    full_analysis = (
+        full_analysis if full_analysis is not None else execution_profile == "engineering"
+    )
     history_error = _validate_history_entries(history)
     if history_error is not None:
         return history_error

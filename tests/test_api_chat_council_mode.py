@@ -206,6 +206,73 @@ def test_chat_explicit_council_mode_overrides_execution_profile_default(monkeypa
     assert kwargs["council_mode"] == "rules"
 
 
+def test_chat_interactive_profile_defaults_full_analysis_false(monkeypatch):
+    import tonesoul.unified_pipeline as unified_pipeline
+
+    captured: dict = {}
+    monkeypatch.setattr(
+        unified_pipeline,
+        "create_unified_pipeline",
+        lambda: _mock_pipeline(captured),
+    )
+
+    client = _client()
+    response = client.post(
+        "/api/chat",
+        json={"message": "hello", "execution_profile": "interactive"},
+    )
+
+    assert response.status_code == 200
+    kwargs = captured["kwargs"]
+    assert kwargs["full_analysis"] is False
+
+
+def test_chat_engineering_profile_defaults_full_analysis_true(monkeypatch):
+    import tonesoul.unified_pipeline as unified_pipeline
+
+    captured: dict = {}
+    monkeypatch.setattr(
+        unified_pipeline,
+        "create_unified_pipeline",
+        lambda: _mock_pipeline(captured),
+    )
+
+    client = _client()
+    response = client.post(
+        "/api/chat",
+        json={"message": "hello", "execution_profile": "engineering"},
+    )
+
+    assert response.status_code == 200
+    kwargs = captured["kwargs"]
+    assert kwargs["full_analysis"] is True
+
+
+def test_chat_explicit_full_analysis_overrides_profile_default(monkeypatch):
+    import tonesoul.unified_pipeline as unified_pipeline
+
+    captured: dict = {}
+    monkeypatch.setattr(
+        unified_pipeline,
+        "create_unified_pipeline",
+        lambda: _mock_pipeline(captured),
+    )
+
+    client = _client()
+    response = client.post(
+        "/api/chat",
+        json={
+            "message": "hello",
+            "execution_profile": "engineering",
+            "full_analysis": False,
+        },
+    )
+
+    assert response.status_code == 200
+    kwargs = captured["kwargs"]
+    assert kwargs["full_analysis"] is False
+
+
 def test_chat_exposes_default_semantic_fields_when_pipeline_omits_them(monkeypatch):
     import tonesoul.unified_pipeline as unified_pipeline
 
