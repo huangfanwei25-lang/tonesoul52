@@ -169,3 +169,11 @@ P3: Operational Hardening
 ## 9. Immediate Next Step
 
 Execute P0 first: define Elisa payload profile + add contract tests + wire into `verify_web_api.py`.
+
+## 10. Execution Status Update (2026-02-24)
+
+- [x] P0: payload profile + route contract tests + `verify_web_api.py --elisa-scenario`
+- [x] P1: preflight Elisa checks + governance status surface (`GET /api/governance-status`)
+- [x] P2: CI blocking smoke includes Elisa scenario
+- [x] P3: operational hardening docs published
+  - `docs/plans/elisa_tonesoul_operational_runbook_2026-02-24.md`

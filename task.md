@@ -577,7 +577,7 @@
 - [x] P0 implementation: Elisa payload profile + route contract tests + `verify_web_api.py` integration scenario.
 - [x] P1 implementation: preflight Elisa checks + governance status surface.
 - [x] P2 implementation: CI blocking smoke for Elisa integration contract.
-- [ ] P3 implementation: operational hardening (runbook/rollback/release checklist).
+- [x] P3 implementation: operational hardening (runbook/rollback/release checklist).
 **Success Criteria**: A reproducible P0-P3 execution path exists with blocking CI gates and same-origin governance behavior preserved.
 
 ## Phase 109: Council Divergence Quality Baseline (2026-02-22)
