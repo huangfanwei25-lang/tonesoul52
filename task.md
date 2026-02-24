@@ -588,3 +588,19 @@
 - [x] `tests/test_council_divergence_quality.py`
 - [x] `tests/test_api_chat_council_mode.py::test_chat_deliberation_exposes_divergence_quality`
 **Success Criteria**: Three-role chamber output includes machine-checkable dissent quality signals and API contract remains stable.
+
+## Phase 110: v1.0 Release Gate (RC -> GA) (2026-02-24)
+- [x] Baseline stability evidence collected:
+- [x] `python scripts/verify_7d.py --include-sdh --web-base https://tonesoul52-ruby.vercel.app --api-base https://tonesoul52-ruby.vercel.app --sync` (`OVERALL=100`)
+- [x] `python scripts/verify_web_api.py --web-base https://tonesoul52-ruby.vercel.app --api-base https://tonesoul52-ruby.vercel.app --same-origin`
+- [x] `npm --prefix apps/web run build`
+- [x] GitHub Actions run set for `fbbbbd1` is fully green (CI/ToneSoul CI/Repo Healthcheck/Pytest/Semantic Health etc.).
+- [x] Published release decision file: `docs/plans/release_v1.0_go_nogo_2026-02-24.md`
+- [x] Version metadata aligned to release-candidate:
+- [x] `package.json` -> `1.0.0-rc.1`
+- [x] `apps/web/package.json` -> `1.0.0-rc.1`
+- [x] `pyproject.toml` -> `1.0.0rc1`
+- [ ] GA blocker A: complete Phase 108 P0-P2 (Elisa contract + CI blocking smoke).
+- [ ] GA blocker B: complete Phase 108 P3 (runbook + rollback + release checklist).
+- [ ] GA blocker C: produce `docs/RELEASE_NOTES_v1.0.0.md` and push tag `v1.0.0`.
+**Success Criteria**: `v1.0.0-rc.1` baseline is stable and traceable; GA can be executed by closing only explicit blockers A/B/C.
