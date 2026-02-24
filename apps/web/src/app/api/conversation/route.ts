@@ -62,11 +62,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "Invalid JSON payload" }, { status: 400 });
     }
 
-    if (isSameOriginMode()) {
-        return NextResponse.json(
-            buildConversationFallback(body, SAME_ORIGIN_PRIMARY_FALLBACK_REASON)
-        );
-    }
+    // Same-origin mode forwards to Python backend via getBackendUrl()
 
     const backendUrl = getBackendUrl();
     const configuredBackendUrl = getConfiguredBackendUrl();

@@ -130,7 +130,18 @@ describe("route transport fallback policy", () => {
     it("routes use same-origin primary mocks on vercel when backend url is missing", async () => {
         process.env.VERCEL = "1";
         process.env.VERCEL_URL = "tonesoul52-one.vercel.app";
-        const fetchMock = vi.spyOn(globalThis, "fetch");
+        // Conversation route now forwards to backend in same-origin mode.
+        // Other routes (consent, session-report) still use their own same-origin mock.
+        const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(
+            new Response(
+                JSON.stringify({
+                    success: true,
+                    conversation_id: "conv_mock",
+                    created_at: new Date().toISOString(),
+                }),
+                { status: 200 }
+            )
+        );
 
         const conversationResponse = await postConversation(makeRequest({ session_id: "s1" }) as never);
         const conversationPayload = (await conversationResponse.json()) as Record<string, unknown>;
@@ -150,10 +161,10 @@ describe("route transport fallback policy", () => {
         );
         const reportPayload = (await reportResponse.json()) as Record<string, unknown>;
 
+        // Conversation route now forwards to backend
         expect(conversationResponse.status).toBe(200);
         expect(conversationPayload.success).toBe(true);
-        expect(conversationPayload.backend_mode).toBe("mock_fallback");
-        expect(conversationPayload.fallback_reason).toBe("same_origin_primary");
+        expect(conversationPayload.conversation_id).toBe("conv_mock");
 
         expect(consentPostResponse.status).toBe(200);
         expect(consentPostPayload.backend_mode).toBe("mock_fallback");
@@ -168,7 +179,8 @@ describe("route transport fallback policy", () => {
         expect(reportPayload.fallback_reason).toBe("same_origin_primary");
         expect(reportPayload.report).toBeTruthy();
 
-        expect(fetchMock).not.toHaveBeenCalled();
+        // fetch should have been called at least once (for conversation)
+        expect(fetchMock).toHaveBeenCalled();
     });
 
     it("routes return 503 on vercel when backend points to localhost", async () => {

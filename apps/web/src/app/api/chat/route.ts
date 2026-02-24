@@ -720,17 +720,8 @@ export async function POST(request: NextRequest) {
     const guardedBody = applyDistillationGuardPolicy(normalizedBody, distillationGuard);
     const transportBudget = resolveTransportBudget(executionProfile);
 
-    // In same-origin mode we intentionally serve the built-in mock layer directly.
-    // This avoids probing /api/_backend paths that may not be deployed.
-    if (isSameOriginMode()) {
-        return NextResponse.json(
-            buildChatFallbackPayload(
-                guardedBody,
-                SAME_ORIGIN_PRIMARY_FALLBACK_REASON,
-                distillationGuard
-            )
-        );
-    }
+    // Same-origin mode now forwards to the Python backend via getBackendUrl()
+    // which resolves to /api/_backend on the same Vercel deployment.
 
     const backendUrl = getBackendUrl();
     const configuredBackendUrl = getConfiguredBackendUrl();

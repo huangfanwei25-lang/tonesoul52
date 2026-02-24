@@ -143,10 +143,12 @@ describe("chat route transport fallback behavior", () => {
         expect(Array.isArray(guard.signals)).toBe(true);
     });
 
-    it("uses same-origin primary mock on vercel when backend url is missing", async () => {
+    it("forwards to backend in same-origin mode on vercel", async () => {
         process.env.VERCEL = "1";
         process.env.VERCEL_URL = "tonesoul52-one.vercel.app";
-        const fetchMock = vi.spyOn(globalThis, "fetch");
+        const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(
+            new Response(JSON.stringify({ response: "ok from backend" }), { status: 200 })
+        );
 
         const response = await postChat(
             makeRequest({
@@ -159,11 +161,10 @@ describe("chat route transport fallback behavior", () => {
         const payload = (await response.json()) as Record<string, unknown>;
 
         expect(response.status).toBe(200);
-        expect(payload.backend_mode).toBe("mock_fallback");
-        expect(payload.fallback_reason).toBe("same_origin_primary");
-        expect(payload.execution_profile).toBe("interactive");
-        expect(typeof payload.response).toBe("string");
-        expect(fetchMock).not.toHaveBeenCalled();
+        expect(payload.response).toBe("ok from backend");
+        expect(fetchMock).toHaveBeenCalledTimes(1);
+        const [url] = fetchMock.mock.calls[0] as [string, RequestInit];
+        expect(url).toContain("/api/_backend/api/chat");
     });
 
     it("returns 503 on vercel when backend url is localhost", async () => {
@@ -187,10 +188,12 @@ describe("chat route transport fallback behavior", () => {
         expect(fetchMock).not.toHaveBeenCalled();
     });
 
-    it("uses engineering execution_profile in same-origin mock when Elisa source is provided", async () => {
+    it("forwards to backend with engineering profile in same-origin mode when Elisa source is provided", async () => {
         process.env.VERCEL = "1";
         process.env.VERCEL_URL = "tonesoul52-one.vercel.app";
-        const fetchMock = vi.spyOn(globalThis, "fetch");
+        const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(
+            new Response(JSON.stringify({ response: "ok" }), { status: 200 })
+        );
 
         const response = await postChat(
             makeRequest({
@@ -206,9 +209,11 @@ describe("chat route transport fallback behavior", () => {
         const payload = (await response.json()) as Record<string, unknown>;
 
         expect(response.status).toBe(200);
-        expect(payload.backend_mode).toBe("mock_fallback");
-        expect(payload.execution_profile).toBe("engineering");
-        expect(fetchMock).not.toHaveBeenCalled();
+        expect(payload.response).toBe("ok");
+        expect(fetchMock).toHaveBeenCalledTimes(1);
+        const [, requestInit] = fetchMock.mock.calls[0] as [string, RequestInit];
+        const parsedBody = JSON.parse(String(requestInit.body)) as Record<string, unknown>;
+        expect(parsedBody.execution_profile).toBe("engineering");
     });
 
     it("returns 503 on vercel when backend url is malformed", async () => {
