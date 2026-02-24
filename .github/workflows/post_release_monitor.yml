@@ -1,0 +1,76 @@
+name: Post Release Monitor
+
+on:
+  schedule:
+    - cron: "40 2 * * *"
+  workflow_dispatch:
+    inputs:
+      web_base:
+        description: "Production web origin, e.g. https://tonesoul52-ruby.vercel.app"
+        required: false
+        default: "https://tonesoul52-ruby.vercel.app"
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  monitor:
+    name: Monitor Production Governance Surface
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      TONESOUL_ENABLE_CHAT_MOCK_FALLBACK: "0"
+      NEXT_PUBLIC_CHAT_EXECUTION_MODE: "backend"
+      NEXT_PUBLIC_ENABLE_PROVIDER_FALLBACK: "0"
+      NEXT_PUBLIC_REPORT_EXECUTION_MODE: "backend"
+      NEXT_PUBLIC_REPORT_PROVIDER_FALLBACK: "0"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -e ".[dev]"
+
+      - name: Resolve production endpoints
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ inputs.web_base }}" ]; then
+            WEB_BASE="${{ inputs.web_base }}"
+          else
+            WEB_BASE="https://tonesoul52-ruby.vercel.app"
+          fi
+          echo "WEB_BASE=$WEB_BASE" >> "$GITHUB_ENV"
+          echo "API_BASE=$WEB_BASE" >> "$GITHUB_ENV"
+
+      - name: Run web/API same-origin smoke (Elisa scenario)
+        run: |
+          set -o pipefail
+          python scripts/verify_web_api.py \
+            --web-base "$WEB_BASE" \
+            --api-base "$API_BASE" \
+            --same-origin \
+            --elisa-scenario | tee post_release_web_api.log
+
+      - name: Run governance preflight probe
+        run: |
+          set -o pipefail
+          python scripts/verify_vercel_preflight.py \
+            --strict \
+            --same-origin \
+            --probe-governance-status \
+            --web-base "$WEB_BASE" | tee post_release_preflight.log
+
+      - name: Upload monitor logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: post-release-monitor-logs
+          path: |
+            post_release_web_api.log
+            post_release_preflight.log

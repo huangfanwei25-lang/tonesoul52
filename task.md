@@ -604,3 +604,17 @@
 - [ ] GA blocker B: complete Phase 108 P3 (runbook + rollback + release checklist).
 - [x] GA blocker C: produce `docs/RELEASE_NOTES_v1.0.0.md` and push tag `v1.0.0`.
 **Success Criteria**: `v1.0.0` baseline is stable and traceable; GA release gates are fully closed.
+
+## Phase 111: Post-Release Continuous Verification (2026-02-24)
+- [x] Added global governance status polling and badge bar in `apps/web/src/components/ChatInterface.tsx`.
+- [x] Strengthened Elisa payload boundary contract with `workspace.changed_files > 64` rejection test.
+- [x] Added scheduled production monitor workflow: `.github/workflows/post_release_monitor.yml`.
+- [x] Added workflow contract coverage for post-release monitor in `tests/test_workflow_contracts.py`.
+- [x] Validation:
+- [x] `npm --prefix apps/web run test -- src/__tests__/apiRoutes.invalidJson.test.ts`
+- [x] `python -m pytest tests/test_workflow_contracts.py -q`
+- [x] `npm --prefix apps/web run lint`
+- [x] `npm --prefix apps/web run build`
+- [x] `python scripts/verify_web_api.py --web-base https://tonesoul52-ruby.vercel.app --api-base https://tonesoul52-ruby.vercel.app --same-origin --elisa-scenario`
+- [x] `python scripts/verify_vercel_preflight.py --strict --same-origin --probe-governance-status --web-base https://tonesoul52-ruby.vercel.app`
+**Success Criteria**: Governance readiness is continuously visible in UI and continuously verified in CI/scheduled monitoring.

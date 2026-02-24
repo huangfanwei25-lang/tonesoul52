@@ -35,6 +35,19 @@ interface ChatInterfaceProps {
     onConversationUpdate: (conv: Conversation) => void;
 }
 
+type GovernanceStatus = {
+    status?: string;
+    backend_mode?: string;
+    governance_capability?: string;
+    deliberation_level?: string;
+    checked_at?: string;
+    reason?: string;
+    elisa?: {
+        integration_ready?: boolean;
+        contract_version?: string;
+    };
+};
+
 // ==================== 記憶注入模板 ====================
 
 const MEMORY_CONTEXT_TEMPLATE = (memories: MemoryInsight[]) => {
@@ -650,6 +663,9 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
     const [isLoading, setIsLoading] = useState(false);
     const [loadingPhase, setLoadingPhase] = useState<string>("");
     const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set());
+    const [governanceStatus, setGovernanceStatus] = useState<GovernanceStatus | null>(null);
+    const [governanceStatusLoading, setGovernanceStatusLoading] = useState(false);
+    const [governanceStatusError, setGovernanceStatusError] = useState<string | null>(null);
     const [soulState, setSoulState] = useState<SoulState>(getInitialSoulState());
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -674,6 +690,56 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
+
+    useEffect(() => {
+        let alive = true;
+
+        const fetchGovernanceStatus = async () => {
+            if (!alive) return;
+            setGovernanceStatusLoading(true);
+            setGovernanceStatusError(null);
+
+            try {
+                const response = await fetch("/api/governance-status", { cache: "no-store" });
+                let payload: GovernanceStatus = {};
+                try {
+                    payload = (await response.json()) as GovernanceStatus;
+                } catch {
+                    payload = {};
+                }
+
+                if (!response.ok) {
+                    const reason =
+                        typeof payload.reason === "string"
+                            ? payload.reason
+                            : "governance_status_unavailable";
+                    throw new Error(reason);
+                }
+
+                if (!alive) return;
+                setGovernanceStatus(payload);
+            } catch (error) {
+                if (!alive) return;
+                setGovernanceStatusError(
+                    error instanceof Error ? error.message : "governance_status_unavailable"
+                );
+            } finally {
+                if (alive) {
+                    setGovernanceStatusLoading(false);
+                }
+            }
+        };
+
+        void fetchGovernanceStatus();
+        const intervalId = setInterval(() => {
+            void fetchGovernanceStatus();
+        }, 60_000);
+
+        return () => {
+            alive = false;
+            clearInterval(intervalId);
+        };
+    }, []);
 
     const toggleDeliberation = (nodeId: string) => {
         setExpandedNodes(prev => {
@@ -1212,6 +1278,24 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
         setInput(text);
     };
 
+    const governanceCapability = governanceStatus?.governance_capability ?? "unknown";
+    const governanceBadgeLabel = governanceStatusError
+        ? "Unavailable"
+        : governanceStatusLoading
+            ? "Checking"
+            : governanceCapability === "runtime_ready"
+                ? "Runtime Ready"
+                : governanceCapability === "mock_only"
+                    ? "Mock Only"
+                    : "Unknown";
+    const governanceBadgeClass = governanceStatusError
+        ? "bg-rose-100 text-rose-700 border-rose-200"
+        : governanceCapability === "runtime_ready"
+            ? "bg-emerald-100 text-emerald-700 border-emerald-200"
+            : governanceCapability === "mock_only"
+                ? "bg-amber-100 text-amber-700 border-amber-200"
+                : "bg-slate-100 text-slate-700 border-slate-200";
+
     if (!conversation) {
         return (
             <div className="flex flex-col h-full bg-slate-50 items-center justify-center text-slate-400">
@@ -1233,6 +1317,44 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
             )}
 
             {/* 靈魂狀態指示器 */}
+            <div className="bg-white border-b border-slate-200 px-4 py-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
+                <span className="text-slate-500 font-semibold tracking-wide uppercase">
+                    Governance
+                </span>
+                <span
+                    className={`px-2 py-0.5 rounded-full border font-semibold ${governanceBadgeClass}`}
+                    title={governanceStatusError || undefined}
+                >
+                    {governanceBadgeLabel}
+                </span>
+                <span className="text-slate-500">
+                    mode:
+                    <span className="ml-1 font-medium text-slate-700">
+                        {governanceStatus?.backend_mode || "unknown"}
+                    </span>
+                </span>
+                <span className="text-slate-500">
+                    elisa:
+                    <span className="ml-1 font-medium text-slate-700">
+                        {governanceStatus?.elisa?.contract_version || "n/a"}
+                    </span>
+                </span>
+                <span className="text-slate-400">
+                    checked:
+                    <span className="ml-1">
+                        {governanceStatus?.checked_at
+                            ? new Date(governanceStatus.checked_at).toLocaleTimeString()
+                            : "pending"}
+                    </span>
+                </span>
+                {governanceStatusError && (
+                    <span className="text-rose-600">
+                        reason:
+                        <span className="ml-1">{governanceStatusError}</span>
+                    </span>
+                )}
+            </div>
+
             {soulState.totalTurns > 0 && (
                 <div className="bg-gray-900/5 border-b border-gray-200 px-4 py-2 flex items-center justify-between">
                     <SoulDriveMeter soulState={soulState} compact />

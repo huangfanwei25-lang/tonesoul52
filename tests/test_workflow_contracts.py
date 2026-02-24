@@ -14,6 +14,7 @@ EXTERNAL_SOURCE_WORKFLOW_PATH = Path(".github/workflows/external_source_registry
 PYTEST_CI_WORKFLOW_PATH = Path(".github/workflows/pytest-ci.yml")
 DUAL_TRACK_BOUNDARY_WORKFLOW_PATH = Path(".github/workflows/dual_track_boundary.yml")
 GIT_HYGIENE_WORKFLOW_PATH = Path(".github/workflows/git_hygiene.yml")
+POST_RELEASE_MONITOR_WORKFLOW_PATH = Path(".github/workflows/post_release_monitor.yml")
 
 
 def _load_yaml(path: Path) -> dict[str, Any]:
@@ -328,3 +329,38 @@ def test_git_hygiene_workflow_uses_strict_threshold_28() -> None:
     run_cmd = run_step.get("run", "")
     assert isinstance(run_cmd, str)
     assert "python scripts/verify_git_hygiene.py --strict --max-tracked-ignored 28" in run_cmd
+
+
+def test_post_release_monitor_workflow_triggers_and_checks() -> None:
+    payload = _load_yaml(POST_RELEASE_MONITOR_WORKFLOW_PATH)
+    on_section = _on_section(payload)
+    assert "schedule" in on_section
+    assert "workflow_dispatch" in on_section
+
+    steps = _job_steps(payload, "monitor")
+    smoke_step = _find_step(steps, "Run web/API same-origin smoke (Elisa scenario)")
+    smoke_cmd = smoke_step.get("run", "")
+    assert isinstance(smoke_cmd, str)
+    assert "python scripts/verify_web_api.py" in smoke_cmd
+    assert "--same-origin" in smoke_cmd
+    assert "--elisa-scenario" in smoke_cmd
+
+    preflight_step = _find_step(steps, "Run governance preflight probe")
+    preflight_cmd = preflight_step.get("run", "")
+    assert isinstance(preflight_cmd, str)
+    assert "python scripts/verify_vercel_preflight.py" in preflight_cmd
+    assert "--strict" in preflight_cmd
+    assert "--same-origin" in preflight_cmd
+    assert "--probe-governance-status" in preflight_cmd
+
+
+def test_post_release_monitor_workflow_uploads_logs() -> None:
+    payload = _load_yaml(POST_RELEASE_MONITOR_WORKFLOW_PATH)
+    steps = _job_steps(payload, "monitor")
+    artifact_step = _find_step(steps, "Upload monitor logs")
+    artifact_with = artifact_step.get("with", {})
+    assert isinstance(artifact_with, dict)
+    path_value = artifact_with.get("path", "")
+    assert isinstance(path_value, str)
+    assert "post_release_web_api.log" in path_value
+    assert "post_release_preflight.log" in path_value
