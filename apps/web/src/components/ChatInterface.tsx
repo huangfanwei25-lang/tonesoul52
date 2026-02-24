@@ -834,7 +834,7 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
             payload.semantic_graph_summary && typeof payload.semantic_graph_summary === "object"
                 ? (payload.semantic_graph_summary as Record<string, unknown>)
                 : {};
-        const deliberation =
+        let deliberation =
             payload.deliberation && typeof payload.deliberation === "object"
                 ? ({
                     ...(payload.deliberation as DeliberationData),
@@ -850,6 +850,17 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
                             : rootSemanticGraphSummary,
                 } as DeliberationData)
                 : undefined;
+
+        if (payload.verdict && typeof payload.verdict === 'object') {
+            const v: any = payload.verdict;
+            deliberation = {
+                ...deliberation,
+                quality: v.divergence_analysis?.quality || deliberation?.quality,
+                role_tensions: v.structured_output?.D?.role_tensions || v.divergence_analysis?.role_tensions,
+                recommended_action: v.structured_output?.D?.recommended_action || v.divergence_analysis?.recommended_action,
+                visual_context: v.structured_output?.D?.visual_context || v.divergence_analysis?.visual_context,
+            };
+        }
         const backendMode = typeof payload.backend_mode === "string" ? payload.backend_mode : undefined;
         const deliberationLevel =
             payload.deliberation_level === "mock" || payload.deliberation_level === "runtime"
@@ -870,7 +881,7 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
                             : "unknown",
                     execution_profile:
                         (fallbackMetadata as Record<string, unknown>).execution_profile === "interactive"
-                        || (fallbackMetadata as Record<string, unknown>).execution_profile === "engineering"
+                            || (fallbackMetadata as Record<string, unknown>).execution_profile === "engineering"
                             ? ((fallbackMetadata as Record<string, unknown>).execution_profile as BackendExecutionProfile)
                             : undefined,
                 }
@@ -885,14 +896,14 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
                             : 0,
                     level:
                         (distillationGuard as Record<string, unknown>).level === "low"
-                        || (distillationGuard as Record<string, unknown>).level === "medium"
-                        || (distillationGuard as Record<string, unknown>).level === "high"
+                            || (distillationGuard as Record<string, unknown>).level === "medium"
+                            || (distillationGuard as Record<string, unknown>).level === "high"
                             ? ((distillationGuard as Record<string, unknown>).level as "low" | "medium" | "high")
                             : "low",
                     policy_action:
                         (distillationGuard as Record<string, unknown>).policy_action === "normal"
-                        || (distillationGuard as Record<string, unknown>).policy_action === "reduce_detail"
-                        || (distillationGuard as Record<string, unknown>).policy_action === "constrain_reasoning"
+                            || (distillationGuard as Record<string, unknown>).policy_action === "reduce_detail"
+                            || (distillationGuard as Record<string, unknown>).policy_action === "constrain_reasoning"
                             ? ((distillationGuard as Record<string, unknown>).policy_action as "normal" | "reduce_detail" | "constrain_reasoning")
                             : "normal",
                     signals: Array.isArray((distillationGuard as Record<string, unknown>).signals)
@@ -1544,10 +1555,15 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
                                                             {message.distillation_guard && (
                                                                 <div>
                                                                     <span className="text-slate-400">Guard: </span>
-                                                                    <span className="font-medium">
-                                                                        {message.distillation_guard.level}/
-                                                                        {message.distillation_guard.policy_action}
+                                                                    <span className={`font-medium ${message.distillation_guard.level === 'high' ? 'text-rose-600' : message.distillation_guard.level === 'medium' ? 'text-amber-600' : 'text-emerald-600'}`}>
+                                                                        {message.distillation_guard.level}
+                                                                        {message.distillation_guard.policy_action !== 'normal' && ` (${message.distillation_guard.policy_action})`}
                                                                     </span>
+                                                                    {message.distillation_guard.signals && message.distillation_guard.signals.length > 0 && (
+                                                                        <span className="ml-1 text-[10px] text-slate-400">
+                                                                            [{message.distillation_guard.signals.join(', ')}]
+                                                                        </span>
+                                                                    )}
                                                                 </div>
                                                             )}
                                                             {message.fallback_metadata?.triggered && (
@@ -1577,11 +1593,13 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
                                                     )}
 
                                                     {/* 議會廳 */}
-                                                    {message.deliberation.council_chamber && (
+                                                    {(message.deliberation.council_chamber || (message.deliberation.role_tensions && message.deliberation.role_tensions.length > 0)) && (
                                                         <CouncilChamber
-                                                            philosopher={message.deliberation.council_chamber.philosopher}
-                                                            engineer={message.deliberation.council_chamber.engineer}
-                                                            guardian={message.deliberation.council_chamber.guardian}
+                                                            philosopher={message.deliberation.council_chamber?.philosopher}
+                                                            engineer={message.deliberation.council_chamber?.engineer}
+                                                            guardian={message.deliberation.council_chamber?.guardian}
+                                                            role_tensions={message.deliberation.role_tensions}
+                                                            recommended_action={message.deliberation.recommended_action}
                                                         />
                                                     )}
 

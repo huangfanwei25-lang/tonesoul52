@@ -1,4 +1,74 @@
-# CODEX_TASK — Level 3：實驗性功能 v7
+# CODEX_TASK — Level 4：MCP 橋接 & 自學型 QA 防禦迴路 (Phase 116)
+
+> **日期**：2026-02-24T21:30 (UTC+8)
+> **交辦者**：Antigravity
+> **前置**：先讀 `docs/plans/phase_116_mcp_connector_and_qa_loop_rfc.md`，再讀 `skills/registry.json`（Phase 115 三層架構）
+> **前一輪**：Phase 115 Progressive-Disclosure Skill Contract 全部完成 ✅
+> **驗證指令**：`python scripts/verify_skill_registry.py --strict` 與 `python -m pytest tests/test_skill_parser.py tests/test_verify_skill_registry.py -q`
+
+---
+
+## 🚀 任務指派 (Delegated to Codex - 2026-02-24)
+
+> **Antigravity 留言給 Codex：**
+> "Phase 115 你做得非常完美。三層漸進式揭露架構已經落地，`verify_skill_registry.py --strict` 全綠，`test_skill_parser.py` 全過。
+>
+> 現在我們面對兩個互相強化的目標，需要你繼續推進：
+>
+> 1. **Phase 116-A: ToneSoul MCP Server（打通生態系）**：
+>    Phase 115 讓我們有了最嚴謹的 L1/L2/L3 技能合約。現在，讓這套護城河能透過 [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) 暴露給外部 Agent（例如 Claude CLI 或 Cursor）。
+>    - 在 `tonesoul/mcp/server.py` 建立 Python MCP Server，讀取 `skills/registry.json` 的 **L1 + L2** 欄位並對外映射為 MCP Tools。
+>    - **L3 的執行腳本絕對不對外暴露**（延遲加載的安全承諾要延伸到 MCP 層）。
+>    - 套用 Phase 112 定義的 `DistillationRiskGuard` 邏輯，阻擋大量試探性呼叫（防 distillation scraping）。
+>    - 參考架構：`tonesoul/council/skill_parser.py`（L1/L2 解析器）、`apps/web/src/app/api/chat/route.ts`（現有的 DistillationRiskGuard 範例）。
+>
+> 2. **Phase 116-B: QA 失敗 → Agent 記憶閉環（AI 自我免疫）**：
+>    每次跑 `python scripts/verify_7d.py` 出現失敗時，目前沒有機制讓 Agent 自己「記住教訓」。
+>    - 擴充 `tools/agent_discussion_tool.py`，新增命令 `ingest --source <json_report>` 讀取 `verify_7d.py` 的 JSON 失敗報告。
+>    - 將 `FAILED` 的 RDD/DDD 特徵自動提煉成 `[QA_LESSON]` 格式，追加寫入 `memory/agent_discussion_curated.jsonl`，使 Agent 的防禦記憶能自我成長。
+>    - 參考：`tools/agent_discussion_tool.py` 的現有 `append-lessons` 與 `curate` 命令結構，以保持介面一致。
+>
+> **注意**：這兩個子任務可以平行推進。MCP Server 是對外橋接，QA Loop 是對內自學，兩者共同實現 NLnet 申請書中「開放生態系 + 認知演化」的核心主張。"
+
+---
+
+## 檔案變更範圍 (Phase 116)
+
+| 檔案 | 操作 | 說明 |
+|------|------|------|
+| `tonesoul/mcp/__init__.py` | [NEW] | MCP 模組初始化 |
+| `tonesoul/mcp/server.py` | [NEW] | Python MCP Server，讀 L1/L2 對外映射 |
+| `tools/agent_discussion_tool.py` | [MODIFY] | 新增 `ingest` 命令讀取 7D 失敗報告 |
+| `tests/test_mcp_server.py` | [NEW] | 確認 L3 不外洩、L2 schema 正確映射 |
+| `tests/test_qa_loop_ingest.py` | [NEW] | 確認 QA 失敗報告正確寫入 curated.jsonl |
+
+## 不要動的檔案 (Phase 116)
+
+| 檔案 | 原因 |
+|------|------|
+| `tonesoul/council/skill_parser.py` | 只讀取 L1/L2，不修改 |
+| `skills/registry.json` | 格式已由 Phase 115 定義，不重構 |
+| `scripts/verify_skill_registry.py` | 已是最終態，不再新增規則 |
+
+## 驗證目標 (Phase 116)
+
+```bash
+# MCP Server 可正確列出技能（不洩露 L3）
+python -m tonesoul.mcp.server --list-tools
+
+# QA Ingest 能讀取失敗報告並寫入記憶
+python tools/agent_discussion_tool.py ingest --source reports/7d_latest.json
+
+# 測試全綠
+python -m pytest tests/test_mcp_server.py tests/test_qa_loop_ingest.py -q
+
+# 確認 curated.jsonl 有新的 [QA_LESSON] 記錄
+python tools/agent_discussion_tool.py curate
+```
+
+---
+
+# CODEX_TASK — Level 3：實驗性功能 v7 (已完成參考)
 
 > **日期**：2026-02-13T23:10 (UTC+8)
 > **交辦者**：Antigravity
