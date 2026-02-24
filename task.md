@@ -659,3 +659,27 @@
 - [x] `python -m ruff check scripts/verify_skill_registry.py tests/test_verify_skill_registry.py`
 - [x] `python scripts/verify_skill_registry.py --strict`
 **Success Criteria**: skill routing metadata is both integrity-checked and injection-hardened before entering blocking governance flow.
+
+## Phase 115: Progressive-Disclosure Skill Contract (2026-02-24)
+- [x] Added `tonesoul/council/skill_parser.py` with three-layer APIs:
+- [x] `get_all_l1_routes()` (routing metadata only)
+- [x] `get_l2_signature(skill_id)` (execution boundary/signature)
+- [x] `get_l3_payload(skill_id)` (execution payload body)
+- [x] Added `resolve_for_request(...)` flow enforcing `L1 match -> L2 profile/trust gate -> L3 load`.
+- [x] Updated `tonesoul/council/runtime.py` dispatcher path to attach `skill_contract_observability` and inject bounded `skill_contract_guidance` only after L1/L2 pass.
+- [x] Refactored skill registry contract to layered fields:
+- [x] `skills/registry.schema.json`: added required `l1_routing` + `l2_signature`.
+- [x] `skills/registry.json`: migrated existing skills from flat `name/triggers` to layered structure.
+- [x] Migrated skill frontmatter:
+- [x] `.agent/skills/local_llm/SKILL.md`
+- [x] `.agent/skills/qa_auditor/SKILL.md`
+- [x] Upgraded verifier `scripts/verify_skill_registry.py` to fail-closed on layered contract consistency (registry/frontmatter alignment, L1 trigger coverage, L2 profile+trust+schema checks).
+- [x] Added/updated tests:
+- [x] `tests/test_skill_parser.py`
+- [x] `tests/test_verify_skill_registry.py`
+- [x] `tests/test_council_runtime.py`
+- [x] Validation:
+- [x] `python -m ruff check tonesoul/council/skill_parser.py tonesoul/council/runtime.py scripts/verify_skill_registry.py tests/test_verify_skill_registry.py tests/test_skill_parser.py tests/test_council_runtime.py`
+- [x] `python scripts/verify_skill_registry.py --strict`
+- [x] `python -m pytest tests/test_skill_parser.py tests/test_verify_skill_registry.py tests/test_council_runtime.py tests/test_council_cli.py -q`
+**Success Criteria**: skills now follow deterministic progressive disclosure with measurable L1 routing precision, explicit L2 boundary checks, and bounded L3 runtime loading.

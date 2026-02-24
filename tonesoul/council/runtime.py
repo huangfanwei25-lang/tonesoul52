@@ -26,6 +26,10 @@ _ESCAPE_FAILURE_TEXT_LIMIT = 240
 _ESCAPE_TRIGGER_LEVEL_FLOOR = 0.95
 _COUNCIL_MODE_ENV = "TONESOUL_COUNCIL_MODE"
 _COUNCIL_MODE_VALUES = {"rules", "rules_only", "hybrid", "full_llm"}
+_SKILL_EXECUTION_PROFILES = {"interactive", "engineering"}
+_SKILL_DEFAULT_EXECUTION_PROFILE = "interactive"
+_SKILL_DEFAULT_ALLOWED_TRUST = ("trusted", "reviewed")
+_SKILL_CONTEXT_GUIDANCE_LIMIT = 1600
 
 
 @dataclass(frozen=True)
@@ -71,6 +75,11 @@ class CouncilRuntime:
 
     def deliberate(self, request: CouncilRequest) -> CouncilVerdict:
         context = dict(request.context) if isinstance(request.context, dict) else {}
+        skill_contract = self._resolve_skill_contract(request=request, context=context)
+        if skill_contract.get("guidance"):
+            context["skill_contract_guidance"] = skill_contract["guidance"]
+        if skill_contract.get("matched_skill_ids"):
+            context["skill_contract_ids"] = skill_contract["matched_skill_ids"]
         role_result = self._build_role_summary(
             context=context,
             selected_frames=request.selected_frames,
@@ -103,6 +112,7 @@ class CouncilRuntime:
         )
         transcript = verdict.transcript if isinstance(verdict.transcript, dict) else {}
         transcript["council_mode_observability"] = perspective_meta
+        transcript["skill_contract_observability"] = skill_contract.get("observability", {})
         verdict.transcript = transcript
 
         escape_trigger_reason: str | None = None
@@ -434,6 +444,102 @@ class CouncilRuntime:
         frames = selected_frames or []
         catalog = role_catalog if isinstance(role_catalog, dict) else {}
         return build_council_summary(context, frames, role_summary, catalog)
+
+    def _resolve_skill_execution_profile(self, context: Dict[str, object]) -> str:
+        candidate = context.get("execution_profile")
+        if isinstance(candidate, str):
+            normalized = candidate.strip().lower()
+            if normalized in _SKILL_EXECUTION_PROFILES:
+                return normalized
+        return _SKILL_DEFAULT_EXECUTION_PROFILE
+
+    def _resolve_allowed_skill_trust(self, context: Dict[str, object]) -> tuple[str, ...]:
+        payload = context.get("skill_allowed_trust_tiers")
+        if not isinstance(payload, list):
+            return _SKILL_DEFAULT_ALLOWED_TRUST
+        values: list[str] = []
+        for item in payload:
+            if not isinstance(item, str):
+                continue
+            token = item.strip().lower()
+            if token and token not in values:
+                values.append(token)
+        return tuple(values) if values else _SKILL_DEFAULT_ALLOWED_TRUST
+
+    def _resolve_skill_contract(
+        self,
+        request: CouncilRequest,
+        context: Dict[str, object],
+    ) -> Dict[str, object]:
+        execution_profile = self._resolve_skill_execution_profile(context)
+        allowed_trust = self._resolve_allowed_skill_trust(context)
+
+        query_segments: List[str] = []
+        for value in (
+            context.get("skill_query"),
+            request.user_intent,
+            request.draft_output,
+        ):
+            if isinstance(value, str) and value.strip():
+                query_segments.append(value.strip())
+        query = " ".join(query_segments)
+
+        observability: Dict[str, object] = {
+            "execution_profile": execution_profile,
+            "allowed_trust_tiers": list(allowed_trust),
+            "query_chars": len(query),
+            "status": "idle",
+            "matched_skill_ids": [],
+        }
+
+        if not query:
+            observability["status"] = "skipped_empty_query"
+            return {
+                "guidance": "",
+                "matched_skill_ids": [],
+                "observability": observability,
+            }
+
+        try:
+            from .skill_parser import SkillContractParser
+
+            parser = SkillContractParser()
+            matches = parser.resolve_for_request(
+                query=query,
+                execution_profile=execution_profile,
+                allowed_trust_tiers=allowed_trust,
+            )
+            matched_ids = [str(item.get("skill_id") or "") for item in matches if item.get("skill_id")]
+            guidance_parts: List[str] = []
+            for item in matches:
+                skill_id = str(item.get("skill_id") or "").strip()
+                excerpt = str(item.get("l3_excerpt") or "").strip()
+                if skill_id and excerpt:
+                    guidance_parts.append(f"[{skill_id}]\n{excerpt}")
+            guidance = "\n\n".join(guidance_parts).strip()
+            if len(guidance) > _SKILL_CONTEXT_GUIDANCE_LIMIT:
+                guidance = (
+                    f"{guidance[:_SKILL_CONTEXT_GUIDANCE_LIMIT]}\n...[skill guidance truncated]"
+                )
+
+            observability["status"] = "matched" if matched_ids else "no_match"
+            observability["matched_skill_ids"] = matched_ids
+            observability["matched_count"] = len(matched_ids)
+            observability["l3_loaded_count"] = len(guidance_parts)
+            return {
+                "guidance": guidance,
+                "matched_skill_ids": matched_ids,
+                "observability": observability,
+            }
+        except Exception as exc:
+            logger.debug("Skill contract routing skipped: %s", exc)
+            observability["status"] = "error"
+            observability["error"] = str(exc)[:160]
+            return {
+                "guidance": "",
+                "matched_skill_ids": [],
+                "observability": observability,
+            }
 
     def _adjust_thresholds(
         self,

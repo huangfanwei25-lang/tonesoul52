@@ -5,7 +5,6 @@
   "skills": [
     {
       "id": "local_llm",
-      "name": "Local LLM",
       "path": ".agent/skills/local_llm/SKILL.md",
       "version": "1.0.0",
       "license": "Internal-Project",
@@ -21,24 +20,53 @@
           "macos"
         ]
       },
-      "triggers": [
-        "local llm",
-        "ollama",
-        "qwen3",
-        "offline model"
-      ],
+      "l1_routing": {
+        "name": "Local LLM",
+        "triggers": [
+          "local llm",
+          "ollama",
+          "qwen3",
+          "offline model"
+        ],
+        "intent": "Delegate secure offline subtasks to Ollama-hosted local models."
+      },
+      "l2_signature": {
+        "execution_profile": [
+          "engineering"
+        ],
+        "trust_tier": "reviewed",
+        "json_schema": {
+          "type": "object",
+          "properties": {
+            "prompt": {
+              "type": "string"
+            },
+            "task": {
+              "type": "string"
+            },
+            "constraints": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "prompt"
+          ]
+        }
+      },
       "trust": {
         "tier": "reviewed",
         "review_owner": "codex",
         "reviewed_at": "2026-02-24"
       },
       "integrity": {
-        "sha256": "2f84d5a31686be00c3bdce9707b6f2a780d9c9470aea65cb6ad231a6d55ccbcc"
+        "sha256": "ad0028479388ef5e291f859a49884b42ad07482268e0eed138e4fef91c961de2"
       }
     },
     {
       "id": "qa_auditor",
-      "name": "QA Auditor",
       "path": ".agent/skills/qa_auditor/SKILL.md",
       "version": "1.0.0",
       "license": "Internal-Project",
@@ -54,19 +82,49 @@
           "macos"
         ]
       },
-      "triggers": [
-        "qa audit",
-        "red team",
-        "chaos testing",
-        "adversarial test"
-      ],
+      "l1_routing": {
+        "name": "QA Auditor",
+        "triggers": [
+          "qa audit",
+          "red team",
+          "chaos testing",
+          "adversarial test"
+        ],
+        "intent": "Run red team D3/D4-oriented audits to expose system-breaking weaknesses."
+      },
+      "l2_signature": {
+        "execution_profile": [
+          "engineering"
+        ],
+        "trust_tier": "reviewed",
+        "json_schema": {
+          "type": "object",
+          "properties": {
+            "target_module": {
+              "type": "string"
+            },
+            "audit_scope": {
+              "type": "string"
+            },
+            "threat_focus": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "target_module"
+          ]
+        }
+      },
       "trust": {
         "tier": "reviewed",
         "review_owner": "codex",
         "reviewed_at": "2026-02-24"
       },
       "integrity": {
-        "sha256": "e7faba70aa69c5ea74b47e7c32cb88c59279c76205e4833b7bf1f5eae44f2a37"
+        "sha256": "af5b359183276577a188fe8335582cec92048cae6600f4ec31ad276eaeb4b4fe"
       }
     }
   ]

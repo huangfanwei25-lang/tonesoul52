@@ -198,3 +198,36 @@ def test_runtime_deliberate_attaches_council_mode_observability():
     assert isinstance(observability, dict)
     assert observability.get("source") == "request_perspective_config"
     assert observability.get("mode") == "full_llm"
+
+
+def test_runtime_deliberate_attaches_skill_contract_observability(monkeypatch):
+    import tonesoul.council.skill_parser as skill_parser_module
+
+    class DummyParser:
+        def __init__(self, *args, **kwargs) -> None:
+            pass
+
+        def resolve_for_request(self, *args, **kwargs):
+            return [
+                {
+                    "skill_id": "local_llm",
+                    "matched_trigger": "local llm",
+                    "l3_excerpt": "Use local llm guidance payload.",
+                }
+            ]
+
+    monkeypatch.setattr(skill_parser_module, "SkillContractParser", DummyParser)
+
+    runtime = CouncilRuntime()
+    request = CouncilRequest(
+        draft_output="Draft response.",
+        user_intent="run local llm",
+        context={"execution_profile": "engineering"},
+    )
+
+    verdict = runtime.deliberate(request)
+    observability = (verdict.transcript or {}).get("skill_contract_observability")
+    assert isinstance(observability, dict)
+    assert observability.get("status") == "matched"
+    assert observability.get("matched_skill_ids") == ["local_llm"]
+    assert observability.get("l3_loaded_count") == 1

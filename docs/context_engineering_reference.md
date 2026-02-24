@@ -209,3 +209,22 @@ python scripts/verify_skill_registry.py --strict
 - Why this matters:
   - keeps progressive disclosure routing deterministic instead of "best-effort"
   - blocks common prompt-injection vectors before skills are loaded into agent context
+
+## Progressive-Disclosure Contract (Phase 115)
+
+- Runtime parser module:
+  - `tonesoul/council/skill_parser.py`
+
+- Layer APIs:
+  - `get_all_l1_routes()` -> lightweight route metadata only
+  - `get_l2_signature(skill_id)` -> execution boundary (profile/trust/schema)
+  - `get_l3_payload(skill_id)` -> heavy execution payload loaded only after L1/L2 pass
+
+- Runtime wiring:
+  - `tonesoul/council/runtime.py` now records `skill_contract_observability`
+  - bounded `skill_contract_guidance` is injected only when L1 matched and L2 passed
+
+- Contract shape updates:
+  - `skills/registry.schema.json` now requires `l1_routing` and `l2_signature`
+  - `skills/registry.json` migrated from flat `name/triggers` to layered fields
+  - `.agent/skills/*/SKILL.md` frontmatter migrated with layered metadata

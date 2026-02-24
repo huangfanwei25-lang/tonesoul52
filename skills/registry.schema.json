@@ -32,12 +32,12 @@
       "type": "object",
       "required": [
         "id",
-        "name",
         "path",
         "version",
         "license",
         "compatibility",
-        "triggers",
+        "l1_routing",
+        "l2_signature",
         "trust",
         "integrity"
       ],
@@ -45,10 +45,6 @@
         "id": {
           "type": "string",
           "pattern": "^[a-z0-9_]+$"
-        },
-        "name": {
-          "type": "string",
-          "minLength": 1
         },
         "path": {
           "type": "string",
@@ -87,13 +83,11 @@
             }
           }
         },
-        "triggers": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "type": "string",
-            "minLength": 1
-          }
+        "l1_routing": {
+          "$ref": "#/$defs/l1_routing"
+        },
+        "l2_signature": {
+          "$ref": "#/$defs/l2_signature"
         },
         "trust": {
           "type": "object",
@@ -132,6 +126,66 @@
               "pattern": "^[0-9a-f]{64}$"
             }
           }
+        }
+      }
+    },
+    "l1_routing": {
+      "type": "object",
+      "required": [
+        "name",
+        "triggers",
+        "intent"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "triggers": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "intent": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        }
+      }
+    },
+    "l2_signature": {
+      "type": "object",
+      "required": [
+        "execution_profile",
+        "trust_tier",
+        "json_schema"
+      ],
+      "properties": {
+        "execution_profile": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "enum": [
+              "interactive",
+              "engineering",
+              "any"
+            ]
+          }
+        },
+        "trust_tier": {
+          "type": "string",
+          "enum": [
+            "trusted",
+            "reviewed",
+            "experimental"
+          ]
+        },
+        "json_schema": {
+          "type": "object"
         }
       }
     }

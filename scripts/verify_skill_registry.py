@@ -21,7 +21,8 @@ DATE_PATTERN = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 SHA256_PATTERN = re.compile(r"^[0-9a-f]{64}$")
 TRUST_TIERS = {"trusted", "reviewed", "experimental"}
 RESERVED_NAMESPACE_TERMS = ("claude", "anthropic")
-FRONTMATTER_DESCRIPTION_MIN_LEN = 40
+L1_INTENT_MAX_LEN = 160
+L2_EXECUTION_PROFILES = {"interactive", "engineering", "any"}
 
 
 def _iso_now() -> str:
@@ -229,24 +230,158 @@ def evaluate_registry(
         else:
             add_check(f"{label}.license", "pass", license_name)
 
-        triggers = _as_string_list(entry.get("triggers"))
-        if not triggers:
-            add_check(f"{label}.triggers", "fail", "triggers must contain at least one string")
+        l1_routing = entry.get("l1_routing")
+        l1_name = ""
+        l1_intent = ""
+        triggers: list[str] = []
+        if not isinstance(l1_routing, dict):
+            add_check(f"{label}.l1_routing", "fail", "l1_routing must be an object")
         else:
-            add_check(f"{label}.triggers", "pass", f"{len(triggers)} trigger(s)")
-            if len({item.casefold() for item in triggers}) != len(triggers):
-                add_check(f"{label}.triggers.unique", "fail", "duplicate trigger values are not allowed")
+            add_check(f"{label}.l1_routing", "pass", "present")
+            l1_name = str(l1_routing.get("name") or "").strip()
+            if not l1_name:
+                add_check(f"{label}.l1_routing.name", "fail", "name must be non-empty")
             else:
-                add_check(f"{label}.triggers.unique", "pass", "trigger values are unique")
-            invalid_markup_triggers = [item for item in triggers if _contains_prompt_markup(item)]
-            if invalid_markup_triggers:
+                add_check(f"{label}.l1_routing.name", "pass", l1_name)
+                if _contains_prompt_markup(l1_name):
+                    add_check(
+                        f"{label}.l1_routing.name.prompt_safety",
+                        "fail",
+                        "l1_routing.name must not include < or >",
+                    )
+                else:
+                    add_check(f"{label}.l1_routing.name.prompt_safety", "pass", "safe")
+
+            l1_intent = str(l1_routing.get("intent") or "").strip()
+            if not l1_intent:
+                add_check(f"{label}.l1_routing.intent", "fail", "intent must be non-empty")
+            elif len(l1_intent) > L1_INTENT_MAX_LEN:
                 add_check(
-                    f"{label}.triggers.prompt_safety",
+                    f"{label}.l1_routing.intent",
                     "fail",
-                    f"triggers contain prompt-markup tokens: {invalid_markup_triggers}",
+                    f"intent too long ({len(l1_intent)} > {L1_INTENT_MAX_LEN})",
                 )
             else:
-                add_check(f"{label}.triggers.prompt_safety", "pass", "no prompt-markup tokens")
+                add_check(f"{label}.l1_routing.intent", "pass", f"length={len(l1_intent)}")
+                if _contains_prompt_markup(l1_intent):
+                    add_check(
+                        f"{label}.l1_routing.intent.prompt_safety",
+                        "fail",
+                        "l1_routing.intent must not include < or >",
+                    )
+                else:
+                    add_check(f"{label}.l1_routing.intent.prompt_safety", "pass", "safe")
+
+            triggers = _as_string_list(l1_routing.get("triggers"))
+            if not triggers:
+                add_check(
+                    f"{label}.l1_routing.triggers",
+                    "fail",
+                    "triggers must contain at least one string",
+                )
+            else:
+                add_check(f"{label}.l1_routing.triggers", "pass", f"{len(triggers)} trigger(s)")
+                if len({item.casefold() for item in triggers}) != len(triggers):
+                    add_check(
+                        f"{label}.l1_routing.triggers.unique",
+                        "fail",
+                        "duplicate trigger values are not allowed",
+                    )
+                else:
+                    add_check(
+                        f"{label}.l1_routing.triggers.unique",
+                        "pass",
+                        "trigger values are unique",
+                    )
+                invalid_markup_triggers = [item for item in triggers if _contains_prompt_markup(item)]
+                if invalid_markup_triggers:
+                    add_check(
+                        f"{label}.l1_routing.triggers.prompt_safety",
+                        "fail",
+                        f"triggers contain prompt-markup tokens: {invalid_markup_triggers}",
+                    )
+                else:
+                    add_check(
+                        f"{label}.l1_routing.triggers.prompt_safety",
+                        "pass",
+                        "no prompt-markup tokens",
+                    )
+
+                if l1_intent:
+                    matched = _matched_triggers_in_description(triggers, l1_intent)
+                    if not matched:
+                        add_check(
+                            f"{label}.l1_routing.trigger_coverage",
+                            "fail",
+                            "intent must contain at least one trigger term",
+                        )
+                    else:
+                        add_check(
+                            f"{label}.l1_routing.trigger_coverage",
+                            "pass",
+                            f"matched={matched[0]!r}",
+                        )
+
+        l2_signature = entry.get("l2_signature")
+        execution_profile_values: list[str] = []
+        l2_trust_tier = ""
+        if not isinstance(l2_signature, dict):
+            add_check(f"{label}.l2_signature", "fail", "l2_signature must be an object")
+        else:
+            add_check(f"{label}.l2_signature", "pass", "present")
+            execution_profile_values = _as_string_list(l2_signature.get("execution_profile"))
+            if not execution_profile_values:
+                add_check(
+                    f"{label}.l2_signature.execution_profile",
+                    "fail",
+                    "execution_profile list is required",
+                )
+            else:
+                invalid_profiles = [
+                    item for item in execution_profile_values if item.lower() not in L2_EXECUTION_PROFILES
+                ]
+                if invalid_profiles:
+                    add_check(
+                        f"{label}.l2_signature.execution_profile",
+                        "fail",
+                        f"invalid execution profiles: {invalid_profiles}",
+                    )
+                else:
+                    add_check(
+                        f"{label}.l2_signature.execution_profile",
+                        "pass",
+                        f"{len(execution_profile_values)} profile(s)",
+                    )
+
+            l2_trust_tier = str(l2_signature.get("trust_tier") or "").strip()
+            if l2_trust_tier not in TRUST_TIERS:
+                add_check(
+                    f"{label}.l2_signature.trust_tier",
+                    "fail",
+                    f"invalid trust_tier: {l2_trust_tier!r}",
+                )
+            else:
+                add_check(f"{label}.l2_signature.trust_tier", "pass", l2_trust_tier)
+
+            json_schema = l2_signature.get("json_schema")
+            if not isinstance(json_schema, dict):
+                add_check(
+                    f"{label}.l2_signature.json_schema",
+                    "fail",
+                    "json_schema must be an object",
+                )
+            elif str(json_schema.get("type") or "").strip() != "object":
+                add_check(
+                    f"{label}.l2_signature.json_schema",
+                    "fail",
+                    "json_schema.type must be 'object'",
+                )
+            else:
+                add_check(
+                    f"{label}.l2_signature.json_schema",
+                    "pass",
+                    "schema type object",
+                )
 
         compatibility = entry.get("compatibility")
         if not isinstance(compatibility, dict):
@@ -273,14 +408,15 @@ def evaluate_registry(
 
         trust = entry.get("trust")
         reviewed_at_date: date | None = None
+        trust_tier = ""
         if not isinstance(trust, dict):
             add_check(f"{label}.trust", "fail", "trust must be an object")
         else:
-            tier = str(trust.get("tier") or "")
-            if tier not in TRUST_TIERS:
-                add_check(f"{label}.trust.tier", "fail", f"invalid tier: {tier!r}")
+            trust_tier = str(trust.get("tier") or "")
+            if trust_tier not in TRUST_TIERS:
+                add_check(f"{label}.trust.tier", "fail", f"invalid tier: {trust_tier!r}")
             else:
-                add_check(f"{label}.trust.tier", "pass", tier)
+                add_check(f"{label}.trust.tier", "pass", trust_tier)
 
             review_owner = str(trust.get("review_owner") or "").strip()
             if not review_owner:
@@ -312,6 +448,14 @@ def evaluate_registry(
                         "pass",
                         f"age_days={age_days}",
                     )
+        if l2_trust_tier and trust_tier and l2_trust_tier != trust_tier:
+            add_check(
+                f"{label}.trust_alignment",
+                "fail",
+                f"l2_signature.trust_tier={l2_trust_tier!r} must match trust.tier={trust_tier!r}",
+            )
+        elif l2_trust_tier and trust_tier:
+            add_check(f"{label}.trust_alignment", "pass", "l2/trust tiers aligned")
 
         relative_path = str(entry.get("path") or "").replace("\\", "/")
         if not relative_path:
@@ -384,43 +528,177 @@ def evaluate_registry(
             add_check(f"{label}.frontmatter.description", "fail", "description must be non-empty")
         else:
             add_check(f"{label}.frontmatter.description", "pass", "description present")
-            if _contains_prompt_markup(frontmatter_description):
+
+        fm_l1 = frontmatter.get("l1_routing")
+        if not isinstance(fm_l1, dict):
+            add_check(f"{label}.frontmatter.l1_routing", "fail", "frontmatter l1_routing is required")
+        else:
+            add_check(f"{label}.frontmatter.l1_routing", "pass", "present")
+            fm_l1_name = str(fm_l1.get("name") or "").strip()
+            if not fm_l1_name:
+                add_check(f"{label}.frontmatter.l1_routing.name", "fail", "name must be non-empty")
+            elif l1_name and fm_l1_name != l1_name:
                 add_check(
-                    f"{label}.frontmatter.description.prompt_safety",
+                    f"{label}.frontmatter.l1_routing.name",
                     "fail",
-                    "frontmatter.description must not include < or >",
+                    f"name mismatch registry={l1_name!r} skill={fm_l1_name!r}",
                 )
             else:
-                add_check(f"{label}.frontmatter.description.prompt_safety", "pass", "safe")
-            if len(frontmatter_description) < FRONTMATTER_DESCRIPTION_MIN_LEN:
+                add_check(f"{label}.frontmatter.l1_routing.name", "pass", fm_l1_name)
+            if _contains_prompt_markup(fm_l1_name):
                 add_check(
-                    f"{label}.frontmatter.description.length",
+                    f"{label}.frontmatter.l1_routing.name.prompt_safety",
                     "fail",
-                    (
-                        "description must be at least "
-                        f"{FRONTMATTER_DESCRIPTION_MIN_LEN} characters for routing precision"
-                    ),
+                    "l1_routing.name must not include < or >",
                 )
             else:
                 add_check(
-                    f"{label}.frontmatter.description.length",
+                    f"{label}.frontmatter.l1_routing.name.prompt_safety",
                     "pass",
-                    f"length={len(frontmatter_description)}",
+                    "safe",
                 )
-            if triggers:
-                matched = _matched_triggers_in_description(triggers, frontmatter_description)
-                if not matched:
+
+            fm_triggers = _as_string_list(fm_l1.get("triggers"))
+            if not fm_triggers:
+                add_check(
+                    f"{label}.frontmatter.l1_routing.triggers",
+                    "fail",
+                    "triggers must contain at least one string",
+                )
+            else:
+                if triggers and {item.casefold() for item in fm_triggers} != {
+                    item.casefold() for item in triggers
+                }:
                     add_check(
-                        f"{label}.routing.trigger_coverage",
+                        f"{label}.frontmatter.l1_routing.triggers",
                         "fail",
-                        "description must contain at least one trigger term",
+                        "frontmatter triggers must match registry l1_routing.triggers",
                     )
                 else:
                     add_check(
-                        f"{label}.routing.trigger_coverage",
+                        f"{label}.frontmatter.l1_routing.triggers",
                         "pass",
-                        f"matched={matched[0]!r}",
+                        f"{len(fm_triggers)} trigger(s)",
                     )
+                invalid_markup_fm_triggers = [item for item in fm_triggers if _contains_prompt_markup(item)]
+                if invalid_markup_fm_triggers:
+                    add_check(
+                        f"{label}.frontmatter.l1_routing.triggers.prompt_safety",
+                        "fail",
+                        f"triggers contain prompt-markup tokens: {invalid_markup_fm_triggers}",
+                    )
+                else:
+                    add_check(
+                        f"{label}.frontmatter.l1_routing.triggers.prompt_safety",
+                        "pass",
+                        "no prompt-markup tokens",
+                    )
+
+            fm_intent = str(fm_l1.get("intent") or "").strip()
+            if not fm_intent:
+                add_check(
+                    f"{label}.frontmatter.l1_routing.intent",
+                    "fail",
+                    "intent must be non-empty",
+                )
+            else:
+                if l1_intent and fm_intent != l1_intent:
+                    add_check(
+                        f"{label}.frontmatter.l1_routing.intent",
+                        "fail",
+                        "frontmatter intent must match registry l1_routing.intent",
+                    )
+                elif len(fm_intent) > L1_INTENT_MAX_LEN:
+                    add_check(
+                        f"{label}.frontmatter.l1_routing.intent",
+                        "fail",
+                        f"intent too long ({len(fm_intent)} > {L1_INTENT_MAX_LEN})",
+                    )
+                else:
+                    add_check(
+                        f"{label}.frontmatter.l1_routing.intent",
+                        "pass",
+                        f"length={len(fm_intent)}",
+                    )
+                if _contains_prompt_markup(fm_intent):
+                    add_check(
+                        f"{label}.frontmatter.l1_routing.intent.prompt_safety",
+                        "fail",
+                        "intent must not include < or >",
+                    )
+                else:
+                    add_check(
+                        f"{label}.frontmatter.l1_routing.intent.prompt_safety",
+                        "pass",
+                        "safe",
+                    )
+
+        fm_l2 = frontmatter.get("l2_signature")
+        if not isinstance(fm_l2, dict):
+            add_check(f"{label}.frontmatter.l2_signature", "fail", "frontmatter l2_signature is required")
+        else:
+            add_check(f"{label}.frontmatter.l2_signature", "pass", "present")
+            fm_profiles = _as_string_list(fm_l2.get("execution_profile"))
+            if not fm_profiles:
+                add_check(
+                    f"{label}.frontmatter.l2_signature.execution_profile",
+                    "fail",
+                    "execution_profile list is required",
+                )
+            elif execution_profile_values and {item.lower() for item in fm_profiles} != {
+                item.lower() for item in execution_profile_values
+            }:
+                add_check(
+                    f"{label}.frontmatter.l2_signature.execution_profile",
+                    "fail",
+                    "frontmatter execution_profile must match registry l2_signature.execution_profile",
+                )
+            else:
+                add_check(
+                    f"{label}.frontmatter.l2_signature.execution_profile",
+                    "pass",
+                    f"{len(fm_profiles)} profile(s)",
+                )
+
+            fm_trust_tier = str(fm_l2.get("trust_tier") or "").strip()
+            if not fm_trust_tier:
+                add_check(
+                    f"{label}.frontmatter.l2_signature.trust_tier",
+                    "fail",
+                    "trust_tier must be non-empty",
+                )
+            elif l2_trust_tier and fm_trust_tier != l2_trust_tier:
+                add_check(
+                    f"{label}.frontmatter.l2_signature.trust_tier",
+                    "fail",
+                    "frontmatter trust_tier must match registry l2_signature.trust_tier",
+                )
+            else:
+                add_check(
+                    f"{label}.frontmatter.l2_signature.trust_tier",
+                    "pass",
+                    fm_trust_tier,
+                )
+
+            fm_json_schema = fm_l2.get("json_schema")
+            if not isinstance(fm_json_schema, dict):
+                add_check(
+                    f"{label}.frontmatter.l2_signature.json_schema",
+                    "fail",
+                    "json_schema must be an object",
+                )
+            elif str(fm_json_schema.get("type") or "").strip() != "object":
+                add_check(
+                    f"{label}.frontmatter.l2_signature.json_schema",
+                    "fail",
+                    "json_schema.type must be 'object'",
+                )
+            else:
+                add_check(
+                    f"{label}.frontmatter.l2_signature.json_schema",
+                    "pass",
+                    "schema type object",
+                )
 
     missing_registry_entries = sorted(discovered - registry_paths)
     for missing_path in missing_registry_entries:

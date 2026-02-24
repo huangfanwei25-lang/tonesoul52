@@ -1,6 +1,31 @@
 ---
 name: "local_llm"
 description: "Use when you need to delegate subtasks to the local Qwen3 model via Ollama. This skill provides a secure, offline interface to the local language model for content drafting, analysis, translation, and other text tasks without sending data to external APIs."
+l1_routing:
+  name: "Local LLM"
+  triggers:
+    - "local llm"
+    - "ollama"
+    - "qwen3"
+    - "offline model"
+  intent: "Delegate secure offline subtasks to Ollama-hosted local models."
+l2_signature:
+  execution_profile:
+    - "engineering"
+  trust_tier: "reviewed"
+  json_schema:
+    type: "object"
+    properties:
+      prompt:
+        type: "string"
+      task:
+        type: "string"
+      constraints:
+        type: "array"
+        items:
+          type: "string"
+    required:
+      - "prompt"
 ---
 
 # Local LLM Skill (Ollama + Qwen3)
