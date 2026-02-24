@@ -618,3 +618,24 @@
 - [x] `python scripts/verify_web_api.py --web-base https://tonesoul52-ruby.vercel.app --api-base https://tonesoul52-ruby.vercel.app --same-origin --elisa-scenario`
 - [x] `python scripts/verify_vercel_preflight.py --strict --same-origin --probe-governance-status --web-base https://tonesoul52-ruby.vercel.app`
 **Success Criteria**: Governance readiness is continuously visible in UI and continuously verified in CI/scheduled monitoring.
+
+## Phase 112: Dual-Track Execution Profile Routing (2026-02-24)
+- [x] Added `execution_profile` contract to web/backend chat routes (`interactive | engineering`).
+- [x] Implemented profile inference:
+- [x] explicit `execution_profile` wins
+- [x] fallback inference: `elisa_context.source=elisa_ide -> engineering`
+- [x] default: `interactive`
+- [x] Implemented profile-driven default council routing when request does not specify mode/config:
+- [x] `interactive -> council_mode=rules`
+- [x] `engineering -> council_mode=full_llm`
+- [x] Added/updated tests:
+- [x] `apps/web/src/__tests__/apiRoutes.invalidJson.test.ts`
+- [x] `apps/web/src/__tests__/apiRoutes.chatTransport.test.ts`
+- [x] `tests/test_api_chat_council_mode.py`
+- [x] `tests/red_team/test_api_type_confusion.py`
+- [x] `tests/test_verify_web_api.py`
+- [x] Updated API documentation: `docs/API_SPEC.md`.
+- [x] Validation:
+- [x] `npm --prefix apps/web run test -- src/__tests__/apiRoutes.invalidJson.test.ts src/__tests__/apiRoutes.chatTransport.test.ts`
+- [x] `python -m pytest tests/test_api_chat_council_mode.py tests/red_team/test_api_type_confusion.py tests/test_verify_web_api.py -q`
+**Success Criteria**: interactive/engineering profile is first-class in chat contract and deterministically maps to speed/quality defaults without breaking explicit overrides.

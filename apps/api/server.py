@@ -59,6 +59,7 @@ _VTP_CONTEXT_FLAGS = (
     "vtp_user_confirmed",
 )
 _ALLOWED_COUNCIL_MODES = {"rules", "rules_only", "hybrid", "full_llm"}
+_ALLOWED_EXECUTION_PROFILES = {"interactive", "engineering"}
 supabase_persistence = SupabasePersistence.from_env()
 _context_distiller: ContextDistiller | None = None
 _soul_db: SoulDB | None = None
@@ -185,6 +186,7 @@ def _build_chat_cache_key(
     message: str,
     history: list,
     full_analysis: bool,
+    execution_profile: str,
     council_mode: str | None,
     perspective_config: dict | None,
     persona_config: dict | None,
@@ -195,6 +197,7 @@ def _build_chat_cache_key(
         "message": message,
         "history": history,
         "full_analysis": full_analysis,
+        "execution_profile": execution_profile,
         "council_mode": council_mode,
         "perspective_config": perspective_config,
         "persona_config": persona_config,
@@ -367,6 +370,41 @@ def _require_optional_council_mode(data: dict, key: str) -> tuple[str | None, tu
     if mode == "rules_only":
         mode = "rules"
     return mode, None
+
+
+def _require_optional_execution_profile(data: dict, key: str) -> tuple[str | None, tuple | None]:
+    value = data.get(key)
+    if value is None:
+        return None, None
+    if not isinstance(value, str):
+        return None, (jsonify({"error": f"Invalid {key}"}), 400)
+    profile = value.strip().lower()
+    if profile not in _ALLOWED_EXECUTION_PROFILES:
+        return None, (jsonify({"error": f"Invalid {key}"}), 400)
+    return profile, None
+
+
+def _resolve_execution_profile(data: dict, explicit_profile: str | None) -> str:
+    if explicit_profile in _ALLOWED_EXECUTION_PROFILES:
+        return explicit_profile
+
+    elisa_context = data.get("elisa_context")
+    if isinstance(elisa_context, dict):
+        source = elisa_context.get("source")
+        if isinstance(source, str) and source.strip().lower() == "elisa_ide":
+            return "engineering"
+
+    return "interactive"
+
+
+def _apply_execution_profile_defaults(
+    council_mode: str | None,
+    perspective_config: dict | None,
+    execution_profile: str,
+) -> str | None:
+    if perspective_config is not None or council_mode is not None:
+        return council_mode
+    return "full_llm" if execution_profile == "engineering" else "rules"
 
 
 def _validate_perspective_config(config: dict) -> tuple[dict | None, tuple | None]:
@@ -1844,6 +1882,9 @@ def chat():
     full_analysis, error = _require_optional_bool(data, "full_analysis")
     if error is not None:
         return error
+    execution_profile, error = _require_optional_execution_profile(data, "execution_profile")
+    if error is not None:
+        return error
     conversation_id, error = _require_optional_string(data, "conversation_id")
     if error is not None:
         return error
@@ -1867,6 +1908,12 @@ def chat():
         persona_config, error = _validate_persona_config(persona_config)
         if error is not None:
             return error
+    execution_profile = _resolve_execution_profile(data, execution_profile)
+    council_mode = _apply_execution_profile_defaults(
+        council_mode,
+        perspective_config,
+        execution_profile,
+    )
     message = message if message is not None else ""
     history = history if history is not None else []
     full_analysis = full_analysis if full_analysis is not None else True
@@ -1882,6 +1929,7 @@ def chat():
             message=message,
             history=history,
             full_analysis=full_analysis,
+            execution_profile=execution_profile,
             council_mode=council_mode,
             perspective_config=perspective_config,
             persona_config=persona_config,
@@ -1889,6 +1937,7 @@ def chat():
         )
         cached_payload = _chat_cache_get(cache_key)
         if cached_payload is not None:
+            cached_payload.setdefault("execution_profile", execution_profile)
             _persist_chat_side_effects(
                 conversation_id=conversation_id,
                 session_id=session_id,
@@ -1922,6 +1971,7 @@ def chat():
 
         response_payload = {
             "response": result.response,
+            "execution_profile": execution_profile,
             "verdict": result.council_verdict,
             "tonebridge": result.tonebridge_analysis,
             "inner_reasoning": result.inner_narrative,

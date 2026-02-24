@@ -58,6 +58,7 @@ def _summarize_payload(label: str, payload: Any, verbose: bool) -> Any:
             "has_verdict": isinstance(verdict, dict),
             "verdict": verdict_name,
             "backend_mode": payload.get("backend_mode", "backend"),
+            "execution_profile": payload.get("execution_profile"),
             "council_mode": (
                 mode_observability.get("mode") if isinstance(mode_observability, dict) else None
             ),
@@ -139,6 +140,17 @@ def _validate_chat_council_mode(payload: Any, requested_mode: str) -> bool:
     return True
 
 
+def _validate_execution_profile(payload: Any, expected_profile: str, label: str) -> bool:
+    payload_dict = _expect_dict(payload, label)
+    if payload_dict is None:
+        return False
+    profile = payload_dict.get("execution_profile")
+    if profile != expected_profile:
+        print(f"[FAIL] {label}: expected execution_profile={expected_profile!r}, got {profile!r}.")
+        return False
+    return True
+
+
 def _validate_same_origin_backend_health(payload: Any, label: str) -> bool:
     payload_dict = _expect_dict(payload, label)
     if payload_dict is None:
@@ -182,6 +194,7 @@ def _build_elisa_chat_payload(conversation_id: str, session_id: str) -> Dict[str
     return {
         "conversation_id": conversation_id,
         "session_id": session_id,
+        "execution_profile": "engineering",
         "message": "Elisa integration smoke: assess governance risk for this patch.",
         "history": [{"role": "user", "content": "Review this code change for risk."}],
         "full_analysis": False,
@@ -406,9 +419,13 @@ def main() -> int:
             all_ok = False
         elisa_response_dict = _expect_dict(elisa_response, "POST web /api/chat (elisa scenario)")
         if elisa_response_dict and not isinstance(elisa_response_dict.get("response"), str):
-            print(
-                "[FAIL] POST web /api/chat (elisa scenario): missing string field 'response'."
-            )
+            print("[FAIL] POST web /api/chat (elisa scenario): missing string field 'response'.")
+            all_ok = False
+        if elisa_response_dict and not _validate_execution_profile(
+            elisa_response,
+            "engineering",
+            "POST web /api/chat (elisa scenario)",
+        ):
             all_ok = False
 
     # 5) Web session report

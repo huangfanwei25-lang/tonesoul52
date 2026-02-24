@@ -103,6 +103,7 @@ describe("chat route transport fallback behavior", () => {
         expect(response.status).toBe(200);
         expect(payload.backend_mode).toBe("mock_fallback");
         expect(payload.fallback_reason).toBe("same_origin_primary");
+        expect(payload.execution_profile).toBe("interactive");
         expect(typeof payload.response).toBe("string");
         expect(fetchMock).not.toHaveBeenCalled();
     });
@@ -125,6 +126,30 @@ describe("chat route transport fallback behavior", () => {
         expect(response.status).toBe(503);
         expect(payload.error).toBe("Backend configuration invalid for Vercel runtime");
         expect(payload.config_issue).toBe("local_address");
+        expect(fetchMock).not.toHaveBeenCalled();
+    });
+
+    it("uses engineering execution_profile in same-origin mock when Elisa source is provided", async () => {
+        process.env.VERCEL = "1";
+        process.env.VERCEL_URL = "tonesoul52-one.vercel.app";
+        const fetchMock = vi.spyOn(globalThis, "fetch");
+
+        const response = await postChat(
+            makeRequest({
+                conversation_id: "c1",
+                message: "hello",
+                history: [],
+                elisa_context: {
+                    source: "elisa_ide",
+                    session_id: "elisa_session_001",
+                },
+            }) as never
+        );
+        const payload = (await response.json()) as Record<string, unknown>;
+
+        expect(response.status).toBe(200);
+        expect(payload.backend_mode).toBe("mock_fallback");
+        expect(payload.execution_profile).toBe("engineering");
         expect(fetchMock).not.toHaveBeenCalled();
     });
 
@@ -172,6 +197,60 @@ describe("chat route transport fallback behavior", () => {
         const [, requestInit] = fetchMock.mock.calls[0] as [string, RequestInit];
         const parsedBody = JSON.parse(String(requestInit.body)) as Record<string, unknown>;
         expect(parsedBody.council_mode).toBe("rules");
+    });
+
+    it("defaults to interactive execution_profile and rules council_mode", async () => {
+        process.env.TONESOUL_BACKEND_URL = "http://127.0.0.1:5000";
+        const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(
+            new Response(JSON.stringify({ response: "ok" }), { status: 200 })
+        );
+
+        const response = await postChat(
+            makeRequest({
+                conversation_id: "c1",
+                message: "hello",
+                history: [],
+                full_analysis: false,
+            }) as never
+        );
+        const payload = (await response.json()) as Record<string, unknown>;
+
+        expect(response.status).toBe(200);
+        expect(payload.response).toBe("ok");
+        expect(fetchMock).toHaveBeenCalledTimes(1);
+        const [, requestInit] = fetchMock.mock.calls[0] as [string, RequestInit];
+        const parsedBody = JSON.parse(String(requestInit.body)) as Record<string, unknown>;
+        expect(parsedBody.execution_profile).toBe("interactive");
+        expect(parsedBody.council_mode).toBe("rules");
+    });
+
+    it("infers engineering execution_profile from elisa_context and upgrades council_mode", async () => {
+        process.env.TONESOUL_BACKEND_URL = "http://127.0.0.1:5000";
+        const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(
+            new Response(JSON.stringify({ response: "ok" }), { status: 200 })
+        );
+
+        const response = await postChat(
+            makeRequest({
+                conversation_id: "c1",
+                message: "hello",
+                history: [],
+                full_analysis: false,
+                elisa_context: {
+                    source: "elisa_ide",
+                    session_id: "elisa_session_001",
+                },
+            }) as never
+        );
+        const payload = (await response.json()) as Record<string, unknown>;
+
+        expect(response.status).toBe(200);
+        expect(payload.response).toBe("ok");
+        expect(fetchMock).toHaveBeenCalledTimes(1);
+        const [, requestInit] = fetchMock.mock.calls[0] as [string, RequestInit];
+        const parsedBody = JSON.parse(String(requestInit.body)) as Record<string, unknown>;
+        expect(parsedBody.execution_profile).toBe("engineering");
+        expect(parsedBody.council_mode).toBe("full_llm");
     });
 
     it("forwards persona custom_roles payload", async () => {

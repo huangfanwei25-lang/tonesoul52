@@ -24,6 +24,11 @@ def _client():
             {"message": "hello", "perspective_config": ["guardian"]},
             "Invalid perspective_config",
         ),
+        (
+            "/api/chat",
+            {"message": "hello", "execution_profile": {"mode": "engineering"}},
+            "Invalid execution_profile",
+        ),
         ("/api/validate", {"context": "not-a-dict"}, "Invalid context"),
         ("/api/validate", {"user_intent": ["leak"]}, "Invalid user_intent"),
         ("/api/conversation", {"session_id": {"id": "session"}}, "Invalid session_id"),

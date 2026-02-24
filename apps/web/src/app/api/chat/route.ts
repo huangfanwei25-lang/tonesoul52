@@ -16,6 +16,7 @@ const DEFAULT_RETRY_MAX_ATTEMPTS = 3;
 const DEFAULT_RETRY_BASE_DELAY_MS = process.env.NODE_ENV === "test" ? 0 : 300;
 const MOCK_FALLBACK_ENV = "TONESOUL_ENABLE_CHAT_MOCK_FALLBACK";
 const ALLOWED_COUNCIL_MODES = new Set(["rules", "rules_only", "hybrid", "full_llm"]);
+const ALLOWED_EXECUTION_PROFILES = new Set(["interactive", "engineering"]);
 const TRANSIENT_STATUS_CODES = new Set([429, 502, 503, 504]);
 const MAX_PERSONA_ROLES = 8;
 const MAX_PERSONA_ATTACHMENTS_PER_ROLE = 6;
@@ -60,6 +61,7 @@ type ChatRequestPayload = {
     message?: string;
     history?: unknown[];
     full_analysis?: boolean;
+    execution_profile?: "interactive" | "engineering";
     council_mode?: "rules" | "hybrid" | "full_llm";
     perspective_config?: Record<string, Record<string, unknown>>;
     persona?: PersonaPayload;
@@ -200,6 +202,17 @@ function parseChatBody(raw: unknown): { body?: ChatRequestPayload; error?: NextR
             return { error: badRequest("full_analysis") };
         }
         parsed.full_analysis = fullAnalysis;
+    }
+    const executionProfile = raw.execution_profile;
+    if (executionProfile !== undefined) {
+        if (typeof executionProfile !== "string") {
+            return { error: badRequest("execution_profile") };
+        }
+        const normalized = executionProfile.trim().toLowerCase();
+        if (!ALLOWED_EXECUTION_PROFILES.has(normalized)) {
+            return { error: badRequest("execution_profile") };
+        }
+        parsed.execution_profile = normalized as ChatRequestPayload["execution_profile"];
     }
 
     const councilMode = raw.council_mode;
@@ -362,6 +375,34 @@ function parseChatBody(raw: unknown): { body?: ChatRequestPayload; error?: NextR
     return { body: parsed };
 }
 
+function resolveExecutionProfile(body: ChatRequestPayload): "interactive" | "engineering" {
+    if (body.execution_profile === "interactive" || body.execution_profile === "engineering") {
+        return body.execution_profile;
+    }
+    const source = body.elisa_context?.source;
+    if (typeof source === "string" && source.trim().toLowerCase() === "elisa_ide") {
+        return "engineering";
+    }
+    return "interactive";
+}
+
+function applyExecutionProfileDefaults(
+    body: ChatRequestPayload,
+    executionProfile: "interactive" | "engineering"
+): ChatRequestPayload {
+    const normalized: ChatRequestPayload = {
+        ...body,
+        execution_profile: executionProfile,
+    };
+
+    if (normalized.perspective_config || normalized.council_mode) {
+        return normalized;
+    }
+
+    normalized.council_mode = executionProfile === "engineering" ? "full_llm" : "rules";
+    return normalized;
+}
+
 function generateMockDeliberation(message: string) {
     const text = String(message || "");
     const isQuestion = /[?？]/.test(text);
@@ -425,6 +466,7 @@ function buildChatFallbackPayload(
     return {
         response: generateMockResponse(message),
         conversation_id: conversationId,
+        execution_profile: body.execution_profile || "interactive",
         deliberation: generateMockDeliberation(message),
         timestamp: new Date().toISOString(),
         deliberation_level: "mock",
@@ -433,6 +475,7 @@ function buildChatFallbackPayload(
         fallback_metadata: {
             triggered: true,
             reason: fallbackReason,
+            execution_profile: body.execution_profile || "interactive",
         },
     };
 }
@@ -495,12 +538,14 @@ export async function POST(request: NextRequest) {
         return parsed.error;
     }
     const body = parsed.body as ChatRequestPayload;
+    const executionProfile = resolveExecutionProfile(body);
+    const normalizedBody = applyExecutionProfileDefaults(body, executionProfile);
 
     // In same-origin mode we intentionally serve the built-in mock layer directly.
     // This avoids probing /api/_backend paths that may not be deployed.
     if (isSameOriginMode()) {
         return NextResponse.json(
-            buildChatFallbackPayload(body, SAME_ORIGIN_PRIMARY_FALLBACK_REASON)
+            buildChatFallbackPayload(normalizedBody, SAME_ORIGIN_PRIMARY_FALLBACK_REASON)
         );
     }
 
@@ -523,7 +568,7 @@ export async function POST(request: NextRequest) {
 
     let backendResponse: Response;
     try {
-        backendResponse = await forwardToBackend(backendUrl, body);
+        backendResponse = await forwardToBackend(backendUrl, normalizedBody);
     } catch (error) {
         const timeoutError = isAbortError(error);
         if (!shouldAllowMockFallback()) {
@@ -541,17 +586,19 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        return NextResponse.json(buildChatFallbackPayload(body, "transport_failure"));
+        return NextResponse.json(buildChatFallbackPayload(normalizedBody, "transport_failure"));
     }
 
     if (!backendResponse.ok && shouldAllowMockFallback()) {
-        return NextResponse.json(buildChatFallbackPayload(body, `backend_http_${backendResponse.status}`));
+        return NextResponse.json(
+            buildChatFallbackPayload(normalizedBody, `backend_http_${backendResponse.status}`)
+        );
     }
 
     const text = await backendResponse.text();
     if (!text) {
         if (shouldAllowMockFallback()) {
-            return NextResponse.json(buildChatFallbackPayload(body, "empty_backend_body"));
+            return NextResponse.json(buildChatFallbackPayload(normalizedBody, "empty_backend_body"));
         }
         return NextResponse.json({}, { status: backendResponse.status });
     }
@@ -559,12 +606,15 @@ export async function POST(request: NextRequest) {
     try {
         const payload = JSON.parse(text);
         if (typeof payload === 'object' && payload !== null) {
+            if (typeof payload.execution_profile !== "string") {
+                payload.execution_profile = executionProfile;
+            }
             payload.deliberation_level = "runtime";
         }
         return NextResponse.json(payload, { status: backendResponse.status });
     } catch {
         if (shouldAllowMockFallback()) {
-            return NextResponse.json(buildChatFallbackPayload(body, "invalid_backend_json"));
+            return NextResponse.json(buildChatFallbackPayload(normalizedBody, "invalid_backend_json"));
         }
         return NextResponse.json(
             { error: "Backend returned invalid JSON", backend_status: backendResponse.status },

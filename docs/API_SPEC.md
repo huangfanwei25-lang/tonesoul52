@@ -1,6 +1,6 @@
 # API Specification (Unified Web + Backend)
 
-Last updated: 2026-02-13
+Last updated: 2026-02-24
 
 ## Goal
 
@@ -158,6 +158,14 @@ Runtime environment:
   - `message: string`
   - `history?: array`
   - `full_analysis?: boolean`
+  - `execution_profile?: "interactive" | "engineering"`
+    - default inference:
+      - explicit field wins when provided
+      - otherwise `elisa_context.source="elisa_ide"` infers `"engineering"`
+      - fallback default is `"interactive"`
+    - profile default council mode (applied only when `council_mode` and `perspective_config` are both absent):
+      - `"interactive"` -> `"rules"`
+      - `"engineering"` -> `"full_llm"`
   - `council_mode?: "rules" | "hybrid" | "full_llm"`
     - compatibility: `"rules_only"` is accepted and normalized to `"rules"`
   - `perspective_config?: object`
@@ -178,6 +186,7 @@ Runtime environment:
       - each `changed_files` entry must be a string
 - Response (backend path):
   - `response: string`
+  - `execution_profile: "interactive" | "engineering"`
   - `verdict?: object`
     - `verdict.transcript.council_mode_observability?: object`
       - `source: "request_perspective_config" | "explicit_perspectives" | "env_default"`
@@ -199,6 +208,7 @@ Runtime environment:
     - mirrors `verdict.metadata.semantic_graph` for backward compatibility
 - Response (explicit mock fallback path, opt-in):
   - `response: string`
+  - `execution_profile: "interactive" | "engineering"`
   - `deliberation: object`
   - `backend_mode: "mock_fallback"`
   - `fallback_reason: "transport_failure"`

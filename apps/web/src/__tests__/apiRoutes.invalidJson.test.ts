@@ -119,6 +119,21 @@ describe("API route handlers return 502 for invalid backend JSON", () => {
         expect(fetchMock).not.toHaveBeenCalled();
     });
 
+    it("chat route rejects invalid execution_profile with 400", async () => {
+        const fetchMock = vi.spyOn(globalThis, "fetch");
+        const response = await postChat(
+            makeRequest({
+                message: "hello",
+                execution_profile: "fast_mode",
+            }) as never
+        );
+        const payload = (await response.json()) as Record<string, unknown>;
+
+        expect(response.status).toBe(400);
+        expect(payload.error).toBe("Invalid execution_profile");
+        expect(fetchMock).not.toHaveBeenCalled();
+    });
+
     it("chat route rejects invalid persona custom_roles type with 400", async () => {
         const fetchMock = vi.spyOn(globalThis, "fetch");
         const response = await postChat(

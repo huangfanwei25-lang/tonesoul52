@@ -2,6 +2,7 @@ from scripts.verify_web_api import (
     _build_elisa_chat_payload,
     _summarize_payload,
     _validate_chat_council_mode,
+    _validate_execution_profile,
     _validate_same_origin_backend_health,
 )
 
@@ -33,9 +34,21 @@ def test_validate_chat_council_mode_fails_for_mismatch():
 
 def test_summarize_chat_payload_includes_council_mode():
     payload = _chat_payload("full_llm")
+    payload["execution_profile"] = "engineering"
     summary = _summarize_payload("POST web /api/chat", payload, verbose=False)
     assert summary["council_mode"] == "full_llm"
+    assert summary["execution_profile"] == "engineering"
     assert summary["has_verdict"] is True
+
+
+def test_validate_execution_profile_passes_for_expected_profile():
+    payload = {"response": "ok", "execution_profile": "engineering"}
+    assert _validate_execution_profile(payload, "engineering", "chat") is True
+
+
+def test_validate_execution_profile_fails_for_mismatch():
+    payload = {"response": "ok", "execution_profile": "interactive"}
+    assert _validate_execution_profile(payload, "engineering", "chat") is False
 
 
 def test_validate_same_origin_backend_health_passes():
@@ -52,6 +65,7 @@ def test_build_elisa_chat_payload_contains_expected_envelope():
     payload = _build_elisa_chat_payload("conv_123", "session_abc")
     assert payload["conversation_id"] == "conv_123"
     assert payload["session_id"] == "session_abc"
+    assert payload["execution_profile"] == "engineering"
     assert payload["council_mode"] == "rules"
 
     elisa_context = payload["elisa_context"]

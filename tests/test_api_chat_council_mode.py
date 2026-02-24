@@ -99,6 +99,113 @@ def test_chat_rejects_invalid_perspective_config_shape():
     assert payload["error"] == "Invalid perspective_config"
 
 
+def test_chat_rejects_invalid_execution_profile_value():
+    client = _client()
+    response = client.post(
+        "/api/chat",
+        json={"message": "hello", "execution_profile": "fast_mode"},
+    )
+    assert response.status_code == 400
+    payload = response.get_json()
+    assert payload["error"] == "Invalid execution_profile"
+
+
+def test_chat_defaults_to_interactive_profile_and_rules_mode(monkeypatch):
+    import tonesoul.unified_pipeline as unified_pipeline
+
+    captured: dict = {}
+    monkeypatch.setattr(
+        unified_pipeline,
+        "create_unified_pipeline",
+        lambda: _mock_pipeline(captured),
+    )
+
+    client = _client()
+    response = client.post("/api/chat", json={"message": "hello"})
+    payload = response.get_json()
+
+    assert response.status_code == 200
+    assert payload["execution_profile"] == "interactive"
+    kwargs = captured["kwargs"]
+    assert kwargs["council_mode"] == "rules"
+
+
+def test_chat_engineering_profile_defaults_to_full_llm_mode(monkeypatch):
+    import tonesoul.unified_pipeline as unified_pipeline
+
+    captured: dict = {}
+    monkeypatch.setattr(
+        unified_pipeline,
+        "create_unified_pipeline",
+        lambda: _mock_pipeline(captured),
+    )
+
+    client = _client()
+    response = client.post(
+        "/api/chat",
+        json={"message": "hello", "execution_profile": "engineering"},
+    )
+    payload = response.get_json()
+
+    assert response.status_code == 200
+    assert payload["execution_profile"] == "engineering"
+    kwargs = captured["kwargs"]
+    assert kwargs["council_mode"] == "full_llm"
+
+
+def test_chat_elisa_context_infers_engineering_profile(monkeypatch):
+    import tonesoul.unified_pipeline as unified_pipeline
+
+    captured: dict = {}
+    monkeypatch.setattr(
+        unified_pipeline,
+        "create_unified_pipeline",
+        lambda: _mock_pipeline(captured),
+    )
+
+    client = _client()
+    response = client.post(
+        "/api/chat",
+        json={
+            "message": "hello",
+            "elisa_context": {"source": "elisa_ide"},
+        },
+    )
+    payload = response.get_json()
+
+    assert response.status_code == 200
+    assert payload["execution_profile"] == "engineering"
+    kwargs = captured["kwargs"]
+    assert kwargs["council_mode"] == "full_llm"
+
+
+def test_chat_explicit_council_mode_overrides_execution_profile_default(monkeypatch):
+    import tonesoul.unified_pipeline as unified_pipeline
+
+    captured: dict = {}
+    monkeypatch.setattr(
+        unified_pipeline,
+        "create_unified_pipeline",
+        lambda: _mock_pipeline(captured),
+    )
+
+    client = _client()
+    response = client.post(
+        "/api/chat",
+        json={
+            "message": "hello",
+            "execution_profile": "engineering",
+            "council_mode": "rules",
+        },
+    )
+    payload = response.get_json()
+
+    assert response.status_code == 200
+    assert payload["execution_profile"] == "engineering"
+    kwargs = captured["kwargs"]
+    assert kwargs["council_mode"] == "rules"
+
+
 def test_chat_exposes_default_semantic_fields_when_pipeline_omits_them(monkeypatch):
     import tonesoul.unified_pipeline as unified_pipeline
 
