@@ -436,7 +436,7 @@ const fetchWithRetry = async (
 // 標準 Gemini API（快速回應）
 const callGeminiAPI = async (prompt: string, apiKey: string): Promise<string> => {
     const response = await fetchWithRetry(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
         {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -463,7 +463,7 @@ const callGeminiAPI = async (prompt: string, apiKey: string): Promise<string> =>
 const callGeminiDeepThinkingAPI = async (prompt: string, apiKey: string): Promise<string> => {
     // 使用 gemini-2.5-flash-preview 支援 thinking budget
     const response = await fetchWithRetry(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
         {
             method: "POST",
             headers: { "Content-Type": "application/json" },

@@ -527,33 +527,5 @@ def _build_chat_evolution_payload(response_payload: dict) -> dict:
         "captured_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
     }
 
-# Note: In Vercel serverless, in-memory caching will not persist across requests reliably.
-# We implement stub logic conforming to the interface to prevent code crashes.
-
-_CHAT_CACHE_SCHEMA_VERSION = "v1"
-
-def _chat_cache_get(cache_key: str) -> dict | None:
-    return None
-
-def _chat_cache_set(cache_key: str, payload: dict) -> None:
-    pass
-
-def _build_chat_cache_key(*, message: str, history: list, full_analysis: bool, execution_profile: str, council_mode: str | None, perspective_config: dict | None, persona_config: dict | None, prior_tension: dict | None) -> str:
-    import json
-    import hashlib
-    canonical_payload = {
-        "schema_version": _CHAT_CACHE_SCHEMA_VERSION,
-        "message": message,
-        "history": history,
-        "full_analysis": full_analysis,
-        "execution_profile": execution_profile,
-        "council_mode": council_mode,
-        "perspective_config": perspective_config,
-        "persona_config": persona_config,
-        "prior_tension": prior_tension,
-    }
-    canonical = json.dumps(canonical_payload, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
-    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
-
 def _should_skip_live_chat_pipeline_for_tests(pipeline) -> bool:
     return False
