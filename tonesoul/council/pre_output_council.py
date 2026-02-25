@@ -69,7 +69,7 @@ class PreOutputCouncil:
             block_threshold=self.block_threshold,
         )
         language = resolve_language(context)
-        divergence = build_divergence_analysis(votes)
+        divergence = build_divergence_analysis(votes, context=context)
         verdict.divergence_analysis = divergence
         verdict.human_summary = generate_human_summary(verdict, language=language)
         verdict.transcript = build_transcript(

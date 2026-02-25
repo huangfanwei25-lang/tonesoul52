@@ -242,6 +242,9 @@ def build_structured_output(verdict: CouncilVerdict) -> dict:
             "has_strong_objection": coherence.has_strong_objection,
         },
         "core_divergence": divergence.get("core_divergence"),
+        "role_tensions": divergence.get("role_tensions", []),
+        "recommended_action": divergence.get("recommended_action"),
+        "visual_context": divergence.get("visual_context"),
     }
 
     follow_up_actions = []

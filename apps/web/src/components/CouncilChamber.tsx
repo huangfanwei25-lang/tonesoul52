@@ -12,6 +12,16 @@ interface CouncilChamberProps {
     philosopher?: CouncilMember;
     engineer?: CouncilMember;
     guardian?: CouncilMember;
+    role_tensions?: Array<{
+        from: string;
+        from_role: string;
+        to: string;
+        to_role: string;
+        reason: string;
+        counter_reason: string;
+        evidence: string[];
+    }>;
+    recommended_action?: string;
 }
 
 interface CouncilRowProps {
@@ -92,8 +102,8 @@ const CouncilRow = ({ role, data, icon: Icon, colorClass, bgClass }: CouncilRowP
     );
 };
 
-export default function CouncilChamber({ philosopher, engineer, guardian }: CouncilChamberProps) {
-    if (!philosopher && !engineer && !guardian) return null;
+export default function CouncilChamber({ philosopher, engineer, guardian, role_tensions, recommended_action }: CouncilChamberProps) {
+    if (!philosopher && !engineer && !guardian && (!role_tensions || role_tensions.length === 0)) return null;
 
     return (
         <div className="space-y-3">
@@ -103,29 +113,75 @@ export default function CouncilChamber({ philosopher, engineer, guardian }: Coun
                 </span>
             </div>
 
-            <div className="space-y-2">
-                <CouncilRow
-                    role="Philosopher"
-                    data={philosopher}
-                    icon={Lightbulb}
-                    colorClass="border-amber-200"
-                    bgClass="bg-amber-50"
-                />
-                <CouncilRow
-                    role="Engineer"
-                    data={engineer}
-                    icon={Cpu}
-                    colorClass="border-blue-200"
-                    bgClass="bg-blue-50"
-                />
-                <CouncilRow
-                    role="Guardian"
-                    data={guardian}
-                    icon={Shield}
-                    colorClass="border-emerald-200"
-                    bgClass="bg-emerald-50"
-                />
-            </div>
+            {recommended_action && (
+                <div className="p-3 mb-3 bg-indigo-50 border border-indigo-200 rounded-lg">
+                    <span className="text-xs font-bold text-indigo-700 block mb-1">RECOMMENDED ACTION</span>
+                    <p className="text-sm text-indigo-900">{recommended_action}</p>
+                </div>
+            )}
+
+            {role_tensions && role_tensions.length > 0 && (
+                <div className="space-y-2 mb-4">
+                    <span className="text-[10px] font-bold text-rose-500 uppercase tracking-wider block mb-2">
+                        議會張力衝突點 (Divergence Traces)
+                    </span>
+                    {role_tensions.map((tension, idx) => (
+                        <div key={idx} className="p-3 bg-rose-50/50 border border-rose-100 rounded-lg text-sm">
+                            <div className="flex items-center gap-2 mb-1.5">
+                                <span className="font-semibold text-rose-700">{tension.from}</span>
+                                <span className="text-rose-400 text-xs px-2">vs</span>
+                                <span className="font-semibold text-rose-700">{tension.to}</span>
+                            </div>
+                            <div className="grid grid-cols-2 gap-3 text-xs mb-2">
+                                <div className="p-2 bg-white/60 rounded border border-rose-50">
+                                    <span className="font-medium text-rose-800/60 block mb-0.5">觀點</span>
+                                    <span className="text-rose-950">{tension.reason}</span>
+                                </div>
+                                <div className="p-2 bg-white/60 rounded border border-rose-50">
+                                    <span className="font-medium text-rose-800/60 block mb-0.5">反駁</span>
+                                    <span className="text-rose-950">{tension.counter_reason}</span>
+                                </div>
+                            </div>
+                            {tension.evidence && tension.evidence.length > 0 && (
+                                <div className="mt-2 pt-2 border-t border-rose-100/50">
+                                    <span className="text-[10px] font-bold text-rose-400 block mb-1">EVIDENCE TRACE</span>
+                                    <ul className="list-disc list-inside text-xs text-rose-900/80 space-y-0.5">
+                                        {tension.evidence.map((ev, i) => (
+                                            <li key={i}>{ev}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+                        </div>
+                    ))}
+                </div>
+            )}
+
+            {(philosopher || engineer || guardian) && (
+                <div className="space-y-2">
+                    <CouncilRow
+                        role="Philosopher"
+                        data={philosopher}
+                        icon={Lightbulb}
+                        colorClass="border-amber-200"
+                        bgClass="bg-amber-50"
+                    />
+                    <CouncilRow
+                        role="Engineer"
+                        data={engineer}
+                        icon={Cpu}
+                        colorClass="border-blue-200"
+                        bgClass="bg-blue-50"
+                    />
+                    <CouncilRow
+                        role="Guardian"
+                        data={guardian}
+                        icon={Shield}
+                        colorClass="border-emerald-200"
+                        bgClass="bg-emerald-50"
+                    />
+                </div>
+            )}
         </div>
     );
 }

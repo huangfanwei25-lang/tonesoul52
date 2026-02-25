@@ -67,6 +67,18 @@ export interface DeliberationData {
             is_valid: boolean;
         };
     };
+    role_tensions?: Array<{
+        from: string;
+        from_role: string;
+        to: string;
+        to_role: string;
+        reason: string;
+        counter_reason: string;
+        evidence: string[];
+    }>;
+    recommended_action?: string;
+    visual_context?: string;
+
     // ==================== vMT-2601 Multiplex Thinking ====================
     // 參考論文：Multiplex Thinking: Reasoning via Token-wise Branch-and-Merge
     // 公式：h_multiplex = Σ w_i · E(t_i)

@@ -313,6 +313,7 @@ def _build_role_tensions(votes: List[PerspectiveVote]) -> List[Dict[str, object]
                 "bucket": bucket,
                 "reasoning": (vote.reasoning or "").strip(),
                 "confidence": confidence,
+                "evidence": list(vote.evidence or []),
             }
         )
 
@@ -371,6 +372,7 @@ def _build_role_tensions(votes: List[PerspectiveVote]) -> List[Dict[str, object]
                 "to_decision": target["bucket"],
                 "reason": source_reason,
                 "counter_reason": target_reason,
+                "evidence": source.get("evidence", []),
             }
         )
 
@@ -417,7 +419,7 @@ def _build_divergence_quality(
     }
 
 
-def build_divergence_analysis(votes: List[PerspectiveVote]) -> Dict[str, object]:
+def build_divergence_analysis(votes: List[PerspectiveVote], context: Optional[Dict[str, object]] = None) -> Dict[str, object]:
     agree: List[str] = []
     concerns: List[str] = []
     objections: List[str] = []
@@ -448,6 +450,8 @@ def build_divergence_analysis(votes: List[PerspectiveVote]) -> Dict[str, object]
     role_tensions = _build_role_tensions(votes)
     quality = _build_divergence_quality(votes, decision_distribution, role_tensions)
 
+    visual_context = context.get("visual_context") if context else None
+
     return {
         "agree": agree,
         "concern": concerns,
@@ -458,6 +462,7 @@ def build_divergence_analysis(votes: List[PerspectiveVote]) -> Dict[str, object]
         "decision_distribution": decision_distribution,
         "role_tensions": role_tensions,
         "quality": quality,
+        "visual_context": visual_context,
     }
 
 

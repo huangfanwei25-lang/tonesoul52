@@ -28,8 +28,7 @@ from tonesoul.supabase_persistence import SupabasePersistence
 # Provide a mock Flask app interface to make migration easier, since we are not using Flask in Vercel.
 # Some legacy code might expect `app.config.get("TESTING")`.
 class DummyAppConfig(dict):
-
-
+    pass
 # ---------------------------------------------------------
 # Payload Extraction Helpers for Vercel Serverless Formats
 # ---------------------------------------------------------
