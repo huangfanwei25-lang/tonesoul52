@@ -996,7 +996,7 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
         // 合併對話脈絡與記憶
         const fullContext = memoryContext + context;
 
-        // Phase 1: 三路並行調用（注入 Persona 調整 + Soul 狀態）
+        // Phase 1: 三路序列化調用（解決 Promise.all 導致的 429 Rate Limit）
         setLoadingPhase("召集議會成員...");
 
         // 🔮 Soul Engine: 生成內在狀態修飾語
@@ -1009,11 +1009,14 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
         const engineerMod = getPersonaModifier(personaConfig, 'engineer');
         const guardianMod = getPersonaModifier(personaConfig, 'guardian');
 
-        const [philosopherRaw, engineerRaw, guardianRaw] = await Promise.all([
-            callAPI(PHILOSOPHER_PROMPT(userMessage, fullContext) + philosopherMod + soulMod),
-            callAPI(ENGINEER_PROMPT(userMessage, fullContext) + engineerMod + soulMod),
-            callAPI(GUARDIAN_PROMPT(userMessage, fullContext) + guardianMod + soulMod),
-        ]);
+        setLoadingPhase("哲學家思考中...");
+        const philosopherRaw = await callAPI(PHILOSOPHER_PROMPT(userMessage, fullContext) + philosopherMod + soulMod);
+
+        setLoadingPhase("工程師評估中...");
+        const engineerRaw = await callAPI(ENGINEER_PROMPT(userMessage, fullContext) + engineerMod + soulMod);
+
+        setLoadingPhase("守護者審查中...");
+        const guardianRaw = await callAPI(GUARDIAN_PROMPT(userMessage, fullContext) + guardianMod + soulMod);
 
         const philosopher = safeJsonParse<{
             stance: string;
