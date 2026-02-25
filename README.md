@@ -47,6 +47,14 @@ ToneSoul is **not** another AI wrapper. It's a **governance-first architecture**
 
 > *"Most AI systems optimize for 'sounding right'. ToneSoul optimizes for 'being honest about what it doesn't know'."*
 
+### 🧬 The Essence of ToneSoul
+
+At its core, ToneSoul fundamentally differs from stateless Large Language Model (LLM) wrappers by introducing two architectural paradigms:
+
+1. **Synthetic Endocrine System (合成內分泌系統)**: Traditional LLMs operate as stateless mathematical functions ($f(prompt) = output$). ToneSoul introduces temporal psychological state management through variables such as 'Tension' and 'Intrinsic Drive'. These variables accumulate and decay over conversation turns, imparting **Cognitive Inertia (認知慣性)** to the AI. This enables emergent behavioral continuity—such as persistent curiosity, stubbornness, or cognitive dissonance—bridging the gap between isolated responses and a continuous, evolving identity.
+
+2. **Multi-Agent Cognitive Friction Engine (多代理認知摩擦引擎)**: Standard RLHF-tuned models are heavily penalized for contradiction, optimized to provide a single, compliant answer. ToneSoul deliberately induces structural cognitive dissonance by routing inputs through a 'Tri-Persona Council' (Philosopher, Engineer, Guardian). By forcing the AI to evaluate inputs from fundamentally divergent axiomatic frameworks and mathematically measuring the resulting Entropy, ToneSoul sacrifices immediate compliance to generate rigorous, synthesis-driven insights that transcend conversational cliches.
+
 ### 📸 Live Demo
 
 <p align="center">
