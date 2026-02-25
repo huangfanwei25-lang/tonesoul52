@@ -5,7 +5,7 @@ import os
 
 # Ensure the local root is in the path so we can import _shared and tonesoul
 from pathlib import Path
-_api_root = Path(__file__).resolve().parents[1]
+_api_root = Path(__file__).resolve().parent
 if str(_api_root) not in sys.path:
     sys.path.insert(0, str(_api_root))
 
