@@ -28,7 +28,205 @@ from tonesoul.supabase_persistence import SupabasePersistence
 # Provide a mock Flask app interface to make migration easier, since we are not using Flask in Vercel.
 # Some legacy code might expect `app.config.get("TESTING")`.
 class DummyAppConfig(dict):
-    pass
+
+
+# ---------------------------------------------------------
+# Payload Extraction Helpers for Vercel Serverless Formats
+# ---------------------------------------------------------
+
+def _require_optional_string(data: dict, key: str) -> tuple[str | None, tuple | None]:
+    value = data.get(key)
+    if value is None:
+        return None, None
+    if isinstance(value, str):
+        return value, None
+    return None, ({"error": f"Invalid {key}"}, 400)
+
+
+def _require_optional_bool(data: dict, key: str) -> tuple[bool | None, tuple | None]:
+    value = data.get(key)
+    if value is None:
+        return None, None
+    if isinstance(value, bool):
+        return value, None
+    return None, ({"error": f"Invalid {key}"}, 400)
+
+
+def _require_optional_dict(data: dict, key: str) -> tuple[dict | None, tuple | None]:
+    value = data.get(key)
+    if value is None:
+        return None, None
+    if isinstance(value, dict):
+        return value, None
+    return None, ({"error": f"Invalid {key}"}, 400)
+
+
+def _require_list(data: dict, key: str) -> tuple[list | None, tuple | None]:
+    value = data.get(key)
+    if isinstance(value, list):
+        return value, None
+    return None, ({"error": f"Invalid {key}"}, 400)
+
+
+def _require_optional_list(data: dict, key: str) -> tuple[list | None, tuple | None]:
+    value = data.get(key)
+    if value is None:
+        return None, None
+    if isinstance(value, list):
+        return value, None
+    return None, ({"error": f"Invalid {key}"}, 400)
+
+
+def _validate_perspective_config(config: dict) -> tuple[dict | None, tuple | None]:
+    for perspective_name, perspective_options in config.items():
+        if not isinstance(perspective_name, str) or not perspective_name.strip():
+            return None, ({"error": "Invalid perspective_config"}, 400)
+        if not isinstance(perspective_options, dict):
+            return None, ({"error": "Invalid perspective_config"}, 400)
+    return config, None
+
+
+def _validate_persona_config(config: dict) -> tuple[dict | None, tuple | None]:
+    scalar_keys = ("name", "style", "risk_sensitivity", "response_length")
+    for key in scalar_keys:
+        value = config.get(key)
+        if value is not None and not isinstance(value, str):
+            return None, ({"error": "Invalid persona"}, 400)
+
+    weights = config.get("weights")
+    if weights is not None:
+        if not isinstance(weights, dict):
+            return None, ({"error": "Invalid persona"}, 400)
+        for key in ("meaning", "practical", "safety"):
+            value = weights.get(key)
+            if value is not None and not isinstance(value, (int, float)):
+                return None, ({"error": "Invalid persona"}, 400)
+
+    custom_roles = config.get("custom_roles")
+    if custom_roles is not None:
+        if not isinstance(custom_roles, list) or len(custom_roles) > 8:
+            return None, ({"error": "Invalid persona"}, 400)
+        for role in custom_roles:
+            if not isinstance(role, dict):
+                return None, ({"error": "Invalid persona"}, 400)
+            for key in ("id", "name", "description", "prompt_hint"):
+                value = role.get(key)
+                if value is not None and not isinstance(value, str):
+                    return None, ({"error": "Invalid persona"}, 400)
+
+            attachments = role.get("attachments")
+            if attachments is not None:
+                if not isinstance(attachments, list) or len(attachments) > 6:
+                    return None, ({"error": "Invalid persona"}, 400)
+                for attachment in attachments:
+                    if not isinstance(attachment, dict):
+                        return None, ({"error": "Invalid persona"}, 400)
+                    for key in ("id", "label", "path", "note"):
+                        value = attachment.get(key)
+                        if value is not None and not isinstance(value, str):
+                            return None, ({"error": "Invalid persona"}, 400)
+
+    return config, None
+
+
+_ALLOWED_HISTORY_ROLES = {"user", "assistant", "system"}
+_MAX_HISTORY_ITEMS = 500
+
+def _validate_history_entries(history: list, *, field_name: str = "history") -> tuple | None:
+    if len(history) > _MAX_HISTORY_ITEMS:
+        return ({"error": f"{field_name} too long"}, 400)
+
+    for item in history:
+        if not isinstance(item, dict):
+            return ({"error": f"Invalid {field_name} item"}, 400)
+
+        role = item.get("role")
+        content = item.get("content")
+        if not isinstance(role, str) or role.strip().lower() not in _ALLOWED_HISTORY_ROLES:
+            return ({"error": f"Invalid {field_name} item"}, 400)
+        if not isinstance(content, str) or not content.strip():
+            return ({"error": f"Invalid {field_name} item"}, 400)
+    return None
+
+
+_ALLOWED_COUNCIL_MODES = {"rules", "rules_only", "hybrid", "full_llm"}
+
+def _require_optional_council_mode(data: dict, key: str) -> tuple[str | None, tuple | None]:
+    value = data.get(key)
+    if value is None:
+        return None, None
+    if not isinstance(value, str):
+        return None, ({"error": f"Invalid {key}"}, 400)
+    mode = value.strip().lower()
+    if mode not in _ALLOWED_COUNCIL_MODES:
+        return None, ({"error": f"Invalid {key}"}, 400)
+    if mode == "rules_only":
+        mode = "rules"
+    return mode, None
+
+
+_ALLOWED_EXECUTION_PROFILES = {"interactive", "engineering"}
+
+def _require_optional_execution_profile(data: dict, key: str) -> tuple[str | None, tuple | None]:
+    value = data.get(key)
+    if value is None:
+        return None, None
+    if not isinstance(value, str):
+        return None, ({"error": f"Invalid {key}"}, 400)
+    profile = value.strip().lower()
+    if profile not in _ALLOWED_EXECUTION_PROFILES:
+        return None, ({"error": f"Invalid {key}"}, 400)
+    return profile, None
+
+
+def _resolve_execution_profile(data: dict, explicit_profile: str | None) -> str:
+    if explicit_profile in _ALLOWED_EXECUTION_PROFILES:
+        return explicit_profile
+
+    elisa_context = data.get("elisa_context")
+    if isinstance(elisa_context, dict):
+        source = elisa_context.get("source")
+        if isinstance(source, str) and source.strip().lower() == "elisa_ide":
+            return "engineering"
+
+    return "interactive"
+
+
+def _apply_execution_profile_defaults(
+    council_mode: str | None,
+    perspective_config: dict | None,
+    execution_profile: str,
+) -> str | None:
+    if perspective_config is not None or council_mode is not None:
+        return council_mode
+    return "full_llm" if execution_profile == "engineering" else "rules"
+
+
+def _build_deliberation_payload(result) -> dict:
+    from tonesoul.utils.payload_helpers import _as_dict, _coerce_float, _clamp01
+    
+    verdict = _as_dict(getattr(result, "council_verdict", {}))
+    tonebridge = _as_dict(getattr(result, "tonebridge_analysis", {}))
+    tone_analysis = _as_dict(tonebridge.get("tone_analysis"))
+    entropy_source = _as_dict(tonebridge.get("entropy_meter"))
+
+    tone_strength = _clamp01(_coerce_float(tone_analysis.get("tone_strength"), default=0.5))
+    entropy_value = _clamp01(_coerce_float(entropy_source.get("value"), default=tone_strength))
+    if entropy_value >= 0.7:
+        entropy_status = "high_tension"
+    elif entropy_value >= 0.3:
+        entropy_status = "healthy_friction"
+    else:
+        entropy_status = "echo_chamber"
+
+    entropy_meter = {
+        "value": entropy_value,
+        "status": str(entropy_source.get("status") or entropy_status),
+    }
+
+    return {"entropy_meter": entropy_meter}
+
+
 class DummyApp:
     config = DummyAppConfig()
 app = DummyApp()
@@ -329,3 +527,34 @@ def _build_chat_evolution_payload(response_payload: dict) -> dict:
         "visual_chain_snapshot": _as_dict(deliberation.get("visual_chain_snapshot")),
         "captured_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
     }
+
+# Note: In Vercel serverless, in-memory caching will not persist across requests reliably.
+# We implement stub logic conforming to the interface to prevent code crashes.
+
+_CHAT_CACHE_SCHEMA_VERSION = "v1"
+
+def _chat_cache_get(cache_key: str) -> dict | None:
+    return None
+
+def _chat_cache_set(cache_key: str, payload: dict) -> None:
+    pass
+
+def _build_chat_cache_key(*, message: str, history: list, full_analysis: bool, execution_profile: str, council_mode: str | None, perspective_config: dict | None, persona_config: dict | None, prior_tension: dict | None) -> str:
+    import json
+    import hashlib
+    canonical_payload = {
+        "schema_version": _CHAT_CACHE_SCHEMA_VERSION,
+        "message": message,
+        "history": history,
+        "full_analysis": full_analysis,
+        "execution_profile": execution_profile,
+        "council_mode": council_mode,
+        "perspective_config": perspective_config,
+        "persona_config": persona_config,
+        "prior_tension": prior_tension,
+    }
+    canonical = json.dumps(canonical_payload, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
+def _should_skip_live_chat_pipeline_for_tests(pipeline) -> bool:
+    return False
