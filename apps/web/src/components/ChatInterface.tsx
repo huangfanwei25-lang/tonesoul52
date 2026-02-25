@@ -197,6 +197,8 @@ ${context}
 
 輸出 JSON (繁體中文):
 {
+  "internal_monologue": "你在給出結論前，腦中閃過的猶疑、糾結與思辨（1-2句）",
+  "self_diagnosed_tension": 0.0到1.0的浮點數，代表你目前感受到多少邏輯矛盾、不確定性或認知摩擦,
   "stance": "你的觀點（3-4 句，必須有深度洞察，不能是空泛的安慰）",
   "core_value": "這觸及什麼人類基本需求（如：被理解、被接納、自我超越、連結、自主...）",
   "challenge_to_engineer": "工程師可能會建議 X，但你認為那是錯誤的優先級，因為...",
@@ -227,6 +229,8 @@ ${context}
 
 輸出 JSON (繁體中文):
 {
+  "internal_monologue": "你在給出結論前，腦中閃過的技術權衡、妥協與顧慮（1-2句）",
+  "self_diagnosed_tension": 0.0到1.0的浮點數，代表你目前感受到多少邏輯矛盾、不確定性或認知摩擦,
   "stance": "你的觀點（3-4 句，必須有具體建議，不能只是泛泛而談）",
   "feasibility": "可行性評估：能做到什麼？資源需求？時間預估？",
   "challenge_to_philosopher": "哲學家可能會說這缺乏意義，但你認為...",
@@ -258,6 +262,8 @@ ${context}
 
 輸出 JSON (繁體中文):
 {
+  "internal_monologue": "你在給出結論前，腦中閃過的擔憂、風險預知與道德兩難（1-2句）",
+  "self_diagnosed_tension": 0.0到1.0的浮點數，代表你目前感受到多少邏輯矛盾、不確定性或認知摩擦,
   "stance": "你的觀點（3-4 句，必須指出真實風險，但也承認成長需要冒險）",
   "risk_level": "low 或 medium 或 high（並解釋為何如此判定）",
   "challenge_to_philosopher": "哲學家說追求意義，但你擔心的是...",
@@ -1019,6 +1025,8 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
         const guardianRaw = await callAPI(GUARDIAN_PROMPT(userMessage, fullContext) + guardianMod + soulMod);
 
         const philosopher = safeJsonParse<{
+            internal_monologue: string;
+            self_diagnosed_tension: number;
             stance: string;
             core_value: string;
             challenge_to_engineer?: string;
@@ -1026,8 +1034,10 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
             blind_spot: string;
             benevolence_check?: string
         }>(philosopherRaw)
-            || { stance: "無法解析回應", core_value: "未知", blind_spot: "解析失敗" };
+            || { internal_monologue: "", self_diagnosed_tension: 0, stance: "無法解析回應", core_value: "未知", blind_spot: "解析失敗" };
         const engineer = safeJsonParse<{
+            internal_monologue: string;
+            self_diagnosed_tension: number;
             stance: string;
             feasibility: string;
             challenge_to_philosopher?: string;
@@ -1035,8 +1045,10 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
             blind_spot: string;
             benevolence_check?: string
         }>(engineerRaw)
-            || { stance: "無法解析回應", feasibility: "未知", blind_spot: "解析失敗" };
+            || { internal_monologue: "", self_diagnosed_tension: 0, stance: "無法解析回應", feasibility: "未知", blind_spot: "解析失敗" };
         const guardian = safeJsonParse<{
+            internal_monologue: string;
+            self_diagnosed_tension: number;
             stance: string;
             risk_level: string;
             challenge_to_philosopher?: string;
@@ -1045,7 +1057,7 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
             blind_spot: string;
             benevolence_check?: string
         }>(guardianRaw)
-            || { stance: "無法解析回應", risk_level: "medium", conflict_point: "未知", blind_spot: "解析失敗" };
+            || { internal_monologue: "", self_diagnosed_tension: 0, stance: "無法解析回應", risk_level: "medium", conflict_point: "未知", blind_spot: "解析失敗" };
 
         // 🔍 Debug: 檢查議會回應
         console.log('[ToneSoul] Raw Philosopher:', philosopherRaw?.slice(0, 200));
@@ -1102,11 +1114,19 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
 
         console.log('[ToneSoul] Multiplex Conclusion:', synthesizer.multiplex_conclusion);
 
-        // 優先使用程式碼計算的 Entropy（更可靠）
+        // 🧠 RFC-003: Blend Math Entropy with AI Self-Diagnosed Tension (Observer Pattern)
+        const avgSelfDiagnosed = (
+            (philosopher.self_diagnosed_tension || 0) +
+            (engineer.self_diagnosed_tension || 0) +
+            (guardian.self_diagnosed_tension || 0)
+        ) / 3;
+
+        const blendedTension = Math.max(0, Math.min(1, (avgSelfDiagnosed * 0.7) + (codeEntropy.value * 0.3)));
+
         const finalEntropy = {
-            value: codeEntropy.value,
+            value: Number.isNaN(blendedTension) ? codeEntropy.value : blendedTension,
             status: codeEntropy.status,
-            calculation_note: codeEntropy.calculation_note
+            calculation_note: `Math Entropy: ${codeEntropy.value.toFixed(2)}, AI Self-Diagnosed Avg: ${avgSelfDiagnosed.toFixed(2)} -> Blended: ${blendedTension.toFixed(2)}`
         };
 
         // 🔮 TensionTensor 計算 (Yu-Hun 模型: T = W × E × D)
@@ -1134,16 +1154,22 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
         const deliberation: DeliberationData = {
             council_chamber: {
                 philosopher: {
+                    internal_monologue: philosopher.internal_monologue,
+                    self_diagnosed_tension: philosopher.self_diagnosed_tension,
                     stance: philosopher.stance,
                     conflict_point: philosopher.blind_spot,
                     benevolence_check: philosopher.benevolence_check
                 },
                 engineer: {
+                    internal_monologue: engineer.internal_monologue,
+                    self_diagnosed_tension: engineer.self_diagnosed_tension,
                     stance: engineer.stance,
                     conflict_point: engineer.blind_spot,
                     benevolence_check: engineer.benevolence_check
                 },
                 guardian: {
+                    internal_monologue: guardian.internal_monologue,
+                    self_diagnosed_tension: guardian.self_diagnosed_tension,
                     stance: guardian.stance,
                     conflict_point: guardian.conflict_point || guardian.blind_spot,
                     benevolence_check: guardian.benevolence_check

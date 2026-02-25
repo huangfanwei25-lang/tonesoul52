@@ -3,6 +3,8 @@
 import { Lightbulb, Cpu, Shield, AlertCircle, Heart } from "lucide-react";
 
 interface CouncilMember {
+    internal_monologue?: string;
+    self_diagnosed_tension?: number;
     stance: string;
     conflict_point?: string;
     benevolence_check?: string;
@@ -70,6 +72,13 @@ const CouncilRow = ({ role, data, icon: Icon, colorClass, bgClass }: CouncilRowP
                             {data.stance || "思考中..."}
                         </p>
                     </div>
+
+                    {data.internal_monologue && (
+                        <div className="mt-2 text-xs italic text-slate-500 border-l-2 border-slate-300 pl-2 py-0.5">
+                            <span className="font-semibold block mb-0.5">💭 內在獨白 (Monologue) — 診斷張力: {data.self_diagnosed_tension !== undefined ? data.self_diagnosed_tension.toFixed(2) : "0.00"}</span>
+                            {data.internal_monologue}
+                        </div>
+                    )}
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         {data.conflict_point && (

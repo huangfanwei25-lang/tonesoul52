@@ -36,9 +36,9 @@ export interface Message {
 
 export interface DeliberationData {
     council_chamber?: {
-        philosopher: { stance: string; conflict_point?: string; benevolence_check?: string };
-        engineer: { stance: string; conflict_point?: string; benevolence_check?: string };
-        guardian: { stance: string; conflict_point?: string; benevolence_check?: string };
+        philosopher: { internal_monologue?: string; self_diagnosed_tension?: number; stance: string; conflict_point?: string; benevolence_check?: string };
+        engineer: { internal_monologue?: string; self_diagnosed_tension?: number; stance: string; conflict_point?: string; benevolence_check?: string };
+        guardian: { internal_monologue?: string; self_diagnosed_tension?: number; stance: string; conflict_point?: string; benevolence_check?: string };
     };
     quality?: {
         score: number;

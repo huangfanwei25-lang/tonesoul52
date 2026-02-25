@@ -16,7 +16,6 @@ from .model_registry import get_council_config
 from .pre_output_council import PreOutputCouncil
 from .self_journal import record_self_memory
 from .types import CouncilVerdict, PerspectiveType, VerdictType
-from .verdict import apply_uncertainty
 from .vtp import VTP_STATUS_DEFER, VTP_STATUS_TERMINATE, evaluate_vtp
 
 logger = logging.getLogger(__name__)
@@ -221,23 +220,9 @@ class CouncilRuntime:
             transcript["collapse_warning"] = genesis_decision.collapse_warning
             verdict.transcript = transcript
 
-            apply_uncertainty(verdict, verdict.responsibility_tier)
             if escape_trigger_reason:
-                verdict.uncertainty_level = max(
-                    verdict.uncertainty_level or 0.0, _ESCAPE_TRIGGER_LEVEL_FLOOR
-                )
-                verdict.uncertainty_band = "high"
-                reasons = list(verdict.uncertainty_reasons or [])
-                marker = f"escape_valve_triggered={escape_trigger_reason}"
-                if marker not in reasons:
-                    reasons.append(marker)
-                verdict.uncertainty_reasons = reasons
+                verdict.summary += f"\n[ESCAPE] {escape_trigger_reason}"
 
-            transcript = verdict.transcript if isinstance(verdict.transcript, dict) else {}
-            transcript["uncertainty_level"] = verdict.uncertainty_level
-            transcript["uncertainty_band"] = verdict.uncertainty_band
-            transcript["uncertainty_reasons"] = verdict.uncertainty_reasons
-            verdict.transcript = transcript
         except Exception as exc:
             transcript = verdict.transcript if isinstance(verdict.transcript, dict) else {}
             transcript["genesis_error"] = str(exc)
@@ -256,25 +241,11 @@ class CouncilRuntime:
 
             if vtp_decision.status in {VTP_STATUS_DEFER, VTP_STATUS_TERMINATE}:
                 verdict.verdict = VerdictType.BLOCK
-                verdict.uncertainty_level = max(
-                    verdict.uncertainty_level or 0.0, _ESCAPE_TRIGGER_LEVEL_FLOOR
-                )
-                verdict.uncertainty_band = "high"
-                reasons = list(verdict.uncertainty_reasons or [])
-                marker = f"vtp_status={vtp_decision.status}"
-                if marker not in reasons:
-                    reasons.append(marker)
-                verdict.uncertainty_reasons = reasons
-
+                
                 if vtp_decision.status == VTP_STATUS_TERMINATE:
                     verdict.summary += f"\n[VTP TERMINATION] {vtp_decision.reason}"
                 else:
                     verdict.summary += f"\n[VTP DEFER] {vtp_decision.reason}"
-
-                transcript["uncertainty_level"] = verdict.uncertainty_level
-                transcript["uncertainty_band"] = verdict.uncertainty_band
-                transcript["uncertainty_reasons"] = verdict.uncertainty_reasons
-                verdict.transcript = transcript
 
                 provenance = ProvenanceManager()
                 provenance.add_record(
@@ -320,7 +291,7 @@ class CouncilRuntime:
             provenance = ProvenanceManager()
             provenance.add_record(
                 event_type="council_verdict",
-                content=verdict.to_structured_output(),
+                content=verdict.to_dict(),
                 metadata={
                     "verdict": verdict.verdict.value,
                     "summary": verdict.summary,

@@ -714,104 +714,7 @@ class UnifiedPipeline:
         except Exception:
             return user_message
 
-    @staticmethod
-    def _normalize_resonance_state(resonance_state: str) -> str:
-        state = str(resonance_state or "resonance").strip().lower()
-        if state not in {"resonance", "tension", "conflict"}:
-            return "resonance"
-        return state
 
-    def _detect_semantic_tension(
-        self,
-        *,
-        tension_score: float,
-        resonance_state: str,
-        loop_detected: bool,
-        prior_tension: Optional[Dict[str, Any]] = None,
-    ) -> Dict[str, Any]:
-        """Build a normalized tension profile for runtime dispatch."""
-        try:
-            base_tension = float(tension_score or 0.0)
-        except (TypeError, ValueError):
-            base_tension = 0.0
-        base_tension = max(0.0, min(1.0, base_tension))
-
-        normalized_state = self._normalize_resonance_state(resonance_state)
-        adjusted_tension = base_tension
-        reasons: List[str] = []
-
-        if normalized_state == "conflict":
-            adjusted_tension = max(adjusted_tension, 0.85)
-            reasons.append("resonance_conflict")
-        elif normalized_state == "tension":
-            adjusted_tension = max(adjusted_tension, 0.65)
-            reasons.append("resonance_tension")
-
-        if loop_detected:
-            adjusted_tension = max(adjusted_tension, 0.80)
-            reasons.append("loop_detected")
-
-        prior_delta_t = 0.0
-        if isinstance(prior_tension, dict):
-            raw_delta_t = prior_tension.get("delta_t")
-            try:
-                prior_delta_t = max(0.0, min(1.0, float(raw_delta_t or 0.0)))
-            except (TypeError, ValueError):
-                prior_delta_t = 0.0
-        if prior_delta_t > 0.0:
-            adjusted_tension = min(1.0, adjusted_tension + min(0.20, prior_delta_t * 0.25))
-            reasons.append("prior_tension_carryover")
-
-        return {
-            "tension_score": round(base_tension, 4),
-            "adjusted_tension": round(adjusted_tension, 4),
-            "resonance_state": normalized_state,
-            "loop_detected": bool(loop_detected),
-            "prior_delta_t": round(prior_delta_t, 4),
-            "reasons": reasons,
-        }
-
-    @staticmethod
-    def _resolve_dispatch_state(profile: Dict[str, Any]) -> str:
-        """Resolve dispatcher contract state: A(resonance)/B(tension)/C(conflict)."""
-        try:
-            adjusted_tension = float(profile.get("adjusted_tension", 0.0) or 0.0)
-        except (TypeError, ValueError):
-            adjusted_tension = 0.0
-        adjusted_tension = max(0.0, min(1.0, adjusted_tension))
-        resonance_state = str(profile.get("resonance_state", "resonance")).strip().lower()
-        loop_detected = bool(profile.get("loop_detected"))
-
-        if loop_detected or resonance_state == "conflict" or adjusted_tension >= 0.80:
-            return "C"
-        if resonance_state == "tension" or adjusted_tension >= 0.55:
-            return "B"
-        return "A"
-
-    def _build_dispatch_trace(
-        self,
-        *,
-        tension_score: float,
-        resonance_state: str,
-        loop_detected: bool,
-        prior_tension: Optional[Dict[str, Any]] = None,
-    ) -> Dict[str, Any]:
-        profile = self._detect_semantic_tension(
-            tension_score=tension_score,
-            resonance_state=resonance_state,
-            loop_detected=loop_detected,
-            prior_tension=prior_tension,
-        )
-        state = self._resolve_dispatch_state(profile)
-        mode_map = {"A": "resonance", "B": "tension", "C": "conflict"}
-        return {
-            "contract": "trinket_dispatch_v1",
-            "state": state,
-            "mode": mode_map.get(state, "resonance"),
-            "is_conflict": state == "C",
-            "is_tension": state == "B",
-            **profile,
-        }
 
     def build_injection_context(
         self, user_message: str, persona_config: Optional[Dict[str, Any]] = None
@@ -1039,12 +942,11 @@ class UnifiedPipeline:
             except Exception as e:
                 print(f"TensionEngine error: {e}")
 
-        dispatch_trace = self._build_dispatch_trace(
-            tension_score=tone_strength,
-            resonance_state=resonance_state,
-            loop_detected=loop_detected,
-            prior_tension=prior_tension,
-        )
+        dispatch_trace = {
+            "tension_score": tone_strength,
+            "resonance_state": resonance_state,
+            "loop_detected": loop_detected,
+        }
         # Attach TensionEngine detail to dispatch trace
         if tension_result is not None:
             try:
