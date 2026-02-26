@@ -14,7 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 const siteUrl = resolveSiteUrl();
-const allowIndexing = isVercelProduction();
+// 強制開啟索引，以便 Google 可以爬取（如果需要針對特定環境，可以加回 VERCEL_ENV 判斷）
+const allowIndexing = true;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -32,6 +33,10 @@ export const metadata: Metadata = {
     type: "website",
     url: siteUrl,
     siteName: "ToneSoul",
+  },
+  verification: {
+    // 這裡替換成你的 Google Search Console 驗證碼
+    google: "填入你的_google_site_verification_碼",
   },
 };
 

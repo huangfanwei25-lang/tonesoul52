@@ -27,6 +27,31 @@ export default function sitemap(): MetadataRoute.Sitemap {
             changeFrequency: "monthly",
             priority: 0.8,
         },
+        // Personal Pages
+        {
+            url: `${siteUrl}/about`,
+            lastModified,
+            changeFrequency: "weekly",
+            priority: 0.9,
+        },
+        {
+            url: `${siteUrl}/about/ai-ethics`,
+            lastModified,
+            changeFrequency: "monthly",
+            priority: 0.8,
+        },
+        {
+            url: `${siteUrl}/about/sentience`,
+            lastModified,
+            changeFrequency: "monthly",
+            priority: 0.8,
+        },
+        {
+            url: `${siteUrl}/about/prompt-engineering`,
+            lastModified,
+            changeFrequency: "monthly",
+            priority: 0.8,
+        },
     ];
 
     // In non-production environments, we still return a sitemap for tooling,
