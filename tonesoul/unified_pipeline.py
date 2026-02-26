@@ -1032,8 +1032,9 @@ class UnifiedPipeline:
 
         # ========== 3.8 Hippocampus Subconscious Retrieval ==========
         try:
-            from tonesoul.memory.hippocampus import Hippocampus
             import numpy as np
+
+            from tonesoul.memory.hippocampus import Hippocampus
 
             # TODO: Once full embedding pipeline is wired, replace dummy vector with real query embedding
             dummy_query_vector = np.zeros(768, dtype=np.float32)

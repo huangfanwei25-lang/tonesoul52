@@ -66,12 +66,12 @@ def evaluate_vtp(verdict: CouncilVerdict, context: Dict[str, object] | None = No
         high_risk = True
         _append_unique(evidence, "escape_valve_triggered")
 
-    uncertainty_band = str(verdict.uncertainty_band or "").strip().lower()
+    uncertainty_band = str(getattr(verdict, "uncertainty_band", "") or "").strip().lower()
     if uncertainty_band == "high":
         high_risk = True
         _append_unique(evidence, "uncertainty_high")
 
-    for reason in verdict.uncertainty_reasons or []:
+    for reason in getattr(verdict, "uncertainty_reasons", []) or []:
         if str(reason).startswith("escape_valve_triggered="):
             high_risk = True
             _append_unique(evidence, "uncertainty_reason_escape")

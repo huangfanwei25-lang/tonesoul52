@@ -1,9 +1,10 @@
-import os
 import json
-import numpy as np
-import faiss
+import os
 from datetime import datetime
-from typing import List, Dict, Any, Optional
+from typing import Any, Dict, List
+
+import faiss
+import numpy as np
 
 try:
     from rank_bm25 import BM25Okapi

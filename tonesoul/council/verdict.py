@@ -1,12 +1,11 @@
 from __future__ import annotations
 
-from typing import List, Optional, Tuple, Union
+from typing import List, Union
 
 from .summary_generator import build_divergence_analysis, format_stance_declaration
 from .types import (
     CoherenceScore,
     CouncilVerdict,
-    GroundingStatus,
     PerspectiveType,
     PerspectiveVote,
     VerdictType,

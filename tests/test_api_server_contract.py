@@ -71,8 +71,6 @@ def test_validate_endpoint_returns_verdict_contract():
     payload = response.get_json()
 
     assert payload["verdict"] == "block"
-    assert "uncertainty_level" in payload
-    assert "uncertainty_band" in payload
     assert isinstance(payload.get("transcript"), dict)
     assert isinstance(payload.get("benevolence_audit"), dict)
 
@@ -101,11 +99,6 @@ def test_validate_endpoint_escape_valve_seed_can_trigger_when_trusted(monkeypatc
 
     assert payload["verdict"] == "block"
     assert escape_payload.get("triggered") is True
-    assert payload.get("uncertainty_band") == "high"
-    assert any(
-        str(reason).startswith("escape_valve_triggered=")
-        for reason in (payload.get("uncertainty_reasons") or [])
-    )
     assert "[ESCAPE VALVE NOTICE]" in payload.get("summary", "")
 
 

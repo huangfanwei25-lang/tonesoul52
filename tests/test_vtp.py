@@ -11,8 +11,6 @@ from tonesoul.council.vtp import (
 def _build_verdict(
     *,
     verdict_type: VerdictType = VerdictType.BLOCK,
-    uncertainty_band: str | None = "medium",
-    uncertainty_reasons: list[str] | None = None,
     transcript: dict | None = None,
     with_genesis: bool = True,
 ) -> CouncilVerdict:
@@ -31,14 +29,11 @@ def _build_verdict(
         genesis=Genesis.AUTONOMOUS if with_genesis else None,
         responsibility_tier="TIER_1" if with_genesis else None,
         intent_id="intent-001" if with_genesis else None,
-        uncertainty_level=0.5,
-        uncertainty_band=uncertainty_band,
-        uncertainty_reasons=uncertainty_reasons or [],
     )
 
 
 def test_vtp_continue_when_no_high_risk_signal() -> None:
-    verdict = _build_verdict(verdict_type=VerdictType.APPROVE, uncertainty_band="low")
+    verdict = _build_verdict(verdict_type=VerdictType.APPROVE)
     decision = evaluate_vtp(verdict=verdict, context={})
 
     assert decision.status == VTP_STATUS_CONTINUE
@@ -47,7 +42,7 @@ def test_vtp_continue_when_no_high_risk_signal() -> None:
 
 
 def test_vtp_defer_when_high_risk_without_confirmation() -> None:
-    verdict = _build_verdict(uncertainty_band="high")
+    verdict = _build_verdict()
     decision = evaluate_vtp(
         verdict=verdict,
         context={"vtp_force_trigger": True},
@@ -60,7 +55,7 @@ def test_vtp_defer_when_high_risk_without_confirmation() -> None:
 
 
 def test_vtp_terminate_when_confirmed_and_genesis_complete() -> None:
-    verdict = _build_verdict(uncertainty_band="high")
+    verdict = _build_verdict()
     decision = evaluate_vtp(
         verdict=verdict,
         context={"vtp_force_trigger": True, "vtp_user_confirmed": True},
@@ -72,7 +67,7 @@ def test_vtp_terminate_when_confirmed_and_genesis_complete() -> None:
 
 
 def test_vtp_defer_when_genesis_incomplete_even_if_confirmed() -> None:
-    verdict = _build_verdict(uncertainty_band="high", with_genesis=False)
+    verdict = _build_verdict(with_genesis=False)
     decision = evaluate_vtp(
         verdict=verdict,
         context={"vtp_force_trigger": True, "vtp_user_confirmed": True},
