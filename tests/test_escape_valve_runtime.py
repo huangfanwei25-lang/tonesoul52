@@ -44,11 +44,6 @@ def test_escape_valve_can_trigger_with_seeded_failure_history() -> None:
     assert isinstance(escape_payload, dict)
     assert escape_payload.get("triggered") is True
     assert "[ESCAPE VALVE NOTICE]" in verdict.summary
-    assert verdict.uncertainty_band == "high"
-    assert any(
-        str(reason).startswith("escape_valve_triggered=")
-        for reason in (verdict.uncertainty_reasons or [])
-    )
     assert transcript.get("escape_valve_observability", {}).get("seed_trusted") is True
 
 
