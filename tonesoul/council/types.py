@@ -83,6 +83,9 @@ class CouncilVerdict:
     is_mine: Optional[bool] = None
     tsr_delta_norm: Optional[float] = None
     collapse_warning: Optional[str] = None
+    uncertainty_level: Optional[float] = None
+    uncertainty_band: Optional[str] = None
+    uncertainty_reasons: Optional[List[str]] = None
     benevolence_audit: Optional[dict] = None  # Added for 7D Backend Auditor
 
     def to_dict(self) -> dict:
@@ -101,6 +104,9 @@ class CouncilVerdict:
             "is_mine": self.is_mine,
             "tsr_delta_norm": self.tsr_delta_norm,
             "collapse_warning": self.collapse_warning,
+            "uncertainty_level": self.uncertainty_level,
+            "uncertainty_band": self.uncertainty_band,
+            "uncertainty_reasons": self.uncertainty_reasons or [],
             "votes": [
                 {
                     "perspective": (
