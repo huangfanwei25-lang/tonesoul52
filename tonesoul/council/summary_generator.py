@@ -419,7 +419,9 @@ def _build_divergence_quality(
     }
 
 
-def build_divergence_analysis(votes: List[PerspectiveVote], context: Optional[Dict[str, object]] = None) -> Dict[str, object]:
+def build_divergence_analysis(
+    votes: List[PerspectiveVote], context: Optional[Dict[str, object]] = None
+) -> Dict[str, object]:
     agree: List[str] = []
     concerns: List[str] = []
     objections: List[str] = []

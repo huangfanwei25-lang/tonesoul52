@@ -858,6 +858,7 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
                 : undefined;
 
         if (payload.verdict && typeof payload.verdict === 'object') {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const v: any = payload.verdict;
             deliberation = {
                 ...deliberation,

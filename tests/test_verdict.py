@@ -93,6 +93,3 @@ def test_approve_when_thresholds_met():
     )
     verdict = generate_verdict(votes=votes, coherence=coherence)
     assert verdict.verdict == VerdictType.APPROVE
-
-
-

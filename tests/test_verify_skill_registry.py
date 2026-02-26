@@ -20,30 +20,30 @@ def _write_skill(
     l1_name = l1_name or name
     triggers = triggers or ["trigger"]
     execution_profiles = execution_profiles or ["engineering"]
-    trigger_lines = "\n".join(f"    - \"{item}\"" for item in triggers)
-    profile_lines = "\n".join(f"    - \"{item}\"" for item in execution_profiles)
+    trigger_lines = "\n".join(f'    - "{item}"' for item in triggers)
+    profile_lines = "\n".join(f'    - "{item}"' for item in execution_profiles)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(
         (
             "---\n"
-            f"name: \"{name}\"\n"
-            f"description: \"{description}\"\n"
+            f'name: "{name}"\n'
+            f'description: "{description}"\n'
             "l1_routing:\n"
-            f"  name: \"{l1_name}\"\n"
+            f'  name: "{l1_name}"\n'
             "  triggers:\n"
             f"{trigger_lines}\n"
-            f"  intent: \"{intent}\"\n"
+            f'  intent: "{intent}"\n'
             "l2_signature:\n"
             "  execution_profile:\n"
             f"{profile_lines}\n"
-            f"  trust_tier: \"{trust_tier}\"\n"
+            f'  trust_tier: "{trust_tier}"\n'
             "  json_schema:\n"
-            "    type: \"object\"\n"
+            '    type: "object"\n'
             "    properties:\n"
             "      prompt:\n"
-            "        type: \"string\"\n"
+            '        type: "string"\n'
             "    required:\n"
-            "      - \"prompt\"\n"
+            '      - "prompt"\n'
             "---\n"
             f"# {name}\n"
         ),
@@ -263,7 +263,9 @@ def test_evaluate_registry_fails_when_description_has_no_trigger_match(tmp_path:
         "local_llm",
         skill_file,
     )
-    entry["l1_routing"]["intent"] = "Long enough intent but intentionally no matching keyword present."
+    entry["l1_routing"][
+        "intent"
+    ] = "Long enough intent but intentionally no matching keyword present."
     registry_payload = {
         "registry_version": "1.0.0",
         "max_review_age_days": 180,
@@ -317,8 +319,7 @@ def test_evaluate_registry_fails_when_l1_intent_has_prompt_markup(
     )
     assert payload["ok"] is False
     assert any(
-        check["name"].endswith("l1_routing.intent.prompt_safety")
-        and check["status"] == "fail"
+        check["name"].endswith("l1_routing.intent.prompt_safety") and check["status"] == "fail"
         for check in payload["checks"]
     )
 

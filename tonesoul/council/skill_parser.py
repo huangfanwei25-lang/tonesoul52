@@ -157,7 +157,9 @@ class SkillContractParser:
                 continue
             signature = self.get_l2_signature(skill_id)
             trust_tier = str(signature.get("trust_tier") or "").strip().lower()
-            profiles = [item.lower() for item in _as_string_list(signature.get("execution_profile"))]
+            profiles = [
+                item.lower() for item in _as_string_list(signature.get("execution_profile"))
+            ]
             profile_allowed = (profile in profiles) or (_PROFILE_ANY in profiles)
             if allowed and trust_tier not in allowed:
                 continue

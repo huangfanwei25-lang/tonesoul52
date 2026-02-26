@@ -241,7 +241,7 @@ class CouncilRuntime:
 
             if vtp_decision.status in {VTP_STATUS_DEFER, VTP_STATUS_TERMINATE}:
                 verdict.verdict = VerdictType.BLOCK
-                
+
                 if vtp_decision.status == VTP_STATUS_TERMINATE:
                     verdict.summary += f"\n[VTP TERMINATION] {vtp_decision.reason}"
                 else:
@@ -480,7 +480,9 @@ class CouncilRuntime:
                 execution_profile=execution_profile,
                 allowed_trust_tiers=allowed_trust,
             )
-            matched_ids = [str(item.get("skill_id") or "") for item in matches if item.get("skill_id")]
+            matched_ids = [
+                str(item.get("skill_id") or "") for item in matches if item.get("skill_id")
+            ]
             guidance_parts: List[str] = []
             for item in matches:
                 skill_id = str(item.get("skill_id") or "").strip()

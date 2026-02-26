@@ -714,8 +714,6 @@ class UnifiedPipeline:
         except Exception:
             return user_message
 
-
-
     def build_injection_context(
         self, user_message: str, persona_config: Optional[Dict[str, Any]] = None
     ) -> str:
@@ -1036,20 +1034,26 @@ class UnifiedPipeline:
         try:
             from tonesoul.memory.hippocampus import Hippocampus
             import numpy as np
-            
+
             # TODO: Once full embedding pipeline is wired, replace dummy vector with real query embedding
             dummy_query_vector = np.zeros(768, dtype=np.float32)
-            
+
             # We initialize locally here for the prototype, but it should be moved to _get_hippocampus() later
             hippocampus = Hippocampus()
             if hippocampus.index is not None or hippocampus.bm25 is not None:
                 memory_results = hippocampus.recall(user_message, dummy_query_vector, top_k=3)
                 if memory_results:
-                    recalled_texts = "\n".join([f"[{m.source_file} (Score: {m.score:.2f})]\n{m.content}" for m in memory_results])
-                    user_message += f"\n\n[系統潛意識記憶 / Ancestral Memory Context]\n{recalled_texts}\n"
+                    recalled_texts = "\n".join(
+                        [
+                            f"[{m.source_file} (Score: {m.score:.2f})]\n{m.content}"
+                            for m in memory_results
+                        ]
+                    )
+                    user_message += (
+                        f"\n\n[系統潛意識記憶 / Ancestral Memory Context]\n{recalled_texts}\n"
+                    )
         except Exception as e:
             print(f"Hippocampus retrieval error: {e}")
-
 
         # ========== 4. 生成增強 prompt ==========
         system_context = self._build_context_prompt(

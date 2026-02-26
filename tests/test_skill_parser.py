@@ -11,19 +11,19 @@ def _write_skill(path: Path, *, skill_id: str, body: str) -> None:
     path.write_text(
         (
             "---\n"
-            f"name: \"{skill_id}\"\n"
-            "description: \"skill description\"\n"
+            f'name: "{skill_id}"\n'
+            'description: "skill description"\n'
             "l1_routing:\n"
-            f"  name: \"{skill_id}\"\n"
+            f'  name: "{skill_id}"\n'
             "  triggers:\n"
-            "    - \"trigger\"\n"
-            "  intent: \"Use trigger for routing.\"\n"
+            '    - "trigger"\n'
+            '  intent: "Use trigger for routing."\n'
             "l2_signature:\n"
             "  execution_profile:\n"
-            "    - \"engineering\"\n"
-            "  trust_tier: \"reviewed\"\n"
+            '    - "engineering"\n'
+            '  trust_tier: "reviewed"\n'
             "  json_schema:\n"
-            "    type: \"object\"\n"
+            '    type: "object"\n'
             "---\n\n"
             f"{body}\n"
         ),
