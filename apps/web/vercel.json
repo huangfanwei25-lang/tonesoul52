@@ -4,10 +4,5 @@
     "devCommand": "npm run dev",
     "installCommand": "npm install",
     "framework": "nextjs",
-    "outputDirectory": ".next",
-    "functions": {
-        "api/_backend/**/*.py": {
-            "runtime": "@vercel/python@4"
-        }
-    }
+    "outputDirectory": ".next"
 }
