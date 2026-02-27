@@ -28,3 +28,10 @@ For high-impact decisions, add a short "choice accountability" line that answers
 
 Recommended template:
 > "[Choice Basis]: prioritized=<value>; constrained_by=<axiom/gate>; correction=<path>"
+
+## 5. Commit Attribution Contract (CI Blocking)
+Repository CI requires attribution trailers on non-exempt commits:
+- `Agent: <agent-name>`
+- `Trace-Topic: <topic>`
+
+If these trailers are missing, `Commit Attribution Check` will fail.
