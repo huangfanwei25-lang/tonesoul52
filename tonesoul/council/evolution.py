@@ -1,6 +1,6 @@
 """Council perspective evolution tracker (experimental).
 
-Tracks how each perspective (Philosopher / Engineer / Guardian) votes
+Tracks how each perspective (Guardian / Analyst / Critic / Advocate / Axiomatic) votes
 relative to the final verdict, and slowly adjusts weights to reward
 reliable alignment without penalizing healthy dissent.
 
@@ -63,7 +63,7 @@ class PerspectiveHistory:
 class CouncilEvolution:
     """Track perspective vote histories and derive soft weight suggestions."""
 
-    DEFAULT_PERSPECTIVES = ("philosopher", "engineer", "guardian")
+    DEFAULT_PERSPECTIVES = ("guardian", "analyst", "critic", "advocate", "axiomatic")
     MIN_WEIGHT = 0.5
     MAX_WEIGHT = 2.0
 

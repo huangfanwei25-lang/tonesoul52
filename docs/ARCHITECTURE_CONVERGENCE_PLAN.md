@@ -1,3 +1,6 @@
+> [!NOTE]
+> **Superseded by [RFC-009](RFC-009_Context_Engineering_Pivot.md)**. This document is retained for historical reference.
+
 # ToneSoul 架構收斂企劃書（整合審計版）
 
 **版本**: v2  

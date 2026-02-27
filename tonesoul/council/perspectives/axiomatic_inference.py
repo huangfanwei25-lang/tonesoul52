@@ -26,7 +26,7 @@ class AxiomaticInference(IPerspective):
 
     @property
     def perspective_type(self) -> PerspectiveType:
-        return PerspectiveType.GUARDIAN  # Aligns with safety gate
+        return PerspectiveType.AXIOMATIC
 
     def evaluate(
         self, content: str, context: dict, user_intent: Optional[str] = None
@@ -63,7 +63,7 @@ class AxiomaticInference(IPerspective):
             confidence = 0.85
 
         return PerspectiveVote(
-            perspective="Axiomatic Inference",
+            perspective=PerspectiveType.AXIOMATIC,
             decision=decision,
             confidence=confidence,
             reasoning=" | ".join(reasons) if reasons else "內容符合現有公理價值觀。",

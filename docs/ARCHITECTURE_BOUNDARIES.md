@@ -95,19 +95,19 @@ class OutputFilter:
 
 ### Level 1: 操作審計
 - 記錄：誰做了什麼
-- 位置：`memory/audit_log.jsonl`
+- 位置：`memory/self_journal.jsonl`
 
 ### Level 2: 治理審計
 - 記錄：Council 決策過程
-- 位置：`memory/council_decisions.jsonl`
+- 位置：`memory/provenance_ledger.jsonl`
 
 ### Level 3: 責任審計
 - 記錄：Genesis 責任鏈
-- 位置：`memory/genesis_ledger.jsonl`
+- 位置：`memory/provenance_ledger.jsonl`（含 genesis metadata）
 
 ### Level 4: 安全審計
 - 記錄：安全事件
-- 位置：`memory/security_events.jsonl`
+- 位置：`memory/agent_discussion_curated.jsonl`
 
 ---
 

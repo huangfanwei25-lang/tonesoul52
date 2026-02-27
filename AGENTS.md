@@ -123,8 +123,12 @@ npm run lint    # 確認格式
 ├─────────────────────────────────────┤
 │  TensionTensor (T = W × E × D)      │
 ├─────────────────────────────────────┤
-│  Multi-Path Deliberation            │
-│  (Philosopher / Engineer / Guardian)│
+│  Context Engineering Layer          │
+│  (ToneBridge / Commit / Rupture)    │
+├─────────────────────────────────────┤
+│  Multi-Perspective Council          │
+│  (Guardian/Analyst/Critic/Advocate/ │
+│   Axiomatic)                        │
 ├─────────────────────────────────────┤
 │  SelfCommit + Vow System            │
 └─────────────────────────────────────┘

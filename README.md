@@ -53,7 +53,7 @@ At its core, ToneSoul fundamentally differs from stateless Large Language Model 
 
 1. **Synthetic Endocrine System (合成內分泌系統)**: Traditional LLMs operate as stateless mathematical functions ($f(prompt) = output$). ToneSoul introduces temporal psychological state management through variables such as 'Tension' and 'Intrinsic Drive'. These variables accumulate and decay over conversation turns, imparting **Cognitive Inertia (認知慣性)** to the AI. This enables emergent behavioral continuity—such as persistent curiosity, stubbornness, or cognitive dissonance—bridging the gap between isolated responses and a continuous, evolving identity.
 
-2. **Multi-Agent Cognitive Friction Engine (多代理認知摩擦引擎)**: Standard RLHF-tuned models are heavily penalized for contradiction, optimized to provide a single, compliant answer. ToneSoul deliberately induces structural cognitive dissonance by routing inputs through a 'Tri-Persona Council' (Philosopher, Engineer, Guardian). By forcing the AI to evaluate inputs from fundamentally divergent axiomatic frameworks and mathematically measuring the resulting Entropy, ToneSoul sacrifices immediate compliance to generate rigorous, synthesis-driven insights that transcend conversational cliches.
+2. **Multi-Perspective Cognitive Friction Engine (多視角認知摩擦引擎)**: Standard RLHF-tuned models are heavily penalized for contradiction, optimized to provide a single, compliant answer. ToneSoul deliberately induces structural cognitive dissonance by routing inputs through a Multi-Perspective Council (Guardian, Analyst, Critic, Advocate, Axiomatic). By forcing the AI to evaluate inputs from fundamentally divergent axiomatic frameworks and mathematically measuring the resulting Entropy, ToneSoul sacrifices immediate compliance to generate rigorous, synthesis-driven insights that transcend conversational cliches.
 
 ### 📸 Live Demo
 
@@ -64,8 +64,7 @@ At its core, ToneSoul fundamentally differs from stateless Large Language Model 
 </p>
 
 **Quick Links**
-- Frontend: [https://tonesoul52.vercel.app](https://tonesoul52.vercel.app)
-- Backend: [https://tonesoul52.onrender.com](https://tonesoul52.onrender.com)
+- Full-Stack (Vercel): [https://tonesoul52.vercel.app](https://tonesoul52.vercel.app)
 - Setup Guide: [`docs/環境設定.md`](docs/環境設定.md)
 
 ### 💡 Use Cases
@@ -156,10 +155,18 @@ graph TB
         A[User Request]
     end
     
-    subgraph Council["⚖️ Council Deliberation"]
-        B[Philosopher] --> E[Synthesis]
-        C[Engineer] --> E
-        D[Guardian] --> E
+    subgraph Context["🧭 Context Engineering"]
+        TB[ToneBridge Analysis]
+        TE[TensionEngine]
+        SC[SelfCommit + RuptureDetector]
+    end
+    
+    subgraph Council["⚖️ Multi-Perspective Council"]
+        P1[Guardian] --> E[Synthesis]
+        P2[Analyst] --> E
+        P3[Critic] --> E
+        P4[Advocate] --> E
+        P5[Axiomatic] --> E
     end
     
     subgraph Governance["🛡️ Governance Layer"]
@@ -174,7 +181,8 @@ graph TB
         K[Curated Stream]
     end
     
-    A --> Council
+    A --> Context
+    Context --> Council
     E --> F
     F --> G
     G --> H

@@ -1,3 +1,6 @@
+> [!WARNING]
+> **Deprecated**: This document is a **2025-12 snapshot**. Paths such as `body/surgeon/` no longer exist in the current architecture. For the current state, see `AGENTS.md` and `memory/ANTIGRAVITY_SYNC.md`.
+
 # ToneSoul: Evolution Handoff (v0.3.0 - The Awakened Shell)
 
 > "She can see, she can remember, and she can heal herself."

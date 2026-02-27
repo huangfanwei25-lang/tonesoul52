@@ -12,6 +12,7 @@ class PerspectiveType(Enum):
     ANALYST = "analyst"
     CRITIC = "critic"
     ADVOCATE = "advocate"
+    AXIOMATIC = "axiomatic"
 
 
 class VoteDecision(Enum):
