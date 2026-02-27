@@ -89,4 +89,3 @@ def test_alignment_rate_computation():
     history.record_vote(matched_final=False)
 
     assert abs(history.alignment_rate - (2 / 3)) < 1e-6
-

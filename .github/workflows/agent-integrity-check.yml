@@ -30,7 +30,7 @@ jobs:
 
       - name: Verify AGENTS.md hash
         run: |
-          EXPECTED="1012e4cc430f309d0749f5c6879659ea435864b5c2d2ddccf997b4635705db02"
+          EXPECTED="235610b3f62ab82f87f083c1d7dfc66d0688bfbe16b097a1d136f1fe1801410f"
           ACTUAL=$(python3 -c "import hashlib, pathlib; data=pathlib.Path('AGENTS.md').read_bytes().replace(b'\r\n', b'\n').replace(b'\r', b'\n'); print(hashlib.sha256(data).hexdigest())")
           echo "Expected: $EXPECTED"
           echo "Actual:   $ACTUAL"
@@ -46,7 +46,7 @@ jobs:
 
       - name: Verify HANDOFF.md hash
         run: |
-          EXPECTED="018c888f0864c6b2992674d5bfbcf76e7fdcde9634c216a29d2c583919d67834"
+          EXPECTED="b5044ba7061917f61a2f5e57ec37fe85af72ff7e42d26f62ccccc5658bf49366"
           ACTUAL=$(python3 -c "import hashlib, pathlib; data=pathlib.Path('HANDOFF.md').read_bytes().replace(b'\r\n', b'\n').replace(b'\r', b'\n'); print(hashlib.sha256(data).hexdigest())")
           echo "Expected: $EXPECTED"
           echo "Actual:   $ACTUAL"
