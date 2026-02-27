@@ -1032,17 +1032,37 @@ class UnifiedPipeline:
 
         # ========== 3.8 Hippocampus Subconscious Retrieval ==========
         try:
-            import numpy as np
+            from tonesoul.memory.openclaw.embeddings import (
+                HashEmbedding,
+                SentenceTransformerEmbedding,
+            )
+            from tonesoul.memory.openclaw.hippocampus import Hippocampus
 
-            from tonesoul.memory.hippocampus import Hippocampus
+            # Lazy initialize the real Hippocampus with embedder and precise db_path
+            if not getattr(self, "_hippocampus", None):
+                db_path = os.path.join(self._repo_root, "memory", "memory_base")
+                profile = os.getenv("TONESOUL_MEMORY_EMBEDDER", "auto").strip().lower()
+                if profile in {"hash", "offline"}:
+                    embedder = HashEmbedding()
+                elif profile in {"sentence-transformer", "st"}:
+                    embedder = SentenceTransformerEmbedding()
+                else:
+                    try:
+                        embedder = SentenceTransformerEmbedding()
+                    except Exception:
+                        embedder = HashEmbedding()
+                self._hippocampus = Hippocampus(
+                    db_path=db_path,
+                    embedder=embedder,
+                )
 
-            # TODO: Once full embedding pipeline is wired, replace dummy vector with real query embedding
-            dummy_query_vector = np.zeros(768, dtype=np.float32)
-
-            # We initialize locally here for the prototype, but it should be moved to _get_hippocampus() later
-            hippocampus = Hippocampus()
-            if hippocampus.index is not None or hippocampus.bm25 is not None:
-                memory_results = hippocampus.recall(user_message, dummy_query_vector, top_k=3)
+            if self._hippocampus.index is not None or self._hippocampus.bm25 is not None:
+                # Pass query_tension to trigger ToneSoul resonance reranking
+                memory_results = self._hippocampus.recall(
+                    query_text=user_message,
+                    top_k=3,
+                    query_tension=tone_strength,
+                )
                 if memory_results:
                     recalled_texts = "\n".join(
                         [
