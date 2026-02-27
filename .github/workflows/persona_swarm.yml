@@ -16,11 +16,39 @@ on:
         required: false
   push:
     branches: [master, main, dev]
+    paths:
+      - "tonesoul/**"
+      - "scripts/run_persona_swarm_framework.py"
+      - "scripts/run_persona_swarm_dispatch.py"
+      - "tests/test_swarm_framework.py"
+      - "tests/test_run_persona_swarm_framework.py"
+      - "tests/test_workflow_contracts.py"
+      - "spec/personas/**"
+      - "docs/status/**"
+      - "pyproject.toml"
+      - "requirements*.txt"
+      - ".github/workflows/persona_swarm.yml"
   pull_request:
     branches: [master, main, dev]
+    paths:
+      - "tonesoul/**"
+      - "scripts/run_persona_swarm_framework.py"
+      - "scripts/run_persona_swarm_dispatch.py"
+      - "tests/test_swarm_framework.py"
+      - "tests/test_run_persona_swarm_framework.py"
+      - "tests/test_workflow_contracts.py"
+      - "spec/personas/**"
+      - "docs/status/**"
+      - "pyproject.toml"
+      - "requirements*.txt"
+      - ".github/workflows/persona_swarm.yml"
 
 permissions:
   contents: read
+
+concurrency:
+  group: tonesoul-persona-swarm-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   evaluate:

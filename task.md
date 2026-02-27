@@ -683,3 +683,11 @@
 - [x] `python scripts/verify_skill_registry.py --strict`
 - [x] `python -m pytest tests/test_skill_parser.py tests/test_verify_skill_registry.py tests/test_council_runtime.py tests/test_council_cli.py -q`
 **Success Criteria**: skills now follow deterministic progressive disclosure with measurable L1 routing precision, explicit L2 boundary checks, and bounded L3 runtime loading.
+
+## Phase 107: CI Cost-Tiering and Trigger Throttling (2026-02-28)
+- [x] Define PR-light vs merge-medium execution policy in workflow triggers
+- [x] Add concurrency cancel-in-progress to high-frequency workflows
+- [x] Add path-based trigger filters to domain-specific workflows (semantic/persona/source/git)
+- [x] Keep governance-required contracts intact (`push`/`pull_request` keys remain where required)
+- [x] Re-run workflow contract checks after edits
+**成功標準**: Workflow contracts與docs consistency檢查通過，PR事件的重複計算顯著下降，且不移除核心治理檢查。

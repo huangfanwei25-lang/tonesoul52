@@ -2,14 +2,21 @@ name: ToneSoul CI
 
 on:
   push:
-    branches: [master, dev]
+    branches: [master, main, dev]
   pull_request:
-    branches: [master, dev]
+    branches: [master, main, dev]
   workflow_dispatch:
+  schedule:
+    - cron: "0 1 * * 0" # weekly matrix burn-in (Sunday UTC)
+
+concurrency:
+  group: tonesoul-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
     name: Test Python ${{ matrix.python-version }}
+    if: github.event_name != 'pull_request' || matrix.python-version == '3.12'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -37,6 +44,7 @@ jobs:
         pytest -v --tb=short --maxfail=5 | tee pytest_all_${{ matrix.python-version }}.log
     
     - name: Run property-based tests
+      if: github.event_name != 'pull_request' || matrix.python-version == '3.12'
       run: |
         set -o pipefail
         pytest tests/test_contract_observer_properties.py tests/test_unified_core_properties.py tests/test_vow_system_properties.py -v --hypothesis-show-statistics | tee pytest_properties_${{ matrix.python-version }}.log
@@ -53,12 +61,12 @@ jobs:
         retention-days: 14
     
     - name: Generate coverage report
-      if: matrix.python-version == '3.12'
+      if: matrix.python-version == '3.12' && github.event_name != 'pull_request'
       run: |
         pytest --cov=tonesoul --cov-report=xml --cov-report=term-missing
     
     - name: Upload coverage to Codecov
-      if: matrix.python-version == '3.12'
+      if: matrix.python-version == '3.12' && github.event_name != 'pull_request'
       uses: codecov/codecov-action@v4
       with:
         file: ./coverage.xml

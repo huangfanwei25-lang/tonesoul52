@@ -2,9 +2,22 @@ name: CI
 
 on:
   push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
+    branches: [ main, master, dev ]
+    paths:
+      - "tonesoul/**"
+      - "tests/**"
+      - "apps/**"
+      - "scripts/**"
+      - "AXIOMS.json"
+      - "law/**"
+      - "pyproject.toml"
+      - "requirements*.txt"
+      - ".github/workflows/ci.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: tonesoul-ci-legacy-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:

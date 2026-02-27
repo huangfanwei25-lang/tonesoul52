@@ -3,8 +3,28 @@ name: Critical Path Tests
 on:
   push:
     branches: [master, main]
+    paths:
+      - "tonesoul/**"
+      - "tests/**"
+      - "scripts/**"
+      - "AXIOMS.json"
+      - "pyproject.toml"
+      - "requirements*.txt"
+      - ".github/workflows/critical_path.yml"
   pull_request:
     branches: [master, main]
+    paths:
+      - "tonesoul/**"
+      - "tests/**"
+      - "scripts/**"
+      - "AXIOMS.json"
+      - "pyproject.toml"
+      - "requirements*.txt"
+      - ".github/workflows/critical_path.yml"
+
+concurrency:
+  group: tonesoul-critical-path-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   smoke:

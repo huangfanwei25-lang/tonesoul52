@@ -6,11 +6,33 @@ on:
   workflow_dispatch:
   push:
     branches: [master, main, dev]
+    paths:
+      - "spec/external_source_registry.yaml"
+      - "scripts/verify_external_source_registry.py"
+      - "scripts/run_external_source_registry_check.py"
+      - "tests/test_workflow_contracts.py"
+      - "tests/test_verify_external_source_registry.py"
+      - "docs/EXTERNAL_SOURCE_TRUST_POLICY.md"
+      - "docs/status/**"
+      - ".github/workflows/external_source_registry.yml"
   pull_request:
     branches: [master, main, dev]
+    paths:
+      - "spec/external_source_registry.yaml"
+      - "scripts/verify_external_source_registry.py"
+      - "scripts/run_external_source_registry_check.py"
+      - "tests/test_workflow_contracts.py"
+      - "tests/test_verify_external_source_registry.py"
+      - "docs/EXTERNAL_SOURCE_TRUST_POLICY.md"
+      - "docs/status/**"
+      - ".github/workflows/external_source_registry.yml"
 
 permissions:
   contents: read
+
+concurrency:
+  group: tonesoul-external-source-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   verify:

@@ -2,9 +2,31 @@ name: Repo Healthcheck
 
 on:
   push:
-    branches: [master, dev]
+    branches: [master, main]
+    paths:
+      - "tonesoul/**"
+      - "tests/**"
+      - "apps/**"
+      - "scripts/**"
+      - "docs/status/**"
+      - "docs/REPOSITORY_STRUCTURE.md"
+      - "AXIOMS.json"
+      - "law/**"
+      - "pyproject.toml"
+      - "requirements*.txt"
+      - ".github/workflows/repo_healthcheck.yml"
   pull_request:
-    branches: [master, dev]
+    branches: [master, main]
+    paths:
+      - "tonesoul/**"
+      - "tests/**"
+      - "apps/**"
+      - "scripts/**"
+      - "AXIOMS.json"
+      - "law/**"
+      - "pyproject.toml"
+      - "requirements*.txt"
+      - ".github/workflows/repo_healthcheck.yml"
   workflow_dispatch:
     inputs:
       include_sdh:
@@ -32,6 +54,10 @@ on:
 
 permissions:
   contents: read
+
+concurrency:
+  group: tonesoul-repo-healthcheck-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   healthcheck:
