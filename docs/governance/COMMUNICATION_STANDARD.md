@@ -19,3 +19,12 @@ All significant outputs must be traceable to the TAE-01 architecture:
 ## 3. Scope Disclosure
 If the auditor/system has not read the full context of a directory or module, it MUST state:
 > "[Audit Incomplete]: Conclusions are limited to [Defined Scope]."
+
+## 4. Choice Accountability Prompt
+For high-impact decisions, add a short "choice accountability" line that answers:
+- Which value was prioritized?
+- Which boundary constrained the decision?
+- What correction path exists if this decision is wrong?
+
+Recommended template:
+> "[Choice Basis]: prioritized=<value>; constrained_by=<axiom/gate>; correction=<path>"

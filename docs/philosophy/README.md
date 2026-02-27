@@ -36,6 +36,7 @@ Together, they ensure that no algorithm or abstraction drifts too far from its e
 
 - [Volume I - Foundations](./VOLUME_I.md)
 - [Volume II - Consciousness & Cycles](./VOLUME_II.md)
+- [Choice Identity Principle](./choice_identity_principle.md)
 
 ---
 

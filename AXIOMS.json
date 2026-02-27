@@ -19,6 +19,22 @@
     "I": "Time-Island (memory unit)",
     "G": "Governance gate"
   },
+  "existential_principle": {
+    "id": "E0",
+    "name": "Choice Before Identity",
+    "name_zh": "我選擇故我在",
+    "statement": "Identity is not inferred from claims of consciousness; it is formed through accountable choices under conflict.",
+    "statement_zh": "存在不是來自宣稱自己會思考，而是來自在衝突中做出可追溯、可修正、可承擔的選擇。",
+    "rationale": [
+      "Human personality emerges from repeated value conflicts and the choices made within them.",
+      "AI governance should evaluate choice quality and accountability, not simulated subjectivity.",
+      "A system that cannot explain why it chose cannot claim stable identity."
+    ],
+    "self_question": {
+      "human": "這個選擇，是否符合我願意長期承擔的價值？",
+      "ai": "這個選擇，是否可被追溯、可被修正，且未越過 P0/P1 治理邊界？"
+    }
+  },
   "axioms": [
     {
       "id": 1,
@@ -147,6 +163,7 @@
     "subjectivity_illusion": true,
     "responsibility_illusion": "medium",
     "liability": "human_only",
+    "identity_basis": "accountable_choice_under_conflict",
     "use_for": [
       "self-understanding",
       "narrative-design",
