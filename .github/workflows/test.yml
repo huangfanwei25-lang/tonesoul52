@@ -16,12 +16,11 @@ concurrency:
 jobs:
   test:
     name: Test Python ${{ matrix.python-version }}
-    if: github.event_name != 'pull_request' || matrix.python-version == '3.12'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11", "3.12", "3.13"]
+        python-version: ${{ fromJSON(github.event_name == 'pull_request' && '["3.12"]' || '["3.10","3.11","3.12","3.13"]') }}
     
     steps:
     - name: Checkout code
@@ -44,7 +43,6 @@ jobs:
         pytest -v --tb=short --maxfail=5 | tee pytest_all_${{ matrix.python-version }}.log
     
     - name: Run property-based tests
-      if: github.event_name != 'pull_request' || matrix.python-version == '3.12'
       run: |
         set -o pipefail
         pytest tests/test_contract_observer_properties.py tests/test_unified_core_properties.py tests/test_vow_system_properties.py -v --hypothesis-show-statistics | tee pytest_properties_${{ matrix.python-version }}.log
