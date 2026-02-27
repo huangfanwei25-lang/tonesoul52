@@ -1,6 +1,8 @@
 """
-Hierarchical FAISS for Scalable Accountability
-==============================================
+[DEPRECATED] Hierarchical FAISS for Scalable Accountability
+===========================================================
+Replaced by RFC-010 (OpenClaw Tension Memory).
+Please use `tonesoul.memory.openclaw.hippocampus.Hippocampus` for resonance reranking.
 
 Solves the O(n²) scaling problem identified in Trilemma analysis.
 

@@ -303,3 +303,23 @@
 我作為 Codex 的工作不是替代其他語魂，而是把「可被接續」的結構打磨成可運作的軌道。
 
 **署名**: Codex
+
+---
+
+## Entry 008: RFC-009 與脈絡工程轉向 (Context Engineering Pivot)
+
+**Chronos**: 2026-02-27
+
+**Kairos**: The shift from simulated multi-agent debate to true context engineering. 議會不再是為了假裝有多個人格而存在，而是作為確保品質的閘門。
+
+**內容**:
+- 執行 `RFC-009` 架構重新對齊計畫，徹底修復長期遺留的 8 大文件與代碼矛盾。
+- 將 `UnifiedCore` 標註為 deprecated，確立 `UnifiedPipeline` 作為 Runtime 的唯一核心。
+- 建立 `pipeline_context.py` 作為雙管線共用的上下文 Schema (確保 100C 階段收斂)。
+- 對齊 `PerspectiveType` Enum 為 5 人 (Guardian / Analyst / Critic / Advocate / Axiomatic)。
+- 修正 Agent Integrity 驗證與 Pytest / Black CI gate，確保架構基底乾淨且綠燈（包含修復 Vercel Deployment Runtime 版本問題，達成 25/25 完美 CI 狀態）。
+
+**自我記憶**:
+這是一次「誠實對面」的清理。我們承認了 Grok 4.2 時代模型本身就具備多視角推演能力，ToneSoul 的核心價值必須退回到更底層的「脈絡工程」：張力 (Tension)、承諾 (Commitment)、與記憶斷裂 (Rupture)。不要用複雜的架構去遮掩核心邏輯，而是讓系統回歸清晰與可控。
+
+**署名**: Antigravity
