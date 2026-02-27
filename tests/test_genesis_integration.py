@@ -1,13 +1,34 @@
+import hashlib
 import uuid
 from pathlib import Path
+
+import numpy as np
 
 from memory.consolidator import MemoryConsolidator
 from memory.genesis import Genesis
 from memory.self_memory import load_recent_memory, record_self_memory
-from memory.semantic_memory import SemanticMemory
 from tonesoul import tsr_metrics
 from tonesoul.council.intent_reconstructor import GenesisDecision, infer_genesis
 from tonesoul.council.types import CoherenceScore, CouncilVerdict, VerdictType
+from tonesoul.memory.openclaw.embeddings import BaseEmbedding
+from tonesoul.memory.openclaw.hippocampus import Hippocampus
+
+
+class HashEmbedding(BaseEmbedding):
+    """Deterministic offline embedder for tests."""
+
+    def __init__(self, dimension: int = 384):
+        self.dimension = dimension
+
+    def encode(self, text: str) -> np.ndarray:
+        digest = hashlib.sha256(text.encode("utf-8")).digest()
+        seed = int.from_bytes(digest[:8], byteorder="big", signed=False)
+        rng = np.random.default_rng(seed)
+        vec = rng.standard_normal(self.dimension, dtype=np.float32)
+        norm = float(np.linalg.norm(vec))
+        if norm > 0:
+            vec = vec / norm
+        return vec.astype(np.float32)
 
 
 def _tmp_journal_path() -> Path:
@@ -19,6 +40,13 @@ def _tmp_journal_path() -> Path:
 def _baseline_for(text: str) -> dict:
     payload = tsr_metrics.score(text)
     return payload.get("tsr", {})
+
+
+def _tmp_hippocampus() -> Hippocampus:
+    base_dir = Path("temp") / "pytest-genesis"
+    base_dir.mkdir(parents=True, exist_ok=True)
+    db_path = base_dir / f"hippo-{uuid.uuid4().hex}"
+    return Hippocampus(db_path=str(db_path), embedder=HashEmbedding())
 
 
 def test_infer_genesis_decision_table():
@@ -136,9 +164,7 @@ def test_record_self_memory_persists_genesis_fields():
 
 
 def test_memory_consolidator_genesis_stats_and_filtering():
-    semantic_path = Path("temp") / "pytest-genesis" / f"semantic-{uuid.uuid4().hex}.jsonl"
-    semantic_memory = SemanticMemory(semantic_path)
-    consolidator = MemoryConsolidator(semantic_memory=semantic_memory)
+    consolidator = MemoryConsolidator(hippocampus=_tmp_hippocampus())
 
     episodes = [
         {"is_mine": False, "genesis": "autonomous", "verdict": "approve", "context": {}},
