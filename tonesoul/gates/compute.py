@@ -212,9 +212,8 @@ class ComputeGate:
             )
 
         # High Tension (>0.4) or Premium user requiring full deliberation
-        if (
-            effective_tension >= self.MIN_COUNCIL_TENSION
-            or (friction_score is not None and friction_score >= self.MIN_COUNCIL_FRICTION)
+        if effective_tension >= self.MIN_COUNCIL_TENSION or (
+            friction_score is not None and friction_score >= self.MIN_COUNCIL_FRICTION
         ):
             if friction_score is not None and friction_score >= self.MIN_COUNCIL_FRICTION:
                 reason = (

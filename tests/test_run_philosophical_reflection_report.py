@@ -149,23 +149,35 @@ def test_build_report_uses_adaptive_threshold_when_distribution_is_low(tmp_path:
             {
                 "timestamp": "2026-02-01T00:00:00Z",
                 "verdict": "declare_stance",
-                "transcript": {"tension_engine": {"signals": {"text_tension": 0.32, "t_ecs": 0.12}}},
+                "transcript": {
+                    "tension_engine": {"signals": {"text_tension": 0.32, "t_ecs": 0.12}}
+                },
             },
             {
                 "timestamp": "2026-02-01T00:01:00Z",
                 "verdict": "declare_stance",
-                "transcript": {"tension_engine": {"signals": {"text_tension": 0.34, "t_ecs": 0.14}}},
+                "transcript": {
+                    "tension_engine": {"signals": {"text_tension": 0.34, "t_ecs": 0.14}}
+                },
             },
             {
                 "timestamp": "2026-02-01T00:02:00Z",
                 "verdict": "declare_stance",
-                "transcript": {"tension_engine": {"signals": {"text_tension": 0.36, "t_ecs": 0.16}}},
+                "transcript": {
+                    "tension_engine": {"signals": {"text_tension": 0.36, "t_ecs": 0.16}}
+                },
             },
         ],
     )
     _write_jsonl(
         discussion_path,
-        [{"timestamp": "2026-02-01T00:03:00Z", "topic": "adaptive-threshold", "status": "resolved"}],
+        [
+            {
+                "timestamp": "2026-02-01T00:03:00Z",
+                "topic": "adaptive-threshold",
+                "status": "resolved",
+            }
+        ],
     )
 
     payload = reflection_runner.build_report(

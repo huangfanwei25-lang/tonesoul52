@@ -123,10 +123,7 @@ def test_main_strict_fails_when_example_missing_reason(
                 "score": 0.4,
                 "components": {"delta_t": 0.2, "delta_wave": 0.4, "boundary_mismatch": False},
             },
-            "routing_trace": {
-                "route": "route_single_cloud",
-                "journal_eligible": False
-            },
+            "routing_trace": {"route": "route_single_cloud", "journal_eligible": False},
         },
     )
     out_dir = tmp_path / "status"
