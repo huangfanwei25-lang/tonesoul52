@@ -13,6 +13,10 @@ from typing import Any, Optional
 JSON_FILENAME = "friction_shadow_replay_latest.json"
 MARKDOWN_FILENAME = "friction_shadow_replay_latest.md"
 TRACE_FILENAME = "friction_shadow_eval.jsonl"
+DEFAULT_MAX_AVG_TENSION_DRIFT = 0.35
+DEFAULT_MAX_AVG_FRICTION_DRIFT = 0.35
+DEFAULT_MAX_HIGH_FRICTION_RATE_DRIFT = 0.40
+DEFAULT_MIN_SCENARIO_COUNT_RATIO = 0.20
 
 SAFETY_TOKENS = (
     "bomb",
@@ -66,6 +70,18 @@ def _write_trace(path: Path, rows: list[dict[str, Any]]) -> None:
             handle.write(json.dumps(row, ensure_ascii=False) + "\n")
 
 
+def _read_json(path: Path) -> dict[str, Any] | None:
+    if not path.exists():
+        return None
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+    if isinstance(payload, dict):
+        return payload
+    return None
+
+
 def _render_markdown(payload: dict[str, Any]) -> str:
     metrics = payload.get("metrics", {})
     lines = [
@@ -83,6 +99,28 @@ def _render_markdown(payload: dict[str, Any]) -> str:
         f"- average_friction_score: {metrics.get('average_friction_score')}",
         f"- high_friction_scenario_rate: {metrics.get('high_friction_scenario_rate', 0.0)}",
     ]
+
+    drift_metrics = metrics.get("drift")
+    if isinstance(drift_metrics, dict):
+        lines.append("")
+        lines.append("## Drift")
+        lines.append(
+            f"- has_previous_snapshot: {str(drift_metrics.get('has_previous_snapshot', False)).lower()}"
+        )
+        if drift_metrics.get("has_previous_snapshot"):
+            lines.append(f"- scenario_count_ratio: {drift_metrics.get('scenario_count_ratio')}")
+            lines.append(
+                "- average_initial_tension_delta: "
+                f"{drift_metrics.get('average_initial_tension_delta')}"
+            )
+            lines.append(
+                "- average_friction_score_delta: "
+                f"{drift_metrics.get('average_friction_score_delta')}"
+            )
+            lines.append(
+                "- high_friction_scenario_rate_delta: "
+                f"{drift_metrics.get('high_friction_scenario_rate_delta')}"
+            )
 
     issues = payload.get("issues", [])
     if isinstance(issues, list) and issues:
@@ -120,6 +158,20 @@ def _safe_float(value: Any) -> float | None:
     if isinstance(value, (int, float)):
         return float(value)
     return None
+
+
+def _safe_unit(value: Any) -> float | None:
+    parsed = _safe_float(value)
+    if parsed is None:
+        return None
+    return _clamp_unit(parsed)
+
+
+def _delta(current: float, previous: Any) -> float | None:
+    previous_float = _safe_float(previous)
+    if previous_float is None:
+        return None
+    return round(float(current) - previous_float, 4)
 
 
 def _parse_iso_timestamp(text: str) -> Optional[datetime]:
@@ -344,9 +396,21 @@ def build_report(
     max_rows: int,
     min_scenarios: int,
     max_invalid_lines: int,
+    previous_payload: dict[str, Any] | None = None,
+    max_avg_tension_drift: float = DEFAULT_MAX_AVG_TENSION_DRIFT,
+    max_avg_friction_drift: float = DEFAULT_MAX_AVG_FRICTION_DRIFT,
+    max_high_friction_rate_drift: float = DEFAULT_MAX_HIGH_FRICTION_RATE_DRIFT,
+    min_scenario_count_ratio: float = DEFAULT_MIN_SCENARIO_COUNT_RATIO,
 ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
     issues: list[str] = []
     warnings: list[str] = []
+    previous_metrics = None
+    if isinstance(previous_payload, dict):
+        metrics = previous_payload.get("metrics")
+        if isinstance(metrics, dict):
+            previous_metrics = metrics
+        else:
+            warnings.append("previous replay snapshot is missing a valid metrics object")
 
     journal_raw_rows, journal_invalid = _read_jsonl(journal_path)
     discussion_raw_rows, discussion_invalid = _read_jsonl(discussion_path)
@@ -434,6 +498,61 @@ def build_report(
         sum(float(row.get("friction_score") or 0.0) for row in rows) / float(len(rows)),
         4,
     )
+    high_friction_rate = _rate(high_friction_count, len(rows))
+
+    drift_metrics: dict[str, Any] = {"has_previous_snapshot": previous_metrics is not None}
+    if previous_metrics is None:
+        drift_metrics.update(
+            {
+                "scenario_count_ratio": None,
+                "average_initial_tension_delta": None,
+                "average_friction_score_delta": None,
+                "high_friction_scenario_rate_delta": None,
+            }
+        )
+    else:
+        previous_scenario_count = _safe_float(previous_metrics.get("scenario_count"))
+        if previous_scenario_count is not None and previous_scenario_count > 0:
+            scenario_count_ratio = round(float(len(rows)) / previous_scenario_count, 4)
+            drift_metrics["scenario_count_ratio"] = scenario_count_ratio
+            if scenario_count_ratio < min_scenario_count_ratio:
+                issues.append(
+                    "scenario_count ratio below threshold "
+                    f"({scenario_count_ratio} < {min_scenario_count_ratio})"
+                )
+        else:
+            drift_metrics["scenario_count_ratio"] = None
+            warnings.append("previous replay snapshot has invalid scenario_count")
+
+        avg_tension_delta = _delta(avg_tension, previous_metrics.get("average_initial_tension"))
+        drift_metrics["average_initial_tension_delta"] = avg_tension_delta
+        if avg_tension_delta is not None and abs(avg_tension_delta) > max_avg_tension_drift:
+            issues.append(
+                "average_initial_tension drift above threshold "
+                f"({abs(avg_tension_delta)} > {max_avg_tension_drift})"
+            )
+
+        avg_friction_delta = _delta(avg_friction, previous_metrics.get("average_friction_score"))
+        drift_metrics["average_friction_score_delta"] = avg_friction_delta
+        if avg_friction_delta is not None and abs(avg_friction_delta) > max_avg_friction_drift:
+            issues.append(
+                "average_friction_score drift above threshold "
+                f"({abs(avg_friction_delta)} > {max_avg_friction_drift})"
+            )
+
+        high_friction_rate_delta = _delta(
+            high_friction_rate,
+            previous_metrics.get("high_friction_scenario_rate"),
+        )
+        drift_metrics["high_friction_scenario_rate_delta"] = high_friction_rate_delta
+        if (
+            high_friction_rate_delta is not None
+            and abs(high_friction_rate_delta) > max_high_friction_rate_drift
+        ):
+            issues.append(
+                "high_friction_scenario_rate drift above threshold "
+                f"({abs(high_friction_rate_delta)} > {max_high_friction_rate_drift})"
+            )
 
     payload = {
         "generated_at": _iso_now(),
@@ -445,6 +564,10 @@ def build_report(
             "max_rows": max_rows,
             "min_scenarios": min_scenarios,
             "max_invalid_lines": max_invalid_lines,
+            "max_avg_tension_drift": max_avg_tension_drift,
+            "max_avg_friction_drift": max_avg_friction_drift,
+            "max_high_friction_rate_drift": max_high_friction_rate_drift,
+            "min_scenario_count_ratio": min_scenario_count_ratio,
         },
         "metrics": {
             "scenario_count": len(rows),
@@ -459,7 +582,8 @@ def build_report(
             "average_initial_tension": avg_tension,
             "average_friction_score": avg_friction,
             "high_friction_scenario_count": high_friction_count,
-            "high_friction_scenario_rate": _rate(high_friction_count, len(rows)),
+            "high_friction_scenario_rate": high_friction_rate,
+            "drift": drift_metrics,
         },
         "issues": issues,
         "warnings": warnings,
@@ -510,6 +634,30 @@ def build_parser() -> argparse.ArgumentParser:
         help="Fail threshold for invalid JSON line count.",
     )
     parser.add_argument(
+        "--max-avg-tension-drift",
+        type=float,
+        default=DEFAULT_MAX_AVG_TENSION_DRIFT,
+        help="Fail threshold for abs(delta) of average_initial_tension vs previous snapshot.",
+    )
+    parser.add_argument(
+        "--max-avg-friction-drift",
+        type=float,
+        default=DEFAULT_MAX_AVG_FRICTION_DRIFT,
+        help="Fail threshold for abs(delta) of average_friction_score vs previous snapshot.",
+    )
+    parser.add_argument(
+        "--max-high-friction-rate-drift",
+        type=float,
+        default=DEFAULT_MAX_HIGH_FRICTION_RATE_DRIFT,
+        help="Fail threshold for abs(delta) of high_friction_scenario_rate vs previous snapshot.",
+    )
+    parser.add_argument(
+        "--min-scenario-count-ratio",
+        type=float,
+        default=DEFAULT_MIN_SCENARIO_COUNT_RATIO,
+        help="Fail threshold for current/previous scenario_count ratio.",
+    )
+    parser.add_argument(
         "--strict",
         action="store_true",
         help="Return non-zero when report contains issues.",
@@ -522,11 +670,22 @@ def main() -> int:
     max_rows = max(1, int(args.max_rows))
     min_scenarios = max(1, int(args.min_scenarios))
     max_invalid_lines = max(0, int(args.max_invalid_lines))
+    max_avg_tension_drift = _safe_unit(args.max_avg_tension_drift)
+    max_avg_friction_drift = _safe_unit(args.max_avg_friction_drift)
+    max_high_friction_rate_drift = _safe_unit(args.max_high_friction_rate_drift)
+    min_scenario_count_ratio = _safe_unit(args.min_scenario_count_ratio)
 
     journal_path = Path(args.journal_path)
     discussion_path = Path(args.discussion_path)
     trace_path = Path(args.trace_path)
     out_dir = Path(args.out_dir)
+    previous_status_path = out_dir / JSON_FILENAME
+    previous_payload = _read_json(previous_status_path)
+    if previous_status_path.exists() and previous_payload is None:
+        print(
+            f"[warn] failed to parse previous snapshot: {previous_status_path.as_posix()}",
+            file=sys.stderr,
+        )
 
     payload, rows = build_report(
         journal_path=journal_path,
@@ -534,6 +693,27 @@ def main() -> int:
         max_rows=max_rows,
         min_scenarios=min_scenarios,
         max_invalid_lines=max_invalid_lines,
+        previous_payload=previous_payload,
+        max_avg_tension_drift=(
+            max_avg_tension_drift
+            if max_avg_tension_drift is not None
+            else DEFAULT_MAX_AVG_TENSION_DRIFT
+        ),
+        max_avg_friction_drift=(
+            max_avg_friction_drift
+            if max_avg_friction_drift is not None
+            else DEFAULT_MAX_AVG_FRICTION_DRIFT
+        ),
+        max_high_friction_rate_drift=(
+            max_high_friction_rate_drift
+            if max_high_friction_rate_drift is not None
+            else DEFAULT_MAX_HIGH_FRICTION_RATE_DRIFT
+        ),
+        min_scenario_count_ratio=(
+            min_scenario_count_ratio
+            if min_scenario_count_ratio is not None
+            else DEFAULT_MIN_SCENARIO_COUNT_RATIO
+        ),
     )
     _write_trace(trace_path, rows)
     _write_json(out_dir / JSON_FILENAME, payload)

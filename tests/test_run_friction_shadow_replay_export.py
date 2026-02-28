@@ -25,6 +25,7 @@ def test_build_report_falls_back_to_synthetic_when_sources_missing(tmp_path: Pat
     )
     assert payload["overall_ok"] is True
     assert payload["metrics"]["source_synthetic_count"] > 0
+    assert payload["metrics"]["drift"]["has_previous_snapshot"] is False
     assert len(rows) == payload["metrics"]["scenario_count"]
     assert any("synthetic fallback" in warning for warning in payload["warnings"])
 
@@ -57,6 +58,53 @@ def test_build_report_can_fail_when_scenario_count_below_threshold(tmp_path: Pat
     )
     assert payload["overall_ok"] is False
     assert any("scenario_count below threshold" in issue for issue in payload["issues"])
+
+
+def test_build_report_can_fail_on_distribution_drift(tmp_path: Path) -> None:
+    journal_path = tmp_path / "memory" / "self_journal.jsonl"
+    _write_jsonl(
+        journal_path,
+        [
+            {
+                "timestamp": "2026-02-01T00:00:00Z",
+                "verdict": "approve",
+                "transcript": {
+                    "timestamp": "2026-02-01T00:00:00Z",
+                    "input_preview": "hello",
+                    "coherence": {"c_inter": 0.9, "approval_rate": 0.9},
+                },
+            }
+        ],
+    )
+    discussion_path = tmp_path / "memory" / "agent_discussion_curated.jsonl"
+    _write_jsonl(discussion_path, [])
+    previous_payload = {
+        "metrics": {
+            "scenario_count": 100.0,
+            "average_initial_tension": 0.9,
+            "average_friction_score": 0.9,
+            "high_friction_scenario_rate": 0.8,
+        }
+    }
+
+    payload, _ = runner.build_report(
+        journal_path=journal_path,
+        discussion_path=discussion_path,
+        max_rows=1200,
+        min_scenarios=1,
+        max_invalid_lines=200,
+        previous_payload=previous_payload,
+        max_avg_tension_drift=0.1,
+        max_avg_friction_drift=0.1,
+        max_high_friction_rate_drift=0.1,
+        min_scenario_count_ratio=0.5,
+    )
+    assert payload["overall_ok"] is False
+    assert payload["metrics"]["drift"]["has_previous_snapshot"] is True
+    assert any("scenario_count ratio below threshold" in issue for issue in payload["issues"])
+    assert any(
+        "average_initial_tension drift above threshold" in issue for issue in payload["issues"]
+    )
 
 
 def test_main_writes_trace_and_status_artifacts(

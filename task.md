@@ -768,3 +768,18 @@
 - [x] Update status docs:
 - [x] `docs/status/README.md`
 **Success Criteria**: replay inputs are reproducibly exported from real traces, calibration runs on those inputs in CI, and trend artifacts are continuously available for threshold tuning.
+
+## Phase 120: Replay Drift Guardrail (2026-02-28)
+- [x] Extend replay exporter with previous-snapshot drift analysis:
+- [x] `scripts/run_friction_shadow_replay_export.py`
+- [x] Add strict drift thresholds:
+- [x] `max_avg_tension_drift`
+- [x] `max_avg_friction_drift`
+- [x] `max_high_friction_rate_drift`
+- [x] `min_scenario_count_ratio`
+- [x] Add drift summary into replay markdown artifact (`docs/status/friction_shadow_replay_latest.md`)
+- [x] Add regression tests:
+- [x] `tests/test_run_friction_shadow_replay_export.py`
+- [x] Sync status docs:
+- [x] `docs/status/README.md`
+**Success Criteria**: replay export can fail-closed on abnormal distribution drift while keeping baseline runs green.
