@@ -15,6 +15,7 @@ PYTEST_CI_WORKFLOW_PATH = Path(".github/workflows/pytest-ci.yml")
 DUAL_TRACK_BOUNDARY_WORKFLOW_PATH = Path(".github/workflows/dual_track_boundary.yml")
 GIT_HYGIENE_WORKFLOW_PATH = Path(".github/workflows/git_hygiene.yml")
 POST_RELEASE_MONITOR_WORKFLOW_PATH = Path(".github/workflows/post_release_monitor.yml")
+FRICTION_SHADOW_WORKFLOW_PATH = Path(".github/workflows/friction_shadow_calibration.yml")
 
 
 def _load_yaml(path: Path) -> dict[str, Any]:
@@ -128,6 +129,8 @@ def test_repo_healthcheck_workflow_has_default_and_dispatch_runners() -> None:
     assert "docs/status/memory_learning_samples_latest.jsonl" in path_value
     assert "docs/status/memory_governance_contract_latest.json" in path_value
     assert "docs/status/memory_governance_contract_latest.md" in path_value
+    assert "docs/status/friction_shadow_replay_latest.json" in path_value
+    assert "docs/status/friction_shadow_replay_latest.md" in path_value
     assert "docs/status/friction_shadow_calibration_latest.json" in path_value
     assert "docs/status/friction_shadow_calibration_latest.md" in path_value
     assert "docs/status/philosophical_reflection_latest.json" in path_value
@@ -370,3 +373,37 @@ def test_post_release_monitor_workflow_uploads_logs() -> None:
     assert isinstance(path_value, str)
     assert "post_release_web_api.log" in path_value
     assert "post_release_preflight.log" in path_value
+
+
+def test_friction_shadow_workflow_triggers_and_blocking_runners() -> None:
+    payload = _load_yaml(FRICTION_SHADOW_WORKFLOW_PATH)
+    on_section = _on_section(payload)
+    assert "schedule" in on_section
+    assert "push" in on_section
+    assert "pull_request" in on_section
+    assert "workflow_dispatch" in on_section
+
+    steps = _job_steps(payload, "calibrate")
+    export_step = _find_step(steps, "Export friction shadow replay (blocking)")
+    export_cmd = export_step.get("run", "")
+    assert isinstance(export_cmd, str)
+    assert "python scripts/run_friction_shadow_replay_export.py --strict" in export_cmd
+
+    calibration_step = _find_step(steps, "Run friction shadow calibration (blocking)")
+    calibration_cmd = calibration_step.get("run", "")
+    assert isinstance(calibration_cmd, str)
+    assert "python scripts/run_friction_shadow_calibration_report.py --strict" in calibration_cmd
+
+
+def test_friction_shadow_workflow_uploads_status_artifacts() -> None:
+    payload = _load_yaml(FRICTION_SHADOW_WORKFLOW_PATH)
+    steps = _job_steps(payload, "calibrate")
+    artifact_step = _find_step(steps, "Upload friction shadow artifacts")
+    artifact_with = artifact_step.get("with", {})
+    assert isinstance(artifact_with, dict)
+    path_value = artifact_with.get("path", "")
+    assert isinstance(path_value, str)
+    assert "docs/status/friction_shadow_replay_latest.json" in path_value
+    assert "docs/status/friction_shadow_replay_latest.md" in path_value
+    assert "docs/status/friction_shadow_calibration_latest.json" in path_value
+    assert "docs/status/friction_shadow_calibration_latest.md" in path_value

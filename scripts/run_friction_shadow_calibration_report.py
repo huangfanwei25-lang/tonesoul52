@@ -435,7 +435,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--trace-path",
-        default="memory/friction_shadow_eval.jsonl",
+        default="memory/narrative/friction_shadow_eval.jsonl",
         help="Optional JSONL scenario replay file for calibration.",
     )
     parser.add_argument(

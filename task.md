@@ -747,3 +747,24 @@
 - [x] Cross-repo field mapping document (`tonesoul52` <-> `OpenClaw-Memory`) with migration notes.
 - [x] Shadow-vs-active friction routing calibration report.
 **Success Criteria**: contract files are enforced by CI/healthcheck, and Q2 roadmap has concrete deliverables with measurable acceptance thresholds.
+
+## Phase 119: Friction Replay Pipeline + Continuous Calibration (2026-02-28)
+- [x] Add real replay exporter from memory traces:
+- [x] `scripts/run_friction_shadow_replay_export.py`
+- [x] Emit replay trace + status artifacts:
+- [x] `memory/narrative/friction_shadow_eval.jsonl` (runtime generated, gitignored)
+- [x] `docs/status/friction_shadow_replay_latest.{json,md}`
+- [x] Integrate replay export into repo healthcheck before calibration:
+- [x] `scripts/run_repo_healthcheck.py`
+- [x] Update healthcheck workflow artifacts and contract tests:
+- [x] `.github/workflows/repo_healthcheck.yml`
+- [x] `tests/test_workflow_contracts.py`
+- [x] Add dedicated CI workflow for periodic replay+calibration:
+- [x] `.github/workflows/friction_shadow_calibration.yml`
+- [x] Add/extend regression tests:
+- [x] `tests/test_run_friction_shadow_replay_export.py`
+- [x] `tests/test_run_repo_healthcheck.py`
+- [x] `tests/test_workflow_contracts.py`
+- [x] Update status docs:
+- [x] `docs/status/README.md`
+**Success Criteria**: replay inputs are reproducibly exported from real traces, calibration runs on those inputs in CI, and trend artifacts are continuously available for threshold tuning.

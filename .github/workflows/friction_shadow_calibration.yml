@@ -1,0 +1,72 @@
+name: Friction Shadow Calibration
+
+on:
+  schedule:
+    - cron: "40 2 * * 5" # weekly on Friday UTC
+  workflow_dispatch:
+  push:
+    branches: [master, main, dev]
+    paths:
+      - "scripts/run_friction_shadow_replay_export.py"
+      - "scripts/run_friction_shadow_calibration_report.py"
+      - "tests/test_run_friction_shadow_replay_export.py"
+      - "tests/test_run_friction_shadow_calibration_report.py"
+      - "tests/test_workflow_contracts.py"
+      - "docs/status/**"
+      - ".github/workflows/friction_shadow_calibration.yml"
+  pull_request:
+    branches: [master, main, dev]
+    paths:
+      - "scripts/run_friction_shadow_replay_export.py"
+      - "scripts/run_friction_shadow_calibration_report.py"
+      - "tests/test_run_friction_shadow_replay_export.py"
+      - "tests/test_run_friction_shadow_calibration_report.py"
+      - "tests/test_workflow_contracts.py"
+      - "docs/status/**"
+      - ".github/workflows/friction_shadow_calibration.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tonesoul-friction-shadow-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  calibrate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Export friction shadow replay (blocking)
+        run: |
+          python scripts/run_friction_shadow_replay_export.py --strict
+
+      - name: Run friction shadow calibration (blocking)
+        run: |
+          python scripts/run_friction_shadow_calibration_report.py --strict
+
+      - name: Upload friction shadow artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: friction-shadow-calibration-${{ github.run_id }}
+          path: |
+            docs/status/friction_shadow_replay_latest.json
+            docs/status/friction_shadow_replay_latest.md
+            docs/status/friction_shadow_calibration_latest.json
+            docs/status/friction_shadow_calibration_latest.md
+          if-no-files-found: error
+          retention-days: 30

@@ -122,6 +122,8 @@ jobs:
             docs/status/memory_learning_samples_latest.jsonl
             docs/status/memory_governance_contract_latest.json
             docs/status/memory_governance_contract_latest.md
+            docs/status/friction_shadow_replay_latest.json
+            docs/status/friction_shadow_replay_latest.md
             docs/status/friction_shadow_calibration_latest.json
             docs/status/friction_shadow_calibration_latest.md
             docs/status/philosophical_reflection_latest.json
