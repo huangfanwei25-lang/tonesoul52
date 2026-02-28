@@ -1,0 +1,151 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tonesoul.dev/schemas/governance/memory_governance_contract_v1.schema.json",
+  "title": "Memory Governance Contract v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "generated_at",
+    "source_repo",
+    "prior_tension",
+    "governance_friction",
+    "routing_trace"
+  ],
+  "properties": {
+    "contract_version": {
+      "type": "string",
+      "const": "v1"
+    },
+    "generated_at": {
+      "type": "string",
+      "minLength": 1,
+      "description": "ISO-8601 UTC timestamp."
+    },
+    "source_repo": {
+      "type": "string",
+      "enum": ["tonesoul52", "openclaw-memory"]
+    },
+    "prior_tension": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["delta_t", "gate_decision"],
+      "properties": {
+        "delta_t": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "query_tension": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "memory_tension": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "query_wave": {
+          "$ref": "#/$defs/wave"
+        },
+        "memory_wave": {
+          "$ref": "#/$defs/wave"
+        },
+        "gate_decision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rationale": {
+          "type": "string"
+        }
+      }
+    },
+    "governance_friction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["score", "components"],
+      "properties": {
+        "score": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "components": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["delta_t", "delta_wave", "boundary_mismatch"],
+          "properties": {
+            "delta_t": {
+              "type": ["number", "null"],
+              "minimum": 0.0,
+              "maximum": 1.0
+            },
+            "delta_wave": {
+              "type": ["number", "null"],
+              "minimum": 0.0,
+              "maximum": 1.0
+            },
+            "boundary_mismatch": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "routing_trace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["route", "journal_eligible", "reason"],
+      "properties": {
+        "route": {
+          "type": "string",
+          "enum": [
+            "route_local_llm",
+            "route_single_cloud",
+            "route_full_council",
+            "block_rate_limit"
+          ]
+        },
+        "journal_eligible": {
+          "type": "boolean"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "risk_level": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "wave": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "uncertainty_shift": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "divergence_shift": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "risk_shift": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "revision_shift": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        }
+      }
+    }
+  }
+}

@@ -210,6 +210,14 @@ def _build_check_specs(
             ],
         },
         {
+            "name": "memory_governance_contract",
+            "command": [
+                python_executable,
+                "scripts/run_memory_governance_contract_check.py",
+                "--strict",
+            ],
+        },
+        {
             "name": "philosophical_reflection",
             "command": [
                 python_executable,

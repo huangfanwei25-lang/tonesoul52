@@ -120,6 +120,8 @@ jobs:
             docs/status/memory_quality_latest.json
             docs/status/memory_quality_latest.md
             docs/status/memory_learning_samples_latest.jsonl
+            docs/status/memory_governance_contract_latest.json
+            docs/status/memory_governance_contract_latest.md
             docs/status/philosophical_reflection_latest.json
             docs/status/philosophical_reflection_latest.md
             docs/status/dual_track_boundary_latest.json

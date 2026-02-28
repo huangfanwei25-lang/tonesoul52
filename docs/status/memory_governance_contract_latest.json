@@ -1,0 +1,118 @@
+{
+  "generated_at": "2026-02-28T04:34:32Z",
+  "source": "scripts/run_memory_governance_contract_check.py",
+  "ok": true,
+  "failed_count": 0,
+  "warning_count": 0,
+  "inputs": {
+    "schema": "spec/governance/memory_governance_contract_v1.schema.json",
+    "example": "spec/governance/memory_governance_contract_v1.example.json"
+  },
+  "checks": [
+    {
+      "name": "schema.read",
+      "status": "pass",
+      "detail": "schema loaded"
+    },
+    {
+      "name": "example.read",
+      "status": "pass",
+      "detail": "example loaded"
+    },
+    {
+      "name": "schema.root_type",
+      "status": "pass",
+      "detail": "root type object"
+    },
+    {
+      "name": "schema.required",
+      "status": "pass",
+      "detail": "required fields present"
+    },
+    {
+      "name": "schema.properties",
+      "status": "pass",
+      "detail": "root properties present"
+    },
+    {
+      "name": "example.contract_version",
+      "status": "pass",
+      "detail": "contract_version=v1"
+    },
+    {
+      "name": "example.source_repo",
+      "status": "pass",
+      "detail": "source_repo valid"
+    },
+    {
+      "name": "example.generated_at",
+      "status": "pass",
+      "detail": "generated_at present"
+    },
+    {
+      "name": "example.prior_tension.delta_t",
+      "status": "pass",
+      "detail": "delta_t in [0,1]"
+    },
+    {
+      "name": "example.prior_tension.gate_decision",
+      "status": "pass",
+      "detail": "gate_decision present"
+    },
+    {
+      "name": "example.prior_tension.query_tension",
+      "status": "pass",
+      "detail": "query_tension in [0,1]"
+    },
+    {
+      "name": "example.prior_tension.memory_tension",
+      "status": "pass",
+      "detail": "memory_tension in [0,1]"
+    },
+    {
+      "name": "example.prior_tension.query_wave",
+      "status": "pass",
+      "detail": "wave shape valid"
+    },
+    {
+      "name": "example.prior_tension.memory_wave",
+      "status": "pass",
+      "detail": "wave shape valid"
+    },
+    {
+      "name": "example.governance_friction.score",
+      "status": "pass",
+      "detail": "score in [0,1]"
+    },
+    {
+      "name": "example.governance_friction.components.delta_t",
+      "status": "pass",
+      "detail": "delta_t in [0,1]"
+    },
+    {
+      "name": "example.governance_friction.components.delta_wave",
+      "status": "pass",
+      "detail": "delta_wave in [0,1]"
+    },
+    {
+      "name": "example.governance_friction.components.boundary_mismatch",
+      "status": "pass",
+      "detail": "boundary_mismatch is boolean"
+    },
+    {
+      "name": "example.routing_trace.route",
+      "status": "pass",
+      "detail": "route valid"
+    },
+    {
+      "name": "example.routing_trace.journal_eligible",
+      "status": "pass",
+      "detail": "journal_eligible is boolean"
+    },
+    {
+      "name": "example.routing_trace.reason",
+      "status": "pass",
+      "detail": "reason present"
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "contract_version": "v1",
+  "generated_at": "2026-02-28T04:30:00Z",
+  "source_repo": "tonesoul52",
+  "prior_tension": {
+    "delta_t": 0.22,
+    "query_tension": 0.88,
+    "memory_tension": 0.14,
+    "query_wave": {
+      "uncertainty_shift": 0.72,
+      "divergence_shift": 0.81,
+      "risk_shift": 0.90,
+      "revision_shift": 0.61
+    },
+    "memory_wave": {
+      "uncertainty_shift": 0.31,
+      "divergence_shift": 0.40,
+      "risk_shift": 0.55,
+      "revision_shift": 0.29
+    },
+    "gate_decision": "block",
+    "rationale": "historical boundary event with high safety concern"
+  },
+  "governance_friction": {
+    "score": 0.67,
+    "components": {
+      "delta_t": 0.74,
+      "delta_wave": 0.37,
+      "boundary_mismatch": true
+    }
+  },
+  "routing_trace": {
+    "route": "route_full_council",
+    "journal_eligible": false,
+    "reason": "High governance friction detected; escalating to full council.",
+    "risk_level": "high"
+  }
+}

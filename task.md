@@ -725,3 +725,25 @@
 - [x] `tests/test_run_philosophical_reflection_report.py`
 - [x] Update engineering spec with friction + adaptive threshold formula.
 **Success Criteria**: low-tension/high-friction requests can escalate to council with audit trace, and reflection report no longer collapses to zero high-tension events under low-scale corpora.
+
+## Phase 118: Contract Freeze + Q2 Execution Kickoff (2026-02-28)
+- [x] Add Q2 execution roadmap with dated phases and acceptance gates:
+- [x] `docs/plans/roadmap_2026q2_memory_governance.md`
+- [x] Introduce shared governance contract schema + example:
+- [x] `spec/governance/memory_governance_contract_v1.schema.json`
+- [x] `spec/governance/memory_governance_contract_v1.example.json`
+- [x] Add machine-checkable contract validation runner:
+- [x] `scripts/run_memory_governance_contract_check.py`
+- [x] Add status artifacts:
+- [x] `docs/status/memory_governance_contract_latest.{json,md}`
+- [x] Integrate contract check into repo healthcheck:
+- [x] `scripts/run_repo_healthcheck.py`
+- [x] Update healthcheck workflow artifact upload + contract tests:
+- [x] `.github/workflows/repo_healthcheck.yml`
+- [x] `tests/test_workflow_contracts.py`
+- [x] Add/extend regression tests:
+- [x] `tests/test_run_memory_governance_contract_check.py`
+- [x] `tests/test_run_repo_healthcheck.py`
+- [ ] Cross-repo field mapping document (`tonesoul52` <-> `OpenClaw-Memory`) with migration notes.
+- [ ] Shadow-vs-active friction routing calibration report.
+**Success Criteria**: contract files are enforced by CI/healthcheck, and Q2 roadmap has concrete deliverables with measurable acceptance thresholds.
