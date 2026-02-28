@@ -101,10 +101,43 @@ def test_build_report_can_fail_on_distribution_drift(tmp_path: Path) -> None:
     )
     assert payload["overall_ok"] is False
     assert payload["metrics"]["drift"]["has_previous_snapshot"] is True
+    assert payload["metrics"]["drift"]["guard_applied"] is True
     assert any("scenario_count ratio below threshold" in issue for issue in payload["issues"])
     assert any(
         "average_initial_tension drift above threshold" in issue for issue in payload["issues"]
     )
+
+
+def test_build_report_skips_drift_guard_when_synthetic_fallback_used(tmp_path: Path) -> None:
+    previous_payload = {
+        "metrics": {
+            "scenario_count": 1200,
+            "source_synthetic_count": 0,
+            "average_initial_tension": 0.6,
+            "average_friction_score": 0.65,
+            "high_friction_scenario_rate": 0.75,
+        }
+    }
+
+    payload, rows = runner.build_report(
+        journal_path=tmp_path / "missing_journal.jsonl",
+        discussion_path=tmp_path / "missing_discussion.jsonl",
+        max_rows=1200,
+        min_scenarios=24,
+        max_invalid_lines=200,
+        previous_payload=previous_payload,
+        max_avg_tension_drift=0.01,
+        max_avg_friction_drift=0.01,
+        max_high_friction_rate_drift=0.01,
+        min_scenario_count_ratio=0.95,
+    )
+    assert rows
+    assert payload["overall_ok"] is True
+    drift = payload["metrics"]["drift"]
+    assert drift["has_previous_snapshot"] is True
+    assert drift["guard_applied"] is False
+    assert drift["guard_skip_reason"] == "synthetic_current"
+    assert any("drift guard skipped" in warning for warning in payload["warnings"])
 
 
 def test_main_writes_trace_and_status_artifacts(

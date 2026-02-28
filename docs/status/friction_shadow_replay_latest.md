@@ -1,6 +1,6 @@
 # Friction Shadow Replay Latest
 
-- generated_at: 2026-02-28T12:25:49Z
+- generated_at: 2026-02-28T12:29:52Z
 - overall_ok: true
 - scenario_count: 1200
 - source_journal_count: 1176
@@ -14,7 +14,8 @@
 
 ## Drift
 - has_previous_snapshot: true
+- guard_applied: true
 - scenario_count_ratio: 1.0
-- average_initial_tension_delta: -0.0016
-- average_friction_score_delta: -0.0016
-- high_friction_scenario_rate_delta: -0.0008
+- average_initial_tension_delta: 0.0
+- average_friction_score_delta: 0.0
+- high_friction_scenario_rate_delta: 0.0

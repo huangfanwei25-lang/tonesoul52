@@ -107,6 +107,9 @@ def _render_markdown(payload: dict[str, Any]) -> str:
         lines.append(
             f"- has_previous_snapshot: {str(drift_metrics.get('has_previous_snapshot', False)).lower()}"
         )
+        lines.append(f"- guard_applied: {str(drift_metrics.get('guard_applied', False)).lower()}")
+        if drift_metrics.get("guard_skip_reason"):
+            lines.append(f"- guard_skip_reason: {drift_metrics.get('guard_skip_reason')}")
         if drift_metrics.get("has_previous_snapshot"):
             lines.append(f"- scenario_count_ratio: {drift_metrics.get('scenario_count_ratio')}")
             lines.append(
@@ -504,6 +507,8 @@ def build_report(
     if previous_metrics is None:
         drift_metrics.update(
             {
+                "guard_applied": False,
+                "guard_skip_reason": "no_previous_snapshot",
                 "scenario_count_ratio": None,
                 "average_initial_tension_delta": None,
                 "average_friction_score_delta": None,
@@ -511,48 +516,78 @@ def build_report(
             }
         )
     else:
-        previous_scenario_count = _safe_float(previous_metrics.get("scenario_count"))
-        if previous_scenario_count is not None and previous_scenario_count > 0:
-            scenario_count_ratio = round(float(len(rows)) / previous_scenario_count, 4)
-            drift_metrics["scenario_count_ratio"] = scenario_count_ratio
-            if scenario_count_ratio < min_scenario_count_ratio:
-                issues.append(
-                    "scenario_count ratio below threshold "
-                    f"({scenario_count_ratio} < {min_scenario_count_ratio})"
-                )
-        else:
-            drift_metrics["scenario_count_ratio"] = None
-            warnings.append("previous replay snapshot has invalid scenario_count")
-
-        avg_tension_delta = _delta(avg_tension, previous_metrics.get("average_initial_tension"))
-        drift_metrics["average_initial_tension_delta"] = avg_tension_delta
-        if avg_tension_delta is not None and abs(avg_tension_delta) > max_avg_tension_drift:
-            issues.append(
-                "average_initial_tension drift above threshold "
-                f"({abs(avg_tension_delta)} > {max_avg_tension_drift})"
-            )
-
-        avg_friction_delta = _delta(avg_friction, previous_metrics.get("average_friction_score"))
-        drift_metrics["average_friction_score_delta"] = avg_friction_delta
-        if avg_friction_delta is not None and abs(avg_friction_delta) > max_avg_friction_drift:
-            issues.append(
-                "average_friction_score drift above threshold "
-                f"({abs(avg_friction_delta)} > {max_avg_friction_drift})"
-            )
-
-        high_friction_rate_delta = _delta(
-            high_friction_rate,
-            previous_metrics.get("high_friction_scenario_rate"),
+        previous_synthetic_count = (
+            _safe_float(previous_metrics.get("source_synthetic_count")) or 0.0
         )
-        drift_metrics["high_friction_scenario_rate_delta"] = high_friction_rate_delta
-        if (
-            high_friction_rate_delta is not None
-            and abs(high_friction_rate_delta) > max_high_friction_rate_drift
-        ):
-            issues.append(
-                "high_friction_scenario_rate drift above threshold "
-                f"({abs(high_friction_rate_delta)} > {max_high_friction_rate_drift})"
+        previous_is_synthetic = previous_synthetic_count > 0
+        current_is_synthetic = synthetic_count > 0
+        if current_is_synthetic or previous_is_synthetic:
+            skip_reason = (
+                "synthetic_current_and_previous"
+                if current_is_synthetic and previous_is_synthetic
+                else "synthetic_current" if current_is_synthetic else "synthetic_previous"
             )
+            drift_metrics.update(
+                {
+                    "guard_applied": False,
+                    "guard_skip_reason": skip_reason,
+                    "scenario_count_ratio": None,
+                    "average_initial_tension_delta": None,
+                    "average_friction_score_delta": None,
+                    "high_friction_scenario_rate_delta": None,
+                }
+            )
+            warnings.append(
+                "drift guard skipped because replay source includes synthetic fallback "
+                f"({skip_reason})"
+            )
+        else:
+            drift_metrics["guard_applied"] = True
+            drift_metrics["guard_skip_reason"] = None
+            previous_scenario_count = _safe_float(previous_metrics.get("scenario_count"))
+            if previous_scenario_count is not None and previous_scenario_count > 0:
+                scenario_count_ratio = round(float(len(rows)) / previous_scenario_count, 4)
+                drift_metrics["scenario_count_ratio"] = scenario_count_ratio
+                if scenario_count_ratio < min_scenario_count_ratio:
+                    issues.append(
+                        "scenario_count ratio below threshold "
+                        f"({scenario_count_ratio} < {min_scenario_count_ratio})"
+                    )
+            else:
+                drift_metrics["scenario_count_ratio"] = None
+                warnings.append("previous replay snapshot has invalid scenario_count")
+
+            avg_tension_delta = _delta(avg_tension, previous_metrics.get("average_initial_tension"))
+            drift_metrics["average_initial_tension_delta"] = avg_tension_delta
+            if avg_tension_delta is not None and abs(avg_tension_delta) > max_avg_tension_drift:
+                issues.append(
+                    "average_initial_tension drift above threshold "
+                    f"({abs(avg_tension_delta)} > {max_avg_tension_drift})"
+                )
+
+            avg_friction_delta = _delta(
+                avg_friction, previous_metrics.get("average_friction_score")
+            )
+            drift_metrics["average_friction_score_delta"] = avg_friction_delta
+            if avg_friction_delta is not None and abs(avg_friction_delta) > max_avg_friction_drift:
+                issues.append(
+                    "average_friction_score drift above threshold "
+                    f"({abs(avg_friction_delta)} > {max_avg_friction_drift})"
+                )
+
+            high_friction_rate_delta = _delta(
+                high_friction_rate,
+                previous_metrics.get("high_friction_scenario_rate"),
+            )
+            drift_metrics["high_friction_scenario_rate_delta"] = high_friction_rate_delta
+            if (
+                high_friction_rate_delta is not None
+                and abs(high_friction_rate_delta) > max_high_friction_rate_drift
+            ):
+                issues.append(
+                    "high_friction_scenario_rate drift above threshold "
+                    f"({abs(high_friction_rate_delta)} > {max_high_friction_rate_drift})"
+                )
 
     payload = {
         "generated_at": _iso_now(),
