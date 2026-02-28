@@ -20,7 +20,7 @@ import threading
 import time
 from dataclasses import dataclass
 from enum import Enum
-from typing import Dict
+from typing import Dict, Optional
 
 
 class RoutingPath(Enum):
@@ -80,7 +80,62 @@ class ComputeGate:
     def __init__(self, local_model_enabled: bool = True):
         self.local_model_enabled = local_model_enabled
         self.MIN_COUNCIL_TENSION = 0.4
+        self.MIN_COUNCIL_FRICTION = 0.62
         self.MIN_CLOUD_LEN = 15
+
+    @staticmethod
+    def _clamp_unit(value: float) -> float:
+        return max(0.0, min(1.0, float(value)))
+
+    @classmethod
+    def _mean_wave_delta(
+        cls, query_wave: Optional[dict], memory_wave: Optional[dict]
+    ) -> Optional[float]:
+        if not isinstance(query_wave, dict) or not isinstance(memory_wave, dict):
+            return None
+        shared: list[float] = []
+        for key in query_wave.keys():
+            if key not in memory_wave:
+                continue
+            qv = query_wave.get(key)
+            mv = memory_wave.get(key)
+            if not isinstance(qv, (int, float)) or not isinstance(mv, (int, float)):
+                continue
+            shared.append(abs(float(qv) - float(mv)))
+        if not shared:
+            return None
+        return cls._clamp_unit(sum(shared) / float(len(shared)))
+
+    @classmethod
+    def compute_governance_friction(
+        cls,
+        *,
+        query_tension: Optional[float],
+        memory_tension: Optional[float],
+        query_wave: Optional[dict] = None,
+        memory_wave: Optional[dict] = None,
+        boundary_mismatch: bool = False,
+    ) -> Optional[float]:
+        """
+        Compute governance friction:
+        F = 0.45 * Δt + 0.35 * Δwave + 0.20 * boundary_mismatch
+        """
+        delta_t: Optional[float] = None
+        if isinstance(query_tension, (int, float)) and isinstance(memory_tension, (int, float)):
+            delta_t = cls._clamp_unit(abs(float(query_tension) - float(memory_tension)))
+
+        delta_wave = cls._mean_wave_delta(query_wave, memory_wave)
+        mismatch = 1.0 if boundary_mismatch else 0.0
+
+        if delta_t is None and delta_wave is None:
+            if boundary_mismatch:
+                return round(0.20 * mismatch, 4)
+            return None
+
+        delta_t = 0.0 if delta_t is None else delta_t
+        delta_wave = 0.0 if delta_wave is None else delta_wave
+        friction = 0.45 * delta_t + 0.35 * delta_wave + 0.20 * mismatch
+        return round(cls._clamp_unit(friction), 4)
 
     def evaluate(
         self,
@@ -88,6 +143,7 @@ class ComputeGate:
         user_message: str,
         initial_tension: float,
         user_id: str = "anonymous",
+        friction_score: Optional[float] = None,
     ) -> RoutingDecision:
         """
         Determines the execution path.
@@ -103,6 +159,13 @@ class ComputeGate:
         """
         user_tier = user_tier.lower()
         msg_len = len(user_message.strip())
+        initial_tension = self._clamp_unit(initial_tension)
+        effective_tension = initial_tension
+        if isinstance(friction_score, (int, float)):
+            friction_score = self._clamp_unit(friction_score)
+            effective_tension = max(effective_tension, friction_score)
+        else:
+            friction_score = None
 
         # 1. Evolutionary Memory Isolation
         # Only premium or admin users generate data worthy of cognitive evolution
@@ -110,7 +173,11 @@ class ComputeGate:
 
         # 2. The Occam Gate (Token Filtering)
         # If the message is basically "hello", "thanks", "ok", route to free local model
-        if msg_len < self.MIN_CLOUD_LEN and initial_tension < self.MIN_COUNCIL_TENSION:
+        if (
+            msg_len < self.MIN_CLOUD_LEN
+            and effective_tension < self.MIN_COUNCIL_TENSION
+            and (friction_score is None or friction_score < self.MIN_COUNCIL_FRICTION)
+        ):
             if self.local_model_enabled:
                 return RoutingDecision(
                     path=RoutingPath.PASS_LOCAL,
@@ -133,7 +200,11 @@ class ComputeGate:
 
         # 4. Tension Cost Threshold
         # Free users are capped at Single Agent processing unless it's a critical safety issue
-        if user_tier == "free" and initial_tension < 0.8:
+        if (
+            user_tier == "free"
+            and effective_tension < 0.8
+            and (friction_score is None or friction_score < self.MIN_COUNCIL_FRICTION)
+        ):
             return RoutingDecision(
                 path=RoutingPath.PASS_SINGLE,
                 journal_eligible=False,
@@ -141,18 +212,32 @@ class ComputeGate:
             )
 
         # High Tension (>0.4) or Premium user requiring full deliberation
-        if initial_tension >= self.MIN_COUNCIL_TENSION:
+        if (
+            effective_tension >= self.MIN_COUNCIL_TENSION
+            or (friction_score is not None and friction_score >= self.MIN_COUNCIL_FRICTION)
+        ):
+            if friction_score is not None and friction_score >= self.MIN_COUNCIL_FRICTION:
+                reason = (
+                    "High governance friction detected "
+                    f"(friction={friction_score:.2f}, effective_tension={effective_tension:.2f}). "
+                    "Scaling up to full Council debate."
+                )
+            else:
+                reason = (
+                    f"High Tension detected ({effective_tension:.2f}). "
+                    "Scaling up to full Council debate."
+                )
             return RoutingDecision(
                 path=RoutingPath.PASS_COUNCIL,
                 journal_eligible=journal_eligible,
-                reason=f"High Tension detected ({initial_tension:.2f}). Scaling up to full Council debate.",
+                reason=reason,
             )
 
         # Default standard processing
         risk_level = "low"
-        if initial_tension >= 0.8:
+        if effective_tension >= 0.8:
             risk_level = "high"
-        elif initial_tension >= self.MIN_COUNCIL_TENSION:
+        elif effective_tension >= self.MIN_COUNCIL_TENSION:
             risk_level = "medium"
 
         return RoutingDecision(

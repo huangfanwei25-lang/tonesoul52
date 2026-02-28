@@ -60,6 +60,13 @@ TENSION_KEYS = {
     "tension_score",
     "adjusted_tension",
     "semantic_tension",
+    "text_tension",
+    "cognitive_friction",
+    "delta_s_ecs",
+    "t_ecs",
+    "total",
+    "total_tension",
+    "semantic_delta",
 }
 
 CONFLICT_VERDICTS = {"block", "declare_stance", "revise"}
@@ -83,6 +90,36 @@ def _rate(numerator: int, denominator: int) -> float:
     if denominator <= 0:
         return 0.0
     return round(float(numerator) / float(denominator), 4)
+
+
+def _quantile(values: list[float], q: float) -> float:
+    if not values:
+        return 0.0
+    if q <= 0.0:
+        return min(values)
+    if q >= 1.0:
+        return max(values)
+    ordered = sorted(values)
+    position = (len(ordered) - 1) * q
+    lower = int(position)
+    upper = min(lower + 1, len(ordered) - 1)
+    weight = position - lower
+    return ordered[lower] * (1.0 - weight) + ordered[upper] * weight
+
+
+def _effective_tension_threshold(configured: float, values: list[float]) -> tuple[float, str]:
+    """
+    Blend configured threshold with corpus distribution.
+    This prevents the threshold from being too high when historic traces are low-scale.
+    """
+    if not values:
+        return configured, "configured"
+    percentile_85 = _quantile(values, 0.85)
+    adaptive = max(0.25, min(0.70, percentile_85))
+    effective = min(configured, adaptive)
+    if abs(effective - configured) < 1e-9:
+        return configured, "configured"
+    return round(effective, 4), "adaptive_p85"
 
 
 def _bounded_float(value: object) -> float | None:
@@ -221,6 +258,11 @@ def _collect_tension_values(node: Any) -> list[float]:
                             "score",
                             "value",
                             "tension",
+                            "text_tension",
+                            "cognitive_friction",
+                            "delta_s_ecs",
+                            "t_ecs",
+                            "total",
                         ):
                             nested = _bounded_float(value.get(candidate_key))
                             if nested is not None:
@@ -278,6 +320,8 @@ def _build_empty_payload(
             "journal_path": journal_path.as_posix(),
             "discussion_path": discussion_path.as_posix(),
             "tension_threshold": round(tension_threshold, 3),
+            "tension_threshold_effective": round(tension_threshold, 3),
+            "tension_threshold_mode": "configured",
         },
         "metrics": {
             "combined_entry_count": 0,
@@ -290,6 +334,7 @@ def _build_empty_payload(
             "choice_event_count": 0,
             "tension_event_count": 0,
             "tension_value_count": 0,
+            "tension_threshold_effective": round(tension_threshold, 3),
             "average_tension": None,
             "max_tension": None,
             "topic_count": 0,
@@ -350,6 +395,7 @@ def build_report(
     choice_event_count = 0
     tension_event_count = 0
     tension_values: list[float] = []
+    entry_tension_peaks: list[float] = []
     topic_statuses: dict[str, set[str]] = {}
     friction_points: list[dict[str, Any]] = []
     seen_friction: set[str] = set()
@@ -390,8 +436,7 @@ def build_report(
         entry_tensions = _collect_tension_values(entry)
         if entry_tensions:
             tension_values.extend(entry_tensions)
-            if max(entry_tensions) >= tension_threshold:
-                tension_event_count += 1
+            entry_tension_peaks.append(max(entry_tensions))
 
         reflection_hit = _contains_marker(texts, REFLECTION_MARKERS)
         conflict_hit = verdict in CONFLICT_VERDICTS or _contains_marker(texts, CONFLICT_MARKERS)
@@ -428,8 +473,7 @@ def build_report(
         entry_tensions = _collect_tension_values(entry)
         if entry_tensions:
             tension_values.extend(entry_tensions)
-            if max(entry_tensions) >= tension_threshold:
-                tension_event_count += 1
+            entry_tension_peaks.append(max(entry_tensions))
 
         reflection_hit = _contains_marker(texts, REFLECTION_MARKERS)
         conflict_hit = status in {"blocked", "pending"} or _contains_marker(texts, CONFLICT_MARKERS)
@@ -461,6 +505,13 @@ def build_report(
             unresolved_topics.append(topic)
 
     combined_entry_count = len(journal_entries) + len(discussion_entries)
+    effective_tension_threshold, threshold_mode = _effective_tension_threshold(
+        tension_threshold,
+        tension_values,
+    )
+    tension_event_count = sum(
+        1 for peak in entry_tension_peaks if peak >= effective_tension_threshold
+    )
     average_tension = round(sum(tension_values) / len(tension_values), 4) if tension_values else None
     max_tension = round(max(tension_values), 4) if tension_values else None
 
@@ -482,6 +533,8 @@ def build_report(
             "journal_path": journal_path.as_posix(),
             "discussion_path": discussion_path.as_posix(),
             "tension_threshold": round(tension_threshold, 3),
+            "tension_threshold_effective": round(effective_tension_threshold, 4),
+            "tension_threshold_mode": threshold_mode,
         },
         "metrics": {
             "combined_entry_count": combined_entry_count,
@@ -494,6 +547,7 @@ def build_report(
             "choice_event_count": choice_event_count,
             "tension_event_count": tension_event_count,
             "tension_value_count": len(tension_values),
+            "tension_threshold_effective": round(effective_tension_threshold, 4),
             "average_tension": average_tension,
             "max_tension": max_tension,
             "topic_count": len(topic_statuses),
@@ -525,6 +579,8 @@ def _render_markdown(payload: dict[str, Any]) -> str:
         f"- journal_path: {payload.get('inputs', {}).get('journal_path', '')}",
         f"- discussion_path: {payload.get('inputs', {}).get('discussion_path', '')}",
         f"- tension_threshold: {payload.get('inputs', {}).get('tension_threshold', 0.75)}",
+        f"- tension_threshold_effective: {payload.get('inputs', {}).get('tension_threshold_effective', 0.75)}",
+        f"- tension_threshold_mode: {payload.get('inputs', {}).get('tension_threshold_mode', 'configured')}",
         "",
         "## Metrics",
         f"- combined_entry_count: {metrics.get('combined_entry_count', 0)}",

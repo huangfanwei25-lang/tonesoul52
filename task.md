@@ -710,3 +710,18 @@
 - [x] `python -m ruff check scripts/run_philosophical_reflection_report.py tests/test_run_philosophical_reflection_report.py scripts/run_repo_healthcheck.py tests/test_run_repo_healthcheck.py tests/test_workflow_contracts.py`
 - [x] `python -m pytest tests/test_run_philosophical_reflection_report.py tests/test_run_repo_healthcheck.py tests/test_workflow_contracts.py -q`
 **Success Criteria**: Philosophical reflection signals become first-class CI/governance artifacts and are reproducible from journal/discussion traces.
+
+## Phase 117: Friction-Aware Routing + Adaptive Reflection Threshold (2026-02-28)
+- [x] Add governance friction contract in `ComputeGate`:
+- [x] `F = 0.45*Δt + 0.35*Δwave + 0.20*boundary_mismatch`
+- [x] Support friction-driven council escalation in route evaluation.
+- [x] Wire `UnifiedPipeline` pre-gate friction estimation from `prior_tension` + override-pressure signal.
+- [x] Expose pre-gate tension/friction observability in dispatch trace.
+- [x] Expand philosophical reflection tension extraction (`text_tension`, `t_ecs`, `delta_s_ecs`, etc.).
+- [x] Add adaptive threshold mode (`adaptive_p85`) for low-scale historical tension distributions.
+- [x] Add/update regression tests:
+- [x] `tests/test_compute_gate.py`
+- [x] `tests/test_pipeline_compute_gate.py`
+- [x] `tests/test_run_philosophical_reflection_report.py`
+- [x] Update engineering spec with friction + adaptive threshold formula.
+**Success Criteria**: low-tension/high-friction requests can escalate to council with audit trace, and reflection report no longer collapses to zero high-tension events under low-scale corpora.

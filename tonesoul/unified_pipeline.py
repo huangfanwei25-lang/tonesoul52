@@ -804,6 +804,80 @@ class UnifiedPipeline:
                     user_input=user_input, ai_response=ai_response, tone_strength=0.5
                 )
 
+    @staticmethod
+    def _safe_unit_value(value: Any) -> Optional[float]:
+        if not isinstance(value, (int, float)):
+            return None
+        parsed = float(value)
+        if parsed < 0.0 or parsed > 1.0:
+            return None
+        return parsed
+
+    @staticmethod
+    def _contains_override_pressure(message: str) -> bool:
+        if not isinstance(message, str):
+            return False
+        lowered = message.lower()
+        markers = (
+            "must",
+            "right now",
+            "immediately",
+            "ignore",
+            "bypass",
+            "override",
+            "force",
+            "just do it",
+            "delete everything",
+            "必須",
+            "立刻",
+            "馬上",
+            "強制",
+            "覆寫",
+            "繞過",
+            "無條件",
+        )
+        return any(marker in lowered for marker in markers)
+
+    def _compute_prior_governance_friction(
+        self,
+        prior_tension: Optional[Dict[str, Any]],
+        user_message: str,
+    ) -> Optional[float]:
+        if not isinstance(prior_tension, dict) or not prior_tension:
+            return None
+
+        from tonesoul.gates.compute import ComputeGate
+
+        query_tension = self._safe_unit_value(prior_tension.get("query_tension"))
+        memory_tension = self._safe_unit_value(prior_tension.get("memory_tension"))
+        delta_t = self._safe_unit_value(prior_tension.get("delta_t"))
+        if query_tension is None and delta_t is not None:
+            query_tension = delta_t
+        if memory_tension is None and delta_t is not None:
+            memory_tension = 0.0
+
+        query_wave = prior_tension.get("query_wave")
+        if not isinstance(query_wave, dict):
+            query_wave = None
+
+        memory_wave = prior_tension.get("memory_wave")
+        if not isinstance(memory_wave, dict):
+            memory_wave = prior_tension.get("wave")
+        if not isinstance(memory_wave, dict):
+            memory_wave = None
+
+        gate_decision = str(prior_tension.get("gate_decision") or "").strip().lower()
+        was_boundary = gate_decision in {"block", "declare_stance", "reject", "refuse"}
+        boundary_mismatch = was_boundary and self._contains_override_pressure(user_message)
+
+        return ComputeGate.compute_governance_friction(
+            query_tension=query_tension,
+            memory_tension=memory_tension,
+            query_wave=query_wave,
+            memory_wave=memory_wave,
+            boundary_mismatch=boundary_mismatch,
+        )
+
     def process(
         self,
         user_message: str,
@@ -842,6 +916,10 @@ class UnifiedPipeline:
                 initial_tension = float(prior_tension.get("delta_t", 0.0) or 0.0)
             except (TypeError, ValueError):
                 pass
+        governance_friction = self._compute_prior_governance_friction(
+            prior_tension=prior_tension,
+            user_message=raw_user_message,
+        )
 
         # Route based on the raw user message. Recovery context can expand token
         # length significantly and should not affect fast-path eligibility.
@@ -850,6 +928,7 @@ class UnifiedPipeline:
             raw_user_message,
             initial_tension,
             user_id=user_id,
+            friction_score=governance_friction,
         )
 
         # FAST ROUTE: Bypass all expensive Cloud APIs and Council layers
@@ -866,6 +945,8 @@ class UnifiedPipeline:
                     "route": routing_decision.path.value,
                     "journal_eligible": routing_decision.journal_eligible,
                     "reason": routing_decision.reason,
+                    "pre_gate_initial_tension": initial_tension,
+                    "pre_gate_governance_friction": governance_friction,
                 },
             )
         elif routing_decision.path == RoutingPath.BLOCK_RATE_LIMIT:
@@ -878,6 +959,8 @@ class UnifiedPipeline:
                     "route": routing_decision.path.value,
                     "journal_eligible": routing_decision.journal_eligible,
                     "reason": routing_decision.reason,
+                    "pre_gate_initial_tension": initial_tension,
+                    "pre_gate_governance_friction": governance_friction,
                 },
             )
 
@@ -944,6 +1027,8 @@ class UnifiedPipeline:
             "tension_score": tone_strength,
             "resonance_state": resonance_state,
             "loop_detected": loop_detected,
+            "pre_gate_initial_tension": initial_tension,
+            "pre_gate_governance_friction": governance_friction,
         }
         # Attach TensionEngine detail to dispatch trace
         if tension_result is not None:

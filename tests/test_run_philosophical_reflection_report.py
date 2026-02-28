@@ -137,3 +137,42 @@ def test_main_strict_returns_non_zero_on_invalid_json_lines(
     assert exit_code == 1
     assert (out_dir / reflection_runner.JSON_FILENAME).exists()
     assert (out_dir / reflection_runner.MARKDOWN_FILENAME).exists()
+
+
+def test_build_report_uses_adaptive_threshold_when_distribution_is_low(tmp_path: Path) -> None:
+    journal_path = tmp_path / "self_journal.jsonl"
+    discussion_path = tmp_path / "agent_discussion_curated.jsonl"
+
+    _write_jsonl(
+        journal_path,
+        [
+            {
+                "timestamp": "2026-02-01T00:00:00Z",
+                "verdict": "declare_stance",
+                "transcript": {"tension_engine": {"signals": {"text_tension": 0.32, "t_ecs": 0.12}}},
+            },
+            {
+                "timestamp": "2026-02-01T00:01:00Z",
+                "verdict": "declare_stance",
+                "transcript": {"tension_engine": {"signals": {"text_tension": 0.34, "t_ecs": 0.14}}},
+            },
+            {
+                "timestamp": "2026-02-01T00:02:00Z",
+                "verdict": "declare_stance",
+                "transcript": {"tension_engine": {"signals": {"text_tension": 0.36, "t_ecs": 0.16}}},
+            },
+        ],
+    )
+    _write_jsonl(
+        discussion_path,
+        [{"timestamp": "2026-02-01T00:03:00Z", "topic": "adaptive-threshold", "status": "resolved"}],
+    )
+
+    payload = reflection_runner.build_report(
+        journal_path=journal_path,
+        discussion_path=discussion_path,
+        tension_threshold=0.75,
+    )
+    assert payload["inputs"]["tension_threshold_mode"] == "adaptive_p85"
+    assert payload["inputs"]["tension_threshold_effective"] < 0.75
+    assert payload["metrics"]["tension_event_count"] >= 1

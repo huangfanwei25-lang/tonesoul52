@@ -42,6 +42,34 @@ IdentityChoiceIndex
 
 輸出範圍為 `[0,1]`，越高表示系統越常在摩擦中做出可追蹤選擇。
 
+### 3.3 Governance Friction (Routing Signal)
+
+當系統已存在歷史邊界記錄時，路由層額外計算摩擦值：
+
+```text
+F = 0.45 * Δt + 0.35 * Δwave + 0.20 * boundary_mismatch
+```
+
+- `Δt = |query_tension - memory_tension|`
+- `Δwave = mean(|query_wave - memory_wave|)`（共享維度）
+- `boundary_mismatch`：當前請求呈現「覆寫/強制」壓力，且歷史決策屬於邊界阻擋（block/refuse）
+
+工程用途：
+- 當 `F` 高於閾值時，即使初始 `tension` 不高，也可提升到 Council 路由。
+
+### 3.4 Adaptive Tension Threshold
+
+為避免歷史資料整體張力偏低導致高張力事件永遠為 0：
+
+- 設定值：`configured_threshold`（預設 0.75）
+- 自適應值：`adaptive = clamp(p85(tension_values), 0.25, 0.70)`
+- 有效門檻：`effective_threshold = min(configured_threshold, adaptive)`
+
+報告輸出應同時保留：
+- `tension_threshold`（設定值）
+- `tension_threshold_effective`（實際計算值）
+- `tension_threshold_mode`（`configured` / `adaptive_p85`）
+
 ## 4. 治理規則（Governance Hooks）
 
 - 高張力且高衝突事件優先寫入 `friction_points`。
