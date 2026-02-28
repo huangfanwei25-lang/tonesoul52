@@ -371,6 +371,31 @@ def test_build_check_specs_includes_philosophical_reflection_check(tmp_path: Pat
     ]
 
 
+def test_build_check_specs_includes_memory_topology_fit_check(tmp_path: Path) -> None:
+    discussion_path = tmp_path / "agent_discussion_curated.jsonl"
+    discussion_path.write_text('{"status":"final"}\n', encoding="utf-8")
+
+    python_executable = r"C:\\repo\\.venv\\Scripts\\python.exe"
+    specs = healthcheck._build_check_specs(
+        python_executable=python_executable,
+        include_sdh=False,
+        check_council_modes=True,
+        strict_soft_fail=False,
+        web_base=None,
+        api_base=None,
+        sdh_timeout=None,
+        allow_missing_discussion=False,
+        discussion_path=discussion_path,
+    )
+
+    topology_fit = next(item for item in specs if item["name"] == "memory_topology_fit")
+    assert topology_fit["command"] == [
+        python_executable,
+        "scripts/run_memory_topology_fit_report.py",
+        "--strict",
+    ]
+
+
 def test_build_check_specs_includes_dual_track_boundary_check(tmp_path: Path) -> None:
     discussion_path = tmp_path / "agent_discussion_curated.jsonl"
     discussion_path.write_text('{"status":"final"}\n', encoding="utf-8")

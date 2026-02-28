@@ -1,0 +1,77 @@
+{
+  "generated_at": "2026-02-28T19:29:19Z",
+  "source": "scripts/run_memory_topology_fit_report.py",
+  "overall_ok": true,
+  "inputs": {
+    "profile": "basic",
+    "max_vram_gb": 8.0,
+    "max_latency_ms": 2500,
+    "min_recommendation_score": 0.45,
+    "replay_status_path": "docs/status/friction_shadow_replay_latest.json",
+    "calibration_status_path": "docs/status/friction_shadow_calibration_latest.json",
+    "reflection_status_path": "docs/status/philosophical_reflection_latest.json"
+  },
+  "diagnostics": {
+    "governance_need_score": 0.3818,
+    "resource_budget_score": 0.15,
+    "high_friction_rate": 0.785,
+    "unresolved_topic_rate": 0.0374,
+    "identity_choice_index": 0.7825,
+    "high_friction_escape_rate": 0.0,
+    "route_change_rate": 0.0
+  },
+  "recommendation": {
+    "topology": "flat",
+    "score": 0.9523,
+    "feasible_under_budget": true,
+    "memory_stack": [
+      "flat_jsonl_experience_log",
+      "rolling_summary_memory",
+      "tension_friction_event_index"
+    ],
+    "tonesoul_delta": "Prioritize memory of friction/boundary choices over raw transcript recall."
+  },
+  "candidate_scores": [
+    {
+      "name": "flat",
+      "feasible": true,
+      "fit_score": 0.9523,
+      "required_budget": 0.15,
+      "governance_capacity": 0.45,
+      "memory_stack": [
+        "flat_jsonl_experience_log",
+        "rolling_summary_memory",
+        "tension_friction_event_index"
+      ]
+    },
+    {
+      "name": "planar",
+      "feasible": false,
+      "fit_score": 0.3243,
+      "required_budget": 0.4,
+      "governance_capacity": 0.74,
+      "memory_stack": [
+        "flat_jsonl_experience_log",
+        "rolling_summary_memory",
+        "tension_friction_event_index",
+        "conflict_graph_links",
+        "topic_to_boundary_relation_index"
+      ]
+    },
+    {
+      "name": "hierarchical",
+      "feasible": false,
+      "fit_score": 0.1163,
+      "required_budget": 0.72,
+      "governance_capacity": 0.9,
+      "memory_stack": [
+        "flat_jsonl_experience_log",
+        "conflict_graph_links",
+        "multi_layer_summary_pyramid",
+        "policy_trace_memory_layer"
+      ]
+    }
+  ],
+  "issues": [],
+  "warnings": []
+}

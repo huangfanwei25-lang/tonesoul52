@@ -128,6 +128,8 @@ jobs:
             docs/status/friction_shadow_calibration_latest.md
             docs/status/philosophical_reflection_latest.json
             docs/status/philosophical_reflection_latest.md
+            docs/status/memory_topology_fit_latest.json
+            docs/status/memory_topology_fit_latest.md
             docs/status/dual_track_boundary_latest.json
             docs/status/dual_track_boundary_latest.md
           if-no-files-found: error

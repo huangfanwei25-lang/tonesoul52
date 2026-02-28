@@ -135,6 +135,8 @@ def test_repo_healthcheck_workflow_has_default_and_dispatch_runners() -> None:
     assert "docs/status/friction_shadow_calibration_latest.md" in path_value
     assert "docs/status/philosophical_reflection_latest.json" in path_value
     assert "docs/status/philosophical_reflection_latest.md" in path_value
+    assert "docs/status/memory_topology_fit_latest.json" in path_value
+    assert "docs/status/memory_topology_fit_latest.md" in path_value
     assert "docs/status/dual_track_boundary_latest.json" in path_value
     assert "docs/status/dual_track_boundary_latest.md" in path_value
 

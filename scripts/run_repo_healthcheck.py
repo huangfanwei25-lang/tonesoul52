@@ -242,6 +242,14 @@ def _build_check_specs(
             ],
         },
         {
+            "name": "memory_topology_fit",
+            "command": [
+                python_executable,
+                "scripts/run_memory_topology_fit_report.py",
+                "--strict",
+            ],
+        },
+        {
             "name": "audit_7d",
             "command": verify_7d_cmd,
         },

@@ -783,3 +783,24 @@
 - [x] Sync status docs:
 - [x] `docs/status/README.md`
 **Success Criteria**: replay export can fail-closed on abnormal distribution drift while keeping baseline runs green.
+
+## Phase 121: Pragmatic Memory Topology Fit (2026-02-28)
+- [x] Add machine-checkable topology recommendation report:
+- [x] `scripts/run_memory_topology_fit_report.py`
+- [x] Encode pragmatic decision dimensions:
+- [x] governance need score (`friction`, unresolved topics, identity-choice stability)
+- [x] resource budget score (`max_vram_gb`, `max_latency_ms`, profile)
+- [x] candidate topology ranking (`flat` / `planar` / `hierarchical`)
+- [x] Emit status artifacts:
+- [x] `docs/status/memory_topology_fit_latest.{json,md}`
+- [x] Integrate strict check into repo healthcheck:
+- [x] `scripts/run_repo_healthcheck.py`
+- [x] Update healthcheck workflow artifact upload + contract tests:
+- [x] `.github/workflows/repo_healthcheck.yml`
+- [x] `tests/test_workflow_contracts.py`
+- [x] Add regression tests:
+- [x] `tests/test_run_memory_topology_fit_report.py`
+- [x] `tests/test_run_repo_healthcheck.py`
+- [x] Sync status docs:
+- [x] `docs/status/README.md`
+**Success Criteria**: topology selection becomes reproducible and auditable under real governance signals, not metaphor-only preference.
