@@ -210,6 +210,14 @@ def _build_check_specs(
             ],
         },
         {
+            "name": "philosophical_reflection",
+            "command": [
+                python_executable,
+                "scripts/run_philosophical_reflection_report.py",
+                "--strict",
+            ],
+        },
+        {
             "name": "audit_7d",
             "command": verify_7d_cmd,
         },

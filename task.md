@@ -691,3 +691,22 @@
 - [x] Keep governance-required contracts intact (`push`/`pull_request` keys remain where required)
 - [x] Re-run workflow contract checks after edits
 **成功標準**: Workflow contracts與docs consistency檢查通過，PR事件的重複計算顯著下降，且不移除核心治理檢查。
+
+## Phase 116: Philosophical Reflection Automation (2026-02-28)
+- [x] Add machine-checkable philosophical reflection reporter (`scripts/run_philosophical_reflection_report.py`).
+- [x] Define reflection/conflict/choice/tension signal metrics and `identity_choice_index`.
+- [x] Emit status artifacts to `docs/status/philosophical_reflection_latest.{json,md}`.
+- [x] Integrate strict philosophical reflection check into `scripts/run_repo_healthcheck.py`.
+- [x] Extend workflow artifact upload in `.github/workflows/repo_healthcheck.yml`.
+- [x] Add regression tests:
+- [x] `tests/test_run_philosophical_reflection_report.py`
+- [x] `tests/test_run_repo_healthcheck.py`
+- [x] `tests/test_workflow_contracts.py`
+- [x] Add engineering spec doc:
+- [x] `docs/philosophy/philosophical_reflection_engineering_spec.md`
+- [x] Update navigation/docs index:
+- [x] `docs/philosophy/README.md`
+- [x] Validation:
+- [x] `python -m ruff check scripts/run_philosophical_reflection_report.py tests/test_run_philosophical_reflection_report.py scripts/run_repo_healthcheck.py tests/test_run_repo_healthcheck.py tests/test_workflow_contracts.py`
+- [x] `python -m pytest tests/test_run_philosophical_reflection_report.py tests/test_run_repo_healthcheck.py tests/test_workflow_contracts.py -q`
+**Success Criteria**: Philosophical reflection signals become first-class CI/governance artifacts and are reproducible from journal/discussion traces.
