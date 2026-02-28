@@ -416,8 +416,7 @@ def build_report(
     invalid_total = journal_invalid + discussion_invalid
     if invalid_total > max_invalid_lines:
         issues.append(
-            "invalid json lines exceed threshold "
-            f"({invalid_total} > {max_invalid_lines})"
+            "invalid json lines exceed threshold " f"({invalid_total} > {max_invalid_lines})"
         )
     if len(rows) < min_scenarios:
         issues.append(f"scenario_count below threshold ({len(rows)} < {min_scenarios})")
@@ -426,9 +425,7 @@ def build_report(
     discussion_count = sum(1 for row in rows if row.get("source") == "discussion")
     free_tier_count = sum(1 for row in rows if row.get("user_tier") == "free")
     premium_tier_count = sum(1 for row in rows if row.get("user_tier") == "premium")
-    high_friction_count = sum(
-        1 for row in rows if float(row.get("friction_score") or 0.0) >= 0.62
-    )
+    high_friction_count = sum(1 for row in rows if float(row.get("friction_score") or 0.0) >= 0.62)
     avg_tension = round(
         sum(float(row.get("initial_tension") or 0.0) for row in rows) / float(len(rows)),
         4,

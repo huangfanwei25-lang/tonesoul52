@@ -184,7 +184,12 @@ def _render_markdown(payload: dict[str, Any]) -> str:
 
     active = route_dist.get("active", {})
     shadow = route_dist.get("shadow", {})
-    for route in ("route_local_llm", "route_single_cloud", "route_full_council", "block_rate_limit"):
+    for route in (
+        "route_local_llm",
+        "route_single_cloud",
+        "route_full_council",
+        "block_rate_limit",
+    ):
         lines.append(f"| {route} | {int(active.get(route, 0))} | {int(shadow.get(route, 0))} |")
 
     band_metrics = payload.get("friction_band_metrics", [])
@@ -333,9 +338,11 @@ def build_report(
                     "source": scenario.get("source"),
                     "user_tier": user_tier,
                     "initial_tension": round(initial_tension, 4),
-                    "friction_score": round(friction_score, 4)
-                    if isinstance(friction_score, (float, int))
-                    else None,
+                    "friction_score": (
+                        round(friction_score, 4)
+                        if isinstance(friction_score, (float, int))
+                        else None
+                    ),
                     "active_route": active_route,
                     "shadow_route": shadow_route,
                     "active_reason": active.reason,
@@ -356,8 +363,7 @@ def build_report(
         issues.append(f"insufficient calibration scenarios: {scenario_count} (< 8)")
     if route_change_rate > max_route_change_rate:
         issues.append(
-            "route_change_rate above threshold "
-            f"({route_change_rate} > {max_route_change_rate})"
+            "route_change_rate above threshold " f"({route_change_rate} > {max_route_change_rate})"
         )
     if high_friction_escape_rate > max_high_friction_escape_rate:
         issues.append(
@@ -502,9 +508,7 @@ def main() -> int:
         shadow_council_tension=shadow_council_tension,
         max_route_change_rate=max_route_change_rate if max_route_change_rate is not None else 0.35,
         max_high_friction_escape_rate=(
-            max_high_friction_escape_rate
-            if max_high_friction_escape_rate is not None
-            else 0.15
+            max_high_friction_escape_rate if max_high_friction_escape_rate is not None else 0.15
         ),
     )
     _write_json(out_dir / JSON_FILENAME, payload)
