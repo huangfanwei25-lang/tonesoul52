@@ -218,6 +218,14 @@ def _build_check_specs(
             ],
         },
         {
+            "name": "friction_shadow_calibration",
+            "command": [
+                python_executable,
+                "scripts/run_friction_shadow_calibration_report.py",
+                "--strict",
+            ],
+        },
+        {
             "name": "philosophical_reflection",
             "command": [
                 python_executable,

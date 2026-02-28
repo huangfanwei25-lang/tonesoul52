@@ -744,6 +744,6 @@
 - [x] Add/extend regression tests:
 - [x] `tests/test_run_memory_governance_contract_check.py`
 - [x] `tests/test_run_repo_healthcheck.py`
-- [ ] Cross-repo field mapping document (`tonesoul52` <-> `OpenClaw-Memory`) with migration notes.
-- [ ] Shadow-vs-active friction routing calibration report.
+- [x] Cross-repo field mapping document (`tonesoul52` <-> `OpenClaw-Memory`) with migration notes.
+- [x] Shadow-vs-active friction routing calibration report.
 **Success Criteria**: contract files are enforced by CI/healthcheck, and Q2 roadmap has concrete deliverables with measurable acceptance thresholds.
