@@ -258,6 +258,26 @@ export default function Home() {
             <span>關於作者與理論</span>
           </Link>
           <a
+            href="https://vocus.cc/article/69a3e06efd897800015fd9bac"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-slate-800 transition-colors text-slate-400 hover:text-white text-sm"
+            title="Declarative Resistance Manifesto"
+          >
+            <BookOpen className="w-4 h-4" />
+            <span>Declarative Resistance Manifesto</span>
+          </a>
+          <a
+            href="https://vocus.cc/user/684f4366fd89780001893a72"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-slate-800 transition-colors text-slate-400 hover:text-white text-sm"
+            title="Vocus 個人頁"
+          >
+            <BookOpen className="w-4 h-4" />
+            <span>Vocus 個人頁</span>
+          </a>
+          <a
             href="/privacy"
             className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-slate-800 transition-colors text-slate-400 hover:text-white text-sm"
           >
