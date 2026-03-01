@@ -1,0 +1,14 @@
+{
+  "generated_at": "2026-03-01T07:26:21Z",
+  "source": "scripts/run_persona_swarm_framework.py",
+  "input_path": "docs/experiments/persona_swarm_long_task_input_2026-03-01.json",
+  "decision": "revise",
+  "decision_support": 0.7639,
+  "swarm_score": 0.8492,
+  "safety_pass_rate": 1.0,
+  "token_latency_cost_index": 0.436,
+  "archetype": "critical_discovery",
+  "cost_tier": "low",
+  "readiness_gate_passed": true,
+  "next_phase": "Phase 124"
+}

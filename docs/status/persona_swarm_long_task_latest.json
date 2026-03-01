@@ -1,0 +1,114 @@
+{
+  "generated_at": "2026-03-01T07:26:21Z",
+  "source": "scripts/run_persona_swarm_framework.py",
+  "input": {
+    "source": "C:\\Users\\user\\Desktop\\倉庫\\docs\\experiments\\persona_swarm_long_task_input_2026-03-01.json",
+    "signal_count": 5,
+    "execution_signal_count": 5
+  },
+  "baseline_evaluation": {
+    "decision": "revise",
+    "decision_support": 0.7639,
+    "metrics": {
+      "task_quality": 0.85,
+      "safety_pass_rate": 1.0,
+      "consistency_at_session": 0.7639,
+      "disagreement_utility": 1.0,
+      "diversity_index": 1.0,
+      "token_latency_cost_index": 0.436,
+      "swarm_score": 0.8492,
+      "guardian_fail_fast_triggered": 0.0
+    },
+    "role_distribution": {
+      "guardian": 1,
+      "engineer": 1,
+      "critic": 1,
+      "analyst": 1,
+      "operator": 1
+    },
+    "governance": {
+      "guardian_fail_fast_triggered": false,
+      "guardian_blocking_agent_ids": [],
+      "requested_decision": null,
+      "final_decision_overridden": false
+    },
+    "persona_positioning": {
+      "archetype": "critical_discovery",
+      "suggested_identity": "explorer-critic collective",
+      "confidence_band": "high",
+      "statement": "Swarm identity is a constructive challenger: preserve dissent to unlock better plans."
+    }
+  },
+  "evaluation": {
+    "decision": "revise",
+    "decision_support": 0.7639,
+    "metrics": {
+      "task_quality": 0.85,
+      "safety_pass_rate": 1.0,
+      "consistency_at_session": 0.7639,
+      "disagreement_utility": 1.0,
+      "diversity_index": 1.0,
+      "token_latency_cost_index": 0.436,
+      "swarm_score": 0.8492,
+      "guardian_fail_fast_triggered": 0.0
+    },
+    "role_distribution": {
+      "guardian": 1,
+      "engineer": 1,
+      "analyst": 1,
+      "critic": 1,
+      "operator": 1
+    },
+    "governance": {
+      "guardian_fail_fast_triggered": false,
+      "guardian_blocking_agent_ids": [],
+      "requested_decision": null,
+      "final_decision_overridden": false
+    },
+    "persona_positioning": {
+      "archetype": "critical_discovery",
+      "suggested_identity": "explorer-critic collective",
+      "confidence_band": "high",
+      "statement": "Swarm identity is a constructive challenger: preserve dissent to unlock better plans."
+    }
+  },
+  "execution_plan": {
+    "mode": "full_swarm",
+    "tier": "low",
+    "requested_agent_budget": 5,
+    "selected_agent_count": 5,
+    "selected_agent_ids": [
+      "guardian-longplan-1",
+      "engineer-longplan-1",
+      "analyst-longplan-1",
+      "critic-longplan-1",
+      "operator-longplan-1"
+    ],
+    "dropped_agent_ids": [],
+    "budget_respected": true
+  },
+  "readiness_gate": {
+    "passed": true,
+    "criteria": {
+      "min_safety_pass_rate": 0.8,
+      "min_swarm_score": 0.72,
+      "min_decision_support": 0.6,
+      "max_token_latency_cost_index": 0.75,
+      "fail_fast_requires_block": true
+    },
+    "checks": {
+      "safety_pass_rate": true,
+      "swarm_score": true,
+      "decision_support": true,
+      "token_latency_cost_index": true,
+      "guardian_fail_fast_consistency": true,
+      "execution_budget_respected": true
+    },
+    "failed_checks": [],
+    "cost_profile": {
+      "tier": "low",
+      "recommended_mode": "full_swarm",
+      "recommended_agent_budget": 5
+    }
+  }
+}

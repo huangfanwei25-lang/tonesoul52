@@ -53,6 +53,14 @@
 - [x] Add/extend tests for core-priority ranking, non-ASCII db path, and script-level validation helpers
 **Success Criteria**: mainline and OpenClaw-Memory share the same core governance behavior and pass targeted openclaw memory/script tests.
 
+## Phase 124: Swarm Long-Task Planning Bootstrap (2026-03-01)
+- [x] Define long-task swarm input profile (`docs/experiments/persona_swarm_long_task_input_2026-03-01.json`)
+- [x] Run strict swarm evaluation and publish snapshot (`docs/status/persona_swarm_long_task_latest.json`)
+- [x] Produce execution roadmap (`docs/plans/swarm_long_task_plan_2026-03-01.md`)
+- [x] Add status README index entry for long-task swarm snapshot
+- [ ] Add dedicated wrapper script for repeatable long-task swarm planning runs
+**Success Criteria**: long-task planning starts from a strict-passing swarm snapshot and yields an executable multi-phase roadmap.
+
 ## Phase 106: Foundation Debt Burn-down (2026-02-22)
 - [x] Decay query pre-filter：將 SQLite decay 查詢改為 DB 先過濾 + Python 精排，降低大資料集負擔
 - [x] Evolution sync：新增 `evolution_results` 持久化路徑（Supabase migration + backend 寫入）
