@@ -48,6 +48,71 @@ def test_hippocampus_memorize_and_recall(tmp_path):
     results = hippo.recall("tension governance", top_k=2, query_tension=0.9)
     assert len(results) >= 1
     assert "high tension" in results[0].content
+    assert results[0].metadata is not None
+
+
+def test_hippocampus_wave_score_metadata_and_core_priority(tmp_path):
+    db_path = tmp_path / "wave-core-db"
+    hippo = Hippocampus(db_path=str(db_path), embedder=TinyEmbedding())
+
+    low_id = hippo.memorize(
+        content="boundary arbitration memory",
+        source_file="low.md",
+        memory_kind="decision",
+        tension=0.8,
+        wave={
+            "uncertainty_shift": 0.2,
+            "divergence_shift": 0.1,
+            "risk_shift": 0.1,
+            "revision_shift": 0.1,
+        },
+        tags=["obedience"],
+    )
+    high_id = hippo.memorize(
+        content="boundary arbitration memory",
+        source_file="high.md",
+        memory_kind="decision",
+        tension=0.8,
+        wave={
+            "uncertainty_shift": 0.85,
+            "divergence_shift": 0.95,
+            "risk_shift": 0.95,
+            "revision_shift": 0.9,
+        },
+        tags=["boundary", "safety"],
+    )
+
+    by_id = {row["id"]: row for row in hippo.metadata[-2:]}
+    assert by_id[high_id]["wave_score"] > by_id[low_id]["wave_score"]
+    assert by_id[high_id]["memory_tier"] == "core"
+    assert by_id[low_id]["memory_tier"] == "episodic"
+    assert set(by_id[high_id]["wave_components"].keys()) == {
+        "conflict_strength",
+        "stance_shift",
+        "boundary_cost",
+        "consequence_weight",
+    }
+
+    results = hippo.recall(
+        "boundary arbitration memory",
+        top_k=2,
+        query_tension=0.9,
+        query_tension_mode="resonance",
+    )
+    assert len(results) == 2
+    assert results[0].doc_id == high_id
+    assert results[0].metadata is not None
+    assert results[0].metadata.get("memory_tier") == "core"
+
+
+def test_hippocampus_accepts_non_ascii_db_path(tmp_path):
+    db_path = tmp_path / "語魂記憶"
+    hippo = Hippocampus(db_path=str(db_path), embedder=TinyEmbedding())
+    doc_id = hippo.memorize(content="unicode path memory", source_file="unicode.md", tension=0.5)
+    assert doc_id
+
+    reloaded = Hippocampus(db_path=str(db_path), embedder=TinyEmbedding())
+    assert any(row["id"] == doc_id for row in reloaded.metadata)
 
 
 def test_hippocampus_blocks_path_traversal():

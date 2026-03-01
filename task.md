@@ -36,6 +36,23 @@
 - [x] Phase 105: Mainline audit refresh and execution planning baseline
 **Latest validation**: `pytest -q` => `849 passed` (2026-02-21). Level 3 implementation tracked in `CODEX_TASK.md` v7.
 
+## Phase 122: Wave-Score Core Memory Governance (OpenClaw-Memory) (2026-03-01)
+- [x] Add governance `wave_score` (conflict_strength × stance_shift × boundary_cost × consequence_weight)
+- [x] Persist governance metadata (`wave_score`, `wave_components`, `memory_tier`)
+- [x] Add high-tension core-priority rerank in recall pipeline
+- [x] Extend benchmark metrics with `core_wave_top1_rate` + strict gate threshold
+- [x] Fix FAISS Windows non-ASCII path write/read by switching to serialized-index I/O
+- [x] Add regression tests for non-ASCII db path and core-wave prioritization
+**Success Criteria**: high-tension queries prioritize core boundary memories with auditable metadata and pass local benchmark/test gates.
+
+## Phase 123: Mainline Sync of Wave-Score Governance (tonesoul52) (2026-03-01)
+- [x] Sync `tonesoul/memory/openclaw/hippocampus.py` with wave-score governance model
+- [x] Add metadata fields (`kind`, `wave`, `wave_score`, `wave_components`, `memory_tier`) and backward-compatible recall output metadata
+- [x] Enable query-time rerank controls (`query_tension_mode`, `query_wave`, `query_wave_mode`) in mainline hippocampus
+- [x] Sync `scripts/ask_my_brain.py` with wave-aware CLI flags, friction report, and validation scenarios
+- [x] Add/extend tests for core-priority ranking, non-ASCII db path, and script-level validation helpers
+**Success Criteria**: mainline and OpenClaw-Memory share the same core governance behavior and pass targeted openclaw memory/script tests.
+
 ## Phase 106: Foundation Debt Burn-down (2026-02-22)
 - [x] Decay query pre-filter：將 SQLite decay 查詢改為 DB 先過濾 + Python 精排，降低大資料集負擔
 - [x] Evolution sync：新增 `evolution_results` 持久化路徑（Supabase migration + backend 寫入）
