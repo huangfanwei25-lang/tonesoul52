@@ -268,7 +268,22 @@ def _check_ddd_hygiene() -> CheckResult:
 
 
 def _check_xdd() -> CheckResult:
-    cmd = [sys.executable, "-m", "pytest", str(Path("tests/test_uncertainty.py")), "-q"]
+    xdd_candidates = [
+        Path("tests/test_uncertainty.py"),
+        Path("tests/test_escape_valve.py"),
+        Path("tests/test_escape_valve_runtime.py"),
+    ]
+    xdd_targets = [str(path) for path in xdd_candidates if path.exists()]
+    if not xdd_targets:
+        return _result(
+            "XDD",
+            "BLOCKING",
+            "fail",
+            [sys.executable, "-m", "pytest", str(xdd_candidates[0]), "-q"],
+            "no XDD uncertainty test file found",
+        )
+
+    cmd = [sys.executable, "-m", "pytest", *xdd_targets, "-q"]
     ok, _, stderr, code = _run(cmd)
     if ok:
         return _result("XDD", "BLOCKING", "pass", cmd)

@@ -225,7 +225,9 @@ def run_check(
             if _bounded_unit_number(delta_t):
                 _add_check(checks, "example.prior_tension.delta_t", "pass", "delta_t in [0,1]")
             else:
-                _add_check(checks, "example.prior_tension.delta_t", "fail", "delta_t must be in [0,1]")
+                _add_check(
+                    checks, "example.prior_tension.delta_t", "fail", "delta_t must be in [0,1]"
+                )
 
             if isinstance(gate_decision, str) and gate_decision.strip():
                 _add_check(
@@ -243,7 +245,9 @@ def run_check(
                 elif _bounded_unit_number(value):
                     _add_check(checks, f"example.prior_tension.{key}", "pass", f"{key} in [0,1]")
                 else:
-                    _add_check(checks, f"example.prior_tension.{key}", "fail", f"{key} must be in [0,1]")
+                    _add_check(
+                        checks, f"example.prior_tension.{key}", "fail", f"{key} must be in [0,1]"
+                    )
 
             _validate_wave(
                 checks,

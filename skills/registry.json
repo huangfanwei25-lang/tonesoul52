@@ -126,6 +126,69 @@
       "integrity": {
         "sha256": "af5b359183276577a188fe8335582cec92048cae6600f4ec31ad276eaeb4b4fe"
       }
+    },
+    {
+      "id": "cv_hardware_diagnostics",
+      "path": ".agent/skills/cv_hardware_diagnostics/SKILL.md",
+      "version": "1.0.0",
+      "license": "Internal-Project",
+      "compatibility": {
+        "runtime": [
+          "codex",
+          "claude-code",
+          "gemini-cli"
+        ],
+        "os": [
+          "windows",
+          "linux",
+          "macos"
+        ]
+      },
+      "l1_routing": {
+        "name": "CV Hardware Diagnostics",
+        "triggers": [
+          "cv hardware",
+          "esp32",
+          "opencv",
+          "serial pre-check"
+        ],
+        "intent": "Run cv hardware diagnostics for esp32 and opencv pipelines using serial pre-check and staged fail-fast validation."
+      },
+      "l2_signature": {
+        "execution_profile": [
+          "engineering"
+        ],
+        "trust_tier": "reviewed",
+        "json_schema": {
+          "type": "object",
+          "properties": {
+            "target_stack": {
+              "type": "string"
+            },
+            "symptoms": {
+              "type": "string"
+            },
+            "environment_constraints": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "target_stack",
+            "symptoms"
+          ]
+        }
+      },
+      "trust": {
+        "tier": "reviewed",
+        "review_owner": "codex",
+        "reviewed_at": "2026-03-01"
+      },
+      "integrity": {
+        "sha256": "30a4e013805b6b8bd9a41a84075e64d0f1a4330a50f89d6167eb8c859a30df66"
+      }
     }
   ]
 }

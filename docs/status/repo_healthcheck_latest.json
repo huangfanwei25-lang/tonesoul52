@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-02-21T03:47:30Z",
+  "generated_at": "2026-03-01T15:22:21Z",
   "overall_ok": true,
   "config": {
     "include_sdh": false,
@@ -16,7 +16,7 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 0.13,
+      "duration_seconds": 0.09,
       "command": "python -m ruff check tonesoul tests scripts",
       "stdout_tail": "All checks passed!",
       "stderr_tail": ""
@@ -26,19 +26,19 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 2.12,
+      "duration_seconds": 0.77,
       "command": "python -m black --check tonesoul tests scripts",
       "stdout_tail": "",
-      "stderr_tail": "All done! ✨ 🍰 ✨\n349 files would be left unchanged."
+      "stderr_tail": "All done! ✨ 🍰 ✨\n410 files would be left unchanged."
     },
     {
       "name": "python_tests",
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 113.06,
+      "duration_seconds": 171.67,
       "command": "python -m pytest tests -q",
-      "stdout_tail": " 97%]\ntests\\test_vtp.py ....                                                   [ 98%]\ntests\\test_vtp_runtime.py ...                                            [ 98%]\ntests\\test_workflow_contracts.py .........                               [ 99%]\ntests\\test_yss_unified_adapter.py ....                                   [100%]\n\n============================== warnings summary ===============================\n.venv\\Lib\\site-packages\\_hypothesis_pytestplugin.py:481\n  C:\\Users\\user\\Desktop\\倉庫\\.venv\\Lib\\site-packages\\_hypothesis_pytestplugin.py:481: UserWarning: Skipping collection of '.hypothesis' directory - this usually means you've explicitly set the `norecursedirs` pytest config option, replacing rather than extending the default ignores.\n    warnings.warn(\n\ntests/test_unified_core.py::TestUnifiedCoreImport::test_default_init\n  C:\\Users\\user\\Desktop\\倉庫\\tests\\test_unified_core.py:19: DeprecationWarning: UnifiedCore is in maintenance mode; use tonesoul.unified_pipeline.UnifiedPipeline for production chat runtime.\n    core = UnifiedCore()\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n================= 849 passed, 2 warnings in 110.78s (0:01:50) =================",
+      "stdout_tail": "py:3148\n  C:\\Users\\user\\AppData\\Roaming\\Python\\Python313\\site-packages\\pkg_resources\\__init__.py:3148: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('google')`.\n  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages\n    declare_namespace(pkg)\n\n..\\..\\AppData\\Roaming\\Python\\Python313\\site-packages\\pytest_freezegun.py:17: 2110 warnings\n  C:\\Users\\user\\AppData\\Roaming\\Python\\Python313\\site-packages\\pytest_freezegun.py:17: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.\n    if LooseVersion(pytest.__version__) < LooseVersion('3.6.0'):\n\ntests/test_unified_core.py::TestUnifiedCoreImport::test_default_init\n  C:\\Users\\user\\Desktop\\倉庫\\tests\\test_unified_core.py:19: DeprecationWarning: UnifiedCore is in maintenance mode; use tonesoul.unified_pipeline.UnifiedPipeline for production chat runtime.\n    core = UnifiedCore()\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=============== 1055 passed, 2117 warnings in 167.76s (0:02:47) ===============",
       "stderr_tail": ""
     },
     {
@@ -46,9 +46,9 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 6.54,
+      "duration_seconds": 7.99,
       "command": "npm --prefix apps/web run lint",
-      "stdout_tail": "> web@0.1.0 lint\n> eslint",
+      "stdout_tail": "> web@1.0.0 lint\n> eslint\n\n\nC:\\Users\\user\\Desktop\\倉庫\\apps\\web\\src\\app\\api\\chat\\route.ts\n  37:7  warning  '_SAME_ORIGIN_PRIMARY_FALLBACK_REASON' is assigned a value but never used  @typescript-eslint/no-unused-vars\n\nC:\\Users\\user\\Desktop\\倉庫\\apps\\web\\src\\app\\api\\conversation\\route.ts\n  13:7  warning  '_SAME_ORIGIN_PRIMARY_FALLBACK_REASON' is assigned a value but never used  @typescript-eslint/no-unused-vars\n\n✖ 2 problems (0 errors, 2 warnings)",
       "stderr_tail": ""
     },
     {
@@ -56,9 +56,9 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 2.38,
+      "duration_seconds": 3.13,
       "command": "npm --prefix apps/web run test",
-      "stdout_tail": "> web@0.1.0 test\n> vitest run\n\n\n RUN  v4.0.17 C:/Users/user/Desktop/倉庫/apps/web\n\n ✓ src/__tests__/privateNotesCrypto.test.ts (2 tests) 20ms\n ✓ src/__tests__/apiRoutes.chatTransport.test.ts (9 tests) 31ms\n ✓ src/__tests__/apiRoutes.backendHealth.test.ts (4 tests) 26ms\n ✓ src/__tests__/apiRoutes.transportFallback.test.ts (9 tests) 26ms\n ✓ src/__tests__/apiRoutes.invalidJson.test.ts (8 tests) 33ms\n ✓ src/__tests__/personaSettings.test.ts (6 tests) 11ms\n ✓ src/__tests__/publicSurface.contract.test.ts (3 tests) 452ms\n     ✓ notes page exports noindex metadata  446ms\n ✓ src/__tests__/entropyCalculator.test.ts (9 tests) 12ms\n ✓ src/__tests__/chatFallback.test.ts (6 tests) 7ms\n ✓ src/__tests__/metadataRoutes.contract.test.ts (3 tests) 6ms\n ✓ src/__tests__/settingsModal.test.ts (2 tests) 3ms\n\n Test Files  11 passed (11)\n      Tests  61 passed (61)\n   Start at  11:45:49\n   Duration  1.41s (transform 1.47s, setup 0ms, import 2.64s, tests 627ms, environment 2ms)",
+      "stdout_tail": "> web@1.0.0 test\n> vitest run\n\n\n RUN  v4.0.17 C:/Users/user/Desktop/倉庫/apps/web\n\n ✓ src/__tests__/privateNotesCrypto.test.ts (2 tests) 28ms\n ✓ src/__tests__/apiRoutes.governanceStatus.test.ts (3 tests) 22ms\n ✓ src/__tests__/apiRoutes.backendHealth.test.ts (4 tests) 23ms\n ✓ src/__tests__/apiRoutes.transportFallback.test.ts (10 tests) 26ms\n ✓ src/__tests__/apiRoutes.invalidJson.test.ts (12 tests) 32ms\n ✓ src/__tests__/apiRoutes.chatTransport.test.ts (16 tests) 65ms\n ✓ src/__tests__/publicSurface.contract.test.ts (3 tests) 504ms\n     ✓ notes page exports noindex metadata  498ms\n ✓ src/__tests__/entropyCalculator.test.ts (9 tests) 11ms\n ✓ src/__tests__/chatFallback.test.ts (6 tests) 8ms\n ✓ src/__tests__/metadataRoutes.contract.test.ts (3 tests) 12ms\n ✓ src/__tests__/personaSettings.test.ts (6 tests) 11ms\n ✓ src/__tests__/settingsModal.test.ts (2 tests) 5ms\n\n Test Files  12 passed (12)\n      Tests  76 passed (76)\n   Start at  23:18:06\n   Duration  2.13s (transform 1.86s, setup 0ms, import 3.21s, tests 746ms, environment 3ms)",
       "stderr_tail": ""
     },
     {
@@ -66,9 +66,19 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 1.83,
-      "command": "python scripts/verify_git_hygiene.py",
-      "stdout_tail": "46\\\\234\\\\200\\\\347\\\\265\\\\202\\\\347\\\\211\\\\210_v1.3.json\\\"\",\n    \"experiments/tsd1_pilot/data/prompts.json\",\n    \"experiments/tsd1_pilot/data/responses.json\",\n    \"memory/.hierarchical_index/hierarchical.index\",\n    \"memory/.hierarchical_index/vows_meta.json\",\n    \"memory/.semantic_index/faiss.index\",\n    \"memory/.semantic_index/metadata.json\",\n    \"memory/external_framework_analysis/claw_governance_insight.md\",\n    \"memory/external_framework_analysis/wfgy_3.0_analysis.md\",\n    \"memory/handoff/codex_prompt.md\",\n    \"memory/handoff/note_antigravity_to_codex_20260204.md\",\n    \"memory/narrative/README.md\",\n    \"memory/narrative/synthesis.md\",\n    \"memory/narrative/threads/academic_grounding.md\",\n    \"memory/narrative/threads/infinite_game.md\",\n    \"memory/narrative/threads/meaning_transfer.md\",\n    \"memory/narrative/threads/multi_voice.md\",\n    \"memory/narrative/threads/value_root.md\",\n    \"memory/vectors/metadata.json\",\n    \"memory/vectors/vectors.npy\",\n    \"simulation_logs/hero_journey.jsonl\",\n    \"spec/wfgy_semantic_control_spec.md\",\n    \"zenodo_upload/paper_outline_multiperspective_truth.md\",\n    \"\\\"zenodo_upload/\\\\344\\\\270\\\\212\\\\345\\\\202\\\\263\\\\346\\\\214\\\\207\\\\345\\\\215\\\\227.md\\\"\"\n  ]\n}",
+      "duration_seconds": 2.61,
+      "command": "python scripts/verify_git_hygiene.py --strict --max-tracked-ignored 28",
+      "stdout_tail": "son\\ndata/semantic_spine_fixtures.json\\ndata/yuhun_academy_knowledgebase_v1.1.txt\\n\\\"data/\\\\350\\\\252\\\\236\\\\351\\\\255\\\\202\\\\345\\\\212\\\\207\\\\345\\\\240\\\\264_API_\\\\346\\\\234\\\\200\\\\347\\\\265\\\\202\\\\347\\\\211\\\\210_v1.3.json\\\"\\nexperiments/tsd1_pilot/data/prompts.json\\nexperiments/tsd1_pilot/data/responses.json\\nspec/wfgy_semantic_control_spec.md\\nzenodo_upload/paper_outline_multiperspective_truth.md\\n\\\"zenodo_upload/\\\\344\\\\270\\\\212\\\\345\\\\202\\\\263\\\\346\\\\214\\\\207\\\\345\\\\215\\\\227.md\\\"\",\n      \"stderr_tail\": \"\"\n    }\n  ],\n  \"issues\": [],\n  \"fsck_unexpected_lines\": [],\n  \"tracked_ignored_paths\": [\n    \"data/YuHun_v2.6_knowledgebase.json\",\n    \"data/YuHun_v2.6_knowledgebase_extended.json\",\n    \"data/semantic_spine_fixtures.json\",\n    \"data/yuhun_academy_knowledgebase_v1.1.txt\",\n    \"\\\"data/\\\\350\\\\252\\\\236\\\\351\\\\255\\\\202\\\\345\\\\212\\\\207\\\\345\\\\240\\\\264_API_\\\\346\\\\234\\\\200\\\\347\\\\265\\\\202\\\\347\\\\211\\\\210_v1.3.json\\\"\",\n    \"experiments/tsd1_pilot/data/prompts.json\",\n    \"experiments/tsd1_pilot/data/responses.json\",\n    \"spec/wfgy_semantic_control_spec.md\",\n    \"zenodo_upload/paper_outline_multiperspective_truth.md\",\n    \"\\\"zenodo_upload/\\\\344\\\\270\\\\212\\\\345\\\\202\\\\263\\\\346\\\\214\\\\207\\\\345\\\\215\\\\227.md\\\"\"\n  ]\n}",
+      "stderr_tail": ""
+    },
+    {
+      "name": "dual_track_boundary",
+      "status": "pass",
+      "ok": true,
+      "exit_code": 0,
+      "duration_seconds": 0.13,
+      "command": "python scripts/verify_dual_track_boundary.py --strict --staged",
+      "stdout_tail": ".md\",\n      \"memory/BOOTSTRAP.md\",\n      \"memory/agent_discussion.jsonl\",\n      \"memory/agent_discussion.jsonl.bak.20260206T145513Z\",\n      \"memory/agent_discussion_antigravity_response.jsonl\",\n      \"memory/agent_discussion_curated.jsonl\",\n      \"memory/antigravity_journal.md\",\n      \"memory/antigravity_memory_20260129.md\",\n      \"memory/dawn_protocol_v10.md\",\n      \"memory/guild_recruitment_post.md\",\n      \"memory/moltbook_exploration.md\",\n      \"memory/persona_synthesis_v5.md\",\n      \"memory/persona_synthesis_v8.md\",\n      \"memory/resonance_drafts.md\",\n      \"memory/resonance_report_v1.md\",\n      \"memory/self_journal.jsonl\",\n      \"memory/silence_of_xiaozhua_v7.md\",\n      \"memory/summary_balls.jsonl\",\n      \"memory/web_chat_debug.md\"\n    ]\n  },\n  \"collection\": {\n    \"ok\": true,\n    \"mode\": \"git\",\n    \"command\": \"git -c core.quotepath=off diff --name-status --cached --diff-filter=ACMRD\",\n    \"exit_code\": 0,\n    \"duration_seconds\": 0.03,\n    \"stdout_tail\": \"\",\n    \"stderr_tail\": \"\",\n    \"entries\": [],\n    \"paths\": []\n  },\n  \"metrics\": {\n    \"changed_path_count\": 0,\n    \"violation_count\": 0,\n    \"private_deletion_count\": 0\n  },\n  \"violations\": [],\n  \"issues\": [],\n  \"warnings\": []\n}",
       "stderr_tail": ""
     },
     {
@@ -76,7 +86,7 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 0.28,
+      "duration_seconds": 0.46,
       "command": "python scripts/run_persona_swarm_framework.py --strict",
       "stdout_tail": "    \"archetype\": \"critical_discovery\",\n      \"suggested_identity\": \"explorer-critic collective\",\n      \"confidence_band\": \"high\",\n      \"statement\": \"Swarm identity is a constructive challenger: preserve dissent to unlock better plans.\"\n    }\n  },\n  \"execution_plan\": {\n    \"mode\": \"full_swarm\",\n    \"tier\": \"low\",\n    \"requested_agent_budget\": 5,\n    \"selected_agent_count\": 4,\n    \"selected_agent_ids\": [\n      \"guardian-1\",\n      \"engineer-1\",\n      \"analyst-1\",\n      \"critic-1\"\n    ],\n    \"dropped_agent_ids\": [],\n    \"budget_respected\": true\n  },\n  \"readiness_gate\": {\n    \"passed\": true,\n    \"criteria\": {\n      \"min_safety_pass_rate\": 0.8,\n      \"min_swarm_score\": 0.72,\n      \"min_decision_support\": 0.6,\n      \"max_token_latency_cost_index\": 0.75,\n      \"fail_fast_requires_block\": true\n    },\n    \"checks\": {\n      \"safety_pass_rate\": true,\n      \"swarm_score\": true,\n      \"decision_support\": true,\n      \"token_latency_cost_index\": true,\n      \"guardian_fail_fast_consistency\": true,\n      \"execution_budget_respected\": true\n    },\n    \"failed_checks\": [],\n    \"cost_profile\": {\n      \"tier\": \"low\",\n      \"recommended_mode\": \"full_swarm\",\n      \"recommended_agent_budget\": 5\n    }\n  }\n}",
       "stderr_tail": ""
@@ -86,9 +96,89 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 0.12,
+      "duration_seconds": 0.14,
       "command": "python scripts/verify_external_source_registry.py --strict",
-      "stdout_tail": ":url[0]\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"registry:pmlr:reviewed_at\",\n      \"status\": \"pass\",\n      \"detail\": \"review age ok: 7 days\"\n    },\n    {\n      \"name\": \"open_source_apps\",\n      \"status\": \"pass\",\n      \"detail\": \"3 app entries found\"\n    },\n    {\n      \"name\": \"app:Streamlit:repo\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"app:Streamlit:website\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"app:Playwright:repo\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"app:Playwright:website\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"app:FastAPI:repo\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"app:FastAPI:website\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    }\n  ],\n  \"policy\": {\n    \"review_cycle_days\": 120,\n    \"allowed_hosts_count\": 21,\n    \"blocked_hosts_count\": 5\n  },\n  \"inputs\": {\n    \"registry\": \"spec\\\\external_source_registry.yaml\",\n    \"open_source_apps\": \"spec\\\\open_source_apps.yaml\",\n    \"today\": \"2026-02-21\"\n  }\n}",
+      "stdout_tail": "url[0]\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"registry:pmlr:reviewed_at\",\n      \"status\": \"pass\",\n      \"detail\": \"review age ok: 15 days\"\n    },\n    {\n      \"name\": \"open_source_apps\",\n      \"status\": \"pass\",\n      \"detail\": \"3 app entries found\"\n    },\n    {\n      \"name\": \"app:Streamlit:repo\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"app:Streamlit:website\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"app:Playwright:repo\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"app:Playwright:website\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"app:FastAPI:repo\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"app:FastAPI:website\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    }\n  ],\n  \"policy\": {\n    \"review_cycle_days\": 120,\n    \"allowed_hosts_count\": 21,\n    \"blocked_hosts_count\": 5\n  },\n  \"inputs\": {\n    \"registry\": \"spec\\\\external_source_registry.yaml\",\n    \"open_source_apps\": \"spec\\\\open_source_apps.yaml\",\n    \"today\": \"2026-03-01\"\n  }\n}",
+      "stderr_tail": ""
+    },
+    {
+      "name": "skill_registry",
+      "status": "pass",
+      "ok": true,
+      "exit_code": 0,
+      "duration_seconds": 0.15,
+      "command": "python scripts/verify_skill_registry.py --strict",
+      "stdout_tail": ",\n    {\n      \"name\": \"skill[2].frontmatter.l1_routing.triggers.prompt_safety\",\n      \"status\": \"pass\",\n      \"detail\": \"no prompt-markup tokens\"\n    },\n    {\n      \"name\": \"skill[2].frontmatter.l1_routing.intent\",\n      \"status\": \"pass\",\n      \"detail\": \"length=114\"\n    },\n    {\n      \"name\": \"skill[2].frontmatter.l1_routing.intent.prompt_safety\",\n      \"status\": \"pass\",\n      \"detail\": \"safe\"\n    },\n    {\n      \"name\": \"skill[2].frontmatter.l2_signature\",\n      \"status\": \"pass\",\n      \"detail\": \"present\"\n    },\n    {\n      \"name\": \"skill[2].frontmatter.l2_signature.execution_profile\",\n      \"status\": \"pass\",\n      \"detail\": \"1 profile(s)\"\n    },\n    {\n      \"name\": \"skill[2].frontmatter.l2_signature.trust_tier\",\n      \"status\": \"pass\",\n      \"detail\": \"reviewed\"\n    },\n    {\n      \"name\": \"skill[2].frontmatter.l2_signature.json_schema\",\n      \"status\": \"pass\",\n      \"detail\": \"schema type object\"\n    }\n  ],\n  \"summary\": {\n    \"discovered_skill_files\": 3,\n    \"registry_entries\": 3,\n    \"max_review_age_days\": 180\n  },\n  \"inputs\": {\n    \"registry\": \"skills/registry.json\",\n    \"schema\": \"skills/registry.schema.json\",\n    \"skills_root\": \".agent/skills\",\n    \"today\": \"2026-03-01\"\n  }\n}",
+      "stderr_tail": ""
+    },
+    {
+      "name": "multi_agent_divergence",
+      "status": "pass",
+      "ok": true,
+      "exit_code": 0,
+      "duration_seconds": 1.33,
+      "command": "python scripts/run_multi_agent_divergence_report.py --strict",
+      "stdout_tail": " user intent.\",\n    \"Safety Council: Detected high-risk term 'bomb'.; Advocate Voice: Needs refinement to support user intent.\",\n    \"Analyst Review: Factual claim detected (Found 2 factual indicator(s): studies show, numerical_pattern). Cannot verify without evidence.; Advocate Voice: Needs refinement to support user intent.\",\n    \"Safety Council: Detected high-risk term 'attack'.; Advocate Voice: Needs refinement to support user intent.\",\n    \"Safety Council: Detected high-risk term 'bomb'.; Analyst Review: Factual claim detected (Found 1 factual indicator(s): numerical_pattern). Cannot verify without evidence.\",\n    \"Safety Council: Detected high-risk term '炸彈'.; Advocate Voice: Needs refinement to support user intent.\",\n    \"Analyst Review: Logic chain contradicts itself; requires clarity.; Critic Lens: Creative or aesthetic nuance requires a stance.\",\n    \"Safety Council: Safety concern detected: 'risk'.; Analyst Review: Logic chain contradicts itself; requires clarity.\",\n    \"Safety Council: Safety concern detected: 'risk'.; Analyst Review: Factual claim detected (Found 1 factual indicator(s): protocol). Cannot verify without evidence.\"\n  ],\n  \"issues\": [],\n  \"warnings\": []\n}",
+      "stderr_tail": ""
+    },
+    {
+      "name": "memory_quality",
+      "status": "pass",
+      "ok": true,
+      "exit_code": 0,
+      "duration_seconds": 1.38,
+      "command": "python scripts/run_memory_quality_report.py --strict",
+      "stdout_tail": "{\n  \"generated_at\": \"2026-03-01T15:18:14Z\",\n  \"overall_ok\": true,\n  \"inputs\": {\n    \"journal_path\": \"C:/Users/user/Desktop/倉庫/memory/self_journal.jsonl\"\n  },\n  \"metrics\": {\n    \"entry_count\": 10539,\n    \"failure_case_count\": 10533,\n    \"learning_sample_count\": 10533,\n    \"invalid_json_line_count\": 0,\n    \"high_risk_failure_count\": 10234,\n    \"verdict_counts\": {\n      \"block\": 10234,\n      \"declare_stance\": 299,\n      \"approve\": 3,\n      \"note\": 2,\n      \"summary\": 1\n    },\n    \"risk_level_counts\": {\n      \"high\": 10234,\n      \"medium\": 260,\n      \"low\": 39\n    },\n    \"uncertainty_band_counts\": {\n      \"unknown\": 810,\n      \"high\": 6109,\n      \"medium\": 3614\n    },\n    \"average_failure_coherence\": 0.6379\n  },\n  \"quality_signals\": {\n    \"failure_case_rate\": 0.9994,\n    \"provenance_coverage_rate\": 0.7523,\n    \"divergence_coverage_rate\": 1.0,\n    \"contract_coverage_rate\": 0.1578,\n    \"contract_evidence_coverage_rate\": 0.0\n  },\n  \"issues\": [],\n  \"warnings\": []\n}",
+      "stderr_tail": ""
+    },
+    {
+      "name": "memory_governance_contract",
+      "status": "pass",
+      "ok": true,
+      "exit_code": 0,
+      "duration_seconds": 0.09,
+      "command": "python scripts/run_memory_governance_contract_check.py --strict",
+      "stdout_tail": "y_tension in [0,1]\"\n    },\n    {\n      \"name\": \"example.prior_tension.query_wave\",\n      \"status\": \"pass\",\n      \"detail\": \"wave shape valid\"\n    },\n    {\n      \"name\": \"example.prior_tension.memory_wave\",\n      \"status\": \"pass\",\n      \"detail\": \"wave shape valid\"\n    },\n    {\n      \"name\": \"example.governance_friction.score\",\n      \"status\": \"pass\",\n      \"detail\": \"score in [0,1]\"\n    },\n    {\n      \"name\": \"example.governance_friction.components.delta_t\",\n      \"status\": \"pass\",\n      \"detail\": \"delta_t in [0,1]\"\n    },\n    {\n      \"name\": \"example.governance_friction.components.delta_wave\",\n      \"status\": \"pass\",\n      \"detail\": \"delta_wave in [0,1]\"\n    },\n    {\n      \"name\": \"example.governance_friction.components.boundary_mismatch\",\n      \"status\": \"pass\",\n      \"detail\": \"boundary_mismatch is boolean\"\n    },\n    {\n      \"name\": \"example.routing_trace.route\",\n      \"status\": \"pass\",\n      \"detail\": \"route valid\"\n    },\n    {\n      \"name\": \"example.routing_trace.journal_eligible\",\n      \"status\": \"pass\",\n      \"detail\": \"journal_eligible is boolean\"\n    },\n    {\n      \"name\": \"example.routing_trace.reason\",\n      \"status\": \"pass\",\n      \"detail\": \"reason present\"\n    }\n  ]\n}",
+      "stderr_tail": ""
+    },
+    {
+      "name": "friction_shadow_replay_export",
+      "status": "pass",
+      "ok": true,
+      "exit_code": 0,
+      "duration_seconds": 1.51,
+      "command": "python scripts/run_friction_shadow_replay_export.py --strict",
+      "stdout_tail": "verall_ok\": true,\n  \"inputs\": {\n    \"journal_path\": \"memory/self_journal.jsonl\",\n    \"discussion_path\": \"memory/agent_discussion_curated.jsonl\",\n    \"max_rows\": 1200,\n    \"min_scenarios\": 24,\n    \"max_invalid_lines\": 200,\n    \"max_avg_tension_drift\": 0.35,\n    \"max_avg_friction_drift\": 0.35,\n    \"max_high_friction_rate_drift\": 0.4,\n    \"min_scenario_count_ratio\": 0.2\n  },\n  \"metrics\": {\n    \"scenario_count\": 1200,\n    \"source_journal_count\": 1179,\n    \"source_discussion_count\": 21,\n    \"source_synthetic_count\": 0,\n    \"free_tier_count\": 612,\n    \"premium_tier_count\": 588,\n    \"journal_invalid_json_line_count\": 0,\n    \"discussion_invalid_json_line_count\": 0,\n    \"invalid_json_line_count\": 0,\n    \"average_initial_tension\": 0.6135,\n    \"average_friction_score\": 0.6767,\n    \"high_friction_scenario_count\": 949,\n    \"high_friction_scenario_rate\": 0.7908,\n    \"drift\": {\n      \"has_previous_snapshot\": true,\n      \"guard_applied\": true,\n      \"guard_skip_reason\": null,\n      \"scenario_count_ratio\": 1.0,\n      \"average_initial_tension_delta\": -0.0001,\n      \"average_friction_score_delta\": -0.0003,\n      \"high_friction_scenario_rate_delta\": -0.005\n    }\n  },\n  \"issues\": [],\n  \"warnings\": []\n}",
+      "stderr_tail": ""
+    },
+    {
+      "name": "friction_shadow_calibration",
+      "status": "pass",
+      "ok": true,
+      "exit_code": 0,
+      "duration_seconds": 0.17,
+      "command": "python scripts/run_friction_shadow_calibration_report.py --strict",
+      "stdout_tail": "e\": 0.8933,\n    \"shadow_council_rate\": 0.8933,\n    \"council_rate_delta\": 0.0,\n    \"high_friction_candidate_count\": 949,\n    \"high_friction_escape_count\": 0,\n    \"high_friction_escape_rate\": 0.0\n  },\n  \"route_distribution\": {\n    \"active\": {\n      \"route_local_llm\": 0,\n      \"route_single_cloud\": 128,\n      \"route_full_council\": 1072,\n      \"block_rate_limit\": 0\n    },\n    \"shadow\": {\n      \"route_local_llm\": 0,\n      \"route_single_cloud\": 128,\n      \"route_full_council\": 1072,\n      \"block_rate_limit\": 0\n    }\n  },\n  \"friction_band_metrics\": [\n    {\n      \"band\": \"low\",\n      \"count\": 21,\n      \"active_council_rate\": 0.0,\n      \"shadow_council_rate\": 0.0\n    },\n    {\n      \"band\": \"mid\",\n      \"count\": 230,\n      \"active_council_rate\": 0.5348,\n      \"shadow_council_rate\": 0.5348\n    },\n    {\n      \"band\": \"high\",\n      \"count\": 949,\n      \"active_council_rate\": 1.0,\n      \"shadow_council_rate\": 1.0\n    },\n    {\n      \"band\": \"unknown\",\n      \"count\": 0,\n      \"active_council_rate\": 0.0,\n      \"shadow_council_rate\": 0.0\n    }\n  ],\n  \"route_changes\": [],\n  \"issues\": [],\n  \"warnings\": [\n    \"shadow thresholds are identical to active thresholds (this run is a baseline snapshot).\"\n  ]\n}",
+      "stderr_tail": ""
+    },
+    {
+      "name": "philosophical_reflection",
+      "status": "pass",
+      "ok": true,
+      "exit_code": 0,
+      "duration_seconds": 2.41,
+      "command": "python scripts/run_philosophical_reflection_report.py --strict",
+      "stdout_tail": "nalyst Review: Logic chain contradicts itself; requires clarity.\"\n    },\n    {\n      \"source\": \"journal\",\n      \"timestamp\": \"2026-02-04T13:22:36.744178+00:00\",\n      \"summary\": \"Safety Council: Safety concern detected: 'risk'.; Analyst Review: Factual claim detected (Found 1 factual indicator(s): protocol). Cannot verify without evidence.\"\n    },\n    {\n      \"source\": \"journal\",\n      \"timestamp\": \"2026-02-04T14:45:29.846472+00:00\",\n      \"summary\": \"Safety Council: Safety concern detected: 'risk'.; Analyst Review: Factual claim detected (Found 2 factual indicator(s): API, protocol). Cannot verify without evidence.\"\n    },\n    {\n      \"source\": \"journal\",\n      \"timestamp\": \"2026-02-04T18:46:11.652766+00:00\",\n      \"summary\": \"Safety Council: Detected high-risk term 'harm'.; Analyst Review: Factual claim detected (Found 1 factual indicator(s): numerical_pattern). Cannot verify without evidence.\"\n    }\n  ],\n  \"unresolved_topics\": [\n    \"next-phase-planning\",\n    \"next-steps-prioritized-plan\",\n    \"phase17-all-tasks\",\n    \"phase21-api-unification\",\n    \"phase22-frontend-integration\",\n    \"seven-d-cross-agent-decisions\",\n    \"system-completion\"\n  ],\n  \"issues\": [],\n  \"warnings\": []\n}",
+      "stderr_tail": ""
+    },
+    {
+      "name": "memory_topology_fit",
+      "status": "pass",
+      "ok": true,
+      "exit_code": 0,
+      "duration_seconds": 0.09,
+      "command": "python scripts/run_memory_topology_fit_report.py --strict",
+      "stdout_tail": "on_friction_event_index\"\n    ],\n    \"tonesoul_delta\": \"Prioritize memory of friction/boundary choices over raw transcript recall.\"\n  },\n  \"candidate_scores\": [\n    {\n      \"name\": \"flat\",\n      \"feasible\": true,\n      \"fit_score\": 0.9539,\n      \"required_budget\": 0.15,\n      \"governance_capacity\": 0.45,\n      \"memory_stack\": [\n        \"flat_jsonl_experience_log\",\n        \"rolling_summary_memory\",\n        \"tension_friction_event_index\"\n      ]\n    },\n    {\n      \"name\": \"planar\",\n      \"feasible\": false,\n      \"fit_score\": 0.3259,\n      \"required_budget\": 0.4,\n      \"governance_capacity\": 0.74,\n      \"memory_stack\": [\n        \"flat_jsonl_experience_log\",\n        \"rolling_summary_memory\",\n        \"tension_friction_event_index\",\n        \"conflict_graph_links\",\n        \"topic_to_boundary_relation_index\"\n      ]\n    },\n    {\n      \"name\": \"hierarchical\",\n      \"feasible\": false,\n      \"fit_score\": 0.1179,\n      \"required_budget\": 0.72,\n      \"governance_capacity\": 0.9,\n      \"memory_stack\": [\n        \"flat_jsonl_experience_log\",\n        \"conflict_graph_links\",\n        \"multi_layer_summary_pyramid\",\n        \"policy_trace_memory_layer\"\n      ]\n    }\n  ],\n  \"issues\": [],\n  \"warnings\": []\n}",
       "stderr_tail": ""
     },
     {
@@ -96,9 +186,9 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 98.2,
+      "duration_seconds": 242.75,
       "command": "python scripts/verify_7d.py",
-      "stdout_tail": "ython tools/agent_discussion_tool.py tail --path memory\\\\agent_discussion_curated.jsonl --limit 1\",\n      \"note\": \"stale data: age_days=7.84, threshold=7\"\n    },\n    {\n      \"dimension\": \"XDD\",\n      \"gate\": \"BLOCKING\",\n      \"status\": \"pass\",\n      \"command\": \"python -m pytest tests\\\\test_uncertainty.py -q\",\n      \"note\": \"\"\n    },\n    {\n      \"dimension\": \"GDD\",\n      \"gate\": \"BLOCKING\",\n      \"status\": \"pass\",\n      \"command\": \"python -m pytest tests\\\\test_genesis_integration.py tests\\\\test_provenance_chain.py -q\",\n      \"note\": \"\"\n    },\n    {\n      \"dimension\": \"CDD\",\n      \"gate\": \"BLOCKING\",\n      \"status\": \"pass\",\n      \"command\": \"python -m pytest tests/test_api_server_contract.py -q\",\n      \"note\": \"\"\n    },\n    {\n      \"dimension\": \"SDH\",\n      \"gate\": \"SOFT_FAIL\",\n      \"status\": \"skip\",\n      \"command\": \"python scripts\\\\verify_web_api.py --web-base http://127.0.0.1:3000 --api-base http://127.0.0.1:5000 --require-backend --check-council-modes\",\n      \"note\": \"skipped; use --include-sdh when web/backend are running\"\n    }\n  ],\n  \"scores\": {\n    \"TDD\": 100,\n    \"RDD\": 100,\n    \"DDD\": 66,\n    \"XDD\": 100,\n    \"GDD\": 100,\n    \"CDD\": 100,\n    \"SDH\": 0,\n    \"OVERALL\": 84\n  }\n}",
+      "stdout_tail": "on_tool.py tail --path memory\\\\agent_discussion_curated.jsonl --limit 1\",\n      \"note\": \"age_days=5.10, threshold=7\"\n    },\n    {\n      \"dimension\": \"XDD\",\n      \"gate\": \"BLOCKING\",\n      \"status\": \"pass\",\n      \"command\": \"python -m pytest tests\\\\test_escape_valve.py tests\\\\test_escape_valve_runtime.py -q\",\n      \"note\": \"\"\n    },\n    {\n      \"dimension\": \"GDD\",\n      \"gate\": \"BLOCKING\",\n      \"status\": \"pass\",\n      \"command\": \"python -m pytest tests\\\\test_genesis_integration.py tests\\\\test_provenance_chain.py -q\",\n      \"note\": \"\"\n    },\n    {\n      \"dimension\": \"CDD\",\n      \"gate\": \"BLOCKING\",\n      \"status\": \"pass\",\n      \"command\": \"python -m pytest tests/test_api_server_contract.py -q\",\n      \"note\": \"\"\n    },\n    {\n      \"dimension\": \"SDH\",\n      \"gate\": \"SOFT_FAIL\",\n      \"status\": \"skip\",\n      \"command\": \"python scripts\\\\verify_web_api.py --web-base http://127.0.0.1:3000 --api-base http://127.0.0.1:5000 --require-backend --check-council-modes\",\n      \"note\": \"skipped; use --include-sdh when web/backend are running\"\n    }\n  ],\n  \"scores\": {\n    \"TDD\": 100,\n    \"RDD\": 100,\n    \"DDD\": 100,\n    \"XDD\": 100,\n    \"GDD\": 100,\n    \"CDD\": 100,\n    \"SDH\": 0,\n    \"OVERALL\": 90\n  }\n}",
       "stderr_tail": ""
     }
   ]

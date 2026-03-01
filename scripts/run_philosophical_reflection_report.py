@@ -440,7 +440,9 @@ def build_report(
 
         reflection_hit = _contains_marker(texts, REFLECTION_MARKERS)
         conflict_hit = verdict in CONFLICT_VERDICTS or _contains_marker(texts, CONFLICT_MARKERS)
-        choice_hit = verdict in {"block", "declare_stance"} or _contains_marker(texts, CHOICE_MARKERS)
+        choice_hit = verdict in {"block", "declare_stance"} or _contains_marker(
+            texts, CHOICE_MARKERS
+        )
 
         if reflection_hit:
             reflection_event_count += 1
@@ -512,7 +514,9 @@ def build_report(
     tension_event_count = sum(
         1 for peak in entry_tension_peaks if peak >= effective_tension_threshold
     )
-    average_tension = round(sum(tension_values) / len(tension_values), 4) if tension_values else None
+    average_tension = (
+        round(sum(tension_values) / len(tension_values), 4) if tension_values else None
+    )
     max_tension = round(max(tension_values), 4) if tension_values else None
 
     reflection_rate = _rate(reflection_event_count, combined_entry_count)

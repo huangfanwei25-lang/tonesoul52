@@ -293,7 +293,9 @@ def evaluate_registry(
                         "pass",
                         "trigger values are unique",
                     )
-                invalid_markup_triggers = [item for item in triggers if _contains_prompt_markup(item)]
+                invalid_markup_triggers = [
+                    item for item in triggers if _contains_prompt_markup(item)
+                ]
                 if invalid_markup_triggers:
                     add_check(
                         f"{label}.l1_routing.triggers.prompt_safety",
@@ -338,7 +340,9 @@ def evaluate_registry(
                 )
             else:
                 invalid_profiles = [
-                    item for item in execution_profile_values if item.lower() not in L2_EXECUTION_PROFILES
+                    item
+                    for item in execution_profile_values
+                    if item.lower() not in L2_EXECUTION_PROFILES
                 ]
                 if invalid_profiles:
                     add_check(
@@ -531,7 +535,9 @@ def evaluate_registry(
 
         fm_l1 = frontmatter.get("l1_routing")
         if not isinstance(fm_l1, dict):
-            add_check(f"{label}.frontmatter.l1_routing", "fail", "frontmatter l1_routing is required")
+            add_check(
+                f"{label}.frontmatter.l1_routing", "fail", "frontmatter l1_routing is required"
+            )
         else:
             add_check(f"{label}.frontmatter.l1_routing", "pass", "present")
             fm_l1_name = str(fm_l1.get("name") or "").strip()
@@ -580,7 +586,9 @@ def evaluate_registry(
                         "pass",
                         f"{len(fm_triggers)} trigger(s)",
                     )
-                invalid_markup_fm_triggers = [item for item in fm_triggers if _contains_prompt_markup(item)]
+                invalid_markup_fm_triggers = [
+                    item for item in fm_triggers if _contains_prompt_markup(item)
+                ]
                 if invalid_markup_fm_triggers:
                     add_check(
                         f"{label}.frontmatter.l1_routing.triggers.prompt_safety",
@@ -635,7 +643,9 @@ def evaluate_registry(
 
         fm_l2 = frontmatter.get("l2_signature")
         if not isinstance(fm_l2, dict):
-            add_check(f"{label}.frontmatter.l2_signature", "fail", "frontmatter l2_signature is required")
+            add_check(
+                f"{label}.frontmatter.l2_signature", "fail", "frontmatter l2_signature is required"
+            )
         else:
             add_check(f"{label}.frontmatter.l2_signature", "pass", "present")
             fm_profiles = _as_string_list(fm_l2.get("execution_profile"))

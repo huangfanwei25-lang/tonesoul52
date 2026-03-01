@@ -1,6 +1,32 @@
 ---
 name: cv_hardware_diagnostics
-description: Multi-stage defensive engineering methodology for diagnosing and resolving hardware, firmware, and computer vision integration issues (e.g., ESP32 + OpenCV setups).
+description: Use for cv hardware diagnostics on ESP32 and OpenCV integrations with staged fail-fast checks and anti-hallucination debugging.
+l1_routing:
+  name: "CV Hardware Diagnostics"
+  triggers:
+    - "cv hardware"
+    - "esp32"
+    - "opencv"
+    - "serial pre-check"
+  intent: "Run cv hardware diagnostics for esp32 and opencv pipelines using serial pre-check and staged fail-fast validation."
+l2_signature:
+  execution_profile:
+    - "engineering"
+  trust_tier: "reviewed"
+  json_schema:
+    type: "object"
+    properties:
+      target_stack:
+        type: "string"
+      symptoms:
+        type: "string"
+      environment_constraints:
+        type: "array"
+        items:
+          type: "string"
+    required:
+      - "target_stack"
+      - "symptoms"
 ---
 
 # 👁️ Hardware Vision Diagnostics (Multi-stage Defensive Engineering)
