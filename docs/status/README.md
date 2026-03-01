@@ -212,6 +212,10 @@ python scripts/run_persona_swarm_framework.py --input docs/experiments/persona_s
 ```
 
 ```bash
+python scripts/run_swarm_long_task_planning.py --strict
+```
+
+```bash
 python scripts/run_external_source_registry_check.py --strict
 ```
 

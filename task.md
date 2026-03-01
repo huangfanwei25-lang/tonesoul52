@@ -58,7 +58,7 @@
 - [x] Run strict swarm evaluation and publish snapshot (`docs/status/persona_swarm_long_task_latest.json`)
 - [x] Produce execution roadmap (`docs/plans/swarm_long_task_plan_2026-03-01.md`)
 - [x] Add status README index entry for long-task swarm snapshot
-- [ ] Add dedicated wrapper script for repeatable long-task swarm planning runs
+- [x] Add dedicated wrapper script for repeatable long-task swarm planning runs
 **Success Criteria**: long-task planning starts from a strict-passing swarm snapshot and yields an executable multi-phase roadmap.
 
 ## Phase 106: Foundation Debt Burn-down (2026-02-22)
