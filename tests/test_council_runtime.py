@@ -68,6 +68,25 @@ def test_council_runtime_includes_multi_agent_contract():
     assert validation.get("valid") is True
 
 
+def test_council_runtime_attaches_persona_uniqueness_audit():
+    runtime = CouncilRuntime()
+    request = CouncilRequest(
+        draft_output="Simple response with clear intent.",
+        context={"tsr_baseline": {"T": 0.0, "S_norm": 0.0, "R": 0.0}},
+        user_intent="ask",
+    )
+    verdict = runtime.deliberate(request)
+
+    transcript = verdict.transcript or {}
+    persona = transcript.get("persona_uniqueness")
+    assert isinstance(persona, dict)
+    assert "is_unique" in persona
+    assert "similarity_scores" in persona
+    payload = verdict.to_dict()
+    assert isinstance(payload.get("persona_uniqueness_audit"), dict)
+    assert isinstance(payload.get("persona_audit"), dict)
+
+
 def test_council_runtime_handles_provenance_write_error(monkeypatch):
     import tonesoul.council.runtime as runtime_module
 

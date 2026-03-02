@@ -13,6 +13,7 @@ from ..role_council import build_council_summary
 from .base import IPerspective
 from .intent_reconstructor import infer_genesis
 from .model_registry import get_council_config
+from .persona_audit import audit_persona_uniqueness
 from .pre_output_council import PreOutputCouncil
 from .self_journal import record_self_memory
 from .types import CouncilVerdict, PerspectiveType, VerdictType
@@ -112,6 +113,10 @@ class CouncilRuntime:
         transcript = verdict.transcript if isinstance(verdict.transcript, dict) else {}
         transcript["council_mode_observability"] = perspective_meta
         transcript["skill_contract_observability"] = skill_contract.get("observability", {})
+        persona_audit = audit_persona_uniqueness(verdict.votes)
+        verdict.persona_audit = persona_audit
+        verdict.persona_uniqueness_audit = persona_audit.to_dict()
+        transcript["persona_uniqueness"] = verdict.persona_uniqueness_audit
         verdict.transcript = transcript
 
         escape_trigger_reason: str | None = None

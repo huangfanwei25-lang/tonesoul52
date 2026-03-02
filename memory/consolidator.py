@@ -23,6 +23,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from memory.self_memory import load_recent_memory
+from tonesoul.memory.crystallizer import MemoryCrystallizer
 from tonesoul.memory.openclaw.embeddings import HashEmbedding, SentenceTransformerEmbedding
 from tonesoul.memory.openclaw.hippocampus import Hippocampus
 
@@ -106,9 +107,11 @@ class MemoryConsolidator:
     def __init__(
         self,
         hippocampus: Optional[Hippocampus] = None,
+        crystallizer: Optional[MemoryCrystallizer] = None,
         min_episodes: int = 5,  # Minimum episodes needed for consolidation
     ):
         self.hippocampus = hippocampus or get_hippocampus()
+        self.crystallizer = crystallizer or MemoryCrystallizer()
         self.min_episodes = min_episodes
         self.state = ConsolidationState()
 
@@ -136,6 +139,13 @@ class MemoryConsolidator:
         patterns = self._extract_patterns(episodes)
         print(f"   Extracted patterns from {len(patterns)} dimensions...")
 
+        # Phase 1.5: Crystallize durable decision rules
+        try:
+            crystals = self.crystallizer.crystallize(patterns)
+        except Exception:
+            crystals = []
+        print(f"   Crystallized {len(crystals)} decision rules...")
+
         # Phase 2: Form semantic facts (Neocortex integration)
         new_facts = self._form_semantics(patterns)
         print(f"   Formed {len(new_facts)} semantic facts...")
@@ -162,6 +172,9 @@ class MemoryConsolidator:
             "episodes_processed": len(episodes),
             "patterns_found": len(patterns),
             "facts_formed": len(new_facts),
+            "crystals_formed": len(crystals),
+            "crystals_generated": len(crystals),
+            "crystals": [crystal.to_dict() for crystal in crystals],
             "facts": new_facts,
         }
 
@@ -197,6 +210,9 @@ class MemoryConsolidator:
             "topics": Counter(),
             "hour_distribution": Counter(),
             "genesis": Counter(),
+            "collapse_warnings": Counter(),
+            "autonomous_high_delta": 0,
+            "low_tension_approvals": 0,
         }
 
         for episode in episodes:
@@ -221,6 +237,33 @@ class MemoryConsolidator:
 
             genesis = episode.get("genesis") or "unknown"
             patterns["genesis"][genesis] += 1
+
+            collapse_warning = episode.get("collapse_warning")
+            if not collapse_warning and isinstance(episode.get("transcript"), dict):
+                collapse_warning = episode["transcript"].get("collapse_warning")
+            if collapse_warning:
+                patterns["collapse_warnings"][str(collapse_warning)] += 1
+
+            if str(genesis).lower() == "autonomous":
+                try:
+                    delta_norm = float(episode.get("tsr_delta_norm", 0.0))
+                except (TypeError, ValueError):
+                    delta_norm = 0.0
+                if delta_norm >= 0.7:
+                    patterns["autonomous_high_delta"] += 1
+
+            if str(verdict).lower() == "approve":
+                context_tension = None
+                if isinstance(ctx, dict):
+                    context_tension = ctx.get("tension")
+                    if context_tension is None and isinstance(ctx.get("prior_tension"), dict):
+                        context_tension = ctx["prior_tension"].get("delta_t")
+                try:
+                    tension_value = float(context_tension) if context_tension is not None else None
+                except (TypeError, ValueError):
+                    tension_value = None
+                if tension_value is not None and tension_value <= 0.35:
+                    patterns["low_tension_approvals"] += 1
 
             # Time patterns
             timestamp = episode.get("timestamp", "")

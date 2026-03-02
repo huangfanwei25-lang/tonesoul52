@@ -1142,11 +1142,30 @@ class UnifiedPipeline:
                 )
 
             if self._hippocampus.index is not None or self._hippocampus.bm25 is not None:
+                zone = getattr(tension_result, "zone", None) if tension_result is not None else None
+                prediction = (
+                    getattr(tension_result, "prediction", None)
+                    if tension_result is not None
+                    else None
+                )
+                zone_value = getattr(zone, "value", zone) or "stable"
+                trend_value = getattr(prediction, "trend", None) if prediction is not None else None
+                work_category = (
+                    getattr(tension_result, "work_category", None)
+                    if tension_result is not None
+                    else None
+                )
+                tension_context = {
+                    "zone": str(zone_value),
+                    "trend": str(trend_value or "stable"),
+                    "work_category": str(work_category or "engineering"),
+                }
                 # Pass query_tension to trigger ToneSoul resonance reranking
                 memory_results = self._hippocampus.recall(
                     query_text=user_message,
                     top_k=3,
                     query_tension=tone_strength,
+                    tension_context=tension_context,
                 )
                 if memory_results:
                     recalled_texts = "\n".join(

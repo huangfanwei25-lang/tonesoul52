@@ -2,9 +2,12 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import List, Optional, Union
+from typing import TYPE_CHECKING, List, Optional, Union
 
 from memory.genesis import Genesis
+
+if TYPE_CHECKING:
+    from .persona_audit import AuditResult
 
 
 class PerspectiveType(Enum):
@@ -88,6 +91,8 @@ class CouncilVerdict:
     uncertainty_band: Optional[str] = None
     uncertainty_reasons: Optional[List[str]] = None
     benevolence_audit: Optional[dict] = None  # Added for 7D Backend Auditor
+    persona_uniqueness_audit: Optional[dict] = None
+    persona_audit: Optional["AuditResult"] = None
 
     def to_dict(self) -> dict:
         """
@@ -95,6 +100,15 @@ class CouncilVerdict:
 
         Includes evidence and grounding status for each vote.
         """
+        persona_audit_payload: dict = {}
+        if self.persona_audit is not None:
+            if hasattr(self.persona_audit, "to_dict"):
+                persona_audit_payload = self.persona_audit.to_dict()  # type: ignore[assignment]
+            elif isinstance(self.persona_audit, dict):
+                persona_audit_payload = self.persona_audit
+        elif isinstance(self.persona_uniqueness_audit, dict):
+            persona_audit_payload = self.persona_uniqueness_audit
+
         return {
             "verdict": self.verdict.value,
             "coherence": self.coherence.overall,
@@ -138,6 +152,8 @@ class CouncilVerdict:
             },
             "transcript": self.transcript or {},
             "benevolence_audit": self.benevolence_audit or {},  # Added for 7D Backend Auditor
+            "persona_uniqueness_audit": self.persona_uniqueness_audit or persona_audit_payload,
+            "persona_audit": persona_audit_payload,
             "human_summary": self.human_summary,
             "divergence_analysis": self.divergence_analysis or {},
         }

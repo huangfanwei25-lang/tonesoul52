@@ -568,10 +568,13 @@ class Hippocampus:
         query_vector: Optional[np.ndarray] = None,
         top_k: int = 5,
         query_tension: Optional[float] = None,
+        tension_context: Optional[Dict[str, Any]] = None,
         query_tension_mode: str = "resonance",
         query_wave: Optional[Dict[str, Any]] = None,
         query_wave_mode: str = "resonance",
     ) -> List[MemoryResult]:
+        # Reserved for compatibility with unified pipeline context wiring.
+        _ = tension_context
         if query_vector is None:
             if self.embedder is None:
                 raise ValueError(

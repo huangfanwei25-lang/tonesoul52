@@ -1,0 +1,187 @@
+from __future__ import annotations
+
+import json
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
+
+from memory.consolidator import MemoryConsolidator
+from tonesoul.memory.crystallizer import Crystal, MemoryCrystallizer
+
+
+def _iso_days_ago(days: int) -> str:
+    dt = datetime.now(timezone.utc) - timedelta(days=days)
+    return dt.replace(microsecond=0).isoformat().replace("+00:00", "Z")
+
+
+def test_crystallize_generates_expected_rules(tmp_path: Path):
+    crystal_path = tmp_path / "crystals.jsonl"
+    crystallizer = MemoryCrystallizer(crystal_path=crystal_path, min_frequency=3)
+    patterns = {
+        "verdicts": {"block": 4, "approve": 6},
+        "low_tension_approvals": 5,
+        "autonomous_high_delta": 3,
+        "collapse_warnings": {"autonomous_high_delta_without_trigger": 1},
+    }
+
+    crystals = crystallizer.crystallize(patterns)
+
+    assert len(crystals) == 4
+    assert any("avoid" in c.rule for c in crystals)
+    assert any("prefer" in c.rule for c in crystals)
+    assert any("attention" in c.rule for c in crystals)
+    assert any("critical" in c.rule for c in crystals)
+    assert len(crystallizer.load_crystals()) == 4
+
+
+def test_crystallize_respects_min_frequency(tmp_path: Path):
+    crystal_path = tmp_path / "crystals.jsonl"
+    crystallizer = MemoryCrystallizer(crystal_path=crystal_path, min_frequency=3)
+    patterns = {
+        "verdicts": {"block": 2, "approve": 2},
+        "low_tension_approvals": 4,
+        "autonomous_high_delta": 2,
+        "collapse_warnings": {},
+    }
+
+    crystals = crystallizer.crystallize(patterns)
+
+    assert crystals == []
+    assert crystallizer.load_crystals() == []
+
+
+def test_crystals_weight_stays_within_unit_interval(tmp_path: Path):
+    crystal_path = tmp_path / "crystals.jsonl"
+    crystallizer = MemoryCrystallizer(crystal_path=crystal_path, min_frequency=1)
+    patterns = {
+        "verdicts": {"block": 3, "approve": 8},
+        "low_tension_approvals": 8,
+        "autonomous_high_delta": 4,
+        "collapse_warnings": {"warn": 2},
+    }
+    crystals = crystallizer.crystallize(patterns)
+
+    assert len(crystals) >= 3
+    for crystal in crystals:
+        assert 0.0 <= crystal.weight <= 1.0
+
+
+def test_top_crystals_sorted_by_weight_access_and_recency(tmp_path: Path):
+    crystal_path = tmp_path / "crystals.jsonl"
+    entries = [
+        Crystal(
+            rule="rule-low",
+            source_pattern="p1",
+            weight=0.7,
+            created_at=_iso_days_ago(3),
+            access_count=10,
+            tags=["prefer"],
+        ),
+        Crystal(
+            rule="rule-high",
+            source_pattern="p2",
+            weight=1.0,
+            created_at=_iso_days_ago(10),
+            access_count=0,
+            tags=["critical"],
+        ),
+        Crystal(
+            rule="rule-mid",
+            source_pattern="p3",
+            weight=0.9,
+            created_at=_iso_days_ago(1),
+            access_count=20,
+            tags=["attention"],
+        ),
+    ]
+    crystal_path.parent.mkdir(parents=True, exist_ok=True)
+    with crystal_path.open("w", encoding="utf-8") as handle:
+        for item in entries:
+            handle.write(json.dumps(item.to_dict(), ensure_ascii=False) + "\n")
+
+    crystallizer = MemoryCrystallizer(crystal_path=crystal_path, min_frequency=1)
+    top = crystallizer.top_crystals(n=2)
+
+    assert [item.rule for item in top] == ["rule-high", "rule-mid"]
+
+
+def test_load_crystals_filters_by_age(tmp_path: Path):
+    crystal_path = tmp_path / "crystals.jsonl"
+    old = Crystal(
+        rule="old-rule",
+        source_pattern="old",
+        weight=0.8,
+        created_at=_iso_days_ago(30),
+        tags=["avoid"],
+    )
+    fresh = Crystal(
+        rule="fresh-rule",
+        source_pattern="new",
+        weight=0.9,
+        created_at=_iso_days_ago(1),
+        tags=["attention"],
+    )
+    with crystal_path.open("w", encoding="utf-8") as handle:
+        handle.write(json.dumps(old.to_dict(), ensure_ascii=False) + "\n")
+        handle.write(json.dumps(fresh.to_dict(), ensure_ascii=False) + "\n")
+
+    crystallizer = MemoryCrystallizer(crystal_path=crystal_path, min_frequency=1)
+    recent = crystallizer.load_crystals(max_age_days=7)
+
+    assert [item.rule for item in recent] == ["fresh-rule"]
+
+
+def test_memory_consolidator_calls_crystallizer(tmp_path: Path, monkeypatch):
+    class DummyHippo:
+        def __init__(self) -> None:
+            self.items = []
+
+        def memorize(self, **kwargs):
+            self.items.append(kwargs)
+
+    class DummyCrystallizer:
+        def __init__(self) -> None:
+            self.called_patterns = None
+
+        def crystallize(self, patterns):
+            self.called_patterns = patterns
+            return [
+                Crystal(
+                    rule="attention: autonomous high-delta outputs require explicit self-check",
+                    source_pattern="genesis:autonomous_high_delta x1",
+                    weight=0.9,
+                    created_at=_iso_days_ago(0),
+                    tags=["attention"],
+                )
+            ]
+
+    dummy_hippo = DummyHippo()
+    dummy_crystallizer = DummyCrystallizer()
+    consolidator = MemoryConsolidator(
+        hippocampus=dummy_hippo,
+        crystallizer=dummy_crystallizer,  # type: ignore[arg-type]
+        min_episodes=1,
+    )
+
+    monkeypatch.setattr(
+        consolidator,
+        "_load_unconsolidated_episodes",
+        lambda: [
+            {
+                "timestamp": _iso_days_ago(0),
+                "is_mine": True,
+                "verdict": "approve",
+                "genesis": "autonomous",
+                "tsr_delta_norm": 0.8,
+                "context": {"tension": 0.2},
+            }
+        ],
+    )
+    monkeypatch.setattr(consolidator, "_form_semantics", lambda patterns: [])
+    monkeypatch.setattr(consolidator.state, "mark_consolidated", lambda timestamp, count: None)
+
+    result = consolidator.consolidate(force=True)
+
+    assert dummy_crystallizer.called_patterns is not None
+    assert result["crystals_formed"] == 1
+    assert result["crystals_generated"] == 1
+    assert isinstance(result["crystals"], list)

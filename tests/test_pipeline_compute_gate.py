@@ -6,6 +6,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+import tonesoul.gates.compute as compute_module
 from tonesoul.gates.compute import RoutingPath, _free_tier_limiter
 from tonesoul.unified_pipeline import UnifiedPipeline
 
@@ -54,8 +55,12 @@ def test_pipeline_premium_journal_eligible():
     assert response.dispatch_trace.get("route") == RoutingPath.PASS_COUNCIL.value
 
 
-def test_pipeline_rate_limit_free_tier():
+def test_pipeline_rate_limit_free_tier(monkeypatch):
     """Test that free tier rate limits are enforced across multiple pipeline calls."""
+    # Freeze ComputeGate clock to make this a true burst test (no token refill between calls).
+    frozen_time = 1_700_000_000.0
+    monkeypatch.setattr(compute_module.time, "time", lambda: frozen_time)
+
     pipeline = UnifiedPipeline()
     pipeline._get_gemini = MagicMock(return_value=None)
     pipeline._get_tonebridge = MagicMock(return_value=None)
