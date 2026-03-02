@@ -61,6 +61,20 @@
 - [x] Add dedicated wrapper script for repeatable long-task swarm planning runs
 **Success Criteria**: long-task planning starts from a strict-passing swarm snapshot and yields an executable multi-phase roadmap.
 
+## Phase 125: RFC-013 Wiring + Memory Integration + Compute Gate Stabilization (2026-03-02)
+- [x] Task A: `memory/consolidator.py` wired with crystallizer-safe fallback and result key `crystals_generated` (kept `crystals_formed` for compatibility).
+- [x] Task B: Added handoff entrypoint script `scripts/ingest_handoffs.py` (import-verified, no real ingestion execution in this run).
+- [x] Task C: Wired `tension_context` into `UnifiedPipeline` hippocampus recall path (backward-compatible signature update in OpenClaw Hippocampus).
+- [x] Task D: Stabilized free-tier rate-limit behavior in integration tests (`tests/test_pipeline_compute_gate.py` 4/4 green).
+- [x] Task E: Exposed persona audit in `CouncilVerdict.to_dict()` via `persona_audit` while preserving `persona_uniqueness_audit`.
+- [x] RFC-013 guardrail: no edits to `nonlinear_predictor.py`, `variance_compressor.py`, `work_classifier.py`.
+- [?] Phase 110 GA blocker A/B direct Compute-Gate A/B code marker is not explicit in `tonesoul/gates/compute.py`; release artifact references remain in historical records.
+**Validation**:
+- `python -m pytest tests/test_memory_crystallizer.py tests/test_memory_consolidator.py -q --tb=short` -> 11 passed
+- `python -m pytest tests/test_tension_recall.py -q --tb=short` -> 3 passed
+- `python -m pytest tests/test_pipeline_compute_gate.py -v --tb=short` -> 4 passed
+- `python -m pytest tests/test_persona_audit.py tests/test_council_runtime.py tests/test_genesis_integration.py -q --tb=short` -> 25 passed
+
 ## Phase 106: Foundation Debt Burn-down (2026-02-22)
 - [x] Decay query pre-filter：將 SQLite decay 查詢改為 DB 先過濾 + Python 精排，降低大資料集負擔
 - [x] Evolution sync：新增 `evolution_results` 持久化路徑（Supabase migration + backend 寫入）
@@ -625,8 +639,8 @@
 - [x] `package.json` -> `1.0.0-rc.1`
 - [x] `apps/web/package.json` -> `1.0.0-rc.1`
 - [x] `pyproject.toml` -> `1.0.0rc1`
-- [ ] GA blocker A: complete Phase 108 P0-P2 (Elisa contract + CI blocking smoke).
-- [ ] GA blocker B: complete Phase 108 P3 (runbook + rollback + release checklist).
+- [x] GA blocker A: complete Phase 108 P0-P2 (Elisa contract + CI blocking smoke).
+- [x] GA blocker B: complete Phase 108 P3 (runbook + rollback + release checklist).
 - [x] GA blocker C: produce `docs/RELEASE_NOTES_v1.0.0.md` and push tag `v1.0.0`.
 **Success Criteria**: `v1.0.0` baseline is stable and traceable; GA release gates are fully closed.
 
