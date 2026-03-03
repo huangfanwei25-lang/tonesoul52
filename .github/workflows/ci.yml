@@ -76,6 +76,15 @@ jobs:
       - name: Lint with ruff (blocking)
         run: |
           ruff check tonesoul tests
+      - name: Verify command registry
+        run: |
+          python scripts/verify_command_registry.py --strict
+      - name: Verify stale command refs
+        run: |
+          python scripts/verify_stale_command_refs.py --strict
+      - name: Verify submodule integrity (warning only)
+        run: |
+          python scripts/verify_submodule_integrity.py --strict || true
 
   web_api_smoke:
     runs-on: ubuntu-latest

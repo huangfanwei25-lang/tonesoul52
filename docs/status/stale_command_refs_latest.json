@@ -1,0 +1,30 @@
+{
+  "overall_ok": true,
+  "repo_root": "C:\\Users\\user\\Desktop\\倉庫",
+  "scan_targets": [
+    "tonesoul",
+    "scripts",
+    "apps",
+    ".github/workflows",
+    "pyproject.toml"
+  ],
+  "patterns": [
+    {
+      "id": "legacy_cli_wrapper_module",
+      "regex": "\\btonesoul\\.cli\\.run_[A-Za-z0-9_]+\\b",
+      "description": "Removed tonesoul.cli run_ wrapper module reference"
+    },
+    {
+      "id": "legacy_tonesoul52_ystm_acceptance",
+      "regex": "\\btonesoul52\\.run_ystm_acceptance\\b",
+      "description": "Legacy ystm acceptance module reference"
+    },
+    {
+      "id": "legacy_tonesoul52_ystm_demo",
+      "regex": "\\btonesoul52\\.run_ystm_demo\\b",
+      "description": "Legacy ystm demo module reference"
+    }
+  ],
+  "match_count": 0,
+  "matches": []
+}

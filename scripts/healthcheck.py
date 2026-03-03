@@ -1,19 +1,53 @@
-﻿import json
+"""
+System healthcheck entrypoint migrated from tonesoul/cli/run_healthcheck.py.
+"""
+
+from __future__ import annotations
+
+import importlib
+import json
 import os
 import subprocess
 import sys
+from dataclasses import dataclass
+from pathlib import Path
 from typing import Dict, List, Optional
 
-from ..inventory import build_inventory, entrypoints_status
-from ..issue_codes import IssueCode, issue
-from ..seed_schema_check import check_seed_schema
-from .run_import_check import IMPORT_TARGETS, _can_import
+REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
 
-REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+from tonesoul.inventory import build_inventory, entrypoints_status
+from tonesoul.issue_codes import IssueCode, issue
+from tonesoul.seed_schema_check import check_seed_schema
+
 LEDGER_CANDIDATES = [
-    os.path.join(REPO_ROOT, "ledger.jsonl"),
-    os.path.join(REPO_ROOT, "body", "ledger", "ledger.jsonl"),
+    REPO_ROOT / "ledger.jsonl",
+    REPO_ROOT / "body" / "ledger" / "ledger.jsonl",
 ]
+
+IMPORT_TARGETS = [
+    "tonesoul.unified_core",
+    "tonesoul.time_island",
+    "tonesoul.yss_gates",
+    "tonesoul.tonesoul_llm",
+    "tonesoul.config",
+]
+
+
+@dataclass
+class ImportResult:
+    target: str
+    ok: bool
+    error: Optional[str] = None
+
+
+def _can_import(name: str) -> ImportResult:
+    try:
+        importlib.import_module(name)
+        return ImportResult(target=name, ok=True)
+    except Exception as exc:  # pragma: no cover - healthcheck error path
+        return ImportResult(target=name, ok=False, error=str(exc))
 
 
 def _check_imports() -> List[Dict[str, object]]:
@@ -25,29 +59,27 @@ def _check_imports() -> List[Dict[str, object]]:
 
 
 def _python_version() -> str:
-    # Use sys.executable for security (B607 fix)
     return subprocess.check_output([sys.executable, "-V"], text=True).strip()
 
 
 def _latest_seed_path(memory_root: str) -> Optional[str]:
-    seeds_dir = os.path.join(memory_root, "seeds")
-    if not os.path.isdir(seeds_dir):
+    seeds_dir = Path(memory_root) / "seeds"
+    if not seeds_dir.is_dir():
         return None
-    candidates = [
-        os.path.join(seeds_dir, name) for name in os.listdir(seeds_dir) if name.endswith(".json")
-    ]
+    candidates = [path for path in seeds_dir.iterdir() if path.suffix == ".json"]
     if not candidates:
         return None
-    return max(candidates, key=os.path.getmtime)
+    return str(max(candidates, key=lambda path: path.stat().st_mtime))
 
 
 def _load_ledger(path: str) -> List[Dict[str, object]]:
     entries: List[Dict[str, object]] = []
-    if not path or not os.path.exists(path):
+    file_path = Path(path)
+    if not file_path.exists():
         return entries
-    with open(path, "r", encoding="utf-8") as handle:
-        for line in handle:
-            line = line.strip()
+    with file_path.open("r", encoding="utf-8") as handle:
+        for raw in handle:
+            line = raw.strip()
             if not line:
                 continue
             try:
@@ -58,8 +90,6 @@ def _load_ledger(path: str) -> List[Dict[str, object]]:
 
 
 def _extract_coverage(entry: Dict[str, object]) -> Optional[float]:
-    if not isinstance(entry, dict):
-        return None
     audit = entry.get("audit")
     if not isinstance(audit, dict):
         return None
@@ -71,8 +101,8 @@ def _extract_coverage(entry: Dict[str, object]) -> Optional[float]:
 
 def _find_ledger_path() -> Optional[str]:
     for path in LEDGER_CANDIDATES:
-        if os.path.exists(path):
-            return path
+        if path.exists():
+            return str(path)
     return None
 
 
@@ -88,6 +118,7 @@ def _coverage_alert() -> Dict[str, object]:
             "minimum": None,
             "warn": False,
         }
+
     entries = _load_ledger(ledger_path)
     values = [
         value for value in (_extract_coverage(entry) for entry in entries) if value is not None
@@ -114,15 +145,17 @@ def _seed_schema_status(memory_root: str) -> Dict[str, object]:
             "ok": None,
             "issues": [issue(IssueCode.SEED_MISSING)],
         }
+
     try:
         with open(seed_path, "r", encoding="utf-8") as handle:
             payload = json.load(handle)
-    except Exception as exc:
+    except Exception as exc:  # pragma: no cover - healthcheck error path
         return {
             "path": seed_path,
             "ok": False,
             "issues": [issue(IssueCode.SEED_LOAD_FAILED, error=exc.__class__.__name__)],
         }
+
     issues = (
         check_seed_schema(payload)
         if isinstance(payload, dict)
@@ -136,11 +169,11 @@ def _seed_schema_status(memory_root: str) -> Dict[str, object]:
 
 
 def main() -> int:
-    memory_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "memory"))
+    memory_root = str(REPO_ROOT / "tonesoul" / "memory")
     seed_schema = _seed_schema_status(memory_root)
     coverage_alert = _coverage_alert()
     report = {
-        "workspace_root": os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")),
+        "workspace_root": str(REPO_ROOT),
         "python": _python_version(),
         "workspaces": build_inventory(),
         "entrypoints": entrypoints_status(),
@@ -149,11 +182,10 @@ def main() -> int:
         "coverage_alert": coverage_alert,
     }
 
-    output_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "reports"))
-    os.makedirs(output_dir, exist_ok=True)
-    out_path = os.path.join(output_dir, "healthcheck.json")
-    with open(out_path, "w", encoding="utf-8") as handle:
-        json.dump(report, handle, indent=2)
+    output_dir = REPO_ROOT / "reports"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    out_path = output_dir / "healthcheck.json"
+    out_path.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
 
     failed = [item for item in report["imports"] if not item["ok"]]
     seed_failed = seed_schema.get("ok") is False
@@ -161,8 +193,8 @@ def main() -> int:
         print(f"Seed schema: OK ({seed_schema.get('path')})")
     elif seed_schema.get("ok") is False:
         print(f"Seed schema: FAIL ({seed_schema.get('path')})")
-        for issue in seed_schema.get("issues", []):
-            print(f"- {issue}")
+        for item in seed_schema.get("issues", []):
+            print(f"- {item}")
     else:
         print("Seed schema: SKIP (no seeds found)")
 

@@ -1,0 +1,242 @@
+{
+  "generated": "local",
+  "modules": [
+    {
+      "module": "tonesoul.adapters",
+      "path": "tonesoul/adapters.py",
+      "classification": "DEAD",
+      "runtime_hits": [],
+      "tests_hits": [],
+      "docs_hits": [],
+      "hit_count": 0
+    },
+    {
+      "module": "tonesoul.append_council_event",
+      "path": "tonesoul/append_council_event.py",
+      "classification": "DEAD",
+      "runtime_hits": [],
+      "tests_hits": [],
+      "docs_hits": [],
+      "hit_count": 0
+    },
+    {
+      "module": "tonesoul.audit_dashboard",
+      "path": "tonesoul/audit_dashboard.py",
+      "classification": "DEAD",
+      "runtime_hits": [],
+      "tests_hits": [],
+      "docs_hits": [],
+      "hit_count": 0
+    },
+    {
+      "module": "tonesoul.config",
+      "path": "tonesoul/config.py",
+      "classification": "ALIVE",
+      "runtime_hits": [
+        {
+          "file": "scripts/healthcheck.py",
+          "line": 34,
+          "snippet": "\"tonesoul.config\","
+        },
+        {
+          "file": "scripts/verify_command_registry.py",
+          "line": 20,
+          "snippet": "from tonesoul.config import KNOWN_ENTRYPOINTS"
+        }
+      ],
+      "tests_hits": [
+        {
+          "file": "tests/test_verify_command_registry.py",
+          "line": 4,
+          "snippet": "from tonesoul.config import EntryPoint"
+        }
+      ],
+      "docs_hits": [],
+      "hit_count": 3
+    },
+    {
+      "module": "tonesoul.etcl_lifecycle",
+      "path": "tonesoul/etcl_lifecycle.py",
+      "classification": "DEAD",
+      "runtime_hits": [],
+      "tests_hits": [],
+      "docs_hits": [],
+      "hit_count": 0
+    },
+    {
+      "module": "tonesoul.generate_patch",
+      "path": "tonesoul/generate_patch.py",
+      "classification": "DEAD",
+      "runtime_hits": [],
+      "tests_hits": [],
+      "docs_hits": [],
+      "hit_count": 0
+    },
+    {
+      "module": "tonesoul.persistence",
+      "path": "tonesoul/persistence.py",
+      "classification": "DEAD",
+      "runtime_hits": [],
+      "tests_hits": [],
+      "docs_hits": [],
+      "hit_count": 0
+    },
+    {
+      "module": "tonesoul.persona_ledger_validator",
+      "path": "tonesoul/persona_ledger_validator.py",
+      "classification": "DEAD",
+      "runtime_hits": [],
+      "tests_hits": [],
+      "docs_hits": [],
+      "hit_count": 0
+    },
+    {
+      "module": "tonesoul.persona_registry_builder",
+      "path": "tonesoul/persona_registry_builder.py",
+      "classification": "DEAD",
+      "runtime_hits": [],
+      "tests_hits": [],
+      "docs_hits": [],
+      "hit_count": 0
+    },
+    {
+      "module": "tonesoul.persona_registry_cleaner",
+      "path": "tonesoul/persona_registry_cleaner.py",
+      "classification": "DEAD",
+      "runtime_hits": [],
+      "tests_hits": [],
+      "docs_hits": [],
+      "hit_count": 0
+    },
+    {
+      "module": "tonesoul.persona_registry_summary",
+      "path": "tonesoul/persona_registry_summary.py",
+      "classification": "DEAD",
+      "runtime_hits": [],
+      "tests_hits": [],
+      "docs_hits": [],
+      "hit_count": 0
+    },
+    {
+      "module": "tonesoul.persona_trace_report",
+      "path": "tonesoul/persona_trace_report.py",
+      "classification": "DEAD",
+      "runtime_hits": [],
+      "tests_hits": [],
+      "docs_hits": [],
+      "hit_count": 0
+    },
+    {
+      "module": "tonesoul.pipeline_context",
+      "path": "tonesoul/pipeline_context.py",
+      "classification": "CAUTION",
+      "runtime_hits": [],
+      "tests_hits": [],
+      "docs_hits": [],
+      "hit_count": 0
+    },
+    {
+      "module": "tonesoul.quick_council",
+      "path": "tonesoul/quick_council.py",
+      "classification": "DEAD",
+      "runtime_hits": [],
+      "tests_hits": [],
+      "docs_hits": [],
+      "hit_count": 0
+    },
+    {
+      "module": "tonesoul.self_test",
+      "path": "tonesoul/self_test.py",
+      "classification": "DEAD",
+      "runtime_hits": [],
+      "tests_hits": [],
+      "docs_hits": [],
+      "hit_count": 0
+    },
+    {
+      "module": "tonesoul.simulate_council",
+      "path": "tonesoul/simulate_council.py",
+      "classification": "DEAD",
+      "runtime_hits": [],
+      "tests_hits": [],
+      "docs_hits": [],
+      "hit_count": 0
+    },
+    {
+      "module": "tonesoul.test_integration",
+      "path": "tonesoul/test_integration.py",
+      "classification": "DEAD",
+      "runtime_hits": [],
+      "tests_hits": [],
+      "docs_hits": [],
+      "hit_count": 0
+    },
+    {
+      "module": "tonesoul.test_interception",
+      "path": "tonesoul/test_interception.py",
+      "classification": "DEAD",
+      "runtime_hits": [],
+      "tests_hits": [],
+      "docs_hits": [],
+      "hit_count": 0
+    },
+    {
+      "module": "tonesoul.tonesoul_llm",
+      "path": "tonesoul/tonesoul_llm.py",
+      "classification": "ALIVE",
+      "runtime_hits": [
+        {
+          "file": "scripts/healthcheck.py",
+          "line": 33,
+          "snippet": "\"tonesoul.tonesoul_llm\","
+        }
+      ],
+      "tests_hits": [],
+      "docs_hits": [],
+      "hit_count": 1
+    },
+    {
+      "module": "tonesoul.ystm.acceptance",
+      "path": "tonesoul/ystm/acceptance.py",
+      "classification": "DEAD",
+      "runtime_hits": [],
+      "tests_hits": [],
+      "docs_hits": [],
+      "hit_count": 0
+    },
+    {
+      "module": "tonesoul.ystm.storage",
+      "path": "tonesoul/ystm/storage.py",
+      "classification": "DEAD",
+      "runtime_hits": [],
+      "tests_hits": [],
+      "docs_hits": [],
+      "hit_count": 0
+    },
+    {
+      "module": "tonesoul.ystm_demo",
+      "path": "tonesoul/ystm_demo.py",
+      "classification": "ALIVE",
+      "runtime_hits": [
+        {
+          "file": "tonesoul/audit_dashboard.py",
+          "line": 726,
+          "snippet": "st.info(\"No YSTM outputs found. Run `python -m tonesoul.ystm_demo` to generate.\")"
+        },
+        {
+          "file": "apps/dashboard/frontend/pages/terrain.py",
+          "line": 168,
+          "snippet": "st.warning(\"語義地圖尚未生成。請先執行 `python -m tonesoul.ystm_demo`\")"
+        },
+        {
+          "file": "apps/dashboard/frontend/pages/terrain.py",
+          "line": 177,
+          "snippet": "st.info(\"尚未找到節點資料，請先執行 `python -m tonesoul.ystm_demo`\")"
+        }
+      ],
+      "tests_hits": [],
+      "docs_hits": [],
+      "hit_count": 3
+    }
+  ]
+}

@@ -1,199 +1,325 @@
 {
-  "workspace_root": "C:\\Users\\user\\Desktop",
+  "workspace_root": "C:\\Users\\user\\Desktop\\倉庫",
   "python": "Python 3.13.5",
   "workspaces": [
     {
       "name": ".agent",
-      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\.agent",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\.agent",
       "has_git": false,
       "readme": null,
       "notes": []
     },
     {
       "name": ".archive",
-      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\.archive",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\.archive",
+      "has_git": false,
+      "readme": null,
+      "notes": []
+    },
+    {
+      "name": ".external",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\.external",
       "has_git": false,
       "readme": null,
       "notes": []
     },
     {
       "name": ".github",
-      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\.github",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\.github",
+      "has_git": false,
+      "readme": null,
+      "notes": []
+    },
+    {
+      "name": ".hypothesis",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\.hypothesis",
+      "has_git": false,
+      "readme": null,
+      "notes": []
+    },
+    {
+      "name": ".moltbook",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\.moltbook",
       "has_git": false,
       "readme": null,
       "notes": []
     },
     {
       "name": ".pytest_cache",
-      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\.pytest_cache",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\.pytest_cache",
       "has_git": false,
-      "readme": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\.pytest_cache\\README.md",
+      "readme": "C:\\Users\\user\\Desktop\\倉庫\\.pytest_cache\\README.md",
       "notes": []
     },
     {
-      "name": "PARADOXES",
-      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\PARADOXES",
+      "name": ".ruff_cache",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\.ruff_cache",
       "has_git": false,
       "readme": null,
       "notes": []
     },
     {
+      "name": ".tmp_ci",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\.tmp_ci",
+      "has_git": false,
+      "readme": null,
+      "notes": []
+    },
+    {
+      "name": ".vercel",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\.vercel",
+      "has_git": false,
+      "readme": null,
+      "notes": []
+    },
+    {
+      "name": ".vercel.bak",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\.vercel.bak",
+      "has_git": false,
+      "readme": null,
+      "notes": []
+    },
+    {
+      "name": "OpenClaw-Memory",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\OpenClaw-Memory",
+      "has_git": true,
+      "readme": "C:\\Users\\user\\Desktop\\倉庫\\OpenClaw-Memory\\README.md",
+      "notes": []
+    },
+    {
+      "name": "PARADOXES",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\PARADOXES",
+      "has_git": false,
+      "readme": "C:\\Users\\user\\Desktop\\倉庫\\PARADOXES\\README.md",
+      "notes": []
+    },
+    {
       "name": "__pycache__",
-      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\__pycache__",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\__pycache__",
       "has_git": false,
       "readme": null,
       "notes": []
     },
     {
       "name": "api",
-      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\api",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\api",
       "has_git": false,
       "readme": null,
       "notes": []
     },
     {
       "name": "apps",
-      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\apps",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\apps",
       "has_git": false,
       "readme": null,
       "notes": []
     },
     {
       "name": "constitution",
-      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\constitution",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\constitution",
       "has_git": false,
       "readme": null,
       "notes": []
     },
     {
       "name": "data",
-      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\data",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\data",
       "has_git": false,
       "readme": null,
       "notes": []
     },
     {
       "name": "docs",
-      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\docs",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\docs",
       "has_git": false,
-      "readme": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\docs\\README.md",
+      "readme": "C:\\Users\\user\\Desktop\\倉庫\\docs\\README.md",
       "notes": []
     },
     {
       "name": "evidence",
-      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\evidence",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\evidence",
       "has_git": false,
       "readme": null,
       "notes": []
     },
     {
       "name": "examples",
-      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\examples",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\examples",
       "has_git": false,
       "readme": null,
       "notes": []
     },
     {
       "name": "experiments",
-      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\experiments",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\experiments",
+      "has_git": false,
+      "readme": null,
+      "notes": []
+    },
+    {
+      "name": "generated_prompts",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\generated_prompts",
+      "has_git": false,
+      "readme": null,
+      "notes": []
+    },
+    {
+      "name": "htmlcov",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\htmlcov",
+      "has_git": false,
+      "readme": null,
+      "notes": []
+    },
+    {
+      "name": "integrations",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\integrations",
       "has_git": false,
       "readme": null,
       "notes": []
     },
     {
       "name": "knowledge",
-      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\knowledge",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\knowledge",
       "has_git": false,
       "readme": null,
       "notes": []
     },
     {
       "name": "knowledge_base",
-      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\knowledge_base",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\knowledge_base",
       "has_git": false,
       "readme": null,
       "notes": []
     },
     {
       "name": "law",
-      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\law",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\law",
       "has_git": false,
-      "readme": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\law\\README.md",
+      "readme": "C:\\Users\\user\\Desktop\\倉庫\\law\\README.md",
       "notes": []
     },
     {
       "name": "memory",
-      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\memory",
-      "has_git": false,
-      "readme": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\memory\\README.md",
-      "notes": []
-    },
-    {
-      "name": "reports",
-      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\reports",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\memory",
       "has_git": false,
       "readme": null,
       "notes": []
     },
     {
-      "name": "run",
-      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\run",
+      "name": "memory_base",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\memory_base",
+      "has_git": false,
+      "readme": null,
+      "notes": []
+    },
+    {
+      "name": "obsidian-vault",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\obsidian-vault",
+      "has_git": false,
+      "readme": null,
+      "notes": []
+    },
+    {
+      "name": "reports",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\reports",
       "has_git": false,
       "readme": null,
       "notes": []
     },
     {
       "name": "scripts",
-      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\scripts",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\scripts",
       "has_git": false,
       "readme": null,
       "notes": []
     },
     {
       "name": "simulation_logs",
-      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\simulation_logs",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\simulation_logs",
+      "has_git": false,
+      "readme": null,
+      "notes": []
+    },
+    {
+      "name": "skills",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\skills",
       "has_git": false,
       "readme": null,
       "notes": []
     },
     {
       "name": "soul",
-      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\soul",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\soul",
       "has_git": false,
       "readme": null,
       "notes": []
     },
     {
       "name": "spec",
-      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\spec",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\spec",
       "has_git": false,
       "readme": null,
       "notes": []
     },
     {
-      "name": "src",
-      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\src",
-      "has_git": false,
-      "readme": null,
+      "name": "tae_fix",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\tae_fix",
+      "has_git": true,
+      "readme": "C:\\Users\\user\\Desktop\\倉庫\\tae_fix\\README.md",
       "notes": []
     },
     {
       "name": "temp",
-      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\temp",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\temp",
+      "has_git": false,
+      "readme": null,
+      "notes": []
+    },
+    {
+      "name": "temp_ci_lint",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\temp_ci_lint",
+      "has_git": false,
+      "readme": null,
+      "notes": []
+    },
+    {
+      "name": "temp_ci_lint_62894064342",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\temp_ci_lint_62894064342",
+      "has_git": false,
+      "readme": null,
+      "notes": []
+    },
+    {
+      "name": "temp_ci_memory_hygiene",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\temp_ci_memory_hygiene",
+      "has_git": false,
+      "readme": null,
+      "notes": []
+    },
+    {
+      "name": "temp_ci_tonesoul52_job62898495163",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\temp_ci_tonesoul52_job62898495163",
       "has_git": false,
       "readme": null,
       "notes": []
     },
     {
       "name": "tests",
-      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\tests",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\tests",
+      "has_git": false,
+      "readme": null,
+      "notes": []
+    },
+    {
+      "name": "tmp",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\tmp",
       "has_git": false,
       "readme": null,
       "notes": []
     },
     {
       "name": "tonesoul",
-      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\tonesoul",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\tonesoul",
       "has_git": false,
       "readme": null,
       "notes": [
@@ -201,48 +327,73 @@
       ]
     },
     {
-      "name": "tools",
-      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\tools",
+      "name": "tonesoul52.egg-info",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\tonesoul52.egg-info",
       "has_git": false,
       "readme": null,
+      "notes": [
+        "ToneSoul-related workspace"
+      ]
+    },
+    {
+      "name": "tonesoul_evolution",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\tonesoul_evolution",
+      "has_git": true,
+      "readme": null,
+      "notes": [
+        "ToneSoul-related workspace"
+      ]
+    },
+    {
+      "name": "tools",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\tools",
+      "has_git": false,
+      "readme": null,
+      "notes": []
+    },
+    {
+      "name": "zenodo_upload",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\zenodo_upload",
+      "has_git": false,
+      "readme": null,
+      "notes": []
+    },
+    {
+      "name": "語魂系統GPTs_v1.1",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\語魂系統GPTs_v1.1",
+      "has_git": false,
+      "readme": "C:\\Users\\user\\Desktop\\倉庫\\語魂系統GPTs_v1.1\\README.md",
       "notes": []
     }
   ],
   "entrypoints": [
     {
       "name": "dashboard",
-      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\apps\\dashboard\\run_dashboard.py",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\apps\\dashboard\\run_dashboard.py",
       "exists": true,
       "command": "python apps/dashboard/run_dashboard.py",
       "notes": "Streamlit dashboard launcher."
     },
     {
       "name": "dashboard_alt",
-      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\apps\\dashboard\\frontend\\app.py",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\apps\\dashboard\\frontend\\app.py",
       "exists": true,
       "command": "python -m streamlit run apps/dashboard/frontend/app.py",
       "notes": "Direct Streamlit app entrypoint."
     },
     {
       "name": "yuhun_cli",
-      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\apps\\cli\\yuhun_cli.py",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\apps\\cli\\yuhun_cli.py",
       "exists": true,
       "command": "python apps/cli/yuhun_cli.py",
       "notes": "Interactive YuHun CLI."
     },
     {
       "name": "yuhun_loop_test",
-      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\scripts\\test_yuhun_loop.py",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\apps\\cli\\yuhun_cli.py",
       "exists": true,
-      "command": "python scripts/test_yuhun_loop.py",
-      "notes": "YuHun loop test runner."
-    },
-    {
-      "name": "yuhun_loop_test_52",
-      "path": "C:\\Users\\user\\Desktop\\\u5009\u5eab\\legacy\\tonesoul-5.2\\tonesoul52\\run_yuhun_loop_wrapper.py",
-      "exists": true,
-      "command": "python -m tonesoul52.run_yuhun_loop_wrapper",
-      "notes": "5.2 wrapper for yuhun CLI help check (non-interactive)."
+      "command": "python apps/cli/yuhun_cli.py --help",
+      "notes": "YuHun CLI help smoke check (non-interactive)."
     }
   ],
   "imports": [

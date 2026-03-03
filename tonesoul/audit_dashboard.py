@@ -723,7 +723,7 @@ def render_ystm_panel() -> None:
     terrain_p2_png = os.path.join(YSTM_DIR, "terrain_p2.png")
 
     if not os.path.exists(nodes_path):
-        st.info("No YSTM outputs found. Run `python -m tonesoul52.run_ystm_demo` to generate.")
+        st.info("No YSTM outputs found. Run `python -m tonesoul.ystm_demo` to generate.")
         return
 
     nodes_payload = _load_json(nodes_path)

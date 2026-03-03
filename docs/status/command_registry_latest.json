@@ -1,0 +1,76 @@
+{
+  "overall_ok": true,
+  "repo_root": "C:\\Users\\user\\Desktop\\倉庫",
+  "entrypoint_count": 4,
+  "issue_count": 0,
+  "warning_count": 1,
+  "entries": [
+    {
+      "name": "dashboard",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\apps\\dashboard\\run_dashboard.py",
+      "command": "python apps/dashboard/run_dashboard.py",
+      "issues": [],
+      "warnings": [],
+      "resolved_path": "C:\\Users\\user\\Desktop\\倉庫\\apps\\dashboard\\run_dashboard.py",
+      "path_exists": true,
+      "command_tokens": [
+        "python",
+        "apps/dashboard/run_dashboard.py"
+      ],
+      "script_resolved": "C:\\Users\\user\\Desktop\\倉庫\\apps\\dashboard\\run_dashboard.py",
+      "script_exists": true
+    },
+    {
+      "name": "dashboard_alt",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\apps\\dashboard\\frontend\\app.py",
+      "command": "python -m streamlit run apps/dashboard/frontend/app.py",
+      "issues": [],
+      "warnings": [
+        "external module target not validated: streamlit"
+      ],
+      "resolved_path": "C:\\Users\\user\\Desktop\\倉庫\\apps\\dashboard\\frontend\\app.py",
+      "path_exists": true,
+      "command_tokens": [
+        "python",
+        "-m",
+        "streamlit",
+        "run",
+        "apps/dashboard/frontend/app.py"
+      ],
+      "module_name": "streamlit",
+      "run_script_resolved": "C:\\Users\\user\\Desktop\\倉庫\\apps\\dashboard\\frontend\\app.py",
+      "run_script_exists": true
+    },
+    {
+      "name": "yuhun_cli",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\apps\\cli\\yuhun_cli.py",
+      "command": "python apps/cli/yuhun_cli.py",
+      "issues": [],
+      "warnings": [],
+      "resolved_path": "C:\\Users\\user\\Desktop\\倉庫\\apps\\cli\\yuhun_cli.py",
+      "path_exists": true,
+      "command_tokens": [
+        "python",
+        "apps/cli/yuhun_cli.py"
+      ],
+      "script_resolved": "C:\\Users\\user\\Desktop\\倉庫\\apps\\cli\\yuhun_cli.py",
+      "script_exists": true
+    },
+    {
+      "name": "yuhun_loop_test",
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\apps\\cli\\yuhun_cli.py",
+      "command": "python apps/cli/yuhun_cli.py --help",
+      "issues": [],
+      "warnings": [],
+      "resolved_path": "C:\\Users\\user\\Desktop\\倉庫\\apps\\cli\\yuhun_cli.py",
+      "path_exists": true,
+      "command_tokens": [
+        "python",
+        "apps/cli/yuhun_cli.py",
+        "--help"
+      ],
+      "script_resolved": "C:\\Users\\user\\Desktop\\倉庫\\apps\\cli\\yuhun_cli.py",
+      "script_exists": true
+    }
+  ]
+}

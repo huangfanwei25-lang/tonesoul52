@@ -1,0 +1,38 @@
+{
+  "overall_ok": true,
+  "repo_root": "C:\\Users\\user\\Desktop\\倉庫",
+  "issue_count": 0,
+  "warning_count": 1,
+  "gitlinks": {
+    "OpenClaw-Memory": "c5e3b89138093df0308bb999ed999263de53efec",
+    "tae_fix": "cfcfceca808a48d2a3ccd47e17d80d974647315d"
+  },
+  "gitmodules": {
+    "OpenClaw-Memory": {
+      "path": "OpenClaw-Memory",
+      "url": "https://github.com/Fan1234-1/OpenClaw-Memory.git"
+    },
+    "tae_fix": {
+      "path": "tae_fix",
+      "url": "https://github.com/Fan1234-1/ToneSoul-Architecture-Engine.git"
+    }
+  },
+  "submodule_status_lines": [
+    "-c5e3b89138093df0308bb999ed999263de53efec OpenClaw-Memory",
+    "-cfcfceca808a48d2a3ccd47e17d80d974647315d tae_fix"
+  ],
+  "issues": [],
+  "warnings": [
+    "2 submodule(s) not initialized in current checkout"
+  ],
+  "commands": {
+    "ls_files": {
+      "exit_code": 0,
+      "stderr_tail": ""
+    },
+    "submodule_status": {
+      "exit_code": 0,
+      "stderr_tail": ""
+    }
+  }
+}

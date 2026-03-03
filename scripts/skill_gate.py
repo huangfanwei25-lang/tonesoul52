@@ -1,8 +1,20 @@
-﻿import argparse
+"""
+Skill gate entrypoint migrated from tonesoul/cli/run_skill_gate.py.
+"""
+
+from __future__ import annotations
+
+import argparse
 import os
+import sys
+from pathlib import Path
 from typing import Dict, Optional
 
-from ..skill_gate import list_skill_paths, review_skills
+REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+from tonesoul.skill_gate import list_skill_paths, review_skills
 
 
 def build_arg_parser() -> argparse.ArgumentParser:
@@ -22,7 +34,7 @@ def build_arg_parser() -> argparse.ArgumentParser:
 
 
 def _default_memory_root() -> str:
-    return os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "memory"))
+    return os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "tonesoul", "memory"))
 
 
 def _resolve_memory_root(path: Optional[str]) -> str:
@@ -30,7 +42,7 @@ def _resolve_memory_root(path: Optional[str]) -> str:
         return _default_memory_root()
     if os.path.isabs(path):
         return path
-    workspace_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    workspace_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "tonesoul"))
     candidate = os.path.abspath(os.path.join(workspace_root, path))
     if os.path.exists(candidate):
         return candidate

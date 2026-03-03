@@ -165,7 +165,7 @@ def render():
         html_content = terrain_html.read_text(encoding="utf-8")
         st.components.v1.html(html_content, height=520, scrolling=True)
     else:
-        st.warning("語義地圖尚未生成。請先執行 `python -m tonesoul52.run_ystm_demo`")
+        st.warning("語義地圖尚未生成。請先執行 `python -m tonesoul.ystm_demo`")
 
     if not nodes_json.exists():
         st.info("尚未找到節點資料，請先產生 `reports/ystm_demo/nodes.json`")
@@ -174,7 +174,7 @@ def render():
     nodes_payload = _load_json(nodes_json)
     nodes = nodes_payload.get("nodes", []) if nodes_payload else []
     if not nodes:
-        st.info("尚未找到節點資料，請先執行 `python -m tonesoul52.run_ystm_demo`")
+        st.info("尚未找到節點資料，請先執行 `python -m tonesoul.ystm_demo`")
         return
 
     summary = _summarize_nodes(nodes)

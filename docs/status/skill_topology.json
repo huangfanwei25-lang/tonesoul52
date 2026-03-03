@@ -3,8 +3,8 @@
     "root": "tonesoul",
     "skills_dir": ".agent/skills",
     "workflows_dir": ".agent/workflows",
-    "node_count": 200,
-    "link_count": 211
+    "node_count": 163,
+    "link_count": 212
   },
   "nodes": [
     {
@@ -21,14 +21,6 @@
       "group": "core",
       "file": "tonesoul/action_set.py",
       "lines": 32,
-      "kind": "python_module"
-    },
-    {
-      "id": "tonesoul.adapters",
-      "label": "adapters.py",
-      "group": "core",
-      "file": "tonesoul/adapters.py",
-      "lines": 57,
       "kind": "python_module"
     },
     {
@@ -72,283 +64,11 @@
       "kind": "python_module"
     },
     {
-      "id": "tonesoul.cli.run_audit",
-      "label": "run_audit.py",
-      "group": "core",
-      "file": "tonesoul/cli/run_audit.py",
-      "lines": 16,
-      "kind": "python_module"
-    },
-    {
-      "id": "tonesoul.cli.run_audit_interface",
-      "label": "run_audit_interface.py",
-      "group": "core",
-      "file": "tonesoul/cli/run_audit_interface.py",
-      "lines": 7,
-      "kind": "python_module"
-    },
-    {
-      "id": "tonesoul.cli.run_constraint_stack",
-      "label": "run_constraint_stack.py",
-      "group": "core",
-      "file": "tonesoul/cli/run_constraint_stack.py",
-      "lines": 7,
-      "kind": "python_module"
-    },
-    {
-      "id": "tonesoul.cli.run_context_compiler",
-      "label": "run_context_compiler.py",
-      "group": "core",
-      "file": "tonesoul/cli/run_context_compiler.py",
-      "lines": 7,
-      "kind": "python_module"
-    },
-    {
-      "id": "tonesoul.cli.run_conversation_summary_backfill",
-      "label": "run_conversation_summary_backfill.py",
-      "group": "core",
-      "file": "tonesoul/cli/run_conversation_summary_backfill.py",
-      "lines": 241,
-      "kind": "python_module"
-    },
-    {
-      "id": "tonesoul.cli.run_conversation_summary_query",
-      "label": "run_conversation_summary_query.py",
-      "group": "core",
-      "file": "tonesoul/cli/run_conversation_summary_query.py",
-      "lines": 199,
-      "kind": "python_module"
-    },
-    {
-      "id": "tonesoul.cli.run_council_healthcheck",
-      "label": "run_council_healthcheck.py",
-      "group": "core",
-      "file": "tonesoul/cli/run_council_healthcheck.py",
-      "lines": 48,
-      "kind": "python_module"
-    },
-    {
-      "id": "tonesoul.cli.run_dependency_scan",
-      "label": "run_dependency_scan.py",
-      "group": "core",
-      "file": "tonesoul/cli/run_dependency_scan.py",
-      "lines": 47,
-      "kind": "python_module"
-    },
-    {
-      "id": "tonesoul.cli.run_encoding_scan",
-      "label": "run_encoding_scan.py",
-      "group": "core",
-      "file": "tonesoul/cli/run_encoding_scan.py",
-      "lines": 43,
-      "kind": "python_module"
-    },
-    {
-      "id": "tonesoul.cli.run_etcl_transition",
-      "label": "run_etcl_transition.py",
-      "group": "core",
-      "file": "tonesoul/cli/run_etcl_transition.py",
-      "lines": 51,
-      "kind": "python_module"
-    },
-    {
-      "id": "tonesoul.cli.run_evidence_collector",
-      "label": "run_evidence_collector.py",
-      "group": "core",
-      "file": "tonesoul/cli/run_evidence_collector.py",
-      "lines": 7,
-      "kind": "python_module"
-    },
-    {
-      "id": "tonesoul.cli.run_frame_router",
-      "label": "run_frame_router.py",
-      "group": "core",
-      "file": "tonesoul/cli/run_frame_router.py",
-      "lines": 7,
-      "kind": "python_module"
-    },
-    {
-      "id": "tonesoul.cli.run_generation_orch",
-      "label": "run_generation_orch.py",
-      "group": "core",
-      "file": "tonesoul/cli/run_generation_orch.py",
-      "lines": 7,
-      "kind": "python_module"
-    },
-    {
-      "id": "tonesoul.cli.run_healthcheck",
-      "label": "run_healthcheck.py",
-      "group": "core",
-      "file": "tonesoul/cli/run_healthcheck.py",
-      "lines": 189,
-      "kind": "python_module"
-    },
-    {
-      "id": "tonesoul.cli.run_import_check",
-      "label": "run_import_check.py",
-      "group": "core",
-      "file": "tonesoul/cli/run_import_check.py",
-      "lines": 53,
-      "kind": "python_module"
-    },
-    {
-      "id": "tonesoul.cli.run_memory_compact",
-      "label": "run_memory_compact.py",
-      "group": "core",
-      "file": "tonesoul/cli/run_memory_compact.py",
-      "lines": 83,
-      "kind": "python_module"
-    },
-    {
-      "id": "tonesoul.cli.run_reliability_check",
-      "label": "run_reliability_check.py",
-      "group": "core",
-      "file": "tonesoul/cli/run_reliability_check.py",
-      "lines": 55,
-      "kind": "python_module"
-    },
-    {
-      "id": "tonesoul.cli.run_seed_schema_check",
-      "label": "run_seed_schema_check.py",
-      "group": "core",
-      "file": "tonesoul/cli/run_seed_schema_check.py",
-      "lines": 4,
-      "kind": "python_module"
-    },
-    {
-      "id": "tonesoul.cli.run_skill_gate",
-      "label": "run_skill_gate.py",
-      "group": "core",
-      "file": "tonesoul/cli/run_skill_gate.py",
-      "lines": 86,
-      "kind": "python_module"
-    },
-    {
-      "id": "tonesoul.cli.run_skill_promoter",
-      "label": "run_skill_promoter.py",
-      "group": "core",
-      "file": "tonesoul/cli/run_skill_promoter.py",
-      "lines": 31,
-      "kind": "python_module"
-    },
-    {
-      "id": "tonesoul.cli.run_tech_trace_capture",
-      "label": "run_tech_trace_capture.py",
-      "group": "core",
-      "file": "tonesoul/cli/run_tech_trace_capture.py",
-      "lines": 7,
-      "kind": "python_module"
-    },
-    {
-      "id": "tonesoul.cli.run_tech_trace_normalize",
-      "label": "run_tech_trace_normalize.py",
-      "group": "core",
-      "file": "tonesoul/cli/run_tech_trace_normalize.py",
-      "lines": 7,
-      "kind": "python_module"
-    },
-    {
-      "id": "tonesoul.cli.run_tech_trace_validate",
-      "label": "run_tech_trace_validate.py",
-      "group": "core",
-      "file": "tonesoul/cli/run_tech_trace_validate.py",
-      "lines": 4,
-      "kind": "python_module"
-    },
-    {
-      "id": "tonesoul.cli.run_validate",
-      "label": "run_validate.py",
-      "group": "core",
-      "file": "tonesoul/cli/run_validate.py",
-      "lines": 38,
-      "kind": "python_module"
-    },
-    {
-      "id": "tonesoul.cli.run_yss_gates",
-      "label": "run_yss_gates.py",
-      "group": "core",
-      "file": "tonesoul/cli/run_yss_gates.py",
-      "lines": 451,
-      "kind": "python_module"
-    },
-    {
-      "id": "tonesoul.cli.run_yss_pipeline",
-      "label": "run_yss_pipeline.py",
-      "group": "core",
-      "file": "tonesoul/cli/run_yss_pipeline.py",
-      "lines": 234,
-      "kind": "python_module"
-    },
-    {
-      "id": "tonesoul.cli.run_ystm_acceptance",
-      "label": "run_ystm_acceptance.py",
-      "group": "core",
-      "file": "tonesoul/cli/run_ystm_acceptance.py",
-      "lines": 20,
-      "kind": "python_module"
-    },
-    {
-      "id": "tonesoul.cli.run_ystm_demo",
-      "label": "run_ystm_demo.py",
-      "group": "core",
-      "file": "tonesoul/cli/run_ystm_demo.py",
-      "lines": 90,
-      "kind": "python_module"
-    },
-    {
-      "id": "tonesoul.cli.run_ystm_diff",
-      "label": "run_ystm_diff.py",
-      "group": "core",
-      "file": "tonesoul/cli/run_ystm_diff.py",
-      "lines": 74,
-      "kind": "python_module"
-    },
-    {
-      "id": "tonesoul.cli.run_ystm_patch_lookup",
-      "label": "run_ystm_patch_lookup.py",
-      "group": "core",
-      "file": "tonesoul/cli/run_ystm_patch_lookup.py",
-      "lines": 81,
-      "kind": "python_module"
-    },
-    {
-      "id": "tonesoul.cli.run_ystm_replay",
-      "label": "run_ystm_replay.py",
-      "group": "core",
-      "file": "tonesoul/cli/run_ystm_replay.py",
-      "lines": 75,
-      "kind": "python_module"
-    },
-    {
-      "id": "tonesoul.cli.run_ystm_update",
-      "label": "run_ystm_update.py",
-      "group": "core",
-      "file": "tonesoul/cli/run_ystm_update.py",
-      "lines": 450,
-      "kind": "python_module"
-    },
-    {
-      "id": "tonesoul.cli.run_yuhun_loop_wrapper",
-      "label": "run_yuhun_loop_wrapper.py",
-      "group": "core",
-      "file": "tonesoul/cli/run_yuhun_loop_wrapper.py",
-      "lines": 19,
-      "kind": "python_module"
-    },
-    {
-      "id": "tonesoul.cli.run_yuhun_smoke",
-      "label": "run_yuhun_smoke.py",
-      "group": "core",
-      "file": "tonesoul/cli/run_yuhun_smoke.py",
-      "lines": 33,
-      "kind": "python_module"
-    },
-    {
       "id": "tonesoul.config",
       "label": "config.py",
       "group": "core",
       "file": "tonesoul/config.py",
-      "lines": 76,
+      "lines": 64,
       "kind": "python_module"
     },
     {
@@ -460,7 +180,7 @@
       "label": "persona_audit.py",
       "group": "council",
       "file": "tonesoul/council/persona_audit.py",
-      "lines": 128,
+      "lines": 126,
       "kind": "python_module"
     },
     {
@@ -860,7 +580,7 @@
       "label": "boot.py",
       "group": "memory",
       "file": "tonesoul/memory/boot.py",
-      "lines": 82,
+      "lines": 81,
       "kind": "python_module"
     },
     {
@@ -876,7 +596,7 @@
       "label": "crystallizer.py",
       "group": "memory",
       "file": "tonesoul/memory/crystallizer.py",
-      "lines": 276,
+      "lines": 282,
       "kind": "python_module"
     },
     {
@@ -892,7 +612,7 @@
       "label": "handoff_ingester.py",
       "group": "memory",
       "file": "tonesoul/memory/handoff_ingester.py",
-      "lines": 187,
+      "lines": 193,
       "kind": "python_module"
     },
     {
@@ -900,7 +620,7 @@
       "label": "hippocampus.py",
       "group": "memory",
       "file": "tonesoul/memory/hippocampus.py",
-      "lines": 221,
+      "lines": 219,
       "kind": "python_module"
     },
     {
@@ -1076,7 +796,7 @@
       "label": "resonance.py",
       "group": "core",
       "file": "tonesoul/resonance.py",
-      "lines": 105,
+      "lines": 104,
       "kind": "python_module"
     },
     {
@@ -1224,22 +944,6 @@
       "kind": "python_module"
     },
     {
-      "id": "tonesoul.test_integration",
-      "label": "test_integration.py",
-      "group": "core",
-      "file": "tonesoul/test_integration.py",
-      "lines": 260,
-      "kind": "python_module"
-    },
-    {
-      "id": "tonesoul.test_interception",
-      "label": "test_interception.py",
-      "group": "core",
-      "file": "tonesoul/test_interception.py",
-      "lines": 108,
-      "kind": "python_module"
-    },
-    {
       "id": "tonesoul.time_island",
       "label": "time_island.py",
       "group": "core",
@@ -1364,7 +1068,7 @@
       "label": "unified_pipeline.py",
       "group": "core",
       "file": "tonesoul/unified_pipeline.py",
-      "lines": 1712,
+      "lines": 1714,
       "kind": "python_module"
     },
     {
@@ -1372,7 +1076,7 @@
       "label": "variance_compressor.py",
       "group": "core",
       "file": "tonesoul/variance_compressor.py",
-      "lines": 208,
+      "lines": 210,
       "kind": "python_module"
     },
     {
@@ -1388,7 +1092,7 @@
       "label": "work_classifier.py",
       "group": "core",
       "file": "tonesoul/work_classifier.py",
-      "lines": 191,
+      "lines": 192,
       "kind": "python_module"
     },
     {
@@ -1396,7 +1100,7 @@
       "label": "yss_gates.py",
       "group": "core",
       "file": "tonesoul/yss_gates.py",
-      "lines": 924,
+      "lines": 940,
       "kind": "python_module"
     },
     {
@@ -2352,6 +2056,11 @@
     {
       "source": "tonesoul.yss_gates",
       "target": "tonesoul.tech_trace.validate",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.yss_gates",
+      "target": "tonesoul.ystm.acceptance",
       "type": "import"
     },
     {

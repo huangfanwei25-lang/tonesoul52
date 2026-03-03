@@ -125,8 +125,8 @@ In plain words: important things are auto-kept, chatter is auto-forgotten.
 
 | Metric | Value |
 |---|---|
-| Tests passing | 1,156 |
-| Journal entries | 11,242 |
+| Tests passing | 1,163 |
+| Journal entries | 1,244 |
 | Active crystals | 3 |
 | Resonance convergences | 28 |
 | Flow detections | 39 |

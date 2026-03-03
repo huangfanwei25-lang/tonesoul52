@@ -1,0 +1,398 @@
+{
+  "modules": [
+    {
+      "module": "tonesoul.adapters",
+      "classification": "WEAK",
+      "py_ref_count": 0,
+      "non_test_py_ref_count": 0,
+      "test_py_ref_count": 0,
+      "text_ref_count": 1,
+      "sample_py_refs": [],
+      "sample_text_refs": [
+        {
+          "file": "CODEX_TASK.md",
+          "line": 42,
+          "snippet": "tonesoul.adapters"
+        }
+      ]
+    },
+    {
+      "module": "tonesoul.append_council_event",
+      "classification": "WEAK",
+      "py_ref_count": 0,
+      "non_test_py_ref_count": 0,
+      "test_py_ref_count": 0,
+      "text_ref_count": 1,
+      "sample_py_refs": [],
+      "sample_text_refs": [
+        {
+          "file": "CODEX_TASK.md",
+          "line": 43,
+          "snippet": "tonesoul.append_council_event"
+        }
+      ]
+    },
+    {
+      "module": "tonesoul.audit_dashboard",
+      "classification": "WEAK",
+      "py_ref_count": 0,
+      "non_test_py_ref_count": 0,
+      "test_py_ref_count": 0,
+      "text_ref_count": 1,
+      "sample_py_refs": [],
+      "sample_text_refs": [
+        {
+          "file": "CODEX_TASK.md",
+          "line": 44,
+          "snippet": "tonesoul.audit_dashboard"
+        }
+      ]
+    },
+    {
+      "module": "tonesoul.config",
+      "classification": "ALIVE",
+      "py_ref_count": 4,
+      "non_test_py_ref_count": 3,
+      "test_py_ref_count": 1,
+      "text_ref_count": 2,
+      "sample_py_refs": [
+        {
+          "file": "scripts/verify_command_registry.py",
+          "line": 20,
+          "import": "tonesoul.config"
+        },
+        {
+          "file": "tonesoul/adapters.py",
+          "line": 6,
+          "import": "tonesoul.config"
+        },
+        {
+          "file": "tonesoul/inventory.py",
+          "line": 5,
+          "import": "tonesoul.config"
+        },
+        {
+          "file": "tests/test_verify_command_registry.py",
+          "line": 4,
+          "import": "tonesoul.config"
+        }
+      ],
+      "sample_text_refs": [
+        {
+          "file": "CODEX_TASK.md",
+          "line": 45,
+          "snippet": "tonesoul.config                    ← 注意：可能被 import 但掃描遺漏"
+        },
+        {
+          "file": "CODEX_TASK.md",
+          "line": 89,
+          "snippet": "- `tonesoul.config` 很可能是核心，**不要刪**，仔細確認"
+        }
+      ]
+    },
+    {
+      "module": "tonesoul.etcl_lifecycle",
+      "classification": "WEAK",
+      "py_ref_count": 0,
+      "non_test_py_ref_count": 0,
+      "test_py_ref_count": 0,
+      "text_ref_count": 1,
+      "sample_py_refs": [],
+      "sample_text_refs": [
+        {
+          "file": "CODEX_TASK.md",
+          "line": 46,
+          "snippet": "tonesoul.etcl_lifecycle"
+        }
+      ]
+    },
+    {
+      "module": "tonesoul.generate_patch",
+      "classification": "WEAK",
+      "py_ref_count": 0,
+      "non_test_py_ref_count": 0,
+      "test_py_ref_count": 0,
+      "text_ref_count": 1,
+      "sample_py_refs": [],
+      "sample_text_refs": [
+        {
+          "file": "CODEX_TASK.md",
+          "line": 47,
+          "snippet": "tonesoul.generate_patch"
+        }
+      ]
+    },
+    {
+      "module": "tonesoul.persistence",
+      "classification": "WEAK",
+      "py_ref_count": 0,
+      "non_test_py_ref_count": 0,
+      "test_py_ref_count": 0,
+      "text_ref_count": 1,
+      "sample_py_refs": [],
+      "sample_text_refs": [
+        {
+          "file": "CODEX_TASK.md",
+          "line": 48,
+          "snippet": "tonesoul.persistence"
+        }
+      ]
+    },
+    {
+      "module": "tonesoul.persona_ledger_validator",
+      "classification": "WEAK",
+      "py_ref_count": 0,
+      "non_test_py_ref_count": 0,
+      "test_py_ref_count": 0,
+      "text_ref_count": 1,
+      "sample_py_refs": [],
+      "sample_text_refs": [
+        {
+          "file": "CODEX_TASK.md",
+          "line": 49,
+          "snippet": "tonesoul.persona_ledger_validator"
+        }
+      ]
+    },
+    {
+      "module": "tonesoul.persona_registry_builder",
+      "classification": "WEAK",
+      "py_ref_count": 0,
+      "non_test_py_ref_count": 0,
+      "test_py_ref_count": 0,
+      "text_ref_count": 1,
+      "sample_py_refs": [],
+      "sample_text_refs": [
+        {
+          "file": "CODEX_TASK.md",
+          "line": 50,
+          "snippet": "tonesoul.persona_registry_builder"
+        }
+      ]
+    },
+    {
+      "module": "tonesoul.persona_registry_cleaner",
+      "classification": "WEAK",
+      "py_ref_count": 0,
+      "non_test_py_ref_count": 0,
+      "test_py_ref_count": 0,
+      "text_ref_count": 1,
+      "sample_py_refs": [],
+      "sample_text_refs": [
+        {
+          "file": "CODEX_TASK.md",
+          "line": 51,
+          "snippet": "tonesoul.persona_registry_cleaner"
+        }
+      ]
+    },
+    {
+      "module": "tonesoul.persona_registry_summary",
+      "classification": "WEAK",
+      "py_ref_count": 0,
+      "non_test_py_ref_count": 0,
+      "test_py_ref_count": 0,
+      "text_ref_count": 1,
+      "sample_py_refs": [],
+      "sample_text_refs": [
+        {
+          "file": "CODEX_TASK.md",
+          "line": 52,
+          "snippet": "tonesoul.persona_registry_summary"
+        }
+      ]
+    },
+    {
+      "module": "tonesoul.persona_trace_report",
+      "classification": "WEAK",
+      "py_ref_count": 0,
+      "non_test_py_ref_count": 0,
+      "test_py_ref_count": 0,
+      "text_ref_count": 1,
+      "sample_py_refs": [],
+      "sample_text_refs": [
+        {
+          "file": "CODEX_TASK.md",
+          "line": 53,
+          "snippet": "tonesoul.persona_trace_report"
+        }
+      ]
+    },
+    {
+      "module": "tonesoul.pipeline_context",
+      "classification": "CAUTION",
+      "py_ref_count": 0,
+      "non_test_py_ref_count": 0,
+      "test_py_ref_count": 0,
+      "text_ref_count": 2,
+      "sample_py_refs": [],
+      "sample_text_refs": [
+        {
+          "file": "CODEX_TASK.md",
+          "line": 54,
+          "snippet": "tonesoul.pipeline_context"
+        },
+        {
+          "file": "CODEX_TASK.md",
+          "line": 90,
+          "snippet": "- `tonesoul.pipeline_context` 可能被 `unified_pipeline.py` 使用"
+        }
+      ]
+    },
+    {
+      "module": "tonesoul.quick_council",
+      "classification": "WEAK",
+      "py_ref_count": 0,
+      "non_test_py_ref_count": 0,
+      "test_py_ref_count": 0,
+      "text_ref_count": 1,
+      "sample_py_refs": [],
+      "sample_text_refs": [
+        {
+          "file": "CODEX_TASK.md",
+          "line": 55,
+          "snippet": "tonesoul.quick_council"
+        }
+      ]
+    },
+    {
+      "module": "tonesoul.self_test",
+      "classification": "WEAK",
+      "py_ref_count": 0,
+      "non_test_py_ref_count": 0,
+      "test_py_ref_count": 0,
+      "text_ref_count": 1,
+      "sample_py_refs": [],
+      "sample_text_refs": [
+        {
+          "file": "CODEX_TASK.md",
+          "line": 56,
+          "snippet": "tonesoul.self_test"
+        }
+      ]
+    },
+    {
+      "module": "tonesoul.simulate_council",
+      "classification": "WEAK",
+      "py_ref_count": 0,
+      "non_test_py_ref_count": 0,
+      "test_py_ref_count": 0,
+      "text_ref_count": 1,
+      "sample_py_refs": [],
+      "sample_text_refs": [
+        {
+          "file": "CODEX_TASK.md",
+          "line": 57,
+          "snippet": "tonesoul.simulate_council"
+        }
+      ]
+    },
+    {
+      "module": "tonesoul.test_integration",
+      "classification": "WEAK",
+      "py_ref_count": 0,
+      "non_test_py_ref_count": 0,
+      "test_py_ref_count": 0,
+      "text_ref_count": 1,
+      "sample_py_refs": [],
+      "sample_text_refs": [
+        {
+          "file": "CODEX_TASK.md",
+          "line": 58,
+          "snippet": "tonesoul.test_integration"
+        }
+      ]
+    },
+    {
+      "module": "tonesoul.test_interception",
+      "classification": "WEAK",
+      "py_ref_count": 0,
+      "non_test_py_ref_count": 0,
+      "test_py_ref_count": 0,
+      "text_ref_count": 1,
+      "sample_py_refs": [],
+      "sample_text_refs": [
+        {
+          "file": "CODEX_TASK.md",
+          "line": 59,
+          "snippet": "tonesoul.test_interception"
+        }
+      ]
+    },
+    {
+      "module": "tonesoul.tonesoul_llm",
+      "classification": "CAUTION",
+      "py_ref_count": 0,
+      "non_test_py_ref_count": 0,
+      "test_py_ref_count": 0,
+      "text_ref_count": 2,
+      "sample_py_refs": [],
+      "sample_text_refs": [
+        {
+          "file": "CODEX_TASK.md",
+          "line": 60,
+          "snippet": "tonesoul.tonesoul_llm"
+        },
+        {
+          "file": "CODEX_TASK.md",
+          "line": 91,
+          "snippet": "- `tonesoul.tonesoul_llm` 可能是 LLM 後端介面"
+        }
+      ]
+    },
+    {
+      "module": "tonesoul.ystm.acceptance",
+      "classification": "ALIVE",
+      "py_ref_count": 1,
+      "non_test_py_ref_count": 1,
+      "test_py_ref_count": 0,
+      "text_ref_count": 1,
+      "sample_py_refs": [
+        {
+          "file": "tonesoul/yss_gates.py",
+          "line": 15,
+          "import": "tonesoul.ystm.acceptance"
+        }
+      ],
+      "sample_text_refs": [
+        {
+          "file": "CODEX_TASK.md",
+          "line": 61,
+          "snippet": "tonesoul.ystm.acceptance"
+        }
+      ]
+    },
+    {
+      "module": "tonesoul.ystm.storage",
+      "classification": "WEAK",
+      "py_ref_count": 0,
+      "non_test_py_ref_count": 0,
+      "test_py_ref_count": 0,
+      "text_ref_count": 1,
+      "sample_py_refs": [],
+      "sample_text_refs": [
+        {
+          "file": "CODEX_TASK.md",
+          "line": 62,
+          "snippet": "tonesoul.ystm.storage"
+        }
+      ]
+    },
+    {
+      "module": "tonesoul.ystm_demo",
+      "classification": "WEAK",
+      "py_ref_count": 0,
+      "non_test_py_ref_count": 0,
+      "test_py_ref_count": 0,
+      "text_ref_count": 1,
+      "sample_py_refs": [],
+      "sample_text_refs": [
+        {
+          "file": "CODEX_TASK.md",
+          "line": 63,
+          "snippet": "tonesoul.ystm_demo"
+        }
+      ]
+    }
+  ]
+}

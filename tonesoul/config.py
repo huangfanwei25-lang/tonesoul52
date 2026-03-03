@@ -34,21 +34,9 @@ KNOWN_ENTRYPOINTS: List[EntryPoint] = [
     ),
     EntryPoint(
         name="yuhun_loop_test",
-        path=os.path.join(WORKSPACE_ROOT, "scripts", "test_yuhun_loop.py"),
-        command="python scripts/test_yuhun_loop.py",
-        notes="YuHun loop test runner.",
-    ),
-    EntryPoint(
-        name="yuhun_loop_test_52",
-        path=os.path.join(
-            WORKSPACE_ROOT,
-            "legacy",
-            "tonesoul-5.2",
-            "tonesoul52",
-            "run_yuhun_loop_wrapper.py",
-        ),
-        command="python -m tonesoul52.run_yuhun_loop_wrapper",
-        notes="5.2 wrapper for yuhun CLI help check (non-interactive).",
+        path=os.path.join(WORKSPACE_ROOT, "apps", "cli", "yuhun_cli.py"),
+        command="python apps/cli/yuhun_cli.py --help",
+        notes="YuHun CLI help smoke check (non-interactive).",
     ),
 ]
 

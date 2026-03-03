@@ -1,8 +1,8 @@
 # Crystallization Report
 
-- Date (UTC): 2026-03-02T14:20:50Z
-- Journal entries scanned: 11081
-- Journal payloads parsed by SoulDB: 11081
+- Date (UTC): 2026-03-03T06:46:09Z
+- Journal entries scanned: 1043
+- Journal payloads parsed by SoulDB: 1043
 - Min frequency: 2
 
 ## Consolidation
@@ -23,13 +23,10 @@
 }
 ```
 
-## Crystals Generated This Run: 3
+## Crystals Generated This Run: 2
 - **[0.80]** avoid high-risk actions that previously triggered block outcomes
-  - Source: `verdict:block x8369`
+  - Source: `verdict:block x683`
   - Tags: avoid, verdict, block
-- **[1.00]** critical: collapse warnings escalate to fail-closed governance
-  - Source: `collapse_warning x3`
-  - Tags: critical, collapse_warning, safety
 - **[0.90]** prefer interactions that produce genuine resonance (tension -> convergence -> novel output)
   - Source: `resonance_convergence x28`
   - Tags: prefer, resonance, convergence
@@ -40,7 +37,7 @@
 - Commitment: every output is a semantic vow, track consistency
   - PASS: avoid high-risk actions that previously triggered block outcomes
 - Binding Force: outputs constrain future semantic field
-  - PASS: critical: collapse warnings escalate to fail-closed governance
+  - WARN: No crystal directly aligned
 
 ## Total Crystal Store: 3
 ### Top Crystal Rules

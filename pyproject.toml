@@ -59,11 +59,6 @@ ystm_viz = [
     "pillow>=10.0",
 ]
 
-[project.scripts]
-ts52-healthcheck = "tonesoul.cli.run_healthcheck:main"
-ts52-audit = "tonesoul.cli.run_audit:main"
-ts52-council = "tonesoul.cli.run_council_healthcheck:main"
-
 [project.urls]
 Homepage = "https://github.com/Fan1234-1/tonesoul52"
 Documentation = "https://github.com/Fan1234-1/tonesoul52#readme"

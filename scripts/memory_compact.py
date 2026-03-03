@@ -1,12 +1,24 @@
-﻿import argparse
+"""
+Memory compaction entrypoint migrated from tonesoul/cli/run_memory_compact.py.
+"""
+
+from __future__ import annotations
+
+import argparse
 import os
+import sys
+from pathlib import Path
 from typing import Dict, List
 
-from ..memory_manager import archive_runs, build_indexes, collect_run_dirs
+REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+from tonesoul.memory_manager import archive_runs, build_indexes, collect_run_dirs
 
 
 def _workspace_root() -> str:
-    return os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    return os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "tonesoul"))
 
 
 def build_arg_parser() -> argparse.ArgumentParser:

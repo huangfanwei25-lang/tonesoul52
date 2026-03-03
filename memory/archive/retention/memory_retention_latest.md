@@ -1,28 +1,28 @@
 # Memory Retention Latest
 
-- generated_at: 2026-02-22T12:17:30Z
-- mode: dry_run
-- cutoff_utc: 2026-02-01T00:00:00Z
+- generated_at: 2026-03-03T06:45:48Z
+- mode: apply
+- cutoff_utc: 2026-03-01T00:00:00Z
 
 ## Summary
-- archived_jsonl_lines: 0
-- moved_handoff_files: 0
+- archived_jsonl_lines: 24364
+- moved_handoff_files: 749
 
 ## Self Journal
-- total_lines: 9032
-- kept_lines: 9032
-- archived_lines: 0
-- archive_path: memory/archive/retention/jsonl/self_journal.before_20260201.jsonl
+- total_lines: 11283
+- kept_lines: 1043
+- archived_lines: 10240
+- archive_path: memory/archive/retention/jsonl/self_journal.before_20260301.jsonl
 
 ## Provenance Ledger
-- total_lines: 12399
-- kept_lines: 12399
-- archived_lines: 0
-- archive_path: memory/archive/retention/jsonl/provenance_ledger.before_20260201.jsonl
+- total_lines: 15894
+- kept_lines: 1770
+- archived_lines: 14124
+- archive_path: memory/archive/retention/jsonl/provenance_ledger.before_20260301.jsonl
 
 ## Handoff
-- total_files: 663
-- candidate_files: 0
-- moved_files: 0
-- moved_mb: 0.0
+- total_files: 837
+- candidate_files: 749
+- moved_files: 749
+- moved_mb: 21.543
 - archive_root: memory/handoff/archive

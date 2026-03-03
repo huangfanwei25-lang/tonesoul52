@@ -1,412 +1,376 @@
 graph TD
     N1["unified_core_compat.py"]
     N2["action_set.py"]
-    N3["adapters.py"]
-    N4["adaptive_gate.py"]
-    N5["append_council_event.py"]
-    N6["audit_dashboard.py"]
-    N7["audit_interface.py"]
-    N8["benevolence.py"]
-    N9["run_audit.py"]
-    N10["run_audit_interface.py"]
-    N11["run_constraint_stack.py"]
-    N12["run_context_compiler.py"]
-    N13["run_conversation_summary_backfill.py"]
-    N14["run_conversation_summary_query.py"]
-    N15["run_council_healthcheck.py"]
-    N16["run_dependency_scan.py"]
-    N17["run_encoding_scan.py"]
-    N18["run_etcl_transition.py"]
-    N19["run_evidence_collector.py"]
-    N20["run_frame_router.py"]
-    N21["run_generation_orch.py"]
-    N22["run_healthcheck.py"]
-    N23["run_import_check.py"]
-    N24["run_memory_compact.py"]
-    N25["run_reliability_check.py"]
-    N26["run_seed_schema_check.py"]
-    N27["run_skill_gate.py"]
-    N28["run_skill_promoter.py"]
-    N29["run_tech_trace_capture.py"]
-    N30["run_tech_trace_normalize.py"]
-    N31["run_tech_trace_validate.py"]
-    N32["run_validate.py"]
-    N33["run_yss_gates.py"]
-    N34["run_yss_pipeline.py"]
-    N35["run_ystm_acceptance.py"]
-    N36["run_ystm_demo.py"]
-    N37["run_ystm_diff.py"]
-    N38["run_ystm_patch_lookup.py"]
-    N39["run_ystm_replay.py"]
-    N40["run_ystm_update.py"]
-    N41["run_yuhun_loop_wrapper.py"]
-    N42["run_yuhun_smoke.py"]
-    N43["config.py"]
-    N44["constraint_stack.py"]
-    N45["context_compiler.py"]
-    N46["contract_observer.py"]
-    N47["consent.py"]
-    N48["pipeline.py"]
-    N49["storage.py"]
-    N50["base.py"]
-    N51["coherence.py"]
-    N52["council_cli.py"]
-    N53["evidence_detector.py"]
-    N54["evolution.py"]
-    N55["intent_reconstructor.py"]
-    N56["model_registry.py"]
-    N57["persona_audit.py"]
-    N58["perspective_factory.py"]
-    N59["advocate.py"]
-    N60["analyst.py"]
-    N61["axiomatic_inference.py"]
-    N62["critic.py"]
-    N63["guardian.py"]
-    N64["semantic_analyst.py"]
-    N65["pre_output_council.py"]
-    N66["runtime.py"]
-    N67["self_journal.py"]
-    N68["skill_parser.py"]
-    N69["summary_generator.py"]
-    N70["swarm_framework.py"]
-    N71["transcript.py"]
-    N72["types.py"]
-    N73["verdict.py"]
-    N74["vtp.py"]
-    N75["council_adapter.py"]
-    N76["council_capability.py"]
-    N77["dcs.py"]
-    N78["engine.py"]
-    N79["gravity.py"]
-    N80["perspectives.py"]
-    N81["types.py"]
-    N82["error_event.py"]
-    N83["escalation.py"]
-    N84["escape_valve.py"]
-    N85["etcl_lifecycle.py"]
-    N86["evidence_collector.py"]
-    N87["context_distiller.py"]
-    N88["corpus_builder.py"]
-    N89["corpus_schema.py"]
-    N90["frame_router.py"]
-    N91["compute.py"]
-    N92["client.py"]
-    N93["session.py"]
-    N94["generate_patch.py"]
-    N95["generation_orch.py"]
-    N96["heartbeat.py"]
-    N97["intent_verification.py"]
-    N98["inventory.py"]
-    N99["issue_codes.py"]
-    N100["gemini_client.py"]
-    N101["ollama_client.py"]
-    N102["local_llm.py"]
-    N103["config.py"]
-    N104["engine.py"]
-    N105["events.py"]
-    N106["adversarial.py"]
-    N107["boot.py"]
-    N108["consolidator.py"]
-    N109["crystallizer.py"]
-    N110["decay.py"]
-    N111["handoff_ingester.py"]
-    N112["hippocampus.py"]
-    N113["embeddings.py"]
-    N114["hippocampus.py"]
-    N115["semantic_graph.py"]
-    N116["soul_db.py"]
-    N117["stats.py"]
-    N118["visual_chain.py"]
-    N119["memory_manager.py"]
-    N120["mercy_objective.py"]
-    N121["nonlinear_predictor.py"]
-    N122["openclaw_auditor.py"]
-    N123["persistence.py"]
-    N124["persona_dimension.py"]
-    N125["persona_ledger_validator.py"]
-    N126["persona_registry_builder.py"]
-    N127["persona_registry_cleaner.py"]
-    N128["persona_registry_summary.py"]
-    N129["persona_trace_report.py"]
-    N130["pipeline_context.py"]
-    N131["poav.py"]
-    N132["quick_council.py"]
-    N133["reflection.py"]
-    N134["resonance.py"]
-    N135["role_council.py"]
-    N136["seed_schema_check.py"]
-    N137["self_test.py"]
-    N138["concept_store.py"]
-    N139["embedder.py"]
-    N140["semantic_control.py"]
-    N141["service_manager.py"]
-    N142["async_queue.py"]
-    N143["errors.py"]
-    N144["simulate_council.py"]
-    N145["skill_apply.py"]
-    N146["skill_gate.py"]
-    N147["skill_promoter.py"]
-    N148["supabase_persistence.py"]
-    N149["capture.py"]
-    N150["normalize.py"]
-    N151["validate.py"]
-    N152["tension_engine.py"]
-    N153["test_integration.py"]
-    N154["test_interception.py"]
-    N155["time_island.py"]
-    N156["analyzer.py"]
-    N157["commitment_extractor.py"]
-    N158["entropy_engine.py"]
-    N159["personas.py"]
-    N160["rupture_detector.py"]
-    N161["self_commit.py"]
-    N162["session_reporter.py"]
-    N163["trajectory.py"]
-    N164["types.py"]
-    N165["value_accumulator.py"]
-    N166["tonesoul_llm.py"]
-    N167["tsr_metrics.py"]
-    N168["unified_controller.py"]
-    N169["unified_core.py"]
-    N170["unified_pipeline.py"]
-    N171["variance_compressor.py"]
-    N172["vow_system.py"]
-    N173["work_classifier.py"]
-    N174["yss_gates.py"]
-    N175["yss_pipeline.py"]
-    N176["yss_unified_adapter.py"]
-    N177["acceptance.py"]
-    N178["audit.py"]
-    N179["demo.py"]
-    N180["diff.py"]
-    N181["energy.py"]
-    N182["governance.py"]
-    N183["ingest.py"]
-    N184["projection.py"]
-    N185["render.py"]
-    N186["representation.py"]
-    N187["schema.py"]
-    N188["storage.py"]
-    N189["terrain.py"]
-    N190["ystm_demo.py"]
-    N191["cv_hardware_diagnostics"]
-    N192["local_llm"]
-    N193["qa_auditor"]
-    N194["tonesoul_governance"]
-    N195["tonesoul_philosophy"]
-    N196["antigravity"]
-    N197["ci-debug"]
-    N198["fullstack-engineer"]
-    N199["git-hygiene"]
-    N200["vibe_mode"]
-    N1 --> N169
-    N5 --> N66
-    N7 --> N187
-    N44 --> N2
-    N44 --> N120
-    N44 --> N187
-    N45 --> N187
+    N3["adaptive_gate.py"]
+    N4["append_council_event.py"]
+    N5["audit_dashboard.py"]
+    N6["audit_interface.py"]
+    N7["benevolence.py"]
+    N8["config.py"]
+    N9["constraint_stack.py"]
+    N10["context_compiler.py"]
+    N11["contract_observer.py"]
+    N12["consent.py"]
+    N13["pipeline.py"]
+    N14["storage.py"]
+    N15["base.py"]
+    N16["coherence.py"]
+    N17["council_cli.py"]
+    N18["evidence_detector.py"]
+    N19["evolution.py"]
+    N20["intent_reconstructor.py"]
+    N21["model_registry.py"]
+    N22["persona_audit.py"]
+    N23["perspective_factory.py"]
+    N24["advocate.py"]
+    N25["analyst.py"]
+    N26["axiomatic_inference.py"]
+    N27["critic.py"]
+    N28["guardian.py"]
+    N29["semantic_analyst.py"]
+    N30["pre_output_council.py"]
+    N31["runtime.py"]
+    N32["self_journal.py"]
+    N33["skill_parser.py"]
+    N34["summary_generator.py"]
+    N35["swarm_framework.py"]
+    N36["transcript.py"]
+    N37["types.py"]
+    N38["verdict.py"]
+    N39["vtp.py"]
+    N40["council_adapter.py"]
+    N41["council_capability.py"]
+    N42["dcs.py"]
+    N43["engine.py"]
+    N44["gravity.py"]
+    N45["perspectives.py"]
+    N46["types.py"]
+    N47["error_event.py"]
+    N48["escalation.py"]
+    N49["escape_valve.py"]
+    N50["etcl_lifecycle.py"]
+    N51["evidence_collector.py"]
+    N52["context_distiller.py"]
+    N53["corpus_builder.py"]
+    N54["corpus_schema.py"]
+    N55["frame_router.py"]
+    N56["compute.py"]
+    N57["client.py"]
+    N58["session.py"]
+    N59["generate_patch.py"]
+    N60["generation_orch.py"]
+    N61["heartbeat.py"]
+    N62["intent_verification.py"]
+    N63["inventory.py"]
+    N64["issue_codes.py"]
+    N65["gemini_client.py"]
+    N66["ollama_client.py"]
+    N67["local_llm.py"]
+    N68["config.py"]
+    N69["engine.py"]
+    N70["events.py"]
+    N71["adversarial.py"]
+    N72["boot.py"]
+    N73["consolidator.py"]
+    N74["crystallizer.py"]
+    N75["decay.py"]
+    N76["handoff_ingester.py"]
+    N77["hippocampus.py"]
+    N78["embeddings.py"]
+    N79["hippocampus.py"]
+    N80["semantic_graph.py"]
+    N81["soul_db.py"]
+    N82["stats.py"]
+    N83["visual_chain.py"]
+    N84["memory_manager.py"]
+    N85["mercy_objective.py"]
+    N86["nonlinear_predictor.py"]
+    N87["openclaw_auditor.py"]
+    N88["persistence.py"]
+    N89["persona_dimension.py"]
+    N90["persona_ledger_validator.py"]
+    N91["persona_registry_builder.py"]
+    N92["persona_registry_cleaner.py"]
+    N93["persona_registry_summary.py"]
+    N94["persona_trace_report.py"]
+    N95["pipeline_context.py"]
+    N96["poav.py"]
+    N97["quick_council.py"]
+    N98["reflection.py"]
+    N99["resonance.py"]
+    N100["role_council.py"]
+    N101["seed_schema_check.py"]
+    N102["self_test.py"]
+    N103["concept_store.py"]
+    N104["embedder.py"]
+    N105["semantic_control.py"]
+    N106["service_manager.py"]
+    N107["async_queue.py"]
+    N108["errors.py"]
+    N109["simulate_council.py"]
+    N110["skill_apply.py"]
+    N111["skill_gate.py"]
+    N112["skill_promoter.py"]
+    N113["supabase_persistence.py"]
+    N114["capture.py"]
+    N115["normalize.py"]
+    N116["validate.py"]
+    N117["tension_engine.py"]
+    N118["time_island.py"]
+    N119["analyzer.py"]
+    N120["commitment_extractor.py"]
+    N121["entropy_engine.py"]
+    N122["personas.py"]
+    N123["rupture_detector.py"]
+    N124["self_commit.py"]
+    N125["session_reporter.py"]
+    N126["trajectory.py"]
+    N127["types.py"]
+    N128["value_accumulator.py"]
+    N129["tonesoul_llm.py"]
+    N130["tsr_metrics.py"]
+    N131["unified_controller.py"]
+    N132["unified_core.py"]
+    N133["unified_pipeline.py"]
+    N134["variance_compressor.py"]
+    N135["vow_system.py"]
+    N136["work_classifier.py"]
+    N137["yss_gates.py"]
+    N138["yss_pipeline.py"]
+    N139["yss_unified_adapter.py"]
+    N140["acceptance.py"]
+    N141["audit.py"]
+    N142["demo.py"]
+    N143["diff.py"]
+    N144["energy.py"]
+    N145["governance.py"]
+    N146["ingest.py"]
+    N147["projection.py"]
+    N148["render.py"]
+    N149["representation.py"]
+    N150["schema.py"]
+    N151["storage.py"]
+    N152["terrain.py"]
+    N153["ystm_demo.py"]
+    N154["cv_hardware_diagnostics"]
+    N155["local_llm"]
+    N156["qa_auditor"]
+    N157["tonesoul_governance"]
+    N158["tonesoul_philosophy"]
+    N159["antigravity"]
+    N160["ci-debug"]
+    N161["fullstack-engineer"]
+    N162["git-hygiene"]
+    N163["vibe_mode"]
+    N1 --> N132
+    N4 --> N31
+    N6 --> N150
+    N9 --> N2
+    N9 --> N85
+    N9 --> N150
+    N10 --> N150
+    N13 --> N12
+    N13 --> N14
+    N15 --> N37
+    N16 --> N37
+    N17 --> N21
+    N17 --> N31
+    N20 --> N130
+    N21 --> N23
+    N22 --> N37
+    N23 --> N15
+    N23 --> N24
+    N23 --> N25
+    N23 --> N26
+    N23 --> N27
+    N23 --> N28
+    N23 --> N29
+    N23 --> N37
+    N23 --> N65
+    N24 --> N15
+    N24 --> N37
+    N25 --> N15
+    N25 --> N18
+    N25 --> N37
+    N26 --> N15
+    N26 --> N37
+    N27 --> N15
+    N27 --> N37
+    N28 --> N15
+    N28 --> N37
+    N29 --> N15
+    N29 --> N25
+    N29 --> N37
+    N29 --> N103
+    N29 --> N104
+    N30 --> N15
+    N30 --> N16
+    N30 --> N19
+    N30 --> N23
+    N30 --> N32
+    N30 --> N34
+    N30 --> N37
+    N30 --> N38
+    N31 --> N7
+    N31 --> N15
+    N31 --> N19
+    N31 --> N20
+    N31 --> N21
+    N31 --> N22
+    N31 --> N30
+    N31 --> N32
+    N31 --> N33
+    N31 --> N37
+    N31 --> N39
+    N31 --> N49
+    N31 --> N100
+    N32 --> N34
+    N32 --> N37
+    N32 --> N81
+    N34 --> N37
+    N36 --> N37
+    N37 --> N22
+    N38 --> N34
+    N38 --> N37
+    N39 --> N37
+    N42 --> N64
+    N42 --> N150
+    N43 --> N44
+    N43 --> N45
+    N43 --> N46
+    N44 --> N46
+    N45 --> N46
     N48 --> N47
-    N48 --> N49
-    N50 --> N72
-    N51 --> N72
-    N52 --> N56
-    N52 --> N66
-    N55 --> N167
-    N56 --> N58
-    N57 --> N72
-    N58 --> N50
-    N58 --> N59
-    N58 --> N60
-    N58 --> N61
-    N58 --> N62
-    N58 --> N63
-    N58 --> N64
-    N58 --> N72
-    N58 --> N100
-    N59 --> N50
-    N59 --> N72
-    N60 --> N50
-    N60 --> N53
-    N60 --> N72
-    N61 --> N50
-    N61 --> N72
-    N62 --> N50
-    N62 --> N72
-    N63 --> N50
-    N63 --> N72
-    N64 --> N50
-    N64 --> N60
-    N64 --> N72
-    N64 --> N138
-    N64 --> N139
-    N65 --> N50
-    N65 --> N51
-    N65 --> N54
-    N65 --> N58
-    N65 --> N67
-    N65 --> N69
-    N65 --> N72
-    N65 --> N73
-    N66 --> N8
-    N66 --> N50
-    N66 --> N54
-    N66 --> N55
-    N66 --> N56
-    N66 --> N57
-    N66 --> N65
-    N66 --> N67
-    N66 --> N68
-    N66 --> N72
-    N66 --> N74
-    N66 --> N84
-    N66 --> N135
-    N67 --> N69
-    N67 --> N72
-    N67 --> N116
-    N69 --> N72
-    N71 --> N72
-    N72 --> N57
-    N73 --> N69
-    N73 --> N72
-    N74 --> N72
-    N77 --> N99
-    N77 --> N187
-    N78 --> N79
-    N78 --> N80
-    N78 --> N81
-    N79 --> N81
-    N80 --> N81
-    N83 --> N82
-    N83 --> N99
-    N85 --> N187
-    N86 --> N187
-    N88 --> N89
-    N90 --> N135
-    N90 --> N187
-    N92 --> N93
-    N95 --> N82
-    N95 --> N187
-    N96 --> N122
-    N97 --> N187
-    N104 --> N103
-    N104 --> N105
-    N104 --> N142
-    N104 --> N143
-    N105 --> N103
-    N107 --> N109
-    N107 --> N111
-    N107 --> N116
-    N108 --> N116
-    N108 --> N117
-    N110 --> N116
-    N111 --> N116
-    N114 --> N113
-    N116 --> N110
-    N119 --> N187
-    N120 --> N187
-    N122 --> N8
-    N122 --> N93
-    N124 --> N187
-    N133 --> N187
-    N135 --> N50
-    N135 --> N66
-    N135 --> N72
-    N136 --> N99
+    N48 --> N64
+    N50 --> N150
+    N51 --> N150
+    N53 --> N54
+    N55 --> N100
+    N55 --> N150
+    N57 --> N58
+    N60 --> N47
+    N60 --> N150
+    N61 --> N87
+    N62 --> N150
+    N69 --> N68
+    N69 --> N70
+    N69 --> N107
+    N69 --> N108
+    N70 --> N68
+    N72 --> N74
+    N72 --> N76
+    N72 --> N81
+    N73 --> N81
+    N73 --> N82
+    N75 --> N81
+    N76 --> N81
+    N79 --> N78
+    N81 --> N75
+    N84 --> N150
+    N85 --> N150
+    N87 --> N7
+    N87 --> N58
+    N89 --> N150
+    N98 --> N150
+    N100 --> N15
+    N100 --> N31
+    N100 --> N37
+    N101 --> N64
+    N103 --> N104
+    N109 --> N40
+    N110 --> N150
+    N111 --> N150
+    N112 --> N150
+    N114 --> N150
+    N115 --> N114
+    N115 --> N150
+    N116 --> N64
+    N117 --> N86
+    N117 --> N105
+    N117 --> N134
+    N117 --> N136
+    N119 --> N127
+    N123 --> N124
+    N128 --> N123
+    N130 --> N150
+    N131 --> N105
+    N132 --> N1
+    N132 --> N11
+    N132 --> N41
+    N132 --> N89
+    N132 --> N105
+    N132 --> N106
+    N132 --> N135
+    N134 --> N86
+    N134 --> N105
+    N134 --> N136
+    N137 --> N42
+    N137 --> N48
+    N137 --> N55
+    N137 --> N64
+    N137 --> N96
+    N137 --> N101
+    N137 --> N116
+    N137 --> N140
+    N137 --> N150
+    N138 --> N2
+    N138 --> N6
+    N138 --> N9
+    N138 --> N10
+    N138 --> N48
+    N138 --> N51
+    N138 --> N55
+    N138 --> N60
+    N138 --> N62
+    N138 --> N84
+    N138 --> N85
+    N138 --> N98
+    N138 --> N110
+    N138 --> N111
+    N138 --> N112
+    N138 --> N114
+    N138 --> N115
+    N138 --> N130
+    N138 --> N137
     N138 --> N139
-    N144 --> N75
-    N145 --> N187
-    N146 --> N187
-    N147 --> N187
-    N149 --> N187
-    N150 --> N149
-    N150 --> N187
-    N151 --> N99
-    N152 --> N121
-    N152 --> N140
-    N152 --> N171
-    N152 --> N173
-    N156 --> N164
-    N160 --> N161
-    N165 --> N160
-    N167 --> N187
-    N168 --> N140
-    N169 --> N1
-    N169 --> N46
-    N169 --> N76
-    N169 --> N124
-    N169 --> N140
-    N169 --> N141
-    N169 --> N172
-    N171 --> N121
-    N171 --> N140
-    N171 --> N173
-    N174 --> N77
-    N174 --> N83
-    N174 --> N90
-    N174 --> N99
-    N174 --> N131
-    N174 --> N136
-    N174 --> N151
-    N174 --> N187
-    N175 --> N2
-    N175 --> N7
-    N175 --> N44
-    N175 --> N45
-    N175 --> N83
-    N175 --> N86
-    N175 --> N90
-    N175 --> N95
-    N175 --> N97
-    N175 --> N119
-    N175 --> N120
-    N175 --> N133
-    N175 --> N145
-    N175 --> N146
-    N175 --> N147
-    N175 --> N149
-    N175 --> N150
-    N175 --> N167
-    N175 --> N174
-    N175 --> N176
-    N175 --> N179
-    N175 --> N181
-    N175 --> N183
-    N175 --> N186
-    N175 --> N189
-    N177 --> N179
-    N177 --> N181
-    N177 --> N182
-    N177 --> N183
-    N177 --> N184
-    N177 --> N186
-    N177 --> N187
-    N177 --> N189
-    N178 --> N187
-    N179 --> N178
-    N179 --> N181
-    N179 --> N183
-    N179 --> N184
-    N179 --> N185
-    N179 --> N186
-    N179 --> N187
-    N179 --> N189
-    N180 --> N187
-    N181 --> N187
-    N182 --> N82
-    N182 --> N181
-    N182 --> N186
-    N182 --> N187
-    N184 --> N187
-    N185 --> N187
-    N186 --> N181
-    N186 --> N187
-    N188 --> N187
-    N189 --> N187
-    N190 --> N179
-    N192 -.-> N124
-    N194 -.-> N91
-    N194 -.-> N109
-    N194 -.-> N134
-    N194 -.-> N152
-    N194 -.-> N170
+    N138 --> N142
+    N138 --> N144
+    N138 --> N146
+    N138 --> N149
+    N138 --> N152
+    N140 --> N142
+    N140 --> N144
+    N140 --> N145
+    N140 --> N146
+    N140 --> N147
+    N140 --> N149
+    N140 --> N150
+    N140 --> N152
+    N141 --> N150
+    N142 --> N141
+    N142 --> N144
+    N142 --> N146
+    N142 --> N147
+    N142 --> N148
+    N142 --> N149
+    N142 --> N150
+    N142 --> N152
+    N143 --> N150
+    N144 --> N150
+    N145 --> N47
+    N145 --> N144
+    N145 --> N149
+    N145 --> N150
+    N147 --> N150
+    N148 --> N150
+    N149 --> N144
+    N149 --> N150
+    N151 --> N150
+    N152 --> N150
+    N153 --> N142
+    N155 -.-> N89
+    N157 -.-> N56
+    N157 -.-> N74
+    N157 -.-> N99
+    N157 -.-> N117
+    N157 -.-> N133

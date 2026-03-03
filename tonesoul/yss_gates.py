@@ -1,7 +1,5 @@
 import json
 import os
-import subprocess
-import sys
 from dataclasses import dataclass
 from typing import Dict, List, Optional
 
@@ -14,6 +12,7 @@ from .issue_codes import IssueCode, issue
 from .poav import score as score_poav
 from .seed_schema_check import check_seed_schema
 from .tech_trace.validate import validate_normalize_payload
+from .ystm.acceptance import run_acceptance
 from .ystm.schema import stable_hash, utc_now
 
 
@@ -699,21 +698,38 @@ def escalation_gate(
 
 
 def build_test_gate(workspace_root: str) -> GateResult:
+    del workspace_root  # Preserved for backwards-compatible signature.
     issues: List[str] = []
-    command = [sys.executable, "-m", "tonesoul52.run_ystm_acceptance"]
-    result = subprocess.run(
-        command,
-        cwd=workspace_root,
-        capture_output=True,
-        text=True,
-    )
-    if result.returncode != 0:
+    try:
+        results = run_acceptance()
+    except Exception as exc:  # pragma: no cover - defensive path for gate failures
         issues.append(issue(IssueCode.YSTM_ACCEPTANCE_FAILED))
-    output_tail = "\n".join((result.stdout or "").strip().splitlines()[-5:])
+        details = {
+            "command": "in_process:tonesoul.ystm.acceptance.run_acceptance",
+            "returncode": 1,
+            "stdout_tail": f"{exc.__class__.__name__}: {exc}",
+        }
+        return GateResult(
+            gate="build_test_gate",
+            passed=False,
+            issues=issues,
+            details=details,
+        )
+
+    failed = [item for item in results if item.get("status") != "PASS"]
+    if failed:
+        issues.append(issue(IssueCode.YSTM_ACCEPTANCE_FAILED))
+
+    output_lines = []
+    for item in results[-5:]:
+        line = f"{item.get('test', 'unknown')}: {item.get('status', 'UNKNOWN')}"
+        if item.get("status") != "PASS" and item.get("error"):
+            line = f"{line} - {item.get('error')}"
+        output_lines.append(line)
     details = {
-        "command": " ".join(command),
-        "returncode": result.returncode,
-        "stdout_tail": output_tail,
+        "command": "in_process:tonesoul.ystm.acceptance.run_acceptance",
+        "returncode": 0 if not failed else 1,
+        "stdout_tail": "\n".join(output_lines),
     }
     return GateResult(
         gate="build_test_gate",
