@@ -78,10 +78,7 @@ def get_hippocampus(db_path: Optional[str] = None) -> Hippocampus:
             raise
         moved = _sanitize_legacy_memory_base(resolved_db_path)
         if moved:
-            print(
-                "[MemorySanitizer] Quarantined legacy memory artifacts: "
-                + ", ".join(moved)
-            )
+            print("[MemorySanitizer] Quarantined legacy memory artifacts: " + ", ".join(moved))
         return Hippocampus(db_path=resolved_db_path, embedder=embedder)
 
 
@@ -309,7 +306,9 @@ class MemoryConsolidator:
             if not isinstance(dispatch_trace, dict):
                 if isinstance(ctx, dict):
                     dispatch_trace = ctx.get("dispatch_trace")
-                if not isinstance(dispatch_trace, dict) and isinstance(episode.get("transcript"), dict):
+                if not isinstance(dispatch_trace, dict) and isinstance(
+                    episode.get("transcript"), dict
+                ):
                     transcript = episode.get("transcript") or {}
                     dispatch_trace = transcript.get("dispatch")
             if isinstance(dispatch_trace, dict):

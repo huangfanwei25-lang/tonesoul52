@@ -934,7 +934,9 @@ class UnifiedPipeline:
         if tension_before is not None:
             try:
                 before_delta = float(
-                    getattr(getattr(tension_before, "signals", None), "semantic_delta", before_delta)
+                    getattr(
+                        getattr(tension_before, "signals", None), "semantic_delta", before_delta
+                    )
                     or before_delta
                 )
             except Exception:

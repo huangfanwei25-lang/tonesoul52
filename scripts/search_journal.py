@@ -366,7 +366,9 @@ def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Search ToneSoul self journal JSONL.")
     parser.add_argument("query", nargs="?", default=None, help="Optional full-text query.")
     parser.add_argument("--journal-path", default=str(DEFAULT_JOURNAL), help="Journal JSONL path.")
-    parser.add_argument("--verdict", default=None, help="Filter verdict, e.g. approve/block/bypassed.")
+    parser.add_argument(
+        "--verdict", default=None, help="Filter verdict, e.g. approve/block/bypassed."
+    )
     parser.add_argument(
         "--resonance",
         default=None,
@@ -389,11 +391,21 @@ def main(argv: list[str] | None = None) -> int:
 
     try:
         filters = SearchFilters(
-            verdict=args.verdict.strip().lower() if isinstance(args.verdict, str) and args.verdict else None,
-            resonance=args.resonance.strip().lower()
-            if isinstance(args.resonance, str) and args.resonance
-            else None,
-            genesis=args.genesis.strip().lower() if isinstance(args.genesis, str) and args.genesis else None,
+            verdict=(
+                args.verdict.strip().lower()
+                if isinstance(args.verdict, str) and args.verdict
+                else None
+            ),
+            resonance=(
+                args.resonance.strip().lower()
+                if isinstance(args.resonance, str) and args.resonance
+                else None
+            ),
+            genesis=(
+                args.genesis.strip().lower()
+                if isinstance(args.genesis, str) and args.genesis
+                else None
+            ),
             date_from=_parse_date(args.date_from),
             date_to=_parse_date(args.date_to),
         )

@@ -79,4 +79,3 @@ def memory_boot(
         handoffs_ingested=handoffs_ingested,
         boot_time_ms=boot_time_ms,
     )
-

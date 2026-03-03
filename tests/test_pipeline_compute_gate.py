@@ -155,7 +155,13 @@ def test_pipeline_council_block_writes_repair_trace():
     assert isinstance(repair, dict)
     assert repair.get("original_gate") == "council_block"
     assert "council_block" in (repair.get("stages") or [])
-    assert repair.get("resonance_class") in {"pending", "flow", "resonance", "deep_resonance", "divergence"}
+    assert repair.get("resonance_class") in {
+        "pending",
+        "flow",
+        "resonance",
+        "deep_resonance",
+        "divergence",
+    }
 
 
 @patch("tonesoul.persona_dimension.PersonaDimension.process")

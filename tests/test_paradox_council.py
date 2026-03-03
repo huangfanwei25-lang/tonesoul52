@@ -368,6 +368,6 @@ class TestParadoxRFC013Signals:
             if result.prediction:
                 trends.append(result.prediction.trend)
         if len(trends) >= 2:
-            assert trends[-1] != "converging", (
-                f"3 consecutive high-risk paradoxes should not converge: {trends}"
-            )
+            assert (
+                trends[-1] != "converging"
+            ), f"3 consecutive high-risk paradoxes should not converge: {trends}"

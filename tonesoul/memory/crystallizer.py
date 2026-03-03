@@ -57,7 +57,9 @@ class Crystal:
         if not rule or not source_pattern or not created_at:
             return None
         tags_raw = payload.get("tags")
-        tags = [str(tag) for tag in tags_raw if str(tag).strip()] if isinstance(tags_raw, list) else []
+        tags = (
+            [str(tag) for tag in tags_raw if str(tag).strip()] if isinstance(tags_raw, list) else []
+        )
         return cls(
             rule=rule,
             source_pattern=source_pattern,
@@ -256,8 +258,12 @@ class MemoryCrystallizer:
                 merged[key] = crystal
                 continue
 
-            current_dt = _parse_iso(existing.created_at) or datetime.fromtimestamp(0, tz=timezone.utc)
-            incoming_dt = _parse_iso(crystal.created_at) or datetime.fromtimestamp(0, tz=timezone.utc)
+            current_dt = _parse_iso(existing.created_at) or datetime.fromtimestamp(
+                0, tz=timezone.utc
+            )
+            incoming_dt = _parse_iso(crystal.created_at) or datetime.fromtimestamp(
+                0, tz=timezone.utc
+            )
 
             use_incoming = incoming_dt >= current_dt
             latest = crystal if use_incoming else existing

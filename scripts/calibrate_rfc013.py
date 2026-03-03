@@ -134,11 +134,7 @@ def _evaluate(
     if len(rows) != EXPECTED_ROWS:
         issues.append(f"row_count={len(rows)} expected={EXPECTED_ROWS}")
 
-    out_of_bounds = [
-        row
-        for row in rows
-        if not (min_ratio <= row.compression_ratio <= max_ratio)
-    ]
+    out_of_bounds = [row for row in rows if not (min_ratio <= row.compression_ratio <= max_ratio)]
     if out_of_bounds:
         issues.append(
             "ratio_out_of_bounds="
@@ -166,10 +162,7 @@ def _evaluate(
         trend="chaotic",
     )
     if severe_case > severe_max_target:
-        issues.append(
-            "severe_case_too_high="
-            f"{severe_case:.4f} > target {severe_max_target:.2f}"
-        )
+        issues.append("severe_case_too_high=" f"{severe_case:.4f} > target {severe_max_target:.2f}")
 
     return (len(issues) == 0), issues
 

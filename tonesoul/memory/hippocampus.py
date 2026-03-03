@@ -213,9 +213,7 @@ class Hippocampus:
             haystack, ["correction", "fix"]
         ):
             multiplier *= 1.3
-        if work_category == "debug" and cls._text_contains_any(
-            haystack, ["error", "bug", "fix"]
-        ):
+        if work_category == "debug" and cls._text_contains_any(haystack, ["error", "bug", "fix"]):
             multiplier *= 1.2
 
         return float(base_score * multiplier)

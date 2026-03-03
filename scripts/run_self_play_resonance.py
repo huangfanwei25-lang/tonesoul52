@@ -480,7 +480,9 @@ def run_self_play(
         "sample_repairs": sample_repairs,
     }
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text(json.dumps(summary, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    output_path.write_text(
+        json.dumps(summary, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     return summary
 
 
@@ -501,7 +503,9 @@ def build_parser() -> argparse.ArgumentParser:
         default="docs/status/self_play_resonance_latest.json",
         help="Summary JSON output path.",
     )
-    parser.add_argument("--dry-run", action="store_true", help="Run without writing journal entries.")
+    parser.add_argument(
+        "--dry-run", action="store_true", help="Run without writing journal entries."
+    )
     parser.add_argument(
         "--use-local-llm",
         action=argparse.BooleanOptionalAction,

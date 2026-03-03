@@ -23,7 +23,6 @@ from .nonlinear_predictor import PredictionResult
 from .semantic_control import LambdaState, SemanticZone
 from .work_classifier import ConstraintProfile, WorkCategory, get_profile
 
-
 # ── γ contribution tables ────────────────────────────────────────
 
 _GAMMA_TREND = {
@@ -71,9 +70,7 @@ class CompressionResult:
         return {
             "compression_ratio": round(self.compression_ratio, 4),
             "gamma_effective": round(self.gamma_effective, 4),
-            "gamma_breakdown": {
-                k: round(v, 4) for k, v in self.gamma_breakdown.items()
-            },
+            "gamma_breakdown": {k: round(v, 4) for k, v in self.gamma_breakdown.items()},
             "zone_override": self.zone_override,
             "explanation": self.explanation,
         }
@@ -162,7 +159,12 @@ class DynamicVarianceCompressor:
 
         # ── explanation ──────────────────────────────────────────
         explanation = self._build_explanation(
-            profile, trend, zone, lambda_state, gamma_eff, ratio,
+            profile,
+            trend,
+            zone,
+            lambda_state,
+            gamma_eff,
+            ratio,
         )
 
         return CompressionResult(

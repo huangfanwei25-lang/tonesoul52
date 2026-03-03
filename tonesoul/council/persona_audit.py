@@ -43,9 +43,7 @@ class AuditResult:
 def _coerce_vote(vote: object, index: int) -> Tuple[str, str, float, str]:
     if isinstance(vote, PerspectiveVote):
         perspective = (
-            vote.perspective.value
-            if hasattr(vote.perspective, "value")
-            else str(vote.perspective)
+            vote.perspective.value if hasattr(vote.perspective, "value") else str(vote.perspective)
         )
         return perspective, vote.decision.value, float(vote.confidence), vote.reasoning
 

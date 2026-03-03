@@ -84,7 +84,11 @@ class HandoffIngester:
             status = self._ingest_markdown(path, since_dt=None, kind="handoff_sync_md")
         except Exception:
             return {"ingested": 0, "skipped": 0, "errors": 1}
-        return {"ingested": 1 if status == "ingested" else 0, "skipped": 1 if status == "skipped" else 0, "errors": 0}
+        return {
+            "ingested": 1 if status == "ingested" else 0,
+            "skipped": 1 if status == "skipped" else 0,
+            "errors": 0,
+        }
 
     def _ingest_json(self, path: Path, *, since_dt: Optional[datetime]) -> str:
         raw = path.read_text(encoding="utf-8", errors="replace").strip()
@@ -136,9 +140,11 @@ class HandoffIngester:
             "files_changed": files_changed,
             "tension_snapshot": {
                 "phase": payload.get("phase"),
-                "drift_log_count": len(payload.get("drift_log", []))
-                if isinstance(payload.get("drift_log"), list)
-                else 0,
+                "drift_log_count": (
+                    len(payload.get("drift_log", []))
+                    if isinstance(payload.get("drift_log"), list)
+                    else 0
+                ),
             },
             "timestamp": timestamp,
             "source_file": path.name,

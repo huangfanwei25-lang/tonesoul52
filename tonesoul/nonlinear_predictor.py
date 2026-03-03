@@ -95,7 +95,7 @@ class NonlinearPredictor:
         ds = max(0.0, min(2.0, current_delta_sigma))
         self._history.append(ds)
         if len(self._history) > self._window:
-            self._history = self._history[-self._window:]
+            self._history = self._history[-self._window :]
 
         # 1) EWMA
         if self._ewma is None:
@@ -197,7 +197,7 @@ class NonlinearPredictor:
 
         # Check for near-constant (stable)
         if len(h) >= 3:
-            recent = h[-min(5, len(h)):]
+            recent = h[-min(5, len(h)) :]
             spread = max(recent) - min(recent)
             if spread < 0.05:
                 return "stable"

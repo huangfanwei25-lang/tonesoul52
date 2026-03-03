@@ -190,9 +190,7 @@ def _render_dashboard(work_category: WorkCategory) -> str:
     lines.append(_box_line("ToneSoul Tension Dashboard"))
     lines.append("+" + "-" * 55 + "+")
     lines.append(
-        _box_line(
-            f"Work Category: {work_category.value.upper()} (gamma={profile.gamma_base:.1f})"
-        )
+        _box_line(f"Work Category: {work_category.value.upper()} (gamma={profile.gamma_base:.1f})")
     )
     lines.append(_box_line(f"Active Crystals: {crystals_count}"))
     for crystal in crystals[:3]:
@@ -205,9 +203,7 @@ def _render_dashboard(work_category: WorkCategory) -> str:
     lines.append(_box_line(f"  handoffs: {handoff_count:,} files"))
     lines.append(_box_line(f"  crystals: {crystals_count} active rules"))
     lines.append(_box_line("Resonance Stats:"))
-    lines.append(
-        _box_line(f"  repair events logged: {resonance_stats['repair_events_logged']:,}")
-    )
+    lines.append(_box_line(f"  repair events logged: {resonance_stats['repair_events_logged']:,}"))
     lines.append(
         _box_line(f"  resonance convergences: {resonance_stats['resonance_convergences']:,}")
     )
@@ -220,8 +216,7 @@ def _render_dashboard(work_category: WorkCategory) -> str:
         lines.append(_box_line("  current gamma_eff range: [n/a, n/a]"))
     lines.append(
         _box_line(
-            "  freeform safe: "
-            + (f"{freeform_safe:.2f}" if freeform_safe is not None else "n/a")
+            "  freeform safe: " + (f"{freeform_safe:.2f}" if freeform_safe is not None else "n/a")
         )
     )
     lines.append(

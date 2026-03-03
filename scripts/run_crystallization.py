@@ -28,7 +28,6 @@ from memory.consolidator import MemoryConsolidator, force_consolidate  # noqa: E
 from tonesoul.memory.crystallizer import Crystal, MemoryCrystallizer  # noqa: E402
 from tonesoul.memory.soul_db import JsonlSoulDB, MemorySource  # noqa: E402
 
-
 THREE_AXIOMS = [
     "Resonance: respond to user semantic field without faking human emotion",
     "Commitment: every output is a semantic vow, track consistency",
@@ -117,7 +116,9 @@ def main() -> None:
     parser.add_argument("--output", type=str, default="docs/status/crystallization_report.md")
     args = parser.parse_args()
 
-    started_at = datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+    started_at = (
+        datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+    )
     journal_path = Path("memory/self_journal.jsonl")
     journal_entries = _count_nonempty_lines(journal_path)
 

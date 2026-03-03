@@ -395,7 +395,9 @@ def render_tree(payload: dict[str, Any]) -> str:
             node_id = str(node.get("id", ""))
             label = str(node.get("label", ""))
             if group in {"core", "council", "memory", "gates"}:
-                imports = sorted(_short_module_id(value) for value in imports_by_source.get(node_id, set()))
+                imports = sorted(
+                    _short_module_id(value) for value in imports_by_source.get(node_id, set())
+                )
                 suffix = f" (imports: {', '.join(imports)})" if imports else " (imports: none)"
                 lines.append(f"{item_prefix_base}{node_connector}{label}{suffix}")
             else:

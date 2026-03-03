@@ -55,4 +55,3 @@ def test_defaults_prediction_confidence_to_one_when_missing():
     result = classify_resonance(_r(0.4, None), _r(0.2, None))
     assert result.prediction_confidence == 1.0
     assert result.resonance_type == ResonanceType.RESONANCE
-
