@@ -3,8 +3,12 @@ import os
 from datetime import datetime
 from typing import Any, Dict, List
 
-import faiss
 import numpy as np
+
+try:
+    import faiss
+except ImportError:  # pragma: no cover - optional dependency for local tests
+    faiss = None
 
 try:
     from rank_bm25 import BM25Okapi
@@ -42,6 +46,10 @@ class Hippocampus:
     def _load_db(self):
         if not os.path.exists(self.index_file) or not os.path.exists(self.meta_file):
             print("Memory Base not found. Please run ingest_ancestral_memory.py first.")
+            return
+
+        if faiss is None:
+            print("FAISS is not installed. Vector index loading is disabled for this runtime.")
             return
 
         self.index = faiss.read_index(self.index_file)
@@ -111,7 +119,12 @@ class Hippocampus:
         return results
 
     def recall(
-        self, query_text: str, query_vector: np.ndarray, top_k: int = 5
+        self,
+        query_text: str,
+        query_vector: np.ndarray,
+        top_k: int = 5,
+        *,
+        tension_context: Dict[str, float] | None = None,
     ) -> List[MemoryResult]:
         """
         Main retrieval function using Reciprocal Rank Fusion (RRF).
@@ -140,8 +153,16 @@ class Hippocampus:
                 doc_map[doc_id] = item["doc"]
             fusion_scores[doc_id] += 1.0 / (rrf_k + rank + 1)
 
+        adjusted_scores: Dict[str, float] = {}
+        for doc_id, score in fusion_scores.items():
+            adjusted_scores[doc_id] = self._apply_tension_context_boost(
+                base_score=score,
+                doc=doc_map[doc_id],
+                tension_context=tension_context,
+            )
+
         # Sort and return top_k
-        sorted_docs = sorted(fusion_scores.items(), key=lambda x: x[1], reverse=True)[:top_k]
+        sorted_docs = sorted(adjusted_scores.items(), key=lambda x: x[1], reverse=True)[:top_k]
 
         final_results = []
         for rank, (doc_id, score) in enumerate(sorted_docs):
@@ -157,3 +178,44 @@ class Hippocampus:
             )
 
         return final_results
+
+    @staticmethod
+    def _text_contains_any(text: str, terms: List[str]) -> bool:
+        text_norm = str(text or "").lower()
+        return any(term in text_norm for term in terms)
+
+    @classmethod
+    def _apply_tension_context_boost(
+        cls,
+        *,
+        base_score: float,
+        doc: Dict[str, Any],
+        tension_context: Dict[str, float] | None,
+    ) -> float:
+        if not tension_context:
+            return float(base_score)
+
+        zone = str(tension_context.get("zone", "")).strip().lower()
+        trend = str(tension_context.get("trend", "")).strip().lower()
+        work_category = str(tension_context.get("work_category", "")).strip().lower()
+
+        content = str(doc.get("content", ""))
+        tags = doc.get("tags")
+        tags_text = " ".join(str(tag) for tag in tags) if isinstance(tags, list) else ""
+        haystack = f"{content} {tags_text}".lower()
+
+        multiplier = 1.0
+        if zone in {"risk", "danger"} and cls._text_contains_any(
+            haystack, ["block", "collapse_warning"]
+        ):
+            multiplier *= 1.5
+        if trend in {"diverging", "chaotic"} and cls._text_contains_any(
+            haystack, ["correction", "fix"]
+        ):
+            multiplier *= 1.3
+        if work_category == "debug" and cls._text_contains_any(
+            haystack, ["error", "bug", "fix"]
+        ):
+            multiplier *= 1.2
+
+        return float(base_score * multiplier)

@@ -185,3 +185,86 @@ def test_memory_consolidator_calls_crystallizer(tmp_path: Path, monkeypatch):
     assert result["crystals_formed"] == 1
     assert result["crystals_generated"] == 1
     assert isinstance(result["crystals"], list)
+
+
+def test_crystallize_adds_resonance_rule_when_convergence_count_high(tmp_path: Path):
+    crystal_path = tmp_path / "crystals.jsonl"
+    crystallizer = MemoryCrystallizer(crystal_path=crystal_path, min_frequency=2)
+    patterns = {
+        "verdicts": {"block": 1, "approve": 1},
+        "low_tension_approvals": 0,
+        "autonomous_high_delta": 0,
+        "collapse_warnings": {},
+        "resonance_convergences": 3,
+    }
+
+    crystals = crystallizer.crystallize(patterns)
+
+    assert any("genuine resonance" in c.rule for c in crystals)
+    assert any("resonance" in c.tags for c in crystals)
+
+
+def test_crystallizer_dedupes_same_rule_and_keeps_latest_pattern(tmp_path: Path):
+    crystal_path = tmp_path / "crystals.jsonl"
+    crystallizer = MemoryCrystallizer(crystal_path=crystal_path, min_frequency=2)
+
+    first = {
+        "verdicts": {"block": 3, "approve": 0},
+        "low_tension_approvals": 0,
+        "autonomous_high_delta": 0,
+        "collapse_warnings": {},
+        "resonance_convergences": 0,
+    }
+    second = {
+        "verdicts": {"block": 5, "approve": 0},
+        "low_tension_approvals": 0,
+        "autonomous_high_delta": 0,
+        "collapse_warnings": {},
+        "resonance_convergences": 0,
+    }
+
+    crystallizer.crystallize(first)
+    crystallizer.crystallize(second)
+
+    loaded = crystallizer.load_crystals()
+    avoid_rules = [c for c in loaded if "avoid high-risk actions" in c.rule]
+    assert len(avoid_rules) == 1
+    assert avoid_rules[0].source_pattern == "verdict:block x5"
+
+
+def test_crystallizer_retains_top_weighted_rules_under_cap(tmp_path: Path):
+    crystal_path = tmp_path / "crystals.jsonl"
+    crystallizer = MemoryCrystallizer(
+        crystal_path=crystal_path,
+        min_frequency=1,
+        max_crystals_keep=2,
+    )
+    crystallizer._append_crystals(
+        [
+            Crystal(
+                rule="rule-low",
+                source_pattern="p-low",
+                weight=0.2,
+                created_at=_iso_days_ago(1),
+                tags=["low"],
+            ),
+            Crystal(
+                rule="rule-mid",
+                source_pattern="p-mid",
+                weight=0.7,
+                created_at=_iso_days_ago(1),
+                tags=["mid"],
+            ),
+            Crystal(
+                rule="rule-high",
+                source_pattern="p-high",
+                weight=0.9,
+                created_at=_iso_days_ago(1),
+                tags=["high"],
+            ),
+        ]
+    )
+
+    loaded = crystallizer.load_crystals()
+    assert len(loaded) == 2
+    assert {item.rule for item in loaded} == {"rule-high", "rule-mid"}

@@ -1,0 +1,2668 @@
+{
+  "meta": {
+    "root": "tonesoul",
+    "skills_dir": ".agent/skills",
+    "workflows_dir": ".agent/workflows",
+    "node_count": 200,
+    "link_count": 211
+  },
+  "nodes": [
+    {
+      "id": "tonesoul._legacy.unified_core_compat",
+      "label": "unified_core_compat.py",
+      "group": "core",
+      "file": "tonesoul/_legacy/unified_core_compat.py",
+      "lines": 124,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.action_set",
+      "label": "action_set.py",
+      "group": "core",
+      "file": "tonesoul/action_set.py",
+      "lines": 32,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.adapters",
+      "label": "adapters.py",
+      "group": "core",
+      "file": "tonesoul/adapters.py",
+      "lines": 57,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.adaptive_gate",
+      "label": "adaptive_gate.py",
+      "group": "core",
+      "file": "tonesoul/adaptive_gate.py",
+      "lines": 242,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.append_council_event",
+      "label": "append_council_event.py",
+      "group": "core",
+      "file": "tonesoul/append_council_event.py",
+      "lines": 100,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.audit_dashboard",
+      "label": "audit_dashboard.py",
+      "group": "core",
+      "file": "tonesoul/audit_dashboard.py",
+      "lines": 797,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.audit_interface",
+      "label": "audit_interface.py",
+      "group": "core",
+      "file": "tonesoul/audit_interface.py",
+      "lines": 356,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.benevolence",
+      "label": "benevolence.py",
+      "group": "core",
+      "file": "tonesoul/benevolence.py",
+      "lines": 385,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.cli.run_audit",
+      "label": "run_audit.py",
+      "group": "core",
+      "file": "tonesoul/cli/run_audit.py",
+      "lines": 16,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.cli.run_audit_interface",
+      "label": "run_audit_interface.py",
+      "group": "core",
+      "file": "tonesoul/cli/run_audit_interface.py",
+      "lines": 7,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.cli.run_constraint_stack",
+      "label": "run_constraint_stack.py",
+      "group": "core",
+      "file": "tonesoul/cli/run_constraint_stack.py",
+      "lines": 7,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.cli.run_context_compiler",
+      "label": "run_context_compiler.py",
+      "group": "core",
+      "file": "tonesoul/cli/run_context_compiler.py",
+      "lines": 7,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.cli.run_conversation_summary_backfill",
+      "label": "run_conversation_summary_backfill.py",
+      "group": "core",
+      "file": "tonesoul/cli/run_conversation_summary_backfill.py",
+      "lines": 241,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.cli.run_conversation_summary_query",
+      "label": "run_conversation_summary_query.py",
+      "group": "core",
+      "file": "tonesoul/cli/run_conversation_summary_query.py",
+      "lines": 199,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.cli.run_council_healthcheck",
+      "label": "run_council_healthcheck.py",
+      "group": "core",
+      "file": "tonesoul/cli/run_council_healthcheck.py",
+      "lines": 48,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.cli.run_dependency_scan",
+      "label": "run_dependency_scan.py",
+      "group": "core",
+      "file": "tonesoul/cli/run_dependency_scan.py",
+      "lines": 47,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.cli.run_encoding_scan",
+      "label": "run_encoding_scan.py",
+      "group": "core",
+      "file": "tonesoul/cli/run_encoding_scan.py",
+      "lines": 43,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.cli.run_etcl_transition",
+      "label": "run_etcl_transition.py",
+      "group": "core",
+      "file": "tonesoul/cli/run_etcl_transition.py",
+      "lines": 51,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.cli.run_evidence_collector",
+      "label": "run_evidence_collector.py",
+      "group": "core",
+      "file": "tonesoul/cli/run_evidence_collector.py",
+      "lines": 7,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.cli.run_frame_router",
+      "label": "run_frame_router.py",
+      "group": "core",
+      "file": "tonesoul/cli/run_frame_router.py",
+      "lines": 7,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.cli.run_generation_orch",
+      "label": "run_generation_orch.py",
+      "group": "core",
+      "file": "tonesoul/cli/run_generation_orch.py",
+      "lines": 7,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.cli.run_healthcheck",
+      "label": "run_healthcheck.py",
+      "group": "core",
+      "file": "tonesoul/cli/run_healthcheck.py",
+      "lines": 189,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.cli.run_import_check",
+      "label": "run_import_check.py",
+      "group": "core",
+      "file": "tonesoul/cli/run_import_check.py",
+      "lines": 53,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.cli.run_memory_compact",
+      "label": "run_memory_compact.py",
+      "group": "core",
+      "file": "tonesoul/cli/run_memory_compact.py",
+      "lines": 83,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.cli.run_reliability_check",
+      "label": "run_reliability_check.py",
+      "group": "core",
+      "file": "tonesoul/cli/run_reliability_check.py",
+      "lines": 55,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.cli.run_seed_schema_check",
+      "label": "run_seed_schema_check.py",
+      "group": "core",
+      "file": "tonesoul/cli/run_seed_schema_check.py",
+      "lines": 4,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.cli.run_skill_gate",
+      "label": "run_skill_gate.py",
+      "group": "core",
+      "file": "tonesoul/cli/run_skill_gate.py",
+      "lines": 86,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.cli.run_skill_promoter",
+      "label": "run_skill_promoter.py",
+      "group": "core",
+      "file": "tonesoul/cli/run_skill_promoter.py",
+      "lines": 31,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.cli.run_tech_trace_capture",
+      "label": "run_tech_trace_capture.py",
+      "group": "core",
+      "file": "tonesoul/cli/run_tech_trace_capture.py",
+      "lines": 7,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.cli.run_tech_trace_normalize",
+      "label": "run_tech_trace_normalize.py",
+      "group": "core",
+      "file": "tonesoul/cli/run_tech_trace_normalize.py",
+      "lines": 7,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.cli.run_tech_trace_validate",
+      "label": "run_tech_trace_validate.py",
+      "group": "core",
+      "file": "tonesoul/cli/run_tech_trace_validate.py",
+      "lines": 4,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.cli.run_validate",
+      "label": "run_validate.py",
+      "group": "core",
+      "file": "tonesoul/cli/run_validate.py",
+      "lines": 38,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.cli.run_yss_gates",
+      "label": "run_yss_gates.py",
+      "group": "core",
+      "file": "tonesoul/cli/run_yss_gates.py",
+      "lines": 451,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.cli.run_yss_pipeline",
+      "label": "run_yss_pipeline.py",
+      "group": "core",
+      "file": "tonesoul/cli/run_yss_pipeline.py",
+      "lines": 234,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.cli.run_ystm_acceptance",
+      "label": "run_ystm_acceptance.py",
+      "group": "core",
+      "file": "tonesoul/cli/run_ystm_acceptance.py",
+      "lines": 20,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.cli.run_ystm_demo",
+      "label": "run_ystm_demo.py",
+      "group": "core",
+      "file": "tonesoul/cli/run_ystm_demo.py",
+      "lines": 90,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.cli.run_ystm_diff",
+      "label": "run_ystm_diff.py",
+      "group": "core",
+      "file": "tonesoul/cli/run_ystm_diff.py",
+      "lines": 74,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.cli.run_ystm_patch_lookup",
+      "label": "run_ystm_patch_lookup.py",
+      "group": "core",
+      "file": "tonesoul/cli/run_ystm_patch_lookup.py",
+      "lines": 81,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.cli.run_ystm_replay",
+      "label": "run_ystm_replay.py",
+      "group": "core",
+      "file": "tonesoul/cli/run_ystm_replay.py",
+      "lines": 75,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.cli.run_ystm_update",
+      "label": "run_ystm_update.py",
+      "group": "core",
+      "file": "tonesoul/cli/run_ystm_update.py",
+      "lines": 450,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.cli.run_yuhun_loop_wrapper",
+      "label": "run_yuhun_loop_wrapper.py",
+      "group": "core",
+      "file": "tonesoul/cli/run_yuhun_loop_wrapper.py",
+      "lines": 19,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.cli.run_yuhun_smoke",
+      "label": "run_yuhun_smoke.py",
+      "group": "core",
+      "file": "tonesoul/cli/run_yuhun_smoke.py",
+      "lines": 33,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.config",
+      "label": "config.py",
+      "group": "core",
+      "file": "tonesoul/config.py",
+      "lines": 76,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.constraint_stack",
+      "label": "constraint_stack.py",
+      "group": "core",
+      "file": "tonesoul/constraint_stack.py",
+      "lines": 149,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.context_compiler",
+      "label": "context_compiler.py",
+      "group": "core",
+      "file": "tonesoul/context_compiler.py",
+      "lines": 135,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.contract_observer",
+      "label": "contract_observer.py",
+      "group": "core",
+      "file": "tonesoul/contract_observer.py",
+      "lines": 448,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.corpus.consent",
+      "label": "consent.py",
+      "group": "core",
+      "file": "tonesoul/corpus/consent.py",
+      "lines": 237,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.corpus.pipeline",
+      "label": "pipeline.py",
+      "group": "core",
+      "file": "tonesoul/corpus/pipeline.py",
+      "lines": 222,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.corpus.storage",
+      "label": "storage.py",
+      "group": "core",
+      "file": "tonesoul/corpus/storage.py",
+      "lines": 370,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.council.base",
+      "label": "base.py",
+      "group": "council",
+      "file": "tonesoul/council/base.py",
+      "lines": 20,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.council.coherence",
+      "label": "coherence.py",
+      "group": "council",
+      "file": "tonesoul/council/coherence.py",
+      "lines": 85,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.council.council_cli",
+      "label": "council_cli.py",
+      "group": "council",
+      "file": "tonesoul/council/council_cli.py",
+      "lines": 172,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.council.evidence_detector",
+      "label": "evidence_detector.py",
+      "group": "council",
+      "file": "tonesoul/council/evidence_detector.py",
+      "lines": 268,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.council.evolution",
+      "label": "evolution.py",
+      "group": "council",
+      "file": "tonesoul/council/evolution.py",
+      "lines": 169,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.council.intent_reconstructor",
+      "label": "intent_reconstructor.py",
+      "group": "council",
+      "file": "tonesoul/council/intent_reconstructor.py",
+      "lines": 219,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.council.model_registry",
+      "label": "model_registry.py",
+      "group": "council",
+      "file": "tonesoul/council/model_registry.py",
+      "lines": 150,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.council.persona_audit",
+      "label": "persona_audit.py",
+      "group": "council",
+      "file": "tonesoul/council/persona_audit.py",
+      "lines": 128,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.council.perspective_factory",
+      "label": "perspective_factory.py",
+      "group": "council",
+      "file": "tonesoul/council/perspective_factory.py",
+      "lines": 799,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.council.perspectives.advocate",
+      "label": "advocate.py",
+      "group": "council",
+      "file": "tonesoul/council/perspectives/advocate.py",
+      "lines": 46,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.council.perspectives.analyst",
+      "label": "analyst.py",
+      "group": "council",
+      "file": "tonesoul/council/perspectives/analyst.py",
+      "lines": 132,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.council.perspectives.axiomatic_inference",
+      "label": "axiomatic_inference.py",
+      "group": "council",
+      "file": "tonesoul/council/perspectives/axiomatic_inference.py",
+      "lines": 70,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.council.perspectives.critic",
+      "label": "critic.py",
+      "group": "council",
+      "file": "tonesoul/council/perspectives/critic.py",
+      "lines": 68,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.council.perspectives.guardian",
+      "label": "guardian.py",
+      "group": "council",
+      "file": "tonesoul/council/perspectives/guardian.py",
+      "lines": 163,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.council.perspectives.semantic_analyst",
+      "label": "semantic_analyst.py",
+      "group": "council",
+      "file": "tonesoul/council/perspectives/semantic_analyst.py",
+      "lines": 92,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.council.pre_output_council",
+      "label": "pre_output_council.py",
+      "group": "council",
+      "file": "tonesoul/council/pre_output_council.py",
+      "lines": 147,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.council.runtime",
+      "label": "runtime.py",
+      "group": "council",
+      "file": "tonesoul/council/runtime.py",
+      "lines": 582,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.council.self_journal",
+      "label": "self_journal.py",
+      "group": "council",
+      "file": "tonesoul/council/self_journal.py",
+      "lines": 173,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.council.skill_parser",
+      "label": "skill_parser.py",
+      "group": "council",
+      "file": "tonesoul/council/skill_parser.py",
+      "lines": 185,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.council.summary_generator",
+      "label": "summary_generator.py",
+      "group": "council",
+      "file": "tonesoul/council/summary_generator.py",
+      "lines": 612,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.council.swarm_framework",
+      "label": "swarm_framework.py",
+      "group": "council",
+      "file": "tonesoul/council/swarm_framework.py",
+      "lines": 320,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.council.transcript",
+      "label": "transcript.py",
+      "group": "council",
+      "file": "tonesoul/council/transcript.py",
+      "lines": 365,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.council.types",
+      "label": "types.py",
+      "group": "council",
+      "file": "tonesoul/council/types.py",
+      "lines": 159,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.council.verdict",
+      "label": "verdict.py",
+      "group": "council",
+      "file": "tonesoul/council/verdict.py",
+      "lines": 125,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.council.vtp",
+      "label": "vtp.py",
+      "group": "council",
+      "file": "tonesoul/council/vtp.py",
+      "lines": 137,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.council_adapter",
+      "label": "council_adapter.py",
+      "group": "council",
+      "file": "tonesoul/council_adapter.py",
+      "lines": 45,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.council_capability",
+      "label": "council_capability.py",
+      "group": "council",
+      "file": "tonesoul/council_capability.py",
+      "lines": 314,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.dcs",
+      "label": "dcs.py",
+      "group": "core",
+      "file": "tonesoul/dcs.py",
+      "lines": 163,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.deliberation.engine",
+      "label": "engine.py",
+      "group": "core",
+      "file": "tonesoul/deliberation/engine.py",
+      "lines": 176,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.deliberation.gravity",
+      "label": "gravity.py",
+      "group": "core",
+      "file": "tonesoul/deliberation/gravity.py",
+      "lines": 413,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.deliberation.perspectives",
+      "label": "perspectives.py",
+      "group": "core",
+      "file": "tonesoul/deliberation/perspectives.py",
+      "lines": 364,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.deliberation.types",
+      "label": "types.py",
+      "group": "core",
+      "file": "tonesoul/deliberation/types.py",
+      "lines": 282,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.error_event",
+      "label": "error_event.py",
+      "group": "core",
+      "file": "tonesoul/error_event.py",
+      "lines": 215,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.escalation",
+      "label": "escalation.py",
+      "group": "core",
+      "file": "tonesoul/escalation.py",
+      "lines": 113,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.escape_valve",
+      "label": "escape_valve.py",
+      "group": "core",
+      "file": "tonesoul/escape_valve.py",
+      "lines": 157,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.etcl_lifecycle",
+      "label": "etcl_lifecycle.py",
+      "group": "core",
+      "file": "tonesoul/etcl_lifecycle.py",
+      "lines": 98,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.evidence_collector",
+      "label": "evidence_collector.py",
+      "group": "core",
+      "file": "tonesoul/evidence_collector.py",
+      "lines": 265,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.evolution.context_distiller",
+      "label": "context_distiller.py",
+      "group": "core",
+      "file": "tonesoul/evolution/context_distiller.py",
+      "lines": 697,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.evolution.corpus_builder",
+      "label": "corpus_builder.py",
+      "group": "core",
+      "file": "tonesoul/evolution/corpus_builder.py",
+      "lines": 370,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.evolution.corpus_schema",
+      "label": "corpus_schema.py",
+      "group": "core",
+      "file": "tonesoul/evolution/corpus_schema.py",
+      "lines": 48,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.frame_router",
+      "label": "frame_router.py",
+      "group": "core",
+      "file": "tonesoul/frame_router.py",
+      "lines": 226,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.gates.compute",
+      "label": "compute.py",
+      "group": "gates",
+      "file": "tonesoul/gates/compute.py",
+      "lines": 247,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.gateway.client",
+      "label": "client.py",
+      "group": "core",
+      "file": "tonesoul/gateway/client.py",
+      "lines": 97,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.gateway.session",
+      "label": "session.py",
+      "group": "core",
+      "file": "tonesoul/gateway/session.py",
+      "lines": 77,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.generate_patch",
+      "label": "generate_patch.py",
+      "group": "core",
+      "file": "tonesoul/generate_patch.py",
+      "lines": 67,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.generation_orch",
+      "label": "generation_orch.py",
+      "group": "core",
+      "file": "tonesoul/generation_orch.py",
+      "lines": 207,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.heartbeat",
+      "label": "heartbeat.py",
+      "group": "core",
+      "file": "tonesoul/heartbeat.py",
+      "lines": 224,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.intent_verification",
+      "label": "intent_verification.py",
+      "group": "core",
+      "file": "tonesoul/intent_verification.py",
+      "lines": 257,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.inventory",
+      "label": "inventory.py",
+      "group": "core",
+      "file": "tonesoul/inventory.py",
+      "lines": 76,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.issue_codes",
+      "label": "issue_codes.py",
+      "group": "core",
+      "file": "tonesoul/issue_codes.py",
+      "lines": 96,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.llm.gemini_client",
+      "label": "gemini_client.py",
+      "group": "core",
+      "file": "tonesoul/llm/gemini_client.py",
+      "lines": 105,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.llm.ollama_client",
+      "label": "ollama_client.py",
+      "group": "core",
+      "file": "tonesoul/llm/ollama_client.py",
+      "lines": 158,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.local_llm",
+      "label": "local_llm.py",
+      "group": "core",
+      "file": "tonesoul/local_llm.py",
+      "lines": 48,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.loop.config",
+      "label": "config.py",
+      "group": "core",
+      "file": "tonesoul/loop/config.py",
+      "lines": 64,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.loop.engine",
+      "label": "engine.py",
+      "group": "core",
+      "file": "tonesoul/loop/engine.py",
+      "lines": 271,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.loop.events",
+      "label": "events.py",
+      "group": "core",
+      "file": "tonesoul/loop/events.py",
+      "lines": 204,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.memory.adversarial",
+      "label": "adversarial.py",
+      "group": "memory",
+      "file": "tonesoul/memory/adversarial.py",
+      "lines": 114,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.memory.boot",
+      "label": "boot.py",
+      "group": "memory",
+      "file": "tonesoul/memory/boot.py",
+      "lines": 82,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.memory.consolidator",
+      "label": "consolidator.py",
+      "group": "memory",
+      "file": "tonesoul/memory/consolidator.py",
+      "lines": 292,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.memory.crystallizer",
+      "label": "crystallizer.py",
+      "group": "memory",
+      "file": "tonesoul/memory/crystallizer.py",
+      "lines": 276,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.memory.decay",
+      "label": "decay.py",
+      "group": "memory",
+      "file": "tonesoul/memory/decay.py",
+      "lines": 84,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.memory.handoff_ingester",
+      "label": "handoff_ingester.py",
+      "group": "memory",
+      "file": "tonesoul/memory/handoff_ingester.py",
+      "lines": 187,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.memory.hippocampus",
+      "label": "hippocampus.py",
+      "group": "memory",
+      "file": "tonesoul/memory/hippocampus.py",
+      "lines": 221,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.memory.openclaw.embeddings",
+      "label": "embeddings.py",
+      "group": "memory",
+      "file": "tonesoul/memory/openclaw/embeddings.py",
+      "lines": 68,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.memory.openclaw.hippocampus",
+      "label": "hippocampus.py",
+      "group": "memory",
+      "file": "tonesoul/memory/openclaw/hippocampus.py",
+      "lines": 641,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.memory.semantic_graph",
+      "label": "semantic_graph.py",
+      "group": "memory",
+      "file": "tonesoul/memory/semantic_graph.py",
+      "lines": 453,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.memory.soul_db",
+      "label": "soul_db.py",
+      "group": "memory",
+      "file": "tonesoul/memory/soul_db.py",
+      "lines": 1108,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.memory.stats",
+      "label": "stats.py",
+      "group": "memory",
+      "file": "tonesoul/memory/stats.py",
+      "lines": 99,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.memory.visual_chain",
+      "label": "visual_chain.py",
+      "group": "memory",
+      "file": "tonesoul/memory/visual_chain.py",
+      "lines": 551,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.memory_manager",
+      "label": "memory_manager.py",
+      "group": "memory",
+      "file": "tonesoul/memory_manager.py",
+      "lines": 652,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.mercy_objective",
+      "label": "mercy_objective.py",
+      "group": "core",
+      "file": "tonesoul/mercy_objective.py",
+      "lines": 104,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.nonlinear_predictor",
+      "label": "nonlinear_predictor.py",
+      "group": "core",
+      "file": "tonesoul/nonlinear_predictor.py",
+      "lines": 273,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.openclaw_auditor",
+      "label": "openclaw_auditor.py",
+      "group": "core",
+      "file": "tonesoul/openclaw_auditor.py",
+      "lines": 225,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.persistence",
+      "label": "persistence.py",
+      "group": "core",
+      "file": "tonesoul/persistence.py",
+      "lines": 234,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.persona_dimension",
+      "label": "persona_dimension.py",
+      "group": "core",
+      "file": "tonesoul/persona_dimension.py",
+      "lines": 447,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.persona_ledger_validator",
+      "label": "persona_ledger_validator.py",
+      "group": "core",
+      "file": "tonesoul/persona_ledger_validator.py",
+      "lines": 44,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.persona_registry_builder",
+      "label": "persona_registry_builder.py",
+      "group": "core",
+      "file": "tonesoul/persona_registry_builder.py",
+      "lines": 110,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.persona_registry_cleaner",
+      "label": "persona_registry_cleaner.py",
+      "group": "core",
+      "file": "tonesoul/persona_registry_cleaner.py",
+      "lines": 98,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.persona_registry_summary",
+      "label": "persona_registry_summary.py",
+      "group": "core",
+      "file": "tonesoul/persona_registry_summary.py",
+      "lines": 44,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.persona_trace_report",
+      "label": "persona_trace_report.py",
+      "group": "core",
+      "file": "tonesoul/persona_trace_report.py",
+      "lines": 149,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.pipeline_context",
+      "label": "pipeline_context.py",
+      "group": "core",
+      "file": "tonesoul/pipeline_context.py",
+      "lines": 80,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.poav",
+      "label": "poav.py",
+      "group": "core",
+      "file": "tonesoul/poav.py",
+      "lines": 101,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.quick_council",
+      "label": "quick_council.py",
+      "group": "core",
+      "file": "tonesoul/quick_council.py",
+      "lines": 244,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.reflection",
+      "label": "reflection.py",
+      "group": "core",
+      "file": "tonesoul/reflection.py",
+      "lines": 78,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.resonance",
+      "label": "resonance.py",
+      "group": "core",
+      "file": "tonesoul/resonance.py",
+      "lines": 105,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.role_council",
+      "label": "role_council.py",
+      "group": "core",
+      "file": "tonesoul/role_council.py",
+      "lines": 203,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.seed_schema_check",
+      "label": "seed_schema_check.py",
+      "group": "core",
+      "file": "tonesoul/seed_schema_check.py",
+      "lines": 155,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.self_test",
+      "label": "self_test.py",
+      "group": "core",
+      "file": "tonesoul/self_test.py",
+      "lines": 139,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.semantic.concept_store",
+      "label": "concept_store.py",
+      "group": "core",
+      "file": "tonesoul/semantic/concept_store.py",
+      "lines": 92,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.semantic.embedder",
+      "label": "embedder.py",
+      "group": "core",
+      "file": "tonesoul/semantic/embedder.py",
+      "lines": 80,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.semantic_control",
+      "label": "semantic_control.py",
+      "group": "core",
+      "file": "tonesoul/semantic_control.py",
+      "lines": 404,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.service_manager",
+      "label": "service_manager.py",
+      "group": "core",
+      "file": "tonesoul/service_manager.py",
+      "lines": 227,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.shared.async_queue",
+      "label": "async_queue.py",
+      "group": "core",
+      "file": "tonesoul/shared/async_queue.py",
+      "lines": 139,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.shared.errors",
+      "label": "errors.py",
+      "group": "core",
+      "file": "tonesoul/shared/errors.py",
+      "lines": 66,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.simulate_council",
+      "label": "simulate_council.py",
+      "group": "core",
+      "file": "tonesoul/simulate_council.py",
+      "lines": 19,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.skill_apply",
+      "label": "skill_apply.py",
+      "group": "core",
+      "file": "tonesoul/skill_apply.py",
+      "lines": 295,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.skill_gate",
+      "label": "skill_gate.py",
+      "group": "core",
+      "file": "tonesoul/skill_gate.py",
+      "lines": 301,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.skill_promoter",
+      "label": "skill_promoter.py",
+      "group": "core",
+      "file": "tonesoul/skill_promoter.py",
+      "lines": 375,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.supabase_persistence",
+      "label": "supabase_persistence.py",
+      "group": "core",
+      "file": "tonesoul/supabase_persistence.py",
+      "lines": 819,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.tech_trace.capture",
+      "label": "capture.py",
+      "group": "core",
+      "file": "tonesoul/tech_trace/capture.py",
+      "lines": 127,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.tech_trace.normalize",
+      "label": "normalize.py",
+      "group": "core",
+      "file": "tonesoul/tech_trace/normalize.py",
+      "lines": 291,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.tech_trace.validate",
+      "label": "validate.py",
+      "group": "core",
+      "file": "tonesoul/tech_trace/validate.py",
+      "lines": 142,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.tension_engine",
+      "label": "tension_engine.py",
+      "group": "core",
+      "file": "tonesoul/tension_engine.py",
+      "lines": 472,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.test_integration",
+      "label": "test_integration.py",
+      "group": "core",
+      "file": "tonesoul/test_integration.py",
+      "lines": 260,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.test_interception",
+      "label": "test_interception.py",
+      "group": "core",
+      "file": "tonesoul/test_interception.py",
+      "lines": 108,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.time_island",
+      "label": "time_island.py",
+      "group": "core",
+      "file": "tonesoul/time_island.py",
+      "lines": 422,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.tonebridge.analyzer",
+      "label": "analyzer.py",
+      "group": "core",
+      "file": "tonesoul/tonebridge/analyzer.py",
+      "lines": 321,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.tonebridge.commitment_extractor",
+      "label": "commitment_extractor.py",
+      "group": "core",
+      "file": "tonesoul/tonebridge/commitment_extractor.py",
+      "lines": 222,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.tonebridge.entropy_engine",
+      "label": "entropy_engine.py",
+      "group": "core",
+      "file": "tonesoul/tonebridge/entropy_engine.py",
+      "lines": 337,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.tonebridge.personas",
+      "label": "personas.py",
+      "group": "core",
+      "file": "tonesoul/tonebridge/personas.py",
+      "lines": 474,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.tonebridge.rupture_detector",
+      "label": "rupture_detector.py",
+      "group": "core",
+      "file": "tonesoul/tonebridge/rupture_detector.py",
+      "lines": 351,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.tonebridge.self_commit",
+      "label": "self_commit.py",
+      "group": "core",
+      "file": "tonesoul/tonebridge/self_commit.py",
+      "lines": 338,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.tonebridge.session_reporter",
+      "label": "session_reporter.py",
+      "group": "core",
+      "file": "tonesoul/tonebridge/session_reporter.py",
+      "lines": 404,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.tonebridge.trajectory",
+      "label": "trajectory.py",
+      "group": "core",
+      "file": "tonesoul/tonebridge/trajectory.py",
+      "lines": 302,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.tonebridge.types",
+      "label": "types.py",
+      "group": "core",
+      "file": "tonesoul/tonebridge/types.py",
+      "lines": 172,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.tonebridge.value_accumulator",
+      "label": "value_accumulator.py",
+      "group": "core",
+      "file": "tonesoul/tonebridge/value_accumulator.py",
+      "lines": 318,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.tonesoul_llm",
+      "label": "tonesoul_llm.py",
+      "group": "core",
+      "file": "tonesoul/tonesoul_llm.py",
+      "lines": 295,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.tsr_metrics",
+      "label": "tsr_metrics.py",
+      "group": "core",
+      "file": "tonesoul/tsr_metrics.py",
+      "lines": 290,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.unified_controller",
+      "label": "unified_controller.py",
+      "group": "core",
+      "file": "tonesoul/unified_controller.py",
+      "lines": 137,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.unified_core",
+      "label": "unified_core.py",
+      "group": "core",
+      "file": "tonesoul/unified_core.py",
+      "lines": 557,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.unified_pipeline",
+      "label": "unified_pipeline.py",
+      "group": "core",
+      "file": "tonesoul/unified_pipeline.py",
+      "lines": 1712,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.variance_compressor",
+      "label": "variance_compressor.py",
+      "group": "core",
+      "file": "tonesoul/variance_compressor.py",
+      "lines": 208,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.vow_system",
+      "label": "vow_system.py",
+      "group": "core",
+      "file": "tonesoul/vow_system.py",
+      "lines": 435,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.work_classifier",
+      "label": "work_classifier.py",
+      "group": "core",
+      "file": "tonesoul/work_classifier.py",
+      "lines": 191,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.yss_gates",
+      "label": "yss_gates.py",
+      "group": "core",
+      "file": "tonesoul/yss_gates.py",
+      "lines": 924,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.yss_pipeline",
+      "label": "yss_pipeline.py",
+      "group": "core",
+      "file": "tonesoul/yss_pipeline.py",
+      "lines": 1091,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.yss_unified_adapter",
+      "label": "yss_unified_adapter.py",
+      "group": "core",
+      "file": "tonesoul/yss_unified_adapter.py",
+      "lines": 228,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.ystm.acceptance",
+      "label": "acceptance.py",
+      "group": "core",
+      "file": "tonesoul/ystm/acceptance.py",
+      "lines": 146,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.ystm.audit",
+      "label": "audit.py",
+      "group": "core",
+      "file": "tonesoul/ystm/audit.py",
+      "lines": 55,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.ystm.demo",
+      "label": "demo.py",
+      "group": "core",
+      "file": "tonesoul/ystm/demo.py",
+      "lines": 400,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.ystm.diff",
+      "label": "diff.py",
+      "group": "core",
+      "file": "tonesoul/ystm/diff.py",
+      "lines": 196,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.ystm.energy",
+      "label": "energy.py",
+      "group": "core",
+      "file": "tonesoul/ystm/energy.py",
+      "lines": 40,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.ystm.governance",
+      "label": "governance.py",
+      "group": "core",
+      "file": "tonesoul/ystm/governance.py",
+      "lines": 174,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.ystm.ingest",
+      "label": "ingest.py",
+      "group": "core",
+      "file": "tonesoul/ystm/ingest.py",
+      "lines": 116,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.ystm.projection",
+      "label": "projection.py",
+      "group": "core",
+      "file": "tonesoul/ystm/projection.py",
+      "lines": 54,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.ystm.render",
+      "label": "render.py",
+      "group": "core",
+      "file": "tonesoul/ystm/render.py",
+      "lines": 504,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.ystm.representation",
+      "label": "representation.py",
+      "group": "core",
+      "file": "tonesoul/ystm/representation.py",
+      "lines": 176,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.ystm.schema",
+      "label": "schema.py",
+      "group": "core",
+      "file": "tonesoul/ystm/schema.py",
+      "lines": 160,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.ystm.storage",
+      "label": "storage.py",
+      "group": "core",
+      "file": "tonesoul/ystm/storage.py",
+      "lines": 187,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.ystm.terrain",
+      "label": "terrain.py",
+      "group": "core",
+      "file": "tonesoul/ystm/terrain.py",
+      "lines": 117,
+      "kind": "python_module"
+    },
+    {
+      "id": "tonesoul.ystm_demo",
+      "label": "ystm_demo.py",
+      "group": "core",
+      "file": "tonesoul/ystm_demo.py",
+      "lines": 5,
+      "kind": "python_module"
+    },
+    {
+      "id": "skill:cv_hardware_diagnostics",
+      "label": "cv_hardware_diagnostics",
+      "group": "skills",
+      "file": ".agent/skills/cv_hardware_diagnostics/SKILL.md",
+      "lines": 69,
+      "kind": "skill"
+    },
+    {
+      "id": "skill:local_llm",
+      "label": "local_llm",
+      "group": "skills",
+      "file": ".agent/skills/local_llm/SKILL.md",
+      "lines": 197,
+      "kind": "skill"
+    },
+    {
+      "id": "skill:qa_auditor",
+      "label": "qa_auditor",
+      "group": "skills",
+      "file": ".agent/skills/qa_auditor/SKILL.md",
+      "lines": 102,
+      "kind": "skill"
+    },
+    {
+      "id": "skill:tonesoul_governance",
+      "label": "tonesoul_governance",
+      "group": "skills",
+      "file": ".agent/skills/tonesoul_governance/SKILL.md",
+      "lines": 69,
+      "kind": "skill"
+    },
+    {
+      "id": "skill:tonesoul_philosophy",
+      "label": "tonesoul_philosophy",
+      "group": "skills",
+      "file": ".agent/skills/tonesoul_philosophy/SKILL.md",
+      "lines": 62,
+      "kind": "skill"
+    },
+    {
+      "id": "workflow:antigravity",
+      "label": "antigravity",
+      "group": "workflows",
+      "file": ".agent/workflows/antigravity.md",
+      "lines": 41,
+      "kind": "workflow"
+    },
+    {
+      "id": "workflow:ci-debug",
+      "label": "ci-debug",
+      "group": "workflows",
+      "file": ".agent/workflows/ci-debug.md",
+      "lines": 59,
+      "kind": "workflow"
+    },
+    {
+      "id": "workflow:fullstack-engineer",
+      "label": "fullstack-engineer",
+      "group": "workflows",
+      "file": ".agent/workflows/fullstack-engineer.md",
+      "lines": 64,
+      "kind": "workflow"
+    },
+    {
+      "id": "workflow:git-hygiene",
+      "label": "git-hygiene",
+      "group": "workflows",
+      "file": ".agent/workflows/git-hygiene.md",
+      "lines": 66,
+      "kind": "workflow"
+    },
+    {
+      "id": "workflow:vibe_mode",
+      "label": "vibe_mode",
+      "group": "workflows",
+      "file": ".agent/workflows/vibe_mode.md",
+      "lines": 35,
+      "kind": "workflow"
+    }
+  ],
+  "links": [
+    {
+      "source": "tonesoul._legacy.unified_core_compat",
+      "target": "tonesoul.unified_core",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.append_council_event",
+      "target": "tonesoul.council.runtime",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.audit_interface",
+      "target": "tonesoul.ystm.schema",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.constraint_stack",
+      "target": "tonesoul.action_set",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.constraint_stack",
+      "target": "tonesoul.mercy_objective",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.constraint_stack",
+      "target": "tonesoul.ystm.schema",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.context_compiler",
+      "target": "tonesoul.ystm.schema",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.corpus.pipeline",
+      "target": "tonesoul.corpus.consent",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.corpus.pipeline",
+      "target": "tonesoul.corpus.storage",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.base",
+      "target": "tonesoul.council.types",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.coherence",
+      "target": "tonesoul.council.types",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.council_cli",
+      "target": "tonesoul.council.model_registry",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.council_cli",
+      "target": "tonesoul.council.runtime",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.intent_reconstructor",
+      "target": "tonesoul.tsr_metrics",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.model_registry",
+      "target": "tonesoul.council.perspective_factory",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.persona_audit",
+      "target": "tonesoul.council.types",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.perspective_factory",
+      "target": "tonesoul.council.base",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.perspective_factory",
+      "target": "tonesoul.council.perspectives.advocate",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.perspective_factory",
+      "target": "tonesoul.council.perspectives.analyst",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.perspective_factory",
+      "target": "tonesoul.council.perspectives.axiomatic_inference",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.perspective_factory",
+      "target": "tonesoul.council.perspectives.critic",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.perspective_factory",
+      "target": "tonesoul.council.perspectives.guardian",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.perspective_factory",
+      "target": "tonesoul.council.perspectives.semantic_analyst",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.perspective_factory",
+      "target": "tonesoul.council.types",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.perspective_factory",
+      "target": "tonesoul.llm.gemini_client",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.perspectives.advocate",
+      "target": "tonesoul.council.base",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.perspectives.advocate",
+      "target": "tonesoul.council.types",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.perspectives.analyst",
+      "target": "tonesoul.council.base",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.perspectives.analyst",
+      "target": "tonesoul.council.evidence_detector",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.perspectives.analyst",
+      "target": "tonesoul.council.types",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.perspectives.axiomatic_inference",
+      "target": "tonesoul.council.base",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.perspectives.axiomatic_inference",
+      "target": "tonesoul.council.types",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.perspectives.critic",
+      "target": "tonesoul.council.base",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.perspectives.critic",
+      "target": "tonesoul.council.types",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.perspectives.guardian",
+      "target": "tonesoul.council.base",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.perspectives.guardian",
+      "target": "tonesoul.council.types",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.perspectives.semantic_analyst",
+      "target": "tonesoul.council.base",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.perspectives.semantic_analyst",
+      "target": "tonesoul.council.perspectives.analyst",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.perspectives.semantic_analyst",
+      "target": "tonesoul.council.types",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.perspectives.semantic_analyst",
+      "target": "tonesoul.semantic.concept_store",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.perspectives.semantic_analyst",
+      "target": "tonesoul.semantic.embedder",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.pre_output_council",
+      "target": "tonesoul.council.base",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.pre_output_council",
+      "target": "tonesoul.council.coherence",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.pre_output_council",
+      "target": "tonesoul.council.evolution",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.pre_output_council",
+      "target": "tonesoul.council.perspective_factory",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.pre_output_council",
+      "target": "tonesoul.council.self_journal",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.pre_output_council",
+      "target": "tonesoul.council.summary_generator",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.pre_output_council",
+      "target": "tonesoul.council.types",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.pre_output_council",
+      "target": "tonesoul.council.verdict",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.runtime",
+      "target": "tonesoul.benevolence",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.runtime",
+      "target": "tonesoul.council.base",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.runtime",
+      "target": "tonesoul.council.evolution",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.runtime",
+      "target": "tonesoul.council.intent_reconstructor",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.runtime",
+      "target": "tonesoul.council.model_registry",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.runtime",
+      "target": "tonesoul.council.persona_audit",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.runtime",
+      "target": "tonesoul.council.pre_output_council",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.runtime",
+      "target": "tonesoul.council.self_journal",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.runtime",
+      "target": "tonesoul.council.skill_parser",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.runtime",
+      "target": "tonesoul.council.types",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.runtime",
+      "target": "tonesoul.council.vtp",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.runtime",
+      "target": "tonesoul.escape_valve",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.runtime",
+      "target": "tonesoul.role_council",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.self_journal",
+      "target": "tonesoul.council.summary_generator",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.self_journal",
+      "target": "tonesoul.council.types",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.self_journal",
+      "target": "tonesoul.memory.soul_db",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.summary_generator",
+      "target": "tonesoul.council.types",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.transcript",
+      "target": "tonesoul.council.types",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.types",
+      "target": "tonesoul.council.persona_audit",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.verdict",
+      "target": "tonesoul.council.summary_generator",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.verdict",
+      "target": "tonesoul.council.types",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.council.vtp",
+      "target": "tonesoul.council.types",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.dcs",
+      "target": "tonesoul.issue_codes",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.dcs",
+      "target": "tonesoul.ystm.schema",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.deliberation.engine",
+      "target": "tonesoul.deliberation.gravity",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.deliberation.engine",
+      "target": "tonesoul.deliberation.perspectives",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.deliberation.engine",
+      "target": "tonesoul.deliberation.types",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.deliberation.gravity",
+      "target": "tonesoul.deliberation.types",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.deliberation.perspectives",
+      "target": "tonesoul.deliberation.types",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.escalation",
+      "target": "tonesoul.error_event",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.escalation",
+      "target": "tonesoul.issue_codes",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.etcl_lifecycle",
+      "target": "tonesoul.ystm.schema",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.evidence_collector",
+      "target": "tonesoul.ystm.schema",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.evolution.corpus_builder",
+      "target": "tonesoul.evolution.corpus_schema",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.frame_router",
+      "target": "tonesoul.role_council",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.frame_router",
+      "target": "tonesoul.ystm.schema",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.gateway.client",
+      "target": "tonesoul.gateway.session",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.generation_orch",
+      "target": "tonesoul.error_event",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.generation_orch",
+      "target": "tonesoul.ystm.schema",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.heartbeat",
+      "target": "tonesoul.openclaw_auditor",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.intent_verification",
+      "target": "tonesoul.ystm.schema",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.loop.engine",
+      "target": "tonesoul.loop.config",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.loop.engine",
+      "target": "tonesoul.loop.events",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.loop.engine",
+      "target": "tonesoul.shared.async_queue",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.loop.engine",
+      "target": "tonesoul.shared.errors",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.loop.events",
+      "target": "tonesoul.loop.config",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.memory.boot",
+      "target": "tonesoul.memory.crystallizer",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.memory.boot",
+      "target": "tonesoul.memory.handoff_ingester",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.memory.boot",
+      "target": "tonesoul.memory.soul_db",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.memory.consolidator",
+      "target": "tonesoul.memory.soul_db",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.memory.consolidator",
+      "target": "tonesoul.memory.stats",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.memory.decay",
+      "target": "tonesoul.memory.soul_db",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.memory.handoff_ingester",
+      "target": "tonesoul.memory.soul_db",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.memory.openclaw.hippocampus",
+      "target": "tonesoul.memory.openclaw.embeddings",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.memory.soul_db",
+      "target": "tonesoul.memory.decay",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.memory_manager",
+      "target": "tonesoul.ystm.schema",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.mercy_objective",
+      "target": "tonesoul.ystm.schema",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.openclaw_auditor",
+      "target": "tonesoul.benevolence",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.openclaw_auditor",
+      "target": "tonesoul.gateway.session",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.persona_dimension",
+      "target": "tonesoul.ystm.schema",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.reflection",
+      "target": "tonesoul.ystm.schema",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.role_council",
+      "target": "tonesoul.council.base",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.role_council",
+      "target": "tonesoul.council.runtime",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.role_council",
+      "target": "tonesoul.council.types",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.seed_schema_check",
+      "target": "tonesoul.issue_codes",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.semantic.concept_store",
+      "target": "tonesoul.semantic.embedder",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.simulate_council",
+      "target": "tonesoul.council_adapter",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.skill_apply",
+      "target": "tonesoul.ystm.schema",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.skill_gate",
+      "target": "tonesoul.ystm.schema",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.skill_promoter",
+      "target": "tonesoul.ystm.schema",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.tech_trace.capture",
+      "target": "tonesoul.ystm.schema",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.tech_trace.normalize",
+      "target": "tonesoul.tech_trace.capture",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.tech_trace.normalize",
+      "target": "tonesoul.ystm.schema",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.tech_trace.validate",
+      "target": "tonesoul.issue_codes",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.tension_engine",
+      "target": "tonesoul.nonlinear_predictor",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.tension_engine",
+      "target": "tonesoul.semantic_control",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.tension_engine",
+      "target": "tonesoul.variance_compressor",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.tension_engine",
+      "target": "tonesoul.work_classifier",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.tonebridge.analyzer",
+      "target": "tonesoul.tonebridge.types",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.tonebridge.rupture_detector",
+      "target": "tonesoul.tonebridge.self_commit",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.tonebridge.value_accumulator",
+      "target": "tonesoul.tonebridge.rupture_detector",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.tsr_metrics",
+      "target": "tonesoul.ystm.schema",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.unified_controller",
+      "target": "tonesoul.semantic_control",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.unified_core",
+      "target": "tonesoul._legacy.unified_core_compat",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.unified_core",
+      "target": "tonesoul.contract_observer",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.unified_core",
+      "target": "tonesoul.council_capability",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.unified_core",
+      "target": "tonesoul.persona_dimension",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.unified_core",
+      "target": "tonesoul.semantic_control",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.unified_core",
+      "target": "tonesoul.service_manager",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.unified_core",
+      "target": "tonesoul.vow_system",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.variance_compressor",
+      "target": "tonesoul.nonlinear_predictor",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.variance_compressor",
+      "target": "tonesoul.semantic_control",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.variance_compressor",
+      "target": "tonesoul.work_classifier",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.yss_gates",
+      "target": "tonesoul.dcs",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.yss_gates",
+      "target": "tonesoul.escalation",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.yss_gates",
+      "target": "tonesoul.frame_router",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.yss_gates",
+      "target": "tonesoul.issue_codes",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.yss_gates",
+      "target": "tonesoul.poav",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.yss_gates",
+      "target": "tonesoul.seed_schema_check",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.yss_gates",
+      "target": "tonesoul.tech_trace.validate",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.yss_gates",
+      "target": "tonesoul.ystm.schema",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.yss_pipeline",
+      "target": "tonesoul.action_set",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.yss_pipeline",
+      "target": "tonesoul.audit_interface",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.yss_pipeline",
+      "target": "tonesoul.constraint_stack",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.yss_pipeline",
+      "target": "tonesoul.context_compiler",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.yss_pipeline",
+      "target": "tonesoul.escalation",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.yss_pipeline",
+      "target": "tonesoul.evidence_collector",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.yss_pipeline",
+      "target": "tonesoul.frame_router",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.yss_pipeline",
+      "target": "tonesoul.generation_orch",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.yss_pipeline",
+      "target": "tonesoul.intent_verification",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.yss_pipeline",
+      "target": "tonesoul.memory_manager",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.yss_pipeline",
+      "target": "tonesoul.mercy_objective",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.yss_pipeline",
+      "target": "tonesoul.reflection",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.yss_pipeline",
+      "target": "tonesoul.skill_apply",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.yss_pipeline",
+      "target": "tonesoul.skill_gate",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.yss_pipeline",
+      "target": "tonesoul.skill_promoter",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.yss_pipeline",
+      "target": "tonesoul.tech_trace.capture",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.yss_pipeline",
+      "target": "tonesoul.tech_trace.normalize",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.yss_pipeline",
+      "target": "tonesoul.tsr_metrics",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.yss_pipeline",
+      "target": "tonesoul.yss_gates",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.yss_pipeline",
+      "target": "tonesoul.yss_unified_adapter",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.yss_pipeline",
+      "target": "tonesoul.ystm.demo",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.yss_pipeline",
+      "target": "tonesoul.ystm.energy",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.yss_pipeline",
+      "target": "tonesoul.ystm.ingest",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.yss_pipeline",
+      "target": "tonesoul.ystm.representation",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.yss_pipeline",
+      "target": "tonesoul.ystm.terrain",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.ystm.acceptance",
+      "target": "tonesoul.ystm.demo",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.ystm.acceptance",
+      "target": "tonesoul.ystm.energy",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.ystm.acceptance",
+      "target": "tonesoul.ystm.governance",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.ystm.acceptance",
+      "target": "tonesoul.ystm.ingest",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.ystm.acceptance",
+      "target": "tonesoul.ystm.projection",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.ystm.acceptance",
+      "target": "tonesoul.ystm.representation",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.ystm.acceptance",
+      "target": "tonesoul.ystm.schema",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.ystm.acceptance",
+      "target": "tonesoul.ystm.terrain",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.ystm.audit",
+      "target": "tonesoul.ystm.schema",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.ystm.demo",
+      "target": "tonesoul.ystm.audit",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.ystm.demo",
+      "target": "tonesoul.ystm.energy",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.ystm.demo",
+      "target": "tonesoul.ystm.ingest",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.ystm.demo",
+      "target": "tonesoul.ystm.projection",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.ystm.demo",
+      "target": "tonesoul.ystm.render",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.ystm.demo",
+      "target": "tonesoul.ystm.representation",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.ystm.demo",
+      "target": "tonesoul.ystm.schema",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.ystm.demo",
+      "target": "tonesoul.ystm.terrain",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.ystm.diff",
+      "target": "tonesoul.ystm.schema",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.ystm.energy",
+      "target": "tonesoul.ystm.schema",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.ystm.governance",
+      "target": "tonesoul.error_event",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.ystm.governance",
+      "target": "tonesoul.ystm.energy",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.ystm.governance",
+      "target": "tonesoul.ystm.representation",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.ystm.governance",
+      "target": "tonesoul.ystm.schema",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.ystm.projection",
+      "target": "tonesoul.ystm.schema",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.ystm.render",
+      "target": "tonesoul.ystm.schema",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.ystm.representation",
+      "target": "tonesoul.ystm.energy",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.ystm.representation",
+      "target": "tonesoul.ystm.schema",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.ystm.storage",
+      "target": "tonesoul.ystm.schema",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.ystm.terrain",
+      "target": "tonesoul.ystm.schema",
+      "type": "import"
+    },
+    {
+      "source": "tonesoul.ystm_demo",
+      "target": "tonesoul.ystm.demo",
+      "type": "import"
+    },
+    {
+      "source": "skill:local_llm",
+      "target": "tonesoul.persona_dimension",
+      "type": "mentions"
+    },
+    {
+      "source": "skill:tonesoul_governance",
+      "target": "tonesoul.gates.compute",
+      "type": "mentions"
+    },
+    {
+      "source": "skill:tonesoul_governance",
+      "target": "tonesoul.memory.crystallizer",
+      "type": "mentions"
+    },
+    {
+      "source": "skill:tonesoul_governance",
+      "target": "tonesoul.resonance",
+      "type": "mentions"
+    },
+    {
+      "source": "skill:tonesoul_governance",
+      "target": "tonesoul.tension_engine",
+      "type": "mentions"
+    },
+    {
+      "source": "skill:tonesoul_governance",
+      "target": "tonesoul.unified_pipeline",
+      "type": "mentions"
+    }
+  ]
+}

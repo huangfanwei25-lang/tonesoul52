@@ -18,7 +18,7 @@ from __future__ import annotations
 import json
 import os
 from collections import Counter
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -26,6 +26,34 @@ from memory.self_memory import load_recent_memory
 from tonesoul.memory.crystallizer import MemoryCrystallizer
 from tonesoul.memory.openclaw.embeddings import HashEmbedding, SentenceTransformerEmbedding
 from tonesoul.memory.openclaw.hippocampus import Hippocampus
+
+
+def _is_legacy_object_array_error(exc: Exception) -> bool:
+    text = str(exc).lower()
+    return "object arrays cannot be loaded when allow_pickle=false" in text
+
+
+def _sanitize_legacy_memory_base(db_path: str) -> List[str]:
+    """
+    Quarantine legacy index artifacts that cannot be loaded safely.
+
+    We explicitly avoid allow_pickle=True for security reasons.
+    Instead, we move suspicious files aside and let Hippocampus rebuild
+    a clean, empty index/meta pair.
+    """
+    base = Path(db_path)
+    index_file = base / "tonesoul_cognitive.index"
+    meta_file = base / "tonesoul_metadata.jsonl"
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    moved: List[str] = []
+
+    for target in (index_file, meta_file):
+        if not target.exists():
+            continue
+        backup = target.with_name(f"{target.name}.legacy_{stamp}.bak")
+        target.replace(backup)
+        moved.append(str(backup))
+    return moved
 
 
 def get_hippocampus(db_path: Optional[str] = None) -> Hippocampus:
@@ -43,7 +71,18 @@ def get_hippocampus(db_path: Optional[str] = None) -> Hippocampus:
         except Exception:
             embedder = HashEmbedding()
 
-    return Hippocampus(db_path=resolved_db_path, embedder=embedder)
+    try:
+        return Hippocampus(db_path=resolved_db_path, embedder=embedder)
+    except ValueError as exc:
+        if not _is_legacy_object_array_error(exc):
+            raise
+        moved = _sanitize_legacy_memory_base(resolved_db_path)
+        if moved:
+            print(
+                "[MemorySanitizer] Quarantined legacy memory artifacts: "
+                + ", ".join(moved)
+            )
+        return Hippocampus(db_path=resolved_db_path, embedder=embedder)
 
 
 # Consolidation tracking
@@ -213,6 +252,7 @@ class MemoryConsolidator:
             "collapse_warnings": Counter(),
             "autonomous_high_delta": 0,
             "low_tension_approvals": 0,
+            "resonance_convergences": 0,
         }
 
         for episode in episodes:
@@ -264,6 +304,20 @@ class MemoryConsolidator:
                     tension_value = None
                 if tension_value is not None and tension_value <= 0.35:
                     patterns["low_tension_approvals"] += 1
+
+            dispatch_trace = episode.get("dispatch_trace")
+            if not isinstance(dispatch_trace, dict):
+                if isinstance(ctx, dict):
+                    dispatch_trace = ctx.get("dispatch_trace")
+                if not isinstance(dispatch_trace, dict) and isinstance(episode.get("transcript"), dict):
+                    transcript = episode.get("transcript") or {}
+                    dispatch_trace = transcript.get("dispatch")
+            if isinstance(dispatch_trace, dict):
+                repair = dispatch_trace.get("repair")
+                if isinstance(repair, dict):
+                    resonance_class = str(repair.get("resonance_class") or "").strip().lower()
+                    if resonance_class in {"resonance", "deep_resonance"}:
+                        patterns["resonance_convergences"] += 1
 
             # Time patterns
             timestamp = episode.get("timestamp", "")

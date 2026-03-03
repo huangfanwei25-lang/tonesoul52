@@ -7,6 +7,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -68,6 +69,8 @@ TENSION_KEYS = {
     "total_tension",
     "semantic_delta",
 }
+
+PREDICTION_TRENDS = {"stable", "converging", "diverging", "chaotic"}
 
 CONFLICT_VERDICTS = {"block", "declare_stance", "revise"}
 RESOLVED_STATUS = {"resolved", "done", "closed"}
@@ -274,6 +277,58 @@ def _collect_tension_values(node: Any) -> list[float]:
     return values
 
 
+def _collect_prediction_trends(node: Any) -> list[str]:
+    trends: list[str] = []
+    queue: list[Any] = [node]
+    while queue:
+        current = queue.pop()
+        if isinstance(current, dict):
+            for key, value in current.items():
+                lowered = str(key).strip().lower()
+                if isinstance(value, (dict, list)):
+                    queue.append(value)
+                if lowered == "prediction" and isinstance(value, dict):
+                    trend = value.get("trend")
+                    if isinstance(trend, str):
+                        normalized = trend.strip().lower()
+                        if normalized in PREDICTION_TRENDS:
+                            trends.append(normalized)
+                if lowered == "prediction_trend" and isinstance(value, str):
+                    normalized = value.strip().lower()
+                    if normalized in PREDICTION_TRENDS:
+                        trends.append(normalized)
+        elif isinstance(current, list):
+            for value in current:
+                if isinstance(value, (dict, list)):
+                    queue.append(value)
+    return trends
+
+
+def _collect_compression_ratios(node: Any) -> list[float]:
+    ratios: list[float] = []
+    queue: list[Any] = [node]
+    while queue:
+        current = queue.pop()
+        if isinstance(current, dict):
+            for key, value in current.items():
+                lowered = str(key).strip().lower()
+                if isinstance(value, (dict, list)):
+                    queue.append(value)
+                if lowered == "compression_ratio":
+                    ratio = _bounded_float(value)
+                    if ratio is not None:
+                        ratios.append(ratio)
+                if lowered == "compression" and isinstance(value, dict):
+                    ratio = _bounded_float(value.get("compression_ratio"))
+                    if ratio is not None:
+                        ratios.append(ratio)
+        elif isinstance(current, list):
+            for value in current:
+                if isinstance(value, (dict, list)):
+                    queue.append(value)
+    return ratios
+
+
 def _contains_marker(texts: list[str], markers: tuple[str, ...]) -> bool:
     if not texts:
         return False
@@ -334,6 +389,12 @@ def _build_empty_payload(
             "choice_event_count": 0,
             "tension_event_count": 0,
             "tension_value_count": 0,
+            "prediction_event_count": 0,
+            "prediction_trend_counts": {},
+            "compression_event_count": 0,
+            "low_compression_event_count": 0,
+            "average_compression_ratio": None,
+            "min_compression_ratio": None,
             "tension_threshold_effective": round(tension_threshold, 3),
             "average_tension": None,
             "max_tension": None,
@@ -345,6 +406,8 @@ def _build_empty_payload(
             "conflict_event_rate": 0.0,
             "choice_event_rate": 0.0,
             "tension_event_rate": 0.0,
+            "predictive_instability_rate": 0.0,
+            "low_compression_rate": 0.0,
             "unresolved_topic_rate": 0.0,
             "identity_choice_index": 0.0,
         },
@@ -396,6 +459,8 @@ def build_report(
     tension_event_count = 0
     tension_values: list[float] = []
     entry_tension_peaks: list[float] = []
+    prediction_trends: list[str] = []
+    compression_ratios: list[float] = []
     topic_statuses: dict[str, set[str]] = {}
     friction_points: list[dict[str, Any]] = []
     seen_friction: set[str] = set()
@@ -434,6 +499,8 @@ def build_report(
         )
 
         entry_tensions = _collect_tension_values(entry)
+        prediction_trends.extend(_collect_prediction_trends(entry))
+        compression_ratios.extend(_collect_compression_ratios(entry))
         if entry_tensions:
             tension_values.extend(entry_tensions)
             entry_tension_peaks.append(max(entry_tensions))
@@ -473,6 +540,8 @@ def build_report(
             }
         )
         entry_tensions = _collect_tension_values(entry)
+        prediction_trends.extend(_collect_prediction_trends(entry))
+        compression_ratios.extend(_collect_compression_ratios(entry))
         if entry_tensions:
             tension_values.extend(entry_tensions)
             entry_tension_peaks.append(max(entry_tensions))
@@ -518,11 +587,25 @@ def build_report(
         round(sum(tension_values) / len(tension_values), 4) if tension_values else None
     )
     max_tension = round(max(tension_values), 4) if tension_values else None
+    prediction_counts = dict(Counter(prediction_trends))
+    compression_event_count = len(compression_ratios)
+    low_compression_count = sum(1 for ratio in compression_ratios if ratio < 0.8)
+    average_compression = (
+        round(sum(compression_ratios) / compression_event_count, 4)
+        if compression_event_count > 0
+        else None
+    )
+    min_compression = round(min(compression_ratios), 4) if compression_ratios else None
 
     reflection_rate = _rate(reflection_event_count, combined_entry_count)
     conflict_rate = _rate(conflict_event_count, combined_entry_count)
     choice_rate = _rate(choice_event_count, combined_entry_count)
     tension_rate = _rate(tension_event_count, combined_entry_count)
+    predictive_instability_rate = _rate(
+        prediction_counts.get("diverging", 0) + prediction_counts.get("chaotic", 0),
+        len(prediction_trends),
+    )
+    low_compression_rate = _rate(low_compression_count, compression_event_count)
     unresolved_topic_rate = _rate(len(unresolved_topics), len(topic_statuses))
     identity_choice_index = round(
         min(1.0, 0.45 * choice_rate + 0.35 * conflict_rate + 0.20 * tension_rate),
@@ -551,6 +634,12 @@ def build_report(
             "choice_event_count": choice_event_count,
             "tension_event_count": tension_event_count,
             "tension_value_count": len(tension_values),
+            "prediction_event_count": len(prediction_trends),
+            "prediction_trend_counts": prediction_counts,
+            "compression_event_count": compression_event_count,
+            "low_compression_event_count": low_compression_count,
+            "average_compression_ratio": average_compression,
+            "min_compression_ratio": min_compression,
             "tension_threshold_effective": round(effective_tension_threshold, 4),
             "average_tension": average_tension,
             "max_tension": max_tension,
@@ -562,6 +651,8 @@ def build_report(
             "conflict_event_rate": conflict_rate,
             "choice_event_rate": choice_rate,
             "tension_event_rate": tension_rate,
+            "predictive_instability_rate": predictive_instability_rate,
+            "low_compression_rate": low_compression_rate,
             "unresolved_topic_rate": unresolved_topic_rate,
             "identity_choice_index": identity_choice_index,
         },
@@ -596,6 +687,12 @@ def _render_markdown(payload: dict[str, Any]) -> str:
         f"- tension_event_count: {metrics.get('tension_event_count', 0)}",
         f"- average_tension: {metrics.get('average_tension')}",
         f"- max_tension: {metrics.get('max_tension')}",
+        f"- prediction_event_count: {metrics.get('prediction_event_count', 0)}",
+        f"- prediction_trend_counts: {metrics.get('prediction_trend_counts', {})}",
+        f"- compression_event_count: {metrics.get('compression_event_count', 0)}",
+        f"- low_compression_event_count: {metrics.get('low_compression_event_count', 0)}",
+        f"- average_compression_ratio: {metrics.get('average_compression_ratio')}",
+        f"- min_compression_ratio: {metrics.get('min_compression_ratio')}",
         f"- unresolved_topic_count: {metrics.get('unresolved_topic_count', 0)}",
         "",
         "## Quality Signals",
@@ -603,6 +700,8 @@ def _render_markdown(payload: dict[str, Any]) -> str:
         f"- conflict_event_rate: {quality.get('conflict_event_rate', 0.0)}",
         f"- choice_event_rate: {quality.get('choice_event_rate', 0.0)}",
         f"- tension_event_rate: {quality.get('tension_event_rate', 0.0)}",
+        f"- predictive_instability_rate: {quality.get('predictive_instability_rate', 0.0)}",
+        f"- low_compression_rate: {quality.get('low_compression_rate', 0.0)}",
         f"- unresolved_topic_rate: {quality.get('unresolved_topic_rate', 0.0)}",
         f"- identity_choice_index: {quality.get('identity_choice_index', 0.0)}",
     ]

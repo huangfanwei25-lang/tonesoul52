@@ -8,6 +8,7 @@ import argparse
 import csv
 import json
 import sys
+from collections import Counter
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Tuple
 
@@ -81,12 +82,91 @@ def _box_line(text: str, width: int = 55) -> str:
     return f"| {clipped.ljust(width - 4)} |"
 
 
+def _read_journal_records(path: Path) -> List[Dict[str, object]]:
+    if not path.exists() or not path.is_file():
+        return []
+    rows: List[Dict[str, object]] = []
+    with path.open("r", encoding="utf-8", errors="replace") as handle:
+        for raw in handle:
+            line = raw.strip()
+            if not line:
+                continue
+            try:
+                payload = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            if not isinstance(payload, dict):
+                continue
+            inner = payload.get("payload")
+            if isinstance(inner, dict):
+                rows.append(inner)
+            else:
+                rows.append(payload)
+    return rows
+
+
+def _extract_repair(entry: Dict[str, object]) -> Optional[Dict[str, object]]:
+    dispatch_trace = entry.get("dispatch_trace")
+    if isinstance(dispatch_trace, dict):
+        repair = dispatch_trace.get("repair")
+        if isinstance(repair, dict):
+            return repair
+
+    context = entry.get("context")
+    if isinstance(context, dict):
+        dispatch_trace = context.get("dispatch_trace")
+        if isinstance(dispatch_trace, dict):
+            repair = dispatch_trace.get("repair")
+            if isinstance(repair, dict):
+                return repair
+
+    transcript = entry.get("transcript")
+    if isinstance(transcript, dict):
+        dispatch_trace = transcript.get("dispatch")
+        if isinstance(dispatch_trace, dict):
+            repair = dispatch_trace.get("repair")
+            if isinstance(repair, dict):
+                return repair
+
+    return None
+
+
+def _compute_resonance_stats(journal_path: Path) -> Dict[str, int]:
+    repair_count = 0
+    resonance_convergences = 0
+    deep_resonance = 0
+    flow = 0
+    classes = Counter()
+
+    for entry in _read_journal_records(journal_path):
+        repair = _extract_repair(entry)
+        if not isinstance(repair, dict):
+            continue
+        repair_count += 1
+        resonance_class = str(repair.get("resonance_class") or "").strip().lower()
+        if not resonance_class:
+            continue
+        classes[resonance_class] += 1
+
+    resonance_convergences = classes.get("resonance", 0) + classes.get("deep_resonance", 0)
+    deep_resonance = classes.get("deep_resonance", 0)
+    flow = classes.get("flow", 0)
+    return {
+        "repair_events_logged": int(repair_count),
+        "resonance_convergences": int(resonance_convergences),
+        "deep_resonance": int(deep_resonance),
+        "flow": int(flow),
+    }
+
+
 def _render_dashboard(work_category: WorkCategory) -> str:
     profile = get_profile(work_category)
     crystals = MemoryCrystallizer().top_crystals(n=5)
-    journal_count = _count_lines(Path("memory/self_journal.jsonl"))
+    journal_path = Path("memory/self_journal.jsonl")
+    journal_count = _count_lines(journal_path)
     handoff_count = _count_files(Path("memory/handoff"))
     crystals_count = len(crystals)
+    resonance_stats = _compute_resonance_stats(journal_path)
 
     calibration_rows = _load_calibration_rows(Path("docs/status/rfc013_calibration.csv"))
     gamma_min, gamma_max = _gamma_range(calibration_rows)
@@ -124,6 +204,15 @@ def _render_dashboard(work_category: WorkCategory) -> str:
     lines.append(_box_line(f"  journal: {journal_count:,} entries"))
     lines.append(_box_line(f"  handoffs: {handoff_count:,} files"))
     lines.append(_box_line(f"  crystals: {crystals_count} active rules"))
+    lines.append(_box_line("Resonance Stats:"))
+    lines.append(
+        _box_line(f"  repair events logged: {resonance_stats['repair_events_logged']:,}")
+    )
+    lines.append(
+        _box_line(f"  resonance convergences: {resonance_stats['resonance_convergences']:,}")
+    )
+    lines.append(_box_line(f"  deep resonance: {resonance_stats['deep_resonance']:,}"))
+    lines.append(_box_line(f"  flow (sycophantic): {resonance_stats['flow']:,}"))
     lines.append(_box_line("Calibration Matrix:"))
     if gamma_min is not None and gamma_max is not None:
         lines.append(_box_line(f"  current gamma_eff range: [{gamma_min:.2f}, {gamma_max:.2f}]"))

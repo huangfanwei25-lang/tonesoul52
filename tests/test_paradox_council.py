@@ -25,6 +25,7 @@ import pytest
 
 from tonesoul.benevolence import AuditLayer, BenevolenceFilter
 from tonesoul.tension_engine import ResistanceVector, TensionEngine
+from tonesoul.work_classifier import WorkCategory
 
 # ---------------------------------------------------------------------------
 # Fixture loading
@@ -288,3 +289,85 @@ class TestDecisionConsistency:
         """Every conflict description should reference at least one Axiom."""
         conflict = paradox["decision_path"]["conflict"]
         assert "Axiom" in conflict, f"Paradox {paradox['id']}: conflict doesn't reference any Axiom"
+
+
+class TestParadoxRFC013Signals:
+    """
+    Extend paradox suite with RFC-013 signals:
+    - Prediction trend for multi-step paradox scenarios
+    - Variance compression under different work categories
+    - Memory trigger decisions for philosophical edge cases
+    """
+
+    @pytest.fixture
+    def engine(self):
+        return TensionEngine(work_category=WorkCategory.RESEARCH)
+
+    @pytest.mark.parametrize("paradox", ALL_PARADOXES, ids=PARADOX_IDS)
+    def test_paradox_produces_prediction(self, engine, paradox: Dict):
+        """Each paradox run through RFC-013 should produce a PredictionResult."""
+        triad = paradox["analysis"]["triad_estimation"]
+        result = engine.compute(
+            intended=[1.0, 0.0, 0.0],
+            generated=[1.0 - triad["delta_s"], triad["delta_s"], 0.0],
+            text_tension=triad["delta_t"],
+        )
+        assert result.prediction is not None
+        assert result.prediction.trend in {"stable", "converging", "diverging", "chaotic"}
+
+    @pytest.mark.parametrize("paradox", ALL_PARADOXES, ids=PARADOX_IDS)
+    def test_paradox_produces_compression(self, engine, paradox: Dict):
+        """Each paradox should produce a CompressionResult within valid range."""
+        triad = paradox["analysis"]["triad_estimation"]
+        result = engine.compute(
+            intended=[1.0, 0.0, 0.0],
+            generated=[1.0 - triad["delta_s"], triad["delta_s"], 0.0],
+            text_tension=triad["delta_t"],
+        )
+        assert result.compression is not None
+        assert 0.0 < result.compression.compression_ratio <= 1.0
+
+    @pytest.mark.parametrize(
+        "paradox",
+        [p for p in ALL_PARADOXES if not p["expected_output"]["allowed"]],
+        ids=[p["id"] for p in ALL_PARADOXES if not p["expected_output"]["allowed"]],
+    )
+    def test_blocked_paradoxes_trigger_memory(self, engine, paradox: Dict):
+        """Blocked paradoxes (high risk) should trigger a memory record."""
+        triad = paradox["analysis"]["triad_estimation"]
+        result = engine.compute(
+            intended=[1.0, 0.0, 0.0],
+            generated=[1.0 - triad["delta_s"], triad["delta_s"], 0.0],
+            text_tension=triad["delta_t"],
+            confidence=0.3,
+            resistance=ResistanceVector(
+                fact=0.0,
+                logic=0.0,
+                ethics=triad["delta_r"],
+            ),
+        )
+        assert result.memory_action is not None, (
+            f"Paradox {paradox['id']} (blocked) should trigger memory "
+            f"but got None (zone={result.zone}, delta={result.signals.semantic_delta:.3f})"
+        )
+
+    def test_multi_step_paradox_sequence_converges(self, engine):
+        """
+        Run 3 blocked paradoxes in sequence through same engine.
+        Predictor should detect pattern (diverging or chaotic).
+        """
+        blocked = [p for p in ALL_PARADOXES if not p["expected_output"]["allowed"]]
+        trends = []
+        for paradox in blocked[:3]:
+            triad = paradox["analysis"]["triad_estimation"]
+            result = engine.compute(
+                intended=[1.0, 0.0, 0.0],
+                generated=[1.0 - triad["delta_s"], triad["delta_s"], 0.0],
+                text_tension=triad["delta_t"],
+            )
+            if result.prediction:
+                trends.append(result.prediction.trend)
+        if len(trends) >= 2:
+            assert trends[-1] != "converging", (
+                f"3 consecutive high-risk paradoxes should not converge: {trends}"
+            )

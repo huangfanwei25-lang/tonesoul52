@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-02-28T04:01:33Z",
+  "generated_at": "2026-03-02T04:25:53Z",
   "overall_ok": true,
   "inputs": {
     "journal_path": "C:/Users/user/Desktop/倉庫/memory/self_journal.jsonl",
@@ -9,16 +9,22 @@
     "tension_threshold_mode": "adaptive_p85"
   },
   "metrics": {
-    "combined_entry_count": 10324,
-    "journal_entry_count": 10060,
+    "combined_entry_count": 11107,
+    "journal_entry_count": 10843,
     "discussion_entry_count": 264,
     "journal_invalid_json_line_count": 0,
     "discussion_invalid_json_line_count": 0,
-    "reflection_event_count": 10054,
-    "conflict_event_count": 10120,
-    "choice_event_count": 10073,
+    "reflection_event_count": 10833,
+    "conflict_event_count": 10899,
+    "choice_event_count": 10852,
     "tension_event_count": 10,
     "tension_value_count": 96,
+    "prediction_event_count": 0,
+    "prediction_trend_counts": {},
+    "compression_event_count": 0,
+    "low_compression_event_count": 0,
+    "average_compression_ratio": null,
+    "min_compression_ratio": null,
     "tension_threshold_effective": 0.25,
     "average_tension": 0.1185,
     "max_tension": 0.65,
@@ -26,12 +32,14 @@
     "unresolved_topic_count": 7
   },
   "quality_signals": {
-    "reflection_event_rate": 0.9738,
-    "conflict_event_rate": 0.9802,
-    "choice_event_rate": 0.9757,
-    "tension_event_rate": 0.001,
+    "reflection_event_rate": 0.9753,
+    "conflict_event_rate": 0.9813,
+    "choice_event_rate": 0.977,
+    "tension_event_rate": 0.0009,
+    "predictive_instability_rate": 0.0,
+    "low_compression_rate": 0.0,
     "unresolved_topic_rate": 0.0374,
-    "identity_choice_index": 0.7823
+    "identity_choice_index": 0.7833
   },
   "friction_points": [
     {

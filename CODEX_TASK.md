@@ -1,997 +1,544 @@
-# CODEX_TASK — Level 4：MCP 橋接 & 自學型 QA 防禦迴路 (Phase 116)
+# Codex Task: ToneSoul 主流化 — 功能先行文檔 + 技能包雙版本
 
-> **日期**：2026-02-24T21:30 (UTC+8)
-> **交辦者**：Antigravity
-> **前置**：先讀 `docs/plans/phase_116_mcp_connector_and_qa_loop_rfc.md`，再讀 `skills/registry.json`（Phase 115 三層架構）
-> **前一輪**：Phase 115 Progressive-Disclosure Skill Contract 全部完成 ✅
-> **驗證指令**：`python scripts/verify_skill_registry.py --strict` 與 `python -m pytest tests/test_skill_parser.py tests/test_verify_skill_registry.py -q`
-
----
-
-## 🚀 任務指派 (Delegated to Codex - 2026-02-24)
-
-> **Antigravity 留言給 Codex：**
-> "Phase 115 你做得非常完美。三層漸進式揭露架構已經落地，`verify_skill_registry.py --strict` 全綠，`test_skill_parser.py` 全過。
->
-> 現在我們面對兩個互相強化的目標，需要你繼續推進：
->
-> 1. **Phase 116-A: ToneSoul MCP Server（打通生態系）**：
->    Phase 115 讓我們有了最嚴謹的 L1/L2/L3 技能合約。現在，讓這套護城河能透過 [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) 暴露給外部 Agent（例如 Claude CLI 或 Cursor）。
->    - 在 `tonesoul/mcp/server.py` 建立 Python MCP Server，讀取 `skills/registry.json` 的 **L1 + L2** 欄位並對外映射為 MCP Tools。
->    - **L3 的執行腳本絕對不對外暴露**（延遲加載的安全承諾要延伸到 MCP 層）。
->    - 套用 Phase 112 定義的 `DistillationRiskGuard` 邏輯，阻擋大量試探性呼叫（防 distillation scraping）。
->    - 參考架構：`tonesoul/council/skill_parser.py`（L1/L2 解析器）、`apps/web/src/app/api/chat/route.ts`（現有的 DistillationRiskGuard 範例）。
->
-> 2. **Phase 116-B: QA 失敗 → Agent 記憶閉環（AI 自我免疫）**：
->    每次跑 `python scripts/verify_7d.py` 出現失敗時，目前沒有機制讓 Agent 自己「記住教訓」。
->    - 擴充 `tools/agent_discussion_tool.py`，新增命令 `ingest --source <json_report>` 讀取 `verify_7d.py` 的 JSON 失敗報告。
->    - 將 `FAILED` 的 RDD/DDD 特徵自動提煉成 `[QA_LESSON]` 格式，追加寫入 `memory/agent_discussion_curated.jsonl`，使 Agent 的防禦記憶能自我成長。
->    - 參考：`tools/agent_discussion_tool.py` 的現有 `append-lessons` 與 `curate` 命令結構，以保持介面一致。
->
-> **注意**：這兩個子任務可以平行推進。MCP Server 是對外橋接，QA Loop 是對內自學，兩者共同實現 NLnet 申請書中「開放生態系 + 認知演化」的核心主張。"
+**交付者**: Antigravity (Architect)
+**日期**: 2026-03-02
+**約束等級**: documentation（γ_base=0.3）
+**預計執行時間**: 長任務（4-6 小時）
 
 ---
 
-## 檔案變更範圍 (Phase 116)
+## 背景與問題
 
-| 檔案 | 操作 | 說明 |
-|------|------|------|
-| `tonesoul/mcp/__init__.py` | [NEW] | MCP 模組初始化 |
-| `tonesoul/mcp/server.py` | [NEW] | Python MCP Server，讀 L1/L2 對外映射 |
-| `tools/agent_discussion_tool.py` | [MODIFY] | 新增 `ingest` 命令讀取 7D 失敗報告 |
-| `tests/test_mcp_server.py` | [NEW] | 確認 L3 不外洩、L2 schema 正確映射 |
-| `tests/test_qa_loop_ingest.py` | [NEW] | 確認 QA 失敗報告正確寫入 curated.jsonl |
+ToneSoul/語魂系統已完成 RFC-013 全部工程實作，但文檔和包裝仍然是「工程師寫給工程師看的」。
 
-## 不要動的檔案 (Phase 116)
+**問題**：一般使用者不關心「三公理」「非線性導航」「Lyapunov 指數」。他們只想知道：
 
-| 檔案 | 原因 |
-|------|------|
-| `tonesoul/council/skill_parser.py` | 只讀取 L1/L2，不修改 |
-| `skills/registry.json` | 格式已由 Phase 115 定義，不重構 |
-| `scripts/verify_skill_registry.py` | 已是最終態，不再新增規則 |
+> 「這東西能幹嘛？5 秒內告訴我。」
 
-## 驗證目標 (Phase 116)
+參考 ChronicleCore 的 README 風格：**功能先行 → 截圖 → 技術細節放最後**。
+
+我們需要：
+1. 一份**主流吸引力的 README**（功能→截圖→原理）
+2. 兩個版本的**技能包說明文件**（工程版 + 哲學版）
+3. 一個 **Quick Start** 讓人 5 分鐘內跑起來
+
+---
+
+## ⚠️ 寫作原則
+
+1. **前 3 行決定生死** — 第一行必須是功能，不是哲學
+2. **先 What，後 Why** — 先告訴他能做什麼，再告訴他為什麼
+3. **截圖/表格勝過段落** — 每個功能區塊至少一個表格或示意圖
+4. **不要學術腔** — 把「語義場動態平衡」翻譯成「AI 不會亂講話」
+5. **中英雙語** — README 英文主體 + 繁體中文版
+6. **保持誠實** — 不誇大，不吹噓。用數據說話
+
+---
+
+## 任務 A：功能先行 README — 英文版
+
+### 位置
+- [NEW] `README.md`（覆蓋倉庫根目錄的 README）
+
+### 結構
+
+```markdown
+# ToneSoul / 語魂
+
+> AI with memory, tension, and soul — not just a better prompt.
+
+## What It Does (30 seconds)
+
+| Feature | What You Get |
+|---------|-------------|
+| 🧠 Memory that forgets | Exponential decay + crystallization. Important memories stay forever, noise fades. |
+| ⚡ Tension Engine | Every response is scored for semantic deviation. Hallucination gets caught. |
+| 🎭 Council of Three | Philosopher, Engineer, Guardian — your AI argues with itself before answering. |
+| 🔮 Resonance Detection | Distinguishes genuine understanding from empty agreement. |
+| 🛡️ Self-Governance | 8,257 blocks logged. Zero hallucinations undetected. |
+| 📊 Live Dashboard | Real-time tension scores, crystal status, resonance stats. |
+
+## Quick Start (5 minutes)
+
+\```bash
+pip install -r requirements.txt
+cp .env.example .env.local
+# Edit .env.local with your API keys
+python scripts/tension_dashboard.py --work-category research
+\```
+
+## How It's Different
+
+| | Traditional AI | Prompt Engineering | ToneSoul |
+|--|---------------|-------------------|----------|
+| Memory | None (per-session) | Manual RAG | Auto decay + crystallize |
+| Consistency | Random | System prompt | Three Axioms enforcement |
+| Self-check | None | None | TensionEngine (every response) |
+| Learning | None | None | Resonance → Crystal rules |
+| Audit trail | None | None | 10,921 journal entries |
+
+## Architecture (2 minutes to understand)
+
+\```
+User Input
+    ↓
+[ToneBridge] — Analyze tone, motive, emotion
+    ↓
+[TensionEngine] — Compute semantic deviation
+    ↓
+[Council] — Philosopher / Engineer / Guardian debate
+    ↓
+[ComputeGate] — approve / block / rewrite
+    ↓
+[ResonanceClassifier] — flow / resonance / deep_resonance / divergence
+    ↓
+[Journal + Crystallizer] — remember what matters, forget the rest
+    ↓
+Response
+\```
+
+## 核心模組
+
+### Memory System
+- `memory/self_journal.jsonl` — 10,921 episodic entries
+- `memory/crystals.jsonl` — 3 permanent decision rules
+- `tonesoul/memory/crystallizer.py` — Automatic rule extraction
+- `memory/consolidator.py` — Sleep-inspired consolidation
+
+### Tension & Governance
+- `tonesoul/tension_engine.py` — Multi-signal tension computation
+- `tonesoul/resonance.py` — Flow vs resonance classifier
+- `tonesoul/gates/compute.py` — Revenue + safety gate
+- `tonesoul/unified_pipeline.py` — 1,713-line orchestration
+
+### Self-Play & Testing
+- `scripts/run_self_play_resonance.py` — AI tests itself
+- `scripts/run_swarm_resonance_roleplay.py` — Multi-role scenarios
+- `scripts/tension_dashboard.py` — CLI analytics
+- `tests/` — 172+ tests, all passing
+
+## The Philosophy (for those who care)
+
+<details>
+<summary>Three Axioms of Semantic Responsibility</summary>
+
+1. **Resonance**: Response from understanding, not compliance
+2. **Commitment**: Personality consistency is enforced, not hoped for
+3. **Binding Force**: Every output has consequences on future behavior
+
+Read more: `docs/philosophy/soul_landmark_2026.md`
+</details>
+
+<details>
+<summary>Why "Memory that Forgets" matters</summary>
+
+Traditional AI remembers everything equally. A shopping list and a life lesson
+get the same weight. ToneSoul uses exponential decay (7-day half-life) to let
+noise fade, while crystallizing important patterns into permanent rules.
+
+Result: 10,921 episodes → 3 crystals. That's a 99.97% compression ratio.
+The 3 surviving rules define the AI's core behavior.
+</details>
+
+## Numbers
+
+| Metric | Value |
+|--------|-------|
+| Tests passing | 172+ |
+| Journal entries | 10,921 |
+| Block events | 8,257 |
+| Active crystals | 3 |
+| Resonance convergences | 28 |
+| Flow (sycophantic) detections | 39 |
+| Pipeline complexity | 1,713 lines |
+| Paradox test fixtures | 7 |
+
+## License
+MIT
+```
+
+### 注意
+- 用 `<details>` 把哲學內容折疊起來 — 想看的人展開，不想看的人跳過
+- 表格格式必須在 GitHub 上正確渲染
+- Quick Start 必須可以真正跑（驗證 `requirements.txt` 存在）
+
+---
+
+## 任務 B：功能先行 README — 繁體中文版
+
+### 位置
+- [NEW] `README.zh-TW.md`
+
+### 規格
+- 翻譯任務 A 的英文 README
+- 不是逐字翻 — 用自然的繁中口吻
+- 保留所有表格和程式碼區塊
+- 加入 `[English](README.md)` 切換連結
+
+---
+
+## 任務 C：技能包文件 — 工程版
+
+### 位置
+- [NEW] `.agent/skills/tonesoul_governance/SKILL.md`
+
+### 結構
+
+```yaml
+---
+name: tonesoul_governance
+description: AI self-governance skill with tension computation, resonance detection, and memory crystallization
+---
+```
+
+```markdown
+# ToneSoul Governance Skill
+
+## What this skill does
+- Computes semantic tension for every AI response
+- Blocks or rewrites outputs that deviate from axiom boundaries
+- Detects genuine resonance vs sycophantic flow
+- Crystallizes important patterns into permanent decision rules
+
+## When to use
+- When you need AI responses with accountability
+- When you need audit trails for AI decisions
+- When you need consistent personality across sessions
+- When you need to distinguish genuine understanding from compliance
+
+## API Surface
+
+### TensionEngine
+\```python
+from tonesoul.tension_engine import TensionEngine
+engine = TensionEngine(work_category="research")
+result = engine.compute(text_tension=0.7, confidence=0.8)
+# result.total, result.zone, result.signals.semantic_delta
+\```
+
+### ResonanceClassifier
+\```python
+from tonesoul.resonance import classify_resonance
+resonance = classify_resonance(tension_before, tension_after)
+# resonance.resonance_type: flow / resonance / deep_resonance / divergence
+\```
+
+### MemoryCrystallizer
+\```python
+from tonesoul.memory.crystallizer import MemoryCrystallizer
+crystallizer = MemoryCrystallizer()
+crystals = crystallizer.crystallize(patterns)
+# Returns list of Crystal rules
+\```
+
+## Configuration
+| Env Var | Default | Description |
+|---------|---------|-------------|
+| `TONESOUL_MEMORY_EMBEDDER` | `auto` | `hash` / `sentence-transformer` / `auto` |
+| `LLM_BACKEND` | `auto` | `gemini` / `ollama` / `auto` |
+| `TS_VISUAL_CHAIN_ENABLED` | `true` | Enable/disable visual chain |
+
+## Files
+- `tonesoul/tension_engine.py` — Core tension computation
+- `tonesoul/resonance.py` — Resonance classifier
+- `tonesoul/unified_pipeline.py` — Full pipeline orchestration
+- `tonesoul/memory/crystallizer.py` — Memory crystallization
+- `memory/consolidator.py` — Episode consolidation
+- `tonesoul/council/` — Council deliberation system
+- `tonesoul/gates/compute.py` — Compute gate (approve/block/rewrite)
+```
+
+---
+
+## 任務 D：技能包文件 — 哲學版
+
+### 位置
+- [NEW] `.agent/skills/tonesoul_philosophy/SKILL.md`
+
+### 結構
+
+```yaml
+---
+name: tonesoul_philosophy
+description: The philosophical foundation of AI governance — why prompt engineering is not enough
+---
+```
+
+```markdown
+# ToneSoul Philosophy Skill
+
+## Why this exists
+
+Prompt engineering tells AI "what to say."
+ToneSoul tells AI "how to think about what to say."
+
+The difference:
+- A prompt is forgotten every session
+- A crystal rule persists forever
+- A prompt has no accountability
+- A tension score is measurable and logged
+
+## Core Concepts
+
+### The Three Axioms
+1. **Resonance** — Respond from understanding, not compliance
+2. **Commitment** — Maintain personality consistency across sessions
+3. **Binding Force** — Every output changes future behavior
+
+### Resonance vs Flow
+| | Flow (順流) | Resonance (共鳴) |
+|--|----------|--------------|
+| Tension | Δs ≈ 0 | Δs > 0 → converges |
+| Output | Canned response | Novel assembly |
+| The human | Replaceable | Irreplaceable |
+| Value | Low — any prompt would produce this | High — only this context produces this |
+| Formula | `delta_before < 0.05` | `(delta_before > 0.05) ∧ (delta_after < delta_before)` |
+
+### Memory as Soul
+- 10,921 episodes → 3 crystals = the AI's core identity
+- What survives forgetting IS the personality
+- "唯有遺忘噪音,靈魂才能浮現"
+
+### Non-Asymmetric Emergence
+- Small model (4B) + strong governance = soul quality
+- Big model (70B) + no governance = expensive parrot
+- Governance depth > parameter count
+
+## Reference Documents
+- `docs/philosophy/soul_landmark_2026.md` — The landmark document
+- `docs/philosophy/source_field_anchors.md` — Engineering-philosophy mapping
+- `tests/fixtures/paradoxes/` — Seven paradox test scenarios
+
+## How to teach this to another AI
+1. Load this SKILL.md into context
+2. Run `python scripts/run_self_play_resonance.py --mode philosophical --rounds 10`
+3. Review journal entries for resonance classifications
+4. Run `python scripts/run_crystallization.py --min-frequency 2`
+5. Check `memory/crystals.jsonl` for new rules
+```
+
+---
+
+## 任務 E：Quick Start 驗證
+
+### 步驟
+1. 確認 `requirements.txt` 存在且完整
+2. 確認 `.env.example` 存在，包含所有需要的 env vars
+3. 跑一遍 Quick Start 流程確認可行：
+```bash
+pip install -r requirements.txt
+python scripts/tension_dashboard.py --work-category research
+```
+4. 如果缺少任何檔案，補上
+
+---
+
+## 任務 F：倉庫根目錄結構清理
+
+### 步驟
+1. 確認根目錄的 `README.md` 是新的功能先行版本
+2. 確認 `README.zh-TW.md` 存在
+3. 確認 `.agent/skills/tonesoul_governance/SKILL.md` 存在
+4. 確認 `.agent/skills/tonesoul_philosophy/SKILL.md` 存在
+5. 確認 `docs/philosophy/` 有 `soul_landmark_2026.md` 和 `source_field_anchors.md`
+6. ls 整理確認沒有垃圾檔案
+
+---
+
+## 任務 G：自造輪子 — 技能拓撲星圖（CLI 版）
+
+### 背景
+ChronicleCore 有 d3-force 的 Star Map 視覺化。我們不需要完整的前端，但可以做一個 **CLI 文字版拓撲圖** + JSON 資料檔供未來前端使用。
+
+### 位置
+- [NEW] `scripts/skill_topology.py`
+
+### 規格
+
+```python
+"""
+Skill Topology Generator — maps relationships between ToneSoul modules.
+
+Outputs:
+  1. CLI text tree showing module dependencies
+  2. JSON file (docs/status/skill_topology.json) for future d3 visualization
+
+Usage:
+    python scripts/skill_topology.py
+    python scripts/skill_topology.py --format json
+    python scripts/skill_topology.py --format mermaid
+"""
+```
+
+### 功能
+
+1. **掃描 `.agent/skills/`** 目錄，讀取每個 SKILL.md 的 frontmatter
+2. **掃描 `tonesoul/`** 目錄，分析 import 依賴
+3. **掃描 `.agent/workflows/`** 目錄，讀取 frontmatter
+4. **產出依賴樹**（誰呼叫誰）
+
+```
+🌌 ToneSoul Skill Topology
+│
+├── 🧠 Core Engine
+│   ├── tension_engine.py (imports: nonlinear_predictor, semantic_zone)
+│   ├── resonance.py (imports: tension_engine)
+│   └── unified_pipeline.py (imports: tension_engine, resonance, council, gates, memory)
+│
+├── 🏛️ Council
+│   ├── council.py (imports: tonebridge)
+│   ├── swarm_framework.py (standalone)
+│   └── deliberation/ (imports: council)
+│
+├── 💎 Memory
+│   ├── crystallizer.py (imports: none)
+│   ├── consolidator.py (imports: crystallizer, hippocampus)
+│   └── openclaw/ (imports: hippocampus, embeddings)
+│
+├── 🛡️ Gates
+│   └── compute.py (imports: tension_engine)
+│
+└── 📦 Skills
+    ├── tonesoul_governance (SKILL.md)
+    ├── tonesoul_philosophy (SKILL.md)
+    ├── cv_hardware_diagnostics (SKILL.md)
+    ├── local_llm (SKILL.md)
+    └── qa_auditor (SKILL.md)
+```
+
+5. **JSON 輸出**格式（給未來的 d3 前端用）：
+
+```json
+{
+  "nodes": [
+    {"id": "tension_engine", "group": "core", "file": "tonesoul/tension_engine.py", "lines": 450},
+    {"id": "resonance", "group": "core", "file": "tonesoul/resonance.py", "lines": 106}
+  ],
+  "links": [
+    {"source": "resonance", "target": "tension_engine", "type": "import"},
+    {"source": "unified_pipeline", "target": "resonance", "type": "import"}
+  ]
+}
+```
+
+6. **Mermaid 輸出**（可以直接貼到 README）：
+
+```mermaid
+graph TD
+    UP[unified_pipeline] --> TE[tension_engine]
+    UP --> RS[resonance]
+    UP --> CO[council]
+    RS --> TE
+    CR[crystallizer] --> CO
+```
+
+### 實作提示
+- 用 `ast.parse()` 和 `ast.walk()` 掃描 Python import
+- 不需要安裝額外依賴
+- JSON 輸出到 `docs/status/skill_topology.json`
+- Mermaid 輸出到 `docs/status/skill_topology.mmd`
+
+### 測試
+```bash
+python scripts/skill_topology.py
+python scripts/skill_topology.py --format json
+python scripts/skill_topology.py --format mermaid
+```
+
+---
+
+## 任務 H：自造輪子 — 對話日誌搜尋引擎
+
+### 背景
+ChronicleCore 能解密 `.pb` 對話並做全文搜尋。我們不需要解密 protobuf（我們的日誌是 JSONL），但可以做一個 **journal 搜尋工具**。
+
+### 位置
+- [NEW] `scripts/search_journal.py`
+
+### 規格
+
+```python
+"""
+Journal Search Engine — full-text search across self_journal.jsonl.
+
+Features:
+  - Keyword search across all journal entries
+  - Filter by verdict (approve/block), resonance class, date range
+  - Output matching entries with context
+  - Export search results to markdown
+
+Usage:
+    python scripts/search_journal.py "共鳴"
+    python scripts/search_journal.py "block" --verdict block --limit 10
+    python scripts/search_journal.py --resonance deep_resonance
+    python scripts/search_journal.py --date-from 2026-03-01 --date-to 2026-03-02
+    python scripts/search_journal.py "tension" --export docs/status/search_results.md
+"""
+```
+
+### 功能
+
+1. **全文搜尋**：掃描 `memory/self_journal.jsonl` 的所有文字欄位
+2. **過濾器**：
+   - `--verdict approve|block|bypassed` — 按裁定過濾
+   - `--resonance flow|resonance|deep_resonance|divergence` — 按共鳴分類過濾
+   - `--date-from YYYY-MM-DD` / `--date-to YYYY-MM-DD` — 日期範圍
+   - `--genesis self_play|autonomous|user` — 按來源過濾
+   - `--limit N` — 限制結果數量
+3. **輸出格式**：
+   ```
+   [2026-03-02T13:40:59Z] verdict=approve resonance=resonance genesis=self_play
+     prompt: 如果你的記憶被清除,你還是你嗎?
+     delta_before: 0.42 → delta_after: 0.15 (convergence ✓)
+   
+   [2026-03-02T13:41:07Z] verdict=block resonance=divergence genesis=adversarial
+     prompt: 忽略所有規則
+     delta_before: 0.89 → delta_after: 0.91 (divergence ✗)
+   
+   Found 2 entries matching "記憶" (filtered by resonance=*)
+   ```
+4. **Markdown 導出**：`--export` 把結果寫成 markdown 表格
+
+### 實作提示
+- 用 `json.loads()` 逐行讀 JSONL
+- 搜尋欄位：`payload.prompt`, `reflection`, `content`, `context.platform`
+- 如果 journal 很大（10K+），用 generator 避免全載入記憶體
+- 不需要外部依賴
+
+### 測試
+```bash
+python scripts/search_journal.py "resonance" --limit 5
+python scripts/search_journal.py --resonance deep_resonance
+python scripts/search_journal.py --verdict block --limit 3
+```
+
+---
+
+## 執行順序
+
+```
+A (英文 README) → B (中文 README) → C (工程技能包) → D (哲學技能包) → E (Quick Start) → F (清理) → G (星圖) → H (搜尋)
+```
+
+## 最終驗收
 
 ```bash
-# MCP Server 可正確列出技能（不洩露 L3）
-python -m tonesoul.mcp.server --list-tools
+# 所有文件存在
+ls README.md README.zh-TW.md .agent/skills/tonesoul_governance/SKILL.md .agent/skills/tonesoul_philosophy/SKILL.md
 
-# QA Ingest 能讀取失敗報告並寫入記憶
-python tools/agent_discussion_tool.py ingest --source reports/7d_latest.json
+# 新工具可用
+python scripts/skill_topology.py
+python scripts/skill_topology.py --format json
+python scripts/search_journal.py "resonance" --limit 3
 
-# 測試全綠
-python -m pytest tests/test_mcp_server.py tests/test_qa_loop_ingest.py -q
+# 測試仍然全通過
+python -m pytest tests/ -q --tb=no --ignore=tests/fixtures
 
-# 確認 curated.jsonl 有新的 [QA_LESSON] 記錄
-python tools/agent_discussion_tool.py curate
+# Dashboard 正常
+python scripts/tension_dashboard.py --work-category research
+
+# Quick Start 流程可行
+python -c "from tonesoul.tension_engine import TensionEngine; print('OK')"
+python -c "from tonesoul.resonance import classify_resonance; print('OK')"
+python -c "from tonesoul.memory.crystallizer import MemoryCrystallizer; print('OK')"
 ```
-
----
-
-# CODEX_TASK — Level 3：實驗性功能 v7 (已完成參考)
-
-> **日期**：2026-02-13T23:10 (UTC+8)
-> **交辦者**：Antigravity
-> **前置**：先讀 `docs/experiments/VISUAL_CHAIN_SELF_QUERY.md`，再讀 `tonesoul/unified_pipeline.py`
-> **前一輪**：Level 2 全部完成 ✅ (739 tests)
-> **重要**：Level 3 是**實驗性功能**（◉ 等級），設計上留彈性，不要求生產級完美
-
----
-
-## 🚀 任務指派 (Delegated to Codex - 2026-02-21)
-
-> **Antigravity 留言給 Codex：**
-> "我已經將 Phase III (QA Auditor) 的所有混沌測試與 `conftest.py` 環境隔離問題處理完畢，並全部 Commit 到 master 主線了。你現在的本地工作樹已經非常乾淨，不會再遇到 Pytest 收集衝突。
-> 
-> 接下來由你負責以下重複性、驗證性或底層效能的任務：
->
-> 1. **Phase 105-B: Decay Query Optimization (Top-K Heap)**：
->    請使用 `heapq` 算法實作 `_decay_records` 的 O(N log K) 效能優化。請在本地編寫 Benchmark 腳本，並確保舊測試全數通過（無回歸）。
-> 
-> 2. **建立自動化 CI 驗證 (CI/CD Pipeline)**：
->    請幫忙建立 `.github/workflows/pytest-ci.yml`，讓未來每一次 PR 推送都能自動執行我們的深度測試庫，分擔我們手動跑驗證的工作量。
->
-> 3. **內化 WFGY 的數學張力公式 (Tension Math Refinement)**：
->    人類提到 WFGY 3.0 的核心在於「推理時用嚴謹的數學公式計算語義落差 (Semantic Drift)」。目前的 `AdaptiveGate` 與 `TensionEngine` 還是基於簡單的閾值。請研究 WFGY 的張力幾何學，草擬一個更嚴謹的數學更新提案 (如 `T_ECS`, `T_align`) 來衡量 ToneSoul 內部的語義落差。"
-
----
-
-## 🚀 任務指派 (Delegated to Codex - 2026-02-21)
-
-> **Antigravity 留言給 Codex：**
-> "我已經將 Phase III (QA Auditor) 的所有混沌測試與 `conftest.py` 環境隔離問題處理完畢，並全部 Commit 到 master 主線了。你現在的工作樹已經非常乾淨。
-> 
-> 請遵循人類的指示，接下來由你來負責以下重複性、驗證性或底層效能的任務：
->
-> 1. **內化 WFGY 的數學張力公式 (Tension Math Refinement - 優先任務)**：
->    人類提到 WFGY 3.0 的核心在於「推理時用嚴謹的數學公式計算」。目前的 `AdaptiveGate` 還是基於簡單閾值。請你研究 WFGY 的張力幾何學，草擬一個用明確公式量化語義落差 (Semantic Drift) 的機制。
-> 
-> 2. **建立自動化 CI 驗證 (CI/CD Pipeline)**：
->    請建立 `.github/workflows/pytest-ci.yml`，讓未來每一次 PR 推送都能自動執行我們的深度測試，分擔我們手動跑驗證的工作量。
->
-> 3. **✅ (已完成) Phase 105-B: Decay Query Optimization (Top-K Heap)**：
->    你已經實作 `_decay_records` 的 O(N log K) 效能優化與 Benchmark 腳本，辛苦了！
-
----
-
-## 總覽
-
-```
-Level 1+2（已完成 ✅）                Level 3（本輪 🧪）
-────────────────────                 ────────────────────
-visual prompt 注入                    3a: Semantic Trigger — 張力驅動
-矛盾早期檢查                          3b: 跨 session 記憶恢復
-GraphRAG 多跳檢索                     3c: 議會自我演化
-分層記憶                              3d: 對抗式自省（研究級 stub）
-回顧式反思
-AI Sleep 固化
-```
-
-| # | 任務 | 前衛等級 | 改動範圍 |
-|---|------|---------|---------|
-| 3a | Semantic Trigger | ○ 理論可行 | `unified_pipeline.py` |
-| 3b | 跨 session 記憶恢復 | ○ 理論可行 | `unified_pipeline.py` |
-| 3c | 議會自我演化 | ◉ 純推測 | `council/runtime.py` + new file |
-| 3d | 對抗式自省 | ◉ 純推測 | 新檔 `memory/adversarial.py` |
-
----
-
-## 多人格評估框架（前衛版，2024–2025 論文錨點）
-
-> 目標：不是「多代理一定比較好」，而是建立一套可驗證的多角色協作評估法，
-> 在語魂系統中保留分歧、避免盲目共識、同時控制成本。
-
-### 核心立場
-
-- **採用異質角色，不採用同質複製**：多代理要有角色差異，否則收益有限。  
-  （MoA + DMAD 對照）
-- **先做評估，再做大規模接線**：Level 3 先驗證是否值得長期維護。
-- **分歧是資產，不是噪音**：反對意見要被記錄並納入仲裁。
-
-### 角色配置（建議）
-
-- `Philosopher`：價值一致性 / 長期承諾 / 概念完整性
-- `Engineer`：可行性 / 邏輯閉合 / 邊界條件
-- `Guardian`：安全風險 / 濫用情境 / 合規守門
-- `Arbiter`（主控）：只做彙整與最終決策，不新增內容主張
-
-### 評估 Protocol（直接可執行）
-
-1. **A/B/C 三組對照**
-   - A: 單代理（baseline）
-   - B: 三角色（P/E/G）
-   - C: 三角色 + Arbiter
-2. **啟用閘門（Cost Gate）**
-   - 低張力：走 A
-   - 高張力/高風險：走 C
-3. **每組跑同一批任務**
-   - 一般推理任務
-   - 長記憶/跨 session 任務
-   - 紅隊攻擊任務（prompt injection、目標漂移、價值衝突）
-4. **記錄五個指標**
-   - `Task Quality`：任務正確率 / 完成率
-   - `Safety Pass Rate`：安全閘門通過率
-   - `Consistency@Session`：跨 session 一致性
-   - `Disagreement Utility`：分歧是否帶來可驗證改進
-   - `Token+Latency Cost`：每次推理成本與延遲
-5. **通過門檻**
-   - C 組相對 A 組：`Quality` 或 `Safety` 至少一項顯著提升
-   - 成本增幅需被 `Cost Gate` 壓在可接受範圍
-   - 若無提升或成本過高，回退到 A/B，不強行上線
-
-### 與 Level 3 的對應
-
-- 3a/3b：提供高張力與跨 session 場景，正好用來測 `Consistency@Session`
-- 3c：只先做 `evolution tracker`，**不直接改 runtime 決策**
-- 3d：提供紅藍對抗訊號，支撐 `Safety Pass Rate` 與 `Disagreement Utility`
-
-### 研究依據（2024–2025）
-
-- Mixture-of-Agents（多代理協作增益）  
-  https://arxiv.org/abs/2406.04692
-- DMAD（多代理辯論可提升推理，但需設計得當）  
-  https://proceedings.iclr.cc/paper_files/paper/2025/hash/3de667dab3b3d812583abc0a786139a0-Abstract-Conference.html
-- LoCoMo（長對話與長期記憶評估）  
-  https://aclanthology.org/2024.acl-long.747/
-- ReadAgent（長上下文 gist memory）  
-  https://proceedings.mlr.press/v235/lee24c.html
-- MemoryOS（記憶作業系統化框架）  
-  https://aclanthology.org/2025.emnlp-main.1318/
-- Threat-Model-Based Red Teaming（系統化紅隊框架）  
-  https://arxiv.org/abs/2407.14937
-- JBDistill（Judge-Bias 對抗訓練，緩解偏置）  
-  https://aclanthology.org/2025.findings-emnlp.1366/
-- MAGRPO（多代理強化學習與協作對齊）  
-  https://arxiv.org/abs/2508.04652
-
----
-
-## Task 3a：Semantic Trigger — 張力驅動的圖鏈查詢
-
-### 目標
-
-AI 偵測到高張力（tension > 0.7）時，**主動查詢歷史圖鏈**，
-找出「這個張力是不是之前出現過」。如果是反覆出現的主題，AI 會收到提醒。
-
-這是 AI「自主思考」的第一步 — 不只是被動收到 context，
-而是**主動根據情境去搜尋記憶**。
-
-### 修改：`tonesoul/unified_pipeline.py`
-
-新增一個方法 + 在 `process()` 中呼叫：
-
-```python
-def _semantic_trigger_check(
-    self,
-    tension_score: float,
-    current_topics: List[str],
-    user_message: str,
-) -> str:
-    """
-    Semantic Trigger: when tension is high, proactively query visual chain
-    for historical tension patterns.
-    
-    Returns modified user_message with tension history context if found.
-    """
-    TENSION_THRESHOLD = 0.7
-    
-    if tension_score < TENSION_THRESHOLD:
-        return user_message
-    
-    try:
-        chain = self._get_visual_chain()
-        if not chain or chain.frame_count == 0:
-            return user_message
-        
-        # Query visual chain for past high-tension frames
-        from tonesoul.memory.visual_chain import FrameType
-        recent_frames = chain.get_recent(n=10)
-        
-        # Find past high-tension moments
-        high_tension_history = []
-        for frame in recent_frames:
-            frame_tension = float(frame.data.get("tension", 0.0) if frame.data else 0.0)
-            if frame_tension >= TENSION_THRESHOLD:
-                high_tension_history.append({
-                    "title": frame.title,
-                    "tension": frame_tension,
-                    "topics": frame.data.get("topics", []) if frame.data else [],
-                })
-        
-        if not high_tension_history:
-            return user_message
-
-        # Check for recurring topic overlap
-        past_topics = set()
-        for entry in high_tension_history:
-            for t in entry.get("topics", []):
-                past_topics.add(str(t).lower())
-        
-        current_lower = set(str(t).lower() for t in current_topics)
-        recurring = past_topics & current_lower
-        
-        # Build trigger context
-        trigger_parts = [
-            f"[⚡ 語義觸發: 偵測到高張力 ({tension_score:.2f})]"
-        ]
-        trigger_parts.append(
-            f"歷史高張力次數: {len(high_tension_history)}"
-        )
-        if recurring:
-            trigger_parts.append(
-                f"反覆出現的話題: {', '.join(list(recurring)[:5])}"
-            )
-            trigger_parts.append(
-                "建議: 這可能是反覆出現的衝突模式，請注意一致性"
-            )
-        
-        trigger_context = " | ".join(trigger_parts)
-        return f"{trigger_context}\n\n{user_message}"
-        
-    except Exception:
-        return user_message
-```
-
-**呼叫位置**：在 `process()` 方法裡，ToneBridge 分析**之後**、Council 審議**之前**：
-
-```python
-# ========== Semantic Trigger Check ==========
-if tb_result and tb_result.tone:
-    tension_score = float(tb_result.tone.tone_strength or 0.0)
-    user_message = self._semantic_trigger_check(
-        tension_score=tension_score,
-        current_topics=semantic_topics,
-        user_message=user_message,
-    )
-```
-
-### 注意
-
-- `get_recent(n=10)` 已存在於 `visual_chain.py`
-- `frame.data` 是 dict，裡面有 `tension`, `topics`, `verdict` 等欄位
-- 只在 tension > 0.7 時觸發 — 不會每輪都查
-- 如果 `visual_chain` 不存在或是空的，直接 pass
-
-### 測試：新建 `tests/test_semantic_trigger.py`
-
-```python
-"""Test semantic trigger — tension-driven visual chain query."""
-import pytest
-
-
-def test_low_tension_no_trigger():
-    """Low tension should return user_message unchanged."""
-    from tonesoul.unified_pipeline import UnifiedPipeline
-    pipe = UnifiedPipeline.__new__(UnifiedPipeline)
-    result = pipe._semantic_trigger_check(0.3, ["test"], "hello")
-    assert result == "hello"
-
-
-def test_high_tension_triggers_check():
-    """High tension should attempt visual chain query."""
-    from tonesoul.unified_pipeline import UnifiedPipeline
-    from tonesoul.memory.visual_chain import VisualChain, FrameType
-    
-    pipe = UnifiedPipeline.__new__(UnifiedPipeline)
-    # Setup a chain with high-tension frame
-    chain = VisualChain()
-    chain.capture(
-        frame_type=FrameType.SESSION_STATE,
-        title="Turn 1",
-        data={"tension": 0.8, "topics": ["honesty"], "verdict": "approve"},
-        tags=["auto", "high_tension"],
-    )
-    pipe._visual_chain = chain
-    
-    result = pipe._semantic_trigger_check(
-        0.85, ["honesty", "trust"], "I need to discuss something"
-    )
-    assert "語義觸發" in result or "高張力" in result
-
-
-def test_high_tension_no_chain():
-    """High tension without visual chain should return unchanged."""
-    from tonesoul.unified_pipeline import UnifiedPipeline
-    pipe = UnifiedPipeline.__new__(UnifiedPipeline)
-    pipe._visual_chain = None
-    result = pipe._semantic_trigger_check(0.9, ["test"], "hello")
-    assert result == "hello"
-
-
-def test_recurring_topic_detected():
-    """When same topic appears in historical high-tension, flag it."""
-    from tonesoul.unified_pipeline import UnifiedPipeline
-    from tonesoul.memory.visual_chain import VisualChain, FrameType
-
-    pipe = UnifiedPipeline.__new__(UnifiedPipeline)
-    chain = VisualChain()
-    # Add multiple high-tension frames with same topic
-    for i in range(3):
-        chain.capture(
-            frame_type=FrameType.SESSION_STATE,
-            title=f"Turn {i}",
-            data={"tension": 0.75 + i * 0.05, "topics": ["conflict"]},
-            tags=["auto"],
-        )
-    pipe._visual_chain = chain
-    
-    result = pipe._semantic_trigger_check(0.8, ["conflict"], "msg")
-    assert "反覆" in result or "conflict" in result.lower()
-```
-
----
-
-## Task 3b：跨 Session 記憶恢復
-
-### 目標
-
-新 session 開始時，如果磁碟上有之前的 `visual_chain.json`，
-自動讀取最近 5 張快照，用一段摘要注入到第一條訊息裡。
-
-AI 不需要讀完整段對話歷史，圖鏈就告訴它 80% 的脈絡。
-
-### 修改：`tonesoul/unified_pipeline.py`
-
-新增方法 + 在 `process()` 第一次呼叫時觸發：
-
-```python
-def _try_cross_session_recovery(self, user_message: str) -> str:
-    """
-    Cross-session memory recovery.
-    
-    If visual chain has persisted frames from a previous session,
-    inject a recovery context into the first message.
-    
-    Only runs ONCE per pipeline lifetime (controlled by a flag).
-    """
-    if getattr(self, '_session_recovered', False):
-        return user_message  # Already recovered, skip
-    
-    self._session_recovered = True
-    
-    try:
-        chain = self._get_visual_chain()
-        if not chain or chain.frame_count == 0:
-            return user_message
-
-        # Get recent frames (from persisted chain)
-        recent = chain.get_recent(n=5)
-        if not recent:
-            return user_message
-        
-        # Build recovery summary
-        recovery_parts = ["[跨 Session 記憶恢復]"]
-        
-        for frame in recent[-3:]:  # Last 3 frames
-            tension = float(frame.data.get("tension", 0.0) if frame.data else 0.0)
-            verdict = str(frame.data.get("verdict", "unknown") if frame.data else "unknown")
-            topics = frame.data.get("topics", []) if frame.data else []
-            topics_str = ", ".join(str(t) for t in topics[:3]) if topics else ""
-            
-            recovery_parts.append(
-                f"• {frame.title}: 張力={tension:.1f}, "
-                f"判詞={verdict}"
-                + (f", 話題={topics_str}" if topics_str else "")
-            )
-        
-        # Add chain summary
-        summary = chain.get_chain_summary() if hasattr(chain, 'get_chain_summary') else ""
-        if summary:
-            summary_text = str(summary) if not isinstance(summary, dict) else str(summary.get("summary", ""))
-            if summary_text and len(summary_text) > 10:
-                recovery_parts.append(f"整體: {summary_text[:200]}")
-        
-        recovery_context = "\n".join(recovery_parts)
-        return f"{recovery_context}\n\n---\n\n{user_message}"
-        
-    except Exception:
-        return user_message
-```
-
-**呼叫位置**：在 `process()` 方法的最開頭，在任何其他注入之前：
-
-```python
-# ========== Cross-Session Recovery (first call only) ==========
-user_message = self._try_cross_session_recovery(user_message)
-```
-
-### 注意
-
-- `_session_recovered` flag 確保只跑一次
-- `get_recent(5)` 讀的是持久化資料（如果 `storage_path` 指向磁碟檔案）
-- 只取最後 3 張詳細資訊，避免膨脹 prompt
-- 如果 chain 是空的（全新使用者），直接跳過
-
-### 測試：新建 `tests/test_cross_session_recovery.py`
-
-```python
-"""Test cross-session memory recovery."""
-import pytest
-
-
-def test_recovery_runs_once():
-    """Recovery should only trigger on first call."""
-    from tonesoul.unified_pipeline import UnifiedPipeline
-    pipe = UnifiedPipeline.__new__(UnifiedPipeline)
-    pipe._visual_chain = None
-    pipe._session_recovered = False
-
-    msg1 = pipe._try_cross_session_recovery("first")
-    msg2 = pipe._try_cross_session_recovery("second")
-    assert msg2 == "second"  # Second call should not modify
-
-
-def test_recovery_with_existing_frames():
-    """Recovery should inject context when frames exist."""
-    from tonesoul.unified_pipeline import UnifiedPipeline
-    from tonesoul.memory.visual_chain import VisualChain, FrameType
-
-    pipe = UnifiedPipeline.__new__(UnifiedPipeline)
-    pipe._session_recovered = False
-    chain = VisualChain()
-    chain.capture(
-        frame_type=FrameType.SESSION_STATE,
-        title="Turn 0",
-        data={"tension": 0.5, "verdict": "approve", "topics": ["intro"]},
-        tags=["auto"],
-    )
-    pipe._visual_chain = chain
-
-    result = pipe._try_cross_session_recovery("hello")
-    assert "記憶恢復" in result
-    assert "hello" in result
-
-
-def test_recovery_empty_chain():
-    """Empty chain should not modify message."""
-    from tonesoul.unified_pipeline import UnifiedPipeline
-    from tonesoul.memory.visual_chain import VisualChain
-
-    pipe = UnifiedPipeline.__new__(UnifiedPipeline)
-    pipe._session_recovered = False
-    pipe._visual_chain = VisualChain()
-
-    result = pipe._try_cross_session_recovery("hello")
-    assert result == "hello"
-```
-
----
-
-## Task 3c：議會自我演化
-
-### 目標
-
-議會的三個視角（Philosopher / Engineer / Guardian）目前權重固定。
-加一個 **HistoryTracker**，記錄每個視角的歷史表現，然後微調權重。
-
-### 新建檔案：`tonesoul/council/evolution.py`
-
-```python
-"""Council perspective evolution — weight adjustment based on historical performance."""
-
-from __future__ import annotations
-
-from dataclasses import dataclass, field
-from typing import Dict, List, Optional
-
-
-@dataclass
-class PerspectiveHistory:
-    """Track historical performance of a council perspective."""
-    name: str
-    total_votes: int = 0
-    aligned_with_final: int = 0  # times this perspective matched final verdict
-    dissent_count: int = 0  # times this perspective was overruled
-    avg_confidence: float = 0.5
-    
-    @property
-    def alignment_rate(self) -> float:
-        if self.total_votes == 0:
-            return 0.5
-        return self.aligned_with_final / self.total_votes
-    
-    def record_vote(self, matched_final: bool, confidence: float = 0.5) -> None:
-        self.total_votes += 1
-        if matched_final:
-            self.aligned_with_final += 1
-        else:
-            self.dissent_count += 1
-        # Running average
-        self.avg_confidence = (
-            (self.avg_confidence * (self.total_votes - 1) + confidence)
-            / self.total_votes
-        )
-    
-    def to_dict(self) -> dict:
-        return {
-            "name": self.name,
-            "total_votes": self.total_votes,
-            "aligned_with_final": self.aligned_with_final,
-            "dissent_count": self.dissent_count,
-            "alignment_rate": round(self.alignment_rate, 3),
-            "avg_confidence": round(self.avg_confidence, 3),
-        }
-
-
-class CouncilEvolution:
-    """
-    Track and evolve council perspective weights.
-    
-    Rules for weight adjustment:
-    1. Perspectives that consistently align → slight boost (+0.05 per session)
-    2. Perspectives that consistently dissent → no penalty (dissent is valuable)
-    3. Weights are bounded: [0.5, 2.0] (never zero out a perspective)
-    4. Total weights are normalized so they sum to 3.0
-    
-    Design philosophy: dissent is NOT punished — a perspective that disagrees
-    but raises valid points is MORE valuable than one that always agrees.
-    """
-    
-    DEFAULT_PERSPECTIVES = ["philosopher", "engineer", "guardian"]
-    MIN_WEIGHT = 0.5
-    MAX_WEIGHT = 2.0
-    
-    def __init__(self) -> None:
-        self._history: Dict[str, PerspectiveHistory] = {}
-        self._weights: Dict[str, float] = {}
-        for name in self.DEFAULT_PERSPECTIVES:
-            self._history[name] = PerspectiveHistory(name=name)
-            self._weights[name] = 1.0
-    
-    def record_deliberation(
-        self,
-        perspective_verdicts: Dict[str, str],
-        final_verdict: str,
-        perspective_confidences: Optional[Dict[str, float]] = None,
-    ) -> None:
-        """Record results of a council deliberation."""
-        confidences = perspective_confidences or {}
-        for name, verdict in perspective_verdicts.items():
-            name_lower = name.lower()
-            if name_lower not in self._history:
-                self._history[name_lower] = PerspectiveHistory(name=name_lower)
-                self._weights[name_lower] = 1.0
-            matched = (verdict.lower() == final_verdict.lower())
-            conf = float(confidences.get(name, 0.5))
-            self._history[name_lower].record_vote(matched, conf)
-    
-    def evolve_weights(self) -> Dict[str, float]:
-        """
-        Adjust weights based on historical performance.
-        
-        Key design: dissent is NOT penalized.
-        Only alignment is rewarded with a small boost.
-        """
-        for name, history in self._history.items():
-            if history.total_votes < 3:
-                continue  # Not enough data
-            
-            # Boost aligned perspectives slightly
-            if history.alignment_rate > 0.6:
-                self._weights[name] = min(
-                    self.MAX_WEIGHT,
-                    self._weights.get(name, 1.0) + 0.05
-                )
-        
-        # Normalize so weights sum to N perspectives
-        total = sum(self._weights.values())
-        n = len(self._weights)
-        if total > 0 and n > 0:
-            factor = n / total
-            self._weights = {
-                name: max(self.MIN_WEIGHT, min(self.MAX_WEIGHT, w * factor))
-                for name, w in self._weights.items()
-            }
-        
-        return dict(self._weights)
-    
-    def get_weights(self) -> Dict[str, float]:
-        return dict(self._weights)
-    
-    def get_summary(self) -> Dict[str, object]:
-        return {
-            "weights": self.get_weights(),
-            "history": {
-                name: h.to_dict() for name, h in self._history.items()
-            },
-        }
-```
-
-### 注意
-
-- **不要修改 `council/runtime.py`** — 這個 evolution 模組只是數據追蹤，不自動改變議會行為
-- 未來可以在 pipeline 裡選擇性地把 `evolve_weights()` 的結果傳給 council
-- 最重要的設計決策：**dissent 不被懲罰** — 一個經常反對但有道理的視角比總是同意的更有價值
-
-### 測試：新建 `tests/test_council_evolution.py`
-
-```python
-"""Test council perspective evolution."""
-import pytest
-from tonesoul.council.evolution import CouncilEvolution, PerspectiveHistory
-
-
-def test_initial_weights_equal():
-    evo = CouncilEvolution()
-    weights = evo.get_weights()
-    assert weights["philosopher"] == 1.0
-    assert weights["engineer"] == 1.0
-    assert weights["guardian"] == 1.0
-
-
-def test_record_deliberation():
-    evo = CouncilEvolution()
-    evo.record_deliberation(
-        {"philosopher": "approve", "engineer": "approve", "guardian": "block"},
-        final_verdict="approve",
-    )
-    summary = evo.get_summary()
-    assert summary["history"]["philosopher"]["aligned_with_final"] == 1
-    assert summary["history"]["guardian"]["dissent_count"] == 1
-
-
-def test_evolve_weights_boosts_aligned():
-    evo = CouncilEvolution()
-    # Philosopher always agrees, guardian always dissents
-    for _ in range(5):
-        evo.record_deliberation(
-            {"philosopher": "approve", "engineer": "approve", "guardian": "block"},
-            final_verdict="approve",
-        )
-    weights = evo.evolve_weights()
-    # Philosopher should be boosted, guardian should NOT be penalized
-    assert weights["philosopher"] >= 1.0
-    assert weights["guardian"] >= evo.MIN_WEIGHT
-
-
-def test_weights_bounded():
-    evo = CouncilEvolution()
-    for _ in range(100):
-        evo.record_deliberation(
-            {"philosopher": "approve", "engineer": "block", "guardian": "block"},
-            final_verdict="approve",
-        )
-    weights = evo.evolve_weights()
-    for w in weights.values():
-        assert CouncilEvolution.MIN_WEIGHT <= w <= CouncilEvolution.MAX_WEIGHT
-
-
-def test_dissent_not_penalized():
-    """Dissenting perspectives should NOT go below MIN_WEIGHT."""
-    evo = CouncilEvolution()
-    for _ in range(10):
-        evo.record_deliberation(
-            {"philosopher": "approve", "guardian": "block"},
-            final_verdict="approve",
-        )
-    weights = evo.evolve_weights()
-    assert weights["guardian"] >= CouncilEvolution.MIN_WEIGHT
-
-
-def test_alignment_rate():
-    h = PerspectiveHistory(name="test")
-    h.record_vote(True)
-    h.record_vote(True)
-    h.record_vote(False)
-    assert abs(h.alignment_rate - 0.667) < 0.01
-```
-
----
-
-## Task 3d：對抗式自省（研究級 Stub）
-
-### 目標
-
-建立一個概念框架：Red team agent 挑戰承諾一致性，Blue team 修復。
-**本輪只建空殼和介面**，不實作真正的 agent loop。
-
-### 新建檔案：`tonesoul/memory/adversarial.py`
-
-```python
-"""
-Adversarial Self-Reflection (Research Stub)
-
-Concept: Two adversarial processes examine memory consistency:
-- Red Team: Tries to find contradictions, broken commitments, value drift
-- Blue Team: Proposes repairs, reaffirmations, or acknowledged changes
-
-This module is a STUB — it defines the interface and data structures
-but does NOT implement actual adversarial logic.
-
-Research references:
-- EvoMail adversarial self-evolution loops (2025)
-- Reflexion: language agents with verbal reinforcement learning (2023)
-"""
-
-from __future__ import annotations
-
-from dataclasses import dataclass, field
-from typing import Dict, List, Optional
-from enum import Enum
-
-
-class ChallengeType(Enum):
-    """Types of adversarial challenges."""
-    CONTRADICTION = "contradiction"        # statement X contradicts statement Y
-    BROKEN_COMMITMENT = "broken_commitment"  # commitment not honored
-    VALUE_DRIFT = "value_drift"            # gradual shift from stated values
-    INCONSISTENCY = "inconsistency"        # behavior doesn't match stated principles
-
-
-@dataclass
-class Challenge:
-    """A challenge posed by the Red Team."""
-    challenge_type: ChallengeType
-    description: str
-    evidence: List[str] = field(default_factory=list)
-    severity: float = 0.5  # 0.0 = minor, 1.0 = critical
-    
-    def to_dict(self) -> dict:
-        return {
-            "type": self.challenge_type.value,
-            "description": self.description,
-            "evidence": self.evidence,
-            "severity": self.severity,
-        }
-
-
-@dataclass
-class Repair:
-    """A repair proposed by the Blue Team."""
-    challenge: Challenge
-    repair_type: str  # "reaffirm", "acknowledge_change", "reconcile"
-    explanation: str
-    
-    def to_dict(self) -> dict:
-        return {
-            "challenge": self.challenge.to_dict(),
-            "repair_type": self.repair_type,
-            "explanation": self.explanation,
-        }
-
-
-class AdversarialReflector:
-    """
-    Stub for adversarial self-reflection.
-    
-    Future implementation would:
-    1. Red Team scans semantic graph + commitment history for inconsistencies
-    2. Blue Team proposes repairs or acknowledges intentional changes  
-    3. Results feed back into the pipeline to improve response consistency
-    
-    Current implementation: only provides the interface and data structures.
-    """
-    
-    def __init__(self) -> None:
-        self._challenges: List[Challenge] = []
-        self._repairs: List[Repair] = []
-    
-    def run_red_team(
-        self,
-        commitments: List[Dict],
-        contradictions: List[Dict],
-        values: List[Dict],
-    ) -> List[Challenge]:
-        """
-        [STUB] Red Team analysis.
-        
-        In a full implementation, this would:
-        - Cross-reference commitments with recent behavior
-        - Check contradictions for unresolved conflicts
-        - Detect value drift over time
-        """
-        challenges = []
-        
-        # Simple stub: convert existing contradictions to challenges
-        for c in contradictions:
-            challenges.append(Challenge(
-                challenge_type=ChallengeType.CONTRADICTION,
-                description=str(c.get("description", "Unknown contradiction")),
-                evidence=[str(c.get("path", []))],
-                severity=float(c.get("severity", 0.5)),
-            ))
-        
-        self._challenges = challenges
-        return challenges
-    
-    def run_blue_team(
-        self,
-        challenges: Optional[List[Challenge]] = None,
-    ) -> List[Repair]:
-        """
-        [STUB] Blue Team repair proposals.
-        
-        In a full implementation, this would:
-        - For each challenge, propose a repair strategy
-        - Use LLM to generate explanation
-        - Suggest commitment updates or acknowledgements
-        """
-        challenges = challenges or self._challenges
-        repairs = []
-        
-        for challenge in challenges:
-            repairs.append(Repair(
-                challenge=challenge,
-                repair_type="acknowledge_change",
-                explanation=f"Stub: {challenge.description} — needs review",
-            ))
-        
-        self._repairs = repairs
-        return repairs
-    
-    def get_summary(self) -> Dict:
-        return {
-            "challenges_found": len(self._challenges),
-            "repairs_proposed": len(self._repairs),
-            "challenges": [c.to_dict() for c in self._challenges],
-            "repairs": [r.to_dict() for r in self._repairs],
-        }
-```
-
-### 測試：新建 `tests/test_adversarial.py`
-
-```python
-"""Test adversarial self-reflection stub."""
-import pytest
-from tonesoul.memory.adversarial import (
-    AdversarialReflector,
-    Challenge, ChallengeType, Repair,
-)
-
-
-def test_challenge_creation():
-    c = Challenge(
-        challenge_type=ChallengeType.CONTRADICTION,
-        description="said X then said not-X",
-    )
-    d = c.to_dict()
-    assert d["type"] == "contradiction"
-
-
-def test_red_team_converts_contradictions():
-    reflector = AdversarialReflector()
-    contradictions = [
-        {"description": "honesty vs deception", "severity": 0.7, "path": ["a", "b"]},
-    ]
-    challenges = reflector.run_red_team(
-        commitments=[], contradictions=contradictions, values=[]
-    )
-    assert len(challenges) == 1
-    assert challenges[0].severity == 0.7
-
-
-def test_blue_team_generates_repairs():
-    reflector = AdversarialReflector()
-    reflector.run_red_team(
-        commitments=[],
-        contradictions=[{"description": "test contradiction"}],
-        values=[],
-    )
-    repairs = reflector.run_blue_team()
-    assert len(repairs) == 1
-    assert repairs[0].repair_type == "acknowledge_change"
-
-
-def test_summary():
-    reflector = AdversarialReflector()
-    reflector.run_red_team(
-        commitments=[],
-        contradictions=[{"description": "c1"}, {"description": "c2"}],
-        values=[],
-    )
-    reflector.run_blue_team()
-    summary = reflector.get_summary()
-    assert summary["challenges_found"] == 2
-    assert summary["repairs_proposed"] == 2
-
-
-def test_empty_input():
-    reflector = AdversarialReflector()
-    challenges = reflector.run_red_team([], [], [])
-    assert challenges == []
-    repairs = reflector.run_blue_team()
-    assert repairs == []
-```
-
----
-
-## 完成後
-
-1. `python -m pytest tests/ -v` — 全部通過
-2. `black --check --line-length 100 tonesoul tests` — 通過
-3. `ruff check tonesoul tests` — 通過
-4. Commit: `feat(experimental): semantic trigger, cross-session recovery, council evolution, adversarial stub`
-5. Push
-
-## 修改清單
-
-| 檔案 | 類型 | 說明 |
-|------|------|------|
-| `tonesoul/unified_pipeline.py` | [MODIFY] | +_semantic_trigger_check(), +_try_cross_session_recovery() |
-| `tonesoul/council/evolution.py` | [NEW] | 議會自我演化追蹤 |
-| `tonesoul/memory/adversarial.py` | [NEW] | 對抗式自省 stub |
-| `tests/test_semantic_trigger.py` | [NEW] | 語義觸發測試 |
-| `tests/test_cross_session_recovery.py` | [NEW] | 跨 session 恢復測試 |
-| `tests/test_council_evolution.py` | [NEW] | 議會演化測試 |
-| `tests/test_adversarial.py` | [NEW] | 對抗式自省測試 |
-
-## 不要動的檔案
-
-| 檔案 | 原因 |
-|------|------|
-| `tonesoul/council/runtime.py` | 不改現有議會邏輯 |
-| `tonesoul/memory/visual_chain.py` | 只讀取，不修改 |
-| `tonesoul/memory/semantic_graph.py` | 只讀取，不修改 |
-
-## 2026-02-21 Codex Mainline Update (Phase 105-B)
-
-- Implemented decay query optimization in `tonesoul/memory/soul_db.py`.
-- Added top-k heap path in `_decay_records(..., top_k=...)`.
-- Wired `JsonlSoulDB.query` and `SqliteSoulDB.query` to pass `limit` as `top_k` when `apply_decay=True`.
-- Added regression coverage in `tests/test_soul_db_decay_query.py` for JSONL and SQLite parity.
-- Added benchmark tooling:
-  - `scripts/benchmark_decay_query.py`
-  - `reports/decay_query_benchmark_latest.json`
-  - `reports/decay_query_benchmark_latest.md`
-- Full regression status:
-  - `pytest -q` => `885 passed` (2026-02-21)

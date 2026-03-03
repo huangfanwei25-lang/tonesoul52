@@ -18,6 +18,7 @@ Covers:
 
 import pytest
 
+from tonesoul.nonlinear_predictor import PredictionResult
 from tonesoul.semantic_control import LambdaState, SemanticZone
 from tonesoul.tension_engine import (
     ResistanceVector,
@@ -27,6 +28,7 @@ from tonesoul.tension_engine import (
     TensionSignals,
     TensionWeights,
 )
+from tonesoul.variance_compressor import CompressionResult
 
 # ---------------------------------------------------------------------------
 # ResistanceVector
@@ -382,6 +384,84 @@ class TestMemoryTriggers:
         result = engine.compute()
         # delta = 0.0, so should be "record_exemplar"
         assert result.memory_action == "record_exemplar"
+
+    def test_chaotic_prediction_triggers_record_hard_predicted(self):
+        prediction = PredictionResult(
+            predicted_delta_sigma=0.5,
+            prediction_confidence=0.9,
+            trend="chaotic",
+            lyapunov_exponent=0.9,
+            horizon_steps=2,
+            acceleration=0.1,
+            ewma=0.5,
+        )
+        action = TensionEngine._check_memory_trigger(
+            0.5,
+            SemanticZone.SAFE,
+            LambdaState.CONVERGENT,
+            prediction=prediction,
+        )
+        assert action == "record_hard_predicted"
+
+    def test_diverging_prediction_high_confidence_triggers_warning(self):
+        prediction = PredictionResult(
+            predicted_delta_sigma=0.55,
+            prediction_confidence=0.8,
+            trend="diverging",
+            lyapunov_exponent=0.4,
+            horizon_steps=3,
+            acceleration=0.05,
+            ewma=0.52,
+        )
+        action = TensionEngine._check_memory_trigger(
+            0.5,
+            SemanticZone.SAFE,
+            LambdaState.CONVERGENT,
+            prediction=prediction,
+        )
+        assert action == "record_predictive_warning"
+
+    def test_high_compression_triggers_memory_record(self):
+        compression = CompressionResult(
+            compression_ratio=0.45,
+            gamma_effective=1.2,
+            gamma_breakdown={"base": 0.6, "trend": 0.2, "zone": 0.3, "lambda": 0.1},
+            zone_override="risk",
+            explanation="test",
+        )
+        action = TensionEngine._check_memory_trigger(
+            0.5,
+            SemanticZone.SAFE,
+            LambdaState.CONVERGENT,
+            compression=compression,
+        )
+        assert action == "record_high_compression"
+
+    def test_compute_passes_prediction_and_compression_to_trigger(self, monkeypatch):
+        engine = TensionEngine()
+        captured = {"prediction": None, "compression": None}
+
+        def fake_trigger(
+            delta,
+            zone,
+            lambda_state,
+            *,
+            prediction=None,
+            compression=None,
+        ):
+            captured["prediction"] = prediction
+            captured["compression"] = compression
+            return "soft_memory"
+
+        monkeypatch.setattr(TensionEngine, "_check_memory_trigger", staticmethod(fake_trigger))
+        result = engine.compute(
+            intended=[1.0, 0.0, 0.0],
+            generated=[0.7, 0.3, 0.0],
+            text_tension=0.2,
+        )
+        assert captured["prediction"] is not None
+        assert captured["compression"] is not None
+        assert result.memory_action == "soft_memory"
 
 
 # ---------------------------------------------------------------------------

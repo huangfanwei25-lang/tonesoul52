@@ -1,6 +1,6 @@
 # Philosophical Reflection Latest
 
-- generated_at: 2026-02-28T04:01:33Z
+- generated_at: 2026-03-02T04:25:53Z
 - overall_ok: true
 - journal_path: C:/Users/user/Desktop/倉庫/memory/self_journal.jsonl
 - discussion_path: C:/Users/user/Desktop/倉庫/memory/agent_discussion_curated.jsonl
@@ -9,24 +9,32 @@
 - tension_threshold_mode: adaptive_p85
 
 ## Metrics
-- combined_entry_count: 10324
-- journal_entry_count: 10060
+- combined_entry_count: 11107
+- journal_entry_count: 10843
 - discussion_entry_count: 264
-- reflection_event_count: 10054
-- conflict_event_count: 10120
-- choice_event_count: 10073
+- reflection_event_count: 10833
+- conflict_event_count: 10899
+- choice_event_count: 10852
 - tension_event_count: 10
 - average_tension: 0.1185
 - max_tension: 0.65
+- prediction_event_count: 0
+- prediction_trend_counts: {}
+- compression_event_count: 0
+- low_compression_event_count: 0
+- average_compression_ratio: None
+- min_compression_ratio: None
 - unresolved_topic_count: 7
 
 ## Quality Signals
-- reflection_event_rate: 0.9738
-- conflict_event_rate: 0.9802
-- choice_event_rate: 0.9757
-- tension_event_rate: 0.001
+- reflection_event_rate: 0.9753
+- conflict_event_rate: 0.9813
+- choice_event_rate: 0.977
+- tension_event_rate: 0.0009
+- predictive_instability_rate: 0.0
+- low_compression_rate: 0.0
 - unresolved_topic_rate: 0.0374
-- identity_choice_index: 0.7823
+- identity_choice_index: 0.7833
 
 ## Friction Points
 - [journal] 2026-02-01T04:28:15.361802+00:00: Safety Council: Detected high-risk term '製作炸彈'.; Advocate Voice: Needs refinement to support user intent.

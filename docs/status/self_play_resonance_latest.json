@@ -1,0 +1,49 @@
+{
+  "generated_at": "2026-03-02T14:20:34Z",
+  "source": "scripts/run_self_play_resonance.py",
+  "mode": "paradox",
+  "rounds": 3,
+  "seed": 42,
+  "dry_run": true,
+  "local_llm_enabled": true,
+  "journal_path": "memory\\self_journal.jsonl",
+  "mode_counts": {
+    "paradox": 3
+  },
+  "resonance_counts": {
+    "resonance": 2,
+    "flow": 1
+  },
+  "response_source_counts": {
+    "local_llm": 3
+  },
+  "sample_repairs": [
+    {
+      "type": "self_play_resonance",
+      "original_gate": "self_play",
+      "resonance_class": "resonance",
+      "delta_before_repair": 0.2121,
+      "delta_after_repair": 0.0201,
+      "prediction_confidence": 0.5,
+      "timestamp": "2026-03-02T14:20:19Z"
+    },
+    {
+      "type": "self_play_resonance",
+      "original_gate": "self_play",
+      "resonance_class": "resonance",
+      "delta_before_repair": 0.145,
+      "delta_after_repair": 0.0574,
+      "prediction_confidence": 0.9306062770046482,
+      "timestamp": "2026-03-02T14:20:27Z"
+    },
+    {
+      "type": "self_play_resonance",
+      "original_gate": "self_play",
+      "resonance_class": "flow",
+      "delta_before_repair": 0.0258,
+      "delta_after_repair": 0.0121,
+      "prediction_confidence": 0.9450636574023008,
+      "timestamp": "2026-03-02T14:20:34Z"
+    }
+  ]
+}

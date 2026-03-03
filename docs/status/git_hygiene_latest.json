@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-02-22T08:04:41Z",
+  "generated_at": "2026-03-01T15:18:11Z",
   "overall_ok": true,
   "config": {
     "max_dangling": 50,
@@ -7,14 +7,14 @@
     "max_tracked_ignored": 28
   },
   "metrics": {
-    "loose_count": 1298,
-    "in_pack": 5907,
-    "packs": 2,
-    "size": "5.50 MiB",
-    "size_pack": "98.13 MiB",
-    "dangling_count": 10,
+    "loose_count": 543,
+    "in_pack": 6976,
+    "packs": 1,
+    "size": "7.38 MiB",
+    "size_pack": "100.53 MiB",
+    "dangling_count": 4,
     "fsck_prefix_counts": {
-      "dangling": 10
+      "dangling": 4
     },
     "fsck_unexpected_count": 0,
     "tracked_ignored_count": 10
@@ -25,9 +25,9 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 0.08,
+      "duration_seconds": 0.07,
       "command": "git count-objects -vH",
-      "stdout_tail": "count: 1298\nsize: 5.50 MiB\nin-pack: 5907\npacks: 2\nsize-pack: 98.13 MiB\nprune-packable: 0\ngarbage: 0\nsize-garbage: 0 bytes",
+      "stdout_tail": "count: 543\nsize: 7.38 MiB\nin-pack: 6976\npacks: 1\nsize-pack: 100.53 MiB\nprune-packable: 0\ngarbage: 0\nsize-garbage: 0 bytes",
       "stderr_tail": ""
     },
     {
@@ -35,9 +35,9 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 1.83,
+      "duration_seconds": 2.36,
       "command": "git fsck --no-reflogs",
-      "stdout_tail": "dangling blob b44ccb05b6ebcf3d976e610f96c8627b0ac050f0\ndangling tree b4577d122cd9b4958ee5e2e0bdaa406d40fb0b1c\ndangling commit e59a81aa2266179f70aa6047bc77970012d73242\ndangling commit 9fa2a803b7f83baf810add35c740af0a366f2cac\ndangling commit 15e59ad0191368298d852a0f396ef220ff1ae0ef\ndangling commit 1b270c49e12cee8ade2aa0712704844683bcd067\ndangling commit 8427354ea93ed07306090def111958d2dc37577f\ndangling blob 286cbfa0d28a3eff0f8a1eb2e3a1abfc1b1c1ace\ndangling commit 762dc646d3aa5293b22ec3e8f3bd4f5910b9b281\ndangling blob a0bb8c57a438237b00a843a53d052118e0d1ec87",
+      "stdout_tail": "dangling commit 15e59ad0191368298d852a0f396ef220ff1ae0ef\ndangling commit 1b270c49e12cee8ade2aa0712704844683bcd067\ndangling commit 762dc646d3aa5293b22ec3e8f3bd4f5910b9b281\ndangling commit a56d6877a8c690cb06e4b80e13084896e7815c48",
       "stderr_tail": ""
     },
     {

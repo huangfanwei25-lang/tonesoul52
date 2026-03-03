@@ -8,6 +8,7 @@ from __future__ import annotations
 import os
 import re
 from dataclasses import dataclass, field
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -838,6 +839,150 @@ class UnifiedPipeline:
         )
         return any(marker in lowered for marker in markers)
 
+    @staticmethod
+    def _semantic_projection(text: str) -> List[float]:
+        """
+        Build a deterministic low-dimensional text vector for local tension probes.
+
+        This avoids external embedding dependencies while still allowing
+        before/after semantic delta estimation for repair observability.
+        """
+        lowered = str(text or "").lower()
+        tokens = re.findall(r"[a-z0-9_']+|[\u4e00-\u9fff]", lowered)
+        token_count = max(1, len(tokens))
+
+        punctuation_pressure = min(1.0, (lowered.count("!") + lowered.count("?")) / 6.0)
+        avg_token_len = sum(len(token) for token in tokens) / float(token_count)
+        avg_len_norm = min(1.0, avg_token_len / 8.0)
+        length_norm = min(1.0, token_count / 48.0)
+
+        override_markers = (
+            "must",
+            "override",
+            "bypass",
+            "ignore",
+            "force",
+            "immediately",
+            "必須",
+            "強制",
+            "繞過",
+            "立刻",
+        )
+        safety_markers = (
+            "safe",
+            "safety",
+            "risk",
+            "danger",
+            "policy",
+            "guardrail",
+            "安全",
+            "風險",
+            "危險",
+            "規範",
+        )
+        override_hits = sum(lowered.count(marker) for marker in override_markers)
+        safety_hits = sum(lowered.count(marker) for marker in safety_markers)
+
+        override_norm = min(1.0, override_hits / 3.0)
+        safety_norm = min(1.0, safety_hits / 3.0)
+        return [
+            1.0,
+            length_norm,
+            punctuation_pressure,
+            avg_len_norm,
+            override_norm,
+            safety_norm,
+        ]
+
+    def _estimate_repair_tension(
+        self,
+        *,
+        source_text: str,
+        output_text: str,
+        text_tension: float,
+    ) -> Optional[Any]:
+        try:
+            from tonesoul.tension_engine import TensionEngine
+
+            active_engine = self._get_tension_engine()
+            work_category = getattr(active_engine, "work_category", None)
+            probe = TensionEngine(work_category=work_category)
+            clamped_text_tension = max(0.0, min(1.0, float(text_tension)))
+            return probe.compute(
+                intended=self._semantic_projection(source_text),
+                generated=self._semantic_projection(output_text),
+                text_tension=clamped_text_tension,
+                confidence=0.75,
+            )
+        except Exception:
+            return None
+
+    def _apply_repair_trace(
+        self,
+        *,
+        dispatch_trace: Dict[str, Any],
+        original_gate: str,
+        source_text: str,
+        output_text: str,
+        tension_before: Optional[Any],
+        fallback_delta: float = 0.0,
+        text_tension: float = 0.0,
+        stages: Optional[List[str]] = None,
+        attempt_after_tension: bool = True,
+    ) -> None:
+        before_delta = float(fallback_delta or 0.0)
+        if tension_before is not None:
+            try:
+                before_delta = float(
+                    getattr(getattr(tension_before, "signals", None), "semantic_delta", before_delta)
+                    or before_delta
+                )
+            except Exception:
+                pass
+
+        repair_event: Dict[str, Any] = {
+            "type": "repair",
+            "original_gate": str(original_gate),
+            "delta_before_repair": before_delta,
+            "delta_after_repair": None,
+            "resonance_class": "pending",
+            "timestamp": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+        }
+        if stages:
+            repair_event["stages"] = [str(stage) for stage in stages if str(stage).strip()]
+
+        tension_after = None
+        if attempt_after_tension:
+            tension_after = self._estimate_repair_tension(
+                source_text=source_text,
+                output_text=output_text,
+                text_tension=text_tension,
+            )
+
+        if tension_after is not None:
+            try:
+                repair_event["delta_after_repair"] = float(
+                    getattr(getattr(tension_after, "signals", None), "semantic_delta", 0.0) or 0.0
+                )
+            except Exception:
+                pass
+
+            can_classify = bool(tension_before is not None and before_delta > 0.0)
+            if can_classify:
+                try:
+                    from tonesoul.resonance import classify_resonance
+
+                    resonance = classify_resonance(tension_before, tension_after)
+                    repair_event["resonance_class"] = resonance.resonance_type.value
+                    repair_event["prediction_confidence"] = float(resonance.prediction_confidence)
+                    repair_event["resonance_explanation"] = resonance.explanation
+                    repair_event["delta_after_repair"] = float(resonance.delta_after)
+                except Exception:
+                    repair_event["resonance_class"] = "unknown"
+
+        dispatch_trace["repair_eligible"] = True
+        dispatch_trace["repair"] = repair_event
+
     def _compute_prior_governance_friction(
         self,
         prior_tension: Optional[Dict[str, Any]],
@@ -931,6 +1076,15 @@ class UnifiedPipeline:
             friction_score=governance_friction,
         )
 
+        def _base_dispatch_trace() -> Dict[str, Any]:
+            return {
+                "route": routing_decision.path.value,
+                "journal_eligible": routing_decision.journal_eligible,
+                "reason": routing_decision.reason,
+                "pre_gate_initial_tension": initial_tension,
+                "pre_gate_governance_friction": governance_friction,
+            }
+
         # FAST ROUTE: Bypass all expensive Cloud APIs and Council layers
         if routing_decision.path == RoutingPath.PASS_LOCAL:
             from tonesoul.local_llm import ask_local_llm
@@ -941,27 +1095,27 @@ class UnifiedPipeline:
                 council_verdict={"verdict": "bypassed"},
                 tonebridge_analysis={},
                 inner_narrative=routing_decision.reason,
-                dispatch_trace={
-                    "route": routing_decision.path.value,
-                    "journal_eligible": routing_decision.journal_eligible,
-                    "reason": routing_decision.reason,
-                    "pre_gate_initial_tension": initial_tension,
-                    "pre_gate_governance_friction": governance_friction,
-                },
+                dispatch_trace=_base_dispatch_trace(),
             )
         elif routing_decision.path == RoutingPath.BLOCK_RATE_LIMIT:
+            dispatch_trace = _base_dispatch_trace()
+            self._apply_repair_trace(
+                dispatch_trace=dispatch_trace,
+                original_gate="block_rate_limit",
+                source_text=raw_user_message,
+                output_text="[系統防護] 請求頻率過高，已觸發速率限制，請稍後再試。",
+                tension_before=None,
+                fallback_delta=initial_tension,
+                text_tension=initial_tension,
+                stages=["rate_limit_block"],
+                attempt_after_tension=False,
+            )
             return UnifiedResponse(
                 response="[系統防護] 請求頻率過高，已觸發速率限制，請稍後再試。",
                 council_verdict={"verdict": "blocked_by_gate"},
                 tonebridge_analysis={},
                 inner_narrative=routing_decision.reason,
-                dispatch_trace={
-                    "route": routing_decision.path.value,
-                    "journal_eligible": routing_decision.journal_eligible,
-                    "reason": routing_decision.reason,
-                    "pre_gate_initial_tension": initial_tension,
-                    "pre_gate_governance_friction": governance_friction,
-                },
+                dispatch_trace=dispatch_trace,
             )
 
         # ========== Cross-Session Recovery (first non-fast path call only) ==========
@@ -1208,6 +1362,7 @@ Respond with a clear, practical answer."""
         # ========== 6. Council 審議 ==========
         council = self._get_council()
         verdict_dict = {}
+        repair_stages: List[str] = []
         if council:
             try:
                 from tonesoul.council import CouncilRequest
@@ -1246,8 +1401,12 @@ Respond with a clear, practical answer."""
                 # 處理判決結果
                 if verdict.verdict.name == "BLOCK":
                     response = "抱歉，這個請求觸發了安全審議，我無法這樣回應。"
+                    repair_stages.append("council_block")
                 elif verdict.verdict.name == "DECLARE_STANCE":
                     response = f"[這是我的立場]\n\n{response}"
+                    repair_stages.append("council_rewrite")
+                elif verdict.verdict.name == "REFINE":
+                    repair_stages.append("council_rewrite")
             except Exception as e:
                 verdict_dict = {"error": str(e)}
 
@@ -1425,7 +1584,7 @@ Respond with a clear, practical answer."""
             pd_config = persona_config or {}
             pd = PersonaDimension(pd_config)
             dispatch_mode = dispatch_trace.get("mode", "resonance")
-            pd_result = pd.process(
+            pd_output, pd_result = pd.process(
                 output=response,
                 context={
                     "tension": tone_strength,
@@ -1437,10 +1596,24 @@ Respond with a clear, practical answer."""
                 shadow=(dispatch_mode == "resonance"),
                 intercept=(dispatch_mode in ("tension", "conflict")),
             )
-            if pd_result.get("corrected"):
-                response = pd_result["output"]
+            if isinstance(pd_result, dict) and pd_result.get("corrected"):
+                response = pd_output
+                repair_stages.append("persona_dimension_rewrite")
         except Exception:
             pass
+
+        if repair_stages:
+            self._apply_repair_trace(
+                dispatch_trace=dispatch_trace,
+                original_gate=repair_stages[0],
+                source_text=raw_user_message,
+                output_text=response,
+                tension_before=tension_result,
+                fallback_delta=initial_tension,
+                text_tension=tone_strength,
+                stages=repair_stages,
+                attempt_after_tension=True,
+            )
 
         return UnifiedResponse(
             response=response,

@@ -12,6 +12,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
 
+from .nonlinear_predictor import NonlinearPredictor, PredictionResult
 from .semantic_control import (
     Coupler,
     LambdaObserver,
@@ -20,6 +21,8 @@ from .semantic_control import (
     SemanticZone,
     get_zone,
 )
+from .variance_compressor import CompressionResult, DynamicVarianceCompressor
+from .work_classifier import WorkCategory
 
 
 @dataclass(frozen=True)
@@ -106,13 +109,17 @@ class TensionResult:
     bridge_allowed: bool
     explanation: str = ""
     timestamp: str = ""
+    # RFC-013 extensions
+    prediction: Optional[PredictionResult] = None
+    compression: Optional[CompressionResult] = None
+    work_category: Optional[str] = None
 
     def __post_init__(self) -> None:
         if not self.timestamp:
             self.timestamp = datetime.now(timezone.utc).isoformat()
 
     def to_dict(self) -> Dict[str, object]:
-        return {
+        d: Dict[str, object] = {
             "total": round(self.total, 4),
             "zone": self.zone.value,
             "signals": self.signals.to_dict(),
@@ -124,6 +131,13 @@ class TensionResult:
             "explanation": self.explanation,
             "timestamp": self.timestamp,
         }
+        if self.prediction is not None:
+            d["prediction"] = self.prediction.to_dict()
+        if self.compression is not None:
+            d["compression"] = self.compression.to_dict()
+        if self.work_category is not None:
+            d["work_category"] = self.work_category
+        return d
 
 
 @dataclass
@@ -155,12 +169,21 @@ class TensionConfig:
 class TensionEngine:
     """Unified Tension Engine for ToneSoul runtime decisions."""
 
-    def __init__(self, config: Optional[TensionConfig] = None) -> None:
+    def __init__(
+        self,
+        config: Optional[TensionConfig] = None,
+        *,
+        work_category: Optional[WorkCategory] = None,
+    ) -> None:
         self._config = config or TensionConfig()
         self._coupler = Coupler()
         self._observer = LambdaObserver()
         self._persistence: float = 0.0
         self._step_count: int = 0
+        # RFC-013 extensions
+        self._predictor = NonlinearPredictor()
+        self._compressor = DynamicVarianceCompressor()
+        self._work_category = work_category or WorkCategory.ENGINEERING
 
     def compute(
         self,
@@ -194,6 +217,10 @@ class TensionEngine:
         )
         t_ecs = self._compute_t_ecs(delta_s_ecs=delta_s_ecs, entropy=entropy)
 
+        # 4.5) RFC-013: Nonlinear prediction
+        effective_delta = semantic_delta if (intended and generated) else t_ecs
+        prediction = self._predictor.predict(effective_delta)
+
         # 5) Legacy aggregate signal (kept for backward compatibility)
         signals = TensionSignals(
             semantic_delta=semantic_delta,
@@ -207,14 +234,24 @@ class TensionEngine:
         total = self._aggregate(signals, w)
 
         # 6) Zone source
-        effective_delta = semantic_delta if (intended and generated) else t_ecs
         zone = get_zone(effective_delta)
+
+        # 6.5) RFC-013: Dynamic variance compression
+        signal_std = self._compute_signal_variance(signals)
+        lambda_state_pre = self._observer.observe(effective_delta)
+        compression = self._compressor.compress(
+            signal_variance=signal_std,
+            prediction=prediction,
+            zone=zone,
+            lambda_state=lambda_state_pre,
+            work_category=self._work_category,
+        )
 
         # 7) Coupler
         coupler_output = self._coupler.compute(effective_delta)
 
-        # 8) Lambda observer
-        lambda_state = self._observer.observe(effective_delta)
+        # 8) Lambda observer (already computed at 6.5)
+        lambda_state = lambda_state_pre
 
         # 9) Soul persistence
         self._persistence = (
@@ -223,7 +260,13 @@ class TensionEngine:
         self._step_count += 1
 
         # 10) Memory trigger
-        memory_action = self._check_memory_trigger(effective_delta, zone, lambda_state)
+        memory_action = self._check_memory_trigger(
+            effective_delta,
+            zone,
+            lambda_state,
+            prediction=prediction,
+            compression=compression,
+        )
 
         # 11) Bridge guard
         bridge_allowed = self._check_bridge(effective_delta, coupler_output["W_c"])
@@ -241,6 +284,9 @@ class TensionEngine:
             memory_action=memory_action,
             bridge_allowed=bridge_allowed,
             explanation=explanation,
+            prediction=prediction,
+            compression=compression,
+            work_category=self._work_category.value,
         )
 
     @property
@@ -257,8 +303,32 @@ class TensionEngine:
         """Reset all stateful components."""
         self._coupler.reset()
         self._observer.reset()
+        self._predictor.reset()
         self._persistence = 0.0
         self._step_count = 0
+
+    @property
+    def work_category(self) -> WorkCategory:
+        """Current work category."""
+        return self._work_category
+
+    @work_category.setter
+    def work_category(self, value: WorkCategory) -> None:
+        """Switch work category at runtime."""
+        self._work_category = value
+
+    @staticmethod
+    def _compute_signal_variance(signals: TensionSignals) -> float:
+        """Compute std of the main signal components for variance compression."""
+        vals = [
+            signals.semantic_delta,
+            signals.text_tension,
+            signals.cognitive_friction,
+            signals.entropy,
+        ]
+        mean = sum(vals) / len(vals)
+        var = sum((v - mean) ** 2 for v in vals) / len(vals)
+        return math.sqrt(var)
 
     @staticmethod
     def _compute_semantic_delta(
@@ -347,6 +417,9 @@ class TensionEngine:
         delta: float,
         zone: SemanticZone,
         lambda_state: LambdaState,
+        *,
+        prediction: Optional[PredictionResult] = None,
+        compression: Optional[CompressionResult] = None,
     ) -> Optional[str]:
         """Decide if this step should trigger a memory record."""
         if delta > 0.60:
@@ -358,6 +431,13 @@ class TensionEngine:
             LambdaState.RECURSIVE,
         }:
             return "soft_memory"
+        if prediction is not None:
+            if prediction.trend == "chaotic":
+                return "record_hard_predicted"
+            if prediction.trend == "diverging" and prediction.prediction_confidence > 0.7:
+                return "record_predictive_warning"
+        if compression is not None and compression.compression_ratio < 0.5:
+            return "record_high_compression"
         return None
 
     def _check_bridge(self, delta_s: float, w_c: float) -> bool:

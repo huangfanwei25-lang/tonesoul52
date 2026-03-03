@@ -5,6 +5,7 @@ import json
 import math
 import re
 import sqlite3
+import time
 import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
@@ -478,11 +479,48 @@ class JsonlSoulDB:
 class SqliteSoulDB:
     def __init__(self, db_path: Optional[Path] = None) -> None:
         self.db_path = db_path or (_default_memory_root() / "soul.db")
+        self._busy_timeout_ms = 30000
+        self._write_retry_attempts = 6
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
         self._init_db()
 
     def _connect(self) -> sqlite3.Connection:
-        return sqlite3.connect(self.db_path)
+        conn = sqlite3.connect(
+            self.db_path,
+            timeout=max(1.0, self._busy_timeout_ms / 1000.0),
+        )
+        try:
+            conn.execute(f"PRAGMA busy_timeout={int(self._busy_timeout_ms)}")
+            conn.execute("PRAGMA journal_mode=WAL")
+        except sqlite3.OperationalError:
+            pass
+        return conn
+
+    def _execute_write(self, op):
+        last_error: Optional[Exception] = None
+        for attempt in range(self._write_retry_attempts):
+            conn: Optional[sqlite3.Connection] = None
+            try:
+                conn = self._connect()
+                result = op(conn)
+                conn.commit()
+                return result
+            except sqlite3.OperationalError as exc:
+                last_error = exc
+                locked = "locked" in str(exc).lower()
+                if conn is not None:
+                    try:
+                        conn.rollback()
+                    except Exception:
+                        pass
+                if (not locked) or attempt >= self._write_retry_attempts - 1:
+                    raise
+                time.sleep(0.01 * (attempt + 1))
+            finally:
+                if conn is not None:
+                    conn.close()
+        if last_error is not None:
+            raise last_error
 
     def _init_db(self) -> None:
         conn = self._connect()
@@ -576,25 +614,25 @@ class SqliteSoulDB:
             verified_value = payload.get("verified") if isinstance(payload, dict) else False
             verified = 1 if verified_value else 0
 
-            conn = self._connect()
-            cursor = conn.cursor()
-            cursor.execute(
-                """
-                INSERT INTO isnad (id, event_type, content, hash, prev_hash, timestamp, verified)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
-                """,
-                (
-                    record_id,
-                    str(event_type),
-                    content,
-                    str(hash_value) if hash_value else None,
-                    str(prev_hash) if prev_hash else None,
-                    timestamp,
-                    verified,
-                ),
-            )
-            conn.commit()
-            conn.close()
+            def _write_isnad(conn: sqlite3.Connection) -> None:
+                cursor = conn.cursor()
+                cursor.execute(
+                    """
+                    INSERT INTO isnad (id, event_type, content, hash, prev_hash, timestamp, verified)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        record_id,
+                        str(event_type),
+                        content,
+                        str(hash_value) if hash_value else None,
+                        str(prev_hash) if prev_hash else None,
+                        timestamp,
+                        verified,
+                    ),
+                )
+
+            self._execute_write(_write_isnad)
             return record_id
 
         record_type = payload.get("type") if isinstance(payload, dict) else None
@@ -614,26 +652,26 @@ class SqliteSoulDB:
         if tags:
             tags_value = _serialize_json(tags)
 
-        conn = self._connect()
-        cursor = conn.cursor()
-        cursor.execute(
-            """
-            INSERT INTO memories (id, type, content, embedding, timestamp, source, parent_id, tags)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            """,
-            (
-                record_id,
-                record_type,
-                content,
-                embedding_value,
-                timestamp,
-                source.value,
-                str(parent_id) if parent_id else None,
-                tags_value,
-            ),
-        )
-        conn.commit()
-        conn.close()
+        def _write_memory(conn: sqlite3.Connection) -> None:
+            cursor = conn.cursor()
+            cursor.execute(
+                """
+                INSERT INTO memories (id, type, content, embedding, timestamp, source, parent_id, tags)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    record_id,
+                    record_type,
+                    content,
+                    embedding_value,
+                    timestamp,
+                    source.value,
+                    str(parent_id) if parent_id else None,
+                    tags_value,
+                ),
+            )
+
+        self._execute_write(_write_memory)
         return record_id
 
     def _count_memories_by_source(self, source: MemorySource) -> int:

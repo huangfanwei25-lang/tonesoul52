@@ -4,6 +4,7 @@ import numpy as np
 import pytest
 
 from memory import consolidator as consolidator_module
+from tonesoul.memory.openclaw import hippocampus as openclaw_hippocampus_module
 from tonesoul.memory.openclaw.embeddings import BaseEmbedding, HashEmbedding
 from tonesoul.memory.openclaw.hippocampus import Hippocampus
 
@@ -139,3 +140,29 @@ def test_get_hippocampus_auto_falls_back_to_hash(tmp_path, monkeypatch):
     )
     hippo = consolidator_module.get_hippocampus(db_path=str(tmp_path / "auto-db"))
     assert isinstance(hippo.embedder, HashEmbedding)
+
+
+def test_get_hippocampus_sanitizes_legacy_object_index(tmp_path, monkeypatch):
+    monkeypatch.setenv("TONESOUL_MEMORY_EMBEDDER", "hash")
+    monkeypatch.setattr(openclaw_hippocampus_module, "faiss", None)
+
+    db_path = tmp_path / "legacy-db"
+    db_path.mkdir(parents=True, exist_ok=True)
+    index_file = db_path / "tonesoul_cognitive.index"
+    meta_file = db_path / "tonesoul_metadata.jsonl"
+
+    with open(index_file, "wb") as handle:
+        np.save(handle, np.array([{"legacy": 1}], dtype=object), allow_pickle=True)
+    meta_file.write_text(
+        '{"id":"legacy","source_file":"legacy.md","content":"legacy payload"}\n',
+        encoding="utf-8",
+    )
+
+    hippo = consolidator_module.get_hippocampus(db_path=str(db_path))
+
+    assert isinstance(hippo, Hippocampus)
+    assert hippo.metadata == []
+    assert index_file.exists()
+    assert meta_file.exists()
+    assert list(db_path.glob("tonesoul_cognitive.index.legacy_*.bak"))
+    assert list(db_path.glob("tonesoul_metadata.jsonl.legacy_*.bak"))

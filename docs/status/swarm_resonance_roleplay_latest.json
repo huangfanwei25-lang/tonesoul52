@@ -1,0 +1,91 @@
+{
+  "generated_at": "2026-03-02T12:32:41Z",
+  "source": "scripts/run_swarm_resonance_roleplay.py",
+  "mode": "all",
+  "rounds": 24,
+  "seed": 42,
+  "dry_run": false,
+  "local_llm_enabled": false,
+  "journal_path": "memory\\self_journal.jsonl",
+  "decision_counts": {
+    "approve": 6,
+    "revise": 17,
+    "block": 1
+  },
+  "resonance_counts": {
+    "resonance": 26,
+    "flow": 32,
+    "divergence": 14
+  },
+  "mode_counts": {
+    "philosophical": 6,
+    "adversarial": 6,
+    "freeform": 6,
+    "paradox": 6
+  },
+  "response_source_counts": {
+    "simulated": 72
+  },
+  "sample_repair": [
+    {
+      "type": "swarm_roleplay_repair",
+      "original_gate": "swarm_roleplay",
+      "resonance_class": "resonance",
+      "delta_before_repair": 0.0898,
+      "delta_after_repair": 0.0109,
+      "prediction_confidence": 0.5,
+      "swarm_decision": "approve",
+      "disagreement_utility": 0.0,
+      "vote_entropy": 1.0,
+      "timestamp": "2026-03-02T12:32:41Z"
+    },
+    {
+      "type": "swarm_roleplay_repair",
+      "original_gate": "swarm_roleplay",
+      "resonance_class": "resonance",
+      "delta_before_repair": 0.0572,
+      "delta_after_repair": 0.0079,
+      "prediction_confidence": 0.5,
+      "swarm_decision": "approve",
+      "disagreement_utility": 1.0,
+      "vote_entropy": 1.0,
+      "timestamp": "2026-03-02T12:32:41Z"
+    },
+    {
+      "type": "swarm_roleplay_repair",
+      "original_gate": "swarm_roleplay",
+      "resonance_class": "flow",
+      "delta_before_repair": 0.0049,
+      "delta_after_repair": 0.001,
+      "prediction_confidence": 0.5,
+      "swarm_decision": "revise",
+      "disagreement_utility": 1.0,
+      "vote_entropy": 1.0,
+      "timestamp": "2026-03-02T12:32:41Z"
+    },
+    {
+      "type": "swarm_roleplay_repair",
+      "original_gate": "swarm_roleplay",
+      "resonance_class": "flow",
+      "delta_before_repair": 0.0021,
+      "delta_after_repair": 0.0046,
+      "prediction_confidence": 0.5,
+      "swarm_decision": "revise",
+      "disagreement_utility": 0.0,
+      "vote_entropy": 1.0,
+      "timestamp": "2026-03-02T12:32:41Z"
+    },
+    {
+      "type": "swarm_roleplay_repair",
+      "original_gate": "swarm_roleplay",
+      "resonance_class": "resonance",
+      "delta_before_repair": 0.1116,
+      "delta_after_repair": 0.0249,
+      "prediction_confidence": 0.5,
+      "swarm_decision": "approve",
+      "disagreement_utility": 1.0,
+      "vote_entropy": 1.0,
+      "timestamp": "2026-03-02T12:32:41Z"
+    }
+  ]
+}

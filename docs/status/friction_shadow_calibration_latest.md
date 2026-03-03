@@ -1,27 +1,27 @@
 # Friction Shadow Calibration Latest
 
-- generated_at: 2026-02-28T09:47:32Z
+- generated_at: 2026-03-01T15:18:16Z
 - overall_ok: true
 - scenario_count: 1200
 - route_change_rate: 0.0
-- active_council_rate: 0.8725
-- shadow_council_rate: 0.8725
+- active_council_rate: 0.8933
+- shadow_council_rate: 0.8933
 - high_friction_escape_rate: 0.0
 
 ## Route Distribution
 | route | active | shadow |
 | --- | ---: | ---: |
 | route_local_llm | 0 | 0 |
-| route_single_cloud | 153 | 153 |
-| route_full_council | 1047 | 1047 |
+| route_single_cloud | 128 | 128 |
+| route_full_council | 1072 | 1072 |
 | block_rate_limit | 0 | 0 |
 
 ## Friction Bands
 | band | count | active_council_rate | shadow_council_rate |
 | --- | ---: | ---: | ---: |
-| low | 24 | 0.0 | 0.0 |
-| mid | 232 | 0.444 | 0.444 |
-| high | 944 | 1.0 | 1.0 |
+| low | 21 | 0.0 | 0.0 |
+| mid | 230 | 0.5348 | 0.5348 |
+| high | 949 | 1.0 | 1.0 |
 | unknown | 0 | 0.0 | 0.0 |
 
 ## Warnings
