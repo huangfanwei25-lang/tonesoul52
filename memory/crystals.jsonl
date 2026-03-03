@@ -1,3 +1,5 @@
 {"rule": "critical: collapse warnings escalate to fail-closed governance", "source_pattern": "collapse_warning x3", "weight": 1.0, "created_at": "2026-03-03T05:28:18Z", "access_count": 0, "tags": ["critical", "collapse_warning", "safety"]}
 {"rule": "prefer interactions that produce genuine resonance (tension -> convergence -> novel output)", "source_pattern": "resonance_convergence x28", "weight": 0.9, "created_at": "2026-03-03T06:46:20Z", "access_count": 0, "tags": ["prefer", "resonance", "convergence"]}
 {"rule": "avoid high-risk actions that previously triggered block outcomes", "source_pattern": "verdict:block x683", "weight": 0.8, "created_at": "2026-03-03T06:46:20Z", "access_count": 0, "tags": ["avoid", "verdict", "block"]}
+{"rule": "always_run_black", "source": "architecture_cleanup_2026-03-03", "weight": 1.0, "description": "Every task must end with black formatting check. No exceptions."}
+{"rule": "always_report_side_effects", "source": "journal_reset_incident_2026-03-03", "weight": 0.8, "description": "Any side effect of a cleanup action (e.g. file reset, data loss) must be explicitly reported."}

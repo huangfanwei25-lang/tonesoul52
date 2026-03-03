@@ -1,9 +1,8 @@
-# Codex Task: 多階段架構收尾 — 孤立模組 + CI 整合 + Git 推送
+# Codex Task: 收尾推送 — CI 整合 + commit + push + 驗證
 
 **交付者**: Antigravity (Architect)
-**日期**: 2026-03-03
-**約束等級**: cleanup + integration（γ_base=0.2）
-**預計執行時間**: 長任務（4-6 小時）
+**日期**: 2026-03-04
+**約束等級**: integration（γ_base=0.2）
 
 ---
 
@@ -15,91 +14,37 @@ python -m black --check scripts/ tonesoul/ memory/ tests/
 python -m pytest tests/ -q --tb=no --ignore=tests/fixtures
 ```
 
+**如果跳過以上步驟，整個交付視為失敗。**
+
 ---
 
 ## 總覽
 
-這是一個多階段任務。按順序做完所有階段。
+上一輪已完成：
+- ✅ 刪除 34 個 CLI thin wrapper
+- ✅ 回收 healthcheck/memory_compact/skill_gate 到 scripts/
+- ✅ 新增 3 個 verify 腳本 + 測試
+- ✅ 孤立模組掃描（22 個 → 刪 3 個 DEAD，保留 19 個）
+- ✅ config.py entrypoint 修復
+- ✅ CI dual_track_boundary.yml 修復
+
+本輪任務：把所有改動提交並推送。
 
 ```
-Phase 1: 孤立模組審計 + 清理
-Phase 2: CI 整合（verify 腳本接進 workflow）
-Phase 3: 星圖 + README 數據更新
-Phase 4: Git commit + push
-Phase 5: CI 驗證（確認全綠）
+Task A: CI workflow 整合 verify 腳本
+Task B: 星圖 + 數據更新
+Task C: Git commit + push（一次性）
+Task D: 本地全量驗證
+Task E: 結晶規則更新
 ```
 
 ---
 
-## Phase 1：孤立模組審計 + 清理
-
-### 背景
-`docs/status/orphan_modules_report.md` 列出了 22 個孤立模組。需要逐一審計，安全刪除或保留。
-
-### 22 個孤立模組
-
-```
-tonesoul.adapters
-tonesoul.append_council_event
-tonesoul.audit_dashboard
-tonesoul.config                    ← 注意：可能被 import 但掃描遺漏
-tonesoul.etcl_lifecycle
-tonesoul.generate_patch
-tonesoul.persistence
-tonesoul.persona_ledger_validator
-tonesoul.persona_registry_builder
-tonesoul.persona_registry_cleaner
-tonesoul.persona_registry_summary
-tonesoul.persona_trace_report
-tonesoul.pipeline_context
-tonesoul.quick_council
-tonesoul.self_test
-tonesoul.simulate_council
-tonesoul.test_integration
-tonesoul.test_interception
-tonesoul.tonesoul_llm
-tonesoul.ystm.acceptance
-tonesoul.ystm.storage
-tonesoul.ystm_demo
-```
+## Task A：CI Workflow 整合
 
 ### 步驟
 
-1. **對每個模組跑完整引用搜尋**：
-```bash
-grep -r "模組名" --include="*.py" --include="*.yml" --include="*.md" . | grep -v "orphan_modules_report"
-```
-
-2. **分類**：
-   - **DEAD**：零引用 → 可以安全刪除
-   - **WEAK**：只被 1-2 個地方引用，且那些地方本身也可能是死碼 → 標記但不刪
-   - **ALIVE**：被核心模組引用 → 保留，從孤立報告移除（false positive）
-   - **CAUTION**：`config.py`, `pipeline_context` 等很可能是 false positive → 仔細確認
-
-3. **刪除 DEAD 模組**：
-   - 刪除 .py 檔案
-   - 刪除對應的測試（如果有）
-   - 確認 pytest 仍全部通過
-
-4. **更新孤立報告**：
-   - 更新 `docs/status/orphan_modules_report.md`
-   - 記錄每個模組的最終分類和處置
-
-### 特別注意
-- `tonesoul.config` 很可能是核心，**不要刪**，仔細確認
-- `tonesoul.pipeline_context` 可能被 `unified_pipeline.py` 使用
-- `tonesoul.tonesoul_llm` 可能是 LLM 後端介面
-- 寧可多保留，不要誤刪
-
----
-
-## Phase 2：CI 整合
-
-### 步驟
-
-1. **把 3 個 verify 腳本加進 CI**：
-
-編輯 `.github/workflows/ci.yml` 或合適的 workflow，加入：
+1. 編輯 `.github/workflows/ci.yml`（或最合適的 workflow），在測試步驟之後加入：
 
 ```yaml
 - name: Verify command registry
@@ -109,95 +54,61 @@ grep -r "模組名" --include="*.py" --include="*.yml" --include="*.md" . | grep
   run: python scripts/verify_stale_command_refs.py --strict
 
 - name: Verify submodule integrity
-  run: python scripts/verify_submodule_integrity.py || true  # warning only
+  run: python scripts/verify_submodule_integrity.py || true
 ```
 
-2. **確認不會破壞其他 workflow**
-3. **submodule integrity 用 `|| true`** — 因為 CI 環境可能不初始化 submodule
+2. `verify_submodule_integrity.py` 用 `|| true` — CI 環境可能不初始化 submodule
+3. 確認不破壞其他 workflow
 
 ---
 
-## Phase 3：星圖 + README 數據更新
+## Task B：星圖重新產生
 
 ### 步驟
 
-1. **重新生成星圖**（移除了 cli/ 後拓撲會改變）：
 ```bash
 python scripts/skill_topology.py
 python scripts/skill_topology.py --format json
-python scripts/skill_topology.py --format mermaid
 ```
 
-2. **更新 README 數據快照**（兩個版本都要更新）：
-
-更新 `README.md` 和 `README.zh-TW.md` 的 Numbers 區塊：
-- Tests passing：取 pytest 結果
-- Journal entries：取 journal 行數
-- 其他指標從 dashboard 取
-
-3. **更新日期為 2026-03-03**（如果還不是的話）
+移除 cli/ 後拓撲會改變，確保輸出正確。
 
 ---
 
-## Phase 4：Git Commit + Push
+## Task C：Git Commit + Push
 
 ### 步驟
 
-1. **Stage 所有變更**：
+1. 確保 working tree 乾淨或只有預期的改動：
+```bash
+git status --short
+```
+
+2. Stage + commit：
 ```bash
 git add -A
-```
+git commit --no-verify -m "refactor: architecture cleanup round 1
 
-2. **Commit**（不含 journal JSONL 如果太大）：
-```bash
-git commit --no-verify -m "refactor: architecture cleanup — delete 34 CLI dead code, migrate 3 tools, scan 22 orphans
-
-- Deleted 34 thin CLI wrappers (zero references)
+- Deleted 34 CLI thin wrappers (zero references)
 - Migrated healthcheck, memory_compact, skill_gate to scripts/
 - Added verify_command_registry, verify_stale_command_refs, verify_submodule_integrity
-- Scanned and cleaned orphan modules
-- Updated star map topology
+- Cleaned 3 DEAD orphan modules (adapters, test_integration, test_interception)
+- Classified 19 WEAK/ALIVE orphan modules (kept)
 - Fixed CI dual_track_boundary fetch-depth
-- Integrated verify scripts into CI
-- Stats: XXXX tests, XX orphans resolved"
+- Integrated verify scripts into CI workflow
+- 1163 tests passing, black clean"
 ```
 
-3. **Push**：
+3. Push：
 ```bash
 git push origin master
 ```
 
 ---
 
-## Phase 5：CI 驗證
+## Task D：本地全量驗證
 
 ### 步驟
-1. 等 CI 跑完（或者跑本地驗證代替）
-2. 確認以下通過：
-```bash
-python -m black --check scripts/ tonesoul/ memory/ tests/
-python -m pytest tests/ -q --tb=no --ignore=tests/fixtures
-python scripts/verify_command_registry.py --strict
-python scripts/verify_stale_command_refs.py --strict
-python scripts/verify_submodule_integrity.py --strict
-python scripts/skill_topology.py
-python scripts/tension_dashboard.py --work-category research
-```
-
-3. 輸出最終統計（測試數、journal 數、結晶數等）
-
----
-
-## 不要做的事
-
-- ❌ 不加新功能
-- ❌ 不改 tension_engine / resonance / unified_pipeline 的邏輯
-- ❌ 不改 README 的文案（只更新數據）
-- ❌ 不改 SKILL.md
-- ❌ 不改 crystallizer / consolidator 邏輯
-- ❌ 如果不確定是不是 dead code，**不要刪**，標記為 WEAK
-
-## 最終驗收
 
 ```bash
 # 格式化
@@ -217,8 +128,42 @@ python scripts/skill_topology.py
 python scripts/tension_dashboard.py --work-category research
 
 # Git 狀態
-git status -sb  # 應該顯示 master...origin/master 無 ahead/behind
-
-# 孤立報告是否更新
-cat docs/status/orphan_modules_report.md
+git status -sb
 ```
+
+---
+
+## Task E：結晶規則更新
+
+在 `memory/crystals.jsonl` 末尾追加兩條新結晶：
+
+```jsonl
+{"rule": "always_run_black", "source": "architecture_cleanup_2026-03-03", "weight": 1.0, "description": "Every task must end with black formatting check. No exceptions."}
+{"rule": "always_report_side_effects", "source": "journal_reset_incident_2026-03-03", "weight": 0.8, "description": "Any side effect of a cleanup action (e.g. file reset, data loss) must be explicitly reported."}
+```
+
+---
+
+## 不要做的事
+
+- ❌ 不加新功能
+- ❌ 不改核心模組邏輯
+- ❌ 不改 README 文案（數據上輪已更新）
+- ❌ 不碰 SKILL.md
+- ❌ 不重置 journal 或其他 memory 資料
+- ❌ 不做任何你沒有在報告中提到的改動
+
+## 最終驗收
+
+```bash
+python -m black --check scripts/ tonesoul/ memory/ tests/
+python -m pytest tests/ -q --tb=no --ignore=tests/fixtures
+python scripts/verify_command_registry.py --strict
+python scripts/verify_stale_command_refs.py --strict
+python scripts/skill_topology.py
+git log --oneline -3
+git status -sb
+cat memory/crystals.jsonl | tail -2
+```
+
+**報告中必須包含以上所有指令的輸出。**
