@@ -21,6 +21,7 @@ from .semantic_control import (
     SemanticZone,
     get_zone,
 )
+from .resistance import PainEngine, ThrottleResult
 from .variance_compressor import CompressionResult, DynamicVarianceCompressor
 from .work_classifier import WorkCategory
 
@@ -113,6 +114,8 @@ class TensionResult:
     prediction: Optional[PredictionResult] = None
     compression: Optional[CompressionResult] = None
     work_category: Optional[str] = None
+    # RFC-012 resistance
+    throttle: Optional[ThrottleResult] = None
 
     def __post_init__(self) -> None:
         if not self.timestamp:
@@ -137,6 +140,8 @@ class TensionResult:
             d["compression"] = self.compression.to_dict()
         if self.work_category is not None:
             d["work_category"] = self.work_category
+        if self.throttle is not None:
+            d["throttle"] = self.throttle.to_dict()
         return d
 
 
@@ -184,6 +189,8 @@ class TensionEngine:
         self._predictor = NonlinearPredictor()
         self._compressor = DynamicVarianceCompressor()
         self._work_category = work_category or WorkCategory.ENGINEERING
+        # RFC-012 resistance
+        self._pain_engine = PainEngine()
 
     def compute(
         self,
@@ -274,6 +281,12 @@ class TensionEngine:
         # 12) Explanation
         explanation = self._build_explanation(signals, total, zone, lambda_state)
 
+        # 12.5) RFC-012: Evaluate pain throttle
+        throttle = self._pain_engine.evaluate_throttle(
+            compression_ratio=compression.compression_ratio,
+            gamma_effective=compression.gamma_effective,
+        )
+
         return TensionResult(
             total=total,
             zone=zone,
@@ -287,6 +300,7 @@ class TensionEngine:
             prediction=prediction,
             compression=compression,
             work_category=self._work_category.value,
+            throttle=throttle,
         )
 
     @property

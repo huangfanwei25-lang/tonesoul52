@@ -179,6 +179,79 @@ class Hippocampus:
 
         return final_results
 
+    # ── Phase II V2: Directional Error Vector ──────────────────
+
+    @staticmethod
+    def compute_error_vector(
+        intended: np.ndarray,
+        generated: np.ndarray,
+    ) -> np.ndarray:
+        """
+        Compute the directional error vector B_vec = intended - generated.
+
+        This vector points from what the model *produced* towards what
+        was *intended*, enabling retrieval of memories aligned with the
+        correction direction.
+
+        Parameters
+        ----------
+        intended : np.ndarray
+            Embedding of the intended output.
+        generated : np.ndarray
+            Embedding of the actual model output.
+
+        Returns
+        -------
+        np.ndarray
+            Directional error vector (same dimensionality as inputs).
+        """
+        b_vec = np.asarray(intended, dtype=np.float32) - np.asarray(generated, dtype=np.float32)
+        norm = float(np.linalg.norm(b_vec))
+        if norm > 1e-8:
+            b_vec = b_vec / norm
+        return b_vec
+
+    def recall_corrective(
+        self,
+        intended: np.ndarray,
+        generated: np.ndarray,
+        query_text: str = "",
+        top_k: int = 5,
+        *,
+        tension_context: Dict[str, float] | None = None,
+    ) -> List[MemoryResult]:
+        """
+        Retrieve memories aligned with the correction direction.
+
+        Uses the directional error vector B_vec to find past experiences
+        where the system successfully self-corrected in a similar direction.
+
+        Parameters
+        ----------
+        intended : np.ndarray
+            Embedding of what was intended.
+        generated : np.ndarray
+            Embedding of what was actually produced.
+        query_text : str
+            Optional text query for hybrid retrieval.
+        top_k : int
+            Number of results to return.
+        tension_context : dict, optional
+            Current tension context for boosting.
+
+        Returns
+        -------
+        List[MemoryResult]
+            Memories aligned with the correction direction.
+        """
+        b_vec = self.compute_error_vector(intended, generated)
+        return self.recall(
+            query_text=query_text or "self-correction",
+            query_vector=b_vec,
+            top_k=top_k,
+            tension_context=tension_context,
+        )
+
     @staticmethod
     def _text_contains_any(text: str, terms: List[str]) -> bool:
         text_norm = str(text or "").lower()
