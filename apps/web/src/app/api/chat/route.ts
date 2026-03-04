@@ -204,6 +204,10 @@ function shouldAllowMockFallback(): boolean {
     return envFlag(MOCK_FALLBACK_ENV, false);
 }
 
+function resolveRuntimeBackendMode(): "same_origin" | "external_backend" {
+    return isSameOriginMode() ? "same_origin" : "external_backend";
+}
+
 function isAbortError(error: unknown): boolean {
     return error instanceof Error && error.name === "AbortError";
 }
@@ -727,6 +731,7 @@ export async function POST(request: NextRequest) {
     // Same-origin mode now forwards to the Python backend via getBackendUrl()
     // which resolves to /api/_backend on the same Vercel deployment.
 
+    const runtimeBackendMode = resolveRuntimeBackendMode();
     const backendUrl = getBackendUrl();
     const configuredBackendUrl = getConfiguredBackendUrl();
     if (isVercelRuntime()) {
@@ -757,6 +762,8 @@ export async function POST(request: NextRequest) {
                         : "Backend unavailable",
                     execution_profile: executionProfile,
                     backend_url: backendUrl,
+                    backend_mode: runtimeBackendMode,
+                    deliberation_level: "unavailable",
                     backend_error: error instanceof Error ? error.message : "Transport failure",
                     backend_timeout_ms: transportBudget.timeoutMs,
                     distillation_guard: distillationGuard,
@@ -797,6 +804,9 @@ export async function POST(request: NextRequest) {
             if (typeof payload.execution_profile !== "string") {
                 payload.execution_profile = executionProfile;
             }
+            if (typeof payload.backend_mode !== "string") {
+                payload.backend_mode = runtimeBackendMode;
+            }
             payload.deliberation_level = "runtime";
             payload.distillation_guard = distillationGuard;
         }
@@ -811,6 +821,8 @@ export async function POST(request: NextRequest) {
             {
                 error: "Backend returned invalid JSON",
                 backend_status: backendResponse.status,
+                backend_mode: runtimeBackendMode,
+                deliberation_level: "unavailable",
                 distillation_guard: distillationGuard,
             },
             { status: 502 }

@@ -9,6 +9,7 @@ import {
 
 const PROBE_TIMEOUT_ENV = "TONESOUL_GOVERNANCE_STATUS_TIMEOUT_MS";
 const DEFAULT_PROBE_TIMEOUT_MS = 6000;
+const SAME_ORIGIN_FORCE_MOCK_ENV = "TONESOUL_FORCE_SAME_ORIGIN_MOCK";
 
 function resolveProbeTimeoutMs(): number {
     const raw = process.env[PROBE_TIMEOUT_ENV];
@@ -21,6 +22,14 @@ function resolveProbeTimeoutMs(): number {
 }
 
 const PROBE_TIMEOUT_MS = resolveProbeTimeoutMs();
+
+function envFlag(name: string, defaultValue = false): boolean {
+    const raw = process.env[name];
+    if (raw == null) {
+        return defaultValue;
+    }
+    return ["1", "true", "yes", "on"].includes(raw.trim().toLowerCase());
+}
 
 type BackendProbeFailureReason =
     | "backend_health_timeout"
@@ -72,14 +81,16 @@ export async function GET() {
     const sameOrigin = isSameOriginMode();
     const backendUrl = getBackendUrl();
     const configuredBackendUrl = getConfiguredBackendUrl();
+    const forceSameOriginMock = sameOrigin && envFlag(SAME_ORIGIN_FORCE_MOCK_ENV, false);
 
-    if (sameOrigin) {
+    if (forceSameOriginMock) {
         return NextResponse.json({
             status: "ok",
             backend_mode: "same_origin",
             governance_capability: "mock_only",
             deliberation_level: "mock",
             backend_status: 200,
+            reason: "same_origin_forced_mock",
             checked_at: checkedAt,
             elisa: buildElisaContract(true, checkedAt),
         });
@@ -110,7 +121,7 @@ export async function GET() {
         return NextResponse.json(
             {
                 status: "degraded",
-                backend_mode: "external_backend",
+                backend_mode: sameOrigin ? "same_origin" : "external_backend",
                 governance_capability: "unavailable",
                 deliberation_level: "unavailable",
                 backend_status: probe.status ?? null,
@@ -124,7 +135,7 @@ export async function GET() {
 
     return NextResponse.json({
         status: "ok",
-        backend_mode: "external_backend",
+        backend_mode: sameOrigin ? "same_origin" : "external_backend",
         governance_capability: "runtime_ready",
         deliberation_level: "runtime",
         backend_status: probe.status,

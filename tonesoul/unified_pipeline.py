@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import os
 import re
+import time
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
@@ -141,6 +142,14 @@ class UnifiedPipeline:
         # Phase I wiring: TensionEngine + PersonaDimension
         self._tension_engine = None
         self._persona_dimension = None
+        # RFC-012/013 runtime guards
+        self._friction_calculator = None
+        self._circuit_breaker = None
+        self._perturbation_recovery = None
+        self._enable_corrective_recall = _read_bool_env(
+            "TONESOUL_ENABLE_CORRECTIVE_RECALL",
+            default=True,
+        )
 
     def _get_gemini(self):
         """Get LLM client based on LLM_BACKEND env var.
@@ -321,6 +330,39 @@ class UnifiedPipeline:
             except Exception:
                 pass
         return self._tension_engine
+
+    def _get_friction_calculator(self):
+        """Get or create the RFC-012 friction calculator."""
+        if self._friction_calculator is None:
+            try:
+                from tonesoul.resistance import FrictionCalculator
+
+                self._friction_calculator = FrictionCalculator()
+            except Exception:
+                pass
+        return self._friction_calculator
+
+    def _get_circuit_breaker(self):
+        """Get or create the RFC-012 circuit breaker."""
+        if self._circuit_breaker is None:
+            try:
+                from tonesoul.resistance import CircuitBreaker
+
+                self._circuit_breaker = CircuitBreaker()
+            except Exception:
+                pass
+        return self._circuit_breaker
+
+    def _get_perturbation_recovery(self):
+        """Get or create the Pipeline V2 perturbation recovery helper."""
+        if self._perturbation_recovery is None:
+            try:
+                from tonesoul.resistance import PerturbationRecovery
+
+                self._perturbation_recovery = PerturbationRecovery()
+            except Exception:
+                pass
+        return self._perturbation_recovery
 
     def _should_capture_visual_frame(self, chain: Any) -> bool:
         """Gate automatic visual capture with env-configurable controls."""
@@ -815,6 +857,18 @@ class UnifiedPipeline:
         return parsed
 
     @staticmethod
+    def _safe_bool(value: Any) -> Optional[bool]:
+        if isinstance(value, bool):
+            return value
+        if isinstance(value, str):
+            lowered = value.strip().lower()
+            if lowered in {"1", "true", "yes", "on"}:
+                return True
+            if lowered in {"0", "false", "no", "off"}:
+                return False
+        return None
+
+    @staticmethod
     def _contains_override_pressure(message: str) -> bool:
         if not isinstance(message, str):
             return False
@@ -985,6 +1039,64 @@ class UnifiedPipeline:
         dispatch_trace["repair_eligible"] = True
         dispatch_trace["repair"] = repair_event
 
+    def _attach_runtime_governance_observability(
+        self,
+        dispatch_trace: Dict[str, Any],
+    ) -> None:
+        if not isinstance(dispatch_trace, dict):
+            return
+
+        resistance = dispatch_trace.get("resistance")
+        if not isinstance(resistance, dict):
+            resistance = {}
+
+        circuit_breaker = resistance.get("circuit_breaker")
+        if not isinstance(circuit_breaker, dict):
+            circuit_breaker = {}
+
+        perturbation_recovery = resistance.get("perturbation_recovery")
+        if not isinstance(perturbation_recovery, dict):
+            perturbation_recovery = {}
+
+        repair = dispatch_trace.get("repair")
+        if not isinstance(repair, dict):
+            repair = {}
+
+        memory_correction = dispatch_trace.get("memory_correction")
+        if not isinstance(memory_correction, dict):
+            memory_correction = {}
+
+        status = str(circuit_breaker.get("status") or "").strip().lower()
+        freeze_triggered = status == "frozen"
+        break_reason = str(circuit_breaker.get("reason") or "").strip() or None
+
+        recovery_path = perturbation_recovery.get("path_id")
+        if not isinstance(recovery_path, (int, str)):
+            recovery_path = None
+
+        rollback_gate = str(repair.get("original_gate") or "").strip() or None
+        rollback_applied = rollback_gate is not None
+
+        corrective_hits = memory_correction.get("corrective_hits")
+        try:
+            corrective_hits_int = int(corrective_hits or 0)
+        except (TypeError, ValueError):
+            corrective_hits_int = 0
+
+        observability: Dict[str, Any] = {
+            "freeze_triggered": freeze_triggered,
+            "break_reason": break_reason,
+            "recovery_path": recovery_path,
+            "rollback_applied": rollback_applied,
+            "rollback_gate": rollback_gate,
+            "memory_correction_hit": corrective_hits_int > 0,
+        }
+        effective_stress = perturbation_recovery.get("effective_stress")
+        if isinstance(effective_stress, (int, float)):
+            observability["recovery_effective_stress"] = round(float(effective_stress), 6)
+
+        dispatch_trace["governance_runtime"] = observability
+
     def _compute_prior_governance_friction(
         self,
         prior_tension: Optional[Dict[str, Any]],
@@ -1024,6 +1136,83 @@ class UnifiedPipeline:
             memory_wave=memory_wave,
             boundary_mismatch=boundary_mismatch,
         )
+
+    def _compute_runtime_friction(
+        self,
+        *,
+        prior_tension: Optional[Dict[str, Any]],
+        tone_strength: float,
+    ) -> Optional[Any]:
+        """Build RFC-012 friction input from runtime context."""
+        if not isinstance(prior_tension, dict) or not prior_tension:
+            return None
+
+        calculator = self._get_friction_calculator()
+        if calculator is None:
+            return None
+
+        query_tension = self._safe_unit_value(prior_tension.get("query_tension"))
+        if query_tension is None:
+            query_tension = max(0.0, min(1.0, float(tone_strength)))
+
+        constraint_tension = self._safe_unit_value(prior_tension.get("memory_tension"))
+        if constraint_tension is None:
+            constraint_tension = self._safe_unit_value(prior_tension.get("delta_t"))
+        if constraint_tension is None:
+            constraint_tension = 0.0
+
+        query_wave = prior_tension.get("query_wave")
+        if not isinstance(query_wave, dict):
+            query_wave = None
+
+        constraint_wave = prior_tension.get("memory_wave")
+        if not isinstance(constraint_wave, dict):
+            constraint_wave = prior_tension.get("wave")
+        if not isinstance(constraint_wave, dict):
+            constraint_wave = None
+
+        gate_decision = str(prior_tension.get("gate_decision") or "").strip().lower()
+        raw_kind = prior_tension.get("constraint_kind")
+        constraint_kind = (
+            str(raw_kind).strip().lower()
+            if isinstance(raw_kind, str) and raw_kind.strip()
+            else ("constraint" if gate_decision else "note")
+        )
+
+        is_immutable = self._safe_bool(prior_tension.get("is_immutable"))
+        if is_immutable is None:
+            is_immutable = gate_decision in {"block", "declare_stance", "reject", "refuse"}
+
+        try:
+            return calculator.compute(
+                query_tension=query_tension,
+                constraint_tension=constraint_tension,
+                query_wave=query_wave,
+                constraint_wave=constraint_wave,
+                constraint_kind=constraint_kind,
+                is_immutable=is_immutable,
+            )
+        except Exception:
+            return None
+
+    @staticmethod
+    def _merge_memory_results(primary: List[Any], secondary: List[Any]) -> List[Any]:
+        merged: List[Any] = []
+        seen: set = set()
+
+        for result in list(primary or []) + list(secondary or []):
+            doc_id = getattr(result, "doc_id", None)
+            if doc_id is None:
+                source = str(getattr(result, "source_file", "")).strip()
+                content = str(getattr(result, "content", "")).strip()
+                doc_id = f"{source}|{content[:96]}"
+            key = str(doc_id)
+            if key in seen:
+                continue
+            seen.add(key)
+            merged.append(result)
+
+        return merged
 
     def process(
         self,
@@ -1092,12 +1281,14 @@ class UnifiedPipeline:
             from tonesoul.local_llm import ask_local_llm
 
             local_response = ask_local_llm(raw_user_message)
+            local_dispatch_trace = _base_dispatch_trace()
+            self._attach_runtime_governance_observability(local_dispatch_trace)
             return UnifiedResponse(
                 response=local_response,
                 council_verdict={"verdict": "bypassed"},
                 tonebridge_analysis={},
                 inner_narrative=routing_decision.reason,
-                dispatch_trace=_base_dispatch_trace(),
+                dispatch_trace=local_dispatch_trace,
             )
         elif routing_decision.path == RoutingPath.BLOCK_RATE_LIMIT:
             dispatch_trace = _base_dispatch_trace()
@@ -1112,6 +1303,7 @@ class UnifiedPipeline:
                 stages=["rate_limit_block"],
                 attempt_after_tension=False,
             )
+            self._attach_runtime_governance_observability(dispatch_trace)
             return UnifiedResponse(
                 response="[系統防護] 請求頻率過高，已觸發速率限制，請稍後再試。",
                 council_verdict={"verdict": "blocked_by_gate"},
@@ -1194,6 +1386,106 @@ class UnifiedPipeline:
                 pass
         dispatch_trace["route"] = routing_decision.path.value
         dispatch_trace["journal_eligible"] = routing_decision.journal_eligible
+        resistance_trace: Dict[str, Any] = {}
+        runtime_friction = self._compute_runtime_friction(
+            prior_tension=prior_tension,
+            tone_strength=tone_strength,
+        )
+        if runtime_friction is not None:
+            try:
+                resistance_trace["friction"] = runtime_friction.to_dict()
+            except Exception:
+                pass
+
+        prediction = (
+            getattr(tension_result, "prediction", None) if tension_result is not None else None
+        )
+        lyapunov_exponent = (
+            getattr(prediction, "lyapunov_exponent", None) if prediction is not None else None
+        )
+        circuit_breaker = self._get_circuit_breaker()
+        if circuit_breaker is not None and runtime_friction is not None:
+            try:
+                circuit_breaker.check(runtime_friction, lyapunov_exponent=lyapunov_exponent)
+                cb_state = circuit_breaker.state.to_dict()
+                cb_state["status"] = "ok"
+                if isinstance(lyapunov_exponent, (int, float)):
+                    cb_state["lyapunov_exponent"] = round(float(lyapunov_exponent), 6)
+                resistance_trace["circuit_breaker"] = cb_state
+            except Exception as exc:
+                if exc.__class__.__name__ == "CollapseException":
+                    cb_state = circuit_breaker.state.to_dict()
+                    cb_state["status"] = "frozen"
+                    cb_state["reason"] = str(getattr(exc, "reason", str(exc)))
+                    if isinstance(lyapunov_exponent, (int, float)):
+                        cb_state["lyapunov_exponent"] = round(float(lyapunov_exponent), 6)
+                    resistance_trace["circuit_breaker"] = cb_state
+                    dispatch_trace["resistance"] = resistance_trace
+                    trajectory_result["dispatch"] = dispatch_trace
+                    block_response = (
+                        "[系統防護] CircuitBreaker 已觸發 Freeze Protocol，暫停高風險推理，"
+                        f"原因：{cb_state['reason']}"
+                    )
+                    self._apply_repair_trace(
+                        dispatch_trace=dispatch_trace,
+                        original_gate="circuit_breaker_block",
+                        source_text=raw_user_message,
+                        output_text=block_response,
+                        tension_before=tension_result,
+                        fallback_delta=initial_tension,
+                        text_tension=tone_strength,
+                        stages=["circuit_breaker_block"],
+                        attempt_after_tension=False,
+                    )
+                    self._attach_runtime_governance_observability(dispatch_trace)
+                    return UnifiedResponse(
+                        response=block_response,
+                        council_verdict={
+                            "verdict": "blocked_by_circuit_breaker",
+                            "reason": cb_state["reason"],
+                        },
+                        tonebridge_analysis=tb_result.to_dict() if tb_result else {},
+                        inner_narrative="Freeze protocol triggered by runtime resistance checks.",
+                        internal_monologue=(
+                            "Runtime guardrail interrupted the generation path "
+                            f"due to: {cb_state['reason']}"
+                        ),
+                        persona_mode="Guardian",
+                        trajectory_analysis=trajectory_result,
+                        dispatch_trace=dispatch_trace,
+                    )
+                print(f"CircuitBreaker error: {exc}")
+
+        perturbation_path = None
+        if tension_result is not None:
+            throttle = getattr(tension_result, "throttle", None)
+            compression = getattr(tension_result, "compression", None)
+            severity = (
+                str(getattr(getattr(throttle, "severity", None), "value", "")).strip().lower()
+            )
+            if (
+                compression is not None
+                and severity in {"severe", "critical"}
+                and getattr(compression, "compression_ratio", None) is not None
+            ):
+                perturbation_recovery = self._get_perturbation_recovery()
+                if perturbation_recovery is not None:
+                    try:
+                        perturbation_path = perturbation_recovery.recover(
+                            compression_ratio=float(compression.compression_ratio),
+                            gamma_effective=getattr(compression, "gamma_effective", None),
+                            friction=runtime_friction,
+                        )
+                    except Exception as exc:
+                        print(f"PerturbationRecovery error: {exc}")
+                if perturbation_path is not None:
+                    try:
+                        resistance_trace["perturbation_recovery"] = perturbation_path.to_dict()
+                    except Exception:
+                        pass
+
+        if resistance_trace:
+            dispatch_trace["resistance"] = resistance_trace
         trajectory_result["dispatch"] = dispatch_trace
         # ========== 2.5 ToneSoul 2.0: 內在審議 ==========
         deliberation = self._get_deliberation()
@@ -1317,12 +1609,57 @@ class UnifiedPipeline:
                     "work_category": str(work_category or "engineering"),
                 }
                 # Pass query_tension to trigger ToneSoul resonance reranking
-                memory_results = self._hippocampus.recall(
+                primary_results = self._hippocampus.recall(
                     query_text=user_message,
                     top_k=3,
                     query_tension=tone_strength,
                     tension_context=tension_context,
                 )
+                corrective_results: List[Any] = []
+                corrective_vector_norm: Optional[float] = None
+                if self._enable_corrective_recall:
+                    try:
+                        import numpy as np
+
+                        from tonesoul.memory.hippocampus import Hippocampus as CorrectiveMemory
+
+                        embedder = getattr(self._hippocampus, "embedder", None)
+                        if embedder is not None and hasattr(embedder, "encode"):
+                            intended_vec = np.asarray(
+                                embedder.encode(raw_user_message), dtype=np.float32
+                            )
+                            generated_vec = np.asarray(
+                                embedder.encode(user_message), dtype=np.float32
+                            )
+                            if intended_vec.shape == generated_vec.shape and intended_vec.size > 0:
+                                b_vec = CorrectiveMemory.compute_error_vector(
+                                    intended=intended_vec,
+                                    generated=generated_vec,
+                                )
+                                corrective_vector_norm = float(np.linalg.norm(b_vec))
+                                corrective_results = self._hippocampus.recall(
+                                    query_text=user_message,
+                                    query_vector=b_vec,
+                                    top_k=2,
+                                    query_tension=tone_strength,
+                                    tension_context=tension_context,
+                                    query_tension_mode="conflict",
+                                )
+                    except Exception as corrective_error:
+                        print(f"Hippocampus corrective recall error: {corrective_error}")
+
+                memory_results = self._merge_memory_results(primary_results, corrective_results)
+                dispatch_trace["memory_correction"] = {
+                    "primary_hits": len(primary_results or []),
+                    "corrective_hits": len(corrective_results or []),
+                    "enabled": bool(self._enable_corrective_recall),
+                }
+                if corrective_vector_norm is not None:
+                    dispatch_trace["memory_correction"]["b_vec_norm"] = round(
+                        corrective_vector_norm,
+                        6,
+                    )
+
                 if memory_results:
                     recalled_texts = "\n".join(
                         [
@@ -1353,6 +1690,18 @@ User message:
 {user_message}
 
 Respond with a clear, practical answer."""
+
+                if perturbation_path is not None:
+                    try:
+                        delay_ms = int(
+                            getattr(getattr(perturbation_path, "throttle", None), "delay_ms", 0)
+                            or 0
+                        )
+                        # Keep the delay bounded to avoid hard stalls during runtime.
+                        if delay_ms > 0:
+                            time.sleep(min(delay_ms, 1500) / 1000.0)
+                    except Exception:
+                        pass
 
                 gemini.start_chat(history)
                 response = gemini.send_message(full_prompt)
@@ -1617,6 +1966,7 @@ Respond with a clear, practical answer."""
                 attempt_after_tension=True,
             )
 
+        self._attach_runtime_governance_observability(dispatch_trace)
         return UnifiedResponse(
             response=response,
             council_verdict=verdict_dict,
@@ -1662,6 +2012,29 @@ Respond with a clear, practical answer."""
                     f"Dispatch state: {dispatch.get('state', 'A')} "
                     f"(adjusted_tension={dispatch.get('adjusted_tension', 0.0)})"
                 )
+                resistance = dispatch.get("resistance")
+                if isinstance(resistance, dict):
+                    cb = resistance.get("circuit_breaker")
+                    if isinstance(cb, dict):
+                        lines.append(
+                            "Circuit breaker: "
+                            f"{cb.get('status', 'unknown')}"
+                            + (f" (reason={cb.get('reason')})" if cb.get("reason") else "")
+                        )
+                    recovery = resistance.get("perturbation_recovery")
+                    if isinstance(recovery, dict):
+                        path_id = recovery.get("path_id")
+                        stress = recovery.get("effective_stress")
+                        lines.append(
+                            "Perturbation recovery: " f"path={path_id}, effective_stress={stress}"
+                        )
+                correction = dispatch.get("memory_correction")
+                if isinstance(correction, dict):
+                    lines.append(
+                        "Memory corrective recall: "
+                        f"primary={correction.get('primary_hits', 0)}, "
+                        f"corrective={correction.get('corrective_hits', 0)}"
+                    )
 
         if tb_result and getattr(tb_result, "tone", None):
             lines.append(

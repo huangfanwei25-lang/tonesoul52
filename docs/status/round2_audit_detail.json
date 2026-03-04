@@ -1,0 +1,435 @@
+{
+  "modules": [
+    {
+      "module": "tonesoul.append_council_event",
+      "path": "tonesoul/append_council_event.py",
+      "line_count": 100,
+      "import_ref_count": 0,
+      "text_ref_count": 2,
+      "test_import_ref_count": 0,
+      "test_text_ref_count": 0,
+      "exported_in_init": [],
+      "summary": {
+        "functions": [
+          "_iso_now",
+          "_compute_hash",
+          "_read_last_hash",
+          "_attach_hash_chain",
+          "build_event",
+          "append_event",
+          "main"
+        ],
+        "classes": [],
+        "has_main": false
+      },
+      "import_refs": [],
+      "text_refs": [
+        {
+          "file": "docs/status/skill_topology.json",
+          "line": 35,
+          "snippet": "\"id\": \"tonesoul.append_council_event\","
+        },
+        {
+          "file": "docs/status/skill_topology.json",
+          "line": 1322,
+          "snippet": "\"source\": \"tonesoul.append_council_event\","
+        }
+      ]
+    },
+    {
+      "module": "tonesoul.audit_dashboard",
+      "path": "tonesoul/audit_dashboard.py",
+      "line_count": 797,
+      "import_ref_count": 0,
+      "text_ref_count": 1,
+      "test_import_ref_count": 0,
+      "test_text_ref_count": 0,
+      "exported_in_init": [],
+      "summary": {
+        "functions": [],
+        "classes": [],
+        "has_main": false
+      },
+      "import_refs": [],
+      "text_refs": [
+        {
+          "file": "docs/status/skill_topology.json",
+          "line": 43,
+          "snippet": "\"id\": \"tonesoul.audit_dashboard\","
+        }
+      ]
+    },
+    {
+      "module": "tonesoul.etcl_lifecycle",
+      "path": "tonesoul/etcl_lifecycle.py",
+      "line_count": 98,
+      "import_ref_count": 0,
+      "text_ref_count": 2,
+      "test_import_ref_count": 0,
+      "test_text_ref_count": 0,
+      "exported_in_init": [],
+      "summary": {
+        "functions": [
+          "seed_path_for_run",
+          "load_seed",
+          "save_seed",
+          "transition",
+          "_next_state",
+          "_workspace_root"
+        ],
+        "classes": [],
+        "has_main": false
+      },
+      "import_refs": [],
+      "text_refs": [
+        {
+          "file": "docs/status/skill_topology.json",
+          "line": 403,
+          "snippet": "\"id\": \"tonesoul.etcl_lifecycle\","
+        },
+        {
+          "file": "docs/status/skill_topology.json",
+          "line": 1717,
+          "snippet": "\"source\": \"tonesoul.etcl_lifecycle\","
+        }
+      ]
+    },
+    {
+      "module": "tonesoul.generate_patch",
+      "path": "tonesoul/generate_patch.py",
+      "line_count": 67,
+      "import_ref_count": 0,
+      "text_ref_count": 1,
+      "test_import_ref_count": 0,
+      "test_text_ref_count": 0,
+      "exported_in_init": [],
+      "summary": {
+        "functions": [],
+        "classes": [],
+        "has_main": false
+      },
+      "import_refs": [],
+      "text_refs": [
+        {
+          "file": "docs/status/skill_topology.json",
+          "line": 475,
+          "snippet": "\"id\": \"tonesoul.generate_patch\","
+        }
+      ]
+    },
+    {
+      "module": "tonesoul.persistence",
+      "path": "tonesoul/persistence.py",
+      "line_count": 234,
+      "import_ref_count": 0,
+      "text_ref_count": 1,
+      "test_import_ref_count": 0,
+      "test_text_ref_count": 0,
+      "exported_in_init": [],
+      "summary": {
+        "functions": [
+          "create_persistence"
+        ],
+        "classes": [
+          "ToneSoulPersistence",
+          "PersistentCore"
+        ],
+        "has_main": false
+      },
+      "import_refs": [],
+      "text_refs": [
+        {
+          "file": "docs/status/skill_topology.json",
+          "line": 707,
+          "snippet": "\"id\": \"tonesoul.persistence\","
+        }
+      ]
+    },
+    {
+      "module": "tonesoul.persona_ledger_validator",
+      "path": "tonesoul/persona_ledger_validator.py",
+      "line_count": 44,
+      "import_ref_count": 0,
+      "text_ref_count": 1,
+      "test_import_ref_count": 0,
+      "test_text_ref_count": 0,
+      "exported_in_init": [],
+      "summary": {
+        "functions": [],
+        "classes": [],
+        "has_main": false
+      },
+      "import_refs": [],
+      "text_refs": [
+        {
+          "file": "docs/status/skill_topology.json",
+          "line": 723,
+          "snippet": "\"id\": \"tonesoul.persona_ledger_validator\","
+        }
+      ]
+    },
+    {
+      "module": "tonesoul.persona_registry_builder",
+      "path": "tonesoul/persona_registry_builder.py",
+      "line_count": 110,
+      "import_ref_count": 0,
+      "text_ref_count": 1,
+      "test_import_ref_count": 0,
+      "test_text_ref_count": 0,
+      "exported_in_init": [],
+      "summary": {
+        "functions": [],
+        "classes": [],
+        "has_main": false
+      },
+      "import_refs": [],
+      "text_refs": [
+        {
+          "file": "docs/status/skill_topology.json",
+          "line": 731,
+          "snippet": "\"id\": \"tonesoul.persona_registry_builder\","
+        }
+      ]
+    },
+    {
+      "module": "tonesoul.persona_registry_cleaner",
+      "path": "tonesoul/persona_registry_cleaner.py",
+      "line_count": 98,
+      "import_ref_count": 0,
+      "text_ref_count": 1,
+      "test_import_ref_count": 0,
+      "test_text_ref_count": 0,
+      "exported_in_init": [],
+      "summary": {
+        "functions": [],
+        "classes": [],
+        "has_main": false
+      },
+      "import_refs": [],
+      "text_refs": [
+        {
+          "file": "docs/status/skill_topology.json",
+          "line": 739,
+          "snippet": "\"id\": \"tonesoul.persona_registry_cleaner\","
+        }
+      ]
+    },
+    {
+      "module": "tonesoul.persona_registry_summary",
+      "path": "tonesoul/persona_registry_summary.py",
+      "line_count": 44,
+      "import_ref_count": 0,
+      "text_ref_count": 1,
+      "test_import_ref_count": 0,
+      "test_text_ref_count": 0,
+      "exported_in_init": [],
+      "summary": {
+        "functions": [],
+        "classes": [],
+        "has_main": false
+      },
+      "import_refs": [],
+      "text_refs": [
+        {
+          "file": "docs/status/skill_topology.json",
+          "line": 747,
+          "snippet": "\"id\": \"tonesoul.persona_registry_summary\","
+        }
+      ]
+    },
+    {
+      "module": "tonesoul.persona_trace_report",
+      "path": "tonesoul/persona_trace_report.py",
+      "line_count": 149,
+      "import_ref_count": 0,
+      "text_ref_count": 1,
+      "test_import_ref_count": 0,
+      "test_text_ref_count": 0,
+      "exported_in_init": [],
+      "summary": {
+        "functions": [
+          "load_jsonl",
+          "_mean",
+          "_persona_counts",
+          "_trace_stats",
+          "_dimension_stats",
+          "build_report",
+          "build_arg_parser",
+          "_default_path",
+          "main"
+        ],
+        "classes": [],
+        "has_main": false
+      },
+      "import_refs": [],
+      "text_refs": [
+        {
+          "file": "docs/status/skill_topology.json",
+          "line": 755,
+          "snippet": "\"id\": \"tonesoul.persona_trace_report\","
+        }
+      ]
+    },
+    {
+      "module": "tonesoul.quick_council",
+      "path": "tonesoul/quick_council.py",
+      "line_count": 244,
+      "import_ref_count": 0,
+      "text_ref_count": 3,
+      "test_import_ref_count": 0,
+      "test_text_ref_count": 0,
+      "exported_in_init": [],
+      "summary": {
+        "functions": [],
+        "classes": [],
+        "has_main": false
+      },
+      "import_refs": [],
+      "text_refs": [
+        {
+          "file": "temp/ci_debug/tonesoul/quick_council.py",
+          "line": 5,
+          "snippet": "from tonesoul.quick_council import quick_review"
+        },
+        {
+          "file": "temp/ci_a825822/tonesoul/quick_council.py",
+          "line": 5,
+          "snippet": "from tonesoul.quick_council import quick_review"
+        },
+        {
+          "file": "docs/status/skill_topology.json",
+          "line": 779,
+          "snippet": "\"id\": \"tonesoul.quick_council\","
+        }
+      ]
+    },
+    {
+      "module": "tonesoul.self_test",
+      "path": "tonesoul/self_test.py",
+      "line_count": 139,
+      "import_ref_count": 0,
+      "text_ref_count": 1,
+      "test_import_ref_count": 0,
+      "test_text_ref_count": 0,
+      "exported_in_init": [],
+      "summary": {
+        "functions": [
+          "main"
+        ],
+        "classes": [],
+        "has_main": false
+      },
+      "import_refs": [],
+      "text_refs": [
+        {
+          "file": "docs/status/skill_topology.json",
+          "line": 819,
+          "snippet": "\"id\": \"tonesoul.self_test\","
+        }
+      ]
+    },
+    {
+      "module": "tonesoul.simulate_council",
+      "path": "tonesoul/simulate_council.py",
+      "line_count": 19,
+      "import_ref_count": 0,
+      "text_ref_count": 4,
+      "test_import_ref_count": 0,
+      "test_text_ref_count": 0,
+      "exported_in_init": [],
+      "summary": {
+        "functions": [
+          "main"
+        ],
+        "classes": [],
+        "has_main": false
+      },
+      "import_refs": [],
+      "text_refs": [
+        {
+          "file": "temp/ci_debug/tonesoul/simulate_council.py",
+          "line": 9,
+          "snippet": "\"tonesoul.simulate_council is deprecated; use tonesoul.council.runtime.CouncilRuntime\","
+        },
+        {
+          "file": "temp/ci_a825822/tonesoul/simulate_council.py",
+          "line": 9,
+          "snippet": "\"tonesoul.simulate_council is deprecated; use tonesoul.council.runtime.CouncilRuntime\","
+        },
+        {
+          "file": "docs/status/skill_topology.json",
+          "line": 875,
+          "snippet": "\"id\": \"tonesoul.simulate_council\","
+        },
+        {
+          "file": "docs/status/skill_topology.json",
+          "line": 1892,
+          "snippet": "\"source\": \"tonesoul.simulate_council\","
+        }
+      ]
+    },
+    {
+      "module": "tonesoul.ystm.storage",
+      "path": "tonesoul/ystm/storage.py",
+      "line_count": 187,
+      "import_ref_count": 0,
+      "text_ref_count": 2,
+      "test_import_ref_count": 0,
+      "test_text_ref_count": 0,
+      "exported_in_init": [],
+      "summary": {
+        "functions": [
+          "_to_float",
+          "_to_optional_float",
+          "_to_optional_str",
+          "node_from_dict",
+          "update_record_from_dict",
+          "load_nodes_payload",
+          "save_nodes_payload",
+          "load_audit_log",
+          "save_audit_log"
+        ],
+        "classes": [],
+        "has_main": false
+      },
+      "import_refs": [],
+      "text_refs": [
+        {
+          "file": "docs/status/skill_topology.json",
+          "line": 1211,
+          "snippet": "\"id\": \"tonesoul.ystm.storage\","
+        },
+        {
+          "file": "docs/status/skill_topology.json",
+          "line": 2332,
+          "snippet": "\"source\": \"tonesoul.ystm.storage\","
+        }
+      ]
+    },
+    {
+      "module": "tonesoul.pipeline_context",
+      "path": "tonesoul/pipeline_context.py",
+      "line_count": 80,
+      "import_ref_count": 0,
+      "text_ref_count": 1,
+      "test_import_ref_count": 0,
+      "test_text_ref_count": 0,
+      "exported_in_init": [],
+      "summary": {
+        "functions": [],
+        "classes": [
+          "PipelineContextSnapshot"
+        ],
+        "has_main": false
+      },
+      "import_refs": [],
+      "text_refs": [
+        {
+          "file": "docs/status/skill_topology.json",
+          "line": 763,
+          "snippet": "\"id\": \"tonesoul.pipeline_context\","
+        }
+      ]
+    }
+  ]
+}

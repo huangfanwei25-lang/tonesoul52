@@ -210,8 +210,11 @@ def _validate_same_origin_backend_health(payload: Any, label: str) -> bool:
         return False
 
     cap = payload_dict.get("governance_capability")
-    if cap is not None and cap != "mock_only":
-        print(f"[FAIL] {label}: expected governance_capability='mock_only', got {cap!r}.")
+    if cap is not None and cap not in {"mock_only", "runtime_ready"}:
+        print(
+            f"[FAIL] {label}: expected governance_capability in "
+            f"{{'mock_only','runtime_ready'}}, got {cap!r}."
+        )
         return False
 
     return True
