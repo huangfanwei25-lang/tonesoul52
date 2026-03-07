@@ -2,6 +2,44 @@
 
 This folder is the repository status source for machine-generated governance snapshots.
 
+## How To Read This Folder
+
+- Read markdown with UTF-8 in PowerShell:
+  - `Get-Content -Raw -Encoding UTF8 docs/status/<file>.md`
+- Treat `*_latest.json` and `*_latest.md` as generated point-in-time snapshots.
+- Do not hand-edit generated `*_latest.*` artifacts unless you are fixing the generator itself.
+- Separate machine snapshots from hand-authored reconciliation docs:
+  - Generated operational snapshots:
+    - `repo_healthcheck_latest.*`
+    - `git_hygiene_latest.*`
+    - `dual_track_boundary_latest.*`
+    - `memory_*_latest.*`
+    - `friction_shadow_*_latest.*`
+    - `philosophical_reflection_latest.*`
+  - Hand-authored historical / handoff docs:
+    - `professional_ai_architecture_review_2026-03-04.md`
+    - `professional_ai_architecture_positioning_2026-03-07.md`
+    - `round2_progress.md`
+    - `round2_handoff_framework.md`
+    - `orphan_modules_report.md`
+- If a generated snapshot conflicts with a historical review, prefer:
+  1. commit/file evidence,
+  2. generated latest snapshot for current state,
+  3. hand-authored review for historical interpretation.
+
+## Human Docs With Special Semantics
+
+- `professional_ai_architecture_review_2026-03-04.md`
+  - A historical architecture review, not a current workspace health report.
+- `professional_ai_architecture_positioning_2026-03-07.md`
+  - An architecture positioning memo, not a test/CI artifact.
+- `round2_progress.md`
+  - Reconciled handoff summary for the Round 2 orphan-module cleanup.
+- `round2_handoff_framework.md`
+  - Operator-facing procedure for re-reading Round 2 without mixing history and current drift.
+- `orphan_modules_report.md`
+  - Contains both the original Round 1 baseline and a later Round 2 reconciliation section.
+
 ## Files
 
 - `7d_snapshot.json`

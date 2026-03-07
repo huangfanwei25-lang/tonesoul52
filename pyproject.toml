@@ -67,7 +67,7 @@ Issues = "https://github.com/Fan1234-1/tonesoul52/issues"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["tonesoul52*"]
+include = ["tonesoul", "tonesoul.*"]
 
 [tool.black]
 line-length = 100

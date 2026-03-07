@@ -1,5 +1,18 @@
 # Professional AI Architecture Review (2026-03-04)
 
+## Reading Notes
+- document_type: historical architecture review
+- review_date: 2026-03-04
+- intent: capture a point-in-time professional assessment of architecture readiness
+- not_for_use_as: current dirty-workspace health verdict
+- PowerShell note: read with `Get-Content -Raw -Encoding UTF8` to avoid mojibake
+
+## Provenance
+- primary_basis:
+  - code references captured in this file
+  - local verification commands run on 2026-03-04
+- later changes may invalidate the operational details while leaving the architectural judgment historically useful
+
 ## Scope
 - 評估對象：ToneSoul Phase II 近期交付（Resistance + V2 模組 + 壓測資料 + 子模組處理）。
 - 評估標準：以「專業 AI 架構師」視角，重點看可維運性、可驗證性、上線風險，而不只任務打勾率。
