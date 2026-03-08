@@ -1,14 +1,17 @@
 from __future__ import annotations
 
 import time
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field, is_dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Protocol
 
 from tonesoul.dream_engine import DreamEngine, build_dream_engine
+from tonesoul.memory.consolidator import sleep_consolidate
+from tonesoul.memory.soul_db import MemorySource
 
 SleepFunc = Callable[[float], None]
+ConsolidateFunc = Callable[..., Any]
 
 
 class DreamEngineLike(Protocol):
@@ -64,10 +67,20 @@ class AutonomousWakeupLoop:
         dream_engine: Optional[DreamEngineLike] = None,
         interval_seconds: float = 10800.0,
         sleep_func: SleepFunc = time.sleep,
+        consolidate_every_cycles: int = 3,
+        consolidate_source: MemorySource = MemorySource.CUSTOM,
+        consolidate_func: ConsolidateFunc = sleep_consolidate,
+        failure_threshold: int = 3,
+        failure_pause_seconds: float = 3600.0,
     ) -> None:
         self.dream_engine = dream_engine or DreamEngine()
         self.interval_seconds = max(0.0, float(interval_seconds))
         self._sleep = sleep_func
+        self.consolidate_every_cycles = max(0, int(consolidate_every_cycles))
+        self.consolidate_source = consolidate_source
+        self._consolidate = consolidate_func
+        self.failure_threshold = max(1, int(failure_threshold))
+        self.failure_pause_seconds = max(0.0, float(failure_pause_seconds))
 
     def emit_once(
         self,
@@ -78,12 +91,39 @@ class AutonomousWakeupLoop:
         kwargs = dict(dream_kwargs or {})
         started_at = _utcnow_iso()
         started_clock = time.perf_counter()
-        result = self.dream_engine.run_cycle(**kwargs)
+        status = "ok"
+        try:
+            result = self.dream_engine.run_cycle(**kwargs)
+            dream_result = result.to_dict() if hasattr(result, "to_dict") else dict(result)
+            summary = self._summarize(dream_result)
+            if int(dream_result.get("stimuli_selected", 0) or 0) <= 0:
+                status = "idle"
+        except Exception as exc:
+            status = "error"
+            dream_result = {
+                "generated_at": _utcnow_iso(),
+                "stimuli_considered": 0,
+                "stimuli_selected": 0,
+                "llm_backend": None,
+                "llm_preflight": {},
+                "collisions": [],
+                "write_gateway": {
+                    "written": 0,
+                    "skipped": 0,
+                    "rejected": 0,
+                    "record_ids": [],
+                    "reject_reasons": [],
+                },
+                "error": {
+                    "type": exc.__class__.__name__,
+                    "message": str(exc) or exc.__class__.__name__,
+                },
+            }
+            summary = self._summarize(dream_result)
+            summary["error_type"] = exc.__class__.__name__
+            summary["error_message"] = str(exc) or exc.__class__.__name__
         finished_at = _utcnow_iso()
         duration_ms = int(round((time.perf_counter() - started_clock) * 1000))
-        dream_result = result.to_dict() if hasattr(result, "to_dict") else dict(result)
-        summary = self._summarize(dream_result)
-        status = "idle" if int(dream_result.get("stimuli_selected", 0) or 0) <= 0 else "ok"
         return WakeupCycleResult(
             cycle=cycle,
             status=status,
@@ -106,13 +146,63 @@ class AutonomousWakeupLoop:
 
         results: List[WakeupCycleResult] = []
         cycle = 0
+        consecutive_failures = 0
         while True:
             cycle += 1
-            results.append(self.emit_once(cycle=cycle, dream_kwargs=dream_kwargs))
+            cycle_result = self.emit_once(cycle=cycle, dream_kwargs=dream_kwargs)
+            if cycle_result.status == "error":
+                consecutive_failures += 1
+            else:
+                consecutive_failures = 0
+                self._maybe_run_consolidation(cycle_result)
+
+            cycle_result.summary["consecutive_failure_count"] = consecutive_failures
+            cycle_result.summary.setdefault("circuit_breaker_paused", False)
+            cycle_result.summary.setdefault("failure_pause_seconds", 0.0)
+            results.append(cycle_result)
             if max_cycles is not None and cycle >= int(max_cycles):
                 break
+            if consecutive_failures >= self.failure_threshold:
+                cycle_result.summary["circuit_breaker_paused"] = True
+                cycle_result.summary["failure_pause_seconds"] = self.failure_pause_seconds
+                self._sleep(self.failure_pause_seconds)
+                consecutive_failures = 0
+                continue
             self._sleep(self.interval_seconds)
         return results
+
+    def _maybe_run_consolidation(self, cycle_result: WakeupCycleResult) -> None:
+        cycle_result.summary.setdefault("consolidation_ran", False)
+        cycle_result.summary.setdefault("consolidation_promoted_count", 0)
+        cycle_result.summary.setdefault("consolidation_cleared_count", 0)
+        cycle_result.summary.setdefault("consolidation_gated_count", 0)
+        if self.consolidate_every_cycles <= 0:
+            return
+        if cycle_result.cycle % self.consolidate_every_cycles != 0:
+            return
+
+        soul_db = getattr(self.dream_engine, "soul_db", None)
+        if soul_db is None:
+            return
+
+        result = self._consolidate(soul_db, source=self.consolidate_source)
+        if hasattr(result, "to_dict"):
+            consolidation_payload = result.to_dict()
+        elif is_dataclass(result):
+            consolidation_payload = asdict(result)
+        else:
+            consolidation_payload = dict(result)
+        cycle_result.dream_result["consolidation"] = consolidation_payload
+        cycle_result.summary["consolidation_ran"] = True
+        cycle_result.summary["consolidation_promoted_count"] = int(
+            consolidation_payload.get("promoted_count", 0) or 0
+        )
+        cycle_result.summary["consolidation_cleared_count"] = int(
+            consolidation_payload.get("cleared_count", 0) or 0
+        )
+        cycle_result.summary["consolidation_gated_count"] = int(
+            consolidation_payload.get("gated_count", 0) or 0
+        )
 
     @staticmethod
     def _summarize(dream_result: Dict[str, object]) -> Dict[str, object]:
@@ -120,6 +210,9 @@ class AutonomousWakeupLoop:
             dream_result.get("collisions")
             if isinstance(dream_result.get("collisions"), list)
             else []
+        )
+        write_gateway = (
+            dream_result.get("write_gateway") if isinstance(dream_result.get("write_gateway"), dict) else {}
         )
         council_count = 0
         frozen_count = 0
@@ -222,15 +315,24 @@ class AutonomousWakeupLoop:
         )
         max_friction = round(max(friction_scores), 4) if friction_scores else None
         max_lyapunov = round(max(lyapunov_values), 4) if lyapunov_values else None
+        stimuli_considered = int(dream_result.get("stimuli_considered", 0) or 0)
+        collision_success_rate = (
+            round(len(collisions) / max(1, stimuli_considered), 4) if stimuli_considered > 0 else 0.0
+        )
         return {
-            "stimuli_considered": int(dream_result.get("stimuli_considered", 0) or 0),
+            "stimuli_considered": stimuli_considered,
             "stimuli_selected": int(dream_result.get("stimuli_selected", 0) or 0),
             "collision_count": len(collisions),
+            "collision_success_rate": collision_success_rate,
             "council_count": council_count,
             "frozen_count": frozen_count,
             "avg_friction_score": avg_friction,
             "max_friction_score": max_friction,
             "max_lyapunov_proxy": max_lyapunov,
+            "write_gateway_written": int(write_gateway.get("written", 0) or 0),
+            "write_gateway_skipped": int(write_gateway.get("skipped", 0) or 0),
+            "write_gateway_rejected": int(write_gateway.get("rejected", 0) or 0),
+            "write_gateway_record_count": len(write_gateway.get("record_ids") or []),
             "llm_call_count": llm_call_count,
             "llm_prompt_tokens_total": llm_prompt_tokens_total,
             "llm_completion_tokens_total": llm_completion_tokens_total,
@@ -263,11 +365,17 @@ def build_autonomous_wakeup_loop(
     crystal_path: Optional[Path] = None,
     interval_seconds: float = 10800.0,
     sleep_func: SleepFunc = time.sleep,
+    consolidate_every_cycles: int = 3,
+    failure_threshold: int = 3,
+    failure_pause_seconds: float = 3600.0,
 ) -> AutonomousWakeupLoop:
     return AutonomousWakeupLoop(
         dream_engine=build_dream_engine(db_path=db_path, crystal_path=crystal_path),
         interval_seconds=interval_seconds,
         sleep_func=sleep_func,
+        consolidate_every_cycles=consolidate_every_cycles,
+        failure_threshold=failure_threshold,
+        failure_pause_seconds=failure_pause_seconds,
     )
 
 

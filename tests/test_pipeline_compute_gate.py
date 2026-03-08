@@ -18,6 +18,12 @@ def _reset_rate_limiter():
     yield
 
 
+@pytest.fixture(autouse=True)
+def _use_hash_embedder(monkeypatch):
+    """These routing tests do not need to load a heavyweight transformer model."""
+    monkeypatch.setenv("TONESOUL_MEMORY_EMBEDDER", "hash")
+
+
 @patch("tonesoul.local_llm.ask_local_llm")
 def test_pipeline_pass_local_fast_route(mock_ask_local_llm):
     """Test that short, free, low-tension paths bypass the cloud and return locally immediately."""

@@ -5,8 +5,15 @@ from types import SimpleNamespace
 from unittest.mock import MagicMock
 
 import numpy as np
+import pytest
 
 from tonesoul.unified_pipeline import UnifiedPipeline
+
+
+@pytest.fixture(autouse=True)
+def _use_hash_embedder(monkeypatch):
+    """Runtime trace tests should not depend on a heavyweight transformer load."""
+    monkeypatch.setenv("TONESOUL_MEMORY_EMBEDDER", "hash")
 
 
 @dataclass
