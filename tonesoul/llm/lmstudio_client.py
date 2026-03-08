@@ -1,6 +1,7 @@
 """
-ToneSoul Ollama Client
-Connects to local Ollama service for LLM inference.
+ToneSoul LM Studio Client
+Connects to LM Studio's OpenAI-compatible local server for LLM inference.
+Provides the same interface as OllamaClient for seamless pipeline integration.
 """
 
 from __future__ import annotations
@@ -14,34 +15,34 @@ from tonesoul.observability.token_meter import TokenMeter
 from tonesoul.schemas import LLMCallMetrics
 
 
-class OllamaError(Exception):
-    """Raised when Ollama returns a non-200 response or is unreachable."""
+class LMStudioError(Exception):
+    """Raised when LM Studio returns an error or is unreachable."""
 
     def __init__(self, message: str, status_code: int | None = None):
         super().__init__(message)
         self.status_code = status_code
 
 
-class OllamaClient:
-    """Wrapper for Ollama local LLM service."""
+class LMStudioClient:
+    """Wrapper for LM Studio's OpenAI-compatible local API."""
 
     def __init__(
         self,
-        host: str = "http://localhost:11434",
-        model: str = "qwen3.5:4b",
+        host: str = "http://localhost:1234",
+        model: str | None = None,
         meter: TokenMeter | None = None,
     ):
         """
-        Initialize Ollama client.
+        Initialize LM Studio client.
 
         Args:
-            host: Ollama service URL (default: http://localhost:11434)
-            model: Model to use (default: qwen3.5:4b)
+            host: LM Studio server URL (default: http://localhost:1234)
+            model: Model to use (default: auto-detect from server)
             meter: Optional token meter for usage recording
         """
         self.host = host.rstrip("/")
         self.model = model
-        self._available_models = None
+        self._chat_history: List[Dict] = []
         self._meter = meter
         self.last_metrics: LLMCallMetrics | None = None
 
@@ -64,17 +65,25 @@ class OllamaClient:
         return (connect_timeout, read_timeout)
 
     def _record_usage(self, model: str, payload: Dict) -> None:
-        prompt_tokens = payload.get("prompt_eval_count")
-        completion_tokens = payload.get("eval_count")
+        usage = payload.get("usage")
+        if not isinstance(usage, dict):
+            self.last_metrics = None
+            return
+
+        prompt_tokens = usage.get("prompt_tokens")
+        completion_tokens = usage.get("completion_tokens")
+        total_tokens = usage.get("total_tokens")
         if not isinstance(prompt_tokens, int) or not isinstance(completion_tokens, int):
             self.last_metrics = None
             return
+        if not isinstance(total_tokens, int):
+            total_tokens = prompt_tokens + completion_tokens
 
         metrics = LLMCallMetrics(
             model=model,
             prompt_tokens=prompt_tokens,
             completion_tokens=completion_tokens,
-            total_tokens=prompt_tokens + completion_tokens,
+            total_tokens=total_tokens,
         )
         self.last_metrics = metrics
         if self._meter is not None:
@@ -94,24 +103,36 @@ class OllamaClient:
         started = time.perf_counter()
         deadline = self._deadline(timeout_seconds)
         try:
-            model = self._ensure_model(timeout_seconds=self._remaining_seconds(deadline))
+            model = self._get_model(timeout_seconds=self._remaining_seconds(deadline))
         except TimeoutError:
             return {
                 "ok": False,
                 "supported": True,
-                "backend": "ollama",
+                "backend": "lmstudio",
                 "model": self.model,
                 "reason": "timeout",
                 "latency_ms": int(round((time.perf_counter() - started) * 1000)),
             }
+        except LMStudioError as exc:
+            return {
+                "ok": False,
+                "supported": True,
+                "backend": "lmstudio",
+                "model": self.model,
+                "reason": "model_resolution_error",
+                "detail": str(exc),
+                "latency_ms": int(round((time.perf_counter() - started) * 1000)),
+            }
         payload = {
             "model": model,
-            "prompt": prompt,
+            "messages": [{"role": "user", "content": prompt}],
+            "max_tokens": 32,
+            "temperature": 0.0,
             "stream": False,
         }
         try:
             response = requests.post(
-                f"{self.host}/api/generate",
+                f"{self.host}/v1/chat/completions",
                 json=payload,
                 timeout=self._request_timeout(deadline),
             )
@@ -120,30 +141,31 @@ class OllamaClient:
                 return {
                     "ok": False,
                     "supported": True,
-                    "backend": "ollama",
+                    "backend": "lmstudio",
                     "model": model,
                     "reason": f"http_{response.status_code}",
                     "latency_ms": latency_ms,
                 }
             data = response.json()
-            text = str(data.get("response", "")).strip()
+            choices = data.get("choices")
+            message = (
+                choices[0]["message"]["content"] if isinstance(choices, list) and choices else ""
+            )
+            text = str(message or "").strip()
             return {
                 "ok": bool(text),
                 "supported": True,
-                "backend": "ollama",
+                "backend": "lmstudio",
                 "model": model,
                 "reason": "ready" if text else "empty_response",
                 "latency_ms": latency_ms,
-                "usage_available": (
-                    isinstance(data.get("prompt_eval_count"), int)
-                    and isinstance(data.get("eval_count"), int)
-                ),
+                "usage_available": isinstance(data.get("usage"), dict),
             }
         except requests.exceptions.Timeout:
             return {
                 "ok": False,
                 "supported": True,
-                "backend": "ollama",
+                "backend": "lmstudio",
                 "model": model,
                 "reason": "timeout",
                 "latency_ms": int(round((time.perf_counter() - started) * 1000)),
@@ -152,7 +174,7 @@ class OllamaClient:
             return {
                 "ok": False,
                 "supported": True,
-                "backend": "ollama",
+                "backend": "lmstudio",
                 "model": model,
                 "reason": "timeout",
                 "latency_ms": int(round((time.perf_counter() - started) * 1000)),
@@ -161,7 +183,7 @@ class OllamaClient:
             return {
                 "ok": False,
                 "supported": True,
-                "backend": "ollama",
+                "backend": "lmstudio",
                 "model": model,
                 "reason": "request_error",
                 "detail": str(exc),
@@ -169,11 +191,11 @@ class OllamaClient:
             }
 
     def is_available(self) -> bool:
-        """Check if Ollama service is running."""
+        """Check if LM Studio server is running."""
         try:
             deadline = self._deadline(2.0)
             response = requests.get(
-                f"{self.host}/api/tags",
+                f"{self.host}/v1/models",
                 timeout=self._request_timeout(deadline),
             )
             return response.status_code == 200
@@ -185,107 +207,63 @@ class OllamaClient:
         try:
             deadline = self._deadline(timeout_seconds)
             response = requests.get(
-                f"{self.host}/api/tags",
+                f"{self.host}/v1/models",
                 timeout=self._request_timeout(deadline),
             )
             if response.status_code == 200:
                 data = response.json()
-                return [m["name"] for m in data.get("models", [])]
+                return [m["id"] for m in data.get("data", [])]
         except Exception:
             pass
         return []
 
-    def _ensure_model(self, timeout_seconds: float = 5.0) -> str:
-        """Ensure model is available, fallback to alternatives."""
-        if self._available_models is None:
-            if max(0.0, float(timeout_seconds)) < 0.02:
-                raise TimeoutError("probe_deadline_exhausted")
-            self._available_models = self.list_models(timeout_seconds=timeout_seconds)
-
-        # Check if preferred model is available
-        if any(self.model in m for m in self._available_models):
+    def _get_model(self, timeout_seconds: float = 5.0) -> str:
+        """Get the model ID to use. Auto-detects if not set."""
+        if self.model:
             return self.model
-
-        # Fallback order: qwen3.5 > qwen > formosa > gemma > llama > mistral > any
-        fallbacks = ["qwen3.5", "qwen", "formosa", "gemma", "llama", "mistral"]
-        for fallback in fallbacks:
-            for model in self._available_models:
-                if fallback in model.lower():
-                    return model
-
-        # Use first available model
-        if self._available_models:
-            return self._available_models[0]
-
-        return self.model  # Return original, let Ollama handle error
+        if max(0.0, float(timeout_seconds)) < 0.02:
+            raise TimeoutError("probe_deadline_exhausted")
+        models = self.list_models(timeout_seconds=timeout_seconds)
+        # Filter out embedding models
+        chat_models = [m for m in models if "embed" not in m.lower()]
+        if chat_models:
+            self.model = chat_models[0]
+            return self.model
+        if models:
+            self.model = models[0]
+            return self.model
+        raise LMStudioError("No models loaded in LM Studio")
 
     def start_chat(self, history: Optional[List[Dict]] = None):
-        """Start a new chat session (GeminiClient compatible)."""
+        """Start a new chat session (GeminiClient/OllamaClient compatible)."""
         self._chat_history = history or []
         return self
 
     def send_message(self, message: str) -> str:
-        """Send a message and get response (GeminiClient compatible)."""
-        # Add user message to history
+        """Send a message and get response (GeminiClient/OllamaClient compatible)."""
         self._chat_history.append({"role": "user", "content": message})
-
-        # Get response using chat API
         response = self.chat(self._chat_history)
-
-        # Add assistant response to history
         self._chat_history.append({"role": "assistant", "content": response})
-
         return response
 
     def generate(self, prompt: str, system: Optional[str] = None) -> str:
-        """
-        Generate a one-shot response.
-
-        Args:
-            prompt: User prompt
-            system: Optional system prompt
-        """
-        model = self._ensure_model()
-
-        payload = {
-            "model": model,
-            "prompt": prompt,
-            "stream": False,
-        }
-
+        """Generate a one-shot response."""
+        messages = []
         if system:
-            payload["system"] = system
-
-        try:
-            response = requests.post(f"{self.host}/api/generate", json=payload, timeout=120)
-
-            if response.status_code == 200:
-                data = response.json()
-                self._record_usage(model, data)
-                return data.get("response", "")
-            else:
-                raise OllamaError(
-                    f"Ollama HTTP {response.status_code}",
-                    status_code=response.status_code,
-                )
-        except OllamaError:
-            raise
-        except requests.exceptions.Timeout:
-            raise OllamaError("Ollama 回應超時")
-        except requests.exceptions.RequestException as e:
-            raise OllamaError(f"Ollama 連接失敗: {e}")
+            messages.append({"role": "system", "content": system})
+        messages.append({"role": "user", "content": prompt})
+        return self.chat(messages)
 
     def chat(self, messages: List[Dict], system: Optional[str] = None) -> str:
         """
-        Multi-turn chat.
+        Multi-turn chat via OpenAI-compatible API.
 
         Args:
             messages: List of {role, content} dicts
             system: Optional system prompt
         """
-        model = self._ensure_model()
+        model = self._get_model()
 
-        # Convert to Ollama format
         formatted_messages = []
         if system:
             formatted_messages.append({"role": "system", "content": system})
@@ -298,32 +276,38 @@ class OllamaClient:
         payload = {
             "model": model,
             "messages": formatted_messages,
+            "max_tokens": 512,
+            "temperature": 0.7,
             "stream": False,
         }
 
         try:
-            response = requests.post(f"{self.host}/api/chat", json=payload, timeout=120)
+            response = requests.post(
+                f"{self.host}/v1/chat/completions",
+                json=payload,
+                timeout=120,
+            )
 
             if response.status_code == 200:
                 data = response.json()
                 self._record_usage(model, data)
-                return data.get("message", {}).get("content", "")
+                return data["choices"][0]["message"]["content"]
             else:
-                raise OllamaError(
-                    f"Ollama HTTP {response.status_code}",
+                raise LMStudioError(
+                    f"LM Studio HTTP {response.status_code}: {response.text[:200]}",
                     status_code=response.status_code,
                 )
-        except OllamaError:
+        except LMStudioError:
             raise
         except requests.exceptions.Timeout:
-            raise OllamaError("Ollama chat 回應超時")
+            raise LMStudioError("LM Studio 回應超時")
         except requests.exceptions.RequestException as e:
-            raise OllamaError(f"Ollama chat 連接失敗: {e}")
+            raise LMStudioError(f"LM Studio 連接失敗: {e}")
 
 
-def create_ollama_client(
+def create_lmstudio_client(
     model: Optional[str] = None,
     meter: TokenMeter | None = None,
-) -> OllamaClient:
-    """Factory function to create an Ollama client."""
-    return OllamaClient(model=model or "qwen3.5:4b", meter=meter)
+) -> LMStudioClient:
+    """Factory function to create an LM Studio client."""
+    return LMStudioClient(model=model, meter=meter)
