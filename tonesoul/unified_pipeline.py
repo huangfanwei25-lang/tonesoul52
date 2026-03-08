@@ -180,6 +180,12 @@ class UnifiedPipeline:
 
     def _get_llm_client(self):
         if self._llm_client is not None:
+            router = self._get_llm_router()
+            if router is not None:
+                try:
+                    router.prime(self._llm_client, backend=self._llm_backend)
+                except Exception:
+                    pass
             return self._llm_client
 
         router = self._get_llm_router()
@@ -1627,6 +1633,7 @@ class UnifiedPipeline:
         )
 
         # ========== 4. LLM 生成回應 ==========
+        router = self._get_llm_router()
         llm_client = self._get_llm_client()
         response = ""
         suggested_replies = []
@@ -1651,8 +1658,11 @@ Respond with a clear, practical answer."""
                     except Exception:
                         pass
 
-                llm_client.start_chat(history)
-                response = llm_client.send_message(full_prompt)
+                if router is not None:
+                    response = router.chat(history=history, prompt=full_prompt)
+                else:
+                    llm_client.start_chat(history)
+                    response = llm_client.send_message(full_prompt)
                 self._attach_llm_observability(
                     dispatch_trace=dispatch_trace,
                     llm_client=llm_client,

@@ -58,6 +58,15 @@ class LLMRouter:
     def _remaining_seconds(deadline: float) -> float:
         return max(0.0, float(deadline) - time.perf_counter())
 
+    def prime(self, client: Any, *, backend: Optional[str] = None) -> Any:
+        """Seed the router cache with an already resolved client."""
+        if client is None:
+            return None
+        self._cached_client = client
+        if isinstance(backend, str) and backend.strip():
+            self._cached_backend = backend.strip()
+        return self._cached_client
+
     def get_client(self) -> Any:
         """
         Get the best available LLM client.
@@ -148,6 +157,23 @@ class LLMRouter:
             "lmstudio": self._try_lmstudio() is not None,
             "gemini": self._try_gemini() is not None,
         }
+
+    def chat(self, *, history: Optional[list[Dict[str, Any]]] = None, prompt: str) -> str:
+        """Send a chat turn through the resolved backend client."""
+        client = self.get_client()
+        if client is None:
+            raise RuntimeError("No active LLM client available")
+
+        start_chat = getattr(client, "start_chat", None)
+        send_message = getattr(client, "send_message", None)
+        if not callable(send_message):
+            raise RuntimeError("Active LLM client does not support send_message")
+        if callable(start_chat):
+            start_chat(history or [])
+        elif history:
+            raise RuntimeError("Active LLM client does not support history-aware chat")
+
+        return str(send_message(prompt))
 
     def inference_check(self, timeout_seconds: float = 10.0) -> Dict[str, Any]:
         """Run a bounded inference-readiness probe for the active backend."""
