@@ -1,6 +1,11 @@
 """
 ToneSoul API Server
 Connects frontend to PreOutputCouncil backend.
+
+DEPRECATION NOTICE:
+This Flask entrypoint is kept for legacy/local compatibility and is in maintenance mode.
+Prefer `api/chat.py` for the active serverless chat entrypoint and
+`tonesoul.unified_pipeline.UnifiedPipeline` for runtime orchestration.
 """
 
 import hashlib
