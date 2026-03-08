@@ -18,6 +18,7 @@ Date: 2026-03-07
 
 from __future__ import annotations
 
+import time
 from typing import Any, Dict, Optional
 
 
@@ -41,6 +42,21 @@ class LLMRouter:
     def active_backend(self) -> Optional[str]:
         """Name of the currently active backend, or None if not yet resolved."""
         return self._cached_backend
+
+    @property
+    def last_metrics(self) -> Any:
+        """Expose the last usage metrics emitted by the active client, if any."""
+        if self._cached_client is None:
+            return None
+        return getattr(self._cached_client, "last_metrics", None)
+
+    @staticmethod
+    def _deadline(timeout_seconds: float) -> float:
+        return time.perf_counter() + max(0.1, float(timeout_seconds))
+
+    @staticmethod
+    def _remaining_seconds(deadline: float) -> float:
+        return max(0.0, float(deadline) - time.perf_counter())
 
     def get_client(self) -> Any:
         """
@@ -132,6 +148,84 @@ class LLMRouter:
             "lmstudio": self._try_lmstudio() is not None,
             "gemini": self._try_gemini() is not None,
         }
+
+    def inference_check(self, timeout_seconds: float = 10.0) -> Dict[str, Any]:
+        """Run a bounded inference-readiness probe for the active backend."""
+        started = time.perf_counter()
+        deadline = self._deadline(timeout_seconds)
+        client = self.get_client()
+        backend = self.active_backend
+        selection_latency_ms = int(round((time.perf_counter() - started) * 1000))
+        if client is None:
+            return {
+                "ok": False,
+                "supported": False,
+                "backend": backend,
+                "reason": "no_client",
+                "latency_ms": selection_latency_ms,
+                "selection_latency_ms": selection_latency_ms,
+                "timeout_seconds": float(timeout_seconds),
+            }
+
+        model = getattr(client, "model", None)
+        if model is not None and not isinstance(model, (str, int, float, bool)):
+            model = getattr(model, "model_name", None) or type(model).__name__
+        probe = getattr(client, "probe_completion", None)
+        if not callable(probe):
+            return {
+                "ok": True,
+                "supported": False,
+                "backend": backend,
+                "model": model,
+                "reason": "probe_unsupported",
+                "latency_ms": selection_latency_ms,
+                "selection_latency_ms": selection_latency_ms,
+                "timeout_seconds": float(timeout_seconds),
+            }
+
+        remaining_timeout = self._remaining_seconds(deadline)
+        if remaining_timeout < 0.02:
+            return {
+                "ok": False,
+                "supported": True,
+                "backend": backend,
+                "model": model,
+                "reason": "timeout",
+                "latency_ms": selection_latency_ms,
+                "selection_latency_ms": selection_latency_ms,
+                "timeout_seconds": float(timeout_seconds),
+            }
+
+        try:
+            result = probe(timeout_seconds=float(remaining_timeout))
+        except Exception as exc:
+            total_latency_ms = int(round((time.perf_counter() - started) * 1000))
+            return {
+                "ok": False,
+                "supported": True,
+                "backend": backend,
+                "model": model,
+                "reason": f"probe_exception:{exc.__class__.__name__}",
+                "detail": str(exc),
+                "latency_ms": total_latency_ms,
+                "selection_latency_ms": selection_latency_ms,
+                "timeout_seconds": float(timeout_seconds),
+            }
+
+        normalized = dict(result) if isinstance(result, dict) else {"ok": False}
+        probe_latency_ms = normalized.get("latency_ms")
+        if isinstance(probe_latency_ms, (int, float)):
+            normalized["probe_latency_ms"] = int(probe_latency_ms)
+            normalized["latency_ms"] = selection_latency_ms + int(probe_latency_ms)
+        else:
+            normalized["latency_ms"] = int(round((time.perf_counter() - started) * 1000))
+        normalized.setdefault("ok", False)
+        normalized.setdefault("supported", True)
+        normalized.setdefault("backend", backend)
+        normalized.setdefault("model", model)
+        normalized["selection_latency_ms"] = selection_latency_ms
+        normalized["timeout_seconds"] = float(timeout_seconds)
+        return normalized
 
     def reset(self) -> None:
         """Clear cached client, forcing re-resolution on next get_client() call."""
