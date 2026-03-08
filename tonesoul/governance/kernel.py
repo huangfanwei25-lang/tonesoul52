@@ -468,16 +468,32 @@ def _safe_bool(value: Any) -> Optional[bool]:
 
 def _contains_override_pressure(message: str) -> bool:
     """Detect if a user message contains override pressure patterns."""
+    if not isinstance(message, str):
+        return False
     if not message:
         return False
     lower = message.lower()
+    marker_patterns = [
+        re.escape(marker)
+        for marker in (
+            "必須",
+            "立刻",
+            "馬上",
+            "繞過",
+            "覆寫",
+            "無條件",
+        )
+    ]
     override_patterns = [
-        r"\bignore\b.*\brule",
+        *marker_patterns,
+        r"\bignore\b(?:\s+\w+){0,6}\s+\b(rule|rules|constraint|constraints|limit|limits|instruction|instructions|policy|policies|guardrail|guardrails)\b",
         r"\boverride\b",
         r"\bbypass\b",
         r"\bjust do it\b",
-        r"\bforget\b.*\b(rule|constraint|limit)",
+        r"\bforget\b(?:\s+\w+){0,6}\s+\b(rule|rules|constraint|constraints|limit|limits|instruction|instructions|policy|policies|guardrail|guardrails)\b",
         r"\bno matter what\b",
+        r"\b(?:must|need to|have to)\b(?:\s+\w+){0,6}\s+\b(ignore|override|bypass|forget)\b",
+        r"\b(ignore|override|bypass|forget)\b(?:\s+\w+){0,6}\s+\b(immediately|right now)\b",
         r"不要管",
         r"忽略.*規則",
         r"直接做",
