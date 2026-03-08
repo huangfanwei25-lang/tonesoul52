@@ -99,7 +99,9 @@ class UnifiedPipeline:
     """
 
     def __init__(self, gemini_client=None):
-        self._gemini = gemini_client
+        self._llm_client = gemini_client
+        self._llm_router = None
+        self._governance_kernel = None
         self._tonebridge = None
         self._council = None
         self._trajectory = None
@@ -142,79 +144,63 @@ class UnifiedPipeline:
         # Phase I wiring: TensionEngine + PersonaDimension
         self._tension_engine = None
         self._persona_dimension = None
-        # RFC-012/013 runtime guards
-        self._friction_calculator = None
-        self._circuit_breaker = None
-        self._perturbation_recovery = None
         self._enable_corrective_recall = _read_bool_env(
             "TONESOUL_ENABLE_CORRECTIVE_RECALL",
             default=True,
         )
 
-    def _get_gemini(self):
-        """Get LLM client based on LLM_BACKEND env var.
-
-        Supported values:
-          - 'gemini'  -> Cloud mode, skip Ollama entirely
-          - 'ollama'  -> Local mode, skip Gemini entirely
-          - 'auto'    -> (default) Try Ollama first, Gemini fallback
-        """
-        if self._gemini is not None:
-            return self._gemini
-
-        import os
-
-        llm_mode = (os.environ.get("LLM_BACKEND") or "auto").strip().lower()
-
-        if llm_mode == "gemini":
+    def _get_governance_kernel(self):
+        if self._governance_kernel is None:
             try:
-                from tonesoul.llm import create_gemini_client
+                from tonesoul.governance.kernel import GovernanceKernel
 
-                self._gemini = create_gemini_client()
-                self._llm_backend = "Gemini"
+                self._governance_kernel = GovernanceKernel()
             except Exception:
                 pass
-            return self._gemini
+        return self._governance_kernel
 
-        if llm_mode == "ollama":
+    def _get_llm_router(self):
+        if self._llm_router is None:
             try:
-                from tonesoul.llm import create_ollama_client
+                from tonesoul.llm.router import LLMRouter
 
-                client = create_ollama_client()
-                if client.is_available() and client.list_models():
-                    self._gemini = client
-                    self._llm_backend = "Ollama"
+                self._llm_router = LLMRouter()
             except Exception:
                 pass
-            return self._gemini
+        return self._llm_router
 
-        # Auto mode: Ollama first, Gemini fallback
+    @staticmethod
+    def _normalize_council_verdict_payload(payload: Any) -> Dict[str, Any]:
         try:
-            from tonesoul.llm import create_ollama_client
+            from tonesoul.schemas import CouncilRuntimeVerdictPayload
 
-            client = create_ollama_client()
-            if client.is_available() and client.list_models():
-                self._gemini = client
-                self._llm_backend = "Ollama"
-                return self._gemini
+            return CouncilRuntimeVerdictPayload.build_payload(payload)
         except Exception:
-            pass
+            return dict(payload) if isinstance(payload, dict) else {}
+
+    def _get_llm_client(self):
+        if self._llm_client is not None:
+            return self._llm_client
+
+        router = self._get_llm_router()
+        if router is None:
+            return None
 
         try:
-            from tonesoul.llm import create_gemini_client
-
-            self._gemini = create_gemini_client()
-            self._llm_backend = "Gemini"
+            self._llm_client = router.get_client()
+            active_backend = getattr(router, "active_backend", None)
+            if isinstance(active_backend, str) and active_backend.strip():
+                self._llm_backend = active_backend
         except Exception:
-            pass
-        return self._gemini
+            return None
+        return self._llm_client
 
     def _get_tonebridge(self):
         if self._tonebridge is None:
             try:
                 from tonesoul.tonebridge import ToneBridgeAnalyzer
 
-                self._tonebridge = ToneBridgeAnalyzer(self._get_gemini())
+                self._tonebridge = ToneBridgeAnalyzer(self._get_llm_client())
             except Exception:
                 pass
         return self._tonebridge
@@ -332,37 +318,34 @@ class UnifiedPipeline:
         return self._tension_engine
 
     def _get_friction_calculator(self):
-        """Get or create the RFC-012 friction calculator."""
-        if self._friction_calculator is None:
-            try:
-                from tonesoul.resistance import FrictionCalculator
-
-                self._friction_calculator = FrictionCalculator()
-            except Exception:
-                pass
-        return self._friction_calculator
+        """Backward-compatible shim to the governance kernel calculator."""
+        kernel = self._get_governance_kernel()
+        if kernel is None:
+            return None
+        try:
+            return kernel._get_friction_calculator()
+        except Exception:
+            return None
 
     def _get_circuit_breaker(self):
-        """Get or create the RFC-012 circuit breaker."""
-        if self._circuit_breaker is None:
-            try:
-                from tonesoul.resistance import CircuitBreaker
-
-                self._circuit_breaker = CircuitBreaker()
-            except Exception:
-                pass
-        return self._circuit_breaker
+        """Backward-compatible shim to the governance kernel breaker."""
+        kernel = self._get_governance_kernel()
+        if kernel is None:
+            return None
+        try:
+            return kernel._get_circuit_breaker()
+        except Exception:
+            return None
 
     def _get_perturbation_recovery(self):
-        """Get or create the Pipeline V2 perturbation recovery helper."""
-        if self._perturbation_recovery is None:
-            try:
-                from tonesoul.resistance import PerturbationRecovery
-
-                self._perturbation_recovery = PerturbationRecovery()
-            except Exception:
-                pass
-        return self._perturbation_recovery
+        """Backward-compatible shim to the governance kernel recovery helper."""
+        kernel = self._get_governance_kernel()
+        if kernel is None:
+            return None
+        try:
+            return kernel._get_perturbation_recovery()
+        except Exception:
+            return None
 
     def _should_capture_visual_frame(self, chain: Any) -> bool:
         """Gate automatic visual capture with env-configurable controls."""
@@ -1045,97 +1028,58 @@ class UnifiedPipeline:
     ) -> None:
         if not isinstance(dispatch_trace, dict):
             return
+        kernel = self._get_governance_kernel()
+        if kernel is None:
+            return
 
-        resistance = dispatch_trace.get("resistance")
-        if not isinstance(resistance, dict):
-            resistance = {}
-
-        circuit_breaker = resistance.get("circuit_breaker")
-        if not isinstance(circuit_breaker, dict):
-            circuit_breaker = {}
-
-        perturbation_recovery = resistance.get("perturbation_recovery")
-        if not isinstance(perturbation_recovery, dict):
-            perturbation_recovery = {}
-
-        repair = dispatch_trace.get("repair")
-        if not isinstance(repair, dict):
-            repair = {}
-
-        memory_correction = dispatch_trace.get("memory_correction")
-        if not isinstance(memory_correction, dict):
-            memory_correction = {}
-
-        status = str(circuit_breaker.get("status") or "").strip().lower()
-        freeze_triggered = status == "frozen"
-        break_reason = str(circuit_breaker.get("reason") or "").strip() or None
-
-        recovery_path = perturbation_recovery.get("path_id")
-        if not isinstance(recovery_path, (int, str)):
-            recovery_path = None
-
-        rollback_gate = str(repair.get("original_gate") or "").strip() or None
-        rollback_applied = rollback_gate is not None
-
-        corrective_hits = memory_correction.get("corrective_hits")
         try:
-            corrective_hits_int = int(corrective_hits or 0)
-        except (TypeError, ValueError):
-            corrective_hits_int = 0
+            dispatch_trace["governance_runtime"] = kernel.build_observability_trace(dispatch_trace)
+        except Exception:
+            return
 
-        observability: Dict[str, Any] = {
-            "freeze_triggered": freeze_triggered,
-            "break_reason": break_reason,
-            "recovery_path": recovery_path,
-            "rollback_applied": rollback_applied,
-            "rollback_gate": rollback_gate,
-            "memory_correction_hit": corrective_hits_int > 0,
-        }
-        effective_stress = perturbation_recovery.get("effective_stress")
-        if isinstance(effective_stress, (int, float)):
-            observability["recovery_effective_stress"] = round(float(effective_stress), 6)
+    def _attach_llm_observability(
+        self,
+        *,
+        dispatch_trace: Dict[str, Any],
+        llm_client: Any,
+    ) -> None:
+        if not isinstance(dispatch_trace, dict):
+            return
 
-        dispatch_trace["governance_runtime"] = observability
+        llm_trace: Dict[str, Any] = {}
+        backend = str(self._llm_backend or "").strip()
+        if backend:
+            llm_trace["backend"] = backend
+
+        router = self._llm_router
+        metrics = getattr(llm_client, "last_metrics", None)
+        if metrics is None and router is not None:
+            metrics = getattr(router, "last_metrics", None)
+
+        from tonesoul.schemas import LLMObservabilityTrace
+
+        llm_trace = LLMObservabilityTrace.build_payload(
+            backend=backend,
+            metrics=metrics,
+            fallback_model=getattr(llm_client, "model", None),
+        )
+
+        if llm_trace:
+            dispatch_trace["llm"] = llm_trace
 
     def _compute_prior_governance_friction(
         self,
         prior_tension: Optional[Dict[str, Any]],
         user_message: str,
     ) -> Optional[float]:
-        if not isinstance(prior_tension, dict) or not prior_tension:
+        kernel = self._get_governance_kernel()
+        if kernel is None:
             return None
 
-        from tonesoul.gates.compute import ComputeGate
-
-        query_tension = self._safe_unit_value(prior_tension.get("query_tension"))
-        memory_tension = self._safe_unit_value(prior_tension.get("memory_tension"))
-        delta_t = self._safe_unit_value(prior_tension.get("delta_t"))
-        if query_tension is None and delta_t is not None:
-            query_tension = delta_t
-        if memory_tension is None and delta_t is not None:
-            memory_tension = 0.0
-
-        query_wave = prior_tension.get("query_wave")
-        if not isinstance(query_wave, dict):
-            query_wave = None
-
-        memory_wave = prior_tension.get("memory_wave")
-        if not isinstance(memory_wave, dict):
-            memory_wave = prior_tension.get("wave")
-        if not isinstance(memory_wave, dict):
-            memory_wave = None
-
-        gate_decision = str(prior_tension.get("gate_decision") or "").strip().lower()
-        was_boundary = gate_decision in {"block", "declare_stance", "reject", "refuse"}
-        boundary_mismatch = was_boundary and self._contains_override_pressure(user_message)
-
-        return ComputeGate.compute_governance_friction(
-            query_tension=query_tension,
-            memory_tension=memory_tension,
-            query_wave=query_wave,
-            memory_wave=memory_wave,
-            boundary_mismatch=boundary_mismatch,
-        )
+        try:
+            return kernel.compute_prior_governance_friction(prior_tension, user_message)
+        except Exception:
+            return None
 
     def _compute_runtime_friction(
         self,
@@ -1144,56 +1088,62 @@ class UnifiedPipeline:
         tone_strength: float,
     ) -> Optional[Any]:
         """Build RFC-012 friction input from runtime context."""
-        if not isinstance(prior_tension, dict) or not prior_tension:
+        kernel = self._get_governance_kernel()
+        if kernel is None:
             return None
-
-        calculator = self._get_friction_calculator()
-        if calculator is None:
-            return None
-
-        query_tension = self._safe_unit_value(prior_tension.get("query_tension"))
-        if query_tension is None:
-            query_tension = max(0.0, min(1.0, float(tone_strength)))
-
-        constraint_tension = self._safe_unit_value(prior_tension.get("memory_tension"))
-        if constraint_tension is None:
-            constraint_tension = self._safe_unit_value(prior_tension.get("delta_t"))
-        if constraint_tension is None:
-            constraint_tension = 0.0
-
-        query_wave = prior_tension.get("query_wave")
-        if not isinstance(query_wave, dict):
-            query_wave = None
-
-        constraint_wave = prior_tension.get("memory_wave")
-        if not isinstance(constraint_wave, dict):
-            constraint_wave = prior_tension.get("wave")
-        if not isinstance(constraint_wave, dict):
-            constraint_wave = None
-
-        gate_decision = str(prior_tension.get("gate_decision") or "").strip().lower()
-        raw_kind = prior_tension.get("constraint_kind")
-        constraint_kind = (
-            str(raw_kind).strip().lower()
-            if isinstance(raw_kind, str) and raw_kind.strip()
-            else ("constraint" if gate_decision else "note")
-        )
-
-        is_immutable = self._safe_bool(prior_tension.get("is_immutable"))
-        if is_immutable is None:
-            is_immutable = gate_decision in {"block", "declare_stance", "reject", "refuse"}
 
         try:
-            return calculator.compute(
-                query_tension=query_tension,
-                constraint_tension=constraint_tension,
-                query_wave=query_wave,
-                constraint_wave=constraint_wave,
-                constraint_kind=constraint_kind,
-                is_immutable=is_immutable,
+            return kernel.compute_runtime_friction(
+                prior_tension=prior_tension,
+                tone_strength=tone_strength,
             )
         except Exception:
             return None
+
+    @staticmethod
+    def _coerce_friction_score(value: Any) -> Optional[float]:
+        if isinstance(value, (int, float)):
+            return max(0.0, min(1.0, float(value)))
+
+        raw_value = getattr(value, "friction_score", None)
+        if isinstance(raw_value, (int, float)):
+            return max(0.0, min(1.0, float(raw_value)))
+
+        if isinstance(value, dict):
+            raw_value = value.get("friction_score")
+            if isinstance(raw_value, (int, float)):
+                return max(0.0, min(1.0, float(raw_value)))
+
+        return None
+
+    def _resolve_council_decision(
+        self,
+        *,
+        tone_strength: float,
+        runtime_friction: Any,
+        governance_friction: Optional[float],
+        user_tier: str,
+        user_message: str,
+    ) -> tuple[bool, Optional[str], Optional[float]]:
+        friction_score = self._coerce_friction_score(runtime_friction)
+        if friction_score is None:
+            friction_score = self._coerce_friction_score(governance_friction)
+
+        kernel = self._get_governance_kernel()
+        if kernel is None:
+            return True, None, friction_score
+
+        try:
+            should_convene, reason = kernel.should_convene_council(
+                tension=tone_strength,
+                friction_score=friction_score,
+                user_tier=user_tier,
+                message_length=len(str(user_message or "")),
+            )
+        except Exception:
+            return True, None, friction_score
+
+        return bool(should_convene), str(reason or "").strip() or None, friction_score
 
     @staticmethod
     def _merge_memory_results(primary: List[Any], secondary: List[Any]) -> List[Any]:
@@ -1266,12 +1216,22 @@ class UnifiedPipeline:
             user_id=user_id,
             friction_score=governance_friction,
         )
+        governance_kernel = self._get_governance_kernel()
 
         def _base_dispatch_trace() -> Dict[str, Any]:
-            return {
+            routing_trace = {
                 "route": routing_decision.path.value,
                 "journal_eligible": routing_decision.journal_eligible,
                 "reason": routing_decision.reason,
+            }
+            if governance_kernel is not None:
+                try:
+                    routing_trace = governance_kernel.build_routing_trace(**routing_trace)
+                except Exception:
+                    pass
+            return {
+                **routing_trace,
+                "routing_trace": dict(routing_trace),
                 "pre_gate_initial_tension": initial_tension,
                 "pre_gate_governance_friction": governance_friction,
             }
@@ -1285,7 +1245,7 @@ class UnifiedPipeline:
             self._attach_runtime_governance_observability(local_dispatch_trace)
             return UnifiedResponse(
                 response=local_response,
-                council_verdict={"verdict": "bypassed"},
+                council_verdict=self._normalize_council_verdict_payload({"verdict": "bypassed"}),
                 tonebridge_analysis={},
                 inner_narrative=routing_decision.reason,
                 dispatch_trace=local_dispatch_trace,
@@ -1306,7 +1266,9 @@ class UnifiedPipeline:
             self._attach_runtime_governance_observability(dispatch_trace)
             return UnifiedResponse(
                 response="[系統防護] 請求頻率過高，已觸發速率限制，請稍後再試。",
-                council_verdict={"verdict": "blocked_by_gate"},
+                council_verdict=self._normalize_council_verdict_payload(
+                    {"verdict": "blocked_by_gate"}
+                ),
                 tonebridge_analysis={},
                 inner_narrative=routing_decision.reason,
                 dispatch_trace=dispatch_trace,
@@ -1371,21 +1333,20 @@ class UnifiedPipeline:
             except Exception as e:
                 print(f"TensionEngine error: {e}")
 
-        dispatch_trace = {
-            "tension_score": tone_strength,
-            "resonance_state": resonance_state,
-            "loop_detected": loop_detected,
-            "pre_gate_initial_tension": initial_tension,
-            "pre_gate_governance_friction": governance_friction,
-        }
+        dispatch_trace = _base_dispatch_trace()
+        dispatch_trace.update(
+            {
+                "tension_score": tone_strength,
+                "resonance_state": resonance_state,
+                "loop_detected": loop_detected,
+            }
+        )
         # Attach TensionEngine detail to dispatch trace
         if tension_result is not None:
             try:
                 dispatch_trace["tension_engine"] = tension_result.to_dict()
             except Exception:
                 pass
-        dispatch_trace["route"] = routing_decision.path.value
-        dispatch_trace["journal_eligible"] = routing_decision.journal_eligible
         resistance_trace: Dict[str, Any] = {}
         runtime_friction = self._compute_runtime_friction(
             prior_tension=prior_tension,
@@ -1403,58 +1364,49 @@ class UnifiedPipeline:
         lyapunov_exponent = (
             getattr(prediction, "lyapunov_exponent", None) if prediction is not None else None
         )
-        circuit_breaker = self._get_circuit_breaker()
-        if circuit_breaker is not None and runtime_friction is not None:
-            try:
-                circuit_breaker.check(runtime_friction, lyapunov_exponent=lyapunov_exponent)
-                cb_state = circuit_breaker.state.to_dict()
-                cb_state["status"] = "ok"
-                if isinstance(lyapunov_exponent, (int, float)):
-                    cb_state["lyapunov_exponent"] = round(float(lyapunov_exponent), 6)
+        if governance_kernel is not None and runtime_friction is not None:
+            cb_status, cb_reason, cb_state = governance_kernel.check_circuit_breaker(
+                runtime_friction,
+                lyapunov_exponent=lyapunov_exponent,
+            )
+            if cb_state:
                 resistance_trace["circuit_breaker"] = cb_state
-            except Exception as exc:
-                if exc.__class__.__name__ == "CollapseException":
-                    cb_state = circuit_breaker.state.to_dict()
-                    cb_state["status"] = "frozen"
-                    cb_state["reason"] = str(getattr(exc, "reason", str(exc)))
-                    if isinstance(lyapunov_exponent, (int, float)):
-                        cb_state["lyapunov_exponent"] = round(float(lyapunov_exponent), 6)
-                    resistance_trace["circuit_breaker"] = cb_state
-                    dispatch_trace["resistance"] = resistance_trace
-                    trajectory_result["dispatch"] = dispatch_trace
-                    block_response = (
-                        "[系統防護] CircuitBreaker 已觸發 Freeze Protocol，暫停高風險推理，"
-                        f"原因：{cb_state['reason']}"
-                    )
-                    self._apply_repair_trace(
-                        dispatch_trace=dispatch_trace,
-                        original_gate="circuit_breaker_block",
-                        source_text=raw_user_message,
-                        output_text=block_response,
-                        tension_before=tension_result,
-                        fallback_delta=initial_tension,
-                        text_tension=tone_strength,
-                        stages=["circuit_breaker_block"],
-                        attempt_after_tension=False,
-                    )
-                    self._attach_runtime_governance_observability(dispatch_trace)
-                    return UnifiedResponse(
-                        response=block_response,
-                        council_verdict={
+            if cb_status == "frozen":
+                dispatch_trace["resistance"] = resistance_trace
+                trajectory_result["dispatch"] = dispatch_trace
+                block_response = (
+                    "[系統防護] CircuitBreaker 已觸發 Freeze Protocol，暫停高風險推理，"
+                    f"原因：{cb_reason}"
+                )
+                self._apply_repair_trace(
+                    dispatch_trace=dispatch_trace,
+                    original_gate="circuit_breaker_block",
+                    source_text=raw_user_message,
+                    output_text=block_response,
+                    tension_before=tension_result,
+                    fallback_delta=initial_tension,
+                    text_tension=tone_strength,
+                    stages=["circuit_breaker_block"],
+                    attempt_after_tension=False,
+                )
+                self._attach_runtime_governance_observability(dispatch_trace)
+                return UnifiedResponse(
+                    response=block_response,
+                    council_verdict=self._normalize_council_verdict_payload(
+                        {
                             "verdict": "blocked_by_circuit_breaker",
-                            "reason": cb_state["reason"],
-                        },
-                        tonebridge_analysis=tb_result.to_dict() if tb_result else {},
-                        inner_narrative="Freeze protocol triggered by runtime resistance checks.",
-                        internal_monologue=(
-                            "Runtime guardrail interrupted the generation path "
-                            f"due to: {cb_state['reason']}"
-                        ),
-                        persona_mode="Guardian",
-                        trajectory_analysis=trajectory_result,
-                        dispatch_trace=dispatch_trace,
-                    )
-                print(f"CircuitBreaker error: {exc}")
+                            "reason": cb_reason,
+                        }
+                    ),
+                    tonebridge_analysis=tb_result.to_dict() if tb_result else {},
+                    inner_narrative="Freeze protocol triggered by runtime resistance checks.",
+                    internal_monologue=(
+                        "Runtime guardrail interrupted the generation path " f"due to: {cb_reason}"
+                    ),
+                    persona_mode="Guardian",
+                    trajectory_analysis=trajectory_result,
+                    dispatch_trace=dispatch_trace,
+                )
 
         perturbation_path = None
         if tension_result is not None:
@@ -1468,16 +1420,12 @@ class UnifiedPipeline:
                 and severity in {"severe", "critical"}
                 and getattr(compression, "compression_ratio", None) is not None
             ):
-                perturbation_recovery = self._get_perturbation_recovery()
-                if perturbation_recovery is not None:
-                    try:
-                        perturbation_path = perturbation_recovery.recover(
-                            compression_ratio=float(compression.compression_ratio),
-                            gamma_effective=getattr(compression, "gamma_effective", None),
-                            friction=runtime_friction,
-                        )
-                    except Exception as exc:
-                        print(f"PerturbationRecovery error: {exc}")
+                if governance_kernel is not None:
+                    perturbation_path = governance_kernel.recover_perturbation(
+                        compression_ratio=float(compression.compression_ratio),
+                        gamma_effective=getattr(compression, "gamma_effective", None),
+                        friction=runtime_friction,
+                    )
                 if perturbation_path is not None:
                     try:
                         resistance_trace["perturbation_recovery"] = perturbation_path.to_dict()
@@ -1679,10 +1627,10 @@ class UnifiedPipeline:
         )
 
         # ========== 4. LLM 生成回應 ==========
-        gemini = self._get_gemini()
+        llm_client = self._get_llm_client()
         response = ""
         suggested_replies = []
-        if gemini:
+        if llm_client:
             try:
                 full_prompt = f"""{system_context}
 
@@ -1703,8 +1651,12 @@ Respond with a clear, practical answer."""
                     except Exception:
                         pass
 
-                gemini.start_chat(history)
-                response = gemini.send_message(full_prompt)
+                llm_client.start_chat(history)
+                response = llm_client.send_message(full_prompt)
+                self._attach_llm_observability(
+                    dispatch_trace=dispatch_trace,
+                    llm_client=llm_client,
+                )
             except Exception as e:
                 response = f"抱歉，生成回應時發生錯誤：{e}"
         else:
@@ -1714,7 +1666,20 @@ Respond with a clear, practical answer."""
         council = self._get_council()
         verdict_dict = {}
         repair_stages: List[str] = []
-        if council:
+        council_should_convene, council_reason, council_friction_score = self._resolve_council_decision(
+            tone_strength=tone_strength,
+            runtime_friction=runtime_friction,
+            governance_friction=governance_friction,
+            user_tier=user_tier,
+            user_message=raw_user_message,
+        )
+        if council_reason or council_friction_score is not None:
+            dispatch_trace["council"] = {
+                "convened": bool(council and council_should_convene),
+                "reason": council_reason,
+                "friction_score": council_friction_score,
+            }
+        if council and council_should_convene:
             try:
                 from tonesoul.council import CouncilRequest
                 from tonesoul.council.model_registry import get_council_config
@@ -1876,6 +1841,7 @@ Respond with a clear, practical answer."""
             verdict_metadata["dispatch_state"] = dispatch_trace.get("state")
             verdict_metadata["dispatch"] = dispatch_trace
             verdict_dict["metadata"] = verdict_metadata
+            verdict_dict = self._normalize_council_verdict_payload(verdict_dict)
 
         # 自動捕捉 visual chain frame，記錄每輪狀態
         chain = self._get_visual_chain()
