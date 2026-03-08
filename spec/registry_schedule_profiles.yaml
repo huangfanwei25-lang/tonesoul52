@@ -1,0 +1,142 @@
+profiles:
+  baseline:
+    description: "Default balanced rotation across all reviewed registry entries."
+    registry:
+      categories: []
+      entry_ids: []
+      include_stale: false
+    schedule:
+      interval_seconds: 10800
+      entries_per_cycle: 1
+      urls_per_cycle: 3
+      revisit_interval_cycles: 0
+      failure_backoff_cycles: 1
+      category_weights: {}
+      category_backoff_multipliers: {}
+      tension_max_friction_score: null
+      tension_max_lyapunov_proxy: null
+      tension_max_council_count: null
+      tension_max_llm_preflight_latency_ms: null
+      tension_max_llm_selection_latency_ms: null
+      tension_max_llm_probe_latency_ms: null
+      tension_max_llm_timeout_count: null
+      tension_cooldown_cycles: 0
+    dream:
+      limit: 3
+      min_priority: 0.35
+      related_limit: 5
+      crystal_count: 5
+
+  security_watch:
+    description: "Higher-cadence security and supply-chain watch profile."
+    registry:
+      categories:
+        - "vulnerability-intel"
+        - "supply-chain-risk"
+        - "artifact-signing"
+        - "supply-chain-hardening"
+      entry_ids: []
+      include_stale: false
+    schedule:
+      interval_seconds: 14400
+      entries_per_cycle: 2
+      urls_per_cycle: 3
+      revisit_interval_cycles: 2
+      failure_backoff_cycles: 2
+      category_weights:
+        vulnerability-intel: 3
+        supply-chain-risk: 2
+        artifact-signing: 1
+        supply-chain-hardening: 1
+      category_backoff_multipliers:
+        vulnerability-intel: 2
+        supply-chain-risk: 2
+        artifact-signing: 1
+        supply-chain-hardening: 1
+      tension_max_friction_score: 0.7
+      tension_max_lyapunov_proxy: 0.2
+      tension_max_council_count: 1
+      tension_max_llm_preflight_latency_ms: 1800
+      tension_max_llm_selection_latency_ms: 700
+      tension_max_llm_probe_latency_ms: 1200
+      tension_max_llm_timeout_count: 0
+      tension_cooldown_cycles: 2
+    dream:
+      limit: 4
+      min_priority: 0.3
+      related_limit: 5
+      crystal_count: 5
+
+  research_slow_burn:
+    description: "Lower-cadence research and dataset exploration profile."
+    registry:
+      categories:
+        - "open-datasets"
+        - "research-archive"
+        - "research-preprint"
+        - "scholarly-graph"
+      entry_ids: []
+      include_stale: false
+    schedule:
+      interval_seconds: 43200
+      entries_per_cycle: 1
+      urls_per_cycle: 2
+      revisit_interval_cycles: 4
+      failure_backoff_cycles: 1
+      category_weights:
+        research-archive: 3
+        open-datasets: 2
+        scholarly-graph: 1
+        research-preprint: 1
+      category_backoff_multipliers:
+        research-archive: 1
+        open-datasets: 1
+        scholarly-graph: 1
+        research-preprint: 2
+      tension_max_friction_score: 0.8
+      tension_max_lyapunov_proxy: 0.25
+      tension_max_council_count: 2
+      tension_max_llm_preflight_latency_ms: 2500
+      tension_max_llm_selection_latency_ms: 1000
+      tension_max_llm_probe_latency_ms: 1800
+      tension_max_llm_timeout_count: 0
+      tension_cooldown_cycles: 1
+    dream:
+      limit: 2
+      min_priority: 0.25
+      related_limit: 6
+      crystal_count: 6
+
+  runtime_probe_watch:
+    description: "Reproducible LLM runtime readiness probe with relaxed governance thresholds."
+    registry:
+      categories:
+        - "vulnerability-intel"
+        - "supply-chain-risk"
+      entry_ids: []
+      include_stale: false
+    schedule:
+      interval_seconds: 21600
+      entries_per_cycle: 1
+      urls_per_cycle: 1
+      revisit_interval_cycles: 0
+      failure_backoff_cycles: 1
+      category_weights:
+        vulnerability-intel: 1
+        supply-chain-risk: 1
+      category_backoff_multipliers:
+        vulnerability-intel: 1
+        supply-chain-risk: 1
+      tension_max_friction_score: 1.0
+      tension_max_lyapunov_proxy: 1.0
+      tension_max_council_count: 99
+      tension_max_llm_preflight_latency_ms: 1800
+      tension_max_llm_selection_latency_ms: 700
+      tension_max_llm_probe_latency_ms: 1200
+      tension_max_llm_timeout_count: 0
+      tension_cooldown_cycles: 2
+    dream:
+      limit: 2
+      min_priority: 0.3
+      related_limit: 5
+      crystal_count: 5
