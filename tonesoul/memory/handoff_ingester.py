@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Dict, Optional
 
 from .soul_db import MemorySource, SoulDB
+from .write_gateway import MemoryWriteGateway
 
 
 def _parse_iso(value: Optional[str]) -> Optional[datetime]:
@@ -35,6 +36,7 @@ class HandoffIngester:
 
     def __init__(self, soul_db: SoulDB) -> None:
         self.soul_db = soul_db
+        self.write_gateway = MemoryWriteGateway(soul_db)
 
     def ingest_handoff_dir(
         self,
@@ -148,8 +150,14 @@ class HandoffIngester:
             },
             "timestamp": timestamp,
             "source_file": path.name,
+            "evidence": [summary, path.name],
+            "provenance": {
+                "kind": "handoff_json",
+                "source_file": path.name,
+                "imported_at": timestamp,
+            },
         }
-        self.soul_db.append(MemorySource.CUSTOM, memory_payload)
+        self.write_gateway.write_payload(MemorySource.CUSTOM, memory_payload)
         return "ingested"
 
     def _ingest_markdown(
@@ -188,6 +196,12 @@ class HandoffIngester:
             "timestamp": timestamp,
             "source_file": path.name,
             "content": content[:4000],
+            "evidence": [first_line[:200], path.name],
+            "provenance": {
+                "kind": kind,
+                "source_file": path.name,
+                "imported_at": timestamp,
+            },
         }
-        self.soul_db.append(MemorySource.CUSTOM, memory_payload)
+        self.write_gateway.write_payload(MemorySource.CUSTOM, memory_payload)
         return "ingested"

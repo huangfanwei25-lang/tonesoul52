@@ -47,7 +47,12 @@ class MemoryRecord:
 
 
 class SoulDB(Protocol):
-    def append(self, source: MemorySource, payload: Dict[str, object]) -> str: ...
+    def append(
+        self,
+        source: MemorySource,
+        payload: Dict[str, object],
+        provenance: object = None,
+    ) -> str: ...
 
     def query(
         self,
@@ -101,6 +106,25 @@ def _deserialize_json(payload: str) -> Dict[str, object]:
     except json.JSONDecodeError:
         return {}
     return parsed if isinstance(parsed, dict) else {}
+
+
+def _deserialize_json_value(payload: Optional[str]) -> object:
+    text = str(payload or "").strip()
+    if not text:
+        return None
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        return text
+
+
+def _normalize_provenance_value(value: object) -> object:
+    if isinstance(value, str):
+        text = value.strip()
+        return text or None
+    if isinstance(value, (list, dict)) and value:
+        return value
+    return None
 
 
 def _coerce_float(value: object, default: float = 0.0) -> float:
@@ -343,15 +367,26 @@ class JsonlSoulDB:
     def register_source(self, source: MemorySource, path: Path) -> None:
         self.source_map[source] = path
 
-    def append(self, source: MemorySource, payload: Dict[str, object]) -> str:
+    def append(
+        self,
+        source: MemorySource,
+        payload: Dict[str, object],
+        provenance: object = None,
+    ) -> str:
         path = self._resolve_path(source)
         path.parent.mkdir(parents=True, exist_ok=True)
         record_id = str(uuid.uuid4())
+        payload_value = dict(payload)
+        provenance_value = _normalize_provenance_value(
+            provenance if provenance is not None else payload_value.get("provenance")
+        )
+        if provenance_value is not None and "provenance" not in payload_value:
+            payload_value["provenance"] = provenance_value
         record = {
             "record_id": record_id,
-            "timestamp": payload.get("timestamp") or _iso_now(),
+            "timestamp": payload_value.get("timestamp") or _iso_now(),
             "source": source.value,
-            "payload": payload,
+            "payload": payload_value,
         }
         with path.open("a", encoding="utf-8") as handle:
             handle.write(json.dumps(record, ensure_ascii=False) + "\n")
@@ -534,7 +569,8 @@ class SqliteSoulDB:
                 timestamp TEXT,
                 source TEXT,
                 parent_id TEXT,
-                tags TEXT
+                tags TEXT,
+                provenance TEXT
             )
             """)
         cursor.execute("""
@@ -560,6 +596,7 @@ class SqliteSoulDB:
                 verified INTEGER
             )
             """)
+        self._ensure_memories_columns(cursor)
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_memories_source ON memories(source)")
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_memories_timestamp ON memories(timestamp)")
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_isnad_timestamp ON isnad(timestamp)")
@@ -587,6 +624,12 @@ class SqliteSoulDB:
         conn.commit()
         conn.close()
 
+    def _ensure_memories_columns(self, cursor: sqlite3.Cursor) -> None:
+        cursor.execute("PRAGMA table_info(memories)")
+        columns = {str(row[1]) for row in cursor.fetchall()}
+        if "provenance" not in columns:
+            cursor.execute("ALTER TABLE memories ADD COLUMN provenance TEXT")
+
     def _ensure_action_logs_columns(self, cursor: sqlite3.Cursor) -> None:
         cursor.execute("PRAGMA table_info(action_logs)")
         columns = {str(row[1]) for row in cursor.fetchall()}
@@ -596,22 +639,33 @@ class SqliteSoulDB:
         if "metadata" not in columns:
             cursor.execute("ALTER TABLE action_logs ADD COLUMN metadata TEXT")
 
-    def append(self, source: MemorySource, payload: Dict[str, object]) -> str:
+    def append(
+        self,
+        source: MemorySource,
+        payload: Dict[str, object],
+        provenance: object = None,
+    ) -> str:
         record_id = None
         if isinstance(payload, dict):
             candidate = payload.get("record_id")
             if isinstance(candidate, str) and candidate:
                 record_id = candidate
         record_id = record_id or str(uuid.uuid4())
-        timestamp = payload.get("timestamp") if isinstance(payload, dict) else None
+        payload_value = dict(payload) if isinstance(payload, dict) else {}
+        provenance_value = _normalize_provenance_value(
+            provenance if provenance is not None else payload_value.get("provenance")
+        )
+        if provenance_value is not None and "provenance" not in payload_value:
+            payload_value["provenance"] = provenance_value
+        timestamp = payload_value.get("timestamp") if isinstance(payload_value, dict) else None
         timestamp = str(timestamp) if timestamp else _iso_now()
 
         if source == MemorySource.PROVENANCE_LEDGER:
-            event_type = payload.get("event_type") or payload.get("type") or "provenance"
-            content = _serialize_json(payload)
-            hash_value = payload.get("hash") if isinstance(payload, dict) else None
-            prev_hash = payload.get("prev_hash") if isinstance(payload, dict) else None
-            verified_value = payload.get("verified") if isinstance(payload, dict) else False
+            event_type = payload_value.get("event_type") or payload_value.get("type") or "provenance"
+            content = _serialize_json(payload_value)
+            hash_value = payload_value.get("hash") if isinstance(payload_value, dict) else None
+            prev_hash = payload_value.get("prev_hash") if isinstance(payload_value, dict) else None
+            verified_value = payload_value.get("verified") if isinstance(payload_value, dict) else False
             verified = 1 if verified_value else 0
 
             def _write_isnad(conn: sqlite3.Connection) -> None:
@@ -635,10 +689,10 @@ class SqliteSoulDB:
             self._execute_write(_write_isnad)
             return record_id
 
-        record_type = payload.get("type") if isinstance(payload, dict) else None
+        record_type = payload_value.get("type") if isinstance(payload_value, dict) else None
         record_type = str(record_type) if record_type else source.value
-        content = _serialize_json(payload)
-        embedding = payload.get("embedding") if isinstance(payload, dict) else None
+        content = _serialize_json(payload_value)
+        embedding = payload_value.get("embedding") if isinstance(payload_value, dict) else None
         embedding_value = None
         if embedding is not None:
             embedding_value = (
@@ -646,18 +700,21 @@ class SqliteSoulDB:
                 if isinstance(embedding, (bytes, bytearray))
                 else _serialize_json(embedding)
             )
-        parent_id = payload.get("parent_id") if isinstance(payload, dict) else None
-        tags = payload.get("tags") if isinstance(payload, dict) else None
+        parent_id = payload_value.get("parent_id") if isinstance(payload_value, dict) else None
+        tags = payload_value.get("tags") if isinstance(payload_value, dict) else None
         tags_value = None
         if tags:
             tags_value = _serialize_json(tags)
+        provenance_text = _serialize_json(provenance_value) if provenance_value is not None else None
 
         def _write_memory(conn: sqlite3.Connection) -> None:
             cursor = conn.cursor()
             cursor.execute(
                 """
-                INSERT INTO memories (id, type, content, embedding, timestamp, source, parent_id, tags)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO memories (
+                    id, type, content, embedding, timestamp, source, parent_id, tags, provenance
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     record_id,
@@ -668,6 +725,7 @@ class SqliteSoulDB:
                     source.value,
                     str(parent_id) if parent_id else None,
                     tags_value,
+                    provenance_text,
                 ),
             )
 
@@ -692,11 +750,14 @@ class SqliteSoulDB:
     def _rows_to_memory_records(
         self,
         source: MemorySource,
-        rows: List[tuple[object, object, object, object]],
+        rows: List[tuple[object, object, object, object, object]],
     ) -> List[MemoryRecord]:
         records: List[MemoryRecord] = []
-        for record_id, timestamp, content, tags in rows:
+        for record_id, timestamp, content, tags, provenance in rows:
             payload = _deserialize_json(str(content or "{}"))
+            provenance_value = _normalize_provenance_value(_deserialize_json_value(provenance))
+            if provenance_value is not None and "provenance" not in payload:
+                payload["provenance"] = provenance_value
             tag_list: List[str] = []
             if tags:
                 try:
@@ -751,7 +812,7 @@ class SqliteSoulDB:
         try:
             cursor.execute(
                 """
-                SELECT id, timestamp, content, tags
+                SELECT id, timestamp, content, tags, provenance
                 FROM memories
                 WHERE source = ?
                   AND (
@@ -876,7 +937,7 @@ class SqliteSoulDB:
         conn = self._connect()
         cursor = conn.cursor()
         sql = """
-            SELECT id, timestamp, content, tags
+            SELECT id, timestamp, content, tags, provenance
             FROM memories
             WHERE source = ?
             ORDER BY rowid ASC
@@ -887,7 +948,7 @@ class SqliteSoulDB:
                 conn.close()
                 return []
             sql = """
-                SELECT id, timestamp, content, tags
+                SELECT id, timestamp, content, tags, provenance
                 FROM memories
                 WHERE source = ?
                 ORDER BY rowid DESC
