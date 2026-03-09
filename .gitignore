@@ -38,6 +38,9 @@ node_modules/
 .next/
 apps/showcase/
 
+# IDE
+.vscode/
+
 # Database
 data/
 data/chromadb/
