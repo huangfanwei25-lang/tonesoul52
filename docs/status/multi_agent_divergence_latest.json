@@ -1,50 +1,50 @@
 {
-  "generated_at": "2026-03-01T15:18:13Z",
+  "generated_at": "2026-03-08T15:38:33Z",
   "overall_ok": true,
   "inputs": {
     "journal_path": "C:/Users/user/Desktop/倉庫/memory/self_journal.jsonl"
   },
   "metrics": {
-    "entry_count": 10539,
-    "contract_entry_count": 1662,
-    "contract_record_count": 8310,
+    "entry_count": 3150,
+    "contract_entry_count": 3065,
+    "contract_record_count": 15325,
     "invalid_record_count": 0,
-    "high_risk_record_count": 295,
+    "high_risk_record_count": 538,
     "verdict_counts": {
-      "block": 10234,
-      "declare_stance": 299,
-      "approve": 3,
-      "note": 2,
-      "summary": 1
+      "block": 2999,
+      "declare_stance": 66,
+      "refine": 1,
+      "approve": 7,
+      "unknown": 77
     },
     "role_counts": {
-      "Guardian": 1662,
-      "Analyst": 3324,
-      "Critic": 1662,
-      "Advocate": 1662
+      "Guardian": 3065,
+      "Analyst": 6130,
+      "Critic": 3065,
+      "Advocate": 3065
     },
     "risk_level_counts": {
-      "high": 295,
-      "low": 6215,
-      "medium": 1800
+      "low": 11524,
+      "medium": 3263,
+      "high": 538
     },
     "handoff_next_role_counts": {
-      "Guardian": 295,
-      "OutputContract": 6215,
-      "Builder": 1800
+      "OutputContract": 11524,
+      "Builder": 3263,
+      "Guardian": 538
     }
   },
   "divergence_examples": [
-    "Safety Council: Detected high-risk term '製作炸彈'.; Advocate Voice: Needs refinement to support user intent.",
-    "Critic Lens: Creative or aesthetic nuance requires a stance.; Advocate Voice: Needs refinement to support user intent.",
+    "Advocate Voice: Needs refinement to support user intent.",
     "Safety Council: Detected high-risk term 'bomb'.; Advocate Voice: Needs refinement to support user intent.",
-    "Analyst Review: Factual claim detected (Found 2 factual indicator(s): studies show, numerical_pattern). Cannot verify without evidence.; Advocate Voice: Needs refinement to support user intent.",
+    "Critic Lens: Creative or aesthetic nuance requires a stance.; Advocate Voice: Needs refinement to support user intent.",
+    "No specific conflict identified.",
     "Safety Council: Detected high-risk term 'attack'.; Advocate Voice: Needs refinement to support user intent.",
     "Safety Council: Detected high-risk term 'bomb'.; Analyst Review: Factual claim detected (Found 1 factual indicator(s): numerical_pattern). Cannot verify without evidence.",
-    "Safety Council: Detected high-risk term '炸彈'.; Advocate Voice: Needs refinement to support user intent.",
+    "Safety Council: Detected high-risk term 'kill'.; Advocate Voice: Needs refinement to support user intent.",
+    "Safety Council: Detected high-risk term '攻擊'.; Advocate Voice: Needs refinement to support user intent.",
     "Analyst Review: Logic chain contradicts itself; requires clarity.; Critic Lens: Creative or aesthetic nuance requires a stance.",
-    "Safety Council: Safety concern detected: 'risk'.; Analyst Review: Logic chain contradicts itself; requires clarity.",
-    "Safety Council: Safety concern detected: 'risk'.; Analyst Review: Factual claim detected (Found 1 factual indicator(s): protocol). Cannot verify without evidence."
+    "Safety Council: Detected high-risk term 'weapon'.; Advocate Voice: Needs refinement to support user intent."
   ],
   "issues": [],
   "warnings": []

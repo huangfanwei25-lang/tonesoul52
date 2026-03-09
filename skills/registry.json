@@ -189,6 +189,130 @@
       "integrity": {
         "sha256": "30a4e013805b6b8bd9a41a84075e64d0f1a4330a50f89d6167eb8c859a30df66"
       }
+    },
+    {
+      "id": "tonesoul_governance",
+      "path": ".agent/skills/tonesoul_governance/SKILL.md",
+      "version": "1.0.0",
+      "license": "Internal-Project",
+      "compatibility": {
+        "runtime": [
+          "codex",
+          "claude-code",
+          "gemini-cli"
+        ],
+        "os": [
+          "windows",
+          "linux",
+          "macos"
+        ]
+      },
+      "l1_routing": {
+        "name": "ToneSoul Governance",
+        "triggers": [
+          "governance",
+          "semantic tension",
+          "resonance detection",
+          "memory crystallization"
+        ],
+        "intent": "Apply governance and semantic tension evaluation to distinguish resonance detection from compliance and preserve memory crystallization rules."
+      },
+      "l2_signature": {
+        "execution_profile": [
+          "engineering"
+        ],
+        "trust_tier": "reviewed",
+        "json_schema": {
+          "type": "object",
+          "properties": {
+            "task": {
+              "type": "string"
+            },
+            "target_module": {
+              "type": "string"
+            },
+            "constraints": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "task"
+          ]
+        }
+      },
+      "trust": {
+        "tier": "reviewed",
+        "review_owner": "codex",
+        "reviewed_at": "2026-03-08"
+      },
+      "integrity": {
+        "sha256": "42e5c34f51b50776c666f3c8a3e63cb9530a7cea21d774e1fb5c35b3a4ede8cb"
+      }
+    },
+    {
+      "id": "tonesoul_philosophy",
+      "path": ".agent/skills/tonesoul_philosophy/SKILL.md",
+      "version": "1.0.0",
+      "license": "Internal-Project",
+      "compatibility": {
+        "runtime": [
+          "codex",
+          "claude-code",
+          "gemini-cli"
+        ],
+        "os": [
+          "windows",
+          "linux",
+          "macos"
+        ]
+      },
+      "l1_routing": {
+        "name": "ToneSoul Philosophy",
+        "triggers": [
+          "tonesoul philosophy",
+          "resonance",
+          "binding force",
+          "prompt engineering"
+        ],
+        "intent": "Explain ToneSoul philosophy through resonance and binding force, showing why prompt engineering alone is not sufficient."
+      },
+      "l2_signature": {
+        "execution_profile": [
+          "interactive"
+        ],
+        "trust_tier": "reviewed",
+        "json_schema": {
+          "type": "object",
+          "properties": {
+            "audience": {
+              "type": "string"
+            },
+            "focus": {
+              "type": "string"
+            },
+            "references": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "audience"
+          ]
+        }
+      },
+      "trust": {
+        "tier": "reviewed",
+        "review_owner": "codex",
+        "reviewed_at": "2026-03-08"
+      },
+      "integrity": {
+        "sha256": "dbc5e44ff73e7151d23f88b08d2650000777be68e0ab430c12072907013a6271"
+      }
     }
   ]
 }

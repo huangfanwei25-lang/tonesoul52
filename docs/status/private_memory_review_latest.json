@@ -1,0 +1,96 @@
+{
+  "generated_at": "2026-03-08T15:13:14Z",
+  "overall_ok": false,
+  "source": "scripts/run_private_memory_review_report.py",
+  "summary": {
+    "entry_count": 5,
+    "mirror_then_archive_count": 2,
+    "archive_to_private_count": 3,
+    "inspect_count": 0,
+    "kind_counts": [
+      {
+        "name": "mirrored_private_memory",
+        "count": 2
+      },
+      {
+        "name": "private_journal",
+        "count": 2
+      },
+      {
+        "name": "private_runtime_namespace",
+        "count": 1
+      }
+    ],
+    "disposition_counts": [
+      {
+        "name": "archive_to_private",
+        "count": 3
+      },
+      {
+        "name": "mirror_then_archive",
+        "count": 2
+      }
+    ]
+  },
+  "entries": [
+    {
+      "path": "memory/antigravity_architecture_plan_2026-03-07.md",
+      "category": "memory",
+      "kind": "private_journal",
+      "disposition": "archive_to_private",
+      "notes": "Treat this as private narrative or planning evidence; archive to the private path instead of using it as public branch payload.",
+      "status": " M",
+      "staged": false,
+      "unstaged": true,
+      "untracked": false
+    },
+    {
+      "path": "memory/antigravity_journal.md",
+      "category": "memory",
+      "kind": "private_journal",
+      "disposition": "archive_to_private",
+      "notes": "Treat this as private narrative or planning evidence; archive to the private path instead of using it as public branch payload.",
+      "status": " M",
+      "staged": false,
+      "unstaged": true,
+      "untracked": false
+    },
+    {
+      "path": "memory/architecture_reflection_2026-03-07.md",
+      "category": "memory",
+      "kind": "mirrored_private_memory",
+      "disposition": "mirror_then_archive",
+      "notes": "Mirror public-safe learnings into task/reflection/status artifacts, then treat the original memory file as private evidence.",
+      "status": " M",
+      "staged": false,
+      "unstaged": true,
+      "untracked": false
+    },
+    {
+      "path": "memory/crystals.jsonl",
+      "category": "memory",
+      "kind": "mirrored_private_memory",
+      "disposition": "mirror_then_archive",
+      "notes": "Mirror public-safe learnings into task/reflection/status artifacts, then treat the original memory file as private evidence.",
+      "status": " M",
+      "staged": false,
+      "unstaged": true,
+      "untracked": false
+    },
+    {
+      "path": "memory/autonomous/",
+      "category": "memory",
+      "kind": "private_runtime_namespace",
+      "disposition": "archive_to_private",
+      "notes": "Treat this as private runtime evidence and keep it outside public branch movement.",
+      "status": "??",
+      "staged": false,
+      "unstaged": false,
+      "untracked": true
+    }
+  ],
+  "issues": [
+    "private_memory_lane_still_dirty"
+  ],
+  "warnings": []
+}

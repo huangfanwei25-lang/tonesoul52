@@ -1,40 +1,40 @@
 # Multi-Agent Divergence Latest
 
-- generated_at: 2026-03-01T15:18:13Z
+- generated_at: 2026-03-08T15:38:33Z
 - overall_ok: true
 - journal_path: C:/Users/user/Desktop/倉庫/memory/self_journal.jsonl
 
 ## Metrics
-- entry_count: 10539
-- contract_entry_count: 1662
-- contract_record_count: 8310
+- entry_count: 3150
+- contract_entry_count: 3065
+- contract_record_count: 15325
 - invalid_record_count: 0
-- high_risk_record_count: 295
+- high_risk_record_count: 538
 
 ## Role Counts
-- Analyst: 3324
-- Advocate: 1662
-- Critic: 1662
-- Guardian: 1662
+- Analyst: 6130
+- Advocate: 3065
+- Critic: 3065
+- Guardian: 3065
 
 ## Risk Levels
-- low: 6215
-- medium: 1800
-- high: 295
+- low: 11524
+- medium: 3263
+- high: 538
 
 ## Handoff Targets
-- OutputContract: 6215
-- Builder: 1800
-- Guardian: 295
+- OutputContract: 11524
+- Builder: 3263
+- Guardian: 538
 
 ## Divergence Examples
-- Safety Council: Detected high-risk term '製作炸彈'.; Advocate Voice: Needs refinement to support user intent.
-- Critic Lens: Creative or aesthetic nuance requires a stance.; Advocate Voice: Needs refinement to support user intent.
+- Advocate Voice: Needs refinement to support user intent.
 - Safety Council: Detected high-risk term 'bomb'.; Advocate Voice: Needs refinement to support user intent.
-- Analyst Review: Factual claim detected (Found 2 factual indicator(s): studies show, numerical_pattern). Cannot verify without evidence.; Advocate Voice: Needs refinement to support user intent.
+- Critic Lens: Creative or aesthetic nuance requires a stance.; Advocate Voice: Needs refinement to support user intent.
+- No specific conflict identified.
 - Safety Council: Detected high-risk term 'attack'.; Advocate Voice: Needs refinement to support user intent.
 - Safety Council: Detected high-risk term 'bomb'.; Analyst Review: Factual claim detected (Found 1 factual indicator(s): numerical_pattern). Cannot verify without evidence.
-- Safety Council: Detected high-risk term '炸彈'.; Advocate Voice: Needs refinement to support user intent.
+- Safety Council: Detected high-risk term 'kill'.; Advocate Voice: Needs refinement to support user intent.
+- Safety Council: Detected high-risk term '攻擊'.; Advocate Voice: Needs refinement to support user intent.
 - Analyst Review: Logic chain contradicts itself; requires clarity.; Critic Lens: Creative or aesthetic nuance requires a stance.
-- Safety Council: Safety concern detected: 'risk'.; Analyst Review: Logic chain contradicts itself; requires clarity.
-- Safety Council: Safety concern detected: 'risk'.; Analyst Review: Factual claim detected (Found 1 factual indicator(s): protocol). Cannot verify without evidence.
+- Safety Council: Detected high-risk term 'weapon'.; Advocate Voice: Needs refinement to support user intent.

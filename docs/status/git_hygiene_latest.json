@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-01T15:18:11Z",
+  "generated_at": "2026-03-08T15:38:30Z",
   "overall_ok": true,
   "config": {
     "max_dangling": 50,
@@ -7,14 +7,14 @@
     "max_tracked_ignored": 28
   },
   "metrics": {
-    "loose_count": 543,
+    "loose_count": 912,
     "in_pack": 6976,
     "packs": 1,
-    "size": "7.38 MiB",
+    "size": "16.65 MiB",
     "size_pack": "100.53 MiB",
-    "dangling_count": 4,
+    "dangling_count": 6,
     "fsck_prefix_counts": {
-      "dangling": 4
+      "dangling": 6
     },
     "fsck_unexpected_count": 0,
     "tracked_ignored_count": 10
@@ -27,7 +27,7 @@
       "exit_code": 0,
       "duration_seconds": 0.07,
       "command": "git count-objects -vH",
-      "stdout_tail": "count: 543\nsize: 7.38 MiB\nin-pack: 6976\npacks: 1\nsize-pack: 100.53 MiB\nprune-packable: 0\ngarbage: 0\nsize-garbage: 0 bytes",
+      "stdout_tail": "count: 912\nsize: 16.65 MiB\nin-pack: 6976\npacks: 1\nsize-pack: 100.53 MiB\nprune-packable: 0\ngarbage: 0\nsize-garbage: 0 bytes",
       "stderr_tail": ""
     },
     {
@@ -35,9 +35,9 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 2.36,
+      "duration_seconds": 2.63,
       "command": "git fsck --no-reflogs",
-      "stdout_tail": "dangling commit 15e59ad0191368298d852a0f396ef220ff1ae0ef\ndangling commit 1b270c49e12cee8ade2aa0712704844683bcd067\ndangling commit 762dc646d3aa5293b22ec3e8f3bd4f5910b9b281\ndangling commit a56d6877a8c690cb06e4b80e13084896e7815c48",
+      "stdout_tail": "dangling commit f609f8ebce0639c95ce7dba029cbb3f50189fdc2\ndangling commit 15e59ad0191368298d852a0f396ef220ff1ae0ef\ndangling commit 1b270c49e12cee8ade2aa0712704844683bcd067\ndangling blob 55e99000f3ca3e78bbf1341190f465402d61927a\ndangling commit 762dc646d3aa5293b22ec3e8f3bd4f5910b9b281\ndangling commit a56d6877a8c690cb06e4b80e13084896e7815c48",
       "stderr_tail": ""
     },
     {
@@ -45,7 +45,7 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 0.06,
+      "duration_seconds": 0.07,
       "command": "git ls-files -ci --exclude-standard",
       "stdout_tail": "data/YuHun_v2.6_knowledgebase.json\ndata/YuHun_v2.6_knowledgebase_extended.json\ndata/semantic_spine_fixtures.json\ndata/yuhun_academy_knowledgebase_v1.1.txt\n\"data/\\350\\252\\236\\351\\255\\202\\345\\212\\207\\345\\240\\264_API_\\346\\234\\200\\347\\265\\202\\347\\211\\210_v1.3.json\"\nexperiments/tsd1_pilot/data/prompts.json\nexperiments/tsd1_pilot/data/responses.json\nspec/wfgy_semantic_control_spec.md\nzenodo_upload/paper_outline_multiperspective_truth.md\n\"zenodo_upload/\\344\\270\\212\\345\\202\\263\\346\\214\\207\\345\\215\\227.md\"",
       "stderr_tail": ""

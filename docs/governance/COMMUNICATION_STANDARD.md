@@ -35,3 +35,8 @@ Repository CI requires attribution trailers on non-exempt commits:
 - `Trace-Topic: <topic>`
 
 If these trailers are missing, `Commit Attribution Check` will fail.
+
+Local parity commands:
+- `python scripts/verify_incremental_commit_attribution.py --strict`
+- `python scripts/plan_commit_attribution_base_switch.py`
+- `python scripts/run_repo_healthcheck.py --strict --allow-missing-discussion`

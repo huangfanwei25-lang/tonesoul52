@@ -1,0 +1,16 @@
+{
+  "overall_ok": true,
+  "experiment": {
+    "name": "true_verification_weekly",
+    "profile": "runtime_probe_watch",
+    "days": 9.0,
+    "wake_interval_hours": 1.5,
+    "interval_seconds": 30.0,
+    "planned_cycles": 4,
+    "reuse_experiment_state": false,
+    "summary_path": "docs/status/true_verification_weekly/true_verification_experiment_latest.json"
+  },
+  "gate": null,
+  "preflight": null,
+  "schedule": null
+}

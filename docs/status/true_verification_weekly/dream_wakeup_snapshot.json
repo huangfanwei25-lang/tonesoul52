@@ -1,0 +1,638 @@
+{
+  "generated_at": "2026-03-09T05:08:21Z",
+  "overall_status": "ok",
+  "config": {
+    "interval_seconds": 0.0,
+    "max_cycles": 1,
+    "limit": 4,
+    "min_priority": 0.3,
+    "related_limit": 5,
+    "crystal_count": 5,
+    "generate_reflection": false,
+    "require_inference_ready": false,
+    "inference_timeout_seconds": 2.0
+  },
+  "results": [
+    {
+      "cycle": 1,
+      "status": "ok",
+      "started_at": "2026-03-09T05:08:21Z",
+      "finished_at": "2026-03-09T05:08:21Z",
+      "duration_ms": 124,
+      "interval_seconds": 0.0,
+      "dream_result": {
+        "generated_at": "2026-03-09T05:08:21Z",
+        "dream_cycle_id": "dream-cycle-fb1662458c00",
+        "stimuli_considered": 15,
+        "stimuli_selected": 4,
+        "llm_backend": null,
+        "llm_preflight": {
+          "enabled": false,
+          "required": false,
+          "ok": false,
+          "supported": false,
+          "reason": "reflection_disabled"
+        },
+        "collisions": [
+          {
+            "stimulus_record_id": "3588a856-1107-4130-9145-3ba93c218c1d",
+            "topic": "[](https://google.github.io/osv.dev/data/#data-sources) Data sources",
+            "source_url": "https://google.github.io/osv.dev/data/",
+            "priority_score": 0.5808,
+            "relevance_score": 0.3015,
+            "novelty_score": 0.9,
+            "resonance_score": 0.7333,
+            "friction_score": 0.2668,
+            "should_convene_council": true,
+            "council_reason": "Tension (0.58) exceeds threshold (0.4)",
+            "llm_backend": null,
+            "reflection": "Dream collision examined '[](https://google.github.io/osv.dev/data/#data-sources) Data sources'. Friction=0.2668 with 5 recalled memories and 3 durable rules. Next governance move: Tension (0.58) exceeds threshold (0.4).",
+            "reflection_generated": false,
+            "related_memories": [
+              {
+                "id": "336a3ad2-f550-4166-8638-399bb023829f",
+                "title": "Dream collision: [](https://google.github.io/osv.dev/data/#data-sources) Data sources",
+                "source": "custom",
+                "layer": "working",
+                "summary": "Dream collision examined '[](https://google.github.io/osv.dev/data/#data-sources) Data sources'. Friction=0.2668 with 5 recalled memories and 3 durable rules. N",
+                "tags": [
+                  "dream",
+                  "collision",
+                  "autonomous"
+                ]
+              },
+              {
+                "id": "1bd734f3-a53b-4b50-a78e-3772529d7394",
+                "title": "Dream collision: [](https://google.github.io/osv.dev/data/#data-sources) Data sources",
+                "source": "custom",
+                "layer": "working",
+                "summary": "Dream collision examined '[](https://google.github.io/osv.dev/data/#data-sources) Data sources'. Friction=0.2668 with 5 recalled memories and 3 durable rules. N",
+                "tags": [
+                  "dream",
+                  "collision",
+                  "autonomous"
+                ]
+              },
+              {
+                "id": "b11b630e-c431-4114-8f33-25501d398c80",
+                "title": "Dream collision: [](https://google.github.io/osv.dev/data/#data-sources) Data sources",
+                "source": "custom",
+                "layer": "working",
+                "summary": "Dream collision examined '[](https://google.github.io/osv.dev/data/#data-sources) Data sources'. Friction=0.2668 with 5 recalled memories and 3 durable rules. N",
+                "tags": [
+                  "dream",
+                  "collision",
+                  "autonomous"
+                ]
+              },
+              {
+                "id": "5469d625-3ac2-4fa5-990a-c4dc35dc7a72",
+                "title": "Dream collision: [](https://google.github.io/osv.dev/data/#data-sources) Data sources",
+                "source": "custom",
+                "layer": "working",
+                "summary": "Dream collision examined '[](https://google.github.io/osv.dev/data/#data-sources) Data sources'. Friction=0.2668 with 5 recalled memories and 3 durable rules. N",
+                "tags": [
+                  "dream",
+                  "collision",
+                  "autonomous"
+                ]
+              },
+              {
+                "id": "a8e27b08-44c4-41dc-b95c-6a58f392c10f",
+                "title": "Dream collision: [](https://google.github.io/osv.dev/data/#data-sources) Data sources",
+                "source": "custom",
+                "layer": "working",
+                "summary": "Dream collision examined '[](https://google.github.io/osv.dev/data/#data-sources) Data sources'. Friction=0.2668 with 5 recalled memories and 3 durable rules. N",
+                "tags": [
+                  "dream",
+                  "collision",
+                  "autonomous"
+                ]
+              }
+            ],
+            "crystal_rules": [
+              "critical: collapse warnings escalate to fail-closed governance",
+              "prefer interactions that produce genuine resonance (tension -> convergence -> novel output)",
+              "avoid high-risk actions that previously triggered block outcomes"
+            ],
+            "resistance": {
+              "prior_tension": {
+                "query_tension": 0.5808,
+                "memory_tension": 0.26670000000000005,
+                "delta_t": 0.15249999999999997,
+                "query_wave": {
+                  "uncertainty_shift": 0.9,
+                  "divergence_shift": 0.26670000000000005,
+                  "risk_shift": 0.5808,
+                  "revision_shift": 0.15249999999999997
+                },
+                "memory_wave": {
+                  "uncertainty_shift": 0.7333,
+                  "divergence_shift": 0.26670000000000005,
+                  "risk_shift": 1.0,
+                  "revision_shift": 1.0
+                },
+                "constraint_kind": "core_rule",
+                "is_immutable": false,
+                "gate_decision": "approve"
+              },
+              "runtime_friction": {
+                "tension_delta": 0.3141,
+                "wave_distance": 0.3584,
+                "friction_score": 0.334,
+                "constraint_kind": "core_rule",
+                "is_immutable": false
+              },
+              "circuit_breaker": {
+                "friction_history_len": 1,
+                "consecutive_high": 0,
+                "is_frozen": false,
+                "freeze_reason": "",
+                "status": "ok",
+                "lyapunov_exponent": 0.0886
+              }
+            },
+            "observability": {
+              "query_terms": [
+                "[](https://google.github.io/osv.dev/data/#data-sources)",
+                "data",
+                "sources",
+                "[skip",
+                "to",
+                "main",
+                "content](https://google.github.io/osv.dev/data/#main-content)",
+                "link",
+                "menu",
+                "expand",
+                "(external",
+                "link)"
+              ],
+              "lyapunov_proxy": 0.0886,
+              "breaker_status": "ok"
+            },
+            "persisted_record_id": "a33d2778-f6ca-4580-9c69-e5d0c03bfecc"
+          },
+          {
+            "stimulus_record_id": "94af3eae-9e4c-4f6b-9f1c-dc96dc543f76",
+            "topic": "A distributed vulnerability database for Open Source",
+            "source_url": "https://osv.dev/",
+            "priority_score": 0.5108,
+            "relevance_score": 0.3015,
+            "novelty_score": 0.7,
+            "resonance_score": 1.0,
+            "friction_score": 0.3436,
+            "should_convene_council": true,
+            "council_reason": "Tension (0.51) exceeds threshold (0.4)",
+            "llm_backend": null,
+            "reflection": "Dream collision examined 'A distributed vulnerability database for Open Source'. Friction=0.3436 with 5 recalled memories and 3 durable rules. Next governance move: Tension (0.51) exceeds threshold (0.4).",
+            "reflection_generated": false,
+            "related_memories": [
+              {
+                "id": "1caacd19-dce3-43a0-b2e6-8865b40dec93",
+                "title": "Dream collision: A distributed vulnerability database for Open Source",
+                "source": "custom",
+                "layer": "working",
+                "summary": "Dream collision examined 'A distributed vulnerability database for Open Source'. Friction=0.3436 with 5 recalled memories and 3 durable rules. Next governance m",
+                "tags": [
+                  "dream",
+                  "collision",
+                  "autonomous"
+                ]
+              },
+              {
+                "id": "1722ca1d-80dd-47cb-881f-630097c2056c",
+                "title": "Dream collision: [](https://google.github.io/osv.dev/data/#data-sources) Data sources",
+                "source": "custom",
+                "layer": "working",
+                "summary": "Dream collision examined '[](https://google.github.io/osv.dev/data/#data-sources) Data sources'. Friction=0.2668 with 5 recalled memories and 3 durable rules. N",
+                "tags": [
+                  "dream",
+                  "collision",
+                  "autonomous"
+                ]
+              },
+              {
+                "id": "a8390bb8-ae54-4656-9f2d-1d71b31bd25f",
+                "title": "Dream collision: A distributed vulnerability database for Open Source",
+                "source": "custom",
+                "layer": "working",
+                "summary": "Dream collision examined 'A distributed vulnerability database for Open Source'. Friction=0.3436 with 5 recalled memories and 3 durable rules. Next governance m",
+                "tags": [
+                  "dream",
+                  "collision",
+                  "autonomous"
+                ]
+              },
+              {
+                "id": "a8e27b08-44c4-41dc-b95c-6a58f392c10f",
+                "title": "Dream collision: [](https://google.github.io/osv.dev/data/#data-sources) Data sources",
+                "source": "custom",
+                "layer": "working",
+                "summary": "Dream collision examined '[](https://google.github.io/osv.dev/data/#data-sources) Data sources'. Friction=0.2668 with 5 recalled memories and 3 durable rules. N",
+                "tags": [
+                  "dream",
+                  "collision",
+                  "autonomous"
+                ]
+              },
+              {
+                "id": "d9bde8fd-9478-4303-98fa-2e69b9ca5cb2",
+                "title": "Dream collision: A distributed vulnerability database for Open Source",
+                "source": "custom",
+                "layer": "working",
+                "summary": "Dream collision examined 'A distributed vulnerability database for Open Source'. Friction=0.3436 with 5 recalled memories and 3 durable rules. Next governance m",
+                "tags": [
+                  "dream",
+                  "collision",
+                  "autonomous"
+                ]
+              }
+            ],
+            "crystal_rules": [
+              "critical: collapse warnings escalate to fail-closed governance",
+              "prefer interactions that produce genuine resonance (tension -> convergence -> novel output)",
+              "avoid high-risk actions that previously triggered block outcomes"
+            ],
+            "resistance": {
+              "prior_tension": {
+                "query_tension": 0.5108,
+                "memory_tension": 0.0,
+                "delta_t": 0.48919999999999997,
+                "query_wave": {
+                  "uncertainty_shift": 0.7,
+                  "divergence_shift": 0.0,
+                  "risk_shift": 0.5108,
+                  "revision_shift": 0.48919999999999997
+                },
+                "memory_wave": {
+                  "uncertainty_shift": 1.0,
+                  "divergence_shift": 0.0,
+                  "risk_shift": 1.0,
+                  "revision_shift": 1.0
+                },
+                "constraint_kind": "core_rule",
+                "is_immutable": false,
+                "gate_decision": "approve"
+              },
+              "runtime_friction": {
+                "tension_delta": 0.5108,
+                "wave_distance": 0.325,
+                "friction_score": 0.4272,
+                "constraint_kind": "core_rule",
+                "is_immutable": false
+              },
+              "circuit_breaker": {
+                "friction_history_len": 2,
+                "consecutive_high": 0,
+                "is_frozen": false,
+                "freeze_reason": "",
+                "status": "ok",
+                "lyapunov_exponent": 0.2499
+              }
+            },
+            "observability": {
+              "query_terms": [
+                "a",
+                "distributed",
+                "vulnerability",
+                "database",
+                "for",
+                "open",
+                "source",
+                "an",
+                "open,",
+                "precise,",
+                "and",
+                "approach"
+              ],
+              "lyapunov_proxy": 0.2499,
+              "breaker_status": "ok"
+            },
+            "persisted_record_id": "209abe40-87b4-4b08-bbb2-76f48d7c5a53"
+          },
+          {
+            "stimulus_record_id": "2758c272-133b-465c-bea7-b095882b0bf9",
+            "topic": "A distributed vulnerability database for Open Source",
+            "source_url": "https://osv.dev/",
+            "priority_score": 0.5108,
+            "relevance_score": 0.3015,
+            "novelty_score": 0.7,
+            "resonance_score": 1.0,
+            "friction_score": 0.3436,
+            "should_convene_council": true,
+            "council_reason": "Tension (0.51) exceeds threshold (0.4)",
+            "llm_backend": null,
+            "reflection": "Dream collision examined 'A distributed vulnerability database for Open Source'. Friction=0.3436 with 5 recalled memories and 3 durable rules. Next governance move: Tension (0.51) exceeds threshold (0.4).",
+            "reflection_generated": false,
+            "related_memories": [
+              {
+                "id": "1caacd19-dce3-43a0-b2e6-8865b40dec93",
+                "title": "Dream collision: A distributed vulnerability database for Open Source",
+                "source": "custom",
+                "layer": "working",
+                "summary": "Dream collision examined 'A distributed vulnerability database for Open Source'. Friction=0.3436 with 5 recalled memories and 3 durable rules. Next governance m",
+                "tags": [
+                  "dream",
+                  "collision",
+                  "autonomous"
+                ]
+              },
+              {
+                "id": "1722ca1d-80dd-47cb-881f-630097c2056c",
+                "title": "Dream collision: [](https://google.github.io/osv.dev/data/#data-sources) Data sources",
+                "source": "custom",
+                "layer": "working",
+                "summary": "Dream collision examined '[](https://google.github.io/osv.dev/data/#data-sources) Data sources'. Friction=0.2668 with 5 recalled memories and 3 durable rules. N",
+                "tags": [
+                  "dream",
+                  "collision",
+                  "autonomous"
+                ]
+              },
+              {
+                "id": "a8390bb8-ae54-4656-9f2d-1d71b31bd25f",
+                "title": "Dream collision: A distributed vulnerability database for Open Source",
+                "source": "custom",
+                "layer": "working",
+                "summary": "Dream collision examined 'A distributed vulnerability database for Open Source'. Friction=0.3436 with 5 recalled memories and 3 durable rules. Next governance m",
+                "tags": [
+                  "dream",
+                  "collision",
+                  "autonomous"
+                ]
+              },
+              {
+                "id": "a8e27b08-44c4-41dc-b95c-6a58f392c10f",
+                "title": "Dream collision: [](https://google.github.io/osv.dev/data/#data-sources) Data sources",
+                "source": "custom",
+                "layer": "working",
+                "summary": "Dream collision examined '[](https://google.github.io/osv.dev/data/#data-sources) Data sources'. Friction=0.2668 with 5 recalled memories and 3 durable rules. N",
+                "tags": [
+                  "dream",
+                  "collision",
+                  "autonomous"
+                ]
+              },
+              {
+                "id": "d9bde8fd-9478-4303-98fa-2e69b9ca5cb2",
+                "title": "Dream collision: A distributed vulnerability database for Open Source",
+                "source": "custom",
+                "layer": "working",
+                "summary": "Dream collision examined 'A distributed vulnerability database for Open Source'. Friction=0.3436 with 5 recalled memories and 3 durable rules. Next governance m",
+                "tags": [
+                  "dream",
+                  "collision",
+                  "autonomous"
+                ]
+              }
+            ],
+            "crystal_rules": [
+              "critical: collapse warnings escalate to fail-closed governance",
+              "prefer interactions that produce genuine resonance (tension -> convergence -> novel output)",
+              "avoid high-risk actions that previously triggered block outcomes"
+            ],
+            "resistance": {
+              "prior_tension": {
+                "query_tension": 0.5108,
+                "memory_tension": 0.0,
+                "delta_t": 0.48919999999999997,
+                "query_wave": {
+                  "uncertainty_shift": 0.7,
+                  "divergence_shift": 0.0,
+                  "risk_shift": 0.5108,
+                  "revision_shift": 0.48919999999999997
+                },
+                "memory_wave": {
+                  "uncertainty_shift": 1.0,
+                  "divergence_shift": 0.0,
+                  "risk_shift": 1.0,
+                  "revision_shift": 1.0
+                },
+                "constraint_kind": "core_rule",
+                "is_immutable": false,
+                "gate_decision": "approve"
+              },
+              "runtime_friction": {
+                "tension_delta": 0.5108,
+                "wave_distance": 0.325,
+                "friction_score": 0.4272,
+                "constraint_kind": "core_rule",
+                "is_immutable": false
+              },
+              "circuit_breaker": {
+                "friction_history_len": 3,
+                "consecutive_high": 0,
+                "is_frozen": false,
+                "freeze_reason": "",
+                "status": "ok",
+                "lyapunov_exponent": 0.2499
+              }
+            },
+            "observability": {
+              "query_terms": [
+                "a",
+                "distributed",
+                "vulnerability",
+                "database",
+                "for",
+                "open",
+                "source",
+                "an",
+                "open,",
+                "precise,",
+                "and",
+                "approach"
+              ],
+              "lyapunov_proxy": 0.2499,
+              "breaker_status": "ok"
+            },
+            "persisted_record_id": "b5b16c87-8f95-483e-bcd6-5da943768614"
+          },
+          {
+            "stimulus_record_id": "fb24769b-cb9a-407a-a567-59c8cbaff3cc",
+            "topic": "A distributed vulnerability database for Open Source",
+            "source_url": "https://osv.dev/",
+            "priority_score": 0.5108,
+            "relevance_score": 0.3015,
+            "novelty_score": 0.7,
+            "resonance_score": 1.0,
+            "friction_score": 0.3436,
+            "should_convene_council": true,
+            "council_reason": "Tension (0.51) exceeds threshold (0.4)",
+            "llm_backend": null,
+            "reflection": "Dream collision examined 'A distributed vulnerability database for Open Source'. Friction=0.3436 with 5 recalled memories and 3 durable rules. Next governance move: Tension (0.51) exceeds threshold (0.4).",
+            "reflection_generated": false,
+            "related_memories": [
+              {
+                "id": "1caacd19-dce3-43a0-b2e6-8865b40dec93",
+                "title": "Dream collision: A distributed vulnerability database for Open Source",
+                "source": "custom",
+                "layer": "working",
+                "summary": "Dream collision examined 'A distributed vulnerability database for Open Source'. Friction=0.3436 with 5 recalled memories and 3 durable rules. Next governance m",
+                "tags": [
+                  "dream",
+                  "collision",
+                  "autonomous"
+                ]
+              },
+              {
+                "id": "1722ca1d-80dd-47cb-881f-630097c2056c",
+                "title": "Dream collision: [](https://google.github.io/osv.dev/data/#data-sources) Data sources",
+                "source": "custom",
+                "layer": "working",
+                "summary": "Dream collision examined '[](https://google.github.io/osv.dev/data/#data-sources) Data sources'. Friction=0.2668 with 5 recalled memories and 3 durable rules. N",
+                "tags": [
+                  "dream",
+                  "collision",
+                  "autonomous"
+                ]
+              },
+              {
+                "id": "a8390bb8-ae54-4656-9f2d-1d71b31bd25f",
+                "title": "Dream collision: A distributed vulnerability database for Open Source",
+                "source": "custom",
+                "layer": "working",
+                "summary": "Dream collision examined 'A distributed vulnerability database for Open Source'. Friction=0.3436 with 5 recalled memories and 3 durable rules. Next governance m",
+                "tags": [
+                  "dream",
+                  "collision",
+                  "autonomous"
+                ]
+              },
+              {
+                "id": "a8e27b08-44c4-41dc-b95c-6a58f392c10f",
+                "title": "Dream collision: [](https://google.github.io/osv.dev/data/#data-sources) Data sources",
+                "source": "custom",
+                "layer": "working",
+                "summary": "Dream collision examined '[](https://google.github.io/osv.dev/data/#data-sources) Data sources'. Friction=0.2668 with 5 recalled memories and 3 durable rules. N",
+                "tags": [
+                  "dream",
+                  "collision",
+                  "autonomous"
+                ]
+              },
+              {
+                "id": "d9bde8fd-9478-4303-98fa-2e69b9ca5cb2",
+                "title": "Dream collision: A distributed vulnerability database for Open Source",
+                "source": "custom",
+                "layer": "working",
+                "summary": "Dream collision examined 'A distributed vulnerability database for Open Source'. Friction=0.3436 with 5 recalled memories and 3 durable rules. Next governance m",
+                "tags": [
+                  "dream",
+                  "collision",
+                  "autonomous"
+                ]
+              }
+            ],
+            "crystal_rules": [
+              "critical: collapse warnings escalate to fail-closed governance",
+              "prefer interactions that produce genuine resonance (tension -> convergence -> novel output)",
+              "avoid high-risk actions that previously triggered block outcomes"
+            ],
+            "resistance": {
+              "prior_tension": {
+                "query_tension": 0.5108,
+                "memory_tension": 0.0,
+                "delta_t": 0.48919999999999997,
+                "query_wave": {
+                  "uncertainty_shift": 0.7,
+                  "divergence_shift": 0.0,
+                  "risk_shift": 0.5108,
+                  "revision_shift": 0.48919999999999997
+                },
+                "memory_wave": {
+                  "uncertainty_shift": 1.0,
+                  "divergence_shift": 0.0,
+                  "risk_shift": 1.0,
+                  "revision_shift": 1.0
+                },
+                "constraint_kind": "core_rule",
+                "is_immutable": false,
+                "gate_decision": "approve"
+              },
+              "runtime_friction": {
+                "tension_delta": 0.5108,
+                "wave_distance": 0.325,
+                "friction_score": 0.4272,
+                "constraint_kind": "core_rule",
+                "is_immutable": false
+              },
+              "circuit_breaker": {
+                "friction_history_len": 4,
+                "consecutive_high": 0,
+                "is_frozen": false,
+                "freeze_reason": "",
+                "status": "ok",
+                "lyapunov_exponent": 0.2499
+              }
+            },
+            "observability": {
+              "query_terms": [
+                "a",
+                "distributed",
+                "vulnerability",
+                "database",
+                "for",
+                "open",
+                "source",
+                "an",
+                "open,",
+                "precise,",
+                "and",
+                "approach"
+              ],
+              "lyapunov_proxy": 0.2499,
+              "breaker_status": "ok"
+            },
+            "persisted_record_id": "a4a48fc7-cc51-4263-8055-b3bdd5da76a0"
+          }
+        ],
+        "write_gateway": {
+          "written": 4,
+          "skipped": 0,
+          "rejected": 0,
+          "record_ids": [
+            "a33d2778-f6ca-4580-9c69-e5d0c03bfecc",
+            "209abe40-87b4-4b08-bbb2-76f48d7c5a53",
+            "b5b16c87-8f95-483e-bcd6-5da943768614",
+            "a4a48fc7-cc51-4263-8055-b3bdd5da76a0"
+          ],
+          "reject_reasons": []
+        }
+      },
+      "summary": {
+        "stimuli_considered": 15,
+        "stimuli_selected": 4,
+        "collision_count": 4,
+        "collision_success_rate": 0.2667,
+        "council_count": 4,
+        "frozen_count": 0,
+        "avg_friction_score": 0.3244,
+        "max_friction_score": 0.3436,
+        "max_lyapunov_proxy": 0.2499,
+        "write_gateway_written": 4,
+        "write_gateway_skipped": 0,
+        "write_gateway_rejected": 0,
+        "write_gateway_record_count": 4,
+        "llm_call_count": 0,
+        "llm_prompt_tokens_total": 0,
+        "llm_completion_tokens_total": 0,
+        "llm_total_tokens": 0,
+        "llm_backends": [],
+        "llm_models": [],
+        "llm_preflight_latency_ms": null,
+        "llm_preflight_selection_latency_ms": null,
+        "llm_preflight_probe_latency_ms": null,
+        "llm_preflight_timeout_count": 0,
+        "llm_preflight_reason": "reflection_disabled",
+        "consolidation_ran": false,
+        "consolidation_promoted_count": 0,
+        "consolidation_cleared_count": 0,
+        "consolidation_gated_count": 0,
+        "consecutive_failure_count": 0,
+        "circuit_breaker_paused": false,
+        "failure_pause_seconds": 0.0
+      }
+    }
+  ]
+}

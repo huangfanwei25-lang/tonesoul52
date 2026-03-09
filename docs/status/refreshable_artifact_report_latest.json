@@ -1,0 +1,1140 @@
+{
+  "generated_at": "2026-03-08T15:42:03Z",
+  "overall_ok": false,
+  "source": "scripts/run_refreshable_artifact_report.py",
+  "summary": {
+    "entry_count": 59,
+    "regenerate_count": 41,
+    "namespace_regenerate_count": 2,
+    "manual_review_count": 2,
+    "archive_or_drop_count": 14,
+    "inspect_count": 0,
+    "kind_counts": [
+      {
+        "name": "known_generated",
+        "count": 41
+      },
+      {
+        "name": "manual_report_input",
+        "count": 2
+      },
+      {
+        "name": "operational_namespace",
+        "count": 2
+      },
+      {
+        "name": "probe_namespace",
+        "count": 14
+      }
+    ],
+    "category_counts": [
+      {
+        "name": "generated_status",
+        "count": 55
+      },
+      {
+        "name": "reports",
+        "count": 4
+      }
+    ],
+    "disposition_counts": [
+      {
+        "name": "archive_or_drop",
+        "count": 14
+      },
+      {
+        "name": "manual_review",
+        "count": 2
+      },
+      {
+        "name": "namespace_regenerate",
+        "count": 2
+      },
+      {
+        "name": "regenerate",
+        "count": 41
+      }
+    ]
+  },
+  "regenerate_groups": [
+    {
+      "command": "python scripts/run_memory_quality_report.py --strict",
+      "source": "scripts/run_memory_quality_report.py",
+      "count": 3,
+      "paths": [
+        "docs/status/memory_learning_samples_latest.jsonl",
+        "docs/status/memory_quality_latest.json",
+        "docs/status/memory_quality_latest.md"
+      ]
+    },
+    {
+      "command": "python experiments/compare_model_reports.py",
+      "source": "experiments/compare_model_reports.py",
+      "count": 2,
+      "paths": [
+        "reports/model_comparison_latest.json",
+        "reports/model_comparison_latest.md"
+      ]
+    },
+    {
+      "command": "python scripts/run_autonomous_registry_schedule.py --strict",
+      "source": "scripts/run_autonomous_registry_schedule.py",
+      "count": 2,
+      "paths": [
+        "docs/status/autonomous_registry_schedule_latest.json",
+        "docs/status/dream_wakeup_snapshot_latest.json"
+      ]
+    },
+    {
+      "command": "python scripts/run_dream_observability_dashboard.py --strict",
+      "source": "scripts/run_dream_observability_dashboard.py",
+      "count": 2,
+      "paths": [
+        "docs/status/dream_observability_latest.html",
+        "docs/status/dream_observability_latest.json"
+      ]
+    },
+    {
+      "command": "python scripts/run_friction_shadow_calibration_report.py --strict",
+      "source": "scripts/run_friction_shadow_calibration_report.py",
+      "count": 2,
+      "paths": [
+        "docs/status/friction_shadow_calibration_latest.json",
+        "docs/status/friction_shadow_calibration_latest.md"
+      ]
+    },
+    {
+      "command": "python scripts/run_friction_shadow_replay_export.py --strict",
+      "source": "scripts/run_friction_shadow_replay_export.py",
+      "count": 2,
+      "paths": [
+        "docs/status/friction_shadow_replay_latest.json",
+        "docs/status/friction_shadow_replay_latest.md"
+      ]
+    },
+    {
+      "command": "python scripts/run_memory_governance_contract_check.py --strict",
+      "source": "scripts/run_memory_governance_contract_check.py",
+      "count": 2,
+      "paths": [
+        "docs/status/memory_governance_contract_latest.json",
+        "docs/status/memory_governance_contract_latest.md"
+      ]
+    },
+    {
+      "command": "python scripts/run_memory_topology_fit_report.py --strict",
+      "source": "scripts/run_memory_topology_fit_report.py",
+      "count": 2,
+      "paths": [
+        "docs/status/memory_topology_fit_latest.json",
+        "docs/status/memory_topology_fit_latest.md"
+      ]
+    },
+    {
+      "command": "python scripts/run_multi_agent_divergence_report.py --strict",
+      "source": "scripts/run_multi_agent_divergence_report.py",
+      "count": 2,
+      "paths": [
+        "docs/status/multi_agent_divergence_latest.json",
+        "docs/status/multi_agent_divergence_latest.md"
+      ]
+    },
+    {
+      "command": "python scripts/run_philosophical_reflection_report.py --strict",
+      "source": "scripts/run_philosophical_reflection_report.py",
+      "count": 2,
+      "paths": [
+        "docs/status/philosophical_reflection_latest.json",
+        "docs/status/philosophical_reflection_latest.md"
+      ]
+    },
+    {
+      "command": "python scripts/run_private_memory_review_report.py",
+      "source": "scripts/run_private_memory_review_report.py",
+      "count": 2,
+      "paths": [
+        "docs/status/private_memory_review_latest.json",
+        "docs/status/private_memory_review_latest.md"
+      ]
+    },
+    {
+      "command": "python scripts/run_refreshable_artifact_report.py",
+      "source": "scripts/run_refreshable_artifact_report.py",
+      "count": 2,
+      "paths": [
+        "docs/status/refreshable_artifact_report_latest.json",
+        "docs/status/refreshable_artifact_report_latest.md"
+      ]
+    },
+    {
+      "command": "python scripts/run_repo_governance_settlement_report.py",
+      "source": "scripts/run_repo_governance_settlement_report.py",
+      "count": 2,
+      "paths": [
+        "docs/status/repo_governance_settlement_latest.json",
+        "docs/status/repo_governance_settlement_latest.md"
+      ]
+    },
+    {
+      "command": "python scripts/run_repo_healthcheck.py --strict --allow-missing-discussion",
+      "source": "scripts/run_repo_healthcheck.py",
+      "count": 2,
+      "paths": [
+        "docs/status/repo_healthcheck_latest.json",
+        "docs/status/repo_healthcheck_latest.md"
+      ]
+    },
+    {
+      "command": "python scripts/run_runtime_source_change_report.py",
+      "source": "scripts/run_runtime_source_change_report.py",
+      "count": 2,
+      "paths": [
+        "docs/status/runtime_source_change_groups_latest.json",
+        "docs/status/runtime_source_change_groups_latest.md"
+      ]
+    },
+    {
+      "command": "python scripts/run_worktree_settlement_report.py",
+      "source": "scripts/run_worktree_settlement_report.py",
+      "count": 2,
+      "paths": [
+        "docs/status/worktree_settlement_latest.json",
+        "docs/status/worktree_settlement_latest.md"
+      ]
+    },
+    {
+      "command": "python scripts/verify_dual_track_boundary.py --strict --staged",
+      "source": "scripts/verify_dual_track_boundary.py",
+      "count": 2,
+      "paths": [
+        "docs/status/dual_track_boundary_latest.json",
+        "docs/status/dual_track_boundary_latest.md"
+      ]
+    },
+    {
+      "command": "python scripts/verify_git_hygiene.py --strict --max-tracked-ignored 28",
+      "source": "scripts/verify_git_hygiene.py",
+      "count": 2,
+      "paths": [
+        "docs/status/git_hygiene_latest.json",
+        "docs/status/git_hygiene_latest.md"
+      ]
+    },
+    {
+      "command": "python scripts/plan_commit_attribution_base_switch.py",
+      "source": "scripts/plan_commit_attribution_base_switch.py",
+      "count": 1,
+      "paths": [
+        "docs/status/commit_attribution_base_switch_latest.json"
+      ]
+    },
+    {
+      "command": "python scripts/run_persona_swarm_framework.py --strict",
+      "source": "scripts/run_persona_swarm_framework.py",
+      "count": 1,
+      "paths": [
+        "docs/status/persona_swarm_framework_latest.json"
+      ]
+    },
+    {
+      "command": "python scripts/verify_incremental_commit_attribution.py --strict --artifact-path docs/status/commit_attribution_local.json",
+      "source": "scripts/verify_incremental_commit_attribution.py",
+      "count": 1,
+      "paths": [
+        "docs/status/commit_attribution_local.json"
+      ]
+    },
+    {
+      "command": "python scripts/verify_incremental_commit_attribution.py --strict --head-sha feat/env-perception-attribution-backfill --equivalent-ref HEAD --artifact-path docs/status/commit_attribution_backfill_branch.json",
+      "source": "scripts/verify_incremental_commit_attribution.py",
+      "count": 1,
+      "paths": [
+        "docs/status/commit_attribution_backfill_branch.json"
+      ]
+    }
+  ],
+  "namespace_groups": [
+    {
+      "path": "docs/status/runtime_probe_watch/",
+      "kind": "operational_namespace",
+      "commands": [
+        "python scripts/run_runtime_probe_watch.py --strict"
+      ],
+      "sources": [
+        "scripts/run_runtime_probe_watch.py"
+      ],
+      "notes": "Runtime preflight namespace with refreshable schedule, wake-up, and dashboard artifacts."
+    },
+    {
+      "path": "docs/status/true_verification_weekly/",
+      "kind": "operational_namespace",
+      "commands": [
+        "python scripts/run_true_verification_host_tick.py --strict",
+        "python scripts/report_true_verification_task_status.py --strict",
+        "python scripts/render_true_verification_task_scheduler.py --strict",
+        "python scripts/install_true_verification_task_scheduler.py --strict"
+      ],
+      "sources": [
+        "scripts/run_true_verification_host_tick.py",
+        "scripts/report_true_verification_task_status.py",
+        "scripts/render_true_verification_task_scheduler.py",
+        "scripts/install_true_verification_task_scheduler.py"
+      ],
+      "notes": "Managed weekly experiment namespace; refresh with the host-tick and task-status entrypoints instead of treating the folder itself as an orphan artifact."
+    }
+  ],
+  "archive_groups": [
+    {
+      "path": "docs/status/probe_deadline/",
+      "kind": "probe_namespace",
+      "notes": "Historical probe namespace. Safe to archive or drop once its evidence has been superseded by current latest artifacts."
+    },
+    {
+      "path": "docs/status/probe_no_llm/",
+      "kind": "probe_namespace",
+      "notes": "Historical probe namespace. Safe to archive or drop once its evidence has been superseded by current latest artifacts."
+    },
+    {
+      "path": "docs/status/probe_preflight/",
+      "kind": "probe_namespace",
+      "notes": "Historical probe namespace. Safe to archive or drop once its evidence has been superseded by current latest artifacts."
+    },
+    {
+      "path": "docs/status/probe_preflight_clean/",
+      "kind": "probe_namespace",
+      "notes": "Historical probe namespace. Safe to archive or drop once its evidence has been superseded by current latest artifacts."
+    },
+    {
+      "path": "docs/status/probe_router_deadline/",
+      "kind": "probe_namespace",
+      "notes": "Historical probe namespace. Safe to archive or drop once its evidence has been superseded by current latest artifacts."
+    },
+    {
+      "path": "docs/status/probe_runtime_gated_long_run/",
+      "kind": "probe_namespace",
+      "notes": "Historical probe namespace. Safe to archive or drop once its evidence has been superseded by current latest artifacts."
+    },
+    {
+      "path": "docs/status/probe_runtime_gated_long_run_fresh/",
+      "kind": "probe_namespace",
+      "notes": "Historical probe namespace. Safe to archive or drop once its evidence has been superseded by current latest artifacts."
+    },
+    {
+      "path": "docs/status/probe_runtime_gated_long_run_fresh_preflight/",
+      "kind": "probe_namespace",
+      "notes": "Historical probe namespace. Safe to archive or drop once its evidence has been superseded by current latest artifacts."
+    },
+    {
+      "path": "docs/status/probe_runtime_gated_long_run_preflight/",
+      "kind": "probe_namespace",
+      "notes": "Historical probe namespace. Safe to archive or drop once its evidence has been superseded by current latest artifacts."
+    },
+    {
+      "path": "docs/status/probe_runtime_profile_live/",
+      "kind": "probe_namespace",
+      "notes": "Historical probe namespace. Safe to archive or drop once its evidence has been superseded by current latest artifacts."
+    },
+    {
+      "path": "docs/status/probe_schedule_governance_dashboard/",
+      "kind": "probe_namespace",
+      "notes": "Historical probe namespace. Safe to archive or drop once its evidence has been superseded by current latest artifacts."
+    },
+    {
+      "path": "docs/status/probe_schedule_governance_live/",
+      "kind": "probe_namespace",
+      "notes": "Historical probe namespace. Safe to archive or drop once its evidence has been superseded by current latest artifacts."
+    },
+    {
+      "path": "docs/status/probe_schedule_governance_live2/",
+      "kind": "probe_namespace",
+      "notes": "Historical probe namespace. Safe to archive or drop once its evidence has been superseded by current latest artifacts."
+    },
+    {
+      "path": "docs/status/probe_schedule_latency_policy/",
+      "kind": "probe_namespace",
+      "notes": "Historical probe namespace. Safe to archive or drop once its evidence has been superseded by current latest artifacts."
+    }
+  ],
+  "entries": [
+    {
+      "path": "docs/status/dual_track_boundary_latest.json",
+      "category": "generated_status",
+      "kind": "known_generated",
+      "disposition": "regenerate",
+      "producer_command": "python scripts/verify_dual_track_boundary.py --strict --staged",
+      "producer_source": "scripts/verify_dual_track_boundary.py",
+      "status": " M",
+      "staged": false,
+      "unstaged": true,
+      "untracked": false
+    },
+    {
+      "path": "docs/status/dual_track_boundary_latest.md",
+      "category": "generated_status",
+      "kind": "known_generated",
+      "disposition": "regenerate",
+      "producer_command": "python scripts/verify_dual_track_boundary.py --strict --staged",
+      "producer_source": "scripts/verify_dual_track_boundary.py",
+      "status": " M",
+      "staged": false,
+      "unstaged": true,
+      "untracked": false
+    },
+    {
+      "path": "docs/status/friction_shadow_calibration_latest.json",
+      "category": "generated_status",
+      "kind": "known_generated",
+      "disposition": "regenerate",
+      "producer_command": "python scripts/run_friction_shadow_calibration_report.py --strict",
+      "producer_source": "scripts/run_friction_shadow_calibration_report.py",
+      "status": " M",
+      "staged": false,
+      "unstaged": true,
+      "untracked": false
+    },
+    {
+      "path": "docs/status/friction_shadow_calibration_latest.md",
+      "category": "generated_status",
+      "kind": "known_generated",
+      "disposition": "regenerate",
+      "producer_command": "python scripts/run_friction_shadow_calibration_report.py --strict",
+      "producer_source": "scripts/run_friction_shadow_calibration_report.py",
+      "status": " M",
+      "staged": false,
+      "unstaged": true,
+      "untracked": false
+    },
+    {
+      "path": "docs/status/friction_shadow_replay_latest.json",
+      "category": "generated_status",
+      "kind": "known_generated",
+      "disposition": "regenerate",
+      "producer_command": "python scripts/run_friction_shadow_replay_export.py --strict",
+      "producer_source": "scripts/run_friction_shadow_replay_export.py",
+      "status": " M",
+      "staged": false,
+      "unstaged": true,
+      "untracked": false
+    },
+    {
+      "path": "docs/status/friction_shadow_replay_latest.md",
+      "category": "generated_status",
+      "kind": "known_generated",
+      "disposition": "regenerate",
+      "producer_command": "python scripts/run_friction_shadow_replay_export.py --strict",
+      "producer_source": "scripts/run_friction_shadow_replay_export.py",
+      "status": " M",
+      "staged": false,
+      "unstaged": true,
+      "untracked": false
+    },
+    {
+      "path": "docs/status/git_hygiene_latest.json",
+      "category": "generated_status",
+      "kind": "known_generated",
+      "disposition": "regenerate",
+      "producer_command": "python scripts/verify_git_hygiene.py --strict --max-tracked-ignored 28",
+      "producer_source": "scripts/verify_git_hygiene.py",
+      "status": " M",
+      "staged": false,
+      "unstaged": true,
+      "untracked": false
+    },
+    {
+      "path": "docs/status/git_hygiene_latest.md",
+      "category": "generated_status",
+      "kind": "known_generated",
+      "disposition": "regenerate",
+      "producer_command": "python scripts/verify_git_hygiene.py --strict --max-tracked-ignored 28",
+      "producer_source": "scripts/verify_git_hygiene.py",
+      "status": " M",
+      "staged": false,
+      "unstaged": true,
+      "untracked": false
+    },
+    {
+      "path": "docs/status/memory_governance_contract_latest.json",
+      "category": "generated_status",
+      "kind": "known_generated",
+      "disposition": "regenerate",
+      "producer_command": "python scripts/run_memory_governance_contract_check.py --strict",
+      "producer_source": "scripts/run_memory_governance_contract_check.py",
+      "status": " M",
+      "staged": false,
+      "unstaged": true,
+      "untracked": false
+    },
+    {
+      "path": "docs/status/memory_governance_contract_latest.md",
+      "category": "generated_status",
+      "kind": "known_generated",
+      "disposition": "regenerate",
+      "producer_command": "python scripts/run_memory_governance_contract_check.py --strict",
+      "producer_source": "scripts/run_memory_governance_contract_check.py",
+      "status": " M",
+      "staged": false,
+      "unstaged": true,
+      "untracked": false
+    },
+    {
+      "path": "docs/status/memory_learning_samples_latest.jsonl",
+      "category": "generated_status",
+      "kind": "known_generated",
+      "disposition": "regenerate",
+      "producer_command": "python scripts/run_memory_quality_report.py --strict",
+      "producer_source": "scripts/run_memory_quality_report.py",
+      "status": " M",
+      "staged": false,
+      "unstaged": true,
+      "untracked": false
+    },
+    {
+      "path": "docs/status/memory_quality_latest.json",
+      "category": "generated_status",
+      "kind": "known_generated",
+      "disposition": "regenerate",
+      "producer_command": "python scripts/run_memory_quality_report.py --strict",
+      "producer_source": "scripts/run_memory_quality_report.py",
+      "status": " M",
+      "staged": false,
+      "unstaged": true,
+      "untracked": false
+    },
+    {
+      "path": "docs/status/memory_quality_latest.md",
+      "category": "generated_status",
+      "kind": "known_generated",
+      "disposition": "regenerate",
+      "producer_command": "python scripts/run_memory_quality_report.py --strict",
+      "producer_source": "scripts/run_memory_quality_report.py",
+      "status": " M",
+      "staged": false,
+      "unstaged": true,
+      "untracked": false
+    },
+    {
+      "path": "docs/status/memory_topology_fit_latest.json",
+      "category": "generated_status",
+      "kind": "known_generated",
+      "disposition": "regenerate",
+      "producer_command": "python scripts/run_memory_topology_fit_report.py --strict",
+      "producer_source": "scripts/run_memory_topology_fit_report.py",
+      "status": " M",
+      "staged": false,
+      "unstaged": true,
+      "untracked": false
+    },
+    {
+      "path": "docs/status/memory_topology_fit_latest.md",
+      "category": "generated_status",
+      "kind": "known_generated",
+      "disposition": "regenerate",
+      "producer_command": "python scripts/run_memory_topology_fit_report.py --strict",
+      "producer_source": "scripts/run_memory_topology_fit_report.py",
+      "status": " M",
+      "staged": false,
+      "unstaged": true,
+      "untracked": false
+    },
+    {
+      "path": "docs/status/multi_agent_divergence_latest.json",
+      "category": "generated_status",
+      "kind": "known_generated",
+      "disposition": "regenerate",
+      "producer_command": "python scripts/run_multi_agent_divergence_report.py --strict",
+      "producer_source": "scripts/run_multi_agent_divergence_report.py",
+      "status": " M",
+      "staged": false,
+      "unstaged": true,
+      "untracked": false
+    },
+    {
+      "path": "docs/status/multi_agent_divergence_latest.md",
+      "category": "generated_status",
+      "kind": "known_generated",
+      "disposition": "regenerate",
+      "producer_command": "python scripts/run_multi_agent_divergence_report.py --strict",
+      "producer_source": "scripts/run_multi_agent_divergence_report.py",
+      "status": " M",
+      "staged": false,
+      "unstaged": true,
+      "untracked": false
+    },
+    {
+      "path": "docs/status/persona_swarm_framework_latest.json",
+      "category": "generated_status",
+      "kind": "known_generated",
+      "disposition": "regenerate",
+      "producer_command": "python scripts/run_persona_swarm_framework.py --strict",
+      "producer_source": "scripts/run_persona_swarm_framework.py",
+      "status": " M",
+      "staged": false,
+      "unstaged": true,
+      "untracked": false
+    },
+    {
+      "path": "docs/status/philosophical_reflection_latest.json",
+      "category": "generated_status",
+      "kind": "known_generated",
+      "disposition": "regenerate",
+      "producer_command": "python scripts/run_philosophical_reflection_report.py --strict",
+      "producer_source": "scripts/run_philosophical_reflection_report.py",
+      "status": " M",
+      "staged": false,
+      "unstaged": true,
+      "untracked": false
+    },
+    {
+      "path": "docs/status/philosophical_reflection_latest.md",
+      "category": "generated_status",
+      "kind": "known_generated",
+      "disposition": "regenerate",
+      "producer_command": "python scripts/run_philosophical_reflection_report.py --strict",
+      "producer_source": "scripts/run_philosophical_reflection_report.py",
+      "status": " M",
+      "staged": false,
+      "unstaged": true,
+      "untracked": false
+    },
+    {
+      "path": "docs/status/repo_healthcheck_latest.json",
+      "category": "generated_status",
+      "kind": "known_generated",
+      "disposition": "regenerate",
+      "producer_command": "python scripts/run_repo_healthcheck.py --strict --allow-missing-discussion",
+      "producer_source": "scripts/run_repo_healthcheck.py",
+      "status": " M",
+      "staged": false,
+      "unstaged": true,
+      "untracked": false
+    },
+    {
+      "path": "docs/status/repo_healthcheck_latest.md",
+      "category": "generated_status",
+      "kind": "known_generated",
+      "disposition": "regenerate",
+      "producer_command": "python scripts/run_repo_healthcheck.py --strict --allow-missing-discussion",
+      "producer_source": "scripts/run_repo_healthcheck.py",
+      "status": " M",
+      "staged": false,
+      "unstaged": true,
+      "untracked": false
+    },
+    {
+      "path": "docs/status/autonomous_registry_schedule_latest.json",
+      "category": "generated_status",
+      "kind": "known_generated",
+      "disposition": "regenerate",
+      "producer_command": "python scripts/run_autonomous_registry_schedule.py --strict",
+      "producer_source": "scripts/run_autonomous_registry_schedule.py",
+      "status": "??",
+      "staged": false,
+      "unstaged": false,
+      "untracked": true
+    },
+    {
+      "path": "docs/status/commit_attribution_backfill_branch.json",
+      "category": "generated_status",
+      "kind": "known_generated",
+      "disposition": "regenerate",
+      "producer_command": "python scripts/verify_incremental_commit_attribution.py --strict --head-sha feat/env-perception-attribution-backfill --equivalent-ref HEAD --artifact-path docs/status/commit_attribution_backfill_branch.json",
+      "producer_source": "scripts/verify_incremental_commit_attribution.py",
+      "status": "??",
+      "staged": false,
+      "unstaged": false,
+      "untracked": true
+    },
+    {
+      "path": "docs/status/commit_attribution_base_switch_latest.json",
+      "category": "generated_status",
+      "kind": "known_generated",
+      "disposition": "regenerate",
+      "producer_command": "python scripts/plan_commit_attribution_base_switch.py",
+      "producer_source": "scripts/plan_commit_attribution_base_switch.py",
+      "status": "??",
+      "staged": false,
+      "unstaged": false,
+      "untracked": true
+    },
+    {
+      "path": "docs/status/commit_attribution_local.json",
+      "category": "generated_status",
+      "kind": "known_generated",
+      "disposition": "regenerate",
+      "producer_command": "python scripts/verify_incremental_commit_attribution.py --strict --artifact-path docs/status/commit_attribution_local.json",
+      "producer_source": "scripts/verify_incremental_commit_attribution.py",
+      "status": "??",
+      "staged": false,
+      "unstaged": false,
+      "untracked": true
+    },
+    {
+      "path": "docs/status/dream_observability_latest.html",
+      "category": "generated_status",
+      "kind": "known_generated",
+      "disposition": "regenerate",
+      "producer_command": "python scripts/run_dream_observability_dashboard.py --strict",
+      "producer_source": "scripts/run_dream_observability_dashboard.py",
+      "status": "??",
+      "staged": false,
+      "unstaged": false,
+      "untracked": true
+    },
+    {
+      "path": "docs/status/dream_observability_latest.json",
+      "category": "generated_status",
+      "kind": "known_generated",
+      "disposition": "regenerate",
+      "producer_command": "python scripts/run_dream_observability_dashboard.py --strict",
+      "producer_source": "scripts/run_dream_observability_dashboard.py",
+      "status": "??",
+      "staged": false,
+      "unstaged": false,
+      "untracked": true
+    },
+    {
+      "path": "docs/status/dream_wakeup_snapshot_latest.json",
+      "category": "generated_status",
+      "kind": "known_generated",
+      "disposition": "regenerate",
+      "producer_command": "python scripts/run_autonomous_registry_schedule.py --strict",
+      "producer_source": "scripts/run_autonomous_registry_schedule.py",
+      "status": "??",
+      "staged": false,
+      "unstaged": false,
+      "untracked": true
+    },
+    {
+      "path": "docs/status/private_memory_review_latest.json",
+      "category": "generated_status",
+      "kind": "known_generated",
+      "disposition": "regenerate",
+      "producer_command": "python scripts/run_private_memory_review_report.py",
+      "producer_source": "scripts/run_private_memory_review_report.py",
+      "status": "??",
+      "staged": false,
+      "unstaged": false,
+      "untracked": true
+    },
+    {
+      "path": "docs/status/private_memory_review_latest.md",
+      "category": "generated_status",
+      "kind": "known_generated",
+      "disposition": "regenerate",
+      "producer_command": "python scripts/run_private_memory_review_report.py",
+      "producer_source": "scripts/run_private_memory_review_report.py",
+      "status": "??",
+      "staged": false,
+      "unstaged": false,
+      "untracked": true
+    },
+    {
+      "path": "docs/status/probe_deadline/",
+      "category": "generated_status",
+      "kind": "probe_namespace",
+      "disposition": "archive_or_drop",
+      "producer_command": null,
+      "producer_source": null,
+      "namespace_commands": [],
+      "producer_sources": [],
+      "notes": "Historical probe namespace. Safe to archive or drop once its evidence has been superseded by current latest artifacts.",
+      "status": "??",
+      "staged": false,
+      "unstaged": false,
+      "untracked": true
+    },
+    {
+      "path": "docs/status/probe_no_llm/",
+      "category": "generated_status",
+      "kind": "probe_namespace",
+      "disposition": "archive_or_drop",
+      "producer_command": null,
+      "producer_source": null,
+      "namespace_commands": [],
+      "producer_sources": [],
+      "notes": "Historical probe namespace. Safe to archive or drop once its evidence has been superseded by current latest artifacts.",
+      "status": "??",
+      "staged": false,
+      "unstaged": false,
+      "untracked": true
+    },
+    {
+      "path": "docs/status/probe_preflight/",
+      "category": "generated_status",
+      "kind": "probe_namespace",
+      "disposition": "archive_or_drop",
+      "producer_command": null,
+      "producer_source": null,
+      "namespace_commands": [],
+      "producer_sources": [],
+      "notes": "Historical probe namespace. Safe to archive or drop once its evidence has been superseded by current latest artifacts.",
+      "status": "??",
+      "staged": false,
+      "unstaged": false,
+      "untracked": true
+    },
+    {
+      "path": "docs/status/probe_preflight_clean/",
+      "category": "generated_status",
+      "kind": "probe_namespace",
+      "disposition": "archive_or_drop",
+      "producer_command": null,
+      "producer_source": null,
+      "namespace_commands": [],
+      "producer_sources": [],
+      "notes": "Historical probe namespace. Safe to archive or drop once its evidence has been superseded by current latest artifacts.",
+      "status": "??",
+      "staged": false,
+      "unstaged": false,
+      "untracked": true
+    },
+    {
+      "path": "docs/status/probe_router_deadline/",
+      "category": "generated_status",
+      "kind": "probe_namespace",
+      "disposition": "archive_or_drop",
+      "producer_command": null,
+      "producer_source": null,
+      "namespace_commands": [],
+      "producer_sources": [],
+      "notes": "Historical probe namespace. Safe to archive or drop once its evidence has been superseded by current latest artifacts.",
+      "status": "??",
+      "staged": false,
+      "unstaged": false,
+      "untracked": true
+    },
+    {
+      "path": "docs/status/probe_runtime_gated_long_run/",
+      "category": "generated_status",
+      "kind": "probe_namespace",
+      "disposition": "archive_or_drop",
+      "producer_command": null,
+      "producer_source": null,
+      "namespace_commands": [],
+      "producer_sources": [],
+      "notes": "Historical probe namespace. Safe to archive or drop once its evidence has been superseded by current latest artifacts.",
+      "status": "??",
+      "staged": false,
+      "unstaged": false,
+      "untracked": true
+    },
+    {
+      "path": "docs/status/probe_runtime_gated_long_run_fresh/",
+      "category": "generated_status",
+      "kind": "probe_namespace",
+      "disposition": "archive_or_drop",
+      "producer_command": null,
+      "producer_source": null,
+      "namespace_commands": [],
+      "producer_sources": [],
+      "notes": "Historical probe namespace. Safe to archive or drop once its evidence has been superseded by current latest artifacts.",
+      "status": "??",
+      "staged": false,
+      "unstaged": false,
+      "untracked": true
+    },
+    {
+      "path": "docs/status/probe_runtime_gated_long_run_fresh_preflight/",
+      "category": "generated_status",
+      "kind": "probe_namespace",
+      "disposition": "archive_or_drop",
+      "producer_command": null,
+      "producer_source": null,
+      "namespace_commands": [],
+      "producer_sources": [],
+      "notes": "Historical probe namespace. Safe to archive or drop once its evidence has been superseded by current latest artifacts.",
+      "status": "??",
+      "staged": false,
+      "unstaged": false,
+      "untracked": true
+    },
+    {
+      "path": "docs/status/probe_runtime_gated_long_run_preflight/",
+      "category": "generated_status",
+      "kind": "probe_namespace",
+      "disposition": "archive_or_drop",
+      "producer_command": null,
+      "producer_source": null,
+      "namespace_commands": [],
+      "producer_sources": [],
+      "notes": "Historical probe namespace. Safe to archive or drop once its evidence has been superseded by current latest artifacts.",
+      "status": "??",
+      "staged": false,
+      "unstaged": false,
+      "untracked": true
+    },
+    {
+      "path": "docs/status/probe_runtime_profile_live/",
+      "category": "generated_status",
+      "kind": "probe_namespace",
+      "disposition": "archive_or_drop",
+      "producer_command": null,
+      "producer_source": null,
+      "namespace_commands": [],
+      "producer_sources": [],
+      "notes": "Historical probe namespace. Safe to archive or drop once its evidence has been superseded by current latest artifacts.",
+      "status": "??",
+      "staged": false,
+      "unstaged": false,
+      "untracked": true
+    },
+    {
+      "path": "docs/status/probe_schedule_governance_dashboard/",
+      "category": "generated_status",
+      "kind": "probe_namespace",
+      "disposition": "archive_or_drop",
+      "producer_command": null,
+      "producer_source": null,
+      "namespace_commands": [],
+      "producer_sources": [],
+      "notes": "Historical probe namespace. Safe to archive or drop once its evidence has been superseded by current latest artifacts.",
+      "status": "??",
+      "staged": false,
+      "unstaged": false,
+      "untracked": true
+    },
+    {
+      "path": "docs/status/probe_schedule_governance_live/",
+      "category": "generated_status",
+      "kind": "probe_namespace",
+      "disposition": "archive_or_drop",
+      "producer_command": null,
+      "producer_source": null,
+      "namespace_commands": [],
+      "producer_sources": [],
+      "notes": "Historical probe namespace. Safe to archive or drop once its evidence has been superseded by current latest artifacts.",
+      "status": "??",
+      "staged": false,
+      "unstaged": false,
+      "untracked": true
+    },
+    {
+      "path": "docs/status/probe_schedule_governance_live2/",
+      "category": "generated_status",
+      "kind": "probe_namespace",
+      "disposition": "archive_or_drop",
+      "producer_command": null,
+      "producer_source": null,
+      "namespace_commands": [],
+      "producer_sources": [],
+      "notes": "Historical probe namespace. Safe to archive or drop once its evidence has been superseded by current latest artifacts.",
+      "status": "??",
+      "staged": false,
+      "unstaged": false,
+      "untracked": true
+    },
+    {
+      "path": "docs/status/probe_schedule_latency_policy/",
+      "category": "generated_status",
+      "kind": "probe_namespace",
+      "disposition": "archive_or_drop",
+      "producer_command": null,
+      "producer_source": null,
+      "namespace_commands": [],
+      "producer_sources": [],
+      "notes": "Historical probe namespace. Safe to archive or drop once its evidence has been superseded by current latest artifacts.",
+      "status": "??",
+      "staged": false,
+      "unstaged": false,
+      "untracked": true
+    },
+    {
+      "path": "docs/status/refreshable_artifact_report_latest.json",
+      "category": "generated_status",
+      "kind": "known_generated",
+      "disposition": "regenerate",
+      "producer_command": "python scripts/run_refreshable_artifact_report.py",
+      "producer_source": "scripts/run_refreshable_artifact_report.py",
+      "status": "??",
+      "staged": false,
+      "unstaged": false,
+      "untracked": true
+    },
+    {
+      "path": "docs/status/refreshable_artifact_report_latest.md",
+      "category": "generated_status",
+      "kind": "known_generated",
+      "disposition": "regenerate",
+      "producer_command": "python scripts/run_refreshable_artifact_report.py",
+      "producer_source": "scripts/run_refreshable_artifact_report.py",
+      "status": "??",
+      "staged": false,
+      "unstaged": false,
+      "untracked": true
+    },
+    {
+      "path": "docs/status/repo_governance_settlement_latest.json",
+      "category": "generated_status",
+      "kind": "known_generated",
+      "disposition": "regenerate",
+      "producer_command": "python scripts/run_repo_governance_settlement_report.py",
+      "producer_source": "scripts/run_repo_governance_settlement_report.py",
+      "status": "??",
+      "staged": false,
+      "unstaged": false,
+      "untracked": true
+    },
+    {
+      "path": "docs/status/repo_governance_settlement_latest.md",
+      "category": "generated_status",
+      "kind": "known_generated",
+      "disposition": "regenerate",
+      "producer_command": "python scripts/run_repo_governance_settlement_report.py",
+      "producer_source": "scripts/run_repo_governance_settlement_report.py",
+      "status": "??",
+      "staged": false,
+      "unstaged": false,
+      "untracked": true
+    },
+    {
+      "path": "docs/status/runtime_probe_watch/",
+      "category": "generated_status",
+      "kind": "operational_namespace",
+      "disposition": "namespace_regenerate",
+      "producer_command": null,
+      "producer_source": null,
+      "namespace_commands": [
+        "python scripts/run_runtime_probe_watch.py --strict"
+      ],
+      "producer_sources": [
+        "scripts/run_runtime_probe_watch.py"
+      ],
+      "notes": "Runtime preflight namespace with refreshable schedule, wake-up, and dashboard artifacts.",
+      "status": "??",
+      "staged": false,
+      "unstaged": false,
+      "untracked": true
+    },
+    {
+      "path": "docs/status/runtime_source_change_groups_latest.json",
+      "category": "generated_status",
+      "kind": "known_generated",
+      "disposition": "regenerate",
+      "producer_command": "python scripts/run_runtime_source_change_report.py",
+      "producer_source": "scripts/run_runtime_source_change_report.py",
+      "status": "??",
+      "staged": false,
+      "unstaged": false,
+      "untracked": true
+    },
+    {
+      "path": "docs/status/runtime_source_change_groups_latest.md",
+      "category": "generated_status",
+      "kind": "known_generated",
+      "disposition": "regenerate",
+      "producer_command": "python scripts/run_runtime_source_change_report.py",
+      "producer_source": "scripts/run_runtime_source_change_report.py",
+      "status": "??",
+      "staged": false,
+      "unstaged": false,
+      "untracked": true
+    },
+    {
+      "path": "docs/status/true_verification_weekly/",
+      "category": "generated_status",
+      "kind": "operational_namespace",
+      "disposition": "namespace_regenerate",
+      "producer_command": null,
+      "producer_source": null,
+      "namespace_commands": [
+        "python scripts/run_true_verification_host_tick.py --strict",
+        "python scripts/report_true_verification_task_status.py --strict",
+        "python scripts/render_true_verification_task_scheduler.py --strict",
+        "python scripts/install_true_verification_task_scheduler.py --strict"
+      ],
+      "producer_sources": [
+        "scripts/run_true_verification_host_tick.py",
+        "scripts/report_true_verification_task_status.py",
+        "scripts/render_true_verification_task_scheduler.py",
+        "scripts/install_true_verification_task_scheduler.py"
+      ],
+      "notes": "Managed weekly experiment namespace; refresh with the host-tick and task-status entrypoints instead of treating the folder itself as an orphan artifact.",
+      "status": "??",
+      "staged": false,
+      "unstaged": false,
+      "untracked": true
+    },
+    {
+      "path": "docs/status/worktree_settlement_latest.json",
+      "category": "generated_status",
+      "kind": "known_generated",
+      "disposition": "regenerate",
+      "producer_command": "python scripts/run_worktree_settlement_report.py",
+      "producer_source": "scripts/run_worktree_settlement_report.py",
+      "status": "??",
+      "staged": false,
+      "unstaged": false,
+      "untracked": true
+    },
+    {
+      "path": "docs/status/worktree_settlement_latest.md",
+      "category": "generated_status",
+      "kind": "known_generated",
+      "disposition": "regenerate",
+      "producer_command": "python scripts/run_worktree_settlement_report.py",
+      "producer_source": "scripts/run_worktree_settlement_report.py",
+      "status": "??",
+      "staged": false,
+      "unstaged": false,
+      "untracked": true
+    },
+    {
+      "path": "reports/analysis_gpt53.md",
+      "category": "reports",
+      "kind": "manual_report_input",
+      "disposition": "manual_review",
+      "producer_command": null,
+      "producer_source": null,
+      "namespace_commands": [],
+      "producer_sources": [],
+      "notes": "",
+      "status": "??",
+      "staged": false,
+      "unstaged": false,
+      "untracked": true
+    },
+    {
+      "path": "reports/analysis_gpt54.md",
+      "category": "reports",
+      "kind": "manual_report_input",
+      "disposition": "manual_review",
+      "producer_command": null,
+      "producer_source": null,
+      "namespace_commands": [],
+      "producer_sources": [],
+      "notes": "",
+      "status": "??",
+      "staged": false,
+      "unstaged": false,
+      "untracked": true
+    },
+    {
+      "path": "reports/model_comparison_latest.json",
+      "category": "reports",
+      "kind": "known_generated",
+      "disposition": "regenerate",
+      "producer_command": "python experiments/compare_model_reports.py",
+      "producer_source": "experiments/compare_model_reports.py",
+      "status": "??",
+      "staged": false,
+      "unstaged": false,
+      "untracked": true
+    },
+    {
+      "path": "reports/model_comparison_latest.md",
+      "category": "reports",
+      "kind": "known_generated",
+      "disposition": "regenerate",
+      "producer_command": "python experiments/compare_model_reports.py",
+      "producer_source": "experiments/compare_model_reports.py",
+      "status": "??",
+      "staged": false,
+      "unstaged": false,
+      "untracked": true
+    }
+  ],
+  "issues": [
+    "refreshable_artifacts_lane_still_dirty"
+  ],
+  "warnings": []
+}

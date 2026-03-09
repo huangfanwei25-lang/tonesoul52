@@ -1,0 +1,56 @@
+{
+  "generated_at": "2026-03-08T15:40:43Z",
+  "overall_ok": false,
+  "source": "scripts/run_repo_governance_settlement_report.py",
+  "healthcheck": {
+    "generated_at": "2026-03-08T14:20:47Z",
+    "overall_ok": false,
+    "pass_count": 19,
+    "fail_count": 1,
+    "failing_checks": [
+      "commit_attribution"
+    ]
+  },
+  "attribution": {
+    "recommendation": "defer_until_worktree_clean",
+    "tree_equal": true,
+    "current_missing_count": 5,
+    "backfill_missing_count": 0,
+    "rationale": "Backfill branch is clean and tree-equivalent, but the current worktree is dirty. Do not switch branch pointers in-place until local changes are settled or moved to a clean worktree.",
+    "suggested_commands": [
+      "git worktree add <clean-path> feat/env-perception-attribution-backfill",
+      "python scripts/plan_commit_attribution_base_switch.py --current-ref HEAD --backfill-ref feat/env-perception-attribution-backfill --strict"
+    ]
+  },
+  "repo_governance_group": {
+    "entry_count": 24,
+    "sample_paths": [
+      ".github/workflows/test.yml",
+      "scripts/healthcheck.py",
+      "scripts/run_repo_healthcheck.py",
+      "scripts/verify_7d.py",
+      "scripts/verify_command_registry.py",
+      "scripts/verify_docs_consistency.py",
+      "tests/test_agent_discussion_tool.py",
+      "tests/test_run_repo_healthcheck.py"
+    ],
+    "recommended_actions": [
+      "Review healthcheck and settlement scripts as one changeset, because they define what counts as safe branch movement.",
+      "Keep their tests and CI wiring paired so gate semantics do not drift from enforcement."
+    ]
+  },
+  "settlement": {
+    "status": "runtime_green_metadata_blocked",
+    "metadata_only_blocker": true,
+    "runtime_green_except_metadata": true,
+    "next_actions": [
+      "Do not reinterpret the remaining failure as runtime drift; current repo governance gates are green except for historical commit trailers.",
+      "Keep branch movement deferred until the dirty worktree is settled, then prefer the tree-equivalent backfill branch as the clean attribution base.",
+      "Current attribution planner recommendation: `defer_until_worktree_clean`."
+    ]
+  },
+  "issues": [
+    "metadata_only_commit_attribution_blocker"
+  ],
+  "warnings": []
+}
