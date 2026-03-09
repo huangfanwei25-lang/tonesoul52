@@ -2162,3 +2162,22 @@
 - [x] internal structured verdict validation no longer silently accepts outward runtime verdict payloads
 - [x] outward `council_verdict` runtime/API shape stayed compatible
 - [x] full regression stayed green: `1445 passed`
+
+## Phase 192: Memory Subjectivity Layer Model (2026-03-09)
+- [x] Write a theory note for ToneSoul memory subjectivity instead of widening runtime code first
+- [x] Define the canonical promotion ladder:
+- [x] `event -> meaning -> tension -> vow -> identity`
+- [x] Clarify what each layer means and what it must not be confused with
+- [x] Tie the ladder back to existing memory governance seams:
+- [x] `provenance`
+- [x] `confidence`
+- [x] `promotion_gate`
+- [x] `decay_policy`
+- [x] Clarify the public/private boundary:
+- [x] raw journals, `soul.db`, scheduler state, and transient artifacts are not automatically identity memory
+- [x] Record the architectural implication:
+- [x] `MemoryWriteGateway` is an admissibility seam, not a final identity writer
+- [x] Add theory note:
+- [x] `docs/plans/memory_subjectivity_layer_addendum_2026-03-09.md`
+- [x] Validation:
+- [x] `rg -n "event -> meaning -> tension -> vow -> identity|provenance|promotion_gate|decay_policy|MemoryWriteGateway" docs/plans/memory_subjectivity_layer_addendum_2026-03-09.md task.md`
