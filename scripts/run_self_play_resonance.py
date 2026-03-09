@@ -26,11 +26,11 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from tonesoul.local_llm import ask_local_llm
-from tonesoul.memory.soul_db import JsonlSoulDB, MemorySource
-from tonesoul.resonance import classify_resonance
-from tonesoul.tension_engine import ResistanceVector, TensionEngine
-from tonesoul.work_classifier import WorkCategory
+from tonesoul.local_llm import ask_local_llm  # noqa: E402
+from tonesoul.memory.soul_db import JsonlSoulDB, MemorySource  # noqa: E402
+from tonesoul.resonance import classify_resonance  # noqa: E402
+from tonesoul.tension_engine import ResistanceVector, TensionEngine  # noqa: E402
+from tonesoul.work_classifier import WorkCategory  # noqa: E402
 
 MODE_PARADOX = "paradox"
 MODE_PHILOSOPHICAL = "philosophical"

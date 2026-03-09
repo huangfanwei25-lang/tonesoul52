@@ -1,4 +1,4 @@
-"""Delegation Test v6: use think=false to disable qwen3 thinking mode."""
+"""Delegation Test v6: use think=false to disable qwen3.5 thinking mode."""
 
 import json
 import time
@@ -38,7 +38,7 @@ start = time.time()
 r = requests.post(
     "http://localhost:11434/api/chat",
     json={
-        "model": "qwen3:4b",
+        "model": "qwen3.5:4b",
         "messages": [{"role": "user", "content": PROMPT}],
         "stream": False,
         "think": False,

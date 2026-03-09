@@ -132,7 +132,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Verify Ollama MVP checklist")
     parser.add_argument(
         "--model",
-        default=os.environ.get("TONESOUL_OLLAMA_MODEL", "qwen3:4b"),
+        default=os.environ.get("TONESOUL_OLLAMA_MODEL", "qwen3.5:4b"),
         help="Model name expected in `ollama list`.",
     )
     parser.add_argument(

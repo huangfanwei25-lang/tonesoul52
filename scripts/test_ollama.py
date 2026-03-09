@@ -34,7 +34,7 @@ try:
     r = requests.post(
         f"{BASE}/api/generate",
         json={
-            "model": "qwen3:4b",
+            "model": "qwen3.5:4b",
             "prompt": "Say hello in one sentence.",
             "stream": False,
             "options": {"num_predict": 20},

@@ -135,6 +135,35 @@ def test_evaluate_registry_passes_with_valid_metadata(tmp_path: Path) -> None:
     assert payload["failed_count"] == 0
 
 
+def test_parse_frontmatter_accepts_utf8_bom(tmp_path: Path) -> None:
+    skill_file = tmp_path / ".agent" / "skills" / "tonesoul_governance" / "SKILL.md"
+    skill_file.parent.mkdir(parents=True, exist_ok=True)
+    skill_file.write_text(
+        "\ufeff---\n"
+        'name: "tonesoul_governance"\n'
+        'description: "Governance skill."\n'
+        "l1_routing:\n"
+        '  name: "ToneSoul Governance"\n'
+        "  triggers:\n"
+        '    - "governance"\n'
+        '  intent: "Apply governance safely."\n'
+        "l2_signature:\n"
+        "  execution_profile:\n"
+        '    - "engineering"\n'
+        '  trust_tier: "reviewed"\n'
+        "  json_schema:\n"
+        '    type: "object"\n'
+        "---\n"
+        "# tonesoul_governance\n",
+        encoding="utf-8",
+    )
+
+    frontmatter = verify_skill_registry._parse_frontmatter(skill_file)
+
+    assert isinstance(frontmatter, dict)
+    assert frontmatter["name"] == "tonesoul_governance"
+
+
 def test_evaluate_registry_fails_when_discovered_skill_missing_from_registry(
     tmp_path: Path,
 ) -> None:

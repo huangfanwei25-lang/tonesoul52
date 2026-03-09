@@ -23,7 +23,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from tonesoul.memory.crystallizer import Crystal
+from tonesoul.memory.crystallizer import Crystal  # noqa: E402
 
 
 def _parse_iso(value: str) -> datetime:

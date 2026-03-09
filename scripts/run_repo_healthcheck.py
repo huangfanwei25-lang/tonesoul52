@@ -18,6 +18,7 @@ DISCUSSION_CURATED_PATH = Path("memory/agent_discussion_curated.jsonl")
 JSON_FILENAME = "repo_healthcheck_latest.json"
 MARKDOWN_FILENAME = "repo_healthcheck_latest.md"
 DEFAULT_MAX_TRACKED_IGNORED = 28
+COMMIT_ATTRIBUTION_BASE_SWITCH_ARTIFACT = "docs/status/commit_attribution_base_switch_latest.json"
 
 
 def _iso_now() -> str:
@@ -54,6 +55,10 @@ def _npm_executable() -> str:
 def _is_ci_environment() -> bool:
     raw = str(os.environ.get("CI", "")).strip().lower()
     return raw in {"1", "true", "yes", "on"}
+
+
+def _is_windows_environment() -> bool:
+    return os.name == "nt"
 
 
 def _run_check(name: str, command: list[str], cwd: Path) -> dict[str, Any]:
@@ -96,6 +101,53 @@ def _skip_check(name: str, command: list[str], reason: str) -> dict[str, Any]:
         "stderr_tail": "",
         "skip_reason": reason,
     }
+
+
+def _run_json_command(
+    name: str, command: list[str], cwd: Path
+) -> tuple[dict[str, Any], dict[str, Any] | None]:
+    started = time.perf_counter()
+    env = os.environ.copy()
+    env.setdefault("PYTHONUTF8", "1")
+    env.setdefault("PYTHONIOENCODING", "utf-8")
+    proc = subprocess.run(
+        command,
+        cwd=cwd,
+        env=env,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+    )
+    duration = round(time.perf_counter() - started, 2)
+    ok = proc.returncode == 0
+    payload: dict[str, Any] | None = None
+    parse_error = ""
+    stdout_text = proc.stdout.strip()
+    if stdout_text:
+        try:
+            parsed = json.loads(stdout_text)
+        except json.JSONDecodeError as exc:
+            parse_error = str(exc)
+        else:
+            if isinstance(parsed, dict):
+                payload = parsed
+            else:
+                parse_error = "JSON root is not an object"
+
+    result = {
+        "name": name,
+        "status": "pass" if ok else "fail",
+        "ok": ok,
+        "exit_code": int(proc.returncode),
+        "duration_seconds": duration,
+        "command": _display_command(command),
+        "stdout_tail": _tail(proc.stdout),
+        "stderr_tail": _tail(proc.stderr),
+    }
+    if parse_error:
+        result["parse_error"] = parse_error
+    return result, payload
 
 
 def _build_check_specs(
@@ -162,6 +214,16 @@ def _build_check_specs(
                 "--strict",
                 "--max-tracked-ignored",
                 str(DEFAULT_MAX_TRACKED_IGNORED),
+            ],
+        },
+        {
+            "name": "commit_attribution",
+            "command": [
+                python_executable,
+                "scripts/verify_incremental_commit_attribution.py",
+                "--strict",
+                "--artifact-path",
+                "docs/status/commit_attribution_local.json",
             ],
         },
         {
@@ -250,10 +312,24 @@ def _build_check_specs(
             ],
         },
         {
+            "name": "true_verification_weekly",
+            "command": [
+                python_executable,
+                "scripts/report_true_verification_task_status.py",
+                "--strict",
+            ],
+        },
+        {
             "name": "audit_7d",
             "command": verify_7d_cmd,
         },
     ]
+
+    if not _is_windows_environment():
+        for spec in specs:
+            if spec["name"] == "true_verification_weekly":
+                spec["skip_reason"] = "requires Windows Task Scheduler host"
+                break
 
     if allow_missing_discussion and not discussion_path.exists():
         for spec in specs:
@@ -297,7 +373,56 @@ def _render_markdown(payload: dict[str, Any]) -> str:
         for item in skipped:
             lines.append(f"- `{item['name']}`: {item.get('skip_reason', 'skipped')}")
 
+    recovery_advice = payload.get("recovery_advice", [])
+    if recovery_advice:
+        lines.append("")
+        lines.append("## Recovery Advice")
+        for item in recovery_advice:
+            detail = item.get("detail") or {}
+            recommendation = detail.get("recommendation") or item.get("status")
+            rationale = detail.get("rationale") or item.get("stderr_tail") or "no detail"
+            lines.append(f"- `{item['name']}`: {recommendation}")
+            lines.append(f"  - rationale: {rationale}")
+            if detail.get("suggested_commands"):
+                lines.append("  - suggested_commands:")
+                for command in detail["suggested_commands"]:
+                    lines.append(f"    - `{command}`")
+
     return "\n".join(lines) + "\n"
+
+
+def _collect_recovery_advice(
+    *,
+    checks: list[dict[str, Any]],
+    repo_root: Path,
+    python_executable: str,
+) -> list[dict[str, Any]]:
+    commit_attribution = next(
+        (item for item in checks if item["name"] == "commit_attribution"), None
+    )
+    if commit_attribution is None or commit_attribution["status"] != "fail":
+        return []
+
+    command = [
+        python_executable,
+        "scripts/plan_commit_attribution_base_switch.py",
+        "--artifact-path",
+        COMMIT_ATTRIBUTION_BASE_SWITCH_ARTIFACT,
+    ]
+    result, payload = _run_json_command("commit_attribution_recovery", command, repo_root)
+    detail = {}
+    if payload is not None:
+        detail = {
+            "recommendation": payload.get("recommendation"),
+            "rationale": payload.get("rationale"),
+            "tree_equal": payload.get("tree_equal"),
+            "current_missing_count": payload.get("current_missing_count"),
+            "backfill_missing_count": payload.get("backfill_missing_count"),
+            "suggested_commands": payload.get("suggested_commands", []),
+        }
+    result["artifact_path"] = COMMIT_ATTRIBUTION_BASE_SWITCH_ARTIFACT
+    result["detail"] = detail
+    return [result]
 
 
 def _write_json(path: Path, payload: dict[str, Any]) -> None:
@@ -400,6 +525,11 @@ def main() -> int:
         checks.append(_run_check(spec["name"], spec["command"], repo_root))
 
     overall_ok = all(item["status"] in {"pass", "skip"} for item in checks)
+    recovery_advice = _collect_recovery_advice(
+        checks=checks,
+        repo_root=repo_root,
+        python_executable=sys.executable,
+    )
     payload = {
         "generated_at": _iso_now(),
         "overall_ok": overall_ok,
@@ -413,6 +543,7 @@ def main() -> int:
             "allow_missing_discussion": allow_missing_discussion,
         },
         "checks": checks,
+        "recovery_advice": recovery_advice,
     }
 
     _write_json(out_dir / JSON_FILENAME, payload)

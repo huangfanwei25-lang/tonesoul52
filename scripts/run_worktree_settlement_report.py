@@ -1,0 +1,319 @@
+"""Generate a non-destructive settlement plan for the current dirty worktree."""
+
+from __future__ import annotations
+
+import argparse
+import json
+import sys
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+import scripts.plan_commit_attribution_base_switch as base_switch_planner  # noqa: E402
+
+JSON_FILENAME = "worktree_settlement_latest.json"
+MARKDOWN_FILENAME = "worktree_settlement_latest.md"
+
+LANE_DEFINITIONS: list[dict[str, Any]] = [
+    {
+        "name": "refreshable_artifacts",
+        "title": "Refreshable Artifacts",
+        "categories": ["generated_status", "reports"],
+        "goal": "Separate reproducible outputs from authored source edits before any branch movement.",
+        "recommended_actions": [
+            "Do not let generated status snapshots and derived reports drive branch-base decisions.",
+            "Refresh, discard, or restage reproducible artifacts only after the authored source set is stable.",
+        ],
+        "exit_criteria": "No remaining dirty paths in generated outputs or reports, or an explicit decision to preserve them.",
+    },
+    {
+        "name": "private_memory_review",
+        "title": "Private Memory Review",
+        "categories": ["memory"],
+        "goal": "Review private memory artifacts outside the public-branch settlement path.",
+        "recommended_actions": [
+            "Treat raw memory artifacts as private-evolution evidence, not ordinary public repo edits.",
+            "Mirror only public-safe learnings into task/reflection/status artifacts when needed.",
+        ],
+        "exit_criteria": "Private memory changes are either archived to the private path or consciously excluded from branch movement.",
+    },
+    {
+        "name": "public_contract_docs",
+        "title": "Public Contract Docs",
+        "categories": ["docs", "spec"],
+        "goal": "Group public documentation and spec edits by owning implementation phase.",
+        "recommended_actions": [
+            "Settle docs and specs after generated artifacts are separated, but before final branch movement.",
+            "Keep public docs aligned with the actual runtime and governance artifacts they describe.",
+        ],
+        "exit_criteria": "Docs/spec edits are paired with their implementation or intentionally deferred.",
+    },
+    {
+        "name": "runtime_source_changes",
+        "title": "Runtime Source Changes",
+        "categories": ["scripts", "tests", "tonesoul", "runtime_apps", "skills", "tooling"],
+        "goal": "Review high-signal code and contract changes as cohesive change groups.",
+        "recommended_actions": [
+            "Keep tests paired with the code paths they validate instead of settling them independently.",
+            "Treat scripts, runtime apps, and core `tonesoul` changes as the public source-of-truth lane.",
+        ],
+        "exit_criteria": "Core source edits are grouped into reviewable changesets with matching tests and docs.",
+    },
+    {
+        "name": "experimental_misc_review",
+        "title": "Experimental and Misc Review",
+        "categories": ["experiments", "repo_misc", "unknown"],
+        "goal": "Resolve root-level drift and experimental assets deliberately instead of letting them hitchhike.",
+        "recommended_actions": [
+            "Decide whether experimental files belong to the public repo, a follow-up branch, or should be dropped.",
+            "Review uncategorized root-level files manually before any git history movement.",
+        ],
+        "exit_criteria": "Experimental and miscellaneous paths have an explicit keep/defer/drop decision.",
+    },
+]
+
+
+def _iso_now() -> str:
+    return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+
+
+def _emit(payload: dict[str, Any]) -> None:
+    text = json.dumps(payload, ensure_ascii=False, indent=2)
+    if hasattr(sys.stdout, "buffer"):
+        sys.stdout.buffer.write((text + "\n").encode("utf-8", errors="replace"))
+    else:
+        print(text.encode("ascii", errors="backslashreplace").decode("ascii"))
+
+
+def _resolve_path(repo_root: Path, value: str) -> Path:
+    raw = Path(str(value).strip())
+    if raw.is_absolute():
+        return raw.resolve()
+    return (repo_root / raw).resolve()
+
+
+def _group_entries(entries: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
+    grouped: dict[str, list[dict[str, Any]]] = {}
+    for entry in entries:
+        category = str(entry.get("category") or "unknown")
+        grouped.setdefault(category, []).append(entry)
+    return grouped
+
+
+def _category_summary(entries: list[dict[str, Any]], sample_limit: int) -> dict[str, Any]:
+    return {
+        "count": len(entries),
+        "staged_count": sum(1 for entry in entries if entry.get("staged")),
+        "unstaged_count": sum(1 for entry in entries if entry.get("unstaged")),
+        "untracked_count": sum(1 for entry in entries if entry.get("untracked")),
+        "sample_paths": [str(entry.get("path") or "") for entry in entries[:sample_limit]],
+    }
+
+
+def _build_lane(
+    lane_definition: dict[str, Any],
+    grouped_entries: dict[str, list[dict[str, Any]]],
+    sample_limit: int,
+) -> dict[str, Any]:
+    category_payloads: list[dict[str, Any]] = []
+    lane_entries: list[dict[str, Any]] = []
+    for category in lane_definition["categories"]:
+        entries = list(grouped_entries.get(category) or [])
+        if not entries:
+            continue
+        category_payloads.append(
+            {
+                "category": category,
+                **_category_summary(entries, sample_limit),
+            }
+        )
+        lane_entries.extend(entries)
+
+    return {
+        "name": lane_definition["name"],
+        "title": lane_definition["title"],
+        "active": bool(category_payloads),
+        "goal": lane_definition["goal"],
+        "categories": category_payloads,
+        "entry_count": len(lane_entries),
+        "recommended_actions": list(lane_definition["recommended_actions"]),
+        "exit_criteria": lane_definition["exit_criteria"],
+    }
+
+
+def _render_markdown(payload: dict[str, Any]) -> str:
+    lines = ["# Worktree Settlement Latest", ""]
+    lines.append(f"- Generated at: `{payload['generated_at']}`")
+    lines.append(f"- Overall OK: `{str(payload['overall_ok']).lower()}`")
+    lines.append(f"- Worktree dirty: `{str(payload['worktree']['dirty']).lower()}`")
+    lines.append(
+        f"- Planner recommendation: `{payload['planner']['recommendation']}`"
+        f" (`tree_equal={str(payload['planner']['tree_equal']).lower()}`)"
+    )
+    lines.append(
+        f"- Attribution debt: current=`{payload['planner']['current_missing_count']}`, "
+        f"backfill=`{payload['planner']['backfill_missing_count']}`"
+    )
+    lines.append("")
+    lines.append("## Settlement Order")
+    lines.append("")
+    for index, lane in enumerate(payload["settlement_lanes"], start=1):
+        lines.append(
+            f"{index}. **{lane['title']}**"
+            f" (`entries={lane['entry_count']}`, `active={str(lane['active']).lower()}`)"
+        )
+        lines.append(f"   - Goal: {lane['goal']}")
+        lines.append(f"   - Exit criteria: {lane['exit_criteria']}")
+        for action in lane["recommended_actions"]:
+            lines.append(f"   - Action: {action}")
+        for category in lane["categories"]:
+            samples = ", ".join(f"`{path}`" for path in category["sample_paths"])
+            lines.append(
+                f"   - `{category['category']}`: count=`{category['count']}`, "
+                f"staged=`{category['staged_count']}`, unstaged=`{category['unstaged_count']}`, "
+                f"untracked=`{category['untracked_count']}`"
+            )
+            if samples:
+                lines.append(f"     samples: {samples}")
+        lines.append("")
+    lines.append("## Notes")
+    lines.append("")
+    lines.append(
+        "- Private memory paths remain governed by the dual-track boundary; settle them as private evidence,"
+        " not as ordinary public branch content."
+    )
+    lines.append(
+        "- Generated status artifacts and derived reports should be refreshed only after the authored source set is stable."
+    )
+    lines.append(
+        f"- Re-check branch movement readiness with `{payload['next_checkpoint']['command']}` after settlement."
+    )
+    lines.append("")
+    return "\n".join(lines)
+
+
+def build_report(
+    repo_root: Path,
+    *,
+    sample_limit: int = 5,
+    backfill_ref: str = base_switch_planner.DEFAULT_BACKFILL_REF,
+) -> tuple[dict[str, Any], str]:
+    plan_config = base_switch_planner.SwitchPlanConfig(
+        repo_root=repo_root,
+        current_ref="HEAD",
+        backfill_ref=backfill_ref,
+        artifact_path=repo_root / "_unused_worktree_settlement_plan.json",
+        strict=False,
+    )
+    switch_plan = base_switch_planner.build_plan(plan_config)
+    entries = base_switch_planner.collect_worktree_entries(repo_root)
+    grouped_entries = _group_entries(entries)
+    lanes = [
+        _build_lane(definition, grouped_entries, sample_limit) for definition in LANE_DEFINITIONS
+    ]
+    active_lane_count = sum(1 for lane in lanes if lane["active"])
+    worktree = switch_plan["worktree"]
+    payload = {
+        "generated_at": _iso_now(),
+        "overall_ok": not bool(worktree.get("dirty")),
+        "source": "scripts/run_worktree_settlement_report.py",
+        "planner": {
+            "recommendation": switch_plan["recommendation"],
+            "rationale": switch_plan["rationale"],
+            "tree_equal": switch_plan["tree_equal"],
+            "current_missing_count": switch_plan["current_missing_count"],
+            "backfill_missing_count": switch_plan["backfill_missing_count"],
+            "cleanup_priority": switch_plan["cleanup_priority"],
+        },
+        "worktree": {
+            "dirty": bool(worktree.get("dirty")),
+            "entry_count": int(worktree.get("entry_count", 0)),
+            "staged_count": int(worktree.get("staged_count", 0)),
+            "unstaged_count": int(worktree.get("unstaged_count", 0)),
+            "untracked_count": int(worktree.get("untracked_count", 0)),
+            "category_counts": dict(worktree.get("category_counts") or {}),
+        },
+        "settlement_lanes": lanes,
+        "summary": {
+            "active_lane_count": active_lane_count,
+            "largest_categories": switch_plan["cleanup_priority"][:5],
+        },
+        "next_checkpoint": {
+            "command": (
+                "python scripts/plan_commit_attribution_base_switch.py "
+                f"--current-ref HEAD --backfill-ref {backfill_ref} --strict"
+            ),
+            "goal": "Re-check whether branch-base movement is safe after settlement.",
+        },
+        "boundary_notes": {
+            "public_scope": ["tonesoul/", "tests/", "scripts/", "docs/status/"],
+            "private_scope": [
+                "memory/self_journal.jsonl",
+                "memory/agent_discussion.jsonl",
+                "memory/agent_discussion_curated.jsonl",
+                "memory/vectors/",
+                ".agent/",
+                "obsidian-vault/",
+            ],
+        },
+        "issues": [] if not worktree.get("dirty") else ["dirty_worktree_blocks_branch_movement"],
+        "warnings": [],
+    }
+    markdown = _render_markdown(payload)
+    return payload, markdown
+
+
+def _write(path: Path, content: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(content, encoding="utf-8")
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        description="Generate a non-destructive settlement plan for the current dirty worktree."
+    )
+    parser.add_argument("--repo-root", default=".", help="Repository root path.")
+    parser.add_argument("--out-dir", default="docs/status", help="Directory for status artifacts.")
+    parser.add_argument(
+        "--sample-limit",
+        type=int,
+        default=5,
+        help="Number of sample paths to include per category.",
+    )
+    parser.add_argument(
+        "--backfill-ref",
+        default=base_switch_planner.DEFAULT_BACKFILL_REF,
+        help="Attribution-clean branch used for planner context.",
+    )
+    parser.add_argument(
+        "--strict",
+        action="store_true",
+        help="Return non-zero while the worktree is still dirty.",
+    )
+    return parser
+
+
+def main() -> int:
+    args = build_parser().parse_args()
+    repo_root = Path(args.repo_root).resolve()
+    out_dir = _resolve_path(repo_root, args.out_dir)
+    sample_limit = max(1, int(args.sample_limit))
+    payload, markdown = build_report(
+        repo_root,
+        sample_limit=sample_limit,
+        backfill_ref=str(args.backfill_ref).strip() or base_switch_planner.DEFAULT_BACKFILL_REF,
+    )
+    _write(out_dir / JSON_FILENAME, json.dumps(payload, ensure_ascii=False, indent=2) + "\n")
+    _write(out_dir / MARKDOWN_FILENAME, markdown)
+    _emit(payload)
+    if args.strict and not payload["overall_ok"]:
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -422,6 +422,189 @@ def test_build_check_specs_includes_dual_track_boundary_check(tmp_path: Path) ->
     ]
 
 
+def test_build_check_specs_includes_incremental_commit_attribution_check(tmp_path: Path) -> None:
+    discussion_path = tmp_path / "agent_discussion_curated.jsonl"
+    discussion_path.write_text('{"status":"final"}\n', encoding="utf-8")
+
+    python_executable = r"C:\\repo\\.venv\\Scripts\\python.exe"
+    specs = healthcheck._build_check_specs(
+        python_executable=python_executable,
+        include_sdh=False,
+        check_council_modes=True,
+        strict_soft_fail=False,
+        web_base=None,
+        api_base=None,
+        sdh_timeout=None,
+        allow_missing_discussion=False,
+        discussion_path=discussion_path,
+    )
+
+    commit_attribution = next(item for item in specs if item["name"] == "commit_attribution")
+    assert commit_attribution["command"] == [
+        python_executable,
+        "scripts/verify_incremental_commit_attribution.py",
+        "--strict",
+        "--artifact-path",
+        "docs/status/commit_attribution_local.json",
+    ]
+
+
+def test_build_check_specs_includes_true_verification_weekly_check_on_windows(
+    monkeypatch,
+    tmp_path: Path,
+) -> None:
+    discussion_path = tmp_path / "agent_discussion_curated.jsonl"
+    discussion_path.write_text('{"status":"final"}\n', encoding="utf-8")
+
+    python_executable = r"C:\\repo\\.venv\\Scripts\\python.exe"
+    monkeypatch.setattr(healthcheck, "_is_windows_environment", lambda: True)
+    specs = healthcheck._build_check_specs(
+        python_executable=python_executable,
+        include_sdh=False,
+        check_council_modes=True,
+        strict_soft_fail=False,
+        web_base=None,
+        api_base=None,
+        sdh_timeout=None,
+        allow_missing_discussion=False,
+        discussion_path=discussion_path,
+    )
+
+    weekly = next(item for item in specs if item["name"] == "true_verification_weekly")
+    assert weekly["command"] == [
+        python_executable,
+        "scripts/report_true_verification_task_status.py",
+        "--strict",
+    ]
+    assert "skip_reason" not in weekly
+
+
+def test_build_check_specs_skips_true_verification_weekly_check_on_non_windows(
+    monkeypatch,
+    tmp_path: Path,
+) -> None:
+    discussion_path = tmp_path / "agent_discussion_curated.jsonl"
+    discussion_path.write_text('{"status":"final"}\n', encoding="utf-8")
+
+    python_executable = r"C:\\repo\\.venv\\Scripts\\python.exe"
+    monkeypatch.setattr(healthcheck, "_is_windows_environment", lambda: False)
+    specs = healthcheck._build_check_specs(
+        python_executable=python_executable,
+        include_sdh=False,
+        check_council_modes=True,
+        strict_soft_fail=False,
+        web_base=None,
+        api_base=None,
+        sdh_timeout=None,
+        allow_missing_discussion=False,
+        discussion_path=discussion_path,
+    )
+
+    weekly = next(item for item in specs if item["name"] == "true_verification_weekly")
+    assert weekly["command"] == [
+        python_executable,
+        "scripts/report_true_verification_task_status.py",
+        "--strict",
+    ]
+    assert weekly["skip_reason"] == "requires Windows Task Scheduler host"
+
+
+def test_collect_recovery_advice_skips_when_commit_attribution_is_not_failing(
+    tmp_path: Path,
+) -> None:
+    advice = healthcheck._collect_recovery_advice(
+        checks=[
+            {
+                "name": "commit_attribution",
+                "status": "pass",
+            }
+        ],
+        repo_root=tmp_path,
+        python_executable=r"C:\\repo\\.venv\\Scripts\\python.exe",
+    )
+
+    assert advice == []
+
+
+def test_collect_recovery_advice_runs_base_switch_planner(monkeypatch, tmp_path: Path) -> None:
+    captured: dict[str, object] = {}
+
+    def fake_run_json_command(name: str, command: list[str], cwd: Path):
+        captured["name"] = name
+        captured["command"] = command
+        captured["cwd"] = cwd
+        return (
+            {
+                "name": name,
+                "status": "pass",
+                "ok": True,
+                "exit_code": 0,
+                "duration_seconds": 0.12,
+                "command": healthcheck._display_command(command),
+                "stdout_tail": "",
+                "stderr_tail": "",
+            },
+            {
+                "recommendation": "defer_until_worktree_clean",
+                "rationale": "worktree dirty",
+                "tree_equal": True,
+                "current_missing_count": 5,
+                "backfill_missing_count": 0,
+                "suggested_commands": [
+                    "git worktree add <clean-path> feat/env-perception-attribution-backfill"
+                ],
+            },
+        )
+
+    monkeypatch.setattr(healthcheck, "_run_json_command", fake_run_json_command)
+
+    advice = healthcheck._collect_recovery_advice(
+        checks=[
+            {
+                "name": "commit_attribution",
+                "status": "fail",
+            }
+        ],
+        repo_root=tmp_path,
+        python_executable=r"C:\\repo\\.venv\\Scripts\\python.exe",
+    )
+
+    assert captured["name"] == "commit_attribution_recovery"
+    assert captured["cwd"] == tmp_path
+    assert captured["command"] == [
+        r"C:\\repo\\.venv\\Scripts\\python.exe",
+        "scripts/plan_commit_attribution_base_switch.py",
+        "--artifact-path",
+        "docs/status/commit_attribution_base_switch_latest.json",
+    ]
+    assert advice == [
+        {
+            "name": "commit_attribution_recovery",
+            "status": "pass",
+            "ok": True,
+            "exit_code": 0,
+            "duration_seconds": 0.12,
+            "command": (
+                "python scripts/plan_commit_attribution_base_switch.py "
+                "--artifact-path docs/status/commit_attribution_base_switch_latest.json"
+            ),
+            "stdout_tail": "",
+            "stderr_tail": "",
+            "artifact_path": "docs/status/commit_attribution_base_switch_latest.json",
+            "detail": {
+                "recommendation": "defer_until_worktree_clean",
+                "rationale": "worktree dirty",
+                "tree_equal": True,
+                "current_missing_count": 5,
+                "backfill_missing_count": 0,
+                "suggested_commands": [
+                    "git worktree add <clean-path> feat/env-perception-attribution-backfill"
+                ],
+            },
+        }
+    ]
+
+
 def test_render_markdown_contains_summary_and_failures() -> None:
     payload = {
         "generated_at": "2026-02-09T00:00:00Z",
@@ -452,6 +635,19 @@ def test_render_markdown_contains_summary_and_failures() -> None:
                 "skip_reason": "missing discussion file: memory/agent_discussion_curated.jsonl",
             },
         ],
+        "recovery_advice": [
+            {
+                "name": "commit_attribution_recovery",
+                "status": "pass",
+                "detail": {
+                    "recommendation": "defer_until_worktree_clean",
+                    "rationale": "worktree dirty",
+                    "suggested_commands": [
+                        "git worktree add <clean-path> feat/env-perception-attribution-backfill"
+                    ],
+                },
+            }
+        ],
     }
 
     markdown = healthcheck._render_markdown(payload)
@@ -465,3 +661,6 @@ def test_render_markdown_contains_summary_and_failures() -> None:
     assert "`audit_7d`: blocking failure" in markdown
     assert "## Skipped" in markdown
     assert "missing discussion file: memory/agent_discussion_curated.jsonl" in markdown
+    assert "## Recovery Advice" in markdown
+    assert "`commit_attribution_recovery`: defer_until_worktree_clean" in markdown
+    assert "git worktree add <clean-path> feat/env-perception-attribution-backfill" in markdown

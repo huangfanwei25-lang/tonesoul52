@@ -16,8 +16,8 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from tonesoul.memory.crystallizer import MemoryCrystallizer
-from tonesoul.work_classifier import WorkCategory, get_profile
+from tonesoul.memory.crystallizer import MemoryCrystallizer  # noqa: E402
+from tonesoul.work_classifier import WorkCategory, get_profile  # noqa: E402
 
 
 def _count_lines(path: Path) -> int:

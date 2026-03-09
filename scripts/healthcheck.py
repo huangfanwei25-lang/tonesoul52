@@ -6,7 +6,6 @@ from __future__ import annotations
 
 import importlib
 import json
-import os
 import subprocess
 import sys
 from dataclasses import dataclass
@@ -17,9 +16,9 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from tonesoul.inventory import build_inventory, entrypoints_status
-from tonesoul.issue_codes import IssueCode, issue
-from tonesoul.seed_schema_check import check_seed_schema
+from tonesoul.inventory import build_inventory, entrypoints_status  # noqa: E402
+from tonesoul.issue_codes import IssueCode, issue  # noqa: E402
+from tonesoul.seed_schema_check import check_seed_schema  # noqa: E402
 
 LEDGER_CANDIDATES = [
     REPO_ROOT / "ledger.jsonl",
