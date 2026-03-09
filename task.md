@@ -2181,3 +2181,27 @@
 - [x] `docs/plans/memory_subjectivity_layer_addendum_2026-03-09.md`
 - [x] Validation:
 - [x] `rg -n "event -> meaning -> tension -> vow -> identity|provenance|promotion_gate|decay_policy|MemoryWriteGateway" docs/plans/memory_subjectivity_layer_addendum_2026-03-09.md task.md`
+
+## Phase 193: Memory Subjectivity Contract Split (2026-03-10)
+- [x] Write an implementation addendum before changing runtime code
+- [x] Record the key architectural split:
+- [x] `MemoryLayer` remains the storage axis
+- [x] `subjectivity_layer` becomes a separate semantic promotion axis
+- [x] Define the minimal shared contract:
+- [x] `subjectivity_layer`
+- [x] `confidence`
+- [x] `provenance`
+- [x] `promotion_gate`
+- [x] `decay_policy`
+- [x] `source_record_ids`
+- [x] Map the contract onto current seams:
+- [x] `MemoryWriteGateway`
+- [x] `SoulDB`
+- [x] `Consolidator`
+- [x] `DreamEngine`
+- [x] `schemas.py`
+- [x] Record the migration order so the repo does not widen runtime and storage semantics in one step
+- [x] Add implementation note:
+- [x] `docs/plans/memory_subjectivity_contract_addendum_2026-03-10.md`
+- [x] Validation:
+- [x] `rg -n "subjectivity_layer|MemoryLayer|MemoryWriteGateway|SoulDB|Consolidator|DreamEngine|schemas.py|promotion_gate|decay_policy" docs/plans/memory_subjectivity_contract_addendum_2026-03-10.md task.md`
