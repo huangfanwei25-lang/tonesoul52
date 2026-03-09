@@ -23,10 +23,9 @@ Date: 2026-03-07
 from __future__ import annotations
 
 import hashlib
-import time
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional
+from typing import List, Optional
 
 
 @dataclass
@@ -36,9 +35,7 @@ class IngestResult:
     url: str
     title: str
     markdown: str
-    ingested_at: str = field(
-        default_factory=lambda: datetime.now(timezone.utc).isoformat()
-    )
+    ingested_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     content_hash: str = ""
     word_count: int = 0
     success: bool = True
@@ -46,9 +43,7 @@ class IngestResult:
 
     def __post_init__(self):
         if self.markdown and not self.content_hash:
-            self.content_hash = hashlib.sha256(
-                self.markdown.encode("utf-8")
-            ).hexdigest()[:16]
+            self.content_hash = hashlib.sha256(self.markdown.encode("utf-8")).hexdigest()[:16]
         if self.markdown and not self.word_count:
             self.word_count = len(self.markdown.split())
 
@@ -176,16 +171,18 @@ class WebIngestor:
         Synchronous wrapper for ingest_urls.
 
         Convenience method for non-async contexts.
+
+        This fails fast when called from a running event loop because blocking
+        the loop thread behind a sync wrapper is not a safe or predictable
+        execution model for Crawl4AI-backed ingestion.
         """
         import asyncio
 
         try:
-            loop = asyncio.get_running_loop()
-            # If already in an async context, create a new thread
-            import concurrent.futures
-
-            with concurrent.futures.ThreadPoolExecutor() as pool:
-                future = pool.submit(asyncio.run, self.ingest_urls(urls))
-                return future.result(timeout=self._timeout * len(urls))
+            asyncio.get_running_loop()
         except RuntimeError:
             return asyncio.run(self.ingest_urls(urls))
+        raise RuntimeError(
+            "ingest_urls_sync() cannot be called from a running event loop; "
+            "await ingest_urls(...) instead."
+        )

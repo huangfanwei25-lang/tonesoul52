@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import asyncio
+
 import pytest
 
 
@@ -100,6 +102,31 @@ class TestStimulusProcessor:
         irrelevant_stim = [s for s in stimuli if "irrelevant" in s.source_url.lower()][0]
         assert relevant_stim.relevance_score > irrelevant_stim.relevance_score
 
+    def test_chinese_keywords_drive_relevance_and_tags(self):
+        from tonesoul.perception.stimulus import StimulusProcessor
+        from tonesoul.perception.web_ingest import IngestResult
+
+        processor = StimulusProcessor(min_word_count=10)
+        content = (
+            "這篇文章討論 AI 治理、記憶系統、管線架構與語義審議，" "也觸及倫理與意識問題。 " * 12
+        )
+        results = [
+            IngestResult(
+                url="http://example.com/zh",
+                title="治理與記憶",
+                markdown=content,
+                success=True,
+            )
+        ]
+
+        stimuli = processor.process_ingested(results)
+
+        assert len(stimuli) == 1
+        assert stimuli[0].relevance_score > 0
+        assert "governance" in stimuli[0].tags
+        assert "memory" in stimuli[0].tags
+        assert "architecture" in stimuli[0].tags
+
     def test_to_memory_payload(self):
         from tonesoul.perception.stimulus import EnvironmentStimulus
 
@@ -141,3 +168,39 @@ class TestWebIngestor:
         # Should report True after Crawl4AI is installed
         available = ingestor.is_available()
         assert isinstance(available, bool)
+
+    def test_ingest_urls_sync_runs_outside_event_loop(self, monkeypatch):
+        from tonesoul.perception.web_ingest import IngestResult, WebIngestor
+
+        ingestor = WebIngestor()
+
+        async def _fake_ingest(urls):
+            return [
+                IngestResult(
+                    url=str(urls[0]),
+                    title="Example",
+                    markdown="Hello world " * 20,
+                    success=True,
+                )
+            ]
+
+        monkeypatch.setattr(ingestor, "ingest_urls", _fake_ingest)
+
+        results = ingestor.ingest_urls_sync(["http://example.com"])
+
+        assert len(results) == 1
+        assert results[0].success is True
+
+    def test_ingest_urls_sync_rejects_running_event_loop(self):
+        from tonesoul.perception.web_ingest import WebIngestor
+
+        ingestor = WebIngestor()
+
+        async def _exercise():
+            with pytest.raises(
+                RuntimeError,
+                match="cannot be called from a running event loop",
+            ):
+                ingestor.ingest_urls_sync(["http://example.com"])
+
+        asyncio.run(_exercise())

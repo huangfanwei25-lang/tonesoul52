@@ -7,6 +7,7 @@ from unittest.mock import MagicMock
 import numpy as np
 import pytest
 
+from tonesoul.schemas import LLMCallMetrics
 from tonesoul.unified_pipeline import UnifiedPipeline
 
 
@@ -129,13 +130,40 @@ class _FakeHippocampus:
         ]
 
 
-def _build_pipeline(tension_result: _FakeTensionResult) -> UnifiedPipeline:
+class _FakeLLMClient:
+    def __init__(
+        self,
+        *,
+        response: str = "mock llm response",
+        model: str = "qwen3.5:4b",
+        metrics: LLMCallMetrics | None = None,
+    ) -> None:
+        self.response = response
+        self.model = model
+        self.last_metrics = metrics
+        self.history = None
+        self.messages = []
+
+    def start_chat(self, history):
+        self.history = history
+        return self
+
+    def send_message(self, message: str) -> str:
+        self.messages.append(message)
+        return self.response
+
+
+def _build_pipeline(
+    tension_result: _FakeTensionResult,
+    *,
+    llm_client: object | None = None,
+) -> UnifiedPipeline:
     pipeline = UnifiedPipeline()
     pipeline._get_tonebridge = MagicMock(return_value=None)
     pipeline._get_trajectory = MagicMock(return_value=None)
     pipeline._get_deliberation = MagicMock(return_value=None)
     pipeline._get_council = MagicMock(return_value=None)
-    pipeline._get_gemini = MagicMock(return_value=None)
+    pipeline._get_llm_client = MagicMock(return_value=llm_client)
     pipeline._get_tension_engine = MagicMock(return_value=_FakeTensionEngine(tension_result))
     return pipeline
 
@@ -173,6 +201,22 @@ def test_runtime_circuit_breaker_blocks_when_immutable_friction_spikes() -> None
     assert (resistance.get("circuit_breaker") or {}).get("status") == "frozen"
     repair = result.dispatch_trace.get("repair") or {}
     assert repair.get("original_gate") == "circuit_breaker_block"
+
+
+def test_fast_route_council_verdict_uses_runtime_normalizer(monkeypatch) -> None:
+    from tonesoul.gates.compute import RoutingPath
+
+    monkeypatch.setattr("tonesoul.local_llm.ask_local_llm", lambda message: "[Local Model] ok")
+
+    pipeline = UnifiedPipeline()
+    result = pipeline.process(
+        user_message="Hello",
+        user_tier="free",
+        user_id="v2-fast-route-verdict-test",
+    )
+
+    assert result.dispatch_trace.get("route") == RoutingPath.PASS_LOCAL.value
+    assert result.council_verdict == {"verdict": "bypassed"}
 
 
 def test_runtime_perturbation_recovery_trace_is_emitted_for_high_stress() -> None:
@@ -246,3 +290,86 @@ def test_runtime_corrective_recall_uses_b_vector_path() -> None:
     assert memory_trace.get("primary_hits") == 1
     assert memory_trace.get("corrective_hits") == 1
     assert float(memory_trace.get("b_vec_norm", 0.0)) > 0.0
+
+
+def test_runtime_dispatch_trace_captures_llm_usage_metrics() -> None:
+    fake_client = _FakeLLMClient(
+        model="qwen3.5:8b",
+        metrics=LLMCallMetrics(
+            model="qwen3.5:8b",
+            prompt_tokens=12,
+            completion_tokens=7,
+            total_tokens=19,
+        ),
+    )
+    pipeline = _build_pipeline(
+        _FakeTensionResult(
+            total=0.58,
+            severity="moderate",
+            compression_ratio=0.61,
+            gamma_effective=1.1,
+            lyapunov_exponent=0.07,
+        ),
+        llm_client=fake_client,
+    )
+    pipeline._llm_backend = "ollama"
+
+    result = pipeline.process(
+        user_message=(
+            "Provide a careful engineering summary of this governance runtime path "
+            "and suggest a concise next step."
+        ),
+        user_tier="premium",
+        user_id="v2-llm-trace-test",
+        prior_tension={
+            "delta_t": 0.46,
+            "query_tension": 0.44,
+            "memory_tension": 0.41,
+            "is_immutable": False,
+        },
+    )
+
+    llm_trace = result.dispatch_trace.get("llm") or {}
+    assert llm_trace.get("backend") == "ollama"
+    assert llm_trace.get("model") == "qwen3.5:8b"
+    assert llm_trace.get("usage") == {
+        "prompt_tokens": 12,
+        "completion_tokens": 7,
+        "total_tokens": 19,
+        "cost_usd": 0.0,
+    }
+
+
+def test_runtime_dispatch_trace_keeps_backend_and_model_without_fabricated_usage() -> None:
+    fake_client = _FakeLLMClient(model="qwen3.5:4b", metrics=None)
+    pipeline = _build_pipeline(
+        _FakeTensionResult(
+            total=0.55,
+            severity="moderate",
+            compression_ratio=0.64,
+            gamma_effective=1.0,
+            lyapunov_exponent=0.05,
+        ),
+        llm_client=fake_client,
+    )
+    pipeline._llm_backend = "ollama"
+
+    result = pipeline.process(
+        user_message=(
+            "Explain the current pipeline state in a practical way without invoking "
+            "the local fast path."
+        ),
+        user_tier="premium",
+        user_id="v2-llm-no-usage-test",
+        prior_tension={
+            "delta_t": 0.42,
+            "query_tension": 0.4,
+            "memory_tension": 0.39,
+            "is_immutable": False,
+        },
+    )
+
+    llm_trace = result.dispatch_trace.get("llm") or {}
+    assert llm_trace.get("backend") == "ollama"
+    assert llm_trace.get("model") == "qwen3.5:4b"
+    assert "usage" not in llm_trace

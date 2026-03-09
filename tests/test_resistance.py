@@ -11,7 +11,6 @@ from tonesoul.resistance import (
     FrictionResult,
     PainEngine,
     PerturbationRecovery,
-    ThrottleResult,
     ThrottleSeverity,
 )
 
@@ -331,6 +330,7 @@ class TestPerturbationRecovery:
 class TestHippocampusV2:
     def test_compute_error_vector_basic(self):
         import numpy as np
+
         from tonesoul.memory.hippocampus import Hippocampus
 
         intended = np.array([1.0, 0.0, 0.0], dtype=np.float32)
@@ -344,6 +344,7 @@ class TestHippocampusV2:
 
     def test_compute_error_vector_identical(self):
         import numpy as np
+
         from tonesoul.memory.hippocampus import Hippocampus
 
         v = np.array([1.0, 2.0, 3.0], dtype=np.float32)
@@ -354,6 +355,7 @@ class TestHippocampusV2:
 
     def test_error_vector_direction(self):
         import numpy as np
+
         from tonesoul.memory.hippocampus import Hippocampus
 
         intended = np.array([1.0, 0.0], dtype=np.float32)

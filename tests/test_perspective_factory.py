@@ -128,6 +128,71 @@ def test_llm_with_google_api_key_initializes_client(monkeypatch):
     assert calls == [DEFAULT_LLM_MODEL]
 
 
+def test_llm_perspective_uses_safe_parse_for_markdown_json(monkeypatch):
+    class _FakeClient:
+        def generate(self, prompt: str) -> str:
+            return (
+                "Structured result:\n"
+                "```json\n"
+                '{"decision":"APPROVE","confidence":0.83,"reasoning":"safe parse works"}\n'
+                "```"
+            )
+
+    monkeypatch.setattr(
+        LLMPerspective,
+        "_get_gemini_client",
+        classmethod(lambda cls, model=DEFAULT_LLM_MODEL: _FakeClient()),
+    )
+
+    perspective = LLMPerspective(name="analyst", model=DEFAULT_LLM_MODEL, fallback=None)
+    vote = perspective.evaluate("draft", context={})
+
+    assert vote.decision == VoteDecision.APPROVE
+    assert vote.confidence == 0.83
+    assert "safe parse works" in vote.reasoning
+
+
+def test_llm_perspective_keeps_text_fallback_for_non_json(monkeypatch):
+    class _FakeClient:
+        def generate(self, prompt: str) -> str:
+            return "CONCERN confidence: 0.42 reasoning: model refused JSON but flagged ambiguity."
+
+    monkeypatch.setattr(
+        LLMPerspective,
+        "_get_gemini_client",
+        classmethod(lambda cls, model=DEFAULT_LLM_MODEL: _FakeClient()),
+    )
+
+    perspective = LLMPerspective(name="analyst", model=DEFAULT_LLM_MODEL, fallback=None)
+    vote = perspective.evaluate("draft", context={})
+
+    assert vote.decision == VoteDecision.CONCERN
+    assert vote.confidence == 0.42
+    assert "flagged ambiguity" in vote.reasoning
+
+
+def test_llm_perspective_prefers_valid_json_over_trailing_decision_noise(monkeypatch):
+    class _FakeClient:
+        def generate(self, prompt: str) -> str:
+            return (
+                'Result: {"decision":"APPROVE","confidence":0.81,"reasoning":"structured wins"} '
+                "trailing note {OBJECT}"
+            )
+
+    monkeypatch.setattr(
+        LLMPerspective,
+        "_get_gemini_client",
+        classmethod(lambda cls, model=DEFAULT_LLM_MODEL: _FakeClient()),
+    )
+
+    perspective = LLMPerspective(name="analyst", model=DEFAULT_LLM_MODEL, fallback=None)
+    vote = perspective.evaluate("draft", context={})
+
+    assert vote.decision == VoteDecision.APPROVE
+    assert vote.confidence == 0.81
+    assert "structured wins" in vote.reasoning
+
+
 def test_ollama_visual_context_truncation_adds_safety_note(monkeypatch):
     captured = {}
 

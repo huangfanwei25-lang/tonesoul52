@@ -2,7 +2,7 @@
 
 from tonesoul.nonlinear_predictor import PredictionResult
 from tonesoul.semantic_control import LambdaState, SemanticZone
-from tonesoul.variance_compressor import CompressionResult, DynamicVarianceCompressor
+from tonesoul.variance_compressor import DynamicVarianceCompressor
 from tonesoul.work_classifier import WorkCategory
 
 

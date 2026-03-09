@@ -9,9 +9,12 @@ Submodules:
   - stimulus: Environmental stimulus processing pipeline
 """
 
+from .source_registry import CuratedSourceSelection, select_curated_registry_urls
 from .stimulus import EnvironmentStimulus, StimulusProcessor
 
 __all__ = [
+    "CuratedSourceSelection",
     "EnvironmentStimulus",
     "StimulusProcessor",
+    "select_curated_registry_urls",
 ]

@@ -5,4 +5,3 @@ from ..benevolence import *  # noqa: F401,F403  backward compat
 from ..escape_valve import *  # noqa: F401,F403  backward compat
 from ..vow_system import *  # noqa: F401,F403  backward compat
 from .kernel import GovernanceDecision, GovernanceKernel, LLMRouteDecision  # noqa: F401
-

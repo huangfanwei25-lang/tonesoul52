@@ -84,15 +84,11 @@ class InternalDeliberation:
         start_time = time.time()
 
         try:
-            # Try to use asyncio
-            loop = asyncio.get_event_loop()
-            if loop.is_running():
-                # We're already in an async context, run sequentially
-                viewpoints = self._sequential_think(context)
-            else:
-                viewpoints = asyncio.run(self._parallel_think(context))
+            asyncio.get_running_loop()
         except RuntimeError:
-            # No event loop, run sequentially
+            viewpoints = asyncio.run(self._parallel_think(context))
+        else:
+            # Already running inside an event loop; keep this sync seam explicit.
             viewpoints = self._sequential_think(context)
 
         # Synthesize

@@ -18,7 +18,7 @@ def test_ask_local_llm_success(mock_post):
     # Verify the structure forces think=False
     call_kwargs = mock_post.call_args.kwargs
     assert call_kwargs["json"]["think"] is False
-    assert call_kwargs["json"]["model"] == "qwen3:4b"
+    assert call_kwargs["json"]["model"] == "qwen3.5:4b"
 
 
 @patch("tonesoul.local_llm.requests.post")

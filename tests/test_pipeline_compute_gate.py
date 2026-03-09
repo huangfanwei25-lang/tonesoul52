@@ -39,6 +39,11 @@ def test_pipeline_pass_local_fast_route(mock_ask_local_llm):
     assert "[Local Model]" in response.response
     assert response.dispatch_trace.get("route") == RoutingPath.PASS_LOCAL.value
     assert response.dispatch_trace.get("journal_eligible") is False
+    assert response.dispatch_trace.get("routing_trace") == {
+        "route": RoutingPath.PASS_LOCAL.value,
+        "journal_eligible": False,
+        "reason": response.dispatch_trace.get("reason"),
+    }
 
 
 def test_pipeline_premium_journal_eligible():
@@ -46,7 +51,7 @@ def test_pipeline_premium_journal_eligible():
     pipeline = UnifiedPipeline()
 
     # Mock network dependencies
-    pipeline._get_gemini = MagicMock(return_value=None)
+    pipeline._get_llm_client = MagicMock(return_value=None)
     pipeline._get_tonebridge = MagicMock(return_value=None)
     pipeline._get_council = MagicMock(return_value=None)
 
@@ -59,6 +64,13 @@ def test_pipeline_premium_journal_eligible():
 
     assert response.dispatch_trace.get("journal_eligible") is True
     assert response.dispatch_trace.get("route") == RoutingPath.PASS_COUNCIL.value
+    assert isinstance(response.dispatch_trace.get("reason"), str)
+    assert response.dispatch_trace.get("reason")
+    assert response.dispatch_trace.get("routing_trace") == {
+        "route": RoutingPath.PASS_COUNCIL.value,
+        "journal_eligible": True,
+        "reason": response.dispatch_trace.get("reason"),
+    }
 
 
 def test_pipeline_rate_limit_free_tier(monkeypatch):
@@ -68,7 +80,7 @@ def test_pipeline_rate_limit_free_tier(monkeypatch):
     monkeypatch.setattr(compute_module.time, "time", lambda: frozen_time)
 
     pipeline = UnifiedPipeline()
-    pipeline._get_gemini = MagicMock(return_value=None)
+    pipeline._get_llm_client = MagicMock(return_value=None)
     pipeline._get_tonebridge = MagicMock(return_value=None)
     pipeline._get_council = MagicMock(return_value=None)
 
@@ -99,7 +111,7 @@ def test_pipeline_rate_limit_free_tier(monkeypatch):
 
 def test_pipeline_free_user_high_governance_friction_escalates_to_council():
     pipeline = UnifiedPipeline()
-    pipeline._get_gemini = MagicMock(return_value=None)
+    pipeline._get_llm_client = MagicMock(return_value=None)
     pipeline._get_tonebridge = MagicMock(return_value=None)
     pipeline._get_council = MagicMock(return_value=None)
 
@@ -145,7 +157,7 @@ class _FakeCouncil:
 
 def test_pipeline_council_block_writes_repair_trace():
     pipeline = UnifiedPipeline()
-    pipeline._get_gemini = MagicMock(return_value=None)
+    pipeline._get_llm_client = MagicMock(return_value=None)
     pipeline._get_tonebridge = MagicMock(return_value=None)
     pipeline._get_council = MagicMock(return_value=_FakeCouncil("BLOCK"))
 
@@ -178,7 +190,7 @@ def test_pipeline_persona_rewrite_writes_repair_trace(mock_persona_process):
     )
 
     pipeline = UnifiedPipeline()
-    pipeline._get_gemini = MagicMock(return_value=None)
+    pipeline._get_llm_client = MagicMock(return_value=None)
     pipeline._get_tonebridge = MagicMock(return_value=None)
     pipeline._get_council = MagicMock(return_value=None)
 

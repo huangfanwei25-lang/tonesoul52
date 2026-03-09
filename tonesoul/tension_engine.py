@@ -13,6 +13,7 @@ from datetime import datetime, timezone
 from typing import Dict, List, Optional
 
 from .nonlinear_predictor import NonlinearPredictor, PredictionResult
+from .resistance import PainEngine, ThrottleResult
 from .semantic_control import (
     Coupler,
     LambdaObserver,
@@ -21,7 +22,6 @@ from .semantic_control import (
     SemanticZone,
     get_zone,
 )
-from .resistance import PainEngine, ThrottleResult
 from .variance_compressor import CompressionResult, DynamicVarianceCompressor
 from .work_classifier import WorkCategory
 

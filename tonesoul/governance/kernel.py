@@ -26,35 +26,16 @@ from __future__ import annotations
 
 import os
 import re
-from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
+from tonesoul import schemas as governance_schemas
+
+GovernanceDecision = governance_schemas.GovernanceDecision
+LLMRouteDecision = governance_schemas.LLMRouteDecision
 
 # ---------------------------------------------------------------------------
 # Data Structures
 # ---------------------------------------------------------------------------
-
-
-@dataclass
-class LLMRouteDecision:
-    """Result of LLM backend selection."""
-
-    backend: str  # "gemini", "ollama", "lmstudio"
-    client: Any  # The actual LLM client instance
-    reason: str = ""
-
-
-@dataclass
-class GovernanceDecision:
-    """Aggregated governance decision for a single pipeline turn."""
-
-    llm_route: Optional[LLMRouteDecision] = None
-    should_convene_council: bool = False
-    council_reason: str = ""
-    friction_score: Optional[float] = None
-    circuit_breaker_status: str = "ok"  # "ok" | "frozen"
-    circuit_breaker_reason: Optional[str] = None
-    provenance: Dict[str, Any] = field(default_factory=dict)
 
 
 # ---------------------------------------------------------------------------
@@ -106,9 +87,7 @@ class GovernanceKernel:
                 reason="Reusing pre-initialized client",
             )
 
-        mode = (
-            os.environ.get("LLM_BACKEND") or preferred_backend or "auto"
-        ).strip().lower()
+        mode = (os.environ.get("LLM_BACKEND") or preferred_backend or "auto").strip().lower()
 
         if mode == "gemini":
             return self._try_gemini("Explicit gemini mode requested")
@@ -141,9 +120,7 @@ class GovernanceKernel:
 
             client = create_ollama_client()
             if client.is_available() and client.list_models():
-                return LLMRouteDecision(
-                    backend="ollama", client=client, reason=reason
-                )
+                return LLMRouteDecision(backend="ollama", client=client, reason=reason)
         except Exception:
             pass
         return LLMRouteDecision(backend="ollama", client=None, reason=f"{reason} (failed)")
@@ -154,9 +131,7 @@ class GovernanceKernel:
 
             client = create_lmstudio_client()
             if client.is_available():
-                return LLMRouteDecision(
-                    backend="lmstudio", client=client, reason=reason
-                )
+                return LLMRouteDecision(backend="lmstudio", client=client, reason=reason)
         except Exception:
             pass
         return LLMRouteDecision(backend="lmstudio", client=None, reason=f"{reason} (failed)")
@@ -166,9 +141,7 @@ class GovernanceKernel:
             from tonesoul.llm import create_gemini_client
 
             client = create_gemini_client()
-            return LLMRouteDecision(
-                backend="gemini", client=client, reason=reason
-            )
+            return LLMRouteDecision(backend="gemini", client=client, reason=reason)
         except Exception:
             pass
         return LLMRouteDecision(backend="gemini", client=None, reason=f"{reason} (failed)")
@@ -207,8 +180,7 @@ class GovernanceKernel:
         # High tension → convene
         if effective_tension >= min_council_tension:
             return True, (
-                f"Tension ({effective_tension:.2f}) "
-                f"exceeds threshold ({min_council_tension})"
+                f"Tension ({effective_tension:.2f}) " f"exceeds threshold ({min_council_tension})"
             )
 
         return False, f"Tension ({effective_tension:.2f}) below threshold, council not needed"
@@ -347,26 +319,76 @@ class GovernanceKernel:
 
     # --- Circuit Breaker ---
 
-    def check_circuit_breaker(self, friction_result: Any) -> tuple[str, Optional[str]]:
+    def check_circuit_breaker(
+        self,
+        friction_result: Any,
+        *,
+        lyapunov_exponent: Optional[float] = None,
+    ) -> tuple[str, Optional[str], Dict[str, Any]]:
         """
         Check if the circuit breaker should freeze processing.
 
         Returns:
-            (status, reason) where status is "ok" or "frozen"
+            (status, reason, state) where status is "ok" or "frozen"
         """
         breaker = self._get_circuit_breaker()
         if breaker is None or friction_result is None:
-            return "ok", None
+            return "ok", None, {}
 
         try:
-            result = breaker.check(friction_result)
-            status = str(getattr(result, "status", "ok")).strip().lower()
-            reason = str(getattr(result, "reason", "")).strip() or None
-            return status, reason
+            breaker.check(friction_result, lyapunov_exponent=lyapunov_exponent)
+            state = breaker.state.to_dict()
+            state["status"] = "ok"
+            if isinstance(lyapunov_exponent, (int, float)):
+                state["lyapunov_exponent"] = round(float(lyapunov_exponent), 6)
+            return "ok", None, state
+        except Exception as exc:
+            if exc.__class__.__name__ == "CollapseException":
+                state = breaker.state.to_dict()
+                reason = str(getattr(exc, "reason", str(exc))).strip() or None
+                state["status"] = "frozen"
+                state["reason"] = reason
+                if isinstance(lyapunov_exponent, (int, float)):
+                    state["lyapunov_exponent"] = round(float(lyapunov_exponent), 6)
+                return "frozen", reason, state
+            return "ok", None, {}
+
+    def recover_perturbation(
+        self,
+        *,
+        compression_ratio: float,
+        gamma_effective: Optional[float],
+        friction: Any,
+    ) -> Optional[Any]:
+        """Delegate perturbation recovery path selection."""
+        recovery = self._get_perturbation_recovery()
+        if recovery is None:
+            return None
+
+        try:
+            return recovery.recover(
+                compression_ratio=float(compression_ratio),
+                gamma_effective=gamma_effective,
+                friction=friction,
+            )
         except Exception:
-            return "ok", None
+            return None
 
     # --- Runtime Governance Observability ---
+
+    @staticmethod
+    def build_routing_trace(
+        *,
+        route: Any,
+        journal_eligible: Any,
+        reason: Any,
+    ) -> Dict[str, Any]:
+        """Build the canonical routing-trace payload used by orchestration layers."""
+        return {
+            "route": str(route or "").strip(),
+            "journal_eligible": bool(journal_eligible),
+            "reason": str(reason or ""),
+        }
 
     @staticmethod
     def build_observability_trace(dispatch_trace: Dict[str, Any]) -> Dict[str, Any]:

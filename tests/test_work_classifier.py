@@ -1,7 +1,6 @@
 """Tests for RFC-013: WorkClassifier."""
 
 from tonesoul.work_classifier import (
-    PROFILES,
     ConstraintProfile,
     WorkCategory,
     classify_work,

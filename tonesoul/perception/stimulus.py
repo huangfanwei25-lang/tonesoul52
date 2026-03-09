@@ -1,21 +1,9 @@
 """
-Stimulus Processing — filtering raw environmental input into meaningful memory.
+Stimulus processing for environmental input.
 
-This is the "意義篩選層" — the layer that decides which environmental
-stimuli are worth remembering. Inspired by how human memory works:
-not everything is stored, only what generates surprise, tension, or
-resonance with existing knowledge.
-
-Usage:
-    from tonesoul.perception.stimulus import StimulusProcessor
-
-    processor = StimulusProcessor()
-    stimuli = processor.process_ingested([ingest_result_1, ingest_result_2])
-    for s in stimuli:
-        print(s.topic, s.relevance_score)
-
-Author: Antigravity
-Date: 2026-03-07
+This layer filters raw web or environment ingestion into memory-ready
+stimuli. Not every external signal should be stored; only the ones that
+show relevance, surprise, or resonance with ToneSoul's ongoing concerns.
 """
 
 from __future__ import annotations
@@ -33,13 +21,13 @@ class EnvironmentStimulus:
 
     source_url: str
     topic: str
-    summary: str  # Compact summary of the stimulus content
-    content_hash: str  # For dedup across sessions
+    summary: str
+    content_hash: str
     ingested_at: str
-    relevance_score: float = 0.0  # 0-1, how relevant to existing memory
-    novelty_score: float = 0.0  # 0-1, how novel compared to known knowledge
+    relevance_score: float = 0.0
+    novelty_score: float = 0.0
     tags: List[str] = field(default_factory=list)
-    raw_excerpt: str = ""  # First N chars of raw content for reference
+    raw_excerpt: str = ""
 
     def to_memory_payload(self) -> Dict[str, Any]:
         """Convert to a payload suitable for soul.db ingestion."""
@@ -59,14 +47,12 @@ class EnvironmentStimulus:
 
 class StimulusProcessor:
     """
-    Processes raw web ingestion results into environmental stimuli.
+    Process raw ingestion results into environmental stimuli.
 
     The processor applies three filters:
-      1. Deduplication (content hash check)
-      2. Relevance scoring (topic overlap with existing memory keywords)
-      3. Novelty scoring (how different from known content)
-
-    Only stimuli above a threshold are promoted to memory.
+      1. Deduplication via content hash.
+      2. Relevance scoring via keyword overlap.
+      3. Novelty scoring via simple structural heuristics.
     """
 
     def __init__(
@@ -78,27 +64,55 @@ class StimulusProcessor:
     ) -> None:
         self._min_word_count = min_word_count
         self._max_excerpt_length = max_excerpt_length
-        self._seen_hashes: set = set()
-        # Default relevance keywords — topics ToneSoul cares about
+        self._seen_hashes: set[str] = set()
         self._relevance_keywords = relevance_keywords or [
-            # AI governance & philosophy
-            "governance", "alignment", "safety", "ethics", "agent",
-            "memory", "consciousness", "self-awareness", "autonomy",
-            # Technical architecture
-            "pipeline", "architecture", "microservice", "monolith",
-            "refactor", "api", "schema", "database",
-            # ToneSoul-specific
-            "tension", "commitment", "rupture", "deliberation",
-            "council", "persona", "semantic", "narrative",
-            # Chinese equivalents
-            "治理", "記憶", "張力", "承諾", "斷裂", "議會",
-            "架構", "語魂", "自主", "意識",
+            "governance",
+            "alignment",
+            "safety",
+            "ethics",
+            "agent",
+            "memory",
+            "consciousness",
+            "self-awareness",
+            "autonomy",
+            "pipeline",
+            "architecture",
+            "microservice",
+            "monolith",
+            "refactor",
+            "api",
+            "schema",
+            "database",
+            "tension",
+            "commitment",
+            "rupture",
+            "deliberation",
+            "council",
+            "persona",
+            "semantic",
+            "narrative",
+            "治理",
+            "對齊",
+            "安全",
+            "倫理",
+            "代理",
+            "記憶",
+            "意識",
+            "自主",
+            "架構",
+            "管線",
+            "張力",
+            "承諾",
+            "破裂",
+            "審議",
+            "議會",
+            "人格",
+            "語義",
+            "敘事",
+            "哲學",
         ]
 
-    def process_ingested(
-        self,
-        ingest_results: List[Any],
-    ) -> List[EnvironmentStimulus]:
+    def process_ingested(self, ingest_results: List[Any]) -> List[EnvironmentStimulus]:
         """
         Process a batch of IngestResults into environmental stimuli.
 
@@ -106,7 +120,7 @@ class StimulusProcessor:
             ingest_results: List of IngestResult from WebIngestor.
 
         Returns:
-            List of EnvironmentStimulus, filtered and scored.
+            Filtered and scored EnvironmentStimulus records.
         """
         stimuli: List[EnvironmentStimulus] = []
 
@@ -122,48 +136,29 @@ class StimulusProcessor:
 
             content_hash = getattr(result, "content_hash", "")
             if not content_hash:
-                content_hash = hashlib.sha256(
-                    result.markdown.encode("utf-8")
-                ).hexdigest()[:16]
+                content_hash = hashlib.sha256(result.markdown.encode("utf-8")).hexdigest()[:16]
 
-            # Dedup check
             if content_hash in self._seen_hashes:
                 continue
             self._seen_hashes.add(content_hash)
 
-            # Extract topic from title
             title = getattr(result, "title", "") or ""
-            topic = self._extract_topic(title, result.markdown)
-
-            # Score relevance
-            relevance = self._score_relevance(result.markdown, title)
-
-            # Score novelty (simple version — length-based surprise)
-            novelty = self._score_novelty(result.markdown)
-
-            # Build excerpt
-            raw_excerpt = result.markdown[:self._max_excerpt_length]
-
-            # Build summary (first meaningful paragraph)
-            summary = self._extract_summary(result.markdown)
-
-            # Build tags
-            tags = self._extract_tags(result.markdown, title)
+            markdown = getattr(result, "markdown", "") or ""
 
             stimulus = EnvironmentStimulus(
                 source_url=getattr(result, "url", ""),
-                topic=topic,
-                summary=summary,
+                topic=self._extract_topic(title, markdown),
+                summary=self._extract_summary(markdown),
                 content_hash=content_hash,
                 ingested_at=getattr(
                     result,
                     "ingested_at",
                     datetime.now(timezone.utc).isoformat(),
                 ),
-                relevance_score=relevance,
-                novelty_score=novelty,
-                tags=tags,
-                raw_excerpt=raw_excerpt,
+                relevance_score=self._score_relevance(markdown, title),
+                novelty_score=self._score_novelty(markdown),
+                tags=self._extract_tags(markdown, title),
+                raw_excerpt=markdown[: self._max_excerpt_length],
             )
             stimuli.append(stimulus)
 
@@ -174,12 +169,10 @@ class StimulusProcessor:
         if title and len(title.strip()) > 3:
             return title.strip()[:100]
 
-        # Try to find first heading in markdown
         heading_match = re.search(r"^#+ (.+)$", markdown, re.MULTILINE)
         if heading_match:
             return heading_match.group(1).strip()[:100]
 
-        # Fallback: first sentence
         first_line = markdown.strip().split("\n")[0]
         return first_line[:100] if first_line else "untitled"
 
@@ -191,12 +184,10 @@ class StimulusProcessor:
             if keyword.lower() in text:
                 hits += 1
 
-        # Normalize: 0-1 scale, with diminishing returns
         if not self._relevance_keywords:
             return 0.0
         ratio = hits / len(self._relevance_keywords)
-        # Apply sqrt for diminishing returns (3 hits out of 30 ≈ 0.32)
-        return min(1.0, ratio ** 0.5)
+        return min(1.0, ratio**0.5)
 
     def _score_novelty(self, markdown: str) -> float:
         """
@@ -206,18 +197,14 @@ class StimulusProcessor:
         """
         word_count = len(markdown.split())
 
-        # Very short content = low novelty
         if word_count < 100:
             return 0.2
 
-        # Check for code blocks (technical = higher novelty for us)
         code_blocks = len(re.findall(r"```", markdown))
         has_code = code_blocks >= 2
-
-        # Check for structured content (lists, tables)
         has_structure = bool(re.search(r"^[-*] ", markdown, re.MULTILINE))
 
-        score = 0.3  # base
+        score = 0.3
         if has_code:
             score += 0.3
         if has_structure:
@@ -234,7 +221,6 @@ class StimulusProcessor:
         lines = markdown.strip().split("\n")
         for line in lines:
             stripped = line.strip()
-            # Skip headings, empty lines, images
             if not stripped:
                 continue
             if stripped.startswith("#"):
@@ -255,11 +241,11 @@ class StimulusProcessor:
 
         tag_keywords = {
             "ai": ["ai", "artificial intelligence", "machine learning", "llm"],
-            "governance": ["governance", "治理", "alignment", "safety"],
+            "governance": ["governance", "治理", "alignment", "對齊", "safety", "安全"],
             "memory": ["memory", "記憶", "remember", "recall"],
-            "architecture": ["architecture", "架構", "refactor", "pipeline"],
-            "philosophy": ["philosophy", "consciousness", "ethics", "意識"],
-            "engineering": ["code", "programming", "github", "open source"],
+            "architecture": ["architecture", "架構", "refactor", "pipeline", "管線"],
+            "philosophy": ["philosophy", "consciousness", "ethics", "哲學", "意識"],
+            "engineering": ["code", "programming", "github", "open source", "工程"],
         }
 
         for tag, keywords in tag_keywords.items():

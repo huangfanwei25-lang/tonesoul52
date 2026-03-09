@@ -1659,6 +1659,10 @@ Respond with a clear, practical answer."""
                         pass
 
                 if router is not None:
+                    try:
+                        router.prime(llm_client, backend=self._llm_backend)
+                    except Exception:
+                        pass
                     response = router.chat(history=history, prompt=full_prompt)
                 else:
                     llm_client.start_chat(history)
