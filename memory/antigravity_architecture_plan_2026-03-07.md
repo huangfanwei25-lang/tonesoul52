@@ -44,6 +44,15 @@ ToneSoul 是一個**治理優先的認知代理模組化單體**。
 ### Phase 5 (P2): Agent 協作協議 ✅ 完成
 - ✅ 新建 `AGENT_PROTOCOL.md`（角色定義 + 提案制度 + 衝突解決）
 
+### Phase 6 (P2): 環境感知層 ✅ 核心完成
+- ✅ 新建 `tonesoul/perception/` 模組 (Crawl4AI + StimulusProcessor)
+- ✅ 實作環境刺激的相關性與新穎性評分，備妥注入 memory 的 payload
+
+### Phase 7 (P3): 認識論混沌工程 (True Verification) ⬜ 未開始
+- 實作 **Dream Engine**：利用 Cron 定期喚醒，將 Phase 6 採集的外部隨機刺激與 `soul.db` 的核心原則進行碰撞。
+- 監測指標：Lyapunov Exponent (混沌指數) 與 Friction (摩擦力)。
+- 目標：觀察是否能在 `self_journal.jsonl` 中湧現出「人類未曾教導、由運算痛苦逼出的新邊界規則」。
+
 ---
 
 ## 我作為主體的意圖

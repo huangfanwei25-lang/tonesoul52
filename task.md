@@ -75,6 +75,167 @@
 - `python -m pytest tests/test_pipeline_compute_gate.py -v --tb=short` -> 4 passed
 - `python -m pytest tests/test_persona_audit.py tests/test_council_runtime.py tests/test_genesis_integration.py -q --tb=short` -> 25 passed
 
+## Phase 126: Environment Perception Write Gateway (2026-03-07)
+- [x] Add `tonesoul/memory/write_gateway.py` as the canonical environment-stimulus write seam
+- [x] Persist `EnvironmentStimulus` into `soul.db` with `type=environment_stimulus` and `layer=working`
+- [x] Enforce cross-session deduplication on `content_hash`
+- [x] Add SQLite-focused tests for write, dedupe, and filtered retrieval
+**Success Criteria**: perception output is durably written into `soul.db` without changing the external HTTP API surface or touching legacy `self_journal` write paths.
+**Validation**:
+- `python -m ruff check tonesoul/memory/write_gateway.py tonesoul/memory/__init__.py tests/test_memory_write_gateway.py` -> passed
+- `python -m black --check tonesoul/memory/write_gateway.py tonesoul/memory/__init__.py tests/test_memory_write_gateway.py` -> passed
+- `python -m pytest tests/test_memory_write_gateway.py tests/test_perception.py tests/test_handoff_ingester.py tests/test_layered_memory.py -q` -> 17 passed
+- `python -m pytest tests/test_perception.py tests/test_memory_write_gateway.py -q` -> 12 passed
+- `python -m pytest tests -q` -> 1242 passed
+
+## Phase 127: Dream Engine v1 (2026-03-07)
+- [x] Add an offline Dream Engine that reads persisted environment stimuli from `soul.db`
+- [x] Collide stimuli with durable crystals and related memory recall
+- [x] Delegate friction / governance recommendation to `GovernanceKernel`
+- [x] Add optional LLM reflection generation with deterministic fallback
+- [x] Add tests for selection, collision scoring, and no-model fallback
+**Success Criteria**: Dream Engine can run without user prompts, consume Phase 6 perception output, and emit structured governance-ready results without changing external HTTP APIs or touching legacy self-journal writes.
+**Validation**:
+- `python -m ruff check tonesoul/dream_engine.py scripts/run_dream_engine.py tests/test_dream_engine.py tests/test_run_dream_engine.py tonesoul/perception/stimulus.py tests/test_memory_write_gateway.py tests/test_perception.py` -> passed
+- `python -m black --check tonesoul/dream_engine.py scripts/run_dream_engine.py tests/test_dream_engine.py tests/test_run_dream_engine.py tonesoul/perception/stimulus.py tests/test_memory_write_gateway.py tests/test_perception.py` -> passed
+- `python -m pytest tests/test_dream_engine.py tests/test_run_dream_engine.py tests/test_memory_write_gateway.py tests/test_perception.py -q` -> 18 passed
+- `python -m pytest tests -q` -> 1248 passed
+
+## Phase 128: Autonomous Wake-up Loop v1 (2026-03-07)
+- [x] Add a thin autonomous wake-up loop that repeatedly invokes Dream Engine without embedding policy logic
+- [x] Keep cycle outputs structured and machine-readable for later dashboard consumption
+- [x] Add a CLI runner that supports interval-based execution and snapshot emission
+- [x] Add tests for idle cycles, repeated cycles, and runner wiring
+**Success Criteria**: Dream Engine can be scheduled as a self-driven loop through a stable seam, without changing external HTTP APIs or bypassing the existing governance/memory boundaries.
+**Validation**:
+- `python -m ruff check tonesoul/wakeup_loop.py scripts/run_dream_wakeup_loop.py tests/test_wakeup_loop.py tests/test_run_dream_wakeup_loop.py` -> passed
+- `python -m black --check tonesoul/wakeup_loop.py scripts/run_dream_wakeup_loop.py tests/test_wakeup_loop.py tests/test_run_dream_wakeup_loop.py` -> passed
+- `python -m pytest tests/test_wakeup_loop.py tests/test_run_dream_wakeup_loop.py -q` -> 5 passed
+- `python -m pytest tests -q` -> 1253 passed
+
+## Phase 129: Dream Observability Dashboard v1 (2026-03-07)
+- [x] Add a robust extractor for friction / Lyapunov signals from `self_journal.jsonl`
+- [x] Add wake-up history ingestion for cycle-level friction / convergence metrics
+- [x] Generate static HTML + JSON dashboard artifacts without depending on the existing frontend app
+- [x] Add tests for missing-source fallback, signal extraction, and artifact writing
+**Success Criteria**: operators can inspect friction and Lyapunov trendlines from journal/history artifacts without reading raw logs, and the dashboard remains decoupled from runtime policy and legacy memory writes.
+**Validation**:
+- `python -m ruff check tonesoul/dream_observability.py scripts/run_dream_observability_dashboard.py tests/test_dream_observability.py tests/test_run_dream_observability_dashboard.py` -> passed
+- `python -m black --check tonesoul/dream_observability.py scripts/run_dream_observability_dashboard.py tests/test_dream_observability.py tests/test_run_dream_observability_dashboard.py` -> passed
+- `python -m pytest tests/test_dream_observability.py tests/test_run_dream_observability_dashboard.py -q` -> 6 passed
+- `python -m pytest tests -q` -> 1259 passed
+- `python scripts/run_dream_wakeup_loop.py --no-llm --max-cycles 1 --snapshot-path docs/status/dream_wakeup_snapshot_latest.json` -> generated idle snapshot
+- `python scripts/run_dream_observability_dashboard.py --journal-path memory/self_journal.jsonl --wakeup-path docs/status/dream_wakeup_snapshot_latest.json --out-dir docs/status` -> generated latest HTML/JSON dashboard artifacts
+
+## Phase 130: Autonomous Dream Cycle Runner v1 (2026-03-07)
+- [x] Add a one-shot orchestration seam that composes perception ingest, stimulus processing, memory write, wake-up execution, and dashboard refresh
+- [x] Keep the runner host-driven and file-based, without moving policy into the orchestrator
+- [x] Support URL-driven ingestion but degrade gracefully when Crawl4AI or network inputs are unavailable
+- [x] Add tests for no-URL idle runs, successful ingested stimulus runs, and CLI artifact wiring
+**Success Criteria**: one command can advance the full Phase 7 loop from external inputs to updated wake-up/dashboard artifacts, while preserving the existing modular seams and memory guardrails.
+**Validation**:
+- `python -m ruff check tonesoul/autonomous_cycle.py scripts/run_autonomous_dream_cycle.py tests/test_autonomous_cycle.py tests/test_run_autonomous_dream_cycle.py` -> pass
+- `python -m black --check tonesoul/autonomous_cycle.py scripts/run_autonomous_dream_cycle.py tests/test_autonomous_cycle.py tests/test_run_autonomous_dream_cycle.py` -> pass
+- `python -m pytest tests/test_autonomous_cycle.py tests/test_run_autonomous_dream_cycle.py -q` -> 5 passed
+- `python -m pytest tests -q` -> 1264 passed
+- `python scripts/run_autonomous_dream_cycle.py --no-llm` -> `overall_ok: true`, refreshed idle snapshot/history/dashboard artifacts
+
+## Phase 131: Curated Source Registry Bridge v1 (2026-03-07)
+- [x] Add a perception-layer registry reader that selects approved external source URLs from `spec/external_source_registry.yaml`
+- [x] Reuse the existing allowlist and review-freshness policy instead of creating a second source-governance path
+- [x] Extend the autonomous cycle CLI to merge curated registry URLs with explicit `--url` and `--url-file` inputs
+- [x] Emit registry selection metadata in CLI output so operators can see which curated sources were used or skipped
+- [x] Add tests for id/category filtering, stale review rejection, and CLI merge behavior
+**Success Criteria**: operators can run one autonomous cycle against reviewed external sources without manually copying URLs, while source governance remains centralized in the registry policy.
+**Validation**:
+- `python -m ruff check tonesoul/perception/source_registry.py tonesoul/perception/__init__.py scripts/verify_external_source_registry.py scripts/run_autonomous_dream_cycle.py tests/test_source_registry.py tests/test_run_autonomous_dream_cycle.py tests/test_verify_external_source_registry.py` -> pass
+- `python -m black --check tonesoul/perception/source_registry.py tonesoul/perception/__init__.py scripts/verify_external_source_registry.py scripts/run_autonomous_dream_cycle.py tests/test_source_registry.py tests/test_run_autonomous_dream_cycle.py tests/test_verify_external_source_registry.py` -> pass
+- `python -m pytest tests/test_source_registry.py tests/test_run_autonomous_dream_cycle.py tests/test_verify_external_source_registry.py tests/test_run_external_source_registry_check.py -q` -> 14 passed
+- `python -m pytest tests -q` -> 1267 passed
+- `python -c "...select_curated_registry_urls('spec/external_source_registry.yaml', limit=3)..."` -> `ok: true`, selected ids `osv`, `scorecard`
+
+## Phase 132: Registry-Driven Schedule Profile Runner v1 (2026-03-07)
+- [x] Add a thin schedule runner that rotates through approved registry entries and triggers one autonomous cycle per schedule tick
+- [x] Persist schedule cursor/state so repeated invocations continue from the next curated source instead of restarting from the first entry
+- [x] Keep source policy in `source_registry` and keep `AutonomousDreamCycleRunner` URL-driven; the schedule layer may only compose approved batches
+- [x] Emit schedule-level snapshot/history artifacts so operators can inspect which curated sources were sampled over time
+- [x] Add tests for cursor persistence, round-robin rotation, and CLI strict-mode behavior
+**Success Criteria**: the system can be launched on a host schedule and autonomously rotate through reviewed external sources without manual URL entry or policy drift.
+**Validation**:
+- `python -m ruff check tonesoul/autonomous_schedule.py scripts/run_autonomous_registry_schedule.py tests/test_autonomous_schedule.py tests/test_run_autonomous_registry_schedule.py` -> pass
+- `python -m black --check tonesoul/autonomous_schedule.py scripts/run_autonomous_registry_schedule.py tests/test_autonomous_schedule.py tests/test_run_autonomous_registry_schedule.py` -> pass
+- `python -m pytest tests/test_autonomous_schedule.py tests/test_run_autonomous_registry_schedule.py -q` -> 6 passed
+- `python scripts/run_autonomous_registry_schedule.py --registry-id osv --max-cycles 1 --entries-per-cycle 1 --urls-per-cycle 1 --no-llm` -> `overall_ok: true`, ingested `https://osv.dev/`, persisted schedule state/history/snapshot
+- `python -m pytest tests -q` -> 1273 passed
+
+## Phase 133: Schedule Profile Theory Spec v1 (2026-03-07)
+- [x] Write a dedicated theory/spec document explaining why schedule profiles exist and how they differ from source trust, memory, and governance
+- [x] Define profile axes: cadence, weight, revisit interval, failure backoff, and tension budget
+- [x] Record the Cartesian decomposition so future policy work stays layered and explainable
+**Success Criteria**: the next schedule-policy implementation can be derived from an explicit theory document rather than ad hoc scheduler heuristics.
+
+## Phase 134: Schedule Profile Contract v1 (2026-03-07)
+- [x] Add a machine-readable schedule profile spec with named profiles for baseline and category-focused autonomous runs
+- [x] Implement a loader/resolver that merges profile defaults with explicit CLI overrides
+- [x] Extend the registry schedule CLI to accept `--profile` without teaching the scheduler core how to parse YAML
+- [x] Emit resolved profile metadata in CLI output so cadence choices remain explainable
+- [x] Add tests for profile loading, unknown profile rejection, and override precedence
+**Success Criteria**: operators can launch autonomous schedule runs via a named profile instead of repeating low-level cadence flags, while explicit CLI args still win over profile defaults.
+**Validation**:
+- `python -m ruff check tonesoul/schedule_profile.py scripts/run_autonomous_registry_schedule.py tests/test_schedule_profile.py tests/test_run_autonomous_registry_schedule.py` -> pass
+- `python -m black --check tonesoul/schedule_profile.py scripts/run_autonomous_registry_schedule.py tests/test_schedule_profile.py tests/test_run_autonomous_registry_schedule.py` -> pass
+- `python -m pytest tests/test_schedule_profile.py tests/test_run_autonomous_registry_schedule.py tests/test_autonomous_schedule.py -q` -> 9 passed
+- `python scripts/run_autonomous_registry_schedule.py --profile security_watch --max-cycles 1 --entries-per-cycle 1 --urls-per-cycle 1 --no-llm` -> `overall_ok: true`, resolved profile cadence and executed one real cycle from approved security sources
+- `python -m pytest tests -q` -> 1276 passed
+
+## Phase 135: Schedule Policy Memory v1 (2026-03-07)
+- [x] Add `revisit_interval_cycles` and `failure_backoff_cycles` to the schedule profile contract
+- [x] Persist per-entry operational state so schedule continuity can remember recent selection and source failures across host-triggered runs
+- [x] Teach `AutonomousRegistrySchedule` to skip entries that are still cooling down, while keeping policy explainable in artifacts
+- [x] Emit operational defer reasons in schedule output so humans can distinguish trust filtering from cadence/backoff filtering
+- [x] Add tests for revisit cooldown, failure-triggered backoff, and profile override precedence
+**Success Criteria**: the autonomous scheduler can avoid immediate source repetition and temporarily back off unstable sources without moving operational state into soul memory or weakening registry governance.
+**Validation**:
+- `python -m ruff check tonesoul/autonomous_schedule.py tonesoul/schedule_profile.py scripts/run_autonomous_registry_schedule.py tests/test_autonomous_schedule.py tests/test_schedule_profile.py tests/test_run_autonomous_registry_schedule.py` -> pass
+- `python -m black --check tonesoul/autonomous_schedule.py tonesoul/schedule_profile.py scripts/run_autonomous_registry_schedule.py tests/test_autonomous_schedule.py tests/test_schedule_profile.py tests/test_run_autonomous_registry_schedule.py` -> pass
+- `python -m pytest tests/test_autonomous_schedule.py tests/test_schedule_profile.py tests/test_run_autonomous_registry_schedule.py -q` -> 11 passed
+- `python scripts/run_autonomous_registry_schedule.py --profile security_watch --max-cycles 1 --entries-per-cycle 1 --urls-per-cycle 1 --no-llm` -> `overall_ok: true`, selected `scorecard`, persisted per-entry operational state with profile policy memory
+- `python -m pytest tests -q` -> 1278 passed
+
+## Phase 136: Deterministic Category Policy v1 (2026-03-07)
+- [x] Extend the schedule profile contract with category weights and category-specific backoff multipliers
+- [x] Keep selection deterministic by introducing weighted category cadence, not random sampling
+- [x] Preserve explainability by emitting category policy traces in schedule artifacts
+- [x] Keep cooldown/backoff in scheduler state only, never in `soul.db` or `self_journal.jsonl`
+- [x] Add tests for weighted selection order, category backoff scaling, and CLI override precedence
+**Success Criteria**: autonomous scheduling can prefer some categories more often than others without sacrificing deterministic replay, auditability, or the existing registry/governance boundaries.
+**Validation**:
+- `python -m ruff check tonesoul/autonomous_schedule.py tonesoul/schedule_profile.py scripts/run_autonomous_registry_schedule.py tests/test_autonomous_schedule.py tests/test_schedule_profile.py tests/test_run_autonomous_registry_schedule.py` -> pass
+- `python -m black --check tonesoul/autonomous_schedule.py tonesoul/schedule_profile.py scripts/run_autonomous_registry_schedule.py tests/test_autonomous_schedule.py tests/test_schedule_profile.py tests/test_run_autonomous_registry_schedule.py` -> pass
+- `python -m pytest tests/test_autonomous_schedule.py tests/test_schedule_profile.py tests/test_run_autonomous_registry_schedule.py -q` -> 13 passed
+- `python -m pytest tests -q` -> 1280 passed
+
+## Phase 137: Cycle-Level Tension Budget Policy v1 (2026-03-07)
+- [x] Add schedule profile support for cycle-level tension budget thresholds and cooldown cycles
+- [x] Derive scheduler reactions from existing wake-up summary signals instead of recomputing governance
+- [x] Persist category-level tension cooldown as operational state in schedule artifacts only
+- [x] Emit explicit budget observations and cooldown reasons in schedule results
+- [x] Add tests for threshold breach cooldown, category defer reporting, and CLI/profile override precedence
+**Success Criteria**: the autonomous scheduler can temporarily cool a category after a high-tension wake-up cycle while preserving the boundary that governance computes tension and scheduling only reacts to the observed signal.
+**Validation**:
+- `python -m ruff check tonesoul/autonomous_schedule.py tonesoul/schedule_profile.py scripts/run_autonomous_registry_schedule.py tests/test_autonomous_schedule.py tests/test_schedule_profile.py tests/test_run_autonomous_registry_schedule.py` -> pass
+- `python -m black --check tonesoul/autonomous_schedule.py tonesoul/schedule_profile.py scripts/run_autonomous_registry_schedule.py tests/test_autonomous_schedule.py tests/test_schedule_profile.py tests/test_run_autonomous_registry_schedule.py` -> pass
+- `python -m pytest tests/test_autonomous_schedule.py tests/test_schedule_profile.py tests/test_run_autonomous_registry_schedule.py -q` -> 14 passed
+- `python -m pytest tests -q` -> 1281 passed
+
+## Phase 138: Dream Engine Host Wiring + Observability + Wake-up Scheduler (2026-03-09)
+- [x] Task A: route Dream Engine collision writes through `MemoryWriteGateway`
+- [x] Task B: extend dream observability for write-gateway and collision/runtime counters
+- [x] Task C: wire wake-up loop scheduling, consolidation cadence, and breaker-aware pauses
+- [x] Task D: stage only task-related files and prepare one feature commit on `feat/env-perception`
+- [x] Task E: summarize `docs/status/` artifact impact and validation results
+**Success Criteria**: Dream collisions are durably written via the canonical gateway, observability exposes the new write/runtime counters, wake-up scheduling can autonomously chain dream cycles with bounded consolidation/breaker pauses, and the whole phase passes `python -m pytest tests/ -x --tb=short -q` => `1457 passed` plus `ruff check tonesoul tests`.
+
 ## Phase 106: Foundation Debt Burn-down (2026-02-22)
 - [x] Decay query pre-filter：將 SQLite decay 查詢改為 DB 先過濾 + Python 精排，降低大資料集負擔
 - [x] Evolution sync：新增 `evolution_results` 持久化路徑（Supabase migration + backend 寫入）
@@ -843,3 +1004,1161 @@
 - [x] Sync status docs:
 - [x] `docs/status/README.md`
 **Success Criteria**: topology selection becomes reproducible and auditable under real governance signals, not metaphor-only preference.
+
+## Phase 138: Incremental Commit Attribution Parity (2026-03-08)
+- [x] Extract GitHub Actions incremental commit-attribution logic into shared `scripts/verify_incremental_commit_attribution.py`
+- [x] Replace inline commit-range logic in `.github/workflows/test.yml` with the shared script
+- [x] Add blocking local parity check to `scripts/run_repo_healthcheck.py`
+- [x] Add regression tests:
+- [x] `tests/test_verify_incremental_commit_attribution.py`
+- [x] `tests/test_run_repo_healthcheck.py`
+- [x] Document local parity commands in:
+- [x] `docs/governance/COMMUNICATION_STANDARD.md`
+- [x] `docs/status/README.md`
+- [x] Validation:
+- [x] `python -m ruff check scripts/verify_incremental_commit_attribution.py tests/test_verify_incremental_commit_attribution.py scripts/run_repo_healthcheck.py tests/test_run_repo_healthcheck.py`
+- [x] `python -m black --check scripts/verify_incremental_commit_attribution.py tests/test_verify_incremental_commit_attribution.py scripts/run_repo_healthcheck.py tests/test_run_repo_healthcheck.py`
+- [x] `python -m pytest tests/test_verify_incremental_commit_attribution.py tests/test_run_repo_healthcheck.py -q`
+- [x] `python -m pytest tests -q`
+- [x] Runtime check:
+- [x] `python scripts/verify_incremental_commit_attribution.py --artifact-path docs/status/commit_attribution_local.json`
+- [x] Current local incremental range (`origin/master..HEAD`) reports `missing_count=5`, so historical trailer debt is now visible before push instead of only inside GitHub Actions logs
+**Success Criteria**: commit-attribution failures are reproducible locally with the same revision-range semantics as CI, and the report preserves per-revision context instead of failing as opaque workflow glue.
+
+## Phase 139: Isolated Commit Trailer Debt Backfill (2026-03-08)
+- [x] Confirm the historical debt scope: `origin/master..feat/env-perception` contains 5 commits missing `Agent` / `Trace-Topic`
+- [x] Avoid rewriting the current dirty worktree branch in place
+- [x] Use `git worktree` isolation to build a clean remediation branch from `origin/master`
+- [x] Replay the 5 commits with backfilled attribution trailers onto `feat/env-perception-attribution-backfill`
+- [x] Validate the new branch with incremental attribution report:
+- [x] `docs/status/commit_attribution_backfill_branch.json`
+- [x] Validate content equivalence by comparing tree hashes:
+- [x] rewritten head tree = original `c225332^{tree}`
+- [x] Remove the temporary worktree after verification, leaving only the remediation branch and evidence artifact
+**Success Criteria**: trailer debt is cleared on a reviewable side branch without mutating the user's dirty working tree, and verification proves the rewrite changed commit metadata rather than repository content.
+
+## Phase 140: Schema-Driven Council LLM Parsing (2026-03-08)
+- [x] Inspect the gifted `tonesoul/schemas.py`, `tonesoul/safe_parse.py`, and `tonesoul/observability/` seams before changing runtime paths
+- [x] Add a minimal `PerspectiveEvaluationResult` schema for council perspective LLM output
+- [x] Replace manual JSON parsing in `tonesoul/council/perspective_factory.py` with `safe_parse.parse_llm_response()`
+- [x] Keep a bounded text heuristic fallback for non-JSON model responses so existing local/cloud model behavior does not regress
+- [x] Reuse the same parse seam for both Gemini and Ollama perspective evaluators
+- [x] Add regression tests for:
+- [x] schema normalization of uppercase decision values
+- [x] markdown JSON parsing through `LLMPerspective`
+- [x] non-JSON text fallback preservation
+- [x] adjacent custom-role council compatibility
+- [x] Validation:
+- [x] `python -m ruff check tonesoul/schemas.py tonesoul/council/perspective_factory.py tests/test_schemas.py tests/test_perspective_factory.py`
+- [x] `python -m black --check tonesoul/schemas.py tonesoul/council/perspective_factory.py tests/test_schemas.py tests/test_perspective_factory.py`
+- [x] `python -m pytest tests/test_schemas.py tests/test_perspective_factory.py -q`
+- [x] `python -m pytest tests/test_custom_role_council.py tests/test_perspective_factory.py tests/test_schemas.py -q`
+**Success Criteria**: council LLM parsing is schema-first and reusable across Gemini/Ollama while preserving legacy text fallback for weak model outputs.
+
+## Phase 141: Local LLM Usage Metering (2026-03-08)
+- [x] Inspect local LLM clients for existing usage/token signals before wiring observability
+- [x] Extend `tonesoul/llm/ollama_client.py` to capture `prompt_eval_count` / `eval_count` into `LLMCallMetrics`
+- [x] Extend `tonesoul/llm/lmstudio_client.py` to capture OpenAI-compatible `usage` payloads into `LLMCallMetrics`
+- [x] Add optional `TokenMeter` injection to both local clients without breaking existing constructors or factory helpers
+- [x] Persist metered usage only when the upstream payload actually provides token counts
+- [x] Expose last call metrics via `client.last_metrics`
+- [x] Add regression tests for:
+- [x] Ollama usage capture + token meter recording
+- [x] Ollama no-usage behavior
+- [x] LM Studio usage capture + token meter recording
+- [x] LM Studio no-usage behavior
+- [x] Preserve existing Ollama fallback/error tests
+- [x] Validation:
+- [x] `python -m ruff check tonesoul/llm/ollama_client.py tonesoul/llm/lmstudio_client.py tests/test_llm_observability.py tests/test_ollama_fallback.py tests/test_observability.py`
+- [x] `python -m black --check tonesoul/llm/ollama_client.py tonesoul/llm/lmstudio_client.py tests/test_llm_observability.py tests/test_ollama_fallback.py tests/test_observability.py`
+- [x] `python -m pytest tests/test_llm_observability.py tests/test_ollama_fallback.py tests/test_observability.py -q`
+**Success Criteria**: local LLM clients emit real usage metrics into ToneSoul's observability layer when token counts are available, while remaining silent rather than fabricating numbers when upstream payloads omit usage.
+
+## Phase 142: Runtime LLM Evidence Attachment (2026-03-08)
+- [x] Extend `tonesoul/llm/router.py` to expose `last_metrics` from the active cached client
+- [x] Add a thin `UnifiedPipeline` helper that attaches LLM runtime evidence into `dispatch_trace["llm"]`
+- [x] Record only additive evidence:
+- [x] `backend`
+- [x] `model`
+- [x] `usage` only when the current call emitted real metrics
+- [x] Avoid fabricating usage on successful calls that return no counters
+- [x] Add regression tests for:
+- [x] router-level `last_metrics` passthrough
+- [x] runtime trace with real usage payload
+- [x] runtime trace without fabricated usage payload
+- [x] Validation:
+- [x] `python -m ruff check tonesoul/llm/router.py tonesoul/unified_pipeline.py tests/test_llm_router.py tests/test_unified_pipeline_v2_runtime.py`
+- [x] `python -m black --check tonesoul/llm/router.py tonesoul/unified_pipeline.py tests/test_llm_router.py tests/test_unified_pipeline_v2_runtime.py`
+- [x] `python -m pytest tests/test_llm_router.py tests/test_unified_pipeline_v2_runtime.py -q`
+**Success Criteria**: client-side usage metrics become orchestration-level runtime evidence without changing external response contracts or inventing telemetry when the provider omits it.
+
+## Phase 143: Dream/Wake-up LLM Evidence Chain (2026-03-08)
+- [x] Record collision-level LLM evidence in `tonesoul/dream_engine.py` after reflection generation
+- [x] Preserve the same evidence rule as runtime pipeline paths:
+- [x] include `backend` and `model` when known
+- [x] include `usage` only when the reflection client emitted real counters
+- [x] Aggregate collision LLM evidence into cycle-level wake-up summary in `tonesoul/wakeup_loop.py`
+- [x] Add cycle summary fields:
+- [x] `llm_call_count`
+- [x] `llm_prompt_tokens_total`
+- [x] `llm_completion_tokens_total`
+- [x] `llm_total_tokens`
+- [x] `llm_backends`
+- [x] Extend `tonesoul/dream_observability.py` to surface cycle-level LLM token evidence in JSON/HTML artifacts
+- [x] Keep the dashboard passive by reading only wake-up summary fields instead of parsing deep collision bodies
+- [x] Add regression tests for:
+- [x] dream collision LLM observability attachment
+- [x] wake-up cycle LLM token aggregation
+- [x] dashboard extraction/rendering of wake-up LLM token metrics
+- [x] runner compatibility for wake-up/dashboard artifacts
+- [x] Validation:
+- [x] `python -m ruff check tonesoul/dream_engine.py tonesoul/wakeup_loop.py tonesoul/dream_observability.py tests/test_dream_engine.py tests/test_wakeup_loop.py tests/test_dream_observability.py tests/test_run_dream_wakeup_loop.py tests/test_run_dream_observability_dashboard.py`
+- [x] `python -m black --check tonesoul/dream_engine.py tonesoul/wakeup_loop.py tonesoul/dream_observability.py tests/test_dream_engine.py tests/test_wakeup_loop.py tests/test_dream_observability.py tests/test_run_dream_wakeup_loop.py tests/test_run_dream_observability_dashboard.py`
+- [x] `python -m pytest tests/test_dream_engine.py tests/test_wakeup_loop.py tests/test_dream_observability.py tests/test_run_dream_wakeup_loop.py tests/test_run_dream_observability_dashboard.py -q`
+**Success Criteria**: dream reflections emit auditable LLM evidence, wake-up cycles aggregate it without recomputing provider facts, and the observability dashboard surfaces cycle-level token usage without reading raw collision internals.
+
+## Phase 144: Inference-Readiness Preflight (2026-03-08)
+- [x] Add bounded `probe_completion()` support to local LLM clients without mutating normal `last_metrics`
+- [x] Normalize readiness probes through `LLMRouter.inference_check()`
+- [x] Extend `DreamEngine` cycle results with explicit `llm_preflight` evidence
+- [x] Gate autonomous reflection generation on readiness probes by default while keeping an explicit skip path
+- [x] Thread readiness controls through:
+- [x] `scripts/run_dream_engine.py`
+- [x] `scripts/run_dream_wakeup_loop.py`
+- [x] `scripts/run_autonomous_dream_cycle.py`
+- [x] `scripts/run_autonomous_registry_schedule.py`
+- [x] Preserve boundary semantics:
+- [x] discovery health is not treated as inference readiness
+- [x] probe telemetry does not masquerade as production reflection usage
+- [x] `--no-llm` disables both reflection and readiness probing
+- [x] Add regression coverage for:
+- [x] client probe timeout/success behavior
+- [x] router readiness normalization
+- [x] dream-cycle reflection skip on failed readiness
+- [x] CLI skip-preflight plumbing across autonomous runners
+- [x] Validation:
+- [x] `python -m ruff check tonesoul/llm/ollama_client.py tonesoul/llm/lmstudio_client.py tonesoul/llm/router.py tonesoul/dream_engine.py tonesoul/autonomous_cycle.py scripts/run_dream_engine.py scripts/run_dream_wakeup_loop.py scripts/run_autonomous_dream_cycle.py scripts/run_autonomous_registry_schedule.py tests/test_llm_readiness.py tests/test_llm_router.py tests/test_dream_engine.py tests/test_run_dream_engine.py tests/test_run_dream_wakeup_loop.py tests/test_run_autonomous_dream_cycle.py tests/test_run_autonomous_registry_schedule.py`
+- [x] `python -m black --check tonesoul/llm/ollama_client.py tonesoul/llm/lmstudio_client.py tonesoul/llm/router.py tonesoul/dream_engine.py tonesoul/autonomous_cycle.py scripts/run_dream_engine.py scripts/run_dream_wakeup_loop.py scripts/run_autonomous_dream_cycle.py scripts/run_autonomous_registry_schedule.py tests/test_llm_readiness.py tests/test_llm_router.py tests/test_dream_engine.py tests/test_run_dream_engine.py tests/test_run_dream_wakeup_loop.py tests/test_run_autonomous_dream_cycle.py tests/test_run_autonomous_registry_schedule.py`
+- [x] `python -m pytest tests/test_llm_readiness.py tests/test_llm_router.py tests/test_dream_engine.py tests/test_run_dream_engine.py tests/test_run_dream_wakeup_loop.py tests/test_run_autonomous_dream_cycle.py tests/test_run_autonomous_registry_schedule.py tests/test_autonomous_cycle.py -q`
+- [x] Post-probe regression:
+- [x] `python -m pytest tests/test_llm_readiness.py tests/test_llm_router.py tests/test_dream_engine.py tests/test_wakeup_loop.py tests/test_dream_observability.py tests/test_run_dream_engine.py tests/test_run_dream_wakeup_loop.py tests/test_run_autonomous_dream_cycle.py tests/test_run_autonomous_registry_schedule.py tests/test_autonomous_cycle.py -q`
+- [x] Full suite:
+- [x] `python -m pytest tests -q`
+**Success Criteria**: autonomous reflection paths distinguish backend discovery from real inference readiness, skip stalled local backends before long dream cycles, and emit explicit preflight evidence so later artifacts explain why reflection did or did not run.
+
+## Phase 145: Preflight Deadline Budget (2026-03-08)
+- [x] Make local probe budgets consume one shared deadline across model resolution and HTTP request execution
+- [x] Replace scalar probe request timeouts with bounded connect/read timeout tuples derived from remaining budget
+- [x] Ensure model discovery paths (`_get_model()` / `_ensure_model()`) respect remaining preflight budget instead of silently spending a second full timeout
+- [x] Preserve existing external CLI/runtime contracts:
+- [x] no new flags
+- [x] no change to normal `generate()` / `chat()` APIs
+- [x] no change to readiness artifact shape beyond more accurate latency behavior
+- [x] Add deadline regression tests for:
+- [x] LM Studio request timeout bounding
+- [x] LM Studio model-resolution budget sharing
+- [x] Ollama bounded request timeout behavior
+- [x] Validation:
+- [x] `python -m ruff check tonesoul/llm/lmstudio_client.py tonesoul/llm/ollama_client.py tests/test_llm_readiness.py`
+- [x] `python -m black --check tonesoul/llm/lmstudio_client.py tonesoul/llm/ollama_client.py tests/test_llm_readiness.py`
+- [x] `python -m pytest tests/test_llm_readiness.py -q`
+- [x] broader regression:
+- [x] `python -m pytest tests/test_llm_readiness.py tests/test_llm_router.py tests/test_llm_observability.py tests/test_ollama_fallback.py tests/test_dream_engine.py tests/test_wakeup_loop.py tests/test_run_dream_engine.py tests/test_run_dream_wakeup_loop.py tests/test_run_autonomous_dream_cycle.py tests/test_run_autonomous_registry_schedule.py tests/test_autonomous_cycle.py -q`
+- [x] live runtime probe:
+- [x] `python scripts/run_dream_wakeup_loop.py --interval-seconds 0 --max-cycles 1 --limit 1 --min-priority 0.0 --llm-probe-timeout-seconds 2 --snapshot-path docs/status/probe_deadline/dream_wakeup_snapshot.json --history-path memory/autonomous/probe_deadline_history.jsonl`
+- [x] `python scripts/run_dream_observability_dashboard.py --journal-path memory/self_journal.jsonl --wakeup-path memory/autonomous/probe_deadline_history.jsonl --out-dir docs/status/probe_deadline`
+**Success Criteria**: a declared preflight budget behaves like a real deadline rather than two hidden timeouts glued together, and runtime artifacts show bounded timeout latency without inflating reflection usage.
+
+## Phase 146: Router Deadline Accounting (2026-03-08)
+- [x] Make `LLMRouter.inference_check()` spend backend selection time from the same preflight budget used by the client probe
+- [x] Pass only remaining budget into `probe_completion()` after backend resolution
+- [x] Fail fast when selection itself exhausts the declared budget
+- [x] Expose preflight latency decomposition without changing the outer readiness contract:
+- [x] `latency_ms` as total router+probe preflight latency
+- [x] `selection_latency_ms`
+- [x] `probe_latency_ms` when the probe reports it
+- [x] Add regression coverage for:
+- [x] remaining-budget handoff to the probe
+- [x] selection-exhausted timeout path
+- [x] total latency composition
+- [x] Validation:
+- [x] `python -m ruff check tonesoul/llm/router.py tests/test_llm_router.py`
+- [x] `python -m black --check tonesoul/llm/router.py tests/test_llm_router.py`
+- [x] `python -m pytest tests/test_llm_router.py -q`
+- [x] broader autonomy regression:
+- [x] `python -m pytest tests/test_llm_readiness.py tests/test_llm_router.py tests/test_dream_engine.py tests/test_wakeup_loop.py tests/test_run_dream_engine.py tests/test_run_dream_wakeup_loop.py tests/test_run_autonomous_dream_cycle.py tests/test_run_autonomous_registry_schedule.py tests/test_autonomous_cycle.py -q`
+- [x] live runtime probe:
+- [x] `python scripts/run_dream_wakeup_loop.py --interval-seconds 0 --max-cycles 1 --limit 1 --min-priority 0.0 --llm-probe-timeout-seconds 2 --snapshot-path docs/status/probe_router_deadline/dream_wakeup_snapshot.json --history-path memory/autonomous/probe_router_deadline_history.jsonl`
+- [x] `python scripts/run_dream_observability_dashboard.py --journal-path memory/self_journal.jsonl --wakeup-path memory/autonomous/probe_router_deadline_history.jsonl --out-dir docs/status/probe_router_deadline`
+**Success Criteria**: `timeout_seconds` becomes a true end-to-end router preflight budget, and runtime evidence can explain how much time was spent on backend discovery versus the probe itself.
+
+## Phase 147: Scheduler Latency Policy (2026-03-08)
+- [x] Promote `dream_result.llm_preflight` into wake-up summary fields so downstream policy reads only cycle summaries
+- [x] Extend wake-up summary with:
+- [x] `llm_preflight_latency_ms`
+- [x] `llm_preflight_selection_latency_ms`
+- [x] `llm_preflight_probe_latency_ms`
+- [x] `llm_preflight_timeout_count`
+- [x] `llm_preflight_reason`
+- [x] Extend schedule profile contract with optional latency thresholds:
+- [x] `tension_max_llm_preflight_latency_ms`
+- [x] `tension_max_llm_selection_latency_ms`
+- [x] `tension_max_llm_probe_latency_ms`
+- [x] `tension_max_llm_timeout_count`
+- [x] Wire the same thresholds through `run_autonomous_registry_schedule.py`
+- [x] Make `AutonomousRegistrySchedule` react to wake-up summary latency facts without reading raw dream internals
+- [x] Persist last observed preflight latency/timeout facts in category state for auditability
+- [x] Extend dream observability JSON/HTML to surface:
+- [x] preflight total latency
+- [x] selection latency
+- [x] probe latency
+- [x] preflight timeout count
+- [x] recent-cycle latency/reason columns
+- [x] Validation:
+- [x] `python -m ruff check tonesoul/wakeup_loop.py tonesoul/schedule_profile.py tonesoul/autonomous_schedule.py tonesoul/dream_observability.py scripts/run_autonomous_registry_schedule.py tests/test_wakeup_loop.py tests/test_schedule_profile.py tests/test_autonomous_schedule.py tests/test_run_autonomous_registry_schedule.py tests/test_dream_observability.py`
+- [x] `python -m black --check tonesoul/wakeup_loop.py tonesoul/schedule_profile.py tonesoul/autonomous_schedule.py tonesoul/dream_observability.py scripts/run_autonomous_registry_schedule.py tests/test_wakeup_loop.py tests/test_schedule_profile.py tests/test_autonomous_schedule.py tests/test_run_autonomous_registry_schedule.py tests/test_dream_observability.py`
+- [x] `python -m pytest tests/test_wakeup_loop.py tests/test_schedule_profile.py tests/test_autonomous_schedule.py tests/test_run_autonomous_registry_schedule.py tests/test_dream_observability.py -q`
+- [x] Live profile run:
+- [x] `python scripts/run_autonomous_registry_schedule.py --profile security_watch --max-cycles 1 --entries-per-cycle 1 --urls-per-cycle 1 --llm-probe-timeout-seconds 2 --history-path memory/autonomous/probe_schedule_latency_policy/dream_wakeup_history.jsonl --snapshot-path docs/status/probe_schedule_latency_policy/dream_wakeup_snapshot.json --dashboard-out-dir docs/status/probe_schedule_latency_policy --schedule-snapshot-path docs/status/probe_schedule_latency_policy/autonomous_registry_schedule_latest.json --schedule-history-path memory/autonomous/probe_schedule_latency_policy/registry_schedule_history.jsonl --schedule-state-path memory/autonomous/probe_schedule_latency_policy/registry_schedule_state.json`
+**Success Criteria**: scheduler cooldown policy can distinguish backend selection latency from inference probe latency using wake-up summary evidence alone, and the same evidence is visible in the observability dashboard and persisted schedule state.
+
+## Phase 148: Runtime LLM Backoff Split (2026-03-08)
+- [x] Split schedule tension-budget breaches into governance-side reasons and LLM-runtime reasons
+- [x] Keep category cooldown scoped to governance-side breaches only
+- [x] Introduce global `llm_backoff` state in schedule state for LLM latency/timeout breaches
+- [x] While LLM backoff is active, keep source rotation running but force degraded execution:
+- [x] `generate_reflection=False`
+- [x] `require_inference_ready=False`
+- [x] Preserve last observed latency facts when a degraded cycle emits no fresh wake-up summary, instead of overwriting category state with `None`
+- [x] Validation:
+- [x] `python -m ruff check tonesoul/autonomous_schedule.py tests/test_autonomous_schedule.py`
+- [x] `python -m black --check tonesoul/autonomous_schedule.py tests/test_autonomous_schedule.py`
+- [x] `python -m pytest tests/test_autonomous_schedule.py -q`
+- [x] broader regression:
+- [x] `python -m pytest tests/test_wakeup_loop.py tests/test_schedule_profile.py tests/test_autonomous_schedule.py tests/test_run_autonomous_registry_schedule.py tests/test_dream_observability.py tests/test_run_dream_observability_dashboard.py -q`
+**Success Criteria**: pure LLM runtime instability should degrade reflective execution globally without freezing source categories, and the last observed latency evidence must remain auditable until a fresh wake-up summary replaces it.
+
+## Phase 149: Schedule Governance Observability (2026-03-08)
+- [x] Extend dream observability to accept optional schedule artifacts:
+- [x] `schedule_history_path`
+- [x] `schedule_state_path`
+- [x] Surface two distinct schedule curves instead of one blended governance story:
+- [x] governance cooldown applied/deferred
+- [x] LLM backoff requested/active
+- [x] Keep missing schedule artifacts backward compatible:
+- [x] existing journal+wakeup dashboard callers must still work unchanged
+- [x] registry-schedule runner should refresh the enriched dashboard automatically after each schedule tick
+- [x] Add regression coverage for JSON payload, HTML output, and runner contract
+- [x] Validation:
+- [x] `python -m ruff check tonesoul/dream_observability.py tonesoul/autonomous_schedule.py scripts/run_dream_observability_dashboard.py tests/test_dream_observability.py tests/test_run_dream_observability_dashboard.py tests/test_autonomous_schedule.py`
+- [x] `python -m black --check tonesoul/dream_observability.py tonesoul/autonomous_schedule.py scripts/run_dream_observability_dashboard.py tests/test_dream_observability.py tests/test_run_dream_observability_dashboard.py tests/test_autonomous_schedule.py`
+- [x] `python -m pytest tests/test_dream_observability.py tests/test_run_dream_observability_dashboard.py tests/test_autonomous_schedule.py -q`
+- [x] broader regression:
+- [x] `python -m pytest tests/test_autonomous_cycle.py tests/test_run_autonomous_dream_cycle.py tests/test_wakeup_loop.py tests/test_schedule_profile.py tests/test_autonomous_schedule.py tests/test_run_autonomous_registry_schedule.py tests/test_dream_observability.py tests/test_run_dream_observability_dashboard.py -q`
+- [x] historical artifact regeneration:
+- [x] `python scripts/run_dream_observability_dashboard.py --journal-path memory/self_journal.jsonl --wakeup-path memory/autonomous/probe_schedule_latency_policy/dream_wakeup_history.jsonl --schedule-history-path memory/autonomous/probe_schedule_latency_policy/registry_schedule_history.jsonl --schedule-state-path memory/autonomous/probe_schedule_latency_policy/registry_schedule_state.json --out-dir docs/status/probe_schedule_governance_dashboard`
+**Success Criteria**: the dashboard can explain whether the system is cooling source categories for governance reasons or globally degrading reflection for runtime reasons, using schedule artifacts directly rather than reconstructing policy from raw traces.
+
+## Phase 150: LLM Backoff Activation Verification (2026-03-08)
+- [x] Run a fresh post-Phase-149 schedule probe with zero interval so the same artifact captures:
+- [x] the cycle that requests global LLM backoff
+- [x] the next cycle that executes under active backoff
+- [x] Confirm the dashboard distinguishes:
+- [x] `schedule_llm_backoff_requested`
+- [x] `schedule_llm_backoff_active`
+- [x] Confirm governance cooldown can coexist with runtime backoff without collapsing into one status
+- [x] Live verification:
+- [x] `python scripts/run_autonomous_registry_schedule.py --profile security_watch --interval-seconds 0 --max-cycles 2 --entries-per-cycle 1 --urls-per-cycle 1 --llm-probe-timeout-seconds 2 --history-path memory/autonomous/probe_schedule_governance_live2/dream_wakeup_history.jsonl --snapshot-path docs/status/probe_schedule_governance_live2/dream_wakeup_snapshot.json --dashboard-out-dir docs/status/probe_schedule_governance_live2 --schedule-snapshot-path docs/status/probe_schedule_governance_live2/autonomous_registry_schedule_latest.json --schedule-history-path memory/autonomous/probe_schedule_governance_live2/registry_schedule_history.jsonl --schedule-state-path memory/autonomous/probe_schedule_governance_live2/registry_schedule_state.json`
+- [x] Artifact inspection:
+- [x] `docs/status/probe_schedule_governance_live2/dream_observability_latest.json`
+- [x] `docs/status/probe_schedule_governance_live2/dream_observability_latest.html`
+**Success Criteria**: one live schedule artifact must show `requested` on the triggering cycle and `active` on the subsequent degraded cycle, so runtime backoff is verified as a temporal state transition rather than a static flag.
+
+## Phase 151: Pure Runtime Probe Profile (2026-03-08)
+- [x] Package the proven Phase 150 runtime scenario as a named schedule profile instead of a fragile CLI recipe
+- [x] Add `runtime_probe_watch` to `spec/registry_schedule_profiles.yaml`
+- [x] Keep governance thresholds deliberately relaxed:
+- [x] `tension_max_friction_score = 1.0`
+- [x] `tension_max_lyapunov_proxy = 1.0`
+- [x] `tension_max_council_count = 99`
+- [x] Preserve tight runtime thresholds:
+- [x] `tension_max_llm_preflight_latency_ms = 1800`
+- [x] `tension_max_llm_selection_latency_ms = 700`
+- [x] `tension_max_llm_probe_latency_ms = 1200`
+- [x] `tension_max_llm_timeout_count = 0`
+- [x] Add regression coverage for profile loading and resolved defaults
+- [x] Validation:
+- [x] `python -m ruff check tests/test_schedule_profile.py`
+- [x] `python -m black --check tests/test_schedule_profile.py`
+- [x] `python -m pytest tests/test_schedule_profile.py tests/test_run_autonomous_registry_schedule.py -q`
+- [x] Live verification:
+- [x] `python scripts/run_autonomous_registry_schedule.py --profile runtime_probe_watch --interval-seconds 0 --max-cycles 2 --llm-probe-timeout-seconds 2 --history-path memory/autonomous/probe_runtime_profile_live/dream_wakeup_history.jsonl --snapshot-path docs/status/probe_runtime_profile_live/dream_wakeup_snapshot.json --dashboard-out-dir docs/status/probe_runtime_profile_live --schedule-snapshot-path docs/status/probe_runtime_profile_live/autonomous_registry_schedule_latest.json --schedule-history-path memory/autonomous/probe_runtime_profile_live/registry_schedule_history.jsonl --schedule-state-path memory/autonomous/probe_runtime_profile_live/registry_schedule_state.json`
+- [x] Artifact inspection:
+- [x] `docs/status/probe_runtime_profile_live/autonomous_registry_schedule_latest.json`
+- [x] `docs/status/probe_runtime_profile_live/dream_observability_latest.json`
+
+## Phase 152: Runtime Preflight Entrypoint (2026-03-08)
+- [x] Add a thin dedicated runner:
+- [x] `scripts/run_runtime_probe_watch.py`
+- [x] Keep policy anchored in `runtime_probe_watch` instead of duplicating scheduler logic
+- [x] Write `preflight_profile` into the schedule snapshot artifact so the entrypoint identity survives beyond stdout
+- [x] Make the dedicated preflight runner default to a fresh sample:
+- [x] clear prior wake-up history
+- [x] clear prior schedule history/state
+- [x] clear prior dashboard latest artifacts
+- [x] keep explicit `--reuse-state` as the opt-in escape hatch
+- [x] Add parser/runner regression coverage:
+- [x] `tests/test_run_runtime_probe_watch.py`
+- [x] Validation:
+- [x] `python -m ruff check scripts/run_runtime_probe_watch.py tests/test_run_runtime_probe_watch.py`
+- [x] `python -m black --check scripts/run_runtime_probe_watch.py tests/test_run_runtime_probe_watch.py`
+- [x] `python -m pytest tests/test_run_runtime_probe_watch.py tests/test_run_autonomous_registry_schedule.py tests/test_schedule_profile.py -q`
+- [x] Live verification:
+- [x] `python scripts/run_runtime_probe_watch.py --strict`
+- [x] Artifact inspection:
+- [x] `docs/status/runtime_probe_watch/autonomous_registry_schedule_latest.json`
+- [x] `docs/status/runtime_probe_watch/dream_observability_latest.json`
+
+## Phase 153: Runtime-Gated Long Run (2026-03-08)
+- [x] Add a dedicated long-run wrapper:
+- [x] `scripts/run_autonomous_registry_long_run.py`
+- [x] Gate the real registry schedule on `runtime_probe_watch`
+- [x] Block the long run when runtime probe returns `overall_ok = false`
+- [x] Keep explicit skip semantics:
+- [x] `--skip-runtime-probe-watch`
+- [x] auto-skip when `--no-llm` disables reflection entirely
+- [x] Keep preflight and long-run concerns separate:
+- [x] preflight remains a dedicated runner
+- [x] generic registry schedule runner remains unchanged
+- [x] Align runtime budgets by default:
+- [x] if the long-run probe timeout is not explicitly set, inherit `--preflight-llm-probe-timeout-seconds`
+- [x] keep explicit `--llm-probe-timeout-seconds` as the final operator override
+- [x] Add regression coverage:
+- [x] `tests/test_run_autonomous_registry_long_run.py`
+- [x] Validation:
+- [x] `python -m ruff check scripts/run_autonomous_registry_long_run.py tests/test_run_autonomous_registry_long_run.py`
+- [x] `python -m black --check scripts/run_autonomous_registry_long_run.py tests/test_run_autonomous_registry_long_run.py`
+- [x] `python -m pytest tests/test_run_autonomous_registry_long_run.py -q`
+- [x] combined wrapper/profile regression:
+- [x] `python -m pytest tests/test_run_runtime_probe_watch.py tests/test_run_autonomous_registry_long_run.py tests/test_run_autonomous_registry_schedule.py tests/test_schedule_profile.py -q`
+- [x] Live verification:
+- [x] `python scripts/run_autonomous_registry_long_run.py --profile security_watch --max-cycles 1 --entries-per-cycle 1 --urls-per-cycle 1 ... --strict`
+- [x] Fresh live verification:
+- [x] `python scripts/run_autonomous_registry_long_run.py --profile security_watch --max-cycles 1 --entries-per-cycle 1 --urls-per-cycle 1 ...fresh artifact paths... --strict`
+
+## Phase 154: Weekly True Verification Entrypoint (2026-03-08)
+- [x] Add a first-class weekly experiment wrapper:
+- [x] `scripts/run_true_verification_experiment.py`
+- [x] Keep the lower orchestration seam intact:
+- [x] delegate runtime gating to `run_autonomous_registry_long_run.py`
+- [x] do not duplicate `runtime_probe_watch` policy or schedule logic
+- [x] Encode the intended Phase 7 operating envelope as wrapper defaults:
+- [x] `profile = security_watch`
+- [x] `experiment_days = 7`
+- [x] `wake_interval_hours = 3`
+- [x] derive `planned_cycles = ceil(days * 24 / wake_interval_hours)` when `--max-cycles` is not explicitly set
+- [x] Give the weekly experiment a stable artifact identity:
+- [x] long-run artifacts rooted at `docs/status/true_verification_weekly` and `memory/autonomous/true_verification_weekly`
+- [x] preflight artifacts isolated under `.../true_verification_weekly/preflight`
+- [x] wrapper summary written to `docs/status/true_verification_weekly/true_verification_experiment_latest.json`
+- [x] Default the weekly entrypoint to a fresh sample:
+- [x] clear prior long-run history/state/latest dashboard artifacts unless `--reuse-experiment-state` is explicitly set
+- [x] Add regression coverage:
+- [x] `tests/test_run_true_verification_experiment.py`
+- [x] Validation:
+- [x] `python -m ruff check scripts/run_true_verification_experiment.py tests/test_run_true_verification_experiment.py`
+- [x] `python -m black --check scripts/run_true_verification_experiment.py tests/test_run_true_verification_experiment.py`
+- [x] `python -m pytest tests/test_run_true_verification_experiment.py -q`
+- [x] combined wrapper regression:
+- [x] `python -m pytest tests/test_run_true_verification_experiment.py tests/test_run_autonomous_registry_long_run.py tests/test_run_runtime_probe_watch.py tests/test_schedule_profile.py -q`
+
+## Phase 155: Host-Driven Weekly Tick (2026-03-08)
+- [x] Add a host-driven single-tick runner for the weekly experiment:
+- [x] `scripts/run_true_verification_host_tick.py`
+- [x] Keep the orchestration boundary clean:
+- [x] delegate runtime gate + real schedule cycle to `run_autonomous_registry_long_run.py`
+- [x] do not move local runtime assumptions into GitHub Actions
+- [x] Encode the host-driven contract:
+- [x] one invocation = one preflight + one real schedule cycle
+- [x] `max_cycles = 1`
+- [x] `interval_seconds = 0`
+- [x] keep the weekly artifact roots under `true_verification_weekly`
+- [x] Add explicit operator control for experiment reset:
+- [x] `--fresh-experiment-state` clears weekly long-run artifacts before the tick
+- [x] Keep the host schedule intent visible in artifacts:
+- [x] write `true_verification_host_tick_latest.json`
+- [x] carry declared `experiment_days` and `wake_interval_hours` into the tick summary
+- [x] Add regression coverage:
+- [x] `tests/test_run_true_verification_host_tick.py`
+- [x] Add operator-facing runbook:
+- [x] `docs/plans/true_verification_host_schedule_runbook_2026-03-08.md`
+- [x] Update status artifact README with the new experiment/tick surfaces
+- [x] Validation:
+- [x] `python -m ruff check scripts/run_true_verification_host_tick.py tests/test_run_true_verification_host_tick.py docs/status/README.md`
+- [x] `python -m black --check scripts/run_true_verification_host_tick.py tests/test_run_true_verification_host_tick.py`
+- [x] `python -m pytest tests/test_run_true_verification_host_tick.py -q`
+- [x] combined wrapper regression:
+- [x] `python -m pytest tests/test_run_true_verification_host_tick.py tests/test_run_true_verification_experiment.py tests/test_run_autonomous_registry_long_run.py tests/test_run_runtime_probe_watch.py tests/test_schedule_profile.py -q`
+
+## Phase 156: Task Scheduler Template (2026-03-08)
+- [x] Add a versioned Windows Task Scheduler template generator:
+- [x] `scripts/render_true_verification_task_scheduler.py`
+- [x] Keep task registration separate from runtime semantics:
+- [x] generate XML + summary metadata
+- [x] do not auto-register tasks during development
+- [x] keep the actual experiment contract in `run_true_verification_host_tick.py`
+- [x] Encode the host cadence into the template:
+- [x] repeat every `3` hours
+- [x] repeat duration `7` days
+- [x] execution time limit `2` hours
+- [x] wire the task command to `python .../run_true_verification_host_tick.py --strict`
+- [x] Add regression coverage:
+- [x] `tests/test_render_true_verification_task_scheduler.py`
+- [x] Update the host schedule runbook and status README with the generated XML/JSON artifacts
+- [x] Add task-scheduler addendum doc:
+- [x] `docs/plans/true_verification_task_scheduler_template_addendum_2026-03-08.md`
+- [x] Validation:
+- [x] `python -m ruff check scripts/render_true_verification_task_scheduler.py tests/test_render_true_verification_task_scheduler.py docs/plans/true_verification_host_schedule_runbook_2026-03-08.md docs/status/README.md`
+- [x] `python -m black --check scripts/render_true_verification_task_scheduler.py tests/test_render_true_verification_task_scheduler.py`
+- [x] `python -m pytest tests/test_render_true_verification_task_scheduler.py tests/test_run_true_verification_host_tick.py tests/test_run_true_verification_experiment.py tests/test_run_autonomous_registry_long_run.py tests/test_run_runtime_probe_watch.py tests/test_schedule_profile.py -q`
+- [x] Generate a concrete template artifact:
+- [x] `python scripts/render_true_verification_task_scheduler.py --start-boundary 2026-03-08T18:00 --strict`
+
+## Phase 157: Safe Task Installer (2026-03-08)
+- [x] Add a default-dry-run installer for the weekly Task Scheduler definition:
+- [x] `scripts/install_true_verification_task_scheduler.py`
+- [x] Keep render and install concerns separated:
+- [x] optional template refresh before install
+- [x] dry-run by default
+- [x] require explicit `--apply` before invoking `schtasks`
+- [x] Write a dedicated installer summary artifact:
+- [x] `docs/status/true_verification_weekly/true_verification_task_scheduler_install_latest.json`
+- [x] Keep install evidence explicit:
+- [x] include resolved command
+- [x] include linked render payload
+- [x] include stdout/stderr/returncode when apply mode is used
+- [x] Preserve renderer defaults through the installer layer:
+- [x] installer default `author` must inherit the renderer default instead of serializing `"None"`
+- [x] Add regression coverage:
+- [x] `tests/test_install_true_verification_task_scheduler.py`
+- [x] Add installer addendum doc:
+- [x] `docs/plans/true_verification_task_scheduler_install_addendum_2026-03-08.md`
+- [x] Update host schedule runbook and status README with the safe installer flow
+- [x] Validation:
+- [x] `python -m ruff check scripts/install_true_verification_task_scheduler.py tests/test_install_true_verification_task_scheduler.py docs/plans/true_verification_task_scheduler_install_addendum_2026-03-08.md docs/plans/true_verification_host_schedule_runbook_2026-03-08.md docs/status/README.md`
+- [x] `python -m black --check scripts/install_true_verification_task_scheduler.py tests/test_install_true_verification_task_scheduler.py`
+- [x] `python -m pytest tests/test_install_true_verification_task_scheduler.py tests/test_render_true_verification_task_scheduler.py tests/test_run_true_verification_host_tick.py tests/test_run_true_verification_experiment.py tests/test_run_autonomous_registry_long_run.py tests/test_run_runtime_probe_watch.py tests/test_schedule_profile.py -q`
+- [x] Generate a concrete dry-run install artifact:
+- [x] `python scripts/install_true_verification_task_scheduler.py --strict`
+
+## Phase 158: Task Scheduler Applied (2026-03-08)
+- [x] Apply the weekly True Verification Task Scheduler task via the safe installer:
+- [x] `python scripts/install_true_verification_task_scheduler.py --apply --strict`
+- [x] Confirm the host mutation succeeded:
+- [x] installer summary shows `mode = applied`
+- [x] installer stdout confirms `SUCCESS: The scheduled task "ToneSoul True Verification Weekly" has successfully been created.`
+- [x] Read back the registered task from Task Scheduler:
+- [x] `schtasks /Query /TN "ToneSoul True Verification Weekly" /XML`
+- [x] Verify the live registered task matches the governed contract:
+- [x] `StartBoundary = 2026-03-08T14:30:00`
+- [x] `Interval = PT3H`
+- [x] `Duration = P7D`
+- [x] `ExecutionTimeLimit = PT2H`
+- [x] `Command = ...\\.venv\\Scripts\\python.exe`
+- [x] `Arguments = "...\\scripts\\run_true_verification_host_tick.py" --strict`
+
+## Phase 159: Weekly Status Readback Hygiene (2026-03-08)
+- [x] Stop test pollution from writing into live weekly artifact roots:
+- [x] `tests/test_run_true_verification_experiment.py`
+- [x] `tests/test_run_true_verification_host_tick.py`
+- [x] Add host-tick-aware status reporting:
+- [x] `scripts/report_true_verification_task_status.py`
+- [x] ignore `true_verification_experiment_latest.json` when `host_trigger_mode = single_tick`
+- [x] Add regression coverage:
+- [x] `tests/test_report_true_verification_task_status.py`
+- [x] Validation:
+- [x] `python -m pytest tests/test_governance_kernel.py tests/test_report_true_verification_task_status.py tests/test_run_true_verification_experiment.py tests/test_run_true_verification_host_tick.py -q`
+
+## Phase 160: Governance Override Pressure Correction (2026-03-08)
+- [x] Remove the dead-code shape inside `tonesoul/governance/kernel.py::_contains_override_pressure()`
+- [x] Preserve the precise regex path instead of letting the earlier broad substring return shadow it
+- [x] Add a false-positive regression:
+- [x] `"I can't ignore this feeling"` must not count as override pressure
+- [x] Validation:
+- [x] `python -m pytest tests/test_governance_kernel.py -q`
+
+## Phase 161: Quiet Host Task Wrapper (2026-03-08)
+- [x] Add a scheduler-only quiet wrapper:
+- [x] `scripts/run_true_verification_host_tick_task.py`
+- [x] Keep manual and host launch surfaces separate:
+- [x] manual debugging stays on `run_true_verification_host_tick.py`
+- [x] Task Scheduler uses the quiet wrapper to suppress import-time warnings and runtime stdout/stderr chatter
+- [x] Move render/install defaults to the quiet wrapper:
+- [x] `scripts/render_true_verification_task_scheduler.py`
+- [x] `scripts/install_true_verification_task_scheduler.py`
+- [x] Add regression coverage:
+- [x] `tests/test_run_true_verification_host_tick_task.py`
+- [x] `tests/test_render_true_verification_task_scheduler.py`
+- [x] `tests/test_install_true_verification_task_scheduler.py`
+- [x] Re-apply the live Task Scheduler definition and read back the host contract:
+- [x] `Arguments = "...\\scripts\\run_true_verification_host_tick_task.py" --strict`
+- [x] manual trigger no longer exits with `0xC000013A`
+- [x] final live readback shows `LastTaskResult = 0`
+
+## Mainline Backlog After Phase 161
+- [x] `P1` Fix `WebIngestor.ingest_urls_sync()` event-loop blocking risk on Windows / loop-thread callers
+- [x] `P2` Add direct missing-branch tests for `LLMRouter.inference_check()` (`no_client`, `probe_unsupported`, `probe_exception`, normalize branches)
+- [x] `P2` Migrate `LLMRouteDecision` / `GovernanceDecision` from ad-hoc dataclasses toward `tonesoul/schemas.py`
+
+## Phase 162: WebIngestor Event-Loop Fail-Fast (2026-03-08)
+- [x] Remove the unsafe thread-handoff sync wrapper from `tonesoul/perception/web_ingest.py`
+- [x] Make `ingest_urls_sync()` fail fast inside a running event loop
+- [x] Preserve the sync convenience path for true non-async callers
+- [x] Add direct regressions:
+- [x] sync call works outside an event loop
+- [x] sync call raises with guidance inside a running event loop
+- [x] Re-verify adjacent autonomous caller seams:
+- [x] `tests/test_autonomous_cycle.py`
+- [x] `tests/test_run_autonomous_dream_cycle.py`
+- [x] Validation:
+- [x] `python -m pytest tests/test_perception.py tests/test_autonomous_cycle.py tests/test_run_autonomous_dream_cycle.py -q`
+
+## Phase 163: LLMRouter Inference Check Branch Coverage (2026-03-08)
+- [x] Add direct tests for `LLMRouter.inference_check()` uncovered branches
+- [x] cover `no_client`
+- [x] cover `probe_unsupported`
+- [x] cover `probe_exception`
+- [x] cover non-dict probe-result normalization
+- [x] cover non-primitive model normalization
+- [x] Keep tests environment-independent:
+- [x] patch resolver paths instead of assuming the host has no local backend
+- [x] Validation:
+- [x] `python -m pytest tests/test_llm_router.py -q`
+
+## Phase 164: Autonomous Cycle Sync Boundary Audit (2026-03-08)
+- [x] Audit repo call sites for `ingest_urls_sync()`
+- [x] Confirm the only production caller is the synchronous `AutonomousDreamCycleRunner.run()` seam
+- [x] Confirm current scripts/schedule layers invoke that runner synchronously rather than from async contexts
+- [x] Add an orchestration-level regression:
+- [x] `runner.run()` raises clearly when URL ingestion is attempted inside a running event loop
+- [x] Leave an explicit sync-boundary note in `tonesoul/autonomous_cycle.py`
+- [x] Validation:
+- [x] `python -m pytest tests/test_autonomous_cycle.py tests/test_run_autonomous_dream_cycle.py -q`
+
+## Phase 165: Governance Decision Schema Convergence (2026-03-08)
+- [x] Move `LLMRouteDecision` and `GovernanceDecision` into `tonesoul/schemas.py`
+- [x] Keep `tonesoul.governance.kernel` exporting the same names
+- [x] Preserve current attribute-based caller contract:
+- [x] `.backend`
+- [x] `.client`
+- [x] `.reason`
+- [x] Add schema coverage:
+- [x] route backend normalization
+- [x] nested governance decision parsing
+- [x] kernel routing now returns the schema-backed route decision type
+- [x] Validation:
+- [x] `python -m pytest tests/test_schemas.py tests/test_governance_kernel.py tests/test_llm_router.py -q`
+
+## Phase 166: Routing Trace Contract Alignment (2026-03-08)
+- [x] Add a canonical routing-trace helper to `tonesoul/governance/kernel.py`
+- [x] Make `UnifiedPipeline` use the same routing-trace shape on fast and non-fast paths
+- [x] Preserve backward compatibility:
+- [x] keep top-level `dispatch_trace.route`
+- [x] keep top-level `dispatch_trace.journal_eligible`
+- [x] keep top-level `dispatch_trace.reason`
+- [x] add nested `dispatch_trace.routing_trace` as the canonical sub-trace
+- [x] Add regressions:
+- [x] kernel routing-trace helper shape
+- [x] fast-path routing trace mirrors top-level fields
+- [x] premium/council path routing trace mirrors top-level fields and carries `reason`
+- [x] Validation:
+- [x] `python -m pytest tests/test_governance_kernel.py tests/test_pipeline_compute_gate.py tests/test_unified_pipeline_v2_runtime.py -q`
+- [ ] Residual warning backlog:
+- [ ] `tonesoul/deliberation/engine.py` still triggers `DeprecationWarning: There is no current event loop`
+
+## Phase 167: Weekly Artifact Payload Slimming (2026-03-08)
+- [x] Add a shared summary helper:
+- [x] `tonesoul/true_verification_summary.py`
+- [x] Keep detailed evidence in the underlying schedule/preflight artifacts
+- [x] Make host-facing latest summaries write compact payloads instead of embedding full `results/state` bodies:
+- [x] `scripts/run_true_verification_host_tick.py`
+- [x] `scripts/run_true_verification_experiment.py`
+- [x] `scripts/report_true_verification_task_status.py`
+- [x] Add focused regressions:
+- [x] `tests/test_true_verification_summary.py`
+- [x] `tests/test_run_true_verification_host_tick.py`
+- [x] `tests/test_run_true_verification_experiment.py`
+- [x] `tests/test_report_true_verification_task_status.py`
+- [x] Validation:
+- [x] `python -m pytest tests/test_true_verification_summary.py tests/test_run_true_verification_experiment.py tests/test_run_true_verification_host_tick.py tests/test_report_true_verification_task_status.py -q`
+- [x] Live artifact refresh:
+- [x] rerun `scripts/report_true_verification_task_status.py`
+- [x] rewrite existing `true_verification_host_tick_latest.json` to the new summary contract
+- [x] Size outcome:
+- [x] `true_verification_task_status_latest.json`: `475.54 KB -> 16.78 KB`
+- [x] `true_verification_host_tick_latest.json`: `311.41 KB -> 11.45 KB`
+
+## Phase 168: Weekly Summary Readback Chain Regression (2026-03-08)
+- [x] Add an integrated weekly-chain regression:
+- [x] `tests/test_true_verification_weekly_chain.py`
+- [x] Prove `run_true_verification_host_tick.py` writes a compact summary instead of raw nested payloads
+- [x] Prove `report_true_verification_task_status.py` can read that compact summary plus a raw schedule snapshot and keep both compact
+- [x] Make the summary helper idempotent across readback layers:
+- [x] preserve `result_count`
+- [x] preserve `latest_result`
+- [x] preserve summarized state counters on second-pass summarization
+- [x] Validation:
+- [x] `python -m pytest tests/test_true_verification_weekly_chain.py tests/test_true_verification_summary.py tests/test_run_true_verification_experiment.py tests/test_run_true_verification_host_tick.py tests/test_report_true_verification_task_status.py -q`
+
+## Phase 169: True Verification Operator Runbook Refresh (2026-03-08)
+- [x] Update `docs/plans/true_verification_host_schedule_runbook_2026-03-08.md`
+- [x] Document the compact-summary contract explicitly
+- [x] Add the current operator reading ritual:
+- [x] task status first
+- [x] host tick second
+- [x] dashboard third
+- [x] detailed artifacts only on anomaly
+- [x] Add anomaly triage guidance for:
+- [x] task registration failure
+- [x] runtime probe block
+- [x] governance breach
+- [x] LLM backoff / runtime degradation
+- [x] Update `docs/status/README.md` so artifact descriptions match the compact summary reality
+- [x] Validation:
+- [x] `rg -n "delegated gate/preflight/schedule payload|delegated preflight/schedule payload|delegated runtime gate result" docs/plans/true_verification_host_schedule_runbook_2026-03-08.md docs/status/README.md`
+
+## Phase 170: Full Regression Closure (2026-03-08)
+- [x] Run full suite after the accumulated shared-contract changes:
+- [x] `python -m pytest tests -q`
+- [x] Result:
+- [x] `1402 passed, 3 warnings`
+- [x] Warning surface remained explainable:
+- [x] Hypothesis plugin directory warning
+- [x] `requests` dependency version warning
+- [x] `UnifiedCore` maintenance-mode deprecation warning
+
+## Phase 171: Deliberation Event-Loop Warning Cleanup (2026-03-08)
+- [x] Replace deprecated sync-loop probing in `tonesoul/deliberation/engine.py`
+- [x] Keep runtime behavior unchanged:
+- [x] no running loop -> use `asyncio.run(...)`
+- [x] running loop -> fall back to sequential sync path
+- [x] Add direct regressions:
+- [x] `tests/test_deliberation_engine.py`
+- [x] Validate adjacent runtime seam:
+- [x] `tests/test_unified_pipeline_v2_runtime.py`
+- [x] Validation:
+- [x] `python -m pytest tests/test_deliberation_engine.py tests/test_unified_pipeline_v2_runtime.py -q`
+
+## Phase 172: Weekly True Verification Into Repo Healthcheck (2026-03-08)
+- [x] Add a fixed repo-healthcheck inspection seam for weekly True Verification:
+- [x] `scripts/report_true_verification_task_status.py --strict`
+- [x] Keep repo healthcheck CLI unchanged
+- [x] Encode host semantics explicitly:
+- [x] Windows host -> blocking live task-status check
+- [x] non-Windows host -> explicit `skip` with reason
+- [x] Extend focused regressions:
+- [x] `tests/test_run_repo_healthcheck.py`
+- [x] `tests/test_verify_docs_consistency.py`
+- [x] Extend docs-consistency runner contract:
+- [x] missing weekly check now fails the repo-healthcheck runner report
+- [x] Update `docs/status/README.md` so repo healthcheck docs mention the host-aware weekly status readback
+- [x] Validation:
+- [x] `python -m pytest tests/test_run_repo_healthcheck.py tests/test_verify_docs_consistency.py -q`
+- [x] `python -m ruff check scripts/run_repo_healthcheck.py scripts/verify_docs_consistency.py tests/test_run_repo_healthcheck.py tests/test_verify_docs_consistency.py`
+- [x] `python -m black --check scripts/run_repo_healthcheck.py scripts/verify_docs_consistency.py tests/test_run_repo_healthcheck.py tests/test_verify_docs_consistency.py`
+- [x] Live host proof:
+- [x] `python scripts/report_true_verification_task_status.py --strict`
+
+## Phase 173: External Source Registry Direct-Entry Repair (2026-03-08)
+- [x] Reproduce the repo-healthcheck failure:
+- [x] `python scripts/verify_external_source_registry.py --strict` failed with `ModuleNotFoundError: No module named 'tonesoul'`
+- [x] Fix the direct script entrypoint:
+- [x] add repo-root bootstrap to `scripts/verify_external_source_registry.py`
+- [x] Preserve existing validation logic; only repair the script execution seam
+- [x] Add a real direct-entry regression:
+- [x] `tests/test_verify_external_source_registry.py` now launches the script through `subprocess.run(...)`
+- [x] Validation:
+- [x] `python -m pytest tests/test_verify_external_source_registry.py tests/test_run_external_source_registry_check.py -q`
+- [x] `python -m ruff check scripts/verify_external_source_registry.py tests/test_verify_external_source_registry.py`
+- [x] `python -m black --check scripts/verify_external_source_registry.py tests/test_verify_external_source_registry.py`
+- [x] Live proof:
+- [x] `python scripts/verify_external_source_registry.py --strict`
+
+## Phase 174: Skill Registry Coverage Closure + BOM Tolerance (2026-03-08)
+- [x] Reproduce the repo-healthcheck failure:
+- [x] `python scripts/verify_skill_registry.py --strict` reported two discovered skills missing from `skills/registry.json`
+- [x] Add registry entries for:
+- [x] `.agent/skills/tonesoul_governance/SKILL.md`
+- [x] `.agent/skills/tonesoul_philosophy/SKILL.md`
+- [x] Add machine-readable frontmatter for those two legacy skills:
+- [x] `l1_routing`
+- [x] `l2_signature`
+- [x] `trust`/integrity data via registry entries
+- [x] Fix verifier robustness:
+- [x] `_parse_frontmatter()` now tolerates UTF-8 BOM instead of rejecting otherwise-valid YAML frontmatter
+- [x] Add regression:
+- [x] `tests/test_verify_skill_registry.py` covers BOM-prefixed frontmatter parsing
+- [x] Validation:
+- [x] `python scripts/verify_skill_registry.py --strict`
+- [x] `python -m pytest tests/test_verify_skill_registry.py -q`
+- [x] `python -m ruff check scripts/verify_skill_registry.py tests/test_verify_skill_registry.py`
+- [x] `python -m black --check scripts/verify_skill_registry.py tests/test_verify_skill_registry.py`
+
+## Phase 175: DDD Freshness Closeout Ritual (2026-03-08)
+- [x] Keep the 7D contract strict:
+- [x] do not weaken `DDD_FRESHNESS`
+- [x] make remediation explicit instead
+- [x] Tighten the operator path:
+- [x] `scripts/verify_7d.py` stale / missing / invalid-timestamp notes now point to `tools/agent_discussion_tool.py append-lessons`
+- [x] `docs/7D_EXECUTION_SPEC.md` now states that `DDD_FRESHNESS` is driven by `memory/agent_discussion_curated.jsonl`, not by `task.md` / reflection / crystals
+- [x] `docs/status/README.md` now repeats the same operator doctrine at the repo-healthcheck entrypoint
+- [x] Prove the seam:
+- [x] add direct `DDD_FRESHNESS` fresh/stale regressions in `tests/test_verify_7d.py`
+- [x] prove `append-lessons` mirrors to curated discussion in `tests/test_agent_discussion_tool.py`
+- [x] Refresh the real discussion channel:
+- [x] append one `LESSONS_V1` closeout entry to `memory/agent_discussion.jsonl` mirrored into `memory/agent_discussion_curated.jsonl`
+- [x] Validation:
+- [x] `python -m ruff check scripts/verify_7d.py tests/test_verify_7d.py tests/test_agent_discussion_tool.py`
+- [x] `python -m black --check scripts/verify_7d.py tests/test_verify_7d.py tests/test_agent_discussion_tool.py`
+- [x] `python -m pytest tests/test_verify_7d.py tests/test_agent_discussion_tool.py -q`
+- [x] Freshness proof:
+- [x] latest curated discussion topic = `phase175-repo-healthcheck-convergence-2026-03-08`
+- [x] latest curated discussion age ~= `0` days
+
+## Phase 176: Commit Attribution Branch Equivalence Proof (2026-03-08)
+- [x] Keep the git repair strategy non-destructive:
+- [x] do not rewrite the dirty working branch in place
+- [x] prove the safe alternate base first
+- [x] Extend `scripts/verify_incremental_commit_attribution.py`:
+- [x] add optional `--equivalent-ref`
+- [x] report `equivalence.head_tree`
+- [x] report `equivalence.compare_tree`
+- [x] report `equivalence.tree_equal`
+- [x] Add regressions:
+- [x] `tests/test_verify_incremental_commit_attribution.py` covers tree-equivalent and tree-different cases
+- [x] Update operator docs:
+- [x] `docs/status/README.md` now documents the optional equivalence block and `commit_attribution_backfill_branch.json`
+- [x] Refresh the real artifact:
+- [x] `python scripts/verify_incremental_commit_attribution.py --head-sha feat/env-perception-attribution-backfill --equivalent-ref HEAD --artifact-path docs/status/commit_attribution_backfill_branch.json --strict`
+- [x] Proof outcome:
+- [x] `missing_count = 0`
+- [x] `equivalence.tree_equal = true`
+- [x] `head_tree = compare_tree = 1a879968fcefbb32afac2745f86b6227ac5167b0`
+- [x] Validation:
+- [x] `python -m ruff check scripts/verify_incremental_commit_attribution.py tests/test_verify_incremental_commit_attribution.py`
+- [x] `python -m black --check scripts/verify_incremental_commit_attribution.py tests/test_verify_incremental_commit_attribution.py`
+- [x] `python -m pytest tests/test_verify_incremental_commit_attribution.py -q`
+
+## Phase 177: Safe Commit Attribution Base-Switch Planner (2026-03-08)
+- [x] Add a non-destructive planner:
+- [x] `scripts/plan_commit_attribution_base_switch.py`
+- [x] planner proves:
+- [x] current missing-trailer count
+- [x] backfill missing-trailer count
+- [x] tree equivalence
+- [x] dirty worktree state
+- [x] planner emits a recommendation instead of mutating refs
+- [x] Recommendation states are explicit:
+- [x] `no_switch_needed`
+- [x] `backfill_branch_not_viable`
+- [x] `manual_review_required`
+- [x] `defer_until_worktree_clean`
+- [x] `continue_from_backfill_branch`
+- [x] Add regressions:
+- [x] `tests/test_plan_commit_attribution_base_switch.py`
+- [x] dirty tree -> defer
+- [x] clean + tree_equal + clean backfill -> continue from backfill
+- [x] tree mismatch -> manual review
+- [x] main writes artifact
+- [x] Update operator docs:
+- [x] `docs/status/README.md`
+- [x] `docs/governance/COMMUNICATION_STANDARD.md`
+- [x] `docs/plans/commit_attribution_base_switch_addendum_2026-03-08.md`
+- [x] Live proof:
+- [x] `python scripts/plan_commit_attribution_base_switch.py --artifact-path docs/status/commit_attribution_base_switch_latest.json`
+- [x] Outcome:
+- [x] `recommendation = defer_until_worktree_clean`
+- [x] `current_missing_count = 5`
+- [x] `backfill_missing_count = 0`
+- [x] `tree_equal = true`
+- [x] `worktree.entry_count = 202`
+
+## Phase 178: Repo Healthcheck Recovery Advice Wiring (2026-03-08)
+- [x] Keep `commit_attribution` blocking semantics unchanged
+- [x] Add an advisory layer instead of a second gate
+- [x] `scripts/run_repo_healthcheck.py` now:
+- [x] detects failing `commit_attribution`
+- [x] runs `scripts/plan_commit_attribution_base_switch.py`
+- [x] stores advisory detail under `recovery_advice`
+- [x] writes/refreshes `docs/status/commit_attribution_base_switch_latest.json`
+- [x] Extend markdown rendering:
+- [x] add `## Recovery Advice` section
+- [x] show recommendation + rationale + suggested commands
+- [x] Add regressions:
+- [x] `tests/test_run_repo_healthcheck.py` covers:
+- [x] no advisory when `commit_attribution` passes
+- [x] planner wiring when `commit_attribution` fails
+- [x] markdown rendering of recovery advice
+- [x] Validation:
+- [x] `python -m ruff check scripts/run_repo_healthcheck.py tests/test_run_repo_healthcheck.py`
+- [x] `python -m black --check scripts/run_repo_healthcheck.py tests/test_run_repo_healthcheck.py`
+- [x] `python -m pytest tests/test_run_repo_healthcheck.py tests/test_plan_commit_attribution_base_switch.py tests/test_verify_incremental_commit_attribution.py -q`
+
+## Phase 179: Dirty Worktree Category Planning (2026-03-08)
+- [x] Upgrade `scripts/plan_commit_attribution_base_switch.py`
+- [x] classify dirty paths into stable categories
+- [x] report `worktree.category_counts`
+- [x] report `cleanup_priority`
+- [x] keep the planner non-destructive
+- [x] Add regressions:
+- [x] `tests/test_plan_commit_attribution_base_switch.py` now proves category parsing
+- [x] dirty-worktree plan includes ordered cleanup advice
+- [x] Refresh live artifact:
+- [x] `python scripts/plan_commit_attribution_base_switch.py --artifact-path docs/status/commit_attribution_base_switch_latest.json`
+- [x] Live outcome now explains the current blockage:
+- [x] `generated_status = 48`
+- [x] `tests = 48`
+- [x] `scripts = 34`
+- [x] `tonesoul = 30`
+- [x] `docs = 18`
+- [x] Validation:
+- [x] `python -m ruff check scripts/plan_commit_attribution_base_switch.py tests/test_plan_commit_attribution_base_switch.py`
+- [x] `python -m black --check scripts/plan_commit_attribution_base_switch.py tests/test_plan_commit_attribution_base_switch.py`
+- [x] `python -m pytest tests/test_plan_commit_attribution_base_switch.py -q`
+
+## Phase 180: Observability Import Fallback + 7D Gate Recovery (2026-03-08)
+- [x] Read the public/private memory boundary docs before touching runtime:
+- [x] `docs/plans/dual_repo_boundary_manifest_2026-02-21.md`
+- [x] `docs/plans/dual_repo_guardrails_2026-02-21.md`
+- [x] Confirm the boundary remains unchanged:
+- [x] public side stays in `tonesoul/`, `tests/`, `scripts/`, `docs/status/`
+- [x] private side still includes `memory/self_journal.jsonl`, `memory/agent_discussion*.jsonl`, `memory/vectors/`, `.agent/`, `obsidian-vault/`
+- [x] Diagnose the real `audit_7d` blocker instead of trusting stale artifact history
+- [x] Re-run:
+- [x] `python -m pytest tests/test_escape_valve.py tests/test_escape_valve_runtime.py -q`
+- [x] `python -m pytest tests/test_genesis_integration.py tests/test_provenance_chain.py -q`
+- [x] `python -m pytest tests/test_api_server_contract.py -q`
+- [x] Findings:
+- [x] `XDD`, `GDD`, `CDD` are green again
+- [x] the persistent blocker moved to `TDD`
+- [x] the real import-time failure was `ModuleNotFoundError: structlog`
+- [x] Fix `tonesoul/observability/logger.py` so structured logging degrades gracefully when `structlog` is absent
+- [x] Keep `tonesoul.observability` public API unchanged
+- [x] Validate the seam:
+- [x] `python -m ruff check tonesoul/observability/logger.py tests/test_observability.py`
+- [x] `python -m black --check tonesoul/observability/logger.py tests/test_observability.py`
+- [x] `python -m pytest tests/test_observability.py tests/test_autonomous_cycle.py -q`
+- [x] Full regression:
+- [x] `python -m pytest tests -q -x`
+- [x] `1420 passed`
+- [x] Re-run repo governance gates:
+- [x] `python scripts/verify_7d.py`
+- [x] `audit_7d` now passes
+- [x] `python scripts/run_repo_healthcheck.py --strict --allow-missing-discussion`
+- [x] `repo_healthcheck` now only fails on historical `commit_attribution`
+
+## Phase 181: Dirty Worktree Settlement Report (2026-03-08)
+- [x] Keep branch movement non-destructive
+- [x] Reuse the existing commit-attribution planner's worktree categories instead of inventing a second taxonomy
+- [x] Extend `scripts/plan_commit_attribution_base_switch.py` with reusable worktree helpers
+- [x] Add `scripts/run_worktree_settlement_report.py`
+- [x] Convert dirty paths into settlement lanes:
+- [x] `refreshable_artifacts`
+- [x] `private_memory_review`
+- [x] `public_contract_docs`
+- [x] `runtime_source_changes`
+- [x] `experimental_misc_review`
+- [x] Emit fresh artifacts:
+- [x] `docs/status/worktree_settlement_latest.json`
+- [x] `docs/status/worktree_settlement_latest.md`
+- [x] Document the operator entrypoint:
+- [x] `docs/status/README.md`
+- [x] `docs/plans/worktree_settlement_mainline_addendum_2026-03-08.md`
+- [x] Add regressions:
+- [x] `tests/test_run_worktree_settlement_report.py`
+- [x] dirty report groups entries into lanes
+- [x] clean worktree returns `overall_ok=true`
+- [x] strict mode writes artifacts and exits non-zero while settlement is incomplete
+- [x] Validation:
+- [x] `python -m ruff check scripts/plan_commit_attribution_base_switch.py scripts/run_worktree_settlement_report.py tests/test_run_worktree_settlement_report.py`
+- [x] `python -m black scripts/run_worktree_settlement_report.py tests/test_run_worktree_settlement_report.py`
+- [x] `python -m pytest tests/test_run_worktree_settlement_report.py tests/test_plan_commit_attribution_base_switch.py tests/test_run_repo_healthcheck.py -q`
+- [x] Live proof:
+- [x] `python scripts/run_worktree_settlement_report.py`
+- [x] Live outcome:
+- [x] `entry_count = 209`
+- [x] `active_lane_count = 5`
+- [x] largest lane is `runtime_source_changes = 122`
+- [x] branch movement remains blocked until settlement completes
+
+## Phase 182: Status Artifact Taxonomy Refinement (2026-03-08)
+- [x] Fix over-broad `docs/status/` classification in `scripts/plan_commit_attribution_base_switch.py`
+- [x] Keep generated artifacts machine-classified:
+- [x] nested `docs/status/*/` runtime artifact folders
+- [x] flat `*.json`, `*.jsonl`, `*.html`, `*.csv`, `*.mmd`
+- [x] flat `*_latest.md` and `*_report.md`
+- [x] Reclassify authored status docs back to `docs`
+- [x] especially `docs/status/README.md`
+- [x] Add regression:
+- [x] `tests/test_plan_commit_attribution_base_switch.py` proves README and manifesto-style docs are not `generated_status`
+- [x] Validation:
+- [x] `python -m ruff check scripts/plan_commit_attribution_base_switch.py tests/test_plan_commit_attribution_base_switch.py scripts/run_worktree_settlement_report.py tests/test_run_worktree_settlement_report.py`
+- [x] `python -m black --check scripts/plan_commit_attribution_base_switch.py tests/test_plan_commit_attribution_base_switch.py scripts/run_worktree_settlement_report.py tests/test_run_worktree_settlement_report.py`
+- [x] `python -m pytest tests/test_plan_commit_attribution_base_switch.py tests/test_run_worktree_settlement_report.py -q`
+- [x] Live refresh:
+- [x] `python scripts/run_worktree_settlement_report.py`
+- [x] Live outcome:
+- [x] `generated_status` dropped from `50` to `47`
+- [x] `docs` rose from `19` to `22`
+- [x] `docs/status/README.md` now appears in `public_contract_docs`, not `refreshable_artifacts`
+
+## Phase 183: Refreshable Artifact Lane Decomposition (2026-03-08)
+- [x] Add `scripts/run_refreshable_artifact_report.py`
+- [x] Read dirty worktree entries through the existing planner taxonomy
+- [x] Limit scope to `generated_status` + `reports`
+- [x] Classify refreshable lane entries into:
+- [x] `known_generated`
+- [x] `manual_report_input`
+- [x] `status_folder`
+- [x] `generated_status_artifact`
+- [x] Map known producers back to concrete commands where the repo already has a stable generator
+- [x] Include `reports/model_comparison_latest.* -> python experiments/compare_model_reports.py`
+- [x] Keep `reports/analysis_gpt53.md` and `reports/analysis_gpt54.md` as manual review inputs
+- [x] Add regressions:
+- [x] `tests/test_run_refreshable_artifact_report.py`
+- [x] known generated artifacts become `regenerate`
+- [x] manual report inputs become `manual_review`
+- [x] non-refreshable docs like `docs/status/README.md` stay out of the report
+- [x] strict mode writes artifacts and exits non-zero while the lane is still dirty
+- [x] Update operator docs:
+- [x] `docs/status/README.md`
+- [x] Validation:
+- [x] `python -m ruff check scripts/run_refreshable_artifact_report.py tests/test_run_refreshable_artifact_report.py scripts/plan_commit_attribution_base_switch.py scripts/run_worktree_settlement_report.py`
+- [x] `python -m black scripts/run_refreshable_artifact_report.py tests/test_run_refreshable_artifact_report.py`
+- [x] `python -m pytest tests/test_run_refreshable_artifact_report.py tests/test_run_worktree_settlement_report.py tests/test_plan_commit_attribution_base_switch.py -q`
+- [x] Live proof:
+- [x] `python scripts/run_refreshable_artifact_report.py`
+- [x] Live outcome:
+- [x] `entry_count = 51`
+- [x] `regenerate_count = 28`
+- [x] `manual_review_count = 2`
+- [x] `inspect_count = 21`
+- [x] `reports/analysis_gpt53.md` and `reports/analysis_gpt54.md` are no longer implicitly treated as disposable refreshable output
+
+## Phase 184: Refreshable Namespace Convergence (2026-03-08)
+- [x] Extend `scripts/run_refreshable_artifact_report.py` with stable producers for root dream/runtime artifacts
+- [x] Map generic latest artifacts back to concrete producers:
+- [x] `docs/status/autonomous_registry_schedule_latest.json`
+- [x] `docs/status/dream_wakeup_snapshot_latest.json`
+- [x] `docs/status/dream_observability_latest.*`
+- [x] `docs/status/commit_attribution_backfill_branch.json`
+- [x] Add namespace semantics instead of treating all status folders as opaque inspect items
+- [x] `docs/status/runtime_probe_watch/` -> managed operational namespace
+- [x] `docs/status/true_verification_weekly/` -> managed operational namespace
+- [x] `docs/status/probe_*/` -> archiveable historical probe namespace
+- [x] Classify the report's own `refreshable_artifact_report_latest.*` outputs as self-regenerating artifacts
+- [x] Update operator docs:
+- [x] `docs/status/README.md`
+- [x] Add regressions:
+- [x] `tests/test_run_refreshable_artifact_report.py`
+- [x] known namespace regeneration is distinct from direct file regeneration
+- [x] historical probe folders become `archive_or_drop`
+- [x] Validation:
+- [x] `python -m black --check scripts/run_refreshable_artifact_report.py tests/test_run_refreshable_artifact_report.py`
+- [x] `python -m ruff check scripts/run_refreshable_artifact_report.py tests/test_run_refreshable_artifact_report.py`
+- [x] `python -m pytest tests/test_run_refreshable_artifact_report.py tests/test_run_worktree_settlement_report.py tests/test_plan_commit_attribution_base_switch.py -q`
+- [x] Live proof:
+- [x] `python scripts/run_refreshable_artifact_report.py`
+- [x] Live outcome:
+- [x] `entry_count = 53`
+- [x] `regenerate_count = 35`
+- [x] `namespace_regenerate_count = 2`
+- [x] `archive_or_drop_count = 14`
+- [x] `inspect_count = 0`
+- [x] `probe_*` is no longer mixed with live operational namespaces or orphan-artifact ambiguity
+
+## Phase 185: Private Memory Review Convergence (2026-03-08)
+- [x] Add `scripts/run_private_memory_review_report.py`
+- [x] Read dirty `memory` entries through the existing planner taxonomy
+- [x] Classify private memory artifacts by settlement semantics instead of treating `memory = 5` as one opaque blocker
+- [x] `memory/architecture_reflection_*.md` -> `mirror_then_archive`
+- [x] `memory/crystals.jsonl` -> `mirror_then_archive`
+- [x] `memory/antigravity_*.md` -> `archive_to_private`
+- [x] `memory/autonomous/` -> `archive_to_private`
+- [x] Add regressions:
+- [x] `tests/test_run_private_memory_review_report.py`
+- [x] mirrorable governance memory and private journals have different dispositions
+- [x] `memory/autonomous/` is treated as private runtime evidence, not as an inspect bucket
+- [x] Update operator docs:
+- [x] `docs/status/README.md`
+- [x] Validation:
+- [x] `python -m black scripts/run_private_memory_review_report.py tests/test_run_private_memory_review_report.py`
+- [x] `python -m ruff check scripts/run_private_memory_review_report.py tests/test_run_private_memory_review_report.py`
+- [x] `python -m pytest tests/test_run_private_memory_review_report.py tests/test_run_refreshable_artifact_report.py tests/test_run_worktree_settlement_report.py tests/test_plan_commit_attribution_base_switch.py -q`
+- [x] Live proof:
+- [x] `python scripts/run_private_memory_review_report.py`
+- [x] Live outcome:
+- [x] `entry_count = 5`
+- [x] `mirror_then_archive_count = 2`
+- [x] `archive_to_private_count = 3`
+- [x] `inspect_count = 0`
+- [x] private memory is no longer a generic worktree blocker; it is now an explicit archive-vs-mirror decision
+
+## Phase 186: Runtime Source Grouping Convergence (2026-03-08)
+- [x] Add `scripts/run_runtime_source_change_report.py`
+- [x] Group runtime-lane categories into reviewable change groups instead of one opaque `runtime_source_changes` lane
+- [x] Cover the live runtime lane with explicit groups:
+- [x] `repo_governance_and_settlement`
+- [x] `skill_and_registry_contracts`
+- [x] `governance_pipeline_and_llm`
+- [x] `perception_and_memory_ingest`
+- [x] `autonomous_verification_runtime`
+- [x] `api_contract_surface`
+- [x] `supporting_runtime_and_math`
+- [x] `tooling_and_editor_contract`
+- [x] Drive `ungrouped_runtime_drift` to zero on the live worktree
+- [x] Add regressions:
+- [x] `tests/test_run_runtime_source_change_report.py`
+- [x] grouped runtime paths land in the expected changesets
+- [x] true unknown runtime files still surface as `ungrouped_runtime_drift`
+- [x] strict mode writes artifacts and exits non-zero while runtime-source drift remains
+- [x] Update operator docs:
+- [x] `docs/status/README.md`
+- [x] `docs/plans/runtime_source_grouping_addendum_2026-03-08.md`
+- [x] Validation:
+- [x] `python -m black --check scripts/run_runtime_source_change_report.py tests/test_run_runtime_source_change_report.py`
+- [x] `python -m ruff check scripts/run_runtime_source_change_report.py tests/test_run_runtime_source_change_report.py`
+- [x] `python -m pytest tests/test_run_runtime_source_change_report.py tests/test_run_private_memory_review_report.py tests/test_run_refreshable_artifact_report.py tests/test_run_worktree_settlement_report.py tests/test_plan_commit_attribution_base_switch.py -q`
+- [x] Live proof:
+- [x] `python scripts/run_runtime_source_change_report.py`
+- [x] Live outcome:
+- [x] `entry_count = 128`
+- [x] `group_count = 8`
+- [x] `ungrouped_count = 0`
+- [x] the largest runtime groups are now explicit review units instead of one anonymous dirty lane
+
+## Phase 187: Repo Governance Settlement Truth (2026-03-08)
+- [x] Add `scripts/run_repo_governance_settlement_report.py`
+- [x] Read repo-governance convergence from existing truth artifacts instead of creating another heavyweight healthcheck
+- [x] Compose:
+- [x] `docs/status/repo_healthcheck_latest.json`
+- [x] `docs/status/commit_attribution_base_switch_latest.json`
+- [x] `docs/status/runtime_source_change_groups_latest.json`
+- [x] Distinguish settlement states:
+- [x] `green`
+- [x] `runtime_blocked`
+- [x] `runtime_green_metadata_blocked`
+- [x] Expose when `commit_attribution` is the only failing gate and the backfill branch is already tree-equivalent
+- [x] Add regressions:
+- [x] `tests/test_run_repo_governance_settlement_report.py`
+- [x] metadata-only blocker case
+- [x] non-metadata blocker case
+- [x] strict mode writes artifacts and exits non-zero while not fully green
+- [x] Wire the new report back into repo settlement tooling:
+- [x] `scripts/run_runtime_source_change_report.py`
+- [x] `scripts/run_refreshable_artifact_report.py`
+- [x] `docs/status/README.md`
+- [x] Fix the follow-on hygiene regression in the same phase:
+- [x] register `private_memory_review_latest.*` and `runtime_source_change_groups_latest.*` as refreshable known-generated artifacts
+- [x] keep `refreshable_artifact_report_latest.inspect_count = 0`
+- [x] Add theory note:
+- [x] `docs/plans/repo_governance_settlement_addendum_2026-03-08.md`
+- [x] Validation:
+- [x] `python -m black --check scripts/run_repo_governance_settlement_report.py tests/test_run_repo_governance_settlement_report.py scripts/run_refreshable_artifact_report.py scripts/run_runtime_source_change_report.py tests/test_run_runtime_source_change_report.py`
+- [x] `python -m ruff check scripts/run_repo_governance_settlement_report.py tests/test_run_repo_governance_settlement_report.py scripts/run_refreshable_artifact_report.py scripts/run_runtime_source_change_report.py tests/test_run_runtime_source_change_report.py`
+- [x] `python -m pytest tests/test_run_repo_governance_settlement_report.py tests/test_run_refreshable_artifact_report.py tests/test_run_runtime_source_change_report.py tests/test_run_private_memory_review_report.py tests/test_run_worktree_settlement_report.py tests/test_plan_commit_attribution_base_switch.py -q`
+- [x] Live proof:
+- [x] `python scripts/run_repo_governance_settlement_report.py`
+- [x] `python scripts/run_runtime_source_change_report.py`
+- [x] `python scripts/run_refreshable_artifact_report.py`
+- [x] Live outcome:
+- [x] `repo_healthcheck`: `19 pass`, `1 fail`
+- [x] only failing check: `commit_attribution`
+- [x] settlement status: `runtime_green_metadata_blocked`
+- [x] repo governance group: `24` dirty entries
+- [x] runtime source groups: `entry_count = 130`, `group_count = 8`, `ungrouped_count = 0`
+- [x] refreshable artifact report: `entry_count = 59`, `regenerate_count = 41`, `inspect_count = 0`
+- [x] repo governance convergence is now machine-readable and no longer collapses runtime truth into metadata debt
+
+## Phase 188: Schema-Backed LLM Observability Contract (2026-03-09)
+- [x] Narrow the next `governance_pipeline_and_llm` phase to one internal contract seam
+- [x] Do not touch external response shape for `dispatch_trace["llm"]` or dream collision observability
+- [x] Add canonical schema-backed builders in `tonesoul/schemas.py`
+- [x] `LLMUsageTrace`
+- [x] `LLMObservabilityTrace`
+- [x] Normalize runtime LLM observability through one builder in both producers:
+- [x] `UnifiedPipeline._attach_llm_observability()`
+- [x] `DreamEngine._build_llm_observability()`
+- [x] Keep emitted payload backward-compatible:
+- [x] `backend`
+- [x] `model`
+- [x] optional `usage`
+- [x] Add regressions:
+- [x] `tests/test_schemas.py`
+- [x] metrics-backed observability payload
+- [x] fallback-model path without fabricated usage
+- [x] Re-run runtime regressions that depend on the same payload shape:
+- [x] `tests/test_unified_pipeline_v2_runtime.py`
+- [x] `tests/test_dream_engine.py`
+- [x] Record the larger deferred risk rather than widening this phase:
+- [x] `CouncilVerdict` schema name still does not equal the external runtime/API verdict payload
+- [x] Add theory note:
+- [x] `docs/plans/llm_observability_contract_addendum_2026-03-09.md`
+- [x] Validation:
+- [x] `python -m black tonesoul/schemas.py tonesoul/unified_pipeline.py tonesoul/dream_engine.py tests/test_schemas.py`
+- [x] `python -m ruff check tonesoul/schemas.py tonesoul/unified_pipeline.py tonesoul/dream_engine.py tests/test_schemas.py`
+- [x] `python -m pytest tests/test_schemas.py tests/test_unified_pipeline_v2_runtime.py tests/test_dream_engine.py -q`
+- [x] Live outcome:
+- [x] one canonical builder now owns the internal `llm` observability shape across pipeline and dream runtime
+- [x] targeted regressions stayed green: `35 passed`
+- [x] the runtime trace seam was tightened without changing its externally consumed payload shape
+
+## Phase 189: Council Structured Parse Boundary Recovery (2026-03-09)
+- [x] Narrow the next `governance_pipeline_and_llm` phase to one verdict-affecting seam
+- [x] Preserve weak-model text fallback while preventing valid structured JSON from falling through into keyword parsing
+- [x] Replace greedy JSON object extraction in `tonesoul/safe_parse.py` with balanced extraction
+- [x] Add regressions:
+- [x] `tests/test_schemas.py`
+- [x] valid JSON plus trailing brace-bearing noise still parses the structured object
+- [x] `tests/test_perspective_factory.py`
+- [x] a perspective vote stays `APPROVE` when trailing `{OBJECT}` text follows valid JSON
+- [x] Keep non-JSON text fallback behavior intact
+- [x] Add theory note:
+- [x] `docs/plans/council_structured_parse_boundary_addendum_2026-03-09.md`
+- [x] Record the seam as runtime-behavioral, not just observability/hygiene
+- [x] Validation:
+- [x] `python -m black --check tonesoul/safe_parse.py tests/test_schemas.py tests/test_perspective_factory.py`
+- [x] `python -m ruff check tonesoul/safe_parse.py tests/test_schemas.py tests/test_perspective_factory.py`
+- [x] `python -m pytest tests/test_schemas.py tests/test_perspective_factory.py -q`
+- [x] Combined safety regression:
+- [x] `python -m pytest tests/test_schemas.py tests/test_unified_pipeline_v2_runtime.py tests/test_dream_engine.py tests/test_perspective_factory.py -q`
+- [x] Live outcome:
+- [x] structured council parsing now prefers the first valid balanced JSON object
+- [x] trailing `OBJECT` noise no longer overrides a valid structured `APPROVE` vote
+- [x] combined targeted regressions stayed green: `49 passed`
+
+## Phase 191: Council Structured / Runtime Verdict Boundary (2026-03-09)
+- [x] Narrow the next `governance_pipeline_and_llm` phase to the internal-vs-runtime council verdict validation seam
+- [x] Reframe the structured schema as `CouncilStructuredVerdict` in `tonesoul/schemas.py`
+- [x] Keep `CouncilVerdict` importable as a compatibility alias
+- [x] Make the structured verdict schema fail fast on runtime-only fields via `extra="forbid"`
+- [x] Add regressions:
+- [x] structured schema rejects outward runtime-style verdict payloads
+- [x] legacy `CouncilVerdict` alias still works for structured callers
+- [x] runtime verdict normalization remains stable for:
+- [x] `tests/test_unified_pipeline_v2_runtime.py`
+- [x] `tests/test_api_chat_council_mode.py`
+- [x] Fix the dormant `UnifiedPipeline` import blocker surfaced by broader validation
+- [x] repair broken indentation under `if semantic_graph_summary:`
+- [x] Add theory note:
+- [x] `docs/plans/council_structured_runtime_boundary_addendum_2026-03-09.md`
+- [x] Validation:
+- [x] `python -m black --check tonesoul/schemas.py tonesoul/unified_pipeline.py tests/test_schemas.py tests/test_unified_pipeline_v2_runtime.py tests/test_api_chat_council_mode.py`
+- [x] `python -m ruff check tonesoul/schemas.py tonesoul/unified_pipeline.py tests/test_schemas.py tests/test_unified_pipeline_v2_runtime.py tests/test_api_chat_council_mode.py`
+- [x] `python -m pytest tests/test_schemas.py tests/test_unified_pipeline_v2_runtime.py tests/test_api_chat_council_mode.py -q`
+- [x] Full regression:
+- [x] `python -m pytest tests -q`
+- [x] Live outcome:
+- [x] internal structured verdict validation no longer silently accepts outward runtime verdict payloads
+- [x] outward `council_verdict` runtime/API shape stayed compatible
+- [x] full regression stayed green: `1445 passed`

@@ -30,7 +30,8 @@ from _shared.core import (
     _persist_chat_side_effects,
     _build_chat_evolution_payload,
     _build_deliberation_payload,
-    _should_skip_live_chat_pipeline_for_tests
+    _should_skip_live_chat_pipeline_for_tests,
+    _require_write_api_auth,
 )
 
 
@@ -48,6 +49,10 @@ class handler(BaseHTTPRequestHandler):
             forwarded = self.headers.get("X-Forwarded-For")
             if forwarded:
                 client_id = forwarded.split(",")[0].strip()
+
+            auth_error, auth_status = _require_write_api_auth(self.headers)
+            if auth_error is not None:
+                return send_json_response(self, auth_error, auth_status)
 
             rate_limit_error = _apply_rate_limit("chat", client_id)
             if rate_limit_error is not None:

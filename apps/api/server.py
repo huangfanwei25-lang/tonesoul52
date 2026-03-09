@@ -46,6 +46,7 @@ council_runtime = CouncilRuntime()
 _MAX_ESCAPE_SEED_ITEMS = 50
 _MAX_PAGINATION_LIMIT = 200
 _READ_API_TOKEN_ENV = "TONESOUL_READ_API_TOKEN"
+_WRITE_API_TOKEN_ENV = "TONESOUL_WRITE_API_TOKEN"
 _EVOLUTION_CACHE_PATH_ENV = "TONESOUL_EVOLUTION_CACHE_PATH"
 _AUTH_FAIL_CLOSED_ENV = "TONESOUL_AUTH_FAIL_CLOSED"
 _RATE_LIMIT_ENABLED_ENV = "TONESOUL_ENABLE_RATE_LIMIT"
@@ -87,6 +88,13 @@ def _read_api_token() -> str:
     if not isinstance(value, str):
         return ""
     return value.strip()
+
+
+def _read_write_api_token() -> str:
+    value = os.environ.get(_WRITE_API_TOKEN_ENV)
+    if isinstance(value, str) and value.strip():
+        return value.strip()
+    return _read_api_token()
 
 
 def _is_production_env() -> bool:
@@ -314,21 +322,46 @@ def _extract_bearer_token(authorization_header: str | None) -> str:
     return token.strip()
 
 
-def _require_read_api_auth():
-    required_token = _read_api_token()
+def _extract_named_token(*header_names: str) -> str:
+    for header_name in header_names:
+        value = request.headers.get(header_name)
+        if isinstance(value, str) and value.strip():
+            return value.strip()
+    return ""
+
+
+def _require_api_auth(*, required_token: str, config_error: str, unauthorized_error: str, header_names: tuple[str, ...]):
     fail_closed = _env_flag(_AUTH_FAIL_CLOSED_ENV, default=_is_production_env())
     if not required_token:
         if fail_closed:
-            return jsonify({"error": "Read API token not configured"}), 503
+            return jsonify({"error": config_error}), 503
         return None
 
     provided_token = _extract_bearer_token(request.headers.get("Authorization"))
     if not provided_token:
-        provided_token = str(request.headers.get("X-ToneSoul-Read-Token") or "").strip()
+        provided_token = _extract_named_token(*header_names)
 
     if not provided_token or not secrets.compare_digest(provided_token, required_token):
-        return jsonify({"error": "Unauthorized read access"}), 401
+        return jsonify({"error": unauthorized_error}), 401
     return None
+
+
+def _require_read_api_auth():
+    return _require_api_auth(
+        required_token=_read_api_token(),
+        config_error="Read API token not configured",
+        unauthorized_error="Unauthorized read access",
+        header_names=("X-ToneSoul-Read-Token",),
+    )
+
+
+def _require_write_api_auth():
+    return _require_api_auth(
+        required_token=_read_write_api_token(),
+        config_error="Write API token not configured",
+        unauthorized_error="Unauthorized write access",
+        header_names=("X-ToneSoul-Write-Token", "X-ToneSoul-Read-Token"),
+    )
 
 
 def _json_payload():
@@ -1294,6 +1327,9 @@ def get_memories():
 @app.route("/api/consolidate", methods=["GET"])
 def get_consolidation():
     """Run memory consolidation and return report."""
+    auth_error = _require_write_api_auth()
+    if auth_error is not None:
+        return auth_error
     result = consolidate()
     return jsonify(
         {
@@ -1351,7 +1387,7 @@ def status():
 @app.route("/api/evolution/distill", methods=["POST"])
 def evolution_distill():
     """Run one context-distillation pass."""
-    auth_error = _require_read_api_auth()
+    auth_error = _require_write_api_auth()
     if auth_error is not None:
         return auth_error
 
@@ -1418,6 +1454,9 @@ def evolution_summary():
 @app.route("/api/conversation", methods=["POST"])
 def create_conversation():
     """Create a conversation id for a user session."""
+    auth_error = _require_write_api_auth()
+    if auth_error is not None:
+        return auth_error
     data = _json_payload()
     if data is None:
         return jsonify({"error": "Invalid JSON payload"}), 400
@@ -1488,7 +1527,7 @@ def get_conversation(conversation_id: str):
 @app.route("/api/conversations/<conversation_id>", methods=["DELETE"])
 def delete_conversation(conversation_id: str):
     """Delete one conversation and cascade related rows."""
-    auth_error = _require_read_api_auth()
+    auth_error = _require_write_api_auth()
     if auth_error is not None:
         return auth_error
     if not conversation_id.strip():
@@ -1511,6 +1550,9 @@ def delete_conversation(conversation_id: str):
 @app.route("/api/consent", methods=["POST"])
 def create_consent():
     """Record consent metadata for the current session."""
+    auth_error = _require_write_api_auth()
+    if auth_error is not None:
+        return auth_error
     data = _json_payload()
     if data is None:
         return jsonify({"error": "Invalid JSON payload"}), 400
@@ -1581,6 +1623,9 @@ def list_audit_logs():
 @app.route("/api/consent/<session_id>", methods=["DELETE"])
 def withdraw_consent(session_id: str):
     """Withdraw consent and acknowledge deletion workflow."""
+    auth_error = _require_write_api_auth()
+    if auth_error is not None:
+        return auth_error
     if not session_id.strip():
         return jsonify({"error": "Invalid session_id"}), 400
     deletion_report = None
@@ -1600,6 +1645,9 @@ def withdraw_consent(session_id: str):
 @app.route("/api/session-report", methods=["POST"])
 def session_report():
     """Generate a session analysis report."""
+    auth_error = _require_write_api_auth()
+    if auth_error is not None:
+        return auth_error
     data = _json_payload()
     if data is None:
         return jsonify({"error": "Invalid JSON payload"}), 400
@@ -1782,6 +1830,10 @@ def llm_switch():
     """Switch the active LLM backend at runtime."""
     global llm_client, llm_backend, llm_last_error
 
+    auth_error = _require_write_api_auth()
+    if auth_error is not None:
+        return auth_error
+
     data = _json_payload()
     if data is None:
         return jsonify({"error": "Invalid JSON payload"}), 400
@@ -1874,6 +1926,10 @@ def chat():
     rate_limit_error = _apply_rate_limit("chat")
     if rate_limit_error is not None:
         return rate_limit_error
+
+    auth_error = _require_write_api_auth()
+    if auth_error is not None:
+        return auth_error
 
     data = _json_payload()
     if data is None:

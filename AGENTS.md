@@ -95,6 +95,27 @@ npm run lint    # 確認格式
 - 在適當層級處理錯誤
 - **永遠不要靜默吞掉異常**
 
+### Codex Full-Auto 安全護欄 🛡️
+
+> 本節適用於 Codex 在 `full-auto` 模式下自主運行時的硬性約束。
+
+**禁區（絕對不可做）：**
+1. ❌ 不可刪除 `tonesoul/` 下的核心模組（`governance/`, `memory/`, `llm/`）
+2. ❌ 不可修改 `.env`, `.gitignore`, `AGENTS.md`, `MEMORY.md` — 這些是人類管理的設定檔
+3. ❌ 不可 commit 任何 API key、密碼、或 `.env` 檔案
+4. ❌ 不可直接 push 到 `master` 分支 — 所有變更必須在功能分支上
+5. ❌ 不可安裝新的系統層級套件（`apt install`, `choco install` 等）
+
+**必做（每次 push 前）：**
+1. ✅ 執行 `pytest tests/ -x` 確認所有測試通過
+2. ✅ 執行 `ruff check tonesoul tests` 確認無 lint 錯誤
+3. ✅ commit message 必須清晰描述變更內容
+4. ✅ 連續失敗 3 次必須停止，留下失敗紀錄等待人類審查
+
+**記憶隔離（參見 MEMORY.md）：**
+- 不可在公開倉庫 commit 個人記憶資料（`.jsonl`, `.db`, `vectors/`）
+- 記憶相關的程式碼和 schema 可以修改，但資料檔案不行
+
 ---
 
 ## 四、決策框架

@@ -1,195 +1,113 @@
-# Codex Task: 架構清理 Round 2 — WEAK 孤立模組深度審計 + 清理
+# Codex Task: Phase 7 — Dream Engine 整合 + 觀測儀表板 + 自動喚醒
 
 **交付者**: Antigravity (Architect)
-**日期**: 2026-03-04
-**約束等級**: cleanup-aggressive（γ_base=0.3）
+**日期**: 2026-03-09
+**分支**: feat/env-perception（不可 push 到 master）
 
 ---
 
-## ⚠️ 永遠要做的事（每次任務結尾）
+## ⚠️ 永遠要做的事（每次 commit 前）
 
 ```bash
-python -m black scripts/ tonesoul/ memory/ tests/
-python -m black --check scripts/ tonesoul/ memory/ tests/
-python -m pytest tests/ -q --tb=no --ignore=tests/fixtures
+python -m pytest tests/ -x --tb=short -q
+ruff check tonesoul tests
 ```
 
 **跳過 = 整個交付失敗。**
-**任何附帶效果（檔案重置、資料變動）必須在報告中明確提及。**
 
-## ⚠️ 增量存檔規則
+## ⚠️ 安全護欄（讀 AGENTS.md「Codex Full-Auto 安全護欄」段落）
 
-每完成一個 Task（A/B/C/D/E），立刻把進度寫入 `docs/status/round2_progress.md`：
-- 已完成的 Task
-- 每個模組的判決結果
-- 當前 test 通過數
-
-**目的**：如果你的 context/token 即將用完，至少有存檔點。不要等到全部做完才寫報告。先寫進度，再繼續下一個 Task。
-
----
-
-## 背景
-
-Round 1 保留了 19 個模組（ALIVE=4, WEAK=14, CAUTION=1）。
-Round 2 目標：對 14 個 WEAK + 1 個 CAUTION **深度審計**，能刪就刪。
+- 不可刪除 tonesoul/ 下的核心模組
+- 不可修改 .env, .gitignore, AGENTS.md, MEMORY.md
+- 不可 commit API key 或 .env
+- 不可 push 到 master
+- 不可安裝系統套件
+- 連續失敗 3 次必須停止並留記錄
 
 ---
 
-## Task A：深度引用分析
+## 脈絡恢復（先讀這些）
+
+1. AGENTS.md — 行為規範
+2. MEMORY.md — 公私記憶隔離
+3. tonesoul/dream_engine.py — 現有 Dream Engine（633 行，已有完整碰撞邏輯）
+4. tonesoul/dream_observability.py — 現有觀測模組
+5. tonesoul/memory/write_gateway.py — 剛完成的記憶寫入閘門
+6. tonesoul/memory/consolidator.py — 睡眠鞏固邏輯
+
+---
+
+## Task A：Dream Engine 接線 Write Gateway
 
 ### 目標
-對每個 WEAK/CAUTION 模組做比 Round 1 更深的分析：
-
-### 15 個目標模組
-
-```
-# WEAK (14)
-tonesoul/append_council_event.py
-tonesoul/audit_dashboard.py
-tonesoul/etcl_lifecycle.py
-tonesoul/generate_patch.py
-tonesoul/persistence.py
-tonesoul/persona_ledger_validator.py
-tonesoul/persona_registry_builder.py
-tonesoul/persona_registry_cleaner.py
-tonesoul/persona_registry_summary.py
-tonesoul/persona_trace_report.py
-tonesoul/quick_council.py
-tonesoul/self_test.py
-tonesoul/simulate_council.py
-tonesoul/ystm/storage.py
-
-# CAUTION (1)
-tonesoul/pipeline_context.py
-```
-
-### 分析步驟（每個模組都要做）
-
-1. **行數統計**：`wc -l` 或等效
-2. **完整引用搜尋**（比 Round 1 更廣）：
-```bash
-grep -rn "模組名" --include="*.py" --include="*.yml" --include="*.md" --include="*.toml" --include="*.json" . \
-  | grep -v orphan_modules \
-  | grep -v CODEX_TASK \
-  | grep -v __pycache__
-```
-3. **讀取模組內容**，判斷：
-   - 它做什麼？
-   - 有沒有被 `__init__.py` export？
-   - 有沒有對應的測試？
-   - 它的功能是否已被其他模組取代？
-
-4. **分類判決**：
-   - **DELETE** — 零引用 + 功能已被取代或從未使用
-   - **ARCHIVE** — 有概念價值但不應在 production，移到 `docs/archive/`
-   - **KEEP** — 確實有用或風險太高
-
----
-
-## Task B：執行清理
-
-### 規則
-
-1. **DELETE 類**：直接刪 .py + 對應測試
-2. **ARCHIVE 類**：
-   - 在 `docs/archive/deprecated_modules/` 建立目錄
-   - 把 .py 搬過去
-   - 在 archive 目錄建 `README.md` 列出搬遷原因
-3. **KEEP 類**：保持不動
-
-### 刪除前確認
-- 每個要刪的模組都要跑 `pytest` 確認無破壞
-- 如果 pytest 失敗，該模組升級為 KEEP
-
----
-
-## Task C：persona_registry 系列特殊處理
-
-`persona_registry_builder.py`、`persona_registry_cleaner.py`、`persona_registry_summary.py` 是一組相關工具。
-
-### 選項（選一）
-1. 如果三個都是 DEAD → 全部 DELETE
-2. 如果有一個有用 → 合併成一個 `persona_registry_tools.py`
-3. 如果複雜度太高 → 全部 ARCHIVE
-
----
-
-## Task D：pipeline_context.py 特殊處理
-
-這是 CAUTION 等級，可能是架構邊界模組。
+Dream Engine 的 `_build_collision` 產生的碰撞結果，需要經過 MemoryWriteGateway 寫入 soul.db。
 
 ### 步驟
-1. 讀取完整內容
-2. 搜尋 `unified_pipeline.py` 是否 import 它
-3. 搜尋 `pipeline` 相關模組是否依賴它
-4. 如果 **零引用** → ARCHIVE（不是 DELETE，因為可能是未接線的設計）
-5. 如果 **有引用** → KEEP 並從孤立報告中移除
+1. 讀取 `dream_engine.py` 的 `run_cycle()` 方法
+2. 在碰撞完成後，將 `DreamCollision` 轉換為 payload
+3. 通過 `MemoryWriteGateway.write_payload()` 寫入
+4. 確保 provenance 包含 source_url 和 dream_cycle_id
+5. 測試：在 `tests/test_dream_engine.py` 中驗證寫入路徑
 
 ---
 
-## Task E：更新報告 + commit + push
+## Task B：觀測儀表板增強
+
+### 目標
+`dream_observability.py` 已有 SVG 圖表生成。增加以下指標追蹤：
 
 ### 步驟
+1. 讀取 `dream_observability.py`，理解現有結構
+2. 加入 `write_gateway` 的寫入統計（written/skipped/rejected 計數）
+3. 加入 Dream Engine 碰撞成功率（collision 數 / stimuli 考慮數）
+4. 如果有 `token_meter.py`，整合 token 使用量顯示
+5. 測試：確保新指標能被正確計算
 
-1. 更新 `docs/status/orphan_modules_report.md`：
-   - Round 2 結果加到底部
-   - 每個模組的最終判決 + 理由
+---
 
-2. 更新星圖：
-```bash
-python scripts/skill_topology.py
-```
+## Task C：自動喚醒機制
 
-3. Commit + push：
-```bash
-git add -A
-git commit --no-verify -m "refactor: architecture cleanup round 2 — WEAK orphan deep audit
+### 目標
+`wakeup_loop.py` 已存在但可能未接線。確認它能：
 
-- Deep-audited 15 WEAK/CAUTION orphan modules
-- Deleted: [列出刪除的]
-- Archived: [列出 archive 的]
-- Kept: [列出保留的]
-- Updated orphan report and star map
-- Tests: XXXX passed, black clean"
+### 步驟
+1. 讀取 `wakeup_loop.py`，理解現有邏輯
+2. 確認它能定時觸發 `DreamEngine.run_cycle()`
+3. 確認它能觸發 `sleep_consolidate()` 做記憶壓縮
+4. 加入簡單的排程邏輯（例如每 N 小時執行一次 dream cycle）
+5. 加入 circuit breaker：如果 Dream Engine 連續 3 次失敗，暫停 1 小時
+6. 測試：在 `tests/test_wakeup_loop.py` 中驗證排程和 circuit breaker
 
-git push origin master
-```
+---
+
+## Task D：把剩餘未追蹤檔案 commit
+
+### 步驟
+1. `git status` 檢查未追蹤檔案
+2. 排除不該 commit 的：.env, *.db, *.jsonl 等 gitignore 已排除的
+3. `git add` 合適的檔案
+4. 跑 pytest + ruff
+5. `git commit -m "feat: wire dream engine to write gateway, enhance observability, implement wakeup scheduler"`
+6. `git push origin feat/env-perception`
+
+---
+
+## Task E：更新進度報告
+
+### 步驟
+1. 更新 `docs/status/` 裡的相關報告
+2. 記錄：
+   - Dream Engine ↔ Write Gateway 接線狀態
+   - 新增的觀測指標
+   - wakeup_loop 的排程配置
+   - 目前 test 通過數
 
 ---
 
 ## 不要做的事
 
-- ❌ 不加新功能
-- ❌ 不改核心邏輯（tension_engine, resonance, pipeline, council）
-- ❌ 不碰 memory/ 的 journal 或 crystals
-- ❌ 不碰 README 或 SKILL.md
-- ❌ 如果不確定，選 KEEP 而不是 DELETE
-- ❌ 不做任何沒在報告中提到的改動
-
-## 最終驗收
-
-```bash
-# 格式化
-python -m black --check scripts/ tonesoul/ memory/ tests/
-
-# 測試
-python -m pytest tests/ -q --tb=no --ignore=tests/fixtures
-
-# verify 腳本
-python scripts/verify_command_registry.py --strict
-python scripts/verify_stale_command_refs.py --strict
-
-# 星圖
-python scripts/skill_topology.py
-
-# Git
-git log --oneline -3
-git status -sb
-
-# 報告
-cat docs/status/orphan_modules_report.md
-```
-
-**報告中必須包含：**
-1. 每個模組的完整判決表（模組名 | 行數 | 引用數 | 判決 | 理由）
-2. 以上所有驗收指令的輸出
+- ❌ 不改 GovernanceKernel 的核心邏輯（已審計通過）
+- ❌ 不碰 unified_pipeline.py（剛重構完，不要再動）
+- ❌ 不碰 soul_db.py 的 schema（write_gateway 已接好）
+- ❌ 不要建新的 CI workflow
+- ❌ 如果不確定，選保守方案

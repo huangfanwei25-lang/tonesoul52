@@ -14,18 +14,18 @@ def run_qa_audit(file_path):
     system_prompt = f"You are the QA Auditor.\n{skill_content}"
     user_prompt = f"Audit the following `{file_path}` file with extreme prejudice focusing on D3 race conditions and D4 environment issues. Keep output concise. Code:\n\n{code_content[:3000]}" # Truncated to avoid context limits of 4b model
 
-    print("Sending to local Ollama (qwen3:4b)...")
+    print("Sending to local Ollama (qwen3.5:4b)...")
     try:
         response = requests.post(
             "http://localhost:11434/api/chat",
             json={
-                "model": "qwen3:4b", # Updated to use the correct model name
+                "model": "qwen3.5:4b", # Updated to use the correct model name
                 "messages": [
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_prompt},
                 ],
                 "stream": False,
-                "think": False, # Crucial for qwen3 flag
+                "think": False, # Crucial for qwen3.5 flag
                 "options": {
                     "temperature": 0.8,
                     "num_predict": 1024, 
