@@ -1573,8 +1573,8 @@
 - [x] premium/council path routing trace mirrors top-level fields and carries `reason`
 - [x] Validation:
 - [x] `python -m pytest tests/test_governance_kernel.py tests/test_pipeline_compute_gate.py tests/test_unified_pipeline_v2_runtime.py -q`
-- [ ] Residual warning backlog:
-- [ ] `tonesoul/deliberation/engine.py` still triggers `DeprecationWarning: There is no current event loop`
+- [x] Residual warning backlog cleared:
+- [x] `tonesoul/deliberation/engine.py` no longer reproduces `DeprecationWarning: There is no current event loop` in targeted validation (`tests/test_deliberation_engine.py` + `tests/test_unified_pipeline_v2_runtime.py`, 2026-03-09)
 
 ## Phase 167: Weekly Artifact Payload Slimming (2026-03-08)
 - [x] Add a shared summary helper:
