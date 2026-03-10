@@ -2389,3 +2389,22 @@
 - [x] add schema regressions in `tests/test_schemas.py`
 - [x] nested mirror delta serializes cleanly
 - [x] dual-track response stays JSON-safe
+
+## Phase 202: ToneSoulMirror Core (2026-03-10)
+- [x] Continue Phase 140 sequentially into Task B
+- [x] add `tonesoul/mirror.py`
+- [x] implement `ToneSoulMirror.reflect(...)`
+- [x] keep the mirror deterministic:
+- [x] no new LLM calls
+- [x] graceful fallback when engine/kernel is unavailable
+- [x] governed projection only differs when governance threshold is crossed
+- [x] implement `_apply_governance(...)`
+- [x] implement `_compute_delta(...)`
+- [x] keep mirror output on existing contracts:
+- [x] `DualTrackResponse`
+- [x] `MirrorDelta`
+- [x] add regressions in `tests/test_mirror.py`
+- [x] passthrough low-tension path
+- [x] triggered high-tension path
+- [x] graceful no-engine fallback
+- [x] dual-track payload stays JSON-serializable
