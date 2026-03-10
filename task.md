@@ -2487,3 +2487,21 @@
 - [x] `tests/test_run_subjectivity_report.py`
 - [x] report warns cleanly when `soul.db` is absent
 - [x] strict mode fails when unresolved tension remains pending review
+
+## Phase 208: Google Always-On Overlap Settlement (2026-03-10)
+- [x] read the Google `always-on-memory-agent` comparison through the current subjectivity plan
+- [x] keep the external overlap as one input to the canonical plan, not a competing roadmap
+- [x] update `docs/plans/memory_subjectivity_implementation_plan_2026-03-10.md`
+- [x] add a narrow position:
+- [x] what can save time now
+- [x] what remains deferred
+- [x] what should not be copied into ToneSoul
+- [x] tie the practical borrowing lane to `Step 3: Retrieval Shadow Mode`
+- [x] keep `docs/plans/memory_subjectivity_context_roadmap_2026-03-10.md` aligned with the new overlap reading
+- [x] preserve the existing guardrails:
+- [x] no ungated direct memory writes
+- [x] no UI-first detour
+- [x] no multimodal expansion ahead of retrieval legitimacy
+- [x] validation before doc-only commit:
+- [x] `python -m pytest tests/ -x --tb=short -q`
+- [x] `ruff check tonesoul tests`

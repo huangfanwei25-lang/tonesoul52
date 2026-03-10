@@ -207,6 +207,47 @@ So the correct use of the RMM reading is:
 - borrow engineering ideas later
 - do not let those ideas override ToneSoul's governance and subjectivity philosophy now
 
+## Google Always-On Memory Position
+
+The Google `always-on-memory-agent` repo is useful for a different reason than RMM.
+
+It is not mainly a research prompt.
+
+It is a concrete adjacent implementation that confirms this category of system is
+real and that some of its boring infrastructure can be borrowed without importing
+Google's whole philosophy.
+
+What the overlap usefully confirms:
+
+- an explicit ingest / consolidate / query split is stable enough to productize
+- SQLite-backed memory can carry a real operator workflow
+- a dedicated query/report surface can exist without turning into a full product rewrite
+- operator-facing memory tooling does not need to wait for a full UI platform
+
+What can save time now:
+
+- borrow the query/report seam shape for `Step 3: Retrieval Shadow Mode`
+- borrow source-citation style and explicit match listing for operator artifacts
+- borrow the idea of a narrow memory-service surface without copying its runtime semantics
+
+What should remain deferred:
+
+- inbox watcher or broad multimodal ingest expansion
+- Streamlit-style UI parity work
+- direct edit/delete memory operations
+
+Why those stay deferred:
+
+- the current bottleneck is retrieval legitimacy, not ingestion breadth
+- CLI/report surfaces have not been exhausted yet
+- memory mutation affordances should not outrun reviewed legitimacy and gateway rules
+
+What should not be copied:
+
+- ungated direct memory writes
+- a value-neutral "remember everything" posture
+- any simplification that erases `subjectivity_layer`, governance, or promotion review
+
 ## Builder Note (2026-03-10)
 
 Writing this down plainly:
@@ -374,6 +415,10 @@ Scope:
 - add shadow evaluation or observability around recall candidates
 - compare plain retrieval versus subjectivity-aware filtering/ranking
 - record whether operators actually need stronger query surfaces
+- borrow the Google always-on query/report shape where it helps:
+  - explicit candidate lists
+  - source-aware traceability
+  - operator-readable artifacts rather than live runtime reranking
 
 Explicit non-goals:
 
@@ -383,6 +428,12 @@ Explicit non-goals:
 Why this is delayed until after Steps 1-2:
 
 - recall policy should not move ahead of reviewed-promotion legitimacy or operator observability
+
+Current branch status:
+
+- no retrieval shadow artifact exists yet
+- the Google always-on overlap now gives one concrete external reference for query/report structure
+- that reference does not change ToneSoul's subjectivity or governance requirements
 
 ### Step 4: Conditional Persistence Upgrade
 
@@ -466,6 +517,14 @@ Why not now:
 
 - operator reporting has not yet exhausted simpler CLI/report surfaces
 - UI is a multiplier on unstable semantics and would lock presentation too early
+
+### Broad Multimodal Ingest / Inbox Watcher Expansion
+
+Why not now:
+
+- the Google overlap shows this is a reasonable future path, but it is not the current bottleneck
+- the branch still needs to prove retrieval and review legitimacy before widening ingestion sources
+- more inputs without stronger recall discipline would add noise faster than meaning
 
 ### Bulk Historical Memory Migration
 

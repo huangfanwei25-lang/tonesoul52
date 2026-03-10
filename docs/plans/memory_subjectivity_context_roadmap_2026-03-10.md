@@ -195,6 +195,7 @@ Status:
 - internal read/report helpers now exist for subjectivity distribution and unresolved tension inspection
 - consolidation runtime now carries subjectivity summary through `SleepResult`
 - external HTTP/API contracts remain unchanged
+- the Google always-on-memory-agent overlap is now recorded as a structural reference for future shadow-query artifacts, not as a competing philosophy
 
 ### Phase D: Optional Persistence Upgrade
 
@@ -257,6 +258,29 @@ That matters for planning:
 - future subjectivity work should extract public-safe rules, schemas, and summaries from memory artifacts, then leave the underlying corpus to the private lane
 
 This note therefore treats the current local `memory/crystals.jsonl` dirtiness as settlement debt, not as an implementation input that should be normalized into public workflow.
+
+## External Overlap Cross-Check
+
+The Google `always-on-memory-agent` comparison is now part of branch context, but
+it should be read narrowly.
+
+What can be borrowed safely:
+
+- query/report surface ideas for retrieval shadow mode
+- operator-readable cited memory listings
+- a boring ingest / consolidate / query decomposition as a sanity check
+
+What remains deferred:
+
+- multimodal inbox expansion
+- UI parity work
+- direct memory mutation tooling
+
+Why the boundary remains important:
+
+- ToneSoul still routes admissible writes through `MemoryWriteGateway`
+- ToneSoul still distinguishes storage layer from `subjectivity_layer`
+- ToneSoul still treats governance and reviewed promotion as first-class constraints
 
 ## Practical Rule For Future Phases
 
