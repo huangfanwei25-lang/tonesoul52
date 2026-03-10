@@ -197,6 +197,7 @@ Status:
 - external HTTP/API contracts remain unchanged
 - the Google always-on-memory-agent overlap is now recorded as a structural reference for future shadow-query artifacts, not as a competing philosophy
 - a read-only shadow query seam now exists for explicit baseline-vs-subjectivity comparison without changing live recall
+- a pressure report seam now exists to aggregate multi-query shadow deltas before any persistence/index decision
 
 ### Phase D: Optional Persistence Upgrade
 

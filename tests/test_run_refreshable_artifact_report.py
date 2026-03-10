@@ -68,6 +68,14 @@ def _entries() -> list[dict[str, object]]:
         },
         {
             "status": "??",
+            "path": "docs/status/subjectivity_shadow_pressure_latest.json",
+            "staged": False,
+            "unstaged": False,
+            "untracked": True,
+            "category": "generated_status",
+        },
+        {
+            "status": "??",
             "path": "reports/model_comparison_latest.json",
             "staged": False,
             "unstaged": False,
@@ -103,8 +111,8 @@ def test_build_report_classifies_known_generated_and_manual_inputs(
     payload, markdown = artifact_report.build_report(tmp_path)
 
     assert payload["overall_ok"] is False
-    assert payload["summary"]["entry_count"] == 9
-    assert payload["summary"]["regenerate_count"] == 5
+    assert payload["summary"]["entry_count"] == 10
+    assert payload["summary"]["regenerate_count"] == 6
     assert payload["summary"]["namespace_regenerate_count"] == 2
     assert payload["summary"]["manual_review_count"] == 1
     assert payload["summary"]["archive_or_drop_count"] == 1
@@ -122,6 +130,10 @@ def test_build_report_classifies_known_generated_and_manual_inputs(
         entries["docs/status/runtime_source_change_groups_latest.json"]["disposition"]
         == "regenerate"
     )
+    assert (
+        entries["docs/status/subjectivity_shadow_pressure_latest.json"]["disposition"]
+        == "regenerate"
+    )
     assert entries["reports/model_comparison_latest.json"]["disposition"] == "regenerate"
     assert entries["reports/analysis_gpt53.md"]["disposition"] == "manual_review"
     assert entries["docs/status/probe_deadline/"]["disposition"] == "archive_or_drop"
@@ -133,6 +145,7 @@ def test_build_report_classifies_known_generated_and_manual_inputs(
     assert entries["docs/status/true_verification_weekly/"]["disposition"] == "namespace_regenerate"
     assert "docs/status/README.md" not in entries
     assert "reports/analysis_gpt53.md" in markdown
+    assert "python scripts/run_subjectivity_shadow_pressure_report.py" in markdown
     assert "python scripts/run_repo_healthcheck.py --strict --allow-missing-discussion" in markdown
     assert "python scripts/run_runtime_probe_watch.py --strict" in markdown
     assert "Historical probe namespace" in markdown

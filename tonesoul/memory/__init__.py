@@ -20,7 +20,10 @@ from .subjectivity_reporting import (
     list_subjectivity_records,
     summarize_subjectivity_distribution,
 )
-from .subjectivity_shadow import build_subjectivity_shadow_report
+from .subjectivity_shadow import (
+    build_subjectivity_shadow_pressure_report,
+    build_subjectivity_shadow_report,
+)
 from .write_gateway import (
     ENVIRONMENT_STIMULUS_LAYER,
     ENVIRONMENT_STIMULUS_SOURCE,
@@ -43,6 +46,7 @@ __all__ = [
     "build_reviewed_vow_payload",
     "build_reviewed_promotion_decision",
     "build_reviewed_promotion_payload",
+    "build_subjectivity_shadow_pressure_report",
     "build_subjectivity_shadow_report",
     "generate_meta_reflection",
     "consolidate",

@@ -2534,3 +2534,28 @@
 - [x] validation before commit:
 - [x] `python -m pytest tests/ -x --tb=short -q`
 - [x] `ruff check tonesoul tests scripts`
+
+## Phase 210: Retrieval Shadow Pressure Metrics (2026-03-10)
+- [x] continue `Step 3` without touching live recall
+- [x] add a batch pressure aggregation seam:
+- [x] `build_subjectivity_shadow_pressure_report(...)`
+- [x] aggregate across multiple queries:
+- [x] `changed_query_rate`
+- [x] `top1_changed_rate`
+- [x] `pressure_query_rate`
+- [x] `avg_classified_lift`
+- [x] tension / reviewed-vow top1 gain counts
+- [x] add an operator runner:
+- [x] `scripts/run_subjectivity_shadow_pressure_report.py`
+- [x] support explicit queries, query files, and a safe default query set
+- [x] register latest pressure artifacts in `scripts/run_refreshable_artifact_report.py`
+- [x] add regressions:
+- [x] `tests/test_subjectivity_shadow.py`
+- [x] `tests/test_run_subjectivity_shadow_pressure_report.py`
+- [x] `tests/test_run_refreshable_artifact_report.py`
+- [x] keep scope narrow:
+- [x] no persistence/index widening
+- [x] no live recall reranking
+- [x] validation before commit:
+- [x] `python -m pytest tests/ -x --tb=short -q`
+- [x] `ruff check tonesoul tests scripts`

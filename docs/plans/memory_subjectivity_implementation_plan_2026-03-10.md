@@ -433,6 +433,8 @@ Current branch status:
 
 - `tonesoul.memory.subjectivity_shadow.build_subjectivity_shadow_report(...)` now provides a read-only baseline-vs-shadow comparison seam on top of `SoulDB.search()`
 - `scripts/run_subjectivity_shadow_query.py` now emits JSON/Markdown artifacts for explicit operator queries and shadow profiles
+- `tonesoul.memory.subjectivity_shadow.build_subjectivity_shadow_pressure_report(...)` now aggregates query-level change pressure across multiple shadow queries
+- `scripts/run_subjectivity_shadow_pressure_report.py` now emits pressure metrics such as `changed_query_rate`, `top1_changed_rate`, and `avg_classified_lift`
 - live recall behavior remains unchanged
 - the Google always-on overlap provided the practical shape for this operator query/report seam without overriding ToneSoul's governance boundary
 

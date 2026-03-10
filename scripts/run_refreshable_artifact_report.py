@@ -127,6 +127,14 @@ EXACT_PRODUCERS: dict[str, dict[str, str]] = {
         "command": "python scripts/run_subjectivity_report.py --strict",
         "source": "scripts/run_subjectivity_report.py",
     },
+    "docs/status/subjectivity_shadow_pressure_latest.json": {
+        "command": "python scripts/run_subjectivity_shadow_pressure_report.py",
+        "source": "scripts/run_subjectivity_shadow_pressure_report.py",
+    },
+    "docs/status/subjectivity_shadow_pressure_latest.md": {
+        "command": "python scripts/run_subjectivity_shadow_pressure_report.py",
+        "source": "scripts/run_subjectivity_shadow_pressure_report.py",
+    },
     "docs/status/memory_topology_fit_latest.json": {
         "command": "python scripts/run_memory_topology_fit_report.py --strict",
         "source": "scripts/run_memory_topology_fit_report.py",

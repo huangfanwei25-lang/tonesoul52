@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from statistics import mean
 from typing import Dict, List, Optional
 
 from .soul_db import MemorySource, SoulDB
@@ -35,6 +36,31 @@ def _subjectivity_distribution(rows: List[Dict[str, object]]) -> Dict[str, int]:
         layer = _normalize_subjectivity_layer(row.get("subjectivity_layer"))
         counts[layer] = counts.get(layer, 0) + 1
     return counts
+
+
+def _classified_count(rows: List[Dict[str, object]]) -> int:
+    return sum(
+        1
+        for row in rows
+        if _normalize_subjectivity_layer(row.get("subjectivity_layer")) != "unclassified"
+    )
+
+
+def _reviewed_vow_count(rows: List[Dict[str, object]]) -> int:
+    count = 0
+    for row in rows:
+        if _normalize_subjectivity_layer(row.get("subjectivity_layer")) != "vow":
+            continue
+        if str(row.get("promotion_status") or "") not in _REVIEWED_PROMOTION_STATUSES:
+            continue
+        count += 1
+    return count
+
+
+def _rate(numerator: int, denominator: int) -> float:
+    if denominator <= 0:
+        return 0.0
+    return round(float(numerator) / float(denominator), 4)
 
 
 def _score_candidate(
@@ -194,4 +220,129 @@ def build_subjectivity_shadow_report(
     }
 
 
-__all__ = ["build_subjectivity_shadow_report"]
+def build_subjectivity_shadow_pressure_report(
+    soul_db: SoulDB,
+    *,
+    queries: List[str],
+    source: Optional[MemorySource] = None,
+    profile: str = "classified_first",
+    limit: int = 5,
+    candidate_limit: int = 20,
+) -> Dict[str, object]:
+    normalized_profile = _normalize_profile(profile)
+    normalized_queries = [str(query or "").strip() for query in queries if str(query or "").strip()]
+    query_reports: List[Dict[str, object]] = []
+    no_hit_queries: List[str] = []
+    changed_query_count = 0
+    top1_changed_count = 0
+    pressure_query_count = 0
+    tension_top1_gain_count = 0
+    reviewed_vow_top1_gain_count = 0
+    classified_lifts: List[int] = []
+    overlap_rates: List[float] = []
+    promoted_counts: List[int] = []
+    demoted_counts: List[int] = []
+
+    for query in normalized_queries:
+        report = build_subjectivity_shadow_report(
+            soul_db,
+            query=query,
+            source=source,
+            profile=normalized_profile,
+            limit=limit,
+            candidate_limit=candidate_limit,
+        )
+        baseline_results = list(report.get("baseline_results") or [])
+        shadow_results = list(report.get("shadow_results") or [])
+        baseline_top = baseline_results[0] if baseline_results else None
+        shadow_top = shadow_results[0] if shadow_results else None
+        baseline_top_id = str((baseline_top or {}).get("record_id") or "")
+        shadow_top_id = str((shadow_top or {}).get("record_id") or "")
+        baseline_top_subjectivity = _normalize_subjectivity_layer(
+            (baseline_top or {}).get("subjectivity_layer")
+        )
+        shadow_top_subjectivity = _normalize_subjectivity_layer(
+            (shadow_top or {}).get("subjectivity_layer")
+        )
+        overlap_count = int(report["metrics"]["overlap_count"])
+        promoted_count = int(report["metrics"]["promoted_count"])
+        demoted_count = int(report["metrics"]["demoted_count"])
+        classified_lift = _classified_count(shadow_results) - _classified_count(baseline_results)
+        reviewed_vow_lift = _reviewed_vow_count(shadow_results) - _reviewed_vow_count(
+            baseline_results
+        )
+        query_changed = [row["record_id"] for row in baseline_results] != [
+            row["record_id"] for row in shadow_results
+        ]
+        top1_changed = bool(baseline_top_id and shadow_top_id and baseline_top_id != shadow_top_id)
+
+        if int(report.get("candidate_count") or 0) == 0:
+            no_hit_queries.append(query)
+        if query_changed:
+            changed_query_count += 1
+        if top1_changed:
+            top1_changed_count += 1
+        if query_changed or classified_lift > 0 or reviewed_vow_lift > 0:
+            pressure_query_count += 1
+        if shadow_top_subjectivity == "tension" and baseline_top_subjectivity != "tension":
+            tension_top1_gain_count += 1
+        if shadow_top_subjectivity == "vow" and baseline_top_subjectivity != "vow":
+            reviewed_vow_top1_gain_count += 1
+
+        classified_lifts.append(classified_lift)
+        overlap_rates.append(
+            float(overlap_count) / float(max(1, min(limit, max(len(baseline_results), len(shadow_results)))))
+        )
+        promoted_counts.append(promoted_count)
+        demoted_counts.append(demoted_count)
+
+        query_reports.append(
+            {
+                "query": query,
+                "candidate_count": int(report.get("candidate_count") or 0),
+                "baseline_top1": baseline_top_id or None,
+                "shadow_top1": shadow_top_id or None,
+                "baseline_top1_subjectivity": baseline_top_subjectivity,
+                "shadow_top1_subjectivity": shadow_top_subjectivity,
+                "query_changed": query_changed,
+                "top1_changed": top1_changed,
+                "classified_lift": classified_lift,
+                "reviewed_vow_lift": reviewed_vow_lift,
+                "overlap_count": overlap_count,
+                "promoted_count": promoted_count,
+                "demoted_count": demoted_count,
+                "delta": dict(report.get("delta") or {}),
+            }
+        )
+
+    query_count = len(normalized_queries)
+    metrics = {
+        "query_count": query_count,
+        "no_hit_query_count": len(no_hit_queries),
+        "changed_query_count": changed_query_count,
+        "changed_query_rate": _rate(changed_query_count, query_count),
+        "top1_changed_count": top1_changed_count,
+        "top1_changed_rate": _rate(top1_changed_count, query_count),
+        "pressure_query_count": pressure_query_count,
+        "pressure_query_rate": _rate(pressure_query_count, query_count),
+        "tension_top1_gain_count": tension_top1_gain_count,
+        "tension_top1_gain_rate": _rate(tension_top1_gain_count, query_count),
+        "reviewed_vow_top1_gain_count": reviewed_vow_top1_gain_count,
+        "reviewed_vow_top1_gain_rate": _rate(reviewed_vow_top1_gain_count, query_count),
+        "avg_overlap_rate": round(mean(overlap_rates), 4) if overlap_rates else 0.0,
+        "avg_promoted_count": round(mean(promoted_counts), 4) if promoted_counts else 0.0,
+        "avg_demoted_count": round(mean(demoted_counts), 4) if demoted_counts else 0.0,
+        "avg_classified_lift": round(mean(classified_lifts), 4) if classified_lifts else 0.0,
+    }
+    return {
+        "profile": normalized_profile,
+        "metrics": metrics,
+        "no_hit_queries": no_hit_queries,
+        "queries": query_reports,
+    }
+
+
+__all__ = [
+    "build_subjectivity_shadow_report",
+    "build_subjectivity_shadow_pressure_report",
+]
