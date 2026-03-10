@@ -25,7 +25,7 @@ Execution note:
 
 ## Current Context Snapshot
 
-As of `2026-03-10`, the branch has completed twelve linked memory-subjectivity
+As of `2026-03-10`, the branch has completed thirteen linked memory-subjectivity
 and mirror-alignment steps:
 
 1. `docs/plans/memory_subjectivity_layer_addendum_2026-03-09.md`
@@ -74,10 +74,14 @@ and mirror-alignment steps:
 12. `tests/test_mirror.py` + `tests/test_unified_pipeline_v2_runtime.py`
     - mirror runtime and memory recording regressions now exist
     - the branch has coverage for both opt-in tracing and durable mirror-delta candidate writes
+13. `tonesoul/memory/reviewed_promotion.py` + `tonesoul/schemas.py`
+    - reviewed promotion now has a canonical actor/decision artifact
+    - approved decisions now replay through one explicit seam instead of ad hoc helper kwargs
+    - `consolidator.py` helpers now route through the canonical review workflow
 
 Current validated baseline:
 
-- `python -m pytest tests/ -x --tb=short -q` -> `1482 passed`
+- `python -m pytest tests/ -x --tb=short -q` -> `1488 passed`
 - `ruff check tonesoul tests` -> passed
 
 Current runtime meaning of this work:
@@ -86,6 +90,7 @@ Current runtime meaning of this work:
 - the gateway can validate that vocabulary
 - ToneSoul can now observe a raw-output vs governed-output delta during runtime when mirror is enabled
 - triggered mirror deltas can now become admissible `tension` candidate memory through the same public write boundary
+- reviewed `tension -> vow` promotion now has an explicit public review artifact and replay contract
 - the runtime still does **not** auto-promote its own traces into vows or identity
 
 That last point is intentional.

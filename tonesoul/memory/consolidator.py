@@ -5,8 +5,12 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Sequence
 
-from tonesoul.schemas import SubjectivityLayer, SubjectivityPromotionGate
-
+from .reviewed_promotion import (
+    build_reviewed_promotion_decision,
+    build_reviewed_promotion_payload,
+    infer_subjectivity_layer,
+    replay_reviewed_promotion,
+)
 from .soul_db import JsonlSoulDB, MemorySource, SoulDB
 from .stats import average_coherence, count_by_verdict, most_common_divergence
 from .subjectivity_reporting import summarize_subjectivity_distribution
@@ -48,33 +52,6 @@ def _classify_for_promotion(payload: Dict[str, object]) -> str:
     return "working"
 
 
-def _infer_subjectivity_layer(payload: Dict[str, object], *, target_layer: str) -> str:
-    existing = str(payload.get("subjectivity_layer") or "").strip().lower()
-    if existing:
-        return existing
-
-    tension_markers = (
-        payload.get("friction_score"),
-        payload.get("tension"),
-        payload.get("tension_score"),
-        payload.get("dream_cycle_id"),
-        payload.get("council_reason"),
-    )
-    if any(marker not in (None, "", [], {}) for marker in tension_markers):
-        return SubjectivityLayer.TENSION.value
-
-    text = " ".join(
-        str(payload.get(key) or "")
-        for key in ("text", "content", "summary", "reflection", "topic")
-    ).lower()
-    if any(keyword in text for keyword in ("conflict", "tension", "friction", "diverge", "rupture")):
-        return SubjectivityLayer.TENSION.value
-
-    if target_layer == "experiential":
-        return SubjectivityLayer.MEANING.value
-    return SubjectivityLayer.EVENT.value
-
-
 def build_reviewed_vow_payload(
     payload: Dict[str, object],
     *,
@@ -84,46 +61,19 @@ def build_reviewed_vow_payload(
     source_record_ids: Optional[Sequence[str]] = None,
     promotion_source: str = "manual_review",
 ) -> Dict[str, object]:
-    if not isinstance(payload, dict):
-        raise TypeError("build_reviewed_vow_payload expects a dict payload")
-
-    reviewer = str(reviewed_by or "").strip()
-    basis = str(review_basis or "").strip()
-    if not reviewer:
-        raise ValueError("reviewed_by is required")
-    if not basis:
-        raise ValueError("review_basis is required")
-
-    normalized_payload = dict(payload)
-    current_layer = str(normalized_payload.get("layer") or "working").strip().lower() or "working"
-    current_subjectivity = _infer_subjectivity_layer(normalized_payload, target_layer=current_layer)
-    if current_subjectivity != SubjectivityLayer.TENSION.value:
-        raise ValueError("reviewed vow promotion expects a tension candidate")
-
-    merged_source_ids: List[str] = []
-    seen_source_ids: set[str] = set()
-    for item in list(source_record_ids or []) + list(normalized_payload.get("source_record_ids") or []):
-        text = str(item).strip()
-        if not text:
-            continue
-        if text in seen_source_ids:
-            continue
-        seen_source_ids.add(text)
-        merged_source_ids.append(text)
-
-    normalized_payload["layer"] = "factual"
-    normalized_payload["subjectivity_layer"] = SubjectivityLayer.VOW.value
-    normalized_payload["promotion_gate"] = SubjectivityPromotionGate.build_payload(
+    decision = build_reviewed_promotion_decision(
+        payload,
+        review_actor={
+            "actor_id": reviewed_by,
+            "actor_type": "operator",
+        },
+        review_basis=review_basis,
+        reviewed_at=reviewed_at,
+        source_record_ids=source_record_ids,
+        promotion_source=promotion_source,
         status="reviewed",
-        source=promotion_source,
-        reviewed_by=reviewer,
-        reviewed_at=reviewed_at or datetime.now(timezone.utc).isoformat(),
-        review_basis=basis,
     )
-    normalized_payload["review_basis"] = basis
-    if merged_source_ids:
-        normalized_payload["source_record_ids"] = merged_source_ids
-    return normalized_payload
+    return build_reviewed_promotion_payload(payload, decision=decision)
 
 
 def promote_reviewed_tension_to_vow(
@@ -137,16 +87,24 @@ def promote_reviewed_tension_to_vow(
     source_record_ids: Optional[Sequence[str]] = None,
     promotion_source: str = "manual_review",
 ) -> str:
-    reviewed_payload = build_reviewed_vow_payload(
+    decision = build_reviewed_promotion_decision(
         payload,
-        reviewed_by=reviewed_by,
+        review_actor={
+            "actor_id": reviewed_by,
+            "actor_type": "operator",
+        },
         review_basis=review_basis,
         reviewed_at=reviewed_at,
         source_record_ids=source_record_ids,
         promotion_source=promotion_source,
+        status="reviewed",
     )
-    gateway = MemoryWriteGateway(soul_db)
-    return gateway.write_payload(source, reviewed_payload)
+    return replay_reviewed_promotion(
+        soul_db,
+        source=source,
+        payload=payload,
+        decision=decision,
+    )
 
 
 def _load_entries(
@@ -305,7 +263,7 @@ def sleep_consolidate(
         promoted_payload["layer"] = target_layer
         promoted_payload["promoted_from"] = "working"
         promoted_payload["promoted_at"] = datetime.now(timezone.utc).isoformat()
-        promoted_payload["subjectivity_layer"] = _infer_subjectivity_layer(
+        promoted_payload["subjectivity_layer"] = infer_subjectivity_layer(
             promoted_payload,
             target_layer=target_layer,
         )

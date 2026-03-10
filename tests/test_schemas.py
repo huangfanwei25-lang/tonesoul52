@@ -391,6 +391,57 @@ class TestSchemas:
             "approved_by": ["guardian"],
         }
 
+    def test_reviewed_promotion_decision_serializes_actor_and_layers(self):
+        from tonesoul.schemas import ReviewedPromotionDecision
+
+        payload = ReviewedPromotionDecision.build_payload(
+            {
+                "status": "approved",
+                "promotion_source": "manual_review",
+                "review_actor": {
+                    "actor_id": " operator ",
+                    "actor_type": " Human ",
+                    "display_name": " Operator Console ",
+                },
+                "source_subjectivity_layer": " TENSION ",
+                "target_subjectivity_layer": " vow ",
+                "source_record_ids": [" a ", "", "b"],
+                "reviewed_at": "2026-03-10T12:00:00Z",
+                "review_basis": "Repeated unresolved tension across reviewed cycles.",
+            }
+        )
+
+        assert payload == {
+            "status": "approved",
+            "promotion_source": "manual_review",
+            "review_actor": {
+                "actor_id": "operator",
+                "actor_type": "human",
+                "display_name": "Operator Console",
+            },
+            "source_subjectivity_layer": "tension",
+            "target_subjectivity_layer": "vow",
+            "source_record_ids": ["a", "b"],
+            "reviewed_at": "2026-03-10T12:00:00Z",
+            "review_basis": "Repeated unresolved tension across reviewed cycles.",
+        }
+
+    def test_reviewed_promotion_decision_rejects_candidate_status(self):
+        from tonesoul.schemas import ReviewedPromotionDecision
+
+        with pytest.raises(ValidationError):
+            ReviewedPromotionDecision.model_validate(
+                {
+                    "status": "candidate",
+                    "promotion_source": "manual_review",
+                    "review_actor": {"actor_id": "operator"},
+                    "source_subjectivity_layer": "tension",
+                    "target_subjectivity_layer": "vow",
+                    "reviewed_at": "2026-03-10T12:00:00Z",
+                    "review_basis": "Still under review.",
+                }
+            )
+
 
 # ---------------------------------------------------------------------------
 # Safe parse tests

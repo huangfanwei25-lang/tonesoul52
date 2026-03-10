@@ -15,7 +15,7 @@ from __future__ import annotations
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 # ---------------------------------------------------------------------------
 # Enums
@@ -475,6 +475,98 @@ class SubjectivityPromotionGate(BaseModel):
         return gate.model_dump(mode="json", exclude_none=True)
 
 
+class SubjectivityReviewActor(BaseModel):
+    """Canonical reviewer identity for audited promotion decisions."""
+
+    actor_id: str
+    actor_type: str = Field(default="operator")
+    display_name: Optional[str] = None
+
+    @field_validator("actor_id", mode="before")
+    @classmethod
+    def _normalize_actor_id(cls, value: object) -> str:
+        normalized = str(value or "").strip()
+        if not normalized:
+            raise ValueError("actor_id is required")
+        return normalized
+
+    @field_validator("actor_type", mode="before")
+    @classmethod
+    def _normalize_actor_type(cls, value: object) -> str:
+        normalized = str(value or "operator").strip().lower()
+        return normalized or "operator"
+
+    @field_validator("display_name", mode="before")
+    @classmethod
+    def _normalize_display_name(cls, value: object) -> Optional[str]:
+        if value is None:
+            return None
+        normalized = str(value).strip()
+        return normalized or None
+
+
+class ReviewedPromotionDecision(BaseModel):
+    """Auditable decision artifact for explicit subjectivity promotion."""
+
+    status: SubjectivityPromotionStatus = Field(default=SubjectivityPromotionStatus.REVIEWED)
+    promotion_source: str = Field(default="manual_review")
+    review_actor: SubjectivityReviewActor
+    source_subjectivity_layer: SubjectivityLayer
+    target_subjectivity_layer: SubjectivityLayer
+    source_record_ids: List[str] = Field(default_factory=list)
+    reviewed_at: str
+    review_basis: str
+    notes: Optional[str] = None
+
+    @field_validator("status", mode="before")
+    @classmethod
+    def _normalize_review_status(cls, value: object) -> str:
+        normalized = getattr(value, "value", value)
+        normalized = str(normalized or SubjectivityPromotionStatus.REVIEWED.value).strip().lower()
+        return normalized or SubjectivityPromotionStatus.REVIEWED.value
+
+    @field_validator("source_subjectivity_layer", "target_subjectivity_layer", mode="before")
+    @classmethod
+    def _normalize_subjectivity_layer(cls, value: object) -> str:
+        normalized = getattr(value, "value", value)
+        normalized = str(normalized or "").strip().lower()
+        return normalized
+
+    @field_validator("promotion_source", "reviewed_at", "review_basis", "notes", mode="before")
+    @classmethod
+    def _normalize_required_text(cls, value: object, info: Any) -> Optional[str]:
+        normalized = str(value or "").strip()
+        if info.field_name in {"promotion_source", "reviewed_at", "review_basis"}:
+            if not normalized:
+                raise ValueError(f"{info.field_name} is required")
+            return normalized
+        return normalized or None
+
+    @field_validator("source_record_ids", mode="before")
+    @classmethod
+    def _normalize_source_record_ids(cls, value: object) -> List[str]:
+        if value is None:
+            return []
+        if not isinstance(value, list):
+            raise ValueError("source_record_ids must be a list")
+        normalized = [str(item).strip() for item in value if str(item).strip()]
+        return normalized
+
+    @model_validator(mode="after")
+    def _validate_decision_status(self) -> "ReviewedPromotionDecision":
+        if self.status == SubjectivityPromotionStatus.CANDIDATE:
+            raise ValueError("reviewed promotion decision cannot stay in candidate status")
+        if self.source_subjectivity_layer == self.target_subjectivity_layer:
+            raise ValueError("reviewed promotion requires distinct source and target layers")
+        return self
+
+    @classmethod
+    def build_payload(cls, payload: Any) -> Dict[str, Any]:
+        raw = dict(payload) if isinstance(payload, dict) else {}
+        model = cls.model_validate(raw)
+        return model.model_dump(mode="json", exclude_none=True)
+
+
 class MemorySubjectivityPayload(BaseModel):
     """Canonical validation seam for subjectivity-aware memory payload fields."""
 
@@ -680,6 +772,8 @@ __all__ = [
     "SubjectivityLayer",
     "SubjectivityPromotionGate",
     "SubjectivityPromotionStatus",
+    "SubjectivityReviewActor",
     "TensionSnapshot",
     "ToneAnalysisResult",
+    "ReviewedPromotionDecision",
 ]

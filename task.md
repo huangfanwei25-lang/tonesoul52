@@ -2451,3 +2451,22 @@
 - [x] update the context roadmap snapshot:
 - [x] `docs/plans/memory_subjectivity_context_roadmap_2026-03-10.md`
 - [x] fold Phase 140 completion into current validated baseline and runtime meaning
+
+## Phase 206: Canonical Reviewed-Promotion Workflow Foundation (2026-03-10)
+- [x] start `Step 1` from the implementation plan of record
+- [x] define a canonical review actor contract in `tonesoul/schemas.py`
+- [x] define a canonical reviewed-promotion decision artifact in `tonesoul/schemas.py`
+- [x] add a dedicated workflow seam in `tonesoul/memory/reviewed_promotion.py`
+- [x] centralize:
+- [x] `build_reviewed_promotion_decision(...)`
+- [x] `build_reviewed_promotion_payload(...)`
+- [x] `replay_reviewed_promotion(...)`
+- [x] route legacy consolidator helper functions through the canonical workflow
+- [x] preserve backward compatibility for:
+- [x] `build_reviewed_vow_payload(...)`
+- [x] `promote_reviewed_tension_to_vow(...)`
+- [x] add regressions:
+- [x] `tests/test_reviewed_promotion.py`
+- [x] extend `tests/test_schemas.py`
+- [x] reviewed promotion decision serializes cleanly
+- [x] approved reviewed promotion replays through `MemoryWriteGateway`

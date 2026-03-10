@@ -9,6 +9,12 @@ from .consolidator import (
     promote_reviewed_tension_to_vow,
 )
 from .decay import calculate_decay, should_forget
+from .reviewed_promotion import (
+    build_reviewed_promotion_decision,
+    build_reviewed_promotion_payload,
+    infer_subjectivity_layer,
+    replay_reviewed_promotion,
+)
 from .stats import average_coherence, count_by_verdict, most_common_divergence
 from .subjectivity_reporting import (
     list_subjectivity_records,
@@ -34,9 +40,13 @@ __all__ = [
     "average_coherence",
     "identify_patterns",
     "build_reviewed_vow_payload",
+    "build_reviewed_promotion_decision",
+    "build_reviewed_promotion_payload",
     "generate_meta_reflection",
     "consolidate",
+    "infer_subjectivity_layer",
     "promote_reviewed_tension_to_vow",
+    "replay_reviewed_promotion",
     "summarize_subjectivity_distribution",
     "list_subjectivity_records",
     "ENVIRONMENT_STIMULUS_TYPE",

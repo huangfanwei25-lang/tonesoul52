@@ -63,6 +63,7 @@ The branch now has a coherent public contract:
 8. `ToneSoulMirror` exists as a deterministic runtime companion for raw-output vs governed-output comparison.
 9. `UnifiedPipeline` can opt into mirror tracing without changing default behavior.
 10. triggered mirror deltas can be recorded through `MemoryWriteGateway` as admissible `tension` candidates.
+11. reviewed promotion now has a canonical actor/decision artifact and a dedicated replay seam instead of relying only on helper kwargs.
 
 Current validated baseline on this branch:
 
@@ -321,6 +322,13 @@ Why this comes next:
 
 - the contract and helpers already exist
 - the missing piece is operational legitimacy, not another schema layer
+
+Current branch status:
+
+- `SubjectivityReviewActor` and `ReviewedPromotionDecision` now define the public review artifact shape
+- `build_reviewed_promotion_decision(...)` and `replay_reviewed_promotion(...)` now provide the canonical explicit lane
+- legacy consolidator helpers remain as compatibility wrappers
+- rejected review decisions are still not stored as first-class operator artifacts; only approved replay is live
 
 ### Step 2: Operator Entry Surface For Reporting
 
