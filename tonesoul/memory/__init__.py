@@ -10,6 +10,10 @@ from .consolidator import (
 )
 from .decay import calculate_decay, should_forget
 from .stats import average_coherence, count_by_verdict, most_common_divergence
+from .subjectivity_reporting import (
+    list_subjectivity_records,
+    summarize_subjectivity_distribution,
+)
 from .write_gateway import (
     ENVIRONMENT_STIMULUS_LAYER,
     ENVIRONMENT_STIMULUS_SOURCE,
@@ -33,6 +37,8 @@ __all__ = [
     "generate_meta_reflection",
     "consolidate",
     "promote_reviewed_tension_to_vow",
+    "summarize_subjectivity_distribution",
+    "list_subjectivity_records",
     "ENVIRONMENT_STIMULUS_TYPE",
     "ENVIRONMENT_STIMULUS_SOURCE",
     "ENVIRONMENT_STIMULUS_LAYER",

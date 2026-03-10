@@ -19,7 +19,7 @@ This addendum records:
 
 ## Current Context Snapshot
 
-As of `2026-03-10`, the branch has completed five linked memory-subjectivity steps:
+As of `2026-03-10`, the branch has completed six linked memory-subjectivity steps:
 
 1. `docs/plans/memory_subjectivity_layer_addendum_2026-03-09.md`
    - defined the ladder:
@@ -40,10 +40,14 @@ As of `2026-03-10`, the branch has completed five linked memory-subjectivity ste
    - reviewable `tension -> vow` metadata is now explicit
    - `review_basis` is required for review-strength `vow` writes
    - a reviewed helper lane exists without introducing automatic vow promotion
+6. `docs/plans/memory_subjectivity_reporting_addendum_2026-03-10.md`
+   - operator-facing reporting helpers now summarize subjectivity distribution
+   - unresolved `tension` records can be listed without widening HTTP/API contracts
+   - read/report surfaces now exist even though subjectivity-ranked recall does not
 
 Current validated baseline:
 
-- `python -m pytest tests/ -x --tb=short -q` -> `1464 passed`
+- `python -m pytest tests/ -x --tb=short -q` -> `1471 passed`
 - `ruff check tonesoul tests` -> passed
 
 Current runtime meaning of this work:
@@ -60,7 +64,7 @@ The branch does **not** yet do these things:
 
 - `DreamEngine` and `sleep_consolidate()` are not yet connected to a real reviewed-promotion workflow; they only emit candidates
 - `SoulDB` does not yet index `subjectivity_layer` as a first-class column
-- recall/query paths do not yet filter or rank on subjectivity semantics
+- recall/query paths do not yet filter or rank on subjectivity semantics beyond operator-side reporting
 - no public runtime is allowed to self-author `identity` memory from one cycle
 
 That incompleteness is correct. The current state is a contract seam, not a full memory rewrite.
@@ -112,6 +116,11 @@ Scope:
 Guardrail:
 
 - do not widen external HTTP/API contracts casually
+
+Status:
+
+- internal read/report helpers now exist for subjectivity distribution and unresolved tension inspection
+- external HTTP/API contracts remain unchanged
 
 ### Phase D: Optional Persistence Upgrade
 

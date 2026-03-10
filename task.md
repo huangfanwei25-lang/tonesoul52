@@ -2307,3 +2307,26 @@
 - [x] Focused validation:
 - [x] `python -m pytest tests/test_schemas.py tests/test_write_gateway.py tests/test_ai_sleep.py -q --tb=short`
 - [x] `ruff check tonesoul/schemas.py tonesoul/memory/write_gateway.py tonesoul/memory/consolidator.py tonesoul/memory/__init__.py tests/test_schemas.py tests/test_write_gateway.py tests/test_ai_sleep.py`
+
+## Phase 198: Subjectivity Retrieval + Reporting (2026-03-10)
+- [x] Keep Phase C observational:
+- [x] no HTTP/API widening
+- [x] no subjectivity-ranked recall yet
+- [x] add internal reporting helpers in `tonesoul/memory/subjectivity_reporting.py`
+- [x] `summarize_subjectivity_distribution(...)`
+- [x] `list_subjectivity_records(...)`
+- [x] define unresolved tension as:
+- [x] `subjectivity_layer == tension`
+- [x] and `promotion_gate` below review-strength status
+- [x] export reporting helpers from `tonesoul/memory/__init__.py`
+- [x] add regressions:
+- [x] `tests/test_subjectivity_reporting.py`
+- [x] distribution summary includes memory-layer / subjectivity-layer / promotion-status counts
+- [x] unresolved tension inspection filters reviewed tension traces out
+- [x] Add implementation note:
+- [x] `docs/plans/memory_subjectivity_reporting_addendum_2026-03-10.md`
+- [x] Keep context roadmap current:
+- [x] `docs/plans/memory_subjectivity_context_roadmap_2026-03-10.md`
+- [x] Focused validation:
+- [x] `python -m pytest tests/test_subjectivity_reporting.py tests/test_ai_sleep.py tests/test_schemas.py tests/test_write_gateway.py -q --tb=short`
+- [x] `ruff check tonesoul/memory/subjectivity_reporting.py tonesoul/memory/__init__.py tests/test_subjectivity_reporting.py`
