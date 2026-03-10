@@ -2,7 +2,13 @@
 
 from __future__ import annotations
 
-from tonesoul.memory.consolidator import SleepResult, _classify_for_promotion, sleep_consolidate
+from tonesoul.memory.consolidator import (
+    SleepResult,
+    _classify_for_promotion,
+    build_reviewed_vow_payload,
+    promote_reviewed_tension_to_vow,
+    sleep_consolidate,
+)
 from tonesoul.memory.soul_db import JsonlSoulDB, MemorySource
 
 
@@ -135,3 +141,70 @@ def test_sleep_consolidate_preserves_existing_subjectivity_layer(tmp_path):
     assert result.promoted_count == 1
     assert len(experiential_records) == 1
     assert experiential_records[0].payload["subjectivity_layer"] == "tension"
+
+
+def test_build_reviewed_vow_payload_promotes_tension_candidate() -> None:
+    payload = build_reviewed_vow_payload(
+        {
+            "summary": "Persistent unresolved governance conflict.",
+            "evidence": ["cycle-1", "cycle-2"],
+            "provenance": {"source": "dream_engine"},
+            "subjectivity_layer": "tension",
+            "layer": "working",
+            "source_record_ids": ["stim-001"],
+        },
+        reviewed_by="operator",
+        review_basis="Repeated tension across two reviewed cycles.",
+    )
+
+    assert payload["layer"] == "factual"
+    assert payload["subjectivity_layer"] == "vow"
+    assert payload["review_basis"] == "Repeated tension across two reviewed cycles."
+    assert payload["source_record_ids"] == ["stim-001"]
+    assert payload["promotion_gate"]["status"] == "reviewed"
+    assert payload["promotion_gate"]["reviewed_by"] == "operator"
+    assert payload["promotion_gate"]["review_basis"] == "Repeated tension across two reviewed cycles."
+
+
+def test_build_reviewed_vow_payload_rejects_non_tension_source() -> None:
+    import pytest
+
+    with pytest.raises(ValueError, match="tension candidate"):
+        build_reviewed_vow_payload(
+            {
+                "summary": "Plain event should not jump straight to vow.",
+                "evidence": ["artifact"],
+                "provenance": {"source": "handoff"},
+                "subjectivity_layer": "event",
+            },
+            reviewed_by="operator",
+            review_basis="Not enough unresolved tension.",
+        )
+
+
+def test_promote_reviewed_tension_to_vow_persists_via_gateway(tmp_path) -> None:
+    db, source = _build_db(tmp_path)
+
+    record_id = promote_reviewed_tension_to_vow(
+        db,
+        source=source,
+        payload={
+            "summary": "Persistent unresolved governance conflict.",
+            "layer": "working",
+            "subjectivity_layer": "tension",
+            "evidence": ["cycle-1", "cycle-2"],
+            "provenance": {"source": "dream_engine"},
+            "source_record_ids": ["stim-001"],
+        },
+        reviewed_by="operator",
+        review_basis="Repeated tension across reviewed cycles.",
+    )
+
+    factual_records = list(db.query(source, layer="factual"))
+
+    assert record_id
+    assert len(factual_records) == 1
+    assert factual_records[0].payload["subjectivity_layer"] == "vow"
+    assert factual_records[0].payload["promotion_gate"]["review_basis"] == (
+        "Repeated tension across reviewed cycles."
+    )

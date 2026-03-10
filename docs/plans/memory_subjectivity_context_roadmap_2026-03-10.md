@@ -19,7 +19,7 @@ This addendum records:
 
 ## Current Context Snapshot
 
-As of `2026-03-10`, the branch has completed three linked memory-subjectivity steps:
+As of `2026-03-10`, the branch has completed five linked memory-subjectivity steps:
 
 1. `docs/plans/memory_subjectivity_layer_addendum_2026-03-09.md`
    - defined the ladder:
@@ -33,10 +33,17 @@ As of `2026-03-10`, the branch has completed three linked memory-subjectivity st
    - `MemorySubjectivityPayload.normalize_fields()`
    - gateway rejection for invalid subjectivity payloads
    - direct `vow` / `identity` writes blocked unless a review-strength `promotion_gate` is present
+4. `tonesoul/dream_engine.py` + `tonesoul/memory/consolidator.py`
+   - `DreamEngine` persisted collisions now emit `subjectivity_layer = tension`
+   - `sleep_consolidate()` now emits candidate `event` / `meaning` / `tension` subjectivity fields without changing storage-layer promotion
+5. `docs/plans/memory_subjectivity_reviewable_promotion_addendum_2026-03-10.md`
+   - reviewable `tension -> vow` metadata is now explicit
+   - `review_basis` is required for review-strength `vow` writes
+   - a reviewed helper lane exists without introducing automatic vow promotion
 
 Current validated baseline:
 
-- `python -m pytest tests/ -x --tb=short -q` -> `1463 passed`
+- `python -m pytest tests/ -x --tb=short -q` -> `1464 passed`
 - `ruff check tonesoul tests` -> passed
 
 Current runtime meaning of this work:
@@ -51,8 +58,7 @@ That last point is intentional.
 
 The branch does **not** yet do these things:
 
-- `DreamEngine` does not yet emit explicit `subjectivity_layer` values
-- `Consolidator` does not yet promote reviewed `tension` candidates into `vow`
+- `DreamEngine` and `sleep_consolidate()` are not yet connected to a real reviewed-promotion workflow; they only emit candidates
 - `SoulDB` does not yet index `subjectivity_layer` as a first-class column
 - recall/query paths do not yet filter or rank on subjectivity semantics
 - no public runtime is allowed to self-author `identity` memory from one cycle
@@ -74,6 +80,10 @@ Guardrail:
 
 - no automatic `vow` / `identity` promotion in this phase
 
+Status:
+
+- completed on this branch
+
 ### Phase B: Reviewable Promotion Lane
 
 Scope:
@@ -86,6 +96,11 @@ Guardrail:
 
 - promotion must remain exceptional
 - a single vivid runtime fragment must not become a vow by default
+
+Status:
+
+- contract + helper lane now exist
+- automatic runtime use is still intentionally deferred
 
 ### Phase C: Retrieval + Reporting
 

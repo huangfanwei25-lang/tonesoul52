@@ -2278,3 +2278,32 @@
 - [x] Focused validation:
 - [x] `python -m pytest tests/test_dream_engine.py tests/test_ai_sleep.py tests/test_schemas.py tests/test_write_gateway.py -q --tb=short`
 - [x] `ruff check tonesoul/dream_engine.py tonesoul/memory/consolidator.py tests/test_dream_engine.py tests/test_ai_sleep.py`
+
+## Phase 197: Reviewable Tension-to-Vow Lane (2026-03-10)
+- [x] Keep the next step explicit:
+- [x] no auto-promotion into `vow`
+- [x] define reviewable promotion metadata in `tonesoul/schemas.py`
+- [x] add `SubjectivityPromotionStatus`
+- [x] add `SubjectivityPromotionGate`
+- [x] require `review_basis` for review-strength `vow` writes in `MemoryWriteGateway`
+- [x] add reviewed promotion helpers in `tonesoul/memory/consolidator.py`
+- [x] `build_reviewed_vow_payload(...)`
+- [x] `promote_reviewed_tension_to_vow(...)`
+- [x] keep the contract split explicit:
+- [x] `subjectivity_layer` becomes `vow`
+- [x] storage `layer` becomes `factual`
+- [x] reject non-tension sources for reviewed vow promotion
+- [x] add regressions:
+- [x] `tests/test_schemas.py`
+- [x] review metadata normalization
+- [x] `tests/test_write_gateway.py`
+- [x] vow review gate without `review_basis` is rejected
+- [x] `tests/test_ai_sleep.py`
+- [x] reviewed vow payload builder works
+- [x] reviewed vow persistence through gateway works
+- [x] non-tension reviewed promotion is rejected
+- [x] Add implementation note:
+- [x] `docs/plans/memory_subjectivity_reviewable_promotion_addendum_2026-03-10.md`
+- [x] Focused validation:
+- [x] `python -m pytest tests/test_schemas.py tests/test_write_gateway.py tests/test_ai_sleep.py -q --tb=short`
+- [x] `ruff check tonesoul/schemas.py tonesoul/memory/write_gateway.py tonesoul/memory/consolidator.py tonesoul/memory/__init__.py tests/test_schemas.py tests/test_write_gateway.py tests/test_ai_sleep.py`

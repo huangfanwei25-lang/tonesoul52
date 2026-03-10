@@ -134,7 +134,11 @@ def test_write_payload_allows_vow_with_review_gate(tmp_path: Path) -> None:
             "evidence": ["review excerpt"],
             "provenance": {"source": "consolidator"},
             "subjectivity_layer": "vow",
-            "promotion_gate": {"status": "reviewed", "reviewed_by": "sleep_consolidator"},
+            "promotion_gate": {
+                "status": "reviewed",
+                "reviewed_by": "sleep_consolidator",
+                "review_basis": "Repeated tension across consolidation windows.",
+            },
         },
     )
 
@@ -145,6 +149,7 @@ def test_write_payload_allows_vow_with_review_gate(tmp_path: Path) -> None:
     assert records[0].payload["promotion_gate"] == {
         "status": "reviewed",
         "reviewed_by": "sleep_consolidator",
+        "review_basis": "Repeated tension across consolidation windows.",
     }
 
 
@@ -165,3 +170,26 @@ def test_write_payload_rejects_invalid_subjectivity_layer(tmp_path: Path) -> Non
         )
 
     assert excinfo.value.reasons == ["invalid_subjectivity_layer"]
+
+
+def test_write_payload_rejects_vow_review_gate_without_review_basis(tmp_path: Path) -> None:
+    db = SqliteSoulDB(db_path=tmp_path / "soul.db")
+    gateway = MemoryWriteGateway(db)
+
+    with pytest.raises(MemoryWriteRejectedError) as excinfo:
+        gateway.write_payload(
+            MemorySource.CUSTOM,
+            {
+                "type": "memory_promotion",
+                "summary": "Review basis is required for auditability.",
+                "evidence": ["review excerpt"],
+                "provenance": {"source": "manual_review"},
+                "subjectivity_layer": "vow",
+                "promotion_gate": {
+                    "status": "reviewed",
+                    "reviewed_by": "operator",
+                },
+            },
+        )
+
+    assert excinfo.value.reasons == ["subjectivity_requires_review"]

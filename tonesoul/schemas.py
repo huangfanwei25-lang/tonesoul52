@@ -57,6 +57,15 @@ class SubjectivityLayer(str, Enum):
     IDENTITY = "identity"
 
 
+class SubjectivityPromotionStatus(str, Enum):
+    CANDIDATE = "candidate"
+    REVIEWED = "reviewed"
+    HUMAN_REVIEWED = "human_reviewed"
+    GOVERNANCE_REVIEWED = "governance_reviewed"
+    APPROVED = "approved"
+    REJECTED = "rejected"
+
+
 # ---------------------------------------------------------------------------
 # ToneBridge Schemas (Analyzer pipeline output)
 # ---------------------------------------------------------------------------
@@ -382,6 +391,51 @@ class DreamReflection(BaseModel):
 # ---------------------------------------------------------------------------
 
 
+class SubjectivityPromotionGate(BaseModel):
+    """Canonical review metadata for subjectivity promotion decisions."""
+
+    status: SubjectivityPromotionStatus = Field(default=SubjectivityPromotionStatus.CANDIDATE)
+    source: Optional[str] = None
+    reviewed_by: Optional[str] = None
+    reviewed_at: Optional[str] = None
+    review_basis: Optional[str] = None
+    approved_by: Optional[List[str]] = None
+    human_review: Optional[bool] = None
+    governance_review: Optional[bool] = None
+
+    @field_validator("status", mode="before")
+    @classmethod
+    def _normalize_status(cls, value: object) -> str:
+        normalized = str(value or SubjectivityPromotionStatus.CANDIDATE.value).strip().lower()
+        return normalized or SubjectivityPromotionStatus.CANDIDATE.value
+
+    @field_validator("source", "reviewed_by", "reviewed_at", "review_basis", mode="before")
+    @classmethod
+    def _normalize_optional_text(cls, value: object) -> Optional[str]:
+        if value is None:
+            return None
+        normalized = str(value).strip()
+        return normalized or None
+
+    @field_validator("approved_by", mode="before")
+    @classmethod
+    def _normalize_approved_by(cls, value: object) -> Optional[List[str]]:
+        if value is None:
+            return None
+        if isinstance(value, str):
+            normalized = value.strip()
+            return [normalized] if normalized else None
+        if not isinstance(value, list):
+            raise ValueError("approved_by must be a list or string")
+        normalized = [str(item).strip() for item in value if str(item).strip()]
+        return normalized or None
+
+    @classmethod
+    def build_payload(cls, **kwargs: Any) -> Dict[str, Any]:
+        gate = cls.model_validate(kwargs)
+        return gate.model_dump(mode="json", exclude_none=True)
+
+
 class MemorySubjectivityPayload(BaseModel):
     """Canonical validation seam for subjectivity-aware memory payload fields."""
 
@@ -389,7 +443,7 @@ class MemorySubjectivityPayload(BaseModel):
 
     subjectivity_layer: Optional[SubjectivityLayer] = None
     confidence: Optional[float] = Field(default=None, ge=0.0, le=1.0)
-    promotion_gate: Optional[Dict[str, Any]] = None
+    promotion_gate: Optional[SubjectivityPromotionGate] = None
     decay_policy: Optional[Dict[str, Any]] = None
     source_record_ids: Optional[List[str]] = None
 
@@ -406,14 +460,22 @@ class MemorySubjectivityPayload(BaseModel):
     def _normalize_optional_policy_dict(cls, value: object, info: Any) -> Optional[Dict[str, Any]]:
         if value is None:
             return None
+        if info.field_name == "promotion_gate":
+            if isinstance(value, dict):
+                return value
+            if isinstance(value, str):
+                normalized = value.strip()
+                if not normalized:
+                    return None
+                return {"status": normalized.lower()}
+            raise ValueError("promotion_gate must be a dict or string")
         if isinstance(value, dict):
             return {str(key): item for key, item in value.items()}
         if isinstance(value, str):
             normalized = value.strip()
             if not normalized:
                 return None
-            key = "status" if info.field_name == "promotion_gate" else "policy"
-            return {key: normalized.lower() if key == "status" else normalized}
+            return {"policy": normalized}
         raise ValueError(f"{info.field_name} must be a dict or string")
 
     @field_validator("source_record_ids", mode="before")
@@ -575,6 +637,8 @@ __all__ = [
     "PerspectiveEvaluationResult",
     "PerspectiveOutput",
     "SubjectivityLayer",
+    "SubjectivityPromotionGate",
+    "SubjectivityPromotionStatus",
     "TensionSnapshot",
     "ToneAnalysisResult",
 ]

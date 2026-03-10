@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Sequence
 
-from tonesoul.schemas import SubjectivityLayer
+from tonesoul.schemas import SubjectivityLayer, SubjectivityPromotionGate
 
 from .soul_db import JsonlSoulDB, MemorySource, SoulDB
 from .stats import average_coherence, count_by_verdict, most_common_divergence
@@ -71,6 +71,80 @@ def _infer_subjectivity_layer(payload: Dict[str, object], *, target_layer: str) 
     if target_layer == "experiential":
         return SubjectivityLayer.MEANING.value
     return SubjectivityLayer.EVENT.value
+
+
+def build_reviewed_vow_payload(
+    payload: Dict[str, object],
+    *,
+    reviewed_by: str,
+    review_basis: str,
+    reviewed_at: Optional[str] = None,
+    source_record_ids: Optional[Sequence[str]] = None,
+    promotion_source: str = "manual_review",
+) -> Dict[str, object]:
+    if not isinstance(payload, dict):
+        raise TypeError("build_reviewed_vow_payload expects a dict payload")
+
+    reviewer = str(reviewed_by or "").strip()
+    basis = str(review_basis or "").strip()
+    if not reviewer:
+        raise ValueError("reviewed_by is required")
+    if not basis:
+        raise ValueError("review_basis is required")
+
+    normalized_payload = dict(payload)
+    current_layer = str(normalized_payload.get("layer") or "working").strip().lower() or "working"
+    current_subjectivity = _infer_subjectivity_layer(normalized_payload, target_layer=current_layer)
+    if current_subjectivity != SubjectivityLayer.TENSION.value:
+        raise ValueError("reviewed vow promotion expects a tension candidate")
+
+    merged_source_ids: List[str] = []
+    seen_source_ids: set[str] = set()
+    for item in list(source_record_ids or []) + list(normalized_payload.get("source_record_ids") or []):
+        text = str(item).strip()
+        if not text:
+            continue
+        if text in seen_source_ids:
+            continue
+        seen_source_ids.add(text)
+        merged_source_ids.append(text)
+
+    normalized_payload["layer"] = "factual"
+    normalized_payload["subjectivity_layer"] = SubjectivityLayer.VOW.value
+    normalized_payload["promotion_gate"] = SubjectivityPromotionGate.build_payload(
+        status="reviewed",
+        source=promotion_source,
+        reviewed_by=reviewer,
+        reviewed_at=reviewed_at or datetime.now(timezone.utc).isoformat(),
+        review_basis=basis,
+    )
+    normalized_payload["review_basis"] = basis
+    if merged_source_ids:
+        normalized_payload["source_record_ids"] = merged_source_ids
+    return normalized_payload
+
+
+def promote_reviewed_tension_to_vow(
+    soul_db: SoulDB,
+    *,
+    source: MemorySource,
+    payload: Dict[str, object],
+    reviewed_by: str,
+    review_basis: str,
+    reviewed_at: Optional[str] = None,
+    source_record_ids: Optional[Sequence[str]] = None,
+    promotion_source: str = "manual_review",
+) -> str:
+    reviewed_payload = build_reviewed_vow_payload(
+        payload,
+        reviewed_by=reviewed_by,
+        review_basis=review_basis,
+        reviewed_at=reviewed_at,
+        source_record_ids=source_record_ids,
+        promotion_source=promotion_source,
+    )
+    gateway = MemoryWriteGateway(soul_db)
+    return gateway.write_payload(source, reviewed_payload)
 
 
 def _load_entries(

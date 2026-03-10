@@ -86,24 +86,31 @@ def _promotion_gate(payload: Dict[str, object]) -> tuple[bool, List[str]]:
 
 def _has_strong_promotion_gate(payload: Dict[str, object]) -> bool:
     gate = payload.get("promotion_gate")
+    review_basis = ""
     if isinstance(gate, str):
         return gate.strip().lower() in _REVIEWED_SUBJECTIVITY_STATES
     if not isinstance(gate, dict):
         return False
 
+    review_basis = str(gate.get("review_basis") or "").strip()
+
     for key in ("status", "decision", "mode"):
         value = gate.get(key)
-        if isinstance(value, str) and value.strip().lower() in _REVIEWED_SUBJECTIVITY_STATES:
+        if (
+            isinstance(value, str)
+            and value.strip().lower() in _REVIEWED_SUBJECTIVITY_STATES
+            and review_basis
+        ):
             return True
 
     for key in ("reviewed_by", "approved_by"):
         value = gate.get(key)
-        if isinstance(value, str) and value.strip():
+        if isinstance(value, str) and value.strip() and review_basis:
             return True
-        if isinstance(value, list) and any(str(item).strip() for item in value):
+        if isinstance(value, list) and any(str(item).strip() for item in value) and review_basis:
             return True
 
-    return bool(gate.get("human_review") or gate.get("governance_review"))
+    return bool(review_basis and (gate.get("human_review") or gate.get("governance_review")))
 
 
 class MemoryWriteRejectedError(ValueError):

@@ -1,7 +1,13 @@
 from __future__ import annotations
 
 from .adversarial import AdversarialReflector, Challenge, ChallengeType, Repair
-from .consolidator import consolidate, generate_meta_reflection, identify_patterns
+from .consolidator import (
+    build_reviewed_vow_payload,
+    consolidate,
+    generate_meta_reflection,
+    identify_patterns,
+    promote_reviewed_tension_to_vow,
+)
 from .decay import calculate_decay, should_forget
 from .stats import average_coherence, count_by_verdict, most_common_divergence
 from .write_gateway import (
@@ -23,8 +29,10 @@ __all__ = [
     "most_common_divergence",
     "average_coherence",
     "identify_patterns",
+    "build_reviewed_vow_payload",
     "generate_meta_reflection",
     "consolidate",
+    "promote_reviewed_tension_to_vow",
     "ENVIRONMENT_STIMULUS_TYPE",
     "ENVIRONMENT_STIMULUS_SOURCE",
     "ENVIRONMENT_STIMULUS_LAYER",

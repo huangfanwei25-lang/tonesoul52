@@ -257,7 +257,11 @@ class TestSchemas:
             {
                 "subjectivity_layer": "  TENSION ",
                 "confidence": 0.82,
-                "promotion_gate": "Reviewed",
+                "promotion_gate": {
+                    "status": "Reviewed",
+                    "reviewed_by": "operator",
+                    "review_basis": "Repeated governance tension across cycles.",
+                },
                 "decay_policy": "slow",
                 "source_record_ids": [" a ", "", "b"],
             }
@@ -266,7 +270,11 @@ class TestSchemas:
         assert payload == {
             "subjectivity_layer": "tension",
             "confidence": 0.82,
-            "promotion_gate": {"status": "reviewed"},
+            "promotion_gate": {
+                "status": "reviewed",
+                "reviewed_by": "operator",
+                "review_basis": "Repeated governance tension across cycles.",
+            },
             "decay_policy": {"policy": "slow"},
             "source_record_ids": ["a", "b"],
         }
@@ -276,6 +284,25 @@ class TestSchemas:
 
         with pytest.raises(ValidationError):
             MemorySubjectivityPayload.normalize_fields({"subjectivity_layer": "myth"})
+
+    def test_subjectivity_promotion_gate_builds_review_metadata(self):
+        from tonesoul.schemas import SubjectivityPromotionGate
+
+        payload = SubjectivityPromotionGate.build_payload(
+            status="human_reviewed",
+            source="manual_review",
+            reviewed_by="operator",
+            review_basis="Repeated tension with stable source evidence.",
+            approved_by="guardian",
+        )
+
+        assert payload == {
+            "status": "human_reviewed",
+            "source": "manual_review",
+            "reviewed_by": "operator",
+            "review_basis": "Repeated tension with stable source evidence.",
+            "approved_by": ["guardian"],
+        }
 
 
 # ---------------------------------------------------------------------------
