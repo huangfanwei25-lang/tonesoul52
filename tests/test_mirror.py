@@ -1,7 +1,11 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from pathlib import Path
+from unittest.mock import MagicMock
 
+from tonesoul.memory.soul_db import MemorySource, SqliteSoulDB
+from tonesoul.memory.write_gateway import MemoryWriteGateway
 from tonesoul.mirror import ToneSoulMirror
 
 
@@ -134,3 +138,39 @@ def test_mirror_delta_serializable() -> None:
     assert payload["mirror_delta"]["mirror_triggered"] is True
     assert payload["mirror_delta"]["subjectivity_flags"] == ["tension"]
     assert payload["mirror_delta"]["governance_decision"]["circuit_breaker_status"] == "ok"
+
+
+def test_record_delta_skips_untriggered() -> None:
+    mirror = ToneSoulMirror(_DummyTensionEngine(), _DummyGovernanceKernel())
+    gateway = MagicMock()
+
+    dual = mirror.reflect("Calm response.", {"tone_strength": 0.2, "confidence": 0.9})
+    record_id = mirror.record_delta(dual, gateway)
+
+    assert record_id is None
+    gateway.write_payload.assert_not_called()
+
+
+def test_record_delta_writes_triggered(tmp_path: Path) -> None:
+    db = SqliteSoulDB(db_path=tmp_path / "soul.db")
+    gateway = MemoryWriteGateway(db)
+    mirror = ToneSoulMirror(_DummyTensionEngine(), _DummyGovernanceKernel())
+
+    dual = mirror.reflect("PLEASE RESPOND IMMEDIATELY!", {"tone_strength": 0.9})
+    record_id = mirror.record_delta(dual, gateway)
+    records = list(db.stream(MemorySource.CUSTOM))
+
+    assert record_id
+    assert len(records) == 1
+    payload = records[0].payload
+    assert payload["type"] == "mirror_delta"
+    assert payload["subjectivity_layer"] == "tension"
+    assert payload["final_choice"] == "governed"
+    assert payload["mirror_delta"]["mirror_triggered"] is True
+    assert payload["promotion_gate"] == {
+        "status": "candidate",
+        "source": "tonesoul_mirror",
+        "review_basis": dual.mirror_delta.delta_summary,
+    }
+    assert payload["provenance"]["kind"] == "mirror_delta"
+    assert payload["provenance"]["source"] == "tonesoul_mirror"

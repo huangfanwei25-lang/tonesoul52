@@ -77,6 +77,27 @@ class ToneSoulMirror:
             reflection_note=delta.delta_summary,
         )
 
+    def record_delta(
+        self,
+        dual: DualTrackResponse,
+        write_gateway: object,
+        *,
+        source: object = None,
+    ) -> Optional[str]:
+        """Persist triggered mirror deltas through the canonical memory write gateway."""
+        if not isinstance(dual, DualTrackResponse):
+            raise TypeError("record_delta expects a DualTrackResponse")
+        if not hasattr(write_gateway, "write_payload"):
+            raise TypeError("record_delta expects a write gateway with write_payload")
+        if not dual.mirror_delta.mirror_triggered:
+            return None
+
+        from tonesoul.memory.soul_db import MemorySource
+
+        resolved_source = source or MemorySource.CUSTOM
+        payload = self._build_memory_payload(dual)
+        return write_gateway.write_payload(resolved_source, payload)
+
     def _compute_tension(
         self,
         text: str,
@@ -198,6 +219,66 @@ class ToneSoulMirror:
             return max(0.0, baseline - 0.35)
         return baseline
 
+    def _build_memory_payload(self, dual: DualTrackResponse) -> Dict[str, Any]:
+        from tonesoul.memory.soul_db import MemoryLayer
+
+        delta = dual.mirror_delta
+        decision = delta.governance_decision
+        timestamp = (
+            str(delta.tension_after.timestamp or "").strip()
+            or str(delta.tension_before.timestamp or "").strip()
+            or _utcnow_iso()
+        )
+        evidence = self._build_evidence(
+            delta.delta_summary,
+            dual.raw_response,
+            dual.governed_response,
+        )
+        provenance = {
+            "kind": "mirror_delta",
+            "source": "tonesoul_mirror",
+            "timestamp": timestamp,
+            "final_choice": dual.final_choice,
+            "mirror_triggered": True,
+            "subjectivity_flags": list(delta.subjectivity_flags),
+        }
+        if decision is not None:
+            provenance.update(
+                {
+                    "council_reason": decision.council_reason,
+                    "circuit_breaker_status": decision.circuit_breaker_status,
+                    "friction_score": decision.friction_score,
+                }
+            )
+        provenance = {
+            key: value
+            for key, value in provenance.items()
+            if value not in (None, "", [], {})
+        }
+
+        return {
+            "type": "mirror_delta",
+            "timestamp": timestamp,
+            "layer": MemoryLayer.WORKING.value,
+            "title": "ToneSoul mirror delta",
+            "summary": delta.delta_summary,
+            "raw_response": dual.raw_response,
+            "governed_response": dual.governed_response,
+            "final_choice": dual.final_choice,
+            "reflection_note": dual.reflection_note,
+            "mirror_delta": delta.model_dump(mode="json"),
+            "subjectivity_layer": SubjectivityLayer.TENSION.value,
+            "promotion_gate": {
+                "status": "candidate",
+                "source": "tonesoul_mirror",
+                "review_basis": delta.delta_summary,
+            },
+            "decay_policy": {"policy": "adaptive"},
+            "tags": ["mirror", "runtime", "dual_track"],
+            "evidence": evidence,
+            "provenance": provenance,
+        }
+
     def _resolve_text_tension(self, text: str, context: Dict[str, Any]) -> float:
         for key in ("text_tension", "tension_score", "tone_strength"):
             value = context.get(key)
@@ -211,6 +292,21 @@ class ToneSoulMirror:
     def _resolve_confidence(context: Dict[str, Any]) -> float:
         value = context.get("confidence", 0.8)
         return max(0.0, min(1.0, _safe_float(value, 0.8)))
+
+    @staticmethod
+    def _build_evidence(*items: object) -> list[str]:
+        evidence: list[str] = []
+        seen: set[str] = set()
+        for item in items:
+            text = str(item or "").strip()
+            if not text:
+                continue
+            normalized = text.lower()
+            if normalized in seen:
+                continue
+            seen.add(normalized)
+            evidence.append(text[:500])
+        return evidence
 
     @staticmethod
     def _extract_total(result: Any) -> float:

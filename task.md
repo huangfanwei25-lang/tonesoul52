@@ -2423,3 +2423,18 @@
 - [x] add regressions in `tests/test_unified_pipeline_v2_runtime.py`
 - [x] default path does not invoke mirror
 - [x] enabled path surfaces mirror delta and governed final response
+
+## Phase 204: Mirror Memory Recording (2026-03-10)
+- [x] Continue Phase 140 sequentially into Task D
+- [x] keep mirror persistence behind an explicit helper:
+- [x] `ToneSoulMirror.record_delta(...)`
+- [x] only persist when `mirror_triggered=True`
+- [x] route writes through `MemoryWriteGateway`
+- [x] keep payload inside existing subjectivity contract:
+- [x] `type=mirror_delta`
+- [x] `subjectivity_layer=tension`
+- [x] candidate `promotion_gate`
+- [x] explicit provenance + evidence
+- [x] add regressions in `tests/test_mirror.py`
+- [x] untriggered delta skips writes
+- [x] triggered delta writes a gateway-valid payload
