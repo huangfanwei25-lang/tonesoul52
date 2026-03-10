@@ -2228,3 +2228,29 @@
 - [x] Focused validation:
 - [x] `python -m pytest tests/test_schemas.py tests/test_write_gateway.py tests/test_memory_write_gateway.py -q --tb=short`
 - [x] `ruff check tonesoul/schemas.py tonesoul/memory/write_gateway.py tests/test_schemas.py tests/test_write_gateway.py tests/test_memory_write_gateway.py`
+
+## Phase 195: Context + Long-Horizon Memory Alignment (2026-03-10)
+- [x] Write one explicit context / roadmap note so memory-subjectivity work does not fragment across addenda
+- [x] Record the current validated baseline:
+- [x] subjectivity philosophy + contract split + gateway guard are complete
+- [x] full regression baseline is `1463 passed`
+- [x] Record what is not done yet:
+- [x] no producer wiring yet
+- [x] no reviewed promotion lane yet
+- [x] no `SoulDB` schema widening yet
+- [x] no subjectivity-aware retrieval yet
+- [x] Define the long-horizon order:
+- [x] producer wiring
+- [x] reviewable promotion
+- [x] retrieval/reporting
+- [x] optional persistence/index upgrade
+- [x] private-lane integration
+- [x] Cross-check the plan against `MEMORY.md`
+- [x] public repo keeps contract/schema/tests/docs
+- [x] private repo keeps raw memory corpus and sensitive runtime evidence
+- [x] Cross-check current repo reality against `private_memory_review`
+- [x] `memory/crystals.jsonl` remains `mirror_then_archive`, not precedent for more public memory data
+- [x] Add roadmap note:
+- [x] `docs/plans/memory_subjectivity_context_roadmap_2026-03-10.md`
+- [x] Validation:
+- [x] `rg -n "1463 passed|MEMORY.md|memory/crystals.jsonl|mirror_then_archive|subjectivity_layer|MemoryLayer|producer wiring|reviewable promotion|SoulDB" docs/plans/memory_subjectivity_context_roadmap_2026-03-10.md task.md docs/status/private_memory_review_latest.md`
