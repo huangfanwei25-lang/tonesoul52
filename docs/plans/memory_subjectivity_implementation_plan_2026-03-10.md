@@ -84,6 +84,158 @@ The main audit conclusions are:
 5. Private memory debt still exists in repo reality.
    It must not become the implicit source of truth for public-branch implementation decisions.
 
+## Immediate Phase 140 Alignment
+
+After reading:
+
+- `docs/plans/phase140_codex_coordination_briefing.md`
+- `docs/plans/rmm_vs_tonesoul.md`
+- `CODEX_TASK.md`
+
+the immediate conclusion is:
+
+`ToneSoul Mirror` does not replace this plan.
+
+It is the runtime companion to it.
+
+The cleanest mental model is:
+
+- subjectivity work = offline memory/governance structure
+- mirror work = runtime dual-track awareness of raw output vs governed projection
+
+That means Phase 140 should be treated as a parallel feeder into the same memory-subjectivity pipeline, not as a competing roadmap.
+
+Mirror deltas belong to the current subjectivity architecture because:
+
+- they are runtime `tension` artifacts
+- they can be written through `MemoryWriteGateway`
+- they can later become Dream collision candidates
+- they increase real query pressure for future reporting or retrieval work
+
+So the plan-of-record remains valid, but Phase 140 is now the immediate execution context around it.
+
+## Mirror Interpretation
+
+The implementation reading of Phase 140 should stay narrow:
+
+1. Task A extends schema, not philosophy.
+   `MirrorDelta` and `DualTrackResponse` should be treated as contract additions on top of existing governance and subjectivity models.
+2. Task B adds a runtime mirror, not a second governor.
+   `ToneSoulMirror` should observe and compare; it should not become a new decision authority.
+3. Task C is real-time shadow mode.
+   The mirror step belongs in `UnifiedPipeline` as an opt-in runtime seam with zero default behavior change.
+4. Task D is memory recording through the existing gate.
+   Mirror artifacts should enter memory as `SubjectivityLayer.TENSION` candidates, not as reviewed commitments.
+
+## Mirror Guardrails
+
+The most important technical interpretation is this:
+
+`governed_response` must remain a deterministic governance projection.
+
+It must **not** quietly turn into:
+
+- a new LLM call
+- a second generation pass
+- a hidden rewrite subsystem inside `GovernanceKernel`
+
+The branch does not currently expose a text-rewriting governance API.
+
+So `ToneSoulMirror._apply_governance()` should be implemented as a narrow projection from existing governance decisions and tension state, not as free-form text regeneration.
+
+Additional guardrails:
+
+- mirror is awareness, not Guardian replacement
+- mirror is opt-in and must default to disabled
+- mirror memory writes must still pass the normal write gateway
+- untriggered mirrors should not write durable memory
+
+## Pipeline Integration Reading
+
+The most coherent insertion point is:
+
+- after the pipeline already has a concrete `response`
+- before trajectory history is finalized
+
+That keeps mirror behavior aligned with what the runtime actually said, while still letting the resulting delta travel with `dispatch_trace` and trajectory state.
+
+The existing `UnifiedResponse` already has stable attachment points:
+
+- `dispatch_trace`
+- `trajectory_analysis`
+
+So Phase 140 does not need to force a broad response-schema rewrite unless implementation pressure proves it necessary.
+
+## Memory Recording Reading
+
+Mirror recording should follow the same public-memory rules as other subjectivity candidates.
+
+The preferred structure is:
+
+- mirror computes a `MirrorDelta`
+- pipeline or caller injects a `MemoryWriteGateway`
+- triggered deltas are written as `type = mirror_delta`
+- `subjectivity_layer = tension`
+- review remains a later step, not part of mirror recording
+
+This is important because it keeps mirror memory inside the existing admissibility boundary instead of creating a side-channel writer.
+
+## RMM Position
+
+The RMM comparison is useful, but it is not the immediate build spec for Phase 140.
+
+What should be treated as future inspiration:
+
+- prospective reflection for better consolidation retention
+- retrospective reflection for retrieval feedback
+- multi-granularity clustering
+
+What should remain deferred:
+
+- RL-trained retrieval
+- value-neutral memory logic
+- real-time compression
+- any move that weakens ToneSoul's values-driven gating
+
+So the correct use of the RMM reading is:
+
+- borrow engineering ideas later
+- do not let those ideas override ToneSoul's governance and subjectivity philosophy now
+
+## Builder Note (2026-03-10)
+
+Writing this down plainly:
+
+the branch is no longer short on ideas.
+
+It is short on disciplined sequencing.
+
+My current read is that the strongest thing in this system is not any one module.
+It is the fact that memory, governance, and subjectivity are starting to point at the same questions.
+
+The immediate danger is not lack of ambition.
+
+It is blur.
+
+If Mirror becomes a hidden rewrite engine, the architecture gets blurry.
+If mirror memory bypasses the gateway, the memory contract gets blurry.
+If RMM's engineering ideas arrive too early, ToneSoul's values-driven moat gets blurry.
+If `vow` or `identity` promotion becomes cheap, the meaning of subjectivity gets blurry.
+
+So the practical instinct here is:
+
+- keep the mirror honest
+- keep memory writes admissible
+- keep review exceptional
+- keep reporting inspectable
+- keep the AGI ambition as horizon, not claim
+
+That is the current mood of the plan.
+
+Not anti-ambition.
+
+Anti-self-deception.
+
 ## Plan Of Record
 
 The next work should proceed in this order.

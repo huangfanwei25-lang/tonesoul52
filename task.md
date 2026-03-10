@@ -2369,6 +2369,8 @@
 - [x] keep the context roadmap aligned with the new plan-of-record:
 - [x] `docs/plans/memory_subjectivity_context_roadmap_2026-03-10.md`
 - [x] keep the addenda as background rationale, not competing plans
+- [x] fold the Phase 140 / RMM / `CODEX_TASK.md` reading back into the plan-of-record
+- [x] keep one explicit builder note in the plan so the current architectural instinct is recorded
 - [x] Full validation before doc-only commit:
 - [x] `python -m pytest tests/ -x --tb=short -q`
 - [x] `ruff check tonesoul tests`
