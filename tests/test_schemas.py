@@ -250,6 +250,33 @@ class TestSchemas:
             "model": "qwen3.5:4b",
         }
 
+    def test_memory_subjectivity_payload_normalizes_supported_fields(self):
+        from tonesoul.schemas import MemorySubjectivityPayload
+
+        payload = MemorySubjectivityPayload.normalize_fields(
+            {
+                "subjectivity_layer": "  TENSION ",
+                "confidence": 0.82,
+                "promotion_gate": "Reviewed",
+                "decay_policy": "slow",
+                "source_record_ids": [" a ", "", "b"],
+            }
+        )
+
+        assert payload == {
+            "subjectivity_layer": "tension",
+            "confidence": 0.82,
+            "promotion_gate": {"status": "reviewed"},
+            "decay_policy": {"policy": "slow"},
+            "source_record_ids": ["a", "b"],
+        }
+
+    def test_memory_subjectivity_payload_rejects_invalid_layer(self):
+        from tonesoul.schemas import MemorySubjectivityPayload
+
+        with pytest.raises(ValidationError):
+            MemorySubjectivityPayload.normalize_fields({"subjectivity_layer": "myth"})
+
 
 # ---------------------------------------------------------------------------
 # Safe parse tests

@@ -73,3 +73,95 @@ def test_gateway_persists_provenance_into_sqlite_schema(tmp_path: Path) -> None:
         "source_file": "handoff.json",
         "kind": "handoff_json",
     }
+
+
+def test_write_payload_normalizes_subjectivity_fields(tmp_path: Path) -> None:
+    db = SqliteSoulDB(db_path=tmp_path / "soul.db")
+    gateway = MemoryWriteGateway(db)
+
+    record_id = gateway.write_payload(
+        MemorySource.CUSTOM,
+        {
+            "type": "dream_collision",
+            "summary": "Unresolved collision should stay as tension candidate.",
+            "evidence": ["collision excerpt"],
+            "provenance": {"source": "dream_engine"},
+            "subjectivity_layer": " TENSION ",
+            "confidence": 0.73,
+            "source_record_ids": [" stim-1 ", "", "stim-2"],
+            "decay_policy": "adaptive",
+        },
+    )
+
+    records = list(db.stream(MemorySource.CUSTOM))
+
+    assert record_id
+    assert len(records) == 1
+    assert records[0].payload["subjectivity_layer"] == "tension"
+    assert records[0].payload["confidence"] == 0.73
+    assert records[0].payload["source_record_ids"] == ["stim-1", "stim-2"]
+    assert records[0].payload["decay_policy"] == {"policy": "adaptive"}
+
+
+def test_write_payload_rejects_vow_without_review_gate(tmp_path: Path) -> None:
+    db = SqliteSoulDB(db_path=tmp_path / "soul.db")
+    gateway = MemoryWriteGateway(db)
+
+    with pytest.raises(MemoryWriteRejectedError) as excinfo:
+        gateway.write_payload(
+            MemorySource.CUSTOM,
+            {
+                "type": "memory_promotion",
+                "summary": "A single cycle should not write vows directly.",
+                "evidence": ["cycle excerpt"],
+                "provenance": {"source": "dream_engine"},
+                "subjectivity_layer": "vow",
+            },
+        )
+
+    assert excinfo.value.reasons == ["subjectivity_requires_review"]
+
+
+def test_write_payload_allows_vow_with_review_gate(tmp_path: Path) -> None:
+    db = SqliteSoulDB(db_path=tmp_path / "soul.db")
+    gateway = MemoryWriteGateway(db)
+
+    gateway.write_payload(
+        MemorySource.CUSTOM,
+        {
+            "type": "memory_promotion",
+            "summary": "Reviewed promotion into vow is allowed.",
+            "evidence": ["review excerpt"],
+            "provenance": {"source": "consolidator"},
+            "subjectivity_layer": "vow",
+            "promotion_gate": {"status": "reviewed", "reviewed_by": "sleep_consolidator"},
+        },
+    )
+
+    records = list(db.stream(MemorySource.CUSTOM))
+
+    assert len(records) == 1
+    assert records[0].payload["subjectivity_layer"] == "vow"
+    assert records[0].payload["promotion_gate"] == {
+        "status": "reviewed",
+        "reviewed_by": "sleep_consolidator",
+    }
+
+
+def test_write_payload_rejects_invalid_subjectivity_layer(tmp_path: Path) -> None:
+    db = SqliteSoulDB(db_path=tmp_path / "soul.db")
+    gateway = MemoryWriteGateway(db)
+
+    with pytest.raises(MemoryWriteRejectedError) as excinfo:
+        gateway.write_payload(
+            MemorySource.CUSTOM,
+            {
+                "type": "handoff",
+                "summary": "Invalid subjectivity layer should fail closed.",
+                "evidence": ["artifact excerpt"],
+                "provenance": {"source_file": "handoff.json"},
+                "subjectivity_layer": "myth",
+            },
+        )
+
+    assert excinfo.value.reasons == ["invalid_subjectivity_layer"]

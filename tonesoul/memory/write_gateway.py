@@ -5,12 +5,19 @@ from dataclasses import dataclass, field
 from typing import Dict, Iterable, List, Optional, Set
 
 from tonesoul.perception.stimulus import EnvironmentStimulus
+from tonesoul.schemas import MemorySubjectivityPayload, SubjectivityLayer
 
 from .soul_db import MemoryLayer, MemoryRecord, MemorySource, SoulDB, SqliteSoulDB
 
 ENVIRONMENT_STIMULUS_TYPE = "environment_stimulus"
 ENVIRONMENT_STIMULUS_SOURCE = MemorySource.CUSTOM
 ENVIRONMENT_STIMULUS_LAYER = MemoryLayer.WORKING.value
+_REVIEWED_SUBJECTIVITY_STATES = {
+    "approved",
+    "governance_reviewed",
+    "human_reviewed",
+    "reviewed",
+}
 
 
 def _has_evidence(payload: Dict[str, object]) -> bool:
@@ -68,7 +75,35 @@ def _promotion_gate(payload: Dict[str, object]) -> tuple[bool, List[str]]:
         reasons.append("missing_evidence")
     if not _has_provenance(payload):
         reasons.append("missing_provenance")
+    subjectivity_layer = str(payload.get("subjectivity_layer") or "").strip().lower()
+    if (
+        subjectivity_layer in {SubjectivityLayer.VOW.value, SubjectivityLayer.IDENTITY.value}
+        and not _has_strong_promotion_gate(payload)
+    ):
+        reasons.append("subjectivity_requires_review")
     return len(reasons) == 0, reasons
+
+
+def _has_strong_promotion_gate(payload: Dict[str, object]) -> bool:
+    gate = payload.get("promotion_gate")
+    if isinstance(gate, str):
+        return gate.strip().lower() in _REVIEWED_SUBJECTIVITY_STATES
+    if not isinstance(gate, dict):
+        return False
+
+    for key in ("status", "decision", "mode"):
+        value = gate.get(key)
+        if isinstance(value, str) and value.strip().lower() in _REVIEWED_SUBJECTIVITY_STATES:
+            return True
+
+    for key in ("reviewed_by", "approved_by"):
+        value = gate.get(key)
+        if isinstance(value, str) and value.strip():
+            return True
+        if isinstance(value, list) and any(str(item).strip() for item in value):
+            return True
+
+    return bool(gate.get("human_review") or gate.get("governance_review"))
 
 
 class MemoryWriteRejectedError(ValueError):
@@ -104,6 +139,7 @@ class MemoryWriteGateway:
             raise TypeError("write_payload expects a dict payload")
 
         normalized_payload = dict(payload)
+        normalized_payload = self._normalize_subjectivity_payload(normalized_payload)
         provenance = self._extract_provenance_payload(normalized_payload)
         if provenance is not None and "provenance" not in normalized_payload:
             normalized_payload["provenance"] = provenance
@@ -281,3 +317,34 @@ class MemoryWriteGateway:
             merged.append(tag)
 
         return merged
+
+    def _normalize_subjectivity_payload(self, payload: Dict[str, object]) -> Dict[str, object]:
+        try:
+            normalized_fields = MemorySubjectivityPayload.normalize_fields(payload)
+        except Exception as exc:
+            reasons: List[str] = []
+            errors = getattr(exc, "errors", None)
+            if callable(errors):
+                for error in errors():
+                    loc = error.get("loc") or []
+                    field_name = str(loc[0]) if loc else "subjectivity_payload"
+                    if field_name == "subjectivity_layer":
+                        reasons.append("invalid_subjectivity_layer")
+                    elif field_name == "confidence":
+                        reasons.append("invalid_subjectivity_confidence")
+                    elif field_name == "promotion_gate":
+                        reasons.append("invalid_promotion_gate")
+                    elif field_name == "decay_policy":
+                        reasons.append("invalid_decay_policy")
+                    elif field_name == "source_record_ids":
+                        reasons.append("invalid_source_record_ids")
+                    else:
+                        reasons.append(f"invalid_{field_name}")
+            raise MemoryWriteRejectedError(reasons or ["invalid_subjectivity_payload"]) from exc
+
+        if not normalized_fields:
+            return payload
+
+        normalized_payload = dict(payload)
+        normalized_payload.update(normalized_fields)
+        return normalized_payload

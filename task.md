@@ -2205,3 +2205,26 @@
 - [x] `docs/plans/memory_subjectivity_contract_addendum_2026-03-10.md`
 - [x] Validation:
 - [x] `rg -n "subjectivity_layer|MemoryLayer|MemoryWriteGateway|SoulDB|Consolidator|DreamEngine|schemas.py|promotion_gate|decay_policy" docs/plans/memory_subjectivity_contract_addendum_2026-03-10.md task.md`
+
+## Phase 194: Subjectivity Layer Schema + Gateway Guard (2026-03-10)
+- [x] Add schema-backed subjectivity contract in `tonesoul/schemas.py`
+- [x] Define `SubjectivityLayer`
+- [x] Define `MemorySubjectivityPayload.normalize_fields()`
+- [x] Keep the seam narrow:
+- [x] validate only subjectivity-related fields
+- [x] do not widen `SoulDB` schema yet
+- [x] teach `MemoryWriteGateway` to normalize subjectivity fields before persistence
+- [x] fail closed on invalid subjectivity payloads
+- [x] block direct `vow` / `identity` writes unless a review-strength `promotion_gate` is present
+- [x] add regressions:
+- [x] `tests/test_schemas.py`
+- [x] subjectivity field normalization
+- [x] invalid layer rejection
+- [x] `tests/test_write_gateway.py`
+- [x] normalized tension write
+- [x] vow rejected without review gate
+- [x] vow accepted with review gate
+- [x] invalid subjectivity layer rejected by gateway
+- [x] Focused validation:
+- [x] `python -m pytest tests/test_schemas.py tests/test_write_gateway.py tests/test_memory_write_gateway.py -q --tb=short`
+- [x] `ruff check tonesoul/schemas.py tonesoul/memory/write_gateway.py tests/test_schemas.py tests/test_write_gateway.py tests/test_memory_write_gateway.py`

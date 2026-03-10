@@ -49,6 +49,14 @@ class PerspectiveDecision(str, Enum):
     ABSTAIN = "abstain"
 
 
+class SubjectivityLayer(str, Enum):
+    EVENT = "event"
+    MEANING = "meaning"
+    TENSION = "tension"
+    VOW = "vow"
+    IDENTITY = "identity"
+
+
 # ---------------------------------------------------------------------------
 # ToneBridge Schemas (Analyzer pipeline output)
 # ---------------------------------------------------------------------------
@@ -370,6 +378,73 @@ class DreamReflection(BaseModel):
 
 
 # ---------------------------------------------------------------------------
+# Memory Subjectivity Schemas
+# ---------------------------------------------------------------------------
+
+
+class MemorySubjectivityPayload(BaseModel):
+    """Canonical validation seam for subjectivity-aware memory payload fields."""
+
+    model_config = ConfigDict(extra="ignore")
+
+    subjectivity_layer: Optional[SubjectivityLayer] = None
+    confidence: Optional[float] = Field(default=None, ge=0.0, le=1.0)
+    promotion_gate: Optional[Dict[str, Any]] = None
+    decay_policy: Optional[Dict[str, Any]] = None
+    source_record_ids: Optional[List[str]] = None
+
+    @field_validator("subjectivity_layer", mode="before")
+    @classmethod
+    def _normalize_subjectivity_layer(cls, value: object) -> Optional[str]:
+        if value is None:
+            return None
+        normalized = str(value).strip().lower()
+        return normalized or None
+
+    @field_validator("promotion_gate", "decay_policy", mode="before")
+    @classmethod
+    def _normalize_optional_policy_dict(cls, value: object, info: Any) -> Optional[Dict[str, Any]]:
+        if value is None:
+            return None
+        if isinstance(value, dict):
+            return {str(key): item for key, item in value.items()}
+        if isinstance(value, str):
+            normalized = value.strip()
+            if not normalized:
+                return None
+            key = "status" if info.field_name == "promotion_gate" else "policy"
+            return {key: normalized.lower() if key == "status" else normalized}
+        raise ValueError(f"{info.field_name} must be a dict or string")
+
+    @field_validator("source_record_ids", mode="before")
+    @classmethod
+    def _normalize_source_record_ids(cls, value: object) -> Optional[List[str]]:
+        if value is None:
+            return None
+        if not isinstance(value, list):
+            raise ValueError("source_record_ids must be a list")
+        normalized = [str(item).strip() for item in value if str(item).strip()]
+        return normalized or None
+
+    @classmethod
+    def normalize_fields(cls, payload: Any) -> Dict[str, Any]:
+        raw = dict(payload) if isinstance(payload, dict) else {}
+        if not any(
+            key in raw
+            for key in (
+                "subjectivity_layer",
+                "confidence",
+                "promotion_gate",
+                "decay_policy",
+                "source_record_ids",
+            )
+        ):
+            return {}
+        model = cls.model_validate(raw)
+        return model.model_dump(mode="json", exclude_none=True)
+
+
+# ---------------------------------------------------------------------------
 # Token Metering Schemas
 # ---------------------------------------------------------------------------
 
@@ -495,9 +570,11 @@ __all__ = [
     "LLMRouteDecision",
     "LLMUsageTrace",
     "MotivePredictionResult",
+    "MemorySubjectivityPayload",
     "PerspectiveDecision",
     "PerspectiveEvaluationResult",
     "PerspectiveOutput",
+    "SubjectivityLayer",
     "TensionSnapshot",
     "ToneAnalysisResult",
 ]
