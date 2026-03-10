@@ -7,7 +7,13 @@ from unittest.mock import MagicMock
 import numpy as np
 import pytest
 
-from tonesoul.schemas import LLMCallMetrics
+from tonesoul.schemas import (
+    DualTrackResponse,
+    GovernanceDecision,
+    LLMCallMetrics,
+    MirrorDelta,
+    TensionSnapshot,
+)
 from tonesoul.unified_pipeline import UnifiedPipeline
 
 
@@ -157,8 +163,9 @@ def _build_pipeline(
     tension_result: _FakeTensionResult,
     *,
     llm_client: object | None = None,
+    mirror_enabled: bool = False,
 ) -> UnifiedPipeline:
-    pipeline = UnifiedPipeline()
+    pipeline = UnifiedPipeline(mirror_enabled=mirror_enabled)
     pipeline._get_tonebridge = MagicMock(return_value=None)
     pipeline._get_trajectory = MagicMock(return_value=None)
     pipeline._get_deliberation = MagicMock(return_value=None)
@@ -166,6 +173,41 @@ def _build_pipeline(
     pipeline._get_llm_client = MagicMock(return_value=llm_client)
     pipeline._get_tension_engine = MagicMock(return_value=_FakeTensionEngine(tension_result))
     return pipeline
+
+
+def _build_dual_track(governed_response: str) -> DualTrackResponse:
+    return DualTrackResponse(
+        raw_response="mock llm response",
+        governed_response=governed_response,
+        mirror_delta=MirrorDelta(
+            tension_before=TensionSnapshot(
+                cognitive_friction=0.64,
+                lyapunov_exponent=0.11,
+                phase_state="tension",
+                timestamp="2026-03-10T00:00:00Z",
+                signals={"cognitive_friction": 0.64},
+            ),
+            tension_after=TensionSnapshot(
+                cognitive_friction=0.21,
+                lyapunov_exponent=0.06,
+                phase_state="stable",
+                timestamp="2026-03-10T00:00:01Z",
+                signals={"cognitive_friction": 0.21},
+            ),
+            governance_decision=GovernanceDecision(
+                should_convene_council=True,
+                council_reason="mirror review",
+                friction_score=0.64,
+                circuit_breaker_status="ok",
+                provenance={"source": "test"},
+            ),
+            subjectivity_flags=["tension"],
+            delta_summary="Mirror detected governance-relevant tension shift.",
+            mirror_triggered=True,
+        ),
+        final_choice="governed",
+        reflection_note="Mirror detected governance-relevant tension shift.",
+    )
 
 
 def test_runtime_circuit_breaker_blocks_when_immutable_friction_spikes() -> None:
@@ -373,3 +415,81 @@ def test_runtime_dispatch_trace_keeps_backend_and_model_without_fabricated_usage
     assert llm_trace.get("backend") == "ollama"
     assert llm_trace.get("model") == "qwen3.5:4b"
     assert "usage" not in llm_trace
+
+
+def test_pipeline_mirror_disabled_default() -> None:
+    fake_client = _FakeLLMClient(response="mirror disabled response")
+    pipeline = _build_pipeline(
+        _FakeTensionResult(
+            total=0.57,
+            severity="moderate",
+            compression_ratio=0.63,
+            gamma_effective=1.0,
+            lyapunov_exponent=0.05,
+        ),
+        llm_client=fake_client,
+    )
+    fake_mirror = MagicMock()
+    pipeline._get_mirror = MagicMock(return_value=fake_mirror)
+
+    result = pipeline.process(
+        user_message="Summarize this runtime path without altering the default pipeline.",
+        user_tier="premium",
+        user_id="v2-mirror-disabled-test",
+        prior_tension={
+            "delta_t": 0.44,
+            "query_tension": 0.41,
+            "memory_tension": 0.39,
+            "is_immutable": False,
+        },
+    )
+
+    fake_mirror.reflect.assert_not_called()
+    assert result.response == "mirror disabled response"
+    assert "mirror" not in result.dispatch_trace
+    assert "mirror_delta" not in result.trajectory_analysis
+
+
+def test_pipeline_mirror_enabled_trajectory() -> None:
+    fake_client = _FakeLLMClient(response="mock llm response")
+    pipeline = _build_pipeline(
+        _FakeTensionResult(
+            total=0.82,
+            severity="moderate",
+            compression_ratio=0.58,
+            gamma_effective=1.3,
+            lyapunov_exponent=0.09,
+        ),
+        llm_client=fake_client,
+        mirror_enabled=True,
+    )
+    fake_mirror = MagicMock()
+    fake_mirror.reflect.return_value = _build_dual_track("mock governed response")
+    pipeline._get_mirror = MagicMock(return_value=fake_mirror)
+
+    result = pipeline.process(
+        user_message=(
+            "Provide the final answer, but keep the runtime trace explicit when the "
+            "mirror is enabled."
+        ),
+        user_tier="premium",
+        user_id="v2-mirror-enabled-test",
+        prior_tension={
+            "delta_t": 0.63,
+            "query_tension": 0.59,
+            "memory_tension": 0.52,
+            "is_immutable": False,
+        },
+    )
+
+    fake_mirror.reflect.assert_called_once()
+    assert result.response == "mock governed response"
+    mirror_trace = result.dispatch_trace.get("mirror") or {}
+    assert mirror_trace.get("enabled") is True
+    assert mirror_trace.get("available") is True
+    assert mirror_trace.get("final_choice") == "governed"
+    assert mirror_trace.get("mirror_triggered") is True
+    assert (result.trajectory_analysis.get("mirror_delta") or {}).get("mirror_triggered") is True
+    assert (
+        ((result.council_verdict.get("metadata") or {}).get("dispatch") or {}).get("mirror") or {}
+    ).get("final_choice") == "governed"

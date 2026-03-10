@@ -98,10 +98,12 @@ class UnifiedPipeline:
              確保輸出符合先前的語場承諾與一致性。
     """
 
-    def __init__(self, gemini_client=None):
+    def __init__(self, gemini_client=None, mirror_enabled: bool = False):
         self._llm_client = gemini_client
         self._llm_router = None
         self._governance_kernel = None
+        self._mirror = None
+        self._mirror_enabled = bool(mirror_enabled)
         self._tonebridge = None
         self._council = None
         self._trajectory = None
@@ -323,6 +325,22 @@ class UnifiedPipeline:
                 pass
         return self._tension_engine
 
+    def _get_mirror(self):
+        """Get or create the opt-in runtime mirror."""
+        if not self._mirror_enabled:
+            return None
+        if self._mirror is None:
+            try:
+                from tonesoul.mirror import ToneSoulMirror
+
+                self._mirror = ToneSoulMirror(
+                    tension_engine=self._get_tension_engine(),
+                    governance_kernel=self._get_governance_kernel(),
+                )
+            except Exception:
+                pass
+        return self._mirror
+
     def _get_friction_calculator(self):
         """Backward-compatible shim to the governance kernel calculator."""
         kernel = self._get_governance_kernel()
@@ -368,6 +386,57 @@ class UnifiedPipeline:
             if next_index % self._visual_chain_sample_every != 0:
                 return False
         return True
+
+    def _apply_mirror_step(
+        self,
+        response: str,
+        *,
+        dispatch_trace: Dict[str, Any],
+        trajectory_result: Dict[str, Any],
+        user_tier: str,
+        tone_strength: float,
+        confidence: float,
+    ) -> str:
+        """Run the optional mirror step and surface its delta in runtime traces."""
+        if not self._mirror_enabled:
+            return response
+
+        mirror = self._get_mirror()
+        if mirror is None:
+            mirror_trace = {
+                "enabled": True,
+                "available": False,
+                "final_choice": "raw",
+                "reflection_note": "Mirror unavailable.",
+            }
+            dispatch_trace["mirror"] = mirror_trace
+            trajectory_result["mirror"] = dict(mirror_trace)
+            return response
+
+        dual = mirror.reflect(
+            response,
+            {
+                "user_tier": user_tier,
+                "text_tension": tone_strength,
+                "confidence": confidence,
+            },
+        )
+        mirror_delta = dual.mirror_delta.model_dump(mode="json")
+        mirror_trace = {
+            "enabled": True,
+            "available": True,
+            "final_choice": dual.final_choice,
+            "reflection_note": dual.reflection_note,
+            "mirror_triggered": dual.mirror_delta.mirror_triggered,
+            "mirror_delta": mirror_delta,
+        }
+        dispatch_trace["mirror"] = mirror_trace
+        trajectory_result["mirror"] = dict(mirror_trace)
+        trajectory_result["mirror_delta"] = dict(mirror_delta)
+
+        if dual.final_choice == "raw":
+            return dual.raw_response or response
+        return dual.governed_response or dual.raw_response or response
 
     @staticmethod
     def _extract_contradiction_description(contradiction: Any) -> str:
@@ -1808,12 +1877,7 @@ Respond with a clear, practical answer."""
             except Exception:
                 pass
 
-        # ========== 11. 更新 Trajectory 歷史 ==========
-        if trajectory:
-            tone_state = trajectory_result.get("resonance_state", "resonance")
-            trajectory.add_turn(user_message, response, tone_state)
-
-        # ========== 12. 產生內部敘事摘要 ==========
+        # ========== 11. 產生內部敘事摘要 ==========
         inner_narrative = self._generate_narrative(tb_result, verdict_dict)
 
         # 干預策略
@@ -1933,6 +1997,15 @@ Respond with a clear, practical answer."""
         except Exception:
             pass
 
+        response = self._apply_mirror_step(
+            response,
+            dispatch_trace=dispatch_trace,
+            trajectory_result=trajectory_result,
+            user_tier=user_tier,
+            tone_strength=tone_strength,
+            confidence=(getattr(tb_result, "confidence", 0.8) if tb_result else 0.8),
+        )
+
         if repair_stages:
             self._apply_repair_trace(
                 dispatch_trace=dispatch_trace,
@@ -1945,6 +2018,19 @@ Respond with a clear, practical answer."""
                 stages=repair_stages,
                 attempt_after_tension=True,
             )
+
+        # ========== 12. 更新 Trajectory 歷史 ==========
+        if trajectory:
+            tone_state = trajectory_result.get("resonance_state", "resonance")
+            trajectory.add_turn(user_message, response, tone_state)
+
+        if isinstance(verdict_dict, dict):
+            verdict_metadata = verdict_dict.get("metadata")
+            if not isinstance(verdict_metadata, dict):
+                verdict_metadata = {}
+            verdict_metadata["dispatch_state"] = dispatch_trace.get("state")
+            verdict_metadata["dispatch"] = dispatch_trace
+            verdict_dict["metadata"] = verdict_metadata
 
         self._attach_runtime_governance_observability(dispatch_trace)
         return UnifiedResponse(

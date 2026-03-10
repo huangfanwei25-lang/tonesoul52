@@ -2408,3 +2408,18 @@
 - [x] triggered high-tension path
 - [x] graceful no-engine fallback
 - [x] dual-track payload stays JSON-serializable
+
+## Phase 203: UnifiedPipeline Mirror Step (2026-03-10)
+- [x] Continue Phase 140 sequentially into Task C
+- [x] keep mirror wiring opt-in with `mirror_enabled=False` by default
+- [x] add lazy runtime mirror construction in `UnifiedPipeline`
+- [x] run mirror after response shaping, without introducing any new LLM call
+- [x] surface mirror traces in runtime payloads:
+- [x] `dispatch_trace["mirror"]`
+- [x] `trajectory_analysis["mirror"]`
+- [x] `trajectory_analysis["mirror_delta"]`
+- [x] keep final response aligned with mirror final choice when enabled
+- [x] move `trajectory.add_turn(...)` to record the post-mirror final response
+- [x] add regressions in `tests/test_unified_pipeline_v2_runtime.py`
+- [x] default path does not invoke mirror
+- [x] enabled path surfaces mirror delta and governed final response
