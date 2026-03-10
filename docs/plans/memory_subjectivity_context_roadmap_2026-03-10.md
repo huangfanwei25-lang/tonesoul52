@@ -19,7 +19,7 @@ This addendum records:
 
 ## Current Context Snapshot
 
-As of `2026-03-10`, the branch has completed six linked memory-subjectivity steps:
+As of `2026-03-10`, the branch has completed seven linked memory-subjectivity steps:
 
 1. `docs/plans/memory_subjectivity_layer_addendum_2026-03-09.md`
    - defined the ladder:
@@ -44,10 +44,14 @@ As of `2026-03-10`, the branch has completed six linked memory-subjectivity step
    - operator-facing reporting helpers now summarize subjectivity distribution
    - unresolved `tension` records can be listed without widening HTTP/API contracts
    - read/report surfaces now exist even though subjectivity-ranked recall does not
+7. `docs/plans/memory_subjectivity_runtime_summary_addendum_2026-03-10.md`
+   - `SleepResult` now carries subjectivity distribution alongside layer counts
+   - consolidation summaries can surface unresolved tension / vow counts without widening public APIs
+   - memory structure is now visible inside the normal wakeup/consolidation runtime path
 
 Current validated baseline:
 
-- `python -m pytest tests/ -x --tb=short -q` -> `1471 passed`
+- `python -m pytest tests/ -x --tb=short -q` -> `1472 passed`
 - `ruff check tonesoul tests` -> passed
 
 Current runtime meaning of this work:
@@ -120,6 +124,7 @@ Guardrail:
 Status:
 
 - internal read/report helpers now exist for subjectivity distribution and unresolved tension inspection
+- consolidation runtime now carries subjectivity summary through `SleepResult`
 - external HTTP/API contracts remain unchanged
 
 ### Phase D: Optional Persistence Upgrade

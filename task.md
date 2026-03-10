@@ -2330,3 +2330,26 @@
 - [x] Focused validation:
 - [x] `python -m pytest tests/test_subjectivity_reporting.py tests/test_ai_sleep.py tests/test_schemas.py tests/test_write_gateway.py -q --tb=short`
 - [x] `ruff check tonesoul/memory/subjectivity_reporting.py tonesoul/memory/__init__.py tests/test_subjectivity_reporting.py`
+
+## Phase 199: Runtime Subjectivity Summary Wiring (2026-03-10)
+- [x] Keep the next step as runtime reporting only:
+- [x] no new retrieval policy
+- [x] no HTTP/API widening
+- [x] teach `sleep_consolidate()` to emit `subjectivity_summary` inside `SleepResult`
+- [x] keep `layer_summary` intact
+- [x] reuse `summarize_subjectivity_distribution(...)` instead of duplicating counting logic
+- [x] teach `AutonomousWakeupLoop` to surface high-signal subjectivity counts:
+- [x] `consolidation_unresolved_tension_count`
+- [x] `consolidation_vow_count`
+- [x] add regressions:
+- [x] `tests/test_ai_sleep.py`
+- [x] `SleepResult` includes subjectivity summary after consolidation
+- [x] `tests/test_wakeup_loop.py`
+- [x] wakeup summary includes unresolved tension / vow counts from consolidation payload
+- [x] Add implementation note:
+- [x] `docs/plans/memory_subjectivity_runtime_summary_addendum_2026-03-10.md`
+- [x] Keep context roadmap current:
+- [x] `docs/plans/memory_subjectivity_context_roadmap_2026-03-10.md`
+- [x] Focused validation:
+- [x] `python -m pytest tests/test_ai_sleep.py tests/test_wakeup_loop.py tests/test_subjectivity_reporting.py -q --tb=short`
+- [x] `ruff check tonesoul/memory/consolidator.py tonesoul/wakeup_loop.py tests/test_ai_sleep.py tests/test_wakeup_loop.py`

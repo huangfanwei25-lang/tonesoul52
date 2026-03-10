@@ -9,6 +9,7 @@ from tonesoul.schemas import SubjectivityLayer, SubjectivityPromotionGate
 
 from .soul_db import JsonlSoulDB, MemorySource, SoulDB
 from .stats import average_coherence, count_by_verdict, most_common_divergence
+from .subjectivity_reporting import summarize_subjectivity_distribution
 from .write_gateway import MemoryWriteGateway, MemoryWriteRejectedError
 
 
@@ -27,6 +28,7 @@ class SleepResult:
     patterns: Dict[str, object]
     meta_reflection: str
     layer_summary: Dict[str, int]
+    subjectivity_summary: Dict[str, object] = field(default_factory=dict)
     gated_count: int = 0
     gate_failures: Dict[str, int] = field(default_factory=dict)
 
@@ -339,6 +341,7 @@ def sleep_consolidate(
             layer_summary[layer] += 1
         else:
             layer_summary[layer] = 1
+    subjectivity_summary = summarize_subjectivity_distribution(soul_db, source=source)
 
     return SleepResult(
         promoted_count=promoted,
@@ -347,5 +350,6 @@ def sleep_consolidate(
         patterns=patterns,
         meta_reflection=meta_reflection,
         layer_summary=layer_summary,
+        subjectivity_summary=subjectivity_summary,
         gate_failures=gate_failures,
     )

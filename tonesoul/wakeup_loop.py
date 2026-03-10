@@ -176,6 +176,8 @@ class AutonomousWakeupLoop:
         cycle_result.summary.setdefault("consolidation_promoted_count", 0)
         cycle_result.summary.setdefault("consolidation_cleared_count", 0)
         cycle_result.summary.setdefault("consolidation_gated_count", 0)
+        cycle_result.summary.setdefault("consolidation_unresolved_tension_count", 0)
+        cycle_result.summary.setdefault("consolidation_vow_count", 0)
         if self.consolidate_every_cycles <= 0:
             return
         if cycle_result.cycle % self.consolidate_every_cycles != 0:
@@ -202,6 +204,22 @@ class AutonomousWakeupLoop:
         )
         cycle_result.summary["consolidation_gated_count"] = int(
             consolidation_payload.get("gated_count", 0) or 0
+        )
+        subjectivity_summary = (
+            consolidation_payload.get("subjectivity_summary")
+            if isinstance(consolidation_payload.get("subjectivity_summary"), dict)
+            else {}
+        )
+        by_subjectivity_layer = (
+            subjectivity_summary.get("by_subjectivity_layer")
+            if isinstance(subjectivity_summary.get("by_subjectivity_layer"), dict)
+            else {}
+        )
+        cycle_result.summary["consolidation_unresolved_tension_count"] = int(
+            subjectivity_summary.get("unresolved_tension_count", 0) or 0
+        )
+        cycle_result.summary["consolidation_vow_count"] = int(
+            by_subjectivity_layer.get("vow", 0) or 0
         )
 
     @staticmethod

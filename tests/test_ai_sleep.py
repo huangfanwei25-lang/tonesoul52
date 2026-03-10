@@ -84,6 +84,27 @@ def test_sleep_result_has_layer_summary(tmp_path):
     assert isinstance(result.layer_summary["experiential"], int)
 
 
+def test_sleep_result_includes_subjectivity_summary(tmp_path):
+    db, source = _build_db(tmp_path)
+    db.append(
+        source,
+        {
+            "text": "I promise to keep provenance explicit",
+            "layer": "working",
+            "evidence_ids": ["ev-100"],
+            "intent_id": "intent-100",
+        },
+    )
+
+    result = sleep_consolidate(db, source=source)
+
+    assert result.subjectivity_summary["total_records"] == 2
+    assert result.subjectivity_summary["by_memory_layer"] == {"working": 1, "factual": 1}
+    assert result.subjectivity_summary["by_subjectivity_layer"]["event"] == 1
+    assert result.subjectivity_summary["by_subjectivity_layer"]["unclassified"] == 1
+    assert result.subjectivity_summary["by_source"] == {"self_journal": 2}
+
+
 def test_sleep_consolidate_blocks_promotion_without_evidence(tmp_path):
     db, source = _build_db(tmp_path)
     db.append(

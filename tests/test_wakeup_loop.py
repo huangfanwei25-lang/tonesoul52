@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from tonesoul.dream_engine import DreamCollision, DreamCycleResult
 from tonesoul.memory.soul_db import MemorySource
@@ -259,6 +259,7 @@ class DummySleepResult:
     promoted_count: int
     cleared_count: int
     gated_count: int
+    subjectivity_summary: dict[str, object] = field(default_factory=dict)
 
 
 def test_run_triggers_periodic_sleep_consolidation() -> None:
@@ -289,7 +290,15 @@ def test_run_triggers_periodic_sleep_consolidation() -> None:
         consolidate_source=MemorySource.CUSTOM,
         consolidate_func=lambda soul_db, source: (
             consolidate_calls.append((soul_db, source))
-            or DummySleepResult(promoted_count=2, cleared_count=1, gated_count=0)
+            or DummySleepResult(
+                promoted_count=2,
+                cleared_count=1,
+                gated_count=0,
+                subjectivity_summary={
+                    "unresolved_tension_count": 1,
+                    "by_subjectivity_layer": {"vow": 2},
+                },
+            )
         ),
     )
 
@@ -301,6 +310,8 @@ def test_run_triggers_periodic_sleep_consolidation() -> None:
     assert results[1].summary["consolidation_promoted_count"] == 2
     assert results[1].summary["consolidation_cleared_count"] == 1
     assert results[1].summary["consolidation_gated_count"] == 0
+    assert results[1].summary["consolidation_unresolved_tension_count"] == 1
+    assert results[1].summary["consolidation_vow_count"] == 2
     assert results[1].dream_result["consolidation"]["promoted_count"] == 2
 
 
