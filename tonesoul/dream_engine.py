@@ -11,6 +11,7 @@ from tonesoul.llm.router import LLMRouter
 from tonesoul.memory.crystallizer import Crystal, MemoryCrystallizer
 from tonesoul.memory.soul_db import MemoryLayer, MemorySource, SoulDB, SqliteSoulDB
 from tonesoul.memory.write_gateway import MemoryWriteGateway, MemoryWriteRejectedError
+from tonesoul.schemas import SubjectivityLayer
 
 
 class LLMRouterLike(Protocol):
@@ -241,6 +242,7 @@ class DreamEngine:
             "type": "dream_collision",
             "timestamp": generated_at,
             "layer": MemoryLayer.WORKING.value,
+            "subjectivity_layer": SubjectivityLayer.TENSION.value,
             "title": (
                 f"Dream collision: {collision.topic}"
                 if str(collision.topic).strip()
@@ -269,6 +271,14 @@ class DreamEngine:
             "crystal_rules": list(collision.crystal_rules),
             "resistance": dict(collision.resistance),
             "observability": dict(collision.observability),
+            "source_record_ids": [collision.stimulus_record_id],
+            "promotion_gate": {
+                "status": "candidate",
+                "source": "dream_engine",
+            },
+            "decay_policy": {
+                "policy": "adaptive",
+            },
             "tags": ["dream", "collision", "autonomous"],
             "evidence": evidence,
             "provenance": {

@@ -370,7 +370,14 @@ def test_run_cycle_persists_collision_via_write_gateway_with_provenance(tmp_path
     assert len(collision_payloads) == 1
     payload = collision_payloads[0]
     assert payload["layer"] == "working"
+    assert payload["subjectivity_layer"] == "tension"
     assert payload["dream_cycle_id"] == result.dream_cycle_id
+    assert payload["source_record_ids"] == [result.collisions[0].stimulus_record_id]
+    assert payload["promotion_gate"] == {
+        "status": "candidate",
+        "source": "dream_engine",
+    }
+    assert payload["decay_policy"] == {"policy": "adaptive"}
     assert payload["provenance"]["dream_cycle_id"] == result.dream_cycle_id
     assert payload["provenance"]["source_url"] == "https://example.com/article"
     assert payload["provenance"]["stimulus_record_id"] == result.collisions[0].stimulus_record_id

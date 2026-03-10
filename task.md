@@ -2254,3 +2254,27 @@
 - [x] `docs/plans/memory_subjectivity_context_roadmap_2026-03-10.md`
 - [x] Validation:
 - [x] `rg -n "1463 passed|MEMORY.md|memory/crystals.jsonl|mirror_then_archive|subjectivity_layer|MemoryLayer|producer wiring|reviewable promotion|SoulDB" docs/plans/memory_subjectivity_context_roadmap_2026-03-10.md task.md docs/status/private_memory_review_latest.md`
+
+## Phase 196: Subjectivity Producer Wiring (2026-03-10)
+- [x] Keep the next runtime step narrow:
+- [x] producer wiring only
+- [x] no `vow` / `identity` auto-promotion
+- [x] wire `DreamEngine` persisted collisions to emit subjectivity candidates:
+- [x] `subjectivity_layer = tension`
+- [x] `source_record_ids = [stimulus_record_id]`
+- [x] candidate `promotion_gate`
+- [x] candidate `decay_policy`
+- [x] wire `sleep_consolidate()` promoted payloads to emit subjectivity candidates:
+- [x] preserve existing `subjectivity_layer` if already present
+- [x] otherwise infer `event` / `meaning` / `tension` without changing storage-layer classification
+- [x] add candidate `promotion_gate`
+- [x] add source linkage when `record_id` exists
+- [x] add regressions:
+- [x] `tests/test_dream_engine.py`
+- [x] persisted collision carries subjectivity candidate fields
+- [x] `tests/test_ai_sleep.py`
+- [x] promoted payload gains subjectivity candidate fields
+- [x] existing subjectivity layer is preserved through consolidation
+- [x] Focused validation:
+- [x] `python -m pytest tests/test_dream_engine.py tests/test_ai_sleep.py tests/test_schemas.py tests/test_write_gateway.py -q --tb=short`
+- [x] `ruff check tonesoul/dream_engine.py tonesoul/memory/consolidator.py tests/test_dream_engine.py tests/test_ai_sleep.py`

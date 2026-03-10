@@ -5,6 +5,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Sequence
 
+from tonesoul.schemas import SubjectivityLayer
+
 from .soul_db import JsonlSoulDB, MemorySource, SoulDB
 from .stats import average_coherence, count_by_verdict, most_common_divergence
 from .write_gateway import MemoryWriteGateway, MemoryWriteRejectedError
@@ -42,6 +44,33 @@ def _classify_for_promotion(payload: Dict[str, object]) -> str:
         if keyword in text:
             return "experiential"
     return "working"
+
+
+def _infer_subjectivity_layer(payload: Dict[str, object], *, target_layer: str) -> str:
+    existing = str(payload.get("subjectivity_layer") or "").strip().lower()
+    if existing:
+        return existing
+
+    tension_markers = (
+        payload.get("friction_score"),
+        payload.get("tension"),
+        payload.get("tension_score"),
+        payload.get("dream_cycle_id"),
+        payload.get("council_reason"),
+    )
+    if any(marker not in (None, "", [], {}) for marker in tension_markers):
+        return SubjectivityLayer.TENSION.value
+
+    text = " ".join(
+        str(payload.get(key) or "")
+        for key in ("text", "content", "summary", "reflection", "topic")
+    ).lower()
+    if any(keyword in text for keyword in ("conflict", "tension", "friction", "diverge", "rupture")):
+        return SubjectivityLayer.TENSION.value
+
+    if target_layer == "experiential":
+        return SubjectivityLayer.MEANING.value
+    return SubjectivityLayer.EVENT.value
 
 
 def _load_entries(
@@ -200,6 +229,19 @@ def sleep_consolidate(
         promoted_payload["layer"] = target_layer
         promoted_payload["promoted_from"] = "working"
         promoted_payload["promoted_at"] = datetime.now(timezone.utc).isoformat()
+        promoted_payload["subjectivity_layer"] = _infer_subjectivity_layer(
+            promoted_payload,
+            target_layer=target_layer,
+        )
+        if record.record_id:
+            promoted_payload["source_record_ids"] = [str(record.record_id)]
+        promoted_payload.setdefault(
+            "promotion_gate",
+            {
+                "status": "candidate",
+                "source": "sleep_consolidate",
+            },
+        )
         try:
             gateway.write_payload(source, promoted_payload)
         except MemoryWriteRejectedError as exc:

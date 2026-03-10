@@ -56,11 +56,18 @@ def test_sleep_consolidate_promotes_commitment(tmp_path):
     result = sleep_consolidate(db, source=source)
     factual_records = list(db.query(source, layer="factual"))
     working_records = list(db.query(source, layer="working"))
+    factual_payload = factual_records[0].payload
 
     assert result.promoted_count == 1
     assert result.gated_count == 0
     assert len(factual_records) == 1
     assert len(working_records) == 1
+    assert factual_payload["subjectivity_layer"] == "event"
+    assert factual_payload["promotion_gate"] == {
+        "status": "candidate",
+        "source": "sleep_consolidate",
+    }
+    assert factual_payload["source_record_ids"]
 
 
 def test_sleep_result_has_layer_summary(tmp_path):
@@ -107,3 +114,24 @@ def test_sleep_consolidate_blocks_promotion_without_provenance(tmp_path):
     assert result.gated_count == 1
     assert result.gate_failures.get("missing_provenance") == 1
     assert len(factual_records) == 0
+
+
+def test_sleep_consolidate_preserves_existing_subjectivity_layer(tmp_path):
+    db, source = _build_db(tmp_path)
+    db.append(
+        source,
+        {
+            "text": "I feel conflict tension around this decision",
+            "layer": "working",
+            "evidence_ids": ["ev-003"],
+            "intent_id": "intent-003",
+            "subjectivity_layer": "tension",
+        },
+    )
+
+    result = sleep_consolidate(db, source=source)
+    experiential_records = list(db.query(source, layer="experiential"))
+
+    assert result.promoted_count == 1
+    assert len(experiential_records) == 1
+    assert experiential_records[0].payload["subjectivity_layer"] == "tension"
