@@ -25,7 +25,7 @@ Execution note:
 
 ## Current Context Snapshot
 
-As of `2026-03-10`, the branch has completed thirteen linked memory-subjectivity
+As of `2026-03-10`, the branch has completed fourteen linked memory-subjectivity
 and mirror-alignment steps:
 
 1. `docs/plans/memory_subjectivity_layer_addendum_2026-03-09.md`
@@ -78,10 +78,14 @@ and mirror-alignment steps:
     - reviewed promotion now has a canonical actor/decision artifact
     - approved decisions now replay through one explicit seam instead of ad hoc helper kwargs
     - `consolidator.py` helpers now route through the canonical review workflow
+14. `scripts/run_subjectivity_report.py`
+    - subjectivity reporting now has an explicit operator entry surface
+    - JSON/Markdown status artifacts can now show unresolved tensions and reviewed vow rows without HTTP/API widening
+    - the new artifacts are registered in the refreshable artifact producer registry
 
 Current validated baseline:
 
-- `python -m pytest tests/ -x --tb=short -q` -> `1488 passed`
+- `python -m pytest tests/ -x --tb=short -q` -> `1491 passed`
 - `ruff check tonesoul tests` -> passed
 
 Current runtime meaning of this work:
@@ -91,6 +95,7 @@ Current runtime meaning of this work:
 - ToneSoul can now observe a raw-output vs governed-output delta during runtime when mirror is enabled
 - triggered mirror deltas can now become admissible `tension` candidate memory through the same public write boundary
 - reviewed `tension -> vow` promotion now has an explicit public review artifact and replay contract
+- operators now have one explicit report seam for inspecting unresolved tensions and reviewed vows
 - the runtime still does **not** auto-promote its own traces into vows or identity
 
 That last point is intentional.

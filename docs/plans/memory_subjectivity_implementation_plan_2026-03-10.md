@@ -64,6 +64,7 @@ The branch now has a coherent public contract:
 9. `UnifiedPipeline` can opt into mirror tracing without changing default behavior.
 10. triggered mirror deltas can be recorded through `MemoryWriteGateway` as admissible `tension` candidates.
 11. reviewed promotion now has a canonical actor/decision artifact and a dedicated replay seam instead of relying only on helper kwargs.
+12. operator-side subjectivity reporting now has an explicit CLI/report entry surface via `scripts/run_subjectivity_report.py`.
 
 Current validated baseline on this branch:
 
@@ -351,6 +352,16 @@ Explicit non-goals:
 Why this comes before retrieval changes:
 
 - the branch should observe subjectivity accumulation before letting it influence recall policy
+
+Current branch status:
+
+- `scripts/run_subjectivity_report.py` now emits operator-facing JSON/Markdown artifacts
+- the report surfaces:
+  - subjectivity distribution
+  - unresolved tensions
+  - reviewed vow count and latest reviewed vow rows
+- the output artifacts are now registered in `run_refreshable_artifact_report.py`
+- HTTP/API remains unchanged
 
 ### Step 3: Retrieval Shadow Mode
 

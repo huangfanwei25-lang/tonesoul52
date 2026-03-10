@@ -2470,3 +2470,20 @@
 - [x] extend `tests/test_schemas.py`
 - [x] reviewed promotion decision serializes cleanly
 - [x] approved reviewed promotion replays through `MemoryWriteGateway`
+
+## Phase 207: Subjectivity Operator Entry Surface (2026-03-10)
+- [x] start `Step 2` from the implementation plan of record
+- [x] add an explicit operator report seam:
+- [x] `scripts/run_subjectivity_report.py`
+- [x] emit JSON/Markdown artifacts for:
+- [x] subjectivity distribution
+- [x] unresolved tensions
+- [x] reviewed vow count and recent reviewed vow rows
+- [x] keep scope narrow:
+- [x] no HTTP/API widening
+- [x] no retrieval policy change
+- [x] register the new `docs/status` artifacts in `scripts/run_refreshable_artifact_report.py`
+- [x] add regressions:
+- [x] `tests/test_run_subjectivity_report.py`
+- [x] report warns cleanly when `soul.db` is absent
+- [x] strict mode fails when unresolved tension remains pending review
