@@ -2559,3 +2559,17 @@
 - [x] validation before commit:
 - [x] `python -m pytest tests/ -x --tb=short -q`
 - [x] `ruff check tonesoul tests scripts`
+
+## Phase 211: Context Compression Handoff Snapshot (2026-03-10)
+- [x] add one compact restart snapshot:
+- [x] `docs/status/codex_subjectivity_handoff_2026-03-10.md`
+- [x] record:
+- [x] current branch / head
+- [x] canonical read order after restart
+- [x] completed phases 208-210
+- [x] latest validation baseline
+- [x] next step decision gate
+- [x] dirty files to leave untouched
+- [x] validation before doc-only commit:
+- [x] `python -m pytest tests/ -x --tb=short -q`
+- [x] `ruff check tonesoul tests scripts`
