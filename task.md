@@ -2505,3 +2505,32 @@
 - [x] validation before doc-only commit:
 - [x] `python -m pytest tests/ -x --tb=short -q`
 - [x] `ruff check tonesoul tests`
+
+## Phase 209: Retrieval Shadow Query Foundation (2026-03-10)
+- [x] start `Step 3` from the implementation plan of record
+- [x] keep scope observational:
+- [x] no live recall rerank changes
+- [x] no HTTP/API widening
+- [x] add a read-only shadow retrieval seam:
+- [x] `tonesoul/memory/subjectivity_shadow.py`
+- [x] compare baseline `SoulDB.search()` candidates against subjectivity-aware shadow ordering
+- [x] support narrow shadow profiles:
+- [x] `classified_first`
+- [x] `tension_first`
+- [x] `reviewed_vow_first`
+- [x] add an explicit operator runner:
+- [x] `scripts/run_subjectivity_shadow_query.py`
+- [x] emit JSON/Markdown artifacts with:
+- [x] baseline results
+- [x] shadow results
+- [x] overlap / promoted / demoted ids
+- [x] layer distribution deltas
+- [x] add regressions:
+- [x] `tests/test_subjectivity_shadow.py`
+- [x] `tests/test_run_subjectivity_shadow_query.py`
+- [x] keep the Google overlap narrow:
+- [x] borrow query/report shape
+- [x] do not borrow ungated memory mutation
+- [x] validation before commit:
+- [x] `python -m pytest tests/ -x --tb=short -q`
+- [x] `ruff check tonesoul tests scripts`

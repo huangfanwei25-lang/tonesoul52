@@ -431,9 +431,10 @@ Why this is delayed until after Steps 1-2:
 
 Current branch status:
 
-- no retrieval shadow artifact exists yet
-- the Google always-on overlap now gives one concrete external reference for query/report structure
-- that reference does not change ToneSoul's subjectivity or governance requirements
+- `tonesoul.memory.subjectivity_shadow.build_subjectivity_shadow_report(...)` now provides a read-only baseline-vs-shadow comparison seam on top of `SoulDB.search()`
+- `scripts/run_subjectivity_shadow_query.py` now emits JSON/Markdown artifacts for explicit operator queries and shadow profiles
+- live recall behavior remains unchanged
+- the Google always-on overlap provided the practical shape for this operator query/report seam without overriding ToneSoul's governance boundary
 
 ### Step 4: Conditional Persistence Upgrade
 

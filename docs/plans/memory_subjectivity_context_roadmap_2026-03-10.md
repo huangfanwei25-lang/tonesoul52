@@ -196,6 +196,7 @@ Status:
 - consolidation runtime now carries subjectivity summary through `SleepResult`
 - external HTTP/API contracts remain unchanged
 - the Google always-on-memory-agent overlap is now recorded as a structural reference for future shadow-query artifacts, not as a competing philosophy
+- a read-only shadow query seam now exists for explicit baseline-vs-subjectivity comparison without changing live recall
 
 ### Phase D: Optional Persistence Upgrade
 
