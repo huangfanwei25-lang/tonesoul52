@@ -2374,3 +2374,18 @@
 - [x] Full validation before doc-only commit:
 - [x] `python -m pytest tests/ -x --tb=short -q`
 - [x] `ruff check tonesoul tests`
+
+## Phase 201: Mirror Schema Contract (2026-03-10)
+- [x] Start Phase 140 sequentially from Task A
+- [x] extend `tonesoul/schemas.py` with:
+- [x] `MirrorDelta`
+- [x] `DualTrackResponse`
+- [x] keep the contract narrow:
+- [x] reuse existing `TensionSnapshot`
+- [x] reuse existing `GovernanceDecision`
+- [x] keep `subjectivity_flags` on `SubjectivityLayer`
+- [x] normalize `final_choice` to `raw | governed | synthesized`
+- [x] export the new schema models in `__all__`
+- [x] add schema regressions in `tests/test_schemas.py`
+- [x] nested mirror delta serializes cleanly
+- [x] dual-track response stays JSON-safe

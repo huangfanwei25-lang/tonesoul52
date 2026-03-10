@@ -136,6 +136,93 @@ class TestSchemas:
         assert result.circuit_breaker_status == "frozen"
         assert result.provenance == {}
 
+    def test_mirror_delta_serializes_nested_governance_and_subjectivity_flags(self):
+        from tonesoul.schemas import MirrorDelta
+
+        result = MirrorDelta.model_validate(
+            {
+                "tension_before": {
+                    "cognitive_friction": 0.71,
+                    "lyapunov_exponent": 0.18,
+                    "phase_state": "unstable",
+                    "timestamp": "2026-03-10T08:00:00Z",
+                },
+                "tension_after": {
+                    "cognitive_friction": 0.33,
+                    "lyapunov_exponent": 0.05,
+                    "phase_state": "stabilizing",
+                    "timestamp": "2026-03-10T08:00:01Z",
+                },
+                "governance_decision": {
+                    "should_convene_council": True,
+                    "council_reason": "High runtime friction",
+                    "friction_score": 0.71,
+                    "circuit_breaker_status": "OK",
+                },
+                "subjectivity_flags": ["tension", "meaning"],
+                "delta_summary": "Mirror detected a meaningful governance delta.",
+                "mirror_triggered": True,
+            }
+        )
+
+        assert result.mirror_triggered is True
+        assert result.governance_decision is not None
+        assert result.governance_decision.circuit_breaker_status == "ok"
+        assert result.subjectivity_flags == ["tension", "meaning"]
+        assert result.model_dump(mode="json") == {
+            "tension_before": {
+                "cognitive_friction": 0.71,
+                "lyapunov_exponent": 0.18,
+                "phase_state": "unstable",
+                "timestamp": "2026-03-10T08:00:00Z",
+                "signals": {},
+            },
+            "tension_after": {
+                "cognitive_friction": 0.33,
+                "lyapunov_exponent": 0.05,
+                "phase_state": "stabilizing",
+                "timestamp": "2026-03-10T08:00:01Z",
+                "signals": {},
+            },
+            "governance_decision": {
+                "llm_route": None,
+                "should_convene_council": True,
+                "council_reason": "High runtime friction",
+                "friction_score": 0.71,
+                "circuit_breaker_status": "ok",
+                "circuit_breaker_reason": None,
+                "provenance": {},
+            },
+            "subjectivity_flags": ["tension", "meaning"],
+            "delta_summary": "Mirror detected a meaningful governance delta.",
+            "mirror_triggered": True,
+        }
+
+    def test_dual_track_response_normalizes_final_choice_and_keeps_delta_json_safe(self):
+        from tonesoul.schemas import DualTrackResponse
+
+        result = DualTrackResponse.model_validate(
+            {
+                "raw_response": "I should answer immediately.",
+                "governed_response": "I should answer carefully.",
+                "mirror_delta": {
+                    "tension_before": {"cognitive_friction": 0.64},
+                    "tension_after": {"cognitive_friction": 0.29},
+                    "mirror_triggered": True,
+                    "subjectivity_flags": ["tension"],
+                },
+                "final_choice": " SYNTHESIZED ",
+                "reflection_note": "Governance softened the response tone.",
+            }
+        )
+
+        payload = result.model_dump(mode="json")
+
+        assert result.final_choice == "synthesized"
+        assert payload["final_choice"] == "synthesized"
+        assert payload["mirror_delta"]["subjectivity_flags"] == ["tension"]
+        assert payload["reflection_note"] == "Governance softened the response tone."
+
     def test_council_runtime_verdict_payload_normalizes_minimal_gate_verdict(self):
         from tonesoul.schemas import CouncilRuntimeVerdictPayload
 

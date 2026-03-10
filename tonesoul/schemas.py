@@ -227,6 +227,45 @@ class GovernanceDecision(BaseModel):
         return {}
 
 
+class MirrorDelta(BaseModel):
+    """Schema for raw output vs governed projection delta."""
+
+    tension_before: TensionSnapshot
+    tension_after: TensionSnapshot
+    governance_decision: Optional[GovernanceDecision] = None
+    subjectivity_flags: List[SubjectivityLayer] = Field(default_factory=list)
+    delta_summary: str = Field(default="")
+    mirror_triggered: bool = False
+
+    @field_validator("delta_summary", mode="before")
+    @classmethod
+    def _normalize_delta_summary(cls, value: object) -> str:
+        return str(value or "")
+
+
+class DualTrackResponse(BaseModel):
+    """Schema for raw/governed response pair plus mirror delta."""
+
+    raw_response: str = Field(default="")
+    governed_response: str = Field(default="")
+    mirror_delta: MirrorDelta
+    final_choice: str = Field(default="raw")
+    reflection_note: str = Field(default="")
+
+    @field_validator("raw_response", "governed_response", "reflection_note", mode="before")
+    @classmethod
+    def _normalize_text_fields(cls, value: object) -> str:
+        return str(value or "")
+
+    @field_validator("final_choice", mode="before")
+    @classmethod
+    def _normalize_final_choice(cls, value: object) -> str:
+        normalized = str(value or "raw").strip().lower()
+        if normalized not in {"raw", "governed", "synthesized"}:
+            raise ValueError("final_choice must be raw, governed, or synthesized")
+        return normalized or "raw"
+
+
 class CouncilRuntimeVote(BaseModel):
     """Canonical runtime payload for one council vote entry."""
 
@@ -622,6 +661,7 @@ __all__ = [
     "CollapseForecastResult",
     "CouncilRuntimeVerdictPayload",
     "CouncilRuntimeVote",
+    "DualTrackResponse",
     "DreamReflection",
     "DreamStimulusRecord",
     "GovernanceDecision",
@@ -633,6 +673,7 @@ __all__ = [
     "LLMUsageTrace",
     "MotivePredictionResult",
     "MemorySubjectivityPayload",
+    "MirrorDelta",
     "PerspectiveDecision",
     "PerspectiveEvaluationResult",
     "PerspectiveOutput",
