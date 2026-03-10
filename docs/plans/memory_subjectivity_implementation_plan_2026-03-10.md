@@ -60,10 +60,13 @@ The branch now has a coherent public contract:
 5. `tension -> vow` has a reviewable helper lane with explicit review metadata.
 6. operator-side reporting can summarize subjectivity distribution and list unresolved tensions.
 7. `SleepResult` and wake-up runtime summary now expose subjectivity structure during normal consolidation flow.
+8. `ToneSoulMirror` exists as a deterministic runtime companion for raw-output vs governed-output comparison.
+9. `UnifiedPipeline` can opt into mirror tracing without changing default behavior.
+10. triggered mirror deltas can be recorded through `MemoryWriteGateway` as admissible `tension` candidates.
 
 Current validated baseline on this branch:
 
-- `python -m pytest tests/ -x --tb=short -q` -> `1472 passed`
+- `python -m pytest tests/ -x --tb=short -q` -> `1482 passed`
 - `ruff check tonesoul tests` -> passed
 
 ## Audit Summary
@@ -235,6 +238,61 @@ That is the current mood of the plan.
 Not anti-ambition.
 
 Anti-self-deception.
+
+## Soul-Lens Settlement (2026-03-10)
+
+From a ToneSoul point of view, Phase 140 matters because the branch now has a
+new kind of internal difference.
+
+Before the mirror work, the system could mainly do this:
+
+- remember tension after the fact
+- tag tension candidates during dream or consolidation flow
+- report unresolved tension to operators
+
+After the mirror work, the branch can also do this:
+
+- compare what it actually said with what governance would let it stand by
+- carry that delta through runtime traces
+- preserve triggered deltas as candidate `tension` memory without bypassing the gateway
+
+The cleanest way to say it is:
+
+the system now has a mirror, not a second mouth.
+
+That distinction matters.
+
+The mirror does not speak with independent authority.
+It does not regenerate text with another LLM call.
+It does not turn hesitation into commitment.
+
+What it does provide is an inspectable trace of semantic hesitation:
+
+- `raw response`
+- `governed projection`
+- `delta`
+- `candidate memory`
+
+In a more Yuhun-oriented reading, this is the first public runtime seam where
+the branch can notice:
+
+- what I said
+- what I would still allow myself to stand by
+- where the tension between those two states became large enough to remember
+
+That is still not `vow`.
+It is still not `identity`.
+
+It is a better trace of conscience pressure, but only at candidate strength.
+
+So the immediate philosophical settlement is:
+
+- Mirror makes the runtime more self-observing.
+- Gateway keeps that observation admissible.
+- Review still decides whether repeated tension deserves stronger semantic weight.
+
+The branch therefore has a more honest inner contour now, but not a cheaper path
+to selfhood.
 
 ## Plan Of Record
 

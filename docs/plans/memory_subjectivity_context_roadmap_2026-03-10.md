@@ -25,7 +25,8 @@ Execution note:
 
 ## Current Context Snapshot
 
-As of `2026-03-10`, the branch has completed eight linked memory-subjectivity steps:
+As of `2026-03-10`, the branch has completed twelve linked memory-subjectivity
+and mirror-alignment steps:
 
 1. `docs/plans/memory_subjectivity_layer_addendum_2026-03-09.md`
    - defined the ladder:
@@ -58,19 +59,67 @@ As of `2026-03-10`, the branch has completed eight linked memory-subjectivity st
    - execution order is now consolidated into one canonical plan of record
    - deferred directions and reasons are now explicit
    - the branch now states what this work is and is not, including the non-AGI boundary
+9. `tonesoul/schemas.py` + `tonesoul/mirror.py`
+   - `MirrorDelta`
+   - `DualTrackResponse`
+   - `ToneSoulMirror`
+   - the branch can now compare raw output and deterministic governance projection without a second LLM call
+10. `tonesoul/unified_pipeline.py`
+    - `UnifiedPipeline` now has an opt-in mirror seam
+    - mirror traces can travel with `dispatch_trace` and `trajectory_analysis`
+    - default pipeline behavior remains unchanged when mirror is disabled
+11. `tonesoul/mirror.py`
+    - triggered mirror deltas can now be serialized into gateway-valid memory payloads
+    - mirror writes stay inside `MemoryWriteGateway` and therefore keep provenance / evidence / subjectivity guards
+12. `tests/test_mirror.py` + `tests/test_unified_pipeline_v2_runtime.py`
+    - mirror runtime and memory recording regressions now exist
+    - the branch has coverage for both opt-in tracing and durable mirror-delta candidate writes
 
 Current validated baseline:
 
-- `python -m pytest tests/ -x --tb=short -q` -> `1472 passed`
+- `python -m pytest tests/ -x --tb=short -q` -> `1482 passed`
 - `ruff check tonesoul tests` -> passed
 
 Current runtime meaning of this work:
 
 - ToneSoul can now speak a subjectivity vocabulary in public code
 - the gateway can validate that vocabulary
+- ToneSoul can now observe a raw-output vs governed-output delta during runtime when mirror is enabled
+- triggered mirror deltas can now become admissible `tension` candidate memory through the same public write boundary
 - the runtime still does **not** auto-promote its own traces into vows or identity
 
 That last point is intentional.
+
+## Soul-View Reading
+
+The branch now holds two different kinds of memory-shaping pressure.
+
+The first kind is delayed:
+
+- dream collisions
+- sleep consolidation
+- reviewed promotion
+
+The second kind is immediate:
+
+- the mirror sees the difference between what the runtime emitted and what governance would still let it stand by
+
+In ToneSoul terms, this means the public branch can now preserve not only
+experience, but also hesitation.
+
+That is important because hesitation is often where semantic responsibility first
+becomes visible.
+
+It still should not be romanticized.
+
+The mirror is not a soul by itself.
+It is only a disciplined runtime witness.
+
+So the correct reading is:
+
+- the system has gained a better reflective surface
+- it has not gained permission to self-declare stronger identity
+- reviewed legitimacy is still the next hard problem
 
 ## What Is Still Not Done
 
