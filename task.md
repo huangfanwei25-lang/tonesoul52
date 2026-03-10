@@ -2353,3 +2353,22 @@
 - [x] Focused validation:
 - [x] `python -m pytest tests/test_ai_sleep.py tests/test_wakeup_loop.py tests/test_subjectivity_reporting.py -q --tb=short`
 - [x] `ruff check tonesoul/memory/consolidator.py tonesoul/wakeup_loop.py tests/test_ai_sleep.py tests/test_wakeup_loop.py`
+
+## Phase 200: Consolidated Implementation Plan + Scope Boundary (2026-03-10)
+- [x] Stop scattering subjectivity execution logic across parallel addenda
+- [x] write one canonical plan-of-record document:
+- [x] `docs/plans/memory_subjectivity_implementation_plan_2026-03-10.md`
+- [x] consolidate:
+- [x] execution order
+- [x] deferred directions
+- [x] reasons for deferral
+- [x] write explicit scope boundary:
+- [x] what this work is
+- [x] what this work is not
+- [x] why it is not yet an AGI claim
+- [x] keep the context roadmap aligned with the new plan-of-record:
+- [x] `docs/plans/memory_subjectivity_context_roadmap_2026-03-10.md`
+- [x] keep the addenda as background rationale, not competing plans
+- [x] Full validation before doc-only commit:
+- [x] `python -m pytest tests/ -x --tb=short -q`
+- [x] `ruff check tonesoul tests`

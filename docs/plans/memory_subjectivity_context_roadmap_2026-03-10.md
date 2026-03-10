@@ -17,9 +17,15 @@ This addendum records:
 - how that plan is constrained by `MEMORY.md`
 - how current repo reality should be interpreted without weakening the public/private boundary
 
+Execution note:
+
+- this file remains the context/roadmap note
+- `docs/plans/memory_subjectivity_implementation_plan_2026-03-10.md` is now the implementation plan of record
+- the earlier addenda remain background rationale, not competing execution plans
+
 ## Current Context Snapshot
 
-As of `2026-03-10`, the branch has completed seven linked memory-subjectivity steps:
+As of `2026-03-10`, the branch has completed eight linked memory-subjectivity steps:
 
 1. `docs/plans/memory_subjectivity_layer_addendum_2026-03-09.md`
    - defined the ladder:
@@ -48,6 +54,10 @@ As of `2026-03-10`, the branch has completed seven linked memory-subjectivity st
    - `SleepResult` now carries subjectivity distribution alongside layer counts
    - consolidation summaries can surface unresolved tension / vow counts without widening public APIs
    - memory structure is now visible inside the normal wakeup/consolidation runtime path
+8. `docs/plans/memory_subjectivity_implementation_plan_2026-03-10.md`
+   - execution order is now consolidated into one canonical plan of record
+   - deferred directions and reasons are now explicit
+   - the branch now states what this work is and is not, including the non-AGI boundary
 
 Current validated baseline:
 
