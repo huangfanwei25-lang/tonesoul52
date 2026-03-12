@@ -10,6 +10,7 @@ from tonesoul.governance.kernel import GovernanceKernel
 from tonesoul.llm.router import LLMRouter
 from tonesoul.memory.crystallizer import Crystal, MemoryCrystallizer
 from tonesoul.memory.soul_db import MemoryLayer, MemorySource, SoulDB, SqliteSoulDB
+from tonesoul.memory.subjectivity_reporting import list_subjectivity_records
 from tonesoul.memory.write_gateway import MemoryWriteGateway, MemoryWriteRejectedError
 from tonesoul.schemas import SubjectivityLayer
 
@@ -24,6 +25,25 @@ class LLMRouterLike(Protocol):
 
 def _utcnow_iso() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+
+
+def _normalize_signature_part(value: object) -> str:
+    return " ".join(str(value or "").strip().lower().split())
+
+
+def _parse_iso_sort_key(value: object) -> datetime:
+    text = str(value or "").strip()
+    if not text:
+        return datetime.min.replace(tzinfo=timezone.utc)
+    if text.endswith("Z"):
+        text = f"{text[:-1]}+00:00"
+    try:
+        parsed = datetime.fromisoformat(text)
+    except ValueError:
+        return datetime.min.replace(tzinfo=timezone.utc)
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed.astimezone(timezone.utc)
 
 
 @dataclass
@@ -193,9 +213,13 @@ class DreamEngine:
         dream_cycle_id: str,
     ) -> Dict[str, object]:
         written = 0
+        skipped = 0
         rejected = 0
         record_ids: List[str] = []
+        skip_reasons: List[str] = []
         reject_reasons: List[str] = []
+        existing_signatures = self._active_unresolved_collision_signatures()
+        rejected_signatures = self._historical_rejected_collision_signatures()
 
         for collision in collisions:
             payload = self._build_collision_payload(
@@ -203,6 +227,32 @@ class DreamEngine:
                 generated_at=generated_at,
                 dream_cycle_id=dream_cycle_id,
             )
+            signature = self._collision_signature(
+                topic=payload.get("topic"),
+                source_url=payload.get("source_url"),
+                stimulus_record_id=payload.get("stimulus_record_id"),
+                source_record_ids=payload.get("source_record_ids"),
+            )
+            rejected_signature = self._reviewed_collision_signature(
+                topic=payload.get("topic"),
+                source_url=payload.get("source_url"),
+                stimulus_record_id=payload.get("stimulus_record_id"),
+                source_record_ids=payload.get("source_record_ids"),
+            )
+            if signature and signature in existing_signatures:
+                skipped += 1
+                skip_reasons.append("active_unresolved_signature")
+                collision.observability = dict(collision.observability)
+                collision.observability["write_status"] = "skipped"
+                collision.observability["write_skip_reason"] = "active_unresolved_signature"
+                continue
+            if rejected_signature and rejected_signature in rejected_signatures:
+                skipped += 1
+                skip_reasons.append("prior_rejected_signature")
+                collision.observability = dict(collision.observability)
+                collision.observability["write_status"] = "skipped"
+                collision.observability["write_skip_reason"] = "prior_rejected_signature"
+                continue
             try:
                 record_id = self.write_gateway.write_payload(MemorySource.CUSTOM, payload)
             except MemoryWriteRejectedError as exc:
@@ -212,12 +262,15 @@ class DreamEngine:
             written += 1
             record_ids.append(record_id)
             collision.persisted_record_id = record_id
+            if signature:
+                existing_signatures.add(signature)
 
         return {
             "written": written,
-            "skipped": 0,
+            "skipped": skipped,
             "rejected": rejected,
             "record_ids": record_ids,
+            "skip_reasons": skip_reasons,
             "reject_reasons": reject_reasons,
         }
 
@@ -289,6 +342,118 @@ class DreamEngine:
                 "generated_at": generated_at,
             },
         }
+
+    def _active_unresolved_collision_signatures(self) -> set[str]:
+        signatures: set[str] = set()
+        rows = list_subjectivity_records(
+            self.soul_db,
+            source=MemorySource.CUSTOM,
+            subjectivity_layer=SubjectivityLayer.TENSION.value,
+            unresolved_only=True,
+            limit=None,
+        )
+        for row in rows:
+            if _normalize_signature_part(row.get("type")) != "dream_collision":
+                continue
+            signature = self._collision_signature(
+                topic=row.get("topic"),
+                source_url=row.get("source_url"),
+                source_record_ids=row.get("source_record_ids"),
+            )
+            if signature:
+                signatures.add(signature)
+        return signatures
+
+    def _collision_signature(
+        self,
+        *,
+        topic: object,
+        source_url: object,
+        stimulus_record_id: object = None,
+        source_record_ids: object = None,
+    ) -> Optional[str]:
+        normalized_topic = _normalize_signature_part(topic)
+        if not normalized_topic:
+            return None
+        normalized_source_url = _normalize_signature_part(source_url)
+        if normalized_source_url:
+            return f"{normalized_topic}||url:{normalized_source_url}"
+
+        lineage_candidates: List[str] = []
+        normalized_stimulus_record_id = _normalize_signature_part(stimulus_record_id)
+        if normalized_stimulus_record_id:
+            lineage_candidates.append(normalized_stimulus_record_id)
+        if isinstance(source_record_ids, list):
+            lineage_candidates.extend(
+                normalized
+                for normalized in (_normalize_signature_part(item) for item in source_record_ids)
+                if normalized
+            )
+        if not lineage_candidates:
+            return None
+        return f"{normalized_topic}||lineage:{lineage_candidates[0]}"
+
+    def _reviewed_collision_signature(
+        self,
+        *,
+        topic: object,
+        source_url: object,
+        stimulus_record_id: object = None,
+        source_record_ids: object = None,
+    ) -> Optional[str]:
+        normalized_topic = _normalize_signature_part(topic)
+        if not normalized_topic:
+            return None
+        normalized_source_url = _normalize_signature_part(source_url)
+
+        lineage_candidates: List[str] = []
+        normalized_stimulus_record_id = _normalize_signature_part(stimulus_record_id)
+        if normalized_stimulus_record_id:
+            lineage_candidates.append(normalized_stimulus_record_id)
+        if isinstance(source_record_ids, list):
+            lineage_candidates.extend(
+                normalized
+                for normalized in (_normalize_signature_part(item) for item in source_record_ids)
+                if normalized
+            )
+        normalized_lineage = lineage_candidates[0] if lineage_candidates else ""
+        if normalized_source_url and normalized_lineage:
+            return f"{normalized_topic}||url:{normalized_source_url}||lineage:{normalized_lineage}"
+        if normalized_source_url:
+            return f"{normalized_topic}||url:{normalized_source_url}"
+        if normalized_lineage:
+            return f"{normalized_topic}||lineage:{normalized_lineage}"
+        return None
+
+    def _historical_rejected_collision_signatures(self) -> set[str]:
+        signatures: dict[str, tuple[datetime, str]] = {}
+        rows = list_subjectivity_records(
+            self.soul_db,
+            source=MemorySource.CUSTOM,
+            subjectivity_layer=SubjectivityLayer.TENSION.value,
+            unresolved_only=False,
+            limit=None,
+        )
+        for row in rows:
+            if _normalize_signature_part(row.get("type")) != "dream_collision":
+                continue
+            review_status = _normalize_signature_part(row.get("review_status"))
+            if not review_status:
+                continue
+            signature = self._reviewed_collision_signature(
+                topic=row.get("topic"),
+                source_url=row.get("source_url"),
+                source_record_ids=row.get("source_record_ids"),
+            )
+            if not signature:
+                continue
+            review_timestamp = _parse_iso_sort_key(
+                row.get("review_timestamp") or row.get("timestamp")
+            )
+            previous = signatures.get(signature)
+            if previous is None or review_timestamp >= previous[0]:
+                signatures[signature] = (review_timestamp, review_status)
+        return {signature for signature, (_, status) in signatures.items() if status == "rejected"}
 
     def _resolve_llm_preflight(
         self,

@@ -14,6 +14,18 @@ from tonesoul.schemas import (
 from .soul_db import MemorySource, SoulDB
 from .write_gateway import MemoryWriteGateway
 
+_REPLAYABLE_REVIEW_STATUSES = {
+    SubjectivityPromotionStatus.REVIEWED,
+    SubjectivityPromotionStatus.HUMAN_REVIEWED,
+    SubjectivityPromotionStatus.GOVERNANCE_REVIEWED,
+    SubjectivityPromotionStatus.APPROVED,
+}
+_SETTLED_REVIEW_STATUSES = _REPLAYABLE_REVIEW_STATUSES | {
+    SubjectivityPromotionStatus.REJECTED,
+}
+_REVIEW_LOG_TYPE = "subjectivity_review"
+_REVIEW_LOG_ACTION = "reviewed_promotion"
+
 
 def infer_subjectivity_layer(payload: Dict[str, object], *, target_layer: str) -> str:
     """Infer a semantic subjectivity layer when the payload is still unlabeled."""
@@ -32,10 +44,11 @@ def infer_subjectivity_layer(payload: Dict[str, object], *, target_layer: str) -
         return SubjectivityLayer.TENSION.value
 
     text = " ".join(
-        str(payload.get(key) or "")
-        for key in ("text", "content", "summary", "reflection", "topic")
+        str(payload.get(key) or "") for key in ("text", "content", "summary", "reflection", "topic")
     ).lower()
-    if any(keyword in text for keyword in ("conflict", "tension", "friction", "diverge", "rupture")):
+    if any(
+        keyword in text for keyword in ("conflict", "tension", "friction", "diverge", "rupture")
+    ):
         return SubjectivityLayer.TENSION.value
 
     if target_layer == "experiential":
@@ -49,6 +62,7 @@ def build_reviewed_promotion_decision(
     review_actor: object,
     review_basis: str,
     reviewed_at: Optional[str] = None,
+    reviewed_record_id: Optional[str] = None,
     source_record_ids: Optional[Sequence[str]] = None,
     promotion_source: str = "manual_review",
     status: str = SubjectivityPromotionStatus.REVIEWED.value,
@@ -87,6 +101,7 @@ def build_reviewed_promotion_decision(
             "review_actor": actor.model_dump(mode="json"),
             "source_subjectivity_layer": source_subjectivity,
             "target_subjectivity_layer": target_subjectivity,
+            "reviewed_record_id": str(reviewed_record_id or "").strip() or None,
             "source_record_ids": merged_source_ids,
             "reviewed_at": reviewed_at or _utcnow_iso(),
             "review_basis": basis,
@@ -105,8 +120,8 @@ def build_reviewed_promotion_payload(
         raise TypeError("build_reviewed_promotion_payload expects a dict payload")
 
     reviewed_decision = _normalize_decision(decision)
-    if reviewed_decision.status == SubjectivityPromotionStatus.REJECTED:
-        raise ValueError("rejected promotion decisions cannot be replayed")
+    if reviewed_decision.status not in _REPLAYABLE_REVIEW_STATUSES:
+        raise ValueError("non-approved review decisions cannot be replayed")
     if reviewed_decision.source_subjectivity_layer != SubjectivityLayer.TENSION:
         raise ValueError("reviewed promotion replay expects a tension source decision")
     if reviewed_decision.target_subjectivity_layer != SubjectivityLayer.VOW:
@@ -126,6 +141,8 @@ def build_reviewed_promotion_payload(
     )
     normalized_payload["review_basis"] = reviewed_decision.review_basis
     normalized_payload["review_decision"] = reviewed_decision.model_dump(mode="json")
+    if reviewed_decision.reviewed_record_id:
+        normalized_payload["reviewed_record_id"] = reviewed_decision.reviewed_record_id
 
     merged_source_ids = _merge_source_record_ids(
         source_record_ids=reviewed_decision.source_record_ids,
@@ -145,9 +162,52 @@ def replay_reviewed_promotion(
     decision: ReviewedPromotionDecision | Dict[str, object],
 ) -> str:
     """Replay an approved reviewed-promotion artifact through the write gateway."""
-    gateway = destination if isinstance(destination, MemoryWriteGateway) else MemoryWriteGateway(destination)
+    gateway = (
+        destination
+        if isinstance(destination, MemoryWriteGateway)
+        else MemoryWriteGateway(destination)
+    )
     reviewed_payload = build_reviewed_promotion_payload(payload, decision=decision)
     return gateway.write_payload(source, reviewed_payload)
+
+
+def apply_reviewed_promotion(
+    destination: MemoryWriteGateway | SoulDB,
+    *,
+    source: MemorySource,
+    payload: Dict[str, object],
+    decision: ReviewedPromotionDecision | Dict[str, object],
+) -> Dict[str, object]:
+    """Record a reviewed-promotion decision and replay approved promotions."""
+    reviewed_decision = _normalize_decision(decision)
+    gateway = (
+        destination
+        if isinstance(destination, MemoryWriteGateway)
+        else MemoryWriteGateway(destination)
+    )
+    soul_db = gateway.soul_db if isinstance(destination, MemoryWriteGateway) else destination
+
+    promoted_record_id: Optional[str] = None
+    promoted_payload: Optional[Dict[str, object]] = None
+    if reviewed_decision.status in _REPLAYABLE_REVIEW_STATUSES:
+        promoted_payload = build_reviewed_promotion_payload(payload, decision=reviewed_decision)
+        promoted_record_id = gateway.write_payload(source, promoted_payload)
+
+    review_log_id = _append_review_log(
+        soul_db,
+        source=source,
+        payload=payload,
+        decision=reviewed_decision,
+        promoted_record_id=promoted_record_id,
+        promoted_payload=promoted_payload,
+    )
+    return {
+        "review_log_id": review_log_id,
+        "promoted_record_id": promoted_record_id,
+        "settled": reviewed_decision.status in _SETTLED_REVIEW_STATUSES,
+        "replayed": reviewed_decision.status in _REPLAYABLE_REVIEW_STATUSES,
+        "decision": reviewed_decision.model_dump(mode="json"),
+    }
 
 
 def _merge_source_record_ids(
@@ -178,11 +238,81 @@ def _normalize_decision(
     return ReviewedPromotionDecision.model_validate(decision)
 
 
+def _append_review_log(
+    destination: object,
+    *,
+    source: MemorySource,
+    payload: Dict[str, object],
+    decision: ReviewedPromotionDecision,
+    promoted_record_id: Optional[str],
+    promoted_payload: Optional[Dict[str, object]],
+) -> Optional[str]:
+    append_action_log = getattr(destination, "append_action_log", None)
+    if not callable(append_action_log):
+        return None
+
+    metadata = {
+        "reviewed_record_id": decision.reviewed_record_id,
+        "status": decision.status.value,
+        "settled": decision.status in _SETTLED_REVIEW_STATUSES,
+        "replayed_to_memory": bool(promoted_record_id),
+        "promoted_record_id": promoted_record_id,
+        "source": source.value,
+        "source_record_ids": list(decision.source_record_ids),
+        "review_decision": decision.model_dump(mode="json"),
+    }
+    params = {
+        "reviewed_record_id": decision.reviewed_record_id,
+        "status": decision.status.value,
+        "source": source.value,
+        "review_actor": decision.review_actor.model_dump(mode="json"),
+    }
+    result = {
+        "settled": decision.status in _SETTLED_REVIEW_STATUSES,
+        "replayed": bool(promoted_record_id),
+        "promoted_record_id": promoted_record_id,
+    }
+    before_context = {
+        "reviewed_record_id": decision.reviewed_record_id,
+        "summary": _payload_excerpt(payload),
+        "subjectivity_layer": infer_subjectivity_layer(
+            payload,
+            target_layer=str(payload.get("layer") or "working").strip().lower() or "working",
+        ),
+    }
+    after_context = {
+        "promotion_status": decision.status.value,
+        "review_basis": decision.review_basis,
+        "promoted_payload": promoted_payload,
+    }
+    return append_action_log(
+        _REVIEW_LOG_TYPE,
+        _REVIEW_LOG_ACTION,
+        params,
+        result,
+        before_context,
+        after_context,
+        None,
+        timestamp=decision.reviewed_at,
+        stream="curated",
+        metadata=metadata,
+    )
+
+
+def _payload_excerpt(payload: Dict[str, object]) -> str:
+    for key in ("summary", "title", "text", "content", "reflection", "topic"):
+        text = str(payload.get(key) or "").strip()
+        if text:
+            return text[:160]
+    return ""
+
+
 def _utcnow_iso() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
 __all__ = [
+    "apply_reviewed_promotion",
     "build_reviewed_promotion_decision",
     "build_reviewed_promotion_payload",
     "infer_subjectivity_layer",

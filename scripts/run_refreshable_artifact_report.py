@@ -135,6 +135,22 @@ EXACT_PRODUCERS: dict[str, dict[str, str]] = {
         "command": "python scripts/run_subjectivity_shadow_pressure_report.py",
         "source": "scripts/run_subjectivity_shadow_pressure_report.py",
     },
+    "docs/status/subjectivity_tension_groups_latest.json": {
+        "command": "python scripts/run_subjectivity_tension_grouping.py",
+        "source": "scripts/run_subjectivity_tension_grouping.py",
+    },
+    "docs/status/subjectivity_tension_groups_latest.md": {
+        "command": "python scripts/run_subjectivity_tension_grouping.py",
+        "source": "scripts/run_subjectivity_tension_grouping.py",
+    },
+    "docs/status/subjectivity_review_batch_latest.json": {
+        "command": "python scripts/run_subjectivity_review_batch.py",
+        "source": "scripts/run_subjectivity_review_batch.py",
+    },
+    "docs/status/subjectivity_review_batch_latest.md": {
+        "command": "python scripts/run_subjectivity_review_batch.py",
+        "source": "scripts/run_subjectivity_review_batch.py",
+    },
     "docs/status/memory_topology_fit_latest.json": {
         "command": "python scripts/run_memory_topology_fit_report.py --strict",
         "source": "scripts/run_memory_topology_fit_report.py",
@@ -315,6 +331,130 @@ def _resolve_path(repo_root: Path, value: str) -> Path:
     return (repo_root / raw).resolve()
 
 
+def _preview_json_path(path: str) -> str:
+    normalized = str(path or "").replace("\\", "/").strip()
+    if not normalized:
+        return ""
+    if normalized.endswith(".json"):
+        return normalized
+    if normalized.endswith(".md"):
+        return f"{normalized[:-3]}.json"
+    return ""
+
+
+def _load_json_document(path: Path) -> dict[str, Any] | None:
+    if not path.exists() or not path.is_file():
+        return None
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+    return payload if isinstance(payload, dict) else None
+
+
+def _extract_handoff_surface(document: dict[str, Any]) -> dict[str, str] | None:
+    candidates: list[dict[str, Any]] = [document]
+    for key in ("batch", "grouping", "report"):
+        nested = document.get(key)
+        if isinstance(nested, dict):
+            candidates.append(nested)
+
+    for candidate in candidates:
+        handoff = candidate.get("handoff")
+        primary_status_line = str(candidate.get("primary_status_line") or "").strip()
+        admissibility_primary_status_line = str(
+            candidate.get("admissibility_primary_status_line") or ""
+        ).strip()
+        queue_shape = ""
+        requires_operator_action = False
+        if isinstance(handoff, dict):
+            queue_shape = str(handoff.get("queue_shape") or "").strip()
+            requires_operator_action = bool(handoff.get("requires_operator_action"))
+            if not primary_status_line:
+                primary_status_line = str(handoff.get("primary_status_line") or "").strip()
+        if queue_shape or primary_status_line or admissibility_primary_status_line:
+            return {
+                "queue_shape": queue_shape,
+                "primary_status_line": primary_status_line,
+                "admissibility_primary_status_line": admissibility_primary_status_line,
+                "requires_operator_action": str(requires_operator_action).lower(),
+            }
+    return None
+
+
+def _build_handoff_previews(
+    repo_root: Path,
+    items: list[dict[str, Any]],
+) -> list[dict[str, str]]:
+    previews: list[dict[str, str]] = []
+    seen_paths: set[str] = set()
+    for item in items:
+        preview_path = _preview_json_path(str(item.get("path") or ""))
+        if not preview_path or preview_path in seen_paths:
+            continue
+        seen_paths.add(preview_path)
+        document = _load_json_document(_resolve_path(repo_root, preview_path))
+        if document is None:
+            continue
+        surface = _extract_handoff_surface(document)
+        if surface is None:
+            continue
+        previews.append(
+            {
+                "path": preview_path,
+                "queue_shape": surface["queue_shape"],
+                "primary_status_line": surface["primary_status_line"],
+                "admissibility_primary_status_line": surface.get(
+                    "admissibility_primary_status_line", ""
+                ),
+                "requires_operator_action": surface.get("requires_operator_action", "false"),
+            }
+        )
+    return sorted(previews, key=lambda item: item["path"])
+
+
+def _subjectivity_focus_preview(
+    previews: list[dict[str, str]],
+) -> dict[str, str] | None:
+    def _normalize(item: dict[str, Any]) -> dict[str, str] | None:
+        path = str(item.get("path") or "").strip()
+        queue_shape = str(item.get("queue_shape") or "").strip()
+        primary_status_line = str(item.get("primary_status_line") or "").strip()
+        if not path or not primary_status_line:
+            return None
+        return {
+            "path": path,
+            "queue_shape": queue_shape,
+            "primary_status_line": primary_status_line,
+            "admissibility_primary_status_line": str(
+                item.get("admissibility_primary_status_line") or ""
+            ).strip(),
+            "requires_operator_action": str(item.get("requires_operator_action") or "false")
+            .strip()
+            .lower(),
+        }
+
+    prioritized = [
+        item
+        for item in previews
+        if str(item.get("admissibility_primary_status_line") or "").strip()
+    ]
+    if prioritized:
+        return _normalize(prioritized[0])
+
+    batch_preview = next(
+        (
+            item
+            for item in previews
+            if str(item.get("path") or "").endswith("subjectivity_review_batch_latest.json")
+        ),
+        None,
+    )
+    if isinstance(batch_preview, dict):
+        return _normalize(batch_preview)
+    return None
+
+
 def _dirty_refreshable_entries(repo_root: Path) -> list[dict[str, Any]]:
     entries = planner.collect_worktree_entries(repo_root)
     return [
@@ -477,6 +617,46 @@ def _render_markdown(payload: dict[str, Any]) -> str:
         f"- Archive-or-drop probe namespaces: `{payload['summary']['archive_or_drop_count']}`"
     )
     lines.append(f"- Inspect items: `{payload['summary']['inspect_count']}`")
+    lines.append(f"- Handoff previews: `{payload['summary']['handoff_preview_count']}`")
+    lines.append(f"- Admissibility previews: `{payload['summary']['admissibility_preview_count']}`")
+    lines.append("")
+    lines.append("## Subjectivity Focus")
+    lines.append("")
+    focus_preview = payload.get("subjectivity_focus_preview")
+    if isinstance(focus_preview, dict):
+        lines.append(f"- path: `{focus_preview.get('path', '')}`")
+        lines.append(f"- queue_shape: `{focus_preview.get('queue_shape', '')}`")
+        lines.append(
+            "- requires_operator_action: "
+            f"`{focus_preview.get('requires_operator_action', 'false')}`"
+        )
+        lines.append(f"- primary_status_line: `{focus_preview.get('primary_status_line', '')}`")
+        if str(focus_preview.get("admissibility_primary_status_line") or "").strip():
+            lines.append(
+                "- admissibility_primary_status_line: "
+                f"`{focus_preview.get('admissibility_primary_status_line', '')}`"
+            )
+    else:
+        lines.append("- None")
+    lines.append("")
+    lines.append("## Handoff Previews")
+    lines.append("")
+    if payload["handoff_previews"]:
+        for item in payload["handoff_previews"]:
+            lines.append(f"- `{item['path']}`")
+            lines.append(f"  - queue_shape: `{item['queue_shape']}`")
+            lines.append(
+                "  - requires_operator_action: "
+                f"`{item.get('requires_operator_action', 'false')}`"
+            )
+            lines.append(f"  - primary_status_line: `{item['primary_status_line']}`")
+            if str(item.get("admissibility_primary_status_line") or "").strip():
+                lines.append(
+                    "  - admissibility_primary_status_line: "
+                    f"`{item['admissibility_primary_status_line']}`"
+                )
+    else:
+        lines.append("- None")
     lines.append("")
     lines.append("## Regenerate")
     lines.append("")
@@ -538,6 +718,13 @@ def _render_markdown(payload: dict[str, Any]) -> str:
 
 def build_report(repo_root: Path) -> tuple[dict[str, Any], str]:
     entries = [_classify_entry(entry) for entry in _dirty_refreshable_entries(repo_root)]
+    handoff_previews = _build_handoff_previews(repo_root, entries)
+    subjectivity_focus_preview = _subjectivity_focus_preview(handoff_previews)
+    admissibility_preview_count = sum(
+        1
+        for item in handoff_previews
+        if str(item.get("admissibility_primary_status_line") or "").strip()
+    )
     regenerate_groups = _group_by_command(entries)
     namespace_groups = _namespace_items(entries)
     archive_groups = _archivable_items(entries)
@@ -552,6 +739,8 @@ def build_report(repo_root: Path) -> tuple[dict[str, Any], str]:
             1 for item in entries if item["disposition"] == "archive_or_drop"
         ),
         "inspect_count": sum(1 for item in entries if item["disposition"] == "inspect"),
+        "handoff_preview_count": len(handoff_previews),
+        "admissibility_preview_count": admissibility_preview_count,
         "kind_counts": _group_counts(entries, "kind"),
         "category_counts": _group_counts(entries, "category"),
         "disposition_counts": _group_counts(entries, "disposition"),
@@ -564,6 +753,8 @@ def build_report(repo_root: Path) -> tuple[dict[str, Any], str]:
         "regenerate_groups": regenerate_groups,
         "namespace_groups": namespace_groups,
         "archive_groups": archive_groups,
+        "handoff_previews": handoff_previews,
+        "subjectivity_focus_preview": subjectivity_focus_preview,
         "entries": entries,
         "issues": [] if not entries else ["refreshable_artifacts_lane_still_dirty"],
         "warnings": [],

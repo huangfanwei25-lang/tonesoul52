@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-09T05:08:21Z",
+  "generated_at": "2026-03-11T23:08:19Z",
   "overall_status": "ok",
   "config": {
     "interval_seconds": 0.0,
@@ -16,14 +16,14 @@
     {
       "cycle": 1,
       "status": "ok",
-      "started_at": "2026-03-09T05:08:21Z",
-      "finished_at": "2026-03-09T05:08:21Z",
-      "duration_ms": 124,
+      "started_at": "2026-03-11T23:08:19Z",
+      "finished_at": "2026-03-11T23:08:19Z",
+      "duration_ms": 296,
       "interval_seconds": 0.0,
       "dream_result": {
-        "generated_at": "2026-03-09T05:08:21Z",
-        "dream_cycle_id": "dream-cycle-fb1662458c00",
-        "stimuli_considered": 15,
+        "generated_at": "2026-03-11T23:08:19Z",
+        "dream_cycle_id": "dream-cycle-8a6a9582041b",
+        "stimuli_considered": 44,
         "stimuli_selected": 4,
         "llm_backend": null,
         "llm_preflight": {
@@ -50,7 +50,7 @@
             "reflection_generated": false,
             "related_memories": [
               {
-                "id": "336a3ad2-f550-4166-8638-399bb023829f",
+                "id": "aaa6dd6a-2075-4cff-891a-7aed00688d06",
                 "title": "Dream collision: [](https://google.github.io/osv.dev/data/#data-sources) Data sources",
                 "source": "custom",
                 "layer": "working",
@@ -62,7 +62,7 @@
                 ]
               },
               {
-                "id": "1bd734f3-a53b-4b50-a78e-3772529d7394",
+                "id": "8823fb74-db34-413d-b9a1-dc16fa2ffd8c",
                 "title": "Dream collision: [](https://google.github.io/osv.dev/data/#data-sources) Data sources",
                 "source": "custom",
                 "layer": "working",
@@ -74,7 +74,7 @@
                 ]
               },
               {
-                "id": "b11b630e-c431-4114-8f33-25501d398c80",
+                "id": "ea3b24b7-4b3f-4c42-b505-fbfe6b2ac21b",
                 "title": "Dream collision: [](https://google.github.io/osv.dev/data/#data-sources) Data sources",
                 "source": "custom",
                 "layer": "working",
@@ -86,7 +86,7 @@
                 ]
               },
               {
-                "id": "5469d625-3ac2-4fa5-990a-c4dc35dc7a72",
+                "id": "5b99adc8-d0fd-4755-8f00-63328911ec92",
                 "title": "Dream collision: [](https://google.github.io/osv.dev/data/#data-sources) Data sources",
                 "source": "custom",
                 "layer": "working",
@@ -98,7 +98,7 @@
                 ]
               },
               {
-                "id": "a8e27b08-44c4-41dc-b95c-6a58f392c10f",
+                "id": "67d8e75f-93a0-49b9-978f-732359603884",
                 "title": "Dream collision: [](https://google.github.io/osv.dev/data/#data-sources) Data sources",
                 "source": "custom",
                 "layer": "working",
@@ -168,12 +168,14 @@
                 "link)"
               ],
               "lyapunov_proxy": 0.0886,
-              "breaker_status": "ok"
+              "breaker_status": "ok",
+              "write_status": "skipped",
+              "write_skip_reason": "prior_rejected_signature"
             },
-            "persisted_record_id": "a33d2778-f6ca-4580-9c69-e5d0c03bfecc"
+            "persisted_record_id": null
           },
           {
-            "stimulus_record_id": "94af3eae-9e4c-4f6b-9f1c-dc96dc543f76",
+            "stimulus_record_id": "72ec93cf-0952-4a4b-9697-e9685582de7c",
             "topic": "A distributed vulnerability database for Open Source",
             "source_url": "https://osv.dev/",
             "priority_score": 0.5108,
@@ -224,11 +226,11 @@
                 ]
               },
               {
-                "id": "a8e27b08-44c4-41dc-b95c-6a58f392c10f",
-                "title": "Dream collision: [](https://google.github.io/osv.dev/data/#data-sources) Data sources",
+                "id": "57c0cac8-d39a-41de-8557-cb95146593f1",
+                "title": "Dream collision: A distributed vulnerability database for Open Source",
                 "source": "custom",
                 "layer": "working",
-                "summary": "Dream collision examined '[](https://google.github.io/osv.dev/data/#data-sources) Data sources'. Friction=0.2668 with 5 recalled memories and 3 durable rules. N",
+                "summary": "Dream collision examined 'A distributed vulnerability database for Open Source'. Friction=0.3436 with 5 recalled memories and 3 durable rules. Next governance m",
                 "tags": [
                   "dream",
                   "collision",
@@ -236,7 +238,7 @@
                 ]
               },
               {
-                "id": "d9bde8fd-9478-4303-98fa-2e69b9ca5cb2",
+                "id": "b5b64114-6a34-4235-97fd-6946334678db",
                 "title": "Dream collision: A distributed vulnerability database for Open Source",
                 "source": "custom",
                 "layer": "working",
@@ -306,12 +308,14 @@
                 "approach"
               ],
               "lyapunov_proxy": 0.2499,
-              "breaker_status": "ok"
+              "breaker_status": "ok",
+              "write_status": "skipped",
+              "write_skip_reason": "active_unresolved_signature"
             },
-            "persisted_record_id": "209abe40-87b4-4b08-bbb2-76f48d7c5a53"
+            "persisted_record_id": null
           },
           {
-            "stimulus_record_id": "2758c272-133b-465c-bea7-b095882b0bf9",
+            "stimulus_record_id": "699d978f-b497-4c04-bca9-9bfa7a2338da",
             "topic": "A distributed vulnerability database for Open Source",
             "source_url": "https://osv.dev/",
             "priority_score": 0.5108,
@@ -362,11 +366,11 @@
                 ]
               },
               {
-                "id": "a8e27b08-44c4-41dc-b95c-6a58f392c10f",
-                "title": "Dream collision: [](https://google.github.io/osv.dev/data/#data-sources) Data sources",
+                "id": "57c0cac8-d39a-41de-8557-cb95146593f1",
+                "title": "Dream collision: A distributed vulnerability database for Open Source",
                 "source": "custom",
                 "layer": "working",
-                "summary": "Dream collision examined '[](https://google.github.io/osv.dev/data/#data-sources) Data sources'. Friction=0.2668 with 5 recalled memories and 3 durable rules. N",
+                "summary": "Dream collision examined 'A distributed vulnerability database for Open Source'. Friction=0.3436 with 5 recalled memories and 3 durable rules. Next governance m",
                 "tags": [
                   "dream",
                   "collision",
@@ -374,7 +378,7 @@
                 ]
               },
               {
-                "id": "d9bde8fd-9478-4303-98fa-2e69b9ca5cb2",
+                "id": "b5b64114-6a34-4235-97fd-6946334678db",
                 "title": "Dream collision: A distributed vulnerability database for Open Source",
                 "source": "custom",
                 "layer": "working",
@@ -444,12 +448,14 @@
                 "approach"
               ],
               "lyapunov_proxy": 0.2499,
-              "breaker_status": "ok"
+              "breaker_status": "ok",
+              "write_status": "skipped",
+              "write_skip_reason": "active_unresolved_signature"
             },
-            "persisted_record_id": "b5b16c87-8f95-483e-bcd6-5da943768614"
+            "persisted_record_id": null
           },
           {
-            "stimulus_record_id": "fb24769b-cb9a-407a-a567-59c8cbaff3cc",
+            "stimulus_record_id": "c9291b7c-f5e0-4d63-b23c-43f0b61f3d72",
             "topic": "A distributed vulnerability database for Open Source",
             "source_url": "https://osv.dev/",
             "priority_score": 0.5108,
@@ -500,11 +506,11 @@
                 ]
               },
               {
-                "id": "a8e27b08-44c4-41dc-b95c-6a58f392c10f",
-                "title": "Dream collision: [](https://google.github.io/osv.dev/data/#data-sources) Data sources",
+                "id": "57c0cac8-d39a-41de-8557-cb95146593f1",
+                "title": "Dream collision: A distributed vulnerability database for Open Source",
                 "source": "custom",
                 "layer": "working",
-                "summary": "Dream collision examined '[](https://google.github.io/osv.dev/data/#data-sources) Data sources'. Friction=0.2668 with 5 recalled memories and 3 durable rules. N",
+                "summary": "Dream collision examined 'A distributed vulnerability database for Open Source'. Friction=0.3436 with 5 recalled memories and 3 durable rules. Next governance m",
                 "tags": [
                   "dream",
                   "collision",
@@ -512,7 +518,7 @@
                 ]
               },
               {
-                "id": "d9bde8fd-9478-4303-98fa-2e69b9ca5cb2",
+                "id": "b5b64114-6a34-4235-97fd-6946334678db",
                 "title": "Dream collision: A distributed vulnerability database for Open Source",
                 "source": "custom",
                 "layer": "working",
@@ -582,38 +588,41 @@
                 "approach"
               ],
               "lyapunov_proxy": 0.2499,
-              "breaker_status": "ok"
+              "breaker_status": "ok",
+              "write_status": "skipped",
+              "write_skip_reason": "active_unresolved_signature"
             },
-            "persisted_record_id": "a4a48fc7-cc51-4263-8055-b3bdd5da76a0"
+            "persisted_record_id": null
           }
         ],
         "write_gateway": {
-          "written": 4,
-          "skipped": 0,
+          "written": 0,
+          "skipped": 4,
           "rejected": 0,
-          "record_ids": [
-            "a33d2778-f6ca-4580-9c69-e5d0c03bfecc",
-            "209abe40-87b4-4b08-bbb2-76f48d7c5a53",
-            "b5b16c87-8f95-483e-bcd6-5da943768614",
-            "a4a48fc7-cc51-4263-8055-b3bdd5da76a0"
+          "record_ids": [],
+          "skip_reasons": [
+            "prior_rejected_signature",
+            "active_unresolved_signature",
+            "active_unresolved_signature",
+            "active_unresolved_signature"
           ],
           "reject_reasons": []
         }
       },
       "summary": {
-        "stimuli_considered": 15,
+        "stimuli_considered": 44,
         "stimuli_selected": 4,
         "collision_count": 4,
-        "collision_success_rate": 0.2667,
+        "collision_success_rate": 0.0909,
         "council_count": 4,
         "frozen_count": 0,
         "avg_friction_score": 0.3244,
         "max_friction_score": 0.3436,
         "max_lyapunov_proxy": 0.2499,
-        "write_gateway_written": 4,
-        "write_gateway_skipped": 0,
+        "write_gateway_written": 0,
+        "write_gateway_skipped": 4,
         "write_gateway_rejected": 0,
-        "write_gateway_record_count": 4,
+        "write_gateway_record_count": 0,
         "llm_call_count": 0,
         "llm_prompt_tokens_total": 0,
         "llm_completion_tokens_total": 0,
@@ -629,6 +638,8 @@
         "consolidation_promoted_count": 0,
         "consolidation_cleared_count": 0,
         "consolidation_gated_count": 0,
+        "consolidation_unresolved_tension_count": 0,
+        "consolidation_vow_count": 0,
         "consecutive_failure_count": 0,
         "circuit_breaker_paused": false,
         "failure_pause_seconds": 0.0

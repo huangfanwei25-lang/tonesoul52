@@ -1,0 +1,500 @@
+{
+  "generated_at": "2026-03-11T14:46:12Z",
+  "overall_ok": true,
+  "source": "scripts/run_subjectivity_tension_grouping.py",
+  "inputs": {
+    "db_path": "C:/Users/user/Desktop/倉庫/memory/soul.db",
+    "source": "all"
+  },
+  "grouping": {
+    "summary": {
+      "unresolved_row_count": 50,
+      "semantic_group_count": 1,
+      "lineage_group_count": 12,
+      "multi_direction_topic_count": 0,
+      "recommendation_counts": {
+        "defer_review": 1
+      },
+      "direction_counts": {
+        "governance_escalation": 1
+      },
+      "duplicate_pressure_counts": {
+        "high": 1
+      },
+      "producer_followup_counts": {
+        "upstream_dedup_candidate": 1
+      }
+    },
+    "handoff": {
+      "queue_shape": "monitoring_queue",
+      "requires_operator_action": false,
+      "semantic_group_count": 1,
+      "status_line_count": 1,
+      "top_group_shape": "high_duplicate_same_source_loop",
+      "primary_status_line": "high_duplicate_same_source_loop | A distributed vulnerability database for Open Source | recommendation=defer_review | rows=50 lineages=12 cycles=30 | density=5r x8, 4r x1, 3r x1, 2r x1, 1r x1 | followup=upstream_dedup_candidate"
+    },
+    "primary_status_line": "high_duplicate_same_source_loop | A distributed vulnerability database for Open Source | recommendation=defer_review | rows=50 lineages=12 cycles=30 | density=5r x8, 4r x1, 3r x1, 2r x1, 1r x1 | followup=upstream_dedup_candidate",
+    "status_lines": [
+      "high_duplicate_same_source_loop | A distributed vulnerability database for Open Source | recommendation=defer_review | rows=50 lineages=12 cycles=30 | density=5r x8, 4r x1, 3r x1, 2r x1, 1r x1 | followup=upstream_dedup_candidate"
+    ],
+    "semantic_groups": [
+      {
+        "group_key": "A distributed vulnerability database for Open Source | governance_escalation | medium",
+        "topic": "A distributed vulnerability database for Open Source",
+        "primary_source_url": "https://osv.dev/",
+        "source_urls": [
+          "https://osv.dev/"
+        ],
+        "direction": "governance_escalation",
+        "friction_band": "medium",
+        "avg_friction_score": 0.3436,
+        "record_count": 50,
+        "record_ids": [
+          "2b0b613e-f13c-45e5-a52e-961194d79083",
+          "3c774f44-8ec1-4ce4-9f4d-adccd0f3abe3",
+          "e3852e6b-fefe-472b-8822-a951a7149b46",
+          "412be5b4-5953-4aa7-b245-b1c89d2e0152",
+          "b5831b7a-e2f7-42d0-8c0f-b799b8ef14d4",
+          "0dd144ba-b763-41be-b14d-d1cda3ab5c60",
+          "29b9a200-c868-4d10-b18e-16926b768cf6",
+          "92f9fe80-15c3-4248-8fe7-35b07c738bc4",
+          "720e0b33-5257-49df-8cd6-e152db7c0ad6",
+          "0caf8643-2071-421b-aad0-5ea71c28062a",
+          "e78d11de-0dd8-4f2a-97cc-aaaaf7bc8bee",
+          "c7f58115-9c96-43c7-b9eb-056ce0c6ef45",
+          "2a124f8b-4c9e-4f5e-a89f-7a4eabdb3a77",
+          "275ebf25-ac56-4ab7-84d3-a0bc91cab301",
+          "b951a785-4319-4d08-9ab5-0dab5c8a9d37",
+          "19141535-854e-4bd3-af82-a9fc0a0df85f",
+          "eeca7264-c9b8-46f9-899c-06f94f0ef8d3",
+          "551941cc-f25c-4089-8524-67d62b04b684",
+          "abb9dc11-dc1d-42fe-82e0-8e5e95971868",
+          "eed15f51-9b62-42a5-b3f3-244559543077",
+          "879364da-a44f-4ef7-b057-15740d45a4a9",
+          "94fefd10-1e17-493c-9767-9afdf7d3c228",
+          "70ea9b23-3cb5-4f9d-8afd-128b38a4b999",
+          "6c287b7f-cb4d-48a5-92cd-d497c04ec511",
+          "a73055f5-ca32-4f77-9411-2591afb3ab08",
+          "add35853-1c16-4041-80f3-54e79f2ba29c",
+          "3f911adb-db2d-4976-b16e-57019e50dd75",
+          "bcb0066f-5849-4914-a21f-850c376a0f89",
+          "d8fe3832-3bb6-4b91-ac65-0e92ff029d67",
+          "b7a3ecb8-8bf1-4948-8d2f-7f6646fbb30f",
+          "33e9e8f8-fa50-472b-bbb5-f34cd1bd2079",
+          "1d03b1c0-971f-4d79-8de9-aa446eb86bdd",
+          "656fb0a6-7e90-4bc0-8cad-b18b94e943ab",
+          "99a9c4bb-18d4-4c81-bee3-b60ed447a87f",
+          "0c404714-39d8-4bd7-a5f4-372df6ba493c",
+          "b5b64114-6a34-4235-97fd-6946334678db",
+          "57c0cac8-d39a-41de-8557-cb95146593f1",
+          "6632620f-251b-4ec2-bd22-43a723551cdb",
+          "a8295d8c-975d-4d70-87e9-f8ea5bba6975",
+          "3eb578ee-6659-42f2-8999-f6d9f7c0959d",
+          "dceb3900-4272-44ea-b211-e2f10988baf9",
+          "5da71834-165c-4a6f-948a-8ceec0cf0cbc",
+          "23e966be-6ec7-42ea-9dcc-cdaaf8d9c1f0",
+          "09545122-eb05-4ff8-b6f3-83a78defa2f1",
+          "f24b02c4-4f87-41d2-94e2-6a1d1ac3f288",
+          "58f1e910-8854-4ff7-8a0c-d4081437ab3f",
+          "5a86ff64-e2ff-404c-a743-d2db19628a83",
+          "767e3162-0119-4021-84bb-dd5045eb7a50",
+          "7e127149-75db-4cb6-b17a-ab3ca7e55f31",
+          "b101d989-9743-4b42-abf4-271980a60d45"
+        ],
+        "lineage_count": 12,
+        "cycle_count": 30,
+        "source_url_count": 1,
+        "stimulus_lineages": [
+          "07173cbb-d751-48c2-933e-cffcd239058f",
+          "165f6d95-3845-4f4e-a63d-d3020f1a499d",
+          "298346a8-53e0-4d93-b572-5aef0dd7ba0e",
+          "5d5719a4-7890-4b6b-a404-3c667bcd9b2a",
+          "70d4c11a-9ddb-4717-a82a-c22fba255639",
+          "90638411-5557-4055-ad09-bc925901d19b",
+          "938da88c-3cf0-4377-bd96-4d23ece4661f",
+          "9b2d5754-190c-41e1-96bd-7a0e6ff967cc",
+          "a9ed1014-7e52-46d5-b486-41ce436aa2e7",
+          "c223a657-d4c8-4765-9be9-1587dafe72fd",
+          "ccb61719-9c1f-4316-8d58-0c1ae98236e0",
+          "fca70fc9-9e86-48f3-be1e-8f9eea526755"
+        ],
+        "dream_cycle_ids": [
+          "dream-cycle-02929a16f780",
+          "dream-cycle-1673c9b041dc",
+          "dream-cycle-17ba587d51e5",
+          "dream-cycle-19fab3ddfe3e",
+          "dream-cycle-2ad038cb9817",
+          "dream-cycle-2be07ab37b0e",
+          "dream-cycle-2f7066b683fd",
+          "dream-cycle-3179c05342b5",
+          "dream-cycle-38ff8a919a99",
+          "dream-cycle-50922a182ad2",
+          "dream-cycle-61191c9f24d9",
+          "dream-cycle-66fb5d706593",
+          "dream-cycle-72443c59f437",
+          "dream-cycle-7b2a79304f4e",
+          "dream-cycle-7b8825f6ebe3",
+          "dream-cycle-85b1213f0a2c",
+          "dream-cycle-88a4656cab90",
+          "dream-cycle-88acc74e2623",
+          "dream-cycle-8a097e758501",
+          "dream-cycle-9033f3024b98",
+          "dream-cycle-adf0fc2de898",
+          "dream-cycle-aea92ab52bf9",
+          "dream-cycle-b16d07643176",
+          "dream-cycle-b27282a329f7",
+          "dream-cycle-b87b4ca95773",
+          "dream-cycle-be22a363c38c",
+          "dream-cycle-c0c9ce35c89f",
+          "dream-cycle-ce7211161fbd",
+          "dream-cycle-e2865d407e36",
+          "dream-cycle-f70a629bfcd8"
+        ],
+        "first_seen": "2026-03-10T05:08:05Z",
+        "last_seen": "2026-03-11T08:08:13Z",
+        "sample_record_ids": [
+          "2b0b613e-f13c-45e5-a52e-961194d79083",
+          "3c774f44-8ec1-4ce4-9f4d-adccd0f3abe3",
+          "e3852e6b-fefe-472b-8822-a951a7149b46",
+          "412be5b4-5953-4aa7-b245-b1c89d2e0152",
+          "b5831b7a-e2f7-42d0-8c0f-b799b8ef14d4",
+          "0dd144ba-b763-41be-b14d-d1cda3ab5c60"
+        ],
+        "sample_summaries": [
+          "Dream collision examined 'A distributed vulnerability database for Open Source'. Friction=0.3436 with 5 recalled memories and 3 durable rules. Next governance m"
+        ],
+        "triage_recommendation": "defer_review",
+        "triage_reason": "Cross-cycle repetition exists, but it is still dominated by one source loop and weak directionality.",
+        "group_shape": "high_duplicate_same_source_loop",
+        "same_source_loop": true,
+        "rows_per_lineage": 4.17,
+        "rows_per_cycle": 1.67,
+        "duplicate_pressure": "high",
+        "duplicate_pressure_reason": "One source loop is reopening the queue with repeated collision rows across many cycles and lineages.",
+        "producer_followup": "upstream_dedup_candidate",
+        "repeated_lineage_count": 11,
+        "dense_lineage_count": 10,
+        "singleton_lineage_count": 1,
+        "max_lineage_record_count": 5,
+        "lineage_record_histogram": {
+          "1": 1,
+          "2": 1,
+          "3": 1,
+          "4": 1,
+          "5": 8
+        }
+      }
+    ],
+    "lineage_groups": [
+      {
+        "lineage_key": "9b2d5754-190c-41e1-96bd-7a0e6ff967cc::A distributed vulnerability database for Open Source",
+        "stimulus_lineage": "9b2d5754-190c-41e1-96bd-7a0e6ff967cc",
+        "topic": "A distributed vulnerability database for Open Source",
+        "record_count": 5,
+        "cycle_count": 5,
+        "timestamps": [
+          "2026-03-11T02:08:04Z",
+          "2026-03-11T02:08:08Z",
+          "2026-03-11T02:08:18Z",
+          "2026-03-11T05:08:19Z",
+          "2026-03-11T08:08:13Z"
+        ],
+        "dream_cycle_ids": [
+          "dream-cycle-02929a16f780",
+          "dream-cycle-19fab3ddfe3e",
+          "dream-cycle-38ff8a919a99",
+          "dream-cycle-7b8825f6ebe3",
+          "dream-cycle-88acc74e2623"
+        ],
+        "sample_record_ids": [
+          "e3852e6b-fefe-472b-8822-a951a7149b46",
+          "29b9a200-c868-4d10-b18e-16926b768cf6",
+          "e78d11de-0dd8-4f2a-97cc-aaaaf7bc8bee",
+          "275ebf25-ac56-4ab7-84d3-a0bc91cab301",
+          "b951a785-4319-4d08-9ab5-0dab5c8a9d37"
+        ]
+      },
+      {
+        "lineage_key": "165f6d95-3845-4f4e-a63d-d3020f1a499d::A distributed vulnerability database for Open Source",
+        "stimulus_lineage": "165f6d95-3845-4f4e-a63d-d3020f1a499d",
+        "topic": "A distributed vulnerability database for Open Source",
+        "record_count": 5,
+        "cycle_count": 5,
+        "timestamps": [
+          "2026-03-10T23:08:04Z",
+          "2026-03-10T23:08:08Z",
+          "2026-03-10T23:08:13Z",
+          "2026-03-11T02:08:18Z",
+          "2026-03-11T05:08:19Z"
+        ],
+        "dream_cycle_ids": [
+          "dream-cycle-19fab3ddfe3e",
+          "dream-cycle-38ff8a919a99",
+          "dream-cycle-8a097e758501",
+          "dream-cycle-b87b4ca95773",
+          "dream-cycle-c0c9ce35c89f"
+        ],
+        "sample_record_ids": [
+          "92f9fe80-15c3-4248-8fe7-35b07c738bc4",
+          "c7f58115-9c96-43c7-b9eb-056ce0c6ef45",
+          "19141535-854e-4bd3-af82-a9fc0a0df85f",
+          "abb9dc11-dc1d-42fe-82e0-8e5e95971868",
+          "eed15f51-9b62-42a5-b3f3-244559543077"
+        ]
+      },
+      {
+        "lineage_key": "90638411-5557-4055-ad09-bc925901d19b::A distributed vulnerability database for Open Source",
+        "stimulus_lineage": "90638411-5557-4055-ad09-bc925901d19b",
+        "topic": "A distributed vulnerability database for Open Source",
+        "record_count": 5,
+        "cycle_count": 5,
+        "timestamps": [
+          "2026-03-10T20:08:04Z",
+          "2026-03-10T20:08:09Z",
+          "2026-03-10T20:08:20Z",
+          "2026-03-10T23:08:13Z",
+          "2026-03-11T02:08:18Z"
+        ],
+        "dream_cycle_ids": [
+          "dream-cycle-17ba587d51e5",
+          "dream-cycle-38ff8a919a99",
+          "dream-cycle-aea92ab52bf9",
+          "dream-cycle-b87b4ca95773",
+          "dream-cycle-f70a629bfcd8"
+        ],
+        "sample_record_ids": [
+          "2a124f8b-4c9e-4f5e-a89f-7a4eabdb3a77",
+          "eeca7264-c9b8-46f9-899c-06f94f0ef8d3",
+          "879364da-a44f-4ef7-b057-15740d45a4a9",
+          "6c287b7f-cb4d-48a5-92cd-d497c04ec511",
+          "a73055f5-ca32-4f77-9411-2591afb3ab08"
+        ]
+      },
+      {
+        "lineage_key": "a9ed1014-7e52-46d5-b486-41ce436aa2e7::A distributed vulnerability database for Open Source",
+        "stimulus_lineage": "a9ed1014-7e52-46d5-b486-41ce436aa2e7",
+        "topic": "A distributed vulnerability database for Open Source",
+        "record_count": 5,
+        "cycle_count": 5,
+        "timestamps": [
+          "2026-03-10T17:08:13Z",
+          "2026-03-10T17:08:18Z",
+          "2026-03-10T17:08:28Z",
+          "2026-03-10T20:08:20Z",
+          "2026-03-10T23:08:13Z"
+        ],
+        "dream_cycle_ids": [
+          "dream-cycle-2f7066b683fd",
+          "dream-cycle-85b1213f0a2c",
+          "dream-cycle-b27282a329f7",
+          "dream-cycle-b87b4ca95773",
+          "dream-cycle-f70a629bfcd8"
+        ],
+        "sample_record_ids": [
+          "551941cc-f25c-4089-8524-67d62b04b684",
+          "94fefd10-1e17-493c-9767-9afdf7d3c228",
+          "add35853-1c16-4041-80f3-54e79f2ba29c",
+          "d8fe3832-3bb6-4b91-ac65-0e92ff029d67",
+          "b7a3ecb8-8bf1-4948-8d2f-7f6646fbb30f"
+        ]
+      },
+      {
+        "lineage_key": "298346a8-53e0-4d93-b572-5aef0dd7ba0e::A distributed vulnerability database for Open Source",
+        "stimulus_lineage": "298346a8-53e0-4d93-b572-5aef0dd7ba0e",
+        "topic": "A distributed vulnerability database for Open Source",
+        "record_count": 5,
+        "cycle_count": 5,
+        "timestamps": [
+          "2026-03-10T14:08:05Z",
+          "2026-03-10T14:08:10Z",
+          "2026-03-10T14:08:24Z",
+          "2026-03-10T17:08:28Z",
+          "2026-03-10T20:08:20Z"
+        ],
+        "dream_cycle_ids": [
+          "dream-cycle-1673c9b041dc",
+          "dream-cycle-2f7066b683fd",
+          "dream-cycle-72443c59f437",
+          "dream-cycle-7b2a79304f4e",
+          "dream-cycle-f70a629bfcd8"
+        ],
+        "sample_record_ids": [
+          "70ea9b23-3cb5-4f9d-8afd-128b38a4b999",
+          "3f911adb-db2d-4976-b16e-57019e50dd75",
+          "33e9e8f8-fa50-472b-bbb5-f34cd1bd2079",
+          "99a9c4bb-18d4-4c81-bee3-b60ed447a87f",
+          "0c404714-39d8-4bd7-a5f4-372df6ba493c"
+        ]
+      },
+      {
+        "lineage_key": "5d5719a4-7890-4b6b-a404-3c667bcd9b2a::A distributed vulnerability database for Open Source",
+        "stimulus_lineage": "5d5719a4-7890-4b6b-a404-3c667bcd9b2a",
+        "topic": "A distributed vulnerability database for Open Source",
+        "record_count": 5,
+        "cycle_count": 5,
+        "timestamps": [
+          "2026-03-10T11:08:05Z",
+          "2026-03-10T11:08:11Z",
+          "2026-03-10T11:08:23Z",
+          "2026-03-10T14:08:24Z",
+          "2026-03-10T17:08:28Z"
+        ],
+        "dream_cycle_ids": [
+          "dream-cycle-2ad038cb9817",
+          "dream-cycle-2f7066b683fd",
+          "dream-cycle-72443c59f437",
+          "dream-cycle-88a4656cab90",
+          "dream-cycle-b16d07643176"
+        ],
+        "sample_record_ids": [
+          "bcb0066f-5849-4914-a21f-850c376a0f89",
+          "1d03b1c0-971f-4d79-8de9-aa446eb86bdd",
+          "b5b64114-6a34-4235-97fd-6946334678db",
+          "a8295d8c-975d-4d70-87e9-f8ea5bba6975",
+          "3eb578ee-6659-42f2-8999-f6d9f7c0959d"
+        ]
+      },
+      {
+        "lineage_key": "70d4c11a-9ddb-4717-a82a-c22fba255639::A distributed vulnerability database for Open Source",
+        "stimulus_lineage": "70d4c11a-9ddb-4717-a82a-c22fba255639",
+        "topic": "A distributed vulnerability database for Open Source",
+        "record_count": 5,
+        "cycle_count": 5,
+        "timestamps": [
+          "2026-03-10T08:08:04Z",
+          "2026-03-10T08:08:10Z",
+          "2026-03-10T08:08:20Z",
+          "2026-03-10T11:08:23Z",
+          "2026-03-10T14:08:24Z"
+        ],
+        "dream_cycle_ids": [
+          "dream-cycle-2ad038cb9817",
+          "dream-cycle-72443c59f437",
+          "dream-cycle-9033f3024b98",
+          "dream-cycle-adf0fc2de898",
+          "dream-cycle-ce7211161fbd"
+        ],
+        "sample_record_ids": [
+          "656fb0a6-7e90-4bc0-8cad-b18b94e943ab",
+          "57c0cac8-d39a-41de-8557-cb95146593f1",
+          "dceb3900-4272-44ea-b211-e2f10988baf9",
+          "09545122-eb05-4ff8-b6f3-83a78defa2f1",
+          "f24b02c4-4f87-41d2-94e2-6a1d1ac3f288"
+        ]
+      },
+      {
+        "lineage_key": "c223a657-d4c8-4765-9be9-1587dafe72fd::A distributed vulnerability database for Open Source",
+        "stimulus_lineage": "c223a657-d4c8-4765-9be9-1587dafe72fd",
+        "topic": "A distributed vulnerability database for Open Source",
+        "record_count": 5,
+        "cycle_count": 5,
+        "timestamps": [
+          "2026-03-10T05:08:05Z",
+          "2026-03-10T05:08:10Z",
+          "2026-03-10T05:08:20Z",
+          "2026-03-10T08:08:20Z",
+          "2026-03-10T11:08:23Z"
+        ],
+        "dream_cycle_ids": [
+          "dream-cycle-2ad038cb9817",
+          "dream-cycle-61191c9f24d9",
+          "dream-cycle-66fb5d706593",
+          "dream-cycle-9033f3024b98",
+          "dream-cycle-e2865d407e36"
+        ],
+        "sample_record_ids": [
+          "6632620f-251b-4ec2-bd22-43a723551cdb",
+          "5da71834-165c-4a6f-948a-8ceec0cf0cbc",
+          "58f1e910-8854-4ff7-8a0c-d4081437ab3f",
+          "7e127149-75db-4cb6-b17a-ab3ca7e55f31",
+          "b101d989-9743-4b42-abf4-271980a60d45"
+        ]
+      },
+      {
+        "lineage_key": "938da88c-3cf0-4377-bd96-4d23ece4661f::A distributed vulnerability database for Open Source",
+        "stimulus_lineage": "938da88c-3cf0-4377-bd96-4d23ece4661f",
+        "topic": "A distributed vulnerability database for Open Source",
+        "record_count": 4,
+        "cycle_count": 4,
+        "timestamps": [
+          "2026-03-11T05:08:05Z",
+          "2026-03-11T05:08:09Z",
+          "2026-03-11T05:08:19Z",
+          "2026-03-11T08:08:13Z"
+        ],
+        "dream_cycle_ids": [
+          "dream-cycle-02929a16f780",
+          "dream-cycle-19fab3ddfe3e",
+          "dream-cycle-2be07ab37b0e",
+          "dream-cycle-be22a363c38c"
+        ],
+        "sample_record_ids": [
+          "3c774f44-8ec1-4ce4-9f4d-adccd0f3abe3",
+          "0dd144ba-b763-41be-b14d-d1cda3ab5c60",
+          "720e0b33-5257-49df-8cd6-e152db7c0ad6",
+          "0caf8643-2071-421b-aad0-5ea71c28062a"
+        ]
+      },
+      {
+        "lineage_key": "ccb61719-9c1f-4316-8d58-0c1ae98236e0::A distributed vulnerability database for Open Source",
+        "stimulus_lineage": "ccb61719-9c1f-4316-8d58-0c1ae98236e0",
+        "topic": "A distributed vulnerability database for Open Source",
+        "record_count": 3,
+        "cycle_count": 3,
+        "timestamps": [
+          "2026-03-11T08:08:04Z",
+          "2026-03-11T08:08:09Z",
+          "2026-03-11T08:08:13Z"
+        ],
+        "dream_cycle_ids": [
+          "dream-cycle-02929a16f780",
+          "dream-cycle-3179c05342b5",
+          "dream-cycle-50922a182ad2"
+        ],
+        "sample_record_ids": [
+          "2b0b613e-f13c-45e5-a52e-961194d79083",
+          "412be5b4-5953-4aa7-b245-b1c89d2e0152",
+          "b5831b7a-e2f7-42d0-8c0f-b799b8ef14d4"
+        ]
+      },
+      {
+        "lineage_key": "07173cbb-d751-48c2-933e-cffcd239058f::A distributed vulnerability database for Open Source",
+        "stimulus_lineage": "07173cbb-d751-48c2-933e-cffcd239058f",
+        "topic": "A distributed vulnerability database for Open Source",
+        "record_count": 2,
+        "cycle_count": 2,
+        "timestamps": [
+          "2026-03-10T05:08:20Z",
+          "2026-03-10T08:08:20Z"
+        ],
+        "dream_cycle_ids": [
+          "dream-cycle-9033f3024b98",
+          "dream-cycle-e2865d407e36"
+        ],
+        "sample_record_ids": [
+          "23e966be-6ec7-42ea-9dcc-cdaaf8d9c1f0",
+          "5a86ff64-e2ff-404c-a743-d2db19628a83"
+        ]
+      },
+      {
+        "lineage_key": "fca70fc9-9e86-48f3-be1e-8f9eea526755::A distributed vulnerability database for Open Source",
+        "stimulus_lineage": "fca70fc9-9e86-48f3-be1e-8f9eea526755",
+        "topic": "A distributed vulnerability database for Open Source",
+        "record_count": 1,
+        "cycle_count": 1,
+        "timestamps": [
+          "2026-03-10T05:08:20Z"
+        ],
+        "dream_cycle_ids": [
+          "dream-cycle-e2865d407e36"
+        ],
+        "sample_record_ids": [
+          "767e3162-0119-4021-84bb-dd5045eb7a50"
+        ]
+      }
+    ],
+    "multi_direction_topics": []
+  },
+  "issues": [],
+  "warnings": []
+}

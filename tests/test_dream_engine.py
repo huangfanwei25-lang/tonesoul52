@@ -5,6 +5,10 @@ from pathlib import Path
 
 from tonesoul.dream_engine import DreamEngine
 from tonesoul.memory.crystallizer import Crystal, MemoryCrystallizer
+from tonesoul.memory.reviewed_promotion import (
+    apply_reviewed_promotion,
+    build_reviewed_promotion_decision,
+)
 from tonesoul.memory.soul_db import MemorySource, SqliteSoulDB
 from tonesoul.memory.write_gateway import MemoryWriteGateway
 from tonesoul.perception.stimulus import EnvironmentStimulus
@@ -85,13 +89,15 @@ def _build_stimulus(
     relevance_score: float,
     novelty_score: float,
     tags: list[str],
+    source_url: str = "https://example.com/article",
+    ingested_at: str = "2026-03-07T12:00:00Z",
 ) -> EnvironmentStimulus:
     return EnvironmentStimulus(
-        source_url="https://example.com/article",
+        source_url=source_url,
         topic=topic,
         summary=summary,
         content_hash=content_hash,
-        ingested_at="2026-03-07T12:00:00Z",
+        ingested_at=ingested_at,
         relevance_score=relevance_score,
         novelty_score=novelty_score,
         tags=tags,
@@ -358,6 +364,7 @@ def test_run_cycle_persists_collision_via_write_gateway_with_provenance(tmp_path
         "skipped": 0,
         "rejected": 0,
         "record_ids": [result.collisions[0].persisted_record_id],
+        "skip_reasons": [],
         "reject_reasons": [],
     }
 
@@ -382,3 +389,308 @@ def test_run_cycle_persists_collision_via_write_gateway_with_provenance(tmp_path
     assert payload["provenance"]["source_url"] == "https://example.com/article"
     assert payload["provenance"]["stimulus_record_id"] == result.collisions[0].stimulus_record_id
     assert payload["evidence"]
+
+
+def test_run_cycle_skips_duplicate_collision_when_same_source_loop_is_still_unresolved(
+    tmp_path: Path,
+) -> None:
+    db = SqliteSoulDB(db_path=tmp_path / "soul.db")
+    gateway = MemoryWriteGateway(db)
+    crystallizer = _write_crystals(tmp_path / "crystals.jsonl")
+    engine = DreamEngine(
+        soul_db=db,
+        write_gateway=gateway,
+        crystallizer=crystallizer,
+        router=DummyRouter(),
+    )
+
+    gateway.write_environment_stimuli(
+        [
+            _build_stimulus(
+                topic="A distributed vulnerability database for Open Source",
+                summary="governance memory architecture signal",
+                content_hash="stim-initial",
+                relevance_score=0.88,
+                novelty_score=0.57,
+                tags=["governance", "memory", "architecture"],
+                source_url="https://osv.dev/",
+                ingested_at="2026-03-07T12:00:00Z",
+            )
+        ]
+    )
+    first_result = engine.run_cycle(limit=1, min_priority=0.1, generate_reflection=False)
+    first_record_id = str(first_result.collisions[0].persisted_record_id or "")
+    persisted_record = next(
+        record
+        for record in db.stream(MemorySource.CUSTOM)
+        if str(record.record_id or "") == first_record_id
+    )
+    decision = build_reviewed_promotion_decision(
+        persisted_record.payload,
+        review_actor="operator",
+        review_basis="Still one source loop; defer instead of promoting.",
+        reviewed_record_id=first_record_id,
+        source_record_ids=persisted_record.payload.get("source_record_ids"),
+        promotion_source="test_review",
+        status="deferred",
+        notes="Wake this up only after a second source loop appears.",
+    )
+    apply_reviewed_promotion(
+        db,
+        source=MemorySource.CUSTOM,
+        payload=persisted_record.payload,
+        decision=decision,
+    )
+
+    gateway.write_environment_stimuli(
+        [
+            _build_stimulus(
+                topic="A distributed vulnerability database for Open Source",
+                summary="governance memory architecture signal refreshed",
+                content_hash="stim-followup",
+                relevance_score=0.91,
+                novelty_score=0.59,
+                tags=["governance", "memory", "architecture"],
+                source_url="https://osv.dev/",
+                ingested_at="2026-03-07T12:05:00Z",
+            )
+        ]
+    )
+    second_result = engine.run_cycle(limit=1, min_priority=0.1, generate_reflection=False)
+
+    assert second_result.write_gateway == {
+        "written": 0,
+        "skipped": 1,
+        "rejected": 0,
+        "record_ids": [],
+        "skip_reasons": ["active_unresolved_signature"],
+        "reject_reasons": [],
+    }
+    assert second_result.collisions[0].persisted_record_id is None
+    assert second_result.collisions[0].observability["write_status"] == "skipped"
+    assert second_result.collisions[0].observability["write_skip_reason"] == (
+        "active_unresolved_signature"
+    )
+
+    collision_payloads = [
+        record.payload
+        for record in db.stream(MemorySource.CUSTOM)
+        if str(record.payload.get("type") or "").strip() == "dream_collision"
+    ]
+    assert len(collision_payloads) == 1
+
+
+def test_run_cycle_still_writes_when_same_topic_appears_from_new_source_loop(
+    tmp_path: Path,
+) -> None:
+    db = SqliteSoulDB(db_path=tmp_path / "soul.db")
+    gateway = MemoryWriteGateway(db)
+    crystallizer = _write_crystals(tmp_path / "crystals.jsonl")
+    engine = DreamEngine(
+        soul_db=db,
+        write_gateway=gateway,
+        crystallizer=crystallizer,
+        router=DummyRouter(),
+    )
+
+    gateway.write_environment_stimuli(
+        [
+            _build_stimulus(
+                topic="A distributed vulnerability database for Open Source",
+                summary="governance memory architecture signal",
+                content_hash="stim-primary",
+                relevance_score=0.88,
+                novelty_score=0.57,
+                tags=["governance", "memory", "architecture"],
+                source_url="https://osv.dev/",
+                ingested_at="2026-03-07T12:00:00Z",
+            )
+        ]
+    )
+    first_result = engine.run_cycle(limit=1, min_priority=0.1, generate_reflection=False)
+    assert first_result.write_gateway["written"] == 1
+
+    gateway.write_environment_stimuli(
+        [
+            _build_stimulus(
+                topic="A distributed vulnerability database for Open Source",
+                summary="governance memory architecture signal mirrored elsewhere",
+                content_hash="stim-secondary",
+                relevance_score=0.9,
+                novelty_score=0.6,
+                tags=["governance", "memory", "architecture"],
+                source_url="https://mirror.example/osv/",
+                ingested_at="2026-03-07T12:05:00Z",
+            )
+        ]
+    )
+    second_result = engine.run_cycle(limit=1, min_priority=0.1, generate_reflection=False)
+
+    assert second_result.write_gateway["written"] == 1
+    assert second_result.write_gateway["skipped"] == 0
+    assert second_result.collisions[0].persisted_record_id
+
+    collision_payloads = [
+        record.payload
+        for record in db.stream(MemorySource.CUSTOM)
+        if str(record.payload.get("type") or "").strip() == "dream_collision"
+    ]
+    assert len(collision_payloads) == 2
+
+
+def test_run_cycle_skips_same_lineage_after_latest_reviewed_rejection(tmp_path: Path) -> None:
+    db = SqliteSoulDB(db_path=tmp_path / "soul.db")
+    gateway = MemoryWriteGateway(db)
+    crystallizer = _write_crystals(tmp_path / "crystals.jsonl")
+    engine = DreamEngine(
+        soul_db=db,
+        write_gateway=gateway,
+        crystallizer=crystallizer,
+        router=DummyRouter(),
+    )
+
+    gateway.write_environment_stimuli(
+        [
+            _build_stimulus(
+                topic="[](https://google.github.io/osv.dev/data/#data-sources) Data sources",
+                summary="governance memory architecture signal",
+                content_hash="stim-primary",
+                relevance_score=0.91,
+                novelty_score=0.59,
+                tags=["governance", "memory", "architecture"],
+                source_url="https://google.github.io/osv.dev/data/",
+                ingested_at="2026-03-07T12:00:00Z",
+            )
+        ]
+    )
+    first_result = engine.run_cycle(limit=1, min_priority=0.1, generate_reflection=False)
+    first_record_id = str(first_result.collisions[0].persisted_record_id or "")
+    persisted_record = next(
+        record
+        for record in db.stream(MemorySource.CUSTOM)
+        if str(record.record_id or "") == first_record_id
+    )
+    decision = build_reviewed_promotion_decision(
+        persisted_record.payload,
+        review_actor="operator",
+        review_basis=(
+            "Repeated same-source governance friction remains visible, but it still comes from "
+            "one source loop and one lineage; reject commitment weight while preserving the tension trace."
+        ),
+        reviewed_record_id=first_record_id,
+        source_record_ids=persisted_record.payload.get("source_record_ids"),
+        promotion_source="test_review",
+        status="rejected",
+        notes="Revisit only if the same direction appears across materially different source contexts or a second independent lineage cluster.",
+    )
+    apply_reviewed_promotion(
+        db,
+        source=MemorySource.CUSTOM,
+        payload=persisted_record.payload,
+        decision=decision,
+    )
+
+    second_result = engine.run_cycle(limit=1, min_priority=0.1, generate_reflection=False)
+
+    assert second_result.write_gateway == {
+        "written": 0,
+        "skipped": 1,
+        "rejected": 0,
+        "record_ids": [],
+        "skip_reasons": ["prior_rejected_signature"],
+        "reject_reasons": [],
+    }
+    assert second_result.collisions[0].persisted_record_id is None
+    assert second_result.collisions[0].observability["write_status"] == "skipped"
+    assert second_result.collisions[0].observability["write_skip_reason"] == (
+        "prior_rejected_signature"
+    )
+
+    collision_payloads = [
+        record.payload
+        for record in db.stream(MemorySource.CUSTOM)
+        if str(record.payload.get("type") or "").strip() == "dream_collision"
+    ]
+    assert len(collision_payloads) == 1
+
+
+def test_run_cycle_still_writes_when_rejected_same_source_reappears_from_new_lineage(
+    tmp_path: Path,
+) -> None:
+    db = SqliteSoulDB(db_path=tmp_path / "soul.db")
+    gateway = MemoryWriteGateway(db)
+    crystallizer = _write_crystals(tmp_path / "crystals.jsonl")
+    engine = DreamEngine(
+        soul_db=db,
+        write_gateway=gateway,
+        crystallizer=crystallizer,
+        router=DummyRouter(),
+    )
+
+    gateway.write_environment_stimuli(
+        [
+            _build_stimulus(
+                topic="[](https://google.github.io/osv.dev/data/#data-sources) Data sources",
+                summary="governance memory architecture signal",
+                content_hash="stim-primary",
+                relevance_score=0.91,
+                novelty_score=0.59,
+                tags=["governance", "memory", "architecture"],
+                source_url="https://google.github.io/osv.dev/data/",
+                ingested_at="2026-03-07T12:00:00Z",
+            )
+        ]
+    )
+    first_result = engine.run_cycle(limit=1, min_priority=0.1, generate_reflection=False)
+    first_record_id = str(first_result.collisions[0].persisted_record_id or "")
+    persisted_record = next(
+        record
+        for record in db.stream(MemorySource.CUSTOM)
+        if str(record.record_id or "") == first_record_id
+    )
+    decision = build_reviewed_promotion_decision(
+        persisted_record.payload,
+        review_actor="operator",
+        review_basis=(
+            "Repeated same-source governance friction remains visible, but it still comes from "
+            "one source loop and one lineage; reject commitment weight while preserving the tension trace."
+        ),
+        reviewed_record_id=first_record_id,
+        source_record_ids=persisted_record.payload.get("source_record_ids"),
+        promotion_source="test_review",
+        status="rejected",
+        notes="Revisit only if the same direction appears across materially different source contexts or a second independent lineage cluster.",
+    )
+    apply_reviewed_promotion(
+        db,
+        source=MemorySource.CUSTOM,
+        payload=persisted_record.payload,
+        decision=decision,
+    )
+
+    gateway.write_environment_stimuli(
+        [
+            _build_stimulus(
+                topic="[](https://google.github.io/osv.dev/data/#data-sources) Data sources",
+                summary="governance memory architecture signal from a second lineage",
+                content_hash="stim-secondary-lineage",
+                relevance_score=0.93,
+                novelty_score=0.61,
+                tags=["governance", "memory", "architecture"],
+                source_url="https://google.github.io/osv.dev/data/",
+                ingested_at="2026-03-07T12:05:00Z",
+            )
+        ]
+    )
+    second_result = engine.run_cycle(limit=1, min_priority=0.1, generate_reflection=False)
+
+    assert second_result.write_gateway["written"] == 1
+    assert second_result.write_gateway["skipped"] == 0
+    assert second_result.collisions[0].persisted_record_id
+
+    collision_payloads = [
+        record.payload
+        for record in db.stream(MemorySource.CUSTOM)
+        if str(record.payload.get("type") or "").strip() == "dream_collision"
+    ]
+    assert len(collision_payloads) == 2

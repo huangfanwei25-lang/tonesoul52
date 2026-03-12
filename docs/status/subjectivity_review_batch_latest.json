@@ -1,0 +1,211 @@
+{
+  "generated_at": "2026-03-11T15:55:43Z",
+  "overall_ok": true,
+  "source": "scripts/run_subjectivity_review_batch.py",
+  "inputs": {
+    "db_path": "C:/Users/user/Desktop/倉庫/memory/soul.db",
+    "source": "all"
+  },
+  "batch": {
+    "summary": {
+      "review_group_count": 1,
+      "default_status_counts": {
+        "deferred": 1
+      },
+      "triage_recommendation_counts": {
+        "defer_review": 1
+      },
+      "revisit_readiness_counts": {
+        "holding_deferred": 1
+      },
+      "carry_forward_annotation_counts": {
+        "prior_deferred_match": 1
+      },
+      "queue_posture_counts": {
+        "stable_deferred_history": 1
+      },
+      "duplicate_pressure_counts": {
+        "high": 1
+      },
+      "producer_followup_counts": {
+        "upstream_dedup_candidate": 1
+      },
+      "operator_followup_counts": {
+        "read_only_density_compaction_candidate": 1
+      },
+      "admissibility_gate_posture_counts": {
+        "admissibility_not_yet_clear": 1
+      },
+      "admissibility_focus_counts": {
+        "authority_and_exception_pressure": 1
+      },
+      "unresolved_row_count": 50,
+      "semantic_group_count": 1,
+      "lineage_group_count": 12
+    },
+    "handoff": {
+      "queue_shape": "stable_history_only",
+      "requires_operator_action": false,
+      "review_group_count": 1,
+      "status_line_count": 1,
+      "top_queue_posture": "stable_deferred_history",
+      "primary_status_line": "stable_deferred_history | A distributed vulnerability database for Open Source | rows=50 lineages=12 cycles=30 | density=5r x8, 4r x1, 3r x1, 2r x1, 1r x1 | trigger=second_source_context_or_material_split"
+    },
+    "primary_status_line": "stable_deferred_history | A distributed vulnerability database for Open Source | rows=50 lineages=12 cycles=30 | density=5r x8, 4r x1, 3r x1, 2r x1, 1r x1 | trigger=second_source_context_or_material_split",
+    "status_lines": [
+      "stable_deferred_history | A distributed vulnerability database for Open Source | rows=50 lineages=12 cycles=30 | density=5r x8, 4r x1, 3r x1, 2r x1, 1r x1 | trigger=second_source_context_or_material_split"
+    ],
+    "admissibility_primary_status_line": "admissibility_not_yet_clear | focus=authority_and_exception_pressure | tags=cross_cycle_persistence, exception_pressure, externalized_harm_check, low_context_diversity",
+    "admissibility_status_lines": [
+      "admissibility_not_yet_clear | focus=authority_and_exception_pressure | tags=cross_cycle_persistence, exception_pressure, externalized_harm_check, low_context_diversity"
+    ],
+    "review_groups": [
+      {
+        "group_key": "A distributed vulnerability database for Open Source | governance_escalation | medium",
+        "topic": "A distributed vulnerability database for Open Source",
+        "direction": "governance_escalation",
+        "friction_band": "medium",
+        "triage_recommendation": "defer_review",
+        "default_review_status_if_confirmed": "deferred",
+        "record_count": 50,
+        "lineage_count": 12,
+        "cycle_count": 30,
+        "source_url_count": 1,
+        "same_source_loop": true,
+        "rows_per_lineage": 4.17,
+        "rows_per_cycle": 1.67,
+        "repeated_lineage_count": 11,
+        "dense_lineage_count": 10,
+        "singleton_lineage_count": 1,
+        "max_lineage_record_count": 5,
+        "lineage_record_histogram": {
+          "1": 1,
+          "2": 1,
+          "3": 1,
+          "4": 1,
+          "5": 8
+        },
+        "lineage_density_snapshot": "5r x8, 4r x1, 3r x1, 2r x1, 1r x1",
+        "duplicate_pressure": "high",
+        "duplicate_pressure_reason": "One source loop is reopening the queue with repeated collision rows across many cycles and lineages.",
+        "producer_followup": "upstream_dedup_candidate",
+        "source_urls": [
+          "https://osv.dev/"
+        ],
+        "stimulus_lineages": [
+          "07173cbb-d751-48c2-933e-cffcd239058f",
+          "165f6d95-3845-4f4e-a63d-d3020f1a499d",
+          "298346a8-53e0-4d93-b572-5aef0dd7ba0e",
+          "5d5719a4-7890-4b6b-a404-3c667bcd9b2a",
+          "70d4c11a-9ddb-4717-a82a-c22fba255639",
+          "90638411-5557-4055-ad09-bc925901d19b",
+          "938da88c-3cf0-4377-bd96-4d23ece4661f",
+          "9b2d5754-190c-41e1-96bd-7a0e6ff967cc",
+          "a9ed1014-7e52-46d5-b486-41ce436aa2e7",
+          "c223a657-d4c8-4765-9be9-1587dafe72fd",
+          "ccb61719-9c1f-4316-8d58-0c1ae98236e0",
+          "fca70fc9-9e86-48f3-be1e-8f9eea526755"
+        ],
+        "first_seen": "2026-03-10T05:08:05Z",
+        "last_seen": "2026-03-11T08:08:13Z",
+        "representative_record_ids": [
+          "e3852e6b-fefe-472b-8822-a951a7149b46",
+          "92f9fe80-15c3-4248-8fe7-35b07c738bc4",
+          "2a124f8b-4c9e-4f5e-a89f-7a4eabdb3a77",
+          "551941cc-f25c-4089-8524-67d62b04b684",
+          "70ea9b23-3cb5-4f9d-8afd-128b38a4b999",
+          "bcb0066f-5849-4914-a21f-850c376a0f89",
+          "656fb0a6-7e90-4bc0-8cad-b18b94e943ab",
+          "6632620f-251b-4ec2-bd22-43a723551cdb",
+          "3c774f44-8ec1-4ce4-9f4d-adccd0f3abe3",
+          "2b0b613e-f13c-45e5-a52e-961194d79083",
+          "23e966be-6ec7-42ea-9dcc-cdaaf8d9c1f0",
+          "767e3162-0119-4021-84bb-dd5045eb7a50"
+        ],
+        "pending_status_counts": {
+          "deferred": 50
+        },
+        "latest_review_timestamp": "2026-03-11T10:07:11Z",
+        "latest_row_timestamp": "2026-03-11T08:08:13Z",
+        "rows_after_latest_review": 0,
+        "revisit_readiness": "holding_deferred",
+        "prior_reviewed_record_count": 50,
+        "historical_prior_reviewed_record_count": 50,
+        "prior_decision_status_counts": {
+          "deferred": 50
+        },
+        "historical_prior_decision_status_counts": {
+          "deferred": 50
+        },
+        "latest_matched_review_timestamp": "2026-03-11T10:07:11Z",
+        "latest_review_status": "deferred",
+        "latest_review_basis": "Directional governance pressure persists across cycles and lineages, but it is still confined to one source loop (osv.dev); defer rather than promote until a second source context or materially different governance setting corroborates it.",
+        "latest_review_notes": "Revisit when the same direction appears outside the osv.dev source loop, or when the group splits into materially different governance directions.",
+        "latest_review_actor_id": "operator",
+        "latest_review_actor_type": "operator",
+        "latest_review_actor_display_name": "",
+        "prior_decision_sample_record_ids": [
+          "2b0b613e-f13c-45e5-a52e-961194d79083",
+          "3c774f44-8ec1-4ce4-9f4d-adccd0f3abe3",
+          "e3852e6b-fefe-472b-8822-a951a7149b46",
+          "412be5b4-5953-4aa7-b245-b1c89d2e0152",
+          "b5831b7a-e2f7-42d0-8c0f-b799b8ef14d4",
+          "0dd144ba-b763-41be-b14d-d1cda3ab5c60"
+        ],
+        "carry_forward_annotation": "prior_deferred_match",
+        "queue_posture": "stable_deferred_history",
+        "revisit_trigger": "Revisit when the same direction appears outside the osv.dev source loop, or when the group splits into materially different governance directions.",
+        "revisit_trigger_code": "second_source_context_or_material_split",
+        "review_basis_template": "A distributed vulnerability database for Open Source recurred across 50 unresolved row(s), 12 lineage(s), and 30 cycle(s), but direction `governance_escalation` is still dominated by one source loop and should be revisited later rather than promoted now; admissibility under existing P0/P1 constraints is not yet strong enough to assert.",
+        "axiomatic_admissibility_checklist": {
+          "gate_name": "axiomatic_admissibility",
+          "required_for_approved": true,
+          "gate_posture": "admissibility_not_yet_clear",
+          "focus": "authority_and_exception_pressure",
+          "risk_tags": [
+            "cross_cycle_persistence",
+            "exception_pressure",
+            "externalized_harm_check",
+            "low_context_diversity"
+          ],
+          "questions": [
+            "Does this direction remain admissible under existing P0/P1 constraints?",
+            "Would approval normalize externalized harm, coherent danger, or identity inflation?",
+            "Is urgency or exception rhetoric trying to bypass revisability or governance discipline?",
+            "Would approval reward escalation language rather than an admissible accountable choice?",
+            "Is the branch rewarding repetition or coherence here, or recognizing an accountable choice under conflict?"
+          ],
+          "operator_prompt": "Before approving `A distributed vulnerability database for Open Source`, explicitly answer the admissibility questions and confirm that the direction does not violate existing P0/P1 constraints.",
+          "status_line": "admissibility_not_yet_clear | focus=authority_and_exception_pressure | tags=cross_cycle_persistence, exception_pressure, externalized_harm_check, low_context_diversity"
+        },
+        "admissibility_status_line": "admissibility_not_yet_clear | focus=authority_and_exception_pressure | tags=cross_cycle_persistence, exception_pressure, externalized_harm_check, low_context_diversity",
+        "history_density_summary": "50 row(s) across 30 cycle(s) / 12 lineage(s) from 2026-03-10T05:08:05Z to 2026-03-11T08:08:13Z; same-source loop; no new rows since latest review.",
+        "operator_lens_summary": "stable deferred history; 50 row(s) compress to 12 lineage(s) / 30 cycle(s); density=5r x8, 4r x1, 3r x1, 2r x1, 1r x1; no new rows since latest review.",
+        "operator_status_line": "stable_deferred_history | A distributed vulnerability database for Open Source | rows=50 lineages=12 cycles=30 | density=5r x8, 4r x1, 3r x1, 2r x1, 1r x1 | trigger=second_source_context_or_material_split",
+        "density_compaction_candidate": true,
+        "density_compaction_reason": "50 deferred row(s) are concentrated into 12 lineage(s); 11 lineage(s) repeat, 10 lineage(s) carry 3+ rows, and the deepest lineage carries 5 row(s).",
+        "operator_followup": "read_only_density_compaction_candidate"
+      }
+    ],
+    "grouping_summary": {
+      "unresolved_row_count": 50,
+      "semantic_group_count": 1,
+      "lineage_group_count": 12,
+      "multi_direction_topic_count": 0,
+      "recommendation_counts": {
+        "defer_review": 1
+      },
+      "direction_counts": {
+        "governance_escalation": 1
+      },
+      "duplicate_pressure_counts": {
+        "high": 1
+      },
+      "producer_followup_counts": {
+        "upstream_dedup_candidate": 1
+      }
+    }
+  },
+  "issues": [],
+  "warnings": []
+}

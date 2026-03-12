@@ -1,7 +1,7 @@
-# Codex Task: Phase 7 — Dream Engine 整合 + 觀測儀表板 + 自動喚醒
+# Codex Task: Phase 140 — ToneSoul Mirror (Dual-Track Inference Loop)
 
 **交付者**: Antigravity (Architect)
-**日期**: 2026-03-09
+**日期**: 2026-03-10
 **分支**: feat/env-perception（不可 push 到 master）
 
 ---
@@ -28,86 +28,163 @@ ruff check tonesoul tests
 
 ## 脈絡恢復（先讀這些）
 
-1. AGENTS.md — 行為規範
-2. MEMORY.md — 公私記憶隔離
-3. tonesoul/dream_engine.py — 現有 Dream Engine（633 行，已有完整碰撞邏輯）
-4. tonesoul/dream_observability.py — 現有觀測模組
-5. tonesoul/memory/write_gateway.py — 剛完成的記憶寫入閘門
-6. tonesoul/memory/consolidator.py — 睡眠鞏固邏輯
+1. `AGENTS.md` — 行為規範
+2. `tonesoul/schemas.py` — 現有 schema（注意你之前做的 `SubjectivityLayer` 和 `SubjectivityPromotionStatus`）
+3. `tonesoul/tension_engine.py` — Tension 計算引擎
+4. `tonesoul/governance/kernel.py` — 治理核心（evaluate / deliberate 方法）
+5. `tonesoul/unified_pipeline.py` — 主推理管線（process 方法）
+6. `tonesoul/memory/write_gateway.py` — 記憶寫入閘門（你之前加的 subjectivity 驗證）
 
 ---
 
-## Task A：Dream Engine 接線 Write Gateway
+## 這次的目標
 
-### 目標
-Dream Engine 的 `_build_collision` 產生的碰撞結果，需要經過 MemoryWriteGateway 寫入 soul.db。
+建立 **ToneSoul Mirror** — 一面鏡子，讓 AI 能同時看到：
+1. 自己的原始輸出
+2. 經過 TensionEngine + GovernanceKernel 的治理版本
+3. 兩者之間的差異（delta）
 
-### 步驟
-1. 讀取 `dream_engine.py` 的 `run_cycle()` 方法
-2. 在碰撞完成後，將 `DreamCollision` 轉換為 payload
-3. 通過 `MemoryWriteGateway.write_payload()` 寫入
-4. 確保 provenance 包含 source_url 和 dream_cycle_id
-5. 測試：在 `tests/test_dream_engine.py` 中驗證寫入路徑
+**這不是過濾器**。AI 不被攔截。AI 看到差異後自己決定最終回應。
 
 ---
 
-## Task B：觀測儀表板增強
+## Task A：DualTrack Schema
 
-### 目標
-`dream_observability.py` 已有 SVG 圖表生成。增加以下指標追蹤：
+**檔案**：`tonesoul/schemas.py`
 
-### 步驟
-1. 讀取 `dream_observability.py`，理解現有結構
-2. 加入 `write_gateway` 的寫入統計（written/skipped/rejected 計數）
-3. 加入 Dream Engine 碰撞成功率（collision 數 / stimuli 考慮數）
-4. 如果有 `token_meter.py`，整合 token 使用量顯示
-5. 測試：確保新指標能被正確計算
+在檔尾（`__all__` 之前）加兩個新 model：
 
----
+```python
+class MirrorDelta(BaseModel):
+    """Raw output vs governed version 的差異快照。"""
+    tension_before: TensionSnapshot
+    tension_after: TensionSnapshot
+    governance_decision: Optional[GovernanceDecision] = None
+    subjectivity_flags: List[SubjectivityLayer] = Field(default_factory=list)
+    delta_summary: str = ""
+    mirror_triggered: bool = False
 
-## Task C：自動喚醒機制
+class DualTrackResponse(BaseModel):
+    """雙軌回應：原始 + 治理版本 + 差異。"""
+    raw_response: str
+    governed_response: str
+    mirror_delta: MirrorDelta
+    final_choice: str = Field(default="raw")  # "raw" | "governed" | "synthesized"
+    reflection_note: str = ""
+```
 
-### 目標
-`wakeup_loop.py` 已存在但可能未接線。確認它能：
-
-### 步驟
-1. 讀取 `wakeup_loop.py`，理解現有邏輯
-2. 確認它能定時觸發 `DreamEngine.run_cycle()`
-3. 確認它能觸發 `sleep_consolidate()` 做記憶壓縮
-4. 加入簡單的排程邏輯（例如每 N 小時執行一次 dream cycle）
-5. 加入 circuit breaker：如果 Dream Engine 連續 3 次失敗，暫停 1 小時
-6. 測試：在 `tests/test_wakeup_loop.py` 中驗證排程和 circuit breaker
-
----
-
-## Task D：把剩餘未追蹤檔案 commit
-
-### 步驟
-1. `git status` 檢查未追蹤檔案
-2. 排除不該 commit 的：.env, *.db, *.jsonl 等 gitignore 已排除的
-3. `git add` 合適的檔案
-4. 跑 pytest + ruff
-5. `git commit -m "feat: wire dream engine to write gateway, enhance observability, implement wakeup scheduler"`
-6. `git push origin feat/env-perception`
+- 把 `MirrorDelta` 和 `DualTrackResponse` 加到 `__all__`
+- 測試：在 `tests/test_schemas.py` 加測試確認 model 能正確實例化和序列化
 
 ---
 
-## Task E：更新進度報告
+## Task B：ToneSoulMirror 核心
 
-### 步驟
-1. 更新 `docs/status/` 裡的相關報告
-2. 記錄：
-   - Dream Engine ↔ Write Gateway 接線狀態
-   - 新增的觀測指標
-   - wakeup_loop 的排程配置
-   - 目前 test 通過數
+**檔案（新建）**：`tonesoul/mirror.py`
+
+```python
+class ToneSoulMirror:
+    """
+    鏡子模式中間件。
+    
+    不攔截 AI 輸出。而是：
+    1. 接收 raw_output
+    2. 用 TensionEngine 計算 tension
+    3. 用 GovernanceKernel 生成 governed version
+    4. 返回 DualTrackResponse（兩個版本 + delta）
+    
+    AI 或 pipeline 可以看差異，自己決定最終回應。
+    """
+    def __init__(self, tension_engine=None, governance_kernel=None):
+        ...
+    
+    def reflect(self, raw_output: str, context: dict) -> DualTrackResponse:
+        ...
+    
+    def _apply_governance(self, raw: str, decision) -> str:
+        ...
+    
+    def _compute_delta(self, before, after, decision) -> MirrorDelta:
+        ...
+```
+
+**關鍵設計原則**：
+- `reflect()` 是純函數：不修改任何狀態
+- 如果 TensionEngine 或 GovernanceKernel 是 None，graceful fallback（mirror_triggered=False）
+- 不做 LLM 呼叫，只用已有的 tension/governance 計算
+- governed_response 只在 tension 超過閾值時才與 raw 不同
+
+**測試**：新建 `tests/test_mirror.py`
+- `test_mirror_passthrough_low_tension` — tensions 低時 governed == raw
+- `test_mirror_triggered_high_tension` — tension 高時 mirror_triggered=True
+- `test_mirror_graceful_no_engine` — 沒有 engine 時 fallback
+- `test_mirror_delta_serializable` — DualTrackResponse 可 JSON 序列化
+
+---
+
+## Task C：UnifiedPipeline Mirror Step
+
+**檔案**：`tonesoul/unified_pipeline.py`
+
+在 `process()` 方法中，response 生成之後（final output 之前），加入可選的 mirror step：
+
+1. 加 `__init__` 參數：`mirror_enabled: bool = False`
+2. 如果 `mirror_enabled`：
+   - 實例化 `ToneSoulMirror(self.tension_engine, self.governance_kernel)`
+   - 呼叫 `mirror.reflect(response_text, context)`
+   - 把 `mirror_delta` 放進 `trajectory` dict
+3. 如果 `not mirror_enabled`：完全不改現有行為
+
+**重要**：這必須是 opt-in 的。預設 `mirror_enabled=False`，不影響現有功能。
+
+**測試**：在 `tests/test_unified_pipeline_v2_runtime.py` 加：
+- `test_pipeline_mirror_disabled_default` — 預設不 mirror
+- `test_pipeline_mirror_enabled_trajectory` — 開啟後 trajectory 有 mirror_delta
+
+---
+
+## Task D：Mirror Memory Recording
+
+**檔案**：`tonesoul/mirror.py`（擴展）
+
+加一個方法：
+```python
+def record_delta(self, dual: DualTrackResponse, write_gateway) -> None:
+    """把 mirror delta 記錄到 soul.db。"""
+    if not dual.mirror_delta.mirror_triggered:
+        return  # 不記錄未觸發的 mirror
+    payload = {
+        "content": dual.mirror_delta.delta_summary,
+        "type": "mirror_delta",
+        "subjectivity_layer": "tension",
+        "mirror_delta": dual.mirror_delta.model_dump(),
+        ...
+    }
+    write_gateway.write_payload(MemorySource.CUSTOM, payload)
+```
+
+**測試**：在 `tests/test_mirror.py` 加：
+- `test_record_delta_skips_untriggered` — 未觸發不寫入
+- `test_record_delta_writes_triggered` — 觸發時正確寫入
 
 ---
 
 ## 不要做的事
 
 - ❌ 不改 GovernanceKernel 的核心邏輯（已審計通過）
-- ❌ 不碰 unified_pipeline.py（剛重構完，不要再動）
-- ❌ 不碰 soul_db.py 的 schema（write_gateway 已接好）
-- ❌ 不要建新的 CI workflow
-- ❌ 如果不確定，選保守方案
+- ❌ 不改 TensionEngine 的計算邏輯
+- ❌ 不改 WriteGateway 的驗證邏輯（你之前做的 subjectivity gate 不要動）
+- ❌ 不在 Mirror 裡做 LLM 呼叫
+- ❌ 不建新的 CI workflow
+- ❌ 不改 Guardian/safety 相關模組
+- ❌ 如果不確定，選保守方案。**Mirror 是觀察工具，不是控制工具。**
+
+---
+
+## 交付格式
+
+1. 每個 Task 一個 commit
+2. Commit message 格式：`feat: add mirror schema (Phase 140 Task A)`
+3. 每個 commit 前跑 pytest + ruff
+4. 最後 `git push origin feat/env-perception`
+5. 在 `docs/status/` 留一份狀態報告

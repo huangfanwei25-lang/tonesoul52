@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-09T05:08:11Z",
+  "generated_at": "2026-03-11T23:08:11Z",
   "overall_ok": true,
   "inputs": {
     "journal_path": "memory/self_journal.jsonl",
@@ -9,7 +9,7 @@
     "max_points": 120
   },
   "metrics": {
-    "journal_entry_count": 3708,
+    "journal_entry_count": 4837,
     "journal_invalid_json_line_count": 0,
     "wakeup_cycle_count": 2,
     "wakeup_invalid_json_line_count": 0,
@@ -86,28 +86,28 @@
     },
     "wakeup_collision_success_rate": {
       "point_count": 2,
-      "latest": 0.1333,
-      "min": 0.1333,
-      "max": 0.1333,
-      "average": 0.1333,
+      "latest": 0.0455,
+      "min": 0.0455,
+      "max": 0.0455,
+      "average": 0.0455,
       "trend": "stable",
       "convergence_events": 0
     },
     "wakeup_write_gateway_written": {
       "point_count": 2,
-      "latest": 2.0,
-      "min": 2.0,
-      "max": 2.0,
-      "average": 2.0,
+      "latest": 0.0,
+      "min": 0.0,
+      "max": 0.0,
+      "average": 0.0,
       "trend": "stable",
       "convergence_events": 0
     },
     "wakeup_write_gateway_skipped": {
       "point_count": 2,
-      "latest": 0.0,
-      "min": 0.0,
-      "max": 0.0,
-      "average": 0.0,
+      "latest": 2.0,
+      "min": 2.0,
+      "max": 2.0,
+      "average": 2.0,
       "trend": "stable",
       "convergence_events": 0
     },
@@ -158,19 +158,19 @@
     },
     "wakeup_llm_selection_latency": {
       "point_count": 1,
-      "latest": 767.0,
-      "min": 767.0,
-      "max": 767.0,
-      "average": 767.0,
+      "latest": 508.0,
+      "min": 508.0,
+      "max": 508.0,
+      "average": 508.0,
       "trend": "insufficient",
       "convergence_events": 0
     },
     "wakeup_llm_probe_latency": {
       "point_count": 1,
-      "latest": 1235.0,
-      "min": 1235.0,
-      "max": 1235.0,
-      "average": 1235.0,
+      "latest": 1494.0,
+      "min": 1494.0,
+      "max": 1494.0,
+      "average": 1494.0,
       "trend": "insufficient",
       "convergence_events": 0
     },
@@ -221,8 +221,8 @@
     },
     "wakeup_council_total": 4,
     "wakeup_frozen_total": 0,
-    "wakeup_write_gateway_written_total": 4,
-    "wakeup_write_gateway_skipped_total": 0,
+    "wakeup_write_gateway_written_total": 0,
+    "wakeup_write_gateway_skipped_total": 4,
     "wakeup_write_gateway_rejected_total": 0,
     "wakeup_llm_call_total": 0,
     "wakeup_llm_preflight_timeout_total": 1,
@@ -1638,14 +1638,14 @@
     ],
     "wakeup_avg_friction": [
       {
-        "timestamp": "2026-03-09T05:08:06Z",
+        "timestamp": "2026-03-11T23:08:06Z",
         "value": 0.3052,
         "source": "wakeup",
         "phase": "cycle",
         "label": "avg_friction_score"
       },
       {
-        "timestamp": "2026-03-09T05:08:10Z",
+        "timestamp": "2026-03-11T23:08:10Z",
         "value": 0.3052,
         "source": "wakeup",
         "phase": "cycle",
@@ -1654,14 +1654,14 @@
     ],
     "wakeup_max_friction": [
       {
-        "timestamp": "2026-03-09T05:08:06Z",
+        "timestamp": "2026-03-11T23:08:06Z",
         "value": 0.3436,
         "source": "wakeup",
         "phase": "cycle",
         "label": "max_friction_score"
       },
       {
-        "timestamp": "2026-03-09T05:08:10Z",
+        "timestamp": "2026-03-11T23:08:10Z",
         "value": 0.3436,
         "source": "wakeup",
         "phase": "cycle",
@@ -1670,14 +1670,14 @@
     ],
     "wakeup_max_lyapunov": [
       {
-        "timestamp": "2026-03-09T05:08:06Z",
+        "timestamp": "2026-03-11T23:08:06Z",
         "value": 0.2499,
         "source": "wakeup",
         "phase": "cycle",
         "label": "max_lyapunov_proxy"
       },
       {
-        "timestamp": "2026-03-09T05:08:10Z",
+        "timestamp": "2026-03-11T23:08:10Z",
         "value": 0.2499,
         "source": "wakeup",
         "phase": "cycle",
@@ -1686,15 +1686,15 @@
     ],
     "wakeup_collision_success_rate": [
       {
-        "timestamp": "2026-03-09T05:08:06Z",
-        "value": 0.1333,
+        "timestamp": "2026-03-11T23:08:06Z",
+        "value": 0.0455,
         "source": "wakeup",
         "phase": "cycle",
         "label": "collision_success_rate"
       },
       {
-        "timestamp": "2026-03-09T05:08:10Z",
-        "value": 0.1333,
+        "timestamp": "2026-03-11T23:08:10Z",
+        "value": 0.0455,
         "source": "wakeup",
         "phase": "cycle",
         "label": "collision_success_rate"
@@ -1702,14 +1702,14 @@
     ],
     "wakeup_council_count": [
       {
-        "timestamp": "2026-03-09T05:08:06Z",
+        "timestamp": "2026-03-11T23:08:06Z",
         "value": 2.0,
         "source": "wakeup",
         "phase": "cycle",
         "label": "council_count"
       },
       {
-        "timestamp": "2026-03-09T05:08:10Z",
+        "timestamp": "2026-03-11T23:08:10Z",
         "value": 2.0,
         "source": "wakeup",
         "phase": "cycle",
@@ -1718,14 +1718,14 @@
     ],
     "wakeup_frozen_count": [
       {
-        "timestamp": "2026-03-09T05:08:06Z",
+        "timestamp": "2026-03-11T23:08:06Z",
         "value": 0.0,
         "source": "wakeup",
         "phase": "cycle",
         "label": "frozen_count"
       },
       {
-        "timestamp": "2026-03-09T05:08:10Z",
+        "timestamp": "2026-03-11T23:08:10Z",
         "value": 0.0,
         "source": "wakeup",
         "phase": "cycle",
@@ -1734,15 +1734,15 @@
     ],
     "wakeup_write_gateway_written": [
       {
-        "timestamp": "2026-03-09T05:08:06Z",
-        "value": 2.0,
+        "timestamp": "2026-03-11T23:08:06Z",
+        "value": 0.0,
         "source": "wakeup",
         "phase": "cycle",
         "label": "write_gateway_written"
       },
       {
-        "timestamp": "2026-03-09T05:08:10Z",
-        "value": 2.0,
+        "timestamp": "2026-03-11T23:08:10Z",
+        "value": 0.0,
         "source": "wakeup",
         "phase": "cycle",
         "label": "write_gateway_written"
@@ -1750,15 +1750,15 @@
     ],
     "wakeup_write_gateway_skipped": [
       {
-        "timestamp": "2026-03-09T05:08:06Z",
-        "value": 0.0,
+        "timestamp": "2026-03-11T23:08:06Z",
+        "value": 2.0,
         "source": "wakeup",
         "phase": "cycle",
         "label": "write_gateway_skipped"
       },
       {
-        "timestamp": "2026-03-09T05:08:10Z",
-        "value": 0.0,
+        "timestamp": "2026-03-11T23:08:10Z",
+        "value": 2.0,
         "source": "wakeup",
         "phase": "cycle",
         "label": "write_gateway_skipped"
@@ -1766,14 +1766,14 @@
     ],
     "wakeup_write_gateway_rejected": [
       {
-        "timestamp": "2026-03-09T05:08:06Z",
+        "timestamp": "2026-03-11T23:08:06Z",
         "value": 0.0,
         "source": "wakeup",
         "phase": "cycle",
         "label": "write_gateway_rejected"
       },
       {
-        "timestamp": "2026-03-09T05:08:10Z",
+        "timestamp": "2026-03-11T23:08:10Z",
         "value": 0.0,
         "source": "wakeup",
         "phase": "cycle",
@@ -1782,14 +1782,14 @@
     ],
     "wakeup_llm_call_count": [
       {
-        "timestamp": "2026-03-09T05:08:06Z",
+        "timestamp": "2026-03-11T23:08:06Z",
         "value": 0.0,
         "source": "wakeup",
         "phase": "cycle",
         "label": "llm_call_count"
       },
       {
-        "timestamp": "2026-03-09T05:08:10Z",
+        "timestamp": "2026-03-11T23:08:10Z",
         "value": 0.0,
         "source": "wakeup",
         "phase": "cycle",
@@ -1798,14 +1798,14 @@
     ],
     "wakeup_llm_prompt_tokens": [
       {
-        "timestamp": "2026-03-09T05:08:06Z",
+        "timestamp": "2026-03-11T23:08:06Z",
         "value": 0.0,
         "source": "wakeup",
         "phase": "cycle",
         "label": "llm_prompt_tokens_total"
       },
       {
-        "timestamp": "2026-03-09T05:08:10Z",
+        "timestamp": "2026-03-11T23:08:10Z",
         "value": 0.0,
         "source": "wakeup",
         "phase": "cycle",
@@ -1814,14 +1814,14 @@
     ],
     "wakeup_llm_completion_tokens": [
       {
-        "timestamp": "2026-03-09T05:08:06Z",
+        "timestamp": "2026-03-11T23:08:06Z",
         "value": 0.0,
         "source": "wakeup",
         "phase": "cycle",
         "label": "llm_completion_tokens_total"
       },
       {
-        "timestamp": "2026-03-09T05:08:10Z",
+        "timestamp": "2026-03-11T23:08:10Z",
         "value": 0.0,
         "source": "wakeup",
         "phase": "cycle",
@@ -1830,14 +1830,14 @@
     ],
     "wakeup_llm_total_tokens": [
       {
-        "timestamp": "2026-03-09T05:08:06Z",
+        "timestamp": "2026-03-11T23:08:06Z",
         "value": 0.0,
         "source": "wakeup",
         "phase": "cycle",
         "label": "llm_total_tokens"
       },
       {
-        "timestamp": "2026-03-09T05:08:10Z",
+        "timestamp": "2026-03-11T23:08:10Z",
         "value": 0.0,
         "source": "wakeup",
         "phase": "cycle",
@@ -1846,7 +1846,7 @@
     ],
     "wakeup_llm_preflight_latency": [
       {
-        "timestamp": "2026-03-09T05:08:06Z",
+        "timestamp": "2026-03-11T23:08:06Z",
         "value": 2002.0,
         "source": "wakeup",
         "phase": "cycle",
@@ -1855,8 +1855,8 @@
     ],
     "wakeup_llm_selection_latency": [
       {
-        "timestamp": "2026-03-09T05:08:06Z",
-        "value": 767.0,
+        "timestamp": "2026-03-11T23:08:06Z",
+        "value": 508.0,
         "source": "wakeup",
         "phase": "cycle",
         "label": "llm_preflight_selection_latency_ms"
@@ -1864,8 +1864,8 @@
     ],
     "wakeup_llm_probe_latency": [
       {
-        "timestamp": "2026-03-09T05:08:06Z",
-        "value": 1235.0,
+        "timestamp": "2026-03-11T23:08:06Z",
+        "value": 1494.0,
         "source": "wakeup",
         "phase": "cycle",
         "label": "llm_preflight_probe_latency_ms"
@@ -1873,14 +1873,14 @@
     ],
     "wakeup_llm_preflight_timeout_count": [
       {
-        "timestamp": "2026-03-09T05:08:06Z",
+        "timestamp": "2026-03-11T23:08:06Z",
         "value": 1.0,
         "source": "wakeup",
         "phase": "cycle",
         "label": "llm_preflight_timeout_count"
       },
       {
-        "timestamp": "2026-03-09T05:08:10Z",
+        "timestamp": "2026-03-11T23:08:10Z",
         "value": 0.0,
         "source": "wakeup",
         "phase": "cycle",
@@ -1889,14 +1889,14 @@
     ],
     "schedule_governance_cooldown_applied": [
       {
-        "timestamp": "2026-03-09T05:08:07Z",
+        "timestamp": "2026-03-11T23:08:07Z",
         "value": 0.0,
         "source": "schedule",
         "phase": "cycle",
         "label": "governance_cooldown_applied"
       },
       {
-        "timestamp": "2026-03-09T05:08:11Z",
+        "timestamp": "2026-03-11T23:08:10Z",
         "value": 0.0,
         "source": "schedule",
         "phase": "cycle",
@@ -1905,14 +1905,14 @@
     ],
     "schedule_governance_cooldown_deferred": [
       {
-        "timestamp": "2026-03-09T05:08:07Z",
+        "timestamp": "2026-03-11T23:08:07Z",
         "value": 0.0,
         "source": "schedule",
         "phase": "cycle",
         "label": "governance_cooldown_deferred"
       },
       {
-        "timestamp": "2026-03-09T05:08:11Z",
+        "timestamp": "2026-03-11T23:08:10Z",
         "value": 0.0,
         "source": "schedule",
         "phase": "cycle",
@@ -1921,14 +1921,14 @@
     ],
     "schedule_llm_backoff_requested": [
       {
-        "timestamp": "2026-03-09T05:08:07Z",
+        "timestamp": "2026-03-11T23:08:07Z",
         "value": 1.0,
         "source": "schedule",
         "phase": "cycle",
         "label": "llm_backoff_requested"
       },
       {
-        "timestamp": "2026-03-09T05:08:11Z",
+        "timestamp": "2026-03-11T23:08:10Z",
         "value": 0.0,
         "source": "schedule",
         "phase": "cycle",
@@ -1937,14 +1937,14 @@
     ],
     "schedule_llm_backoff_active": [
       {
-        "timestamp": "2026-03-09T05:08:07Z",
+        "timestamp": "2026-03-11T23:08:07Z",
         "value": 0.0,
         "source": "schedule",
         "phase": "cycle",
         "label": "llm_backoff_active"
       },
       {
-        "timestamp": "2026-03-09T05:08:11Z",
+        "timestamp": "2026-03-11T23:08:10Z",
         "value": 1.0,
         "source": "schedule",
         "phase": "cycle",
@@ -1956,15 +1956,15 @@
     {
       "cycle": 1,
       "status": "ok",
-      "timestamp": "2026-03-09T05:08:06Z",
+      "timestamp": "2026-03-11T23:08:06Z",
       "avg_friction_score": 0.3052,
       "max_friction_score": 0.3436,
       "max_lyapunov_proxy": 0.2499,
-      "collision_success_rate": 0.1333,
+      "collision_success_rate": 0.0455,
       "council_count": 2,
       "frozen_count": 0,
-      "write_gateway_written": 2,
-      "write_gateway_skipped": 0,
+      "write_gateway_written": 0,
+      "write_gateway_skipped": 2,
       "write_gateway_rejected": 0,
       "llm_call_count": 0,
       "llm_prompt_tokens_total": 0,
@@ -1973,8 +1973,8 @@
       "llm_backends": [],
       "llm_models": [],
       "llm_preflight_latency_ms": 2002,
-      "llm_preflight_selection_latency_ms": 767,
-      "llm_preflight_probe_latency_ms": 1235,
+      "llm_preflight_selection_latency_ms": 508,
+      "llm_preflight_probe_latency_ms": 1494,
       "llm_preflight_timeout_count": 1,
       "llm_preflight_reason": "timeout",
       "consolidation_ran": false,
@@ -1985,15 +1985,15 @@
     {
       "cycle": 1,
       "status": "ok",
-      "timestamp": "2026-03-09T05:08:10Z",
+      "timestamp": "2026-03-11T23:08:10Z",
       "avg_friction_score": 0.3052,
       "max_friction_score": 0.3436,
       "max_lyapunov_proxy": 0.2499,
-      "collision_success_rate": 0.1333,
+      "collision_success_rate": 0.0455,
       "council_count": 2,
       "frozen_count": 0,
-      "write_gateway_written": 2,
-      "write_gateway_skipped": 0,
+      "write_gateway_written": 0,
+      "write_gateway_skipped": 2,
       "write_gateway_rejected": 0,
       "llm_call_count": 0,
       "llm_prompt_tokens_total": 0,
@@ -2015,7 +2015,7 @@
   "recent_schedule_cycles": [
     {
       "cycle": 1,
-      "timestamp": "2026-03-09T05:08:07Z",
+      "timestamp": "2026-03-11T23:08:07Z",
       "selected_categories": [
         "vulnerability-intel"
       ],
@@ -2029,14 +2029,13 @@
       "governance_breach_reasons": [],
       "llm_breach_reasons": [
         "llm_preflight_latency_ms>1800 (observed=2002)",
-        "llm_selection_latency_ms>700 (observed=767)",
-        "llm_probe_latency_ms>1200 (observed=1235)",
+        "llm_probe_latency_ms>1200 (observed=1494)",
         "llm_preflight_timeout_count>0 (observed=1)"
       ]
     },
     {
       "cycle": 2,
-      "timestamp": "2026-03-09T05:08:11Z",
+      "timestamp": "2026-03-11T23:08:10Z",
       "selected_categories": [
         "supply-chain-risk"
       ],
@@ -2044,27 +2043,26 @@
       "deferred_category_count": 0,
       "llm_backoff_requested": false,
       "llm_backoff_active": true,
-      "llm_backoff_mode": "mixed_latency",
+      "llm_backoff_mode": "probe_latency",
       "llm_backoff_action": "disable_reflection",
-      "llm_backoff_reason_count": 4,
+      "llm_backoff_reason_count": 3,
       "governance_breach_reasons": [],
       "llm_breach_reasons": []
     }
   ],
   "schedule_state": {
     "cycles_run": 2,
-    "updated_at": "2026-03-09T05:08:11Z",
+    "updated_at": "2026-03-11T23:08:10Z",
     "active_governance_cooldown_categories": [],
     "active_governance_cooldown_count": 0,
     "llm_backoff_active": true,
     "llm_backoff_until_cycle": 3,
-    "llm_backoff_mode": "mixed_latency",
+    "llm_backoff_mode": "probe_latency",
     "llm_backoff_status": "breached",
-    "llm_backoff_reason_count": 4,
+    "llm_backoff_reason_count": 3,
     "llm_backoff_breach_reasons": [
       "llm_preflight_latency_ms>1800 (observed=2002)",
-      "llm_selection_latency_ms>700 (observed=767)",
-      "llm_probe_latency_ms>1200 (observed=1235)",
+      "llm_probe_latency_ms>1200 (observed=1494)",
       "llm_preflight_timeout_count>0 (observed=1)"
     ]
   },

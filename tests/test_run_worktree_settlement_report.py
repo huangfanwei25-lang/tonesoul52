@@ -83,6 +83,39 @@ def test_build_report_groups_dirty_entries_into_lanes(
         "collect_worktree_entries",
         lambda repo_root: _dirty_entries(),
     )
+    monkeypatch.setattr(
+        settlement_runner.refreshable_report,
+        "build_report",
+        lambda repo_root: (
+            {
+                "handoff_previews": [
+                    {
+                        "path": "docs/status/subjectivity_report_latest.json",
+                        "queue_shape": "deferred_monitoring",
+                        "requires_operator_action": "false",
+                        "primary_status_line": (
+                            "deferred_monitoring | records=195 unresolved=50 deferred=50 "
+                            "settled=31 reviewed_vows=0 | top_unresolved_status=deferred"
+                        ),
+                        "admissibility_primary_status_line": "",
+                    },
+                    {
+                        "path": "docs/status/subjectivity_review_batch_latest.json",
+                        "queue_shape": "stable_history_only",
+                        "requires_operator_action": "false",
+                        "primary_status_line": (
+                            "stable_deferred_history | A distributed vulnerability database for "
+                            "Open Source | rows=50 lineages=12 cycles=30"
+                        ),
+                        "admissibility_primary_status_line": (
+                            "admissibility_not_yet_clear | focus=authority_and_exception_pressure"
+                        ),
+                    },
+                ]
+            },
+            "# Refreshable Artifact Report Latest\n",
+        ),
+    )
 
     payload, markdown = settlement_runner.build_report(tmp_path, sample_limit=2)
 
@@ -97,6 +130,28 @@ def test_build_report_groups_dirty_entries_into_lanes(
     assert refresh_lane["active"] is True
     assert refresh_lane["entry_count"] == 2
     assert refresh_lane["categories"][0]["category"] == "generated_status"
+    assert refresh_lane["handoff_preview_count"] == 2
+    assert refresh_lane["admissibility_preview_count"] == 1
+    assert payload["summary"]["refreshable_handoff_preview_count"] == 2
+    assert payload["summary"]["refreshable_admissibility_preview_count"] == 1
+    assert payload["subjectivity_focus_preview"] == {
+        "path": "docs/status/subjectivity_review_batch_latest.json",
+        "queue_shape": "stable_history_only",
+        "requires_operator_action": "false",
+        "primary_status_line": (
+            "stable_deferred_history | A distributed vulnerability database for "
+            "Open Source | rows=50 lineages=12 cycles=30"
+        ),
+        "admissibility_primary_status_line": (
+            "admissibility_not_yet_clear | focus=authority_and_exception_pressure"
+        ),
+    }
+    assert refresh_lane["handoff_previews"][0]["queue_shape"] == "deferred_monitoring"
+    assert (
+        refresh_lane["handoff_previews"][1]["admissibility_primary_status_line"]
+        == "admissibility_not_yet_clear | focus=authority_and_exception_pressure"
+    )
+    assert refresh_lane["handoff_previews"][1]["requires_operator_action"] == "false"
 
     memory_lane = next(
         lane for lane in payload["settlement_lanes"] if lane["name"] == "private_memory_review"
@@ -106,7 +161,13 @@ def test_build_report_groups_dirty_entries_into_lanes(
     assert "private" in memory_lane["recommended_actions"][0].lower()
 
     assert "Private memory paths remain governed by the dual-track boundary" in markdown
+    assert "## Subjectivity Focus Mirror" in markdown
     assert "Refreshable Artifacts" in markdown
+    assert "Handoff previews: `2`" in markdown
+    assert "requires_operator_action" in markdown
+    assert "deferred_monitoring" in markdown
+    assert "stable_history_only" in markdown
+    assert "admissibility" in markdown
 
 
 def test_build_report_returns_clean_status_when_worktree_is_clean(
@@ -136,12 +197,23 @@ def test_build_report_returns_clean_status_when_worktree_is_clean(
         "collect_worktree_entries",
         lambda repo_root: [],
     )
+    monkeypatch.setattr(
+        settlement_runner.refreshable_report,
+        "build_report",
+        lambda repo_root: (
+            {"handoff_previews": [], "subjectivity_focus_preview": None},
+            "# Refreshable Artifact Report Latest\n",
+        ),
+    )
 
     payload, _ = settlement_runner.build_report(tmp_path)
 
     assert payload["overall_ok"] is True
     assert payload["issues"] == []
     assert payload["summary"]["active_lane_count"] == 0
+    assert payload["summary"]["refreshable_handoff_preview_count"] == 0
+    assert payload["summary"]["refreshable_admissibility_preview_count"] == 0
+    assert payload["subjectivity_focus_preview"] is None
 
 
 def test_main_strict_writes_artifacts_and_fails_when_dirty(

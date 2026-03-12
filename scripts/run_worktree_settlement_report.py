@@ -14,6 +14,7 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 import scripts.plan_commit_attribution_base_switch as base_switch_planner  # noqa: E402
+import scripts.run_refreshable_artifact_report as refreshable_report  # noqa: E402
 
 JSON_FILENAME = "worktree_settlement_latest.json"
 MARKDOWN_FILENAME = "worktree_settlement_latest.md"
@@ -145,6 +146,68 @@ def _build_lane(
     }
 
 
+def _refreshable_handoff_previews(repo_root: Path) -> list[dict[str, str]]:
+    payload, _ = refreshable_report.build_report(repo_root)
+    previews = payload.get("handoff_previews")
+    if not isinstance(previews, list):
+        return []
+    normalized: list[dict[str, str]] = []
+    for item in previews:
+        if not isinstance(item, dict):
+            continue
+        path = str(item.get("path") or "").strip()
+        queue_shape = str(item.get("queue_shape") or "").strip()
+        primary_status_line = str(item.get("primary_status_line") or "").strip()
+        if not path or not primary_status_line:
+            continue
+        normalized.append(
+            {
+                "path": path,
+                "queue_shape": queue_shape,
+                "primary_status_line": primary_status_line,
+                "admissibility_primary_status_line": str(
+                    item.get("admissibility_primary_status_line") or ""
+                ).strip(),
+                "requires_operator_action": str(item.get("requires_operator_action") or "false")
+                .strip()
+                .lower(),
+            }
+        )
+    return normalized
+
+
+def _refreshable_subjectivity_focus_preview(repo_root: Path) -> dict[str, str] | None:
+    payload, _ = refreshable_report.build_report(repo_root)
+    preview = payload.get("subjectivity_focus_preview")
+    if not isinstance(preview, dict):
+        previews = payload.get("handoff_previews")
+        if isinstance(previews, list):
+            for item in previews:
+                if not isinstance(item, dict):
+                    continue
+                if str(item.get("admissibility_primary_status_line") or "").strip():
+                    preview = item
+                    break
+    if not isinstance(preview, dict):
+        return None
+    path = str(preview.get("path") or "").strip()
+    queue_shape = str(preview.get("queue_shape") or "").strip()
+    primary_status_line = str(preview.get("primary_status_line") or "").strip()
+    if not path or not primary_status_line:
+        return None
+    return {
+        "path": path,
+        "queue_shape": queue_shape,
+        "primary_status_line": primary_status_line,
+        "admissibility_primary_status_line": str(
+            preview.get("admissibility_primary_status_line") or ""
+        ).strip(),
+        "requires_operator_action": str(preview.get("requires_operator_action") or "false")
+        .strip()
+        .lower(),
+    }
+
+
 def _render_markdown(payload: dict[str, Any]) -> str:
     lines = ["# Worktree Settlement Latest", ""]
     lines.append(f"- Generated at: `{payload['generated_at']}`")
@@ -158,6 +221,25 @@ def _render_markdown(payload: dict[str, Any]) -> str:
         f"- Attribution debt: current=`{payload['planner']['current_missing_count']}`, "
         f"backfill=`{payload['planner']['backfill_missing_count']}`"
     )
+    lines.append("")
+    lines.append("## Subjectivity Focus Mirror")
+    lines.append("")
+    focus_preview = payload.get("subjectivity_focus_preview")
+    if isinstance(focus_preview, dict):
+        lines.append(f"- path: `{focus_preview.get('path', '')}`")
+        lines.append(f"- queue_shape: `{focus_preview.get('queue_shape', '')}`")
+        lines.append(
+            "- requires_operator_action: "
+            f"`{focus_preview.get('requires_operator_action', 'false')}`"
+        )
+        lines.append(f"- primary_status_line: `{focus_preview.get('primary_status_line', '')}`")
+        if str(focus_preview.get("admissibility_primary_status_line") or "").strip():
+            lines.append(
+                "- admissibility_primary_status_line: "
+                f"`{focus_preview.get('admissibility_primary_status_line', '')}`"
+            )
+    else:
+        lines.append("- None")
     lines.append("")
     lines.append("## Settlement Order")
     lines.append("")
@@ -179,6 +261,25 @@ def _render_markdown(payload: dict[str, Any]) -> str:
             )
             if samples:
                 lines.append(f"     samples: {samples}")
+        previews = list(lane.get("handoff_previews") or [])
+        if previews:
+            lines.append(f"   - Handoff previews: `{len(previews)}`")
+            for preview in previews:
+                lines.append(
+                    "     - "
+                    f"`{preview.get('path', '')}` "
+                    f"(`{preview.get('queue_shape', '')}`): "
+                    f"`{preview.get('primary_status_line', '')}`"
+                )
+                lines.append(
+                    "       requires_operator_action: "
+                    f"`{preview.get('requires_operator_action', 'false')}`"
+                )
+                if str(preview.get("admissibility_primary_status_line") or "").strip():
+                    lines.append(
+                        "       admissibility: "
+                        f"`{preview.get('admissibility_primary_status_line', '')}`"
+                    )
         lines.append("")
     lines.append("## Notes")
     lines.append("")
@@ -215,6 +316,20 @@ def build_report(
     lanes = [
         _build_lane(definition, grouped_entries, sample_limit) for definition in LANE_DEFINITIONS
     ]
+    refreshable_handoff_previews = _refreshable_handoff_previews(repo_root)
+    refreshable_subjectivity_focus_preview = _refreshable_subjectivity_focus_preview(repo_root)
+    refreshable_admissibility_preview_count = sum(
+        1
+        for item in refreshable_handoff_previews
+        if str(item.get("admissibility_primary_status_line") or "").strip()
+    )
+    for lane in lanes:
+        if lane["name"] != "refreshable_artifacts":
+            continue
+        lane["handoff_previews"] = refreshable_handoff_previews
+        lane["handoff_preview_count"] = len(refreshable_handoff_previews)
+        lane["admissibility_preview_count"] = refreshable_admissibility_preview_count
+        break
     active_lane_count = sum(1 for lane in lanes if lane["active"])
     worktree = switch_plan["worktree"]
     payload = {
@@ -241,7 +356,10 @@ def build_report(
         "summary": {
             "active_lane_count": active_lane_count,
             "largest_categories": switch_plan["cleanup_priority"][:5],
+            "refreshable_handoff_preview_count": len(refreshable_handoff_previews),
+            "refreshable_admissibility_preview_count": refreshable_admissibility_preview_count,
         },
+        "subjectivity_focus_preview": refreshable_subjectivity_focus_preview,
         "next_checkpoint": {
             "command": (
                 "python scripts/plan_commit_attribution_base_switch.py "

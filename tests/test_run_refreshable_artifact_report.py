@@ -76,6 +76,38 @@ def _entries() -> list[dict[str, object]]:
         },
         {
             "status": "??",
+            "path": "docs/status/subjectivity_tension_groups_latest.json",
+            "staged": False,
+            "unstaged": False,
+            "untracked": True,
+            "category": "generated_status",
+        },
+        {
+            "status": "??",
+            "path": "docs/status/subjectivity_tension_groups_latest.md",
+            "staged": False,
+            "unstaged": False,
+            "untracked": True,
+            "category": "generated_status",
+        },
+        {
+            "status": "??",
+            "path": "docs/status/subjectivity_review_batch_latest.json",
+            "staged": False,
+            "unstaged": False,
+            "untracked": True,
+            "category": "generated_status",
+        },
+        {
+            "status": "??",
+            "path": "docs/status/subjectivity_review_batch_latest.md",
+            "staged": False,
+            "unstaged": False,
+            "untracked": True,
+            "category": "generated_status",
+        },
+        {
+            "status": "??",
             "path": "reports/model_comparison_latest.json",
             "staged": False,
             "unstaged": False,
@@ -111,12 +143,15 @@ def test_build_report_classifies_known_generated_and_manual_inputs(
     payload, markdown = artifact_report.build_report(tmp_path)
 
     assert payload["overall_ok"] is False
-    assert payload["summary"]["entry_count"] == 10
-    assert payload["summary"]["regenerate_count"] == 6
+    assert payload["summary"]["entry_count"] == 14
+    assert payload["summary"]["regenerate_count"] == 10
     assert payload["summary"]["namespace_regenerate_count"] == 2
     assert payload["summary"]["manual_review_count"] == 1
     assert payload["summary"]["archive_or_drop_count"] == 1
     assert payload["summary"]["inspect_count"] == 0
+    assert payload["summary"]["handoff_preview_count"] == 0
+    assert payload["summary"]["admissibility_preview_count"] == 0
+    assert payload["subjectivity_focus_preview"] is None
 
     entries = {item["path"]: item for item in payload["entries"]}
     assert entries["docs/status/repo_healthcheck_latest.json"]["disposition"] == "regenerate"
@@ -134,6 +169,17 @@ def test_build_report_classifies_known_generated_and_manual_inputs(
         entries["docs/status/subjectivity_shadow_pressure_latest.json"]["disposition"]
         == "regenerate"
     )
+    assert (
+        entries["docs/status/subjectivity_tension_groups_latest.json"]["disposition"]
+        == "regenerate"
+    )
+    assert (
+        entries["docs/status/subjectivity_tension_groups_latest.md"]["disposition"] == "regenerate"
+    )
+    assert (
+        entries["docs/status/subjectivity_review_batch_latest.json"]["disposition"] == "regenerate"
+    )
+    assert entries["docs/status/subjectivity_review_batch_latest.md"]["disposition"] == "regenerate"
     assert entries["reports/model_comparison_latest.json"]["disposition"] == "regenerate"
     assert entries["reports/analysis_gpt53.md"]["disposition"] == "manual_review"
     assert entries["docs/status/probe_deadline/"]["disposition"] == "archive_or_drop"
@@ -146,6 +192,8 @@ def test_build_report_classifies_known_generated_and_manual_inputs(
     assert "docs/status/README.md" not in entries
     assert "reports/analysis_gpt53.md" in markdown
     assert "python scripts/run_subjectivity_shadow_pressure_report.py" in markdown
+    assert "python scripts/run_subjectivity_tension_grouping.py" in markdown
+    assert "python scripts/run_subjectivity_review_batch.py" in markdown
     assert "python scripts/run_repo_healthcheck.py --strict --allow-missing-discussion" in markdown
     assert "python scripts/run_runtime_probe_watch.py --strict" in markdown
     assert "Historical probe namespace" in markdown
@@ -160,6 +208,9 @@ def test_build_report_is_clean_when_no_refreshable_entries(
 
     assert payload["overall_ok"] is True
     assert payload["summary"]["entry_count"] == 0
+    assert payload["summary"]["handoff_preview_count"] == 0
+    assert payload["summary"]["admissibility_preview_count"] == 0
+    assert payload["subjectivity_focus_preview"] is None
     assert payload["issues"] == []
 
 
@@ -213,3 +264,140 @@ def test_main_strict_writes_artifacts_and_fails_when_dirty(
     assert md_path.exists()
     saved = json.loads(json_path.read_text(encoding="utf-8"))
     assert saved["summary"]["entry_count"] == 2
+
+
+def test_build_report_surfaces_handoff_previews_for_subjectivity_artifacts(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    status_dir = tmp_path / "docs" / "status"
+    status_dir.mkdir(parents=True, exist_ok=True)
+    (status_dir / "subjectivity_report_latest.json").write_text(
+        json.dumps(
+            {
+                "handoff": {
+                    "queue_shape": "deferred_monitoring",
+                    "requires_operator_action": False,
+                    "top_unresolved_status": "deferred",
+                    "primary_status_line": (
+                        "deferred_monitoring | records=195 unresolved=50 deferred=50 "
+                        "settled=31 reviewed_vows=0 | top_unresolved_status=deferred"
+                    ),
+                },
+                "primary_status_line": (
+                    "deferred_monitoring | records=195 unresolved=50 deferred=50 "
+                    "settled=31 reviewed_vows=0 | top_unresolved_status=deferred"
+                ),
+            },
+            ensure_ascii=False,
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+    (status_dir / "subjectivity_review_batch_latest.json").write_text(
+        json.dumps(
+            {
+                "batch": {
+                    "handoff": {
+                        "queue_shape": "stable_history_only",
+                        "requires_operator_action": False,
+                        "top_queue_posture": "stable_deferred_history",
+                        "primary_status_line": (
+                            "stable_deferred_history | A distributed vulnerability database for "
+                            "Open Source | rows=50 lineages=12 cycles=30 | "
+                            "trigger=second_source_context_or_material_split"
+                        ),
+                    },
+                    "primary_status_line": (
+                        "stable_deferred_history | A distributed vulnerability database for "
+                        "Open Source | rows=50 lineages=12 cycles=30 | "
+                        "trigger=second_source_context_or_material_split"
+                    ),
+                    "admissibility_primary_status_line": (
+                        "admissibility_not_yet_clear | focus=authority_and_exception_pressure | "
+                        "tags=cross_cycle_persistence, exception_pressure, "
+                        "externalized_harm_check, low_context_diversity"
+                    ),
+                }
+            },
+            ensure_ascii=False,
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(
+        artifact_report.planner,
+        "collect_worktree_entries",
+        lambda repo_root: [
+            {
+                "status": "??",
+                "path": "docs/status/subjectivity_report_latest.md",
+                "staged": False,
+                "unstaged": False,
+                "untracked": True,
+                "category": "generated_status",
+            },
+            {
+                "status": "??",
+                "path": "docs/status/subjectivity_review_batch_latest.json",
+                "staged": False,
+                "unstaged": False,
+                "untracked": True,
+                "category": "generated_status",
+            },
+        ],
+    )
+
+    payload, markdown = artifact_report.build_report(tmp_path)
+
+    assert payload["summary"]["handoff_preview_count"] == 2
+    assert payload["summary"]["admissibility_preview_count"] == 1
+    assert payload["subjectivity_focus_preview"] == {
+        "path": "docs/status/subjectivity_review_batch_latest.json",
+        "queue_shape": "stable_history_only",
+        "requires_operator_action": "false",
+        "primary_status_line": (
+            "stable_deferred_history | A distributed vulnerability database for "
+            "Open Source | rows=50 lineages=12 cycles=30 | "
+            "trigger=second_source_context_or_material_split"
+        ),
+        "admissibility_primary_status_line": (
+            "admissibility_not_yet_clear | focus=authority_and_exception_pressure | "
+            "tags=cross_cycle_persistence, exception_pressure, "
+            "externalized_harm_check, low_context_diversity"
+        ),
+    }
+    assert payload["handoff_previews"] == [
+        {
+            "path": "docs/status/subjectivity_report_latest.json",
+            "queue_shape": "deferred_monitoring",
+            "requires_operator_action": "false",
+            "primary_status_line": (
+                "deferred_monitoring | records=195 unresolved=50 deferred=50 "
+                "settled=31 reviewed_vows=0 | top_unresolved_status=deferred"
+            ),
+            "admissibility_primary_status_line": "",
+        },
+        {
+            "path": "docs/status/subjectivity_review_batch_latest.json",
+            "queue_shape": "stable_history_only",
+            "requires_operator_action": "false",
+            "primary_status_line": (
+                "stable_deferred_history | A distributed vulnerability database for "
+                "Open Source | rows=50 lineages=12 cycles=30 | "
+                "trigger=second_source_context_or_material_split"
+            ),
+            "admissibility_primary_status_line": (
+                "admissibility_not_yet_clear | focus=authority_and_exception_pressure | "
+                "tags=cross_cycle_persistence, exception_pressure, "
+                "externalized_harm_check, low_context_diversity"
+            ),
+        },
+    ]
+    assert "## Subjectivity Focus" in markdown
+    assert "## Handoff Previews" in markdown
+    assert "requires_operator_action" in markdown
+    assert "`docs/status/subjectivity_report_latest.json`" in markdown
+    assert "deferred_monitoring" in markdown
+    assert "stable_history_only" in markdown
+    assert "Admissibility previews: `1`" in markdown
+    assert "admissibility_primary_status_line" in markdown

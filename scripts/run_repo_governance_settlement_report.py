@@ -36,6 +36,12 @@ def _load_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def _load_optional_json(path: Path) -> dict[str, Any] | None:
+    if not path.exists():
+        return None
+    return _load_json(path)
+
+
 def _repo_governance_group(runtime_groups: dict[str, Any]) -> dict[str, Any] | None:
     groups = runtime_groups.get("change_groups")
     if not isinstance(groups, list):
@@ -137,6 +143,51 @@ def _render_markdown(payload: dict[str, Any]) -> str:
     for path in payload["repo_governance_group"]["sample_paths"]:
         lines.append(f"- Sample: `{path}`")
     lines.append("")
+    lines.append("## Worktree Settlement Mirror")
+    lines.append("")
+    lines.append(f"- Worktree dirty: `{str(payload['worktree_settlement']['dirty']).lower()}`")
+    lines.append(
+        f"- Planner recommendation: `{payload['worktree_settlement']['planner_recommendation']}`"
+    )
+    lines.append(
+        "- Refreshable subjectivity previews: "
+        f"`{payload['worktree_settlement']['refreshable_handoff_preview_count']}`"
+    )
+    lines.append(
+        "- Refreshable admissibility previews: "
+        f"`{payload['worktree_settlement']['refreshable_admissibility_preview_count']}`"
+    )
+    focus_preview = payload["worktree_settlement"].get("subjectivity_focus_preview")
+    if isinstance(focus_preview, dict):
+        lines.append("")
+        lines.append("## Subjectivity Focus Mirror")
+        lines.append("")
+        lines.append(f"- path: `{focus_preview.get('path', '')}`")
+        lines.append(f"- queue_shape: `{focus_preview.get('queue_shape', '')}`")
+        lines.append(
+            "- requires_operator_action: "
+            f"`{focus_preview.get('requires_operator_action', 'false')}`"
+        )
+        lines.append(f"- primary_status_line: `{focus_preview.get('primary_status_line', '')}`")
+        if str(focus_preview.get("admissibility_primary_status_line") or "").strip():
+            lines.append(
+                "- admissibility_primary_status_line: "
+                f"`{focus_preview.get('admissibility_primary_status_line', '')}`"
+            )
+    lines.append("")
+    for preview in payload["worktree_settlement"]["handoff_previews"]:
+        lines.append(
+            "- "
+            f"`{preview['path']}` "
+            f"(`{preview['queue_shape']}`): "
+            f"`{preview['primary_status_line']}`"
+        )
+        lines.append(
+            "  - requires_operator_action: " f"`{preview.get('requires_operator_action', 'false')}`"
+        )
+        if str(preview.get("admissibility_primary_status_line") or "").strip():
+            lines.append("  - admissibility: " f"`{preview['admissibility_primary_status_line']}`")
+    lines.append("")
     lines.append("## Next Actions")
     lines.append("")
     for action in payload["settlement"]["next_actions"]:
@@ -151,10 +202,12 @@ def build_report(
     healthcheck_path: str = "docs/status/repo_healthcheck_latest.json",
     attribution_path: str = "docs/status/commit_attribution_base_switch_latest.json",
     runtime_groups_path: str = "docs/status/runtime_source_change_groups_latest.json",
+    worktree_settlement_path: str = "docs/status/worktree_settlement_latest.json",
 ) -> tuple[dict[str, Any], str]:
     healthcheck = _load_json(_resolve_path(repo_root, healthcheck_path))
     attribution = _load_json(_resolve_path(repo_root, attribution_path))
     runtime_groups = _load_json(_resolve_path(repo_root, runtime_groups_path))
+    worktree_settlement = _load_optional_json(_resolve_path(repo_root, worktree_settlement_path))
 
     checks = [check for check in healthcheck.get("checks", []) if isinstance(check, dict)]
     failing_checks = [str(check.get("name") or "") for check in checks if not bool(check.get("ok"))]
@@ -195,6 +248,63 @@ def build_report(
             "sample_paths": list((repo_group or {}).get("sample_paths") or []),
             "recommended_actions": list((repo_group or {}).get("recommended_actions") or []),
         },
+        "worktree_settlement": {
+            "dirty": bool((worktree_settlement or {}).get("worktree", {}).get("dirty", False)),
+            "planner_recommendation": str(
+                (worktree_settlement or {}).get("planner", {}).get("recommendation") or ""
+            ),
+            "refreshable_handoff_preview_count": int(
+                (worktree_settlement or {})
+                .get("summary", {})
+                .get("refreshable_handoff_preview_count", 0)
+            ),
+            "refreshable_admissibility_preview_count": int(
+                (worktree_settlement or {})
+                .get("summary", {})
+                .get("refreshable_admissibility_preview_count", 0)
+            ),
+            "subjectivity_focus_preview": (
+                {
+                    "path": str(item.get("path") or ""),
+                    "queue_shape": str(item.get("queue_shape") or ""),
+                    "primary_status_line": str(item.get("primary_status_line") or ""),
+                    "admissibility_primary_status_line": str(
+                        item.get("admissibility_primary_status_line") or ""
+                    ),
+                    "requires_operator_action": str(
+                        item.get("requires_operator_action") or "false"
+                    ),
+                }
+                if isinstance(
+                    item := (worktree_settlement or {}).get("subjectivity_focus_preview"), dict
+                )
+                and str(item.get("path") or "").strip()
+                and str(item.get("primary_status_line") or "").strip()
+                else None
+            ),
+            "handoff_previews": [
+                {
+                    "path": str(item.get("path") or ""),
+                    "queue_shape": str(item.get("queue_shape") or ""),
+                    "primary_status_line": str(item.get("primary_status_line") or ""),
+                    "admissibility_primary_status_line": str(
+                        item.get("admissibility_primary_status_line") or ""
+                    ),
+                    "requires_operator_action": str(
+                        item.get("requires_operator_action") or "false"
+                    ),
+                }
+                for item in (
+                    (worktree_settlement or {})
+                    .get("settlement_lanes", [{}])[0]
+                    .get("handoff_previews", [])
+                    if isinstance((worktree_settlement or {}).get("settlement_lanes"), list)
+                    and (worktree_settlement or {}).get("settlement_lanes")
+                    else []
+                )
+                if isinstance(item, dict) and str(item.get("primary_status_line") or "").strip()
+            ],
+        },
         "settlement": {
             "status": settlement_status,
             "metadata_only_blocker": metadata_only_blocker,
@@ -207,7 +317,10 @@ def build_report(
             failing_checks,
             metadata_only_blocker=metadata_only_blocker,
         ),
-        "warnings": [] if repo_group else ["missing_repo_governance_runtime_group"],
+        "warnings": (
+            ([] if repo_group else ["missing_repo_governance_runtime_group"])
+            + ([] if worktree_settlement is not None else ["missing_worktree_settlement_artifact"])
+        ),
     }
     return payload, _render_markdown(payload)
 
@@ -239,6 +352,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="Path to the latest runtime-source grouping artifact.",
     )
     parser.add_argument(
+        "--worktree-settlement-path",
+        default="docs/status/worktree_settlement_latest.json",
+        help="Path to the latest worktree-settlement artifact.",
+    )
+    parser.add_argument(
         "--strict",
         action="store_true",
         help="Return non-zero unless repo governance settlement is fully green.",
@@ -255,6 +373,7 @@ def main() -> int:
         healthcheck_path=str(args.healthcheck_path),
         attribution_path=str(args.attribution_path),
         runtime_groups_path=str(args.runtime_groups_path),
+        worktree_settlement_path=str(args.worktree_settlement_path),
     )
     _write(out_dir / JSON_FILENAME, json.dumps(payload, ensure_ascii=False, indent=2) + "\n")
     _write(out_dir / MARKDOWN_FILENAME, markdown)

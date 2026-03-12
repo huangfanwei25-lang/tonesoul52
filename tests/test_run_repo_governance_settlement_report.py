@@ -53,12 +53,65 @@ def test_build_report_identifies_metadata_only_blocker(tmp_path: Path) -> None:
             ]
         },
     )
+    _write_json(
+        tmp_path / "worktree_settlement.json",
+        {
+            "planner": {"recommendation": "manual_review_required"},
+            "worktree": {"dirty": True},
+            "summary": {
+                "refreshable_handoff_preview_count": 3,
+                "refreshable_admissibility_preview_count": 1,
+            },
+            "subjectivity_focus_preview": {
+                "path": "docs/status/subjectivity_review_batch_latest.json",
+                "queue_shape": "stable_history_only",
+                "requires_operator_action": "false",
+                "primary_status_line": (
+                    "stable_deferred_history | A distributed vulnerability database for "
+                    "Open Source | rows=50 lineages=12 cycles=30"
+                ),
+                "admissibility_primary_status_line": (
+                    "admissibility_not_yet_clear | focus=authority_and_exception_pressure"
+                ),
+            },
+            "settlement_lanes": [
+                {
+                    "name": "refreshable_artifacts",
+                    "handoff_previews": [
+                        {
+                            "path": "docs/status/subjectivity_report_latest.json",
+                            "queue_shape": "deferred_monitoring",
+                            "requires_operator_action": "false",
+                            "primary_status_line": (
+                                "deferred_monitoring | records=195 unresolved=50 deferred=50 "
+                                "settled=31 reviewed_vows=0 | top_unresolved_status=deferred"
+                            ),
+                            "admissibility_primary_status_line": "",
+                        },
+                        {
+                            "path": "docs/status/subjectivity_review_batch_latest.json",
+                            "queue_shape": "stable_history_only",
+                            "requires_operator_action": "false",
+                            "primary_status_line": (
+                                "stable_deferred_history | A distributed vulnerability database for "
+                                "Open Source | rows=50 lineages=12 cycles=30"
+                            ),
+                            "admissibility_primary_status_line": (
+                                "admissibility_not_yet_clear | focus=authority_and_exception_pressure"
+                            ),
+                        },
+                    ],
+                }
+            ],
+        },
+    )
 
     payload, markdown = governance_report.build_report(
         tmp_path,
         healthcheck_path="healthcheck.json",
         attribution_path="attribution.json",
         runtime_groups_path="runtime_groups.json",
+        worktree_settlement_path="worktree_settlement.json",
     )
 
     assert payload["overall_ok"] is False
@@ -67,9 +120,38 @@ def test_build_report_identifies_metadata_only_blocker(tmp_path: Path) -> None:
     assert payload["settlement"]["runtime_green_except_metadata"] is True
     assert payload["healthcheck"]["failing_checks"] == ["commit_attribution"]
     assert payload["repo_governance_group"]["entry_count"] == 24
+    assert payload["worktree_settlement"]["refreshable_handoff_preview_count"] == 3
+    assert payload["worktree_settlement"]["refreshable_admissibility_preview_count"] == 1
+    assert payload["worktree_settlement"]["subjectivity_focus_preview"] == {
+        "path": "docs/status/subjectivity_review_batch_latest.json",
+        "queue_shape": "stable_history_only",
+        "requires_operator_action": "false",
+        "primary_status_line": (
+            "stable_deferred_history | A distributed vulnerability database for "
+            "Open Source | rows=50 lineages=12 cycles=30"
+        ),
+        "admissibility_primary_status_line": (
+            "admissibility_not_yet_clear | focus=authority_and_exception_pressure"
+        ),
+    }
+    assert payload["worktree_settlement"]["handoff_previews"][0]["queue_shape"] == (
+        "deferred_monitoring"
+    )
+    assert (
+        payload["worktree_settlement"]["handoff_previews"][1]["admissibility_primary_status_line"]
+        == "admissibility_not_yet_clear | focus=authority_and_exception_pressure"
+    )
+    assert (
+        payload["worktree_settlement"]["handoff_previews"][1]["requires_operator_action"] == "false"
+    )
     assert payload["issues"] == ["metadata_only_commit_attribution_blocker"]
     assert "Metadata-only blocker: `true`" in markdown
     assert "Runtime green except attribution: `true`" in markdown
+    assert "Refreshable subjectivity previews: `3`" in markdown
+    assert "Refreshable admissibility previews: `1`" in markdown
+    assert "## Subjectivity Focus Mirror" in markdown
+    assert "requires_operator_action" in markdown
+    assert "deferred_monitoring" in markdown
 
 
 def test_build_report_surfaces_non_metadata_runtime_blocker(tmp_path: Path) -> None:
@@ -104,11 +186,17 @@ def test_build_report_surfaces_non_metadata_runtime_blocker(tmp_path: Path) -> N
 
     assert payload["settlement"]["status"] == "runtime_blocked"
     assert payload["settlement"]["metadata_only_blocker"] is False
+    assert payload["worktree_settlement"]["refreshable_handoff_preview_count"] == 0
+    assert payload["worktree_settlement"]["refreshable_admissibility_preview_count"] == 0
+    assert payload["worktree_settlement"]["subjectivity_focus_preview"] is None
     assert payload["issues"] == [
         "blocking_check:python_tests",
         "blocking_check:commit_attribution",
     ]
-    assert payload["warnings"] == ["missing_repo_governance_runtime_group"]
+    assert payload["warnings"] == [
+        "missing_repo_governance_runtime_group",
+        "missing_worktree_settlement_artifact",
+    ]
 
 
 def test_main_strict_writes_artifacts_and_fails_when_not_green(monkeypatch, tmp_path: Path) -> None:
@@ -135,6 +223,13 @@ def test_main_strict_writes_artifacts_and_fails_when_not_green(monkeypatch, tmp_
             "entry_count": 24,
             "sample_paths": [],
             "recommended_actions": [],
+        },
+        "worktree_settlement": {
+            "dirty": True,
+            "planner_recommendation": "manual_review_required",
+            "refreshable_handoff_preview_count": 3,
+            "refreshable_admissibility_preview_count": 1,
+            "handoff_previews": [],
         },
         "settlement": {
             "status": "runtime_green_metadata_blocked",

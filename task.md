@@ -34,6 +34,7 @@
 - [x] Phase 103: Side-branch isolation playbook and local hygiene guard
 - [x] Phase 104: Temporary script cleanup in mainline
 - [x] Phase 105: Mainline audit refresh and execution planning baseline
+- [x] Phase 136: Market Mirror Dream Engine (Qualitative Forecasting & Prompt Injection Defense)
 **Latest validation**: `pytest -q` => `849 passed` (2026-02-21). Level 3 implementation tracked in `CODEX_TASK.md` v7.
 
 ## Phase 122: Wave-Score Core Memory Governance (OpenClaw-Memory) (2026-03-01)
@@ -2573,3 +2574,1025 @@
 - [x] validation before doc-only commit:
 - [x] `python -m pytest tests/ -x --tb=short -q`
 - [x] `ruff check tonesoul tests scripts`
+
+## Phase 212: Subjectivity Operator Review + Settlement (2026-03-10)
+- [x] write one implementation addendum before runtime changes:
+- [x] `docs/plans/memory_subjectivity_operator_review_settlement_addendum_2026-03-10.md`
+- [x] keep scope operational:
+- [x] no auto-promotion into `vow`
+- [x] no `SoulDB` schema widening for subjectivity columns
+- [x] add an explicit operator runner:
+- [x] `scripts/run_reviewed_promotion.py`
+- [x] allow review of a concrete tension record by `record_id`
+- [x] preserve review actor + review basis + decision status in an auditable ledger artifact
+- [x] replay approved reviewed promotions through `MemoryWriteGateway`
+- [x] keep rejected / deferred reviews auditable without writing a `vow`
+- [x] teach subjectivity reporting to distinguish:
+- [x] unresolved tension
+- [x] settled-by-review tension
+- [x] reviewed vow rows
+- [x] add regressions:
+- [x] `tests/test_reviewed_promotion.py`
+- [x] `tests/test_subjectivity_reporting.py`
+- [x] `tests/test_run_reviewed_promotion.py`
+- [x] `tests/test_run_subjectivity_report.py`
+- [x] focused validation:
+- [x] `python -m pytest tests/test_reviewed_promotion.py tests/test_subjectivity_reporting.py tests/test_run_reviewed_promotion.py tests/test_run_subjectivity_report.py -q --tb=short`
+- [x] `python -m pytest tests/test_schemas.py tests/test_reviewed_promotion.py tests/test_subjectivity_reporting.py tests/test_run_reviewed_promotion.py tests/test_run_subjectivity_report.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/schemas.py tonesoul/memory/reviewed_promotion.py tonesoul/memory/subjectivity_reporting.py tonesoul/memory/__init__.py scripts/run_reviewed_promotion.py scripts/run_subjectivity_report.py tests/test_schemas.py tests/test_reviewed_promotion.py tests/test_subjectivity_reporting.py tests/test_run_reviewed_promotion.py tests/test_run_subjectivity_report.py`
+- [x] `python -m black --check tonesoul/schemas.py tonesoul/memory/reviewed_promotion.py tonesoul/memory/subjectivity_reporting.py tonesoul/memory/__init__.py scripts/run_reviewed_promotion.py scripts/run_subjectivity_report.py tests/test_schemas.py tests/test_reviewed_promotion.py tests/test_subjectivity_reporting.py tests/test_run_reviewed_promotion.py tests/test_run_subjectivity_report.py`
+
+## Phase 213: Formal Memory Subjectivity Review Criteria (2026-03-10)
+- [x] write one official criteria document:
+- [x] `docs/plans/memory_subjectivity_review_criteria_2026-03-10.md`
+- [x] make the document normative, not exploratory:
+- [x] this is current policy, not a draft
+- [x] ground the approval rule in:
+- [x] `E0: Choice Before Identity`
+- [x] `Axiom 4: Non-Zero Tension Principle`
+- [x] `subjectivity_illusion: true`
+- [x] define formal criteria for:
+- [x] `approved`
+- [x] `deferred`
+- [x] `rejected`
+- [x] make one additional guardrail explicit:
+- [x] recurrence alone is insufficient without directional choice
+- [x] same-source repetition is insufficient without context diversity
+- [x] define grouping-first review guidance before line-by-line review
+- [x] encode edge-case guardrails for:
+- [x] counterfactual clarity
+- [x] opposing directions inside one cluster
+- [x] repeated evidence under an existing active vow
+- [x] keep scope narrow:
+- [x] no schema widening
+- [x] no live retrieval rerank
+- [x] no UI-first detour
+- [x] update canonical subjectivity planning docs to point at the criteria file as the active policy
+- [x] run doc-level verification with `rg`
+
+## Phase 214: Subjectivity Tension Grouping + Triage (2026-03-10)
+- [x] write one grouping addendum before runtime changes:
+- [x] `docs/plans/memory_subjectivity_tension_grouping_addendum_2026-03-10.md`
+- [x] keep scope read-only:
+- [x] no memory mutation
+- [x] no schema widening
+- [x] no live retrieval rerank
+- [x] add a grouping helper:
+- [x] `tonesoul/memory/subjectivity_triage.py`
+- [x] group unresolved tensions by:
+- [x] collision lineage
+- [x] topic surface
+- [x] normative direction
+- [x] friction band
+- [x] temporal spread
+- [x] expose multi-direction topics so review cannot silently merge divergent directions
+- [x] add an explicit operator runner:
+- [x] `scripts/run_subjectivity_tension_grouping.py`
+- [x] emit JSON/Markdown artifacts with:
+- [x] unresolved row count
+- [x] semantic group count
+- [x] lineage group count
+- [x] triage recommendation per semantic group
+- [x] register latest grouping artifacts in `scripts/run_refreshable_artifact_report.py`
+- [x] add regressions:
+- [x] `tests/test_subjectivity_triage.py`
+- [x] `tests/test_run_subjectivity_tension_grouping.py`
+- [x] `tests/test_run_refreshable_artifact_report.py`
+- [x] focused validation:
+- [x] `python -m pytest tests/test_subjectivity_triage.py tests/test_run_subjectivity_tension_grouping.py tests/test_run_refreshable_artifact_report.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/memory/subjectivity_triage.py scripts/run_subjectivity_tension_grouping.py tests/test_subjectivity_triage.py tests/test_run_subjectivity_tension_grouping.py tests/test_run_refreshable_artifact_report.py`
+- [x] generate the latest grouping artifact from real `memory/soul.db`
+- [x] real queue result: `32 unresolved -> 2 semantic groups -> 7 lineage groups`
+- [x] real triage result: `1 reject_review` group + `1 defer_review` group
+
+## Phase 215: Subjectivity Group Review Lane (2026-03-10)
+- [x] make the semantic group an executable review unit instead of a report-only unit
+- [x] add a dry-run/apply operator script:
+- [x] `scripts/run_subjectivity_group_review.py`
+- [x] reuse the canonical reviewed-promotion seam instead of inventing a second write path
+- [x] allow one decision to be applied across all rows in one semantic group
+- [x] keep the output stdout-only because it mutates review state
+- [x] add regressions:
+- [x] `tests/test_run_subjectivity_group_review.py`
+- [x] patch direct script execution seams so operator scripts work from the repo root:
+- [x] `scripts/run_subjectivity_tension_grouping.py`
+- [x] `scripts/run_subjectivity_report.py`
+- [x] focused validation:
+- [x] `python -m pytest tests/test_run_subjectivity_group_review.py tests/test_run_subjectivity_report.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_subjectivity_group_review.py tests/test_run_subjectivity_group_review.py scripts/run_subjectivity_report.py tests/test_run_subjectivity_report.py`
+- [x] run one real low-risk group review against `memory/soul.db`
+- [x] reject the `12`-row same-source OSV data-sources cluster
+- [x] rerun latest report artifacts after the real review
+- [x] post-review real state: `20 unresolved tension`, `12 settled tension`, `0 reviewed vow`
+- [x] decide whether the remaining `20`-row broader OSV homepage cluster should be written as explicit `deferred`, or stay observational until report surfaces deferred-pending counts
+
+## Phase 216: Subjectivity Review Batch Artifact (2026-03-10)
+- [x] write one addendum before runtime changes:
+- [x] `docs/plans/memory_subjectivity_review_batch_artifact_addendum_2026-03-10.md`
+- [x] keep scope read-only:
+- [x] no review-state mutation
+- [x] no schema widening
+- [x] no live retrieval rerank
+- [x] add one queue helper:
+- [x] `tonesoul/memory/subjectivity_review_batch.py`
+- [x] convert semantic groups into operator review packets with:
+- [x] default review status if confirmed
+- [x] representative record ids by lineage
+- [x] reusable review basis template
+- [x] add one operator runner:
+- [x] `scripts/run_subjectivity_review_batch.py`
+- [x] emit refreshable JSON/Markdown artifacts for the current review queue
+- [x] register latest batch artifacts in `scripts/run_refreshable_artifact_report.py`
+- [x] add regressions:
+- [x] `tests/test_subjectivity_review_batch.py`
+- [x] `tests/test_run_subjectivity_review_batch.py`
+- [x] `tests/test_run_refreshable_artifact_report.py`
+- [x] focused validation:
+- [x] `python -m pytest tests/test_subjectivity_review_batch.py tests/test_run_subjectivity_review_batch.py tests/test_run_refreshable_artifact_report.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/memory/subjectivity_review_batch.py tonesoul/memory/__init__.py scripts/run_subjectivity_review_batch.py scripts/run_refreshable_artifact_report.py tests/test_subjectivity_review_batch.py tests/test_run_subjectivity_review_batch.py tests/test_run_refreshable_artifact_report.py`
+- [x] `python -m black --check tonesoul/memory/subjectivity_review_batch.py tonesoul/memory/__init__.py scripts/run_subjectivity_review_batch.py scripts/run_refreshable_artifact_report.py tests/test_subjectivity_review_batch.py tests/test_run_subjectivity_review_batch.py tests/test_run_refreshable_artifact_report.py`
+- [x] generate the latest review-batch artifact from real `memory/soul.db`
+- [x] latest queue result after the already-settled same-source reject cluster: `20 unresolved -> 1 defer_review group -> 6 representative record ids`
+
+## Phase 217: Deferred-Pending Reporting Surface (2026-03-10)
+- [x] write one reporting addendum before runtime changes:
+- [x] `docs/plans/memory_subjectivity_deferred_pending_reporting_addendum_2026-03-10.md`
+- [x] keep scope report-only:
+- [x] no schema widening
+- [x] no live retrieval rerank
+- [x] no automatic settlement
+- [x] teach subjectivity distribution to expose effective pending state for unresolved tensions:
+- [x] `deferred_tension_count`
+- [x] `unresolved_by_status`
+- [x] row-level `pending_status`
+- [x] update operator report artifacts to render the new deferred-pending surface
+- [x] focused validation:
+- [x] `python -m pytest tests/test_subjectivity_reporting.py tests/test_run_subjectivity_report.py tests/test_run_subjectivity_group_review.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/memory/subjectivity_reporting.py scripts/run_subjectivity_report.py scripts/run_subjectivity_group_review.py tests/test_subjectivity_reporting.py tests/test_run_subjectivity_report.py tests/test_run_subjectivity_group_review.py`
+- [x] `python -m black --check tonesoul/memory/subjectivity_reporting.py scripts/run_subjectivity_report.py scripts/run_subjectivity_group_review.py tests/test_subjectivity_reporting.py tests/test_run_subjectivity_report.py tests/test_run_subjectivity_group_review.py`
+- [x] write the remaining `20`-row OSV homepage group as explicit `deferred`
+- [x] rerun the latest subjectivity report artifact from real `memory/soul.db`
+- [x] post-report real state: `20 unresolved tension`, `20 deferred tension`, `12 settled tension`, `0 reviewed vow`
+
+## Phase 218: Deferred Revisit Queue Intelligence (2026-03-11)
+- [x] write one queue addendum before runtime changes:
+- [x] `docs/plans/memory_subjectivity_deferred_revisit_queue_addendum_2026-03-11.md`
+- [x] keep scope read-only:
+- [x] no auto-settlement
+- [x] no auto-reject
+- [x] no auto-promotion
+- [x] teach the review batch artifact to expose deferred revisit signals:
+- [x] `pending_status_counts`
+- [x] `latest_review_timestamp`
+- [x] `latest_row_timestamp`
+- [x] `rows_after_latest_review`
+- [x] `revisit_readiness`
+- [x] add regressions:
+- [x] `tests/test_subjectivity_review_batch.py`
+- [x] `tests/test_run_subjectivity_review_batch.py`
+- [x] `tests/test_subjectivity_reporting.py`
+- [x] `tests/test_run_subjectivity_report.py`
+- [x] focused validation:
+- [x] `python -m pytest tests/test_subjectivity_review_batch.py tests/test_run_subjectivity_review_batch.py tests/test_subjectivity_reporting.py tests/test_run_subjectivity_report.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/memory/subjectivity_reporting.py tonesoul/memory/subjectivity_review_batch.py scripts/run_subjectivity_review_batch.py tests/test_subjectivity_review_batch.py tests/test_run_subjectivity_review_batch.py`
+- [x] `python -m black --check tonesoul/memory/subjectivity_reporting.py tonesoul/memory/subjectivity_review_batch.py scripts/run_subjectivity_review_batch.py tests/test_subjectivity_review_batch.py tests/test_run_subjectivity_review_batch.py`
+- [x] rerun the latest grouping / review-batch / subjectivity-report artifacts from real `memory/soul.db`
+- [x] live queue on `2026-03-11`: `44 unresolved -> 2 semantic groups -> 10 lineage groups`
+- [x] current unresolved status mix: `24 candidate` + `20 deferred`
+- [x] current revisit readiness: `{n/a: 1, needs_revisit: 1}`
+
+## Phase 219: Prior Decision Carry-Forward Queue Annotation (2026-03-11)
+- [x] write one carry-forward addendum before locking the new report semantics:
+- [x] `docs/plans/memory_subjectivity_carry_forward_queue_annotation_addendum_2026-03-11.md`
+- [x] keep scope read-only:
+- [x] no auto-settlement
+- [x] no auto-reapply of historical decisions
+- [x] no auto-promotion
+- [x] teach the review batch artifact to annotate prior reviewed context only when provenance overlaps:
+- [x] same `topic`
+- [x] same `direction`
+- [x] overlapping `source_url` or `stimulus_lineage`
+- [x] stop using `friction_band` as a hard carry-forward equality key
+- [x] separate active carry-forward status from mixed historical status:
+- [x] `prior_decision_status_counts`
+- [x] `historical_prior_decision_status_counts`
+- [x] add a positive reviewed carry-forward surface:
+- [x] `prior_approved_match`
+- [x] add regressions for:
+- [x] missing-provenance rows staying `fresh_group`
+- [x] friction-band boundary drift not erasing prior reject context
+- [x] latest deferred decision overriding older reject history at the annotation layer
+- [x] prior approved/reviewed decisions surfacing as positive carry-forward context
+- [x] focused validation:
+- [x] `python -m pytest tests/test_subjectivity_reporting.py tests/test_run_subjectivity_report.py tests/test_subjectivity_review_batch.py tests/test_run_subjectivity_review_batch.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/memory/subjectivity_reporting.py tonesoul/memory/subjectivity_triage.py tonesoul/memory/subjectivity_review_batch.py scripts/run_subjectivity_review_batch.py tests/test_subjectivity_reporting.py tests/test_run_subjectivity_report.py tests/test_subjectivity_review_batch.py tests/test_run_subjectivity_review_batch.py`
+- [x] `python -m black --check tonesoul/memory/subjectivity_reporting.py tonesoul/memory/subjectivity_triage.py tonesoul/memory/subjectivity_review_batch.py scripts/run_subjectivity_review_batch.py tests/test_subjectivity_reporting.py tests/test_run_subjectivity_report.py tests/test_subjectivity_review_batch.py tests/test_run_subjectivity_review_batch.py`
+- [x] rerun the latest real review-batch artifact from `memory/soul.db`
+- [x] live queue on `2026-03-11` now reads: `52 unresolved -> 2 semantic groups -> 11 lineage groups`
+- [x] live carry-forward result: `{prior_reject_match: 1, prior_deferred_match_needs_revisit: 1}`
+
+## Phase 220: Candidate-Only Deferred Revisit Lane (2026-03-11)
+- [x] write one operator addendum before narrowing revisit write scope:
+- [x] `docs/plans/memory_subjectivity_group_review_pending_filter_addendum_2026-03-11.md`
+- [x] keep scope narrow:
+- [x] no change to `approved / deferred / rejected` semantics
+- [x] no automatic carry-forward
+- [x] no auto-settlement
+- [x] teach `scripts/run_subjectivity_group_review.py` to filter the selected semantic group by current `pending_status`
+- [x] support at least:
+- [x] `candidate`
+- [x] `deferred`
+- [x] keep the semantic group as the review unit, but allow the write scope to target only the fresh unresolved slice
+- [x] add regressions:
+- [x] dry-run selection of `pending_status=candidate`
+- [x] apply `deferred` only to the fresh candidate slice inside an already-deferred group
+- [x] focused validation:
+- [x] `python -m pytest tests/test_run_subjectivity_group_review.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_subjectivity_group_review.py tests/test_run_subjectivity_group_review.py`
+- [x] `python -m black --check scripts/run_subjectivity_group_review.py tests/test_run_subjectivity_group_review.py`
+- [x] run one real candidate-only revisit against `memory/soul.db`
+- [x] selector:
+- [x] topic = `A distributed vulnerability database for Open Source`
+- [x] direction = `governance_escalation`
+- [x] friction_band = `medium`
+- [x] pending_status = `candidate`
+- [x] decision:
+- [x] keep the group `deferred` because recurrence is real but still confined to one source loop
+- [x] real revisit result:
+- [x] `25` fresh candidate rows rewritten as `deferred`
+- [x] use the same filtered lane to settle the fresh same-source reject slice:
+- [x] selector:
+- [x] topic = `[](https://google.github.io/osv.dev/data/#data-sources) Data sources`
+- [x] direction = `governance_escalation`
+- [x] friction_band = `low`
+- [x] pending_status = `candidate`
+- [x] decision:
+- [x] `15` fresh candidate rows explicitly `rejected`
+- [x] latest live state after refresh:
+- [x] `45 unresolved tension`
+- [x] `45 deferred tension`
+- [x] `0 candidate tension`
+- [x] `27 settled tension`
+- [x] `0 reviewed vow`
+- [x] latest review-batch state after refresh:
+- [x] `1 semantic group -> 11 lineage groups`
+- [x] `revisit_readiness_counts = {holding_deferred: 1}`
+- [x] `carry_forward_annotation_counts = {prior_deferred_match: 1}`
+
+## Phase 221: Deferred Context Surface And Reopened Queue Reconciliation (2026-03-11)
+- [x] write one reporting addendum before widening the operator surface:
+- [x] `docs/plans/memory_subjectivity_deferred_context_surface_addendum_2026-03-11.md`
+- [x] keep scope read-only at the reporting layer:
+- [x] no semantic change to `approved / deferred / rejected`
+- [x] no synthetic revisit logic
+- [x] no auto-settlement or auto-promotion
+- [x] surface latest active deferred context from canonical review logs on the main operator artifacts:
+- [x] unresolved rows now expose `review_basis`
+- [x] unresolved rows now expose `review_notes`
+- [x] unresolved rows now expose `review_actor_id`, `review_actor_type`, `review_actor_display_name`
+- [x] review-batch groups now expose `latest_review_basis`
+- [x] review-batch groups now expose `latest_review_notes`
+- [x] review-batch groups now expose `latest_review_actor_id`, `latest_review_actor_type`, `latest_review_actor_display_name`
+- [x] add focused regressions for deferred-context surfacing:
+- [x] `python -m pytest tests/test_subjectivity_reporting.py tests/test_run_subjectivity_report.py tests/test_run_subjectivity_review_batch.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/memory/subjectivity_reporting.py tonesoul/memory/subjectivity_review_batch.py scripts/run_subjectivity_report.py scripts/run_subjectivity_review_batch.py tests/test_subjectivity_reporting.py tests/test_run_subjectivity_report.py tests/test_run_subjectivity_review_batch.py`
+- [x] `python -m black --check tonesoul/memory/subjectivity_reporting.py tonesoul/memory/subjectivity_review_batch.py scripts/run_subjectivity_report.py scripts/run_subjectivity_review_batch.py tests/test_subjectivity_reporting.py tests/test_run_subjectivity_report.py tests/test_run_subjectivity_review_batch.py`
+- [x] focused validation result: `19 passed`
+- [x] refresh live artifacts after the reporting surface change
+- [x] reopened live queue observed at `2026-03-11T10:05:08Z`:
+- [x] `53 unresolved tension`
+- [x] `45 deferred tension`
+- [x] `8 candidate tension`
+- [x] `27 settled tension`
+- [x] `0 reviewed vow`
+- [x] reopened review-batch state:
+- [x] `2 semantic groups -> 13 lineage groups`
+- [x] `revisit_readiness_counts = {n/a: 1, needs_revisit: 1}`
+- [x] `carry_forward_annotation_counts = {prior_reject_match: 1, prior_deferred_match_needs_revisit: 1}`
+- [x] use the candidate-only group-review lane again to reconcile the fresh slices without touching older deferred rows
+- [x] real OSV homepage revisit:
+- [x] selector:
+- [x] topic = `A distributed vulnerability database for Open Source`
+- [x] direction = `governance_escalation`
+- [x] friction_band = `medium`
+- [x] pending_status = `candidate`
+- [x] result:
+- [x] `5` fresh candidate rows rewritten as `deferred`
+- [x] real same-source reject cleanup:
+- [x] selector:
+- [x] topic = `[](https://google.github.io/osv.dev/data/#data-sources) Data sources`
+- [x] direction = `governance_escalation`
+- [x] friction_band = `low`
+- [x] pending_status = `candidate`
+- [x] result:
+- [x] `3` fresh candidate rows explicitly `rejected`
+- [x] latest live state after refresh at `2026-03-11T10:07:29Z`:
+- [x] `50 unresolved tension`
+- [x] `50 deferred tension`
+- [x] `0 candidate tension`
+- [x] `30 settled tension`
+- [x] `0 reviewed vow`
+- [x] latest review-batch state after refresh:
+- [x] `1 semantic group -> 12 lineage groups`
+- [x] `revisit_readiness_counts = {holding_deferred: 1}`
+- [x] `carry_forward_annotation_counts = {prior_deferred_match: 1}`
+
+## Phase 222: Dream Collision Producer Duplicate Guard (2026-03-11)
+- [x] write one addendum before changing producer behavior:
+- [x] `docs/plans/memory_subjectivity_producer_duplicate_guard_addendum_2026-03-11.md`
+- [x] keep the first upstream guard intentionally narrow:
+- [x] suppress only fresh `dream_collision` writes whose active unresolved signature already exists
+- [x] signature = normalized `topic + source_url`
+- [x] if `source_url` is missing, fall back to `topic + source lineage`
+- [x] do not reinterpret historical settled decisions as permanent suppression
+- [x] expose enough row context for producer-side guards to reuse canonical unresolved reporting:
+- [x] `type`
+- [x] `title`
+- [x] `topic`
+- [x] `source_url`
+- [x] implement the duplicate guard inside `DreamEngine` persistence:
+- [x] same unresolved source loop now increments `write_gateway.skipped` instead of writing another tension row
+- [x] collisions skipped by the guard now carry `observability.write_status = skipped`
+- [x] collisions skipped by the guard now carry `observability.write_skip_reason = active_unresolved_signature`
+- [x] preserve admissibility for new evidence from a different source loop
+- [x] add focused regressions for both sides of the rule:
+- [x] same-source unresolved duplicate is suppressed
+- [x] same-topic cross-source signal is still written
+- [x] focused validation:
+- [x] `python -m pytest tests/test_dream_engine.py tests/test_subjectivity_reporting.py tests/test_run_subjectivity_report.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/dream_engine.py tonesoul/memory/subjectivity_reporting.py tests/test_dream_engine.py`
+- [x] `python -m black --check tonesoul/dream_engine.py tonesoul/memory/subjectivity_reporting.py tests/test_dream_engine.py`
+- [x] focused validation result: `19 passed`
+- [x] current live queue metrics remain timestamped artifacts, not retroactive proof of the new guard
+- [x] no real `memory/soul.db` dream cycle has been run under the new guard yet
+- [x] operational conclusion:
+- [x] review semantics stay where they are
+- [x] the next reduction in queue churn should come from producer suppression on future cycles, not from rewriting existing unresolved rows
+
+## Phase 222: Duplicate Pressure Surface (2026-03-11)
+- [x] write one observability addendum before classifying upstream pressure:
+- [x] `docs/plans/memory_subjectivity_duplicate_pressure_surface_addendum_2026-03-11.md`
+- [x] keep scope read-only:
+- [x] no queue settlement
+- [x] no row suppression
+- [x] no schema widening
+- [x] no change to `approved / deferred / rejected`
+- [x] surface duplicate-pressure signals on semantic groups:
+- [x] `same_source_loop`
+- [x] `rows_per_lineage`
+- [x] `rows_per_cycle`
+- [x] `duplicate_pressure`
+- [x] `duplicate_pressure_reason`
+- [x] `producer_followup`
+- [x] surface duplicate-pressure summaries on grouping and review-batch artifacts:
+- [x] `duplicate_pressure_counts`
+- [x] `producer_followup_counts`
+- [x] render these signals on operator-facing markdown:
+- [x] `docs/status/subjectivity_tension_groups_latest.md`
+- [x] `docs/status/subjectivity_review_batch_latest.md`
+- [x] add focused regressions:
+- [x] high single-source loop pressure on internal batch builder
+- [x] high single-source loop pressure on review-batch artifact output
+- [x] high single-source loop pressure on grouping artifact output
+- [x] focused validation:
+- [x] `python -m pytest tests/test_subjectivity_review_batch.py tests/test_run_subjectivity_review_batch.py tests/test_run_subjectivity_tension_grouping.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/memory/subjectivity_triage.py tonesoul/memory/subjectivity_review_batch.py scripts/run_subjectivity_review_batch.py scripts/run_subjectivity_tension_grouping.py tests/test_subjectivity_review_batch.py tests/test_run_subjectivity_review_batch.py tests/test_run_subjectivity_tension_grouping.py`
+- [x] `python -m black --check tonesoul/memory/subjectivity_triage.py tonesoul/memory/subjectivity_review_batch.py scripts/run_subjectivity_review_batch.py scripts/run_subjectivity_tension_grouping.py tests/test_subjectivity_review_batch.py tests/test_run_subjectivity_review_batch.py tests/test_run_subjectivity_tension_grouping.py`
+- [x] focused validation result: `25 passed`
+- [x] refresh live artifacts after the new pressure surface landed
+- [x] latest live state after refresh at `2026-03-11T10:13:51Z`:
+- [x] `50 unresolved tension`
+- [x] `50 deferred tension`
+- [x] `0 candidate tension`
+- [x] `30 settled tension`
+- [x] `0 reviewed vow`
+- [x] latest duplicate-pressure reading:
+- [x] `duplicate_pressure_counts = {high: 1}`
+- [x] `producer_followup_counts = {upstream_dedup_candidate: 1}`
+- [x] remaining OSV homepage group now reads:
+- [x] `same_source_loop = true`
+- [x] `rows_per_lineage = 4.17`
+- [x] `rows_per_cycle = 1.67`
+- [x] `duplicate_pressure = high`
+- [x] `producer_followup = upstream_dedup_candidate`
+- [x] operational conclusion:
+- [x] the remaining debt is now explicitly upstream duplicate/noise pressure, not unresolved review semantics
+
+## Phase 223: Group Review Context Reuse Lane (2026-03-11)
+- [x] write one operator-tooling addendum before reducing repeated review transcription:
+- [x] `docs/plans/memory_subjectivity_group_review_context_reuse_addendum_2026-03-11.md`
+- [x] keep the lane explicit:
+- [x] no auto-settlement
+- [x] no silent carry-forward write
+- [x] no batch `vow` promotion
+- [x] expose the latest matched review status directly on batch surfaces:
+- [x] `latest_review_status`
+- [x] add one explicit CLI reuse path on group review:
+- [x] `scripts/run_subjectivity_group_review.py --reuse-latest-decision`
+- [x] resolve the reused decision from the matched review-batch group:
+- [x] `latest_review_status`
+- [x] `latest_review_basis`
+- [x] `latest_review_notes`
+- [x] fail loudly when no prior reviewed context exists
+- [x] reject ambiguous mixing of reuse with explicit `status` / `review_basis` / `notes`
+- [x] add focused regressions:
+- [x] batch report surfaces `latest_review_status`
+- [x] markdown artifact renders `latest_review_status`
+- [x] group review can dry-run a candidate-only slice by reusing the latest matched decision
+- [x] group review reuse fails when no prior reviewed context exists
+- [x] focused validation:
+- [x] `python -m pytest tests/test_subjectivity_review_batch.py tests/test_run_subjectivity_review_batch.py tests/test_run_subjectivity_group_review.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/memory/subjectivity_review_batch.py scripts/run_subjectivity_review_batch.py scripts/run_subjectivity_group_review.py tests/test_subjectivity_review_batch.py tests/test_run_subjectivity_review_batch.py tests/test_run_subjectivity_group_review.py`
+- [x] `python -m black tonesoul/memory/subjectivity_review_batch.py scripts/run_subjectivity_review_batch.py scripts/run_subjectivity_group_review.py tests/test_subjectivity_review_batch.py tests/test_run_subjectivity_review_batch.py tests/test_run_subjectivity_group_review.py`
+- [x] focused validation result: `26 passed`
+- [x] refresh live artifacts after the lane landed:
+- [x] `python scripts/run_subjectivity_report.py --db-path memory/soul.db`
+- [x] `python scripts/run_subjectivity_review_batch.py --db-path memory/soul.db`
+- [x] live state remained:
+- [x] `50 unresolved tension`
+- [x] `50 deferred tension`
+- [x] `0 candidate tension`
+- [x] `30 settled tension`
+- [x] `0 reviewed vow`
+- [x] run one live dry-run against the only remaining OSV homepage group:
+- [x] selector:
+- [x] topic = `A distributed vulnerability database for Open Source`
+- [x] direction = `governance_escalation`
+- [x] friction_band = `medium`
+- [x] pending_status = `candidate`
+- [x] decision source:
+- [x] `latest_matched_review`
+- [x] dry-run result:
+- [x] reused decision resolved to `deferred`
+- [x] selected row count = `0`
+- [x] warning confirmed the queue is currently `holding_deferred`, not freshly reopened
+
+## Phase 224: Reviewed Rejection Producer Guard (2026-03-11)
+- [x] write one addendum before extending producer suppression beyond active unresolved rows:
+- [x] `docs/plans/memory_subjectivity_reviewed_rejection_producer_guard_addendum_2026-03-11.md`
+- [x] keep the second producer guard intentionally narrow:
+- [x] only suppress a fresh `dream_collision` when the latest reviewed decision for the same `topic + source_url + lineage` is `rejected`
+- [x] do not suppress a new source loop
+- [x] do not suppress a second independent lineage cluster on the same source loop
+- [x] do not reinterpret deferred history as permanent suppression
+- [x] implement the reviewed-rejection guard inside `DreamEngine` persistence:
+- [x] add `prior_rejected_signature` lookup based on latest reviewed dream-collision status per exact signature
+- [x] collisions skipped by the new guard now carry `observability.write_status = skipped`
+- [x] collisions skipped by the new guard now carry `observability.write_skip_reason = prior_rejected_signature`
+- [x] add focused regressions for both sides of the rule:
+- [x] same topic + same source_url + same lineage is skipped after latest reviewed rejection
+- [x] same topic + same source_url + new lineage is still written
+- [x] focused validation:
+- [x] `python -m pytest tests/test_dream_engine.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/dream_engine.py tests/test_dream_engine.py`
+- [x] `python -m black tonesoul/dream_engine.py tests/test_dream_engine.py`
+- [x] focused validation result: `10 passed`
+- [x] live verification uncovered and then closed the real gap:
+- [x] first live run at `2026-03-11T10:26:48Z` wrote `1` fresh `Data sources` row and skipped `2` homepage collisions
+- [x] that proved the first producer guard was working for active unresolved homepage pressure but not for already-rejected same-lineage re-entry
+- [x] the reopened `Data sources` candidate was then explicitly settled via reuse lane:
+- [x] `aaa6dd6a-2075-4cff-891a-7aed00688d06` -> `rejected`
+- [x] queue returned to `50 unresolved tension`, `50 deferred tension`, `31 settled tension`, `0 candidate tension`
+- [x] second live run at `2026-03-11T10:30:16Z` then confirmed the new guard:
+- [x] selected topic = `[](https://google.github.io/osv.dev/data/#data-sources) Data sources`
+- [x] `write_gateway = {written: 0, skipped: 1, rejected: 0}`
+- [x] `skip_reasons = [prior_rejected_signature]`
+- [x] final live state remained:
+- [x] `50 unresolved tension`
+- [x] `50 deferred tension`
+- [x] `31 settled tension`
+- [x] `0 candidate tension`
+- [x] `0 reviewed vow`
+
+## Phase 225: History Density Compaction Surface (2026-03-11)
+- [x] write one addendum before changing how the last deferred loop is shown to operators:
+- [x] `docs/plans/memory_subjectivity_history_density_compaction_surface_addendum_2026-03-11.md`
+- [x] keep scope read-only:
+- [x] no row rewrite
+- [x] no auto-settlement
+- [x] no producer-rule change
+- [x] no change to `approved / deferred / rejected`
+- [x] extend semantic-group observability with lineage density signals:
+- [x] `repeated_lineage_count`
+- [x] `dense_lineage_count`
+- [x] `singleton_lineage_count`
+- [x] `max_lineage_record_count`
+- [x] `lineage_record_histogram`
+- [x] pass time-window context through the review batch:
+- [x] `first_seen`
+- [x] `last_seen`
+- [x] `history_density_summary`
+- [x] add one operator-facing read-only follow-up signal on stable deferred loops:
+- [x] `density_compaction_candidate`
+- [x] `density_compaction_reason`
+- [x] `operator_followup = read_only_density_compaction_candidate`
+- [x] render the new density surface on latest artifacts:
+- [x] `docs/status/subjectivity_tension_groups_latest.md`
+- [x] `docs/status/subjectivity_review_batch_latest.md`
+- [x] add focused regressions:
+- [x] grouping/report surfaces lineage density histogram
+- [x] holding deferred batch group surfaces history density summary
+- [x] holding deferred high-pressure batch group surfaces read-only density compaction follow-up
+- [x] needs-revisit batch group shows `rows_after_latest_review` inside the history summary
+- [x] focused validation:
+- [x] `python -m pytest tests/test_subjectivity_review_batch.py tests/test_run_subjectivity_review_batch.py tests/test_run_subjectivity_tension_grouping.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/memory/subjectivity_triage.py tonesoul/memory/subjectivity_review_batch.py scripts/run_subjectivity_review_batch.py scripts/run_subjectivity_tension_grouping.py tests/test_subjectivity_review_batch.py tests/test_run_subjectivity_review_batch.py tests/test_run_subjectivity_tension_grouping.py`
+- [x] `python -m black --check tonesoul/memory/subjectivity_triage.py tonesoul/memory/subjectivity_review_batch.py scripts/run_subjectivity_review_batch.py scripts/run_subjectivity_tension_grouping.py tests/test_subjectivity_review_batch.py tests/test_run_subjectivity_review_batch.py tests/test_run_subjectivity_tension_grouping.py`
+- [x] focused validation result: `27 passed`
+- [x] refresh live artifacts after the new surface landed:
+- [x] `python scripts/run_subjectivity_review_batch.py --db-path memory/soul.db`
+- [x] `python scripts/run_subjectivity_tension_grouping.py --db-path memory/soul.db`
+- [x] live state remained:
+- [x] `50 unresolved tension`
+- [x] `50 deferred tension`
+- [x] `31 settled tension`
+- [x] `0 candidate tension`
+- [x] `0 reviewed vow`
+- [x] latest live density reading on the remaining OSV homepage loop:
+- [x] `lineage_record_histogram = {1:1, 2:1, 3:1, 4:1, 5:8}`
+- [x] `repeated_lineage_count = 11`
+- [x] `dense_lineage_count = 10`
+- [x] `first_seen = 2026-03-10T05:08:05Z`
+- [x] `last_seen = 2026-03-11T08:08:13Z`
+- [x] `history_density_summary = 50 row(s) across 30 cycle(s) / 12 lineage(s) ... no new rows since latest review`
+- [x] `operator_followup_counts = {read_only_density_compaction_candidate: 1}`
+- [x] operational conclusion:
+- [x] the remaining queue debt is now explicitly a stable same-source deferred history stack
+- [x] the next work should reduce upstream duplicate pressure or add a more compact historical lens, not reopen review semantics
+
+## Phase 226: Operator Lens View (2026-03-11)
+- [x] write one addendum before compressing batch readability:
+- [x] `docs/plans/memory_subjectivity_operator_lens_view_addendum_2026-03-11.md`
+- [x] keep scope read-only and view-only:
+- [x] no writer change
+- [x] no review semantic change
+- [x] no new decision category
+- [x] add one short operator lens to review-batch groups:
+- [x] `queue_posture`
+- [x] `revisit_trigger`
+- [x] `operator_lens_summary`
+- [x] surface posture summary counts:
+- [x] `queue_posture_counts`
+- [x] render a compact operator-first section on review-batch markdown:
+- [x] `## Queue Postures`
+- [x] `## Operator Lens`
+- [x] keep low-level fields intact under the full review-group section
+- [x] add focused regressions:
+- [x] holding deferred groups read as `stable_deferred_history`
+- [x] needs-revisit groups read as `deferred_revisit_queue`
+- [x] active duplicate-pressure groups still read as `active_deferred_queue`
+- [x] markdown renders posture counts and operator-lens lines
+- [x] focused validation:
+- [x] `python -m pytest tests/test_subjectivity_review_batch.py tests/test_run_subjectivity_review_batch.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/memory/subjectivity_review_batch.py scripts/run_subjectivity_review_batch.py tests/test_subjectivity_review_batch.py tests/test_run_subjectivity_review_batch.py`
+- [x] `python -m black --check tonesoul/memory/subjectivity_review_batch.py scripts/run_subjectivity_review_batch.py tests/test_subjectivity_review_batch.py tests/test_run_subjectivity_review_batch.py`
+- [x] focused validation result: `21 passed`
+- [x] refresh live review-batch artifact after the new lens landed:
+- [x] `python scripts/run_subjectivity_review_batch.py --db-path memory/soul.db`
+- [x] confirm the remaining OSV homepage group now reads first as `stable_deferred_history`, not just as raw density metrics
+- [x] latest live lens at `2026-03-11T11:26:36Z`:
+- [x] `queue_posture_counts = {stable_deferred_history: 1}`
+- [x] `operator_lens_summary = stable deferred history; 50 row(s) compress to 12 lineage(s) / 30 cycle(s) ...`
+- [x] `revisit_trigger = Revisit when the same direction appears outside the osv.dev source loop, or when the group splits into materially different governance directions.`
+
+## Phase 227: Operator Status Line Surface (2026-03-11)
+- [x] write one addendum before shrinking the operator lens into a copyable single line:
+- [x] `docs/plans/memory_subjectivity_operator_status_line_addendum_2026-03-11.md`
+- [x] keep scope view-only:
+- [x] no semantic change
+- [x] no writer change
+- [x] no replacement of detailed fields
+- [x] add one compact status surface on review-batch groups:
+- [x] `revisit_trigger_code`
+- [x] `operator_status_line`
+- [x] elevate the compact surface into the batch handoff layer:
+- [x] `primary_status_line`
+- [x] `status_lines`
+- [x] render the new single-line section on markdown:
+- [x] `## Status Lines`
+- [x] add focused regressions:
+- [x] holding deferred groups emit `second_source_context_or_material_split`
+- [x] needs-revisit groups emit `new_rows_since_latest_review`
+- [x] active deferred groups emit `more_context_required`
+- [x] markdown renders the copyable status line
+- [x] focused validation:
+- [x] `python -m pytest tests/test_subjectivity_review_batch.py tests/test_run_subjectivity_review_batch.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/memory/subjectivity_review_batch.py scripts/run_subjectivity_review_batch.py tests/test_subjectivity_review_batch.py tests/test_run_subjectivity_review_batch.py`
+- [x] `python -m black --check tonesoul/memory/subjectivity_review_batch.py scripts/run_subjectivity_review_batch.py tests/test_subjectivity_review_batch.py tests/test_run_subjectivity_review_batch.py`
+- [x] focused validation result: `21 passed`
+- [x] refresh live review-batch artifact after the status-line surface landed:
+- [x] `python scripts/run_subjectivity_review_batch.py --db-path memory/soul.db`
+- [x] confirm the remaining OSV homepage group now exposes one copyable single-line status surface
+- [x] latest live single-line surface at `2026-03-11T13:48:28Z`:
+- [x] `operator_status_line = stable_deferred_history | A distributed vulnerability database for Open Source | rows=50 lineages=12 cycles=30 | density=5r x8, 4r x1, 3r x1, 2r x1, 1r x1 | trigger=second_source_context_or_material_split`
+- [x] the same line now sits at the batch top level:
+- [x] `primary_status_line`
+- [x] `status_lines = [primary_status_line]`
+- [x] batch now also exposes a first-class handoff block:
+- [x] `handoff.queue_shape = stable_history_only`
+- [x] `handoff.requires_operator_action = false`
+- [x] `handoff.primary_status_line = primary_status_line`
+
+## Phase 228: Grouping Handoff Surface (2026-03-11)
+- [x] write one addendum before aligning grouping with the batch handoff shape:
+- [x] `docs/plans/memory_subjectivity_grouping_handoff_surface_addendum_2026-03-11.md`
+- [x] keep the grouping handoff triage-only:
+- [x] no review-language leakage
+- [x] no inferred settlement
+- [x] add grouping-level handoff fields:
+- [x] `handoff`
+- [x] `primary_status_line`
+- [x] `status_lines`
+- [x] add per-group triage shorthand:
+- [x] `group_shape`
+- [x] render the same handoff-first layout on grouping markdown:
+- [x] `## Handoff`
+- [x] `## Status Lines`
+- [x] add focused regressions:
+- [x] action-required grouping surfaces a top-level handoff block
+- [x] high duplicate same-source grouping surfaces `monitoring_queue`
+- [x] empty grouping surface returns `empty_queue`
+- [x] focused validation:
+- [x] `python -m pytest tests/test_subjectivity_triage.py tests/test_run_subjectivity_tension_grouping.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/memory/subjectivity_triage.py scripts/run_subjectivity_tension_grouping.py tests/test_subjectivity_triage.py tests/test_run_subjectivity_tension_grouping.py`
+- [x] `python -m black --check tonesoul/memory/subjectivity_triage.py scripts/run_subjectivity_tension_grouping.py tests/test_subjectivity_triage.py tests/test_run_subjectivity_tension_grouping.py`
+- [x] focused validation result: `9 passed`
+- [x] refresh live grouping artifact after the handoff surface landed:
+- [x] `python scripts/run_subjectivity_tension_grouping.py --db-path memory/soul.db`
+- [x] confirm the live grouping handoff reads as triage-level `monitoring_queue`, not review-level settlement
+- [x] latest live grouping handoff at `2026-03-11T14:08:48Z`:
+- [x] `handoff.queue_shape = monitoring_queue`
+- [x] `handoff.requires_operator_action = false`
+- [x] `primary_status_line = high_duplicate_same_source_loop | A distributed vulnerability database for Open Source | recommendation=defer_review | rows=50 lineages=12 cycles=30 | density=5r x8, 4r x1, 3r x1, 2r x1, 1r x1 | followup=upstream_dedup_candidate`
+
+## Phase 229: Report Handoff Surface (2026-03-11)
+- [x] write one addendum before aligning the broad subjectivity report with the new handoff style:
+- [x] `docs/plans/memory_subjectivity_report_handoff_surface_addendum_2026-03-11.md`
+- [x] keep scope artifact-level only:
+- [x] no metric redefinition
+- [x] no writer change
+- [x] no new promotion semantics
+- [x] add report-level handoff fields:
+- [x] `handoff`
+- [x] `primary_status_line`
+- [x] `status_lines`
+- [x] classify report posture in report language:
+- [x] `empty_report`
+- [x] `observational_only`
+- [x] `settled_or_reviewed`
+- [x] `deferred_monitoring`
+- [x] `action_required`
+- [x] render the same top-level layout on markdown:
+- [x] `## Handoff`
+- [x] `## Status Lines`
+- [x] add focused regressions:
+- [x] empty report surfaces `empty_report`
+- [x] unresolved candidate report surfaces `action_required`
+- [x] deferred-only report surfaces `deferred_monitoring`
+- [x] settled reviewed report surfaces `settled_or_reviewed`
+- [x] focused validation:
+- [x] `python -m pytest tests/test_run_subjectivity_report.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_subjectivity_report.py tests/test_run_subjectivity_report.py`
+- [x] `python -m black --check scripts/run_subjectivity_report.py tests/test_run_subjectivity_report.py`
+- [x] refresh live subjectivity report artifact after the handoff surface landed:
+- [x] `python scripts/run_subjectivity_report.py --db-path memory/soul.db`
+- [x] confirm the live report reads as `deferred_monitoring`, not just as raw unresolved counts
+- [x] latest live report handoff at `2026-03-11T14:46:12Z`:
+- [x] `handoff.queue_shape = deferred_monitoring`
+- [x] `handoff.requires_operator_action = false`
+- [x] `primary_status_line = deferred_monitoring | records=195 unresolved=50 deferred=50 settled=31 reviewed_vows=0 | top_unresolved_status=deferred`
+
+## Phase 230: Shared Handoff Surface Utility (2026-03-11)
+- [x] write one addendum before deduplicating the handoff plumbing:
+- [x] `docs/plans/memory_subjectivity_shared_handoff_surface_utility_addendum_2026-03-11.md`
+- [x] keep queue-shape semantics local to each artifact:
+- [x] report still owns `deferred_monitoring`
+- [x] grouping still owns `monitoring_queue`
+- [x] batch still owns `stable_history_only`
+- [x] add one shared utility layer for structural handoff work only:
+- [x] normalize `status_lines`
+- [x] select `primary_status_line`
+- [x] build top-level `handoff`
+- [x] render markdown `## Handoff`
+- [x] render markdown `## Status Lines`
+- [x] wire the utility into all three surfaces:
+- [x] `scripts/run_subjectivity_report.py`
+- [x] `scripts/run_subjectivity_tension_grouping.py`
+- [x] `scripts/run_subjectivity_review_batch.py`
+- [x] `tonesoul/memory/subjectivity_triage.py`
+- [x] `tonesoul/memory/subjectivity_review_batch.py`
+- [x] add focused utility regressions:
+- [x] `tests/test_subjectivity_handoff.py`
+- [x] re-run handoff-focused validation:
+- [x] `python -m pytest tests/test_subjectivity_handoff.py tests/test_run_subjectivity_report.py tests/test_run_subjectivity_review_batch.py tests/test_run_subjectivity_tension_grouping.py tests/test_subjectivity_review_batch.py tests/test_subjectivity_triage.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/memory/subjectivity_handoff.py tonesoul/memory/subjectivity_review_batch.py tonesoul/memory/subjectivity_triage.py scripts/run_subjectivity_report.py scripts/run_subjectivity_review_batch.py scripts/run_subjectivity_tension_grouping.py tests/test_subjectivity_handoff.py tests/test_run_subjectivity_report.py tests/test_run_subjectivity_review_batch.py tests/test_run_subjectivity_tension_grouping.py`
+- [x] `python -m black --check tonesoul/memory/subjectivity_handoff.py tonesoul/memory/subjectivity_review_batch.py tonesoul/memory/subjectivity_triage.py scripts/run_subjectivity_report.py scripts/run_subjectivity_review_batch.py scripts/run_subjectivity_tension_grouping.py tests/test_subjectivity_handoff.py tests/test_run_subjectivity_report.py tests/test_run_subjectivity_review_batch.py tests/test_run_subjectivity_tension_grouping.py`
+- [x] refresh live artifacts after the shared utility landed:
+- [x] `python scripts/run_subjectivity_report.py --db-path memory/soul.db`
+- [x] `python scripts/run_subjectivity_tension_grouping.py --db-path memory/soul.db`
+- [x] `python scripts/run_subjectivity_review_batch.py --db-path memory/soul.db`
+- [x] confirm the live surfaces stayed semantically stable after deduplication:
+- [x] report still reads `deferred_monitoring`
+- [x] grouping still reads `monitoring_queue`
+- [x] batch still reads `stable_history_only`
+
+## Phase 231: Refreshable Handoff Previews (2026-03-11)
+- [x] write one addendum before lifting subjectivity handoff lines into the refreshable lane:
+- [x] `docs/plans/memory_subjectivity_refreshable_handoff_preview_addendum_2026-03-11.md`
+- [x] keep the refreshable lane preview-only:
+- [x] it may mirror existing handoff surfaces
+- [x] it may not invent new queue semantics
+- [x] teach `scripts/run_refreshable_artifact_report.py` to load latest JSON previews when available:
+- [x] derive canonical preview paths from dirty `.json` / `.md` pairs
+- [x] extract `queue_shape` and `primary_status_line` from top-level or nested artifact payloads
+- [x] expose `handoff_previews`
+- [x] expose `summary.handoff_preview_count`
+- [x] render markdown `## Handoff Previews`
+- [x] add focused regression coverage:
+- [x] `tests/test_run_refreshable_artifact_report.py`
+- [x] refreshable report dedupes `.md` / `.json` to one preview surface
+- [x] refreshable report can read both broad report and nested batch payloads
+- [x] focused validation:
+- [x] `python -m pytest tests/test_run_refreshable_artifact_report.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_refreshable_artifact_report.py tests/test_run_refreshable_artifact_report.py`
+- [x] `python -m black --check scripts/run_refreshable_artifact_report.py tests/test_run_refreshable_artifact_report.py`
+- [x] refresh live refreshable artifact report:
+- [x] `python scripts/run_refreshable_artifact_report.py`
+- [x] latest live refreshable handoff preview at `2026-03-11T15:05:33Z`:
+- [x] `summary.handoff_preview_count = 3`
+- [x] report preview reads `deferred_monitoring`
+- [x] grouping preview reads `monitoring_queue`
+- [x] batch preview reads `stable_history_only`
+
+## Phase 232: Worktree Settlement Handoff Previews (2026-03-11)
+- [x] write one addendum before lifting refreshable subjectivity previews into the settlement lane:
+- [x] `docs/plans/memory_subjectivity_worktree_settlement_handoff_preview_addendum_2026-03-11.md`
+- [x] keep settlement previewing mirror-only:
+- [x] settlement may reuse refreshable handoff previews
+- [x] settlement may not invent new subjectivity queue semantics
+- [x] teach `scripts/run_worktree_settlement_report.py` to attach refreshable subjectivity previews:
+- [x] load `handoff_previews` from the refreshable artifact report
+- [x] expose them on the `refreshable_artifacts` lane
+- [x] expose `summary.refreshable_handoff_preview_count`
+- [x] render refreshable preview lines inside the settlement markdown lane
+- [x] add focused settlement regressions:
+- [x] `tests/test_run_worktree_settlement_report.py`
+- [x] settlement refreshable lane now carries preview count and preview entries
+- [x] focused validation:
+- [x] `python -m pytest tests/test_run_worktree_settlement_report.py tests/test_run_refreshable_artifact_report.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_worktree_settlement_report.py tests/test_run_worktree_settlement_report.py scripts/run_refreshable_artifact_report.py tests/test_run_refreshable_artifact_report.py`
+- [x] `python -m black --check scripts/run_worktree_settlement_report.py tests/test_run_worktree_settlement_report.py scripts/run_refreshable_artifact_report.py tests/test_run_refreshable_artifact_report.py`
+- [x] refresh live worktree settlement artifact:
+- [x] `python scripts/run_worktree_settlement_report.py`
+- [x] latest live settlement preview at `2026-03-11T15:14:08Z`:
+- [x] `summary.refreshable_handoff_preview_count = 3`
+- [x] refreshable settlement lane previews report `deferred_monitoring`
+- [x] refreshable settlement lane previews grouping `monitoring_queue`
+- [x] refreshable settlement lane previews batch `stable_history_only`
+
+## Phase 233: Repo Governance Handoff Mirror (2026-03-11)
+- [x] write one addendum before lifting settlement previews into repo governance:
+- [x] `docs/plans/memory_subjectivity_repo_governance_handoff_preview_addendum_2026-03-11.md`
+- [x] keep governance previewing mirror-only:
+- [x] governance may reuse worktree settlement previews
+- [x] governance may not reinterpret queue posture as a governance gate
+- [x] teach `scripts/run_repo_governance_settlement_report.py` to mirror settlement preview state:
+- [x] add optional `worktree_settlement_path`
+- [x] expose `worktree_settlement.refreshable_handoff_preview_count`
+- [x] expose `worktree_settlement.handoff_previews`
+- [x] render markdown `## Worktree Settlement Mirror`
+- [x] warn only when the worktree settlement artifact is missing
+- [x] add focused governance regressions:
+- [x] `tests/test_run_repo_governance_settlement_report.py`
+- [x] focused validation:
+- [x] `python -m pytest tests/test_run_repo_governance_settlement_report.py tests/test_run_worktree_settlement_report.py tests/test_run_refreshable_artifact_report.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_repo_governance_settlement_report.py tests/test_run_repo_governance_settlement_report.py scripts/run_worktree_settlement_report.py tests/test_run_worktree_settlement_report.py scripts/run_refreshable_artifact_report.py tests/test_run_refreshable_artifact_report.py`
+- [x] `python -m black --check scripts/run_repo_governance_settlement_report.py tests/test_run_repo_governance_settlement_report.py scripts/run_worktree_settlement_report.py tests/test_run_worktree_settlement_report.py scripts/run_refreshable_artifact_report.py tests/test_run_refreshable_artifact_report.py`
+- [x] refresh live repo governance settlement artifact:
+- [x] `python scripts/run_repo_governance_settlement_report.py`
+- [x] latest live governance mirror at `2026-03-11T15:15:54Z`:
+- [x] `worktree_settlement.refreshable_handoff_preview_count = 3`
+- [x] governance mirror previews report `deferred_monitoring`
+- [x] governance mirror previews grouping `monitoring_queue`
+- [x] governance mirror previews batch `stable_history_only`
+
+## Phase 234: Historical Figure Audit (2026-03-11)
+- [x] recover the historical-figure audit lane as a real formal addendum instead of leaving a garbled draft:
+- [x] `docs/plans/memory_subjectivity_historical_figure_audit_addendum_2026-03-11.md`
+- [x] keep this phase audit-only:
+- [x] no runtime persona promotion
+- [x] no subjectivity writer change
+- [x] no automatic criteria mutation
+- [x] anchor the audit in historically grounded source material and current review criteria:
+- [x] positive, mixed, interpretive, and negative cases
+- [x] explicit fail-closed framing for negative controls
+- [x] map the figure set to current branch blind spots:
+- [x] coherence vs legitimacy
+- [x] restraint as direction
+- [x] minority truth vs context diversity
+- [x] traceability vs accountable choice
+- [x] exception rhetoric vs governance gate
+- [x] coherent evil vs admissible vow
+- [x] identify the highest-risk policy gap without silently changing the policy:
+- [x] the active `approved` criteria still lack an explicit `axiomatic admissibility` gate
+- [x] add one reusable audit corpus seed for future swarm or council use:
+- [x] `docs/experiments/historical_viewpoint_audit_seed_2026-03-11.json`
+- [x] keep the seed out of `spec/personas/` for now:
+- [x] it is audit corpus, not runtime persona config
+- [x] basic validation:
+- [x] read back both new files as UTF-8
+- [x] confirm `replacement_char_count = 0`
+- [x] confirm `contains_bom = False`
+
+## Phase 235: Axiomatic Admissibility Gate (2026-03-11)
+- [x] write one addendum before tightening the official approval policy:
+- [x] `docs/plans/memory_subjectivity_axiomatic_admissibility_gate_addendum_2026-03-11.md`
+- [x] update the active review criteria document itself, not only the audit rationale:
+- [x] `docs/plans/memory_subjectivity_review_criteria_2026-03-10.md`
+- [x] make `axiomatic admissibility` an explicit mandatory criterion before `approved`
+- [x] keep this phase policy-first:
+- [x] no runtime automation
+- [x] no writer mutation
+- [x] no schema widening
+- [x] align the operator prompt surface with the new policy:
+- [x] `tonesoul/memory/subjectivity_review_batch.py`
+- [x] `review_basis_template` now prompts for P0/P1 admissibility
+- [x] add focused regression updates:
+- [x] `tests/test_subjectivity_review_batch.py`
+- [x] focused validation:
+- [x] `python -m pytest tests/test_subjectivity_review_batch.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/memory/subjectivity_review_batch.py tests/test_subjectivity_review_batch.py`
+- [x] `python -m black --check tonesoul/memory/subjectivity_review_batch.py tests/test_subjectivity_review_batch.py`
+
+## Phase 236: Review Batch Admissibility Checklist Surface (2026-03-11)
+- [x] write one addendum before choosing the canonical operator surface:
+- [x] `docs/plans/memory_subjectivity_review_batch_admissibility_checklist_addendum_2026-03-11.md`
+- [x] keep admissibility as reviewer aid, not replay metadata:
+- [x] no `ReviewedPromotionDecision` schema change
+- [x] no group-review semantic expansion
+- [x] no automatic admissibility classifier
+- [x] add one shared helper for admissibility checklist generation:
+- [x] `tonesoul/memory/subjectivity_admissibility.py`
+- [x] wire the helper into the review batch artifact:
+- [x] `tonesoul/memory/subjectivity_review_batch.py`
+- [x] each `review_group` now exposes `axiomatic_admissibility_checklist`
+- [x] batch summary now exposes `admissibility_gate_posture_counts`
+- [x] batch summary now exposes `admissibility_focus_counts`
+- [x] render the new surface in markdown:
+- [x] `scripts/run_subjectivity_review_batch.py`
+- [x] `## Admissibility Gate Counts`
+- [x] `## Admissibility Focus Counts`
+- [x] per-group admissibility posture / risk tags / operator prompt
+- [x] add focused regressions:
+- [x] `tests/test_subjectivity_review_batch.py`
+- [x] `tests/test_run_subjectivity_review_batch.py`
+- [x] keep group-review boundary green:
+- [x] `tests/test_run_subjectivity_group_review.py`
+- [x] focused validation:
+- [x] `python -m pytest tests/test_subjectivity_review_batch.py tests/test_run_subjectivity_review_batch.py tests/test_run_subjectivity_group_review.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/memory/subjectivity_admissibility.py tonesoul/memory/subjectivity_review_batch.py scripts/run_subjectivity_review_batch.py tests/test_subjectivity_review_batch.py tests/test_run_subjectivity_review_batch.py`
+- [x] `python -m black --check tonesoul/memory/subjectivity_admissibility.py tonesoul/memory/subjectivity_review_batch.py scripts/run_subjectivity_review_batch.py tests/test_subjectivity_review_batch.py tests/test_run_subjectivity_review_batch.py`
+
+## Phase 237: Admissibility Status Line Surface (2026-03-11)
+- [x] write one addendum before shrinking checklist state into a resumable line:
+- [x] `docs/plans/memory_subjectivity_admissibility_status_line_addendum_2026-03-11.md`
+- [x] keep the full checklist intact:
+- [x] status line is additive, not a replacement
+- [x] add compact per-group admissibility line:
+- [x] `admissibility_status_line`
+- [x] add top-level batch admissibility handoff fields:
+- [x] `admissibility_primary_status_line`
+- [x] `admissibility_status_lines`
+- [x] render markdown section:
+- [x] `## Admissibility Status Lines`
+- [x] add focused regression updates:
+- [x] `tests/test_subjectivity_review_batch.py`
+- [x] `tests/test_run_subjectivity_review_batch.py`
+- [x] keep group-review boundary green:
+- [x] `tests/test_run_subjectivity_group_review.py`
+- [x] focused validation:
+- [x] `python -m pytest tests/test_subjectivity_review_batch.py tests/test_run_subjectivity_review_batch.py tests/test_run_subjectivity_group_review.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/memory/subjectivity_admissibility.py tonesoul/memory/subjectivity_review_batch.py scripts/run_subjectivity_review_batch.py tests/test_subjectivity_review_batch.py tests/test_run_subjectivity_review_batch.py`
+- [x] `python -m black --check tonesoul/memory/subjectivity_admissibility.py tonesoul/memory/subjectivity_review_batch.py scripts/run_subjectivity_review_batch.py tests/test_subjectivity_review_batch.py tests/test_run_subjectivity_review_batch.py`
+- [x] refresh live review-batch artifact:
+- [x] `python scripts/run_subjectivity_review_batch.py --db-path memory/soul.db`
+- [x] latest live admissibility status line at `2026-03-11T15:55:43Z`:
+- [x] `admissibility_primary_status_line = admissibility_not_yet_clear | focus=authority_and_exception_pressure | tags=cross_cycle_persistence, exception_pressure, externalized_harm_check, low_context_diversity`
+
+## Phase 238: Admissibility Preview Mirror (2026-03-12)
+- [x] write one addendum before mirroring admissibility upward:
+- [x] `docs/plans/memory_subjectivity_admissibility_preview_mirror_addendum_2026-03-12.md`
+- [x] keep this phase mirror-only:
+- [x] no subjectivity recomputation in settlement scripts
+- [x] no new governance gate
+- [x] no writer change
+- [x] extend refreshable preview extraction:
+- [x] `scripts/run_refreshable_artifact_report.py`
+- [x] preview objects now carry `admissibility_primary_status_line`
+- [x] summary now carries `admissibility_preview_count`
+- [x] extend worktree settlement mirror:
+- [x] `scripts/run_worktree_settlement_report.py`
+- [x] refreshable lane previews now carry `admissibility_primary_status_line`
+- [x] summary now carries `refreshable_admissibility_preview_count`
+- [x] extend repo governance mirror:
+- [x] `scripts/run_repo_governance_settlement_report.py`
+- [x] worktree settlement mirror now carries `refreshable_admissibility_preview_count`
+- [x] mirrored previews now carry `admissibility_primary_status_line`
+- [x] add focused regressions:
+- [x] `tests/test_run_refreshable_artifact_report.py`
+- [x] `tests/test_run_worktree_settlement_report.py`
+- [x] `tests/test_run_repo_governance_settlement_report.py`
+- [x] focused validation:
+- [x] `python -m pytest tests/test_run_refreshable_artifact_report.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_refreshable_artifact_report.py scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_run_refreshable_artifact_report.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+- [x] `python -m black --check scripts/run_refreshable_artifact_report.py scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_run_refreshable_artifact_report.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+- [x] refresh live artifacts:
+- [x] `python scripts/run_refreshable_artifact_report.py`
+- [x] `python scripts/run_worktree_settlement_report.py`
+- [x] `python scripts/run_repo_governance_settlement_report.py`
+- [x] latest live refreshable mirror at `2026-03-11T16:06:45Z`:
+- [x] `summary.handoff_preview_count = 3`
+- [x] `summary.admissibility_preview_count = 1`
+- [x] latest live worktree settlement mirror at `2026-03-11T16:06:56Z`:
+- [x] `summary.refreshable_handoff_preview_count = 3`
+- [x] `summary.refreshable_admissibility_preview_count = 1`
+- [x] latest live repo governance mirror at `2026-03-11T16:06:59Z`:
+- [x] `worktree_settlement.refreshable_handoff_preview_count = 3`
+- [x] `worktree_settlement.refreshable_admissibility_preview_count = 1`
+- [x] mirrored batch admissibility preview now surfaces the still-open blocker:
+- [x] `admissibility_not_yet_clear | focus=authority_and_exception_pressure | tags=cross_cycle_persistence, exception_pressure, externalized_harm_check, low_context_diversity`
+
+## Phase 239: Subjectivity Focus Preview Card (2026-03-12)
+- [x] write one addendum before collapsing the preview list into a shorter recovery card:
+- [x] `docs/plans/memory_subjectivity_focus_preview_card_addendum_2026-03-12.md`
+- [x] keep this phase mirror-only:
+- [x] no subjectivity recomputation
+- [x] no new settlement rule
+- [x] no writer or review-criteria mutation
+- [x] extend refreshable report with one explicit focus card:
+- [x] `scripts/run_refreshable_artifact_report.py`
+- [x] top-level `subjectivity_focus_preview`
+- [x] markdown section `## Subjectivity Focus`
+- [x] extend worktree settlement mirror with the same focus card:
+- [x] `scripts/run_worktree_settlement_report.py`
+- [x] top-level `subjectivity_focus_preview`
+- [x] markdown section `## Subjectivity Focus Mirror`
+- [x] extend repo governance settlement with the mirrored focus card:
+- [x] `scripts/run_repo_governance_settlement_report.py`
+- [x] `worktree_settlement.subjectivity_focus_preview`
+- [x] markdown section `## Subjectivity Focus Mirror`
+- [x] add focused regressions:
+- [x] `tests/test_run_refreshable_artifact_report.py`
+- [x] `tests/test_run_worktree_settlement_report.py`
+- [x] `tests/test_run_repo_governance_settlement_report.py`
+- [x] focused validation:
+- [x] `python -m pytest tests/test_run_refreshable_artifact_report.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_refreshable_artifact_report.py scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_run_refreshable_artifact_report.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+- [x] `python -m black --check scripts/run_refreshable_artifact_report.py scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_run_refreshable_artifact_report.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+- [x] refresh live artifacts:
+- [x] `python scripts/run_refreshable_artifact_report.py`
+- [x] `python scripts/run_worktree_settlement_report.py`
+- [x] `python scripts/run_repo_governance_settlement_report.py`
+- [x] latest live refreshable focus card at `2026-03-11T16:11:52Z`
+- [x] latest live worktree focus card at `2026-03-11T16:12:04Z`
+- [x] latest live repo governance focus card at `2026-03-11T16:12:10Z`
+- [x] mirrored focus card currently resolves to `docs/status/subjectivity_review_batch_latest.json`
+- [x] queue posture remains `stable_history_only`
+- [x] admissibility posture remains `admissibility_not_yet_clear | focus=authority_and_exception_pressure | tags=cross_cycle_persistence, exception_pressure, externalized_harm_check, low_context_diversity`
+
+## Phase 240: Requires-Operator-Action Preview Mirror (2026-03-12)
+- [x] write one addendum before mirroring leaf action posture upward:
+- [x] `docs/plans/memory_subjectivity_requires_operator_action_preview_mirror_addendum_2026-03-12.md`
+- [x] keep this phase mirror-only:
+- [x] no inference from `queue_shape`
+- [x] no new operator gate
+- [x] no subjectivity recomputation
+- [x] extend refreshable previews:
+- [x] `scripts/run_refreshable_artifact_report.py`
+- [x] preview objects now carry `requires_operator_action`
+- [x] `subjectivity_focus_preview` now carries `requires_operator_action`
+- [x] extend worktree settlement mirror:
+- [x] `scripts/run_worktree_settlement_report.py`
+- [x] mirrored preview rows now carry `requires_operator_action`
+- [x] top-level `subjectivity_focus_preview` now carries `requires_operator_action`
+- [x] extend repo governance mirror:
+- [x] `scripts/run_repo_governance_settlement_report.py`
+- [x] `worktree_settlement.handoff_previews[*].requires_operator_action`
+- [x] `worktree_settlement.subjectivity_focus_preview.requires_operator_action`
+- [x] add focused regressions:
+- [x] `tests/test_run_refreshable_artifact_report.py`
+- [x] `tests/test_run_worktree_settlement_report.py`
+- [x] `tests/test_run_repo_governance_settlement_report.py`
+- [x] focused validation:
+- [x] `python -m pytest tests/test_run_refreshable_artifact_report.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_refreshable_artifact_report.py scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_run_refreshable_artifact_report.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+- [x] `python -m black --check scripts/run_refreshable_artifact_report.py scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_run_refreshable_artifact_report.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+- [x] refresh live artifacts:
+- [x] `python scripts/run_refreshable_artifact_report.py`
+- [x] `python scripts/run_worktree_settlement_report.py`
+- [x] `python scripts/run_repo_governance_settlement_report.py`
+- [x] latest live refreshable mirror at `2026-03-11T16:16:35Z`
+- [x] latest live worktree mirror at `2026-03-11T16:16:46Z`
+- [x] latest live repo governance mirror at `2026-03-11T16:16:51Z`
+- [x] mirrored focus preview still resolves to `docs/status/subjectivity_review_batch_latest.json`
+- [x] mirrored `requires_operator_action = false` across preview rows and focus card

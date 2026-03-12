@@ -10,6 +10,7 @@ from .consolidator import (
 )
 from .decay import calculate_decay, should_forget
 from .reviewed_promotion import (
+    apply_reviewed_promotion,
     build_reviewed_promotion_decision,
     build_reviewed_promotion_payload,
     infer_subjectivity_layer,
@@ -20,10 +21,12 @@ from .subjectivity_reporting import (
     list_subjectivity_records,
     summarize_subjectivity_distribution,
 )
+from .subjectivity_review_batch import build_subjectivity_review_batch_report
 from .subjectivity_shadow import (
     build_subjectivity_shadow_pressure_report,
     build_subjectivity_shadow_report,
 )
+from .subjectivity_triage import build_subjectivity_tension_group_report
 from .write_gateway import (
     ENVIRONMENT_STIMULUS_LAYER,
     ENVIRONMENT_STIMULUS_SOURCE,
@@ -43,11 +46,14 @@ __all__ = [
     "most_common_divergence",
     "average_coherence",
     "identify_patterns",
+    "apply_reviewed_promotion",
     "build_reviewed_vow_payload",
     "build_reviewed_promotion_decision",
     "build_reviewed_promotion_payload",
     "build_subjectivity_shadow_pressure_report",
     "build_subjectivity_shadow_report",
+    "build_subjectivity_tension_group_report",
+    "build_subjectivity_review_batch_report",
     "generate_meta_reflection",
     "consolidate",
     "infer_subjectivity_layer",

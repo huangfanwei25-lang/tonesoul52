@@ -1,72 +1,42 @@
 # Refreshable Artifact Report Latest
 
-- Generated at: `2026-03-08T15:42:03Z`
+- Generated at: `2026-03-11T16:16:35Z`
 - Overall OK: `false`
-- Dirty refreshable entries: `59`
-- Known regenerators: `41`
-- Namespace regenerators: `2`
-- Manual review items: `2`
-- Archive-or-drop probe namespaces: `14`
+- Dirty refreshable entries: `23`
+- Known regenerators: `14`
+- Namespace regenerators: `9`
+- Manual review items: `0`
+- Archive-or-drop probe namespaces: `0`
 - Inspect items: `0`
+- Handoff previews: `3`
+- Admissibility previews: `1`
+
+## Subjectivity Focus
+
+- path: `docs/status/subjectivity_review_batch_latest.json`
+- queue_shape: `stable_history_only`
+- requires_operator_action: `false`
+- primary_status_line: `stable_deferred_history | A distributed vulnerability database for Open Source | rows=50 lineages=12 cycles=30 | density=5r x8, 4r x1, 3r x1, 2r x1, 1r x1 | trigger=second_source_context_or_material_split`
+- admissibility_primary_status_line: `admissibility_not_yet_clear | focus=authority_and_exception_pressure | tags=cross_cycle_persistence, exception_pressure, externalized_harm_check, low_context_diversity`
+
+## Handoff Previews
+
+- `docs/status/subjectivity_report_latest.json`
+  - queue_shape: `deferred_monitoring`
+  - requires_operator_action: `false`
+  - primary_status_line: `deferred_monitoring | records=195 unresolved=50 deferred=50 settled=31 reviewed_vows=0 | top_unresolved_status=deferred`
+- `docs/status/subjectivity_review_batch_latest.json`
+  - queue_shape: `stable_history_only`
+  - requires_operator_action: `false`
+  - primary_status_line: `stable_deferred_history | A distributed vulnerability database for Open Source | rows=50 lineages=12 cycles=30 | density=5r x8, 4r x1, 3r x1, 2r x1, 1r x1 | trigger=second_source_context_or_material_split`
+  - admissibility_primary_status_line: `admissibility_not_yet_clear | focus=authority_and_exception_pressure | tags=cross_cycle_persistence, exception_pressure, externalized_harm_check, low_context_diversity`
+- `docs/status/subjectivity_tension_groups_latest.json`
+  - queue_shape: `monitoring_queue`
+  - requires_operator_action: `false`
+  - primary_status_line: `high_duplicate_same_source_loop | A distributed vulnerability database for Open Source | recommendation=defer_review | rows=50 lineages=12 cycles=30 | density=5r x8, 4r x1, 3r x1, 2r x1, 1r x1 | followup=upstream_dedup_candidate`
 
 ## Regenerate
 
-- `python scripts/run_memory_quality_report.py --strict`
-  - count: `3`
-  - source: `scripts/run_memory_quality_report.py`
-  - path: `docs/status/memory_learning_samples_latest.jsonl`
-  - path: `docs/status/memory_quality_latest.json`
-  - path: `docs/status/memory_quality_latest.md`
-- `python experiments/compare_model_reports.py`
-  - count: `2`
-  - source: `experiments/compare_model_reports.py`
-  - path: `reports/model_comparison_latest.json`
-  - path: `reports/model_comparison_latest.md`
-- `python scripts/run_autonomous_registry_schedule.py --strict`
-  - count: `2`
-  - source: `scripts/run_autonomous_registry_schedule.py`
-  - path: `docs/status/autonomous_registry_schedule_latest.json`
-  - path: `docs/status/dream_wakeup_snapshot_latest.json`
-- `python scripts/run_dream_observability_dashboard.py --strict`
-  - count: `2`
-  - source: `scripts/run_dream_observability_dashboard.py`
-  - path: `docs/status/dream_observability_latest.html`
-  - path: `docs/status/dream_observability_latest.json`
-- `python scripts/run_friction_shadow_calibration_report.py --strict`
-  - count: `2`
-  - source: `scripts/run_friction_shadow_calibration_report.py`
-  - path: `docs/status/friction_shadow_calibration_latest.json`
-  - path: `docs/status/friction_shadow_calibration_latest.md`
-- `python scripts/run_friction_shadow_replay_export.py --strict`
-  - count: `2`
-  - source: `scripts/run_friction_shadow_replay_export.py`
-  - path: `docs/status/friction_shadow_replay_latest.json`
-  - path: `docs/status/friction_shadow_replay_latest.md`
-- `python scripts/run_memory_governance_contract_check.py --strict`
-  - count: `2`
-  - source: `scripts/run_memory_governance_contract_check.py`
-  - path: `docs/status/memory_governance_contract_latest.json`
-  - path: `docs/status/memory_governance_contract_latest.md`
-- `python scripts/run_memory_topology_fit_report.py --strict`
-  - count: `2`
-  - source: `scripts/run_memory_topology_fit_report.py`
-  - path: `docs/status/memory_topology_fit_latest.json`
-  - path: `docs/status/memory_topology_fit_latest.md`
-- `python scripts/run_multi_agent_divergence_report.py --strict`
-  - count: `2`
-  - source: `scripts/run_multi_agent_divergence_report.py`
-  - path: `docs/status/multi_agent_divergence_latest.json`
-  - path: `docs/status/multi_agent_divergence_latest.md`
-- `python scripts/run_philosophical_reflection_report.py --strict`
-  - count: `2`
-  - source: `scripts/run_philosophical_reflection_report.py`
-  - path: `docs/status/philosophical_reflection_latest.json`
-  - path: `docs/status/philosophical_reflection_latest.md`
-- `python scripts/run_private_memory_review_report.py`
-  - count: `2`
-  - source: `scripts/run_private_memory_review_report.py`
-  - path: `docs/status/private_memory_review_latest.json`
-  - path: `docs/status/private_memory_review_latest.md`
 - `python scripts/run_refreshable_artifact_report.py`
   - count: `2`
   - source: `scripts/run_refreshable_artifact_report.py`
@@ -77,55 +47,115 @@
   - source: `scripts/run_repo_governance_settlement_report.py`
   - path: `docs/status/repo_governance_settlement_latest.json`
   - path: `docs/status/repo_governance_settlement_latest.md`
-- `python scripts/run_repo_healthcheck.py --strict --allow-missing-discussion`
+- `python scripts/run_subjectivity_report.py --strict`
   - count: `2`
-  - source: `scripts/run_repo_healthcheck.py`
-  - path: `docs/status/repo_healthcheck_latest.json`
-  - path: `docs/status/repo_healthcheck_latest.md`
-- `python scripts/run_runtime_source_change_report.py`
+  - source: `scripts/run_subjectivity_report.py`
+  - path: `docs/status/subjectivity_report_latest.json`
+  - path: `docs/status/subjectivity_report_latest.md`
+- `python scripts/run_subjectivity_review_batch.py`
   - count: `2`
-  - source: `scripts/run_runtime_source_change_report.py`
-  - path: `docs/status/runtime_source_change_groups_latest.json`
-  - path: `docs/status/runtime_source_change_groups_latest.md`
+  - source: `scripts/run_subjectivity_review_batch.py`
+  - path: `docs/status/subjectivity_review_batch_latest.json`
+  - path: `docs/status/subjectivity_review_batch_latest.md`
+- `python scripts/run_subjectivity_shadow_pressure_report.py`
+  - count: `2`
+  - source: `scripts/run_subjectivity_shadow_pressure_report.py`
+  - path: `docs/status/subjectivity_shadow_pressure_latest.json`
+  - path: `docs/status/subjectivity_shadow_pressure_latest.md`
+- `python scripts/run_subjectivity_tension_grouping.py`
+  - count: `2`
+  - source: `scripts/run_subjectivity_tension_grouping.py`
+  - path: `docs/status/subjectivity_tension_groups_latest.json`
+  - path: `docs/status/subjectivity_tension_groups_latest.md`
 - `python scripts/run_worktree_settlement_report.py`
   - count: `2`
   - source: `scripts/run_worktree_settlement_report.py`
   - path: `docs/status/worktree_settlement_latest.json`
   - path: `docs/status/worktree_settlement_latest.md`
-- `python scripts/verify_dual_track_boundary.py --strict --staged`
-  - count: `2`
-  - source: `scripts/verify_dual_track_boundary.py`
-  - path: `docs/status/dual_track_boundary_latest.json`
-  - path: `docs/status/dual_track_boundary_latest.md`
-- `python scripts/verify_git_hygiene.py --strict --max-tracked-ignored 28`
-  - count: `2`
-  - source: `scripts/verify_git_hygiene.py`
-  - path: `docs/status/git_hygiene_latest.json`
-  - path: `docs/status/git_hygiene_latest.md`
-- `python scripts/plan_commit_attribution_base_switch.py`
-  - count: `1`
-  - source: `scripts/plan_commit_attribution_base_switch.py`
-  - path: `docs/status/commit_attribution_base_switch_latest.json`
-- `python scripts/run_persona_swarm_framework.py --strict`
-  - count: `1`
-  - source: `scripts/run_persona_swarm_framework.py`
-  - path: `docs/status/persona_swarm_framework_latest.json`
-- `python scripts/verify_incremental_commit_attribution.py --strict --artifact-path docs/status/commit_attribution_local.json`
-  - count: `1`
-  - source: `scripts/verify_incremental_commit_attribution.py`
-  - path: `docs/status/commit_attribution_local.json`
-- `python scripts/verify_incremental_commit_attribution.py --strict --head-sha feat/env-perception-attribution-backfill --equivalent-ref HEAD --artifact-path docs/status/commit_attribution_backfill_branch.json`
-  - count: `1`
-  - source: `scripts/verify_incremental_commit_attribution.py`
-  - path: `docs/status/commit_attribution_backfill_branch.json`
 
 ## Namespace Regenerate
 
-- `docs/status/runtime_probe_watch/` (`operational_namespace`)
-  - notes: `Runtime preflight namespace with refreshable schedule, wake-up, and dashboard artifacts.`
-  - command: `python scripts/run_runtime_probe_watch.py --strict`
-  - source: `scripts/run_runtime_probe_watch.py`
-- `docs/status/true_verification_weekly/` (`operational_namespace`)
+- `docs/status/true_verification_weekly/autonomous_registry_schedule_latest.json` (`operational_namespace`)
+  - notes: `Managed weekly experiment namespace; refresh with the host-tick and task-status entrypoints instead of treating the folder itself as an orphan artifact.`
+  - command: `python scripts/run_true_verification_host_tick.py --strict`
+  - command: `python scripts/report_true_verification_task_status.py --strict`
+  - command: `python scripts/render_true_verification_task_scheduler.py --strict`
+  - command: `python scripts/install_true_verification_task_scheduler.py --strict`
+  - source: `scripts/run_true_verification_host_tick.py`
+  - source: `scripts/report_true_verification_task_status.py`
+  - source: `scripts/render_true_verification_task_scheduler.py`
+  - source: `scripts/install_true_verification_task_scheduler.py`
+- `docs/status/true_verification_weekly/dream_observability_latest.html` (`operational_namespace`)
+  - notes: `Managed weekly experiment namespace; refresh with the host-tick and task-status entrypoints instead of treating the folder itself as an orphan artifact.`
+  - command: `python scripts/run_true_verification_host_tick.py --strict`
+  - command: `python scripts/report_true_verification_task_status.py --strict`
+  - command: `python scripts/render_true_verification_task_scheduler.py --strict`
+  - command: `python scripts/install_true_verification_task_scheduler.py --strict`
+  - source: `scripts/run_true_verification_host_tick.py`
+  - source: `scripts/report_true_verification_task_status.py`
+  - source: `scripts/render_true_verification_task_scheduler.py`
+  - source: `scripts/install_true_verification_task_scheduler.py`
+- `docs/status/true_verification_weekly/dream_observability_latest.json` (`operational_namespace`)
+  - notes: `Managed weekly experiment namespace; refresh with the host-tick and task-status entrypoints instead of treating the folder itself as an orphan artifact.`
+  - command: `python scripts/run_true_verification_host_tick.py --strict`
+  - command: `python scripts/report_true_verification_task_status.py --strict`
+  - command: `python scripts/render_true_verification_task_scheduler.py --strict`
+  - command: `python scripts/install_true_verification_task_scheduler.py --strict`
+  - source: `scripts/run_true_verification_host_tick.py`
+  - source: `scripts/report_true_verification_task_status.py`
+  - source: `scripts/render_true_verification_task_scheduler.py`
+  - source: `scripts/install_true_verification_task_scheduler.py`
+- `docs/status/true_verification_weekly/dream_wakeup_snapshot.json` (`operational_namespace`)
+  - notes: `Managed weekly experiment namespace; refresh with the host-tick and task-status entrypoints instead of treating the folder itself as an orphan artifact.`
+  - command: `python scripts/run_true_verification_host_tick.py --strict`
+  - command: `python scripts/report_true_verification_task_status.py --strict`
+  - command: `python scripts/render_true_verification_task_scheduler.py --strict`
+  - command: `python scripts/install_true_verification_task_scheduler.py --strict`
+  - source: `scripts/run_true_verification_host_tick.py`
+  - source: `scripts/report_true_verification_task_status.py`
+  - source: `scripts/render_true_verification_task_scheduler.py`
+  - source: `scripts/install_true_verification_task_scheduler.py`
+- `docs/status/true_verification_weekly/preflight/autonomous_registry_schedule_latest.json` (`operational_namespace`)
+  - notes: `Managed weekly experiment namespace; refresh with the host-tick and task-status entrypoints instead of treating the folder itself as an orphan artifact.`
+  - command: `python scripts/run_true_verification_host_tick.py --strict`
+  - command: `python scripts/report_true_verification_task_status.py --strict`
+  - command: `python scripts/render_true_verification_task_scheduler.py --strict`
+  - command: `python scripts/install_true_verification_task_scheduler.py --strict`
+  - source: `scripts/run_true_verification_host_tick.py`
+  - source: `scripts/report_true_verification_task_status.py`
+  - source: `scripts/render_true_verification_task_scheduler.py`
+  - source: `scripts/install_true_verification_task_scheduler.py`
+- `docs/status/true_verification_weekly/preflight/dream_observability_latest.html` (`operational_namespace`)
+  - notes: `Managed weekly experiment namespace; refresh with the host-tick and task-status entrypoints instead of treating the folder itself as an orphan artifact.`
+  - command: `python scripts/run_true_verification_host_tick.py --strict`
+  - command: `python scripts/report_true_verification_task_status.py --strict`
+  - command: `python scripts/render_true_verification_task_scheduler.py --strict`
+  - command: `python scripts/install_true_verification_task_scheduler.py --strict`
+  - source: `scripts/run_true_verification_host_tick.py`
+  - source: `scripts/report_true_verification_task_status.py`
+  - source: `scripts/render_true_verification_task_scheduler.py`
+  - source: `scripts/install_true_verification_task_scheduler.py`
+- `docs/status/true_verification_weekly/preflight/dream_observability_latest.json` (`operational_namespace`)
+  - notes: `Managed weekly experiment namespace; refresh with the host-tick and task-status entrypoints instead of treating the folder itself as an orphan artifact.`
+  - command: `python scripts/run_true_verification_host_tick.py --strict`
+  - command: `python scripts/report_true_verification_task_status.py --strict`
+  - command: `python scripts/render_true_verification_task_scheduler.py --strict`
+  - command: `python scripts/install_true_verification_task_scheduler.py --strict`
+  - source: `scripts/run_true_verification_host_tick.py`
+  - source: `scripts/report_true_verification_task_status.py`
+  - source: `scripts/render_true_verification_task_scheduler.py`
+  - source: `scripts/install_true_verification_task_scheduler.py`
+- `docs/status/true_verification_weekly/preflight/dream_wakeup_snapshot.json` (`operational_namespace`)
+  - notes: `Managed weekly experiment namespace; refresh with the host-tick and task-status entrypoints instead of treating the folder itself as an orphan artifact.`
+  - command: `python scripts/run_true_verification_host_tick.py --strict`
+  - command: `python scripts/report_true_verification_task_status.py --strict`
+  - command: `python scripts/render_true_verification_task_scheduler.py --strict`
+  - command: `python scripts/install_true_verification_task_scheduler.py --strict`
+  - source: `scripts/run_true_verification_host_tick.py`
+  - source: `scripts/report_true_verification_task_status.py`
+  - source: `scripts/render_true_verification_task_scheduler.py`
+  - source: `scripts/install_true_verification_task_scheduler.py`
+- `docs/status/true_verification_weekly/true_verification_host_tick_latest.json` (`operational_namespace`)
   - notes: `Managed weekly experiment namespace; refresh with the host-tick and task-status entrypoints instead of treating the folder itself as an orphan artifact.`
   - command: `python scripts/run_true_verification_host_tick.py --strict`
   - command: `python scripts/report_true_verification_task_status.py --strict`
@@ -138,39 +168,11 @@
 
 ## Manual Review
 
-- `reports/analysis_gpt53.md` (`manual_report_input`)
-- `reports/analysis_gpt54.md` (`manual_report_input`)
+- None
 
 ## Archive Or Drop
 
-- `docs/status/probe_deadline/` (`probe_namespace`)
-  - notes: `Historical probe namespace. Safe to archive or drop once its evidence has been superseded by current latest artifacts.`
-- `docs/status/probe_no_llm/` (`probe_namespace`)
-  - notes: `Historical probe namespace. Safe to archive or drop once its evidence has been superseded by current latest artifacts.`
-- `docs/status/probe_preflight/` (`probe_namespace`)
-  - notes: `Historical probe namespace. Safe to archive or drop once its evidence has been superseded by current latest artifacts.`
-- `docs/status/probe_preflight_clean/` (`probe_namespace`)
-  - notes: `Historical probe namespace. Safe to archive or drop once its evidence has been superseded by current latest artifacts.`
-- `docs/status/probe_router_deadline/` (`probe_namespace`)
-  - notes: `Historical probe namespace. Safe to archive or drop once its evidence has been superseded by current latest artifacts.`
-- `docs/status/probe_runtime_gated_long_run/` (`probe_namespace`)
-  - notes: `Historical probe namespace. Safe to archive or drop once its evidence has been superseded by current latest artifacts.`
-- `docs/status/probe_runtime_gated_long_run_fresh/` (`probe_namespace`)
-  - notes: `Historical probe namespace. Safe to archive or drop once its evidence has been superseded by current latest artifacts.`
-- `docs/status/probe_runtime_gated_long_run_fresh_preflight/` (`probe_namespace`)
-  - notes: `Historical probe namespace. Safe to archive or drop once its evidence has been superseded by current latest artifacts.`
-- `docs/status/probe_runtime_gated_long_run_preflight/` (`probe_namespace`)
-  - notes: `Historical probe namespace. Safe to archive or drop once its evidence has been superseded by current latest artifacts.`
-- `docs/status/probe_runtime_profile_live/` (`probe_namespace`)
-  - notes: `Historical probe namespace. Safe to archive or drop once its evidence has been superseded by current latest artifacts.`
-- `docs/status/probe_schedule_governance_dashboard/` (`probe_namespace`)
-  - notes: `Historical probe namespace. Safe to archive or drop once its evidence has been superseded by current latest artifacts.`
-- `docs/status/probe_schedule_governance_live/` (`probe_namespace`)
-  - notes: `Historical probe namespace. Safe to archive or drop once its evidence has been superseded by current latest artifacts.`
-- `docs/status/probe_schedule_governance_live2/` (`probe_namespace`)
-  - notes: `Historical probe namespace. Safe to archive or drop once its evidence has been superseded by current latest artifacts.`
-- `docs/status/probe_schedule_latency_policy/` (`probe_namespace`)
-  - notes: `Historical probe namespace. Safe to archive or drop once its evidence has been superseded by current latest artifacts.`
+- None
 
 ## Inspect
 

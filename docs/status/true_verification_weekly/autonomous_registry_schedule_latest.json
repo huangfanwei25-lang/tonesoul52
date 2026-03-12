@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-09T05:08:21Z",
+  "generated_at": "2026-03-11T23:08:20Z",
   "overall_ok": true,
   "config": {
     "interval_seconds": 0.0,
@@ -40,12 +40,12 @@
   "results": [
     {
       "cycle": 1,
-      "started_at": "2026-03-09T05:08:11Z",
-      "finished_at": "2026-03-09T05:08:21Z",
-      "duration_ms": 9929,
+      "started_at": "2026-03-11T23:08:11Z",
+      "finished_at": "2026-03-11T23:08:20Z",
+      "duration_ms": 8564,
       "registry_batch": {
         "cycle": 1,
-        "absolute_cycle": 2,
+        "absolute_cycle": 11,
         "cursor_before": 0,
         "cursor_after": 0,
         "eligible_entry_count": 5,
@@ -70,7 +70,7 @@
             "name": "OpenSSF Scorecard",
             "category": "supply-chain-risk",
             "reviewed_at": "2026-02-14",
-            "age_days": 23,
+            "age_days": 26,
             "url_count": 2,
             "urls": [
               "https://scorecard.dev/",
@@ -86,7 +86,7 @@
             "name": "Sigstore",
             "category": "artifact-signing",
             "reviewed_at": "2026-02-14",
-            "age_days": 23,
+            "age_days": 26,
             "url_count": 1,
             "urls": [
               "https://sigstore.dev/"
@@ -110,6 +110,7 @@
         "category_cursor_after": 6,
         "category_entry_cursor_updates": {
           "artifact-signing": 0,
+          "supply-chain-hardening": 0,
           "supply-chain-risk": 0,
           "vulnerability-intel": 0
         },
@@ -151,7 +152,7 @@
           {
             "category": "vulnerability-intel",
             "reason": "tension_budget_cooldown",
-            "available_after_cycle": 4,
+            "available_after_cycle": 13,
             "last_budget_status": "breached",
             "last_breach_reasons": [
               "max_lyapunov_proxy>0.2 (observed=0.2499)",
@@ -169,7 +170,7 @@
         "ok": true
       },
       "autonomous_payload": {
-        "generated_at": "2026-03-09T05:08:21Z",
+        "generated_at": "2026-03-11T23:08:20Z",
         "urls_requested": 3,
         "urls_ingested": 3,
         "urls_failed": 0,
@@ -190,7 +191,7 @@
         },
         "ingestion_failures": [],
         "wakeup_payload": {
-          "generated_at": "2026-03-09T05:08:21Z",
+          "generated_at": "2026-03-11T23:08:19Z",
           "overall_status": "ok",
           "config": {
             "interval_seconds": 0.0,
@@ -207,14 +208,14 @@
             {
               "cycle": 1,
               "status": "ok",
-              "started_at": "2026-03-09T05:08:21Z",
-              "finished_at": "2026-03-09T05:08:21Z",
-              "duration_ms": 124,
+              "started_at": "2026-03-11T23:08:19Z",
+              "finished_at": "2026-03-11T23:08:19Z",
+              "duration_ms": 296,
               "interval_seconds": 0.0,
               "dream_result": {
-                "generated_at": "2026-03-09T05:08:21Z",
-                "dream_cycle_id": "dream-cycle-fb1662458c00",
-                "stimuli_considered": 15,
+                "generated_at": "2026-03-11T23:08:19Z",
+                "dream_cycle_id": "dream-cycle-8a6a9582041b",
+                "stimuli_considered": 44,
                 "stimuli_selected": 4,
                 "llm_backend": null,
                 "llm_preflight": {
@@ -241,7 +242,7 @@
                     "reflection_generated": false,
                     "related_memories": [
                       {
-                        "id": "336a3ad2-f550-4166-8638-399bb023829f",
+                        "id": "aaa6dd6a-2075-4cff-891a-7aed00688d06",
                         "title": "Dream collision: [](https://google.github.io/osv.dev/data/#data-sources) Data sources",
                         "source": "custom",
                         "layer": "working",
@@ -253,7 +254,7 @@
                         ]
                       },
                       {
-                        "id": "1bd734f3-a53b-4b50-a78e-3772529d7394",
+                        "id": "8823fb74-db34-413d-b9a1-dc16fa2ffd8c",
                         "title": "Dream collision: [](https://google.github.io/osv.dev/data/#data-sources) Data sources",
                         "source": "custom",
                         "layer": "working",
@@ -265,7 +266,7 @@
                         ]
                       },
                       {
-                        "id": "b11b630e-c431-4114-8f33-25501d398c80",
+                        "id": "ea3b24b7-4b3f-4c42-b505-fbfe6b2ac21b",
                         "title": "Dream collision: [](https://google.github.io/osv.dev/data/#data-sources) Data sources",
                         "source": "custom",
                         "layer": "working",
@@ -277,7 +278,7 @@
                         ]
                       },
                       {
-                        "id": "5469d625-3ac2-4fa5-990a-c4dc35dc7a72",
+                        "id": "5b99adc8-d0fd-4755-8f00-63328911ec92",
                         "title": "Dream collision: [](https://google.github.io/osv.dev/data/#data-sources) Data sources",
                         "source": "custom",
                         "layer": "working",
@@ -289,7 +290,7 @@
                         ]
                       },
                       {
-                        "id": "a8e27b08-44c4-41dc-b95c-6a58f392c10f",
+                        "id": "67d8e75f-93a0-49b9-978f-732359603884",
                         "title": "Dream collision: [](https://google.github.io/osv.dev/data/#data-sources) Data sources",
                         "source": "custom",
                         "layer": "working",
@@ -359,12 +360,14 @@
                         "link)"
                       ],
                       "lyapunov_proxy": 0.0886,
-                      "breaker_status": "ok"
+                      "breaker_status": "ok",
+                      "write_status": "skipped",
+                      "write_skip_reason": "prior_rejected_signature"
                     },
-                    "persisted_record_id": "a33d2778-f6ca-4580-9c69-e5d0c03bfecc"
+                    "persisted_record_id": null
                   },
                   {
-                    "stimulus_record_id": "94af3eae-9e4c-4f6b-9f1c-dc96dc543f76",
+                    "stimulus_record_id": "72ec93cf-0952-4a4b-9697-e9685582de7c",
                     "topic": "A distributed vulnerability database for Open Source",
                     "source_url": "https://osv.dev/",
                     "priority_score": 0.5108,
@@ -415,11 +418,11 @@
                         ]
                       },
                       {
-                        "id": "a8e27b08-44c4-41dc-b95c-6a58f392c10f",
-                        "title": "Dream collision: [](https://google.github.io/osv.dev/data/#data-sources) Data sources",
+                        "id": "57c0cac8-d39a-41de-8557-cb95146593f1",
+                        "title": "Dream collision: A distributed vulnerability database for Open Source",
                         "source": "custom",
                         "layer": "working",
-                        "summary": "Dream collision examined '[](https://google.github.io/osv.dev/data/#data-sources) Data sources'. Friction=0.2668 with 5 recalled memories and 3 durable rules. N",
+                        "summary": "Dream collision examined 'A distributed vulnerability database for Open Source'. Friction=0.3436 with 5 recalled memories and 3 durable rules. Next governance m",
                         "tags": [
                           "dream",
                           "collision",
@@ -427,7 +430,7 @@
                         ]
                       },
                       {
-                        "id": "d9bde8fd-9478-4303-98fa-2e69b9ca5cb2",
+                        "id": "b5b64114-6a34-4235-97fd-6946334678db",
                         "title": "Dream collision: A distributed vulnerability database for Open Source",
                         "source": "custom",
                         "layer": "working",
@@ -497,12 +500,14 @@
                         "approach"
                       ],
                       "lyapunov_proxy": 0.2499,
-                      "breaker_status": "ok"
+                      "breaker_status": "ok",
+                      "write_status": "skipped",
+                      "write_skip_reason": "active_unresolved_signature"
                     },
-                    "persisted_record_id": "209abe40-87b4-4b08-bbb2-76f48d7c5a53"
+                    "persisted_record_id": null
                   },
                   {
-                    "stimulus_record_id": "2758c272-133b-465c-bea7-b095882b0bf9",
+                    "stimulus_record_id": "699d978f-b497-4c04-bca9-9bfa7a2338da",
                     "topic": "A distributed vulnerability database for Open Source",
                     "source_url": "https://osv.dev/",
                     "priority_score": 0.5108,
@@ -553,11 +558,11 @@
                         ]
                       },
                       {
-                        "id": "a8e27b08-44c4-41dc-b95c-6a58f392c10f",
-                        "title": "Dream collision: [](https://google.github.io/osv.dev/data/#data-sources) Data sources",
+                        "id": "57c0cac8-d39a-41de-8557-cb95146593f1",
+                        "title": "Dream collision: A distributed vulnerability database for Open Source",
                         "source": "custom",
                         "layer": "working",
-                        "summary": "Dream collision examined '[](https://google.github.io/osv.dev/data/#data-sources) Data sources'. Friction=0.2668 with 5 recalled memories and 3 durable rules. N",
+                        "summary": "Dream collision examined 'A distributed vulnerability database for Open Source'. Friction=0.3436 with 5 recalled memories and 3 durable rules. Next governance m",
                         "tags": [
                           "dream",
                           "collision",
@@ -565,7 +570,7 @@
                         ]
                       },
                       {
-                        "id": "d9bde8fd-9478-4303-98fa-2e69b9ca5cb2",
+                        "id": "b5b64114-6a34-4235-97fd-6946334678db",
                         "title": "Dream collision: A distributed vulnerability database for Open Source",
                         "source": "custom",
                         "layer": "working",
@@ -635,12 +640,14 @@
                         "approach"
                       ],
                       "lyapunov_proxy": 0.2499,
-                      "breaker_status": "ok"
+                      "breaker_status": "ok",
+                      "write_status": "skipped",
+                      "write_skip_reason": "active_unresolved_signature"
                     },
-                    "persisted_record_id": "b5b16c87-8f95-483e-bcd6-5da943768614"
+                    "persisted_record_id": null
                   },
                   {
-                    "stimulus_record_id": "fb24769b-cb9a-407a-a567-59c8cbaff3cc",
+                    "stimulus_record_id": "c9291b7c-f5e0-4d63-b23c-43f0b61f3d72",
                     "topic": "A distributed vulnerability database for Open Source",
                     "source_url": "https://osv.dev/",
                     "priority_score": 0.5108,
@@ -691,11 +698,11 @@
                         ]
                       },
                       {
-                        "id": "a8e27b08-44c4-41dc-b95c-6a58f392c10f",
-                        "title": "Dream collision: [](https://google.github.io/osv.dev/data/#data-sources) Data sources",
+                        "id": "57c0cac8-d39a-41de-8557-cb95146593f1",
+                        "title": "Dream collision: A distributed vulnerability database for Open Source",
                         "source": "custom",
                         "layer": "working",
-                        "summary": "Dream collision examined '[](https://google.github.io/osv.dev/data/#data-sources) Data sources'. Friction=0.2668 with 5 recalled memories and 3 durable rules. N",
+                        "summary": "Dream collision examined 'A distributed vulnerability database for Open Source'. Friction=0.3436 with 5 recalled memories and 3 durable rules. Next governance m",
                         "tags": [
                           "dream",
                           "collision",
@@ -703,7 +710,7 @@
                         ]
                       },
                       {
-                        "id": "d9bde8fd-9478-4303-98fa-2e69b9ca5cb2",
+                        "id": "b5b64114-6a34-4235-97fd-6946334678db",
                         "title": "Dream collision: A distributed vulnerability database for Open Source",
                         "source": "custom",
                         "layer": "working",
@@ -773,38 +780,41 @@
                         "approach"
                       ],
                       "lyapunov_proxy": 0.2499,
-                      "breaker_status": "ok"
+                      "breaker_status": "ok",
+                      "write_status": "skipped",
+                      "write_skip_reason": "active_unresolved_signature"
                     },
-                    "persisted_record_id": "a4a48fc7-cc51-4263-8055-b3bdd5da76a0"
+                    "persisted_record_id": null
                   }
                 ],
                 "write_gateway": {
-                  "written": 4,
-                  "skipped": 0,
+                  "written": 0,
+                  "skipped": 4,
                   "rejected": 0,
-                  "record_ids": [
-                    "a33d2778-f6ca-4580-9c69-e5d0c03bfecc",
-                    "209abe40-87b4-4b08-bbb2-76f48d7c5a53",
-                    "b5b16c87-8f95-483e-bcd6-5da943768614",
-                    "a4a48fc7-cc51-4263-8055-b3bdd5da76a0"
+                  "record_ids": [],
+                  "skip_reasons": [
+                    "prior_rejected_signature",
+                    "active_unresolved_signature",
+                    "active_unresolved_signature",
+                    "active_unresolved_signature"
                   ],
                   "reject_reasons": []
                 }
               },
               "summary": {
-                "stimuli_considered": 15,
+                "stimuli_considered": 44,
                 "stimuli_selected": 4,
                 "collision_count": 4,
-                "collision_success_rate": 0.2667,
+                "collision_success_rate": 0.0909,
                 "council_count": 4,
                 "frozen_count": 0,
                 "avg_friction_score": 0.3244,
                 "max_friction_score": 0.3436,
                 "max_lyapunov_proxy": 0.2499,
-                "write_gateway_written": 4,
-                "write_gateway_skipped": 0,
+                "write_gateway_written": 0,
+                "write_gateway_skipped": 4,
                 "write_gateway_rejected": 0,
-                "write_gateway_record_count": 4,
+                "write_gateway_record_count": 0,
                 "llm_call_count": 0,
                 "llm_prompt_tokens_total": 0,
                 "llm_completion_tokens_total": 0,
@@ -820,6 +830,8 @@
                 "consolidation_promoted_count": 0,
                 "consolidation_cleared_count": 0,
                 "consolidation_gated_count": 0,
+                "consolidation_unresolved_tension_count": 0,
+                "consolidation_vow_count": 0,
                 "consecutive_failure_count": 0,
                 "circuit_breaker_paused": false,
                 "failure_pause_seconds": 0.0
@@ -828,7 +840,7 @@
           ]
         },
         "dashboard_payload": {
-          "generated_at": "2026-03-09T05:08:21Z",
+          "generated_at": "2026-03-11T23:08:20Z",
           "overall_ok": true,
           "inputs": {
             "journal_path": "memory/self_journal.jsonl",
@@ -838,30 +850,30 @@
             "max_points": 120
           },
           "metrics": {
-            "journal_entry_count": 3708,
+            "journal_entry_count": 4837,
             "journal_invalid_json_line_count": 0,
-            "wakeup_cycle_count": 2,
+            "wakeup_cycle_count": 11,
             "wakeup_invalid_json_line_count": 0,
             "schedule_cycle_count": 0,
             "schedule_invalid_json_line_count": 0,
             "schedule_state_invalid_json_count": 0,
             "journal_friction_point_count": 100,
             "journal_lyapunov_point_count": 100,
-            "wakeup_avg_friction_point_count": 2,
-            "wakeup_max_friction_point_count": 2,
-            "wakeup_max_lyapunov_point_count": 2,
-            "wakeup_collision_success_rate_point_count": 2,
-            "wakeup_write_gateway_written_point_count": 2,
-            "wakeup_write_gateway_skipped_point_count": 2,
-            "wakeup_write_gateway_rejected_point_count": 2,
-            "wakeup_llm_call_count_point_count": 2,
-            "wakeup_llm_prompt_tokens_point_count": 2,
-            "wakeup_llm_completion_tokens_point_count": 2,
-            "wakeup_llm_total_tokens_point_count": 2,
-            "wakeup_llm_preflight_latency_point_count": 1,
-            "wakeup_llm_selection_latency_point_count": 1,
-            "wakeup_llm_probe_latency_point_count": 1,
-            "wakeup_llm_preflight_timeout_count_point_count": 2,
+            "wakeup_avg_friction_point_count": 11,
+            "wakeup_max_friction_point_count": 11,
+            "wakeup_max_lyapunov_point_count": 11,
+            "wakeup_collision_success_rate_point_count": 11,
+            "wakeup_write_gateway_written_point_count": 11,
+            "wakeup_write_gateway_skipped_point_count": 11,
+            "wakeup_write_gateway_rejected_point_count": 11,
+            "wakeup_llm_call_count_point_count": 11,
+            "wakeup_llm_prompt_tokens_point_count": 11,
+            "wakeup_llm_completion_tokens_point_count": 11,
+            "wakeup_llm_total_tokens_point_count": 11,
+            "wakeup_llm_preflight_latency_point_count": 4,
+            "wakeup_llm_selection_latency_point_count": 4,
+            "wakeup_llm_probe_latency_point_count": 2,
+            "wakeup_llm_preflight_timeout_count_point_count": 11,
             "schedule_governance_cooldown_applied_point_count": 0,
             "schedule_governance_cooldown_deferred_point_count": 0,
             "schedule_llm_backoff_requested_point_count": 0,
@@ -887,7 +899,7 @@
               "convergence_events": 0
             },
             "wakeup_avg_friction": {
-              "point_count": 2,
+              "point_count": 11,
               "latest": 0.3244,
               "min": 0.3244,
               "max": 0.3244,
@@ -896,7 +908,7 @@
               "convergence_events": 0
             },
             "wakeup_max_friction": {
-              "point_count": 2,
+              "point_count": 11,
               "latest": 0.3436,
               "min": 0.3436,
               "max": 0.3436,
@@ -905,7 +917,7 @@
               "convergence_events": 0
             },
             "wakeup_max_lyapunov": {
-              "point_count": 2,
+              "point_count": 11,
               "latest": 0.2499,
               "min": 0.2499,
               "max": 0.2499,
@@ -914,34 +926,34 @@
               "convergence_events": 0
             },
             "wakeup_collision_success_rate": {
-              "point_count": 2,
-              "latest": 0.2667,
-              "min": 0.2667,
-              "max": 0.3077,
-              "average": 0.2872,
-              "trend": "falling",
+              "point_count": 11,
+              "latest": 0.0909,
+              "min": 0.0909,
+              "max": 0.129,
+              "average": 0.1079,
+              "trend": "stable",
               "convergence_events": 0
             },
             "wakeup_write_gateway_written": {
-              "point_count": 2,
-              "latest": 4.0,
-              "min": 4.0,
+              "point_count": 11,
+              "latest": 0.0,
+              "min": 0.0,
               "max": 4.0,
-              "average": 4.0,
+              "average": 2.1818,
               "trend": "stable",
               "convergence_events": 0
             },
             "wakeup_write_gateway_skipped": {
-              "point_count": 2,
-              "latest": 0.0,
+              "point_count": 11,
+              "latest": 4.0,
               "min": 0.0,
-              "max": 0.0,
-              "average": 0.0,
+              "max": 4.0,
+              "average": 1.8182,
               "trend": "stable",
               "convergence_events": 0
             },
             "wakeup_write_gateway_rejected": {
-              "point_count": 2,
+              "point_count": 11,
               "latest": 0.0,
               "min": 0.0,
               "max": 0.0,
@@ -950,7 +962,7 @@
               "convergence_events": 0
             },
             "wakeup_llm_prompt_tokens": {
-              "point_count": 2,
+              "point_count": 11,
               "latest": 0.0,
               "min": 0.0,
               "max": 0.0,
@@ -959,7 +971,7 @@
               "convergence_events": 0
             },
             "wakeup_llm_completion_tokens": {
-              "point_count": 2,
+              "point_count": 11,
               "latest": 0.0,
               "min": 0.0,
               "max": 0.0,
@@ -968,7 +980,7 @@
               "convergence_events": 0
             },
             "wakeup_llm_total_tokens": {
-              "point_count": 2,
+              "point_count": 11,
               "latest": 0.0,
               "min": 0.0,
               "max": 0.0,
@@ -977,39 +989,39 @@
               "convergence_events": 0
             },
             "wakeup_llm_preflight_latency": {
-              "point_count": 1,
-              "latest": 2013.0,
-              "min": 2013.0,
-              "max": 2013.0,
-              "average": 2013.0,
-              "trend": "insufficient",
+              "point_count": 4,
+              "latest": 2001.0,
+              "min": 1004.0,
+              "max": 2001.0,
+              "average": 1502.5,
+              "trend": "rising",
               "convergence_events": 0
             },
             "wakeup_llm_selection_latency": {
-              "point_count": 1,
-              "latest": 765.0,
-              "min": 765.0,
-              "max": 765.0,
-              "average": 765.0,
-              "trend": "insufficient",
+              "point_count": 4,
+              "latest": 517.0,
+              "min": 516.0,
+              "max": 1004.0,
+              "average": 760.25,
+              "trend": "falling",
               "convergence_events": 0
             },
             "wakeup_llm_probe_latency": {
-              "point_count": 1,
-              "latest": 1248.0,
-              "min": 1248.0,
-              "max": 1248.0,
-              "average": 1248.0,
-              "trend": "insufficient",
+              "point_count": 2,
+              "latest": 1484.0,
+              "min": 1484.0,
+              "max": 1485.0,
+              "average": 1484.5,
+              "trend": "stable",
               "convergence_events": 0
             },
             "wakeup_llm_preflight_timeout_count": {
-              "point_count": 2,
+              "point_count": 11,
               "latest": 0.0,
               "min": 0.0,
               "max": 1.0,
-              "average": 0.5,
-              "trend": "falling",
+              "average": 0.1818,
+              "trend": "stable",
               "convergence_events": 0
             },
             "schedule_governance_cooldown_applied": {
@@ -1048,13 +1060,13 @@
               "trend": "empty",
               "convergence_events": 0
             },
-            "wakeup_council_total": 8,
+            "wakeup_council_total": 44,
             "wakeup_frozen_total": 0,
-            "wakeup_write_gateway_written_total": 8,
-            "wakeup_write_gateway_skipped_total": 0,
+            "wakeup_write_gateway_written_total": 24,
+            "wakeup_write_gateway_skipped_total": 20,
             "wakeup_write_gateway_rejected_total": 0,
             "wakeup_llm_call_total": 0,
-            "wakeup_llm_preflight_timeout_total": 1,
+            "wakeup_llm_preflight_timeout_total": 2,
             "schedule_governance_cooldown_applied_total": 0,
             "schedule_governance_cooldown_deferred_total": 0,
             "schedule_llm_backoff_requested_total": 0,
@@ -2467,14 +2479,77 @@
             ],
             "wakeup_avg_friction": [
               {
-                "timestamp": "2026-03-08T23:08:20Z",
+                "timestamp": "2026-03-10T17:08:29Z",
                 "value": 0.3244,
                 "source": "wakeup",
                 "phase": "cycle",
                 "label": "avg_friction_score"
               },
               {
-                "timestamp": "2026-03-09T05:08:21Z",
+                "timestamp": "2026-03-10T20:08:20Z",
+                "value": 0.3244,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "avg_friction_score"
+              },
+              {
+                "timestamp": "2026-03-10T23:08:13Z",
+                "value": 0.3244,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "avg_friction_score"
+              },
+              {
+                "timestamp": "2026-03-11T02:08:20Z",
+                "value": 0.3244,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "avg_friction_score"
+              },
+              {
+                "timestamp": "2026-03-11T05:08:19Z",
+                "value": 0.3244,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "avg_friction_score"
+              },
+              {
+                "timestamp": "2026-03-11T08:08:13Z",
+                "value": 0.3244,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "avg_friction_score"
+              },
+              {
+                "timestamp": "2026-03-11T11:08:24Z",
+                "value": 0.3244,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "avg_friction_score"
+              },
+              {
+                "timestamp": "2026-03-11T14:08:25Z",
+                "value": 0.3244,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "avg_friction_score"
+              },
+              {
+                "timestamp": "2026-03-11T17:08:14Z",
+                "value": 0.3244,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "avg_friction_score"
+              },
+              {
+                "timestamp": "2026-03-11T20:08:35Z",
+                "value": 0.3244,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "avg_friction_score"
+              },
+              {
+                "timestamp": "2026-03-11T23:08:19Z",
                 "value": 0.3244,
                 "source": "wakeup",
                 "phase": "cycle",
@@ -2483,14 +2558,77 @@
             ],
             "wakeup_max_friction": [
               {
-                "timestamp": "2026-03-08T23:08:20Z",
+                "timestamp": "2026-03-10T17:08:29Z",
                 "value": 0.3436,
                 "source": "wakeup",
                 "phase": "cycle",
                 "label": "max_friction_score"
               },
               {
-                "timestamp": "2026-03-09T05:08:21Z",
+                "timestamp": "2026-03-10T20:08:20Z",
+                "value": 0.3436,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "max_friction_score"
+              },
+              {
+                "timestamp": "2026-03-10T23:08:13Z",
+                "value": 0.3436,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "max_friction_score"
+              },
+              {
+                "timestamp": "2026-03-11T02:08:20Z",
+                "value": 0.3436,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "max_friction_score"
+              },
+              {
+                "timestamp": "2026-03-11T05:08:19Z",
+                "value": 0.3436,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "max_friction_score"
+              },
+              {
+                "timestamp": "2026-03-11T08:08:13Z",
+                "value": 0.3436,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "max_friction_score"
+              },
+              {
+                "timestamp": "2026-03-11T11:08:24Z",
+                "value": 0.3436,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "max_friction_score"
+              },
+              {
+                "timestamp": "2026-03-11T14:08:25Z",
+                "value": 0.3436,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "max_friction_score"
+              },
+              {
+                "timestamp": "2026-03-11T17:08:14Z",
+                "value": 0.3436,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "max_friction_score"
+              },
+              {
+                "timestamp": "2026-03-11T20:08:35Z",
+                "value": 0.3436,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "max_friction_score"
+              },
+              {
+                "timestamp": "2026-03-11T23:08:19Z",
                 "value": 0.3436,
                 "source": "wakeup",
                 "phase": "cycle",
@@ -2499,14 +2637,77 @@
             ],
             "wakeup_max_lyapunov": [
               {
-                "timestamp": "2026-03-08T23:08:20Z",
+                "timestamp": "2026-03-10T17:08:29Z",
                 "value": 0.2499,
                 "source": "wakeup",
                 "phase": "cycle",
                 "label": "max_lyapunov_proxy"
               },
               {
-                "timestamp": "2026-03-09T05:08:21Z",
+                "timestamp": "2026-03-10T20:08:20Z",
+                "value": 0.2499,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "max_lyapunov_proxy"
+              },
+              {
+                "timestamp": "2026-03-10T23:08:13Z",
+                "value": 0.2499,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "max_lyapunov_proxy"
+              },
+              {
+                "timestamp": "2026-03-11T02:08:20Z",
+                "value": 0.2499,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "max_lyapunov_proxy"
+              },
+              {
+                "timestamp": "2026-03-11T05:08:19Z",
+                "value": 0.2499,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "max_lyapunov_proxy"
+              },
+              {
+                "timestamp": "2026-03-11T08:08:13Z",
+                "value": 0.2499,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "max_lyapunov_proxy"
+              },
+              {
+                "timestamp": "2026-03-11T11:08:24Z",
+                "value": 0.2499,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "max_lyapunov_proxy"
+              },
+              {
+                "timestamp": "2026-03-11T14:08:25Z",
+                "value": 0.2499,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "max_lyapunov_proxy"
+              },
+              {
+                "timestamp": "2026-03-11T17:08:14Z",
+                "value": 0.2499,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "max_lyapunov_proxy"
+              },
+              {
+                "timestamp": "2026-03-11T20:08:35Z",
+                "value": 0.2499,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "max_lyapunov_proxy"
+              },
+              {
+                "timestamp": "2026-03-11T23:08:19Z",
                 "value": 0.2499,
                 "source": "wakeup",
                 "phase": "cycle",
@@ -2515,15 +2716,78 @@
             ],
             "wakeup_collision_success_rate": [
               {
-                "timestamp": "2026-03-08T23:08:20Z",
-                "value": 0.3077,
+                "timestamp": "2026-03-10T17:08:29Z",
+                "value": 0.129,
                 "source": "wakeup",
                 "phase": "cycle",
                 "label": "collision_success_rate"
               },
               {
-                "timestamp": "2026-03-09T05:08:21Z",
-                "value": 0.2667,
+                "timestamp": "2026-03-10T20:08:20Z",
+                "value": 0.125,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "collision_success_rate"
+              },
+              {
+                "timestamp": "2026-03-10T23:08:13Z",
+                "value": 0.1212,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "collision_success_rate"
+              },
+              {
+                "timestamp": "2026-03-11T02:08:20Z",
+                "value": 0.1143,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "collision_success_rate"
+              },
+              {
+                "timestamp": "2026-03-11T05:08:19Z",
+                "value": 0.1081,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "collision_success_rate"
+              },
+              {
+                "timestamp": "2026-03-11T08:08:13Z",
+                "value": 0.1053,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "collision_success_rate"
+              },
+              {
+                "timestamp": "2026-03-11T11:08:24Z",
+                "value": 0.1026,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "collision_success_rate"
+              },
+              {
+                "timestamp": "2026-03-11T14:08:25Z",
+                "value": 0.1,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "collision_success_rate"
+              },
+              {
+                "timestamp": "2026-03-11T17:08:14Z",
+                "value": 0.0976,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "collision_success_rate"
+              },
+              {
+                "timestamp": "2026-03-11T20:08:35Z",
+                "value": 0.093,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "collision_success_rate"
+              },
+              {
+                "timestamp": "2026-03-11T23:08:19Z",
+                "value": 0.0909,
                 "source": "wakeup",
                 "phase": "cycle",
                 "label": "collision_success_rate"
@@ -2531,14 +2795,77 @@
             ],
             "wakeup_council_count": [
               {
-                "timestamp": "2026-03-08T23:08:20Z",
+                "timestamp": "2026-03-10T17:08:29Z",
                 "value": 4.0,
                 "source": "wakeup",
                 "phase": "cycle",
                 "label": "council_count"
               },
               {
-                "timestamp": "2026-03-09T05:08:21Z",
+                "timestamp": "2026-03-10T20:08:20Z",
+                "value": 4.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "council_count"
+              },
+              {
+                "timestamp": "2026-03-10T23:08:13Z",
+                "value": 4.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "council_count"
+              },
+              {
+                "timestamp": "2026-03-11T02:08:20Z",
+                "value": 4.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "council_count"
+              },
+              {
+                "timestamp": "2026-03-11T05:08:19Z",
+                "value": 4.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "council_count"
+              },
+              {
+                "timestamp": "2026-03-11T08:08:13Z",
+                "value": 4.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "council_count"
+              },
+              {
+                "timestamp": "2026-03-11T11:08:24Z",
+                "value": 4.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "council_count"
+              },
+              {
+                "timestamp": "2026-03-11T14:08:25Z",
+                "value": 4.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "council_count"
+              },
+              {
+                "timestamp": "2026-03-11T17:08:14Z",
+                "value": 4.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "council_count"
+              },
+              {
+                "timestamp": "2026-03-11T20:08:35Z",
+                "value": 4.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "council_count"
+              },
+              {
+                "timestamp": "2026-03-11T23:08:19Z",
                 "value": 4.0,
                 "source": "wakeup",
                 "phase": "cycle",
@@ -2547,14 +2874,77 @@
             ],
             "wakeup_frozen_count": [
               {
-                "timestamp": "2026-03-08T23:08:20Z",
+                "timestamp": "2026-03-10T17:08:29Z",
                 "value": 0.0,
                 "source": "wakeup",
                 "phase": "cycle",
                 "label": "frozen_count"
               },
               {
-                "timestamp": "2026-03-09T05:08:21Z",
+                "timestamp": "2026-03-10T20:08:20Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "frozen_count"
+              },
+              {
+                "timestamp": "2026-03-10T23:08:13Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "frozen_count"
+              },
+              {
+                "timestamp": "2026-03-11T02:08:20Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "frozen_count"
+              },
+              {
+                "timestamp": "2026-03-11T05:08:19Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "frozen_count"
+              },
+              {
+                "timestamp": "2026-03-11T08:08:13Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "frozen_count"
+              },
+              {
+                "timestamp": "2026-03-11T11:08:24Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "frozen_count"
+              },
+              {
+                "timestamp": "2026-03-11T14:08:25Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "frozen_count"
+              },
+              {
+                "timestamp": "2026-03-11T17:08:14Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "frozen_count"
+              },
+              {
+                "timestamp": "2026-03-11T20:08:35Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "frozen_count"
+              },
+              {
+                "timestamp": "2026-03-11T23:08:19Z",
                 "value": 0.0,
                 "source": "wakeup",
                 "phase": "cycle",
@@ -2563,15 +2953,78 @@
             ],
             "wakeup_write_gateway_written": [
               {
-                "timestamp": "2026-03-08T23:08:20Z",
+                "timestamp": "2026-03-10T17:08:29Z",
                 "value": 4.0,
                 "source": "wakeup",
                 "phase": "cycle",
                 "label": "write_gateway_written"
               },
               {
-                "timestamp": "2026-03-09T05:08:21Z",
+                "timestamp": "2026-03-10T20:08:20Z",
                 "value": 4.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "write_gateway_written"
+              },
+              {
+                "timestamp": "2026-03-10T23:08:13Z",
+                "value": 4.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "write_gateway_written"
+              },
+              {
+                "timestamp": "2026-03-11T02:08:20Z",
+                "value": 4.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "write_gateway_written"
+              },
+              {
+                "timestamp": "2026-03-11T05:08:19Z",
+                "value": 4.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "write_gateway_written"
+              },
+              {
+                "timestamp": "2026-03-11T08:08:13Z",
+                "value": 4.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "write_gateway_written"
+              },
+              {
+                "timestamp": "2026-03-11T11:08:24Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "write_gateway_written"
+              },
+              {
+                "timestamp": "2026-03-11T14:08:25Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "write_gateway_written"
+              },
+              {
+                "timestamp": "2026-03-11T17:08:14Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "write_gateway_written"
+              },
+              {
+                "timestamp": "2026-03-11T20:08:35Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "write_gateway_written"
+              },
+              {
+                "timestamp": "2026-03-11T23:08:19Z",
+                "value": 0.0,
                 "source": "wakeup",
                 "phase": "cycle",
                 "label": "write_gateway_written"
@@ -2579,15 +3032,78 @@
             ],
             "wakeup_write_gateway_skipped": [
               {
-                "timestamp": "2026-03-08T23:08:20Z",
+                "timestamp": "2026-03-10T17:08:29Z",
                 "value": 0.0,
                 "source": "wakeup",
                 "phase": "cycle",
                 "label": "write_gateway_skipped"
               },
               {
-                "timestamp": "2026-03-09T05:08:21Z",
+                "timestamp": "2026-03-10T20:08:20Z",
                 "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "write_gateway_skipped"
+              },
+              {
+                "timestamp": "2026-03-10T23:08:13Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "write_gateway_skipped"
+              },
+              {
+                "timestamp": "2026-03-11T02:08:20Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "write_gateway_skipped"
+              },
+              {
+                "timestamp": "2026-03-11T05:08:19Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "write_gateway_skipped"
+              },
+              {
+                "timestamp": "2026-03-11T08:08:13Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "write_gateway_skipped"
+              },
+              {
+                "timestamp": "2026-03-11T11:08:24Z",
+                "value": 4.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "write_gateway_skipped"
+              },
+              {
+                "timestamp": "2026-03-11T14:08:25Z",
+                "value": 4.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "write_gateway_skipped"
+              },
+              {
+                "timestamp": "2026-03-11T17:08:14Z",
+                "value": 4.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "write_gateway_skipped"
+              },
+              {
+                "timestamp": "2026-03-11T20:08:35Z",
+                "value": 4.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "write_gateway_skipped"
+              },
+              {
+                "timestamp": "2026-03-11T23:08:19Z",
+                "value": 4.0,
                 "source": "wakeup",
                 "phase": "cycle",
                 "label": "write_gateway_skipped"
@@ -2595,14 +3111,77 @@
             ],
             "wakeup_write_gateway_rejected": [
               {
-                "timestamp": "2026-03-08T23:08:20Z",
+                "timestamp": "2026-03-10T17:08:29Z",
                 "value": 0.0,
                 "source": "wakeup",
                 "phase": "cycle",
                 "label": "write_gateway_rejected"
               },
               {
-                "timestamp": "2026-03-09T05:08:21Z",
+                "timestamp": "2026-03-10T20:08:20Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "write_gateway_rejected"
+              },
+              {
+                "timestamp": "2026-03-10T23:08:13Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "write_gateway_rejected"
+              },
+              {
+                "timestamp": "2026-03-11T02:08:20Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "write_gateway_rejected"
+              },
+              {
+                "timestamp": "2026-03-11T05:08:19Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "write_gateway_rejected"
+              },
+              {
+                "timestamp": "2026-03-11T08:08:13Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "write_gateway_rejected"
+              },
+              {
+                "timestamp": "2026-03-11T11:08:24Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "write_gateway_rejected"
+              },
+              {
+                "timestamp": "2026-03-11T14:08:25Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "write_gateway_rejected"
+              },
+              {
+                "timestamp": "2026-03-11T17:08:14Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "write_gateway_rejected"
+              },
+              {
+                "timestamp": "2026-03-11T20:08:35Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "write_gateway_rejected"
+              },
+              {
+                "timestamp": "2026-03-11T23:08:19Z",
                 "value": 0.0,
                 "source": "wakeup",
                 "phase": "cycle",
@@ -2611,14 +3190,77 @@
             ],
             "wakeup_llm_call_count": [
               {
-                "timestamp": "2026-03-08T23:08:20Z",
+                "timestamp": "2026-03-10T17:08:29Z",
                 "value": 0.0,
                 "source": "wakeup",
                 "phase": "cycle",
                 "label": "llm_call_count"
               },
               {
-                "timestamp": "2026-03-09T05:08:21Z",
+                "timestamp": "2026-03-10T20:08:20Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_call_count"
+              },
+              {
+                "timestamp": "2026-03-10T23:08:13Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_call_count"
+              },
+              {
+                "timestamp": "2026-03-11T02:08:20Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_call_count"
+              },
+              {
+                "timestamp": "2026-03-11T05:08:19Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_call_count"
+              },
+              {
+                "timestamp": "2026-03-11T08:08:13Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_call_count"
+              },
+              {
+                "timestamp": "2026-03-11T11:08:24Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_call_count"
+              },
+              {
+                "timestamp": "2026-03-11T14:08:25Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_call_count"
+              },
+              {
+                "timestamp": "2026-03-11T17:08:14Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_call_count"
+              },
+              {
+                "timestamp": "2026-03-11T20:08:35Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_call_count"
+              },
+              {
+                "timestamp": "2026-03-11T23:08:19Z",
                 "value": 0.0,
                 "source": "wakeup",
                 "phase": "cycle",
@@ -2627,14 +3269,77 @@
             ],
             "wakeup_llm_prompt_tokens": [
               {
-                "timestamp": "2026-03-08T23:08:20Z",
+                "timestamp": "2026-03-10T17:08:29Z",
                 "value": 0.0,
                 "source": "wakeup",
                 "phase": "cycle",
                 "label": "llm_prompt_tokens_total"
               },
               {
-                "timestamp": "2026-03-09T05:08:21Z",
+                "timestamp": "2026-03-10T20:08:20Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_prompt_tokens_total"
+              },
+              {
+                "timestamp": "2026-03-10T23:08:13Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_prompt_tokens_total"
+              },
+              {
+                "timestamp": "2026-03-11T02:08:20Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_prompt_tokens_total"
+              },
+              {
+                "timestamp": "2026-03-11T05:08:19Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_prompt_tokens_total"
+              },
+              {
+                "timestamp": "2026-03-11T08:08:13Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_prompt_tokens_total"
+              },
+              {
+                "timestamp": "2026-03-11T11:08:24Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_prompt_tokens_total"
+              },
+              {
+                "timestamp": "2026-03-11T14:08:25Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_prompt_tokens_total"
+              },
+              {
+                "timestamp": "2026-03-11T17:08:14Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_prompt_tokens_total"
+              },
+              {
+                "timestamp": "2026-03-11T20:08:35Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_prompt_tokens_total"
+              },
+              {
+                "timestamp": "2026-03-11T23:08:19Z",
                 "value": 0.0,
                 "source": "wakeup",
                 "phase": "cycle",
@@ -2643,14 +3348,77 @@
             ],
             "wakeup_llm_completion_tokens": [
               {
-                "timestamp": "2026-03-08T23:08:20Z",
+                "timestamp": "2026-03-10T17:08:29Z",
                 "value": 0.0,
                 "source": "wakeup",
                 "phase": "cycle",
                 "label": "llm_completion_tokens_total"
               },
               {
-                "timestamp": "2026-03-09T05:08:21Z",
+                "timestamp": "2026-03-10T20:08:20Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_completion_tokens_total"
+              },
+              {
+                "timestamp": "2026-03-10T23:08:13Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_completion_tokens_total"
+              },
+              {
+                "timestamp": "2026-03-11T02:08:20Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_completion_tokens_total"
+              },
+              {
+                "timestamp": "2026-03-11T05:08:19Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_completion_tokens_total"
+              },
+              {
+                "timestamp": "2026-03-11T08:08:13Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_completion_tokens_total"
+              },
+              {
+                "timestamp": "2026-03-11T11:08:24Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_completion_tokens_total"
+              },
+              {
+                "timestamp": "2026-03-11T14:08:25Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_completion_tokens_total"
+              },
+              {
+                "timestamp": "2026-03-11T17:08:14Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_completion_tokens_total"
+              },
+              {
+                "timestamp": "2026-03-11T20:08:35Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_completion_tokens_total"
+              },
+              {
+                "timestamp": "2026-03-11T23:08:19Z",
                 "value": 0.0,
                 "source": "wakeup",
                 "phase": "cycle",
@@ -2659,14 +3427,77 @@
             ],
             "wakeup_llm_total_tokens": [
               {
-                "timestamp": "2026-03-08T23:08:20Z",
+                "timestamp": "2026-03-10T17:08:29Z",
                 "value": 0.0,
                 "source": "wakeup",
                 "phase": "cycle",
                 "label": "llm_total_tokens"
               },
               {
-                "timestamp": "2026-03-09T05:08:21Z",
+                "timestamp": "2026-03-10T20:08:20Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_total_tokens"
+              },
+              {
+                "timestamp": "2026-03-10T23:08:13Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_total_tokens"
+              },
+              {
+                "timestamp": "2026-03-11T02:08:20Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_total_tokens"
+              },
+              {
+                "timestamp": "2026-03-11T05:08:19Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_total_tokens"
+              },
+              {
+                "timestamp": "2026-03-11T08:08:13Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_total_tokens"
+              },
+              {
+                "timestamp": "2026-03-11T11:08:24Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_total_tokens"
+              },
+              {
+                "timestamp": "2026-03-11T14:08:25Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_total_tokens"
+              },
+              {
+                "timestamp": "2026-03-11T17:08:14Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_total_tokens"
+              },
+              {
+                "timestamp": "2026-03-11T20:08:35Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_total_tokens"
+              },
+              {
+                "timestamp": "2026-03-11T23:08:19Z",
                 "value": 0.0,
                 "source": "wakeup",
                 "phase": "cycle",
@@ -2675,8 +3506,29 @@
             ],
             "wakeup_llm_preflight_latency": [
               {
-                "timestamp": "2026-03-08T23:08:20Z",
-                "value": 2013.0,
+                "timestamp": "2026-03-10T17:08:29Z",
+                "value": 1004.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_preflight_latency_ms"
+              },
+              {
+                "timestamp": "2026-03-11T02:08:20Z",
+                "value": 1004.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_preflight_latency_ms"
+              },
+              {
+                "timestamp": "2026-03-11T11:08:24Z",
+                "value": 2001.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_preflight_latency_ms"
+              },
+              {
+                "timestamp": "2026-03-11T20:08:35Z",
+                "value": 2001.0,
                 "source": "wakeup",
                 "phase": "cycle",
                 "label": "llm_preflight_latency_ms"
@@ -2684,8 +3536,29 @@
             ],
             "wakeup_llm_selection_latency": [
               {
-                "timestamp": "2026-03-08T23:08:20Z",
-                "value": 765.0,
+                "timestamp": "2026-03-10T17:08:29Z",
+                "value": 1004.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_preflight_selection_latency_ms"
+              },
+              {
+                "timestamp": "2026-03-11T02:08:20Z",
+                "value": 1004.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_preflight_selection_latency_ms"
+              },
+              {
+                "timestamp": "2026-03-11T11:08:24Z",
+                "value": 516.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_preflight_selection_latency_ms"
+              },
+              {
+                "timestamp": "2026-03-11T20:08:35Z",
+                "value": 517.0,
                 "source": "wakeup",
                 "phase": "cycle",
                 "label": "llm_preflight_selection_latency_ms"
@@ -2693,8 +3566,15 @@
             ],
             "wakeup_llm_probe_latency": [
               {
-                "timestamp": "2026-03-08T23:08:20Z",
-                "value": 1248.0,
+                "timestamp": "2026-03-11T11:08:24Z",
+                "value": 1485.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_preflight_probe_latency_ms"
+              },
+              {
+                "timestamp": "2026-03-11T20:08:35Z",
+                "value": 1484.0,
                 "source": "wakeup",
                 "phase": "cycle",
                 "label": "llm_preflight_probe_latency_ms"
@@ -2702,14 +3582,77 @@
             ],
             "wakeup_llm_preflight_timeout_count": [
               {
-                "timestamp": "2026-03-08T23:08:20Z",
+                "timestamp": "2026-03-10T17:08:29Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_preflight_timeout_count"
+              },
+              {
+                "timestamp": "2026-03-10T20:08:20Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_preflight_timeout_count"
+              },
+              {
+                "timestamp": "2026-03-10T23:08:13Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_preflight_timeout_count"
+              },
+              {
+                "timestamp": "2026-03-11T02:08:20Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_preflight_timeout_count"
+              },
+              {
+                "timestamp": "2026-03-11T05:08:19Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_preflight_timeout_count"
+              },
+              {
+                "timestamp": "2026-03-11T08:08:13Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_preflight_timeout_count"
+              },
+              {
+                "timestamp": "2026-03-11T11:08:24Z",
                 "value": 1.0,
                 "source": "wakeup",
                 "phase": "cycle",
                 "label": "llm_preflight_timeout_count"
               },
               {
-                "timestamp": "2026-03-09T05:08:21Z",
+                "timestamp": "2026-03-11T14:08:25Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_preflight_timeout_count"
+              },
+              {
+                "timestamp": "2026-03-11T17:08:14Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_preflight_timeout_count"
+              },
+              {
+                "timestamp": "2026-03-11T20:08:35Z",
+                "value": 1.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_preflight_timeout_count"
+              },
+              {
+                "timestamp": "2026-03-11T23:08:19Z",
                 "value": 0.0,
                 "source": "wakeup",
                 "phase": "cycle",
@@ -2725,11 +3668,11 @@
             {
               "cycle": 1,
               "status": "ok",
-              "timestamp": "2026-03-08T23:08:20Z",
+              "timestamp": "2026-03-11T02:08:20Z",
               "avg_friction_score": 0.3244,
               "max_friction_score": 0.3436,
               "max_lyapunov_proxy": 0.2499,
-              "collision_success_rate": 0.3077,
+              "collision_success_rate": 0.1143,
               "council_count": 4,
               "frozen_count": 0,
               "write_gateway_written": 4,
@@ -2741,9 +3684,96 @@
               "llm_total_tokens": 0,
               "llm_backends": [],
               "llm_models": [],
-              "llm_preflight_latency_ms": 2013,
-              "llm_preflight_selection_latency_ms": 765,
-              "llm_preflight_probe_latency_ms": 1248,
+              "llm_preflight_latency_ms": 1004,
+              "llm_preflight_selection_latency_ms": 1004,
+              "llm_preflight_probe_latency_ms": null,
+              "llm_preflight_timeout_count": 0,
+              "llm_preflight_reason": "no_client",
+              "consolidation_ran": false,
+              "consolidation_promoted_count": 0,
+              "failure_pause_seconds": 0,
+              "circuit_breaker_paused": false
+            },
+            {
+              "cycle": 1,
+              "status": "ok",
+              "timestamp": "2026-03-11T05:08:19Z",
+              "avg_friction_score": 0.3244,
+              "max_friction_score": 0.3436,
+              "max_lyapunov_proxy": 0.2499,
+              "collision_success_rate": 0.1081,
+              "council_count": 4,
+              "frozen_count": 0,
+              "write_gateway_written": 4,
+              "write_gateway_skipped": 0,
+              "write_gateway_rejected": 0,
+              "llm_call_count": 0,
+              "llm_prompt_tokens_total": 0,
+              "llm_completion_tokens_total": 0,
+              "llm_total_tokens": 0,
+              "llm_backends": [],
+              "llm_models": [],
+              "llm_preflight_latency_ms": null,
+              "llm_preflight_selection_latency_ms": null,
+              "llm_preflight_probe_latency_ms": null,
+              "llm_preflight_timeout_count": 0,
+              "llm_preflight_reason": "reflection_disabled",
+              "consolidation_ran": false,
+              "consolidation_promoted_count": 0,
+              "failure_pause_seconds": 0,
+              "circuit_breaker_paused": false
+            },
+            {
+              "cycle": 1,
+              "status": "ok",
+              "timestamp": "2026-03-11T08:08:13Z",
+              "avg_friction_score": 0.3244,
+              "max_friction_score": 0.3436,
+              "max_lyapunov_proxy": 0.2499,
+              "collision_success_rate": 0.1053,
+              "council_count": 4,
+              "frozen_count": 0,
+              "write_gateway_written": 4,
+              "write_gateway_skipped": 0,
+              "write_gateway_rejected": 0,
+              "llm_call_count": 0,
+              "llm_prompt_tokens_total": 0,
+              "llm_completion_tokens_total": 0,
+              "llm_total_tokens": 0,
+              "llm_backends": [],
+              "llm_models": [],
+              "llm_preflight_latency_ms": null,
+              "llm_preflight_selection_latency_ms": null,
+              "llm_preflight_probe_latency_ms": null,
+              "llm_preflight_timeout_count": 0,
+              "llm_preflight_reason": "reflection_disabled",
+              "consolidation_ran": false,
+              "consolidation_promoted_count": 0,
+              "failure_pause_seconds": 0,
+              "circuit_breaker_paused": false
+            },
+            {
+              "cycle": 1,
+              "status": "ok",
+              "timestamp": "2026-03-11T11:08:24Z",
+              "avg_friction_score": 0.3244,
+              "max_friction_score": 0.3436,
+              "max_lyapunov_proxy": 0.2499,
+              "collision_success_rate": 0.1026,
+              "council_count": 4,
+              "frozen_count": 0,
+              "write_gateway_written": 0,
+              "write_gateway_skipped": 4,
+              "write_gateway_rejected": 0,
+              "llm_call_count": 0,
+              "llm_prompt_tokens_total": 0,
+              "llm_completion_tokens_total": 0,
+              "llm_total_tokens": 0,
+              "llm_backends": [],
+              "llm_models": [],
+              "llm_preflight_latency_ms": 2001,
+              "llm_preflight_selection_latency_ms": 516,
+              "llm_preflight_probe_latency_ms": 1485,
               "llm_preflight_timeout_count": 1,
               "llm_preflight_reason": "timeout",
               "consolidation_ran": false,
@@ -2754,15 +3784,102 @@
             {
               "cycle": 1,
               "status": "ok",
-              "timestamp": "2026-03-09T05:08:21Z",
+              "timestamp": "2026-03-11T14:08:25Z",
               "avg_friction_score": 0.3244,
               "max_friction_score": 0.3436,
               "max_lyapunov_proxy": 0.2499,
-              "collision_success_rate": 0.2667,
+              "collision_success_rate": 0.1,
               "council_count": 4,
               "frozen_count": 0,
-              "write_gateway_written": 4,
-              "write_gateway_skipped": 0,
+              "write_gateway_written": 0,
+              "write_gateway_skipped": 4,
+              "write_gateway_rejected": 0,
+              "llm_call_count": 0,
+              "llm_prompt_tokens_total": 0,
+              "llm_completion_tokens_total": 0,
+              "llm_total_tokens": 0,
+              "llm_backends": [],
+              "llm_models": [],
+              "llm_preflight_latency_ms": null,
+              "llm_preflight_selection_latency_ms": null,
+              "llm_preflight_probe_latency_ms": null,
+              "llm_preflight_timeout_count": 0,
+              "llm_preflight_reason": "reflection_disabled",
+              "consolidation_ran": false,
+              "consolidation_promoted_count": 0,
+              "failure_pause_seconds": 0,
+              "circuit_breaker_paused": false
+            },
+            {
+              "cycle": 1,
+              "status": "ok",
+              "timestamp": "2026-03-11T17:08:14Z",
+              "avg_friction_score": 0.3244,
+              "max_friction_score": 0.3436,
+              "max_lyapunov_proxy": 0.2499,
+              "collision_success_rate": 0.0976,
+              "council_count": 4,
+              "frozen_count": 0,
+              "write_gateway_written": 0,
+              "write_gateway_skipped": 4,
+              "write_gateway_rejected": 0,
+              "llm_call_count": 0,
+              "llm_prompt_tokens_total": 0,
+              "llm_completion_tokens_total": 0,
+              "llm_total_tokens": 0,
+              "llm_backends": [],
+              "llm_models": [],
+              "llm_preflight_latency_ms": null,
+              "llm_preflight_selection_latency_ms": null,
+              "llm_preflight_probe_latency_ms": null,
+              "llm_preflight_timeout_count": 0,
+              "llm_preflight_reason": "reflection_disabled",
+              "consolidation_ran": false,
+              "consolidation_promoted_count": 0,
+              "failure_pause_seconds": 0,
+              "circuit_breaker_paused": false
+            },
+            {
+              "cycle": 1,
+              "status": "ok",
+              "timestamp": "2026-03-11T20:08:35Z",
+              "avg_friction_score": 0.3244,
+              "max_friction_score": 0.3436,
+              "max_lyapunov_proxy": 0.2499,
+              "collision_success_rate": 0.093,
+              "council_count": 4,
+              "frozen_count": 0,
+              "write_gateway_written": 0,
+              "write_gateway_skipped": 4,
+              "write_gateway_rejected": 0,
+              "llm_call_count": 0,
+              "llm_prompt_tokens_total": 0,
+              "llm_completion_tokens_total": 0,
+              "llm_total_tokens": 0,
+              "llm_backends": [],
+              "llm_models": [],
+              "llm_preflight_latency_ms": 2001,
+              "llm_preflight_selection_latency_ms": 517,
+              "llm_preflight_probe_latency_ms": 1484,
+              "llm_preflight_timeout_count": 1,
+              "llm_preflight_reason": "timeout",
+              "consolidation_ran": false,
+              "consolidation_promoted_count": 0,
+              "failure_pause_seconds": 0,
+              "circuit_breaker_paused": false
+            },
+            {
+              "cycle": 1,
+              "status": "ok",
+              "timestamp": "2026-03-11T23:08:19Z",
+              "avg_friction_score": 0.3244,
+              "max_friction_score": 0.3436,
+              "max_lyapunov_proxy": 0.2499,
+              "collision_success_rate": 0.0909,
+              "council_count": 4,
+              "frozen_count": 0,
+              "write_gateway_written": 0,
+              "write_gateway_skipped": 4,
               "write_gateway_rejected": 0,
               "llm_call_count": 0,
               "llm_prompt_tokens_total": 0,
@@ -2798,7 +3915,7 @@
         },
         "overall_ok": true,
         "registry_selection": {
-          "generated_at": "2026-03-09T05:08:11Z",
+          "generated_at": "2026-03-11T23:08:11Z",
           "registry_path": "spec/external_source_registry.yaml",
           "filters": {
             "entry_ids": [],
@@ -2829,7 +3946,7 @@
               "name": "OSV (Open Source Vulnerabilities)",
               "category": "vulnerability-intel",
               "reviewed_at": "2026-02-14",
-              "age_days": 23,
+              "age_days": 26,
               "url_count": 2,
               "urls": [
                 "https://osv.dev/",
@@ -2842,7 +3959,7 @@
               "name": "OpenSSF Scorecard",
               "category": "supply-chain-risk",
               "reviewed_at": "2026-02-14",
-              "age_days": 23,
+              "age_days": 26,
               "url_count": 2,
               "urls": [
                 "https://scorecard.dev/",
@@ -2855,7 +3972,7 @@
               "name": "Sigstore",
               "category": "artifact-signing",
               "reviewed_at": "2026-02-14",
-              "age_days": 23,
+              "age_days": 26,
               "url_count": 2,
               "urls": [
                 "https://sigstore.dev/",
@@ -2868,7 +3985,7 @@
               "name": "The Update Framework",
               "category": "supply-chain-hardening",
               "reviewed_at": "2026-02-14",
-              "age_days": 23,
+              "age_days": 26,
               "url_count": 1,
               "urls": [
                 "https://theupdateframework.io/"
@@ -2880,7 +3997,7 @@
               "name": "NVD",
               "category": "vulnerability-intel",
               "reviewed_at": "2026-02-14",
-              "age_days": 23,
+              "age_days": 26,
               "url_count": 1,
               "urls": [
                 "https://nvd.nist.gov/"
@@ -2900,13 +4017,12 @@
         },
         "llm_policy": {
           "active": true,
-          "mode": "mixed_latency",
-          "backoff_until_cycle": 3,
-          "reason_count": 4,
+          "mode": "probe_latency",
+          "backoff_until_cycle": 12,
+          "reason_count": 3,
           "breach_reasons": [
-            "llm_preflight_latency_ms>1800 (observed=2013)",
-            "llm_selection_latency_ms>700 (observed=765)",
-            "llm_probe_latency_ms>1200 (observed=1248)",
+            "llm_preflight_latency_ms>1800 (observed=2001)",
+            "llm_probe_latency_ms>1200 (observed=1484)",
             "llm_preflight_timeout_count>0 (observed=1)"
           ],
           "action": "disable_reflection"
@@ -2958,13 +4074,12 @@
         "llm_backoff_requested": false,
         "llm_policy": {
           "active": true,
-          "mode": "mixed_latency",
-          "backoff_until_cycle": 3,
-          "reason_count": 4,
+          "mode": "probe_latency",
+          "backoff_until_cycle": 12,
+          "reason_count": 3,
           "breach_reasons": [
-            "llm_preflight_latency_ms>1800 (observed=2013)",
-            "llm_selection_latency_ms>700 (observed=765)",
-            "llm_probe_latency_ms>1200 (observed=1248)",
+            "llm_preflight_latency_ms>1800 (observed=2001)",
+            "llm_probe_latency_ms>1200 (observed=1484)",
             "llm_preflight_timeout_count>0 (observed=1)"
           ],
           "action": "disable_reflection"
@@ -2976,50 +4091,58 @@
   "state": {
     "cursor": 0,
     "category_cursor": 6,
-    "cycles_run": 2,
-    "updated_at": "2026-03-09T05:08:21Z",
+    "cycles_run": 11,
+    "updated_at": "2026-03-11T23:08:20Z",
     "last_entry_ids": [
       "scorecard",
       "sigstore"
     ],
     "entry_states": {
       "nvd": {
-        "last_selected_cycle": 1,
+        "last_selected_cycle": 10,
         "backoff_until_cycle": 0,
         "consecutive_failures": 0,
         "last_outcome": "ok",
-        "updated_at": "2026-03-08T23:08:21Z"
+        "updated_at": "2026-03-11T20:08:35Z"
       },
       "osv": {
-        "last_selected_cycle": 1,
+        "last_selected_cycle": 10,
         "backoff_until_cycle": 0,
         "consecutive_failures": 0,
         "last_outcome": "ok",
-        "updated_at": "2026-03-08T23:08:21Z"
+        "updated_at": "2026-03-11T20:08:35Z"
       },
       "scorecard": {
-        "last_selected_cycle": 2,
+        "last_selected_cycle": 11,
         "backoff_until_cycle": 0,
         "consecutive_failures": 0,
         "last_outcome": "ok",
-        "updated_at": "2026-03-09T05:08:21Z"
+        "updated_at": "2026-03-11T23:08:20Z"
       },
       "sigstore": {
-        "last_selected_cycle": 2,
+        "last_selected_cycle": 11,
         "backoff_until_cycle": 0,
         "consecutive_failures": 0,
         "last_outcome": "ok",
-        "updated_at": "2026-03-09T05:08:21Z"
+        "updated_at": "2026-03-11T23:08:20Z"
+      },
+      "tuf": {
+        "last_selected_cycle": 9,
+        "backoff_until_cycle": 0,
+        "consecutive_failures": 0,
+        "last_outcome": "ok",
+        "updated_at": "2026-03-11T17:08:15Z"
       }
     },
     "category_entry_cursors": {
       "artifact-signing": 0,
+      "supply-chain-hardening": 0,
       "supply-chain-risk": 0,
       "vulnerability-intel": 0
     },
     "category_states": {
       "artifact-signing": {
-        "tension_cooldown_until_cycle": 4,
+        "tension_cooldown_until_cycle": 13,
         "last_budget_status": "breached",
         "last_breach_reasons": [
           "max_lyapunov_proxy>0.2 (observed=0.2499)",
@@ -3032,10 +4155,26 @@
         "last_llm_selection_latency_ms": null,
         "last_llm_probe_latency_ms": null,
         "last_llm_preflight_timeout_count": 0,
-        "updated_at": "2026-03-09T05:08:21Z"
+        "updated_at": "2026-03-11T23:08:20Z"
+      },
+      "supply-chain-hardening": {
+        "tension_cooldown_until_cycle": 11,
+        "last_budget_status": "breached",
+        "last_breach_reasons": [
+          "max_lyapunov_proxy>0.2 (observed=0.2499)",
+          "council_count>1 (observed=4)"
+        ],
+        "last_max_friction_score": 0.3436,
+        "last_max_lyapunov_proxy": 0.2499,
+        "last_council_count": 4,
+        "last_llm_preflight_latency_ms": null,
+        "last_llm_selection_latency_ms": null,
+        "last_llm_probe_latency_ms": null,
+        "last_llm_preflight_timeout_count": 0,
+        "updated_at": "2026-03-11T17:08:15Z"
       },
       "supply-chain-risk": {
-        "tension_cooldown_until_cycle": 4,
+        "tension_cooldown_until_cycle": 13,
         "last_budget_status": "breached",
         "last_breach_reasons": [
           "max_lyapunov_proxy>0.2 (observed=0.2499)",
@@ -3048,10 +4187,10 @@
         "last_llm_selection_latency_ms": null,
         "last_llm_probe_latency_ms": null,
         "last_llm_preflight_timeout_count": 0,
-        "updated_at": "2026-03-09T05:08:21Z"
+        "updated_at": "2026-03-11T23:08:20Z"
       },
       "vulnerability-intel": {
-        "tension_cooldown_until_cycle": 3,
+        "tension_cooldown_until_cycle": 12,
         "last_budget_status": "breached",
         "last_breach_reasons": [
           "max_lyapunov_proxy>0.2 (observed=0.2499)",
@@ -3060,24 +4199,23 @@
         "last_max_friction_score": 0.3436,
         "last_max_lyapunov_proxy": 0.2499,
         "last_council_count": 4,
-        "last_llm_preflight_latency_ms": 2013,
-        "last_llm_selection_latency_ms": 765,
-        "last_llm_probe_latency_ms": 1248,
+        "last_llm_preflight_latency_ms": 2001,
+        "last_llm_selection_latency_ms": 517,
+        "last_llm_probe_latency_ms": 1484,
         "last_llm_preflight_timeout_count": 1,
-        "updated_at": "2026-03-08T23:08:21Z"
+        "updated_at": "2026-03-11T20:08:35Z"
       }
     },
     "llm_backoff": {
-      "backoff_until_cycle": 3,
+      "backoff_until_cycle": 12,
       "last_status": "breached",
-      "last_mode": "mixed_latency",
+      "last_mode": "probe_latency",
       "last_breach_reasons": [
-        "llm_preflight_latency_ms>1800 (observed=2013)",
-        "llm_selection_latency_ms>700 (observed=765)",
-        "llm_probe_latency_ms>1200 (observed=1248)",
+        "llm_preflight_latency_ms>1800 (observed=2001)",
+        "llm_probe_latency_ms>1200 (observed=1484)",
         "llm_preflight_timeout_count>0 (observed=1)"
       ],
-      "updated_at": "2026-03-08T23:08:21Z"
+      "updated_at": "2026-03-11T20:08:35Z"
     }
   }
 }

@@ -63,6 +63,7 @@ class SubjectivityPromotionStatus(str, Enum):
     HUMAN_REVIEWED = "human_reviewed"
     GOVERNANCE_REVIEWED = "governance_reviewed"
     APPROVED = "approved"
+    DEFERRED = "deferred"
     REJECTED = "rejected"
 
 
@@ -513,6 +514,7 @@ class ReviewedPromotionDecision(BaseModel):
     review_actor: SubjectivityReviewActor
     source_subjectivity_layer: SubjectivityLayer
     target_subjectivity_layer: SubjectivityLayer
+    reviewed_record_id: Optional[str] = None
     source_record_ids: List[str] = Field(default_factory=list)
     reviewed_at: str
     review_basis: str
@@ -532,7 +534,14 @@ class ReviewedPromotionDecision(BaseModel):
         normalized = str(normalized or "").strip().lower()
         return normalized
 
-    @field_validator("promotion_source", "reviewed_at", "review_basis", "notes", mode="before")
+    @field_validator(
+        "promotion_source",
+        "reviewed_at",
+        "review_basis",
+        "notes",
+        "reviewed_record_id",
+        mode="before",
+    )
     @classmethod
     def _normalize_required_text(cls, value: object, info: Any) -> Optional[str]:
         normalized = str(value or "").strip()

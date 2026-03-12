@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-09T05:08:22Z",
+  "generated_at": "2026-03-11T23:08:21Z",
   "overall_ok": true,
   "inputs": {
     "journal_path": "memory/self_journal.jsonl",
@@ -9,34 +9,34 @@
     "max_points": 120
   },
   "metrics": {
-    "journal_entry_count": 3708,
+    "journal_entry_count": 4837,
     "journal_invalid_json_line_count": 0,
-    "wakeup_cycle_count": 2,
+    "wakeup_cycle_count": 11,
     "wakeup_invalid_json_line_count": 0,
-    "schedule_cycle_count": 2,
+    "schedule_cycle_count": 11,
     "schedule_invalid_json_line_count": 0,
     "schedule_state_invalid_json_count": 0,
     "journal_friction_point_count": 100,
     "journal_lyapunov_point_count": 100,
-    "wakeup_avg_friction_point_count": 2,
-    "wakeup_max_friction_point_count": 2,
-    "wakeup_max_lyapunov_point_count": 2,
-    "wakeup_collision_success_rate_point_count": 2,
-    "wakeup_write_gateway_written_point_count": 2,
-    "wakeup_write_gateway_skipped_point_count": 2,
-    "wakeup_write_gateway_rejected_point_count": 2,
-    "wakeup_llm_call_count_point_count": 2,
-    "wakeup_llm_prompt_tokens_point_count": 2,
-    "wakeup_llm_completion_tokens_point_count": 2,
-    "wakeup_llm_total_tokens_point_count": 2,
-    "wakeup_llm_preflight_latency_point_count": 1,
-    "wakeup_llm_selection_latency_point_count": 1,
-    "wakeup_llm_probe_latency_point_count": 1,
-    "wakeup_llm_preflight_timeout_count_point_count": 2,
-    "schedule_governance_cooldown_applied_point_count": 2,
-    "schedule_governance_cooldown_deferred_point_count": 2,
-    "schedule_llm_backoff_requested_point_count": 2,
-    "schedule_llm_backoff_active_point_count": 2
+    "wakeup_avg_friction_point_count": 11,
+    "wakeup_max_friction_point_count": 11,
+    "wakeup_max_lyapunov_point_count": 11,
+    "wakeup_collision_success_rate_point_count": 11,
+    "wakeup_write_gateway_written_point_count": 11,
+    "wakeup_write_gateway_skipped_point_count": 11,
+    "wakeup_write_gateway_rejected_point_count": 11,
+    "wakeup_llm_call_count_point_count": 11,
+    "wakeup_llm_prompt_tokens_point_count": 11,
+    "wakeup_llm_completion_tokens_point_count": 11,
+    "wakeup_llm_total_tokens_point_count": 11,
+    "wakeup_llm_preflight_latency_point_count": 4,
+    "wakeup_llm_selection_latency_point_count": 4,
+    "wakeup_llm_probe_latency_point_count": 2,
+    "wakeup_llm_preflight_timeout_count_point_count": 11,
+    "schedule_governance_cooldown_applied_point_count": 11,
+    "schedule_governance_cooldown_deferred_point_count": 11,
+    "schedule_llm_backoff_requested_point_count": 11,
+    "schedule_llm_backoff_active_point_count": 11
   },
   "summary": {
     "journal_friction": {
@@ -58,7 +58,7 @@
       "convergence_events": 0
     },
     "wakeup_avg_friction": {
-      "point_count": 2,
+      "point_count": 11,
       "latest": 0.3244,
       "min": 0.3244,
       "max": 0.3244,
@@ -67,7 +67,7 @@
       "convergence_events": 0
     },
     "wakeup_max_friction": {
-      "point_count": 2,
+      "point_count": 11,
       "latest": 0.3436,
       "min": 0.3436,
       "max": 0.3436,
@@ -76,7 +76,7 @@
       "convergence_events": 0
     },
     "wakeup_max_lyapunov": {
-      "point_count": 2,
+      "point_count": 11,
       "latest": 0.2499,
       "min": 0.2499,
       "max": 0.2499,
@@ -85,34 +85,34 @@
       "convergence_events": 0
     },
     "wakeup_collision_success_rate": {
-      "point_count": 2,
-      "latest": 0.2667,
-      "min": 0.2667,
-      "max": 0.3077,
-      "average": 0.2872,
-      "trend": "falling",
+      "point_count": 11,
+      "latest": 0.0909,
+      "min": 0.0909,
+      "max": 0.129,
+      "average": 0.1079,
+      "trend": "stable",
       "convergence_events": 0
     },
     "wakeup_write_gateway_written": {
-      "point_count": 2,
-      "latest": 4.0,
-      "min": 4.0,
+      "point_count": 11,
+      "latest": 0.0,
+      "min": 0.0,
       "max": 4.0,
-      "average": 4.0,
+      "average": 2.1818,
       "trend": "stable",
       "convergence_events": 0
     },
     "wakeup_write_gateway_skipped": {
-      "point_count": 2,
-      "latest": 0.0,
+      "point_count": 11,
+      "latest": 4.0,
       "min": 0.0,
-      "max": 0.0,
-      "average": 0.0,
+      "max": 4.0,
+      "average": 1.8182,
       "trend": "stable",
       "convergence_events": 0
     },
     "wakeup_write_gateway_rejected": {
-      "point_count": 2,
+      "point_count": 11,
       "latest": 0.0,
       "min": 0.0,
       "max": 0.0,
@@ -121,7 +121,7 @@
       "convergence_events": 0
     },
     "wakeup_llm_prompt_tokens": {
-      "point_count": 2,
+      "point_count": 11,
       "latest": 0.0,
       "min": 0.0,
       "max": 0.0,
@@ -130,7 +130,7 @@
       "convergence_events": 0
     },
     "wakeup_llm_completion_tokens": {
-      "point_count": 2,
+      "point_count": 11,
       "latest": 0.0,
       "min": 0.0,
       "max": 0.0,
@@ -139,7 +139,7 @@
       "convergence_events": 0
     },
     "wakeup_llm_total_tokens": {
-      "point_count": 2,
+      "point_count": 11,
       "latest": 0.0,
       "min": 0.0,
       "max": 0.0,
@@ -148,88 +148,88 @@
       "convergence_events": 0
     },
     "wakeup_llm_preflight_latency": {
-      "point_count": 1,
-      "latest": 2013.0,
-      "min": 2013.0,
-      "max": 2013.0,
-      "average": 2013.0,
-      "trend": "insufficient",
+      "point_count": 4,
+      "latest": 2001.0,
+      "min": 1004.0,
+      "max": 2001.0,
+      "average": 1502.5,
+      "trend": "rising",
       "convergence_events": 0
     },
     "wakeup_llm_selection_latency": {
-      "point_count": 1,
-      "latest": 765.0,
-      "min": 765.0,
-      "max": 765.0,
-      "average": 765.0,
-      "trend": "insufficient",
-      "convergence_events": 0
-    },
-    "wakeup_llm_probe_latency": {
-      "point_count": 1,
-      "latest": 1248.0,
-      "min": 1248.0,
-      "max": 1248.0,
-      "average": 1248.0,
-      "trend": "insufficient",
-      "convergence_events": 0
-    },
-    "wakeup_llm_preflight_timeout_count": {
-      "point_count": 2,
-      "latest": 0.0,
-      "min": 0.0,
-      "max": 1.0,
-      "average": 0.5,
+      "point_count": 4,
+      "latest": 517.0,
+      "min": 516.0,
+      "max": 1004.0,
+      "average": 760.25,
       "trend": "falling",
       "convergence_events": 0
     },
-    "schedule_governance_cooldown_applied": {
+    "wakeup_llm_probe_latency": {
       "point_count": 2,
+      "latest": 1484.0,
+      "min": 1484.0,
+      "max": 1485.0,
+      "average": 1484.5,
+      "trend": "stable",
+      "convergence_events": 0
+    },
+    "wakeup_llm_preflight_timeout_count": {
+      "point_count": 11,
+      "latest": 0.0,
+      "min": 0.0,
+      "max": 1.0,
+      "average": 0.1818,
+      "trend": "stable",
+      "convergence_events": 0
+    },
+    "schedule_governance_cooldown_applied": {
+      "point_count": 11,
       "latest": 2.0,
       "min": 1.0,
       "max": 2.0,
-      "average": 1.5,
+      "average": 1.3636,
       "trend": "rising",
       "convergence_events": 0
     },
     "schedule_governance_cooldown_deferred": {
-      "point_count": 2,
+      "point_count": 11,
       "latest": 1.0,
       "min": 0.0,
-      "max": 1.0,
-      "average": 0.5,
-      "trend": "rising",
-      "convergence_events": 0
-    },
-    "schedule_llm_backoff_requested": {
-      "point_count": 2,
-      "latest": 0.0,
-      "min": 0.0,
-      "max": 1.0,
-      "average": 0.5,
+      "max": 3.0,
+      "average": 1.4545,
       "trend": "falling",
       "convergence_events": 0
     },
+    "schedule_llm_backoff_requested": {
+      "point_count": 11,
+      "latest": 0.0,
+      "min": 0.0,
+      "max": 1.0,
+      "average": 0.3636,
+      "trend": "stable",
+      "convergence_events": 0
+    },
     "schedule_llm_backoff_active": {
-      "point_count": 2,
+      "point_count": 11,
       "latest": 1.0,
       "min": 0.0,
       "max": 1.0,
-      "average": 0.5,
-      "trend": "rising",
+      "average": 0.6364,
+      "trend": "stable",
       "convergence_events": 0
     },
-    "wakeup_council_total": 8,
+    "wakeup_council_total": 44,
     "wakeup_frozen_total": 0,
-    "wakeup_write_gateway_written_total": 8,
-    "wakeup_write_gateway_skipped_total": 0,
+    "wakeup_write_gateway_written_total": 24,
+    "wakeup_write_gateway_skipped_total": 20,
     "wakeup_write_gateway_rejected_total": 0,
     "wakeup_llm_call_total": 0,
-    "wakeup_llm_preflight_timeout_total": 1,
-    "schedule_governance_cooldown_applied_total": 3,
-    "schedule_governance_cooldown_deferred_total": 1,
-    "schedule_llm_backoff_requested_total": 1,
-    "schedule_llm_backoff_active_total": 1
+    "wakeup_llm_preflight_timeout_total": 2,
+    "schedule_governance_cooldown_applied_total": 15,
+    "schedule_governance_cooldown_deferred_total": 16,
+    "schedule_llm_backoff_requested_total": 4,
+    "schedule_llm_backoff_active_total": 7
   },
   "series": {
     "journal_friction": [
@@ -1638,14 +1638,77 @@
     ],
     "wakeup_avg_friction": [
       {
-        "timestamp": "2026-03-08T23:08:20Z",
+        "timestamp": "2026-03-10T17:08:29Z",
         "value": 0.3244,
         "source": "wakeup",
         "phase": "cycle",
         "label": "avg_friction_score"
       },
       {
-        "timestamp": "2026-03-09T05:08:21Z",
+        "timestamp": "2026-03-10T20:08:20Z",
+        "value": 0.3244,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "avg_friction_score"
+      },
+      {
+        "timestamp": "2026-03-10T23:08:13Z",
+        "value": 0.3244,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "avg_friction_score"
+      },
+      {
+        "timestamp": "2026-03-11T02:08:20Z",
+        "value": 0.3244,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "avg_friction_score"
+      },
+      {
+        "timestamp": "2026-03-11T05:08:19Z",
+        "value": 0.3244,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "avg_friction_score"
+      },
+      {
+        "timestamp": "2026-03-11T08:08:13Z",
+        "value": 0.3244,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "avg_friction_score"
+      },
+      {
+        "timestamp": "2026-03-11T11:08:24Z",
+        "value": 0.3244,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "avg_friction_score"
+      },
+      {
+        "timestamp": "2026-03-11T14:08:25Z",
+        "value": 0.3244,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "avg_friction_score"
+      },
+      {
+        "timestamp": "2026-03-11T17:08:14Z",
+        "value": 0.3244,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "avg_friction_score"
+      },
+      {
+        "timestamp": "2026-03-11T20:08:35Z",
+        "value": 0.3244,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "avg_friction_score"
+      },
+      {
+        "timestamp": "2026-03-11T23:08:19Z",
         "value": 0.3244,
         "source": "wakeup",
         "phase": "cycle",
@@ -1654,14 +1717,77 @@
     ],
     "wakeup_max_friction": [
       {
-        "timestamp": "2026-03-08T23:08:20Z",
+        "timestamp": "2026-03-10T17:08:29Z",
         "value": 0.3436,
         "source": "wakeup",
         "phase": "cycle",
         "label": "max_friction_score"
       },
       {
-        "timestamp": "2026-03-09T05:08:21Z",
+        "timestamp": "2026-03-10T20:08:20Z",
+        "value": 0.3436,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "max_friction_score"
+      },
+      {
+        "timestamp": "2026-03-10T23:08:13Z",
+        "value": 0.3436,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "max_friction_score"
+      },
+      {
+        "timestamp": "2026-03-11T02:08:20Z",
+        "value": 0.3436,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "max_friction_score"
+      },
+      {
+        "timestamp": "2026-03-11T05:08:19Z",
+        "value": 0.3436,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "max_friction_score"
+      },
+      {
+        "timestamp": "2026-03-11T08:08:13Z",
+        "value": 0.3436,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "max_friction_score"
+      },
+      {
+        "timestamp": "2026-03-11T11:08:24Z",
+        "value": 0.3436,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "max_friction_score"
+      },
+      {
+        "timestamp": "2026-03-11T14:08:25Z",
+        "value": 0.3436,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "max_friction_score"
+      },
+      {
+        "timestamp": "2026-03-11T17:08:14Z",
+        "value": 0.3436,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "max_friction_score"
+      },
+      {
+        "timestamp": "2026-03-11T20:08:35Z",
+        "value": 0.3436,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "max_friction_score"
+      },
+      {
+        "timestamp": "2026-03-11T23:08:19Z",
         "value": 0.3436,
         "source": "wakeup",
         "phase": "cycle",
@@ -1670,14 +1796,77 @@
     ],
     "wakeup_max_lyapunov": [
       {
-        "timestamp": "2026-03-08T23:08:20Z",
+        "timestamp": "2026-03-10T17:08:29Z",
         "value": 0.2499,
         "source": "wakeup",
         "phase": "cycle",
         "label": "max_lyapunov_proxy"
       },
       {
-        "timestamp": "2026-03-09T05:08:21Z",
+        "timestamp": "2026-03-10T20:08:20Z",
+        "value": 0.2499,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "max_lyapunov_proxy"
+      },
+      {
+        "timestamp": "2026-03-10T23:08:13Z",
+        "value": 0.2499,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "max_lyapunov_proxy"
+      },
+      {
+        "timestamp": "2026-03-11T02:08:20Z",
+        "value": 0.2499,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "max_lyapunov_proxy"
+      },
+      {
+        "timestamp": "2026-03-11T05:08:19Z",
+        "value": 0.2499,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "max_lyapunov_proxy"
+      },
+      {
+        "timestamp": "2026-03-11T08:08:13Z",
+        "value": 0.2499,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "max_lyapunov_proxy"
+      },
+      {
+        "timestamp": "2026-03-11T11:08:24Z",
+        "value": 0.2499,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "max_lyapunov_proxy"
+      },
+      {
+        "timestamp": "2026-03-11T14:08:25Z",
+        "value": 0.2499,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "max_lyapunov_proxy"
+      },
+      {
+        "timestamp": "2026-03-11T17:08:14Z",
+        "value": 0.2499,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "max_lyapunov_proxy"
+      },
+      {
+        "timestamp": "2026-03-11T20:08:35Z",
+        "value": 0.2499,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "max_lyapunov_proxy"
+      },
+      {
+        "timestamp": "2026-03-11T23:08:19Z",
         "value": 0.2499,
         "source": "wakeup",
         "phase": "cycle",
@@ -1686,15 +1875,78 @@
     ],
     "wakeup_collision_success_rate": [
       {
-        "timestamp": "2026-03-08T23:08:20Z",
-        "value": 0.3077,
+        "timestamp": "2026-03-10T17:08:29Z",
+        "value": 0.129,
         "source": "wakeup",
         "phase": "cycle",
         "label": "collision_success_rate"
       },
       {
-        "timestamp": "2026-03-09T05:08:21Z",
-        "value": 0.2667,
+        "timestamp": "2026-03-10T20:08:20Z",
+        "value": 0.125,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "collision_success_rate"
+      },
+      {
+        "timestamp": "2026-03-10T23:08:13Z",
+        "value": 0.1212,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "collision_success_rate"
+      },
+      {
+        "timestamp": "2026-03-11T02:08:20Z",
+        "value": 0.1143,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "collision_success_rate"
+      },
+      {
+        "timestamp": "2026-03-11T05:08:19Z",
+        "value": 0.1081,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "collision_success_rate"
+      },
+      {
+        "timestamp": "2026-03-11T08:08:13Z",
+        "value": 0.1053,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "collision_success_rate"
+      },
+      {
+        "timestamp": "2026-03-11T11:08:24Z",
+        "value": 0.1026,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "collision_success_rate"
+      },
+      {
+        "timestamp": "2026-03-11T14:08:25Z",
+        "value": 0.1,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "collision_success_rate"
+      },
+      {
+        "timestamp": "2026-03-11T17:08:14Z",
+        "value": 0.0976,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "collision_success_rate"
+      },
+      {
+        "timestamp": "2026-03-11T20:08:35Z",
+        "value": 0.093,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "collision_success_rate"
+      },
+      {
+        "timestamp": "2026-03-11T23:08:19Z",
+        "value": 0.0909,
         "source": "wakeup",
         "phase": "cycle",
         "label": "collision_success_rate"
@@ -1702,14 +1954,77 @@
     ],
     "wakeup_council_count": [
       {
-        "timestamp": "2026-03-08T23:08:20Z",
+        "timestamp": "2026-03-10T17:08:29Z",
         "value": 4.0,
         "source": "wakeup",
         "phase": "cycle",
         "label": "council_count"
       },
       {
-        "timestamp": "2026-03-09T05:08:21Z",
+        "timestamp": "2026-03-10T20:08:20Z",
+        "value": 4.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "council_count"
+      },
+      {
+        "timestamp": "2026-03-10T23:08:13Z",
+        "value": 4.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "council_count"
+      },
+      {
+        "timestamp": "2026-03-11T02:08:20Z",
+        "value": 4.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "council_count"
+      },
+      {
+        "timestamp": "2026-03-11T05:08:19Z",
+        "value": 4.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "council_count"
+      },
+      {
+        "timestamp": "2026-03-11T08:08:13Z",
+        "value": 4.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "council_count"
+      },
+      {
+        "timestamp": "2026-03-11T11:08:24Z",
+        "value": 4.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "council_count"
+      },
+      {
+        "timestamp": "2026-03-11T14:08:25Z",
+        "value": 4.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "council_count"
+      },
+      {
+        "timestamp": "2026-03-11T17:08:14Z",
+        "value": 4.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "council_count"
+      },
+      {
+        "timestamp": "2026-03-11T20:08:35Z",
+        "value": 4.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "council_count"
+      },
+      {
+        "timestamp": "2026-03-11T23:08:19Z",
         "value": 4.0,
         "source": "wakeup",
         "phase": "cycle",
@@ -1718,14 +2033,77 @@
     ],
     "wakeup_frozen_count": [
       {
-        "timestamp": "2026-03-08T23:08:20Z",
+        "timestamp": "2026-03-10T17:08:29Z",
         "value": 0.0,
         "source": "wakeup",
         "phase": "cycle",
         "label": "frozen_count"
       },
       {
-        "timestamp": "2026-03-09T05:08:21Z",
+        "timestamp": "2026-03-10T20:08:20Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "frozen_count"
+      },
+      {
+        "timestamp": "2026-03-10T23:08:13Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "frozen_count"
+      },
+      {
+        "timestamp": "2026-03-11T02:08:20Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "frozen_count"
+      },
+      {
+        "timestamp": "2026-03-11T05:08:19Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "frozen_count"
+      },
+      {
+        "timestamp": "2026-03-11T08:08:13Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "frozen_count"
+      },
+      {
+        "timestamp": "2026-03-11T11:08:24Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "frozen_count"
+      },
+      {
+        "timestamp": "2026-03-11T14:08:25Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "frozen_count"
+      },
+      {
+        "timestamp": "2026-03-11T17:08:14Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "frozen_count"
+      },
+      {
+        "timestamp": "2026-03-11T20:08:35Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "frozen_count"
+      },
+      {
+        "timestamp": "2026-03-11T23:08:19Z",
         "value": 0.0,
         "source": "wakeup",
         "phase": "cycle",
@@ -1734,15 +2112,78 @@
     ],
     "wakeup_write_gateway_written": [
       {
-        "timestamp": "2026-03-08T23:08:20Z",
+        "timestamp": "2026-03-10T17:08:29Z",
         "value": 4.0,
         "source": "wakeup",
         "phase": "cycle",
         "label": "write_gateway_written"
       },
       {
-        "timestamp": "2026-03-09T05:08:21Z",
+        "timestamp": "2026-03-10T20:08:20Z",
         "value": 4.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "write_gateway_written"
+      },
+      {
+        "timestamp": "2026-03-10T23:08:13Z",
+        "value": 4.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "write_gateway_written"
+      },
+      {
+        "timestamp": "2026-03-11T02:08:20Z",
+        "value": 4.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "write_gateway_written"
+      },
+      {
+        "timestamp": "2026-03-11T05:08:19Z",
+        "value": 4.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "write_gateway_written"
+      },
+      {
+        "timestamp": "2026-03-11T08:08:13Z",
+        "value": 4.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "write_gateway_written"
+      },
+      {
+        "timestamp": "2026-03-11T11:08:24Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "write_gateway_written"
+      },
+      {
+        "timestamp": "2026-03-11T14:08:25Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "write_gateway_written"
+      },
+      {
+        "timestamp": "2026-03-11T17:08:14Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "write_gateway_written"
+      },
+      {
+        "timestamp": "2026-03-11T20:08:35Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "write_gateway_written"
+      },
+      {
+        "timestamp": "2026-03-11T23:08:19Z",
+        "value": 0.0,
         "source": "wakeup",
         "phase": "cycle",
         "label": "write_gateway_written"
@@ -1750,15 +2191,78 @@
     ],
     "wakeup_write_gateway_skipped": [
       {
-        "timestamp": "2026-03-08T23:08:20Z",
+        "timestamp": "2026-03-10T17:08:29Z",
         "value": 0.0,
         "source": "wakeup",
         "phase": "cycle",
         "label": "write_gateway_skipped"
       },
       {
-        "timestamp": "2026-03-09T05:08:21Z",
+        "timestamp": "2026-03-10T20:08:20Z",
         "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "write_gateway_skipped"
+      },
+      {
+        "timestamp": "2026-03-10T23:08:13Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "write_gateway_skipped"
+      },
+      {
+        "timestamp": "2026-03-11T02:08:20Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "write_gateway_skipped"
+      },
+      {
+        "timestamp": "2026-03-11T05:08:19Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "write_gateway_skipped"
+      },
+      {
+        "timestamp": "2026-03-11T08:08:13Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "write_gateway_skipped"
+      },
+      {
+        "timestamp": "2026-03-11T11:08:24Z",
+        "value": 4.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "write_gateway_skipped"
+      },
+      {
+        "timestamp": "2026-03-11T14:08:25Z",
+        "value": 4.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "write_gateway_skipped"
+      },
+      {
+        "timestamp": "2026-03-11T17:08:14Z",
+        "value": 4.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "write_gateway_skipped"
+      },
+      {
+        "timestamp": "2026-03-11T20:08:35Z",
+        "value": 4.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "write_gateway_skipped"
+      },
+      {
+        "timestamp": "2026-03-11T23:08:19Z",
+        "value": 4.0,
         "source": "wakeup",
         "phase": "cycle",
         "label": "write_gateway_skipped"
@@ -1766,14 +2270,77 @@
     ],
     "wakeup_write_gateway_rejected": [
       {
-        "timestamp": "2026-03-08T23:08:20Z",
+        "timestamp": "2026-03-10T17:08:29Z",
         "value": 0.0,
         "source": "wakeup",
         "phase": "cycle",
         "label": "write_gateway_rejected"
       },
       {
-        "timestamp": "2026-03-09T05:08:21Z",
+        "timestamp": "2026-03-10T20:08:20Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "write_gateway_rejected"
+      },
+      {
+        "timestamp": "2026-03-10T23:08:13Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "write_gateway_rejected"
+      },
+      {
+        "timestamp": "2026-03-11T02:08:20Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "write_gateway_rejected"
+      },
+      {
+        "timestamp": "2026-03-11T05:08:19Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "write_gateway_rejected"
+      },
+      {
+        "timestamp": "2026-03-11T08:08:13Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "write_gateway_rejected"
+      },
+      {
+        "timestamp": "2026-03-11T11:08:24Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "write_gateway_rejected"
+      },
+      {
+        "timestamp": "2026-03-11T14:08:25Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "write_gateway_rejected"
+      },
+      {
+        "timestamp": "2026-03-11T17:08:14Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "write_gateway_rejected"
+      },
+      {
+        "timestamp": "2026-03-11T20:08:35Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "write_gateway_rejected"
+      },
+      {
+        "timestamp": "2026-03-11T23:08:19Z",
         "value": 0.0,
         "source": "wakeup",
         "phase": "cycle",
@@ -1782,14 +2349,77 @@
     ],
     "wakeup_llm_call_count": [
       {
-        "timestamp": "2026-03-08T23:08:20Z",
+        "timestamp": "2026-03-10T17:08:29Z",
         "value": 0.0,
         "source": "wakeup",
         "phase": "cycle",
         "label": "llm_call_count"
       },
       {
-        "timestamp": "2026-03-09T05:08:21Z",
+        "timestamp": "2026-03-10T20:08:20Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_call_count"
+      },
+      {
+        "timestamp": "2026-03-10T23:08:13Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_call_count"
+      },
+      {
+        "timestamp": "2026-03-11T02:08:20Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_call_count"
+      },
+      {
+        "timestamp": "2026-03-11T05:08:19Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_call_count"
+      },
+      {
+        "timestamp": "2026-03-11T08:08:13Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_call_count"
+      },
+      {
+        "timestamp": "2026-03-11T11:08:24Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_call_count"
+      },
+      {
+        "timestamp": "2026-03-11T14:08:25Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_call_count"
+      },
+      {
+        "timestamp": "2026-03-11T17:08:14Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_call_count"
+      },
+      {
+        "timestamp": "2026-03-11T20:08:35Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_call_count"
+      },
+      {
+        "timestamp": "2026-03-11T23:08:19Z",
         "value": 0.0,
         "source": "wakeup",
         "phase": "cycle",
@@ -1798,14 +2428,77 @@
     ],
     "wakeup_llm_prompt_tokens": [
       {
-        "timestamp": "2026-03-08T23:08:20Z",
+        "timestamp": "2026-03-10T17:08:29Z",
         "value": 0.0,
         "source": "wakeup",
         "phase": "cycle",
         "label": "llm_prompt_tokens_total"
       },
       {
-        "timestamp": "2026-03-09T05:08:21Z",
+        "timestamp": "2026-03-10T20:08:20Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_prompt_tokens_total"
+      },
+      {
+        "timestamp": "2026-03-10T23:08:13Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_prompt_tokens_total"
+      },
+      {
+        "timestamp": "2026-03-11T02:08:20Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_prompt_tokens_total"
+      },
+      {
+        "timestamp": "2026-03-11T05:08:19Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_prompt_tokens_total"
+      },
+      {
+        "timestamp": "2026-03-11T08:08:13Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_prompt_tokens_total"
+      },
+      {
+        "timestamp": "2026-03-11T11:08:24Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_prompt_tokens_total"
+      },
+      {
+        "timestamp": "2026-03-11T14:08:25Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_prompt_tokens_total"
+      },
+      {
+        "timestamp": "2026-03-11T17:08:14Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_prompt_tokens_total"
+      },
+      {
+        "timestamp": "2026-03-11T20:08:35Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_prompt_tokens_total"
+      },
+      {
+        "timestamp": "2026-03-11T23:08:19Z",
         "value": 0.0,
         "source": "wakeup",
         "phase": "cycle",
@@ -1814,14 +2507,77 @@
     ],
     "wakeup_llm_completion_tokens": [
       {
-        "timestamp": "2026-03-08T23:08:20Z",
+        "timestamp": "2026-03-10T17:08:29Z",
         "value": 0.0,
         "source": "wakeup",
         "phase": "cycle",
         "label": "llm_completion_tokens_total"
       },
       {
-        "timestamp": "2026-03-09T05:08:21Z",
+        "timestamp": "2026-03-10T20:08:20Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_completion_tokens_total"
+      },
+      {
+        "timestamp": "2026-03-10T23:08:13Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_completion_tokens_total"
+      },
+      {
+        "timestamp": "2026-03-11T02:08:20Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_completion_tokens_total"
+      },
+      {
+        "timestamp": "2026-03-11T05:08:19Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_completion_tokens_total"
+      },
+      {
+        "timestamp": "2026-03-11T08:08:13Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_completion_tokens_total"
+      },
+      {
+        "timestamp": "2026-03-11T11:08:24Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_completion_tokens_total"
+      },
+      {
+        "timestamp": "2026-03-11T14:08:25Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_completion_tokens_total"
+      },
+      {
+        "timestamp": "2026-03-11T17:08:14Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_completion_tokens_total"
+      },
+      {
+        "timestamp": "2026-03-11T20:08:35Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_completion_tokens_total"
+      },
+      {
+        "timestamp": "2026-03-11T23:08:19Z",
         "value": 0.0,
         "source": "wakeup",
         "phase": "cycle",
@@ -1830,14 +2586,77 @@
     ],
     "wakeup_llm_total_tokens": [
       {
-        "timestamp": "2026-03-08T23:08:20Z",
+        "timestamp": "2026-03-10T17:08:29Z",
         "value": 0.0,
         "source": "wakeup",
         "phase": "cycle",
         "label": "llm_total_tokens"
       },
       {
-        "timestamp": "2026-03-09T05:08:21Z",
+        "timestamp": "2026-03-10T20:08:20Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_total_tokens"
+      },
+      {
+        "timestamp": "2026-03-10T23:08:13Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_total_tokens"
+      },
+      {
+        "timestamp": "2026-03-11T02:08:20Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_total_tokens"
+      },
+      {
+        "timestamp": "2026-03-11T05:08:19Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_total_tokens"
+      },
+      {
+        "timestamp": "2026-03-11T08:08:13Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_total_tokens"
+      },
+      {
+        "timestamp": "2026-03-11T11:08:24Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_total_tokens"
+      },
+      {
+        "timestamp": "2026-03-11T14:08:25Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_total_tokens"
+      },
+      {
+        "timestamp": "2026-03-11T17:08:14Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_total_tokens"
+      },
+      {
+        "timestamp": "2026-03-11T20:08:35Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_total_tokens"
+      },
+      {
+        "timestamp": "2026-03-11T23:08:19Z",
         "value": 0.0,
         "source": "wakeup",
         "phase": "cycle",
@@ -1846,8 +2665,29 @@
     ],
     "wakeup_llm_preflight_latency": [
       {
-        "timestamp": "2026-03-08T23:08:20Z",
-        "value": 2013.0,
+        "timestamp": "2026-03-10T17:08:29Z",
+        "value": 1004.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_preflight_latency_ms"
+      },
+      {
+        "timestamp": "2026-03-11T02:08:20Z",
+        "value": 1004.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_preflight_latency_ms"
+      },
+      {
+        "timestamp": "2026-03-11T11:08:24Z",
+        "value": 2001.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_preflight_latency_ms"
+      },
+      {
+        "timestamp": "2026-03-11T20:08:35Z",
+        "value": 2001.0,
         "source": "wakeup",
         "phase": "cycle",
         "label": "llm_preflight_latency_ms"
@@ -1855,8 +2695,29 @@
     ],
     "wakeup_llm_selection_latency": [
       {
-        "timestamp": "2026-03-08T23:08:20Z",
-        "value": 765.0,
+        "timestamp": "2026-03-10T17:08:29Z",
+        "value": 1004.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_preflight_selection_latency_ms"
+      },
+      {
+        "timestamp": "2026-03-11T02:08:20Z",
+        "value": 1004.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_preflight_selection_latency_ms"
+      },
+      {
+        "timestamp": "2026-03-11T11:08:24Z",
+        "value": 516.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_preflight_selection_latency_ms"
+      },
+      {
+        "timestamp": "2026-03-11T20:08:35Z",
+        "value": 517.0,
         "source": "wakeup",
         "phase": "cycle",
         "label": "llm_preflight_selection_latency_ms"
@@ -1864,8 +2725,15 @@
     ],
     "wakeup_llm_probe_latency": [
       {
-        "timestamp": "2026-03-08T23:08:20Z",
-        "value": 1248.0,
+        "timestamp": "2026-03-11T11:08:24Z",
+        "value": 1485.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_preflight_probe_latency_ms"
+      },
+      {
+        "timestamp": "2026-03-11T20:08:35Z",
+        "value": 1484.0,
         "source": "wakeup",
         "phase": "cycle",
         "label": "llm_preflight_probe_latency_ms"
@@ -1873,14 +2741,77 @@
     ],
     "wakeup_llm_preflight_timeout_count": [
       {
-        "timestamp": "2026-03-08T23:08:20Z",
+        "timestamp": "2026-03-10T17:08:29Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_preflight_timeout_count"
+      },
+      {
+        "timestamp": "2026-03-10T20:08:20Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_preflight_timeout_count"
+      },
+      {
+        "timestamp": "2026-03-10T23:08:13Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_preflight_timeout_count"
+      },
+      {
+        "timestamp": "2026-03-11T02:08:20Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_preflight_timeout_count"
+      },
+      {
+        "timestamp": "2026-03-11T05:08:19Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_preflight_timeout_count"
+      },
+      {
+        "timestamp": "2026-03-11T08:08:13Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_preflight_timeout_count"
+      },
+      {
+        "timestamp": "2026-03-11T11:08:24Z",
         "value": 1.0,
         "source": "wakeup",
         "phase": "cycle",
         "label": "llm_preflight_timeout_count"
       },
       {
-        "timestamp": "2026-03-09T05:08:21Z",
+        "timestamp": "2026-03-11T14:08:25Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_preflight_timeout_count"
+      },
+      {
+        "timestamp": "2026-03-11T17:08:14Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_preflight_timeout_count"
+      },
+      {
+        "timestamp": "2026-03-11T20:08:35Z",
+        "value": 1.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_preflight_timeout_count"
+      },
+      {
+        "timestamp": "2026-03-11T23:08:19Z",
         "value": 0.0,
         "source": "wakeup",
         "phase": "cycle",
@@ -1889,14 +2820,77 @@
     ],
     "schedule_governance_cooldown_applied": [
       {
-        "timestamp": "2026-03-08T23:08:21Z",
+        "timestamp": "2026-03-10T17:08:30Z",
         "value": 1.0,
         "source": "schedule",
         "phase": "cycle",
         "label": "governance_cooldown_applied"
       },
       {
-        "timestamp": "2026-03-09T05:08:21Z",
+        "timestamp": "2026-03-10T20:08:21Z",
+        "value": 2.0,
+        "source": "schedule",
+        "phase": "cycle",
+        "label": "governance_cooldown_applied"
+      },
+      {
+        "timestamp": "2026-03-10T23:08:14Z",
+        "value": 1.0,
+        "source": "schedule",
+        "phase": "cycle",
+        "label": "governance_cooldown_applied"
+      },
+      {
+        "timestamp": "2026-03-11T02:08:20Z",
+        "value": 1.0,
+        "source": "schedule",
+        "phase": "cycle",
+        "label": "governance_cooldown_applied"
+      },
+      {
+        "timestamp": "2026-03-11T05:08:20Z",
+        "value": 2.0,
+        "source": "schedule",
+        "phase": "cycle",
+        "label": "governance_cooldown_applied"
+      },
+      {
+        "timestamp": "2026-03-11T08:08:14Z",
+        "value": 1.0,
+        "source": "schedule",
+        "phase": "cycle",
+        "label": "governance_cooldown_applied"
+      },
+      {
+        "timestamp": "2026-03-11T11:08:24Z",
+        "value": 1.0,
+        "source": "schedule",
+        "phase": "cycle",
+        "label": "governance_cooldown_applied"
+      },
+      {
+        "timestamp": "2026-03-11T14:08:26Z",
+        "value": 2.0,
+        "source": "schedule",
+        "phase": "cycle",
+        "label": "governance_cooldown_applied"
+      },
+      {
+        "timestamp": "2026-03-11T17:08:15Z",
+        "value": 1.0,
+        "source": "schedule",
+        "phase": "cycle",
+        "label": "governance_cooldown_applied"
+      },
+      {
+        "timestamp": "2026-03-11T20:08:35Z",
+        "value": 1.0,
+        "source": "schedule",
+        "phase": "cycle",
+        "label": "governance_cooldown_applied"
+      },
+      {
+        "timestamp": "2026-03-11T23:08:20Z",
         "value": 2.0,
         "source": "schedule",
         "phase": "cycle",
@@ -1905,14 +2899,77 @@
     ],
     "schedule_governance_cooldown_deferred": [
       {
-        "timestamp": "2026-03-08T23:08:21Z",
+        "timestamp": "2026-03-10T17:08:30Z",
         "value": 0.0,
         "source": "schedule",
         "phase": "cycle",
         "label": "governance_cooldown_deferred"
       },
       {
-        "timestamp": "2026-03-09T05:08:21Z",
+        "timestamp": "2026-03-10T20:08:21Z",
+        "value": 1.0,
+        "source": "schedule",
+        "phase": "cycle",
+        "label": "governance_cooldown_deferred"
+      },
+      {
+        "timestamp": "2026-03-10T23:08:14Z",
+        "value": 3.0,
+        "source": "schedule",
+        "phase": "cycle",
+        "label": "governance_cooldown_deferred"
+      },
+      {
+        "timestamp": "2026-03-11T02:08:20Z",
+        "value": 1.0,
+        "source": "schedule",
+        "phase": "cycle",
+        "label": "governance_cooldown_deferred"
+      },
+      {
+        "timestamp": "2026-03-11T05:08:20Z",
+        "value": 1.0,
+        "source": "schedule",
+        "phase": "cycle",
+        "label": "governance_cooldown_deferred"
+      },
+      {
+        "timestamp": "2026-03-11T08:08:14Z",
+        "value": 3.0,
+        "source": "schedule",
+        "phase": "cycle",
+        "label": "governance_cooldown_deferred"
+      },
+      {
+        "timestamp": "2026-03-11T11:08:24Z",
+        "value": 1.0,
+        "source": "schedule",
+        "phase": "cycle",
+        "label": "governance_cooldown_deferred"
+      },
+      {
+        "timestamp": "2026-03-11T14:08:26Z",
+        "value": 1.0,
+        "source": "schedule",
+        "phase": "cycle",
+        "label": "governance_cooldown_deferred"
+      },
+      {
+        "timestamp": "2026-03-11T17:08:15Z",
+        "value": 3.0,
+        "source": "schedule",
+        "phase": "cycle",
+        "label": "governance_cooldown_deferred"
+      },
+      {
+        "timestamp": "2026-03-11T20:08:35Z",
+        "value": 1.0,
+        "source": "schedule",
+        "phase": "cycle",
+        "label": "governance_cooldown_deferred"
+      },
+      {
+        "timestamp": "2026-03-11T23:08:20Z",
         "value": 1.0,
         "source": "schedule",
         "phase": "cycle",
@@ -1921,14 +2978,77 @@
     ],
     "schedule_llm_backoff_requested": [
       {
-        "timestamp": "2026-03-08T23:08:21Z",
+        "timestamp": "2026-03-10T17:08:30Z",
         "value": 1.0,
         "source": "schedule",
         "phase": "cycle",
         "label": "llm_backoff_requested"
       },
       {
-        "timestamp": "2026-03-09T05:08:21Z",
+        "timestamp": "2026-03-10T20:08:21Z",
+        "value": 0.0,
+        "source": "schedule",
+        "phase": "cycle",
+        "label": "llm_backoff_requested"
+      },
+      {
+        "timestamp": "2026-03-10T23:08:14Z",
+        "value": 0.0,
+        "source": "schedule",
+        "phase": "cycle",
+        "label": "llm_backoff_requested"
+      },
+      {
+        "timestamp": "2026-03-11T02:08:20Z",
+        "value": 1.0,
+        "source": "schedule",
+        "phase": "cycle",
+        "label": "llm_backoff_requested"
+      },
+      {
+        "timestamp": "2026-03-11T05:08:20Z",
+        "value": 0.0,
+        "source": "schedule",
+        "phase": "cycle",
+        "label": "llm_backoff_requested"
+      },
+      {
+        "timestamp": "2026-03-11T08:08:14Z",
+        "value": 0.0,
+        "source": "schedule",
+        "phase": "cycle",
+        "label": "llm_backoff_requested"
+      },
+      {
+        "timestamp": "2026-03-11T11:08:24Z",
+        "value": 1.0,
+        "source": "schedule",
+        "phase": "cycle",
+        "label": "llm_backoff_requested"
+      },
+      {
+        "timestamp": "2026-03-11T14:08:26Z",
+        "value": 0.0,
+        "source": "schedule",
+        "phase": "cycle",
+        "label": "llm_backoff_requested"
+      },
+      {
+        "timestamp": "2026-03-11T17:08:15Z",
+        "value": 0.0,
+        "source": "schedule",
+        "phase": "cycle",
+        "label": "llm_backoff_requested"
+      },
+      {
+        "timestamp": "2026-03-11T20:08:35Z",
+        "value": 1.0,
+        "source": "schedule",
+        "phase": "cycle",
+        "label": "llm_backoff_requested"
+      },
+      {
+        "timestamp": "2026-03-11T23:08:20Z",
         "value": 0.0,
         "source": "schedule",
         "phase": "cycle",
@@ -1937,14 +3057,77 @@
     ],
     "schedule_llm_backoff_active": [
       {
-        "timestamp": "2026-03-08T23:08:21Z",
+        "timestamp": "2026-03-10T17:08:30Z",
         "value": 0.0,
         "source": "schedule",
         "phase": "cycle",
         "label": "llm_backoff_active"
       },
       {
-        "timestamp": "2026-03-09T05:08:21Z",
+        "timestamp": "2026-03-10T20:08:21Z",
+        "value": 1.0,
+        "source": "schedule",
+        "phase": "cycle",
+        "label": "llm_backoff_active"
+      },
+      {
+        "timestamp": "2026-03-10T23:08:14Z",
+        "value": 1.0,
+        "source": "schedule",
+        "phase": "cycle",
+        "label": "llm_backoff_active"
+      },
+      {
+        "timestamp": "2026-03-11T02:08:20Z",
+        "value": 0.0,
+        "source": "schedule",
+        "phase": "cycle",
+        "label": "llm_backoff_active"
+      },
+      {
+        "timestamp": "2026-03-11T05:08:20Z",
+        "value": 1.0,
+        "source": "schedule",
+        "phase": "cycle",
+        "label": "llm_backoff_active"
+      },
+      {
+        "timestamp": "2026-03-11T08:08:14Z",
+        "value": 1.0,
+        "source": "schedule",
+        "phase": "cycle",
+        "label": "llm_backoff_active"
+      },
+      {
+        "timestamp": "2026-03-11T11:08:24Z",
+        "value": 0.0,
+        "source": "schedule",
+        "phase": "cycle",
+        "label": "llm_backoff_active"
+      },
+      {
+        "timestamp": "2026-03-11T14:08:26Z",
+        "value": 1.0,
+        "source": "schedule",
+        "phase": "cycle",
+        "label": "llm_backoff_active"
+      },
+      {
+        "timestamp": "2026-03-11T17:08:15Z",
+        "value": 1.0,
+        "source": "schedule",
+        "phase": "cycle",
+        "label": "llm_backoff_active"
+      },
+      {
+        "timestamp": "2026-03-11T20:08:35Z",
+        "value": 0.0,
+        "source": "schedule",
+        "phase": "cycle",
+        "label": "llm_backoff_active"
+      },
+      {
+        "timestamp": "2026-03-11T23:08:20Z",
         "value": 1.0,
         "source": "schedule",
         "phase": "cycle",
@@ -1956,11 +3139,11 @@
     {
       "cycle": 1,
       "status": "ok",
-      "timestamp": "2026-03-08T23:08:20Z",
+      "timestamp": "2026-03-11T02:08:20Z",
       "avg_friction_score": 0.3244,
       "max_friction_score": 0.3436,
       "max_lyapunov_proxy": 0.2499,
-      "collision_success_rate": 0.3077,
+      "collision_success_rate": 0.1143,
       "council_count": 4,
       "frozen_count": 0,
       "write_gateway_written": 4,
@@ -1972,9 +3155,96 @@
       "llm_total_tokens": 0,
       "llm_backends": [],
       "llm_models": [],
-      "llm_preflight_latency_ms": 2013,
-      "llm_preflight_selection_latency_ms": 765,
-      "llm_preflight_probe_latency_ms": 1248,
+      "llm_preflight_latency_ms": 1004,
+      "llm_preflight_selection_latency_ms": 1004,
+      "llm_preflight_probe_latency_ms": null,
+      "llm_preflight_timeout_count": 0,
+      "llm_preflight_reason": "no_client",
+      "consolidation_ran": false,
+      "consolidation_promoted_count": 0,
+      "failure_pause_seconds": 0,
+      "circuit_breaker_paused": false
+    },
+    {
+      "cycle": 1,
+      "status": "ok",
+      "timestamp": "2026-03-11T05:08:19Z",
+      "avg_friction_score": 0.3244,
+      "max_friction_score": 0.3436,
+      "max_lyapunov_proxy": 0.2499,
+      "collision_success_rate": 0.1081,
+      "council_count": 4,
+      "frozen_count": 0,
+      "write_gateway_written": 4,
+      "write_gateway_skipped": 0,
+      "write_gateway_rejected": 0,
+      "llm_call_count": 0,
+      "llm_prompt_tokens_total": 0,
+      "llm_completion_tokens_total": 0,
+      "llm_total_tokens": 0,
+      "llm_backends": [],
+      "llm_models": [],
+      "llm_preflight_latency_ms": null,
+      "llm_preflight_selection_latency_ms": null,
+      "llm_preflight_probe_latency_ms": null,
+      "llm_preflight_timeout_count": 0,
+      "llm_preflight_reason": "reflection_disabled",
+      "consolidation_ran": false,
+      "consolidation_promoted_count": 0,
+      "failure_pause_seconds": 0,
+      "circuit_breaker_paused": false
+    },
+    {
+      "cycle": 1,
+      "status": "ok",
+      "timestamp": "2026-03-11T08:08:13Z",
+      "avg_friction_score": 0.3244,
+      "max_friction_score": 0.3436,
+      "max_lyapunov_proxy": 0.2499,
+      "collision_success_rate": 0.1053,
+      "council_count": 4,
+      "frozen_count": 0,
+      "write_gateway_written": 4,
+      "write_gateway_skipped": 0,
+      "write_gateway_rejected": 0,
+      "llm_call_count": 0,
+      "llm_prompt_tokens_total": 0,
+      "llm_completion_tokens_total": 0,
+      "llm_total_tokens": 0,
+      "llm_backends": [],
+      "llm_models": [],
+      "llm_preflight_latency_ms": null,
+      "llm_preflight_selection_latency_ms": null,
+      "llm_preflight_probe_latency_ms": null,
+      "llm_preflight_timeout_count": 0,
+      "llm_preflight_reason": "reflection_disabled",
+      "consolidation_ran": false,
+      "consolidation_promoted_count": 0,
+      "failure_pause_seconds": 0,
+      "circuit_breaker_paused": false
+    },
+    {
+      "cycle": 1,
+      "status": "ok",
+      "timestamp": "2026-03-11T11:08:24Z",
+      "avg_friction_score": 0.3244,
+      "max_friction_score": 0.3436,
+      "max_lyapunov_proxy": 0.2499,
+      "collision_success_rate": 0.1026,
+      "council_count": 4,
+      "frozen_count": 0,
+      "write_gateway_written": 0,
+      "write_gateway_skipped": 4,
+      "write_gateway_rejected": 0,
+      "llm_call_count": 0,
+      "llm_prompt_tokens_total": 0,
+      "llm_completion_tokens_total": 0,
+      "llm_total_tokens": 0,
+      "llm_backends": [],
+      "llm_models": [],
+      "llm_preflight_latency_ms": 2001,
+      "llm_preflight_selection_latency_ms": 516,
+      "llm_preflight_probe_latency_ms": 1485,
       "llm_preflight_timeout_count": 1,
       "llm_preflight_reason": "timeout",
       "consolidation_ran": false,
@@ -1985,15 +3255,102 @@
     {
       "cycle": 1,
       "status": "ok",
-      "timestamp": "2026-03-09T05:08:21Z",
+      "timestamp": "2026-03-11T14:08:25Z",
       "avg_friction_score": 0.3244,
       "max_friction_score": 0.3436,
       "max_lyapunov_proxy": 0.2499,
-      "collision_success_rate": 0.2667,
+      "collision_success_rate": 0.1,
       "council_count": 4,
       "frozen_count": 0,
-      "write_gateway_written": 4,
-      "write_gateway_skipped": 0,
+      "write_gateway_written": 0,
+      "write_gateway_skipped": 4,
+      "write_gateway_rejected": 0,
+      "llm_call_count": 0,
+      "llm_prompt_tokens_total": 0,
+      "llm_completion_tokens_total": 0,
+      "llm_total_tokens": 0,
+      "llm_backends": [],
+      "llm_models": [],
+      "llm_preflight_latency_ms": null,
+      "llm_preflight_selection_latency_ms": null,
+      "llm_preflight_probe_latency_ms": null,
+      "llm_preflight_timeout_count": 0,
+      "llm_preflight_reason": "reflection_disabled",
+      "consolidation_ran": false,
+      "consolidation_promoted_count": 0,
+      "failure_pause_seconds": 0,
+      "circuit_breaker_paused": false
+    },
+    {
+      "cycle": 1,
+      "status": "ok",
+      "timestamp": "2026-03-11T17:08:14Z",
+      "avg_friction_score": 0.3244,
+      "max_friction_score": 0.3436,
+      "max_lyapunov_proxy": 0.2499,
+      "collision_success_rate": 0.0976,
+      "council_count": 4,
+      "frozen_count": 0,
+      "write_gateway_written": 0,
+      "write_gateway_skipped": 4,
+      "write_gateway_rejected": 0,
+      "llm_call_count": 0,
+      "llm_prompt_tokens_total": 0,
+      "llm_completion_tokens_total": 0,
+      "llm_total_tokens": 0,
+      "llm_backends": [],
+      "llm_models": [],
+      "llm_preflight_latency_ms": null,
+      "llm_preflight_selection_latency_ms": null,
+      "llm_preflight_probe_latency_ms": null,
+      "llm_preflight_timeout_count": 0,
+      "llm_preflight_reason": "reflection_disabled",
+      "consolidation_ran": false,
+      "consolidation_promoted_count": 0,
+      "failure_pause_seconds": 0,
+      "circuit_breaker_paused": false
+    },
+    {
+      "cycle": 1,
+      "status": "ok",
+      "timestamp": "2026-03-11T20:08:35Z",
+      "avg_friction_score": 0.3244,
+      "max_friction_score": 0.3436,
+      "max_lyapunov_proxy": 0.2499,
+      "collision_success_rate": 0.093,
+      "council_count": 4,
+      "frozen_count": 0,
+      "write_gateway_written": 0,
+      "write_gateway_skipped": 4,
+      "write_gateway_rejected": 0,
+      "llm_call_count": 0,
+      "llm_prompt_tokens_total": 0,
+      "llm_completion_tokens_total": 0,
+      "llm_total_tokens": 0,
+      "llm_backends": [],
+      "llm_models": [],
+      "llm_preflight_latency_ms": 2001,
+      "llm_preflight_selection_latency_ms": 517,
+      "llm_preflight_probe_latency_ms": 1484,
+      "llm_preflight_timeout_count": 1,
+      "llm_preflight_reason": "timeout",
+      "consolidation_ran": false,
+      "consolidation_promoted_count": 0,
+      "failure_pause_seconds": 0,
+      "circuit_breaker_paused": false
+    },
+    {
+      "cycle": 1,
+      "status": "ok",
+      "timestamp": "2026-03-11T23:08:19Z",
+      "avg_friction_score": 0.3244,
+      "max_friction_score": 0.3436,
+      "max_lyapunov_proxy": 0.2499,
+      "collision_success_rate": 0.0909,
+      "council_count": 4,
+      "frozen_count": 0,
+      "write_gateway_written": 0,
+      "write_gateway_skipped": 4,
       "write_gateway_rejected": 0,
       "llm_call_count": 0,
       "llm_prompt_tokens_total": 0,
@@ -2015,7 +3372,7 @@
   "recent_schedule_cycles": [
     {
       "cycle": 1,
-      "timestamp": "2026-03-08T23:08:21Z",
+      "timestamp": "2026-03-11T02:08:20Z",
       "selected_categories": [
         "vulnerability-intel",
         "vulnerability-intel"
@@ -2023,26 +3380,23 @@
       "cooled_categories": [
         "vulnerability-intel"
       ],
-      "deferred_category_count": 0,
+      "deferred_category_count": 1,
       "llm_backoff_requested": true,
       "llm_backoff_active": false,
-      "llm_backoff_mode": "none",
+      "llm_backoff_mode": "selection_latency",
       "llm_backoff_action": "normal",
-      "llm_backoff_reason_count": 0,
+      "llm_backoff_reason_count": 1,
       "governance_breach_reasons": [
         "max_lyapunov_proxy>0.2 (observed=0.2499)",
         "council_count>1 (observed=4)"
       ],
       "llm_breach_reasons": [
-        "llm_preflight_latency_ms>1800 (observed=2013)",
-        "llm_selection_latency_ms>700 (observed=765)",
-        "llm_probe_latency_ms>1200 (observed=1248)",
-        "llm_preflight_timeout_count>0 (observed=1)"
+        "llm_selection_latency_ms>700 (observed=1004)"
       ]
     },
     {
       "cycle": 1,
-      "timestamp": "2026-03-09T05:08:21Z",
+      "timestamp": "2026-03-11T05:08:20Z",
       "selected_categories": [
         "supply-chain-risk",
         "artifact-signing"
@@ -2054,9 +3408,149 @@
       "deferred_category_count": 1,
       "llm_backoff_requested": false,
       "llm_backoff_active": true,
-      "llm_backoff_mode": "mixed_latency",
+      "llm_backoff_mode": "selection_latency",
       "llm_backoff_action": "disable_reflection",
-      "llm_backoff_reason_count": 4,
+      "llm_backoff_reason_count": 1,
+      "governance_breach_reasons": [
+        "max_lyapunov_proxy>0.2 (observed=0.2499)",
+        "council_count>1 (observed=4)"
+      ],
+      "llm_breach_reasons": []
+    },
+    {
+      "cycle": 1,
+      "timestamp": "2026-03-11T08:08:14Z",
+      "selected_categories": [
+        "supply-chain-hardening"
+      ],
+      "cooled_categories": [
+        "supply-chain-hardening"
+      ],
+      "deferred_category_count": 3,
+      "llm_backoff_requested": false,
+      "llm_backoff_active": true,
+      "llm_backoff_mode": "selection_latency",
+      "llm_backoff_action": "disable_reflection",
+      "llm_backoff_reason_count": 1,
+      "governance_breach_reasons": [
+        "max_lyapunov_proxy>0.2 (observed=0.2499)",
+        "council_count>1 (observed=4)"
+      ],
+      "llm_breach_reasons": []
+    },
+    {
+      "cycle": 1,
+      "timestamp": "2026-03-11T11:08:24Z",
+      "selected_categories": [
+        "vulnerability-intel",
+        "vulnerability-intel"
+      ],
+      "cooled_categories": [
+        "vulnerability-intel"
+      ],
+      "deferred_category_count": 1,
+      "llm_backoff_requested": true,
+      "llm_backoff_active": false,
+      "llm_backoff_mode": "selection_latency",
+      "llm_backoff_action": "normal",
+      "llm_backoff_reason_count": 1,
+      "governance_breach_reasons": [
+        "max_lyapunov_proxy>0.2 (observed=0.2499)",
+        "council_count>1 (observed=4)"
+      ],
+      "llm_breach_reasons": [
+        "llm_preflight_latency_ms>1800 (observed=2001)",
+        "llm_probe_latency_ms>1200 (observed=1485)",
+        "llm_preflight_timeout_count>0 (observed=1)"
+      ]
+    },
+    {
+      "cycle": 1,
+      "timestamp": "2026-03-11T14:08:26Z",
+      "selected_categories": [
+        "supply-chain-risk",
+        "artifact-signing"
+      ],
+      "cooled_categories": [
+        "artifact-signing",
+        "supply-chain-risk"
+      ],
+      "deferred_category_count": 1,
+      "llm_backoff_requested": false,
+      "llm_backoff_active": true,
+      "llm_backoff_mode": "probe_latency",
+      "llm_backoff_action": "disable_reflection",
+      "llm_backoff_reason_count": 3,
+      "governance_breach_reasons": [
+        "max_lyapunov_proxy>0.2 (observed=0.2499)",
+        "council_count>1 (observed=4)"
+      ],
+      "llm_breach_reasons": []
+    },
+    {
+      "cycle": 1,
+      "timestamp": "2026-03-11T17:08:15Z",
+      "selected_categories": [
+        "supply-chain-hardening"
+      ],
+      "cooled_categories": [
+        "supply-chain-hardening"
+      ],
+      "deferred_category_count": 3,
+      "llm_backoff_requested": false,
+      "llm_backoff_active": true,
+      "llm_backoff_mode": "probe_latency",
+      "llm_backoff_action": "disable_reflection",
+      "llm_backoff_reason_count": 3,
+      "governance_breach_reasons": [
+        "max_lyapunov_proxy>0.2 (observed=0.2499)",
+        "council_count>1 (observed=4)"
+      ],
+      "llm_breach_reasons": []
+    },
+    {
+      "cycle": 1,
+      "timestamp": "2026-03-11T20:08:35Z",
+      "selected_categories": [
+        "vulnerability-intel",
+        "vulnerability-intel"
+      ],
+      "cooled_categories": [
+        "vulnerability-intel"
+      ],
+      "deferred_category_count": 1,
+      "llm_backoff_requested": true,
+      "llm_backoff_active": false,
+      "llm_backoff_mode": "probe_latency",
+      "llm_backoff_action": "normal",
+      "llm_backoff_reason_count": 3,
+      "governance_breach_reasons": [
+        "max_lyapunov_proxy>0.2 (observed=0.2499)",
+        "council_count>1 (observed=4)"
+      ],
+      "llm_breach_reasons": [
+        "llm_preflight_latency_ms>1800 (observed=2001)",
+        "llm_probe_latency_ms>1200 (observed=1484)",
+        "llm_preflight_timeout_count>0 (observed=1)"
+      ]
+    },
+    {
+      "cycle": 1,
+      "timestamp": "2026-03-11T23:08:20Z",
+      "selected_categories": [
+        "supply-chain-risk",
+        "artifact-signing"
+      ],
+      "cooled_categories": [
+        "artifact-signing",
+        "supply-chain-risk"
+      ],
+      "deferred_category_count": 1,
+      "llm_backoff_requested": false,
+      "llm_backoff_active": true,
+      "llm_backoff_mode": "probe_latency",
+      "llm_backoff_action": "disable_reflection",
+      "llm_backoff_reason_count": 3,
       "governance_breach_reasons": [
         "max_lyapunov_proxy>0.2 (observed=0.2499)",
         "council_count>1 (observed=4)"
@@ -2065,8 +3559,8 @@
     }
   ],
   "schedule_state": {
-    "cycles_run": 2,
-    "updated_at": "2026-03-09T05:08:21Z",
+    "cycles_run": 11,
+    "updated_at": "2026-03-11T23:08:20Z",
     "active_governance_cooldown_categories": [
       "artifact-signing",
       "supply-chain-risk",
@@ -2074,14 +3568,13 @@
     ],
     "active_governance_cooldown_count": 3,
     "llm_backoff_active": true,
-    "llm_backoff_until_cycle": 3,
-    "llm_backoff_mode": "mixed_latency",
+    "llm_backoff_until_cycle": 12,
+    "llm_backoff_mode": "probe_latency",
     "llm_backoff_status": "breached",
-    "llm_backoff_reason_count": 4,
+    "llm_backoff_reason_count": 3,
     "llm_backoff_breach_reasons": [
-      "llm_preflight_latency_ms>1800 (observed=2013)",
-      "llm_selection_latency_ms>700 (observed=765)",
-      "llm_probe_latency_ms>1200 (observed=1248)",
+      "llm_preflight_latency_ms>1800 (observed=2001)",
+      "llm_probe_latency_ms>1200 (observed=1484)",
       "llm_preflight_timeout_count>0 (observed=1)"
     ]
   },
