@@ -5860,3 +5860,16 @@
 - `python -m pytest tests/test_semantic_graph.py tests/test_memory_hippocampus.py tests/test_council_summary_generator.py -q` -> 27 passed, 8 warnings
 - `python -m ruff check tonesoul tests` -> passed
 - `python -m pytest tests/ -x --tb=short -q` -> 2244 passed, 4 warnings
+
+## Phase 563: Evidence Detector + Intent Reconstructor + Deliberation Coverage (2026-03-19)
+- [x] add `tests/test_evidence_detector.py` for technical/historical evidence requirements, plain-text no-claim detection, and detector singleton access
+- [x] add `tests/test_intent_reconstructor.py` for genesis/id resolution, baseline normalization, TSR averaging, collapse warning heuristics, and journal-backed inference branches
+- [x] add `tests/test_deliberation_perspectives.py` for Muse/Logos/Aegis trigger selection and default fallback branches
+- [x] add `tests/test_deliberation_types.py` for deliberation dataclass serialization, weight normalization, internal debate formatting, and API payload shaping
+- [x] validate targeted tests and full regression
+**Success Criteria**: Evidence detection, intent reconstruction, and deliberation serialization contracts are covered by deterministic tests without changing runtime behavior.
+**Validation**:
+- `python -m ruff check tests/test_evidence_detector.py tests/test_intent_reconstructor.py tests/test_deliberation_perspectives.py tests/test_deliberation_types.py` -> passed
+- `python -m pytest tests/test_evidence_detector.py tests/test_intent_reconstructor.py tests/test_deliberation_perspectives.py tests/test_deliberation_types.py -q` -> 25 passed, 2 warnings
+- `python -m ruff check tonesoul tests` -> passed
+- `python -m pytest tests/ -x --tb=short -q` -> 2269 passed, 4 warnings
