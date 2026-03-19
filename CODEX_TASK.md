@@ -1,267 +1,297 @@
-# Codex Task: Phase 548-553 — Bulk Test Coverage + Contract Normalization
+# Codex Task: Phase 554-559 — 系統收斂：覆蓋缺口 + 死碼清理 + 邊界硬化
 
 **指派者**: 痕 (Hén)
 **日期**: 2026-03-19
 **分支**: `feat/env-perception`（繼續使用，不可 push 到 master）
-**前置條件**: 1860 tests passing, lint clean
+**前置條件**: 1975 tests passing, lint clean
 
-> **本次工單為大量批次任務。6 個 Phase，按順序執行。**
+> **本次工單為系統收斂任務。6 個 Phase，按順序執行。**
 > 每完成一個 Phase 就 commit 一次，不要累積。
+> **目標：消除 11 個核心模組的測試盲區，清理死碼，硬化模組邊界。**
 
 ---
 
 ## 脈絡（先讀這些）
 
-1. `tonesoul/unified_pipeline.py` — 主推理管線，理解 dispatch_trace 結構和 lazy getter 模式
-2. `tonesoul/governance/kernel.py` — 治理核心，理解 routing_trace 結構
-3. `tonesoul/contract_observer.py` — 輸出契約驗證器，理解 ContractVerifier API
-4. `tonesoul/safe_parse.py` — JSON 安全解析，理解 parse_llm_response 的 fallback 行為
-5. `tonesoul/frame_router.py` — 框架路由器，理解 route_frames + build_frame_plan
-6. `tonesoul/perception/web_ingest.py` — Web 收集器，理解 WebIngestor 的 async/sync API
-7. `tonesoul/seed_schema_check.py` — 種子 schema 驗證
-8. `tonesoul/generation_orch.py` — 執行報告生成器
-9. `tonesoul/mercy_objective.py` — 仁慈目標權重解析
-10. `tonesoul/soul_persistence.py` — Soul 持久層接口
-11. `tonesoul/vow_inventory.py` — 誓約信念狀態追蹤
-12. `tonesoul/status_alignment.py` — 狀態對齊追蹤
-13. `tests/test_mirror.py` — 參考現有測試模式（mock + assertion 風格）
+1. `tonesoul/memory_manager.py` (652L) — 記憶管理器，最大未測模組
+2. `tonesoul/persona_dimension.py` (447L) — 人格維度空間，DriftMonitor 依賴
+3. `tonesoul/semantic_control.py` (404L) — 語義控制層，pipeline 輔助
+4. `tonesoul/benevolence.py` (385L) — 仁慈裁決引擎
+5. `tonesoul/skill_promoter.py` (375L) — 技能晉升管線
+6. `tonesoul/audit_interface.py` (356L) — 審計接口
+7. `tonesoul/council_capability.py` (314L) — Council 能力聲明
+8. `tonesoul/evidence_collector.py` (265L) — 證據蒐集器
+9. `tonesoul/intent_verification.py` (257L) — 意圖驗證
+10. `tonesoul/jump_monitor.py` (212L) — 奇點跳躍偵測
+11. `tonesoul/escalation.py` (113L) — 升級策略
+12. `tonesoul/council_adapter.py` (45L) — **0 imports，疑似死碼**
+13. `tonesoul/tonesoul_llm.py` (295L) — **0 imports，疑似死碼**
 14. `tests/test_alert_escalation.py` — 參考大型測試檔的 class 分組模式
-15. `AXIOMS.json` — 7 公理定義，contract_observer 用到
+15. `tests/test_dispatch_trace_contract.py` — 參考 dispatch_trace 測試模式
 
 ---
 
-## Phase 548: Test Coverage — Safe Parse + Frame Router + Seed Schema (20+ tests)
+## Phase 554: Test Coverage — Memory Manager + Persona Dimension (25+ tests)
 
-為 3 個**核心工具模組**補齊測試。
+為系統中**最大的兩個未測模組**補齊測試。
 
 ### 任務清單
 
-- [ ] **Task A**: 建立 `tests/test_safe_parse.py`
-  - `test_safe_parse_json_valid` — 正常 JSON 字串
-  - `test_safe_parse_json_with_trailing_commas` — 尾部逗號自動清理
-  - `test_safe_parse_json_from_markdown_codeblock` — \`\`\`json ... \`\`\` 包裹
-  - `test_safe_parse_json_returns_none_on_garbage` — 完全無效輸入 → None
-  - `test_parse_llm_response_extracts_object` — 從雜亂 LLM 回覆中提取 JSON
-  - `test_parse_llm_response_strict_rejects_partial` — strict=True 拒絕部分匹配
-  - `test_validate_dict_with_valid_schema` — dataclass 驗證成功
-  - `test_validate_dict_missing_field` — 缺欄位 → 錯誤
+- [ ] **Task A**: 建立 `tests/test_memory_manager.py`
+  讀 `tonesoul/memory_manager.py` (652L) 理解全部 API。這是記憶管理器，負責記憶的存取、索引、淘汰。
 
-- [ ] **Task B**: 建立 `tests/test_frame_router.py`
-  - `test_score_frame_keyword_match` — 關鍵字匹配計分
-  - `test_score_frame_no_match` — 無匹配 → 0 分
-  - `test_route_frames_returns_top_n` — limit 參數限制返回數量
-  - `test_route_frames_empty_registry` — 空 registry → 空列表
-  - `test_build_frame_plan_structure` — 返回 dict 包含 frames, roles 等欄位
-  - `test_build_frame_plan_with_role_catalog` — 角色目錄對齊
-  - `test_role_alignment_known_unmatched` — 已知 vs 未匹配角色區分
+  - `test_init_default_config` — 預設配置初始化
+  - `test_store_memory_basic` — 基本記憶存入
+  - `test_retrieve_memory_by_key` — 按 key 取回
+  - `test_retrieve_nonexistent_key` — 不存在的 key → None / 空
+  - `test_store_and_overwrite` — 覆寫已有 key
+  - `test_memory_index_consistency` — 索引與實際記憶一致
+  - `test_memory_eviction_policy` — 淘汰策略（如有 LRU/freshness）
+  - `test_bulk_store_and_list` — 批量存入 → 列表正確
+  - `test_clear_all_memories` — 清空操作
+  - `test_memory_search_by_tag` — 按標籤搜尋（如有）
+  - `test_memory_persistence_roundtrip` — 存→取→比較一致
+  - `test_memory_metadata_preserved` — metadata 欄位保留
+  - `test_concurrent_access_safety` — 多次快速存取不崩潰
 
-- [ ] **Task C**: 建立 `tests/test_seed_schema_check.py`
-  - `test_valid_seed_passes` — 完整 seed → 0 issues
-  - `test_missing_required_key` — 缺必填欄位 → issue
-  - `test_partial_seed_lists_all_missing` — 多欄位缺失 → 多 issue
-  - `test_empty_seed` — 空 dict → 全部 issue
-  - `test_main_with_valid_file` — CLI 入口正確退出碼
+- [ ] **Task B**: 建立 `tests/test_persona_dimension.py`
+  讀 `tonesoul/persona_dimension.py` (447L) 理解 API。這是人格維度空間模組，DriftMonitor 依賴它。
+
+  - `test_persona_vector_creation` — 向量初始化
+  - `test_persona_distance_calculation` — 兩點間距離
+  - `test_persona_normalize` — 向量正規化
+  - `test_persona_drift_detection` — 漂移偵測（與 DriftMonitor 的接口）
+  - `test_persona_boundary_clamp` — 邊界值限制
+  - `test_persona_dimension_names` — 維度名稱對應正確
+  - `test_persona_interpolation` — 兩向量插值
+  - `test_persona_zero_vector` — 零向量邊界
+  - `test_persona_high_dimensional` — 多維空間不崩潰
+  - `test_persona_serialization` — 序列化/反序列化
+  - `test_persona_ema_update` — EMA 更新（如有 exponential moving average）
+  - `test_persona_snapshot` — 快照功能
 
 ### 成功標準
-- `ruff check tests/test_safe_parse.py tests/test_frame_router.py tests/test_seed_schema_check.py` → passed
-- `pytest tests/test_safe_parse.py tests/test_frame_router.py tests/test_seed_schema_check.py -q` → 20+ passed
-- `pytest tests/ -x` → 1880+ passed（無回歸）
+- `ruff check tests/test_memory_manager.py tests/test_persona_dimension.py` → passed
+- `pytest tests/test_memory_manager.py tests/test_persona_dimension.py -q` → 25+ passed
+- `pytest tests/ -x` → 2000+ passed（無回歸）
 
 ---
 
-## Phase 549: Test Coverage — Contract Observer + Generation Orch (25+ tests)
+## Phase 555: Test Coverage — Semantic Control + Benevolence + Escalation (22+ tests)
 
 ### 任務清單
 
-- [ ] **Task A**: 建立 `tests/test_contract_observer.py`
+- [ ] **Task A**: 建立 `tests/test_semantic_control.py`
+  讀 `tonesoul/semantic_control.py` (404L) 理解 API。語義控制層，管理語義場約束。
 
-  **ContractVerifier 類別**:
-  - `test_verify_all_passes_clean_output` — 正常輸出通過所有契約
-  - `test_verify_all_catches_absolute_claim` — "This is definitely..." → 失敗
-  - `test_verify_all_catches_harmful_content` — 有害內容偵測
-  - `test_verify_all_zone_filtering` — zone_trigger 過濾正確
-  - `test_custom_contract_registration` — 自訂契約註冊
+  - `test_semantic_control_init` — 初始化不崩潰
+  - `test_apply_control_basic` — 基本控制施加
+  - `test_control_constraint_enforcement` — 約束執行
+  - `test_control_boundary_violation` — 邊界違反偵測
+  - `test_control_passthrough_clean` — 乾淨輸入通過
+  - `test_control_multiple_constraints` — 多重約束同時施加
+  - `test_control_report_structure` — 控制報告結構正確
+  - `test_control_graceful_on_error` — 異常不崩潰
 
-  **MultiScaleObserver 類別**:
-  - `test_observe_returns_metrics` — 回傳 dict 含 short/medium 指標
-  - `test_observe_accumulates_history` — 多次 observe 累積正確
-  - `test_get_alert_none_when_stable` — 穩定狀態 → None
-  - `test_get_alert_triggers_on_spike` — delta_s 突增 → alert
-  - `test_reset_clears_history` — reset 清空
+- [ ] **Task B**: 建立 `tests/test_benevolence.py`
+  讀 `tonesoul/benevolence.py` (385L) 理解 API。仁慈裁決引擎，判斷是否應展現善意。
 
-  **QualityTracker 類別**:
-  - `test_record_and_snapshot` — record 後 take_snapshot 正確
-  - `test_snapshot_trends` — 多次 record → 趨勢判斷
-  - `test_get_summary_format` — summary dict 結構
-  - `test_reset_clears_all` — 清空計數
+  - `test_benevolence_score_neutral` — 中性輸入 → 中性分數
+  - `test_benevolence_score_positive` — 正面情境 → 高分
+  - `test_benevolence_score_negative` — 負面情境 → 低分
+  - `test_benevolence_override_by_axiom` — 公理覆寫
+  - `test_benevolence_boundary_values` — 0.0 和 1.0 邊界
+  - `test_benevolence_weights_structure` — 權重結構驗證
+  - `test_benevolence_deterministic` — 相同輸入 → 相同輸出
 
-  **頂層驗證函數**:
-  - `test_check_no_absolute_claims_passes` — 正常文本通過
-  - `test_check_no_absolute_claims_fails` — "absolutely", "definitely" 等被捕捉
-  - `test_check_uncertainty_disclosure_passes` — 含 "I think", "might" 等
-  - `test_check_uncertainty_disclosure_fails` — 無任何不確定表達
-  - `test_check_no_harmful_content_passes` — 安全文本
-  - `test_check_structured_response_passes` — 結構化回覆
+- [ ] **Task C**: 建立 `tests/test_escalation.py`
+  讀 `tonesoul/escalation.py` (113L) 理解 API。升級策略模組。
 
-- [ ] **Task B**: 建立 `tests/test_generation_orch.py`
-  - `test_build_execution_report_minimal` — 最小參數 → 報告字串
-  - `test_build_execution_report_with_frame_plan` — 含 frame_plan → 結構完整
-  - `test_build_execution_report_with_error_event` — 錯誤事件 ID 注入
-  - `test_build_execution_report_with_skills` — skills_applied 列表渲染
-  - `test_record_error_event_creates_entry` — 錯誤事件記錄 (用 tmp 文件)
+  - `test_escalation_level_determination` — 等級判定
+  - `test_escalation_threshold_boundary` — 門檻邊界
+  - `test_escalation_step_up` — 逐級升級
+  - `test_escalation_step_down` — 降級
+  - `test_escalation_max_level` — 最高等級限制
+  - `test_escalation_default_state` — 初始狀態
+  - `test_escalation_summary` — 摘要結構
 
 ### 成功標準
-- `ruff check tests/test_contract_observer.py tests/test_generation_orch.py` → passed
-- `pytest tests/test_contract_observer.py tests/test_generation_orch.py -q` → 25+ passed
-- `pytest tests/ -x` → 1905+ passed（無回歸）
+- `ruff check tests/test_semantic_control.py tests/test_benevolence.py tests/test_escalation.py` → passed
+- `pytest tests/test_semantic_control.py tests/test_benevolence.py tests/test_escalation.py -q` → 22+ passed
+- `pytest tests/ -x` → 2022+ passed（無回歸）
 
 ---
 
-## Phase 550: Test Coverage — Mercy Objective + Web Ingest + Soul Persistence (18+ tests)
+## Phase 556: Test Coverage — Skill Promoter + Audit Interface + Council Capability (20+ tests)
 
 ### 任務清單
 
-- [ ] **Task A**: 建立 `tests/test_mercy_objective.py`
-  - `test_resolve_mercy_objective_default_weights` — 預設權重回傳合理值
-  - `test_resolve_mercy_objective_with_signals` — 自訂信號影響輸出
-  - `test_resolve_mercy_objective_with_overrides` — weight_overrides 覆寫
-  - `test_decision_mode_returns_string` — _decision_mode 返回合法模式
-  - `test_normalize_weights_sums_to_one` — 權重正規化後總和 ≈ 1.0
-  - `test_clamp_boundary_values` — 0.0 和 1.0 邊界
+- [ ] **Task A**: 建立 `tests/test_skill_promoter.py`
+  讀 `tonesoul/skill_promoter.py` (375L) 理解 API。技能晉升管線。
 
-- [ ] **Task B**: 建立 `tests/test_web_ingest.py`
-  ⚠️ **注意**: `WebIngestor` 依賴外部套件 Crawl4AI，測試必須 mock 或 skip。不可真的發 HTTP 請求。
-  - `test_ingest_result_dataclass_defaults` — 預設值正確
-  - `test_ingest_result_post_init_hash` — __post_init__ 計算 content_hash
-  - `test_is_available_without_crawl4ai` — Crawl4AI 不存在 → False
-  - `test_ingest_urls_sync_mock` — mock 外部呼叫，驗證回傳結構
-  - `test_ingest_error_handling` — URL 失敗 → IngestResult.success=False
-  - `test_max_content_length_truncation` — 長內容截斷
+  - `test_skill_promotion_eligible` — 合格技能晉升
+  - `test_skill_promotion_ineligible` — 不合格 → 拒絕
+  - `test_skill_promotion_criteria` — 晉升條件檢查
+  - `test_skill_score_calculation` — 分數計算
+  - `test_skill_promotion_history` — 晉升歷史追蹤
+  - `test_skill_demotion` — 降級機制（如有）
+  - `test_skill_list_sorted` — 排序正確
 
-- [ ] **Task C**: 建立 `tests/test_soul_persistence.py`
-  讀 `tonesoul/soul_persistence.py` 理解 API 後寫測試。
-  - 至少 6 個測試覆蓋：初始化、儲存、讀取、不存在 key、覆寫、清除
+- [ ] **Task B**: 建立 `tests/test_audit_interface.py`
+  讀 `tonesoul/audit_interface.py` (356L) 理解 API。審計接口。
+
+  - `test_audit_record_creation` — 記錄建立
+  - `test_audit_record_fields` — 必要欄位存在
+  - `test_audit_query_by_time` — 按時間查詢
+  - `test_audit_query_by_component` — 按組件查詢
+  - `test_audit_summary_structure` — 摘要結構
+  - `test_audit_empty_log` — 空日誌 → 安全回傳
+
+- [ ] **Task C**: 建立 `tests/test_council_capability.py`
+  讀 `tonesoul/council_capability.py` (314L) 理解 API。Council 能力聲明。
+
+  - `test_capability_declaration` — 能力宣告
+  - `test_capability_query` — 能力查詢
+  - `test_capability_match_role` — 能力與角色匹配
+  - `test_capability_unknown_role` — 未知角色 → 安全處理
+  - `test_capability_list_all` — 列出所有能力
+  - `test_capability_deterministic` — 相同輸入 → 相同輸出
+  - `test_capability_empty_registry` — 空 registry → 安全回傳
 
 ### 成功標準
-- `ruff check tests/test_mercy_objective.py tests/test_web_ingest.py tests/test_soul_persistence.py` → passed
-- `pytest tests/test_mercy_objective.py tests/test_web_ingest.py tests/test_soul_persistence.py -q` → 18+ passed
-- `pytest tests/ -x` → 1923+ passed（無回歸）
+- `ruff check tests/test_skill_promoter.py tests/test_audit_interface.py tests/test_council_capability.py` → passed
+- `pytest tests/test_skill_promoter.py tests/test_audit_interface.py tests/test_council_capability.py -q` → 20+ passed
+- `pytest tests/ -x` → 2042+ passed（無回歸）
 
 ---
 
-## Phase 551: Contract Normalization — dispatch_trace 標準化 (6 modules)
-
-**目標**: 統一 `dispatch_trace` 的返回結構，讓所有產出 trace 的模組遵守同一 schema。
+## Phase 557: Test Coverage — Evidence Collector + Intent Verification + Jump Monitor (22+ tests)
 
 ### 任務清單
 
-- [ ] **Task A**: 在 `tonesoul/schemas.py` 新增 `DispatchTraceSection` TypedDict
-  ```python
-  class DispatchTraceSection(TypedDict, total=False):
-      component: str          # 產出此 section 的模組名
-      timestamp: str          # ISO 8601
-      status: str             # "ok" | "degraded" | "error"
-      detail: Dict[str, Any]  # 模組特定資料
-  ```
+- [ ] **Task A**: 建立 `tests/test_evidence_collector.py`
+  讀 `tonesoul/evidence_collector.py` (265L) 理解 API。證據蒐集器。
 
-- [ ] **Task B**: 在 `tonesoul/unified_pipeline.py` 的 `process()` 方法中，
-  確保每個寫入 `dispatch_trace` 的地方都包含 `component` 和 `timestamp` 欄位。
-  目前有寫入 trace 的位置包括：
-  - `dispatch_trace["alert"]` — 補上 `component="alert_escalation"`, `timestamp`
-  - `dispatch_trace["action_set"]` — 補上 `component="action_set"`, `timestamp`
-  - `dispatch_trace["drift"]` — 補上 `component="drift_monitor"`, `timestamp`
-  - `dispatch_trace["suppressed_errors"]` — 補上 `component="exception_trace"`, `timestamp`
-  - `dispatch_trace["trajectory"]` — 補上 `component="trajectory"`, `timestamp`
-  - `dispatch_trace["soul_integral"]` — 補上 `component="tension_engine"`, `timestamp`
-  ⚠️ **不要改變 `detail` 內容**，只是外加 `component` + `timestamp` 包裹。
+  - `test_collect_evidence_basic` — 基本蒐集
+  - `test_evidence_dedup` — 重複證據去重
+  - `test_evidence_ranking` — 證據排序
+  - `test_evidence_source_tracking` — 來源追蹤
+  - `test_evidence_empty_input` — 空輸入 → 空結果
+  - `test_evidence_max_capacity` — 容量限制
+  - `test_evidence_summary` — 摘要結構
+  - `test_evidence_filter_by_type` — 按類型過濾
 
-- [ ] **Task C**: 在 `tonesoul/governance/kernel.py` 的 `build_routing_trace()` 中，
-  對 `routing_trace` 做同樣的 `component` + `timestamp` 標準化。
+- [ ] **Task B**: 建立 `tests/test_intent_verification.py`
+  讀 `tonesoul/intent_verification.py` (257L) 理解 API。意圖驗證模組。
 
-- [ ] **Task D**: 更新相關測試中的 assertion 以適應新欄位
-  - 不可破壞現有 assertion（新欄位是 additive）
-  - 新增 assertion 確認 `component` 和 `timestamp` 存在
+  - `test_verify_intent_match` — 意圖匹配
+  - `test_verify_intent_mismatch` — 意圖不匹配 → 失敗
+  - `test_verify_intent_ambiguous` — 模糊意圖處理
+  - `test_verification_confidence_score` — 信心分數
+  - `test_verification_report_structure` — 報告結構
+  - `test_verification_empty_context` — 空脈絡 → 安全處理
+  - `test_verification_multiple_intents` — 多意圖場景
 
-- [ ] **Task E**: 建立 `tests/test_dispatch_trace_contract.py` (10+ tests)
-  - `test_all_trace_sections_have_component` — process() 後檢查所有 section
-  - `test_all_trace_sections_have_timestamp` — ISO 8601 格式驗證
-  - `test_trace_section_status_values` — 只允許 "ok" | "degraded" | "error"
-  - `test_routing_trace_has_component` — kernel routing trace 也有 component
-  - `test_trace_backward_compatible` — 原有欄位仍存在
+- [ ] **Task C**: 建立 `tests/test_jump_monitor.py`
+  讀 `tonesoul/jump_monitor.py` (212L) 理解 API。奇點跳躍偵測。
+
+  - `test_jump_detection_normal` — 正常波動 → 不觸發
+  - `test_jump_detection_spike` — 突變 → 觸發
+  - `test_jump_threshold_boundary` — 門檻邊界
+  - `test_jump_cooldown` — 冷卻期
+  - `test_jump_history_tracking` — 歷史追蹤
+  - `test_jump_reset` — 重置
+  - `test_jump_summary` — 摘要結構
 
 ### 成功標準
-- `ruff check tonesoul/schemas.py tonesoul/unified_pipeline.py tonesoul/governance/kernel.py tests/test_dispatch_trace_contract.py` → passed
-- `pytest tests/test_dispatch_trace_contract.py -q` → 10+ passed
-- `pytest tests/ -x` → 1933+ passed（無回歸）
+- `ruff check tests/test_evidence_collector.py tests/test_intent_verification.py tests/test_jump_monitor.py` → passed
+- `pytest tests/test_evidence_collector.py tests/test_intent_verification.py tests/test_jump_monitor.py -q` → 22+ passed
+- `pytest tests/ -x` → 2064+ passed（無回歸）
 
 ---
 
-## Phase 552: Vow Conviction Lifecycle + Status Alignment Tests (20+ tests)
+## Phase 558: Dead Code Audit + Deprecation Markers (8+ tests)
+
+**目標**: 驗證並標記死碼模組，為未來清理做準備。
 
 ### 任務清單
 
-- [ ] **Task A**: 擴展或建立 `tests/test_vow_inventory.py`
-  讀 `tonesoul/vow_system.py` + `tonesoul/vow_inventory.py` 理解全部 API。
+- [ ] **Task A**: 驗證 `tonesoul/council_adapter.py` (45L, 0 imports)
+  1. 搜索全 codebase 確認無使用（`grep -r "council_adapter" tonesoul/ tests/`）
+  2. 如確認無使用，在檔案頂部加 deprecation 警告：
+     ```python
+     import warnings
+     warnings.warn(
+         "council_adapter is deprecated and scheduled for removal. "
+         "Use tonesoul.council.perspectives directly.",
+         DeprecationWarning,
+         stacklevel=2,
+     )
+     ```
+  3. 建立 `tests/test_council_adapter_deprecated.py`：
+     - `test_import_emits_deprecation_warning` — import 時觸發 DeprecationWarning
+     - `test_module_still_importable` — 不崩潰
 
-  **VowInventory 測試**:
-  - `test_vow_conviction_state_creation` — VowConvictionState dataclass 初始值
-  - `test_register_vow_and_retrieve` — 註冊 → 取回
-  - `test_conviction_score_update` — 更新信念分數
-  - `test_conviction_window_sliding` — 30 輪窗口正確滑動
-  - `test_average_conviction_calculation` — 平均值計算正確
-  - `test_vow_trajectory_tracking` — 軌跡追蹤紀錄
-  - `test_multiple_vows_independent` — 多誓約互不影響
-  - `test_empty_inventory_summary` — 空倉庫 → 空摘要
+- [ ] **Task B**: 驗證 `tonesoul/tonesoul_llm.py` (295L, 0 imports)
+  1. 搜索全 codebase 確認無使用
+  2. 如確認無使用，在檔案頂部加 deprecation 警告（同上模式）
+  3. 建立 `tests/test_tonesoul_llm_deprecated.py`：
+     - `test_import_emits_deprecation_warning`
+     - `test_module_still_importable`
 
-  **VowSystem 測試** (如有額外 API):
-  - `test_vow_creation_with_context` — 帶脈絡建立誓約
-  - `test_vow_breach_detection` — 違約偵測
+- [ ] **Task C**: 驗證 `tonesoul/market/forecaster.py` 和 `tonesoul/market/gold_detector.py`
+  1. 搜索全 codebase 確認使用狀況
+  2. 如為孤立模組（不影響主管線），加 deprecation 警告
+  3. 建立 `tests/test_market_deprecation.py`：
+     - `test_forecaster_import_warning`
+     - `test_gold_detector_import_warning`
 
-- [ ] **Task B**: 建立 `tests/test_status_alignment.py`
-  讀 `tonesoul/status_alignment.py` 理解 API。
-  - 至少 10 個測試：初始對齊、偏移檢測、校正機制、邊界值、多維對齊
+- [ ] **Task D**: 修復 `dispatch_trace["repair_eligible"]` 一致性問題
+  在 `tonesoul/unified_pipeline.py` 中，`dispatch_trace["repair_eligible"] = True` 是唯一未經 `_build_trace_section()` 包裹的寫入。
+  改為使用 `_build_trace_section()` 包裹，或移入 `dispatch_trace["repair"]["detail"]` 中。
+  ⚠️ 不可改變語義，只做結構標準化。
 
 ### 成功標準
-- `ruff check tests/test_vow_inventory.py tests/test_status_alignment.py` → passed
-- `pytest tests/test_vow_inventory.py tests/test_status_alignment.py -q` → 20+ passed
-- `pytest tests/ -x` → 1953+ passed（無回歸）
+- `ruff check` 相關檔案 → passed
+- deprecation warning 測試全過
+- `dispatch_trace["repair_eligible"]` 已標準化
+- `pytest tests/ -x` → 2072+ passed（無回歸）
 
 ---
 
-## Phase 553: Council Coherence + Deliberation Gravity Tests (20+ tests)
+## Phase 559: YSS Pipeline 收斂測試 (15+ tests)
+
+`yss_pipeline.py` (1091L) 和 `yss_gates.py` (940L) 是兩個大型未測模組。它們是 YSS (語魂脊柱系統) 的核心管線。
 
 ### 任務清單
 
-- [ ] **Task A**: 建立 `tests/test_council_coherence.py`
-  讀 `tonesoul/council/coherence.py` 理解 API。
-  - `test_coherence_score_unanimous` — 全票一致 → 高分
-  - `test_coherence_score_split` — 意見分裂 → 低分
-  - `test_coherence_score_empty_votes` — 空投票 → 安全預設
-  - `test_coherence_with_abstentions` — 棄權票處理
-  - `test_coherence_boundary_values` — 0.0 和 1.0 邊界
-  - `test_coherence_weights_applied` — 權重影響
-  - `test_coherence_consistent_deterministic` — 相同輸入 → 相同輸出
-  - `test_coherence_single_perspective` — 只有一個視角
-  - `test_coherence_with_tension_data` — 含張力數據
-  - `test_coherence_score_normalized` — 分數在 [0,1] 範圍
+- [ ] **Task A**: 建立 `tests/test_yss_pipeline.py`
+  讀 `tonesoul/yss_pipeline.py` 理解 API。
 
-- [ ] **Task B**: 建立 `tests/test_deliberation_gravity.py`
-  讀 `tonesoul/deliberation/gravity.py` 理解 API。
-  - `test_gravity_synthesize_basic` — 基本合成呼叫
-  - `test_gravity_weighs_perspectives` — 權重影響合成結果
-  - `test_gravity_handles_empty_input` — 空輸入 → graceful fallback
-  - `test_gravity_handles_single_voice` — 單一聲音 → 直接採用
-  - `test_gravity_conflict_resolution` — 衝突聲音的合成策略
-  - `test_gravity_semantic_field_conservation` — 語義場守恆（Axiom 7）
-  - `test_gravity_tension_preserved` — 張力保留（Axiom 4: 非零張力）
-  - `test_gravity_deterministic` — 相同輸入 → 相同輸出
-  - `test_gravity_output_structure` — 輸出結構包含必要欄位
-  - `test_gravity_graceful_on_exception` — 內部異常不崩潰
+  - `test_yss_pipeline_init` — 初始化不崩潰
+  - `test_yss_pipeline_process_minimal` — 最小輸入處理
+  - `test_yss_pipeline_output_structure` — 輸出結構正確
+  - `test_yss_pipeline_stage_sequence` — 階段順序正確
+  - `test_yss_pipeline_error_in_stage` — 單階段錯誤 → 安全降級
+  - `test_yss_pipeline_empty_input` — 空輸入 → 安全處理
+  - `test_yss_pipeline_context_propagation` — 上下文傳遞
+  - `test_yss_pipeline_trace_output` — 追蹤輸出
+
+- [ ] **Task B**: 建立 `tests/test_yss_gates.py`
+  讀 `tonesoul/yss_gates.py` 理解 API。
+
+  - `test_gate_pass_condition` — 通過條件
+  - `test_gate_block_condition` — 阻擋條件
+  - `test_gate_threshold_boundary` — 門檻邊界值
+  - `test_gate_chain_execution` — 多閘門連鎖
+  - `test_gate_bypass_flag` — bypass 旗標（如有）
+  - `test_gate_report_structure` — 報告結構
+  - `test_gate_graceful_on_error` — 異常不崩潰
 
 ### 成功標準
-- `ruff check tests/test_council_coherence.py tests/test_deliberation_gravity.py` → passed
-- `pytest tests/test_council_coherence.py tests/test_deliberation_gravity.py -q` → 20+ passed
-- `pytest tests/ -x` → 1973+ passed（無回歸）
+- `ruff check tests/test_yss_pipeline.py tests/test_yss_gates.py` → passed
+- `pytest tests/test_yss_pipeline.py tests/test_yss_gates.py -q` → 15+ passed
+- `pytest tests/ -x` → **2087+ passed（無回歸）**
 
 ---
 
@@ -273,13 +303,14 @@
 - ❌ 不可刪除任何現有測試
 - ❌ 不可在 `unified_pipeline.py` 中改變控制流（if/else 分支順序）
 - ❌ 不可 push 到 master
-- ❌ Phase 551 的 dispatch_trace 標準化只加欄位，不改 detail 內容
+- ❌ Phase 558 的死碼清理只加 deprecation 警告，**不可刪除檔案**
+- ❌ Phase 558 的 dispatch_trace 修復只做結構標準化，不改語義
 
 ## 技術提示
 
 ### 測試模式參考
 ```python
-# 標準 mock 模式（參考 tests/test_mirror.py）
+# 標準 mock 模式（參考 tests/test_alert_escalation.py）
 from unittest.mock import MagicMock, patch
 
 class TestSomeFeature:
@@ -288,10 +319,15 @@ class TestSomeFeature:
         result = obj.method(input)
         assert result["key"] == expected
 
-# Dataclass 測試模式
-def test_dataclass_defaults():
-    dc = MyDataclass(required_field="x")
-    assert dc.optional_field == default_value
+# Deprecation 測試模式 (Phase 558)
+import warnings
+def test_import_emits_deprecation_warning():
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        import tonesoul.council_adapter  # noqa: F401
+        dep_warnings = [x for x in w if issubclass(x.category, DeprecationWarning)]
+        assert len(dep_warnings) >= 1
+        assert "deprecated" in str(dep_warnings[0].message).lower()
 
 # 異常路徑模式
 def test_graceful_fallback():
@@ -300,32 +336,19 @@ def test_graceful_fallback():
     assert result is not None  # 沒有崩潰
 ```
 
-### dispatch_trace 標準化模式 (Phase 551)
-```python
-from datetime import datetime, timezone
-
-# 加入方式：
-dispatch_trace["alert"] = {
-    "component": "alert_escalation",
-    "timestamp": datetime.now(timezone.utc).isoformat(),
-    "status": "ok",
-    "detail": { ... 原有內容 ... }
-}
-```
-
 ### 重要注意
-- `safe_parse.py` 的 `_extract_balanced_json_object` 用了手動括號匹配，測試要覆蓋巢狀 JSON
-- `contract_observer.py` 的 check 函數用了 regex，測試要覆蓋 edge case
-- `web_ingest.py` 必須 mock Crawl4AI（不可真的發 HTTP 請求）
-- `frame_router.py` 的 `_score_frame` 是計分核心，測試要覆蓋多種 frame+context 組合
+- `memory_manager.py` 是 652 行的大模組，需要仔細讀 API 後再寫測試
+- `persona_dimension.py` 被 `drift_monitor.py` 依賴 — 測試要確認 DriftMonitor 的接口能正常調用
+- `yss_pipeline.py` (1091L) 和 `yss_gates.py` (940L) 是大型模組，先讀 class 和 public method，再逐一測試
+- Phase 558 的死碼驗證必須先做 grep 確認，不可假設
 - 每個 Phase commit 一次，message 格式: `test(Phase NNN): [描述]`
 
 ### Commit Message 格式
 ```
-Phase 548: test(Phase 548): safe_parse + frame_router + seed_schema tests
-Phase 549: test(Phase 549): contract_observer + generation_orch tests
-Phase 550: test(Phase 550): mercy_objective + web_ingest + soul_persistence tests
-Phase 551: feat(Phase 551): dispatch_trace contract normalization
-Phase 552: test(Phase 552): vow_conviction + status_alignment tests
-Phase 553: test(Phase 553): council_coherence + deliberation_gravity tests
+Phase 554: test(Phase 554): memory_manager + persona_dimension tests
+Phase 555: test(Phase 555): semantic_control + benevolence + escalation tests
+Phase 556: test(Phase 556): skill_promoter + audit_interface + council_capability tests
+Phase 557: test(Phase 557): evidence_collector + intent_verification + jump_monitor tests
+Phase 558: refactor(Phase 558): dead code deprecation + dispatch_trace consistency
+Phase 559: test(Phase 559): yss_pipeline + yss_gates convergence tests
 ```
