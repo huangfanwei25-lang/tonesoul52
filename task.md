@@ -5973,3 +5973,24 @@
 - `python -m pytest tests/test_service_manager.py tests/test_error_event.py tests/test_dcs.py tests/test_constraint_stack.py tests/test_unified_controller.py tests/test_context_compiler.py -q` -> 29 passed, 2 warnings
 - `python -m ruff check tonesoul tests` -> passed
 - `python -m pytest tests/ -x --tb=short -q` -> 2447 passed, 9 warnings
+
+## Phase 571: Final Tail-Module Convergence Coverage (2026-03-20)
+- [x] add `tests/test_subjectivity_admissibility.py` for direction classification, focus mapping, admissibility checklist generation, derived-direction handling, and status-line formatting
+- [x] add `tests/test_memory_stats.py` for verdict/divergence/coherence extraction and aggregate helpers
+- [x] add `tests/test_openclaw_embeddings.py` for deterministic hash embeddings, mock embeddings, and sentence-transformer missing-dependency fallback
+- [x] add `tests/test_concept_store.py` for concept loading/filtering, text expansion, index building, and ranking behavior
+- [x] add `tests/test_semantic_embedder.py` for cosine similarity edges, embedder availability/runtime fallback, fake transformer wiring, and default helper delegation
+- [x] add `tests/test_perspective_axiomatic_inference.py`, `tests/test_perspective_critic.py`, and `tests/test_perspective_advocate.py` for perspective-type and approve/concern decision branches
+- [x] add `tests/test_async_queue.py` for buffering, waiter delivery, close semantics, and closed-queue errors
+- [x] add `tests/test_shared_errors.py` for singleton error identity, hierarchy, and message strings
+- [x] add `tests/test_issue_codes.py` for raw and formatted issue-code rendering
+- [x] add `tests/test_corpus_schema.py` for `CorpusEntry.to_dict()` serialization of required/optional fields
+- [x] add `tests/test_action_set_module.py` for decision-mode fallback and action-policy resolution
+- [x] add `tests/test_tonesoul_config.py` for workspace-dir filtering, README resolution priority, and entrypoint indexing
+- [x] validate targeted tests and full regression
+**Success Criteria**: the remaining tail modules under `tonesoul/` gain deterministic unit coverage across helpers, schemas, perspectives, queues, and config surfaces without touching protected runtime files.
+**Validation**:
+- `python -m ruff check tests/test_subjectivity_admissibility.py tests/test_memory_stats.py tests/test_openclaw_embeddings.py tests/test_concept_store.py tests/test_semantic_embedder.py tests/test_perspective_axiomatic_inference.py tests/test_perspective_critic.py tests/test_perspective_advocate.py tests/test_async_queue.py tests/test_shared_errors.py tests/test_issue_codes.py tests/test_corpus_schema.py tests/test_action_set_module.py tests/test_tonesoul_config.py` -> passed
+- `python -m pytest tests/test_subjectivity_admissibility.py tests/test_memory_stats.py tests/test_openclaw_embeddings.py tests/test_concept_store.py tests/test_semantic_embedder.py tests/test_perspective_axiomatic_inference.py tests/test_perspective_critic.py tests/test_perspective_advocate.py tests/test_async_queue.py tests/test_shared_errors.py tests/test_issue_codes.py tests/test_corpus_schema.py tests/test_action_set_module.py tests/test_tonesoul_config.py -q` -> 44 passed, 2 warnings
+- `python -m ruff check tonesoul tests` -> passed
+- `python -m pytest tests/ -x --tb=short -q` -> 2491 passed, 9 warnings
