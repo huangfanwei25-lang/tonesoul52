@@ -5942,3 +5942,19 @@
 - `python -m pytest tests/test_tonebridge_trajectory.py tests/test_perception_stimulus.py tests/test_corpus_consent.py -q` -> 23 passed, 1 warning
 - `python -m ruff check tonesoul tests` -> passed
 - `python -m pytest tests/ -x --tb=short -q` -> 2388 passed, 9 warnings
+
+## Phase 569: Tech Trace + Observability + Loop Coverage (2026-03-20)
+- [x] add `tests/test_tech_trace_normalize.py` for pruning, summary/claim extraction, JSON arg loading, normalization coercion, capture loading, and CLI output writing
+- [x] add `tests/test_tech_trace_validate.py` for normalize-payload loading, claim/link/attribution issue detection, strict validation, and CLI pass/fail reporting
+- [x] add `tests/test_tech_trace_capture.py` for tag normalization, text loading precedence, capture payload hashing/pruning, and CLI output writing
+- [x] add `tests/test_observability_logger.py` for JSONL handler writes, fallback bound logger emission, structlog-missing fallback, and idempotent logger configuration
+- [x] add `tests/test_observability_env_config.py` for custom `.env` loading idempotence, missing-file no-op behavior, CI detection, mock-mode detection, and resolved config overrides
+- [x] add `tests/test_loop_events.py` for lifecycle/error serialization and current base `to_dict()` behavior on non-overridden event dataclasses
+- [x] add `tests/test_loop_config.py` for default loop config factory values and custom config/result dataclass fields
+- [x] validate targeted tests and full regression
+**Success Criteria**: Tech-Trace CLI helpers, observability plumbing, and loop event/config primitives gain deterministic coverage without altering runtime behavior or protected pipeline/kernel files.
+**Validation**:
+- `python -m ruff check tests/test_tech_trace_normalize.py tests/test_tech_trace_validate.py tests/test_tech_trace_capture.py tests/test_observability_logger.py tests/test_observability_env_config.py tests/test_loop_events.py tests/test_loop_config.py` -> passed
+- `python -m pytest tests/test_tech_trace_normalize.py tests/test_tech_trace_validate.py tests/test_tech_trace_capture.py tests/test_observability_logger.py tests/test_observability_env_config.py tests/test_loop_events.py tests/test_loop_config.py -q` -> 30 passed, 1 warning
+- `python -m ruff check tonesoul tests` -> passed
+- `python -m pytest tests/ -x --tb=short -q` -> 2418 passed, 9 warnings
