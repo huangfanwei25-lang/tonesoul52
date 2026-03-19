@@ -39,11 +39,10 @@ def test_pipeline_pass_local_fast_route(mock_ask_local_llm):
     assert "[Local Model]" in response.response
     assert response.dispatch_trace.get("route") == RoutingPath.PASS_LOCAL.value
     assert response.dispatch_trace.get("journal_eligible") is False
-    assert response.dispatch_trace.get("routing_trace") == {
-        "route": RoutingPath.PASS_LOCAL.value,
-        "journal_eligible": False,
-        "reason": response.dispatch_trace.get("reason"),
-    }
+    routing_trace = response.dispatch_trace.get("routing_trace") or {}
+    assert routing_trace.get("route") == RoutingPath.PASS_LOCAL.value
+    assert routing_trace.get("journal_eligible") is False
+    assert routing_trace.get("reason") == response.dispatch_trace.get("reason")
 
 
 def test_pipeline_premium_journal_eligible():
@@ -66,11 +65,10 @@ def test_pipeline_premium_journal_eligible():
     assert response.dispatch_trace.get("route") == RoutingPath.PASS_COUNCIL.value
     assert isinstance(response.dispatch_trace.get("reason"), str)
     assert response.dispatch_trace.get("reason")
-    assert response.dispatch_trace.get("routing_trace") == {
-        "route": RoutingPath.PASS_COUNCIL.value,
-        "journal_eligible": True,
-        "reason": response.dispatch_trace.get("reason"),
-    }
+    routing_trace = response.dispatch_trace.get("routing_trace") or {}
+    assert routing_trace.get("route") == RoutingPath.PASS_COUNCIL.value
+    assert routing_trace.get("journal_eligible") is True
+    assert routing_trace.get("reason") == response.dispatch_trace.get("reason")
 
 
 def test_pipeline_rate_limit_free_tier(monkeypatch):

@@ -13,7 +13,7 @@ Usage:
 from __future__ import annotations
 
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, TypedDict
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
@@ -65,6 +65,15 @@ class SubjectivityPromotionStatus(str, Enum):
     APPROVED = "approved"
     DEFERRED = "deferred"
     REJECTED = "rejected"
+
+
+class DispatchTraceSection(TypedDict, total=False):
+    """Normalized additive schema for dispatch/routing trace sections."""
+
+    component: str
+    timestamp: str
+    status: str
+    detail: Dict[str, Any]
 
 
 # ---------------------------------------------------------------------------

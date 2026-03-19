@@ -14,6 +14,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from tonesoul.exception_trace import ExceptionTrace
+from tonesoul.schemas import DispatchTraceSection
 
 
 def _read_bool_env(name: str, default: bool = False) -> bool:
@@ -452,6 +453,24 @@ class UnifiedPipeline:
                 return False
         return True
 
+    def _build_trace_section(
+        self,
+        component: str,
+        detail: Optional[Dict[str, Any]],
+        *,
+        status: str = "ok",
+    ) -> DispatchTraceSection:
+        payload = dict(detail) if isinstance(detail, dict) else {}
+        normalized_status = str(status or "ok").strip().lower()
+        if normalized_status not in {"ok", "degraded", "error"}:
+            normalized_status = "ok"
+        section: Dict[str, Any] = dict(payload)
+        section["component"] = component
+        section["timestamp"] = datetime.now(timezone.utc).isoformat()
+        section["status"] = normalized_status
+        section["detail"] = payload
+        return section
+
     def _apply_mirror_step(
         self,
         response: str,
@@ -475,8 +494,9 @@ class UnifiedPipeline:
                 "final_choice": "raw",
                 "reflection_note": "Mirror unavailable.",
             }
-            dispatch_trace["mirror"] = mirror_trace
-            trajectory_result["mirror"] = dict(mirror_trace)
+            section = self._build_trace_section("mirror", mirror_trace, status="degraded")
+            dispatch_trace["mirror"] = section
+            trajectory_result["mirror"] = dict(section)
             return response
 
         dual = mirror.reflect(
@@ -498,15 +518,27 @@ class UnifiedPipeline:
             "enforced": self._mirror_mode == "enforce",
             "mirror_delta": mirror_delta,
         }
-        dispatch_trace["mirror"] = mirror_trace
-        trajectory_result["mirror"] = dict(mirror_trace)
-        trajectory_result["mirror_delta"] = dict(mirror_delta)
-
         if self._mirror_mode != "enforce":
             mirror_trace["applied_response"] = "raw"
+            section = self._build_trace_section(
+                "mirror",
+                mirror_trace,
+                status="degraded" if dual.mirror_delta.mirror_triggered else "ok",
+            )
+            dispatch_trace["mirror"] = section
+            trajectory_result["mirror"] = dict(section)
+            trajectory_result["mirror_delta"] = dict(mirror_delta)
             return dual.raw_response or response
 
         mirror_trace["applied_response"] = dual.final_choice
+        section = self._build_trace_section(
+            "mirror",
+            mirror_trace,
+            status="degraded" if dual.mirror_delta.mirror_triggered else "ok",
+        )
+        dispatch_trace["mirror"] = section
+        trajectory_result["mirror"] = dict(section)
+        trajectory_result["mirror_delta"] = dict(mirror_delta)
         if dual.final_choice == "raw":
             return dual.raw_response or response
         return dual.governed_response or dual.raw_response or response
@@ -1208,7 +1240,11 @@ class UnifiedPipeline:
                     repair_event["resonance_class"] = "unknown"
 
         dispatch_trace["repair_eligible"] = True
-        dispatch_trace["repair"] = repair_event
+        dispatch_trace["repair"] = self._build_trace_section(
+            "repair",
+            repair_event,
+            status="degraded",
+        )
 
     def _attach_runtime_governance_observability(
         self,
@@ -1221,7 +1257,15 @@ class UnifiedPipeline:
             return
 
         try:
-            dispatch_trace["governance_runtime"] = kernel.build_observability_trace(dispatch_trace)
+            governance_runtime = kernel.build_observability_trace(dispatch_trace)
+            status = "error" if governance_runtime.get("freeze_triggered") else "ok"
+            if governance_runtime.get("rollback_applied") and status == "ok":
+                status = "degraded"
+            dispatch_trace["governance_runtime"] = self._build_trace_section(
+                "governance_runtime",
+                governance_runtime,
+                status=status,
+            )
         except Exception:
             return
 
@@ -1253,7 +1297,11 @@ class UnifiedPipeline:
         )
 
         if llm_trace:
-            dispatch_trace["llm"] = llm_trace
+            dispatch_trace["llm"] = self._build_trace_section(
+                "llm",
+                llm_trace,
+                status="ok",
+            )
 
     def _compute_prior_governance_friction(
         self,
@@ -1423,8 +1471,22 @@ class UnifiedPipeline:
                         e,
                     )
                     pass
+            if not isinstance(routing_trace, dict):
+                routing_trace = {
+                    "route": routing_decision.path.value,
+                    "journal_eligible": routing_decision.journal_eligible,
+                    "reason": routing_decision.reason,
+                }
+            if "component" not in routing_trace or "timestamp" not in routing_trace:
+                routing_trace = self._build_trace_section(
+                    "compute_gate",
+                    routing_trace,
+                    status="degraded" if "suppressed_errors" in routing_trace else "ok",
+                )
             return {
-                **routing_trace,
+                "route": routing_trace.get("route"),
+                "journal_eligible": routing_trace.get("journal_eligible"),
+                "reason": routing_trace.get("reason"),
                 "routing_trace": dict(routing_trace),
                 "pre_gate_initial_tension": initial_tension,
                 "pre_gate_governance_friction": governance_friction,
@@ -1432,7 +1494,11 @@ class UnifiedPipeline:
 
         def _attach_suppressed_errors(trace: Dict[str, Any]) -> None:
             if self._exc_trace.has_errors:
-                trace["suppressed_errors"] = self._exc_trace.summary()
+                trace["suppressed_errors"] = self._build_trace_section(
+                    "exception_trace",
+                    self._exc_trace.summary(),
+                    status="degraded",
+                )
 
         # FAST ROUTE: Bypass all expensive Cloud APIs and Council layers
         if routing_decision.path == RoutingPath.PASS_LOCAL:
@@ -1562,14 +1628,36 @@ class UnifiedPipeline:
                 "tension_score": tone_strength,
                 "resonance_state": resonance_state,
                 "loop_detected": loop_detected,
-                "scenario_envelope": dict(scenario_envelope),
+                "scenario_envelope": self._build_trace_section(
+                    "scenario_envelope",
+                    dict(scenario_envelope),
+                    status="ok" if scenario_envelope.get("enabled", True) else "degraded",
+                ),
             }
+        )
+        dispatch_trace["trajectory"] = self._build_trace_section(
+            "trajectory",
+            dict(trajectory_result),
+            status="degraded" if loop_detected else "ok",
         )
         # Phase 544: attach drift summary to dispatch trace
         drift_monitor = self._get_drift_monitor()
         if drift_monitor is not None and drift_monitor.step_count > 0:
             try:
-                dispatch_trace["drift"] = drift_monitor.summary()
+                drift_summary = drift_monitor.summary()
+                drift_status = "ok"
+                current_alert = str(
+                    drift_summary.get("current_alert") or drift_summary.get("alert") or ""
+                ).strip().lower()
+                if current_alert == "warning":
+                    drift_status = "degraded"
+                elif current_alert in {"crisis", "error"}:
+                    drift_status = "error"
+                dispatch_trace["drift"] = self._build_trace_section(
+                    "drift_monitor",
+                    drift_summary,
+                    status=drift_status,
+                )
             except Exception as e:
                 self._exc_trace.record(
                     "unified_pipeline",
@@ -1580,7 +1668,17 @@ class UnifiedPipeline:
         # Attach TensionEngine detail to dispatch trace
         if tension_result is not None:
             try:
-                dispatch_trace["tension_engine"] = tension_result.to_dict()
+                tension_detail = tension_result.to_dict()
+                dispatch_trace["tension_engine"] = self._build_trace_section(
+                    "tension_engine",
+                    tension_detail,
+                    status="ok",
+                )
+                dispatch_trace["soul_integral"] = self._build_trace_section(
+                    "tension_engine",
+                    tension_detail,
+                    status="ok",
+                )
             except Exception as e:
                 self._exc_trace.record(
                     "unified_pipeline",
@@ -1618,7 +1716,11 @@ class UnifiedPipeline:
             if cb_state:
                 resistance_trace["circuit_breaker"] = cb_state
             if cb_status == "frozen":
-                dispatch_trace["resistance"] = resistance_trace
+                dispatch_trace["resistance"] = self._build_trace_section(
+                    "governance_resistance",
+                    resistance_trace,
+                    status="error",
+                )
                 trajectory_result["dispatch"] = dispatch_trace
                 block_response = (
                     "[系統防護] CircuitBreaker 已觸發 Freeze Protocol，暫停高風險推理，"
@@ -1685,7 +1787,11 @@ class UnifiedPipeline:
                         pass
 
         if resistance_trace:
-            dispatch_trace["resistance"] = resistance_trace
+            dispatch_trace["resistance"] = self._build_trace_section(
+                "governance_resistance",
+                resistance_trace,
+                status="degraded",
+            )
 
         # ========== 2.4 Phase 545: AlertEscalation — L1/L2/L3 ==========
         alert_event = None
@@ -1741,7 +1847,14 @@ class UnifiedPipeline:
                     jump_indicators_tripped=_jump_indicators,
                     consecutive_high_friction=_consecutive,
                 )
-                dispatch_trace["alert"] = alert_escalation.summary()
+                alert_status = "ok"
+                if alert_event is not None and not alert_event.is_clear:
+                    alert_status = "error" if str(alert_event.level.value) == "L3" else "degraded"
+                dispatch_trace["alert"] = self._build_trace_section(
+                    "alert_escalation",
+                    alert_escalation.summary(),
+                    status=alert_status,
+                )
             except Exception as e:
                 self._exc_trace.record(
                     "unified_pipeline",
@@ -1750,6 +1863,12 @@ class UnifiedPipeline:
                 )
                 pass
 
+        if resistance_trace:
+            dispatch_trace["resistance"] = self._build_trace_section(
+                "governance_resistance",
+                resistance_trace,
+                status="degraded",
+            )
         trajectory_result["dispatch"] = dispatch_trace
         # ========== 2.5 ToneSoul 2.0: 內在審議 ==========
         deliberation = self._get_deliberation()
@@ -1825,7 +1944,14 @@ class UnifiedPipeline:
                 deliberation_trace["persona_mode"] = persona_mode
                 deliberation_trace["monologue_excerpt"] = internal_monologue[:160]
 
-        dispatch_trace["deliberation"] = dict(deliberation_trace)
+        deliberation_status = "ok"
+        if deliberation_trace.get("fallback"):
+            deliberation_status = "degraded"
+        dispatch_trace["deliberation"] = self._build_trace_section(
+            "deliberation",
+            dict(deliberation_trace),
+            status=deliberation_status,
+        )
         trajectory_result["deliberation"] = dict(deliberation_trace)
 
         # ========== 2.6 Phase 545: L2/L3 graduated response ==========
@@ -1861,10 +1987,14 @@ class UnifiedPipeline:
         if _lockdown_active:
             from tonesoul.action_set import ACTION_POLICY
 
-            dispatch_trace["action_set"] = {
-                "mode": "lockdown",
-                "allowed_actions": list(ACTION_POLICY.get("lockdown", [])),
-            }
+            dispatch_trace["action_set"] = self._build_trace_section(
+                "action_set",
+                {
+                    "mode": "lockdown",
+                    "allowed_actions": list(ACTION_POLICY.get("lockdown", [])),
+                },
+                status="degraded",
+            )
 
         # ========== 3. 第三公理：載入承諾堆疊 ==========
         commit_stack = self._get_commit_stack()
@@ -1884,7 +2014,11 @@ class UnifiedPipeline:
         user_message, graph_rag_trace = self._inject_graph_rag_context(
             user_message, tb_result=tb_result
         )
-        dispatch_trace["graph_rag"] = dict(graph_rag_trace)
+        dispatch_trace["graph_rag"] = self._build_trace_section(
+            "graph_rag",
+            dict(graph_rag_trace),
+            status="ok" if graph_rag_trace.get("applied") else "degraded",
+        )
         trajectory_result["graph_rag"] = dict(graph_rag_trace)
 
         # ========== 3.7 Semantic Trigger (high-tension recurrence check) ==========
@@ -1980,16 +2114,21 @@ class UnifiedPipeline:
                         print(f"Hippocampus corrective recall error: {corrective_error}")
 
                 memory_results = self._merge_memory_results(primary_results, corrective_results)
-                dispatch_trace["memory_correction"] = {
+                memory_correction_trace = {
                     "primary_hits": len(primary_results or []),
                     "corrective_hits": len(corrective_results or []),
                     "enabled": bool(self._enable_corrective_recall),
                 }
                 if corrective_vector_norm is not None:
-                    dispatch_trace["memory_correction"]["b_vec_norm"] = round(
+                    memory_correction_trace["b_vec_norm"] = round(
                         corrective_vector_norm,
                         6,
                     )
+                dispatch_trace["memory_correction"] = self._build_trace_section(
+                    "memory_correction",
+                    memory_correction_trace,
+                    status="ok",
+                )
 
                 if memory_results:
                     recalled_texts = "\n".join(
@@ -2076,11 +2215,15 @@ Respond with a clear, practical answer."""
             user_message=raw_user_message,
         )
         if council_reason or council_friction_score is not None:
-            dispatch_trace["council"] = {
-                "convened": bool(council and council_should_convene),
-                "reason": council_reason,
-                "friction_score": council_friction_score,
-            }
+            dispatch_trace["council"] = self._build_trace_section(
+                "council",
+                {
+                    "convened": bool(council and council_should_convene),
+                    "reason": council_reason,
+                    "friction_score": council_friction_score,
+                },
+                status="degraded" if council and council_should_convene else "ok",
+            )
         if council and council_should_convene:
             try:
                 from tonesoul.council import CouncilRequest
@@ -2274,7 +2417,11 @@ Respond with a clear, practical answer."""
                         deliberation_trace["persona_track_summary"] = (
                             deliberation.get_persona_track_summary()
                         )
-                        dispatch_trace["deliberation"] = dict(deliberation_trace)
+                        dispatch_trace["deliberation"] = self._build_trace_section(
+                            "deliberation",
+                            dict(deliberation_trace),
+                            status="degraded" if deliberation_trace.get("fallback") else "ok",
+                        )
                         trajectory_result["deliberation"] = dict(deliberation_trace)
         except Exception as e:
             self._exc_trace.record(
@@ -2405,6 +2552,11 @@ Respond with a clear, practical answer."""
             verdict_metadata["dispatch"] = dispatch_trace
             verdict_dict["metadata"] = verdict_metadata
 
+        dispatch_trace["trajectory"] = self._build_trace_section(
+            "trajectory",
+            {key: value for key, value in trajectory_result.items() if key != "dispatch"},
+            status="degraded" if loop_detected else "ok",
+        )
         self._attach_runtime_governance_observability(dispatch_trace)
 
         # Persist cumulative tension integral (Ψ) across sessions

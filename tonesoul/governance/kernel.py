@@ -26,12 +26,14 @@ from __future__ import annotations
 
 import os
 import re
+from datetime import datetime, timezone
 from typing import Any, Dict, Optional
 
 from tonesoul import schemas as governance_schemas
 from tonesoul.exception_trace import ExceptionTrace
 
 GovernanceDecision = governance_schemas.GovernanceDecision
+DispatchTraceSection = governance_schemas.DispatchTraceSection
 LLMRouteDecision = governance_schemas.LLMRouteDecision
 
 # ---------------------------------------------------------------------------
@@ -431,15 +433,20 @@ class GovernanceKernel:
         route: Any,
         journal_eligible: Any,
         reason: Any,
-    ) -> Dict[str, Any]:
+    ) -> DispatchTraceSection:
         """Build the canonical routing-trace payload used by orchestration layers."""
-        routing_trace = {
+        detail = {
             "route": str(route or "").strip(),
             "journal_eligible": bool(journal_eligible),
             "reason": str(reason or ""),
         }
         if self._exc_trace.has_errors:
-            routing_trace["suppressed_errors"] = self._exc_trace.summary()
+            detail["suppressed_errors"] = self._exc_trace.summary()
+        routing_trace: Dict[str, Any] = dict(detail)
+        routing_trace["component"] = "governance_kernel"
+        routing_trace["timestamp"] = datetime.now(timezone.utc).isoformat()
+        routing_trace["status"] = "degraded" if self._exc_trace.has_errors else "ok"
+        routing_trace["detail"] = detail
         return routing_trace
 
     @staticmethod

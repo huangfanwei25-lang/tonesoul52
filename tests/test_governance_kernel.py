@@ -177,11 +177,13 @@ class TestGovernanceKernelObservability:
             reason="Route due to sustained governance friction",
         )
 
-        assert result == {
-            "route": "route_single_cloud",
-            "journal_eligible": True,
-            "reason": "Route due to sustained governance friction",
-        }
+        assert result["route"] == "route_single_cloud"
+        assert result["journal_eligible"] is True
+        assert result["reason"] == "Route due to sustained governance friction"
+        assert result["component"] == "governance_kernel"
+        assert "timestamp" in result
+        assert result["status"] == "ok"
+        assert result["detail"]["route"] == "route_single_cloud"
 
     def test_kernel_exc_trace_default_empty(self):
         from tonesoul.governance.kernel import GovernanceKernel
