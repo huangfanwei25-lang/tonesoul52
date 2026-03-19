@@ -76,6 +76,12 @@ def build_parser() -> argparse.ArgumentParser:
         help="Path to write the latest wake-up snapshot JSON",
     )
     parser.add_argument(
+        "--state-path",
+        type=str,
+        default="memory/autonomous/dream_wakeup_state.json",
+        help="Path to persisted wake-up runtime state JSON",
+    )
+    parser.add_argument(
         "--dashboard-out-dir",
         type=str,
         default="docs/status",
@@ -174,6 +180,29 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Return non-zero if ingestion or downstream artifact generation is not fully OK",
     )
+    parser.add_argument(
+        "--disable-scribe",
+        action="store_true",
+        help="Disable post-cycle Scribe chronicle generation inside the wake-up runner.",
+    )
+    parser.add_argument(
+        "--scribe-out-dir",
+        type=str,
+        default="docs/chronicles",
+        help="Directory for Scribe chronicle markdown/companion outputs.",
+    )
+    parser.add_argument(
+        "--scribe-status-path",
+        type=str,
+        default="docs/status/scribe_status_latest.json",
+        help="Path for the compact latest Scribe status artifact.",
+    )
+    parser.add_argument(
+        "--scribe-state-path",
+        type=str,
+        default="memory/autonomous/dream_wakeup_scribe_state.json",
+        help="Path to persisted Scribe dedupe state JSON.",
+    )
     return parser
 
 
@@ -184,8 +213,13 @@ def run_cycle(args: argparse.Namespace) -> dict[str, object]:
         journal_path=Path(args.journal_path),
         history_path=Path(args.history_path),
         snapshot_path=Path(args.snapshot_path),
+        state_path=Path(args.state_path),
         dashboard_out_dir=Path(args.dashboard_out_dir),
         interval_seconds=args.interval_seconds,
+        enable_scribe=not bool(args.disable_scribe),
+        scribe_out_dir=Path(args.scribe_out_dir),
+        scribe_status_path=Path(args.scribe_status_path),
+        scribe_state_path=Path(args.scribe_state_path),
     )
     explicit_urls = [str(url).strip() for url in args.url if str(url).strip()]
     file_urls = _read_url_file(args.url_file)

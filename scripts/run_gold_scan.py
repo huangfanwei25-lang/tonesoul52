@@ -20,14 +20,13 @@ from tonesoul.market.gold_detector import GoldDetector, GoldReport
 from tonesoul.market.data_ingest import MarketDataIngestor
 
 
-# Diverse watchlist: stars + fallen angels
+# Diverse watchlist: requested stocks
 WATCHLIST = [
-    ("5289", "宜鼎 Innodisk",     "🌟 Edge AI Memory"),
-    ("2330", "台積電 TSMC",        "🌟 AI Chip Foundry"),
-    ("3661", "世芯 Alchip",        "🌟 ASIC Design"),
-    ("2303", "聯電 UMC",           "💀 Mature Node"),
-    ("2409", "友達 AUO",           "💀 Panel Cyclical"),
-    ("2618", "長榮航 EVA Air",     "💀 Post-COVID"),
+    ("3037", "欣興 Unimicron", "🌟 ABF Carrier"),
+    ("2368", "金像電 GCE", "🌟 Server PCB"),
+    ("2308", "台達電 Delta", "🌟 Power/Thermal"),
+    ("3163", "波若威 Browave", "🌟 Silicon Photonics"),
+    ("3017", "奇鋐 AVC", "🌟 Thermal Solutions"),
 ]
 
 
@@ -125,7 +124,12 @@ def main():
     detector = GoldDetector()
     results = []
 
-    for stock_id, name, tag in WATCHLIST:
+    target_watchlist = WATCHLIST
+    if len(sys.argv) > 1:
+        custom_id = sys.argv[1]
+        target_watchlist = [(custom_id, "User Target", "🔍 Custom Scan")]
+
+    for stock_id, name, tag in target_watchlist:
         print(f"\n📡 Scanning {stock_id} {name} ({tag})...")
         try:
             report = scan_single(ingestor, detector, stock_id)

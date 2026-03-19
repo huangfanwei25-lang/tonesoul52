@@ -230,6 +230,12 @@ def build_parser() -> argparse.ArgumentParser:
         help="Maximum allowed LLM preflight timeout count per wake-up cycle before category cooldown is applied",
     )
     parser.add_argument(
+        "--tension-max-consecutive-failure-count",
+        type=int,
+        default=None,
+        help="Maximum allowed nested wake-up consecutive failure count before category cooldown is applied",
+    )
+    parser.add_argument(
         "--tension-cooldown-cycles",
         type=int,
         default=None,
@@ -417,6 +423,10 @@ def run_schedule(args: argparse.Namespace) -> dict[str, object]:
         tension_max_llm_timeout_count=_resolve_optional_int(
             args.tension_max_llm_timeout_count,
             profile.tension_max_llm_timeout_count if profile else None,
+        ),
+        tension_max_consecutive_failure_count=_resolve_optional_int(
+            args.tension_max_consecutive_failure_count,
+            profile.tension_max_consecutive_failure_count if profile else None,
         ),
         tension_cooldown_cycles=int(
             _resolve_value(

@@ -43,6 +43,34 @@ EXACT_PRODUCERS: dict[str, dict[str, str]] = {
         "command": "python scripts/run_repo_healthcheck.py --strict --allow-missing-discussion",
         "source": "scripts/run_repo_healthcheck.py",
     },
+    "docs/status/repo_intelligence_latest.json": {
+        "command": "python scripts/run_repo_intelligence_report.py",
+        "source": "scripts/run_repo_intelligence_report.py",
+    },
+    "docs/status/repo_intelligence_latest.md": {
+        "command": "python scripts/run_repo_intelligence_report.py",
+        "source": "scripts/run_repo_intelligence_report.py",
+    },
+    "docs/status/repo_semantic_atlas_latest.json": {
+        "command": "python scripts/run_repo_semantic_atlas.py",
+        "source": "scripts/run_repo_semantic_atlas.py",
+    },
+    "docs/status/repo_semantic_atlas_latest.md": {
+        "command": "python scripts/run_repo_semantic_atlas.py",
+        "source": "scripts/run_repo_semantic_atlas.py",
+    },
+    "docs/status/repo_semantic_atlas_latest.mmd": {
+        "command": "python scripts/run_repo_semantic_atlas.py",
+        "source": "scripts/run_repo_semantic_atlas.py",
+    },
+    "docs/status/agent_integrity_latest.json": {
+        "command": "python scripts/run_agent_integrity_report.py --strict",
+        "source": "scripts/run_agent_integrity_report.py",
+    },
+    "docs/status/agent_integrity_latest.md": {
+        "command": "python scripts/run_agent_integrity_report.py --strict",
+        "source": "scripts/run_agent_integrity_report.py",
+    },
     "docs/status/runtime_source_change_groups_latest.json": {
         "command": "python scripts/run_runtime_source_change_report.py",
         "source": "scripts/run_runtime_source_change_report.py",
@@ -243,6 +271,14 @@ EXACT_PRODUCERS: dict[str, dict[str, str]] = {
         "command": "python scripts/run_worktree_settlement_report.py",
         "source": "scripts/run_worktree_settlement_report.py",
     },
+    "docs/status/scribe_status_latest.json": {
+        "command": "python scripts/run_scribe_cycle.py",
+        "source": "scripts/run_scribe_cycle.py",
+    },
+    "docs/status/true_verification_weekly/true_verification_task_status_latest.json": {
+        "command": "python scripts/report_true_verification_task_status.py --strict",
+        "source": "scripts/report_true_verification_task_status.py",
+    },
     "docs/status/commit_attribution_local.json": {
         "command": "python scripts/verify_incremental_commit_attribution.py --strict --artifact-path docs/status/commit_attribution_local.json",
         "source": "scripts/verify_incremental_commit_attribution.py",
@@ -362,8 +398,27 @@ def _extract_handoff_surface(document: dict[str, Any]) -> dict[str, str] | None:
     for candidate in candidates:
         handoff = candidate.get("handoff")
         primary_status_line = str(candidate.get("primary_status_line") or "").strip()
+        runtime_status_line = str(candidate.get("runtime_status_line") or "").strip()
+        anchor_status_line = str(candidate.get("anchor_status_line") or "").strip()
+        scribe_status_line = str(candidate.get("scribe_status_line") or "").strip()
+        problem_route_status_line = str(candidate.get("problem_route_status_line") or "").strip()
+        problem_route_secondary_labels = str(
+            candidate.get("problem_route_secondary_labels") or ""
+        ).strip()
+        dream_weekly_alignment_line = str(
+            candidate.get("dream_weekly_alignment_line") or ""
+        ).strip()
+        artifact_policy_status_line = str(
+            candidate.get("artifact_policy_status_line") or ""
+        ).strip()
         admissibility_primary_status_line = str(
             candidate.get("admissibility_primary_status_line") or ""
+        ).strip()
+        semantic_retrieval_protocol = str(
+            candidate.get("semantic_retrieval_protocol") or ""
+        ).strip()
+        semantic_preferred_neighborhood = str(
+            candidate.get("semantic_preferred_neighborhood") or ""
         ).strip()
         queue_shape = ""
         requires_operator_action = False
@@ -372,13 +427,76 @@ def _extract_handoff_surface(document: dict[str, Any]) -> dict[str, str] | None:
             requires_operator_action = bool(handoff.get("requires_operator_action"))
             if not primary_status_line:
                 primary_status_line = str(handoff.get("primary_status_line") or "").strip()
-        if queue_shape or primary_status_line or admissibility_primary_status_line:
-            return {
+            if not runtime_status_line:
+                runtime_status_line = str(handoff.get("runtime_status_line") or "").strip()
+            if not scribe_status_line:
+                scribe_status_line = str(handoff.get("scribe_status_line") or "").strip()
+            if not anchor_status_line:
+                anchor_status_line = str(handoff.get("anchor_status_line") or "").strip()
+            if not problem_route_status_line:
+                problem_route_status_line = str(
+                    handoff.get("problem_route_status_line") or ""
+                ).strip()
+            if not problem_route_secondary_labels:
+                problem_route_secondary_labels = str(
+                    handoff.get("problem_route_secondary_labels") or ""
+                ).strip()
+            if not dream_weekly_alignment_line:
+                dream_weekly_alignment_line = str(
+                    handoff.get("dream_weekly_alignment_line") or ""
+                ).strip()
+            if not artifact_policy_status_line:
+                artifact_policy_status_line = str(
+                    handoff.get("artifact_policy_status_line") or ""
+                ).strip()
+            if not admissibility_primary_status_line:
+                admissibility_primary_status_line = str(
+                    handoff.get("admissibility_primary_status_line") or ""
+                ).strip()
+            if not semantic_retrieval_protocol:
+                semantic_retrieval_protocol = str(
+                    handoff.get("semantic_retrieval_protocol") or ""
+                ).strip()
+            if not semantic_preferred_neighborhood:
+                semantic_preferred_neighborhood = str(
+                    handoff.get("semantic_preferred_neighborhood") or ""
+                ).strip()
+        if (
+            queue_shape
+            or primary_status_line
+            or runtime_status_line
+            or anchor_status_line
+            or scribe_status_line
+            or problem_route_status_line
+            or problem_route_secondary_labels
+            or dream_weekly_alignment_line
+            or artifact_policy_status_line
+            or admissibility_primary_status_line
+            or semantic_retrieval_protocol
+            or semantic_preferred_neighborhood
+        ):
+            preview = {
                 "queue_shape": queue_shape,
                 "primary_status_line": primary_status_line,
+                "runtime_status_line": runtime_status_line,
+                "anchor_status_line": anchor_status_line,
+                "artifact_policy_status_line": artifact_policy_status_line,
                 "admissibility_primary_status_line": admissibility_primary_status_line,
                 "requires_operator_action": str(requires_operator_action).lower(),
             }
+            if scribe_status_line:
+                preview["scribe_status_line"] = scribe_status_line
+            if problem_route_status_line:
+                preview["problem_route_status_line"] = problem_route_status_line
+            if problem_route_secondary_labels:
+                preview["problem_route_secondary_labels"] = problem_route_secondary_labels
+            if dream_weekly_alignment_line:
+                preview["dream_weekly_alignment_line"] = dream_weekly_alignment_line
+            if semantic_retrieval_protocol:
+                preview["semantic_retrieval_protocol"] = semantic_retrieval_protocol
+            if semantic_preferred_neighborhood:
+                preview["semantic_preferred_neighborhood"] = semantic_preferred_neighborhood
+            return preview
     return None
 
 
@@ -399,17 +517,41 @@ def _build_handoff_previews(
         surface = _extract_handoff_surface(document)
         if surface is None:
             continue
-        previews.append(
-            {
-                "path": preview_path,
-                "queue_shape": surface["queue_shape"],
-                "primary_status_line": surface["primary_status_line"],
-                "admissibility_primary_status_line": surface.get(
-                    "admissibility_primary_status_line", ""
-                ),
-                "requires_operator_action": surface.get("requires_operator_action", "false"),
-            }
-        )
+        preview = {
+            "path": preview_path,
+            "queue_shape": surface["queue_shape"],
+            "primary_status_line": surface["primary_status_line"],
+            "runtime_status_line": surface.get("runtime_status_line", ""),
+            "anchor_status_line": surface.get("anchor_status_line", ""),
+            "artifact_policy_status_line": surface.get("artifact_policy_status_line", ""),
+            "admissibility_primary_status_line": surface.get(
+                "admissibility_primary_status_line", ""
+            ),
+            "requires_operator_action": surface.get("requires_operator_action", "false"),
+        }
+        semantic_retrieval_protocol = str(surface.get("semantic_retrieval_protocol") or "").strip()
+        if semantic_retrieval_protocol:
+            preview["semantic_retrieval_protocol"] = semantic_retrieval_protocol
+        semantic_preferred_neighborhood = str(
+            surface.get("semantic_preferred_neighborhood") or ""
+        ).strip()
+        if semantic_preferred_neighborhood:
+            preview["semantic_preferred_neighborhood"] = semantic_preferred_neighborhood
+        scribe_status_line = str(surface.get("scribe_status_line") or "").strip()
+        if scribe_status_line:
+            preview["scribe_status_line"] = scribe_status_line
+        problem_route_status_line = str(surface.get("problem_route_status_line") or "").strip()
+        if problem_route_status_line:
+            preview["problem_route_status_line"] = problem_route_status_line
+        problem_route_secondary_labels = str(
+            surface.get("problem_route_secondary_labels") or ""
+        ).strip()
+        if problem_route_secondary_labels:
+            preview["problem_route_secondary_labels"] = problem_route_secondary_labels
+        dream_weekly_alignment_line = str(surface.get("dream_weekly_alignment_line") or "").strip()
+        if dream_weekly_alignment_line:
+            preview["dream_weekly_alignment_line"] = dream_weekly_alignment_line
+        previews.append(preview)
     return sorted(previews, key=lambda item: item["path"])
 
 
@@ -422,10 +564,15 @@ def _subjectivity_focus_preview(
         primary_status_line = str(item.get("primary_status_line") or "").strip()
         if not path or not primary_status_line:
             return None
-        return {
+        preview = {
             "path": path,
             "queue_shape": queue_shape,
             "primary_status_line": primary_status_line,
+            "runtime_status_line": str(item.get("runtime_status_line") or "").strip(),
+            "anchor_status_line": str(item.get("anchor_status_line") or "").strip(),
+            "artifact_policy_status_line": str(
+                item.get("artifact_policy_status_line") or ""
+            ).strip(),
             "admissibility_primary_status_line": str(
                 item.get("admissibility_primary_status_line") or ""
             ).strip(),
@@ -433,6 +580,21 @@ def _subjectivity_focus_preview(
             .strip()
             .lower(),
         }
+        scribe_status_line = str(item.get("scribe_status_line") or "").strip()
+        if scribe_status_line:
+            preview["scribe_status_line"] = scribe_status_line
+        problem_route_status_line = str(item.get("problem_route_status_line") or "").strip()
+        if problem_route_status_line:
+            preview["problem_route_status_line"] = problem_route_status_line
+        problem_route_secondary_labels = str(
+            item.get("problem_route_secondary_labels") or ""
+        ).strip()
+        if problem_route_secondary_labels:
+            preview["problem_route_secondary_labels"] = problem_route_secondary_labels
+        dream_weekly_alignment_line = str(item.get("dream_weekly_alignment_line") or "").strip()
+        if dream_weekly_alignment_line:
+            preview["dream_weekly_alignment_line"] = dream_weekly_alignment_line
+        return preview
 
     prioritized = [
         item
@@ -631,6 +793,32 @@ def _render_markdown(payload: dict[str, Any]) -> str:
             f"`{focus_preview.get('requires_operator_action', 'false')}`"
         )
         lines.append(f"- primary_status_line: `{focus_preview.get('primary_status_line', '')}`")
+        if str(focus_preview.get("runtime_status_line") or "").strip():
+            lines.append(f"- runtime_status_line: `{focus_preview.get('runtime_status_line', '')}`")
+        if str(focus_preview.get("scribe_status_line") or "").strip():
+            lines.append(f"- scribe_status_line: `{focus_preview.get('scribe_status_line', '')}`")
+        if str(focus_preview.get("anchor_status_line") or "").strip():
+            lines.append(f"- anchor_status_line: `{focus_preview.get('anchor_status_line', '')}`")
+        if str(focus_preview.get("problem_route_status_line") or "").strip():
+            lines.append(
+                "- problem_route_status_line: "
+                f"`{focus_preview.get('problem_route_status_line', '')}`"
+            )
+        if str(focus_preview.get("problem_route_secondary_labels") or "").strip():
+            lines.append(
+                "- problem_route_secondary_labels: "
+                f"`{focus_preview.get('problem_route_secondary_labels', '')}`"
+            )
+        if str(focus_preview.get("dream_weekly_alignment_line") or "").strip():
+            lines.append(
+                "- dream_weekly_alignment_line: "
+                f"`{focus_preview.get('dream_weekly_alignment_line', '')}`"
+            )
+        if str(focus_preview.get("artifact_policy_status_line") or "").strip():
+            lines.append(
+                "- artifact_policy_status_line: "
+                f"`{focus_preview.get('artifact_policy_status_line', '')}`"
+            )
         if str(focus_preview.get("admissibility_primary_status_line") or "").strip():
             lines.append(
                 "- admissibility_primary_status_line: "
@@ -650,6 +838,38 @@ def _render_markdown(payload: dict[str, Any]) -> str:
                 f"`{item.get('requires_operator_action', 'false')}`"
             )
             lines.append(f"  - primary_status_line: `{item['primary_status_line']}`")
+            if str(item.get("runtime_status_line") or "").strip():
+                lines.append(f"  - runtime_status_line: `{item['runtime_status_line']}`")
+            if str(item.get("scribe_status_line") or "").strip():
+                lines.append(f"  - scribe_status_line: `{item['scribe_status_line']}`")
+            if str(item.get("anchor_status_line") or "").strip():
+                lines.append(f"  - anchor_status_line: `{item['anchor_status_line']}`")
+            if str(item.get("problem_route_status_line") or "").strip():
+                lines.append(
+                    "  - problem_route_status_line: " f"`{item['problem_route_status_line']}`"
+                )
+            if str(item.get("problem_route_secondary_labels") or "").strip():
+                lines.append(
+                    "  - problem_route_secondary_labels: "
+                    f"`{item['problem_route_secondary_labels']}`"
+                )
+            if str(item.get("dream_weekly_alignment_line") or "").strip():
+                lines.append(
+                    "  - dream_weekly_alignment_line: " f"`{item['dream_weekly_alignment_line']}`"
+                )
+            if str(item.get("artifact_policy_status_line") or "").strip():
+                lines.append(
+                    "  - artifact_policy_status_line: " f"`{item['artifact_policy_status_line']}`"
+                )
+            if str(item.get("semantic_retrieval_protocol") or "").strip():
+                lines.append(
+                    "  - semantic_retrieval_protocol: " f"`{item['semantic_retrieval_protocol']}`"
+                )
+            if str(item.get("semantic_preferred_neighborhood") or "").strip():
+                lines.append(
+                    "  - semantic_preferred_neighborhood: "
+                    f"`{item['semantic_preferred_neighborhood']}`"
+                )
             if str(item.get("admissibility_primary_status_line") or "").strip():
                 lines.append(
                     "  - admissibility_primary_status_line: "

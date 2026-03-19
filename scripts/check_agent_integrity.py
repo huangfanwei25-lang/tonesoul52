@@ -7,20 +7,27 @@ hidden prompt-injection characters.
 
 from __future__ import annotations
 
-import hashlib
 import re
 import subprocess
 import sys
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
+try:
+    from scripts.agent_integrity_contract import (
+        EMBEDDED_HASH_METADATA_FILES,
+        PROTECTED_FILE_HASHES,
+        compute_hash,
+        extract_embedded_expected_hash,
+    )
+except ModuleNotFoundError:  # pragma: no cover - direct script execution fallback
+    from agent_integrity_contract import (
+        EMBEDDED_HASH_METADATA_FILES,
+        PROTECTED_FILE_HASHES,
+        compute_hash,
+        extract_embedded_expected_hash,
+    )
 
-# SHA-256 hashes of trusted files. Update when intentionally modified.
-TRUSTED_HASHES = {
-    "AGENTS.md": "235610b3f62ab82f87f083c1d7dfc66d0688bfbe16b097a1d136f1fe1801410f",
-    "HANDOFF.md": "b5044ba7061917f61a2f5e57ec37fe85af72ff7e42d26f62ccccc5658bf49366",
-    "SOUL.md": "5b9f13b4fb5a5ac3d1b9618b0073cc33a3edb0f985518144d575dc97eb372a5f",
-}
+REPO_ROOT = Path(__file__).resolve().parents[1]
 
 # Paths that are not allowed unless explicitly authorized.
 UNAUTHORIZED_PATHS = [
@@ -37,17 +44,16 @@ WATCHED_DIRS = [
 HIDDEN_CHAR_PATTERN = re.compile(r"[\u200b\u200c\u200d\u200e\u200f\u202a-\u202e\u2060\ufeff]")
 
 
-def compute_hash(filepath: Path) -> str:
-    """Compute SHA-256 hash with normalized line endings for cross-platform stability."""
-    payload = filepath.read_bytes().replace(b"\r\n", b"\n").replace(b"\r", b"\n")
-    return hashlib.sha256(payload).hexdigest()
+def _resolve_repo_root(repo_root: Path | None = None) -> Path:
+    return repo_root or REPO_ROOT
 
 
-def check_hash_integrity() -> list[str]:
+def check_hash_integrity(repo_root: Path | None = None) -> list[str]:
     """Verify SHA-256 hashes of trusted files."""
     errors: list[str] = []
-    for filename, expected_hash in TRUSTED_HASHES.items():
-        filepath = REPO_ROOT / filename
+    root = _resolve_repo_root(repo_root)
+    for filename, expected_hash in PROTECTED_FILE_HASHES.items():
+        filepath = root / filename
         if not filepath.is_file():
             errors.append(f"ERROR: {filename} is missing")
             continue
@@ -62,13 +68,14 @@ def check_hash_integrity() -> list[str]:
     return errors
 
 
-def check_hidden_characters() -> list[str]:
+def check_hidden_characters(repo_root: Path | None = None) -> list[str]:
     """Scan trusted files for hidden Unicode characters."""
     errors: list[str] = []
-    files_to_scan = list(TRUSTED_HASHES.keys())
+    files_to_scan = list(PROTECTED_FILE_HASHES.keys())
+    root = _resolve_repo_root(repo_root)
 
     for filename in files_to_scan:
-        filepath = REPO_ROOT / filename
+        filepath = root / filename
         if not filepath.is_file():
             continue
 
@@ -96,11 +103,12 @@ def check_hidden_characters() -> list[str]:
     return errors
 
 
-def check_unauthorized_paths() -> list[str]:
+def check_unauthorized_paths(repo_root: Path | None = None) -> list[str]:
     """Check for unauthorized agent directories/files."""
     errors: list[str] = []
+    root = _resolve_repo_root(repo_root)
     for path_name in UNAUTHORIZED_PATHS:
-        target = REPO_ROOT / path_name
+        target = root / path_name
         if not target.exists():
             continue
 
@@ -118,11 +126,12 @@ def check_unauthorized_paths() -> list[str]:
     return errors
 
 
-def check_watched_dirs() -> list[str]:
+def check_watched_dirs(repo_root: Path | None = None) -> list[str]:
     """List files under watched directories for manual review."""
     warnings: list[str] = []
+    root = _resolve_repo_root(repo_root)
     for dir_name in WATCHED_DIRS:
-        target = REPO_ROOT / dir_name
+        target = root / dir_name
         if not target.is_dir():
             continue
 
@@ -130,7 +139,7 @@ def check_watched_dirs() -> list[str]:
         if not files:
             continue
 
-        preview = "\n".join(f"  - {item.relative_to(REPO_ROOT)}" for item in files[:10])
+        preview = "\n".join(f"  - {item.relative_to(root)}" for item in files[:10])
         warnings.append(
             f"WARNING: {dir_name}/ contains {len(files)} file(s)\n{preview}\n"
             "  action: verify files are trusted"
@@ -138,14 +147,35 @@ def check_watched_dirs() -> list[str]:
     return warnings
 
 
-def check_staged_agent_files() -> list[str]:
+def check_embedded_hash_metadata(repo_root: Path | None = None) -> list[str]:
+    """Warn when in-document expected-hash metadata drifts from the executable contract."""
+    warnings: list[str] = []
+    root = _resolve_repo_root(repo_root)
+    for filename in EMBEDDED_HASH_METADATA_FILES:
+        filepath = root / filename
+        embedded_hash = extract_embedded_expected_hash(filepath)
+        if embedded_hash is None:
+            continue
+        expected_hash = PROTECTED_FILE_HASHES.get(filename)
+        if expected_hash and embedded_hash != expected_hash:
+            warnings.append(
+                f"WARNING: embedded Expected Hash metadata drift in {filename}\n"
+                f"  embedded: {embedded_hash}\n"
+                f"  contract: {expected_hash}\n"
+                "  action: update the in-document table during the next intentional protected-file edit"
+            )
+    return warnings
+
+
+def check_staged_agent_files(repo_root: Path | None = None) -> list[str]:
     """For pre-commit mode: warn when sensitive files are staged."""
+    root = _resolve_repo_root(repo_root)
     try:
         result = subprocess.run(
             ["git", "diff", "--cached", "--name-only"],
             capture_output=True,
             text=True,
-            cwd=str(REPO_ROOT),
+            cwd=str(root),
             check=False,
         )
         staged = result.stdout.strip().split("\n") if result.stdout.strip() else []
@@ -200,6 +230,11 @@ def main() -> int:
     all_errors.extend(errors)
     if not errors:
         print("OK: no unauthorized paths")
+
+    warnings = check_embedded_hash_metadata()
+    all_warnings.extend(warnings)
+    if not warnings:
+        print("OK: embedded hash metadata aligned")
 
     warnings = check_watched_dirs()
     all_warnings.extend(warnings)
