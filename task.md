@@ -5885,3 +5885,17 @@
 - `python -m pytest tests/test_scribe_narrative_builder.py tests/test_scribe_status_artifact.py tests/test_skill_gate.py -q` -> 15 passed, 2 warnings
 - `python -m ruff check tonesoul tests` -> passed
 - `python -m pytest tests/ -x --tb=short -q` -> 2284 passed, 4 warnings
+
+## Phase 565: Observability + Corpus Storage + Skill Apply Coverage (2026-03-19)
+- [x] add `tests/test_token_meter.py` for missing-log totals, invalid JSONL line skipping, default-cost trace persistence, and exact-budget boundary behavior
+- [x] add `tests/test_action_audit.py` for combined filters with limit, invalid metadata fallback, since-based counting, and empty-metadata null storage
+- [x] add `tests/test_corpus_storage.py` for missing conversation guards, metadata defaulting, empty deliberation persistence, descending session ordering, stats/delete flows, and JSONL export structure
+- [x] add `tests/test_skill_apply.py` for skill loading, context-key normalization, trigger matching, trigger-only gating, directive merge semantics, and section rendering
+- [x] harden `tonesoul/skill_apply.py` so non-dict `time_island.kairos` safely falls back to an empty context block
+- [x] validate targeted tests and full regression
+**Success Criteria**: Token/action observability, corpus persistence helpers, and skill application contracts are covered by deterministic tests, and malformed `kairos` payloads no longer crash skill matching.
+**Validation**:
+- `python -m ruff check tonesoul/skill_apply.py tests/test_token_meter.py tests/test_action_audit.py tests/test_corpus_storage.py tests/test_skill_apply.py` -> passed
+- `python -m pytest tests/test_token_meter.py tests/test_action_audit.py tests/test_corpus_storage.py tests/test_skill_apply.py -q` -> 19 passed, 1 warning
+- `python -m ruff check tonesoul tests` -> passed
+- `python -m pytest tests/ -x --tb=short -q` -> 2303 passed, 4 warnings

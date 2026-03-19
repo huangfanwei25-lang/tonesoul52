@@ -50,7 +50,7 @@ def build_context_key(
     time_island = (
         context.get("time_island", {}) if isinstance(context.get("time_island"), dict) else {}
     )
-    kairos = time_island.get("kairos", {}) if isinstance(time_island, dict) else {}
+    kairos = time_island.get("kairos", {}) if isinstance(time_island.get("kairos"), dict) else {}
     frame_ids = []
     if frame_plan and isinstance(frame_plan.get("selected_frames"), list):
         for item in frame_plan["selected_frames"]:
