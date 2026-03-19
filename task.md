@@ -5753,3 +5753,38 @@
 - [x] `python -m pytest tests/test_deliberation_gravity_pareto.py tests/test_deliberation_engine.py -q --tb=short` — 5 passed
 - [x] `python -m pytest tests/ --tb=no -q` — 1688 passed, 0 failed
 **Success Criteria**: Deliberation now includes explicit Pareto-aware weighting support without breaking existing synthesis behavior.
+
+## Phase 554: Memory Manager + Persona Dimension Coverage (2026-03-19)
+- [x] add `tests/test_memory_manager.py` for run discovery, pointer construction, seed/index generation, and archive rollover
+- [x] add `tests/test_persona_dimension.py` for vector extraction, tolerance adaptation, correction flow, and DriftMonitor integration
+- [x] validate targeted tests and full regression
+**Success Criteria**: Memory indexing and persona evaluation paths are covered by focused tests without changing runtime behavior.
+**Validation**:
+- `python -m ruff check tests/test_memory_manager.py tests/test_persona_dimension.py` -> passed
+- `python -m pytest tests/test_memory_manager.py tests/test_persona_dimension.py -q` -> 39 passed
+- `python -m ruff check tonesoul tests` -> passed
+- `python -m pytest tests/ -x --tb=short -q` -> 2014 passed, 3 warnings
+
+## Phase 555: Semantic Control + Benevolence + Escalation Coverage (2026-03-19)
+- [x] add `tests/test_semantic_control.py` for tension derivation, hysteresis, controller reset, and report structure
+- [x] add `tests/test_benevolence.py` for audit outcomes, override paths, and wrapper behavior
+- [x] add `tests/test_escalation.py` for drift metric loading, escalation decisions, and ledger recording
+- [x] validate targeted tests and full regression
+**Success Criteria**: Semantic control, benevolence screening, and escalation fallback logic are covered by deterministic tests.
+**Validation**:
+- `python -m ruff check tests/test_semantic_control.py tests/test_benevolence.py tests/test_escalation.py` -> passed
+- `python -m pytest tests/test_semantic_control.py tests/test_benevolence.py tests/test_escalation.py -q` -> 29 passed
+- `python -m ruff check tonesoul tests` -> passed
+- `python -m pytest tests/ -x --tb=short -q` -> 2043 passed, 3 warnings
+
+## Phase 556: Skill Promotion + Audit Interface + Council Capability Coverage (2026-03-19)
+- [x] add `tests/test_skill_promoter.py` for seed grouping, eligibility thresholds, dry-run behavior, and skill index persistence
+- [x] add `tests/test_audit_interface.py` for gate loader extraction, digest helpers, request assembly, and CLI output resolution
+- [x] add `tests/test_council_capability.py` for council weighting, capability coverage thresholds, and long-term quality trend alerts
+- [x] validate targeted tests and full regression
+**Success Criteria**: Skill promotion, audit request assembly, and council capability boundaries are covered by focused branch tests.
+**Validation**:
+- `python -m ruff check tests/test_skill_promoter.py tests/test_audit_interface.py tests/test_council_capability.py` -> passed
+- `python -m pytest tests/test_skill_promoter.py tests/test_audit_interface.py tests/test_council_capability.py -q` -> 38 passed
+- `python -m ruff check tonesoul tests` -> passed
+- `python -m pytest tests/ -x --tb=short -q` -> 2081 passed, 3 warnings
