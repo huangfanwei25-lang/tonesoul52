@@ -5899,3 +5899,17 @@
 - `python -m pytest tests/test_token_meter.py tests/test_action_audit.py tests/test_corpus_storage.py tests/test_skill_apply.py -q` -> 19 passed, 1 warning
 - `python -m ruff check tonesoul tests` -> passed
 - `python -m pytest tests/ -x --tb=short -q` -> 2303 passed, 4 warnings
+
+## Phase 566: LLM Clients + Market Detector/Ingest/Forecaster Coverage (2026-03-20)
+- [x] add `tests/test_ollama_client.py` for fallback model selection, system-prompt payload wiring, chat history/session glue, bounded probe branches, and timeout/error handling
+- [x] add `tests/test_lmstudio_client.py` for model auto-resolution, generate/send-message wiring, probe failure branches, and OpenAI-compatible payload formatting
+- [x] add `tests/test_gold_detector.py` for institutional/revenue/margin/inventory/PE signal detection and aggregate verdict math
+- [x] add `tests/test_data_ingest.py` for unavailable/empty fetchers, financial loader failures, row-to-stimulus mapping, and full-profile fanout
+- [x] add `tests/test_forecaster.py` for request-failure fallback text, snapshot formatting, multiplier mapping, malicious parse rejection, and generate-forecast delegation
+- [x] validate targeted tests and full regression
+**Success Criteria**: Local LLM clients and market mirror helpers are covered by deterministic tests without adding network dependence or altering runtime behavior.
+**Validation**:
+- `python -m ruff check tests/test_ollama_client.py tests/test_lmstudio_client.py tests/test_gold_detector.py tests/test_data_ingest.py tests/test_forecaster.py` -> passed
+- `python -m pytest tests/test_ollama_client.py tests/test_lmstudio_client.py tests/test_gold_detector.py tests/test_data_ingest.py tests/test_forecaster.py -q` -> 37 passed, 8 warnings
+- `python -m ruff check tonesoul tests` -> passed
+- `python -m pytest tests/ -x --tb=short -q` -> 2340 passed, 9 warnings
