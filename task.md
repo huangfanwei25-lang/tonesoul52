@@ -5913,3 +5913,20 @@
 - `python -m pytest tests/test_ollama_client.py tests/test_lmstudio_client.py tests/test_gold_detector.py tests/test_data_ingest.py tests/test_forecaster.py -q` -> 37 passed, 8 warnings
 - `python -m ruff check tonesoul tests` -> passed
 - `python -m pytest tests/ -x --tb=short -q` -> 2340 passed, 9 warnings
+
+## Phase 567: YSTM Subsystem Full Coverage - Demo + Diff + Representation + Acceptance + Terrain + Projection + Energy (2026-03-20)
+- [x] add `tests/test_ystm_demo.py` for contour serialization, drift-vector building, artifact writing, and PNG fallback/export branches
+- [x] add `tests/test_ystm_demo_entry.py` for `tonesoul.ystm_demo` public re-export surface
+- [x] add `tests/test_ystm_diff.py` for node add/delete/update diffing, batch summaries, and rollback request generation
+- [x] add `tests/test_ystm_representation.py` for tokenization/embedding determinism, numeric cleaners, coordinate mapping, and node-building defaults
+- [x] add `tests/test_ystm_acceptance.py` for acceptance runner PASS/FAIL aggregation and terrain-signature helpers
+- [x] add `tests/test_ystm_terrain.py` for plane ordering, KDE/level edge cases, and marching-squares saddle handling
+- [x] add `tests/test_ystm_projection.py` for empty/singleton PCA projection branches and zero-dimensional metadata handling
+- [x] add `tests/test_ystm_energy.py` for raw totals, normalization, and energy application with missing components
+- [x] validate targeted tests and full regression
+**Success Criteria**: YSTM demo/export, geometry/diff/projection helpers, and acceptance harness are covered by deterministic tests without changing subsystem behavior.
+**Validation**:
+- `python -m ruff check tests/test_ystm_demo.py tests/test_ystm_diff.py tests/test_ystm_representation.py tests/test_ystm_acceptance.py tests/test_ystm_terrain.py tests/test_ystm_projection.py tests/test_ystm_energy.py tests/test_ystm_demo_entry.py` -> passed
+- `python -m pytest tests/test_ystm_demo.py tests/test_ystm_diff.py tests/test_ystm_representation.py tests/test_ystm_acceptance.py tests/test_ystm_terrain.py tests/test_ystm_projection.py tests/test_ystm_energy.py tests/test_ystm_demo_entry.py -q` -> 25 passed, 1 warning
+- `python -m ruff check tonesoul tests` -> passed
+- `python -m pytest tests/ -x --tb=short -q` -> 2365 passed, 9 warnings
