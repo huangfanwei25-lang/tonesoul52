@@ -9,6 +9,12 @@ WORKSPACE_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "
 if WORKSPACE_ROOT not in sys.path:
     sys.path.insert(0, WORKSPACE_ROOT)
 
+warnings.warn(
+    "tonesoul.council_adapter is deprecated; use tonesoul.council.runtime.CouncilRuntime",
+    DeprecationWarning,
+    stacklevel=2,
+)
+
 
 def _iso_now() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
@@ -19,11 +25,6 @@ def run_council(
     context: Optional[Dict[str, object]] = None,
     user_intent: Optional[str] = None,
 ) -> Dict[str, object]:
-    warnings.warn(
-        "tonesoul.council_adapter is deprecated; use tonesoul.council.runtime.CouncilRuntime",
-        DeprecationWarning,
-        stacklevel=2,
-    )
     from tonesoul.council.runtime import CouncilRequest, CouncilRuntime
 
     request = CouncilRequest(

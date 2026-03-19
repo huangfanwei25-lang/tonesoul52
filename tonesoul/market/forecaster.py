@@ -12,6 +12,7 @@ from overwriting the valuation logic.
 from __future__ import annotations
 
 import logging
+import warnings
 from dataclasses import dataclass
 from typing import List
 
@@ -19,6 +20,12 @@ from tonesoul.llm.ollama_client import create_ollama_client
 from tonesoul.market.analyzer import QuarterlySnapshot
 
 logger = logging.getLogger(__name__)
+
+warnings.warn(
+    "tonesoul.market.forecaster is deprecated and scheduled for removal.",
+    DeprecationWarning,
+    stacklevel=2,
+)
 
 @dataclass
 class DreamForecast:

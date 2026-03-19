@@ -1239,7 +1239,7 @@ class UnifiedPipeline:
                 except Exception:
                     repair_event["resonance_class"] = "unknown"
 
-        dispatch_trace["repair_eligible"] = True
+        repair_event["repair_eligible"] = True
         dispatch_trace["repair"] = self._build_trace_section(
             "repair",
             repair_event,

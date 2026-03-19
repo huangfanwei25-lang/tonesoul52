@@ -99,9 +99,11 @@ def test_pipeline_rate_limit_free_tier(monkeypatch):
     )
     assert response.dispatch_trace.get("route") == RoutingPath.BLOCK_RATE_LIMIT.value
     assert "Rate limit exceeded" in response.dispatch_trace.get("reason", "")
-    assert response.dispatch_trace.get("repair_eligible") is True
+    assert response.dispatch_trace.get("repair_eligible") is None
     repair = response.dispatch_trace.get("repair")
     assert isinstance(repair, dict)
+    assert repair.get("repair_eligible") is True
+    assert repair.get("detail", {}).get("repair_eligible") is True
     assert repair.get("original_gate") == "block_rate_limit"
     assert repair.get("resonance_class") == "pending"
     assert repair.get("delta_after_repair") is None
@@ -167,8 +169,10 @@ def test_pipeline_council_block_writes_repair_trace():
     )
 
     repair = response.dispatch_trace.get("repair")
-    assert response.dispatch_trace.get("repair_eligible") is True
+    assert response.dispatch_trace.get("repair_eligible") is None
     assert isinstance(repair, dict)
+    assert repair.get("repair_eligible") is True
+    assert repair.get("detail", {}).get("repair_eligible") is True
     assert repair.get("original_gate") == "council_block"
     assert "council_block" in (repair.get("stages") or [])
     assert repair.get("resonance_class") in {
@@ -200,7 +204,9 @@ def test_pipeline_persona_rewrite_writes_repair_trace(mock_persona_process):
 
     repair = response.dispatch_trace.get("repair")
     assert response.response == "persona corrected output"
-    assert response.dispatch_trace.get("repair_eligible") is True
+    assert response.dispatch_trace.get("repair_eligible") is None
     assert isinstance(repair, dict)
+    assert repair.get("repair_eligible") is True
+    assert repair.get("detail", {}).get("repair_eligible") is True
     assert repair.get("original_gate") == "persona_dimension_rewrite"
     assert "persona_dimension_rewrite" in (repair.get("stages") or [])

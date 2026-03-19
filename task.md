@@ -5800,3 +5800,16 @@
 - `python -m pytest tests/test_evidence_collector.py tests/test_intent_verification.py tests/test_jump_monitor.py -q` -> 31 passed
 - `python -m ruff check tonesoul tests` -> passed
 - `python -m pytest tests/ -x --tb=short -q` -> 2112 passed, 3 warnings
+
+## Phase 558: Dead Code Deprecation + Dispatch Trace Consistency (2026-03-19)
+- [x] verify legacy module usage with `rg` before changing `tonesoul/council_adapter.py`, `tonesoul/tonesoul_llm.py`, `tonesoul/market/forecaster.py`, and `tonesoul/market/gold_detector.py`
+- [x] emit import-time `DeprecationWarning` for the legacy modules while keeping them importable
+- [x] normalize repair observability by moving `repair_eligible` into the repair trace payload in `tonesoul/unified_pipeline.py`
+- [x] add deprecation coverage and update compute-gate repair trace assertions
+- [x] validate targeted tests and full regression
+**Success Criteria**: Legacy modules warn on import without breaking compatibility, and repair eligibility is exposed through the structured repair trace instead of a flat dispatch field.
+**Validation**:
+- `python -m ruff check tonesoul/council_adapter.py tonesoul/tonesoul_llm.py tonesoul/market/forecaster.py tonesoul/market/gold_detector.py tonesoul/unified_pipeline.py tests/test_council_adapter_deprecated.py tests/test_tonesoul_llm_deprecated.py tests/test_market_deprecation.py tests/test_pipeline_compute_gate.py` -> passed
+- `python -m pytest tests/test_council_adapter_deprecated.py tests/test_tonesoul_llm_deprecated.py tests/test_market_deprecation.py tests/test_pipeline_compute_gate.py -q` -> 14 passed
+- `python -m ruff check tonesoul tests` -> passed
+- `python -m pytest tests/ -x --tb=short -q` -> 2120 passed, 4 warnings

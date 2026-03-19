@@ -47,6 +47,9 @@ def _warn_legacy_tonesoul_llm_once() -> None:
     _LEGACY_WARNING_EMITTED = True
 
 
+_warn_legacy_tonesoul_llm_once()
+
+
 class ToneSoulLLM:
     """
     ToneSoul + LLM 整合

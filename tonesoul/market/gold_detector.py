@@ -15,10 +15,17 @@ Five signals:
 from __future__ import annotations
 
 import logging
+import warnings
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
+
+warnings.warn(
+    "tonesoul.market.gold_detector is deprecated and scheduled for removal.",
+    DeprecationWarning,
+    stacklevel=2,
+)
 
 
 @dataclass
