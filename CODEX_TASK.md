@@ -1,372 +1,295 @@
-# Codex Task: Phase 554-559 — ✅ 已完成 (2026-03-19 審核通過)
-
-> **審核者**: 痕 (Hén)
-> **審核日期**: 2026-03-19
-> **結果**: ✅ ALL 6 PHASES PASS — 169 新測試，1975 → 2144，lint clean，無回歸
->
-> | Phase | Commit | 新測試 | 累積 |
-> |-------|--------|--------|------|
-> | 554 | `3f9e4e4` | 39 | 2014 |
-> | 555 | `5c8cd9a` | 29 | 2043 |
-> | 556 | `1931b96` | 38 | 2081 |
-> | 557 | `dd63a3d` | 31 | 2112 |
-> | 558 | `91b0f80` | 8 | 2120 |
-> | 559 | `433d7bd` | 24 | 2144 |
->
-> 下一輪工單待指派。
-
----
-
-## 原始工單（保留參考）
+# Codex Task: Phase 560-565 — 子系統收斂：ToneBridge + Memory + Council + 邊界模組
 
 **指派者**: 痕 (Hén)
 **日期**: 2026-03-19
-**分支**: `feat/env-perception`
-**前置條件**: 1975 tests passing, lint clean
+**分支**: `feat/env-perception`（繼續使用，不可 push 到 master）
+**前置條件**: 2144 tests passing, lint clean
 
-> 系統收斂任務。6 個 Phase，按順序執行。
-> **目標：消除 11 個核心模組的測試盲區，清理死碼，硬化模組邊界。**
+> **本次工單為子系統收斂任務。6 個 Phase，按順序執行。**
+> 每完成一個 Phase 就 commit 一次，不要累積。
+> **目標：消除 ToneBridge(5模組)、Memory(3模組)、Council(3模組)、Scribe(2模組)、Deliberation(2模組)、邊界模組(2模組) 的測試盲區。**
 
 ---
 
 ## 脈絡（先讀這些）
 
-1. `tonesoul/memory_manager.py` (652L) — 記憶管理器，最大未測模組
-2. `tonesoul/persona_dimension.py` (447L) — 人格維度空間，DriftMonitor 依賴
-3. `tonesoul/semantic_control.py` (404L) — 語義控制層，pipeline 輔助
-4. `tonesoul/benevolence.py` (385L) — 仁慈裁決引擎
-5. `tonesoul/skill_promoter.py` (375L) — 技能晉升管線
-6. `tonesoul/audit_interface.py` (356L) — 審計接口
-7. `tonesoul/council_capability.py` (314L) — Council 能力聲明
-8. `tonesoul/evidence_collector.py` (265L) — 證據蒐集器
-9. `tonesoul/intent_verification.py` (257L) — 意圖驗證
-10. `tonesoul/jump_monitor.py` (212L) — 奇點跳躍偵測
-11. `tonesoul/escalation.py` (113L) — 升級策略
-12. `tonesoul/council_adapter.py` (45L) — **0 imports，疑似死碼**
-13. `tonesoul/tonesoul_llm.py` (295L) — **0 imports，疑似死碼**
-14. `tests/test_alert_escalation.py` — 參考大型測試檔的 class 分組模式
-15. `tests/test_dispatch_trace_contract.py` — 參考 dispatch_trace 測試模式
+1. `tonesoul/tonebridge/personas.py` (474L) — 人格橋接，ToneBridge 最大未測模組
+2. `tonesoul/tonebridge/rupture_detector.py` (351L) — 斷裂偵測器
+3. `tonesoul/tonebridge/entropy_engine.py` (337L) — 熵引擎
+4. `tonesoul/tonebridge/analyzer.py` (321L) — ToneBridge 分析器
+5. `tonesoul/tonebridge/value_accumulator.py` (318L) — 價值累積器
+6. `tonesoul/memory/openclaw/hippocampus.py` (641L) — OpenClaw 記憶海馬體
+7. `tonesoul/memory/semantic_graph.py` (453L) — 語義圖
+8. `tonesoul/memory/hippocampus.py` (292L) — 記憶海馬體
+9. `tonesoul/council/summary_generator.py` (612L) — Council 摘要產生器
+10. `tonesoul/council/evidence_detector.py` (268L) — 證據偵測器
+11. `tonesoul/council/intent_reconstructor.py` (219L) — 意圖重建器
+12. `tonesoul/scribe/narrative_builder.py` (456L) — 敘事建構器
+13. `tonesoul/scribe/status_artifact.py` (345L) — 狀態紀錄
+14. `tonesoul/deliberation/perspectives.py` (364L) — 審議觀點引擎
+15. `tonesoul/deliberation/types.py` (284L) — 審議型別定義
+16. `tonesoul/skill_gate.py` (301L) — 技能閘門
+17. `tonesoul/skill_apply.py` (295L) — 技能套用
+18. `tests/test_alert_escalation.py` — 參考大型測試檔的 class 分組模式
+19. `tests/test_skill_promoter.py` — 參考 Phase 556 的技能測試模式
 
 ---
 
-## Phase 554: Test Coverage — Memory Manager + Persona Dimension (25+ tests)
+## Phase 560: ToneBridge 子系統測試 — personas + rupture_detector + entropy_engine (25+ tests)
 
-為系統中**最大的兩個未測模組**補齊測試。
+ToneBridge 是語魂的「橋」— 連接語境與張力的核心子系統。5 個模組全部未測，這裡先處理最大的 3 個。
 
 ### 任務清單
 
-- [ ] **Task A**: 建立 `tests/test_memory_manager.py`
-  讀 `tonesoul/memory_manager.py` (652L) 理解全部 API。這是記憶管理器，負責記憶的存取、索引、淘汰。
+- [ ] **Task A**: 建立 `tests/test_tonebridge_personas.py`
+  讀 `tonesoul/tonebridge/personas.py` (474L) 理解全部 API。這是人格橋接模組。
 
-  - `test_init_default_config` — 預設配置初始化
-  - `test_store_memory_basic` — 基本記憶存入
-  - `test_retrieve_memory_by_key` — 按 key 取回
-  - `test_retrieve_nonexistent_key` — 不存在的 key → None / 空
-  - `test_store_and_overwrite` — 覆寫已有 key
-  - `test_memory_index_consistency` — 索引與實際記憶一致
-  - `test_memory_eviction_policy` — 淘汰策略（如有 LRU/freshness）
-  - `test_bulk_store_and_list` — 批量存入 → 列表正確
-  - `test_clear_all_memories` — 清空操作
-  - `test_memory_search_by_tag` — 按標籤搜尋（如有）
-  - `test_memory_persistence_roundtrip` — 存→取→比較一致
-  - `test_memory_metadata_preserved` — metadata 欄位保留
-  - `test_concurrent_access_safety` — 多次快速存取不崩潰
+  - 測試人格載入、序列化、欄位驗證
+  - 測試人格切換邏輯
+  - 測試人格與 Council 的交互邊界
+  - 測試空輸入 / 缺欄位的 graceful 降級
+  - 至少 8 個測試
 
-- [ ] **Task B**: 建立 `tests/test_persona_dimension.py`
-  讀 `tonesoul/persona_dimension.py` (447L) 理解 API。這是人格維度空間模組，DriftMonitor 依賴它。
+- [ ] **Task B**: 建立 `tests/test_tonebridge_rupture_detector.py`
+  讀 `tonesoul/tonebridge/rupture_detector.py` (351L)。斷裂偵測器 — 偵測對話中的價值斷裂。
 
-  - `test_persona_vector_creation` — 向量初始化
-  - `test_persona_distance_calculation` — 兩點間距離
-  - `test_persona_normalize` — 向量正規化
-  - `test_persona_drift_detection` — 漂移偵測（與 DriftMonitor 的接口）
-  - `test_persona_boundary_clamp` — 邊界值限制
-  - `test_persona_dimension_names` — 維度名稱對應正確
-  - `test_persona_interpolation` — 兩向量插值
-  - `test_persona_zero_vector` — 零向量邊界
-  - `test_persona_high_dimensional` — 多維空間不崩潰
-  - `test_persona_serialization` — 序列化/反序列化
-  - `test_persona_ema_update` — EMA 更新（如有 exponential moving average）
-  - `test_persona_snapshot` — 快照功能
+  - 測試偵測邏輯的觸發條件
+  - 測試斷裂分數計算
+  - 測試閾值邊界情況
+  - 測試無斷裂情況的正常通過
+  - 至少 8 個測試
+
+- [ ] **Task C**: 建立 `tests/test_tonebridge_entropy_engine.py`
+  讀 `tonesoul/tonebridge/entropy_engine.py` (337L)。熵引擎 — 計算對話熵值。
+
+  - 測試熵值計算公式
+  - 測試高熵 / 低熵的分類
+  - 測試邊界條件（空輸入、單一 token）
+  - 至少 8 個測試
 
 ### 成功標準
-- `ruff check tests/test_memory_manager.py tests/test_persona_dimension.py` → passed
-- `pytest tests/test_memory_manager.py tests/test_persona_dimension.py -q` → 25+ passed
-- `pytest tests/ -x` → 2000+ passed（無回歸）
+- [ ] 3 個新測試檔，共 25+ 測試通過
+- [ ] `ruff check tests/test_tonebridge_*.py tonesoul/tonebridge/` 無錯誤
+- [ ] `pytest tests/ -x` 全過，無回歸
+- [ ] commit: `test(Phase 560): tonebridge personas + rupture_detector + entropy_engine tests`
 
 ---
 
-## Phase 555: Test Coverage — Semantic Control + Benevolence + Escalation (22+ tests)
+## Phase 561: ToneBridge 完結 + Memory 海馬體 (22+ tests)
+
+完成 ToneBridge 剩餘 2 個模組，開始 Memory 子系統最大的模組。
 
 ### 任務清單
 
-- [ ] **Task A**: 建立 `tests/test_semantic_control.py`
-  讀 `tonesoul/semantic_control.py` (404L) 理解 API。語義控制層，管理語義場約束。
+- [ ] **Task A**: 建立 `tests/test_tonebridge_analyzer.py`
+  讀 `tonesoul/tonebridge/analyzer.py` (321L)。ToneBridge 分析器。
 
-  - `test_semantic_control_init` — 初始化不崩潰
-  - `test_apply_control_basic` — 基本控制施加
-  - `test_control_constraint_enforcement` — 約束執行
-  - `test_control_boundary_violation` — 邊界違反偵測
-  - `test_control_passthrough_clean` — 乾淨輸入通過
-  - `test_control_multiple_constraints` — 多重約束同時施加
-  - `test_control_report_structure` — 控制報告結構正確
-  - `test_control_graceful_on_error` — 異常不崩潰
+  - 測試分析流程的輸入/輸出格式
+  - 測試各分析維度
+  - 至少 7 個測試
 
-- [ ] **Task B**: 建立 `tests/test_benevolence.py`
-  讀 `tonesoul/benevolence.py` (385L) 理解 API。仁慈裁決引擎，判斷是否應展現善意。
+- [ ] **Task B**: 建立 `tests/test_tonebridge_value_accumulator.py`
+  讀 `tonesoul/tonebridge/value_accumulator.py` (318L)。價值累積器 — 累積對話價值軌跡。
 
-  - `test_benevolence_score_neutral` — 中性輸入 → 中性分數
-  - `test_benevolence_score_positive` — 正面情境 → 高分
-  - `test_benevolence_score_negative` — 負面情境 → 低分
-  - `test_benevolence_override_by_axiom` — 公理覆寫
-  - `test_benevolence_boundary_values` — 0.0 和 1.0 邊界
-  - `test_benevolence_weights_structure` — 權重結構驗證
-  - `test_benevolence_deterministic` — 相同輸入 → 相同輸出
+  - 測試累積邏輯（加權、衰減）
+  - 測試歷史查詢
+  - 測試重置 / 初始化
+  - 至少 7 個測試
 
-- [ ] **Task C**: 建立 `tests/test_escalation.py`
-  讀 `tonesoul/escalation.py` (113L) 理解 API。升級策略模組。
+- [ ] **Task C**: 建立 `tests/test_openclaw_hippocampus.py`
+  讀 `tonesoul/memory/openclaw/hippocampus.py` (641L)。這是最大的未測模組。
 
-  - `test_escalation_level_determination` — 等級判定
-  - `test_escalation_threshold_boundary` — 門檻邊界
-  - `test_escalation_step_up` — 逐級升級
-  - `test_escalation_step_down` — 降級
-  - `test_escalation_max_level` — 最高等級限制
-  - `test_escalation_default_state` — 初始狀態
-  - `test_escalation_summary` — 摘要結構
+  - 測試記憶存入 / 取出
+  - 測試索引建立
+  - 測試搜尋 / 召回邏輯
+  - 測試容量限制 / 淘汰策略
+  - 至少 8 個測試
 
 ### 成功標準
-- `ruff check tests/test_semantic_control.py tests/test_benevolence.py tests/test_escalation.py` → passed
-- `pytest tests/test_semantic_control.py tests/test_benevolence.py tests/test_escalation.py -q` → 22+ passed
-- `pytest tests/ -x` → 2022+ passed（無回歸）
+- [ ] 3 個新測試檔，共 22+ 測試通過
+- [ ] `ruff check` 無錯誤
+- [ ] `pytest tests/ -x` 全過，無回歸
+- [ ] commit: `test(Phase 561): tonebridge analyzer + value_accumulator + openclaw hippocampus tests`
 
 ---
 
-## Phase 556: Test Coverage — Skill Promoter + Audit Interface + Council Capability (20+ tests)
+## Phase 562: Memory 語義圖 + Council 摘要產生器 (22+ tests)
+
+覆蓋 Memory 子系統的語義圖和 Council 最大的未測模組。
 
 ### 任務清單
 
-- [ ] **Task A**: 建立 `tests/test_skill_promoter.py`
-  讀 `tonesoul/skill_promoter.py` (375L) 理解 API。技能晉升管線。
+- [ ] **Task A**: 建立 `tests/test_semantic_graph.py`
+  讀 `tonesoul/memory/semantic_graph.py` (453L)。語義圖 — 記憶間的語義關係網路。
 
-  - `test_skill_promotion_eligible` — 合格技能晉升
-  - `test_skill_promotion_ineligible` — 不合格 → 拒絕
-  - `test_skill_promotion_criteria` — 晉升條件檢查
-  - `test_skill_score_calculation` — 分數計算
-  - `test_skill_promotion_history` — 晉升歷史追蹤
-  - `test_skill_demotion` — 降級機制（如有）
-  - `test_skill_list_sorted` — 排序正確
+  - 測試節點新增 / 刪除
+  - 測試邊（關係）的建立
+  - 測試圖查詢 / 路徑搜尋
+  - 測試序列化 / 反序列化
+  - 至少 8 個測試
 
-- [ ] **Task B**: 建立 `tests/test_audit_interface.py`
-  讀 `tonesoul/audit_interface.py` (356L) 理解 API。審計接口。
+- [ ] **Task B**: 建立 `tests/test_memory_hippocampus.py`
+  讀 `tonesoul/memory/hippocampus.py` (292L)。基本海馬體模組（非 OpenClaw 版本）。
 
-  - `test_audit_record_creation` — 記錄建立
-  - `test_audit_record_fields` — 必要欄位存在
-  - `test_audit_query_by_time` — 按時間查詢
-  - `test_audit_query_by_component` — 按組件查詢
-  - `test_audit_summary_structure` — 摘要結構
-  - `test_audit_empty_log` — 空日誌 → 安全回傳
+  - 測試記憶存取基本操作
+  - 測試與 semantic_graph 的界面
+  - 至少 6 個測試
 
-- [ ] **Task C**: 建立 `tests/test_council_capability.py`
-  讀 `tonesoul/council_capability.py` (314L) 理解 API。Council 能力聲明。
+- [ ] **Task C**: 建立 `tests/test_council_summary_generator.py`
+  讀 `tonesoul/council/summary_generator.py` (612L)。Council 摘要產生器 — 審議後產生摘要。
 
-  - `test_capability_declaration` — 能力宣告
-  - `test_capability_query` — 能力查詢
-  - `test_capability_match_role` — 能力與角色匹配
-  - `test_capability_unknown_role` — 未知角色 → 安全處理
-  - `test_capability_list_all` — 列出所有能力
-  - `test_capability_deterministic` — 相同輸入 → 相同輸出
-  - `test_capability_empty_registry` — 空 registry → 安全回傳
+  - 測試摘要格式
+  - 測試多觀點合成邏輯
+  - 測試空審議 / 單一觀點的邊界
+  - 至少 8 個測試
 
 ### 成功標準
-- `ruff check tests/test_skill_promoter.py tests/test_audit_interface.py tests/test_council_capability.py` → passed
-- `pytest tests/test_skill_promoter.py tests/test_audit_interface.py tests/test_council_capability.py -q` → 20+ passed
-- `pytest tests/ -x` → 2042+ passed（無回歸）
+- [ ] 3 個新測試檔，共 22+ 測試通過
+- [ ] `ruff check` 無錯誤
+- [ ] `pytest tests/ -x` 全過，無回歸
+- [ ] commit: `test(Phase 562): semantic_graph + hippocampus + council summary_generator tests`
 
 ---
 
-## Phase 557: Test Coverage — Evidence Collector + Intent Verification + Jump Monitor (22+ tests)
+## Phase 563: Council 完結 + Deliberation 審議引擎 (22+ tests)
+
+完成 Council 子系統並覆蓋 Deliberation 模組。
 
 ### 任務清單
 
-- [ ] **Task A**: 建立 `tests/test_evidence_collector.py`
-  讀 `tonesoul/evidence_collector.py` (265L) 理解 API。證據蒐集器。
+- [ ] **Task A**: 建立 `tests/test_council_evidence_detector.py`
+  讀 `tonesoul/council/evidence_detector.py` (268L)。證據偵測器。
 
-  - `test_collect_evidence_basic` — 基本蒐集
-  - `test_evidence_dedup` — 重複證據去重
-  - `test_evidence_ranking` — 證據排序
-  - `test_evidence_source_tracking` — 來源追蹤
-  - `test_evidence_empty_input` — 空輸入 → 空結果
-  - `test_evidence_max_capacity` — 容量限制
-  - `test_evidence_summary` — 摘要結構
-  - `test_evidence_filter_by_type` — 按類型過濾
+  - 測試證據分類
+  - 測試證據強度評分
+  - 測試多證據聚合
+  - 至少 7 個測試
 
-- [ ] **Task B**: 建立 `tests/test_intent_verification.py`
-  讀 `tonesoul/intent_verification.py` (257L) 理解 API。意圖驗證模組。
+- [ ] **Task B**: 建立 `tests/test_council_intent_reconstructor.py`
+  讀 `tonesoul/council/intent_reconstructor.py` (219L)。意圖重建器 — 從對話中重建使用者意圖。
 
-  - `test_verify_intent_match` — 意圖匹配
-  - `test_verify_intent_mismatch` — 意圖不匹配 → 失敗
-  - `test_verify_intent_ambiguous` — 模糊意圖處理
-  - `test_verification_confidence_score` — 信心分數
-  - `test_verification_report_structure` — 報告結構
-  - `test_verification_empty_context` — 空脈絡 → 安全處理
-  - `test_verification_multiple_intents` — 多意圖場景
+  - 測試意圖提取格式
+  - 測試多輪對話的意圖追蹤
+  - 至少 6 個測試
 
-- [ ] **Task C**: 建立 `tests/test_jump_monitor.py`
-  讀 `tonesoul/jump_monitor.py` (212L) 理解 API。奇點跳躍偵測。
+- [ ] **Task C**: 建立 `tests/test_deliberation_perspectives.py`
+  讀 `tonesoul/deliberation/perspectives.py` (364L)。審議觀點引擎。
 
-  - `test_jump_detection_normal` — 正常波動 → 不觸發
-  - `test_jump_detection_spike` — 突變 → 觸發
-  - `test_jump_threshold_boundary` — 門檻邊界
-  - `test_jump_cooldown` — 冷卻期
-  - `test_jump_history_tracking` — 歷史追蹤
-  - `test_jump_reset` — 重置
-  - `test_jump_summary` — 摘要結構
+  - 測試觀點生成
+  - 測試觀點衝突偵測
+  - 測試觀點權重分配
+  - 至少 7 個測試
+
+- [ ] **Task D**: 建立 `tests/test_deliberation_types.py`
+  讀 `tonesoul/deliberation/types.py` (284L)。審議型別定義。
+
+  - 測試 dataclass / TypedDict 的欄位驗證
+  - 測試序列化 / 反序列化
+  - 至少 5 個測試（型別模組測試可精簡）
 
 ### 成功標準
-- `ruff check tests/test_evidence_collector.py tests/test_intent_verification.py tests/test_jump_monitor.py` → passed
-- `pytest tests/test_evidence_collector.py tests/test_intent_verification.py tests/test_jump_monitor.py -q` → 22+ passed
-- `pytest tests/ -x` → 2064+ passed（無回歸）
+- [ ] 4 個新測試檔，共 22+ 測試通過（型別模組可簡短）
+- [ ] `ruff check` 無錯誤
+- [ ] `pytest tests/ -x` 全過，無回歸
+- [ ] commit: `test(Phase 563): council evidence_detector + intent_reconstructor + deliberation perspectives + types tests`
 
 ---
 
-## Phase 558: Dead Code Audit + Deprecation Markers (8+ tests)
+## Phase 564: Scribe 敘事子系統 + 邊界模組 (22+ tests)
 
-**目標**: 驗證並標記死碼模組，為未來清理做準備。
+覆蓋 Scribe（敘事建構）和技能邊界模組。
 
 ### 任務清單
 
-- [ ] **Task A**: 驗證 `tonesoul/council_adapter.py` (45L, 0 imports)
-  1. 搜索全 codebase 確認無使用（`grep -r "council_adapter" tonesoul/ tests/`）
-  2. 如確認無使用，在檔案頂部加 deprecation 警告：
-     ```python
-     import warnings
-     warnings.warn(
-         "council_adapter is deprecated and scheduled for removal. "
-         "Use tonesoul.council.perspectives directly.",
-         DeprecationWarning,
-         stacklevel=2,
-     )
-     ```
-  3. 建立 `tests/test_council_adapter_deprecated.py`：
-     - `test_import_emits_deprecation_warning` — import 時觸發 DeprecationWarning
-     - `test_module_still_importable` — 不崩潰
+- [ ] **Task A**: 建立 `tests/test_narrative_builder.py`
+  讀 `tonesoul/scribe/narrative_builder.py` (456L)。敘事建構器 — 將審議結果轉為敘事。
 
-- [ ] **Task B**: 驗證 `tonesoul/tonesoul_llm.py` (295L, 0 imports)
-  1. 搜索全 codebase 確認無使用
-  2. 如確認無使用，在檔案頂部加 deprecation 警告（同上模式）
-  3. 建立 `tests/test_tonesoul_llm_deprecated.py`：
-     - `test_import_emits_deprecation_warning`
-     - `test_module_still_importable`
+  - 測試敘事格式化
+  - 測試不同輸入結構的處理
+  - 測試空輸入降級
+  - 至少 8 個測試
 
-- [ ] **Task C**: 驗證 `tonesoul/market/forecaster.py` 和 `tonesoul/market/gold_detector.py`
-  1. 搜索全 codebase 確認使用狀況
-  2. 如為孤立模組（不影響主管線），加 deprecation 警告
-  3. 建立 `tests/test_market_deprecation.py`：
-     - `test_forecaster_import_warning`
-     - `test_gold_detector_import_warning`
+- [ ] **Task B**: 建立 `tests/test_status_artifact.py`
+  讀 `tonesoul/scribe/status_artifact.py` (345L)。狀態紀錄。
 
-- [ ] **Task D**: 修復 `dispatch_trace["repair_eligible"]` 一致性問題
-  在 `tonesoul/unified_pipeline.py` 中，`dispatch_trace["repair_eligible"] = True` 是唯一未經 `_build_trace_section()` 包裹的寫入。
-  改為使用 `_build_trace_section()` 包裹，或移入 `dispatch_trace["repair"]["detail"]` 中。
-  ⚠️ 不可改變語義，只做結構標準化。
+  - 測試紀錄建立
+  - 測試紀錄欄位完整性
+  - 至少 6 個測試
+
+- [ ] **Task C**: 建立 `tests/test_skill_gate.py`
+  讀 `tonesoul/skill_gate.py` (301L)。技能閘門 — 決定是否放行技能執行。
+
+  - 測試閘門開啟/阻擋邏輯
+  - 測試條件判定
+  - 測試與 governance 的交互
+  - 至少 7 個測試
 
 ### 成功標準
-- `ruff check` 相關檔案 → passed
-- deprecation warning 測試全過
-- `dispatch_trace["repair_eligible"]` 已標準化
-- `pytest tests/ -x` → 2072+ passed（無回歸）
+- [ ] 3 個新測試檔，共 22+ 測試通過
+- [ ] `ruff check` 無錯誤
+- [ ] `pytest tests/ -x` 全過，無回歸
+- [ ] commit: `test(Phase 564): narrative_builder + status_artifact + skill_gate tests`
 
 ---
 
-## Phase 559: YSS Pipeline 收斂測試 (15+ tests)
+## Phase 565: Observability + Corpus + skill_apply (20+ tests)
 
-`yss_pipeline.py` (1091L) 和 `yss_gates.py` (940L) 是兩個大型未測模組。它們是 YSS (語魂脊柱系統) 的核心管線。
+覆蓋可觀測性子系統和語料庫存取。
 
 ### 任務清單
 
-- [ ] **Task A**: 建立 `tests/test_yss_pipeline.py`
-  讀 `tonesoul/yss_pipeline.py` 理解 API。
+- [ ] **Task A**: 建立 `tests/test_observability_token_meter.py`
+  讀 `tonesoul/observability/token_meter.py` (204L)。Token 計量器。
 
-  - `test_yss_pipeline_init` — 初始化不崩潰
-  - `test_yss_pipeline_process_minimal` — 最小輸入處理
-  - `test_yss_pipeline_output_structure` — 輸出結構正確
-  - `test_yss_pipeline_stage_sequence` — 階段順序正確
-  - `test_yss_pipeline_error_in_stage` — 單階段錯誤 → 安全降級
-  - `test_yss_pipeline_empty_input` — 空輸入 → 安全處理
-  - `test_yss_pipeline_context_propagation` — 上下文傳遞
-  - `test_yss_pipeline_trace_output` — 追蹤輸出
+  - 測試 token 計數
+  - 測試預算追蹤
+  - 測試超限警告
+  - 至少 5 個測試
 
-- [ ] **Task B**: 建立 `tests/test_yss_gates.py`
-  讀 `tonesoul/yss_gates.py` 理解 API。
+- [ ] **Task B**: 建立 `tests/test_observability_action_audit.py`
+  讀 `tonesoul/observability/action_audit.py` (194L)。行為審計。
 
-  - `test_gate_pass_condition` — 通過條件
-  - `test_gate_block_condition` — 阻擋條件
-  - `test_gate_threshold_boundary` — 門檻邊界值
-  - `test_gate_chain_execution` — 多閘門連鎖
-  - `test_gate_bypass_flag` — bypass 旗標（如有）
-  - `test_gate_report_structure` — 報告結構
-  - `test_gate_graceful_on_error` — 異常不崩潰
+  - 測試審計記錄建立
+  - 測試查詢 / 過濾
+  - 至少 5 個測試
+
+- [ ] **Task C**: 建立 `tests/test_corpus_storage.py`
+  讀 `tonesoul/corpus/storage.py` (370L)。語料庫存取。
+
+  - 測試存入 / 取出
+  - 測試索引
+  - 至少 6 個測試
+
+- [ ] **Task D**: 建立 `tests/test_skill_apply.py`
+  讀 `tonesoul/skill_apply.py` (295L)。技能套用。
+
+  - 測試技能執行流程
+  - 測試與 skill_gate 的交互
+  - 至少 5 個測試
 
 ### 成功標準
-- `ruff check tests/test_yss_pipeline.py tests/test_yss_gates.py` → passed
-- `pytest tests/test_yss_pipeline.py tests/test_yss_gates.py -q` → 15+ passed
-- `pytest tests/ -x` → **2087+ passed（無回歸）**
+- [ ] 4 個新測試檔，共 20+ 測試通過
+- [ ] `ruff check` 無錯誤
+- [ ] `pytest tests/ -x` 全過，無回歸
+- [ ] commit: `test(Phase 565): observability token_meter + action_audit + corpus storage + skill_apply tests`
 
 ---
 
 ## 禁止事項（所有 Phase 通用）
 
-- ❌ 不可修改 `AGENTS.md`, `CODEX_PROTOCOL.md`, `.env`, `.gitignore`
-- ❌ 不可改變現有 API 的 return type（只可 additive 增加欄位）
-- ❌ 不可安裝新的 pip 套件
-- ❌ 不可刪除任何現有測試
-- ❌ 不可在 `unified_pipeline.py` 中改變控制流（if/else 分支順序）
-- ❌ 不可 push 到 master
-- ❌ Phase 558 的死碼清理只加 deprecation 警告，**不可刪除檔案**
-- ❌ Phase 558 的 dispatch_trace 修復只做結構標準化，不改語義
+- ❌ 不可刪除任何現有源碼檔案
+- ❌ 不可修改 `.env`, `.gitignore`, `AGENTS.md`, `MEMORY.md`, `CODEX_PROTOCOL.md`
+- ❌ 不可 push 到 `master`
+- ❌ 不可安裝新的系統層級套件
+- ❌ 不可修改 `tonesoul/governance/kernel.py` 核心邏輯
+- ❌ 不可修改 `tonesoul/unified_pipeline.py` 路由結構
+- ❌ 不可使用 `--no-verify` 繞過 hooks
 
 ## 技術提示
 
-### 測試模式參考
-```python
-# 標準 mock 模式（參考 tests/test_alert_escalation.py）
-from unittest.mock import MagicMock, patch
-
-class TestSomeFeature:
-    def test_basic(self):
-        obj = SomeClass()
-        result = obj.method(input)
-        assert result["key"] == expected
-
-# Deprecation 測試模式 (Phase 558)
-import warnings
-def test_import_emits_deprecation_warning():
-    with warnings.catch_warnings(record=True) as w:
-        warnings.simplefilter("always")
-        import tonesoul.council_adapter  # noqa: F401
-        dep_warnings = [x for x in w if issubclass(x.category, DeprecationWarning)]
-        assert len(dep_warnings) >= 1
-        assert "deprecated" in str(dep_warnings[0].message).lower()
-
-# 異常路徑模式
-def test_graceful_fallback():
-    with patch("tonesoul.module.dependency", side_effect=Exception("boom")):
-        result = function_under_test()
-    assert result is not None  # 沒有崩潰
-```
-
-### 重要注意
-- `memory_manager.py` 是 652 行的大模組，需要仔細讀 API 後再寫測試
-- `persona_dimension.py` 被 `drift_monitor.py` 依賴 — 測試要確認 DriftMonitor 的接口能正常調用
-- `yss_pipeline.py` (1091L) 和 `yss_gates.py` (940L) 是大型模組，先讀 class 和 public method，再逐一測試
-- Phase 558 的死碼驗證必須先做 grep 確認，不可假設
-- 每個 Phase commit 一次，message 格式: `test(Phase NNN): [描述]`
-
-### Commit Message 格式
-```
-Phase 554: test(Phase 554): memory_manager + persona_dimension tests
-Phase 555: test(Phase 555): semantic_control + benevolence + escalation tests
-Phase 556: test(Phase 556): skill_promoter + audit_interface + council_capability tests
-Phase 557: test(Phase 557): evidence_collector + intent_verification + jump_monitor tests
-Phase 558: refactor(Phase 558): dead code deprecation + dispatch_trace consistency
-Phase 559: test(Phase 559): yss_pipeline + yss_gates convergence tests
-```
+- 所有新模組的 import 路徑已確認存在，直接 `from tonesoul.tonebridge.personas import ...` 即可
+- 如果模組依賴 LLM 調用，用 `monkeypatch` mock 掉，不要實際調用
+- 如果模組使用檔案系統，用 `tmp_path` fixture
+- 參考 Phase 554-559 的測試風格（特別是 `test_skill_promoter.py` 的結構）
+- 每個測試檔用 class 分組相關測試（參考 `test_alert_escalation.py`）
+- 型別模組（如 `deliberation/types.py`）通常只需測 dataclass 欄位和序列化，不需過度測試
