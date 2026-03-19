@@ -5824,3 +5824,15 @@
 - `python -m pytest tests/test_yss_pipeline.py tests/test_yss_gates.py -q` -> 24 passed
 - `python -m ruff check tonesoul tests` -> passed
 - `python -m pytest tests/ -x --tb=short -q` -> 2144 passed, 4 warnings
+
+## Phase 560: ToneBridge Persona + Rupture + Entropy Coverage (2026-03-19)
+- [x] add `tests/test_tonebridge_personas.py` for trigger detection, score normalization, persona switching, transition prompts, hardened prompts, and navigation prompt contracts
+- [x] add `tests/test_tonebridge_rupture_detector.py` for semantic rupture serialization, negation/retraction/softening checks, severity thresholds, and warning formatting
+- [x] add `tests/test_tonebridge_entropy_engine.py` for entropy serialization, scoring, spread and repetition heuristics, constraint violations, summaries, and reset behavior
+- [x] validate targeted tests and full regression
+**Success Criteria**: ToneBridge persona routing, rupture detection, and entropy monitoring are covered by deterministic tests without changing runtime behavior.
+**Validation**:
+- `python -m ruff check tests/test_tonebridge_personas.py tests/test_tonebridge_rupture_detector.py tests/test_tonebridge_entropy_engine.py` -> passed
+- `python -m pytest tests/test_tonebridge_personas.py tests/test_tonebridge_rupture_detector.py tests/test_tonebridge_entropy_engine.py -q` -> 37 passed, 1 warning
+- `python -m ruff check tonesoul tests` -> passed
+- `python -m pytest tests/ -x --tb=short -q` -> 2181 passed, 4 warnings
