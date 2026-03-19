@@ -15,7 +15,14 @@ describe("governance status route", () => {
         process.env.VERCEL = "1";
         process.env.VERCEL_URL = "tonesoul52-one.vercel.app";
         const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(
-            new Response(JSON.stringify({ status: "ok" }), { status: 200 })
+            new Response(
+                JSON.stringify({
+                    status: "ok",
+                    governance_capability: "runtime_ready",
+                    recent_verdicts: [{ gate_decision: "approve", delta_t: 0.23 }],
+                }),
+                { status: 200 }
+            )
         );
 
         const response = await getGovernanceStatus();
@@ -26,12 +33,13 @@ describe("governance status route", () => {
         expect(payload.backend_mode).toBe("same_origin");
         expect(payload.governance_capability).toBe("runtime_ready");
         expect(payload.deliberation_level).toBe("runtime");
+        expect(payload.recent_verdicts).toEqual([{ gate_decision: "approve", delta_t: 0.23 }]);
         expect(payload.elisa).toMatchObject({
             integration_ready: true,
             contract_version: "phase108_p1",
         });
         expect(fetchMock).toHaveBeenCalledWith(
-            "https://tonesoul52-one.vercel.app/api/_backend/api/health",
+            "https://tonesoul52-one.vercel.app/api/_backend/api/governance_status",
             expect.objectContaining({ method: "GET" })
         );
     });
@@ -56,7 +64,10 @@ describe("governance status route", () => {
     it("returns runtime governance status when backend health probe succeeds", async () => {
         process.env.TONESOUL_BACKEND_URL = "http://127.0.0.1:5000";
         const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(
-            new Response(JSON.stringify({ status: "ok" }), { status: 200 })
+            new Response(
+                JSON.stringify({ status: "ok", governance_capability: "runtime_ready" }),
+                { status: 200 }
+            )
         );
 
         const response = await getGovernanceStatus();
@@ -69,7 +80,7 @@ describe("governance status route", () => {
         expect(payload.deliberation_level).toBe("runtime");
         expect(payload.elisa).toMatchObject({ integration_ready: true });
         expect(fetchMock).toHaveBeenCalledWith(
-            "http://127.0.0.1:5000/api/health",
+            "http://127.0.0.1:5000/api/governance_status",
             expect.objectContaining({ method: "GET" })
         );
     });
@@ -84,7 +95,7 @@ describe("governance status route", () => {
         expect(response.status).toBe(503);
         expect(payload.status).toBe("degraded");
         expect(payload.governance_capability).toBe("unavailable");
-        expect(payload.reason).toBe("backend_health_transport_error");
+        expect(payload.reason).toBe("backend_governance_status_transport_error");
         expect(payload.elisa).toMatchObject({ integration_ready: false });
     });
 });

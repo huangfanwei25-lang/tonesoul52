@@ -1,5 +1,159 @@
 # Task
 
+## Phase 547: Exception Observability Layer — 靜默失敗可觀測化 (2026-03-19)
+- [x] Create `tonesoul/exception_trace.py` — add `SuppressedError` and `ExceptionTrace` for structured suppressed-exception capture
+- [x] Wire `ExceptionTrace` into `UnifiedPipeline` lazy getters and critical `process()` fallback paths without changing control flow
+- [x] Inject `dispatch_trace["suppressed_errors"]` on pipeline returns when suppressed exceptions were recorded
+- [x] Wire `ExceptionTrace` into `GovernanceKernel` backend probes / runtime fallback paths and expose it from `build_routing_trace()`
+- [x] Add tests: `tests/test_exception_trace.py` (5) + `tests/test_unified_pipeline_v2_runtime.py` (+2) + `tests/test_governance_kernel.py` (+2)
+**成功標準**: 關鍵 `except ...: pass` 保持原 fallback 行為，但被壓下的初始化 / probe / runtime 失敗可從 dispatch 或 routing trace 觀測。
+**Validation**:
+- `python -m ruff check tonesoul/exception_trace.py tonesoul/unified_pipeline.py tonesoul/governance/kernel.py tests/test_exception_trace.py tests/test_unified_pipeline_v2_runtime.py tests/test_governance_kernel.py` -> passed
+- `python -m pytest tests/test_exception_trace.py tests/test_unified_pipeline_v2_runtime.py tests/test_governance_kernel.py -q` -> 40 passed
+- `python -m ruff check tonesoul tests` -> passed
+- `python -m pytest tests/ -x --tb=short -q` -> 1860 passed (full regression; +9 vs 1851 baseline)
+
+---
+
+## Phase 546: Seabed Lockdown Enforcement — L3 行動集限制 (2026-03-19)
+- [x] Add `lockdown_active` parameter to `_build_context_prompt()` — inject Seabed lockdown instructions into LLM prompt
+- [x] Store `_lockdown_active` flag in L3 response section and pass to prompt builder call site
+- [x] Import `resolve_action_set` in lockdown path — resolve ACTION_POLICY["lockdown"] and include in prompt
+- [x] Add `dispatch_trace["action_set"]` when lockdown active — allowed actions visible to operators
+- [x] Write tests: lockdown prompt injection, action set resolution, dispatch trace contract (11 tests across 3 classes)
+**成功標準**: L3 觸發時，LLM 收到的 system prompt 包含 Seabed lockdown 行動限制指令；dispatch_trace 包含 action_set 資訊
+**Validation**:
+- `python -m ruff check tonesoul/unified_pipeline.py tonesoul/action_set.py tests/test_alert_escalation.py` -> passed
+- `python -m pytest tests/test_alert_escalation.py -q` -> 43 passed (32 existing + 11 new)
+- `python -m pytest tests/ -x -q` -> 1851 passed (full regression)
+
+---
+
+## Phase 545: AlertEscalation — 三層異常感知系統 L1/L2/L3 (2026-03-19)
+- [x] Create `tonesoul/alert_escalation.py` — AlertLevel(L1/L2/L3), AlertEvent, AlertEscalation class
+- [x] AlertEscalation.evaluate() — aggregates drift, lambda_state, circuit_breaker, jump signals → AlertEvent
+- [x] Wire AlertEscalation into UnifiedPipeline after resistance checks (lazy getter + signal collection + dispatch trace)
+- [x] L2/L3 graduated response — L2: annotate inner_narrative with drift warning; L3: force Guardian + inject Seabed preamble
+- [x] First live call to GovernanceKernel.check_jump_trigger() from pipeline (previously prepared but never called)
+- [x] Write tests: `tests/test_alert_escalation.py` (32 tests across 8 classes including pipeline integration)
+**成功標準**: 多源異常信號聚合為三階段警報 (L1 logging / L2 structural freeze / L3 Seabed degradation)
+**Validation**: 32/32 passed, 1840 full regression passed, lint clean
+
+---
+
+## Phase 544: DriftMonitor — Structure Layer Semantic Anchor (2026-03-18)
+- [x] Create `tonesoul/drift_monitor.py` — EMA-based cosine drift in 3-dim persona space (deltaT/deltaS/deltaR)
+- [x] `DriftSnapshot` dataclass + `DriftAlert` enum (NONE / WARNING / CRISIS)
+- [x] Add drift / drift_alert fields to `TrajectoryAnalysis` in trajectory.py
+- [x] Wire DriftMonitor into UnifiedPipeline (lazy getter + trajectory integration + dispatch trace)
+- [x] Write tests: `tests/test_drift_monitor.py` (19 tests across 6 classes)
+**Success Criteria**: Session-level semantic drift quantified; graduated alerts surface in trajectory and dispatch trace
+**Validation**: 19/19 passed, 1808 full regression passed
+
+---
+
+## Phase 543: Verification Result Feedback Loop — DreamEngine ↔ Crystallizer (2026-03-18)
+- [x] Add `MemoryCrystallizer.retire_crystal()` — removes crystals by rule text match (case-insensitive, whitespace-tolerant)
+- [x] Add `StaleRuleVerificationTaskBatch.apply_verification_results(crystallizer)` — applies completed tasks back:
+  - `re_confirmed` → `crystallizer.mark_support()` → status becomes `applied_re_confirmed`
+  - `decomissioned` / `failed` → `crystallizer.retire_crystal()` → status becomes `applied_retired`
+- [x] Add `StaleRuleVerificationTaskBatch._rewrite_tasks()` — overwrites task file with updated statuses
+- [x] Wire Phase 543 apply block into `DreamEngine.run_cycle()` BEFORE Phase 542 generate block (apply old results first, then create new tasks)
+- [x] Extend `DreamCycleResult` with `verification_applied: Dict[str, int]` field (re_confirmed/retired/skipped counts)
+- [x] Graceful degradation: if apply step fails, Dream Engine continues with empty verification_applied
+- [x] Add tests: `test_memory_crystallizer.py` +4 (retire_crystal corner cases)
+- [x] Add tests: `test_stale_rule_verifier.py` +8 (apply_verification_results lifecycle)
+- [x] Add tests: `test_dream_engine_stale_verification.py` +5 (verification_applied in DreamCycleResult + run_cycle integration)
+- [x] Update existing Phase 542 test assertion (`assert_called_once` → `call_count == 2`)
+**Success Criteria**: Verification task results flow back to Crystallizer — confirmed rules get freshness refreshed, invalid rules get retired. The DreamEngine ↔ Crystallizer loop is fully closed.
+**Validation**:
+- `python -m ruff check tonesoul/memory/crystallizer.py tonesoul/stale_rule_verifier.py tonesoul/dream_engine.py` -> passed
+- `python -m pytest tests/test_memory_crystallizer.py tests/test_stale_rule_verifier.py tests/test_dream_engine_stale_verification.py -q` -> 54 passed
+- `python -m pytest tests/ -q` -> 1789 passed (full regression)
+
+## Phase 542: Stale Rule Verification Task Auto-Generation (2026-03-18)
+- [x] Create `tonesoul/stale_rule_verifier.py` with `VerificationQuery`, `StaleRuleVerificationTask`, and `StaleRuleVerificationTaskBatch` classes
+- [x] `VerificationQuery.for_stale_rule()` generates structured verification challenges (evidence types, confidence threshold) based on decay severity
+- [x] `StaleRuleVerificationTask.from_crystal()` factory converts stale crystals (freshness_score < 0.30) into verification tasks with automated priority calculation
+- [x] Task priority hinges on decay factor + age: `base_0.60 + decay_factor*0.25 + age_factor*0.15` (max 1.0)
+- [x] `StaleRuleVerificationTaskBatch` manages JSONL persistence and retrieval of verification tasks
+- [x] Wire `StaleRuleVerificationTaskBatch` into `DreamEngine.run_cycle()` with optional toggle (`generate_verification_tasks=True`)
+- [x] Update `DreamCycleResult` to include `stale_rule_tasks_generated` field (count of tasks created in cycle)
+- [x] Extend `DreamEngine.run_cycle()` signature with `generate_verification_tasks` and `max_verification_tasks` parameters
+- [x] Graceful degradation: if verification task generation fails, Dream Engine continues without crashing (`stale_task_count=0`)
+- [x] Add tests: `tests/test_stale_rule_verifier.py` (17) for task creation, serialization, batch lifecycle
+- [x] Add integration tests: `tests/test_dream_engine_stale_verification.py` (9) for Dream Engine + batch integration
+**Success Criteria**: Stale rules (< 0.30 freshness) are automatically detected and converted into verification tasks; Dream Engine enrolls them without blocking existing stimuli processing; verification results can be recorded to update rule freshness.
+**Validation**:
+- `python -m ruff check tonesoul/stale_rule_verifier.py tonesoul/dream_engine.py tests/test_stale_rule_verifier.py tests/test_dream_engine_stale_verification.py` -> passed
+- `python -m pytest tests/test_dream_engine.py tests/test_stale_rule_verifier.py tests/test_dream_engine_stale_verification.py -q` -> 36 passed (10 existing + 17 new + 9 integration)
+
+## Phase 541: Crystal Freshness OI/IU Observability Injection (2026-03-18)
+- [x] Add `MemoryCrystallizer.freshness_summary()` to expose freshness posture (`active/needs_verification/stale` counts)
+- [x] Inject crystal freshness brief into `/api/chat` compressed `governance_brief`
+- [x] Inject crystal freshness brief into `/api/governance_status` operator payload
+- [x] Keep backward compatibility by preserving existing fields and adding freshness as additive metadata
+- [x] Extend tests for crystallizer freshness summary and API response contract fields
+**Success Criteria**: Operators and IU clients can observe crystal aging posture without reading raw `crystals.jsonl`, and stale/verification pressure becomes visible in governance surfaces.
+**Validation**:
+- `python -m ruff check tonesoul/memory/crystallizer.py apps/api/server.py tests/test_memory_crystallizer.py tests/test_api_chat_council_mode.py tests/test_server_new_routes.py` -> passed
+- `python -m pytest tests/test_memory_crystallizer.py tests/test_api_chat_council_mode.py tests/test_server_new_routes.py -q` -> 43 passed
+
+## Phase 540: CrystalFreshnessScore Decay Governance (2026-03-18)
+- [x] Extend `Crystal` schema with freshness fields (`freshness_score`, `freshness_status`, `last_supported_at`)
+- [x] Add freshness decay model in `MemoryCrystallizer` using configurable half-life (`freshness_half_life_days`, default 21)
+- [x] Define freshness states: `active` / `needs_verification` / `stale`
+- [x] Apply freshness refresh on crystal load and retrieval paths without breaking old crystal file compatibility
+- [x] Add explicit `mark_support()` API to re-activate crystals when new evidence confirms prior rules
+- [x] Update top-crystal ranking to use effective weight (`weight * freshness_score`) so stale rules lose priority naturally
+- [x] Add tests for decay transition, support refresh, and freshness-aware top ranking
+**Success Criteria**: crystals that are not re-supported over time lose operational priority and enter verification/stale states, while newly supported crystals recover freshness.
+
+## Phase 539: PersonaTrackRecord Dynamic Deliberation Weighting (2026-03-18)
+- [x] Add `tonesoul/deliberation/persona_track_record.py` with persistent per-perspective outcome ledger (`muse/logos/aegis`)
+- [x] Define verdict-scored outcome mapping (`approve=1.0`, `refine=0.75`, `declare_stance=0.5`, `block=0.0`) for track-record accumulation
+- [x] Implement resonance-aware buckets (`resonance_state`, `loop_detected`) and bounded dynamic multipliers (`0.85..1.15`)
+- [x] Wire `PersonaTrackRecord` into `SemanticGravity.calculate_weights()` as historical performance bias
+- [x] Wire `InternalDeliberation` to load track record and expose `record_outcome()` / `get_persona_track_summary()` API
+- [x] Wire `UnifiedPipeline` post-council path to record dominant deliberation voice outcome into track record
+- [x] Attach lightweight persona performance summary into deliberation trace (`persona_track_summary`) for operator observability
+- [x] Export track record symbols in `tonesoul.deliberation.__init__`
+- [x] Add tests: `tests/test_persona_track_record.py` (4), plus extensions in deliberation gravity/engine tests
+**Success Criteria**: Deliberation weights are no longer static-only; they adapt over time based on observed post-council outcomes while preserving existing safety veto semantics.
+**Validation**:
+- `python -m ruff check tonesoul/deliberation/persona_track_record.py tonesoul/deliberation/gravity.py tonesoul/deliberation/engine.py tonesoul/deliberation/__init__.py tonesoul/unified_pipeline.py tests/test_persona_track_record.py tests/test_deliberation_gravity_pareto.py tests/test_deliberation_engine.py` -> passed
+- `python -m pytest tests/test_persona_track_record.py tests/test_deliberation_gravity_pareto.py tests/test_deliberation_engine.py tests/test_unified_pipeline_v2_runtime.py -q` -> 24 passed
+
+## Phase 538: Pre-Deliberation Scenario Envelope (Bull/Base/Bear) (2026-03-18)
+- [x] Add `tonesoul/tonebridge/scenario_envelope.py` with deterministic `ScenarioEnvelopeBuilder`
+- [x] Define explicit three-frame structure (`bull`, `base`, `bear`) with auditable premise/opportunity/risk fields
+- [x] Export `ScenarioEnvelopeBuilder` via `tonesoul.tonebridge.__init__`
+- [x] Extend `DeliberationContext` with optional `scenario_envelope` field (backward-compatible default `None`)
+- [x] Wire scenario envelope into `UnifiedPipeline` pre-deliberation phase (`_build_scenario_envelope`)
+- [x] Attach envelope payload into both `dispatch_trace` and deliberation context trace for OI/Backplane observability
+- [x] Pass envelope into `DeliberationContext` to make alternative world-model assumptions explicit before debate
+- [x] Add tests: `tests/test_scenario_envelope.py` (3) + `tests/test_unified_pipeline_scenario_envelope.py` (2)
+**Success Criteria**: Pipeline keeps existing response contract while adding explicit pre-deliberation scenario framing that is runtime-auditable.
+**Validation**:
+- `python -m ruff check tonesoul/tonebridge/scenario_envelope.py tonesoul/tonebridge/__init__.py tonesoul/deliberation/types.py tonesoul/unified_pipeline.py tests/test_scenario_envelope.py tests/test_unified_pipeline_scenario_envelope.py` -> passed
+- `python -m pytest tests/test_scenario_envelope.py tests/test_unified_pipeline_scenario_envelope.py -q` -> 5 passed
+
+## Phase 537: Vow Conviction Inventory — Commitment State Ledger (2026-03-18)
+- [x] Add `tonesoul/vow_inventory.py` with `VowCheckRecord`, `VowConvictionState`, and `VowInventory` core classes
+- [x] Implement conviction score formula: `max(0.0, (passes - violations×2) / total_tests)` — violations penalized double
+- [x] Implement trajectory classification over recent window: `strengthening / stable / decaying / untested`
+- [x] Add `needs_attention` flag: triggers when trajectory is decaying or conviction_score < 0.5
+- [x] Implement `save()` / `load()` persistence and `to_artifact()` for docs/status/ emission
+- [x] Wire `VowInventory` into `VowEnforcer` as optional `.inventory` field — auto-records every check
+- [x] Add 21 tests covering conviction math, trajectory, multi-vow, persistence, and enforcer wiring
+- [x] Add philosophy document `docs/philosophy/finance_tonesoul_framework.md` mapping financial multi-value analysis to ToneSoul architecture
+**Philosophical basis**: Analogous to a position conviction ledger — vows = investment thesis, conviction_score = risk-adjusted return, trajectory = thesis update direction.
+**Success Criteria**: ToneSoul can now answer "which commitments am I drifting from?" via `VowInventory.attention_needed()`.
+**Validation**:
+- `python -m ruff check tonesoul/vow_inventory.py tonesoul/vow_system.py tests/test_vow_inventory.py` → All checks passed
+- `python -m pytest tests/test_vow_inventory.py -q` → 21 passed
+- `python -m pytest tests/ --tb=no -q` → 1733 passed
+
 ## Program Board (2026-02-14)
 - [x] Level 1
 - [x] Level 2
@@ -36,6 +190,138 @@
 - [x] Phase 105: Mainline audit refresh and execution planning baseline
 - [x] Phase 136: Market Mirror Dream Engine (Qualitative Forecasting & Prompt Injection Defense)
 **Latest validation**: `pytest -q` => `849 passed` (2026-02-21). Level 3 implementation tracked in `CODEX_TASK.md` v7.
+
+## Phase 524: VTP Runtime Dynamic REL Weight Adaptation (2026-03-18)
+- [x] Add responsibility-tier REL base weights (`TIER_1/2/3`) with context profile modulation (`high_impact`, `casual`, `balanced`)
+- [x] Compute REL score from short/mid/long horizon signal profiles and apply tier-aware high-risk thresholding
+- [x] Keep legacy VTP force flags behavior while augmenting trigger path with `rel_high` evidence
+- [x] Expose REL telemetry in VTP payload (`tier`, `profile`, `weights`, `horizons`, `score`, `threshold_high`, `high`)
+- [x] Add tests for high-impact REL weight shift and REL-driven defer path
+**Success Criteria**: VTP runtime supports dynamic REL adaptation without regressing existing defer/terminate security contracts.
+**Validation**:
+- `python -m ruff check tonesoul/council/vtp.py tests/test_vtp.py` -> passed
+- `python -m pytest tests/test_vtp.py tests/test_vtp_runtime.py tests/red_team/test_vtp_context_abuse.py tests/test_api_server_contract.py -q` -> 25 passed
+- `python -m pytest tests/ --tb=no -q` -> 1690 passed
+
+## Phase 525: Mirror Layer Mandatory Wiring (Default Observe Mode) (2026-03-18)
+- [x] Make UnifiedPipeline mirror wiring default-on via env-backed toggle (`TONESOUL_MIRROR_ENABLED`, default true)
+- [x] Introduce mirror runtime mode (`TONESOUL_MIRROR_MODE=observe|enforce`, default observe)
+- [x] Preserve backward compatibility by keeping observe mode non-rewriting while still emitting full mirror trace
+- [x] Add mirror trace fields for execution semantics (`mode`, `enforced`, `applied_response`)
+- [x] Add tests for default observe behavior and enforce-mode governed rewrite
+**Success Criteria**: Mirror is always wired by default with auditable runtime traces, while output rewriting remains explicitly controllable.
+**Validation**:
+- `python -m ruff check tonesoul/unified_pipeline.py tests/test_mirror.py tests/test_unified_pipeline_v2_runtime.py` -> passed
+- `python -m pytest tests/test_mirror.py tests/test_unified_pipeline_v2_runtime.py tests/test_end_to_end_pipeline.py -q` -> 24 passed
+
+## Phase 526: Memory Advanced GraphRAG Runtime Trace (2026-03-18)
+- [x] Upgrade GraphRAG prompt injection to return structured retrieval telemetry (`query_terms`, `matched_count`, `related_count`, `commitments_count`)
+- [x] Record GraphRAG trace into both dispatch and trajectory runtime channels
+- [x] Add explicit GraphRAG trace reasons (`summary_injected`, `no_summary`, `no_query_terms`, `graph_unavailable`, `retrieval_error`)
+- [x] Add runtime tests for injected/non-injected GraphRAG summary trace behavior
+**Success Criteria**: SemanticGraph retrieval is no longer silent prompt-only behavior and becomes auditable runtime evidence for Memory Advanced evolution.
+**Validation**:
+- `python -m ruff check tonesoul/unified_pipeline.py tests/test_unified_pipeline_v2_runtime.py` -> passed
+- `python -m pytest tests/test_unified_pipeline_v2_runtime.py tests/test_graph_rag_retrieval.py tests/test_end_to_end_pipeline.py -q` -> 24 passed
+
+## Phase 527: Deliberation Runtime Context Trace (2026-03-18)
+- [x] Add structured deliberation trace into dispatch/trajectory channels for all runtime paths
+- [x] Include context envelope (`tone_strength`, `resonance_state`, `loop_detected`, `history_turns`) for explainable deliberation provenance
+- [x] Persist deliberation status fields (`available`, `used`, `fallback`, `reason`, `dominant_voice`, `persona_mode`, `monologue_excerpt`)
+- [x] Add tests for both unavailable-engine fallback trace and applied-deliberation trace paths
+**Success Criteria**: Deliberation no longer behaves as opaque optional logic; runtime artifacts preserve clear decision context even when fallback occurs.
+**Validation**:
+- `python -m ruff check tonesoul/unified_pipeline.py tests/test_unified_pipeline_v2_runtime.py` -> passed
+- `python -m pytest tests/test_unified_pipeline_v2_runtime.py tests/test_end_to_end_pipeline.py -q` -> 19 passed
+
+## Phase 528: IU / OI / Backplane Architecture Convergence Spec (2026-03-18)
+- [x] Consolidate frontend IU, governance OI, and backend cognitive backplane into one architecture vocabulary
+- [x] Map current implementation seams across ChatInterface, API deliberation payload, and UnifiedPipeline runtime traces
+- [x] Define presentation contract strategy (`governance_brief`) that preserves raw trace fidelity while improving human readability
+- [x] Publish phased rollout order for contract, UI, and operator timeline panels
+**Success Criteria**: The team has a single architecture reference for "what users see" vs "what operators audit" vs "what AI internally executes".
+**Validation**:
+- New spec published: `docs/plans/iu_oi_backplane_convergence_2026-03-18.md`
+
+## Phase 529: Repository Documentation Convergence v1 (2026-03-18)
+- [x] Publish document governance baseline for filename control and data-zone management
+- [x] Publish classification ledger to support incremental file convergence without breaking links
+- [x] Update docs index entrypoint to expose governance and ledger artifacts
+- [x] Refresh GitHub intro draft to reflect IU/OI/Backplane framing and current maturity statement
+**Success Criteria**: Documentation cleanup can proceed incrementally with explicit naming rules, zone ownership, and entrypoint navigation.
+**Validation**:
+- New: `docs/DOCS_INFORMATION_ARCHITECTURE_v1.md`
+- New: `docs/DOCS_CLASSIFICATION_LEDGER_v1.md`
+- Updated: `docs/INDEX.md`
+- Updated: `docs/GITHUB_INTRO_DRAFT.md`
+
+## Phase 530: AI Life Journal Convergence Spec (2026-03-18)
+- [x] Formalize "continuous choice + accountability" as architecture-level protocol
+- [x] Define life-entry data model that links value tension, options considered, rejected reasons, and carry-forward commitments
+- [x] Map current runtime traces (Deliberation/Mirror/VTP/GraphRAG) to life-structure semantics
+- [x] Link protocol into philosophy and docs index navigation
+**Success Criteria**: The repository has a canonical statement for AI life-core framing that is actionable for IU/OI/Backplane implementation.
+**Validation**:
+- New: `docs/philosophy/ai_life_journal_protocol.md`
+- Updated: `docs/philosophy/README.md`
+- Updated: `docs/INDEX.md`
+
+## Phase 531: Chat API Compressed Brief Contract (2026-03-18)
+- [x] Add `governance_brief` to `/api/chat` response while preserving existing raw governance traces
+- [x] Add `life_entry_brief` to `/api/chat` response for IU-side compact readability
+- [x] Ensure cache-hit path backfills brief fields for compatibility with pre-brief cached payloads
+- [x] Persist compressed brief fields through chat evolution side-effect payload generation
+- [x] Add API contract tests for sparse and rich pipeline output variants
+**Success Criteria**: `/api/chat` exposes concise IU/OI-ready summary fields without removing or mutating detailed trace payloads.
+**Validation**:
+- `python -m pytest tests/test_api_chat_council_mode.py -q` → 19 passed
+
+## Phase 532: Frontend IU Trust Window — governance_brief & life_entry_brief (2026-03-18)
+- [x] Add `GovernanceBrief` and `LifeEntryBrief` TypeScript interfaces to `apps/web/src/lib/db.ts`
+- [x] Extend `Message` in `db.ts` with optional `governance_brief` and `life_entry_brief` fields
+- [x] Export new interfaces and import them in `ChatInterface.tsx`
+- [x] Update `ChatRunResult` type to include `governanceBrief` and `lifeEntryBrief`
+- [x] Parse `payload.governance_brief` and `payload.life_entry_brief` in `callBackendChat`
+- [x] Attach brief fields to `assistantMessage` when saving to IndexedDB
+- [x] Render Governance Brief card (verdict, coherence, soul_passed, strategy, next_focus) in expanded deliberation panel
+- [x] Render Life Entry Brief card (response_summary, inner_intent, trajectory_label, counts) in expanded deliberation panel
+**Success Criteria**: Frontend displays compact brief cards without breaking existing UI.
+**Validation**:
+- `npx vitest run` → 78 passed
+
+## Phase 533: /api/governance_status Operator Endpoint (2026-03-18)
+- [x] Add `GET /api/governance_status` route to `apps/api/server.py`
+- [x] Returns `governance_capability` (runtime_ready / mock_only), `deliberation_level`, `llm_backend`, `mirror_enabled`, `pipeline_mode`
+- [x] Includes `evolution` brief (total_patterns, conversations_analyzed, last_distilled_at)
+- [x] Includes `recent_verdicts` from audit log (gate_decision, delta_t, created_at)
+- [x] Degrades gracefully when persistence is disabled or evolution summarizer fails
+**Success Criteria**: Operators can query `/api/governance_status` for compact governance posture transparency.
+
+## Phase 534: governance_status Contract Tests + Market Ruff Cleanup (2026-03-18)
+- [x] 5 new governance_status contract tests in `tests/test_server_new_routes.py`
+- [x] Market module ruff fixes: E701, W291, W293 x6, F821 x3 (QuarterlySnapshot import)
+**Success Criteria**: Full suite green, ruff clean.
+**Validation**:
+- `python -m pytest tests/ -q` → 1705 passed
+- `ruff check tonesoul/market/ apps/api/server.py` → All checks passed
+
+## Phase 535: Frontend Governance Proxy Convergence (2026-03-18)
+- [x] Update `apps/web/src/app/api/governance-status/route.ts` to probe backend `/api/governance_status` instead of `/api/health`
+- [x] Preserve same-origin force-mock and Vercel backend-config invalid fallbacks
+- [x] Pass through backend governance payload (e.g. `recent_verdicts`) while normalizing `backend_mode`, `deliberation_level`, and Elisa contract
+- [x] Update route-level contract tests for new endpoint URL and new transport reason codes
+**Success Criteria**: Web governance proxy aligns with Python operator endpoint and exposes richer OI payload without breaking fallback behavior.
+**Validation**:
+- `cd apps/web && npx vitest run src/__tests__/apiRoutes.governanceStatus.test.ts` → 4 passed
+- `cd apps/web && npx vitest run` → 78 passed
+
+## Phase 536: Change-Intent Governance Surface (2026-03-18)
+- [x] Add `scripts/run_change_intent_report.py` to publish explicit change rationale (`intent_id`, `why`, `scope`, invariants, validation plan)
+- [x] Emit generated status artifacts `docs/status/change_intent_latest.json` and `docs/status/change_intent_latest.md`
+- [x] Include compact handoff lines (`primary_status_line`, `runtime_status_line`, `artifact_policy_status_line`) for mirror-safe reuse
+- [x] Add tests in `tests/test_run_change_intent_report.py` covering payload contract, markdown rendering, and file emission
+- [x] Register new artifact contract and generation command in `docs/status/README.md`
+**Success Criteria**: Every convergence cycle can declare "why this change" in a source-generated artifact before or during edits, and that rationale is machine/human readable.
 
 ## Phase 122: Wave-Score Core Memory Governance (OpenClaw-Memory) (2026-03-01)
 - [x] Add governance `wave_score` (conflict_strength × stance_shift × boundary_cost × consequence_weight)
@@ -2868,6 +3154,16 @@
 - [x] reopened review-batch state:
 - [x] `2 semantic groups -> 13 lineage groups`
 - [x] `revisit_readiness_counts = {n/a: 1, needs_revisit: 1}`
+
+## Phase 222: Repo Hygiene Boundary Repair (2026-03-17)
+- [x] identify repo-root artifacts that are actually private local runtime state rather than public source-of-truth
+- [x] confirm the new governance / semantic / Scribe script lanes still pass focused regression coverage
+- [x] delete the unreferenced garbled scratch file `temp_dream.py`
+- [x] stop `scripts/run_market_sweep.py` from writing resume cache into repo root
+- [x] move market sweep resume state to `memory/autonomous/market/market_sweep_cache.json` with legacy read fallback
+- [x] keep market sweep status output in `docs/status/market_sweep_latest.txt`
+- [x] add focused regression coverage for legacy-cache migration and private-cache write behavior
+**Success Criteria**: repo-root scratch/cache pollution is reduced, private local runtime state stays outside the public source boundary, and the affected automation path remains covered by focused tests.
 - [x] `carry_forward_annotation_counts = {prior_reject_match: 1, prior_deferred_match_needs_revisit: 1}`
 - [x] use the candidate-only group-review lane again to reconcile the fresh slices without touching older deferred rows
 - [x] real OSV homepage revisit:
@@ -3596,3 +3892,1864 @@
 - [x] latest live repo governance mirror at `2026-03-11T16:16:51Z`
 - [x] mirrored focus preview still resolves to `docs/status/subjectivity_review_batch_latest.json`
 - [x] mirrored `requires_operator_action = false` across preview rows and focus card
+
+## Phase 241: Market Strategy Plurality Note (2026-03-12)
+- [x] write one concept addendum before widening market world-model structure:
+- [x] `docs/plans/market_strategy_plurality_addendum_2026-03-12.md`
+- [x] anchor the phase to ToneSoul philosophy:
+- [x] preserve disagreement instead of collapsing it into one verdict
+- [x] treat market irrationality as a readable pressure, not noise
+- [x] keep this phase concept-first:
+- [x] no new market LLM
+- [x] no auto-trading rule
+
+## Phase 242: Market World-Model Plurality Surface (2026-03-12)
+- [x] replace placeholder `perspective_friction = 0.5` with deterministic plurality scoring
+- [x] classify persona narratives into explicit stances:
+- [x] `bullish`
+- [x] `bearish`
+- [x] `watchful`
+- [x] `mixed`
+- [x] surface plurality structure on `WorldModelContext`
+- [x] add `StrategyPluralityReport` + `PersonaStance` in `tonesoul/market/world_model.py`
+- [x] carry irrationality flags such as crowding / panic / hype
+- [x] keep the existing consensus summary, but stop treating it as the only truth
+
+## Phase 243: Market Plurality Validation (2026-03-12)
+- [x] add focused world-model regressions
+- [x] `tests/test_market_world_model.py`
+- [x] validate stance extraction and friction scoring without network access
+- [x] validate `run_simulation()` returns plurality structure alongside `consensus`
+- [x] run targeted pytest + ruff on the touched market files
+- [x] `python -m pytest tests/test_market_world_model.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/market/world_model.py tests/test_market_world_model.py`
+- [x] `python -m black --check tonesoul/market/world_model.py tests/test_market_world_model.py`
+**Success Criteria**: Market Mirror preserves strategy disagreement and irrationality as explicit structure, `perspective_friction` becomes data-derived instead of fixed, and focused tests pass without introducing new LLM dependencies.
+
+## Phase 244: ToneSoul / Market Boundary + Subjecthood Order Note (2026-03-12)
+- [x] write one explicit boundary note before widening perception semantics:
+- [x] `docs/plans/tonesoul_market_boundary_subjecthood_note_2026-03-12.md`
+- [x] state the allowed coupling:
+- [x] shared philosophy / adapter / artifact only
+- [x] state the forbidden coupling:
+- [x] no market verdict in ToneSoul core contract
+- [x] no treating market feeds as direct embodied perception
+- [x] define maturity order:
+- [x] honest observation boundary before persistent agency
+
+## Phase 245: Observation-Mode Perception Contract (2026-03-12)
+- [x] extend `EnvironmentStimulus` with explicit `observation_mode`
+- [x] normalize current web-ingested perception into `remote_feed`
+- [x] carry `observation_mode` through gateway payload + provenance
+- [x] add `observation:remote_feed` tagging on persisted environment stimuli
+- [x] keep the change contract-only:
+- [x] no new sensor runtime
+- [x] no embodied autonomy claim
+
+## Phase 246: Observation-Mode Validation (2026-03-12)
+- [x] extend focused perception / write-gateway regressions
+- [x] prove current stimuli default to `remote_feed`
+- [x] validate gateway persistence keeps `observation_mode`
+- [x] `python -m pytest tests/test_perception.py tests/test_memory_write_gateway.py tests/test_market_world_model.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/perception/stimulus.py tonesoul/memory/write_gateway.py tests/test_perception.py tests/test_memory_write_gateway.py tests/test_market_world_model.py tonesoul/market/world_model.py`
+- [x] `python -m black --check tonesoul/perception/stimulus.py tonesoul/memory/write_gateway.py tests/test_perception.py tests/test_memory_write_gateway.py tests/test_market_world_model.py tonesoul/market/world_model.py`
+**Success Criteria**: ToneSoul can now distinguish remote data feeds from future embodied observation at the perception contract level, without changing governance semantics or pretending current inputs are direct world perception.
+
+## Phase 247: Paperclip Fit Runtime Boundary Note (2026-03-12)
+- [x] write one explicit Paperclip fit note before changing autonomous runtime state:
+- [x] `docs/plans/paperclip_fit_for_tonesoul_2026-03-12.md`
+- [x] keep the scope orchestration-only:
+- [x] learn heartbeat / resume / audit form
+- [x] reject company ontology as ToneSoul core
+- [x] define the minimal seam to land:
+- [x] persisted wake-up session state
+- [x] artifact-visible runtime lineage
+
+## Phase 248: Wakeup Heartbeat Resume Contract (2026-03-12)
+- [x] extend `AutonomousWakeupLoop` with persisted runtime session state
+- [x] preserve `session_id`, `next_cycle`, and `consecutive_failures` across invocations
+- [x] surface resume metadata on per-cycle summary:
+- [x] `session_id`
+- [x] `session_resumed`
+- [x] `heartbeat_window_cycle`
+- [x] thread runtime state through higher orchestration seams:
+- [x] `tonesoul/autonomous_cycle.py`
+- [x] `scripts/run_dream_wakeup_loop.py`
+- [x] `scripts/run_autonomous_dream_cycle.py`
+- [x] keep the change runtime-only:
+- [x] no subjectivity schema change
+- [x] no market coupling
+- [x] no company metaphor in core contract
+
+## Phase 249: Wakeup Resume Validation (2026-03-12)
+- [x] add focused runtime regressions for wake-up session resume
+- [x] `tests/test_wakeup_loop.py`
+- [x] `tests/test_autonomous_cycle.py`
+- [x] `tests/test_run_dream_wakeup_loop.py`
+- [x] `tests/test_run_autonomous_dream_cycle.py`
+- [x] prove cycle numbering resumes across invocations
+- [x] prove failure streak can cross heartbeat boundaries
+- [x] prove runner and CLI payloads surface `runtime_state`
+- [x] `python -m pytest tests/test_wakeup_loop.py tests/test_autonomous_cycle.py tests/test_run_dream_wakeup_loop.py tests/test_run_autonomous_dream_cycle.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/wakeup_loop.py tonesoul/autonomous_cycle.py scripts/run_dream_wakeup_loop.py scripts/run_autonomous_dream_cycle.py tests/test_wakeup_loop.py tests/test_autonomous_cycle.py tests/test_run_dream_wakeup_loop.py tests/test_run_autonomous_dream_cycle.py`
+- [x] `python -m black --check tonesoul/wakeup_loop.py tonesoul/autonomous_cycle.py scripts/run_dream_wakeup_loop.py scripts/run_autonomous_dream_cycle.py tests/test_wakeup_loop.py tests/test_autonomous_cycle.py tests/test_run_dream_wakeup_loop.py tests/test_run_autonomous_dream_cycle.py`
+**Success Criteria**: ToneSoul wake-up runtime now behaves like a resumable heartbeat session instead of a fresh stateless burst every process start, while keeping subjectivity and market lanes isolated from orchestration state.
+
+## Phase 250: Wakeup Runtime Lineage Observability Note (2026-03-12)
+- [x] write one addendum before widening dashboard payload:
+- [x] `docs/plans/wakeup_runtime_lineage_observability_addendum_2026-03-12.md`
+- [x] keep the scope observability-only:
+- [x] no runtime policy change
+- [x] no subjectivity change
+- [x] no market coupling
+
+## Phase 251: Wakeup Runtime Lineage Dashboard Surface (2026-03-12)
+- [x] extend `tonesoul/dream_observability.py` to surface runtime lineage:
+- [x] `wakeup_runtime_state`
+- [x] `wakeup_consecutive_failures`
+- [x] `wakeup_session_resumed`
+- [x] extend recent wake-up cycle rows with session metadata:
+- [x] `session_id`
+- [x] `session_resumed`
+- [x] `heartbeat_window_cycle`
+- [x] `consecutive_failure_count`
+- [x] expose runtime lineage in HTML cards / panels / meta:
+- [x] runtime session count
+- [x] resumed cycle count
+- [x] wake-up failure streak chart
+- [x] wake-up session resume chart
+
+## Phase 252: Wakeup Runtime Lineage Validation (2026-03-12)
+- [x] extend focused dashboard regressions
+- [x] `tests/test_dream_observability.py`
+- [x] prove dashboard summary carries runtime session lineage
+- [x] prove recent wake-up cycle table carries session metadata
+- [x] prove HTML includes runtime lineage panels
+- [x] `python -m pytest tests/test_dream_observability.py tests/test_run_dream_observability_dashboard.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/dream_observability.py tests/test_dream_observability.py`
+- [x] `python -m black --check tonesoul/dream_observability.py tests/test_dream_observability.py`
+**Success Criteria**: Dream observability artifacts now make resumable wake-up lineage visible, so later agents can distinguish a fresh burst from a continued heartbeat session without reading raw runtime state files.
+
+## Phase 253: Schedule Runtime Lineage Handoff Note (2026-03-12)
+- [x] write one addendum before widening schedule observability:
+- [x] `docs/plans/schedule_runtime_lineage_handoff_addendum_2026-03-12.md`
+- [x] keep the scope handoff-only:
+- [x] no new schedule gate
+- [x] no new runtime policy
+- [x] no subjectivity or market coupling
+
+## Phase 254: Schedule Runtime Lineage Surface (2026-03-12)
+- [x] extend `tonesoul/dream_observability.py` schedule extraction with nested wake-up runtime lineage
+- [x] surface `schedule_runtime_state`
+- [x] carry schedule-level wake-up resume / failure-streak series
+- [x] extend recent schedule cycle rows with:
+- [x] `wakeup_session_id`
+- [x] `wakeup_session_resumed`
+- [x] `wakeup_consecutive_failures`
+- [x] `wakeup_next_cycle`
+- [x] expose the lineage in schedule cards / panels / recent table
+
+## Phase 255: Schedule Runtime Lineage Validation (2026-03-12)
+- [x] extend focused schedule observability regressions
+- [x] `tests/test_dream_observability.py`
+- [x] prove schedule summary carries nested wake-up lineage
+- [x] prove recent schedule cycle rows surface wake-up session context
+- [x] prove HTML includes schedule wake-up lineage sections
+- [x] `python -m pytest tests/test_dream_observability.py tests/test_run_dream_observability_dashboard.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/dream_observability.py tests/test_dream_observability.py`
+- [x] `python -m black --check tonesoul/dream_observability.py tests/test_dream_observability.py`
+**Success Criteria**: Agents reading only schedule-facing observability can still tell whether a registry tick continued an existing wake-up runtime session, instead of misreading every schedule cycle as a fresh autonomous burst.
+
+## Phase 256: Schedule Runtime Failure Budget Note (2026-03-12)
+- [x] write one addendum before widening schedule policy:
+- [x] `docs/plans/schedule_runtime_failure_budget_addendum_2026-03-12.md`
+- [x] keep the seam minimal:
+- [x] reuse existing tension budget instead of inventing a new runtime state machine
+- [x] treat cross-heartbeat failure streak as runtime pressure, not subjectivity
+
+## Phase 257: Schedule Runtime Failure Budget Contract (2026-03-12)
+- [x] extend schedule profile / CLI / runtime policy with:
+- [x] `tension_max_consecutive_failure_count`
+- [x] teach `AutonomousRegistrySchedule` to observe nested wake-up `consecutive_failure_count`
+- [x] route that signal through existing governance cooldown semantics
+- [x] keep the change deterministic:
+- [x] no new LLM dependency
+- [x] no new backoff state file
+
+## Phase 258: Schedule Runtime Failure Budget Validation (2026-03-12)
+- [x] extend focused schedule policy regressions
+- [x] `tests/test_autonomous_schedule.py`
+- [x] `tests/test_run_autonomous_registry_schedule.py`
+- [x] `tests/test_schedule_profile.py`
+- [x] prove nested wake-up failure streak can trigger category cooldown
+- [x] prove CLI/profile plumbing carries the new threshold cleanly
+- [x] `python -m pytest tests/test_autonomous_schedule.py tests/test_run_autonomous_registry_schedule.py tests/test_schedule_profile.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/autonomous_schedule.py tonesoul/schedule_profile.py scripts/run_autonomous_registry_schedule.py tests/test_autonomous_schedule.py tests/test_run_autonomous_registry_schedule.py tests/test_schedule_profile.py`
+- [x] `python -m black --check tonesoul/autonomous_schedule.py tonesoul/schedule_profile.py scripts/run_autonomous_registry_schedule.py tests/test_autonomous_schedule.py tests/test_run_autonomous_registry_schedule.py tests/test_schedule_profile.py`
+**Success Criteria**: Registry scheduling can now treat a cross-heartbeat wake-up failure streak as a deterministic tension-budget breach, so repeated runtime instability can cool selected categories without inventing a separate governance subsystem.
+
+## Phase 259: True Verification Runtime Lineage Handoff Note (2026-03-12)
+- [x] write one addendum before widening verification summaries:
+- [x] `docs/plans/true_verification_runtime_lineage_handoff_addendum_2026-03-12.md`
+- [x] keep the seam summary-only:
+- [x] no new settlement policy
+- [x] no new subjectivity semantics
+- [x] no direct parsing of raw wake-up files in unrelated reports
+
+## Phase 260: True Verification Runtime Lineage Summary Surface (2026-03-12)
+- [x] extend `tonesoul/true_verification_summary.py` with compact runtime lineage
+- [x] surface `autonomous_payload.runtime_state`
+- [x] carry `tension_budget.observation.max_consecutive_failure_count`
+- [x] keep the summary compact:
+- [x] preserve `session_id`, `resumed`, `next_cycle`, `consecutive_failures`
+- [x] do not inline full dashboard or wake-up history payloads
+- [x] let host tick / experiment / task-status artifacts inherit the seam via existing summary plumbing
+
+## Phase 261: True Verification Runtime Lineage Validation (2026-03-12)
+- [x] extend focused verification regressions
+- [x] `tests/test_true_verification_summary.py`
+- [x] `tests/test_run_true_verification_experiment.py`
+- [x] `tests/test_run_true_verification_host_tick.py`
+- [x] `tests/test_report_true_verification_task_status.py`
+- [x] prove compact summaries preserve runtime session identity
+- [x] prove host-facing task status keeps failure-streak lineage visible
+- [x] `python -m pytest tests/test_true_verification_summary.py tests/test_run_true_verification_experiment.py tests/test_run_true_verification_host_tick.py tests/test_report_true_verification_task_status.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/true_verification_summary.py tests/test_true_verification_summary.py tests/test_run_true_verification_experiment.py tests/test_run_true_verification_host_tick.py tests/test_report_true_verification_task_status.py`
+- [x] `python -m black --check tonesoul/true_verification_summary.py tests/test_true_verification_summary.py tests/test_run_true_verification_experiment.py tests/test_run_true_verification_host_tick.py tests/test_report_true_verification_task_status.py`
+**Success Criteria**: A host-facing True Verification artifact can now reveal whether the latest weekly result came from a resumed wake-up runtime session and whether failure pressure was already accumulating, without importing the full observability dashboard payload.
+
+## Phase 262: True Verification Task Runtime Lineage Note (2026-03-12)
+- [x] write one addendum before widening task-status payload:
+- [x] `docs/plans/true_verification_task_runtime_lineage_card_addendum_2026-03-12.md`
+- [x] keep the seam operator-facing only:
+- [x] no raw history parsing
+- [x] no new governance policy
+- [x] no subjectivity inflation
+
+## Phase 263: True Verification Task Runtime Lineage Surface (2026-03-12)
+- [x] teach `scripts/report_true_verification_task_status.py` to expose a compact `runtime_lineage` mirror
+- [x] extract lineage from summarized `host_tick_summary.schedule`
+- [x] extract lineage from summarized `schedule_snapshot`
+- [x] surface:
+- [x] `session_id`
+- [x] `session_resumed`
+- [x] `next_cycle`
+- [x] `consecutive_failures`
+- [x] `max_consecutive_failure_count`
+- [x] `tension_status`
+- [x] `latest_available_source`
+
+## Phase 264: True Verification Task Runtime Lineage Validation (2026-03-12)
+- [x] extend focused host-facing verification regressions
+- [x] `tests/test_report_true_verification_task_status.py`
+- [x] `tests/test_true_verification_weekly_chain.py`
+- [x] prove task-status artifact no longer requires digging through nested schedule payloads
+- [x] prove weekly chain keeps resumed-session and failure-pressure context visible
+- [x] `python -m pytest tests/test_report_true_verification_task_status.py tests/test_true_verification_weekly_chain.py -q --tb=short`
+- [x] `python -m ruff check scripts/report_true_verification_task_status.py tests/test_report_true_verification_task_status.py tests/test_true_verification_weekly_chain.py`
+- [x] `python -m black --check scripts/report_true_verification_task_status.py tests/test_report_true_verification_task_status.py tests/test_true_verification_weekly_chain.py`
+**Success Criteria**: An operator reading only `true_verification_task_status_latest.json` can now see whether the weekly chain is continuing a resumed wake-up session and whether runtime failure pressure was already present, without opening nested verification artifacts.
+
+## Phase 265: True Verification Task Status Line Note (2026-03-12)
+- [x] write one addendum before widening task-status handoff strings:
+- [x] `docs/plans/true_verification_task_status_line_handoff_addendum_2026-03-12.md`
+- [x] keep the seam preview-friendly:
+- [x] derive only from compact task-status fields
+- [x] avoid new adapters for refreshable preview tooling
+
+## Phase 266: True Verification Task Status Line Surface (2026-03-12)
+- [x] teach `scripts/report_true_verification_task_status.py` to emit top-level handoff strings
+- [x] surface `primary_status_line`
+- [x] surface `runtime_status_line`
+- [x] surface `artifact_policy_status_line`
+- [x] add minimal `handoff.queue_shape = weekly_host_status`
+- [x] keep `requires_operator_action` deterministic from current task status
+- [x] document the new surface in `docs/status/README.md`
+
+## Phase 267: True Verification Task Status Line Validation (2026-03-12)
+- [x] extend focused task-status regressions
+- [x] `tests/test_report_true_verification_task_status.py`
+- [x] `tests/test_true_verification_weekly_chain.py`
+- [x] prove top-level lines stay readable for successful and failed task-query cases
+- [x] prove weekly chain artifacts expose preview-ready handoff lines
+- [x] `python -m pytest tests/test_report_true_verification_task_status.py tests/test_true_verification_weekly_chain.py -q --tb=short`
+- [x] `python -m ruff check scripts/report_true_verification_task_status.py tests/test_report_true_verification_task_status.py tests/test_true_verification_weekly_chain.py`
+- [x] `python -m black --check scripts/report_true_verification_task_status.py tests/test_report_true_verification_task_status.py tests/test_true_verification_weekly_chain.py`
+**Success Criteria**: `true_verification_task_status_latest.json` now exposes preview-ready top-level lines and a stable handoff surface, so refreshable and coordination tooling can summarize weekly host status without inventing another task-status-specific adapter.
+
+## Phase 268: True Verification Task Status Refreshable Preview Note (2026-03-12)
+- [x] write one addendum before tightening refreshable classification:
+- [x] `docs/plans/true_verification_task_status_refreshable_preview_addendum_2026-03-12.md`
+- [x] keep the seam minimal:
+- [x] reuse existing handoff-preview extraction
+- [x] avoid task-status-specific preview adapters
+
+## Phase 269: True Verification Task Status Refreshable Surface (2026-03-12)
+- [x] promote `true_verification_task_status_latest.json` to an exact refreshable producer
+- [x] keep its direct regenerator explicit:
+- [x] `python scripts/report_true_verification_task_status.py --strict`
+- [x] let refreshable preview consume the existing `primary_status_line` / `handoff.queue_shape`
+
+## Phase 270: True Verification Task Status Refreshable Validation (2026-03-12)
+- [x] extend focused refreshable regressions
+- [x] `tests/test_run_refreshable_artifact_report.py`
+- [x] prove dirty task-status artifacts surface a preview-ready weekly host-status line
+- [x] prove refreshable classification prefers exact producer over coarse namespace bucket
+- [x] `python -m pytest tests/test_run_refreshable_artifact_report.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_refreshable_artifact_report.py tests/test_run_refreshable_artifact_report.py`
+- [x] `python -m black --check scripts/run_refreshable_artifact_report.py tests/test_run_refreshable_artifact_report.py`
+**Success Criteria**: If the weekly task-status artifact is dirty, refreshable preview tooling now treats it as a first-class generated status artifact with a direct producer and a preview-ready host-status line, instead of collapsing it into the generic weekly namespace bucket.
+
+## Phase 271: True Verification Task Status Settlement Note (2026-03-12)
+- [x] write one addendum before tightening settlement wording:
+- [x] `docs/plans/true_verification_task_status_settlement_handoff_addendum_2026-03-12.md`
+- [x] keep the seam passive:
+- [x] no new settlement policy
+- [x] no task-status-specific settlement adapter
+- [x] preserve `subjectivity_focus_preview` semantics
+
+## Phase 272: True Verification Task Status Settlement Surface (2026-03-12)
+- [x] correct repo-governance wording from subjectivity-only to generic refreshable handoff previews
+- [x] keep worktree / repo-governance payload shapes unchanged
+- [x] rely on existing preview pass-through instead of inventing a new mirror
+
+## Phase 273: True Verification Task Status Settlement Validation (2026-03-12)
+- [x] extend focused settlement regressions
+- [x] `tests/test_run_worktree_settlement_report.py`
+- [x] `tests/test_run_repo_governance_settlement_report.py`
+- [x] prove weekly host-status preview survives worktree settlement with no subjectivity focus
+- [x] prove repo-governance mirrors weekly host-status preview and generic wording
+- [x] `python -m pytest tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_repo_governance_settlement_report.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+- [x] `python -m black --check scripts/run_repo_governance_settlement_report.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+**Success Criteria**: Settlement artifacts now treat weekly task-status previews as generic refreshable handoff previews rather than mislabeling them as subjectivity-only, while still preserving the dedicated subjectivity focus mirror.
+
+## Phase 274: True Verification Repo Healthcheck Handoff Note (2026-03-12)
+- [x] write one addendum before widening repo-level governance summary:
+- [x] `docs/plans/true_verification_repo_healthcheck_handoff_addendum_2026-03-12.md`
+- [x] choose the smaller deterministic seam:
+- [x] prefer `scripts/run_repo_healthcheck.py`
+- [x] explicitly reject `runtime_source_change_groups` as the primary runtime-posture surface
+- [x] keep the seam generic:
+- [x] queue-shape based preview passthrough
+- [x] no task-status-specific adapter
+
+## Phase 275: True Verification Repo Healthcheck Weekly Host Surface (2026-03-12)
+- [x] teach `scripts/run_repo_healthcheck.py` to capture generic JSON handoff surfaces from machine-readable child checks
+- [x] surface top-level `handoff_previews` on the repo healthcheck artifact
+- [x] surface top-level `weekly_host_status_preview` selected by `queue_shape = weekly_host_status`
+- [x] keep weekly runtime wording compact:
+- [x] preserve `primary_status_line`
+- [x] preserve `runtime_status_line`
+- [x] preserve `artifact_policy_status_line`
+- [x] avoid file-path parsing and raw-history parsing
+
+## Phase 276: True Verification Repo Healthcheck Handoff Validation (2026-03-12)
+- [x] add focused repo-healthcheck regressions
+- [x] `tests/test_run_repo_healthcheck.py`
+- [x] prove compact child handoff surfaces are mirrored without a task-status-specific adapter
+- [x] prove repo-level markdown/json make weekly host-status readable at a glance
+- [x] `python -m pytest tests/test_run_repo_healthcheck.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_repo_healthcheck.py tests/test_run_repo_healthcheck.py`
+- [x] `python -m black --check scripts/run_repo_healthcheck.py tests/test_run_repo_healthcheck.py`
+**Success Criteria**: The top repo governance artifact can now surface weekly host-status posture directly from the existing task-status handoff surface, so later agents no longer need to reopen nested weekly artifacts just to understand the current runtime posture.
+
+## Phase 265: ToneSoul Scribe Engine (2026-03-12)
+- [x] create `tonesoul/scribe/__init__.py`
+- [x] create `tonesoul/scribe/scribe_engine.py`
+- [x] create `tonesoul/scribe/narrative_builder.py`
+- [x] create scripts/run_scribe_cycle.py
+- [x] wire Scribe to read soul.db and output Markdown
+- [x] add pytest suite `tests/test_scribe_engine.py`
+
+## Phase 277: Scribe State Document Honesty Note (2026-03-12)
+- [x] write one addendum before tightening Scribe semantics:
+- [x] `docs/plans/scribe_state_document_honesty_addendum_2026-03-12.md`
+- [x] define the target shape as a state document, not only a poetic chronicle
+- [x] require explicit fallback markers and provenance
+
+## Phase 278: Scribe Provenance and Bootstrap Boundaries (2026-03-12)
+- [x] remove synthetic event wording from the empty-history path
+- [x] preserve unknown friction and resolution fields as unknown
+- [x] add chronicle provenance metadata:
+- [x] observed counts
+- [x] fallback_mode
+- [x] title_hint
+- [x] correct footer wording so bootstrap fallback is not mislabeled as pure observed history
+
+## Phase 279: Scribe Honesty Validation (2026-03-12)
+- [x] update focused Scribe regressions
+- [x] `tests/test_scribe_engine.py`
+- [x] prove empty-db mode uses bootstrap reflection without inventing recorded tensions
+- [x] prove generated chronicles include provenance and honest footer wording
+- [x] `python -m pytest tests/test_scribe_engine.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/scribe scripts/run_scribe_cycle.py tests/test_scribe_engine.py`
+- [x] `python -m black --check tonesoul/scribe scripts/run_scribe_cycle.py tests/test_scribe_engine.py`
+**Success Criteria**: Scribe output remains reflective, but every chronicle now makes its observation counts and bootstrap/fallback status explicit, so later agents can read it as a trustworthy internal-state document rather than a disguised synthetic memory.
+
+## Phase 280: Scribe Companion Handoff Note (2026-03-12)
+- [x] write one addendum before widening the Scribe artifact contract:
+- [x] `docs/plans/scribe_companion_handoff_addendum_2026-03-12.md`
+- [x] choose the smallest deterministic handoff seam:
+- [x] same-basename JSON sidecar next to the markdown chronicle
+- [x] explicitly reject `docs/status` live artifact refresh as the primary surface
+- [x] require failure metadata when markdown publication does not happen
+
+## Phase 281: Scribe Companion Surface (2026-03-12)
+- [x] add a machine-readable Scribe draft result and JSON companion contract
+- [x] keep chronicle and companion provenance aligned:
+- [x] observed counts
+- [x] fallback mode
+- [x] title hint
+- [x] source db path
+- [x] llm model
+- [x] generated at
+- [x] chronicle path
+- [x] preserve honest failure states:
+- [x] `llm_unavailable`
+- [x] `generation_failed`
+- [x] update `scripts/run_scribe_cycle.py` to surface companion status and path
+
+## Phase 282: Scribe Companion Validation (2026-03-12)
+- [x] extend focused Scribe regressions for companion metadata
+- [x] `tests/test_scribe_engine.py`
+- [x] prove observed-history chronicle and JSON companion agree
+- [x] prove empty-db bootstrap mode remains honest in both surfaces
+- [x] prove LLM failure still writes a reviewable companion artifact
+- [x] `python -m pytest tests/test_scribe_engine.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/scribe scripts/run_scribe_cycle.py tests/test_scribe_engine.py`
+- [x] `python -m black --check tonesoul/scribe scripts/run_scribe_cycle.py tests/test_scribe_engine.py`
+**Success Criteria**: Every Scribe run now leaves a compact machine-readable handoff surface that later agents can replay or audit without re-parsing markdown, while bootstrap mode and LLM failure mode remain semantically distinct and honest.
+
+## Phase 283: Scribe Local Model Resilience Note (2026-03-13)
+- [x] write one addendum before changing Scribe generation behavior:
+- [x] `docs/plans/scribe_local_model_resilience_addendum_2026-03-13.md`
+- [x] define local-model timeout as a resilience problem, not a truth problem
+- [x] choose a bounded local fallback ladder instead of a general orchestration layer
+
+## Phase 284: Scribe Local Fallback Ladder (2026-03-13)
+- [x] add bounded fallback / retry behavior for local Ollama generation
+- [x] keep sidecar honesty intact:
+- [x] actual `llm_model`
+- [x] ordered `llm_attempts`
+- [x] preserve `generation_failed` when all candidates fail
+- [x] use shorter per-attempt timeouts than the generic default
+- [x] avoid claiming fallback output came from the original large model
+
+## Phase 285: Scribe Resilience Validation (2026-03-13)
+- [x] extend focused Scribe regressions for timeout / fallback behavior
+- [x] prove first-model timeout can fall through to a later local candidate
+- [x] prove all-attempt failure still leaves honest companion metadata
+- [x] `python -m pytest tests/test_scribe_engine.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/scribe scripts/run_scribe_cycle.py tests/test_scribe_engine.py tonesoul/llm/ollama_client.py`
+- [x] `python -m black --check tonesoul/scribe scripts/run_scribe_cycle.py tests/test_scribe_engine.py tonesoul/llm/ollama_client.py`
+**Success Criteria**: Scribe remains semantically honest when local models are weak, but now has a bounded deterministic chance to recover by falling through to a smaller local model instead of stopping after one large-model timeout.
+
+## Phase 286: Scribe Local Model Profile Note (2026-03-13)
+- [x] write one addendum before changing candidate filtering:
+- [x] `docs/plans/scribe_local_model_profile_addendum_2026-03-13.md`
+- [x] define broad fallback discovery as a model-shape problem, not a retry-count problem
+- [x] keep model policy local to Scribe instead of promoting repo-wide registry rules
+
+## Phase 287: Scribe Candidate Filter (2026-03-13)
+- [x] keep configured preferred model first
+- [x] filter discovered fallbacks to a conservative Scribe-compatible profile
+- [x] exclude obviously unsuitable local variants before ranking:
+- [x] `uncensored`
+- [x] `vision`
+- [x] `embed`
+- [x] `rerank`
+- [x] preserve deterministic fallback ordering after filtering
+
+## Phase 288: Scribe Profile Validation (2026-03-13)
+- [x] extend focused Scribe regressions for candidate filtering
+- [x] prove incompatible fallback names are skipped
+- [x] prove ordinary smaller text models still remain eligible
+- [x] `python -m pytest tests/test_scribe_engine.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/scribe scripts/run_scribe_cycle.py tests/test_scribe_engine.py tonesoul/llm/ollama_client.py`
+- [x] `python -m black --check tonesoul/scribe scripts/run_scribe_cycle.py tests/test_scribe_engine.py tonesoul/llm/ollama_client.py`
+**Success Criteria**: Scribe keeps a bounded local recovery path, but only through models that still look like chronicle-writing backends instead of arbitrary installed variants.
+
+## Phase 289: Scribe Status Handoff Note (2026-03-13)
+- [x] write one addendum before exposing a latest status artifact:
+- [x] `docs/plans/scribe_status_handoff_addendum_2026-03-13.md`
+- [x] define the gap as a compact handoff problem, not a chronicle-content problem
+- [x] keep the solution at the script/artifact layer, not a new orchestration lane
+
+## Phase 290: Scribe Latest Status Surface (2026-03-13)
+- [x] publish one compact `docs/status/scribe_status_latest.json`
+- [x] mirror recent Scribe result into top-level status lines and `handoff`
+- [x] distinguish `chronicle_pair` from `companion_only`
+- [x] register the producer in `run_refreshable_artifact_report.py`
+
+## Phase 291: Scribe Status Validation (2026-03-13)
+- [x] add focused tests for Scribe latest-status payload shaping
+- [x] prove refreshable artifact registry recognizes the new status artifact
+- [x] `python -m pytest tests/test_run_scribe_cycle.py tests/test_run_refreshable_artifact_report.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_scribe_cycle.py scripts/run_refreshable_artifact_report.py tests/test_run_scribe_cycle.py tests/test_run_refreshable_artifact_report.py`
+- [x] `python -m black --check scripts/run_scribe_cycle.py scripts/run_refreshable_artifact_report.py tests/test_run_scribe_cycle.py tests/test_run_refreshable_artifact_report.py`
+**Success Criteria**: Scribe no longer hides behind raw chronicle files alone; one compact latest artifact now tells later agents whether a full chronicle pair exists, which model actually wrote it, and what handoff posture the latest run implies.
+
+## Phase 292: Scribe Runtime Group Note (2026-03-13)
+- [x] write one addendum before widening runtime-source grouping:
+- [x] `docs/plans/scribe_runtime_source_group_addendum_2026-03-13.md`
+- [x] define the move as review grouping, not healthcheck expansion
+- [x] keep Scribe distinct from weekly host-status / subjectivity lanes
+
+## Phase 293: Scribe Runtime Source Group (2026-03-13)
+- [x] add one explicit runtime-source bucket for Scribe code and tests
+- [x] point that bucket at `docs/status/scribe_status_latest.json`
+- [x] keep Scribe out of generic supporting-runtime spillover
+
+## Phase 294: Scribe Runtime Group Validation (2026-03-13)
+- [x] add focused tests for Scribe runtime-source grouping
+- [x] prove the new group exposes the Scribe status surface
+- [x] `python -m pytest tests/test_run_runtime_source_change_report.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_runtime_source_change_report.py tests/test_run_runtime_source_change_report.py`
+- [x] `python -m black --check scripts/run_runtime_source_change_report.py tests/test_run_runtime_source_change_report.py`
+**Success Criteria**: Scribe runtime work no longer disappears into generic drift; `runtime_source_change_groups` now exposes it as a distinct review lane and points later agents to `docs/status/scribe_status_latest.json` first.
+
+## Phase 295: Scribe Settlement Focus Note (2026-03-13)
+- [x] write one addendum before widening settlement mirrors:
+- [x] `docs/plans/scribe_settlement_focus_mirror_addendum_2026-03-13.md`
+- [x] define the change as preview selection, not a new preview channel
+- [x] keep Scribe distinct from subjectivity focus and weekly host status
+
+## Phase 296: Scribe Settlement Focus Mirror (2026-03-13)
+- [x] select one compact `scribe_focus_preview` in worktree settlement when present
+- [x] mirror the same compact Scribe preview into repo-governance settlement
+- [x] keep the underlying generic handoff preview list unchanged
+
+## Phase 297: Scribe Settlement Focus Validation (2026-03-13)
+- [x] add focused tests for Scribe focus preview selection and mirror rendering
+- [x] `python -m pytest tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+- [x] `python -m black --check scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+**Success Criteria**: Scribe no longer disappears inside generic settlement preview lists; worktree and repo-governance settlement now expose one compact Scribe focus mirror that points to the latest Scribe status artifact.
+
+## Phase 298: Scribe Semantic Boundary Note (2026-03-13)
+- [x] write one addendum before tightening Scribe prose constraints:
+- [x] `docs/plans/scribe_semantic_boundary_guardrail_addendum_2026-03-13.md`
+- [x] define the issue as semantic drift, not provenance drift
+- [x] keep the guardrail small and bootstrap-specific
+
+## Phase 299: Scribe Semantic Boundary Guardrail (2026-03-13)
+- [x] strengthen bootstrap prompt instructions against invented system internals
+- [x] reject bootstrap drafts that mention unsupported internal-system terms
+- [x] record `boundary_rejected` attempts in `llm_attempts`
+- [x] preserve honest failure if all attempts violate the boundary
+
+## Phase 300: Scribe Guardrail Validation (2026-03-13)
+- [x] add focused regressions for boundary rejection / fallback recovery
+- [x] prove bootstrap drift can fall through to a later model
+- [x] prove all-boundary-rejected attempts fail honestly
+- [x] `python -m pytest tests/test_scribe_engine.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/scribe scripts/run_scribe_cycle.py tests/test_scribe_engine.py tonesoul/llm/ollama_client.py`
+- [x] `python -m black --check tonesoul/scribe scripts/run_scribe_cycle.py tests/test_scribe_engine.py tonesoul/llm/ollama_client.py`
+**Success Criteria**: Bootstrap Scribe output no longer publishes invented internal system nouns as if they were observed facts; boundary-violating drafts are either recovered via fallback or rejected honestly.
+
+## Phase 301: Scribe Observed-History Grounding Note (2026-03-13)
+- [x] write one addendum before widening guardrails into observed-history mode:
+- [x] `docs/plans/scribe_observed_history_grounding_addendum_2026-03-13.md`
+- [x] define the issue as semantic extension beyond observed records
+- [x] keep the grounding check deterministic and small
+
+## Phase 302: Scribe Observed-History Grounding Guardrail (2026-03-13)
+- [x] require at least one observed anchor token in observed-history drafts
+- [x] reject unsupported runtime phrases not present in observed records
+- [x] reuse `boundary_rejected` attempt lineage instead of creating a new failure channel
+
+## Phase 303: Scribe Observed-History Validation (2026-03-13)
+- [x] add focused regressions for observed-history drift rejection and recovery
+- [x] prove observed-history drift can fall through to a later local model
+- [x] `python -m pytest tests/test_scribe_engine.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/scribe scripts/run_scribe_cycle.py tests/test_scribe_engine.py tonesoul/llm/ollama_client.py`
+- [x] `python -m black --check tonesoul/scribe scripts/run_scribe_cycle.py tests/test_scribe_engine.py tonesoul/llm/ollama_client.py`
+**Success Criteria**: When Scribe has real observed tensions, the chronicle remains anchored to those records and no longer mixes them with unsupported self-runtime prose.
+
+## Phase 304: Repo Intelligence Note (2026-03-13)
+- [x] write one addendum before adopting external repo-intelligence ideas:
+- [x] `docs/plans/gitnexus_fit_for_tonesoul_2026-03-13.md`
+- [x] define the move as a ToneSoul-owned sidecar artifact, not a direct tool install
+- [x] keep protected files / hooks outside the adoption surface
+
+## Phase 305: Repo Intelligence Status Surface (2026-03-13)
+- [x] add one compact `docs/status/repo_intelligence_latest.json`
+- [x] add one human-readable `docs/status/repo_intelligence_latest.md`
+- [x] mirror the compact repo-intelligence preview into `repo_healthcheck`
+- [x] register the new artifact producer in `run_refreshable_artifact_report.py`
+
+## Phase 306: Repo Intelligence Validation (2026-03-13)
+- [x] add focused tests for repo-intelligence payload shaping and healthcheck mirror selection
+- [x] prove refreshable artifact registry recognizes the new status artifact
+- [x] `python -m pytest tests/test_run_repo_intelligence_report.py tests/test_run_repo_healthcheck.py tests/test_run_refreshable_artifact_report.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_repo_intelligence_report.py scripts/run_repo_healthcheck.py scripts/run_refreshable_artifact_report.py tests/test_run_repo_intelligence_report.py tests/test_run_repo_healthcheck.py tests/test_run_refreshable_artifact_report.py`
+- [x] `python -m black --check scripts/run_repo_intelligence_report.py scripts/run_repo_healthcheck.py scripts/run_refreshable_artifact_report.py tests/test_run_repo_intelligence_report.py tests/test_run_repo_healthcheck.py tests/test_run_refreshable_artifact_report.py`
+**Success Criteria**: ToneSoul gains a safe, machine-readable repo-intelligence surface and top-level healthcheck readback without installing or trusting an external repo tool inside the main worktree.
+
+## Phase 307: Scribe Template-Assist Note (2026-03-13)
+- [x] write one addendum before adding a new recovery path:
+- [x] `docs/plans/scribe_template_assist_recovery_addendum_2026-03-13.md`
+- [x] define template assist as honest observed-history recovery, not hidden success inflation
+- [x] keep bootstrap behavior unchanged in this phase
+
+## Phase 308: Scribe Template-Assist Recovery (2026-03-13)
+- [x] add deterministic chronicle synthesis for observed-history recovery
+- [x] expose `generation_mode` in companion and status payloads
+- [x] preserve boundary-rejected lineage while allowing template-assisted output
+- [x] keep live status / settlement seams compatible with the new mode
+
+## Phase 309: Scribe Template-Assist Validation (2026-03-13)
+- [x] add focused tests for observed-history template recovery and status surfacing
+- [x] prove bootstrap fallback still fails honestly when no observed history exists
+- [x] `python -m pytest tests/test_scribe_engine.py tests/test_run_scribe_cycle.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/scribe scripts/run_scribe_cycle.py tests/test_scribe_engine.py tests/test_run_scribe_cycle.py tonesoul/llm/ollama_client.py`
+- [x] `python -m black --check tonesoul/scribe scripts/run_scribe_cycle.py tests/test_scribe_engine.py tests/test_run_scribe_cycle.py tonesoul/llm/ollama_client.py`
+**Success Criteria**: Scribe can now recover from weak observed-history local models by publishing a clearly marked template-assisted chronicle, while keeping bootstrap and boundary honesty intact.
+
+## Phase 310: Scribe State-Document Template Note (2026-03-13)
+- [x] write one addendum before refining template-assist tone:
+- [x] `docs/plans/scribe_state_document_template_addendum_2026-03-13.md`
+- [x] define the target as readable inner-state documentation, not freer prose
+- [x] keep the output deterministic and observed-history-only
+
+## Phase 311: Scribe State-Document Template Refinement (2026-03-13)
+- [x] reshape template-assist chronicle body into fixed state-document sections
+- [x] expose absence / posture language from counts instead of generic recap prose
+- [x] keep observed ids and details as the only concrete anchors
+
+## Phase 312: Scribe State-Document Validation (2026-03-13)
+- [x] add focused tests for structured template-assist wording
+- [x] re-run Scribe once to confirm real observed-history recovery still lands as a readable state document
+- [x] `python -m pytest tests/test_scribe_engine.py tests/test_run_scribe_cycle.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/scribe scripts/run_scribe_cycle.py tests/test_scribe_engine.py tests/test_run_scribe_cycle.py tonesoul/llm/ollama_client.py`
+- [x] `python -m black --check tonesoul/scribe scripts/run_scribe_cycle.py tests/test_scribe_engine.py tests/test_run_scribe_cycle.py tonesoul/llm/ollama_client.py`
+**Success Criteria**: Template-assist chronicles now read like compact inner-state documents with explicit visible/absent/posture structure, while remaining fully deterministic and grounded.
+
+## Phase 313: Scribe State-Document Handoff Note (2026-03-13)
+- [x] write one addendum before widening compact handoff readback:
+- [x] `docs/plans/scribe_state_document_handoff_addendum_2026-03-13.md`
+- [x] define the move as generic compact preview plumbing, not a Scribe-only adapter
+- [x] keep posture derivation deterministic from observed counts
+
+## Phase 314: Scribe State-Document Handoff Surface (2026-03-13)
+- [x] add a more meaningful Scribe runtime-status posture line
+- [x] pass runtime/artifact compact lines through refreshable previews
+- [x] mirror the same compact lines into worktree and repo-governance settlement
+
+## Phase 315: Scribe State-Document Handoff Validation (2026-03-13)
+- [x] add focused tests for Scribe posture surfacing across status / refreshable / settlement
+- [x] `python -m pytest tests/test_run_scribe_cycle.py tests/test_run_refreshable_artifact_report.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_scribe_cycle.py scripts/run_refreshable_artifact_report.py scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_run_scribe_cycle.py tests/test_run_refreshable_artifact_report.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+- [x] `python -m black --check scripts/run_scribe_cycle.py scripts/run_refreshable_artifact_report.py scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_run_scribe_cycle.py tests/test_run_refreshable_artifact_report.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+**Success Criteria**: Scribe's compact status now carries readable state-document posture, and the same runtime/artifact lines remain visible through refreshable previews and settlement mirrors without markdown re-parsing.
+
+## Phase 316: Scribe Repo-Healthcheck Mirror Note (2026-03-13)
+- [x] write one addendum before widening repo-healthcheck readback:
+- [x] `docs/plans/scribe_repo_healthcheck_mirror_addendum_2026-03-13.md`
+- [x] define the move as a passive mirror of existing status, not an active Scribe run
+- [x] keep Scribe preview separate from actively executed health checks
+
+## Phase 317: Scribe Repo-Healthcheck Mirror Surface (2026-03-13)
+- [x] add a passive status-preview loader to repo healthcheck
+- [x] mirror `scribe_status_latest.json` into repo-healthcheck payload
+- [x] expose Scribe primary/runtime/artifact-policy lines in repo-healthcheck markdown summary
+
+## Phase 318: Scribe Repo-Healthcheck Mirror Validation (2026-03-13)
+- [x] add focused tests for healthcheck passive Scribe mirroring
+- [x] `python -m pytest tests/test_run_repo_healthcheck.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_repo_healthcheck.py tests/test_run_repo_healthcheck.py`
+- [x] `python -m black --check scripts/run_repo_healthcheck.py tests/test_run_repo_healthcheck.py`
+**Success Criteria**: Repo healthcheck can mirror the latest Scribe state-document posture from the existing status artifact without rerunning Scribe or losing the compact handoff contract.
+
+## Phase 319: Wakeup Scribe Integration Note (2026-03-13)
+- [x] write one addendum before attaching Scribe to autonomous wake-up:
+- [x] `docs/plans/wakeup_scribe_integration_addendum_2026-03-13.md`
+- [x] define the move as a post-cycle best-effort layer, not a DreamEngine responsibility
+- [x] define trigger signals from wake-up/consolidation summary instead of `write_gateway_written` only
+
+## Phase 320: Shared Scribe Runtime Contract (2026-03-13)
+- [x] extract the compact Scribe status payload/writer into a library module
+- [x] keep CLI and wake-up integration on the same `scribe_status_latest.json` contract
+- [x] avoid importing CLI script code from core runtime modules
+
+## Phase 321: Wakeup Loop Scribe Gate (2026-03-13)
+- [x] add a best-effort post-cycle Scribe gate to `AutonomousWakeupLoop`
+- [x] persist a small Scribe dedupe state under `memory/autonomous/`
+- [x] mirror Scribe result/skip status back into wake-up summary and snapshot payloads
+- [x] expose `--disable-scribe` / path overrides in wake-up and autonomous cycle scripts
+
+## Phase 322: Wakeup Scribe Validation (2026-03-13)
+- [x] add focused tests for Scribe triggering, duplicate suppression, and non-blocking failure behavior
+- [x] run one real wake-up probe with temp state/artifact paths to inspect the integrated result
+- [x] `python -m pytest tests/test_wakeup_loop.py tests/test_run_dream_wakeup_loop.py tests/test_autonomous_cycle.py tests/test_run_autonomous_dream_cycle.py tests/test_run_scribe_cycle.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/wakeup_loop.py tonesoul/autonomous_cycle.py tonesoul/scribe/status_artifact.py scripts/run_dream_wakeup_loop.py scripts/run_autonomous_dream_cycle.py scripts/run_scribe_cycle.py tests/test_wakeup_loop.py tests/test_run_dream_wakeup_loop.py tests/test_autonomous_cycle.py tests/test_run_autonomous_dream_cycle.py tests/test_run_scribe_cycle.py`
+- [x] `python -m black --check tonesoul/wakeup_loop.py tonesoul/autonomous_cycle.py tonesoul/scribe/status_artifact.py scripts/run_dream_wakeup_loop.py scripts/run_autonomous_dream_cycle.py scripts/run_scribe_cycle.py tests/test_wakeup_loop.py tests/test_run_dream_wakeup_loop.py tests/test_autonomous_cycle.py tests/test_run_autonomous_dream_cycle.py tests/test_run_scribe_cycle.py`
+**Success Criteria**: Wake-up can autonomously decide whether a cycle is worth chronicling, call Scribe without blocking the core cycle, suppress duplicate diary slices, and expose the outcome through the same compact Scribe status/handoff seam.
+
+## Phase 323: Wakeup Scribe Observability Note (2026-03-13)
+- [x] write one addendum before widening dashboard readback:
+- [x] `docs/plans/wakeup_scribe_observability_addendum_2026-03-13.md`
+- [x] define the move as a passive mirror of `scribe_*` wake-up summary fields
+- [x] keep dream observability out of chronicle parsing and Scribe execution
+
+## Phase 324: Wakeup Scribe Dashboard Surface (2026-03-13)
+- [x] expose compact Scribe status/posture through dream observability summary payload
+- [x] carry Scribe fields into recent wake-up cycle rows
+- [x] render a readable Scribe card / table columns in dashboard HTML
+
+## Phase 325: Wakeup Scribe Dashboard Validation (2026-03-13)
+- [x] add focused tests for Scribe wake-up observability mirroring
+- [x] `python -m pytest tests/test_dream_observability.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/dream_observability.py tests/test_dream_observability.py`
+- [x] `python -m black --check tonesoul/dream_observability.py tests/test_dream_observability.py`
+**Success Criteria**: Dream observability can show whether wake-up wrote a chronicle, what posture it surfaced, and what compact Scribe status the latest cycle carried, without reparsing chronicle artifacts.
+
+## Phase 326: True Verification Scribe Handoff Note (2026-03-14)
+- [x] write one addendum before widening weekly host-facing summaries:
+- [x] `docs/plans/true_verification_scribe_handoff_addendum_2026-03-14.md`
+- [x] define the move as a compact host-facing mirror of wake-up Scribe posture
+- [x] keep `true_verification` out of chronicle parsing and Scribe execution
+
+## Phase 327: True Verification Scribe Host-Facing Surface (2026-03-14)
+- [x] keep one bounded wake-up Scribe summary inside compact schedule summaries
+- [x] expose a readable `scribe_status_line` in weekly task status
+- [x] mirror the same compact Scribe handoff into machine-readable task-status payload
+
+## Phase 328: True Verification Scribe Handoff Validation (2026-03-14)
+- [x] add focused tests for compact weekly Scribe handoff propagation
+- [x] `python -m pytest tests/test_true_verification_summary.py tests/test_report_true_verification_task_status.py tests/test_true_verification_weekly_chain.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/true_verification_summary.py scripts/report_true_verification_task_status.py tests/test_true_verification_summary.py tests/test_report_true_verification_task_status.py tests/test_true_verification_weekly_chain.py`
+- [x] `python -m black --check tonesoul/true_verification_summary.py scripts/report_true_verification_task_status.py tests/test_true_verification_summary.py tests/test_report_true_verification_task_status.py tests/test_true_verification_weekly_chain.py`
+**Success Criteria**: Weekly host-facing `true_verification` artifacts can describe the latest wake-up Scribe posture in one compact line and one machine-readable block without reopening dream observability or chronicle files.
+
+## Phase 329: Weekly Scribe Repo-Healthcheck Note (2026-03-14)
+- [x] write one addendum before widening repo-healthcheck weekly preview:
+- [x] `docs/plans/true_verification_scribe_repo_healthcheck_addendum_2026-03-14.md`
+- [x] define the move as a passive mirror of `scribe_status_line`
+- [x] keep weekly preview selection unchanged (`queue_shape == weekly_host_status`)
+
+## Phase 330: Weekly Scribe Repo-Healthcheck Surface (2026-03-14)
+- [x] extend generic handoff preview extraction with optional `scribe_status_line`
+- [x] mirror weekly Scribe posture into `weekly_host_status_preview`
+- [x] render the weekly Scribe line in repo-healthcheck markdown
+
+## Phase 331: Weekly Scribe Repo-Healthcheck Validation (2026-03-14)
+- [x] add focused tests for weekly Scribe preview mirroring in repo healthcheck
+- [x] `python -m pytest tests/test_run_repo_healthcheck.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_repo_healthcheck.py tests/test_run_repo_healthcheck.py`
+- [x] `python -m black --check scripts/run_repo_healthcheck.py tests/test_run_repo_healthcheck.py`
+**Success Criteria**: Repo healthcheck can mirror and render the weekly host-facing `scribe_status_line` alongside the existing weekly runtime preview without reopening lower-level artifacts.
+
+## Phase 332: Weekly Scribe Settlement Preview Note (2026-03-14)
+- [x] write one addendum before widening settlement mirrors:
+- [x] `docs/plans/true_verification_scribe_settlement_preview_addendum_2026-03-14.md`
+- [x] define the move as a passive settlement mirror of `scribe_status_line`
+- [x] keep settlement routing unchanged and preview-driven
+
+## Phase 333: Weekly Scribe Settlement Preview Surface (2026-03-14)
+- [x] extend settlement handoff preview normalization with optional `scribe_status_line`
+- [x] mirror weekly Scribe posture through worktree settlement and repo-governance settlement payloads
+- [x] render the weekly Scribe line in settlement markdown when present
+
+## Phase 334: Weekly Scribe Settlement Preview Validation (2026-03-14)
+- [x] add focused tests for weekly Scribe settlement mirroring
+- [x] `python -m pytest tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+- [x] `python -m black --check scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+**Success Criteria**: Settlement artifacts can mirror and render the weekly host-facing `scribe_status_line` alongside the existing weekly runtime preview without reopening lower-level artifacts or introducing a weekly-specific adapter.
+
+## Phase 335: Weekly Scribe Settlement Topline Note (2026-03-14)
+- [x] write one addendum before promoting weekly settlement summary lines:
+- [x] `docs/plans/true_verification_scribe_settlement_topline_addendum_2026-03-14.md`
+- [x] define the move as a passive top-line mirror of the existing weekly preview
+- [x] keep `queue_shape == weekly_host_status` as the only selector
+
+## Phase 336: Weekly Scribe Settlement Topline Surface (2026-03-14)
+- [x] add a top-level `weekly_host_status_preview` mirror to worktree settlement
+- [x] mirror the same weekly preview through repo-governance settlement
+- [x] render weekly host/runtime/Scribe compact lines in settlement summaries
+
+## Phase 337: Weekly Scribe Settlement Topline Validation (2026-03-14)
+- [x] add focused tests for settlement top-line weekly Scribe mirroring
+- [x] `python -m pytest tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+- [x] `python -m black --check scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+**Success Criteria**: Worktree and repo-governance settlement artifacts can show the weekly host/runtime/Scribe posture in top-line summary form while preserving the existing handoff preview routing.
+
+## Phase 338: Scribe Template Grounding Quality Note (2026-03-14)
+- [x] write one addendum before tightening template-assisted chronicle quality:
+- [x] `docs/plans/scribe_template_grounding_quality_addendum_2026-03-14.md`
+- [x] define the move as stronger deterministic grounding, not new prose freedom
+- [x] keep wakeup/Scribe routing and status contracts unchanged
+
+## Phase 339: Scribe Template Grounding Quality Surface (2026-03-14)
+- [x] add a compact observed-anchor ledger to template-assisted chronicles
+- [x] let `Weight carried now` fall back from tension to collision/crystal when needed
+- [x] preserve explicit unknown-friction wording inside the deterministic template
+
+## Phase 340: Scribe Template Grounding Quality Validation (2026-03-14)
+- [x] add focused tests for stronger template grounding and non-tension weight selection
+- [x] `python -m pytest tests/test_scribe_engine.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/scribe tests/test_scribe_engine.py`
+- [x] `python -m black --check tonesoul/scribe tests/test_scribe_engine.py`
+**Success Criteria**: Template-assisted chronicles read as explicit state documents with named observed anchors and honest weighting, without loosening existing semantic guardrails.
+
+## Phase 341: Scribe Anchor Label Refinement Note (2026-03-14)
+- [x] write one addendum before refining anchor names inside template-assisted chronicles:
+- [x] `docs/plans/scribe_anchor_label_refinement_addendum_2026-03-14.md`
+- [x] define the move as deterministic label refinement, not new summarization freedom
+- [x] keep source records and guardrails unchanged
+
+## Phase 342: Scribe Anchor Label Refinement Surface (2026-03-14)
+- [x] prefer non-generic recorded topics for tension anchor labels
+- [x] fall back to explicit description clauses when the topic is only a schema placeholder
+- [x] reuse the refined anchor label in both `Observed anchors` and `Weight carried now`
+
+## Phase 343: Scribe Anchor Label Refinement Validation (2026-03-14)
+- [x] add focused tests for generic-topic anchor fallback
+- [x] `python -m pytest tests/test_scribe_engine.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/scribe tests/test_scribe_engine.py`
+- [x] `python -m black --check tonesoul/scribe tests/test_scribe_engine.py`
+**Success Criteria**: Template-assisted chronicles stop echoing generic schema labels like `tension: tension` and instead present deterministic anchor names grounded in the observed record.
+
+## Phase 344: Scribe LLM Postcheck Boundary Note (2026-03-14)
+- [x] write one addendum before tightening live `llm_chronicle` publication:
+- [x] `docs/plans/scribe_llm_postcheck_boundary_addendum_2026-03-14.md`
+- [x] define the move as deterministic post-generation filtering, not prompt inflation
+- [x] keep wakeup/Scribe routing and status contracts unchanged
+
+## Phase 345: Scribe LLM Postcheck Boundary Surface (2026-03-14)
+- [x] reject fabricated log-entry framing and standalone date front matter in observed-history prose
+- [x] reject user-role drift and operational-self narration when not present in the observed record
+- [x] route rejected live prose back into the existing fallback ladder
+
+## Phase 346: Scribe LLM Postcheck Boundary Validation (2026-03-14)
+- [x] add focused tests for fabricated metadata and role-drift rejection
+- [x] `python -m pytest tests/test_scribe_engine.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/scribe tests/test_scribe_engine.py`
+- [x] `python -m black --check tonesoul/scribe tests/test_scribe_engine.py`
+**Success Criteria**: Live `llm_chronicle` output is rejected when it invents diary metadata, dates, or external-role framing not present in the observed record, and Scribe falls back cleanly instead of publishing drift.
+
+## Phase 347: Scribe Anchor Label Clipping Note (2026-03-14)
+- [x] write one addendum before refining anchor-label truncation:
+- [x] `docs/plans/scribe_anchor_label_clipping_addendum_2026-03-14.md`
+- [x] define the move as word-safe clipping, not wider labels
+- [x] keep wakeup/Scribe routing and guardrail behavior unchanged
+
+## Phase 348: Scribe Anchor Label Clipping Surface (2026-03-14)
+- [x] prefer nearby word/punctuation boundaries when clipping anchor labels
+- [x] preserve existing length caps and hard-clip fallback
+- [x] keep the refinement deterministic inside `narrative_builder.py`
+
+## Phase 349: Scribe Anchor Label Clipping Validation (2026-03-14)
+- [x] add focused tests for word-safe label truncation
+- [x] `python -m pytest tests/test_scribe_engine.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/scribe tests/test_scribe_engine.py`
+- [x] `python -m black --check tonesoul/scribe tests/test_scribe_engine.py`
+**Success Criteria**: Template-assisted anchor labels stay compact but stop clipping obvious words in half, and live Scribe output reflects the cleaner label shape.
+
+## Phase 350: Scribe Anchor Handoff Note (2026-03-14)
+- [x] write one addendum before widening the Scribe status contract:
+- [x] `docs/plans/scribe_anchor_handoff_addendum_2026-03-14.md`
+- [x] define the move as deterministic lead-anchor exposure, not new prose generation
+- [x] keep repo-healthcheck / settlement mirrors unchanged in this phase
+
+## Phase 351: Scribe Anchor Handoff Surface (2026-03-14)
+- [x] derive one bounded `lead_anchor_summary` from the observed Scribe records
+- [x] persist the summary in `ScribeDraftResult` and companion metadata
+- [x] mirror the same summary into `scribe_status_latest.json` and Scribe handoff fields
+
+## Phase 352: Scribe Anchor Handoff Validation (2026-03-14)
+- [x] add focused tests for lead-anchor status payloads and companion metadata
+- [x] `python -m pytest tests/test_scribe_engine.py tests/test_run_scribe_cycle.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/scribe scripts/run_scribe_cycle.py tests/test_scribe_engine.py tests/test_run_scribe_cycle.py`
+- [x] `python -m black --check tonesoul/scribe scripts/run_scribe_cycle.py tests/test_scribe_engine.py tests/test_run_scribe_cycle.py`
+**Success Criteria**: The Scribe status surface can expose the primary observed anchor of the latest chronicle without reopening markdown, while remaining deterministic and grounded in the same observed records as the chronicle itself.
+
+## Phase 353: Scribe Refreshable Anchor Preview Note (2026-03-14)
+- [x] write one addendum before widening generic refreshable preview extraction:
+- [x] `docs/plans/scribe_refreshable_anchor_preview_addendum_2026-03-14.md`
+- [x] define the move as optional generic `anchor_status_line` plumbing
+- [x] keep repo-healthcheck / settlement mirrors unchanged in this phase
+
+## Phase 354: Scribe Refreshable Anchor Preview Surface (2026-03-14)
+- [x] extend generic handoff preview extraction with optional `anchor_status_line`
+- [x] preserve the line in `handoff_previews` and focus preview normalization
+- [x] render the line in refreshable markdown only when present
+
+## Phase 355: Scribe Refreshable Anchor Preview Validation (2026-03-14)
+- [x] add focused tests for Scribe preview extraction with `anchor_status_line`
+- [x] `python -m pytest tests/test_run_refreshable_artifact_report.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_refreshable_artifact_report.py tests/test_run_refreshable_artifact_report.py`
+- [x] `python -m black --check scripts/run_refreshable_artifact_report.py tests/test_run_refreshable_artifact_report.py`
+**Success Criteria**: Generic refreshable previews can preserve and render a compact anchor line when an artifact exposes one, while remaining backward-compatible for artifacts that do not carry anchor metadata.
+
+## Phase 356: Scribe Anchor Repo-Healthcheck Note (2026-03-14)
+- [x] write one addendum before widening repo-healthcheck preview mirrors:
+- [x] `docs/plans/scribe_anchor_repo_healthcheck_addendum_2026-03-14.md`
+- [x] define the move as passive `anchor_status_line` mirroring only
+- [x] keep queue-shape selection and preview routing unchanged
+
+## Phase 357: Scribe Anchor Repo-Healthcheck Surface (2026-03-14)
+- [x] extend repo-healthcheck generic handoff extraction with optional `anchor_status_line`
+- [x] preserve the line in weekly and passive Scribe preview payloads
+- [x] render repo-healthcheck summary/markdown anchor lines only when present
+
+## Phase 358: Scribe Anchor Repo-Healthcheck Validation (2026-03-14)
+- [x] add focused tests for weekly and passive Scribe anchor preview mirroring
+- [x] `python -m pytest tests/test_run_repo_healthcheck.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_repo_healthcheck.py tests/test_run_repo_healthcheck.py`
+- [x] `python -m black --check scripts/run_repo_healthcheck.py tests/test_run_repo_healthcheck.py`
+**Success Criteria**: Repo healthcheck can mirror optional anchor lines from weekly and passive Scribe previews without reopening lower-level artifacts, while remaining backward-compatible for previews that do not expose anchor metadata.
+
+## Phase 359: Scribe Anchor Settlement Preview Note (2026-03-14)
+- [x] write one addendum before widening settlement mirrors:
+- [x] `docs/plans/scribe_anchor_settlement_preview_addendum_2026-03-14.md`
+- [x] define the move as passive `anchor_status_line` mirroring only
+- [x] keep settlement routing and focus-preview selection unchanged
+
+## Phase 360: Scribe Anchor Settlement Preview Surface (2026-03-14)
+- [x] extend worktree/repo-governance settlement preview normalization with optional `anchor_status_line`
+- [x] preserve the line in weekly and Scribe focus mirrors when present
+- [x] render settlement markdown anchor lines only when source previews already expose them
+
+## Phase 361: Scribe Anchor Settlement Preview Validation (2026-03-14)
+- [x] add focused tests for weekly and Scribe anchor settlement mirroring
+- [x] `python -m pytest tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+- [x] `python -m black --check scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+**Success Criteria**: Worktree settlement and repo-governance settlement can mirror optional anchor lines from weekly and Scribe previews without reopening lower-level artifacts, while remaining backward-compatible for previews that do not carry anchor metadata.
+
+## Phase 362: WFGY Route-First Note (2026-03-14)
+- [x] write one note on what to borrow from WFGY and what not to import:
+- [x] `docs/plans/wfgy_problem_map_fit_for_tonesoul_2026-03-14.md`
+- [x] define the first landing point as bounded Scribe problem routing
+- [x] keep ToneSoul ontology separate from the troubleshooting atlas
+
+## Phase 363: Scribe Problem Route Surface (2026-03-14)
+- [x] map a bounded Scribe `problem_route` from attempts/errors into family/invariant/repair fields
+- [x] expose a compact `problem_route_status_line` in `scribe_status_latest.json`
+- [x] keep the route deterministic and grounded in existing attempt metadata
+
+## Phase 364: Scribe Problem Route Validation (2026-03-14)
+- [x] add focused tests for grounding, execution, and representation routing
+- [x] `python -m pytest tests/test_run_scribe_cycle.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/scribe scripts/run_scribe_cycle.py tests/test_run_scribe_cycle.py`
+- [x] `python -m black --check tonesoul/scribe scripts/run_scribe_cycle.py tests/test_run_scribe_cycle.py`
+**Success Criteria**: Scribe status artifacts can tell a later agent which failure family it is in, which invariant broke, and where the first repair surface should be, without reopening chronicle markdown or inventing a separate diagnostic runtime.
+
+## Phase 365: Scribe Problem Route Preview Note (2026-03-14)
+- [x] write one addendum before widening upper preview mirrors:
+- [x] `docs/plans/scribe_problem_route_preview_addendum_2026-03-14.md`
+- [x] define the move as optional generic preview metadata
+- [x] keep route computation inside Scribe status generation only
+
+## Phase 366: Scribe Problem Route Preview Surface (2026-03-14)
+- [x] extend refreshable previews with optional `problem_route_status_line`
+- [x] mirror the line through repo healthcheck and settlement preview surfaces
+- [x] render compact markdown lines only when source previews already expose a route
+
+## Phase 367: Scribe Problem Route Preview Validation (2026-03-14)
+- [x] add focused tests for refreshable, repo-healthcheck, and settlement route mirroring
+- [x] `python -m pytest tests/test_run_refreshable_artifact_report.py tests/test_run_repo_healthcheck.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_refreshable_artifact_report.py scripts/run_repo_healthcheck.py scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_run_refreshable_artifact_report.py tests/test_run_repo_healthcheck.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+- [x] `python -m black --check scripts/run_refreshable_artifact_report.py scripts/run_repo_healthcheck.py scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_run_refreshable_artifact_report.py tests/test_run_repo_healthcheck.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+**Success Criteria**: Route-first Scribe diagnostics can travel through the same passive preview chain as posture and anchor metadata, so later agents can see the first repair surface without reopening lower-level artifacts.
+
+## Phase 368: True Verification Scribe Problem Route Note (2026-03-14)
+- [x] write one addendum before widening weekly host-facing output:
+- [x] `docs/plans/true_verification_scribe_problem_route_addendum_2026-03-14.md`
+- [x] keep route computation inside wakeup/Scribe status generation
+- [x] define weekly output as a compact mirror, not a recomputation seam
+
+## Phase 369: True Verification Scribe Problem Route Surface (2026-03-14)
+- [x] preserve `scribe_problem_route_status_line` in wakeup and compact verification summaries
+- [x] expose weekly top-level `problem_route_status_line`
+- [x] include the line in weekly handoff so higher preview layers can mirror it passively
+
+## Phase 370: True Verification Scribe Problem Route Validation (2026-03-14)
+- [x] add focused tests for wakeup summary carry-through and weekly host-facing route mirroring
+- [x] `python -m pytest tests/test_wakeup_loop.py tests/test_true_verification_summary.py tests/test_report_true_verification_task_status.py tests/test_true_verification_weekly_chain.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/wakeup_loop.py tonesoul/true_verification_summary.py scripts/report_true_verification_task_status.py tests/test_wakeup_loop.py tests/test_true_verification_summary.py tests/test_report_true_verification_task_status.py tests/test_true_verification_weekly_chain.py`
+- [x] `python -m black --check tonesoul/wakeup_loop.py tonesoul/true_verification_summary.py scripts/report_true_verification_task_status.py tests/test_wakeup_loop.py tests/test_true_verification_summary.py tests/test_report_true_verification_task_status.py tests/test_true_verification_weekly_chain.py`
+**Success Criteria**: The weekly host-facing artifact can carry the latest Scribe problem route from wakeup summary to top-level handoff, so later agents can see the first repair surface without reopening Scribe status files.
+
+## Phase 371: True Verification Scribe Problem Route Optionality Note (2026-03-14)
+- [x] write one addendum before tightening weekly route formatting:
+- [x] `docs/plans/true_verification_scribe_problem_route_optionality_addendum_2026-03-14.md`
+- [x] restate that compact route metadata should stay silent when absent
+- [x] keep non-empty route wording unchanged
+
+## Phase 372: True Verification Scribe Problem Route Optionality Surface (2026-03-14)
+- [x] stop emitting placeholder weekly route lines when no real route exists
+- [x] preserve existing non-empty route formatting for real repair surfaces
+
+## Phase 373: True Verification Scribe Problem Route Optionality Validation (2026-03-14)
+- [x] add focused regression for empty weekly route behavior
+- [x] `python -m pytest tests/test_report_true_verification_task_status.py -q --tb=short`
+- [x] `python -m ruff check scripts/report_true_verification_task_status.py tests/test_report_true_verification_task_status.py`
+- [x] `python -m black --check scripts/report_true_verification_task_status.py tests/test_report_true_verification_task_status.py`
+**Success Criteria**: Weekly task-status output only carries `problem_route_status_line` when the wakeup/Scribe chain exposed a real route, keeping upper preview mirrors silent instead of inventing placeholder route text.
+
+## Phase 374: Scribe Problem Route Refinement Note (2026-03-14)
+- [x] write one addendum before refining route granularity:
+- [x] `docs/plans/scribe_problem_route_refinement_addendum_2026-03-14.md`
+- [x] define the goal as finer invariants and repair surfaces, not a new route schema
+- [x] keep outer `problem_route` payload shape unchanged
+
+## Phase 375: Scribe Problem Route Refinement Surface (2026-03-14)
+- [x] split anchor-absence from broader observed-history drift
+- [x] split semantic self/role drift from container-localization drift
+- [x] split timeout-dominated execution closure from the generic execution bucket
+
+## Phase 376: Scribe Problem Route Refinement Validation (2026-03-14)
+- [x] add focused regressions for refined timeout, anchor-gap, and semantic role-drift routes
+- [x] `python -m pytest tests/test_run_scribe_cycle.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/scribe/status_artifact.py tests/test_run_scribe_cycle.py`
+- [x] `python -m black --check tonesoul/scribe/status_artifact.py tests/test_run_scribe_cycle.py`
+**Success Criteria**: Scribe route metadata still uses the same compact contract, but later agents can distinguish anchor absence, semantic self/role drift, container drift, and timeout-heavy execution closure without reopening chronicle prose.
+
+## Phase 377: Scribe Problem Route Secondary Preview Note (2026-03-14)
+- [x] keep the existing secondary-preview addendum as the phase boundary:
+- [x] `docs/plans/scribe_problem_route_secondary_preview_addendum_2026-03-14.md`
+- [x] restate that secondary hints remain subordinate to one dominant route
+- [x] keep upper preview layers scalar and passive
+
+## Phase 378: Scribe Problem Route Secondary Preview Surface (2026-03-14)
+- [x] mirror `problem_route_secondary_labels` through Scribe status preview surfaces
+- [x] preserve optionality so empty secondary hints stay silent
+- [x] render the compact secondary labels in refreshable, repo healthcheck, and settlement markdown
+
+## Phase 379: Scribe Problem Route Secondary Preview Validation (2026-03-14)
+- [x] add focused regressions for Scribe status payload and preview-chain carry-through
+- [x] `python -m pytest tests/test_run_scribe_cycle.py tests/test_run_refreshable_artifact_report.py tests/test_run_repo_healthcheck.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/scribe/status_artifact.py scripts/run_refreshable_artifact_report.py scripts/run_repo_healthcheck.py scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_run_scribe_cycle.py tests/test_run_refreshable_artifact_report.py tests/test_run_repo_healthcheck.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+- [x] `python -m black --check tonesoul/scribe/status_artifact.py scripts/run_refreshable_artifact_report.py scripts/run_repo_healthcheck.py scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_run_scribe_cycle.py tests/test_run_refreshable_artifact_report.py tests/test_run_repo_healthcheck.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+**Success Criteria**: Mixed-signal Scribe runs keep one dominant route while upper preview and governance surfaces can still carry a compact machine-readable hint about secondary route families, without reopening the full route object.
+
+## Phase 380: True Verification Scribe Problem Route Secondary Note (2026-03-14)
+- [x] write one addendum before carrying secondary route hints into weekly host status:
+- [x] `docs/plans/true_verification_scribe_problem_route_secondary_addendum_2026-03-14.md`
+- [x] keep weekly output scalar and subordinate to the dominant route line
+- [x] avoid introducing a second weekly diagnostics schema
+
+## Phase 381: True Verification Scribe Problem Route Secondary Surface (2026-03-14)
+- [x] preserve `scribe_problem_route_secondary_labels` in wakeup summaries
+- [x] keep the scalar through true-verification summary compaction
+- [x] expose `problem_route_secondary_labels` in weekly task-status output and handoff only when non-empty
+
+## Phase 382: True Verification Scribe Problem Route Secondary Validation (2026-03-14)
+- [x] add focused carry-through regressions for wakeup, summary compaction, and weekly host-facing output
+- [x] `python -m pytest tests/test_wakeup_loop.py tests/test_true_verification_summary.py tests/test_report_true_verification_task_status.py tests/test_true_verification_weekly_chain.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/wakeup_loop.py tonesoul/true_verification_summary.py scripts/report_true_verification_task_status.py tests/test_wakeup_loop.py tests/test_true_verification_summary.py tests/test_report_true_verification_task_status.py tests/test_true_verification_weekly_chain.py`
+- [x] `python -m black --check tonesoul/wakeup_loop.py tonesoul/true_verification_summary.py scripts/report_true_verification_task_status.py tests/test_wakeup_loop.py tests/test_true_verification_summary.py tests/test_report_true_verification_task_status.py tests/test_true_verification_weekly_chain.py`
+**Success Criteria**: Weekly host-facing status keeps the dominant Scribe route line and can also carry a compact machine-readable secondary-route hint, without recomputing route logic or turning weekly output into a full diagnostics object.
+
+## Phase 383: Wakeup Scribe Secondary Observability Note (2026-03-14)
+- [x] write one addendum before extending dream observability:
+- [x] `docs/plans/wakeup_scribe_secondary_observability_addendum_2026-03-14.md`
+- [x] keep the change passive and route-first
+- [x] avoid adding a new chart family
+
+## Phase 384: Wakeup Scribe Secondary Observability Surface (2026-03-14)
+- [x] preserve Scribe route and secondary-route hints in wakeup observability payloads
+- [x] expose the hints in recent wake-up rows and compact HTML surfaces
+- [x] keep dashboard rendering bounded to summary/meta/table changes
+
+## Phase 385: Wakeup Scribe Secondary Observability Validation (2026-03-14)
+- [x] add focused dashboard regressions for Scribe route carry-through
+- [x] `python -m pytest tests/test_dream_observability.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/dream_observability.py tests/test_dream_observability.py`
+- [x] `python -m black --check tonesoul/dream_observability.py tests/test_dream_observability.py`
+**Success Criteria**: Dream observability can show the latest Scribe problem route and mixed-signal secondary labels from wakeup summaries, without turning the dashboard into a diagnostics router.
+
+## Phase 386: Dream Observability Handoff Note (2026-03-14)
+- [x] write one addendum before turning the dashboard JSON into a compact status surface:
+- [x] `docs/plans/dream_observability_handoff_addendum_2026-03-14.md`
+- [x] keep route data passive and sourced from wakeup carry-through
+- [x] reuse the generic handoff shape instead of inventing a dream-specific schema
+
+## Phase 387: Dream Observability Handoff Surface (2026-03-14)
+- [x] add compact status lines and `handoff` to `dream_observability_latest.json`
+- [x] expose latest wakeup/Scribe route and secondary hints through that surface
+- [x] let generic refreshable preview tooling read the dashboard artifact as a bounded status surface
+
+## Phase 388: Dream Observability Handoff Validation (2026-03-14)
+- [x] add focused regressions for dashboard JSON output and refreshable preview carry-through
+- [x] `python -m pytest tests/test_dream_observability.py tests/test_run_dream_observability_dashboard.py tests/test_run_refreshable_artifact_report.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/dream_observability.py scripts/run_dream_observability_dashboard.py tests/test_dream_observability.py tests/test_run_dream_observability_dashboard.py tests/test_run_refreshable_artifact_report.py`
+- [x] `python -m black --check tonesoul/dream_observability.py scripts/run_dream_observability_dashboard.py tests/test_dream_observability.py tests/test_run_dream_observability_dashboard.py tests/test_run_refreshable_artifact_report.py`
+**Success Criteria**: The dream observability artifact becomes a readable status surface with compact route-first metadata, and higher-level preview tooling can mirror it without parsing the full dashboard payload.
+
+## Phase 389: Dream Observability Governance Mirror Note (2026-03-14)
+- [x] write one addendum before elevating the dashboard into top-level governance mirrors:
+- [x] `docs/plans/dream_observability_governance_mirror_addendum_2026-03-14.md`
+- [x] keep dream observability passive and distinct from weekly host status
+- [x] reuse existing passive preview / focus preview patterns
+
+## Phase 390: Dream Observability Governance Mirror Surface (2026-03-14)
+- [x] add `dream_observability_preview` to repo healthcheck
+- [x] add `dream_observability_focus_preview` to worktree and repo-governance settlement
+- [x] mirror compact route-first lines in markdown summaries and focus sections
+
+## Phase 391: Dream Observability Governance Mirror Validation (2026-03-14)
+- [x] add focused regressions for repo healthcheck and settlement carry-through
+- [x] `python -m pytest tests/test_run_repo_healthcheck.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_repo_healthcheck.py scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_run_repo_healthcheck.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+- [x] `python -m black --check scripts/run_repo_healthcheck.py scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_run_repo_healthcheck.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+**Success Criteria**: Repo healthcheck and settlement artifacts can elevate dream observability as a readable passive mirror, so later agents do not need to fish it out of generic handoff preview lists.
+
+## Phase 392: Dream Observability Settlement Topline Note (2026-03-14)
+- [x] write one addendum before promoting dream observability into settlement top-lines:
+- [x] `docs/plans/dream_observability_settlement_topline_addendum_2026-03-14.md`
+- [x] keep the dedicated focus mirror and only add passive compact lines
+
+## Phase 393: Dream Observability Settlement Topline Surface (2026-03-14)
+- [x] mirror dream observability compact lines in worktree settlement markdown
+- [x] mirror the same compact lines in repo-governance settlement markdown
+- [x] keep the lines optional so absent dream previews still render quietly
+
+## Phase 394: Dream Observability Settlement Topline Validation (2026-03-14)
+- [x] add focused regressions for worktree and repo-governance settlement top-line rendering
+- [x] `python -m pytest tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+- [x] `python -m black --check scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+**Success Criteria**: Settlement markdown exposes dream observability as one-glance top-line posture, so later agents do not have to open the focus mirror section to notice route-first wakeup diagnostics.
+
+## Phase 395: Dream Weekly Alignment Note (2026-03-14)
+- [x] write one addendum before compressing weekly and dream posture into one line:
+- [x] `docs/plans/dream_weekly_alignment_line_addendum_2026-03-14.md`
+- [x] keep the original weekly and dream lines intact
+
+## Phase 396: Dream Weekly Alignment Surface (2026-03-14)
+- [x] add one deterministic `dream_weekly_alignment_line` helper
+- [x] surface it in repo healthcheck
+- [x] surface it in worktree and repo-governance settlement
+
+## Phase 397: Dream Weekly Alignment Validation (2026-03-14)
+- [x] add focused regressions for aligned and divergent route-family cases
+- [x] `python -m pytest tests/test_run_repo_healthcheck.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/status_alignment.py scripts/run_repo_healthcheck.py scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_run_repo_healthcheck.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+- [x] `python -m black --check tonesoul/status_alignment.py scripts/run_repo_healthcheck.py scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_run_repo_healthcheck.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+**Success Criteria**: Repo-level and settlement summaries can state whether weekly host status and dream observability agree on the dominant repair family, without hiding the original source lines.
+
+## Phase 398: Weekly Dream Alignment Note (2026-03-14)
+- [x] write one addendum before teaching weekly host-facing status about dream alignment:
+- [x] `docs/plans/true_verification_dream_alignment_addendum_2026-03-14.md`
+- [x] keep dream alignment passive and one-way
+
+## Phase 399: Weekly Dream Alignment Surface (2026-03-14)
+- [x] add optional dream observability input to `report_true_verification_task_status.py`
+- [x] surface `dream_weekly_alignment_line` at weekly top-level
+- [x] carry it into weekly `handoff`
+
+## Phase 400: Weekly Dream Alignment Validation (2026-03-14)
+- [x] add focused regressions for weekly aligned carry-through
+- [x] `python -m pytest tests/test_report_true_verification_task_status.py tests/test_true_verification_weekly_chain.py -q --tb=short`
+- [x] `python -m ruff check scripts/report_true_verification_task_status.py tests/test_report_true_verification_task_status.py tests/test_true_verification_weekly_chain.py`
+- [x] `python -m black --check scripts/report_true_verification_task_status.py tests/test_report_true_verification_task_status.py tests/test_true_verification_weekly_chain.py`
+**Success Criteria**: The weekly host-facing artifact can state whether it is aligned with the latest dream observability route family, without needing upper governance mirrors to infer it.
+
+## Phase 401: Dream Weekly Alignment Preview Note (2026-03-14)
+- [x] write one addendum before carrying `dream_weekly_alignment_line` through generic previews:
+- [x] `docs/plans/dream_weekly_alignment_preview_passthrough_addendum_2026-03-14.md`
+- [x] keep fallback recomputation as a backup only
+
+## Phase 402: Dream Weekly Alignment Preview Surface (2026-03-14)
+- [x] preserve `dream_weekly_alignment_line` in refreshable and healthcheck preview extractors
+- [x] preserve it through worktree and repo-governance settlement compact mirrors
+- [x] prefer source-declared alignment where available
+
+## Phase 403: Dream Weekly Alignment Preview Validation (2026-03-14)
+- [x] add focused regressions for preview passthrough
+- [x] `python -m pytest tests/test_run_refreshable_artifact_report.py tests/test_run_repo_healthcheck.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_refreshable_artifact_report.py scripts/run_repo_healthcheck.py scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_run_refreshable_artifact_report.py tests/test_run_repo_healthcheck.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+- [x] `python -m black --check scripts/run_refreshable_artifact_report.py scripts/run_repo_healthcheck.py scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_run_refreshable_artifact_report.py tests/test_run_repo_healthcheck.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+**Success Criteria**: Source-declared weekly/dream alignment can flow through the generic preview chain unchanged, while upper layers still retain recomputation as fallback.
+
+## Phase 404: Refreshable Alignment Fallback Note (2026-03-14)
+- [x] write one addendum before changing refreshable handoff fallback behavior:
+- [x] `docs/plans/dream_weekly_alignment_refreshable_handoff_fallback_addendum_2026-03-14.md`
+- [x] limit the change to `dream_weekly_alignment_line`
+
+## Phase 405: Refreshable Alignment Fallback Surface (2026-03-14)
+- [x] let `run_refreshable_artifact_report.py` read `dream_weekly_alignment_line` from nested `handoff` when top-level is absent
+- [x] keep the rest of the generic preview extraction unchanged
+
+## Phase 406: Refreshable Alignment Fallback Validation (2026-03-14)
+- [x] add one focused regression for handoff-only alignment passthrough
+- [x] `python -m pytest tests/test_run_refreshable_artifact_report.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_refreshable_artifact_report.py tests/test_run_refreshable_artifact_report.py`
+- [x] `python -m black --check scripts/run_refreshable_artifact_report.py tests/test_run_refreshable_artifact_report.py`
+**Success Criteria**: Refreshable preview extraction preserves source-declared weekly/dream alignment even when it is exposed only under `handoff`.
+
+## Phase 407: Refreshable Handoff Parity Note (2026-03-14)
+- [x] write one addendum before widening refreshable handoff fallback beyond alignment only:
+- [x] `docs/plans/refreshable_handoff_surface_parity_addendum_2026-03-14.md`
+- [x] keep the change local to `run_refreshable_artifact_report.py`
+
+## Phase 408: Refreshable Handoff Parity Surface (2026-03-14)
+- [x] let the generic refreshable extractor read `scribe_status_line` from nested `handoff`
+- [x] let the same extractor read `anchor_status_line`, `problem_route_status_line`, and `problem_route_secondary_labels` from nested `handoff`
+- [x] preserve the same optional rendering behavior in handoff previews and focus previews
+
+## Phase 409: Refreshable Handoff Parity Validation (2026-03-14)
+- [x] add one focused regression proving handoff-only Scribe/route compact lines survive refreshable preview extraction
+- [x] `python -m pytest tests/test_run_refreshable_artifact_report.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_refreshable_artifact_report.py tests/test_run_refreshable_artifact_report.py`
+- [x] `python -m black --check scripts/run_refreshable_artifact_report.py tests/test_run_refreshable_artifact_report.py`
+**Success Criteria**: Refreshable generic previews keep the same compact Scribe and route-first lines that source artifacts already expose under `handoff`, instead of forcing upper layers to infer or lose them.
+
+## Phase 410: Status Compact Grammar Note (2026-03-14)
+- [x] write one addendum before documenting the shared compact handoff grammar:
+- [x] `docs/plans/status_compact_handoff_grammar_addendum_2026-03-14.md`
+- [x] keep the move documentation-only
+
+## Phase 411: Status Compact Grammar README (2026-03-14)
+- [x] document the shared mandatory and optional compact lines in `docs/status/README.md`
+- [x] clarify that source-declared compact lines should be mirrored through upper previews instead of silently recomputed
+- [x] record how `problem_route_status_line`, `problem_route_secondary_labels`, and `dream_weekly_alignment_line` should be read
+
+## Phase 412: Status Compact Grammar Validation (2026-03-14)
+- [x] re-read `docs/status/README.md` after editing to confirm the new section matches the current generator behavior
+- [x] keep the note bounded to compact handoff grammar, not a full artifact catalog rewrite
+**Success Criteria**: A later agent can open `docs/status/README.md` and understand the shared compact status grammar without reopening multiple generator scripts to infer field semantics.
+
+## Phase 413: Weekly Scribe Anchor Note (2026-03-14)
+- [x] write one addendum before carrying the Scribe lead anchor into weekly host-facing status:
+- [x] `docs/plans/true_verification_scribe_anchor_handoff_addendum_2026-03-14.md`
+- [x] keep the weekly field generic while the wakeup summary key stays Scribe-scoped
+
+## Phase 414: Weekly Scribe Anchor Surface (2026-03-14)
+- [x] preserve `scribe_anchor_status_line` in wakeup summaries and compact true-verification summaries
+- [x] expose top-level `anchor_status_line` in weekly task status
+- [x] carry the same compact line into weekly `handoff`
+
+## Phase 415: Weekly Scribe Anchor Validation (2026-03-14)
+- [x] add focused regressions for wakeup summary, compact summary, and weekly carry-through
+- [x] `python -m pytest tests/test_wakeup_loop.py tests/test_true_verification_summary.py tests/test_report_true_verification_task_status.py tests/test_true_verification_weekly_chain.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/wakeup_loop.py tonesoul/true_verification_summary.py scripts/report_true_verification_task_status.py tests/test_wakeup_loop.py tests/test_true_verification_summary.py tests/test_report_true_verification_task_status.py tests/test_true_verification_weekly_chain.py`
+- [x] `python -m black --check tonesoul/wakeup_loop.py tonesoul/true_verification_summary.py scripts/report_true_verification_task_status.py tests/test_wakeup_loop.py tests/test_true_verification_summary.py tests/test_report_true_verification_task_status.py tests/test_true_verification_weekly_chain.py`
+**Success Criteria**: Weekly host-facing status finally source-declares its anchor posture, so upper mirrors can report `weekly_anchor_posture` without relying on an empty placeholder.
+
+## Phase 416: Dream Scribe Anchor Note (2026-03-14)
+- [x] write one addendum before teaching dream observability to source-declare the latest Scribe anchor:
+- [x] `docs/plans/dream_observability_scribe_anchor_addendum_2026-03-14.md`
+- [x] keep the change local to the dream dashboard source artifact
+
+## Phase 417: Dream Scribe Anchor Surface (2026-03-14)
+- [x] preserve `scribe_anchor_status_line` in wakeup-row extraction and dream summary
+- [x] expose top-level `anchor_status_line` in `dream_observability_latest.json`
+- [x] carry the same compact line into dream `handoff`
+
+## Phase 418: Dream Scribe Anchor Validation (2026-03-14)
+- [x] add focused regressions for dream summary, wakeup state, and top-level payload carry-through
+- [x] `python -m pytest tests/test_dream_observability.py -q --tb=short`
+- [x] `python -m ruff check tonesoul/dream_observability.py tests/test_dream_observability.py`
+- [x] `python -m black --check tonesoul/dream_observability.py tests/test_dream_observability.py`
+**Success Criteria**: `dream_observability_latest.json` source-declares the latest Scribe anchor, so later mirrors can preserve a dream anchor posture instead of showing only posture and route.
+
+## Phase 419: Dream Anchor Topline Note (2026-03-14)
+- [x] write one addendum before mirroring the dream anchor into upper summaries:
+- [x] `docs/plans/dream_observability_anchor_topline_addendum_2026-03-14.md`
+- [x] keep the move summary-only, with no new fallback logic
+
+## Phase 420: Dream Anchor Topline Surface (2026-03-14)
+- [x] mirror the optional dream anchor line in repo healthcheck markdown
+- [x] mirror the same line in worktree settlement markdown
+- [x] mirror the same line in repo-governance settlement markdown
+
+## Phase 421: Dream Anchor Topline Validation (2026-03-14)
+- [x] update focused dream-preview regressions for the new topline and preview payload
+- [x] `python -m pytest tests/test_run_repo_healthcheck.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_repo_healthcheck.py scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_run_repo_healthcheck.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+- [x] `python -m black --check scripts/run_repo_healthcheck.py scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_run_repo_healthcheck.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+**Success Criteria**: Upper governance summaries expose a one-glance dream anchor posture whenever the source dream artifact declared one, without inventing anchors on their own.
+
+## Phase 422: Dream Focus Anchor Note (2026-03-15)
+- [x] write one addendum before aligning dream focus mirror rendering with the new anchor topline:
+- [x] `docs/plans/dream_focus_anchor_render_addendum_2026-03-15.md`
+- [x] keep the move markdown-only
+
+## Phase 423: Dream Focus Anchor Surface (2026-03-15)
+- [x] render optional `anchor_status_line` inside worktree dream focus mirror
+- [x] render the same optional line inside repo-governance dream focus mirror
+- [x] keep payload and preview normalization unchanged
+
+## Phase 424: Dream Focus Anchor Validation (2026-03-15)
+- [x] update focused settlement markdown regressions for dream focus mirror anchor rendering
+- [x] `python -m pytest tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+- [x] `python -m black --check scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+**Success Criteria**: Dream focus mirror markdown shows `anchor_status_line` whenever the dream preview carries one, so the detailed mirror no longer drops information already visible in the topline summary.
+
+## Phase 425: Weekly Host Status Mirror Note (2026-03-15)
+- [x] write one addendum before making weekly host-facing status a dedicated settlement detail mirror:
+- [x] `docs/plans/weekly_host_status_mirror_addendum_2026-03-15.md`
+- [x] keep the move markdown-only and source-declared
+
+## Phase 426: Weekly Host Status Mirror Surface (2026-03-15)
+- [x] render `## Weekly Host Status Mirror` in worktree settlement markdown
+- [x] render the same section in repo-governance settlement markdown
+- [x] keep payload and preview normalization unchanged
+
+## Phase 427: Weekly Host Status Mirror Validation (2026-03-15)
+- [x] update focused settlement markdown regressions for the new weekly detail mirror
+- [x] `python -m pytest tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+- [x] `python -m black --check scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+**Success Criteria**: Settlement markdown gives weekly host-facing status the same bounded detail mirror treatment already given to dream observability and Scribe, without adding a new payload shape.
+
+## Phase 428: Repo Healthcheck Handoff Operator Note (2026-03-15)
+- [x] write one addendum before restoring `requires_operator_action` parity in repo healthcheck markdown:
+- [x] `docs/plans/repo_healthcheck_handoff_operator_render_addendum_2026-03-15.md`
+- [x] keep the change markdown-only
+
+## Phase 429: Repo Healthcheck Handoff Operator Surface (2026-03-15)
+- [x] render `requires_operator_action` inside repo healthcheck `## Handoff Previews`
+- [x] keep preview normalization and payload schema unchanged
+- [x] match the renderer shape already used by refreshable and settlement reports
+
+## Phase 430: Repo Healthcheck Handoff Operator Validation (2026-03-15)
+- [x] update focused repo healthcheck markdown regressions for the new handoff line
+- [x] `python -m pytest tests/test_run_repo_healthcheck.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_repo_healthcheck.py tests/test_run_repo_healthcheck.py`
+- [x] `python -m black --check scripts/run_repo_healthcheck.py tests/test_run_repo_healthcheck.py`
+**Success Criteria**: Repo healthcheck markdown no longer drops `requires_operator_action` from handoff previews that already declared it in JSON.
+
+## Phase 431: Repo Healthcheck Admissibility Preview Note (2026-03-15)
+- [x] write one addendum before restoring admissibility compact-line parity in repo healthcheck previews:
+- [x] `docs/plans/repo_healthcheck_admissibility_preview_parity_addendum_2026-03-15.md`
+- [x] keep the field optional and grammar-aligned
+
+## Phase 432: Repo Healthcheck Admissibility Preview Surface (2026-03-15)
+- [x] preserve optional `admissibility_primary_status_line` in repo healthcheck handoff preview normalization
+- [x] preserve the same optional line in named passive preview normalization
+- [x] render the line inside repo healthcheck `## Handoff Previews` when present
+
+## Phase 433: Repo Healthcheck Admissibility Preview Validation (2026-03-15)
+- [x] add focused repo healthcheck regressions for admissibility preview carry-through
+- [x] `python -m pytest tests/test_run_repo_healthcheck.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_repo_healthcheck.py tests/test_run_repo_healthcheck.py`
+- [x] `python -m black --check scripts/run_repo_healthcheck.py tests/test_run_repo_healthcheck.py`
+**Success Criteria**: Repo healthcheck preserves optional admissibility compact lines instead of silently stripping them from the shared preview grammar.
+
+## Phase 434: Repo Healthcheck Nested Fallback Note (2026-03-15)
+- [x] write one addendum before extending repo healthcheck nested handoff fallback:
+- [x] `docs/plans/repo_healthcheck_handoff_nested_fallback_addendum_2026-03-15.md`
+- [x] keep the move limited to already-supported compact lines
+
+## Phase 435: Repo Healthcheck Nested Fallback Surface (2026-03-15)
+- [x] add nested handoff fallback for `artifact_policy_status_line`
+- [x] add nested handoff fallback for `admissibility_primary_status_line`
+- [x] avoid changing any top-level preview schema
+
+## Phase 436: Repo Healthcheck Nested Fallback Validation (2026-03-15)
+- [x] add focused repo healthcheck regression for handoff-only artifact/admissibility carry-through
+- [x] `python -m pytest tests/test_run_repo_healthcheck.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_repo_healthcheck.py tests/test_run_repo_healthcheck.py`
+- [x] `python -m black --check scripts/run_repo_healthcheck.py tests/test_run_repo_healthcheck.py`
+**Success Criteria**: Repo healthcheck treats handoff-only artifact/admissibility lines the same way it already treats handoff-only route, anchor, and Scribe lines.
+
+## Phase 437: Refreshable Nested Fallback Note (2026-03-15)
+- [x] write one addendum before extending refreshable nested handoff fallback:
+- [x] `docs/plans/refreshable_handoff_nested_fallback_addendum_2026-03-15.md`
+- [x] keep the change aligned with the existing compact preview grammar
+
+## Phase 438: Refreshable Nested Fallback Surface (2026-03-15)
+- [x] add nested handoff fallback for `artifact_policy_status_line`
+- [x] add nested handoff fallback for `admissibility_primary_status_line`
+- [x] keep preview shape unchanged
+
+## Phase 439: Refreshable Nested Fallback Validation (2026-03-15)
+- [x] add focused refreshable regression for handoff-only artifact/admissibility carry-through
+- [x] `python -m pytest tests/test_run_refreshable_artifact_report.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_refreshable_artifact_report.py tests/test_run_refreshable_artifact_report.py`
+- [x] `python -m black --check scripts/run_refreshable_artifact_report.py tests/test_run_refreshable_artifact_report.py`
+**Success Criteria**: Refreshable extraction treats handoff-only artifact/admissibility lines the same way it already treats handoff-only route, anchor, Scribe, and alignment lines.
+
+## Phase 440: Weekly Artifact Policy Note (2026-03-15)
+- [x] write one addendum before carrying weekly artifact policy through the weekly lane:
+- [x] `docs/plans/true_verification_weekly_artifact_policy_handoff_addendum_2026-03-15.md`
+- [x] keep the field optional and compact-grammar aligned
+
+## Phase 441: Weekly Artifact Policy Surface (2026-03-15)
+- [x] carry `artifact_policy_status_line` into weekly `handoff`
+- [x] mirror the same line in repo healthcheck weekly summary
+- [x] mirror the same line in worktree/repo-governance weekly summary and detail mirror
+
+## Phase 442: Weekly Artifact Policy Validation (2026-03-15)
+- [x] add focused weekly/report/healthcheck/settlement regressions for weekly artifact policy carry-through
+- [x] `python -m pytest tests/test_report_true_verification_task_status.py tests/test_run_repo_healthcheck.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py -q --tb=short`
+- [x] `python -m ruff check scripts/report_true_verification_task_status.py scripts/run_repo_healthcheck.py scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_report_true_verification_task_status.py tests/test_run_repo_healthcheck.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+- [x] `python -m black --check scripts/report_true_verification_task_status.py scripts/run_repo_healthcheck.py scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_report_true_verification_task_status.py tests/test_run_repo_healthcheck.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+**Success Criteria**: Weekly host-facing status no longer drops its own artifact policy, and upper weekly mirrors preserve that compact line instead of only showing runtime/route/posture.
+
+## Phase 443: Settlement Admissibility Label Note (2026-03-15)
+- [x] write one addendum before tightening settlement markdown label parity:
+- [x] `docs/plans/settlement_admissibility_label_parity_addendum_2026-03-15.md`
+- [x] keep the change markdown-only and compact-grammar aligned
+
+## Phase 444: Settlement Admissibility Label Surface (2026-03-15)
+- [x] render `admissibility_primary_status_line` instead of `admissibility` in worktree settlement handoff previews
+- [x] render `admissibility_primary_status_line` instead of `admissibility` in repo-governance settlement handoff previews
+
+## Phase 445: Settlement Admissibility Label Validation (2026-03-15)
+- [x] add focused markdown regressions for the renamed settlement label
+- [x] `python -m pytest tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+- [x] `python -m black --check scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+**Success Criteria**: Settlement markdown stops inventing a shorter admissibility alias, so compact handoff grammar stays consistent across source, preview, and governance mirrors.
+
+## Phase 446: Subjectivity Admissibility Label Note (2026-03-15)
+- [x] write one addendum before renaming the source markdown label:
+- [x] `docs/plans/subjectivity_admissibility_label_parity_addendum_2026-03-15.md`
+- [x] keep the scope markdown-only and compact-grammar aligned
+
+## Phase 447: Subjectivity Admissibility Label Surface (2026-03-15)
+- [x] render `admissibility_primary_status_line` instead of `admissibility` in `run_subjectivity_review_batch.py`
+- [x] keep payload and checklist schema unchanged
+
+## Phase 448: Subjectivity Admissibility Label Validation (2026-03-15)
+- [x] add/update focused regression for the renamed subjectivity markdown label
+- [x] `python -m pytest tests/test_run_subjectivity_review_batch.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_subjectivity_review_batch.py tests/test_run_subjectivity_review_batch.py`
+- [x] `python -m black --check scripts/run_subjectivity_review_batch.py tests/test_run_subjectivity_review_batch.py`
+**Success Criteria**: Subjectivity batch markdown uses the same admissibility compact label as the rest of the governance preview chain, without changing payload semantics.
+
+## Phase 449: Refreshable Subjectivity Focus Note (2026-03-15)
+- [x] write one addendum before widening refreshable subjectivity focus rendering:
+- [x] `docs/plans/refreshable_subjectivity_focus_parity_addendum_2026-03-15.md`
+- [x] keep the change renderer-only and schema-neutral
+
+## Phase 450: Refreshable Subjectivity Focus Surface (2026-03-15)
+- [x] render `runtime_status_line` in `## Subjectivity Focus` when present
+- [x] render `artifact_policy_status_line` in `## Subjectivity Focus` when present
+
+## Phase 451: Refreshable Subjectivity Focus Validation (2026-03-15)
+- [x] add focused regression proving the subjectivity focus markdown no longer truncates runtime/policy lines
+- [x] `python -m pytest tests/test_run_refreshable_artifact_report.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_refreshable_artifact_report.py tests/test_run_refreshable_artifact_report.py`
+- [x] `python -m black --check scripts/run_refreshable_artifact_report.py tests/test_run_refreshable_artifact_report.py`
+**Success Criteria**: The refreshable subjectivity focus card mirrors runtime/policy compact lines already present in its normalized payload, instead of dropping them while upper governance mirrors keep them.
+
+## Phase 452: Settlement Subjectivity Focus Note (2026-03-15)
+- [x] write one addendum before widening subjectivity focus mirror rendering:
+- [x] `docs/plans/settlement_subjectivity_focus_compact_parity_addendum_2026-03-15.md`
+- [x] keep the change renderer-only and schema-neutral
+
+## Phase 453: Settlement Subjectivity Focus Surface (2026-03-15)
+- [x] render `scribe/anchor/route/alignment` compact lines in worktree subjectivity focus mirror when present
+- [x] render the same compact lines in repo-governance subjectivity focus mirror when present
+
+## Phase 454: Settlement Subjectivity Focus Validation (2026-03-15)
+- [x] add focused regressions proving subjectivity focus mirrors no longer truncate compact lines already preserved in payload
+- [x] `python -m pytest tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+- [x] `python -m black --check scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+**Success Criteria**: Subjectivity focus mirrors in settlement artifacts render the same compact optional lines they already preserve in normalized preview payloads, instead of truncating them to runtime/policy/admissibility only.
+
+## Phase 455: Status Handoff Metadata Note (2026-03-15)
+- [x] write one addendum before widening README contract wording:
+- [x] `docs/plans/status_handoff_metadata_contract_addendum_2026-03-15.md`
+- [x] keep the scope documentation-only
+
+## Phase 456: Status Handoff Metadata Contract (2026-03-15)
+- [x] document `queue_shape` as shared handoff metadata in `docs/status/README.md`
+- [x] document `requires_operator_action` as shared handoff metadata in `docs/status/README.md`
+
+## Phase 457: Status Handoff Metadata Validation (2026-03-15)
+- [x] verify the README contract now names both routing and operator-action metadata explicitly
+- [x] `rg -n "queue_shape|requires_operator_action|Shared handoff metadata" docs/status/README.md`
+**Success Criteria**: The public contract note for status artifacts no longer implies that compact lines are the whole handoff surface; metadata needed for routing and operator escalation is documented explicitly.
+
+## Phase 458: Repo Healthcheck Subjectivity Focus Note (2026-03-15)
+- [x] write one addendum before adding a dedicated subjectivity focus mirror:
+- [x] `docs/plans/repo_healthcheck_subjectivity_focus_mirror_addendum_2026-03-15.md`
+- [x] keep the change passive and source-declared
+
+## Phase 459: Repo Healthcheck Subjectivity Focus Surface (2026-03-15)
+- [x] select `subjectivity_focus_preview` from existing handoff previews by admissibility presence
+- [x] render top-lines and a dedicated markdown section for the mirrored subjectivity focus surface
+
+## Phase 460: Repo Healthcheck Subjectivity Focus Validation (2026-03-15)
+- [x] add focused regression coverage for the new subjectivity focus mirror
+- [x] `python -m pytest tests/test_run_repo_healthcheck.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_repo_healthcheck.py tests/test_run_repo_healthcheck.py`
+- [x] `python -m black --check scripts/run_repo_healthcheck.py tests/test_run_repo_healthcheck.py`
+**Success Criteria**: Repo healthcheck mirrors the same subjectivity-oriented compact lines already declared by admissibility-carrying previews, instead of leaving governance focus implicit in the generic handoff list.
+
+## Phase 461: Repo Healthcheck Subjectivity Passive Fallback Note (2026-03-15)
+- [x] write one addendum before widening subjectivity focus selection to passive artifacts:
+- [x] `docs/plans/repo_healthcheck_subjectivity_passive_fallback_addendum_2026-03-15.md`
+- [x] keep the fallback source-declared and non-competing
+
+## Phase 462: Repo Healthcheck Subjectivity Passive Fallback Surface (2026-03-15)
+- [x] load `docs/status/subjectivity_review_batch_latest.json` as a passive preview candidate
+- [x] use it only when no structured admissibility-carrying handoff preview exists
+
+## Phase 463: Repo Healthcheck Subjectivity Passive Fallback Validation (2026-03-15)
+- [x] add focused regression proving passive subjectivity status backfills the mirror when weekly is absent
+- [x] `python -m pytest tests/test_run_repo_healthcheck.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_repo_healthcheck.py tests/test_run_repo_healthcheck.py`
+- [x] `python -m black --check scripts/run_repo_healthcheck.py tests/test_run_repo_healthcheck.py`
+**Success Criteria**: Repo healthcheck preserves a readable subjectivity focus mirror even on runs where the weekly structured source is skipped, as long as the passive subjectivity status artifact already exists.
+
+## Phase 464: Repo Healthcheck Preview Contract Note (2026-03-15)
+- [x] write one addendum before widening README wording:
+- [x] `docs/plans/repo_healthcheck_preview_contract_addendum_2026-03-15.md`
+- [x] keep the scope documentation-only
+
+## Phase 465: Repo Healthcheck Preview Contract (2026-03-15)
+- [x] document repo-healthcheck preview mirrors in `docs/status/README.md`
+- [x] mention subjectivity focus structured-first/passive-fallback behavior
+
+## Phase 466: Repo Healthcheck Preview Contract Validation (2026-03-15)
+- [x] verify the README now names repo-healthcheck preview mirrors explicitly
+- [x] `rg -n "subjectivity focus|repo intelligence|weekly host status|dream observability|Scribe status" docs/status/README.md`
+**Success Criteria**: The status README no longer describes repo healthcheck as only a flat check aggregate; it also names the bounded preview mirrors it already carries.
+
+## Phase 467: Status Preview Path Metadata Note (2026-03-15)
+- [x] write one addendum before widening README metadata wording:
+- [x] `docs/plans/status_preview_path_metadata_addendum_2026-03-15.md`
+- [x] keep the scope documentation-only
+
+## Phase 468: Status Preview Path Metadata Contract (2026-03-15)
+- [x] document optional shared preview `path` metadata in `docs/status/README.md`
+- [x] keep `path` distinct from required compact lines
+
+## Phase 469: Status Preview Path Metadata Validation (2026-03-15)
+- [x] verify the README now names optional `path` metadata explicitly
+- [x] `rg -n "path|Shared handoff metadata|optional preview metadata" docs/status/README.md`
+**Success Criteria**: Later agents can see from the public README that passive/focus mirrors may carry a stable artifact `path`, rather than treating that field as an undocumented renderer quirk.
+
+## Phase 470: Runtime Status Handoff Fallback Note (2026-03-15)
+- [x] write one addendum before widening generic handoff fallback:
+- [x] `docs/plans/runtime_status_handoff_fallback_parity_addendum_2026-03-15.md`
+- [x] keep the scope extractor-only and schema-neutral
+
+## Phase 471: Runtime Status Handoff Fallback Surface (2026-03-15)
+- [x] preserve `runtime_status_line` from nested `handoff` in refreshable generic extraction
+- [x] preserve `runtime_status_line` from nested `handoff` in repo-healthcheck generic extraction
+
+## Phase 472: Runtime Status Handoff Fallback Validation (2026-03-15)
+- [x] add focused handoff-only regressions for both extractors
+- [x] `python -m pytest tests/test_run_refreshable_artifact_report.py tests/test_run_repo_healthcheck.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_refreshable_artifact_report.py scripts/run_repo_healthcheck.py tests/test_run_refreshable_artifact_report.py tests/test_run_repo_healthcheck.py`
+- [x] `python -m black --check scripts/run_refreshable_artifact_report.py scripts/run_repo_healthcheck.py tests/test_run_refreshable_artifact_report.py tests/test_run_repo_healthcheck.py`
+**Success Criteria**: Upper preview layers no longer drop a source-declared runtime posture just because it lives only under nested `handoff`.
+
+## Phase 473: Settlement Subjectivity Topline Note (2026-03-15)
+- [x] write one addendum before lifting subjectivity focus into settlement toplines:
+- [x] `docs/plans/settlement_subjectivity_topline_addendum_2026-03-15.md`
+- [x] keep the change renderer-only and source-declared
+
+## Phase 474: Settlement Subjectivity Topline Surface (2026-03-15)
+- [x] mirror subjectivity focus compact lines into worktree settlement top summary
+- [x] mirror the same subjectivity focus compact lines into repo-governance settlement top summary
+
+## Phase 475: Settlement Subjectivity Topline Validation (2026-03-15)
+- [x] add focused regressions proving subjectivity toplines appear without changing the detailed focus mirror
+- [x] `python -m pytest tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+- [x] `python -m black --check scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+**Success Criteria**: Settlement summaries no longer hide subjectivity governance posture below the fold while weekly and dream already have toplines.
+
+## Phase 476: Weekly Admissibility Handoff Note (2026-03-15)
+- [x] write one addendum before widening weekly source + mirror parity:
+- [x] `docs/plans/true_verification_weekly_admissibility_handoff_addendum_2026-03-15.md`
+- [x] keep the move passive and source-declared
+
+## Phase 477: Weekly Admissibility Handoff Surface (2026-03-15)
+- [x] let weekly task status mirror `admissibility_primary_status_line` from subjectivity review status
+- [x] carry that line into weekly `handoff` only when present
+- [x] surface the same weekly admissibility line in repo-healthcheck and settlement weekly mirrors
+
+## Phase 478: Weekly Admissibility Handoff Validation (2026-03-15)
+- [x] add focused regressions across weekly source, repo-healthcheck, and settlement renderers
+- [x] `python -m pytest tests/test_report_true_verification_task_status.py tests/test_true_verification_weekly_chain.py tests/test_run_repo_healthcheck.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py -q --tb=short`
+- [x] `python -m ruff check scripts/report_true_verification_task_status.py scripts/run_repo_healthcheck.py scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_report_true_verification_task_status.py tests/test_true_verification_weekly_chain.py tests/test_run_repo_healthcheck.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+- [x] `python -m black --check scripts/report_true_verification_task_status.py scripts/run_repo_healthcheck.py scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_report_true_verification_task_status.py tests/test_true_verification_weekly_chain.py tests/test_run_repo_healthcheck.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+**Success Criteria**: Weekly host-facing status no longer relies on upper layers to infer admissibility; it source-declares the compact line itself, and healthcheck/settlement weekly mirrors stop dropping it.
+
+## Phase 479: Repo Healthcheck Weekly Mirror Note (2026-03-15)
+- [x] write one addendum before widening repo-healthcheck weekly detail rendering:
+- [x] `docs/plans/repo_healthcheck_weekly_mirror_addendum_2026-03-15.md`
+- [x] keep the move renderer-only and source-declared
+
+## Phase 480: Repo Healthcheck Weekly Mirror Surface (2026-03-15)
+- [x] render a dedicated `## Weekly Host Status Mirror` section in repo-healthcheck markdown
+- [x] reuse only fields already present on `weekly_host_status_preview`
+
+## Phase 481: Repo Healthcheck Weekly Mirror Validation (2026-03-15)
+- [x] extend focused weekly repo-healthcheck regression to assert the new mirror section
+- [x] `python -m pytest tests/test_run_repo_healthcheck.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_repo_healthcheck.py tests/test_run_repo_healthcheck.py`
+- [x] `python -m black --check scripts/run_repo_healthcheck.py tests/test_run_repo_healthcheck.py`
+**Success Criteria**: Repo healthcheck markdown no longer hides weekly host-facing detail behind toplines and generic handoff previews; it now offers a bounded weekly mirror like the settlement chain.
+
+## Phase 482: Agent Integrity Single-Source Note (2026-03-15)
+- [x] write one addendum before touching integrity CI/plumbing:
+- [x] `docs/plans/agent_integrity_single_source_addendum_2026-03-15.md`
+- [x] keep `AGENTS.md` itself untouched in this phase
+
+## Phase 483: Agent Integrity Single-Source Surface (2026-03-15)
+- [x] move protected-file trusted hashes into one shared executable contract
+- [x] make `scripts/check_agent_integrity.py` import that contract instead of duplicating hashes
+- [x] make `.github/workflows/agent-integrity-check.yml` call the shared checker instead of embedding inline trusted hashes
+- [x] surface stale embedded `Expected Hash` metadata as a warning, not as executable truth
+
+## Phase 484: Agent Integrity Single-Source Validation (2026-03-15)
+- [x] add focused tests for the shared integrity contract and workflow anti-drift shape
+- [x] `python -m pytest tests/test_check_agent_integrity.py tests/test_workflow_contracts.py -q --tb=short`
+- [x] `python -m ruff check scripts/agent_integrity_contract.py scripts/check_agent_integrity.py tests/test_check_agent_integrity.py tests/test_workflow_contracts.py`
+- [x] `python -m black --check scripts/agent_integrity_contract.py scripts/check_agent_integrity.py tests/test_check_agent_integrity.py tests/test_workflow_contracts.py`
+**Success Criteria**: There is one executable protected-file hash source, CI no longer duplicates inline hash literals, and future workflow drift is caught by tests before GitHub Actions fails noisily.
+
+## Phase 485: Agent Integrity Governance Surface Note (2026-03-15)
+- [x] write one addendum before turning integrity drift into a status artifact:
+- [x] `docs/plans/agent_integrity_governance_surface_addendum_2026-03-15.md`
+- [x] keep `AGENTS.md` untouched and stay within passive governance surfaces
+
+## Phase 486: Agent Integrity Governance Surface (2026-03-15)
+- [x] add `scripts/run_agent_integrity_report.py` to publish compact JSON/Markdown status artifacts
+- [x] carry `primary/runtime/artifact_policy/problem_route` through the existing handoff grammar
+- [x] register the new artifact in `refreshable`
+- [x] mirror the new passive preview in `repo_healthcheck`
+
+## Phase 487: Agent Integrity Governance Validation (2026-03-15)
+- [x] add focused tests for the new integrity artifact and its refreshable/repo-healthcheck mirrors
+- [x] `python -m pytest tests/test_run_agent_integrity_report.py tests/test_run_refreshable_artifact_report.py tests/test_run_repo_healthcheck.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_agent_integrity_report.py scripts/check_agent_integrity.py scripts/run_refreshable_artifact_report.py scripts/run_repo_healthcheck.py tests/test_run_agent_integrity_report.py tests/test_run_refreshable_artifact_report.py tests/test_run_repo_healthcheck.py`
+- [x] `python -m black --check scripts/run_agent_integrity_report.py scripts/check_agent_integrity.py scripts/run_refreshable_artifact_report.py scripts/run_repo_healthcheck.py tests/test_run_agent_integrity_report.py tests/test_run_refreshable_artifact_report.py tests/test_run_repo_healthcheck.py`
+**Success Criteria**: Agent integrity drift is now a source-declared governance artifact that can be regenerated, previewed, and mirrored by upper repo-governance surfaces instead of living only inside CI/pre-commit side effects.
+
+## Phase 488: Agent Integrity Settlement Mirror Note (2026-03-15)
+- [x] extend the same governance artifact into settlement mirrors without inventing a new schema
+- [x] keep the move passive and preview-driven
+
+## Phase 489: Agent Integrity Settlement Mirror Surface (2026-03-15)
+- [x] select `agent_integrity_focus_preview` from refreshable handoff previews in worktree settlement
+- [x] render `## Agent Integrity Focus Mirror` in worktree settlement markdown
+- [x] mirror that focus preview into repo-governance settlement summary and detail sections
+
+## Phase 490: Agent Integrity Settlement Mirror Validation (2026-03-15)
+- [x] add focused regressions for worktree and repo-governance settlement mirrors
+- [x] `python -m pytest tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+- [x] `python -m black --check scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+**Success Criteria**: Agent integrity now appears as a first-class passive governance mirror in both worktree and repo-governance settlement artifacts, alongside weekly, dream, and Scribe.
+
+## Phase 491: Agent Integrity Repo-Intelligence Note (2026-03-15)
+- [x] write one addendum before widening discovery/docs surfaces:
+- [x] `docs/plans/agent_integrity_repo_intelligence_addendum_2026-03-15.md`
+- [x] keep the move documentation/repo-intelligence only
+
+## Phase 492: Agent Integrity Repo-Intelligence Surface (2026-03-15)
+- [x] add `agent_integrity_latest.json` to repo-intelligence recommended surfaces
+- [x] update repo-intelligence entrypoint summary to mention integrity explicitly
+- [x] document the new artifact and repo-healthcheck mirror in `docs/status/README.md`
+
+## Phase 493: Agent Integrity Repo-Intelligence Validation (2026-03-15)
+- [x] add focused repo-intelligence regression updates
+- [x] `python -m pytest tests/test_run_repo_intelligence_report.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_repo_intelligence_report.py tests/test_run_repo_intelligence_report.py`
+- [x] `python -m black --check scripts/run_repo_intelligence_report.py tests/test_run_repo_intelligence_report.py`
+**Success Criteria**: Later agents now discover `agent_integrity` as a first-class governance entrypoint instead of only noticing it indirectly through repo-healthcheck or settlement mirrors.
+
+## Phase 494: Repo Semantic Atlas Note (2026-03-15)
+- [x] write one addendum before introducing a semantic-memory artifact:
+- [x] `docs/plans/repo_semantic_atlas_addendum_2026-03-15.md`
+- [x] keep the first version bounded to aliases, neighborhoods, and a domain graph
+
+## Phase 495: Repo Semantic Atlas Surface (2026-03-15)
+- [x] add `scripts/run_repo_semantic_atlas.py` to publish JSON/Markdown/Mermaid atlas artifacts
+- [x] register `ToneSoul Chronicles` as a semantic alias with chronicle memory hooks
+- [x] add the atlas to `repo_intelligence` and `refreshable` discovery surfaces
+- [x] document the new artifact family in `docs/status/README.md`
+
+## Phase 496: Repo Semantic Atlas Validation (2026-03-15)
+- [x] add focused tests for the atlas generator and its repo-intelligence / refreshable integration
+- [x] `python -m pytest tests/test_run_repo_semantic_atlas.py tests/test_run_repo_intelligence_report.py tests/test_run_refreshable_artifact_report.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_repo_semantic_atlas.py scripts/run_repo_intelligence_report.py scripts/run_refreshable_artifact_report.py tests/test_run_repo_semantic_atlas.py tests/test_run_repo_intelligence_report.py tests/test_run_refreshable_artifact_report.py`
+- [x] `python -m black --check scripts/run_repo_semantic_atlas.py scripts/run_repo_intelligence_report.py scripts/run_refreshable_artifact_report.py tests/test_run_repo_semantic_atlas.py tests/test_run_repo_intelligence_report.py tests/test_run_refreshable_artifact_report.py`
+**Success Criteria**: The repo gains a bounded semantic atlas that maps remembered phrases like `ToneSoul Chronicles` to canonical files and neighborhoods, while remaining discoverable through repo-intelligence and refreshable artifact tooling.
+
+## Phase 497: Semantic Memory Contract Note (2026-03-16)
+- [x] write one addendum before changing atlas retrieval rules:
+- [x] `docs/plans/repo_semantic_memory_contract_addendum_2026-03-16.md`
+- [x] anchor the contract in biological memory and retrieval literature
+
+## Phase 498: Semantic Memory Retrieval Contract (2026-03-16)
+- [x] add memory layers, naming rules, and retrieval protocol to `run_repo_semantic_atlas.py`
+- [x] encode biology and AI retrieval basis directly into the atlas payload
+- [x] keep the contract backend-agnostic so different search-oriented agents can reuse it
+
+## Phase 499: Semantic Memory Retrieval Validation (2026-03-16)
+- [x] extend atlas-focused tests to assert the new retrieval contract sections
+- [x] `python -m pytest tests/test_run_repo_semantic_atlas.py tests/test_run_repo_intelligence_report.py tests/test_run_refreshable_artifact_report.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_repo_semantic_atlas.py scripts/run_repo_intelligence_report.py scripts/run_refreshable_artifact_report.py tests/test_run_repo_semantic_atlas.py tests/test_run_repo_intelligence_report.py tests/test_run_refreshable_artifact_report.py`
+- [x] `python -m black --check scripts/run_repo_semantic_atlas.py scripts/run_repo_intelligence_report.py scripts/run_refreshable_artifact_report.py tests/test_run_repo_semantic_atlas.py tests/test_run_repo_intelligence_report.py tests/test_run_refreshable_artifact_report.py`
+**Success Criteria**: The semantic atlas no longer only lists aliases and neighborhoods; it now teaches any later search-oriented AI how to retrieve by alias, neighborhood, status surface, and one-hop expansion before raw file scan.
+
+## Phase 500: Document Threads Note (2026-03-16)
+- [x] write one addendum before wiring document filenames into the atlas:
+- [x] `docs/plans/repo_document_threads_addendum_2026-03-16.md`
+- [x] keep the first version deterministic and filename-driven
+
+## Phase 501: Document Threads Surface (2026-03-16)
+- [x] extend `run_repo_semantic_atlas.py` with `document_threads`
+- [x] connect `docs/plans`, `docs/status`, and `docs/chronicles` filenames through normalized thread ids
+- [x] link each thread to nearby semantic neighborhoods
+
+## Phase 502: Document Threads Validation (2026-03-16)
+- [x] extend atlas-focused tests to assert thread grouping and markdown rendering
+- [x] `python -m pytest tests/test_run_repo_semantic_atlas.py tests/test_run_repo_intelligence_report.py tests/test_run_refreshable_artifact_report.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_repo_semantic_atlas.py scripts/run_repo_intelligence_report.py scripts/run_refreshable_artifact_report.py tests/test_run_repo_semantic_atlas.py tests/test_run_repo_intelligence_report.py tests/test_run_refreshable_artifact_report.py`
+- [x] `python -m black --check scripts/run_repo_semantic_atlas.py scripts/run_repo_intelligence_report.py scripts/run_refreshable_artifact_report.py tests/test_run_repo_semantic_atlas.py tests/test_run_repo_intelligence_report.py tests/test_run_refreshable_artifact_report.py`
+**Success Criteria**: The semantic atlas now strings the repository's document filenames into deterministic threads that later agents can follow by lane, normalized stem, and cross-directory relation.
+
+## Phase 503: Semantic Atlas Governance Note (2026-03-16)
+- [x] write one addendum before mirroring the semantic atlas into governance surfaces
+- [x] `docs/plans/repo_semantic_atlas_governance_mirror_addendum_2026-03-16.md`
+- [x] keep the mirror passive and source-declared
+
+## Phase 504: Semantic Atlas Governance Surface (2026-03-16)
+- [x] mirror `repo_semantic_atlas_latest.json` into `repo_healthcheck`
+- [x] mirror the same compact lines into `worktree_settlement` and `repo_governance_settlement`
+- [x] avoid inventing atlas-specific upper-layer schema beyond shared compact lines
+
+## Phase 505: Semantic Atlas Governance Validation (2026-03-16)
+- [x] extend focused tests for healthcheck and settlement mirrors
+- [x] `python -m pytest tests/test_run_repo_healthcheck.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_repo_healthcheck.py scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_run_repo_healthcheck.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+- [x] `python -m black --check scripts/run_repo_healthcheck.py scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_run_repo_healthcheck.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+**Success Criteria**: Any later agent can discover the semantic atlas and its retrieval protocol from the normal repo governance entry surfaces, not only by opening the atlas artifact directly.
+
+## Phase 506: Repo Intelligence Semantic Protocol Note (2026-03-16)
+- [x] write one addendum before compressing atlas retrieval rules into repo intelligence
+- [x] `docs/plans/repo_intelligence_semantic_protocol_addendum_2026-03-16.md`
+- [x] keep the mirror passive and source-declared
+
+## Phase 507: Repo Intelligence Semantic Protocol Surface (2026-03-16)
+- [x] mirror the atlas retrieval protocol into `run_repo_intelligence_report.py`
+- [x] expose first-neighborhood and protocol fields without rebuilding atlas semantics upstream
+- [x] keep `repo_intelligence` as the higher-level retrieval entrypoint
+
+## Phase 508: Repo Intelligence Semantic Protocol Validation (2026-03-16)
+- [x] extend focused tests for `run_repo_intelligence_report.py`
+- [x] `python -m pytest tests/test_run_repo_intelligence_report.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_repo_intelligence_report.py tests/test_run_repo_intelligence_report.py`
+- [x] `python -m black --check scripts/run_repo_intelligence_report.py tests/test_run_repo_intelligence_report.py`
+**Success Criteria**: Any later search-oriented agent opening repo intelligence can learn the atlas retrieval protocol and preferred first neighborhood before reopening the full atlas artifact.
+
+## Phase 509: ICL Translation Note (2026-03-16)
+- [x] write one addendum translating task-recognition language into ToneSoul terms
+- [x] `docs/plans/icl_task_recognition_semantic_translation_addendum_2026-03-16.md`
+- [x] keep the paper as support for protocol routing, not overclaim full subjectivity
+
+## Phase 510: ICL Retrieval Basis Surface (2026-03-16)
+- [x] add one new AI retrieval basis principle to `run_repo_semantic_atlas.py`
+- [x] phrase the takeaway in ToneSoul terms (`protocol recognition seam`, `post-seam context release`)
+- [x] keep the atlas ontology ours, not copied from external wording
+
+## Phase 511: ICL Retrieval Basis Validation (2026-03-16)
+- [x] extend focused atlas tests for the new retrieval basis item
+- [x] `python -m pytest tests/test_run_repo_semantic_atlas.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_repo_semantic_atlas.py tests/test_run_repo_semantic_atlas.py`
+- [x] `python -m black --check scripts/run_repo_semantic_atlas.py tests/test_run_repo_semantic_atlas.py`
+**Success Criteria**: The semantic atlas now cites ICL task-recognition work as support for protocol-as-routing-organ, but keeps the theory phrased in ToneSoul language rather than generic prompt-engineering language.
+
+## Phase 512: Semantic Protocol Handoff Note (2026-03-16)
+- [x] write one addendum before promoting semantic protocol fields into shared handoff grammar
+- [x] `docs/plans/semantic_protocol_handoff_parity_addendum_2026-03-16.md`
+- [x] keep the fields optional and source-declared
+
+## Phase 513: Semantic Protocol Handoff Surface (2026-03-16)
+- [x] preserve `semantic_retrieval_protocol` and `semantic_preferred_neighborhood` in refreshable extraction
+- [x] preserve the same fields in repo healthcheck preview extraction and repo-intelligence mirror rendering
+- [x] document the fields under the shared compact handoff grammar
+
+## Phase 514: Semantic Protocol Handoff Validation (2026-03-16)
+- [x] extend focused tests for refreshable and repo healthcheck parity
+- [x] `python -m pytest tests/test_run_refreshable_artifact_report.py tests/test_run_repo_healthcheck.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_refreshable_artifact_report.py scripts/run_repo_healthcheck.py tests/test_run_refreshable_artifact_report.py tests/test_run_repo_healthcheck.py`
+- [x] `python -m black --check scripts/run_refreshable_artifact_report.py scripts/run_repo_healthcheck.py tests/test_run_refreshable_artifact_report.py tests/test_run_repo_healthcheck.py`
+**Success Criteria**: Semantic retrieval guidance from repo intelligence no longer disappears in the generic preview chain; later agents can still see how to search, not only which file to open.
+
+## Phase 515: Repo Intelligence Settlement Mirror Note (2026-03-16)
+- [x] write one addendum before promoting repo intelligence into settlement focus mirrors
+- [x] `docs/plans/repo_intelligence_settlement_mirror_addendum_2026-03-16.md`
+- [x] keep the mirror passive and source-declared
+
+## Phase 516: Repo Intelligence Settlement Focus Mirror (2026-03-16)
+- [x] select `repo_intelligence_focus_preview` from refreshable handoff previews
+- [x] mirror the same focus preview through repo-governance settlement
+- [x] render `semantic_retrieval_protocol` and `semantic_preferred_neighborhood` in settlement summaries and detail mirrors
+
+## Phase 517: Repo Intelligence Settlement Mirror Validation (2026-03-16)
+- [x] extend focused settlement tests for repo intelligence mirror parity
+- [x] `python -m pytest tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py -q --tb=short`
+- [x] `python -m ruff check scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+- [x] `python -m black --check scripts/run_worktree_settlement_report.py scripts/run_repo_governance_settlement_report.py tests/test_run_worktree_settlement_report.py tests/test_run_repo_governance_settlement_report.py`
+**Success Criteria**: Settlement no longer loses repo intelligence's retrieval protocol; higher-level governance can still read how later agents should search before opening raw files.
+
+## Phase 518: Soul Persistence — Cross-Session Ψ Integral (2026-03-18)
+- [x] Create `tonesoul/soul_persistence.py` — `SoulPsiSnapshot` dataclass, `save_psi()`, `load_psi()`
+- [x] Add `save_persistence()` / `load_persistence()` methods to `TensionEngine`
+- [x] Wire `load_persistence()` into `UnifiedPipeline._get_tension_engine()`
+- [x] Wire `save_persistence()` into `UnifiedPipeline.process()` success path
+- [x] Create `tests/test_soul_persistence.py` — 7 tests (roundtrip, missing file, corrupt file, nested dirs, snapshot dict, engine save/load, decay correctness)
+- [x] `python -m ruff check tonesoul/soul_persistence.py tonesoul/tension_engine.py tests/test_soul_persistence.py` — All checks passed
+- [x] `python -m pytest tests/ --tb=no -q` — 1643 passed, 0 failed
+**Success Criteria**: Ψ integral (`S_oul = Σ T[i] × e^(-α(t-t[i]))`) now survives process restarts via `memory/autonomous/soul_psi.json`. "沒有記憶的沉澱就沒有性格，只有反應。"
+
+## Phase 519: ETCL Seed Lifecycle T0-T6 (2026-03-18)
+- [x] Add `SeedStage` enum (T0_DRAFT through T6_CANONICAL) to `tonesoul/memory/crystallizer.py`
+- [x] Add `stage` and `stage_history` fields to `Crystal` dataclass (backward compatible — legacy crystals default to T0)
+- [x] Add `advance_stage()` method with forward-only validation
+- [x] Auto-advance to T1 on `crystallize()` (deposit to storage)
+- [x] Add `record_retrieval()` method for T2 transition + access_count increment
+- [x] Update `_dedupe_crystals()` to keep higher stage on merge
+- [x] Create `tests/test_etcl_lifecycle.py` — 16 tests covering enum, forward/backward transitions, full T0→T6 lifecycle, serialization, backward compat, crystallize→T1, retrieval→T2, idempotency, dedupe stage precedence
+- [x] `python -m ruff check tonesoul/memory/crystallizer.py` — All checks passed
+- [x] `python -m pytest tests/ --tb=no -q` — 1659 passed, 0 failed
+**Success Criteria**: Crystal lifecycle now tracks ETCL stages (T0-T6) per Vol-2 spec. Crystals progress from Draft → Deposit → Retrieval with full transition history.
+
+## Phase 520: JUMP Engine — Singularity Detection & Seabed Lockdown (2026-03-18)
+- [x] Fix `ACTION_POLICY["lockdown"]` to `["verify", "cite", "inquire"]` per Vol-5 §2 (was only `["inquire"]`)
+- [x] Create `tonesoul/jump_monitor.py` — `JumpMonitor` class with three singularity indicators: reasoning convergence (ΔU/ΔInput), chain integrity, self-reference ratio
+- [x] Implement `JumpSignal` dataclass, `LockdownStatus` enum, sliding window tracking
+- [x] Add `check_jump_trigger()` method to `GovernanceKernel` (lazy-loaded JumpMonitor)
+- [x] Implement `exit_lockdown()` for explicit human-approved exit
+- [x] Create `tests/test_jump_engine.py` — 14 tests (action set spec, normal conditions, individual indicators, combined trigger, lockdown enter/exit, governance kernel integration)
+- [x] `python -m ruff check tonesoul/jump_monitor.py tonesoul/governance/kernel.py tonesoul/action_set.py` — All checks passed
+- [x] `python -m pytest tests/ --tb=no -q` — 1673 passed, 0 failed
+**Success Criteria**: JUMP Engine runtime enforcement — when ≥2 of 3 singularity indicators trip, system enters Seabed Lockdown (Verify/Cite/Inquire only). GovernanceKernel can now detect cognitive singularity.
+
+## Phase 521: Home Vector + Drift Tracker (2026-03-18)
+- [x] Create `tonesoul/drift_tracker.py` — `DriftTracker` class with configurable Home Vector H (defaults to {deltaT: 0.5, deltaS: 0.5, deltaR: 0.5})
+- [x] Implement `compute()` — Euclidean distance from H, per-axis deltas, threshold check
+- [x] Implement `drift_max_for_dcs()` — rescales to DCS domain (√3 → 4.0 linear map)
+- [x] Create `tests/test_drift_tracker.py` — 12 tests (default H, zero drift, monotonicity, per-axis, threshold exceeded/not, custom H, max drift, DCS scaling, property, serialization)
+- [x] `python -m ruff check tonesoul/drift_tracker.py tests/test_drift_tracker.py` — All checks passed
+- [x] `python -m pytest tests/ --tb=no -q` — 1685 passed, 0 failed
+**Success Criteria**: Home Vector anchoring operational. DriftTracker can compute Drift(C_t, H) and translate it to DCS-compatible drift_max values for governance integration.
+
+## Phase 522: Dead Code Audit & Architecture Blueprint Update (2026-03-18)
+- [x] Investigated `_legacy/`, `ystm/`, `yss_*.py` for dead code — all three are actively referenced (25+ imports)
+- [x] Updated architecture blueprint Phase A-E with completion status
+- [x] Recorded finding: dead code removal deferred until YSS pipeline fully migrated to UnifiedPipeline
+- [x] `python -m pytest tests/ --tb=no -q` — 1685 passed, 0 failed
+**Success Criteria**: Dead code audit complete. All five architecture phases (A-E) have been executed or documented with findings.
+
+## Phase 523: Deliberation Pareto Weighting (2026-03-18)
+- [x] Added Pareto frontier computation in `tonesoul/deliberation/gravity.py`
+- [x] Integrated conservative Pareto boost (`PARETO_BOOST=0.05`) into `calculate_weights()`
+- [x] Objective space: maximize `confidence`, minimize `safety_risk`
+- [x] Added `tests/test_deliberation_gravity_pareto.py` (3 tests)
+- [x] `python -m ruff check tonesoul/deliberation/gravity.py tests/test_deliberation_gravity_pareto.py` — All checks passed
+- [x] `python -m pytest tests/test_deliberation_gravity_pareto.py tests/test_deliberation_engine.py -q --tb=short` — 5 passed
+- [x] `python -m pytest tests/ --tb=no -q` — 1688 passed, 0 failed
+**Success Criteria**: Deliberation now includes explicit Pareto-aware weighting support without breaking existing synthesis behavior.

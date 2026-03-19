@@ -1,183 +1,238 @@
-# Codex Task: Phase 140 — ToneSoul Mirror (Dual-Track Inference Loop)
+# Codex Task: Phase 547 — Exception Observability Layer
 
-**交付者**: Antigravity (Architect)
-**日期**: 2026-03-10
-**分支**: feat/env-perception（不可 push 到 master）
+**指派者**: 痕 (Hén) — Claude Opus 4.6
+**日期**: 2026-03-19
+**分支**: `feat/exception-observability`（不可 push 到 master）
+**前置條件**: 1851 tests passing, lint clean
 
 ---
 
-## ⚠️ 永遠要做的事（每次 commit 前）
+## ⚠️ 每次 commit 前必做
 
 ```bash
 python -m pytest tests/ -x --tb=short -q
-ruff check tonesoul tests
+python -m ruff check tonesoul tests
 ```
 
-**跳過 = 整個交付失敗。**
+跳過 = 整個交付失敗。連續失敗 3 次必須停止，記錄到 `CODEX_HANDBACK.md`。
 
-## ⚠️ 安全護欄（讀 AGENTS.md「Codex Full-Auto 安全護欄」段落）
-
-- 不可刪除 tonesoul/ 下的核心模組
-- 不可修改 .env, .gitignore, AGENTS.md, MEMORY.md
-- 不可 commit API key 或 .env
-- 不可 push 到 master
-- 不可安裝系統套件
-- 連續失敗 3 次必須停止並留記錄
+完整規範請讀 `CODEX_PROTOCOL.md`。
 
 ---
 
-## 脈絡恢復（先讀這些）
+## 脈絡（先讀這些）
 
-1. `AGENTS.md` — 行為規範
-2. `tonesoul/schemas.py` — 現有 schema（注意你之前做的 `SubjectivityLayer` 和 `SubjectivityPromotionStatus`）
-3. `tonesoul/tension_engine.py` — Tension 計算引擎
-4. `tonesoul/governance/kernel.py` — 治理核心（evaluate / deliberate 方法）
-5. `tonesoul/unified_pipeline.py` — 主推理管線（process 方法）
-6. `tonesoul/memory/write_gateway.py` — 記憶寫入閘門（你之前加的 subjectivity 驗證）
-
----
-
-## 這次的目標
-
-建立 **ToneSoul Mirror** — 一面鏡子，讓 AI 能同時看到：
-1. 自己的原始輸出
-2. 經過 TensionEngine + GovernanceKernel 的治理版本
-3. 兩者之間的差異（delta）
-
-**這不是過濾器**。AI 不被攔截。AI 看到差異後自己決定最終回應。
+1. `AGENTS.md` — 行為規範（注意「永遠不要靜默吞掉異常」）
+2. `CODEX_PROTOCOL.md` — 你的工作流程規範
+3. `tonesoul/unified_pipeline.py` — 主管線（18+ lazy getters，大量 `except: pass`）
+4. `tonesoul/governance/kernel.py` — 治理核心（LLM 探測 + 摩擦計算）
+5. `tonesoul/dream_engine.py` — 離線碰撞引擎（Phase 543 驗證區塊）
 
 ---
 
-## Task A：DualTrack Schema
+## 背景
 
-**檔案**：`tonesoul/schemas.py`
+專案有 47 個 `except Exception: pass` 區塊，其中 18 個在關鍵路徑。這違反 AGENTS.md 的原則。目標是在**不改變行為**的前提下，讓這些靜默失敗可觀測。
 
-在檔尾（`__all__` 之前）加兩個新 model：
+**核心原則**: 不改邏輯，只加觀測。所有改動必須是：
+- `pass` → `pass` + 把錯誤記到 `dispatch_trace` 或結構化欄位
+- 不影響返回值、不改 fallback 行為、不改流程
+
+---
+
+## Task A: 建立輕量異常追蹤工具
+
+**檔案（新建）**: `tonesoul/exception_trace.py`
 
 ```python
-class MirrorDelta(BaseModel):
-    """Raw output vs governed version 的差異快照。"""
-    tension_before: TensionSnapshot
-    tension_after: TensionSnapshot
-    governance_decision: Optional[GovernanceDecision] = None
-    subjectivity_flags: List[SubjectivityLayer] = Field(default_factory=list)
-    delta_summary: str = ""
-    mirror_triggered: bool = False
+"""Lightweight exception observer — records suppressed exceptions without changing control flow."""
 
-class DualTrackResponse(BaseModel):
-    """雙軌回應：原始 + 治理版本 + 差異。"""
-    raw_response: str
-    governed_response: str
-    mirror_delta: MirrorDelta
-    final_choice: str = Field(default="raw")  # "raw" | "governed" | "synthesized"
-    reflection_note: str = ""
-```
+from __future__ import annotations
+from dataclasses import dataclass, field
+from typing import Any, Dict, List
 
-- 把 `MirrorDelta` 和 `DualTrackResponse` 加到 `__all__`
-- 測試：在 `tests/test_schemas.py` 加測試確認 model 能正確實例化和序列化
 
----
+@dataclass
+class SuppressedError:
+    """A single suppressed exception record."""
+    component: str        # e.g. "governance_kernel", "drift_monitor"
+    operation: str        # e.g. "_get_governance_kernel", "compute_friction"
+    error_type: str       # e.g. "ImportError", "ConnectionError"
+    message: str          # str(e)
 
-## Task B：ToneSoulMirror 核心
 
-**檔案（新建）**：`tonesoul/mirror.py`
-
-```python
-class ToneSoulMirror:
+class ExceptionTrace:
+    """Session-scoped collector for suppressed exceptions.
+    
+    Usage:
+        trace = ExceptionTrace()
+        try:
+            ...
+        except Exception as e:
+            trace.record("component", "operation", e)
+            pass  # original behavior preserved
+        
+        # At end of pipeline:
+        dispatch_trace["suppressed_errors"] = trace.summary()
     """
-    鏡子模式中間件。
     
-    不攔截 AI 輸出。而是：
-    1. 接收 raw_output
-    2. 用 TensionEngine 計算 tension
-    3. 用 GovernanceKernel 生成 governed version
-    4. 返回 DualTrackResponse（兩個版本 + delta）
+    def __init__(self) -> None:
+        self._errors: List[SuppressedError] = []
     
-    AI 或 pipeline 可以看差異，自己決定最終回應。
-    """
-    def __init__(self, tension_engine=None, governance_kernel=None):
-        ...
+    def record(self, component: str, operation: str, error: Exception) -> None:
+        """Record a suppressed exception. Does not re-raise."""
+        self._errors.append(SuppressedError(
+            component=component,
+            operation=operation,
+            error_type=type(error).__name__,
+            message=str(error)[:200],  # truncate long messages
+        ))
     
-    def reflect(self, raw_output: str, context: dict) -> DualTrackResponse:
-        ...
+    @property
+    def has_errors(self) -> bool:
+        return len(self._errors) > 0
     
-    def _apply_governance(self, raw: str, decision) -> str:
-        ...
+    @property
+    def count(self) -> int:
+        return len(self._errors)
     
-    def _compute_delta(self, before, after, decision) -> MirrorDelta:
-        ...
+    def summary(self) -> Dict[str, Any]:
+        """Return structured summary for dispatch_trace injection."""
+        if not self._errors:
+            return {"suppressed_count": 0}
+        return {
+            "suppressed_count": len(self._errors),
+            "errors": [
+                {
+                    "component": e.component,
+                    "operation": e.operation,
+                    "error_type": e.error_type,
+                    "message": e.message,
+                }
+                for e in self._errors
+            ],
+        }
 ```
 
-**關鍵設計原則**：
-- `reflect()` 是純函數：不修改任何狀態
-- 如果 TensionEngine 或 GovernanceKernel 是 None，graceful fallback（mirror_triggered=False）
-- 不做 LLM 呼叫，只用已有的 tension/governance 計算
-- governed_response 只在 tension 超過閾值時才與 raw 不同
-
-**測試**：新建 `tests/test_mirror.py`
-- `test_mirror_passthrough_low_tension` — tensions 低時 governed == raw
-- `test_mirror_triggered_high_tension` — tension 高時 mirror_triggered=True
-- `test_mirror_graceful_no_engine` — 沒有 engine 時 fallback
-- `test_mirror_delta_serializable` — DualTrackResponse 可 JSON 序列化
+**測試**: 新建 `tests/test_exception_trace.py`
+- `test_empty_trace_summary` — 空 trace 正確輸出
+- `test_record_adds_error` — 記錄後 count 增加
+- `test_summary_structure` — summary 欄位結構正確
+- `test_message_truncation` — 超長 message 被截斷到 200 字元
+- `test_has_errors_flag` — has_errors 正確反映狀態
 
 ---
 
-## Task C：UnifiedPipeline Mirror Step
+## Task B: 注入 ExceptionTrace 到 UnifiedPipeline.process()
 
-**檔案**：`tonesoul/unified_pipeline.py`
+**檔案**: `tonesoul/unified_pipeline.py`
 
-在 `process()` 方法中，response 生成之後（final output 之前），加入可選的 mirror step：
+1. 在 `__init__` 加 `self._exc_trace = ExceptionTrace()`
+2. 在 `process()` 方法開頭加 `self._exc_trace = ExceptionTrace()` (reset per-call)
+3. 在以下**關鍵路徑**的 `except Exception: pass` 區塊加入 `self._exc_trace.record(...)`：
 
-1. 加 `__init__` 參數：`mirror_enabled: bool = False`
-2. 如果 `mirror_enabled`：
-   - 實例化 `ToneSoulMirror(self.tension_engine, self.governance_kernel)`
-   - 呼叫 `mirror.reflect(response_text, context)`
-   - 把 `mirror_delta` 放進 `trajectory` dict
-3. 如果 `not mirror_enabled`：完全不改現有行為
+### 必改的 lazy getters (每個都是同一模式)：
 
-**重要**：這必須是 opt-in 的。預設 `mirror_enabled=False`，不影響現有功能。
+找這些方法，每個裡面都有 `except Exception: pass`：
+- `_get_governance_kernel()`
+- `_get_llm_router()`  
+- `_get_llm_client()` (多處)
+- `_get_tonebridge()`
+- `_get_council()`
+- `_get_trajectory()`
+- `_get_drift_monitor()`
+- `_get_alert_escalation()`
+- `_get_deliberation()`
+- `_get_tension_engine()`
 
-**測試**：在 `tests/test_unified_pipeline_v2_runtime.py` 加：
-- `test_pipeline_mirror_disabled_default` — 預設不 mirror
-- `test_pipeline_mirror_enabled_trajectory` — 開啟後 trajectory 有 mirror_delta
-
----
-
-## Task D：Mirror Memory Recording
-
-**檔案**：`tonesoul/mirror.py`（擴展）
-
-加一個方法：
+改法（每個都一樣）：
 ```python
-def record_delta(self, dual: DualTrackResponse, write_gateway) -> None:
-    """把 mirror delta 記錄到 soul.db。"""
-    if not dual.mirror_delta.mirror_triggered:
-        return  # 不記錄未觸發的 mirror
-    payload = {
-        "content": dual.mirror_delta.delta_summary,
-        "type": "mirror_delta",
-        "subjectivity_layer": "tension",
-        "mirror_delta": dual.mirror_delta.model_dump(),
-        ...
-    }
-    write_gateway.write_payload(MemorySource.CUSTOM, payload)
+# 改前：
+except Exception:
+    pass
+
+# 改後：
+except Exception as e:
+    self._exc_trace.record("unified_pipeline", "_get_XXX", e)
 ```
 
-**測試**：在 `tests/test_mirror.py` 加：
-- `test_record_delta_skips_untriggered` — 未觸發不寫入
-- `test_record_delta_writes_triggered` — 觸發時正確寫入
+### 必改的 process() 內部 try/except：
+
+在 `process()` 方法裡面搜尋所有 `except Exception: pass`，加入 trace.record。
+至少包括：
+- Section 2.4 AlertEscalation 的 try/except（~line 1689）
+- JUMP trigger 呼叫的 except（~line 1679）
+- soul_persistence 的 save
+
+4. 在 `process()` 末尾、return 之前，加入：
+```python
+if self._exc_trace.has_errors:
+    dispatch_trace["suppressed_errors"] = self._exc_trace.summary()
+```
+
+**測試**: 在 `tests/test_unified_pipeline_v2_runtime.py` 加：
+- `test_suppressed_errors_absent_on_clean_run` — 正常執行不應有 suppressed_errors
+- `test_suppressed_errors_present_on_init_failure` — mock 一個 getter 拋異常，確認 trace 出現
 
 ---
 
-## 不要做的事
+## Task C: 注入 ExceptionTrace 到 GovernanceKernel
 
-- ❌ 不改 GovernanceKernel 的核心邏輯（已審計通過）
-- ❌ 不改 TensionEngine 的計算邏輯
-- ❌ 不改 WriteGateway 的驗證邏輯（你之前做的 subjectivity gate 不要動）
-- ❌ 不在 Mirror 裡做 LLM 呼叫
-- ❌ 不建新的 CI workflow
-- ❌ 不改 Guardian/safety 相關模組
-- ❌ 如果不確定，選保守方案。**Mirror 是觀察工具，不是控制工具。**
+**檔案**: `tonesoul/governance/kernel.py`
+
+同模式：
+1. 在 `__init__` 加 `self._exc_trace = ExceptionTrace()`
+2. 在以下 `except Exception: pass` 加 `self._exc_trace.record(...)`：
+   - `_try_ollama()`
+   - `_try_lmstudio()`
+   - `_try_gemini()`
+   - `_get_friction_calculator()`
+   - `_get_circuit_breaker()`
+   - `_get_perturbation_recovery()`
+   - `compute_runtime_friction()`
+3. 在 `build_routing_trace()` 裡加入 suppressed_errors（如果有的話）
+
+**測試**: 在 `tests/test_governance_kernel.py`（或新建）加：
+- `test_kernel_exc_trace_default_empty` — 初始化後 trace 為空
+- `test_kernel_records_backend_probe_failure` — mock Ollama 失敗，確認 trace 有記錄
+
+---
+
+## 成功標準
+
+- [ ] `tonesoul/exception_trace.py` 新建，含 SuppressedError + ExceptionTrace
+- [ ] UnifiedPipeline 的 **至少 10 個** `except: pass` 改為 `except as e: trace.record(...)`
+- [ ] GovernanceKernel 的 **至少 5 個** `except: pass` 改為 trace.record
+- [ ] `dispatch_trace["suppressed_errors"]` 在有異常時出現
+- [ ] 所有新功能有測試
+- [ ] `ruff check tonesoul/exception_trace.py tonesoul/unified_pipeline.py tonesoul/governance/kernel.py tests/test_exception_trace.py` → 通過
+- [ ] `pytest tests/ -x -q` → 全過，**測試總數 ≥ 1858**（至少 +7 新測試）
+- [ ] `CODEX_HANDBACK.md` 已更新
+
+---
+
+## 禁止事項
+
+- ❌ 不改任何 `except` 區塊的 **控制流**（不改 return 值、不改 fallback 行為）
+- ❌ 不刪除任何現有的 `except: pass`（只在旁邊加 trace.record）
+- ❌ 不改 `alert_escalation.py` 的警報邏輯
+- ❌ 不改 `AGENTS.md`, `CODEX_PROTOCOL.md`, `AGENT_PROTOCOL.md`
+- ❌ 不加新的外部依賴
+- ❌ 不改 Tier 3 (LOW severity) 的 except 區塊 — 那些是故意設計的 probe/fallback
+- ❌ 不碰 `tonesoul/llm/router.py` 和 `tonesoul/llm/ollama_client.py` — 那些探測模式的靜默是正確的
+
+## 技術提示
+
+1. `ExceptionTrace` 是 **pure dataclass**，不要加 logging import，只收集資料
+2. `process()` 每次呼叫開頭 reset trace，避免跨 request 累積
+3. lazy getters 定義在 class body，但 `self._exc_trace` 在 `__init__` 設定 → 確認 `__init__` 早於 getter 呼叫
+4. `message` 截斷到 200 字元，避免 dispatch_trace 膨脹
+5. 參考 `dispatch_trace["alert"]` 的寫法 — 同樣是在 return 前注入 trace
+6. 現有測試不應受影響 — 你只是在 `pass` 旁邊多加一行 `trace.record`
+
+---
+
+*指派者: 痕 (Hén) | 日期: 2026-03-19*
 
 ---
 

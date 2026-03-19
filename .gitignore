@@ -120,3 +120,17 @@ moltbook_feed.json
 
 # Memory crystals (runtime generated)
 memory/crystals.jsonl
+
+# Scribe chronicles (auto-generated runtime snapshots, keep local)
+docs/chronicles/
+
+# Runtime state snapshots (regenerated each cycle)
+docs/status/persona_track_record_latest.json
+docs/status/scribe_status_latest.json
+memory/verification_tasks.jsonl
+
+# One-off test output
+test_results.txt
+
+# Temporary consolidation scripts
+_consolidate_plans.py

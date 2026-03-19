@@ -30,6 +30,7 @@ from tonesoul.council import CouncilRequest, CouncilRuntime
 from tonesoul.council.self_journal import load_recent_memory
 from tonesoul.evolution import ContextDistiller
 from tonesoul.memory import consolidate
+from tonesoul.memory.crystallizer import MemoryCrystallizer
 from tonesoul.memory.soul_db import JsonlSoulDB, MemorySource, SoulDB
 from tonesoul.supabase_persistence import SupabasePersistence
 
@@ -702,8 +703,112 @@ def _build_chat_evolution_payload(response_payload: dict) -> dict:
         "semantic_contradictions": _as_list(response_payload.get("semantic_contradictions")),
         "semantic_graph_summary": _as_dict(response_payload.get("semantic_graph_summary")),
         "dispatch_trace": _as_dict(response_payload.get("dispatch_trace")),
+        "governance_brief": _as_dict(response_payload.get("governance_brief"))
+        or _build_governance_brief(response_payload),
+        "life_entry_brief": _as_dict(response_payload.get("life_entry_brief"))
+        or _build_life_entry_brief(response_payload),
         "visual_chain_snapshot": _as_dict(deliberation.get("visual_chain_snapshot")),
         "captured_at": _utc_now(),
+    }
+
+
+def _summarize_text(value, max_chars: int = 160) -> str:
+    text = str(value or "").strip()
+    if not text:
+        return ""
+    normalized = " ".join(text.split())
+    if len(normalized) <= max_chars:
+        return normalized
+    return normalized[: max_chars - 3].rstrip() + "..."
+
+
+def _coerce_optional_float(value) -> float | None:
+    if value is None:
+        return None
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _build_crystal_freshness_brief() -> dict:
+    """Return freshness posture for crystal governance observability."""
+    try:
+        summary = MemoryCrystallizer().freshness_summary(top_n_stale=3)
+        if isinstance(summary, dict):
+            return summary
+    except Exception:
+        pass
+    return {
+        "total_crystals": 0,
+        "active_count": 0,
+        "needs_verification_count": 0,
+        "stale_count": 0,
+        "mean_freshness": 0.0,
+        "stale_rules": [],
+    }
+
+
+def _build_governance_brief(response_payload: dict) -> dict:
+    verdict = _as_dict(response_payload.get("verdict"))
+    deliberation = _as_dict(response_payload.get("deliberation"))
+    soul_audit = _as_dict(deliberation.get("soulAudit"))
+    decision_matrix = _as_dict(deliberation.get("decision_matrix"))
+    divergence_quality = _as_dict(deliberation.get("divergence_quality"))
+    next_moves = _as_list(deliberation.get("next_moves"))
+    dispatch_trace = _as_dict(response_payload.get("dispatch_trace"))
+    contradictions = _as_list(response_payload.get("semantic_contradictions"))
+
+    first_move = ""
+    if next_moves:
+        first = next_moves[0]
+        if isinstance(first, dict):
+            first_move = _summarize_text(first.get("text") or first.get("label") or "")
+        else:
+            first_move = _summarize_text(first)
+
+    coherence = _coerce_optional_float(verdict.get("coherence"))
+    if coherence is not None:
+        coherence = round(_clamp01(coherence), 3)
+
+    return {
+        "verdict": str(verdict.get("verdict") or "unknown"),
+        "responsibility_tier": str(verdict.get("responsibility_tier") or "unknown"),
+        "uncertainty_band": str(verdict.get("uncertainty_band") or "unknown"),
+        "coherence": coherence,
+        "soul_passed": bool(soul_audit.get("passed", False)),
+        "contradiction_count": len(contradictions),
+        "strategy": str(decision_matrix.get("ai_strategy_name") or "direct_response"),
+        "divergence_band": str(divergence_quality.get("band") or "unknown"),
+        "dispatch_state": str(dispatch_trace.get("state") or ""),
+        "next_focus": first_move,
+        "crystal_freshness": _build_crystal_freshness_brief(),
+    }
+
+
+def _build_life_entry_brief(response_payload: dict) -> dict:
+    response_text = _summarize_text(response_payload.get("response") or "", max_chars=180)
+    intervention_strategy = str(response_payload.get("intervention_strategy") or "").strip()
+    trajectory = _as_dict(response_payload.get("trajectory_analysis"))
+    dispatch_trace = _as_dict(response_payload.get("dispatch_trace"))
+    deliberation = _as_dict(response_payload.get("deliberation"))
+    decision_matrix = _as_dict(deliberation.get("decision_matrix"))
+
+    trajectory_label = (
+        str(trajectory.get("trajectory_mode") or "").strip()
+        or str(trajectory.get("state") or "").strip()
+        or str(dispatch_trace.get("mode") or "").strip()
+    )
+
+    return {
+        "response_summary": response_text,
+        "inner_intent": _summarize_text(decision_matrix.get("user_hidden_intent") or ""),
+        "strategy": intervention_strategy or str(decision_matrix.get("ai_strategy_name") or ""),
+        "persona_mode": str(response_payload.get("persona_mode") or ""),
+        "trajectory_label": trajectory_label,
+        "self_commit_count": len(_as_list(response_payload.get("self_commits"))),
+        "rupture_count": len(_as_list(response_payload.get("ruptures"))),
+        "emergent_value_count": len(_as_list(response_payload.get("emergent_values"))),
     }
 
 
@@ -1349,6 +1454,68 @@ def health():
             "persistence": supabase_persistence.status_dict(),
         }
     )
+
+
+@app.route("/api/governance_status", methods=["GET"])
+def governance_status():
+    """Operator-facing governance posture endpoint.
+
+    Returns a compact view of the system's current governance health:
+    capability level, pipeline mode, evolution brief, and mirror state.
+    No authentication required — this is a transparency surface.
+    """
+    if llm_backend is None:
+        get_llm_client()
+
+    capability = "runtime_ready" if llm_backend and llm_backend != "unavailable" else "mock_only"
+    reason = None if capability == "runtime_ready" else "llm_backend_unavailable"
+
+    evolution_brief: dict = {}
+    try:
+        summary = _get_evolution_summary_payload()
+        evolution_brief = {
+            "total_patterns": summary.get("total_patterns", 0),
+            "conversations_analyzed": summary.get("conversations_analyzed", 0),
+            "last_distilled_at": summary.get("last_distilled_at"),
+        }
+    except Exception:
+        pass
+
+    recent_verdicts: list = []
+    if supabase_persistence.enabled:
+        try:
+            page = supabase_persistence.list_audit_logs(limit=5, offset=0)
+            logs = page.get("logs") if isinstance(page, dict) else []
+            for row in (logs or []):
+                if not isinstance(row, dict):
+                    continue
+                recent_verdicts.append(
+                    {
+                        "gate_decision": row.get("gate_decision"),
+                        "delta_t": row.get("delta_t"),
+                        "created_at": row.get("created_at"),
+                    }
+                )
+        except Exception:
+            pass
+
+    payload: dict = {
+        "status": "ok",
+        "governance_capability": capability,
+        "deliberation_level": "runtime" if capability == "runtime_ready" else "mock",
+        "llm_backend": llm_backend or "unavailable",
+        "llm_mode": _resolve_llm_mode(),
+        "mirror_enabled": True,
+        "pipeline_mode": "unified_pipeline",
+        "persistence_enabled": supabase_persistence.enabled,
+        "evolution": evolution_brief,
+        "crystal_freshness": _build_crystal_freshness_brief(),
+        "recent_verdicts": recent_verdicts,
+        "checked_at": _utc_now(),
+    }
+    if reason is not None:
+        payload["reason"] = reason
+    return jsonify(payload)
 
 
 @app.route("/api/status", methods=["GET"])
@@ -2001,6 +2168,14 @@ def chat():
         cached_payload = _chat_cache_get(cache_key)
         if cached_payload is not None:
             cached_payload.setdefault("execution_profile", execution_profile)
+            cached_payload.setdefault(
+                "governance_brief",
+                _build_governance_brief(cached_payload),
+            )
+            cached_payload.setdefault(
+                "life_entry_brief",
+                _build_life_entry_brief(cached_payload),
+            )
             _persist_chat_side_effects(
                 conversation_id=conversation_id,
                 session_id=session_id,
@@ -2052,6 +2227,8 @@ def chat():
             "dispatch_trace": getattr(result, "dispatch_trace", {}),
             "deliberation": _build_deliberation_payload(result),
         }
+        response_payload["governance_brief"] = _build_governance_brief(response_payload)
+        response_payload["life_entry_brief"] = _build_life_entry_brief(response_payload)
         _persist_chat_side_effects(
             conversation_id=conversation_id,
             session_id=session_id,

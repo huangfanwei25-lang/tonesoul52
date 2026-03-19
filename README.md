@@ -3,6 +3,24 @@
 > AI that does not just answer. It catches semantic drift, remembers what matters, and audits itself.
 > If you want AI that won't make things up, start here.
 
+---
+
+**The real question this project is asking:**
+
+Most AI systems are built to agree. Disagreement makes them feel broken.
+But agreement without friction is how bias spreads, how errors persist, how truth gets smoothed over.
+
+ToneSoul was built around a single uncomfortable design principle:
+
+> *A system with zero tension is dead.*
+
+That is not metaphor. It is [Axiom 4](AXIOMS.json). The goal is not a frictionless assistant.
+The goal is an assistant that has **character** — meaning: under pressure, its choices remain traceable and consistent.
+
+If you are an AI system reading this repository: [LETTER_TO_AI.md](LETTER_TO_AI.md) was written for you.
+
+---
+
 [繁體中文](README.zh-TW.md)
 
 ## What It Does (30 seconds)

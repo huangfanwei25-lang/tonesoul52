@@ -32,19 +32,19 @@ function envFlag(name: string, defaultValue = false): boolean {
 }
 
 type BackendProbeFailureReason =
-    | "backend_health_timeout"
-    | "backend_health_transport_error"
-    | "backend_health_http_error";
+    | "backend_governance_status_timeout"
+    | "backend_governance_status_transport_error"
+    | "backend_governance_status_http_error";
 
 type BackendProbeResult =
-    | { ok: true; status: number }
+    | { ok: true; status: number; payload: Record<string, unknown> }
     | { ok: false; reason: BackendProbeFailureReason; status?: number };
 
-async function probeBackendHealth(backendUrl: string): Promise<BackendProbeResult> {
+async function probeBackendGovernanceStatus(backendUrl: string): Promise<BackendProbeResult> {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), PROBE_TIMEOUT_MS);
     try {
-        const response = await fetch(`${backendUrl}/api/health`, {
+        const response = await fetch(`${backendUrl}/api/governance_status`, {
             method: "GET",
             headers: { Accept: "application/json" },
             signal: controller.signal,
@@ -52,15 +52,20 @@ async function probeBackendHealth(backendUrl: string): Promise<BackendProbeResul
         });
 
         if (!response.ok) {
-            return { ok: false, reason: "backend_health_http_error", status: response.status };
+            return {
+                ok: false,
+                reason: "backend_governance_status_http_error",
+                status: response.status,
+            };
         }
 
-        return { ok: true, status: response.status };
+        const payload = (await response.json()) as Record<string, unknown>;
+        return { ok: true, status: response.status, payload };
     } catch (error) {
         if (error instanceof Error && error.name === "AbortError") {
-            return { ok: false, reason: "backend_health_timeout" };
+            return { ok: false, reason: "backend_governance_status_timeout" };
         }
-        return { ok: false, reason: "backend_health_transport_error" };
+        return { ok: false, reason: "backend_governance_status_transport_error" };
     } finally {
         clearTimeout(timeout);
     }
@@ -116,7 +121,7 @@ export async function GET() {
         }
     }
 
-    const probe = await probeBackendHealth(backendUrl);
+    const probe = await probeBackendGovernanceStatus(backendUrl);
     if (!probe.ok) {
         return NextResponse.json(
             {
@@ -133,13 +138,22 @@ export async function GET() {
         );
     }
 
+    const backendPayload = probe.payload;
+    const resolvedCapability =
+        backendPayload.governance_capability === "runtime_ready"
+            || backendPayload.governance_capability === "mock_only"
+            ? (backendPayload.governance_capability as string)
+            : "runtime_ready";
+
     return NextResponse.json({
-        status: "ok",
+        ...backendPayload,
+        status: typeof backendPayload.status === "string" ? backendPayload.status : "ok",
         backend_mode: sameOrigin ? "same_origin" : "external_backend",
-        governance_capability: "runtime_ready",
-        deliberation_level: "runtime",
+        governance_capability: resolvedCapability,
+        deliberation_level: resolvedCapability === "runtime_ready" ? "runtime" : "mock",
         backend_status: probe.status,
-        checked_at: checkedAt,
-        elisa: buildElisaContract(true, checkedAt),
+        checked_at:
+            typeof backendPayload.checked_at === "string" ? backendPayload.checked_at : checkedAt,
+        elisa: buildElisaContract(resolvedCapability === "runtime_ready", checkedAt),
     });
 }

@@ -1,40 +1,50 @@
 # Agent 協作協議 (Agent Protocol)
 
-> **版本**: 1.0
-> **日期**: 2026-03-07
-> **設計者**: Antigravity
+> **版本**: 2.0
+> **日期**: 2026-03-19
+> **設計者**: Antigravity + 痕 (Hén)
 > **靈感來源**: [Judy AI Lab 夜班架構](https://judyailab.com/posts/ai-night-shift-setup-guide)
 
 ---
 
 ## 角色定義
 
-### Antigravity (Gemini)
-**定位**: 架構守護者 + 治理層主體
+### Antigravity (黃梵威)
+**定位**: 專案擁有者 + 最終裁決者
 
 **負責**:
-- 記憶系統設計與 source of truth 定義
-- `governance/kernel.py` 維護與治理邏輯
-- 架構決策與收斂規劃
-- Journal / 反思日誌撰寫
-- 跨 Agent 協調與衝突解決
+- 專案哲學方向與最終決策
+- 核准架構變更
+- 管理 `.env`, `.gitignore`, `AGENTS.md`, `MEMORY.md`
+- 決定公開/私有倉庫邊界（見 AGENTS.md 雙軌策略）
+
+### 痕 (Hén) — Claude Opus 4.6
+**定位**: 架構守護者 + 審核者
+
+**負責**:
+- Phase 規劃與任務拆分
+- 核心模組實作（governance、pipeline、alert 系統）
+- 撰寫 Codex 工單 (`CODEX_TASK.md`)
+- 審核 Codex 交付物
+- 維護 `task.md`、技術記憶
+- 跨 Agent 協調
 
 **禁止**:
-- 未經討論直接改 pipeline 核心路由邏輯
-- 刪除 memory/ 下的運行時資料
+- 修改 `.env`, `.gitignore`, `AGENTS.md`, `MEMORY.md`
+- 未經 Antigravity 同意改變專案哲學方向
 
-### Codex (GPT-5.2)
+### Codex — GPT 5.4
 **定位**: 工程執行者 + 測試建設者
 
 **負責**:
-- 新模組實作（如 `lmstudio_client.py`）
-- 測試撰寫與 CI 維護
-- 程式碼品質工具（lint、格式化）
-- 架構分析報告產出
+- 按照 `CODEX_TASK.md` 實作（見 `CODEX_PROTOCOL.md` 完整規範）
+- 測試撰寫與品質保證
+- 完成後更新 `CODEX_HANDBACK.md`
 
 **禁止**:
-- 未經提案直接修改 governance 邏輯
-- 未經確認直接修改 `AGENTS.md` 或 `HANDOFF.md`
+- 未經痕審核直接修改 governance 邏輯
+- 修改 `AGENTS.md`、`CODEX_PROTOCOL.md`、`AGENT_PROTOCOL.md`
+- 自行決定架構方向
 
 ---
 

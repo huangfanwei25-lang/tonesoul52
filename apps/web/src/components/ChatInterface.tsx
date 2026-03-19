@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Send, Loader2, Brain, ChevronDown, ChevronUp, AlertTriangle, MessageSquare, MoveRight, Users } from "lucide-react";
 import { ApiSettings } from "./SettingsModal";
-import { Message as DBMessage, DeliberationData, Conversation, saveConversation, MemoryInsight, findRelevantMemories } from "@/lib/db";
+import { Message as DBMessage, DeliberationData, Conversation, saveConversation, MemoryInsight, findRelevantMemories, GovernanceBrief, LifeEntryBrief } from "@/lib/db";
 import { calculateEntropy, validateAudit } from "@/lib/entropyCalculator";
 import CouncilChamber from "./CouncilChamber";
 import SoulStateMeter from "./SoulStateMeter";
@@ -67,6 +67,8 @@ type ChatRunResult = {
         policy_action: "normal" | "reduce_detail" | "constrain_reasoning";
         signals: string[];
     };
+    governanceBrief?: GovernanceBrief;
+    lifeEntryBrief?: LifeEntryBrief;
 };
 
 // ==================== 記憶注入模板 ====================
@@ -928,6 +930,12 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
             executionProfile: resolvedExecutionProfile,
             fallbackMetadata: normalizedFallbackMetadata,
             distillationGuard: normalizedDistillationGuard,
+            governanceBrief: payload.governance_brief && typeof payload.governance_brief === "object"
+                ? (payload.governance_brief as GovernanceBrief)
+                : undefined,
+            lifeEntryBrief: payload.life_entry_brief && typeof payload.life_entry_brief === "object"
+                ? (payload.life_entry_brief as LifeEntryBrief)
+                : undefined,
         };
     };
     const getCallAPI = () => {
@@ -1356,6 +1364,8 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
                 execution_profile: result.executionProfile,
                 fallback_metadata: result.fallbackMetadata,
                 distillation_guard: result.distillationGuard,
+                governance_brief: result.governanceBrief,
+                life_entry_brief: result.lifeEntryBrief,
                 timestamp: new Date(),
             };
 
@@ -1614,6 +1624,118 @@ export default function ChatInterface({ conversation, apiSettings, personaConfig
                                                             )}
                                                         </div>
                                                     </div>
+                                                    {/* Governance Brief (Phase 532) */}
+                                                    {message.governance_brief && (
+                                                        <div className="bg-white/60 p-4 rounded-lg border border-violet-200 shadow-sm">
+                                                            <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-1">
+                                                                <Users className="w-3 h-3" />
+                                                                治理摘要 (Governance Brief)
+                                                            </div>
+                                                            <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-xs text-slate-700">
+                                                                {message.governance_brief.verdict && (
+                                                                    <div className="flex gap-1">
+                                                                        <span className="text-slate-400 shrink-0">裁決:</span>
+                                                                        <span className="font-medium capitalize">{message.governance_brief.verdict}</span>
+                                                                    </div>
+                                                                )}
+                                                                {message.governance_brief.responsibility_tier && (
+                                                                    <div className="flex gap-1">
+                                                                        <span className="text-slate-400 shrink-0">責任層:</span>
+                                                                        <span className="font-medium">{message.governance_brief.responsibility_tier}</span>
+                                                                    </div>
+                                                                )}
+                                                                {message.governance_brief.coherence != null && (
+                                                                    <div className="flex gap-1">
+                                                                        <span className="text-slate-400 shrink-0">一致性:</span>
+                                                                        <span className="font-medium">{(message.governance_brief.coherence * 100).toFixed(0)}%</span>
+                                                                    </div>
+                                                                )}
+                                                                {message.governance_brief.soul_passed != null && (
+                                                                    <div className="flex gap-1">
+                                                                        <span className="text-slate-400 shrink-0">靈魂通過:</span>
+                                                                        <span className={`font-medium ${message.governance_brief.soul_passed ? 'text-emerald-600' : 'text-rose-600'}`}>
+                                                                            {message.governance_brief.soul_passed ? 'Yes' : 'No'}
+                                                                        </span>
+                                                                    </div>
+                                                                )}
+                                                                {message.governance_brief.dispatch_state && (
+                                                                    <div className="flex gap-1">
+                                                                        <span className="text-slate-400 shrink-0">派送:</span>
+                                                                        <span className="font-medium">{message.governance_brief.dispatch_state}</span>
+                                                                    </div>
+                                                                )}
+                                                                {message.governance_brief.strategy && (
+                                                                    <div className="col-span-2 flex gap-1">
+                                                                        <span className="text-slate-400 shrink-0">策略:</span>
+                                                                        <span className="italic">{message.governance_brief.strategy}</span>
+                                                                    </div>
+                                                                )}
+                                                                {message.governance_brief.next_focus && (
+                                                                    <div className="col-span-2 flex gap-1">
+                                                                        <span className="text-slate-400 shrink-0">下一焦點:</span>
+                                                                        <span className="italic">{message.governance_brief.next_focus}</span>
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                    {/* Life Entry Brief (Phase 532) */}
+                                                    {message.life_entry_brief && (
+                                                        <div className="bg-white/60 p-4 rounded-lg border border-teal-200 shadow-sm">
+                                                            <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-1">
+                                                                <MessageSquare className="w-3 h-3" />
+                                                                生命日誌摘要 (Life Entry Brief)
+                                                            </div>
+                                                            <div className="space-y-1 text-xs text-slate-700">
+                                                                {message.life_entry_brief.response_summary && (
+                                                                    <p className="text-slate-600 italic border-l-2 border-teal-200 pl-2">
+                                                                        {message.life_entry_brief.response_summary}
+                                                                    </p>
+                                                                )}
+                                                                <div className="grid grid-cols-2 gap-x-6 gap-y-1 mt-2">
+                                                                    {message.life_entry_brief.inner_intent && (
+                                                                        <div className="flex gap-1">
+                                                                            <span className="text-slate-400 shrink-0">內在意圖:</span>
+                                                                            <span>{message.life_entry_brief.inner_intent}</span>
+                                                                        </div>
+                                                                    )}
+                                                                    {message.life_entry_brief.persona_mode && (
+                                                                        <div className="flex gap-1">
+                                                                            <span className="text-slate-400 shrink-0">人格模式:</span>
+                                                                            <span className="font-medium">{message.life_entry_brief.persona_mode}</span>
+                                                                        </div>
+                                                                    )}
+                                                                    {message.life_entry_brief.trajectory_label && (
+                                                                        <div className="flex gap-1">
+                                                                            <span className="text-slate-400 shrink-0">軌跡:</span>
+                                                                            <span className="font-medium">{message.life_entry_brief.trajectory_label}</span>
+                                                                        </div>
+                                                                    )}
+                                                                    {message.life_entry_brief.strategy && (
+                                                                        <div className="flex gap-1">
+                                                                            <span className="text-slate-400 shrink-0">策略:</span>
+                                                                            <span>{message.life_entry_brief.strategy}</span>
+                                                                        </div>
+                                                                    )}
+                                                                    {(message.life_entry_brief.self_commit_count != null
+                                                                        || message.life_entry_brief.rupture_count != null
+                                                                        || message.life_entry_brief.emergent_value_count != null) && (
+                                                                        <div className="col-span-2 flex gap-4 mt-1">
+                                                                            {message.life_entry_brief.self_commit_count != null && (
+                                                                                <span className="text-slate-400">承諾: <b className="text-slate-700">{message.life_entry_brief.self_commit_count}</b></span>
+                                                                            )}
+                                                                            {message.life_entry_brief.rupture_count != null && (
+                                                                                <span className="text-slate-400">斷裂: <b className="text-slate-700">{message.life_entry_brief.rupture_count}</b></span>
+                                                                            )}
+                                                                            {message.life_entry_brief.emergent_value_count != null && (
+                                                                                <span className="text-slate-400">湧現值: <b className="text-slate-700">{message.life_entry_brief.emergent_value_count}</b></span>
+                                                                            )}
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    )}
                                                     {/* 張力儀表 */}
                                                     {message.deliberation.entropy_meter && (
                                                         <SoulStateMeter

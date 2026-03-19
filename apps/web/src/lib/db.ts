@@ -12,6 +12,30 @@ const MEMORY_STORE_NAME = 'memory_insights';
 const MAX_CONVERSATIONS = 10;
 const MAX_MEMORIES = 50;
 
+export interface GovernanceBrief {
+    verdict?: string;
+    responsibility_tier?: string;
+    uncertainty_band?: number | null;
+    coherence?: number | null;
+    soul_passed?: boolean | null;
+    contradiction_count?: number;
+    strategy?: string;
+    divergence_band?: string;
+    dispatch_state?: string;
+    next_focus?: string;
+}
+
+export interface LifeEntryBrief {
+    response_summary?: string;
+    inner_intent?: string;
+    strategy?: string;
+    persona_mode?: string;
+    trajectory_label?: string;
+    self_commit_count?: number;
+    rupture_count?: number;
+    emergent_value_count?: number;
+}
+
 export interface Message {
     id: string;
     role: 'user' | 'assistant';
@@ -31,6 +55,8 @@ export interface Message {
         policy_action: 'normal' | 'reduce_detail' | 'constrain_reasoning';
         signals: string[];
     };
+    governance_brief?: GovernanceBrief;
+    life_entry_brief?: LifeEntryBrief;
     timestamp: number;
 }
 
