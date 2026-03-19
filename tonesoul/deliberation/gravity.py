@@ -80,48 +80,54 @@ class SemanticGravity:
         Returns:
             SynthesizedResponse with merged output
         """
-        # Step 1: Check for Guardian veto
-        aegis_view = self._find_aegis(viewpoints)
-        if aegis_view and aegis_view.veto_triggered:
-            return self._guardian_override(aegis_view, viewpoints, deliberation_time_ms)
+        if not viewpoints:
+            return self._fallback_response(viewpoints, deliberation_time_ms)
 
-        # Step 2: Detect tensions
-        tensions = self.detect_tensions(viewpoints)
+        try:
+            # Step 1: Check for Guardian veto
+            aegis_view = self._find_aegis(viewpoints)
+            if aegis_view and aegis_view.veto_triggered:
+                return self._guardian_override(aegis_view, viewpoints, deliberation_time_ms)
 
-        # Step 3: Calculate dynamic weights
-        weights = self.calculate_weights(viewpoints, context)
+            # Step 2: Detect tensions
+            tensions = self.detect_tensions(viewpoints)
 
-        # Step 4: Check for unanimous agreement
-        if self._is_unanimous(viewpoints):
-            return self._unanimous_response(viewpoints, weights, deliberation_time_ms)
+            # Step 3: Calculate dynamic weights
+            weights = self.calculate_weights(viewpoints, context)
 
-        # Step 5: Weighted merge
-        merged_response = self._weighted_merge(viewpoints, weights)
-        dominant = self._get_dominant(weights)
+            # Step 4: Check for unanimous agreement
+            if self._is_unanimous(viewpoints):
+                return self._unanimous_response(viewpoints, weights, deliberation_time_ms)
 
-        # Step 6: ToneStream Distillation - Generate tactical decision
-        tactical = self._generate_tactical_decision(viewpoints, context)
+            # Step 5: Weighted merge
+            merged_response = self._weighted_merge(viewpoints, weights)
+            dominant = self._get_dominant(weights)
 
-        # Step 7: ToneStream Distillation - Generate suggested replies
-        suggestions = self._generate_suggested_replies(context, dominant)
+            # Step 6: ToneStream Distillation - Generate tactical decision
+            tactical = self._generate_tactical_decision(viewpoints, context)
 
-        # Step 8: ToneStream Distillation - Determine tension zone
-        zone, calc_note = self._determine_tension_zone(tensions, viewpoints)
+            # Step 7: ToneStream Distillation - Generate suggested replies
+            suggestions = self._generate_suggested_replies(context, dominant)
 
-        return SynthesizedResponse(
-            response=merged_response,
-            synthesis_type=SynthesisType.WEIGHTED_FUSION,
-            dominant_voice=dominant,
-            viewpoints=viewpoints,
-            tensions=tensions,
-            weights=weights,
-            deliberation_time_ms=deliberation_time_ms,
-            # ToneStream additions
-            tactical_decision=tactical,
-            suggested_replies=suggestions,
-            tension_zone=zone,
-            calculation_note=calc_note,
-        )
+            # Step 8: ToneStream Distillation - Determine tension zone
+            zone, calc_note = self._determine_tension_zone(tensions, viewpoints)
+
+            return SynthesizedResponse(
+                response=merged_response,
+                synthesis_type=SynthesisType.WEIGHTED_FUSION,
+                dominant_voice=dominant,
+                viewpoints=viewpoints,
+                tensions=tensions,
+                weights=weights,
+                deliberation_time_ms=deliberation_time_ms,
+                # ToneStream additions
+                tactical_decision=tactical,
+                suggested_replies=suggestions,
+                tension_zone=zone,
+                calculation_note=calc_note,
+            )
+        except Exception:
+            return self._fallback_response(viewpoints, deliberation_time_ms)
 
     def detect_tensions(self, viewpoints: List[ViewPoint]) -> List[Tension]:
         """Detect conflicts between viewpoints."""
@@ -296,6 +302,22 @@ class SemanticGravity:
                     merged = f"{merged}\n\n不過需要注意：{secondary.concerns[0]}"
 
         return merged
+
+    def _fallback_response(
+        self, viewpoints: List[ViewPoint], deliberation_time_ms: float
+    ) -> SynthesizedResponse:
+        """Return the strongest available voice without raising synthesis errors."""
+        dominant = max(viewpoints, key=lambda v: v.confidence, default=None)
+
+        return SynthesizedResponse(
+            response=dominant.proposed_response if dominant else "",
+            synthesis_type=SynthesisType.DOMINANT,
+            dominant_voice=dominant.perspective if dominant else None,
+            viewpoints=viewpoints,
+            tensions=[],
+            weights=DeliberationWeights(),
+            deliberation_time_ms=deliberation_time_ms,
+        )
 
     def _find_aegis(self, viewpoints: List[ViewPoint]) -> Optional[ViewPoint]:
         """Find the Aegis (Guardian) viewpoint."""
