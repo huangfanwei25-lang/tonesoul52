@@ -315,7 +315,7 @@ class MarketDataIngestor:
             method_name = method_map.get(dataset_name)
             if not method_name:
                 raise ValueError(f"Unknown dataset_name: {dataset_name}")
-                
+
             fetch_method = getattr(self._loader, method_name)
             df = fetch_method(
                 stock_id=stock_id,

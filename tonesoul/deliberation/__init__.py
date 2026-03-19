@@ -26,6 +26,11 @@ Usage:
 
 from .engine import InternalDeliberation, create_deliberation_engine, deliberate
 from .gravity import SemanticGravity, create_semantic_gravity
+from .persona_track_record import (
+    PersonaTrackRecord,
+    create_persona_track_record,
+    default_track_record_path,
+)
 from .perspectives import (
     AegisPerspective,
     BasePerspective,
@@ -69,6 +74,9 @@ __all__ = [
     # Synthesis
     "SemanticGravity",
     "create_semantic_gravity",
+    "PersonaTrackRecord",
+    "create_persona_track_record",
+    "default_track_record_path",
     # Main Engine
     "InternalDeliberation",
     "create_deliberation_engine",

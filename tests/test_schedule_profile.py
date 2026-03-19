@@ -32,6 +32,7 @@ def test_load_schedule_profiles_reads_named_profiles() -> None:
     assert profiles["security_watch"].tension_max_llm_selection_latency_ms == 700
     assert profiles["security_watch"].tension_max_llm_probe_latency_ms == 1200
     assert profiles["security_watch"].tension_max_llm_timeout_count == 0
+    assert profiles["security_watch"].tension_max_consecutive_failure_count is None
     assert profiles["security_watch"].tension_cooldown_cycles == 2
 
 
@@ -61,6 +62,7 @@ def test_runtime_probe_watch_relaxes_governance_and_keeps_runtime_thresholds() -
     assert profile.tension_max_llm_selection_latency_ms == 700
     assert profile.tension_max_llm_probe_latency_ms == 1200
     assert profile.tension_max_llm_timeout_count == 0
+    assert profile.tension_max_consecutive_failure_count is None
     assert profile.tension_cooldown_cycles == 2
     assert profile.min_priority == 0.3
 
@@ -95,6 +97,7 @@ def test_resolve_schedule_profile_returns_expected_defaults() -> None:
     assert profile.tension_max_llm_selection_latency_ms == 1000
     assert profile.tension_max_llm_probe_latency_ms == 1800
     assert profile.tension_max_llm_timeout_count == 0
+    assert profile.tension_max_consecutive_failure_count is None
     assert profile.tension_cooldown_cycles == 1
     assert profile.min_priority == 0.25
 

@@ -101,7 +101,7 @@ def test_top_crystals_sorted_by_weight_access_and_recency(tmp_path: Path):
     crystallizer = MemoryCrystallizer(crystal_path=crystal_path, min_frequency=1)
     top = crystallizer.top_crystals(n=2)
 
-    assert [item.rule for item in top] == ["rule-high", "rule-mid"]
+    assert [item.rule for item in top] == ["rule-mid", "rule-high"]
 
 
 def test_load_crystals_filters_by_age(tmp_path: Path):
@@ -268,3 +268,165 @@ def test_crystallizer_retains_top_weighted_rules_under_cap(tmp_path: Path):
     loaded = crystallizer.load_crystals()
     assert len(loaded) == 2
     assert {item.rule for item in loaded} == {"rule-high", "rule-mid"}
+
+
+def test_freshness_decay_marks_old_crystal_needs_verification(tmp_path: Path):
+    crystal_path = tmp_path / "crystals.jsonl"
+    crystallizer = MemoryCrystallizer(
+        crystal_path=crystal_path,
+        min_frequency=1,
+        freshness_half_life_days=10,
+    )
+    old = Crystal(
+        rule="old-support-rule",
+        source_pattern="old",
+        weight=0.8,
+        created_at=_iso_days_ago(30),
+        tags=["old"],
+    )
+    crystallizer._write_crystals([old])
+
+    loaded = crystallizer.load_crystals()
+    assert len(loaded) == 1
+    assert loaded[0].freshness_score < 0.55
+    assert loaded[0].freshness_status in {"needs_verification", "stale"}
+
+
+def test_mark_support_refreshes_freshness_status(tmp_path: Path):
+    crystal_path = tmp_path / "crystals.jsonl"
+    crystallizer = MemoryCrystallizer(
+        crystal_path=crystal_path,
+        min_frequency=1,
+        freshness_half_life_days=10,
+    )
+    crystal = Crystal(
+        rule="refresh-me",
+        source_pattern="legacy",
+        weight=0.7,
+        created_at=_iso_days_ago(45),
+        tags=["legacy"],
+    )
+    crystallizer._write_crystals([crystal])
+
+    assert crystallizer.mark_support("refresh-me") is True
+    loaded = crystallizer.load_crystals()
+    assert loaded[0].last_supported_at is not None
+    assert loaded[0].freshness_status == "active"
+
+
+def test_top_crystals_uses_effective_weight_with_freshness(tmp_path: Path):
+    crystal_path = tmp_path / "crystals.jsonl"
+    crystallizer = MemoryCrystallizer(
+        crystal_path=crystal_path,
+        min_frequency=1,
+        freshness_half_life_days=10,
+    )
+    stale_high = Crystal(
+        rule="stale-high",
+        source_pattern="stale",
+        weight=1.0,
+        created_at=_iso_days_ago(120),
+        tags=["stale"],
+    )
+    fresh_mid = Crystal(
+        rule="fresh-mid",
+        source_pattern="fresh",
+        weight=0.75,
+        created_at=_iso_days_ago(1),
+        tags=["fresh"],
+    )
+    crystallizer._write_crystals([stale_high, fresh_mid])
+
+    top = crystallizer.top_crystals(n=1)
+    assert top[0].rule == "fresh-mid"
+
+
+def test_freshness_summary_counts_statuses(tmp_path: Path):
+    crystal_path = tmp_path / "crystals.jsonl"
+    crystallizer = MemoryCrystallizer(
+        crystal_path=crystal_path,
+        min_frequency=1,
+        freshness_half_life_days=10,
+    )
+    crystals = [
+        Crystal(
+            rule="fresh-rule",
+            source_pattern="new",
+            weight=0.8,
+            created_at=_iso_days_ago(1),
+            tags=["fresh"],
+        ),
+        Crystal(
+            rule="aging-rule",
+            source_pattern="mid",
+            weight=0.8,
+            created_at=_iso_days_ago(18),
+            tags=["aging"],
+        ),
+        Crystal(
+            rule="stale-rule",
+            source_pattern="old",
+            weight=0.8,
+            created_at=_iso_days_ago(100),
+            tags=["stale"],
+        ),
+    ]
+    crystallizer._write_crystals(crystals)
+
+    summary = crystallizer.freshness_summary(top_n_stale=2)
+
+    assert summary["total_crystals"] == 3
+    assert summary["active_count"] >= 1
+    assert summary["stale_count"] >= 1
+    assert isinstance(summary["stale_rules"], list)
+
+
+# Phase 543: retire_crystal tests
+
+
+def test_retire_crystal_removes_matching_rule(tmp_path: Path):
+    crystal_path = tmp_path / "crystals.jsonl"
+    crystallizer = MemoryCrystallizer(crystal_path=crystal_path, min_frequency=1)
+    crystallizer._write_crystals(
+        [
+            Crystal(rule="keep-me", source_pattern="a", weight=0.8, created_at=_iso_days_ago(1), tags=["a"]),
+            Crystal(rule="remove-me", source_pattern="b", weight=0.6, created_at=_iso_days_ago(1), tags=["b"]),
+        ]
+    )
+
+    removed = crystallizer.retire_crystal("remove-me")
+
+    assert removed is True
+    loaded = crystallizer.load_crystals()
+    assert len(loaded) == 1
+    assert loaded[0].rule == "keep-me"
+
+
+def test_retire_crystal_case_insensitive(tmp_path: Path):
+    crystal_path = tmp_path / "crystals.jsonl"
+    crystallizer = MemoryCrystallizer(crystal_path=crystal_path, min_frequency=1)
+    crystallizer._write_crystals(
+        [Crystal(rule="Remove Me", source_pattern="x", weight=0.5, created_at=_iso_days_ago(1), tags=["x"])]
+    )
+
+    assert crystallizer.retire_crystal("  REMOVE ME  ") is True
+    assert crystallizer.load_crystals() == []
+
+
+def test_retire_crystal_returns_false_when_not_found(tmp_path: Path):
+    crystal_path = tmp_path / "crystals.jsonl"
+    crystallizer = MemoryCrystallizer(crystal_path=crystal_path, min_frequency=1)
+    crystallizer._write_crystals(
+        [Crystal(rule="keep", source_pattern="x", weight=0.5, created_at=_iso_days_ago(1), tags=["x"])]
+    )
+
+    assert crystallizer.retire_crystal("nonexistent") is False
+    assert len(crystallizer.load_crystals()) == 1
+
+
+def test_retire_crystal_empty_string_returns_false(tmp_path: Path):
+    crystal_path = tmp_path / "crystals.jsonl"
+    crystallizer = MemoryCrystallizer(crystal_path=crystal_path, min_frequency=1)
+
+    assert crystallizer.retire_crystal("") is False
+    assert crystallizer.retire_crystal(None) is False

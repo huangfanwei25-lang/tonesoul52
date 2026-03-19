@@ -43,10 +43,13 @@ def test_gateway_persists_environment_stimulus_into_sqlite(tmp_path) -> None:
     assert records[0].layer == MemoryLayer.WORKING.value
     assert records[0].payload["type"] == ENVIRONMENT_STIMULUS_TYPE
     assert records[0].payload["timestamp"] == "2026-03-07T12:00:00Z"
+    assert records[0].payload["observation_mode"] == "remote_feed"
     assert records[0].payload["evidence"][0] == "governance memory architecture"
     assert records[0].payload["provenance"]["source_url"] == "https://example.com/article"
+    assert records[0].payload["provenance"]["observation_mode"] == "remote_feed"
     assert "environment" in records[0].payload["tags"]
     assert "perception" in records[0].payload["tags"]
+    assert "observation:remote_feed" in records[0].payload["tags"]
     assert "governance" in records[0].tags
 
 
@@ -126,3 +129,4 @@ def test_gateway_integrates_processor_output_across_sessions(tmp_path) -> None:
     assert records[0].payload["type"] == ENVIRONMENT_STIMULUS_TYPE
     assert records[0].layer == MemoryLayer.WORKING.value
     assert records[0].payload["topic"] == "Governance Note"
+    assert records[0].payload["observation_mode"] == "remote_feed"

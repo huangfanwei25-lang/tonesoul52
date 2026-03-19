@@ -32,6 +32,11 @@ GROUP_DEFINITIONS: list[dict[str, Any]] = [
         "name": "repo_governance_and_settlement",
         "title": "Repo Governance and Settlement",
         "goal": "Keep repo-level gates, settlement planners, and healthcheck contracts reviewable as one governance surface.",
+        "status_surfaces": [
+            "docs/status/repo_healthcheck_latest.json",
+            "docs/status/repo_governance_settlement_latest.json",
+            "docs/status/refreshable_artifact_report_latest.json",
+        ],
         "recommended_actions": [
             "Review healthcheck and settlement scripts as one changeset, because they define what counts as safe branch movement.",
             "Keep their tests and CI wiring paired so gate semantics do not drift from enforcement.",
@@ -138,6 +143,12 @@ GROUP_DEFINITIONS: list[dict[str, Any]] = [
         "name": "autonomous_verification_runtime",
         "title": "Autonomous Verification Runtime",
         "goal": "Keep autonomous schedule, wake-up, dashboard, and weekly true-verification runners reviewable as one runtime chain.",
+        "status_surfaces": [
+            "docs/status/repo_healthcheck_latest.json",
+            "docs/status/true_verification_weekly/true_verification_task_status_latest.json",
+            "docs/status/dream_observability_latest.json",
+            "docs/status/autonomous_registry_schedule_latest.json",
+        ],
         "recommended_actions": [
             "Review autonomous runtime modules with their runners and tests as one stack, because they share artifacts and cadence contracts.",
             "Treat task-scheduler wiring and true-verification summaries as part of the same operational runtime, not as detached scripts.",
@@ -167,6 +178,24 @@ GROUP_DEFINITIONS: list[dict[str, Any]] = [
             "tests/test_schedule_profile.py",
             "tests/test_true_verification_",
             "tests/test_wakeup_loop.py",
+        ],
+    },
+    {
+        "name": "scribe_chronicle_runtime",
+        "title": "Scribe Chronicle Runtime",
+        "goal": "Keep chronicle generation, companion/status handoff, and focused Scribe tests reviewable as one reflective runtime lane.",
+        "status_surfaces": [
+            "docs/status/scribe_status_latest.json",
+        ],
+        "recommended_actions": [
+            "Review Scribe engine, runner, and focused tests together because they define one chronicle-generation contract.",
+            "Open the compact Scribe status artifact first before reading raw chronicles, so review starts from the latest truthful handoff surface.",
+        ],
+        "prefixes": [
+            "tonesoul/scribe/",
+            "scripts/run_scribe_cycle.py",
+            "tests/test_scribe_engine.py",
+            "tests/test_run_scribe_cycle.py",
         ],
     },
     {
@@ -270,6 +299,7 @@ def _group_entries(entries: list[dict[str, Any]]) -> list[dict[str, Any]]:
                 "name": definition["name"],
                 "title": definition["title"],
                 "goal": definition["goal"],
+                "status_surfaces": list(definition.get("status_surfaces") or []),
                 "recommended_actions": list(definition["recommended_actions"]),
                 "entry_count": len(matched),
                 "category_counts": _count_by_key(matched, "category"),
@@ -291,6 +321,7 @@ def _group_entries(entries: list[dict[str, Any]]) -> list[dict[str, Any]]:
                 "name": "ungrouped_runtime_drift",
                 "title": "Ungrouped Runtime Drift",
                 "goal": "Surface runtime-source files that still lack a review group.",
+                "status_surfaces": [],
                 "recommended_actions": [
                     "Do not settle these files until they are attached to an explicit runtime change group.",
                 ],
@@ -327,6 +358,8 @@ def _render_markdown(payload: dict[str, Any]) -> str:
     for index, group in enumerate(payload["change_groups"], start=1):
         lines.append(f"{index}. **{group['title']}** (`entries={group['entry_count']}`)")
         lines.append(f"   - Goal: {group['goal']}")
+        for surface in group.get("status_surfaces", []):
+            lines.append(f"   - Status surface: `{surface}`")
         for action in group["recommended_actions"]:
             lines.append(f"   - Action: {action}")
         if group["category_counts"]:

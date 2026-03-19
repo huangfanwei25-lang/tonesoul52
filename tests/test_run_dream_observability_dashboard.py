@@ -85,6 +85,19 @@ def test_run_dashboard_writes_json_and_html_artifacts(tmp_path: Path) -> None:
                     "max_lyapunov_proxy": 0.19,
                     "council_count": 1,
                     "frozen_count": 0,
+                    "scribe_evaluated": True,
+                    "scribe_triggered": True,
+                    "scribe_status": "generated",
+                    "scribe_generation_mode": "template_assist",
+                    "scribe_state_document_posture": "pressure_without_counterweight",
+                    "scribe_problem_route_status_line": (
+                        "route | family=F6_semantic_role_boundary_integrity "
+                        "invariant=chronicle_self_scope "
+                        "repair=semantic_boundary_guardrail "
+                        "secondary=F4_execution_contract_integrity"
+                    ),
+                    "scribe_problem_route_secondary_labels": ("F4_execution_contract_integrity"),
+                    "scribe_latest_available_source": "chronicle_pair",
                 },
             }
         ],
@@ -160,6 +173,15 @@ def test_run_dashboard_writes_json_and_html_artifacts(tmp_path: Path) -> None:
     assert json_payload["metrics"]["journal_entry_count"] == 1
     assert json_payload["metrics"]["schedule_cycle_count"] == 1
     assert json_payload["schedule_state"]["llm_backoff_active"] is True
+    assert json_payload["handoff"]["queue_shape"] == "dream_observability_ready"
+    assert (
+        json_payload["problem_route_status_line"]
+        == "route | family=F6_semantic_role_boundary_integrity "
+        "invariant=chronicle_self_scope "
+        "repair=semantic_boundary_guardrail "
+        "secondary=F4_execution_contract_integrity"
+    )
+    assert json_payload["problem_route_secondary_labels"] == "F4_execution_contract_integrity"
     assert "Dream Observability Dashboard" in html_text
     assert "Recent Schedule Cycles" in html_text
 

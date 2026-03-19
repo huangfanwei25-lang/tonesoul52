@@ -29,6 +29,7 @@ import re
 from typing import Any, Dict, Optional
 
 from tonesoul import schemas as governance_schemas
+from tonesoul.exception_trace import ExceptionTrace
 
 GovernanceDecision = governance_schemas.GovernanceDecision
 LLMRouteDecision = governance_schemas.LLMRouteDecision
@@ -55,6 +56,46 @@ class GovernanceKernel:
         self._friction_calculator = None
         self._circuit_breaker = None
         self._perturbation_recovery = None
+        self._jump_monitor = None
+        self._exc_trace = ExceptionTrace()
+
+    # --- JUMP Engine (Vol-5 §2) ---
+
+    def _get_jump_monitor(self):
+        if self._jump_monitor is None:
+            from tonesoul.jump_monitor import JumpMonitor
+
+            self._jump_monitor = JumpMonitor()
+        return self._jump_monitor
+
+    def check_jump_trigger(
+        self,
+        tension_total: float = 0.0,
+        has_echo_trace: bool = True,
+        center_delta_norm: float = 0.0,
+        input_norm: float = 1.0,
+    ) -> Dict[str, Any]:
+        """Record latest output metrics and check for singularity.
+
+        Returns a dict with ``triggered``, ``status``, and ``reason`` keys.
+        """
+        monitor = self._get_jump_monitor()
+        monitor.record_output(
+            tension_total=tension_total,
+            has_echo_trace=has_echo_trace,
+            center_delta_norm=center_delta_norm,
+            input_norm=input_norm,
+        )
+        signal = monitor.check_singularity()
+        return {
+            "triggered": signal.triggered,
+            "status": monitor.status.value,
+            "reason": signal.reason,
+            "reasoning_convergence": signal.reasoning_convergence,
+            "chain_integrity": signal.chain_integrity,
+            "self_reference_ratio": signal.self_reference_ratio,
+            "indicators_tripped": signal.indicators_tripped,
+        }
 
     # --- LLM Routing ---
 
@@ -121,7 +162,8 @@ class GovernanceKernel:
             client = create_ollama_client()
             if client.is_available() and client.list_models():
                 return LLMRouteDecision(backend="ollama", client=client, reason=reason)
-        except Exception:
+        except Exception as e:
+            self._exc_trace.record("governance_kernel", "_try_ollama", e)
             pass
         return LLMRouteDecision(backend="ollama", client=None, reason=f"{reason} (failed)")
 
@@ -132,7 +174,8 @@ class GovernanceKernel:
             client = create_lmstudio_client()
             if client.is_available():
                 return LLMRouteDecision(backend="lmstudio", client=client, reason=reason)
-        except Exception:
+        except Exception as e:
+            self._exc_trace.record("governance_kernel", "_try_lmstudio", e)
             pass
         return LLMRouteDecision(backend="lmstudio", client=None, reason=f"{reason} (failed)")
 
@@ -142,7 +185,8 @@ class GovernanceKernel:
 
             client = create_gemini_client()
             return LLMRouteDecision(backend="gemini", client=client, reason=reason)
-        except Exception:
+        except Exception as e:
+            self._exc_trace.record("governance_kernel", "_try_gemini", e)
             pass
         return LLMRouteDecision(backend="gemini", client=None, reason=f"{reason} (failed)")
 
@@ -193,7 +237,8 @@ class GovernanceKernel:
                 from tonesoul.resistance import FrictionCalculator
 
                 self._friction_calculator = FrictionCalculator()
-            except Exception:
+            except Exception as e:
+                self._exc_trace.record("governance_kernel", "_get_friction_calculator", e)
                 pass
         return self._friction_calculator
 
@@ -203,7 +248,8 @@ class GovernanceKernel:
                 from tonesoul.resistance import CircuitBreaker
 
                 self._circuit_breaker = CircuitBreaker()
-            except Exception:
+            except Exception as e:
+                self._exc_trace.record("governance_kernel", "_get_circuit_breaker", e)
                 pass
         return self._circuit_breaker
 
@@ -213,7 +259,8 @@ class GovernanceKernel:
                 from tonesoul.resistance import PerturbationRecovery
 
                 self._perturbation_recovery = PerturbationRecovery()
-            except Exception:
+            except Exception as e:
+                self._exc_trace.record("governance_kernel", "_get_perturbation_recovery", e)
                 pass
         return self._perturbation_recovery
 
@@ -314,7 +361,8 @@ class GovernanceKernel:
                 constraint_kind=constraint_kind,
                 is_immutable=is_immutable,
             )
-        except Exception:
+        except Exception as e:
+            self._exc_trace.record("governance_kernel", "compute_runtime_friction", e)
             return None
 
     # --- Circuit Breaker ---
@@ -371,24 +419,28 @@ class GovernanceKernel:
                 gamma_effective=gamma_effective,
                 friction=friction,
             )
-        except Exception:
+        except Exception as e:
+            self._exc_trace.record("governance_kernel", "recover_perturbation", e)
             return None
 
     # --- Runtime Governance Observability ---
 
-    @staticmethod
     def build_routing_trace(
+        self,
         *,
         route: Any,
         journal_eligible: Any,
         reason: Any,
     ) -> Dict[str, Any]:
         """Build the canonical routing-trace payload used by orchestration layers."""
-        return {
+        routing_trace = {
             "route": str(route or "").strip(),
             "journal_eligible": bool(journal_eligible),
             "reason": str(reason or ""),
         }
+        if self._exc_trace.has_errors:
+            routing_trace["suppressed_errors"] = self._exc_trace.summary()
+        return routing_trace
 
     @staticmethod
     def build_observability_trace(dispatch_trace: Dict[str, Any]) -> Dict[str, Any]:

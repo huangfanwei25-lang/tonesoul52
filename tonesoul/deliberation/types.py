@@ -271,6 +271,7 @@ class DeliberationContext:
     tone_strength: float = 0.5
     resonance_state: str = "resonance"
     loop_detected: bool = False
+    scenario_envelope: Optional[Dict[str, Any]] = None
 
     def to_dict(self) -> dict:
         return {
@@ -279,4 +280,5 @@ class DeliberationContext:
             "tone_strength": self.tone_strength,
             "resonance_state": self.resonance_state,
             "loop_detected": self.loop_detected,
+            "scenario_envelope_enabled": bool(self.scenario_envelope),
         }

@@ -1,10 +1,38 @@
 from __future__ import annotations
 
 import json
+import math
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timedelta, timezone
+from enum import Enum
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
+
+# ---------------------------------------------------------------------------
+# ETCL Seed Stage (T0-T6) — see law/docs/v1.2/vol-2.md §2
+# ---------------------------------------------------------------------------
+
+class SeedStage(str, Enum):
+    """Seven-stage ETCL lifecycle for semantic seeds / crystals."""
+
+    T0_DRAFT = "T0"       # Seed generation — initial creation
+    T1_DEPOSIT = "T1"     # External deposit — persisted to LTM
+    T2_RETRIEVAL = "T2"   # Retrieval & awakening — loaded for use
+    T3_ALIGN = "T3"       # Alignment & merge — drift resolved
+    T4_APPLY = "T4"       # Application — used in output generation
+    T5_FEEDBACK = "T5"    # Feedback — re-deposited as refined seed
+    T6_CANONICAL = "T6"   # Canonicalisation — governance freeze
+
+    @classmethod
+    def from_value(cls, value: str) -> "SeedStage":
+        """Parse a stage string like 'T0' into a SeedStage enum."""
+        for member in cls:
+            if member.value == value:
+                return member
+        return cls.T0_DRAFT
+
+
+_STAGE_ORDER = [s.value for s in SeedStage]
 
 
 def _utcnow_iso() -> str:
@@ -30,6 +58,14 @@ def _clamp_unit(value: float) -> float:
     return max(0.0, min(1.0, float(value)))
 
 
+def _freshness_status(score: float) -> str:
+    if score < 0.30:
+        return "stale"
+    if score < 0.55:
+        return "needs_verification"
+    return "active"
+
+
 @dataclass
 class Crystal:
     """A crystallized decision rule extracted from episodic patterns."""
@@ -40,11 +76,35 @@ class Crystal:
     created_at: str
     access_count: int = 0
     tags: List[str] = field(default_factory=list)
+    stage: str = SeedStage.T0_DRAFT.value
+    stage_history: List[Dict[str, str]] = field(default_factory=list)
+    freshness_score: float = 1.0
+    freshness_status: str = "active"
+    last_supported_at: Optional[str] = None
+
+    def advance_stage(self, new_stage: SeedStage) -> bool:
+        """Advance to *new_stage* if it follows the current stage.
+
+        Returns True on success, False if the transition is invalid
+        (e.g. going backwards).
+        """
+        current_idx = _STAGE_ORDER.index(self.stage) if self.stage in _STAGE_ORDER else 0
+        target_idx = _STAGE_ORDER.index(new_stage.value)
+        if target_idx <= current_idx:
+            return False
+        now = _utcnow_iso()
+        self.stage_history.append(
+            {"from": self.stage, "to": new_stage.value, "at": now}
+        )
+        self.stage = new_stage.value
+        return True
 
     def to_dict(self) -> Dict[str, object]:
         payload = asdict(self)
         payload["weight"] = round(_clamp_unit(float(self.weight)), 4)
         payload["access_count"] = max(0, int(self.access_count))
+        payload["freshness_score"] = round(_clamp_unit(float(self.freshness_score)), 4)
+        payload["freshness_status"] = str(self.freshness_status or "active")
         return payload
 
     @classmethod
@@ -67,6 +127,17 @@ class Crystal:
             created_at=created_at,
             access_count=max(0, int(payload.get("access_count", 0))),
             tags=tags,
+            stage=str(payload.get("stage", SeedStage.T0_DRAFT.value)),
+            stage_history=(
+                list(payload["stage_history"])
+                if isinstance(payload.get("stage_history"), list)
+                else []
+            ),
+            freshness_score=_clamp_unit(float(payload.get("freshness_score", 1.0))),
+            freshness_status=str(payload.get("freshness_status", "active") or "active"),
+            last_supported_at=(
+                str(payload.get("last_supported_at")) if payload.get("last_supported_at") else None
+            ),
         )
 
 
@@ -82,10 +153,12 @@ class MemoryCrystallizer:
         crystal_path: Path = Path("memory/crystals.jsonl"),
         min_frequency: int = 3,
         max_crystals_keep: int = 256,
+        freshness_half_life_days: int = 21,
     ) -> None:
         self.crystal_path = Path(crystal_path)
         self.min_frequency = max(1, int(min_frequency))
         self.max_crystals_keep = max(1, int(max_crystals_keep))
+        self.freshness_half_life_days = max(1, int(freshness_half_life_days))
 
     def crystallize(self, patterns: Dict[str, object]) -> List[Crystal]:
         """Extract crystallized rules from consolidation patterns and persist them."""
@@ -166,6 +239,9 @@ class MemoryCrystallizer:
             )
 
         if generated:
+            # ETCL: advance newly generated crystals to T1 (deposit)
+            for crystal in generated:
+                crystal.advance_stage(SeedStage.T1_DEPOSIT)
             self._append_crystals(generated)
 
         try:
@@ -185,6 +261,7 @@ class MemoryCrystallizer:
         max_age_days: Optional[int] = None,
         *,
         dedupe: bool = True,
+        apply_freshness: bool = True,
     ) -> List[Crystal]:
         """Load persisted crystals, optionally filtering by recency."""
         if not self.crystal_path.exists():
@@ -211,6 +288,8 @@ class MemoryCrystallizer:
                     created_at = _parse_iso(crystal.created_at)
                     if created_at is None or created_at < age_limit:
                         continue
+                if apply_freshness:
+                    self._refresh_freshness(crystal)
                 crystals.append(crystal)
         if dedupe:
             return self._dedupe_crystals(crystals)
@@ -225,6 +304,84 @@ class MemoryCrystallizer:
         crystals.sort(key=self._sort_key, reverse=True)
         return crystals[:limit]
 
+    def record_retrieval(self, crystals: List[Crystal]) -> None:
+        """Mark retrieved crystals as T2 (retrieval & awakening) and persist.
+
+        Only advances crystals that are currently at T1. Already at T2+
+        are left unchanged.  access_count is also incremented.
+        """
+        for crystal in crystals:
+            crystal.access_count += 1
+            crystal.advance_stage(SeedStage.T2_RETRIEVAL)
+            crystal.last_supported_at = _utcnow_iso()
+            self._refresh_freshness(crystal)
+        self._write_crystals(crystals)
+
+    def mark_support(self, crystal_rule: str) -> bool:
+        """Mark a crystal as supported by recent evidence and persist it."""
+        target = str(crystal_rule or "").strip().lower()
+        if not target:
+            return False
+        crystals = self.load_crystals(dedupe=False, apply_freshness=False)
+        updated = False
+        for crystal in crystals:
+            if str(crystal.rule).strip().lower() != target:
+                continue
+            crystal.last_supported_at = _utcnow_iso()
+            crystal.access_count += 1
+            self._refresh_freshness(crystal)
+            updated = True
+        if updated:
+            self._write_crystals(self._dedupe_crystals(crystals))
+        return updated
+
+    def retire_crystal(self, crystal_rule: str) -> bool:
+        """Remove a crystal whose rule text matches *crystal_rule*.
+
+        Used when verification confirms a rule is no longer valid.
+        Returns True if a crystal was removed, False otherwise.
+        """
+        target = str(crystal_rule or "").strip().lower()
+        if not target:
+            return False
+        crystals = self.load_crystals(dedupe=False, apply_freshness=False)
+        before = len(crystals)
+        remaining = [c for c in crystals if str(c.rule).strip().lower() != target]
+        if len(remaining) == before:
+            return False
+        self._write_crystals(self._dedupe_crystals(remaining))
+        return True
+
+    def freshness_summary(self, top_n_stale: int = 3) -> Dict[str, object]:
+        """Return compact freshness statistics for governance surfaces."""
+        crystals = self.load_crystals()
+        if not crystals:
+            return {
+                "total_crystals": 0,
+                "active_count": 0,
+                "needs_verification_count": 0,
+                "stale_count": 0,
+                "mean_freshness": 0.0,
+                "stale_rules": [],
+            }
+
+        active = [c for c in crystals if c.freshness_status == "active"]
+        needs_verification = [c for c in crystals if c.freshness_status == "needs_verification"]
+        stale = [c for c in crystals if c.freshness_status == "stale"]
+        mean_freshness = sum(float(c.freshness_score) for c in crystals) / len(crystals)
+
+        stale_sorted = sorted(stale, key=lambda c: (float(c.freshness_score), c.created_at))
+        stale_rules = [c.rule for c in stale_sorted[: max(0, int(top_n_stale))]]
+
+        return {
+            "total_crystals": len(crystals),
+            "active_count": len(active),
+            "needs_verification_count": len(needs_verification),
+            "stale_count": len(stale),
+            "mean_freshness": round(_clamp_unit(mean_freshness), 4),
+            "stale_rules": stale_rules,
+        }
+
     def _append_crystals(self, crystals: List[Crystal]) -> None:
         self.crystal_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -232,9 +389,13 @@ class MemoryCrystallizer:
         merged = self._dedupe_crystals([*existing, *crystals])
         merged.sort(key=self._sort_key, reverse=True)
         merged = merged[: self.max_crystals_keep]
+        self._write_crystals(merged)
 
+    def _write_crystals(self, crystals: List[Crystal]) -> None:
+        """Overwrite the crystal file with the given list."""
+        self.crystal_path.parent.mkdir(parents=True, exist_ok=True)
         with self.crystal_path.open("w", encoding="utf-8") as handle:
-            for crystal in merged:
+            for crystal in crystals:
                 handle.write(json.dumps(crystal.to_dict(), ensure_ascii=False) + "\n")
 
     @staticmethod
@@ -243,11 +404,30 @@ class MemoryCrystallizer:
 
     @staticmethod
     def _sort_key(crystal: Crystal) -> Tuple[float, int, datetime]:
+        effective_weight = _clamp_unit(crystal.weight) * _clamp_unit(crystal.freshness_score)
         return (
-            _clamp_unit(crystal.weight),
+            effective_weight,
             int(crystal.access_count),
             _parse_iso(crystal.created_at) or datetime.fromtimestamp(0, tz=timezone.utc),
         )
+
+    def _refresh_freshness(self, crystal: Crystal) -> None:
+        """Compute freshness score and status using age + support recency."""
+        now = datetime.now(timezone.utc)
+        base_dt = _parse_iso(crystal.last_supported_at) or _parse_iso(crystal.created_at)
+        if base_dt is None:
+            crystal.freshness_score = 0.5
+            crystal.freshness_status = "needs_verification"
+            return
+
+        age_days = max(0.0, (now - base_dt).total_seconds() / 86400.0)
+        decay = math.exp(-math.log(2.0) * (age_days / float(self.freshness_half_life_days)))
+
+        # Small confidence boost from repeated support (bounded)
+        support_boost = min(0.15, int(crystal.access_count) * 0.01)
+        score = _clamp_unit(decay + support_boost)
+        crystal.freshness_score = score
+        crystal.freshness_status = _freshness_status(score)
 
     def _dedupe_crystals(self, crystals: List[Crystal]) -> List[Crystal]:
         merged: Dict[str, Crystal] = {}
@@ -270,6 +450,20 @@ class MemoryCrystallizer:
             older = existing if use_incoming else crystal
             tags = list(dict.fromkeys([*latest.tags, *older.tags]))
 
+            # ETCL: keep the more advanced stage and merge histories
+            existing_stage_idx = (
+                _STAGE_ORDER.index(existing.stage) if existing.stage in _STAGE_ORDER else 0
+            )
+            incoming_stage_idx = (
+                _STAGE_ORDER.index(crystal.stage) if crystal.stage in _STAGE_ORDER else 0
+            )
+            merged_stage = (
+                crystal.stage if incoming_stage_idx >= existing_stage_idx else existing.stage
+            )
+            merged_history = list(
+                {json.dumps(h, sort_keys=True): h for h in [*existing.stage_history, *crystal.stage_history]}.values()
+            )
+
             merged[key] = Crystal(
                 rule=latest.rule,
                 source_pattern=latest.source_pattern,
@@ -277,6 +471,8 @@ class MemoryCrystallizer:
                 created_at=latest.created_at,
                 access_count=max(int(existing.access_count), int(crystal.access_count)),
                 tags=tags,
+                stage=merged_stage,
+                stage_history=merged_history,
             )
 
         return list(merged.values())

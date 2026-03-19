@@ -53,6 +53,8 @@ def test_build_parser_parses_registry_schedule_args() -> None:
             "1200",
             "--tension-max-llm-timeout-count",
             "0",
+            "--tension-max-consecutive-failure-count",
+            "2",
             "--tension-cooldown-cycles",
             "4",
             "--schedule-state-path",
@@ -78,6 +80,7 @@ def test_build_parser_parses_registry_schedule_args() -> None:
     assert args.tension_max_llm_selection_latency_ms == 700
     assert args.tension_max_llm_probe_latency_ms == 1200
     assert args.tension_max_llm_timeout_count == 0
+    assert args.tension_max_consecutive_failure_count == 2
     assert args.tension_cooldown_cycles == 4
     assert args.schedule_state_path == "memory/autonomous/state.json"
     assert args.strict is True
@@ -106,6 +109,7 @@ def test_run_schedule_delegates_to_schedule_builder(monkeypatch) -> None:
         tension_max_llm_selection_latency_ms = 600
         tension_max_llm_probe_latency_ms = 1100
         tension_max_llm_timeout_count = 0
+        tension_max_consecutive_failure_count = None
         tension_cooldown_cycles = 2
         limit = 4
         min_priority = 0.22
@@ -150,6 +154,8 @@ def test_run_schedule_delegates_to_schedule_builder(monkeypatch) -> None:
                 "0.8",
                 "--tension-max-llm-probe-latency-ms",
                 "1250",
+                "--tension-max-consecutive-failure-count",
+                "1",
                 "--tension-cooldown-cycles",
                 "5",
                 "--skip-llm-preflight",
@@ -182,6 +188,7 @@ def test_run_schedule_delegates_to_schedule_builder(monkeypatch) -> None:
     assert dummy_schedule.calls[0]["tension_max_llm_selection_latency_ms"] == 600
     assert dummy_schedule.calls[0]["tension_max_llm_probe_latency_ms"] == 1250
     assert dummy_schedule.calls[0]["tension_max_llm_timeout_count"] == 0
+    assert dummy_schedule.calls[0]["tension_max_consecutive_failure_count"] == 1
     assert dummy_schedule.calls[0]["tension_cooldown_cycles"] == 5
     assert dummy_schedule.calls[0]["cycle_kwargs"]["limit"] == 4
     assert dummy_schedule.calls[0]["cycle_kwargs"]["min_priority"] == 0.22

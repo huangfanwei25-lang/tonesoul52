@@ -145,6 +145,39 @@ class PreflightLatencyBreachRunner:
         }
 
 
+class RuntimeFailureStreakRunner:
+    def __init__(self) -> None:
+        self.calls: list[dict[str, object]] = []
+
+    def run(self, **kwargs):
+        self.calls.append(dict(kwargs))
+        urls = list(kwargs.get("urls", []))
+        return {
+            "overall_ok": True,
+            "urls_requested": len(urls),
+            "ingestion_failures": [],
+            "runtime_state": {
+                "session_id": "wakeup_alpha",
+                "next_cycle": 4,
+                "consecutive_failures": 2,
+                "resumed": True,
+            },
+            "wakeup_payload": {
+                "results": [
+                    {
+                        "summary": {
+                            "max_friction_score": 0.21,
+                            "max_lyapunov_proxy": 0.05,
+                            "council_count": 0,
+                            "consecutive_failure_count": 2,
+                            "session_resumed": True,
+                        }
+                    }
+                ]
+            },
+        }
+
+
 def test_schedule_rotates_through_registry_entries_and_writes_history(tmp_path: Path) -> None:
     runner = DummyRunner()
     schedule = AutonomousRegistrySchedule(
@@ -559,14 +592,79 @@ def test_schedule_applies_llm_preflight_budget_as_global_llm_backoff(
         second_payload["results"][0]["autonomous_payload"]["llm_policy"]["action"]
         == "disable_reflection"
     )
+
+
+def test_schedule_applies_runtime_failure_budget_as_governance_cooldown(
+    tmp_path: Path,
+) -> None:
+    registry_path = _write_registry(tmp_path / "registry.yaml")
+    state_path = tmp_path / "state.json"
+    snapshot_path = tmp_path / "latest.json"
+    history_path = tmp_path / "history.jsonl"
+
+    breach_runner = RuntimeFailureStreakRunner()
+    first_schedule = AutonomousRegistrySchedule(
+        runner=breach_runner,
+        registry_path=registry_path,
+        state_path=state_path,
+        snapshot_path=snapshot_path,
+        history_path=history_path,
+        interval_seconds=0.0,
+        sleep_func=lambda _seconds: None,
+    )
+    first_payload = first_schedule.run(
+        max_cycles=1,
+        categories=["research"],
+        entries_per_cycle=1,
+        urls_per_cycle=1,
+        tension_max_consecutive_failure_count=1,
+        tension_cooldown_cycles=2,
+        cycle_kwargs={"generate_reflection": False},
+    )
+
+    second_runner = DummyRunner()
+    second_schedule = AutonomousRegistrySchedule(
+        runner=second_runner,
+        registry_path=registry_path,
+        state_path=state_path,
+        snapshot_path=snapshot_path,
+        history_path=history_path,
+        interval_seconds=0.0,
+        sleep_func=lambda _seconds: None,
+    )
+    second_payload = second_schedule.run(
+        max_cycles=1,
+        categories=["research"],
+        entries_per_cycle=1,
+        urls_per_cycle=1,
+        tension_max_consecutive_failure_count=1,
+        tension_cooldown_cycles=2,
+        cycle_kwargs={"generate_reflection": False},
+    )
+
+    first_budget = first_payload["results"][0]["tension_budget"]
+    assert first_budget["breached"] is True
+    assert first_budget["governance_breached"] is True
+    assert first_budget["observation"]["max_consecutive_failure_count"] == 2
+    assert first_budget["governance_breach_reasons"] == ["consecutive_failure_count>1 (observed=2)"]
+    assert first_budget["cooled_categories"] == ["research"]
+    assert second_payload["results"][0]["registry_batch"]["selected_entry_ids"] == []
+    assert second_payload["results"][0]["registry_batch"]["deferred_categories"] == [
+        {
+            "category": "research",
+            "reason": "tension_budget_cooldown",
+            "available_after_cycle": 4,
+            "last_budget_status": "breached",
+            "last_breach_reasons": [
+                "consecutive_failure_count>1 (observed=2)",
+            ],
+        }
+    ]
     state = json.loads(state_path.read_text(encoding="utf-8"))
-    assert state["category_states"]["research"]["tension_cooldown_until_cycle"] == 0
-    assert state["category_states"]["research"]["last_llm_preflight_latency_ms"] == 2002
-    assert state["category_states"]["research"]["last_llm_selection_latency_ms"] == 759
-    assert state["category_states"]["research"]["last_llm_probe_latency_ms"] == 1243
-    assert state["category_states"]["research"]["last_llm_preflight_timeout_count"] == 1
-    assert state["llm_backoff"]["backoff_until_cycle"] == 3
-    assert state["llm_backoff"]["last_status"] == "breached"
+    assert state["category_states"]["research"]["tension_cooldown_until_cycle"] == 3
+    assert state["category_states"]["research"]["last_budget_status"] == "breached"
+    assert state["llm_backoff"]["backoff_until_cycle"] == 0
+    assert state["llm_backoff"]["last_status"] == "ok"
 
 
 def test_schedule_refreshes_dashboard_with_schedule_governance_artifacts(

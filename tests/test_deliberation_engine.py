@@ -62,3 +62,21 @@ def test_deliberate_sync_falls_back_to_sequential_inside_running_loop(monkeypatc
 
     assert result == {"viewpoints": ["sequential"]}
     assert calls == [("sequential", context)]
+
+
+def test_record_outcome_updates_persona_track_summary(tmp_path, monkeypatch) -> None:
+    from tonesoul.deliberation.persona_track_record import create_persona_track_record
+
+    engine = InternalDeliberation()
+    engine._persona_track_record = create_persona_track_record(tmp_path / "ptr.json")
+    engine._gravity._track_record = engine._persona_track_record
+
+    engine.record_outcome(
+        dominant_voice="muse",
+        verdict="approve",
+        resonance_state="resonance",
+        loop_detected=False,
+    )
+
+    summary = engine.get_persona_track_summary()
+    assert summary["muse"]["total"] == 1

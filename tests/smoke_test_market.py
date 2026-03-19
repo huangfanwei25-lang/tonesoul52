@@ -1,13 +1,13 @@
 """Smoke test: Fetch Innodisk (5289) data and run Step 2 anomaly detection."""
 
-import sys
 import os
+import sys
 
 # Add project root to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from tonesoul.market.analyzer import QuarterlySnapshot, SixStepAnalyzer
 from tonesoul.market.data_ingest import MarketDataIngestor
-from tonesoul.market.analyzer import SixStepAnalyzer, QuarterlySnapshot
 
 
 def main():
@@ -97,30 +97,33 @@ def main():
 
     # Step 4: Trends
     trends = analyzer.analyze_trends(snapshots)
-    print(f"\n📈 Trends:")
+    print("\n📈 Trends:")
     for metric, trend in trends.items():
         print(f"   {metric}: {trend}")
 
     # Step 6: Scenarios
     scenarios = analyzer.build_scenarios(snapshots, current_price=905, annual_eps=21.72)
-    print(f"\n🎯 Investment scenarios:")
+    print("\n🎯 Investment scenarios:")
     for sc in scenarios:
-        print(f"   {sc.name.upper()}: EPS {sc.eps_estimate} × PE {sc.pe_multiple} = NT${sc.target_price:,.0f} (prob {sc.probability:.0%})")
+        print(
+            f"   {sc.name.upper()}: EPS {sc.eps_estimate} × PE {sc.pe_multiple} = "
+            f"NT${sc.target_price:,.0f} (prob {sc.probability:.0%})"
+        )
         for c in sc.conditions[:2]:
             print(f"      - {c}")
 
     # Final verdict
     print(f"\n{'=' * 60}")
-    print(f"ToneSoul GovernanceKernel Verdict:")
+    print("ToneSoul GovernanceKernel Verdict:")
     print(f"  Friction: {friction:.2f}")
     if friction < 0.3:
-        print(f"  Decision: BUY (low friction)")
+        print("  Decision: BUY (low friction)")
     elif friction < 0.6:
-        print(f"  Decision: BUY with conditions (moderate friction)")
+        print("  Decision: BUY with conditions (moderate friction)")
     elif friction < 0.8:
-        print(f"  Decision: WATCH — friction elevated, split entry")
+        print("  Decision: WATCH — friction elevated, split entry")
     else:
-        print(f"  Decision: HOLD — too much risk")
+        print("  Decision: HOLD — too much risk")
     print(f"{'=' * 60}")
 
 

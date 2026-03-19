@@ -7,6 +7,7 @@ from unittest.mock import MagicMock
 from tonesoul.memory.soul_db import MemorySource, SqliteSoulDB
 from tonesoul.memory.write_gateway import MemoryWriteGateway
 from tonesoul.mirror import ToneSoulMirror
+from tonesoul.unified_pipeline import UnifiedPipeline
 
 
 @dataclass
@@ -174,3 +175,92 @@ def test_record_delta_writes_triggered(tmp_path: Path) -> None:
     }
     assert payload["provenance"]["kind"] == "mirror_delta"
     assert payload["provenance"]["source"] == "tonesoul_mirror"
+
+
+def test_pipeline_mirror_enabled_by_default_observe_mode(monkeypatch) -> None:
+    monkeypatch.delenv("TONESOUL_MIRROR_ENABLED", raising=False)
+    monkeypatch.delenv("TONESOUL_MIRROR_MODE", raising=False)
+    pipeline = UnifiedPipeline()
+
+    assert pipeline._mirror_enabled is True
+    assert pipeline._mirror_mode == "observe"
+
+
+def test_pipeline_mirror_observe_mode_keeps_raw_response(monkeypatch) -> None:
+    monkeypatch.setenv("TONESOUL_MIRROR_MODE", "observe")
+    pipeline = UnifiedPipeline(mirror_enabled=True)
+
+    class _MirrorStub:
+        @staticmethod
+        def reflect(response: str, _context: dict[str, object]):
+            from types import SimpleNamespace
+
+            return SimpleNamespace(
+                raw_response=response,
+                governed_response=response + " [governed]",
+                final_choice="governed",
+                reflection_note="triggered",
+                mirror_delta=SimpleNamespace(
+                    mirror_triggered=True,
+                    model_dump=lambda mode=None: {"mirror_triggered": True},
+                ),
+            )
+
+    pipeline._get_mirror = lambda: _MirrorStub()
+    dispatch_trace: dict[str, object] = {}
+    trajectory: dict[str, object] = {}
+
+    result = pipeline._apply_mirror_step(
+        "original",
+        dispatch_trace=dispatch_trace,
+        trajectory_result=trajectory,
+        user_tier="free",
+        tone_strength=0.9,
+        confidence=0.8,
+    )
+
+    assert result == "original"
+    mirror_trace = dispatch_trace.get("mirror") or {}
+    assert mirror_trace.get("mode") == "observe"
+    assert mirror_trace.get("applied_response") == "raw"
+    assert mirror_trace.get("enforced") is False
+
+
+def test_pipeline_mirror_enforce_mode_can_apply_governed_response(monkeypatch) -> None:
+    monkeypatch.setenv("TONESOUL_MIRROR_MODE", "enforce")
+    pipeline = UnifiedPipeline(mirror_enabled=True)
+
+    class _MirrorStub:
+        @staticmethod
+        def reflect(response: str, _context: dict[str, object]):
+            from types import SimpleNamespace
+
+            return SimpleNamespace(
+                raw_response=response,
+                governed_response=response + " [governed]",
+                final_choice="governed",
+                reflection_note="triggered",
+                mirror_delta=SimpleNamespace(
+                    mirror_triggered=True,
+                    model_dump=lambda mode=None: {"mirror_triggered": True},
+                ),
+            )
+
+    pipeline._get_mirror = lambda: _MirrorStub()
+    dispatch_trace: dict[str, object] = {}
+    trajectory: dict[str, object] = {}
+
+    result = pipeline._apply_mirror_step(
+        "original",
+        dispatch_trace=dispatch_trace,
+        trajectory_result=trajectory,
+        user_tier="free",
+        tone_strength=0.9,
+        confidence=0.8,
+    )
+
+    assert result == "original [governed]"
+    mirror_trace = dispatch_trace.get("mirror") or {}
+    assert mirror_trace.get("mode") == "enforce"
+    assert mirror_trace.get("applied_response") == "governed"
+    assert mirror_trace.get("enforced") is True

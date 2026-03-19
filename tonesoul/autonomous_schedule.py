@@ -507,6 +507,7 @@ class AutonomousRegistrySchedule:
         max_llm_selection_latency_ms: int | None = None
         max_llm_probe_latency_ms: int | None = None
         llm_preflight_timeout_count = 0
+        max_consecutive_failure_count = 0
         observed_cycles = 0
         for item in results:
             if not isinstance(item, dict):
@@ -565,7 +566,27 @@ class AutonomousRegistrySchedule:
                 )
             except (TypeError, ValueError):
                 pass
+            try:
+                max_consecutive_failure_count = max(
+                    max_consecutive_failure_count,
+                    int(summary.get("consecutive_failure_count", 0) or 0),
+                )
+            except (TypeError, ValueError):
+                pass
             observed_cycles += 1
+
+        runtime_state = (
+            autonomous_payload.get("runtime_state")
+            if isinstance(autonomous_payload.get("runtime_state"), dict)
+            else {}
+        )
+        try:
+            max_consecutive_failure_count = max(
+                max_consecutive_failure_count,
+                int(runtime_state.get("consecutive_failures", 0) or 0),
+            )
+        except (TypeError, ValueError):
+            pass
 
         return {
             "observed_cycles": int(observed_cycles),
@@ -580,6 +601,7 @@ class AutonomousRegistrySchedule:
             "max_llm_selection_latency_ms": max_llm_selection_latency_ms,
             "max_llm_probe_latency_ms": max_llm_probe_latency_ms,
             "llm_preflight_timeout_count": int(llm_preflight_timeout_count),
+            "max_consecutive_failure_count": int(max_consecutive_failure_count),
         }
 
     @staticmethod
@@ -610,6 +632,7 @@ class AutonomousRegistrySchedule:
         max_llm_selection_latency_ms: int | None,
         max_llm_probe_latency_ms: int | None,
         max_llm_timeout_count: int | None,
+        max_consecutive_failure_count: int | None,
         cooldown_cycles: int,
         selected_categories: Sequence[str],
     ) -> dict[str, Any]:
@@ -634,6 +657,11 @@ class AutonomousRegistrySchedule:
             "max_llm_timeout_count": (
                 None if max_llm_timeout_count is None else int(max_llm_timeout_count)
             ),
+            "max_consecutive_failure_count": (
+                None
+                if max_consecutive_failure_count is None
+                else int(max_consecutive_failure_count)
+            ),
             "cooldown_cycles": max(0, int(cooldown_cycles)),
         }
         enabled = any(
@@ -647,6 +675,9 @@ class AutonomousRegistrySchedule:
         observed_llm_selection_latency_ms = observation.get("max_llm_selection_latency_ms")
         observed_llm_probe_latency_ms = observation.get("max_llm_probe_latency_ms")
         observed_llm_timeout_count = int(observation.get("llm_preflight_timeout_count", 0) or 0)
+        observed_consecutive_failure_count = int(
+            observation.get("max_consecutive_failure_count", 0) or 0
+        )
         governance_breach_reasons: list[str] = []
         llm_breach_reasons: list[str] = []
 
@@ -728,6 +759,16 @@ class AutonomousRegistrySchedule:
             )
             breach_reasons.append(reason)
             llm_breach_reasons.append(reason)
+        if max_consecutive_failure_count is not None and observed_consecutive_failure_count > int(
+            max_consecutive_failure_count
+        ):
+            reason = (
+                "consecutive_failure_count>"
+                f"{int(max_consecutive_failure_count)}"
+                f" (observed={int(observed_consecutive_failure_count)})"
+            )
+            breach_reasons.append(reason)
+            governance_breach_reasons.append(reason)
 
         cooled_categories = sorted(
             {str(item).strip().lower() for item in selected_categories if str(item).strip()}
@@ -1182,6 +1223,7 @@ class AutonomousRegistrySchedule:
         tension_max_llm_selection_latency_ms: int | None = None,
         tension_max_llm_probe_latency_ms: int | None = None,
         tension_max_llm_timeout_count: int | None = None,
+        tension_max_consecutive_failure_count: int | None = None,
         tension_cooldown_cycles: int = 0,
         cycle_kwargs: Optional[dict[str, Any]] = None,
     ) -> dict[str, Any]:
@@ -1244,6 +1286,11 @@ class AutonomousRegistrySchedule:
                         if tension_max_llm_timeout_count is None
                         else int(tension_max_llm_timeout_count)
                     ),
+                    "tension_max_consecutive_failure_count": (
+                        None
+                        if tension_max_consecutive_failure_count is None
+                        else int(tension_max_consecutive_failure_count)
+                    ),
                     "tension_cooldown_cycles": max(0, int(tension_cooldown_cycles)),
                 },
                 "results": [],
@@ -1301,6 +1348,11 @@ class AutonomousRegistrySchedule:
                 None
                 if tension_max_llm_timeout_count is None
                 else int(tension_max_llm_timeout_count)
+            ),
+            "tension_max_consecutive_failure_count": (
+                None
+                if tension_max_consecutive_failure_count is None
+                else int(tension_max_consecutive_failure_count)
             ),
             "tension_cooldown_cycles": max(0, int(tension_cooldown_cycles)),
             "entry_ids": [str(item).strip() for item in entry_ids or [] if str(item).strip()],
@@ -1360,6 +1412,7 @@ class AutonomousRegistrySchedule:
                 max_llm_selection_latency_ms=tension_max_llm_selection_latency_ms,
                 max_llm_probe_latency_ms=tension_max_llm_probe_latency_ms,
                 max_llm_timeout_count=tension_max_llm_timeout_count,
+                max_consecutive_failure_count=tension_max_consecutive_failure_count,
                 cooldown_cycles=tension_cooldown_cycles,
                 selected_categories=batch.selected_categories,
             )

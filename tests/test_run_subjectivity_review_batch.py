@@ -107,8 +107,8 @@ def test_build_report_emits_review_groups_and_default_status_counts(tmp_path: Pa
     assert "## Admissibility Gate Counts" in markdown
     assert "## Admissibility Status Lines" in markdown
     assert (
-        "admissibility: insufficient_admissibility_confidence / authority_and_exception_pressure"
-        in markdown
+        "admissibility_primary_status_line: insufficient_admissibility_confidence / "
+        "authority_and_exception_pressure" in markdown
     )
     assert payload["batch"]["admissibility_primary_status_line"] == (
         "insufficient_admissibility_confidence | focus=authority_and_exception_pressure | "

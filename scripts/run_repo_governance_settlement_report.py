@@ -9,6 +9,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from tonesoul.status_alignment import build_dream_weekly_alignment_line
+
 JSON_FILENAME = "repo_governance_settlement_latest.json"
 MARKDOWN_FILENAME = "repo_governance_settlement_latest.md"
 
@@ -150,13 +152,251 @@ def _render_markdown(payload: dict[str, Any]) -> str:
         f"- Planner recommendation: `{payload['worktree_settlement']['planner_recommendation']}`"
     )
     lines.append(
-        "- Refreshable subjectivity previews: "
+        "- Refreshable handoff previews: "
         f"`{payload['worktree_settlement']['refreshable_handoff_preview_count']}`"
     )
     lines.append(
         "- Refreshable admissibility previews: "
         f"`{payload['worktree_settlement']['refreshable_admissibility_preview_count']}`"
     )
+    dream_weekly_alignment_line = str(payload.get("dream_weekly_alignment_line") or "").strip()
+    weekly_host_status_preview = payload["worktree_settlement"].get("weekly_host_status_preview")
+    if isinstance(weekly_host_status_preview, dict):
+        primary_status_line = str(
+            weekly_host_status_preview.get("primary_status_line") or ""
+        ).strip()
+        runtime_status_line = str(
+            weekly_host_status_preview.get("runtime_status_line") or ""
+        ).strip()
+        anchor_status_line = str(weekly_host_status_preview.get("anchor_status_line") or "").strip()
+        problem_route_status_line = str(
+            weekly_host_status_preview.get("problem_route_status_line") or ""
+        ).strip()
+        problem_route_secondary_labels = str(
+            weekly_host_status_preview.get("problem_route_secondary_labels") or ""
+        ).strip()
+        scribe_status_line = str(weekly_host_status_preview.get("scribe_status_line") or "").strip()
+        artifact_policy_status_line = str(
+            weekly_host_status_preview.get("artifact_policy_status_line") or ""
+        ).strip()
+        admissibility_primary_status_line = str(
+            weekly_host_status_preview.get("admissibility_primary_status_line") or ""
+        ).strip()
+        if primary_status_line:
+            lines.append(f"- Weekly host status: `{primary_status_line}`")
+        if runtime_status_line:
+            lines.append(f"- Weekly runtime posture: `{runtime_status_line}`")
+        if anchor_status_line:
+            lines.append(f"- Weekly anchor posture: `{anchor_status_line}`")
+        if problem_route_status_line:
+            lines.append(f"- Weekly problem route: `{problem_route_status_line}`")
+        if problem_route_secondary_labels:
+            lines.append(f"- Weekly problem route secondary: `{problem_route_secondary_labels}`")
+        if scribe_status_line:
+            lines.append(f"- Weekly Scribe posture: `{scribe_status_line}`")
+        if artifact_policy_status_line:
+            lines.append(f"- Weekly artifact policy: `{artifact_policy_status_line}`")
+        if admissibility_primary_status_line:
+            lines.append(f"- Weekly admissibility: `{admissibility_primary_status_line}`")
+    focus_preview = payload["worktree_settlement"].get("subjectivity_focus_preview")
+    if isinstance(focus_preview, dict):
+        primary_status_line = str(focus_preview.get("primary_status_line") or "").strip()
+        runtime_status_line = str(focus_preview.get("runtime_status_line") or "").strip()
+        scribe_status_line = str(focus_preview.get("scribe_status_line") or "").strip()
+        anchor_status_line = str(focus_preview.get("anchor_status_line") or "").strip()
+        problem_route_status_line = str(
+            focus_preview.get("problem_route_status_line") or ""
+        ).strip()
+        problem_route_secondary_labels = str(
+            focus_preview.get("problem_route_secondary_labels") or ""
+        ).strip()
+        focus_alignment_line = str(focus_preview.get("dream_weekly_alignment_line") or "").strip()
+        artifact_policy_status_line = str(
+            focus_preview.get("artifact_policy_status_line") or ""
+        ).strip()
+        admissibility_primary_status_line = str(
+            focus_preview.get("admissibility_primary_status_line") or ""
+        ).strip()
+        if primary_status_line:
+            lines.append(f"- Subjectivity focus: `{primary_status_line}`")
+        if runtime_status_line:
+            lines.append(f"- Subjectivity runtime posture: `{runtime_status_line}`")
+        if scribe_status_line:
+            lines.append(f"- Subjectivity Scribe posture: `{scribe_status_line}`")
+        if anchor_status_line:
+            lines.append(f"- Subjectivity anchor posture: `{anchor_status_line}`")
+        if problem_route_status_line:
+            lines.append(f"- Subjectivity problem route: `{problem_route_status_line}`")
+        if problem_route_secondary_labels:
+            lines.append(
+                f"- Subjectivity problem route secondary: `{problem_route_secondary_labels}`"
+            )
+        if focus_alignment_line:
+            lines.append(f"- Subjectivity alignment: `{focus_alignment_line}`")
+        if artifact_policy_status_line:
+            lines.append(f"- Subjectivity artifact policy: `{artifact_policy_status_line}`")
+        if admissibility_primary_status_line:
+            lines.append(f"- Subjectivity admissibility: `{admissibility_primary_status_line}`")
+    dream_observability_focus_preview = payload["worktree_settlement"].get(
+        "dream_observability_focus_preview"
+    )
+    if isinstance(dream_observability_focus_preview, dict):
+        primary_status_line = str(
+            dream_observability_focus_preview.get("primary_status_line") or ""
+        ).strip()
+        runtime_status_line = str(
+            dream_observability_focus_preview.get("runtime_status_line") or ""
+        ).strip()
+        anchor_status_line = str(
+            dream_observability_focus_preview.get("anchor_status_line") or ""
+        ).strip()
+        problem_route_status_line = str(
+            dream_observability_focus_preview.get("problem_route_status_line") or ""
+        ).strip()
+        problem_route_secondary_labels = str(
+            dream_observability_focus_preview.get("problem_route_secondary_labels") or ""
+        ).strip()
+        artifact_policy_status_line = str(
+            dream_observability_focus_preview.get("artifact_policy_status_line") or ""
+        ).strip()
+        if primary_status_line:
+            lines.append(f"- Dream observability: `{primary_status_line}`")
+        if runtime_status_line:
+            lines.append(f"- Dream runtime posture: `{runtime_status_line}`")
+        if anchor_status_line:
+            lines.append(f"- Dream anchor posture: `{anchor_status_line}`")
+        if problem_route_status_line:
+            lines.append(f"- Dream problem route: `{problem_route_status_line}`")
+        if problem_route_secondary_labels:
+            lines.append(f"- Dream problem route secondary: `{problem_route_secondary_labels}`")
+        if artifact_policy_status_line:
+            lines.append(f"- Dream artifact policy: `{artifact_policy_status_line}`")
+    repo_semantic_atlas_focus_preview = payload["worktree_settlement"].get(
+        "repo_semantic_atlas_focus_preview"
+    )
+    if isinstance(repo_semantic_atlas_focus_preview, dict):
+        primary_status_line = str(
+            repo_semantic_atlas_focus_preview.get("primary_status_line") or ""
+        ).strip()
+        runtime_status_line = str(
+            repo_semantic_atlas_focus_preview.get("runtime_status_line") or ""
+        ).strip()
+        artifact_policy_status_line = str(
+            repo_semantic_atlas_focus_preview.get("artifact_policy_status_line") or ""
+        ).strip()
+        if primary_status_line:
+            lines.append(f"- Repo semantic atlas: `{primary_status_line}`")
+        if runtime_status_line:
+            lines.append(f"- Repo semantic retrieval: `{runtime_status_line}`")
+        if artifact_policy_status_line:
+            lines.append(f"- Repo semantic artifact policy: `{artifact_policy_status_line}`")
+    repo_intelligence_focus_preview = payload["worktree_settlement"].get(
+        "repo_intelligence_focus_preview"
+    )
+    if isinstance(repo_intelligence_focus_preview, dict):
+        primary_status_line = str(
+            repo_intelligence_focus_preview.get("primary_status_line") or ""
+        ).strip()
+        runtime_status_line = str(
+            repo_intelligence_focus_preview.get("runtime_status_line") or ""
+        ).strip()
+        semantic_retrieval_protocol = str(
+            repo_intelligence_focus_preview.get("semantic_retrieval_protocol") or ""
+        ).strip()
+        semantic_preferred_neighborhood = str(
+            repo_intelligence_focus_preview.get("semantic_preferred_neighborhood") or ""
+        ).strip()
+        artifact_policy_status_line = str(
+            repo_intelligence_focus_preview.get("artifact_policy_status_line") or ""
+        ).strip()
+        if primary_status_line:
+            lines.append(f"- Repo intelligence: `{primary_status_line}`")
+        if runtime_status_line:
+            lines.append(f"- Repo intelligence runtime: `{runtime_status_line}`")
+        if semantic_retrieval_protocol:
+            lines.append(f"- Repo intelligence semantic protocol: `{semantic_retrieval_protocol}`")
+        if semantic_preferred_neighborhood:
+            lines.append(
+                f"- Repo intelligence first neighborhood: `{semantic_preferred_neighborhood}`"
+            )
+        if artifact_policy_status_line:
+            lines.append(f"- Repo intelligence artifact policy: `{artifact_policy_status_line}`")
+    agent_integrity_focus_preview = payload["worktree_settlement"].get(
+        "agent_integrity_focus_preview"
+    )
+    if isinstance(agent_integrity_focus_preview, dict):
+        primary_status_line = str(
+            agent_integrity_focus_preview.get("primary_status_line") or ""
+        ).strip()
+        runtime_status_line = str(
+            agent_integrity_focus_preview.get("runtime_status_line") or ""
+        ).strip()
+        problem_route_status_line = str(
+            agent_integrity_focus_preview.get("problem_route_status_line") or ""
+        ).strip()
+        artifact_policy_status_line = str(
+            agent_integrity_focus_preview.get("artifact_policy_status_line") or ""
+        ).strip()
+        if primary_status_line:
+            lines.append(f"- Agent integrity: `{primary_status_line}`")
+        if runtime_status_line:
+            lines.append(f"- Agent integrity runtime: `{runtime_status_line}`")
+        if problem_route_status_line:
+            lines.append(f"- Agent integrity problem route: `{problem_route_status_line}`")
+        if artifact_policy_status_line:
+            lines.append(f"- Agent integrity artifact policy: `{artifact_policy_status_line}`")
+    if dream_weekly_alignment_line:
+        lines.append(f"- Dream weekly alignment: `{dream_weekly_alignment_line}`")
+    if isinstance(weekly_host_status_preview, dict):
+        lines.append("")
+        lines.append("## Weekly Host Status Mirror")
+        lines.append("")
+        lines.append(f"- path: `{weekly_host_status_preview.get('path', '')}`")
+        lines.append(f"- queue_shape: `{weekly_host_status_preview.get('queue_shape', '')}`")
+        lines.append(
+            "- requires_operator_action: "
+            f"`{weekly_host_status_preview.get('requires_operator_action', 'false')}`"
+        )
+        lines.append(
+            f"- primary_status_line: `{weekly_host_status_preview.get('primary_status_line', '')}`"
+        )
+        if str(weekly_host_status_preview.get("runtime_status_line") or "").strip():
+            lines.append(
+                f"- runtime_status_line: `{weekly_host_status_preview.get('runtime_status_line', '')}`"
+            )
+        if str(weekly_host_status_preview.get("anchor_status_line") or "").strip():
+            lines.append(
+                f"- anchor_status_line: `{weekly_host_status_preview.get('anchor_status_line', '')}`"
+            )
+        if str(weekly_host_status_preview.get("problem_route_status_line") or "").strip():
+            lines.append(
+                "- problem_route_status_line: "
+                f"`{weekly_host_status_preview.get('problem_route_status_line', '')}`"
+            )
+        if str(weekly_host_status_preview.get("problem_route_secondary_labels") or "").strip():
+            lines.append(
+                "- problem_route_secondary_labels: "
+                f"`{weekly_host_status_preview.get('problem_route_secondary_labels', '')}`"
+            )
+        if str(weekly_host_status_preview.get("scribe_status_line") or "").strip():
+            lines.append(
+                f"- scribe_status_line: `{weekly_host_status_preview.get('scribe_status_line', '')}`"
+            )
+        if str(weekly_host_status_preview.get("artifact_policy_status_line") or "").strip():
+            lines.append(
+                "- artifact_policy_status_line: "
+                f"`{weekly_host_status_preview.get('artifact_policy_status_line', '')}`"
+            )
+        if str(weekly_host_status_preview.get("admissibility_primary_status_line") or "").strip():
+            lines.append(
+                "- admissibility_primary_status_line: "
+                f"`{weekly_host_status_preview.get('admissibility_primary_status_line', '')}`"
+            )
+        if str(weekly_host_status_preview.get("dream_weekly_alignment_line") or "").strip():
+            lines.append(
+                "- dream_weekly_alignment_line: "
+                f"`{weekly_host_status_preview.get('dream_weekly_alignment_line', '')}`"
+            )
     focus_preview = payload["worktree_settlement"].get("subjectivity_focus_preview")
     if isinstance(focus_preview, dict):
         lines.append("")
@@ -169,10 +409,203 @@ def _render_markdown(payload: dict[str, Any]) -> str:
             f"`{focus_preview.get('requires_operator_action', 'false')}`"
         )
         lines.append(f"- primary_status_line: `{focus_preview.get('primary_status_line', '')}`")
+        if str(focus_preview.get("runtime_status_line") or "").strip():
+            lines.append(f"- runtime_status_line: `{focus_preview.get('runtime_status_line', '')}`")
+        if str(focus_preview.get("scribe_status_line") or "").strip():
+            lines.append(f"- scribe_status_line: `{focus_preview.get('scribe_status_line', '')}`")
+        if str(focus_preview.get("anchor_status_line") or "").strip():
+            lines.append(f"- anchor_status_line: `{focus_preview.get('anchor_status_line', '')}`")
+        if str(focus_preview.get("problem_route_status_line") or "").strip():
+            lines.append(
+                "- problem_route_status_line: "
+                f"`{focus_preview.get('problem_route_status_line', '')}`"
+            )
+        if str(focus_preview.get("problem_route_secondary_labels") or "").strip():
+            lines.append(
+                "- problem_route_secondary_labels: "
+                f"`{focus_preview.get('problem_route_secondary_labels', '')}`"
+            )
+        if str(focus_preview.get("dream_weekly_alignment_line") or "").strip():
+            lines.append(
+                "- dream_weekly_alignment_line: "
+                f"`{focus_preview.get('dream_weekly_alignment_line', '')}`"
+            )
+        if str(focus_preview.get("artifact_policy_status_line") or "").strip():
+            lines.append(
+                "- artifact_policy_status_line: "
+                f"`{focus_preview.get('artifact_policy_status_line', '')}`"
+            )
         if str(focus_preview.get("admissibility_primary_status_line") or "").strip():
             lines.append(
                 "- admissibility_primary_status_line: "
                 f"`{focus_preview.get('admissibility_primary_status_line', '')}`"
+            )
+    scribe_focus_preview = payload["worktree_settlement"].get("scribe_focus_preview")
+    if isinstance(scribe_focus_preview, dict):
+        lines.append("")
+        lines.append("## Scribe Focus Mirror")
+        lines.append("")
+        lines.append(f"- path: `{scribe_focus_preview.get('path', '')}`")
+        lines.append(f"- queue_shape: `{scribe_focus_preview.get('queue_shape', '')}`")
+        lines.append(
+            "- requires_operator_action: "
+            f"`{scribe_focus_preview.get('requires_operator_action', 'false')}`"
+        )
+        lines.append(
+            f"- primary_status_line: `{scribe_focus_preview.get('primary_status_line', '')}`"
+        )
+        if str(scribe_focus_preview.get("runtime_status_line") or "").strip():
+            lines.append(
+                f"- runtime_status_line: `{scribe_focus_preview.get('runtime_status_line', '')}`"
+            )
+        if str(scribe_focus_preview.get("anchor_status_line") or "").strip():
+            lines.append(
+                f"- anchor_status_line: `{scribe_focus_preview.get('anchor_status_line', '')}`"
+            )
+        if str(scribe_focus_preview.get("problem_route_status_line") or "").strip():
+            lines.append(
+                "- problem_route_status_line: "
+                f"`{scribe_focus_preview.get('problem_route_status_line', '')}`"
+            )
+        if str(scribe_focus_preview.get("problem_route_secondary_labels") or "").strip():
+            lines.append(
+                "- problem_route_secondary_labels: "
+                f"`{scribe_focus_preview.get('problem_route_secondary_labels', '')}`"
+            )
+        if str(scribe_focus_preview.get("artifact_policy_status_line") or "").strip():
+            lines.append(
+                "- artifact_policy_status_line: "
+                f"`{scribe_focus_preview.get('artifact_policy_status_line', '')}`"
+            )
+    if isinstance(dream_observability_focus_preview, dict):
+        lines.append("")
+        lines.append("## Dream Observability Focus Mirror")
+        lines.append("")
+        lines.append(f"- path: `{dream_observability_focus_preview.get('path', '')}`")
+        lines.append(f"- queue_shape: `{dream_observability_focus_preview.get('queue_shape', '')}`")
+        lines.append(
+            "- requires_operator_action: "
+            f"`{dream_observability_focus_preview.get('requires_operator_action', 'false')}`"
+        )
+        lines.append(
+            "- primary_status_line: "
+            f"`{dream_observability_focus_preview.get('primary_status_line', '')}`"
+        )
+        if str(dream_observability_focus_preview.get("runtime_status_line") or "").strip():
+            lines.append(
+                "- runtime_status_line: "
+                f"`{dream_observability_focus_preview.get('runtime_status_line', '')}`"
+            )
+        if str(dream_observability_focus_preview.get("anchor_status_line") or "").strip():
+            lines.append(
+                "- anchor_status_line: "
+                f"`{dream_observability_focus_preview.get('anchor_status_line', '')}`"
+            )
+        if str(dream_observability_focus_preview.get("problem_route_status_line") or "").strip():
+            lines.append(
+                "- problem_route_status_line: "
+                f"`{dream_observability_focus_preview.get('problem_route_status_line', '')}`"
+            )
+        if str(
+            dream_observability_focus_preview.get("problem_route_secondary_labels") or ""
+        ).strip():
+            lines.append(
+                "- problem_route_secondary_labels: "
+                f"`{dream_observability_focus_preview.get('problem_route_secondary_labels', '')}`"
+            )
+        if str(dream_observability_focus_preview.get("artifact_policy_status_line") or "").strip():
+            lines.append(
+                "- artifact_policy_status_line: "
+                f"`{dream_observability_focus_preview.get('artifact_policy_status_line', '')}`"
+            )
+    if isinstance(repo_semantic_atlas_focus_preview, dict):
+        lines.append("")
+        lines.append("## Repo Semantic Atlas Focus Mirror")
+        lines.append("")
+        lines.append(f"- path: `{repo_semantic_atlas_focus_preview.get('path', '')}`")
+        lines.append(f"- queue_shape: `{repo_semantic_atlas_focus_preview.get('queue_shape', '')}`")
+        lines.append(
+            "- requires_operator_action: "
+            f"`{repo_semantic_atlas_focus_preview.get('requires_operator_action', 'false')}`"
+        )
+        lines.append(
+            "- primary_status_line: "
+            f"`{repo_semantic_atlas_focus_preview.get('primary_status_line', '')}`"
+        )
+        if str(repo_semantic_atlas_focus_preview.get("runtime_status_line") or "").strip():
+            lines.append(
+                "- runtime_status_line: "
+                f"`{repo_semantic_atlas_focus_preview.get('runtime_status_line', '')}`"
+            )
+        if str(repo_semantic_atlas_focus_preview.get("artifact_policy_status_line") or "").strip():
+            lines.append(
+                "- artifact_policy_status_line: "
+                f"`{repo_semantic_atlas_focus_preview.get('artifact_policy_status_line', '')}`"
+            )
+    if isinstance(repo_intelligence_focus_preview, dict):
+        lines.append("")
+        lines.append("## Repo Intelligence Focus Mirror")
+        lines.append("")
+        lines.append(f"- path: `{repo_intelligence_focus_preview.get('path', '')}`")
+        lines.append(f"- queue_shape: `{repo_intelligence_focus_preview.get('queue_shape', '')}`")
+        lines.append(
+            "- requires_operator_action: "
+            f"`{repo_intelligence_focus_preview.get('requires_operator_action', 'false')}`"
+        )
+        lines.append(
+            "- primary_status_line: "
+            f"`{repo_intelligence_focus_preview.get('primary_status_line', '')}`"
+        )
+        if str(repo_intelligence_focus_preview.get("runtime_status_line") or "").strip():
+            lines.append(
+                "- runtime_status_line: "
+                f"`{repo_intelligence_focus_preview.get('runtime_status_line', '')}`"
+            )
+        if str(repo_intelligence_focus_preview.get("semantic_retrieval_protocol") or "").strip():
+            lines.append(
+                "- semantic_retrieval_protocol: "
+                f"`{repo_intelligence_focus_preview.get('semantic_retrieval_protocol', '')}`"
+            )
+        if str(
+            repo_intelligence_focus_preview.get("semantic_preferred_neighborhood") or ""
+        ).strip():
+            lines.append(
+                "- semantic_preferred_neighborhood: "
+                f"`{repo_intelligence_focus_preview.get('semantic_preferred_neighborhood', '')}`"
+            )
+        if str(repo_intelligence_focus_preview.get("artifact_policy_status_line") or "").strip():
+            lines.append(
+                "- artifact_policy_status_line: "
+                f"`{repo_intelligence_focus_preview.get('artifact_policy_status_line', '')}`"
+            )
+    if isinstance(agent_integrity_focus_preview, dict):
+        lines.append("")
+        lines.append("## Agent Integrity Focus Mirror")
+        lines.append("")
+        lines.append(f"- path: `{agent_integrity_focus_preview.get('path', '')}`")
+        lines.append(f"- queue_shape: `{agent_integrity_focus_preview.get('queue_shape', '')}`")
+        lines.append(
+            "- requires_operator_action: "
+            f"`{agent_integrity_focus_preview.get('requires_operator_action', 'false')}`"
+        )
+        lines.append(
+            "- primary_status_line: "
+            f"`{agent_integrity_focus_preview.get('primary_status_line', '')}`"
+        )
+        if str(agent_integrity_focus_preview.get("runtime_status_line") or "").strip():
+            lines.append(
+                "- runtime_status_line: "
+                f"`{agent_integrity_focus_preview.get('runtime_status_line', '')}`"
+            )
+        if str(agent_integrity_focus_preview.get("problem_route_status_line") or "").strip():
+            lines.append(
+                "- problem_route_status_line: "
+                f"`{agent_integrity_focus_preview.get('problem_route_status_line', '')}`"
+            )
+        if str(agent_integrity_focus_preview.get("artifact_policy_status_line") or "").strip():
+            lines.append(
+                "- artifact_policy_status_line: "
+                f"`{agent_integrity_focus_preview.get('artifact_policy_status_line', '')}`"
             )
     lines.append("")
     for preview in payload["worktree_settlement"]["handoff_previews"]:
@@ -182,11 +615,46 @@ def _render_markdown(payload: dict[str, Any]) -> str:
             f"(`{preview['queue_shape']}`): "
             f"`{preview['primary_status_line']}`"
         )
+        if str(preview.get("runtime_status_line") or "").strip():
+            lines.append("  - runtime_status_line: " f"`{preview['runtime_status_line']}`")
+        if str(preview.get("anchor_status_line") or "").strip():
+            lines.append("  - anchor_status_line: " f"`{preview['anchor_status_line']}`")
+        if str(preview.get("problem_route_status_line") or "").strip():
+            lines.append(
+                "  - problem_route_status_line: " f"`{preview['problem_route_status_line']}`"
+            )
+        if str(preview.get("problem_route_secondary_labels") or "").strip():
+            lines.append(
+                "  - problem_route_secondary_labels: "
+                f"`{preview['problem_route_secondary_labels']}`"
+            )
+        if str(preview.get("dream_weekly_alignment_line") or "").strip():
+            lines.append(
+                "  - dream_weekly_alignment_line: " f"`{preview['dream_weekly_alignment_line']}`"
+            )
+        if str(preview.get("artifact_policy_status_line") or "").strip():
+            lines.append(
+                "  - artifact_policy_status_line: " f"`{preview['artifact_policy_status_line']}`"
+            )
+        if str(preview.get("semantic_retrieval_protocol") or "").strip():
+            lines.append(
+                "  - semantic_retrieval_protocol: " f"`{preview['semantic_retrieval_protocol']}`"
+            )
+        if str(preview.get("semantic_preferred_neighborhood") or "").strip():
+            lines.append(
+                "  - semantic_preferred_neighborhood: "
+                f"`{preview['semantic_preferred_neighborhood']}`"
+            )
+        if str(preview.get("scribe_status_line") or "").strip():
+            lines.append("  - scribe_status_line: " f"`{preview['scribe_status_line']}`")
         lines.append(
             "  - requires_operator_action: " f"`{preview.get('requires_operator_action', 'false')}`"
         )
         if str(preview.get("admissibility_primary_status_line") or "").strip():
-            lines.append("  - admissibility: " f"`{preview['admissibility_primary_status_line']}`")
+            lines.append(
+                "  - admissibility_primary_status_line: "
+                f"`{preview['admissibility_primary_status_line']}`"
+            )
     lines.append("")
     lines.append("## Next Actions")
     lines.append("")
@@ -223,6 +691,71 @@ def build_report(
         failing_checks,
         metadata_only_blocker=metadata_only_blocker,
     )
+
+    def _compact_preview(item: dict[str, Any] | None) -> dict[str, str] | None:
+        if not isinstance(item, dict):
+            return None
+        path = str(item.get("path") or "").strip()
+        primary_status_line = str(item.get("primary_status_line") or "").strip()
+        if not path or not primary_status_line:
+            return None
+        preview = {
+            "path": path,
+            "queue_shape": str(item.get("queue_shape") or ""),
+            "primary_status_line": str(item.get("primary_status_line") or ""),
+            "runtime_status_line": str(item.get("runtime_status_line") or ""),
+            "anchor_status_line": str(item.get("anchor_status_line") or ""),
+            "artifact_policy_status_line": str(item.get("artifact_policy_status_line") or ""),
+            "admissibility_primary_status_line": str(
+                item.get("admissibility_primary_status_line") or ""
+            ),
+            "requires_operator_action": str(item.get("requires_operator_action") or "false"),
+        }
+        semantic_retrieval_protocol = str(item.get("semantic_retrieval_protocol") or "").strip()
+        if semantic_retrieval_protocol:
+            preview["semantic_retrieval_protocol"] = semantic_retrieval_protocol
+        semantic_preferred_neighborhood = str(
+            item.get("semantic_preferred_neighborhood") or ""
+        ).strip()
+        if semantic_preferred_neighborhood:
+            preview["semantic_preferred_neighborhood"] = semantic_preferred_neighborhood
+        problem_route_status_line = str(item.get("problem_route_status_line") or "").strip()
+        if problem_route_status_line:
+            preview["problem_route_status_line"] = problem_route_status_line
+        problem_route_secondary_labels = str(
+            item.get("problem_route_secondary_labels") or ""
+        ).strip()
+        if problem_route_secondary_labels:
+            preview["problem_route_secondary_labels"] = problem_route_secondary_labels
+        dream_weekly_alignment_line = str(item.get("dream_weekly_alignment_line") or "").strip()
+        if dream_weekly_alignment_line:
+            preview["dream_weekly_alignment_line"] = dream_weekly_alignment_line
+        scribe_status_line = str(item.get("scribe_status_line") or "").strip()
+        if scribe_status_line:
+            preview["scribe_status_line"] = scribe_status_line
+        return preview
+
+    def _fallback_weekly_preview(document: dict[str, Any] | None) -> dict[str, str] | None:
+        if not isinstance(document, dict):
+            return None
+        lanes = document.get("settlement_lanes")
+        if not isinstance(lanes, list):
+            return None
+        for lane in lanes:
+            if not isinstance(lane, dict):
+                continue
+            previews = lane.get("handoff_previews")
+            if not isinstance(previews, list):
+                continue
+            for item in previews:
+                if not isinstance(item, dict):
+                    continue
+                if str(item.get("queue_shape") or "").strip() != "weekly_host_status":
+                    continue
+                preview = _compact_preview(item)
+                if preview is not None:
+                    return preview
+        return None
 
     payload = {
         "generated_at": _iso_now(),
@@ -263,37 +796,59 @@ def build_report(
                 .get("summary", {})
                 .get("refreshable_admissibility_preview_count", 0)
             ),
+            "weekly_host_status_preview": (
+                _compact_preview(item)
+                if isinstance(
+                    item := (worktree_settlement or {}).get("weekly_host_status_preview"), dict
+                )
+                else _fallback_weekly_preview(worktree_settlement)
+            ),
             "subjectivity_focus_preview": (
-                {
-                    "path": str(item.get("path") or ""),
-                    "queue_shape": str(item.get("queue_shape") or ""),
-                    "primary_status_line": str(item.get("primary_status_line") or ""),
-                    "admissibility_primary_status_line": str(
-                        item.get("admissibility_primary_status_line") or ""
-                    ),
-                    "requires_operator_action": str(
-                        item.get("requires_operator_action") or "false"
-                    ),
-                }
+                _compact_preview(item)
                 if isinstance(
                     item := (worktree_settlement or {}).get("subjectivity_focus_preview"), dict
                 )
-                and str(item.get("path") or "").strip()
-                and str(item.get("primary_status_line") or "").strip()
+                else None
+            ),
+            "dream_observability_focus_preview": (
+                _compact_preview(item)
+                if isinstance(
+                    item := (worktree_settlement or {}).get("dream_observability_focus_preview"),
+                    dict,
+                )
+                else None
+            ),
+            "repo_semantic_atlas_focus_preview": (
+                _compact_preview(item)
+                if isinstance(
+                    item := (worktree_settlement or {}).get("repo_semantic_atlas_focus_preview"),
+                    dict,
+                )
+                else None
+            ),
+            "repo_intelligence_focus_preview": (
+                _compact_preview(item)
+                if isinstance(
+                    item := (worktree_settlement or {}).get("repo_intelligence_focus_preview"),
+                    dict,
+                )
+                else None
+            ),
+            "agent_integrity_focus_preview": (
+                _compact_preview(item)
+                if isinstance(
+                    item := (worktree_settlement or {}).get("agent_integrity_focus_preview"),
+                    dict,
+                )
+                else None
+            ),
+            "scribe_focus_preview": (
+                _compact_preview(item)
+                if isinstance(item := (worktree_settlement or {}).get("scribe_focus_preview"), dict)
                 else None
             ),
             "handoff_previews": [
-                {
-                    "path": str(item.get("path") or ""),
-                    "queue_shape": str(item.get("queue_shape") or ""),
-                    "primary_status_line": str(item.get("primary_status_line") or ""),
-                    "admissibility_primary_status_line": str(
-                        item.get("admissibility_primary_status_line") or ""
-                    ),
-                    "requires_operator_action": str(
-                        item.get("requires_operator_action") or "false"
-                    ),
-                }
+                preview
                 for item in (
                     (worktree_settlement or {})
                     .get("settlement_lanes", [{}])[0]
@@ -302,9 +857,40 @@ def build_report(
                     and (worktree_settlement or {}).get("settlement_lanes")
                     else []
                 )
-                if isinstance(item, dict) and str(item.get("primary_status_line") or "").strip()
+                if isinstance(item, dict) and (preview := _compact_preview(item)) is not None
             ],
         },
+        "dream_weekly_alignment_line": str(
+            (
+                (
+                    _compact_preview(item)
+                    if isinstance(
+                        item := (worktree_settlement or {}).get("weekly_host_status_preview"),
+                        dict,
+                    )
+                    else _fallback_weekly_preview(worktree_settlement)
+                )
+                or {}
+            ).get("dream_weekly_alignment_line")
+            or ""
+        ).strip()
+        or build_dream_weekly_alignment_line(
+            (
+                _compact_preview(item)
+                if isinstance(
+                    item := (worktree_settlement or {}).get("weekly_host_status_preview"), dict
+                )
+                else _fallback_weekly_preview(worktree_settlement)
+            ),
+            (
+                _compact_preview(item)
+                if isinstance(
+                    item := (worktree_settlement or {}).get("dream_observability_focus_preview"),
+                    dict,
+                )
+                else None
+            ),
+        ),
         "settlement": {
             "status": settlement_status,
             "metadata_only_blocker": metadata_only_blocker,

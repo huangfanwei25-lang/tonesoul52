@@ -8,6 +8,7 @@ stateful tension result used by dispatch and gate decisions.
 from __future__ import annotations
 
 import math
+import pathlib
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
@@ -320,6 +321,20 @@ class TensionEngine:
         self._predictor.reset()
         self._persistence = 0.0
         self._step_count = 0
+
+    def save_persistence(self, path: "Optional[pathlib.Path]" = None) -> None:
+        """Persist the current Ψ value to disk for cross-session continuity."""
+        from tonesoul.soul_persistence import save_psi
+
+        save_psi(self._persistence, self._step_count, path)
+
+    def load_persistence(self, path: "Optional[pathlib.Path]" = None) -> None:
+        """Restore the Ψ value from a previous session."""
+        from tonesoul.soul_persistence import load_psi
+
+        snapshot = load_psi(path)
+        self._persistence = snapshot.psi
+        self._step_count = snapshot.step_count
 
     @property
     def work_category(self) -> WorkCategory:

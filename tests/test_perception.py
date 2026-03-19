@@ -41,6 +41,7 @@ class TestStimulusProcessor:
         assert stimuli[0].topic == "AI Governance Overview"
         assert stimuli[0].relevance_score > 0  # Has relevant keywords
         assert len(stimuli[0].tags) > 0
+        assert stimuli[0].observation_mode == "remote_feed"
 
     def test_deduplication(self):
         from tonesoul.perception.stimulus import StimulusProcessor
@@ -144,6 +145,23 @@ class TestStimulusProcessor:
         assert payload["type"] == "environment_stimulus"
         assert payload["relevance_score"] == 0.75
         assert "ai" in payload["tags"]
+        assert payload["observation_mode"] == "remote_feed"
+
+    def test_observation_mode_normalizes_unknown_values(self):
+        from tonesoul.perception.stimulus import EnvironmentStimulus
+
+        stimulus = EnvironmentStimulus(
+            source_url="http://example.com",
+            topic="Test Topic",
+            summary="Test summary",
+            content_hash="abc123",
+            ingested_at="2026-03-07T00:00:00Z",
+            observation_mode="satellite",
+        )
+
+        payload = stimulus.to_memory_payload()
+
+        assert payload["observation_mode"] == "remote_feed"
 
 
 class TestWebIngestor:

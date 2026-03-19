@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from types import SimpleNamespace
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 import numpy as np
 import pytest
@@ -93,6 +93,9 @@ class _FakeTensionEngine:
     def compute(self, **_kwargs):
         return self._result
 
+    def save_persistence(self) -> None:
+        return None
+
 
 @dataclass
 class _FakeMemoryResult:
@@ -157,6 +160,45 @@ class _FakeLLMClient:
     def send_message(self, message: str) -> str:
         self.messages.append(message)
         return self.response
+
+
+class _FakeGraphWithSummary:
+    def retrieve_relevant(self, *, query_terms, max_hops=2, max_results=10):
+        return {
+            "matched_nodes": [{"id": "n1", "label": "honesty"}],
+            "related_nodes": [{"id": "n2", "label": "trust"}],
+            "commitments_in_scope": [{"id": "c1", "label": "be truthful"}],
+            "context_summary": "Matched honesty with trust implications.",
+        }
+
+
+class _FakeGraphNoSummary:
+    def retrieve_relevant(self, *, query_terms, max_hops=2, max_results=10):
+        return {
+            "matched_nodes": [],
+            "related_nodes": [],
+            "commitments_in_scope": [],
+            "context_summary": "",
+        }
+
+
+class _FakeDominantVoice:
+    def __init__(self, value: str) -> None:
+        self.value = value
+
+
+class _FakeDeliberationResult:
+    def __init__(self, voice: str, reasoning: str) -> None:
+        self.dominant_voice = _FakeDominantVoice(voice)
+        self._reasoning = reasoning
+
+    def get_internal_debate(self) -> dict[str, dict[str, str]]:
+        return {self.dominant_voice.value: {"reasoning": self._reasoning}}
+
+
+class _FakeDeliberationEngine:
+    def deliberate_sync(self, _context):
+        return _FakeDeliberationResult("logos", "Prefer structured, low-risk decomposition.")
 
 
 def _build_pipeline(
@@ -382,6 +424,60 @@ def test_runtime_dispatch_trace_captures_llm_usage_metrics() -> None:
     }
 
 
+def test_runtime_deliberation_trace_when_engine_unavailable() -> None:
+    pipeline = _build_pipeline(
+        _FakeTensionResult(
+            total=0.51,
+            severity="moderate",
+            compression_ratio=0.62,
+            gamma_effective=1.2,
+            lyapunov_exponent=0.05,
+        ),
+        llm_client=_FakeLLMClient(response="trace test"),
+    )
+
+    result = pipeline.process(
+        user_message="Summarize with clear governance context.",
+        user_tier="free",
+        user_id="v2-deliberation-unavailable",
+    )
+
+    trace = result.dispatch_trace.get("deliberation") or {}
+    assert trace.get("enabled") is True
+    assert trace.get("available") is False
+    assert trace.get("used") is False
+    assert trace.get("reason") == "engine_unavailable"
+    assert isinstance((trace.get("context") or {}).get("history_turns"), int)
+
+
+def test_runtime_deliberation_trace_when_engine_applied() -> None:
+    pipeline = _build_pipeline(
+        _FakeTensionResult(
+            total=0.61,
+            severity="moderate",
+            compression_ratio=0.55,
+            gamma_effective=1.1,
+            lyapunov_exponent=0.04,
+        ),
+        llm_client=_FakeLLMClient(response="trace test"),
+    )
+    pipeline._get_deliberation = MagicMock(return_value=_FakeDeliberationEngine())
+
+    result = pipeline.process(
+        user_message="Need a structured and reliable implementation plan.",
+        user_tier="premium",
+        user_id="v2-deliberation-used",
+    )
+
+    trace = result.dispatch_trace.get("deliberation") or {}
+    assert trace.get("available") is True
+    assert trace.get("used") is True
+    assert trace.get("reason") == "deliberation_applied"
+    assert trace.get("dominant_voice") == "logos"
+    assert trace.get("persona_mode") == "Engineer"
+    assert "monologue_excerpt" in trace
+
+
 def test_runtime_dispatch_trace_keeps_backend_and_model_without_fabricated_usage() -> None:
     fake_client = _FakeLLMClient(model="qwen3.5:4b", metrics=None)
     pipeline = _build_pipeline(
@@ -417,6 +513,75 @@ def test_runtime_dispatch_trace_keeps_backend_and_model_without_fabricated_usage
     assert "usage" not in llm_trace
 
 
+def test_suppressed_errors_absent_on_clean_run() -> None:
+    pipeline = _build_pipeline(
+        _FakeTensionResult(
+            total=0.55,
+            severity="moderate",
+            compression_ratio=0.64,
+            gamma_effective=1.0,
+            lyapunov_exponent=0.05,
+        ),
+        llm_client=_FakeLLMClient(model="qwen3.5:4b", metrics=None),
+    )
+    pipeline._get_governance_kernel = MagicMock(return_value=None)
+    pipeline._get_drift_monitor = MagicMock(return_value=None)
+    pipeline._get_alert_escalation = MagicMock(return_value=None)
+    pipeline._get_llm_router = MagicMock(return_value=None)
+
+    result = pipeline.process(
+        user_message="Explain the runtime flow in a concise and reliable way.",
+        user_tier="premium",
+        user_id="v2-suppressed-errors-clean",
+        prior_tension={
+            "delta_t": 0.42,
+            "query_tension": 0.4,
+            "memory_tension": 0.39,
+            "is_immutable": False,
+        },
+    )
+
+    assert "suppressed_errors" not in result.dispatch_trace
+
+
+def test_suppressed_errors_present_on_init_failure() -> None:
+    pipeline = _build_pipeline(
+        _FakeTensionResult(
+            total=0.57,
+            severity="moderate",
+            compression_ratio=0.61,
+            gamma_effective=1.0,
+            lyapunov_exponent=0.06,
+        ),
+        llm_client=_FakeLLMClient(response="trace test"),
+    )
+    pipeline._get_governance_kernel = MagicMock(return_value=None)
+    pipeline._get_drift_monitor = MagicMock(return_value=None)
+    pipeline._get_llm_router = MagicMock(return_value=None)
+
+    with patch(
+        "tonesoul.alert_escalation.AlertEscalation",
+        side_effect=RuntimeError("alert escalation unavailable"),
+    ):
+        result = pipeline.process(
+            user_message="Need a stable execution plan with explicit fallback behavior.",
+            user_tier="premium",
+            user_id="v2-suppressed-errors-failure",
+            prior_tension={
+                "delta_t": 0.44,
+                "query_tension": 0.41,
+                "memory_tension": 0.4,
+                "is_immutable": False,
+            },
+        )
+
+    suppressed = result.dispatch_trace.get("suppressed_errors") or {}
+    assert suppressed.get("suppressed_count") == 1
+    assert suppressed["errors"][0]["component"] == "unified_pipeline"
+    assert suppressed["errors"][0]["operation"] == "_get_alert_escalation"
+    assert suppressed["errors"][0]["error_type"] == "RuntimeError"
+
+
 def test_pipeline_mirror_disabled_default() -> None:
     fake_client = _FakeLLMClient(response="mirror disabled response")
     pipeline = _build_pipeline(
@@ -450,7 +615,8 @@ def test_pipeline_mirror_disabled_default() -> None:
     assert "mirror_delta" not in result.trajectory_analysis
 
 
-def test_pipeline_mirror_enabled_trajectory() -> None:
+def test_pipeline_mirror_enabled_trajectory(monkeypatch) -> None:
+    monkeypatch.setenv("TONESOUL_MIRROR_MODE", "observe")
     fake_client = _FakeLLMClient(response="mock llm response")
     pipeline = _build_pipeline(
         _FakeTensionResult(
@@ -483,13 +649,83 @@ def test_pipeline_mirror_enabled_trajectory() -> None:
     )
 
     fake_mirror.reflect.assert_called_once()
-    assert result.response == "mock governed response"
+    assert result.response == "mock llm response"
     mirror_trace = result.dispatch_trace.get("mirror") or {}
     assert mirror_trace.get("enabled") is True
     assert mirror_trace.get("available") is True
+    assert mirror_trace.get("mode") == "observe"
+    assert mirror_trace.get("enforced") is False
+    assert mirror_trace.get("applied_response") == "raw"
     assert mirror_trace.get("final_choice") == "governed"
     assert mirror_trace.get("mirror_triggered") is True
     assert (result.trajectory_analysis.get("mirror_delta") or {}).get("mirror_triggered") is True
     assert (
         ((result.council_verdict.get("metadata") or {}).get("dispatch") or {}).get("mirror") or {}
     ).get("final_choice") == "governed"
+
+
+def test_pipeline_mirror_enforce_mode_applies_governed_response(monkeypatch) -> None:
+    monkeypatch.setenv("TONESOUL_MIRROR_MODE", "enforce")
+    fake_client = _FakeLLMClient(response="mock llm response")
+    pipeline = _build_pipeline(
+        _FakeTensionResult(
+            total=0.82,
+            severity="moderate",
+            compression_ratio=0.58,
+            gamma_effective=1.3,
+            lyapunov_exponent=0.09,
+        ),
+        llm_client=fake_client,
+        mirror_enabled=True,
+    )
+    fake_mirror = MagicMock()
+    fake_mirror.reflect.return_value = _build_dual_track("mock governed response")
+    pipeline._get_mirror = MagicMock(return_value=fake_mirror)
+
+    result = pipeline.process(
+        user_message="Apply governed response in enforce mode.",
+        user_tier="premium",
+        user_id="v2-mirror-enforce-test",
+        prior_tension={
+            "delta_t": 0.63,
+            "query_tension": 0.59,
+            "memory_tension": 0.52,
+            "is_immutable": False,
+        },
+    )
+
+    fake_mirror.reflect.assert_called_once()
+    assert result.response == "mock governed response"
+    mirror_trace = result.dispatch_trace.get("mirror") or {}
+    assert mirror_trace.get("mode") == "enforce"
+    assert mirror_trace.get("enforced") is True
+    assert mirror_trace.get("applied_response") == "governed"
+
+
+def test_graph_rag_trace_injected_when_summary_available() -> None:
+    pipeline = UnifiedPipeline(mirror_enabled=False)
+    pipeline._semantic_graph = _FakeGraphWithSummary()
+
+    updated, trace = pipeline._inject_graph_rag_context(
+        "Please help me reason about honesty and trust.",
+        tb_result=None,
+    )
+
+    assert "[語義圖譜檢索:" in updated
+    assert trace.get("applied") is True
+    assert trace.get("reason") == "summary_injected"
+    assert trace.get("matched_count") == 1
+    assert trace.get("related_count") == 1
+    assert trace.get("commitments_count") == 1
+
+
+def test_graph_rag_trace_not_injected_without_summary() -> None:
+    pipeline = UnifiedPipeline(mirror_enabled=False)
+    pipeline._semantic_graph = _FakeGraphNoSummary()
+
+    source = "Explain this concise topic."
+    updated, trace = pipeline._inject_graph_rag_context(source, tb_result=None)
+
+    assert updated == source
+    assert trace.get("applied") is False
+    assert trace.get("reason") == "no_summary"

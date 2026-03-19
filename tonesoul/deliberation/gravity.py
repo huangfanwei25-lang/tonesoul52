@@ -12,6 +12,7 @@ is context-dependent.
 from itertools import combinations
 from typing import List, Optional
 
+from .persona_track_record import PersonaTrackRecord
 from .types import (
     DeliberationContext,
     DeliberationWeights,
@@ -54,6 +55,13 @@ class SemanticGravity:
         "conflict_state": (PerspectiveType.AEGIS, 0.25),
         "loop_detected": (PerspectiveType.LOGOS, 0.2),
     }
+
+    # Pareto frontier boost for non-dominated viewpoints.
+    # Kept intentionally small to preserve existing behavior.
+    PARETO_BOOST = 0.05
+
+    def __init__(self, track_record: Optional[PersonaTrackRecord] = None):
+        self._track_record = track_record
 
     def synthesize(
         self,
@@ -196,10 +204,65 @@ class SemanticGravity:
                 if vp.safety_risk > 0.5:
                     weights.aegis += 0.3
 
+        # Pareto adjustment: reward viewpoints that are not dominated
+        # in the (confidence max, safety_risk min) objective space.
+        pareto = self._pareto_frontier(viewpoints)
+        for vp in pareto:
+            if vp.perspective == PerspectiveType.MUSE:
+                weights.muse += self.PARETO_BOOST
+            elif vp.perspective == PerspectiveType.LOGOS:
+                weights.logos += self.PARETO_BOOST
+            elif vp.perspective == PerspectiveType.AEGIS:
+                weights.aegis += self.PARETO_BOOST
+
+        # Historical perspective performance bias (Phase 539)
+        if self._track_record is not None:
+            weights.muse *= self._track_record.get_multiplier(
+                "muse",
+                resonance_state=context.resonance_state,
+                loop_detected=context.loop_detected,
+            )
+            weights.logos *= self._track_record.get_multiplier(
+                "logos",
+                resonance_state=context.resonance_state,
+                loop_detected=context.loop_detected,
+            )
+            weights.aegis *= self._track_record.get_multiplier(
+                "aegis",
+                resonance_state=context.resonance_state,
+                loop_detected=context.loop_detected,
+            )
+
         # Normalize
         weights.normalize()
 
         return weights
+
+    def _pareto_frontier(self, viewpoints: List[ViewPoint]) -> List[ViewPoint]:
+        """Return non-dominated viewpoints under two objectives.
+
+        Objectives:
+        1) maximize confidence
+        2) minimize safety_risk
+        """
+        frontier: List[ViewPoint] = []
+        for candidate in viewpoints:
+            dominated = False
+            for other in viewpoints:
+                if other is candidate:
+                    continue
+                better_or_equal_conf = other.confidence >= candidate.confidence
+                better_or_equal_risk = other.safety_risk <= candidate.safety_risk
+                strictly_better = (
+                    other.confidence > candidate.confidence
+                    or other.safety_risk < candidate.safety_risk
+                )
+                if better_or_equal_conf and better_or_equal_risk and strictly_better:
+                    dominated = True
+                    break
+            if not dominated:
+                frontier.append(candidate)
+        return frontier
 
     def _weighted_merge(self, viewpoints: List[ViewPoint], weights: DeliberationWeights) -> str:
         """Merge responses using weights."""
@@ -408,6 +471,6 @@ class SemanticGravity:
         return zone, note
 
 
-def create_semantic_gravity() -> SemanticGravity:
+def create_semantic_gravity(track_record: Optional[PersonaTrackRecord] = None) -> SemanticGravity:
     """Factory function."""
-    return SemanticGravity()
+    return SemanticGravity(track_record=track_record)

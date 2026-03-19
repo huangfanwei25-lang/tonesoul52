@@ -12,11 +12,9 @@ Automates the user's six-step financial analysis framework:
 from __future__ import annotations
 
 import logging
+import typing
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
-import typing
-
-from tonesoul.market.data_ingest import MarketStimulus
 
 logger = logging.getLogger(__name__)
 
@@ -99,7 +97,8 @@ else:
     try:
         from typing import Protocol
     except ImportError:
-        class Protocol: pass
+        class Protocol:
+            pass
 
 class IndustryTemplate(Protocol):
     def find_tension_signals(self, snapshots: List[QuarterlySnapshot]) -> List[TensionSignal]: ...
@@ -108,7 +107,7 @@ class IndustryTemplate(Protocol):
 
 class TechGrowthTemplate:
     """Original Template: Suited for tech, semi, and high-growth sectors (e.g. 5289 Innodisk)."""
-    
+
     def find_tension_signals(
         self, snapshots: List[QuarterlySnapshot]
     ) -> List[TensionSignal]:
@@ -333,7 +332,7 @@ class CyclicalTemplate:
         annual_eps: float,
     ) -> List[InvestmentScenario]:
         bvps = self.book_value_per_share
-        
+
         bull_pbr = 1.3
         base_pbr = 1.0
         bear_pbr = 0.8

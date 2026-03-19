@@ -170,7 +170,8 @@ class TestGovernanceKernelObservability:
     def test_build_routing_trace(self):
         from tonesoul.governance.kernel import GovernanceKernel
 
-        result = GovernanceKernel.build_routing_trace(
+        kernel = GovernanceKernel()
+        result = kernel.build_routing_trace(
             route="route_single_cloud",
             journal_eligible=1,
             reason="Route due to sustained governance friction",
@@ -181,6 +182,39 @@ class TestGovernanceKernelObservability:
             "journal_eligible": True,
             "reason": "Route due to sustained governance friction",
         }
+
+    def test_kernel_exc_trace_default_empty(self):
+        from tonesoul.governance.kernel import GovernanceKernel
+
+        kernel = GovernanceKernel()
+
+        assert kernel._exc_trace.has_errors is False
+        assert kernel._exc_trace.summary() == {"suppressed_count": 0}
+
+    def test_kernel_records_backend_probe_failure(self):
+        from tonesoul.governance.kernel import GovernanceKernel
+
+        kernel = GovernanceKernel()
+
+        with patch(
+            "tonesoul.llm.create_ollama_client",
+            side_effect=RuntimeError("ollama probe failed"),
+        ):
+            decision = kernel._try_ollama("Auto: Ollama first")
+
+        assert decision.backend == "ollama"
+        assert decision.client is None
+        assert kernel._exc_trace.has_errors is True
+
+        routing_trace = kernel.build_routing_trace(
+            route="route_single_cloud",
+            journal_eligible=False,
+            reason="probe test",
+        )
+        suppressed = routing_trace.get("suppressed_errors") or {}
+        assert suppressed.get("suppressed_count") == 1
+        assert suppressed["errors"][0]["operation"] == "_try_ollama"
+        assert suppressed["errors"][0]["error_type"] == "RuntimeError"
 
     def test_empty_trace(self):
         from tonesoul.governance.kernel import GovernanceKernel

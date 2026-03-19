@@ -44,6 +44,7 @@ class OllamaClient:
         self._available_models = None
         self._meter = meter
         self.last_metrics: LLMCallMetrics | None = None
+        self.last_resolved_model: str | None = None
 
     @staticmethod
     def _deadline(timeout_seconds: float) -> float:
@@ -319,6 +320,53 @@ class OllamaClient:
             raise OllamaError("Ollama chat 回應超時")
         except requests.exceptions.RequestException as e:
             raise OllamaError(f"Ollama chat 連接失敗: {e}")
+
+    def chat_with_timeout(
+        self,
+        messages: List[Dict],
+        system: Optional[str] = None,
+        timeout_seconds: float = 120.0,
+    ) -> str:
+        """Multi-turn chat with configurable timeout and resolved-model tracking."""
+        model = self._ensure_model()
+        self.last_resolved_model = model
+
+        formatted_messages = []
+        if system:
+            formatted_messages.append({"role": "system", "content": system})
+
+        for msg in messages:
+            role = msg.get("role", "user")
+            content = msg.get("content", "")
+            formatted_messages.append({"role": role, "content": content})
+
+        payload = {
+            "model": model,
+            "messages": formatted_messages,
+            "stream": False,
+        }
+
+        try:
+            response = requests.post(
+                f"{self.host}/api/chat",
+                json=payload,
+                timeout=max(1.0, float(timeout_seconds)),
+            )
+
+            if response.status_code == 200:
+                data = response.json()
+                self._record_usage(model, data)
+                return data.get("message", {}).get("content", "")
+            raise OllamaError(
+                f"Ollama HTTP {response.status_code}",
+                status_code=response.status_code,
+            )
+        except OllamaError:
+            raise
+        except requests.exceptions.Timeout:
+            raise OllamaError("Ollama chat timed out")
+        except requests.exceptions.RequestException as e:
+            raise OllamaError(f"Ollama chat failed: {e}")
 
 
 def create_ollama_client(

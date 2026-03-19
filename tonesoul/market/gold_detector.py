@@ -45,7 +45,7 @@ class GoldReport:
 
 class GoldDetector:
     """Scans raw FinMind data for transformation signals.
-    
+
     All math is done in Python. No LLM calls.
     """
 
@@ -131,7 +131,7 @@ class GoldDetector:
         self, institutional_data: List[Dict[str, Any]]
     ) -> Optional[GoldSignal]:
         """Detects sustained net buying by institutional investors (三大法人).
-        
+
         Logic:
         - Look at the last 20 trading days.
         - Count days where net_buy > 0.
@@ -175,7 +175,7 @@ class GoldDetector:
         self, monthly_revenue: List[Dict[str, Any]]
     ) -> Optional[GoldSignal]:
         """Detects a revenue YoY breakout after a period of decline or stagnation.
-        
+
         Logic:
         - Look at the last 6 months of YoY growth.
         - If the most recent 2 months show > 10% YoY growth after ≥ 2 months of < 5% → breakout.
@@ -223,7 +223,7 @@ class GoldDetector:
         self, income_statements: List[Dict[str, Any]]
     ) -> Optional[GoldSignal]:
         """Detects a gross margin turning point (from declining to expanding).
-        
+
         Logic:
         - Look at the last 4 quarters of gross margin.
         - If Q1-Q2 were declining and Q3-Q4 are expanding → inflection.
@@ -274,7 +274,7 @@ class GoldDetector:
         balance_sheets: List[Dict[str, Any]],
     ) -> Optional[GoldSignal]:
         """Detects inventory-to-revenue ratio declining (destocking complete).
-        
+
         Logic:
         - Calculate inventory / quarterly revenue for last 4 quarters.
         - If the ratio has been declining for 2+ consecutive quarters → clearance signal.
@@ -320,7 +320,7 @@ class GoldDetector:
         self, per_pbr_data: List[Dict[str, Any]]
     ) -> Optional[GoldSignal]:
         """Detects if current PE is significantly below its own historical average.
-        
+
         Logic:
         - Calculate average PE over the full dataset.
         - If current PE < 0.7 * avg_pe → stock is undervalued relative to its own history.

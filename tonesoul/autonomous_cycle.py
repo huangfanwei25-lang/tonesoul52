@@ -15,6 +15,7 @@ from tonesoul.memory.soul_db import SqliteSoulDB
 from tonesoul.memory.write_gateway import MemoryWriteGateway, MemoryWriteResult
 from tonesoul.perception.stimulus import StimulusProcessor
 from tonesoul.perception.web_ingest import WebIngestor
+from tonesoul.scribe.scribe_engine import ToneSoulScribe
 from tonesoul.wakeup_loop import AutonomousWakeupLoop
 
 
@@ -67,6 +68,7 @@ class AutonomousCycleResult:
     paths: dict[str, str] = field(default_factory=dict)
     ingestion_failures: list[dict[str, str]] = field(default_factory=list)
     wakeup_payload: dict[str, object] = field(default_factory=dict)
+    runtime_state: dict[str, object] = field(default_factory=dict)
     dashboard_payload: dict[str, object] = field(default_factory=dict)
     overall_ok: bool = True
 
@@ -88,6 +90,7 @@ class AutonomousCycleResult:
             "paths": dict(self.paths),
             "ingestion_failures": list(self.ingestion_failures),
             "wakeup_payload": dict(self.wakeup_payload),
+            "runtime_state": dict(self.runtime_state),
             "dashboard_payload": dict(self.dashboard_payload),
             "overall_ok": bool(self.overall_ok),
         }
@@ -109,8 +112,13 @@ class AutonomousDreamCycleRunner:
         journal_path: Path = Path("memory/self_journal.jsonl"),
         history_path: Path = Path("memory/autonomous/dream_wakeup_history.jsonl"),
         snapshot_path: Path = Path("docs/status/dream_wakeup_snapshot_latest.json"),
+        state_path: Path = Path("memory/autonomous/dream_wakeup_state.json"),
         dashboard_out_dir: Path = Path("docs/status"),
         interval_seconds: float = 0.0,
+        enable_scribe: bool = True,
+        scribe_out_dir: Path = Path("docs/chronicles"),
+        scribe_status_path: Path = Path("docs/status/scribe_status_latest.json"),
+        scribe_state_path: Path = Path("memory/autonomous/dream_wakeup_scribe_state.json"),
         ingestor: Optional[URLIngestorLike] = None,
         stimulus_processor: Optional[StimulusProcessor] = None,
         write_gateway: Optional[MemoryWriteGateway] = None,
@@ -121,8 +129,13 @@ class AutonomousDreamCycleRunner:
         self.journal_path = Path(journal_path)
         self.history_path = Path(history_path)
         self.snapshot_path = Path(snapshot_path)
+        self.state_path = Path(state_path)
         self.dashboard_out_dir = Path(dashboard_out_dir)
         self.interval_seconds = max(0.0, float(interval_seconds))
+        self.enable_scribe = bool(enable_scribe)
+        self.scribe_out_dir = Path(scribe_out_dir)
+        self.scribe_status_path = Path(scribe_status_path)
+        self.scribe_state_path = Path(scribe_state_path)
 
         self.ingestor = ingestor or WebIngestor()
         self.stimulus_processor = stimulus_processor or StimulusProcessor()
@@ -154,6 +167,12 @@ class AutonomousDreamCycleRunner:
         return AutonomousWakeupLoop(
             dream_engine=dream_engine,
             interval_seconds=self.interval_seconds,
+            state_path=self.state_path,
+            scribe=(
+                None if not self.enable_scribe else ToneSoulScribe(out_dir=str(self.scribe_out_dir))
+            ),
+            scribe_status_path=(None if not self.enable_scribe else self.scribe_status_path),
+            scribe_state_path=(None if not self.enable_scribe else self.scribe_state_path),
         )
 
     def run(
@@ -199,6 +218,7 @@ class AutonomousDreamCycleRunner:
             },
         )
         wakeup_rows = [result.to_dict() for result in wakeup_results]
+        runtime_state = self.wakeup_loop.get_runtime_state_snapshot()
         wakeup_payload: dict[str, object] = {
             "generated_at": _iso_now(),
             "overall_status": _derive_overall_status(wakeup_rows),
@@ -213,6 +233,7 @@ class AutonomousDreamCycleRunner:
                 "require_inference_ready": bool(require_inference_ready),
                 "inference_timeout_seconds": float(inference_timeout_seconds),
             },
+            "runtime_state": runtime_state,
             "results": wakeup_rows,
         }
         _write_json(self.snapshot_path, wakeup_payload)
@@ -239,11 +260,13 @@ class AutonomousDreamCycleRunner:
             paths={
                 "history_path": self.history_path.as_posix(),
                 "snapshot_path": self.snapshot_path.as_posix(),
+                "state_path": self.state_path.as_posix(),
                 "dashboard_json_path": (self.dashboard_out_dir / JSON_FILENAME).as_posix(),
                 "dashboard_html_path": (self.dashboard_out_dir / HTML_FILENAME).as_posix(),
             },
             ingestion_failures=ingestion_failures,
             wakeup_payload=wakeup_payload,
+            runtime_state=runtime_state,
             dashboard_payload=dashboard_payload,
             overall_ok=overall_ok,
         )
@@ -256,8 +279,13 @@ def build_autonomous_cycle_runner(
     journal_path: Path = Path("memory/self_journal.jsonl"),
     history_path: Path = Path("memory/autonomous/dream_wakeup_history.jsonl"),
     snapshot_path: Path = Path("docs/status/dream_wakeup_snapshot_latest.json"),
+    state_path: Path = Path("memory/autonomous/dream_wakeup_state.json"),
     dashboard_out_dir: Path = Path("docs/status"),
     interval_seconds: float = 0.0,
+    enable_scribe: bool = True,
+    scribe_out_dir: Path = Path("docs/chronicles"),
+    scribe_status_path: Path = Path("docs/status/scribe_status_latest.json"),
+    scribe_state_path: Path = Path("memory/autonomous/dream_wakeup_scribe_state.json"),
 ) -> AutonomousDreamCycleRunner:
     return AutonomousDreamCycleRunner(
         db_path=db_path,
@@ -265,8 +293,13 @@ def build_autonomous_cycle_runner(
         journal_path=journal_path,
         history_path=history_path,
         snapshot_path=snapshot_path,
+        state_path=state_path,
         dashboard_out_dir=dashboard_out_dir,
         interval_seconds=interval_seconds,
+        enable_scribe=enable_scribe,
+        scribe_out_dir=scribe_out_dir,
+        scribe_status_path=scribe_status_path,
+        scribe_state_path=scribe_state_path,
     )
 
 

@@ -107,6 +107,7 @@ class ScheduleProfile:
     tension_max_llm_selection_latency_ms: Optional[int]
     tension_max_llm_probe_latency_ms: Optional[int]
     tension_max_llm_timeout_count: Optional[int]
+    tension_max_consecutive_failure_count: Optional[int]
     tension_cooldown_cycles: int
     limit: int
     min_priority: float
@@ -169,6 +170,11 @@ class ScheduleProfile:
                     None
                     if self.tension_max_llm_timeout_count is None
                     else int(self.tension_max_llm_timeout_count)
+                ),
+                "tension_max_consecutive_failure_count": (
+                    None
+                    if self.tension_max_consecutive_failure_count is None
+                    else int(self.tension_max_consecutive_failure_count)
                 ),
                 "tension_cooldown_cycles": int(self.tension_cooldown_cycles),
             },
@@ -245,6 +251,10 @@ def _build_profile(name: str, payload: dict[str, Any]) -> ScheduleProfile:
         ),
         tension_max_llm_timeout_count=_as_optional_int(
             schedule.get("tension_max_llm_timeout_count"),
+            minimum=0,
+        ),
+        tension_max_consecutive_failure_count=_as_optional_int(
+            schedule.get("tension_max_consecutive_failure_count"),
             minimum=0,
         ),
         tension_cooldown_cycles=_as_int(

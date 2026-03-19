@@ -13,6 +13,7 @@ from tonesoul.memory.soul_db import MemoryLayer, MemorySource, SoulDB, SqliteSou
 from tonesoul.memory.subjectivity_reporting import list_subjectivity_records
 from tonesoul.memory.write_gateway import MemoryWriteGateway, MemoryWriteRejectedError
 from tonesoul.schemas import SubjectivityLayer
+from tonesoul.stale_rule_verifier import StaleRuleVerificationTaskBatch
 
 
 class LLMRouterLike(Protocol):
@@ -102,6 +103,11 @@ class DreamCycleResult:
     llm_preflight: Dict[str, object] = field(default_factory=dict)
     collisions: List[DreamCollision] = field(default_factory=list)
     write_gateway: Dict[str, object] = field(default_factory=dict)
+    stale_rule_tasks_generated: int = 0
+    """Number of verification tasks generated from stale rules in this cycle."""
+
+    verification_applied: Dict[str, int] = field(default_factory=dict)
+    """Results of applying completed verification tasks: {re_confirmed, retired, skipped}."""
 
     def to_dict(self) -> Dict[str, object]:
         return {
@@ -113,6 +119,8 @@ class DreamCycleResult:
             "llm_preflight": dict(self.llm_preflight),
             "collisions": [collision.to_dict() for collision in self.collisions],
             "write_gateway": dict(self.write_gateway),
+            "stale_rule_tasks_generated": int(self.stale_rule_tasks_generated),
+            "verification_applied": dict(self.verification_applied),
         }
 
 
@@ -150,6 +158,8 @@ class DreamEngine:
         generate_reflection: bool = True,
         require_inference_ready: bool = False,
         inference_timeout_seconds: float = 10.0,
+        generate_verification_tasks: bool = True,
+        max_verification_tasks: int = 5,
     ) -> DreamCycleResult:
         generated_at = _utcnow_iso()
         dream_cycle_id = self._build_dream_cycle_id()
@@ -172,6 +182,34 @@ class DreamEngine:
                     backend = getattr(self.router, "active_backend", None)
 
         crystals = self.crystallizer.top_crystals(n=crystal_count)
+
+        # Phase 543: Apply completed verification results back to Crystallizer
+        verification_applied = {"re_confirmed": 0, "retired": 0, "skipped": 0}
+        if generate_verification_tasks:
+            try:
+                apply_batch = StaleRuleVerificationTaskBatch()
+                verification_applied = apply_batch.apply_verification_results(
+                    self.crystallizer,
+                )
+            except Exception:
+                pass
+
+        # Phase 542: Generate verification tasks from stale rules
+        stale_task_count = 0
+        if generate_verification_tasks:
+            try:
+                batch = StaleRuleVerificationTaskBatch()
+                verification_tasks = batch.generate_from_crystals(
+                    crystals,
+                    max_tasks=max(0, int(max_verification_tasks)),
+                )
+                stale_task_count = len(verification_tasks)
+                batch.persist_tasks(verification_tasks)
+            except Exception as e:
+                # Graceful degradation: log but continue
+                print(f"Warning: Stale rule verification generation failed: {e}")
+                stale_task_count = 0
+
         collisions = [
             self._build_collision(
                 record,
@@ -199,6 +237,8 @@ class DreamEngine:
             llm_preflight=llm_preflight,
             collisions=collisions,
             write_gateway=write_gateway,
+            stale_rule_tasks_generated=stale_task_count,
+            verification_applied=verification_applied,
         )
 
     @staticmethod

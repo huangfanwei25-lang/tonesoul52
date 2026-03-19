@@ -13,6 +13,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+from tonesoul.exception_trace import ExceptionTrace
+
 
 def _read_bool_env(name: str, default: bool = False) -> bool:
     value = os.environ.get(name)
@@ -98,15 +100,26 @@ class UnifiedPipeline:
              確保輸出符合先前的語場承諾與一致性。
     """
 
-    def __init__(self, gemini_client=None, mirror_enabled: bool = False):
+    def __init__(self, gemini_client=None, mirror_enabled: Optional[bool] = None):
         self._llm_client = gemini_client
         self._llm_router = None
         self._governance_kernel = None
+        self._exc_trace = ExceptionTrace()
         self._mirror = None
-        self._mirror_enabled = bool(mirror_enabled)
+        self._mirror_enabled = (
+            _read_bool_env("TONESOUL_MIRROR_ENABLED", default=True)
+            if mirror_enabled is None
+            else bool(mirror_enabled)
+        )
+        mirror_mode = str(os.environ.get("TONESOUL_MIRROR_MODE", "observe") or "observe")
+        self._mirror_mode = mirror_mode.strip().lower()
+        if self._mirror_mode not in {"observe", "enforce"}:
+            self._mirror_mode = "observe"
         self._tonebridge = None
         self._council = None
         self._trajectory = None
+        self._drift_monitor = None
+        self._alert_escalation = None
         # Third Axiom components
         self._self_commit_stack = None
         self._commit_extractor = None
@@ -157,7 +170,8 @@ class UnifiedPipeline:
                 from tonesoul.governance.kernel import GovernanceKernel
 
                 self._governance_kernel = GovernanceKernel()
-            except Exception:
+            except Exception as e:
+                self._exc_trace.record("unified_pipeline", "_get_governance_kernel", e)
                 pass
         return self._governance_kernel
 
@@ -167,7 +181,8 @@ class UnifiedPipeline:
                 from tonesoul.llm.router import LLMRouter
 
                 self._llm_router = LLMRouter()
-            except Exception:
+            except Exception as e:
+                self._exc_trace.record("unified_pipeline", "_get_llm_router", e)
                 pass
         return self._llm_router
 
@@ -186,7 +201,8 @@ class UnifiedPipeline:
             if router is not None:
                 try:
                     router.prime(self._llm_client, backend=self._llm_backend)
-                except Exception:
+                except Exception as e:
+                    self._exc_trace.record("unified_pipeline", "_get_llm_client.prime_router", e)
                     pass
             return self._llm_client
 
@@ -199,7 +215,8 @@ class UnifiedPipeline:
             active_backend = getattr(router, "active_backend", None)
             if isinstance(active_backend, str) and active_backend.strip():
                 self._llm_backend = active_backend
-        except Exception:
+        except Exception as e:
+            self._exc_trace.record("unified_pipeline", "_get_llm_client.get_client", e)
             return None
         return self._llm_client
 
@@ -209,7 +226,8 @@ class UnifiedPipeline:
                 from tonesoul.tonebridge import ToneBridgeAnalyzer
 
                 self._tonebridge = ToneBridgeAnalyzer(self._get_llm_client())
-            except Exception:
+            except Exception as e:
+                self._exc_trace.record("unified_pipeline", "_get_tonebridge", e)
                 pass
         return self._tonebridge
 
@@ -219,7 +237,8 @@ class UnifiedPipeline:
                 from tonesoul.council import CouncilRuntime
 
                 self._council = CouncilRuntime()
-            except Exception:
+            except Exception as e:
+                self._exc_trace.record("unified_pipeline", "_get_council", e)
                 pass
         return self._council
 
@@ -229,9 +248,52 @@ class UnifiedPipeline:
                 from tonesoul.tonebridge import TrajectoryAnalyzer
 
                 self._trajectory = TrajectoryAnalyzer(window_size=5)
-            except Exception:
+            except Exception as e:
+                self._exc_trace.record("unified_pipeline", "_get_trajectory", e)
                 pass
         return self._trajectory
+
+    def _get_drift_monitor(self):
+        if self._drift_monitor is None:
+            try:
+                from tonesoul.drift_monitor import DriftMonitor
+
+                self._drift_monitor = DriftMonitor()
+            except Exception as e:
+                self._exc_trace.record("unified_pipeline", "_get_drift_monitor", e)
+                pass
+        return self._drift_monitor
+
+    def _get_alert_escalation(self):
+        if self._alert_escalation is None:
+            try:
+                from tonesoul.alert_escalation import AlertEscalation
+
+                self._alert_escalation = AlertEscalation()
+            except Exception as e:
+                self._exc_trace.record("unified_pipeline", "_get_alert_escalation", e)
+                pass
+        return self._alert_escalation
+
+    def _build_scenario_envelope(
+        self,
+        user_message: str,
+        history: List[Dict[str, Any]],
+    ) -> Dict[str, Any]:
+        """Build explicit bull/base/bear frames before deliberation."""
+        try:
+            from tonesoul.tonebridge import ScenarioEnvelopeBuilder
+
+            builder = ScenarioEnvelopeBuilder()
+            return builder.build(user_message, history)
+        except Exception as e:
+            return {
+                "enabled": False,
+                "source": "unavailable",
+                "reason": f"error:{e.__class__.__name__}",
+                "frames": [],
+                "summary": "scenario_envelope_unavailable",
+            }
 
     # ===== ToneSoul 2.0: Internal Deliberation =====
     def _get_deliberation(self):
@@ -241,7 +303,8 @@ class UnifiedPipeline:
                 from tonesoul.deliberation import InternalDeliberation
 
                 self._deliberation = InternalDeliberation()
-            except Exception:
+            except Exception as e:
+                self._exc_trace.record("unified_pipeline", "_get_deliberation", e)
                 pass
         return self._deliberation
 
@@ -321,7 +384,9 @@ class UnifiedPipeline:
                 from tonesoul.tension_engine import TensionEngine
 
                 self._tension_engine = TensionEngine()
-            except Exception:
+                self._tension_engine.load_persistence()
+            except Exception as e:
+                self._exc_trace.record("unified_pipeline", "_get_tension_engine", e)
                 pass
         return self._tension_engine
 
@@ -406,6 +471,7 @@ class UnifiedPipeline:
             mirror_trace = {
                 "enabled": True,
                 "available": False,
+                "mode": self._mirror_mode,
                 "final_choice": "raw",
                 "reflection_note": "Mirror unavailable.",
             }
@@ -425,15 +491,22 @@ class UnifiedPipeline:
         mirror_trace = {
             "enabled": True,
             "available": True,
+            "mode": self._mirror_mode,
             "final_choice": dual.final_choice,
             "reflection_note": dual.reflection_note,
             "mirror_triggered": dual.mirror_delta.mirror_triggered,
+            "enforced": self._mirror_mode == "enforce",
             "mirror_delta": mirror_delta,
         }
         dispatch_trace["mirror"] = mirror_trace
         trajectory_result["mirror"] = dict(mirror_trace)
         trajectory_result["mirror_delta"] = dict(mirror_delta)
 
+        if self._mirror_mode != "enforce":
+            mirror_trace["applied_response"] = "raw"
+            return dual.raw_response or response
+
+        mirror_trace["applied_response"] = dual.final_choice
         if dual.final_choice == "raw":
             return dual.raw_response or response
         return dual.governed_response or dual.raw_response or response
@@ -664,24 +737,64 @@ class UnifiedPipeline:
             deduped.append(term)
         return deduped
 
-    def _inject_graph_rag_context(self, user_message: str, tb_result: Any = None) -> str:
-        """Inject GraphRAG retrieval summary into prompt context."""
+    def _inject_graph_rag_context(
+        self, user_message: str, tb_result: Any = None
+    ) -> tuple[str, Dict[str, Any]]:
+        """Inject GraphRAG retrieval summary into prompt context with trace metadata."""
+        trace: Dict[str, Any] = {
+            "enabled": True,
+            "applied": False,
+            "query_terms": [],
+            "matched_count": 0,
+            "related_count": 0,
+            "commitments_count": 0,
+            "context_summary": "",
+            "reason": "",
+        }
         try:
             graph = self._get_semantic_graph()
             if not graph:
-                return user_message
+                trace["reason"] = "graph_unavailable"
+                return user_message, trace
             query_terms = self._collect_graph_query_terms(user_message, tb_result)
+            trace["query_terms"] = list(query_terms)
             if not query_terms:
-                return user_message
+                trace["reason"] = "no_query_terms"
+                return user_message, trace
             graph_context = graph.retrieve_relevant(
                 query_terms=query_terms, max_hops=2, max_results=10
             )
+            matched_nodes = graph_context.get("matched_nodes") or []
+            related_nodes = graph_context.get("related_nodes") or []
+            commitments = graph_context.get("commitments_in_scope") or []
+            trace["matched_count"] = len(matched_nodes)
+            trace["related_count"] = len(related_nodes)
+            trace["commitments_count"] = len(commitments)
             context_summary = str(graph_context.get("context_summary", "")).strip()
+            trace["context_summary"] = context_summary
             if context_summary:
-                return f"[語義圖譜檢索: {context_summary}]\n\n{user_message}"
+                trace["applied"] = True
+                trace["reason"] = "summary_injected"
+                return f"[語義圖譜檢索: {context_summary}]\n\n{user_message}", trace
+            trace["reason"] = "no_summary"
         except Exception:
-            return user_message
-        return user_message
+            trace["reason"] = "retrieval_error"
+            return user_message, trace
+        return user_message, trace
+
+    @staticmethod
+    def _fallback_persona_mode(dispatch_state: str, resonance_state: str) -> str:
+        if dispatch_state == "C":
+            return "Guardian"
+        if dispatch_state == "B":
+            return "Engineer"
+        try:
+            from tonesoul.tonebridge import get_persona_from_resonance
+
+            persona = get_persona_from_resonance(resonance_state)
+            return str(getattr(persona, "value", "Philosopher") or "Philosopher")
+        except Exception:
+            return "Philosopher"
 
     @staticmethod
     def _collect_semantic_topics(tb_result: Any = None) -> List[str]:
@@ -1263,6 +1376,7 @@ class UnifiedPipeline:
             UnifiedResponse: 包含回應與分析資料
         """
         history = history or []
+        self._exc_trace = ExceptionTrace()
         raw_user_message = user_message
 
         # ========== Phase V: Compute Gate (Revenue / API Protection) ==========
@@ -1302,7 +1416,12 @@ class UnifiedPipeline:
             if governance_kernel is not None:
                 try:
                     routing_trace = governance_kernel.build_routing_trace(**routing_trace)
-                except Exception:
+                except Exception as e:
+                    self._exc_trace.record(
+                        "unified_pipeline",
+                        "process._base_dispatch_trace.build_routing_trace",
+                        e,
+                    )
                     pass
             return {
                 **routing_trace,
@@ -1311,12 +1430,17 @@ class UnifiedPipeline:
                 "pre_gate_governance_friction": governance_friction,
             }
 
+        def _attach_suppressed_errors(trace: Dict[str, Any]) -> None:
+            if self._exc_trace.has_errors:
+                trace["suppressed_errors"] = self._exc_trace.summary()
+
         # FAST ROUTE: Bypass all expensive Cloud APIs and Council layers
         if routing_decision.path == RoutingPath.PASS_LOCAL:
             from tonesoul.local_llm import ask_local_llm
 
             local_response = ask_local_llm(raw_user_message)
             local_dispatch_trace = _base_dispatch_trace()
+            _attach_suppressed_errors(local_dispatch_trace)
             self._attach_runtime_governance_observability(local_dispatch_trace)
             return UnifiedResponse(
                 response=local_response,
@@ -1339,6 +1463,7 @@ class UnifiedPipeline:
                 attempt_after_tension=False,
             )
             self._attach_runtime_governance_observability(dispatch_trace)
+            _attach_suppressed_errors(dispatch_trace)
             return UnifiedResponse(
                 response="[系統防護] 請求頻率過高，已觸發速率限制，請稍後再試。",
                 council_verdict=self._normalize_council_verdict_payload(
@@ -1362,6 +1487,9 @@ class UnifiedPipeline:
         # ========== 0.5 重建軌跡分析器狀態 ==========
         # 修復對話歷史 bug
         self._rebuild_trajectory_from_history(history)
+
+        # ========== 0.6 Scenario Envelope (Bull/Base/Bear) ==========
+        scenario_envelope = self._build_scenario_envelope(user_message, history)
 
         # ========== 1. ToneBridge 分析用戶 ==========
         tonebridge = self._get_tonebridge()
@@ -1387,6 +1515,26 @@ class UnifiedPipeline:
 
                 # 軌跡分析
                 traj_analysis = trajectory.analyze(user_message, tone_strength)
+
+                # Phase 544: Drift monitoring (Structure Layer anchor)
+                drift_monitor = self._get_drift_monitor()
+                if drift_monitor is not None:
+                    try:
+                        obs = {"deltaT": tone_strength, "deltaS": 0.5, "deltaR": 0.5}
+                        if tb_result and tb_result.tone:
+                            obs["deltaS"] = getattr(tb_result.tone, "formality", 0.5) or 0.5
+                            obs["deltaR"] = getattr(tb_result.tone, "responsibility", 0.5) or 0.5
+                        snap = drift_monitor.observe(obs)
+                        traj_analysis.drift = snap.drift
+                        traj_analysis.drift_alert = snap.alert.value
+                    except Exception as e:
+                        self._exc_trace.record(
+                            "unified_pipeline",
+                            "process.trajectory.observe_drift",
+                            e,
+                        )
+                        pass
+
                 trajectory_result = traj_analysis.to_dict()
                 resonance_state = traj_analysis.resonance_state.value
                 loop_detected = traj_analysis.loop_detected
@@ -1414,13 +1562,31 @@ class UnifiedPipeline:
                 "tension_score": tone_strength,
                 "resonance_state": resonance_state,
                 "loop_detected": loop_detected,
+                "scenario_envelope": dict(scenario_envelope),
             }
         )
+        # Phase 544: attach drift summary to dispatch trace
+        drift_monitor = self._get_drift_monitor()
+        if drift_monitor is not None and drift_monitor.step_count > 0:
+            try:
+                dispatch_trace["drift"] = drift_monitor.summary()
+            except Exception as e:
+                self._exc_trace.record(
+                    "unified_pipeline",
+                    "process.dispatch_trace.drift_summary",
+                    e,
+                )
+                pass
         # Attach TensionEngine detail to dispatch trace
         if tension_result is not None:
             try:
                 dispatch_trace["tension_engine"] = tension_result.to_dict()
-            except Exception:
+            except Exception as e:
+                self._exc_trace.record(
+                    "unified_pipeline",
+                    "process.dispatch_trace.tension_engine",
+                    e,
+                )
                 pass
         resistance_trace: Dict[str, Any] = {}
         runtime_friction = self._compute_runtime_friction(
@@ -1430,7 +1596,12 @@ class UnifiedPipeline:
         if runtime_friction is not None:
             try:
                 resistance_trace["friction"] = runtime_friction.to_dict()
-            except Exception:
+            except Exception as e:
+                self._exc_trace.record(
+                    "unified_pipeline",
+                    "process.dispatch_trace.runtime_friction",
+                    e,
+                )
                 pass
 
         prediction = (
@@ -1464,6 +1635,7 @@ class UnifiedPipeline:
                     stages=["circuit_breaker_block"],
                     attempt_after_tension=False,
                 )
+                _attach_suppressed_errors(dispatch_trace)
                 self._attach_runtime_governance_observability(dispatch_trace)
                 return UnifiedResponse(
                     response=block_response,
@@ -1504,17 +1676,102 @@ class UnifiedPipeline:
                 if perturbation_path is not None:
                     try:
                         resistance_trace["perturbation_recovery"] = perturbation_path.to_dict()
-                    except Exception:
+                    except Exception as e:
+                        self._exc_trace.record(
+                            "unified_pipeline",
+                            "process.dispatch_trace.perturbation_recovery",
+                            e,
+                        )
                         pass
 
         if resistance_trace:
             dispatch_trace["resistance"] = resistance_trace
+
+        # ========== 2.4 Phase 545: AlertEscalation — L1/L2/L3 ==========
+        alert_event = None
+        alert_escalation = self._get_alert_escalation()
+        if alert_escalation is not None:
+            try:
+                # Collect signals from subsystems
+                _drift_alert = None
+                _dm = self._get_drift_monitor()
+                if _dm is not None and _dm.step_count > 0:
+                    _drift_alert = _dm.current_alert.value
+
+                _lambda_state = None
+                if tension_result is not None:
+                    _ls = getattr(tension_result, "lambda_state", None)
+                    if _ls is not None:
+                        _lambda_state = _ls.value if hasattr(_ls, "value") else str(_ls)
+
+                _cb_status_str = None
+                _consecutive = 0
+                _cb_data = resistance_trace.get("circuit_breaker")
+                if isinstance(_cb_data, dict):
+                    _cb_status_str = _cb_data.get("status")
+                    _consecutive = _cb_data.get("consecutive_high", 0)
+
+                # JUMP trigger — first live call site
+                _jump_triggered = False
+                _jump_indicators = 0
+                if governance_kernel is not None and tension_result is not None:
+                    try:
+                        _jump_result = governance_kernel.check_jump_trigger(
+                            tension_total=getattr(tension_result, "total", 0.0),
+                            has_echo_trace=True,
+                            center_delta_norm=0.0,
+                            input_norm=max(1.0, float(len(raw_user_message))),
+                        )
+                        _jump_triggered = bool(_jump_result.get("triggered", False))
+                        _jump_indicators = int(_jump_result.get("indicators_tripped", 0))
+                        resistance_trace["jump"] = _jump_result
+                    except Exception as e:
+                        self._exc_trace.record(
+                            "unified_pipeline",
+                            "process.alert_escalation.jump_trigger",
+                            e,
+                        )
+                        pass
+
+                alert_event = alert_escalation.evaluate(
+                    drift_alert=_drift_alert,
+                    lambda_state=_lambda_state,
+                    circuit_breaker_status=_cb_status_str,
+                    jump_triggered=_jump_triggered,
+                    jump_indicators_tripped=_jump_indicators,
+                    consecutive_high_friction=_consecutive,
+                )
+                dispatch_trace["alert"] = alert_escalation.summary()
+            except Exception as e:
+                self._exc_trace.record(
+                    "unified_pipeline",
+                    "process.alert_escalation.evaluate",
+                    e,
+                )
+                pass
+
         trajectory_result["dispatch"] = dispatch_trace
         # ========== 2.5 ToneSoul 2.0: 內在審議 ==========
         deliberation = self._get_deliberation()
         deliberation_result = None
         persona_mode = "Philosopher"  # 預設模式
         internal_monologue = ""
+        deliberation_trace: Dict[str, Any] = {
+            "enabled": True,
+            "available": bool(deliberation),
+            "used": False,
+            "fallback": False,
+            "reason": "engine_unavailable" if not deliberation else "",
+            "dominant_voice": "",
+            "persona_mode": persona_mode,
+            "context": {
+                "tone_strength": round(float(tone_strength), 4),
+                "resonance_state": str(resonance_state or ""),
+                "loop_detected": bool(loop_detected),
+                "history_turns": len(history),
+                "scenario_envelope": dict(scenario_envelope),
+            },
+        }
 
         if deliberation:
             try:
@@ -1526,15 +1783,23 @@ class UnifiedPipeline:
                     tone_strength=tone_strength,
                     resonance_state=resonance_state,
                     loop_detected=loop_detected,
+                    scenario_envelope=dict(scenario_envelope),
                 )
                 deliberation_result = deliberation.deliberate_sync(context)
+                deliberation_trace["used"] = True
+                deliberation_trace["reason"] = "deliberation_applied"
 
                 # 從審議結果獲取 persona 和 monologue
                 if deliberation_result.dominant_voice:
                     voice_map = {"muse": "Philosopher", "logos": "Engineer", "aegis": "Guardian"}
+                    dominant_voice = str(deliberation_result.dominant_voice.value)
+                    deliberation_trace["dominant_voice"] = dominant_voice
                     persona_mode = voice_map.get(
-                        deliberation_result.dominant_voice.value, "Philosopher"
+                        dominant_voice, "Philosopher"
                     )
+                    deliberation_trace["persona_mode"] = persona_mode
+                else:
+                    deliberation_trace["reason"] = "no_dominant_voice"
 
                 # 生成 internal monologue 從審議
                 internal_debate = deliberation_result.get_internal_debate()
@@ -1546,21 +1811,60 @@ class UnifiedPipeline:
                     )
                     if dominant in internal_debate:
                         internal_monologue = internal_debate[dominant].get("reasoning", "")
+                if internal_monologue:
+                    deliberation_trace["monologue_excerpt"] = internal_monologue[:160]
 
             except Exception as e:
                 print(f"Deliberation error: {e}")
                 # Fallback dispatch mapping
                 dispatch_state = dispatch_trace.get("state", "A")
-                if dispatch_state == "C":
-                    persona_mode = "Guardian"
-                elif dispatch_state == "B":
-                    persona_mode = "Engineer"
-                else:
-                    from tonesoul.tonebridge import get_persona_from_resonance
-
-                    persona = get_persona_from_resonance(resonance_state)
-                    persona_mode = persona.value
+                persona_mode = self._fallback_persona_mode(str(dispatch_state), str(resonance_state))
                 internal_monologue = "Fallback to deterministic persona mapping."
+                deliberation_trace["fallback"] = True
+                deliberation_trace["reason"] = f"error:{e.__class__.__name__}"
+                deliberation_trace["persona_mode"] = persona_mode
+                deliberation_trace["monologue_excerpt"] = internal_monologue[:160]
+
+        dispatch_trace["deliberation"] = dict(deliberation_trace)
+        trajectory_result["deliberation"] = dict(deliberation_trace)
+
+        # ========== 2.6 Phase 545: L2/L3 graduated response ==========
+        _alert_preamble = ""
+        _lockdown_active = False
+        if alert_event is not None and not alert_event.is_clear:
+            from tonesoul.alert_escalation import AlertLevel
+
+            if alert_event.level == AlertLevel.L3:
+                # Seabed-grade degradation: Guardian only, minimal output
+                persona_mode = "Guardian"
+                _lockdown_active = True
+                _alert_preamble = (
+                    "[系統防護 L3] 偵測到系統性異常，已切換至 Seabed 安全模式。"
+                    "僅執行 Verify / Cite / Inquire 操作。"
+                    f"原因：{'; '.join(alert_event.reasons)}"
+                )
+                internal_monologue = (
+                    f"L3 systemic alert: {'; '.join(alert_event.reasons)}. "
+                    "Entering Seabed Lockdown — Guardian-only response."
+                )
+            elif alert_event.level == AlertLevel.L2:
+                # Structural warning: annotate but continue
+                _alert_preamble = (
+                    "[結構層警告 L2] "
+                    f"{'; '.join(alert_event.reasons)}"
+                )
+                internal_monologue = (
+                    f"L2 structure alert: {'; '.join(alert_event.reasons)}. "
+                    "Structural updates frozen; proceeding with caution."
+                ) + (f" (prior: {internal_monologue})" if internal_monologue else "")
+
+        if _lockdown_active:
+            from tonesoul.action_set import ACTION_POLICY
+
+            dispatch_trace["action_set"] = {
+                "mode": "lockdown",
+                "allowed_actions": list(ACTION_POLICY.get("lockdown", [])),
+            }
 
         # ========== 3. 第三公理：載入承諾堆疊 ==========
         commit_stack = self._get_commit_stack()
@@ -1577,7 +1881,11 @@ class UnifiedPipeline:
         user_message = self._inject_early_contradiction_warning(user_message)
 
         # ========== 3.6 GraphRAG Context Retrieval ==========
-        user_message = self._inject_graph_rag_context(user_message, tb_result=tb_result)
+        user_message, graph_rag_trace = self._inject_graph_rag_context(
+            user_message, tb_result=tb_result
+        )
+        dispatch_trace["graph_rag"] = dict(graph_rag_trace)
+        trajectory_result["graph_rag"] = dict(graph_rag_trace)
 
         # ========== 3.7 Semantic Trigger (high-tension recurrence check) ==========
         user_message = self._semantic_trigger_check(
@@ -1698,7 +2006,8 @@ class UnifiedPipeline:
 
         # ========== 4. 生成增強 prompt ==========
         system_context = self._build_context_prompt(
-            tb_result, persona_mode, trajectory_result, commitment_prompt
+            tb_result, persona_mode, trajectory_result, commitment_prompt,
+            lockdown_active=_lockdown_active,
         )
 
         # ========== 4. LLM 生成回應 ==========
@@ -1724,13 +2033,23 @@ Respond with a clear, practical answer."""
                         # Keep the delay bounded to avoid hard stalls during runtime.
                         if delay_ms > 0:
                             time.sleep(min(delay_ms, 1500) / 1000.0)
-                    except Exception:
+                    except Exception as e:
+                        self._exc_trace.record(
+                            "unified_pipeline",
+                            "process.llm.delay",
+                            e,
+                        )
                         pass
 
                 if router is not None:
                     try:
                         router.prime(llm_client, backend=self._llm_backend)
-                    except Exception:
+                    except Exception as e:
+                        self._exc_trace.record(
+                            "unified_pipeline",
+                            "process.llm.router_prime",
+                            e,
+                        )
                         pass
                     response = router.chat(history=history, prompt=full_prompt)
                 else:
@@ -1874,11 +2193,18 @@ Respond with a clear, practical answer."""
                 )
                 # 預測共鳴路徑
                 tb_result.resonance = tonebridge.predict_resonance(tb_result.memini)
-            except Exception:
+            except Exception as e:
+                self._exc_trace.record(
+                    "unified_pipeline",
+                    "process.resonance.predict",
+                    e,
+                )
                 pass
 
         # ========== 11. 產生內部敘事摘要 ==========
         inner_narrative = self._generate_narrative(tb_result, verdict_dict)
+        if _alert_preamble:
+            inner_narrative = f"{_alert_preamble}\n{inner_narrative}"
 
         # 干預策略
         intervention = ""
@@ -1893,7 +2219,12 @@ Respond with a clear, practical answer."""
         if commit_stack:
             try:
                 self_commits_data = [c.to_dict() for c in commit_stack.get_recent(5)]
-            except Exception:
+            except Exception as e:
+                self._exc_trace.record(
+                    "unified_pipeline",
+                    "process.commit_stack.get_recent",
+                    e,
+                )
                 pass
         if detected_ruptures:
             try:
@@ -1905,7 +2236,12 @@ Respond with a clear, practical answer."""
         if value_acc:
             try:
                 emergent_values_data = [v.to_dict() for v in value_acc.get_active_values(0.3)]
-            except Exception:
+            except Exception as e:
+                self._exc_trace.record(
+                    "unified_pipeline",
+                    "process.value_accumulator.get_active_values",
+                    e,
+                )
                 pass
 
         # 將語義矛盾與圖譜附加到 verdict metadata，供前端顯示
@@ -1920,6 +2256,33 @@ Respond with a clear, practical answer."""
             verdict_metadata["dispatch"] = dispatch_trace
             verdict_dict["metadata"] = verdict_metadata
             verdict_dict = self._normalize_council_verdict_payload(verdict_dict)
+
+        # Phase 539: feed post-council outcome back into persona track record
+        try:
+            dominant_voice = str(deliberation_trace.get("dominant_voice", "") or "").strip()
+            verdict_name = str(verdict_dict.get("verdict", "") if isinstance(verdict_dict, dict) else "")
+            if dominant_voice and verdict_name:
+                deliberation = self._get_deliberation()
+                if deliberation is not None and hasattr(deliberation, "record_outcome"):
+                    deliberation.record_outcome(
+                        dominant_voice=dominant_voice,
+                        verdict=verdict_name,
+                        resonance_state=str(resonance_state or "unknown"),
+                        loop_detected=bool(loop_detected),
+                    )
+                    if hasattr(deliberation, "get_persona_track_summary"):
+                        deliberation_trace["persona_track_summary"] = (
+                            deliberation.get_persona_track_summary()
+                        )
+                        dispatch_trace["deliberation"] = dict(deliberation_trace)
+                        trajectory_result["deliberation"] = dict(deliberation_trace)
+        except Exception as e:
+            self._exc_trace.record(
+                "unified_pipeline",
+                "process.deliberation.record_outcome",
+                e,
+            )
+            pass
 
         # 自動捕捉 visual chain frame，記錄每輪狀態
         chain = self._get_visual_chain()
@@ -1969,7 +2332,12 @@ Respond with a clear, practical answer."""
                         data={"journal_commit": True, "reason": routing_decision.reason},
                         tags=["journal_eligible"],
                     )
-            except Exception:
+            except Exception as e:
+                self._exc_trace.record(
+                    "unified_pipeline",
+                    "process.visual_chain.capture",
+                    e,
+                )
                 pass
 
         # ========== 8.5 PersonaDimension Post-Processing ==========
@@ -1994,7 +2362,12 @@ Respond with a clear, practical answer."""
             if isinstance(pd_result, dict) and pd_result.get("corrected"):
                 response = pd_output
                 repair_stages.append("persona_dimension_rewrite")
-        except Exception:
+        except Exception as e:
+            self._exc_trace.record(
+                "unified_pipeline",
+                "process.persona_dimension",
+                e,
+            )
             pass
 
         response = self._apply_mirror_step(
@@ -2033,6 +2406,22 @@ Respond with a clear, practical answer."""
             verdict_dict["metadata"] = verdict_metadata
 
         self._attach_runtime_governance_observability(dispatch_trace)
+
+        # Persist cumulative tension integral (Ψ) across sessions
+        te = self._get_tension_engine()
+        if te is not None:
+            try:
+                te.save_persistence()
+            except Exception as e:
+                self._exc_trace.record(
+                    "unified_pipeline",
+                    "process.tension_engine.save_persistence",
+                    e,
+                )
+                pass
+
+        _attach_suppressed_errors(dispatch_trace)
+
         return UnifiedResponse(
             response=response,
             council_verdict=verdict_dict,
@@ -2058,6 +2447,7 @@ Respond with a clear, practical answer."""
         persona_mode: str = "Philosopher",
         trajectory_result: dict = None,
         commitment_prompt: str = "",
+        lockdown_active: bool = False,
     ) -> str:
         """Build runtime context prompt for the LLM call."""
         lines: List[str] = []
@@ -2112,6 +2502,21 @@ Respond with a clear, practical answer."""
             motive = getattr(tb_result.motive, "likely_motive", None)
             if motive:
                 lines.append(f"Likely motive: {motive}")
+
+        if lockdown_active:
+            from tonesoul.action_set import ACTION_POLICY
+
+            allowed = ACTION_POLICY.get("lockdown", ["verify", "cite", "inquire"])
+            lines.append("")
+            lines.append("[SEABED LOCKDOWN ACTIVE]")
+            lines.append(
+                "System is in Seabed safety mode. "
+                f"Allowed actions: {', '.join(allowed)}."
+            )
+            lines.append(
+                "Do NOT generate creative, speculative, or exploratory content. "
+                "Respond only with verifiable facts, cited sources, or clarifying questions."
+            )
 
         lines.append("Reply with factual, concise, and safe guidance.")
         return "\n".join(lines)

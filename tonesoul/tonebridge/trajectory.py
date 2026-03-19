@@ -55,8 +55,12 @@ class TrajectoryAnalysis:
     loop_count: int = 0
     loop_detected: bool = False
 
+    # Phase 544: drift from Home vector
+    drift: Optional[float] = None
+    drift_alert: Optional[str] = None
+
     def to_dict(self) -> Dict[str, Any]:
-        return {
+        d = {
             "shift_magnitude": self.shift_magnitude,
             "direction_change": self.direction_change.value,
             "reasoning": self.reasoning,
@@ -64,6 +68,11 @@ class TrajectoryAnalysis:
             "loop_count": self.loop_count,
             "loop_detected": self.loop_detected,
         }
+        if self.drift is not None:
+            d["drift"] = round(self.drift, 6)
+        if self.drift_alert is not None:
+            d["drift_alert"] = self.drift_alert
+        return d
 
 
 class TrajectoryAnalyzer:

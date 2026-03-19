@@ -220,3 +220,114 @@ def test_audit_logs_blank_session_id_is_treated_as_none(monkeypatch):
     assert fake.last_audit_call is not None
     assert fake.last_audit_call["session_id"] is None
     assert "session_id" not in payload
+
+
+# ==================== Phase 534: /api/governance_status contract tests ====================
+
+
+def test_governance_status_returns_runtime_ready_when_llm_configured(monkeypatch):
+    fake = _FakeEvolutionPersistence()
+    monkeypatch.setattr(server, "supabase_persistence", fake)
+    monkeypatch.setattr(server, "_context_distiller", None)
+    monkeypatch.setattr(server, "llm_backend", "Gemini API")
+
+    client = _client()
+    response = client.get("/api/governance_status")
+    payload = response.get_json()
+
+    assert response.status_code == 200
+    assert payload["status"] == "ok"
+    assert payload["governance_capability"] == "runtime_ready"
+    assert payload["deliberation_level"] == "runtime"
+    assert payload["llm_backend"] == "Gemini API"
+    assert payload["mirror_enabled"] is True
+    assert payload["pipeline_mode"] == "unified_pipeline"
+    assert isinstance(payload.get("crystal_freshness"), dict)
+    assert "total_crystals" in payload["crystal_freshness"]
+    assert "checked_at" in payload
+    assert "reason" not in payload
+
+
+def test_governance_status_returns_mock_only_when_llm_unavailable(monkeypatch):
+    fake = _FakeEvolutionPersistence()
+    monkeypatch.setattr(server, "supabase_persistence", fake)
+    monkeypatch.setattr(server, "_context_distiller", None)
+    monkeypatch.setattr(server, "llm_backend", None)
+
+    def _fake_get_llm_client():
+        pass
+
+    monkeypatch.setattr(server, "get_llm_client", _fake_get_llm_client)
+
+    client = _client()
+    response = client.get("/api/governance_status")
+    payload = response.get_json()
+
+    assert response.status_code == 200
+    assert payload["governance_capability"] == "mock_only"
+    assert payload["deliberation_level"] == "mock"
+    assert payload["reason"] == "llm_backend_unavailable"
+
+
+def test_governance_status_includes_recent_verdicts_from_persistence(monkeypatch):
+    fake = _FakeEvolutionPersistence()
+    monkeypatch.setattr(server, "supabase_persistence", fake)
+    monkeypatch.setattr(server, "_context_distiller", None)
+    monkeypatch.setattr(server, "llm_backend", "Ollama (llama3)")
+
+    client = _client()
+    response = client.get("/api/governance_status")
+    payload = response.get_json()
+
+    assert response.status_code == 200
+    verdicts = payload.get("recent_verdicts", [])
+    assert isinstance(verdicts, list)
+    assert len(verdicts) >= 1
+    first = verdicts[0]
+    assert "gate_decision" in first
+    assert "delta_t" in first
+    assert "created_at" in first
+
+
+def test_governance_status_includes_evolution_brief(monkeypatch):
+    fake = _FakeEvolutionPersistence()
+    monkeypatch.setattr(server, "supabase_persistence", fake)
+    monkeypatch.setattr(server, "_context_distiller", None)
+    monkeypatch.setattr(server, "llm_backend", "Gemini API")
+
+    client = _client()
+    client.post("/api/evolution/distill", json={"limit": 20})
+
+    response = client.get("/api/governance_status")
+    payload = response.get_json()
+
+    assert response.status_code == 200
+    evolution = payload.get("evolution", {})
+    assert isinstance(evolution, dict)
+    assert "total_patterns" in evolution
+    assert "conversations_analyzed" in evolution
+    assert "last_distilled_at" in evolution
+
+
+def test_governance_status_degrades_gracefully_without_persistence(monkeypatch):
+    class _NoPersistence:
+        enabled = False
+
+        def status_dict(self):
+            return {"provider": None, "enabled": False, "configured": False, "last_error": None}
+
+        def list_audit_logs(self, **_kw):
+            raise RuntimeError("no persistence")
+
+    monkeypatch.setattr(server, "supabase_persistence", _NoPersistence())
+    monkeypatch.setattr(server, "_context_distiller", None)
+    monkeypatch.setattr(server, "llm_backend", "Gemini API")
+
+    client = _client()
+    response = client.get("/api/governance_status")
+    payload = response.get_json()
+
+    assert response.status_code == 200
+    assert payload["governance_capability"] == "runtime_ready"
+    assert payload["persistence_enabled"] is False
+    assert payload["recent_verdicts"] == []

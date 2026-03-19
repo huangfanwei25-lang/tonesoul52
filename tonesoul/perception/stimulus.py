@@ -14,6 +14,21 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
+VALID_OBSERVATION_MODES = {
+    "remote_feed",
+    "simulated",
+    "interactive",
+    "sensor",
+    "embodied",
+}
+
+
+def _normalize_observation_mode(value: object) -> str:
+    text = str(value or "").strip().lower()
+    if text in VALID_OBSERVATION_MODES:
+        return text
+    return "remote_feed"
+
 
 @dataclass
 class EnvironmentStimulus:
@@ -28,6 +43,7 @@ class EnvironmentStimulus:
     novelty_score: float = 0.0
     tags: List[str] = field(default_factory=list)
     raw_excerpt: str = ""
+    observation_mode: str = "remote_feed"
 
     def to_memory_payload(self) -> Dict[str, Any]:
         """Convert to a payload suitable for soul.db ingestion."""
@@ -42,6 +58,7 @@ class EnvironmentStimulus:
             "novelty_score": round(self.novelty_score, 4),
             "tags": self.tags,
             "raw_excerpt": self.raw_excerpt[:500],
+            "observation_mode": _normalize_observation_mode(self.observation_mode),
         }
 
 
@@ -159,6 +176,7 @@ class StimulusProcessor:
                 novelty_score=self._score_novelty(markdown),
                 tags=self._extract_tags(markdown, title),
                 raw_excerpt=markdown[: self._max_excerpt_length],
+                observation_mode="remote_feed",
             )
             stimuli.append(stimulus)
 

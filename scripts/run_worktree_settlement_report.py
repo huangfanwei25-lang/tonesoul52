@@ -15,6 +15,7 @@ if str(REPO_ROOT) not in sys.path:
 
 import scripts.plan_commit_attribution_base_switch as base_switch_planner  # noqa: E402
 import scripts.run_refreshable_artifact_report as refreshable_report  # noqa: E402
+from tonesoul.status_alignment import build_dream_weekly_alignment_line  # noqa: E402
 
 JSON_FILENAME = "worktree_settlement_latest.json"
 MARKDOWN_FILENAME = "worktree_settlement_latest.md"
@@ -160,19 +161,45 @@ def _refreshable_handoff_previews(repo_root: Path) -> list[dict[str, str]]:
         primary_status_line = str(item.get("primary_status_line") or "").strip()
         if not path or not primary_status_line:
             continue
-        normalized.append(
-            {
-                "path": path,
-                "queue_shape": queue_shape,
-                "primary_status_line": primary_status_line,
-                "admissibility_primary_status_line": str(
-                    item.get("admissibility_primary_status_line") or ""
-                ).strip(),
-                "requires_operator_action": str(item.get("requires_operator_action") or "false")
-                .strip()
-                .lower(),
-            }
-        )
+        preview = {
+            "path": path,
+            "queue_shape": queue_shape,
+            "primary_status_line": primary_status_line,
+            "runtime_status_line": str(item.get("runtime_status_line") or "").strip(),
+            "anchor_status_line": str(item.get("anchor_status_line") or "").strip(),
+            "artifact_policy_status_line": str(
+                item.get("artifact_policy_status_line") or ""
+            ).strip(),
+            "admissibility_primary_status_line": str(
+                item.get("admissibility_primary_status_line") or ""
+            ).strip(),
+            "requires_operator_action": str(item.get("requires_operator_action") or "false")
+            .strip()
+            .lower(),
+        }
+        problem_route_status_line = str(item.get("problem_route_status_line") or "").strip()
+        if problem_route_status_line:
+            preview["problem_route_status_line"] = problem_route_status_line
+        problem_route_secondary_labels = str(
+            item.get("problem_route_secondary_labels") or ""
+        ).strip()
+        if problem_route_secondary_labels:
+            preview["problem_route_secondary_labels"] = problem_route_secondary_labels
+        semantic_retrieval_protocol = str(item.get("semantic_retrieval_protocol") or "").strip()
+        if semantic_retrieval_protocol:
+            preview["semantic_retrieval_protocol"] = semantic_retrieval_protocol
+        semantic_preferred_neighborhood = str(
+            item.get("semantic_preferred_neighborhood") or ""
+        ).strip()
+        if semantic_preferred_neighborhood:
+            preview["semantic_preferred_neighborhood"] = semantic_preferred_neighborhood
+        dream_weekly_alignment_line = str(item.get("dream_weekly_alignment_line") or "").strip()
+        if dream_weekly_alignment_line:
+            preview["dream_weekly_alignment_line"] = dream_weekly_alignment_line
+        scribe_status_line = str(item.get("scribe_status_line") or "").strip()
+        if scribe_status_line:
+            preview["scribe_status_line"] = scribe_status_line
+        normalized.append(preview)
     return normalized
 
 
@@ -195,10 +222,15 @@ def _refreshable_subjectivity_focus_preview(repo_root: Path) -> dict[str, str] |
     primary_status_line = str(preview.get("primary_status_line") or "").strip()
     if not path or not primary_status_line:
         return None
-    return {
+    normalized = {
         "path": path,
         "queue_shape": queue_shape,
         "primary_status_line": primary_status_line,
+        "runtime_status_line": str(preview.get("runtime_status_line") or "").strip(),
+        "anchor_status_line": str(preview.get("anchor_status_line") or "").strip(),
+        "artifact_policy_status_line": str(
+            preview.get("artifact_policy_status_line") or ""
+        ).strip(),
         "admissibility_primary_status_line": str(
             preview.get("admissibility_primary_status_line") or ""
         ).strip(),
@@ -206,6 +238,290 @@ def _refreshable_subjectivity_focus_preview(repo_root: Path) -> dict[str, str] |
         .strip()
         .lower(),
     }
+    scribe_status_line = str(preview.get("scribe_status_line") or "").strip()
+    if scribe_status_line:
+        normalized["scribe_status_line"] = scribe_status_line
+    problem_route_status_line = str(preview.get("problem_route_status_line") or "").strip()
+    if problem_route_status_line:
+        normalized["problem_route_status_line"] = problem_route_status_line
+    problem_route_secondary_labels = str(
+        preview.get("problem_route_secondary_labels") or ""
+    ).strip()
+    if problem_route_secondary_labels:
+        normalized["problem_route_secondary_labels"] = problem_route_secondary_labels
+    dream_weekly_alignment_line = str(preview.get("dream_weekly_alignment_line") or "").strip()
+    if dream_weekly_alignment_line:
+        normalized["dream_weekly_alignment_line"] = dream_weekly_alignment_line
+    return normalized
+
+
+def _refreshable_scribe_focus_preview(repo_root: Path) -> dict[str, str] | None:
+    payload, _ = refreshable_report.build_report(repo_root)
+    previews = payload.get("handoff_previews")
+    if not isinstance(previews, list):
+        return None
+
+    def _normalize(preview: dict[str, Any]) -> dict[str, str] | None:
+        path = str(preview.get("path") or "").strip()
+        queue_shape = str(preview.get("queue_shape") or "").strip()
+        primary_status_line = str(preview.get("primary_status_line") or "").strip()
+        if not path or not primary_status_line:
+            return None
+        if not (
+            path.endswith("docs/status/scribe_status_latest.json")
+            or queue_shape.startswith("scribe_")
+        ):
+            return None
+        normalized = {
+            "path": path,
+            "queue_shape": queue_shape,
+            "primary_status_line": primary_status_line,
+            "runtime_status_line": str(preview.get("runtime_status_line") or "").strip(),
+            "anchor_status_line": str(preview.get("anchor_status_line") or "").strip(),
+            "artifact_policy_status_line": str(
+                preview.get("artifact_policy_status_line") or ""
+            ).strip(),
+            "admissibility_primary_status_line": str(
+                preview.get("admissibility_primary_status_line") or ""
+            ).strip(),
+            "requires_operator_action": str(preview.get("requires_operator_action") or "false")
+            .strip()
+            .lower(),
+        }
+        problem_route_status_line = str(preview.get("problem_route_status_line") or "").strip()
+        if problem_route_status_line:
+            normalized["problem_route_status_line"] = problem_route_status_line
+        problem_route_secondary_labels = str(
+            preview.get("problem_route_secondary_labels") or ""
+        ).strip()
+        if problem_route_secondary_labels:
+            normalized["problem_route_secondary_labels"] = problem_route_secondary_labels
+        dream_weekly_alignment_line = str(preview.get("dream_weekly_alignment_line") or "").strip()
+        if dream_weekly_alignment_line:
+            normalized["dream_weekly_alignment_line"] = dream_weekly_alignment_line
+        return normalized
+
+    for item in previews:
+        if isinstance(item, dict) and str(item.get("path") or "").strip().endswith(
+            "docs/status/scribe_status_latest.json"
+        ):
+            normalized = _normalize(item)
+            if normalized is not None:
+                return normalized
+
+    for item in previews:
+        if not isinstance(item, dict):
+            continue
+        normalized = _normalize(item)
+        if normalized is not None:
+            return normalized
+    return None
+
+
+def _refreshable_dream_observability_focus_preview(repo_root: Path) -> dict[str, str] | None:
+    payload, _ = refreshable_report.build_report(repo_root)
+    previews = payload.get("handoff_previews")
+    if not isinstance(previews, list):
+        return None
+
+    def _normalize(preview: dict[str, Any]) -> dict[str, str] | None:
+        path = str(preview.get("path") or "").strip()
+        queue_shape = str(preview.get("queue_shape") or "").strip()
+        primary_status_line = str(preview.get("primary_status_line") or "").strip()
+        if not path or not primary_status_line:
+            return None
+        if not (
+            path.endswith("docs/status/dream_observability_latest.json")
+            or queue_shape == "dream_observability_ready"
+        ):
+            return None
+        normalized = {
+            "path": path,
+            "queue_shape": queue_shape,
+            "primary_status_line": primary_status_line,
+            "runtime_status_line": str(preview.get("runtime_status_line") or "").strip(),
+            "anchor_status_line": str(preview.get("anchor_status_line") or "").strip(),
+            "artifact_policy_status_line": str(
+                preview.get("artifact_policy_status_line") or ""
+            ).strip(),
+            "admissibility_primary_status_line": str(
+                preview.get("admissibility_primary_status_line") or ""
+            ).strip(),
+            "requires_operator_action": str(preview.get("requires_operator_action") or "false")
+            .strip()
+            .lower(),
+        }
+        problem_route_status_line = str(preview.get("problem_route_status_line") or "").strip()
+        if problem_route_status_line:
+            normalized["problem_route_status_line"] = problem_route_status_line
+        problem_route_secondary_labels = str(
+            preview.get("problem_route_secondary_labels") or ""
+        ).strip()
+        if problem_route_secondary_labels:
+            normalized["problem_route_secondary_labels"] = problem_route_secondary_labels
+        dream_weekly_alignment_line = str(preview.get("dream_weekly_alignment_line") or "").strip()
+        if dream_weekly_alignment_line:
+            normalized["dream_weekly_alignment_line"] = dream_weekly_alignment_line
+        return normalized
+
+    for item in previews:
+        if isinstance(item, dict) and str(item.get("path") or "").strip().endswith(
+            "docs/status/dream_observability_latest.json"
+        ):
+            normalized = _normalize(item)
+            if normalized is not None:
+                return normalized
+
+    for item in previews:
+        if not isinstance(item, dict):
+            continue
+        normalized = _normalize(item)
+        if normalized is not None:
+            return normalized
+    return None
+
+
+def _refreshable_agent_integrity_focus_preview(repo_root: Path) -> dict[str, str] | None:
+    payload, _ = refreshable_report.build_report(repo_root)
+    previews = payload.get("handoff_previews")
+    if not isinstance(previews, list):
+        return None
+
+    for preview in previews:
+        if not isinstance(preview, dict):
+            continue
+        path = str(preview.get("path") or "").strip()
+        queue_shape = str(preview.get("queue_shape") or "").strip()
+        primary_status_line = str(preview.get("primary_status_line") or "").strip()
+        if not path or not primary_status_line:
+            continue
+        if not (
+            path.endswith("docs/status/agent_integrity_latest.json")
+            or queue_shape in {"agent_integrity_guarded", "agent_integrity_attention"}
+        ):
+            continue
+        normalized = {
+            "path": path,
+            "queue_shape": queue_shape,
+            "primary_status_line": primary_status_line,
+            "runtime_status_line": str(preview.get("runtime_status_line") or "").strip(),
+            "anchor_status_line": str(preview.get("anchor_status_line") or "").strip(),
+            "artifact_policy_status_line": str(
+                preview.get("artifact_policy_status_line") or ""
+            ).strip(),
+            "admissibility_primary_status_line": str(
+                preview.get("admissibility_primary_status_line") or ""
+            ).strip(),
+            "requires_operator_action": str(preview.get("requires_operator_action") or "false")
+            .strip()
+            .lower(),
+        }
+        problem_route_status_line = str(preview.get("problem_route_status_line") or "").strip()
+        if problem_route_status_line:
+            normalized["problem_route_status_line"] = problem_route_status_line
+        return normalized
+    return None
+
+
+def _refreshable_repo_semantic_atlas_focus_preview(repo_root: Path) -> dict[str, str] | None:
+    payload, _ = refreshable_report.build_report(repo_root)
+    previews = payload.get("handoff_previews")
+    if not isinstance(previews, list):
+        return None
+
+    for preview in previews:
+        if not isinstance(preview, dict):
+            continue
+        path = str(preview.get("path") or "").strip()
+        queue_shape = str(preview.get("queue_shape") or "").strip()
+        primary_status_line = str(preview.get("primary_status_line") or "").strip()
+        if not path or not primary_status_line:
+            continue
+        if not (
+            path.endswith("docs/status/repo_semantic_atlas_latest.json")
+            or queue_shape == "repo_semantic_atlas_ready"
+        ):
+            continue
+        return {
+            "path": path,
+            "queue_shape": queue_shape,
+            "primary_status_line": primary_status_line,
+            "runtime_status_line": str(preview.get("runtime_status_line") or "").strip(),
+            "anchor_status_line": str(preview.get("anchor_status_line") or "").strip(),
+            "artifact_policy_status_line": str(
+                preview.get("artifact_policy_status_line") or ""
+            ).strip(),
+            "admissibility_primary_status_line": str(
+                preview.get("admissibility_primary_status_line") or ""
+            ).strip(),
+            "requires_operator_action": str(preview.get("requires_operator_action") or "false")
+            .strip()
+            .lower(),
+        }
+    return None
+
+
+def _refreshable_repo_intelligence_focus_preview(repo_root: Path) -> dict[str, str] | None:
+    payload, _ = refreshable_report.build_report(repo_root)
+    previews = payload.get("handoff_previews")
+    if not isinstance(previews, list):
+        return None
+
+    for preview in previews:
+        if not isinstance(preview, dict):
+            continue
+        path = str(preview.get("path") or "").strip()
+        queue_shape = str(preview.get("queue_shape") or "").strip()
+        primary_status_line = str(preview.get("primary_status_line") or "").strip()
+        if not path or not primary_status_line:
+            continue
+        if not (
+            path.endswith("docs/status/repo_intelligence_latest.json")
+            or queue_shape == "repo_intelligence_ready"
+        ):
+            continue
+        normalized = {
+            "path": path,
+            "queue_shape": queue_shape,
+            "primary_status_line": primary_status_line,
+            "runtime_status_line": str(preview.get("runtime_status_line") or "").strip(),
+            "anchor_status_line": str(preview.get("anchor_status_line") or "").strip(),
+            "artifact_policy_status_line": str(
+                preview.get("artifact_policy_status_line") or ""
+            ).strip(),
+            "admissibility_primary_status_line": str(
+                preview.get("admissibility_primary_status_line") or ""
+            ).strip(),
+            "requires_operator_action": str(preview.get("requires_operator_action") or "false")
+            .strip()
+            .lower(),
+        }
+        semantic_retrieval_protocol = str(preview.get("semantic_retrieval_protocol") or "").strip()
+        if semantic_retrieval_protocol:
+            normalized["semantic_retrieval_protocol"] = semantic_retrieval_protocol
+        semantic_preferred_neighborhood = str(
+            preview.get("semantic_preferred_neighborhood") or ""
+        ).strip()
+        if semantic_preferred_neighborhood:
+            normalized["semantic_preferred_neighborhood"] = semantic_preferred_neighborhood
+        return normalized
+    return None
+
+
+def _select_refreshable_preview_by_queue_shape(
+    previews: list[dict[str, str]],
+    *,
+    queue_shape: str,
+) -> dict[str, str] | None:
+    target = queue_shape.strip()
+    if not target:
+        return None
+    for preview in previews:
+        if str(preview.get("queue_shape") or "").strip() != target:
+            continue
+        if str(preview.get("primary_status_line") or "").strip():
+            return dict(preview)
+    return None
 
 
 def _render_markdown(payload: dict[str, Any]) -> str:
@@ -221,6 +537,210 @@ def _render_markdown(payload: dict[str, Any]) -> str:
         f"- Attribution debt: current=`{payload['planner']['current_missing_count']}`, "
         f"backfill=`{payload['planner']['backfill_missing_count']}`"
     )
+    dream_weekly_alignment_line = str(payload.get("dream_weekly_alignment_line") or "").strip()
+    weekly_host_status_preview = payload.get("weekly_host_status_preview")
+    if isinstance(weekly_host_status_preview, dict):
+        primary_status_line = str(
+            weekly_host_status_preview.get("primary_status_line") or ""
+        ).strip()
+        runtime_status_line = str(
+            weekly_host_status_preview.get("runtime_status_line") or ""
+        ).strip()
+        anchor_status_line = str(weekly_host_status_preview.get("anchor_status_line") or "").strip()
+        problem_route_status_line = str(
+            weekly_host_status_preview.get("problem_route_status_line") or ""
+        ).strip()
+        problem_route_secondary_labels = str(
+            weekly_host_status_preview.get("problem_route_secondary_labels") or ""
+        ).strip()
+        scribe_status_line = str(weekly_host_status_preview.get("scribe_status_line") or "").strip()
+        artifact_policy_status_line = str(
+            weekly_host_status_preview.get("artifact_policy_status_line") or ""
+        ).strip()
+        admissibility_primary_status_line = str(
+            weekly_host_status_preview.get("admissibility_primary_status_line") or ""
+        ).strip()
+        if primary_status_line:
+            lines.append(f"- Weekly host status: `{primary_status_line}`")
+        if runtime_status_line:
+            lines.append(f"- Weekly runtime posture: `{runtime_status_line}`")
+        if anchor_status_line:
+            lines.append(f"- Weekly anchor posture: `{anchor_status_line}`")
+        if problem_route_status_line:
+            lines.append(f"- Weekly problem route: `{problem_route_status_line}`")
+        if problem_route_secondary_labels:
+            lines.append(f"- Weekly problem route secondary: `{problem_route_secondary_labels}`")
+        if scribe_status_line:
+            lines.append(f"- Weekly Scribe posture: `{scribe_status_line}`")
+        if artifact_policy_status_line:
+            lines.append(f"- Weekly artifact policy: `{artifact_policy_status_line}`")
+        if admissibility_primary_status_line:
+            lines.append(f"- Weekly admissibility: `{admissibility_primary_status_line}`")
+    focus_preview = payload.get("subjectivity_focus_preview")
+    if isinstance(focus_preview, dict):
+        primary_status_line = str(focus_preview.get("primary_status_line") or "").strip()
+        runtime_status_line = str(focus_preview.get("runtime_status_line") or "").strip()
+        scribe_status_line = str(focus_preview.get("scribe_status_line") or "").strip()
+        anchor_status_line = str(focus_preview.get("anchor_status_line") or "").strip()
+        problem_route_status_line = str(
+            focus_preview.get("problem_route_status_line") or ""
+        ).strip()
+        problem_route_secondary_labels = str(
+            focus_preview.get("problem_route_secondary_labels") or ""
+        ).strip()
+        focus_alignment_line = str(focus_preview.get("dream_weekly_alignment_line") or "").strip()
+        artifact_policy_status_line = str(
+            focus_preview.get("artifact_policy_status_line") or ""
+        ).strip()
+        admissibility_primary_status_line = str(
+            focus_preview.get("admissibility_primary_status_line") or ""
+        ).strip()
+        if primary_status_line:
+            lines.append(f"- Subjectivity focus: `{primary_status_line}`")
+        if runtime_status_line:
+            lines.append(f"- Subjectivity runtime posture: `{runtime_status_line}`")
+        if scribe_status_line:
+            lines.append(f"- Subjectivity Scribe posture: `{scribe_status_line}`")
+        if anchor_status_line:
+            lines.append(f"- Subjectivity anchor posture: `{anchor_status_line}`")
+        if problem_route_status_line:
+            lines.append(f"- Subjectivity problem route: `{problem_route_status_line}`")
+        if problem_route_secondary_labels:
+            lines.append(
+                f"- Subjectivity problem route secondary: `{problem_route_secondary_labels}`"
+            )
+        if focus_alignment_line:
+            lines.append(f"- Subjectivity alignment: `{focus_alignment_line}`")
+        if artifact_policy_status_line:
+            lines.append(f"- Subjectivity artifact policy: `{artifact_policy_status_line}`")
+        if admissibility_primary_status_line:
+            lines.append(f"- Subjectivity admissibility: `{admissibility_primary_status_line}`")
+    dream_focus_preview = payload.get("dream_observability_focus_preview")
+    if isinstance(dream_focus_preview, dict):
+        primary_status_line = str(dream_focus_preview.get("primary_status_line") or "").strip()
+        runtime_status_line = str(dream_focus_preview.get("runtime_status_line") or "").strip()
+        anchor_status_line = str(dream_focus_preview.get("anchor_status_line") or "").strip()
+        problem_route_status_line = str(
+            dream_focus_preview.get("problem_route_status_line") or ""
+        ).strip()
+        problem_route_secondary_labels = str(
+            dream_focus_preview.get("problem_route_secondary_labels") or ""
+        ).strip()
+        artifact_policy_status_line = str(
+            dream_focus_preview.get("artifact_policy_status_line") or ""
+        ).strip()
+        if primary_status_line:
+            lines.append(f"- Dream observability: `{primary_status_line}`")
+        if runtime_status_line:
+            lines.append(f"- Dream runtime posture: `{runtime_status_line}`")
+        if anchor_status_line:
+            lines.append(f"- Dream anchor posture: `{anchor_status_line}`")
+        if problem_route_status_line:
+            lines.append(f"- Dream problem route: `{problem_route_status_line}`")
+        if problem_route_secondary_labels:
+            lines.append(f"- Dream problem route secondary: `{problem_route_secondary_labels}`")
+        if artifact_policy_status_line:
+            lines.append(f"- Dream artifact policy: `{artifact_policy_status_line}`")
+    repo_semantic_atlas_focus_preview = payload.get("repo_semantic_atlas_focus_preview")
+    if isinstance(repo_semantic_atlas_focus_preview, dict):
+        primary_status_line = str(
+            repo_semantic_atlas_focus_preview.get("primary_status_line") or ""
+        ).strip()
+        runtime_status_line = str(
+            repo_semantic_atlas_focus_preview.get("runtime_status_line") or ""
+        ).strip()
+        artifact_policy_status_line = str(
+            repo_semantic_atlas_focus_preview.get("artifact_policy_status_line") or ""
+        ).strip()
+        if primary_status_line:
+            lines.append(f"- Repo semantic atlas: `{primary_status_line}`")
+        if runtime_status_line:
+            lines.append(f"- Repo semantic retrieval: `{runtime_status_line}`")
+        if artifact_policy_status_line:
+            lines.append(f"- Repo semantic artifact policy: `{artifact_policy_status_line}`")
+    repo_intelligence_focus_preview = payload.get("repo_intelligence_focus_preview")
+    if isinstance(repo_intelligence_focus_preview, dict):
+        primary_status_line = str(
+            repo_intelligence_focus_preview.get("primary_status_line") or ""
+        ).strip()
+        runtime_status_line = str(
+            repo_intelligence_focus_preview.get("runtime_status_line") or ""
+        ).strip()
+        semantic_retrieval_protocol = str(
+            repo_intelligence_focus_preview.get("semantic_retrieval_protocol") or ""
+        ).strip()
+        semantic_preferred_neighborhood = str(
+            repo_intelligence_focus_preview.get("semantic_preferred_neighborhood") or ""
+        ).strip()
+        artifact_policy_status_line = str(
+            repo_intelligence_focus_preview.get("artifact_policy_status_line") or ""
+        ).strip()
+        if primary_status_line:
+            lines.append(f"- Repo intelligence: `{primary_status_line}`")
+        if runtime_status_line:
+            lines.append(f"- Repo intelligence runtime: `{runtime_status_line}`")
+        if semantic_retrieval_protocol:
+            lines.append(f"- Repo intelligence semantic protocol: `{semantic_retrieval_protocol}`")
+        if semantic_preferred_neighborhood:
+            lines.append(
+                f"- Repo intelligence first neighborhood: `{semantic_preferred_neighborhood}`"
+            )
+        if artifact_policy_status_line:
+            lines.append(f"- Repo intelligence artifact policy: `{artifact_policy_status_line}`")
+    if dream_weekly_alignment_line:
+        lines.append(f"- Dream weekly alignment: `{dream_weekly_alignment_line}`")
+    lines.append("")
+    lines.append("## Weekly Host Status Mirror")
+    lines.append("")
+    if isinstance(weekly_host_status_preview, dict):
+        lines.append(f"- path: `{weekly_host_status_preview.get('path', '')}`")
+        lines.append(f"- queue_shape: `{weekly_host_status_preview.get('queue_shape', '')}`")
+        lines.append(
+            "- requires_operator_action: "
+            f"`{weekly_host_status_preview.get('requires_operator_action', 'false')}`"
+        )
+        lines.append(
+            f"- primary_status_line: `{weekly_host_status_preview.get('primary_status_line', '')}`"
+        )
+        if str(weekly_host_status_preview.get("runtime_status_line") or "").strip():
+            lines.append(
+                f"- runtime_status_line: `{weekly_host_status_preview.get('runtime_status_line', '')}`"
+            )
+        if str(weekly_host_status_preview.get("anchor_status_line") or "").strip():
+            lines.append(
+                f"- anchor_status_line: `{weekly_host_status_preview.get('anchor_status_line', '')}`"
+            )
+        if str(weekly_host_status_preview.get("problem_route_status_line") or "").strip():
+            lines.append(
+                "- problem_route_status_line: "
+                f"`{weekly_host_status_preview.get('problem_route_status_line', '')}`"
+            )
+        if str(weekly_host_status_preview.get("problem_route_secondary_labels") or "").strip():
+            lines.append(
+                "- problem_route_secondary_labels: "
+                f"`{weekly_host_status_preview.get('problem_route_secondary_labels', '')}`"
+            )
+        if str(weekly_host_status_preview.get("scribe_status_line") or "").strip():
+            lines.append(
+                f"- scribe_status_line: `{weekly_host_status_preview.get('scribe_status_line', '')}`"
+            )
+        if str(weekly_host_status_preview.get("artifact_policy_status_line") or "").strip():
+            lines.append(
+                "- artifact_policy_status_line: "
+                f"`{weekly_host_status_preview.get('artifact_policy_status_line', '')}`"
+            )
+        if str(weekly_host_status_preview.get("admissibility_primary_status_line") or "").strip():
+            lines.append(
+                "- admissibility_primary_status_line: "
+                f"`{weekly_host_status_preview.get('admissibility_primary_status_line', '')}`"
+            )
+        if str(weekly_host_status_preview.get("dream_weekly_alignment_line") or "").strip():
+            lines.append(
+                "- dream_weekly_alignment_line: "
+                f"`{weekly_host_status_preview.get('dream_weekly_alignment_line', '')}`"
+            )
+    else:
+        lines.append("- None")
     lines.append("")
     lines.append("## Subjectivity Focus Mirror")
     lines.append("")
@@ -233,10 +753,210 @@ def _render_markdown(payload: dict[str, Any]) -> str:
             f"`{focus_preview.get('requires_operator_action', 'false')}`"
         )
         lines.append(f"- primary_status_line: `{focus_preview.get('primary_status_line', '')}`")
+        if str(focus_preview.get("runtime_status_line") or "").strip():
+            lines.append(f"- runtime_status_line: `{focus_preview.get('runtime_status_line', '')}`")
+        if str(focus_preview.get("scribe_status_line") or "").strip():
+            lines.append(f"- scribe_status_line: `{focus_preview.get('scribe_status_line', '')}`")
+        if str(focus_preview.get("anchor_status_line") or "").strip():
+            lines.append(f"- anchor_status_line: `{focus_preview.get('anchor_status_line', '')}`")
+        if str(focus_preview.get("problem_route_status_line") or "").strip():
+            lines.append(
+                "- problem_route_status_line: "
+                f"`{focus_preview.get('problem_route_status_line', '')}`"
+            )
+        if str(focus_preview.get("problem_route_secondary_labels") or "").strip():
+            lines.append(
+                "- problem_route_secondary_labels: "
+                f"`{focus_preview.get('problem_route_secondary_labels', '')}`"
+            )
+        if str(focus_preview.get("dream_weekly_alignment_line") or "").strip():
+            lines.append(
+                "- dream_weekly_alignment_line: "
+                f"`{focus_preview.get('dream_weekly_alignment_line', '')}`"
+            )
+        if str(focus_preview.get("artifact_policy_status_line") or "").strip():
+            lines.append(
+                "- artifact_policy_status_line: "
+                f"`{focus_preview.get('artifact_policy_status_line', '')}`"
+            )
         if str(focus_preview.get("admissibility_primary_status_line") or "").strip():
             lines.append(
                 "- admissibility_primary_status_line: "
                 f"`{focus_preview.get('admissibility_primary_status_line', '')}`"
+            )
+    else:
+        lines.append("- None")
+    lines.append("")
+    lines.append("## Dream Observability Focus Mirror")
+    lines.append("")
+    if isinstance(dream_focus_preview, dict):
+        lines.append(f"- path: `{dream_focus_preview.get('path', '')}`")
+        lines.append(f"- queue_shape: `{dream_focus_preview.get('queue_shape', '')}`")
+        lines.append(
+            "- requires_operator_action: "
+            f"`{dream_focus_preview.get('requires_operator_action', 'false')}`"
+        )
+        lines.append(
+            f"- primary_status_line: `{dream_focus_preview.get('primary_status_line', '')}`"
+        )
+        if str(dream_focus_preview.get("runtime_status_line") or "").strip():
+            lines.append(
+                f"- runtime_status_line: `{dream_focus_preview.get('runtime_status_line', '')}`"
+            )
+        if str(dream_focus_preview.get("anchor_status_line") or "").strip():
+            lines.append(
+                f"- anchor_status_line: `{dream_focus_preview.get('anchor_status_line', '')}`"
+            )
+        if str(dream_focus_preview.get("problem_route_status_line") or "").strip():
+            lines.append(
+                "- problem_route_status_line: "
+                f"`{dream_focus_preview.get('problem_route_status_line', '')}`"
+            )
+        if str(dream_focus_preview.get("problem_route_secondary_labels") or "").strip():
+            lines.append(
+                "- problem_route_secondary_labels: "
+                f"`{dream_focus_preview.get('problem_route_secondary_labels', '')}`"
+            )
+        if str(dream_focus_preview.get("artifact_policy_status_line") or "").strip():
+            lines.append(
+                "- artifact_policy_status_line: "
+                f"`{dream_focus_preview.get('artifact_policy_status_line', '')}`"
+            )
+    else:
+        lines.append("- None")
+    lines.append("")
+    lines.append("## Repo Semantic Atlas Focus Mirror")
+    lines.append("")
+    if isinstance(repo_semantic_atlas_focus_preview, dict):
+        lines.append(f"- path: `{repo_semantic_atlas_focus_preview.get('path', '')}`")
+        lines.append(f"- queue_shape: `{repo_semantic_atlas_focus_preview.get('queue_shape', '')}`")
+        lines.append(
+            "- requires_operator_action: "
+            f"`{repo_semantic_atlas_focus_preview.get('requires_operator_action', 'false')}`"
+        )
+        lines.append(
+            "- primary_status_line: "
+            f"`{repo_semantic_atlas_focus_preview.get('primary_status_line', '')}`"
+        )
+        if str(repo_semantic_atlas_focus_preview.get("runtime_status_line") or "").strip():
+            lines.append(
+                "- runtime_status_line: "
+                f"`{repo_semantic_atlas_focus_preview.get('runtime_status_line', '')}`"
+            )
+        if str(repo_semantic_atlas_focus_preview.get("artifact_policy_status_line") or "").strip():
+            lines.append(
+                "- artifact_policy_status_line: "
+                f"`{repo_semantic_atlas_focus_preview.get('artifact_policy_status_line', '')}`"
+            )
+    else:
+        lines.append("- None")
+    lines.append("")
+    lines.append("## Repo Intelligence Focus Mirror")
+    lines.append("")
+    repo_intelligence_focus_preview = payload.get("repo_intelligence_focus_preview")
+    if isinstance(repo_intelligence_focus_preview, dict):
+        lines.append(f"- path: `{repo_intelligence_focus_preview.get('path', '')}`")
+        lines.append(f"- queue_shape: `{repo_intelligence_focus_preview.get('queue_shape', '')}`")
+        lines.append(
+            "- requires_operator_action: "
+            f"`{repo_intelligence_focus_preview.get('requires_operator_action', 'false')}`"
+        )
+        lines.append(
+            "- primary_status_line: "
+            f"`{repo_intelligence_focus_preview.get('primary_status_line', '')}`"
+        )
+        if str(repo_intelligence_focus_preview.get("runtime_status_line") or "").strip():
+            lines.append(
+                "- runtime_status_line: "
+                f"`{repo_intelligence_focus_preview.get('runtime_status_line', '')}`"
+            )
+        if str(repo_intelligence_focus_preview.get("semantic_retrieval_protocol") or "").strip():
+            lines.append(
+                "- semantic_retrieval_protocol: "
+                f"`{repo_intelligence_focus_preview.get('semantic_retrieval_protocol', '')}`"
+            )
+        if str(
+            repo_intelligence_focus_preview.get("semantic_preferred_neighborhood") or ""
+        ).strip():
+            lines.append(
+                "- semantic_preferred_neighborhood: "
+                f"`{repo_intelligence_focus_preview.get('semantic_preferred_neighborhood', '')}`"
+            )
+        if str(repo_intelligence_focus_preview.get("artifact_policy_status_line") or "").strip():
+            lines.append(
+                "- artifact_policy_status_line: "
+                f"`{repo_intelligence_focus_preview.get('artifact_policy_status_line', '')}`"
+            )
+    else:
+        lines.append("- None")
+    lines.append("")
+    lines.append("## Scribe Focus Mirror")
+    lines.append("")
+    scribe_focus_preview = payload.get("scribe_focus_preview")
+    if isinstance(scribe_focus_preview, dict):
+        lines.append(f"- path: `{scribe_focus_preview.get('path', '')}`")
+        lines.append(f"- queue_shape: `{scribe_focus_preview.get('queue_shape', '')}`")
+        lines.append(
+            "- requires_operator_action: "
+            f"`{scribe_focus_preview.get('requires_operator_action', 'false')}`"
+        )
+        lines.append(
+            f"- primary_status_line: `{scribe_focus_preview.get('primary_status_line', '')}`"
+        )
+        if str(scribe_focus_preview.get("runtime_status_line") or "").strip():
+            lines.append(
+                f"- runtime_status_line: `{scribe_focus_preview.get('runtime_status_line', '')}`"
+            )
+        if str(scribe_focus_preview.get("anchor_status_line") or "").strip():
+            lines.append(
+                f"- anchor_status_line: `{scribe_focus_preview.get('anchor_status_line', '')}`"
+            )
+        if str(scribe_focus_preview.get("problem_route_status_line") or "").strip():
+            lines.append(
+                "- problem_route_status_line: "
+                f"`{scribe_focus_preview.get('problem_route_status_line', '')}`"
+            )
+        if str(scribe_focus_preview.get("problem_route_secondary_labels") or "").strip():
+            lines.append(
+                "- problem_route_secondary_labels: "
+                f"`{scribe_focus_preview.get('problem_route_secondary_labels', '')}`"
+            )
+        if str(scribe_focus_preview.get("artifact_policy_status_line") or "").strip():
+            lines.append(
+                "- artifact_policy_status_line: "
+                f"`{scribe_focus_preview.get('artifact_policy_status_line', '')}`"
+            )
+    else:
+        lines.append("- None")
+    lines.append("")
+    lines.append("## Agent Integrity Focus Mirror")
+    lines.append("")
+    agent_integrity_focus_preview = payload.get("agent_integrity_focus_preview")
+    if isinstance(agent_integrity_focus_preview, dict):
+        lines.append(f"- path: `{agent_integrity_focus_preview.get('path', '')}`")
+        lines.append(f"- queue_shape: `{agent_integrity_focus_preview.get('queue_shape', '')}`")
+        lines.append(
+            "- requires_operator_action: "
+            f"`{agent_integrity_focus_preview.get('requires_operator_action', 'false')}`"
+        )
+        lines.append(
+            "- primary_status_line: "
+            f"`{agent_integrity_focus_preview.get('primary_status_line', '')}`"
+        )
+        if str(agent_integrity_focus_preview.get("runtime_status_line") or "").strip():
+            lines.append(
+                "- runtime_status_line: "
+                f"`{agent_integrity_focus_preview.get('runtime_status_line', '')}`"
+            )
+        if str(agent_integrity_focus_preview.get("problem_route_status_line") or "").strip():
+            lines.append(
+                "- problem_route_status_line: "
+                f"`{agent_integrity_focus_preview.get('problem_route_status_line', '')}`"
+            )
+        if str(agent_integrity_focus_preview.get("artifact_policy_status_line") or "").strip():
+            lines.append(
+                "- artifact_policy_status_line: "
+                f"`{agent_integrity_focus_preview.get('artifact_policy_status_line', '')}`"
             )
     else:
         lines.append("- None")
@@ -271,13 +991,55 @@ def _render_markdown(payload: dict[str, Any]) -> str:
                     f"(`{preview.get('queue_shape', '')}`): "
                     f"`{preview.get('primary_status_line', '')}`"
                 )
+                if str(preview.get("runtime_status_line") or "").strip():
+                    lines.append(
+                        "       runtime_status_line: " f"`{preview.get('runtime_status_line', '')}`"
+                    )
+                if str(preview.get("anchor_status_line") or "").strip():
+                    lines.append(
+                        "       anchor_status_line: " f"`{preview.get('anchor_status_line', '')}`"
+                    )
+                if str(preview.get("problem_route_status_line") or "").strip():
+                    lines.append(
+                        "       problem_route_status_line: "
+                        f"`{preview.get('problem_route_status_line', '')}`"
+                    )
+                if str(preview.get("problem_route_secondary_labels") or "").strip():
+                    lines.append(
+                        "       problem_route_secondary_labels: "
+                        f"`{preview.get('problem_route_secondary_labels', '')}`"
+                    )
+                if str(preview.get("dream_weekly_alignment_line") or "").strip():
+                    lines.append(
+                        "       dream_weekly_alignment_line: "
+                        f"`{preview.get('dream_weekly_alignment_line', '')}`"
+                    )
+                if str(preview.get("artifact_policy_status_line") or "").strip():
+                    lines.append(
+                        "       artifact_policy_status_line: "
+                        f"`{preview.get('artifact_policy_status_line', '')}`"
+                    )
+                if str(preview.get("semantic_retrieval_protocol") or "").strip():
+                    lines.append(
+                        "       semantic_retrieval_protocol: "
+                        f"`{preview.get('semantic_retrieval_protocol', '')}`"
+                    )
+                if str(preview.get("semantic_preferred_neighborhood") or "").strip():
+                    lines.append(
+                        "       semantic_preferred_neighborhood: "
+                        f"`{preview.get('semantic_preferred_neighborhood', '')}`"
+                    )
+                if str(preview.get("scribe_status_line") or "").strip():
+                    lines.append(
+                        "       scribe_status_line: " f"`{preview.get('scribe_status_line', '')}`"
+                    )
                 lines.append(
                     "       requires_operator_action: "
                     f"`{preview.get('requires_operator_action', 'false')}`"
                 )
                 if str(preview.get("admissibility_primary_status_line") or "").strip():
                     lines.append(
-                        "       admissibility: "
+                        "       admissibility_primary_status_line: "
                         f"`{preview.get('admissibility_primary_status_line', '')}`"
                     )
         lines.append("")
@@ -318,6 +1080,23 @@ def build_report(
     ]
     refreshable_handoff_previews = _refreshable_handoff_previews(repo_root)
     refreshable_subjectivity_focus_preview = _refreshable_subjectivity_focus_preview(repo_root)
+    refreshable_dream_observability_focus_preview = _refreshable_dream_observability_focus_preview(
+        repo_root
+    )
+    refreshable_scribe_focus_preview = _refreshable_scribe_focus_preview(repo_root)
+    refreshable_agent_integrity_focus_preview = _refreshable_agent_integrity_focus_preview(
+        repo_root
+    )
+    refreshable_repo_semantic_atlas_focus_preview = _refreshable_repo_semantic_atlas_focus_preview(
+        repo_root
+    )
+    refreshable_repo_intelligence_focus_preview = _refreshable_repo_intelligence_focus_preview(
+        repo_root
+    )
+    refreshable_weekly_host_status_preview = _select_refreshable_preview_by_queue_shape(
+        refreshable_handoff_previews,
+        queue_shape="weekly_host_status",
+    )
     refreshable_admissibility_preview_count = sum(
         1
         for item in refreshable_handoff_previews
@@ -359,7 +1138,20 @@ def build_report(
             "refreshable_handoff_preview_count": len(refreshable_handoff_previews),
             "refreshable_admissibility_preview_count": refreshable_admissibility_preview_count,
         },
+        "weekly_host_status_preview": refreshable_weekly_host_status_preview,
         "subjectivity_focus_preview": refreshable_subjectivity_focus_preview,
+        "dream_observability_focus_preview": refreshable_dream_observability_focus_preview,
+        "scribe_focus_preview": refreshable_scribe_focus_preview,
+        "agent_integrity_focus_preview": refreshable_agent_integrity_focus_preview,
+        "repo_semantic_atlas_focus_preview": refreshable_repo_semantic_atlas_focus_preview,
+        "repo_intelligence_focus_preview": refreshable_repo_intelligence_focus_preview,
+        "dream_weekly_alignment_line": str(
+            (refreshable_weekly_host_status_preview or {}).get("dream_weekly_alignment_line") or ""
+        ).strip()
+        or build_dream_weekly_alignment_line(
+            refreshable_weekly_host_status_preview,
+            refreshable_dream_observability_focus_preview,
+        ),
         "next_checkpoint": {
             "command": (
                 "python scripts/plan_commit_attribution_base_switch.py "

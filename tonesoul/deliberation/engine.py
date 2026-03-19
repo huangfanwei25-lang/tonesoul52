@@ -16,6 +16,7 @@ import time
 from typing import Any, Dict, List, Optional
 
 from .gravity import create_semantic_gravity
+from .persona_track_record import create_persona_track_record
 from .perspectives import (
     BasePerspective,
     create_perspectives,
@@ -46,8 +47,10 @@ class InternalDeliberation:
         # Initialize three perspectives
         self._perspectives = create_perspectives()
 
+        self._persona_track_record = create_persona_track_record()
+
         # Initialize synthesis engine
-        self._gravity = create_semantic_gravity()
+        self._gravity = create_semantic_gravity(track_record=self._persona_track_record)
 
         # State tracking
         self._deliberation_count = 0
@@ -138,6 +141,26 @@ class InternalDeliberation:
     @property
     def deliberation_count(self) -> int:
         return self._deliberation_count
+
+    def record_outcome(
+        self,
+        dominant_voice: Optional[str],
+        verdict: str,
+        resonance_state: str = "unknown",
+        loop_detected: bool = False,
+    ) -> None:
+        """Persist post-council outcome for dynamic future weighting."""
+        if not dominant_voice:
+            return
+        self._persona_track_record.record_outcome(
+            perspective=str(dominant_voice),
+            verdict=str(verdict),
+            resonance_state=resonance_state,
+            loop_detected=loop_detected,
+        )
+
+    def get_persona_track_summary(self) -> Dict[str, Dict[str, float]]:
+        return self._persona_track_record.summary()
 
 
 def create_deliberation_engine() -> InternalDeliberation:

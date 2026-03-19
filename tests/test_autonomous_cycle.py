@@ -29,7 +29,9 @@ def test_runner_supports_idle_cycle_without_urls(tmp_path: Path) -> None:
         journal_path=journal_path,
         history_path=tmp_path / "dream_wakeup_history.jsonl",
         snapshot_path=tmp_path / "dream_wakeup_snapshot.json",
+        state_path=tmp_path / "dream_wakeup_state.json",
         dashboard_out_dir=tmp_path / "status",
+        enable_scribe=False,
         ingestor=DummyIngestor([]),
         stimulus_processor=StimulusProcessor(min_word_count=10),
     )
@@ -43,8 +45,11 @@ def test_runner_supports_idle_cycle_without_urls(tmp_path: Path) -> None:
     assert result.wakeup_overall_status == "idle"
     assert Path(result.paths["history_path"]).exists()
     assert Path(result.paths["snapshot_path"]).exists()
+    assert Path(result.paths["state_path"]).exists()
     assert Path(result.paths["dashboard_json_path"]).exists()
     assert Path(result.paths["dashboard_html_path"]).exists()
+    assert result.runtime_state["next_cycle"] == 2
+    assert result.runtime_state["resumed"] is False
 
 
 def test_runner_ingests_writes_and_refreshes_dashboard(tmp_path: Path) -> None:
@@ -70,7 +75,9 @@ def test_runner_ingests_writes_and_refreshes_dashboard(tmp_path: Path) -> None:
         journal_path=journal_path,
         history_path=tmp_path / "dream_wakeup_history.jsonl",
         snapshot_path=tmp_path / "dream_wakeup_snapshot.json",
+        state_path=tmp_path / "dream_wakeup_state.json",
         dashboard_out_dir=tmp_path / "status",
+        enable_scribe=False,
         ingestor=dummy_ingestor,
         stimulus_processor=StimulusProcessor(min_word_count=10),
     )
@@ -94,6 +101,7 @@ def test_runner_ingests_writes_and_refreshes_dashboard(tmp_path: Path) -> None:
     assert result.wakeup_cycle_count == 1
     assert result.wakeup_overall_status == "ok"
     assert result.wakeup_payload["results"][0]["dream_result"]["stimuli_selected"] == 1
+    assert result.wakeup_payload["runtime_state"]["next_cycle"] == 2
     assert result.dashboard_payload["metrics"]["wakeup_cycle_count"] == 1
     assert result.dashboard_payload["summary"]["wakeup_avg_friction"]["point_count"] == 1
 
@@ -104,6 +112,45 @@ def test_runner_ingests_writes_and_refreshes_dashboard(tmp_path: Path) -> None:
     ]
     assert len(history_rows) == 1
     assert history_rows[0]["status"] == "ok"
+
+
+def test_runner_resumes_wakeup_state_across_invocations(tmp_path: Path) -> None:
+    journal_path = tmp_path / "self_journal.jsonl"
+    journal_path.write_text("", encoding="utf-8")
+    state_path = tmp_path / "dream_wakeup_state.json"
+
+    first_runner = AutonomousDreamCycleRunner(
+        db_path=tmp_path / "soul.db",
+        crystal_path=tmp_path / "crystals.jsonl",
+        journal_path=journal_path,
+        history_path=tmp_path / "dream_wakeup_history.jsonl",
+        snapshot_path=tmp_path / "dream_wakeup_snapshot.json",
+        state_path=state_path,
+        dashboard_out_dir=tmp_path / "status",
+        enable_scribe=False,
+        ingestor=DummyIngestor([]),
+        stimulus_processor=StimulusProcessor(min_word_count=10),
+    )
+    first_result = first_runner.run(urls=[], max_cycles=1, generate_reflection=False)
+
+    second_runner = AutonomousDreamCycleRunner(
+        db_path=tmp_path / "soul.db",
+        crystal_path=tmp_path / "crystals.jsonl",
+        journal_path=journal_path,
+        history_path=tmp_path / "dream_wakeup_history.jsonl",
+        snapshot_path=tmp_path / "dream_wakeup_snapshot.json",
+        state_path=state_path,
+        dashboard_out_dir=tmp_path / "status",
+        enable_scribe=False,
+        ingestor=DummyIngestor([]),
+        stimulus_processor=StimulusProcessor(min_word_count=10),
+    )
+    second_result = second_runner.run(urls=[], max_cycles=1, generate_reflection=False)
+
+    assert first_result.wakeup_payload["results"][0]["cycle"] == 1
+    assert second_result.wakeup_payload["results"][0]["cycle"] == 2
+    assert first_result.runtime_state["session_id"] == second_result.runtime_state["session_id"]
+    assert second_result.runtime_state["resumed"] is True
 
 
 def test_runner_raises_when_sync_ingestion_is_used_inside_running_event_loop(
@@ -117,7 +164,9 @@ def test_runner_raises_when_sync_ingestion_is_used_inside_running_event_loop(
         journal_path=journal_path,
         history_path=tmp_path / "dream_wakeup_history.jsonl",
         snapshot_path=tmp_path / "dream_wakeup_snapshot.json",
+        state_path=tmp_path / "dream_wakeup_state.json",
         dashboard_out_dir=tmp_path / "status",
+        enable_scribe=False,
         ingestor=WebIngestor(timeout=1),
         stimulus_processor=StimulusProcessor(min_word_count=10),
     )

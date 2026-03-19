@@ -298,6 +298,113 @@ def test_chat_exposes_default_semantic_fields_when_pipeline_omits_them(monkeypat
     assert deliberation["visual_chain_snapshot"] == {}
 
 
+def test_chat_exposes_compressed_brief_fields_with_sparse_pipeline_data(monkeypatch):
+    import tonesoul.unified_pipeline as unified_pipeline
+
+    captured: dict = {}
+    monkeypatch.setattr(
+        unified_pipeline,
+        "create_unified_pipeline",
+        lambda: _mock_pipeline(captured),
+    )
+
+    client = _client()
+    response = client.post("/api/chat", json={"message": "hello"})
+    payload = response.get_json()
+
+    assert response.status_code == 200
+    governance_brief = payload.get("governance_brief")
+    life_entry_brief = payload.get("life_entry_brief")
+
+    assert isinstance(governance_brief, dict)
+    assert governance_brief["verdict"] == "unknown"
+    assert governance_brief["responsibility_tier"] == "unknown"
+    assert governance_brief["uncertainty_band"] == "unknown"
+    assert governance_brief["coherence"] is None
+    assert governance_brief["soul_passed"] is True
+    assert governance_brief["contradiction_count"] == 0
+    assert isinstance(governance_brief["crystal_freshness"], dict)
+    assert "total_crystals" in governance_brief["crystal_freshness"]
+
+    assert isinstance(life_entry_brief, dict)
+    assert life_entry_brief["response_summary"] == "ok"
+    assert life_entry_brief["inner_intent"] == "Unspecified"
+    assert life_entry_brief["strategy"] == "direct_response"
+    assert life_entry_brief["self_commit_count"] == 0
+    assert life_entry_brief["rupture_count"] == 0
+    assert life_entry_brief["emergent_value_count"] == 0
+
+
+def test_chat_exposes_compressed_brief_fields_with_rich_pipeline_data(monkeypatch):
+    import tonesoul.unified_pipeline as unified_pipeline
+
+    class _Pipeline:
+        def process(self, **kwargs):
+            return SimpleNamespace(
+                response="Provide a bounded plan with one rollback checkpoint and accountability logs.",
+                council_verdict={
+                    "verdict": "refine",
+                    "coherence": 0.66,
+                    "responsibility_tier": "tier-2",
+                    "uncertainty_band": "medium",
+                    "summary": "Needs one rollback checkpoint before execution.",
+                    "votes": [
+                        {
+                            "perspective": "analyst",
+                            "decision": "concern",
+                            "confidence": 0.82,
+                            "reasoning": "Rollback condition should be explicit.",
+                        }
+                    ],
+                },
+                tonebridge_analysis={
+                    "motive_prediction": {
+                        "likely_motive": "Need a safe execution path",
+                    }
+                },
+                inner_narrative="",
+                intervention_strategy="clarify_then_commit",
+                internal_monologue="",
+                persona_mode="architect",
+                trajectory_analysis={"state": "stabilizing"},
+                self_commits=[{"id": "s1"}],
+                ruptures=[{"id": "r1"}],
+                emergent_values=[{"id": "v1"}, {"id": "v2"}],
+                semantic_contradictions=[{"found": True, "description": "minor mismatch"}],
+                semantic_graph_summary={"total_nodes": 4},
+                dispatch_trace={"state": "B", "mode": "tension"},
+            )
+
+    monkeypatch.setattr(unified_pipeline, "create_unified_pipeline", lambda: _Pipeline())
+
+    client = _client()
+    response = client.post("/api/chat", json={"message": "hello"})
+    payload = response.get_json()
+
+    assert response.status_code == 200
+    governance_brief = payload.get("governance_brief")
+    life_entry_brief = payload.get("life_entry_brief")
+
+    assert governance_brief["verdict"] == "refine"
+    assert governance_brief["responsibility_tier"] == "tier-2"
+    assert governance_brief["uncertainty_band"] == "medium"
+    assert governance_brief["coherence"] == 0.66
+    assert governance_brief["soul_passed"] is False
+    assert governance_brief["contradiction_count"] == 1
+    assert governance_brief["strategy"] == "clarify_then_commit"
+    assert governance_brief["dispatch_state"] == "B"
+    assert isinstance(governance_brief["crystal_freshness"], dict)
+
+    assert life_entry_brief["response_summary"].startswith("Provide a bounded plan")
+    assert life_entry_brief["inner_intent"] == "Need a safe execution path"
+    assert life_entry_brief["strategy"] == "clarify_then_commit"
+    assert life_entry_brief["persona_mode"] == "architect"
+    assert life_entry_brief["trajectory_label"] == "stabilizing"
+    assert life_entry_brief["self_commit_count"] == 1
+    assert life_entry_brief["rupture_count"] == 1
+    assert life_entry_brief["emergent_value_count"] == 2
+
+
 def test_chat_exposes_semantic_fields_when_pipeline_provides_them(monkeypatch):
     import tonesoul.unified_pipeline as unified_pipeline
 

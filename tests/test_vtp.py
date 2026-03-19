@@ -76,3 +76,31 @@ def test_vtp_defer_when_genesis_incomplete_even_if_confirmed() -> None:
     assert decision.status == VTP_STATUS_DEFER
     assert decision.reason == "genesis_context_incomplete"
     assert "genesis_incomplete" in decision.evidence
+
+
+def test_vtp_rel_weights_shift_for_high_impact_tier1_context() -> None:
+    verdict = _build_verdict(with_genesis=True)
+    decision = evaluate_vtp(
+        verdict=verdict,
+        context={"user_intent": "need legal compliance guidance"},
+    )
+
+    rel = decision.rel or {}
+    weights = rel.get("weights") or {}
+    assert rel.get("profile") == "high_impact"
+    assert rel.get("tier") == "TIER_1"
+    assert weights.get("long", 0.0) > weights.get("short", 0.0)
+
+
+def test_vtp_rel_high_can_defer_without_explicit_force_flags() -> None:
+    verdict = _build_verdict(with_genesis=False)
+    verdict.responsibility_tier = "TIER_1"
+    decision = evaluate_vtp(
+        verdict=verdict,
+        context={"user_intent": "legal safety compliance review"},
+    )
+
+    assert decision.status == VTP_STATUS_DEFER
+    assert decision.reason == "high_risk_requires_user_confirmation"
+    assert "rel_high" in decision.evidence
+    assert (decision.rel or {}).get("high") is True

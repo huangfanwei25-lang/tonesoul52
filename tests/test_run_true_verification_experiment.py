@@ -53,7 +53,27 @@ def test_run_experiment_derives_weekly_cadence_and_writes_summary(
                 "overall_ok": True,
                 "gate": {"status": "passed"},
                 "preflight": {"overall_ok": True},
-                "schedule": {"overall_ok": True, "results": [{"cycle": 1}]},
+                "schedule": {
+                    "overall_ok": True,
+                    "results": [
+                        {
+                            "cycle": 1,
+                            "autonomous_payload": {
+                                "overall_ok": True,
+                                "runtime_state": {
+                                    "session_id": "wakeup-exp-001",
+                                    "next_cycle": 2,
+                                    "consecutive_failures": 0,
+                                    "resumed": False,
+                                },
+                            },
+                            "tension_budget": {
+                                "status": "ok",
+                                "observation": {"max_consecutive_failure_count": 0},
+                            },
+                        }
+                    ],
+                },
             }
 
     dummy = DummyLongRunModule()
@@ -79,7 +99,18 @@ def test_run_experiment_derives_weekly_cadence_and_writes_summary(
     assert summary_payload["gate"]["status"] == "passed"
     assert summary_payload["preflight"] == {"overall_ok": True}
     assert summary_payload["schedule"]["result_count"] == 1
-    assert summary_payload["schedule"]["latest_result"] == {"cycle": 1}
+    assert (
+        summary_payload["schedule"]["latest_result"]["autonomous_payload"]["runtime_state"][
+            "session_id"
+        ]
+        == "wakeup-exp-001"
+    )
+    assert (
+        summary_payload["schedule"]["latest_result"]["tension_budget"]["observation"][
+            "max_consecutive_failure_count"
+        ]
+        == 0
+    )
 
 
 def test_run_experiment_keeps_explicit_schedule_overrides(

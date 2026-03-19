@@ -1,9 +1,12 @@
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass, field
+from pathlib import Path
 
 from tonesoul.dream_engine import DreamCollision, DreamCycleResult
-from tonesoul.memory.soul_db import MemorySource
+from tonesoul.memory.soul_db import MemorySource, SqliteSoulDB
+from tonesoul.scribe.scribe_engine import ScribeDraftResult
 from tonesoul.wakeup_loop import AutonomousWakeupLoop
 
 
@@ -60,7 +63,9 @@ def _build_result(
     return DreamCycleResult(
         generated_at="2026-03-07T17:00:00Z",
         dream_cycle_id="dream-cycle-test",
-        stimuli_considered=max(1, len(collisions)) if stimuli_considered is None else stimuli_considered,
+        stimuli_considered=(
+            max(1, len(collisions)) if stimuli_considered is None else stimuli_considered
+        ),
         stimuli_selected=len(collisions),
         llm_backend=None,
         collisions=list(collisions),
@@ -262,6 +267,21 @@ class DummySleepResult:
     subjectivity_summary: dict[str, object] = field(default_factory=dict)
 
 
+class DummyScribe:
+    def __init__(self, result: ScribeDraftResult) -> None:
+        self.result = result
+        self.calls: list[dict[str, object]] = []
+
+    def draft_chronicle(self, db, title_hint="A Day in the Dream Engine", source_db_path=None):
+        self.calls.append(
+            {
+                "title_hint": title_hint,
+                "source_db_path": None if source_db_path is None else str(source_db_path),
+            }
+        )
+        return self.result
+
+
 def test_run_triggers_periodic_sleep_consolidation() -> None:
     class ConsolidatingEngine(DummyEngine):
         def __init__(self, results):
@@ -315,6 +335,207 @@ def test_run_triggers_periodic_sleep_consolidation() -> None:
     assert results[1].dream_result["consolidation"]["promoted_count"] == 2
 
 
+def test_run_triggers_scribe_after_material_cycle(tmp_path: Path) -> None:
+    class ScribeEngine(DummyEngine):
+        def __init__(self, results, soul_db) -> None:
+            super().__init__(results)
+            self.soul_db = soul_db
+
+    soul_db = SqliteSoulDB(db_path=tmp_path / "soul.db")
+    chronicle_path = tmp_path / "chronicles" / "chronicle.md"
+    companion_path = tmp_path / "chronicles" / "chronicle.json"
+    scribe = DummyScribe(
+        ScribeDraftResult(
+            generated_at="2026-03-13T15:20:00Z",
+            status="generated",
+            source_db_path=str(soul_db.db_path),
+            observed_counts={"tensions": 1, "collisions": 0, "crystals": 0},
+            lead_anchor_summary="[T1] tension: scribe-worthy collision...",
+            fallback_mode="observed_history",
+            generation_mode="template_assist",
+            title_hint="The Weight of Unresolved Tensions",
+            llm_model="gemma3:4b",
+            llm_attempts=[
+                {"model": "qwen3.5:4b", "status": "timeout"},
+                {
+                    "model": "gemma3:4b",
+                    "status": "boundary_rejected",
+                    "error": "data streams, the user",
+                },
+                {"model": "template_assist", "status": "generated"},
+            ],
+            chronicle_path=chronicle_path,
+            companion_path=companion_path,
+        )
+    )
+    status_path = tmp_path / "status" / "scribe_status_latest.json"
+    scribe_state_path = tmp_path / "state" / "scribe_state.json"
+    loop = AutonomousWakeupLoop(
+        dream_engine=ScribeEngine(
+            [
+                _build_result(
+                    _build_collision(
+                        topic="scribe-worthy",
+                        friction_score=0.58,
+                        should_convene_council=True,
+                    )
+                )
+            ],
+            soul_db,
+        ),
+        interval_seconds=0.0,
+        sleep_func=lambda _: None,
+        consolidate_every_cycles=0,
+        scribe=scribe,
+        scribe_status_path=status_path,
+        scribe_state_path=scribe_state_path,
+    )
+
+    results = loop.run(max_cycles=1, dream_kwargs={"limit": 1})
+
+    assert len(scribe.calls) == 1
+    assert scribe.calls[0]["title_hint"] == "After the Wake-Up Collisions"
+    assert results[0].summary["scribe_triggered"] is True
+    assert results[0].summary["scribe_status"] == "generated"
+    assert results[0].summary["scribe_generation_mode"] == "template_assist"
+    assert results[0].summary["scribe_state_document_posture"] == "pressure_without_counterweight"
+    assert (
+        results[0].summary["scribe_anchor_status_line"]
+        == "anchor | [T1] tension: scribe-worthy collision..."
+    )
+    assert (
+        results[0].summary["scribe_problem_route_status_line"]
+        == "route | family=F6_semantic_role_boundary_integrity "
+        "invariant=chronicle_self_scope "
+        "repair=semantic_boundary_guardrail "
+        "secondary=F4_execution_contract_integrity"
+    )
+    assert (
+        results[0].summary["scribe_problem_route_secondary_labels"]
+        == "F4_execution_contract_integrity"
+    )
+    assert (
+        results[0].dream_result["scribe"]["result"]["latest_available_source"] == "chronicle_pair"
+    )
+    assert status_path.exists()
+    assert scribe_state_path.exists()
+
+
+def test_run_suppresses_duplicate_scribe_signal_across_invocations(tmp_path: Path) -> None:
+    class ScribeEngine(DummyEngine):
+        def __init__(self, results, soul_db) -> None:
+            super().__init__(results)
+            self.soul_db = soul_db
+
+    soul_db = SqliteSoulDB(db_path=tmp_path / "soul.db")
+    status_path = tmp_path / "status" / "scribe_status_latest.json"
+    scribe_state_path = tmp_path / "state" / "scribe_state.json"
+    scribe = DummyScribe(
+        ScribeDraftResult(
+            generated_at="2026-03-13T15:25:00Z",
+            status="generated",
+            source_db_path=str(soul_db.db_path),
+            observed_counts={"tensions": 1, "collisions": 0, "crystals": 0},
+            fallback_mode="observed_history",
+            generation_mode="template_assist",
+            title_hint="The Weight of Unresolved Tensions",
+            llm_model="gemma3:4b",
+            llm_attempts=[{"model": "gemma3:4b", "status": "generated"}],
+            chronicle_path=tmp_path / "chronicles" / "chronicle.md",
+            companion_path=tmp_path / "chronicles" / "chronicle.json",
+        )
+    )
+
+    first_loop = AutonomousWakeupLoop(
+        dream_engine=ScribeEngine(
+            [
+                _build_result(
+                    _build_collision(
+                        topic="duplicate-topic",
+                        friction_score=0.61,
+                        should_convene_council=True,
+                    )
+                )
+            ],
+            soul_db,
+        ),
+        interval_seconds=0.0,
+        sleep_func=lambda _: None,
+        consolidate_every_cycles=0,
+        scribe=scribe,
+        scribe_status_path=status_path,
+        scribe_state_path=scribe_state_path,
+    )
+    second_loop = AutonomousWakeupLoop(
+        dream_engine=ScribeEngine(
+            [
+                _build_result(
+                    _build_collision(
+                        topic="duplicate-topic",
+                        friction_score=0.61,
+                        should_convene_council=True,
+                    )
+                )
+            ],
+            soul_db,
+        ),
+        interval_seconds=0.0,
+        sleep_func=lambda _: None,
+        consolidate_every_cycles=0,
+        scribe=scribe,
+        scribe_status_path=status_path,
+        scribe_state_path=scribe_state_path,
+    )
+
+    first_results = first_loop.run(max_cycles=1, dream_kwargs={"limit": 1})
+    second_results = second_loop.run(max_cycles=1, dream_kwargs={"limit": 1})
+
+    assert len(scribe.calls) == 1
+    assert first_results[0].summary["scribe_triggered"] is True
+    assert second_results[0].summary["scribe_triggered"] is False
+    assert second_results[0].summary["scribe_skip_reason"] == "duplicate_signal_signature"
+
+
+def test_run_keeps_cycle_ok_when_scribe_runtime_fails(tmp_path: Path) -> None:
+    class ScribeEngine(DummyEngine):
+        def __init__(self, results, soul_db) -> None:
+            super().__init__(results)
+            self.soul_db = soul_db
+
+    class FailingScribe:
+        def draft_chronicle(self, db, title_hint="A Day in the Dream Engine", source_db_path=None):
+            raise RuntimeError("scribe boom")
+
+    soul_db = SqliteSoulDB(db_path=tmp_path / "soul.db")
+    loop = AutonomousWakeupLoop(
+        dream_engine=ScribeEngine(
+            [
+                _build_result(
+                    _build_collision(
+                        topic="scribe-fails",
+                        friction_score=0.55,
+                        should_convene_council=True,
+                    )
+                )
+            ],
+            soul_db,
+        ),
+        interval_seconds=0.0,
+        sleep_func=lambda _: None,
+        consolidate_every_cycles=0,
+        scribe=FailingScribe(),
+        scribe_status_path=tmp_path / "status" / "scribe_status_latest.json",
+        scribe_state_path=tmp_path / "state" / "scribe_state.json",
+    )
+
+    results = loop.run(max_cycles=1, dream_kwargs={"limit": 1})
+
+    assert results[0].status == "ok"
+    assert results[0].summary["scribe_triggered"] is False
+    assert results[0].summary["scribe_skip_reason"] == "scribe_runtime_failed"
+    assert results[0].dream_result["scribe"]["error"]["message"] == "scribe boom"
+
+
 def test_run_pauses_after_three_consecutive_failures() -> None:
     class FailingEngine:
         def __init__(self) -> None:
@@ -344,3 +565,96 @@ def test_run_pauses_after_three_consecutive_failures() -> None:
     assert results[3].summary["consecutive_failure_count"] == 1
     assert results[0].summary["error_type"] == "RuntimeError"
     assert results[0].summary["error_message"] == "boom"
+
+
+def test_run_persists_runtime_session_state_across_invocations(tmp_path: Path) -> None:
+    state_path = tmp_path / "dream_wakeup_state.json"
+
+    first_loop = AutonomousWakeupLoop(
+        dream_engine=DummyEngine(
+            [
+                _build_result(
+                    _build_collision(
+                        topic="first",
+                        friction_score=0.4,
+                        should_convene_council=False,
+                    )
+                )
+            ]
+        ),
+        interval_seconds=0.0,
+        sleep_func=lambda _: None,
+        state_path=state_path,
+    )
+    first_results = first_loop.run(max_cycles=1, dream_kwargs={"limit": 1})
+
+    second_loop = AutonomousWakeupLoop(
+        dream_engine=DummyEngine(
+            [
+                _build_result(
+                    _build_collision(
+                        topic="second",
+                        friction_score=0.6,
+                        should_convene_council=True,
+                    )
+                )
+            ]
+        ),
+        interval_seconds=0.0,
+        sleep_func=lambda _: None,
+        state_path=state_path,
+    )
+    second_results = second_loop.run(max_cycles=1, dream_kwargs={"limit": 1})
+
+    persisted_state = json.loads(state_path.read_text(encoding="utf-8"))
+
+    assert first_results[0].cycle == 1
+    assert second_results[0].cycle == 2
+    assert first_results[0].summary["session_resumed"] is False
+    assert second_results[0].summary["session_resumed"] is True
+    assert first_results[0].summary["session_id"] == second_results[0].summary["session_id"]
+    assert persisted_state["next_cycle"] == 3
+    assert persisted_state["last_status"] == "ok"
+    assert persisted_state["consecutive_failures"] == 0
+
+
+def test_run_resumes_consecutive_failures_from_persisted_state(tmp_path: Path) -> None:
+    state_path = tmp_path / "dream_wakeup_state.json"
+    sleep_calls: list[float] = []
+
+    class FailingEngine:
+        def run_cycle(self, **kwargs):
+            raise RuntimeError("boom")
+
+    first_loop = AutonomousWakeupLoop(
+        dream_engine=FailingEngine(),
+        interval_seconds=10.0,
+        sleep_func=lambda seconds: sleep_calls.append(seconds),
+        failure_threshold=3,
+        failure_pause_seconds=3600.0,
+        consolidate_every_cycles=0,
+        state_path=state_path,
+    )
+    first_results = first_loop.run(max_cycles=2, dream_kwargs={"limit": 1})
+
+    second_loop = AutonomousWakeupLoop(
+        dream_engine=FailingEngine(),
+        interval_seconds=10.0,
+        sleep_func=lambda seconds: sleep_calls.append(seconds),
+        failure_threshold=3,
+        failure_pause_seconds=3600.0,
+        consolidate_every_cycles=0,
+        state_path=state_path,
+    )
+    second_results = second_loop.run(max_cycles=2, dream_kwargs={"limit": 1})
+    persisted_state = json.loads(state_path.read_text(encoding="utf-8"))
+
+    assert [result.cycle for result in first_results] == [1, 2]
+    assert [result.cycle for result in second_results] == [3, 4]
+    assert first_results[1].summary["consecutive_failure_count"] == 2
+    assert second_results[0].summary["consecutive_failure_count"] == 3
+    assert second_results[0].summary["circuit_breaker_paused"] is True
+    assert second_results[1].summary["consecutive_failure_count"] == 1
+    assert second_results[0].summary["session_resumed"] is True
+    assert sleep_calls == [10.0, 3600.0]
+    assert persisted_state["consecutive_failures"] == 1

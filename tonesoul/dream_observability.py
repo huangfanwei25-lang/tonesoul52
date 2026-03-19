@@ -6,6 +6,8 @@ from html import escape
 from pathlib import Path
 from typing import Any, Optional, Sequence
 
+from tonesoul.memory.subjectivity_handoff import build_handoff_surface
+
 JSON_FILENAME = "dream_observability_latest.json"
 HTML_FILENAME = "dream_observability_latest.html"
 
@@ -293,6 +295,8 @@ def _extract_wakeup_points(rows: Sequence[dict[str, Any]]) -> dict[str, Any]:
     max_friction_points: list[dict[str, Any]] = []
     max_lyapunov_points: list[dict[str, Any]] = []
     collision_success_rate_points: list[dict[str, Any]] = []
+    consecutive_failure_points: list[dict[str, Any]] = []
+    session_resumed_points: list[dict[str, Any]] = []
     council_count_points: list[dict[str, Any]] = []
     frozen_count_points: list[dict[str, Any]] = []
     write_gateway_written_points: list[dict[str, Any]] = []
@@ -306,7 +310,22 @@ def _extract_wakeup_points(rows: Sequence[dict[str, Any]]) -> dict[str, Any]:
     llm_selection_latency_points: list[dict[str, Any]] = []
     llm_probe_latency_points: list[dict[str, Any]] = []
     llm_preflight_timeout_points: list[dict[str, Any]] = []
+    scribe_triggered_points: list[dict[str, Any]] = []
     recent_cycles: list[dict[str, Any]] = []
+    session_ids: set[str] = set()
+    resumed_cycle_count = 0
+    latest_session_id: str | None = None
+    latest_resume_state_path: str | None = None
+    latest_heartbeat_window_cycle: int | None = None
+    latest_consecutive_failure_count = 0
+    latest_scribe_status: str | None = None
+    latest_scribe_generation_mode: str | None = None
+    latest_scribe_state_document_posture: str | None = None
+    latest_scribe_anchor_status_line: str | None = None
+    latest_scribe_problem_route_status_line: str | None = None
+    latest_scribe_problem_route_secondary_labels: str | None = None
+    latest_scribe_available_source: str | None = None
+    latest_scribe_skip_reason: str | None = None
 
     for row in rows:
         summary = row.get("summary") if isinstance(row.get("summary"), dict) else {}
@@ -318,6 +337,65 @@ def _extract_wakeup_points(rows: Sequence[dict[str, Any]]) -> dict[str, Any]:
         )
         cycle = row.get("cycle")
         status = str(row.get("status") or "").strip() or "unknown"
+        session_id = str(summary.get("session_id") or "").strip() or None
+        session_resumed = bool(summary.get("session_resumed", False))
+        heartbeat_window_cycle = _to_int(summary.get("heartbeat_window_cycle"))
+        consecutive_failure_count = max(0, int(summary.get("consecutive_failure_count", 0) or 0))
+        resume_state_path = str(summary.get("resume_state_path") or "").strip() or None
+        if session_id:
+            session_ids.add(session_id)
+            latest_session_id = session_id
+        if session_resumed:
+            resumed_cycle_count += 1
+        if heartbeat_window_cycle is not None:
+            latest_heartbeat_window_cycle = heartbeat_window_cycle
+        if resume_state_path:
+            latest_resume_state_path = resume_state_path
+        latest_consecutive_failure_count = consecutive_failure_count
+        has_scribe_signal = any(
+            key in summary
+            for key in (
+                "scribe_evaluated",
+                "scribe_triggered",
+                "scribe_status",
+                "scribe_generation_mode",
+                "scribe_state_document_posture",
+                "scribe_anchor_status_line",
+                "scribe_problem_route_status_line",
+                "scribe_problem_route_secondary_labels",
+                "scribe_latest_available_source",
+                "scribe_skip_reason",
+            )
+        )
+        scribe_evaluated = bool(summary.get("scribe_evaluated", False))
+        scribe_triggered = bool(summary.get("scribe_triggered", False))
+        scribe_status = str(summary.get("scribe_status") or "").strip() or None
+        scribe_generation_mode = str(summary.get("scribe_generation_mode") or "").strip() or None
+        scribe_state_document_posture = (
+            str(summary.get("scribe_state_document_posture") or "").strip() or None
+        )
+        scribe_anchor_status_line = (
+            str(summary.get("scribe_anchor_status_line") or "").strip() or None
+        )
+        scribe_problem_route_status_line = (
+            str(summary.get("scribe_problem_route_status_line") or "").strip() or None
+        )
+        scribe_problem_route_secondary_labels = (
+            str(summary.get("scribe_problem_route_secondary_labels") or "").strip() or None
+        )
+        scribe_latest_available_source = (
+            str(summary.get("scribe_latest_available_source") or "").strip() or None
+        )
+        scribe_skip_reason = str(summary.get("scribe_skip_reason") or "").strip() or None
+        if has_scribe_signal:
+            latest_scribe_status = scribe_status
+            latest_scribe_generation_mode = scribe_generation_mode
+            latest_scribe_state_document_posture = scribe_state_document_posture
+            latest_scribe_anchor_status_line = scribe_anchor_status_line
+            latest_scribe_problem_route_status_line = scribe_problem_route_status_line
+            latest_scribe_problem_route_secondary_labels = scribe_problem_route_secondary_labels
+            latest_scribe_available_source = scribe_latest_available_source
+            latest_scribe_skip_reason = scribe_skip_reason
 
         _append_point(
             avg_friction_points,
@@ -354,6 +432,24 @@ def _extract_wakeup_points(rows: Sequence[dict[str, Any]]) -> dict[str, Any]:
             source="wakeup",
             phase="cycle",
             label="collision_success_rate",
+        )
+        _append_point(
+            consecutive_failure_points,
+            set(),
+            timestamp=timestamp,
+            value=consecutive_failure_count,
+            source="wakeup",
+            phase="runtime",
+            label="consecutive_failure_count",
+        )
+        _append_point(
+            session_resumed_points,
+            set(),
+            timestamp=timestamp,
+            value=1 if session_resumed else 0,
+            source="wakeup",
+            phase="runtime",
+            label="session_resumed",
         )
         _append_point(
             council_count_points,
@@ -472,12 +568,27 @@ def _extract_wakeup_points(rows: Sequence[dict[str, Any]]) -> dict[str, Any]:
             phase="cycle",
             label="llm_preflight_timeout_count",
         )
+        if has_scribe_signal:
+            _append_point(
+                scribe_triggered_points,
+                set(),
+                timestamp=timestamp,
+                value=1 if scribe_triggered else 0,
+                source="wakeup",
+                phase="scribe",
+                label="scribe_triggered",
+            )
 
         recent_cycles.append(
             {
                 "cycle": int(cycle) if isinstance(cycle, int) else cycle,
                 "status": status,
                 "timestamp": timestamp,
+                "session_id": session_id,
+                "session_resumed": session_resumed,
+                "heartbeat_window_cycle": heartbeat_window_cycle,
+                "consecutive_failure_count": consecutive_failure_count,
+                "resume_state_path": resume_state_path,
                 "avg_friction_score": _round_or_none(_to_float(summary.get("avg_friction_score"))),
                 "max_friction_score": _round_or_none(_to_float(summary.get("max_friction_score"))),
                 "max_lyapunov_proxy": _round_or_none(_to_float(summary.get("max_lyapunov_proxy"))),
@@ -522,6 +633,16 @@ def _extract_wakeup_points(rows: Sequence[dict[str, Any]]) -> dict[str, Any]:
                 "consolidation_promoted_count": int(
                     summary.get("consolidation_promoted_count", 0) or 0
                 ),
+                "scribe_evaluated": scribe_evaluated,
+                "scribe_triggered": scribe_triggered,
+                "scribe_status": scribe_status,
+                "scribe_generation_mode": scribe_generation_mode,
+                "scribe_state_document_posture": scribe_state_document_posture,
+                "scribe_anchor_status_line": scribe_anchor_status_line,
+                "scribe_problem_route_status_line": scribe_problem_route_status_line,
+                "scribe_problem_route_secondary_labels": scribe_problem_route_secondary_labels,
+                "scribe_latest_available_source": scribe_latest_available_source,
+                "scribe_skip_reason": scribe_skip_reason,
                 "failure_pause_seconds": _to_int(summary.get("failure_pause_seconds")) or 0,
                 "circuit_breaker_paused": bool(summary.get("circuit_breaker_paused", False)),
             }
@@ -532,6 +653,8 @@ def _extract_wakeup_points(rows: Sequence[dict[str, Any]]) -> dict[str, Any]:
         "wakeup_max_friction": max_friction_points,
         "wakeup_max_lyapunov": max_lyapunov_points,
         "wakeup_collision_success_rate": collision_success_rate_points,
+        "wakeup_consecutive_failures": consecutive_failure_points,
+        "wakeup_session_resumed": session_resumed_points,
         "wakeup_council_count": council_count_points,
         "wakeup_frozen_count": frozen_count_points,
         "wakeup_write_gateway_written": write_gateway_written_points,
@@ -545,6 +668,25 @@ def _extract_wakeup_points(rows: Sequence[dict[str, Any]]) -> dict[str, Any]:
         "wakeup_llm_selection_latency": llm_selection_latency_points,
         "wakeup_llm_probe_latency": llm_probe_latency_points,
         "wakeup_llm_preflight_timeout_count": llm_preflight_timeout_points,
+        "wakeup_scribe_triggered": scribe_triggered_points,
+        "wakeup_runtime_state": {
+            "session_count": len(session_ids),
+            "latest_session_id": latest_session_id,
+            "resumed_cycle_count": resumed_cycle_count,
+            "latest_resume_state_path": latest_resume_state_path,
+            "latest_heartbeat_window_cycle": latest_heartbeat_window_cycle,
+            "latest_consecutive_failure_count": latest_consecutive_failure_count,
+        },
+        "wakeup_scribe_state": {
+            "latest_status": latest_scribe_status,
+            "latest_generation_mode": latest_scribe_generation_mode,
+            "latest_state_document_posture": latest_scribe_state_document_posture,
+            "latest_anchor_status_line": latest_scribe_anchor_status_line,
+            "latest_problem_route_status_line": latest_scribe_problem_route_status_line,
+            "latest_problem_route_secondary_labels": latest_scribe_problem_route_secondary_labels,
+            "latest_available_source": latest_scribe_available_source,
+            "latest_skip_reason": latest_scribe_skip_reason,
+        },
         "recent_wakeup_cycles": recent_cycles[-8:],
     }
 
@@ -556,7 +698,14 @@ def _extract_schedule_points(
     governance_cooldown_deferred_points: list[dict[str, Any]] = []
     llm_backoff_requested_points: list[dict[str, Any]] = []
     llm_backoff_active_points: list[dict[str, Any]] = []
+    wakeup_session_resumed_points: list[dict[str, Any]] = []
+    wakeup_consecutive_failures_points: list[dict[str, Any]] = []
     recent_cycles: list[dict[str, Any]] = []
+    wakeup_session_ids: set[str] = set()
+    wakeup_resumed_cycle_count = 0
+    latest_wakeup_session_id: str | None = None
+    latest_wakeup_state_path: str | None = None
+    latest_wakeup_consecutive_failures = 0
 
     for row in rows:
         registry_batch = (
@@ -571,6 +720,11 @@ def _extract_schedule_points(
         llm_policy = (
             autonomous_payload.get("llm_policy")
             if isinstance(autonomous_payload.get("llm_policy"), dict)
+            else {}
+        )
+        runtime_state = (
+            autonomous_payload.get("runtime_state")
+            if isinstance(autonomous_payload.get("runtime_state"), dict)
             else {}
         )
         timestamp = (
@@ -597,6 +751,19 @@ def _extract_schedule_points(
         if llm_backoff_reason_count is None:
             reasons = llm_policy.get("breach_reasons") or []
             llm_backoff_reason_count = len(reasons) if isinstance(reasons, list) else 0
+        wakeup_session_id = str(runtime_state.get("session_id") or "").strip() or None
+        wakeup_session_resumed = bool(runtime_state.get("resumed", False))
+        wakeup_consecutive_failures = max(0, int(runtime_state.get("consecutive_failures", 0) or 0))
+        wakeup_next_cycle = _to_int(runtime_state.get("next_cycle"))
+        wakeup_state_path = str(runtime_state.get("state_path") or "").strip() or None
+        if wakeup_session_id:
+            wakeup_session_ids.add(wakeup_session_id)
+            latest_wakeup_session_id = wakeup_session_id
+        if wakeup_session_resumed:
+            wakeup_resumed_cycle_count += 1
+        if wakeup_state_path:
+            latest_wakeup_state_path = wakeup_state_path
+        latest_wakeup_consecutive_failures = wakeup_consecutive_failures
 
         _append_point(
             governance_cooldown_applied_points,
@@ -634,6 +801,24 @@ def _extract_schedule_points(
             phase="cycle",
             label="llm_backoff_active",
         )
+        _append_point(
+            wakeup_session_resumed_points,
+            set(),
+            timestamp=timestamp,
+            value=1 if wakeup_session_resumed else 0,
+            source="schedule",
+            phase="runtime",
+            label="wakeup_session_resumed",
+        )
+        _append_point(
+            wakeup_consecutive_failures_points,
+            set(),
+            timestamp=timestamp,
+            value=wakeup_consecutive_failures,
+            source="schedule",
+            phase="runtime",
+            label="wakeup_consecutive_failures",
+        )
 
         recent_cycles.append(
             {
@@ -651,6 +836,11 @@ def _extract_schedule_points(
                 "llm_backoff_mode": str(llm_policy.get("mode") or "none"),
                 "llm_backoff_action": str(llm_policy.get("action") or "normal"),
                 "llm_backoff_reason_count": int(llm_backoff_reason_count or 0),
+                "wakeup_session_id": wakeup_session_id,
+                "wakeup_session_resumed": wakeup_session_resumed,
+                "wakeup_consecutive_failures": wakeup_consecutive_failures,
+                "wakeup_next_cycle": wakeup_next_cycle,
+                "wakeup_state_path": wakeup_state_path,
                 "governance_breach_reasons": [
                     str(item).strip()
                     for item in (tension_budget.get("governance_breach_reasons") or [])
@@ -705,6 +895,15 @@ def _extract_schedule_points(
         "schedule_governance_cooldown_deferred": governance_cooldown_deferred_points,
         "schedule_llm_backoff_requested": llm_backoff_requested_points,
         "schedule_llm_backoff_active": llm_backoff_active_points,
+        "schedule_wakeup_session_resumed": wakeup_session_resumed_points,
+        "schedule_wakeup_consecutive_failures": wakeup_consecutive_failures_points,
+        "schedule_runtime_state": {
+            "session_count": len(wakeup_session_ids),
+            "latest_session_id": latest_wakeup_session_id,
+            "resumed_cycle_count": wakeup_resumed_cycle_count,
+            "latest_state_path": latest_wakeup_state_path,
+            "latest_consecutive_failures": latest_wakeup_consecutive_failures,
+        },
         "recent_schedule_cycles": recent_cycles[-8:],
         "schedule_state": schedule_state,
     }
@@ -785,6 +984,72 @@ def _summarize_metric(
     return summary
 
 
+def _dashboard_status_surface(
+    *,
+    overall_ok: bool,
+    summary: dict[str, Any],
+    metrics: dict[str, Any],
+    inputs: dict[str, Any],
+) -> dict[str, Any]:
+    primary_status_line = (
+        "dream_observability_ready | "
+        f"wakeup_cycles={int(metrics.get('wakeup_cycle_count', 0) or 0)} "
+        f"schedule_cycles={int(metrics.get('schedule_cycle_count', 0) or 0)} "
+        f"warnings={int(summary.get('warning_count', 0) or 0)} "
+        f"overall_ok={'yes' if overall_ok else 'no'}"
+    )
+    runtime_status_line = (
+        "wakeup_scribe | "
+        f"status={summary.get('wakeup_latest_scribe_status') or 'none'} "
+        f"posture={summary.get('wakeup_latest_scribe_state_document_posture') or 'none'} "
+        f"source={summary.get('wakeup_latest_scribe_available_source') or 'none'}"
+    )
+    anchor_status_line = str(summary.get("wakeup_latest_scribe_anchor_status_line") or "").strip()
+    problem_route_status_line = str(
+        summary.get("wakeup_latest_scribe_problem_route_status_line") or ""
+    ).strip()
+    problem_route_secondary_labels = str(
+        summary.get("wakeup_latest_scribe_problem_route_secondary_labels") or ""
+    ).strip()
+    artifact_policy_status_line = (
+        "dashboard_inputs | "
+        f"wakeup={'yes' if str(inputs.get('wakeup_path') or '').strip() else 'no'} "
+        f"schedule={'yes' if str(inputs.get('schedule_history_path') or '').strip() else 'no'} "
+        f"invalid_json={int(summary.get('invalid_json_total', 0) or 0)}"
+    )
+    handoff_extra_fields: dict[str, Any] = {
+        "anchor_status_line": anchor_status_line,
+        "problem_route_status_line": problem_route_status_line,
+        "latest_scribe_status": summary.get("wakeup_latest_scribe_status") or "",
+        "latest_scribe_state_document_posture": (
+            summary.get("wakeup_latest_scribe_state_document_posture") or ""
+        ),
+        "latest_scribe_available_source": summary.get("wakeup_latest_scribe_available_source")
+        or "",
+    }
+    if problem_route_secondary_labels:
+        handoff_extra_fields["problem_route_secondary_labels"] = problem_route_secondary_labels
+    return {
+        "primary_status_line": primary_status_line,
+        "runtime_status_line": runtime_status_line,
+        "anchor_status_line": anchor_status_line,
+        "problem_route_status_line": problem_route_status_line,
+        "problem_route_secondary_labels": problem_route_secondary_labels,
+        "artifact_policy_status_line": artifact_policy_status_line,
+        "handoff": build_handoff_surface(
+            queue_shape="dream_observability_ready",
+            requires_operator_action=not overall_ok,
+            status_lines=[
+                primary_status_line,
+                runtime_status_line,
+                problem_route_status_line,
+                artifact_policy_status_line,
+            ],
+            extra_fields=handoff_extra_fields,
+        ),
+    }
+
+
 def build_dashboard(
     *,
     journal_path: Path,
@@ -838,6 +1103,12 @@ def build_dashboard(
         "wakeup_collision_success_rate": _truncate_points(
             wakeup_payload["wakeup_collision_success_rate"], max_points
         ),
+        "wakeup_consecutive_failures": _truncate_points(
+            wakeup_payload["wakeup_consecutive_failures"], max_points
+        ),
+        "wakeup_session_resumed": _truncate_points(
+            wakeup_payload["wakeup_session_resumed"], max_points
+        ),
         "wakeup_council_count": _truncate_points(
             wakeup_payload["wakeup_council_count"], max_points
         ),
@@ -875,6 +1146,9 @@ def build_dashboard(
         "wakeup_llm_preflight_timeout_count": _truncate_points(
             wakeup_payload["wakeup_llm_preflight_timeout_count"], max_points
         ),
+        "wakeup_scribe_triggered": _truncate_points(
+            wakeup_payload["wakeup_scribe_triggered"], max_points
+        ),
         "schedule_governance_cooldown_applied": _truncate_points(
             schedule_payload["schedule_governance_cooldown_applied"], max_points
         ),
@@ -886,6 +1160,12 @@ def build_dashboard(
         ),
         "schedule_llm_backoff_active": _truncate_points(
             schedule_payload["schedule_llm_backoff_active"], max_points
+        ),
+        "schedule_wakeup_session_resumed": _truncate_points(
+            schedule_payload["schedule_wakeup_session_resumed"], max_points
+        ),
+        "schedule_wakeup_consecutive_failures": _truncate_points(
+            schedule_payload["schedule_wakeup_consecutive_failures"], max_points
         ),
     }
 
@@ -923,6 +1203,12 @@ def build_dashboard(
         "wakeup_collision_success_rate": _summarize_metric(
             series["wakeup_collision_success_rate"],
         ),
+        "wakeup_consecutive_failures": _summarize_metric(
+            series["wakeup_consecutive_failures"],
+        ),
+        "wakeup_session_resumed": _summarize_metric(
+            series["wakeup_session_resumed"],
+        ),
         "wakeup_write_gateway_written": _summarize_metric(
             series["wakeup_write_gateway_written"],
         ),
@@ -953,6 +1239,9 @@ def build_dashboard(
         "wakeup_llm_preflight_timeout_count": _summarize_metric(
             series["wakeup_llm_preflight_timeout_count"],
         ),
+        "wakeup_scribe_triggered": _summarize_metric(
+            series["wakeup_scribe_triggered"],
+        ),
         "schedule_governance_cooldown_applied": _summarize_metric(
             series["schedule_governance_cooldown_applied"],
         ),
@@ -964,6 +1253,12 @@ def build_dashboard(
         ),
         "schedule_llm_backoff_active": _summarize_metric(
             series["schedule_llm_backoff_active"],
+        ),
+        "schedule_wakeup_session_resumed": _summarize_metric(
+            series["schedule_wakeup_session_resumed"],
+        ),
+        "schedule_wakeup_consecutive_failures": _summarize_metric(
+            series["schedule_wakeup_consecutive_failures"],
         ),
         "wakeup_council_total": int(
             sum(float(point["value"]) for point in series["wakeup_council_count"])
@@ -986,6 +1281,68 @@ def build_dashboard(
         "wakeup_llm_preflight_timeout_total": int(
             sum(float(point["value"]) for point in series["wakeup_llm_preflight_timeout_count"])
         ),
+        "wakeup_scribe_triggered_total": int(
+            sum(float(point["value"]) for point in series["wakeup_scribe_triggered"])
+        ),
+        "wakeup_runtime_session_count": int(
+            wakeup_payload["wakeup_runtime_state"].get("session_count", 0) or 0
+        ),
+        "wakeup_resumed_cycle_total": int(
+            wakeup_payload["wakeup_runtime_state"].get("resumed_cycle_count", 0) or 0
+        ),
+        "wakeup_latest_session_id": (
+            str(wakeup_payload["wakeup_runtime_state"].get("latest_session_id") or "").strip()
+            or None
+        ),
+        "wakeup_latest_resume_state_path": (
+            str(
+                wakeup_payload["wakeup_runtime_state"].get("latest_resume_state_path") or ""
+            ).strip()
+            or None
+        ),
+        "wakeup_latest_heartbeat_window_cycle": _to_int(
+            wakeup_payload["wakeup_runtime_state"].get("latest_heartbeat_window_cycle")
+        ),
+        "wakeup_latest_scribe_status": (
+            str(wakeup_payload["wakeup_scribe_state"].get("latest_status") or "").strip() or None
+        ),
+        "wakeup_latest_scribe_generation_mode": (
+            str(wakeup_payload["wakeup_scribe_state"].get("latest_generation_mode") or "").strip()
+            or None
+        ),
+        "wakeup_latest_scribe_state_document_posture": (
+            str(
+                wakeup_payload["wakeup_scribe_state"].get("latest_state_document_posture") or ""
+            ).strip()
+            or None
+        ),
+        "wakeup_latest_scribe_anchor_status_line": (
+            str(
+                wakeup_payload["wakeup_scribe_state"].get("latest_anchor_status_line") or ""
+            ).strip()
+            or None
+        ),
+        "wakeup_latest_scribe_problem_route_status_line": (
+            str(
+                wakeup_payload["wakeup_scribe_state"].get("latest_problem_route_status_line") or ""
+            ).strip()
+            or None
+        ),
+        "wakeup_latest_scribe_problem_route_secondary_labels": (
+            str(
+                wakeup_payload["wakeup_scribe_state"].get("latest_problem_route_secondary_labels")
+                or ""
+            ).strip()
+            or None
+        ),
+        "wakeup_latest_scribe_available_source": (
+            str(wakeup_payload["wakeup_scribe_state"].get("latest_available_source") or "").strip()
+            or None
+        ),
+        "wakeup_latest_scribe_skip_reason": (
+            str(wakeup_payload["wakeup_scribe_state"].get("latest_skip_reason") or "").strip()
+            or None
+        ),
         "schedule_governance_cooldown_applied_total": int(
             sum(float(point["value"]) for point in series["schedule_governance_cooldown_applied"])
         ),
@@ -998,6 +1355,27 @@ def build_dashboard(
         "schedule_llm_backoff_active_total": int(
             sum(float(point["value"]) for point in series["schedule_llm_backoff_active"])
         ),
+        "schedule_wakeup_runtime_session_count": int(
+            schedule_payload["schedule_runtime_state"].get("session_count", 0) or 0
+        ),
+        "schedule_wakeup_resumed_cycle_total": int(
+            schedule_payload["schedule_runtime_state"].get("resumed_cycle_count", 0) or 0
+        ),
+        "schedule_wakeup_latest_session_id": (
+            str(schedule_payload["schedule_runtime_state"].get("latest_session_id") or "").strip()
+            or None
+        ),
+        "schedule_wakeup_latest_state_path": (
+            str(schedule_payload["schedule_runtime_state"].get("latest_state_path") or "").strip()
+            or None
+        ),
+        "warning_count": len(warnings),
+        "invalid_json_total": (
+            int(journal_invalid_json_line_count)
+            + int(wakeup_invalid_json_line_count)
+            + int(schedule_invalid_json_line_count)
+            + int(schedule_state_invalid_json_count)
+        ),
     }
 
     overall_ok = (
@@ -1006,9 +1384,24 @@ def build_dashboard(
         and schedule_invalid_json_line_count == 0
         and schedule_state_invalid_json_count == 0
     )
+    status_surface = _dashboard_status_surface(
+        overall_ok=overall_ok,
+        summary=summary,
+        metrics={
+            "wakeup_cycle_count": len(wakeup_rows),
+            "schedule_cycle_count": len(schedule_rows),
+        },
+        inputs={
+            "wakeup_path": wakeup_path.as_posix(),
+            "schedule_history_path": (
+                None if schedule_history_path is None else schedule_history_path.as_posix()
+            ),
+        },
+    )
     return {
         "generated_at": _iso_now(),
         "overall_ok": overall_ok,
+        **status_surface,
         "inputs": {
             "journal_path": journal_path.as_posix(),
             "wakeup_path": wakeup_path.as_posix(),
@@ -1036,20 +1429,16 @@ def build_dashboard(
             "wakeup_collision_success_rate_point_count": len(
                 series["wakeup_collision_success_rate"]
             ),
-            "wakeup_write_gateway_written_point_count": len(
-                series["wakeup_write_gateway_written"]
-            ),
-            "wakeup_write_gateway_skipped_point_count": len(
-                series["wakeup_write_gateway_skipped"]
-            ),
+            "wakeup_consecutive_failures_point_count": len(series["wakeup_consecutive_failures"]),
+            "wakeup_session_resumed_point_count": len(series["wakeup_session_resumed"]),
+            "wakeup_write_gateway_written_point_count": len(series["wakeup_write_gateway_written"]),
+            "wakeup_write_gateway_skipped_point_count": len(series["wakeup_write_gateway_skipped"]),
             "wakeup_write_gateway_rejected_point_count": len(
                 series["wakeup_write_gateway_rejected"]
             ),
             "wakeup_llm_call_count_point_count": len(series["wakeup_llm_call_count"]),
             "wakeup_llm_prompt_tokens_point_count": len(series["wakeup_llm_prompt_tokens"]),
-            "wakeup_llm_completion_tokens_point_count": len(
-                series["wakeup_llm_completion_tokens"]
-            ),
+            "wakeup_llm_completion_tokens_point_count": len(series["wakeup_llm_completion_tokens"]),
             "wakeup_llm_total_tokens_point_count": len(series["wakeup_llm_total_tokens"]),
             "wakeup_llm_preflight_latency_point_count": len(series["wakeup_llm_preflight_latency"]),
             "wakeup_llm_selection_latency_point_count": len(series["wakeup_llm_selection_latency"]),
@@ -1057,6 +1446,7 @@ def build_dashboard(
             "wakeup_llm_preflight_timeout_count_point_count": len(
                 series["wakeup_llm_preflight_timeout_count"]
             ),
+            "wakeup_scribe_triggered_point_count": len(series["wakeup_scribe_triggered"]),
             "schedule_governance_cooldown_applied_point_count": len(
                 series["schedule_governance_cooldown_applied"]
             ),
@@ -1067,11 +1457,20 @@ def build_dashboard(
                 series["schedule_llm_backoff_requested"]
             ),
             "schedule_llm_backoff_active_point_count": len(series["schedule_llm_backoff_active"]),
+            "schedule_wakeup_session_resumed_point_count": len(
+                series["schedule_wakeup_session_resumed"]
+            ),
+            "schedule_wakeup_consecutive_failures_point_count": len(
+                series["schedule_wakeup_consecutive_failures"]
+            ),
         },
         "summary": summary,
         "series": series,
+        "wakeup_runtime_state": wakeup_payload["wakeup_runtime_state"],
+        "wakeup_scribe_state": wakeup_payload["wakeup_scribe_state"],
         "recent_wakeup_cycles": wakeup_payload["recent_wakeup_cycles"],
         "recent_schedule_cycles": schedule_payload["recent_schedule_cycles"],
+        "schedule_runtime_state": schedule_payload["schedule_runtime_state"],
         "schedule_state": schedule_payload["schedule_state"],
         "warnings": warnings,
     }
@@ -1088,6 +1487,7 @@ def _render_value(value: object) -> str:
 def _render_cards(payload: dict[str, Any]) -> str:
     summary = payload["summary"]
     schedule_state = payload.get("schedule_state", {})
+    schedule_runtime_state = payload.get("schedule_runtime_state", {})
     llm_backoff_active = bool(schedule_state.get("llm_backoff_active", False))
     llm_backoff_mode = str(schedule_state.get("llm_backoff_mode") or "none")
     cards = [
@@ -1115,6 +1515,37 @@ def _render_cards(payload: dict[str, Any]) -> str:
             "Wake-up Max Lyapunov",
             summary["wakeup_max_lyapunov"]["latest"],
             summary["wakeup_max_lyapunov"]["trend"],
+        ),
+        (
+            "Runtime Sessions",
+            summary["wakeup_runtime_session_count"],
+            "wakeup",
+        ),
+        (
+            "Resumed Cycles",
+            summary["wakeup_resumed_cycle_total"],
+            "cycles",
+        ),
+        (
+            "Failure Streak",
+            summary["wakeup_consecutive_failures"]["latest"],
+            summary["wakeup_consecutive_failures"]["trend"],
+        ),
+        (
+            "Scribe Status",
+            summary["wakeup_latest_scribe_status"] or "none",
+            (
+                summary["wakeup_latest_scribe_problem_route_secondary_labels"]
+                or summary["wakeup_latest_scribe_problem_route_status_line"]
+                or summary["wakeup_latest_scribe_state_document_posture"]
+                or summary["wakeup_latest_scribe_generation_mode"]
+                or "wakeup"
+            ),
+        ),
+        (
+            "Scribe Triggered",
+            summary["wakeup_scribe_triggered_total"],
+            "cycles",
         ),
         (
             "Gateway Writes",
@@ -1167,9 +1598,29 @@ def _render_cards(payload: dict[str, Any]) -> str:
             llm_backoff_mode,
         ),
         (
+            "Schedule Wakeup Sessions",
+            summary["schedule_wakeup_runtime_session_count"],
+            "schedule",
+        ),
+        (
+            "Schedule Resumed",
+            summary["schedule_wakeup_resumed_cycle_total"],
+            "cycles",
+        ),
+        (
+            "Sched Failure Streak",
+            summary["schedule_wakeup_consecutive_failures"]["latest"],
+            summary["schedule_wakeup_consecutive_failures"]["trend"],
+        ),
+        (
             "Active Cooldowns",
             schedule_state.get("active_governance_cooldown_count", 0),
             "categories",
+        ),
+        (
+            "Schedule Session",
+            schedule_runtime_state.get("latest_session_id") or "n/a",
+            "latest",
         ),
         ("LLM Calls", summary["wakeup_llm_call_total"], "cycles"),
         ("Council Total", summary["wakeup_council_total"], "cycles"),
@@ -1328,6 +1779,10 @@ def _render_recent_cycles(rows: Sequence[dict[str, Any]]) -> str:
             f"<td>{escape(str(row.get('cycle') or 'n/a'))}</td>"
             f"<td>{escape(str(row.get('status') or 'unknown'))}</td>"
             f"<td>{escape(_compact_timestamp(row.get('timestamp')))}</td>"
+            f"<td>{escape(str(row.get('session_id') or 'n/a'))}</td>"
+            f"<td>{escape('yes' if row.get('session_resumed') else 'no')}</td>"
+            f"<td>{escape(_render_value(row.get('heartbeat_window_cycle')))}</td>"
+            f"<td>{escape(str(row.get('consecutive_failure_count') or 0))}</td>"
             f"<td>{escape(_render_value(row.get('avg_friction_score')))}</td>"
             f"<td>{escape(_render_value(row.get('max_lyapunov_proxy')))}</td>"
             f"<td>{escape(_render_value(row.get('collision_success_rate')))}</td>"
@@ -1346,6 +1801,12 @@ def _render_recent_cycles(rows: Sequence[dict[str, Any]]) -> str:
             f"<td>{escape(str(row.get('llm_preflight_reason') or 'n/a'))}</td>"
             f"<td>{escape('yes' if row.get('consolidation_ran') else 'no')}</td>"
             f"<td>{escape(str(row.get('consolidation_promoted_count') or 0))}</td>"
+            f"<td>{escape(str(row.get('scribe_status') or 'n/a'))}</td>"
+            f"<td>{escape(str(row.get('scribe_generation_mode') or 'n/a'))}</td>"
+            f"<td>{escape(str(row.get('scribe_state_document_posture') or 'n/a'))}</td>"
+            f"<td>{escape(str(row.get('scribe_problem_route_status_line') or 'n/a'))}</td>"
+            f"<td>{escape(str(row.get('scribe_problem_route_secondary_labels') or 'n/a'))}</td>"
+            f"<td>{escape(str(row.get('scribe_latest_available_source') or 'n/a'))}</td>"
             f"<td>{escape('yes' if row.get('circuit_breaker_paused') else 'no')}</td>"
             f"<td>{escape(', '.join(str(item) for item in (row.get('llm_backends') or [])) or 'n/a')}</td>"
             f"<td>{escape(', '.join(str(item) for item in (row.get('llm_models') or [])) or 'n/a')}</td>"
@@ -1354,10 +1815,14 @@ def _render_recent_cycles(rows: Sequence[dict[str, Any]]) -> str:
     return (
         "<table class='cycle-table'>"
         "<thead><tr><th>Cycle</th><th>Status</th><th>Timestamp</th>"
+        "<th>Session</th><th>Resumed</th><th>Window Cycle</th><th>Failure Streak</th>"
         "<th>Avg Friction</th><th>Max Lyapunov</th><th>Collision Rate</th><th>Council</th><th>Frozen</th>"
         "<th>Gateway Writes</th><th>Gateway Rejected</th><th>LLM Calls</th>"
         "<th>Prompt Tokens</th><th>Completion Tokens</th><th>LLM Tokens</th><th>Preflight ms</th><th>Select ms</th>"
-        "<th>Probe ms</th><th>Timeouts</th><th>Preflight Reason</th><th>Consolidated</th><th>Promoted</th><th>Paused</th><th>Backends</th><th>Models</th></tr></thead>"
+        "<th>Probe ms</th><th>Timeouts</th><th>Preflight Reason</th><th>Consolidated</th><th>Promoted</th>"
+        "<th>Scribe Status</th><th>Scribe Mode</th><th>Scribe Posture</th><th>Scribe Route</th>"
+        "<th>Scribe Secondary</th><th>Scribe Source</th>"
+        "<th>Paused</th><th>Backends</th><th>Models</th></tr></thead>"
         f"<tbody>{''.join(body)}</tbody></table>"
     )
 
@@ -1377,6 +1842,10 @@ def _render_recent_schedule_cycles(rows: Sequence[dict[str, Any]]) -> str:
             f"<td>{escape(str(row.get('deferred_category_count') or 0))}</td>"
             f"<td>{escape('yes' if row.get('llm_backoff_requested') else 'no')}</td>"
             f"<td>{escape('yes' if row.get('llm_backoff_active') else 'no')}</td>"
+            f"<td>{escape(str(row.get('wakeup_session_id') or 'n/a'))}</td>"
+            f"<td>{escape('yes' if row.get('wakeup_session_resumed') else 'no')}</td>"
+            f"<td>{escape(str(row.get('wakeup_consecutive_failures') or 0))}</td>"
+            f"<td>{escape(_render_value(row.get('wakeup_next_cycle')))}</td>"
             f"<td>{escape(str(row.get('llm_backoff_mode') or 'none'))}</td>"
             f"<td>{escape(str(row.get('llm_backoff_action') or 'normal'))}</td>"
             f"<td>{escape(str(row.get('llm_backoff_reason_count') or 0))}</td>"
@@ -1388,7 +1857,8 @@ def _render_recent_schedule_cycles(rows: Sequence[dict[str, Any]]) -> str:
         "<table class='cycle-table'>"
         "<thead><tr><th>Cycle</th><th>Timestamp</th><th>Selected Categories</th>"
         "<th>Cooled Categories</th><th>Deferred Categories</th><th>LLM Backoff Requested</th>"
-        "<th>LLM Backoff Active</th><th>Backoff Mode</th><th>LLM Action</th>"
+        "<th>LLM Backoff Active</th><th>Wake-up Session</th><th>Wake-up Resumed</th>"
+        "<th>Failure Streak</th><th>Wake-up Next Cycle</th><th>Backoff Mode</th><th>LLM Action</th>"
         "<th>LLM Reasons</th><th>Governance Breaches</th><th>LLM Breaches</th></tr></thead>"
         f"<tbody>{''.join(body)}</tbody></table>"
     )
@@ -1396,6 +1866,8 @@ def _render_recent_schedule_cycles(rows: Sequence[dict[str, Any]]) -> str:
 
 def render_html(payload: dict[str, Any]) -> str:
     summary = payload["summary"]
+    wakeup_runtime_state = payload.get("wakeup_runtime_state", {})
+    wakeup_scribe_state = payload.get("wakeup_scribe_state", {})
     warnings = payload.get("warnings", [])
     warning_html = ""
     if warnings:
@@ -1475,6 +1947,30 @@ def render_html(payload: dict[str, Any]) -> str:
                 reference_lines=((0.5, "50%", "threshold"),),
             ),
             summary=summary["wakeup_collision_success_rate"],
+        ),
+        _render_chart_panel(
+            title="Wake-up Failure Streak",
+            subtitle="Consecutive Dream Engine failures carried across resumable heartbeat windows.",
+            svg=_render_chart_svg(
+                payload["series"]["wakeup_consecutive_failures"],
+                color="#8f2d23",
+                fixed_min=0.0,
+                include_zero=True,
+            ),
+            summary=summary["wakeup_consecutive_failures"],
+        ),
+        _render_chart_panel(
+            title="Wake-up Session Resume",
+            subtitle="Whether each wake-up cycle continued an existing runtime session.",
+            svg=_render_chart_svg(
+                payload["series"]["wakeup_session_resumed"],
+                color="#2c5f85",
+                fixed_min=0.0,
+                fixed_max=1.0,
+                include_zero=True,
+                reference_lines=((1.0, "resumed", "threshold"),),
+            ),
+            summary=summary["wakeup_session_resumed"],
         ),
         _render_chart_panel(
             title="Write Gateway Written",
@@ -1623,6 +2119,30 @@ def render_html(payload: dict[str, Any]) -> str:
             ),
             summary=summary["schedule_llm_backoff_active"],
         ),
+        _render_chart_panel(
+            title="Schedule Wake-up Resume",
+            subtitle="Whether each schedule tick continued an existing nested wake-up runtime session.",
+            svg=_render_chart_svg(
+                payload["series"]["schedule_wakeup_session_resumed"],
+                color="#2c5f85",
+                fixed_min=0.0,
+                fixed_max=1.0,
+                include_zero=True,
+                reference_lines=((1.0, "resumed", "threshold"),),
+            ),
+            summary=summary["schedule_wakeup_session_resumed"],
+        ),
+        _render_chart_panel(
+            title="Schedule Wake-up Failure Streak",
+            subtitle="Nested wake-up consecutive failure count visible from the schedule handoff.",
+            svg=_render_chart_svg(
+                payload["series"]["schedule_wakeup_consecutive_failures"],
+                color="#8f2d23",
+                fixed_min=0.0,
+                include_zero=True,
+            ),
+            summary=summary["schedule_wakeup_consecutive_failures"],
+        ),
     ]
 
     schedule_meta_parts = []
@@ -1634,9 +2154,47 @@ def render_html(payload: dict[str, Any]) -> str:
         schedule_meta_parts.append(
             f"schedule_state={escape(str(payload['inputs']['schedule_state_path']))}"
         )
+    schedule_runtime_state = payload.get("schedule_runtime_state", {})
+    if schedule_runtime_state.get("latest_session_id"):
+        schedule_meta_parts.append(
+            f"schedule_wakeup_session={escape(str(schedule_runtime_state['latest_session_id']))}"
+        )
     schedule_meta = ""
     if schedule_meta_parts:
         schedule_meta = " | " + " | ".join(schedule_meta_parts)
+
+    wakeup_meta_parts = []
+    if wakeup_runtime_state.get("latest_session_id"):
+        wakeup_meta_parts.append(
+            f"wakeup_session={escape(str(wakeup_runtime_state['latest_session_id']))}"
+        )
+    if wakeup_runtime_state.get("latest_resume_state_path"):
+        wakeup_meta_parts.append(
+            f"resume_state={escape(str(wakeup_runtime_state['latest_resume_state_path']))}"
+        )
+    wakeup_runtime_meta = ""
+    if wakeup_meta_parts:
+        wakeup_runtime_meta = " | " + " | ".join(wakeup_meta_parts)
+    if wakeup_scribe_state.get("latest_status"):
+        wakeup_runtime_meta += (
+            f" | scribe_status={escape(str(wakeup_scribe_state['latest_status']))}"
+        )
+    if wakeup_scribe_state.get("latest_state_document_posture"):
+        wakeup_runtime_meta += (
+            " | "
+            f"scribe_posture={escape(str(wakeup_scribe_state['latest_state_document_posture']))}"
+        )
+    if wakeup_scribe_state.get("latest_problem_route_status_line"):
+        wakeup_runtime_meta += (
+            " | "
+            f"scribe_route={escape(str(wakeup_scribe_state['latest_problem_route_status_line']))}"
+        )
+    if wakeup_scribe_state.get("latest_problem_route_secondary_labels"):
+        wakeup_runtime_meta += (
+            " | "
+            "scribe_secondary="
+            f"{escape(str(wakeup_scribe_state['latest_problem_route_secondary_labels']))}"
+        )
 
     return f"""<!doctype html>
 <html lang="en">
@@ -1849,6 +2407,7 @@ def render_html(payload: dict[str, Any]) -> str:
         generated_at={escape(str(payload["generated_at"]))}
         | journal={escape(str(payload["inputs"]["journal_path"]))}
         | wakeup={escape(str(payload["inputs"]["wakeup_path"]))}
+        {wakeup_runtime_meta}
         {schedule_meta}
       </div>
     </header>

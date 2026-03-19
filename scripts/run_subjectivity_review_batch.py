@@ -290,7 +290,7 @@ def _render_markdown(payload: dict[str, Any]) -> str:
             admissibility = group.get("axiomatic_admissibility_checklist") or {}
             if admissibility:
                 lines.append(
-                    "  - admissibility: "
+                    "  - admissibility_primary_status_line: "
                     f"{admissibility.get('gate_posture', '')} / {admissibility.get('focus', '')}"
                 )
                 if group.get("admissibility_status_line"):

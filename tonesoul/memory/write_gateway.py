@@ -76,10 +76,10 @@ def _promotion_gate(payload: Dict[str, object]) -> tuple[bool, List[str]]:
     if not _has_provenance(payload):
         reasons.append("missing_provenance")
     subjectivity_layer = str(payload.get("subjectivity_layer") or "").strip().lower()
-    if (
-        subjectivity_layer in {SubjectivityLayer.VOW.value, SubjectivityLayer.IDENTITY.value}
-        and not _has_strong_promotion_gate(payload)
-    ):
+    if subjectivity_layer in {
+        SubjectivityLayer.VOW.value,
+        SubjectivityLayer.IDENTITY.value,
+    } and not _has_strong_promotion_gate(payload):
         reasons.append("subjectivity_requires_review")
     return len(reasons) == 0, reasons
 
@@ -217,16 +217,22 @@ class MemoryWriteGateway:
         content_hash: str,
     ) -> dict[str, object]:
         payload = stimulus.to_memory_payload()
+        observation_mode = str(payload.get("observation_mode") or "remote_feed").strip().lower()
         payload["content_hash"] = content_hash
+        payload["observation_mode"] = observation_mode
         payload["timestamp"] = str(payload.get("timestamp") or stimulus.ingested_at)
         payload["layer"] = str(payload.get("layer") or ENVIRONMENT_STIMULUS_LAYER)
-        payload["tags"] = self._merge_tags(payload.get("tags"))
+        payload["tags"] = self._merge_tags(
+            payload.get("tags"),
+            observation_mode=observation_mode,
+        )
         payload["evidence"] = self._build_environment_evidence(stimulus)
         payload["provenance"] = {
             "kind": "environment_stimulus",
             "source_url": stimulus.source_url,
             "ingested_at": stimulus.ingested_at,
             "content_hash": content_hash,
+            "observation_mode": observation_mode,
         }
         return payload
 
@@ -303,7 +309,7 @@ class MemoryWriteGateway:
         )
         return hashlib.sha256(digest_input.encode("utf-8")).hexdigest()[:16]
 
-    def _merge_tags(self, value: object) -> List[str]:
+    def _merge_tags(self, value: object, *, observation_mode: str = "remote_feed") -> List[str]:
         merged: List[str] = []
         seen: Set[str] = set()
 
@@ -322,6 +328,11 @@ class MemoryWriteGateway:
                 continue
             seen.add(tag)
             merged.append(tag)
+
+        observation_tag = f"observation:{str(observation_mode or 'remote_feed').strip().lower()}"
+        if observation_tag not in seen:
+            seen.add(observation_tag)
+            merged.append(observation_tag)
 
         return merged
 

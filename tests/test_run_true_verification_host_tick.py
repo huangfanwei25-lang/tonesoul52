@@ -52,7 +52,27 @@ def test_run_host_tick_delegates_one_cycle_to_long_run(
                 "overall_ok": True,
                 "gate": {"status": "passed"},
                 "preflight": {"overall_ok": True},
-                "schedule": {"overall_ok": True, "results": [{"cycle": 1}]},
+                "schedule": {
+                    "overall_ok": True,
+                    "results": [
+                        {
+                            "cycle": 1,
+                            "autonomous_payload": {
+                                "overall_ok": True,
+                                "runtime_state": {
+                                    "session_id": "wakeup-host-001",
+                                    "next_cycle": 2,
+                                    "consecutive_failures": 1,
+                                    "resumed": True,
+                                },
+                            },
+                            "tension_budget": {
+                                "status": "breached",
+                                "observation": {"max_consecutive_failure_count": 1},
+                            },
+                        }
+                    ],
+                },
             }
 
     dummy = DummyLongRunModule()
@@ -70,7 +90,18 @@ def test_run_host_tick_delegates_one_cycle_to_long_run(
     assert summary_payload["gate"]["status"] == "passed"
     assert summary_payload["preflight"] == {"overall_ok": True}
     assert summary_payload["schedule"]["result_count"] == 1
-    assert summary_payload["schedule"]["latest_result"] == {"cycle": 1}
+    assert (
+        summary_payload["schedule"]["latest_result"]["autonomous_payload"]["runtime_state"][
+            "session_id"
+        ]
+        == "wakeup-host-001"
+    )
+    assert (
+        summary_payload["schedule"]["latest_result"]["tension_budget"]["observation"][
+            "max_consecutive_failure_count"
+        ]
+        == 1
+    )
 
 
 def test_run_host_tick_keeps_explicit_operator_overrides(

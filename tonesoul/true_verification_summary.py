@@ -47,6 +47,21 @@ def _summarize_autonomous_payload(payload: dict[str, Any]) -> dict[str, Any]:
         "wakeup_cycle_count",
         "dashboard_overall_ok",
     )
+    runtime_state = payload.get("runtime_state")
+    if isinstance(runtime_state, dict):
+        summary["runtime_state"] = _copy_scalar_keys(
+            runtime_state,
+            "session_id",
+            "next_cycle",
+            "consecutive_failures",
+            "last_status",
+            "last_started_at",
+            "last_finished_at",
+            "last_duration_ms",
+            "updated_at",
+            "resumed",
+            "state_path",
+        )
     memory_write = payload.get("memory_write")
     if isinstance(memory_write, dict):
         summary["memory_write"] = _copy_scalar_keys(
@@ -60,6 +75,74 @@ def _summarize_autonomous_payload(payload: dict[str, Any]) -> dict[str, Any]:
     paths = payload.get("paths")
     if isinstance(paths, dict):
         summary["paths"] = dict(paths)
+    wakeup_summary = payload.get("wakeup_summary")
+    if isinstance(wakeup_summary, dict):
+        compact_wakeup_summary = _summarize_wakeup_summary(wakeup_summary)
+        if compact_wakeup_summary:
+            summary["wakeup_summary"] = compact_wakeup_summary
+    else:
+        wakeup_payload = payload.get("wakeup_payload")
+        if isinstance(wakeup_payload, dict):
+            compact_wakeup_summary = _summarize_wakeup_summary(wakeup_payload)
+            if compact_wakeup_summary:
+                summary["wakeup_summary"] = compact_wakeup_summary
+    return summary
+
+
+def _summarize_wakeup_summary(payload: dict[str, Any]) -> dict[str, Any]:
+    summary = _copy_scalar_keys(
+        payload,
+        "overall_status",
+        "result_count",
+        "latest_cycle",
+        "latest_status",
+        "scribe_evaluated",
+        "scribe_triggered",
+        "scribe_status",
+        "scribe_generation_mode",
+        "scribe_state_document_posture",
+        "scribe_anchor_status_line",
+        "scribe_problem_route_status_line",
+        "scribe_problem_route_secondary_labels",
+        "scribe_latest_available_source",
+        "scribe_skip_reason",
+    )
+    results = payload.get("results")
+    latest_result: dict[str, Any] | None = None
+    if isinstance(results, list):
+        if "result_count" not in summary:
+            summary["result_count"] = len(results)
+        if results:
+            candidate = results[-1]
+            if isinstance(candidate, dict):
+                latest_result = candidate
+    latest_result = latest_result or (
+        payload.get("latest_result") if isinstance(payload.get("latest_result"), dict) else None
+    )
+    if isinstance(latest_result, dict):
+        if latest_result.get("cycle") is not None:
+            summary["latest_cycle"] = latest_result.get("cycle")
+        if latest_result.get("status") is not None:
+            summary["latest_status"] = latest_result.get("status")
+        cycle_summary = (
+            latest_result.get("summary") if isinstance(latest_result.get("summary"), dict) else {}
+        )
+        if cycle_summary:
+            summary.update(
+                _copy_scalar_keys(
+                    cycle_summary,
+                    "scribe_evaluated",
+                    "scribe_triggered",
+                    "scribe_status",
+                    "scribe_generation_mode",
+                    "scribe_state_document_posture",
+                    "scribe_anchor_status_line",
+                    "scribe_problem_route_status_line",
+                    "scribe_problem_route_secondary_labels",
+                    "scribe_latest_available_source",
+                    "scribe_skip_reason",
+                )
+            )
     return summary
 
 
@@ -85,11 +168,14 @@ def _summarize_tension_budget(payload: dict[str, Any]) -> dict[str, Any]:
             "observed_cycles",
             "max_friction_score",
             "max_lyapunov_proxy",
+            "council_count",
             "max_council_count",
             "max_llm_preflight_latency_ms",
             "max_llm_selection_latency_ms",
             "max_llm_probe_latency_ms",
+            "llm_preflight_timeout_count",
             "max_llm_timeout_count",
+            "max_consecutive_failure_count",
             "last_reason",
         )
     return summary

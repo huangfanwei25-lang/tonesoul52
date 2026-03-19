@@ -84,6 +84,15 @@ def test_run_wakeup_loop_writes_snapshot_and_history(monkeypatch, tmp_path: Path
                 )
             ]
 
+        def get_runtime_state_snapshot(self):
+            return {
+                "session_id": "wakeup_test_session",
+                "next_cycle": 2,
+                "consecutive_failures": 0,
+                "resumed": False,
+                "state_path": "memory/autonomous/dream_wakeup_state.json",
+            }
+
     dummy_loop = DummyLoop()
     monkeypatch.setattr(module, "build_autonomous_wakeup_loop", lambda **kwargs: dummy_loop)
     args = module.build_parser().parse_args(
