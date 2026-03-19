@@ -5930,3 +5930,15 @@
 - `python -m pytest tests/test_ystm_demo.py tests/test_ystm_diff.py tests/test_ystm_representation.py tests/test_ystm_acceptance.py tests/test_ystm_terrain.py tests/test_ystm_projection.py tests/test_ystm_energy.py tests/test_ystm_demo_entry.py -q` -> 25 passed, 1 warning
 - `python -m ruff check tonesoul tests` -> passed
 - `python -m pytest tests/ -x --tb=short -q` -> 2365 passed, 9 warnings
+
+## Phase 568: ToneBridge Trajectory + Perception Stimulus + Corpus Consent Coverage (2026-03-20)
+- [x] add `tests/test_tonebridge_trajectory.py` for context-window shaping, similarity heuristics, loop detection, direction branches, tension-state inference, and reset behavior
+- [x] add `tests/test_perception_stimulus.py` for observation-mode normalization, topic/summary extraction, relevance and novelty scoring edges, tag mapping, ingestion defaults, and payload truncation
+- [x] add `tests/test_corpus_consent.py` for consent hashing, round-trip persistence, withdrawal semantics, stats aggregation, replacement behavior, and factory initialization
+- [x] validate targeted tests and full regression
+**Success Criteria**: trajectory analysis, stimulus normalization, and consent persistence gain deterministic coverage without changing runtime behavior or touching guarded pipeline/kernel files.
+**Validation**:
+- `python -m ruff check tests/test_tonebridge_trajectory.py tests/test_perception_stimulus.py tests/test_corpus_consent.py` -> passed
+- `python -m pytest tests/test_tonebridge_trajectory.py tests/test_perception_stimulus.py tests/test_corpus_consent.py -q` -> 23 passed, 1 warning
+- `python -m ruff check tonesoul tests` -> passed
+- `python -m pytest tests/ -x --tb=short -q` -> 2388 passed, 9 warnings
