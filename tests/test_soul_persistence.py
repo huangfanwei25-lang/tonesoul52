@@ -8,6 +8,14 @@ from pathlib import Path
 from tonesoul.soul_persistence import SoulPsiSnapshot, load_psi, save_psi
 
 
+def test_snapshot_initializes_updated_at() -> None:
+    snap = SoulPsiSnapshot()
+
+    assert snap.psi == 0.0
+    assert snap.step_count == 0
+    assert snap.updated_at != ""
+
+
 def test_save_and_load_roundtrip(tmp_path: Path) -> None:
     path = tmp_path / "psi.json"
     save_psi(psi=0.42, step_count=10, path=path)
@@ -38,6 +46,17 @@ def test_save_creates_parent_dirs(tmp_path: Path) -> None:
     data = json.loads(path.read_text(encoding="utf-8"))
     assert data["psi"] == 1.5
     assert data["step_count"] == 3
+
+
+def test_save_overwrites_existing_snapshot(tmp_path: Path) -> None:
+    path = tmp_path / "psi.json"
+    save_psi(psi=0.2, step_count=2, path=path)
+
+    save_psi(psi=0.9, step_count=9, path=path)
+    loaded = load_psi(path)
+
+    assert loaded.psi == 0.9
+    assert loaded.step_count == 9
 
 
 def test_snapshot_to_dict() -> None:
