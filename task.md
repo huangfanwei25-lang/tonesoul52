@@ -5836,3 +5836,15 @@
 - `python -m pytest tests/test_tonebridge_personas.py tests/test_tonebridge_rupture_detector.py tests/test_tonebridge_entropy_engine.py -q` -> 37 passed, 1 warning
 - `python -m ruff check tonesoul tests` -> passed
 - `python -m pytest tests/ -x --tb=short -q` -> 2181 passed, 4 warnings
+
+## Phase 561: ToneBridge Analyzer + Value Accumulator + OpenClaw Hippocampus Coverage (2026-03-19)
+- [x] add `tests/test_tonebridge_analyzer.py` for Gemini JSON extraction, stage fallbacks, memini construction, and full-analysis orchestration
+- [x] add `tests/test_tonebridge_value_accumulator.py` for correction serialization, keyword classification, value formation threshold, reinforcement, and summary output
+- [x] add `tests/test_openclaw_hippocampus.py` for memory kind and wave validation, wave/tension scoring helpers, recall mode validation, keyword search filtering, and conflict-mode reranking
+- [x] validate targeted tests and full regression
+**Success Criteria**: ToneBridge analysis helpers, emergent value formation, and OpenClaw memory reranking branches are covered by deterministic tests without changing runtime behavior.
+**Validation**:
+- `python -m ruff check tests/test_tonebridge_analyzer.py tests/test_tonebridge_value_accumulator.py tests/test_openclaw_hippocampus.py` -> passed
+- `python -m pytest tests/test_tonebridge_analyzer.py tests/test_tonebridge_value_accumulator.py tests/test_openclaw_hippocampus.py -q` -> 36 passed, 1 warning
+- `python -m ruff check tonesoul tests` -> passed
+- `python -m pytest tests/ -x --tb=short -q` -> 2217 passed, 4 warnings
