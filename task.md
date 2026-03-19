@@ -5788,3 +5788,15 @@
 - `python -m pytest tests/test_skill_promoter.py tests/test_audit_interface.py tests/test_council_capability.py -q` -> 38 passed
 - `python -m ruff check tonesoul tests` -> passed
 - `python -m pytest tests/ -x --tb=short -q` -> 2081 passed, 3 warnings
+
+## Phase 557: Evidence Collection + Intent Verification + Jump Monitor Coverage (2026-03-19)
+- [x] add `tests/test_evidence_collector.py` for digest helpers, summary rollover, retention, and CLI output writing
+- [x] add `tests/test_intent_verification.py` for intent analysis, evidence normalization, audit branches, and payload assembly
+- [x] add `tests/test_jump_monitor.py` for metric helpers, indicator thresholds, status serialization, and lockdown reset behavior
+- [x] validate targeted tests and full regression
+**Success Criteria**: Evidence summary, intent verification, and jump-monitor metric branches are covered without changing runtime behavior.
+**Validation**:
+- `python -m ruff check tests/test_evidence_collector.py tests/test_intent_verification.py tests/test_jump_monitor.py` -> passed
+- `python -m pytest tests/test_evidence_collector.py tests/test_intent_verification.py tests/test_jump_monitor.py -q` -> 31 passed
+- `python -m ruff check tonesoul tests` -> passed
+- `python -m pytest tests/ -x --tb=short -q` -> 2112 passed, 3 warnings
