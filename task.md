@@ -5813,3 +5813,14 @@
 - `python -m pytest tests/test_council_adapter_deprecated.py tests/test_tonesoul_llm_deprecated.py tests/test_market_deprecation.py tests/test_pipeline_compute_gate.py -q` -> 14 passed
 - `python -m ruff check tonesoul tests` -> passed
 - `python -m pytest tests/ -x --tb=short -q` -> 2120 passed, 4 warnings
+
+## Phase 559: YSS Pipeline + Gates Convergence Coverage (2026-03-19)
+- [x] add `tests/test_yss_gates.py` for context lint, guardian enforcement, P0 gate, intent achievement, evidence completeness, acceptance fallback, and report rendering
+- [x] add `tests/test_yss_pipeline.py` for seed loading, run-dir resolution, retention config, required-file extraction, gate collection, gate output writing, and unified-request glue
+- [x] validate targeted tests and full regression
+**Success Criteria**: YSS pipeline helpers and gate contracts are covered by focused tests without changing pipeline behavior or return shapes.
+**Validation**:
+- `python -m ruff check tests/test_yss_pipeline.py tests/test_yss_gates.py` -> passed
+- `python -m pytest tests/test_yss_pipeline.py tests/test_yss_gates.py -q` -> 24 passed
+- `python -m ruff check tonesoul tests` -> passed
+- `python -m pytest tests/ -x --tb=short -q` -> 2144 passed, 4 warnings
