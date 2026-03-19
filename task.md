@@ -5958,3 +5958,18 @@
 - `python -m pytest tests/test_tech_trace_normalize.py tests/test_tech_trace_validate.py tests/test_tech_trace_capture.py tests/test_observability_logger.py tests/test_observability_env_config.py tests/test_loop_events.py tests/test_loop_config.py -q` -> 30 passed, 1 warning
 - `python -m ruff check tonesoul tests` -> passed
 - `python -m pytest tests/ -x --tb=short -q` -> 2418 passed, 9 warnings
+
+## Phase 570: Core Utility Coverage - Service Manager + Error Event + DCS + Constraint Stack + Unified Controller + Context Compiler (2026-03-20)
+- [x] add `tests/test_service_manager.py` for enum/dataclass serialization, manager initialization, call accounting, status reports, and singleton helper behavior
+- [x] add `tests/test_error_event.py` for event-id generation, delta/harm metrics, JSON serialization, ledger persistence, query helpers, and pattern analysis
+- [x] add `tests/test_dcs.py` for missing-policy fallback, reason extension, open/soft-close/closed decisions, threshold overrides, and mode-rule handling
+- [x] add `tests/test_constraint_stack.py` for constraint merging, action/mercy section formatting, document assembly, output resolution, and CLI file generation
+- [x] add `tests/test_unified_controller.py` for semantic delegation, council-disabled fallback, council import fallback, council verdict plumbing, and reset delegation
+- [x] add `tests/test_context_compiler.py` for seed loading, context compilation defaults, output/run-id helpers, and CLI YAML emission with overrides
+- [x] validate targeted tests and full regression
+**Success Criteria**: core helper/controller modules gain deterministic coverage across data-shaping, singleton/fallback behavior, and CLI/document generation paths without modifying production behavior.
+**Validation**:
+- `python -m ruff check tests/test_service_manager.py tests/test_error_event.py tests/test_dcs.py tests/test_constraint_stack.py tests/test_unified_controller.py tests/test_context_compiler.py` -> passed
+- `python -m pytest tests/test_service_manager.py tests/test_error_event.py tests/test_dcs.py tests/test_constraint_stack.py tests/test_unified_controller.py tests/test_context_compiler.py -q` -> 29 passed, 2 warnings
+- `python -m ruff check tonesoul tests` -> passed
+- `python -m pytest tests/ -x --tb=short -q` -> 2447 passed, 9 warnings
