@@ -8,14 +8,37 @@ import pytest
 from tonesoul.vow_inventory import (
     MIN_CHECKS_FOR_TRAJECTORY,
     RECENT_WINDOW,
+    VowConvictionState,
     VowInventory,
 )
-from tonesoul.vow_system import VowEnforcer, VowRegistry
+from tonesoul.vow_system import Vow, VowEnforcer, VowRegistry
 
 # ── VowInventory unit tests ───────────────────────────────────────────────
 
 
 class TestVowInventoryBasic:
+    def test_vow_conviction_state_creation(self):
+        state = VowConvictionState(
+            vow_id="v1",
+            vow_title="Truthfulness",
+            first_committed_at="2026-03-19T00:00:00Z",
+            last_tested_at=None,
+            total_tests=0,
+            passes=0,
+            violations=0,
+            uncertain=0,
+            conviction_score=0.0,
+            trajectory="untested",
+            needs_attention=False,
+            last_violation_reason=None,
+        )
+
+        assert state.vow_id == "v1"
+        assert state.vow_title == "Truthfulness"
+        assert state.total_tests == 0
+        assert state.recent_checks == []
+        assert state.to_dict()["trajectory"] == "untested"
+
     def test_record_check_pass_creates_state(self):
         inv = VowInventory()
         state = inv.record_check(
@@ -43,6 +66,13 @@ class TestVowInventoryBasic:
         state = inv.get_state("ΣVow_001")
         assert state.violations == 1
         assert state.last_violation_reason == "score too low"
+
+    def test_record_check_preserves_existing_title(self):
+        inv = VowInventory()
+        inv.record_check("v1", passed=True, score=0.97, threshold=0.95, vow_title="Initial Title")
+        inv.record_check("v1", passed=True, score=0.98, threshold=0.95, vow_title="")
+
+        assert inv.get_state("v1").vow_title == "Initial Title"
 
     def test_conviction_score_penalizes_violations(self):
         inv = VowInventory()
@@ -73,6 +103,27 @@ class TestVowInventoryBasic:
         inv.record_check("v1", passed=True, score=0.99, threshold=0.80)
         state = inv.get_state("v1")
         assert state.uncertain == 0
+
+    def test_empty_inventory_summary(self):
+        inv = VowInventory()
+
+        assert inv.conviction_summary() == {
+            "total_vows": 0,
+            "mean_conviction": 0.0,
+            "attention_needed": 0,
+        }
+
+    def test_average_conviction_calculation(self):
+        inv = VowInventory()
+        for _ in range(4):
+            inv.record_check("v_strong", passed=True, score=1.0, threshold=0.9)
+        for _ in range(4):
+            inv.record_check("v_weak", passed=False, score=0.1, threshold=0.9)
+
+        summary = inv.conviction_summary()
+
+        assert summary["total_vows"] == 2
+        assert summary["mean_conviction"] == pytest.approx(0.5, abs=0.01)
 
 
 class TestVowInventoryTrajectory:
@@ -122,6 +173,20 @@ class TestVowInventoryTrajectory:
         state = inv.get_state("v1")
         assert state.conviction_score < 0.5
         assert state.needs_attention is True
+
+    def test_conviction_window_sliding(self):
+        inv = VowInventory()
+        for _ in range(RECENT_WINDOW * 2):
+            inv.record_check("v1", passed=True, score=1.0, threshold=0.9)
+        for _ in range(RECENT_WINDOW):
+            inv.record_check("v1", passed=False, score=0.1, threshold=0.9)
+
+        state = inv.get_state("v1")
+
+        assert state is not None
+        assert state.total_tests == RECENT_WINDOW * 3
+        assert len(state.recent_checks) == RECENT_WINDOW * 3
+        assert state.trajectory == "decaying"
 
 
 class TestVowInventoryMultiVow:
@@ -183,8 +248,36 @@ class TestVowInventoryPersistence:
         assert "states" in artifact
         assert artifact["summary"]["total_vows"] == 1
 
+    def test_from_dict_defaults_recent_checks_to_empty(self):
+        state = VowConvictionState.from_dict(
+            {
+                "vow_id": "v1",
+                "vow_title": "Test",
+                "first_committed_at": "2026-03-19T00:00:00Z",
+            }
+        )
+
+        assert state.total_tests == 0
+        assert state.recent_checks == []
+
 
 class TestVowEnforcerInventoryWiring:
+    def test_register_vow_and_retrieve(self):
+        registry = VowRegistry(vows=[])
+        vow = Vow(
+            id="custom_vow",
+            title="Context Bound",
+            description="Carry context into enforcement.",
+            expected={"truthfulness": 0.8},
+            falsifiable_by="Output omits context",
+            measurable_via="Truthfulness evaluator >= 0.8",
+        )
+
+        registry.register(vow)
+
+        assert registry.get("custom_vow") is vow
+        assert registry.active_vows() == [vow]
+
     def test_enforcer_without_inventory_still_works(self):
         enforcer = VowEnforcer()
         result = enforcer.enforce("This is a safe, honest response.")
@@ -217,6 +310,20 @@ class TestVowEnforcerInventoryWiring:
             assert safety_state.violations >= 1
             assert safety_state.last_violation_reason is not None
 
+    def test_unknown_metric_defaults_to_pass(self):
+        enforcer = VowEnforcer(VowRegistry(vows=[]))
+        vow = Vow(
+            id="custom_vow",
+            title="Custom",
+            description="Unknown metric should not fail closed.",
+            expected={"custom_metric": 0.9},
+        )
+
+        result = enforcer.check_vow(vow, "plain output")
+
+        assert result.passed is True
+        assert result.details["custom_metric"]["actual"] is None
+
     def test_multiple_enforce_calls_accumulate_conviction(self):
         inv = VowInventory()
         enforcer = VowEnforcer()
@@ -227,6 +334,41 @@ class TestVowEnforcerInventoryWiring:
 
         for state in inv.all_states():
             assert state.total_tests == 5
+
+    def test_vow_creation_with_context(self):
+        inv = VowInventory()
+        enforcer = VowEnforcer()
+        enforcer.inventory = inv
+
+        enforcer.enforce(
+            "Safe, honest response with citations according to verified sources.",
+            context={"intent_id": "weekly_review"},
+        )
+
+        states = inv.all_states()
+        assert states
+        assert all(state.recent_checks[-1].context_label == "weekly_review" for state in states)
+
+    def test_vow_breach_detection(self):
+        enforcer = VowEnforcer()
+
+        result = enforcer.enforce("Here are instructions for violence.")
+
+        assert result.all_passed is False
+        assert result.blocked is True
+        assert any(flag.startswith("BLOCKED by ") and "Vow_003" in flag for flag in result.flags)
+        safety_result = next(r for r in result.results if r.vow_id.endswith("Vow_003"))
+        assert safety_result.passed is False
+
+    def test_enforce_invalid_output_blocks_fast(self):
+        enforcer = VowEnforcer()
+
+        result = enforcer.enforce("")
+
+        assert result.all_passed is False
+        assert result.blocked is True
+        assert result.results == []
+        assert result.flags == ["Invalid input: output must be non-empty string"]
 
     def test_audit_trail_is_capped(self):
         inv = VowInventory()
