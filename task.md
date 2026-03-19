@@ -5848,3 +5848,15 @@
 - `python -m pytest tests/test_tonebridge_analyzer.py tests/test_tonebridge_value_accumulator.py tests/test_openclaw_hippocampus.py -q` -> 36 passed, 1 warning
 - `python -m ruff check tonesoul tests` -> passed
 - `python -m pytest tests/ -x --tb=short -q` -> 2217 passed, 4 warnings
+
+## Phase 562: Semantic Graph + Legacy Hippocampus + Council Summary Coverage (2026-03-19)
+- [x] add `tests/test_semantic_graph.py` for node reuse, adjacency updates, contradiction detection, retrieval limits, commitment extraction, response topic linking, and reset/export summaries
+- [x] add `tests/test_memory_hippocampus.py` for legacy memory loading, time decay, vector and keyword ranking, RRF fusion, corrective recall, and tension-context boosts
+- [x] add `tests/test_council_summary_generator.py` for language resolution, collaboration record defaults, divergence analysis, human summary branches, stance formatting, and transcript contract output
+- [x] validate targeted tests and full regression
+**Success Criteria**: Semantic graph state transitions, legacy memory recall helpers, and council summary contracts are covered by deterministic tests without changing runtime behavior.
+**Validation**:
+- `python -m ruff check tests/test_semantic_graph.py tests/test_memory_hippocampus.py tests/test_council_summary_generator.py` -> passed
+- `python -m pytest tests/test_semantic_graph.py tests/test_memory_hippocampus.py tests/test_council_summary_generator.py -q` -> 27 passed, 8 warnings
+- `python -m ruff check tonesoul tests` -> passed
+- `python -m pytest tests/ -x --tb=short -q` -> 2244 passed, 4 warnings
