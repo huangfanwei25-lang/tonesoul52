@@ -5873,3 +5873,15 @@
 - `python -m pytest tests/test_evidence_detector.py tests/test_intent_reconstructor.py tests/test_deliberation_perspectives.py tests/test_deliberation_types.py -q` -> 25 passed, 2 warnings
 - `python -m ruff check tonesoul tests` -> passed
 - `python -m pytest tests/ -x --tb=short -q` -> 2269 passed, 4 warnings
+
+## Phase 564: Scribe Narrative + Status Artifact + Skill Gate Coverage (2026-03-19)
+- [x] add `tests/test_scribe_narrative_builder.py` for marker trimming, empty-anchor fallback, friction formatting, anchor fallback priority, and collision/crystal rendering branches
+- [x] add `tests/test_scribe_status_artifact.py` for queue-shape fallback, remaining posture states, unknown boundary routing, empty-response routing, and handoff payload shaping
+- [x] add `tests/test_skill_gate.py` for skill discovery, scoring ratios, auto-approval, forced rejection, role-threshold enforcement, dry-run persistence, and skill index writing
+- [x] validate targeted tests and full regression
+**Success Criteria**: Scribe narrative formatting, scribe status routing, and skill review policy contracts are covered by deterministic tests without changing runtime behavior.
+**Validation**:
+- `python -m ruff check tests/test_scribe_narrative_builder.py tests/test_scribe_status_artifact.py tests/test_skill_gate.py` -> passed
+- `python -m pytest tests/test_scribe_narrative_builder.py tests/test_scribe_status_artifact.py tests/test_skill_gate.py -q` -> 15 passed, 2 warnings
+- `python -m ruff check tonesoul tests` -> passed
+- `python -m pytest tests/ -x --tb=short -q` -> 2284 passed, 4 warnings
