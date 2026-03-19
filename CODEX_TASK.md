@@ -1,296 +1,401 @@
-# Codex Task: Phase 560-565 — ✅ 已完成 (2026-03-19 審核通過)
-
-> **審核者**: 痕 (Hén)
-> **審核日期**: 2026-03-19
-> **結果**: ✅ ALL 6 PHASES PASS — 159 新測試，2144 → 2303，lint clean，無回歸
->
-> | Phase | Commit | 新測試 | 累積 |
-> |-------|--------|--------|------|
-> | 560 | `2dd8b81` | 37 | 2181 |
-> | 561 | `c0ed1fa` | 36 | 2217 |
-> | 562 | `64f8b19` | 27 | 2244 |
-> | 563 | `37b1fdd` | 25 | 2269 |
-> | 564 | `2045abc` | 15 | 2284 |
-> | 565 | `5aaa463` | 19 | 2303 |
->
-> 源碼修改: skill_apply.py kairos fallback 硬化 (1處，已驗證)
-> 下一輪工單待指派。
-
----
-
-## 原始工單（保留參考）
+# Codex Task: Phase 566-571 — 最終收斂 (Final Convergence)
 
 **指派者**: 痕 (Hén)
 **日期**: 2026-03-19
 **分支**: `feat/env-perception`
-**前置條件**: 2144 tests passing, lint clean
+**前置條件**: 2303 tests passing, lint clean
 
-> 子系統收斂任務。6 個 Phase。
-> **目標：覆蓋 ToneBridge(5)、Memory(3)、Council(3)、Scribe(2)、Deliberation(2)、邊界模組(2)。**
+> **最終收斂任務。6 個 Phase，43 個模組，做完後全部源碼模組都有測試覆蓋。**
+> 這是最後一輪。完成後 tonesoul/ 下不再有未測模組。
 
 ---
 
 ## 脈絡（先讀這些）
 
-1. `tonesoul/tonebridge/personas.py` (474L) — 人格橋接，ToneBridge 最大未測模組
-2. `tonesoul/tonebridge/rupture_detector.py` (351L) — 斷裂偵測器
-3. `tonesoul/tonebridge/entropy_engine.py` (337L) — 熵引擎
-4. `tonesoul/tonebridge/analyzer.py` (321L) — ToneBridge 分析器
-5. `tonesoul/tonebridge/value_accumulator.py` (318L) — 價值累積器
-6. `tonesoul/memory/openclaw/hippocampus.py` (641L) — OpenClaw 記憶海馬體
-7. `tonesoul/memory/semantic_graph.py` (453L) — 語義圖
-8. `tonesoul/memory/hippocampus.py` (292L) — 記憶海馬體
-9. `tonesoul/council/summary_generator.py` (612L) — Council 摘要產生器
-10. `tonesoul/council/evidence_detector.py` (268L) — 證據偵測器
-11. `tonesoul/council/intent_reconstructor.py` (219L) — 意圖重建器
-12. `tonesoul/scribe/narrative_builder.py` (456L) — 敘事建構器
-13. `tonesoul/scribe/status_artifact.py` (345L) — 狀態紀錄
-14. `tonesoul/deliberation/perspectives.py` (364L) — 審議觀點引擎
-15. `tonesoul/deliberation/types.py` (284L) — 審議型別定義
-16. `tonesoul/skill_gate.py` (301L) — 技能閘門
-17. `tonesoul/skill_apply.py` (295L) — 技能套用
-18. `tests/test_alert_escalation.py` — 參考大型測試檔的 class 分組模式
-19. `tests/test_skill_promoter.py` — 參考 Phase 556 的技能測試模式
+1. `tests/test_tonebridge_analyzer.py` — 參考 Phase 560 的測試結構
+2. `tests/test_skill_apply.py` — 參考 Phase 565 的邊界測試模式
+3. `tests/test_alert_escalation.py` — 參考 class 分組模式
+4. `tests/test_governance_kernel.py` — 參考大型核心模組的測試策略
 
 ---
 
-## Phase 560: ToneBridge 子系統測試 — personas + rupture_detector + entropy_engine (25+ tests)
+## Phase 566: LLM 客戶端 + Market 子系統 (5 模組, 30+ tests)
 
-ToneBridge 是語魂的「橋」— 連接語境與張力的核心子系統。5 個模組全部未測，這裡先處理最大的 3 個。
-
-### 任務清單
-
-- [ ] **Task A**: 建立 `tests/test_tonebridge_personas.py`
-  讀 `tonesoul/tonebridge/personas.py` (474L) 理解全部 API。這是人格橋接模組。
-
-  - 測試人格載入、序列化、欄位驗證
-  - 測試人格切換邏輯
-  - 測試人格與 Council 的交互邊界
-  - 測試空輸入 / 缺欄位的 graceful 降級
-  - 至少 8 個測試
-
-- [ ] **Task B**: 建立 `tests/test_tonebridge_rupture_detector.py`
-  讀 `tonesoul/tonebridge/rupture_detector.py` (351L)。斷裂偵測器 — 偵測對話中的價值斷裂。
-
-  - 測試偵測邏輯的觸發條件
-  - 測試斷裂分數計算
-  - 測試閾值邊界情況
-  - 測試無斷裂情況的正常通過
-  - 至少 8 個測試
-
-- [ ] **Task C**: 建立 `tests/test_tonebridge_entropy_engine.py`
-  讀 `tonesoul/tonebridge/entropy_engine.py` (337L)。熵引擎 — 計算對話熵值。
-
-  - 測試熵值計算公式
-  - 測試高熵 / 低熵的分類
-  - 測試邊界條件（空輸入、單一 token）
-  - 至少 8 個測試
-
-### 成功標準
-- [ ] 3 個新測試檔，共 25+ 測試通過
-- [ ] `ruff check tests/test_tonebridge_*.py tonesoul/tonebridge/` 無錯誤
-- [ ] `pytest tests/ -x` 全過，無回歸
-- [ ] commit: `test(Phase 560): tonebridge personas + rupture_detector + entropy_engine tests`
-
----
-
-## Phase 561: ToneBridge 完結 + Memory 海馬體 (22+ tests)
-
-完成 ToneBridge 剩餘 2 個模組，開始 Memory 子系統最大的模組。
+覆蓋 LLM 客戶端封裝和 Market 子系統的核心模組。
 
 ### 任務清單
 
-- [ ] **Task A**: 建立 `tests/test_tonebridge_analyzer.py`
-  讀 `tonesoul/tonebridge/analyzer.py` (321L)。ToneBridge 分析器。
+- [ ] **Task A**: 建立 `tests/test_ollama_client.py`
+  讀 `tonesoul/llm/ollama_client.py` (377L)。Ollama LLM 客戶端封裝。
 
-  - 測試分析流程的輸入/輸出格式
-  - 測試各分析維度
+  - 測試客戶端初始化（預設參數、自訂端點）
+  - 測試請求建構（prompt 格式化、模型選擇）
+  - 測試回應解析（正常、空回應、錯誤格式）
+  - 測試連線失敗的 graceful fallback
+  - 測試 timeout 處理
   - 至少 7 個測試
 
-- [ ] **Task B**: 建立 `tests/test_tonebridge_value_accumulator.py`
-  讀 `tonesoul/tonebridge/value_accumulator.py` (318L)。價值累積器 — 累積對話價值軌跡。
+- [ ] **Task B**: 建立 `tests/test_lmstudio_client.py`
+  讀 `tonesoul/llm/lmstudio_client.py` (313L)。LM Studio 客戶端封裝。
 
-  - 測試累積邏輯（加權、衰減）
-  - 測試歷史查詢
-  - 測試重置 / 初始化
-  - 至少 7 個測試
-
-- [ ] **Task C**: 建立 `tests/test_openclaw_hippocampus.py`
-  讀 `tonesoul/memory/openclaw/hippocampus.py` (641L)。這是最大的未測模組。
-
-  - 測試記憶存入 / 取出
-  - 測試索引建立
-  - 測試搜尋 / 召回邏輯
-  - 測試容量限制 / 淘汰策略
-  - 至少 8 個測試
-
-### 成功標準
-- [ ] 3 個新測試檔，共 22+ 測試通過
-- [ ] `ruff check` 無錯誤
-- [ ] `pytest tests/ -x` 全過，無回歸
-- [ ] commit: `test(Phase 561): tonebridge analyzer + value_accumulator + openclaw hippocampus tests`
-
----
-
-## Phase 562: Memory 語義圖 + Council 摘要產生器 (22+ tests)
-
-覆蓋 Memory 子系統的語義圖和 Council 最大的未測模組。
-
-### 任務清單
-
-- [ ] **Task A**: 建立 `tests/test_semantic_graph.py`
-  讀 `tonesoul/memory/semantic_graph.py` (453L)。語義圖 — 記憶間的語義關係網路。
-
-  - 測試節點新增 / 刪除
-  - 測試邊（關係）的建立
-  - 測試圖查詢 / 路徑搜尋
-  - 測試序列化 / 反序列化
-  - 至少 8 個測試
-
-- [ ] **Task B**: 建立 `tests/test_memory_hippocampus.py`
-  讀 `tonesoul/memory/hippocampus.py` (292L)。基本海馬體模組（非 OpenClaw 版本）。
-
-  - 測試記憶存取基本操作
-  - 測試與 semantic_graph 的界面
+  - 測試客戶端初始化
+  - 測試 API 呼叫格式
+  - 測試錯誤回應處理
+  - 測試 streaming 模式（如有）
   - 至少 6 個測試
 
-- [ ] **Task C**: 建立 `tests/test_council_summary_generator.py`
-  讀 `tonesoul/council/summary_generator.py` (612L)。Council 摘要產生器 — 審議後產生摘要。
+- [ ] **Task C**: 建立 `tests/test_gold_detector.py`
+  讀 `tonesoul/market/gold_detector.py` (382L)。黃金偵測器 — 偵測有價值的資訊片段。
 
-  - 測試摘要格式
-  - 測試多觀點合成邏輯
-  - 測試空審議 / 單一觀點的邊界
-  - 至少 8 個測試
-
-### 成功標準
-- [ ] 3 個新測試檔，共 22+ 測試通過
-- [ ] `ruff check` 無錯誤
-- [ ] `pytest tests/ -x` 全過，無回歸
-- [ ] commit: `test(Phase 562): semantic_graph + hippocampus + council summary_generator tests`
-
----
-
-## Phase 563: Council 完結 + Deliberation 審議引擎 (22+ tests)
-
-完成 Council 子系統並覆蓋 Deliberation 模組。
-
-### 任務清單
-
-- [ ] **Task A**: 建立 `tests/test_council_evidence_detector.py`
-  讀 `tonesoul/council/evidence_detector.py` (268L)。證據偵測器。
-
-  - 測試證據分類
-  - 測試證據強度評分
-  - 測試多證據聚合
+  - 測試偵測邏輯和評分
+  - 測試閾值判定
+  - 測試各資訊類型的處理
   - 至少 7 個測試
 
-- [ ] **Task B**: 建立 `tests/test_council_intent_reconstructor.py`
-  讀 `tonesoul/council/intent_reconstructor.py` (219L)。意圖重建器 — 從對話中重建使用者意圖。
+- [ ] **Task D**: 建立 `tests/test_data_ingest.py`
+  讀 `tonesoul/market/data_ingest.py` (346L)。資料攝入管線。
 
-  - 測試意圖提取格式
-  - 測試多輪對話的意圖追蹤
+  - 測試資料格式驗證
+  - 測試攝入流程（正常、異常資料）
+  - 測試批次處理
   - 至少 6 個測試
 
-- [ ] **Task C**: 建立 `tests/test_deliberation_perspectives.py`
-  讀 `tonesoul/deliberation/perspectives.py` (364L)。審議觀點引擎。
+- [ ] **Task E**: 建立 `tests/test_forecaster.py`
+  讀 `tonesoul/market/forecaster.py` (210L)。預測器。
 
-  - 測試觀點生成
-  - 測試觀點衝突偵測
-  - 測試觀點權重分配
-  - 至少 7 個測試
-
-- [ ] **Task D**: 建立 `tests/test_deliberation_types.py`
-  讀 `tonesoul/deliberation/types.py` (284L)。審議型別定義。
-
-  - 測試 dataclass / TypedDict 的欄位驗證
-  - 測試序列化 / 反序列化
-  - 至少 5 個測試（型別模組測試可精簡）
-
-### 成功標準
-- [ ] 4 個新測試檔，共 22+ 測試通過（型別模組可簡短）
-- [ ] `ruff check` 無錯誤
-- [ ] `pytest tests/ -x` 全過，無回歸
-- [ ] commit: `test(Phase 563): council evidence_detector + intent_reconstructor + deliberation perspectives + types tests`
-
----
-
-## Phase 564: Scribe 敘事子系統 + 邊界模組 (22+ tests)
-
-覆蓋 Scribe（敘事建構）和技能邊界模組。
-
-### 任務清單
-
-- [ ] **Task A**: 建立 `tests/test_narrative_builder.py`
-  讀 `tonesoul/scribe/narrative_builder.py` (456L)。敘事建構器 — 將審議結果轉為敘事。
-
-  - 測試敘事格式化
-  - 測試不同輸入結構的處理
-  - 測試空輸入降級
-  - 至少 8 個測試
-
-- [ ] **Task B**: 建立 `tests/test_status_artifact.py`
-  讀 `tonesoul/scribe/status_artifact.py` (345L)。狀態紀錄。
-
-  - 測試紀錄建立
-  - 測試紀錄欄位完整性
-  - 至少 6 個測試
-
-- [ ] **Task C**: 建立 `tests/test_skill_gate.py`
-  讀 `tonesoul/skill_gate.py` (301L)。技能閘門 — 決定是否放行技能執行。
-
-  - 測試閘門開啟/阻擋邏輯
-  - 測試條件判定
-  - 測試與 governance 的交互
-  - 至少 7 個測試
-
-### 成功標準
-- [ ] 3 個新測試檔，共 22+ 測試通過
-- [ ] `ruff check` 無錯誤
-- [ ] `pytest tests/ -x` 全過，無回歸
-- [ ] commit: `test(Phase 564): narrative_builder + status_artifact + skill_gate tests`
-
----
-
-## Phase 565: Observability + Corpus + skill_apply (20+ tests)
-
-覆蓋可觀測性子系統和語料庫存取。
-
-### 任務清單
-
-- [ ] **Task A**: 建立 `tests/test_observability_token_meter.py`
-  讀 `tonesoul/observability/token_meter.py` (204L)。Token 計量器。
-
-  - 測試 token 計數
-  - 測試預算追蹤
-  - 測試超限警告
-  - 至少 5 個測試
-
-- [ ] **Task B**: 建立 `tests/test_observability_action_audit.py`
-  讀 `tonesoul/observability/action_audit.py` (194L)。行為審計。
-
-  - 測試審計記錄建立
-  - 測試查詢 / 過濾
-  - 至少 5 個測試
-
-- [ ] **Task C**: 建立 `tests/test_corpus_storage.py`
-  讀 `tonesoul/corpus/storage.py` (370L)。語料庫存取。
-
-  - 測試存入 / 取出
-  - 測試索引
-  - 至少 6 個測試
-
-- [ ] **Task D**: 建立 `tests/test_skill_apply.py`
-  讀 `tonesoul/skill_apply.py` (295L)。技能套用。
-
-  - 測試技能執行流程
-  - 測試與 skill_gate 的交互
+  - 測試預測模型輸入/輸出
+  - 測試歷史資料查詢
   - 至少 5 個測試
 
 ### 成功標準
-- [ ] 4 個新測試檔，共 20+ 測試通過
+- [ ] 5 個新測試檔，共 30+ 測試通過
+- [ ] `ruff check tests/ tonesoul/llm/ tonesoul/market/` 無錯誤
+- [ ] `pytest tests/ -x` 全過，無回歸
+- [ ] commit: `test(Phase 566): LLM clients + market gold_detector + data_ingest + forecaster`
+
+---
+
+## Phase 567: YSTM 子系統全覆蓋 (8 模組, 25+ tests)
+
+YSTM（You-Soul-Tension-Model）是語魂的張力視覺化子系統，8 個模組全部未測。
+小模組居多，可以精簡。`ystm_demo.py` (5L) 如果只是腳本入口，可跳過或寫 1 個 smoke test。
+
+### 任務清單
+
+- [ ] **Task A**: 建立 `tests/test_ystm_demo.py`
+  讀 `tonesoul/ystm/demo.py` (400L)。YSTM 展示邏輯。
+
+  - 測試 demo 流程的各步驟
+  - 測試輸出格式
+  - 至少 6 個測試
+
+- [ ] **Task B**: 建立 `tests/test_ystm_diff.py`
+  讀 `tonesoul/ystm/diff.py` (196L)。張力差異計算。
+
+  - 測試差異計算邏輯
+  - 測試邊界值（相同輸入、空輸入）
+  - 至少 4 個測試
+
+- [ ] **Task C**: 建立 `tests/test_ystm_representation.py`
+  讀 `tonesoul/ystm/representation.py` (176L)。張力表示層。
+
+  - 測試表示建構
+  - 測試序列化
+  - 至少 4 個測試
+
+- [ ] **Task D**: 建立 `tests/test_ystm_acceptance.py`
+  讀 `tonesoul/ystm/acceptance.py` (146L)。接受度判定。
+
+  - 測試接受/拒絕邏輯
+  - 測試閾值邊界
+  - 至少 3 個測試
+
+- [ ] **Task E**: 建立 `tests/test_ystm_terrain.py`
+  讀 `tonesoul/ystm/terrain.py` (117L)。張力地形。
+
+  - 測試地形建構
+  - 至少 3 個測試
+
+- [ ] **Task F**: 建立 `tests/test_ystm_projection.py`
+  讀 `tonesoul/ystm/projection.py` (54L)。張力投影。
+
+  - 至少 2 個測試
+
+- [ ] **Task G**: 建立 `tests/test_ystm_energy.py`
+  讀 `tonesoul/ystm/energy.py` (40L)。張力能量。
+
+  - 至少 2 個測試
+
+- [ ] **Task H**: 建立 `tests/test_ystm_demo_entry.py`（如 `ystm_demo.py` 只有 5L）
+  讀 `tonesoul/ystm_demo.py` (5L)。如果只是 import + run，1 個 smoke test 即可。
+
+  - 至少 1 個測試
+
+### 成功標準
+- [ ] 8 個新測試檔，共 25+ 測試通過
+- [ ] `ruff check tests/test_ystm_*.py tonesoul/ystm/` 無錯誤
+- [ ] `pytest tests/ -x` 全過，無回歸
+- [ ] commit: `test(Phase 567): YSTM subsystem full coverage — demo + diff + representation + acceptance + terrain + projection + energy`
+
+---
+
+## Phase 568: ToneBridge 軌跡 + Perception + Corpus 同意 (3 模組, 20+ tests)
+
+覆蓋 ToneBridge 最後的軌跡模組、感知子系統和語料庫同意機制。
+
+### 任務清單
+
+- [ ] **Task A**: 建立 `tests/test_tonebridge_trajectory.py`
+  讀 `tonesoul/tonebridge/trajectory.py` (311L)。張力軌跡 — 追蹤對話中的張力演變。
+
+  - 測試軌跡記錄（新增時間點）
+  - 測試軌跡查詢（時間範圍、最近 N 個）
+  - 測試軌跡統計（趨勢、峰值）
+  - 測試空軌跡的 graceful 處理
+  - 至少 7 個測試
+
+- [ ] **Task B**: 建立 `tests/test_perception_stimulus.py`
+  讀 `tonesoul/perception/stimulus.py` (275L)。刺激處理 — 外部輸入的感知分類。
+
+  - 測試刺激分類邏輯
+  - 測試強度評估
+  - 測試多刺激聚合
+  - 至少 6 個測試
+
+- [ ] **Task C**: 建立 `tests/test_corpus_consent.py`
+  讀 `tonesoul/corpus/consent.py` (237L)。語料庫同意機制。
+
+  - 測試同意狀態管理（授權、撤銷）
+  - 測試同意驗證邏輯
+  - 測試預設同意策略
+  - 至少 6 個測試
+
+### 成功標準
+- [ ] 3 個新測試檔，共 20+ 測試通過
 - [ ] `ruff check` 無錯誤
 - [ ] `pytest tests/ -x` 全過，無回歸
-- [ ] commit: `test(Phase 565): observability token_meter + action_audit + corpus storage + skill_apply tests`
+- [ ] commit: `test(Phase 568): tonebridge trajectory + perception stimulus + corpus consent`
+
+---
+
+## Phase 569: Tech Trace + Observability + Loop (7 模組, 25+ tests)
+
+覆蓋技術追蹤、可觀測性和事件迴圈子系統。
+
+### 任務清單
+
+- [ ] **Task A**: 建立 `tests/test_tech_trace_normalize.py`
+  讀 `tonesoul/tech_trace/normalize.py` (291L)。追蹤資料正規化。
+
+  - 測試各資料型態的正規化
+  - 測試格式轉換
+  - 測試異常輸入
+  - 至少 6 個測試
+
+- [ ] **Task B**: 建立 `tests/test_tech_trace_validate.py`
+  讀 `tonesoul/tech_trace/validate.py` (142L)。追蹤資料驗證。
+
+  - 測試驗證規則
+  - 測試通過/失敗回饋
+  - 至少 4 個測試
+
+- [ ] **Task C**: 建立 `tests/test_tech_trace_capture.py`
+  讀 `tonesoul/tech_trace/capture.py` (127L)。追蹤資料擷取。
+
+  - 測試擷取流程
+  - 測試資料完整性
+  - 至少 3 個測試
+
+- [ ] **Task D**: 建立 `tests/test_observability_logger.py`
+  讀 `tonesoul/observability/logger.py` (235L)。可觀測性日誌。
+
+  - 測試日誌層級
+  - 測試結構化日誌輸出
+  - 測試日誌過濾
+  - 至少 5 個測試
+
+- [ ] **Task E**: 建立 `tests/test_observability_env_config.py`
+  讀 `tonesoul/observability/env_config.py` (113L)。環境設定。
+
+  - 測試設定載入（預設值、env vars）
+  - 測試設定驗證
+  - 至少 3 個測試
+
+- [ ] **Task F**: 建立 `tests/test_loop_events.py`
+  讀 `tonesoul/loop/events.py` (204L)。迴圈事件。
+
+  - 測試事件建立
+  - 測試事件分發
+  - 至少 4 個測試
+
+- [ ] **Task G**: 建立 `tests/test_loop_config.py`
+  讀 `tonesoul/loop/config.py` (64L)。迴圈設定。
+
+  - 測試設定欄位
+  - 至少 2 個測試
+
+### 成功標準
+- [ ] 7 個新測試檔，共 25+ 測試通過
+- [ ] `ruff check` 無錯誤
+- [ ] `pytest tests/ -x` 全過，無回歸
+- [ ] commit: `test(Phase 569): tech_trace normalize + validate + capture + observability logger + env_config + loop events + config`
+
+---
+
+## Phase 570: Core 根模組 (6 模組, 20+ tests)
+
+覆蓋 tonesoul/ 根目錄下的核心工具模組。
+
+### 任務清單
+
+- [ ] **Task A**: 建立 `tests/test_service_manager.py`
+  讀 `tonesoul/service_manager.py` (227L)。服務管理器。
+
+  - 測試服務註冊 / 取消
+  - 測試服務查詢
+  - 測試生命週期管理
+  - 至少 5 個測試
+
+- [ ] **Task B**: 建立 `tests/test_error_event.py`
+  讀 `tonesoul/error_event.py` (215L)。錯誤事件。
+
+  - 測試事件建立
+  - 測試事件屬性
+  - 測試事件序列化
+  - 至少 4 個測試
+
+- [ ] **Task C**: 建立 `tests/test_dcs.py`
+  讀 `tonesoul/dcs.py` (163L)。DCS（Decision Context Stack）。
+
+  - 測試 stack push/pop
+  - 測試 context 查詢
+  - 至少 4 個測試
+
+- [ ] **Task D**: 建立 `tests/test_constraint_stack.py`
+  讀 `tonesoul/constraint_stack.py` (149L)。約束堆疊。
+
+  - 測試約束添加 / 移除
+  - 測試約束衝突偵測
+  - 至少 3 個測試
+
+- [ ] **Task E**: 建立 `tests/test_unified_controller.py`
+  讀 `tonesoul/unified_controller.py` (137L)。統一控制器。
+
+  - 測試控制器初始化
+  - 測試指令分發
+  - 至少 3 個測試
+
+- [ ] **Task F**: 建立 `tests/test_context_compiler.py`
+  讀 `tonesoul/context_compiler.py` (135L)。上下文編譯器。
+
+  - 測試上下文組裝
+  - 測試欄位合併
+  - 至少 3 個測試
+
+### 成功標準
+- [ ] 6 個新測試檔，共 20+ 測試通過
+- [ ] `ruff check` 無錯誤
+- [ ] `pytest tests/ -x` 全過，無回歸
+- [ ] commit: `test(Phase 570): service_manager + error_event + dcs + constraint_stack + unified_controller + context_compiler`
+
+---
+
+## Phase 571: 尾部收斂 — 全部小模組 (14 模組, 25+ tests)
+
+最後的掃尾。14 個小模組全部覆蓋。做完後 tonesoul/ 不再有未測模組。
+
+### 任務清單
+
+- [ ] **Task A**: 建立 `tests/test_subjectivity_admissibility.py`
+  讀 `tonesoul/memory/subjectivity_admissibility.py` (197L)。主觀性可採納判定。
+
+  - 測試可採納性判定邏輯
+  - 測試邊界案例
+  - 至少 4 個測試
+
+- [ ] **Task B**: 建立 `tests/test_memory_stats.py`
+  讀 `tonesoul/memory/stats.py` (99L)。記憶統計。
+
+  - 測試統計計算
+  - 至少 2 個測試
+
+- [ ] **Task C**: 建立 `tests/test_openclaw_embeddings.py`
+  讀 `tonesoul/memory/openclaw/embeddings.py` (68L)。OpenClaw 嵌入。
+
+  - 測試嵌入生成
+  - 至少 2 個測試
+
+- [ ] **Task D**: 建立 `tests/test_concept_store.py`
+  讀 `tonesoul/semantic/concept_store.py` (92L)。概念儲存。
+
+  - 測試概念 CRUD
+  - 至少 3 個測試
+
+- [ ] **Task E**: 建立 `tests/test_semantic_embedder.py`
+  讀 `tonesoul/semantic/embedder.py` (80L)。語義嵌入器。
+
+  - 測試嵌入計算
+  - 至少 2 個測試
+
+- [ ] **Task F**: 建立 `tests/test_perspective_axiomatic_inference.py`
+  讀 `tonesoul/council/perspectives/axiomatic_inference.py` (70L)。公理推理觀點。
+
+  - 測試推理邏輯
+  - 至少 2 個測試
+
+- [ ] **Task G**: 建立 `tests/test_perspective_critic.py`
+  讀 `tonesoul/council/perspectives/critic.py` (68L)。批評者觀點。
+
+  - 測試批評生成
+  - 至少 2 個測試
+
+- [ ] **Task H**: 建立 `tests/test_perspective_advocate.py`
+  讀 `tonesoul/council/perspectives/advocate.py` (46L)。倡議者觀點。
+
+  - 至少 2 個測試
+
+- [ ] **Task I**: 建立 `tests/test_async_queue.py`
+  讀 `tonesoul/shared/async_queue.py` (139L)。非同步佇列。
+
+  - 測試 enqueue / dequeue
+  - 測試容量限制
+  - 至少 3 個測試
+
+- [ ] **Task J**: 建立 `tests/test_shared_errors.py`
+  讀 `tonesoul/shared/errors.py` (66L)。共用錯誤定義。
+
+  - 測試各 Exception 類別
+  - 至少 2 個測試
+
+- [ ] **Task K**: 建立 `tests/test_issue_codes.py`
+  讀 `tonesoul/issue_codes.py` (96L)。問題代碼定義。
+
+  - 測試代碼格式
+  - 至少 2 個測試
+
+- [ ] **Task L**: 建立 `tests/test_corpus_schema.py`
+  讀 `tonesoul/evolution/corpus_schema.py` (48L)。語料庫 Schema。
+
+  - 測試 schema 驗證
+  - 至少 2 個測試
+
+- [ ] **Task M**: 建立 `tests/test_action_set_module.py`
+  讀 `tonesoul/action_set.py` (32L)。行動集定義。
+  注意：已有 `test_action_set` 但可能不覆蓋此檔。檢查後決定是否需要新測試。
+
+  - 至少 1 個測試
+
+- [ ] **Task N**: 建立 `tests/test_tonesoul_config.py`
+  讀 `tonesoul/config.py` (64L)。全域設定。
+
+  - 測試設定載入
+  - 至少 2 個測試
+
+### 成功標準
+- [ ] 14 個新測試檔，共 25+ 測試通過
+- [ ] `ruff check` 無錯誤
+- [ ] `pytest tests/ -x` 全過，無回歸
+- [ ] commit: `test(Phase 571): final convergence — 14 tail modules fully covered`
 
 ---
 
@@ -306,9 +411,13 @@ ToneBridge 是語魂的「橋」— 連接語境與張力的核心子系統。5 
 
 ## 技術提示
 
-- 所有新模組的 import 路徑已確認存在，直接 `from tonesoul.tonebridge.personas import ...` 即可
-- 如果模組依賴 LLM 調用，用 `monkeypatch` mock 掉，不要實際調用
-- 如果模組使用檔案系統，用 `tmp_path` fixture
-- 參考 Phase 554-559 的測試風格（特別是 `test_skill_promoter.py` 的結構）
-- 每個測試檔用 class 分組相關測試（參考 `test_alert_escalation.py`）
-- 型別模組（如 `deliberation/types.py`）通常只需測 dataclass 欄位和序列化，不需過度測試
+- 所有模組的 import 路徑已確認存在
+- LLM 客戶端（ollama_client, lmstudio_client）依賴外部服務 — **必須** mock HTTP 調用，用 `monkeypatch` 替換 `httpx.Client` 或 `requests.Session`
+- Market 模組可能依賴外部資料 — mock 掉所有 I/O
+- YSTM 模組多為純計算，直接測即可
+- 小模組（<100L）可以精簡測試，每檔 2-3 個 test 足夠
+- `ystm_demo.py` 只有 5L，如果只是 import 入口，1 個 smoke test 即可
+- 測試命名請保持 `test_[模組名].py` 或 `test_[子系統]_[模組名].py` 格式
+- 如果某模組的測試檔名會與已存在的衝突（如 `test_action_set` 已存在），請用 `test_action_set_module.py` 避免衝突
+- 每次 commit 前必須跑 `ruff check tonesoul tests` + `pytest tests/ -x --tb=short -q`
+- 參考前幾輪的測試風格（class 分組、monkeypatch mock、tmp_path fixture）
