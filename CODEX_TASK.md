@@ -1,13 +1,32 @@
-# Codex Task: Phase 560-565 — 子系統收斂：ToneBridge + Memory + Council + 邊界模組
+# Codex Task: Phase 560-565 — ✅ 已完成 (2026-03-19 審核通過)
+
+> **審核者**: 痕 (Hén)
+> **審核日期**: 2026-03-19
+> **結果**: ✅ ALL 6 PHASES PASS — 159 新測試，2144 → 2303，lint clean，無回歸
+>
+> | Phase | Commit | 新測試 | 累積 |
+> |-------|--------|--------|------|
+> | 560 | `2dd8b81` | 37 | 2181 |
+> | 561 | `c0ed1fa` | 36 | 2217 |
+> | 562 | `64f8b19` | 27 | 2244 |
+> | 563 | `37b1fdd` | 25 | 2269 |
+> | 564 | `2045abc` | 15 | 2284 |
+> | 565 | `5aaa463` | 19 | 2303 |
+>
+> 源碼修改: skill_apply.py kairos fallback 硬化 (1處，已驗證)
+> 下一輪工單待指派。
+
+---
+
+## 原始工單（保留參考）
 
 **指派者**: 痕 (Hén)
 **日期**: 2026-03-19
-**分支**: `feat/env-perception`（繼續使用，不可 push 到 master）
+**分支**: `feat/env-perception`
 **前置條件**: 2144 tests passing, lint clean
 
-> **本次工單為子系統收斂任務。6 個 Phase，按順序執行。**
-> 每完成一個 Phase 就 commit 一次，不要累積。
-> **目標：消除 ToneBridge(5模組)、Memory(3模組)、Council(3模組)、Scribe(2模組)、Deliberation(2模組)、邊界模組(2模組) 的測試盲區。**
+> 子系統收斂任務。6 個 Phase。
+> **目標：覆蓋 ToneBridge(5)、Memory(3)、Council(3)、Scribe(2)、Deliberation(2)、邊界模組(2)。**
 
 ---
 

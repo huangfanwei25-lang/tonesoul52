@@ -144,11 +144,11 @@ Codex 完成任務後，必須更新 `CODEX_HANDBACK.md`：
 | 項目 | 值 |
 |------|-----|
 | Python | 3.13.5 |
-| 測試總數 | 2144 |
+| 測試總數 | 2303 |
 | 模組數 | 214+ |
 | 核心管線 | `tonesoul/unified_pipeline.py` (18+ step flow) |
 | 安全堆疊 | DriftMonitor → AlertEscalation → CircuitBreaker → JumpMonitor |
-| 最新 Phase | 559 (YSS Pipeline + Gates Convergence) |
+| 最新 Phase | 565 (Observability + Corpus + Skill Apply) |
 | venv | `.venv/` |
 | lint | `ruff` |
 | test | `pytest` |
