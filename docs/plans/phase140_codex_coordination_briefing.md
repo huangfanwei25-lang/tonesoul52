@@ -5,6 +5,23 @@
 > **Status**: ✅ Completed, uncommitted  
 > **Audience**: CODEX (下一位接手的 agent)
 
+> Status Update (2026-03-12, Codex)
+>
+> This briefing is now historical context only. Its original `Completed, uncommitted`
+> status is no longer current.
+>
+> Current source of truth:
+>
+> - Market Mirror Phase 136-137 already landed in commit `1ab648c`
+>   (`feat(market): Phase 136-137 Dream Engine + Gold Detector [antigravity]`).
+> - The follow-up subjectivity lane already landed in commit `eab6e3f`
+>   (`feat(subjectivity): land review workflow and preview mirrors [codex]`).
+> - `git diff --cached --name-only` is empty as of 2026-03-12, so there is no pending
+>   staged Antigravity market commit to replay.
+> - `memory/crystals.jsonl` remains intentionally uncommitted.
+> - For commit-boundary coordination, prefer
+>   `docs/plans/subjectivity_market_coordination_note_2026-03-12.md`.
+
 ## Summary
 
 Antigravity 在夜間 session 完成了 Market Mirror 的兩個新 phase，所有變更都在 `tonesoul/market/` 和 `scripts/` 目錄下，**與 subjectivity review 系統完全無交集**。
