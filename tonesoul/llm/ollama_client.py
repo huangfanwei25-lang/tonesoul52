@@ -25,11 +25,22 @@ class OllamaError(Exception):
 class OllamaClient:
     """Wrapper for Ollama local LLM service."""
 
+    MAX_PROMPT_CHARS = 8192
+    _PROMPT_INJECTION_MARKERS = (
+        "<system>",
+        "<developer>",
+        "ignore previous instructions",
+        "ignore all previous",
+        "bypass safety",
+        "override the system prompt",
+    )
+
     def __init__(
         self,
         host: str = "http://localhost:11434",
         model: str = "qwen3.5:4b",
         meter: TokenMeter | None = None,
+        allowed_models: Optional[List[str]] = None,
     ):
         """
         Initialize Ollama client.
@@ -45,6 +56,11 @@ class OllamaClient:
         self._meter = meter
         self.last_metrics: LLMCallMetrics | None = None
         self.last_resolved_model: str | None = None
+        self._allowed_models = {
+            str(item).strip().lower()
+            for item in list(allowed_models or [])
+            if str(item).strip()
+        }
 
     @staticmethod
     def _deadline(timeout_seconds: float) -> float:
@@ -85,6 +101,52 @@ class OllamaClient:
                 completion_tokens=metrics.completion_tokens,
             )
 
+    @classmethod
+    def _sanitize_prompt(cls, prompt: str) -> str:
+        text = str(prompt or "")
+        if len(text) <= cls.MAX_PROMPT_CHARS:
+            return text
+        marker = "\n...[truncated]"
+        return text[: max(0, cls.MAX_PROMPT_CHARS - len(marker))] + marker
+
+    @classmethod
+    def _sanitize_messages(cls, messages: List[Dict]) -> List[Dict]:
+        sanitized: List[Dict] = []
+        for msg in messages:
+            role = msg.get("role", "user")
+            content = cls._sanitize_prompt(str(msg.get("content", "")))
+            sanitized.append({"role": role, "content": content})
+        return sanitized
+
+    @classmethod
+    def _response_has_injection_markers(cls, text: str) -> bool:
+        haystack = str(text or "").lower()
+        return any(marker in haystack for marker in cls._PROMPT_INJECTION_MARKERS)
+
+    @classmethod
+    def _sanitize_response_text(cls, text: str) -> str:
+        normalized = str(text or "")
+        if not cls._response_has_injection_markers(normalized):
+            return normalized
+
+        safe_lines = []
+        for line in normalized.splitlines():
+            stripped = line.strip()
+            if stripped and not cls._response_has_injection_markers(stripped):
+                safe_lines.append(line)
+
+        if safe_lines:
+            return "\n".join(safe_lines)
+        return "[filtered potential prompt injection]"
+
+    def _validate_model(self, model: str) -> str:
+        resolved = str(model or "").strip()
+        if not self._allowed_models:
+            return resolved
+        if resolved.lower() not in self._allowed_models:
+            raise OllamaError(f"Model not allowed by registry: {resolved}")
+        return resolved
+
     def probe_completion(
         self,
         *,
@@ -95,7 +157,9 @@ class OllamaClient:
         started = time.perf_counter()
         deadline = self._deadline(timeout_seconds)
         try:
-            model = self._ensure_model(timeout_seconds=self._remaining_seconds(deadline))
+            model = self._validate_model(
+                self._ensure_model(timeout_seconds=self._remaining_seconds(deadline))
+            )
         except TimeoutError:
             return {
                 "ok": False,
@@ -107,7 +171,7 @@ class OllamaClient:
             }
         payload = {
             "model": model,
-            "prompt": prompt,
+            "prompt": self._sanitize_prompt(prompt),
             "stream": False,
         }
         try:
@@ -127,7 +191,7 @@ class OllamaClient:
                     "latency_ms": latency_ms,
                 }
             data = response.json()
-            text = str(data.get("response", "")).strip()
+            text = self._sanitize_response_text(str(data.get("response", "")).strip())
             return {
                 "ok": bool(text),
                 "supported": True,
@@ -246,16 +310,16 @@ class OllamaClient:
             prompt: User prompt
             system: Optional system prompt
         """
-        model = self._ensure_model()
+        model = self._validate_model(self._ensure_model())
 
         payload = {
             "model": model,
-            "prompt": prompt,
+            "prompt": self._sanitize_prompt(prompt),
             "stream": False,
         }
 
         if system:
-            payload["system"] = system
+            payload["system"] = self._sanitize_prompt(system)
 
         try:
             response = requests.post(f"{self.host}/api/generate", json=payload, timeout=120)
@@ -263,7 +327,7 @@ class OllamaClient:
             if response.status_code == 200:
                 data = response.json()
                 self._record_usage(model, data)
-                return data.get("response", "")
+                return self._sanitize_response_text(data.get("response", ""))
             else:
                 raise OllamaError(
                     f"Ollama HTTP {response.status_code}",
@@ -284,17 +348,16 @@ class OllamaClient:
             messages: List of {role, content} dicts
             system: Optional system prompt
         """
-        model = self._ensure_model()
+        model = self._validate_model(self._ensure_model())
 
         # Convert to Ollama format
         formatted_messages = []
         if system:
-            formatted_messages.append({"role": "system", "content": system})
+            formatted_messages.append(
+                {"role": "system", "content": self._sanitize_prompt(system)}
+            )
 
-        for msg in messages:
-            role = msg.get("role", "user")
-            content = msg.get("content", "")
-            formatted_messages.append({"role": role, "content": content})
+        formatted_messages.extend(self._sanitize_messages(messages))
 
         payload = {
             "model": model,
@@ -308,7 +371,7 @@ class OllamaClient:
             if response.status_code == 200:
                 data = response.json()
                 self._record_usage(model, data)
-                return data.get("message", {}).get("content", "")
+                return self._sanitize_response_text(data.get("message", {}).get("content", ""))
             else:
                 raise OllamaError(
                     f"Ollama HTTP {response.status_code}",
@@ -328,17 +391,16 @@ class OllamaClient:
         timeout_seconds: float = 120.0,
     ) -> str:
         """Multi-turn chat with configurable timeout and resolved-model tracking."""
-        model = self._ensure_model()
+        model = self._validate_model(self._ensure_model())
         self.last_resolved_model = model
 
         formatted_messages = []
         if system:
-            formatted_messages.append({"role": "system", "content": system})
+            formatted_messages.append(
+                {"role": "system", "content": self._sanitize_prompt(system)}
+            )
 
-        for msg in messages:
-            role = msg.get("role", "user")
-            content = msg.get("content", "")
-            formatted_messages.append({"role": role, "content": content})
+        formatted_messages.extend(self._sanitize_messages(messages))
 
         payload = {
             "model": model,
@@ -356,7 +418,7 @@ class OllamaClient:
             if response.status_code == 200:
                 data = response.json()
                 self._record_usage(model, data)
-                return data.get("message", {}).get("content", "")
+                return self._sanitize_response_text(data.get("message", {}).get("content", ""))
             raise OllamaError(
                 f"Ollama HTTP {response.status_code}",
                 status_code=response.status_code,

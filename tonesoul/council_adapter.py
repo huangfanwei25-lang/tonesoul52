@@ -14,6 +14,7 @@ warnings.warn(
     DeprecationWarning,
     stacklevel=2,
 )
+__deprecated__ = True  # Scheduled for removal. Use tonesoul.council.runtime instead.
 
 
 def _iso_now() -> str:

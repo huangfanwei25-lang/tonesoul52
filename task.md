@@ -5994,3 +5994,65 @@
 - `python -m pytest tests/test_subjectivity_admissibility.py tests/test_memory_stats.py tests/test_openclaw_embeddings.py tests/test_concept_store.py tests/test_semantic_embedder.py tests/test_perspective_axiomatic_inference.py tests/test_perspective_critic.py tests/test_perspective_advocate.py tests/test_async_queue.py tests/test_shared_errors.py tests/test_issue_codes.py tests/test_corpus_schema.py tests/test_action_set_module.py tests/test_tonesoul_config.py -q` -> 44 passed, 2 warnings
 - `python -m ruff check tonesoul tests` -> passed
 - `python -m pytest tests/ -x --tb=short -q` -> 2491 passed, 9 warnings
+
+## Phase 572: Integration Quality Hardening - ToneBridge + Memory Lifecycle + Deliberation Council (2026-03-20)
+- [x] add `tests/test_integration_tonebridge_pipeline.py` for entropy overload, low/high-tension governance routing, rupture detection, council blocking, and dispatch trace propagation
+- [x] add `tests/test_integration_memory_lifecycle.py` for gateway round-trips, decay ordering, crystallizer persistence/freshness, admissibility derivation, and memory stats aggregation
+- [x] add `tests/test_integration_deliberation_council.py` for sync/async deliberation flows, conflict-biased safety routing, human summary contract, and persona track recording
+- [x] validate targeted tests
+**Success Criteria**: ToneBridge, memory lifecycle, and deliberation/council orchestration gain deterministic integration coverage without touching protected kernel/pipeline core structure.
+**Validation**:
+- `python -m ruff check tests/test_integration_tonebridge_pipeline.py tests/test_integration_memory_lifecycle.py tests/test_integration_deliberation_council.py` -> passed
+- `python -m pytest tests/test_integration_tonebridge_pipeline.py tests/test_integration_memory_lifecycle.py tests/test_integration_deliberation_council.py -q` -> 19 passed, 2 warnings
+
+## Phase 573: Deprecated Module Audit + Unified Markers (2026-03-20)
+- [x] audit legacy modules and capture import/reference chains for `tonesoul/council_adapter.py`, `tonesoul/role_council.py`, `tonesoul/tonesoul_llm.py`, `tonesoul/unified_core.py`, `tonesoul/market/forecaster.py`, `tonesoul/market/gold_detector.py`, and `tonesoul/_legacy/unified_core_compat.py`
+- [x] add unified `__deprecated__ = True` markers with successor notes across audited legacy modules
+- [x] confirm `tonesoul/__init__.py` and `tonesoul/market/__init__.py` do not re-export deprecated surfaces
+- [x] record the audit summary in `CODEX_HANDBACK.md`
+**Success Criteria**: Deprecated compatibility modules are machine-discoverable, successor paths are explicit, and the current import chain is documented for later removal planning.
+**Validation**:
+- `python -m ruff check tonesoul/council_adapter.py tonesoul/role_council.py tonesoul/tonesoul_llm.py tonesoul/unified_core.py tonesoul/market/forecaster.py tonesoul/market/gold_detector.py tonesoul/_legacy/unified_core_compat.py` -> passed
+
+## Phase 574: Security Boundary Tests - Memory + Governance + LLM (2026-03-20)
+- [x] add `tests/test_security_memory_boundary.py` for invalid payload rejection, source-record-id fail-closed behavior, excerpt truncation, injection-like search safety, and consent withdrawal enforcement
+- [x] add `tests/test_security_governance_bypass.py` for lockdown/constraint/DCS bypass resistance
+- [x] add `tests/test_security_llm_boundary.py` for prompt truncation, injection marker sanitization, and model allowlist enforcement across local LLM clients
+- [x] harden `tonesoul/dcs.py` so lockdown defaults cannot be reopened by override policy fragments
+- [x] harden `tonesoul/llm/ollama_client.py` and `tonesoul/llm/lmstudio_client.py` with prompt bounds, response sanitization, and allowlist checks
+**Success Criteria**: Memory writes, governance closures, and local LLM adapters fail closed under malformed or adversarial inputs.
+**Validation**:
+- `python -m ruff check tonesoul/dcs.py tonesoul/llm/ollama_client.py tonesoul/llm/lmstudio_client.py tests/test_security_memory_boundary.py tests/test_security_governance_bypass.py tests/test_security_llm_boundary.py` -> passed
+- `python -m pytest tests/test_security_memory_boundary.py tests/test_security_governance_bypass.py tests/test_security_llm_boundary.py -q` -> 18 passed, 2 warnings
+
+## Phase 575: Property-Based Testing - Tension Engine + SoulDB + Drift Monitor (2026-03-20)
+- [x] add `tests/test_property_tension_engine.py` for bounded totals, entropy normalization, friction normalization, persistence monotonicity, and empty-vector behavior
+- [x] add `tests/test_property_soul_db.py` for search/timeline/detail invariants across randomized records
+- [x] add `tests/test_property_drift_monitor.py` for bounded drift, step accounting, valid alert enums, stable-home invariants, and repeated-shift warning behavior
+- [x] clamp `tonesoul/tension_engine.py::_compute_entropy()` to `[0, 1]` for floating-point edge cases exposed by Hypothesis
+- [x] validate targeted tests
+**Success Criteria**: Randomized edge cases cannot push core tension/memory/drift helpers outside their declared numeric or structural contracts.
+**Validation**:
+- `python -m ruff check tonesoul/tension_engine.py tests/test_property_tension_engine.py tests/test_property_soul_db.py tests/test_property_drift_monitor.py` -> passed
+- `python -m pytest tests/test_property_tension_engine.py tests/test_property_soul_db.py tests/test_property_drift_monitor.py -q` -> 15 passed, 2 warnings
+
+## Phase 576: Thin Test Expansion - Demo Entry + Dispatch + Issue Codes + Handoff Builder (2026-03-20)
+- [x] expand `tests/test_ystm_demo_entry.py` beyond import smoke coverage
+- [x] expand `tests/test_unified_pipeline_dispatch.py` for dispatch route/runtime trace assertions
+- [x] expand `tests/test_issue_codes.py` for raw and formatted code rendering branches
+- [x] expand `tests/test_handoff_builder_security.py` for security-focused handoff builder behavior
+- [x] validate targeted tests
+**Success Criteria**: Previously thin tests now exercise meaningful branch and contract behavior instead of import-only smoke paths.
+**Validation**:
+- `python -m ruff check tests/test_ystm_demo_entry.py tests/test_unified_pipeline_dispatch.py tests/test_issue_codes.py tests/test_handoff_builder_security.py` -> passed
+- `python -m pytest tests/test_ystm_demo_entry.py tests/test_unified_pipeline_dispatch.py tests/test_issue_codes.py tests/test_handoff_builder_security.py -q` -> 18 passed, 2 warnings
+
+## Phase 577: CI + README + Pyproject Sync (2026-03-20)
+- [x] update `.github/workflows/pytest-ci.yml` to run blocking `ruff check tonesoul tests` and `pytest tests/ -x --tb=short -q`
+- [x] refresh `README.md` quality snapshot with the current regression count and tested-module coverage
+- [x] add `[tool.pytest.ini_options]` to `pyproject.toml` for editor/tooling sync on `testpaths`, asyncio mode, and markers
+- [x] append Phase 572-577 execution history to `task.md`
+**Success Criteria**: CI, packaging metadata, and repository status docs reflect the current quality gate and test surface.
+**Validation**:
+- `python -m ruff check tonesoul tests` -> passed
+- `python -m pytest tests/ -x --tb=short -q` -> 2555 passed, 9 warnings

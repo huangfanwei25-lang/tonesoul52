@@ -26,11 +26,22 @@ class LMStudioError(Exception):
 class LMStudioClient:
     """Wrapper for LM Studio's OpenAI-compatible local API."""
 
+    MAX_PROMPT_CHARS = 8192
+    _PROMPT_INJECTION_MARKERS = (
+        "<system>",
+        "<developer>",
+        "ignore previous instructions",
+        "ignore all previous",
+        "bypass safety",
+        "override the system prompt",
+    )
+
     def __init__(
         self,
         host: str = "http://localhost:1234",
         model: str | None = None,
         meter: TokenMeter | None = None,
+        allowed_models: Optional[List[str]] = None,
     ):
         """
         Initialize LM Studio client.
@@ -45,6 +56,11 @@ class LMStudioClient:
         self._chat_history: List[Dict] = []
         self._meter = meter
         self.last_metrics: LLMCallMetrics | None = None
+        self._allowed_models = {
+            str(item).strip().lower()
+            for item in list(allowed_models or [])
+            if str(item).strip()
+        }
 
     @staticmethod
     def _deadline(timeout_seconds: float) -> float:
@@ -93,6 +109,52 @@ class LMStudioClient:
                 completion_tokens=metrics.completion_tokens,
             )
 
+    @classmethod
+    def _sanitize_prompt(cls, prompt: str) -> str:
+        text = str(prompt or "")
+        if len(text) <= cls.MAX_PROMPT_CHARS:
+            return text
+        marker = "\n...[truncated]"
+        return text[: max(0, cls.MAX_PROMPT_CHARS - len(marker))] + marker
+
+    @classmethod
+    def _sanitize_messages(cls, messages: List[Dict]) -> List[Dict]:
+        sanitized: List[Dict] = []
+        for msg in messages:
+            role = msg.get("role", "user")
+            content = cls._sanitize_prompt(str(msg.get("content", "")))
+            sanitized.append({"role": role, "content": content})
+        return sanitized
+
+    @classmethod
+    def _response_has_injection_markers(cls, text: str) -> bool:
+        haystack = str(text or "").lower()
+        return any(marker in haystack for marker in cls._PROMPT_INJECTION_MARKERS)
+
+    @classmethod
+    def _sanitize_response_text(cls, text: str) -> str:
+        normalized = str(text or "")
+        if not cls._response_has_injection_markers(normalized):
+            return normalized
+
+        safe_lines = []
+        for line in normalized.splitlines():
+            stripped = line.strip()
+            if stripped and not cls._response_has_injection_markers(stripped):
+                safe_lines.append(line)
+
+        if safe_lines:
+            return "\n".join(safe_lines)
+        return "[filtered potential prompt injection]"
+
+    def _validate_model(self, model: str) -> str:
+        resolved = str(model or "").strip()
+        if not self._allowed_models:
+            return resolved
+        if resolved.lower() not in self._allowed_models:
+            raise LMStudioError(f"Model not allowed by registry: {resolved}")
+        return resolved
+
     def probe_completion(
         self,
         *,
@@ -103,7 +165,9 @@ class LMStudioClient:
         started = time.perf_counter()
         deadline = self._deadline(timeout_seconds)
         try:
-            model = self._get_model(timeout_seconds=self._remaining_seconds(deadline))
+            model = self._validate_model(
+                self._get_model(timeout_seconds=self._remaining_seconds(deadline))
+            )
         except TimeoutError:
             return {
                 "ok": False,
@@ -125,7 +189,7 @@ class LMStudioClient:
             }
         payload = {
             "model": model,
-            "messages": [{"role": "user", "content": prompt}],
+            "messages": [{"role": "user", "content": self._sanitize_prompt(prompt)}],
             "max_tokens": 32,
             "temperature": 0.0,
             "stream": False,
@@ -151,7 +215,7 @@ class LMStudioClient:
             message = (
                 choices[0]["message"]["content"] if isinstance(choices, list) and choices else ""
             )
-            text = str(message or "").strip()
+            text = self._sanitize_response_text(str(message or "").strip())
             return {
                 "ok": bool(text),
                 "supported": True,
@@ -262,16 +326,15 @@ class LMStudioClient:
             messages: List of {role, content} dicts
             system: Optional system prompt
         """
-        model = self._get_model()
+        model = self._validate_model(self._get_model())
 
         formatted_messages = []
         if system:
-            formatted_messages.append({"role": "system", "content": system})
+            formatted_messages.append(
+                {"role": "system", "content": self._sanitize_prompt(system)}
+            )
 
-        for msg in messages:
-            role = msg.get("role", "user")
-            content = msg.get("content", "")
-            formatted_messages.append({"role": role, "content": content})
+        formatted_messages.extend(self._sanitize_messages(messages))
 
         payload = {
             "model": model,
@@ -291,7 +354,7 @@ class LMStudioClient:
             if response.status_code == 200:
                 data = response.json()
                 self._record_usage(model, data)
-                return data["choices"][0]["message"]["content"]
+                return self._sanitize_response_text(data["choices"][0]["message"]["content"])
             else:
                 raise LMStudioError(
                     f"LM Studio HTTP {response.status_code}: {response.text[:200]}",

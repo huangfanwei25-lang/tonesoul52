@@ -14,6 +14,8 @@ from typing import TYPE_CHECKING, AsyncIterator, Dict, Optional, Tuple
 if TYPE_CHECKING:
     from tonesoul.unified_core import UnifiedCore
 
+__deprecated__ = True  # Scheduled for removal. Use tonesoul.unified_pipeline instead.
+
 
 def process_with_domain_compat(
     core: "UnifiedCore",

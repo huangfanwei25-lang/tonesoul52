@@ -51,10 +51,14 @@ jobs:
         run: |
           python scripts/verify_citation_integrity.py --strict
 
+      - name: Run ruff (blocking)
+        run: |
+          ruff check tonesoul tests
+
       - name: Run pytest (blocking)
         run: |
           set -o pipefail
-          pytest -q --tb=short | tee pytest_ci.log
+          pytest tests/ -x --tb=short -q | tee pytest_ci.log
 
       - name: Upload pytest logs
         if: always()

@@ -33,6 +33,7 @@ OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434/api/generate")
 OLLAMA_CHAT_URL = os.getenv("OLLAMA_URL", "http://localhost:11434/api/chat")
 DEFAULT_MODEL = os.getenv("TS_MODEL", "gemma3:4b")
 _LEGACY_WARNING_EMITTED = False
+__deprecated__ = True  # Scheduled for removal. Use tonesoul.unified_pipeline instead.
 
 
 def _warn_legacy_tonesoul_llm_once() -> None:

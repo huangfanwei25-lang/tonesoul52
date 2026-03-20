@@ -139,18 +139,14 @@ then crystallizes repeated high-value patterns into durable rules.
 In plain words: important things are auto-kept, chatter is auto-forgotten.
 </details>
 
-## Numbers (Snapshot: 2026-03-03)
+## Quality Snapshot (2026-03-20)
 
 | Metric | Value |
 |---|---|
-| Tests passing | 1,163 |
-| Journal entries | 1,284 |
-| Active crystals | 3 |
-| Resonance convergences | 28 |
-| Flow detections | 39 |
-| Repair events logged | 74 |
-| Pipeline size (`unified_pipeline.py`) | 1,517 lines |
-| Paradox fixtures | 7 |
+| Tests passing | 2,555 |
+| Tested `tonesoul/` modules | 186 / 186 |
+| Quality hardening footprint | 13 files touched (9 new test files, 4 expanded) |
+| Default CI gates | `ruff check tonesoul tests` + `pytest tests/ -x --tb=short -q` |
 
 ## License
 

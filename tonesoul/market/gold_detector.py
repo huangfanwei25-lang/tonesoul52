@@ -26,6 +26,7 @@ warnings.warn(
     DeprecationWarning,
     stacklevel=2,
 )
+__deprecated__ = True  # Scheduled for removal. Use tonesoul.market.analyzer instead.
 
 
 @dataclass

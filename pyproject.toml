@@ -80,3 +80,10 @@ extend-exclude = ["scripts/legacy"]
 [tool.ruff.lint]
 select = ["E", "F", "W", "I"]
 ignore = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+markers = [
+    "asyncio: mark test as asyncio",
+]

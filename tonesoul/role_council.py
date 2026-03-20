@@ -16,6 +16,7 @@ STANCE_SCORES = {
 
 RISK_ROLES = {"Risk", "Opposition"}
 AUDIT_ROLES = {"Audit", "Recorder"}
+__deprecated__ = True  # Scheduled for removal. Use tonesoul.council.runtime instead.
 
 
 def _decision_mode(context: Dict[str, object]) -> str:

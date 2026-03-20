@@ -295,10 +295,15 @@ def test_pytest_ci_workflow_triggers_and_blocking_runner() -> None:
     assert isinstance(citation_cmd, str)
     assert "python scripts/verify_citation_integrity.py --strict" in citation_cmd
 
+    ruff_step = _find_step(steps, "Run ruff (blocking)")
+    ruff_cmd = ruff_step.get("run", "")
+    assert isinstance(ruff_cmd, str)
+    assert "ruff check tonesoul tests" in ruff_cmd
+
     run_step = _find_step(steps, "Run pytest (blocking)")
     run_cmd = run_step.get("run", "")
     assert isinstance(run_cmd, str)
-    assert "pytest -q --tb=short" in run_cmd
+    assert "pytest tests/ -x --tb=short -q" in run_cmd
     assert run_step.get("continue-on-error") is not True
 
 

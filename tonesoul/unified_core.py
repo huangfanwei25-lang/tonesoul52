@@ -103,6 +103,7 @@ INTERVENTION_MATRIX = {
         LambdaState.CHAOTIC: InterventionLevel.BLOCK,
     },
 }
+__deprecated__ = True  # Scheduled for removal. Use tonesoul.unified_pipeline instead.
 
 
 @dataclass

@@ -407,7 +407,8 @@ class TensionEngine:
         if max_entropy <= 0:
             return 0.0
 
-        return min(1.0, raw_entropy / max_entropy)
+        normalized_entropy = raw_entropy / max_entropy
+        return min(1.0, max(0.0, normalized_entropy))
 
     def _compute_delta_s_ecs(
         self,
