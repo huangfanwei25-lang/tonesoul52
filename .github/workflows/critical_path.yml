@@ -45,7 +45,7 @@ jobs:
       - name: Verify core imports
         run: |
           export PYTHONPATH=.
-          python -c "from tonesoul.unified_core import UnifiedCore; print('UnifiedCore OK')"
+          python -c "from tonesoul.unified_pipeline import UnifiedPipeline; print('UnifiedPipeline OK')"
           python -c "from tonesoul.council import PreOutputCouncil; print('PreOutputCouncil OK')"
           python -c "from tonesoul.poav import score; print('POAV OK')"
           python -c "from tonesoul.vow_system import VowEnforcer; print('VowEnforcer OK')"

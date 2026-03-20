@@ -5,7 +5,7 @@ from typing import Dict, List, Optional, Tuple
 
 import yaml
 
-from .role_council import build_council_summary
+from .council.runtime import build_council_summary
 from .ystm.schema import stable_hash, utc_now
 
 

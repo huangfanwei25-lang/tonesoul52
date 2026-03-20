@@ -144,11 +144,11 @@ Codex 完成任務後，必須更新 `CODEX_HANDBACK.md`：
 | 項目 | 值 |
 |------|-----|
 | Python | 3.13.5 |
-| 測試總數 | 2572 |
-| 模組數 | 219+ |
+| 測試總數 | 2526 |
+| 模組數 | 212+ |
 | 核心管線 | `tonesoul/unified_pipeline.py` (18+ step flow) |
 | 安全堆疊 | DriftMonitor → AlertEscalation → CircuitBreaker → JumpMonitor |
-| 最新 Phase | 583 (Inter-Soul Tension Protocol) |
+| 最新 Phase | 583 (578-581 deprecated removal + 582-583 inter-soul protocol) |
 | venv | `.venv/` |
 | lint | `ruff` |
 | test | `pytest` |

@@ -26,10 +26,8 @@ LEDGER_CANDIDATES = [
 ]
 
 IMPORT_TARGETS = [
-    "tonesoul.unified_core",
     "tonesoul.time_island",
     "tonesoul.yss_gates",
-    "tonesoul.tonesoul_llm",
     "tonesoul.config",
 ]
 

@@ -19,7 +19,7 @@ class DriftResult:
     """Result of a drift computation."""
 
     drift: float = 0.0                      # Euclidean distance from H
-    per_axis: Dict[str, float] = None       # type: ignore[assignment]
+    per_axis: Optional[Dict[str, float]] = None
     exceeded: bool = False
     threshold: float = 1.0
 

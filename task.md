@@ -6083,3 +6083,48 @@
 - `python -m pytest tests/test_inter_soul_negotiation.py tests/test_inter_soul_sovereignty.py -q` -> 8 passed, 1 warning
 - `python -m ruff check tonesoul tests` -> passed
 - `python -m pytest tests/ -x --tb=short -q` -> 2572 passed, 9 warnings
+
+## Phase 578: Remove Thin Deprecated Wrappers (2026-03-20)
+- [x] delete `tonesoul/council_adapter.py` and `tests/test_council_adapter_deprecated.py`
+- [x] delete `tonesoul/tonesoul_llm.py` and `tests/test_tonesoul_llm_deprecated.py`
+- [x] remove `tonesoul.tonesoul_llm` from `scripts/healthcheck.py` import probes
+- [x] validate full lint and regression after wrapper removal
+**Success Criteria**: the two thinnest deprecated compatibility wrappers are gone, healthcheck no longer treats them as supported imports, and the remaining runtime surfaces keep passing regression.
+**Validation**:
+- `python -m ruff check tonesoul tests` -> passed
+- `python -m pytest tests/ -x --tb=short -q` -> 2568 passed, 9 warnings
+
+## Phase 579: Internalize Council Summary Logic (2026-03-20)
+- [x] move `build_council_summary` and its helper logic into `tonesoul/council/runtime.py`
+- [x] update `tonesoul/frame_router.py` to import the summary builder from `tonesoul.council.runtime`
+- [x] delete `tonesoul/role_council.py`
+- [x] delete `tests/test_role_council_integration.py`
+- [x] keep the transcript key `role_council` unchanged for downstream compatibility
+**Success Criteria**: council summary generation lives with the active runtime, no imports remain on `tonesoul.role_council`, and downstream transcript consumers observe no behavioral regression.
+**Validation**:
+- `python -m ruff check tonesoul tests` -> passed
+- `python -m pytest tests/ -x --tb=short -q` -> 2567 passed, 9 warnings
+
+## Phase 580: Remove UnifiedCore Legacy Chain (2026-03-20)
+- [x] delete `tonesoul/unified_core.py`
+- [x] delete `tonesoul/_legacy/unified_core_compat.py` and the now-unused `_legacy` package shim
+- [x] delete `tests/test_unified_core.py` and `tests/test_unified_core_properties.py`
+- [x] remove `tonesoul.unified_core` from `scripts/healthcheck.py`
+- [x] replace `examples/demo_loop_integration.py` with a `UnifiedPipeline`-based example
+- [x] delete repo-root helper `fix_nonlocal.py`
+**Success Criteria**: the repository no longer exposes `UnifiedCore`, examples teach `UnifiedPipeline` as the supported entrypoint, and the removed legacy chain leaves no live imports behind.
+**Validation**:
+- `python -m ruff check tonesoul tests` -> passed
+- `python -m pytest tests/ -x --tb=short -q` -> 2545 passed, 8 warnings
+
+## Phase 581: Remove Deprecated Market Modules and Exit Scripts (2026-03-20)
+- [x] delete `tonesoul/market/forecaster.py` and `tonesoul/market/gold_detector.py`
+- [x] delete `tests/test_forecaster.py`, `tests/test_gold_detector.py`, and `tests/test_market_deprecation.py`
+- [x] replace `scripts/run_gold_scan.py`, `scripts/run_market_sweep.py`, and `scripts/test_dream_engine_5289.py` with explicit Phase 581 exit notices
+- [x] repurpose script coverage to assert `SystemExit` notices via `tests/test_run_market_sweep.py` and `tests/test_run_market_removed_scripts.py`
+- [x] validate final full lint and regression after market cleanup
+**Success Criteria**: deprecated market surfaces are fully removed, executable scripts fail loudly with migration guidance instead of silently importing dead modules, and repository regression remains green above the expected test-count floor.
+**Validation**:
+- `python -m ruff check tonesoul tests` -> passed
+- `python -m ruff check scripts/run_gold_scan.py scripts/run_market_sweep.py scripts/test_dream_engine_5289.py tests/test_run_market_sweep.py tests/test_run_market_removed_scripts.py` -> passed
+- `python -m pytest tests/ -x --tb=short -q` -> 2526 passed, 6 warnings

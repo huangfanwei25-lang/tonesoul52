@@ -1,114 +1,44 @@
-"""
-Demo: LoopEngine Integration with UnifiedCore
+"""Demo: conversational loop integration with UnifiedPipeline."""
 
-This demo showcases the Ralph-inspired iterative self-correction feature.
-"""
+from __future__ import annotations
 
-import asyncio
 import sys
 from pathlib import Path
 
-# Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from tonesoul.unified_core import UnifiedCore
-from tonesoul.loop.events import PromiseDetectedEvent, IterationStartEvent
+from tonesoul.unified_pipeline import UnifiedPipeline
 
 
-async def demo_iterative_correction():
-    """Demonstrate iterative self-correction using LoopEngine"""
+def _append_history(history: list[dict[str, object]], user_message: str, response: str) -> None:
+    history.append({"role": "user", "parts": [user_message]})
+    history.append({"role": "model", "parts": [response]})
 
+
+def demo_pipeline_loop() -> None:
     print("=" * 70)
-    print("  ToneSoul + Ralph: Iterative Self-Correction Demo")
-    print("=" * 70)
-
-    # Initialize UnifiedCore
-    print("\n[1] Initializing UnifiedCore...")
-    core = UnifiedCore(
-        persona_payload={
-            "id": "demo_persona",
-            "home_vector": {"deltaT": 0.5, "deltaS": 0.5, "deltaR": 0.5},
-            "tolerance": {"deltaT": 0.3, "deltaS": 0.35, "deltaR": 0.4},
-        }
-    )
-    print("✓ Core initialized")
-
-    # Test output that might need correction
-    test_output = "This is a test output that might have semantic drift."
-
-    print(f"\n[2] Processing output with iterative correction...")
-    print(f"Input: {test_output}")
-    print()
-
-    # Use process_with_correction
-    result = await core.process_with_correction(
-        output=test_output,
-        max_corrections=3,
-        correction_threshold=0.5,
-    )
-
-    # Display results
-    print("\n" + "=" * 70)
-    print("  Results")
+    print("  ToneSoul UnifiedPipeline Loop Demo")
     print("=" * 70)
 
-    print(f"\n📊 Summary:")
-    print(f"  Final Output: {result['final_output']}")
-    print(f"  Corrections: {result['corrections']}")
-    print(f"  State: {result['state']}")
-    print(f"  Duration: {result['duration_ms']}ms")
-    print(f"  Success: {result['success']}")
+    pipeline = UnifiedPipeline(mirror_enabled=False)
+    history: list[dict[str, object]] = []
+    prompts = [
+        "Summarize a cautious rollout plan for a new feature.",
+        "Refine it with one rollback checkpoint and an accountability note.",
+    ]
 
-    # Display correction history
-    print(f"\n📝 Correction History:")
-    for i, correction in enumerate(result["correction_history"], 1):
-        tension = correction.get("semantic_tension", {})
-        print(f"  Iteration {i}:")
-        print(f"    - Mean Tension: {tension.get('mean', 0):.3f}")
-        print(f"    - Intervention: {correction.get('intervention', 'N/A')}")
-        print(f"    - Corrected: {correction.get('corrected', False)}")
+    for index, prompt in enumerate(prompts, start=1):
+        print(f"\n[{index}] User: {prompt}")
+        result = pipeline.process(user_message=prompt, history=history)
 
-    # Display events
-    print(f"\n📡 Events ({len(result['events'])}):")
-    for event in result["events"]:
-        if isinstance(event, IterationStartEvent):
-            print(f"  → Iteration {event.iteration}/{event.max_iterations} started")
-        elif isinstance(event, PromiseDetectedEvent):
-            print(f"  ✓ Promise detected: {event.phrase}")
-        elif event.event_type == "loop_complete":
-            print(f"  ✓ Loop completed")
+        print(f"Response: {result.response}")
+        print(f"Council verdict: {result.council_verdict.get('verdict')}")
+        print(f"Dispatch route: {result.dispatch_trace.get('route')}")
 
-    print("\n" + "=" * 70)
-    print("  Demo Complete")
-    print("=" * 70)
+        _append_history(history, prompt, result.response)
 
-
-async def demo_simple_usage():
-    """Simple usage example"""
-    print("\n\n" + "=" * 70)
-    print("  Simple Usage Example")
-    print("=" * 70)
-
-    # Minimal setup
-    core = UnifiedCore(
-        persona_payload={
-            "id": "simple",
-            "home_vector": {"deltaT": 0.5, "deltaS": 0.5, "deltaR": 0.5},
-        }
-    )
-
-    # Process with correction
-    result = await core.process_with_correction(
-        output="Simple test",
-        max_corrections=2,
-    )
-
-    print(f"\nFinal: {result['final_output']}")
-    print(f"Iterations: {result['corrections']}")
-    print(f"Success: {result['success']}")
+    print("\nDemo complete.")
 
 
 if __name__ == "__main__":
-    # Run demos
-    asyncio.run(demo_iterative_correction())
-    asyncio.run(demo_simple_usage())
+    demo_pipeline_loop()
