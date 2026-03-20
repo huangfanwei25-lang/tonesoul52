@@ -144,11 +144,11 @@ Codex 完成任務後，必須更新 `CODEX_HANDBACK.md`：
 | 項目 | 值 |
 |------|-----|
 | Python | 3.13.5 |
-| 測試總數 | 2555 |
-| 模組數 | 214+ |
+| 測試總數 | 2572 |
+| 模組數 | 219+ |
 | 核心管線 | `tonesoul/unified_pipeline.py` (18+ step flow) |
 | 安全堆疊 | DriftMonitor → AlertEscalation → CircuitBreaker → JumpMonitor |
-| 最新 Phase | 577 (品質深化 — integration / security / property-based testing) |
+| 最新 Phase | 583 (Inter-Soul Tension Protocol) |
 | venv | `.venv/` |
 | lint | `ruff` |
 | test | `pytest` |
@@ -163,6 +163,7 @@ Codex 完成任務後，必須更新 `CODEX_HANDBACK.md`：
 | `tonesoul/action_set.py` | 行動集策略 (normal/cautious/lockdown) |
 | `tonesoul/drift_monitor.py` | EMA 語義漂移偵測 |
 | `tonesoul/jump_monitor.py` | 奇點跳躍偵測 |
+| `tonesoul/inter_soul/` | 跨靈魂張力協議 (TensionPacket / Bridge / Negotiation / Sovereignty) |
 | `tonesoul/memory/crystallizer.py` | 記憶結晶 + 新鮮度衰減 |
 | `tonesoul/dream_engine.py` | 離線碰撞 + 驗證任務 |
 | `task.md` | Phase 歷史紀錄 |

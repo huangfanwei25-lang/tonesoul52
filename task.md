@@ -6056,3 +6056,30 @@
 **Validation**:
 - `python -m ruff check tonesoul tests` -> passed
 - `python -m pytest tests/ -x --tb=short -q` -> 2555 passed, 9 warnings
+
+## Phase 582: Inter-Soul Tension Protocol - Core Types + Local Bridge (2026-03-20)
+- [x] add `tonesoul/inter_soul/__init__.py` with package docstring and exported public API
+- [x] add `tonesoul/inter_soul/types.py` with `TensionPacket`, `RuptureNotice`, `NegotiationOutcome`, and `SovereigntyBoundary`
+- [x] implement HMAC-backed `TensionPacket.sign()` / `verify_signature()` aligned with the repository handoff signing pattern
+- [x] add `tonesoul/inter_soul/bridge.py` with `InterSoulBridge` protocol and append-only `LocalInterSoulBridge`
+- [x] add `tests/test_inter_soul_types.py` for dataclass round-trip, signature verification, tamper rejection, and enum stability
+- [x] add `tests/test_inter_soul_bridge.py` for FIFO packet sharing, rupture propagation, history sedimentation, and bridge-level negotiation
+**Success Criteria**: the repo exposes a coherent `tonesoul.inter_soul` public surface with signed tension packets, visible rupture notices, and a local bridge that preserves exchange history instead of erasing it.
+**Validation**:
+- `python -m ruff check tonesoul/inter_soul tests/test_inter_soul_types.py tests/test_inter_soul_bridge.py` -> passed
+- `python -m pytest tests/test_inter_soul_types.py tests/test_inter_soul_bridge.py -q` -> 9 passed, 1 warning
+
+## Phase 583: Inter-Soul Tension Protocol - Negotiation Engine + Sovereignty Guard (2026-03-20)
+- [x] add `tonesoul/inter_soul/negotiation.py` with `NegotiationResult` and `TensionNegotiator`
+- [x] add `tonesoul/inter_soul/sovereignty.py` with `SovereigntyGuard`, AXIOMS loading, and protected-field violation checks
+- [x] map current sovereign hard constraints from `AXIOMS.json` P0 axioms to packet governance fields: Axiom `3` -> `zone`, Axiom `6` -> `lambda_state`
+- [x] support both repo-style `{"axioms": [...]}` and list-style `[{...}]` axiom payloads when building boundaries
+- [x] add `tests/test_inter_soul_negotiation.py` for `ALIGNED`, `DIVERGENT`, and `SOVEREIGN_OVERRIDE`
+- [x] add `tests/test_inter_soul_sovereignty.py` for boundary construction and protected-field detection
+- [x] validate targeted tests and full regression
+**Success Criteria**: inter-soul negotiation keeps divergence visible by design, and sovereign boundary violations fail closed before convergence logic can smooth them away.
+**Validation**:
+- `python -m ruff check tonesoul/inter_soul tests/test_inter_soul_negotiation.py tests/test_inter_soul_sovereignty.py` -> passed
+- `python -m pytest tests/test_inter_soul_negotiation.py tests/test_inter_soul_sovereignty.py -q` -> 8 passed, 1 warning
+- `python -m ruff check tonesoul tests` -> passed
+- `python -m pytest tests/ -x --tb=short -q` -> 2572 passed, 9 warnings

@@ -1,76 +1,60 @@
 # Codex 交回報告
 
-**Phase**: 572-577 品質深化 + 代碼衛生
+**Phase**: 582-583 Inter-Soul Tension Protocol
 **完成日期**: 2026-03-20
 **狀態**: 已完成 / 待痕審核
 
 ## 修改摘要
-- 新增 9 個測試檔，補上 integration / security / property-based coverage。
-- 擴充 4 個原本過薄的測試檔，改成具體契約與分支驗證。
-- 強化 `tonesoul/llm/ollama_client.py` 與 `tonesoul/llm/lmstudio_client.py`：
-  prompt 長度上限、基礎 prompt-injection 標記清理、model allowlist 驗證。
-- 強化 `tonesoul/dcs.py`：`lockdown` 模式下不可被 policy override 重新打開預設關閉 trigger。
-- 強化 `tonesoul/tension_engine.py`：`_compute_entropy()` 最終值 clamp 到 `[0, 1]`，消除浮點邊界負值。
-- 為 7 個 deprecated/legacy 模組加上統一 `__deprecated__ = True` 標記與 successor 註記。
-- 更新 `.github/workflows/pytest-ci.yml`、`README.md`、`pyproject.toml`、`task.md`。
+- 新增 `tonesoul/inter_soul/` 套件，落地四個核心型別、bridge、negotiation、sovereignty。
+- `TensionPacket` 具備 HMAC-SHA256 簽章與驗章，序列化規則對齊 `tools/handoff_builder.py` 的 canonical JSON 思路。
+- `LocalInterSoulBridge` 採 in-memory append-only history，讓張力交換和 rupture 通知可追蹤，不會在接收後被抹平。
+- `TensionNegotiator` 實作三種結果：
+  `ALIGNED`
+  `DIVERGENT`
+  `SOVEREIGN_OVERRIDE`
+- `SovereigntyGuard` 可從 repo 版 `AXIOMS.json` 與 list-style axioms 兩種格式建構主權邊界。
+- 新增 4 個測試檔，共 17 個測試，覆蓋型別、bridge、協商與主權守衛。
+
+## Inter-Soul Public API
+- `tonesoul.inter_soul.TensionPacket`
+- `tonesoul.inter_soul.RuptureNotice`
+- `tonesoul.inter_soul.NegotiationOutcome`
+- `tonesoul.inter_soul.SovereigntyBoundary`
+- `tonesoul.inter_soul.InterSoulBridge`
+- `tonesoul.inter_soul.LocalInterSoulBridge`
+- `tonesoul.inter_soul.NegotiationResult`
+- `tonesoul.inter_soul.TensionNegotiator`
+- `tonesoul.inter_soul.SovereigntyGuard`
+
+## 主權映射
+- Axiom `3` (`Governance Gate (POAV)`, P0) -> `zone`
+- Axiom `6` (`User Sovereignty Constraint`, P0) -> `lambda_state`
+
+目前 `SovereigntyGuard.build_boundary()` 只會把有明確 field 映射的 P0 axiom 納入 `SovereigntyBoundary`。這樣可以避免憑空發明 governance field，同時保留後續擴充空間。
+
+## 哲學原則落點
+- 不消除分歧：
+  `NegotiationOutcome.DIVERGENT` 被當成正常結果，不是失敗分支。
+- 記憶沉澱：
+  `LocalInterSoulBridge` 保留 `tension_history` / `rupture_history`，不是只做一次性傳遞。
+- 主權實體：
+  `SovereigntyBoundary` 是硬約束；protected field 有差異時直接回 `SOVEREIGN_OVERRIDE`。
 
 ## 測試結果
+- `ruff check tonesoul/inter_soul tests/test_inter_soul_types.py tests/test_inter_soul_bridge.py tests/test_inter_soul_negotiation.py tests/test_inter_soul_sovereignty.py` -> passed
+- `pytest tests/test_inter_soul_types.py tests/test_inter_soul_bridge.py tests/test_inter_soul_negotiation.py tests/test_inter_soul_sovereignty.py -q` -> 17 passed, 1 warning
 - `ruff check tonesoul tests` -> passed
-- `pytest tests/ -x --tb=short -q` -> 2555 passed, 9 warnings
-- targeted integration/security/property hardening suite -> 70 passed, 2 warnings
+- `pytest tests/ -x --tb=short -q` -> 2572 passed, 9 warnings
 
-## Deprecated 模組引用鏈
-- `tonesoul/council_adapter.py`
-  目前引用：`tests/test_council_adapter_deprecated.py`
-  取代路徑：`tonesoul.council.runtime.CouncilRuntime`
-- `tonesoul/role_council.py`
-  目前引用：`tonesoul/frame_router.py`, `tonesoul/council/runtime.py`, `tests/test_role_council_integration.py`
-  取代路徑：`tonesoul.council.runtime.CouncilRuntime`
-- `tonesoul/tonesoul_llm.py`
-  目前引用：`scripts/healthcheck.py`, `tests/test_tonesoul_llm_deprecated.py`
-  取代路徑：`tonesoul.unified_pipeline.UnifiedPipeline`
-- `tonesoul/unified_core.py`
-  目前引用：`scripts/healthcheck.py`, `tonesoul/_legacy/unified_core_compat.py`, `tests/test_unified_core.py`, `tests/test_unified_core_properties.py`
-  取代路徑：`tonesoul.unified_pipeline.UnifiedPipeline`
-- `tonesoul/market/forecaster.py`
-  目前引用：`scripts/test_dream_engine_5289.py`, `tests/test_forecaster.py`, `tests/test_market_deprecation.py`
-  取代路徑：保留 legacy surface，後續應收斂到非 deprecated market flow
-- `tonesoul/market/gold_detector.py`
-  目前引用：`scripts/run_gold_scan.py`, `scripts/run_market_sweep.py`, `tests/test_gold_detector.py`, `tests/test_market_deprecation.py`
-  取代路徑：保留 legacy surface，後續應收斂到非 deprecated market flow
-- `tonesoul/_legacy/unified_core_compat.py`
-  目前引用：`tonesoul/unified_core.py`
-  取代路徑：由 `tonesoul.unified_core.UnifiedCore` 的相容層接住，不應新增新依賴
-
-## Audit 補充
-- `tonesoul/__init__.py` 目前只 re-export `UnifiedController`，沒有 deprecated re-export。
-- `tonesoul/market/__init__.py` 沒有對 `forecaster` 或 `gold_detector` 做 re-export。
-- deprecated 標記已補在：
-  `tonesoul/council_adapter.py`
-  `tonesoul/role_council.py`
-  `tonesoul/tonesoul_llm.py`
-  `tonesoul/unified_core.py`
-  `tonesoul/market/forecaster.py`
-  `tonesoul/market/gold_detector.py`
-  `tonesoul/_legacy/unified_core_compat.py`
-
-## 風險 / 阻塞
-- 無阻塞。
-- full regression 仍有 9 個 warning，主要來自：
-  1. Hypothesis 對 `.hypothesis` 目錄的 `norecursedirs` 提示。
-  2. `requests` 依賴版本組合的 `RequestsDependencyWarning`。
-  3. 既有 deprecated market / unified-core 測試與 `data_ingest.py` 的 `datetime.utcnow()` 提示。
-- `pytest.ini` 目前仍是 authoritative config，因此 pytest 會提示忽略 `pyproject.toml` 內的 pytest 設定；這是設定同步狀態，不影響本次測試結果。
-
-## 建議後續 / 注意事項
-- 優先把 `role_council` 與 `tonesoul_llm` 的直接使用點收斂到 runtime / unified pipeline，讓 Phase 600+ 能真正移除 legacy 模組。
-- `pyproject.toml` 已補 pytest metadata，但 repo 目前仍有 `pytest.ini`；若後續要單一化設定，應先決定以哪一個為 authoritative config。
-- market legacy 模組目前仍有 script 入口依賴；移除前要先替換 `scripts/run_gold_scan.py`、`scripts/run_market_sweep.py`、`scripts/test_dream_engine_5289.py`。
+## 風險 / 注意事項
+- `SovereigntyGuard.check_violation()` 是 payload-field 檢查器；若直接把完整 packet 丟進去，它會把 packet 內已有的 protected field 視為觸碰主權欄位。現階段 `TensionNegotiator` 是先算差異欄位再判斷，所以行為正確。
+- 目前只映射了 `zone` / `lambda_state` 兩個主權欄位。若未來 AXIOMS 增加更細的治理欄位，需要同步擴充 `_DEFAULT_FIELD_MAP`。
+- `signals` 目前限制為 `Dict[str, float]`，所以像 `resistance` 這類複合結構在 Inter-Soul 層應先壓平成數值再交換。
 
 ## 重要檔案修改
-- 檔案 1: `tonesoul/llm/ollama_client.py`, `tonesoul/llm/lmstudio_client.py`
-  目的：補 prompt 邊界、注入標記清理、model allowlist。
-- 檔案 2: `tonesoul/dcs.py`, `tonesoul/tension_engine.py`
-  目的：補 lockdown fail-closed 與 entropy 浮點邊界硬化。
-- 檔案 3: `.github/workflows/pytest-ci.yml`, `README.md`, `pyproject.toml`, `task.md`
-  目的：同步 CI 品質門檻與 repo 狀態文件。
+- `tonesoul/inter_soul/types.py`
+  目的：定義 signed tension packet、rupture notice、negotiation outcome、sovereignty boundary。
+- `tonesoul/inter_soul/bridge.py`
+  目的：定義 bridge protocol 與 local append-only bridge。
+- `tonesoul/inter_soul/negotiation.py`, `tonesoul/inter_soul/sovereignty.py`
+  目的：定義協商引擎、主權守衛與 AXIOMS 對應規則。
