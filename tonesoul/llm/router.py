@@ -19,7 +19,28 @@ Date: 2026-03-07
 from __future__ import annotations
 
 import time
+from enum import Enum
 from typing import Any, Dict, Optional
+
+
+class ThinkingTier(str, Enum):
+    """Reasoning tier for initial and revision generation."""
+
+    LOCAL = "local"
+    CLOUD = "cloud"
+    AUTO = "auto"
+
+
+def resolve_thinking_tier(alert_level: Any) -> ThinkingTier:
+    """Map alert severity to a reasoning tier."""
+    if isinstance(alert_level, ThinkingTier) and alert_level is not ThinkingTier.AUTO:
+        return alert_level
+
+    raw_level = getattr(alert_level, "value", alert_level)
+    normalized = str(raw_level or "").strip().upper()
+    if normalized in {"L2", "L3"}:
+        return ThinkingTier.CLOUD
+    return ThinkingTier.LOCAL
 
 
 class LLMRouter:
@@ -37,6 +58,11 @@ class LLMRouter:
         self._preferred = preferred_backend.strip().lower()
         self._cached_client: Any = None
         self._cached_backend: Optional[str] = None
+        self._local_client: Any = None
+        self._local_backend: Optional[str] = None
+        self._cloud_client: Any = None
+        self._cloud_backend: Optional[str] = None
+        self._last_thinking_tier: Optional[str] = None
 
     @property
     def active_backend(self) -> Optional[str]:
@@ -49,6 +75,11 @@ class LLMRouter:
         if self._cached_client is None:
             return None
         return getattr(self._cached_client, "last_metrics", None)
+
+    @property
+    def last_thinking_tier(self) -> Optional[str]:
+        """Most recent effective tier used for chat dispatch."""
+        return self._last_thinking_tier
 
     @staticmethod
     def _deadline(timeout_seconds: float) -> float:
@@ -63,9 +94,87 @@ class LLMRouter:
         if client is None:
             return None
         self._cached_client = client
-        if isinstance(backend, str) and backend.strip():
-            self._cached_backend = backend.strip()
+        normalized_backend = self._normalize_backend_name(backend)
+        if normalized_backend:
+            self._cached_backend = normalized_backend
+            tier = self._tier_from_backend(normalized_backend)
+            if tier is ThinkingTier.LOCAL:
+                self._local_client = client
+                self._local_backend = normalized_backend
+            elif tier is ThinkingTier.CLOUD:
+                self._cloud_client = client
+                self._cloud_backend = normalized_backend
         return self._cached_client
+
+    @staticmethod
+    def _normalize_backend_name(backend: Optional[str]) -> Optional[str]:
+        if not isinstance(backend, str):
+            return None
+        normalized = backend.strip().lower()
+        return normalized or None
+
+    @staticmethod
+    def _tier_from_backend(backend: Optional[str]) -> Optional[ThinkingTier]:
+        normalized = LLMRouter._normalize_backend_name(backend)
+        if normalized in {"lmstudio", "ollama"}:
+            return ThinkingTier.LOCAL
+        if normalized == "gemini":
+            return ThinkingTier.CLOUD
+        return None
+
+    @staticmethod
+    def _coerce_tier(tier: Any, *, alert_level: Any = None) -> ThinkingTier:
+        if isinstance(tier, ThinkingTier):
+            return resolve_thinking_tier(alert_level) if tier is ThinkingTier.AUTO else tier
+
+        normalized = str(getattr(tier, "value", tier) or "").strip().lower()
+        if normalized == ThinkingTier.LOCAL.value:
+            return ThinkingTier.LOCAL
+        if normalized == ThinkingTier.CLOUD.value:
+            return ThinkingTier.CLOUD
+        return resolve_thinking_tier(alert_level)
+
+    def _activate_client(
+        self,
+        client: Any,
+        *,
+        backend: Optional[str],
+        requested_tier: ThinkingTier,
+    ) -> Any:
+        self._cached_client = client
+        normalized_backend = self._normalize_backend_name(backend)
+        if normalized_backend:
+            self._cached_backend = normalized_backend
+        actual_tier = self._tier_from_backend(normalized_backend) or requested_tier
+        self._last_thinking_tier = actual_tier.value
+        return client
+
+    def _resolve_client_for_tier(self, tier: ThinkingTier) -> tuple[Any, Optional[str]]:
+        # Respect manually injected clients when no backend metadata is available.
+        # This keeps tests and explicit dependency injection from reaching out to
+        # live backends unexpectedly.
+        if self._cached_client is not None and self._cached_backend is None:
+            return self._cached_client, None
+
+        if tier is ThinkingTier.LOCAL:
+            if self._local_client is not None:
+                return self._local_client, self._local_backend or "lmstudio"
+            client = self._try_lmstudio()
+            if client is not None:
+                self._local_client = client
+                self._local_backend = "lmstudio"
+                return client, "lmstudio"
+        elif tier is ThinkingTier.CLOUD:
+            if self._cloud_client is not None:
+                return self._cloud_client, self._cloud_backend or "gemini"
+            client = self._try_gemini()
+            if client is not None:
+                self._cloud_client = client
+                self._cloud_backend = "gemini"
+                return client, "gemini"
+
+        client = self.get_client()
+        return client, self.active_backend
 
     def get_client(self) -> Any:
         """
@@ -175,6 +284,32 @@ class LLMRouter:
 
         return str(send_message(prompt))
 
+    def chat_with_tier(
+        self,
+        *,
+        history: Optional[list[Dict[str, Any]]] = None,
+        prompt: str,
+        tier: Any = "auto",
+        alert_level: Any = None,
+    ) -> str:
+        """Send a chat turn using the requested reasoning tier."""
+        resolved_tier = self._coerce_tier(tier, alert_level=alert_level)
+        client, backend = self._resolve_client_for_tier(resolved_tier)
+        if client is None:
+            raise RuntimeError("No active LLM client available")
+        self._activate_client(client, backend=backend, requested_tier=resolved_tier)
+
+        start_chat = getattr(client, "start_chat", None)
+        send_message = getattr(client, "send_message", None)
+        if not callable(send_message):
+            raise RuntimeError("Active LLM client does not support send_message")
+        if callable(start_chat):
+            start_chat(history or [])
+        elif history:
+            raise RuntimeError("Active LLM client does not support history-aware chat")
+
+        return str(send_message(prompt))
+
     def inference_check(self, timeout_seconds: float = 10.0) -> Dict[str, Any]:
         """Run a bounded inference-readiness probe for the active backend."""
         started = time.perf_counter()
@@ -257,3 +392,8 @@ class LLMRouter:
         """Clear cached client, forcing re-resolution on next get_client() call."""
         self._cached_client = None
         self._cached_backend = None
+        self._local_client = None
+        self._local_backend = None
+        self._cloud_client = None
+        self._cloud_backend = None
+        self._last_thinking_tier = None

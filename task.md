@@ -6128,3 +6128,45 @@
 - `python -m ruff check tonesoul tests` -> passed
 - `python -m ruff check scripts/run_gold_scan.py scripts/run_market_sweep.py scripts/test_dream_engine_5289.py tests/test_run_market_sweep.py tests/test_run_market_removed_scripts.py` -> passed
 - `python -m pytest tests/ -x --tb=short -q` -> 2526 passed, 6 warnings
+
+## Phase 584: ReflectionVerdict + `_self_check()` Foundation (2026-03-20)
+- [x] extend `tonesoul/reflection.py` with `MAX_REVISIONS`, `REFLECTION_TENSION_THRESHOLD`, and `ReflectionVerdict`
+- [x] add `UnifiedPipeline._self_check()` with VowEnforcer, council, and tension-delta evaluation
+- [x] record the final verdict in `dispatch_trace["reflection_verdict"]`
+- [x] add `tests/test_reflection.py` for verdict serialization, severity thresholds, council overrides, and trace emission
+**Success Criteria**: reflection checks stay outside the primary generation path while producing deterministic revise/no-revise signals from vows, council review, and tension drift.
+**Validation**:
+- `python -m ruff check tonesoul tests` -> passed
+- `python -m pytest tests/ -x --tb=short -q` -> 2537 passed, 6 warnings
+
+## Phase 585: Reflection Loop Integration (2026-03-20)
+- [x] add `build_revision_prompt()` to `tonesoul/reflection.py`
+- [x] insert a bounded reflection loop into `UnifiedPipeline.process()` before the final council stage
+- [x] record `dispatch_trace["reflection_count"]` and `dispatch_trace["reflection_verdicts"]`
+- [x] add `tests/test_reflection_loop.py` for prompt shaping, revision caps, fallback behavior, and council interaction
+**Success Criteria**: `UnifiedPipeline` can self-revise up to two times without mutating the downstream council path, and trace output preserves the full reflection history.
+**Validation**:
+- `python -m ruff check tonesoul tests` -> passed
+- `python -m pytest tests/ -x --tb=short -q` -> 2548 passed, 6 warnings
+
+## Phase 586: ThinkingTier Router (2026-03-20)
+- [x] add `ThinkingTier` and `resolve_thinking_tier()` to `tonesoul/llm/router.py`
+- [x] implement `LLMRouter.chat_with_tier()` with LM Studio local routing, Gemini cloud routing, and safe fallback
+- [x] wire initial `UnifiedPipeline` generation through `chat_with_tier()` and record `dispatch_trace["thinking_tier"]`
+- [x] keep manually injected clients from probing live backends when backend metadata is absent
+- [x] add `tests/test_thinking_tier.py` and update router/pipeline tests for tier-aware generation
+**Success Criteria**: initial generation selects local vs cloud reasoning from alert level without breaking existing injected-client or router-mediated test paths.
+**Validation**:
+- `python -m ruff check tonesoul tests` -> passed
+- `python -m pytest tests/test_thinking_tier.py tests/test_unified_pipeline_llm_router.py tests/test_reflection_loop.py tests/test_unified_pipeline_v2_runtime.py -q` -> 23 passed, 2 warnings
+
+## Phase 587: Severity-Aware Reflection Routing + Stats (2026-03-20)
+- [x] add `ReflectionStats` to `tonesoul/reflection.py`
+- [x] route revision turns through `chat_with_tier()` with `cloud` escalation at `severity >= 0.5`
+- [x] preserve a cloud floor for revisions when the initial alert-selected tier is already cloud
+- [x] record `dispatch_trace["reflection_tiers"]` and sectioned `dispatch_trace["reflection_stats"]`
+- [x] add `tests/test_reflection_integration.py` for local-only, cloud-escalated, and L2 cloud-floor scenarios
+**Success Criteria**: revision routing becomes severity-aware, high-alert sessions never downgrade revisions back to local reasoning, and reflection telemetry reports revision mix without breaking dispatch-trace contracts.
+**Validation**:
+- `python -m ruff check tonesoul tests` -> passed
+- `python -m pytest tests/ -x --tb=short -q` -> 2564 passed, 6 warnings

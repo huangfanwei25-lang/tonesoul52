@@ -471,6 +471,122 @@ class UnifiedPipeline:
         section["detail"] = payload
         return section
 
+    def _self_check(self, draft: str, context: dict) -> Any:
+        from tonesoul.reflection import REFLECTION_TENSION_THRESHOLD, ReflectionVerdict
+        from tonesoul.vow_system import VowEnforcer
+
+        safe_context = dict(context) if isinstance(context, dict) else {}
+        reasons: list[str] = []
+        severity = 0.0
+        vow_result = None
+        council_decision: str | None = None
+        tension_delta: float | None = None
+
+        try:
+            vow_result = VowEnforcer().enforce(draft)
+            if vow_result.blocked:
+                reasons.extend(list(vow_result.flags) or ["vow_block"])
+                severity = max(severity, 0.9)
+            elif vow_result.repair_needed:
+                reasons.extend(list(vow_result.flags) or ["vow_repair"])
+                severity = max(severity, 0.5)
+            elif vow_result.flags:
+                reasons.extend(list(vow_result.flags))
+                severity = max(severity, 0.2)
+        except Exception as e:
+            self._exc_trace.record("unified_pipeline", "_self_check.vow_enforce", e)
+
+        try:
+            override_decision = safe_context.get("reflection_council_decision")
+            skip_council = bool(safe_context.get("reflection_skip_council"))
+            if isinstance(override_decision, str) and override_decision.strip():
+                council_decision = override_decision.strip().lower()
+            elif not skip_council:
+                council = self._get_council()
+                if council is not None:
+                    from tonesoul.council import CouncilRequest
+
+                    council_context = {
+                        key: value
+                        for key, value in safe_context.items()
+                        if not str(key).startswith("reflection_")
+                    }
+                    council_verdict = council.deliberate(
+                        CouncilRequest(draft_output=draft, context=council_context)
+                    )
+                    raw_decision = getattr(council_verdict, "verdict", None)
+                    council_decision = getattr(raw_decision, "value", raw_decision)
+                    if council_decision is not None:
+                        council_decision = str(council_decision).strip().lower()
+
+            if council_decision == "block":
+                reasons.append("council:block")
+                severity = max(severity, 0.9)
+            elif council_decision == "refine":
+                reasons.append("council:refine")
+                severity = max(severity, 0.4)
+        except Exception as e:
+            self._exc_trace.record("unified_pipeline", "_self_check.council", e)
+
+        try:
+            tension_engine = self._get_tension_engine()
+            if tension_engine is not None:
+                baseline = None
+                for candidate in (
+                    safe_context.get("reflection_tension_baseline"),
+                    safe_context.get("tension_baseline"),
+                    safe_context.get("tension_score"),
+                    (
+                        safe_context.get("prior_tension", {}).get("delta_t")
+                        if isinstance(safe_context.get("prior_tension"), dict)
+                        else None
+                    ),
+                ):
+                    try:
+                        if candidate is None:
+                            continue
+                        baseline = float(candidate)
+                        break
+                    except (TypeError, ValueError):
+                        continue
+
+                draft_text_tension = safe_context.get("reflection_text_tension")
+                try:
+                    if draft_text_tension is None:
+                        from tonesoul.persona_dimension import VectorCalculator
+
+                        draft_text_tension = VectorCalculator().compute(
+                            draft,
+                            safe_context,
+                        ).deltaT
+                    draft_text_tension = float(draft_text_tension)
+                except Exception:
+                    draft_text_tension = 0.0
+
+                tension_result = tension_engine.compute(
+                    text_tension=float(draft_text_tension),
+                    confidence=safe_context.get("reflection_confidence"),
+                )
+                draft_total = float(getattr(tension_result, "total", 0.0) or 0.0)
+                tension_delta = (
+                    abs(draft_total - baseline) if baseline is not None else abs(draft_total)
+                )
+                if tension_delta > REFLECTION_TENSION_THRESHOLD:
+                    reasons.append(f"tension_delta:{round(tension_delta, 4)}")
+                    severity = max(severity, min(1.0, 0.3 + tension_delta))
+        except Exception as e:
+            self._exc_trace.record("unified_pipeline", "_self_check.tension", e)
+
+        should_revise = bool(reasons) and severity > 0.2
+        return ReflectionVerdict(
+            should_revise=should_revise,
+            reasons=reasons,
+            severity=round(severity, 4),
+            vow_result=vow_result,
+            council_decision=council_decision,
+            tension_delta=round(tension_delta, 4) if tension_delta is not None else None,
+        )
+
     def _apply_mirror_step(
         self,
         response: str,
@@ -2154,8 +2270,11 @@ class UnifiedPipeline:
         llm_client = self._get_llm_client()
         response = ""
         suggested_replies = []
+        thinking_tier = None
         if llm_client:
             try:
+                from tonesoul.llm.router import resolve_thinking_tier
+
                 full_prompt = f"""{system_context}
 
 User message:
@@ -2190,20 +2309,46 @@ Respond with a clear, practical answer."""
                             e,
                         )
                         pass
-                    response = router.chat(history=history, prompt=full_prompt)
+                    chat_with_tier = getattr(router, "chat_with_tier", None)
+                    requested_tier = resolve_thinking_tier(
+                        getattr(alert_event, "level", None) if alert_event is not None else None
+                    )
+                    if callable(chat_with_tier):
+                        response = chat_with_tier(
+                            history=history,
+                            prompt=full_prompt,
+                            alert_level=getattr(alert_event, "level", None)
+                            if alert_event is not None
+                            else None,
+                        )
+                        thinking_tier = getattr(router, "last_thinking_tier", None)
+                    else:
+                        response = router.chat(history=history, prompt=full_prompt)
+                    if not thinking_tier:
+                        thinking_tier = requested_tier.value
                 else:
                     llm_client.start_chat(history)
                     response = llm_client.send_message(full_prompt)
+                    thinking_tier = resolve_thinking_tier(
+                        getattr(alert_event, "level", None) if alert_event is not None else None
+                    ).value
+                dispatch_trace["thinking_tier"] = thinking_tier
+                observability_client = llm_client
+                if router is not None:
+                    try:
+                        observability_client = router.get_client() or llm_client
+                    except Exception:
+                        observability_client = llm_client
                 self._attach_llm_observability(
                     dispatch_trace=dispatch_trace,
-                    llm_client=llm_client,
+                    llm_client=observability_client,
                 )
             except Exception as e:
                 response = f"抱歉，生成回應時發生錯誤：{e}"
         else:
             response = "抱歉，LLM 服務不可用。"
 
-        # ========== 6. Council 審議 ==========
+        # ========== 6. Reflection Loop + Council 審議 ==========
         council = self._get_council()
         verdict_dict = {}
         repair_stages: List[str] = []
@@ -2224,6 +2369,134 @@ Respond with a clear, practical answer."""
                 },
                 status="degraded" if council and council_should_convene else "ok",
             )
+        reflection_verdicts: List[Any] = []
+        reflection_tiers: List[str] = []
+        revision_count = 0
+        reflection_context = {
+            "language": "zh",
+            "tension_score": tone_strength,
+            "reflection_confidence": (
+                getattr(tb_result, "confidence", 0.8) if tb_result else 0.8
+            ),
+            "prior_tension": prior_tension if isinstance(prior_tension, dict) else {},
+            "reflection_skip_council": not bool(council and council_should_convene),
+        }
+        try:
+            from tonesoul.llm.router import ThinkingTier
+            from tonesoul.reflection import (
+                MAX_REVISIONS,
+                ReflectionStats,
+                ReflectionVerdict,
+                build_revision_prompt,
+            )
+
+            while revision_count < MAX_REVISIONS:
+                try:
+                    current_verdict = self._self_check(response, reflection_context)
+                except Exception as e:
+                    self._exc_trace.record(
+                        "unified_pipeline",
+                        "process.reflection_loop.self_check",
+                        e,
+                    )
+                    break
+
+                reflection_verdicts.append(current_verdict)
+                if not current_verdict.should_revise:
+                    break
+
+                revision_prompt = build_revision_prompt(response, current_verdict)
+                revision_tier = (
+                    ThinkingTier.CLOUD
+                    if thinking_tier == ThinkingTier.CLOUD.value or current_verdict.severity >= 0.5
+                    else ThinkingTier.LOCAL
+                )
+                try:
+                    if router is not None:
+                        chat_with_tier = getattr(router, "chat_with_tier", None)
+                        if callable(chat_with_tier):
+                            response = chat_with_tier(
+                                history=history,
+                                prompt=revision_prompt,
+                                tier=revision_tier,
+                            )
+                            reflection_tiers.append(
+                                getattr(router, "last_thinking_tier", None)
+                                or revision_tier.value
+                            )
+                        else:
+                            response = router.chat(history=history, prompt=revision_prompt)
+                            reflection_tiers.append(revision_tier.value)
+                    elif llm_client is not None:
+                        llm_client.start_chat(history)
+                        response = llm_client.send_message(revision_prompt)
+                        reflection_tiers.append(revision_tier.value)
+                    else:
+                        break
+                    revision_count += 1
+                    observability_client = llm_client
+                    if router is not None:
+                        try:
+                            observability_client = router.get_client() or llm_client
+                        except Exception:
+                            observability_client = llm_client
+                    self._attach_llm_observability(
+                        dispatch_trace=dispatch_trace,
+                        llm_client=observability_client,
+                    )
+                except Exception as e:
+                    self._exc_trace.record(
+                        "unified_pipeline",
+                        "process.reflection_loop.revision_chat",
+                        e,
+                    )
+                    break
+
+            final_reflection_verdict = (
+                reflection_verdicts[-1]
+                if reflection_verdicts
+                else ReflectionVerdict(should_revise=False)
+            )
+            reflection_status = "ok"
+            if final_reflection_verdict.should_revise:
+                reflection_status = (
+                    "error" if final_reflection_verdict.severity >= 0.8 else "degraded"
+                )
+            reflection_stats = ReflectionStats(
+                total_revisions=revision_count,
+                local_revisions=sum(1 for tier in reflection_tiers if tier == "local"),
+                cloud_revisions=sum(1 for tier in reflection_tiers if tier == "cloud"),
+                final_severity=float(final_reflection_verdict.severity),
+                verdicts=[
+                    verdict
+                    for verdict in reflection_verdicts
+                    if isinstance(verdict, ReflectionVerdict)
+                ],
+            )
+            dispatch_trace["reflection_count"] = revision_count
+            dispatch_trace["reflection_verdicts"] = [
+                verdict.to_dict() if hasattr(verdict, "to_dict") else {}
+                for verdict in reflection_verdicts
+            ]
+            dispatch_trace["reflection_tiers"] = list(reflection_tiers)
+            dispatch_trace["reflection_stats"] = self._build_trace_section(
+                "reflection_stats",
+                reflection_stats.to_dict(),
+                status=reflection_status,
+            )
+            dispatch_trace["reflection_verdict"] = self._build_trace_section(
+                "reflection",
+                final_reflection_verdict.to_dict(),
+                status=reflection_status,
+            )
+        except Exception as e:
+            self._exc_trace.record(
+                "unified_pipeline",
+                "process.reflection_loop",
+                e,
+            )
+            pass
+
         if council and council_should_convene:
             try:
                 from tonesoul.council import CouncilRequest

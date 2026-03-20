@@ -74,7 +74,7 @@ def test_pipeline_convenes_council_when_kernel_requests_it() -> None:
         user_id="kernel-convene-test",
     )
 
-    council.deliberate.assert_called_once()
+    assert council.deliberate.call_count == 2
     kernel.should_convene_council.assert_called_once()
     assert result.dispatch_trace["council"]["convened"] is True
     assert result.dispatch_trace["council"]["reason"] == "kernel_decision"

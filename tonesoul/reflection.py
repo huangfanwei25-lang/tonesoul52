@@ -1,7 +1,96 @@
+from __future__ import annotations
+
 import json
-from typing import Dict, Optional
+from dataclasses import dataclass, field
+from typing import TYPE_CHECKING, Dict, Optional
 
 from .ystm.schema import utc_now
+
+if TYPE_CHECKING:
+    from .vow_system import VowEnforcementResult
+
+
+MAX_REVISIONS: int = 2
+REFLECTION_TENSION_THRESHOLD: float = 0.25
+
+
+@dataclass
+class ReflectionVerdict:
+    should_revise: bool
+    reasons: list[str] = field(default_factory=list)
+    severity: float = 0.0
+    vow_result: VowEnforcementResult | None = None
+    council_decision: str | None = None
+    tension_delta: float | None = None
+
+    def to_dict(self) -> Dict[str, object]:
+        return {
+            "should_revise": bool(self.should_revise),
+            "reasons": list(self.reasons),
+            "severity": float(self.severity),
+            "vow_result": (
+                self.vow_result.to_dict() if hasattr(self.vow_result, "to_dict") else None
+            ),
+            "council_decision": self.council_decision,
+            "tension_delta": self.tension_delta,
+        }
+
+
+@dataclass
+class ReflectionStats:
+    total_revisions: int
+    local_revisions: int
+    cloud_revisions: int
+    final_severity: float
+    verdicts: list[ReflectionVerdict] = field(default_factory=list)
+
+    def to_dict(self) -> Dict[str, object]:
+        return {
+            "total_revisions": int(self.total_revisions),
+            "local_revisions": int(self.local_revisions),
+            "cloud_revisions": int(self.cloud_revisions),
+            "final_severity": float(self.final_severity),
+            "verdicts": [verdict.to_dict() for verdict in self.verdicts],
+        }
+
+
+def build_revision_prompt(draft: str, verdict: ReflectionVerdict) -> str:
+    safe_draft = str(draft or "")
+    if len(safe_draft) > 4000:
+        safe_draft = safe_draft[:4000] + "..."
+
+    reasons = list(verdict.reasons) or ["No explicit reflection reasons were recorded."]
+    constraints = [
+        "Keep the answer practical, specific, and aligned with the user's request.",
+        "Resolve the listed issues without mentioning hidden review steps or internal tooling.",
+        "Preserve any valid content from the draft that does not need repair.",
+    ]
+    if verdict.vow_result is not None:
+        if verdict.vow_result.blocked:
+            constraints.append("Remove blocked or unsafe content completely.")
+        elif verdict.vow_result.repair_needed:
+            constraints.append("Repair the content so vow checks can pass.")
+    if verdict.council_decision:
+        constraints.append(f"Address the council signal: {verdict.council_decision}.")
+    if verdict.tension_delta is not None:
+        constraints.append(
+            "Reduce tension drift below "
+            f"{REFLECTION_TENSION_THRESHOLD:.2f}; current delta={verdict.tension_delta:.4f}."
+        )
+
+    lines = [
+        "Revise the draft below to resolve the detected issues.",
+        "",
+        "Why rewrite:",
+        *[f"- {reason}" for reason in reasons],
+        "",
+        "Revision constraints:",
+        *[f"- {item}" for item in constraints],
+        "",
+        "Draft to revise:",
+        safe_draft,
+    ]
+    return "\n".join(lines)
 
 
 def _issue_suggestion(issue: str) -> str:

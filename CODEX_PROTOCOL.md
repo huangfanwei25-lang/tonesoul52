@@ -144,11 +144,11 @@ Codex 完成任務後，必須更新 `CODEX_HANDBACK.md`：
 | 項目 | 值 |
 |------|-----|
 | Python | 3.13.5 |
-| 測試總數 | 2526 |
-| 模組數 | 212+ |
+| 測試總數 | 2564 |
+| 模組數 | 213+ |
 | 核心管線 | `tonesoul/unified_pipeline.py` (18+ step flow) |
 | 安全堆疊 | DriftMonitor → AlertEscalation → CircuitBreaker → JumpMonitor |
-| 最新 Phase | 583 (578-581 deprecated removal + 582-583 inter-soul protocol) |
+| 最新 Phase | 587 (584-587 Reflection Loop + 章魚架構) |
 | venv | `.venv/` |
 | lint | `ruff` |
 | test | `pytest` |
@@ -163,6 +163,8 @@ Codex 完成任務後，必須更新 `CODEX_HANDBACK.md`：
 | `tonesoul/action_set.py` | 行動集策略 (normal/cautious/lockdown) |
 | `tonesoul/drift_monitor.py` | EMA 語義漂移偵測 |
 | `tonesoul/jump_monitor.py` | 奇點跳躍偵測 |
+| `tonesoul/reflection.py` | 反思迴路 (ReflectionVerdict + Self-Check) |
+| `tonesoul/llm/router.py` | LLM 路由 + ThinkingTier (LOCAL/CLOUD) |
 | `tonesoul/inter_soul/` | 跨靈魂張力協議 (TensionPacket / Bridge / Negotiation / Sovereignty) |
 | `tonesoul/memory/crystallizer.py` | 記憶結晶 + 新鮮度衰減 |
 | `tonesoul/dream_engine.py` | 離線碰撞 + 驗證任務 |
