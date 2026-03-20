@@ -335,7 +335,7 @@ AlertEscalation 的 L1/L2/L3 直接映射到 LLM 路由：
 
 ```python
 class ThinkingTier(Enum):
-    LOCAL = "local"       # L2: 本地 7B (Qwen/305)
+    LOCAL = "local"       # L2: 本地 9B (LM Studio)
     CLOUD = "cloud"       # L3: 雲端 (Claude/GPT/Gemini)
     AUTO = "auto"         # 根據 AlertLevel 決定
 
@@ -353,11 +353,14 @@ def resolve_thinking_tier(alert_level: AlertLevel) -> ThinkingTier:
 
 ```python
 # config.py 或 .env
-LOCAL_LLM_BACKEND = "ollama"        # or "lmstudio"
-LOCAL_LLM_MODEL = "305"             # 用戶的 7B 模型
+LOCAL_LLM_BACKEND = "lmstudio"      # 預設 LM Studio（支援自訂 GGUF 模型）
+LOCAL_LLM_MODEL = "qwen3.5-9b-uncensored-hauhaucs-aggressive"
 CLOUD_LLM_BACKEND = "gemini"        # or "claude", "openai"
 CLOUD_LLM_MODEL = "claude-opus-4-6" # 雲端主腦
 ```
+
+> **備註**: Ollama 不支援此自訂模型，故 LOCAL 預設走 LM Studio。
+> LM Studio 的 `_get_model()` 會自動偵測已載入模型，若明確指定模型名稱可跳過偵測。
 
 ### 6.3 整合到 UnifiedPipeline
 
@@ -367,9 +370,9 @@ def _call_llm(self, prompt: str, tier: str = "auto") -> str:
         tier = resolve_thinking_tier(self._last_alert_level)
 
     if tier == ThinkingTier.LOCAL:
-        client = resolve_llm_backend("ollama")  # 本地 7B
+        client = resolve_llm_backend("lmstudio")  # 本地 9B
     else:
-        client = resolve_llm_backend("gemini")   # 雲端
+        client = resolve_llm_backend("gemini")     # 雲端
 
     return client.chat(prompt)
 ```
