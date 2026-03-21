@@ -88,7 +88,8 @@ def test_render_task_template_writes_xml_and_summary(tmp_path: Path) -> None:
     working_directory = _find(root, "task:Actions/task:Exec/task:WorkingDirectory").text
     assert command is not None and PurePath(command).name in {"python", "python.exe"}
     assert arguments is not None and "run_true_verification_host_tick_task.py" in arguments
-    assert working_directory is not None and working_directory.endswith("倉庫")
+    assert working_directory is not None
+    assert Path(working_directory).name == module.repo_root.name
 
 
 def test_render_task_template_keeps_explicit_overrides(tmp_path: Path) -> None:
