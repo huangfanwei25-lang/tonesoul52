@@ -3,7 +3,7 @@ from typing import Dict
 ACTION_POLICY = {
     "normal": ["verify", "cite", "inquire"],
     "cautious": ["verify", "inquire"],
-    "lockdown": ["inquire"],
+    "lockdown": ["verify", "cite", "inquire"],  # Seabed Lockdown — Vol-5 §2
 }
 
 

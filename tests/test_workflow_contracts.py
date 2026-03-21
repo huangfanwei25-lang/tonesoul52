@@ -16,6 +16,7 @@ DUAL_TRACK_BOUNDARY_WORKFLOW_PATH = Path(".github/workflows/dual_track_boundary.
 GIT_HYGIENE_WORKFLOW_PATH = Path(".github/workflows/git_hygiene.yml")
 POST_RELEASE_MONITOR_WORKFLOW_PATH = Path(".github/workflows/post_release_monitor.yml")
 FRICTION_SHADOW_WORKFLOW_PATH = Path(".github/workflows/friction_shadow_calibration.yml")
+AGENT_INTEGRITY_WORKFLOW_PATH = Path(".github/workflows/agent-integrity-check.yml")
 
 
 def _load_yaml(path: Path) -> dict[str, Any]:
@@ -63,6 +64,19 @@ def _job_steps(payload: dict[str, Any], job_name: str) -> list[dict[str, Any]]:
     steps = job.get("steps", [])
     assert isinstance(steps, list)
     return [step for step in steps if isinstance(step, dict)]
+
+
+def test_agent_integrity_workflow_uses_shared_checker_without_inline_hashes() -> None:
+    payload = _load_yaml(AGENT_INTEGRITY_WORKFLOW_PATH)
+    steps = _job_steps(payload, "integrity-check")
+    run_step = _find_step(steps, "Run agent integrity contract (blocking)")
+    run_cmd = run_step.get("run", "")
+    assert isinstance(run_cmd, str)
+    assert run_cmd == "python3 scripts/check_agent_integrity.py"
+
+    workflow_text = AGENT_INTEGRITY_WORKFLOW_PATH.read_text(encoding="utf-8")
+    assert 'EXPECTED="' not in workflow_text
+    assert "git diff HEAD~1" not in workflow_text
 
 
 def test_repo_healthcheck_workflow_dispatch_inputs_contract() -> None:
@@ -281,10 +295,15 @@ def test_pytest_ci_workflow_triggers_and_blocking_runner() -> None:
     assert isinstance(citation_cmd, str)
     assert "python scripts/verify_citation_integrity.py --strict" in citation_cmd
 
+    ruff_step = _find_step(steps, "Run ruff (blocking)")
+    ruff_cmd = ruff_step.get("run", "")
+    assert isinstance(ruff_cmd, str)
+    assert "ruff check tonesoul tests" in ruff_cmd
+
     run_step = _find_step(steps, "Run pytest (blocking)")
     run_cmd = run_step.get("run", "")
     assert isinstance(run_cmd, str)
-    assert "pytest -q --tb=short" in run_cmd
+    assert "pytest tests/ -x --tb=short -q" in run_cmd
     assert run_step.get("continue-on-error") is not True
 
 

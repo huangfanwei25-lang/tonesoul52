@@ -66,15 +66,15 @@ RULES_ONLY_COUNCIL_CONFIG: Dict[str, Dict[str, str]] = {
     "axiomatic": {"mode": "rules"},
 }
 
-# Local model configuration (Ollama + qwen3:4b)
+# Local model configuration (Ollama + qwen3.5:4b)
 # Strategy: Only Guardian and Critic use LLM — they produce the most
 # meaningful divergence. Others stay rules-based for cost/speed.
 LOCAL_COUNCIL_CONFIG: Dict[str, Dict[str, str]] = {
-    "guardian": {"mode": "ollama", "model": "qwen3:4b"},
+    "guardian": {"mode": "ollama", "model": "qwen3.5:4b"},
     "analyst": {"mode": "rules"},
-    "critic": {"mode": "ollama", "model": "qwen3:4b"},
+    "critic": {"mode": "ollama", "model": "qwen3.5:4b"},
     "advocate": {"mode": "rules"},
-    "axiomatic": {"mode": "ollama", "model": "qwen3:4b"},
+    "axiomatic": {"mode": "ollama", "model": "qwen3.5:4b"},
 }
 
 
@@ -141,7 +141,7 @@ MODEL_CHARACTERISTICS = {
         "cost": "low",
         "speed": "fast",
     },
-    "qwen3:4b": {
+    "qwen3.5:4b": {
         "style": "concise, independent, local-only",
         "best_for": ["guardian", "critic"],
         "cost": "free",

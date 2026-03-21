@@ -1,0 +1,205 @@
+{
+  "event_name": "local",
+  "mode": "local_incremental",
+  "range_spec": "bdd1bbb7e573786a5560d5f07b9283a5f3ddf00a..HEAD",
+  "base_ref": "origin/master",
+  "checked_revisions": [
+    "f7f50e15cafbd0b9dfb35af6c79823b3fddebd66",
+    "ac1abeff0b656e5cfcb81739af2e962fd5757570",
+    "d97240684c039b7850145fa524e144a1945e0701",
+    "04689f801d798ad77b703db530b1f8e754e05de2",
+    "c225332e2f4c6854dba231b1805d0d1d97d4ad42"
+  ],
+  "checked_count": 5,
+  "missing_count": 5,
+  "missing": [
+    {
+      "rev": "f7f50e15cafbd0b9dfb35af6c79823b3fddebd66",
+      "summary": "feat(RFC-012): add Resistance Engine + Phase II V2 modules",
+      "error": ""
+    },
+    {
+      "rev": "ac1abeff0b656e5cfcb81739af2e962fd5757570",
+      "summary": "refactor: architecture cleanup round 2 + V2 runtime wiring",
+      "error": ""
+    },
+    {
+      "rev": "d97240684c039b7850145fa524e144a1945e0701",
+      "summary": "docs: reconcile status handoff artifacts",
+      "error": ""
+    },
+    {
+      "rev": "04689f801d798ad77b703db530b1f8e754e05de2",
+      "summary": "fix: restore non-doc files from handoff commit",
+      "error": ""
+    },
+    {
+      "rev": "c225332e2f4c6854dba231b1805d0d1d97d4ad42",
+      "summary": "feat: add GovernanceKernel, LLM Router, Perception Layer, Agent Protocol",
+      "error": ""
+    }
+  ],
+  "ok": false,
+  "results": [
+    {
+      "ok": false,
+      "summary": "feat(RFC-012): add Resistance Engine + Phase II V2 modules",
+      "agent": null,
+      "topic": null,
+      "has_agent": false,
+      "has_topic": false,
+      "changed_files": [
+        "scripts/generate_stress_data.py",
+        "tests/test_resistance.py",
+        "tonesoul/memory/hippocampus.py",
+        "tonesoul/resistance.py",
+        "tonesoul/tension_engine.py"
+      ],
+      "docs_only": false,
+      "exempted": false,
+      "exemption_reason": null,
+      "rev": "f7f50e15cafbd0b9dfb35af6c79823b3fddebd66",
+      "exit_code": 0
+    },
+    {
+      "ok": false,
+      "summary": "refactor: architecture cleanup round 2 + V2 runtime wiring",
+      "agent": null,
+      "topic": null,
+      "has_agent": false,
+      "has_topic": false,
+      "changed_files": [
+        ".tmp_ci/changed_db44.txt",
+        "CODEX_TASK.md",
+        "apps/web/src/__tests__/apiRoutes.backendHealth.test.ts",
+        "apps/web/src/__tests__/apiRoutes.chatTransport.test.ts",
+        "apps/web/src/__tests__/apiRoutes.governanceStatus.test.ts",
+        "apps/web/src/__tests__/apiRoutes.invalidJson.test.ts",
+        "apps/web/src/__tests__/apiRoutes.transportFallback.test.ts",
+        "apps/web/src/app/api/backend-health/route.ts",
+        "apps/web/src/app/api/chat/route.ts",
+        "apps/web/src/app/api/consent/route.ts",
+        "apps/web/src/app/api/conversation/route.ts",
+        "apps/web/src/app/api/governance-status/route.ts",
+        "apps/web/src/app/api/session-report/route.ts",
+        "docs/archive/deprecated_modules/README.md",
+        "docs/archive/deprecated_modules/audit_dashboard.py",
+        "docs/archive/deprecated_modules/etcl_lifecycle.py",
+        "docs/archive/deprecated_modules/persistence.py",
+        "docs/archive/deprecated_modules/persona_trace_report.py",
+        "docs/archive/deprecated_modules/pipeline_context.py",
+        "docs/archive/deprecated_modules/quick_council.py",
+        "docs/archive/deprecated_modules/storage.py",
+        "docs/status/professional_ai_architecture_review_2026-03-04.md",
+        "docs/status/round2_audit_detail.json",
+        "docs/status/round2_progress.md",
+        "memory/archive/retention/jsonl/provenance_ledger.before_20260301.jsonl",
+        "memory/archive/retention/jsonl/self_journal.before_20260301.jsonl",
+        "memory/archive/retention/memory_retention_20260303T064539Z.json",
+        "memory/archive/retention/memory_retention_20260303T064539Z.md",
+        "memory/archive/retention/memory_retention_20260303T064548Z.json",
+        "memory/archive/retention/memory_retention_20260303T064548Z.md",
+        "memory/stress_test_journal.jsonl",
+        "scripts/verify_web_api.py",
+        "tests/test_unified_pipeline_v2_runtime.py",
+        "tests/test_verify_web_api.py",
+        "tonesoul/append_council_event.py",
+        "tonesoul/generate_patch.py",
+        "tonesoul/persona_ledger_validator.py",
+        "tonesoul/persona_registry_builder.py",
+        "tonesoul/persona_registry_cleaner.py",
+        "tonesoul/persona_registry_summary.py",
+        "tonesoul/self_test.py",
+        "tonesoul/simulate_council.py",
+        "tonesoul/unified_pipeline.py"
+      ],
+      "docs_only": false,
+      "exempted": false,
+      "exemption_reason": null,
+      "rev": "ac1abeff0b656e5cfcb81739af2e962fd5757570",
+      "exit_code": 0
+    },
+    {
+      "ok": false,
+      "summary": "docs: reconcile status handoff artifacts",
+      "agent": null,
+      "topic": null,
+      "has_agent": false,
+      "has_topic": false,
+      "changed_files": [
+        ".gitignore",
+        "docs/status/README.md",
+        "docs/status/orphan_modules_report.md",
+        "docs/status/professional_ai_architecture_positioning_2026-03-07.md",
+        "docs/status/professional_ai_architecture_review_2026-03-04.md",
+        "docs/status/round2_handoff_framework.md",
+        "docs/status/round2_progress.md",
+        "memory/archive/retention/jsonl/provenance_ledger.before_20260201.jsonl",
+        "memory/archive/retention/jsonl/provenance_ledger.before_20260301.jsonl",
+        "memory/archive/retention/jsonl/self_journal.before_20260201.jsonl",
+        "memory/archive/retention/jsonl/self_journal.before_20260301.jsonl",
+        "memory/archive/retention/memory_retention_history.jsonl",
+        "pyproject.toml"
+      ],
+      "docs_only": false,
+      "exempted": false,
+      "exemption_reason": null,
+      "rev": "d97240684c039b7850145fa524e144a1945e0701",
+      "exit_code": 0
+    },
+    {
+      "ok": false,
+      "summary": "fix: restore non-doc files from handoff commit",
+      "agent": null,
+      "topic": null,
+      "has_agent": false,
+      "has_topic": false,
+      "changed_files": [
+        ".gitignore",
+        "memory/archive/retention/jsonl/provenance_ledger.before_20260201.jsonl",
+        "memory/archive/retention/jsonl/provenance_ledger.before_20260301.jsonl",
+        "memory/archive/retention/jsonl/self_journal.before_20260201.jsonl",
+        "memory/archive/retention/jsonl/self_journal.before_20260301.jsonl",
+        "memory/archive/retention/memory_retention_history.jsonl",
+        "pyproject.toml"
+      ],
+      "docs_only": false,
+      "exempted": false,
+      "exemption_reason": null,
+      "rev": "04689f801d798ad77b703db530b1f8e754e05de2",
+      "exit_code": 0
+    },
+    {
+      "ok": false,
+      "summary": "feat: add GovernanceKernel, LLM Router, Perception Layer, Agent Protocol",
+      "agent": null,
+      "topic": null,
+      "has_agent": false,
+      "has_topic": false,
+      "changed_files": [
+        "AGENT_PROTOCOL.md",
+        "memory/antigravity_architecture_plan_2026-03-07.md",
+        "memory/antigravity_journal.md",
+        "memory/architecture_reflection_2026-03-07.md",
+        "tests/test_governance_kernel.py",
+        "tests/test_perception.py",
+        "tonesoul/governance/__init__.py",
+        "tonesoul/governance/kernel.py",
+        "tonesoul/llm/__init__.py",
+        "tonesoul/llm/router.py",
+        "tonesoul/perception/__init__.py",
+        "tonesoul/perception/stimulus.py",
+        "tonesoul/perception/web_ingest.py"
+      ],
+      "docs_only": false,
+      "exempted": false,
+      "exemption_reason": null,
+      "rev": "c225332e2f4c6854dba231b1805d0d1d97d4ad42",
+      "exit_code": 0
+    }
+  ],
+  "advice": {
+    "agent_trailer": "Agent: Codex",
+    "trace_topic_trailer": "Trace-Topic: <topic-name>"
+  }
+}

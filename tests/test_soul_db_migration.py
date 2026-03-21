@@ -3,7 +3,7 @@ from __future__ import annotations
 import sqlite3
 from pathlib import Path
 
-from tonesoul.memory.soul_db import SqliteSoulDB
+from tonesoul.memory.soul_db import MemorySource, SqliteSoulDB
 
 
 def test_sqlite_soul_db_migrates_legacy_action_logs_schema(tmp_path: Path) -> None:
@@ -47,3 +47,46 @@ def test_sqlite_soul_db_migrates_legacy_action_logs_schema(tmp_path: Path) -> No
     assert latest
     assert latest[0]["stream"] == "raw"
     assert latest[0]["metadata"] == {}
+
+
+def test_sqlite_soul_db_migrates_legacy_memories_schema_with_provenance(tmp_path: Path) -> None:
+    db_path = tmp_path / "legacy_memories.db"
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        CREATE TABLE memories (
+            id TEXT PRIMARY KEY,
+            type TEXT NOT NULL,
+            content TEXT NOT NULL,
+            embedding BLOB,
+            timestamp TEXT,
+            source TEXT,
+            parent_id TEXT,
+            tags TEXT
+        )
+        """
+    )
+    conn.commit()
+    conn.close()
+
+    db = SqliteSoulDB(db_path=db_path)
+    db.append(
+        MemorySource.CUSTOM,
+        {
+            "type": "handoff",
+            "summary": "legacy schema write",
+            "timestamp": "2026-03-08T10:00:00Z",
+            "evidence": ["legacy schema write"],
+            "provenance": {"source_file": "legacy.json"},
+        },
+    )
+
+    conn = sqlite3.connect(db_path)
+    columns = {str(row[1]) for row in conn.execute("PRAGMA table_info(memories)")}
+    conn.close()
+
+    assert "provenance" in columns
+    records = list(db.stream(MemorySource.CUSTOM))
+    assert records
+    assert records[0].payload["provenance"] == {"source_file": "legacy.json"}

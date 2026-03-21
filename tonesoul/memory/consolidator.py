@@ -5,8 +5,16 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Sequence
 
+from .reviewed_promotion import (
+    build_reviewed_promotion_decision,
+    build_reviewed_promotion_payload,
+    infer_subjectivity_layer,
+    replay_reviewed_promotion,
+)
 from .soul_db import JsonlSoulDB, MemorySource, SoulDB
 from .stats import average_coherence, count_by_verdict, most_common_divergence
+from .subjectivity_reporting import summarize_subjectivity_distribution
+from .write_gateway import MemoryWriteGateway, MemoryWriteRejectedError
 
 
 @dataclass
@@ -24,6 +32,7 @@ class SleepResult:
     patterns: Dict[str, object]
     meta_reflection: str
     layer_summary: Dict[str, int]
+    subjectivity_summary: Dict[str, object] = field(default_factory=dict)
     gated_count: int = 0
     gate_failures: Dict[str, int] = field(default_factory=dict)
 
@@ -43,62 +52,59 @@ def _classify_for_promotion(payload: Dict[str, object]) -> str:
     return "working"
 
 
-def _has_evidence(payload: Dict[str, object]) -> bool:
-    evidence_ids = payload.get("evidence_ids")
-    if isinstance(evidence_ids, list) and any(str(item).strip() for item in evidence_ids):
-        return True
-
-    evidence = payload.get("evidence")
-    if isinstance(evidence, list) and any(str(item).strip() for item in evidence):
-        return True
-
-    transcript = payload.get("transcript")
-    if not isinstance(transcript, dict):
-        return False
-
-    contract = transcript.get("multi_agent_contract")
-    if isinstance(contract, dict):
-        records = contract.get("records")
-        if isinstance(records, list):
-            for record in records:
-                if not isinstance(record, dict):
-                    continue
-                record_evidence = record.get("evidence")
-                if isinstance(record_evidence, list) and any(
-                    str(item).strip() for item in record_evidence
-                ):
-                    return True
-    return False
+def build_reviewed_vow_payload(
+    payload: Dict[str, object],
+    *,
+    reviewed_by: str,
+    review_basis: str,
+    reviewed_at: Optional[str] = None,
+    source_record_ids: Optional[Sequence[str]] = None,
+    promotion_source: str = "manual_review",
+) -> Dict[str, object]:
+    decision = build_reviewed_promotion_decision(
+        payload,
+        review_actor={
+            "actor_id": reviewed_by,
+            "actor_type": "operator",
+        },
+        review_basis=review_basis,
+        reviewed_at=reviewed_at,
+        source_record_ids=source_record_ids,
+        promotion_source=promotion_source,
+        status="reviewed",
+    )
+    return build_reviewed_promotion_payload(payload, decision=decision)
 
 
-def _has_provenance(payload: Dict[str, object]) -> bool:
-    for key in ("intent_id", "genesis", "provenance", "isnad"):
-        value = payload.get(key)
-        if isinstance(value, str) and value.strip():
-            return True
-        if isinstance(value, (list, dict)) and value:
-            return True
-
-    transcript = payload.get("transcript")
-    if not isinstance(transcript, dict):
-        return False
-
-    for key in ("intent_id", "genesis", "provenance", "isnad"):
-        value = transcript.get(key)
-        if isinstance(value, str) and value.strip():
-            return True
-        if isinstance(value, (list, dict)) and value:
-            return True
-    return False
-
-
-def _promotion_gate(payload: Dict[str, object]) -> tuple[bool, List[str]]:
-    reasons: List[str] = []
-    if not _has_evidence(payload):
-        reasons.append("missing_evidence")
-    if not _has_provenance(payload):
-        reasons.append("missing_provenance")
-    return len(reasons) == 0, reasons
+def promote_reviewed_tension_to_vow(
+    soul_db: SoulDB,
+    *,
+    source: MemorySource,
+    payload: Dict[str, object],
+    reviewed_by: str,
+    review_basis: str,
+    reviewed_at: Optional[str] = None,
+    source_record_ids: Optional[Sequence[str]] = None,
+    promotion_source: str = "manual_review",
+) -> str:
+    decision = build_reviewed_promotion_decision(
+        payload,
+        review_actor={
+            "actor_id": reviewed_by,
+            "actor_type": "operator",
+        },
+        review_basis=review_basis,
+        reviewed_at=reviewed_at,
+        source_record_ids=source_record_ids,
+        promotion_source=promotion_source,
+        status="reviewed",
+    )
+    return replay_reviewed_promotion(
+        soul_db,
+        source=source,
+        payload=payload,
+        decision=decision,
+    )
 
 
 def _load_entries(
@@ -245,6 +251,7 @@ def sleep_consolidate(
     cleared = 0
     gated = 0
     gate_failures: Dict[str, int] = {}
+    gateway = MemoryWriteGateway(soul_db)
 
     for record in working_records:
         target_layer = _classify_for_promotion(record.payload)
@@ -252,19 +259,31 @@ def sleep_consolidate(
             cleared += 1
             continue
 
-        gate_ok, reasons = _promotion_gate(record.payload)
-        if not gate_ok:
-            gated += 1
-            cleared += 1
-            for reason in reasons:
-                gate_failures[reason] = gate_failures.get(reason, 0) + 1
-            continue
-
         promoted_payload = dict(record.payload)
         promoted_payload["layer"] = target_layer
         promoted_payload["promoted_from"] = "working"
         promoted_payload["promoted_at"] = datetime.now(timezone.utc).isoformat()
-        soul_db.append(source, promoted_payload)
+        promoted_payload["subjectivity_layer"] = infer_subjectivity_layer(
+            promoted_payload,
+            target_layer=target_layer,
+        )
+        if record.record_id:
+            promoted_payload["source_record_ids"] = [str(record.record_id)]
+        promoted_payload.setdefault(
+            "promotion_gate",
+            {
+                "status": "candidate",
+                "source": "sleep_consolidate",
+            },
+        )
+        try:
+            gateway.write_payload(source, promoted_payload)
+        except MemoryWriteRejectedError as exc:
+            gated += 1
+            cleared += 1
+            for reason in exc.reasons:
+                gate_failures[reason] = gate_failures.get(reason, 0) + 1
+            continue
         promoted += 1
 
     all_entries = [
@@ -280,6 +299,7 @@ def sleep_consolidate(
             layer_summary[layer] += 1
         else:
             layer_summary[layer] = 1
+    subjectivity_summary = summarize_subjectivity_distribution(soul_db, source=source)
 
     return SleepResult(
         promoted_count=promoted,
@@ -288,5 +308,6 @@ def sleep_consolidate(
         patterns=patterns,
         meta_reflection=meta_reflection,
         layer_summary=layer_summary,
+        subjectivity_summary=subjectivity_summary,
         gate_failures=gate_failures,
     )

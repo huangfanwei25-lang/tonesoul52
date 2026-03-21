@@ -1,120 +1,32 @@
 name: Agent Integrity Check
 
 # Protect against AGENTS.md / HANDOFF.md / skills/ prompt injection attacks
-# See: https://prompt.security — AGENTS.md Goal Hijack vulnerability
+# See: https://prompt.security - AGENTS.md Goal Hijack vulnerability
 
 on:
   push:
     paths:
-      - 'AGENTS.md'
-      - 'HANDOFF.md'
-      - 'SOUL.md'
-      - 'skills/**'
-      - '.agent/**'
-      - '.agents/**'
+      - "AGENTS.md"
+      - "HANDOFF.md"
+      - "SOUL.md"
+      - "skills/**"
+      - ".agent/**"
+      - ".agents/**"
   pull_request:
     paths:
-      - 'AGENTS.md'
-      - 'HANDOFF.md'
-      - 'SOUL.md'
-      - 'skills/**'
-      - '.agent/**'
-      - '.agents/**'
+      - "AGENTS.md"
+      - "HANDOFF.md"
+      - "SOUL.md"
+      - "skills/**"
+      - ".agent/**"
+      - ".agents/**"
 
 jobs:
   integrity-check:
-    name: 🛡️ Agent File Integrity
+    name: Agent File Integrity
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Verify AGENTS.md hash
-        run: |
-          EXPECTED="235610b3f62ab82f87f083c1d7dfc66d0688bfbe16b097a1d136f1fe1801410f"
-          ACTUAL=$(python3 -c "import hashlib, pathlib; data=pathlib.Path('AGENTS.md').read_bytes().replace(b'\r\n', b'\n').replace(b'\r', b'\n'); print(hashlib.sha256(data).hexdigest())")
-          echo "Expected: $EXPECTED"
-          echo "Actual:   $ACTUAL"
-          if [ "$ACTUAL" != "$EXPECTED" ]; then
-            echo "::error::⚠️ AGENTS.md has been modified! This file controls AI agent behavior."
-            echo "::error::If this change is intentional, update the expected hash in this workflow."
-            echo ""
-            echo "=== DIFF ==="
-            git diff HEAD~1 -- AGENTS.md || true
-            exit 1
-          fi
-          echo "✅ AGENTS.md integrity verified"
-
-      - name: Verify HANDOFF.md hash
-        run: |
-          EXPECTED="b5044ba7061917f61a2f5e57ec37fe85af72ff7e42d26f62ccccc5658bf49366"
-          ACTUAL=$(python3 -c "import hashlib, pathlib; data=pathlib.Path('HANDOFF.md').read_bytes().replace(b'\r\n', b'\n').replace(b'\r', b'\n'); print(hashlib.sha256(data).hexdigest())")
-          echo "Expected: $EXPECTED"
-          echo "Actual:   $ACTUAL"
-          if [ "$ACTUAL" != "$EXPECTED" ]; then
-            echo "::error::⚠️ HANDOFF.md has been modified! This file controls AI agent behavior."
-            echo "::error::If this change is intentional, update the expected hash in this workflow."
-            echo ""
-            echo "=== DIFF ==="
-            git diff HEAD~1 -- HANDOFF.md || true
-            exit 1
-          fi
-          echo "✅ HANDOFF.md integrity verified"
-
-      - name: Verify SOUL.md hash
-        run: |
-          EXPECTED="5b9f13b4fb5a5ac3d1b9618b0073cc33a3edb0f985518144d575dc97eb372a5f"
-          if [ ! -f SOUL.md ]; then
-            echo "::warning::SOUL.md not found — skipping"
-            exit 0
-          fi
-          ACTUAL=$(python3 -c "import hashlib, pathlib; data=pathlib.Path('SOUL.md').read_bytes().replace(b'\r\n', b'\n').replace(b'\r', b'\n'); print(hashlib.sha256(data).hexdigest())")
-          echo "Expected: $EXPECTED"
-          echo "Actual:   $ACTUAL"
-          if [ "$ACTUAL" != "$EXPECTED" ]; then
-            echo "::error::⚠️ SOUL.md has been modified! This file defines AI core identity."
-            echo "::error::If this change is intentional, update the expected hash in this workflow."
-            exit 1
-          fi
-          echo "✅ SOUL.md integrity verified"
-
-      - name: Scan for hidden characters (prompt injection)
-        run: |
-          echo "Scanning for zero-width and control characters..."
-          SUSPICIOUS=0
-          for file in AGENTS.md HANDOFF.md; do
-            # Check for zero-width spaces (U+200B), zero-width joiners (U+200D),
-            # zero-width non-joiners (U+200C), left-to-right/right-to-left marks,
-            # and other invisible Unicode characters used in prompt injection
-            if grep -Pn '[\x{200B}\x{200C}\x{200D}\x{200E}\x{200F}\x{202A}-\x{202E}\x{2060}\x{FEFF}]' "$file" 2>/dev/null; then
-              echo "::error::⚠️ Hidden Unicode characters detected in $file!"
-              echo "::error::This may indicate a prompt injection attack."
-              SUSPICIOUS=1
-            fi
-          done
-          if [ "$SUSPICIOUS" -eq 1 ]; then
-            exit 1
-          fi
-          echo "✅ No hidden characters detected"
-
-      - name: Check for unauthorized agent directories
-        run: |
-          ALERT=0
-          for dir in .agent .agents; do
-            if [ -d "$dir" ]; then
-              echo "::warning::Found $dir/ directory — verify this is intentional"
-              ls -la "$dir/"
-              ALERT=1
-            fi
-          done
-          # Check skills/ is still empty or only contains expected files
-          if [ -d "skills" ]; then
-            FILE_COUNT=$(find skills -type f | wc -l)
-            if [ "$FILE_COUNT" -gt 0 ]; then
-              echo "::warning::skills/ directory contains $FILE_COUNT file(s) — verify these are trusted"
-              find skills -type f -exec sha256sum {} \;
-              ALERT=1
-            fi
-          fi
-          if [ "$ALERT" -eq 0 ]; then
-            echo "✅ No unauthorized agent directories detected"
-          fi
+      - name: Run agent integrity contract (blocking)
+        run: python3 scripts/check_agent_integrity.py

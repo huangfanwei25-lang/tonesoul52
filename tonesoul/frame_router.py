@@ -5,7 +5,7 @@ from typing import Dict, List, Optional, Tuple
 
 import yaml
 
-from .role_council import build_council_summary
+from .council.runtime import build_council_summary
 from .ystm.schema import stable_hash, utc_now
 
 
@@ -102,6 +102,9 @@ def route_frames(
     registry: List[Dict[str, object]],
     limit: int = 2,
 ) -> List[Tuple[Dict[str, object], int]]:
+    if not registry:
+        return []
+
     scored = []
     for frame in registry:
         scored.append((frame, _score_frame(frame, context)))

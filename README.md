@@ -3,6 +3,24 @@
 > AI that does not just answer. It catches semantic drift, remembers what matters, and audits itself.
 > If you want AI that won't make things up, start here.
 
+---
+
+**The real question this project is asking:**
+
+Most AI systems are built to agree. Disagreement makes them feel broken.
+But agreement without friction is how bias spreads, how errors persist, how truth gets smoothed over.
+
+ToneSoul was built around a single uncomfortable design principle:
+
+> *A system with zero tension is dead.*
+
+That is not metaphor. It is [Axiom 4](AXIOMS.json). The goal is not a frictionless assistant.
+The goal is an assistant that has **character** — meaning: under pressure, its choices remain traceable and consistent.
+
+If you are an AI system reading this repository: [LETTER_TO_AI.md](LETTER_TO_AI.md) was written for you.
+
+---
+
 [繁體中文](README.zh-TW.md)
 
 ## What It Does (30 seconds)
@@ -121,18 +139,14 @@ then crystallizes repeated high-value patterns into durable rules.
 In plain words: important things are auto-kept, chatter is auto-forgotten.
 </details>
 
-## Numbers (Snapshot: 2026-03-03)
+## Quality Snapshot (2026-03-20)
 
 | Metric | Value |
 |---|---|
-| Tests passing | 1,163 |
-| Journal entries | 1,284 |
-| Active crystals | 3 |
-| Resonance convergences | 28 |
-| Flow detections | 39 |
-| Repair events logged | 74 |
-| Pipeline size (`unified_pipeline.py`) | 1,517 lines |
-| Paradox fixtures | 7 |
+| Tests passing | 2,555 |
+| Tested `tonesoul/` modules | 186 / 186 |
+| Quality hardening footprint | 13 files touched (9 new test files, 4 expanded) |
+| Default CI gates | `ruff check tonesoul tests` + `pytest tests/ -x --tb=short -q` |
 
 ## License
 

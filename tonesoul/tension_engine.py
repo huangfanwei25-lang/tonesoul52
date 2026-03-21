@@ -8,11 +8,13 @@ stateful tension result used by dispatch and gate decisions.
 from __future__ import annotations
 
 import math
+import pathlib
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
 
 from .nonlinear_predictor import NonlinearPredictor, PredictionResult
+from .resistance import PainEngine, ThrottleResult
 from .semantic_control import (
     Coupler,
     LambdaObserver,
@@ -113,6 +115,8 @@ class TensionResult:
     prediction: Optional[PredictionResult] = None
     compression: Optional[CompressionResult] = None
     work_category: Optional[str] = None
+    # RFC-012 resistance
+    throttle: Optional[ThrottleResult] = None
 
     def __post_init__(self) -> None:
         if not self.timestamp:
@@ -137,6 +141,8 @@ class TensionResult:
             d["compression"] = self.compression.to_dict()
         if self.work_category is not None:
             d["work_category"] = self.work_category
+        if self.throttle is not None:
+            d["throttle"] = self.throttle.to_dict()
         return d
 
 
@@ -184,6 +190,8 @@ class TensionEngine:
         self._predictor = NonlinearPredictor()
         self._compressor = DynamicVarianceCompressor()
         self._work_category = work_category or WorkCategory.ENGINEERING
+        # RFC-012 resistance
+        self._pain_engine = PainEngine()
 
     def compute(
         self,
@@ -274,6 +282,12 @@ class TensionEngine:
         # 12) Explanation
         explanation = self._build_explanation(signals, total, zone, lambda_state)
 
+        # 12.5) RFC-012: Evaluate pain throttle
+        throttle = self._pain_engine.evaluate_throttle(
+            compression_ratio=compression.compression_ratio,
+            gamma_effective=compression.gamma_effective,
+        )
+
         return TensionResult(
             total=total,
             zone=zone,
@@ -287,6 +301,7 @@ class TensionEngine:
             prediction=prediction,
             compression=compression,
             work_category=self._work_category.value,
+            throttle=throttle,
         )
 
     @property
@@ -306,6 +321,20 @@ class TensionEngine:
         self._predictor.reset()
         self._persistence = 0.0
         self._step_count = 0
+
+    def save_persistence(self, path: "Optional[pathlib.Path]" = None) -> None:
+        """Persist the current Ψ value to disk for cross-session continuity."""
+        from tonesoul.soul_persistence import save_psi
+
+        save_psi(self._persistence, self._step_count, path)
+
+    def load_persistence(self, path: "Optional[pathlib.Path]" = None) -> None:
+        """Restore the Ψ value from a previous session."""
+        from tonesoul.soul_persistence import load_psi
+
+        snapshot = load_psi(path)
+        self._persistence = snapshot.psi
+        self._step_count = snapshot.step_count
 
     @property
     def work_category(self) -> WorkCategory:
@@ -378,7 +407,8 @@ class TensionEngine:
         if max_entropy <= 0:
             return 0.0
 
-        return min(1.0, raw_entropy / max_entropy)
+        normalized_entropy = raw_entropy / max_entropy
+        return min(1.0, max(0.0, normalized_entropy))
 
     def _compute_delta_s_ecs(
         self,

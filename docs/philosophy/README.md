@@ -38,6 +38,7 @@ Together, they ensure that no algorithm or abstraction drifts too far from its e
 - [Volume II - Consciousness & Cycles](./VOLUME_II.md)
 - [Choice Identity Principle](./choice_identity_principle.md)
 - [Philosophical Reflection Engineering Spec](./philosophical_reflection_engineering_spec.md)
+- [AI Life Journal Protocol](./ai_life_journal_protocol.md)
 
 ---
 

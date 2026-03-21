@@ -40,7 +40,7 @@ jobs:
         export PYTHONPATH=.
         python -c "from tonesoul.tsr_metrics import score; print('tsr_metrics OK')"
         python -c "from tonesoul.poav import score; print('poav OK')"
-        python -c "from tonesoul.unified_core import UnifiedCore; print('unified_core OK')"
+        python -c "from tonesoul.unified_pipeline import UnifiedPipeline; print('unified_pipeline OK')"
         python -c "from tonesoul.vow_system import VowEnforcer; print('vow_system OK')"
         python -c "from tonesoul.time_island import TimeIsland; print('time_island OK')"
     

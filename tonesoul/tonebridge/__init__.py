@@ -33,6 +33,9 @@ from .rupture_detector import (
     RuptureSeverity,
     SemanticRupture,
 )
+from .scenario_envelope import (
+    ScenarioEnvelopeBuilder,
+)
 
 # Third Axiom - Self Commit System
 from .self_commit import (
@@ -103,6 +106,7 @@ __all__ = [
     "SessionReporter",
     "SessionSummary",
     "TurningPoint",
+    "ScenarioEnvelopeBuilder",
     # Enhanced Commitment Extraction
     "CommitmentExtractor",
     "CommitmentStructure",

@@ -1,6 +1,17 @@
 # ToneSoul Documentation Index
 
-> 自動更新於 2026-02-21。按主題分類，方便快速導航。
+> 自動更新於 2026-03-18。按主題分類，方便快速導航。
+
+---
+
+## 🧭 Documentation Governance v1
+
+| 文件 | 說明 |
+|------|------|
+| [DOCS_INFORMATION_ARCHITECTURE_v1.md](DOCS_INFORMATION_ARCHITECTURE_v1.md) | 文件分類、檔名控管、資料區管理基線 |
+| [DOCS_CLASSIFICATION_LEDGER_v1.md](DOCS_CLASSIFICATION_LEDGER_v1.md) | 第一版分類台帳（先分類、後搬移） |
+| [FILE_PURPOSE_MAP.md](FILE_PURPOSE_MAP.md) | 跨目錄命名規約 |
+| [plans/iu_oi_backplane_convergence_2026-03-18.md](plans/iu_oi_backplane_convergence_2026-03-18.md) | IU/OI/Backplane 收斂藍圖 |
 
 ---
 
@@ -45,6 +56,7 @@
 | [PHILOSOPHY_WHITEPAPER_v1.md](PHILOSOPHY_WHITEPAPER_v1.md) | 哲學白皮書 v1 |
 | [WHITEPAPER.md](WHITEPAPER.md) | 主白皮書 (45KB) |
 | [WORLD_MODEL_X_MIND_MODEL.md](WORLD_MODEL_X_MIND_MODEL.md) | 世界模型 × 心智模型 |
+| [philosophy/ai_life_journal_protocol.md](philosophy/ai_life_journal_protocol.md) | AI 生命日記與承擔協議 |
 | [AI_CONCEPT_ASSESSMENT.md](AI_CONCEPT_ASSESSMENT.md) | AI 概念評估 |
 | [TRUTH_STRUCTURE.md](TRUTH_STRUCTURE.md) | 真理結構 (19KB) |
 | [core_concepts.md](core_concepts.md) | 核心概念定義 |

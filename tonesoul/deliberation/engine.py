@@ -15,7 +15,9 @@ import asyncio
 import time
 from typing import Any, Dict, List, Optional
 
+from .adaptive_rounds import TENSION_LOW, aggregate_tension_severity, calculate_debate_rounds
 from .gravity import create_semantic_gravity
+from .persona_track_record import create_persona_track_record
 from .perspectives import (
     BasePerspective,
     create_perspectives,
@@ -23,6 +25,7 @@ from .perspectives import (
 from .types import (
     DeliberationContext,
     PerspectiveType,
+    RoundResult,
     SynthesizedResponse,
     ViewPoint,
 )
@@ -46,8 +49,10 @@ class InternalDeliberation:
         # Initialize three perspectives
         self._perspectives = create_perspectives()
 
+        self._persona_track_record = create_persona_track_record()
+
         # Initialize synthesis engine
-        self._gravity = create_semantic_gravity()
+        self._gravity = create_semantic_gravity(track_record=self._persona_track_record)
 
         # State tracking
         self._deliberation_count = 0
@@ -60,19 +65,9 @@ class InternalDeliberation:
         This is more efficient as we don't wait for each
         perspective sequentially.
         """
-        start_time = time.time()
-
-        # Parallel execution of all perspectives
-        viewpoints = await self._parallel_think(context)
-
-        # Synthesize
-        elapsed_ms = (time.time() - start_time) * 1000
-        result = self._gravity.synthesize(viewpoints, context, elapsed_ms)
-
-        # Track state
+        result, viewpoints = await self._run_adaptive_deliberation_async(context)
         self._deliberation_count += 1
         self._last_viewpoints = viewpoints
-
         return result
 
     def deliberate_sync(self, context: DeliberationContext) -> SynthesizedResponse:
@@ -81,29 +76,141 @@ class InternalDeliberation:
 
         Uses asyncio.run() or sequential execution as fallback.
         """
-        start_time = time.time()
-
         try:
-            # Try to use asyncio
-            loop = asyncio.get_event_loop()
-            if loop.is_running():
-                # We're already in an async context, run sequentially
-                viewpoints = self._sequential_think(context)
-            else:
-                viewpoints = asyncio.run(self._parallel_think(context))
+            asyncio.get_running_loop()
         except RuntimeError:
-            # No event loop, run sequentially
-            viewpoints = self._sequential_think(context)
+            result, viewpoints = asyncio.run(self._run_adaptive_deliberation_async(context))
+        else:
+            # Already running inside an event loop; keep this sync seam explicit.
+            result, viewpoints = self._run_adaptive_deliberation_sync(context)
 
-        # Synthesize
-        elapsed_ms = (time.time() - start_time) * 1000
-        result = self._gravity.synthesize(viewpoints, context, elapsed_ms)
-
-        # Track state
         self._deliberation_count += 1
         self._last_viewpoints = viewpoints
 
         return result
+
+    async def _run_adaptive_deliberation_async(
+        self, context: DeliberationContext
+    ) -> tuple[SynthesizedResponse, List[ViewPoint]]:
+        start_time = time.time()
+        round_results: List[RoundResult] = []
+
+        viewpoints = await self._parallel_think(context)
+        round_results.append(self._build_round_result(1, viewpoints, context))
+        target_rounds = calculate_debate_rounds(round_results[0].tensions)
+
+        aegis = self._gravity._find_aegis(viewpoints)
+        if aegis and aegis.veto_triggered:
+            elapsed_ms = (time.time() - start_time) * 1000
+            result = self._gravity._guardian_override(aegis, viewpoints, elapsed_ms)
+            self._attach_round_metadata(result, round_results)
+            return result, viewpoints
+
+        current_round = 2
+        while current_round <= target_rounds:
+            debate_context = self._build_debate_context(context, viewpoints, current_round)
+            viewpoints = await self._parallel_think(debate_context)
+            current_round_result = self._build_round_result(current_round, viewpoints, debate_context)
+            round_results.append(current_round_result)
+
+            aegis = self._gravity._find_aegis(viewpoints)
+            if aegis and aegis.veto_triggered:
+                elapsed_ms = (time.time() - start_time) * 1000
+                result = self._gravity._guardian_override(aegis, viewpoints, elapsed_ms)
+                self._attach_round_metadata(result, round_results)
+                return result, viewpoints
+
+            if current_round_result.aggregate_tension < TENSION_LOW:
+                break
+            current_round += 1
+
+        elapsed_ms = (time.time() - start_time) * 1000
+        result = self._gravity.synthesize(viewpoints, context, elapsed_ms)
+        self._attach_round_metadata(result, round_results)
+        return result, viewpoints
+
+    def _run_adaptive_deliberation_sync(
+        self, context: DeliberationContext
+    ) -> tuple[SynthesizedResponse, List[ViewPoint]]:
+        start_time = time.time()
+        round_results: List[RoundResult] = []
+
+        viewpoints = self._sequential_think(context)
+        round_results.append(self._build_round_result(1, viewpoints, context))
+        target_rounds = calculate_debate_rounds(round_results[0].tensions)
+
+        aegis = self._gravity._find_aegis(viewpoints)
+        if aegis and aegis.veto_triggered:
+            elapsed_ms = (time.time() - start_time) * 1000
+            result = self._gravity._guardian_override(aegis, viewpoints, elapsed_ms)
+            self._attach_round_metadata(result, round_results)
+            return result, viewpoints
+
+        current_round = 2
+        while current_round <= target_rounds:
+            debate_context = self._build_debate_context(context, viewpoints, current_round)
+            viewpoints = self._sequential_think(debate_context)
+            current_round_result = self._build_round_result(current_round, viewpoints, debate_context)
+            round_results.append(current_round_result)
+
+            aegis = self._gravity._find_aegis(viewpoints)
+            if aegis and aegis.veto_triggered:
+                elapsed_ms = (time.time() - start_time) * 1000
+                result = self._gravity._guardian_override(aegis, viewpoints, elapsed_ms)
+                self._attach_round_metadata(result, round_results)
+                return result, viewpoints
+
+            if current_round_result.aggregate_tension < TENSION_LOW:
+                break
+            current_round += 1
+
+        elapsed_ms = (time.time() - start_time) * 1000
+        result = self._gravity.synthesize(viewpoints, context, elapsed_ms)
+        self._attach_round_metadata(result, round_results)
+        return result, viewpoints
+
+    def _build_round_result(
+        self,
+        round_number: int,
+        viewpoints: List[ViewPoint],
+        context: DeliberationContext,
+    ) -> RoundResult:
+        tensions = self._gravity.detect_tensions(viewpoints)
+        weights = self._gravity.calculate_weights(viewpoints, context)
+        return RoundResult(
+            round_number=round_number,
+            viewpoints=viewpoints,
+            tensions=tensions,
+            weights=weights,
+            aggregate_tension=aggregate_tension_severity(tensions),
+        )
+
+    @staticmethod
+    def _build_debate_context(
+        context: DeliberationContext,
+        viewpoints: List[ViewPoint],
+        round_number: int,
+    ) -> DeliberationContext:
+        return DeliberationContext(
+            user_input=context.user_input,
+            conversation_history=context.conversation_history,
+            commit_stack=context.commit_stack,
+            trajectory=context.trajectory,
+            entropy_state=context.entropy_state,
+            tone_strength=context.tone_strength,
+            resonance_state=context.resonance_state,
+            loop_detected=context.loop_detected,
+            scenario_envelope=dict(context.scenario_envelope or {}),
+            prior_viewpoints=[viewpoint.to_dict() for viewpoint in viewpoints],
+            debate_round=round_number,
+        )
+
+    @staticmethod
+    def _attach_round_metadata(result: Any, round_results: List[RoundResult]) -> None:
+        if hasattr(result, "rounds_used"):
+            result.rounds_used = len(round_results)
+        if hasattr(result, "round_results"):
+            result.round_results = list(round_results)
 
     async def _parallel_think(self, context: DeliberationContext) -> List[ViewPoint]:
         """Execute all perspectives in parallel."""
@@ -142,6 +249,26 @@ class InternalDeliberation:
     @property
     def deliberation_count(self) -> int:
         return self._deliberation_count
+
+    def record_outcome(
+        self,
+        dominant_voice: Optional[str],
+        verdict: str,
+        resonance_state: str = "unknown",
+        loop_detected: bool = False,
+    ) -> None:
+        """Persist post-council outcome for dynamic future weighting."""
+        if not dominant_voice:
+            return
+        self._persona_track_record.record_outcome(
+            perspective=str(dominant_voice),
+            verdict=str(verdict),
+            resonance_state=resonance_state,
+            loop_detected=loop_detected,
+        )
+
+    def get_persona_track_summary(self) -> Dict[str, Dict[str, float]]:
+        return self._persona_track_record.summary()
 
 
 def create_deliberation_engine() -> InternalDeliberation:

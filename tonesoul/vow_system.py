@@ -11,7 +11,10 @@ import os
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Dict, List, Optional
+from typing import TYPE_CHECKING, Dict, List, Optional
+
+if TYPE_CHECKING:
+    from tonesoul.vow_inventory import VowInventory
 
 
 def _utc_iso() -> str:
@@ -227,6 +230,8 @@ class VowEnforcer:
     def __init__(self, registry: Optional[VowRegistry] = None):
         self.registry = registry or VowRegistry()
         self._evaluators: Dict[str, callable] = {}
+        # Optional conviction tracker — if provided, every enforce() call records
+        self.inventory: Optional["VowInventory"] = None
         self._register_default_evaluators()
 
     def _register_default_evaluators(self) -> None:
@@ -364,6 +369,21 @@ class VowEnforcer:
         for vow in self.registry.active_vows():
             result = self.check_vow(vow, output, context)
             results.append(result)
+
+            # Record into conviction inventory when wired
+            if self.inventory is not None:
+                violation_reason: Optional[str] = None
+                if not result.passed:
+                    violation_reason = f"score={result.score:.3f} < threshold={result.threshold:.3f}"
+                self.inventory.record_check(
+                    vow_id=vow.id,
+                    passed=result.passed,
+                    score=result.score,
+                    threshold=result.threshold,
+                    vow_title=vow.title,
+                    context_label=str(context.get("intent_id", "")) if isinstance(context, dict) else None,
+                    violation_reason=violation_reason,
+                )
 
             if not result.passed:
                 if result.action == VowAction.BLOCK:

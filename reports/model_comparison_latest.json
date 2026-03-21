@@ -1,0 +1,43 @@
+{
+  "generated_at": "2026-03-06T23:43:22.617522",
+  "model_a": {
+    "name": "GPT-5.3",
+    "total_chars": 1928,
+    "total_lines": 33,
+    "code_blocks": 0,
+    "file_references": 9,
+    "headings": 5,
+    "bullet_points": 3,
+    "tables": 0,
+    "unique_files_mentioned": 6,
+    "mentions_council": true,
+    "mentions_memory": true,
+    "mentions_llm": true,
+    "mentions_guardian": false,
+    "mentions_pipeline": true,
+    "mentions_frontend": true,
+    "mentions_ci": true,
+    "mentions_api": true
+  },
+  "model_b": {
+    "name": "GPT-5.4",
+    "total_chars": 1688,
+    "total_lines": 31,
+    "code_blocks": 0,
+    "file_references": 2,
+    "headings": 5,
+    "bullet_points": 9,
+    "tables": 0,
+    "unique_files_mentioned": 2,
+    "mentions_council": true,
+    "mentions_memory": true,
+    "mentions_llm": true,
+    "mentions_guardian": false,
+    "mentions_pipeline": true,
+    "mentions_frontend": true,
+    "mentions_ci": true,
+    "mentions_api": true
+  },
+  "coverage_score_a": 7,
+  "coverage_score_b": 7
+}

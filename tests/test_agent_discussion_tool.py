@@ -59,6 +59,9 @@ def test_cmd_append_lessons_writes_standard_message(tmp_path: Path):
     assert message.startswith(f"[{LESSONS_TEMPLATE_VERSION}]")
     assert "missed:\n- overlooked soft-fail risk" in message
     assert "signature: signed_by=codex(gpt-5)" in message
+    curated_rows = load_entries(path=curated)
+    assert len(curated_rows) == 1
+    assert curated_rows[0]["topic"] == "repo-convergence-progress-2026-02-10"
 
 
 def test_cmd_append_lessons_rejects_missing_corrections(tmp_path: Path, capsys):

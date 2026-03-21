@@ -39,7 +39,8 @@ describe("chat route transport fallback behavior", () => {
 
         expect(response.status).toBe(502);
         expect(payload.error).toBe("Backend unavailable");
-        expect(payload.backend_mode).toBeUndefined();
+        expect(payload.backend_mode).toBe("external_backend");
+        expect(payload.deliberation_level).toBe("unavailable");
     });
 
     it("returns mock fallback only when explicitly enabled", async () => {
@@ -84,6 +85,8 @@ describe("chat route transport fallback behavior", () => {
         expect(String(payload.error)).toContain("timed out");
         expect(payload.backend_timeout_ms).toBe(55000);
         expect(payload.execution_profile).toBe("interactive");
+        expect(payload.backend_mode).toBe("external_backend");
+        expect(payload.deliberation_level).toBe("unavailable");
     });
 
     it("uses longer timeout budget for engineering execution_profile", async () => {
@@ -105,6 +108,8 @@ describe("chat route transport fallback behavior", () => {
         expect(response.status).toBe(504);
         expect(payload.backend_timeout_ms).toBe(58000);
         expect(payload.execution_profile).toBe("engineering");
+        expect(payload.backend_mode).toBe("external_backend");
+        expect(payload.deliberation_level).toBe("unavailable");
     });
 
     it("constrains reasoning when distillation-extraction prompt is detected", async () => {
@@ -162,6 +167,8 @@ describe("chat route transport fallback behavior", () => {
 
         expect(response.status).toBe(200);
         expect(payload.response).toBe("ok from backend");
+        expect(payload.backend_mode).toBe("same_origin");
+        expect(payload.deliberation_level).toBe("runtime");
         expect(fetchMock).toHaveBeenCalledTimes(1);
         const [url] = fetchMock.mock.calls[0] as [string, RequestInit];
         expect(url).toContain("/api/_backend/api/chat");
@@ -210,6 +217,8 @@ describe("chat route transport fallback behavior", () => {
 
         expect(response.status).toBe(200);
         expect(payload.response).toBe("ok");
+        expect(payload.backend_mode).toBe("same_origin");
+        expect(payload.deliberation_level).toBe("runtime");
         expect(fetchMock).toHaveBeenCalledTimes(1);
         const [, requestInit] = fetchMock.mock.calls[0] as [string, RequestInit];
         const parsedBody = JSON.parse(String(requestInit.body)) as Record<string, unknown>;
@@ -256,6 +265,8 @@ describe("chat route transport fallback behavior", () => {
 
         expect(response.status).toBe(200);
         expect(payload.response).toBe("ok");
+        expect(payload.backend_mode).toBe("external_backend");
+        expect(payload.deliberation_level).toBe("runtime");
         expect(fetchMock).toHaveBeenCalledTimes(1);
         const [, requestInit] = fetchMock.mock.calls[0] as [string, RequestInit];
         const parsedBody = JSON.parse(String(requestInit.body)) as Record<string, unknown>;
@@ -280,6 +291,8 @@ describe("chat route transport fallback behavior", () => {
 
         expect(response.status).toBe(200);
         expect(payload.response).toBe("ok");
+        expect(payload.backend_mode).toBe("external_backend");
+        expect(payload.deliberation_level).toBe("runtime");
         expect(fetchMock).toHaveBeenCalledTimes(1);
         const [, requestInit] = fetchMock.mock.calls[0] as [string, RequestInit];
         const parsedBody = JSON.parse(String(requestInit.body)) as Record<string, unknown>;
@@ -309,6 +322,8 @@ describe("chat route transport fallback behavior", () => {
 
         expect(response.status).toBe(200);
         expect(payload.response).toBe("ok");
+        expect(payload.backend_mode).toBe("external_backend");
+        expect(payload.deliberation_level).toBe("runtime");
         expect(fetchMock).toHaveBeenCalledTimes(1);
         const [, requestInit] = fetchMock.mock.calls[0] as [string, RequestInit];
         const parsedBody = JSON.parse(String(requestInit.body)) as Record<string, unknown>;
@@ -347,6 +362,8 @@ describe("chat route transport fallback behavior", () => {
 
         expect(response.status).toBe(200);
         expect(payload.response).toBe("ok");
+        expect(payload.backend_mode).toBe("external_backend");
+        expect(payload.deliberation_level).toBe("runtime");
         expect(fetchMock).toHaveBeenCalledTimes(1);
         const [, requestInit] = fetchMock.mock.calls[0] as [string, RequestInit];
         const parsedBody = JSON.parse(String(requestInit.body)) as Record<string, unknown>;
@@ -427,6 +444,8 @@ describe("chat route transport fallback behavior", () => {
 
         expect(response.status).toBe(200);
         expect(payload.response).toBe("ok");
+        expect(payload.backend_mode).toBe("external_backend");
+        expect(payload.deliberation_level).toBe("runtime");
         expect(fetchMock).toHaveBeenCalledTimes(2);
     });
 

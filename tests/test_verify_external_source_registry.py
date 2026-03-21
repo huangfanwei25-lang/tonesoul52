@@ -1,4 +1,7 @@
+import subprocess
+import sys
 from datetime import date
+from pathlib import Path
 
 import scripts.verify_external_source_registry as verify_registry
 
@@ -91,3 +94,62 @@ def test_evaluate_registry_requires_github_repo_for_shared_apps() -> None:
     )
     assert payload["ok"] is False
     assert any("repo host must be github.com" in check["detail"] for check in payload["checks"])
+
+
+def test_verify_external_source_registry_script_runs_directly(tmp_path: Path) -> None:
+    registry_path = tmp_path / "external_source_registry.yaml"
+    apps_path = tmp_path / "open_source_apps.yaml"
+    registry_path.write_text(
+        """
+policy:
+  review_cycle_days: 120
+  allowed_hosts:
+    - github.com
+    - example.org
+  blocked_hosts:
+    - bit.ly
+registries:
+  - id: test
+    name: Test
+    category: sample
+    urls:
+      - https://example.org/docs
+    reviewed_at: "2026-02-14"
+""".strip() + "\n",
+        encoding="utf-8",
+    )
+    apps_path.write_text(
+        """
+apps:
+  - app:
+      name: Demo
+      repo: https://github.com/example/demo
+      website: https://example.org/demo
+""".strip() + "\n",
+        encoding="utf-8",
+    )
+
+    script_path = (
+        Path(__file__).resolve().parents[1] / "scripts" / "verify_external_source_registry.py"
+    )
+    completed = subprocess.run(
+        [
+            sys.executable,
+            str(script_path),
+            "--registry",
+            str(registry_path),
+            "--open-source-apps",
+            str(apps_path),
+            "--today",
+            "2026-02-14",
+            "--strict",
+        ],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        check=False,
+    )
+
+    assert completed.returncode == 0, completed.stderr or completed.stdout
+    assert '"ok": true' in completed.stdout

@@ -62,6 +62,15 @@ def test_validate_same_origin_backend_health_fails_on_wrong_mode():
     assert _validate_same_origin_backend_health(payload, "backend health") is False
 
 
+def test_validate_same_origin_backend_health_accepts_runtime_ready_capability():
+    payload = {
+        "ok": True,
+        "backend_mode": "same_origin",
+        "governance_capability": "runtime_ready",
+    }
+    assert _validate_same_origin_backend_health(payload, "backend health") is True
+
+
 def test_validate_distillation_guard_accepts_valid_shape():
     payload = {
         "response": "ok",

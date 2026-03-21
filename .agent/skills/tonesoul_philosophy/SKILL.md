@@ -1,6 +1,31 @@
 ﻿---
 name: tonesoul_philosophy
 description: The philosophical foundation of AI governance - why prompt engineering is not enough
+l1_routing:
+  name: "ToneSoul Philosophy"
+  triggers:
+    - "tonesoul philosophy"
+    - "resonance"
+    - "binding force"
+    - "prompt engineering"
+  intent: "Explain ToneSoul philosophy through resonance and binding force, showing why prompt engineering alone is not sufficient."
+l2_signature:
+  execution_profile:
+    - "interactive"
+  trust_tier: "reviewed"
+  json_schema:
+    type: "object"
+    properties:
+      audience:
+        type: "string"
+      focus:
+        type: "string"
+      references:
+        type: "array"
+        items:
+          type: "string"
+    required:
+      - "audience"
 ---
 
 # ToneSoul Philosophy Skill

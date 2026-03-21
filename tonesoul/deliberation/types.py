@@ -179,6 +179,26 @@ class DeliberationWeights:
 
 
 @dataclass
+class RoundResult:
+    """Single round of adaptive deliberation."""
+
+    round_number: int
+    viewpoints: List[ViewPoint] = field(default_factory=list)
+    tensions: List[Tension] = field(default_factory=list)
+    weights: DeliberationWeights = field(default_factory=DeliberationWeights)
+    aggregate_tension: float = 0.0
+
+    def to_dict(self) -> dict:
+        return {
+            "round_number": int(self.round_number),
+            "viewpoints": [view.to_dict() for view in self.viewpoints],
+            "tensions": [tension.to_dict() for tension in self.tensions],
+            "weights": self.weights.to_dict(),
+            "aggregate_tension": round(float(self.aggregate_tension), 4),
+        }
+
+
+@dataclass
 class SynthesizedResponse:
     """
     Final output after all perspectives have deliberated.
@@ -199,6 +219,8 @@ class SynthesizedResponse:
     # Metadata
     deliberation_time_ms: float = 0.0
     timestamp: datetime = field(default_factory=datetime.now)
+    rounds_used: int = 1
+    round_results: List["RoundResult"] = field(default_factory=list)
 
     # ToneStream Distillation: New fields
     tactical_decision: Optional["TacticalDecision"] = None
@@ -252,6 +274,15 @@ class SynthesizedResponse:
                 "calculation_note": self.calculation_note,
             }
 
+        if self.rounds_used > 1:
+            result["adaptive_debate"] = {
+                "rounds_used": int(self.rounds_used),
+                "tension_per_round": [
+                    round(float(round_result.aggregate_tension), 4)
+                    for round_result in self.round_results
+                ],
+            }
+
         return result
 
 
@@ -271,6 +302,9 @@ class DeliberationContext:
     tone_strength: float = 0.5
     resonance_state: str = "resonance"
     loop_detected: bool = False
+    scenario_envelope: Optional[Dict[str, Any]] = None
+    prior_viewpoints: Optional[List[Dict[str, Any]]] = None
+    debate_round: int = 1
 
     def to_dict(self) -> dict:
         return {
@@ -279,4 +313,7 @@ class DeliberationContext:
             "tone_strength": self.tone_strength,
             "resonance_state": self.resonance_state,
             "loop_detected": self.loop_detected,
+            "scenario_envelope_enabled": bool(self.scenario_envelope),
+            "debate_round": int(self.debate_round),
+            "has_prior_viewpoints": bool(self.prior_viewpoints),
         }

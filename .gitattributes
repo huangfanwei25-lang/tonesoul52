@@ -1,0 +1,26 @@
+# ToneSoul — normalize line endings
+# Codex runs on Linux (LF), local dev on Windows (CRLF)
+# Git stores LF, checkout converts to OS native
+* text=auto eol=lf
+
+# Ensure these are always LF
+*.py text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.json text eol=lf
+*.toml text eol=lf
+*.txt text eol=lf
+*.html text eol=lf
+*.css text eol=lf
+*.js text eol=lf
+*.xml text eol=lf
+
+# Binary files
+*.gguf binary
+*.png binary
+*.jpg binary
+*.wav binary
+*.mp3 binary
+*.mp4 binary
+*.zip binary

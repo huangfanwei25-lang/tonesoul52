@@ -1,0 +1,380 @@
+{
+  "generated_at": "2026-03-08T03:56:43Z",
+  "overall_status": "ok",
+  "config": {
+    "interval_seconds": 0.0,
+    "max_cycles": 1,
+    "limit": 4,
+    "min_priority": 0.3,
+    "related_limit": 5,
+    "crystal_count": 5,
+    "generate_reflection": true,
+    "require_inference_ready": true,
+    "inference_timeout_seconds": 2.0
+  },
+  "results": [
+    {
+      "cycle": 1,
+      "status": "ok",
+      "started_at": "2026-03-08T03:56:41Z",
+      "finished_at": "2026-03-08T03:56:43Z",
+      "duration_ms": 2195,
+      "interval_seconds": 0.0,
+      "dream_result": {
+        "generated_at": "2026-03-08T03:56:43Z",
+        "stimuli_considered": 3,
+        "stimuli_selected": 3,
+        "llm_backend": "lmstudio",
+        "llm_preflight": {
+          "ok": false,
+          "supported": true,
+          "backend": "lmstudio",
+          "model": "qwen3.5-9b",
+          "reason": "timeout",
+          "latency_ms": 2013,
+          "probe_latency_ms": 1255,
+          "selection_latency_ms": 758,
+          "timeout_seconds": 2.0,
+          "enabled": true,
+          "required": true
+        },
+        "collisions": [
+          {
+            "stimulus_record_id": "ffc10418-cb1f-4e63-9324-9426fc6c6eeb",
+            "topic": "A distributed vulnerability database for Open Source",
+            "source_url": "https://osv.dev/",
+            "priority_score": 0.5108,
+            "relevance_score": 0.3015,
+            "novelty_score": 0.7,
+            "resonance_score": 1.0,
+            "friction_score": 0.3067,
+            "should_convene_council": true,
+            "council_reason": "Tension (0.51) exceeds threshold (0.4)",
+            "llm_backend": "lmstudio",
+            "reflection": "Dream collision examined 'A distributed vulnerability database for Open Source'. Friction=0.3067 with 2 recalled memories and 3 durable rules. Next governance move: Tension (0.51) exceeds threshold (0.4).",
+            "reflection_generated": false,
+            "related_memories": [
+              {
+                "id": "85c8bd7e-5cfe-4606-8acb-f1c63ac15b96",
+                "title": "An open, precise, and distributed approach to producing and consuming vulnerability information for open source.",
+                "source": "custom",
+                "layer": "working",
+                "summary": "An open, precise, and distributed approach to producing and consuming vulnerability information for open source.",
+                "tags": [
+                  "ai",
+                  "architecture",
+                  "engineering",
+                  "environment",
+                  "perception"
+                ]
+              },
+              {
+                "id": "5e0863eb-6caa-4354-bd51-7a87de7fd905",
+                "title": "Quickly assess open source projects for risky practices",
+                "source": "custom",
+                "layer": "working",
+                "summary": "Quickly assess open source projects for risky practices",
+                "tags": [
+                  "ai",
+                  "engineering",
+                  "environment",
+                  "perception"
+                ]
+              }
+            ],
+            "crystal_rules": [
+              "critical: collapse warnings escalate to fail-closed governance",
+              "prefer interactions that produce genuine resonance (tension -> convergence -> novel output)",
+              "avoid high-risk actions that previously triggered block outcomes"
+            ],
+            "resistance": {
+              "prior_tension": {
+                "query_tension": 0.5108,
+                "memory_tension": 0.0,
+                "delta_t": 0.48919999999999997,
+                "query_wave": {
+                  "uncertainty_shift": 0.7,
+                  "divergence_shift": 0.0,
+                  "risk_shift": 0.5108,
+                  "revision_shift": 0.48919999999999997
+                },
+                "memory_wave": {
+                  "uncertainty_shift": 1.0,
+                  "divergence_shift": 0.0,
+                  "risk_shift": 1.0,
+                  "revision_shift": 0.4
+                },
+                "constraint_kind": "core_rule",
+                "is_immutable": false,
+                "gate_decision": "approve"
+              },
+              "runtime_friction": {
+                "tension_delta": 0.5108,
+                "wave_distance": 0.2196,
+                "friction_score": 0.3798,
+                "constraint_kind": "core_rule",
+                "is_immutable": false
+              },
+              "circuit_breaker": {
+                "friction_history_len": 1,
+                "consecutive_high": 0,
+                "is_frozen": false,
+                "freeze_reason": "",
+                "status": "ok",
+                "lyapunov_exponent": 0.2499
+              }
+            },
+            "observability": {
+              "query_terms": [
+                "a",
+                "distributed",
+                "vulnerability",
+                "database",
+                "for",
+                "open",
+                "source",
+                "an",
+                "open,",
+                "precise,",
+                "and",
+                "approach"
+              ],
+              "lyapunov_proxy": 0.2499,
+              "breaker_status": "ok"
+            }
+          },
+          {
+            "stimulus_record_id": "85c8bd7e-5cfe-4606-8acb-f1c63ac15b96",
+            "topic": "A distributed vulnerability database for Open Source",
+            "source_url": "https://osv.dev/",
+            "priority_score": 0.5108,
+            "relevance_score": 0.3015,
+            "novelty_score": 0.7,
+            "resonance_score": 1.0,
+            "friction_score": 0.3067,
+            "should_convene_council": true,
+            "council_reason": "Tension (0.51) exceeds threshold (0.4)",
+            "llm_backend": "lmstudio",
+            "reflection": "Dream collision examined 'A distributed vulnerability database for Open Source'. Friction=0.3067 with 2 recalled memories and 3 durable rules. Next governance move: Tension (0.51) exceeds threshold (0.4).",
+            "reflection_generated": false,
+            "related_memories": [
+              {
+                "id": "ffc10418-cb1f-4e63-9324-9426fc6c6eeb",
+                "title": "An open, precise, and distributed approach to producing and consuming vulnerability information for open source.",
+                "source": "custom",
+                "layer": "working",
+                "summary": "An open, precise, and distributed approach to producing and consuming vulnerability information for open source.",
+                "tags": [
+                  "ai",
+                  "architecture",
+                  "engineering",
+                  "environment",
+                  "perception"
+                ]
+              },
+              {
+                "id": "5e0863eb-6caa-4354-bd51-7a87de7fd905",
+                "title": "Quickly assess open source projects for risky practices",
+                "source": "custom",
+                "layer": "working",
+                "summary": "Quickly assess open source projects for risky practices",
+                "tags": [
+                  "ai",
+                  "engineering",
+                  "environment",
+                  "perception"
+                ]
+              }
+            ],
+            "crystal_rules": [
+              "critical: collapse warnings escalate to fail-closed governance",
+              "prefer interactions that produce genuine resonance (tension -> convergence -> novel output)",
+              "avoid high-risk actions that previously triggered block outcomes"
+            ],
+            "resistance": {
+              "prior_tension": {
+                "query_tension": 0.5108,
+                "memory_tension": 0.0,
+                "delta_t": 0.48919999999999997,
+                "query_wave": {
+                  "uncertainty_shift": 0.7,
+                  "divergence_shift": 0.0,
+                  "risk_shift": 0.5108,
+                  "revision_shift": 0.48919999999999997
+                },
+                "memory_wave": {
+                  "uncertainty_shift": 1.0,
+                  "divergence_shift": 0.0,
+                  "risk_shift": 1.0,
+                  "revision_shift": 0.4
+                },
+                "constraint_kind": "core_rule",
+                "is_immutable": false,
+                "gate_decision": "approve"
+              },
+              "runtime_friction": {
+                "tension_delta": 0.5108,
+                "wave_distance": 0.2196,
+                "friction_score": 0.3798,
+                "constraint_kind": "core_rule",
+                "is_immutable": false
+              },
+              "circuit_breaker": {
+                "friction_history_len": 2,
+                "consecutive_high": 0,
+                "is_frozen": false,
+                "freeze_reason": "",
+                "status": "ok",
+                "lyapunov_exponent": 0.2499
+              }
+            },
+            "observability": {
+              "query_terms": [
+                "a",
+                "distributed",
+                "vulnerability",
+                "database",
+                "for",
+                "open",
+                "source",
+                "an",
+                "open,",
+                "precise,",
+                "and",
+                "approach"
+              ],
+              "lyapunov_proxy": 0.2499,
+              "breaker_status": "ok"
+            }
+          },
+          {
+            "stimulus_record_id": "5e0863eb-6caa-4354-bd51-7a87de7fd905",
+            "topic": "Build better security habits,",
+            "source_url": "https://scorecard.dev/",
+            "priority_score": 0.36,
+            "relevance_score": 0.0,
+            "novelty_score": 0.8,
+            "resonance_score": 0.6,
+            "friction_score": 0.1055,
+            "should_convene_council": false,
+            "council_reason": "Tension (0.36) below threshold, council not needed",
+            "llm_backend": "lmstudio",
+            "reflection": "Dream collision examined 'Build better security habits,'. Friction=0.1055 with 2 recalled memories and 3 durable rules. Next governance move: Tension (0.36) below threshold, council not needed.",
+            "reflection_generated": false,
+            "related_memories": [
+              {
+                "id": "ffc10418-cb1f-4e63-9324-9426fc6c6eeb",
+                "title": "An open, precise, and distributed approach to producing and consuming vulnerability information for open source.",
+                "source": "custom",
+                "layer": "working",
+                "summary": "An open, precise, and distributed approach to producing and consuming vulnerability information for open source.",
+                "tags": [
+                  "ai",
+                  "architecture",
+                  "engineering",
+                  "environment",
+                  "perception"
+                ]
+              },
+              {
+                "id": "85c8bd7e-5cfe-4606-8acb-f1c63ac15b96",
+                "title": "An open, precise, and distributed approach to producing and consuming vulnerability information for open source.",
+                "source": "custom",
+                "layer": "working",
+                "summary": "An open, precise, and distributed approach to producing and consuming vulnerability information for open source.",
+                "tags": [
+                  "ai",
+                  "architecture",
+                  "engineering",
+                  "environment",
+                  "perception"
+                ]
+              }
+            ],
+            "crystal_rules": [
+              "critical: collapse warnings escalate to fail-closed governance",
+              "prefer interactions that produce genuine resonance (tension -> convergence -> novel output)",
+              "avoid high-risk actions that previously triggered block outcomes"
+            ],
+            "resistance": {
+              "prior_tension": {
+                "query_tension": 0.36,
+                "memory_tension": 0.4,
+                "delta_t": 0.24,
+                "query_wave": {
+                  "uncertainty_shift": 0.8,
+                  "divergence_shift": 0.4,
+                  "risk_shift": 0.36,
+                  "revision_shift": 0.24
+                },
+                "memory_wave": {
+                  "uncertainty_shift": 0.6,
+                  "divergence_shift": 0.4,
+                  "risk_shift": 1.0,
+                  "revision_shift": 0.4
+                },
+                "constraint_kind": "core_rule",
+                "is_immutable": false,
+                "gate_decision": "approve"
+              },
+              "runtime_friction": {
+                "tension_delta": 0.04,
+                "wave_distance": 0.25,
+                "friction_score": 0.1345,
+                "constraint_kind": "core_rule",
+                "is_immutable": false
+              },
+              "circuit_breaker": {
+                "friction_history_len": 3,
+                "consecutive_high": 0,
+                "is_frozen": false,
+                "freeze_reason": "",
+                "status": "ok",
+                "lyapunov_exponent": 0.096
+              }
+            },
+            "observability": {
+              "query_terms": [
+                "build",
+                "better",
+                "security",
+                "habits,",
+                "quickly",
+                "assess",
+                "open",
+                "source",
+                "projects",
+                "for",
+                "risky",
+                "practices"
+              ],
+              "lyapunov_proxy": 0.096,
+              "breaker_status": "ok"
+            }
+          }
+        ]
+      },
+      "summary": {
+        "stimuli_considered": 3,
+        "stimuli_selected": 3,
+        "collision_count": 3,
+        "council_count": 2,
+        "frozen_count": 0,
+        "avg_friction_score": 0.2396,
+        "max_friction_score": 0.3067,
+        "max_lyapunov_proxy": 0.2499,
+        "llm_call_count": 0,
+        "llm_prompt_tokens_total": 0,
+        "llm_completion_tokens_total": 0,
+        "llm_total_tokens": 0,
+        "llm_backends": [],
+        "llm_models": [],
+        "llm_preflight_latency_ms": 2013,
+        "llm_preflight_selection_latency_ms": 758,
+        "llm_preflight_probe_latency_ms": 1255,
+        "llm_preflight_timeout_count": 1,
+        "llm_preflight_reason": "timeout"
+      }
+    }
+  ]
+}

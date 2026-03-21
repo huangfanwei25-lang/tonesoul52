@@ -17,6 +17,10 @@ function shouldAllowMockFallback(): boolean {
     return envFlag(MOCK_FALLBACK_ENV, false);
 }
 
+function resolveRuntimeBackendMode(): "same_origin" | "external_backend" {
+    return isSameOriginMode() ? "same_origin" : "external_backend";
+}
+
 function buildConversationFallback(
     body: Record<string, unknown>,
     fallbackReason: string
@@ -64,6 +68,7 @@ export async function POST(request: NextRequest) {
 
     // Same-origin mode forwards to Python backend via getBackendUrl()
 
+    const runtimeBackendMode = resolveRuntimeBackendMode();
     const backendUrl = getBackendUrl();
     const configuredBackendUrl = getConfiguredBackendUrl();
     if (isVercelRuntime()) {
@@ -90,6 +95,8 @@ export async function POST(request: NextRequest) {
                 {
                     error: "Backend unavailable",
                     backend_url: backendUrl,
+                    backend_mode: runtimeBackendMode,
+                    deliberation_level: "unavailable",
                     backend_error: error instanceof Error ? error.message : "Transport failure",
                     hint: `Set ${MOCK_FALLBACK_ENV}=1 to enable explicit mock fallback.`,
                 },
@@ -114,6 +121,9 @@ export async function POST(request: NextRequest) {
     try {
         const payload = JSON.parse(text);
         if (typeof payload === 'object' && payload !== null) {
+            if (typeof payload.backend_mode !== "string") {
+                payload.backend_mode = runtimeBackendMode;
+            }
             payload.deliberation_level = "runtime";
         }
         return NextResponse.json(payload, { status: backendResponse.status });
@@ -122,7 +132,12 @@ export async function POST(request: NextRequest) {
             return NextResponse.json(buildConversationFallback(body, "invalid_backend_json"));
         }
         return NextResponse.json(
-            { error: "Backend returned invalid JSON", backend_status: backendResponse.status },
+            {
+                error: "Backend returned invalid JSON",
+                backend_status: backendResponse.status,
+                backend_mode: runtimeBackendMode,
+                deliberation_level: "unavailable",
+            },
             { status: 502 }
         );
     }

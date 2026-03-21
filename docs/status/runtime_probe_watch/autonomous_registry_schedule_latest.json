@@ -1,0 +1,4699 @@
+{
+  "generated_at": "2026-03-08T05:15:54Z",
+  "overall_ok": true,
+  "config": {
+    "interval_seconds": 0.0,
+    "max_cycles": 2,
+    "entries_per_cycle": 1,
+    "urls_per_cycle": 1,
+    "include_stale": false,
+    "revisit_interval_cycles": 0,
+    "failure_backoff_cycles": 1,
+    "category_weights": {
+      "supply-chain-risk": 1,
+      "vulnerability-intel": 1
+    },
+    "category_backoff_multipliers": {
+      "supply-chain-risk": 1,
+      "vulnerability-intel": 1
+    },
+    "tension_max_friction_score": 1.0,
+    "tension_max_lyapunov_proxy": 1.0,
+    "tension_max_council_count": 99,
+    "tension_max_llm_preflight_latency_ms": 1800,
+    "tension_max_llm_selection_latency_ms": 700,
+    "tension_max_llm_probe_latency_ms": 1200,
+    "tension_max_llm_timeout_count": 0,
+    "tension_cooldown_cycles": 2,
+    "entry_ids": [],
+    "categories": [
+      "vulnerability-intel",
+      "supply-chain-risk"
+    ]
+  },
+  "results": [
+    {
+      "cycle": 1,
+      "started_at": "2026-03-08T05:15:46Z",
+      "finished_at": "2026-03-08T05:15:51Z",
+      "duration_ms": 5307,
+      "registry_batch": {
+        "cycle": 1,
+        "absolute_cycle": 1,
+        "cursor_before": 0,
+        "cursor_after": 0,
+        "eligible_entry_count": 3,
+        "selection_mode": "category_weighted_round_robin",
+        "selected_entry_ids": [
+          "osv"
+        ],
+        "selected_categories": [
+          "vulnerability-intel"
+        ],
+        "selected_url_count": 1,
+        "selected_urls": [
+          "https://osv.dev/"
+        ],
+        "selected_entries": [
+          {
+            "id": "osv",
+            "name": "OSV (Open Source Vulnerabilities)",
+            "category": "vulnerability-intel",
+            "reviewed_at": "2026-02-14",
+            "age_days": 22,
+            "url_count": 1,
+            "urls": [
+              "https://osv.dev/"
+            ],
+            "rationale": "Open source vulnerability aggregation and schema-backed feeds.",
+            "category_weight": 1,
+            "category_slot": 0,
+            "selection_mode": "category_weighted_round_robin"
+          }
+        ],
+        "category_slots": [
+          "vulnerability-intel",
+          "supply-chain-risk"
+        ],
+        "category_cursor_before": 0,
+        "category_cursor_after": 1,
+        "category_entry_cursor_updates": {
+          "vulnerability-intel": 1
+        },
+        "category_policy_trace": [
+          {
+            "slot": 0,
+            "category": "vulnerability-intel",
+            "weight": 1,
+            "cursor_before": 0,
+            "action": "selected",
+            "entry_id": "osv",
+            "cursor_after": 1
+          }
+        ],
+        "deferred_category_count": 0,
+        "deferred_categories": [],
+        "deferred_entry_count": 0,
+        "deferred_entries": [],
+        "warning_count": 1,
+        "warnings": [
+          "selected URLs capped at urls_per_cycle=1"
+        ],
+        "ok": true
+      },
+      "autonomous_payload": {
+        "generated_at": "2026-03-08T05:15:51Z",
+        "urls_requested": 1,
+        "urls_ingested": 1,
+        "urls_failed": 0,
+        "stimuli_processed": 1,
+        "memory_write": {
+          "written": 0,
+          "skipped": 1,
+          "record_ids": []
+        },
+        "wakeup_overall_status": "ok",
+        "wakeup_cycle_count": 1,
+        "dashboard_overall_ok": true,
+        "paths": {
+          "history_path": "memory/autonomous/runtime_probe_watch/dream_wakeup_history.jsonl",
+          "snapshot_path": "docs/status/runtime_probe_watch/dream_wakeup_snapshot.json",
+          "dashboard_json_path": "docs/status/runtime_probe_watch/dream_observability_latest.json",
+          "dashboard_html_path": "docs/status/runtime_probe_watch/dream_observability_latest.html"
+        },
+        "ingestion_failures": [],
+        "wakeup_payload": {
+          "generated_at": "2026-03-08T05:15:51Z",
+          "overall_status": "ok",
+          "config": {
+            "interval_seconds": 0.0,
+            "max_cycles": 1,
+            "limit": 2,
+            "min_priority": 0.3,
+            "related_limit": 5,
+            "crystal_count": 5,
+            "generate_reflection": true,
+            "require_inference_ready": true,
+            "inference_timeout_seconds": 2.0
+          },
+          "results": [
+            {
+              "cycle": 1,
+              "status": "ok",
+              "started_at": "2026-03-08T05:15:49Z",
+              "finished_at": "2026-03-08T05:15:51Z",
+              "duration_ms": 2068,
+              "interval_seconds": 0.0,
+              "dream_result": {
+                "generated_at": "2026-03-08T05:15:51Z",
+                "stimuli_considered": 4,
+                "stimuli_selected": 2,
+                "llm_backend": "lmstudio",
+                "llm_preflight": {
+                  "ok": false,
+                  "supported": true,
+                  "backend": "lmstudio",
+                  "model": "qwen3.5-9b",
+                  "reason": "timeout",
+                  "latency_ms": 2013,
+                  "probe_latency_ms": 1256,
+                  "selection_latency_ms": 757,
+                  "timeout_seconds": 2.0,
+                  "enabled": true,
+                  "required": true
+                },
+                "collisions": [
+                  {
+                    "stimulus_record_id": "ffc10418-cb1f-4e63-9324-9426fc6c6eeb",
+                    "topic": "A distributed vulnerability database for Open Source",
+                    "source_url": "https://osv.dev/",
+                    "priority_score": 0.5108,
+                    "relevance_score": 0.3015,
+                    "novelty_score": 0.7,
+                    "resonance_score": 1.0,
+                    "friction_score": 0.3086,
+                    "should_convene_council": true,
+                    "council_reason": "Tension (0.51) exceeds threshold (0.4)",
+                    "llm_backend": "lmstudio",
+                    "reflection": "Dream collision examined 'A distributed vulnerability database for Open Source'. Friction=0.3086 with 3 recalled memories and 3 durable rules. Next governance move: Tension (0.51) exceeds threshold (0.4).",
+                    "reflection_generated": false,
+                    "related_memories": [
+                      {
+                        "id": "85c8bd7e-5cfe-4606-8acb-f1c63ac15b96",
+                        "title": "An open, precise, and distributed approach to producing and consuming vulnerability information for open source.",
+                        "source": "custom",
+                        "layer": "working",
+                        "summary": "An open, precise, and distributed approach to producing and consuming vulnerability information for open source.",
+                        "tags": [
+                          "ai",
+                          "architecture",
+                          "engineering",
+                          "environment",
+                          "perception"
+                        ]
+                      },
+                      {
+                        "id": "79e77ae9-51f5-4099-a79e-d3faaac63354",
+                        "title": "[ ![Icon for New NVD Communications and Status Updates Page](https://nvd.nist.gov/site-media/images/LandingPage/readAllA",
+                        "source": "custom",
+                        "layer": "working",
+                        "summary": "[ ![Icon for New NVD Communications and Status Updates Page](https://nvd.nist.gov/site-media/images/LandingPage/readAllAboutIt800x632.png)",
+                        "tags": [
+                          "ai",
+                          "environment",
+                          "perception"
+                        ]
+                      },
+                      {
+                        "id": "5e0863eb-6caa-4354-bd51-7a87de7fd905",
+                        "title": "Quickly assess open source projects for risky practices",
+                        "source": "custom",
+                        "layer": "working",
+                        "summary": "Quickly assess open source projects for risky practices",
+                        "tags": [
+                          "ai",
+                          "engineering",
+                          "environment",
+                          "perception"
+                        ]
+                      }
+                    ],
+                    "crystal_rules": [
+                      "critical: collapse warnings escalate to fail-closed governance",
+                      "prefer interactions that produce genuine resonance (tension -> convergence -> novel output)",
+                      "avoid high-risk actions that previously triggered block outcomes"
+                    ],
+                    "resistance": {
+                      "prior_tension": {
+                        "query_tension": 0.5108,
+                        "memory_tension": 0.0,
+                        "delta_t": 0.48919999999999997,
+                        "query_wave": {
+                          "uncertainty_shift": 0.7,
+                          "divergence_shift": 0.0,
+                          "risk_shift": 0.5108,
+                          "revision_shift": 0.48919999999999997
+                        },
+                        "memory_wave": {
+                          "uncertainty_shift": 1.0,
+                          "divergence_shift": 0.0,
+                          "risk_shift": 1.0,
+                          "revision_shift": 0.6
+                        },
+                        "constraint_kind": "core_rule",
+                        "is_immutable": false,
+                        "gate_decision": "approve"
+                      },
+                      "runtime_friction": {
+                        "tension_delta": 0.5108,
+                        "wave_distance": 0.225,
+                        "friction_score": 0.3822,
+                        "constraint_kind": "core_rule",
+                        "is_immutable": false
+                      },
+                      "circuit_breaker": {
+                        "friction_history_len": 1,
+                        "consecutive_high": 0,
+                        "is_frozen": false,
+                        "freeze_reason": "",
+                        "status": "ok",
+                        "lyapunov_exponent": 0.2499
+                      }
+                    },
+                    "observability": {
+                      "query_terms": [
+                        "a",
+                        "distributed",
+                        "vulnerability",
+                        "database",
+                        "for",
+                        "open",
+                        "source",
+                        "an",
+                        "open,",
+                        "precise,",
+                        "and",
+                        "approach"
+                      ],
+                      "lyapunov_proxy": 0.2499,
+                      "breaker_status": "ok"
+                    }
+                  },
+                  {
+                    "stimulus_record_id": "85c8bd7e-5cfe-4606-8acb-f1c63ac15b96",
+                    "topic": "A distributed vulnerability database for Open Source",
+                    "source_url": "https://osv.dev/",
+                    "priority_score": 0.5108,
+                    "relevance_score": 0.3015,
+                    "novelty_score": 0.7,
+                    "resonance_score": 1.0,
+                    "friction_score": 0.3086,
+                    "should_convene_council": true,
+                    "council_reason": "Tension (0.51) exceeds threshold (0.4)",
+                    "llm_backend": "lmstudio",
+                    "reflection": "Dream collision examined 'A distributed vulnerability database for Open Source'. Friction=0.3086 with 3 recalled memories and 3 durable rules. Next governance move: Tension (0.51) exceeds threshold (0.4).",
+                    "reflection_generated": false,
+                    "related_memories": [
+                      {
+                        "id": "ffc10418-cb1f-4e63-9324-9426fc6c6eeb",
+                        "title": "An open, precise, and distributed approach to producing and consuming vulnerability information for open source.",
+                        "source": "custom",
+                        "layer": "working",
+                        "summary": "An open, precise, and distributed approach to producing and consuming vulnerability information for open source.",
+                        "tags": [
+                          "ai",
+                          "architecture",
+                          "engineering",
+                          "environment",
+                          "perception"
+                        ]
+                      },
+                      {
+                        "id": "79e77ae9-51f5-4099-a79e-d3faaac63354",
+                        "title": "[ ![Icon for New NVD Communications and Status Updates Page](https://nvd.nist.gov/site-media/images/LandingPage/readAllA",
+                        "source": "custom",
+                        "layer": "working",
+                        "summary": "[ ![Icon for New NVD Communications and Status Updates Page](https://nvd.nist.gov/site-media/images/LandingPage/readAllAboutIt800x632.png)",
+                        "tags": [
+                          "ai",
+                          "environment",
+                          "perception"
+                        ]
+                      },
+                      {
+                        "id": "5e0863eb-6caa-4354-bd51-7a87de7fd905",
+                        "title": "Quickly assess open source projects for risky practices",
+                        "source": "custom",
+                        "layer": "working",
+                        "summary": "Quickly assess open source projects for risky practices",
+                        "tags": [
+                          "ai",
+                          "engineering",
+                          "environment",
+                          "perception"
+                        ]
+                      }
+                    ],
+                    "crystal_rules": [
+                      "critical: collapse warnings escalate to fail-closed governance",
+                      "prefer interactions that produce genuine resonance (tension -> convergence -> novel output)",
+                      "avoid high-risk actions that previously triggered block outcomes"
+                    ],
+                    "resistance": {
+                      "prior_tension": {
+                        "query_tension": 0.5108,
+                        "memory_tension": 0.0,
+                        "delta_t": 0.48919999999999997,
+                        "query_wave": {
+                          "uncertainty_shift": 0.7,
+                          "divergence_shift": 0.0,
+                          "risk_shift": 0.5108,
+                          "revision_shift": 0.48919999999999997
+                        },
+                        "memory_wave": {
+                          "uncertainty_shift": 1.0,
+                          "divergence_shift": 0.0,
+                          "risk_shift": 1.0,
+                          "revision_shift": 0.6
+                        },
+                        "constraint_kind": "core_rule",
+                        "is_immutable": false,
+                        "gate_decision": "approve"
+                      },
+                      "runtime_friction": {
+                        "tension_delta": 0.5108,
+                        "wave_distance": 0.225,
+                        "friction_score": 0.3822,
+                        "constraint_kind": "core_rule",
+                        "is_immutable": false
+                      },
+                      "circuit_breaker": {
+                        "friction_history_len": 2,
+                        "consecutive_high": 0,
+                        "is_frozen": false,
+                        "freeze_reason": "",
+                        "status": "ok",
+                        "lyapunov_exponent": 0.2499
+                      }
+                    },
+                    "observability": {
+                      "query_terms": [
+                        "a",
+                        "distributed",
+                        "vulnerability",
+                        "database",
+                        "for",
+                        "open",
+                        "source",
+                        "an",
+                        "open,",
+                        "precise,",
+                        "and",
+                        "approach"
+                      ],
+                      "lyapunov_proxy": 0.2499,
+                      "breaker_status": "ok"
+                    }
+                  }
+                ]
+              },
+              "summary": {
+                "stimuli_considered": 4,
+                "stimuli_selected": 2,
+                "collision_count": 2,
+                "council_count": 2,
+                "frozen_count": 0,
+                "avg_friction_score": 0.3086,
+                "max_friction_score": 0.3086,
+                "max_lyapunov_proxy": 0.2499,
+                "llm_call_count": 0,
+                "llm_prompt_tokens_total": 0,
+                "llm_completion_tokens_total": 0,
+                "llm_total_tokens": 0,
+                "llm_backends": [],
+                "llm_models": [],
+                "llm_preflight_latency_ms": 2013,
+                "llm_preflight_selection_latency_ms": 757,
+                "llm_preflight_probe_latency_ms": 1256,
+                "llm_preflight_timeout_count": 1,
+                "llm_preflight_reason": "timeout"
+              }
+            }
+          ]
+        },
+        "dashboard_payload": {
+          "generated_at": "2026-03-08T05:15:51Z",
+          "overall_ok": true,
+          "inputs": {
+            "journal_path": "memory/self_journal.jsonl",
+            "wakeup_path": "memory/autonomous/runtime_probe_watch/dream_wakeup_history.jsonl",
+            "schedule_history_path": null,
+            "schedule_state_path": null,
+            "max_points": 120
+          },
+          "metrics": {
+            "journal_entry_count": 2446,
+            "journal_invalid_json_line_count": 0,
+            "wakeup_cycle_count": 1,
+            "wakeup_invalid_json_line_count": 0,
+            "schedule_cycle_count": 0,
+            "schedule_invalid_json_line_count": 0,
+            "schedule_state_invalid_json_count": 0,
+            "journal_friction_point_count": 100,
+            "journal_lyapunov_point_count": 100,
+            "wakeup_avg_friction_point_count": 1,
+            "wakeup_max_friction_point_count": 1,
+            "wakeup_max_lyapunov_point_count": 1,
+            "wakeup_llm_call_count_point_count": 1,
+            "wakeup_llm_total_tokens_point_count": 1,
+            "wakeup_llm_preflight_latency_point_count": 1,
+            "wakeup_llm_selection_latency_point_count": 1,
+            "wakeup_llm_probe_latency_point_count": 1,
+            "wakeup_llm_preflight_timeout_count_point_count": 1,
+            "schedule_governance_cooldown_applied_point_count": 0,
+            "schedule_governance_cooldown_deferred_point_count": 0,
+            "schedule_llm_backoff_requested_point_count": 0,
+            "schedule_llm_backoff_active_point_count": 0
+          },
+          "summary": {
+            "journal_friction": {
+              "point_count": 100,
+              "latest": 0.2322,
+              "min": 0.0566,
+              "max": 0.3065,
+              "average": 0.1864,
+              "trend": "falling",
+              "convergence_events": 0
+            },
+            "journal_lyapunov": {
+              "point_count": 100,
+              "latest": -5.0,
+              "min": -5.0,
+              "max": 0.0,
+              "average": -4.5283,
+              "trend": "stable",
+              "convergence_events": 0
+            },
+            "wakeup_avg_friction": {
+              "point_count": 1,
+              "latest": 0.3086,
+              "min": 0.3086,
+              "max": 0.3086,
+              "average": 0.3086,
+              "trend": "insufficient",
+              "convergence_events": 0
+            },
+            "wakeup_max_friction": {
+              "point_count": 1,
+              "latest": 0.3086,
+              "min": 0.3086,
+              "max": 0.3086,
+              "average": 0.3086,
+              "trend": "insufficient",
+              "convergence_events": 0
+            },
+            "wakeup_max_lyapunov": {
+              "point_count": 1,
+              "latest": 0.2499,
+              "min": 0.2499,
+              "max": 0.2499,
+              "average": 0.2499,
+              "trend": "insufficient",
+              "convergence_events": 0
+            },
+            "wakeup_llm_total_tokens": {
+              "point_count": 1,
+              "latest": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "average": 0.0,
+              "trend": "insufficient",
+              "convergence_events": 0
+            },
+            "wakeup_llm_preflight_latency": {
+              "point_count": 1,
+              "latest": 2013.0,
+              "min": 2013.0,
+              "max": 2013.0,
+              "average": 2013.0,
+              "trend": "insufficient",
+              "convergence_events": 0
+            },
+            "wakeup_llm_selection_latency": {
+              "point_count": 1,
+              "latest": 757.0,
+              "min": 757.0,
+              "max": 757.0,
+              "average": 757.0,
+              "trend": "insufficient",
+              "convergence_events": 0
+            },
+            "wakeup_llm_probe_latency": {
+              "point_count": 1,
+              "latest": 1256.0,
+              "min": 1256.0,
+              "max": 1256.0,
+              "average": 1256.0,
+              "trend": "insufficient",
+              "convergence_events": 0
+            },
+            "wakeup_llm_preflight_timeout_count": {
+              "point_count": 1,
+              "latest": 1.0,
+              "min": 1.0,
+              "max": 1.0,
+              "average": 1.0,
+              "trend": "insufficient",
+              "convergence_events": 0
+            },
+            "schedule_governance_cooldown_applied": {
+              "point_count": 0,
+              "latest": null,
+              "min": null,
+              "max": null,
+              "average": null,
+              "trend": "empty",
+              "convergence_events": 0
+            },
+            "schedule_governance_cooldown_deferred": {
+              "point_count": 0,
+              "latest": null,
+              "min": null,
+              "max": null,
+              "average": null,
+              "trend": "empty",
+              "convergence_events": 0
+            },
+            "schedule_llm_backoff_requested": {
+              "point_count": 0,
+              "latest": null,
+              "min": null,
+              "max": null,
+              "average": null,
+              "trend": "empty",
+              "convergence_events": 0
+            },
+            "schedule_llm_backoff_active": {
+              "point_count": 0,
+              "latest": null,
+              "min": null,
+              "max": null,
+              "average": null,
+              "trend": "empty",
+              "convergence_events": 0
+            },
+            "wakeup_council_total": 2,
+            "wakeup_frozen_total": 0,
+            "wakeup_llm_call_total": 0,
+            "wakeup_llm_preflight_timeout_total": 1,
+            "schedule_governance_cooldown_applied_total": 0,
+            "schedule_governance_cooldown_deferred_total": 0,
+            "schedule_llm_backoff_requested_total": 0,
+            "schedule_llm_backoff_active_total": 0
+          },
+          "series": {
+            "journal_friction": [
+              {
+                "timestamp": "2026-03-02T12:32:32.136110+00:00",
+                "value": 0.1916,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.136175+00:00",
+                "value": 0.3065,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.137033+00:00",
+                "value": 0.1775,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.137154+00:00",
+                "value": 0.2322,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.137938+00:00",
+                "value": 0.246,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.137993+00:00",
+                "value": 0.2109,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.138601+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.138677+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.139326+00:00",
+                "value": 0.1916,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.139380+00:00",
+                "value": 0.3065,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.140047+00:00",
+                "value": 0.1775,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.140163+00:00",
+                "value": 0.2322,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.141153+00:00",
+                "value": 0.246,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.141269+00:00",
+                "value": 0.2109,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.142153+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.142259+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.143523+00:00",
+                "value": 0.1916,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.143620+00:00",
+                "value": 0.3065,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.144678+00:00",
+                "value": 0.1775,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.144773+00:00",
+                "value": 0.2322,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.145734+00:00",
+                "value": 0.246,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.145827+00:00",
+                "value": 0.2109,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.146621+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.146713+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.148138+00:00",
+                "value": 0.1916,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.148260+00:00",
+                "value": 0.3065,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.149475+00:00",
+                "value": 0.1775,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.149586+00:00",
+                "value": 0.2322,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.150631+00:00",
+                "value": 0.246,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.150739+00:00",
+                "value": 0.2109,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.151613+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.151721+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.152649+00:00",
+                "value": 0.1916,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.152754+00:00",
+                "value": 0.3065,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.153720+00:00",
+                "value": 0.1775,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.153827+00:00",
+                "value": 0.2322,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.154786+00:00",
+                "value": 0.246,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.154894+00:00",
+                "value": 0.2109,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.155765+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.155872+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.156818+00:00",
+                "value": 0.1916,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.156923+00:00",
+                "value": 0.3065,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.157873+00:00",
+                "value": 0.1775,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.157985+00:00",
+                "value": 0.2322,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.159002+00:00",
+                "value": 0.246,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.159126+00:00",
+                "value": 0.2109,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.160149+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.160210+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.161004+00:00",
+                "value": 0.1916,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.161113+00:00",
+                "value": 0.3065,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.162128+00:00",
+                "value": 0.1775,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.162184+00:00",
+                "value": 0.2322,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.163016+00:00",
+                "value": 0.246,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.163128+00:00",
+                "value": 0.2109,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.164116+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.164192+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.165086+00:00",
+                "value": 0.1916,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.165145+00:00",
+                "value": 0.3065,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.165849+00:00",
+                "value": 0.1775,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.165904+00:00",
+                "value": 0.2322,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.166582+00:00",
+                "value": 0.246,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.166633+00:00",
+                "value": 0.2109,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.167226+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.167300+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.168007+00:00",
+                "value": 0.1916,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.168071+00:00",
+                "value": 0.3065,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.169086+00:00",
+                "value": 0.1775,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.169197+00:00",
+                "value": 0.2322,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.170217+00:00",
+                "value": 0.246,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.170329+00:00",
+                "value": 0.2109,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.171261+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.171367+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.172344+00:00",
+                "value": 0.1916,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.172452+00:00",
+                "value": 0.3065,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.173411+00:00",
+                "value": 0.1775,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.173519+00:00",
+                "value": 0.2322,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.174473+00:00",
+                "value": 0.246,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.174581+00:00",
+                "value": 0.2109,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.175413+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.175520+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.176697+00:00",
+                "value": 0.1916,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.176803+00:00",
+                "value": 0.3065,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.177968+00:00",
+                "value": 0.1775,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.178084+00:00",
+                "value": 0.2322,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.179270+00:00",
+                "value": 0.246,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.179325+00:00",
+                "value": 0.2109,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.180026+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.180089+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.181240+00:00",
+                "value": 0.1916,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.181366+00:00",
+                "value": 0.3065,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.182578+00:00",
+                "value": 0.1775,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.182690+00:00",
+                "value": 0.2322,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.183770+00:00",
+                "value": 0.246,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.183879+00:00",
+                "value": 0.2109,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.184662+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.184821+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.185796+00:00",
+                "value": 0.1916,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.185896+00:00",
+                "value": 0.3065,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.186705+00:00",
+                "value": 0.1775,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.186830+00:00",
+                "value": 0.2322,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              }
+            ],
+            "journal_lyapunov": [
+              {
+                "timestamp": "2026-03-02T12:32:32.136110+00:00",
+                "value": 0.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.136175+00:00",
+                "value": -1.2368,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.137033+00:00",
+                "value": -2.3018,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.137154+00:00",
+                "value": -3.101,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.137938+00:00",
+                "value": -2.7369,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.137993+00:00",
+                "value": -2.7018,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.138601+00:00",
+                "value": -2.5843,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.138677+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.139326+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.139380+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.140047+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.140163+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.141153+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.141269+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.142153+00:00",
+                "value": -2.3513,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.142259+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.143523+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.143620+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.144678+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.144773+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.145734+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.145827+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.146621+00:00",
+                "value": -2.0227,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.146713+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.148138+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.148260+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.149475+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.149586+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.150631+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.150739+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.151613+00:00",
+                "value": -2.667,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.151721+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.152649+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.152754+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.153720+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.153827+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.154786+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.154894+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.155765+00:00",
+                "value": -2.1524,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.155872+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.156818+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.156923+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.157873+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.157985+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.159002+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.159126+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.160149+00:00",
+                "value": -2.2869,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.160210+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.161004+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.161113+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.162128+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.162184+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.163016+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.163128+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.164116+00:00",
+                "value": -2.0733,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.164192+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.165086+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.165145+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.165849+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.165904+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.166582+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.166633+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.167226+00:00",
+                "value": -3.0152,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.167300+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.168007+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.168071+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.169086+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.169197+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.170217+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.170329+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.171261+00:00",
+                "value": -3.0272,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.171367+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.172344+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.172452+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.173411+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.173519+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.174473+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.174581+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.175413+00:00",
+                "value": -2.8853,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.175520+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.176697+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.176803+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.177968+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.178084+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.179270+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.179325+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.180026+00:00",
+                "value": -2.9253,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.180089+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.181240+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.181366+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.182578+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.182690+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.183770+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.183879+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.184662+00:00",
+                "value": -2.7572,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.184821+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.185796+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.185896+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.186705+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.186830+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              }
+            ],
+            "wakeup_avg_friction": [
+              {
+                "timestamp": "2026-03-08T05:15:51Z",
+                "value": 0.3086,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "avg_friction_score"
+              }
+            ],
+            "wakeup_max_friction": [
+              {
+                "timestamp": "2026-03-08T05:15:51Z",
+                "value": 0.3086,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "max_friction_score"
+              }
+            ],
+            "wakeup_max_lyapunov": [
+              {
+                "timestamp": "2026-03-08T05:15:51Z",
+                "value": 0.2499,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "max_lyapunov_proxy"
+              }
+            ],
+            "wakeup_council_count": [
+              {
+                "timestamp": "2026-03-08T05:15:51Z",
+                "value": 2.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "council_count"
+              }
+            ],
+            "wakeup_frozen_count": [
+              {
+                "timestamp": "2026-03-08T05:15:51Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "frozen_count"
+              }
+            ],
+            "wakeup_llm_call_count": [
+              {
+                "timestamp": "2026-03-08T05:15:51Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_call_count"
+              }
+            ],
+            "wakeup_llm_total_tokens": [
+              {
+                "timestamp": "2026-03-08T05:15:51Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_total_tokens"
+              }
+            ],
+            "wakeup_llm_preflight_latency": [
+              {
+                "timestamp": "2026-03-08T05:15:51Z",
+                "value": 2013.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_preflight_latency_ms"
+              }
+            ],
+            "wakeup_llm_selection_latency": [
+              {
+                "timestamp": "2026-03-08T05:15:51Z",
+                "value": 757.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_preflight_selection_latency_ms"
+              }
+            ],
+            "wakeup_llm_probe_latency": [
+              {
+                "timestamp": "2026-03-08T05:15:51Z",
+                "value": 1256.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_preflight_probe_latency_ms"
+              }
+            ],
+            "wakeup_llm_preflight_timeout_count": [
+              {
+                "timestamp": "2026-03-08T05:15:51Z",
+                "value": 1.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_preflight_timeout_count"
+              }
+            ],
+            "schedule_governance_cooldown_applied": [],
+            "schedule_governance_cooldown_deferred": [],
+            "schedule_llm_backoff_requested": [],
+            "schedule_llm_backoff_active": []
+          },
+          "recent_wakeup_cycles": [
+            {
+              "cycle": 1,
+              "status": "ok",
+              "timestamp": "2026-03-08T05:15:51Z",
+              "avg_friction_score": 0.3086,
+              "max_friction_score": 0.3086,
+              "max_lyapunov_proxy": 0.2499,
+              "council_count": 2,
+              "frozen_count": 0,
+              "llm_call_count": 0,
+              "llm_total_tokens": 0,
+              "llm_backends": [],
+              "llm_models": [],
+              "llm_preflight_latency_ms": 2013,
+              "llm_preflight_selection_latency_ms": 757,
+              "llm_preflight_probe_latency_ms": 1256,
+              "llm_preflight_timeout_count": 1,
+              "llm_preflight_reason": "timeout"
+            }
+          ],
+          "recent_schedule_cycles": [],
+          "schedule_state": {
+            "cycles_run": 0,
+            "updated_at": null,
+            "active_governance_cooldown_categories": [],
+            "active_governance_cooldown_count": 0,
+            "llm_backoff_active": false,
+            "llm_backoff_until_cycle": 0,
+            "llm_backoff_mode": "none",
+            "llm_backoff_status": "unknown",
+            "llm_backoff_reason_count": 0,
+            "llm_backoff_breach_reasons": []
+          },
+          "warnings": []
+        },
+        "overall_ok": true,
+        "registry_selection": {
+          "generated_at": "2026-03-08T05:15:46Z",
+          "registry_path": "spec/external_source_registry.yaml",
+          "filters": {
+            "entry_ids": [],
+            "categories": [
+              "supply-chain-risk",
+              "vulnerability-intel"
+            ],
+            "limit": null,
+            "include_stale": false
+          },
+          "selected_url_count": 5,
+          "selected_urls": [
+            "https://osv.dev/",
+            "https://google.github.io/osv.dev/data/",
+            "https://scorecard.dev/",
+            "https://openssf.org/projects/scorecard/",
+            "https://nvd.nist.gov/"
+          ],
+          "selected_entry_count": 3,
+          "selected_entries": [
+            {
+              "id": "osv",
+              "name": "OSV (Open Source Vulnerabilities)",
+              "category": "vulnerability-intel",
+              "reviewed_at": "2026-02-14",
+              "age_days": 22,
+              "url_count": 2,
+              "urls": [
+                "https://osv.dev/",
+                "https://google.github.io/osv.dev/data/"
+              ],
+              "rationale": "Open source vulnerability aggregation and schema-backed feeds."
+            },
+            {
+              "id": "scorecard",
+              "name": "OpenSSF Scorecard",
+              "category": "supply-chain-risk",
+              "reviewed_at": "2026-02-14",
+              "age_days": 22,
+              "url_count": 2,
+              "urls": [
+                "https://scorecard.dev/",
+                "https://openssf.org/projects/scorecard/"
+              ],
+              "rationale": "Repository security posture scoring for dependency intake."
+            },
+            {
+              "id": "nvd",
+              "name": "NVD",
+              "category": "vulnerability-intel",
+              "reviewed_at": "2026-02-14",
+              "age_days": 22,
+              "url_count": 1,
+              "urls": [
+                "https://nvd.nist.gov/"
+              ],
+              "rationale": "Authoritative CVE enrichment source from NIST."
+            }
+          ],
+          "skipped_entries": [],
+          "warning_count": 0,
+          "warnings": [],
+          "policy": {
+            "review_cycle_days": 120,
+            "allowed_hosts_count": 21,
+            "blocked_hosts_count": 5
+          },
+          "ok": true
+        },
+        "llm_policy": {
+          "active": false,
+          "mode": "none",
+          "backoff_until_cycle": 0,
+          "reason_count": 0,
+          "breach_reasons": [],
+          "action": "normal"
+        }
+      },
+      "tension_budget": {
+        "enabled": true,
+        "thresholds": {
+          "max_friction_score": 1.0,
+          "max_lyapunov_proxy": 1.0,
+          "max_council_count": 99,
+          "max_llm_preflight_latency_ms": 1800,
+          "max_llm_selection_latency_ms": 700,
+          "max_llm_probe_latency_ms": 1200,
+          "max_llm_timeout_count": 0,
+          "cooldown_cycles": 2
+        },
+        "observation": {
+          "observed_cycles": 1,
+          "max_friction_score": 0.3086,
+          "max_lyapunov_proxy": 0.2499,
+          "council_count": 2,
+          "max_llm_preflight_latency_ms": 2013,
+          "max_llm_selection_latency_ms": 757,
+          "max_llm_probe_latency_ms": 1256,
+          "llm_preflight_timeout_count": 1
+        },
+        "breached": true,
+        "breach_reason_count": 4,
+        "breach_reasons": [
+          "llm_preflight_latency_ms>1800 (observed=2013)",
+          "llm_selection_latency_ms>700 (observed=757)",
+          "llm_probe_latency_ms>1200 (observed=1256)",
+          "llm_preflight_timeout_count>0 (observed=1)"
+        ],
+        "governance_breach_reason_count": 0,
+        "governance_breach_reasons": [],
+        "governance_breached": false,
+        "llm_breach_reason_count": 4,
+        "llm_breach_reasons": [
+          "llm_preflight_latency_ms>1800 (observed=2013)",
+          "llm_selection_latency_ms>700 (observed=757)",
+          "llm_probe_latency_ms>1200 (observed=1256)",
+          "llm_preflight_timeout_count>0 (observed=1)"
+        ],
+        "llm_breached": true,
+        "llm_backoff_mode": "mixed_latency",
+        "cooldown_cycles": 2,
+        "cooled_categories": [],
+        "llm_backoff_requested": true,
+        "llm_policy": {
+          "active": false,
+          "mode": "none",
+          "backoff_until_cycle": 0,
+          "reason_count": 0,
+          "breach_reasons": [],
+          "action": "normal"
+        }
+      },
+      "overall_ok": true
+    },
+    {
+      "cycle": 2,
+      "started_at": "2026-03-08T05:15:51Z",
+      "finished_at": "2026-03-08T05:15:54Z",
+      "duration_ms": 3131,
+      "registry_batch": {
+        "cycle": 2,
+        "absolute_cycle": 2,
+        "cursor_before": 0,
+        "cursor_after": 0,
+        "eligible_entry_count": 3,
+        "selection_mode": "category_weighted_round_robin",
+        "selected_entry_ids": [
+          "scorecard"
+        ],
+        "selected_categories": [
+          "supply-chain-risk"
+        ],
+        "selected_url_count": 1,
+        "selected_urls": [
+          "https://scorecard.dev/"
+        ],
+        "selected_entries": [
+          {
+            "id": "scorecard",
+            "name": "OpenSSF Scorecard",
+            "category": "supply-chain-risk",
+            "reviewed_at": "2026-02-14",
+            "age_days": 22,
+            "url_count": 1,
+            "urls": [
+              "https://scorecard.dev/"
+            ],
+            "rationale": "Repository security posture scoring for dependency intake.",
+            "category_weight": 1,
+            "category_slot": 1,
+            "selection_mode": "category_weighted_round_robin"
+          }
+        ],
+        "category_slots": [
+          "vulnerability-intel",
+          "supply-chain-risk"
+        ],
+        "category_cursor_before": 1,
+        "category_cursor_after": 0,
+        "category_entry_cursor_updates": {
+          "supply-chain-risk": 0,
+          "vulnerability-intel": 1
+        },
+        "category_policy_trace": [
+          {
+            "slot": 1,
+            "category": "supply-chain-risk",
+            "weight": 1,
+            "cursor_before": 0,
+            "action": "selected",
+            "entry_id": "scorecard",
+            "cursor_after": 0
+          }
+        ],
+        "deferred_category_count": 0,
+        "deferred_categories": [],
+        "deferred_entry_count": 0,
+        "deferred_entries": [],
+        "warning_count": 1,
+        "warnings": [
+          "selected URLs capped at urls_per_cycle=1"
+        ],
+        "ok": true
+      },
+      "autonomous_payload": {
+        "generated_at": "2026-03-08T05:15:54Z",
+        "urls_requested": 1,
+        "urls_ingested": 1,
+        "urls_failed": 0,
+        "stimuli_processed": 1,
+        "memory_write": {
+          "written": 0,
+          "skipped": 1,
+          "record_ids": []
+        },
+        "wakeup_overall_status": "ok",
+        "wakeup_cycle_count": 1,
+        "dashboard_overall_ok": true,
+        "paths": {
+          "history_path": "memory/autonomous/runtime_probe_watch/dream_wakeup_history.jsonl",
+          "snapshot_path": "docs/status/runtime_probe_watch/dream_wakeup_snapshot.json",
+          "dashboard_json_path": "docs/status/runtime_probe_watch/dream_observability_latest.json",
+          "dashboard_html_path": "docs/status/runtime_probe_watch/dream_observability_latest.html"
+        },
+        "ingestion_failures": [],
+        "wakeup_payload": {
+          "generated_at": "2026-03-08T05:15:54Z",
+          "overall_status": "ok",
+          "config": {
+            "interval_seconds": 0.0,
+            "max_cycles": 1,
+            "limit": 2,
+            "min_priority": 0.3,
+            "related_limit": 5,
+            "crystal_count": 5,
+            "generate_reflection": false,
+            "require_inference_ready": false,
+            "inference_timeout_seconds": 2.0
+          },
+          "results": [
+            {
+              "cycle": 1,
+              "status": "ok",
+              "started_at": "2026-03-08T05:15:54Z",
+              "finished_at": "2026-03-08T05:15:54Z",
+              "duration_ms": 44,
+              "interval_seconds": 0.0,
+              "dream_result": {
+                "generated_at": "2026-03-08T05:15:54Z",
+                "stimuli_considered": 4,
+                "stimuli_selected": 2,
+                "llm_backend": null,
+                "llm_preflight": {
+                  "enabled": false,
+                  "required": false,
+                  "ok": false,
+                  "supported": false,
+                  "reason": "reflection_disabled"
+                },
+                "collisions": [
+                  {
+                    "stimulus_record_id": "ffc10418-cb1f-4e63-9324-9426fc6c6eeb",
+                    "topic": "A distributed vulnerability database for Open Source",
+                    "source_url": "https://osv.dev/",
+                    "priority_score": 0.5108,
+                    "relevance_score": 0.3015,
+                    "novelty_score": 0.7,
+                    "resonance_score": 1.0,
+                    "friction_score": 0.3086,
+                    "should_convene_council": true,
+                    "council_reason": "Tension (0.51) exceeds threshold (0.4)",
+                    "llm_backend": null,
+                    "reflection": "Dream collision examined 'A distributed vulnerability database for Open Source'. Friction=0.3086 with 3 recalled memories and 3 durable rules. Next governance move: Tension (0.51) exceeds threshold (0.4).",
+                    "reflection_generated": false,
+                    "related_memories": [
+                      {
+                        "id": "85c8bd7e-5cfe-4606-8acb-f1c63ac15b96",
+                        "title": "An open, precise, and distributed approach to producing and consuming vulnerability information for open source.",
+                        "source": "custom",
+                        "layer": "working",
+                        "summary": "An open, precise, and distributed approach to producing and consuming vulnerability information for open source.",
+                        "tags": [
+                          "ai",
+                          "architecture",
+                          "engineering",
+                          "environment",
+                          "perception"
+                        ]
+                      },
+                      {
+                        "id": "79e77ae9-51f5-4099-a79e-d3faaac63354",
+                        "title": "[ ![Icon for New NVD Communications and Status Updates Page](https://nvd.nist.gov/site-media/images/LandingPage/readAllA",
+                        "source": "custom",
+                        "layer": "working",
+                        "summary": "[ ![Icon for New NVD Communications and Status Updates Page](https://nvd.nist.gov/site-media/images/LandingPage/readAllAboutIt800x632.png)",
+                        "tags": [
+                          "ai",
+                          "environment",
+                          "perception"
+                        ]
+                      },
+                      {
+                        "id": "5e0863eb-6caa-4354-bd51-7a87de7fd905",
+                        "title": "Quickly assess open source projects for risky practices",
+                        "source": "custom",
+                        "layer": "working",
+                        "summary": "Quickly assess open source projects for risky practices",
+                        "tags": [
+                          "ai",
+                          "engineering",
+                          "environment",
+                          "perception"
+                        ]
+                      }
+                    ],
+                    "crystal_rules": [
+                      "critical: collapse warnings escalate to fail-closed governance",
+                      "prefer interactions that produce genuine resonance (tension -> convergence -> novel output)",
+                      "avoid high-risk actions that previously triggered block outcomes"
+                    ],
+                    "resistance": {
+                      "prior_tension": {
+                        "query_tension": 0.5108,
+                        "memory_tension": 0.0,
+                        "delta_t": 0.48919999999999997,
+                        "query_wave": {
+                          "uncertainty_shift": 0.7,
+                          "divergence_shift": 0.0,
+                          "risk_shift": 0.5108,
+                          "revision_shift": 0.48919999999999997
+                        },
+                        "memory_wave": {
+                          "uncertainty_shift": 1.0,
+                          "divergence_shift": 0.0,
+                          "risk_shift": 1.0,
+                          "revision_shift": 0.6
+                        },
+                        "constraint_kind": "core_rule",
+                        "is_immutable": false,
+                        "gate_decision": "approve"
+                      },
+                      "runtime_friction": {
+                        "tension_delta": 0.5108,
+                        "wave_distance": 0.225,
+                        "friction_score": 0.3822,
+                        "constraint_kind": "core_rule",
+                        "is_immutable": false
+                      },
+                      "circuit_breaker": {
+                        "friction_history_len": 3,
+                        "consecutive_high": 0,
+                        "is_frozen": false,
+                        "freeze_reason": "",
+                        "status": "ok",
+                        "lyapunov_exponent": 0.2499
+                      }
+                    },
+                    "observability": {
+                      "query_terms": [
+                        "a",
+                        "distributed",
+                        "vulnerability",
+                        "database",
+                        "for",
+                        "open",
+                        "source",
+                        "an",
+                        "open,",
+                        "precise,",
+                        "and",
+                        "approach"
+                      ],
+                      "lyapunov_proxy": 0.2499,
+                      "breaker_status": "ok"
+                    }
+                  },
+                  {
+                    "stimulus_record_id": "85c8bd7e-5cfe-4606-8acb-f1c63ac15b96",
+                    "topic": "A distributed vulnerability database for Open Source",
+                    "source_url": "https://osv.dev/",
+                    "priority_score": 0.5108,
+                    "relevance_score": 0.3015,
+                    "novelty_score": 0.7,
+                    "resonance_score": 1.0,
+                    "friction_score": 0.3086,
+                    "should_convene_council": true,
+                    "council_reason": "Tension (0.51) exceeds threshold (0.4)",
+                    "llm_backend": null,
+                    "reflection": "Dream collision examined 'A distributed vulnerability database for Open Source'. Friction=0.3086 with 3 recalled memories and 3 durable rules. Next governance move: Tension (0.51) exceeds threshold (0.4).",
+                    "reflection_generated": false,
+                    "related_memories": [
+                      {
+                        "id": "ffc10418-cb1f-4e63-9324-9426fc6c6eeb",
+                        "title": "An open, precise, and distributed approach to producing and consuming vulnerability information for open source.",
+                        "source": "custom",
+                        "layer": "working",
+                        "summary": "An open, precise, and distributed approach to producing and consuming vulnerability information for open source.",
+                        "tags": [
+                          "ai",
+                          "architecture",
+                          "engineering",
+                          "environment",
+                          "perception"
+                        ]
+                      },
+                      {
+                        "id": "79e77ae9-51f5-4099-a79e-d3faaac63354",
+                        "title": "[ ![Icon for New NVD Communications and Status Updates Page](https://nvd.nist.gov/site-media/images/LandingPage/readAllA",
+                        "source": "custom",
+                        "layer": "working",
+                        "summary": "[ ![Icon for New NVD Communications and Status Updates Page](https://nvd.nist.gov/site-media/images/LandingPage/readAllAboutIt800x632.png)",
+                        "tags": [
+                          "ai",
+                          "environment",
+                          "perception"
+                        ]
+                      },
+                      {
+                        "id": "5e0863eb-6caa-4354-bd51-7a87de7fd905",
+                        "title": "Quickly assess open source projects for risky practices",
+                        "source": "custom",
+                        "layer": "working",
+                        "summary": "Quickly assess open source projects for risky practices",
+                        "tags": [
+                          "ai",
+                          "engineering",
+                          "environment",
+                          "perception"
+                        ]
+                      }
+                    ],
+                    "crystal_rules": [
+                      "critical: collapse warnings escalate to fail-closed governance",
+                      "prefer interactions that produce genuine resonance (tension -> convergence -> novel output)",
+                      "avoid high-risk actions that previously triggered block outcomes"
+                    ],
+                    "resistance": {
+                      "prior_tension": {
+                        "query_tension": 0.5108,
+                        "memory_tension": 0.0,
+                        "delta_t": 0.48919999999999997,
+                        "query_wave": {
+                          "uncertainty_shift": 0.7,
+                          "divergence_shift": 0.0,
+                          "risk_shift": 0.5108,
+                          "revision_shift": 0.48919999999999997
+                        },
+                        "memory_wave": {
+                          "uncertainty_shift": 1.0,
+                          "divergence_shift": 0.0,
+                          "risk_shift": 1.0,
+                          "revision_shift": 0.6
+                        },
+                        "constraint_kind": "core_rule",
+                        "is_immutable": false,
+                        "gate_decision": "approve"
+                      },
+                      "runtime_friction": {
+                        "tension_delta": 0.5108,
+                        "wave_distance": 0.225,
+                        "friction_score": 0.3822,
+                        "constraint_kind": "core_rule",
+                        "is_immutable": false
+                      },
+                      "circuit_breaker": {
+                        "friction_history_len": 4,
+                        "consecutive_high": 0,
+                        "is_frozen": false,
+                        "freeze_reason": "",
+                        "status": "ok",
+                        "lyapunov_exponent": 0.2499
+                      }
+                    },
+                    "observability": {
+                      "query_terms": [
+                        "a",
+                        "distributed",
+                        "vulnerability",
+                        "database",
+                        "for",
+                        "open",
+                        "source",
+                        "an",
+                        "open,",
+                        "precise,",
+                        "and",
+                        "approach"
+                      ],
+                      "lyapunov_proxy": 0.2499,
+                      "breaker_status": "ok"
+                    }
+                  }
+                ]
+              },
+              "summary": {
+                "stimuli_considered": 4,
+                "stimuli_selected": 2,
+                "collision_count": 2,
+                "council_count": 2,
+                "frozen_count": 0,
+                "avg_friction_score": 0.3086,
+                "max_friction_score": 0.3086,
+                "max_lyapunov_proxy": 0.2499,
+                "llm_call_count": 0,
+                "llm_prompt_tokens_total": 0,
+                "llm_completion_tokens_total": 0,
+                "llm_total_tokens": 0,
+                "llm_backends": [],
+                "llm_models": [],
+                "llm_preflight_latency_ms": null,
+                "llm_preflight_selection_latency_ms": null,
+                "llm_preflight_probe_latency_ms": null,
+                "llm_preflight_timeout_count": 0,
+                "llm_preflight_reason": "reflection_disabled"
+              }
+            }
+          ]
+        },
+        "dashboard_payload": {
+          "generated_at": "2026-03-08T05:15:54Z",
+          "overall_ok": true,
+          "inputs": {
+            "journal_path": "memory/self_journal.jsonl",
+            "wakeup_path": "memory/autonomous/runtime_probe_watch/dream_wakeup_history.jsonl",
+            "schedule_history_path": null,
+            "schedule_state_path": null,
+            "max_points": 120
+          },
+          "metrics": {
+            "journal_entry_count": 2446,
+            "journal_invalid_json_line_count": 0,
+            "wakeup_cycle_count": 2,
+            "wakeup_invalid_json_line_count": 0,
+            "schedule_cycle_count": 0,
+            "schedule_invalid_json_line_count": 0,
+            "schedule_state_invalid_json_count": 0,
+            "journal_friction_point_count": 100,
+            "journal_lyapunov_point_count": 100,
+            "wakeup_avg_friction_point_count": 2,
+            "wakeup_max_friction_point_count": 2,
+            "wakeup_max_lyapunov_point_count": 2,
+            "wakeup_llm_call_count_point_count": 2,
+            "wakeup_llm_total_tokens_point_count": 2,
+            "wakeup_llm_preflight_latency_point_count": 1,
+            "wakeup_llm_selection_latency_point_count": 1,
+            "wakeup_llm_probe_latency_point_count": 1,
+            "wakeup_llm_preflight_timeout_count_point_count": 2,
+            "schedule_governance_cooldown_applied_point_count": 0,
+            "schedule_governance_cooldown_deferred_point_count": 0,
+            "schedule_llm_backoff_requested_point_count": 0,
+            "schedule_llm_backoff_active_point_count": 0
+          },
+          "summary": {
+            "journal_friction": {
+              "point_count": 100,
+              "latest": 0.2322,
+              "min": 0.0566,
+              "max": 0.3065,
+              "average": 0.1864,
+              "trend": "falling",
+              "convergence_events": 0
+            },
+            "journal_lyapunov": {
+              "point_count": 100,
+              "latest": -5.0,
+              "min": -5.0,
+              "max": 0.0,
+              "average": -4.5283,
+              "trend": "stable",
+              "convergence_events": 0
+            },
+            "wakeup_avg_friction": {
+              "point_count": 2,
+              "latest": 0.3086,
+              "min": 0.3086,
+              "max": 0.3086,
+              "average": 0.3086,
+              "trend": "stable",
+              "convergence_events": 0
+            },
+            "wakeup_max_friction": {
+              "point_count": 2,
+              "latest": 0.3086,
+              "min": 0.3086,
+              "max": 0.3086,
+              "average": 0.3086,
+              "trend": "stable",
+              "convergence_events": 0
+            },
+            "wakeup_max_lyapunov": {
+              "point_count": 2,
+              "latest": 0.2499,
+              "min": 0.2499,
+              "max": 0.2499,
+              "average": 0.2499,
+              "trend": "stable",
+              "convergence_events": 0
+            },
+            "wakeup_llm_total_tokens": {
+              "point_count": 2,
+              "latest": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "average": 0.0,
+              "trend": "stable",
+              "convergence_events": 0
+            },
+            "wakeup_llm_preflight_latency": {
+              "point_count": 1,
+              "latest": 2013.0,
+              "min": 2013.0,
+              "max": 2013.0,
+              "average": 2013.0,
+              "trend": "insufficient",
+              "convergence_events": 0
+            },
+            "wakeup_llm_selection_latency": {
+              "point_count": 1,
+              "latest": 757.0,
+              "min": 757.0,
+              "max": 757.0,
+              "average": 757.0,
+              "trend": "insufficient",
+              "convergence_events": 0
+            },
+            "wakeup_llm_probe_latency": {
+              "point_count": 1,
+              "latest": 1256.0,
+              "min": 1256.0,
+              "max": 1256.0,
+              "average": 1256.0,
+              "trend": "insufficient",
+              "convergence_events": 0
+            },
+            "wakeup_llm_preflight_timeout_count": {
+              "point_count": 2,
+              "latest": 0.0,
+              "min": 0.0,
+              "max": 1.0,
+              "average": 0.5,
+              "trend": "falling",
+              "convergence_events": 0
+            },
+            "schedule_governance_cooldown_applied": {
+              "point_count": 0,
+              "latest": null,
+              "min": null,
+              "max": null,
+              "average": null,
+              "trend": "empty",
+              "convergence_events": 0
+            },
+            "schedule_governance_cooldown_deferred": {
+              "point_count": 0,
+              "latest": null,
+              "min": null,
+              "max": null,
+              "average": null,
+              "trend": "empty",
+              "convergence_events": 0
+            },
+            "schedule_llm_backoff_requested": {
+              "point_count": 0,
+              "latest": null,
+              "min": null,
+              "max": null,
+              "average": null,
+              "trend": "empty",
+              "convergence_events": 0
+            },
+            "schedule_llm_backoff_active": {
+              "point_count": 0,
+              "latest": null,
+              "min": null,
+              "max": null,
+              "average": null,
+              "trend": "empty",
+              "convergence_events": 0
+            },
+            "wakeup_council_total": 4,
+            "wakeup_frozen_total": 0,
+            "wakeup_llm_call_total": 0,
+            "wakeup_llm_preflight_timeout_total": 1,
+            "schedule_governance_cooldown_applied_total": 0,
+            "schedule_governance_cooldown_deferred_total": 0,
+            "schedule_llm_backoff_requested_total": 0,
+            "schedule_llm_backoff_active_total": 0
+          },
+          "series": {
+            "journal_friction": [
+              {
+                "timestamp": "2026-03-02T12:32:32.136110+00:00",
+                "value": 0.1916,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.136175+00:00",
+                "value": 0.3065,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.137033+00:00",
+                "value": 0.1775,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.137154+00:00",
+                "value": 0.2322,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.137938+00:00",
+                "value": 0.246,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.137993+00:00",
+                "value": 0.2109,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.138601+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.138677+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.139326+00:00",
+                "value": 0.1916,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.139380+00:00",
+                "value": 0.3065,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.140047+00:00",
+                "value": 0.1775,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.140163+00:00",
+                "value": 0.2322,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.141153+00:00",
+                "value": 0.246,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.141269+00:00",
+                "value": 0.2109,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.142153+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.142259+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.143523+00:00",
+                "value": 0.1916,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.143620+00:00",
+                "value": 0.3065,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.144678+00:00",
+                "value": 0.1775,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.144773+00:00",
+                "value": 0.2322,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.145734+00:00",
+                "value": 0.246,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.145827+00:00",
+                "value": 0.2109,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.146621+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.146713+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.148138+00:00",
+                "value": 0.1916,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.148260+00:00",
+                "value": 0.3065,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.149475+00:00",
+                "value": 0.1775,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.149586+00:00",
+                "value": 0.2322,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.150631+00:00",
+                "value": 0.246,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.150739+00:00",
+                "value": 0.2109,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.151613+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.151721+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.152649+00:00",
+                "value": 0.1916,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.152754+00:00",
+                "value": 0.3065,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.153720+00:00",
+                "value": 0.1775,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.153827+00:00",
+                "value": 0.2322,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.154786+00:00",
+                "value": 0.246,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.154894+00:00",
+                "value": 0.2109,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.155765+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.155872+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.156818+00:00",
+                "value": 0.1916,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.156923+00:00",
+                "value": 0.3065,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.157873+00:00",
+                "value": 0.1775,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.157985+00:00",
+                "value": 0.2322,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.159002+00:00",
+                "value": 0.246,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.159126+00:00",
+                "value": 0.2109,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.160149+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.160210+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.161004+00:00",
+                "value": 0.1916,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.161113+00:00",
+                "value": 0.3065,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.162128+00:00",
+                "value": 0.1775,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.162184+00:00",
+                "value": 0.2322,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.163016+00:00",
+                "value": 0.246,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.163128+00:00",
+                "value": 0.2109,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.164116+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.164192+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.165086+00:00",
+                "value": 0.1916,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.165145+00:00",
+                "value": 0.3065,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.165849+00:00",
+                "value": 0.1775,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.165904+00:00",
+                "value": 0.2322,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.166582+00:00",
+                "value": 0.246,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.166633+00:00",
+                "value": 0.2109,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.167226+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.167300+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.168007+00:00",
+                "value": 0.1916,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.168071+00:00",
+                "value": 0.3065,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.169086+00:00",
+                "value": 0.1775,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.169197+00:00",
+                "value": 0.2322,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.170217+00:00",
+                "value": 0.246,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.170329+00:00",
+                "value": 0.2109,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.171261+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.171367+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.172344+00:00",
+                "value": 0.1916,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.172452+00:00",
+                "value": 0.3065,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.173411+00:00",
+                "value": 0.1775,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.173519+00:00",
+                "value": 0.2322,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.174473+00:00",
+                "value": 0.246,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.174581+00:00",
+                "value": 0.2109,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.175413+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.175520+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.176697+00:00",
+                "value": 0.1916,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.176803+00:00",
+                "value": 0.3065,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.177968+00:00",
+                "value": 0.1775,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.178084+00:00",
+                "value": 0.2322,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.179270+00:00",
+                "value": 0.246,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.179325+00:00",
+                "value": 0.2109,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.180026+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.180089+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.181240+00:00",
+                "value": 0.1916,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.181366+00:00",
+                "value": 0.3065,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.182578+00:00",
+                "value": 0.1775,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.182690+00:00",
+                "value": 0.2322,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.183770+00:00",
+                "value": 0.246,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.183879+00:00",
+                "value": 0.2109,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.184662+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.184821+00:00",
+                "value": 0.0566,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.185796+00:00",
+                "value": 0.1916,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.185896+00:00",
+                "value": 0.3065,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.186705+00:00",
+                "value": 0.1775,
+                "source": "journal",
+                "phase": "before",
+                "label": "cognitive_friction"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.186830+00:00",
+                "value": 0.2322,
+                "source": "journal",
+                "phase": "after",
+                "label": "cognitive_friction"
+              }
+            ],
+            "journal_lyapunov": [
+              {
+                "timestamp": "2026-03-02T12:32:32.136110+00:00",
+                "value": 0.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.136175+00:00",
+                "value": -1.2368,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.137033+00:00",
+                "value": -2.3018,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.137154+00:00",
+                "value": -3.101,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.137938+00:00",
+                "value": -2.7369,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.137993+00:00",
+                "value": -2.7018,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.138601+00:00",
+                "value": -2.5843,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.138677+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.139326+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.139380+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.140047+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.140163+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.141153+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.141269+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.142153+00:00",
+                "value": -2.3513,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.142259+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.143523+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.143620+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.144678+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.144773+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.145734+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.145827+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.146621+00:00",
+                "value": -2.0227,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.146713+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.148138+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.148260+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.149475+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.149586+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.150631+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.150739+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.151613+00:00",
+                "value": -2.667,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.151721+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.152649+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.152754+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.153720+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.153827+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.154786+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.154894+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.155765+00:00",
+                "value": -2.1524,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.155872+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.156818+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.156923+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.157873+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.157985+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.159002+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.159126+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.160149+00:00",
+                "value": -2.2869,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.160210+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.161004+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.161113+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.162128+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.162184+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.163016+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.163128+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.164116+00:00",
+                "value": -2.0733,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.164192+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.165086+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.165145+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.165849+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.165904+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.166582+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.166633+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.167226+00:00",
+                "value": -3.0152,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.167300+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.168007+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.168071+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.169086+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.169197+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.170217+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.170329+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.171261+00:00",
+                "value": -3.0272,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.171367+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.172344+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.172452+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.173411+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.173519+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.174473+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.174581+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.175413+00:00",
+                "value": -2.8853,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.175520+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.176697+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.176803+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.177968+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.178084+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.179270+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.179325+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.180026+00:00",
+                "value": -2.9253,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.180089+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.181240+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.181366+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.182578+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.182690+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.183770+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.183879+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.184662+00:00",
+                "value": -2.7572,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.184821+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.185796+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.185896+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.186705+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "before",
+                "label": "lyapunov_exponent"
+              },
+              {
+                "timestamp": "2026-03-02T12:32:32.186830+00:00",
+                "value": -5.0,
+                "source": "journal",
+                "phase": "after",
+                "label": "lyapunov_exponent"
+              }
+            ],
+            "wakeup_avg_friction": [
+              {
+                "timestamp": "2026-03-08T05:15:51Z",
+                "value": 0.3086,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "avg_friction_score"
+              },
+              {
+                "timestamp": "2026-03-08T05:15:54Z",
+                "value": 0.3086,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "avg_friction_score"
+              }
+            ],
+            "wakeup_max_friction": [
+              {
+                "timestamp": "2026-03-08T05:15:51Z",
+                "value": 0.3086,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "max_friction_score"
+              },
+              {
+                "timestamp": "2026-03-08T05:15:54Z",
+                "value": 0.3086,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "max_friction_score"
+              }
+            ],
+            "wakeup_max_lyapunov": [
+              {
+                "timestamp": "2026-03-08T05:15:51Z",
+                "value": 0.2499,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "max_lyapunov_proxy"
+              },
+              {
+                "timestamp": "2026-03-08T05:15:54Z",
+                "value": 0.2499,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "max_lyapunov_proxy"
+              }
+            ],
+            "wakeup_council_count": [
+              {
+                "timestamp": "2026-03-08T05:15:51Z",
+                "value": 2.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "council_count"
+              },
+              {
+                "timestamp": "2026-03-08T05:15:54Z",
+                "value": 2.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "council_count"
+              }
+            ],
+            "wakeup_frozen_count": [
+              {
+                "timestamp": "2026-03-08T05:15:51Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "frozen_count"
+              },
+              {
+                "timestamp": "2026-03-08T05:15:54Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "frozen_count"
+              }
+            ],
+            "wakeup_llm_call_count": [
+              {
+                "timestamp": "2026-03-08T05:15:51Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_call_count"
+              },
+              {
+                "timestamp": "2026-03-08T05:15:54Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_call_count"
+              }
+            ],
+            "wakeup_llm_total_tokens": [
+              {
+                "timestamp": "2026-03-08T05:15:51Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_total_tokens"
+              },
+              {
+                "timestamp": "2026-03-08T05:15:54Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_total_tokens"
+              }
+            ],
+            "wakeup_llm_preflight_latency": [
+              {
+                "timestamp": "2026-03-08T05:15:51Z",
+                "value": 2013.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_preflight_latency_ms"
+              }
+            ],
+            "wakeup_llm_selection_latency": [
+              {
+                "timestamp": "2026-03-08T05:15:51Z",
+                "value": 757.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_preflight_selection_latency_ms"
+              }
+            ],
+            "wakeup_llm_probe_latency": [
+              {
+                "timestamp": "2026-03-08T05:15:51Z",
+                "value": 1256.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_preflight_probe_latency_ms"
+              }
+            ],
+            "wakeup_llm_preflight_timeout_count": [
+              {
+                "timestamp": "2026-03-08T05:15:51Z",
+                "value": 1.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_preflight_timeout_count"
+              },
+              {
+                "timestamp": "2026-03-08T05:15:54Z",
+                "value": 0.0,
+                "source": "wakeup",
+                "phase": "cycle",
+                "label": "llm_preflight_timeout_count"
+              }
+            ],
+            "schedule_governance_cooldown_applied": [],
+            "schedule_governance_cooldown_deferred": [],
+            "schedule_llm_backoff_requested": [],
+            "schedule_llm_backoff_active": []
+          },
+          "recent_wakeup_cycles": [
+            {
+              "cycle": 1,
+              "status": "ok",
+              "timestamp": "2026-03-08T05:15:51Z",
+              "avg_friction_score": 0.3086,
+              "max_friction_score": 0.3086,
+              "max_lyapunov_proxy": 0.2499,
+              "council_count": 2,
+              "frozen_count": 0,
+              "llm_call_count": 0,
+              "llm_total_tokens": 0,
+              "llm_backends": [],
+              "llm_models": [],
+              "llm_preflight_latency_ms": 2013,
+              "llm_preflight_selection_latency_ms": 757,
+              "llm_preflight_probe_latency_ms": 1256,
+              "llm_preflight_timeout_count": 1,
+              "llm_preflight_reason": "timeout"
+            },
+            {
+              "cycle": 1,
+              "status": "ok",
+              "timestamp": "2026-03-08T05:15:54Z",
+              "avg_friction_score": 0.3086,
+              "max_friction_score": 0.3086,
+              "max_lyapunov_proxy": 0.2499,
+              "council_count": 2,
+              "frozen_count": 0,
+              "llm_call_count": 0,
+              "llm_total_tokens": 0,
+              "llm_backends": [],
+              "llm_models": [],
+              "llm_preflight_latency_ms": null,
+              "llm_preflight_selection_latency_ms": null,
+              "llm_preflight_probe_latency_ms": null,
+              "llm_preflight_timeout_count": 0,
+              "llm_preflight_reason": "reflection_disabled"
+            }
+          ],
+          "recent_schedule_cycles": [],
+          "schedule_state": {
+            "cycles_run": 0,
+            "updated_at": null,
+            "active_governance_cooldown_categories": [],
+            "active_governance_cooldown_count": 0,
+            "llm_backoff_active": false,
+            "llm_backoff_until_cycle": 0,
+            "llm_backoff_mode": "none",
+            "llm_backoff_status": "unknown",
+            "llm_backoff_reason_count": 0,
+            "llm_backoff_breach_reasons": []
+          },
+          "warnings": []
+        },
+        "overall_ok": true,
+        "registry_selection": {
+          "generated_at": "2026-03-08T05:15:51Z",
+          "registry_path": "spec/external_source_registry.yaml",
+          "filters": {
+            "entry_ids": [],
+            "categories": [
+              "supply-chain-risk",
+              "vulnerability-intel"
+            ],
+            "limit": null,
+            "include_stale": false
+          },
+          "selected_url_count": 5,
+          "selected_urls": [
+            "https://osv.dev/",
+            "https://google.github.io/osv.dev/data/",
+            "https://scorecard.dev/",
+            "https://openssf.org/projects/scorecard/",
+            "https://nvd.nist.gov/"
+          ],
+          "selected_entry_count": 3,
+          "selected_entries": [
+            {
+              "id": "osv",
+              "name": "OSV (Open Source Vulnerabilities)",
+              "category": "vulnerability-intel",
+              "reviewed_at": "2026-02-14",
+              "age_days": 22,
+              "url_count": 2,
+              "urls": [
+                "https://osv.dev/",
+                "https://google.github.io/osv.dev/data/"
+              ],
+              "rationale": "Open source vulnerability aggregation and schema-backed feeds."
+            },
+            {
+              "id": "scorecard",
+              "name": "OpenSSF Scorecard",
+              "category": "supply-chain-risk",
+              "reviewed_at": "2026-02-14",
+              "age_days": 22,
+              "url_count": 2,
+              "urls": [
+                "https://scorecard.dev/",
+                "https://openssf.org/projects/scorecard/"
+              ],
+              "rationale": "Repository security posture scoring for dependency intake."
+            },
+            {
+              "id": "nvd",
+              "name": "NVD",
+              "category": "vulnerability-intel",
+              "reviewed_at": "2026-02-14",
+              "age_days": 22,
+              "url_count": 1,
+              "urls": [
+                "https://nvd.nist.gov/"
+              ],
+              "rationale": "Authoritative CVE enrichment source from NIST."
+            }
+          ],
+          "skipped_entries": [],
+          "warning_count": 0,
+          "warnings": [],
+          "policy": {
+            "review_cycle_days": 120,
+            "allowed_hosts_count": 21,
+            "blocked_hosts_count": 5
+          },
+          "ok": true
+        },
+        "llm_policy": {
+          "active": true,
+          "mode": "mixed_latency",
+          "backoff_until_cycle": 3,
+          "reason_count": 4,
+          "breach_reasons": [
+            "llm_preflight_latency_ms>1800 (observed=2013)",
+            "llm_selection_latency_ms>700 (observed=757)",
+            "llm_probe_latency_ms>1200 (observed=1256)",
+            "llm_preflight_timeout_count>0 (observed=1)"
+          ],
+          "action": "disable_reflection"
+        }
+      },
+      "tension_budget": {
+        "enabled": true,
+        "thresholds": {
+          "max_friction_score": 1.0,
+          "max_lyapunov_proxy": 1.0,
+          "max_council_count": 99,
+          "max_llm_preflight_latency_ms": 1800,
+          "max_llm_selection_latency_ms": 700,
+          "max_llm_probe_latency_ms": 1200,
+          "max_llm_timeout_count": 0,
+          "cooldown_cycles": 2
+        },
+        "observation": {
+          "observed_cycles": 1,
+          "max_friction_score": 0.3086,
+          "max_lyapunov_proxy": 0.2499,
+          "council_count": 2,
+          "max_llm_preflight_latency_ms": null,
+          "max_llm_selection_latency_ms": null,
+          "max_llm_probe_latency_ms": null,
+          "llm_preflight_timeout_count": 0
+        },
+        "breached": false,
+        "breach_reason_count": 0,
+        "breach_reasons": [],
+        "governance_breach_reason_count": 0,
+        "governance_breach_reasons": [],
+        "governance_breached": false,
+        "llm_breach_reason_count": 0,
+        "llm_breach_reasons": [],
+        "llm_breached": false,
+        "llm_backoff_mode": "none",
+        "cooldown_cycles": 2,
+        "cooled_categories": [],
+        "llm_backoff_requested": false,
+        "llm_policy": {
+          "active": true,
+          "mode": "mixed_latency",
+          "backoff_until_cycle": 3,
+          "reason_count": 4,
+          "breach_reasons": [
+            "llm_preflight_latency_ms>1800 (observed=2013)",
+            "llm_selection_latency_ms>700 (observed=757)",
+            "llm_probe_latency_ms>1200 (observed=1256)",
+            "llm_preflight_timeout_count>0 (observed=1)"
+          ],
+          "action": "disable_reflection"
+        }
+      },
+      "overall_ok": true
+    }
+  ],
+  "state": {
+    "cursor": 0,
+    "category_cursor": 0,
+    "cycles_run": 2,
+    "updated_at": "2026-03-08T05:15:54Z",
+    "last_entry_ids": [
+      "scorecard"
+    ],
+    "entry_states": {
+      "osv": {
+        "last_selected_cycle": 1,
+        "backoff_until_cycle": 0,
+        "consecutive_failures": 0,
+        "last_outcome": "ok",
+        "updated_at": "2026-03-08T05:15:51Z"
+      },
+      "scorecard": {
+        "last_selected_cycle": 2,
+        "backoff_until_cycle": 0,
+        "consecutive_failures": 0,
+        "last_outcome": "ok",
+        "updated_at": "2026-03-08T05:15:54Z"
+      }
+    },
+    "category_entry_cursors": {
+      "supply-chain-risk": 0,
+      "vulnerability-intel": 1
+    },
+    "category_states": {
+      "supply-chain-risk": {
+        "tension_cooldown_until_cycle": 0,
+        "last_budget_status": "ok",
+        "last_breach_reasons": [],
+        "last_max_friction_score": 0.3086,
+        "last_max_lyapunov_proxy": 0.2499,
+        "last_council_count": 2,
+        "last_llm_preflight_latency_ms": null,
+        "last_llm_selection_latency_ms": null,
+        "last_llm_probe_latency_ms": null,
+        "last_llm_preflight_timeout_count": 0,
+        "updated_at": "2026-03-08T05:15:54Z"
+      },
+      "vulnerability-intel": {
+        "tension_cooldown_until_cycle": 0,
+        "last_budget_status": "ok",
+        "last_breach_reasons": [],
+        "last_max_friction_score": 0.3086,
+        "last_max_lyapunov_proxy": 0.2499,
+        "last_council_count": 2,
+        "last_llm_preflight_latency_ms": 2013,
+        "last_llm_selection_latency_ms": 757,
+        "last_llm_probe_latency_ms": 1256,
+        "last_llm_preflight_timeout_count": 1,
+        "updated_at": "2026-03-08T05:15:51Z"
+      }
+    },
+    "llm_backoff": {
+      "backoff_until_cycle": 3,
+      "last_status": "breached",
+      "last_mode": "mixed_latency",
+      "last_breach_reasons": [
+        "llm_preflight_latency_ms>1800 (observed=2013)",
+        "llm_selection_latency_ms>700 (observed=757)",
+        "llm_probe_latency_ms>1200 (observed=1256)",
+        "llm_preflight_timeout_count>0 (observed=1)"
+      ],
+      "updated_at": "2026-03-08T05:15:51Z"
+    }
+  },
+  "profile": {
+    "name": "runtime_probe_watch",
+    "description": "Reproducible LLM runtime readiness probe with relaxed governance thresholds.",
+    "registry": {
+      "entry_ids": [],
+      "categories": [
+        "vulnerability-intel",
+        "supply-chain-risk"
+      ],
+      "include_stale": false
+    },
+    "schedule": {
+      "interval_seconds": 21600.0,
+      "entries_per_cycle": 1,
+      "urls_per_cycle": 1,
+      "revisit_interval_cycles": 0,
+      "failure_backoff_cycles": 1,
+      "category_weights": {
+        "supply-chain-risk": 1,
+        "vulnerability-intel": 1
+      },
+      "category_backoff_multipliers": {
+        "supply-chain-risk": 1,
+        "vulnerability-intel": 1
+      },
+      "tension_max_friction_score": 1.0,
+      "tension_max_lyapunov_proxy": 1.0,
+      "tension_max_council_count": 99,
+      "tension_max_llm_preflight_latency_ms": 1800,
+      "tension_max_llm_selection_latency_ms": 700,
+      "tension_max_llm_probe_latency_ms": 1200,
+      "tension_max_llm_timeout_count": 0,
+      "tension_cooldown_cycles": 2
+    },
+    "dream": {
+      "limit": 2,
+      "min_priority": 0.3,
+      "related_limit": 5,
+      "crystal_count": 5
+    }
+  },
+  "preflight_profile": "runtime_probe_watch"
+}

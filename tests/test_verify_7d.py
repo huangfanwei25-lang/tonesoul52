@@ -1,3 +1,6 @@
+import json
+from datetime import datetime, timedelta, timezone
+
 import scripts.verify_7d as verify_7d
 
 
@@ -117,3 +120,51 @@ def test_check_tdd_uses_extended_pytest_timeout(monkeypatch):
 
     assert result.status == "pass"
     assert captured["timeout"] == verify_7d.TDD_PYTEST_TIMEOUT
+
+
+def test_check_ddd_freshness_passes_for_recent_discussion(tmp_path):
+    discussion = tmp_path / "agent_discussion_curated.jsonl"
+    recent = datetime.now(timezone.utc) - timedelta(days=1)
+    discussion.write_text(
+        json.dumps(
+            {
+                "timestamp": recent.isoformat().replace("+00:00", "Z"),
+                "author": "codex",
+                "topic": "phase-closeout",
+                "status": "done",
+                "message": "fresh discussion closeout",
+            }
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+    result = verify_7d._check_ddd_freshness(discussion, stale_days=7)
+
+    assert result.status == "pass"
+    assert "age_days=" in result.note
+    assert "remediation" not in result.note
+
+
+def test_check_ddd_freshness_reports_closeout_remediation_for_stale_discussion(tmp_path):
+    discussion = tmp_path / "agent_discussion_curated.jsonl"
+    stale = datetime.now(timezone.utc) - timedelta(days=9)
+    discussion.write_text(
+        json.dumps(
+            {
+                "timestamp": stale.isoformat().replace("+00:00", "Z"),
+                "author": "codex",
+                "topic": "phase-closeout",
+                "status": "done",
+                "message": "stale discussion closeout",
+            }
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+    result = verify_7d._check_ddd_freshness(discussion, stale_days=7)
+
+    assert result.status == "fail"
+    assert "stale data" in result.note
+    assert verify_7d.DDD_FRESHNESS_REMEDIATION in result.note

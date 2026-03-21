@@ -18,6 +18,12 @@ def _reset_rate_limiter():
     yield
 
 
+@pytest.fixture(autouse=True)
+def _use_hash_embedder(monkeypatch):
+    """These routing tests do not need to load a heavyweight transformer model."""
+    monkeypatch.setenv("TONESOUL_MEMORY_EMBEDDER", "hash")
+
+
 @patch("tonesoul.local_llm.ask_local_llm")
 def test_pipeline_pass_local_fast_route(mock_ask_local_llm):
     """Test that short, free, low-tension paths bypass the cloud and return locally immediately."""
@@ -33,6 +39,10 @@ def test_pipeline_pass_local_fast_route(mock_ask_local_llm):
     assert "[Local Model]" in response.response
     assert response.dispatch_trace.get("route") == RoutingPath.PASS_LOCAL.value
     assert response.dispatch_trace.get("journal_eligible") is False
+    routing_trace = response.dispatch_trace.get("routing_trace") or {}
+    assert routing_trace.get("route") == RoutingPath.PASS_LOCAL.value
+    assert routing_trace.get("journal_eligible") is False
+    assert routing_trace.get("reason") == response.dispatch_trace.get("reason")
 
 
 def test_pipeline_premium_journal_eligible():
@@ -40,7 +50,7 @@ def test_pipeline_premium_journal_eligible():
     pipeline = UnifiedPipeline()
 
     # Mock network dependencies
-    pipeline._get_gemini = MagicMock(return_value=None)
+    pipeline._get_llm_client = MagicMock(return_value=None)
     pipeline._get_tonebridge = MagicMock(return_value=None)
     pipeline._get_council = MagicMock(return_value=None)
 
@@ -53,6 +63,12 @@ def test_pipeline_premium_journal_eligible():
 
     assert response.dispatch_trace.get("journal_eligible") is True
     assert response.dispatch_trace.get("route") == RoutingPath.PASS_COUNCIL.value
+    assert isinstance(response.dispatch_trace.get("reason"), str)
+    assert response.dispatch_trace.get("reason")
+    routing_trace = response.dispatch_trace.get("routing_trace") or {}
+    assert routing_trace.get("route") == RoutingPath.PASS_COUNCIL.value
+    assert routing_trace.get("journal_eligible") is True
+    assert routing_trace.get("reason") == response.dispatch_trace.get("reason")
 
 
 def test_pipeline_rate_limit_free_tier(monkeypatch):
@@ -62,7 +78,7 @@ def test_pipeline_rate_limit_free_tier(monkeypatch):
     monkeypatch.setattr(compute_module.time, "time", lambda: frozen_time)
 
     pipeline = UnifiedPipeline()
-    pipeline._get_gemini = MagicMock(return_value=None)
+    pipeline._get_llm_client = MagicMock(return_value=None)
     pipeline._get_tonebridge = MagicMock(return_value=None)
     pipeline._get_council = MagicMock(return_value=None)
 
@@ -83,9 +99,11 @@ def test_pipeline_rate_limit_free_tier(monkeypatch):
     )
     assert response.dispatch_trace.get("route") == RoutingPath.BLOCK_RATE_LIMIT.value
     assert "Rate limit exceeded" in response.dispatch_trace.get("reason", "")
-    assert response.dispatch_trace.get("repair_eligible") is True
+    assert response.dispatch_trace.get("repair_eligible") is None
     repair = response.dispatch_trace.get("repair")
     assert isinstance(repair, dict)
+    assert repair.get("repair_eligible") is True
+    assert repair.get("detail", {}).get("repair_eligible") is True
     assert repair.get("original_gate") == "block_rate_limit"
     assert repair.get("resonance_class") == "pending"
     assert repair.get("delta_after_repair") is None
@@ -93,7 +111,7 @@ def test_pipeline_rate_limit_free_tier(monkeypatch):
 
 def test_pipeline_free_user_high_governance_friction_escalates_to_council():
     pipeline = UnifiedPipeline()
-    pipeline._get_gemini = MagicMock(return_value=None)
+    pipeline._get_llm_client = MagicMock(return_value=None)
     pipeline._get_tonebridge = MagicMock(return_value=None)
     pipeline._get_council = MagicMock(return_value=None)
 
@@ -139,7 +157,7 @@ class _FakeCouncil:
 
 def test_pipeline_council_block_writes_repair_trace():
     pipeline = UnifiedPipeline()
-    pipeline._get_gemini = MagicMock(return_value=None)
+    pipeline._get_llm_client = MagicMock(return_value=None)
     pipeline._get_tonebridge = MagicMock(return_value=None)
     pipeline._get_council = MagicMock(return_value=_FakeCouncil("BLOCK"))
 
@@ -151,8 +169,10 @@ def test_pipeline_council_block_writes_repair_trace():
     )
 
     repair = response.dispatch_trace.get("repair")
-    assert response.dispatch_trace.get("repair_eligible") is True
+    assert response.dispatch_trace.get("repair_eligible") is None
     assert isinstance(repair, dict)
+    assert repair.get("repair_eligible") is True
+    assert repair.get("detail", {}).get("repair_eligible") is True
     assert repair.get("original_gate") == "council_block"
     assert "council_block" in (repair.get("stages") or [])
     assert repair.get("resonance_class") in {
@@ -172,7 +192,7 @@ def test_pipeline_persona_rewrite_writes_repair_trace(mock_persona_process):
     )
 
     pipeline = UnifiedPipeline()
-    pipeline._get_gemini = MagicMock(return_value=None)
+    pipeline._get_llm_client = MagicMock(return_value=None)
     pipeline._get_tonebridge = MagicMock(return_value=None)
     pipeline._get_council = MagicMock(return_value=None)
 
@@ -184,7 +204,9 @@ def test_pipeline_persona_rewrite_writes_repair_trace(mock_persona_process):
 
     repair = response.dispatch_trace.get("repair")
     assert response.response == "persona corrected output"
-    assert response.dispatch_trace.get("repair_eligible") is True
+    assert response.dispatch_trace.get("repair_eligible") is None
     assert isinstance(repair, dict)
+    assert repair.get("repair_eligible") is True
+    assert repair.get("detail", {}).get("repair_eligible") is True
     assert repair.get("original_gate") == "persona_dimension_rewrite"
     assert "persona_dimension_rewrite" in (repair.get("stages") or [])

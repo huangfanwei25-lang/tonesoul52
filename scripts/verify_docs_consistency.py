@@ -269,6 +269,7 @@ def _evaluate_repo_healthcheck_runner_contract(script_path: Path) -> dict[str, b
         "has_external_source_registry_check": False,
         "has_multi_agent_divergence_check": False,
         "has_memory_quality_check": False,
+        "has_true_verification_weekly_check": False,
     }
 
     module = _load_python_module(
@@ -324,6 +325,11 @@ def _evaluate_repo_healthcheck_runner_contract(script_path: Path) -> dict[str, b
         if spec.get("name") == "memory_quality":
             result["has_memory_quality_check"] = (
                 command[:2] == ["python", "scripts/run_memory_quality_report.py"]
+                and "--strict" in command
+            )
+        if spec.get("name") == "true_verification_weekly":
+            result["has_true_verification_weekly_check"] = (
+                command[:2] == ["python", "scripts/report_true_verification_task_status.py"]
                 and "--strict" in command
             )
 
@@ -515,6 +521,7 @@ def build_report(repo_root: Path) -> dict[str, Any]:
     repo_healthcheck_runner_has_external_source_registry_check = False
     repo_healthcheck_runner_has_multi_agent_divergence_check = False
     repo_healthcheck_runner_has_memory_quality_check = False
+    repo_healthcheck_runner_has_true_verification_weekly_check = False
     if repo_healthcheck_exists:
         repo_healthcheck_payload = _load_yaml_mapping(repo_healthcheck_workflow)
         if repo_healthcheck_payload is not None:
@@ -619,6 +626,9 @@ def build_report(repo_root: Path) -> dict[str, Any]:
         repo_healthcheck_runner_has_memory_quality_check = runner_contract[
             "has_memory_quality_check"
         ]
+        repo_healthcheck_runner_has_true_verification_weekly_check = runner_contract[
+            "has_true_verification_weekly_check"
+        ]
         if not repo_healthcheck_runner_has_persona_swarm_check:
             issues.append("repo healthcheck runner missing persona swarm check")
         if not repo_healthcheck_runner_has_external_source_registry_check:
@@ -627,6 +637,8 @@ def build_report(repo_root: Path) -> dict[str, Any]:
             issues.append("repo healthcheck runner missing multi-agent divergence check")
         if not repo_healthcheck_runner_has_memory_quality_check:
             issues.append("repo healthcheck runner missing memory quality check")
+        if not repo_healthcheck_runner_has_true_verification_weekly_check:
+            issues.append("repo healthcheck runner missing weekly true verification check")
     else:
         issues.append("missing scripts/run_repo_healthcheck.py")
 
@@ -761,6 +773,9 @@ def build_report(repo_root: Path) -> dict[str, Any]:
                 repo_healthcheck_runner_has_multi_agent_divergence_check
             ),
             "has_memory_quality_check": repo_healthcheck_runner_has_memory_quality_check,
+            "has_true_verification_weekly_check": (
+                repo_healthcheck_runner_has_true_verification_weekly_check
+            ),
         },
         "docs_freshness": {
             "repo_structure_exists": repo_structure_exists,

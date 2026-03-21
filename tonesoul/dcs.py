@@ -109,6 +109,11 @@ def build_dcs_result(
 
     close_on = set(mode_rules.get("close_on", default_close_on))
     soft_close_on = set(mode_rules.get("soft_close_on", default_soft_close_on))
+    if decision_mode == "lockdown":
+        # Lockdown is fail-closed: policy overrides may tighten behavior, but
+        # cannot reopen triggers that the built-in lockdown posture closes.
+        close_on |= default_close_on
+        soft_close_on -= close_on
 
     closed_triggers = [key for key, active in triggers.items() if active and key in close_on]
     soft_triggers = [

@@ -1,0 +1,92 @@
+{
+  "generated_at": "2026-03-11T16:16:51Z",
+  "overall_ok": false,
+  "source": "scripts/run_repo_governance_settlement_report.py",
+  "healthcheck": {
+    "generated_at": "2026-03-08T15:43:20Z",
+    "overall_ok": false,
+    "pass_count": 19,
+    "fail_count": 1,
+    "failing_checks": [
+      "commit_attribution"
+    ]
+  },
+  "attribution": {
+    "recommendation": "defer_until_worktree_clean",
+    "tree_equal": true,
+    "current_missing_count": 5,
+    "backfill_missing_count": 0,
+    "rationale": "Backfill branch is clean and tree-equivalent, but the current worktree is dirty. Do not switch branch pointers in-place until local changes are settled or moved to a clean worktree.",
+    "suggested_commands": [
+      "git worktree add <clean-path> feat/env-perception-attribution-backfill",
+      "python scripts/plan_commit_attribution_base_switch.py --current-ref HEAD --backfill-ref feat/env-perception-attribution-backfill --strict"
+    ]
+  },
+  "repo_governance_group": {
+    "entry_count": 24,
+    "sample_paths": [
+      ".github/workflows/test.yml",
+      "scripts/healthcheck.py",
+      "scripts/run_repo_healthcheck.py",
+      "scripts/verify_7d.py",
+      "scripts/verify_command_registry.py",
+      "scripts/verify_docs_consistency.py",
+      "tests/test_agent_discussion_tool.py",
+      "tests/test_run_repo_healthcheck.py"
+    ],
+    "recommended_actions": [
+      "Review healthcheck and settlement scripts as one changeset, because they define what counts as safe branch movement.",
+      "Keep their tests and CI wiring paired so gate semantics do not drift from enforcement."
+    ]
+  },
+  "worktree_settlement": {
+    "dirty": true,
+    "planner_recommendation": "manual_review_required",
+    "refreshable_handoff_preview_count": 3,
+    "refreshable_admissibility_preview_count": 1,
+    "subjectivity_focus_preview": {
+      "path": "docs/status/subjectivity_review_batch_latest.json",
+      "queue_shape": "stable_history_only",
+      "primary_status_line": "stable_deferred_history | A distributed vulnerability database for Open Source | rows=50 lineages=12 cycles=30 | density=5r x8, 4r x1, 3r x1, 2r x1, 1r x1 | trigger=second_source_context_or_material_split",
+      "admissibility_primary_status_line": "admissibility_not_yet_clear | focus=authority_and_exception_pressure | tags=cross_cycle_persistence, exception_pressure, externalized_harm_check, low_context_diversity",
+      "requires_operator_action": "false"
+    },
+    "handoff_previews": [
+      {
+        "path": "docs/status/subjectivity_report_latest.json",
+        "queue_shape": "deferred_monitoring",
+        "primary_status_line": "deferred_monitoring | records=195 unresolved=50 deferred=50 settled=31 reviewed_vows=0 | top_unresolved_status=deferred",
+        "admissibility_primary_status_line": "",
+        "requires_operator_action": "false"
+      },
+      {
+        "path": "docs/status/subjectivity_review_batch_latest.json",
+        "queue_shape": "stable_history_only",
+        "primary_status_line": "stable_deferred_history | A distributed vulnerability database for Open Source | rows=50 lineages=12 cycles=30 | density=5r x8, 4r x1, 3r x1, 2r x1, 1r x1 | trigger=second_source_context_or_material_split",
+        "admissibility_primary_status_line": "admissibility_not_yet_clear | focus=authority_and_exception_pressure | tags=cross_cycle_persistence, exception_pressure, externalized_harm_check, low_context_diversity",
+        "requires_operator_action": "false"
+      },
+      {
+        "path": "docs/status/subjectivity_tension_groups_latest.json",
+        "queue_shape": "monitoring_queue",
+        "primary_status_line": "high_duplicate_same_source_loop | A distributed vulnerability database for Open Source | recommendation=defer_review | rows=50 lineages=12 cycles=30 | density=5r x8, 4r x1, 3r x1, 2r x1, 1r x1 | followup=upstream_dedup_candidate",
+        "admissibility_primary_status_line": "",
+        "requires_operator_action": "false"
+      }
+    ]
+  },
+  "settlement": {
+    "status": "runtime_green_metadata_blocked",
+    "metadata_only_blocker": true,
+    "runtime_green_except_metadata": true,
+    "next_actions": [
+      "Do not reinterpret the remaining failure as runtime drift; current repo governance gates are green except for historical commit trailers.",
+      "Keep branch movement deferred until the dirty worktree is settled, then prefer the tree-equivalent backfill branch as the clean attribution base.",
+      "Current attribution planner recommendation: `defer_until_worktree_clean`."
+    ]
+  },
+  "issues": [
+    "metadata_only_commit_attribution_blocker"
+  ],
+  "warnings": []
+}

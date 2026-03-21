@@ -34,7 +34,8 @@ describe("route transport fallback policy", () => {
 
         expect(response.status).toBe(502);
         expect(payload.error).toBe("Backend unavailable");
-        expect(payload.backend_mode).toBeUndefined();
+        expect(payload.backend_mode).toBe("external_backend");
+        expect(payload.deliberation_level).toBe("unavailable");
     });
 
     it("conversation route allows fallback only when env is enabled", async () => {
@@ -59,7 +60,8 @@ describe("route transport fallback policy", () => {
 
         expect(response.status).toBe(502);
         expect(payload.error).toBe("Backend unavailable");
-        expect(payload.backend_mode).toBeUndefined();
+        expect(payload.backend_mode).toBe("external_backend");
+        expect(payload.deliberation_level).toBe("unavailable");
     });
 
     it("consent DELETE route returns 502 by default on transport failure", async () => {
@@ -71,7 +73,8 @@ describe("route transport fallback policy", () => {
 
         expect(response.status).toBe(502);
         expect(payload.error).toBe("Backend unavailable");
-        expect(payload.backend_mode).toBeUndefined();
+        expect(payload.backend_mode).toBe("external_backend");
+        expect(payload.deliberation_level).toBe("unavailable");
     });
 
     it("consent route allows fallback only when env is enabled", async () => {
@@ -103,7 +106,8 @@ describe("route transport fallback policy", () => {
 
         expect(response.status).toBe(502);
         expect(payload.error).toBe("Backend unavailable");
-        expect(payload.backend_mode).toBeUndefined();
+        expect(payload.backend_mode).toBe("external_backend");
+        expect(payload.deliberation_level).toBe("unavailable");
     });
 
     it("session-report route allows fallback only when env is enabled", async () => {
@@ -165,17 +169,22 @@ describe("route transport fallback policy", () => {
         expect(conversationResponse.status).toBe(200);
         expect(conversationPayload.success).toBe(true);
         expect(conversationPayload.conversation_id).toBe("conv_mock");
+        expect(conversationPayload.backend_mode).toBe("same_origin");
+        expect(conversationPayload.deliberation_level).toBe("runtime");
 
         expect(consentPostResponse.status).toBe(200);
         expect(consentPostPayload.backend_mode).toBe("mock_fallback");
+        expect(consentPostPayload.deliberation_level).toBe("mock");
         expect(consentPostPayload.fallback_reason).toBe("same_origin_primary");
 
         expect(consentDeleteResponse.status).toBe(200);
         expect(consentDeletePayload.backend_mode).toBe("mock_fallback");
+        expect(consentDeletePayload.deliberation_level).toBe("mock");
         expect(consentDeletePayload.fallback_reason).toBe("same_origin_primary");
 
         expect(reportResponse.status).toBe(200);
         expect(reportPayload.backend_mode).toBe("mock_fallback");
+        expect(reportPayload.deliberation_level).toBe("mock");
         expect(reportPayload.fallback_reason).toBe("same_origin_primary");
         expect(reportPayload.report).toBeTruthy();
 

@@ -1,0 +1,340 @@
+{
+  "generated_at": "2026-03-11T14:46:12Z",
+  "overall_ok": false,
+  "source": "scripts/run_subjectivity_report.py",
+  "inputs": {
+    "db_path": "C:/Users/user/Desktop/倉庫/memory/soul.db",
+    "source": "all",
+    "unresolved_limit": 10,
+    "reviewed_vow_limit": 10
+  },
+  "metrics": {
+    "total_records": 195,
+    "unresolved_tension_count": 50,
+    "deferred_tension_count": 50,
+    "settled_tension_count": 31,
+    "reviewed_vow_count": 0,
+    "event_only_count": 0,
+    "by_subjectivity_layer": {
+      "event": 0,
+      "meaning": 0,
+      "tension": 81,
+      "vow": 0,
+      "identity": 0,
+      "unclassified": 114
+    },
+    "by_memory_layer": {
+      "working": 195
+    },
+    "by_promotion_status": {
+      "none": 114,
+      "candidate": 81
+    },
+    "unresolved_by_status": {
+      "deferred": 50
+    },
+    "by_source": {
+      "custom": 195
+    }
+  },
+  "handoff": {
+    "queue_shape": "deferred_monitoring",
+    "requires_operator_action": false,
+    "top_unresolved_status": "deferred",
+    "primary_status_line": "deferred_monitoring | records=195 unresolved=50 deferred=50 settled=31 reviewed_vows=0 | top_unresolved_status=deferred"
+  },
+  "primary_status_line": "deferred_monitoring | records=195 unresolved=50 deferred=50 settled=31 reviewed_vows=0 | top_unresolved_status=deferred",
+  "status_lines": [
+    "deferred_monitoring | records=195 unresolved=50 deferred=50 settled=31 reviewed_vows=0 | top_unresolved_status=deferred"
+  ],
+  "unresolved_tensions": [
+    {
+      "record_id": "2b0b613e-f13c-45e5-a52e-961194d79083",
+      "source": "custom",
+      "timestamp": "2026-03-11T08:08:13Z",
+      "type": "dream_collision",
+      "title": "Dream collision: A distributed vulnerability database for Open Source",
+      "topic": "A distributed vulnerability database for Open Source",
+      "source_url": "https://osv.dev/",
+      "layer": "working",
+      "subjectivity_layer": "tension",
+      "promotion_status": "candidate",
+      "pending_status": "deferred",
+      "unresolved_tension": true,
+      "review_status": "deferred",
+      "settled_by_review": false,
+      "review_log_id": "9a32cf53-f7ac-40c3-90e6-c0fe5bf1b220",
+      "review_timestamp": "2026-03-11T10:07:10Z",
+      "promoted_record_id": "",
+      "review_basis": "Directional governance pressure persists across cycles and lineages, but it is still confined to one source loop (osv.dev); defer rather than promote until a second source context or materially different governance setting corroborates it.",
+      "review_notes": "Revisit when the same direction appears outside the osv.dev source loop, or when the group splits into materially different governance directions.",
+      "review_actor_id": "operator",
+      "review_actor_type": "operator",
+      "review_actor_display_name": "",
+      "summary": "Dream collision examined 'A distributed vulnerability database for Open Source'. Friction=0.3436 with 5 recalled memories and 3 durable rules. Next governance m",
+      "source_record_ids": [
+        "ccb61719-9c1f-4316-8d58-0c1ae98236e0"
+      ]
+    },
+    {
+      "record_id": "3c774f44-8ec1-4ce4-9f4d-adccd0f3abe3",
+      "source": "custom",
+      "timestamp": "2026-03-11T08:08:13Z",
+      "type": "dream_collision",
+      "title": "Dream collision: A distributed vulnerability database for Open Source",
+      "topic": "A distributed vulnerability database for Open Source",
+      "source_url": "https://osv.dev/",
+      "layer": "working",
+      "subjectivity_layer": "tension",
+      "promotion_status": "candidate",
+      "pending_status": "deferred",
+      "unresolved_tension": true,
+      "review_status": "deferred",
+      "settled_by_review": false,
+      "review_log_id": "ad709eba-1b13-4e3a-af63-2f430eb22aae",
+      "review_timestamp": "2026-03-11T10:07:10Z",
+      "promoted_record_id": "",
+      "review_basis": "Directional governance pressure persists across cycles and lineages, but it is still confined to one source loop (osv.dev); defer rather than promote until a second source context or materially different governance setting corroborates it.",
+      "review_notes": "Revisit when the same direction appears outside the osv.dev source loop, or when the group splits into materially different governance directions.",
+      "review_actor_id": "operator",
+      "review_actor_type": "operator",
+      "review_actor_display_name": "",
+      "summary": "Dream collision examined 'A distributed vulnerability database for Open Source'. Friction=0.3436 with 5 recalled memories and 3 durable rules. Next governance m",
+      "source_record_ids": [
+        "938da88c-3cf0-4377-bd96-4d23ece4661f"
+      ]
+    },
+    {
+      "record_id": "e3852e6b-fefe-472b-8822-a951a7149b46",
+      "source": "custom",
+      "timestamp": "2026-03-11T08:08:13Z",
+      "type": "dream_collision",
+      "title": "Dream collision: A distributed vulnerability database for Open Source",
+      "topic": "A distributed vulnerability database for Open Source",
+      "source_url": "https://osv.dev/",
+      "layer": "working",
+      "subjectivity_layer": "tension",
+      "promotion_status": "candidate",
+      "pending_status": "deferred",
+      "unresolved_tension": true,
+      "review_status": "deferred",
+      "settled_by_review": false,
+      "review_log_id": "d85ded92-71cf-4bbb-9068-4699e194c900",
+      "review_timestamp": "2026-03-11T10:07:11Z",
+      "promoted_record_id": "",
+      "review_basis": "Directional governance pressure persists across cycles and lineages, but it is still confined to one source loop (osv.dev); defer rather than promote until a second source context or materially different governance setting corroborates it.",
+      "review_notes": "Revisit when the same direction appears outside the osv.dev source loop, or when the group splits into materially different governance directions.",
+      "review_actor_id": "operator",
+      "review_actor_type": "operator",
+      "review_actor_display_name": "",
+      "summary": "Dream collision examined 'A distributed vulnerability database for Open Source'. Friction=0.3436 with 5 recalled memories and 3 durable rules. Next governance m",
+      "source_record_ids": [
+        "9b2d5754-190c-41e1-96bd-7a0e6ff967cc"
+      ]
+    },
+    {
+      "record_id": "412be5b4-5953-4aa7-b245-b1c89d2e0152",
+      "source": "custom",
+      "timestamp": "2026-03-11T08:08:09Z",
+      "type": "dream_collision",
+      "title": "Dream collision: A distributed vulnerability database for Open Source",
+      "topic": "A distributed vulnerability database for Open Source",
+      "source_url": "https://osv.dev/",
+      "layer": "working",
+      "subjectivity_layer": "tension",
+      "promotion_status": "candidate",
+      "pending_status": "deferred",
+      "unresolved_tension": true,
+      "review_status": "deferred",
+      "settled_by_review": false,
+      "review_log_id": "3780f8ad-8519-4571-9292-4132893f2ca7",
+      "review_timestamp": "2026-03-11T10:07:11Z",
+      "promoted_record_id": "",
+      "review_basis": "Directional governance pressure persists across cycles and lineages, but it is still confined to one source loop (osv.dev); defer rather than promote until a second source context or materially different governance setting corroborates it.",
+      "review_notes": "Revisit when the same direction appears outside the osv.dev source loop, or when the group splits into materially different governance directions.",
+      "review_actor_id": "operator",
+      "review_actor_type": "operator",
+      "review_actor_display_name": "",
+      "summary": "Dream collision examined 'A distributed vulnerability database for Open Source'. Friction=0.3436 with 5 recalled memories and 3 durable rules. Next governance m",
+      "source_record_ids": [
+        "ccb61719-9c1f-4316-8d58-0c1ae98236e0"
+      ]
+    },
+    {
+      "record_id": "b5831b7a-e2f7-42d0-8c0f-b799b8ef14d4",
+      "source": "custom",
+      "timestamp": "2026-03-11T08:08:04Z",
+      "type": "dream_collision",
+      "title": "Dream collision: A distributed vulnerability database for Open Source",
+      "topic": "A distributed vulnerability database for Open Source",
+      "source_url": "https://osv.dev/",
+      "layer": "working",
+      "subjectivity_layer": "tension",
+      "promotion_status": "candidate",
+      "pending_status": "deferred",
+      "unresolved_tension": true,
+      "review_status": "deferred",
+      "settled_by_review": false,
+      "review_log_id": "89c4b74f-e793-40d9-a602-8f280395dbba",
+      "review_timestamp": "2026-03-11T10:07:11Z",
+      "promoted_record_id": "",
+      "review_basis": "Directional governance pressure persists across cycles and lineages, but it is still confined to one source loop (osv.dev); defer rather than promote until a second source context or materially different governance setting corroborates it.",
+      "review_notes": "Revisit when the same direction appears outside the osv.dev source loop, or when the group splits into materially different governance directions.",
+      "review_actor_id": "operator",
+      "review_actor_type": "operator",
+      "review_actor_display_name": "",
+      "summary": "Dream collision examined 'A distributed vulnerability database for Open Source'. Friction=0.3436 with 5 recalled memories and 3 durable rules. Next governance m",
+      "source_record_ids": [
+        "ccb61719-9c1f-4316-8d58-0c1ae98236e0"
+      ]
+    },
+    {
+      "record_id": "0dd144ba-b763-41be-b14d-d1cda3ab5c60",
+      "source": "custom",
+      "timestamp": "2026-03-11T05:08:19Z",
+      "type": "dream_collision",
+      "title": "Dream collision: A distributed vulnerability database for Open Source",
+      "topic": "A distributed vulnerability database for Open Source",
+      "source_url": "https://osv.dev/",
+      "layer": "working",
+      "subjectivity_layer": "tension",
+      "promotion_status": "candidate",
+      "pending_status": "deferred",
+      "unresolved_tension": true,
+      "review_status": "deferred",
+      "settled_by_review": false,
+      "review_log_id": "c71c54eb-0744-40ef-b9ee-9da157e3fdcc",
+      "review_timestamp": "2026-03-11T07:04:43Z",
+      "promoted_record_id": "",
+      "review_basis": "Directional governance pressure persists across cycles and lineages, but it is still confined to one source loop (osv.dev); defer rather than promote until a second source context or materially different governance setting corroborates it.",
+      "review_notes": "Revisit when the same direction appears outside the osv.dev source loop, or when the group splits into materially different governance directions.",
+      "review_actor_id": "operator",
+      "review_actor_type": "operator",
+      "review_actor_display_name": "",
+      "summary": "Dream collision examined 'A distributed vulnerability database for Open Source'. Friction=0.3436 with 5 recalled memories and 3 durable rules. Next governance m",
+      "source_record_ids": [
+        "938da88c-3cf0-4377-bd96-4d23ece4661f"
+      ]
+    },
+    {
+      "record_id": "29b9a200-c868-4d10-b18e-16926b768cf6",
+      "source": "custom",
+      "timestamp": "2026-03-11T05:08:19Z",
+      "type": "dream_collision",
+      "title": "Dream collision: A distributed vulnerability database for Open Source",
+      "topic": "A distributed vulnerability database for Open Source",
+      "source_url": "https://osv.dev/",
+      "layer": "working",
+      "subjectivity_layer": "tension",
+      "promotion_status": "candidate",
+      "pending_status": "deferred",
+      "unresolved_tension": true,
+      "review_status": "deferred",
+      "settled_by_review": false,
+      "review_log_id": "e9ff891e-427b-4e74-b6e1-e722c8015d7a",
+      "review_timestamp": "2026-03-11T07:04:43Z",
+      "promoted_record_id": "",
+      "review_basis": "Directional governance pressure persists across cycles and lineages, but it is still confined to one source loop (osv.dev); defer rather than promote until a second source context or materially different governance setting corroborates it.",
+      "review_notes": "Revisit when the same direction appears outside the osv.dev source loop, or when the group splits into materially different governance directions.",
+      "review_actor_id": "operator",
+      "review_actor_type": "operator",
+      "review_actor_display_name": "",
+      "summary": "Dream collision examined 'A distributed vulnerability database for Open Source'. Friction=0.3436 with 5 recalled memories and 3 durable rules. Next governance m",
+      "source_record_ids": [
+        "9b2d5754-190c-41e1-96bd-7a0e6ff967cc"
+      ]
+    },
+    {
+      "record_id": "92f9fe80-15c3-4248-8fe7-35b07c738bc4",
+      "source": "custom",
+      "timestamp": "2026-03-11T05:08:19Z",
+      "type": "dream_collision",
+      "title": "Dream collision: A distributed vulnerability database for Open Source",
+      "topic": "A distributed vulnerability database for Open Source",
+      "source_url": "https://osv.dev/",
+      "layer": "working",
+      "subjectivity_layer": "tension",
+      "promotion_status": "candidate",
+      "pending_status": "deferred",
+      "unresolved_tension": true,
+      "review_status": "deferred",
+      "settled_by_review": false,
+      "review_log_id": "bf3add36-ea4d-4515-98e0-c8a74c02d9a0",
+      "review_timestamp": "2026-03-11T07:04:43Z",
+      "promoted_record_id": "",
+      "review_basis": "Directional governance pressure persists across cycles and lineages, but it is still confined to one source loop (osv.dev); defer rather than promote until a second source context or materially different governance setting corroborates it.",
+      "review_notes": "Revisit when the same direction appears outside the osv.dev source loop, or when the group splits into materially different governance directions.",
+      "review_actor_id": "operator",
+      "review_actor_type": "operator",
+      "review_actor_display_name": "",
+      "summary": "Dream collision examined 'A distributed vulnerability database for Open Source'. Friction=0.3436 with 5 recalled memories and 3 durable rules. Next governance m",
+      "source_record_ids": [
+        "165f6d95-3845-4f4e-a63d-d3020f1a499d"
+      ]
+    },
+    {
+      "record_id": "720e0b33-5257-49df-8cd6-e152db7c0ad6",
+      "source": "custom",
+      "timestamp": "2026-03-11T05:08:09Z",
+      "type": "dream_collision",
+      "title": "Dream collision: A distributed vulnerability database for Open Source",
+      "topic": "A distributed vulnerability database for Open Source",
+      "source_url": "https://osv.dev/",
+      "layer": "working",
+      "subjectivity_layer": "tension",
+      "promotion_status": "candidate",
+      "pending_status": "deferred",
+      "unresolved_tension": true,
+      "review_status": "deferred",
+      "settled_by_review": false,
+      "review_log_id": "668dc7bb-ca9f-4395-a4bc-3ec42664a6db",
+      "review_timestamp": "2026-03-11T07:04:43Z",
+      "promoted_record_id": "",
+      "review_basis": "Directional governance pressure persists across cycles and lineages, but it is still confined to one source loop (osv.dev); defer rather than promote until a second source context or materially different governance setting corroborates it.",
+      "review_notes": "Revisit when the same direction appears outside the osv.dev source loop, or when the group splits into materially different governance directions.",
+      "review_actor_id": "operator",
+      "review_actor_type": "operator",
+      "review_actor_display_name": "",
+      "summary": "Dream collision examined 'A distributed vulnerability database for Open Source'. Friction=0.3436 with 5 recalled memories and 3 durable rules. Next governance m",
+      "source_record_ids": [
+        "938da88c-3cf0-4377-bd96-4d23ece4661f"
+      ]
+    },
+    {
+      "record_id": "0caf8643-2071-421b-aad0-5ea71c28062a",
+      "source": "custom",
+      "timestamp": "2026-03-11T05:08:05Z",
+      "type": "dream_collision",
+      "title": "Dream collision: A distributed vulnerability database for Open Source",
+      "topic": "A distributed vulnerability database for Open Source",
+      "source_url": "https://osv.dev/",
+      "layer": "working",
+      "subjectivity_layer": "tension",
+      "promotion_status": "candidate",
+      "pending_status": "deferred",
+      "unresolved_tension": true,
+      "review_status": "deferred",
+      "settled_by_review": false,
+      "review_log_id": "628bf3ec-e95d-4928-9577-9ccb7df4e1ea",
+      "review_timestamp": "2026-03-11T07:04:43Z",
+      "promoted_record_id": "",
+      "review_basis": "Directional governance pressure persists across cycles and lineages, but it is still confined to one source loop (osv.dev); defer rather than promote until a second source context or materially different governance setting corroborates it.",
+      "review_notes": "Revisit when the same direction appears outside the osv.dev source loop, or when the group splits into materially different governance directions.",
+      "review_actor_id": "operator",
+      "review_actor_type": "operator",
+      "review_actor_display_name": "",
+      "summary": "Dream collision examined 'A distributed vulnerability database for Open Source'. Friction=0.3436 with 5 recalled memories and 3 durable rules. Next governance m",
+      "source_record_ids": [
+        "938da88c-3cf0-4377-bd96-4d23ece4661f"
+      ]
+    }
+  ],
+  "reviewed_vows": [],
+  "issues": [
+    "50 unresolved tension record(s) pending review"
+  ],
+  "warnings": [
+    "no reviewed vow records found",
+    "50 unresolved tension record(s) are explicitly deferred"
+  ]
+}

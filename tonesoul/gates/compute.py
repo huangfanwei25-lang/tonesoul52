@@ -6,7 +6,7 @@ tier, requested action, and calculated metrics (like text density/tension)
 to determine the cheapest and safest processing route.
 
 Available Routes:
-- PASS_LOCAL: Short/simple inputs bypass the Council and go straight to the free local model (e.g. qwen3:4b).
+- PASS_LOCAL: Short/simple inputs bypass the Council and go straight to the free local model (e.g. qwen3.5:4b).
 - PASS_SINGLE: Low tension inputs go to a single, cheap cloud model. Bypasses 3-agent Council.
 - PASS_COUNCIL: High tension / high value inputs that require the full 3-perspective debate.
 - BLOCK_RATE_LIMIT: API spam/abuse detected.

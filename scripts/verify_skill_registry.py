@@ -58,6 +58,7 @@ def _parse_frontmatter(path: Path) -> dict[str, Any] | None:
     except UnicodeDecodeError:
         text = path.read_text(encoding="utf-8", errors="replace")
 
+    text = text.lstrip("\ufeff")
     if not text.startswith("---\n"):
         return None
     parts = text.split("---\n", 2)

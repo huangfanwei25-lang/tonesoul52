@@ -235,6 +235,7 @@ council_runtime = CouncilRuntime()
 _MAX_ESCAPE_SEED_ITEMS = 50
 _MAX_PAGINATION_LIMIT = 200
 _READ_API_TOKEN_ENV = "TONESOUL_READ_API_TOKEN"
+_WRITE_API_TOKEN_ENV = "TONESOUL_WRITE_API_TOKEN"
 _EVOLUTION_CACHE_PATH_ENV = "TONESOUL_EVOLUTION_CACHE_PATH"
 _AUTH_FAIL_CLOSED_ENV = "TONESOUL_AUTH_FAIL_CLOSED"
 _RATE_LIMIT_ENABLED_ENV = "TONESOUL_ENABLE_RATE_LIMIT"
@@ -277,6 +278,13 @@ def _read_api_token() -> str:
     if not isinstance(value, str):
         return ""
     return value.strip()
+
+
+def _read_write_api_token() -> str:
+    value = os.environ.get(_WRITE_API_TOKEN_ENV)
+    if isinstance(value, str) and value.strip():
+        return value.strip()
+    return _read_api_token()
 
 def _is_production_env() -> bool:
     if _env_flag("TONESOUL_PRODUCTION", default=False):
@@ -432,21 +440,49 @@ def _extract_bearer_token(authorization_header: str | None) -> str:
         return ""
     return token.strip()
 
-def _require_read_api_auth(headers: dict):
-    required_token = _read_api_token()
+
+def _extract_named_token(headers: dict, *header_names: str) -> str:
+    for header_name in header_names:
+        value = headers.get(header_name, headers.get(header_name.lower()))
+        if isinstance(value, str) and value.strip():
+            return value.strip()
+    return ""
+
+
+def _require_api_auth(headers: dict, *, required_token: str, config_error: str, unauthorized_error: str, header_names: tuple[str, ...]):
     fail_closed = _env_flag(_AUTH_FAIL_CLOSED_ENV, default=_is_production_env())
     if not required_token:
         if fail_closed:
-            return {"error": "Read API token not configured"}, 503
+            return {"error": config_error}, 503
         return None, 200
 
     provided_token = _extract_bearer_token(headers.get("Authorization", headers.get("authorization")))
     if not provided_token:
-        provided_token = str(headers.get("X-ToneSoul-Read-Token", headers.get("x-tonesoul-read-token")) or "").strip()
+        provided_token = _extract_named_token(headers, *header_names)
 
     if not provided_token or not secrets.compare_digest(provided_token, required_token):
-        return {"error": "Unauthorized read access"}, 401
+        return {"error": unauthorized_error}, 401
     return None, 200
+
+
+def _require_read_api_auth(headers: dict):
+    return _require_api_auth(
+        headers,
+        required_token=_read_api_token(),
+        config_error="Read API token not configured",
+        unauthorized_error="Unauthorized read access",
+        header_names=("X-ToneSoul-Read-Token",),
+    )
+
+
+def _require_write_api_auth(headers: dict):
+    return _require_api_auth(
+        headers,
+        required_token=_read_write_api_token(),
+        config_error="Write API token not configured",
+        unauthorized_error="Unauthorized write access",
+        header_names=("X-ToneSoul-Write-Token", "X-ToneSoul-Read-Token"),
+    )
 
 def _get_context_distiller() -> ContextDistiller:
     global _context_distiller

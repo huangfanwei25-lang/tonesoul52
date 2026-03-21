@@ -1,6 +1,31 @@
 ﻿---
 name: tonesoul_governance
 description: AI self-governance skill with tension computation, resonance detection, and memory crystallization
+l1_routing:
+  name: "ToneSoul Governance"
+  triggers:
+    - "governance"
+    - "semantic tension"
+    - "resonance detection"
+    - "memory crystallization"
+  intent: "Apply governance and semantic tension evaluation to distinguish resonance detection from compliance and preserve memory crystallization rules."
+l2_signature:
+  execution_profile:
+    - "engineering"
+  trust_tier: "reviewed"
+  json_schema:
+    type: "object"
+    properties:
+      task:
+        type: "string"
+      target_module:
+        type: "string"
+      constraints:
+        type: "array"
+        items:
+          type: "string"
+    required:
+      - "task"
 ---
 
 # ToneSoul Governance Skill

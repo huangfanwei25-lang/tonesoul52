@@ -1,0 +1,35 @@
+{
+  "overall_ok": true,
+  "mode": "applied",
+  "task_name": "ToneSoul True Verification Weekly",
+  "apply": true,
+  "rendered": true,
+  "render": {
+    "overall_ok": true,
+    "task_name": "ToneSoul True Verification Weekly",
+    "author": "user",
+    "start_boundary": "2026-03-08T16:08",
+    "interval_hours": 3,
+    "duration_days": 7,
+    "execution_time_limit_hours": 2,
+    "python_executable": "C:\\Users\\user\\Desktop\\倉庫\\.venv\\Scripts\\python.exe",
+    "script_path": "C:\\Users\\user\\Desktop\\倉庫\\scripts\\run_true_verification_host_tick_task.py",
+    "working_directory": "C:\\Users\\user\\Desktop\\倉庫",
+    "output_path": "docs\\status\\true_verification_weekly\\true_verification_task_scheduler.xml",
+    "summary_path": "docs\\status\\true_verification_weekly\\true_verification_task_scheduler_latest.json",
+    "register_hint": "schtasks /Create /TN \"ToneSoul True Verification Weekly\" /XML \"docs\\status\\true_verification_weekly\\true_verification_task_scheduler.xml\" /F"
+  },
+  "xml_path": "docs\\status\\true_verification_weekly\\true_verification_task_scheduler.xml",
+  "command": [
+    "schtasks",
+    "/Create",
+    "/TN",
+    "ToneSoul True Verification Weekly",
+    "/XML",
+    "docs\\status\\true_verification_weekly\\true_verification_task_scheduler.xml",
+    "/F"
+  ],
+  "returncode": 0,
+  "stdout": "SUCCESS: The scheduled task \"ToneSoul True Verification Weekly\" has successfully been created.\n",
+  "stderr": ""
+}

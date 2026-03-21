@@ -38,7 +38,8 @@ describe("API route handlers return 502 for invalid backend JSON", () => {
         expect(response.status).toBe(502);
         expect(payload.error).toBe("Backend returned invalid JSON");
         expect(payload.backend_status).toBe(201);
-        expect(payload.backend_mode).toBeUndefined();
+        expect(payload.backend_mode).toBe("external_backend");
+        expect(payload.deliberation_level).toBe("unavailable");
     });
 
     it("consent POST route returns 502 without mock fallback", async () => {
@@ -53,7 +54,8 @@ describe("API route handlers return 502 for invalid backend JSON", () => {
         expect(response.status).toBe(502);
         expect(payload.error).toBe("Backend returned invalid JSON");
         expect(payload.backend_status).toBe(200);
-        expect(payload.backend_mode).toBeUndefined();
+        expect(payload.backend_mode).toBe("external_backend");
+        expect(payload.deliberation_level).toBe("unavailable");
     });
 
     it("consent DELETE route returns 502 without mock fallback", async () => {
@@ -66,7 +68,8 @@ describe("API route handlers return 502 for invalid backend JSON", () => {
         expect(response.status).toBe(502);
         expect(payload.error).toBe("Backend returned invalid JSON");
         expect(payload.backend_status).toBe(200);
-        expect(payload.backend_mode).toBeUndefined();
+        expect(payload.backend_mode).toBe("external_backend");
+        expect(payload.deliberation_level).toBe("unavailable");
     });
 
     it("chat route returns 502 without mock fallback", async () => {
@@ -86,7 +89,8 @@ describe("API route handlers return 502 for invalid backend JSON", () => {
         expect(response.status).toBe(502);
         expect(payload.error).toBe("Backend returned invalid JSON");
         expect(payload.backend_status).toBe(200);
-        expect(payload.backend_mode).toBeUndefined();
+        expect(payload.backend_mode).toBe("external_backend");
+        expect(payload.deliberation_level).toBe("unavailable");
     });
 
     it("chat route rejects invalid council_mode type with 400", async () => {
@@ -226,6 +230,7 @@ describe("API route handlers return 502 for invalid backend JSON", () => {
         expect(response.status).toBe(502);
         expect(payload.error).toBe("Backend returned invalid JSON");
         expect(payload.backend_status).toBe(200);
-        expect(payload.backend_mode).toBeUndefined();
+        expect(payload.backend_mode).toBe("external_backend");
+        expect(payload.deliberation_level).toBe("unavailable");
     });
 });

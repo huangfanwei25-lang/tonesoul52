@@ -1,0 +1,194 @@
+{
+  "generated_at": "2026-03-10T14:39:40Z",
+  "overall_ok": true,
+  "source": "scripts/run_subjectivity_shadow_pressure_report.py",
+  "inputs": {
+    "db_path": "C:/Users/user/Desktop/倉庫/memory/soul.db",
+    "queries": [
+      "governance",
+      "provenance",
+      "boundary",
+      "tension",
+      "memory"
+    ],
+    "source_filter": "all",
+    "profile": "reviewed_vow_first",
+    "limit": 10,
+    "candidate_limit": 20,
+    "query_file": null
+  },
+  "pressure": {
+    "profile": "reviewed_vow_first",
+    "metrics": {
+      "query_count": 5,
+      "no_hit_query_count": 1,
+      "changed_query_count": 1,
+      "changed_query_rate": 0.2,
+      "top1_changed_count": 0,
+      "top1_changed_rate": 0.0,
+      "pressure_query_count": 1,
+      "pressure_query_rate": 0.2,
+      "tension_top1_gain_count": 0,
+      "tension_top1_gain_rate": 0.0,
+      "reviewed_vow_top1_gain_count": 0,
+      "reviewed_vow_top1_gain_rate": 0.0,
+      "avg_overlap_rate": 0.8,
+      "avg_promoted_count": 0,
+      "avg_demoted_count": 0,
+      "avg_classified_lift": 0
+    },
+    "no_hit_queries": [
+      "boundary"
+    ],
+    "queries": [
+      {
+        "query": "governance",
+        "candidate_count": 20,
+        "baseline_top1": "656fb0a6-7e90-4bc0-8cad-b18b94e943ab",
+        "shadow_top1": "656fb0a6-7e90-4bc0-8cad-b18b94e943ab",
+        "baseline_top1_subjectivity": "tension",
+        "shadow_top1_subjectivity": "tension",
+        "query_changed": false,
+        "top1_changed": false,
+        "classified_lift": 0,
+        "reviewed_vow_lift": 0,
+        "overlap_count": 10,
+        "promoted_count": 0,
+        "demoted_count": 0,
+        "delta": {
+          "overlap_ids": [
+            "656fb0a6-7e90-4bc0-8cad-b18b94e943ab",
+            "1d03b1c0-971f-4d79-8de9-aa446eb86bdd",
+            "33e9e8f8-fa50-472b-bbb5-f34cd1bd2079",
+            "99a9c4bb-18d4-4c81-bee3-b60ed447a87f",
+            "0c404714-39d8-4bd7-a5f4-372df6ba493c",
+            "6632620f-251b-4ec2-bd22-43a723551cdb",
+            "57c0cac8-d39a-41de-8557-cb95146593f1",
+            "b5b64114-6a34-4235-97fd-6946334678db",
+            "a8295d8c-975d-4d70-87e9-f8ea5bba6975",
+            "3eb578ee-6659-42f2-8999-f6d9f7c0959d"
+          ],
+          "promoted_ids": [],
+          "demoted_ids": []
+        }
+      },
+      {
+        "query": "provenance",
+        "candidate_count": 20,
+        "baseline_top1": "656fb0a6-7e90-4bc0-8cad-b18b94e943ab",
+        "shadow_top1": "656fb0a6-7e90-4bc0-8cad-b18b94e943ab",
+        "baseline_top1_subjectivity": "tension",
+        "shadow_top1_subjectivity": "tension",
+        "query_changed": true,
+        "top1_changed": false,
+        "classified_lift": 0,
+        "reviewed_vow_lift": 0,
+        "overlap_count": 10,
+        "promoted_count": 0,
+        "demoted_count": 0,
+        "delta": {
+          "overlap_ids": [
+            "656fb0a6-7e90-4bc0-8cad-b18b94e943ab",
+            "1d03b1c0-971f-4d79-8de9-aa446eb86bdd",
+            "33e9e8f8-fa50-472b-bbb5-f34cd1bd2079",
+            "69e8469a-2451-4bd9-a086-d9fc7e7256db",
+            "ff93cb31-b4ba-4762-98a2-becb82c5fae0",
+            "99a9c4bb-18d4-4c81-bee3-b60ed447a87f",
+            "61a73747-7e96-43ac-8d9a-2d7d29549570",
+            "298346a8-53e0-4d93-b572-5aef0dd7ba0e",
+            "0c404714-39d8-4bd7-a5f4-372df6ba493c",
+            "ae0a6abd-9cc9-45d8-a6c1-a20033f058d3"
+          ],
+          "promoted_ids": [],
+          "demoted_ids": []
+        }
+      },
+      {
+        "query": "boundary",
+        "candidate_count": 0,
+        "baseline_top1": null,
+        "shadow_top1": null,
+        "baseline_top1_subjectivity": "unclassified",
+        "shadow_top1_subjectivity": "unclassified",
+        "query_changed": false,
+        "top1_changed": false,
+        "classified_lift": 0,
+        "reviewed_vow_lift": 0,
+        "overlap_count": 0,
+        "promoted_count": 0,
+        "demoted_count": 0,
+        "delta": {
+          "overlap_ids": [],
+          "promoted_ids": [],
+          "demoted_ids": []
+        }
+      },
+      {
+        "query": "tension",
+        "candidate_count": 20,
+        "baseline_top1": "656fb0a6-7e90-4bc0-8cad-b18b94e943ab",
+        "shadow_top1": "656fb0a6-7e90-4bc0-8cad-b18b94e943ab",
+        "baseline_top1_subjectivity": "tension",
+        "shadow_top1_subjectivity": "tension",
+        "query_changed": false,
+        "top1_changed": false,
+        "classified_lift": 0,
+        "reviewed_vow_lift": 0,
+        "overlap_count": 10,
+        "promoted_count": 0,
+        "demoted_count": 0,
+        "delta": {
+          "overlap_ids": [
+            "656fb0a6-7e90-4bc0-8cad-b18b94e943ab",
+            "1d03b1c0-971f-4d79-8de9-aa446eb86bdd",
+            "33e9e8f8-fa50-472b-bbb5-f34cd1bd2079",
+            "69e8469a-2451-4bd9-a086-d9fc7e7256db",
+            "99a9c4bb-18d4-4c81-bee3-b60ed447a87f",
+            "61a73747-7e96-43ac-8d9a-2d7d29549570",
+            "0c404714-39d8-4bd7-a5f4-372df6ba493c",
+            "ae0a6abd-9cc9-45d8-a6c1-a20033f058d3",
+            "6632620f-251b-4ec2-bd22-43a723551cdb",
+            "57c0cac8-d39a-41de-8557-cb95146593f1"
+          ],
+          "promoted_ids": [],
+          "demoted_ids": []
+        }
+      },
+      {
+        "query": "memory",
+        "candidate_count": 20,
+        "baseline_top1": "656fb0a6-7e90-4bc0-8cad-b18b94e943ab",
+        "shadow_top1": "656fb0a6-7e90-4bc0-8cad-b18b94e943ab",
+        "baseline_top1_subjectivity": "tension",
+        "shadow_top1_subjectivity": "tension",
+        "query_changed": false,
+        "top1_changed": false,
+        "classified_lift": 0,
+        "reviewed_vow_lift": 0,
+        "overlap_count": 10,
+        "promoted_count": 0,
+        "demoted_count": 0,
+        "delta": {
+          "overlap_ids": [
+            "656fb0a6-7e90-4bc0-8cad-b18b94e943ab",
+            "1d03b1c0-971f-4d79-8de9-aa446eb86bdd",
+            "33e9e8f8-fa50-472b-bbb5-f34cd1bd2079",
+            "69e8469a-2451-4bd9-a086-d9fc7e7256db",
+            "99a9c4bb-18d4-4c81-bee3-b60ed447a87f",
+            "61a73747-7e96-43ac-8d9a-2d7d29549570",
+            "0c404714-39d8-4bd7-a5f4-372df6ba493c",
+            "ae0a6abd-9cc9-45d8-a6c1-a20033f058d3",
+            "6632620f-251b-4ec2-bd22-43a723551cdb",
+            "57c0cac8-d39a-41de-8557-cb95146593f1"
+          ],
+          "promoted_ids": [],
+          "demoted_ids": []
+        }
+      }
+    ]
+  },
+  "warnings": [
+    "no explicit queries provided; used default subjectivity shadow query set"
+  ],
+  "issues": []
+}

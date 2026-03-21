@@ -1,0 +1,340 @@
+{
+  "overall_ok": true,
+  "experiment": {
+    "name": "true_verification_weekly",
+    "profile": "security_watch",
+    "days": 7.0,
+    "wake_interval_hours": 3.0,
+    "host_trigger_mode": "single_tick",
+    "max_cycles_per_invocation": 1,
+    "interval_seconds": 0.0,
+    "fresh_experiment_state": false,
+    "tick_summary_path": "docs/status/true_verification_weekly/true_verification_host_tick_latest.json",
+    "experiment_summary_path": "docs/status/true_verification_weekly/true_verification_experiment_latest.json"
+  },
+  "gate": {
+    "status": "passed",
+    "reason": "runtime_probe_ok",
+    "profile": "runtime_probe_watch"
+  },
+  "preflight": {
+    "generated_at": "2026-03-12T05:08:12Z",
+    "overall_ok": true,
+    "preflight_profile": "runtime_probe_watch",
+    "config": {
+      "interval_seconds": 0.0,
+      "max_cycles": 2,
+      "entries_per_cycle": 1,
+      "urls_per_cycle": 1,
+      "include_stale": false,
+      "revisit_interval_cycles": 0,
+      "failure_backoff_cycles": 1,
+      "category_weights": {
+        "supply-chain-risk": 1,
+        "vulnerability-intel": 1
+      },
+      "category_backoff_multipliers": {
+        "supply-chain-risk": 1,
+        "vulnerability-intel": 1
+      },
+      "tension_max_friction_score": 1.0,
+      "tension_max_lyapunov_proxy": 1.0,
+      "tension_max_council_count": 99,
+      "tension_max_llm_preflight_latency_ms": 1800,
+      "tension_max_llm_selection_latency_ms": 700,
+      "tension_max_llm_probe_latency_ms": 1200,
+      "tension_max_llm_timeout_count": 0,
+      "tension_cooldown_cycles": 2,
+      "entry_ids": [],
+      "categories": [
+        "vulnerability-intel",
+        "supply-chain-risk"
+      ]
+    },
+    "result_count": 2,
+    "latest_result": {
+      "cycle": 2,
+      "overall_ok": true,
+      "duration_ms": 3877,
+      "started_at": "2026-03-12T05:08:08Z",
+      "finished_at": "2026-03-12T05:08:12Z",
+      "registry_batch": {
+        "selected_url_count": 1,
+        "deferred_category_count": 0,
+        "deferred_entry_count": 0,
+        "warning_count": 1,
+        "ok": true,
+        "selected_entry_ids": [
+          "scorecard"
+        ],
+        "selected_categories": [
+          "supply-chain-risk"
+        ],
+        "deferred_categories": [],
+        "warnings": [
+          "selected URLs capped at urls_per_cycle=1"
+        ]
+      },
+      "autonomous_payload": {
+        "overall_ok": true,
+        "generated_at": "2026-03-12T05:08:12Z",
+        "urls_requested": 1,
+        "urls_ingested": 1,
+        "urls_failed": 0,
+        "stimuli_processed": 1,
+        "wakeup_overall_status": "ok",
+        "wakeup_cycle_count": 1,
+        "dashboard_overall_ok": true,
+        "memory_write": {
+          "written": 0,
+          "skipped": 1
+        },
+        "llm_policy": {
+          "active": true,
+          "mode": "probe_latency",
+          "backoff_until_cycle": 3,
+          "reason_count": 3,
+          "breach_reasons": [
+            "llm_preflight_latency_ms>1800 (observed=2002)",
+            "llm_probe_latency_ms>1200 (observed=1491)",
+            "llm_preflight_timeout_count>0 (observed=1)"
+          ],
+          "action": "disable_reflection"
+        },
+        "paths": {
+          "history_path": "memory/autonomous/true_verification_weekly/preflight/dream_wakeup_history.jsonl",
+          "snapshot_path": "docs/status/true_verification_weekly/preflight/dream_wakeup_snapshot.json",
+          "state_path": "memory/autonomous/dream_wakeup_state.json",
+          "dashboard_json_path": "docs/status/true_verification_weekly/preflight/dream_observability_latest.json",
+          "dashboard_html_path": "docs/status/true_verification_weekly/preflight/dream_observability_latest.html"
+        }
+      },
+      "tension_budget": {
+        "cooldown_cycles": 2,
+        "governance_breached": false,
+        "llm_breached": false,
+        "breach_reasons": [],
+        "governance_breach_reasons": [],
+        "llm_breach_reasons": [],
+        "llm_policy": {
+          "active": true,
+          "mode": "probe_latency",
+          "backoff_until_cycle": 3,
+          "reason_count": 3,
+          "breach_reasons": [
+            "llm_preflight_latency_ms>1800 (observed=2002)",
+            "llm_probe_latency_ms>1200 (observed=1491)",
+            "llm_preflight_timeout_count>0 (observed=1)"
+          ],
+          "action": "disable_reflection"
+        },
+        "observation": {
+          "observed_cycles": 1,
+          "max_friction_score": 0.3436,
+          "max_lyapunov_proxy": 0.2499
+        }
+      }
+    },
+    "state": {
+      "cursor": 0,
+      "category_cursor": 0,
+      "cycles_run": 2,
+      "updated_at": "2026-03-12T05:08:12Z",
+      "last_entry_ids": [
+        "scorecard"
+      ],
+      "entry_state_count": 2,
+      "category_entry_cursor_count": 2,
+      "category_state_count": 2,
+      "llm_backoff": {
+        "backoff_until_cycle": 3,
+        "last_status": "breached",
+        "last_mode": "probe_latency",
+        "updated_at": "2026-03-12T05:08:08Z",
+        "last_breach_reasons": [
+          "llm_preflight_latency_ms>1800 (observed=2002)",
+          "llm_probe_latency_ms>1200 (observed=1491)",
+          "llm_preflight_timeout_count>0 (observed=1)"
+        ]
+      }
+    }
+  },
+  "schedule": {
+    "generated_at": "2026-03-12T05:08:25Z",
+    "overall_ok": true,
+    "config": {
+      "interval_seconds": 0.0,
+      "max_cycles": 1,
+      "entries_per_cycle": 2,
+      "urls_per_cycle": 3,
+      "include_stale": false,
+      "revisit_interval_cycles": 2,
+      "failure_backoff_cycles": 2,
+      "category_weights": {
+        "artifact-signing": 1,
+        "supply-chain-hardening": 1,
+        "supply-chain-risk": 2,
+        "vulnerability-intel": 3
+      },
+      "category_backoff_multipliers": {
+        "artifact-signing": 1,
+        "supply-chain-hardening": 1,
+        "supply-chain-risk": 2,
+        "vulnerability-intel": 2
+      },
+      "tension_max_friction_score": 0.7,
+      "tension_max_lyapunov_proxy": 0.2,
+      "tension_max_council_count": 1,
+      "tension_max_llm_preflight_latency_ms": 1800,
+      "tension_max_llm_selection_latency_ms": 700,
+      "tension_max_llm_probe_latency_ms": 1200,
+      "tension_max_llm_timeout_count": 0,
+      "tension_cooldown_cycles": 2,
+      "entry_ids": [],
+      "categories": [
+        "vulnerability-intel",
+        "supply-chain-risk",
+        "artifact-signing",
+        "supply-chain-hardening"
+      ]
+    },
+    "result_count": 1,
+    "latest_result": {
+      "cycle": 1,
+      "overall_ok": true,
+      "duration_ms": 12081,
+      "started_at": "2026-03-12T05:08:13Z",
+      "finished_at": "2026-03-12T05:08:25Z",
+      "registry_batch": {
+        "selected_url_count": 3,
+        "deferred_category_count": 1,
+        "deferred_entry_count": 0,
+        "warning_count": 1,
+        "ok": true,
+        "selected_entry_ids": [
+          "osv",
+          "nvd"
+        ],
+        "selected_categories": [
+          "vulnerability-intel",
+          "vulnerability-intel"
+        ],
+        "deferred_categories": [
+          {
+            "category": "supply-chain-hardening",
+            "reason": "tension_budget_cooldown",
+            "available_after_cycle": 15,
+            "last_budget_status": "breached",
+            "last_breach_reasons": [
+              "max_lyapunov_proxy>0.2 (observed=0.2499)",
+              "council_count>1 (observed=4)"
+            ],
+            "weight": 1
+          }
+        ],
+        "warnings": [
+          "selected URLs capped at urls_per_cycle=3"
+        ]
+      },
+      "autonomous_payload": {
+        "overall_ok": true,
+        "generated_at": "2026-03-12T05:08:25Z",
+        "urls_requested": 3,
+        "urls_ingested": 3,
+        "urls_failed": 0,
+        "stimuli_processed": 3,
+        "wakeup_overall_status": "ok",
+        "wakeup_cycle_count": 1,
+        "dashboard_overall_ok": true,
+        "memory_write": {
+          "written": 1,
+          "skipped": 2
+        },
+        "llm_policy": {
+          "active": false,
+          "mode": "probe_latency",
+          "backoff_until_cycle": 12,
+          "reason_count": 3,
+          "breach_reasons": [
+            "llm_preflight_latency_ms>1800 (observed=2001)",
+            "llm_probe_latency_ms>1200 (observed=1484)",
+            "llm_preflight_timeout_count>0 (observed=1)"
+          ],
+          "action": "normal"
+        },
+        "paths": {
+          "history_path": "memory/autonomous/true_verification_weekly/dream_wakeup_history.jsonl",
+          "snapshot_path": "docs/status/true_verification_weekly/dream_wakeup_snapshot.json",
+          "state_path": "memory/autonomous/dream_wakeup_state.json",
+          "dashboard_json_path": "docs/status/true_verification_weekly/dream_observability_latest.json",
+          "dashboard_html_path": "docs/status/true_verification_weekly/dream_observability_latest.html"
+        }
+      },
+      "tension_budget": {
+        "cooldown_cycles": 2,
+        "governance_breached": true,
+        "llm_breached": true,
+        "breach_reasons": [
+          "max_lyapunov_proxy>0.2 (observed=0.2499)",
+          "council_count>1 (observed=4)",
+          "llm_preflight_latency_ms>1800 (observed=2003)",
+          "llm_probe_latency_ms>1200 (observed=1496)",
+          "llm_preflight_timeout_count>0 (observed=1)"
+        ],
+        "governance_breach_reasons": [
+          "max_lyapunov_proxy>0.2 (observed=0.2499)",
+          "council_count>1 (observed=4)"
+        ],
+        "llm_breach_reasons": [
+          "llm_preflight_latency_ms>1800 (observed=2003)",
+          "llm_probe_latency_ms>1200 (observed=1496)",
+          "llm_preflight_timeout_count>0 (observed=1)"
+        ],
+        "llm_policy": {
+          "active": false,
+          "mode": "probe_latency",
+          "backoff_until_cycle": 12,
+          "reason_count": 3,
+          "breach_reasons": [
+            "llm_preflight_latency_ms>1800 (observed=2001)",
+            "llm_probe_latency_ms>1200 (observed=1484)",
+            "llm_preflight_timeout_count>0 (observed=1)"
+          ],
+          "action": "normal"
+        },
+        "observation": {
+          "observed_cycles": 1,
+          "max_friction_score": 0.3436,
+          "max_lyapunov_proxy": 0.2499,
+          "max_llm_preflight_latency_ms": 2003,
+          "max_llm_selection_latency_ms": 507,
+          "max_llm_probe_latency_ms": 1496
+        }
+      }
+    },
+    "state": {
+      "cursor": 0,
+      "category_cursor": 2,
+      "cycles_run": 13,
+      "updated_at": "2026-03-12T05:08:25Z",
+      "last_entry_ids": [
+        "osv",
+        "nvd"
+      ],
+      "entry_state_count": 5,
+      "category_entry_cursor_count": 4,
+      "category_state_count": 4,
+      "llm_backoff": {
+        "backoff_until_cycle": 15,
+        "last_status": "breached",
+        "last_mode": "probe_latency",
+        "updated_at": "2026-03-12T05:08:25Z",
+        "last_breach_reasons": [
+          "llm_preflight_latency_ms>1800 (observed=2003)",
+          "llm_probe_latency_ms>1200 (observed=1496)",
+          "llm_preflight_timeout_count>0 (observed=1)"
+        ]
+      }
+    }
+  }
+}

@@ -1,6 +1,11 @@
 """
 ToneSoul API Server
 Connects frontend to PreOutputCouncil backend.
+
+DEPRECATION NOTICE:
+This Flask entrypoint is kept for legacy/local compatibility and is in maintenance mode.
+Prefer `api/chat.py` for the active serverless chat entrypoint and
+`tonesoul.unified_pipeline.UnifiedPipeline` for runtime orchestration.
 """
 
 import hashlib
@@ -25,6 +30,7 @@ from tonesoul.council import CouncilRequest, CouncilRuntime
 from tonesoul.council.self_journal import load_recent_memory
 from tonesoul.evolution import ContextDistiller
 from tonesoul.memory import consolidate
+from tonesoul.memory.crystallizer import MemoryCrystallizer
 from tonesoul.memory.soul_db import JsonlSoulDB, MemorySource, SoulDB
 from tonesoul.supabase_persistence import SupabasePersistence
 
@@ -41,6 +47,7 @@ council_runtime = CouncilRuntime()
 _MAX_ESCAPE_SEED_ITEMS = 50
 _MAX_PAGINATION_LIMIT = 200
 _READ_API_TOKEN_ENV = "TONESOUL_READ_API_TOKEN"
+_WRITE_API_TOKEN_ENV = "TONESOUL_WRITE_API_TOKEN"
 _EVOLUTION_CACHE_PATH_ENV = "TONESOUL_EVOLUTION_CACHE_PATH"
 _AUTH_FAIL_CLOSED_ENV = "TONESOUL_AUTH_FAIL_CLOSED"
 _RATE_LIMIT_ENABLED_ENV = "TONESOUL_ENABLE_RATE_LIMIT"
@@ -82,6 +89,13 @@ def _read_api_token() -> str:
     if not isinstance(value, str):
         return ""
     return value.strip()
+
+
+def _read_write_api_token() -> str:
+    value = os.environ.get(_WRITE_API_TOKEN_ENV)
+    if isinstance(value, str) and value.strip():
+        return value.strip()
+    return _read_api_token()
 
 
 def _is_production_env() -> bool:
@@ -309,21 +323,46 @@ def _extract_bearer_token(authorization_header: str | None) -> str:
     return token.strip()
 
 
-def _require_read_api_auth():
-    required_token = _read_api_token()
+def _extract_named_token(*header_names: str) -> str:
+    for header_name in header_names:
+        value = request.headers.get(header_name)
+        if isinstance(value, str) and value.strip():
+            return value.strip()
+    return ""
+
+
+def _require_api_auth(*, required_token: str, config_error: str, unauthorized_error: str, header_names: tuple[str, ...]):
     fail_closed = _env_flag(_AUTH_FAIL_CLOSED_ENV, default=_is_production_env())
     if not required_token:
         if fail_closed:
-            return jsonify({"error": "Read API token not configured"}), 503
+            return jsonify({"error": config_error}), 503
         return None
 
     provided_token = _extract_bearer_token(request.headers.get("Authorization"))
     if not provided_token:
-        provided_token = str(request.headers.get("X-ToneSoul-Read-Token") or "").strip()
+        provided_token = _extract_named_token(*header_names)
 
     if not provided_token or not secrets.compare_digest(provided_token, required_token):
-        return jsonify({"error": "Unauthorized read access"}), 401
+        return jsonify({"error": unauthorized_error}), 401
     return None
+
+
+def _require_read_api_auth():
+    return _require_api_auth(
+        required_token=_read_api_token(),
+        config_error="Read API token not configured",
+        unauthorized_error="Unauthorized read access",
+        header_names=("X-ToneSoul-Read-Token",),
+    )
+
+
+def _require_write_api_auth():
+    return _require_api_auth(
+        required_token=_read_write_api_token(),
+        config_error="Write API token not configured",
+        unauthorized_error="Unauthorized write access",
+        header_names=("X-ToneSoul-Write-Token", "X-ToneSoul-Read-Token"),
+    )
 
 
 def _json_payload():
@@ -664,8 +703,112 @@ def _build_chat_evolution_payload(response_payload: dict) -> dict:
         "semantic_contradictions": _as_list(response_payload.get("semantic_contradictions")),
         "semantic_graph_summary": _as_dict(response_payload.get("semantic_graph_summary")),
         "dispatch_trace": _as_dict(response_payload.get("dispatch_trace")),
+        "governance_brief": _as_dict(response_payload.get("governance_brief"))
+        or _build_governance_brief(response_payload),
+        "life_entry_brief": _as_dict(response_payload.get("life_entry_brief"))
+        or _build_life_entry_brief(response_payload),
         "visual_chain_snapshot": _as_dict(deliberation.get("visual_chain_snapshot")),
         "captured_at": _utc_now(),
+    }
+
+
+def _summarize_text(value, max_chars: int = 160) -> str:
+    text = str(value or "").strip()
+    if not text:
+        return ""
+    normalized = " ".join(text.split())
+    if len(normalized) <= max_chars:
+        return normalized
+    return normalized[: max_chars - 3].rstrip() + "..."
+
+
+def _coerce_optional_float(value) -> float | None:
+    if value is None:
+        return None
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _build_crystal_freshness_brief() -> dict:
+    """Return freshness posture for crystal governance observability."""
+    try:
+        summary = MemoryCrystallizer().freshness_summary(top_n_stale=3)
+        if isinstance(summary, dict):
+            return summary
+    except Exception:
+        pass
+    return {
+        "total_crystals": 0,
+        "active_count": 0,
+        "needs_verification_count": 0,
+        "stale_count": 0,
+        "mean_freshness": 0.0,
+        "stale_rules": [],
+    }
+
+
+def _build_governance_brief(response_payload: dict) -> dict:
+    verdict = _as_dict(response_payload.get("verdict"))
+    deliberation = _as_dict(response_payload.get("deliberation"))
+    soul_audit = _as_dict(deliberation.get("soulAudit"))
+    decision_matrix = _as_dict(deliberation.get("decision_matrix"))
+    divergence_quality = _as_dict(deliberation.get("divergence_quality"))
+    next_moves = _as_list(deliberation.get("next_moves"))
+    dispatch_trace = _as_dict(response_payload.get("dispatch_trace"))
+    contradictions = _as_list(response_payload.get("semantic_contradictions"))
+
+    first_move = ""
+    if next_moves:
+        first = next_moves[0]
+        if isinstance(first, dict):
+            first_move = _summarize_text(first.get("text") or first.get("label") or "")
+        else:
+            first_move = _summarize_text(first)
+
+    coherence = _coerce_optional_float(verdict.get("coherence"))
+    if coherence is not None:
+        coherence = round(_clamp01(coherence), 3)
+
+    return {
+        "verdict": str(verdict.get("verdict") or "unknown"),
+        "responsibility_tier": str(verdict.get("responsibility_tier") or "unknown"),
+        "uncertainty_band": str(verdict.get("uncertainty_band") or "unknown"),
+        "coherence": coherence,
+        "soul_passed": bool(soul_audit.get("passed", False)),
+        "contradiction_count": len(contradictions),
+        "strategy": str(decision_matrix.get("ai_strategy_name") or "direct_response"),
+        "divergence_band": str(divergence_quality.get("band") or "unknown"),
+        "dispatch_state": str(dispatch_trace.get("state") or ""),
+        "next_focus": first_move,
+        "crystal_freshness": _build_crystal_freshness_brief(),
+    }
+
+
+def _build_life_entry_brief(response_payload: dict) -> dict:
+    response_text = _summarize_text(response_payload.get("response") or "", max_chars=180)
+    intervention_strategy = str(response_payload.get("intervention_strategy") or "").strip()
+    trajectory = _as_dict(response_payload.get("trajectory_analysis"))
+    dispatch_trace = _as_dict(response_payload.get("dispatch_trace"))
+    deliberation = _as_dict(response_payload.get("deliberation"))
+    decision_matrix = _as_dict(deliberation.get("decision_matrix"))
+
+    trajectory_label = (
+        str(trajectory.get("trajectory_mode") or "").strip()
+        or str(trajectory.get("state") or "").strip()
+        or str(dispatch_trace.get("mode") or "").strip()
+    )
+
+    return {
+        "response_summary": response_text,
+        "inner_intent": _summarize_text(decision_matrix.get("user_hidden_intent") or ""),
+        "strategy": intervention_strategy or str(decision_matrix.get("ai_strategy_name") or ""),
+        "persona_mode": str(response_payload.get("persona_mode") or ""),
+        "trajectory_label": trajectory_label,
+        "self_commit_count": len(_as_list(response_payload.get("self_commits"))),
+        "rupture_count": len(_as_list(response_payload.get("ruptures"))),
+        "emergent_value_count": len(_as_list(response_payload.get("emergent_values"))),
     }
 
 
@@ -1289,6 +1432,9 @@ def get_memories():
 @app.route("/api/consolidate", methods=["GET"])
 def get_consolidation():
     """Run memory consolidation and return report."""
+    auth_error = _require_write_api_auth()
+    if auth_error is not None:
+        return auth_error
     result = consolidate()
     return jsonify(
         {
@@ -1308,6 +1454,68 @@ def health():
             "persistence": supabase_persistence.status_dict(),
         }
     )
+
+
+@app.route("/api/governance_status", methods=["GET"])
+def governance_status():
+    """Operator-facing governance posture endpoint.
+
+    Returns a compact view of the system's current governance health:
+    capability level, pipeline mode, evolution brief, and mirror state.
+    No authentication required — this is a transparency surface.
+    """
+    if llm_backend is None:
+        get_llm_client()
+
+    capability = "runtime_ready" if llm_backend and llm_backend != "unavailable" else "mock_only"
+    reason = None if capability == "runtime_ready" else "llm_backend_unavailable"
+
+    evolution_brief: dict = {}
+    try:
+        summary = _get_evolution_summary_payload()
+        evolution_brief = {
+            "total_patterns": summary.get("total_patterns", 0),
+            "conversations_analyzed": summary.get("conversations_analyzed", 0),
+            "last_distilled_at": summary.get("last_distilled_at"),
+        }
+    except Exception:
+        pass
+
+    recent_verdicts: list = []
+    if supabase_persistence.enabled:
+        try:
+            page = supabase_persistence.list_audit_logs(limit=5, offset=0)
+            logs = page.get("logs") if isinstance(page, dict) else []
+            for row in (logs or []):
+                if not isinstance(row, dict):
+                    continue
+                recent_verdicts.append(
+                    {
+                        "gate_decision": row.get("gate_decision"),
+                        "delta_t": row.get("delta_t"),
+                        "created_at": row.get("created_at"),
+                    }
+                )
+        except Exception:
+            pass
+
+    payload: dict = {
+        "status": "ok",
+        "governance_capability": capability,
+        "deliberation_level": "runtime" if capability == "runtime_ready" else "mock",
+        "llm_backend": llm_backend or "unavailable",
+        "llm_mode": _resolve_llm_mode(),
+        "mirror_enabled": True,
+        "pipeline_mode": "unified_pipeline",
+        "persistence_enabled": supabase_persistence.enabled,
+        "evolution": evolution_brief,
+        "crystal_freshness": _build_crystal_freshness_brief(),
+        "recent_verdicts": recent_verdicts,
+        "checked_at": _utc_now(),
+    }
+    if reason is not None:
+        payload["reason"] = reason
+    return jsonify(payload)
 
 
 @app.route("/api/status", methods=["GET"])
@@ -1346,7 +1554,7 @@ def status():
 @app.route("/api/evolution/distill", methods=["POST"])
 def evolution_distill():
     """Run one context-distillation pass."""
-    auth_error = _require_read_api_auth()
+    auth_error = _require_write_api_auth()
     if auth_error is not None:
         return auth_error
 
@@ -1413,6 +1621,9 @@ def evolution_summary():
 @app.route("/api/conversation", methods=["POST"])
 def create_conversation():
     """Create a conversation id for a user session."""
+    auth_error = _require_write_api_auth()
+    if auth_error is not None:
+        return auth_error
     data = _json_payload()
     if data is None:
         return jsonify({"error": "Invalid JSON payload"}), 400
@@ -1483,7 +1694,7 @@ def get_conversation(conversation_id: str):
 @app.route("/api/conversations/<conversation_id>", methods=["DELETE"])
 def delete_conversation(conversation_id: str):
     """Delete one conversation and cascade related rows."""
-    auth_error = _require_read_api_auth()
+    auth_error = _require_write_api_auth()
     if auth_error is not None:
         return auth_error
     if not conversation_id.strip():
@@ -1506,6 +1717,9 @@ def delete_conversation(conversation_id: str):
 @app.route("/api/consent", methods=["POST"])
 def create_consent():
     """Record consent metadata for the current session."""
+    auth_error = _require_write_api_auth()
+    if auth_error is not None:
+        return auth_error
     data = _json_payload()
     if data is None:
         return jsonify({"error": "Invalid JSON payload"}), 400
@@ -1576,6 +1790,9 @@ def list_audit_logs():
 @app.route("/api/consent/<session_id>", methods=["DELETE"])
 def withdraw_consent(session_id: str):
     """Withdraw consent and acknowledge deletion workflow."""
+    auth_error = _require_write_api_auth()
+    if auth_error is not None:
+        return auth_error
     if not session_id.strip():
         return jsonify({"error": "Invalid session_id"}), 400
     deletion_report = None
@@ -1595,6 +1812,9 @@ def withdraw_consent(session_id: str):
 @app.route("/api/session-report", methods=["POST"])
 def session_report():
     """Generate a session analysis report."""
+    auth_error = _require_write_api_auth()
+    if auth_error is not None:
+        return auth_error
     data = _json_payload()
     if data is None:
         return jsonify({"error": "Invalid JSON payload"}), 400
@@ -1777,6 +1997,10 @@ def llm_switch():
     """Switch the active LLM backend at runtime."""
     global llm_client, llm_backend, llm_last_error
 
+    auth_error = _require_write_api_auth()
+    if auth_error is not None:
+        return auth_error
+
     data = _json_payload()
     if data is None:
         return jsonify({"error": "Invalid JSON payload"}), 400
@@ -1870,6 +2094,10 @@ def chat():
     if rate_limit_error is not None:
         return rate_limit_error
 
+    auth_error = _require_write_api_auth()
+    if auth_error is not None:
+        return auth_error
+
     data = _json_payload()
     if data is None:
         return jsonify({"error": "Invalid JSON payload"}), 400
@@ -1940,6 +2168,14 @@ def chat():
         cached_payload = _chat_cache_get(cache_key)
         if cached_payload is not None:
             cached_payload.setdefault("execution_profile", execution_profile)
+            cached_payload.setdefault(
+                "governance_brief",
+                _build_governance_brief(cached_payload),
+            )
+            cached_payload.setdefault(
+                "life_entry_brief",
+                _build_life_entry_brief(cached_payload),
+            )
             _persist_chat_side_effects(
                 conversation_id=conversation_id,
                 session_id=session_id,
@@ -1991,6 +2227,8 @@ def chat():
             "dispatch_trace": getattr(result, "dispatch_trace", {}),
             "deliberation": _build_deliberation_payload(result),
         }
+        response_payload["governance_brief"] = _build_governance_brief(response_payload)
+        response_payload["life_entry_brief"] = _build_life_entry_brief(response_payload)
         _persist_chat_side_effects(
             conversation_id=conversation_id,
             session_id=session_id,

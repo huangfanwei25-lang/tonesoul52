@@ -22,7 +22,6 @@ Usage:
 import json
 import logging
 import os
-import re
 from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Callable, Dict, List, Optional, Union
@@ -32,6 +31,8 @@ try:
 except ImportError:  # pragma: no cover
     _requests_mod = None  # type: ignore[assignment]
 
+from ..safe_parse import parse_llm_response
+from ..schemas import PerspectiveEvaluationResult
 from .base import IPerspective
 from .perspectives.advocate import AdvocatePerspective
 from .perspectives.analyst import AnalystPerspective
@@ -114,6 +115,50 @@ def _safe_confidence(value: object, default: float = 0.5) -> float:
         return float(value)
     except (TypeError, ValueError):
         return default
+
+
+def _fallback_parse_llm_text(response: str) -> Dict[str, Any]:
+    """Preserve legacy non-JSON parsing for weak local/cloud model outputs."""
+
+    response_upper = response.upper()
+    if "OBJECT" in response_upper:
+        decision = "OBJECT"
+    elif "CONCERN" in response_upper:
+        decision = "CONCERN"
+    elif "APPROVE" in response_upper:
+        decision = "APPROVE"
+    else:
+        decision = "CONCERN"
+
+    confidence = 0.6
+    for marker in ("confidence", "conf"):
+        marker_pos = response.lower().find(marker)
+        if marker_pos >= 0:
+            snippet = response[marker_pos : marker_pos + 48]
+            digits = "".join(char for char in snippet if char.isdigit() or char == ".")
+            try:
+                if digits:
+                    confidence = float(digits)
+                    break
+            except ValueError:
+                continue
+
+    return {
+        "decision": decision,
+        "confidence": min(1.0, max(0.0, confidence)),
+        "reasoning": response[:200],
+    }
+
+
+def _parse_structured_perspective_response(response: str) -> Dict[str, Any]:
+    parsed = parse_llm_response(response, PerspectiveEvaluationResult)
+    if parsed is not None:
+        return {
+            "decision": parsed.decision.value,
+            "confidence": parsed.confidence,
+            "reasoning": parsed.reasoning,
+        }
+    return _fallback_parse_llm_text(response)
 
 
 def _normalize_council_config(
@@ -219,43 +264,6 @@ Decision must be: APPROVE (truthful/consistent), CONCERN (ambiguous), or OBJECT 
         }
         return prompts.get(self.name, prompts["analyst"])
 
-    def _parse_llm_response(self, response: str) -> Dict[str, Any]:
-        """Parse JSON from LLM response, handling markdown code blocks."""
-        # Try to extract JSON from code block
-        json_match = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", response, re.DOTALL)
-        if json_match:
-            try:
-                return json.loads(json_match.group(1))
-            except json.JSONDecodeError:
-                pass
-
-        # Try direct JSON parse
-        try:
-            return json.loads(response.strip())
-        except json.JSONDecodeError:
-            pass
-
-        # Fallback: extract decision from text
-        response_upper = response.upper()
-        if "OBJECT" in response_upper:
-            decision = "OBJECT"
-        elif "CONCERN" in response_upper:
-            decision = "CONCERN"
-        elif "APPROVE" in response_upper:
-            decision = "APPROVE"
-        else:
-            decision = "CONCERN"
-
-        # Try to extract confidence
-        conf_match = re.search(r"(?:confidence|conf)[:\s]*([0-9.]+)", response, re.I)
-        confidence = float(conf_match.group(1)) if conf_match else 0.6
-
-        return {
-            "decision": decision,
-            "confidence": min(1.0, max(0.0, confidence)),
-            "reasoning": response[:200],  # Use first 200 chars as reasoning
-        }
-
     def evaluate(
         self,
         draft_output: str,
@@ -314,7 +322,7 @@ Respond with JSON only."""
             response = client.generate(prompt)
             logger.debug(f"[{self.name}] LLM response: {response[:200]}...")
 
-            parsed = self._parse_llm_response(response)
+            parsed = _parse_structured_perspective_response(response)
             decision = _normalize_decision(parsed.get("decision"))
             confidence = _safe_confidence(parsed.get("confidence", 0.7))
 
@@ -339,18 +347,18 @@ Respond with JSON only."""
             )
 
 
-DEFAULT_OLLAMA_MODEL = "qwen3:4b"
+DEFAULT_OLLAMA_MODEL = "qwen3.5:4b"
 DEFAULT_OLLAMA_ENDPOINT = "http://localhost:11434"
 
 
 class OllamaPerspective(IPerspective):
     """Local model perspective via Ollama REST API.
 
-    Calls a local model (e.g. qwen3:4b) through Ollama's /api/chat endpoint
+    Calls a local model (e.g. qwen3.5:4b) through Ollama's /api/chat endpoint
     for perspective evaluation. Reuses prompts and parsing from LLMPerspective
     but targets the local Ollama service instead of Gemini.
 
-    Key constraints for qwen3:
+    Key constraints for qwen3.5:
     - Must set think=False (otherwise returns empty string)
     - num_predict capped at 256 (quality drops beyond that for 4B models)
     - timeout 120s (first request loads model into GPU: ~8-10s)
@@ -409,10 +417,8 @@ class OllamaPerspective(IPerspective):
         return prompts.get(self.name, prompts["analyst"])
 
     def _parse_response(self, response: str) -> Dict[str, Any]:
-        """Parse JSON from Ollama response (delegates to LLMPerspective helper)."""
-        # Reuse the robust parser from LLMPerspective
-        dummy = LLMPerspective.__new__(LLMPerspective)
-        return dummy._parse_llm_response(response)
+        """Parse JSON or textual fallback from Ollama perspective output."""
+        return _parse_structured_perspective_response(response)
 
     def evaluate(
         self,
@@ -475,7 +481,7 @@ class OllamaPerspective(IPerspective):
                         {"role": "user", "content": user_msg},
                     ],
                     "stream": False,
-                    "think": False,  # Critical for qwen3 — otherwise empty response
+                    "think": False,  # Critical for qwen3.5 — otherwise empty response
                     "options": {
                         "temperature": 0.7,
                         "num_predict": 256,

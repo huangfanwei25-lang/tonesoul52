@@ -12,7 +12,7 @@ class DummySoulDB:
     def __init__(self) -> None:
         self.records = []
 
-    def append(self, source: MemorySource, payload):  # noqa: ANN001
+    def append(self, source: MemorySource, payload, provenance=None):  # noqa: ANN001
         self.records.append({"source": source, "payload": payload})
         return str(len(self.records))
 
@@ -52,6 +52,8 @@ def test_ingest_handoff_json_file(tmp_path: Path):
     assert payload["from_agent"] == "codex"
     assert payload["to_agent"] == "antigravity"
     assert "fix compute gate" in payload["key_decisions"]
+    assert payload["provenance"]["source_file"] == "handoff_2026-03-02T01-00-00Z.json"
+    assert payload["evidence"][0] == "finish release gate"
 
 
 def test_ingest_handoff_markdown_and_sync_md(tmp_path: Path):
@@ -77,6 +79,8 @@ def test_ingest_handoff_markdown_and_sync_md(tmp_path: Path):
     assert len(db.records) == 2
     assert db.records[0]["payload"]["type"] == "handoff_md"
     assert db.records[1]["payload"]["type"] == "handoff_sync_md"
+    assert db.records[0]["payload"]["provenance"]["kind"] == "handoff_md"
+    assert db.records[1]["payload"]["provenance"]["kind"] == "handoff_sync_md"
 
 
 def test_ingest_handoff_since_filter(tmp_path: Path):

@@ -1,0 +1,1916 @@
+{
+  "generated_at": "2026-03-08T03:56:44Z",
+  "overall_ok": true,
+  "inputs": {
+    "journal_path": "memory/self_journal.jsonl",
+    "wakeup_path": "memory/autonomous/dream_wakeup_history.jsonl",
+    "max_points": 120
+  },
+  "metrics": {
+    "journal_entry_count": 2446,
+    "journal_invalid_json_line_count": 0,
+    "wakeup_cycle_count": 6,
+    "wakeup_invalid_json_line_count": 0,
+    "journal_friction_point_count": 100,
+    "journal_lyapunov_point_count": 100,
+    "wakeup_avg_friction_point_count": 5,
+    "wakeup_max_friction_point_count": 5,
+    "wakeup_max_lyapunov_point_count": 5,
+    "wakeup_llm_call_count_point_count": 2,
+    "wakeup_llm_total_tokens_point_count": 2,
+    "wakeup_llm_preflight_latency_point_count": 1,
+    "wakeup_llm_selection_latency_point_count": 1,
+    "wakeup_llm_probe_latency_point_count": 1,
+    "wakeup_llm_preflight_timeout_count_point_count": 1
+  },
+  "summary": {
+    "journal_friction": {
+      "point_count": 100,
+      "latest": 0.2322,
+      "min": 0.0566,
+      "max": 0.3065,
+      "average": 0.1864,
+      "trend": "falling",
+      "convergence_events": 0
+    },
+    "journal_lyapunov": {
+      "point_count": 100,
+      "latest": -5.0,
+      "min": -5.0,
+      "max": 0.0,
+      "average": -4.5283,
+      "trend": "stable",
+      "convergence_events": 0
+    },
+    "wakeup_avg_friction": {
+      "point_count": 5,
+      "latest": 0.2396,
+      "min": 0.1189,
+      "max": 0.2396,
+      "average": 0.1793,
+      "trend": "stable",
+      "convergence_events": 0
+    },
+    "wakeup_max_friction": {
+      "point_count": 5,
+      "latest": 0.3067,
+      "min": 0.1189,
+      "max": 0.3242,
+      "average": 0.2386,
+      "trend": "stable",
+      "convergence_events": 0
+    },
+    "wakeup_max_lyapunov": {
+      "point_count": 5,
+      "latest": 0.2499,
+      "min": 0.0665,
+      "max": 0.2499,
+      "average": 0.1765,
+      "trend": "stable",
+      "convergence_events": 0
+    },
+    "wakeup_llm_total_tokens": {
+      "point_count": 2,
+      "latest": 0.0,
+      "min": 0.0,
+      "max": 0.0,
+      "average": 0.0,
+      "trend": "stable",
+      "convergence_events": 0
+    },
+    "wakeup_llm_preflight_latency": {
+      "point_count": 1,
+      "latest": 2013.0,
+      "min": 2013.0,
+      "max": 2013.0,
+      "average": 2013.0,
+      "trend": "insufficient",
+      "convergence_events": 0
+    },
+    "wakeup_llm_selection_latency": {
+      "point_count": 1,
+      "latest": 758.0,
+      "min": 758.0,
+      "max": 758.0,
+      "average": 758.0,
+      "trend": "insufficient",
+      "convergence_events": 0
+    },
+    "wakeup_llm_probe_latency": {
+      "point_count": 1,
+      "latest": 1255.0,
+      "min": 1255.0,
+      "max": 1255.0,
+      "average": 1255.0,
+      "trend": "insufficient",
+      "convergence_events": 0
+    },
+    "wakeup_llm_preflight_timeout_count": {
+      "point_count": 1,
+      "latest": 1.0,
+      "min": 1.0,
+      "max": 1.0,
+      "average": 1.0,
+      "trend": "insufficient",
+      "convergence_events": 0
+    },
+    "wakeup_council_total": 6,
+    "wakeup_frozen_total": 0,
+    "wakeup_llm_call_total": 2,
+    "wakeup_llm_preflight_timeout_total": 1
+  },
+  "series": {
+    "journal_friction": [
+      {
+        "timestamp": "2026-03-02T12:32:32.136110+00:00",
+        "value": 0.1916,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.136175+00:00",
+        "value": 0.3065,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.137033+00:00",
+        "value": 0.1775,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.137154+00:00",
+        "value": 0.2322,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.137938+00:00",
+        "value": 0.246,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.137993+00:00",
+        "value": 0.2109,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.138601+00:00",
+        "value": 0.0566,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.138677+00:00",
+        "value": 0.0566,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.139326+00:00",
+        "value": 0.1916,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.139380+00:00",
+        "value": 0.3065,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.140047+00:00",
+        "value": 0.1775,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.140163+00:00",
+        "value": 0.2322,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.141153+00:00",
+        "value": 0.246,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.141269+00:00",
+        "value": 0.2109,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.142153+00:00",
+        "value": 0.0566,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.142259+00:00",
+        "value": 0.0566,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.143523+00:00",
+        "value": 0.1916,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.143620+00:00",
+        "value": 0.3065,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.144678+00:00",
+        "value": 0.1775,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.144773+00:00",
+        "value": 0.2322,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.145734+00:00",
+        "value": 0.246,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.145827+00:00",
+        "value": 0.2109,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.146621+00:00",
+        "value": 0.0566,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.146713+00:00",
+        "value": 0.0566,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.148138+00:00",
+        "value": 0.1916,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.148260+00:00",
+        "value": 0.3065,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.149475+00:00",
+        "value": 0.1775,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.149586+00:00",
+        "value": 0.2322,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.150631+00:00",
+        "value": 0.246,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.150739+00:00",
+        "value": 0.2109,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.151613+00:00",
+        "value": 0.0566,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.151721+00:00",
+        "value": 0.0566,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.152649+00:00",
+        "value": 0.1916,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.152754+00:00",
+        "value": 0.3065,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.153720+00:00",
+        "value": 0.1775,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.153827+00:00",
+        "value": 0.2322,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.154786+00:00",
+        "value": 0.246,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.154894+00:00",
+        "value": 0.2109,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.155765+00:00",
+        "value": 0.0566,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.155872+00:00",
+        "value": 0.0566,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.156818+00:00",
+        "value": 0.1916,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.156923+00:00",
+        "value": 0.3065,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.157873+00:00",
+        "value": 0.1775,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.157985+00:00",
+        "value": 0.2322,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.159002+00:00",
+        "value": 0.246,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.159126+00:00",
+        "value": 0.2109,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.160149+00:00",
+        "value": 0.0566,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.160210+00:00",
+        "value": 0.0566,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.161004+00:00",
+        "value": 0.1916,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.161113+00:00",
+        "value": 0.3065,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.162128+00:00",
+        "value": 0.1775,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.162184+00:00",
+        "value": 0.2322,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.163016+00:00",
+        "value": 0.246,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.163128+00:00",
+        "value": 0.2109,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.164116+00:00",
+        "value": 0.0566,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.164192+00:00",
+        "value": 0.0566,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.165086+00:00",
+        "value": 0.1916,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.165145+00:00",
+        "value": 0.3065,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.165849+00:00",
+        "value": 0.1775,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.165904+00:00",
+        "value": 0.2322,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.166582+00:00",
+        "value": 0.246,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.166633+00:00",
+        "value": 0.2109,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.167226+00:00",
+        "value": 0.0566,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.167300+00:00",
+        "value": 0.0566,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.168007+00:00",
+        "value": 0.1916,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.168071+00:00",
+        "value": 0.3065,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.169086+00:00",
+        "value": 0.1775,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.169197+00:00",
+        "value": 0.2322,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.170217+00:00",
+        "value": 0.246,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.170329+00:00",
+        "value": 0.2109,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.171261+00:00",
+        "value": 0.0566,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.171367+00:00",
+        "value": 0.0566,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.172344+00:00",
+        "value": 0.1916,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.172452+00:00",
+        "value": 0.3065,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.173411+00:00",
+        "value": 0.1775,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.173519+00:00",
+        "value": 0.2322,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.174473+00:00",
+        "value": 0.246,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.174581+00:00",
+        "value": 0.2109,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.175413+00:00",
+        "value": 0.0566,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.175520+00:00",
+        "value": 0.0566,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.176697+00:00",
+        "value": 0.1916,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.176803+00:00",
+        "value": 0.3065,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.177968+00:00",
+        "value": 0.1775,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.178084+00:00",
+        "value": 0.2322,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.179270+00:00",
+        "value": 0.246,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.179325+00:00",
+        "value": 0.2109,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.180026+00:00",
+        "value": 0.0566,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.180089+00:00",
+        "value": 0.0566,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.181240+00:00",
+        "value": 0.1916,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.181366+00:00",
+        "value": 0.3065,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.182578+00:00",
+        "value": 0.1775,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.182690+00:00",
+        "value": 0.2322,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.183770+00:00",
+        "value": 0.246,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.183879+00:00",
+        "value": 0.2109,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.184662+00:00",
+        "value": 0.0566,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.184821+00:00",
+        "value": 0.0566,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.185796+00:00",
+        "value": 0.1916,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.185896+00:00",
+        "value": 0.3065,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.186705+00:00",
+        "value": 0.1775,
+        "source": "journal",
+        "phase": "before",
+        "label": "cognitive_friction"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.186830+00:00",
+        "value": 0.2322,
+        "source": "journal",
+        "phase": "after",
+        "label": "cognitive_friction"
+      }
+    ],
+    "journal_lyapunov": [
+      {
+        "timestamp": "2026-03-02T12:32:32.136110+00:00",
+        "value": 0.0,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.136175+00:00",
+        "value": -1.2368,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.137033+00:00",
+        "value": -2.3018,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.137154+00:00",
+        "value": -3.101,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.137938+00:00",
+        "value": -2.7369,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.137993+00:00",
+        "value": -2.7018,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.138601+00:00",
+        "value": -2.5843,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.138677+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.139326+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.139380+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.140047+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.140163+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.141153+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.141269+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.142153+00:00",
+        "value": -2.3513,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.142259+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.143523+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.143620+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.144678+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.144773+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.145734+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.145827+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.146621+00:00",
+        "value": -2.0227,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.146713+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.148138+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.148260+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.149475+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.149586+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.150631+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.150739+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.151613+00:00",
+        "value": -2.667,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.151721+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.152649+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.152754+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.153720+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.153827+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.154786+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.154894+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.155765+00:00",
+        "value": -2.1524,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.155872+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.156818+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.156923+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.157873+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.157985+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.159002+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.159126+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.160149+00:00",
+        "value": -2.2869,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.160210+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.161004+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.161113+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.162128+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.162184+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.163016+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.163128+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.164116+00:00",
+        "value": -2.0733,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.164192+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.165086+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.165145+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.165849+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.165904+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.166582+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.166633+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.167226+00:00",
+        "value": -3.0152,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.167300+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.168007+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.168071+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.169086+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.169197+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.170217+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.170329+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.171261+00:00",
+        "value": -3.0272,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.171367+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.172344+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.172452+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.173411+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.173519+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.174473+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.174581+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.175413+00:00",
+        "value": -2.8853,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.175520+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.176697+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.176803+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.177968+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.178084+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.179270+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.179325+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.180026+00:00",
+        "value": -2.9253,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.180089+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.181240+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.181366+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.182578+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.182690+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.183770+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.183879+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.184662+00:00",
+        "value": -2.7572,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.184821+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.185796+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.185896+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.186705+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "before",
+        "label": "lyapunov_exponent"
+      },
+      {
+        "timestamp": "2026-03-02T12:32:32.186830+00:00",
+        "value": -5.0,
+        "source": "journal",
+        "phase": "after",
+        "label": "lyapunov_exponent"
+      }
+    ],
+    "wakeup_avg_friction": [
+      {
+        "timestamp": "2026-03-07T12:00:54Z",
+        "value": 0.1189,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "avg_friction_score"
+      },
+      {
+        "timestamp": "2026-03-07T12:11:32Z",
+        "value": 0.1189,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "avg_friction_score"
+      },
+      {
+        "timestamp": "2026-03-07T12:24:59Z",
+        "value": 0.2096,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "avg_friction_score"
+      },
+      {
+        "timestamp": "2026-03-08T03:15:47Z",
+        "value": 0.2096,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "avg_friction_score"
+      },
+      {
+        "timestamp": "2026-03-08T03:56:43Z",
+        "value": 0.2396,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "avg_friction_score"
+      }
+    ],
+    "wakeup_max_friction": [
+      {
+        "timestamp": "2026-03-07T12:00:54Z",
+        "value": 0.1189,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "max_friction_score"
+      },
+      {
+        "timestamp": "2026-03-07T12:11:32Z",
+        "value": 0.1189,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "max_friction_score"
+      },
+      {
+        "timestamp": "2026-03-07T12:24:59Z",
+        "value": 0.3242,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "max_friction_score"
+      },
+      {
+        "timestamp": "2026-03-08T03:15:47Z",
+        "value": 0.3242,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "max_friction_score"
+      },
+      {
+        "timestamp": "2026-03-08T03:56:43Z",
+        "value": 0.3067,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "max_friction_score"
+      }
+    ],
+    "wakeup_max_lyapunov": [
+      {
+        "timestamp": "2026-03-07T12:00:54Z",
+        "value": 0.0665,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "max_lyapunov_proxy"
+      },
+      {
+        "timestamp": "2026-03-07T12:11:32Z",
+        "value": 0.0665,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "max_lyapunov_proxy"
+      },
+      {
+        "timestamp": "2026-03-07T12:24:59Z",
+        "value": 0.2499,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "max_lyapunov_proxy"
+      },
+      {
+        "timestamp": "2026-03-08T03:15:47Z",
+        "value": 0.2499,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "max_lyapunov_proxy"
+      },
+      {
+        "timestamp": "2026-03-08T03:56:43Z",
+        "value": 0.2499,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "max_lyapunov_proxy"
+      }
+    ],
+    "wakeup_council_count": [
+      {
+        "timestamp": "2026-03-07T11:34:58Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "council_count"
+      },
+      {
+        "timestamp": "2026-03-07T12:00:54Z",
+        "value": 1.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "council_count"
+      },
+      {
+        "timestamp": "2026-03-07T12:11:32Z",
+        "value": 1.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "council_count"
+      },
+      {
+        "timestamp": "2026-03-07T12:24:59Z",
+        "value": 1.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "council_count"
+      },
+      {
+        "timestamp": "2026-03-08T03:15:47Z",
+        "value": 1.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "council_count"
+      },
+      {
+        "timestamp": "2026-03-08T03:56:43Z",
+        "value": 2.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "council_count"
+      }
+    ],
+    "wakeup_frozen_count": [
+      {
+        "timestamp": "2026-03-07T11:34:58Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "frozen_count"
+      },
+      {
+        "timestamp": "2026-03-07T12:00:54Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "frozen_count"
+      },
+      {
+        "timestamp": "2026-03-07T12:11:32Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "frozen_count"
+      },
+      {
+        "timestamp": "2026-03-07T12:24:59Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "frozen_count"
+      },
+      {
+        "timestamp": "2026-03-08T03:15:47Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "frozen_count"
+      },
+      {
+        "timestamp": "2026-03-08T03:56:43Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "frozen_count"
+      }
+    ],
+    "wakeup_llm_call_count": [
+      {
+        "timestamp": "2026-03-08T03:15:47Z",
+        "value": 2.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_call_count"
+      },
+      {
+        "timestamp": "2026-03-08T03:56:43Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_call_count"
+      }
+    ],
+    "wakeup_llm_total_tokens": [
+      {
+        "timestamp": "2026-03-08T03:15:47Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_total_tokens"
+      },
+      {
+        "timestamp": "2026-03-08T03:56:43Z",
+        "value": 0.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_total_tokens"
+      }
+    ],
+    "wakeup_llm_preflight_latency": [
+      {
+        "timestamp": "2026-03-08T03:56:43Z",
+        "value": 2013.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_preflight_latency_ms"
+      }
+    ],
+    "wakeup_llm_selection_latency": [
+      {
+        "timestamp": "2026-03-08T03:56:43Z",
+        "value": 758.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_preflight_selection_latency_ms"
+      }
+    ],
+    "wakeup_llm_probe_latency": [
+      {
+        "timestamp": "2026-03-08T03:56:43Z",
+        "value": 1255.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_preflight_probe_latency_ms"
+      }
+    ],
+    "wakeup_llm_preflight_timeout_count": [
+      {
+        "timestamp": "2026-03-08T03:56:43Z",
+        "value": 1.0,
+        "source": "wakeup",
+        "phase": "cycle",
+        "label": "llm_preflight_timeout_count"
+      }
+    ]
+  },
+  "recent_wakeup_cycles": [
+    {
+      "cycle": 1,
+      "status": "idle",
+      "timestamp": "2026-03-07T11:34:58Z",
+      "avg_friction_score": null,
+      "max_friction_score": null,
+      "max_lyapunov_proxy": null,
+      "council_count": 0,
+      "frozen_count": 0,
+      "llm_call_count": 0,
+      "llm_total_tokens": 0,
+      "llm_backends": [],
+      "llm_models": [],
+      "llm_preflight_latency_ms": null,
+      "llm_preflight_selection_latency_ms": null,
+      "llm_preflight_probe_latency_ms": null,
+      "llm_preflight_timeout_count": 0,
+      "llm_preflight_reason": null
+    },
+    {
+      "cycle": 1,
+      "status": "ok",
+      "timestamp": "2026-03-07T12:00:54Z",
+      "avg_friction_score": 0.1189,
+      "max_friction_score": 0.1189,
+      "max_lyapunov_proxy": 0.0665,
+      "council_count": 1,
+      "frozen_count": 0,
+      "llm_call_count": 0,
+      "llm_total_tokens": 0,
+      "llm_backends": [],
+      "llm_models": [],
+      "llm_preflight_latency_ms": null,
+      "llm_preflight_selection_latency_ms": null,
+      "llm_preflight_probe_latency_ms": null,
+      "llm_preflight_timeout_count": 0,
+      "llm_preflight_reason": null
+    },
+    {
+      "cycle": 1,
+      "status": "ok",
+      "timestamp": "2026-03-07T12:11:32Z",
+      "avg_friction_score": 0.1189,
+      "max_friction_score": 0.1189,
+      "max_lyapunov_proxy": 0.0665,
+      "council_count": 1,
+      "frozen_count": 0,
+      "llm_call_count": 0,
+      "llm_total_tokens": 0,
+      "llm_backends": [],
+      "llm_models": [],
+      "llm_preflight_latency_ms": null,
+      "llm_preflight_selection_latency_ms": null,
+      "llm_preflight_probe_latency_ms": null,
+      "llm_preflight_timeout_count": 0,
+      "llm_preflight_reason": null
+    },
+    {
+      "cycle": 1,
+      "status": "ok",
+      "timestamp": "2026-03-07T12:24:59Z",
+      "avg_friction_score": 0.2096,
+      "max_friction_score": 0.3242,
+      "max_lyapunov_proxy": 0.2499,
+      "council_count": 1,
+      "frozen_count": 0,
+      "llm_call_count": 0,
+      "llm_total_tokens": 0,
+      "llm_backends": [],
+      "llm_models": [],
+      "llm_preflight_latency_ms": null,
+      "llm_preflight_selection_latency_ms": null,
+      "llm_preflight_probe_latency_ms": null,
+      "llm_preflight_timeout_count": 0,
+      "llm_preflight_reason": null
+    },
+    {
+      "cycle": 1,
+      "status": "ok",
+      "timestamp": "2026-03-08T03:15:47Z",
+      "avg_friction_score": 0.2096,
+      "max_friction_score": 0.3242,
+      "max_lyapunov_proxy": 0.2499,
+      "council_count": 1,
+      "frozen_count": 0,
+      "llm_call_count": 2,
+      "llm_total_tokens": 0,
+      "llm_backends": [
+        "lmstudio"
+      ],
+      "llm_models": [
+        "qwen3.5-9b"
+      ],
+      "llm_preflight_latency_ms": null,
+      "llm_preflight_selection_latency_ms": null,
+      "llm_preflight_probe_latency_ms": null,
+      "llm_preflight_timeout_count": 0,
+      "llm_preflight_reason": null
+    },
+    {
+      "cycle": 1,
+      "status": "ok",
+      "timestamp": "2026-03-08T03:56:43Z",
+      "avg_friction_score": 0.2396,
+      "max_friction_score": 0.3067,
+      "max_lyapunov_proxy": 0.2499,
+      "council_count": 2,
+      "frozen_count": 0,
+      "llm_call_count": 0,
+      "llm_total_tokens": 0,
+      "llm_backends": [],
+      "llm_models": [],
+      "llm_preflight_latency_ms": 2013,
+      "llm_preflight_selection_latency_ms": 758,
+      "llm_preflight_probe_latency_ms": 1255,
+      "llm_preflight_timeout_count": 1,
+      "llm_preflight_reason": "timeout"
+    }
+  ],
+  "warnings": []
+}

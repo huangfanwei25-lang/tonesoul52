@@ -22,6 +22,10 @@ RDD_MIN_CASES = 20
 DDD_STALE_DAYS = 7
 DDD_ALLOWED_INVALID_TOPICS: set[str] = set()
 DDD_DISCUSSION_PATH = Path("memory/agent_discussion_curated.jsonl")
+DDD_FRESHNESS_REMEDIATION = (
+    "append one LESSONS_V1 closeout via "
+    "`python tools/agent_discussion_tool.py append-lessons ...`"
+)
 DEFAULT_WEB_BASE = "http://127.0.0.1:3000"
 DEFAULT_API_BASE = "http://127.0.0.1:5000"
 AUDIT_WEB_BASE_ENV = "TONESOUL_AUDIT_WEB_BASE"
@@ -118,7 +122,13 @@ def _check_ddd_freshness(path: Path, stale_days: int) -> CheckResult:
         "1",
     ]
     if not path.exists():
-        return _result("DDD_FRESHNESS", "SOFT_FAIL", "fail", cmd, "discussion file not found")
+        return _result(
+            "DDD_FRESHNESS",
+            "SOFT_FAIL",
+            "fail",
+            cmd,
+            f"discussion file not found; remediation: {DDD_FRESHNESS_REMEDIATION}",
+        )
     latest: datetime | None = None
     with path.open("r", encoding="utf-8", errors="replace") as handle:
         for raw in handle:
@@ -140,7 +150,10 @@ def _check_ddd_freshness(path: Path, stale_days: int) -> CheckResult:
             "SOFT_FAIL",
             "fail",
             cmd,
-            "no valid timestamp found in discussion channel",
+            (
+                "no valid timestamp found in discussion channel; remediation: "
+                f"{DDD_FRESHNESS_REMEDIATION}"
+            ),
         )
     age_days = (datetime.now(timezone.utc) - latest).total_seconds() / 86400.0
     if age_days <= stale_days:
@@ -156,7 +169,10 @@ def _check_ddd_freshness(path: Path, stale_days: int) -> CheckResult:
         "SOFT_FAIL",
         "fail",
         cmd,
-        f"stale data: age_days={age_days:.2f}, threshold={stale_days}",
+        (
+            f"stale data: age_days={age_days:.2f}, threshold={stale_days}; remediation: "
+            f"{DDD_FRESHNESS_REMEDIATION}"
+        ),
     )
 
 

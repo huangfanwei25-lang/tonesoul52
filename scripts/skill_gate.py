@@ -14,7 +14,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from tonesoul.skill_gate import list_skill_paths, review_skills
+from tonesoul.skill_gate import list_skill_paths, review_skills  # noqa: E402
 
 
 def build_arg_parser() -> argparse.ArgumentParser:

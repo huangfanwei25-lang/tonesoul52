@@ -27,6 +27,20 @@
 
 ---
 
+## DDD Freshness Closeout Ritual
+
+- `DDD_FRESHNESS` 只看 `memory/agent_discussion_curated.jsonl` 的最新有效 timestamp。
+- 更新 `task.md`、`architecture_reflection_*`、`crystals.jsonl` 不會自動刷新這個 gate。
+- 每個有意義的 phase / convergence 收尾，都應追加一筆 `LESSONS_V1` closeout 到 discussion channel，讓討論通道和實際工程節奏保持同步。
+
+範例：
+
+```bash
+python tools/agent_discussion_tool.py append-lessons --author codex --topic phase-closeout-2026-03-08 --summary "Closed repo healthcheck convergence work" --missed "Discussion freshness was not refreshed with the engineering work" --correction "Record one LESSONS_V1 closeout at the end of each meaningful phase" --evidence "python scripts/run_repo_healthcheck.py --strict --allow-missing-discussion"
+```
+
+---
+
 ## 隔離埠執行（建議）
 
 - 一鍵全量（含 SDH）：`python scripts/run_7d_isolated.py`
