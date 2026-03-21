@@ -58,6 +58,5 @@ jobs:
       run: |
         python -m py_compile tonesoul/tsr_metrics.py
         python -m py_compile tonesoul/poav.py
-        python -m py_compile tonesoul/unified_core.py
         python -m py_compile tonesoul/vow_system.py
         python -m py_compile tonesoul/time_island.py

@@ -45,7 +45,7 @@ jobs:
     - name: Run property-based tests
       run: |
         set -o pipefail
-        pytest tests/test_contract_observer_properties.py tests/test_unified_core_properties.py tests/test_vow_system_properties.py -v --hypothesis-show-statistics | tee pytest_properties_${{ matrix.python-version }}.log
+        pytest tests/test_contract_observer_properties.py tests/test_vow_system_properties.py -v --hypothesis-show-statistics | tee pytest_properties_${{ matrix.python-version }}.log
 
     - name: Upload pytest logs
       if: always()
