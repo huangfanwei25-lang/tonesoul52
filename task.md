@@ -6170,3 +6170,28 @@
 **Validation**:
 - `python -m ruff check tonesoul tests` -> passed
 - `python -m pytest tests/ -x --tb=short -q` -> 2564 passed, 6 warnings
+
+## Phase 588: Adaptive Round Calculator + RoundResult 資料結構 (2026-03-21)
+- [ ] 建立 `tonesoul/deliberation/adaptive_rounds.py` — `calculate_debate_rounds()`, `aggregate_tension_severity()`
+- [ ] 在 `types.py` 新增 `RoundResult` dataclass
+- [ ] 在 `SynthesizedResponse` 新增 `rounds_used`, `round_results` 欄位（向後相容）
+- [ ] 在 `to_api_response()` 加入 `adaptive_debate` 區段
+- [ ] 寫測試 `tests/test_adaptive_rounds.py`（≥ 12 tests）
+**Success Criteria**: 資料結構就位，所有現有測試不受影響，新增 ≥ 12 tests 全過。
+
+## Phase 589: Multi-Round Deliberation Loop (2026-03-21)
+- [ ] 在 `DeliberationContext` 新增 `prior_viewpoints`, `debate_round` 欄位
+- [ ] 在 perspectives.py 各觀點加入 `_adjust_for_debate()` re-think 邏輯
+- [ ] 修改 `InternalDeliberation.deliberate()` 為多輪迴路
+- [ ] 修改 `deliberate_sync()` 同步版
+- [ ] Guardian veto 在任意輪次可立即終止
+- [ ] 提前收斂：張力降到 < 0.3 自動停止
+- [ ] 寫測試 `tests/test_adaptive_deliberation.py`（≥ 12 tests）
+**Success Criteria**: 低張力→1輪，中張力→2輪，高張力→3輪，Guardian veto 即時生效。
+
+## Phase 590: Pipeline 整合 + 可觀測性 (2026-03-21)
+- [ ] 在 `dispatch_trace` 記錄 `deliberation_rounds`, `tensions_per_round`, `debate_converged_early`
+- [ ] 確保 `record_outcome()` 使用最終輪 dominant_voice
+- [ ] 驗證 API response 含 `adaptive_debate` 區段
+- [ ] 寫測試 `tests/test_adaptive_pipeline.py`（≥ 8 tests）
+**Success Criteria**: 端對端可觀測，現有 dispatch_trace 欄位不受影響。

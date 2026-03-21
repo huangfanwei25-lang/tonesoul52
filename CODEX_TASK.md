@@ -1,10 +1,10 @@
-# Codex Task: Phase 584-587 — Reflection Loop + 章魚架構
+# Codex Task: Phase 588-590 — Tension-Adaptive Debate Rounds (張力自適應辯論)
 
 **指派者**: 痕 (Hén)
-**日期**: 2026-03-20
+**日期**: 2026-03-21
 **分支**: feat/env-perception（不可 push 到 master）
-**前置條件**: 2526 tests passing, lint clean
-**設計文件**: `docs/RFC-014_Reflection_Loop_Octopus_Architecture.md`（必讀）
+**前置條件**: 2564 tests passing, lint clean
+**設計文件**: `docs/RFC-014_Reflection_Loop_Octopus_Architecture.md`（參考）
 
 ---
 
@@ -12,241 +12,333 @@
 
 1. **每個 Phase 單獨 commit**，commit message 格式：`feat(Phase N): [摘要]`
 2. 每個 Phase 完成後：`ruff check tonesoul tests` + `pytest tests/ -x --tb=short -q` 全過
-3. 預期測試數逐步增長：584 ≥ 2540, 585 ≥ 2555, 586 ≥ 2570, 587 ≥ 2580
+3. 預期測試數逐步增長：588 ≥ 2580, 589 ≥ 2600, 590 ≥ 2615
 4. **禁止修改** `AGENTS.md`、`CODEX_PROTOCOL.md`、`AXIOMS.json`
 5. **禁止修改** `tonesoul/inter_soul/` — 已審核通過的套件
 6. 連續失敗 3 次 → 停下，寫 CODEX_HANDBACK.md
 7. **unified_pipeline.py 可以修改**，但必須保留所有現有 dispatch_trace 欄位
+8. **禁止修改** `tonesoul/deliberation/perspectives.py` 的 `think()` 簽名
+
+---
+
+## 設計哲學
+
+> 「不要消除分歧，而是讓分歧可見。」
+
+當前審議系統是**單輪並行**：Muse/Logos/Aegis 各想一次 → `gravity.synthesize()` 合成。
+這導致高張力場景只能粗暴地加權合併，無法讓觀點在碰撞後修正。
+
+**方向 B** 的核心：讓辯論輪數隨張力自適應。
+- 低張力 (< 0.3) → 1 輪（現有行為，零額外開銷）
+- 中張力 (0.3–0.7) → 2 輪（觀點意識到分歧後微調）
+- 高張力 (> 0.7) → 3 輪（深度辯論，Aegis 可修正立場）
+
+Guardian veto 在**任何一輪**都有效 — 一旦 Aegis 觸發 veto，立即終止辯論。
 
 ---
 
 ## 脈絡（先讀這些）
 
-1. `docs/RFC-014_Reflection_Loop_Octopus_Architecture.md` — **必讀**，整體設計藍圖
-2. `tonesoul/vow_system.py` — VowEnforcer API，Phase 584 的核心
-3. `tonesoul/unified_pipeline.py` L2097-2176 — Council 審議後處理，Phase 585 的插入點
-4. `tonesoul/llm/router.py` — 現有路由邏輯，Phase 586 要擴充
-5. `tonesoul/llm/lmstudio_client.py` — LM Studio 客戶端，Phase 586 的 LOCAL 後端
-6. `tonesoul/alert_escalation.py` — AlertLevel L1/L2/L3，Phase 586 的觸發條件
-7. `tonesoul/council/pre_output_council.py` — Council deliberate() 和 verdict 型別
+1. `tonesoul/deliberation/engine.py` — **必讀**，現有單輪審議邏輯
+2. `tonesoul/deliberation/gravity.py` — **必讀**，張力偵測 + 語義重力合成
+3. `tonesoul/deliberation/types.py` — 所有 dataclass（ViewPoint, Tension, TensionZone, SynthesizedResponse）
+4. `tonesoul/deliberation/perspectives.py` — Muse/Logos/Aegis 的 `think()` 介面
+5. `tonesoul/deliberation/persona_track_record.py` — 歷史績效追蹤
+6. `tonesoul/unified_pipeline.py` — Pipeline 整合點（dispatch_trace）
+7. `tonesoul/council/runtime.py` — Council 對 deliberation 結果的後處理
 
 ---
 
-## Phase 584: VowEnforcer 接入 + ReflectionVerdict
+## Phase 588: Adaptive Round Calculator + RoundResult 資料結構
 
-**脈絡**: VowEnforcer 已完整實作（`enforce()` 接受文本，返回 `VowEnforcementResult`），但**從未接入 `process()`**。本 Phase 建立反思判決基礎設施。
-
-### 任務
-
-- [ ] 建立 `tonesoul/reflection.py`，包含：
-  - `ReflectionVerdict` dataclass：`should_revise: bool`, `reasons: list[str]`, `severity: float`, `vow_result: Optional[VowEnforcementResult]`, `council_decision: Optional[str]`, `tension_delta: Optional[float]`
-  - `MAX_REVISIONS: int = 2`（常數）
-  - `REFLECTION_TENSION_THRESHOLD: float = 0.25`（常數）
-
-- [ ] 在 `UnifiedPipeline` 中加入 `_self_check()` 方法：
-  ```python
-  def _self_check(self, draft: str, context: dict) -> ReflectionVerdict:
-  ```
-  - **關卡 1**: 呼叫 `VowEnforcer().enforce(draft)` — 若 `blocked=True` 或 `repair_needed=True`，加入 reasons
-  - **關卡 2**: 呼叫 `self._get_council().deliberate(request)` — 若 verdict 為 REFINE 或 BLOCK，加入 reasons
-  - **關卡 3**: 若 `self._tension_engine` 可用，用 `compute()` 估計 draft 張力，與上一步比較 delta — 若 delta > `REFLECTION_TENSION_THRESHOLD`，加入 reasons
-  - `severity` = 各關卡最高觸發值（BLOCK=0.9, REFINE=0.4, Vow REPAIR=0.5, Vow FLAG=0.2, tension=0.3+delta）
-  - `should_revise = len(reasons) > 0 and severity > 0.2`
-
-- [ ] `dispatch_trace["reflection_verdict"]` 記錄 `ReflectionVerdict` 的 dict 表示
-
-- [ ] 寫測試 `tests/test_reflection.py`（≥ 10 tests）：
-  - `ReflectionVerdict` 基本建構
-  - `_self_check` 在 Vow 全通過 + Council APPROVE → `should_revise=False`
-  - `_self_check` 在 Vow BLOCK → `should_revise=True, severity≥0.8`
-  - `_self_check` 在 Vow REPAIR → `should_revise=True, severity≥0.5`
-  - `_self_check` 在 Council REFINE → `should_revise=True, severity≥0.4`
-  - `_self_check` 在 Council BLOCK → `should_revise=True, severity≥0.9`
-  - `_self_check` 在張力惡化 → `should_revise=True`
-  - `_self_check` 在 Vow FLAG only → `should_revise=False`（FLAG 不足以觸發修訂）
-  - 多重關卡觸發時 severity 取最高
-  - `dispatch_trace` 正確記錄
-
-### 技術提示
-- `VowEnforcer().enforce(output)` 已可用，返回 `VowEnforcementResult`
-- `check_vows(text)` 是快捷函數，也可以用
-- Council 的 `deliberate()` 接受 `CouncilRequest(draft_output=draft, context=context)`
-- 不要在此 Phase 修改 `process()` 的 LLM 呼叫流程 — 只建立基礎設施和 `_self_check` 方法
-- `_self_check` 應該是可獨立測試的（mock VowEnforcer 和 Council）
-
-### 禁止
-- ❌ 不修改現有 `process()` 的 LLM 呼叫段（Phase 585 處理）
-- ❌ 不修改 `vow_system.py` 本身
-
----
-
-## Phase 585: Reflection Loop 主迴路
-
-**脈絡**: Phase 584 建立了 `_self_check()`。本 Phase 將其織入 `process()` 的 LLM 生成段，實現「生成 → 自檢 → 條件修訂」迴路。
+**脈絡**: 在修改引擎前，先建立「該辯幾輪」的計算邏輯和每輪結果的資料結構。
 
 ### 任務
 
-- [ ] 在 `tonesoul/reflection.py` 加入：
-  - `build_revision_prompt(draft: str, verdict: ReflectionVerdict) -> str` — 生成修訂提示
-    - 格式：原文 + 問題原因列表 + 「請修訂以上回答，保留正確部分，修正問題。不要提及修訂過程。」
-
-- [ ] 修改 `UnifiedPipeline.process()` — 在 LLM 呼叫後、現有 Council 審議前，插入反思迴路：
-  ```python
-  # 現有: response = router.chat(...)
-  # 新增:
-  revision_count = 0
-  while revision_count < MAX_REVISIONS:
-      verdict = self._self_check(response, context)
-      if not verdict.should_revise:
-          break
-      revision_prompt = build_revision_prompt(response, verdict)
-      response = router.chat(history=history, prompt=revision_prompt)
-      revision_count += 1
-  dispatch_trace["reflection_count"] = revision_count
-  dispatch_trace["reflection_verdicts"] = [v.to_dict() for v in all_verdicts]
-  ```
-  - 注意：反思迴路在**現有 Council 審議之前**。迴路中的 Council 是「快速預檢」，後面的正式 Council 仍然保留
-
-- [ ] 寫測試 `tests/test_reflection_loop.py`（≥ 10 tests）：
-  - `build_revision_prompt` 格式正確，包含原因
-  - 端對端：Vow 通過 → `reflection_count=0`
-  - 端對端：Vow BLOCK → 修訂一次後通過 → `reflection_count=1`
-  - 端對端：連續 BLOCK → 觸發 MAX_REVISIONS=2 上限
-  - `dispatch_trace["reflection_count"]` 正確
-  - `dispatch_trace["reflection_verdicts"]` 為列表
-  - 修訂後的回答確實改變了（不是原文複製）
-  - 反思迴路後，正式 Council 仍然被呼叫（未被跳過）
-  - 異常處理：`_self_check` 失敗時 graceful fallback（不觸發修訂）
-  - `build_revision_prompt` 含截斷保護（超長 draft 不炸 prompt）
-
-### 技術提示
-- `process()` 中 LLM 呼叫的位置在 ~L2128：`response = router.chat(history=history, prompt=full_prompt)`
-- 後續的 Council 審議在 ~L2097-2176
-- 反思迴路的 `_self_check` 中的 Council 預檢可以用 `CouncilRequest(draft_output=draft, context=..., perspectives=None)` — 使用預設 perspectives
-- `build_revision_prompt` 對 draft 做截斷保護：if len(draft) > 4000: draft = draft[:4000] + "..."
-- mock router 讓第二次 chat() 返回一個「修訂後」的回答
-
-### 禁止
-- ❌ 不修改 `vow_system.py`
-- ❌ 不修改 `council/pre_output_council.py`
-- ❌ 不移除現有的 Council 審議（L2097-2176 段）
-
----
-
-## Phase 586: Thinking Depth Router
-
-**脈絡**: ToneSoul 目前不區分本地/雲端 LLM。本 Phase 加入 ThinkingTier，根據 AlertLevel 選擇推理深度。
-
-**用戶本地模型**: LM Studio 上的 `qwen3.5-9b-uncensored-hauhaucs-aggressive`（9B GGUF）
-**Ollama 不支援此模型**，所以 LOCAL tier 預設走 LM Studio。
-
-### 任務
-
-- [ ] 在 `tonesoul/llm/router.py` 加入：
-  ```python
-  class ThinkingTier(Enum):
-      LOCAL = "local"     # LM Studio 本地模型
-      CLOUD = "cloud"     # 雲端 (Gemini/Claude)
-      AUTO = "auto"       # 根據 AlertLevel 決定
-  ```
-
-- [ ] 加入模組層級函數：
-  ```python
-  def resolve_thinking_tier(alert_level) -> ThinkingTier:
-      # L1 or no alert → LOCAL
-      # L2, L3 → CLOUD
-  ```
-
-- [ ] 擴充 `LLMRouter.__init__` 支援 `thinking_tier` 參數（預設 "auto"）
-
-- [ ] 加入 `LLMRouter.chat_with_tier()` 方法：
-  ```python
-  def chat_with_tier(self, *, history, prompt, tier="auto", alert_level=None) -> str:
-  ```
-  - `tier="auto"` 時根據 `alert_level` 決定
-  - `tier="local"` 強制走 LM Studio：`self._try_lmstudio()`
-  - `tier="cloud"` 強制走 Gemini：`self._try_gemini()`
-  - 若指定 tier 不可用，fallback 到 `auto` 模式
-
-- [ ] 在 `UnifiedPipeline.process()` 中：
-  - 將 `router.chat(...)` 呼叫改為 `router.chat_with_tier(..., alert_level=self._last_alert_level)`
-  - `dispatch_trace["thinking_tier"]` 記錄使用的 tier
-
-- [ ] 寫測試 `tests/test_thinking_tier.py`（≥ 8 tests）：
-  - `resolve_thinking_tier(None)` → LOCAL
-  - `resolve_thinking_tier(L1)` → LOCAL
-  - `resolve_thinking_tier(L2)` → CLOUD
-  - `resolve_thinking_tier(L3)` → CLOUD
-  - `chat_with_tier(tier="local")` 呼叫 LM Studio 路徑
-  - `chat_with_tier(tier="cloud")` 呼叫 Gemini 路徑
-  - `chat_with_tier(tier="auto", alert_level=None)` → LOCAL
-  - Fallback：指定 tier 不可用時不 crash
-
-### 技術提示
-- 現有 `_try_lmstudio()` 和 `_try_gemini()` 已存在，可直接用
-- `chat_with_tier` 內部建立臨時 client，不污染 `_cached_client`
-- 或者加入 `_local_client` / `_cloud_client` 雙快取
-- `AlertLevel` 從 `tonesoul.alert_escalation` import
-- LM Studio 預設 port 1234，會自動偵測模型 — 若指定模型名需要透過 `create_lmstudio_client(model="...")`
-
-### 禁止
-- ❌ 不修改 `ollama_client.py`、`lmstudio_client.py`、`gemini_client.py` 的核心邏輯
-- ❌ 不硬編碼模型名稱 — 模型名透過 `create_lmstudio_client(model=...)` 參數傳入
-
----
-
-## Phase 587: 反思 + 路由整合
-
-**脈絡**: Phase 585 的 Reflection Loop + Phase 586 的 ThinkingTier 整合。修訂用的 LLM 根據 severity 選擇 tier。
-
-### 任務
-
-- [ ] 修改 Reflection Loop（Phase 585）的修訂 LLM 呼叫：
-  ```python
-  # 修訂 tier 根據嚴重度選擇
-  revision_tier = "cloud" if verdict.severity >= 0.5 else "local"
-  response = router.chat_with_tier(
-      history=history,
-      prompt=revision_prompt,
-      tier=revision_tier
-  )
-  ```
-
-- [ ] `dispatch_trace["reflection_tiers"]` 記錄每次修訂使用的 tier
-
-- [ ] 在 `tonesoul/reflection.py` 加入 `ReflectionStats` dataclass：
+- [ ] 在 `tonesoul/deliberation/types.py` 新增：
   ```python
   @dataclass
-  class ReflectionStats:
-      total_revisions: int
-      local_revisions: int
-      cloud_revisions: int
-      final_severity: float
-      verdicts: list[ReflectionVerdict]
+  class RoundResult:
+      """Single round of deliberation."""
+      round_number: int            # 1-based
+      viewpoints: List[ViewPoint]
+      tensions: List[Tension]
+      weights: DeliberationWeights
+      aggregate_tension: float     # 所有 tension severity 的平均
+
+      def to_dict(self) -> dict: ...
   ```
 
-- [ ] 整合端對端：
-  - AlertLevel=None → 首次用 LOCAL 生成 → 自檢 → 若需修訂且 severity<0.5 → LOCAL 修訂
-  - AlertLevel=L2 → 首次用 CLOUD 生成 → 自檢 → 修訂也用 CLOUD
-  - AlertLevel=None → 首次 LOCAL → 自檢 severity≥0.5 → **升級到 CLOUD 修訂**（章魚核心場景）
+- [ ] 在 `SynthesizedResponse` 新增欄位（向後相容，有預設值）：
+  ```python
+  rounds_used: int = 1
+  round_results: List["RoundResult"] = field(default_factory=list)
+  ```
 
-- [ ] 寫測試 `tests/test_reflection_integration.py`（≥ 8 tests）：
-  - 低張力 + 無問題 → LOCAL only, 0 revisions
-  - 低張力 + Vow FLAG → LOCAL only, 0 revisions（FLAG 不觸發）
-  - 低張力 + Vow REPAIR → LOCAL 修訂（severity < 0.5）
-  - 低張力 + Council BLOCK → CLOUD 修訂（severity ≥ 0.9）
-  - 高張力 (L2) → CLOUD 首次 + CLOUD 修訂
-  - `ReflectionStats` 正確計數
-  - `dispatch_trace["reflection_tiers"]` 記錄正確
-  - `dispatch_trace["thinking_tier"]` 與反思 tier 可以不同
+- [ ] 在 `SynthesizedResponse.to_api_response()` 新增 `"adaptive_debate"` 區段：
+  ```python
+  if self.rounds_used > 1:
+      result["adaptive_debate"] = {
+          "rounds_used": self.rounds_used,
+          "tension_per_round": [r.aggregate_tension for r in self.round_results],
+      }
+  ```
+
+- [ ] 建立 `tonesoul/deliberation/adaptive_rounds.py`，包含：
+  ```python
+  # 常數
+  TENSION_LOW = 0.3
+  TENSION_HIGH = 0.7
+  MAX_DEBATE_ROUNDS = 3
+
+  def calculate_debate_rounds(tensions: List[Tension]) -> int:
+      """
+      根據張力嚴重度決定辯論輪數。
+
+      - avg_severity < 0.3 → 1 round
+      - 0.3 ≤ avg_severity < 0.7 → 2 rounds
+      - avg_severity ≥ 0.7 → 3 rounds
+      - 無張力 → 1 round
+      """
+
+  def aggregate_tension_severity(tensions: List[Tension]) -> float:
+      """計算所有張力的平均嚴重度。空列表返回 0.0。"""
+  ```
+
+- [ ] 寫測試 `tests/test_adaptive_rounds.py`（≥ 12 tests）：
+  - `aggregate_tension_severity([])` → 0.0
+  - `aggregate_tension_severity` 單一 tension → 回傳該 severity
+  - `aggregate_tension_severity` 多個 tension → 回傳平均值
+  - `calculate_debate_rounds([])` → 1
+  - `calculate_debate_rounds` severity=0.1 → 1
+  - `calculate_debate_rounds` severity=0.29 → 1
+  - `calculate_debate_rounds` severity=0.3 → 2
+  - `calculate_debate_rounds` severity=0.5 → 2
+  - `calculate_debate_rounds` severity=0.69 → 2
+  - `calculate_debate_rounds` severity=0.7 → 3
+  - `calculate_debate_rounds` severity=0.9 → 3
+  - `RoundResult` 基本建構 + `to_dict()` 完整
+  - `SynthesizedResponse` 新欄位有預設值（向後相容）
+  - `to_api_response()` 在 `rounds_used=1` 時不產生 `adaptive_debate` 區段
+  - `to_api_response()` 在 `rounds_used=2` 時產生 `adaptive_debate` 區段
 
 ### 技術提示
-- 這是章魚架構的核心場景：**本地生成 → 自檢發現嚴重問題 → 雲端修訂**
-- Mock 兩個 client（local + cloud），驗證正確的 client 被呼叫
+- `Tension` 已有 `severity: float` 欄位
+- `TensionZone` 的閾值已定義：ECHO_CHAMBER (<0.3), SWEET_SPOT (0.3-0.7), CHAOS (>0.7)
+- 常數名稱 `TENSION_LOW`, `TENSION_HIGH` 必須與 `TensionZone` 語義一致
+- `RoundResult.aggregate_tension` 用 `aggregate_tension_severity()` 計算
+- **向後相容**：所有新欄位必須有預設值，現有測試不能斷
 
 ### 禁止
-- ❌ 不修改 VowEnforcer 或 Council 的判決邏輯
-- ❌ 不移除現有的 Council 審議段
+- ❌ 不修改 `engine.py`（Phase 589 處理）
+- ❌ 不修改 `gravity.py` 的合成邏輯
+- ❌ 不修改 `perspectives.py`
+
+---
+
+## Phase 589: Multi-Round Deliberation Loop
+
+**脈絡**: Phase 588 定義了資料結構。本 Phase 修改 `InternalDeliberation` 引擎，讓它根據張力自動進行多輪辯論。
+
+### 核心設計
+
+```
+Round 1: 所有 perspective 獨立思考（現有行為）
+         → detect_tensions → calculate_debate_rounds
+         → 若只需 1 輪 → 直接 synthesize（零額外開銷）
+
+Round 2+: 每個 perspective 收到「其他觀點摘要」作為額外脈絡
+          → 重新 think → detect_tensions → 若張力收斂 → 提前退出
+          → 否則繼續到 MAX_DEBATE_ROUNDS
+```
+
+### 任務
+
+- [ ] 在 `DeliberationContext` 新增可選欄位：
+  ```python
+  prior_viewpoints: Optional[List[Dict]] = None  # 上輪觀點摘要
+  debate_round: int = 1                          # 當前輪次
+  ```
+
+- [ ] 修改 `BasePerspective.think()` — 在 base class 層處理 `prior_viewpoints`：
+  - **不改 `think()` 签名** — 它已經接受 `context: DeliberationContext`
+  - 各 perspective 的 `think()` 實作中，若 `context.prior_viewpoints` 不為 None 且 `context.debate_round > 1`：
+    - 可以調整 `confidence`（看到反對意見可能降低自信）
+    - 可以調整 `concerns`（加入對其他觀點的回應）
+    - Aegis 可以緩和或加強 `safety_risk`
+
+- [ ] 在 `tonesoul/deliberation/perspectives.py` 的每個 perspective 加入 **re-think 邏輯**：
+  ```python
+  # 在 think() 方法末尾（回傳 view 之前）
+  if context.prior_viewpoints and context.debate_round > 1:
+      self._adjust_for_debate(view, context)
+  ```
+  - `MusePerspective._adjust_for_debate()`: 若 Logos/Aegis 都反對，confidence 降低 0.1
+  - `LogosPerspective._adjust_for_debate()`: 若 Aegis 有高 safety_risk，concerns 加入風險意識
+  - `AegisPerspective._adjust_for_debate()`: 若其他兩者都高信心且無安全疑慮，safety_risk 降低 0.1（Aegis 可以讓步）
+
+- [ ] 修改 `InternalDeliberation.deliberate()` 和 `deliberate_sync()`：
+  ```python
+  async def deliberate(self, context: DeliberationContext) -> SynthesizedResponse:
+      start_time = time.time()
+      round_results: List[RoundResult] = []
+
+      # Round 1: 標準並行思考
+      viewpoints = await self._parallel_think(context)
+      tensions = self._gravity.detect_tensions(viewpoints)
+      weights = self._gravity.calculate_weights(viewpoints, context)
+      agg_tension = aggregate_tension_severity(tensions)
+
+      round_results.append(RoundResult(
+          round_number=1,
+          viewpoints=viewpoints,
+          tensions=tensions,
+          weights=weights,
+          aggregate_tension=agg_tension,
+      ))
+
+      # 計算需要幾輪
+      target_rounds = calculate_debate_rounds(tensions)
+
+      # Guardian veto 可在任何輪次觸發
+      aegis = self._gravity._find_aegis(viewpoints)
+      if aegis and aegis.veto_triggered:
+          # 立即終止
+          elapsed = (time.time() - start_time) * 1000
+          result = self._gravity._guardian_override(aegis, viewpoints, elapsed)
+          result.rounds_used = 1
+          result.round_results = round_results
+          return result
+
+      # Round 2+: 帶脈絡的再思考
+      current_round = 2
+      while current_round <= target_rounds:
+          # 準備上輪觀點摘要
+          prior = [vp.to_dict() for vp in viewpoints]
+          debate_context = DeliberationContext(
+              user_input=context.user_input,
+              conversation_history=context.conversation_history,
+              tone_strength=context.tone_strength,
+              resonance_state=context.resonance_state,
+              loop_detected=context.loop_detected,
+              prior_viewpoints=prior,
+              debate_round=current_round,
+          )
+
+          viewpoints = await self._parallel_think(debate_context)
+
+          # Guardian veto check
+          aegis = self._gravity._find_aegis(viewpoints)
+          if aegis and aegis.veto_triggered:
+              elapsed = (time.time() - start_time) * 1000
+              result = self._gravity._guardian_override(aegis, viewpoints, elapsed)
+              result.rounds_used = current_round
+              result.round_results = round_results
+              return result
+
+          tensions = self._gravity.detect_tensions(viewpoints)
+          weights = self._gravity.calculate_weights(viewpoints, debate_context)
+          agg_tension = aggregate_tension_severity(tensions)
+
+          round_results.append(RoundResult(
+              round_number=current_round,
+              viewpoints=viewpoints,
+              tensions=tensions,
+              weights=weights,
+              aggregate_tension=agg_tension,
+          ))
+
+          # 提前收斂：張力降到 ECHO_CHAMBER 就不用再辯了
+          if agg_tension < TENSION_LOW:
+              break
+
+          current_round += 1
+
+      # 用最終輪的 viewpoints 做合成
+      elapsed = (time.time() - start_time) * 1000
+      result = self._gravity.synthesize(viewpoints, context, elapsed)
+      result.rounds_used = len(round_results)
+      result.round_results = round_results
+      return result
+  ```
+
+- [ ] `deliberate_sync()` 同步版做相同修改
+
+- [ ] 寫測試 `tests/test_adaptive_deliberation.py`（≥ 12 tests）：
+  - 低張力場景 → 1 輪，行為與修改前相同
+  - 中張力場景 → 2 輪，第 2 輪 viewpoints 反映 prior_viewpoints 影響
+  - 高張力場景 → 3 輪
+  - Guardian veto 在 Round 1 → 立即終止，rounds_used=1
+  - Guardian veto 在 Round 2 → 終止，rounds_used=2
+  - 提前收斂：Round 2 張力降到 < 0.3 → 不進 Round 3
+  - `result.rounds_used` 正確
+  - `result.round_results` 長度與 rounds_used 一致
+  - 每個 RoundResult 的 `aggregate_tension` 正確
+  - `_adjust_for_debate` 被正確呼叫（mock 驗證）
+  - async `deliberate()` 和 sync `deliberate_sync()` 行為一致
+  - `prior_viewpoints` 為 None 時 → 標準行為（向後相容）
+
+### 技術提示
+- `_parallel_think()` 接受 `DeliberationContext`，新欄位自然傳遞
+- `_sequential_think()` 同理
+- `gravity.synthesize()` 只在最後一輪被呼叫
+- 中間輪次分別呼叫 `detect_tensions()` 和 `calculate_weights()` — 不呼叫完整 `synthesize()`
+- Mock perspectives 讓它們在 Round 2+ 調低 confidence 以驗證 re-think 邏輯
+- `DeliberationContext` 新欄位都有預設值，確保向後相容
+
+### 禁止
+- ❌ 不修改 `gravity.py` 的 `synthesize()` 邏輯（只用現有 API）
+- ❌ 不修改 `BasePerspective.think()` 的函數簽名
+- ❌ 不移除現有的 `record_outcome()` 呼叫
+- ❌ 不讓 Round 超過 MAX_DEBATE_ROUNDS（硬上限 3）
+
+---
+
+## Phase 590: Pipeline 整合 + 可觀測性
+
+**脈絡**: Phase 589 的多輪辯論在引擎層完成。本 Phase 將結果織入 UnifiedPipeline 的 dispatch_trace，確保端對端可觀測。
+
+### 任務
+
+- [ ] 在 `UnifiedPipeline.process()` 中，審議結果記錄到 dispatch_trace：
+  ```python
+  dispatch_trace["deliberation_rounds"] = synth.rounds_used
+  dispatch_trace["tensions_per_round"] = [
+      r.aggregate_tension for r in synth.round_results
+  ]
+  dispatch_trace["debate_converged_early"] = (
+      synth.rounds_used < calculate_debate_rounds(synth.tensions)
+  )
+  ```
+  - 僅在 `rounds_used > 1` 時才加 `tensions_per_round` 和 `debate_converged_early`
+
+- [ ] 在 `SynthesizedResponse.to_api_response()` 驗證 `adaptive_debate` 區段完整性：
+  確保端對端 API 輸出包含辯論元資料（Phase 588 已加結構，此處驗證 pipeline 整合正確）
+
+- [ ] 確保 `record_outcome()` 使用最終輪的 dominant_voice（不是 Round 1 的）
+
+- [ ] 寫測試 `tests/test_adaptive_pipeline.py`（≥ 8 tests）：
+  - E2E mock：低張力 → `dispatch_trace["deliberation_rounds"]=1`，無 `tensions_per_round`
+  - E2E mock：中張力 → `dispatch_trace["deliberation_rounds"]=2`，有 `tensions_per_round`
+  - E2E mock：高張力 → `dispatch_trace["deliberation_rounds"]=3`
+  - `debate_converged_early=True` 當提前收斂
+  - `debate_converged_early=False` 當跑滿預設輪數
+  - `record_outcome` 使用最終輪 dominant
+  - 現有 `dispatch_trace` 欄位不受影響（regression guard）
+  - API response 含 `adaptive_debate` 區段（多輪時）
+
+### 技術提示
+- 找到 `unified_pipeline.py` 中呼叫 `deliberate()` 或 `deliberate_sync()` 的位置
+- `dispatch_trace` 是 `dict`，直接新增 key 即可
+- `synth.round_results` 和 `synth.rounds_used` 來自 Phase 588/589 新增的欄位
+- 現有的 `dispatch_trace["internal_debate"]` 等欄位**不可移除**
+- Mock 整個 `InternalDeliberation` 或 `SemanticGravity` 來控制張力水平
+
+### 禁止
+- ❌ 不修改 `InternalDeliberation` 的核心邏輯（Phase 589 已完成）
+- ❌ 不移除現有的 `dispatch_trace` 任何欄位
+- ❌ 不修改 `council/` 下的任何文件
+- ❌ 不修改 `vow_system.py`
 
 ---
 
