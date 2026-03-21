@@ -3,7 +3,7 @@ from __future__ import annotations
 import asyncio
 
 from tonesoul.deliberation.engine import InternalDeliberation
-from tonesoul.deliberation.types import DeliberationContext
+from tonesoul.deliberation.types import DeliberationContext, DeliberationWeights, RoundResult
 
 
 def test_deliberate_sync_uses_asyncio_run_when_no_loop_is_running(monkeypatch) -> None:
@@ -23,10 +23,22 @@ def test_deliberate_sync_uses_asyncio_run_when_no_loop_is_running(monkeypatch) -
     monkeypatch.setattr(engine, "_parallel_think", _fake_parallel)
     monkeypatch.setattr(engine, "_sequential_think", _fake_sequential)
     monkeypatch.setattr(
+        engine,
+        "_build_round_result",
+        lambda round_number, viewpoints, _context: RoundResult(
+            round_number=round_number,
+            viewpoints=viewpoints,
+            tensions=[],
+            weights=DeliberationWeights(),
+            aggregate_tension=0.0,
+        ),
+    )
+    monkeypatch.setattr(
         engine._gravity,
         "synthesize",
         lambda viewpoints, _context, _elapsed_ms: {"viewpoints": viewpoints},
     )
+    monkeypatch.setattr(engine._gravity, "_find_aegis", lambda viewpoints: None)
 
     result = engine.deliberate_sync(context)
 
@@ -50,10 +62,22 @@ def test_deliberate_sync_falls_back_to_sequential_inside_running_loop(monkeypatc
     monkeypatch.setattr(engine, "_parallel_think", _fake_parallel)
     monkeypatch.setattr(engine, "_sequential_think", _fake_sequential)
     monkeypatch.setattr(
+        engine,
+        "_build_round_result",
+        lambda round_number, viewpoints, _context: RoundResult(
+            round_number=round_number,
+            viewpoints=viewpoints,
+            tensions=[],
+            weights=DeliberationWeights(),
+            aggregate_tension=0.0,
+        ),
+    )
+    monkeypatch.setattr(
         engine._gravity,
         "synthesize",
         lambda viewpoints, _context, _elapsed_ms: {"viewpoints": viewpoints},
     )
+    monkeypatch.setattr(engine._gravity, "_find_aegis", lambda viewpoints: None)
 
     async def _exercise():
         return engine.deliberate_sync(context)

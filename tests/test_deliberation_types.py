@@ -94,6 +94,7 @@ def test_synthesized_response_formats_internal_debate_and_api_payload() -> None:
         suggested_replies=[SuggestedReply("next", "continue")],
         tension_zone=TensionZone.SWEET_SPOT,
         calculation_note="balanced tension",
+        rounds_used=1,
     )
 
     debate = response.get_internal_debate()
@@ -109,6 +110,7 @@ def test_synthesized_response_formats_internal_debate_and_api_payload() -> None:
         "zone": "sweet_spot",
         "calculation_note": "balanced tension",
     }
+    assert "adaptive_debate" not in payload
 
 
 def test_deliberation_context_to_dict_truncates_input_and_marks_scenario_envelope() -> None:
@@ -128,4 +130,6 @@ def test_deliberation_context_to_dict_truncates_input_and_marks_scenario_envelop
         "resonance_state": "tension",
         "loop_detected": True,
         "scenario_envelope_enabled": True,
+        "debate_round": 1,
+        "has_prior_viewpoints": False,
     }

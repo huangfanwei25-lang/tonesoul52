@@ -42,6 +42,7 @@ from .types import (
     DeliberationContext,
     DeliberationWeights,
     PerspectiveType,
+    RoundResult,
     SuggestedReply,
     SynthesisType,
     SynthesizedResponse,
@@ -61,6 +62,7 @@ __all__ = [
     "PerspectiveType",
     "DeliberationWeights",
     "DeliberationContext",
+    "RoundResult",
     # ToneStream Distillation
     "TensionZone",
     "TacticalDecision",

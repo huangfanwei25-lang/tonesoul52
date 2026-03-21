@@ -6172,26 +6172,39 @@
 - `python -m pytest tests/ -x --tb=short -q` -> 2564 passed, 6 warnings
 
 ## Phase 588: Adaptive Round Calculator + RoundResult 資料結構 (2026-03-21)
-- [ ] 建立 `tonesoul/deliberation/adaptive_rounds.py` — `calculate_debate_rounds()`, `aggregate_tension_severity()`
-- [ ] 在 `types.py` 新增 `RoundResult` dataclass
-- [ ] 在 `SynthesizedResponse` 新增 `rounds_used`, `round_results` 欄位（向後相容）
-- [ ] 在 `to_api_response()` 加入 `adaptive_debate` 區段
-- [ ] 寫測試 `tests/test_adaptive_rounds.py`（≥ 12 tests）
+- [x] 建立 `tonesoul/deliberation/adaptive_rounds.py` — `calculate_debate_rounds()`, `aggregate_tension_severity()`, 常數 TENSION_LOW/HIGH/MAX_DEBATE_ROUNDS
+- [x] 在 `types.py` 新增 `RoundResult` dataclass（round_number, viewpoints, tensions, weights, aggregate_tension, to_dict()）
+- [x] 在 `SynthesizedResponse` 新增 `rounds_used=1`, `round_results=[]` 欄位（向後相容）
+- [x] 在 `to_api_response()` 加入 `adaptive_debate` 區段（僅 rounds_used > 1 時）
+- [x] 寫測試 `tests/test_adaptive_rounds.py`（12 tests）
 **Success Criteria**: 資料結構就位，所有現有測試不受影響，新增 ≥ 12 tests 全過。
+**Validation**:
+- `ruff check` → passed (all files)
+- `pytest tests/test_adaptive_rounds.py -q` → 12 passed
 
 ## Phase 589: Multi-Round Deliberation Loop (2026-03-21)
-- [ ] 在 `DeliberationContext` 新增 `prior_viewpoints`, `debate_round` 欄位
-- [ ] 在 perspectives.py 各觀點加入 `_adjust_for_debate()` re-think 邏輯
-- [ ] 修改 `InternalDeliberation.deliberate()` 為多輪迴路
-- [ ] 修改 `deliberate_sync()` 同步版
-- [ ] Guardian veto 在任意輪次可立即終止
-- [ ] 提前收斂：張力降到 < 0.3 自動停止
-- [ ] 寫測試 `tests/test_adaptive_deliberation.py`（≥ 12 tests）
+- [x] 在 `DeliberationContext` 新增 `prior_viewpoints: Optional[List[Dict]] = None`, `debate_round: int = 1`
+- [x] 在 perspectives.py 各觀點加入 `_adjust_for_debate()` re-think 邏輯（Muse: confidence-0.1; Logos: aegis concern; Aegis: guard_maintained）
+- [x] 修改 `InternalDeliberation.deliberate()` 為多輪迴路（_run_adaptive_deliberation_async）
+- [x] 修改 `deliberate_sync()` 同步版（_run_adaptive_deliberation_sync）
+- [x] Guardian veto 在任意輪次可立即終止
+- [x] 提前收斂：張力降到 < TENSION_LOW (0.3) 自動停止
+- [x] 寫測試 `tests/test_adaptive_deliberation.py`（13 tests）
 **Success Criteria**: 低張力→1輪，中張力→2輪，高張力→3輪，Guardian veto 即時生效。
+**Validation**:
+- `ruff check` → passed (all files)
+- `pytest tests/test_adaptive_deliberation.py -q` → 13 passed
+**Spec deviation (accepted)**: Aegis._adjust_for_debate() 只升級不降級（spec 允許降 0.1），更安全。
 
 ## Phase 590: Pipeline 整合 + 可觀測性 (2026-03-21)
-- [ ] 在 `dispatch_trace` 記錄 `deliberation_rounds`, `tensions_per_round`, `debate_converged_early`
-- [ ] 確保 `record_outcome()` 使用最終輪 dominant_voice
-- [ ] 驗證 API response 含 `adaptive_debate` 區段
-- [ ] 寫測試 `tests/test_adaptive_pipeline.py`（≥ 8 tests）
+- [x] 在 `dispatch_trace` 記錄 `deliberation_rounds`（always）, `tensions_per_round`, `debate_converged_early`（僅 rounds_used > 1）
+- [x] 確保 `record_outcome()` 使用最終輪 dominant_voice
+- [x] 驗證 API response 含 `adaptive_debate` 區段
+- [x] 寫測試 `tests/test_adaptive_pipeline.py`（8 tests）
 **Success Criteria**: 端對端可觀測，現有 dispatch_trace 欄位不受影響。
+**Validation**:
+- `ruff check` → passed (all files)
+- `pytest tests/test_adaptive_pipeline.py -q` → 8 passed
+- New test total: 33 (12+13+8), all passed
+- Full regression: 2597 passed (2564 → +33), lint clean
+- Guardrails: AGENTS.md ✅ AXIOMS.json ✅ gravity.py ✅ inter_soul/ ✅ think() signature ✅

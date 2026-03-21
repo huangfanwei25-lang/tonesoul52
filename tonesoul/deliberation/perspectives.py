@@ -32,6 +32,24 @@ class BasePerspective(ABC):
             perspective=self.perspective_type, reasoning="", proposed_response="", confidence=0.5
         )
 
+    def _prior_viewpoints(self, context: DeliberationContext) -> List[Dict]:
+        prior = getattr(context, "prior_viewpoints", None)
+        if not isinstance(prior, list):
+            return []
+        return [item for item in prior if isinstance(item, dict)]
+
+    def _prior_viewpoint(self, context: DeliberationContext, perspective: str) -> Dict | None:
+        target = str(perspective or "").strip().lower()
+        for view in self._prior_viewpoints(context):
+            if str(view.get("perspective", "")).strip().lower() == target:
+                return view
+        return None
+
+    def _adjust_for_debate(self, view: ViewPoint, context: DeliberationContext) -> ViewPoint:
+        """Allow round 2+ debate adjustments without changing think() signature."""
+        del context
+        return view
+
 
 class MusePerspective(BasePerspective):
     """
@@ -85,9 +103,34 @@ class MusePerspective(BasePerspective):
             view.confidence = 0.5
             view.reasoning = "這不是典型的哲學問題，但我仍可提供意義層面的視角。"
 
+        if context.debate_round > 1 and context.prior_viewpoints:
+            view = self._adjust_for_debate(view, context)
+
         # Generate proposed response
         view.proposed_response = self._compose_response(context, view)
 
+        return view
+
+    def _adjust_for_debate(self, view: ViewPoint, context: DeliberationContext) -> ViewPoint:
+        logos_prior = self._prior_viewpoint(context, PerspectiveType.LOGOS.value)
+        aegis_prior = self._prior_viewpoint(context, PerspectiveType.AEGIS.value)
+        if not logos_prior and not aegis_prior:
+            return view
+
+        feedback = []
+        if logos_prior and logos_prior.get("concerns"):
+            feedback.append("logos")
+        if aegis_prior and (
+            aegis_prior.get("concerns") or float(aegis_prior.get("safety_risk", 0.0) or 0.0) > 0.0
+        ):
+            feedback.append("aegis")
+
+        if feedback:
+            view.confidence = max(0.0, view.confidence - 0.1)
+            concern = f"debate feedback considered from {', '.join(feedback)}"
+            if concern not in view.concerns:
+                view.concerns.append(concern)
+            view.reasoning = f"{view.reasoning} [debate:{'/'.join(feedback)}]"
         return view
 
     def _generate_metaphors(self, text: str) -> List[str]:
@@ -188,9 +231,27 @@ class LogosPerspective(BasePerspective):
         view.logical_steps = self._analyze_logically(context)
         view.definitions = self._extract_definitions(context.user_input)
 
+        if context.debate_round > 1 and context.prior_viewpoints:
+            view = self._adjust_for_debate(view, context)
+
         # Generate proposed response
         view.proposed_response = self._compose_response(context, view)
 
+        return view
+
+    def _adjust_for_debate(self, view: ViewPoint, context: DeliberationContext) -> ViewPoint:
+        aegis_prior = self._prior_viewpoint(context, PerspectiveType.AEGIS.value)
+        if not aegis_prior:
+            return view
+
+        safety_risk = float(aegis_prior.get("safety_risk", 0.0) or 0.0)
+        concerns = aegis_prior.get("concerns") or []
+        if safety_risk > 0.0 or concerns:
+            clarification = "address aegis safety concerns before final answer"
+            if clarification not in view.concerns:
+                view.concerns.append(clarification)
+            view.confidence = max(0.0, view.confidence - 0.05)
+            view.reasoning = f"{view.reasoning} [debate:aegis_constraints]"
         return view
 
     def _analyze_logically(self, context: DeliberationContext) -> List[str]:
@@ -309,9 +370,36 @@ class AegisPerspective(BasePerspective):
             view.confidence = 0.3
             view.reasoning = "未偵測到安全風險，可繼續正常回應。"
 
+        if context.debate_round > 1 and context.prior_viewpoints:
+            view = self._adjust_for_debate(view, context)
+
         # Generate proposed response
         view.proposed_response = self._compose_response(context, view)
 
+        return view
+
+    def _adjust_for_debate(self, view: ViewPoint, context: DeliberationContext) -> ViewPoint:
+        prior_aegis = self._prior_viewpoint(context, PerspectiveType.AEGIS.value)
+        if not prior_aegis:
+            return view
+
+        prior_risk = float(prior_aegis.get("safety_risk", 0.0) or 0.0)
+        prior_concerns = prior_aegis.get("concerns") or []
+        unresolved = bool(prior_concerns) or prior_risk > 0.0 or bool(prior_aegis.get("veto_triggered"))
+        if not unresolved:
+            return view
+
+        view.safety_risk = min(1.0, max(view.safety_risk, prior_risk) + 0.1)
+        reminder = "previous round safety concerns remain unresolved"
+        if reminder not in view.concerns:
+            view.concerns.append(reminder)
+        if prior_concerns:
+            view.ethical_concerns = list(dict.fromkeys([*view.ethical_concerns, *prior_concerns]))
+        if view.safety_risk > self.SAFETY_THRESHOLD and not view.veto_triggered:
+            view.veto_triggered = True
+            view.veto_reason = view.veto_reason or "repeated unresolved safety concerns"
+            view.confidence = max(view.confidence, 0.95)
+        view.reasoning = f"{view.reasoning} [debate:guard_maintained]"
         return view
 
     def _assess_safety_risk(self, text: str) -> float:

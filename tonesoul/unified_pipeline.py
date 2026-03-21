@@ -2011,6 +2011,7 @@ class UnifiedPipeline:
         if deliberation:
             try:
                 from tonesoul.deliberation import DeliberationContext
+                from tonesoul.deliberation.adaptive_rounds import calculate_debate_rounds
 
                 context = DeliberationContext(
                     user_input=user_message,
@@ -2023,6 +2024,27 @@ class UnifiedPipeline:
                 deliberation_result = deliberation.deliberate_sync(context)
                 deliberation_trace["used"] = True
                 deliberation_trace["reason"] = "deliberation_applied"
+                rounds_used = int(getattr(deliberation_result, "rounds_used", 1) or 1)
+                round_results = list(getattr(deliberation_result, "round_results", []) or [])
+                deliberation_trace["rounds_used"] = rounds_used
+                dispatch_trace["deliberation_rounds"] = rounds_used
+
+                if rounds_used > 1:
+                    tensions_per_round = [
+                        round(float(getattr(round_result, "aggregate_tension", 0.0) or 0.0), 4)
+                        for round_result in round_results
+                    ]
+                    initial_tensions = []
+                    if round_results:
+                        initial_tensions = list(getattr(round_results[0], "tensions", []) or [])
+                    elif hasattr(deliberation_result, "tensions"):
+                        initial_tensions = list(getattr(deliberation_result, "tensions", []) or [])
+                    planned_rounds = calculate_debate_rounds(initial_tensions)
+                    debate_converged_early = rounds_used < planned_rounds
+                    deliberation_trace["tensions_per_round"] = tensions_per_round
+                    deliberation_trace["debate_converged_early"] = debate_converged_early
+                    dispatch_trace["tensions_per_round"] = tensions_per_round
+                    dispatch_trace["debate_converged_early"] = debate_converged_early
 
                 # 從審議結果獲取 persona 和 monologue
                 if deliberation_result.dominant_voice:
