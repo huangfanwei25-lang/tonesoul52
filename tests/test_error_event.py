@@ -69,7 +69,9 @@ def test_error_ledger_record_reload_and_queries(tmp_path):
     reloaded = ErrorLedger(str(ledger_path))
 
     assert len(reloaded.events) == 2
-    assert [event.event_id for event in reloaded.find_by_strategy_type("learn")] == [harmful.event_id]
+    assert [event.event_id for event in reloaded.find_by_strategy_type("learn")] == [
+        harmful.event_id
+    ]
     assert [event.event_id for event in reloaded.find_harmful()] == [harmful.event_id]
 
 

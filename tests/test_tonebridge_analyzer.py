@@ -34,9 +34,7 @@ def test_call_gemini_parses_raw_json() -> None:
 
 
 def test_call_gemini_parses_markdown_json_block() -> None:
-    analyzer = ToneBridgeAnalyzer(
-        gemini_client=FakeClient('```json\n{"tone_strength": 0.7}\n```')
-    )
+    analyzer = ToneBridgeAnalyzer(gemini_client=FakeClient('```json\n{"tone_strength": 0.7}\n```'))
 
     payload = analyzer._call_gemini("prompt")
 
@@ -44,9 +42,7 @@ def test_call_gemini_parses_markdown_json_block() -> None:
 
 
 def test_call_gemini_extracts_embedded_json_object() -> None:
-    analyzer = ToneBridgeAnalyzer(
-        gemini_client=FakeClient('prefix {"tone_strength": 0.6} suffix')
-    )
+    analyzer = ToneBridgeAnalyzer(gemini_client=FakeClient('prefix {"tone_strength": 0.6} suffix'))
 
     payload = analyzer._call_gemini("prompt")
 
@@ -113,7 +109,9 @@ def test_analyze_tone_maps_json_payload_into_dataclass(monkeypatch) -> None:
 
 def test_analyze_tone_falls_back_to_unknown_when_call_fails(monkeypatch) -> None:
     analyzer = ToneBridgeAnalyzer(gemini_client=FakeClient("{}"))
-    monkeypatch.setattr(analyzer, "_call_gemini", lambda prompt: (_ for _ in ()).throw(ValueError()))
+    monkeypatch.setattr(
+        analyzer, "_call_gemini", lambda prompt: (_ for _ in ()).throw(ValueError())
+    )
 
     tone = analyzer.analyze_tone("hello")
 
@@ -150,7 +148,9 @@ def test_predict_motive_maps_json_payload(monkeypatch) -> None:
 
 def test_predict_motive_falls_back_to_empty_prediction(monkeypatch) -> None:
     analyzer = ToneBridgeAnalyzer(gemini_client=FakeClient("{}"))
-    monkeypatch.setattr(analyzer, "_call_gemini", lambda prompt: (_ for _ in ()).throw(RuntimeError()))
+    monkeypatch.setattr(
+        analyzer, "_call_gemini", lambda prompt: (_ for _ in ()).throw(RuntimeError())
+    )
 
     motive = analyzer.predict_motive("hello", ToneAnalysis())
 
@@ -211,7 +211,9 @@ def test_generate_memini_unit_truncates_input_and_tracks_verdict() -> None:
 
 def test_predict_resonance_returns_fallback_strategy_when_call_fails(monkeypatch) -> None:
     analyzer = ToneBridgeAnalyzer(gemini_client=FakeClient("{}"))
-    monkeypatch.setattr(analyzer, "_call_gemini", lambda prompt: (_ for _ in ()).throw(ValueError()))
+    monkeypatch.setattr(
+        analyzer, "_call_gemini", lambda prompt: (_ for _ in ()).throw(ValueError())
+    )
 
     resonance = analyzer.predict_resonance(MeminiUnit(id="m1"))
 

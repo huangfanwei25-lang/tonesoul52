@@ -54,7 +54,9 @@ def test_environment_stimulus_truncates_excessive_excerpt_before_persisting(tmp_
     assert len(record.payload["raw_excerpt"]) == 500
 
 
-def test_sqlite_soul_db_search_handles_injection_like_query_without_mutation(tmp_path: Path) -> None:
+def test_sqlite_soul_db_search_handles_injection_like_query_without_mutation(
+    tmp_path: Path,
+) -> None:
     db = SqliteSoulDB(db_path=tmp_path / "soul.db")
     db.append(MemorySource.CUSTOM, {"text": "stable governance memory", "title": "stable note"})
 

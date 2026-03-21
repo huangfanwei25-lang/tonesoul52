@@ -81,7 +81,9 @@ def test_compile_context_fills_defaults_and_time_island(monkeypatch):
 def test_resolve_output_and_generate_run_id_format(monkeypatch, tmp_path):
     monkeypatch.setattr(compiler_mod, "_generate_run_id", lambda: "RUN123")
 
-    assert compiler_mod._resolve_output(None, str(tmp_path)) == str(tmp_path / "RUN123" / "context.yaml")
+    assert compiler_mod._resolve_output(None, str(tmp_path)) == str(
+        tmp_path / "RUN123" / "context.yaml"
+    )
     assert compiler_mod._resolve_output(str(tmp_path / "explicit.yaml"), str(tmp_path)) == str(
         (tmp_path / "explicit.yaml").resolve()
     )

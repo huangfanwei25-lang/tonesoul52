@@ -102,10 +102,21 @@ def test_check_softening_requires_high_weight_and_marker(monkeypatch) -> None:
 def test_calculate_severity_respects_weight_and_type() -> None:
     detector = RuptureDetector()
 
-    assert detector._calculate_severity(_commit("x", weight=0.9), "direct_negation") is RuptureSeverity.CRITICAL
-    assert detector._calculate_severity(_commit("x", weight=0.6), "direct_negation") is RuptureSeverity.SIGNIFICANT
-    assert detector._calculate_severity(_commit("x", weight=0.4), "retraction") is RuptureSeverity.MINOR
-    assert detector._calculate_severity(_commit("x", weight=0.9), "softening") is RuptureSeverity.MINOR
+    assert (
+        detector._calculate_severity(_commit("x", weight=0.9), "direct_negation")
+        is RuptureSeverity.CRITICAL
+    )
+    assert (
+        detector._calculate_severity(_commit("x", weight=0.6), "direct_negation")
+        is RuptureSeverity.SIGNIFICANT
+    )
+    assert (
+        detector._calculate_severity(_commit("x", weight=0.4), "retraction")
+        is RuptureSeverity.MINOR
+    )
+    assert (
+        detector._calculate_severity(_commit("x", weight=0.9), "softening") is RuptureSeverity.MINOR
+    )
 
 
 def test_detect_collects_direct_negation_rupture(monkeypatch) -> None:

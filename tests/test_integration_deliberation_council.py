@@ -41,7 +41,9 @@ def test_internal_deliberation_sync_flow_produces_weighted_response() -> None:
 def test_internal_deliberation_async_flow_produces_viewpoints() -> None:
     engine = InternalDeliberation()
 
-    result = asyncio.run(engine.deliberate(_context(user_input="How should we reason under tension?")))
+    result = asyncio.run(
+        engine.deliberate(_context(user_input="How should we reason under tension?"))
+    )
 
     assert len(result.viewpoints) == 3
     assert result.deliberation_time_ms >= 0.0

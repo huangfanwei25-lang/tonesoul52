@@ -27,7 +27,9 @@ class _FakeDataFrame:
 
 
 class _Loader:
-    def __init__(self, *, monthly=None, daily=None, per_pbr=None, institutional=None, financial=None):
+    def __init__(
+        self, *, monthly=None, daily=None, per_pbr=None, institutional=None, financial=None
+    ):
         self._monthly = monthly
         self._daily = daily
         self._per_pbr = per_pbr

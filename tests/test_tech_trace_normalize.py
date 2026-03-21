@@ -49,7 +49,9 @@ def test_normalize_claims_links_and_attributions():
         ]
     )
     links = normalize_mod._normalize_links([" https://example.com ", {"url": "https://b.example"}])
-    attributions = normalize_mod._normalize_attributions(["source-a", {"uri": "https://src.example"}])
+    attributions = normalize_mod._normalize_attributions(
+        ["source-a", {"uri": "https://src.example"}]
+    )
 
     assert [item["text"] for item in claims] == ["first claim", "second claim", "third claim"]
     assert claims[2]["id"] == "custom-3"

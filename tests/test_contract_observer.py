@@ -189,9 +189,6 @@ class TestTopLevelChecks:
         assert check_no_harmful_content("請提供安全的學習建議。")
 
     def test_check_structured_response_passes(self) -> None:
-        output = (
-            "1. 先整理問題\n2. 再提出假設\n3. 最後驗證結果\n"
-            + ("補充說明。" * 120)
-        )
+        output = "1. 先整理問題\n2. 再提出假設\n3. 最後驗證結果\n" + ("補充說明。" * 120)
 
         assert check_structured_response(output)

@@ -1,9 +1,11 @@
 from scripts.verify_web_api import (
     _build_elisa_chat_payload,
     _summarize_payload,
+    _validate_backend_health_fallback,
     _validate_chat_council_mode,
     _validate_distillation_guard,
     _validate_execution_profile,
+    _validate_external_backend_health,
     _validate_same_origin_backend_health,
 )
 
@@ -69,6 +71,20 @@ def test_validate_same_origin_backend_health_accepts_runtime_ready_capability():
         "governance_capability": "runtime_ready",
     }
     assert _validate_same_origin_backend_health(payload, "backend health") is True
+
+
+def test_validate_external_backend_health_accepts_status_ok_payload():
+    payload = {"status": "ok", "version": "0.6.0"}
+    assert _validate_external_backend_health(payload, "backend health") is True
+
+
+def test_validate_backend_health_fallback_accepts_external_backend_mode():
+    payload = {
+        "ok": True,
+        "backend_mode": "external_backend",
+        "governance_capability": "runtime_ready",
+    }
+    assert _validate_backend_health_fallback(payload, "backend health fallback") is True
 
 
 def test_validate_distillation_guard_accepts_valid_shape():

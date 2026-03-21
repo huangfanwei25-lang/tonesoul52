@@ -225,8 +225,8 @@ def _validate_external_backend_health(payload: Any, label: str) -> bool:
     if payload_dict is None:
         return False
 
-    if payload_dict.get("ok") is not True:
-        print(f"[FAIL] {label}: expected payload.ok=true.")
+    if payload_dict.get("ok") is not True and payload_dict.get("status") != "ok":
+        print(f"[FAIL] {label}: expected payload.ok=true or payload.status='ok'.")
         return False
 
     cap = payload_dict.get("governance_capability")
@@ -235,6 +235,24 @@ def _validate_external_backend_health(payload: Any, label: str) -> bool:
         return False
 
     return True
+
+
+def _validate_backend_health_fallback(payload: Any, label: str) -> bool:
+    payload_dict = _expect_dict(payload, label)
+    if payload_dict is None:
+        return False
+
+    backend_mode = payload_dict.get("backend_mode")
+    if backend_mode == "same_origin":
+        return _validate_same_origin_backend_health(payload_dict, label)
+    if backend_mode == "external_backend":
+        return _validate_external_backend_health(payload_dict, label)
+
+    print(
+        f"[FAIL] {label}: expected backend_mode in "
+        f"{{'same_origin','external_backend'}}, got {backend_mode!r}."
+    )
+    return False
 
 
 def _build_elisa_chat_payload(conversation_id: str, session_id: str) -> Dict[str, Any]:
@@ -356,7 +374,7 @@ def main() -> int:
                 fallback_payload,
                 verbose,
             )
-            fallback_valid = fallback_ok and _validate_same_origin_backend_health(
+            fallback_valid = fallback_ok and _validate_backend_health_fallback(
                 fallback_payload,
                 "GET web /api/backend-health (same-origin fallback)",
             )

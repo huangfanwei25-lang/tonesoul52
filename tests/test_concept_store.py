@@ -28,7 +28,9 @@ def test_load_list_get_and_to_text_ignore_invalid_files(tmp_path):
         encoding="utf-8",
     )
     (tmp_path / "invalid.json").write_text("{broken", encoding="utf-8")
-    (tmp_path / "nameless.json").write_text(json.dumps({"description": "missing"}), encoding="utf-8")
+    (tmp_path / "nameless.json").write_text(
+        json.dumps({"description": "missing"}), encoding="utf-8"
+    )
 
     store = ConceptStore(tmp_path)
     store.load()
@@ -41,7 +43,9 @@ def test_load_list_get_and_to_text_ignore_invalid_files(tmp_path):
 def test_build_index_and_rank_use_embedder_vectors(tmp_path):
     for name in ("alpha", "beta"):
         (tmp_path / f"{name}.json").write_text(
-            json.dumps({"name": name, "description": f"{name} desc", "examples": [], "keywords": []}),
+            json.dumps(
+                {"name": name, "description": f"{name} desc", "examples": [], "keywords": []}
+            ),
             encoding="utf-8",
         )
 

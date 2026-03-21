@@ -1,4 +1,5 @@
 """Tests for VowInventory — Commitment Conviction Tracker"""
+
 from __future__ import annotations
 
 from pathlib import Path

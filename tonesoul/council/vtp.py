@@ -43,7 +43,9 @@ _CASUAL_KEYWORDS = (
 
 
 def _normalized_rel_weights(weights: Dict[str, float]) -> Dict[str, float]:
-    total = max(weights.get("short", 0.0) + weights.get("mid", 0.0) + weights.get("long", 0.0), 1e-9)
+    total = max(
+        weights.get("short", 0.0) + weights.get("mid", 0.0) + weights.get("long", 0.0), 1e-9
+    )
     return {
         "short": max(weights.get("short", 0.0), 0.0) / total,
         "mid": max(weights.get("mid", 0.0), 0.0) / total,

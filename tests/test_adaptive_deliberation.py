@@ -29,7 +29,9 @@ def _context(**overrides) -> DeliberationContext:
 
 
 class _ScriptedPerspective:
-    def __init__(self, perspective: PerspectiveType, *, veto_rounds: set[int] | None = None) -> None:
+    def __init__(
+        self, perspective: PerspectiveType, *, veto_rounds: set[int] | None = None
+    ) -> None:
         self.perspective = perspective
         self.veto_rounds = set(veto_rounds or set())
         self.calls: list[DeliberationContext] = []

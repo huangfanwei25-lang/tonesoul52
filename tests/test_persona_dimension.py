@@ -172,9 +172,10 @@ def test_persona_dimension_process_with_intercept_applies_corrections() -> None:
     assert result["corrected"] is True
     assert result["original_output"] == original
     assert result["correction_info"]["corrections"]
-    assert result["correction_info"]["corrected_length"] >= result["correction_info"][
-        "original_length"
-    ]
+    assert (
+        result["correction_info"]["corrected_length"]
+        >= result["correction_info"]["original_length"]
+    )
 
 
 def test_vector_distance_returns_summary() -> None:
@@ -193,7 +194,9 @@ def test_vector_distance_returns_summary() -> None:
 
 
 def test_vector_distance_returns_none_without_numeric_home() -> None:
-    assert _vector_distance({"deltaT": "x"}, PersonaVector(deltaT=0.8, deltaS=0.3, deltaR=0.4)) is None
+    assert (
+        _vector_distance({"deltaT": "x"}, PersonaVector(deltaT=0.8, deltaS=0.3, deltaR=0.4)) is None
+    )
 
 
 def test_count_hits_counts_duplicate_occurrences() -> None:
@@ -258,9 +261,7 @@ def test_persona_dimension_snapshot_can_feed_drift_monitor() -> None:
     monitor = DriftMonitor(theta_warning=0.0, theta_crisis=1.0)
     result = evaluator.evaluate("Please verify and ensure safety.")
 
-    snap = monitor.observe(
-        {key: result["vector"][key] for key in ("deltaT", "deltaS", "deltaR")}
-    )
+    snap = monitor.observe({key: result["vector"][key] for key in ("deltaT", "deltaS", "deltaR")})
 
     assert snap.step == 1
     assert snap.alert in {DriftAlert.NONE, DriftAlert.WARNING}

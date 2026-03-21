@@ -4,6 +4,11 @@
 
 ---
 
+## Canonical Architecture Anchor
+
+- [architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md](architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md)
+- [notes/TONESOUL_ARCHITECTURE_MEMORY_ANCHOR_2026-03-22.md](notes/TONESOUL_ARCHITECTURE_MEMORY_ANCHOR_2026-03-22.md)
+
 ## 🧭 Documentation Governance v1
 
 | 文件 | 說明 |
@@ -14,6 +19,7 @@
 | [plans/iu_oi_backplane_convergence_2026-03-18.md](plans/iu_oi_backplane_convergence_2026-03-18.md) | IU/OI/Backplane 收斂藍圖 |
 
 ---
+
 
 ## 🚀 Quick Start
 
@@ -27,6 +33,7 @@
 | [faq.md](faq.md) | EN | FAQ |
 
 ---
+
 
 ## 🏗 Architecture
 
@@ -47,6 +54,7 @@
 
 ---
 
+
 ## 🧠 Philosophy & Theory
 
 | 文件 | 說明 |
@@ -66,6 +74,7 @@
 
 ---
 
+
 ## 🔐 Governance & Safety
 
 | 文件 | 說明 |
@@ -83,6 +92,7 @@
 | [governance/](governance/) | 治理子目錄 (3 files) |
 
 ---
+
 
 ## 📐 Specifications (`spec/`)
 
@@ -105,6 +115,7 @@
 
 ---
 
+
 ## 📊 Semantic & Metrics
 
 | 文件 | 說明 |
@@ -121,6 +132,7 @@
 
 ---
 
+
 ## 🔧 API & Integration
 
 | 文件 | 說明 |
@@ -133,6 +145,7 @@
 | [TRAINING_DATA_SPEC.md](TRAINING_DATA_SPEC.md) | 訓練資料規格 |
 
 ---
+
 
 ## 📝 Research & Publications
 
@@ -149,6 +162,7 @@
 
 ---
 
+
 ## 📰 Marketing & Community
 
 | 文件 | 說明 |
@@ -163,6 +177,7 @@
 | [TECH_ARTICLE_DRAFT_v0.1.0.md](TECH_ARTICLE_DRAFT_v0.1.0.md) | 技術文章草稿 |
 
 ---
+
 
 ## 🗂 Engineering & Operations
 
@@ -183,6 +198,7 @@
 | [status/](status/) | 狀態子目錄 (11 files) |
 
 ---
+
 
 ## 📁 Subdirectory Index
 

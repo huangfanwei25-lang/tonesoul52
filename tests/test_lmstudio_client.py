@@ -19,7 +19,9 @@ def test_get_model_prefers_non_embedding_model_and_caches_choice(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     client = LMStudioClient(model=None)
-    monkeypatch.setattr(client, "list_models", lambda timeout_seconds=5.0: ["embed-small", "qwen-14b"])
+    monkeypatch.setattr(
+        client, "list_models", lambda timeout_seconds=5.0: ["embed-small", "qwen-14b"]
+    )
 
     assert client._get_model() == "qwen-14b"
     assert client.model == "qwen-14b"
@@ -57,7 +59,9 @@ def test_generate_delegates_to_chat_with_system_prompt(monkeypatch: pytest.Monke
     assert captured["system"] is None
 
 
-def test_send_message_updates_history_and_returns_chat_response(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_send_message_updates_history_and_returns_chat_response(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     client = LMStudioClient(model="test-model")
     client.start_chat(history=[{"role": "assistant", "content": "seed"}])
     monkeypatch.setattr(client, "chat", lambda messages: f"reply:{len(messages)}")

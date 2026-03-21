@@ -82,7 +82,9 @@ class VerificationQuery:
                 f"or find a COUNTER-EXAMPLE showing it has become invalid."
             )
             evidence_types = ["counter_example", "supporting_case", "temporal_exception"]
-            decomission_hint = "If no supporting evidence found in 3 attempts, consider decomissioning."
+            decomission_hint = (
+                "If no supporting evidence found in 3 attempts, consider decomissioning."
+            )
         else:
             challenge = (
                 f"This rule is aging (score: {freshness_score:.2f}). "
@@ -263,10 +265,7 @@ class StaleRuleVerificationTaskBatch:
         Returns:
             List of StaleRuleVerificationTask objects
         """
-        stale_only = [
-            c for c in crystals
-            if getattr(c, "freshness_score", 1.0) < 0.30
-        ]
+        stale_only = [c for c in crystals if getattr(c, "freshness_score", 1.0) < 0.30]
 
         # Sort by freshness_score (most stale first) and age
         stale_only.sort(
@@ -296,6 +295,7 @@ class StaleRuleVerificationTaskBatch:
         """
         try:
             from pathlib import Path
+
             path = Path(self.storage_path)
             path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -314,6 +314,7 @@ class StaleRuleVerificationTaskBatch:
         """
         try:
             from pathlib import Path
+
             path = Path(self.storage_path)
             if not path.exists():
                 return []
@@ -404,6 +405,7 @@ class StaleRuleVerificationTaskBatch:
         """Overwrite the task file with updated statuses."""
         try:
             from pathlib import Path
+
             path = Path(self.storage_path)
             path.parent.mkdir(parents=True, exist_ok=True)
             with open(path, "w", encoding="utf-8") as f:

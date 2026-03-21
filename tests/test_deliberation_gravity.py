@@ -205,7 +205,11 @@ def test_gravity_graceful_on_exception(monkeypatch) -> None:
         _vp(PerspectiveType.LOGOS, "logos response", 0.7),
     ]
 
-    monkeypatch.setattr(gravity, "_weighted_merge", lambda *_args, **_kwargs: (_ for _ in ()).throw(RuntimeError("boom")))
+    monkeypatch.setattr(
+        gravity,
+        "_weighted_merge",
+        lambda *_args, **_kwargs: (_ for _ in ()).throw(RuntimeError("boom")),
+    )
 
     result = gravity.synthesize(viewpoints, _context())
 

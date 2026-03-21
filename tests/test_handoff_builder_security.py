@@ -32,7 +32,9 @@ def test_handoff_builder_detects_tampered_packet(monkeypatch):
         target_model="gpt-5.4-mini",
         phase=Phase(current="implement", reason="security hardening"),
         pending_tasks=[PendingTask(id="1", description="finish tests", status="pending")],
-        drift_log=[DriftEntry(timestamp="2026-03-20T12:00:00Z", choice="a", toward="b", away_from="c")],
+        drift_log=[
+            DriftEntry(timestamp="2026-03-20T12:00:00Z", choice="a", toward="b", away_from="c")
+        ],
         context_summary=ContextSummary(
             user_goal="ship secure handoff",
             key_concepts=["security", "handoff"],

@@ -347,7 +347,9 @@ class TestSeabedLockdownPromptInjection:
     def test_lockdown_preserves_persona_in_prompt(self):
         pipeline = self._make_pipeline()
         prompt = pipeline._build_context_prompt(
-            None, persona_mode="Guardian", lockdown_active=True,
+            None,
+            persona_mode="Guardian",
+            lockdown_active=True,
         )
         assert "Persona mode: Guardian" in prompt
         assert "[SEABED LOCKDOWN ACTIVE]" in prompt

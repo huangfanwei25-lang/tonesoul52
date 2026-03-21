@@ -19,6 +19,10 @@ from typing import Any
 
 import yaml
 
+REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
 
 def _read(path: Path) -> str:
     return path.read_text(encoding="utf-8", errors="replace")

@@ -58,9 +58,7 @@ def test_negotiator_preserves_visible_divergence_instead_of_erasing_it() -> None
 
 
 def test_negotiator_returns_sovereign_override_when_boundary_field_differs() -> None:
-    negotiator = TensionNegotiator(
-        SovereigntyBoundary(frozenset({"zone"}), frozenset({"3"}))
-    )
+    negotiator = TensionNegotiator(SovereigntyBoundary(frozenset({"zone"}), frozenset({"3"})))
 
     result = negotiator.negotiate(
         _packet(total=0.5, zone="safe"),

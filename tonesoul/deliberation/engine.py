@@ -110,7 +110,9 @@ class InternalDeliberation:
         while current_round <= target_rounds:
             debate_context = self._build_debate_context(context, viewpoints, current_round)
             viewpoints = await self._parallel_think(debate_context)
-            current_round_result = self._build_round_result(current_round, viewpoints, debate_context)
+            current_round_result = self._build_round_result(
+                current_round, viewpoints, debate_context
+            )
             round_results.append(current_round_result)
 
             aegis = self._gravity._find_aegis(viewpoints)
@@ -150,7 +152,9 @@ class InternalDeliberation:
         while current_round <= target_rounds:
             debate_context = self._build_debate_context(context, viewpoints, current_round)
             viewpoints = self._sequential_think(debate_context)
-            current_round_result = self._build_round_result(current_round, viewpoints, debate_context)
+            current_round_result = self._build_round_result(
+                current_round, viewpoints, debate_context
+            )
             round_results.append(current_round_result)
 
             aegis = self._gravity._find_aegis(viewpoints)

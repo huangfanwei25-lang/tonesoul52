@@ -102,9 +102,9 @@ def test_jump_triggers_with_two_indicators() -> None:
     )
     for _ in range(5):
         m.record_output(
-            tension_total=0.5,       # constant → convergence trips
-            has_echo_trace=False,     # missing → chain integrity trips
-            center_delta_norm=0.1,    # low → self-ref does NOT trip
+            tension_total=0.5,  # constant → convergence trips
+            has_echo_trace=False,  # missing → chain integrity trips
+            center_delta_norm=0.1,  # low → self-ref does NOT trip
             input_norm=1.0,
         )
     signal = m.check_singularity()
@@ -123,9 +123,9 @@ def test_jump_does_not_trigger_with_only_one_indicator() -> None:
     )
     for _ in range(5):
         m.record_output(
-            tension_total=0.5,       # constant → convergence trips
-            has_echo_trace=True,      # OK
-            center_delta_norm=0.1,    # OK
+            tension_total=0.5,  # constant → convergence trips
+            has_echo_trace=True,  # OK
+            center_delta_norm=0.1,  # OK
             input_norm=1.0,
         )
     signal = m.check_singularity()
@@ -186,8 +186,8 @@ def test_governance_kernel_jump_triggers_on_convergence_and_chain() -> None:
     k = GovernanceKernel()
     for _ in range(10):
         result = k.check_jump_trigger(
-            tension_total=0.5,       # constant
-            has_echo_trace=False,     # missing
+            tension_total=0.5,  # constant
+            has_echo_trace=False,  # missing
         )
     assert result["triggered"] is True
     assert result["status"] == "lockdown"

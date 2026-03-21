@@ -555,10 +555,14 @@ class UnifiedPipeline:
                     if draft_text_tension is None:
                         from tonesoul.persona_dimension import VectorCalculator
 
-                        draft_text_tension = VectorCalculator().compute(
-                            draft,
-                            safe_context,
-                        ).deltaT
+                        draft_text_tension = (
+                            VectorCalculator()
+                            .compute(
+                                draft,
+                                safe_context,
+                            )
+                            .deltaT
+                        )
                     draft_text_tension = float(draft_text_tension)
                 except Exception:
                     draft_text_tension = 0.0
@@ -1762,9 +1766,11 @@ class UnifiedPipeline:
             try:
                 drift_summary = drift_monitor.summary()
                 drift_status = "ok"
-                current_alert = str(
-                    drift_summary.get("current_alert") or drift_summary.get("alert") or ""
-                ).strip().lower()
+                current_alert = (
+                    str(drift_summary.get("current_alert") or drift_summary.get("alert") or "")
+                    .strip()
+                    .lower()
+                )
                 if current_alert == "warning":
                     drift_status = "degraded"
                 elif current_alert in {"crisis", "error"}:
@@ -2051,9 +2057,7 @@ class UnifiedPipeline:
                     voice_map = {"muse": "Philosopher", "logos": "Engineer", "aegis": "Guardian"}
                     dominant_voice = str(deliberation_result.dominant_voice.value)
                     deliberation_trace["dominant_voice"] = dominant_voice
-                    persona_mode = voice_map.get(
-                        dominant_voice, "Philosopher"
-                    )
+                    persona_mode = voice_map.get(dominant_voice, "Philosopher")
                     deliberation_trace["persona_mode"] = persona_mode
                 else:
                     deliberation_trace["reason"] = "no_dominant_voice"
@@ -2075,7 +2079,9 @@ class UnifiedPipeline:
                 print(f"Deliberation error: {e}")
                 # Fallback dispatch mapping
                 dispatch_state = dispatch_trace.get("state", "A")
-                persona_mode = self._fallback_persona_mode(str(dispatch_state), str(resonance_state))
+                persona_mode = self._fallback_persona_mode(
+                    str(dispatch_state), str(resonance_state)
+                )
                 internal_monologue = "Fallback to deterministic persona mapping."
                 deliberation_trace["fallback"] = True
                 deliberation_trace["reason"] = f"error:{e.__class__.__name__}"
@@ -2113,10 +2119,7 @@ class UnifiedPipeline:
                 )
             elif alert_event.level == AlertLevel.L2:
                 # Structural warning: annotate but continue
-                _alert_preamble = (
-                    "[結構層警告 L2] "
-                    f"{'; '.join(alert_event.reasons)}"
-                )
+                _alert_preamble = "[結構層警告 L2] " f"{'; '.join(alert_event.reasons)}"
                 internal_monologue = (
                     f"L2 structure alert: {'; '.join(alert_event.reasons)}. "
                     "Structural updates frozen; proceeding with caution."
@@ -2283,7 +2286,10 @@ class UnifiedPipeline:
 
         # ========== 4. 生成增強 prompt ==========
         system_context = self._build_context_prompt(
-            tb_result, persona_mode, trajectory_result, commitment_prompt,
+            tb_result,
+            persona_mode,
+            trajectory_result,
+            commitment_prompt,
             lockdown_active=_lockdown_active,
         )
 
@@ -2339,9 +2345,11 @@ Respond with a clear, practical answer."""
                         response = chat_with_tier(
                             history=history,
                             prompt=full_prompt,
-                            alert_level=getattr(alert_event, "level", None)
-                            if alert_event is not None
-                            else None,
+                            alert_level=(
+                                getattr(alert_event, "level", None)
+                                if alert_event is not None
+                                else None
+                            ),
                         )
                         thinking_tier = getattr(router, "last_thinking_tier", None)
                     else:
@@ -2374,12 +2382,14 @@ Respond with a clear, practical answer."""
         council = self._get_council()
         verdict_dict = {}
         repair_stages: List[str] = []
-        council_should_convene, council_reason, council_friction_score = self._resolve_council_decision(
-            tone_strength=tone_strength,
-            runtime_friction=runtime_friction,
-            governance_friction=governance_friction,
-            user_tier=user_tier,
-            user_message=raw_user_message,
+        council_should_convene, council_reason, council_friction_score = (
+            self._resolve_council_decision(
+                tone_strength=tone_strength,
+                runtime_friction=runtime_friction,
+                governance_friction=governance_friction,
+                user_tier=user_tier,
+                user_message=raw_user_message,
+            )
         )
         if council_reason or council_friction_score is not None:
             dispatch_trace["council"] = self._build_trace_section(
@@ -2397,9 +2407,7 @@ Respond with a clear, practical answer."""
         reflection_context = {
             "language": "zh",
             "tension_score": tone_strength,
-            "reflection_confidence": (
-                getattr(tb_result, "confidence", 0.8) if tb_result else 0.8
-            ),
+            "reflection_confidence": (getattr(tb_result, "confidence", 0.8) if tb_result else 0.8),
             "prior_tension": prior_tension if isinstance(prior_tension, dict) else {},
             "reflection_skip_council": not bool(council and council_should_convene),
         }
@@ -2443,8 +2451,7 @@ Respond with a clear, practical answer."""
                                 tier=revision_tier,
                             )
                             reflection_tiers.append(
-                                getattr(router, "last_thinking_tier", None)
-                                or revision_tier.value
+                                getattr(router, "last_thinking_tier", None) or revision_tier.value
                             )
                         else:
                             response = router.chat(history=history, prompt=revision_prompt)
@@ -2698,7 +2705,9 @@ Respond with a clear, practical answer."""
         # Phase 539: feed post-council outcome back into persona track record
         try:
             dominant_voice = str(deliberation_trace.get("dominant_voice", "") or "").strip()
-            verdict_name = str(verdict_dict.get("verdict", "") if isinstance(verdict_dict, dict) else "")
+            verdict_name = str(
+                verdict_dict.get("verdict", "") if isinstance(verdict_dict, dict) else ""
+            )
             if dominant_voice and verdict_name:
                 deliberation = self._get_deliberation()
                 if deliberation is not None and hasattr(deliberation, "record_outcome"):
@@ -2957,8 +2966,7 @@ Respond with a clear, practical answer."""
             lines.append("")
             lines.append("[SEABED LOCKDOWN ACTIVE]")
             lines.append(
-                "System is in Seabed safety mode. "
-                f"Allowed actions: {', '.join(allowed)}."
+                "System is in Seabed safety mode. " f"Allowed actions: {', '.join(allowed)}."
             )
             lines.append(
                 "Do NOT generate creative, speculative, or exploratory content. "

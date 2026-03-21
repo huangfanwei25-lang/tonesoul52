@@ -52,9 +52,7 @@ class _DummyTensionEngine:
         self.calls: list[dict[str, object]] = []
 
     def compute(self, *, text_tension: float = 0.0, confidence: float = 0.8, **_: object):
-        self.calls.append(
-            {"text_tension": float(text_tension), "confidence": float(confidence)}
-        )
+        self.calls.append({"text_tension": float(text_tension), "confidence": float(confidence)})
         total = max(0.0, min(1.0, float(text_tension)))
         phase = "unstable" if total >= 0.4 else "stable"
         return _DummyTensionResult(

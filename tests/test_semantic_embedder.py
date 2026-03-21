@@ -22,7 +22,11 @@ def test_semantic_embedder_uses_sentence_transformer_when_available(monkeypatch)
         def encode(self, texts, convert_to_numpy=True):
             return np.array([[len(texts[0]), 1.0]], dtype=float)
 
-    monkeypatch.setitem(sys.modules, "sentence_transformers", SimpleNamespace(SentenceTransformer=FakeSentenceTransformer))
+    monkeypatch.setitem(
+        sys.modules,
+        "sentence_transformers",
+        SimpleNamespace(SentenceTransformer=FakeSentenceTransformer),
+    )
 
     embedder = embed_mod.SemanticEmbedder(model_name="fake-model", device="cpu")
 

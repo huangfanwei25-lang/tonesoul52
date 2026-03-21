@@ -100,10 +100,7 @@ class DriftMonitor:
             self._center = dict(obs)
         else:
             alpha = self.ema_alpha
-            self._center = {
-                d: alpha * obs[d] + (1.0 - alpha) * self._center[d]
-                for d in _DIMS
-            }
+            self._center = {d: alpha * obs[d] + (1.0 - alpha) * self._center[d] for d in _DIMS}
 
         self._step += 1
         drift = self._cosine_drift(self._center, self.home)

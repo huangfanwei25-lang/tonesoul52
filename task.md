@@ -1,5 +1,66 @@
 # Task
 
+## Phase 551: Architecture North Star - Externalized Cognitive OS Anchor (2026-03-22)
+- [x] Add one canonical architecture document that states ToneSoul is an externalized cognitive operating system rather than a larger prompt bundle
+- [x] Add one repo-safe memory anchor that later agents can open first without touching protected human-managed memory files
+- [x] Surface the new architecture anchor through onboarding and documentation indexes so it becomes the default retrieval entrypoint
+- [x] Refresh graph/status artifacts as needed so later agents can recover the new anchor through existing repository navigation surfaces
+**Success Criteria**: Later agents can open one canonical architecture document and one repo-safe memory anchor, recover the intended evolution path, and stop treating ToneSoul as prompt sprawl.
+**Validation**:
+- `python scripts/run_tonesoul_knowledge_graph.py` -> passed
+- `python scripts/run_changed_surface_checks.py --repo-root .` -> passed
+- `python scripts/verify_docs_consistency.py --repo-root .` -> passed
+- `python scripts/verify_protected_paths.py --repo-root . --strict` -> passed
+- `python -m pytest tests/test_run_tonesoul_knowledge_graph.py tests/test_run_changed_surface_checks.py tests/test_verify_protected_paths.py -q` -> passed
+- existing repo regression baseline remains green from Phase 550: `python -m pytest tests -x -q` -> passed (`2610 passed`)
+
+---
+
+## Phase 550: Public CI Recovery - Contracts, Cross-Platform Tests, and Workflow Drift (2026-03-21)
+- [x] Fix `scripts/verify_docs_consistency.py` so direct script execution resolves repo-local modules the same way as package import
+- [x] Repair cross-platform CI failures in scheduler/memory tests without weakening the intended contract
+- [x] Align `scripts/verify_web_api.py` with current backend and backend-health payload semantics
+- [x] Restore critical-path workflow dependency installation for `pydantic`-backed imports
+- [x] Re-run the failing local CI slices before deciding whether broad formatter cleanup is still needed
+**Success Criteria**: The current public `tonesoul52` CI red lights collapse to concrete, reproducible, locally validated fixes instead of lingering contract drift between scripts, tests, and workflows.
+**Validation**:
+- `python -m black --check --line-length 100 tonesoul tests` -> passed
+- `python -m pytest tests/test_render_true_verification_task_scheduler.py tests/test_integration_memory_lifecycle.py tests/test_verify_web_api.py tests/test_run_repo_healthcheck.py tests/test_verify_docs_consistency.py -q` -> passed
+- `python -m ruff check scripts/verify_docs_consistency.py scripts/render_true_verification_task_scheduler.py scripts/verify_web_api.py tonesoul/memory/stats.py tests/test_render_true_verification_task_scheduler.py tests/test_integration_memory_lifecycle.py tests/test_verify_web_api.py` -> passed
+- `python scripts/verify_docs_consistency.py --repo-root .` -> passed
+- `python -c "from tonesoul.unified_pipeline import UnifiedPipeline; print('UnifiedPipeline OK')"` -> passed
+- `python -c "from tonesoul.council import PreOutputCouncil; print('PreOutputCouncil OK')"` -> passed
+- `python -c "from tonesoul.poav import score; print('POAV OK')"` -> passed
+- `python -c "from tonesoul.vow_system import VowEnforcer; print('VowEnforcer OK')"` -> passed
+- `python -m pytest tests/test_guardian.py tests/test_verdict.py tests/test_poav.py tests/test_vow_system.py -v --tb=short` -> passed
+- `python -m ruff check tonesoul tests` -> passed
+- `python -m pytest tests -x -q` -> passed (`2610 passed`)
+
+---
+
+## Phase 549: Agent Guardrails - Protected Paths + Changed Surface Checks (2026-03-21)
+- [x] Add `scripts/verify_protected_paths.py` tests covering blocked files, blocked prefixes, allow-path bypass, and changed-file-list parsing
+- [x] Add `scripts/run_changed_surface_checks.py` to classify changed files into runtime/web/docs surfaces and build executable verification plans
+- [x] Emit machine-readable `docs/status/changed_surface_checks_latest.{json,md}` artifacts for later agents and hooks
+- [x] Cover planning/execution behavior with focused tests so the verifier can be trusted before hook wiring
+**Success Criteria**: ToneSoul changes no longer rely on prose-only warnings; protected paths fail closed, changed surfaces map to concrete checks, and later agents can open one artifact to see what must be validated.
+**Validation**:
+- `python -m pytest tests/test_verify_protected_paths.py tests/test_run_changed_surface_checks.py -q` -> passed
+- `python -m ruff check scripts/verify_protected_paths.py scripts/run_changed_surface_checks.py tests/test_verify_protected_paths.py tests/test_run_changed_surface_checks.py` -> passed
+- `python scripts/run_changed_surface_checks.py --repo-root . --changed-file scripts/run_changed_surface_checks.py --changed-file tests/test_run_changed_surface_checks.py --execute --strict` -> passed
+
+---
+
+## Phase 548: ToneSoul Knowledge Graph Baseline (2026-03-21)
+- [x] Define a knowledge-graph design that separates authority docs, runtime modules, memory lanes, and verification surfaces
+- [x] Add a generator script that emits `docs/status/tonesoul_knowledge_graph_latest.{json,md,mmd}`
+- [x] Ground the graph in canonical sources (`語魂系統GPTs_v1.1/`, `docs/`, `tonesoul/`, `apps/web/`, `tests/`) instead of ad-hoc filename crawling
+- [x] Capture retrieval-oriented edges (`contains`, `references`, `imports`, `verifies`, `neighbors`) so later agents can traverse the repo by lane
+- [x] Add tests for graph extraction and artifact rendering
+**成功標準**: ToneSoul gains a compact, passive knowledge graph that later agents can open first to recover the system structure without re-reading the full repository.
+
+---
+
 ## Phase 547: Exception Observability Layer — 靜默失敗可觀測化 (2026-03-19)
 - [x] Create `tonesoul/exception_trace.py` — add `SuppressedError` and `ExceptionTrace` for structured suppressed-exception capture
 - [x] Wire `ExceptionTrace` into `UnifiedPipeline` lazy getters and critical `process()` fallback paths without changing control flow

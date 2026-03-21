@@ -1,0 +1,110 @@
+graph TD
+    lane_authority["Authority"]
+    file_README_md["README.md"]
+    lane_authority --> file_README_md
+    file_AI_ONBOARDING_md["AI_ONBOARDING.md"]
+    lane_authority --> file_AI_ONBOARDING_md
+    file_docs_terminology_md["terminology.md"]
+    lane_authority --> file_docs_terminology_md
+    file_____GPTs_v1_1_01___________md["01_術語與門檻單一規格.md"]
+    lane_authority --> file_____GPTs_v1_1_01___________md
+    lane_evolution["Evolution Plane"]
+    file_tonesoul_dream_engine_py["dream_engine.py"]
+    lane_evolution --> file_tonesoul_dream_engine_py
+    file_tonesoul_wakeup_loop_py["wakeup_loop.py"]
+    lane_evolution --> file_tonesoul_wakeup_loop_py
+    file_tonesoul_stale_rule_verifier_py["stale_rule_verifier.py"]
+    lane_evolution --> file_tonesoul_stale_rule_verifier_py
+    file_scripts_run_repo_semantic_atlas_py["run_repo_semantic_atlas.py"]
+    lane_evolution --> file_scripts_run_repo_semantic_atlas_py
+    lane_governance["Council + Governance"]
+    file_tonesoul_council_runtime_py["runtime.py"]
+    lane_governance --> file_tonesoul_council_runtime_py
+    file_tonesoul_council_pre_output_council_py["pre_output_council.py"]
+    lane_governance --> file_tonesoul_council_pre_output_council_py
+    file_tonesoul_council_verdict_py["verdict.py"]
+    lane_governance --> file_tonesoul_council_verdict_py
+    file_tonesoul_governance_kernel_py["kernel.py"]
+    lane_governance --> file_tonesoul_governance_kernel_py
+    lane_memory["Memory Plane"]
+    file_MEMORY_md["MEMORY.md"]
+    lane_memory --> file_MEMORY_md
+    file_tonesoul_memory_semantic_graph_py["semantic_graph.py"]
+    lane_memory --> file_tonesoul_memory_semantic_graph_py
+    file_tonesoul_memory_crystallizer_py["crystallizer.py"]
+    lane_memory --> file_tonesoul_memory_crystallizer_py
+    file_tonesoul_memory_soul_db_py["soul_db.py"]
+    lane_memory --> file_tonesoul_memory_soul_db_py
+    lane_observability["Observability"]
+    file_docs_status_README_md["README.md"]
+    lane_observability --> file_docs_status_README_md
+    file_docs_status_repo_healthcheck_latest_md["repo_healthcheck_latest.md"]
+    lane_observability --> file_docs_status_repo_healthcheck_latest_md
+    file_docs_status_memory_governance_contract_latest_md["memory_governance_contract_latest.md"]
+    lane_observability --> file_docs_status_memory_governance_contract_latest_md
+    file_docs_status_tonesoul_system_manifesto_md["tonesoul_system_manifesto.md"]
+    lane_observability --> file_docs_status_tonesoul_system_manifesto_md
+    lane_runtime["Runtime Plane"]
+    file_apps_web_src_app_api_chat_route_ts["route.ts"]
+    lane_runtime --> file_apps_web_src_app_api_chat_route_ts
+    file_apps_api_server_py["server.py"]
+    lane_runtime --> file_apps_api_server_py
+    file_tonesoul_unified_pipeline_py["unified_pipeline.py"]
+    lane_runtime --> file_tonesoul_unified_pipeline_py
+    file_tonesoul_tension_engine_py["tension_engine.py"]
+    lane_runtime --> file_tonesoul_tension_engine_py
+    lane_verification["Verification"]
+    file_tests_test_council_runtime_py["test_council_runtime.py"]
+    lane_verification --> file_tests_test_council_runtime_py
+    file_tests_test_dream_engine_py["test_dream_engine.py"]
+    lane_verification --> file_tests_test_dream_engine_py
+    file_tests_test_exception_trace_py["test_exception_trace.py"]
+    lane_verification --> file_tests_test_exception_trace_py
+    file_scripts_run_repo_healthcheck_py["run_repo_healthcheck.py"]
+    lane_verification --> file_scripts_run_repo_healthcheck_py
+    lane_web["Web Surface"]
+    file_apps_web_src_app_api_chat_route_ts["route.ts"]
+    lane_web --> file_apps_web_src_app_api_chat_route_ts
+    file_apps_web_src_lib_soulEngine_ts["soulEngine.ts"]
+    lane_web --> file_apps_web_src_lib_soulEngine_ts
+    file_apps_web_src_lib_chatFallback_ts["chatFallback.ts"]
+    lane_web --> file_apps_web_src_lib_chatFallback_ts
+    file_apps_web_src_lib_soulAuditor_ts["soulAuditor.ts"]
+    lane_web --> file_apps_web_src_lib_soulAuditor_ts
+    file_apps_api_server_py --> file_tonesoul_council_runtime_py
+    file_apps_web_src_app_api_chat_route_ts --> file_tonesoul_unified_pipeline_py
+    file_tonesoul_unified_pipeline_py --> file_tonesoul_council_runtime_py
+    file_tonesoul_unified_pipeline_py --> file_tonesoul_governance_kernel_py
+    file_tonesoul_unified_pipeline_py --> file_tonesoul_memory_crystallizer_py
+    file_tonesoul_unified_pipeline_py --> file_tonesoul_memory_semantic_graph_py
+    file_tonesoul_unified_pipeline_py --> file_tonesoul_tension_engine_py
+    file_tonesoul_wakeup_loop_py --> file_tonesoul_dream_engine_py
+    lane_authority -.-> lane_governance
+    lane_authority -.-> lane_runtime
+    lane_authority -.-> lane_verification
+    lane_authority -.-> lane_web
+    lane_evolution -.-> lane_memory
+    lane_evolution -.-> lane_observability
+    lane_evolution -.-> lane_verification
+    lane_governance -.-> lane_authority
+    lane_governance -.-> lane_memory
+    lane_governance -.-> lane_runtime
+    lane_governance -.-> lane_verification
+    lane_memory -.-> lane_evolution
+    lane_memory -.-> lane_governance
+    lane_memory -.-> lane_runtime
+    lane_memory -.-> lane_verification
+    lane_observability -.-> lane_evolution
+    lane_observability -.-> lane_verification
+    lane_runtime -.-> lane_authority
+    lane_runtime -.-> lane_governance
+    lane_runtime -.-> lane_memory
+    lane_runtime -.-> lane_web
+    lane_verification -.-> lane_authority
+    lane_verification -.-> lane_governance
+    lane_verification -.-> lane_memory
+    lane_verification -.-> lane_observability
+    lane_verification -.-> lane_web
+    lane_web -.-> lane_authority
+    lane_web -.-> lane_runtime
+    lane_web -.-> lane_verification

@@ -118,9 +118,7 @@ class MarketDataIngestor:
             )
             stimuli.append(stimulus)
 
-        logger.info(
-            "Fetched %d monthly revenue records for %s", len(stimuli), stock_id
-        )
+        logger.info("Fetched %d monthly revenue records for %s", len(stimuli), stock_id)
         return stimuli
 
     # -----------------------------------------------------------------
@@ -310,7 +308,7 @@ class MarketDataIngestor:
             method_map = {
                 "income_statement": "taiwan_stock_financial_statement",
                 "balance_sheet": "taiwan_stock_balance_sheet",
-                "cash_flow": "taiwan_stock_cash_flows_statement"
+                "cash_flow": "taiwan_stock_cash_flows_statement",
             }
             method_name = method_map.get(dataset_name)
             if not method_name:
@@ -340,7 +338,5 @@ class MarketDataIngestor:
                 )
             )
 
-        logger.info(
-            "Fetched %d %s records for %s", len(stimuli), dataset_name, stock_id
-        )
+        logger.info("Fetched %d %s records for %s", len(stimuli), dataset_name, stock_id)
         return stimuli

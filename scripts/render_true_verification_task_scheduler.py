@@ -5,7 +5,7 @@ import json
 import os
 import sys
 from datetime import datetime, timedelta
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 from xml.sax.saxutils import escape
 
 repo_root = Path(__file__).resolve().parents[1]
@@ -43,6 +43,20 @@ def _default_start_boundary() -> str:
 def _validate_positive(name: str, value: int) -> None:
     if int(value) <= 0:
         raise ValueError(f"{name} must be > 0")
+
+
+def _looks_like_windows_path(value: str) -> bool:
+    text = str(value).strip()
+    return (len(text) >= 2 and text[1] == ":") or text.startswith("\\\\")
+
+
+def _normalize_task_path(value: str) -> str:
+    text = str(value).strip()
+    if not text:
+        return text
+    if _looks_like_windows_path(text):
+        return str(PureWindowsPath(text))
+    return str(Path(text))
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -136,9 +150,9 @@ def _build_config(args: argparse.Namespace) -> dict[str, object]:
         "interval_hours": int(args.interval_hours),
         "duration_days": int(args.duration_days),
         "execution_time_limit_hours": int(args.execution_time_limit_hours),
-        "python_executable": str(Path(args.python_executable)),
-        "script_path": str(Path(args.script_path)),
-        "working_directory": str(Path(args.working_directory)),
+        "python_executable": _normalize_task_path(args.python_executable),
+        "script_path": _normalize_task_path(args.script_path),
+        "working_directory": _normalize_task_path(args.working_directory),
     }
 
 

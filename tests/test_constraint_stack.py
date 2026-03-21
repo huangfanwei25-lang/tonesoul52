@@ -7,9 +7,13 @@ from tonesoul import constraint_stack as constraint_mod
 
 
 def test_merge_constraints_handles_present_and_missing_lists():
-    assert constraint_mod._merge_constraints(
-        {"constraints": ["c1"], "assumptions": ["a1"]}
-    ) == ["Context constraints:", "- c1", "", "Assumptions:", "- a1"]
+    assert constraint_mod._merge_constraints({"constraints": ["c1"], "assumptions": ["a1"]}) == [
+        "Context constraints:",
+        "- c1",
+        "",
+        "Assumptions:",
+        "- a1",
+    ]
     assert constraint_mod._merge_constraints({"constraints": "bad", "assumptions": None}) == [
         "Context constraints:",
         "",
@@ -18,7 +22,9 @@ def test_merge_constraints_handles_present_and_missing_lists():
 
 
 def test_format_action_set_includes_policy_and_rationale():
-    lines = constraint_mod._format_action_set({"time_island": {"kairos": {"decision_mode": "cautious"}}})
+    lines = constraint_mod._format_action_set(
+        {"time_island": {"kairos": {"decision_mode": "cautious"}}}
+    )
 
     assert lines == [
         "## Action Set",
@@ -124,6 +130,8 @@ def test_resolve_output_and_main_write_constraints_file(tmp_path, monkeypatch):
     saved = output_path.read_text(encoding="utf-8")
 
     assert Path(result["constraints"]) == output_path.resolve()
-    assert constraint_mod._resolve_output(None, str(context_path)) == str(tmp_path / "constraints.md")
+    assert constraint_mod._resolve_output(None, str(context_path)) == str(
+        tmp_path / "constraints.md"
+    )
     assert saved.startswith("# Constraint Stack")
     assert "Template body" in saved

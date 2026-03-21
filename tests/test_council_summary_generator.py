@@ -210,8 +210,7 @@ def test_generate_human_summary_approve_branch_mentions_minor_notes() -> None:
     summary = generate_human_summary(verdict, language="en")
 
     assert summary == (
-        "Overall, this content looks safe and helpful. "
-        "Minor notes were raised about safety."
+        "Overall, this content looks safe and helpful. " "Minor notes were raised about safety."
     )
 
 

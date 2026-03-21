@@ -4,6 +4,11 @@
 
 ---
 
+## Canonical Architecture Anchor
+
+1. [architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md](architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md)
+2. [notes/TONESOUL_ARCHITECTURE_MEMORY_ANCHOR_2026-03-22.md](notes/TONESOUL_ARCHITECTURE_MEMORY_ANCHOR_2026-03-22.md)
+
 ## 🎯 快速開始
 
 1. [AI_ONBOARDING.md](../AI_ONBOARDING.md) — 給新 AI 的引導
@@ -11,6 +16,7 @@
 3. [core_concepts.md](core_concepts.md) — 核心概念說明
 
 ---
+
 
 ## 📚 文檔結構
 
@@ -22,6 +28,7 @@
 | **FAQ** | `faq.md` | 常見問題 |
 
 ---
+
 
 ## 📂 子目錄
 
@@ -56,6 +63,7 @@
 
 ---
 
+
 ## 🔗 相關文件
 
 - [/spec/council_spec.md](../spec/council_spec.md) — 多人格會議系統規格
@@ -63,5 +71,6 @@
 - [/README.md](../README.md) — 項目入口
 
 ---
+
 
 *Last updated: 2026-01-10*

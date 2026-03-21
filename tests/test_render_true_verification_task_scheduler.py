@@ -3,7 +3,7 @@ from __future__ import annotations
 import importlib.util
 import json
 import xml.etree.ElementTree as ET
-from pathlib import Path
+from pathlib import Path, PurePath
 
 import pytest
 
@@ -86,7 +86,7 @@ def test_render_task_template_writes_xml_and_summary(tmp_path: Path) -> None:
     command = _find(root, "task:Actions/task:Exec/task:Command").text
     arguments = _find(root, "task:Actions/task:Exec/task:Arguments").text
     working_directory = _find(root, "task:Actions/task:Exec/task:WorkingDirectory").text
-    assert command is not None and command.endswith("python.exe")
+    assert command is not None and PurePath(command).name in {"python", "python.exe"}
     assert arguments is not None and "run_true_verification_host_tick_task.py" in arguments
     assert working_directory is not None and working_directory.endswith("倉庫")
 
@@ -140,6 +140,11 @@ def test_render_task_template_keeps_explicit_overrides(tmp_path: Path) -> None:
     )
     assert _find(root, "task:Settings/task:ExecutionTimeLimit").text == "PT4H"
     assert _find(root, "task:Actions/task:Exec/task:Command").text == "C:\\Python\\python.exe"
+    assert (
+        _find(root, "task:Actions/task:Exec/task:Arguments").text
+        == '"C:\\repo\\scripts\\run_true_verification_host_tick_task.py" --strict'
+    )
+    assert _find(root, "task:Actions/task:Exec/task:WorkingDirectory").text == "C:\\repo"
 
 
 def test_render_task_template_rejects_non_positive_interval() -> None:

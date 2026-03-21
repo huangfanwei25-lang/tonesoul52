@@ -140,9 +140,7 @@ class VowConvictionState:
             trajectory=d.get("trajectory", "untested"),
             needs_attention=d.get("needs_attention", False),
             last_violation_reason=d.get("last_violation_reason"),
-            recent_checks=[
-                VowCheckRecord.from_dict(r) for r in d.get("recent_checks", [])
-            ],
+            recent_checks=[VowCheckRecord.from_dict(r) for r in d.get("recent_checks", [])],
         )
 
 

@@ -18,7 +18,7 @@ from typing import Dict, Optional
 class DriftResult:
     """Result of a drift computation."""
 
-    drift: float = 0.0                      # Euclidean distance from H
+    drift: float = 0.0  # Euclidean distance from H
     per_axis: Optional[Dict[str, float]] = None
     exceeded: bool = False
     threshold: float = 1.0
@@ -79,7 +79,7 @@ class DriftTracker:
             "deltaS": abs(float(deltaS) - float(self._home.get("deltaS", 0.5))),
             "deltaR": abs(float(deltaR) - float(self._home.get("deltaR", 0.5))),
         }
-        total = sum(v ** 2 for v in diffs.values()) ** 0.5
+        total = sum(v**2 for v in diffs.values()) ** 0.5
         result = DriftResult(
             drift=round(total, 6),
             per_axis={k: round(v, 6) for k, v in diffs.items()},
@@ -104,7 +104,7 @@ class DriftTracker:
         # Scale: max possible Euclidean distance is √3 ≈ 1.732
         # DCS default threshold is 4.0
         # Linear map: DCS_drift = (euclidean / √3) × 4.0
-        max_euclidean = 3 ** 0.5
+        max_euclidean = 3**0.5
         return round((result.drift / max_euclidean) * 4.0, 6) if max_euclidean > 0 else 0.0
 
     def to_dict(self) -> Dict[str, object]:

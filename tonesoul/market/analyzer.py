@@ -68,7 +68,7 @@ class InvestmentScenario:
     pe_multiple: float = 0.0
     bvps_estimate: float = 0.0
     pbr_multiple: float = 0.0
-    valuation_model: str = "PE" # "PE" or "PBR"
+    valuation_model: str = "PE"  # "PE" or "PBR"
     conditions: List[str] = field(default_factory=list)
     probability: float = 0.33
 
@@ -87,6 +87,7 @@ class AnalysisResult:
     confidence: float = 0.0
     summary: str = ""
 
+
 # ---------------------------------------------------------------------------
 # Industry Templates
 # ---------------------------------------------------------------------------
@@ -97,20 +98,23 @@ else:
     try:
         from typing import Protocol
     except ImportError:
+
         class Protocol:
             pass
+
 
 class IndustryTemplate(Protocol):
     def find_tension_signals(self, snapshots: List[QuarterlySnapshot]) -> List[TensionSignal]: ...
     def analyze_trends(self, snapshots: List[QuarterlySnapshot]) -> Dict[str, str]: ...
-    def build_scenarios(self, snapshots: List[QuarterlySnapshot], current_price: float, annual_eps: float) -> List[InvestmentScenario]: ...
+    def build_scenarios(
+        self, snapshots: List[QuarterlySnapshot], current_price: float, annual_eps: float
+    ) -> List[InvestmentScenario]: ...
+
 
 class TechGrowthTemplate:
     """Original Template: Suited for tech, semi, and high-growth sectors (e.g. 5289 Innodisk)."""
 
-    def find_tension_signals(
-        self, snapshots: List[QuarterlySnapshot]
-    ) -> List[TensionSignal]:
+    def find_tension_signals(self, snapshots: List[QuarterlySnapshot]) -> List[TensionSignal]:
         if len(snapshots) < 2:
             return []
 
@@ -118,55 +122,82 @@ class TechGrowthTemplate:
         latest = snapshots[-1]
         previous = snapshots[-2]
 
-        if latest.revenue > previous.revenue and latest.operating_cash_flow < previous.operating_cash_flow:
+        if (
+            latest.revenue > previous.revenue
+            and latest.operating_cash_flow < previous.operating_cash_flow
+        ):
             signals.append(
                 TensionSignal(
-                    signal_id="revenue_vs_ocf", severity="high",
+                    signal_id="revenue_vs_ocf",
+                    severity="high",
                     description=f"Revenue grew from {previous.revenue:.1f} to {latest.revenue:.1f} "
                     f"but OCF dropped from {previous.operating_cash_flow:.1f} to {latest.operating_cash_flow:.1f}",
-                    metric_a="revenue", metric_a_value=latest.revenue,
-                    metric_b="operating_cash_flow", metric_b_value=latest.operating_cash_flow,
-                    expected_relationship="both should grow together", actual_relationship="diverging",
+                    metric_a="revenue",
+                    metric_a_value=latest.revenue,
+                    metric_b="operating_cash_flow",
+                    metric_b_value=latest.operating_cash_flow,
+                    expected_relationship="both should grow together",
+                    actual_relationship="diverging",
                 )
             )
 
         if previous.revenue > 0 and previous.inventory > 0:
             rev_growth = (latest.revenue - previous.revenue) / previous.revenue
-            inv_growth = (latest.inventory - previous.inventory) / previous.inventory if previous.inventory > 0 else 0
+            inv_growth = (
+                (latest.inventory - previous.inventory) / previous.inventory
+                if previous.inventory > 0
+                else 0
+            )
             if inv_growth > rev_growth * 1.5 and inv_growth > 0.2:
                 signals.append(
                     TensionSignal(
                         signal_id="inventory_vs_revenue",
                         severity="high" if inv_growth > rev_growth * 3 else "medium",
                         description=f"Inventory grew {inv_growth:.0%} vs revenue grew {rev_growth:.0%}",
-                        metric_a="revenue_growth", metric_a_value=rev_growth,
-                        metric_b="inventory_growth", metric_b_value=inv_growth,
-                        expected_relationship="inventory should grow proportionally to revenue", actual_relationship="inventory outpacing revenue",
+                        metric_a="revenue_growth",
+                        metric_a_value=rev_growth,
+                        metric_b="inventory_growth",
+                        metric_b_value=inv_growth,
+                        expected_relationship="inventory should grow proportionally to revenue",
+                        actual_relationship="inventory outpacing revenue",
                     )
                 )
 
         if previous.revenue > 0 and previous.accounts_receivable > 0:
-            ar_growth = (latest.accounts_receivable - previous.accounts_receivable) / previous.accounts_receivable if previous.accounts_receivable > 0 else 0
+            ar_growth = (
+                (latest.accounts_receivable - previous.accounts_receivable)
+                / previous.accounts_receivable
+                if previous.accounts_receivable > 0
+                else 0
+            )
             if ar_growth > rev_growth * 1.5 and ar_growth > 0.2:
                 signals.append(
                     TensionSignal(
-                        signal_id="ar_vs_revenue", severity="medium",
+                        signal_id="ar_vs_revenue",
+                        severity="medium",
                         description=f"Accounts receivable grew {ar_growth:.0%} vs revenue grew {rev_growth:.0%}",
-                        metric_a="revenue_growth", metric_a_value=rev_growth,
-                        metric_b="ar_growth", metric_b_value=ar_growth,
-                        expected_relationship="AR should grow proportionally", actual_relationship="AR outpacing revenue",
+                        metric_a="revenue_growth",
+                        metric_a_value=rev_growth,
+                        metric_b="ar_growth",
+                        metric_b_value=ar_growth,
+                        expected_relationship="AR should grow proportionally",
+                        actual_relationship="AR outpacing revenue",
                     )
                 )
 
         if latest.cash < previous.cash and latest.short_term_debt > previous.short_term_debt:
             signals.append(
                 TensionSignal(
-                    signal_id="cash_vs_debt", severity="medium",
+                    signal_id="cash_vs_debt",
+                    severity="medium",
                     description=f"Cash dropped from {previous.cash:.1f} to {latest.cash:.1f} "
                     f"while debt increased from {previous.short_term_debt:.1f} to {latest.short_term_debt:.1f}",
-                    metric_a="cash", metric_a_value=latest.cash,
-                    metric_b="short_term_debt", metric_b_value=latest.short_term_debt,
-                    expected_relationship="healthy companies don't burn cash while borrowing", actual_relationship="cash down, debt up",
+                    metric_a="cash",
+                    metric_a_value=latest.cash,
+                    metric_b="short_term_debt",
+                    metric_b_value=latest.short_term_debt,
+                    expected_relationship="healthy companies don't burn cash while borrowing",
+                    actual_relationship="cash down, debt up",
                 )
             )
 
@@ -176,17 +207,18 @@ class TechGrowthTemplate:
                     signal_id="negative_ocf",
                     severity="high" if latest.operating_cash_flow < -10 else "medium",
                     description=f"Operating cash flow is negative: {latest.operating_cash_flow:.1f}",
-                    metric_a="operating_cash_flow", metric_a_value=latest.operating_cash_flow,
-                    metric_b="net_income", metric_b_value=latest.net_income,
-                    expected_relationship="OCF should be positive for profitable companies", actual_relationship="profitable but cash-burning",
+                    metric_a="operating_cash_flow",
+                    metric_a_value=latest.operating_cash_flow,
+                    metric_b="net_income",
+                    metric_b_value=latest.net_income,
+                    expected_relationship="OCF should be positive for profitable companies",
+                    actual_relationship="profitable but cash-burning",
                 )
             )
 
         return signals
 
-    def analyze_trends(
-        self, snapshots: List[QuarterlySnapshot]
-    ) -> Dict[str, str]:
+    def analyze_trends(self, snapshots: List[QuarterlySnapshot]) -> Dict[str, str]:
         if len(snapshots) < 3:
             return {"status": "insufficient data for trend analysis"}
 
@@ -235,19 +267,44 @@ class TechGrowthTemplate:
 
         return [
             InvestmentScenario(
-                name="bull", eps_estimate=round(bull_eps, 2), pe_multiple=round(bull_pe, 1),
-                target_price=round(bull_eps * bull_pe, 0), probability=0.25, valuation_model="PE",
-                conditions=["Revenue growth accelerates", "Inventory converts to shipments", "OCF turns positive", "AI revenue share reaches 30%"],
+                name="bull",
+                eps_estimate=round(bull_eps, 2),
+                pe_multiple=round(bull_pe, 1),
+                target_price=round(bull_eps * bull_pe, 0),
+                probability=0.25,
+                valuation_model="PE",
+                conditions=[
+                    "Revenue growth accelerates",
+                    "Inventory converts to shipments",
+                    "OCF turns positive",
+                    "AI revenue share reaches 30%",
+                ],
             ),
             InvestmentScenario(
-                name="base", eps_estimate=round(base_eps, 2), pe_multiple=round(base_pe, 1),
-                target_price=round(base_eps * base_pe, 0), probability=0.50, valuation_model="PE",
-                conditions=["Revenue growth moderates", "Margins stay stable", "Inventory slowly digested"],
+                name="base",
+                eps_estimate=round(base_eps, 2),
+                pe_multiple=round(base_pe, 1),
+                target_price=round(base_eps * base_pe, 0),
+                probability=0.50,
+                valuation_model="PE",
+                conditions=[
+                    "Revenue growth moderates",
+                    "Margins stay stable",
+                    "Inventory slowly digested",
+                ],
             ),
             InvestmentScenario(
-                name="bear", eps_estimate=round(bear_eps, 2), pe_multiple=round(bear_pe, 1),
-                target_price=round(bear_eps * bear_pe, 0), probability=0.25, valuation_model="PE",
-                conditions=["DRAM price correction", "Inventory write-downs", "Growth decelerates sharply"],
+                name="bear",
+                eps_estimate=round(bear_eps, 2),
+                pe_multiple=round(bear_pe, 1),
+                target_price=round(bear_eps * bear_pe, 0),
+                probability=0.25,
+                valuation_model="PE",
+                conditions=[
+                    "DRAM price correction",
+                    "Inventory write-downs",
+                    "Growth decelerates sharply",
+                ],
             ),
         ]
 
@@ -255,11 +312,10 @@ class TechGrowthTemplate:
 @dataclass
 class CyclicalTemplate:
     """New Template: Suited for cyclical, petrochemical, and raw material sectors (e.g. 1326 Formosa Chemicals)."""
+
     book_value_per_share: float = 50.0
 
-    def find_tension_signals(
-        self, snapshots: List[QuarterlySnapshot]
-    ) -> List[TensionSignal]:
+    def find_tension_signals(self, snapshots: List[QuarterlySnapshot]) -> List[TensionSignal]:
         if len(snapshots) < 2:
             return []
 
@@ -271,11 +327,15 @@ class CyclicalTemplate:
         if latest.gross_margin < previous.gross_margin - 0.02 and latest.gross_margin < 0.05:
             signals.append(
                 TensionSignal(
-                    signal_id="margin_crash", severity="high",
+                    signal_id="margin_crash",
+                    severity="high",
                     description=f"Gross margin crashed from {previous.gross_margin:.1%} to {latest.gross_margin:.1%}",
-                    metric_a="gross_margin", metric_a_value=latest.gross_margin,
-                    metric_b="previous_margin", metric_b_value=previous.gross_margin,
-                    expected_relationship="margin should be stable during mid-cycle", actual_relationship="severe contraction",
+                    metric_a="gross_margin",
+                    metric_a_value=latest.gross_margin,
+                    metric_b="previous_margin",
+                    metric_b_value=previous.gross_margin,
+                    expected_relationship="margin should be stable during mid-cycle",
+                    actual_relationship="severe contraction",
                 )
             )
 
@@ -283,11 +343,15 @@ class CyclicalTemplate:
         if latest.operating_income < 0 and latest.inventory > previous.inventory * 1.05:
             signals.append(
                 TensionSignal(
-                    signal_id="inventory_build_during_loss", severity="high",
+                    signal_id="inventory_build_during_loss",
+                    severity="high",
                     description=f"Building inventory ({previous.inventory:.1f} → {latest.inventory:.1f}) while reporting operating loss ({latest.operating_income:.1f})",
-                    metric_a="inventory", metric_a_value=latest.inventory,
-                    metric_b="operating_income", metric_b_value=latest.operating_income,
-                    expected_relationship="inventory should decrease during cycle trough to preserve cash", actual_relationship="inventory building while losing money",
+                    metric_a="inventory",
+                    metric_a_value=latest.inventory,
+                    metric_b="operating_income",
+                    metric_b_value=latest.operating_income,
+                    expected_relationship="inventory should decrease during cycle trough to preserve cash",
+                    actual_relationship="inventory building while losing money",
                 )
             )
 
@@ -298,17 +362,18 @@ class CyclicalTemplate:
                     signal_id="deep_trough_cash_burn",
                     severity="critical" if latest.operating_cash_flow < -10 else "medium",
                     description=f"Severe cash burn (OCF: {latest.operating_cash_flow:.1f})",
-                    metric_a="operating_cash_flow", metric_a_value=latest.operating_cash_flow,
-                    metric_b="cash", metric_b_value=latest.cash,
-                    expected_relationship="OCF should stabilize", actual_relationship="accelerating cash burn",
+                    metric_a="operating_cash_flow",
+                    metric_a_value=latest.operating_cash_flow,
+                    metric_b="cash",
+                    metric_b_value=latest.cash,
+                    expected_relationship="OCF should stabilize",
+                    actual_relationship="accelerating cash burn",
                 )
             )
 
         return signals
 
-    def analyze_trends(
-        self, snapshots: List[QuarterlySnapshot]
-    ) -> Dict[str, str]:
+    def analyze_trends(self, snapshots: List[QuarterlySnapshot]) -> Dict[str, str]:
         if len(snapshots) < 3:
             return {"status": "insufficient data for trend analysis"}
 
@@ -339,19 +404,43 @@ class CyclicalTemplate:
 
         return [
             InvestmentScenario(
-                name="bull", bvps_estimate=bvps, pbr_multiple=bull_pbr,
-                target_price=round(bvps * bull_pbr, 0), probability=0.25, valuation_model="PBR",
-                conditions=["Product spread expands sharply", "Inventory devaluation reverses", "Global demand recovers"],
+                name="bull",
+                bvps_estimate=bvps,
+                pbr_multiple=bull_pbr,
+                target_price=round(bvps * bull_pbr, 0),
+                probability=0.25,
+                valuation_model="PBR",
+                conditions=[
+                    "Product spread expands sharply",
+                    "Inventory devaluation reverses",
+                    "Global demand recovers",
+                ],
             ),
             InvestmentScenario(
-                name="base", bvps_estimate=bvps, pbr_multiple=base_pbr,
-                target_price=round(bvps * base_pbr, 0), probability=0.50, valuation_model="PBR",
-                conditions=["Spreads stabilize at breakeven", "Inventory digests slowly", "Capacity utilization crawls to 80%"],
+                name="base",
+                bvps_estimate=bvps,
+                pbr_multiple=base_pbr,
+                target_price=round(bvps * base_pbr, 0),
+                probability=0.50,
+                valuation_model="PBR",
+                conditions=[
+                    "Spreads stabilize at breakeven",
+                    "Inventory digests slowly",
+                    "Capacity utilization crawls to 80%",
+                ],
             ),
             InvestmentScenario(
-                name="bear", bvps_estimate=bvps, pbr_multiple=bear_pbr,
-                target_price=round(bvps * bear_pbr, 0), probability=0.25, valuation_model="PBR",
-                conditions=["Oil prices crash", "New capacity dumps into market", "Persistent cash burn"],
+                name="bear",
+                bvps_estimate=bvps,
+                pbr_multiple=bear_pbr,
+                target_price=round(bvps * bear_pbr, 0),
+                probability=0.25,
+                valuation_model="PBR",
+                conditions=[
+                    "Oil prices crash",
+                    "New capacity dumps into market",
+                    "Persistent cash burn",
+                ],
             ),
         ]
 
@@ -370,14 +459,10 @@ class SixStepAnalyzer:
         else:
             self.template = template
 
-    def find_tension_signals(
-        self, snapshots: List[QuarterlySnapshot]
-    ) -> List[TensionSignal]:
+    def find_tension_signals(self, snapshots: List[QuarterlySnapshot]) -> List[TensionSignal]:
         return self.template.find_tension_signals(snapshots)
 
-    def analyze_trends(
-        self, snapshots: List[QuarterlySnapshot]
-    ) -> Dict[str, str]:
+    def analyze_trends(self, snapshots: List[QuarterlySnapshot]) -> Dict[str, str]:
         return self.template.analyze_trends(snapshots)
 
     def build_scenarios(
@@ -415,7 +500,7 @@ class SixStepAnalyzer:
 
         friction = 0.0
         for i, w in enumerate(weights):
-            diminishing = 0.7 ** i
+            diminishing = 0.7**i
             friction += w * diminishing
 
         return min(1.0, friction)

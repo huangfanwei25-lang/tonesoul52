@@ -12,16 +12,17 @@ from typing import Dict, List, Optional, Tuple
 # ETCL Seed Stage (T0-T6) — see law/docs/v1.2/vol-2.md §2
 # ---------------------------------------------------------------------------
 
+
 class SeedStage(str, Enum):
     """Seven-stage ETCL lifecycle for semantic seeds / crystals."""
 
-    T0_DRAFT = "T0"       # Seed generation — initial creation
-    T1_DEPOSIT = "T1"     # External deposit — persisted to LTM
-    T2_RETRIEVAL = "T2"   # Retrieval & awakening — loaded for use
-    T3_ALIGN = "T3"       # Alignment & merge — drift resolved
-    T4_APPLY = "T4"       # Application — used in output generation
-    T5_FEEDBACK = "T5"    # Feedback — re-deposited as refined seed
-    T6_CANONICAL = "T6"   # Canonicalisation — governance freeze
+    T0_DRAFT = "T0"  # Seed generation — initial creation
+    T1_DEPOSIT = "T1"  # External deposit — persisted to LTM
+    T2_RETRIEVAL = "T2"  # Retrieval & awakening — loaded for use
+    T3_ALIGN = "T3"  # Alignment & merge — drift resolved
+    T4_APPLY = "T4"  # Application — used in output generation
+    T5_FEEDBACK = "T5"  # Feedback — re-deposited as refined seed
+    T6_CANONICAL = "T6"  # Canonicalisation — governance freeze
 
     @classmethod
     def from_value(cls, value: str) -> "SeedStage":
@@ -93,9 +94,7 @@ class Crystal:
         if target_idx <= current_idx:
             return False
         now = _utcnow_iso()
-        self.stage_history.append(
-            {"from": self.stage, "to": new_stage.value, "at": now}
-        )
+        self.stage_history.append({"from": self.stage, "to": new_stage.value, "at": now})
         self.stage = new_stage.value
         return True
 
@@ -461,7 +460,10 @@ class MemoryCrystallizer:
                 crystal.stage if incoming_stage_idx >= existing_stage_idx else existing.stage
             )
             merged_history = list(
-                {json.dumps(h, sort_keys=True): h for h in [*existing.stage_history, *crystal.stage_history]}.values()
+                {
+                    json.dumps(h, sort_keys=True): h
+                    for h in [*existing.stage_history, *crystal.stage_history]
+                }.values()
             )
 
             merged[key] = Crystal(

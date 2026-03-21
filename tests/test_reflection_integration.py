@@ -67,9 +67,7 @@ def _pipeline(*, router: _FakeRouter, alert_level: AlertLevel | None = None) -> 
     pipeline._get_council = MagicMock(return_value=None)
     pipeline._get_governance_kernel = MagicMock(return_value=None)
     pipeline._get_drift_monitor = MagicMock(return_value=None)
-    pipeline._get_alert_escalation = MagicMock(
-        return_value=_FakeAlertEscalation(alert_level)
-    )
+    pipeline._get_alert_escalation = MagicMock(return_value=_FakeAlertEscalation(alert_level))
     return pipeline
 
 

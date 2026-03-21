@@ -85,7 +85,9 @@ class TensionPacket:
             total=payload.get("total", 0.0),
             zone=str(payload.get("zone", "safe")).strip(),
             lambda_state=str(payload.get("lambda_state", "stable")).strip(),
-            signals=_normalize_signals(payload.get("signals") if isinstance(payload, Mapping) else {}),
+            signals=_normalize_signals(
+                payload.get("signals") if isinstance(payload, Mapping) else {}
+            ),
             signature=str(payload.get("signature", "")).strip(),
         )
 
@@ -169,7 +171,9 @@ class SovereigntyBoundary:
         object.__setattr__(
             self,
             "non_negotiable_fields",
-            frozenset(str(item).strip() for item in self.non_negotiable_fields if str(item).strip()),
+            frozenset(
+                str(item).strip() for item in self.non_negotiable_fields if str(item).strip()
+            ),
         )
         object.__setattr__(
             self,
@@ -190,6 +194,8 @@ class SovereigntyBoundary:
         fields = fields_raw if isinstance(fields_raw, (list, tuple, set, frozenset)) else []
         axioms = axioms_raw if isinstance(axioms_raw, (list, tuple, set, frozenset)) else []
         return cls(
-            non_negotiable_fields=frozenset(str(item).strip() for item in fields if str(item).strip()),
+            non_negotiable_fields=frozenset(
+                str(item).strip() for item in fields if str(item).strip()
+            ),
             axiom_ids=frozenset(str(item).strip() for item in axioms if str(item).strip()),
         )

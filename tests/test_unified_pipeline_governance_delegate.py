@@ -17,9 +17,7 @@ class _FakeVerdict:
 class _FakeKernel:
     def __init__(self, should_convene: bool) -> None:
         self._should_convene = should_convene
-        self.should_convene_council = MagicMock(
-            return_value=(should_convene, "kernel_decision")
-        )
+        self.should_convene_council = MagicMock(return_value=(should_convene, "kernel_decision"))
 
     def build_routing_trace(self, *, route, journal_eligible, reason):
         return {

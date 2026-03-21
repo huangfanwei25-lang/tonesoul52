@@ -10,7 +10,9 @@ import pytest
 from tonesoul.perception.web_ingest import IngestResult, WebIngestor
 
 
-def _fake_crawl4ai_module(*, result: object | None = None, error: Exception | None = None) -> ModuleType:
+def _fake_crawl4ai_module(
+    *, result: object | None = None, error: Exception | None = None
+) -> ModuleType:
     module = ModuleType("crawl4ai")
 
     class AsyncWebCrawler:

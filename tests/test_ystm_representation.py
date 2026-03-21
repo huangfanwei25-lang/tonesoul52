@@ -13,7 +13,9 @@ from tonesoul.ystm.representation import (
 
 def test_tokenize_and_simple_embed_are_deterministic() -> None:
     assert tokenize("Alpha, beta! Alpha") == ["alpha", "beta", "alpha"]
-    assert simple_embed("Alpha beta", dims=6).tolist() == simple_embed("Alpha beta", dims=6).tolist()
+    assert (
+        simple_embed("Alpha beta", dims=6).tolist() == simple_embed("Alpha beta", dims=6).tolist()
+    )
 
 
 def test_helper_converters_handle_blank_and_invalid_values() -> None:
@@ -36,7 +38,12 @@ def test_build_nodes_prefers_explicit_source_and_math_fields() -> None:
         "source_grade": "A",
         "source_retrieved_at": "2026-03-20T00:00:00Z",
         "source_verified_by": "human",
-        "source": {"type": "nested", "uri": "https://nested.example", "hash": "nested-hash", "grade": "C"},
+        "source": {
+            "type": "nested",
+            "uri": "https://nested.example",
+            "hash": "nested-hash",
+            "grade": "C",
+        },
         "math_height": 1.5,
         "math_geology": "ridge",
         "math_ruggedness": 0.75,

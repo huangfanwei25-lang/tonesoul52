@@ -60,9 +60,7 @@ class LMStudioClient:
         self._meter = meter
         self.last_metrics: LLMCallMetrics | None = None
         self._allowed_models = {
-            str(item).strip().lower()
-            for item in list(allowed_models or [])
-            if str(item).strip()
+            str(item).strip().lower() for item in list(allowed_models or []) if str(item).strip()
         }
 
     @staticmethod
@@ -333,9 +331,7 @@ class LMStudioClient:
 
         formatted_messages = []
         if system:
-            formatted_messages.append(
-                {"role": "system", "content": self._sanitize_prompt(system)}
-            )
+            formatted_messages.append({"role": "system", "content": self._sanitize_prompt(system)})
 
         formatted_messages.extend(self._sanitize_messages(messages))
 

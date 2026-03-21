@@ -19,9 +19,11 @@ from tonesoul.stale_rule_verifier import (
 
 # Test Fixtures
 
+
 @dataclass
 class MockCrystal:
     """Mock Crystal for testing."""
+
     rule: str
     source_pattern: str
     weight: float
@@ -85,6 +87,7 @@ def active_crystal():
 
 # Tests: VerificationQuery
 
+
 class TestVerificationQuery:
     """Test VerificationQuery generation from stale rules."""
 
@@ -126,6 +129,7 @@ class TestVerificationQuery:
 
 
 # Tests: StaleRuleVerificationTask
+
 
 class TestStaleRuleVerificationTask:
     """Test StaleRuleVerificationTask creation and management."""
@@ -210,10 +214,13 @@ class TestStaleRuleVerificationTask:
 
 # Tests: StaleRuleVerificationTaskBatch
 
+
 class TestStaleRuleVerificationTaskBatch:
     """Test batch generation and persistence."""
 
-    def test_generate_from_crystals(self, stale_crystal, needs_verification_crystal, active_crystal):
+    def test_generate_from_crystals(
+        self, stale_crystal, needs_verification_crystal, active_crystal
+    ):
         """Test generating tasks from a mixed crystal list."""
         batch = StaleRuleVerificationTaskBatch()
         crystals = [stale_crystal, needs_verification_crystal, active_crystal]
@@ -230,14 +237,16 @@ class TestStaleRuleVerificationTaskBatch:
         now = datetime.now(timezone.utc)
         stale_crystals = []
         for i in range(5):
-            created_at = (now - timedelta(days=30+i)).isoformat().replace("+00:00", "Z")
-            stale_crystals.append(MockCrystal(
-                rule=f"Rule {i}",
-                source_pattern="test",
-                weight=0.75,
-                created_at=created_at,
-                freshness_score=0.20,
-            ))
+            created_at = (now - timedelta(days=30 + i)).isoformat().replace("+00:00", "Z")
+            stale_crystals.append(
+                MockCrystal(
+                    rule=f"Rule {i}",
+                    source_pattern="test",
+                    weight=0.75,
+                    created_at=created_at,
+                    freshness_score=0.20,
+                )
+            )
 
         tasks = batch.generate_from_crystals(stale_crystals, max_tasks=3)
         assert len(tasks) == 3
@@ -319,6 +328,7 @@ class TestStaleRuleVerificationTaskBatch:
 
 # Integration test
 
+
 class TestStaleRuleVerificationIntegration:
     """Integration tests for stale rule verification."""
 
@@ -352,13 +362,15 @@ class TestStaleRuleVerificationIntegration:
             stale_crystals = []
             for i in range(3):
                 created_at = (now - timedelta(days=30)).isoformat().replace("+00:00", "Z")
-                stale_crystals.append(MockCrystal(
-                    rule=f"Rule {i}",
-                    source_pattern=f"source_{i}",
-                    weight=0.75,
-                    created_at=created_at,
-                    freshness_score=0.20,
-                ))
+                stale_crystals.append(
+                    MockCrystal(
+                        rule=f"Rule {i}",
+                        source_pattern=f"source_{i}",
+                        weight=0.75,
+                        created_at=created_at,
+                        freshness_score=0.20,
+                    )
+                )
 
             # Generate and persist
             batch1 = StaleRuleVerificationTaskBatch(storage_path=storage_path)

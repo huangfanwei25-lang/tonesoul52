@@ -64,7 +64,9 @@ def test_calculate_persona_scores_normalizes_weights() -> None:
 def test_evaluate_defaults_to_resonance_mapping_without_triggers() -> None:
     switcher = module.PersonaSwitcher()
 
-    philosopher, _, philosopher_conf = switcher.evaluate("", resonance_state="resonance", context={})
+    philosopher, _, philosopher_conf = switcher.evaluate(
+        "", resonance_state="resonance", context={}
+    )
     engineer, _, engineer_conf = switcher.evaluate("", resonance_state="tension", context={})
     guardian, _, guardian_conf = switcher.evaluate("", resonance_state="conflict", context={})
 

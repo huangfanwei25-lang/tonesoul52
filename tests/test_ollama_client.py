@@ -31,7 +31,9 @@ def test_ensure_model_returns_first_available_then_original_when_none_loaded() -
     assert client._ensure_model() == "missing-model"
 
 
-def test_generate_includes_system_prompt_in_request_payload(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_generate_includes_system_prompt_in_request_payload(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     captured: dict[str, object] = {}
     client = OllamaClient(model="test-model")
     client._available_models = ["test-model"]
@@ -51,7 +53,9 @@ def test_generate_includes_system_prompt_in_request_payload(monkeypatch: pytest.
     }
 
 
-def test_send_message_appends_history_and_returns_chat_response(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_send_message_appends_history_and_returns_chat_response(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     client = OllamaClient(model="test-model")
     client.start_chat(history=[{"role": "assistant", "content": "seed"}])
     monkeypatch.setattr(client, "chat", lambda messages: f"reply:{len(messages)}")
@@ -130,7 +134,9 @@ def test_probe_completion_reports_http_and_empty_response_branches(
     assert empty_result["reason"] == "empty_response"
 
 
-def test_list_models_and_chat_with_timeout_cover_error_paths(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_list_models_and_chat_with_timeout_cover_error_paths(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     client = OllamaClient(model="test-model")
     client._available_models = ["test-model"]
 
