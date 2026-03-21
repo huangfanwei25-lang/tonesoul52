@@ -42,6 +42,7 @@ class LMStudioClient:
         model: str | None = None,
         meter: TokenMeter | None = None,
         allowed_models: Optional[List[str]] = None,
+        chat_timeout: float = 300.0,
     ):
         """
         Initialize LM Studio client.
@@ -50,9 +51,11 @@ class LMStudioClient:
             host: LM Studio server URL (default: http://localhost:1234)
             model: Model to use (default: auto-detect from server)
             meter: Optional token meter for usage recording
+            chat_timeout: Timeout for chat completions in seconds (default: 300)
         """
         self.host = host.rstrip("/")
         self.model = model
+        self._chat_timeout = chat_timeout
         self._chat_history: List[Dict] = []
         self._meter = meter
         self.last_metrics: LLMCallMetrics | None = None
@@ -348,7 +351,7 @@ class LMStudioClient:
             response = requests.post(
                 f"{self.host}/v1/chat/completions",
                 json=payload,
-                timeout=120,
+                timeout=self._chat_timeout,
             )
 
             if response.status_code == 200:
@@ -372,5 +375,16 @@ def create_lmstudio_client(
     model: Optional[str] = None,
     meter: TokenMeter | None = None,
 ) -> LMStudioClient:
-    """Factory function to create an LM Studio client."""
-    return LMStudioClient(model=model, meter=meter)
+    """Factory function to create an LM Studio client.
+
+    Model resolution order:
+      1. Explicit ``model`` argument
+      2. ``LMSTUDIO_MODEL`` environment variable
+      3. Auto-detect from server (first non-embedding model)
+    """
+    import os
+
+    resolved_model = model or os.environ.get("LMSTUDIO_MODEL") or None
+    timeout_str = os.environ.get("LMSTUDIO_TIMEOUT", "")
+    chat_timeout = float(timeout_str) if timeout_str else 300.0
+    return LMStudioClient(model=resolved_model, meter=meter, chat_timeout=chat_timeout)

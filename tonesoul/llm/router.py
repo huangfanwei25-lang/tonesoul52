@@ -55,7 +55,11 @@ class LLMRouter:
     """
 
     def __init__(self, preferred_backend: str = "auto") -> None:
-        self._preferred = preferred_backend.strip().lower()
+        import os
+
+        env_backend = os.environ.get("TONESOUL_LLM_BACKEND", "").strip().lower()
+        effective = env_backend or preferred_backend.strip().lower()
+        self._preferred = effective
         self._cached_client: Any = None
         self._cached_backend: Optional[str] = None
         self._local_client: Any = None
