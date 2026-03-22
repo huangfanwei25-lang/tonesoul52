@@ -108,6 +108,20 @@ ToneSoul 不應只被理解成 prompt stack，而應被理解成一套 externali
 2. 當前 README 與 docs 索引
 3. 舊 spec 作為歷史背景，不當作現況唯一依據
 
+## 知識表面邊界
+
+不要把所有看起來像「知識」的目錄都當成同一種權威來源。
+
+- `knowledge/`
+  - 概念、身份、學習脈絡筆記
+- `knowledge_base/`
+  - 本地結構化概念庫與工具（如 `knowledge.db`）
+- `PARADOXES/`
+  - 治理 / 紅隊式悖論 fixture，不是一般知識庫
+
+參考：
+[`docs/architecture/KNOWLEDGE_SURFACES_BOUNDARY_MAP.md`](docs/architecture/KNOWLEDGE_SURFACES_BOUNDARY_MAP.md)
+
 ## 核心模組
 
 ### 記憶系統

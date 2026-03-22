@@ -127,6 +127,20 @@ If they disagree, prefer:
 2. current README / docs indexes,
 3. older spec documents as historical context.
 
+## Knowledge Surface Boundaries
+
+Do not treat every knowledge-like directory as the same authority surface.
+
+- `knowledge/`
+  - conceptual and identity-oriented notes
+- `knowledge_base/`
+  - local structured concept store (`knowledge.db`, helper utilities)
+- `PARADOXES/`
+  - governance / red-team style paradox fixtures, not a general knowledge corpus
+
+Reference:
+[`docs/architecture/KNOWLEDGE_SURFACES_BOUNDARY_MAP.md`](docs/architecture/KNOWLEDGE_SURFACES_BOUNDARY_MAP.md)
+
 ## Core Modules
 
 ### Memory System

@@ -12,8 +12,10 @@ Read these before making architecture assumptions:
 
 1. `docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md`
 2. `docs/notes/TONESOUL_ARCHITECTURE_MEMORY_ANCHOR_2026-03-22.md`
+3. `docs/architecture/KNOWLEDGE_SURFACES_BOUNDARY_MAP.md`
 
 If long prose, scattered repo state, and runtime behavior disagree, prefer the canonical architecture anchor.
+If multiple "knowledge" directories appear to disagree, use the knowledge surface boundary map before inferring authority.
 
 ## 🎯 你需要知道的
 

@@ -1,5 +1,16 @@
 # Task
 
+## Phase 555: Knowledge Surface Boundary Map - `knowledge/` vs `knowledge_base/` vs `PARADOXES/` (2026-03-22)
+- [x] Add one boundary map that explains what each knowledge-like surface is, what it is not, and when an agent should read it
+- [x] Link the boundary map from README, AI onboarding, and docs indexes so retrieval starts from the right authority surface
+- [x] Reduce future audit drift by explicitly warning readers not to collapse conceptual notes, structured stores, and paradox fixtures into one category
+**Success Criteria**: Future agents and external readers can distinguish conceptual knowledge, structured concept storage, and governance test fixtures before making architecture claims.
+**Validation**:
+- `python scripts/verify_docs_consistency.py --repo-root .` -> passed
+- `python scripts/verify_protected_paths.py --repo-root . --strict --changed-file README.md --changed-file README.zh-TW.md --changed-file AI_ONBOARDING.md --changed-file docs/INDEX.md --changed-file docs/README.md --changed-file docs/architecture/KNOWLEDGE_SURFACES_BOUNDARY_MAP.md --changed-file task.md` -> passed
+
+---
+
 ## Phase 554: Initial Retrieval Audit Clarification - Public Doc Drift Cleanup (2026-03-22)
 - [x] Write one hand-authored clarification memo that separates valid findings from stale retrieval artifacts in the external audit
 - [x] Correct the most misleading public entrypoint docs so future audits do not keep inheriting obsolete repository descriptions
