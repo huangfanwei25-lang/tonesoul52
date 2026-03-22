@@ -2,7 +2,7 @@
 
 > **Purpose**: 給未來沒有記憶的 AI 實例的快速引導。
 > **Author**: 黃梵威 (Fan-Wei Huang) + Previous AI Instances
-> **Last Updated**: 2026-01-10
+> **Last Updated**: 2026-03-22
 
 ---
 
@@ -14,10 +14,14 @@ Read these before making architecture assumptions:
 2. `docs/notes/TONESOUL_ARCHITECTURE_MEMORY_ANCHOR_2026-03-22.md`
 3. `docs/architecture/KNOWLEDGE_SURFACES_BOUNDARY_MAP.md`
 4. `docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md`
+5. `docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md`
+6. `docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md`
 
 If long prose, scattered repo state, and runtime behavior disagree, prefer the canonical architecture anchor.
 If multiple "knowledge" directories appear to disagree, use the knowledge surface boundary map before inferring authority.
 If runtime layers and model-attachment direction feel split apart, use the eight-layer convergence map before inventing a new architecture story.
+If retrieval path is unclear, use the L7 retrieval contract before bulk-reading markdown.
+If adapters, RL, or distillation are in scope, use the L8 boundary contract before proposing training surfaces.
 
 ## 🎯 你需要知道的
 

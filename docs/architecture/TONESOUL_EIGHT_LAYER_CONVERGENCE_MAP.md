@@ -40,7 +40,7 @@ They are the engineering surfaces that make ToneSoul:
 | L5 | Audit, Provenance, and Explainability | expose why a decision happened and leave replayable evidence | `tonesoul/council/transcript.py`, `tonesoul/council/summary_generator.py`, `memory/provenance_chain.py`, `tonesoul/contract_observer.py`, `tonesoul/exception_trace.py` |
 | L6 | Memory, Continuity, and Dream Loop | retain, decay, crystallize, review, and replay long-horizon continuity | `tonesoul/memory/*`, `tonesoul/dream_engine.py`, `tonesoul/stale_rule_verifier.py`, `tonesoul/vow_inventory.py` |
 | L7 | Compiled Retrieval and Verifier Surfaces | compile prose into graph, status, and enforcement artifacts that agents can open first | `docs/status/*`, `scripts/run_tonesoul_knowledge_graph.py`, `scripts/run_changed_surface_checks.py`, `scripts/verify_protected_paths.py`, `docs/architecture/KNOWLEDGE_SURFACES_BOUNDARY_MAP.md` |
-| L8 | Model Attachment and Distillation Boundary | expose only stable public-safe behavior for adapters, RL loops, or future retrieval-native interfaces | `docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md`, `docs/philosophy/cultural_vector_distillation.md`, distillation and adapter-facing plans |
+| L8 | Model Attachment and Distillation Boundary | expose only stable public-safe behavior for adapters, RL loops, or future retrieval-native interfaces | `docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md`, `docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md`, `docs/philosophy/cultural_vector_distillation.md`, distillation and adapter-facing plans |
 
 ## Layer Details
 
@@ -134,6 +134,10 @@ Responsibilities:
 
 This layer exists because later agents repeatedly failed when forced to reconstruct the repo from long prose and implicit joins.
 
+Operational contract:
+
+- `docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md`
+
 ### L8. Model Attachment and Distillation Boundary
 
 This is the other new layer that the old six-layer model did not name explicitly.
@@ -149,6 +153,10 @@ Important rule:
 
 - ToneSoul may distill stable public behavior
 - ToneSoul must not distill raw private memory, vault contents, or irreversible user history
+
+Operational contract:
+
+- `docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md`
 
 ## Why There Is No Ninth "Model-Internalized Runtime Layer"
 
@@ -204,8 +212,10 @@ When architecture direction is ambiguous:
 1. `docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md`
 2. `docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md`
 3. `docs/architecture/KNOWLEDGE_SURFACES_BOUNDARY_MAP.md`
-4. `docs/status/tonesoul_knowledge_graph_latest.md`
-5. `AI_ONBOARDING.md`
+4. `docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md`
+5. `docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md`
+6. `docs/status/tonesoul_knowledge_graph_latest.md`
+7. `AI_ONBOARDING.md`
 
 ## Canonical Instruction For Future Agents
 

@@ -20,6 +20,10 @@ Companion map:
 
 - `docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md`
   - use this when you need the layer-by-layer bridge from the older six-layer runtime model to the newer retrieval and model-attachment path
+- `docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md`
+  - use this when you need the operational rule for which retrieval surface to open first
+- `docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md`
+  - use this when you need the operational rule for what may and may not be distilled into adapters or RL traces
 
 ## The Four-Layer Roadmap
 

@@ -1,6 +1,6 @@
 # ToneSoul Documentation Index
 
-> 自動更新於 2026-03-18。按主題分類，方便快速導航。
+> 自動更新於 2026-03-22。按主題分類，方便快速導航。
 
 ---
 
@@ -10,6 +10,11 @@
 - [notes/TONESOUL_ARCHITECTURE_MEMORY_ANCHOR_2026-03-22.md](notes/TONESOUL_ARCHITECTURE_MEMORY_ANCHOR_2026-03-22.md)
 - [architecture/KNOWLEDGE_SURFACES_BOUNDARY_MAP.md](architecture/KNOWLEDGE_SURFACES_BOUNDARY_MAP.md)
 - [architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md](architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md)
+
+## Engineering Contracts
+
+- [architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md](architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md)
+- [architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md](architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md)
 
 ## 🧭 Documentation Governance v1
 
@@ -213,5 +218,5 @@
 | `governance/` | 4 | 治理規則、合規 |
 | `status/` | 95 | 專案狀態追蹤 |
 | `notes/` | 2 | 備註 |
-| `architecture/` | 6 | 架構圖 |
+| `architecture/` | 8 | 架構圖與工程邊界合約 |
 | `images/` | 2 | 圖片資源 |

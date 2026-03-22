@@ -1,5 +1,17 @@
 # Task
 
+## Phase 592: L7/L8 Operational Contracts - Retrieval Order and Distillation Boundary (2026-03-22)
+- [x] Write one L7 contract that defines which retrieval surface to open first and when to switch from prose to executable verification
+- [x] Write one L8 contract that defines which behavior may be distilled and which private or deletion-sensitive data must remain external
+- [x] Link the two contracts from architecture anchors, onboarding, and public README surfaces so later agents stop improvising retrieval and distillation rules
+**Success Criteria**: Future agents can answer "what should I read first?" and "what may be attached to models?" from explicit contracts rather than from scattered inference.
+**Validation**:
+- `python scripts/run_tonesoul_knowledge_graph.py` -> passed
+- `python scripts/verify_docs_consistency.py --repo-root .` -> passed
+- `python scripts/verify_protected_paths.py --repo-root . --strict --changed-file README.md --changed-file README.zh-TW.md --changed-file AI_ONBOARDING.md --changed-file docs/README.md --changed-file docs/INDEX.md --changed-file docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md --changed-file docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md --changed-file docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md --changed-file docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md --changed-file docs/status/tonesoul_knowledge_graph_latest.json --changed-file docs/status/tonesoul_knowledge_graph_latest.md --changed-file task.md` -> passed
+
+---
+
 ## Phase 591: L7/L8 Open-Source Evidence Map - Research-to-Engineering Boundary (2026-03-22)
 - [x] Research current open-source references for L7 `compiled retrieval + verifiers` and L8 `model attachment + distillation boundary`
 - [x] Separate benchmark-backed theories from promising but not-yet-canonical frameworks so ToneSoul stops overclaiming frontier work

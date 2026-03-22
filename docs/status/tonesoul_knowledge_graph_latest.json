@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-03-22T07:32:59Z",
+  "generated_at": "2026-03-22T08:48:11Z",
   "source": "scripts/run_tonesoul_knowledge_graph.py",
   "meta": {
-    "node_count": 832,
-    "edge_count": 1575,
+    "node_count": 835,
+    "edge_count": 1586,
     "lane_count": 8,
     "source_doc_count": 15
   },
@@ -959,6 +959,20 @@
       "lanes": []
     },
     {
+      "id": "file:docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md",
+      "label": "TONESOUL_L7_RETRIEVAL_CONTRACT.md",
+      "kind": "doc",
+      "path": "docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md",
+      "lanes": []
+    },
+    {
+      "id": "file:docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md",
+      "label": "TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md",
+      "kind": "doc",
+      "path": "docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md",
+      "lanes": []
+    },
+    {
       "id": "file:docs/governance/TRINKET_PROTOCOL_SPEC.md",
       "label": "TRINKET_PROTOCOL_SPEC.md",
       "kind": "doc",
@@ -1189,6 +1203,13 @@
       "label": "test_coverage_latest.md",
       "kind": "doc",
       "path": "reports/test_coverage_latest.md",
+      "lanes": []
+    },
+    {
+      "id": "file:docs/research/tonesoul_l7_l8_open_source_evidence_map_2026-03-22.md",
+      "label": "tonesoul_l7_l8_open_source_evidence_map_2026-03-22.md",
+      "kind": "doc",
+      "path": "docs/research/tonesoul_l7_l8_open_source_evidence_map_2026-03-22.md",
       "lanes": []
     },
     {
@@ -7643,6 +7664,16 @@
     },
     {
       "source": "file:AI_ONBOARDING.md",
+      "target": "file:docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md",
+      "type": "references"
+    },
+    {
+      "source": "file:AI_ONBOARDING.md",
+      "target": "file:docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md",
+      "type": "references"
+    },
+    {
+      "source": "file:AI_ONBOARDING.md",
       "target": "file:docs/notes/TONESOUL_ARCHITECTURE_MEMORY_ANCHOR_2026-03-22.md",
       "type": "references"
     },
@@ -7799,6 +7830,16 @@
     {
       "source": "file:README.md",
       "target": "file:docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md",
+      "type": "references"
+    },
+    {
+      "source": "file:README.md",
+      "target": "file:docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md",
+      "type": "references"
+    },
+    {
+      "source": "file:README.md",
+      "target": "file:docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md",
       "type": "references"
     },
     {
@@ -8019,6 +8060,16 @@
     {
       "source": "file:docs/README.md",
       "target": "file:docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/README.md",
+      "target": "file:docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/README.md",
+      "target": "file:docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md",
       "type": "references"
     },
     {
@@ -8518,6 +8569,16 @@
     },
     {
       "source": "file:task.md",
+      "target": "file:docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md",
+      "type": "references"
+    },
+    {
+      "source": "file:task.md",
+      "target": "file:docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md",
+      "type": "references"
+    },
+    {
+      "source": "file:task.md",
       "target": "file:docs/chronicles",
       "type": "references"
     },
@@ -8883,6 +8944,11 @@
     },
     {
       "source": "file:task.md",
+      "target": "file:docs/research/tonesoul_l7_l8_open_source_evidence_map_2026-03-22.md",
+      "type": "references"
+    },
+    {
+      "source": "file:task.md",
       "target": "file:docs/status",
       "type": "references"
     },
@@ -9094,6 +9160,16 @@
     {
       "source": "file:task.md",
       "target": "file:docs/status/subjectivity_tension_groups_latest.md",
+      "type": "references"
+    },
+    {
+      "source": "file:task.md",
+      "target": "file:docs/status/tonesoul_knowledge_graph_latest.json",
+      "type": "references"
+    },
+    {
+      "source": "file:task.md",
+      "target": "file:docs/status/tonesoul_knowledge_graph_latest.md",
       "type": "references"
     },
     {
@@ -14018,7 +14094,7 @@
       "path": "task.md",
       "label": "task.md",
       "kind": "doc",
-      "degree": 643
+      "degree": 648
     },
     {
       "id": "file:tonesoul/unified_pipeline.py",
@@ -14039,7 +14115,7 @@
       "path": "README.md",
       "label": "README.md",
       "kind": "doc",
-      "degree": 34
+      "degree": 36
     },
     {
       "id": "file:語魂系統GPTs_v1.1/02_執行治理規格_Runtime.md",
@@ -14067,7 +14143,7 @@
       "path": "AI_ONBOARDING.md",
       "label": "AI_ONBOARDING.md",
       "kind": "doc",
-      "degree": 23
+      "degree": 25
     },
     {
       "id": "file:apps/api/server.py",
@@ -14091,11 +14167,11 @@
       "degree": 20
     },
     {
-      "id": "file:tonesoul/__init__.py",
-      "path": "tonesoul/__init__.py",
-      "label": "__init__.py",
-      "kind": "python_module",
-      "degree": 17
+      "id": "file:docs/README.md",
+      "path": "docs/README.md",
+      "label": "README.md",
+      "kind": "doc",
+      "degree": 18
     }
   ]
 }

@@ -21,6 +21,13 @@
 - `architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md`
   - reconciles the older six-layer runtime model with the newer externalized-cognition and model-attachment roadmap
 
+## Engineering Contracts
+
+- `architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md`
+  - defines which retrieval surface to open first and when to switch from prose to executable verification
+- `architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md`
+  - defines what may and may not be distilled into adapters, RL traces, or future model-attached layers
+
 ## 🎯 快速開始
 
 1. [AI_ONBOARDING.md](../AI_ONBOARDING.md) — 給新 AI 的引導
