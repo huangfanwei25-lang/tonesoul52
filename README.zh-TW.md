@@ -70,6 +70,8 @@ python scripts/tension_dashboard.py --work-category research
 ToneSoul 不應只被理解成 prompt stack，而應被理解成一套 externalized cognitive operating system。
 正典架構文件在
 [`docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md`](docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md)。
+如果你要看從舊六層 runtime 到新模型外掛路線的銜接圖，請再讀
+[`docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md`](docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md)。
 
 ```text
 使用者輸入

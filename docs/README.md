@@ -9,11 +9,17 @@
 1. [architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md](architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md)
 2. [notes/TONESOUL_ARCHITECTURE_MEMORY_ANCHOR_2026-03-22.md](notes/TONESOUL_ARCHITECTURE_MEMORY_ANCHOR_2026-03-22.md)
 3. [architecture/KNOWLEDGE_SURFACES_BOUNDARY_MAP.md](architecture/KNOWLEDGE_SURFACES_BOUNDARY_MAP.md)
+4. [architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md](architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md)
 
 ## Retrieval Boundary
 
 - `architecture/KNOWLEDGE_SURFACES_BOUNDARY_MAP.md`
   - clarifies how to read `knowledge/`, `knowledge_base/`, and `PARADOXES/` without collapsing them into one authority surface
+
+## Architecture Companion
+
+- `architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md`
+  - reconciles the older six-layer runtime model with the newer externalized-cognition and model-attachment roadmap
 
 ## 🎯 快速開始
 

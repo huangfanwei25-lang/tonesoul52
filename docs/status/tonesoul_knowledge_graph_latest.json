@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-03-21T16:39:02Z",
+  "generated_at": "2026-03-22T07:32:59Z",
   "source": "scripts/run_tonesoul_knowledge_graph.py",
   "meta": {
-    "node_count": 817,
-    "edge_count": 1530,
+    "node_count": 832,
+    "edge_count": 1575,
     "lane_count": 8,
     "source_doc_count": 15
   },
@@ -373,6 +373,13 @@
       "lanes": []
     },
     {
+      "id": "file:PARADOXES",
+      "label": "PARADOXES",
+      "kind": "collection",
+      "path": "PARADOXES",
+      "lanes": []
+    },
+    {
       "id": "file:apps",
       "label": "apps",
       "kind": "collection",
@@ -398,6 +405,20 @@
       "label": "experiments",
       "kind": "collection",
       "path": "experiments",
+      "lanes": []
+    },
+    {
+      "id": "file:knowledge",
+      "label": "knowledge",
+      "kind": "collection",
+      "path": "knowledge",
+      "lanes": []
+    },
+    {
+      "id": "file:knowledge_base",
+      "label": "knowledge_base",
+      "kind": "collection",
+      "path": "knowledge_base",
       "lanes": []
     },
     {
@@ -738,6 +759,13 @@
       "lanes": []
     },
     {
+      "id": "file:docs/architecture/KNOWLEDGE_SURFACES_BOUNDARY_MAP.md",
+      "label": "KNOWLEDGE_SURFACES_BOUNDARY_MAP.md",
+      "kind": "doc",
+      "path": "docs/architecture/KNOWLEDGE_SURFACES_BOUNDARY_MAP.md",
+      "lanes": []
+    },
+    {
       "id": "file:LETTER_TO_AI.md",
       "label": "LETTER_TO_AI.md",
       "kind": "doc",
@@ -758,6 +786,13 @@
       "label": "MGGI_MANIFESTO.md",
       "kind": "doc",
       "path": "docs/MGGI_MANIFESTO.md",
+      "lanes": []
+    },
+    {
+      "id": "file:MGGI_SPEC.md",
+      "label": "MGGI_SPEC.md",
+      "kind": "doc",
+      "path": "MGGI_SPEC.md",
       "lanes": []
     },
     {
@@ -882,6 +917,13 @@
       "lanes": []
     },
     {
+      "id": "file:SOUL.md",
+      "label": "SOUL.md",
+      "kind": "doc",
+      "path": "SOUL.md",
+      "lanes": []
+    },
+    {
       "id": "file:docs/STEP_LEDGER_SPEC.md",
       "label": "STEP_LEDGER_SPEC.md",
       "kind": "doc",
@@ -889,10 +931,24 @@
       "lanes": []
     },
     {
+      "id": "file:TAE-01_Architecture_Spec.md",
+      "label": "TAE-01_Architecture_Spec.md",
+      "kind": "doc",
+      "path": "TAE-01_Architecture_Spec.md",
+      "lanes": []
+    },
+    {
       "id": "file:docs/notes/TONESOUL_ARCHITECTURE_MEMORY_ANCHOR_2026-03-22.md",
       "label": "TONESOUL_ARCHITECTURE_MEMORY_ANCHOR_2026-03-22.md",
       "kind": "doc",
       "path": "docs/notes/TONESOUL_ARCHITECTURE_MEMORY_ANCHOR_2026-03-22.md",
+      "lanes": []
+    },
+    {
+      "id": "file:docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md",
+      "label": "TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md",
+      "kind": "doc",
+      "path": "docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md",
       "lanes": []
     },
     {
@@ -2581,6 +2637,13 @@
       "lanes": []
     },
     {
+      "id": "file:tools/governed_poster.py",
+      "label": "governed_poster.py",
+      "kind": "python_module",
+      "path": "tools/governed_poster.py",
+      "lanes": []
+    },
+    {
       "id": "file:tonesoul/deliberation/gravity.py",
       "label": "gravity.py",
       "kind": "python_module",
@@ -2727,6 +2790,13 @@
       "label": "model_registry.py",
       "kind": "python_module",
       "path": "tonesoul/council/model_registry.py",
+      "lanes": []
+    },
+    {
+      "id": "file:tools/moltbook_poster.py",
+      "label": "moltbook_poster.py",
+      "kind": "python_module",
+      "path": "tools/moltbook_poster.py",
       "lanes": []
     },
     {
@@ -2911,17 +2981,17 @@
       "lanes": []
     },
     {
-      "id": "file:tonesoul/ystm/schema.py",
-      "label": "schema.py",
-      "kind": "python_module",
-      "path": "tonesoul/ystm/schema.py",
-      "lanes": []
-    },
-    {
       "id": "file:tools/schema.py",
       "label": "schema.py",
       "kind": "python_module",
       "path": "tools/schema.py",
+      "lanes": []
+    },
+    {
+      "id": "file:tonesoul/ystm/schema.py",
+      "label": "schema.py",
+      "kind": "python_module",
+      "path": "tonesoul/ystm/schema.py",
       "lanes": []
     },
     {
@@ -3716,6 +3786,13 @@
       "lanes": []
     },
     {
+      "id": "file:scripts/run_tonesoul_knowledge_graph.py",
+      "label": "run_tonesoul_knowledge_graph.py",
+      "kind": "script",
+      "path": "scripts/run_tonesoul_knowledge_graph.py",
+      "lanes": []
+    },
+    {
       "id": "file:scripts/run_true_verification_experiment.py",
       "label": "run_true_verification_experiment.py",
       "kind": "script",
@@ -3942,6 +4019,13 @@
       "lanes": []
     },
     {
+      "id": "file:docs/status/7d_snapshot.json",
+      "label": "7d_snapshot.json",
+      "kind": "status_surface",
+      "path": "docs/status/7d_snapshot.json",
+      "lanes": []
+    },
+    {
       "id": "file:docs/status/README.md",
       "label": "README.md",
       "kind": "status_surface",
@@ -4096,6 +4180,13 @@
       "label": "friction_shadow_replay_latest.md",
       "kind": "status_surface",
       "path": "docs/status/friction_shadow_replay_latest.md",
+      "lanes": []
+    },
+    {
+      "id": "file:docs/status/initial_retrieval_audit_clarification_2026-03-22.md",
+      "label": "initial_retrieval_audit_clarification_2026-03-22.md",
+      "kind": "status_surface",
+      "path": "docs/status/initial_retrieval_audit_clarification_2026-03-22.md",
       "lanes": []
     },
     {
@@ -4725,6 +4816,13 @@
       "label": "test_governance_kernel.py",
       "kind": "test",
       "path": "tests/test_governance_kernel.py",
+      "lanes": []
+    },
+    {
+      "id": "file:tests/test_governed_poster_memory.py",
+      "label": "test_governed_poster_memory.py",
+      "kind": "test",
+      "path": "tests/test_governed_poster_memory.py",
       "lanes": []
     },
     {
@@ -5432,6 +5530,13 @@
       "label": "test_run_subjectivity_tension_grouping.py",
       "kind": "test",
       "path": "tests/test_run_subjectivity_tension_grouping.py",
+      "lanes": []
+    },
+    {
+      "id": "file:tests/test_run_tonesoul_knowledge_graph.py",
+      "label": "test_run_tonesoul_knowledge_graph.py",
+      "kind": "test",
+      "path": "tests/test_run_tonesoul_knowledge_graph.py",
       "lanes": []
     },
     {
@@ -7322,6 +7427,36 @@
       "type": "imports"
     },
     {
+      "source": "file:tools/governed_poster.py",
+      "target": "file:memory/genesis.py",
+      "type": "imports"
+    },
+    {
+      "source": "file:tools/governed_poster.py",
+      "target": "file:memory/rag_token_gate.py",
+      "type": "imports"
+    },
+    {
+      "source": "file:tools/governed_poster.py",
+      "target": "file:memory/self_memory.py",
+      "type": "imports"
+    },
+    {
+      "source": "file:tools/governed_poster.py",
+      "target": "file:tonesoul/council/__init__.py",
+      "type": "imports"
+    },
+    {
+      "source": "file:tools/governed_poster.py",
+      "target": "file:tools/moltbook_poster.py",
+      "type": "imports"
+    },
+    {
+      "source": "file:tools/governed_poster.py",
+      "target": "file:tools/schema.py",
+      "type": "imports"
+    },
+    {
       "source": "lane:authority",
       "target": "lane:governance",
       "type": "neighbors"
@@ -7489,6 +7624,16 @@
     {
       "source": "file:AI_ONBOARDING.md",
       "target": "file:docs",
+      "type": "references"
+    },
+    {
+      "source": "file:AI_ONBOARDING.md",
+      "target": "file:docs/architecture/KNOWLEDGE_SURFACES_BOUNDARY_MAP.md",
+      "type": "references"
+    },
+    {
+      "source": "file:AI_ONBOARDING.md",
+      "target": "file:docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md",
       "type": "references"
     },
     {
@@ -7618,7 +7763,42 @@
     },
     {
       "source": "file:README.md",
+      "target": "file:MGGI_SPEC.md",
+      "type": "references"
+    },
+    {
+      "source": "file:README.md",
+      "target": "file:PARADOXES",
+      "type": "references"
+    },
+    {
+      "source": "file:README.md",
       "target": "file:README.zh-TW.md",
+      "type": "references"
+    },
+    {
+      "source": "file:README.md",
+      "target": "file:SOUL.md",
+      "type": "references"
+    },
+    {
+      "source": "file:README.md",
+      "target": "file:TAE-01_Architecture_Spec.md",
+      "type": "references"
+    },
+    {
+      "source": "file:README.md",
+      "target": "file:docs/architecture/KNOWLEDGE_SURFACES_BOUNDARY_MAP.md",
+      "type": "references"
+    },
+    {
+      "source": "file:README.md",
+      "target": "file:docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md",
+      "type": "references"
+    },
+    {
+      "source": "file:README.md",
+      "target": "file:docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md",
       "type": "references"
     },
     {
@@ -7629,6 +7809,26 @@
     {
       "source": "file:README.md",
       "target": "file:docs/philosophy/soul_landmark_2026.md",
+      "type": "references"
+    },
+    {
+      "source": "file:README.md",
+      "target": "file:docs/status/7d_snapshot.json",
+      "type": "references"
+    },
+    {
+      "source": "file:README.md",
+      "target": "file:docs/status/repo_healthcheck_latest.json",
+      "type": "references"
+    },
+    {
+      "source": "file:README.md",
+      "target": "file:knowledge",
+      "type": "references"
+    },
+    {
+      "source": "file:README.md",
+      "target": "file:knowledge_base",
       "type": "references"
     },
     {
@@ -7664,6 +7864,11 @@
     {
       "source": "file:README.md",
       "target": "file:tests",
+      "type": "references"
+    },
+    {
+      "source": "file:README.md",
+      "target": "file:tests/red_team",
       "type": "references"
     },
     {
@@ -7788,12 +7993,27 @@
     },
     {
       "source": "file:docs/README.md",
+      "target": "file:PARADOXES",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/README.md",
       "target": "file:README.md",
       "type": "references"
     },
     {
       "source": "file:docs/README.md",
       "target": "file:docs/WHITEPAPER.md",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/README.md",
+      "target": "file:docs/architecture/KNOWLEDGE_SURFACES_BOUNDARY_MAP.md",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/README.md",
+      "target": "file:docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md",
       "type": "references"
     },
     {
@@ -7819,6 +8039,16 @@
     {
       "source": "file:docs/README.md",
       "target": "file:docs/terminology.md",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/README.md",
+      "target": "file:knowledge",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/README.md",
+      "target": "file:knowledge_base",
       "type": "references"
     },
     {
@@ -8048,6 +8278,11 @@
     },
     {
       "source": "file:task.md",
+      "target": "file:AI_ONBOARDING.md",
+      "type": "references"
+    },
+    {
+      "source": "file:task.md",
       "target": "file:AXIOMS.json",
       "type": "references"
     },
@@ -8074,6 +8309,11 @@
     {
       "source": "file:task.md",
       "target": "file:OpenClaw-Memory",
+      "type": "references"
+    },
+    {
+      "source": "file:task.md",
+      "target": "file:PARADOXES",
       "type": "references"
     },
     {
@@ -8228,6 +8468,11 @@
     },
     {
       "source": "file:task.md",
+      "target": "file:docs/README.md",
+      "type": "references"
+    },
+    {
+      "source": "file:task.md",
       "target": "file:docs/RELEASE_NOTES_v0.1.0.md",
       "type": "references"
     },
@@ -8254,6 +8499,21 @@
     {
       "source": "file:task.md",
       "target": "file:docs/VERCEL_DEPLOY.md",
+      "type": "references"
+    },
+    {
+      "source": "file:task.md",
+      "target": "file:docs/architecture/KNOWLEDGE_SURFACES_BOUNDARY_MAP.md",
+      "type": "references"
+    },
+    {
+      "source": "file:task.md",
+      "target": "file:docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md",
+      "type": "references"
+    },
+    {
+      "source": "file:task.md",
+      "target": "file:docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md",
       "type": "references"
     },
     {
@@ -8294,6 +8554,11 @@
     {
       "source": "file:task.md",
       "target": "file:docs/governance/TRINKET_PROTOCOL_SPEC.md",
+      "type": "references"
+    },
+    {
+      "source": "file:task.md",
+      "target": "file:docs/notes/TONESOUL_ARCHITECTURE_MEMORY_ANCHOR_2026-03-22.md",
       "type": "references"
     },
     {
@@ -8673,6 +8938,11 @@
     },
     {
       "source": "file:task.md",
+      "target": "file:docs/status/initial_retrieval_audit_clarification_2026-03-22.md",
+      "type": "references"
+    },
+    {
+      "source": "file:task.md",
       "target": "file:docs/status/monthly_consolidation_report.json",
       "type": "references"
     },
@@ -8859,6 +9129,16 @@
     {
       "source": "file:task.md",
       "target": "file:experiments/compare_model_reports.py",
+      "type": "references"
+    },
+    {
+      "source": "file:task.md",
+      "target": "file:knowledge",
+      "type": "references"
+    },
+    {
+      "source": "file:task.md",
+      "target": "file:knowledge_base",
       "type": "references"
     },
     {
@@ -9299,6 +9579,11 @@
     {
       "source": "file:task.md",
       "target": "file:scripts/run_subjectivity_tension_grouping.py",
+      "type": "references"
+    },
+    {
+      "source": "file:task.md",
+      "target": "file:scripts/run_tonesoul_knowledge_graph.py",
       "type": "references"
     },
     {
@@ -9749,6 +10034,11 @@
     {
       "source": "file:task.md",
       "target": "file:tests/test_governance_kernel.py",
+      "type": "references"
+    },
+    {
+      "source": "file:task.md",
+      "target": "file:tests/test_governed_poster_memory.py",
       "type": "references"
     },
     {
@@ -10244,6 +10534,11 @@
     {
       "source": "file:task.md",
       "target": "file:tests/test_run_subjectivity_tension_grouping.py",
+      "type": "references"
+    },
+    {
+      "source": "file:task.md",
+      "target": "file:tests/test_run_tonesoul_knowledge_graph.py",
       "type": "references"
     },
     {
@@ -11079,6 +11374,11 @@
     {
       "source": "file:task.md",
       "target": "file:tools/agent_discussion_tool.py",
+      "type": "references"
+    },
+    {
+      "source": "file:task.md",
+      "target": "file:tools/governed_poster.py",
       "type": "references"
     },
     {
@@ -12167,6 +12467,31 @@
       "type": "verifies"
     },
     {
+      "source": "file:tests/test_governed_poster_memory.py",
+      "target": "file:memory/genesis.py",
+      "type": "verifies"
+    },
+    {
+      "source": "file:tests/test_governed_poster_memory.py",
+      "target": "file:memory/self_memory.py",
+      "type": "verifies"
+    },
+    {
+      "source": "file:tests/test_governed_poster_memory.py",
+      "target": "file:tonesoul/memory/soul_db.py",
+      "type": "verifies"
+    },
+    {
+      "source": "file:tests/test_governed_poster_memory.py",
+      "target": "file:tools/governed_poster.py",
+      "type": "verifies"
+    },
+    {
+      "source": "file:tests/test_governed_poster_memory.py",
+      "target": "file:tools/schema.py",
+      "type": "verifies"
+    },
+    {
       "source": "file:tests/test_graph_rag_retrieval.py",
       "target": "file:tonesoul/memory/semantic_graph.py",
       "type": "verifies"
@@ -13012,6 +13337,11 @@
       "type": "verifies"
     },
     {
+      "source": "file:tests/test_run_tonesoul_knowledge_graph.py",
+      "target": "file:scripts/run_tonesoul_knowledge_graph.py",
+      "type": "verifies"
+    },
+    {
       "source": "file:tests/test_run_worktree_settlement_report.py",
       "target": "file:scripts/run_worktree_settlement_report.py",
       "type": "verifies"
@@ -13688,7 +14018,7 @@
       "path": "task.md",
       "label": "task.md",
       "kind": "doc",
-      "degree": 629
+      "degree": 643
     },
     {
       "id": "file:tonesoul/unified_pipeline.py",
@@ -13702,7 +14032,14 @@
       "path": "tonesoul/memory/soul_db.py",
       "label": "soul_db.py",
       "kind": "python_module",
-      "degree": 44
+      "degree": 45
+    },
+    {
+      "id": "file:README.md",
+      "path": "README.md",
+      "label": "README.md",
+      "kind": "doc",
+      "degree": 34
     },
     {
       "id": "file:語魂系統GPTs_v1.1/02_執行治理規格_Runtime.md",
@@ -13726,11 +14063,11 @@
       "degree": 27
     },
     {
-      "id": "file:README.md",
-      "path": "README.md",
-      "label": "README.md",
+      "id": "file:AI_ONBOARDING.md",
+      "path": "AI_ONBOARDING.md",
+      "label": "AI_ONBOARDING.md",
       "kind": "doc",
-      "degree": 22
+      "degree": 23
     },
     {
       "id": "file:apps/api/server.py",
@@ -13745,13 +14082,6 @@
       "label": "types.py",
       "kind": "python_module",
       "degree": 21
-    },
-    {
-      "id": "file:AI_ONBOARDING.md",
-      "path": "AI_ONBOARDING.md",
-      "label": "AI_ONBOARDING.md",
-      "kind": "doc",
-      "degree": 20
     },
     {
       "id": "file:tonesoul/schemas.py",

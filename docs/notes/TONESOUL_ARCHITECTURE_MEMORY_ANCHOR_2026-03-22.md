@@ -12,8 +12,9 @@ Treat it as an externalized cognitive operating system.
 Canonical path:
 
 - `docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md`
+- `docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md`
 
-If future work is ambiguous, open that file first.
+If future work is ambiguous, open the externalized architecture anchor first, then the eight-layer convergence map.
 
 ## Memory Rule
 
@@ -41,9 +42,10 @@ prefer:
 ## Reading Order
 
 1. `docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md`
-2. `docs/status/tonesoul_knowledge_graph_latest.md`
-3. `docs/status/changed_surface_checks_latest.md`
-4. `AI_ONBOARDING.md`
+2. `docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md`
+3. `docs/status/tonesoul_knowledge_graph_latest.md`
+4. `docs/status/changed_surface_checks_latest.md`
+5. `AI_ONBOARDING.md`
 
 ## Note
 

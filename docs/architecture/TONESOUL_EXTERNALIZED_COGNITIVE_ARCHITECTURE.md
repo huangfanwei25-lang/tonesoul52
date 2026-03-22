@@ -16,6 +16,11 @@ ToneSoul is an externalized cognitive operating system:
 
 The engineering goal is to move hidden reasoning dependencies out of the model's opaque internals and into versioned, inspectable system modules.
 
+Companion map:
+
+- `docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md`
+  - use this when you need the layer-by-layer bridge from the older six-layer runtime model to the newer retrieval and model-attachment path
+
 ## The Four-Layer Roadmap
 
 ### 1. External Soul

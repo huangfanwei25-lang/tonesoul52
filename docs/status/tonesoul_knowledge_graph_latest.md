@@ -1,8 +1,8 @@
 # ToneSoul Knowledge Graph Latest
 
-- generated_at: 2026-03-21T16:39:02Z
-- node_count: 817
-- edge_count: 1530
+- generated_at: 2026-03-22T07:32:59Z
+- node_count: 832
+- edge_count: 1575
 - lane_count: 8
 
 ## Retrieval Protocol
@@ -103,15 +103,15 @@
 ## Top Anchors
 | path | kind | degree |
 | --- | --- | ---: |
-| `task.md` | `doc` | 629 |
+| `task.md` | `doc` | 643 |
 | `tonesoul/unified_pipeline.py` | `python_module` | 52 |
-| `tonesoul/memory/soul_db.py` | `python_module` | 44 |
+| `tonesoul/memory/soul_db.py` | `python_module` | 45 |
+| `README.md` | `doc` | 34 |
 | `語魂系統GPTs_v1.1/02_執行治理規格_Runtime.md` | `authority_doc` | 29 |
 | `語魂系統GPTs_v1.1/10_哲學到程式_可驗證對照表.md` | `authority_doc` | 29 |
 | `語魂系統GPTs_v1.1/07_六層架構與實作對位.md` | `authority_doc` | 27 |
-| `README.md` | `doc` | 22 |
+| `AI_ONBOARDING.md` | `doc` | 23 |
 | `apps/api/server.py` | `app_module` | 21 |
 | `tonesoul/council/types.py` | `python_module` | 21 |
-| `AI_ONBOARDING.md` | `doc` | 20 |
 | `tonesoul/schemas.py` | `python_module` | 20 |
 | `tonesoul/__init__.py` | `python_module` | 17 |

@@ -1,5 +1,17 @@
 # Task
 
+## Phase 556: Eight-Layer Convergence Map - Runtime Governance to Model Attachment (2026-03-22)
+- [x] Reconcile the older six-layer runtime model with the newer externalized-cognition roadmap into one eight-layer architecture map
+- [x] Make the new L7 retrieval/verifier surface and L8 model-attachment boundary explicit so future agents stop inventing hidden layers
+- [x] Link the convergence map from architecture anchors, onboarding, and public README surfaces so later retrieval starts from the right layer model
+**Success Criteria**: Future agents can distinguish the six operational governance layers from the newer retrieval and model-attachment layers, without collapsing private memory into model weights.
+**Validation**:
+- `python scripts/run_tonesoul_knowledge_graph.py` -> passed
+- `python scripts/verify_docs_consistency.py --repo-root .` -> passed
+- `python scripts/verify_protected_paths.py --repo-root . --strict --changed-file README.md --changed-file README.zh-TW.md --changed-file AI_ONBOARDING.md --changed-file docs/INDEX.md --changed-file docs/README.md --changed-file docs/notes/TONESOUL_ARCHITECTURE_MEMORY_ANCHOR_2026-03-22.md --changed-file docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md --changed-file docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md --changed-file docs/status/tonesoul_knowledge_graph_latest.json --changed-file docs/status/tonesoul_knowledge_graph_latest.md --changed-file task.md` -> passed
+
+---
+
 ## Phase 555: Knowledge Surface Boundary Map - `knowledge/` vs `knowledge_base/` vs `PARADOXES/` (2026-03-22)
 - [x] Add one boundary map that explains what each knowledge-like surface is, what it is not, and when an agent should read it
 - [x] Link the boundary map from README, AI onboarding, and docs indexes so retrieval starts from the right authority surface

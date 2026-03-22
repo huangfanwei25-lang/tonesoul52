@@ -88,6 +88,8 @@ python scripts/tension_dashboard.py --work-category research
 ToneSoul should be read as an externalized cognitive operating system, not just a prompt stack.
 The canonical architecture anchor is
 [`docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md`](docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md).
+For the layer-by-layer bridge from the older six-layer runtime to the newer model-attachment path, open
+[`docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md`](docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md).
 
 ```text
 User Input
