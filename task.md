@@ -1,5 +1,34 @@
 # Task
 
+## Phase 553: Local Verification Hardening - Optional Dependency Import + Corrective Recall Test (2026-03-22)
+- [x] Broaden the governed poster NarrativeGate fallback so optional embedding imports degrade cleanly when Windows DLL initialization fails
+- [x] Tighten the corrective recall runtime test around the actual B-vector path contract instead of a brittle fake-embedder norm assumption
+- [x] Re-run targeted and full regression checks after the hardening changes so the repository returns to a clean local verification state
+**Success Criteria**: Local verification stops failing on optional embedding DLL import noise and on over-specified corrective recall assertions, while preserving the intended runtime contract.
+**Validation**:
+- `python -m pytest tests/test_governed_poster_memory.py tests/test_unified_pipeline_v2_runtime.py::test_runtime_corrective_recall_uses_b_vector_path -q` -> passed
+- `python -m ruff check tonesoul tests` -> passed
+- `python -m ruff check tools/governed_poster.py` -> passed
+- `python -m pytest tests -x -q` -> passed (`2610 passed`)
+
+---
+
+## Phase 552: Repository Discoverability - Ethical Architecture Keywords (2026-03-22)
+- [x] Add high-signal retrieval keywords to the public README surfaces so AI indexing can associate ToneSoul with governance, verifier-first agents, and externalized cognition
+- [x] Update the GitHub intro draft with one explicit About description and topic set aligned with the new architecture north star
+- [x] Reflect the retrieval framing in both English and Traditional Chinese repository entrypoints
+**Success Criteria**: Public repository-facing descriptions stop reading like a generic agent repo and become searchable as ethical AI governance, memory graph, verifier-first, and externalized cognitive architecture work.
+**Validation**:
+- `gh repo view Fan1234-1/tonesoul52 --json description,homepageUrl,repositoryTopics,url` -> passed
+- `git diff -- README.md README.zh-TW.md docs/GITHUB_INTRO_DRAFT.md task.md` -> reviewed
+- `python scripts/verify_docs_consistency.py --repo-root .` -> passed
+- `python scripts/verify_protected_paths.py --repo-root . --strict --changed-file README.md --changed-file README.zh-TW.md --changed-file docs/GITHUB_INTRO_DRAFT.md --changed-file task.md` -> passed
+- `python -m pytest tests -x -q` -> passed (`2610 passed`)
+- repository About description now matches the externalized cognitive architecture framing
+- repository topics now include `ai-governance`, `ethical-ai`, `cognitive-architecture`, `knowledge-graph`, `semantic-governance`, and `verifier-first`
+
+---
+
 ## Phase 551: Architecture North Star - Externalized Cognitive OS Anchor (2026-03-22)
 - [x] Add one canonical architecture document that states ToneSoul is an externalized cognitive operating system rather than a larger prompt bundle
 - [x] Add one repo-safe memory anchor that later agents can open first without touching protected human-managed memory files

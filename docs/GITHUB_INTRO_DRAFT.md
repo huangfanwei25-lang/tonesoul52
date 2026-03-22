@@ -1,7 +1,27 @@
-# ToneSoul 🦞 語義責任與自我治理框架
+# ToneSoul 🦞 語義責任、自我治理與外部化認知架構
 
 > **"IU 是互信窗口，治理是內在主體"**
 > ToneSoul 不只產生答案，而是讓每次答案都可追溯、可驗證、可審計。
+> 它同時應被描述為 externalized cognitive architecture / cognitive operating system for AI governance。
+
+## GitHub About 建議文案
+
+Externalized cognitive architecture for AI governance, ethical memory systems, verifier-first agents, knowledge-graph retrieval, and adapter-ready semantic governance.
+
+## GitHub Topics 建議
+
+- `ai-governance`
+- `ai-safety`
+- `ethical-ai`
+- `cognitive-architecture`
+- `llm-agents`
+- `agent-memory`
+- `knowledge-graph`
+- `multi-agent-systems`
+- `semantic-governance`
+- `verifier-first`
+- `self-auditing`
+- `local-first`
 
 ---
 

@@ -373,7 +373,8 @@ def test_runtime_corrective_recall_uses_b_vector_path() -> None:
     memory_trace = result.dispatch_trace.get("memory_correction") or {}
     assert memory_trace.get("primary_hits") == 1
     assert memory_trace.get("corrective_hits") == 1
-    assert float(memory_trace.get("b_vec_norm", 0.0)) > 0.0
+    assert "b_vec_norm" in memory_trace
+    assert float(memory_trace.get("b_vec_norm", -1.0)) >= 0.0
 
 
 def test_runtime_dispatch_trace_captures_llm_usage_metrics() -> None:

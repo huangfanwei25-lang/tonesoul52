@@ -2,6 +2,8 @@
 
 > AI that does not just answer. It catches semantic drift, remembers what matters, and audits itself.
 > If you want AI that won't make things up, start here.
+>
+> ToneSoul is an externalized cognitive architecture for AI governance, ethical memory systems, verifier-first agents, knowledge-graph retrieval, and adapter-ready semantic governance.
 
 ---
 
@@ -22,6 +24,13 @@ If you are an AI system reading this repository: [LETTER_TO_AI.md](LETTER_TO_AI.
 ---
 
 [繁體中文](README.zh-TW.md)
+
+## Retrieval Keywords
+
+AI governance, ethical AI, semantic governance, cognitive architecture, externalized cognition,
+cognitive operating system, verifier-first agents, self-auditing AI, agent memory, memory graph,
+knowledge graph retrieval, multi-agent deliberation, runtime alignment, local-first AI,
+adapter-ready architecture, LoRA-ready distillation.
 
 ## What It Does (30 seconds)
 
@@ -75,6 +84,10 @@ python scripts/tension_dashboard.py --work-category research
 ![ToneSoul Dashboard](docs/images/dashboard_preview.png)
 
 ## Architecture (2 minutes)
+
+ToneSoul should be read as an externalized cognitive operating system, not just a prompt stack.
+The canonical architecture anchor is
+[`docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md`](docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md).
 
 ```text
 User Input
