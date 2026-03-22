@@ -83,9 +83,7 @@ class TestDreamEngineStaleRuleIntegration:
         dream_engine_with_mocks,
     ):
         """Test that run_cycle generates verification tasks for stale rules."""
-        with patch(
-            "tonesoul.dream_engine.StaleRuleVerificationTaskBatch"
-        ) as MockBatch:
+        with patch("tonesoul.dream_engine.StaleRuleVerificationTaskBatch") as MockBatch:
             # Mock batch behavior
             mock_batch = MagicMock()
             mock_batch.generate_from_crystals.return_value = [
@@ -93,9 +91,7 @@ class TestDreamEngineStaleRuleIntegration:
             ]
             MockBatch.return_value = mock_batch
 
-            with patch.object(
-                dream_engine_with_mocks, "_persist_collisions"
-            ) as mock_persist:
+            with patch.object(dream_engine_with_mocks, "_persist_collisions") as mock_persist:
                 mock_persist.return_value = {}
 
                 result = dream_engine_with_mocks.run_cycle(
@@ -118,9 +114,7 @@ class TestDreamEngineStaleRuleIntegration:
         dream_engine_with_mocks,
     ):
         """Test that verification tasks can be disabled."""
-        with patch.object(
-            dream_engine_with_mocks, "_persist_collisions"
-        ) as mock_persist:
+        with patch.object(dream_engine_with_mocks, "_persist_collisions") as mock_persist:
             mock_persist.return_value = {}
 
             result = dream_engine_with_mocks.run_cycle(
@@ -136,15 +130,11 @@ class TestDreamEngineStaleRuleIntegration:
         dream_engine_with_mocks,
     ):
         """Test that verification task generation failure is handled gracefully."""
-        with patch(
-            "tonesoul.dream_engine.StaleRuleVerificationTaskBatch"
-        ) as MockBatch:
+        with patch("tonesoul.dream_engine.StaleRuleVerificationTaskBatch") as MockBatch:
             # Mock batch to raise an exception
             MockBatch.side_effect = Exception("Batch creation failed")
 
-            with patch.object(
-                dream_engine_with_mocks, "_persist_collisions"
-            ) as mock_persist:
+            with patch.object(dream_engine_with_mocks, "_persist_collisions") as mock_persist:
                 mock_persist.return_value = {}
 
                 # Should not raise, should gracefully degrade
@@ -161,9 +151,7 @@ class TestDreamEngineStaleRuleIntegration:
         dream_engine_with_mocks,
     ):
         """Test that DreamCycleResult.to_dict includes verification task count."""
-        with patch(
-            "tonesoul.dream_engine.StaleRuleVerificationTaskBatch"
-        ) as MockBatch:
+        with patch("tonesoul.dream_engine.StaleRuleVerificationTaskBatch") as MockBatch:
             mock_batch = MagicMock()
             mock_batch.generate_from_crystals.return_value = [
                 MagicMock(),
@@ -171,9 +159,7 @@ class TestDreamEngineStaleRuleIntegration:
             ]
             MockBatch.return_value = mock_batch
 
-            with patch.object(
-                dream_engine_with_mocks, "_persist_collisions"
-            ) as mock_persist:
+            with patch.object(dream_engine_with_mocks, "_persist_collisions") as mock_persist:
                 mock_persist.return_value = {}
 
                 result = dream_engine_with_mocks.run_cycle(
@@ -191,17 +177,13 @@ class TestDreamEngineStaleRuleIntegration:
         dream_engine_with_mocks,
     ):
         """Test that max_verification_tasks limit is respected."""
-        with patch(
-            "tonesoul.dream_engine.StaleRuleVerificationTaskBatch"
-        ) as MockBatch:
+        with patch("tonesoul.dream_engine.StaleRuleVerificationTaskBatch") as MockBatch:
             mock_batch = MagicMock()
             # Return 5 tasks
             mock_batch.generate_from_crystals.return_value = [MagicMock()] * 5
             MockBatch.return_value = mock_batch
 
-            with patch.object(
-                dream_engine_with_mocks, "_persist_collisions"
-            ) as mock_persist:
+            with patch.object(dream_engine_with_mocks, "_persist_collisions") as mock_persist:
                 mock_persist.return_value = {}
 
                 result = dream_engine_with_mocks.run_cycle(
@@ -220,17 +202,13 @@ class TestDreamEngineStaleRuleIntegration:
         dream_engine_with_mocks,
     ):
         """Test that verification tasks are persisted to storage."""
-        with patch(
-            "tonesoul.dream_engine.StaleRuleVerificationTaskBatch"
-        ) as MockBatch:
+        with patch("tonesoul.dream_engine.StaleRuleVerificationTaskBatch") as MockBatch:
             mock_batch = MagicMock()
             mock_task = MagicMock(spec=StaleRuleVerificationTask)
             mock_batch.generate_from_crystals.return_value = [mock_task]
             MockBatch.return_value = mock_batch
 
-            with patch.object(
-                dream_engine_with_mocks, "_persist_collisions"
-            ) as mock_persist:
+            with patch.object(dream_engine_with_mocks, "_persist_collisions") as mock_persist:
                 mock_persist.return_value = {}
 
                 dream_engine_with_mocks.run_cycle(
@@ -332,9 +310,7 @@ class TestDreamEngineApplyVerification:
         dream_engine_with_mocks,
     ):
         """run_cycle should apply verification results before generating new tasks."""
-        with patch(
-            "tonesoul.dream_engine.StaleRuleVerificationTaskBatch"
-        ) as MockBatch:
+        with patch("tonesoul.dream_engine.StaleRuleVerificationTaskBatch") as MockBatch:
             mock_apply_batch = MagicMock()
             mock_apply_batch.apply_verification_results.return_value = {
                 "re_confirmed": 1,
@@ -347,9 +323,7 @@ class TestDreamEngineApplyVerification:
             # First call for apply, second for generate
             MockBatch.side_effect = [mock_apply_batch, mock_gen_batch]
 
-            with patch.object(
-                dream_engine_with_mocks, "_persist_collisions"
-            ) as mock_persist:
+            with patch.object(dream_engine_with_mocks, "_persist_collisions") as mock_persist:
                 mock_persist.return_value = {}
 
                 result = dream_engine_with_mocks.run_cycle(
@@ -365,9 +339,7 @@ class TestDreamEngineApplyVerification:
         dream_engine_with_mocks,
     ):
         """When generate_verification_tasks=False, verification_applied is empty."""
-        with patch.object(
-            dream_engine_with_mocks, "_persist_collisions"
-        ) as mock_persist:
+        with patch.object(dream_engine_with_mocks, "_persist_collisions") as mock_persist:
             mock_persist.return_value = {}
 
             result = dream_engine_with_mocks.run_cycle(
@@ -382,17 +354,13 @@ class TestDreamEngineApplyVerification:
         dream_engine_with_mocks,
     ):
         """If apply raises, run_cycle should continue without errors."""
-        with patch(
-            "tonesoul.dream_engine.StaleRuleVerificationTaskBatch"
-        ) as MockBatch:
+        with patch("tonesoul.dream_engine.StaleRuleVerificationTaskBatch") as MockBatch:
             # First call (apply) raises, second call (generate) succeeds
             mock_gen_batch = MagicMock()
             mock_gen_batch.generate_from_crystals.return_value = []
             MockBatch.side_effect = [Exception("apply failed"), mock_gen_batch]
 
-            with patch.object(
-                dream_engine_with_mocks, "_persist_collisions"
-            ) as mock_persist:
+            with patch.object(dream_engine_with_mocks, "_persist_collisions") as mock_persist:
                 mock_persist.return_value = {}
 
                 result = dream_engine_with_mocks.run_cycle(
@@ -401,4 +369,8 @@ class TestDreamEngineApplyVerification:
                 )
 
                 # Should degrade gracefully
-                assert result.verification_applied == {"re_confirmed": 0, "retired": 0, "skipped": 0}
+                assert result.verification_applied == {
+                    "re_confirmed": 0,
+                    "retired": 0,
+                    "skipped": 0,
+                }

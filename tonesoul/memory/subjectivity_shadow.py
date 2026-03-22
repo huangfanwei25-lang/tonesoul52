@@ -119,7 +119,9 @@ def _build_candidate_rows(
     if not search_rows:
         return []
 
-    detail_rows = {row["id"]: row for row in soul_db.detail([str(item["id"]) for item in search_rows])}
+    detail_rows = {
+        row["id"]: row for row in soul_db.detail([str(item["id"]) for item in search_rows])
+    }
     candidates: List[Dict[str, object]] = []
     for baseline_rank, search_row in enumerate(search_rows, start=1):
         record_id = str(search_row.get("id") or "").strip()
@@ -291,7 +293,8 @@ def build_subjectivity_shadow_pressure_report(
 
         classified_lifts.append(classified_lift)
         overlap_rates.append(
-            float(overlap_count) / float(max(1, min(limit, max(len(baseline_results), len(shadow_results)))))
+            float(overlap_count)
+            / float(max(1, min(limit, max(len(baseline_results), len(shadow_results)))))
         )
         promoted_counts.append(promoted_count)
         demoted_counts.append(demoted_count)

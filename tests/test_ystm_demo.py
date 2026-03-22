@@ -73,7 +73,9 @@ def test_write_demo_outputs_falls_back_to_render_png_when_svg_conversion_fails(
 def test_build_drift_vectors_skips_missing_or_unknown_refs() -> None:
     nodes = build_nodes(DEFAULT_SEGMENTS[:2], config=EmbeddingConfig(dims=4), energy=EnergyConfig())
     nodes[0] = replace(nodes[0], drift=NodeDrift())
-    nodes[1] = replace(nodes[1], drift=NodeDrift(delta_norm=1.5, drift_ref={"from_node_id": "node_999"}))
+    nodes[1] = replace(
+        nodes[1], drift=NodeDrift(delta_norm=1.5, drift_ref={"from_node_id": "node_999"})
+    )
     valid = replace(
         nodes[1],
         id="node_003",

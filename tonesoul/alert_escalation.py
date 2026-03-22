@@ -113,9 +113,7 @@ class AlertEscalation:
                 reasons.append("drift crisis (structure layer)")
                 level = AlertLevel.L2
             if jump_indicators_tripped >= 1 and not jump_triggered:
-                reasons.append(
-                    f"pre-singularity ({jump_indicators_tripped} indicator(s))"
-                )
+                reasons.append(f"pre-singularity ({jump_indicators_tripped} indicator(s))")
                 level = AlertLevel.L2
             if lambda_state == "chaotic":
                 reasons.append("lambda state chaotic (wave energy surge)")
@@ -130,9 +128,7 @@ class AlertEscalation:
                 reasons.append("lambda state divergent (oscillation)")
                 level = AlertLevel.L1
             if consecutive_high_friction >= 2:
-                reasons.append(
-                    f"consecutive high friction ({consecutive_high_friction})"
-                )
+                reasons.append(f"consecutive high friction ({consecutive_high_friction})")
                 level = AlertLevel.L1
 
         event = AlertEvent(level=level, reasons=reasons, signals=signals)

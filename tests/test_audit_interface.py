@@ -51,7 +51,9 @@ def test_gate_loaders_extract_nested_results(tmp_path: Path) -> None:
 
 
 def test_gate_loaders_support_direct_nested_payloads(tmp_path: Path) -> None:
-    poav_path = _write_json(tmp_path / "poav.json", {"poav_result": {"gate": "poav_gate", "ok": True}})
+    poav_path = _write_json(
+        tmp_path / "poav.json", {"poav_result": {"gate": "poav_gate", "ok": True}}
+    )
     escalation_path = _write_json(
         tmp_path / "escalation.json",
         {"escalation_result": {"gate": "escalation_gate", "level": "L2"}},
@@ -197,7 +199,9 @@ def test_build_audit_request_includes_optional_digests_and_role_meta(tmp_path: P
 def test_resolve_output_defaults_to_context_directory(tmp_path: Path) -> None:
     context_path = tmp_path / "run" / "context.yaml"
 
-    assert module._resolve_output(None, str(context_path)) == str(tmp_path / "run" / "audit_request.json")
+    assert module._resolve_output(None, str(context_path)) == str(
+        tmp_path / "run" / "audit_request.json"
+    )
     assert module._resolve_output(str(tmp_path / "custom.json"), str(context_path)) == str(
         tmp_path / "custom.json"
     )

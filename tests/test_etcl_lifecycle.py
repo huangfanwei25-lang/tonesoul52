@@ -36,8 +36,11 @@ def test_crystal_advance_stage_forward() -> None:
 
 def test_crystal_advance_stage_rejects_backward() -> None:
     c = Crystal(
-        rule="test", source_pattern="p", weight=0.5,
-        created_at="2026-01-01T00:00:00Z", stage="T3",
+        rule="test",
+        source_pattern="p",
+        weight=0.5,
+        created_at="2026-01-01T00:00:00Z",
+        stage="T3",
     )
     assert c.advance_stage(SeedStage.T1_DEPOSIT) is False
     assert c.stage == "T3"
@@ -46,8 +49,11 @@ def test_crystal_advance_stage_rejects_backward() -> None:
 
 def test_crystal_advance_stage_rejects_same() -> None:
     c = Crystal(
-        rule="test", source_pattern="p", weight=0.5,
-        created_at="2026-01-01T00:00:00Z", stage="T2",
+        rule="test",
+        source_pattern="p",
+        weight=0.5,
+        created_at="2026-01-01T00:00:00Z",
+        stage="T2",
     )
     assert c.advance_stage(SeedStage.T2_RETRIEVAL) is False
     assert c.stage == "T2"
@@ -63,8 +69,11 @@ def test_crystal_full_lifecycle_t0_to_t6() -> None:
 
 def test_crystal_to_dict_includes_stage() -> None:
     c = Crystal(
-        rule="test", source_pattern="p", weight=0.5,
-        created_at="2026-01-01T00:00:00Z", stage="T2",
+        rule="test",
+        source_pattern="p",
+        weight=0.5,
+        created_at="2026-01-01T00:00:00Z",
+        stage="T2",
     )
     d = c.to_dict()
     assert d["stage"] == "T2"
@@ -103,9 +112,11 @@ def test_crystal_from_dict_backward_compat_no_stage() -> None:
 def test_crystallize_produces_t1_crystals(tmp_path: Path) -> None:
     """Newly crystallized rules should be at T1 (deposited)."""
     cryst = MemoryCrystallizer(crystal_path=tmp_path / "crystals.jsonl")
-    result = cryst.crystallize({
-        "verdicts": {"block": 5, "approve": 1},
-    })
+    result = cryst.crystallize(
+        {
+            "verdicts": {"block": 5, "approve": 1},
+        }
+    )
     assert len(result) >= 1
     for crystal in result:
         assert crystal.stage == "T1"
@@ -182,12 +193,18 @@ def test_dedupe_keeps_higher_stage(tmp_path: Path) -> None:
     cryst = MemoryCrystallizer(crystal_path=path)
 
     c1 = Crystal(
-        rule="my rule", source_pattern="a", weight=0.5,
-        created_at="2026-01-01T00:00:00Z", stage="T1",
+        rule="my rule",
+        source_pattern="a",
+        weight=0.5,
+        created_at="2026-01-01T00:00:00Z",
+        stage="T1",
     )
     c2 = Crystal(
-        rule="my rule", source_pattern="b", weight=0.6,
-        created_at="2026-01-02T00:00:00Z", stage="T3",
+        rule="my rule",
+        source_pattern="b",
+        weight=0.6,
+        created_at="2026-01-02T00:00:00Z",
+        stage="T3",
     )
     merged = cryst._dedupe_crystals([c1, c2])
     assert len(merged) == 1

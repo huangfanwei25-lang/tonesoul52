@@ -13,8 +13,12 @@ MODULE = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(MODULE)
 
 
-def test_build_report_contains_intent_and_handoff(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
-    monkeypatch.setattr(MODULE, "_git_touched_paths", lambda _repo_root: ["apps/api/server.py", "task.md"])
+def test_build_report_contains_intent_and_handoff(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    monkeypatch.setattr(
+        MODULE, "_git_touched_paths", lambda _repo_root: ["apps/api/server.py", "task.md"]
+    )
 
     payload = MODULE.build_report(
         repo_root=tmp_path,
@@ -103,7 +107,7 @@ def _args(**kwargs):
     """Build a minimal Args object for monkeypatching _parse_args."""
     defaults = {
         "repo_root": None,  # must be overridden
-        "out_dir": None,    # must be overridden
+        "out_dir": None,  # must be overridden
         "intent_id": "intent-strict",
         "summary": "strict test",
         "why": "必要的理由",
@@ -121,31 +125,43 @@ def _args(**kwargs):
 def test_strict_mode_rejects_empty_why(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     out_dir = tmp_path / "status"
     monkeypatch.setattr(MODULE, "_git_touched_paths", lambda _: [])
-    monkeypatch.setattr(MODULE, "_parse_args", lambda: _args(repo_root=tmp_path, out_dir=out_dir, why="  "))
+    monkeypatch.setattr(
+        MODULE, "_parse_args", lambda: _args(repo_root=tmp_path, out_dir=out_dir, why="  ")
+    )
 
     exit_code = MODULE.main()
     assert exit_code == 1
 
 
-def test_strict_mode_rejects_empty_invariants(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+def test_strict_mode_rejects_empty_invariants(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
     out_dir = tmp_path / "status"
     monkeypatch.setattr(MODULE, "_git_touched_paths", lambda _: [])
-    monkeypatch.setattr(MODULE, "_parse_args", lambda: _args(repo_root=tmp_path, out_dir=out_dir, invariant=[]))
+    monkeypatch.setattr(
+        MODULE, "_parse_args", lambda: _args(repo_root=tmp_path, out_dir=out_dir, invariant=[])
+    )
 
     exit_code = MODULE.main()
     assert exit_code == 1
 
 
-def test_strict_mode_rejects_empty_validation_cmds(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+def test_strict_mode_rejects_empty_validation_cmds(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
     out_dir = tmp_path / "status"
     monkeypatch.setattr(MODULE, "_git_touched_paths", lambda _: [])
-    monkeypatch.setattr(MODULE, "_parse_args", lambda: _args(repo_root=tmp_path, out_dir=out_dir, validation_cmd=[]))
+    monkeypatch.setattr(
+        MODULE, "_parse_args", lambda: _args(repo_root=tmp_path, out_dir=out_dir, validation_cmd=[])
+    )
 
     exit_code = MODULE.main()
     assert exit_code == 1
 
 
-def test_strict_mode_passes_with_all_fields(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+def test_strict_mode_passes_with_all_fields(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
     out_dir = tmp_path / "status"
     monkeypatch.setattr(MODULE, "_git_touched_paths", lambda _: ["task.md"])
     monkeypatch.setattr(MODULE, "_parse_args", lambda: _args(repo_root=tmp_path, out_dir=out_dir))

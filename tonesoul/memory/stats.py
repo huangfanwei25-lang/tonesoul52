@@ -96,4 +96,4 @@ def average_coherence(entries: Iterable[dict]) -> float:
             values.append(coherence)
     if not values:
         return 0.0
-    return sum(values) / len(values)
+    return round(sum(values) / len(values), 4)

@@ -104,7 +104,9 @@ def _build_pipeline(total: float) -> UnifiedPipeline:
     pipeline._get_deliberation = MagicMock(return_value=None)
     pipeline._get_council = MagicMock(return_value=None)
     pipeline._get_llm_client = MagicMock(return_value=_FakeLLMClient())
-    pipeline._get_tension_engine = MagicMock(return_value=_FakeTensionEngine(_FakeTensionResult(total)))
+    pipeline._get_tension_engine = MagicMock(
+        return_value=_FakeTensionEngine(_FakeTensionResult(total))
+    )
     return pipeline
 
 

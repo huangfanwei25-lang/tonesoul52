@@ -73,12 +73,18 @@ def test_build_record_axiomatic_admissibility_checklist_derives_direction():
 
 
 def test_build_axiomatic_admissibility_status_line_handles_optional_tags():
-    assert subject_mod.build_axiomatic_admissibility_status_line(
-        gate_posture="manual",
-        focus="focus",
-        risk_tags=["a", "b"],
-    ) == "manual | focus=focus | tags=a, b"
-    assert subject_mod.build_axiomatic_admissibility_status_line(
-        gate_posture="manual",
-        focus="focus",
-    ) == "manual | focus=focus"
+    assert (
+        subject_mod.build_axiomatic_admissibility_status_line(
+            gate_posture="manual",
+            focus="focus",
+            risk_tags=["a", "b"],
+        )
+        == "manual | focus=focus | tags=a, b"
+    )
+    assert (
+        subject_mod.build_axiomatic_admissibility_status_line(
+            gate_posture="manual",
+            focus="focus",
+        )
+        == "manual | focus=focus"
+    )

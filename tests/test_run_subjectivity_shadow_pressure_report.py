@@ -85,4 +85,6 @@ def test_main_writes_pressure_artifacts_and_uses_default_queries(
     assert md_path.exists()
     payload = json.loads(json_path.read_text(encoding="utf-8"))
     assert payload["inputs"]["queries"] == list(pressure_runner.DEFAULT_QUERIES)
-    assert any("used default subjectivity shadow query set" in warning for warning in payload["warnings"])
+    assert any(
+        "used default subjectivity shadow query set" in warning for warning in payload["warnings"]
+    )

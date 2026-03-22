@@ -24,7 +24,9 @@ def test_compute_zone_adjustment_normalizes_weighted_sum() -> None:
 
 
 def test_adjusted_zone_thresholds_apply_zone_shift() -> None:
-    thresholds = CouncilWeights(guardian=2.0, analyst=1.0, critic=1.0, advocate=0.0).adjusted_zone_thresholds()
+    thresholds = CouncilWeights(
+        guardian=2.0, analyst=1.0, critic=1.0, advocate=0.0
+    ).adjusted_zone_thresholds()
 
     assert thresholds == {
         "safe_to_transit": 0.368,
@@ -155,6 +157,8 @@ def test_get_alerts_returns_all_active_warnings() -> None:
 
 def test_get_alerts_returns_empty_for_short_history() -> None:
     monitor = LongTermQualityMonitor()
-    monitor.record_session({"avg_delta_s": 0.2, "contract_pass_rate": 1.0, "intervention_rate": 0.0})
+    monitor.record_session(
+        {"avg_delta_s": 0.2, "contract_pass_rate": 1.0, "intervention_rate": 0.0}
+    )
 
     assert monitor.get_alerts() == []

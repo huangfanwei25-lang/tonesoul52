@@ -2,8 +2,17 @@
 
 > 這不是只會回答的 AI。它會先檢查語義偏移、記住真正重要的事，並留下可追溯紀錄。
 > 如果你要的是「AI 不會亂講話」，這個專案就是為這件事做的。
+>
+> ToneSoul 也是一套給 AI 治理、倫理記憶系統、verifier-first agents、知識圖譜檢索、adapter-ready semantic governance 研究用的外部化認知架構。
 
 [English](README.md)
+
+## 檢索關鍵字
+
+AI governance、ethical AI、semantic governance、cognitive architecture、externalized cognition、
+cognitive operating system、verifier-first agents、self-auditing AI、agent memory、memory graph、
+knowledge graph retrieval、multi-agent deliberation、runtime alignment、local-first AI、
+adapter-ready architecture、LoRA-ready distillation。
 
 ## 30 秒看懂它能做什麼
 
@@ -57,6 +66,10 @@ python scripts/tension_dashboard.py --work-category research
 ![ToneSoul Dashboard](docs/images/dashboard_preview.png)
 
 ## 2 分鐘看懂架構
+
+ToneSoul 不應只被理解成 prompt stack，而應被理解成一套 externalized cognitive operating system。
+正典架構文件在
+[`docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md`](docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md)。
 
 ```text
 使用者輸入

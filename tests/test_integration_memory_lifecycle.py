@@ -3,6 +3,8 @@ from __future__ import annotations
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
+import pytest
+
 from tonesoul.memory.crystallizer import MemoryCrystallizer
 from tonesoul.memory.decay import HALF_LIFE_DAYS, calculate_decay
 from tonesoul.memory.soul_db import MemorySource, SqliteSoulDB
@@ -126,7 +128,7 @@ def test_memory_stats_summarize_consolidated_entries() -> None:
 
     assert count_by_verdict(entries) == {"approve": 2, "block": 1}
     assert most_common_divergence(entries) == "risk"
-    assert average_coherence(entries) == 0.6
+    assert average_coherence(entries) == pytest.approx(0.6)
 
 
 def test_decay_curve_distinguishes_fresh_from_old_records() -> None:

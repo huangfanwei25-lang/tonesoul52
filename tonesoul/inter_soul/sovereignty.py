@@ -64,7 +64,9 @@ class SovereigntyGuard:
             axiom_ids=frozenset(axiom_ids),
         )
 
-    def check_violation(self, remote_packet_or_fields: TensionPacket | Mapping[str, object]) -> Optional[str]:
+    def check_violation(
+        self, remote_packet_or_fields: TensionPacket | Mapping[str, object]
+    ) -> Optional[str]:
         if isinstance(remote_packet_or_fields, TensionPacket):
             payload: Mapping[str, object] = remote_packet_or_fields.to_dict()
         elif isinstance(remote_packet_or_fields, Mapping):

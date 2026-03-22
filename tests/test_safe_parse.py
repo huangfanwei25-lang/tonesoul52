@@ -13,9 +13,7 @@ class _SamplePayload(BaseModel):
 
 
 def test_safe_parse_json_valid() -> None:
-    payload = safe_parse_json(
-        '{"title": "alpha", "score": 3, "meta": {"nested": {"ok": true}}}'
-    )
+    payload = safe_parse_json('{"title": "alpha", "score": 3, "meta": {"nested": {"ok": true}}}')
 
     assert payload == {
         "title": "alpha",
@@ -25,9 +23,7 @@ def test_safe_parse_json_valid() -> None:
 
 
 def test_safe_parse_json_with_trailing_commas() -> None:
-    payload = safe_parse_json(
-        '{"title": "alpha", "score": 3, "meta": {"tags": ["x", "y",],},}'
-    )
+    payload = safe_parse_json('{"title": "alpha", "score": 3, "meta": {"tags": ["x", "y",],},}')
 
     assert payload == {
         "title": "alpha",
@@ -37,13 +33,11 @@ def test_safe_parse_json_with_trailing_commas() -> None:
 
 
 def test_safe_parse_json_from_markdown_codeblock() -> None:
-    payload = safe_parse_json(
-        """
+    payload = safe_parse_json("""
         ```json
         {"title": "alpha", "score": 3}
         ```
-        """
-    )
+        """)
 
     assert payload == {"title": "alpha", "score": 3}
 

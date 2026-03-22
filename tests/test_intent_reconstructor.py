@@ -44,7 +44,9 @@ def test_normalize_baseline_accepts_wrapped_tsr_and_rejects_invalid_payloads() -
     assert module._normalize_baseline({"tsr": {"T": "nope"}}) is None
 
 
-def test_average_tsr_uses_first_available_text_field_and_ignores_invalid_scores(monkeypatch) -> None:
+def test_average_tsr_uses_first_available_text_field_and_ignores_invalid_scores(
+    monkeypatch,
+) -> None:
     def fake_score(text: str):
         if text == "reflection":
             return {"tsr": {"T": 1.0, "S_norm": 0.5, "R": 0.0}}
@@ -70,7 +72,9 @@ def test_compute_delta_norm_returns_none_without_baseline_or_valid_tsr(monkeypat
     monkeypatch.setattr(module, "_resolve_baseline", lambda context: None)
     assert module._compute_delta_norm("draft", {}) is None
 
-    monkeypatch.setattr(module, "_resolve_baseline", lambda context: {"T": 0.0, "S_norm": 0.0, "R": 0.0})
+    monkeypatch.setattr(
+        module, "_resolve_baseline", lambda context: {"T": 0.0, "S_norm": 0.0, "R": 0.0}
+    )
     monkeypatch.setattr(module.tsr_metrics, "score", lambda text: {"tsr": "bad"})
     assert module._compute_delta_norm("draft", {}) is None
 
@@ -78,11 +82,18 @@ def test_compute_delta_norm_returns_none_without_baseline_or_valid_tsr(monkeypat
 def test_should_warn_collapse_requires_autonomous_high_delta_and_no_external_trigger() -> None:
     assert module._should_warn_collapse(Genesis.REACTIVE_USER, 0.9, {}) is False
     assert module._should_warn_collapse(Genesis.AUTONOMOUS, 0.7, {}) is False
-    assert module._should_warn_collapse(Genesis.AUTONOMOUS, 0.9, {"trigger": "user_request"}) is False
-    assert module._should_warn_collapse(Genesis.AUTONOMOUS, 0.9, {"trigger": "self_reflection"}) is True
+    assert (
+        module._should_warn_collapse(Genesis.AUTONOMOUS, 0.9, {"trigger": "user_request"}) is False
+    )
+    assert (
+        module._should_warn_collapse(Genesis.AUTONOMOUS, 0.9, {"trigger": "self_reflection"})
+        is True
+    )
 
 
-def test_infer_genesis_uses_journal_baseline_and_suppresses_warning_with_trigger(monkeypatch) -> None:
+def test_infer_genesis_uses_journal_baseline_and_suppresses_warning_with_trigger(
+    monkeypatch,
+) -> None:
     monkeypatch.setattr(module, "load_recent_memory", lambda n=10: [{"summary": "baseline text"}])
 
     def fake_score(text: str):

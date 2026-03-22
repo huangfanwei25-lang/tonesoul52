@@ -20,7 +20,7 @@ try:
     from memory.rag_token_gate import NarrativeGate
 
     _NARRATIVE_GATE_IMPORT_ERROR = None
-except ImportError as e:
+except (ImportError, OSError) as e:
     _NARRATIVE_GATE_IMPORT_ERROR = e
 
     class NarrativeGate:  # type: ignore[no-redef]

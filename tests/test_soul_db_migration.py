@@ -53,8 +53,7 @@ def test_sqlite_soul_db_migrates_legacy_memories_schema_with_provenance(tmp_path
     db_path = tmp_path / "legacy_memories.db"
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
-    cursor.execute(
-        """
+    cursor.execute("""
         CREATE TABLE memories (
             id TEXT PRIMARY KEY,
             type TEXT NOT NULL,
@@ -65,8 +64,7 @@ def test_sqlite_soul_db_migrates_legacy_memories_schema_with_provenance(tmp_path
             parent_id TEXT,
             tags TEXT
         )
-        """
-    )
+        """)
     conn.commit()
     conn.close()
 

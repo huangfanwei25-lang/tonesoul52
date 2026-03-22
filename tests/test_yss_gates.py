@@ -125,7 +125,9 @@ def test_intent_achievement_gate_blocks_when_failed_and_required(tmp_path: Path)
 
 
 def test_build_test_gate_handles_acceptance_exception(monkeypatch) -> None:
-    monkeypatch.setattr(module, "run_acceptance", lambda: (_ for _ in ()).throw(RuntimeError("boom")))
+    monkeypatch.setattr(
+        module, "run_acceptance", lambda: (_ for _ in ()).throw(RuntimeError("boom"))
+    )
 
     result = module.build_test_gate("workspace")
 

@@ -84,7 +84,9 @@ def test_build_execution_report_with_frame_plan(monkeypatch) -> None:
     )
 
     assert "## Selected Frames" in report
-    assert "- analysis (score=4) roles=['Risk', 'Recorder'] gov_roles=['guardian', 'scribe']" in report
+    assert (
+        "- analysis (score=4) roles=['Risk', 'Recorder'] gov_roles=['guardian', 'scribe']" in report
+    )
     assert "## Rejected Frames" in report
     assert "## Role Summary" in report
     assert "## Council Summary" in report

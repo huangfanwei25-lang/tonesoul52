@@ -53,7 +53,11 @@ class PersonaTrackRecord:
     def create(cls, path: Path) -> "PersonaTrackRecord":
         return cls(
             path=path,
-            global_stats={"muse": _default_stat(), "logos": _default_stat(), "aegis": _default_stat()},
+            global_stats={
+                "muse": _default_stat(),
+                "logos": _default_stat(),
+                "aegis": _default_stat(),
+            },
             resonance_stats={},
         )
 
@@ -79,7 +83,9 @@ class PersonaTrackRecord:
             "resonance_stats": self.resonance_stats,
             "summary": self.summary(),
         }
-        self.path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        self.path.write_text(
+            json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+        )
 
     def record_outcome(
         self,
@@ -176,7 +182,9 @@ class PersonaTrackRecord:
 
 
 def default_track_record_path() -> Path:
-    return Path(__file__).resolve().parents[2] / "docs" / "status" / "persona_track_record_latest.json"
+    return (
+        Path(__file__).resolve().parents[2] / "docs" / "status" / "persona_track_record_latest.json"
+    )
 
 
 def create_persona_track_record(path: Optional[Path] = None) -> PersonaTrackRecord:

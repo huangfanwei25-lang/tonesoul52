@@ -40,7 +40,10 @@ def test_jsonl_file_handler_writes_formatted_record(tmp_path):
     files = list(tmp_path.glob("tonesoul_*.jsonl"))
 
     assert len(files) == 1
-    assert json.loads(files[0].read_text(encoding="utf-8").strip()) == {"event": "hello", "value": 3}
+    assert json.loads(files[0].read_text(encoding="utf-8").strip()) == {
+        "event": "hello",
+        "value": 3,
+    }
     handler.close()
 
 

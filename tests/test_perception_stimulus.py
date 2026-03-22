@@ -48,7 +48,9 @@ def test_score_relevance_returns_zero_when_keywords_are_empty():
 def test_score_novelty_distinguishes_short_and_structured_content():
     processor = StimulusProcessor(min_word_count=1)
     short_markdown = "word " * 50
-    structured_markdown = ("word " * 120) + "\n```py\nprint('x')\n```\n```py\nprint('y')\n```\n- item"
+    structured_markdown = (
+        "word " * 120
+    ) + "\n```py\nprint('x')\n```\n```py\nprint('y')\n```\n- item"
 
     assert processor._score_novelty(short_markdown) == 0.2
     assert processor._score_novelty(structured_markdown) == 0.8

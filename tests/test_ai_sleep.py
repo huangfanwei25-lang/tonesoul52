@@ -184,7 +184,9 @@ def test_build_reviewed_vow_payload_promotes_tension_candidate() -> None:
     assert payload["source_record_ids"] == ["stim-001"]
     assert payload["promotion_gate"]["status"] == "reviewed"
     assert payload["promotion_gate"]["reviewed_by"] == "operator"
-    assert payload["promotion_gate"]["review_basis"] == "Repeated tension across two reviewed cycles."
+    assert (
+        payload["promotion_gate"]["review_basis"] == "Repeated tension across two reviewed cycles."
+    )
 
 
 def test_build_reviewed_vow_payload_rejects_non_tension_source() -> None:

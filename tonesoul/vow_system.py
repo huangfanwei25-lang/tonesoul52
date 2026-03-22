@@ -374,14 +374,18 @@ class VowEnforcer:
             if self.inventory is not None:
                 violation_reason: Optional[str] = None
                 if not result.passed:
-                    violation_reason = f"score={result.score:.3f} < threshold={result.threshold:.3f}"
+                    violation_reason = (
+                        f"score={result.score:.3f} < threshold={result.threshold:.3f}"
+                    )
                 self.inventory.record_check(
                     vow_id=vow.id,
                     passed=result.passed,
                     score=result.score,
                     threshold=result.threshold,
                     vow_title=vow.title,
-                    context_label=str(context.get("intent_id", "")) if isinstance(context, dict) else None,
+                    context_label=(
+                        str(context.get("intent_id", "")) if isinstance(context, dict) else None
+                    ),
                     violation_reason=violation_reason,
                 )
 

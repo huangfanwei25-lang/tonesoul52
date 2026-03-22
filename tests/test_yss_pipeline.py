@@ -144,7 +144,9 @@ def test_build_required_files_includes_optional_artifacts(tmp_path: Path) -> Non
     ctx.tech_trace_capture_path = str(tmp_path / "capture.json")
     ctx.tech_trace_normalize_path = str(tmp_path / "normalize.json")
     ctx.intent_verification_path = str(tmp_path / "intent.json")
-    ctx.ystm_outputs.update({"audit": str(tmp_path / "audit.json"), "terrain": str(tmp_path / "terrain.html")})
+    ctx.ystm_outputs.update(
+        {"audit": str(tmp_path / "audit.json"), "terrain": str(tmp_path / "terrain.html")}
+    )
 
     required = module._build_required_files(ctx)
 
@@ -208,7 +210,9 @@ def test_collect_gate_results_force_gates_overrides_skip(
         lambda *_args, **_kwargs: _gate_result("escalation_gate"),
     )
     monkeypatch.setattr(module, "context_lint", lambda _payload: _gate_result("context_lint"))
-    monkeypatch.setattr(module, "router_replay", lambda *_args, **_kwargs: _gate_result("router_replay"))
+    monkeypatch.setattr(
+        module, "router_replay", lambda *_args, **_kwargs: _gate_result("router_replay")
+    )
     monkeypatch.setattr(module, "role_alignment", lambda _plan: _gate_result("role_alignment"))
     monkeypatch.setattr(
         module,
@@ -231,7 +235,9 @@ def test_collect_gate_results_force_gates_overrides_skip(
         lambda *_args, **_kwargs: _gate_result("intent_achievement_gate"),
     )
     monkeypatch.setattr(module, "dcs_gate", lambda *_args, **_kwargs: _gate_result("dcs_gate"))
-    monkeypatch.setattr(module, "build_test_gate", lambda _workspace: _gate_result("build_test_gate"))
+    monkeypatch.setattr(
+        module, "build_test_gate", lambda _workspace: _gate_result("build_test_gate")
+    )
     monkeypatch.setattr(
         module,
         "evidence_completeness",

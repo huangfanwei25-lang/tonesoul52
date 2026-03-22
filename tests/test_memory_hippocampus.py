@@ -157,7 +157,9 @@ def test_compute_error_vector_normalizes_nonzero_and_preserves_zero_vector() -> 
     assert np.allclose(zero, np.array([0.0, 0.0], dtype=np.float32))
 
 
-def test_recall_corrective_uses_default_query_and_passes_tension_context(monkeypatch, tmp_path) -> None:
+def test_recall_corrective_uses_default_query_and_passes_tension_context(
+    monkeypatch, tmp_path
+) -> None:
     hippo = Hippocampus(db_path=str(tmp_path / "corrective-db"))
     captured = {}
 

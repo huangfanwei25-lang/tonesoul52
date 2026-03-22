@@ -76,8 +76,11 @@ class TestSoulDbProperties:
         with TemporaryDirectory() as tmpdir:
             db = JsonlSoulDB(source_map={MemorySource.CUSTOM: _db_path(tmpdir)})
             old = (
-                datetime.now(timezone.utc) - timedelta(days=90)
-            ).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+                (datetime.now(timezone.utc) - timedelta(days=90))
+                .replace(microsecond=0)
+                .isoformat()
+                .replace("+00:00", "Z")
+            )
             db.append(MemorySource.CUSTOM, _record(text, timestamp=old))
             results = list(
                 db.query(

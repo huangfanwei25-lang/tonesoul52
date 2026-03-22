@@ -39,7 +39,9 @@ class ToneSoulMirror:
         self.tension_engine = tension_engine
         self.governance_kernel = governance_kernel
 
-    def reflect(self, raw_output: str, context: Optional[Dict[str, Any]] = None) -> DualTrackResponse:
+    def reflect(
+        self, raw_output: str, context: Optional[Dict[str, Any]] = None
+    ) -> DualTrackResponse:
         raw = str(raw_output or "")
         ctx = dict(context or {})
 
@@ -251,9 +253,7 @@ class ToneSoulMirror:
                 }
             )
         provenance = {
-            key: value
-            for key, value in provenance.items()
-            if value not in (None, "", [], {})
+            key: value for key, value in provenance.items() if value not in (None, "", [], {})
         }
 
         return {

@@ -661,11 +661,15 @@ class SqliteSoulDB:
         timestamp = str(timestamp) if timestamp else _iso_now()
 
         if source == MemorySource.PROVENANCE_LEDGER:
-            event_type = payload_value.get("event_type") or payload_value.get("type") or "provenance"
+            event_type = (
+                payload_value.get("event_type") or payload_value.get("type") or "provenance"
+            )
             content = _serialize_json(payload_value)
             hash_value = payload_value.get("hash") if isinstance(payload_value, dict) else None
             prev_hash = payload_value.get("prev_hash") if isinstance(payload_value, dict) else None
-            verified_value = payload_value.get("verified") if isinstance(payload_value, dict) else False
+            verified_value = (
+                payload_value.get("verified") if isinstance(payload_value, dict) else False
+            )
             verified = 1 if verified_value else 0
 
             def _write_isnad(conn: sqlite3.Connection) -> None:
@@ -705,7 +709,9 @@ class SqliteSoulDB:
         tags_value = None
         if tags:
             tags_value = _serialize_json(tags)
-        provenance_text = _serialize_json(provenance_value) if provenance_value is not None else None
+        provenance_text = (
+            _serialize_json(provenance_value) if provenance_value is not None else None
+        )
 
         def _write_memory(conn: sqlite3.Connection) -> None:
             cursor = conn.cursor()

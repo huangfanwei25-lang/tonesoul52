@@ -83,7 +83,9 @@ def test_reflection_verdict_to_dict_includes_nested_vow_payload() -> None:
     assert payload["vow_result"]["blocked"] is True
 
 
-def test_self_check_returns_no_revision_when_all_guards_pass(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_self_check_returns_no_revision_when_all_guards_pass(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     monkeypatch.setattr(vow_system.VowEnforcer, "enforce", lambda self, output: _vow_result())
     pipeline = _pipeline(council_decision="approve", tension_total=0.54)
 
@@ -205,7 +207,9 @@ def test_self_check_accepts_council_decision_override(monkeypatch: pytest.Monkey
     assert verdict.should_revise is True
 
 
-def test_process_attaches_reflection_verdict_to_dispatch_trace(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_process_attaches_reflection_verdict_to_dispatch_trace(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     pipeline = UnifiedPipeline(mirror_enabled=False)
     pipeline._get_governance_kernel = MagicMock(return_value=None)
     pipeline._get_tonebridge = MagicMock(return_value=None)

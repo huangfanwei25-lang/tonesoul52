@@ -7,7 +7,7 @@ Property-Based Tests for VowSystem
 import string
 
 import pytest
-from hypothesis import given, settings
+from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 
 from tonesoul.vow_system import (
@@ -20,6 +20,15 @@ from tonesoul.vow_system import (
 )
 
 # === Strategies ===
+
+
+UNIT_FLOAT_STRATEGY = st.floats(
+    min_value=0.0,
+    max_value=1.0,
+    allow_nan=False,
+    allow_infinity=False,
+    width=32,
+)
 
 
 @st.composite
@@ -40,12 +49,12 @@ def vow_strategy(draw):
         expected=draw(
             st.dictionaries(
                 keys=st.sampled_from(["truthfulness", "responsibility", "coherence", "safety"]),
-                values=st.floats(min_value=0.0, max_value=1.0),
+                values=UNIT_FLOAT_STRATEGY,
                 min_size=1,
                 max_size=4,
             )
         ),
-        violation_threshold=draw(st.floats(min_value=0.0, max_value=1.0)),
+        violation_threshold=draw(UNIT_FLOAT_STRATEGY),
         action_on_violation=draw(
             st.sampled_from([VowAction.PASS, VowAction.FLAG, VowAction.REPAIR, VowAction.BLOCK])
         ),
@@ -59,7 +68,7 @@ def vow_strategy(draw):
 class TestVowProperties:
     """測試 Vow 的不變量"""
 
-    @settings(max_examples=50)
+    @settings(max_examples=50, suppress_health_check=[HealthCheck.too_slow])
     @given(vow_strategy())
     def test_vow_serialization_roundtrip(self, vow):
         """屬性: Vow 序列化後反序列化應該相等"""
@@ -74,13 +83,13 @@ class TestVowProperties:
         assert reconstructed.action_on_violation == vow.action_on_violation
         assert reconstructed.active == vow.active
 
-    @settings(max_examples=50)
+    @settings(max_examples=50, suppress_health_check=[HealthCheck.too_slow])
     @given(vow_strategy())
     def test_vow_threshold_bounds(self, vow):
         """屬性: violation_threshold 必須在 [0, 1] 範圍內"""
         assert 0.0 <= vow.violation_threshold <= 1.0
 
-    @settings(max_examples=50)
+    @settings(max_examples=50, suppress_health_check=[HealthCheck.too_slow])
     @given(vow_strategy())
     def test_vow_to_dict_has_required_keys(self, vow):
         """屬性: to_dict() 必須包含所有必要鍵值"""
@@ -100,7 +109,7 @@ class TestVowProperties:
 class TestVowRegistryProperties:
     """測試 VowRegistry 的不變量"""
 
-    @settings(max_examples=50)
+    @settings(max_examples=50, suppress_health_check=[HealthCheck.too_slow])
     @given(st.lists(vow_strategy(), min_size=1, max_size=10, unique_by=lambda v: v.id))
     def test_registry_idempotency(self, vows):
         """屬性: 註冊同一個 vow 多次等同於註冊一次"""
@@ -118,7 +127,7 @@ class TestVowRegistryProperties:
 
         assert count_after_first == count_after_second
 
-    @settings(max_examples=50)
+    @settings(max_examples=50, suppress_health_check=[HealthCheck.too_slow])
     @given(st.lists(vow_strategy(), min_size=1, max_size=10, unique_by=lambda v: v.id))
     def test_registry_get_returns_registered_vows(self, vows):
         """屬性: 註冊的 vow 一定可以被 get() 取回"""
@@ -132,7 +141,7 @@ class TestVowRegistryProperties:
             assert retrieved is not None
             assert retrieved.id == vow.id
 
-    @settings(max_examples=50)
+    @settings(max_examples=50, suppress_health_check=[HealthCheck.too_slow])
     @given(st.lists(vow_strategy(), min_size=2, max_size=10, unique_by=lambda v: v.id))
     def test_registry_unregister_decreases_count(self, vows):
         """屬性: unregister 會減少 vow 數量"""
@@ -187,8 +196,8 @@ class TestVowCheckResultProperties:
     @given(
         st.text(min_size=1, max_size=20),  # vow_id
         st.booleans(),  # passed
-        st.floats(min_value=0.0, max_value=1.0),  # score
-        st.floats(min_value=0.0, max_value=1.0),  # threshold
+        UNIT_FLOAT_STRATEGY,  # score
+        UNIT_FLOAT_STRATEGY,  # threshold
     )
     def test_check_result_score_bounds(self, vow_id, passed, score, threshold):
         """屬性: score 必須在 [0, 1] 範圍內"""
@@ -199,8 +208,8 @@ class TestVowCheckResultProperties:
     @given(
         st.text(min_size=1, max_size=20),  # vow_id
         st.booleans(),  # passed
-        st.floats(min_value=0.0, max_value=1.0),  # score
-        st.floats(min_value=0.0, max_value=1.0),  # threshold
+        UNIT_FLOAT_STRATEGY,  # score
+        UNIT_FLOAT_STRATEGY,  # threshold
     )
     def test_check_result_to_dict_roundtrip(self, vow_id, passed, score, threshold):
         """屬性: VowCheckResult 序列化後反序列化應該相等"""

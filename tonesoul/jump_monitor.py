@@ -29,8 +29,8 @@ class JumpSignal:
 
     triggered: bool = False
     reasoning_convergence: float = 1.0  # ΔU/ΔInput, lower = more converged
-    chain_integrity: float = 1.0        # 0.0-1.0, lower = less complete
-    self_reference_ratio: float = 0.0   # higher = more self-referential
+    chain_integrity: float = 1.0  # 0.0-1.0, lower = less complete
+    self_reference_ratio: float = 0.0  # higher = more self-referential
     indicators_tripped: int = 0
     reason: str = ""
 

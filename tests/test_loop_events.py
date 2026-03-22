@@ -53,16 +53,16 @@ def test_iteration_start_event_serializes_iteration_fields():
 
 
 def test_non_overridden_events_keep_base_to_dict_shape():
-    assert LoopCancelledEvent(result=LoopResult(state="cancelled", iterations=1, duration_ms=2)).to_dict() == {
-        "event_type": "loop_cancelled"
-    }
+    assert LoopCancelledEvent(
+        result=LoopResult(state="cancelled", iterations=1, duration_ms=2)
+    ).to_dict() == {"event_type": "loop_cancelled"}
     assert IterationCompleteEvent(iteration=2, duration_ms=12).to_dict() == {
         "event_type": "iteration_complete"
     }
     assert AIResponseEvent(text="hello", iteration=1).to_dict() == {"event_type": "ai_response"}
-    assert ToolExecutionStartEvent(tool_name="search", parameters={"q": "x"}, iteration=1).to_dict() == {
-        "event_type": "tool_execution_start"
-    }
+    assert ToolExecutionStartEvent(
+        tool_name="search", parameters={"q": "x"}, iteration=1
+    ).to_dict() == {"event_type": "tool_execution_start"}
     assert ToolExecutionEvent(
         tool_name="search",
         parameters={"q": "x"},
@@ -70,9 +70,9 @@ def test_non_overridden_events_keep_base_to_dict_shape():
         duration_ms=5,
         iteration=1,
     ).to_dict() == {"event_type": "tool_execution"}
-    assert PromiseDetectedEvent(phrase="I promise", source="ai_response", iteration=2).to_dict() == {
-        "event_type": "promise_detected"
-    }
+    assert PromiseDetectedEvent(
+        phrase="I promise", source="ai_response", iteration=2
+    ).to_dict() == {"event_type": "promise_detected"}
     assert VowDeclarationEvent(vow_id="v1", declared=True, iteration=3).to_dict() == {
         "event_type": "vow_declaration"
     }

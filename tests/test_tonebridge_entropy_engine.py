@@ -137,7 +137,9 @@ def test_analyze_reports_commitment_overload_and_repetition_alerts() -> None:
 
 def test_analyze_reports_trajectory_narrowing_and_constraint_violation(monkeypatch) -> None:
     engine = EntropyEngine()
-    monkeypatch.setattr(engine, "check_constraint_violation", lambda *_args, **_kwargs: ["violation"])
+    monkeypatch.setattr(
+        engine, "check_constraint_violation", lambda *_args, **_kwargs: ["violation"]
+    )
 
     engine.analyze("response-1", [], "topic-a")
     engine.analyze("response-2", [], "topic-a")

@@ -389,8 +389,20 @@ def test_retire_crystal_removes_matching_rule(tmp_path: Path):
     crystallizer = MemoryCrystallizer(crystal_path=crystal_path, min_frequency=1)
     crystallizer._write_crystals(
         [
-            Crystal(rule="keep-me", source_pattern="a", weight=0.8, created_at=_iso_days_ago(1), tags=["a"]),
-            Crystal(rule="remove-me", source_pattern="b", weight=0.6, created_at=_iso_days_ago(1), tags=["b"]),
+            Crystal(
+                rule="keep-me",
+                source_pattern="a",
+                weight=0.8,
+                created_at=_iso_days_ago(1),
+                tags=["a"],
+            ),
+            Crystal(
+                rule="remove-me",
+                source_pattern="b",
+                weight=0.6,
+                created_at=_iso_days_ago(1),
+                tags=["b"],
+            ),
         ]
     )
 
@@ -406,7 +418,15 @@ def test_retire_crystal_case_insensitive(tmp_path: Path):
     crystal_path = tmp_path / "crystals.jsonl"
     crystallizer = MemoryCrystallizer(crystal_path=crystal_path, min_frequency=1)
     crystallizer._write_crystals(
-        [Crystal(rule="Remove Me", source_pattern="x", weight=0.5, created_at=_iso_days_ago(1), tags=["x"])]
+        [
+            Crystal(
+                rule="Remove Me",
+                source_pattern="x",
+                weight=0.5,
+                created_at=_iso_days_ago(1),
+                tags=["x"],
+            )
+        ]
     )
 
     assert crystallizer.retire_crystal("  REMOVE ME  ") is True
@@ -417,7 +437,11 @@ def test_retire_crystal_returns_false_when_not_found(tmp_path: Path):
     crystal_path = tmp_path / "crystals.jsonl"
     crystallizer = MemoryCrystallizer(crystal_path=crystal_path, min_frequency=1)
     crystallizer._write_crystals(
-        [Crystal(rule="keep", source_pattern="x", weight=0.5, created_at=_iso_days_ago(1), tags=["x"])]
+        [
+            Crystal(
+                rule="keep", source_pattern="x", weight=0.5, created_at=_iso_days_ago(1), tags=["x"]
+            )
+        ]
     )
 
     assert crystallizer.retire_crystal("nonexistent") is False

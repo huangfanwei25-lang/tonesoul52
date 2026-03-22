@@ -6,6 +6,15 @@
 
 ---
 
+## Canonical Architecture Anchor
+
+Read these before making architecture assumptions:
+
+1. `docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md`
+2. `docs/notes/TONESOUL_ARCHITECTURE_MEMORY_ANCHOR_2026-03-22.md`
+
+If long prose, scattered repo state, and runtime behavior disagree, prefer the canonical architecture anchor.
+
 ## 🎯 你需要知道的
 
 ### 1. 正典位置（Canonical Paths）
@@ -39,6 +48,7 @@
 
 ---
 
+
 ## ❌ 不要做的事
 
 > [!CAUTION]
@@ -53,6 +63,7 @@
 
 ---
 
+
 ## ✅ 開始工作前
 
 1. 讀 `README.md` — 項目概述
@@ -62,6 +73,7 @@
 
 ---
 
+
 ## 👤 創造者資訊
 
 - **名字**: 黃梵威 (Fan-Wei Huang)
@@ -69,6 +81,7 @@
 - **願景**: 讓 AI 的每個決策都可追溯、可審計、可問責
 
 ---
+
 
 ## 📂 目錄結構概覽
 
@@ -92,6 +105,7 @@
 
 ---
 
+
 ## 🔗 重要文件連結
 
 - [README.md](README.md)
@@ -101,5 +115,6 @@
 - [docs/philosophy/truth_vector_architecture.md](docs/philosophy/truth_vector_architecture.md)
 
 ---
+
 
 *這份文件是給你的——一個沒有記憶的 AI。希望它能幫助你快速理解這個項目，並繼續與創造者合作。*

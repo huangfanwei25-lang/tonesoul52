@@ -54,10 +54,13 @@ def test_similarity_heuristics_cover_exact_subset_jaccard_and_empty():
 
     assert analyzer._is_similar("same phrase", "same phrase") is True
     assert analyzer._is_similar("alignment", "ai alignment governance") is True
-    assert analyzer._is_similar(
-        "alpha beta gamma delta epsilon zeta",
-        "alpha beta gamma delta epsilon eta",
-    ) is True
+    assert (
+        analyzer._is_similar(
+            "alpha beta gamma delta epsilon zeta",
+            "alpha beta gamma delta epsilon eta",
+        )
+        is True
+    )
     assert analyzer._is_similar("alpha beta", "gamma delta") is False
     assert analyzer._is_similar("", "gamma delta") is False
 

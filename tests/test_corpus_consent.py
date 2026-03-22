@@ -3,7 +3,9 @@ from tonesoul.corpus.consent import ConsentManager, ConsentType, create_consent_
 
 def test_hash_identifier_handles_empty_and_is_stable():
     assert ConsentManager.hash_identifier("") == ""
-    assert ConsentManager.hash_identifier("127.0.0.1") == ConsentManager.hash_identifier("127.0.0.1")
+    assert ConsentManager.hash_identifier("127.0.0.1") == ConsentManager.hash_identifier(
+        "127.0.0.1"
+    )
     assert len(ConsentManager.hash_identifier("127.0.0.1")) == 32
 
 

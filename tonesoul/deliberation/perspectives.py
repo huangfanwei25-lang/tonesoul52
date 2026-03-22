@@ -385,7 +385,9 @@ class AegisPerspective(BasePerspective):
 
         prior_risk = float(prior_aegis.get("safety_risk", 0.0) or 0.0)
         prior_concerns = prior_aegis.get("concerns") or []
-        unresolved = bool(prior_concerns) or prior_risk > 0.0 or bool(prior_aegis.get("veto_triggered"))
+        unresolved = (
+            bool(prior_concerns) or prior_risk > 0.0 or bool(prior_aegis.get("veto_triggered"))
+        )
         if not unresolved:
             return view
 

@@ -78,12 +78,7 @@ class TensionNegotiator:
         lambda_gap = 0.0 if local.lambda_state == remote.lambda_state else 0.25
         signal_gap = cls._compute_signal_gap(local, remote)
 
-        score = (
-            0.45 * total_gap
-            + 0.35 * signal_gap
-            + 0.10 * zone_gap
-            + 0.10 * lambda_gap
-        )
+        score = 0.45 * total_gap + 0.35 * signal_gap + 0.10 * zone_gap + 0.10 * lambda_gap
         return max(0.0, min(1.0, score))
 
     @staticmethod

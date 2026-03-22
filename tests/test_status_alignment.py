@@ -27,7 +27,9 @@ def test_route_family_returns_empty_without_family() -> None:
 
 
 def test_secondary_labels_splits_and_filters_empty_items() -> None:
-    labels = _secondary_labels(" F4_execution_contract_integrity, ,F6_semantic_role_boundary_integrity ,,")
+    labels = _secondary_labels(
+        " F4_execution_contract_integrity, ,F6_semantic_role_boundary_integrity ,,"
+    )
 
     assert labels == [
         "F4_execution_contract_integrity",
@@ -73,9 +75,7 @@ def test_alignment_marks_aligned_and_preserves_shared_secondary() -> None:
 
 
 def test_alignment_marks_diverged_for_different_families() -> None:
-    weekly_preview = {
-        "problem_route_status_line": "route | family=F1_grounding_evidence_integrity"
-    }
+    weekly_preview = {"problem_route_status_line": "route | family=F1_grounding_evidence_integrity"}
     dream_preview = {
         "problem_route_status_line": "route | family=F6_semantic_role_boundary_integrity"
     }
@@ -89,9 +89,7 @@ def test_alignment_marks_diverged_for_different_families() -> None:
 
 
 def test_alignment_marks_partial_when_only_weekly_has_family() -> None:
-    weekly_preview = {
-        "problem_route_status_line": "route | family=F4_execution_contract_integrity"
-    }
+    weekly_preview = {"problem_route_status_line": "route | family=F4_execution_contract_integrity"}
 
     assert (
         build_dream_weekly_alignment_line(weekly_preview, {})

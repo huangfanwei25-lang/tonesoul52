@@ -22,7 +22,9 @@ class _FakeTensionResult:
         self.zone = SimpleNamespace(value="tension")
         self.prediction = SimpleNamespace(lyapunov_exponent=0.05, trend="rising")
         self.compression = SimpleNamespace(compression_ratio=0.6, gamma_effective=1.0)
-        self.throttle = SimpleNamespace(value="moderate", severity=SimpleNamespace(value="moderate"), delay_ms=0)
+        self.throttle = SimpleNamespace(
+            value="moderate", severity=SimpleNamespace(value="moderate"), delay_ms=0
+        )
         self.work_category = "engineering"
         self.signals = SimpleNamespace(semantic_delta=0.0)
 
@@ -35,7 +37,10 @@ class _FakeTensionResult:
                 "compression_ratio": self.compression.compression_ratio,
                 "gamma_effective": self.compression.gamma_effective,
             },
-            "throttle": {"severity": self.throttle.severity.value, "delay_ms": self.throttle.delay_ms},
+            "throttle": {
+                "severity": self.throttle.severity.value,
+                "delay_ms": self.throttle.delay_ms,
+            },
         }
 
 
@@ -185,7 +190,11 @@ def _build_pipeline(
         return_value=ReflectionVerdict(should_revise=False, reasons=[], severity=0.0)
     )
     pipeline._resolve_council_decision = MagicMock(
-        return_value=(should_convene, "adaptive_test" if should_convene else "", 0.4 if should_convene else None)
+        return_value=(
+            should_convene,
+            "adaptive_test" if should_convene else "",
+            0.4 if should_convene else None,
+        )
     )
     return pipeline, deliberation
 
