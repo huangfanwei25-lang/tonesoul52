@@ -17,7 +17,9 @@ def test_build_l7_payload_contains_authority_routes_and_verifiers() -> None:
     assert payload["contract_version"] == "v1"
     assert payload["default_reading_order"][0] == "architecture_anchor"
     assert any(surface["id"] == "verifier" for surface in payload["surfaces"])
-    assert any(route["question_type"] == "latest_repo_state" for route in payload["question_routes"])
+    assert any(
+        route["question_type"] == "latest_repo_state" for route in payload["question_routes"]
+    )
     assert any(check["id"] == "docs_consistency" for check in payload["verifier_checks"])
 
 
