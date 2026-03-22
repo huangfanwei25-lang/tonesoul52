@@ -72,7 +72,7 @@
 | [core_concepts.md](core_concepts.md) | 核心概念定義 |
 | [terminology.md](terminology.md) | 術語表 |
 | [glossary_engineering_mapping.md](glossary_engineering_mapping.md) | 術語↔工程對照 |
-| [philosophy/](philosophy/) | 哲學子目錄 (14 files) |
+| [philosophy/](philosophy/) | 哲學子目錄 (27 files) |
 
 ---
 
@@ -91,7 +91,7 @@
 | [COUNCIL_RUNTIME.md](COUNCIL_RUNTIME.md) | Council 運行時 |
 | [SEMANTIC_BIFURCATION_AUDIT.md](SEMANTIC_BIFURCATION_AUDIT.md) | 語義分岔審計 |
 | [when_to_ground.md](when_to_ground.md) | 何時接地（限制判定） |
-| [governance/](governance/) | 治理子目錄 (3 files) |
+| [governance/](governance/) | 治理子目錄 (4 files) |
 
 ---
 
@@ -159,8 +159,9 @@
 | [bayesian_accountability_plan.md](bayesian_accountability_plan.md) | 貝葉斯問責計畫 |
 | [reproducibility_guide.md](reproducibility_guide.md) | 可重現性指南 |
 | [rmf_crosswalk.md](rmf_crosswalk.md) | RMF 交叉引用 |
+| [research/tonesoul_l7_l8_open_source_evidence_map_2026-03-22.md](research/tonesoul_l7_l8_open_source_evidence_map_2026-03-22.md) | L7/L8 開源框架與實證理論地圖 |
 | [zenodo_publishing_guide.md](zenodo_publishing_guide.md) | Zenodo 發布指南 |
-| [research/](research/) | 研究子目錄 (9 files) |
+| [research/](research/) | 研究子目錄 (10 files) |
 
 ---
 
@@ -196,8 +197,8 @@
 | [ADR-001-dual-track-resolution.md](ADR-001-dual-track-resolution.md) | ADR: 雙軌解析 |
 | [failure_analysis.md](failure_analysis.md) | 失敗分析 |
 | [privacy_policy.md](privacy_policy.md) | 隱私政策 |
-| [engineering/](engineering/) | 工程子目錄 (16 files) |
-| [status/](status/) | 狀態子目錄 (11 files) |
+| [engineering/](engineering/) | 工程子目錄 (9 files) |
+| [status/](status/) | 狀態子目錄 (95 files) |
 
 ---
 
@@ -206,11 +207,11 @@
 
 | 目錄 | Files | 內容 |
 |------|-------|------|
-| `philosophy/` | 14 | 倫理框架、觀者與被觀者、宣言 |
-| `engineering/` | 16 | 工程規格、實作細節 |
-| `research/` | 9 | 學術研究、對比分析 |
-| `governance/` | 3 | 治理規則、合規 |
-| `status/` | 11 | 專案狀態追蹤 |
-| `notes/` | 1 | 備註 |
-| `architecture/` | 1 | 架構圖 |
-| `images/` | 1 | 圖片資源 |
+| `philosophy/` | 27 | 倫理框架、觀者與被觀者、宣言 |
+| `engineering/` | 9 | 工程規格、實作細節 |
+| `research/` | 10 | 學術研究、對比分析 |
+| `governance/` | 4 | 治理規則、合規 |
+| `status/` | 95 | 專案狀態追蹤 |
+| `notes/` | 2 | 備註 |
+| `architecture/` | 6 | 架構圖 |
+| `images/` | 2 | 圖片資源 |

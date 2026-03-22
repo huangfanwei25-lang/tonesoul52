@@ -72,6 +72,7 @@
 | `RESEARCH_CONTEXT_2.0.md` | 2.0 研究脈絡與演進背景 |
 | `experimental_design.md` | 指標驗證與實驗設計 |
 | `multi_agent_architecture_patterns.md` | OpenClaw 與主流框架對照、導入 CP 評估 |
+| `tonesoul_l7_l8_open_source_evidence_map_2026-03-22.md` | L7/L8 的開源框架、benchmark、與可採納邊界整理 |
 
 ---
 
@@ -85,4 +86,4 @@
 ---
 
 
-*Last updated: 2026-01-10*
+*Last updated: 2026-03-22*

@@ -1,5 +1,16 @@
 # Task
 
+## Phase 591: L7/L8 Open-Source Evidence Map - Research-to-Engineering Boundary (2026-03-22)
+- [x] Research current open-source references for L7 `compiled retrieval + verifiers` and L8 `model attachment + distillation boundary`
+- [x] Separate benchmark-backed theories from promising but not-yet-canonical frameworks so ToneSoul stops overclaiming frontier work
+- [x] Publish a repo-local research evidence map and link it from documentation indexes without promoting it to canonical architecture truth
+**Success Criteria**: Future agents can open one research note, distinguish benchmark-backed theory from framework inspiration, and avoid collapsing experimental RL/memory projects into ToneSoul's canonical architecture.
+**Validation**:
+- `python scripts/verify_docs_consistency.py --repo-root .` -> passed
+- `python scripts/verify_protected_paths.py --repo-root . --strict --changed-file docs/research/tonesoul_l7_l8_open_source_evidence_map_2026-03-22.md --changed-file docs/INDEX.md --changed-file docs/README.md --changed-file task.md` -> passed
+
+---
+
 ## Phase 556: Eight-Layer Convergence Map - Runtime Governance to Model Attachment (2026-03-22)
 - [x] Reconcile the older six-layer runtime model with the newer externalized-cognition roadmap into one eight-layer architecture map
 - [x] Make the new L7 retrieval/verifier surface and L8 model-attachment boundary explicit so future agents stop inventing hidden layers
