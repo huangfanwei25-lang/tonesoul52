@@ -107,6 +107,26 @@ User Input
 Response
 ```
 
+## Spec Entry Points
+
+If you are trying to understand the repository without mixing current architecture and historical
+layers, start with these files in this order:
+
+- `docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md`
+  - current north-star architecture and the intended evolution path
+- `SOUL.md`
+  - agent-facing identity / operating posture layer
+- `MGGI_SPEC.md`
+  - formal engineering and governance framing
+- `TAE-01_Architecture_Spec.md`
+  - earlier architecture lineage and historical specification context
+
+If they disagree, prefer:
+
+1. the canonical architecture anchor,
+2. current README / docs indexes,
+3. older spec documents as historical context.
+
 ## Core Modules
 
 ### Memory System
@@ -152,13 +172,15 @@ then crystallizes repeated high-value patterns into durable rules.
 In plain words: important things are auto-kept, chatter is auto-forgotten.
 </details>
 
-## Quality Snapshot (2026-03-20)
+## Quality Snapshot (2026-03-22)
 
 | Metric | Value |
 |---|---|
-| Tests passing | 2,555 |
+| Tests passing | 2,610 (local full regression on 2026-03-22) |
 | Tested `tonesoul/` modules | 186 / 186 |
-| Quality hardening footprint | 13 files touched (9 new test files, 4 expanded) |
+| RDD posture | baseline active in `tests/red_team/`; still staged below full blocking maturity |
+| DDD posture | hygiene + curated audit active; freshness remains an explicit staged rule |
+| Machine-readable status | `docs/status/repo_healthcheck_latest.json`, `docs/status/7d_snapshot.json` |
 | Default CI gates | `ruff check tonesoul tests` + `pytest tests/ -x --tb=short -q` |
 
 ## License

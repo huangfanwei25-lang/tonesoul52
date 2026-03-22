@@ -1,5 +1,16 @@
 # Task
 
+## Phase 554: Initial Retrieval Audit Clarification - Public Doc Drift Cleanup (2026-03-22)
+- [x] Write one hand-authored clarification memo that separates valid findings from stale retrieval artifacts in the external audit
+- [x] Correct the most misleading public entrypoint docs so future audits do not keep inheriting obsolete repository descriptions
+- [x] Make spec-entry precedence explicit so readers stop conflating the canonical architecture anchor with older spec layers
+**Success Criteria**: An initial retrieval-style audit no longer has to guess which claims are current, which are historical, and which are stale document drift.
+**Validation**:
+- `python scripts/verify_docs_consistency.py --repo-root .` -> passed
+- `python scripts/verify_protected_paths.py --repo-root . --strict --changed-file README.md --changed-file README.zh-TW.md --changed-file docs/REPOSITORY_STRUCTURE.md --changed-file docs/status/README.md --changed-file docs/status/initial_retrieval_audit_clarification_2026-03-22.md --changed-file task.md` -> passed
+
+---
+
 ## Phase 553: Local Verification Hardening - Optional Dependency Import + Corrective Recall Test (2026-03-22)
 - [x] Broaden the governed poster NarrativeGate fallback so optional embedding imports degrade cleanly when Windows DLL initialization fails
 - [x] Tighten the corrective recall runtime test around the actual B-vector path contract instead of a brittle fake-embedder norm assumption

@@ -44,6 +44,8 @@ This folder is the repository status source for machine-generated governance sna
   - One-page statement of what ToneSoul is trying to become at the system level.
 - `tonesoul_verified_delivery_architecture.md`
   - DDD-inspired but ToneSoul-native verification architecture: SSOA, Gate 0-6, and highest-ROI verifiers.
+- `initial_retrieval_audit_clarification_2026-03-22.md`
+  - Hand-authored clarification memo that separates valid, partial, and stale findings from an initial external retrieval-style audit.
 
 ## Files
 
