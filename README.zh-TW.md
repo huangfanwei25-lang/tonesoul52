@@ -76,6 +76,10 @@ ToneSoul 不應只被理解成 prompt stack，而應被理解成一套 externali
 [`docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md`](docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md)
 與
 [`docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md`](docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md)。
+如果你要直接看較短、可機器讀取的鏡像，請再開
+[`docs/status/l7_retrieval_contract_latest.json`](docs/status/l7_retrieval_contract_latest.json)
+與
+[`docs/status/l8_distillation_boundary_latest.json`](docs/status/l8_distillation_boundary_latest.json)。
 
 ```text
 使用者輸入

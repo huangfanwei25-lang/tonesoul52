@@ -1,5 +1,20 @@
 # Task
 
+## Phase 593: L7/L8 Artifact Mirrors - Retrieval Policy Packet and Adapter Dataset Boundary (2026-03-22)
+- [x] Add generated machine-readable mirrors for L7 retrieval order and L8 distillation/export gates so later agents can read compact artifacts before long prose
+- [x] Add a first public-safe adapter dataset schema and example record so L8 has a concrete field contract instead of a prose-only boundary
+- [x] Wire the new artifacts into status docs, architecture docs, and the knowledge graph so retrieval and distillation boundaries become discoverable surfaces
+**Success Criteria**: Later agents can open one L7 JSON artifact to know what to read and verify next, and one L8 JSON/schema pair to know what adapter rows may look like without guessing public/private boundaries.
+**Validation**:
+- `python scripts/run_l7_l8_contract_artifacts.py` -> passed
+- `python scripts/run_tonesoul_knowledge_graph.py` -> passed
+- `python -m ruff check scripts/run_l7_l8_contract_artifacts.py scripts/run_tonesoul_knowledge_graph.py tests/test_run_l7_l8_contract_artifacts.py tests/test_run_tonesoul_knowledge_graph.py` -> passed
+- `python -m pytest tests/test_run_l7_l8_contract_artifacts.py tests/test_run_tonesoul_knowledge_graph.py -q` -> passed
+- `python scripts/verify_docs_consistency.py --repo-root .` -> passed
+- `python scripts/verify_protected_paths.py --repo-root . --strict --changed-file README.md --changed-file README.zh-TW.md --changed-file AI_ONBOARDING.md --changed-file docs/README.md --changed-file docs/INDEX.md --changed-file docs/status/README.md --changed-file docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md --changed-file docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md --changed-file docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md --changed-file docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md --changed-file docs/status/l7_retrieval_contract_latest.json --changed-file docs/status/l7_retrieval_contract_latest.md --changed-file docs/status/l8_distillation_boundary_latest.json --changed-file docs/status/l8_distillation_boundary_latest.md --changed-file docs/status/tonesoul_knowledge_graph_latest.json --changed-file docs/status/tonesoul_knowledge_graph_latest.md --changed-file docs/status/tonesoul_knowledge_graph_latest.mmd --changed-file spec/governance/adapter_dataset_record_v1.schema.json --changed-file spec/governance/adapter_dataset_record_v1.example.json --changed-file task.md` -> passed
+
+---
+
 ## Phase 592: L7/L8 Operational Contracts - Retrieval Order and Distillation Boundary (2026-03-22)
 - [x] Write one L7 contract that defines which retrieval surface to open first and when to switch from prose to executable verification
 - [x] Write one L8 contract that defines which behavior may be distilled and which private or deletion-sensitive data must remain external

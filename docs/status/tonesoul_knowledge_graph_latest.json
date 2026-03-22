@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-03-22T08:48:11Z",
+  "generated_at": "2026-03-22T09:05:06Z",
   "source": "scripts/run_tonesoul_knowledge_graph.py",
   "meta": {
-    "node_count": 835,
-    "edge_count": 1586,
+    "node_count": 844,
+    "edge_count": 1628,
     "lane_count": 8,
-    "source_doc_count": 15
+    "source_doc_count": 17
   },
   "retrieval_protocol": [
     {
@@ -33,6 +33,8 @@
     "docs/terminology.md",
     "docs/system_walkthrough.md",
     "docs/KNOWLEDGE_GRAPH.md",
+    "docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md",
+    "docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md",
     "docs/plans/tonesoul_knowledge_graph_plan_2026-03-21.md",
     "語魂系統GPTs_v1.1/README.md",
     "語魂系統GPTs_v1.1/01_術語與門檻單一規格.md",
@@ -51,6 +53,8 @@
         "README.md",
         "AI_ONBOARDING.md",
         "docs/terminology.md",
+        "docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md",
+        "docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md",
         "語魂系統GPTs_v1.1/01_術語與門檻單一規格.md",
         "語魂系統GPTs_v1.1/02_執行治理規格_Runtime.md",
         "語魂系統GPTs_v1.1/07_六層架構與實作對位.md",
@@ -166,7 +170,9 @@
         "scripts/run_repo_healthcheck.py",
         "scripts/verify_7d.py",
         "docs/status/README.md",
-        "docs/status/repo_healthcheck_latest.md"
+        "docs/status/repo_healthcheck_latest.md",
+        "docs/status/l7_retrieval_contract_latest.md",
+        "docs/status/l8_distillation_boundary_latest.md"
       ],
       "neighbors": [
         "authority",
@@ -185,6 +191,9 @@
         "docs/status/repo_healthcheck_latest.md",
         "docs/status/memory_governance_contract_latest.md",
         "docs/status/tonesoul_system_manifesto.md",
+        "docs/status/l7_retrieval_contract_latest.md",
+        "docs/status/l8_distillation_boundary_latest.md",
+        "scripts/run_l7_l8_contract_artifacts.py",
         "scripts/run_repo_semantic_atlas.py"
       ],
       "neighbors": [
@@ -963,14 +972,18 @@
       "label": "TONESOUL_L7_RETRIEVAL_CONTRACT.md",
       "kind": "doc",
       "path": "docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md",
-      "lanes": []
+      "lanes": [
+        "authority"
+      ]
     },
     {
       "id": "file:docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md",
       "label": "TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md",
       "kind": "doc",
       "path": "docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md",
-      "lanes": []
+      "lanes": [
+        "authority"
+      ]
     },
     {
       "id": "file:docs/governance/TRINKET_PROTOCOL_SPEC.md",
@@ -3620,6 +3633,15 @@
       "lanes": []
     },
     {
+      "id": "file:scripts/run_l7_l8_contract_artifacts.py",
+      "label": "run_l7_l8_contract_artifacts.py",
+      "kind": "script",
+      "path": "scripts/run_l7_l8_contract_artifacts.py",
+      "lanes": [
+        "observability"
+      ]
+    },
+    {
       "id": "file:scripts/run_market_sweep.py",
       "label": "run_market_sweep.py",
       "kind": "script",
@@ -3970,6 +3992,20 @@
       "lanes": []
     },
     {
+      "id": "file:spec/governance/adapter_dataset_record_v1.example.json",
+      "label": "adapter_dataset_record_v1.example.json",
+      "kind": "spec",
+      "path": "spec/governance/adapter_dataset_record_v1.example.json",
+      "lanes": []
+    },
+    {
+      "id": "file:spec/governance/adapter_dataset_record_v1.schema.json",
+      "label": "adapter_dataset_record_v1.schema.json",
+      "kind": "spec",
+      "path": "spec/governance/adapter_dataset_record_v1.schema.json",
+      "lanes": []
+    },
+    {
       "id": "file:spec/chat_ui_improvement_spec.md",
       "label": "chat_ui_improvement_spec.md",
       "kind": "spec",
@@ -4106,6 +4142,13 @@
       "lanes": []
     },
     {
+      "id": "file:docs/status/changed_surface_checks_latest.md",
+      "label": "changed_surface_checks_latest.md",
+      "kind": "status_surface",
+      "path": "docs/status/changed_surface_checks_latest.md",
+      "lanes": []
+    },
+    {
       "id": "file:docs/status/codex_subjectivity_handoff_2026-03-10.md",
       "label": "codex_subjectivity_handoff_2026-03-10.md",
       "kind": "status_surface",
@@ -4208,6 +4251,34 @@
       "label": "initial_retrieval_audit_clarification_2026-03-22.md",
       "kind": "status_surface",
       "path": "docs/status/initial_retrieval_audit_clarification_2026-03-22.md",
+      "lanes": []
+    },
+    {
+      "id": "file:docs/status/l7_retrieval_contract_latest.json",
+      "label": "l7_retrieval_contract_latest.json",
+      "kind": "status_surface",
+      "path": "docs/status/l7_retrieval_contract_latest.json",
+      "lanes": []
+    },
+    {
+      "id": "file:docs/status/l7_retrieval_contract_latest.md",
+      "label": "l7_retrieval_contract_latest.md",
+      "kind": "status_surface",
+      "path": "docs/status/l7_retrieval_contract_latest.md",
+      "lanes": []
+    },
+    {
+      "id": "file:docs/status/l8_distillation_boundary_latest.json",
+      "label": "l8_distillation_boundary_latest.json",
+      "kind": "status_surface",
+      "path": "docs/status/l8_distillation_boundary_latest.json",
+      "lanes": []
+    },
+    {
+      "id": "file:docs/status/l8_distillation_boundary_latest.md",
+      "label": "l8_distillation_boundary_latest.md",
+      "kind": "status_surface",
+      "path": "docs/status/l8_distillation_boundary_latest.md",
       "lanes": []
     },
     {
@@ -5379,6 +5450,13 @@
       "lanes": []
     },
     {
+      "id": "file:tests/test_run_l7_l8_contract_artifacts.py",
+      "label": "test_run_l7_l8_contract_artifacts.py",
+      "kind": "test",
+      "path": "tests/test_run_l7_l8_contract_artifacts.py",
+      "lanes": []
+    },
+    {
       "id": "file:tests/test_run_market_removed_scripts.py",
       "label": "test_run_market_removed_scripts.py",
       "kind": "test",
@@ -6174,6 +6252,16 @@
     },
     {
       "source": "lane:authority",
+      "target": "file:docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md",
+      "type": "contains"
+    },
+    {
+      "source": "lane:authority",
+      "target": "file:docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md",
+      "type": "contains"
+    },
+    {
+      "source": "lane:authority",
       "target": "file:docs/terminology.md",
       "type": "contains"
     },
@@ -6305,6 +6393,11 @@
     {
       "source": "lane:observability",
       "target": "file:docs/status/tonesoul_system_manifesto.md",
+      "type": "contains"
+    },
+    {
+      "source": "lane:observability",
+      "target": "file:scripts/run_l7_l8_contract_artifacts.py",
       "type": "contains"
     },
     {
@@ -7689,6 +7782,16 @@
     },
     {
       "source": "file:AI_ONBOARDING.md",
+      "target": "file:docs/status/l7_retrieval_contract_latest.json",
+      "type": "references"
+    },
+    {
+      "source": "file:AI_ONBOARDING.md",
+      "target": "file:docs/status/l8_distillation_boundary_latest.json",
+      "type": "references"
+    },
+    {
+      "source": "file:AI_ONBOARDING.md",
       "target": "file:docs/terminology.md",
       "type": "references"
     },
@@ -7855,6 +7958,16 @@
     {
       "source": "file:README.md",
       "target": "file:docs/status/7d_snapshot.json",
+      "type": "references"
+    },
+    {
+      "source": "file:README.md",
+      "target": "file:docs/status/l7_retrieval_contract_latest.json",
+      "type": "references"
+    },
+    {
+      "source": "file:README.md",
+      "target": "file:docs/status/l8_distillation_boundary_latest.json",
       "type": "references"
     },
     {
@@ -8089,6 +8202,16 @@
     },
     {
       "source": "file:docs/README.md",
+      "target": "file:docs/status/l7_retrieval_contract_latest.json",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/README.md",
+      "target": "file:docs/status/l8_distillation_boundary_latest.json",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/README.md",
       "target": "file:docs/terminology.md",
       "type": "references"
     },
@@ -8105,6 +8228,126 @@
     {
       "source": "file:docs/README.md",
       "target": "file:spec/council_spec.md",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md",
+      "target": "file:PARADOXES",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md",
+      "target": "file:docs/architecture/KNOWLEDGE_SURFACES_BOUNDARY_MAP.md",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md",
+      "target": "file:docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md",
+      "target": "file:docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md",
+      "target": "file:docs/research/tonesoul_l7_l8_open_source_evidence_map_2026-03-22.md",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md",
+      "target": "file:docs/status/changed_surface_checks_latest.md",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md",
+      "target": "file:docs/status/l7_retrieval_contract_latest.json",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md",
+      "target": "file:docs/status/l7_retrieval_contract_latest.md",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md",
+      "target": "file:docs/status/repo_healthcheck_latest.json",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md",
+      "target": "file:docs/status/tonesoul_knowledge_graph_latest.md",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md",
+      "target": "file:knowledge",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md",
+      "target": "file:knowledge_base",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md",
+      "target": "file:scripts/run_changed_surface_checks.py",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md",
+      "target": "file:scripts/verify_docs_consistency.py",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md",
+      "target": "file:scripts/verify_protected_paths.py",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md",
+      "target": "file:task.md",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md",
+      "target": "file:OpenClaw-Memory",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md",
+      "target": "file:docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md",
+      "target": "file:docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md",
+      "target": "file:docs/research/tonesoul_l7_l8_open_source_evidence_map_2026-03-22.md",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md",
+      "target": "file:docs/status/l8_distillation_boundary_latest.json",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md",
+      "target": "file:docs/status/l8_distillation_boundary_latest.md",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md",
+      "target": "file:spec/governance/adapter_dataset_record_v1.example.json",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md",
+      "target": "file:spec/governance/adapter_dataset_record_v1.schema.json",
       "type": "references"
     },
     {
@@ -9009,6 +9252,26 @@
     },
     {
       "source": "file:task.md",
+      "target": "file:docs/status/l7_retrieval_contract_latest.json",
+      "type": "references"
+    },
+    {
+      "source": "file:task.md",
+      "target": "file:docs/status/l7_retrieval_contract_latest.md",
+      "type": "references"
+    },
+    {
+      "source": "file:task.md",
+      "target": "file:docs/status/l8_distillation_boundary_latest.json",
+      "type": "references"
+    },
+    {
+      "source": "file:task.md",
+      "target": "file:docs/status/l8_distillation_boundary_latest.md",
+      "type": "references"
+    },
+    {
+      "source": "file:task.md",
       "target": "file:docs/status/monthly_consolidation_report.json",
       "type": "references"
     },
@@ -9539,6 +9802,11 @@
     },
     {
       "source": "file:task.md",
+      "target": "file:scripts/run_l7_l8_contract_artifacts.py",
+      "type": "references"
+    },
+    {
+      "source": "file:task.md",
       "target": "file:scripts/run_market_sweep.py",
       "type": "references"
     },
@@ -9780,6 +10048,16 @@
     {
       "source": "file:task.md",
       "target": "file:spec/external_source_registry.yaml",
+      "type": "references"
+    },
+    {
+      "source": "file:task.md",
+      "target": "file:spec/governance/adapter_dataset_record_v1.example.json",
+      "type": "references"
+    },
+    {
+      "source": "file:task.md",
+      "target": "file:spec/governance/adapter_dataset_record_v1.schema.json",
       "type": "references"
     },
     {
@@ -10485,6 +10763,11 @@
     {
       "source": "file:task.md",
       "target": "file:tests/test_run_friction_shadow_replay_export.py",
+      "type": "references"
+    },
+    {
+      "source": "file:task.md",
+      "target": "file:tests/test_run_l7_l8_contract_artifacts.py",
       "type": "references"
     },
     {
@@ -13228,6 +13511,11 @@
       "type": "verifies"
     },
     {
+      "source": "file:tests/test_run_l7_l8_contract_artifacts.py",
+      "target": "file:scripts/run_l7_l8_contract_artifacts.py",
+      "type": "verifies"
+    },
+    {
       "source": "file:tests/test_run_market_removed_scripts.py",
       "target": "file:scripts/run_gold_scan.py",
       "type": "verifies"
@@ -14094,7 +14382,7 @@
       "path": "task.md",
       "label": "task.md",
       "kind": "doc",
-      "degree": 648
+      "degree": 657
     },
     {
       "id": "file:tonesoul/unified_pipeline.py",
@@ -14115,7 +14403,7 @@
       "path": "README.md",
       "label": "README.md",
       "kind": "doc",
-      "degree": 36
+      "degree": 38
     },
     {
       "id": "file:語魂系統GPTs_v1.1/02_執行治理規格_Runtime.md",
@@ -14132,6 +14420,13 @@
       "degree": 29
     },
     {
+      "id": "file:AI_ONBOARDING.md",
+      "path": "AI_ONBOARDING.md",
+      "label": "AI_ONBOARDING.md",
+      "kind": "doc",
+      "degree": 27
+    },
+    {
       "id": "file:語魂系統GPTs_v1.1/07_六層架構與實作對位.md",
       "path": "語魂系統GPTs_v1.1/07_六層架構與實作對位.md",
       "label": "07_六層架構與實作對位.md",
@@ -14139,17 +14434,17 @@
       "degree": 27
     },
     {
-      "id": "file:AI_ONBOARDING.md",
-      "path": "AI_ONBOARDING.md",
-      "label": "AI_ONBOARDING.md",
-      "kind": "doc",
-      "degree": 25
-    },
-    {
       "id": "file:apps/api/server.py",
       "path": "apps/api/server.py",
       "label": "server.py",
       "kind": "app_module",
+      "degree": 21
+    },
+    {
+      "id": "file:docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md",
+      "path": "docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md",
+      "label": "TONESOUL_L7_RETRIEVAL_CONTRACT.md",
+      "kind": "doc",
       "degree": 21
     },
     {
@@ -14160,18 +14455,11 @@
       "degree": 21
     },
     {
-      "id": "file:tonesoul/schemas.py",
-      "path": "tonesoul/schemas.py",
-      "label": "schemas.py",
-      "kind": "python_module",
-      "degree": 20
-    },
-    {
       "id": "file:docs/README.md",
       "path": "docs/README.md",
       "label": "README.md",
       "kind": "doc",
-      "degree": 18
+      "degree": 20
     }
   ]
 }

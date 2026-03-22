@@ -20,6 +20,11 @@ This contract defines:
 - what must stay external
 - what gates must be passed before any adapter or RL-facing export is allowed
 
+Machine-readable mirror:
+
+- `docs/status/l8_distillation_boundary_latest.json`
+- `docs/status/l8_distillation_boundary_latest.md`
+
 ## Core Rule
 
 ToneSoul may distill stable public-safe behavior.
@@ -98,6 +103,11 @@ If a future adapter dataset is created, every row should be able to answer:
 
 If those fields cannot be stated, the row is not ready.
 
+Schema anchor:
+
+- `spec/governance/adapter_dataset_record_v1.schema.json`
+- `spec/governance/adapter_dataset_record_v1.example.json`
+
 ## Cross-Repo Boundary
 
 | Repository | Role | Distillation Posture |
@@ -154,6 +164,10 @@ If the change improves fluency but reduces auditability, it fails the contract.
   - locates L8 inside the overall architecture
 - `docs/research/tonesoul_l7_l8_open_source_evidence_map_2026-03-22.md`
   - explains which external theories support adapters, RL, and memory boundaries
+- `spec/governance/adapter_dataset_record_v1.schema.json`
+  - defines the minimum public-safe adapter dataset row shape
+- `docs/status/l8_distillation_boundary_latest.json`
+  - machine-readable export gates, forbidden surfaces, and evaluation dimensions
 
 ## Canonical Instruction For Future Agents
 

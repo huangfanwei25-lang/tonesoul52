@@ -94,6 +94,10 @@ For the concrete operational boundaries, open
 [`docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md`](docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md)
 and
 [`docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md`](docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md).
+For compact machine-readable mirrors, open
+[`docs/status/l7_retrieval_contract_latest.json`](docs/status/l7_retrieval_contract_latest.json)
+and
+[`docs/status/l8_distillation_boundary_latest.json`](docs/status/l8_distillation_boundary_latest.json).
 
 ```text
 User Input

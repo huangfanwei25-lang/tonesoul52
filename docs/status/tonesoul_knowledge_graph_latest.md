@@ -1,8 +1,8 @@
 # ToneSoul Knowledge Graph Latest
 
-- generated_at: 2026-03-22T08:48:11Z
-- node_count: 835
-- edge_count: 1586
+- generated_at: 2026-03-22T09:05:06Z
+- node_count: 844
+- edge_count: 1628
 - lane_count: 8
 
 ## Retrieval Protocol
@@ -18,6 +18,8 @@
   - `README.md`
   - `AI_ONBOARDING.md`
   - `docs/terminology.md`
+  - `docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md`
+  - `docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md`
   - `語魂系統GPTs_v1.1/01_術語與門檻單一規格.md`
   - `語魂系統GPTs_v1.1/02_執行治理規格_Runtime.md`
   - `語魂系統GPTs_v1.1/07_六層架構與實作對位.md`
@@ -88,6 +90,8 @@
   - `scripts/verify_7d.py`
   - `docs/status/README.md`
   - `docs/status/repo_healthcheck_latest.md`
+  - `docs/status/l7_retrieval_contract_latest.md`
+  - `docs/status/l8_distillation_boundary_latest.md`
 - neighbors: `authority`, `governance`, `memory`, `web`, `observability`
 
 ### Observability
@@ -97,21 +101,24 @@
   - `docs/status/repo_healthcheck_latest.md`
   - `docs/status/memory_governance_contract_latest.md`
   - `docs/status/tonesoul_system_manifesto.md`
+  - `docs/status/l7_retrieval_contract_latest.md`
+  - `docs/status/l8_distillation_boundary_latest.md`
+  - `scripts/run_l7_l8_contract_artifacts.py`
   - `scripts/run_repo_semantic_atlas.py`
 - neighbors: `verification`, `evolution`
 
 ## Top Anchors
 | path | kind | degree |
 | --- | --- | ---: |
-| `task.md` | `doc` | 648 |
+| `task.md` | `doc` | 657 |
 | `tonesoul/unified_pipeline.py` | `python_module` | 52 |
 | `tonesoul/memory/soul_db.py` | `python_module` | 45 |
-| `README.md` | `doc` | 36 |
+| `README.md` | `doc` | 38 |
 | `語魂系統GPTs_v1.1/02_執行治理規格_Runtime.md` | `authority_doc` | 29 |
 | `語魂系統GPTs_v1.1/10_哲學到程式_可驗證對照表.md` | `authority_doc` | 29 |
+| `AI_ONBOARDING.md` | `doc` | 27 |
 | `語魂系統GPTs_v1.1/07_六層架構與實作對位.md` | `authority_doc` | 27 |
-| `AI_ONBOARDING.md` | `doc` | 25 |
 | `apps/api/server.py` | `app_module` | 21 |
+| `docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md` | `doc` | 21 |
 | `tonesoul/council/types.py` | `python_module` | 21 |
-| `tonesoul/schemas.py` | `python_module` | 20 |
-| `docs/README.md` | `doc` | 18 |
+| `docs/README.md` | `doc` | 20 |

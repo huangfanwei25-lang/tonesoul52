@@ -28,6 +28,13 @@
 - `architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md`
   - defines what may and may not be distilled into adapters, RL traces, or future model-attached layers
 
+## Machine-Readable Mirrors
+
+- `status/l7_retrieval_contract_latest.json`
+  - compact L7 reading order, question routes, and verifier checklist
+- `status/l8_distillation_boundary_latest.json`
+  - compact L8 export gates, forbidden surfaces, and evaluation dimensions
+
 ## 🎯 快速開始
 
 1. [AI_ONBOARDING.md](../AI_ONBOARDING.md) — 給新 AI 的引導

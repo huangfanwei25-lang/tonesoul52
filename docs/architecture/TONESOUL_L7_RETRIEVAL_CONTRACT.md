@@ -21,6 +21,11 @@ This contract defines:
 - which surface has authority for which kind of question
 - when to stop reading and run a verifier instead
 
+Machine-readable mirror:
+
+- `docs/status/l7_retrieval_contract_latest.json`
+- `docs/status/l7_retrieval_contract_latest.md`
+
 ## Core Rule
 
 Do not start from raw prose if a compiled artifact or verifier already exists.
@@ -128,6 +133,8 @@ It is to stop forcing the model to reconstruct system truth from long-form prose
   - locates L7 inside the eight-layer architecture
 - `docs/research/tonesoul_l7_l8_open_source_evidence_map_2026-03-22.md`
   - explains which external theories support this contract
+- `docs/status/l7_retrieval_contract_latest.json`
+  - machine-readable retrieval order, question routes, and verifier checklist
 
 ## Canonical Instruction For Future Agents
 

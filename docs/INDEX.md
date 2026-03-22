@@ -16,6 +16,11 @@
 - [architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md](architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md)
 - [architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md](architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md)
 
+## Machine-Readable Contract Mirrors
+
+- [status/l7_retrieval_contract_latest.json](status/l7_retrieval_contract_latest.json)
+- [status/l8_distillation_boundary_latest.json](status/l8_distillation_boundary_latest.json)
+
 ## 🧭 Documentation Governance v1
 
 | 文件 | 說明 |
@@ -216,7 +221,7 @@
 | `engineering/` | 9 | 工程規格、實作細節 |
 | `research/` | 10 | 學術研究、對比分析 |
 | `governance/` | 4 | 治理規則、合規 |
-| `status/` | 95 | 專案狀態追蹤 |
+| `status/` | 99 | 專案狀態追蹤 |
 | `notes/` | 2 | 備註 |
 | `architecture/` | 8 | 架構圖與工程邊界合約 |
 | `images/` | 2 | 圖片資源 |

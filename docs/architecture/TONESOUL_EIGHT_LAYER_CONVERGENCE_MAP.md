@@ -137,6 +137,7 @@ This layer exists because later agents repeatedly failed when forced to reconstr
 Operational contract:
 
 - `docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md`
+- `docs/status/l7_retrieval_contract_latest.json`
 
 ### L8. Model Attachment and Distillation Boundary
 
@@ -157,6 +158,7 @@ Important rule:
 Operational contract:
 
 - `docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md`
+- `docs/status/l8_distillation_boundary_latest.json`
 
 ## Why There Is No Ninth "Model-Internalized Runtime Layer"
 
