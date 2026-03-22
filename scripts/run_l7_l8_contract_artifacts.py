@@ -213,6 +213,14 @@ def build_l8_payload(repo_root: Path = REPO_ROOT) -> dict[str, Any]:
             ],
         },
         {
+            "id": "governance_posture",
+            "allowed": True,
+            "examples": [
+                "stable refusal posture",
+                "public governance guard behavior",
+            ],
+        },
+        {
             "id": "language_style",
             "allowed": True,
             "examples": [
@@ -412,8 +420,7 @@ def write_outputs(
     )
     paths["l8_markdown"].write_text(render_l8_markdown(l8_payload), encoding="utf-8")
     return {
-        key: _normalize_repo_path(str(path.relative_to(repo_root)))
-        for key, path in paths.items()
+        key: _normalize_repo_path(str(path.relative_to(repo_root))) for key, path in paths.items()
     }
 
 

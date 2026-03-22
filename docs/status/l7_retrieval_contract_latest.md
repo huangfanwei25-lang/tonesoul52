@@ -1,6 +1,6 @@
 # L7 Retrieval Contract Latest
 
-- generated_at: 2026-03-22T09:04:58Z
+- generated_at: 2026-03-22T10:40:46Z
 - contract_version: v1
 - canonical_contract: `docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md`
 

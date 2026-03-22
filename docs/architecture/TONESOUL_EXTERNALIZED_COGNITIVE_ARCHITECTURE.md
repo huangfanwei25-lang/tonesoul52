@@ -24,10 +24,18 @@ Companion map:
   - use this when you need the operational rule for which retrieval surface to open first
 - `docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md`
   - use this when you need the operational rule for what may and may not be distilled into adapters or RL traces
+- `docs/architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md`
+  - use this when you need the cross-cutting rule for separating mechanism, observability, and interpretation
 - `docs/status/l7_retrieval_contract_latest.json`
   - machine-readable L7 retrieval order and verifier checklist
 - `docs/status/l8_distillation_boundary_latest.json`
   - machine-readable L8 export gates and dataset boundary summary
+- `docs/status/l7_operational_packet_latest.json`
+  - short operational retrieval packet for later agents
+- `docs/status/l8_adapter_dataset_gate_latest.json`
+  - first executable L8 gate for adapter-row review
+- `docs/status/abc_firewall_latest.json`
+  - machine-readable posture for claim-governance and observable-shell honesty
 
 ## The Four-Layer Roadmap
 

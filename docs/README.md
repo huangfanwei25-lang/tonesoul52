@@ -27,6 +27,8 @@
   - defines which retrieval surface to open first and when to switch from prose to executable verification
 - `architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md`
   - defines what may and may not be distilled into adapters, RL traces, or future model-attached layers
+- `architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md`
+  - defines the A/B/C firewall for separating mechanism, observable behavior, and interpretation in documents and claims
 
 ## Machine-Readable Mirrors
 
@@ -34,6 +36,15 @@
   - compact L7 reading order, question routes, and verifier checklist
 - `status/l8_distillation_boundary_latest.json`
   - compact L8 export gates, forbidden surfaces, and evaluation dimensions
+
+## Operational Packets
+
+- `status/l7_operational_packet_latest.json`
+  - short agent-facing retrieval packet with selected route, first surfaces, and planned checks
+- `status/l8_adapter_dataset_gate_latest.json`
+  - adapter-row gate report showing whether public-safe distillation inputs pass the first L8 review
+- `status/abc_firewall_latest.json`
+  - doctrine verifier status for disclaimer-first, entrypoint references, and observable-shell claim boundaries
 
 ## 🎯 快速開始
 

@@ -98,6 +98,14 @@ For compact machine-readable mirrors, open
 [`docs/status/l7_retrieval_contract_latest.json`](docs/status/l7_retrieval_contract_latest.json)
 and
 [`docs/status/l8_distillation_boundary_latest.json`](docs/status/l8_distillation_boundary_latest.json).
+For the first directly usable operational packet and gate report, open
+[`docs/status/l7_operational_packet_latest.json`](docs/status/l7_operational_packet_latest.json)
+and
+[`docs/status/l8_adapter_dataset_gate_latest.json`](docs/status/l8_adapter_dataset_gate_latest.json).
+For claim-boundary and theory/mechanism separation, open
+[`docs/architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md`](docs/architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md)
+and
+[`docs/status/abc_firewall_latest.json`](docs/status/abc_firewall_latest.json).
 
 ```text
 User Input

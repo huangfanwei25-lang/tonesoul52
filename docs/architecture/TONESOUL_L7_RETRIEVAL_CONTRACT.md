@@ -25,6 +25,8 @@ Machine-readable mirror:
 
 - `docs/status/l7_retrieval_contract_latest.json`
 - `docs/status/l7_retrieval_contract_latest.md`
+- `docs/status/l7_operational_packet_latest.json`
+- `docs/status/l7_operational_packet_latest.md`
 
 ## Core Rule
 
@@ -135,6 +137,8 @@ It is to stop forcing the model to reconstruct system truth from long-form prose
   - explains which external theories support this contract
 - `docs/status/l7_retrieval_contract_latest.json`
   - machine-readable retrieval order, question routes, and verifier checklist
+- `docs/status/l7_operational_packet_latest.json`
+  - short route packet that turns this contract into one immediately usable retrieval handoff
 
 ## Canonical Instruction For Future Agents
 

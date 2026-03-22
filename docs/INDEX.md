@@ -15,11 +15,18 @@
 
 - [architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md](architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md)
 - [architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md](architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md)
+- [architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md](architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md)
 
 ## Machine-Readable Contract Mirrors
 
 - [status/l7_retrieval_contract_latest.json](status/l7_retrieval_contract_latest.json)
 - [status/l8_distillation_boundary_latest.json](status/l8_distillation_boundary_latest.json)
+
+## Operational Packets
+
+- [status/l7_operational_packet_latest.json](status/l7_operational_packet_latest.json)
+- [status/l8_adapter_dataset_gate_latest.json](status/l8_adapter_dataset_gate_latest.json)
+- [status/abc_firewall_latest.json](status/abc_firewall_latest.json)
 
 ## 🧭 Documentation Governance v1
 

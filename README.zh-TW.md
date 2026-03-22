@@ -80,6 +80,14 @@ ToneSoul 不應只被理解成 prompt stack，而應被理解成一套 externali
 [`docs/status/l7_retrieval_contract_latest.json`](docs/status/l7_retrieval_contract_latest.json)
 與
 [`docs/status/l8_distillation_boundary_latest.json`](docs/status/l8_distillation_boundary_latest.json)。
+如果你要直接看第一版可執行的操作層 packet / gate，請再開
+[`docs/status/l7_operational_packet_latest.json`](docs/status/l7_operational_packet_latest.json)
+與
+[`docs/status/l8_adapter_dataset_gate_latest.json`](docs/status/l8_adapter_dataset_gate_latest.json)。
+如果你要看論述邊界、防止理論偷渡機制的治理規則，請再開
+[`docs/architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md`](docs/architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md)
+與
+[`docs/status/abc_firewall_latest.json`](docs/status/abc_firewall_latest.json)。
 
 ```text
 使用者輸入

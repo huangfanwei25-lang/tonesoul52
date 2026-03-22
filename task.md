@@ -1,5 +1,36 @@
 # Task
 
+## Phase 595: A/B/C Firewall Doctrine - Claim Governance and Observable Shell Honesty (2026-03-22)
+- [x] Add a standalone A/B/C firewall doctrine that separates mechanism, observable behavior, and interpretation without renumbering the eight-layer runtime
+- [x] Add a verifier for doctrine presence, entrypoint references, disclaimer-first posture, and observable-shell boundary overclaims
+- [x] Wire the doctrine and verifier into README, onboarding, docs indexes, architecture anchors, and status docs so later agents do not collapse theory into mechanism
+**Success Criteria**: ToneSoul has one explicit cross-cutting doctrine for claim governance, and one executable report that fails when entrypoint docs lose the doctrine link or start overclaiming latent-state intervention.
+**Validation**:
+- `python scripts/verify_abc_firewall.py --strict` -> passed
+- `python -m ruff check scripts/verify_abc_firewall.py tests/test_verify_abc_firewall.py` -> passed
+- `python -m pytest tests/test_verify_abc_firewall.py -q` -> passed
+- `python scripts/verify_docs_consistency.py --repo-root .` -> passed
+- `python scripts/verify_protected_paths.py --repo-root . --strict --changed-file README.md --changed-file README.zh-TW.md --changed-file AI_ONBOARDING.md --changed-file docs/README.md --changed-file docs/INDEX.md --changed-file docs/notes/TONESOUL_ARCHITECTURE_MEMORY_ANCHOR_2026-03-22.md --changed-file docs/status/README.md --changed-file docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md --changed-file docs/architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md --changed-file docs/status/abc_firewall_latest.json --changed-file docs/status/abc_firewall_latest.md --changed-file scripts/verify_abc_firewall.py --changed-file task.md --changed-file tests/test_verify_abc_firewall.py` -> passed
+
+---
+
+## Phase 594: L7/L8 Operational Packets - Agent Retrieval Packet and Adapter Gate (2026-03-22)
+- [x] Add an L7 operational packet generator so later agents can open one short artifact and know which route, surfaces, and checks to use next
+- [x] Add an L8 adapter dataset gate so public-safe adapter rows are validated by schema and boundary policy before anyone treats them as training-ready
+- [x] Surface the new packet and gate through README, onboarding, docs indexes, and status docs so they become discoverable retrieval entrypoints
+**Success Criteria**: L7 no longer stops at a contract mirror, and L8 no longer stops at a prose boundary; both expose one executable operational artifact that later agents can actually use.
+**Validation**:
+- `python scripts/run_l7_operational_packet.py` -> passed
+- `python scripts/run_l8_adapter_dataset_gate.py --strict` -> passed
+- `python scripts/run_l7_l8_contract_artifacts.py` -> passed
+- `python scripts/run_tonesoul_knowledge_graph.py` -> passed
+- `python -m ruff check scripts/run_l7_l8_contract_artifacts.py scripts/run_l7_operational_packet.py scripts/run_l8_adapter_dataset_gate.py tests/test_run_l7_l8_contract_artifacts.py tests/test_run_l7_operational_packet.py tests/test_run_l8_adapter_dataset_gate.py tests/test_run_tonesoul_knowledge_graph.py` -> passed
+- `python -m pytest tests/test_run_l7_l8_contract_artifacts.py tests/test_run_l7_operational_packet.py tests/test_run_l8_adapter_dataset_gate.py tests/test_run_tonesoul_knowledge_graph.py -q` -> passed
+- `python scripts/verify_docs_consistency.py --repo-root .` -> passed
+- `python scripts/verify_protected_paths.py --repo-root . --strict --changed-file README.md --changed-file README.zh-TW.md --changed-file AI_ONBOARDING.md --changed-file docs/README.md --changed-file docs/INDEX.md --changed-file docs/status/README.md --changed-file docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md --changed-file docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md --changed-file docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md --changed-file docs/status/l7_retrieval_contract_latest.json --changed-file docs/status/l7_retrieval_contract_latest.md --changed-file docs/status/l7_operational_packet_latest.json --changed-file docs/status/l7_operational_packet_latest.md --changed-file docs/status/l8_distillation_boundary_latest.json --changed-file docs/status/l8_distillation_boundary_latest.md --changed-file docs/status/l8_adapter_dataset_gate_latest.json --changed-file docs/status/l8_adapter_dataset_gate_latest.md --changed-file docs/status/tonesoul_knowledge_graph_latest.json --changed-file docs/status/tonesoul_knowledge_graph_latest.md --changed-file docs/status/tonesoul_knowledge_graph_latest.mmd --changed-file scripts/run_l7_l8_contract_artifacts.py --changed-file scripts/run_l7_operational_packet.py --changed-file scripts/run_l8_adapter_dataset_gate.py --changed-file spec/governance/adapter_dataset_record_v1.schema.json --changed-file task.md --changed-file tests/test_run_l7_l8_contract_artifacts.py --changed-file tests/test_run_l7_operational_packet.py --changed-file tests/test_run_l8_adapter_dataset_gate.py --changed-file tests/test_run_tonesoul_knowledge_graph.py` -> passed
+
+---
+
 ## Phase 593: L7/L8 Artifact Mirrors - Retrieval Policy Packet and Adapter Dataset Boundary (2026-03-22)
 - [x] Add generated machine-readable mirrors for L7 retrieval order and L8 distillation/export gates so later agents can read compact artifacts before long prose
 - [x] Add a first public-safe adapter dataset schema and example record so L8 has a concrete field contract instead of a prose-only boundary

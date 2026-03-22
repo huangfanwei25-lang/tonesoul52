@@ -1,0 +1,112 @@
+{
+  "generated_at": "2026-03-22T10:41:23Z",
+  "status": "ready",
+  "contract_version": "v1",
+  "canonical_contract": "docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md",
+  "question_type": "latest_repo_state",
+  "route_source": "default_no_change_context",
+  "supported_question_types": [
+    "architecture_meaning",
+    "knowledge_surface_authority",
+    "latest_repo_state",
+    "change_validation",
+    "external_design_influence"
+  ],
+  "collection": {
+    "mode": "none",
+    "command": null,
+    "exit_code": 0
+  },
+  "open_sequence": [
+    {
+      "kind": "path",
+      "value": "docs/status/repo_healthcheck_latest.json"
+    },
+    {
+      "kind": "path",
+      "value": "docs/status/tonesoul_knowledge_graph_latest.md"
+    },
+    {
+      "kind": "surface",
+      "value": "verifier"
+    },
+    {
+      "kind": "path",
+      "value": "scripts/verify_docs_consistency.py"
+    },
+    {
+      "kind": "path",
+      "value": "scripts/verify_protected_paths.py"
+    },
+    {
+      "kind": "path",
+      "value": "scripts/run_changed_surface_checks.py"
+    }
+  ],
+  "recommended_checks": [
+    {
+      "name": "protected_paths",
+      "command": "python scripts/verify_protected_paths.py --repo-root . --strict",
+      "surface_ids": [
+        "verifier"
+      ],
+      "reason": "sensitive files, memory lanes, or protected docs are touched",
+      "blocking": true
+    },
+    {
+      "name": "docs_consistency",
+      "command": "python scripts/verify_docs_consistency.py --repo-root .",
+      "surface_ids": [
+        "verifier"
+      ],
+      "reason": "authority docs, status surfaces, or repo-facing descriptions changed",
+      "blocking": true
+    },
+    {
+      "name": "changed_surface_checks",
+      "command": "python scripts/run_changed_surface_checks.py --repo-root .",
+      "surface_ids": [
+        "verifier"
+      ],
+      "reason": "you need the check plan for current changes instead of guessing",
+      "blocking": true
+    }
+  ],
+  "stop_reading_triggers": [
+    "protected paths are involved",
+    "the question is about what is true right now",
+    "the claim can be checked mechanically",
+    "status artifacts and prose may have drifted apart",
+    "the task is code-change oriented and a verifier already maps the changed surface"
+  ],
+  "changed_surface_summary": {
+    "changed_path_count": 0,
+    "surface_ids": [],
+    "planned_check_count": 0,
+    "warnings": []
+  },
+  "protected_path_summary": {
+    "ok": true,
+    "violation_count": 0,
+    "violations": []
+  },
+  "authority_order": [
+    "architecture_anchor",
+    "boundary_map",
+    "status_artifact",
+    "research_note",
+    "implementation_source",
+    "verifier"
+  ],
+  "primary_status_line": "l7_packet_ready | question_type=latest_repo_state route_source=default_no_change_context changed_paths=0 surfaces=0 protected_violations=0",
+  "runtime_status_line": "entrypoints | first=docs/status/repo_healthcheck_latest.json second=docs/status/tonesoul_knowledge_graph_latest.md next=verifier checks=protected_paths,docs_consistency,changed_surface_checks",
+  "artifact_policy_status_line": "compiled_retrieval=first | prose_after_artifacts=true fail_closed=false stop_triggers=5",
+  "handoff": {
+    "queue_shape": "l7_packet_ready",
+    "requires_operator_action": false,
+    "preferred_first_surface": "docs/status/repo_healthcheck_latest.json",
+    "preferred_second_surface": "docs/status/tonesoul_knowledge_graph_latest.md",
+    "question_type": "latest_repo_state",
+    "primary_status_line": "l7_packet_ready | question_type=latest_repo_state route_source=default_no_change_context changed_paths=0 surfaces=0 protected_violations=0"
+  }
+}

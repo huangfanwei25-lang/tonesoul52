@@ -24,6 +24,8 @@ Machine-readable mirror:
 
 - `docs/status/l8_distillation_boundary_latest.json`
 - `docs/status/l8_distillation_boundary_latest.md`
+- `docs/status/l8_adapter_dataset_gate_latest.json`
+- `docs/status/l8_adapter_dataset_gate_latest.md`
 
 ## Core Rule
 
@@ -168,6 +170,8 @@ If the change improves fluency but reduces auditability, it fails the contract.
   - defines the minimum public-safe adapter dataset row shape
 - `docs/status/l8_distillation_boundary_latest.json`
   - machine-readable export gates, forbidden surfaces, and evaluation dimensions
+- `docs/status/l8_adapter_dataset_gate_latest.json`
+  - first executable gate report for adapter-row review against this boundary
 
 ## Canonical Instruction For Future Agents
 

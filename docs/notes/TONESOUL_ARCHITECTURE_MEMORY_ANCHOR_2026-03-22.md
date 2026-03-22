@@ -15,6 +15,7 @@ Canonical path:
 - `docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md`
 
 If future work is ambiguous, open the externalized architecture anchor first, then the eight-layer convergence map.
+If the ambiguity is not about runtime layers but about how to state architecture claims honestly, open `docs/architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md`.
 
 ## Memory Rule
 

@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-03-22T09:05:06Z",
+  "generated_at": "2026-03-22T12:48:44Z",
   "source": "scripts/run_tonesoul_knowledge_graph.py",
   "meta": {
-    "node_count": 844,
-    "edge_count": 1628,
+    "node_count": 857,
+    "edge_count": 1669,
     "lane_count": 8,
     "source_doc_count": 17
   },
@@ -944,6 +944,13 @@
       "label": "TAE-01_Architecture_Spec.md",
       "kind": "doc",
       "path": "TAE-01_Architecture_Spec.md",
+      "lanes": []
+    },
+    {
+      "id": "file:docs/architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md",
+      "label": "TONESOUL_ABC_FIREWALL_DOCTRINE.md",
+      "kind": "doc",
+      "path": "docs/architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md",
       "lanes": []
     },
     {
@@ -3642,6 +3649,20 @@
       ]
     },
     {
+      "id": "file:scripts/run_l7_operational_packet.py",
+      "label": "run_l7_operational_packet.py",
+      "kind": "script",
+      "path": "scripts/run_l7_operational_packet.py",
+      "lanes": []
+    },
+    {
+      "id": "file:scripts/run_l8_adapter_dataset_gate.py",
+      "label": "run_l8_adapter_dataset_gate.py",
+      "kind": "script",
+      "path": "scripts/run_l8_adapter_dataset_gate.py",
+      "lanes": []
+    },
+    {
       "id": "file:scripts/run_market_sweep.py",
       "label": "run_market_sweep.py",
       "kind": "script",
@@ -3887,6 +3908,13 @@
       ]
     },
     {
+      "id": "file:scripts/verify_abc_firewall.py",
+      "label": "verify_abc_firewall.py",
+      "kind": "script",
+      "path": "scripts/verify_abc_firewall.py",
+      "lanes": []
+    },
+    {
       "id": "file:scripts/verify_backend_persistence.py",
       "label": "verify_backend_persistence.py",
       "kind": "script",
@@ -4093,6 +4121,20 @@
       ]
     },
     {
+      "id": "file:docs/status/abc_firewall_latest.json",
+      "label": "abc_firewall_latest.json",
+      "kind": "status_surface",
+      "path": "docs/status/abc_firewall_latest.json",
+      "lanes": []
+    },
+    {
+      "id": "file:docs/status/abc_firewall_latest.md",
+      "label": "abc_firewall_latest.md",
+      "kind": "status_surface",
+      "path": "docs/status/abc_firewall_latest.md",
+      "lanes": []
+    },
+    {
       "id": "file:docs/status/probe_runtime_profile_live/autonomous_registry_schedule_latest.json",
       "label": "autonomous_registry_schedule_latest.json",
       "kind": "status_surface",
@@ -4254,6 +4296,20 @@
       "lanes": []
     },
     {
+      "id": "file:docs/status/l7_operational_packet_latest.json",
+      "label": "l7_operational_packet_latest.json",
+      "kind": "status_surface",
+      "path": "docs/status/l7_operational_packet_latest.json",
+      "lanes": []
+    },
+    {
+      "id": "file:docs/status/l7_operational_packet_latest.md",
+      "label": "l7_operational_packet_latest.md",
+      "kind": "status_surface",
+      "path": "docs/status/l7_operational_packet_latest.md",
+      "lanes": []
+    },
+    {
       "id": "file:docs/status/l7_retrieval_contract_latest.json",
       "label": "l7_retrieval_contract_latest.json",
       "kind": "status_surface",
@@ -4265,6 +4321,23 @@
       "label": "l7_retrieval_contract_latest.md",
       "kind": "status_surface",
       "path": "docs/status/l7_retrieval_contract_latest.md",
+      "lanes": [
+        "observability",
+        "verification"
+      ]
+    },
+    {
+      "id": "file:docs/status/l8_adapter_dataset_gate_latest.json",
+      "label": "l8_adapter_dataset_gate_latest.json",
+      "kind": "status_surface",
+      "path": "docs/status/l8_adapter_dataset_gate_latest.json",
+      "lanes": []
+    },
+    {
+      "id": "file:docs/status/l8_adapter_dataset_gate_latest.md",
+      "label": "l8_adapter_dataset_gate_latest.md",
+      "kind": "status_surface",
+      "path": "docs/status/l8_adapter_dataset_gate_latest.md",
       "lanes": []
     },
     {
@@ -4279,7 +4352,10 @@
       "label": "l8_distillation_boundary_latest.md",
       "kind": "status_surface",
       "path": "docs/status/l8_distillation_boundary_latest.md",
-      "lanes": []
+      "lanes": [
+        "observability",
+        "verification"
+      ]
     },
     {
       "id": "file:docs/status/memory_governance_contract_latest.md",
@@ -5457,6 +5533,20 @@
       "lanes": []
     },
     {
+      "id": "file:tests/test_run_l7_operational_packet.py",
+      "label": "test_run_l7_operational_packet.py",
+      "kind": "test",
+      "path": "tests/test_run_l7_operational_packet.py",
+      "lanes": []
+    },
+    {
+      "id": "file:tests/test_run_l8_adapter_dataset_gate.py",
+      "label": "test_run_l8_adapter_dataset_gate.py",
+      "kind": "test",
+      "path": "tests/test_run_l8_adapter_dataset_gate.py",
+      "lanes": []
+    },
+    {
       "id": "file:tests/test_run_market_removed_scripts.py",
       "label": "test_run_market_removed_scripts.py",
       "kind": "test",
@@ -6038,6 +6128,13 @@
       "lanes": []
     },
     {
+      "id": "file:tests/test_verify_abc_firewall.py",
+      "label": "test_verify_abc_firewall.py",
+      "kind": "test",
+      "path": "tests/test_verify_abc_firewall.py",
+      "lanes": []
+    },
+    {
       "id": "file:tests/test_verify_commit_attribution.py",
       "label": "test_verify_commit_attribution.py",
       "kind": "test",
@@ -6382,6 +6479,16 @@
     },
     {
       "source": "lane:observability",
+      "target": "file:docs/status/l7_retrieval_contract_latest.md",
+      "type": "contains"
+    },
+    {
+      "source": "lane:observability",
+      "target": "file:docs/status/l8_distillation_boundary_latest.md",
+      "type": "contains"
+    },
+    {
+      "source": "lane:observability",
       "target": "file:docs/status/memory_governance_contract_latest.md",
       "type": "contains"
     },
@@ -6433,6 +6540,16 @@
     {
       "source": "lane:verification",
       "target": "file:docs/status/README.md",
+      "type": "contains"
+    },
+    {
+      "source": "lane:verification",
+      "target": "file:docs/status/l7_retrieval_contract_latest.md",
+      "type": "contains"
+    },
+    {
+      "source": "lane:verification",
+      "target": "file:docs/status/l8_distillation_boundary_latest.md",
       "type": "contains"
     },
     {
@@ -6733,6 +6850,26 @@
     {
       "source": "file:scripts/run_dream_wakeup_loop.py",
       "target": "file:tonesoul/wakeup_loop.py",
+      "type": "imports"
+    },
+    {
+      "source": "file:scripts/run_l7_operational_packet.py",
+      "target": "file:scripts/run_changed_surface_checks.py",
+      "type": "imports"
+    },
+    {
+      "source": "file:scripts/run_l7_operational_packet.py",
+      "target": "file:scripts/run_l7_l8_contract_artifacts.py",
+      "type": "imports"
+    },
+    {
+      "source": "file:scripts/run_l7_operational_packet.py",
+      "target": "file:scripts/verify_protected_paths.py",
+      "type": "imports"
+    },
+    {
+      "source": "file:scripts/run_l8_adapter_dataset_gate.py",
+      "target": "file:scripts/run_l7_l8_contract_artifacts.py",
       "type": "imports"
     },
     {
@@ -7747,6 +7884,11 @@
     },
     {
       "source": "file:AI_ONBOARDING.md",
+      "target": "file:docs/architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md",
+      "type": "references"
+    },
+    {
+      "source": "file:AI_ONBOARDING.md",
       "target": "file:docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md",
       "type": "references"
     },
@@ -7782,7 +7924,22 @@
     },
     {
       "source": "file:AI_ONBOARDING.md",
+      "target": "file:docs/status/abc_firewall_latest.json",
+      "type": "references"
+    },
+    {
+      "source": "file:AI_ONBOARDING.md",
+      "target": "file:docs/status/l7_operational_packet_latest.json",
+      "type": "references"
+    },
+    {
+      "source": "file:AI_ONBOARDING.md",
       "target": "file:docs/status/l7_retrieval_contract_latest.json",
+      "type": "references"
+    },
+    {
+      "source": "file:AI_ONBOARDING.md",
+      "target": "file:docs/status/l8_adapter_dataset_gate_latest.json",
       "type": "references"
     },
     {
@@ -7927,6 +8084,11 @@
     },
     {
       "source": "file:README.md",
+      "target": "file:docs/architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md",
+      "type": "references"
+    },
+    {
+      "source": "file:README.md",
       "target": "file:docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md",
       "type": "references"
     },
@@ -7962,7 +8124,22 @@
     },
     {
       "source": "file:README.md",
+      "target": "file:docs/status/abc_firewall_latest.json",
+      "type": "references"
+    },
+    {
+      "source": "file:README.md",
+      "target": "file:docs/status/l7_operational_packet_latest.json",
+      "type": "references"
+    },
+    {
+      "source": "file:README.md",
       "target": "file:docs/status/l7_retrieval_contract_latest.json",
+      "type": "references"
+    },
+    {
+      "source": "file:README.md",
+      "target": "file:docs/status/l8_adapter_dataset_gate_latest.json",
       "type": "references"
     },
     {
@@ -8167,6 +8344,11 @@
     },
     {
       "source": "file:docs/README.md",
+      "target": "file:docs/architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/README.md",
       "target": "file:docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md",
       "type": "references"
     },
@@ -8202,7 +8384,22 @@
     },
     {
       "source": "file:docs/README.md",
+      "target": "file:docs/status/abc_firewall_latest.json",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/README.md",
+      "target": "file:docs/status/l7_operational_packet_latest.json",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/README.md",
       "target": "file:docs/status/l7_retrieval_contract_latest.json",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/README.md",
+      "target": "file:docs/status/l8_adapter_dataset_gate_latest.json",
       "type": "references"
     },
     {
@@ -8258,6 +8455,16 @@
     {
       "source": "file:docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md",
       "target": "file:docs/status/changed_surface_checks_latest.md",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md",
+      "target": "file:docs/status/l7_operational_packet_latest.json",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md",
+      "target": "file:docs/status/l7_operational_packet_latest.md",
       "type": "references"
     },
     {
@@ -8328,6 +8535,16 @@
     {
       "source": "file:docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md",
       "target": "file:docs/research/tonesoul_l7_l8_open_source_evidence_map_2026-03-22.md",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md",
+      "target": "file:docs/status/l8_adapter_dataset_gate_latest.json",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md",
+      "target": "file:docs/status/l8_adapter_dataset_gate_latest.md",
       "type": "references"
     },
     {
@@ -8802,6 +9019,11 @@
     },
     {
       "source": "file:task.md",
+      "target": "file:docs/architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md",
+      "type": "references"
+    },
+    {
+      "source": "file:task.md",
       "target": "file:docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md",
       "type": "references"
     },
@@ -9202,6 +9424,16 @@
     },
     {
       "source": "file:task.md",
+      "target": "file:docs/status/abc_firewall_latest.json",
+      "type": "references"
+    },
+    {
+      "source": "file:task.md",
+      "target": "file:docs/status/abc_firewall_latest.md",
+      "type": "references"
+    },
+    {
+      "source": "file:task.md",
       "target": "file:docs/status/autonomous_registry_schedule_latest.json",
       "type": "references"
     },
@@ -9252,12 +9484,32 @@
     },
     {
       "source": "file:task.md",
+      "target": "file:docs/status/l7_operational_packet_latest.json",
+      "type": "references"
+    },
+    {
+      "source": "file:task.md",
+      "target": "file:docs/status/l7_operational_packet_latest.md",
+      "type": "references"
+    },
+    {
+      "source": "file:task.md",
       "target": "file:docs/status/l7_retrieval_contract_latest.json",
       "type": "references"
     },
     {
       "source": "file:task.md",
       "target": "file:docs/status/l7_retrieval_contract_latest.md",
+      "type": "references"
+    },
+    {
+      "source": "file:task.md",
+      "target": "file:docs/status/l8_adapter_dataset_gate_latest.json",
+      "type": "references"
+    },
+    {
+      "source": "file:task.md",
+      "target": "file:docs/status/l8_adapter_dataset_gate_latest.md",
       "type": "references"
     },
     {
@@ -9433,6 +9685,11 @@
     {
       "source": "file:task.md",
       "target": "file:docs/status/tonesoul_knowledge_graph_latest.md",
+      "type": "references"
+    },
+    {
+      "source": "file:task.md",
+      "target": "file:docs/status/tonesoul_knowledge_graph_latest.mmd",
       "type": "references"
     },
     {
@@ -9807,6 +10064,16 @@
     },
     {
       "source": "file:task.md",
+      "target": "file:scripts/run_l7_operational_packet.py",
+      "type": "references"
+    },
+    {
+      "source": "file:task.md",
+      "target": "file:scripts/run_l8_adapter_dataset_gate.py",
+      "type": "references"
+    },
+    {
+      "source": "file:task.md",
       "target": "file:scripts/run_market_sweep.py",
       "type": "references"
     },
@@ -9958,6 +10225,11 @@
     {
       "source": "file:task.md",
       "target": "file:scripts/verify_7d.py",
+      "type": "references"
+    },
+    {
+      "source": "file:task.md",
+      "target": "file:scripts/verify_abc_firewall.py",
       "type": "references"
     },
     {
@@ -10772,6 +11044,16 @@
     },
     {
       "source": "file:task.md",
+      "target": "file:tests/test_run_l7_operational_packet.py",
+      "type": "references"
+    },
+    {
+      "source": "file:task.md",
+      "target": "file:tests/test_run_l8_adapter_dataset_gate.py",
+      "type": "references"
+    },
+    {
+      "source": "file:task.md",
       "target": "file:tests/test_run_market_removed_scripts.py",
       "type": "references"
     },
@@ -11173,6 +11455,11 @@
     {
       "source": "file:task.md",
       "target": "file:tests/test_verify_7d.py",
+      "type": "references"
+    },
+    {
+      "source": "file:task.md",
+      "target": "file:tests/test_verify_abc_firewall.py",
       "type": "references"
     },
     {
@@ -13516,6 +13803,16 @@
       "type": "verifies"
     },
     {
+      "source": "file:tests/test_run_l7_operational_packet.py",
+      "target": "file:scripts/run_l7_operational_packet.py",
+      "type": "verifies"
+    },
+    {
+      "source": "file:tests/test_run_l8_adapter_dataset_gate.py",
+      "target": "file:scripts/run_l8_adapter_dataset_gate.py",
+      "type": "verifies"
+    },
+    {
       "source": "file:tests/test_run_market_removed_scripts.py",
       "target": "file:scripts/run_gold_scan.py",
       "type": "verifies"
@@ -14141,6 +14438,11 @@
       "type": "verifies"
     },
     {
+      "source": "file:tests/test_verify_abc_firewall.py",
+      "target": "file:scripts/verify_abc_firewall.py",
+      "type": "verifies"
+    },
+    {
       "source": "file:tests/test_verify_commit_attribution.py",
       "target": "file:scripts/verify_commit_attribution.py",
       "type": "verifies"
@@ -14382,7 +14684,7 @@
       "path": "task.md",
       "label": "task.md",
       "kind": "doc",
-      "degree": 657
+      "degree": 671
     },
     {
       "id": "file:tonesoul/unified_pipeline.py",
@@ -14403,7 +14705,14 @@
       "path": "README.md",
       "label": "README.md",
       "kind": "doc",
-      "degree": 38
+      "degree": 42
+    },
+    {
+      "id": "file:AI_ONBOARDING.md",
+      "path": "AI_ONBOARDING.md",
+      "label": "AI_ONBOARDING.md",
+      "kind": "doc",
+      "degree": 31
     },
     {
       "id": "file:語魂系統GPTs_v1.1/02_執行治理規格_Runtime.md",
@@ -14420,18 +14729,25 @@
       "degree": 29
     },
     {
-      "id": "file:AI_ONBOARDING.md",
-      "path": "AI_ONBOARDING.md",
-      "label": "AI_ONBOARDING.md",
-      "kind": "doc",
-      "degree": 27
-    },
-    {
       "id": "file:語魂系統GPTs_v1.1/07_六層架構與實作對位.md",
       "path": "語魂系統GPTs_v1.1/07_六層架構與實作對位.md",
       "label": "07_六層架構與實作對位.md",
       "kind": "authority_doc",
       "degree": 27
+    },
+    {
+      "id": "file:docs/README.md",
+      "path": "docs/README.md",
+      "label": "README.md",
+      "kind": "doc",
+      "degree": 24
+    },
+    {
+      "id": "file:docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md",
+      "path": "docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md",
+      "label": "TONESOUL_L7_RETRIEVAL_CONTRACT.md",
+      "kind": "doc",
+      "degree": 23
     },
     {
       "id": "file:apps/api/server.py",
@@ -14441,25 +14757,11 @@
       "degree": 21
     },
     {
-      "id": "file:docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md",
-      "path": "docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md",
-      "label": "TONESOUL_L7_RETRIEVAL_CONTRACT.md",
-      "kind": "doc",
-      "degree": 21
-    },
-    {
       "id": "file:tonesoul/council/types.py",
       "path": "tonesoul/council/types.py",
       "label": "types.py",
       "kind": "python_module",
       "degree": 21
-    },
-    {
-      "id": "file:docs/README.md",
-      "path": "docs/README.md",
-      "label": "README.md",
-      "kind": "doc",
-      "degree": 20
     }
   ]
 }

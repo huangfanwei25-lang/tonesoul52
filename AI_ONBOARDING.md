@@ -23,6 +23,8 @@ If runtime layers and model-attachment direction feel split apart, use the eight
 If retrieval path is unclear, use the L7 retrieval contract before bulk-reading markdown.
 If adapters, RL, or distillation are in scope, use the L8 boundary contract before proposing training surfaces.
 If you need compact machine-readable guidance, open `docs/status/l7_retrieval_contract_latest.json` and `docs/status/l8_distillation_boundary_latest.json`.
+If you need the first directly usable operational layer, open `docs/status/l7_operational_packet_latest.json` and `docs/status/l8_adapter_dataset_gate_latest.json`.
+If you need claim-governance boundaries for theory vs mechanism, open `docs/architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md` and `docs/status/abc_firewall_latest.json`.
 
 ## 🎯 你需要知道的
 

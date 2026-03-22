@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-22T09:04:58Z",
+  "generated_at": "2026-03-22T10:40:46Z",
   "contract_version": "v1",
   "canonical_contract": "docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md",
   "machine_readable_mirror": "docs/status/l8_distillation_boundary_latest.json",
@@ -45,6 +45,14 @@
       "examples": [
         "retrieval-before-long-prompt",
         "verifier-before-claim"
+      ]
+    },
+    {
+      "id": "governance_posture",
+      "allowed": true,
+      "examples": [
+        "stable refusal posture",
+        "public governance guard behavior"
       ]
     },
     {
@@ -122,7 +130,7 @@
     "training_objective": "governance_posture"
   },
   "metrics": {
-    "allowed_class_count": 4,
+    "allowed_class_count": 5,
     "forbidden_surface_count": 8,
     "export_gate_count": 5,
     "evaluation_dimension_count": 5

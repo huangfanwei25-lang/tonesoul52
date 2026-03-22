@@ -1,6 +1,6 @@
 # L8 Distillation Boundary Latest
 
-- generated_at: 2026-03-22T09:04:58Z
+- generated_at: 2026-03-22T10:40:46Z
 - contract_version: v1
 - canonical_contract: `docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md`
 - dataset_schema_ref: `spec/governance/adapter_dataset_record_v1.schema.json`
@@ -17,6 +17,9 @@
 - `tool_routing_habit`
   - `retrieval-before-long-prompt`
   - `verifier-before-claim`
+- `governance_posture`
+  - `stable refusal posture`
+  - `public governance guard behavior`
 - `language_style`
   - `public-facing tone style`
 
