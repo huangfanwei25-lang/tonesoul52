@@ -1,5 +1,8 @@
 # 為什麼 AI 總是「信口開河」？MIT 最新研究給了答案
 
+> Purpose: outward-facing post draft that frames AI overconfidence as a governance problem and introduces ToneSoul's response.
+> Last Updated: 2026-03-23
+
 > 從「過度自信的實習生」到「會思考的導航員」——一個獨立開發者的 AI 元認知實踐
 
 ---

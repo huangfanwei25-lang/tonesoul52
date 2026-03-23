@@ -1,5 +1,8 @@
 # File Purpose Map
 
+> Purpose: define naming and purpose conventions for scripts, tests, docs, and report surfaces across the repository.
+> Last Updated: 2026-03-23
+
 ## 目的
 
 統一命名語意，讓「檔名 = 用途」可被快速理解，降低跨代理協作成本。

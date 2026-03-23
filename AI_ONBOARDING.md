@@ -2,9 +2,12 @@
 
 > **Purpose**: 給未來沒有記憶的 AI 實例的快速引導。
 > **Author**: 黃梵威 (Fan-Wei Huang) + Previous AI Instances
-> **Last Updated**: 2026-01-10
+> **Last Updated**: 2026-03-22
 
 ---
+
+> Purpose: AI onboarding entrypoint for ToneSoul architecture, retrieval order, and collaboration boundaries.
+> Last Updated: 2026-03-22
 
 ## Canonical Architecture Anchor
 
@@ -12,8 +15,57 @@ Read these before making architecture assumptions:
 
 1. `docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md`
 2. `docs/notes/TONESOUL_ARCHITECTURE_MEMORY_ANCHOR_2026-03-22.md`
+3. `docs/architecture/KNOWLEDGE_SURFACES_BOUNDARY_MAP.md`
+4. `docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md`
+5. `docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md`
+6. `docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md`
+7. `docs/notes/TONESOUL_RUNTIME_ADAPTER_MEMORY_ANCHOR_2026-03-23.md`
 
 If long prose, scattered repo state, and runtime behavior disagree, prefer the canonical architecture anchor.
+If multiple "knowledge" directories appear to disagree, use the knowledge surface boundary map before inferring authority.
+If runtime layers and model-attachment direction feel split apart, use the eight-layer convergence map before inventing a new architecture story.
+If retrieval path is unclear, use the L7 retrieval contract before bulk-reading markdown.
+If adapters, RL, or distillation are in scope, use the L8 boundary contract before proposing training surfaces.
+If the next question is how developer agents should persist tension, vows, vetoes, and stance drift across sessions, open `docs/notes/TONESOUL_RUNTIME_ADAPTER_MEMORY_ANCHOR_2026-03-23.md` before inventing a new memory workflow.
+If you need the original draft idea for self-dogfooding ToneSoul on top of agent workflows, open `docs/RFC-015_Self_Dogfooding_Runtime_Adapter.md`, but treat it as a draft source until it is rewritten cleanly.
+If you need compact machine-readable guidance, open `docs/status/l7_retrieval_contract_latest.json` and `docs/status/l8_distillation_boundary_latest.json`.
+If you need the first directly usable operational layer, open `docs/status/l7_operational_packet_latest.json` and `docs/status/l8_adapter_dataset_gate_latest.json`.
+If you need claim-governance boundaries for theory vs mechanism, open `docs/architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md` and `docs/status/abc_firewall_latest.json`.
+If duplicate doc names, mirror lanes, or missing purpose/date metadata are blocking retrieval, open `docs/status/doc_convergence_inventory_latest.json` and `docs/plans/doc_convergence_cleanup_plan_2026-03-22.md` before proposing renames or merges.
+If you need the full multi-wave roadmap for repository documentation cleanup, open `docs/plans/doc_convergence_master_plan_2026-03-23.md` before starting a new convergence pass.
+If the overall documentation lane still feels too flat or noisy, open `docs/architecture/DOC_AUTHORITY_STRUCTURE_MAP.md` and `docs/status/doc_authority_structure_latest.json` before inventing a new taxonomy.
+If the collision is not a true duplicate but a same-basename semantic split, open `docs/architecture/BASENAME_DIVERGENCE_DISTILLATION_MAP.md`, `spec/governance/basename_divergence_registry_v1.json`, and `docs/status/basename_divergence_distillation_latest.json` before deciding to rename anything.
+If nested private-memory shadows are in scope, treat `memory/.hierarchical_index/` as the active lane and confirm current posture in `docs/architecture/PRIVATE_MEMORY_SHADOW_BOUNDARY_MAP.md` and `docs/status/private_memory_shadow_latest.json` before touching any memory data.
+If paradox fixtures are in scope, treat `PARADOXES/` as the canonical governance casebook and `tests/fixtures/paradoxes/` as the test projection lane; confirm current posture in `docs/architecture/PARADOX_FIXTURE_OWNERSHIP_MAP.md` and `docs/status/paradox_fixture_ownership_latest.json`.
+If engineering-book mirrors are in scope, treat `docs/engineering/` as canonical and confirm current sync posture in `docs/architecture/ENGINEERING_MIRROR_OWNERSHIP_MAP.md` and `docs/status/engineering_mirror_ownership_latest.json`.
+
+## 🔄 Session Start: Load Governance State (ALL Agents)
+
+> [!IMPORTANT]
+> **Every AI agent MUST do this as the FIRST action of every session.**
+
+Run the governance state reader to inherit prior session posture:
+
+```bash
+python scripts/read_governance_state.py
+```
+
+This auto-discovers `governance_state.json` from these locations:
+1. `./governance_state.json` (repo-local, for testing)
+2. `~/.gemini/tonesoul/governance_state.json` (Antigravity)
+3. `~/.codex/memories/governance_state.json` (Codex)
+4. `~/.tonesoul/governance_state.json` (generic)
+
+If no state file exists, initialize one:
+```bash
+python scripts/init_governance_state.py --output <your-agent-storage-path>/governance_state.json
+```
+
+At session end, run the `/session-end` workflow to write back your trace.
+
+See `docs/RFC-015_Self_Dogfooding_Runtime_Adapter.md` for the full contract.
+
+---
 
 ## 🎯 你需要知道的
 

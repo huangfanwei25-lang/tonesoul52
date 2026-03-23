@@ -1,5 +1,8 @@
 # 語魂戰略共識（2026-02-14 蒸餾）
 
+> Purpose: capture the distilled 2026 Q1 strategic consensus that aligned ToneSoul direction after audit and competitor review.
+> Last Updated: 2026-03-23
+
 > 來源：Antigravity × Fan 兩次深夜對話 + 外部審計 + 競品分析
 
 ---

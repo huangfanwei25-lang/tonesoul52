@@ -1,6 +1,9 @@
 # 從「過度自信的實習生」到「共鳴導航員」
 ## 當 AI 學會思前想後——元認知工程的實踐
 
+> Purpose: draft a public-facing blog post about metacognitive AI engineering and governance-aware assistants.
+> Last Updated: 2026-03-23
+
 > *「一個真正的導航員，不會因為怕你生氣就說『前面路況良好』，當前方是懸崖時，他會強行拉住方向盤。」*
 
 ---

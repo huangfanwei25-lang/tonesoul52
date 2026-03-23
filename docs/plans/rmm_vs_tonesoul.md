@@ -1,5 +1,8 @@
 # RMM 論文 vs ToneSoul 記憶架構 — 技術對照
 
+> Purpose: compare the ACL 2025 RMM approach with ToneSoul's memory-governance architecture.
+> Last Updated: 2026-03-23
+
 > **RMM**: "In Prospect and Retrospect: Reflective Memory Management for Long-term Personalized Dialogue Agents"
 > Zhen Tan et al., **ACL 2025** (同儕審查通過)
 >

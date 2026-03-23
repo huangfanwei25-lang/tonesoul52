@@ -1,5 +1,8 @@
 # Memory Subjectivity Review Batch Artifact Addendum (2026-03-10)
 
+> Purpose: define the canonical pending-queue artifact for grouped subjectivity review work.
+> Last Updated: 2026-03-23
+
 ## Why This Addendum Exists
 
 The branch now has two different but complementary operator needs:

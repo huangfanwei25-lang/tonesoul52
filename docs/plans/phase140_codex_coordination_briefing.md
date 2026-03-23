@@ -1,5 +1,8 @@
 # Phase 136 / 137: Market Mirror — CODEX Coordination Briefing
 
+> Purpose: preserve a historical coordination briefing for the Market Mirror phases and clarify its non-current status.
+> Last Updated: 2026-03-23
+
 > **Author**: Antigravity (夜間 session)  
 > **Date**: 2026-03-12T00:00+08:00  
 > **Status**: ✅ Completed, uncommitted  

@@ -1,5 +1,8 @@
 # Memory Subjectivity Grouping Handoff Surface Addendum (2026-03-11)
 
+> Purpose: align grouping artifacts with the same handoff surface shape already exposed by the review-batch artifact.
+> Last Updated: 2026-03-23
+
 ## Why This Addendum Exists
 
 The review-batch artifact already had a compact handoff surface.

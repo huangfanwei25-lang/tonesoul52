@@ -1,5 +1,8 @@
 # Memory Subjectivity Carry-Forward Queue Annotation Addendum (2026-03-11)
 
+> Purpose: define how prior review outcomes are carried forward as queue annotations without inheriting decisions blindly.
+> Last Updated: 2026-03-23
+
 ## Why This Addendum Exists
 
 The branch already had:

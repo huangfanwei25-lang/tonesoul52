@@ -1,5 +1,7 @@
 # Multi-Persona Evaluation Framework (Phase 78)
 
+> Purpose: define a reproducible evaluation protocol for comparing single-path, tri-persona, and arbiter-assisted runtime decisions.
+> Last Updated: 2026-03-23
 ## Goal
 
 Define a reproducible A/B/C protocol for ToneSoul multi-persona runtime decisions.

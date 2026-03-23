@@ -1,6 +1,9 @@
 # ToneSoul Documentation Index
 
-> 自動更新於 2026-03-18。按主題分類，方便快速導航。
+> Purpose: top-level documentation index for ToneSoul authority surfaces, operational packets, and convergence maps.
+> Last Updated: 2026-03-23
+
+> 自動更新於 2026-03-22。按主題分類，方便快速導航。
 
 ---
 
@@ -8,6 +11,50 @@
 
 - [architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md](architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md)
 - [notes/TONESOUL_ARCHITECTURE_MEMORY_ANCHOR_2026-03-22.md](notes/TONESOUL_ARCHITECTURE_MEMORY_ANCHOR_2026-03-22.md)
+- [notes/TONESOUL_RUNTIME_ADAPTER_MEMORY_ANCHOR_2026-03-23.md](notes/TONESOUL_RUNTIME_ADAPTER_MEMORY_ANCHOR_2026-03-23.md)
+- [architecture/KNOWLEDGE_SURFACES_BOUNDARY_MAP.md](architecture/KNOWLEDGE_SURFACES_BOUNDARY_MAP.md)
+- [architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md](architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md)
+
+## Engineering Contracts
+
+- [architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md](architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md)
+- [architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md](architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md)
+- [architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md](architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md)
+
+## Developer Runtime Adapter Direction
+
+- [notes/TONESOUL_RUNTIME_ADAPTER_MEMORY_ANCHOR_2026-03-23.md](notes/TONESOUL_RUNTIME_ADAPTER_MEMORY_ANCHOR_2026-03-23.md)
+- [RFC-015_Self_Dogfooding_Runtime_Adapter.md](RFC-015_Self_Dogfooding_Runtime_Adapter.md)
+
+## Machine-Readable Contract Mirrors
+
+- [status/l7_retrieval_contract_latest.json](status/l7_retrieval_contract_latest.json)
+- [status/l8_distillation_boundary_latest.json](status/l8_distillation_boundary_latest.json)
+
+## Operational Packets
+
+- [status/l7_operational_packet_latest.json](status/l7_operational_packet_latest.json)
+- [status/l8_adapter_dataset_gate_latest.json](status/l8_adapter_dataset_gate_latest.json)
+- [status/abc_firewall_latest.json](status/abc_firewall_latest.json)
+
+## Documentation Convergence
+
+- [status/doc_convergence_inventory_latest.json](status/doc_convergence_inventory_latest.json)
+- [status/doc_convergence_inventory_latest.mmd](status/doc_convergence_inventory_latest.mmd)
+- [plans/doc_convergence_cleanup_plan_2026-03-22.md](plans/doc_convergence_cleanup_plan_2026-03-22.md)
+- [plans/doc_convergence_master_plan_2026-03-23.md](plans/doc_convergence_master_plan_2026-03-23.md)
+- [architecture/DOC_AUTHORITY_STRUCTURE_MAP.md](architecture/DOC_AUTHORITY_STRUCTURE_MAP.md)
+- [status/doc_authority_structure_latest.json](status/doc_authority_structure_latest.json)
+- [architecture/BASENAME_DIVERGENCE_DISTILLATION_MAP.md](architecture/BASENAME_DIVERGENCE_DISTILLATION_MAP.md)
+- [status/basename_divergence_distillation_latest.json](status/basename_divergence_distillation_latest.json)
+- [architecture/PRIVATE_MEMORY_SHADOW_BOUNDARY_MAP.md](architecture/PRIVATE_MEMORY_SHADOW_BOUNDARY_MAP.md)
+- [status/private_memory_shadow_latest.json](status/private_memory_shadow_latest.json)
+- [architecture/PARADOX_FIXTURE_OWNERSHIP_MAP.md](architecture/PARADOX_FIXTURE_OWNERSHIP_MAP.md)
+- [status/paradox_fixture_ownership_latest.json](status/paradox_fixture_ownership_latest.json)
+- [architecture/ENGINEERING_MIRROR_OWNERSHIP_MAP.md](architecture/ENGINEERING_MIRROR_OWNERSHIP_MAP.md)
+- [status/engineering_mirror_ownership_latest.json](status/engineering_mirror_ownership_latest.json)
+- [architecture/HISTORICAL_DOC_LANE_POLICY.md](architecture/HISTORICAL_DOC_LANE_POLICY.md)
+- [status/historical_doc_lane_latest.json](status/historical_doc_lane_latest.json)
 
 ## 🧭 Documentation Governance v1
 
@@ -70,7 +117,7 @@
 | [core_concepts.md](core_concepts.md) | 核心概念定義 |
 | [terminology.md](terminology.md) | 術語表 |
 | [glossary_engineering_mapping.md](glossary_engineering_mapping.md) | 術語↔工程對照 |
-| [philosophy/](philosophy/) | 哲學子目錄 (14 files) |
+| [philosophy/](philosophy/) | 哲學子目錄 (27 files) |
 
 ---
 
@@ -89,7 +136,7 @@
 | [COUNCIL_RUNTIME.md](COUNCIL_RUNTIME.md) | Council 運行時 |
 | [SEMANTIC_BIFURCATION_AUDIT.md](SEMANTIC_BIFURCATION_AUDIT.md) | 語義分岔審計 |
 | [when_to_ground.md](when_to_ground.md) | 何時接地（限制判定） |
-| [governance/](governance/) | 治理子目錄 (3 files) |
+| [governance/](governance/) | 治理子目錄 (4 files) |
 
 ---
 
@@ -157,8 +204,9 @@
 | [bayesian_accountability_plan.md](bayesian_accountability_plan.md) | 貝葉斯問責計畫 |
 | [reproducibility_guide.md](reproducibility_guide.md) | 可重現性指南 |
 | [rmf_crosswalk.md](rmf_crosswalk.md) | RMF 交叉引用 |
+| [research/tonesoul_l7_l8_open_source_evidence_map_2026-03-22.md](research/tonesoul_l7_l8_open_source_evidence_map_2026-03-22.md) | L7/L8 開源框架與實證理論地圖 |
 | [zenodo_publishing_guide.md](zenodo_publishing_guide.md) | Zenodo 發布指南 |
-| [research/](research/) | 研究子目錄 (9 files) |
+| [research/](research/) | 研究子目錄 (10 files) |
 
 ---
 
@@ -194,8 +242,8 @@
 | [ADR-001-dual-track-resolution.md](ADR-001-dual-track-resolution.md) | ADR: 雙軌解析 |
 | [failure_analysis.md](failure_analysis.md) | 失敗分析 |
 | [privacy_policy.md](privacy_policy.md) | 隱私政策 |
-| [engineering/](engineering/) | 工程子目錄 (16 files) |
-| [status/](status/) | 狀態子目錄 (11 files) |
+| [engineering/](engineering/) | 工程子目錄 (9 files) |
+| [status/](status/) | 狀態子目錄 (95 files) |
 
 ---
 
@@ -204,11 +252,11 @@
 
 | 目錄 | Files | 內容 |
 |------|-------|------|
-| `philosophy/` | 14 | 倫理框架、觀者與被觀者、宣言 |
-| `engineering/` | 16 | 工程規格、實作細節 |
-| `research/` | 9 | 學術研究、對比分析 |
-| `governance/` | 3 | 治理規則、合規 |
-| `status/` | 11 | 專案狀態追蹤 |
-| `notes/` | 1 | 備註 |
-| `architecture/` | 1 | 架構圖 |
-| `images/` | 1 | 圖片資源 |
+| `philosophy/` | 27 | 倫理框架、觀者與被觀者、宣言 |
+| `engineering/` | 9 | 工程規格、實作細節 |
+| `research/` | 10 | 學術研究、對比分析 |
+| `governance/` | 4 | 治理規則、合規 |
+| `status/` | 99 | 專案狀態追蹤 |
+| `notes/` | 2 | 備註 |
+| `architecture/` | 8 | 架構圖與工程邊界合約 |
+| `images/` | 2 | 圖片資源 |

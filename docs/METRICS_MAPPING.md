@@ -1,5 +1,8 @@
 # Metrics Mapping (Migration Guide)
 
+> Purpose: map legacy metric concepts onto the current S/T/R/E/I governance dimensions during migration.
+> Last Updated: 2026-03-23
+
 This document maps legacy metric concepts to the current **S/T/R/E/I** governance set.
 
 ---

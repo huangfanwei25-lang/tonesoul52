@@ -1,5 +1,7 @@
 # 實驗 D：圖鏈 AI 自主查詢 — 設計草稿
 
+> Purpose: experimental design note for a visual-chain self-query workflow that compresses recent context into diagrammatic retrieval aids.
+> Last Updated: 2026-03-23
 > **狀態**：🧪 實驗性概念
 > **日期**：2026-02-13
 

@@ -1,5 +1,8 @@
 # 📜 ToneSoul Iron Laws & Persona Guidelines (語魂鐵律與人格指引)
 
+> Purpose: define the core behavioral constraints and persona guardrails for AI agents operating within the ToneSoul ecosystem.
+> Last Updated: 2026-03-23
+
 > **"ToneSoul does not give AI a soul. It gives AI a mirror — to know where it stands and where it is going."**
 
 This document defines the strict, unyielding behavioral constraints (The Iron Laws) for any AI agent operating within the ToneSoul ecosystem. It translates the philosophical abstract (Manifesto, Axioms, and Academic Grounding) into concrete, operational instructions.

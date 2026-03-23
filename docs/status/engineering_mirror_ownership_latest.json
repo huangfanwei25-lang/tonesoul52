@@ -1,0 +1,206 @@
+{
+  "generated_at": "2026-03-22T14:22:32Z",
+  "contract": {
+    "canonical_root": "docs/engineering",
+    "mirror_root": "law/engineering",
+    "sync_direction": "docs/engineering -> law/engineering",
+    "owner_rule": "prefer canonical owner when canonical and mirror disagree"
+  },
+  "metrics": {
+    "pair_count": 15,
+    "exact_match_count": 14,
+    "sync_needed_count": 0,
+    "canonical_only_count": 1,
+    "mirror_only_count": 0
+  },
+  "pairs": [
+    {
+      "relative_path": "APPENDIX_ENGINEERING.md",
+      "canonical_path": "docs/engineering/APPENDIX_ENGINEERING.md",
+      "mirror_path": "law/engineering/APPENDIX_ENGINEERING.md",
+      "policy_mode": "exact_mirror",
+      "expected_posture": "exact mirror",
+      "exact_match": true,
+      "needs_sync": false,
+      "similarity": 1.0,
+      "canonical_sha256": "3484b87432e7673fbdb60beddedc2052c66dc73d451869d28a5e342574dc0b8f",
+      "mirror_sha256": "3484b87432e7673fbdb60beddedc2052c66dc73d451869d28a5e342574dc0b8f"
+    },
+    {
+      "relative_path": "DIAGRAMS/cqrs_tonesoul_flow.md",
+      "canonical_path": "docs/engineering/DIAGRAMS/cqrs_tonesoul_flow.md",
+      "mirror_path": "law/engineering/DIAGRAMS/cqrs_tonesoul_flow.md",
+      "policy_mode": "exact_mirror",
+      "expected_posture": "exact mirror",
+      "exact_match": true,
+      "needs_sync": false,
+      "similarity": 1.0,
+      "canonical_sha256": "0963592055a15318696d06cf7cc133ae9c8bee811fc53c8249ecc16546c3bce3",
+      "mirror_sha256": "0963592055a15318696d06cf7cc133ae9c8bee811fc53c8249ecc16546c3bce3"
+    },
+    {
+      "relative_path": "DIAGRAMS/drift_score_visualization.md",
+      "canonical_path": "docs/engineering/DIAGRAMS/drift_score_visualization.md",
+      "mirror_path": "law/engineering/DIAGRAMS/drift_score_visualization.md",
+      "policy_mode": "exact_mirror",
+      "expected_posture": "exact mirror",
+      "exact_match": true,
+      "needs_sync": false,
+      "similarity": 1.0,
+      "canonical_sha256": "f8e614b62d4384ce6dab4ae2b9ea214901e58574e48bce246a0f3b0b39727c9d",
+      "mirror_sha256": "f8e614b62d4384ce6dab4ae2b9ea214901e58574e48bce246a0f3b0b39727c9d"
+    },
+    {
+      "relative_path": "DIAGRAMS/three_vector_structure.md",
+      "canonical_path": "docs/engineering/DIAGRAMS/three_vector_structure.md",
+      "mirror_path": "law/engineering/DIAGRAMS/three_vector_structure.md",
+      "policy_mode": "exact_mirror",
+      "expected_posture": "exact mirror",
+      "exact_match": true,
+      "needs_sync": false,
+      "similarity": 1.0,
+      "canonical_sha256": "41f2300ffd4058de633bd19a3f9bfeb86b27e6614c7914f7f021234aabb31a0b",
+      "mirror_sha256": "41f2300ffd4058de633bd19a3f9bfeb86b27e6614c7914f7f021234aabb31a0b"
+    },
+    {
+      "relative_path": "EXAMPLES/drift_score_example.md",
+      "canonical_path": "docs/engineering/EXAMPLES/drift_score_example.md",
+      "mirror_path": "law/engineering/EXAMPLES/drift_score_example.md",
+      "policy_mode": "exact_mirror",
+      "expected_posture": "exact mirror",
+      "exact_match": true,
+      "needs_sync": false,
+      "similarity": 1.0,
+      "canonical_sha256": "e49ab5241324fb7b5f97fe0fc5b3e88a951bb75ec281f91b0d0eeeef19d001e3",
+      "mirror_sha256": "e49ab5241324fb7b5f97fe0fc5b3e88a951bb75ec281f91b0d0eeeef19d001e3"
+    },
+    {
+      "relative_path": "EXAMPLES/poav_report_example.md",
+      "canonical_path": "docs/engineering/EXAMPLES/poav_report_example.md",
+      "mirror_path": "law/engineering/EXAMPLES/poav_report_example.md",
+      "policy_mode": "exact_mirror",
+      "expected_posture": "exact mirror",
+      "exact_match": true,
+      "needs_sync": false,
+      "similarity": 1.0,
+      "canonical_sha256": "4b6d4e621884e87952ddccdb4b2224261ea714c10af209707d5eb561fa3130a8",
+      "mirror_sha256": "4b6d4e621884e87952ddccdb4b2224261ea714c10af209707d5eb561fa3130a8"
+    },
+    {
+      "relative_path": "EXAMPLES/step_ledger_example.md",
+      "canonical_path": "docs/engineering/EXAMPLES/step_ledger_example.md",
+      "mirror_path": "law/engineering/EXAMPLES/step_ledger_example.md",
+      "policy_mode": "exact_mirror",
+      "expected_posture": "exact mirror",
+      "exact_match": true,
+      "needs_sync": false,
+      "similarity": 1.0,
+      "canonical_sha256": "23b9e3986ede99ea1bd0b8b341ed2f36a6756827d1bc0beca24d09344ae9a374",
+      "mirror_sha256": "23b9e3986ede99ea1bd0b8b341ed2f36a6756827d1bc0beca24d09344ae9a374"
+    },
+    {
+      "relative_path": "EXAMPLES/time_island_example.md",
+      "canonical_path": "docs/engineering/EXAMPLES/time_island_example.md",
+      "mirror_path": "law/engineering/EXAMPLES/time_island_example.md",
+      "policy_mode": "exact_mirror",
+      "expected_posture": "exact mirror",
+      "exact_match": true,
+      "needs_sync": false,
+      "similarity": 1.0,
+      "canonical_sha256": "09370d3b253b07d35b545dd46a04ab3e7e0d8f130a474ff4014e559a9e6751f8",
+      "mirror_sha256": "09370d3b253b07d35b545dd46a04ab3e7e0d8f130a474ff4014e559a9e6751f8"
+    },
+    {
+      "relative_path": "OVERVIEW.md",
+      "canonical_path": "docs/engineering/OVERVIEW.md",
+      "mirror_path": "law/engineering/OVERVIEW.md",
+      "policy_mode": "exact_mirror",
+      "expected_posture": "exact mirror",
+      "exact_match": true,
+      "needs_sync": false,
+      "similarity": 1.0,
+      "canonical_sha256": "5beeda3abcb4c7a0195bf7ad5a5f7607e6d589741020f830315b8fbb1ff1c67a",
+      "mirror_sha256": "5beeda3abcb4c7a0195bf7ad5a5f7607e6d589741020f830315b8fbb1ff1c67a"
+    },
+    {
+      "relative_path": "README.md",
+      "canonical_path": "docs/engineering/README.md",
+      "mirror_path": "law/engineering/README.md",
+      "policy_mode": "role_scoped",
+      "expected_posture": "role-scoped pair",
+      "exact_match": false,
+      "needs_sync": false,
+      "similarity": 0.897,
+      "canonical_sha256": "ee855b327beccb9acaf4bf36549761853b063c6940ca3ba0185eeafca3be0a53",
+      "mirror_sha256": "4284878b0f253e86cbca05c61227886f195a41efea0b42a712d0229f6e2db2da"
+    },
+    {
+      "relative_path": "VOLUME_I_ENGINEERING_FOUNDATION.md",
+      "canonical_path": "docs/engineering/VOLUME_I_ENGINEERING_FOUNDATION.md",
+      "mirror_path": "law/engineering/VOLUME_I_ENGINEERING_FOUNDATION.md",
+      "policy_mode": "exact_mirror",
+      "expected_posture": "exact mirror",
+      "exact_match": true,
+      "needs_sync": false,
+      "similarity": 1.0,
+      "canonical_sha256": "21d2db3e74da2a16a961658279cb20e998640599412537e756ce3046ed9e748a",
+      "mirror_sha256": "21d2db3e74da2a16a961658279cb20e998640599412537e756ce3046ed9e748a"
+    },
+    {
+      "relative_path": "VOLUME_II_ENGINEERING_DYNAMICS.md",
+      "canonical_path": "docs/engineering/VOLUME_II_ENGINEERING_DYNAMICS.md",
+      "mirror_path": "law/engineering/VOLUME_II_ENGINEERING_DYNAMICS.md",
+      "policy_mode": "exact_mirror",
+      "expected_posture": "exact mirror",
+      "exact_match": true,
+      "needs_sync": false,
+      "similarity": 1.0,
+      "canonical_sha256": "922575ae03693ff528accf2cf6a1ac80f9014b96f267cfc6e5748cea75d47caa",
+      "mirror_sha256": "922575ae03693ff528accf2cf6a1ac80f9014b96f267cfc6e5748cea75d47caa"
+    },
+    {
+      "relative_path": "VOLUME_III_ENGINEERING_RESPONSIBILITY.md",
+      "canonical_path": "docs/engineering/VOLUME_III_ENGINEERING_RESPONSIBILITY.md",
+      "mirror_path": "law/engineering/VOLUME_III_ENGINEERING_RESPONSIBILITY.md",
+      "policy_mode": "exact_mirror",
+      "expected_posture": "exact mirror",
+      "exact_match": true,
+      "needs_sync": false,
+      "similarity": 1.0,
+      "canonical_sha256": "daed7e6f138bfb1bf9a75181654ab62d8605ff244505197105796880ac339d36",
+      "mirror_sha256": "daed7e6f138bfb1bf9a75181654ab62d8605ff244505197105796880ac339d36"
+    },
+    {
+      "relative_path": "VOLUME_IV_ENGINEERING_EVOLUTION.md",
+      "canonical_path": "docs/engineering/VOLUME_IV_ENGINEERING_EVOLUTION.md",
+      "mirror_path": "law/engineering/VOLUME_IV_ENGINEERING_EVOLUTION.md",
+      "policy_mode": "exact_mirror",
+      "expected_posture": "exact mirror",
+      "exact_match": true,
+      "needs_sync": false,
+      "similarity": 1.0,
+      "canonical_sha256": "d47e3e2b8d66e285e94d7b9fb71d0d93a075041a2d41ee2bbe480548b29217f0",
+      "mirror_sha256": "d47e3e2b8d66e285e94d7b9fb71d0d93a075041a2d41ee2bbe480548b29217f0"
+    },
+    {
+      "relative_path": "VOLUME_V_ENGINEERING_CLOSURE.md",
+      "canonical_path": "docs/engineering/VOLUME_V_ENGINEERING_CLOSURE.md",
+      "mirror_path": "law/engineering/VOLUME_V_ENGINEERING_CLOSURE.md",
+      "policy_mode": "exact_mirror",
+      "expected_posture": "exact mirror",
+      "exact_match": true,
+      "needs_sync": false,
+      "similarity": 1.0,
+      "canonical_sha256": "24c8f3fbdb8eb1727470e97a52fe9ada581a9b9cbd3a6fd1a81f4183b138e936",
+      "mirror_sha256": "24c8f3fbdb8eb1727470e97a52fe9ada581a9b9cbd3a6fd1a81f4183b138e936"
+    }
+  ],
+  "sync_needed": [],
+  "canonical_only": [
+    "prompt_hardening.md"
+  ],
+  "mirror_only": [],
+  "primary_status_line": "engineering_mirror_contract | pairs=15 exact=14 sync_needed=0 canonical_only=1 mirror_only=0",
+  "runtime_status_line": "owner=docs/engineering | mirror=law/engineering sync_direction=canonical_to_mirror drift=0",
+  "artifact_policy_status_line": "mirror_policy=explicit_owner | comparison=normalized_hash_plus_similarity"
+}

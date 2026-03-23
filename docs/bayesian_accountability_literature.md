@@ -1,5 +1,8 @@
 # Literature Review: Bayesian Accountability (Academic Foundation)
 
+> Purpose: summarize the literature basis for Bayesian accountability as an alternative to binary oracle-style verification.
+> Last Updated: 2026-03-23
+
 **Research Date**: 2026-02-02  
 **Trigger**: MizukiAI's critique that semantic accountability requires "oracle-level understanding OR surveillance"  
 **Our Claim**: Bayesian Accountability is a third option (probabilistic verification)

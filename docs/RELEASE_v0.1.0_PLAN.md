@@ -1,5 +1,8 @@
 # Release Plan v0.1.0
 
+> Purpose: historical release-readiness checklist and execution plan for ToneSoul v0.1.0.
+> Last Updated: 2026-03-23
+
 ## 範圍
 
 v0.1.0 以「可審計、可部署、可驗證」為交付標準。

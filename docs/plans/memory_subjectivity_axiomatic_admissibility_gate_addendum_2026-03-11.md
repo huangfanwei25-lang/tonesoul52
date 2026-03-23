@@ -1,5 +1,8 @@
 # Memory Subjectivity Axiomatic Admissibility Gate Addendum (2026-03-11)
 
+> Purpose: require axiomatic admissibility before subjectivity records can be approved as stable memory.
+> Last Updated: 2026-03-23
+
 ## Why This Addendum Exists
 
 The historical-figure audit surfaced one policy gap more important than any
@@ -58,4 +61,3 @@ It is not yet:
 - a new runtime promotion blocker
 
 Those would require separate design and test work.
-

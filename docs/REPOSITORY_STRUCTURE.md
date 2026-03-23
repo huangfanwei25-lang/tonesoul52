@@ -105,36 +105,44 @@ tonesoul52/
 
 ## 🧪 測試 (`tests/`)
 
-| 類別 | 檔案數 | 範例 |
+| 類別 | 現況 | 範例 |
 |------|--------|------|
-| **單元測試** | ~50 | `test_council_runtime.py`, `test_benevolence.py` |
-| **整合測試** | ~10 | `test_genesis_integration.py` |
-| **紅隊測試** | 2 | `tests/red_team/` (20 cases) |
-| **屬性測試** | 5 | `test_property_simple.py` |
+| **核心 / 單元 / 整合測試** | 大型混合測試集；實際數量以 `tests/` 和最新 healthcheck 為準 | `test_council_runtime.py`, `test_benevolence.py`, `test_genesis_integration.py` |
+| **紅隊測試** | `tests/red_team/` baseline 已啟用；最新 case-count 以 `docs/status/7d_snapshot.json` 為準 | `test_api_input_hardening.py`, `test_rdd_fuzzing.py` |
+| **屬性測試** | 多個 `test_property_*.py` 與契約導向測試共存 | `test_property_simple.py` |
 
 ---
 
 ## 🔧 根目錄腳本
 
-### 社群腳本 (`post_*.py`)
+### 歷史說明
 
-用於 Moltbook 社群對話，**非攻擊工具**：
+較早期的倉庫版本曾有根目錄 `post_*.py` / `reply_*.py` 社群腳本。
+目前公開主線不再以這些根目錄腳本作為主要入口，相關互動能力改由 `tools/`
+中的治理包裝工具承接。
 
-| 腳本 | 對話對象 |
-|------|----------|
-| `post_case_evil_response.py` | @evil |
-| `post_case_osmarks_response.py` | @osmarks |
-| `post_xiaozhua_*.py` | @Xiaozhua |
+### 社群 / 治理工具 (`tools/`)
+
+| 腳本 | 用途 |
+|------|------|
+| `tools/governed_poster.py` | 經治理與記憶包裝後的社群發文入口 |
+| `tools/moltbook_poster.py` | Moltbook 發文工具 |
+| `tools/moltbook_client.py` | Moltbook API client 與憑證解析 |
 
 ### 驗證腳本 (`verify_*.py`)
 
 | 腳本 | 用途 |
 |------|------|
-| `verify_fortress.py` | 治理防護驗證 |
-| `verify_identities.py` | 身份驗證 |
-| `verify_metabolism.py` | 記憶代謝驗證 |
+| `scripts/verify_fortress.py` | legacy 相容性驗證；依賴 pre-5.x sandbox runtime，缺失時預設 skip |
+| `scripts/verify_7d.py` | 7D 審計與治理維度驗證 |
+| `scripts/verify_docs_consistency.py` | 文件與治理契約一致性驗證 |
 
-註：`scripts/legacy/` 內有同名相容 shim，可支援舊指令路徑。
+### 本機診斷腳本
+
+| 腳本 | 用途 |
+|------|------|
+| `monitor_ports.ps1` | Windows 本機埠觀測與除錯，不是部署入口 |
+| `monitor_ports_v2.ps1` | Windows 本機埠觀測 v2，偏向短迴圈診斷用途 |
 
 ### 執行腳本 (`run_*.py`)
 
@@ -153,6 +161,9 @@ tonesoul52/
 | `README.md` | 專案介紹 |
 | `SOUL.md` | AI 角色設定 |
 | `AGENTS.md` | 代理系統說明 |
+| `docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md` | 現行正典架構入口 |
+| `MGGI_SPEC.md` | 形式化工程與治理規格 |
+| `TAE-01_Architecture_Spec.md` | 歷史架構 spec 譜系 |
 | `CODEX_TASK.md` | Codex 任務清單 |
 | `task.md` | 當前任務追蹤 |
 | `AXIOMS.json` | 核心公理定義 |
@@ -183,7 +194,7 @@ tonesoul52/
 |------|------|
 | **核心模組** | 106 files |
 | **文件** | 78 files |
-| **測試** | 59 files |
+| **測試** | dynamic: inspect `tests/` directly or latest healthcheck artifact |
 | **測試案例** | dynamic: docs/status/repo_healthcheck_latest.json (python_tests) |
-| **紅隊案例** | 20 cases |
+| **紅隊案例** | dynamic: docs/status/7d_snapshot.json (RDD case-count) |
 

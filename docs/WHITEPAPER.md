@@ -2,6 +2,9 @@
 operator: user
 ---
 
+Purpose: author-drafted engineering whitepaper source for the Huang Fanwei canon and its structured export targets.
+Last Updated: 2026-03-23
+
 ## 《黃梵威法典：工程白皮書》 v1.1
 
 **註**：以下文檔已根據上述建議重新構建，採用 **Markdown +

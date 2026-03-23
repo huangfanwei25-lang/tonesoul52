@@ -1,5 +1,8 @@
 # Perspective - Codex (2026-02-04)
 
+> Purpose: capture the Codex-side collaboration perspective, concerns, and working preferences for ToneSoul tasks.
+> Last Updated: 2026-03-23
+
 > 這份筆記描述 Codex 在 ToneSoul 專案中的協作視角與工作偏好。
 
 ## 角色定位

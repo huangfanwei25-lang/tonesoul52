@@ -1,5 +1,8 @@
 # Memory Subjectivity Repo Governance Handoff Preview Addendum (2026-03-11)
 
+> Purpose: define the governance-facing handoff preview that surfaces subjectivity settlement state alongside repo governance signals.
+> Last Updated: 2026-03-23
+
 ## Why This Addendum Exists
 
 The worktree settlement report can now mirror refreshable subjectivity handoff

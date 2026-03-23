@@ -1,5 +1,8 @@
 # ToneSoul 文件分類台帳 v1
 
+> Purpose: classify documentation lanes into governance zones so retrieval and cleanup work can distinguish authority surfaces.
+> Last Updated: 2026-03-23
+
 > 日期：2026-03-18
 > 用途：把「先分類、後搬移」落成可執行清單。
 

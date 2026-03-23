@@ -1,5 +1,8 @@
 # Tools API Schema
 
+> Purpose: standardize the output envelope used by `tools/` surfaces so responses stay traceable and testable.
+> Last Updated: 2026-03-23
+
 目的是讓 `tools/` 底下的輸出格式一致、可追蹤、可測試。
 
 欄位定義

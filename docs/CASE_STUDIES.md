@@ -1,5 +1,8 @@
 # 🎯 ToneSoul 案例研究（示例版）
 
+> Purpose: collect case-study style examples showing how ToneSoul concepts apply to concrete governance and product scenarios.
+> Last Updated: 2026-03-23
+
 > **用可追溯案例說明治理能力，而不是只靠敘事。**
 
 ---

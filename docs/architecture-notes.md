@@ -1,5 +1,8 @@
 # Architecture Notes
 
+> Purpose: capture paired philosophical and engineering explanations for why the TAE-01 architecture is shaped as it is.
+> Last Updated: 2026-03-23
+
 This document offers two complementary perspectives on the ToneSoul Architecture Engine (TAE-01): a philosophical lens and an engineering lens.  Both views are essential for understanding why the system looks the way it does.
 
 ## Part A: The Philosopher's View (給哲學家看)

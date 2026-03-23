@@ -1,5 +1,8 @@
 # Commit Attribution Base-Switch Addendum
 
+> Purpose: document the safe base-switch rule for commit-attribution cleanup when trees are equivalent but commit metadata differs.
+> Last Updated: 2026-03-23
+
 ## Why This Exists
 
 `commit_attribution` can fail for two very different reasons:

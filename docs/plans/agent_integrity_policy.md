@@ -1,5 +1,8 @@
 # Agent Integrity Policy — 代理完整性政策
 
+> Purpose: consolidate addenda around agent-integrity governance, trusted-hash ownership, and integrity-check source-of-truth rules.
+> Last Updated: 2026-03-23
+
 > 合併日期：2026-03-19
 > 原始 addendum 數：3
 > 時間跨度：2026-03-15 ~ 2026-03-15

@@ -1,5 +1,8 @@
 # ToneSoul v1.0.0 Release Notes
 
+> Purpose: release record for the first stable governance baseline and the gates used to declare ToneSoul v1.0.0 GA.
+> Last Updated: 2026-03-23
+
 Release date: 2026-02-24  
 Status: GA (`v1.0.0`)
 

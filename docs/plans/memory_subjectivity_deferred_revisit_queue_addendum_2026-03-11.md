@@ -1,5 +1,8 @@
 # Memory Subjectivity Deferred Revisit Queue Addendum (2026-03-11)
 
+> Purpose: define how deferred semantic groups re-enter an explicit revisit queue instead of silently disappearing or auto-settling.
+> Last Updated: 2026-03-23
+
 ## Why This Addendum Exists
 
 The branch can now do two things correctly:

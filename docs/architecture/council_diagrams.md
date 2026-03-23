@@ -1,6 +1,9 @@
 # PreOutputCouncil Architecture
 # 多視角審議系統架構圖
 
+> Purpose: provide diagram-based views of the PreOutputCouncil flow and perspective interactions.
+> Last Updated: 2026-03-23
+
 This document provides visual diagrams of the ToneSoul Council system using Mermaid.
 
 ---

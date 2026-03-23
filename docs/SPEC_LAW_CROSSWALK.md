@@ -1,5 +1,8 @@
 # Spec / Law 一頁式對照
 
+> Purpose: crosswalk the implementation-facing `spec/` lane against the governance-facing `law/` lane in one retrieval surface.
+> Last Updated: 2026-03-23
+
 > 目的：降低 `spec/`（可實作規格）與 `law/`（治理規範）重複敘述，建立單一對照入口。
 
 ## 分工原則

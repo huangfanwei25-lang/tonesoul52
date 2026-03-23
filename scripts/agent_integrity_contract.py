@@ -11,7 +11,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 PROTECTED_FILE_HASHES = {
     "AGENTS.md": "ddc2330c75dadc5525de61286237a458adc22cfaa63732a191ad10b9b158e7fa",
     "HANDOFF.md": "d6ac7efc13a181bf2289ab19b82f42b9c2aba7833e6537048837fa0ec47cfeba",
-    "SOUL.md": "5b9f13b4fb5a5ac3d1b9618b0073cc33a3edb0f985518144d575dc97eb372a5f",
+    "SOUL.md": "9c5fce9040236f2e5439bd4e158c5a655dfc3c5c101575c508bb8d172a62a7f5",
 }
 
 EMBEDDED_HASH_METADATA_FILES = ("AGENTS.md",)

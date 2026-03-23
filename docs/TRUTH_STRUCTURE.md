@@ -2,6 +2,7 @@
 
 Purpose: unify governance (Soul) and the thinking engine (YuHun) into a single,
 auditable structure for collaboration.
+Last Updated: 2026-03-23
 
 Status: draft; updated as more theory/value/structure sources are read.
 

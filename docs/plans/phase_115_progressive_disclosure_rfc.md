@@ -1,5 +1,8 @@
 # Phase 115: Progressive-Disclosure Skill Contract (RFC)
 
+> Purpose: propose the progressive-disclosure skill contract for routing and loading agent capabilities with lower context cost.
+> Last Updated: 2026-03-23
+
 ## 1. 背景與動機 (Background & Motivation)
 
 隨著 ToneSoul 的 Agent 技能 (Skills) 越來越強大且數量增加，將所有技能的完整 Markdown (包含大量的 Prompt Few-shots、工具配置、安全規則) 一次性塞入 Context Window 會造成嚴重的 Token 污染與效能負擔。

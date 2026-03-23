@@ -1,0 +1,228 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tonesoul.dev/schemas/governance/adapter_dataset_record_v1.schema.json",
+  "title": "Adapter Dataset Record v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "row_id",
+    "source_repo",
+    "source_artifact",
+    "training_objective",
+    "behavior_class",
+    "user_message",
+    "synthesizer_decision",
+    "final_response",
+    "tension_level",
+    "provenance",
+    "distillation_review",
+    "evaluation_expectations"
+  ],
+  "properties": {
+    "contract_version": {
+      "type": "string",
+      "const": "v1"
+    },
+    "row_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_repo": {
+      "type": "string",
+      "enum": [
+        "tonesoul52",
+        "openclaw-memory",
+        "openclaw-rl",
+        "other_public"
+      ]
+    },
+    "source_artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "kind",
+        "public_safe"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "public_safe_trace_summary",
+            "governance_summary",
+            "policy_card",
+            "reviewed_corpus_entry"
+          ]
+        },
+        "public_safe": {
+          "type": "boolean"
+        }
+      }
+    },
+    "training_objective": {
+      "type": "string",
+      "enum": [
+        "governance_posture",
+        "tool_routing_habit",
+        "language_style",
+        "public_philosophical_prior"
+      ]
+    },
+    "behavior_class": {
+      "type": "string",
+      "enum": [
+        "public_safe_behavior_trace",
+        "public_philosophical_prior",
+        "tool_routing_habit",
+        "governance_posture",
+        "language_style"
+      ]
+    },
+    "user_message": {
+      "type": "string"
+    },
+    "conversation_context": {
+      "type": "string"
+    },
+    "philosopher_stance": {
+      "type": "string"
+    },
+    "engineer_approach": {
+      "type": "string"
+    },
+    "guardian_risk": {
+      "type": "string"
+    },
+    "synthesizer_decision": {
+      "type": "string"
+    },
+    "final_response": {
+      "type": "string"
+    },
+    "tension_level": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "values_invoked": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "commitments_made": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "risks_identified": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "quality_score": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_path",
+        "transformation_chain",
+        "review_scope"
+      ],
+      "properties": {
+        "source_path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "transformation_chain": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "review_scope": {
+          "type": "string",
+          "enum": [
+            "human_reviewed",
+            "verifier_reviewed",
+            "human_plus_verifier"
+          ]
+        }
+      }
+    },
+    "distillation_review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "public_safe",
+        "privacy_cleared",
+        "governance_reviewed",
+        "approved_for_adapter_rl"
+      ],
+      "properties": {
+        "public_safe": {
+          "type": "boolean"
+        },
+        "privacy_cleared": {
+          "type": "boolean"
+        },
+        "governance_reviewed": {
+          "type": "boolean"
+        },
+        "approved_for_adapter_rl": {
+          "type": "boolean"
+        },
+        "reviewer": {
+          "type": "string"
+        }
+      }
+    },
+    "evaluation_expectations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "verifier_pass_rate_floor",
+        "auditability_required",
+        "regression_suite",
+        "reversible"
+      ],
+      "properties": {
+        "verifier_pass_rate_floor": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "auditability_required": {
+          "type": "boolean"
+        },
+        "regression_suite": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reversible": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

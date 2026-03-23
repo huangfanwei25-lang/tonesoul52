@@ -1,5 +1,8 @@
 # 語魂主線：概念收斂到可實作架構（2026-02-22）
 
+> Purpose: translate ToneSoul concepts into an implementable architecture blueprint with explicit goals and assumptions.
+> Last Updated: 2026-03-23
+
 ## 0. 目標與前提
 
 本藍圖採用你指定的規則：

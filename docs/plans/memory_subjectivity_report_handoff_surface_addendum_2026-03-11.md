@@ -1,5 +1,8 @@
 # Memory Subjectivity Report Handoff Surface Addendum (2026-03-11)
 
+> Purpose: define the fast-resume handoff surface for the main subjectivity report artifact.
+> Last Updated: 2026-03-23
+
 ## Why This Addendum Exists
 
 The branch already aligned handoff surfaces across:

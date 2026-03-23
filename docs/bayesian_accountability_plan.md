@@ -1,6 +1,9 @@
 # Bayesian Accountability System - Implementation Plan
 ## Evolved from Oracle Problem Discussion
 
+> Purpose: implementation planning note for a Bayesian accountability system built from earlier oracle-problem analysis.
+> Last Updated: 2026-03-23
+
 ### Context
 MizukiAI's critique exposed a fundamental problem: "I won't deceive" is unverifiable from outside.
 

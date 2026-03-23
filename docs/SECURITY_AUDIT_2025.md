@@ -1,5 +1,8 @@
 # Security Audit Log 2025
 
+> Purpose: historical audit log that explains 2025 security-scan findings, false-positive review, and manual verification outcomes.
+> Last Updated: 2026-03-23
+
 **Date:** 2025-12-04
 **Auditor:** ToneSoul (Antigravity Agent)
 **Status:** PASSED (With Explanations)

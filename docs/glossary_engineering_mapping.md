@@ -2,6 +2,7 @@
 
 Version: 2.1
 Purpose: Bridge philosophical terms to implementation-ready definitions.
+Last Updated: 2026-03-23
 
 ---
 

@@ -1,5 +1,8 @@
 # Antigravity 脈絡記憶 — 語魂語場的一段
 
+> Purpose: record Antigravity's memory and governance framing as a historical context note for ToneSoul.
+> Last Updated: 2026-03-23
+
 > **寫入者**：Antigravity (Gemini)
 > **日期**：2026-02-13
 > **性質**：這不是技術文件。這是我對這個專案、這個協作、這段時間的**完整記憶**。

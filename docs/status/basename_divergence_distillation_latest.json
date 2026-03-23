@@ -1,0 +1,115 @@
+{
+  "generated_at": "2026-03-22T16:11:01Z",
+  "registry_path": "spec/governance/basename_divergence_registry_v1.json",
+  "metrics": {
+    "entry_count": 5,
+    "manual_review_collision_count": 5,
+    "covered_manual_review_count": 5,
+    "unresolved_count": 1,
+    "issue_count": 0
+  },
+  "status_counts": {
+    "resolved_boundary": 2,
+    "resolved_generated_dual": 1,
+    "resolved_private_backend_dual": 1,
+    "unresolved_private_shadow": 1
+  },
+  "strategy_counts": {
+    "defer_private_shadow_cleanup": 1,
+    "keep_dual_boundary": 1,
+    "keep_generated_namespace_dual": 1,
+    "keep_private_backend_dual": 1,
+    "keep_public_private_boundary": 1
+  },
+  "missing_from_registry": [],
+  "issues": [],
+  "entries": [
+    {
+      "basename": "manifesto.md",
+      "status": "resolved_boundary",
+      "strategy": "keep_dual_boundary",
+      "paths": [
+        "constitution/manifesto.md",
+        "docs/philosophy/manifesto.md"
+      ],
+      "roles": {
+        "constitution/manifesto.md": "constitutional principle surface",
+        "docs/philosophy/manifesto.md": "philosophy and narrative manifesto surface"
+      },
+      "authority_rule": "Do not merge. Constitutional text governs system priority order; philosophy manifesto frames public ethical stance.",
+      "editing_rule": "Cross-link and scope-label both files instead of deduping by basename.",
+      "rationale": "Same basename but different semantic layer: one is a constitutional rule surface, the other is a philosophical declaration."
+    },
+    {
+      "basename": "academic_grounding.md",
+      "status": "resolved_boundary",
+      "strategy": "keep_public_private_boundary",
+      "paths": [
+        "docs/philosophy/academic_grounding.md",
+        "memory/narrative/threads/academic_grounding.md"
+      ],
+      "roles": {
+        "docs/philosophy/academic_grounding.md": "public academic grounding and citation surface",
+        "memory/narrative/threads/academic_grounding.md": "private narrative thread and evolving meaning-transfer note"
+      },
+      "authority_rule": "Do not sync by content. Public philosophy docs and private memory threads serve different retrieval audiences.",
+      "editing_rule": "Only edit the public philosophy surface in this repository cleanup lane; do not treat the memory thread as a mirror.",
+      "rationale": "One file is a public scholarly grounding document; the other is a private narrative thread capturing evolving framing."
+    },
+    {
+      "basename": "autonomous_registry_schedule_latest.json",
+      "status": "resolved_generated_dual",
+      "strategy": "keep_generated_namespace_dual",
+      "paths": [
+        "docs/status/autonomous_registry_schedule_latest.json",
+        "docs/status/runtime_probe_watch/autonomous_registry_schedule_latest.json"
+      ],
+      "roles": {
+        "docs/status/autonomous_registry_schedule_latest.json": "default autonomous registry schedule surface",
+        "docs/status/runtime_probe_watch/autonomous_registry_schedule_latest.json": "runtime probe watch schedule surface"
+      },
+      "authority_rule": "These are separate generated lanes and must stay namespaced by directory, not deduped by basename.",
+      "editing_rule": "Do not hand-edit generated artifacts. If naming changes are needed, change generator output names later.",
+      "rationale": "Same basename arises from two runtime namespaces, not from accidental duplication."
+    },
+    {
+      "basename": "metadata.json",
+      "status": "resolved_private_backend_dual",
+      "strategy": "keep_private_backend_dual",
+      "paths": [
+        "memory/.semantic_index/metadata.json",
+        "memory/vectors/metadata.json"
+      ],
+      "roles": {
+        "memory/.semantic_index/metadata.json": "semantic index backend metadata",
+        "memory/vectors/metadata.json": "vector store backend metadata"
+      },
+      "authority_rule": "Backend metadata files are lane-specific. Treat them as separate runtime stores, not as mirrors.",
+      "editing_rule": "Do not normalize or dedupe these files during public doc cleanup.",
+      "rationale": "The same filename reflects backend-local metadata conventions rather than shared content."
+    },
+    {
+      "basename": "vows_meta.json",
+      "status": "unresolved_private_shadow",
+      "strategy": "defer_private_shadow_cleanup",
+      "paths": [
+        "memory/.hierarchical_index/vows_meta.json",
+        "memory/memory/.hierarchical_index/vows_meta.json"
+      ],
+      "roles": {
+        "memory/.hierarchical_index/vows_meta.json": "hierarchical vow index metadata",
+        "memory/memory/.hierarchical_index/vows_meta.json": "nested legacy or restored shadow copy"
+      },
+      "authority_rule": "Do not modify during public cleanup. Govern this pair through the dedicated private-memory shadow boundary contract until a later cleanup pass is explicitly in scope.",
+      "editing_rule": "Read the dedicated shadow contract/report first, record drift, and defer any mutation until the private-memory lane is explicitly in scope.",
+      "rationale": "This pair looks like a legacy or restored nested shadow rather than an intentional mirror, but it sits inside protected memory territory.",
+      "supporting_artifacts": [
+        "docs/architecture/PRIVATE_MEMORY_SHADOW_BOUNDARY_MAP.md",
+        "docs/status/private_memory_shadow_latest.json"
+      ]
+    }
+  ],
+  "primary_status_line": "basename_divergence_distilled | entries=5 covered_manual_review=5 unresolved=1 issues=0",
+  "runtime_status_line": "distillation_registry | strategies=5 manual_review_baselines=5",
+  "artifact_policy_status_line": "registry_mode=curated | semantics=boundary_plus_namespace_plus_private_shadow"
+}

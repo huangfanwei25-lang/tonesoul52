@@ -1,5 +1,8 @@
 # 雙倉庫防回滲守門規範（Dual-Track Guardrails）
 
+> Purpose: define guardrails that prevent private evolution data and strategy from leaking into the public repository.
+> Last Updated: 2026-03-23
+
 > 日期：2026-02-21
 > 狀態：Draft for Immediate Adoption
 > 目標：避免私有演化資料與策略誤提交到公開倉。
