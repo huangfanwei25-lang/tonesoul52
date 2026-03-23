@@ -1,5 +1,13 @@
 # Task
 
+## Phase 619: Runtime Adapter Memory Anchor and Handoff Preservation (2026-03-23)
+- [x] Preserve the latest repo context, structured rules, and next-step runtime-adapter direction in a repo-safe memory anchor
+- [x] Wire the new runtime-adapter memory anchor into onboarding and documentation entrypoints so later agents open it before inventing a new workflow
+- [x] Record RFC-015 as the draft source for self-dogfooding while keeping the cleaner anchor as the primary handoff surface
+**Success Criteria**: Later agents can recover the current ToneSoul architecture posture, docs-convergence state, and next runtime-adapter build direction without rereading the whole repo.
+
+---
+
 ## Phase 618: Metadata Backfill Wave 2N - Plans Lane Consolidation Batch 4 (2026-03-23)
 - [x] Backfill explicit `Purpose` and `Last Updated` metadata on the next memory-subjectivity-heavy plans batch still sitting at the sample head
 - [x] Normalize operator/report/review addenda without rewriting their bodies, so retrieval sees one consistent metadata surface across the family

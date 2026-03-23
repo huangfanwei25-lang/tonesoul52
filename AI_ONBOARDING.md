@@ -19,12 +19,15 @@ Read these before making architecture assumptions:
 4. `docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md`
 5. `docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md`
 6. `docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md`
+7. `docs/notes/TONESOUL_RUNTIME_ADAPTER_MEMORY_ANCHOR_2026-03-23.md`
 
 If long prose, scattered repo state, and runtime behavior disagree, prefer the canonical architecture anchor.
 If multiple "knowledge" directories appear to disagree, use the knowledge surface boundary map before inferring authority.
 If runtime layers and model-attachment direction feel split apart, use the eight-layer convergence map before inventing a new architecture story.
 If retrieval path is unclear, use the L7 retrieval contract before bulk-reading markdown.
 If adapters, RL, or distillation are in scope, use the L8 boundary contract before proposing training surfaces.
+If the next question is how developer agents should persist tension, vows, vetoes, and stance drift across sessions, open `docs/notes/TONESOUL_RUNTIME_ADAPTER_MEMORY_ANCHOR_2026-03-23.md` before inventing a new memory workflow.
+If you need the original draft idea for self-dogfooding ToneSoul on top of agent workflows, open `docs/RFC-015_Self_Dogfooding_Runtime_Adapter.md`, but treat it as a draft source until it is rewritten cleanly.
 If you need compact machine-readable guidance, open `docs/status/l7_retrieval_contract_latest.json` and `docs/status/l8_distillation_boundary_latest.json`.
 If you need the first directly usable operational layer, open `docs/status/l7_operational_packet_latest.json` and `docs/status/l8_adapter_dataset_gate_latest.json`.
 If you need claim-governance boundaries for theory vs mechanism, open `docs/architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md` and `docs/status/abc_firewall_latest.json`.

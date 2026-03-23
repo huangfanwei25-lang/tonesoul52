@@ -54,3 +54,12 @@ prefer:
 ## Note
 
 This anchor exists because later agents repeatedly lost the architecture thread when relying only on large markdown context windows.
+
+## Newest Companion
+
+If the next question is not just "what is ToneSoul?" but "how should developer agents start running a minimal ToneSoul shell themselves?", open:
+
+- `docs/notes/TONESOUL_RUNTIME_ADAPTER_MEMORY_ANCHOR_2026-03-23.md`
+- `docs/RFC-015_Self_Dogfooding_Runtime_Adapter.md`
+
+Treat the new runtime-adapter anchor as the handoff note for the next major build seam.
