@@ -1,6 +1,9 @@
 # RFC-003: 語魂極輕量化架構與龍蝦本機記憶系統
 **(JSON-Prompt Driven Architecture & Lobster Local Memory)**
 
+> Purpose: historical lightweight ToneSoul RFC for JSON-prompt orchestration and local-memory deployment constraints.
+> Last Updated: 2026-03-23
+
 ## 🌟 核心發明概述 (Executive Summary)
 本架構為 **ToneSoul (語魂)** 生態系中的一次典範轉移。傳統的 AI Agent 架構往往受限於兩大瓶頸：過度依賴雲端向量資料庫（如 Pinecone），以及後端寫死了沉重且僵化的學術數學檢驗（如早期的 Hamlet 架構）。
 

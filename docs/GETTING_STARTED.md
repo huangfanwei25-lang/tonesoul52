@@ -1,5 +1,8 @@
 # Getting Started with ToneSoul
 
+> Purpose: quickstart guide for installing ToneSoul, running a basic governance flow, and learning the core concepts.
+> Last Updated: 2026-03-23
+
 ToneSoul pairs a governance kernel (`AXIOMS.json`, `law/constitution.json`) with a semantic engine (`tonesoul/`). This guide helps new contributors install, run a basic flow, and internalize the core concepts.
 
 ## 1. Installation

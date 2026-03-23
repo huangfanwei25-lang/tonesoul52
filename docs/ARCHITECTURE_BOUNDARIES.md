@@ -1,5 +1,8 @@
 # ToneSoul 架構邊界與責任劃分
 
+> Purpose: map the boundary between application, governance, and infrastructure layers across the ToneSoul repository.
+> Last Updated: 2026-03-23
+
 ## 🏗️ 三層架構
 
 ```

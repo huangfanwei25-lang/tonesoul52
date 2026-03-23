@@ -1,5 +1,8 @@
 # ToneSoul Architecture Memory Anchor (2026-03-22)
 
+> Purpose: repo-safe memory anchor that tells later agents which architecture interpretation to treat as primary.
+> Last Updated: 2026-03-23
+
 ## Purpose
 
 This is a repo-safe memory anchor for later agents.

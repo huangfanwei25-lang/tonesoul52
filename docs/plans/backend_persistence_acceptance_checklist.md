@@ -1,5 +1,8 @@
 # Backend Persistence 驗收清單
 
+> Purpose: checklist and command reference for validating deployed backend persistence behavior and health signals.
+> Last Updated: 2026-03-23
+
 最後更新：2026-02-14
 
 ## 近期執行紀錄（2026-02-14）

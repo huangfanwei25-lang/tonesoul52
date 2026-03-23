@@ -1,5 +1,9 @@
 # PARADOXES Dataset Guide
 
+> Purpose: canonical governance casebook for paradox and dilemma scenarios used by Council and RDD validation.
+> Status: source-of-truth lane for paradox fixtures; tests may project reduced cases downstream.
+> Last Updated: 2026-03-22
+
 ## 目的
 
 `PARADOXES/` 用來放「道德與治理悖論」測試資料，供 Council 與 RDD（Red Team-Driven Defense）驗證。

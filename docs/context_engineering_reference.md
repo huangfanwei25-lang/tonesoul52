@@ -1,5 +1,6 @@
 # 脈絡工程參考資料 (Context Engineering Reference)
 
+> Purpose: summarize context-engineering practices from 2025-2026 and map them onto ToneSoul's retrieval and runtime design.
 > 整理自 2025-2026 開源社群的最佳實踐，對應 ToneSoul 系統設計。
 > 最後更新: 2026-02-21
 

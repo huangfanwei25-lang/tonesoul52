@@ -1,5 +1,8 @@
 # Memory Subjectivity Group Review Context Reuse Addendum (2026-03-11)
 
+> Purpose: allow group-review workflows to reuse prior reviewed context as an explicit operator action.
+> Last Updated: 2026-03-23
+
 ## Why This Addendum Exists
 
 The branch already has a safe operator lane for batch `deferred` / `rejected`

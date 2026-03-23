@@ -1,5 +1,8 @@
 # Soul DB 草案
 
+> Purpose: draft the minimum interface and data model for a unified Soul DB memory entrypoint.
+> Last Updated: 2026-03-23
+
 本文件定義 `soul_db.py` 的最小可行介面與資料模型，作為未來 Memory 架構的統一入口。
 
 **目標**

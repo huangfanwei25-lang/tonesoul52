@@ -5,6 +5,9 @@
 >
 > ToneSoul is an externalized cognitive architecture for AI governance, ethical memory systems, verifier-first agents, knowledge-graph retrieval, and adapter-ready semantic governance.
 
+> Purpose: public repository entrypoint for ToneSoul's architecture, governance posture, and practical onboarding.
+> Last Updated: 2026-03-22
+
 ---
 
 **The real question this project is asking:**
@@ -106,6 +109,32 @@ For claim-boundary and theory/mechanism separation, open
 [`docs/architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md`](docs/architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md)
 and
 [`docs/status/abc_firewall_latest.json`](docs/status/abc_firewall_latest.json).
+For document-surface cleanup, same-basename collision review, and metadata backfill order, open
+[`docs/status/doc_convergence_inventory_latest.json`](docs/status/doc_convergence_inventory_latest.json)
+and
+[`docs/plans/doc_convergence_cleanup_plan_2026-03-22.md`](docs/plans/doc_convergence_cleanup_plan_2026-03-22.md).
+For the full multi-wave documentation convergence roadmap, open
+[`docs/plans/doc_convergence_master_plan_2026-03-23.md`](docs/plans/doc_convergence_master_plan_2026-03-23.md).
+For a finer document authority map that separates entrypoints, canonical anchors, contracts, and generated status lanes, open
+[`docs/architecture/DOC_AUTHORITY_STRUCTURE_MAP.md`](docs/architecture/DOC_AUTHORITY_STRUCTURE_MAP.md)
+and
+[`docs/status/doc_authority_structure_latest.json`](docs/status/doc_authority_structure_latest.json).
+For the distilled handling rules behind same-basename but non-duplicate files, open
+[`docs/architecture/BASENAME_DIVERGENCE_DISTILLATION_MAP.md`](docs/architecture/BASENAME_DIVERGENCE_DISTILLATION_MAP.md)
+and
+[`docs/status/basename_divergence_distillation_latest.json`](docs/status/basename_divergence_distillation_latest.json).
+For nested private-memory shadow lanes that must not be deduped during public cleanup, open
+[`docs/architecture/PRIVATE_MEMORY_SHADOW_BOUNDARY_MAP.md`](docs/architecture/PRIVATE_MEMORY_SHADOW_BOUNDARY_MAP.md)
+and
+[`docs/status/private_memory_shadow_latest.json`](docs/status/private_memory_shadow_latest.json).
+For paradox casebook versus test-fixture ownership, open
+[`docs/architecture/PARADOX_FIXTURE_OWNERSHIP_MAP.md`](docs/architecture/PARADOX_FIXTURE_OWNERSHIP_MAP.md)
+and
+[`docs/status/paradox_fixture_ownership_latest.json`](docs/status/paradox_fixture_ownership_latest.json).
+For engineering-book mirror ownership and sync posture, open
+[`docs/architecture/ENGINEERING_MIRROR_OWNERSHIP_MAP.md`](docs/architecture/ENGINEERING_MIRROR_OWNERSHIP_MAP.md)
+and
+[`docs/status/engineering_mirror_ownership_latest.json`](docs/status/engineering_mirror_ownership_latest.json).
 
 ```text
 User Input

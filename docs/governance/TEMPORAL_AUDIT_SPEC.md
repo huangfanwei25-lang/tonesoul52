@@ -1,5 +1,8 @@
 # Specification: Temporal Audit Constraints
 
+> Purpose: define the temporal audit firewall that separates past facts, present operations, and future projections.
+> Last Updated: 2026-03-23
+
 ## 1. The Three-Phase Firewall
 To ensure the integrity of the **World Model**, all system reports and audits must strictly distinguish between temporal phases.
 

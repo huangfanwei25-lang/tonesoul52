@@ -1,5 +1,8 @@
 # External Dissemination Guide
 
+> Purpose: provide a practical guide for submitting ToneSoul governance material to external repos and benchmarks.
+> Last Updated: 2026-03-23
+
 This guide provides the exact content and steps to submit ToneSoul's ethical framework to major AI safety benchmarks.
 
 ## 1. Anthropic (Claude Prompts / Constitution)

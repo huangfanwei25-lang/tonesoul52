@@ -1,5 +1,8 @@
 # 主線藍圖：記憶系統 + 多 AI 協作（2026-02-22）
 
+> Purpose: describe the mainline memory direction and its relationship to multi-agent orchestration work.
+> Last Updated: 2026-03-23
+
 ## 1. 主線定義
 
 ToneSoul 後續主線：

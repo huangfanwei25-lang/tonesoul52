@@ -6,6 +6,9 @@
 
 ---
 
+> Purpose: AI onboarding entrypoint for ToneSoul architecture, retrieval order, and collaboration boundaries.
+> Last Updated: 2026-03-22
+
 ## Canonical Architecture Anchor
 
 Read these before making architecture assumptions:
@@ -25,6 +28,13 @@ If adapters, RL, or distillation are in scope, use the L8 boundary contract befo
 If you need compact machine-readable guidance, open `docs/status/l7_retrieval_contract_latest.json` and `docs/status/l8_distillation_boundary_latest.json`.
 If you need the first directly usable operational layer, open `docs/status/l7_operational_packet_latest.json` and `docs/status/l8_adapter_dataset_gate_latest.json`.
 If you need claim-governance boundaries for theory vs mechanism, open `docs/architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md` and `docs/status/abc_firewall_latest.json`.
+If duplicate doc names, mirror lanes, or missing purpose/date metadata are blocking retrieval, open `docs/status/doc_convergence_inventory_latest.json` and `docs/plans/doc_convergence_cleanup_plan_2026-03-22.md` before proposing renames or merges.
+If you need the full multi-wave roadmap for repository documentation cleanup, open `docs/plans/doc_convergence_master_plan_2026-03-23.md` before starting a new convergence pass.
+If the overall documentation lane still feels too flat or noisy, open `docs/architecture/DOC_AUTHORITY_STRUCTURE_MAP.md` and `docs/status/doc_authority_structure_latest.json` before inventing a new taxonomy.
+If the collision is not a true duplicate but a same-basename semantic split, open `docs/architecture/BASENAME_DIVERGENCE_DISTILLATION_MAP.md`, `spec/governance/basename_divergence_registry_v1.json`, and `docs/status/basename_divergence_distillation_latest.json` before deciding to rename anything.
+If nested private-memory shadows are in scope, treat `memory/.hierarchical_index/` as the active lane and confirm current posture in `docs/architecture/PRIVATE_MEMORY_SHADOW_BOUNDARY_MAP.md` and `docs/status/private_memory_shadow_latest.json` before touching any memory data.
+If paradox fixtures are in scope, treat `PARADOXES/` as the canonical governance casebook and `tests/fixtures/paradoxes/` as the test projection lane; confirm current posture in `docs/architecture/PARADOX_FIXTURE_OWNERSHIP_MAP.md` and `docs/status/paradox_fixture_ownership_latest.json`.
+If engineering-book mirrors are in scope, treat `docs/engineering/` as canonical and confirm current sync posture in `docs/architecture/ENGINEERING_MIRROR_OWNERSHIP_MAP.md` and `docs/status/engineering_mirror_ownership_latest.json`.
 
 ## 🎯 你需要知道的
 

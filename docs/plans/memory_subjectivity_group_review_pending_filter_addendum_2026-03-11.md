@@ -1,5 +1,8 @@
 # Memory Subjectivity Group Review Pending-Filter Addendum (2026-03-11)
 
+> Purpose: let group-review actions focus on only the fresh pending slice instead of replaying the whole semantic group.
+> Last Updated: 2026-03-23
+
 ## Why This Addendum Exists
 
 The group review lane can already settle an entire semantic group.

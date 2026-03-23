@@ -1,5 +1,8 @@
 # Memory Subjectivity Review Criteria (2026-03-10)
 
+> Purpose: define the active public review policy for `tension -> vow` subjectivity decisions.
+> Last Updated: 2026-03-23
+
 ## Status
 
 This file is the current official review policy for `tension -> vow` decisions

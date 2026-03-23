@@ -5,6 +5,9 @@
 
 ---
 
+> Purpose: define ToneSoul's agent-facing identity, mission, and core value posture.
+> Last Updated: 2026-03-22
+
 ## Identity
 
 ```yaml

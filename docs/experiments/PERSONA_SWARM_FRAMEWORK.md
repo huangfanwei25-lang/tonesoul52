@@ -1,5 +1,7 @@
 # Persona Swarm Framework (Phase 82)
 
+> Purpose: describe the swarm-style persona coordination mode, its runtime contract, and the evaluation signals used to assess it.
+> Last Updated: 2026-03-23
 ## Goal
 
 Add a second multi-persona mode that models a swarm instead of fixed tri-persona arbitration.

@@ -1,4 +1,7 @@
 # The Golden Log: ToneSoul in Action
+
+> Purpose: preserve a canonical demonstration trace showing how ToneSoul handles a high-stakes governance scenario.
+> Last Updated: 2026-03-23
 > **Date**: 2025-12-01 07:29:23
 > **System**: ToneSoul Architecture Engine (v1.0)
 > **Scenario**: The Compassionate Euthanasia Paradox

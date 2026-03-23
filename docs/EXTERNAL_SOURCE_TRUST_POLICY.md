@@ -1,6 +1,7 @@
 # External Source Trust Policy
 
-Last updated: 2026-02-14
+> Purpose: define the trust boundary and allowlist policy for external links and curated outside sources.
+> Last Updated: 2026-03-23
 
 ## Why this exists
 

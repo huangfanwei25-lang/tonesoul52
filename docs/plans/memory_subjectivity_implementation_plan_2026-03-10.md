@@ -1,5 +1,8 @@
 # Memory Subjectivity Implementation Plan (2026-03-10)
 
+> Purpose: define the canonical execution plan for the public memory-subjectivity rollout and its addendum sequence.
+> Last Updated: 2026-03-23
+
 ## Purpose
 
 This document is the canonical plan of record for the current public-branch

@@ -1,5 +1,8 @@
 # Memory Subjectivity Operator Lens View Addendum (2026-03-11)
 
+> Purpose: define the compressed operator lens used to read subjectivity queue posture and revisit triggers quickly.
+> Last Updated: 2026-03-23
+
 ## Why This Addendum Exists
 
 The history-density surface made one thing clearer:

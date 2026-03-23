@@ -1,6 +1,7 @@
 # ToneSoul Training Data Specification
 
 > **Purpose**: Define data formats and structures for future model weight adjustments.
+> Last Updated: 2026-03-23
 
 ---
 

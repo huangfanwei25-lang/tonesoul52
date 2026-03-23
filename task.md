@@ -1,5 +1,314 @@
 # Task
 
+## Phase 618: Metadata Backfill Wave 2N - Plans Lane Consolidation Batch 4 (2026-03-23)
+- [x] Backfill explicit `Purpose` and `Last Updated` metadata on the next memory-subjectivity-heavy plans batch still sitting at the sample head
+- [x] Normalize operator/report/review addenda without rewriting their bodies, so retrieval sees one consistent metadata surface across the family
+- [x] Keep protected human-managed files out of scope and let the remaining sample reveal the next non-protected debt
+**Success Criteria**: The current operator/report/review subjectivity addenda leave the sample head, and the remaining backlog shifts toward the smaller long-tail planning and non-plan docs.
+**Validation**:
+- `python scripts/run_doc_convergence_inventory.py` -> passed
+- `python scripts/verify_docs_consistency.py --repo-root .` -> passed
+- `python scripts/verify_protected_paths.py --repo-root . --strict --changed-file docs/plans/memory_subjectivity_history_density_compaction_surface_addendum_2026-03-11.md --changed-file docs/plans/memory_subjectivity_implementation_plan_2026-03-10.md --changed-file docs/plans/memory_subjectivity_layer_addendum_2026-03-09.md --changed-file docs/plans/memory_subjectivity_operator_lens_view_addendum_2026-03-11.md --changed-file docs/plans/memory_subjectivity_operator_review_settlement_addendum_2026-03-10.md --changed-file docs/plans/memory_subjectivity_operator_status_line_addendum_2026-03-11.md --changed-file docs/plans/memory_subjectivity_producer_duplicate_guard_addendum_2026-03-11.md --changed-file docs/plans/memory_subjectivity_refreshable_handoff_preview_addendum_2026-03-11.md --changed-file docs/plans/memory_subjectivity_repo_governance_handoff_preview_addendum_2026-03-11.md --changed-file docs/plans/memory_subjectivity_report_handoff_surface_addendum_2026-03-11.md --changed-file docs/plans/memory_subjectivity_reporting_addendum_2026-03-10.md --changed-file docs/plans/memory_subjectivity_requires_operator_action_preview_mirror_addendum_2026-03-12.md --changed-file docs/plans/memory_subjectivity_review_batch_admissibility_checklist_addendum_2026-03-11.md --changed-file docs/plans/memory_subjectivity_review_batch_artifact_addendum_2026-03-10.md --changed-file docs/plans/memory_subjectivity_review_criteria_2026-03-10.md --changed-file docs/plans/memory_subjectivity_reviewable_promotion_addendum_2026-03-10.md --changed-file task.md` -> passed
+
+---
+
+## Phase 617: Metadata Backfill Wave 2M - Plans Lane Consolidation Batch 3 (2026-03-23)
+- [x] Backfill `Purpose` and `Last Updated` on the next memory-subjectivity-heavy plans batch
+- [x] Capture both addendum-style subjectivity notes and broader plan/roadmap comparisons in the same wave
+- [x] Keep this wave inside the plans lane so the remaining queue reflects what still needs a later batch rather than repeating the same family
+**Success Criteria**: Deferred/pending/group-review subjectivity addenda leave the sample head, and the plans backlog shifts again toward the remaining long-tail documents.
+**Validation**:
+- `python scripts/run_doc_convergence_inventory.py` -> passed
+- `python scripts/verify_docs_consistency.py --repo-root .` -> passed
+- `python scripts/verify_protected_paths.py --repo-root . --strict --changed-file docs/plans/memory_subjectivity_deferred_context_surface_addendum_2026-03-11.md --changed-file docs/plans/memory_subjectivity_deferred_pending_reporting_addendum_2026-03-10.md --changed-file docs/plans/memory_subjectivity_deferred_revisit_queue_addendum_2026-03-11.md --changed-file docs/plans/memory_subjectivity_duplicate_pressure_surface_addendum_2026-03-11.md --changed-file docs/plans/memory_subjectivity_focus_preview_card_addendum_2026-03-12.md --changed-file docs/plans/memory_subjectivity_group_review_context_reuse_addendum_2026-03-11.md --changed-file docs/plans/memory_subjectivity_group_review_pending_filter_addendum_2026-03-11.md --changed-file docs/plans/memory_subjectivity_grouping_handoff_surface_addendum_2026-03-11.md --changed-file docs/plans/memory_subjectivity_historical_figure_audit_addendum_2026-03-11.md --changed-file docs/plans/rmm_vs_tonesoul.md --changed-file docs/plans/roadmap_2026q2_memory_governance.md --changed-file docs/plans/semantic_memory_architecture.md --changed-file task.md` -> passed
+
+---
+
+## Phase 616: Metadata Backfill Wave 2L - Plans Lane Consolidation Batch 2 (2026-03-23)
+- [x] Backfill `Purpose` and `Last Updated` on the next concentrated plans batch, focusing on memory-subjectivity, observability, and RFC surfaces
+- [x] Normalize both addendum-style plans and RFC-style plans so they expose explicit retrieval metadata instead of relying on section names alone
+- [x] Keep this wave inside the plans lane so the next sample reflects what still remains after a second focused batch
+**Success Criteria**: Memory-subjectivity, observability, and RFC planning docs leave the sample head, and the remaining plans backlog becomes more targeted.
+**Validation**:
+- `python scripts/run_doc_convergence_inventory.py` -> passed
+- `python scripts/verify_docs_consistency.py --repo-root .` -> passed
+- `python scripts/verify_protected_paths.py --repo-root . --strict --changed-file docs/plans/llm_observability_contract_addendum_2026-03-09.md --changed-file docs/plans/mainline_phase105_execution_plan_2026-02-21.md --changed-file docs/plans/memory_multi_ai_mainline_2026-02-22.md --changed-file docs/plans/memory_subjectivity_admissibility_preview_mirror_addendum_2026-03-12.md --changed-file docs/plans/memory_subjectivity_admissibility_status_line_addendum_2026-03-11.md --changed-file docs/plans/memory_subjectivity_axiomatic_admissibility_gate_addendum_2026-03-11.md --changed-file docs/plans/memory_subjectivity_carry_forward_queue_annotation_addendum_2026-03-11.md --changed-file docs/plans/memory_subjectivity_context_roadmap_2026-03-10.md --changed-file docs/plans/memory_subjectivity_contract_addendum_2026-03-10.md --changed-file docs/plans/phase_115_progressive_disclosure_rfc.md --changed-file docs/plans/phase_116_mcp_connector_and_qa_loop_rfc.md --changed-file docs/plans/repo_healthcheck_evolution.md --changed-file task.md` -> passed
+
+---
+
+## Phase 615: Metadata Backfill Wave 2K - Plans Lane Consolidation Batch 1 (2026-03-23)
+- [x] Backfill `Purpose` and `Last Updated` on the first concentrated `docs/plans/*` sample-head batch
+- [x] Normalize planning docs that previously relied on embedded dates, status prose, or section names instead of explicit retrieval metadata
+- [x] Keep this wave inside the plans lane so the next backlog reflects what remains after a full lane-focused pass
+**Success Criteria**: The first plans-lane batch leaves the sample head, and the remaining queue shifts deeper into the rest of the planning backlog instead of repeating the same early documents.
+**Validation**:
+- `python scripts/run_doc_convergence_inventory.py` -> passed
+- `python scripts/verify_docs_consistency.py --repo-root .` -> passed
+- `python scripts/verify_protected_paths.py --repo-root . --strict --changed-file docs/plans/backend_persistent_storage_plan.md --changed-file docs/plans/commit_attribution_base_switch_addendum_2026-03-08.md --changed-file docs/plans/concept_to_architecture_blueprint_2026-02-22.md --changed-file docs/plans/council_structured_parse_boundary_addendum_2026-03-09.md --changed-file docs/plans/dual_repo_boundary_manifest_2026-02-21.md --changed-file docs/plans/dual_repo_guardrails_2026-02-21.md --changed-file docs/plans/dual_repo_migration_runbook_2026-02-21.md --changed-file docs/plans/git_local_repo_stabilization_plan_2026-02-20.md --changed-file task.md` -> passed
+
+---
+
+## Phase 614: Metadata Backfill Wave 2J - Governance, Notes, and Plans Surfaces (2026-03-23)
+- [x] Backfill `Purpose` and `Last Updated` on the next governance, notes, and plans docs surfaced by the convergence sample
+- [x] Normalize docs that already had embedded dates or internal purpose sections so the inventory can treat them as explicit retrieval metadata
+- [x] Keep this wave on active planning and protocol surfaces rather than revisiting historical lanes already covered by contract
+**Success Criteria**: Governance specs, architecture notes, and active planning/runbook docs leave the sample head, and the remaining queue becomes narrower still.
+**Validation**:
+- `python scripts/run_doc_convergence_inventory.py` -> passed
+- `python scripts/verify_docs_consistency.py --repo-root .` -> passed
+- `python scripts/verify_protected_paths.py --repo-root . --strict --changed-file docs/governance/TEMPORAL_AUDIT_SPEC.md --changed-file docs/governance/TRINKET_PROTOCOL_SPEC.md --changed-file docs/nlnet_grant_proposal_draft.md --changed-file docs/notes/TONESOUL_ARCHITECTURE_MEMORY_ANCHOR_2026-03-22.md --changed-file docs/notes/perspective_codex.md --changed-file docs/plans/ANTIGRAVITY_VM_RUNBOOK.md --changed-file docs/plans/agent_integrity_policy.md --changed-file docs/plans/architecture_external_reference.md --changed-file docs/plans/backend_persistence_acceptance_checklist.md --changed-file docs/plans/dream_wakeup_observability.md --changed-file docs/plans/google_always_on_vs_tonesoul.md --changed-file docs/plans/phase140_codex_coordination_briefing.md --changed-file task.md` -> passed
+
+---
+
+## Phase 613: Metadata Backfill Wave 2I - Core Concepts, Experiments, and Governance Surfaces (2026-03-23)
+- [x] Backfill `Purpose` and `Last Updated` on the next active docs surfaced by the convergence sample, focusing on core concepts, experiments, and governance protocols
+- [x] Normalize mixed header styles so older `Date`/`Version`/`Scope` blocks gain explicit retrieval metadata without rewriting the bodies
+- [x] Keep this wave on active public docs rather than historical lanes, which are now contract-managed separately
+**Success Criteria**: Core concept docs, experiment specs, and governance protocol docs move out of the active metadata sample head, and the next queue becomes more specialized.
+
+---
+
+## Phase 612: Historical Lane Contract - Archive and Chronicles Governance (2026-03-23)
+- [x] Declare a dedicated historical-lane policy for `docs/archive/` and `docs/chronicles/` so generated chronicle files stop posing as ordinary active-doc metadata debt
+- [x] Add a generated historical-lane report and wire it into docs indexes and status docs so later agents can verify the lane instead of rediscovering it
+- [x] Teach the convergence inventory to downgrade contract-managed archive/chronicle docs out of the active metadata backlog once the policy, lane README, and report exist
+**Success Criteria**: Chronicle files stop dominating the public metadata queue, archive/chronicle surfaces become explicit historical lanes, and later cleanup can focus on active docs first.
+**Validation**:
+- `python -m black --check --line-length 100 scripts/run_doc_convergence_inventory.py scripts/run_historical_doc_lane_report.py tests/test_run_doc_convergence_inventory.py tests/test_run_historical_doc_lane_report.py` -> passed
+- `python -m ruff check scripts/run_doc_convergence_inventory.py scripts/run_historical_doc_lane_report.py tests/test_run_doc_convergence_inventory.py tests/test_run_historical_doc_lane_report.py` -> passed
+- `python -m pytest tests/test_run_doc_convergence_inventory.py tests/test_run_historical_doc_lane_report.py -q` -> passed
+- `python scripts/run_historical_doc_lane_report.py` -> passed
+- `python scripts/run_doc_convergence_inventory.py` -> passed
+- `python scripts/verify_docs_consistency.py --repo-root .` -> passed
+- `python scripts/verify_protected_paths.py --repo-root . --strict --changed-file docs/archive/deprecated_modules/README.md --changed-file docs/README.md --changed-file docs/INDEX.md --changed-file docs/status/README.md --changed-file docs/plans/doc_convergence_master_plan_2026-03-23.md --changed-file docs/architecture/HISTORICAL_DOC_LANE_POLICY.md --changed-file docs/chronicles/README.md --changed-file docs/status/historical_doc_lane_latest.json --changed-file docs/status/historical_doc_lane_latest.md --changed-file docs/status/doc_convergence_inventory_latest.json --changed-file docs/status/doc_convergence_inventory_latest.md --changed-file docs/status/doc_convergence_inventory_latest.mmd --changed-file scripts/run_doc_convergence_inventory.py --changed-file scripts/run_historical_doc_lane_report.py --changed-file tests/test_run_doc_convergence_inventory.py --changed-file tests/test_run_historical_doc_lane_report.py --changed-file task.md` -> passed
+
+---
+
+## Phase 611: Metadata Backfill Wave 2H - Architecture and Bayesian Accountability Surfaces (2026-03-23)
+- [x] Backfill `Purpose` and `Last Updated` on the next architecture and Bayesian-accountability docs surfaced by the convergence sample
+- [x] Normalize remaining date-only gaps on active architecture/spec docs so the sample head reflects true missing metadata rather than partial headers
+- [x] Keep the wave focused on active public architecture surfaces, not protected files or private memory lanes
+**Success Criteria**: Architecture maps, RFC drafts, council diagrams, and Bayesian-accountability notes stop clustering at the front of the missing-metadata queue, and the next wave becomes more historically scoped.
+**Validation**:
+- `python scripts/run_doc_convergence_inventory.py` -> passed
+- `python scripts/verify_docs_consistency.py --repo-root .` -> passed
+- `python scripts/verify_protected_paths.py --repo-root . --strict --changed-file docs/architecture/KNOWLEDGE_SURFACES_BOUNDARY_MAP.md --changed-file docs/architecture/RFC-003-AI-Metacognition.md --changed-file docs/architecture/RFC-003_Lightweight_ToneSoul.md --changed-file docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md --changed-file docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md --changed-file docs/architecture/council_diagrams.md --changed-file docs/bayesian_accountability_literature.md --changed-file docs/bayesian_accountability_plan.md --changed-file docs/TRAINING_DATA_SPEC.md --changed-file docs/TRUTH_STRUCTURE.md --changed-file task.md` -> passed
+
+---
+
+## Phase 610: Metadata Backfill Wave 2G - Deploy, VTP, Whitepaper, and Comparison Surfaces (2026-03-23)
+- [x] Backfill `Purpose` and `Last Updated` on the next deploy/article/whitepaper/comparison docs surfaced by the convergence sample
+- [x] Preserve existing front matter or historical headings while making retrieval role and recency explicit
+- [x] Re-run the convergence inventory so this mixed public-facing wave leaves the sample head and exposes the next narrower backlog
+**Success Criteria**: Deployment guidance, public-facing article drafts, VTP, and comparison/whitepaper docs stop competing for the same missing-metadata slot, making the next wave more coherent.
+**Validation**:
+- `python scripts/run_doc_convergence_inventory.py` -> passed
+- `python scripts/verify_docs_consistency.py --repo-root .` -> passed
+- `python scripts/verify_protected_paths.py --repo-root . --strict --changed-file docs/VERCEL_DEPLOY.md --changed-file docs/VOCUS_PICOBOT_ARTICLE.md --changed-file docs/VOCUS_POST.md --changed-file docs/VTP_SPEC.md --changed-file docs/WHITEPAPER.md --changed-file docs/WORLD_MODEL_X_MIND_MODEL.md --changed-file docs/academic_comparison.md --changed-file docs/architecture-notes.md --changed-file task.md` -> passed
+
+---
+
+## Phase 609: Metadata Backfill Wave 2F - Structure, StepLedger, and Tools Surfaces (2026-03-23)
+- [x] Backfill `Purpose` and `Last Updated` on the next structure/specification/tooling docs surfaced by the convergence sample
+- [x] Normalize one remaining date-only gap on `docs/RESEARCH_EVIDENCE.md` so the sample head stops mixing fully missing metadata with one-off date omissions
+- [x] Keep the wave focused on retrieval and engineering entry surfaces rather than lower-priority archive or protected files
+**Success Criteria**: Structure, StepLedger, spec-law, and tools-facing docs move out of the missing-metadata sample head, and the next queue becomes narrower and easier to batch.
+**Validation**:
+- `python scripts/run_doc_convergence_inventory.py` -> passed
+- `python scripts/verify_docs_consistency.py --repo-root .` -> passed
+- `python scripts/verify_protected_paths.py --repo-root . --strict --changed-file docs/SOUL_DB.md --changed-file docs/SPEC_LAW_CROSSWALK.md --changed-file docs/STEPLEDGER_SYSTEM_PROMPT.md --changed-file docs/STEP_LEDGER_SPEC.md --changed-file docs/STRATEGY_CONSENSUS_2026Q1.md --changed-file docs/STRUCTURE.md --changed-file docs/TECH_ARTICLE_DRAFT_v0.1.0.md --changed-file docs/TOOLS_API_CLIENT.md --changed-file docs/TOOLS_API_SCHEMA.md --changed-file docs/RESEARCH_EVIDENCE.md --changed-file task.md` -> passed
+
+---
+
+## Phase 608: Metadata Backfill Wave 2E - Whitepaper, Release, RFC, and Audit Surfaces (2026-03-23)
+- [x] Backfill `Purpose` and `Last Updated` on the next whitepaper/release/RFC/audit docs surfaced by the convergence sample
+- [x] Re-run the convergence inventory so these historical and spec-adjacent docs leave the sample head and expose the next unresolved wave
+- [x] Keep the wave metadata-only so historical records stay readable without being rewritten into new canonical prose
+**Success Criteria**: Historical release, RFC, audit, and whitepaper docs stop sitting at the front of the missing-metadata queue, and later cleanup can move deeper into the remaining backlog.
+**Validation**:
+- `python scripts/run_doc_convergence_inventory.py` -> passed
+- `python scripts/verify_docs_consistency.py --repo-root .` -> passed
+- `python scripts/verify_protected_paths.py --repo-root . --strict --changed-file docs/PHILOSOPHY_WHITEPAPER_v1.md --changed-file docs/RELEASE_NOTES_v0.1.0.md --changed-file docs/RELEASE_NOTES_v1.0.0.md --changed-file docs/RELEASE_v0.1.0_PLAN.md --changed-file docs/RFC-009_Context_Engineering_Pivot.md --changed-file docs/RFC-013_Nonlinear_Prediction_Dynamic_Variance_Compression.md --changed-file docs/RFC-014_Reflection_Loop_Octopus_Architecture.md --changed-file docs/SECURITY_AUDIT_2025.md --changed-file docs/SEMANTIC_BIFURCATION_AUDIT.md --changed-file docs/SEMANTIC_SPINE_SPEC.md --changed-file docs/SMALL_BOAT_MVP.md --changed-file task.md` -> passed
+
+---
+
+## Phase 607: Metadata Backfill Wave 2D - Narrative, Philosophy, and Orchestrator Surfaces (2026-03-23)
+- [x] Backfill `Purpose` and `Last Updated` on the next narrative/philosophy/orchestrator docs surfaced by the convergence sample
+- [x] Re-run the convergence inventory so these narrative-facing docs leave the sample head and expose the next backlog wave
+- [x] Keep the wave limited to public docs and avoid protected files or private memory data
+**Success Criteria**: Narrative and philosophy docs stop reappearing at the front of the missing-metadata queue, and the next cleanup wave becomes more precise.
+**Validation**:
+- `python scripts/run_doc_convergence_inventory.py` -> passed
+- `python scripts/verify_docs_consistency.py --repo-root .` -> passed
+- `python scripts/verify_protected_paths.py --repo-root . --strict --changed-file docs/MOLTBOOK_POST_DRAFT.md --changed-file docs/NARRATIVE.md --changed-file docs/NARRATIVE_LAYER.md --changed-file docs/NARRATIVE_MAP.md --changed-file docs/NARRATIVE_MODULE_MAP.md --changed-file docs/ORCHESTRATOR_MVP.md --changed-file docs/PHILOSOPHY.md --changed-file docs/PHILOSOPHY_EN.md --changed-file task.md` -> passed
+
+---
+
+## Phase 606: Inventory Metadata Parser Normalization - Bold Purpose Variants (2026-03-23)
+- [x] Extend the convergence inventory parser so `**Purpose**` and `**Document Purpose**` style headers are recognized as metadata instead of false gaps
+- [x] Add a targeted test so future parser changes do not regress bold metadata detection
+- [x] Regenerate the inventory after the parser fix so already-normalized docs stop reappearing in the queue
+**Success Criteria**: The document queue stops flagging docs that already declare bold metadata headers, and the inventory becomes a more truthful backlog.
+**Validation**:
+- `python -m black --check --line-length 100 scripts/run_doc_convergence_inventory.py tests/test_run_doc_convergence_inventory.py` -> passed
+- `python -m ruff check scripts/run_doc_convergence_inventory.py tests/test_run_doc_convergence_inventory.py` -> passed
+- `python -m pytest tests/test_run_doc_convergence_inventory.py -q` -> passed
+- `python scripts/run_doc_convergence_inventory.py` -> passed
+- `python scripts/verify_docs_consistency.py --repo-root .` -> passed
+- `python scripts/verify_protected_paths.py --repo-root . --strict --changed-file scripts/run_doc_convergence_inventory.py --changed-file tests/test_run_doc_convergence_inventory.py --changed-file task.md` -> passed
+
+---
+
+## Phase 605: Metadata Backfill Wave 2C - External, Trust, and Audit Guidance Surfaces (2026-03-23)
+- [x] Backfill `Purpose` and `Last Updated` on the next public external/trust/audit guidance docs surfaced by the convergence sample
+- [x] Re-run the convergence inventory so the sample head reflects the next unresolved docs instead of already-fixed guidance surfaces
+- [x] Keep the wave limited to public docs and avoid protected files or private memory data
+**Success Criteria**: External, trust, and audit guidance docs leave the sample head, making the next cleanup queue more specific and less repetitive.
+**Validation**:
+- `python scripts/run_doc_convergence_inventory.py` -> passed
+- `python scripts/verify_docs_consistency.py --repo-root .` -> passed
+- `python scripts/verify_protected_paths.py --repo-root . --strict --changed-file docs/EXTERNAL_PR_GUIDE.md --changed-file docs/EXTERNAL_SOURCE_TRUST_POLICY.md --changed-file docs/GITHUB_INTRO_DRAFT.md --changed-file docs/GLOBAL_TRACKING_BOARD.md --changed-file docs/GOLDEN_LOG.md --changed-file docs/HONESTY_MECHANISM.md --changed-file docs/INTEGRATION_AUDIT_DRAFT.md --changed-file docs/IRON_LAWS_PERSONA.md --changed-file task.md` -> passed
+
+---
+
+## Phase 604: Document Convergence Master Plan - Multi-Wave Program and Execution Order (2026-03-23)
+- [x] Write one master plan above the individual cleanup phases so later agents can continue convergence without re-inventing the workstreams
+- [x] Separate the program into stable workstreams: metadata backlog waves, boundary contracts, retrieval maps, historical labeling, and final gates
+- [x] Publish the immediate next queue so the following cleanup wave can start from a concrete sample head instead of a vague intention
+- [x] Wire the master plan through README, onboarding, docs indexes, and the task log
+**Success Criteria**: ToneSoul now has one program-level documentation convergence roadmap, and later agents can continue cleanup by following a stable sequence instead of ad hoc file picking.
+**Validation**:
+- `python scripts/verify_docs_consistency.py --repo-root .` -> passed
+- `python scripts/verify_protected_paths.py --repo-root . --strict --changed-file README.md --changed-file README.zh-TW.md --changed-file AI_ONBOARDING.md --changed-file docs/README.md --changed-file docs/INDEX.md --changed-file docs/plans/doc_convergence_master_plan_2026-03-23.md --changed-file task.md` -> passed
+
+---
+
+## Phase 603: Metadata Backfill Wave 2B - Narrative and Showcase Surfaces (2026-03-23)
+- [x] Backfill `Purpose` and `Last Updated` on the next public narrative/showcase docs surfaced by the convergence sample
+- [x] Re-run the convergence inventory so already-fixed narrative docs stop reappearing at the front of the queue
+- [x] Keep the wave limited to public docs and avoid protected files or private memory data
+**Success Criteria**: Narrative and showcase docs move out of the missing-metadata sample head, leaving a cleaner next queue for later cleanup waves.
+**Validation**:
+- `python scripts/run_doc_convergence_inventory.py` -> passed
+- `python scripts/verify_docs_consistency.py --repo-root .` -> passed
+- `python scripts/verify_protected_paths.py --repo-root . --strict --changed-file docs/ANTIGRAVITY_CONTEXT_MEMORY.md --changed-file docs/ANTIGRAVITY_CONTEXT_MEMORY_SWARM.md --changed-file docs/BLOG_POST.md --changed-file docs/CASE_STUDIES.md --changed-file docs/DEMO_SHOWCASE.md --changed-file docs/DIMENSIONS.md --changed-file task.md` -> passed
+
+---
+
+## Phase 602: Metadata Backfill Wave 2A - High-Priority Public Docs (2026-03-23)
+- [x] Backfill `Purpose` and `Last Updated` on the next high-priority public docs from the convergence sample, focusing on ADR, continuity, and architecture-planning surfaces
+- [x] Re-run the convergence inventory after the backfill so the sample list reflects the new metadata posture instead of stale gaps
+- [x] Keep this wave docs-only and avoid touching protected human-managed files or private memory data
+**Success Criteria**: The first unresolved public docs in the convergence sample move out of the missing-metadata list, and the inventory becomes a truthful next-wave queue instead of repeating already-fixed files.
+**Validation**:
+- `python scripts/run_doc_convergence_inventory.py` -> passed
+- `python scripts/verify_docs_consistency.py --repo-root .` -> passed
+- `python scripts/verify_protected_paths.py --repo-root . --strict --changed-file docs/ADR-001-dual-track-resolution.md --changed-file docs/AI_CONCEPT_ASSESSMENT.md --changed-file docs/AI_CONTINUITY_PROTOCOL.md --changed-file docs/ARCHITECTURE_CONVERGENCE_PLAN.md --changed-file docs/ARCHITECTURE_DEPLOYED.md --changed-file docs/ARCHITECTURE_REVIEW.md --changed-file task.md` -> passed
+
+---
+
+## Phase 601: Documentation Authority Structure - High-Authority Metadata Wave and Fine-Grained Map (2026-03-23)
+- [x] Backfill `Purpose` and `Last Updated` metadata on a first wave of high-authority public docs so retrieval agents stop inferring role from body prose alone
+- [x] Add a dedicated documentation authority structure map that groups entrypoints, canonical anchors, governance contracts, and generated status lanes
+- [x] Publish a generated authority-structure artifact set so the finer document map can be consumed without rereading long prose
+- [x] Wire the new map through README, onboarding, docs indexes, and status docs
+**Success Criteria**: The highest-value public docs expose explicit role/date metadata, and later agents can open one fine-grained structure map before flattening all docs into a single search space.
+**Validation**:
+- `python -m black --check --line-length 100 scripts/run_doc_convergence_inventory.py tests/test_run_doc_convergence_inventory.py scripts/run_doc_authority_structure_map.py tests/test_run_doc_authority_structure_map.py` -> passed
+- `python -m ruff check scripts/run_doc_convergence_inventory.py tests/test_run_doc_convergence_inventory.py scripts/run_doc_authority_structure_map.py tests/test_run_doc_authority_structure_map.py` -> passed
+- `python -m pytest tests/test_run_doc_convergence_inventory.py tests/test_run_doc_authority_structure_map.py -q` -> passed
+- `python scripts/run_doc_convergence_inventory.py` -> passed
+- `python scripts/run_doc_authority_structure_map.py` -> passed
+- `python scripts/verify_docs_consistency.py --repo-root .` -> passed
+- `python scripts/verify_protected_paths.py --repo-root . --strict --changed-file constitution/manifesto.md --changed-file README.md --changed-file README.zh-TW.md --changed-file AI_ONBOARDING.md --changed-file docs/7D_AUDIT_FRAMEWORK.md --changed-file docs/7D_EXECUTION_SPEC.md --changed-file docs/API_SPEC.md --changed-file docs/ARCHITECTURE_BOUNDARIES.md --changed-file docs/AUDIT_CONTRACT.md --changed-file docs/CORE_MODULES.md --changed-file docs/COUNCIL_RUNTIME.md --changed-file docs/DOCS_CLASSIFICATION_LEDGER_v1.md --changed-file docs/DOCS_INFORMATION_ARCHITECTURE_v1.md --changed-file docs/FILE_PURPOSE_MAP.md --changed-file docs/GETTING_STARTED.md --changed-file docs/GETTING_STARTED_zh.md --changed-file docs/INDEX.md --changed-file docs/KNOWLEDGE_GRAPH.md --changed-file docs/METRICS_MAPPING.md --changed-file docs/MGGI_MANIFESTO.md --changed-file docs/MODULE_DEPENDENCIES.md --changed-file docs/README.md --changed-file docs/architecture/DOC_AUTHORITY_STRUCTURE_MAP.md --changed-file docs/status/README.md --changed-file docs/status/doc_authority_structure_latest.json --changed-file docs/status/doc_authority_structure_latest.md --changed-file docs/status/doc_authority_structure_latest.mmd --changed-file docs/status/doc_convergence_inventory_latest.json --changed-file docs/status/doc_convergence_inventory_latest.md --changed-file docs/status/doc_convergence_inventory_latest.mmd --changed-file scripts/run_doc_authority_structure_map.py --changed-file scripts/run_doc_convergence_inventory.py --changed-file task.md --changed-file tests/test_run_doc_authority_structure_map.py --changed-file tests/test_run_doc_convergence_inventory.py` -> passed
+
+---
+
+## Phase 600: Private Memory Shadow Boundary - Active Lane vs Nested Legacy Shadow (2026-03-23)
+- [x] Declare a dedicated boundary contract for `memory/.hierarchical_index/` versus `memory/memory/.hierarchical_index/` so public convergence work stops at reporting instead of mutating memory data
+- [x] Add a generated private-shadow report that compares the active and shadow lanes by file presence, hashes, JSON-shape drift, and registry alignment
+- [x] Teach the document convergence inventory to downgrade the remaining `vows_meta.json` collision into dedicated shadow-contract maintenance
+- [x] Wire the private-shadow boundary into README, onboarding, docs indexes, cleanup plans, and status docs
+**Success Criteria**: The remaining nested memory shadow stops reading like an unresolved duplicate and instead becomes an explicitly governed deferred-cleanup lane with one contract and one machine-readable report.
+**Validation**:
+- `python -m black --check --line-length 100 scripts/run_private_memory_shadow_report.py tests/test_run_private_memory_shadow_report.py scripts/run_doc_convergence_inventory.py tests/test_run_doc_convergence_inventory.py` -> passed
+- `python -m ruff check scripts/run_private_memory_shadow_report.py tests/test_run_private_memory_shadow_report.py scripts/run_doc_convergence_inventory.py tests/test_run_doc_convergence_inventory.py` -> passed
+- `python -m pytest tests/test_run_private_memory_shadow_report.py tests/test_run_doc_convergence_inventory.py -q` -> passed
+- `python scripts/run_private_memory_shadow_report.py` -> passed
+- `python scripts/run_basename_divergence_distillation_report.py` -> passed
+- `python scripts/run_doc_convergence_inventory.py` -> passed
+- `python scripts/verify_docs_consistency.py --repo-root .` -> passed
+- `python scripts/verify_protected_paths.py --repo-root . --strict --changed-file README.md --changed-file README.zh-TW.md --changed-file AI_ONBOARDING.md --changed-file docs/README.md --changed-file docs/INDEX.md --changed-file docs/architecture/BASENAME_DIVERGENCE_DISTILLATION_MAP.md --changed-file docs/architecture/PRIVATE_MEMORY_SHADOW_BOUNDARY_MAP.md --changed-file docs/plans/doc_convergence_cleanup_plan_2026-03-22.md --changed-file docs/status/README.md --changed-file docs/status/basename_divergence_distillation_latest.json --changed-file docs/status/basename_divergence_distillation_latest.md --changed-file docs/status/doc_convergence_inventory_latest.json --changed-file docs/status/doc_convergence_inventory_latest.md --changed-file docs/status/doc_convergence_inventory_latest.mmd --changed-file docs/status/private_memory_shadow_latest.json --changed-file docs/status/private_memory_shadow_latest.md --changed-file scripts/run_basename_divergence_distillation_report.py --changed-file scripts/run_doc_convergence_inventory.py --changed-file scripts/run_private_memory_shadow_report.py --changed-file spec/governance/basename_divergence_registry_v1.json --changed-file task.md --changed-file tests/test_run_doc_convergence_inventory.py --changed-file tests/test_run_private_memory_shadow_report.py` -> passed
+
+---
+
+## Phase 599: Paradox Fixture Ownership - Canonical Casebook and Test Projections (2026-03-22)
+- [x] Declare `PARADOXES/` as the canonical paradox casebook and `tests/fixtures/paradoxes/` as the downstream test projection lane
+- [x] Add a generated ownership report that distinguishes exact mirrors from intentionally reduced fixture projections
+- [x] Add README metadata to both paradox lanes so later agents stop treating fixtures as an equal authority surface
+- [x] Teach the document convergence inventory to read the paradox ownership contract and downgrade raw ambiguity into contract maintenance
+**Success Criteria**: Paradox fixtures stop reading like accidental duplicates and instead become one governed casebook-to-fixture pipeline with explicit exact/reduced-projection rules.
+**Validation**:
+- `python -m black --check --line-length 100 scripts/run_doc_convergence_inventory.py tests/test_run_doc_convergence_inventory.py scripts/run_paradox_fixture_ownership_report.py tests/test_run_paradox_fixture_ownership_report.py` -> passed
+- `python -m ruff check scripts/run_doc_convergence_inventory.py tests/test_run_doc_convergence_inventory.py scripts/run_paradox_fixture_ownership_report.py tests/test_run_paradox_fixture_ownership_report.py` -> passed
+- `python -m pytest tests/test_run_doc_convergence_inventory.py tests/test_run_paradox_fixture_ownership_report.py -q` -> passed
+- `python scripts/run_paradox_fixture_ownership_report.py` -> passed
+- `python scripts/run_doc_convergence_inventory.py` -> passed
+- `python scripts/verify_docs_consistency.py --repo-root .` -> passed
+- `python scripts/verify_protected_paths.py --repo-root . --strict --changed-file README.md --changed-file README.zh-TW.md --changed-file AI_ONBOARDING.md --changed-file PARADOXES/README.md --changed-file tests/fixtures/paradoxes/README.md --changed-file docs/README.md --changed-file docs/INDEX.md --changed-file docs/architecture/PARADOX_FIXTURE_OWNERSHIP_MAP.md --changed-file docs/plans/doc_convergence_cleanup_plan_2026-03-22.md --changed-file docs/status/README.md --changed-file docs/status/doc_convergence_inventory_latest.json --changed-file docs/status/doc_convergence_inventory_latest.md --changed-file docs/status/doc_convergence_inventory_latest.mmd --changed-file docs/status/paradox_fixture_ownership_latest.json --changed-file docs/status/paradox_fixture_ownership_latest.md --changed-file scripts/run_doc_convergence_inventory.py --changed-file scripts/run_paradox_fixture_ownership_report.py --changed-file task.md --changed-file tests/test_run_doc_convergence_inventory.py --changed-file tests/test_run_paradox_fixture_ownership_report.py` -> passed
+
+---
+
+## Phase 598: Basename Divergence Distillation - Curated Registry for Same-Name Non-Duplicates (2026-03-22)
+- [x] Distill the five high-risk same-basename manual-review collisions into explicit categories instead of leaving them as perpetual ad hoc review items
+- [x] Add a curated registry and generated report so later agents can tell apart boundary pairs, generated namespace duals, backend duals, and deferred private shadows
+- [x] Teach the document convergence inventory to read that registry and downgrade raw re-triage into registry maintenance when coverage is complete
+- [x] Wire the distillation map, registry, and report into README, onboarding, docs indexes, and status docs
+**Success Criteria**: Same-basename divergence is no longer just a warning list; it becomes a small maintained governance surface that later agents can reuse without rediscovering the same distinctions.
+**Validation**:
+- `python -m black --check --line-length 100 scripts/run_doc_convergence_inventory.py tests/test_run_doc_convergence_inventory.py scripts/run_basename_divergence_distillation_report.py tests/test_run_basename_divergence_distillation_report.py` -> passed
+- `python -m ruff check scripts/run_doc_convergence_inventory.py tests/test_run_doc_convergence_inventory.py scripts/run_basename_divergence_distillation_report.py tests/test_run_basename_divergence_distillation_report.py` -> passed
+- `python -m pytest tests/test_run_doc_convergence_inventory.py tests/test_run_basename_divergence_distillation_report.py -q` -> passed
+- `python scripts/run_basename_divergence_distillation_report.py` -> passed
+- `python scripts/run_doc_convergence_inventory.py` -> passed
+- `python scripts/verify_docs_consistency.py --repo-root .` -> passed
+- `python scripts/verify_protected_paths.py --repo-root . --strict --changed-file README.md --changed-file README.zh-TW.md --changed-file AI_ONBOARDING.md --changed-file docs/README.md --changed-file docs/INDEX.md --changed-file docs/architecture/BASENAME_DIVERGENCE_DISTILLATION_MAP.md --changed-file docs/plans/doc_convergence_cleanup_plan_2026-03-22.md --changed-file docs/status/README.md --changed-file docs/status/doc_convergence_inventory_latest.json --changed-file docs/status/doc_convergence_inventory_latest.md --changed-file docs/status/doc_convergence_inventory_latest.mmd --changed-file docs/status/basename_divergence_distillation_latest.json --changed-file docs/status/basename_divergence_distillation_latest.md --changed-file scripts/run_doc_convergence_inventory.py --changed-file scripts/run_basename_divergence_distillation_report.py --changed-file spec/governance/basename_divergence_registry_v1.json --changed-file task.md --changed-file tests/test_run_doc_convergence_inventory.py --changed-file tests/test_run_basename_divergence_distillation_report.py` -> passed
+
+---
+
+## Phase 597: Engineering Mirror Ownership - Canonical Owner and Mirror Resync (2026-03-22)
+- [x] Declare one explicit ownership contract for the duplicated engineering family so `docs/engineering/` and `law/engineering/` stop acting like parallel truth sources
+- [x] Add a generated ownership report that shows exact mirrors, sync-needed pairs, and canonical-only files
+- [x] Resync the currently drifted engineering mirrors from the canonical owner and add surface metadata to the two README lanes
+- [x] Wire the ownership map and generated report into README, onboarding, docs indexes, and status docs
+**Success Criteria**: The engineering mirror family now has one named owner, one mirror lane, one machine-readable sync report, and no remaining drift in the currently mirrored pair set.
+**Validation**:
+- `python -m black --check --line-length 100 scripts/run_engineering_mirror_ownership_report.py tests/test_run_engineering_mirror_ownership_report.py` -> passed
+- `python -m ruff check scripts/run_engineering_mirror_ownership_report.py tests/test_run_engineering_mirror_ownership_report.py` -> passed
+- `python -m pytest tests/test_run_engineering_mirror_ownership_report.py -q` -> passed
+- `python scripts/run_engineering_mirror_ownership_report.py` -> passed
+- `python scripts/run_doc_convergence_inventory.py` -> passed
+- `python scripts/verify_docs_consistency.py --repo-root .` -> passed
+- `python scripts/verify_protected_paths.py --repo-root . --strict --changed-file README.md --changed-file README.zh-TW.md --changed-file AI_ONBOARDING.md --changed-file docs/README.md --changed-file docs/INDEX.md --changed-file docs/architecture/ENGINEERING_MIRROR_OWNERSHIP_MAP.md --changed-file docs/engineering/README.md --changed-file law/engineering/README.md --changed-file law/engineering/OVERVIEW.md --changed-file law/engineering/VOLUME_III_ENGINEERING_RESPONSIBILITY.md --changed-file docs/plans/doc_convergence_cleanup_plan_2026-03-22.md --changed-file docs/status/README.md --changed-file docs/status/doc_convergence_inventory_latest.json --changed-file docs/status/doc_convergence_inventory_latest.md --changed-file docs/status/doc_convergence_inventory_latest.mmd --changed-file docs/status/engineering_mirror_ownership_latest.json --changed-file docs/status/engineering_mirror_ownership_latest.md --changed-file scripts/run_engineering_mirror_ownership_report.py --changed-file scripts/run_doc_convergence_inventory.py --changed-file task.md --changed-file tests/test_run_engineering_mirror_ownership_report.py` -> passed
+
+---
+
+## Phase 596: Document Convergence Inventory - Duplicate Name Audit and Metadata Backfill (2026-03-22)
+- [x] Add a generator that inventories authored doc surfaces, compares same-basename files by content hash plus similarity, and classifies mirror vs divergence families
+- [x] Publish one cleanup plan that turns the raw inventory into first-wave priorities for engineering mirrors, same-name divergence, paradox fixture policy, and entrypoint metadata backfill
+- [x] Wire the inventory and cleanup plan into README, onboarding, docs indexes, and status docs so later agents stop proposing blind renames
+- [x] Backfill `Purpose` and `Last Updated` metadata on the most important public entrypoints touched in this phase
+**Success Criteria**: Later agents can open one generated inventory, see which same-name files are truly duplicated versus semantically divergent, and follow one explicit cleanup order before moving or merging documents.
+**Validation**:
+- `python -m black --check --line-length 100 scripts/run_doc_convergence_inventory.py tests/test_run_doc_convergence_inventory.py` -> passed
+- `python -m ruff check scripts/run_doc_convergence_inventory.py tests/test_run_doc_convergence_inventory.py` -> passed
+- `python -m pytest tests/test_run_doc_convergence_inventory.py -q` -> passed
+- `python scripts/run_doc_convergence_inventory.py` -> passed
+- `python scripts/verify_docs_consistency.py --repo-root .` -> passed
+- `python scripts/verify_protected_paths.py --repo-root . --strict --changed-file README.md --changed-file README.zh-TW.md --changed-file AI_ONBOARDING.md --changed-file SOUL.md --changed-file MGGI_SPEC.md --changed-file TAE-01_Architecture_Spec.md --changed-file docs/README.md --changed-file docs/INDEX.md --changed-file docs/plans/doc_convergence_cleanup_plan_2026-03-22.md --changed-file docs/status/README.md --changed-file docs/status/doc_convergence_inventory_latest.json --changed-file docs/status/doc_convergence_inventory_latest.md --changed-file docs/status/doc_convergence_inventory_latest.mmd --changed-file scripts/run_doc_convergence_inventory.py --changed-file task.md --changed-file tests/test_run_doc_convergence_inventory.py` -> passed
+
+---
+
 ## Phase 595: A/B/C Firewall Doctrine - Claim Governance and Observable Shell Honesty (2026-03-22)
 - [x] Add a standalone A/B/C firewall doctrine that separates mechanism, observable behavior, and interpretation without renumbering the eight-layer runtime
 - [x] Add a verifier for doctrine presence, entrypoint references, disclaimer-first posture, and observable-shell boundary overclaims

@@ -1,5 +1,8 @@
 # Council Runtime 整合設計
 
+> Purpose: describe the current council runtime facade, authoritative entrypoints, and deprecated migration boundaries.
+> Last Updated: 2026-03-23
+
 本文件定義 Council 的統一入口（Facade）與角色權重整合策略，目標是將現有的
 `PreOutputCouncil` 與 `role_council.py` 收斂為單一 API。
 

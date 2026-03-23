@@ -1,6 +1,9 @@
 # Academic Comparison: ToneSoul vs Related Approaches
 # 學術對比：語魂與相關方法
 
+> Purpose: compare ToneSoul with adjacent academic and industry approaches across governance, transparency, and training posture.
+> Last Updated: 2026-03-23
+
 ---
 
 ## Overview Comparison

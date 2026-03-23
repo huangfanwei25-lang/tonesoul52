@@ -1,0 +1,76 @@
+{
+  "generated_at": "2026-03-22T16:10:56Z",
+  "contract": {
+    "active_root": "memory/.hierarchical_index",
+    "shadow_root": "memory/memory/.hierarchical_index",
+    "source_of_truth_rule": "Prefer memory/.hierarchical_index as the active lane in public convergence work.",
+    "public_cleanup_rule": "Do not mutate either lane during public document convergence; report only.",
+    "deferred_cleanup_phase": "private_memory_lane_cleanup"
+  },
+  "metrics": {
+    "active_file_count": 2,
+    "shadow_file_count": 2,
+    "pair_count": 2,
+    "divergent_pair_count": 2,
+    "exact_match_count": 0,
+    "needs_review_count": 0
+  },
+  "registry_alignment": {
+    "entry_present": true,
+    "tracked_basename": "vows_meta.json",
+    "paths_match_expected": true,
+    "missing_paths": [],
+    "extra_paths": []
+  },
+  "pairs": [
+    {
+      "relative_path": "hierarchical.index",
+      "active_path": "memory/.hierarchical_index/hierarchical.index",
+      "shadow_path": "memory/memory/.hierarchical_index/hierarchical.index",
+      "comparison_mode": "binary_hash_compare",
+      "policy": "defer_private_cleanup",
+      "exact_match": false,
+      "needs_review": false,
+      "missing_side": null,
+      "active_size": 24811,
+      "shadow_size": 12475,
+      "active_sha256": "7b46367c7467e893afefc5dacb098d301c456146371596e78169ec7179c1d814",
+      "shadow_sha256": "9ae95eacb2be68cf859ef618243c279d6f10ff3a48465fc08523f8be1d28faac"
+    },
+    {
+      "relative_path": "vows_meta.json",
+      "active_path": "memory/.hierarchical_index/vows_meta.json",
+      "shadow_path": "memory/memory/.hierarchical_index/vows_meta.json",
+      "comparison_mode": "json_structural_compare",
+      "policy": "defer_private_cleanup",
+      "exact_match": false,
+      "needs_review": false,
+      "missing_side": null,
+      "active_size": 1034,
+      "shadow_size": 713,
+      "active_sha256": "18124665453cef0def2fa0c9376e3b20f96fdc640cf3cbc759d0f9ae5458121b",
+      "shadow_sha256": "013de1efd7b0a354b961eb23fe8545f48acf5e5b6f3e7f635747e4f3c5e69481",
+      "similarity": 0.317,
+      "active_item_count": 8,
+      "shadow_item_count": 3,
+      "active_first_item_keys": [
+        "scope",
+        "statement",
+        "verdict"
+      ],
+      "shadow_first_item_keys": [
+        "agent_id",
+        "metadata",
+        "scope",
+        "statement",
+        "timestamp",
+        "verdict"
+      ],
+      "key_shape_match": false
+    }
+  ],
+  "issues": [],
+  "primary_status_line": "private_memory_shadow_contract | pairs=2 divergent=2 missing=0 registry_entry=1",
+  "runtime_status_line": "active_root=memory/.hierarchical_index | shadow_root=memory/memory/.hierarchical_index defer_mutation=1 review=0",
+  "artifact_policy_status_line": "shadow_policy=observe_report_do_not_mutate | cleanup_scope=private_memory_phase_only"
+}

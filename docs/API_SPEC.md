@@ -1,6 +1,7 @@
 # API Specification (Unified Web + Backend)
 
-Last updated: 2026-02-24
+> Purpose: define the shared contract between web routes and backend services for the current ToneSoul API surface.
+> Last Updated: 2026-03-23
 
 ## Goal
 

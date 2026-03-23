@@ -1,5 +1,8 @@
 # ToneSoul 入門指南
 
+> Purpose: ToneSoul 的繁體中文快速上手指南，說明安裝、基本流程與核心概念入口。
+> Last Updated: 2026-03-23
+
 ToneSoul 將治理核心（`AXIOMS.json`、`law/constitution.json`）與語義引擎（`tonesoul/`）結合，這份中文指南帶你走完安裝、示範流程，並串連核心概念。
 
 ## 1. 安裝流程

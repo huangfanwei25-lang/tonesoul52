@@ -1,5 +1,8 @@
 # Memory Subjectivity Contract Addendum (2026-03-10)
 
+> Purpose: define the implementation contract that separates operational memory placement from subjectivity admissibility.
+> Last Updated: 2026-03-23
+
 ## Why This Addendum Exists
 
 The subjectivity ladder from the previous note is now clear:

@@ -1,5 +1,8 @@
 # 🚤 小船 MVP — 語魂本地多模型部署設計
 
+> Purpose: local-first MVP plan for running a smaller on-device ToneSoul stack under limited hardware constraints.
+> Last Updated: 2026-03-23
+
 > **日期**：2026-02-14
 > **狀態**：設計稿，待 Fan 審閱
 > **前提**：環境開通後手動部署

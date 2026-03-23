@@ -1,5 +1,8 @@
 # 技術文章草稿：ToneSoul v0.1.0
 
+> Purpose: draft external-facing technical article material for introducing ToneSoul v0.1.0.
+> Last Updated: 2026-03-23
+
 ## 標題候選
 
 1. 從「功能正確」到「責任可追溯」：ToneSoul 的治理工程

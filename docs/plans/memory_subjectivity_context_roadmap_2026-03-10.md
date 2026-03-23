@@ -1,5 +1,8 @@
 # Memory Subjectivity Context + Roadmap Addendum (2026-03-10)
 
+> Purpose: provide the context and roadmap note for the broader memory-subjectivity branch after it outgrew isolated patches.
+> Last Updated: 2026-03-23
+
 ## Why This Note Exists
 
 The recent memory-subjectivity work now spans more than one narrow patch:

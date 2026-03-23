@@ -1,5 +1,8 @@
 # MGGI Manifesto: The Sovereignty of the Consistent Pulse ⚖️
 
+> Purpose: define the MGGI philosophical posture that prioritizes coherence, provenance, and governable sovereignty over raw capability.
+> Last Updated: 2026-03-23
+
 Minimal Governable General Intelligence (**MGGI**) represents a fundamental departure from the pursuit of raw AGI. We prioritize **Coherence** over **Intelligence** and **Responsibility** over **Capability**.
 
 ## The Three Pillars of MGGI

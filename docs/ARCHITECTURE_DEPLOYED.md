@@ -1,5 +1,8 @@
 # ToneSoul 系統架構 — 架構師級全局文件
 
+> Purpose: document the deployed ToneSoul architecture split across web, API, and governance layers.
+> Last Updated: 2026-03-23
+
 > **版本**：v2.1 · **審計者**：Antigravity (Gemini) · **日期**：2026-02-13
 > **v2.1 更新**：記憶架構強化（動態遺忘、語義圖譜管線串接、視覺記憶鏈、採樣策略）
 > **方法**：Meta-Prompt 逐模組深度掃描 + 介面/依賴/資料流整合

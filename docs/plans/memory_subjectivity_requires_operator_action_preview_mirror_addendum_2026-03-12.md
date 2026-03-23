@@ -1,5 +1,8 @@
 # Memory Subjectivity Requires-Operator-Action Preview Mirror Addendum (2026-03-12)
 
+> Purpose: define higher-level preview mirrors that expose whether subjectivity artifacts require operator action.
+> Last Updated: 2026-03-23
+
 ## Why This Addendum Exists
 
 The higher mirrors already knew:

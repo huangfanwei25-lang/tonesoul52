@@ -1,5 +1,8 @@
 # 2026 Q2 Roadmap: Memory Governance Mainline
 
+> Purpose: roadmap the Q2 memory-governance mainline across `tonesoul52` and `OpenClaw-Memory`.
+> Last Updated: 2026-03-23
+
 Date range: **2026-03-01 -> 2026-05-31**  
 Scope: `tonesoul52` + `OpenClaw-Memory` dual-repo convergence around tension/friction governance.
 

@@ -1,5 +1,8 @@
 # Architecture & External Reference — 架構藍圖與外部對標
 
+> Purpose: consolidate architecture addenda and external-reference comparisons that shaped recent ToneSoul positioning work.
+> Last Updated: 2026-03-23
+
 > 合併日期：2026-03-19
 > 原始 addendum 數：6
 > 時間跨度：2026-03-12 ~ 2026-03-18

@@ -1,5 +1,8 @@
 # ToneSoul StepLedger System Prompt Template
 
+> Purpose: provide a reusable system-prompt template for StepLedger-governed assistant behavior.
+> Last Updated: 2026-03-23
+
 Use this template as a system prompt for governed responses with StepLedger.
 
 ---

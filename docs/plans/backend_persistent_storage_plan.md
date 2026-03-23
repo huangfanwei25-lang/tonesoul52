@@ -1,5 +1,8 @@
 # Backend Persistent Storage Plan
 
+> Purpose: define the persistent-storage integration tasks for `apps/api`, Supabase, and the related acceptance path.
+> Last Updated: 2026-03-23
+
 > 範圍：`apps/api` + Supabase 持久化整合  
 > 負責：Codex  
 > 最後更新：2026-02-12

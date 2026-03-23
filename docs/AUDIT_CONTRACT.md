@@ -1,5 +1,8 @@
 # Audit Contract (Ledger Schema)
 
+> Purpose: define the required schema and minimum fields for audit-ledger entries and step-level provenance records.
+> Last Updated: 2026-03-23
+
 This document defines the strict requirements for a valid Ledger Entry in the StepLedger (`L4`).
 
 ## Ledger Entry Schema (JSONL)

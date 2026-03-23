@@ -1,5 +1,8 @@
 # Demo Showcase Playbook
 
+> Purpose: operator playbook for showing ToneSoul demos across API, web, and governance verification flows.
+> Last Updated: 2026-03-23
+
 ## 目標
 
 用可重複的流程展示 ToneSoul 的三個核心價值：

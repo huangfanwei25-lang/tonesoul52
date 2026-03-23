@@ -1,5 +1,8 @@
 # Memory Subjectivity Admissibility Preview Mirror Addendum (2026-03-12)
 
+> Purpose: mirror admissibility status upward into preview surfaces so interruption recovery preserves gate context.
+> Last Updated: 2026-03-23
+
 ## Why This Addendum Exists
 
 The review batch now exposes a compact admissibility handoff line:

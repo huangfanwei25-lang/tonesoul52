@@ -1,5 +1,8 @@
 # Memory Subjectivity History Density Compaction Surface Addendum (2026-03-11)
 
+> Purpose: define a compact operator-facing surface for historically dense deferred subjectivity queues.
+> Last Updated: 2026-03-23
+
 ## Why This Addendum Exists
 
 The branch has already done the important semantic work:

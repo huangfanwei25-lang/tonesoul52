@@ -1,5 +1,8 @@
 # 🌐 ToneSoul Global Tracking Board (2026-02-22)
 
+> Purpose: track major parallel workstreams, owners, and queue posture across the broader ToneSoul effort.
+> Last Updated: 2026-03-23
+
 > **"想法太多，實作太少。" —— 為了避免概念膨脹，這裡收斂並追蹤全域所有尚未實作的重點想法與架構藍圖。**
 
 這份追蹤表將工作清楚劃分為兩條線：

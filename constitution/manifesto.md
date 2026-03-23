@@ -1,5 +1,8 @@
 # ToneSoul Manifesto
 
+> Purpose: constitutional manifesto for ToneSoul priority order, governing principles, and behavioral cycle.
+> Last Updated: 2026-03-23
+
 ## Highest Guiding Principles
 
 ToneSoul Architecture Engine (TAE‑01) operates under a strict hierarchy of priorities known as **P‑levels**.  These priorities define how the system resolves conflicts and makes decisions:

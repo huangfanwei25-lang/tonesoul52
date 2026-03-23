@@ -1,5 +1,8 @@
 # ToneSoul Documentation Index
 
+> Purpose: top-level documentation index for ToneSoul authority surfaces, operational packets, and convergence maps.
+> Last Updated: 2026-03-23
+
 > 自動更新於 2026-03-22。按主題分類，方便快速導航。
 
 ---
@@ -27,6 +30,25 @@
 - [status/l7_operational_packet_latest.json](status/l7_operational_packet_latest.json)
 - [status/l8_adapter_dataset_gate_latest.json](status/l8_adapter_dataset_gate_latest.json)
 - [status/abc_firewall_latest.json](status/abc_firewall_latest.json)
+
+## Documentation Convergence
+
+- [status/doc_convergence_inventory_latest.json](status/doc_convergence_inventory_latest.json)
+- [status/doc_convergence_inventory_latest.mmd](status/doc_convergence_inventory_latest.mmd)
+- [plans/doc_convergence_cleanup_plan_2026-03-22.md](plans/doc_convergence_cleanup_plan_2026-03-22.md)
+- [plans/doc_convergence_master_plan_2026-03-23.md](plans/doc_convergence_master_plan_2026-03-23.md)
+- [architecture/DOC_AUTHORITY_STRUCTURE_MAP.md](architecture/DOC_AUTHORITY_STRUCTURE_MAP.md)
+- [status/doc_authority_structure_latest.json](status/doc_authority_structure_latest.json)
+- [architecture/BASENAME_DIVERGENCE_DISTILLATION_MAP.md](architecture/BASENAME_DIVERGENCE_DISTILLATION_MAP.md)
+- [status/basename_divergence_distillation_latest.json](status/basename_divergence_distillation_latest.json)
+- [architecture/PRIVATE_MEMORY_SHADOW_BOUNDARY_MAP.md](architecture/PRIVATE_MEMORY_SHADOW_BOUNDARY_MAP.md)
+- [status/private_memory_shadow_latest.json](status/private_memory_shadow_latest.json)
+- [architecture/PARADOX_FIXTURE_OWNERSHIP_MAP.md](architecture/PARADOX_FIXTURE_OWNERSHIP_MAP.md)
+- [status/paradox_fixture_ownership_latest.json](status/paradox_fixture_ownership_latest.json)
+- [architecture/ENGINEERING_MIRROR_OWNERSHIP_MAP.md](architecture/ENGINEERING_MIRROR_OWNERSHIP_MAP.md)
+- [status/engineering_mirror_ownership_latest.json](status/engineering_mirror_ownership_latest.json)
+- [architecture/HISTORICAL_DOC_LANE_POLICY.md](architecture/HISTORICAL_DOC_LANE_POLICY.md)
+- [status/historical_doc_lane_latest.json](status/historical_doc_lane_latest.json)
 
 ## 🧭 Documentation Governance v1
 

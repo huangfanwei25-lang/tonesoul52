@@ -1,5 +1,8 @@
 # 專案結構規範
 
+> Purpose: define repository structure, naming conventions, and the module-addition flow for maintainable ToneSoul growth.
+> Last Updated: 2026-03-23
+
 本文件定義 ToneSoul 倉庫的目錄用途、命名規則與新增模組流程，確保結構清晰可維護。
 
 ## 與其他結構文件的分工

@@ -1,5 +1,8 @@
 # LLM Observability Contract Addendum (2026-03-09)
 
+> Purpose: define the canonical observability contract for shared LLM payloads across runtime and dream surfaces.
+> Last Updated: 2026-03-23
+
 ## Problem
 
 `UnifiedPipeline` and `DreamEngine` were both emitting an `llm` observability payload, but each one was building the dict by hand.

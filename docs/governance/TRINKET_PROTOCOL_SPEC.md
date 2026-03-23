@@ -1,5 +1,8 @@
 # Trinket Protocol Spec v1
 
+> Purpose: specify the auditable dispatch contract for high-tension handling across ToneSoul runtime and evolution lanes.
+> Last Updated: 2026-03-23
+
 Date: 2026-02-14  
 Status: Active (Phase 100A baseline)
 
@@ -71,4 +74,3 @@ Required trace fields:
 - Allowed for compatibility tests and legacy wrappers.
 - Not the production chat runtime entrypoint.
 - Production runtime owner: `tonesoul.unified_pipeline.UnifiedPipeline`.
-

@@ -1,5 +1,8 @@
 # Memory Subjectivity Review Batch Admissibility Checklist Addendum (2026-03-11)
 
+> Purpose: define the admissibility checklist rendered on the canonical subjectivity review-batch artifact.
+> Last Updated: 2026-03-23
+
 ## Why This Addendum Exists
 
 The branch already updated the official review policy to require
@@ -87,4 +90,3 @@ The branch now has three distinct layers for this topic:
   auto-solved admissibility
 
 That is the correct boundary for now.
-

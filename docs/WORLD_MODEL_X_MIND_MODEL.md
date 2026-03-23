@@ -1,5 +1,8 @@
 # World Model × ToneSoul Mind Model · 行為決策核心
 
+> Purpose: explain the decision split between world-model prediction and ToneSoul mind-model evaluation.
+> Last Updated: 2026-03-23
+
 > **One-liner**: 世界模型告訴我「這會發生什麼」，心智模型告訴我「這應該發生嗎」。
 
 ---

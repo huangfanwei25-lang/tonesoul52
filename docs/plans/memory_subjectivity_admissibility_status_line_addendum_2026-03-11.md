@@ -1,5 +1,8 @@
 # Memory Subjectivity Admissibility Status Line Addendum (2026-03-11)
 
+> Purpose: add compact admissibility status lines on top of the heavier review checklist surfaces.
+> Last Updated: 2026-03-23
+
 ## Why This Addendum Exists
 
 The review batch already exposed full admissibility checklists.
@@ -54,4 +57,3 @@ This phase still does not:
 - change review semantics
 
 It only makes the existing judgment easier to resume after interruption.
-

@@ -1,5 +1,8 @@
 # Antigravity VM Runbook (安全最小權限版)
 
+> Purpose: operator runbook for the Antigravity VM environment, access boundaries, and deployment workflow.
+> Last Updated: 2026-03-23
+
 最後更新：2026-02-14
 適用範圍：在隔離虛擬機內執行 ToneSoul / Antigravity 工作流
 

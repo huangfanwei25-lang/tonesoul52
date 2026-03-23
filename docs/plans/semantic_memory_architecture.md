@@ -1,5 +1,8 @@
 # Semantic Memory & Atlas — 語義記憶與圖冊架構
 
+> Purpose: consolidate semantic-memory and atlas addenda into one architecture-side planning surface.
+> Last Updated: 2026-03-23
+
 > 合併日期：2026-03-19
 > 原始 addendum 數：8
 > 時間跨度：2026-03-15 ~ 2026-03-16

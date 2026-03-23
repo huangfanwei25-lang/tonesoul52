@@ -1,5 +1,8 @@
 # ToneSoul: Teaching AI to "Think Before Speaking"
 
+> Purpose: English philosophy overview for ToneSoul's recursive deliberation and semantically responsible AI posture.
+> Last Updated: 2026-03-23
+
 > *Recursive Deliberation for Semantically Responsible AI*
 
 ---

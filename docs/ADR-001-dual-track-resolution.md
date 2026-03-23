@@ -1,5 +1,8 @@
 # ADR-001: Dual-Track Codebase Resolution
 
+> Purpose: architectural decision record that resolves the old dual-track core layout and declares `tonesoul/` as canonical.
+> Last Updated: 2026-03-23
+
 ## Status
 Accepted
 

@@ -1,5 +1,8 @@
 # Dream & Wakeup Observability — 夢境與喚醒可觀測性
 
+> Purpose: collect observability addenda for Dream Engine, Wakeup lineage, and Scribe-facing telemetry surfaces.
+> Last Updated: 2026-03-23
+
 > 合併日期：2026-03-19
 > 原始 addendum 數：13
 > 時間跨度：2026-03-12 ~ 2026-03-15

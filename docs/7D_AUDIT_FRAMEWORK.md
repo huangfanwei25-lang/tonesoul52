@@ -1,5 +1,8 @@
 ﻿# 7D AI Audit Framework / 七維 AI 審計框架
 
+> Purpose: explain ToneSoul's seven-dimensional audit model for verification, accountability, and system calibration.
+> Last Updated: 2026-03-23
+
 > **Engineering paranoia is a feature, not a bug.**  
 > 把「懷疑」制度化，才能把「信任」工程化。
 

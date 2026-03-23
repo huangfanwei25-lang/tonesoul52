@@ -4,6 +4,9 @@
 > 如果你要的是「AI 不會亂講話」，這個專案就是為這件事做的。
 >
 > ToneSoul 也是一套給 AI 治理、倫理記憶系統、verifier-first agents、知識圖譜檢索、adapter-ready semantic governance 研究用的外部化認知架構。
+>
+> Purpose: 語魂公開倉庫入口，說明整體架構、治理方向與實作入口。
+> Last Updated: 2026-03-22
 
 [English](README.md)
 
@@ -88,6 +91,34 @@ ToneSoul 不應只被理解成 prompt stack，而應被理解成一套 externali
 [`docs/architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md`](docs/architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md)
 與
 [`docs/status/abc_firewall_latest.json`](docs/status/abc_firewall_latest.json)。
+如果你要整理同名文件、鏡像文件與缺少用途/日期的入口檔，先看
+[`docs/status/doc_convergence_inventory_latest.json`](docs/status/doc_convergence_inventory_latest.json)
+與
+[`docs/plans/doc_convergence_cleanup_plan_2026-03-22.md`](docs/plans/doc_convergence_cleanup_plan_2026-03-22.md)。
+如果你要看完整的多波次收斂總任務，請再開
+[`docs/plans/doc_convergence_master_plan_2026-03-23.md`](docs/plans/doc_convergence_master_plan_2026-03-23.md)。
+如果你需要更細的文件結構圖，想先分清 entrypoint、canonical anchor、contract、status lane，再看
+[`docs/architecture/DOC_AUTHORITY_STRUCTURE_MAP.md`](docs/architecture/DOC_AUTHORITY_STRUCTURE_MAP.md)
+與
+[`docs/status/doc_authority_structure_latest.json`](docs/status/doc_authority_structure_latest.json)。
+如果你要看這些同名異義文件被怎麼「蒸餾」成可治理規則，請看
+[`docs/architecture/BASENAME_DIVERGENCE_DISTILLATION_MAP.md`](docs/architecture/BASENAME_DIVERGENCE_DISTILLATION_MAP.md)
+與
+[`docs/status/basename_divergence_distillation_latest.json`](docs/status/basename_divergence_distillation_latest.json)。
+如果你碰到 nested private-memory shadow，先不要把它當成一般重複檔；請先開
+[`docs/architecture/PRIVATE_MEMORY_SHADOW_BOUNDARY_MAP.md`](docs/architecture/PRIVATE_MEMORY_SHADOW_BOUNDARY_MAP.md)
+與
+[`docs/status/private_memory_shadow_latest.json`](docs/status/private_memory_shadow_latest.json)。
+如果你在處理悖論案例與測試夾具，請把 [`PARADOXES/`](PARADOXES/) 視為正典案例集，並用
+[`docs/architecture/PARADOX_FIXTURE_OWNERSHIP_MAP.md`](docs/architecture/PARADOX_FIXTURE_OWNERSHIP_MAP.md)
+與
+[`docs/status/paradox_fixture_ownership_latest.json`](docs/status/paradox_fixture_ownership_latest.json)
+確認哪些是 exact mirror、哪些是 reduced projection。
+如果你在讀工程卷冊，請把 [`docs/engineering/`](docs/engineering/) 視為 canonical owner，並用
+[`docs/architecture/ENGINEERING_MIRROR_OWNERSHIP_MAP.md`](docs/architecture/ENGINEERING_MIRROR_OWNERSHIP_MAP.md)
+與
+[`docs/status/engineering_mirror_ownership_latest.json`](docs/status/engineering_mirror_ownership_latest.json)
+確認 `law/engineering/` 的 mirror 狀態。
 
 ```text
 使用者輸入

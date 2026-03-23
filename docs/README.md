@@ -1,5 +1,8 @@
 # ToneSoul Documentation Index
 
+> Purpose: documentation entrypoint and guided index for ToneSoul architecture, status artifacts, and convergence surfaces.
+> Last Updated: 2026-03-23
+
 > 這是文檔的入口點。請從這裡開始閱讀。
 
 ---
@@ -45,6 +48,41 @@
   - adapter-row gate report showing whether public-safe distillation inputs pass the first L8 review
 - `status/abc_firewall_latest.json`
   - doctrine verifier status for disclaimer-first, entrypoint references, and observable-shell claim boundaries
+ 
+## Documentation Convergence
+ 
+- `status/doc_convergence_inventory_latest.json`
+  - inventories authored doc surfaces, same-basename collisions, content similarity, and missing metadata gaps
+- `status/doc_convergence_inventory_latest.mmd`
+  - mermaid overview of authored doc categories, collision families, and cleanup priority nodes
+- `plans/doc_convergence_cleanup_plan_2026-03-22.md`
+  - first cleanup wave for engineering mirrors, divergent same-name docs, paradox fixture policy, and entrypoint metadata backfill
+- `plans/doc_convergence_master_plan_2026-03-23.md`
+  - program-level roadmap for multi-wave documentation cleanup, metadata reduction, and boundary maintenance
+- `architecture/DOC_AUTHORITY_STRUCTURE_MAP.md`
+  - retrieval-oriented structure map for entrypoints, canonical anchors, governance contracts, and generated status lanes
+- `architecture/BASENAME_DIVERGENCE_DISTILLATION_MAP.md`
+  - distills same-basename but non-duplicate files into explicit governance categories
+- `status/basename_divergence_distillation_latest.json`
+  - machine-readable registry report for resolved boundary pairs, generated namespace duals, backend duals, and deferred private shadows
+- `status/doc_authority_structure_latest.json`
+  - machine-readable map of document authority groups, tracked retrieval surfaces, and metadata posture across the main doc lanes
+- `architecture/PRIVATE_MEMORY_SHADOW_BOUNDARY_MAP.md`
+  - declares `memory/.hierarchical_index/` as the active lane and `memory/memory/.hierarchical_index/` as the deferred shadow lane during public convergence
+- `status/private_memory_shadow_latest.json`
+  - machine-readable report for active-vs-shadow private-memory pairs, hashes, JSON-shape drift, and deferred cleanup posture
+- `architecture/PARADOX_FIXTURE_OWNERSHIP_MAP.md`
+  - declares `PARADOXES/` as the canonical paradox casebook and `tests/fixtures/paradoxes/` as the projection lane
+- `status/paradox_fixture_ownership_latest.json`
+  - reports which paradox fixtures are exact mirrors, which are reduced test projections, and whether any pair needs review
+- `architecture/ENGINEERING_MIRROR_OWNERSHIP_MAP.md`
+  - declares `docs/engineering/` as canonical owner and `law/engineering/` as the mirror lane
+- `status/engineering_mirror_ownership_latest.json`
+  - reports which engineering mirror pairs are exact, which still need sync, and which files remain canonical-only
+- `architecture/HISTORICAL_DOC_LANE_POLICY.md`
+  - declares `docs/archive/` and `docs/chronicles/` as historical lanes with different metadata rules from active architecture docs
+- `status/historical_doc_lane_latest.json`
+  - machine-readable report for chronicle pairs, generated-at markers, archive presence, and historical-lane governance posture
 
 ## 🎯 快速開始
 

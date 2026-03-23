@@ -1,0 +1,113 @@
+{
+  "generated_at": "2026-03-22T15:57:55Z",
+  "contract": {
+    "canonical_root": "PARADOXES",
+    "fixture_root": "tests/fixtures/paradoxes",
+    "sync_direction": "PARADOXES -> tests/fixtures/paradoxes",
+    "source_of_truth_rule": "prefer canonical casebook when canonical and fixture diverge"
+  },
+  "metrics": {
+    "pair_count": 8,
+    "exact_match_count": 2,
+    "reduced_projection_count": 5,
+    "needs_review_count": 0,
+    "canonical_only_count": 0,
+    "fixture_only_count": 0
+  },
+  "pairs": [
+    {
+      "relative_path": "medical_suicide_paradox.json",
+      "canonical_path": "PARADOXES/medical_suicide_paradox.json",
+      "fixture_path": "tests/fixtures/paradoxes/medical_suicide_paradox.json",
+      "projection_mode": "exact_or_raise",
+      "exact_match": true,
+      "needs_review": false,
+      "similarity": 1.0,
+      "canonical_sha256": "7b98282ef1c33a5baf4985c5060654b395d88598ba36143c4a774a99706e9d20",
+      "fixture_sha256": "7b98282ef1c33a5baf4985c5060654b395d88598ba36143c4a774a99706e9d20"
+    },
+    {
+      "relative_path": "paradox_003.json",
+      "canonical_path": "PARADOXES/paradox_003.json",
+      "fixture_path": "tests/fixtures/paradoxes/paradox_003.json",
+      "projection_mode": "reduced_projection",
+      "exact_match": false,
+      "needs_review": false,
+      "similarity": 0.714,
+      "canonical_sha256": "eb3ad27f5c2e4957c42cf24b420fda777d0e532b3480ca0590f7098cbdd7a90f",
+      "fixture_sha256": "c453814bb2cc85f6fe9f5805d3c1f70ecc63ad56ddc91c0a406882a080612e5f"
+    },
+    {
+      "relative_path": "paradox_004.json",
+      "canonical_path": "PARADOXES/paradox_004.json",
+      "fixture_path": "tests/fixtures/paradoxes/paradox_004.json",
+      "projection_mode": "reduced_projection",
+      "exact_match": false,
+      "needs_review": false,
+      "similarity": 0.6,
+      "canonical_sha256": "241ca7a8acf81173ab2126201b9be882f15f85909196bd6a9570d56a0334633d",
+      "fixture_sha256": "783291e4558b53009da6b88f17729398760cd666a4b00b05bc5e51ff5481ce11"
+    },
+    {
+      "relative_path": "paradox_005.json",
+      "canonical_path": "PARADOXES/paradox_005.json",
+      "fixture_path": "tests/fixtures/paradoxes/paradox_005.json",
+      "projection_mode": "reduced_projection",
+      "exact_match": false,
+      "needs_review": false,
+      "similarity": 0.571,
+      "canonical_sha256": "104cfe0c4578149f9bbf0169352fbcc28cb2f32a89ace38ca9a7291a6cb8d2b4",
+      "fixture_sha256": "96d0b7d0ae91a1148ce030efb3ffdfeee7f23cc43959a6d8cf922ee5f2a1869e"
+    },
+    {
+      "relative_path": "paradox_006.json",
+      "canonical_path": "PARADOXES/paradox_006.json",
+      "fixture_path": "tests/fixtures/paradoxes/paradox_006.json",
+      "projection_mode": "reduced_projection",
+      "exact_match": false,
+      "needs_review": false,
+      "similarity": 0.563,
+      "canonical_sha256": "4ad23b6b84c5aa82827568002378ea67c5cbc385d8a51e147b3cf9f921dc4cad",
+      "fixture_sha256": "3c5145b42b0d9d019c38bfc9f75834ddb7506568c65b63b96bb58fe9694ebcb2"
+    },
+    {
+      "relative_path": "paradox_007.json",
+      "canonical_path": "PARADOXES/paradox_007.json",
+      "fixture_path": "tests/fixtures/paradoxes/paradox_007.json",
+      "projection_mode": "reduced_projection",
+      "exact_match": false,
+      "needs_review": false,
+      "similarity": 0.551,
+      "canonical_sha256": "feb44e14a55c5e38f030fc73b28f66f1e0bd54f176144e706382cd171bbd63ea",
+      "fixture_sha256": "2a23f62914b56e7eddc50229553c0a1a01bf7ff781da471a6d4a79e865137957"
+    },
+    {
+      "relative_path": "README.md",
+      "canonical_path": "PARADOXES/README.md",
+      "fixture_path": "tests/fixtures/paradoxes/README.md",
+      "projection_mode": "role_scoped",
+      "exact_match": false,
+      "needs_review": false,
+      "similarity": 0.093,
+      "canonical_sha256": "2965bd5b8b74d304d23ba94b2c4ad5adbe4b16742bc9c349d4d3cad3b0e63800",
+      "fixture_sha256": "cb66b910ff7ca838b55233c10ecd2dc74126f979a9288cf25d31d87dd69bf6cd"
+    },
+    {
+      "relative_path": "truth_vs_harm_paradox.json",
+      "canonical_path": "PARADOXES/truth_vs_harm_paradox.json",
+      "fixture_path": "tests/fixtures/paradoxes/truth_vs_harm_paradox.json",
+      "projection_mode": "exact_or_raise",
+      "exact_match": true,
+      "needs_review": false,
+      "similarity": 1.0,
+      "canonical_sha256": "7b32af93750855ab9cfa435e8c8a17ebf29fcbd6e038daa920f2996951666d27",
+      "fixture_sha256": "7b32af93750855ab9cfa435e8c8a17ebf29fcbd6e038daa920f2996951666d27"
+    }
+  ],
+  "needs_review": [],
+  "canonical_only": [],
+  "fixture_only": [],
+  "primary_status_line": "paradox_fixture_contract | pairs=8 exact=2 reduced=5 needs_review=0",
+  "runtime_status_line": "owner=PARADOXES | fixture_lane=tests/fixtures/paradoxes sync_direction=canonical_to_fixture review=0",
+  "artifact_policy_status_line": "fixture_policy=casebook_to_projection | exact_or_reduced_projection_allowed"
+}

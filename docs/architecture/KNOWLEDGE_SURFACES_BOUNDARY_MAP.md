@@ -1,5 +1,8 @@
 # Knowledge Surfaces Boundary Map
 
+> Purpose: define the authority boundary between `knowledge/`, `knowledge_base/`, and `PARADOXES/` so retrieval stays lane-aware.
+> Last Updated: 2026-03-23
+
 This document exists to stop a common retrieval mistake:
 
 > treating every knowledge-like directory in the repository as the same kind of authority.

@@ -1,5 +1,8 @@
 # ToneSoul 敘事 → 模組 → 測試對照表
 
+> Purpose: provide a compact crosswalk between narrative domains, implementation modules, and their tests.
+> Last Updated: 2026-03-23
+
 目的：把「我就是 ToneSoul」的敘事落到可追蹤的工程實體，避免過度抽象。
 
 | 敘事句 | 具體模組 / 檔案 | 對應測試 / 驗證 |

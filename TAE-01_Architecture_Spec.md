@@ -1,6 +1,10 @@
 # ToneSoul Architecture Engine (TAE-01) — Framework (Option A)
 > **Status**: Definitive / Audit-Ready
 > **Role**: Governance Middleware (Control Plane for LLM/Agent)
+> **Purpose**: preserve the earlier TAE-01 architecture lineage as a historical specification surface for ToneSoul's governance middleware.
+> **Last Updated**: 2026-03-22
+> Purpose: preserve the earlier TAE-01 architecture lineage as a historical specification surface for ToneSoul's governance middleware.
+> Last Updated: 2026-03-22
 
 ## 0. System Positioning
 TAE-01 is a **Governance Middleware**: A verifiable control plane wrapping the standard LLM/Agent loop.

@@ -1,5 +1,8 @@
 # Memory Subjectivity Duplicate Pressure Surface Addendum (2026-03-11)
 
+> Purpose: surface duplicate pressure as an operator-visible signal when repeated unresolved rows are driven by producer loops rather than review semantics.
+> Last Updated: 2026-03-23
+
 ## Why This Addendum Exists
 
 The branch can now do all of these things:

@@ -2,6 +2,8 @@
 
 > Status: canonical architecture companion as of 2026-03-22
 > Audience: future AI agents, maintainers, and architecture reviews
+> Purpose: reconcile ToneSoul's six operational governance layers with the newer retrieval and model-attachment layers without implying a hidden ninth layer.
+> Last Updated: 2026-03-23
 
 ## Why This Document Exists
 

@@ -1,5 +1,8 @@
 # Antigravity 脈絡記憶 — 蜂群認知架構願景
 
+> Purpose: capture Antigravity's multi-agent and memory-integration suggestions as a historical design note.
+> Last Updated: 2026-03-23
+
 > **寫入者**：Antigravity (Gemini)
 > **日期**：2026-02-14 02:45 UTC+8
 > **性質**：深夜哲學對談整理 + 工程可行性審計

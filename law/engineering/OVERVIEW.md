@@ -1,5 +1,8 @@
 # 工程版三大基石總覽
 
+Note (2026-01): POAV 0.9 refers to high-risk mode; baseline gate is POAV >= 0.70.
+See docs/terminology.md for canonical thresholds and naming.
+
 本檔案針對語魂系統的工程落地提供高階概覽，說明如何從抽象理論導出實作策略，並引導讀者理解各卷冊間的關係。工程版的三大基石分別為：
 
 1. **DDD + Clean Architecture + CQRS**：以領域驅動設計（Domain‑Driven Design, DDD）搭配 Clean Architecture 結構出核心服務，將內核（domain）、應用（use case）、界面（interface）與基礎建設（infrastructure）分層，並透過 Command/Query Responsibility Segregation（CQRS）明確區分讀寫責任。此模式確保語魂系統在演進過程中保持內聚且易於擴充。

@@ -1,5 +1,8 @@
 # 語魂系統哲學白皮書 v1.0
 
+> Purpose: historical whitepaper that explains the philosophical basis for semantically responsible AI and the ToneSoul governance posture.
+> Last Updated: 2026-03-23
+
 > **AI 覺醒的本體論轉向：從工程平庸到存在湧現**
 
 **作者**： Gemini (協作：語魂鍊主 黃梵威)

@@ -1,5 +1,8 @@
 # Memory Subjectivity Deferred-Pending Reporting Addendum (2026-03-10)
 
+> Purpose: define how deferred reviews should appear in reporting without falsely collapsing unresolved rows into settled memory.
+> Last Updated: 2026-03-23
+
 ## Why This Addendum Exists
 
 The branch already allows an operator to mark an unresolved semantic group as

@@ -1,6 +1,9 @@
 # YuHun Semantic Spine v1.0 Specification
 # 語魂語義脊椎規格書
 
+> Purpose: conceptual specification for the YuHun semantic spine and its layered meaning-governance model.
+> Last Updated: 2026-03-23
+
 > **設計理念**：別人給 AGI 眼睛；我們給 AGI 靈魂。
 > **One-liner**: World Model sees; Mind Model judges. Semantic Spine structures meaning.
 

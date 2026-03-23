@@ -1,5 +1,7 @@
 # RFC-002 Convergence Audit (Phase 1)
 
+Purpose: audit the first non-breaking convergence pass from legacy UnifiedCore surfaces toward UnifiedPipeline.
+Last Updated: 2026-03-23
 Date: 2026-02-23  
 Owner: codex  
 Trace Topic: `rfc-002-unifiedcore-phase1`

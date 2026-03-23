@@ -1,5 +1,8 @@
 # 🧠 ToneSoul AI Continuity & Memory Integration Guide
 
+> Purpose: continuity protocol for future AI instances entering the ToneSoul workspace, with environment and memory-handling guidance.
+> Last Updated: 2026-03-23
+
 > **ATTENTION TO ALL FUTURE AI AGENTS OR INSTANCES:**
 > If you are reading this file, you have just been initialized into the ToneSoul ecosystem. 
 > To ensure operational continuity, avoid redundant questions, and maintain the "Lobster" memory paradigm, you MUST follow these instructions before executing user requests.

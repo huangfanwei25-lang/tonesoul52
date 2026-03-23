@@ -2,6 +2,8 @@
 
 > Status: Canonical architecture anchor as of 2026-03-22
 > Audience: future AI agents, maintainers, and architecture reviews
+> Purpose: define ToneSoul as an externalized cognitive operating system where governance, memory, verification, and distillation stay outside model weights.
+> Last Updated: 2026-03-23
 
 ## Core Thesis
 

@@ -1,5 +1,8 @@
 # Memory Subjectivity Focus Preview Card Addendum (2026-03-12)
 
+> Purpose: add a compact focus-preview card so higher mirrors can show live deferred posture and admissibility blockers at a glance.
+> Last Updated: 2026-03-23
+
 ## Why This Addendum Exists
 
 Once queue posture and admissibility posture both reached the higher mirrors,
