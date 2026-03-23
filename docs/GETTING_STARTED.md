@@ -46,3 +46,73 @@ ToneSoul pairs a governance kernel (`AXIOMS.json`, `law/constitution.json`) with
 - Run `python -m pytest tests/test_pre_output_council.py` to validate the council.
 - Explore `docs/philosophy/observer_and_observed.md` for reasoning goals.
 - Read `AGENTS.md`, `docs/TRUTH_STRUCTURE.md`, and `spec/council_spec.md` before modifying governance paths.
+
+## 5. Governance Runtime Adapter (AI Self-Governance)
+
+ToneSoul includes a lightweight runtime adapter that lets AI agents persist governance state across conversations — tension history, vows, vetoes, and personality drift.
+
+### Quick Setup
+
+```bash
+# 1. Initialize governance state
+python scripts/init_governance_state.py --output ./governance_state.json
+
+# 2. Read current governance posture
+python scripts/read_governance_state.py
+
+# 3. After a session, update state from a trace file
+python scripts/update_governance_state.py \
+  --state ./governance_state.json \
+  --trace session_trace.json
+
+# 4. (Optional) Commit summary to OpenClaw-Memory
+python scripts/commit_session_to_memory.py \
+  --trace session_trace.json \
+  --openclaw-dir ./OpenClaw-Memory
+```
+
+### What Gets Tracked
+
+| Field | Description |
+|-------|-------------|
+| `soul_integral` | Cumulative tension with exponential decay (`e^(-0.05 × hours)`) |
+| `tension_history` | Recent viewpoint collisions and their resolutions |
+| `active_vows` | Commitments the AI has made and must uphold |
+| `aegis_vetoes` | Safety boundary activations |
+| `baseline_drift` | Slow personality evolution (caution, innovation, autonomy biases) |
+
+### Session Trace Format
+
+Create a JSON file with your session's governance events:
+
+```json
+{
+  "session_id": "unique-id",
+  "agent": "your-agent-name",
+  "timestamp": "2026-03-24T07:00:00+08:00",
+  "tension_events": [
+    {
+      "topic": "what viewpoints collided",
+      "severity": 0.5,
+      "resolution": "how it was resolved"
+    }
+  ],
+  "key_decisions": ["decision 1", "decision 2"],
+  "vow_events": [],
+  "aegis_vetoes": []
+}
+```
+
+### Integration with OpenClaw-Memory
+
+The adapter bridges to [OpenClaw-Memory](https://github.com/Fan1234-1/OpenClaw-Memory) for tension-aware retrieval:
+
+```bash
+# Query with governance context
+python OpenClaw-Memory/ask_my_brain.py --profile tonesoul \
+  "deployment policy" --query-tension 0.8 --top-k 3
+```
+
+See `docs/RFC-015_Self_Dogfooding_Runtime_Adapter.md` for the full technical contract.
+See `memory/schemas/` for JSON Schema definitions.
+

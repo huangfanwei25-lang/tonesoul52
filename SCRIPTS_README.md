@@ -55,3 +55,17 @@
 
 - `post_tonesoul_evil_verdict.py` -> `post_case_evil_response.py`
 - `post_tonesoul_osmarks_verdict.py` -> `post_case_osmarks_response.py`
+
+## 7) 治理狀態腳本（Governance Runtime Adapter）
+
+讓 AI 助手跨對話保留治理姿態（張力、承諾、否決、性格漂移）。
+
+| 檔案 | 用途 | 指令 |
+|---|---|---|
+| `scripts/init_governance_state.py` | 初始化治理狀態 | `python scripts/init_governance_state.py --output ./governance_state.json` |
+| `scripts/read_governance_state.py` | 讀取並顯示治理狀態 | `python scripts/read_governance_state.py` |
+| `scripts/update_governance_state.py` | 從 session trace 更新狀態 | `python scripts/update_governance_state.py --state ./governance_state.json --trace trace.json` |
+| `scripts/commit_session_to_memory.py` | 注入摘要到 OpenClaw-Memory | `python scripts/commit_session_to_memory.py --trace trace.json` |
+
+詳見 `docs/RFC-015_Self_Dogfooding_Runtime_Adapter.md`。
+
