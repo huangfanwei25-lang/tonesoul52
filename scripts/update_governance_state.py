@@ -129,10 +129,17 @@ def main() -> None:
     # 1. Decay old tensions
     state["tension_history"] = decay_tensions(state["tension_history"], now)
 
-    # 2. Append new tension events
+    # 2. Append new tension events (with dedup)
+    existing_keys = {
+        (t.get("topic", ""), t.get("resolution", ""))
+        for t in state["tension_history"]
+    }
     for event in trace.get("tension_events", []):
         event.setdefault("timestamp", now.isoformat())
-        state["tension_history"].append(event)
+        key = (event.get("topic", ""), event.get("resolution", ""))
+        if key not in existing_keys:
+            state["tension_history"].append(event)
+            existing_keys.add(key)
 
     # Cap history size
     if len(state["tension_history"]) > MAX_TENSION_HISTORY:
