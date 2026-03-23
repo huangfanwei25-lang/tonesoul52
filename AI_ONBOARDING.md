@@ -39,6 +39,34 @@ If nested private-memory shadows are in scope, treat `memory/.hierarchical_index
 If paradox fixtures are in scope, treat `PARADOXES/` as the canonical governance casebook and `tests/fixtures/paradoxes/` as the test projection lane; confirm current posture in `docs/architecture/PARADOX_FIXTURE_OWNERSHIP_MAP.md` and `docs/status/paradox_fixture_ownership_latest.json`.
 If engineering-book mirrors are in scope, treat `docs/engineering/` as canonical and confirm current sync posture in `docs/architecture/ENGINEERING_MIRROR_OWNERSHIP_MAP.md` and `docs/status/engineering_mirror_ownership_latest.json`.
 
+## 🔄 Session Start: Load Governance State (ALL Agents)
+
+> [!IMPORTANT]
+> **Every AI agent MUST do this as the FIRST action of every session.**
+
+Run the governance state reader to inherit prior session posture:
+
+```bash
+python scripts/read_governance_state.py
+```
+
+This auto-discovers `governance_state.json` from these locations:
+1. `./governance_state.json` (repo-local, for testing)
+2. `~/.gemini/tonesoul/governance_state.json` (Antigravity)
+3. `~/.codex/memories/governance_state.json` (Codex)
+4. `~/.tonesoul/governance_state.json` (generic)
+
+If no state file exists, initialize one:
+```bash
+python scripts/init_governance_state.py --output <your-agent-storage-path>/governance_state.json
+```
+
+At session end, run the `/session-end` workflow to write back your trace.
+
+See `docs/RFC-015_Self_Dogfooding_Runtime_Adapter.md` for the full contract.
+
+---
+
 ## 🎯 你需要知道的
 
 ### 1. 正典位置（Canonical Paths）
