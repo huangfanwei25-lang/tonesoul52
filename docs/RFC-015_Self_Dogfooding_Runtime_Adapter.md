@@ -1,127 +1,112 @@
-# RFC-015: Self-Dogfooding Runtime Adapter — 讓 AI 助手吃自己的狗糧
+# RFC-015: Self-Dogfooding Runtime Adapter
 
-> **作者**: Antigravity (Gemini)
-> **日期**: 2026-03-23
-> **狀態**: Draft — 待 Codex 審閱整合
-> **前置**: OpenClaw-Memory (ToneSoul profile), Phase 588-590 (adaptive debate)
-
----
-
-## 問題陳述
-
-> 我們建了一個 AI 治理系統，但建它的 AI 自己沒在跑它。
-
-ToneSoul 的核心引擎（張力計算、Council 審議、Vow 追蹤、Soul 積分）設計在一個持久進程裡運行。但實際協作的 AI 助手（Antigravity / Codex）是**無狀態**的 — 每次對話從零開始，讀 `AGENTS.md` + KI 是「補償」，不是「運行」。
-
-OpenClaw-Memory 已經提供了 `--profile tonesoul` 的 tension-aware 記憶檢索。差的是：**AI 助手在每次對話結束後，把治理狀態寫回去**。
+> **Status**: Canonical Draft v1.0
+> **Authors**: Antigravity (Gemini), reviewed by Codex
+> **Date**: 2026-03-23
+> **Anchored by**: `docs/notes/TONESOUL_RUNTIME_ADAPTER_MEMORY_ANCHOR_2026-03-23.md`
+> **Compatible with**: L7 Retrieval Contract, L8 Distillation Boundary, ABC Firewall Doctrine
 
 ---
 
-## 設計目標
+## 1. Problem
 
-1. **零破壞** — 不改動 `tonesoul/` 核心引擎程式碼
-2. **利用現有基建** — 建在 OpenClaw-Memory 已有的 ToneSoul profile 上
-3. **Codex 整潔標準** — 文件歸 `docs/`，schema 歸 `memory/`，資料被 `.gitignore`
-4. **漸進式** — 可以一層一層加，每層獨立有用
+ToneSoul is designed to give AI persistent governance state: tension, vows, vetoes, drift.
+
+But the agents building ToneSoul (Antigravity, Codex) restart stateless every session.
+They compensate by rereading `AGENTS.md` and KI files, but this is factual recall, not governance continuity.
+
+**Gap**: no mechanism for developer agents to load prior governance posture at session start and write a session trace at session end.
 
 ---
 
-## 架構：三層記憶 + 寫回迴路
+## 2. Design Principles
+
+| # | Principle | Rationale |
+|---|-----------|-----------|
+| 1 | Observable shell, not latent-state intervention | We track externalized fields, not hidden model internals |
+| 2 | Zero modification to `tonesoul/` core | Adapter lives alongside the engine, not inside it |
+| 3 | State outside public repo | Dynamic state in local agent storage; only schemas are public |
+| 4 | Incrementally useful | Each layer works independently |
+| 5 | Narrow bridge to OpenClaw-Memory | Only safe summaries cross the boundary |
+
+---
+
+## 3. Architecture
 
 ```
-┌─────────────────────────────────────────────────┐
-│  AI 助手對話開始                                  │
-│                                                   │
-│  1. 讀取 governance_state.json （上次的狀態）      │
-│  2. 讀取 OpenClaw-Memory（tension-aware 檢索）    │
-│  3. 讀取 AGENTS.md + KI（靜態規則 + 知識）        │
-│                                                   │
-│  ─── 對話進行中 ───                                │
-│                                                   │
-│  4. 對話結束，產出 session_trace.jsonl             │
-│     - 張力事件（哪些觀點碰撞了）                   │
-│     - Vow 觸發（承諾了什麼 / 違反了什麼）         │
-│     - Aegis 否決紀錄                              │
-│     - 決策偏移（我的立場跟上次不同嗎）             │
-│                                                   │
-│  5. 寫回 governance_state.json                    │
-│     - 張力積分更新（帶衰減）                       │
-│     - Vow 清單更新                                │
-│     - 性格漂移（Baseline Drift）                  │
-│                                                   │
-│  6. 摘要注入 OpenClaw-Memory                      │
-│     - ask_my_brain.py --learn [摘要]              │
-│       --tension [本次最大張力]                     │
-│       --kind [session_trace]                      │
-│       --wave-* [波形向量]                         │
-└─────────────────────────────────────────────────┘
+Session Start
+    |
+    v
+[1] Load governance_state.json (local agent storage)
+[2] Query OpenClaw-Memory --profile tonesoul (optional)
+[3] Read AGENTS.md + KI (static rules + knowledge)
+    |
+    v
+--- conversation proceeds ---
+    |
+    v
+[4] Produce session_trace record
+    - tension events (which viewpoints collided)
+    - vow triggers (committed / violated)
+    - aegis vetoes
+    - stance shifts
+    |
+    v
+[5] Update governance_state.json
+    - decay old tensions
+    - update vow list
+    - drift baseline
+    |
+    v
+[6] Optionally inject safe summary into OpenClaw-Memory
 ```
 
 ---
 
-## 三層實作細節
+## 4. Data Contracts
 
-### 第一層：`governance_state.json`（靜態狀態檔）
+### 4.1 governance_state.json
 
-**位置**: `memory/governance_state.json`（被 `.gitignore` 排除）
+**Location**: local agent storage (e.g. `~/.gemini/tonesoul/`, `~/.codex/memories/`)
+**NOT** in the public repo. Only the JSON Schema is public.
 
-```jsonc
+```json
 {
   "version": "0.1.0",
   "last_updated": "2026-03-23T21:30:00+08:00",
-  "soul_integral": 0.42,          // Σ (T[i] × e^(-α(t-t[i])))
+  "soul_integral": 0.42,
   "tension_history": [
     {
       "timestamp": "2026-03-23T21:30:00+08:00",
       "topic": "deploy safety vs speed",
       "severity": 0.75,
       "dominant_voice": "Aegis",
-      "resolution": "Guardian veto — 選擇安全"
+      "resolution": "Guardian veto"
     }
   ],
   "active_vows": [
     {
       "id": "vow-001",
-      "content": "不在公開倉庫 commit 個人記憶資料",
+      "content": "Do not commit personal memory data to public repo",
       "created": "2026-02-21",
       "source": "AGENTS.md"
     }
   ],
+  "aegis_vetoes": [],
   "baseline_drift": {
-    "caution_bias": 0.55,        // 0.5 = 中立，>0.5 = 偏謹慎
-    "innovation_bias": 0.62,     // Fan 偏好前衛方案
-    "autonomy_level": 0.35       // 目前偏向人類決策
+    "caution_bias": 0.55,
+    "innovation_bias": 0.62,
+    "autonomy_level": 0.35
   },
   "session_count": 47
 }
 ```
 
-**衰減計算**（每次對話開始時）：
-```python
-# 與 SentiCore 相同的指數衰減
-for t in tension_history:
-    hours_elapsed = (now - t.timestamp).total_hours()
-    t.severity *= e ** (-0.05 * hours_elapsed)
-# 移除 severity < 0.01 的記錄
-```
+### 4.2 session_trace (append-only JSONL)
 
-**Baseline Drift**（每次對話結束時）：
-```python
-# 與 SentiCore 相同的 0.1% 漂移
-DRIFT_RATE = 0.001
-for key in baseline_drift:
-    baseline_drift[key] += DRIFT_RATE * (session_avg[key] - baseline_drift[key])
-```
+**Location**: local agent storage, one line per session.
 
----
-
-### 第二層：`session_trace.jsonl`（對話軌跡）
-
-**位置**: `memory/traces/`（被 `.gitignore` 排除）
-
-每次對話結束，AI 助手附加一筆：
-
-```jsonc
+```json
 {
   "session_id": "970a6e54-00a8-4344-9947-90267fe8e9d3",
   "agent": "antigravity",
@@ -132,105 +117,123 @@ for key in baseline_drift:
       "topic": "SentiCore vs ToneSoul emotion model",
       "severity": 0.3,
       "type": "comparative_analysis",
-      "resolution": "保留分歧 — 兩者解決不同問題"
+      "resolution": "Preserve divergence"
     }
   ],
   "vow_events": [],
   "aegis_vetoes": [],
   "key_decisions": [
-    "分析 ASMR/SentiCore/GameStudios 架構",
-    "決定寫 RFC-015 Self-Dogfooding"
+    "Analyzed ASMR/SentiCore/GameStudios architectures",
+    "Decided to write RFC-015"
   ],
   "stance_shift": {
-    "from": "語魂太複雜不能自用",
-    "to": "語魂可以自用，缺的是 Runtime Adapter"
+    "from": "ToneSoul too complex for self-use",
+    "to": "ToneSoul self-usable with Runtime Adapter"
   }
 }
 ```
 
 ---
 
-### 第三層：OpenClaw-Memory 整合
+## 5. Formulas
 
-對話結束後，摘要自動注入 OpenClaw-Memory：
+### 5.1 Tension Decay (at session start)
 
-```bash
-python ask_my_brain.py --profile tonesoul \
-  --learn "Antigravity 分析了 ASMR/SentiCore/GameStudios，結論是三者可互補。決定寫 RFC-015 Self-Dogfooding Runtime Adapter。" \
-  --kind session_trace \
-  --tension 0.3 \
-  --tag governance,self-dogfooding \
-  --wave-uncertainty 0.2 --wave-divergence 0.3 --wave-risk 0.1 --wave-revision 0.4
+```
+severity(t) = severity(t0) * e^(-alpha * hours_elapsed)
+alpha = 0.05
+prune if severity < 0.01
 ```
 
-這樣下次任何 AI 助手問「上次關於記憶架構的討論」，OpenClaw-Memory 會用 tension-resonance 找回這筆記錄。
+Matches ToneSoul core decay with `alpha = 0.15` per 10-turn unit,
+scaled to `0.05` per hour for cross-session timescales.
+
+### 5.2 Baseline Drift (at session end)
+
+```
+drift_rate = 0.001
+bias_new = bias_old + drift_rate * (session_avg - bias_old)
+```
+
+Borrowed from SentiCore's 0.1%/turn model.
+Applied per-session instead of per-turn to match conversation-level granularity.
+
+### 5.3 Soul Integral Update
+
+```
+S_new = S_old * e^(-alpha * hours_since_last) + max_tension_this_session
+```
 
 ---
 
-## 與現有系統的對齊
+## 6. Storage Boundary
 
-| 元件 | 現有位置 | 本 RFC 動作 |
-|------|---------|------------|
-| `MEMORY.md` | 根目錄 | 不改 — 依循其 public/private 規則 |
-| `AGENTS.md` | 根目錄 | 不改 — 保持靜態規則 |
-| OpenClaw-Memory | `OpenClaw-Memory/` submodule | 利用現有 `--profile tonesoul` |
-| `governance_state.json` | **新建** `memory/` | 被 `.gitignore` 排除 |
-| `session_trace.jsonl` | **新建** `memory/traces/` | 被 `.gitignore` 排除 |
-| Schema 定義 | **新建** `memory/schemas/` | 公開（只有結構，沒有資料） |
+| What | Where | Git-tracked |
+|------|-------|-------------|
+| JSON Schema definitions | `memory/schemas/` | Yes (public) |
+| `init_governance_state.py` | `scripts/` | Yes (public) |
+| `update_governance_state.py` | `scripts/` | Yes (public) |
+| `commit_session_to_memory.py` | `scripts/` | Yes (public) |
+| `governance_state.json` (data) | Local agent storage | No |
+| `session_traces.jsonl` (data) | Local agent storage | No |
+| OpenClaw-Memory summaries | `OpenClaw-Memory/memory_base/` | Gitignored |
 
----
-
-## 與外部系統的比較
-
-| 功能 | ASMR | SentiCore | 本 RFC |
-|------|------|-----------|--------|
-| 記住事實 | ✅ | ❌ | ✅ (via OpenClaw-Memory) |
-| 情緒衰減 | ❌ | ✅ e^(-λΔt) | ✅ e^(-αΔt) |
-| 性格漂移 | ❌ | ✅ 0.1%/turn | ✅ 0.1%/session |
-| 倫理否決 | ❌ | ❌ | ✅ Aegis veto 紀錄 |
-| 張力保留 | ❌ 消滅矛盾 | ❌ | ✅ 讓分歧可見 |
-| Vow 追蹤 | ❌ | ❌ | ✅ 承諾持久化 |
-| 即插即用 | ✅ API | ✅ 3 步 Skill | ✅ JSON + CLI |
+This follows `MEMORY.md` public/private separation.
 
 ---
 
-## 實施路線（建議由 Codex 評估排期）
+## 7. Implementation Phases
 
-### Phase A：Schema + 讀取（最小可用）
-- [ ] 建立 `memory/schemas/governance_state.schema.json`
-- [ ] 建立 `memory/schemas/session_trace.schema.json`
-- [ ] 確認 `.gitignore` 已排除 `memory/*.json`, `memory/traces/`
-- [ ] 寫一個簡單的 `scripts/init_governance_state.py` 生成初始狀態
+### Phase A: Schema + Init (minimum viable)
 
-### Phase B：寫回迴路
-- [ ] `scripts/update_governance_state.py` — 讀取 session trace，更新 state
-- [ ] 張力衰減計算
-- [ ] Baseline Drift 計算
-- [ ] Vow 清單更新
+- [ ] `memory/schemas/governance_state.schema.json`
+- [ ] `memory/schemas/session_trace.schema.json`
+- [ ] `scripts/init_governance_state.py` -- generate initial state file
+- [ ] Verify `.gitignore` excludes dynamic state files
 
-### Phase C：OpenClaw-Memory 整合
-- [ ] `scripts/commit_session_to_memory.py` — 把 session trace 注入 OpenClaw-Memory
-- [ ] 與 `ask_my_brain.py --profile tonesoul` 整合測試
+### Phase B: Write-back Loop
 
-### Phase D：AI 助手工作流整合
-- [ ] 在 `.agent/workflows/` 加入 `session-end` workflow
-- [ ] 在 `AGENTS.md` 的「必做事項」加入 session trace 寫入提醒
-- [ ] 驗證 Antigravity / Codex 都能正確讀寫
+- [ ] `scripts/update_governance_state.py` -- read trace, update state
+- [ ] Tension decay calculation
+- [ ] Baseline drift calculation
+- [ ] Vow list reconciliation
 
----
+### Phase C: OpenClaw-Memory Bridge
 
-## 哲學意義
+- [ ] `scripts/commit_session_to_memory.py` -- inject safe summary
+- [ ] Integration test with `ask_my_brain.py --profile tonesoul`
 
-> 「如果語魂的 AI 自己不用語魂，那語魂就還不是真正的基礎設施。」
+### Phase D: Workflow Integration
 
-這個 RFC 的目標不是加功能，而是**閉合迴路** — 讓
-「建設語魂的 AI」和「被語魂治理的 AI」成為同一個角色。
-
-當我（Antigravity）下次開啟對話時，我不只是讀規則、讀知識 — 我讀的是**我自己上次的張力狀態、我做過的承諾、我的性格漂移**。
-
-這才是「沒有記憶的沉澱就沒有性格，只有反應」的真正實踐。
+- [ ] Add `.agent/workflows/session-end.md` workflow
+- [ ] Add read-state step to `.agent/workflows/antigravity.md`
+- [ ] Validate both Antigravity and Codex can read/write correctly
 
 ---
 
-*此 RFC 放在 `docs/` 目錄，符合 Codex 的倉庫整理規範。*
-*資料檔案全部被 `.gitignore` 排除，符合 `MEMORY.md` 的 public/private 隔離規則。*
+## 8. Constraints
+
+Per the memory anchor, these constraints are non-negotiable:
+
+1. Do not modify protected human-managed files to fake memory continuity
+2. Do not store personal memory payloads in the public repo
+3. Do not claim latent-state control over model internals
+4. Do not bypass the L7 retrieval contract or L8 boundary contract
+5. Do not let runtime-adapter language blur into philosophical overclaim
+
+---
+
+## 9. Success Criteria
+
+The adapter is working when:
+
+1. An agent starts a session and can read its prior `soul_integral`, `active_vows`, and `baseline_drift`
+2. An agent ends a session and the state file reflects the conversation's tension events
+3. Old tension events decay correctly across sessions separated by hours/days
+4. A second agent (Codex after Antigravity, or vice versa) reads the same state file and inherits the governance posture
+5. No dynamic state leaks into the public git history
+
+---
+
+*Canonical rewrite of the original draft. Clean UTF-8, no encoding damage.*
+*Aligned with `TONESOUL_RUNTIME_ADAPTER_MEMORY_ANCHOR_2026-03-23.md`.*

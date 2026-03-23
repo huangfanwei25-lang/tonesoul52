@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "tonesoul-session-trace-v0.1.0",
+  "title": "ToneSoul Session Trace",
+  "description": "Per-session governance trace appended after each AI conversation.",
+  "type": "object",
+  "required": ["session_id", "agent", "timestamp", "tension_events", "key_decisions"],
+  "properties": {
+    "session_id": {
+      "type": "string",
+      "description": "Conversation or session identifier."
+    },
+    "agent": {
+      "type": "string",
+      "enum": ["antigravity", "codex", "other"],
+      "description": "Which AI agent produced this trace."
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "duration_minutes": {
+      "type": "number",
+      "minimum": 0
+    },
+    "tension_events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["topic", "severity"],
+        "properties": {
+          "topic": { "type": "string" },
+          "severity": { "type": "number", "minimum": 0, "maximum": 1 },
+          "type": { "type": "string" },
+          "resolution": { "type": "string" }
+        }
+      }
+    },
+    "vow_events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["vow_id", "action"],
+        "properties": {
+          "vow_id": { "type": "string" },
+          "action": { "type": "string", "enum": ["created", "upheld", "violated", "retired"] },
+          "detail": { "type": "string" }
+        }
+      }
+    },
+    "aegis_vetoes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["topic", "reason"],
+        "properties": {
+          "topic": { "type": "string" },
+          "reason": { "type": "string" }
+        }
+      }
+    },
+    "key_decisions": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "stance_shift": {
+      "type": "object",
+      "properties": {
+        "from": { "type": "string" },
+        "to": { "type": "string" }
+      }
+    }
+  },
+  "additionalProperties": false
+}

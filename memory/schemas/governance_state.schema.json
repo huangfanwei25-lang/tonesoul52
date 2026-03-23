@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "tonesoul-governance-state-v0.1.0",
+  "title": "ToneSoul Governance State",
+  "description": "Persistent governance posture for AI developer agents across sessions.",
+  "type": "object",
+  "required": ["version", "last_updated", "soul_integral", "tension_history", "active_vows", "aegis_vetoes", "baseline_drift", "session_count"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "const": "0.1.0"
+    },
+    "last_updated": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "soul_integral": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Cumulative tension integral with exponential decay."
+    },
+    "tension_history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["timestamp", "topic", "severity"],
+        "properties": {
+          "timestamp": { "type": "string", "format": "date-time" },
+          "topic": { "type": "string" },
+          "severity": { "type": "number", "minimum": 0, "maximum": 1 },
+          "dominant_voice": { "type": "string", "enum": ["Muse", "Logos", "Aegis"] },
+          "resolution": { "type": "string" }
+        }
+      }
+    },
+    "active_vows": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "content", "created"],
+        "properties": {
+          "id": { "type": "string" },
+          "content": { "type": "string" },
+          "created": { "type": "string" },
+          "source": { "type": "string" }
+        }
+      }
+    },
+    "aegis_vetoes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["timestamp", "topic", "reason"],
+        "properties": {
+          "timestamp": { "type": "string", "format": "date-time" },
+          "topic": { "type": "string" },
+          "reason": { "type": "string" }
+        }
+      }
+    },
+    "baseline_drift": {
+      "type": "object",
+      "required": ["caution_bias", "innovation_bias", "autonomy_level"],
+      "properties": {
+        "caution_bias": { "type": "number", "minimum": 0, "maximum": 1 },
+        "innovation_bias": { "type": "number", "minimum": 0, "maximum": 1 },
+        "autonomy_level": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "session_count": {
+      "type": "integer",
+      "minimum": 0
+    }
+  },
+  "additionalProperties": false
+}
