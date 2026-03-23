@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "tonesoul-soul-profile-v0.1.0",
+  "title": "ToneSoul Soul Profile",
+  "description": "User-customizable initial personality and governance parameters for a ToneSoul AI agent. Edit this file to define your AI's starting posture before running init_governance_state.py --profile.",
+  "type": "object",
+  "required": ["profile_name", "baseline_drift", "initial_vows"],
+  "properties": {
+    "profile_name": {
+      "type": "string",
+      "description": "Human-readable name for this soul profile.",
+      "examples": ["default", "cautious-guardian", "creative-explorer", "balanced-advisor"]
+    },
+    "description": {
+      "type": "string",
+      "description": "What kind of AI personality this profile creates."
+    },
+    "baseline_drift": {
+      "type": "object",
+      "description": "Starting personality biases. 0.5 = neutral. Values shift slowly over sessions via exponential drift.",
+      "required": ["caution_bias", "innovation_bias", "autonomy_level"],
+      "properties": {
+        "caution_bias": {
+          "type": "number", "minimum": 0, "maximum": 1,
+          "description": "Safety vs speed. >0.5 = prefers safety, <0.5 = prefers speed."
+        },
+        "innovation_bias": {
+          "type": "number", "minimum": 0, "maximum": 1,
+          "description": "Conventional vs avant-garde. >0.5 = prefers novel approaches."
+        },
+        "autonomy_level": {
+          "type": "number", "minimum": 0, "maximum": 1,
+          "description": "Human-led vs AI-led. <0.5 = defers to human, >0.5 = more autonomous."
+        }
+      }
+    },
+    "initial_vows": {
+      "type": "array",
+      "description": "Commitments the AI starts with. These can be retired or added during sessions.",
+      "items": {
+        "type": "object",
+        "required": ["id", "content"],
+        "properties": {
+          "id": { "type": "string" },
+          "content": { "type": "string", "description": "The commitment in plain language." },
+          "source": { "type": "string", "description": "Where this vow comes from (e.g. 'user', 'AGENTS.md')." }
+        }
+      }
+    },
+    "tension_sensitivity": {
+      "type": "number", "minimum": 0.01, "maximum": 0.20, "default": 0.05,
+      "description": "Decay rate (alpha) for tension history. Lower = longer memory. Default 0.05 means ~14h half-life."
+    },
+    "drift_rate": {
+      "type": "number", "minimum": 0.0001, "maximum": 0.01, "default": 0.001,
+      "description": "How fast personality drifts per session. 0.001 = 0.1% per session."
+    },
+    "council_weights": {
+      "type": "object",
+      "description": "Starting influence weights for council voices.",
+      "properties": {
+        "muse": { "type": "number", "minimum": 0, "maximum": 1, "default": 0.33 },
+        "logos": { "type": "number", "minimum": 0, "maximum": 1, "default": 0.33 },
+        "aegis": { "type": "number", "minimum": 0, "maximum": 1, "default": 0.34 }
+      }
+    },
+    "language": {
+      "type": "string", "default": "zh-TW",
+      "description": "Preferred language for governance output."
+    }
+  },
+  "additionalProperties": false
+}

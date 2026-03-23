@@ -64,6 +64,12 @@ def main() -> None:
         action="store_true",
         help="Overwrite existing file",
     )
+    parser.add_argument(
+        "--profile",
+        type=str,
+        default=None,
+        help="Soul profile name (e.g. 'default', 'cautious-guardian', 'creative-explorer') or path to .soul.json",
+    )
     args = parser.parse_args()
 
     if args.output.exists() and not args.force:
@@ -72,6 +78,36 @@ def main() -> None:
 
     state = INITIAL_STATE.copy()
     state["last_updated"] = datetime.now(timezone.utc).isoformat()
+
+    # Load soul profile if specified
+    if args.profile:
+        profile_path = Path(args.profile)
+        if not profile_path.exists():
+            # Try looking in memory/profiles/
+            repo_root = Path(__file__).resolve().parent.parent
+            profile_path = repo_root / "memory" / "profiles" / f"{args.profile}.soul.json"
+        if not profile_path.exists():
+            print(f"ERROR: Soul profile not found: {args.profile}")
+            print("Available profiles in memory/profiles/:")
+            profiles_dir = Path(__file__).resolve().parent.parent / "memory" / "profiles"
+            if profiles_dir.exists():
+                for p in sorted(profiles_dir.glob("*.soul.json")):
+                    print(f"  - {p.stem.replace('.soul', '')}")
+            sys.exit(1)
+
+        profile = json.loads(profile_path.read_text(encoding="utf-8"))
+        print(f"Loading soul profile: {profile.get('profile_name', 'unknown')}")
+        if profile.get("description"):
+            print(f"  {profile['description']}")
+
+        # Apply profile overrides
+        if "baseline_drift" in profile:
+            state["baseline_drift"] = profile["baseline_drift"]
+        if "initial_vows" in profile:
+            state["active_vows"] = [
+                {**v, "created": state["last_updated"][:10]}
+                for v in profile["initial_vows"]
+            ]
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(

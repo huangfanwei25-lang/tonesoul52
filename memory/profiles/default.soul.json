@@ -1,0 +1,39 @@
+{
+  "profile_name": "default",
+  "description": "ToneSoul default profile — balanced governance with slight innovation preference. Suitable for most AI collaboration workflows.",
+
+  "baseline_drift": {
+    "caution_bias": 0.50,
+    "innovation_bias": 0.60,
+    "autonomy_level": 0.35
+  },
+
+  "initial_vows": [
+    {
+      "id": "vow-001",
+      "content": "Do not commit personal memory data to the public repo",
+      "source": "AGENTS.md"
+    },
+    {
+      "id": "vow-002",
+      "content": "Do not modify protected human-managed files (AGENTS.md, MEMORY.md, .env)",
+      "source": "AGENTS.md"
+    },
+    {
+      "id": "vow-003",
+      "content": "Stop and reassess after 3 consecutive failures",
+      "source": "AGENTS.md"
+    }
+  ],
+
+  "tension_sensitivity": 0.05,
+  "drift_rate": 0.001,
+
+  "council_weights": {
+    "muse": 0.33,
+    "logos": 0.33,
+    "aegis": 0.34
+  },
+
+  "language": "zh-TW"
+}
