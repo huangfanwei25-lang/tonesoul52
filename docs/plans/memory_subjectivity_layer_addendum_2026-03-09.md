@@ -1,5 +1,8 @@
 # Memory Subjectivity Layer Addendum (2026-03-09)
 
+> Purpose: define the public subjectivity-layer model that sits on top of existing memory control seams.
+> Last Updated: 2026-03-23
+
 ## Why This Addendum Exists
 
 ToneSoul already has several memory-side control seams:

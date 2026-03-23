@@ -1,5 +1,8 @@
 # Deprecated Modules Archive
 
+> Purpose: explain why deprecated runtime modules were moved into archive rather than treated as active production surfaces.
+> Last Updated: 2026-03-23
+
 **Date**: 2026-03-04 (Round 2 WEAK/CAUTION Deep Audit)
 **Auditor**: Codex (analysis) + Antigravity (execution)
 

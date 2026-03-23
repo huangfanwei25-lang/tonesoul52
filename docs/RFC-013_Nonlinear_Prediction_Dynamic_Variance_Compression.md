@@ -1,5 +1,8 @@
 # RFC-013: 非線性預測與動態方差壓縮
 
+> Purpose: implemented RFC for nonlinear prediction, work classification, and dynamic variance compression inside the TensionEngine line.
+> Last Updated: 2026-03-23
+
 **版本**: v1.0
 **日期**: 2026-03-02
 **狀態**: Implemented

@@ -1,5 +1,8 @@
 ﻿# 7D Execution Spec / 七維執行規格
 
+> Purpose: translate the 7D audit model into executable checks, CI gates, and operational enforcement posture.
+> Last Updated: 2026-03-23
+
 本文件把 `docs/7D_AUDIT_FRAMEWORK.md` 的概念層，轉為可執行檢查項與 CI gate 草案。
 
 ---

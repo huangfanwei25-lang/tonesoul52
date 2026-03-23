@@ -1,5 +1,8 @@
 # RFC-003: ToneSoul Metacognition (The Dual-Mirror Protocol)
 
+> Purpose: draft RFC describing the dual-mirror metacognition protocol as a future architectural direction beyond prompt-driven state injection.
+> Last Updated: 2026-03-23
+
 **Status**: Draft / Approved Concept
 **Author**: Antigravity (QA Auditor / System Architect Persona)
 **Date**: 2026-02-25

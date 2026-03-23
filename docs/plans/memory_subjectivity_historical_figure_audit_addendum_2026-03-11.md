@@ -1,5 +1,8 @@
 # Memory Subjectivity Historical Figure Audit Addendum (2026-03-11)
 
+> Purpose: pressure-test the subjectivity review policy against historical figures without turning the result into a runtime persona contract.
+> Last Updated: 2026-03-23
+
 ## Status
 
 This file is a formal audit addendum for the current public ToneSoul branch.

@@ -1,5 +1,8 @@
 # Phase 116: MCP Connector & Automated QA Loop (RFC)
 
+> Purpose: propose the MCP connector and automated QA loop that extends progressive disclosure into tools and self-healing review.
+> Last Updated: 2026-03-23
+
 ## 1. 背景與動機 (Background & Motivation)
 
 在 Phase 115 中，我們成功將 ToneSoul 的技能合約升級為「三層漸進式揭露 (Progressive Disclosure)」，實現了極致的安全沙盒與 Token 節省。現在，ToneSoul 具備了高度結構化且安全的技能定義（L1 路由 + L2 邊界 + L3 負載）。

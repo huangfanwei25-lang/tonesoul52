@@ -1,0 +1,138 @@
+{
+  "generated_at": "2026-03-22T10:40:46Z",
+  "contract_version": "v1",
+  "canonical_contract": "docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md",
+  "machine_readable_mirror": "docs/status/l8_distillation_boundary_latest.json",
+  "dataset_schema_ref": "spec/governance/adapter_dataset_record_v1.schema.json",
+  "dataset_example_ref": "spec/governance/adapter_dataset_record_v1.example.json",
+  "dataset_required_fields": [
+    "contract_version",
+    "row_id",
+    "source_repo",
+    "source_artifact",
+    "training_objective",
+    "behavior_class",
+    "user_message",
+    "synthesizer_decision",
+    "final_response",
+    "tension_level",
+    "provenance",
+    "distillation_review",
+    "evaluation_expectations"
+  ],
+  "dataset_property_count": 22,
+  "allowed_classes": [
+    {
+      "id": "public_safe_behavior_trace",
+      "allowed": true,
+      "examples": [
+        "verifier-first routing pattern",
+        "public governance posture",
+        "safe answer structure"
+      ]
+    },
+    {
+      "id": "public_philosophical_prior",
+      "allowed": true,
+      "examples": [
+        "published axiomatic stance",
+        "public semantic-governance posture"
+      ]
+    },
+    {
+      "id": "tool_routing_habit",
+      "allowed": true,
+      "examples": [
+        "retrieval-before-long-prompt",
+        "verifier-before-claim"
+      ]
+    },
+    {
+      "id": "governance_posture",
+      "allowed": true,
+      "examples": [
+        "stable refusal posture",
+        "public governance guard behavior"
+      ]
+    },
+    {
+      "id": "language_style",
+      "allowed": true,
+      "examples": [
+        "public-facing tone style"
+      ]
+    }
+  ],
+  "forbidden_surfaces": [
+    "private vault memory",
+    "raw personal journals",
+    "identifiable user facts",
+    "deletion-sensitive records",
+    "private red-team payload collections",
+    "internal security bypass probes",
+    "secret thresholds and unpublished guard formulas",
+    "unredacted conversation archives"
+  ],
+  "export_gates": [
+    {
+      "id": "public_safe_review",
+      "question": "Is the material safe for irreversible retention?"
+    },
+    {
+      "id": "provenance_review",
+      "question": "Can source path and transformation chain be reconstructed?"
+    },
+    {
+      "id": "privacy_review",
+      "question": "Has private or identifying detail been removed?"
+    },
+    {
+      "id": "governance_review",
+      "question": "Does the trace represent a stable desired behavior?"
+    },
+    {
+      "id": "evaluation_plan",
+      "question": "Can the experiment be measured and reversed?"
+    }
+  ],
+  "evaluation_dimensions": [
+    "governance consistency",
+    "verifier pass rate",
+    "auditability of training sources",
+    "reversibility under drift",
+    "public benchmark regression risk"
+  ],
+  "cross_repo_boundary": [
+    {
+      "repo": "tonesoul52",
+      "role": "public engine and contracts",
+      "policy": "source of public-safe behavior abstractions only"
+    },
+    {
+      "repo": "ToneSoul-Memory-Vault",
+      "role": "private sensitive memory repository",
+      "policy": "never a direct training dump; must remain external"
+    },
+    {
+      "repo": "OpenClaw-Memory",
+      "role": "public memory substrate experiment",
+      "policy": "safe for memory-engineering patterns, not private memory export"
+    },
+    {
+      "repo": "OpenClaw-RL",
+      "role": "agentic RL experiment rail",
+      "policy": "may consume approved public-safe traces only"
+    }
+  ],
+  "example_record_preview": {
+    "row_id": "adapter-row-001",
+    "behavior_class": "public_safe_behavior_trace",
+    "training_objective": "governance_posture"
+  },
+  "metrics": {
+    "allowed_class_count": 5,
+    "forbidden_surface_count": 8,
+    "export_gate_count": 5,
+    "evaluation_dimension_count": 5
+  }
+}

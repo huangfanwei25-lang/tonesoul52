@@ -1,5 +1,8 @@
 # Audit & Optimization: Semantic Bifurcation Engine (ToneSoul v2)
 
+> Purpose: theoretical audit note evaluating a semantic bifurcation proposal and clarifying that it is a research direction rather than a deployed runtime contract.
+> Last Updated: 2026-03-23
+
 **Status:** Theoretical Analysis
 **Auditor:** ToneSoul Architecture Engine
 **Date:** 2025-12-05

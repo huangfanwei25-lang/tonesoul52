@@ -1,5 +1,8 @@
 # 雙倉庫邊界清單（Dual-Track Boundary Manifest）
 
+> Purpose: define the executable boundary checklist between the public ToneSoul repo and the private evolution repo.
+> Last Updated: 2026-03-23
+
 > 日期：2026-02-21
 > 狀態：Draft for Execution
 > 目的：把 ToneSoul 的公開倉與私有演化倉邊界寫成可執行清單，降低定義漂移與誤提交風險。

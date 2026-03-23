@@ -1,5 +1,7 @@
 # ToneSoul FAQ | 語魂常見問題
 
+> Purpose: answer recurring philosophical and engineering questions about what ToneSoul claims, measures, and does not claim.
+> Last Updated: 2026-03-23
 > **Answering the Hard Questions**
 
 ---

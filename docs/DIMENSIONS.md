@@ -1,5 +1,8 @@
 # Governance Audit Main Set: S/T/R/E/I (v0.2.x)
 
+> Purpose: define the machine-facing S/T/R/E/I governance dimensions and their strict narrative boundary.
+> Last Updated: 2026-03-23
+
 These 5 dimensions are the **ONLY** core vectors allowed in the specification layer.
 Any other interpretation (Compassion, Soul, etc.) belongs strictly to the **Narrative Layer**.
 

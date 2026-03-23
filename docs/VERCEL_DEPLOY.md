@@ -1,5 +1,6 @@
 ﻿# Vercel Deploy Guide (Navigator / apps/web)
 
+Purpose: deployment guide for the Vercel-hosted web surface and its connection to the external ToneSoul backend.
 Last updated: 2026-02-14
 
 ## Scope

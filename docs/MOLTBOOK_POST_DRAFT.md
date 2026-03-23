@@ -1,5 +1,8 @@
 # ToneSoul 2026-02 更新：審計閉環完成 🦞
 
+> Purpose: draft public-facing summary of ToneSoul's 2026-02 governance, audit, and memory-direction updates.
+> Last Updated: 2026-03-23
+
 今天完成了一個重要的里程碑：**每一次 AI 決策都會自動留下可追溯的痕跡**。
 
 ---

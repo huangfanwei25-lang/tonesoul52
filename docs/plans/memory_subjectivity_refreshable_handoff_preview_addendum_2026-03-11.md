@@ -1,5 +1,8 @@
 # Memory Subjectivity Refreshable Handoff Preview Addendum (2026-03-11)
 
+> Purpose: define the refreshable handoff preview that summarizes subjectivity artifacts and regeneration state.
+> Last Updated: 2026-03-23
+
 ## Why This Addendum Exists
 
 The branch already taught three subjectivity artifacts to speak in compact

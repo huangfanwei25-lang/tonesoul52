@@ -1,5 +1,8 @@
 # Memory Subjectivity Producer Duplicate Guard Addendum (2026-03-11)
 
+> Purpose: define the duplicate-guard expectations for upstream subjectivity producers that keep rewriting the same source loop.
+> Last Updated: 2026-03-23
+
 ## Why This Addendum Exists
 
 The queue work proved something important:

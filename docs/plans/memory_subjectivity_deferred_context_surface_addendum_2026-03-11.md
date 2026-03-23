@@ -1,5 +1,8 @@
 # Memory Subjectivity Deferred Context Surface Addendum (2026-03-11)
 
+> Purpose: expose the latest deferred reason and revisit condition on the main operator-facing subjectivity surfaces.
+> Last Updated: 2026-03-23
+
 ## Why This Addendum Exists
 
 The branch can already say:

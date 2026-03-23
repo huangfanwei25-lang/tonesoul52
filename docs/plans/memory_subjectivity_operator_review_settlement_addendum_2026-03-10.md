@@ -1,5 +1,8 @@
 # Memory Subjectivity Operator Review + Settlement Addendum (2026-03-10)
 
+> Purpose: define the operator review-and-settlement flow for subjectivity decisions and replayable outcomes.
+> Last Updated: 2026-03-23
+
 ## Why This Addendum Exists
 
 The branch already has:

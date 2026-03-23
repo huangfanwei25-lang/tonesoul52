@@ -1,5 +1,8 @@
 # ToneSoul 文件資訊架構 v1
 
+> Purpose: declare the documentation-zone baseline, movement rules, and naming boundaries for ToneSoul docs.
+> Last Updated: 2026-03-23
+
 > 日期：2026-03-18
 > 狀態：Baseline v1（先收斂規則，不做大規模搬檔）
 

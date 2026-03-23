@@ -1,5 +1,8 @@
 # RFC-009: Context Engineering Pivot（脈絡工程轉向）
 
+> Purpose: approved RFC that documents the architecture pivot from older council-first framing toward context-engineering-centered runtime design.
+> Last Updated: 2026-03-23
+
 **版本**: v1.0
 **日期**: 2026-02-27
 **狀態**: Approved

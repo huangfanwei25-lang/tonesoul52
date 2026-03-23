@@ -1,5 +1,8 @@
 # 多模型調度器 MVP 架構
 
+> Purpose: outline the MVP design for orchestrating multi-model scheduling and handoff flows.
+> Last Updated: 2026-03-23
+
 ## 架構圖
 
 ```mermaid

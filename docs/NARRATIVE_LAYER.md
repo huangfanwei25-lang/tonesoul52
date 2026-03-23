@@ -1,5 +1,8 @@
 # Narrative Layer
 
+> Purpose: define which terms belong to the narrative layer and how they map back to engineering-spec language.
+> Last Updated: 2026-03-23
+
 The following terms belong to the **Narrative Layer**. They are permitted for "Persona", "Tone", and "Lore" descriptions but are **FORBIDDEN** in the Engineering Specification logic.
 
 ## Permitted Narrative Terms

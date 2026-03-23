@@ -1,5 +1,7 @@
 # ToneSoul Core Concepts | 語魂核心概念
 
+> Purpose: explain the essential ToneSoul concepts, problem framing, and governance vocabulary in one overview document.
+> Last Updated: 2026-03-23
 > **The Essential Ideas of ToneSoul in One Document**  
 > Version 1.0 | 2026-01-08  
 > 黃梵威 (Fan-Wei Huang)

@@ -1,5 +1,8 @@
 # ToneSoul Core Modules Reference
 
+> Purpose: explain the main ToneSoul runtime modules, their responsibilities, and their intended contribution to the system.
+> Last Updated: 2026-03-23
+
 **Document ID:** YuHun_Advanced_Co-Creator_Manual_v1.0
 
 This document provides technical details about ToneSoul's internal architecture for advanced users and contributors.

@@ -1,5 +1,8 @@
 # Tools API 客戶端設計
 
+> Purpose: define the dedicated tools API client structure, credential loading, and error-handling posture.
+> Last Updated: 2026-03-23
+
 此文件定義 tools 專用的 API 客戶端結構，統一憑證取得與錯誤處理。
 
 **目標**

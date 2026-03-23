@@ -1,5 +1,8 @@
 # 🧠 ToneSoul Knowledge Graph & Asset Map
 
+> Purpose: map the structural relationships between ToneSoul theory, governance, memory, and implementation assets.
+> Last Updated: 2026-03-23
+
 This document serves as the structural index for the ToneSoul repository, mapping the relationships between theory, governance, and implementation.
 
 ## 🌌 Core Theory (The "Why")

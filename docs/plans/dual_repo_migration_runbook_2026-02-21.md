@@ -1,5 +1,8 @@
 # 雙倉庫遷移 Runbook（Dual-Track Migration Runbook）
 
+> Purpose: provide the migration runbook for separating and operating ToneSoul's public and private repositories.
+> Last Updated: 2026-03-23
+
 > 日期：2026-02-21
 > 狀態：Execution Ready
 > 範圍：把公開倉與私有倉從「概念分離」推進到「可重演分離」。

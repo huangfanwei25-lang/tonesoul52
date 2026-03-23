@@ -1,5 +1,8 @@
 # Memory Subjectivity Operator Status Line Addendum (2026-03-11)
 
+> Purpose: define the one-line status surface for subjectivity queue posture, density, and revisit codes.
+> Last Updated: 2026-03-23
+
 ## Why This Addendum Exists
 
 The operator lens improved readability, but it still occupied multiple lines.

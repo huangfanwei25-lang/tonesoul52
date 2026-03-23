@@ -1,5 +1,7 @@
 # Research Evidence Map (2026-02-04)
 
+Last Updated: 2026-03-23
+
 Purpose: Curate peer-reviewed and standards-based sources that support ToneSoul's auditability, governance, and meaning-transfer positioning.
 Selection criteria: Prefer journals and standards. Conference or preprint items are listed only as supplementary references.
 

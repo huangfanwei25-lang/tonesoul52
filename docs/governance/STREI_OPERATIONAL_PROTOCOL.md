@@ -1,5 +1,7 @@
 # Protocol: STREI Vector Operational Specification
 
+> Purpose: specify the operational meaning, thresholds, and maintenance rules for the STREI vector in ToneSoul governance.
+> Last Updated: 2026-03-23
 ## 1. Definition & Vector Mapping
 The STREI vector represents the **Mind Model State** of ToneSoul (TAE-01). It is an
 engineering requirement for all L2-L5 interactions.

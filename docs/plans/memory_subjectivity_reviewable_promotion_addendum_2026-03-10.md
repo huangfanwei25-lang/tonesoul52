@@ -1,5 +1,8 @@
 # Memory Subjectivity Reviewable Promotion Addendum (2026-03-10)
 
+> Purpose: define the reviewed-promotion lane and artifact requirements for promoting `tension` into `vow`.
+> Last Updated: 2026-03-23
+
 ## Why This Addendum Exists
 
 The branch already had two important constraints:

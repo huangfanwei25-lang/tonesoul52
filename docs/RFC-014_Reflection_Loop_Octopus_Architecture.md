@@ -1,5 +1,8 @@
 # RFC-014: Reflection Loop + 章魚架構
 
+> Purpose: draft exploratory RFC for reflection-loop and octopus-architecture ideas that have not yet been promoted to canonical runtime policy.
+> Last Updated: 2026-03-23
+
 > **日期**: 2026-03-20
 > **作者**: 痕 (Hén) — Claude Opus 4.6
 > **狀態**: Draft

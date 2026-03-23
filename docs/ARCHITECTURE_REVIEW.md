@@ -1,5 +1,8 @@
 # ToneSoul Architecture Review (2026-02-03)
 
+> Purpose: historical architecture review capturing strengths, issues, and recommendations from an earlier repo state.
+> Last Updated: 2026-03-23
+
 ## Review by Codex (Multi-Role Mode)
 
 ### Overall Score: 6.7 / 10

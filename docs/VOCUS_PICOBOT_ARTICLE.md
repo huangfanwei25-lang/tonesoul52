@@ -1,5 +1,8 @@
 # 8MB 的 AI 助手，能替你跑腿，也能替你闖禍 — Picobot 介紹與語魂系統的反思
 
+> Purpose: article draft that uses Picobot as a comparison case for reflecting on agent autonomy and ToneSoul governance.
+> Last Updated: 2026-03-23
+
 > 開源倉庫連結：[github.com/louisho5/picobot](https://github.com/louisho5/picobot)
 
 ---

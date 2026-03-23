@@ -1,5 +1,8 @@
 # Git 與本地倉庫整治企畫書（2026-02-20）
 
+> Purpose: stabilize the local git repository and worktree before larger dual-track convergence and migration work.
+> Last Updated: 2026-03-23
+
 ## 1. 企畫目標
 - 先把目前 `git` 與本地倉庫狀態完整盤點，形成可追溯基線。
 - 將最近新增檔案與當前工作樹變更分群，避免語魂 1.0 開發時混入無關改動。

@@ -1,5 +1,8 @@
 # AI Perspective: Honest Assessment of ToneSoul Concepts
 
+> Purpose: assess which ToneSoul concepts are technically grounded versus philosophically aspirational from an AI-facing perspective.
+> Last Updated: 2026-03-23
+
 > **Document Purpose:** An honest evaluation of ToneSoul's concepts from an AI's perspective, assessing what is technically grounded vs. what is philosophically aspirational.
 
 ---

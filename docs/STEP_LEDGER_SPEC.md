@@ -1,5 +1,8 @@
 # StepLedger & Time-Island Formal Specification
 
+> Purpose: formalize the StepLedger and Time-Island patterns as reusable audit and session-isolation specifications.
+> Last Updated: 2026-03-23
+
 ## Overview
 
 This document formalizes the **StepLedger** (audit trail) and **Time-Island** (session isolation) patterns as reusable specifications.

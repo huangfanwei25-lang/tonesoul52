@@ -1,5 +1,8 @@
 # ToneSoul 🦞 語義責任、自我治理與外部化認知架構
 
+> Purpose: draft the public GitHub-facing positioning language, About text, and topics for ToneSoul discoverability.
+> Last Updated: 2026-03-23
+
 > **"IU 是互信窗口，治理是內在主體"**
 > ToneSoul 不只產生答案，而是讓每次答案都可追溯、可驗證、可審計。
 > 它同時應被描述為 externalized cognitive architecture / cognitive operating system for AI governance。

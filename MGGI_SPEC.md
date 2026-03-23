@@ -1,6 +1,10 @@
 # MGGI Specification (v0.1.0)
 > **Minimal Governable General Intelligence**
 > *Engineering Constraints over Philosophical Intent.*
+> **Purpose**: define the formal engineering and governance constraints for the MGGI framing used as one ToneSoul specification surface.
+> **Last Updated**: 2026-03-22
+> Purpose: define the formal engineering and governance constraints for the MGGI framing used as one ToneSoul specification surface.
+> Last Updated: 2026-03-22
 
 ## 1. Definition
 

@@ -1,5 +1,8 @@
 # NLnet Grant Proposal Draft: ToneSoul (NGI0 Commons Fund)
 
+> Purpose: draft the NLnet grant narrative for positioning ToneSoul as a local-first public-good governance engine.
+> Last Updated: 2026-03-23
+
 > **📝 申請建議策略 (Strategy Note)**
 > NLnet 偏好「具體、開源、保護隱私、去中心化且不依賴特定大廠」的基礎建設專案。我們應該主打 ToneSoul 作為一個 **「Local-First 的 AI 治理與認知分歧引擎 (Local-First Cognitive Divergence Engine for AI Governance)」**，強調我們藉由本地模型 (Ollama + Qwen3) 建立三視角議會，打破專有大語言模型 (Proprietary LLMs) 的同溫層與價值觀壟斷，把真正的決策思考權（Meaningful Divergence）還給開源社群與使用者。
 > 

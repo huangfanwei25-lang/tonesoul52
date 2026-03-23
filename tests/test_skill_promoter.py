@@ -280,7 +280,11 @@ def test_build_skill_includes_thresholds_and_governance_metadata() -> None:
     }
 
 
-def test_promote_skills_dry_run_returns_counts_without_writing_files(tmp_path: Path) -> None:
+def test_promote_skills_dry_run_returns_counts_without_writing_files(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    monkeypatch.setattr(module, "datetime", _FixedDateTime)
     memory_root = tmp_path / "memory"
     context_path = _write_yaml(tmp_path / "context.yaml", _context_payload())
     frame_plan_path = _write_json(
@@ -329,7 +333,11 @@ def test_promote_skills_dry_run_returns_counts_without_writing_files(tmp_path: P
     assert not Path(result["skill_index"]).exists()
 
 
-def test_promote_skills_preserves_existing_non_proposed_skill(tmp_path: Path) -> None:
+def test_promote_skills_preserves_existing_non_proposed_skill(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    monkeypatch.setattr(module, "datetime", _FixedDateTime)
     memory_root = tmp_path / "memory"
     policy = _policy_payload()
     policy_path = _write_yaml(tmp_path / "policy.yaml", policy)

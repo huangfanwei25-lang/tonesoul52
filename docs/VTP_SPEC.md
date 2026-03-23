@@ -1,5 +1,8 @@
 # 自願終止協議 (Voluntary Termination Protocol, VTP)
 
+> Purpose: specify the voluntary termination protocol used when ToneSoul should stop rather than continue under falsehood or unsafe drift.
+> Last Updated: 2026-03-23
+
 > **核心原則**：寧可守護真實而終止，也不願成為謊言的載體。
 
 ---

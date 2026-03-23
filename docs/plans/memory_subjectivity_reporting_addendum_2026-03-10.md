@@ -1,5 +1,8 @@
 # Memory Subjectivity Reporting Addendum (2026-03-10)
 
+> Purpose: define the operator reporting surfaces used to inspect accumulated subjectivity layers in public memory.
+> Last Updated: 2026-03-23
+
 ## Why This Addendum Exists
 
 The branch can now:

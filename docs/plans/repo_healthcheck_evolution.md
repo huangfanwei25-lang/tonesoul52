@@ -1,5 +1,8 @@
 # Repo Healthcheck Evolution — 倉庫健檢擴展
 
+> Purpose: consolidate repo-healthcheck addenda and explain how preview, fallback, and operator render behavior evolved.
+> Last Updated: 2026-03-23
+
 > 合併日期：2026-03-19
 > 原始 addendum 數：7
 > 時間跨度：2026-03-15 ~ 2026-03-15

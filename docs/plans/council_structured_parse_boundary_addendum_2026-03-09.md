@@ -1,5 +1,8 @@
 # Council Structured Parse Boundary Addendum (2026-03-09)
 
+> Purpose: record the structured-parse boundary fix that prevents council fallback parsing from overriding valid JSON votes.
+> Last Updated: 2026-03-23
+
 ## Problem
 
 The council perspective seam had two parsing modes:

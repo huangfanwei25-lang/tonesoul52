@@ -1,5 +1,8 @@
 # Always-On Memory Agent (Google) vs ToneSoul — 架構對照
 
+> Purpose: compare Google's always-on memory agent with ToneSoul's governance-first memory architecture.
+> Last Updated: 2026-03-23
+
 > **Google Always-On Memory Agent**: [GoogleCloudPlatform/generative-ai](https://github.com/GoogleCloudPlatform/generative-ai/tree/main/gemini/agents/always-on-memory-agent)
 > Built with Google ADK + Gemini 3.1 Flash-Lite + SQLite
 >

@@ -1,5 +1,9 @@
 # 工程版倉庫導覽
 
+> Purpose: canonical engineering reading surface for the mirrored engineering document family.
+> Status: canonical owner for `law/engineering/` mirrors.
+> Last Updated: 2026-03-22
+
 本資料夾收錄了《AI‑Ethics × 語魂系統》在工程落地層面的完整內容。不同於哲學卷冊著重於“為何”（WHY），工程卷冊聚焦於“如何”（HOW）：如何將語魂理論映射成可實作的架構、程式碼與流程，如何在開發週期中持續保持倫理張力與系統自洽，以及如何構建可驗證、可延展的實作參考。
 
 ## 結構一覽

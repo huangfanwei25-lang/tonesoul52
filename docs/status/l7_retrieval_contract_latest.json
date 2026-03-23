@@ -1,0 +1,132 @@
+{
+  "generated_at": "2026-03-22T10:40:46Z",
+  "contract_version": "v1",
+  "canonical_contract": "docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md",
+  "machine_readable_mirror": "docs/status/l7_retrieval_contract_latest.json",
+  "default_reading_order": [
+    "architecture_anchor",
+    "boundary_map",
+    "status_artifact",
+    "research_note",
+    "implementation_source",
+    "verifier"
+  ],
+  "surfaces": [
+    {
+      "id": "architecture_anchor",
+      "authority_rank": 1,
+      "use_for": "north-star architecture, layer meaning, repo-wide interpretation",
+      "examples": [
+        "docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md",
+        "docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md"
+      ]
+    },
+    {
+      "id": "boundary_map",
+      "authority_rank": 2,
+      "use_for": "surface separation and authority disambiguation",
+      "examples": [
+        "docs/architecture/KNOWLEDGE_SURFACES_BOUNDARY_MAP.md",
+        "docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md"
+      ]
+    },
+    {
+      "id": "status_artifact",
+      "authority_rank": 3,
+      "use_for": "latest generated repo state, machine-readable operational truth",
+      "examples": [
+        "docs/status/tonesoul_knowledge_graph_latest.md",
+        "docs/status/changed_surface_checks_latest.md",
+        "docs/status/repo_healthcheck_latest.json"
+      ]
+    },
+    {
+      "id": "research_note",
+      "authority_rank": 4,
+      "use_for": "external evidence and non-canonical comparison",
+      "examples": [
+        "docs/research/tonesoul_l7_l8_open_source_evidence_map_2026-03-22.md"
+      ]
+    },
+    {
+      "id": "implementation_source",
+      "authority_rank": 5,
+      "use_for": "actual runtime behavior when prose is insufficient",
+      "examples": [
+        "tonesoul/unified_pipeline.py",
+        "scripts/run_changed_surface_checks.py"
+      ]
+    },
+    {
+      "id": "verifier",
+      "authority_rank": 6,
+      "use_for": "mechanical truth checks when drift risk is high",
+      "examples": [
+        "scripts/verify_docs_consistency.py",
+        "scripts/verify_protected_paths.py",
+        "scripts/run_changed_surface_checks.py"
+      ]
+    }
+  ],
+  "question_routes": [
+    {
+      "question_type": "architecture_meaning",
+      "open_first": "docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md",
+      "open_second": "docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md",
+      "then": "implementation_source"
+    },
+    {
+      "question_type": "knowledge_surface_authority",
+      "open_first": "docs/architecture/KNOWLEDGE_SURFACES_BOUNDARY_MAP.md",
+      "open_second": "docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md",
+      "then": "status_artifact"
+    },
+    {
+      "question_type": "latest_repo_state",
+      "open_first": "docs/status/repo_healthcheck_latest.json",
+      "open_second": "docs/status/tonesoul_knowledge_graph_latest.md",
+      "then": "verifier"
+    },
+    {
+      "question_type": "change_validation",
+      "open_first": "scripts/run_changed_surface_checks.py",
+      "open_second": "docs/status/changed_surface_checks_latest.md",
+      "then": "verifier"
+    },
+    {
+      "question_type": "external_design_influence",
+      "open_first": "docs/research/tonesoul_l7_l8_open_source_evidence_map_2026-03-22.md",
+      "open_second": "docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md",
+      "then": "human_review"
+    }
+  ],
+  "verifier_checks": [
+    {
+      "id": "protected_paths",
+      "command": "python scripts/verify_protected_paths.py --repo-root . --strict",
+      "use_when": "sensitive files, memory lanes, or protected docs are touched"
+    },
+    {
+      "id": "docs_consistency",
+      "command": "python scripts/verify_docs_consistency.py --repo-root .",
+      "use_when": "authority docs, status surfaces, or repo-facing descriptions changed"
+    },
+    {
+      "id": "changed_surface_checks",
+      "command": "python scripts/run_changed_surface_checks.py --repo-root .",
+      "use_when": "you need the check plan for current changes instead of guessing"
+    }
+  ],
+  "stop_reading_triggers": [
+    "protected paths are involved",
+    "the question is about what is true right now",
+    "the claim can be checked mechanically",
+    "status artifacts and prose may have drifted apart",
+    "the task is code-change oriented and a verifier already maps the changed surface"
+  ],
+  "metrics": {
+    "surface_count": 6,
+    "question_route_count": 5,
+    "verifier_count": 3
+  }
+}

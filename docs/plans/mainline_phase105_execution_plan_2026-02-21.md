@@ -1,5 +1,8 @@
 # Mainline Phase 105 執行企畫 (2026-02-21)
 
+> Purpose: execution plan for stabilizing the Phase 105 mainline before broader convergence and delivery work.
+> Last Updated: 2026-03-23
+
 ## 目標
 
 在不干擾支線進行的前提下，推進主線未完成架構任務，先完成「可驗證、可提交、可回溯」的執行基線。

@@ -1,5 +1,7 @@
 # Failure Analysis (Phase 1 Academic Foundation)
 
+Purpose: document adversarial bypass failures and the mitigations added to Guardian and PreOutputCouncil behavior.
+Last Updated: 2026-03-23
 Scope: adversarial bypass attempts against the Guardian safety rules and
 their impact on PreOutputCouncil verdicts.
 
