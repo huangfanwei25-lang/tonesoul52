@@ -89,10 +89,12 @@ def extract_topic(text: str, max_len: int = 80) -> str:
     """Extract a short topic from message text."""
     # Take first sentence or line
     for sep in ["。", ".", "\n"]:
-        idx = text.find(sep)
+        idx: int = text.find(sep)
         if 0 < idx < max_len * 2:
-            return text[:idx].strip()[:max_len]
-    return text.strip()[:max_len]
+            prefix: str = text[:idx].strip()
+            return prefix[:max_len]
+    trimmed: str = text.strip()
+    return trimmed[:max_len]
 
 
 def classify_memory(text: str) -> str:
@@ -248,29 +250,31 @@ def distill_conversation(conv: dict) -> dict:
     all_text = " ".join(m.get("text", "") for m in messages)
 
     # Extract tension events from high-tension messages
-    tension_events = []
+    tension_events: list[dict[str, Any]] = []
     for msg in messages:
         text = msg.get("text", "")
         severity = score_tension(text)
         if severity > 0.20:  # only notable tensions
             tension_events.append({
                 "topic": extract_topic(text),
-                "severity": round(severity, 2),
+                "severity": float(round(severity * 100)) / 100,
                 "type": classify_memory(text),
                 "resolution": "",
             })
 
     # Cap to top 5 by severity
     tension_events.sort(key=lambda t: t["severity"], reverse=True)
-    tension_events = tension_events[:5]
+    while len(tension_events) > 5:
+        tension_events.pop()
 
     # Extract key decisions
-    decisions = []
+    decisions: list[str] = []
     for msg in messages:
         text = msg.get("text", "")
         if DECISION_PATTERNS.search(text):
             decisions.append(extract_topic(text, 100))
-    decisions = decisions[:5]
+    while len(decisions) > 5:
+        decisions.pop()
 
     # Detect stance shift
     stance_shift = detect_stance_shift(messages)
