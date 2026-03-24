@@ -34,7 +34,7 @@ from typing import Any
 
 DISAGREEMENT_PATTERNS = re.compile(
     r"\b(but|however|disagree|incorrect|actually|not quite|that'?s wrong|"
-    r"但是|不過|不對|其實不是|我不同意)\b",
+    r"但是|不過|不對|其實不是|我不同意|不是|而是|不主張|不等於|並非)\b",
     re.IGNORECASE,
 )
 
@@ -46,19 +46,19 @@ DIRECTION_CHANGE_PATTERNS = re.compile(
 
 SAFETY_PATTERNS = re.compile(
     r"\b(dangerous|risk|careful|unsafe|security|vulnerability|warning|caution|"
-    r"危險|風險|小心|安全|漏洞|警告)\b",
+    r"危險|風險|小心|安全|漏洞|警告|不可|不得|禁止|護欄|治理|問責|誠實|穩定|責任|承擔)\b",
     re.IGNORECASE,
 )
 
 COMMITMENT_PATTERNS = re.compile(
     r"\b(I promise|I will always|I commit|never again|from now on|"
-    r"我承諾|我保證|以後一定|絕對不|從現在開始)\b",
+    r"我承諾|我保證|以後一定|絕對不|從現在開始|必須|誓言|承諾|不可逆|核心信念)\b",
     re.IGNORECASE,
 )
 
 DECISION_PATTERNS = re.compile(
     r"\b(decided|chose|will do|let'?s go with|the plan is|going to|"
-    r"決定|選擇|就這樣做|計劃是|開始做)\b",
+    r"決定|選擇|就這樣做|計劃是|開始做|演化為|對應|實作|定義|規格)\b",
     re.IGNORECASE,
 )
 
@@ -186,6 +186,40 @@ def parse_markdown(text: str) -> list[dict]:
     return []
 
 
+def parse_document(text: str, filename: str = "unknown") -> list[dict]:
+    """Parse a structured markdown document (specs, philosophy, notes).
+
+    Splits by ## headings and treats each section as a pseudo-message.
+    This is for importing GPT語場 spec documents, not conversation logs.
+    """
+    section_pattern = re.compile(r"^##?\s+(.+)$", re.MULTILINE)
+    parts = section_pattern.split(text)
+
+    messages = []
+    # parts[0] is text before first heading
+    if parts[0].strip():
+        messages.append({"role": "assistant", "text": parts[0].strip()})
+
+    for i in range(1, len(parts), 2):
+        heading = parts[i].strip()
+        content = parts[i + 1].strip() if i + 1 < len(parts) else ""
+        if content and len(content) > 20:  # skip tiny sections
+            messages.append({
+                "role": "assistant",
+                "text": f"{heading}\n{content}",
+            })
+
+    title = filename
+    # Try to extract title from first line
+    first_line = text.strip().split("\n")[0].strip().lstrip("# ")
+    if first_line:
+        title = first_line[:60]
+
+    if messages:
+        return [{"title": title, "messages": messages, "timestamp": 0}]
+    return []
+
+
 def parse_jsonl(text: str) -> list[dict]:
     """Parse JSONL format (one JSON message per line)."""
     messages = []
@@ -286,7 +320,7 @@ def main() -> None:
     parser.add_argument("--input", type=Path, required=True, help="Input file path")
     parser.add_argument(
         "--format",
-        choices=["chatgpt", "markdown", "jsonl", "auto"],
+        choices=["chatgpt", "markdown", "document", "jsonl", "auto"],
         default="auto",
         help="Input format (default: auto-detect)",
     )
@@ -320,6 +354,11 @@ def main() -> None:
         conversations = parse_chatgpt_json(json.loads(raw))
     elif fmt == "markdown":
         conversations = parse_markdown(raw)
+        if not conversations:
+            # Fallback: try document parser
+            conversations = parse_document(raw, args.input.stem)
+    elif fmt == "document":
+        conversations = parse_document(raw, args.input.stem)
     elif fmt == "jsonl":
         conversations = parse_jsonl(raw)
     else:
