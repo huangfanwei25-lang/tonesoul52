@@ -116,3 +116,39 @@ python OpenClaw-Memory/ask_my_brain.py --profile tonesoul \
 See `docs/RFC-015_Self_Dogfooding_Runtime_Adapter.md` for the full technical contract.
 See `memory/schemas/` for JSON Schema definitions.
 
+### Importing External Conversations
+
+Already have AI conversations in ChatGPT, Claude, or other tools? Import them:
+
+```bash
+# Import a ChatGPT export (auto-detects .json)
+python scripts/import_conversation.py --input conversations.json --dry-run
+
+# Import a markdown conversation log
+python scripts/import_conversation.py --input chat.md --output traces/
+
+# Import and directly update governance state
+python scripts/import_conversation.py \
+  --input conversations.json \
+  --update-state ./governance_state.json
+```
+
+The importer extracts tension events, key decisions, stance shifts, and vow-like commitments from your conversation history using heuristic scoring.
+
+### Soul Profiles
+
+Customize your AI's starting personality with soul profiles:
+
+```bash
+# List available profiles
+ls memory/profiles/
+
+# Initialize with a specific profile
+python scripts/init_governance_state.py \
+  --profile creative-explorer \
+  --output ./governance_state.json
+```
+
+Available presets: `default`, `cautious-guardian`, `creative-explorer`.
+Create your own by copying and editing any `.soul.json` in `memory/profiles/`.
+
