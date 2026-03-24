@@ -66,6 +66,7 @@
 | `scripts/read_governance_state.py` | 讀取並顯示治理狀態 | `python scripts/read_governance_state.py` |
 | `scripts/update_governance_state.py` | 從 session trace 更新狀態 | `python scripts/update_governance_state.py --state ./governance_state.json --trace trace.json` |
 | `scripts/commit_session_to_memory.py` | 注入摘要到 OpenClaw-Memory | `python scripts/commit_session_to_memory.py --trace trace.json` |
+| `scripts/import_conversation.py` | 匯入外部 AI 對話並蒸餾為治理 trace | `python scripts/import_conversation.py --input conversations.json` |
 
 詳見 `docs/RFC-015_Self_Dogfooding_Runtime_Adapter.md`。
 
