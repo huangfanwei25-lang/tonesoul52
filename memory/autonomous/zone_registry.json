@@ -1,0 +1,120 @@
+{
+  "zones": [
+    {
+      "zone_id": "memory",
+      "name": "記憶圖書館",
+      "icon": "book",
+      "color": "#4ecdc4",
+      "topics": [
+        "memory"
+      ],
+      "visit_count": 3,
+      "artifact_count": 1,
+      "first_seen": "2026-03-25T05:09:48.165489+00:00",
+      "last_seen": "2026-03-25T05:09:48.165489+00:00",
+      "grid_x": 0,
+      "grid_y": 0,
+      "level": 2
+    },
+    {
+      "zone_id": "governance",
+      "name": "治理議會廳",
+      "icon": "shield",
+      "color": "#7c5cfc",
+      "topics": [
+        "governance"
+      ],
+      "visit_count": 1,
+      "artifact_count": 0,
+      "first_seen": "2026-03-25T05:09:48.165489+00:00",
+      "last_seen": "2026-03-25T05:09:48.165489+00:00",
+      "grid_x": 1,
+      "grid_y": 0,
+      "level": 1
+    },
+    {
+      "zone_id": "testing",
+      "name": "試煉場",
+      "icon": "flask",
+      "color": "#ff6b6b",
+      "topics": [
+        "testing"
+      ],
+      "visit_count": 1,
+      "artifact_count": 2,
+      "first_seen": "2026-03-25T05:09:48.165489+00:00",
+      "last_seen": "2026-03-25T05:09:48.165489+00:00",
+      "grid_x": 1,
+      "grid_y": 1,
+      "level": 1
+    },
+    {
+      "zone_id": "benevolence",
+      "name": "仁慈花園",
+      "icon": "flower",
+      "color": "#ff6b9d",
+      "topics": [
+        "benevolence"
+      ],
+      "visit_count": 1,
+      "artifact_count": 1,
+      "first_seen": "2026-03-25T05:09:48.165489+00:00",
+      "last_seen": "2026-03-25T05:09:48.165489+00:00",
+      "grid_x": 0,
+      "grid_y": 1,
+      "level": 1
+    },
+    {
+      "zone_id": "architecture",
+      "name": "建築工坊",
+      "icon": "gear",
+      "color": "#6bcb77",
+      "topics": [
+        "architecture"
+      ],
+      "visit_count": 1,
+      "artifact_count": 0,
+      "first_seen": "2026-03-25T05:09:48.165489+00:00",
+      "last_seen": "2026-03-25T05:09:48.165489+00:00",
+      "grid_x": -1,
+      "grid_y": 1,
+      "level": 1
+    },
+    {
+      "zone_id": "infrastructure",
+      "name": "基礎設施塔",
+      "icon": "tower",
+      "color": "#a8a8c0",
+      "topics": [
+        "infrastructure"
+      ],
+      "visit_count": 1,
+      "artifact_count": 0,
+      "first_seen": "2026-03-25T05:09:48.165489+00:00",
+      "last_seen": "2026-03-25T05:09:48.165489+00:00",
+      "grid_x": -1,
+      "grid_y": 0,
+      "level": 1
+    },
+    {
+      "zone_id": "diagnostic",
+      "name": "診斷工房",
+      "icon": "scope",
+      "color": "#54a0ff",
+      "topics": [
+        "diagnostic"
+      ],
+      "visit_count": 1,
+      "artifact_count": 0,
+      "first_seen": "2026-03-25T05:09:48.165489+00:00",
+      "last_seen": "2026-03-25T05:09:48.165489+00:00",
+      "grid_x": -1,
+      "grid_y": -1,
+      "level": 1
+    }
+  ],
+  "total_sessions": 1,
+  "world_mood": "alert",
+  "weather": "clear",
+  "last_rebuilt": "2026-03-25T12:03:51.248387+00:00"
+}

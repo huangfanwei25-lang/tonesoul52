@@ -1,0 +1,55 @@
+{
+  "version": "0.1.0",
+  "last_updated": "2026-03-25T05:09:48.165972+00:00",
+  "soul_integral": 0.7,
+  "tension_history": [
+    {
+      "topic": "self_journal 96.8% false positive block rate",
+      "severity": 0.7,
+      "type": "diagnostic",
+      "resolution": "Test pollution identified and cleaned; benevolence FLAG logic fixed",
+      "timestamp": "2026-03-25T05:09:48.165489+00:00"
+    },
+    {
+      "topic": "memory architecture disconnection across models",
+      "severity": 0.5,
+      "type": "architecture",
+      "resolution": "Runtime adapter load/commit implemented; CLAUDE.md session protocol created",
+      "timestamp": "2026-03-25T05:09:48.165489+00:00"
+    },
+    {
+      "topic": "OpenClaw-Memory empty - no vector memory to query",
+      "severity": 0.4,
+      "type": "infrastructure",
+      "resolution": "Initialized with 89 chunks from architecture, governance, and core docs",
+      "timestamp": "2026-03-25T05:09:48.165489+00:00"
+    }
+  ],
+  "active_vows": [
+    {
+      "id": "vow-001",
+      "content": "Do not commit personal memory data to the public repo",
+      "created": "2026-02-21",
+      "source": "AGENTS.md"
+    },
+    {
+      "id": "vow-002",
+      "content": "Do not modify protected human-managed files (AGENTS.md, MEMORY.md, .env)",
+      "created": "2026-02-21",
+      "source": "AGENTS.md"
+    },
+    {
+      "id": "vow-003",
+      "content": "Stop and reassess after 3 consecutive failures",
+      "created": "2026-02-21",
+      "source": "AGENTS.md"
+    }
+  ],
+  "aegis_vetoes": [],
+  "baseline_drift": {
+    "caution_bias": 0.5,
+    "innovation_bias": 0.5999,
+    "autonomy_level": 0.35
+  },
+  "session_count": 1
+}
