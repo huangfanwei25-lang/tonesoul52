@@ -985,7 +985,7 @@
     reader.readAsText(file);
   }
 
-  function renderDashboard(data, filename) {
+  function renderDashboard(data, filename, journalEntries) {
     dropZone.style.display = 'none';
     dashboard.classList.add('active');
 
@@ -1007,8 +1007,10 @@
     renderTensions(data.tension_history || []);
     renderDrift(data.baseline_drift || {});
     renderVows(data.active_vows || []);
-    renderAvatar(si, data.baseline_drift || {}, data.tension_history || [], data.active_vows || []);
-    renderDiary(data.tension_history || [], data.active_vows || [], data.session_count || 0);
+    const jGroups = (journalEntries && journalEntries.groups) ? journalEntries.groups : [];
+    const jSummary = (journalEntries && journalEntries.verdict_summary) ? journalEntries.verdict_summary : null;
+    renderAvatar(si, data.baseline_drift || {}, data.tension_history || [], data.active_vows || [], jSummary);
+    renderDiary(data.tension_history || [], data.active_vows || [], data.session_count || 0, jGroups);
   }
 
   function describeSoulIntegral(si) {
@@ -1143,26 +1145,49 @@
     { text: '不以「讓使用者舒服」取代「可被問責」。', src: '— 誠實契約第十條' },
   ];
 
-  function renderAvatar(si, drift, tensions, vows) {
+  function renderAvatar(si, drift, tensions, vows, jSummary) {
     const mood = MOODS.find(m => si <= m.max) || MOODS[MOODS.length - 1];
 
-    // Mood text
-    document.getElementById('avatarMood').textContent = mood.mood;
-    document.getElementById('avatarMoodDesc').textContent = mood.desc;
+    // Overlay mood with recent journal stress if available
+    const stress = jSummary ? jSummary.stress_level : 0;
+    const dominant = jSummary ? jSummary.dominant : '';
+    let moodText = mood.mood;
+    let moodDesc = mood.desc;
+    let auraColor = mood.aura;
+
+    if (jSummary) {
+      if (stress > 0.5) {
+        moodText = '緊繃';
+        moodDesc = `最近決策中 ${Math.round(stress * 100)}% 被攔截，正承受高張力`;
+        auraColor = 'rgba(255,107,107,0.5)';
+      } else if (stress > 0.3) {
+        moodText = moodText + ' · 謹慎';
+        moodDesc = moodDesc + '（近期有較多攔截事件）';
+        auraColor = 'rgba(255,211,61,0.4)';
+      } else if (dominant === 'approve' && (jSummary.approve || 0) >= 10) {
+        moodText = moodText + ' · 流暢';
+        moodDesc = moodDesc + '（近期決策高度一致）';
+      }
+    }
+
+    document.getElementById('avatarMood').textContent = moodText;
+    document.getElementById('avatarMoodDesc').textContent = moodDesc;
 
     // Mouth shape (wider = more experience)
     const mouth = document.getElementById('pxMouth');
     mouth.style.width = mood.mouth;
-    mouth.style.borderRadius = mood.mouthRadius;
+    mouth.style.borderRadius = stress > 0.5 ? '0' : mood.mouthRadius;  // flat mouth when stressed
 
     // Aura
-    document.getElementById('pxAura').style.borderColor = mood.aura;
+    document.getElementById('pxAura').style.borderColor = auraColor;
 
-    // Accessory based on drift
+    // Accessory based on drift + stress
     const acc = document.getElementById('pxAccessory');
     const caution = drift.caution_bias || 0.5;
     const innovation = drift.innovation_bias || 0.5;
-    if (caution > 0.6) {
+    if (stress > 0.5) {
+      acc.textContent = '⚠️'; acc.classList.add('visible');
+    } else if (caution > 0.6) {
       acc.textContent = '🛡️'; acc.classList.add('visible');
     } else if (innovation > 0.6) {
       acc.textContent = '🚀'; acc.classList.add('visible');
@@ -1172,45 +1197,79 @@
       acc.textContent = '🔮'; acc.classList.add('visible');
     }
 
-    // Random quote
-    const q = QUOTES[Math.floor(Math.random() * QUOTES.length)];
-    document.getElementById('avatarQuote').textContent = q.text;
-    document.getElementById('avatarQuoteSource').textContent = q.src;
+    // Quote: if journal available, pick from recent reflection; else use QUOTES
+    if (jSummary && dominant === 'block' && stress > 0.3) {
+      document.getElementById('avatarQuote').textContent = '這段時間有許多決策受到阻擋。每一次攔截都是在學習邊界在哪裡。';
+      document.getElementById('avatarQuoteSource').textContent = '— 近期 journal 狀態';
+    } else {
+      const q = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+      document.getElementById('avatarQuote').textContent = q.text;
+      document.getElementById('avatarQuoteSource').textContent = q.src;
+    }
   }
 
   // --- Memory Diary ---
   let diaryPages = [];
   let diaryPage = 0;
 
-  function renderDiary(tensions, vows, sessionCount) {
+  function _verdictBar(verdicts) {
+    const a = verdicts.approve || 0, b = verdicts.block || 0, c = verdicts.concern || 0;
+    const total = a + b + c;
+    if (total === 0) return '';
+    const parts = [];
+    if (a) parts.push(`<span class="diary-tag decision">${a} 通過</span>`);
+    if (b) parts.push(`<span class="diary-tag tension">${b} 攔截</span>`);
+    if (c) parts.push(`<span class="diary-tag vow">${c} 疑慮</span>`);
+    return parts.join(' ');
+  }
+
+  function renderDiary(tensions, vows, sessionCount, jGroups) {
     diaryPages = [];
 
-    // Build diary entries from tension history
-    tensions.forEach((t, i) => {
-      const tags = [];
-      tags.push({ text: `severity ${(t.severity || 0).toFixed(2)}`, cls: 'tension' });
-      if (t.type === 'governance') tags.push({ text: '治理', cls: 'vow' });
-      if (t.resolution) tags.push({ text: '已解決', cls: 'decision' });
+    // Priority: use real journal groups if available
+    if (jGroups && jGroups.length > 0) {
+      jGroups.forEach(group => {
+        // First entry of the day as the representative body
+        const firstEntry = group.entries && group.entries[0];
+        const body = firstEntry ? firstEntry.body : '（本日無詳細記錄）';
+        const verdictBarHtml = _verdictBar(group.verdicts || {});
 
-      diaryPages.push({
-        date: t.timestamp || `Session #${i + 1}`,
-        title: t.topic || '觀點碰撞',
-        body: t.resolution || '這次張力事件在記憶中留下了痕跡。每一次內部衝突都在塑造性格的輪廓。',
-        tags: tags,
+        diaryPages.push({
+          date: `${group.label}　${group.date}`,
+          title: `共 ${group.count} 筆記錄`,
+          body: body,
+          tags: [],
+          verdictBarHtml: verdictBarHtml,
+          entries: group.entries || [],
+        });
       });
-    });
+    } else {
+      // Fallback: build from tension history and vows
+      tensions.forEach((t, i) => {
+        const tags = [];
+        tags.push({ text: `severity ${(t.severity || 0).toFixed(2)}`, cls: 'tension' });
+        if (t.type === 'governance') tags.push({ text: '治理', cls: 'vow' });
+        if (t.resolution) tags.push({ text: '已解決', cls: 'decision' });
 
-    // Add vow entries
-    vows.forEach(v => {
-      diaryPages.push({
-        date: v.created || '—',
-        title: '🛡️ 承諾: ' + (v.id || ''),
-        body: v.content || v.detail || '一個被記住的承諾。',
-        tags: [{ text: '承諾', cls: 'vow' }],
+        diaryPages.push({
+          date: t.timestamp || `Session #${i + 1}`,
+          title: t.topic || '觀點碰撞',
+          body: t.resolution || '這次張力事件在記憶中留下了痕跡。每一次內部衝突都在塑造性格的輪廓。',
+          tags: tags,
+        });
       });
-    });
 
-    // If empty, add a welcome entry
+      vows.forEach(v => {
+        diaryPages.push({
+          date: v.created || '—',
+          title: '🛡️ 承諾: ' + (v.id || ''),
+          body: v.content || v.detail || '一個被記住的承諾。',
+          tags: [{ text: '承諾', cls: 'vow' }],
+        });
+      });
+    }
+
+    // If still empty, add a welcome entry
     if (diaryPages.length === 0) {
       diaryPages.push({
         date: new Date().toISOString().slice(0, 10),
@@ -1230,14 +1289,17 @@
     if (!entry) return;
 
     const container = document.getElementById('diaryContent');
+    const tagsHtml = entry.tags && entry.tags.length
+      ? entry.tags.map(t => `<span class="diary-tag ${t.cls}">${escapeHtml(t.text)}</span>`).join('')
+      : '';
+    const verdictHtml = entry.verdictBarHtml || '';
+
     container.innerHTML = `
       <div class="diary-card">
         <div class="diary-date">${escapeHtml(String(entry.date))}</div>
         <div class="diary-title">${escapeHtml(entry.title)}</div>
         <div class="diary-body">${escapeHtml(entry.body)}</div>
-        <div class="diary-tags">
-          ${entry.tags.map(t => `<span class="diary-tag ${t.cls}">${escapeHtml(t.text)}</span>`).join('')}
-        </div>
+        <div class="diary-tags">${verdictHtml}${tagsHtml}</div>
       </div>
     `;
 

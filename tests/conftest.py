@@ -10,6 +10,19 @@ def pytest_ignore_collect(collection_path, config):
     return collection_path.name.startswith("test_output")
 
 
+@pytest.fixture(autouse=True)
+def _isolate_soul_db(tmp_path, monkeypatch):
+    """Redirect all SoulDB writes to a temp directory during tests.
+
+    Without this, tests that trigger council runtime / self_journal writes
+    pollute the real memory/self_journal.jsonl with thousands of test entries.
+    """
+    import tonesoul.memory.soul_db as soul_db_mod
+
+    monkeypatch.setattr(soul_db_mod, "_default_memory_root", lambda: tmp_path / "memory")
+    (tmp_path / "memory").mkdir(exist_ok=True)
+
+
 @pytest.fixture
 def workspace_tmpdir():
     """Provide a temporary directory rooted inside the repo workspace."""

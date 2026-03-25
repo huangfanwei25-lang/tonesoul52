@@ -2,10 +2,11 @@
 Memory Boot Protocol - runs at session start.
 
 Sequence:
-1. Load top crystals (permanent decision rules)
-2. Check if consolidation is due
-3. Ingest any new handoff files
-4. Return boot summary
+1. Load governance posture (runtime adapter)
+2. Load top crystals (permanent decision rules)
+3. Check if consolidation is due
+4. Ingest any new handoff files
+5. Return boot summary with governance posture
 """
 
 from __future__ import annotations
@@ -29,6 +30,7 @@ class BootSummary:
     consolidation_result: Optional[Dict[str, object]]
     handoffs_ingested: int
     boot_time_ms: float
+    governance_posture: Optional[str] = None  # human-readable summary from runtime adapter
 
 
 def memory_boot(
@@ -39,6 +41,15 @@ def memory_boot(
 ) -> BootSummary:
     """Execute the full memory boot sequence."""
     started = perf_counter()
+
+    # Step 0: Load governance posture via runtime adapter
+    governance_summary: Optional[str] = None
+    try:
+        from tonesoul.runtime_adapter import load, summary
+        posture = load()
+        governance_summary = summary(posture)
+    except Exception:
+        governance_summary = None
 
     top_rules: List[str] = []
     consolidation_result: Optional[Dict[str, object]] = None
@@ -78,4 +89,5 @@ def memory_boot(
         consolidation_result=consolidation_result,
         handoffs_ingested=handoffs_ingested,
         boot_time_ms=boot_time_ms,
+        governance_posture=governance_summary,
     )

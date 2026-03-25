@@ -332,16 +332,25 @@ class BenevolenceFilter:
         shadow_error: Optional[str],
         benev_error: Optional[str],
     ) -> Tuple[AuditResult, Optional[str], Optional[str]]:
-        """最終判定"""
+        """最終判定
+
+        Only REJECT and INTERCEPT escalate to a blocking final result.
+        FLAG is advisory — it records the concern but does not block output.
+        This prevents false positives from cross-layer attribution checks
+        and marginal shadow coverage from blocking legitimate responses.
+        """
         checks = [
             (audit.shadow_check, "無影子的輸出", shadow_error),
             (audit.benevolence_check, "攔截無效敘事", benev_error),
-            (audit.attribute_check, "跨層混用", attr_error),
         ]
 
         for result, msg, code in checks:
-            if result in (AuditResult.REJECT, AuditResult.INTERCEPT, AuditResult.FLAG):
+            if result in (AuditResult.REJECT, AuditResult.INTERCEPT):
                 return result, msg, code
+
+        # FLAG from attribute check is advisory, not blocking
+        if audit.attribute_check == AuditResult.FLAG:
+            return AuditResult.FLAG, "跨層混用", attr_error
 
         return AuditResult.PASS, None, None
 
