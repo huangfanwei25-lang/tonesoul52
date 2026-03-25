@@ -317,6 +317,16 @@ def commit(
     with t_path.open("a", encoding="utf-8") as f:
         f.write(json.dumps(trace.to_dict(), ensure_ascii=False) + "\n")
 
+    # Auto-rebuild zone_registry so world map updates immediately
+    try:
+        from tonesoul.zone_registry import rebuild_and_save
+        rebuild_and_save(
+            traces_path=t_path,
+            governance_path=s_path,
+        )
+    except Exception:
+        pass  # Non-critical — world map still works on next launch
+
     return posture
 
 

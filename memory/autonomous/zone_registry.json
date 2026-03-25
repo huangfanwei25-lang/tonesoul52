@@ -24,10 +24,10 @@
       "topics": [
         "governance"
       ],
-      "visit_count": 1,
+      "visit_count": 2,
       "artifact_count": 0,
       "first_seen": "2026-03-25T05:09:48.165489+00:00",
-      "last_seen": "2026-03-25T05:09:48.165489+00:00",
+      "last_seen": "2026-03-25T13:51:18.353536+00:00",
       "grid_x": 1,
       "grid_y": 0,
       "level": 1
@@ -111,10 +111,42 @@
       "grid_x": -1,
       "grid_y": -1,
       "level": 1
+    },
+    {
+      "zone_id": "gamification",
+      "name": "遊戲化實驗室",
+      "icon": "game",
+      "color": "#5f27cd",
+      "topics": [
+        "gamification"
+      ],
+      "visit_count": 1,
+      "artifact_count": 0,
+      "first_seen": "2026-03-25T13:51:18.353536+00:00",
+      "last_seen": "2026-03-25T13:51:18.353536+00:00",
+      "grid_x": 0,
+      "grid_y": -1,
+      "level": 1
+    },
+    {
+      "zone_id": "dashboard",
+      "name": "觀測站",
+      "icon": "eye",
+      "color": "#01a3a4",
+      "topics": [
+        "dashboard"
+      ],
+      "visit_count": 1,
+      "artifact_count": 0,
+      "first_seen": "2026-03-25T13:51:18.353536+00:00",
+      "last_seen": "2026-03-25T13:51:18.353536+00:00",
+      "grid_x": 1,
+      "grid_y": -1,
+      "level": 1
     }
   ],
-  "total_sessions": 1,
-  "world_mood": "alert",
+  "total_sessions": 2,
+  "world_mood": "calm",
   "weather": "clear",
-  "last_rebuilt": "2026-03-25T12:03:51.248387+00:00"
+  "last_rebuilt": "2026-03-25T13:53:23.595523+00:00"
 }
