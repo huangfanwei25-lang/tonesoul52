@@ -1,0 +1,410 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tonesoul.dev/schemas/governance/r_memory_packet_v1.schema.json",
+  "title": "R-Memory Packet v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "generated_at",
+    "backend",
+    "dominance_order",
+    "session_end_order",
+    "trace_integrity",
+    "parallel_lanes",
+    "canonical_sources",
+    "posture",
+    "recent_traces",
+    "recent_visitors",
+    "active_claims",
+    "recent_compactions"
+  ],
+  "properties": {
+    "contract_version": {
+      "type": "string",
+      "const": "v1"
+    },
+    "generated_at": {
+      "type": "string",
+      "minLength": 1
+    },
+    "backend": {
+      "type": "string",
+      "enum": ["redis", "file", "unknown"]
+    },
+    "dominance_order": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "session_end_order": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "trace_integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "aegis_protected",
+        "hash_chain_required",
+        "source_of_truth"
+      ],
+      "properties": {
+        "aegis_protected": {
+          "type": "boolean"
+        },
+        "hash_chain_required": {
+          "type": "boolean"
+        },
+        "source_of_truth": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "parallel_lanes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "canonical_commit_serialized",
+        "perspectives_surface",
+        "checkpoints_surface",
+        "compaction_surface",
+        "field_surface"
+      ],
+      "properties": {
+        "canonical_commit_serialized": {
+          "type": "boolean"
+        },
+        "perspectives_surface": {
+          "type": "string",
+          "minLength": 1
+        },
+        "checkpoints_surface": {
+          "type": "string",
+          "minLength": 1
+        },
+        "compaction_surface": {
+          "type": "string",
+          "minLength": 1
+        },
+        "field_surface": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "canonical_sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "posture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "soul_integral",
+        "session_count",
+        "last_updated",
+        "baseline_drift",
+        "active_vows",
+        "recent_tensions",
+        "recent_aegis_vetoes"
+      ],
+      "properties": {
+        "soul_integral": {
+          "type": "number"
+        },
+        "session_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "last_updated": {
+          "type": "string"
+        },
+        "baseline_drift": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "number"
+          }
+        },
+        "active_vows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/vow"
+          }
+        },
+        "recent_tensions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tension"
+          }
+        },
+        "recent_aegis_vetoes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/veto"
+          }
+        }
+      }
+    },
+    "recent_traces": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/trace"
+      }
+    },
+    "recent_visitors": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/visitor"
+      }
+    },
+    "active_claims": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/claim"
+      }
+    },
+    "recent_compactions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/compaction"
+      }
+    }
+  },
+  "$defs": {
+    "vow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "content", "source"],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        }
+      }
+    },
+    "tension": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["topic", "severity"],
+      "properties": {
+        "topic": {
+          "type": "string"
+        },
+        "severity": {
+          "type": "number"
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "resolution": {
+          "type": "string"
+        }
+      }
+    },
+    "veto": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "timestamp"],
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "agent": {
+          "type": "string"
+        },
+        "topic": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "violations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "trace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "session_id",
+        "agent",
+        "timestamp",
+        "topics",
+        "tension_count",
+        "vow_count",
+        "aegis_veto_count",
+        "key_decision_count"
+      ],
+      "properties": {
+        "session_id": {
+          "type": "string"
+        },
+        "agent": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "topics": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "tension_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "vow_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "aegis_veto_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "key_decision_count": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "visitor": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["agent", "timestamp", "source"],
+      "properties": {
+        "agent": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        }
+      }
+    },
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "task_id",
+        "agent",
+        "summary",
+        "paths",
+        "source",
+        "created_at",
+        "expires_at"
+      ],
+      "properties": {
+        "task_id": {
+          "type": "string"
+        },
+        "agent": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "paths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "source": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "expires_at": {
+          "type": "string"
+        }
+      }
+    },
+    "compaction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "compaction_id",
+        "agent",
+        "session_id",
+        "summary",
+        "carry_forward",
+        "pending_paths",
+        "evidence_refs",
+        "next_action",
+        "source",
+        "updated_at"
+      ],
+      "properties": {
+        "compaction_id": {
+          "type": "string"
+        },
+        "agent": {
+          "type": "string"
+        },
+        "session_id": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "carry_forward": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "pending_paths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "next_action": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

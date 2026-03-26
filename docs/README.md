@@ -1,7 +1,7 @@
 # ToneSoul Documentation Index
 
 > Purpose: documentation entrypoint and guided index for ToneSoul architecture, status artifacts, and convergence surfaces.
-> Last Updated: 2026-03-23
+> Last Updated: 2026-03-26
 
 > 這是文檔的入口點。請從這裡開始閱讀。
 
@@ -14,6 +14,7 @@
 3. [notes/TONESOUL_RUNTIME_ADAPTER_MEMORY_ANCHOR_2026-03-23.md](notes/TONESOUL_RUNTIME_ADAPTER_MEMORY_ANCHOR_2026-03-23.md)
 4. [architecture/KNOWLEDGE_SURFACES_BOUNDARY_MAP.md](architecture/KNOWLEDGE_SURFACES_BOUNDARY_MAP.md)
 5. [architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md](architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md)
+6. [notes/TONESOUL_RUNTIME_REVIEW_LOGIC_ANCHOR_2026-03-26.md](notes/TONESOUL_RUNTIME_REVIEW_LOGIC_ANCHOR_2026-03-26.md)
 
 ## Retrieval Boundary
 
@@ -28,6 +29,16 @@
   - preserves the current handoff context for the next build seam: self-dogfooding ToneSoul through a lightweight developer runtime adapter
 - `RFC-015_Self_Dogfooding_Runtime_Adapter.md`
   - draft source note for the runtime-adapter direction; keep it subordinate to the newer memory anchor until it is rewritten cleanly
+- `architecture/TONESOUL_R_MEMORY_STACK_RECOMMENDATION.md`
+  - detailed recommendation for Redis-backed "R-memory", dominance order inside live compute, and the external repository stack that best fits ToneSoul
+- `notes/TONESOUL_RUNTIME_REVIEW_LOGIC_ANCHOR_2026-03-26.md`
+  - preserves the runtime review logic for authoritative state flow, safety-before-mutation, and one-cause-one-effect during Redis/world/gateway work
+- `architecture/TONESOUL_MULTI_AGENT_SEMANTIC_FIELD_CONTRACT.md`
+  - evidence-backed contract for how far ToneSoul may push multi-agent shared state, where semantic-field synthesis remains experimental, and why canonical commit must stay serialized
+- `research/tonesoul_multi_agent_semantic_field_evidence_map_2026-03-26.md`
+  - official-source evidence map covering Anthropic, OpenAI, Microsoft, Google Cloud, and Google Research before ToneSoul promotes semantic-field language into canonical architecture
+- `architecture/TONESOUL_RUNTIME_COMPACTION_AND_GAMIFICATION_CONTRACT.md`
+  - triages recent compaction-memory, world-gamification, legacy-trace-repair, and security ideas into mainline, experimental, delayed, and forbidden lanes
 
 ## Engineering Contracts
 
@@ -37,6 +48,10 @@
   - defines what may and may not be distilled into adapters, RL traces, or future model-attached layers
 - `architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md`
   - defines the A/B/C firewall for separating mechanism, observable behavior, and interpretation in documents and claims
+- `architecture/TONESOUL_MULTI_AGENT_SEMANTIC_FIELD_CONTRACT.md`
+  - defines the boundary between parallel perspective lanes, experimental field synthesis, and serialized canonical governance commit
+- `architecture/TONESOUL_RUNTIME_COMPACTION_AND_GAMIFICATION_CONTRACT.md`
+  - defines what part of the newer runtime/world/security proposal belongs in canonical runtime, projection layers, or separate workstreams
 
 ## Machine-Readable Mirrors
 
@@ -53,6 +68,10 @@
   - adapter-row gate report showing whether public-safe distillation inputs pass the first L8 review
 - `status/abc_firewall_latest.json`
   - doctrine verifier status for disclaimer-first, entrypoint references, and observable-shell claim boundaries
+- `../spec/governance/r_memory_packet_v1.schema.json`
+  - schema for the compact hot-state packet emitted by `python scripts/run_r_memory_packet.py` or `GET /packet`
+- `../scripts/run_task_claim.py`
+  - local CLI for claim/release/list task locks before multiple terminals touch the same surface
  
 ## Documentation Convergence
  

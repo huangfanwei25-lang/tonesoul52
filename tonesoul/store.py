@@ -1,0 +1,102 @@
+"""ToneSoul Storage Abstraction Layer.
+
+Auto-selects backend:
+  - RedisStore  if Redis is reachable at TONESOUL_REDIS_URL (default redis://localhost:6379/0)
+  - FileStore   otherwise (JSON files — current behavior, always works)
+
+Usage:
+    from tonesoul.store import get_store
+    store = get_store()
+    state = store.get_state()
+    store.set_state(state)
+    store.append_trace(trace_dict)
+
+Pub/sub (Redis only — FileStore silently skips):
+    store.publish("governance:updated", {"session_count": 5})
+    for msg in store.subscribe("governance:updated"):
+        print(msg)
+"""
+
+from __future__ import annotations
+
+import os
+
+# ---------------------------------------------------------------------------
+# Redis key / channel constants  (shared by RedisStore + any subscriber)
+# ---------------------------------------------------------------------------
+
+KEY_GOVERNANCE = "ts:governance"  # JSON string
+KEY_ZONES = "ts:zones"  # JSON string
+STREAM_TRACES = "ts:traces"  # Redis Stream (append-only)
+CHANNEL_EVENTS = "ts:events"  # Pub/sub channel
+LOCK_PREFIX = "ts:locks:"  # Per-task lock keys (Redis) / conceptual prefix
+COMMIT_LOCK_KEY = "ts:commit_lock"  # Canonical governance commit mutex
+PERSPECTIVE_PREFIX = "ts:perspectives:"  # Per-agent perspective lane
+CHECKPOINT_PREFIX = "ts:checkpoints:"  # Mid-session checkpoint lane
+KEY_COMPACTED = "ts:compacted"  # Non-canonical resumability/compaction lane
+FIELD_KEY = "ts:field"  # Experimental semantic-field synthesis surface
+
+
+# ---------------------------------------------------------------------------
+# Factory
+# ---------------------------------------------------------------------------
+
+_store_singleton = None
+
+
+def get_store(redis_url: str | None = None, *, force_file: bool = False):
+    """Return the singleton store (auto-detected backend).
+
+    Args:
+        redis_url:  Override TONESOUL_REDIS_URL env var.
+        force_file: Always use FileStore (useful in tests).
+    """
+    global _store_singleton
+    if _store_singleton is not None:
+        return _store_singleton
+
+    if force_file:
+        _store_singleton = _make_file_store()
+        return _store_singleton
+
+    url = redis_url or os.environ.get("TONESOUL_REDIS_URL", "redis://localhost:6379/0")
+    _store_singleton = _try_redis(url) or _make_file_store()
+    return _store_singleton
+
+
+def reset_store() -> None:
+    """Reset singleton (for tests)."""
+    global _store_singleton
+    _store_singleton = None
+
+
+# ---------------------------------------------------------------------------
+# Internal helpers
+# ---------------------------------------------------------------------------
+
+
+def _try_redis(url: str):
+    """Try to connect to Redis. Return RedisStore or None."""
+    try:
+        import redis as _redis
+
+        client = _redis.from_url(url, socket_connect_timeout=0.5, socket_timeout=0.5)
+        client.ping()
+    except Exception:
+        return None
+
+    try:
+        from tonesoul.backends.redis_store import RedisStore
+
+        store = RedisStore(client)
+        print(f"[ToneSoul] Storage: Redis ({url})")
+        return store
+    except Exception:
+        return None
+
+
+def _make_file_store():
+    from tonesoul.backends.file_store import FileStore
+
+    print("[ToneSoul] Storage: FileStore (Redis not available)")
+    return FileStore()

@@ -3,20 +3,31 @@
 from __future__ import annotations
 
 import json
-import math
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
 from tonesoul.runtime_adapter import (
+    CommitConcurrencyError,
     GovernancePosture,
     SessionTrace,
+    claim_task,
     commit,
     decay_tensions,
     drift_baseline,
+    list_active_claims,
+    list_checkpoints,
+    list_compactions,
+    list_perspectives,
     load,
+    r_memory_packet,
+    release_task_claim,
     summary,
     update_soul_integral,
+    write_checkpoint,
+    write_compaction,
+    write_perspective,
 )
 
 
@@ -128,6 +139,283 @@ def test_commit_retires_vow(tmp_state: Path, tmp_traces: Path) -> None:
     assert "v-old" not in ids
 
 
+def test_commit_blocked_trace_does_not_mutate_state(
+    tmp_state: Path,
+    tmp_traces: Path,
+    monkeypatch,
+) -> None:
+    state = {
+        "version": "0.1.0",
+        "last_updated": "2026-03-25T00:00:00+00:00",
+        "soul_integral": 0.0,
+        "tension_history": [],
+        "active_vows": [],
+        "aegis_vetoes": [],
+        "baseline_drift": {"caution_bias": 0.5, "innovation_bias": 0.5, "autonomy_level": 0.5},
+        "session_count": 2,
+    }
+    tmp_state.write_text(json.dumps(state), encoding="utf-8")
+
+    class _BlockedShield:
+        @classmethod
+        def load(cls, store=None):
+            return cls()
+
+        def protect_trace(self, trace_dict, agent_id):
+            return trace_dict, SimpleNamespace(
+                severity="blocked",
+                violations=["prompt_injection"],
+            )
+
+        def save(self, store) -> None:
+            return None
+
+    monkeypatch.setattr("tonesoul.aegis_shield.AegisShield", _BlockedShield)
+
+    trace = SessionTrace(
+        agent="test",
+        tension_events=[{"topic": "scope creep", "severity": 0.9}],
+        vow_events=[{"vow_id": "v-new", "action": "created", "detail": "should never land"}],
+    )
+    posture = commit(trace, state_path=tmp_state, traces_path=tmp_traces)
+
+    assert posture.session_count == 2
+    assert posture.tension_history == []
+    assert posture.active_vows == []
+    assert len(posture.aegis_vetoes) == 1
+    assert posture.aegis_vetoes[0]["type"] == "memory_poisoning"
+    assert not tmp_traces.exists()
+
+    saved = json.loads(tmp_state.read_text(encoding="utf-8"))
+    assert saved["session_count"] == 2
+    assert saved["tension_history"] == []
+    assert saved["active_vows"] == []
+    assert len(saved["aegis_vetoes"]) == 1
+
+
+def test_commit_rebuilds_zone_registry_with_same_explicit_paths(
+    tmp_state: Path,
+    tmp_traces: Path,
+    monkeypatch,
+) -> None:
+    calls = {}
+
+    def fake_rebuild_and_save(
+        traces_path=None,
+        governance_path=None,
+        registry_path=None,
+        store=None,
+    ):
+        calls["traces_path"] = traces_path
+        calls["governance_path"] = governance_path
+        calls["registry_path"] = registry_path
+        calls["store"] = store
+        return None
+
+    monkeypatch.setattr("tonesoul.zone_registry.rebuild_and_save", fake_rebuild_and_save)
+
+    trace = SessionTrace(agent="test", key_decisions=["rebuild zones"])
+    commit(trace, state_path=tmp_state, traces_path=tmp_traces)
+
+    assert calls["store"] is None
+    assert calls["traces_path"] == tmp_traces
+    assert calls["governance_path"] == tmp_state
+    assert calls["registry_path"] is not None
+    assert calls["registry_path"].name == "zone_registry.json"
+
+
+def test_commit_raises_when_canonical_lock_is_unavailable(
+    tmp_state: Path,
+    tmp_traces: Path,
+    monkeypatch,
+) -> None:
+    monkeypatch.setattr(
+        "tonesoul.backends.file_store.FileStore.acquire_commit_lock",
+        lambda self, owner, ttl_seconds=30: None,
+    )
+
+    trace = SessionTrace(agent="codex", key_decisions=["should conflict"])
+    with pytest.raises(CommitConcurrencyError):
+        commit(trace, state_path=tmp_state, traces_path=tmp_traces)
+
+
+def test_commit_lock_file_is_released_after_success(tmp_state: Path, tmp_traces: Path) -> None:
+    trace = SessionTrace(agent="codex", key_decisions=["release lock"])
+    commit(trace, state_path=tmp_state, traces_path=tmp_traces)
+
+    lock_path = tmp_state.parent / ".aegis" / "commit.lock.json"
+    assert not lock_path.exists()
+
+
+def test_r_memory_packet_exposes_runtime_dominance_and_recent_trace(
+    tmp_state: Path,
+    tmp_traces: Path,
+) -> None:
+    trace = SessionTrace(
+        agent="codex",
+        topics=["runtime", "redis"],
+        tension_events=[{"topic": "safety vs speed", "severity": 0.7}],
+        key_decisions=["emit packet"],
+    )
+    commit(trace, state_path=tmp_state, traces_path=tmp_traces)
+
+    from tonesoul.backends.file_store import FileStore
+
+    store = FileStore(
+        gov_path=tmp_state,
+        traces_path=tmp_traces,
+        zones_path=tmp_traces.parent / "zone_registry.json",
+    )
+    posture = load(state_path=tmp_state)
+    packet = r_memory_packet(posture=posture, store=store, trace_limit=3, visitor_limit=3)
+
+    assert packet["contract_version"] == "v1"
+    assert packet["backend"] == "file"
+    assert packet["dominance_order"][0] == "hard_constraints"
+    assert packet["session_end_order"][3] == "persist_governance_posture"
+    assert packet["trace_integrity"]["hash_chain_required"] is True
+    assert packet["parallel_lanes"]["canonical_commit_serialized"] is True
+    assert packet["parallel_lanes"]["perspectives_surface"] == "ts:perspectives:{agent_id}"
+    assert packet["parallel_lanes"]["compaction_surface"] == "ts:compacted"
+    assert packet["posture"]["session_count"] == 1
+    assert packet["recent_traces"][0]["agent"] == "codex"
+    assert packet["recent_traces"][0]["topics"] == ["runtime", "redis"]
+
+
+def test_task_claims_prevent_collisions_and_appear_in_packet(tmp_path: Path) -> None:
+    from tonesoul.backends.file_store import FileStore
+
+    store = FileStore(
+        gov_path=tmp_path / "governance_state.json",
+        traces_path=tmp_path / "session_traces.jsonl",
+        zones_path=tmp_path / "zone_registry.json",
+        claims_path=tmp_path / "task_claims.json",
+    )
+
+    first = claim_task(
+        "launch-world-dedupe",
+        agent_id="codex",
+        summary="dedupe redis refresh",
+        paths=["scripts/launch_world.py"],
+        store=store,
+    )
+    second = claim_task(
+        "launch-world-dedupe",
+        agent_id="gemini",
+        summary="should conflict",
+        paths=["scripts/launch_world.py"],
+        store=store,
+    )
+
+    assert first["ok"] is True
+    assert second["ok"] is False
+
+    claims = list_active_claims(store=store)
+    assert len(claims) == 1
+    assert claims[0]["agent"] == "codex"
+
+    packet = r_memory_packet(posture=GovernancePosture(), store=store)
+    assert packet["active_claims"][0]["task_id"] == "launch-world-dedupe"
+    assert packet["active_claims"][0]["agent"] == "codex"
+
+    released = release_task_claim("launch-world-dedupe", agent_id="codex", store=store)
+    assert released["ok"] is True
+    assert list_active_claims(store=store) == []
+
+
+def test_perspectives_and_checkpoints_use_noncanonical_lanes(tmp_path: Path) -> None:
+    from tonesoul.backends.file_store import FileStore
+
+    store = FileStore(
+        gov_path=tmp_path / "governance_state.json",
+        traces_path=tmp_path / "session_traces.jsonl",
+        zones_path=tmp_path / "zone_registry.json",
+        claims_path=tmp_path / "task_claims.json",
+        perspectives_path=tmp_path / "perspectives.json",
+        checkpoints_path=tmp_path / "checkpoints.json",
+        commit_lock_path=tmp_path / "commit.lock.json",
+    )
+
+    perspective = write_perspective(
+        "codex",
+        session_id="sess-42",
+        summary="guardian leans cautious, analyst wants evidence",
+        stance="divergent_but_productive",
+        tensions=["safety vs speed"],
+        proposed_drift={"caution_bias": 0.58},
+        proposed_vows=["trace-before-promotion"],
+        evidence_refs=["docs/architecture/TONESOUL_MULTI_AGENT_SEMANTIC_FIELD_CONTRACT.md"],
+        store=store,
+    )
+    checkpoint = write_checkpoint(
+        "cp-42",
+        agent_id="codex",
+        session_id="sess-42",
+        summary="mutex implemented, field lane pending",
+        pending_paths=["tonesoul/runtime_adapter.py", "tonesoul/backends/redis_store.py"],
+        next_action="add field synthesis evaluator",
+        store=store,
+    )
+
+    assert perspective["agent"] == "codex"
+    assert checkpoint["checkpoint_id"] == "cp-42"
+
+    perspectives = list_perspectives(store=store)
+    checkpoints = list_checkpoints(store=store)
+
+    assert perspectives[0]["stance"] == "divergent_but_productive"
+    assert perspectives[0]["proposed_vows"] == ["trace-before-promotion"]
+    assert checkpoints[0]["next_action"] == "add field synthesis evaluator"
+
+
+def test_compactions_use_noncanonical_resumability_lane(tmp_path: Path) -> None:
+    from tonesoul.backends.file_store import FileStore
+
+    store = FileStore(
+        gov_path=tmp_path / "governance_state.json",
+        traces_path=tmp_path / "session_traces.jsonl",
+        zones_path=tmp_path / "zone_registry.json",
+        claims_path=tmp_path / "task_claims.json",
+        compactions_path=tmp_path / "compacted.json",
+    )
+
+    first = write_compaction(
+        agent_id="codex",
+        session_id="sess-42",
+        summary="Session condensed into a resumability handoff.",
+        carry_forward=["keep canonical commit serialized"],
+        pending_paths=["scripts/gateway.py"],
+        evidence_refs=[
+            "docs/architecture/TONESOUL_RUNTIME_COMPACTION_AND_GAMIFICATION_CONTRACT.md"
+        ],
+        next_action="surface compaction in the packet only",
+        limit=2,
+        store=store,
+    )
+    second = write_compaction(
+        agent_id="gemini",
+        session_id="sess-43",
+        summary="Second summary should appear first.",
+        carry_forward=["do not mutate governance posture"],
+        pending_paths=["apps/dashboard/world.html"],
+        next_action="use packet consumption in UI",
+        limit=2,
+        store=store,
+    )
+
+    compactions = list_compactions(store=store, n=5)
+
+    assert first["agent"] == "codex"
+    assert second["agent"] == "gemini"
+    assert len(compactions) == 2
+    assert compactions[0]["summary"] == "Second summary should appear first."
+    assert compactions[1]["carry_forward"] == ["keep canonical commit serialized"]
+
+    packet = r_memory_packet(posture=GovernancePosture(), store=store)
+    assert packet["recent_compactions"][0]["agent"] == "gemini"
+    assert packet["recent_compactions"][1]["agent"] == "codex"
+
+
 # ── decay_tensions() ────────────────────────────────────────────
 
 
@@ -139,6 +427,7 @@ def test_decay_prunes_old_tensions() -> None:
 
 def test_decay_preserves_recent_tensions() -> None:
     from datetime import datetime, timezone
+
     now = datetime.now(timezone.utc).isoformat()
     recent = [{"timestamp": now, "severity": 0.8, "topic": "just happened"}]
     result = decay_tensions(recent)
@@ -166,6 +455,7 @@ def test_drift_high_tension_nudges_caution_up() -> None:
 
 def test_soul_integral_accumulates() -> None:
     from datetime import datetime, timezone
+
     now = datetime.now(timezone.utc).isoformat()
     result = update_soul_integral(0.0, now, [{"severity": 0.7}])
     assert result == pytest.approx(0.7, abs=0.01)

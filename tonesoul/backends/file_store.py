@@ -1,0 +1,367 @@
+"""FileStore — JSON-file backend (current behavior, zero dependencies).
+
+Stores:
+  governance_state.json          → governance posture
+  memory/autonomous/session_traces.jsonl → append-only trace log
+  memory/autonomous/zone_registry.json   → zone map
+
+Pub/sub: no-op (world map falls back to file-mtime polling).
+"""
+
+from __future__ import annotations
+
+import json
+import uuid
+from pathlib import Path
+from time import time as _time
+from typing import Any, Dict, Iterator, List
+
+_ROOT = Path(__file__).resolve().parent.parent.parent  # repo root
+
+_DEFAULT_GOV = _ROOT / "governance_state.json"
+_DEFAULT_TRACES = _ROOT / "memory" / "autonomous" / "session_traces.jsonl"
+_DEFAULT_ZONES = _ROOT / "memory" / "autonomous" / "zone_registry.json"
+_DEFAULT_CLAIMS = _ROOT / ".aegis" / "task_claims.json"
+_DEFAULT_COMMIT_LOCK = _ROOT / ".aegis" / "commit.lock.json"
+_DEFAULT_PERSPECTIVES = _ROOT / ".aegis" / "perspectives.json"
+_DEFAULT_CHECKPOINTS = _ROOT / ".aegis" / "checkpoints.json"
+_DEFAULT_COMPACTIONS = _ROOT / ".aegis" / "compacted.json"
+
+
+class FileStore:
+    """JSON/JSONL file backend. Thread-safe for single-writer scenarios."""
+
+    def __init__(
+        self,
+        gov_path: Path | None = None,
+        traces_path: Path | None = None,
+        zones_path: Path | None = None,
+        claims_path: Path | None = None,
+        commit_lock_path: Path | None = None,
+        perspectives_path: Path | None = None,
+        checkpoints_path: Path | None = None,
+        compactions_path: Path | None = None,
+    ) -> None:
+        self.gov_path = gov_path or _DEFAULT_GOV
+        self.traces_path = traces_path or _DEFAULT_TRACES
+        self.zones_path = zones_path or _DEFAULT_ZONES
+        self.claims_path = claims_path or _DEFAULT_CLAIMS
+        self.commit_lock_path = commit_lock_path or _DEFAULT_COMMIT_LOCK
+        self.perspectives_path = perspectives_path or _DEFAULT_PERSPECTIVES
+        self.checkpoints_path = checkpoints_path or _DEFAULT_CHECKPOINTS
+        self.compactions_path = compactions_path or _DEFAULT_COMPACTIONS
+
+    # ── Governance state ────────────────────────────────────────────────────
+
+    def get_state(self) -> Dict[str, Any]:
+        if not self.gov_path.exists():
+            return {}
+        return json.loads(self.gov_path.read_text(encoding="utf-8"))
+
+    def set_state(self, data: Dict[str, Any]) -> None:
+        self.gov_path.parent.mkdir(parents=True, exist_ok=True)
+        self.gov_path.write_text(
+            json.dumps(data, indent=2, ensure_ascii=False) + "\n",
+            encoding="utf-8",
+        )
+
+    # ── Session traces ───────────────────────────────────────────────────────
+
+    def append_trace(self, trace: Dict[str, Any]) -> None:
+        self.traces_path.parent.mkdir(parents=True, exist_ok=True)
+        with self.traces_path.open("a", encoding="utf-8") as f:
+            f.write(json.dumps(trace, ensure_ascii=False) + "\n")
+
+    def get_traces(self, n: int = 100) -> List[Dict[str, Any]]:
+        if not self.traces_path.exists():
+            return []
+        lines = self.traces_path.read_text(encoding="utf-8").splitlines()
+        result = []
+        for line in lines[-n:]:
+            line = line.strip()
+            if line:
+                try:
+                    result.append(json.loads(line))
+                except json.JSONDecodeError:
+                    pass
+        return result
+
+    # ── Zone registry ────────────────────────────────────────────────────────
+
+    def get_zones(self) -> Dict[str, Any]:
+        if not self.zones_path.exists():
+            return {}
+        return json.loads(self.zones_path.read_text(encoding="utf-8"))
+
+    def set_zones(self, data: Dict[str, Any]) -> None:
+        self.zones_path.parent.mkdir(parents=True, exist_ok=True)
+        self.zones_path.write_text(
+            json.dumps(data, indent=2, ensure_ascii=False) + "\n",
+            encoding="utf-8",
+        )
+
+    # ── Pub/sub (no-op) ──────────────────────────────────────────────────────
+
+    def publish(self, channel: str, message: Dict[str, Any]) -> None:
+        pass  # World map uses file-mtime polling as fallback
+
+    def subscribe(self, channel: str) -> Iterator[Dict[str, Any]]:
+        return iter([])  # no-op
+
+    # ── Task claims / locks ────────────────────────────────────────────────
+
+    def claim_lock(self, task_id: str, claim: Dict[str, Any], ttl_seconds: int = 1800) -> bool:
+        claims = self._read_claims()
+        self._purge_expired_claims(claims)
+        existing = claims.get(task_id)
+        if existing:
+            if str(existing.get("agent", "")) != str(claim.get("agent", "")):
+                return False
+        entry = dict(claim)
+        entry["task_id"] = task_id
+        entry["ttl_seconds"] = int(ttl_seconds)
+        claims[task_id] = entry
+        self._write_claims(claims)
+        return True
+
+    def release_lock(self, task_id: str, agent_id: str | None = None) -> bool:
+        claims = self._read_claims()
+        self._purge_expired_claims(claims)
+        existing = claims.get(task_id)
+        if not existing:
+            return False
+        if agent_id and str(existing.get("agent", "")) != str(agent_id):
+            return False
+        del claims[task_id]
+        self._write_claims(claims)
+        return True
+
+    def list_locks(self) -> List[Dict[str, Any]]:
+        claims = self._read_claims()
+        self._purge_expired_claims(claims)
+        self._write_claims(claims)
+        return [claims[key] for key in sorted(claims)]
+
+    def _read_claims(self) -> Dict[str, Dict[str, Any]]:
+        if not self.claims_path.exists():
+            return {}
+        try:
+            raw = json.loads(self.claims_path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            return {}
+        if not isinstance(raw, dict):
+            return {}
+        result: Dict[str, Dict[str, Any]] = {}
+        for key, value in raw.items():
+            if isinstance(key, str) and isinstance(value, dict):
+                result[key] = dict(value)
+        return result
+
+    def _write_claims(self, claims: Dict[str, Dict[str, Any]]) -> None:
+        self.claims_path.parent.mkdir(parents=True, exist_ok=True)
+        self.claims_path.write_text(
+            json.dumps(claims, indent=2, ensure_ascii=False) + "\n",
+            encoding="utf-8",
+        )
+
+    def _purge_expired_entries(self, claims: Dict[str, Dict[str, Any]]) -> None:
+        to_delete: List[str] = []
+        for task_id, claim in claims.items():
+            expires_at = str(claim.get("expires_at", "")).strip()
+            if not expires_at:
+                continue
+            try:
+                expires_ts = float(expires_at)
+            except ValueError:
+                continue
+            if expires_ts <= 0:
+                continue
+            if expires_ts <= _time():
+                to_delete.append(task_id)
+        for task_id in to_delete:
+            claims.pop(task_id, None)
+
+    def _purge_expired_claims(self, claims: Dict[str, Dict[str, Any]]) -> None:
+        self._purge_expired_entries(claims)
+
+    # Canonical commit mutex
+
+    def acquire_commit_lock(self, owner: str, ttl_seconds: int = 30) -> str | None:
+        token = f"{owner}:{uuid.uuid4()}"
+        payload = {
+            "owner": owner,
+            "token": token,
+            "expires_at": _time() + float(ttl_seconds),
+        }
+        self.commit_lock_path.parent.mkdir(parents=True, exist_ok=True)
+        for _ in range(2):
+            try:
+                with self.commit_lock_path.open("x", encoding="utf-8") as handle:
+                    handle.write(json.dumps(payload, ensure_ascii=False) + "\n")
+                return token
+            except FileExistsError:
+                existing = self._read_json_file(self.commit_lock_path)
+                expires_at = float(existing.get("expires_at", 0.0) or 0.0)
+                if expires_at and expires_at <= _time():
+                    try:
+                        self.commit_lock_path.unlink()
+                    except FileNotFoundError:
+                        pass
+                    continue
+                return None
+        return None
+
+    def release_commit_lock(self, token: str) -> bool:
+        raw = self._read_json_file(self.commit_lock_path)
+        if not raw:
+            return False
+        if str(raw.get("token", "")) != str(token):
+            return False
+        try:
+            self.commit_lock_path.unlink()
+        except FileNotFoundError:
+            return False
+        return True
+
+    # Perspective and checkpoint lanes
+
+    def set_perspective(
+        self,
+        agent_id: str,
+        data: Dict[str, Any],
+        *,
+        ttl_seconds: int = 7200,
+    ) -> None:
+        perspectives = self._read_registry(self.perspectives_path)
+        entry = dict(data)
+        entry["agent"] = agent_id
+        entry["expires_at"] = str(_time() + float(ttl_seconds))
+        perspectives[agent_id] = entry
+        self._purge_expired_entries(perspectives)
+        self._write_registry(self.perspectives_path, perspectives)
+
+    def list_perspectives(self) -> List[Dict[str, Any]]:
+        perspectives = self._read_registry(self.perspectives_path)
+        self._purge_expired_entries(perspectives)
+        self._write_registry(self.perspectives_path, perspectives)
+        return [perspectives[key] for key in sorted(perspectives)]
+
+    def set_checkpoint(
+        self,
+        checkpoint_id: str,
+        data: Dict[str, Any],
+        *,
+        ttl_seconds: int = 86400,
+    ) -> None:
+        checkpoints = self._read_registry(self.checkpoints_path)
+        entry = dict(data)
+        entry["checkpoint_id"] = checkpoint_id
+        entry["expires_at"] = str(_time() + float(ttl_seconds))
+        checkpoints[checkpoint_id] = entry
+        self._purge_expired_entries(checkpoints)
+        self._write_registry(self.checkpoints_path, checkpoints)
+
+    def list_checkpoints(self) -> List[Dict[str, Any]]:
+        checkpoints = self._read_registry(self.checkpoints_path)
+        self._purge_expired_entries(checkpoints)
+        self._write_registry(self.checkpoints_path, checkpoints)
+        return sorted(
+            checkpoints.values(),
+            key=lambda item: str(item.get("updated_at", "")),
+            reverse=True,
+        )
+
+    def append_compaction(
+        self,
+        data: Dict[str, Any],
+        *,
+        limit: int = 20,
+        ttl_seconds: int = 604800,
+    ) -> None:
+        compactions = self._read_list_registry(self.compactions_path)
+        self._purge_expired_list_entries(compactions)
+        entry = dict(data)
+        if ttl_seconds > 0:
+            entry["expires_at"] = str(_time() + float(ttl_seconds))
+        compactions.insert(0, entry)
+        if limit > 0:
+            compactions = compactions[: int(limit)]
+        self._write_list_registry(self.compactions_path, compactions)
+
+    def get_compactions(self, n: int = 5) -> List[Dict[str, Any]]:
+        compactions = self._read_list_registry(self.compactions_path)
+        self._purge_expired_list_entries(compactions)
+        self._write_list_registry(self.compactions_path, compactions)
+        return compactions[: max(0, int(n))]
+
+    def _read_json_file(self, path: Path) -> Dict[str, Any]:
+        if not path.exists():
+            return {}
+        try:
+            raw = json.loads(path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            return {}
+        return raw if isinstance(raw, dict) else {}
+
+    def _read_registry(self, path: Path) -> Dict[str, Dict[str, Any]]:
+        raw = self._read_json_file(path)
+        result: Dict[str, Dict[str, Any]] = {}
+        for key, value in raw.items():
+            if isinstance(key, str) and isinstance(value, dict):
+                result[key] = dict(value)
+        return result
+
+    def _read_list_registry(self, path: Path) -> List[Dict[str, Any]]:
+        if not path.exists():
+            return []
+        try:
+            raw = json.loads(path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            return []
+        if not isinstance(raw, list):
+            return []
+        result: List[Dict[str, Any]] = []
+        for item in raw:
+            if isinstance(item, dict):
+                result.append(dict(item))
+        return result
+
+    def _write_registry(self, path: Path, values: Dict[str, Dict[str, Any]]) -> None:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(
+            json.dumps(values, indent=2, ensure_ascii=False) + "\n",
+            encoding="utf-8",
+        )
+
+    def _write_list_registry(self, path: Path, values: List[Dict[str, Any]]) -> None:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(
+            json.dumps(values, indent=2, ensure_ascii=False) + "\n",
+            encoding="utf-8",
+        )
+
+    def _purge_expired_list_entries(self, values: List[Dict[str, Any]]) -> None:
+        kept: List[Dict[str, Any]] = []
+        for item in values:
+            expires_at = str(item.get("expires_at", "")).strip()
+            if not expires_at:
+                kept.append(item)
+                continue
+            try:
+                expires_ts = float(expires_at)
+            except ValueError:
+                kept.append(item)
+                continue
+            if expires_ts <= 0 or expires_ts > _time():
+                kept.append(item)
+        values[:] = kept
+
+    # ── Backend info ─────────────────────────────────────────────────────────
+
+    @property
+    def backend_name(self) -> str:
+        return "file"
+
+    @property
+    def is_redis(self) -> bool:
+        return False

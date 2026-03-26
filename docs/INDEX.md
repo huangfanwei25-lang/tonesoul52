@@ -1,7 +1,7 @@
 # ToneSoul Documentation Index
 
 > Purpose: top-level documentation index for ToneSoul authority surfaces, operational packets, and convergence maps.
-> Last Updated: 2026-03-23
+> Last Updated: 2026-03-26
 
 > 自動更新於 2026-03-22。按主題分類，方便快速導航。
 
@@ -14,17 +14,26 @@
 - [notes/TONESOUL_RUNTIME_ADAPTER_MEMORY_ANCHOR_2026-03-23.md](notes/TONESOUL_RUNTIME_ADAPTER_MEMORY_ANCHOR_2026-03-23.md)
 - [architecture/KNOWLEDGE_SURFACES_BOUNDARY_MAP.md](architecture/KNOWLEDGE_SURFACES_BOUNDARY_MAP.md)
 - [architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md](architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md)
+- [notes/TONESOUL_RUNTIME_REVIEW_LOGIC_ANCHOR_2026-03-26.md](notes/TONESOUL_RUNTIME_REVIEW_LOGIC_ANCHOR_2026-03-26.md)
+- [architecture/TONESOUL_MULTI_AGENT_SEMANTIC_FIELD_CONTRACT.md](architecture/TONESOUL_MULTI_AGENT_SEMANTIC_FIELD_CONTRACT.md)
+- [architecture/TONESOUL_RUNTIME_COMPACTION_AND_GAMIFICATION_CONTRACT.md](architecture/TONESOUL_RUNTIME_COMPACTION_AND_GAMIFICATION_CONTRACT.md)
 
 ## Engineering Contracts
 
 - [architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md](architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md)
 - [architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md](architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md)
 - [architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md](architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md)
+- [architecture/TONESOUL_MULTI_AGENT_SEMANTIC_FIELD_CONTRACT.md](architecture/TONESOUL_MULTI_AGENT_SEMANTIC_FIELD_CONTRACT.md)
+- [architecture/TONESOUL_RUNTIME_COMPACTION_AND_GAMIFICATION_CONTRACT.md](architecture/TONESOUL_RUNTIME_COMPACTION_AND_GAMIFICATION_CONTRACT.md)
 
 ## Developer Runtime Adapter Direction
 
 - [notes/TONESOUL_RUNTIME_ADAPTER_MEMORY_ANCHOR_2026-03-23.md](notes/TONESOUL_RUNTIME_ADAPTER_MEMORY_ANCHOR_2026-03-23.md)
 - [RFC-015_Self_Dogfooding_Runtime_Adapter.md](RFC-015_Self_Dogfooding_Runtime_Adapter.md)
+- [architecture/TONESOUL_R_MEMORY_STACK_RECOMMENDATION.md](architecture/TONESOUL_R_MEMORY_STACK_RECOMMENDATION.md)
+- [notes/TONESOUL_RUNTIME_REVIEW_LOGIC_ANCHOR_2026-03-26.md](notes/TONESOUL_RUNTIME_REVIEW_LOGIC_ANCHOR_2026-03-26.md)
+- [research/tonesoul_multi_agent_semantic_field_evidence_map_2026-03-26.md](research/tonesoul_multi_agent_semantic_field_evidence_map_2026-03-26.md)
+- [architecture/TONESOUL_RUNTIME_COMPACTION_AND_GAMIFICATION_CONTRACT.md](architecture/TONESOUL_RUNTIME_COMPACTION_AND_GAMIFICATION_CONTRACT.md)
 
 ## Machine-Readable Contract Mirrors
 
@@ -36,6 +45,8 @@
 - [status/l7_operational_packet_latest.json](status/l7_operational_packet_latest.json)
 - [status/l8_adapter_dataset_gate_latest.json](status/l8_adapter_dataset_gate_latest.json)
 - [status/abc_firewall_latest.json](status/abc_firewall_latest.json)
+- [../spec/governance/r_memory_packet_v1.schema.json](../spec/governance/r_memory_packet_v1.schema.json)
+- [../scripts/run_task_claim.py](../scripts/run_task_claim.py)
 
 ## Documentation Convergence
 

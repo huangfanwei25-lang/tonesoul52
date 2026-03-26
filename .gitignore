@@ -134,3 +134,4 @@ test_results.txt
 
 # Temporary consolidation scripts
 _consolidate_plans.py
+.aegis/

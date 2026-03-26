@@ -28,6 +28,8 @@ Companion map:
   - use this when you need the operational rule for what may and may not be distilled into adapters or RL traces
 - `docs/architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md`
   - use this when you need the cross-cutting rule for separating mechanism, observability, and interpretation
+- `docs/architecture/TONESOUL_MULTI_AGENT_SEMANTIC_FIELD_CONTRACT.md`
+  - use this when you need the evidence-backed boundary between parallel perspective lanes, experimental field synthesis, and serialized canonical commit
 - `docs/status/l7_retrieval_contract_latest.json`
   - machine-readable L7 retrieval order and verifier checklist
 - `docs/status/l8_distillation_boundary_latest.json`

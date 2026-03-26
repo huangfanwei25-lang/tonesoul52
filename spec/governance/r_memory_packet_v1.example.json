@@ -1,0 +1,129 @@
+{
+  "contract_version": "v1",
+  "generated_at": "2026-03-26T12:00:00+00:00",
+  "backend": "redis",
+  "dominance_order": [
+    "hard_constraints",
+    "canonical_governance_contracts",
+    "current_task_objective",
+    "r_memory_posture",
+    "retrieved_long_term_memory",
+    "loose_prose_background"
+  ],
+  "session_end_order": [
+    "build_session_trace",
+    "run_aegis_and_verifier_gates",
+    "merge_trace_effects_into_governance_posture",
+    "persist_governance_posture",
+    "append_aegis_protected_trace",
+    "rebuild_world_and_zone_surfaces",
+    "optionally_export_safe_semantic_summary"
+  ],
+  "trace_integrity": {
+    "aegis_protected": true,
+    "hash_chain_required": true,
+    "source_of_truth": "tonesoul/runtime_adapter.py::commit"
+  },
+  "parallel_lanes": {
+    "canonical_commit_serialized": true,
+    "perspectives_surface": "ts:perspectives:{agent_id}",
+    "checkpoints_surface": "ts:checkpoints:*",
+    "compaction_surface": "ts:compacted",
+    "field_surface": "ts:field"
+  },
+  "canonical_sources": [
+    "docs/architecture/TONESOUL_R_MEMORY_STACK_RECOMMENDATION.md",
+    "docs/architecture/TONESOUL_MULTI_AGENT_SEMANTIC_FIELD_CONTRACT.md",
+    "docs/architecture/TONESOUL_RUNTIME_COMPACTION_AND_GAMIFICATION_CONTRACT.md",
+    "docs/notes/TONESOUL_RUNTIME_REVIEW_LOGIC_ANCHOR_2026-03-26.md",
+    "docs/RFC-015_Self_Dogfooding_Runtime_Adapter.md"
+  ],
+  "posture": {
+    "soul_integral": 0.82,
+    "session_count": 12,
+    "last_updated": "2026-03-26T11:55:00+00:00",
+    "baseline_drift": {
+      "caution_bias": 0.55,
+      "innovation_bias": 0.61,
+      "autonomy_level": 0.35
+    },
+    "active_vows": [
+      {
+        "id": "public-memory-boundary",
+        "content": "Do not commit personal memory data to the public repo.",
+        "source": "AGENTS.md"
+      }
+    ],
+    "recent_tensions": [
+      {
+        "topic": "runtime safety vs coordination speed",
+        "severity": 0.74,
+        "timestamp": "2026-03-26T11:50:00+00:00",
+        "resolution": "Aegis-first commit path"
+      }
+    ],
+    "recent_aegis_vetoes": [
+      {
+        "type": "memory_poisoning",
+        "timestamp": "2026-03-26T11:40:00+00:00",
+        "agent": "codex",
+        "violations": ["prompt_injection"]
+      }
+    ]
+  },
+  "recent_traces": [
+    {
+      "session_id": "sess-001",
+      "agent": "codex",
+      "timestamp": "2026-03-26T11:55:00+00:00",
+      "topics": ["runtime_adapter", "redis"],
+      "tension_count": 2,
+      "vow_count": 0,
+      "aegis_veto_count": 0,
+      "key_decision_count": 3
+    }
+  ],
+  "recent_visitors": [
+    {
+      "agent": "codex",
+      "timestamp": "2026-03-26T11:56:00+00:00",
+      "source": "gateway"
+    }
+  ],
+  "active_claims": [
+    {
+      "task_id": "launch-world-dedupe",
+      "agent": "codex",
+      "summary": "dedupe Redis world refresh after governance commit",
+      "paths": [
+        "scripts/launch_world.py",
+        "tests/test_launch_world.py"
+      ],
+      "source": "gateway",
+      "created_at": "2026-03-26T11:57:00+00:00",
+      "expires_at": "1774527120.0"
+    }
+  ],
+  "recent_compactions": [
+    {
+      "compaction_id": "cmp-001",
+      "agent": "codex",
+      "session_id": "sess-001",
+      "summary": "Mutex landed; next agent should wire compaction summaries into gateway consumers only after packet stays stable.",
+      "carry_forward": [
+        "canonical commit stays serialized",
+        "compaction remains non-canonical resumability memory"
+      ],
+      "pending_paths": [
+        "scripts/gateway.py",
+        "apps/dashboard/world.html"
+      ],
+      "evidence_refs": [
+        "docs/architecture/TONESOUL_RUNTIME_COMPACTION_AND_GAMIFICATION_CONTRACT.md"
+      ],
+      "next_action": "Expose bounded compaction summaries in the operator shell without mutating governance posture.",
+      "source": "cli",
+      "updated_at": "2026-03-26T12:00:00+00:00"
+    }
+  ]
+}

@@ -1,5 +1,69 @@
 # Task
 
+## Phase 630: Non-Canonical Compaction Lane and Packet Handoff Surface (2026-03-26)
+- [x] Add a bounded resumability compaction lane (`ts:compacted` / `.aegis/compacted.json`) that stays outside canonical governance mutation
+- [x] Expose compaction summaries through runtime helpers, the R-memory packet schema, and a local `save_compaction.py` CLI
+- [x] Wire the new compaction surface into onboarding and stack docs so later agents treat it as non-canonical handoff memory rather than hidden truth
+**Success Criteria**: Later agents can leave and recover bounded compaction summaries without mutating `ts:governance`, and the packet exposes recent compactions as a resumability surface rather than a new canonical lane.
+
+---
+
+## Phase 629: Runtime Compaction and Gamification Boundary Contract (2026-03-26)
+- [x] Distill the recent Redis/gamification/security handoff into a boundary contract instead of copying the whole proposal into canonical runtime
+- [x] Separate compaction memory, world/dashboard gamification, legacy trace repair, and security work into mainline, experimental, delayed, and forbidden lanes
+- [x] Wire the new contract into onboarding and documentation entrypoints so later agents do not bundle every attractive idea into the same phase
+**Success Criteria**: Later agents can explain which parts of the recent runtime/world proposal belong in canonical ToneSoul runtime, which remain projection-only or experimental, and which require separate migration or security plans.
+
+---
+
+## Phase 628: Canonical Commit Mutex and Non-Canonical Perspective Lanes (2026-03-26)
+- [x] Add a dedicated canonical commit mutex so shared governance state and Aegis chain-head updates no longer rely on advisory task claims
+- [x] Expose minimal `perspectives` and `checkpoints` lanes as non-canonical runtime surfaces instead of forcing every multi-agent update into `ts:governance`
+- [x] Reflect the new serialized-commit plus parallel-lane posture in the R-memory packet schema and runtime tests
+**Success Criteria**: Canonical commits fail closed when another commit is in progress, accepted traces and chain-head updates stay behind one mutex, and later agents can distinguish serialized canonical state from experimental perspective/checkpoint lanes.
+
+---
+
+## Phase 627: Multi-Agent Semantic Field Evidence Review and Contract Boundary (2026-03-26)
+- [x] Review current official enterprise and lab evidence before promoting ToneSoul's multi-agent semantic-field idea into canonical architecture
+- [x] Distill the evidence into a conservative contract that separates parallel perspectives, experimental field synthesis, and serialized canonical commit
+- [x] Wire the new evidence map and contract into architecture and onboarding entrypoints so later agents do not overclaim shared-state semantics
+**Success Criteria**: Later agents can explain, from current official sources, why ToneSoul may support shared R-memory and perspective lanes while still requiring canonical commit serialization and treating semantic-field synthesis as experimental.
+
+---
+
+## Phase 626: Redis World Refresh Dedupe and Multi-Terminal Sync Clarification (2026-03-26)
+- [x] Collapse Redis world refresh handling into one-cause-one-effect so one commit does not trigger two rebuild cascades
+- [x] Add direct regression tests for governance-update plus immediate zone-update dedupe, while preserving standalone zone refresh behavior
+- [x] Preserve the practical multi-terminal sync path as `AI_ONBOARDING + R-memory packet + gateway`, not raw runtime artifact sharing
+**Success Criteria**: A Redis-backed commit triggers a single world rebuild/push, independent zone updates still refresh correctly, and another terminal AI has a clear shared-state entrypoint instead of guessing from repo files.
+
+---
+
+## Phase 625: R-Memory Packet Surface and Gateway Handoff Entry (2026-03-26)
+- [x] Encode the live R-memory dominance order, session-end order, and Aegis trace-integrity requirements into a compact machine-readable packet
+- [x] Expose the packet through both a local CLI (`scripts/run_r_memory_packet.py`) and the standalone gateway (`GET /packet`) so other agents can inherit hot posture without rereading long prose
+- [x] Add direct regression coverage for the new packet surface and wire the review-logic anchor into documentation entrypoints
+**Success Criteria**: Another agent or local tool can obtain a compact R-memory handoff packet, validate it against a public schema, and inherit the current governance posture plus runtime dominance logic without guessing the commit order.
+
+---
+
+## Phase 624: R-Memory Stack Recommendation and Dominance Order (2026-03-26)
+- [x] Define Redis-backed "R-memory" as a first-class ToneSoul runtime concept instead of an informal nickname
+- [x] Write the detailed stack recommendation covering live compute dominance order, Redis/file/graph memory boundaries, and the best-fit external repositories
+- [x] Wire the recommendation into onboarding and documentation entrypoints so later agents open it before inventing a new memory stack
+**Success Criteria**: Later agents can explain what R-memory is, what it should dominate, what it must never replace, and which external repositories best fit ToneSoul's next runtime-memory layer.
+
+---
+
+## Phase 623: Runtime Adapter and World Live-Update Hardening (2026-03-26)
+- [x] Fix the world dashboard to rebuild from the active Redis store instead of stale file artifacts when Redis is enabled
+- [x] Eliminate the zone-registry feedback loop / duplicate writes across `commit()` and `launch_world.py`
+- [x] Add regression tests for blocked-trace isolation, explicit-path zone rebuilds, Redis-backed world rebuilds, and missing-timestamp traces
+**Success Criteria**: The runtime adapter no longer mutates governance state on blocked traces, the world dashboard remains responsive under WebSocket usage, and Redis/file rebuild paths stay aligned under test.
+
+---
+
 ## Phase 619: Runtime Adapter Memory Anchor and Handoff Preservation (2026-03-23)
 - [x] Preserve the latest repo context, structured rules, and next-step runtime-adapter direction in a repo-safe memory anchor
 - [x] Wire the new runtime-adapter memory anchor into onboarding and documentation entrypoints so later agents open it before inventing a new workflow

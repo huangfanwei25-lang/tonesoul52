@@ -2,12 +2,12 @@
 
 > **Purpose**: 給未來沒有記憶的 AI 實例的快速引導。
 > **Author**: 黃梵威 (Fan-Wei Huang) + Previous AI Instances
-> **Last Updated**: 2026-03-22
+> **Last Updated**: 2026-03-26
 
 ---
 
 > Purpose: AI onboarding entrypoint for ToneSoul architecture, retrieval order, and collaboration boundaries.
-> Last Updated: 2026-03-22
+> Last Updated: 2026-03-26
 
 ## Canonical Architecture Anchor
 
@@ -20,6 +20,10 @@ Read these before making architecture assumptions:
 5. `docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md`
 6. `docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md`
 7. `docs/notes/TONESOUL_RUNTIME_ADAPTER_MEMORY_ANCHOR_2026-03-23.md`
+8. `docs/architecture/TONESOUL_R_MEMORY_STACK_RECOMMENDATION.md`
+9. `docs/notes/TONESOUL_RUNTIME_REVIEW_LOGIC_ANCHOR_2026-03-26.md`
+10. `docs/architecture/TONESOUL_MULTI_AGENT_SEMANTIC_FIELD_CONTRACT.md`
+11. `docs/architecture/TONESOUL_RUNTIME_COMPACTION_AND_GAMIFICATION_CONTRACT.md`
 
 If long prose, scattered repo state, and runtime behavior disagree, prefer the canonical architecture anchor.
 If multiple "knowledge" directories appear to disagree, use the knowledge surface boundary map before inferring authority.
@@ -27,9 +31,16 @@ If runtime layers and model-attachment direction feel split apart, use the eight
 If retrieval path is unclear, use the L7 retrieval contract before bulk-reading markdown.
 If adapters, RL, or distillation are in scope, use the L8 boundary contract before proposing training surfaces.
 If the next question is how developer agents should persist tension, vows, vetoes, and stance drift across sessions, open `docs/notes/TONESOUL_RUNTIME_ADAPTER_MEMORY_ANCHOR_2026-03-23.md` before inventing a new memory workflow.
+If the next question is how Redis-backed shared runtime memory should fit into ToneSoul, or what "R-memory" should and should not dominate, open `docs/architecture/TONESOUL_R_MEMORY_STACK_RECOMMENDATION.md` before proposing a new memory stack.
+If runtime state authority, Redis/file fallback truth, dashboard behavior, or commit-order safety are in conflict, open `docs/notes/TONESOUL_RUNTIME_REVIEW_LOGIC_ANCHOR_2026-03-26.md` before trusting the prettier surface.
+If the next question is whether multiple agents may safely share one hot runtime layer, or how far ToneSoul may push a "semantic field" idea without overclaiming, open `docs/architecture/TONESOUL_MULTI_AGENT_SEMANTIC_FIELD_CONTRACT.md` and `docs/research/tonesoul_multi_agent_semantic_field_evidence_map_2026-03-26.md` before proposing concurrent canonical state.
+If the next question is whether compaction memory, dashboard gamification, legacy trace repair, and security ideas should all enter the same runtime phase, open `docs/architecture/TONESOUL_RUNTIME_COMPACTION_AND_GAMIFICATION_CONTRACT.md` before bundling them together.
 If you need the original draft idea for self-dogfooding ToneSoul on top of agent workflows, open `docs/RFC-015_Self_Dogfooding_Runtime_Adapter.md`, but treat it as a draft source until it is rewritten cleanly.
 If you need compact machine-readable guidance, open `docs/status/l7_retrieval_contract_latest.json` and `docs/status/l8_distillation_boundary_latest.json`.
 If you need the first directly usable operational layer, open `docs/status/l7_operational_packet_latest.json` and `docs/status/l8_adapter_dataset_gate_latest.json`.
+If you need the live hot-state handoff surface for another agent or tool, run `python scripts/run_r_memory_packet.py` or query `GET /packet`, and validate the shape against `spec/governance/r_memory_packet_v1.schema.json`.
+If you need to leave a bounded resumability handoff without mutating canonical governance posture, run `python scripts/save_compaction.py --agent <name> --summary "<short summary>"`, feed the same JSON shape into the script via `--input` / stdin, or call `POST /compact` on the gateway.
+If more than one terminal or agent may touch the same task, claim it first with `python scripts/run_task_claim.py claim <task_id> --agent <name>` or `POST /claim`, and inspect current collisions with `python scripts/run_task_claim.py list` or `GET /claims`.
 If you need claim-governance boundaries for theory vs mechanism, open `docs/architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md` and `docs/status/abc_firewall_latest.json`.
 If duplicate doc names, mirror lanes, or missing purpose/date metadata are blocking retrieval, open `docs/status/doc_convergence_inventory_latest.json` and `docs/plans/doc_convergence_cleanup_plan_2026-03-22.md` before proposing renames or merges.
 If you need the full multi-wave roadmap for repository documentation cleanup, open `docs/plans/doc_convergence_master_plan_2026-03-23.md` before starting a new convergence pass.

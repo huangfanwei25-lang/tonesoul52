@@ -191,9 +191,10 @@ def rebuild_from_traces(
             for topic in trace.get("topics", []):
                 zone_key = _match_topic_to_zone(topic) or topic.lower().replace(" ", "_")
                 topic_counter[zone_key] += 1
-                if zone_key not in zone_first_seen:
-                    zone_first_seen[zone_key] = ts
-                zone_last_seen[zone_key] = ts
+                if ts:  # Only update timestamps from traces that have one
+                    if zone_key not in zone_first_seen:
+                        zone_first_seen[zone_key] = ts
+                    zone_last_seen[zone_key] = ts
 
             # Tension topics also generate zones
             for t in trace.get("tension_events", []):
@@ -201,9 +202,10 @@ def rebuild_from_traces(
                 zone_key = _match_topic_to_zone(topic)
                 if zone_key:
                     topic_counter[zone_key] += 1
-                    if zone_key not in zone_first_seen:
-                        zone_first_seen[zone_key] = ts
-                    zone_last_seen[zone_key] = ts
+                    if ts:
+                        if zone_key not in zone_first_seen:
+                            zone_first_seen[zone_key] = ts
+                        zone_last_seen[zone_key] = ts
 
             # Key decisions count as artifacts
             for decision in trace.get("key_decisions", []):
@@ -283,8 +285,83 @@ def rebuild_and_save(
     traces_path: Optional[Path] = None,
     governance_path: Optional[Path] = None,
     registry_path: Optional[Path] = None,
+    store=None,
 ) -> WorldState:
-    """Convenience: rebuild from traces and save."""
+    """Convenience: rebuild from traces and save.
+
+    If `store` is provided (Redis backend), reads traces from store
+    and writes zones back to store instead of files.
+    """
+    if store is not None and store.is_redis:
+        world = _rebuild_from_store(store)
+        store.set_zones(world.to_dict())
+        return world
+
     world = rebuild_from_traces(traces_path, governance_path)
     save(world, registry_path)
     return world
+
+
+def _rebuild_from_store(store) -> WorldState:
+    """Rebuild world state from Redis store."""
+    from collections import Counter
+    from datetime import datetime, timezone
+
+    topic_counter: Counter = Counter()
+    zone_first_seen: Dict[str, str] = {}
+    zone_last_seen: Dict[str, str] = {}
+    zone_artifacts: Counter = Counter()
+    total_sessions = 0
+
+    for trace in store.get_traces(n=10000):
+        total_sessions += 1
+        ts = trace.get("timestamp", "")
+        for topic in trace.get("topics", []):
+            zone_key = _match_topic_to_zone(topic) or topic.lower().replace(" ", "_")
+            topic_counter[zone_key] += 1
+            if ts:
+                if zone_key not in zone_first_seen:
+                    zone_first_seen[zone_key] = ts
+                zone_last_seen[zone_key] = ts
+        for t in trace.get("tension_events", []):
+            zone_key = _match_topic_to_zone(t.get("topic", ""))
+            if zone_key:
+                topic_counter[zone_key] += 1
+        for decision in trace.get("key_decisions", []):
+            zone_key = _match_topic_to_zone(decision)
+            if zone_key:
+                zone_artifacts[zone_key] += 1
+
+    zones: List[Zone] = []
+    for zone_key, count in topic_counter.most_common():
+        preset = _ZONE_PRESETS.get(zone_key, {})
+        zones.append(Zone(
+            zone_id=zone_key,
+            name=preset.get("name", zone_key.replace("_", " ").title()),
+            icon=preset.get("icon", "star"),
+            color=preset.get("color", "#7c5cfc"),
+            topics=[zone_key],
+            visit_count=count,
+            artifact_count=zone_artifacts.get(zone_key, 0),
+            first_seen=zone_first_seen.get(zone_key, ""),
+            last_seen=zone_last_seen.get(zone_key, ""),
+            level=min(5, 1 + count // 3),
+        ))
+
+    _assign_grid_positions(zones)
+
+    gov = store.get_state()
+    soul_integral = float(gov.get("soul_integral", 0.0))
+    tension_count = len(gov.get("tension_history", []))
+    drift = gov.get("baseline_drift", {})
+
+    return WorldState(
+        zones=zones,
+        total_sessions=total_sessions,
+        world_mood=_compute_mood(soul_integral, tension_count),
+        weather=_compute_weather(
+            float(drift.get("caution_bias", 0.5)),
+            float(drift.get("innovation_bias", 0.5)),
+        ),
+        last_rebuilt=datetime.now(timezone.utc).isoformat(),
+    )

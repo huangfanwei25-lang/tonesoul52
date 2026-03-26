@@ -234,6 +234,45 @@
   .t-lo { background: #102020; color: #4ecdc4; }
   .tension-topic { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
+  /* Visitors */
+  .visitors-area {
+    max-height: 100px;
+    overflow-y: auto;
+  }
+  .visitor-item {
+    padding: 4px 20px;
+    font-size: 11px;
+    color: #606080;
+    border-bottom: 1px solid #12121e;
+    display: flex;
+    justify-content: space-between;
+  }
+  .visitor-agent { color: #4ecdc4; }
+  .visitor-time { color: #404060; font-size: 10px; }
+
+  /* Aegis */
+  .aegis-area {
+    padding: 8px 20px;
+  }
+  .aegis-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+  }
+  .aegis-icon {
+    font-size: 14px;
+    width: 20px;
+    text-align: center;
+  }
+  .aegis-intact { color: #6bcb77; }
+  .aegis-compromised { color: #ffd93d; }
+  .aegis-detail {
+    font-size: 10px;
+    color: #505068;
+    margin-top: 4px;
+  }
+
   /* Tooltip */
   #tip {
     display: none; position: fixed;
@@ -310,6 +349,14 @@
     <!-- Vows -->
     <div class="section-head">承諾 VOWS</div>
     <div class="vows-area" id="vowsList"></div>
+
+    <!-- Visitors -->
+    <div class="section-head" style="border-top:2px solid #2a2a3e;">訪客 VISITORS</div>
+    <div class="visitors-area" id="visitorsList"></div>
+
+    <!-- Aegis -->
+    <div class="section-head" style="border-top:2px solid #2a2a3e;">防禦 AEGIS SHIELD</div>
+    <div class="aegis-area" id="aegisStatus"></div>
 
     <!-- Tensions -->
     <div class="section-head" style="border-top:2px solid #2a2a3e;">近期張力 TENSIONS</div>
@@ -961,6 +1008,8 @@ function loadAll(world, gov) {
 
   drawPortrait(mood);
   updatePanel(gov, world);
+  updateVisitors();
+  updateAegis();
 }
 
 // Drag-drop
@@ -980,6 +1029,57 @@ document.body.addEventListener('drop', e => {
     r.readAsText(f);
   });
 });
+
+// ============================================================
+//  VISITORS & AEGIS PANEL
+// ============================================================
+function updateVisitors() {
+  const el = document.getElementById('visitorsList');
+  if (!el) return;
+  const visitors = (typeof __VISITORS__ !== 'undefined') ? __VISITORS__ : [];
+  if (!visitors.length) {
+    el.innerHTML = '<div style="padding:6px 20px;font-size:11px;color:#404060;">No visitors yet</div>';
+    return;
+  }
+  const seen = new Set();
+  el.innerHTML = visitors.filter(v => {
+    const key = v.agent + '@' + (v.timestamp || '').substring(0, 16);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  }).slice(0, 5).map(v => {
+    const ts = (v.timestamp || '').substring(11, 16);
+    const src = v.source ? ` [${v.source}]` : '';
+    return `<div class="visitor-item">
+      <span class="visitor-agent">${v.agent || '?'}</span>
+      <span class="visitor-time">${ts}${src}</span>
+    </div>`;
+  }).join('');
+}
+
+function updateAegis() {
+  const el = document.getElementById('aegisStatus');
+  if (!el) return;
+  const a = (typeof __AEGIS__ !== 'undefined') ? __AEGIS__ : {};
+  const intact = a.integrity === 'intact';
+  const icon = intact ? '&#9632;' : '&#9888;';
+  const cls = intact ? 'aegis-intact' : 'aegis-compromised';
+  const label = intact ? 'INTACT' : (a.integrity || 'UNKNOWN').toUpperCase();
+
+  const signed = (a.total_traces || 0) - (a.signature_failures || []).length;
+  const unsigned = (a.signature_failures || []).filter(f => f.reason === 'no signature').length;
+
+  el.innerHTML = `
+    <div class="aegis-status">
+      <span class="aegis-icon ${cls}">${icon}</span>
+      <span class="${cls}" style="font-weight:bold;letter-spacing:1px;">${label}</span>
+    </div>
+    <div class="aegis-detail">
+      Chain: ${a.chain_valid ? 'valid' : 'BROKEN'} |
+      Signed: ${signed}/${a.total_traces || 0}${unsigned ? ' ('+unsigned+' legacy)' : ''}
+    </div>
+  `;
+}
 
 // Injected data
 if (typeof __WORLD_DATA__ !== 'undefined') worldData = __WORLD_DATA__;
