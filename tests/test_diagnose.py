@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from types import SimpleNamespace
-
 from tonesoul.diagnose import compact_diagnostic, full_diagnostic
 from tonesoul.runtime_adapter import GovernancePosture
 
@@ -75,6 +73,15 @@ def _fake_posture() -> GovernancePosture:
 
 def _fake_packet():
     return {
+        "posture": {
+            "risk_posture": {
+                "score": 0.67,
+                "level": "high",
+                "recommended_action": "review_before_commit",
+                "factors": ["high_recent_tension"],
+                "inputs": {"tension_pressure": 0.7},
+            }
+        },
         "recent_traces": [
             {
                 "session_id": "sess-1",
@@ -111,6 +118,15 @@ def _fake_packet():
             "perspectives_surface": "ts:perspectives:{agent_id}",
             "checkpoints_surface": "ts:checkpoints:*",
         },
+        "project_memory_summary": {
+            "focus_topics": ["shared-memory", "runtime"],
+            "recent_agents": ["codex", "claude"],
+            "active_claim_count": 1,
+            "pending_paths": ["docs/architecture/TONESOUL_SHARED_R_MEMORY_OPERATIONS_CONTRACT.md"],
+            "carry_forward": ["keep packet first"],
+            "next_actions": ["integrate risk posture into packet"],
+            "summary_text": "近期焦點：shared-memory, runtime | 下一步：integrate risk posture into packet",
+        },
     }
 
 
@@ -128,6 +144,7 @@ def test_compact_diagnostic_reports_shared_runtime_counts(monkeypatch) -> None:
 
     assert "claims=1" in text
     assert "compactions=1" in text
+    assert "R=0.67/high" in text
     assert "aegis=intact" in text
 
 
@@ -144,6 +161,8 @@ def test_full_diagnostic_is_cp950_safe_and_includes_shared_runtime(monkeypatch) 
     report = full_diagnostic(agent_id="codex")
 
     assert "[Shared Runtime] claims=1 visitors=1 compactions=1" in report
+    assert "Risk Posture:" in report
+    assert "[Project Memory Summary]" in report
     assert "coord-contract" in report
     assert "diagnose/load -> packet -> claim" in report
     report.encode("cp950", errors="strict")

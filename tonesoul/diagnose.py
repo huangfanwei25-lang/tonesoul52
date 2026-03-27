@@ -61,14 +61,16 @@ def _packet(store, posture, *, trace_limit: int = 5, visitor_limit: int = 5) -> 
             "active_claims": [],
             "recent_compactions": [],
             "parallel_lanes": {},
+            "posture": {"risk_posture": {}},
+            "project_memory_summary": {},
         }
 
 
 def compact_diagnostic(agent_id: str = "unknown") -> str:
     """One-line diagnostic for low-context session start."""
     try:
-        from tonesoul.store import get_store
         from tonesoul.runtime_adapter import load
+        from tonesoul.store import get_store
 
         store = get_store()
         posture = load(agent_id=agent_id, source="diagnose")
@@ -94,6 +96,8 @@ def compact_diagnostic(agent_id: str = "unknown") -> str:
         return (
             f"[ToneSoul] {store.backend_name} | SI={posture.soul_integral:.2f} | "
             f"vows={len(posture.active_vows)} tensions={len(posture.tension_history)} | "
+            f"R={float(((packet.get('posture') or {}).get('risk_posture') or {}).get('score', 0.0)):.2f}"
+            f"/{((packet.get('posture') or {}).get('risk_posture') or {}).get('level', 'unknown')} | "
             f"traces={traces_n} claims={len(packet.get('active_claims', []))} "
             f"compactions={len(packet.get('recent_compactions', []))} zones={zones_n} | "
             f"aegis={aegis} | agent={agent_id}"
@@ -124,6 +128,8 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
         "active_claims": [],
         "recent_compactions": [],
         "parallel_lanes": {},
+        "posture": {"risk_posture": {}},
+        "project_memory_summary": {},
     }
 
     try:
@@ -160,6 +166,16 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
                 f"  Recent Tensions: {len(posture.tension_history)}",
             ]
         )
+        risk_posture = ((packet.get("posture") or {}).get("risk_posture") or {})
+        if risk_posture:
+            lines.extend(
+                [
+                    "  Risk Posture:",
+                    f"    score={float(risk_posture.get('score', 0.0)):.2f}",
+                    f"    level={risk_posture.get('level', 'unknown')}",
+                    f"    action={risk_posture.get('recommended_action', 'unknown')}",
+                ]
+            )
         for vow in posture.active_vows[:3]:
             lines.append(f"    vow[{vow.get('id', '?')}]: {_clip(vow.get('content', ''))}")
         for tension in posture.tension_history[-3:]:
@@ -276,16 +292,28 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
     else:
         lines.append("  No recent compactions are visible right now.")
 
+    project_memory_summary = packet.get("project_memory_summary") or {}
+    if project_memory_summary:
+        lines.append("")
+        lines.append("[Project Memory Summary]")
+        lines.append(f"  {_clip(project_memory_summary.get('summary_text', ''))}")
+        focus_topics = list(project_memory_summary.get("focus_topics") or [])
+        if focus_topics:
+            lines.append(f"  focus_topics={', '.join(focus_topics)}")
+        pending_paths = list(project_memory_summary.get("pending_paths") or [])
+        if pending_paths:
+            lines.append(f"  pending_paths={', '.join(pending_paths[:3])}")
+
     lanes = packet.get("parallel_lanes", {})
     if lanes:
         lines.extend(
             [
                 "  Surfaces:",
-                f"    packet=GET /packet or python scripts/run_r_memory_packet.py",
-                f"    claims=POST /claim,/release or python scripts/run_task_claim.py",
+                "    packet=GET /packet or python scripts/run_r_memory_packet.py",
+                "    claims=POST /claim,/release or python scripts/run_task_claim.py",
                 f"    perspectives={lanes.get('perspectives_surface', 'ts:perspectives:{agent_id}')}",
                 f"    checkpoints={lanes.get('checkpoints_surface', 'ts:checkpoints:*')}",
-                f"    compaction=POST /compact or python scripts/save_compaction.py",
+                "    compaction=POST /compact or python scripts/save_compaction.py",
                 f"    canonical_commit_serialized={lanes.get('canonical_commit_serialized', True)}",
             ]
         )

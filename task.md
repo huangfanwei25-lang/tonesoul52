@@ -1,5 +1,11 @@
 # Task
 
+## Phase 640: Runtime Risk (R) and Project Memory Summary (2026-03-27)
+- [x] Add a bounded runtime Risk (R) calculator grounded in governed surfaces instead of leaving `R` as a phantom TSR dimension
+- [x] Surface `risk_posture` and `project_memory_summary` through `r_memory_packet()` so later agents can inherit both risk posture and current work focus
+- [x] Extend `diagnose` and packet-facing tests so the new surfaces stay visible and machine-readable
+**Success Criteria**: `GovernancePosture` persists a computed `risk_posture`, `r_memory_packet()` emits both `risk_posture` and `project_memory_summary`, and packet/diagnostic tests prove later agents can inherit them without rereading the whole repo.
+
 ## Phase 639: Drift Alert Guidance Surface (2026-03-27)
 - [x] Turn `DriftMonitor` alert classification into machine-readable bounded guidance instead of raw `warning/crisis` labels alone
 - [x] Surface drift recommendations through `UnifiedPipeline` dispatch traces so later agents can see what the runtime suggests doing next

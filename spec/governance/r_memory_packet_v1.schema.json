@@ -138,6 +138,9 @@
             "type": "number"
           }
         },
+        "risk_posture": {
+          "$ref": "#/$defs/risk_posture"
+        },
         "active_vows": {
           "type": "array",
           "items": {
@@ -181,6 +184,9 @@
       "items": {
         "$ref": "#/$defs/compaction"
       }
+    },
+    "project_memory_summary": {
+      "$ref": "#/$defs/project_memory_summary"
     }
   },
   "$defs": {
@@ -403,6 +409,91 @@
         },
         "updated_at": {
           "type": "string"
+        }
+      }
+    },
+    "risk_posture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["score", "level", "factors", "recommended_action", "inputs"],
+      "properties": {
+        "score": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "level": {
+          "type": "string",
+          "enum": ["stable", "caution", "high", "critical"]
+        },
+        "factors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "recommended_action": {
+          "type": "string",
+          "minLength": 1
+        },
+        "inputs": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "project_memory_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "focus_topics",
+        "recent_agents",
+        "active_claim_count",
+        "pending_paths",
+        "carry_forward",
+        "next_actions",
+        "summary_text"
+      ],
+      "properties": {
+        "focus_topics": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "recent_agents": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "active_claim_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "pending_paths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "carry_forward": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "next_actions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "summary_text": {
+          "type": "string",
+          "minLength": 1
         }
       }
     }

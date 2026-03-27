@@ -76,10 +76,12 @@ def test_commit_increments_session_count(tmp_state: Path, tmp_traces: Path) -> N
     trace = SessionTrace(agent="test", key_decisions=["did a thing"])
     posture = commit(trace, state_path=tmp_state, traces_path=tmp_traces)
     assert posture.session_count == 1
+    assert set(posture.risk_posture) >= {"score", "level", "recommended_action"}
 
     trace2 = SessionTrace(agent="test", key_decisions=["did another thing"])
     posture2 = commit(trace2, state_path=tmp_state, traces_path=tmp_traces)
     assert posture2.session_count == 2
+    assert set(posture2.risk_posture) >= {"score", "level", "recommended_action"}
 
 
 def test_commit_writes_trace_jsonl(tmp_state: Path, tmp_traces: Path) -> None:
@@ -282,6 +284,9 @@ def test_r_memory_packet_exposes_runtime_dominance_and_recent_trace(
         in packet["canonical_sources"]
     )
     assert packet["posture"]["session_count"] == 1
+    assert set(packet["posture"]["risk_posture"]) >= {"score", "level", "recommended_action"}
+    assert "project_memory_summary" in packet
+    assert "summary_text" in packet["project_memory_summary"]
     assert packet["recent_traces"][0]["agent"] == "codex"
     assert packet["recent_traces"][0]["topics"] == ["runtime", "redis"]
 
@@ -418,6 +423,8 @@ def test_compactions_use_noncanonical_resumability_lane(tmp_path: Path) -> None:
     packet = r_memory_packet(posture=GovernancePosture(), store=store)
     assert packet["recent_compactions"][0]["agent"] == "gemini"
     assert packet["recent_compactions"][1]["agent"] == "codex"
+    assert "project_memory_summary" in packet
+    assert packet["project_memory_summary"]["next_actions"][0] == "use packet consumption in UI"
 
 
 # ── decay_tensions() ────────────────────────────────────────────

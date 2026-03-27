@@ -58,6 +58,7 @@ class GovernancePosture:
             "autonomy_level": 0.35,
         }
     )
+    risk_posture: Dict[str, Any] = field(default_factory=dict)
     session_count: int = 0
 
     def to_dict(self) -> Dict[str, Any]:
@@ -73,6 +74,7 @@ class GovernancePosture:
             active_vows=list(data.get("active_vows") or []),
             aegis_vetoes=list(data.get("aegis_vetoes") or []),
             baseline_drift=dict(data.get("baseline_drift") or {}),
+            risk_posture=dict(data.get("risk_posture") or {}),
             session_count=int(data.get("session_count", 0)),
         )
 
@@ -645,6 +647,22 @@ def commit(
             entry["timestamp"] = trace.timestamp
         posture.aegis_vetoes.append(entry)
 
+    recent_traces_for_risk = list(store.get_traces(n=4))
+    recent_traces_for_risk.append(trace_dict)
+    claims_for_risk = list_active_claims(store=store)
+    compactions_for_risk = list_compactions(store=store, n=5)
+    try:
+        from tonesoul.risk_calculator import compute_runtime_risk
+
+        posture.risk_posture = compute_runtime_risk(
+            posture=posture,
+            recent_traces=recent_traces_for_risk[-5:],
+            claims=claims_for_risk,
+            compactions=compactions_for_risk,
+        )
+    except Exception:
+        posture.risk_posture = {}
+
     # Update metadata
     posture.session_count += 1
     posture.last_updated = _utc_now()
@@ -710,6 +728,19 @@ def summary(posture: Optional[GovernancePosture] = None) -> str:
         for v in posture.aegis_vetoes[-3:]:
             lines.append(f"  {v.get('topic', '?')}: {v.get('reason', '?')}")
 
+    risk_posture = dict(posture.risk_posture or {})
+    if risk_posture:
+        lines.append("")
+        lines.append("--- Risk Posture ---")
+        lines.append(
+            f"  R={float(risk_posture.get('score', 0.0)):.2f}"
+            f" ({risk_posture.get('level', 'unknown')})"
+        )
+        lines.append(f"  Action: {risk_posture.get('recommended_action', 'unknown')}")
+        factors = list(risk_posture.get("factors") or [])
+        if factors:
+            lines.append(f"  Factors: {', '.join(factors)}")
+
     # Recent visitors (Redis only)
     visitors = get_recent_visitors(n=5)
     if visitors:
@@ -766,6 +797,7 @@ def r_memory_packet(
     visitors = get_recent_visitors(store=store, n=visitor_limit)
     claims = list_active_claims(store=store)
     compactions = list_compactions(store=store, n=trace_limit)
+    from tonesoul.risk_calculator import build_project_memory_summary, compute_runtime_risk
 
     def _trim_tension(event: Dict[str, Any]) -> Dict[str, Any]:
         item = {
@@ -830,6 +862,20 @@ def r_memory_packet(
             "updated_at": str(entry.get("updated_at", "")),
         }
 
+    risk_posture = compute_runtime_risk(
+        posture=posture,
+        recent_traces=traces[-trace_limit:],
+        claims=claims,
+        compactions=compactions,
+    )
+    posture.risk_posture = dict(risk_posture)
+    project_memory_summary = build_project_memory_summary(
+        posture=posture,
+        recent_traces=traces[-trace_limit:],
+        claims=claims,
+        compactions=compactions,
+    )
+
     return {
         "contract_version": R_MEMORY_PACKET_VERSION,
         "generated_at": _utc_now(),
@@ -876,6 +922,7 @@ def r_memory_packet(
             "session_count": posture.session_count,
             "last_updated": posture.last_updated,
             "baseline_drift": dict(posture.baseline_drift),
+            "risk_posture": dict(risk_posture),
             "active_vows": [
                 {
                     "id": str(v.get("id", "")),
@@ -891,4 +938,5 @@ def r_memory_packet(
         "recent_visitors": visitors[:visitor_limit],
         "active_claims": [_trim_claim(c) for c in claims],
         "recent_compactions": [_trim_compaction(c) for c in compactions[:trace_limit]],
+        "project_memory_summary": project_memory_summary,
     }
