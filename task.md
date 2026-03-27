@@ -1,5 +1,11 @@
 # Task
 
+## Phase 636: Extend Claude Work Order With Implementation-Gap Triage (2026-03-27)
+- [x] Append a follow-up implementation-gap triage stage to the same Claude authority-distillation work order instead of opening a second disconnected ticket
+- [x] Focus the extension on the highest-risk theory-vs-runtime gaps rather than asking Claude to mutate runtime code
+- [x] Keep the follow-up bounded to triage and future-ticket recommendation, not a giant roadmap
+**Success Criteria**: Claude can continue in the same work-order file, evaluate the most dangerous implementation gaps, and return a small set of downgrade-vs-future-plan decisions without overstepping into runtime changes.
+
 ## Phase 635: Claude Authority Distillation Integration (2026-03-27)
 - [x] Review Claude's new claim-authority matrix and law/runtime boundary contract against the current canonical and operational routing stack
 - [x] Integrate the approved artifacts into onboarding, doc indexes, and authority-map generation without promoting them above code, tests, or canonical contracts
