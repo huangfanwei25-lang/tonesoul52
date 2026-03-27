@@ -1,5 +1,11 @@
 # Task
 
+## Phase 634: Shared R-Memory Operating Contract and Diagnostic Surface (2026-03-27)
+- [x] Write a full operating contract for how multiple agents actually share one R-memory layer instead of leaving the behavior implicit across chat messages and scattered code
+- [x] Route the new contract into onboarding, docs indexes, packet canonical sources, and authority-map generation so later agents can discover it without rereading the whole repo
+- [x] Upgrade the session-start diagnostic to expose shared-runtime coordination surfaces and survive Windows terminal encodings instead of failing during full report output
+**Success Criteria**: A later agent can discover the shared R-memory operating order from repo entrypoints, see active claims/compactions at session start, and distinguish visible shared state from unwritten private reasoning.
+
 ## Phase 633: External Deep-Structure Work Order for Claim Authority Distillation (2026-03-27)
 - [x] Write a bounded work order for a long-context synthesis agent instead of sending it into runtime code paths blindly
 - [x] Aim the external workstream at claim-authority mapping and law/runtime boundary clarification, where panoramic repo reading is strongest

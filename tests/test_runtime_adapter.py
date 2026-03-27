@@ -277,6 +277,10 @@ def test_r_memory_packet_exposes_runtime_dominance_and_recent_trace(
     assert packet["parallel_lanes"]["canonical_commit_serialized"] is True
     assert packet["parallel_lanes"]["perspectives_surface"] == "ts:perspectives:{agent_id}"
     assert packet["parallel_lanes"]["compaction_surface"] == "ts:compacted"
+    assert (
+        "docs/architecture/TONESOUL_SHARED_R_MEMORY_OPERATIONS_CONTRACT.md"
+        in packet["canonical_sources"]
+    )
     assert packet["posture"]["session_count"] == 1
     assert packet["recent_traces"][0]["agent"] == "codex"
     assert packet["recent_traces"][0]["topics"] == ["runtime", "redis"]

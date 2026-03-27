@@ -94,6 +94,7 @@ GROUPS = [
             "docs/AUDIT_CONTRACT.md",
             "docs/API_SPEC.md",
             "docs/COUNCIL_RUNTIME.md",
+            "docs/architecture/TONESOUL_SHARED_R_MEMORY_OPERATIONS_CONTRACT.md",
         ],
     },
     {

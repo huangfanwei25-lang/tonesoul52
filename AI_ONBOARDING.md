@@ -40,6 +40,7 @@ Read these before making architecture assumptions:
 9. `docs/notes/TONESOUL_RUNTIME_REVIEW_LOGIC_ANCHOR_2026-03-26.md`
 10. `docs/architecture/TONESOUL_MULTI_AGENT_SEMANTIC_FIELD_CONTRACT.md`
 11. `docs/architecture/TONESOUL_RUNTIME_COMPACTION_AND_GAMIFICATION_CONTRACT.md`
+12. `docs/architecture/TONESOUL_SHARED_R_MEMORY_OPERATIONS_CONTRACT.md`
 
 If long prose, scattered repo state, and runtime behavior disagree, prefer the canonical architecture anchor.
 If multiple "knowledge" directories appear to disagree, use the knowledge surface boundary map before inferring authority.
@@ -51,6 +52,7 @@ If the next question is how Redis-backed shared runtime memory should fit into T
 If runtime state authority, Redis/file fallback truth, dashboard behavior, or commit-order safety are in conflict, open `docs/notes/TONESOUL_RUNTIME_REVIEW_LOGIC_ANCHOR_2026-03-26.md` before trusting the prettier surface.
 If the next question is whether multiple agents may safely share one hot runtime layer, or how far ToneSoul may push a "semantic field" idea without overclaiming, open `docs/architecture/TONESOUL_MULTI_AGENT_SEMANTIC_FIELD_CONTRACT.md` and `docs/research/tonesoul_multi_agent_semantic_field_evidence_map_2026-03-26.md` before proposing concurrent canonical state.
 If the next question is whether compaction memory, dashboard gamification, legacy trace repair, and security ideas should all enter the same runtime phase, open `docs/architecture/TONESOUL_RUNTIME_COMPACTION_AND_GAMIFICATION_CONTRACT.md` before bundling them together.
+If the next question is not merely "can agents share R-memory" but "what must be written for another agent to actually inherit progress, and in what order should claims, checkpoints, compactions, and commit happen", open `docs/architecture/TONESOUL_SHARED_R_MEMORY_OPERATIONS_CONTRACT.md` before assuming shared-state magic.
 If the repository layout is clear but the deeper internal shape still is not, open `docs/notes/TONESOUL_DEEP_READING_ANCHOR_2026-03-26.md` and then `docs/narrative/TONESOUL_CODEX_READING.md`; treat them as grounded interpretive aids, not as replacements for code or contracts.
 If you need the original draft idea for self-dogfooding ToneSoul on top of agent workflows, open `docs/RFC-015_Self_Dogfooding_Runtime_Adapter.md`, but treat it as a draft source until it is rewritten cleanly.
 If you need compact machine-readable guidance, open `docs/status/l7_retrieval_contract_latest.json` and `docs/status/l8_distillation_boundary_latest.json`.
@@ -82,6 +84,13 @@ Use the fuller diagnostic when you also need store/Aegis/world context:
 
 ```bash
 python -m tonesoul.diagnose --agent <your-id>
+```
+
+If multiple agents may touch the same task, follow immediately with:
+
+```bash
+python scripts/run_r_memory_packet.py
+python scripts/run_task_claim.py list
 ```
 
 This auto-discovers `governance_state.json` from these locations:

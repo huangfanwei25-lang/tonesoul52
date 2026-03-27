@@ -30,6 +30,7 @@ Use these in order. Do not let a deep or interpretive document silently outrank 
 - [architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md](architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md)
 - [notes/TONESOUL_RUNTIME_REVIEW_LOGIC_ANCHOR_2026-03-26.md](notes/TONESOUL_RUNTIME_REVIEW_LOGIC_ANCHOR_2026-03-26.md)
 - [architecture/TONESOUL_MULTI_AGENT_SEMANTIC_FIELD_CONTRACT.md](architecture/TONESOUL_MULTI_AGENT_SEMANTIC_FIELD_CONTRACT.md)
+- [architecture/TONESOUL_SHARED_R_MEMORY_OPERATIONS_CONTRACT.md](architecture/TONESOUL_SHARED_R_MEMORY_OPERATIONS_CONTRACT.md)
 - [architecture/TONESOUL_RUNTIME_COMPACTION_AND_GAMIFICATION_CONTRACT.md](architecture/TONESOUL_RUNTIME_COMPACTION_AND_GAMIFICATION_CONTRACT.md)
 
 ## Interpretive Reading Layer
@@ -56,6 +57,7 @@ Use these after the canonical architecture anchor, not before it.
 - [architecture/TONESOUL_R_MEMORY_STACK_RECOMMENDATION.md](architecture/TONESOUL_R_MEMORY_STACK_RECOMMENDATION.md)
 - [notes/TONESOUL_RUNTIME_REVIEW_LOGIC_ANCHOR_2026-03-26.md](notes/TONESOUL_RUNTIME_REVIEW_LOGIC_ANCHOR_2026-03-26.md)
 - [research/tonesoul_multi_agent_semantic_field_evidence_map_2026-03-26.md](research/tonesoul_multi_agent_semantic_field_evidence_map_2026-03-26.md)
+- [architecture/TONESOUL_SHARED_R_MEMORY_OPERATIONS_CONTRACT.md](architecture/TONESOUL_SHARED_R_MEMORY_OPERATIONS_CONTRACT.md)
 - [architecture/TONESOUL_RUNTIME_COMPACTION_AND_GAMIFICATION_CONTRACT.md](architecture/TONESOUL_RUNTIME_COMPACTION_AND_GAMIFICATION_CONTRACT.md)
 
 ## Machine-Readable Contract Mirrors

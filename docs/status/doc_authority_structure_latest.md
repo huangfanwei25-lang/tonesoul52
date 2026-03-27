@@ -1,14 +1,14 @@
 # Documentation Authority Structure Latest
 
-- generated_at: 2026-03-27T03:25:28Z
-- primary_status_line: `doc_authority_structure | groups=9 tracked=33 metadata_complete=33 metadata_missing=0`
+- generated_at: 2026-03-27T04:39:54Z
+- primary_status_line: `doc_authority_structure | groups=9 tracked=34 metadata_complete=34 metadata_missing=0`
 - runtime_status_line: `doc_retrieval_order=entrypoint_to_operational_to_canonical_to_deep_map_to_interpretive | generated_status_lane=5`
 - artifact_policy_status_line: `structure_mode=retrieval_oriented | authority_roles=explicit | generated_status_preferred_for_current_state`
 
 ## Metrics
 - `group_count`: `9`
-- `tracked_file_count`: `33`
-- `metadata_complete_count`: `33`
+- `tracked_file_count`: `34`
+- `metadata_complete_count`: `34`
 - `metadata_missing_count`: `0`
 
 ## Groups
@@ -51,7 +51,7 @@
   - read_order: 5
   - `docs/notes/TONESOUL_DEEP_READING_ANCHOR_2026-03-26.md` exists=`true` purpose=`true` date=`true`
   - `docs/narrative/TONESOUL_CODEX_READING.md` exists=`true` purpose=`true` date=`true`
-- `Governance And Execution` tracked=`5` metadata_complete=`5`
+- `Governance And Execution` tracked=`6` metadata_complete=`6`
   - description: runtime, audit, and API contracts
   - authority_role: contract
   - use_when: when moving from documentation into executable governance or API behavior
@@ -61,6 +61,7 @@
   - `docs/AUDIT_CONTRACT.md` exists=`true` purpose=`true` date=`true`
   - `docs/API_SPEC.md` exists=`true` purpose=`true` date=`true`
   - `docs/COUNCIL_RUNTIME.md` exists=`true` purpose=`true` date=`true`
+  - `docs/architecture/TONESOUL_SHARED_R_MEMORY_OPERATIONS_CONTRACT.md` exists=`true` purpose=`true` date=`true`
 - `Documentation Governance` tracked=`5` metadata_complete=`5`
   - description: naming, zoning, and convergence planning surfaces
   - authority_role: doc_governance

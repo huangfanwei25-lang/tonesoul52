@@ -56,6 +56,8 @@ Do not collapse these into one layer. Operational guides help an agent work; can
   - preserves the runtime review logic for authoritative state flow, safety-before-mutation, and one-cause-one-effect during Redis/world/gateway work
 - `architecture/TONESOUL_MULTI_AGENT_SEMANTIC_FIELD_CONTRACT.md`
   - evidence-backed contract for how far ToneSoul may push multi-agent shared state, where semantic-field synthesis remains experimental, and why canonical commit must stay serialized
+- `architecture/TONESOUL_SHARED_R_MEMORY_OPERATIONS_CONTRACT.md`
+  - operating contract for what shared R-memory actually exposes to later agents, when to claim/checkpoint/compact, and which order preserves continuity without pretending agents share hidden thought
 - `research/tonesoul_multi_agent_semantic_field_evidence_map_2026-03-26.md`
   - official-source evidence map covering Anthropic, OpenAI, Microsoft, Google Cloud, and Google Research before ToneSoul promotes semantic-field language into canonical architecture
 - `architecture/TONESOUL_RUNTIME_COMPACTION_AND_GAMIFICATION_CONTRACT.md`
@@ -71,6 +73,8 @@ Do not collapse these into one layer. Operational guides help an agent work; can
   - defines the A/B/C firewall for separating mechanism, observable behavior, and interpretation in documents and claims
 - `architecture/TONESOUL_MULTI_AGENT_SEMANTIC_FIELD_CONTRACT.md`
   - defines the boundary between parallel perspective lanes, experimental field synthesis, and serialized canonical governance commit
+- `architecture/TONESOUL_SHARED_R_MEMORY_OPERATIONS_CONTRACT.md`
+  - defines the practical multi-agent operating cadence across diagnose, packet, claim, perspective, checkpoint, compaction, commit, and release
 - `architecture/TONESOUL_RUNTIME_COMPACTION_AND_GAMIFICATION_CONTRACT.md`
   - defines what part of the newer runtime/world/security proposal belongs in canonical runtime, projection layers, or separate workstreams
 

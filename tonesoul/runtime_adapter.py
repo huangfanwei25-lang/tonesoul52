@@ -866,6 +866,7 @@ def r_memory_packet(
         "canonical_sources": [
             "docs/architecture/TONESOUL_R_MEMORY_STACK_RECOMMENDATION.md",
             "docs/architecture/TONESOUL_MULTI_AGENT_SEMANTIC_FIELD_CONTRACT.md",
+            "docs/architecture/TONESOUL_SHARED_R_MEMORY_OPERATIONS_CONTRACT.md",
             "docs/architecture/TONESOUL_RUNTIME_COMPACTION_AND_GAMIFICATION_CONTRACT.md",
             "docs/notes/TONESOUL_RUNTIME_REVIEW_LOGIC_ANCHOR_2026-03-26.md",
             "docs/RFC-015_Self_Dogfooding_Runtime_Adapter.md",

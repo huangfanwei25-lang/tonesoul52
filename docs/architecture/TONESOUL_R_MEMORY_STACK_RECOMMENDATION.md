@@ -7,6 +7,8 @@ Companion contract:
 
 - `docs/architecture/TONESOUL_MULTI_AGENT_SEMANTIC_FIELD_CONTRACT.md`
   - use this when the question is not only "what is R-memory" but also "how many agents may share it, what must stay serialized, and where semantic-field ideas stop being evidence-backed"
+- `docs/architecture/TONESOUL_SHARED_R_MEMORY_OPERATIONS_CONTRACT.md`
+  - use this when the question is not only "what is shared state" but "what another agent can actually see, when to claim/checkpoint/compact, and what must be externalized on purpose"
 
 ## Core Thesis
 

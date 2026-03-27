@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-27T03:36:32Z",
+  "generated_at": "2026-03-27T04:42:14Z",
   "scope": {
     "include_roots": [
       "PARADOXES",
@@ -62,7 +62,7 @@
     ]
   },
   "metrics": {
-    "authored_file_count": 2252,
+    "authored_file_count": 2256,
     "collision_count": 27,
     "exact_match_collision_count": 16,
     "divergent_collision_count": 11,
@@ -73,7 +73,7 @@
     "missing_metadata_sample_limit": 40
   },
   "category_counts": {
-    "architecture_doc": 18,
+    "architecture_doc": 21,
     "archive_doc": 1,
     "chronicle_doc": 48,
     "constitution_doc": 1,
@@ -83,7 +83,7 @@
     "knowledge_doc": 2,
     "law_doc": 60,
     "law_engineering_mirror": 15,
-    "memory_doc_or_data": 1607,
+    "memory_doc_or_data": 1608,
     "paradox_fixture": 8,
     "paradox_test_fixture": 8,
     "philosophy_doc": 27,
@@ -793,12 +793,12 @@
       "basename": "AI_ONBOARDING.md",
       "extension": ".md",
       "surface_type": "root_entrypoint",
-      "size_bytes": 12482,
+      "size_bytes": 13038,
       "title": "AI Onboarding Guide | AI 引導指南",
       "purpose": "給未來沒有記憶的 AI 實例的快速引導。",
       "status": "",
       "date_hint": "2026-03-27",
-      "content_sha256": "f61c48969d63918bdc928fc76af85d64d41df7920686cc9531a54883fce75a4a"
+      "content_sha256": "ee4c55cbb08ab2420b7bbea096ab0404870001996cea0e458b11635776733312"
     },
     {
       "path": "AXIOMS.json",
@@ -1089,6 +1089,18 @@
       "content_sha256": "c39f45121cb279c1769a508367cedc27c5060dd98286e1968c22939ea1119122"
     },
     {
+      "path": "docs/architecture/TONESOUL_CLAIM_AUTHORITY_MATRIX.md",
+      "basename": "TONESOUL_CLAIM_AUTHORITY_MATRIX.md",
+      "extension": ".md",
+      "surface_type": "architecture_doc",
+      "size_bytes": 16893,
+      "title": "ToneSoul Claim Authority Matrix",
+      "purpose": "tell later agents, for each major ToneSoul claim or term, what its current authority and implementation status is",
+      "status": "architectural boundary contract",
+      "date_hint": "2026-03-27",
+      "content_sha256": "830d7c9769c1ed37eec804a254bee0b85359378ca9dd08c4a2e73c7e7791457d"
+    },
+    {
       "path": "docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md",
       "basename": "TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md",
       "extension": ".md",
@@ -1137,6 +1149,18 @@
       "content_sha256": "41035f43fcbae3e16d88c9e137537c2a4d9a649784b08ff21238fbda9c78fea3"
     },
     {
+      "path": "docs/architecture/TONESOUL_LAW_RUNTIME_BOUNDARY_CONTRACT.md",
+      "basename": "TONESOUL_LAW_RUNTIME_BOUNDARY_CONTRACT.md",
+      "extension": ".md",
+      "surface_type": "architecture_doc",
+      "size_bytes": 16510,
+      "title": "ToneSoul Law / Runtime Boundary Contract",
+      "purpose": "explicitly classify high-confusion terms from law/ and related deep prose into four categories so later agents stop mistaking theory for live implementation",
+      "status": "architectural boundary contract",
+      "date_hint": "2026-03-27",
+      "content_sha256": "be87d03fcc8a5b3cfa286bb9ec7466bdfbcdc1a83e87fe650e4075185cdba53a"
+    },
+    {
       "path": "docs/architecture/TONESOUL_MULTI_AGENT_SEMANTIC_FIELD_CONTRACT.md",
       "basename": "TONESOUL_MULTI_AGENT_SEMANTIC_FIELD_CONTRACT.md",
       "extension": ".md",
@@ -1153,12 +1177,12 @@
       "basename": "TONESOUL_R_MEMORY_STACK_RECOMMENDATION.md",
       "extension": ".md",
       "surface_type": "architecture_doc",
-      "size_bytes": 13458,
+      "size_bytes": 13712,
       "title": "ToneSoul R-Memory Stack Recommendation",
       "purpose": "define how Redis-backed \"R-memory\" should fit into ToneSoul as the live shared runtime memory layer, what it should and should not dominate, and which external repositories are the best fit for this role.",
       "status": "",
       "date_hint": "2026-03-26",
-      "content_sha256": "1b498dbdee543440d35d7a28ac01d763ad798f2252621fe010955f258c8805bb"
+      "content_sha256": "4c1aa9f5aeb5dc0043bfee90929b0fc2974ad05e67338e30e19bcfc62e2d52bc"
     },
     {
       "path": "docs/architecture/TONESOUL_RUNTIME_COMPACTION_AND_GAMIFICATION_CONTRACT.md",
@@ -1171,6 +1195,18 @@
       "status": "architectural contract and prioritization boundary as of 2026-03-26",
       "date_hint": "2026-03-26",
       "content_sha256": "534d679d4fa58a520ab5629b8210e62d9404edf1fdaba73f21e3336c2296896f"
+    },
+    {
+      "path": "docs/architecture/TONESOUL_SHARED_R_MEMORY_OPERATIONS_CONTRACT.md",
+      "basename": "TONESOUL_SHARED_R_MEMORY_OPERATIONS_CONTRACT.md",
+      "extension": ".md",
+      "surface_type": "architecture_doc",
+      "size_bytes": 9906,
+      "title": "ToneSoul Shared R-Memory Operations Contract",
+      "purpose": "multi-agent shared runtime operations across diagnose, packet, claims, perspectives, checkpoints, compactions, and serialized canonical commit",
+      "status": "operational architecture contract as of 2026-03-27",
+      "date_hint": "2026-03-27",
+      "content_sha256": "19ff67a438a34efe13a30e702c2c087d5579c04b0bcdde93193e8e00a52c4e68"
     },
     {
       "path": "docs/architecture-notes.md",
@@ -2473,12 +2509,12 @@
       "basename": "INDEX.md",
       "extension": ".md",
       "surface_type": "general_doc",
-      "size_bytes": 15739,
+      "size_bytes": 15993,
       "title": "ToneSoul Documentation Index",
       "purpose": "top-level documentation index for ToneSoul authority surfaces, operational packets, and convergence maps.",
       "status": "",
       "date_hint": "2026-03-27",
-      "content_sha256": "c14996ed45c434f6628ca0229c9b350bd509d004c60f4b4a8dfe38c34bfc77a5"
+      "content_sha256": "8a64ed171f03a0fceacbe3d41cd349d83e633cdbd5019a468f9b2db0dee2c793"
     },
     {
       "path": "docs/INTEGRATION_AUDIT_DRAFT.md",
@@ -4321,12 +4357,12 @@
       "basename": "README.md",
       "extension": ".md",
       "surface_type": "general_doc",
-      "size_bytes": 10672,
+      "size_bytes": 11147,
       "title": "ToneSoul Documentation Index",
       "purpose": "documentation entrypoint and guided index for ToneSoul architecture, status artifacts, and convergence surfaces.",
       "status": "",
       "date_hint": "2026-03-27",
-      "content_sha256": "48cd49659847bfb779f2f9d374b83747cc8db30b3ec83d623ae50196e69ab457"
+      "content_sha256": "7298ed71134192e25f1152f338ce5be092d83df6def4bb75b13ed22efbf414f3"
     },
     {
       "path": "docs/RELEASE_NOTES_v0.1.0.md",
@@ -4921,36 +4957,36 @@
       "basename": "doc_authority_structure_latest.json",
       "extension": ".json",
       "surface_type": "generated_status_artifact",
-      "size_bytes": 11467,
+      "size_bytes": 11703,
       "title": "doc_authority_structure_latest.json",
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "669ef8035766aef3636f0bada6f6b5817bc2b340d60bebfd8af732fee6e05c19"
+      "content_sha256": "fc4555d998d1a54d829928d171d3c576a0142725690dacf5bfa98187fc33403a"
     },
     {
       "path": "docs/status/doc_authority_structure_latest.md",
       "basename": "doc_authority_structure_latest.md",
       "extension": ".md",
       "surface_type": "generated_status_artifact",
-      "size_bytes": 6058,
+      "size_bytes": 6172,
       "title": "Documentation Authority Structure Latest",
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "c83c0fb30bd02176287fcf63a0f37d15580fa865faa22ab79522f7ee40af3245"
+      "content_sha256": "dbd76ed83302b9d7f9598bbec243b72675b8f85d3f813b1d9be166b80c00fbac"
     },
     {
       "path": "docs/status/doc_convergence_inventory_latest.json",
       "basename": "doc_convergence_inventory_latest.json",
       "extension": ".json",
       "surface_type": "generated_status_artifact",
-      "size_bytes": 1091327,
+      "size_bytes": 1094534,
       "title": "doc_convergence_inventory_latest.json",
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "bff69bc1c2fdeb11574fb5dadb3c88a7d7c9e983908d32c6918b4e399b33d130"
+      "content_sha256": "dba70920f8874163c5cb56df2ba941fa5598d27595699aef40bd15be58f747fa"
     },
     {
       "path": "docs/status/doc_convergence_inventory_latest.md",
@@ -4962,7 +4998,7 @@
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "8ab2cfac23b3a659745fc47c154c19521b802238e20deb757bde3372d178cd78"
+      "content_sha256": "2535a6a68d2cfc18b60a0ea7d5e8536081964e71d9c88ae5e8de4a82ff0f2a4e"
     },
     {
       "path": "docs/status/dream_engine_wakeup_status_2026-03-09.md",
@@ -7590,7 +7626,7 @@
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "638b0d23bd5d5d3ee9d8b19ba93d1eb832a44d0cc6a754bb1beab8132325a679"
+      "content_sha256": "8fcf0f08614b47589688348920f540022fdc1190e382a1a5bdedc5671b2151b2"
     },
     {
       "path": "memory/BOOTSTRAP.md",
@@ -7807,6 +7843,18 @@
       "status": "",
       "date_hint": "2026-03-26",
       "content_sha256": "1feed3a37faebf1129bff7940e5dffb8d01e2dbf8273e7613b84e63886dfcf08"
+    },
+    {
+      "path": "memory/handoff/2026-03-27_claude_opus_deep_structure_distillation.md",
+      "basename": "2026-03-27_claude_opus_deep_structure_distillation.md",
+      "extension": ".md",
+      "surface_type": "memory_doc_or_data",
+      "size_bytes": 5824,
+      "title": "2026-03-27 工作備注 — 深層結構權威蒸餾",
+      "purpose": "",
+      "status": "",
+      "date_hint": "2026-03-27",
+      "content_sha256": "7a30b384061e8e6fce1033accca8a9eb7368ba4670585edd02c5d26250f5f269"
     },
     {
       "path": "memory/handoff/archive/2026-02/handoff_2026-02-06T04-40-13Z.json",
@@ -27661,12 +27709,12 @@
       "basename": "task.md",
       "extension": ".md",
       "surface_type": "root_entrypoint",
-      "size_bytes": 86353,
+      "size_bytes": 87197,
       "title": "Task",
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "83e5b2052d325e61aef07785a1c6af92d3bd6edfb602e9f1b95846fb857c2556"
+      "content_sha256": "195b4c21b6fe4b1a9862f049a88d9489c9ee314e9926b86f51bf9186f4e35620"
     },
     {
       "path": "tests/fixtures/paradoxes/medical_suicide_paradox.json",
@@ -27801,7 +27849,7 @@
       "content_sha256": "2cee7ef4a180d9208eefe9a83fe3d22bbfb6d32cecb6f5c05880d57e75006343"
     }
   ],
-  "primary_status_line": "doc_convergence_ready | authored_files=2252 collisions=27 missing_purpose=140 missing_date=101",
-  "runtime_status_line": "entrypoints | doc_inventory=doc_convergence_inventory_latest.json largest_family=docs_law_engineering_mirror architecture_docs=18",
+  "primary_status_line": "doc_convergence_ready | authored_files=2256 collisions=27 missing_purpose=140 missing_date=101",
+  "runtime_status_line": "entrypoints | doc_inventory=doc_convergence_inventory_latest.json largest_family=docs_law_engineering_mirror architecture_docs=21",
   "artifact_policy_status_line": "doc_scope=authored_only | content_check=hash_plus_similarity generated_noise=excluded"
 }
