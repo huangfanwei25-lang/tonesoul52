@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from types import SimpleNamespace
 
+import tonesoul.risk_calculator as risk_calculator
 from tonesoul.risk_calculator import build_project_memory_summary, compute_runtime_risk
 
 
@@ -22,7 +23,12 @@ def test_compute_runtime_risk_surfaces_high_pressure_factors() -> None:
         {"task_id": "packet-summary", "agent": "claude"},
     ]
     compactions = [
-        {"pending_paths": ["tonesoul/runtime_adapter.py", "spec/governance/r_memory_packet_v1.schema.json"]},
+        {
+            "pending_paths": [
+                "tonesoul/runtime_adapter.py",
+                "spec/governance/r_memory_packet_v1.schema.json",
+            ]
+        },
         {"pending_paths": ["tonesoul/diagnose.py", "tests/test_runtime_adapter.py"]},
     ]
 
@@ -39,28 +45,81 @@ def test_compute_runtime_risk_surfaces_high_pressure_factors() -> None:
     assert "recent_aegis_vetoes" in risk["factors"]
 
 
-def test_build_project_memory_summary_aggregates_focus_and_pending_paths() -> None:
+def test_build_project_memory_summary_aggregates_focus_pending_and_repo_progress() -> None:
     posture = SimpleNamespace(tension_history=[{"topic": "fallback", "severity": 0.4}])
-    summary = build_project_memory_summary(
-        posture=posture,
-        recent_traces=[
-            {"agent": "codex", "topics": ["runtime", "risk"]},
-            {"agent": "claude", "topics": ["risk", "packet"]},
-        ],
-        claims=[
-            {"task_id": "risk-r", "agent": "codex", "paths": ["tonesoul/runtime_adapter.py"]},
-        ],
-        compactions=[
-            {
-                "pending_paths": ["tonesoul/diagnose.py"],
-                "carry_forward": ["keep packet readable"],
-                "next_action": "wire project memory summary into diagnose",
-            }
-        ],
-    )
+    original_repo_snapshot = risk_calculator._build_repo_progress_snapshot
+    risk_calculator._build_repo_progress_snapshot = lambda repo_root=None: {
+        "available": True,
+        "branch": "feature/r-memory",
+        "head": "abc1234",
+        "staged_count": 1,
+        "modified_count": 2,
+        "untracked_count": 3,
+        "dirty_count": 6,
+        "path_preview": ["tonesoul/runtime_adapter.py"],
+    }
+    try:
+        summary = build_project_memory_summary(
+            posture=posture,
+            recent_traces=[
+                {"agent": "codex", "topics": ["runtime", "risk"]},
+                {"agent": "claude", "topics": ["risk", "packet"]},
+            ],
+            claims=[
+                {
+                    "task_id": "risk-r",
+                    "agent": "codex",
+                    "paths": ["tonesoul/runtime_adapter.py"],
+                },
+            ],
+            compactions=[
+                {
+                    "pending_paths": ["tonesoul/diagnose.py"],
+                    "carry_forward": ["keep packet readable"],
+                    "next_action": "wire project memory summary into diagnose",
+                }
+            ],
+        )
+    finally:
+        risk_calculator._build_repo_progress_snapshot = original_repo_snapshot
 
     assert summary["focus_topics"][0] == "risk"
     assert "codex" in summary["recent_agents"]
     assert "tonesoul/runtime_adapter.py" in summary["pending_paths"]
     assert summary["carry_forward"] == ["keep packet readable"]
-    assert "近期焦點" in summary["summary_text"]
+    assert summary["repo_progress"]["branch"] == "feature/r-memory"
+    assert "focus=risk, runtime" in summary["summary_text"]
+    assert "repo=feature/r-memory@abc1234 dirty=6" in summary["summary_text"]
+
+
+def test_repo_progress_snapshot_parses_git_status(monkeypatch) -> None:
+    class _Completed:
+        def __init__(self, stdout: str, returncode: int = 0) -> None:
+            self.stdout = stdout
+            self.returncode = returncode
+
+    responses = {
+        ("git", "rev-parse", "--abbrev-ref", "HEAD"): _Completed("feature/r-memory\n"),
+        ("git", "rev-parse", "--short", "HEAD"): _Completed("abc1234\n"),
+        ("git", "status", "--short"): _Completed(
+            "M  tonesoul/runtime_adapter.py\n"
+            " M tonesoul/diagnose.py\n"
+            "?? docs/status/new_snapshot.md\n"
+        ),
+    }
+
+    def _fake_run(command, **kwargs):
+        return responses[tuple(command)]
+
+    monkeypatch.setattr(risk_calculator.subprocess, "run", _fake_run)
+
+    snapshot = risk_calculator._build_repo_progress_snapshot(repo_root=".")
+
+    assert snapshot["available"] is True
+    assert snapshot["branch"] == "feature/r-memory"
+    assert snapshot["head"] == "abc1234"
+    assert snapshot["staged_count"] == 1
+    assert snapshot["modified_count"] == 1
+    assert snapshot["untracked_count"] == 1
+    assert snapshot["dirty_count"] == 3
+    assert snapshot["path_preview"][0] == "tonesoul/runtime_adapter.py"

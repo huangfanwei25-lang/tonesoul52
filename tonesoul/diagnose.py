@@ -100,6 +100,8 @@ def compact_diagnostic(agent_id: str = "unknown") -> str:
             f"/{((packet.get('posture') or {}).get('risk_posture') or {}).get('level', 'unknown')} | "
             f"traces={traces_n} claims={len(packet.get('active_claims', []))} "
             f"compactions={len(packet.get('recent_compactions', []))} zones={zones_n} | "
+            f"git={((packet.get('project_memory_summary') or {}).get('repo_progress') or {}).get('head', 'unknown')}"
+            f"/dirty={int((((packet.get('project_memory_summary') or {}).get('repo_progress') or {}).get('dirty_count', 0) or 0))} | "
             f"aegis={aegis} | agent={agent_id}"
         )
     except Exception as exc:
@@ -303,6 +305,19 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
         pending_paths = list(project_memory_summary.get("pending_paths") or [])
         if pending_paths:
             lines.append(f"  pending_paths={', '.join(pending_paths[:3])}")
+        repo_progress = project_memory_summary.get("repo_progress") or {}
+        if repo_progress.get("available"):
+            lines.append(
+                "  repo="
+                f"{repo_progress.get('branch', 'unknown')}@{repo_progress.get('head', 'unknown')}"
+                f" dirty={int(repo_progress.get('dirty_count', 0) or 0)}"
+                f" staged={int(repo_progress.get('staged_count', 0) or 0)}"
+                f" modified={int(repo_progress.get('modified_count', 0) or 0)}"
+                f" untracked={int(repo_progress.get('untracked_count', 0) or 0)}"
+            )
+            path_preview = list(repo_progress.get("path_preview") or [])
+            if path_preview:
+                lines.append(f"  repo_paths={', '.join(path_preview[:3])}")
 
     lanes = packet.get("parallel_lanes", {})
     if lanes:

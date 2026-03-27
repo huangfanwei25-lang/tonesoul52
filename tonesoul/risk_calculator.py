@@ -1,14 +1,15 @@
 """Runtime risk posture and project-memory summary helpers.
 
-This module deliberately computes a bounded operational Risk (R) surface from
-already-governed runtime signals. It does not implement POAV gating or any
-theoretical law/ metric.
+This module computes bounded operational signals from already-governed runtime
+surfaces. It does not implement law/ theory metrics or hidden governance rules.
 """
 
 from __future__ import annotations
 
+import subprocess
 from collections import Counter
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any, Dict, Iterable, List
 
 
@@ -37,11 +38,7 @@ def compute_runtime_risk(
     claims: List[Dict[str, Any]] | None = None,
     compactions: List[Dict[str, Any]] | None = None,
 ) -> Dict[str, Any]:
-    """Compute a bounded runtime Risk (R) posture in [0, 1].
-
-    Inputs are intentionally limited to already-visible governed surfaces:
-    recent tensions, recent Aegis vetoes, active claims, and compaction backlog.
-    """
+    """Compute a bounded runtime Risk (R) posture in [0, 1]."""
     recent_traces = list(recent_traces or [])
     claims = list(claims or [])
     compactions = list(compactions or [])
@@ -122,6 +119,7 @@ def build_project_memory_summary(
     recent_traces: List[Dict[str, Any]] | None = None,
     claims: List[Dict[str, Any]] | None = None,
     compactions: List[Dict[str, Any]] | None = None,
+    repo_root: str | Path | None = None,
 ) -> Dict[str, Any]:
     """Build a compact handoff-ready summary of the current project memory."""
     recent_traces = list(recent_traces or [])
@@ -140,9 +138,7 @@ def build_project_memory_summary(
                 topic_counter[normalized] += 1
 
     pending_paths = _unique_ordered(
-        path
-        for claim in claims
-        for path in (claim.get("paths") or [])
+        path for claim in claims for path in (claim.get("paths") or [])
     )
     pending_paths.extend(
         path
@@ -152,9 +148,7 @@ def build_project_memory_summary(
     )
 
     carry_forward = _unique_ordered(
-        item
-        for entry in compactions[:5]
-        for item in (entry.get("carry_forward") or [])
+        item for entry in compactions[:5] for item in (entry.get("carry_forward") or [])
     )
     next_actions = _unique_ordered(
         str(entry.get("next_action", "")).strip()
@@ -170,17 +164,25 @@ def build_project_memory_summary(
             if str(event.get("topic", "")).strip()
         ][:3]
 
+    repo_progress = _build_repo_progress_snapshot(repo_root=repo_root)
+
     summary_lines: List[str] = []
     if focus_topics:
-        summary_lines.append(f"近期焦點：{', '.join(focus_topics)}")
+        summary_lines.append(f"focus={', '.join(focus_topics)}")
     if claims:
-        summary_lines.append(f"活躍任務認領：{len(claims)}")
+        summary_lines.append(f"claims={len(claims)}")
     if pending_paths:
-        summary_lines.append(f"待續路徑：{', '.join(pending_paths[:3])}")
+        summary_lines.append(f"pending={', '.join(pending_paths[:3])}")
     if next_actions:
-        summary_lines.append(f"下一步：{next_actions[0]}")
+        summary_lines.append(f"next={next_actions[0]}")
+    if repo_progress.get("available"):
+        summary_lines.append(
+            "repo="
+            f"{repo_progress.get('branch', 'unknown')}@{repo_progress.get('head', 'unknown')}"
+            f" dirty={int(repo_progress.get('dirty_count', 0) or 0)}"
+        )
     if not summary_lines:
-        summary_lines.append("目前沒有足夠的共享記憶片段可形成專案摘要。")
+        summary_lines.append("No active carry-forward surface is visible yet.")
 
     return {
         "focus_topics": focus_topics,
@@ -189,8 +191,79 @@ def build_project_memory_summary(
         "pending_paths": pending_paths[:8],
         "carry_forward": carry_forward[:6],
         "next_actions": next_actions[:4],
+        "repo_progress": repo_progress,
         "summary_text": " | ".join(summary_lines),
     }
+
+
+def _build_repo_progress_snapshot(repo_root: str | Path | None = None) -> Dict[str, Any]:
+    repo_path = Path(repo_root) if repo_root is not None else Path(__file__).resolve().parents[1]
+    branch = _run_git_command(["git", "rev-parse", "--abbrev-ref", "HEAD"], cwd=repo_path)
+    head = _run_git_command(["git", "rev-parse", "--short", "HEAD"], cwd=repo_path)
+    status_output = _run_git_command(["git", "status", "--short"], cwd=repo_path)
+
+    if not branch or not head or status_output is None:
+        return {
+            "available": False,
+            "branch": "",
+            "head": "",
+            "staged_count": 0,
+            "modified_count": 0,
+            "untracked_count": 0,
+            "dirty_count": 0,
+            "path_preview": [],
+        }
+
+    staged_count = 0
+    modified_count = 0
+    untracked_count = 0
+    path_preview: List[str] = []
+
+    for raw_line in status_output.splitlines():
+        line = raw_line.rstrip()
+        if not line:
+            continue
+        if line.startswith("??"):
+            untracked_count += 1
+        else:
+            index_state = line[0] if len(line) > 0 else " "
+            worktree_state = line[1] if len(line) > 1 else " "
+            if index_state not in {" ", "?"}:
+                staged_count += 1
+            if worktree_state not in {" ", "?"}:
+                modified_count += 1
+        path_text = line[3:].strip() if len(line) >= 4 else line.strip()
+        if path_text and path_text not in path_preview and len(path_preview) < 5:
+            path_preview.append(path_text)
+
+    dirty_count = staged_count + modified_count + untracked_count
+    return {
+        "available": True,
+        "branch": branch,
+        "head": head,
+        "staged_count": staged_count,
+        "modified_count": modified_count,
+        "untracked_count": untracked_count,
+        "dirty_count": dirty_count,
+        "path_preview": path_preview,
+    }
+
+
+def _run_git_command(command: List[str], *, cwd: Path) -> str | None:
+    try:
+        completed = subprocess.run(
+            command,
+            cwd=str(cwd),
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+        )
+    except (FileNotFoundError, OSError):
+        return None
+    if completed.returncode != 0:
+        return None
+    return completed.stdout.strip()
 
 
 def _coerce_unit(value: Any) -> float:

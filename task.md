@@ -1,5 +1,11 @@
 # Task
 
+## Phase 643: Repo Progress Snapshot Through R-Memory (2026-03-27)
+- [x] Extend `project_memory_summary` so it carries a bounded local repo progress snapshot instead of only topic/claim prose
+- [x] Surface that snapshot through `diagnose` and packet-facing tests so later agents can see branch/head/dirty posture without rereading `git status`
+- [x] Keep the snapshot observational only: it informs coordination, but does not become a governance gate
+**Success Criteria**: `project_memory_summary` exposes a machine-readable `repo_progress` block, diagnostics render it safely, and packet/summary tests prove later agents can recover current worktree posture from R-memory surfaces.
+
 ## Phase 642: Claim-Authority Refresh After Runtime Gate Upgrades (2026-03-27)
 - [x] Update the claim-authority matrix so POAV gate, ContractObserver blocking, and Risk (R) no longer describe the pre-integration world
 - [x] Regenerate `docs/status/claim_authority_latest.{md,json}` from the refreshed matrix so later agents inherit the current runtime truth instead of stale gap language

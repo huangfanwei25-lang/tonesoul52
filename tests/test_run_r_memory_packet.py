@@ -117,6 +117,7 @@ def test_run_r_memory_packet_emits_json(capsys, monkeypatch, tmp_path: Path) -> 
     assert output["posture"]["session_count"] == 4
     assert set(output["posture"]["risk_posture"]) >= {"score", "level", "recommended_action"}
     assert "project_memory_summary" in output
+    assert "repo_progress" in output["project_memory_summary"]
     assert output["recent_traces"][0]["agent"] == "codex"
     assert output["active_claims"][0]["task_id"] == "task-1"
     assert output["recent_compactions"][0]["compaction_id"] == "cmp-1"

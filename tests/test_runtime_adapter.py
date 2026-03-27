@@ -287,6 +287,7 @@ def test_r_memory_packet_exposes_runtime_dominance_and_recent_trace(
     assert set(packet["posture"]["risk_posture"]) >= {"score", "level", "recommended_action"}
     assert "project_memory_summary" in packet
     assert "summary_text" in packet["project_memory_summary"]
+    assert "repo_progress" in packet["project_memory_summary"]
     assert packet["recent_traces"][0]["agent"] == "codex"
     assert packet["recent_traces"][0]["topics"] == ["runtime", "redis"]
 
@@ -425,6 +426,7 @@ def test_compactions_use_noncanonical_resumability_lane(tmp_path: Path) -> None:
     assert packet["recent_compactions"][1]["agent"] == "codex"
     assert "project_memory_summary" in packet
     assert packet["project_memory_summary"]["next_actions"][0] == "use packet consumption in UI"
+    assert "repo_progress" in packet["project_memory_summary"]
 
 
 # ── decay_tensions() ────────────────────────────────────────────

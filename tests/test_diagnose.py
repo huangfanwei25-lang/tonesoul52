@@ -125,7 +125,23 @@ def _fake_packet():
             "pending_paths": ["docs/architecture/TONESOUL_SHARED_R_MEMORY_OPERATIONS_CONTRACT.md"],
             "carry_forward": ["keep packet first"],
             "next_actions": ["integrate risk posture into packet"],
-            "summary_text": "近期焦點：shared-memory, runtime | 下一步：integrate risk posture into packet",
+            "repo_progress": {
+                "available": True,
+                "branch": "codex/r-memory-compaction-lane-20260326",
+                "head": "04c243d",
+                "staged_count": 1,
+                "modified_count": 2,
+                "untracked_count": 3,
+                "dirty_count": 6,
+                "path_preview": [
+                    "tonesoul/runtime_adapter.py",
+                    "tonesoul/diagnose.py",
+                ],
+            },
+            "summary_text": (
+                "focus=shared-memory, runtime | next=integrate risk posture into packet | "
+                "repo=codex/r-memory-compaction-lane-20260326@04c243d dirty=6"
+            ),
         },
     }
 
@@ -145,6 +161,7 @@ def test_compact_diagnostic_reports_shared_runtime_counts(monkeypatch) -> None:
     assert "claims=1" in text
     assert "compactions=1" in text
     assert "R=0.67/high" in text
+    assert "git=04c243d/dirty=6" in text
     assert "aegis=intact" in text
 
 
@@ -165,4 +182,6 @@ def test_full_diagnostic_is_cp950_safe_and_includes_shared_runtime(monkeypatch) 
     assert "[Project Memory Summary]" in report
     assert "coord-contract" in report
     assert "diagnose/load -> packet -> claim" in report
+    assert "repo=codex/r-memory-compaction-lane-20260326@04c243d dirty=6" in report
+    assert "repo_paths=tonesoul/runtime_adapter.py, tonesoul/diagnose.py" in report
     report.encode("cp950", errors="strict")
