@@ -78,6 +78,15 @@ Do not collapse these into one layer. Operational guides help an agent work; can
 - `architecture/TONESOUL_RUNTIME_COMPACTION_AND_GAMIFICATION_CONTRACT.md`
   - defines what part of the newer runtime/world/security proposal belongs in canonical runtime, projection layers, or separate workstreams
 
+## Claim Authority Distillation
+
+- `architecture/TONESOUL_CLAIM_AUTHORITY_MATRIX.md`
+  - 75-term matrix for checking whether a ToneSoul term is canonical, runtime, law/spec vocabulary, research/theory, or projection, and whether it is safe to rely on operationally
+- `architecture/TONESOUL_LAW_RUNTIME_BOUNDARY_CONTRACT.md`
+  - higher-signal boundary contract for the most confusing law/runtime terms so later agents stop mistaking theory, worldview, or design vocabulary for live implementation
+
+Treat these as boundary aids. They help later agents classify claims, but they do not outrank code, tests, `AXIOMS.json`, or canonical architecture contracts.
+
 ## Machine-Readable Mirrors
 
 - `status/l7_retrieval_contract_latest.json`

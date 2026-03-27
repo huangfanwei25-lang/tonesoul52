@@ -48,7 +48,15 @@ Use these after the canonical architecture anchor, not before it.
 - [architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md](architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md)
 - [architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md](architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md)
 - [architecture/TONESOUL_MULTI_AGENT_SEMANTIC_FIELD_CONTRACT.md](architecture/TONESOUL_MULTI_AGENT_SEMANTIC_FIELD_CONTRACT.md)
+- [architecture/TONESOUL_SHARED_R_MEMORY_OPERATIONS_CONTRACT.md](architecture/TONESOUL_SHARED_R_MEMORY_OPERATIONS_CONTRACT.md)
 - [architecture/TONESOUL_RUNTIME_COMPACTION_AND_GAMIFICATION_CONTRACT.md](architecture/TONESOUL_RUNTIME_COMPACTION_AND_GAMIFICATION_CONTRACT.md)
+
+## Claim Authority Distillation
+
+- [architecture/TONESOUL_CLAIM_AUTHORITY_MATRIX.md](architecture/TONESOUL_CLAIM_AUTHORITY_MATRIX.md)
+  - full cross-lane matrix for whether a term is canonical, runtime, vocabulary, theory, or projection
+- [architecture/TONESOUL_LAW_RUNTIME_BOUNDARY_CONTRACT.md](architecture/TONESOUL_LAW_RUNTIME_BOUNDARY_CONTRACT.md)
+  - compact boundary contract for the highest-confusion `law/` and deep-prose terms
 
 ## Developer Runtime Adapter Direction
 

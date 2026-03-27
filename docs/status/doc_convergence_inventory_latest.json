@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-27T04:42:14Z",
+  "generated_at": "2026-03-27T04:50:39Z",
   "scope": {
     "include_roots": [
       "PARADOXES",
@@ -793,12 +793,12 @@
       "basename": "AI_ONBOARDING.md",
       "extension": ".md",
       "surface_type": "root_entrypoint",
-      "size_bytes": 13038,
+      "size_bytes": 13363,
       "title": "AI Onboarding Guide | AI 引導指南",
       "purpose": "給未來沒有記憶的 AI 實例的快速引導。",
       "status": "",
       "date_hint": "2026-03-27",
-      "content_sha256": "ee4c55cbb08ab2420b7bbea096ab0404870001996cea0e458b11635776733312"
+      "content_sha256": "543bdb65a1c9e256a9728bc6e6f5201fea128e5e7418a94e0f5bab986c6c2317"
     },
     {
       "path": "AXIOMS.json",
@@ -2509,12 +2509,12 @@
       "basename": "INDEX.md",
       "extension": ".md",
       "surface_type": "general_doc",
-      "size_bytes": 15993,
+      "size_bytes": 16557,
       "title": "ToneSoul Documentation Index",
       "purpose": "top-level documentation index for ToneSoul authority surfaces, operational packets, and convergence maps.",
       "status": "",
       "date_hint": "2026-03-27",
-      "content_sha256": "8a64ed171f03a0fceacbe3d41cd349d83e633cdbd5019a468f9b2db0dee2c793"
+      "content_sha256": "d939a1833751256b9e0b6873c3c55c84fb4fe33c6f5376af866bab2a40e02812"
     },
     {
       "path": "docs/INTEGRATION_AUDIT_DRAFT.md",
@@ -4357,12 +4357,12 @@
       "basename": "README.md",
       "extension": ".md",
       "surface_type": "general_doc",
-      "size_bytes": 11147,
+      "size_bytes": 11804,
       "title": "ToneSoul Documentation Index",
       "purpose": "documentation entrypoint and guided index for ToneSoul architecture, status artifacts, and convergence surfaces.",
       "status": "",
       "date_hint": "2026-03-27",
-      "content_sha256": "7298ed71134192e25f1152f338ce5be092d83df6def4bb75b13ed22efbf414f3"
+      "content_sha256": "19e903e7e4103a37bc05464726396c7ca3e8204a1b351b19ad6a54de20dc3f9a"
     },
     {
       "path": "docs/RELEASE_NOTES_v0.1.0.md",
@@ -4957,24 +4957,24 @@
       "basename": "doc_authority_structure_latest.json",
       "extension": ".json",
       "surface_type": "generated_status_artifact",
-      "size_bytes": 11703,
+      "size_bytes": 12691,
       "title": "doc_authority_structure_latest.json",
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "fc4555d998d1a54d829928d171d3c576a0142725690dacf5bfa98187fc33403a"
+      "content_sha256": "1e9b7e7160fcd18aa2b6d5bd8e6a60b0db1287bc0c7891d3dfe61ed32730b7bd"
     },
     {
       "path": "docs/status/doc_authority_structure_latest.md",
       "basename": "doc_authority_structure_latest.md",
       "extension": ".md",
       "surface_type": "generated_status_artifact",
-      "size_bytes": 6172,
+      "size_bytes": 6760,
       "title": "Documentation Authority Structure Latest",
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "dbd76ed83302b9d7f9598bbec243b72675b8f85d3f813b1d9be166b80c00fbac"
+      "content_sha256": "aca648acbc64f73237f8554d1b77ce16231ab25c6ff0220b66176c244edf19c9"
     },
     {
       "path": "docs/status/doc_convergence_inventory_latest.json",
@@ -4986,7 +4986,7 @@
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "dba70920f8874163c5cb56df2ba941fa5598d27595699aef40bd15be58f747fa"
+      "content_sha256": "1142ed9f15e88c12b229f98b660a6f3c60c55d52c628caf0de6274c8b854aa81"
     },
     {
       "path": "docs/status/doc_convergence_inventory_latest.md",
@@ -4998,7 +4998,7 @@
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "2535a6a68d2cfc18b60a0ea7d5e8536081964e71d9c88ae5e8de4a82ff0f2a4e"
+      "content_sha256": "2865e1e2c1bc9014d0363b4ffda2340d2cef99d74f7a53f041cc90662693d415"
     },
     {
       "path": "docs/status/dream_engine_wakeup_status_2026-03-09.md",
@@ -7626,7 +7626,7 @@
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "8fcf0f08614b47589688348920f540022fdc1190e382a1a5bdedc5671b2151b2"
+      "content_sha256": "c5c64c4a54146e343df8e41f276e1ab49afdcd976f8e99ef72593eee6fbf0043"
     },
     {
       "path": "memory/BOOTSTRAP.md",
@@ -27709,12 +27709,12 @@
       "basename": "task.md",
       "extension": ".md",
       "surface_type": "root_entrypoint",
-      "size_bytes": 87197,
+      "size_bytes": 87940,
       "title": "Task",
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "195b4c21b6fe4b1a9862f049a88d9489c9ee314e9926b86f51bf9186f4e35620"
+      "content_sha256": "e7fb31503f697c8130575e12ff3da06ffdadd960b69944800ab07a79128566d6"
     },
     {
       "path": "tests/fixtures/paradoxes/medical_suicide_paradox.json",

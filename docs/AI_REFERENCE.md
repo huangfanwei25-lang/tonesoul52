@@ -302,3 +302,34 @@
 | 防火牆教義 | `docs/architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md` |
 | 運行時程式碼 | `tonesoul/runtime_adapter.py` |
 | Session 協議 | `CLAUDE.md` |
+
+---
+
+## 六、Shared R-Memory Operating Order
+
+當問題不只是「這個詞是什麼」，而是「多個 agent 怎麼真的共用一層 hot runtime」，請先讀：
+
+- `docs/architecture/TONESOUL_SHARED_R_MEMORY_OPERATIONS_CONTRACT.md`
+
+當問題不只是「這個詞很大」，而是「它到底是不是 runtime 硬依賴」，請再讀：
+
+- `docs/architecture/TONESOUL_CLAIM_AUTHORITY_MATRIX.md`
+- `docs/architecture/TONESOUL_LAW_RUNTIME_BOUNDARY_CONTRACT.md`
+
+建議操作順序：
+
+1. `python -m tonesoul.diagnose --agent <id>`
+2. `python scripts/run_r_memory_packet.py`
+3. `python scripts/run_task_claim.py list`
+4. `python scripts/run_task_claim.py claim <task_id> --agent <id> --summary "..."`
+5. 本地工作
+6. 若未定論但已對外部協作有影響，寫 `write_perspective()`
+7. 若工作被打斷，寫 `write_checkpoint()`
+8. 若要跨 session / 跨模型交接，寫 `write_compaction()`
+9. 只有接受後的正典變更才進 `commit()`
+10. 完成後釋放 claim
+
+可見性邊界：
+
+- 寫入後才可見：claims、perspectives、checkpoints、compactions、accepted traces
+- 預設不可見：私有推理、本地 context window、未 staged 編輯、沒寫出的工作進度

@@ -1,6 +1,6 @@
 # Document Convergence Inventory Latest
 
-- generated_at: 2026-03-27T04:42:14Z
+- generated_at: 2026-03-27T04:50:39Z
 - primary_status_line: `doc_convergence_ready | authored_files=2256 collisions=27 missing_purpose=140 missing_date=101`
 - runtime_status_line: `entrypoints | doc_inventory=doc_convergence_inventory_latest.json largest_family=docs_law_engineering_mirror architecture_docs=21`
 - artifact_policy_status_line: `doc_scope=authored_only | content_check=hash_plus_similarity generated_noise=excluded`

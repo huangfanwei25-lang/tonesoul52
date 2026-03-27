@@ -1,5 +1,11 @@
 # Task
 
+## Phase 635: Claude Authority Distillation Integration (2026-03-27)
+- [x] Review Claude's new claim-authority matrix and law/runtime boundary contract against the current canonical and operational routing stack
+- [x] Integrate the approved artifacts into onboarding, doc indexes, and authority-map generation without promoting them above code, tests, or canonical contracts
+- [x] Keep Claude's `memory/handoff/*` note out of the public commit lane while still using it as a local integration reference
+**Success Criteria**: Later agents can discover Claude's authority-distillation artifacts from repo entrypoints, use them to avoid overclaiming repo terms, and still understand that they are boundary aids rather than constitutional truth.
+
 ## Phase 634: Shared R-Memory Operating Contract and Diagnostic Surface (2026-03-27)
 - [x] Write a full operating contract for how multiple agents actually share one R-memory layer instead of leaving the behavior implicit across chat messages and scattered code
 - [x] Route the new contract into onboarding, docs indexes, packet canonical sources, and authority-map generation so later agents can discover it without rereading the whole repo

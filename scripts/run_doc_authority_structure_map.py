@@ -98,12 +98,24 @@ GROUPS = [
         ],
     },
     {
+        "id": "claim_authority_distillation",
+        "label": "Claim Authority Distillation",
+        "description": "boundary aids that classify whether prominent repo terms are active runtime, vocabulary, theory, or projection",
+        "authority_role": "boundary_contract",
+        "use_when": "when a term sounds load-bearing but you need to know whether it is truly implemented before relying on it",
+        "read_order": 7,
+        "files": [
+            "docs/architecture/TONESOUL_CLAIM_AUTHORITY_MATRIX.md",
+            "docs/architecture/TONESOUL_LAW_RUNTIME_BOUNDARY_CONTRACT.md",
+        ],
+    },
+    {
         "id": "doc_governance",
         "label": "Documentation Governance",
         "description": "naming, zoning, and convergence planning surfaces",
         "authority_role": "doc_governance",
         "use_when": "when retrieval quality, metadata posture, or naming collisions are the problem",
-        "read_order": 7,
+        "read_order": 8,
         "files": [
             "docs/DOCS_INFORMATION_ARCHITECTURE_v1.md",
             "docs/DOCS_CLASSIFICATION_LEDGER_v1.md",
@@ -118,7 +130,7 @@ GROUPS = [
         "description": "ownership and divergence boundaries for duplicate-like surfaces",
         "authority_role": "boundary_contract",
         "use_when": "when two similar-looking lanes need explicit ownership or split-brain control",
-        "read_order": 8,
+        "read_order": 9,
         "files": [
             "docs/architecture/BASENAME_DIVERGENCE_DISTILLATION_MAP.md",
             "docs/architecture/PRIVATE_MEMORY_SHADOW_BOUNDARY_MAP.md",
@@ -132,7 +144,7 @@ GROUPS = [
         "description": "machine-readable current posture for convergence-related lanes",
         "authority_role": "generated_status",
         "use_when": "when current machine-readable posture matters more than prose explanation",
-        "read_order": 9,
+        "read_order": 10,
         "files": [
             "docs/status/doc_convergence_inventory_latest.json",
             "docs/status/basename_divergence_distillation_latest.json",

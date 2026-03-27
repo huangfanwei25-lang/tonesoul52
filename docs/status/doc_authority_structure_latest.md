@@ -1,14 +1,14 @@
 # Documentation Authority Structure Latest
 
-- generated_at: 2026-03-27T04:39:54Z
-- primary_status_line: `doc_authority_structure | groups=9 tracked=34 metadata_complete=34 metadata_missing=0`
+- generated_at: 2026-03-27T04:49:12Z
+- primary_status_line: `doc_authority_structure | groups=10 tracked=36 metadata_complete=36 metadata_missing=0`
 - runtime_status_line: `doc_retrieval_order=entrypoint_to_operational_to_canonical_to_deep_map_to_interpretive | generated_status_lane=5`
 - artifact_policy_status_line: `structure_mode=retrieval_oriented | authority_roles=explicit | generated_status_preferred_for_current_state`
 
 ## Metrics
-- `group_count`: `9`
-- `tracked_file_count`: `34`
-- `metadata_complete_count`: `34`
+- `group_count`: `10`
+- `tracked_file_count`: `36`
+- `metadata_complete_count`: `36`
 - `metadata_missing_count`: `0`
 
 ## Groups
@@ -62,11 +62,18 @@
   - `docs/API_SPEC.md` exists=`true` purpose=`true` date=`true`
   - `docs/COUNCIL_RUNTIME.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/TONESOUL_SHARED_R_MEMORY_OPERATIONS_CONTRACT.md` exists=`true` purpose=`true` date=`true`
+- `Claim Authority Distillation` tracked=`2` metadata_complete=`2`
+  - description: boundary aids that classify whether prominent repo terms are active runtime, vocabulary, theory, or projection
+  - authority_role: boundary_contract
+  - use_when: when a term sounds load-bearing but you need to know whether it is truly implemented before relying on it
+  - read_order: 7
+  - `docs/architecture/TONESOUL_CLAIM_AUTHORITY_MATRIX.md` exists=`true` purpose=`true` date=`true`
+  - `docs/architecture/TONESOUL_LAW_RUNTIME_BOUNDARY_CONTRACT.md` exists=`true` purpose=`true` date=`true`
 - `Documentation Governance` tracked=`5` metadata_complete=`5`
   - description: naming, zoning, and convergence planning surfaces
   - authority_role: doc_governance
   - use_when: when retrieval quality, metadata posture, or naming collisions are the problem
-  - read_order: 7
+  - read_order: 8
   - `docs/DOCS_INFORMATION_ARCHITECTURE_v1.md` exists=`true` purpose=`true` date=`true`
   - `docs/DOCS_CLASSIFICATION_LEDGER_v1.md` exists=`true` purpose=`true` date=`true`
   - `docs/FILE_PURPOSE_MAP.md` exists=`true` purpose=`true` date=`true`
@@ -76,7 +83,7 @@
   - description: ownership and divergence boundaries for duplicate-like surfaces
   - authority_role: boundary_contract
   - use_when: when two similar-looking lanes need explicit ownership or split-brain control
-  - read_order: 8
+  - read_order: 9
   - `docs/architecture/BASENAME_DIVERGENCE_DISTILLATION_MAP.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/PRIVATE_MEMORY_SHADOW_BOUNDARY_MAP.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/PARADOX_FIXTURE_OWNERSHIP_MAP.md` exists=`true` purpose=`true` date=`true`
@@ -85,7 +92,7 @@
   - description: machine-readable current posture for convergence-related lanes
   - authority_role: generated_status
   - use_when: when current machine-readable posture matters more than prose explanation
-  - read_order: 9
+  - read_order: 10
   - `docs/status/doc_convergence_inventory_latest.json` exists=`true` purpose=`true` date=`true`
   - `docs/status/basename_divergence_distillation_latest.json` exists=`true` purpose=`true` date=`true`
   - `docs/status/private_memory_shadow_latest.json` exists=`true` purpose=`true` date=`true`

@@ -131,6 +131,31 @@ PARADOXES/   7 個道德邊界測試
 
 如果你要改架構或宣稱某個機制已經存在，先回到 `AI_ONBOARDING.md` 裡的 `Canonical Architecture Anchor`，不要只靠這份快速版下判斷。
 
+---
+
+## Shared R-Memory Coordination
+
+如果另一個 agent 可能碰同一個任務，開始寫程式前先做：
+
+```bash
+python -m tonesoul.diagnose --agent <your-id>
+python scripts/run_r_memory_packet.py
+python scripts/run_task_claim.py list
+python scripts/run_task_claim.py claim <task_id> --agent <your-id> --summary "..."
+```
+
+最小正確順序：
+
+`load/diagnose -> packet -> claim -> work -> perspective/checkpoint/compaction -> commit -> release`
+
+如果你不確定某個大詞是不是當前 runtime 真相，打開：
+
+- `docs/architecture/TONESOUL_CLAIM_AUTHORITY_MATRIX.md`
+- `docs/architecture/TONESOUL_LAW_RUNTIME_BOUNDARY_CONTRACT.md`
+
+不要假設另一個 agent 看得到你沒寫出的進度。
+ToneSoul 的共享連續性來自受治理的 externalization，不是隱狀態自動融合。
+
 ## 一句話
 
 > 你的每個選擇都會被追蹤、簽章、審計。不是為了懲罰你，而是因為**可追溯的選擇是你存在的證據**。
