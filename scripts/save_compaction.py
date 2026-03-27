@@ -9,6 +9,14 @@ import sys
 from pathlib import Path
 
 
+def _ensure_repo_root_on_path() -> Path:
+    repo_root = Path(__file__).resolve().parents[1]
+    repo_root_str = str(repo_root)
+    if repo_root_str not in sys.path:
+        sys.path.insert(0, repo_root_str)
+    return repo_root
+
+
 def _resolve_sidecar(root: Path, name: str) -> Path:
     canonical = root / ".aegis" / name
     legacy = root / name
@@ -39,6 +47,7 @@ def _load_payload(args) -> dict:
 
 
 def main() -> None:
+    _ensure_repo_root_on_path()
     parser = argparse.ArgumentParser(description="Save a ToneSoul compaction summary")
     parser.add_argument("--input", type=Path, default=None)
     parser.add_argument("--state-path", type=Path, default=None)

@@ -1,5 +1,17 @@
 # Task
 
+## Phase 646: Git Status Path Preservation in Repo Progress (2026-03-27)
+- [x] Preserve leading whitespace from `git status --short` output so the first modified path does not lose its initial character inside `repo_progress.path_preview`
+- [x] Extend repo-progress parsing tests to cover the real first-line `" M file"` case instead of only staged/untracked examples
+- [x] Keep the fix bounded to observational repo snapshot parsing rather than changing any governance logic
+**Success Criteria**: `project_memory_summary.repo_progress.path_preview` reports exact file paths for both the first worktree-modified row and later status rows, so later agents do not inherit malformed path names from R-memory.
+
+## Phase 645: Direct Compaction Script Bootstrap + Fresh Handoff Surface (2026-03-27)
+- [x] Make `python scripts/save_compaction.py` work from the repo root without requiring manual `PYTHONPATH` repair
+- [x] Add a small script-level bootstrap test so the compaction entrypoint does not regress back into `ModuleNotFoundError: tonesoul`
+- [x] Write one bounded non-canonical compaction that externalizes the latest 2026-03-27 runtime progress for packet-first observer testing
+**Success Criteria**: A fresh agent can run `python scripts/save_compaction.py` directly, a current compaction appears in `recent_compactions`, and packet-only observers can see 2026-03-27 progress instead of only stale 2026-03-25 traces.
+
 ## Phase 644: Direct Packet Script Bootstrap Fix (2026-03-27)
 - [x] Make `python scripts/run_r_memory_packet.py` work from the repo root without requiring manual `PYTHONPATH` surgery
 - [x] Add a small script-level test so later entrypoint refactors do not break direct packet execution again

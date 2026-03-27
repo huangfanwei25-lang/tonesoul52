@@ -263,7 +263,7 @@ def _run_git_command(command: List[str], *, cwd: Path) -> str | None:
         return None
     if completed.returncode != 0:
         return None
-    return completed.stdout.strip()
+    return completed.stdout.rstrip("\r\n")
 
 
 def _coerce_unit(value: Any) -> float:

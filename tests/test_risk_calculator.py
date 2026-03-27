@@ -102,6 +102,7 @@ def test_repo_progress_snapshot_parses_git_status(monkeypatch) -> None:
         ("git", "rev-parse", "--abbrev-ref", "HEAD"): _Completed("feature/r-memory\n"),
         ("git", "rev-parse", "--short", "HEAD"): _Completed("abc1234\n"),
         ("git", "status", "--short"): _Completed(
+            " M CLAUDE.md\n"
             "M  tonesoul/runtime_adapter.py\n"
             " M tonesoul/diagnose.py\n"
             "?? docs/status/new_snapshot.md\n"
@@ -119,7 +120,8 @@ def test_repo_progress_snapshot_parses_git_status(monkeypatch) -> None:
     assert snapshot["branch"] == "feature/r-memory"
     assert snapshot["head"] == "abc1234"
     assert snapshot["staged_count"] == 1
-    assert snapshot["modified_count"] == 1
+    assert snapshot["modified_count"] == 2
     assert snapshot["untracked_count"] == 1
-    assert snapshot["dirty_count"] == 3
-    assert snapshot["path_preview"][0] == "tonesoul/runtime_adapter.py"
+    assert snapshot["dirty_count"] == 4
+    assert snapshot["path_preview"][0] == "CLAUDE.md"
+    assert snapshot["path_preview"][1] == "tonesoul/runtime_adapter.py"

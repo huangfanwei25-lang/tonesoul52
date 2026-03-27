@@ -66,3 +66,14 @@ def test_save_compaction_writes_noncanonical_summary(capsys, monkeypatch, tmp_pa
     saved = json.loads((tmp_path / ".aegis" / "compacted.json").read_text(encoding="utf-8"))
     assert saved[0]["agent"] == "codex"
     assert saved[0]["next_action"] == "teach the next agent to read packet first"
+
+
+def test_ensure_repo_root_on_path_adds_repo_root(monkeypatch) -> None:
+    module = _load_script_module()
+    repo_root = str(Path(__file__).resolve().parents[1])
+    monkeypatch.setattr(sys, "path", [entry for entry in sys.path if entry != repo_root])
+
+    returned = module._ensure_repo_root_on_path()
+
+    assert str(returned) == repo_root
+    assert sys.path[0] == repo_root
