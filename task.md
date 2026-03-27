@@ -1,5 +1,11 @@
 # Task
 
+## Phase 644: Direct Packet Script Bootstrap Fix (2026-03-27)
+- [x] Make `python scripts/run_r_memory_packet.py` work from the repo root without requiring manual `PYTHONPATH` surgery
+- [x] Add a small script-level test so later entrypoint refactors do not break direct packet execution again
+- [x] Keep the fix limited to bootstrap/import stability rather than changing packet semantics
+**Success Criteria**: A fresh AI can run `python scripts/run_r_memory_packet.py` directly from the repo root, get a valid packet, and not fail at `ModuleNotFoundError: tonesoul`.
+
 ## Phase 643: Repo Progress Snapshot Through R-Memory (2026-03-27)
 - [x] Extend `project_memory_summary` so it carries a bounded local repo progress snapshot instead of only topic/claim prose
 - [x] Surface that snapshot through `diagnose` and packet-facing tests so later agents can see branch/head/dirty posture without rereading `git status`

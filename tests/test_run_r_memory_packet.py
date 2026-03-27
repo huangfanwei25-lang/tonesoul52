@@ -121,3 +121,14 @@ def test_run_r_memory_packet_emits_json(capsys, monkeypatch, tmp_path: Path) -> 
     assert output["recent_traces"][0]["agent"] == "codex"
     assert output["active_claims"][0]["task_id"] == "task-1"
     assert output["recent_compactions"][0]["compaction_id"] == "cmp-1"
+
+
+def test_ensure_repo_root_on_path_adds_repo_root(monkeypatch) -> None:
+    module = _load_script_module()
+    repo_root = str(Path(__file__).resolve().parents[1])
+    monkeypatch.setattr(sys, "path", [entry for entry in sys.path if entry != repo_root])
+
+    resolved = module._ensure_repo_root_on_path()
+
+    assert str(resolved) == repo_root
+    assert sys.path[0] == repo_root
