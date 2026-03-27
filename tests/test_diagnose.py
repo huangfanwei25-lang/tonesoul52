@@ -113,10 +113,28 @@ def _fake_packet():
                 "summary": "captured current boundary decisions",
             }
         ],
+        "recent_subject_snapshots": [
+            {
+                "snapshot_id": "subj-1",
+                "agent": "codex",
+                "session_id": "sess-1",
+                "summary": "Stay packet-first and keep theory out of runtime truth.",
+                "stable_vows": ["do not smuggle theory into runtime"],
+                "durable_boundaries": ["protected files stay human-managed"],
+                "decision_preferences": ["prefer packet before broad repo scan"],
+                "verified_routines": ["leave compaction before release"],
+                "active_threads": ["subject-snapshot rollout"],
+                "evidence_refs": ["docs/AI_QUICKSTART.md"],
+                "refresh_signals": ["refresh when durable boundaries change"],
+                "source": "cli",
+                "updated_at": "2026-03-28T00:04:00Z",
+            }
+        ],
         "parallel_lanes": {
             "canonical_commit_serialized": True,
             "perspectives_surface": "ts:perspectives:{agent_id}",
             "checkpoints_surface": "ts:checkpoints:*",
+            "subject_snapshot_surface": "ts:subject_snapshots",
         },
         "project_memory_summary": {
             "focus_topics": ["shared-memory", "runtime"],
@@ -125,6 +143,14 @@ def _fake_packet():
             "pending_paths": ["docs/architecture/TONESOUL_SHARED_R_MEMORY_OPERATIONS_CONTRACT.md"],
             "carry_forward": ["keep packet first"],
             "next_actions": ["integrate risk posture into packet"],
+            "subject_anchor": {
+                "summary": "Stay packet-first and keep theory out of runtime truth.",
+                "stable_vows": ["do not smuggle theory into runtime"],
+                "durable_boundaries": ["protected files stay human-managed"],
+                "decision_preferences": ["prefer packet before broad repo scan"],
+                "verified_routines": ["leave compaction before release"],
+                "active_threads": ["subject-snapshot rollout"],
+            },
             "repo_progress": {
                 "available": True,
                 "branch": "codex/r-memory-compaction-lane-20260326",
@@ -160,6 +186,7 @@ def _fake_packet():
                 "perspective": 'python scripts/save_perspective.py --agent <your-id> --summary "..." --stance "..."',
                 "checkpoint": 'python scripts/save_checkpoint.py --checkpoint-id <id> --agent <your-id> --summary "..." --path "..."',
                 "compaction": 'python scripts/save_compaction.py --agent <your-id> --summary "..." --path "..."',
+                "subject_snapshot": 'python scripts/save_subject_snapshot.py --agent <your-id> --summary "..." --boundary "..." --preference "..."',
                 "release": "python scripts/run_task_claim.py release <task_id> --agent <your-id>",
             },
             "recommended_order": [
@@ -174,6 +201,7 @@ def _fake_packet():
             "current_reminders": [
                 "Prefer recent_compactions and project_memory_summary before older recent_traces.",
                 "Active claims are visible; coordinate before editing overlapping paths.",
+                "A recent subject snapshot is visible; treat it as durable working identity, but still non-canonical.",
             ],
             "completion_rule": (
                 "Before ending a session, externalize progress with checkpoint or compaction, "
@@ -197,6 +225,7 @@ def test_compact_diagnostic_reports_shared_runtime_counts(monkeypatch) -> None:
 
     assert "claims=1" in text
     assert "compactions=1" in text
+    assert "subjects=1" in text
     assert "R=0.67/high" in text
     assert "git=04c243d/dirty=6" in text
     assert "aegis=intact" in text
@@ -214,9 +243,10 @@ def test_full_diagnostic_is_cp950_safe_and_includes_shared_runtime(monkeypatch) 
 
     report = full_diagnostic(agent_id="codex")
 
-    assert "[Shared Runtime] claims=1 visitors=1 compactions=1" in report
+    assert "[Shared Runtime] claims=1 visitors=1 compactions=1 subject_snapshots=1" in report
     assert "Risk Posture:" in report
     assert "[Project Memory Summary]" in report
+    assert "[Subject Snapshot] count=1" in report
     assert "coord-contract" in report
     assert "diagnose/load -> packet -> claim" in report
     assert "repo=codex/r-memory-compaction-lane-20260326@04c243d dirty=6" in report
@@ -224,6 +254,8 @@ def test_full_diagnostic_is_cp950_safe_and_includes_shared_runtime(monkeypatch) 
     assert "[Operator Guidance]" in report
     assert "save_checkpoint.py" in report
     assert "save_compaction.py" in report
+    assert "save_subject_snapshot.py" in report
     assert "completion_rule=Before ending a session" in report
+    assert "subject_anchor:" in report
     assert "Prefer recent_compactions and project_memory_summary before older" in report
     report.encode("cp950", errors="strict")

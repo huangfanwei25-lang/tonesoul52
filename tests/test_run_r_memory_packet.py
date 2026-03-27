@@ -25,6 +25,7 @@ def test_run_r_memory_packet_emits_json(capsys, monkeypatch, tmp_path: Path) -> 
     sidecar_dir = tmp_path / ".aegis"
     claims_path = sidecar_dir / "task_claims.json"
     compactions_path = sidecar_dir / "compacted.json"
+    subject_snapshots_path = sidecar_dir / "subject_snapshots.json"
     state_path.write_text(
         json.dumps(
             {
@@ -98,6 +99,28 @@ def test_run_r_memory_packet_emits_json(capsys, monkeypatch, tmp_path: Path) -> 
         ),
         encoding="utf-8",
     )
+    subject_snapshots_path.write_text(
+        json.dumps(
+            [
+                {
+                    "snapshot_id": "subj-1",
+                    "agent": "codex",
+                    "session_id": "sess-1",
+                    "summary": "Stay packet-first and keep theory out of runtime assumptions.",
+                    "stable_vows": ["do not commit personal memory data"],
+                    "durable_boundaries": ["protected files stay human-managed"],
+                    "decision_preferences": ["prefer packet before broad repo scan"],
+                    "verified_routines": ["leave compaction before handoff"],
+                    "active_threads": ["subject-snapshot rollout"],
+                    "evidence_refs": ["docs/AI_QUICKSTART.md"],
+                    "refresh_signals": ["refresh when session cadence changes"],
+                    "source": "cli",
+                    "updated_at": "2026-03-28T00:04:00+00:00"
+                }
+            ]
+        ),
+        encoding="utf-8",
+    )
 
     monkeypatch.setattr(
         sys,
@@ -121,11 +144,14 @@ def test_run_r_memory_packet_emits_json(capsys, monkeypatch, tmp_path: Path) -> 
     assert "operator_guidance" in output
     assert output["operator_guidance"]["backend_mode"] == "file"
     assert "checkpoint" in output["operator_guidance"]["coordination_commands"]
+    assert "subject_snapshot" in output["operator_guidance"]["coordination_commands"]
     assert output["operator_guidance"]["session_end"][1].startswith("python scripts/save_compaction.py")
     assert "checkpoint or compaction" in output["operator_guidance"]["completion_rule"]
     assert output["recent_traces"][0]["agent"] == "codex"
     assert output["active_claims"][0]["task_id"] == "task-1"
     assert output["recent_compactions"][0]["compaction_id"] == "cmp-1"
+    assert output["recent_subject_snapshots"][0]["snapshot_id"] == "subj-1"
+    assert output["project_memory_summary"]["subject_anchor"]["summary"].startswith("Stay packet-first")
 
 
 def test_ensure_repo_root_on_path_adds_repo_root(monkeypatch) -> None:

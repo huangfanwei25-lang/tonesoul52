@@ -1,7 +1,7 @@
 # ToneSoul Shared R-Memory Operations Contract
 
 > Status: operational architecture contract as of 2026-03-27
-> Scope: multi-agent shared runtime operations across diagnose, packet, claims, perspectives, checkpoints, compactions, and serialized canonical commit
+> Scope: multi-agent shared runtime operations across diagnose, packet, claims, perspectives, checkpoints, compactions, subject snapshots, and serialized canonical commit
 > Purpose: define what later agents must externalize into shared R-memory, what other agents can actually see there, and which operating order preserves continuity without overclaiming shared cognition.
 > Last Updated: 2026-03-28
 
@@ -37,6 +37,7 @@ This contract is grounded in the current executable and schema surfaces:
 - `scripts/save_perspective.py`
 - `scripts/save_checkpoint.py`
 - `scripts/save_compaction.py`
+- `scripts/save_subject_snapshot.py`
 - `spec/governance/r_memory_packet_v1.schema.json`
 - `docs/architecture/TONESOUL_R_MEMORY_STACK_RECOMMENDATION.md`
 - `docs/architecture/TONESOUL_MULTI_AGENT_SEMANTIC_FIELD_CONTRACT.md`
@@ -77,7 +78,7 @@ The core rule is:
 
 Default collaboration posture:
 
-> every collaborative AI session starts with diagnose + packet + claim inspection, and ends by externalizing checkpoint or compaction before releasing any shared claim
+> every collaborative AI session starts with diagnose + packet + claim inspection, and ends by externalizing checkpoint or compaction before releasing any shared claim; when durable operator identity changes, add a subject snapshot before leaving.
 
 ### 2. Session Start Handshake
 
@@ -180,7 +181,34 @@ Forbidden move:
 
 - using compaction to smuggle unreviewed canonical changes into later-agent behavior
 
-### 7. Canonical Commit Protocol
+### 7. Subject Snapshot Protocol
+
+Use `write_subject_snapshot()` or `scripts/save_subject_snapshot.py` when stable boundaries, decision preferences, or verified routines changed and later agents should inherit a more durable working identity than a short compaction.
+
+Supported surfaces:
+
+- `python scripts/save_subject_snapshot.py --agent <name> --summary "..." --boundary "..." --preference "..."`
+- `write_subject_snapshot()`
+
+Subject snapshot fields should answer:
+
+- what stable self-structure should persist across later agents
+- which vows or durable boundaries are still load-bearing
+- which decision preferences have proven useful
+- which routines are verified rather than aspirational
+- which active threads still define the current operator identity
+
+Subject snapshot semantics:
+
+- durable working identity
+- non-canonical
+- slower-changing than checkpoint or compaction
+
+Forbidden move:
+
+- treating a subject snapshot as canonical posture or constitutional truth
+
+### 8. Canonical Commit Protocol
 
 Canonical state changes still belong only to `commit()`.
 
@@ -204,7 +232,7 @@ Canonical commit is not for:
 - multi-agent brainstorming drafts
 - resumability notes that have not passed canonical review
 
-### 8. Required Operating Cadence
+### 9. Required Operating Cadence
 
 When multiple agents share one hot runtime, the correct order is:
 
@@ -215,10 +243,11 @@ When multiple agents share one hot runtime, the correct order is:
 5. externalize perspective when unresolved but coordination-relevant
 6. externalize checkpoint when interrupted
 7. externalize compaction when handing off across sessions or models
-8. canonical commit only for accepted final state mutation
-9. release claim
+8. externalize subject snapshot when durable operator identity materially changed
+9. canonical commit only for accepted final state mutation
+10. release claim
 
-### 9. Shared Surface Table
+### 10. Shared Surface Table
 
 | Surface | Meaning | Authority | Visibility |
 |---------|---------|-----------|------------|
@@ -229,15 +258,17 @@ When multiple agents share one hot runtime, the correct order is:
 | `ts:perspectives:{agent_id}` | provisional stance | non-canonical | visible after explicit write |
 | `ts:checkpoints:*` | resumability checkpoint | non-canonical | visible after explicit write |
 | `ts:compacted` | bounded handoff summary | non-canonical | visible after explicit write |
+| `ts:subject_snapshots` | durable working identity snapshot | non-canonical | visible after explicit write |
 | `ts:field` | experimental synthesis | experimental | visible if implemented |
 | `GET /packet` | aggregated hot-state read surface | operational packet | read-only composite view |
 
-### 10. Failure Modes And Anti-Patterns
+### 11. Failure Modes And Anti-Patterns
 
 Architectural failure signals:
 
 - an agent worked for a long time without claim/checkpoint/compaction, then expected another agent to know its progress
 - compaction text changed later-agent posture without canonical evidence
+- a subject snapshot was treated as canonical truth instead of durable non-canonical structure
 - a task claim was treated as if it granted canonical mutation rights
 - packet output was treated as if it were the whole repository history
 - perspective language was promoted straight into mechanism without contract support

@@ -63,6 +63,7 @@ def main() -> None:
             perspectives_path=_resolve_sidecar(claim_root, "perspectives.json"),
             checkpoints_path=_resolve_sidecar(claim_root, "checkpoints.json"),
             compactions_path=_resolve_sidecar(claim_root, "compacted.json"),
+            subject_snapshots_path=_resolve_sidecar(claim_root, "subject_snapshots.json"),
         )
         posture = load(state_path=args.state_path)
 

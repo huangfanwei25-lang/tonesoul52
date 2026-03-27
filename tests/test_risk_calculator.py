@@ -79,6 +79,16 @@ def test_build_project_memory_summary_aggregates_focus_pending_and_repo_progress
                     "next_action": "wire project memory summary into diagnose",
                 }
             ],
+            subject_snapshots=[
+                {
+                    "summary": "Stay packet-first and keep theory out of runtime truth.",
+                    "stable_vows": ["do not smuggle theory into runtime"],
+                    "durable_boundaries": ["protected files stay human-managed"],
+                    "decision_preferences": ["prefer packet before broad repo scan"],
+                    "verified_routines": ["leave compaction before release"],
+                    "active_threads": ["subject-snapshot rollout"],
+                }
+            ],
         )
     finally:
         risk_calculator._build_repo_progress_snapshot = original_repo_snapshot
@@ -87,8 +97,10 @@ def test_build_project_memory_summary_aggregates_focus_pending_and_repo_progress
     assert "codex" in summary["recent_agents"]
     assert "tonesoul/runtime_adapter.py" in summary["pending_paths"]
     assert summary["carry_forward"] == ["keep packet readable"]
+    assert summary["subject_anchor"]["summary"].startswith("Stay packet-first")
     assert summary["repo_progress"]["branch"] == "feature/r-memory"
     assert "focus=risk, runtime" in summary["summary_text"]
+    assert "subject=Stay packet-first and keep theory out of runtime truth." in summary["summary_text"]
     assert "repo=feature/r-memory@abc1234 dirty=6" in summary["summary_text"]
 
 

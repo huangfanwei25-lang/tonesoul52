@@ -29,6 +29,7 @@
     "perspectives_surface": "ts:perspectives:{agent_id}",
     "checkpoints_surface": "ts:checkpoints:*",
     "compaction_surface": "ts:compacted",
+    "subject_snapshot_surface": "ts:subject_snapshots",
     "field_surface": "ts:field"
   },
   "canonical_sources": [
@@ -46,6 +47,19 @@
       "caution_bias": 0.55,
       "innovation_bias": 0.61,
       "autonomy_level": 0.35
+    },
+    "risk_posture": {
+      "score": 0.24,
+      "level": "stable",
+      "factors": ["compaction_backlog"],
+      "recommended_action": "normal_operation",
+      "inputs": {
+        "tension_pressure": 0.35,
+        "aegis_pressure": 0.0,
+        "coordination_pressure": 0.25,
+        "backlog_pressure": 0.5,
+        "trace_pressure": 0.0
+      }
     },
     "active_vows": [
       {
@@ -125,5 +139,125 @@
       "source": "cli",
       "updated_at": "2026-03-26T12:00:00+00:00"
     }
-  ]
+  ],
+  "recent_subject_snapshots": [
+    {
+      "snapshot_id": "subj-001",
+      "agent": "codex",
+      "session_id": "sess-001",
+      "summary": "Operate as a packet-first runtime steward with explicit boundaries.",
+      "stable_vows": [
+        "do not commit personal memory data"
+      ],
+      "durable_boundaries": [
+        "protected files stay human-managed"
+      ],
+      "decision_preferences": [
+        "prefer packet before broad repo scan"
+      ],
+      "verified_routines": [
+        "leave compaction before release"
+      ],
+      "active_threads": [
+        "subject-snapshot rollout"
+      ],
+      "evidence_refs": [
+        "docs/AI_QUICKSTART.md"
+      ],
+      "refresh_signals": [
+        "refresh when durable boundaries change"
+      ],
+      "source": "cli",
+      "updated_at": "2026-03-26T12:01:00+00:00"
+    }
+  ],
+  "project_memory_summary": {
+    "focus_topics": [
+      "runtime_adapter",
+      "redis"
+    ],
+    "recent_agents": [
+      "codex"
+    ],
+    "active_claim_count": 1,
+    "pending_paths": [
+      "scripts/gateway.py",
+      "apps/dashboard/world.html"
+    ],
+    "carry_forward": [
+      "canonical commit stays serialized",
+      "compaction remains non-canonical resumability memory"
+    ],
+    "next_actions": [
+      "Expose bounded compaction summaries in the operator shell without mutating governance posture."
+    ],
+    "subject_anchor": {
+      "summary": "Operate as a packet-first runtime steward with explicit boundaries.",
+      "stable_vows": [
+        "do not commit personal memory data"
+      ],
+      "durable_boundaries": [
+        "protected files stay human-managed"
+      ],
+      "decision_preferences": [
+        "prefer packet before broad repo scan"
+      ],
+      "verified_routines": [
+        "leave compaction before release"
+      ],
+      "active_threads": [
+        "subject-snapshot rollout"
+      ]
+    },
+    "summary_text": "focus=runtime_adapter, redis | subject=Operate as a packet-first runtime steward with explicit boundaries. | claims=1 | pending=scripts/gateway.py, apps/dashboard/world.html",
+    "repo_progress": {
+      "available": true,
+      "branch": "codex/r-memory-compaction-lane-20260326",
+      "head": "abc1234",
+      "staged_count": 1,
+      "modified_count": 2,
+      "untracked_count": 1,
+      "dirty_count": 4,
+      "path_preview": [
+        "tonesoul/runtime_adapter.py",
+        "scripts/run_r_memory_packet.py"
+      ]
+    }
+  },
+  "operator_guidance": {
+    "backend_mode": "redis",
+    "session_start": [
+      "python -m tonesoul.diagnose --agent <your-id>",
+      "python scripts/run_r_memory_packet.py",
+      "python scripts/run_task_claim.py list"
+    ],
+    "session_end": [
+      "python scripts/save_checkpoint.py --checkpoint-id <id> --agent <your-id> --summary \"...\" --path \"...\"",
+      "python scripts/save_compaction.py --agent <your-id> --summary \"...\" --path \"...\"",
+      "python scripts/run_task_claim.py release <task_id> --agent <your-id>"
+    ],
+    "coordination_commands": {
+      "claim": "python scripts/run_task_claim.py claim <task_id> --agent <your-id> --summary \"...\"",
+      "perspective": "python scripts/save_perspective.py --agent <your-id> --summary \"...\" --stance \"...\"",
+      "checkpoint": "python scripts/save_checkpoint.py --checkpoint-id <id> --agent <your-id> --summary \"...\" --path \"...\"",
+      "compaction": "python scripts/save_compaction.py --agent <your-id> --summary \"...\" --path \"...\"",
+      "subject_snapshot": "python scripts/save_subject_snapshot.py --agent <your-id> --summary \"...\" --boundary \"...\" --preference \"...\"",
+      "release": "python scripts/run_task_claim.py release <task_id> --agent <your-id>"
+    },
+    "recommended_order": [
+      "diagnose/load",
+      "packet",
+      "claim",
+      "work",
+      "perspective/checkpoint/compaction",
+      "commit",
+      "release"
+    ],
+    "current_reminders": [
+      "Prefer recent_compactions and project_memory_summary before older recent_traces.",
+      "Active claims are visible; coordinate before editing overlapping paths.",
+      "A recent subject snapshot is visible; treat it as durable working identity, but still non-canonical."
+    ],
+    "completion_rule": "Before ending a session, externalize progress with checkpoint or compaction, then release any shared claim."
+  }
 }

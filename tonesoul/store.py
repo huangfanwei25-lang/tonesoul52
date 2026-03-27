@@ -34,6 +34,7 @@ COMMIT_LOCK_KEY = "ts:commit_lock"  # Canonical governance commit mutex
 PERSPECTIVE_PREFIX = "ts:perspectives:"  # Per-agent perspective lane
 CHECKPOINT_PREFIX = "ts:checkpoints:"  # Mid-session checkpoint lane
 KEY_COMPACTED = "ts:compacted"  # Non-canonical resumability/compaction lane
+KEY_SUBJECT_SNAPSHOTS = "ts:subject_snapshots"  # Stable non-canonical subject snapshot lane
 FIELD_KEY = "ts:field"  # Experimental semantic-field synthesis surface
 
 

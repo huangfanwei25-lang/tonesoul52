@@ -60,6 +60,7 @@ def _packet(store, posture, *, trace_limit: int = 5, visitor_limit: int = 5) -> 
             "recent_visitors": [],
             "active_claims": [],
             "recent_compactions": [],
+            "recent_subject_snapshots": [],
             "parallel_lanes": {},
             "posture": {"risk_posture": {}},
             "project_memory_summary": {},
@@ -100,7 +101,8 @@ def compact_diagnostic(agent_id: str = "unknown") -> str:
             f"R={float(((packet.get('posture') or {}).get('risk_posture') or {}).get('score', 0.0)):.2f}"
             f"/{((packet.get('posture') or {}).get('risk_posture') or {}).get('level', 'unknown')} | "
             f"traces={traces_n} claims={len(packet.get('active_claims', []))} "
-            f"compactions={len(packet.get('recent_compactions', []))} zones={zones_n} | "
+            f"compactions={len(packet.get('recent_compactions', []))} "
+            f"subjects={len(packet.get('recent_subject_snapshots', []))} zones={zones_n} | "
             f"git={((packet.get('project_memory_summary') or {}).get('repo_progress') or {}).get('head', 'unknown')}"
             f"/dirty={int((((packet.get('project_memory_summary') or {}).get('repo_progress') or {}).get('dirty_count', 0) or 0))} | "
             f"aegis={aegis} | agent={agent_id}"
@@ -130,6 +132,7 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
         "recent_visitors": [],
         "active_claims": [],
         "recent_compactions": [],
+        "recent_subject_snapshots": [],
         "parallel_lanes": {},
         "posture": {"risk_posture": {}},
         "project_memory_summary": {},
@@ -261,9 +264,12 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
 
     claims = packet.get("active_claims", [])
     compactions = packet.get("recent_compactions", [])
+    subject_snapshots = packet.get("recent_subject_snapshots", [])
     visitors = packet.get("recent_visitors", [])
     lines.append(
-        f"[Shared Runtime] claims={len(claims)} visitors={len(visitors)} compactions={len(compactions)}"
+        "[Shared Runtime] "
+        f"claims={len(claims)} visitors={len(visitors)} compactions={len(compactions)} "
+        f"subject_snapshots={len(subject_snapshots)}"
     )
     if claims:
         for claim in claims[:5]:
@@ -321,6 +327,44 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
             if path_preview:
                 lines.append(f"  repo_paths={', '.join(path_preview[:3])}")
 
+        subject_anchor = project_memory_summary.get("subject_anchor") or {}
+        if subject_anchor:
+            lines.append("  subject_anchor:")
+            summary = str(subject_anchor.get("summary", "")).strip()
+            if summary:
+                lines.append(f"    summary={_clip(summary)}")
+            for key in (
+                "stable_vows",
+                "durable_boundaries",
+                "decision_preferences",
+                "verified_routines",
+                "active_threads",
+            ):
+                values = list(subject_anchor.get(key) or [])
+                if values:
+                    lines.append(f"    {key}={', '.join(values[:3])}")
+
+    subject_snapshots = packet.get("recent_subject_snapshots", [])
+    if subject_snapshots:
+        lines.append("")
+        lines.append(f"[Subject Snapshot] count={len(subject_snapshots)}")
+        latest = subject_snapshots[0]
+        lines.append(
+            "  "
+            f"{latest.get('updated_at', '')[:16]} | "
+            f"{latest.get('agent', '?')} | "
+            f"summary={_clip(latest.get('summary', ''))}"
+        )
+        for key in (
+            "durable_boundaries",
+            "decision_preferences",
+            "verified_routines",
+            "active_threads",
+        ):
+            values = list(latest.get(key) or [])
+            if values:
+                lines.append(f"  {key}={', '.join(values[:3])}")
+
     operator_guidance = packet.get("operator_guidance") or {}
     if operator_guidance:
         lines.append("")
@@ -338,7 +382,14 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
         commands = operator_guidance.get("coordination_commands") or {}
         if commands:
             lines.append("  coordination_commands:")
-            for key in ("claim", "perspective", "checkpoint", "compaction", "release"):
+            for key in (
+                "claim",
+                "perspective",
+                "checkpoint",
+                "compaction",
+                "subject_snapshot",
+                "release",
+            ):
                 command = str(commands.get(key, "")).strip()
                 if command:
                     lines.append(f"    {key}={command}")
@@ -361,6 +412,7 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
                 f"    perspectives={lanes.get('perspectives_surface', 'ts:perspectives:{agent_id}')}",
                 f"    checkpoints={lanes.get('checkpoints_surface', 'ts:checkpoints:*')}",
                 "    compaction=POST /compact or python scripts/save_compaction.py",
+                f"    subject_snapshots={lanes.get('subject_snapshot_surface', 'ts:subject_snapshots')}",
                 f"    canonical_commit_serialized={lanes.get('canonical_commit_serialized', True)}",
             ]
         )
@@ -369,7 +421,7 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
     lines.extend(
         [
             "[Visibility Model]",
-            "  Visible after explicit write: claims, perspectives, checkpoints, compactions, accepted traces.",
+            "  Visible after explicit write: claims, perspectives, checkpoints, compactions, subject snapshots, accepted traces.",
             "  Never assume visible: private reasoning, local context window, unstaged edits, or unwritten task state.",
             "",
             "[Recommended Order]",

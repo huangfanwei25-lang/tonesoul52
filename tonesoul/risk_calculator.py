@@ -119,12 +119,14 @@ def build_project_memory_summary(
     recent_traces: List[Dict[str, Any]] | None = None,
     claims: List[Dict[str, Any]] | None = None,
     compactions: List[Dict[str, Any]] | None = None,
+    subject_snapshots: List[Dict[str, Any]] | None = None,
     repo_root: str | Path | None = None,
 ) -> Dict[str, Any]:
     """Build a compact handoff-ready summary of the current project memory."""
     recent_traces = list(recent_traces or [])
     claims = list(claims or [])
     compactions = list(compactions or [])
+    subject_snapshots = list(subject_snapshots or [])
 
     topic_counter: Counter[str] = Counter()
     recent_agents: List[str] = []
@@ -165,10 +167,14 @@ def build_project_memory_summary(
         ][:3]
 
     repo_progress = _build_repo_progress_snapshot(repo_root=repo_root)
+    latest_subject_snapshot = subject_snapshots[0] if subject_snapshots else {}
+    subject_anchor = _build_subject_anchor(latest_subject_snapshot)
 
     summary_lines: List[str] = []
     if focus_topics:
         summary_lines.append(f"focus={', '.join(focus_topics)}")
+    if subject_anchor.get("summary"):
+        summary_lines.append(f"subject={subject_anchor['summary']}")
     if claims:
         summary_lines.append(f"claims={len(claims)}")
     if pending_paths:
@@ -184,7 +190,7 @@ def build_project_memory_summary(
     if not summary_lines:
         summary_lines.append("No active carry-forward surface is visible yet.")
 
-    return {
+    result = {
         "focus_topics": focus_topics,
         "recent_agents": recent_agents[:5],
         "active_claim_count": len(claims),
@@ -193,6 +199,22 @@ def build_project_memory_summary(
         "next_actions": next_actions[:4],
         "repo_progress": repo_progress,
         "summary_text": " | ".join(summary_lines),
+    }
+    if subject_anchor:
+        result["subject_anchor"] = subject_anchor
+    return result
+
+
+def _build_subject_anchor(snapshot: Dict[str, Any]) -> Dict[str, Any]:
+    if not snapshot:
+        return {}
+    return {
+        "summary": str(snapshot.get("summary", "")).strip(),
+        "stable_vows": _slice_strings(snapshot.get("stable_vows"), 4),
+        "durable_boundaries": _slice_strings(snapshot.get("durable_boundaries"), 4),
+        "decision_preferences": _slice_strings(snapshot.get("decision_preferences"), 4),
+        "verified_routines": _slice_strings(snapshot.get("verified_routines"), 4),
+        "active_threads": _slice_strings(snapshot.get("active_threads"), 4),
     }
 
 
@@ -284,3 +306,7 @@ def _unique_ordered(values: Iterable[Any]) -> List[str]:
         seen.add(text)
         result.append(text)
     return result
+
+
+def _slice_strings(values: Iterable[Any] | None, limit: int) -> List[str]:
+    return _unique_ordered(values or [])[: max(0, int(limit))]

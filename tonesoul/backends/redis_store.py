@@ -23,6 +23,7 @@ from tonesoul.store import (
     COMMIT_LOCK_KEY,
     KEY_COMPACTED,
     KEY_GOVERNANCE,
+    KEY_SUBJECT_SNAPSHOTS,
     KEY_ZONES,
     LOCK_PREFIX,
     PERSPECTIVE_PREFIX,
@@ -230,6 +231,30 @@ return 0
 
     def get_compactions(self, n: int = 5) -> List[Dict[str, Any]]:
         raw_list = self._r.lrange(KEY_COMPACTED, 0, max(0, int(n) - 1))
+        result: List[Dict[str, Any]] = []
+        for raw in raw_list:
+            text = raw.decode("utf-8") if isinstance(raw, bytes) else raw
+            try:
+                result.append(json.loads(text))
+            except json.JSONDecodeError:
+                continue
+        return result
+
+    def append_subject_snapshot(
+        self,
+        data: Dict[str, Any],
+        *,
+        limit: int = 12,
+        ttl_seconds: int = 2592000,
+    ) -> None:
+        self._r.lpush(KEY_SUBJECT_SNAPSHOTS, json.dumps(data, ensure_ascii=False))
+        self._r.ltrim(KEY_SUBJECT_SNAPSHOTS, 0, max(0, int(limit) - 1))
+        if ttl_seconds > 0:
+            self._r.expire(KEY_SUBJECT_SNAPSHOTS, int(ttl_seconds))
+        self.publish(CHANNEL_EVENTS, {"type": "subject_snapshots:updated"})
+
+    def get_subject_snapshots(self, n: int = 3) -> List[Dict[str, Any]]:
+        raw_list = self._r.lrange(KEY_SUBJECT_SNAPSHOTS, 0, max(0, int(n) - 1))
         result: List[Dict[str, Any]] = []
         for raw in raw_list:
             text = raw.decode("utf-8") if isinstance(raw, bytes) else raw

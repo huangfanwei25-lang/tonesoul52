@@ -20,6 +20,7 @@ from tonesoul.runtime_adapter import (
     list_checkpoints,
     list_compactions,
     list_perspectives,
+    list_subject_snapshots,
     load,
     r_memory_packet,
     release_task_claim,
@@ -28,6 +29,7 @@ from tonesoul.runtime_adapter import (
     write_checkpoint,
     write_compaction,
     write_perspective,
+    write_subject_snapshot,
 )
 
 
@@ -267,6 +269,7 @@ def test_r_memory_packet_exposes_runtime_dominance_and_recent_trace(
         gov_path=tmp_state,
         traces_path=tmp_traces,
         zones_path=tmp_traces.parent / "zone_registry.json",
+        subject_snapshots_path=tmp_traces.parent / "subject_snapshots.json",
     )
     posture = load(state_path=tmp_state)
     packet = r_memory_packet(posture=posture, store=store, trace_limit=3, visitor_limit=3)
@@ -279,6 +282,7 @@ def test_r_memory_packet_exposes_runtime_dominance_and_recent_trace(
     assert packet["parallel_lanes"]["canonical_commit_serialized"] is True
     assert packet["parallel_lanes"]["perspectives_surface"] == "ts:perspectives:{agent_id}"
     assert packet["parallel_lanes"]["compaction_surface"] == "ts:compacted"
+    assert packet["parallel_lanes"]["subject_snapshot_surface"] == "ts:subject_snapshots"
     assert (
         "docs/architecture/TONESOUL_SHARED_R_MEMORY_OPERATIONS_CONTRACT.md"
         in packet["canonical_sources"]
@@ -292,6 +296,7 @@ def test_r_memory_packet_exposes_runtime_dominance_and_recent_trace(
     assert packet["operator_guidance"]["session_start"][0].startswith("python -m tonesoul.diagnose")
     assert packet["operator_guidance"]["session_end"][0].startswith("python scripts/save_checkpoint.py")
     assert "claim" in packet["operator_guidance"]["coordination_commands"]
+    assert "subject_snapshot" in packet["operator_guidance"]["coordination_commands"]
     assert "checkpoint or compaction" in packet["operator_guidance"]["completion_rule"]
     assert packet["recent_traces"][0]["agent"] == "codex"
     assert packet["recent_traces"][0]["topics"] == ["runtime", "redis"]
@@ -305,6 +310,7 @@ def test_task_claims_prevent_collisions_and_appear_in_packet(tmp_path: Path) -> 
         traces_path=tmp_path / "session_traces.jsonl",
         zones_path=tmp_path / "zone_registry.json",
         claims_path=tmp_path / "task_claims.json",
+        subject_snapshots_path=tmp_path / "subject_snapshots.json",
     )
 
     first = claim_task(
@@ -349,6 +355,7 @@ def test_perspectives_and_checkpoints_use_noncanonical_lanes(tmp_path: Path) -> 
         perspectives_path=tmp_path / "perspectives.json",
         checkpoints_path=tmp_path / "checkpoints.json",
         commit_lock_path=tmp_path / "commit.lock.json",
+        subject_snapshots_path=tmp_path / "subject_snapshots.json",
     )
 
     perspective = write_perspective(
@@ -392,6 +399,7 @@ def test_compactions_use_noncanonical_resumability_lane(tmp_path: Path) -> None:
         zones_path=tmp_path / "zone_registry.json",
         claims_path=tmp_path / "task_claims.json",
         compactions_path=tmp_path / "compacted.json",
+        subject_snapshots_path=tmp_path / "subject_snapshots.json",
     )
 
     first = write_compaction(
@@ -441,6 +449,46 @@ def test_compactions_use_noncanonical_resumability_lane(tmp_path: Path) -> None:
     )
 
 
+def test_subject_snapshots_surface_durable_subject_anchor(tmp_path: Path) -> None:
+    from tonesoul.backends.file_store import FileStore
+
+    store = FileStore(
+        gov_path=tmp_path / "governance_state.json",
+        traces_path=tmp_path / "session_traces.jsonl",
+        zones_path=tmp_path / "zone_registry.json",
+        subject_snapshots_path=tmp_path / "subject_snapshots.json",
+    )
+
+    snapshot = write_subject_snapshot(
+        agent_id="codex",
+        session_id="sess-44",
+        summary="Operate as a packet-first runtime steward with explicit boundaries.",
+        stable_vows=["never smuggle theory into runtime truth"],
+        durable_boundaries=["do not edit protected human-managed files"],
+        decision_preferences=["prefer packet before broad repo scan"],
+        verified_routines=["end sessions with checkpoint or compaction before release"],
+        active_threads=["subject snapshot hardening"],
+        evidence_refs=["docs/AI_QUICKSTART.md"],
+        refresh_signals=["refresh when durable boundaries change"],
+        store=store,
+    )
+
+    snapshots = list_subject_snapshots(store=store, n=5)
+    packet = r_memory_packet(posture=GovernancePosture(), store=store)
+
+    assert snapshot["agent"] == "codex"
+    assert snapshots[0]["summary"].startswith("Operate as a packet-first runtime steward")
+    assert packet["recent_subject_snapshots"][0]["snapshot_id"] == snapshot["snapshot_id"]
+    assert (
+        packet["project_memory_summary"]["subject_anchor"]["summary"]
+        == "Operate as a packet-first runtime steward with explicit boundaries."
+    )
+    assert (
+        "A recent subject snapshot is visible; treat it as durable working identity, but still non-canonical."
+        in packet["operator_guidance"]["current_reminders"]
+    )
+
+
 def test_r_memory_packet_surfaces_fresh_compaction_even_when_traces_are_older(
     tmp_path: Path,
 ) -> None:
@@ -451,6 +499,7 @@ def test_r_memory_packet_surfaces_fresh_compaction_even_when_traces_are_older(
         traces_path=tmp_path / "session_traces.jsonl",
         zones_path=tmp_path / "zone_registry.json",
         compactions_path=tmp_path / "compacted.json",
+        subject_snapshots_path=tmp_path / "subject_snapshots.json",
     )
 
     legacy_trace = SessionTrace(

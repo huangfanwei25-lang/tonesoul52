@@ -26,6 +26,7 @@ _DEFAULT_COMMIT_LOCK = _ROOT / ".aegis" / "commit.lock.json"
 _DEFAULT_PERSPECTIVES = _ROOT / ".aegis" / "perspectives.json"
 _DEFAULT_CHECKPOINTS = _ROOT / ".aegis" / "checkpoints.json"
 _DEFAULT_COMPACTIONS = _ROOT / ".aegis" / "compacted.json"
+_DEFAULT_SUBJECT_SNAPSHOTS = _ROOT / ".aegis" / "subject_snapshots.json"
 
 
 class FileStore:
@@ -41,6 +42,7 @@ class FileStore:
         perspectives_path: Path | None = None,
         checkpoints_path: Path | None = None,
         compactions_path: Path | None = None,
+        subject_snapshots_path: Path | None = None,
     ) -> None:
         self.gov_path = gov_path or _DEFAULT_GOV
         self.traces_path = traces_path or _DEFAULT_TRACES
@@ -50,6 +52,7 @@ class FileStore:
         self.perspectives_path = perspectives_path or _DEFAULT_PERSPECTIVES
         self.checkpoints_path = checkpoints_path or _DEFAULT_CHECKPOINTS
         self.compactions_path = compactions_path or _DEFAULT_COMPACTIONS
+        self.subject_snapshots_path = subject_snapshots_path or _DEFAULT_SUBJECT_SNAPSHOTS
 
     # ── Governance state ────────────────────────────────────────────────────
 
@@ -293,6 +296,29 @@ class FileStore:
         self._purge_expired_list_entries(compactions)
         self._write_list_registry(self.compactions_path, compactions)
         return compactions[: max(0, int(n))]
+
+    def append_subject_snapshot(
+        self,
+        data: Dict[str, Any],
+        *,
+        limit: int = 12,
+        ttl_seconds: int = 2592000,
+    ) -> None:
+        snapshots = self._read_list_registry(self.subject_snapshots_path)
+        self._purge_expired_list_entries(snapshots)
+        entry = dict(data)
+        if ttl_seconds > 0:
+            entry["expires_at"] = str(_time() + float(ttl_seconds))
+        snapshots.insert(0, entry)
+        if limit > 0:
+            snapshots = snapshots[: int(limit)]
+        self._write_list_registry(self.subject_snapshots_path, snapshots)
+
+    def get_subject_snapshots(self, n: int = 3) -> List[Dict[str, Any]]:
+        snapshots = self._read_list_registry(self.subject_snapshots_path)
+        self._purge_expired_list_entries(snapshots)
+        self._write_list_registry(self.subject_snapshots_path, snapshots)
+        return snapshots[: max(0, int(n))]
 
     def _read_json_file(self, path: Path) -> Dict[str, Any]:
         if not path.exists():

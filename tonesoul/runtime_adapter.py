@@ -513,12 +513,68 @@ def list_compactions(store=None, n: int = 5) -> List[Dict[str, Any]]:
         return []
 
 
+def write_subject_snapshot(
+    *,
+    agent_id: str,
+    summary: str,
+    session_id: str = "",
+    stable_vows: Optional[List[str]] = None,
+    durable_boundaries: Optional[List[str]] = None,
+    decision_preferences: Optional[List[str]] = None,
+    verified_routines: Optional[List[str]] = None,
+    active_threads: Optional[List[str]] = None,
+    evidence_refs: Optional[List[str]] = None,
+    refresh_signals: Optional[List[str]] = None,
+    source: str = "direct",
+    ttl_seconds: int = 2592000,
+    limit: int = 12,
+    store=None,
+) -> Dict[str, Any]:
+    """Write a more durable but still non-canonical subject snapshot."""
+    if not str(summary or "").strip():
+        raise ValueError("summary is required for subject snapshots")
+    if store is None:
+        from tonesoul.store import get_store
+
+        store = get_store()
+    payload = {
+        "snapshot_id": str(uuid.uuid4()),
+        "agent": agent_id,
+        "session_id": session_id,
+        "summary": summary,
+        "stable_vows": list(stable_vows or []),
+        "durable_boundaries": list(durable_boundaries or []),
+        "decision_preferences": list(decision_preferences or []),
+        "verified_routines": list(verified_routines or []),
+        "active_threads": list(active_threads or []),
+        "evidence_refs": list(evidence_refs or []),
+        "refresh_signals": list(refresh_signals or []),
+        "source": source,
+        "updated_at": _utc_now(),
+    }
+    store.append_subject_snapshot(payload, limit=limit, ttl_seconds=ttl_seconds)
+    return payload
+
+
+def list_subject_snapshots(store=None, n: int = 3) -> List[Dict[str, Any]]:
+    """List recent non-canonical subject snapshots."""
+    if store is None:
+        from tonesoul.store import get_store
+
+        store = get_store()
+    try:
+        return list(store.get_subject_snapshots(n=n))
+    except Exception:
+        return []
+
+
 def _build_operator_guidance(
     *,
     backend_name: str,
     is_redis: bool,
     claims: List[Dict[str, Any]],
     compactions: List[Dict[str, Any]],
+    subject_snapshots: List[Dict[str, Any]],
     project_memory_summary: Dict[str, Any],
 ) -> Dict[str, Any]:
     """Build packet-visible operator guidance for shared R-memory coordination."""
@@ -536,6 +592,15 @@ def _build_operator_guidance(
     pending_paths = list(project_memory_summary.get("pending_paths") or [])
     if pending_paths:
         reminders.append("Pending paths are already externalized; reuse them before widening the scan.")
+
+    if subject_snapshots:
+        reminders.append(
+            "A recent subject snapshot is visible; treat it as durable working identity, but still non-canonical."
+        )
+    else:
+        reminders.append(
+            "No subject snapshot is visible; write one when stable boundaries, preferences, or verified routines change."
+        )
 
     if is_redis:
         reminders.append("Redis live surfaces are available; perspectives and checkpoints may be visible immediately.")
@@ -559,6 +624,10 @@ def _build_operator_guidance(
             "perspective": 'python scripts/save_perspective.py --agent <your-id> --summary "..." --stance "..."',
             "checkpoint": 'python scripts/save_checkpoint.py --checkpoint-id <id> --agent <your-id> --summary "..." --path "..."',
             "compaction": 'python scripts/save_compaction.py --agent <your-id> --summary "..." --path "..."',
+            "subject_snapshot": (
+                'python scripts/save_subject_snapshot.py --agent <your-id> --summary "..." '
+                '--boundary "..." --preference "..."'
+            ),
             "release": "python scripts/run_task_claim.py release <task_id> --agent <your-id>",
         },
         "recommended_order": [
@@ -620,6 +689,7 @@ def commit(
             perspectives_path=base_dir / ".aegis" / "perspectives.json",
             checkpoints_path=base_dir / ".aegis" / "checkpoints.json",
             compactions_path=base_dir / ".aegis" / "compacted.json",
+            subject_snapshots_path=base_dir / ".aegis" / "subject_snapshots.json",
         )
     else:
         store = get_store()
@@ -862,6 +932,7 @@ def r_memory_packet(
     visitors = get_recent_visitors(store=store, n=visitor_limit)
     claims = list_active_claims(store=store)
     compactions = list_compactions(store=store, n=trace_limit)
+    subject_snapshots = list_subject_snapshots(store=store, n=max(3, min(trace_limit, 5)))
     from tonesoul.risk_calculator import build_project_memory_summary, compute_runtime_risk
 
     def _trim_tension(event: Dict[str, Any]) -> Dict[str, Any]:
@@ -927,6 +998,23 @@ def r_memory_packet(
             "updated_at": str(entry.get("updated_at", "")),
         }
 
+    def _trim_subject_snapshot(entry: Dict[str, Any]) -> Dict[str, Any]:
+        return {
+            "snapshot_id": str(entry.get("snapshot_id", "")),
+            "agent": str(entry.get("agent", "")),
+            "session_id": str(entry.get("session_id", "")),
+            "summary": str(entry.get("summary", "")),
+            "stable_vows": list(entry.get("stable_vows") or []),
+            "durable_boundaries": list(entry.get("durable_boundaries") or []),
+            "decision_preferences": list(entry.get("decision_preferences") or []),
+            "verified_routines": list(entry.get("verified_routines") or []),
+            "active_threads": list(entry.get("active_threads") or []),
+            "evidence_refs": list(entry.get("evidence_refs") or []),
+            "refresh_signals": list(entry.get("refresh_signals") or []),
+            "source": str(entry.get("source", "")),
+            "updated_at": str(entry.get("updated_at", "")),
+        }
+
     risk_posture = compute_runtime_risk(
         posture=posture,
         recent_traces=traces[-trace_limit:],
@@ -939,12 +1027,14 @@ def r_memory_packet(
         recent_traces=traces[-trace_limit:],
         claims=claims,
         compactions=compactions,
+        subject_snapshots=subject_snapshots,
     )
     operator_guidance = _build_operator_guidance(
         backend_name=getattr(store, "backend_name", "unknown"),
         is_redis=bool(getattr(store, "is_redis", False)),
         claims=claims,
         compactions=compactions,
+        subject_snapshots=subject_snapshots,
         project_memory_summary=project_memory_summary,
     )
 
@@ -979,6 +1069,7 @@ def r_memory_packet(
             "perspectives_surface": "ts:perspectives:{agent_id}",
             "checkpoints_surface": "ts:checkpoints:*",
             "compaction_surface": "ts:compacted",
+            "subject_snapshot_surface": "ts:subject_snapshots",
             "field_surface": "ts:field",
         },
         "canonical_sources": [
@@ -1010,6 +1101,9 @@ def r_memory_packet(
         "recent_visitors": visitors[:visitor_limit],
         "active_claims": [_trim_claim(c) for c in claims],
         "recent_compactions": [_trim_compaction(c) for c in compactions[:trace_limit]],
+        "recent_subject_snapshots": [
+            _trim_subject_snapshot(snapshot) for snapshot in subject_snapshots[:trace_limit]
+        ],
         "project_memory_summary": project_memory_summary,
         "operator_guidance": operator_guidance,
     }

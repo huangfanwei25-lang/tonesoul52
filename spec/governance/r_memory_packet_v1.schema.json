@@ -18,6 +18,7 @@
     "recent_visitors",
     "active_claims",
     "recent_compactions",
+    "recent_subject_snapshots",
     "operator_guidance"
   ],
   "properties": {
@@ -78,6 +79,7 @@
         "perspectives_surface",
         "checkpoints_surface",
         "compaction_surface",
+        "subject_snapshot_surface",
         "field_surface"
       ],
       "properties": {
@@ -93,6 +95,10 @@
           "minLength": 1
         },
         "compaction_surface": {
+          "type": "string",
+          "minLength": 1
+        },
+        "subject_snapshot_surface": {
           "type": "string",
           "minLength": 1
         },
@@ -184,6 +190,12 @@
       "type": "array",
       "items": {
         "$ref": "#/$defs/compaction"
+      }
+    },
+    "recent_subject_snapshots": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/subject_snapshot"
       }
     },
     "project_memory_summary": {
@@ -416,6 +428,139 @@
         }
       }
     },
+    "subject_snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "snapshot_id",
+        "agent",
+        "session_id",
+        "summary",
+        "stable_vows",
+        "durable_boundaries",
+        "decision_preferences",
+        "verified_routines",
+        "active_threads",
+        "evidence_refs",
+        "refresh_signals",
+        "source",
+        "updated_at"
+      ],
+      "properties": {
+        "snapshot_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "agent": {
+          "type": "string",
+          "minLength": 1
+        },
+        "session_id": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "stable_vows": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "durable_boundaries": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "decision_preferences": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "verified_routines": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "active_threads": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "refresh_signals": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "source": {
+          "type": "string",
+          "minLength": 1
+        },
+        "updated_at": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "subject_anchor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "summary",
+        "stable_vows",
+        "durable_boundaries",
+        "decision_preferences",
+        "verified_routines",
+        "active_threads"
+      ],
+      "properties": {
+        "summary": {
+          "type": "string"
+        },
+        "stable_vows": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "durable_boundaries": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "decision_preferences": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "verified_routines": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "active_threads": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "risk_posture": {
       "type": "object",
       "additionalProperties": false,
@@ -495,6 +640,9 @@
             "type": "string"
           }
         },
+        "subject_anchor": {
+          "$ref": "#/$defs/subject_anchor"
+        },
         "summary_text": {
           "type": "string",
           "minLength": 1
@@ -542,6 +690,7 @@
             "perspective",
             "checkpoint",
             "compaction",
+            "subject_snapshot",
             "release"
           ],
           "properties": {
@@ -558,6 +707,10 @@
               "minLength": 1
             },
             "compaction": {
+              "type": "string",
+              "minLength": 1
+            },
+            "subject_snapshot": {
               "type": "string",
               "minLength": 1
             },

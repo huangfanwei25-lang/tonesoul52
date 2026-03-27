@@ -1,5 +1,11 @@
 # Task
 
+## Phase 651: Subject Snapshot Surface for Durable Working Identity (2026-03-28)
+- [x] Add a bounded `subject_snapshot` surface that is more durable than checkpoint/compaction but still explicitly non-canonical
+- [x] Route the latest subject snapshot through packet and diagnose so later agents can inherit stable boundaries, preferences, and verified routines without rereading the whole repo
+- [x] Add a direct `save_subject_snapshot.py` entrypoint plus schema/tests so the new surface is machine-readable instead of prose-only
+**Success Criteria**: Later agents can read one recent subject snapshot from packet/diagnose, see a stable working-identity anchor that stays below canonical posture, and write the same surface directly through a repo-root script.
+
 ## Phase 650: Default Session Cadence as Shared Memory Contract (2026-03-28)
 - [x] Extend packet-visible operator guidance so every collaborative AI session has explicit start and end commands, not just mid-session coordination hints
 - [x] Update onboarding and quickstart language so `diagnose -> packet -> claims` at session start and `checkpoint/compaction -> release` at session end become the default rule for all collaborative agents

@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tonesoul.dev/schemas/governance/subject_snapshot_v1.schema.json",
+  "title": "ToneSoul Subject Snapshot v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "snapshot_id",
+    "agent",
+    "session_id",
+    "summary",
+    "stable_vows",
+    "durable_boundaries",
+    "decision_preferences",
+    "verified_routines",
+    "active_threads",
+    "evidence_refs",
+    "refresh_signals",
+    "source",
+    "updated_at"
+  ],
+  "properties": {
+    "snapshot_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "agent": {
+      "type": "string",
+      "minLength": 1
+    },
+    "session_id": {
+      "type": "string"
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "stable_vows": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "durable_boundaries": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "decision_preferences": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "verified_routines": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "active_threads": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "refresh_signals": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "source": {
+      "type": "string",
+      "minLength": 1
+    },
+    "updated_at": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}
