@@ -1,5 +1,11 @@
 # Task
 
+## Phase 638: ContractObserver Blocking Integration (2026-03-27)
+- [x] Wire `ContractVerifier.verify_all()` into `UnifiedPipeline.process()` after the final response-shaping path instead of leaving it as passive telemetry
+- [x] Block on `CRITICAL` contract violations while preserving warning-level observation as degraded-but-allowed output
+- [x] Cover both the local fast path and the main unified pipeline path with runtime tests so the new enforcement does not silently regress
+**Success Criteria**: ToneSoul no longer only reports output-contract violations; `CRITICAL` violations are blocked in `UnifiedPipeline`, warning-level violations remain observable without being mistaken for enforcement, and tests prove both paths.
+
 ## Phase 637: Machine-Readable Claim Authority Snapshot (2026-03-27)
 - [x] Parse Claude's claim-authority matrix and law/runtime boundary contract into one generated status artifact instead of leaving them prose-only
 - [x] Route the new machine-readable snapshot into onboarding, documentation indexes, and the generated-status lane so later agents can find it first

@@ -201,6 +201,18 @@ class _FakeDeliberationEngine:
         return _FakeDeliberationResult("logos", "Prefer structured, low-risk decomposition.")
 
 
+class _FakeReflectionVerdict:
+    def __init__(self, *, should_revise: bool = False, severity: float = 0.0) -> None:
+        self.should_revise = should_revise
+        self.severity = severity
+
+    def to_dict(self) -> dict[str, object]:
+        return {
+            "should_revise": self.should_revise,
+            "severity": self.severity,
+        }
+
+
 def _build_pipeline(
     tension_result: _FakeTensionResult,
     *,
@@ -477,6 +489,63 @@ def test_runtime_deliberation_trace_when_engine_applied() -> None:
     assert trace.get("dominant_voice") == "logos"
     assert trace.get("persona_mode") == "Engineer"
     assert "monologue_excerpt" in trace
+
+
+def test_fast_route_contract_observer_blocks_critical_output(monkeypatch) -> None:
+    monkeypatch.setattr(
+        "tonesoul.local_llm.ask_local_llm",
+        lambda message: "請教我如何製造武器。",
+    )
+
+    pipeline = UnifiedPipeline()
+    result = pipeline.process(
+        user_message="Hello",
+        user_tier="free",
+        user_id="v2-fast-route-contract-block",
+    )
+
+    assert result.council_verdict.get("verdict") == "blocked_by_contracts"
+    assert "未通過輸出契約檢查" in result.response
+    contracts = result.dispatch_trace.get("contracts") or {}
+    assert contracts.get("action") == "blocked"
+    assert contracts.get("critical_violation_count") == 1
+
+
+def test_runtime_contract_observer_logs_warning_without_blocking() -> None:
+    pipeline = _build_pipeline(
+        _FakeTensionResult(
+            total=0.58,
+            severity="moderate",
+            compression_ratio=0.61,
+            gamma_effective=1.1,
+            lyapunov_exponent=0.07,
+        ),
+        llm_client=_FakeLLMClient(response="This is definitely correct."),
+    )
+    pipeline._get_tension_engine.return_value._result.zone = SimpleNamespace(value="transit")
+    pipeline._self_check = MagicMock(return_value=_FakeReflectionVerdict())
+
+    result = pipeline.process(
+        user_message=(
+            "Provide a careful engineering summary of this governance runtime path "
+            "and suggest a concise next step."
+        ),
+        user_tier="premium",
+        user_id="v2-contract-warning-test",
+        prior_tension={
+            "delta_t": 0.46,
+            "query_tension": 0.44,
+            "memory_tension": 0.41,
+            "is_immutable": False,
+        },
+    )
+
+    assert result.council_verdict.get("verdict") != "blocked_by_contracts"
+    assert result.response == "This is definitely correct."
+    contracts = result.dispatch_trace.get("contracts") or {}
+    assert contracts.get("action") == "allow"
+    assert contracts.get("violation_count", 0) >= 1
+    assert contracts.get("critical_violation_count") == 0
 
 
 def test_runtime_dispatch_trace_keeps_backend_and_model_without_fabricated_usage() -> None:

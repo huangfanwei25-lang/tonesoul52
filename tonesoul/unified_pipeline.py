@@ -121,6 +121,7 @@ class UnifiedPipeline:
         self._trajectory = None
         self._drift_monitor = None
         self._alert_escalation = None
+        self._contract_verifier = None
         # Third Axiom components
         self._self_commit_stack = None
         self._commit_extractor = None
@@ -275,6 +276,17 @@ class UnifiedPipeline:
                 self._exc_trace.record("unified_pipeline", "_get_alert_escalation", e)
                 pass
         return self._alert_escalation
+
+    def _get_contract_verifier(self):
+        if self._contract_verifier is None:
+            try:
+                from tonesoul.contract_observer import ContractVerifier
+
+                self._contract_verifier = ContractVerifier()
+            except Exception as e:
+                self._exc_trace.record("unified_pipeline", "_get_contract_verifier", e)
+                pass
+        return self._contract_verifier
 
     def _build_scenario_envelope(
         self,
@@ -470,6 +482,57 @@ class UnifiedPipeline:
         section["status"] = normalized_status
         section["detail"] = payload
         return section
+
+    def _enforce_output_contracts(
+        self,
+        *,
+        response: str,
+        current_zone: Optional[str],
+        dispatch_trace: Dict[str, Any],
+    ) -> tuple[str, bool, Dict[str, Any]]:
+        verifier = self._get_contract_verifier()
+        normalized_zone = str(current_zone or "safe").strip().lower()
+        if normalized_zone not in {"safe", "transit", "risk", "danger"}:
+            normalized_zone = "safe"
+
+        if verifier is None:
+            return response, False, {}
+
+        try:
+            contract_result = verifier.verify_all(response, normalized_zone)
+        except Exception as e:
+            self._exc_trace.record("unified_pipeline", "_enforce_output_contracts", e)
+            return response, False, {}
+
+        violations = list(contract_result.get("violations") or [])
+        critical_violations = [
+            violation
+            for violation in violations
+            if str(violation.get("severity", "")).strip().lower() == "critical"
+        ]
+        blocked = bool(critical_violations)
+
+        trace_detail = {
+            "current_zone": normalized_zone,
+            "passed": bool(contract_result.get("passed", not violations)),
+            "checked": int(contract_result.get("checked", 0) or 0),
+            "total_contracts": int(contract_result.get("total_contracts", 0) or 0),
+            "violation_count": len(violations),
+            "critical_violation_count": len(critical_violations),
+            "action": "blocked" if blocked else "allow",
+            "violations": violations,
+        }
+        dispatch_trace["contracts"] = self._build_trace_section(
+            "contract_observer",
+            trace_detail,
+            status="error" if blocked else ("degraded" if violations else "ok"),
+        )
+
+        if not blocked:
+            return response, False, contract_result
+
+        blocked_response = "抱歉，這個回應未通過輸出契約檢查，我不能直接這樣回答。"
+        return blocked_response, True, contract_result
 
     def _self_check(self, draft: str, context: dict) -> Any:
         from tonesoul.reflection import REFLECTION_TENSION_THRESHOLD, ReflectionVerdict
@@ -1626,11 +1689,31 @@ class UnifiedPipeline:
 
             local_response = ask_local_llm(raw_user_message)
             local_dispatch_trace = _base_dispatch_trace()
+            local_verdict = {"verdict": "bypassed"}
+            local_response, blocked_by_contracts, contract_result = self._enforce_output_contracts(
+                response=local_response,
+                current_zone="safe",
+                dispatch_trace=local_dispatch_trace,
+            )
+            if blocked_by_contracts:
+                local_verdict["verdict"] = "blocked_by_contracts"
+                local_verdict["metadata"] = {"contract_observer": contract_result}
+                self._apply_repair_trace(
+                    dispatch_trace=local_dispatch_trace,
+                    original_gate="contract_block",
+                    source_text=raw_user_message,
+                    output_text=local_response,
+                    tension_before=None,
+                    fallback_delta=initial_tension,
+                    text_tension=initial_tension,
+                    stages=["contract_block"],
+                    attempt_after_tension=False,
+                )
             _attach_suppressed_errors(local_dispatch_trace)
             self._attach_runtime_governance_observability(local_dispatch_trace)
             return UnifiedResponse(
                 response=local_response,
-                council_verdict=self._normalize_council_verdict_payload({"verdict": "bypassed"}),
+                council_verdict=self._normalize_council_verdict_payload(local_verdict),
                 tonebridge_analysis={},
                 inner_narrative=routing_decision.reason,
                 dispatch_trace=local_dispatch_trace,
@@ -2829,6 +2912,22 @@ Respond with a clear, practical answer."""
             tone_strength=tone_strength,
             confidence=(getattr(tb_result, "confidence", 0.8) if tb_result else 0.8),
         )
+
+        response, blocked_by_contracts, contract_result = self._enforce_output_contracts(
+            response=response,
+            current_zone=getattr(getattr(tension_result, "zone", None), "value", "safe"),
+            dispatch_trace=dispatch_trace,
+        )
+        if contract_result and isinstance(verdict_dict, dict):
+            verdict_metadata = verdict_dict.get("metadata")
+            if not isinstance(verdict_metadata, dict):
+                verdict_metadata = {}
+            verdict_metadata["contract_observer"] = contract_result
+            verdict_dict["metadata"] = verdict_metadata
+        if blocked_by_contracts:
+            repair_stages.append("contract_block")
+            if isinstance(verdict_dict, dict):
+                verdict_dict["verdict"] = "blocked_by_contracts"
 
         if repair_stages:
             self._apply_repair_trace(
