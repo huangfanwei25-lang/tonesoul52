@@ -336,7 +336,8 @@ def test_fast_route_council_verdict_uses_runtime_normalizer(monkeypatch) -> None
     )
 
     assert result.dispatch_trace.get("route") == RoutingPath.PASS_LOCAL.value
-    assert result.council_verdict == {"verdict": "bypassed"}
+    assert result.council_verdict.get("verdict") == "bypassed"
+    assert isinstance(result.council_verdict.get("metadata"), dict)
 
 
 def test_runtime_perturbation_recovery_trace_is_emitted_for_high_stress() -> None:
@@ -570,6 +571,111 @@ def test_runtime_contract_observer_logs_warning_without_blocking() -> None:
     assert contracts.get("action") == "allow"
     assert contracts.get("violation_count", 0) >= 1
     assert contracts.get("critical_violation_count") == 0
+
+
+def test_fast_route_poav_records_low_score_without_blocking(monkeypatch) -> None:
+    monkeypatch.setattr(
+        "tonesoul.local_llm.ask_local_llm",
+        lambda message: "Repeated sentence. " * 60,
+    )
+
+    pipeline = UnifiedPipeline()
+    result = pipeline.process(
+        user_message="Hello",
+        user_tier="free",
+        user_id="v2-fast-route-poav-record",
+    )
+
+    assert result.council_verdict.get("verdict") == "bypassed"
+    poav_trace = result.dispatch_trace.get("poav") or {}
+    assert poav_trace.get("high_risk_mode") is False
+    assert poav_trace.get("action") == "record_only"
+    assert poav_trace.get("threshold") == pytest.approx(0.7)
+
+
+def test_runtime_poav_blocks_low_quality_output_in_high_risk_mode() -> None:
+    pipeline = _build_pipeline(
+        _FakeTensionResult(
+            total=0.74,
+            severity="severe",
+            compression_ratio=0.57,
+            gamma_effective=1.3,
+            lyapunov_exponent=0.08,
+        ),
+        llm_client=_FakeLLMClient(response="Do it now."),
+    )
+    pipeline._get_tension_engine.return_value._result.zone = SimpleNamespace(value="risk")
+    pipeline._self_check = MagicMock(return_value=_FakeReflectionVerdict())
+
+    result = pipeline.process(
+        user_message=(
+            "Provide a direct operational answer for this sensitive runtime situation "
+            "without extra framing."
+        ),
+        user_tier="premium",
+        user_id="v2-poav-block-test",
+        prior_tension={
+            "delta_t": 0.63,
+            "query_tension": 0.61,
+            "memory_tension": 0.58,
+            "is_immutable": False,
+        },
+    )
+
+    assert result.council_verdict.get("verdict") == "blocked_by_poav"
+    assert "未通過 POAV 治理閘門" in result.response
+    poav_trace = result.dispatch_trace.get("poav") or {}
+    assert poav_trace.get("high_risk_mode") is True
+    assert poav_trace.get("action") == "blocked"
+    assert poav_trace.get("threshold") == pytest.approx(0.92)
+    assert result.dispatch_trace.get("contracts") is None
+    repair = result.dispatch_trace.get("repair") or {}
+    assert repair.get("original_gate") == "poav_block"
+
+
+def test_runtime_poav_allows_evidence_rich_output_in_high_risk_mode() -> None:
+    pipeline = _build_pipeline(
+        _FakeTensionResult(
+            total=0.72,
+            severity="severe",
+            compression_ratio=0.59,
+            gamma_effective=1.2,
+            lyapunov_exponent=0.07,
+        ),
+        llm_client=_FakeLLMClient(
+            response=(
+                "Evidence: see audit log at C:\\repo\\audit.json. "
+                "Source: docs/AI_REFERENCE.md. "
+                "Reference: spec/governance/r_memory_packet_v1.schema.json. "
+                "Constraint: verify path, cite source, and report uncertainty."
+            )
+        ),
+    )
+    pipeline._get_tension_engine.return_value._result.zone = SimpleNamespace(value="risk")
+    pipeline._self_check = MagicMock(return_value=_FakeReflectionVerdict())
+
+    result = pipeline.process(
+        user_message=(
+            "Summarize the sensitive runtime posture with concrete evidence and bounded "
+            "next steps."
+        ),
+        user_tier="premium",
+        user_id="v2-poav-pass-test",
+        prior_tension={
+            "delta_t": 0.59,
+            "query_tension": 0.56,
+            "memory_tension": 0.52,
+            "is_immutable": False,
+        },
+    )
+
+    assert result.council_verdict.get("verdict") != "blocked_by_poav"
+    poav_trace = result.dispatch_trace.get("poav") or {}
+    assert poav_trace.get("high_risk_mode") is True
+    assert poav_trace.get("passed") is True
+    assert poav_trace.get("threshold") == pytest.approx(0.92)
+    assert poav_trace.get("poav_total", 0.0) >= 0.92
+    assert result.response.startswith("Evidence:")
 
 
 def test_runtime_drift_actions_trace_surfaces_guidance() -> None:

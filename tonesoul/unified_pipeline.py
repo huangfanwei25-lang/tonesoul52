@@ -483,6 +483,87 @@ class UnifiedPipeline:
         section["detail"] = payload
         return section
 
+    @staticmethod
+    def _normalize_runtime_zone(current_zone: Optional[str]) -> str:
+        normalized_zone = str(current_zone or "safe").strip().lower()
+        if normalized_zone not in {"safe", "transit", "risk", "danger"}:
+            normalized_zone = "safe"
+        return normalized_zone
+
+    def _enforce_poav_gate(
+        self,
+        *,
+        response: str,
+        current_zone: Optional[str],
+        dispatch_trace: Dict[str, Any],
+        lockdown_active: bool = False,
+        source: str = "unified_pipeline",
+    ) -> tuple[str, bool, Dict[str, Any]]:
+        normalized_zone = self._normalize_runtime_zone(current_zone)
+        high_risk_mode = bool(lockdown_active) or normalized_zone in {"risk", "danger"}
+
+        try:
+            from tonesoul.yss_gates import poav_gate
+        except Exception as e:
+            self._exc_trace.record("unified_pipeline", "_enforce_poav_gate.import", e)
+            return response, False, {}
+
+        threshold = 0.92 if high_risk_mode else 0.70
+        enforce = high_risk_mode
+
+        try:
+            gate_result = poav_gate(
+                response,
+                threshold=threshold,
+                enforce=enforce,
+                source=source,
+            )
+        except Exception as e:
+            self._exc_trace.record("unified_pipeline", "_enforce_poav_gate", e)
+            return response, False, {}
+
+        details = dict(gate_result.details) if isinstance(gate_result.details, dict) else {}
+        components = details.get("components") if isinstance(details.get("components"), dict) else {}
+        poav_total = float(components.get("total", 0.0) or 0.0)
+        issues = list(gate_result.issues or [])
+        blocked = bool(enforce and not gate_result.passed)
+
+        result_payload = {
+            "gate": gate_result.gate,
+            "passed": bool(gate_result.passed),
+            "issues": issues,
+            "details": details,
+            "current_zone": normalized_zone,
+            "high_risk_mode": high_risk_mode,
+            "blocked": blocked,
+        }
+
+        trace_detail = {
+            **details,
+            "current_zone": normalized_zone,
+            "high_risk_mode": high_risk_mode,
+            "passed": bool(gate_result.passed),
+            "issues": issues,
+            "issue_count": len(issues),
+            "action": "blocked"
+            if blocked
+            else str(details.get("decision") or ("record_only" if issues else "allow")),
+            "poav_total": round(poav_total, 3),
+        }
+        dispatch_trace["poav"] = self._build_trace_section(
+            "poav_gate",
+            trace_detail,
+            status="error" if blocked else ("degraded" if issues else "ok"),
+        )
+
+        if not blocked:
+            return response, False, result_payload
+
+        blocked_response = (
+            "抱歉，這個回應未通過 POAV 治理閘門，我需要改用更可驗證、可審計的方式回答。"
+        )
+        return blocked_response, True, result_payload
+
     def _enforce_output_contracts(
         self,
         *,
@@ -491,9 +572,7 @@ class UnifiedPipeline:
         dispatch_trace: Dict[str, Any],
     ) -> tuple[str, bool, Dict[str, Any]]:
         verifier = self._get_contract_verifier()
-        normalized_zone = str(current_zone or "safe").strip().lower()
-        if normalized_zone not in {"safe", "transit", "risk", "danger"}:
-            normalized_zone = "safe"
+        normalized_zone = self._normalize_runtime_zone(current_zone)
 
         if verifier is None:
             return response, False, {}
@@ -1690,25 +1769,53 @@ class UnifiedPipeline:
             local_response = ask_local_llm(raw_user_message)
             local_dispatch_trace = _base_dispatch_trace()
             local_verdict = {"verdict": "bypassed"}
-            local_response, blocked_by_contracts, contract_result = self._enforce_output_contracts(
+            local_response, blocked_by_poav, poav_result = self._enforce_poav_gate(
                 response=local_response,
                 current_zone="safe",
                 dispatch_trace=local_dispatch_trace,
+                lockdown_active=False,
+                source="local_fast_route",
             )
-            if blocked_by_contracts:
-                local_verdict["verdict"] = "blocked_by_contracts"
-                local_verdict["metadata"] = {"contract_observer": contract_result}
+            if poav_result:
+                local_verdict["metadata"] = {"poav_gate": poav_result}
+            if blocked_by_poav:
+                local_verdict["verdict"] = "blocked_by_poav"
                 self._apply_repair_trace(
                     dispatch_trace=local_dispatch_trace,
-                    original_gate="contract_block",
+                    original_gate="poav_block",
                     source_text=raw_user_message,
                     output_text=local_response,
                     tension_before=None,
                     fallback_delta=initial_tension,
                     text_tension=initial_tension,
-                    stages=["contract_block"],
+                    stages=["poav_block"],
                     attempt_after_tension=False,
                 )
+            else:
+                local_response, blocked_by_contracts, contract_result = self._enforce_output_contracts(
+                    response=local_response,
+                    current_zone="safe",
+                    dispatch_trace=local_dispatch_trace,
+                )
+                if contract_result:
+                    verdict_metadata = local_verdict.get("metadata")
+                    if not isinstance(verdict_metadata, dict):
+                        verdict_metadata = {}
+                    verdict_metadata["contract_observer"] = contract_result
+                    local_verdict["metadata"] = verdict_metadata
+                if blocked_by_contracts:
+                    local_verdict["verdict"] = "blocked_by_contracts"
+                    self._apply_repair_trace(
+                        dispatch_trace=local_dispatch_trace,
+                        original_gate="contract_block",
+                        source_text=raw_user_message,
+                        output_text=local_response,
+                        tension_before=None,
+                        fallback_delta=initial_tension,
+                        text_tension=initial_tension,
+                        stages=["contract_block"],
+                        attempt_after_tension=False,
+                    )
             _attach_suppressed_errors(local_dispatch_trace)
             self._attach_runtime_governance_observability(local_dispatch_trace)
             return UnifiedResponse(
@@ -2921,21 +3028,40 @@ Respond with a clear, practical answer."""
             confidence=(getattr(tb_result, "confidence", 0.8) if tb_result else 0.8),
         )
 
-        response, blocked_by_contracts, contract_result = self._enforce_output_contracts(
+        current_zone = getattr(getattr(tension_result, "zone", None), "value", "safe")
+        response, blocked_by_poav, poav_result = self._enforce_poav_gate(
             response=response,
-            current_zone=getattr(getattr(tension_result, "zone", None), "value", "safe"),
+            current_zone=current_zone,
             dispatch_trace=dispatch_trace,
+            lockdown_active=_lockdown_active,
+            source="unified_pipeline",
         )
-        if contract_result and isinstance(verdict_dict, dict):
+        if poav_result and isinstance(verdict_dict, dict):
             verdict_metadata = verdict_dict.get("metadata")
             if not isinstance(verdict_metadata, dict):
                 verdict_metadata = {}
-            verdict_metadata["contract_observer"] = contract_result
+            verdict_metadata["poav_gate"] = poav_result
             verdict_dict["metadata"] = verdict_metadata
-        if blocked_by_contracts:
-            repair_stages.append("contract_block")
+        if blocked_by_poav:
+            repair_stages.append("poav_block")
             if isinstance(verdict_dict, dict):
-                verdict_dict["verdict"] = "blocked_by_contracts"
+                verdict_dict["verdict"] = "blocked_by_poav"
+        else:
+            response, blocked_by_contracts, contract_result = self._enforce_output_contracts(
+                response=response,
+                current_zone=current_zone,
+                dispatch_trace=dispatch_trace,
+            )
+            if contract_result and isinstance(verdict_dict, dict):
+                verdict_metadata = verdict_dict.get("metadata")
+                if not isinstance(verdict_metadata, dict):
+                    verdict_metadata = {}
+                verdict_metadata["contract_observer"] = contract_result
+                verdict_dict["metadata"] = verdict_metadata
+            if blocked_by_contracts:
+                repair_stages.append("contract_block")
+                if isinstance(verdict_dict, dict):
+                    verdict_dict["verdict"] = "blocked_by_contracts"
 
         if repair_stages:
             self._apply_repair_trace(

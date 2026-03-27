@@ -1,5 +1,17 @@
 # Task
 
+## Phase 642: Claim-Authority Refresh After Runtime Gate Upgrades (2026-03-27)
+- [x] Update the claim-authority matrix so POAV gate, ContractObserver blocking, and Risk (R) no longer describe the pre-integration world
+- [x] Regenerate `docs/status/claim_authority_latest.{md,json}` from the refreshed matrix so later agents inherit the current runtime truth instead of stale gap language
+- [x] Re-run claim-authority and docs consistency checks after the refresh
+**Success Criteria**: Entry/status documents no longer tell later agents that POAV enforcement, ContractObserver blocking, or runtime Risk (R) are missing when the code already implements bounded versions of those capabilities.
+
+## Phase 641: Bounded POAV Gate Enforcement in Unified Runtime (2026-03-27)
+- [x] Reuse the existing `tonesoul.yss_gates.poav_gate()` instead of inventing a second POAV implementation, and wire it into `UnifiedPipeline.process()`
+- [x] Enforce `POAV >= 0.92` only for bounded high-risk runtime paths (`risk/danger` zone or lockdown) while keeping low-risk paths record-only at the baseline threshold
+- [x] Surface POAV gate decisions through dispatch trace and verdict metadata, then cover fast-route record-only, high-risk block, and high-risk pass cases with runtime tests
+**Success Criteria**: The main runtime now has an actual inference-time POAV checkpoint, high-risk outputs can be blocked by low POAV, low-risk outputs remain observable without overclaiming full YuHun Gate semantics, and tests prove both enforcement and non-enforcement paths.
+
 ## Phase 640: Runtime Risk (R) and Project Memory Summary (2026-03-27)
 - [x] Add a bounded runtime Risk (R) calculator grounded in governed surfaces instead of leaving `R` as a phantom TSR dimension
 - [x] Surface `risk_posture` and `project_memory_summary` through `r_memory_packet()` so later agents can inherit both risk posture and current work focus

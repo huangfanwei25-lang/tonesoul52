@@ -1,15 +1,15 @@
 # Claim Authority Latest
 
-- generated_at: 2026-03-27T06:05:03Z
-- primary_status_line: `claim_authority_snapshot | terms=75 hard_runtime=32 runtime_adjacent=16 test_backed=12 doc_only=6 research_theory=6 projection_only=3`
-- runtime_status_line: `claim_authority_lookup | high_confusion_terms=18 safe_reliance=35 verification_required=23 overclaiming_risks=10`
+- generated_at: 2026-03-27T14:57:52Z
+- primary_status_line: `claim_authority_snapshot | terms=75 hard_runtime=34 runtime_adjacent=14 test_backed=12 doc_only=6 research_theory=6 projection_only=3`
+- runtime_status_line: `claim_authority_lookup | high_confusion_terms=18 safe_reliance=37 verification_required=21 overclaiming_risks=10`
 - artifact_policy_status_line: `boundary_snapshot=subordinate_to_code_tests_axioms_and_canonical_contracts | machine_lookup=true`
 
 ## Metrics
 - `term_count`: `75`
 - `high_confusion_term_count`: `18`
-- `safe_reliance_term_count`: `35`
-- `verification_required_term_count`: `23`
+- `safe_reliance_term_count`: `37`
+- `verification_required_term_count`: `21`
 - `top_overclaiming_risk_count`: `10`
 
 ## High-Confusion Quick Lookup
@@ -39,20 +39,21 @@
 
 | Risk | Term | What It Sounds Like | What It Actually Is |
 |------|------|---------------------|---------------------|
-| 1 | POAV ≥ 0.92 Gate | Inference-time consensus gate that blocks actions | POAV weights are tracked in TimeIsland; no enforcement gate exists |
+| 1 | POAV ≥ 0.92 Gate | Universal inference-time consensus gate that blocks every major output | A bounded runtime gate now exists in unified_pipeline.py: it enforces ≥ 0.92 on risk / danger / lockdown paths, while low-risk paths remain baseline record-only |
 | 2 | YuHun Gate | A callable runtime gate object | A governance design concept; runtime equivalent is scattered across unified_pipeline + aegis |
 | 3 | StepLedger | An active append-only ledger recording every step | Law/ schema exists; runtime equivalent is Aegis chain + session traces, not a dedicated ledger |
-| 4 | Risk (R) calculation | Active risk scoring that blocks at R > 0.9 | R values are stored in data structures but never computed |
+| 4 | Risk (R) calculation | Active risk scoring that blocks at R > 0.9 | risk_calculator.py now computes runtime risk posture and surfaces it through GovernancePosture / r_memory_packet(), but it is not yet a direct blocking gate |
 | 5 | Lex Lattice | Active governance framework | Theoretical framework based on MDL/information theory |
 | 6 | LAR metric | Computed accountability score | Specification only, no runtime calculation |
 | 7 | Mirror Recursion (Axiom 5) | Automatic self-reflection cycle | No implementation found |
 | 8 | Semantic Field Conservation (Axiom 7) | Active energy conservation tracking | Conceptual only |
-| 9 | ContractObserver blocking | Output contracts that block bad outputs | Verifier returns violations but never blocks |
+| 9 | ContractObserver blocking | Every output-contract violation blocks the response | unified_pipeline.py now blocks only CRITICAL violations; warning-level issues remain degraded telemetry |
 | 10 | 12-Layer Semantic Spine | 12 active processing layers | Architectural model in law/, not runtime layers |
 
 ## Safe Reliance Terms
 - `Axiom 1: Continuity`
 - `Axiom 2: Responsibility Threshold`
+- `Axiom 3: Governance Gate (POAV ≥ 0.92)`
 - `Axiom 4: Non-Zero Tension`
 - `GovernancePosture`
 - `SessionTrace`
@@ -70,6 +71,7 @@
 - `DriftMonitor`
 - `EscapeValve`
 - `BenevolenceFilter`
+- `ContractObserver`
 - `Council (Multi-Persona Deliberation)`
 - `TimeIsland`
 - `POAV Weights`
@@ -93,7 +95,7 @@
 |---|------|---------|--------|------|-------------------|
 | 1 | Axiom 1: Continuity | Core Governance (Axioms & Posture) | hard runtime | Yes | - |
 | 2 | Axiom 2: Responsibility Threshold | Core Governance (Axioms & Posture) | hard runtime | Yes | - |
-| 3 | Axiom 3: Governance Gate (POAV ≥ 0.92) | Core Governance (Axioms & Posture) | runtime-adjacent | Only with verification — weights tracked, gate not enforced at inference | - |
+| 3 | Axiom 3: Governance Gate (POAV ≥ 0.92) | Core Governance (Axioms & Posture) | hard runtime | Yes — bounded runtime gate exists: unified_pipeline enforces ≥ 0.92 on high-risk paths and records baseline POAV on low-risk paths | - |
 | 4 | Axiom 4: Non-Zero Tension | Core Governance (Axioms & Posture) | hard runtime | Yes | - |
 | 5 | Axiom 5: Mirror Recursion | Core Governance (Axioms & Posture) | doc-only | No — no reflection cycle code found | - |
 | 6 | Axiom 6: User Sovereignty / Harm Block | Core Governance (Axioms & Posture) | runtime-adjacent | Only with verification — filters exist, enforcement path varies | - |
@@ -117,7 +119,7 @@
 | 24 | DriftMonitor | Monitoring & Quality | hard runtime | Yes | - |
 | 25 | EscapeValve | Monitoring & Quality | hard runtime | Yes | - |
 | 26 | BenevolenceFilter | Monitoring & Quality | hard runtime | Yes | - |
-| 27 | ContractObserver | Monitoring & Quality | runtime-adjacent | Only with verification — verifier returns violations but doesn't block | - |
+| 27 | ContractObserver | Monitoring & Quality | hard runtime | Yes — CRITICAL violations block in unified_pipeline; warning-level violations remain observable without blocking | - |
 | 28 | MultiScaleObserver | Monitoring & Quality | test-backed | Only with verification | - |
 | 29 | QualityTracker | Monitoring & Quality | test-backed | Only with verification | - |
 | 30 | LongTermQualityMonitor | Monitoring & Quality | test-backed | Only with verification | - |
@@ -128,7 +130,7 @@
 | 35 | InterSoul Bridge | Council & Persona | test-backed | Only with verification | - |
 | 36 | SovereigntyGuard | Council & Persona | test-backed | Only with verification | Active Runtime / Audit Dependency |
 | 37 | TimeIsland | Decision Context & State | hard runtime | Yes | - |
-| 38 | POAV Weights | Decision Context & State | hard runtime (data) | Yes (tracked), No (not enforced as gate) | - |
+| 38 | POAV Weights | Decision Context & State | hard runtime (data) | Yes — tracked as runtime data; bounded high-risk enforcement now exists in unified_pipeline | - |
 | 39 | Vow System | Decision Context & State | hard runtime | Yes | - |
 | 40 | TensionEngine | Decision Context & State | hard runtime | Yes | - |
 | 41 | ResistanceVector | Decision Context & State | test-backed | Only with verification | - |

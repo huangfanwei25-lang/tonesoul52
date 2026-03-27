@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-27T06:05:03Z",
+  "generated_at": "2026-03-27T14:57:52Z",
   "source_documents": {
     "matrix": "docs/architecture/TONESOUL_CLAIM_AUTHORITY_MATRIX.md",
     "boundary_contract": "docs/architecture/TONESOUL_LAW_RUNTIME_BOUNDARY_CONTRACT.md"
@@ -7,24 +7,24 @@
   "metrics": {
     "term_count": 75,
     "high_confusion_term_count": 18,
-    "safe_reliance_term_count": 35,
-    "verification_required_term_count": 23,
+    "safe_reliance_term_count": 37,
+    "verification_required_term_count": 21,
     "top_overclaiming_risk_count": 10,
     "status_counts": {
       "doc-only": 6,
-      "hard runtime": 32,
+      "hard runtime": 34,
       "projection-only": 3,
       "research/theory": 6,
-      "runtime-adjacent": 16,
+      "runtime-adjacent": 14,
       "test-backed": 12
     },
     "raw_status_counts": {
       "doc-only": 6,
-      "hard runtime": 31,
+      "hard runtime": 33,
       "hard runtime (data)": 1,
       "projection-only": 3,
       "research/theory": 6,
-      "runtime-adjacent": 16,
+      "runtime-adjacent": 14,
       "test-backed": 12
     },
     "authority_role_counts": {
@@ -96,16 +96,19 @@
       "authority_roles": [
         "canonical"
       ],
-      "implementation_status": "runtime-adjacent",
-      "status_bucket": "runtime-adjacent",
+      "implementation_status": "hard runtime",
+      "status_bucket": "hard runtime",
       "source_files": [
         "AXIOMS.json",
         "time_island.py",
-        "test_poav.py"
+        "yss_gates.py",
+        "unified_pipeline.py",
+        "test_poav.py",
+        "test_unified_pipeline_v2_runtime.py"
       ],
-      "source_files_raw": "AXIOMS.json, time_island.py (POAV weights tracked), test_poav.py",
-      "rely_guidance": "Only with verification — weights tracked, gate not enforced at inference",
-      "rely_level": "verify",
+      "source_files_raw": "AXIOMS.json, time_island.py (POAV weights tracked), yss_gates.py (poav_gate), unified_pipeline.py, test_poav.py, test_unified_pipeline_v2_runtime.py",
+      "rely_guidance": "Yes — bounded runtime gate exists: unified_pipeline enforces ≥ 0.92 on high-risk paths and records baseline POAV on low-risk paths",
+      "rely_level": "yes",
       "id": "axiom3governancegatepoav092",
       "boundary_category_code": "",
       "boundary_category_label": "",
@@ -614,14 +617,16 @@
       "authority_roles": [
         "runtime"
       ],
-      "implementation_status": "runtime-adjacent",
-      "status_bucket": "runtime-adjacent",
+      "implementation_status": "hard runtime",
+      "status_bucket": "hard runtime",
       "source_files": [
-        "contract_observer.py"
+        "contract_observer.py",
+        "unified_pipeline.py",
+        "test_unified_pipeline_v2_runtime.py"
       ],
-      "source_files_raw": "contract_observer.py (4 output contracts, zone-triggered), no blocking integration",
-      "rely_guidance": "Only with verification — verifier returns violations but doesn't block",
-      "rely_level": "verify",
+      "source_files_raw": "contract_observer.py (4 output contracts, zone-triggered), unified_pipeline.py (CRITICAL violations block), test_unified_pipeline_v2_runtime.py",
+      "rely_guidance": "Yes — CRITICAL violations block in unified_pipeline; warning-level violations remain observable without blocking",
+      "rely_level": "yes",
       "id": "contractobserver",
       "boundary_category_code": "",
       "boundary_category_label": "",
@@ -853,10 +858,11 @@
       "implementation_status": "hard runtime (data)",
       "status_bucket": "hard runtime",
       "source_files": [
-        "time_island.py"
+        "time_island.py",
+        "unified_pipeline.py"
       ],
-      "source_files_raw": "time_island.py:89 (default {P:0.25, O:0.25, A:0.25, V:0.25})",
-      "rely_guidance": "Yes (tracked), No (not enforced as gate)",
+      "source_files_raw": "time_island.py:89 (default {P:0.25, O:0.25, A:0.25, V:0.25}), unified_pipeline.py (bounded gate consumes POAV score at inference)",
+      "rely_guidance": "Yes — tracked as runtime data; bounded high-risk enforcement now exists in unified_pipeline",
       "rely_level": "yes",
       "id": "poavweights",
       "boundary_category_code": "",
@@ -1790,8 +1796,8 @@
     {
       "Risk": "1",
       "Term": "POAV ≥ 0.92 Gate",
-      "What It Sounds Like": "Inference-time consensus gate that blocks actions",
-      "What It Actually Is": "POAV weights are tracked in TimeIsland; no enforcement gate exists"
+      "What It Sounds Like": "Universal inference-time consensus gate that blocks every major output",
+      "What It Actually Is": "A bounded runtime gate now exists in unified_pipeline.py: it enforces ≥ 0.92 on risk / danger / lockdown paths, while low-risk paths remain baseline record-only"
     },
     {
       "Risk": "2",
@@ -1809,7 +1815,7 @@
       "Risk": "4",
       "Term": "Risk (R) calculation",
       "What It Sounds Like": "Active risk scoring that blocks at R > 0.9",
-      "What It Actually Is": "R values are stored in data structures but never computed"
+      "What It Actually Is": "risk_calculator.py now computes runtime risk posture and surfaces it through GovernancePosture / r_memory_packet(), but it is not yet a direct blocking gate"
     },
     {
       "Risk": "5",
@@ -1838,8 +1844,8 @@
     {
       "Risk": "9",
       "Term": "ContractObserver blocking",
-      "What It Sounds Like": "Output contracts that block bad outputs",
-      "What It Actually Is": "Verifier returns violations but never blocks"
+      "What It Sounds Like": "Every output-contract violation blocks the response",
+      "What It Actually Is": "unified_pipeline.py now blocks only CRITICAL violations; warning-level issues remain degraded telemetry"
     },
     {
       "Risk": "10",
@@ -1851,6 +1857,7 @@
   "safe_reliance_terms": [
     "Axiom 1: Continuity",
     "Axiom 2: Responsibility Threshold",
+    "Axiom 3: Governance Gate (POAV ≥ 0.92)",
     "Axiom 4: Non-Zero Tension",
     "GovernancePosture",
     "SessionTrace",
@@ -1868,6 +1875,7 @@
     "DriftMonitor",
     "EscapeValve",
     "BenevolenceFilter",
+    "ContractObserver",
     "Council (Multi-Persona Deliberation)",
     "TimeIsland",
     "POAV Weights",
@@ -1886,12 +1894,10 @@
     "Red Team Scenarios"
   ],
   "verification_required_terms": [
-    "Axiom 3: Governance Gate (POAV ≥ 0.92)",
     "Axiom 6: User Sovereignty / Harm Block",
     "CircuitBreaker / Freeze Protocol",
     "PainEngine",
     "FrictionCalculator",
-    "ContractObserver",
     "MultiScaleObserver",
     "QualityTracker",
     "LongTermQualityMonitor",
@@ -1910,7 +1916,7 @@
     "BBPF",
     "Honesty Contract (10 Rules)"
   ],
-  "primary_status_line": "claim_authority_snapshot | terms=75 hard_runtime=32 runtime_adjacent=16 test_backed=12 doc_only=6 research_theory=6 projection_only=3",
-  "runtime_status_line": "claim_authority_lookup | high_confusion_terms=18 safe_reliance=35 verification_required=23 overclaiming_risks=10",
+  "primary_status_line": "claim_authority_snapshot | terms=75 hard_runtime=34 runtime_adjacent=14 test_backed=12 doc_only=6 research_theory=6 projection_only=3",
+  "runtime_status_line": "claim_authority_lookup | high_confusion_terms=18 safe_reliance=37 verification_required=21 overclaiming_risks=10",
   "artifact_policy_status_line": "boundary_snapshot=subordinate_to_code_tests_axioms_and_canonical_contracts | machine_lookup=true"
 }

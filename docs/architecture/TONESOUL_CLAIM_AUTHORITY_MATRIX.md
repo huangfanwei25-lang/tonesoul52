@@ -49,7 +49,7 @@ If you are an AI agent entering this repo:
 |---|------|-----------|--------|-------------|-------|
 | 1 | **Axiom 1: Continuity** | canonical | hard runtime | AXIOMS.json, runtime_adapter.py (load/commit), time_island.py | Yes |
 | 2 | **Axiom 2: Responsibility Threshold** | canonical | hard runtime | AXIOMS.json, aegis_shield.py (hash chain + sign), runtime_adapter.py (commit) | Yes |
-| 3 | **Axiom 3: Governance Gate (POAV ≥ 0.92)** | canonical | runtime-adjacent | AXIOMS.json, time_island.py (POAV weights tracked), test_poav.py | Only with verification — weights tracked, gate not enforced at inference |
+| 3 | **Axiom 3: Governance Gate (POAV ≥ 0.92)** | canonical | hard runtime | AXIOMS.json, time_island.py (POAV weights tracked), yss_gates.py (poav_gate), unified_pipeline.py, test_poav.py, test_unified_pipeline_v2_runtime.py | Yes — bounded runtime gate exists: unified_pipeline enforces ≥ 0.92 on high-risk paths and records baseline POAV on low-risk paths |
 | 4 | **Axiom 4: Non-Zero Tension** | canonical | hard runtime | AXIOMS.json, runtime_adapter.py (tension decay never drops to zero), tension_engine.py | Yes |
 | 5 | **Axiom 5: Mirror Recursion** | canonical | doc-only | AXIOMS.json | No — no reflection cycle code found |
 | 6 | **Axiom 6: User Sovereignty / Harm Block** | canonical | runtime-adjacent | AXIOMS.json, benevolence.py (INTERCEPT/REJECT), resistance.py (CircuitBreaker) | Only with verification — filters exist, enforcement path varies |
@@ -83,7 +83,7 @@ If you are an AI agent entering this repo:
 | 24 | **DriftMonitor** | runtime | hard runtime | drift_monitor.py (EMA alpha=0.3, WARNING≥0.35, CRISIS≥0.60) | Yes |
 | 25 | **EscapeValve** | runtime | hard runtime | escape_valve.py (max_retries=3, circuit_breaker=5), test_escape_valve.py + red_team | Yes |
 | 26 | **BenevolenceFilter** | runtime | hard runtime | benevolence.py (3-layer: attribute + shadow + benevolence audit), test_benevolence.py | Yes |
-| 27 | **ContractObserver** | runtime | runtime-adjacent | contract_observer.py (4 output contracts, zone-triggered), no blocking integration | Only with verification — verifier returns violations but doesn't block |
+| 27 | **ContractObserver** | runtime | hard runtime | contract_observer.py (4 output contracts, zone-triggered), unified_pipeline.py (CRITICAL violations block), test_unified_pipeline_v2_runtime.py | Yes — CRITICAL violations block in unified_pipeline; warning-level violations remain observable without blocking |
 | 28 | **MultiScaleObserver** | runtime | test-backed | contract_observer.py:237-314 (instant/short/medium trends) | Only with verification |
 | 29 | **QualityTracker** | runtime | test-backed | contract_observer.py:328-393 | Only with verification |
 | 30 | **LongTermQualityMonitor** | runtime | test-backed | council_capability.py:171-246 (trend detection, degradation alerts) | Only with verification |
@@ -104,7 +104,7 @@ If you are an AI agent entering this repo:
 | # | Term | Authority | Status | Source Files | Rely? |
 |---|------|-----------|--------|-------------|-------|
 | 37 | **TimeIsland** | runtime | hard runtime | time_island.py (lifecycle: DRAFT→ACTIVE→COMPLETED→ARCHIVED), test_time_island.py | Yes |
-| 38 | **POAV Weights** | runtime | hard runtime (data) | time_island.py:89 (default {P:0.25, O:0.25, A:0.25, V:0.25}) | Yes (tracked), No (not enforced as gate) |
+| 38 | **POAV Weights** | runtime | hard runtime (data) | time_island.py:89 (default {P:0.25, O:0.25, A:0.25, V:0.25}), unified_pipeline.py (bounded gate consumes POAV score at inference) | Yes — tracked as runtime data; bounded high-risk enforcement now exists in unified_pipeline |
 | 39 | **Vow System** | runtime | hard runtime | test_vow_system.py, test_vow_system_properties.py, runtime_adapter.py (reconcile) | Yes |
 | 40 | **TensionEngine** | runtime | hard runtime | tension_engine.py, test_tension_engine.py, test_property_tension_engine.py | Yes |
 | 41 | **ResistanceVector** | runtime | test-backed | test_tension_engine.py (fact/logic/ethics weighted sum) | Only with verification |
@@ -176,15 +176,15 @@ These are the terms most likely to mislead a later AI into thinking something is
 
 | Risk | Term | What It Sounds Like | What It Actually Is |
 |------|------|---------------------|---------------------|
-| 1 | **POAV ≥ 0.92 Gate** | Inference-time consensus gate that blocks actions | POAV weights are tracked in TimeIsland; no enforcement gate exists |
+| 1 | **POAV ≥ 0.92 Gate** | Universal inference-time consensus gate that blocks every major output | A bounded runtime gate now exists in `unified_pipeline.py`: it enforces ≥ 0.92 on `risk` / `danger` / lockdown paths, while low-risk paths remain baseline record-only |
 | 2 | **YuHun Gate** | A callable runtime gate object | A governance design concept; runtime equivalent is scattered across unified_pipeline + aegis |
 | 3 | **StepLedger** | An active append-only ledger recording every step | Law/ schema exists; runtime equivalent is Aegis chain + session traces, not a dedicated ledger |
-| 4 | **Risk (R) calculation** | Active risk scoring that blocks at R > 0.9 | R values are stored in data structures but never computed |
+| 4 | **Risk (R) calculation** | Active risk scoring that blocks at R > 0.9 | `risk_calculator.py` now computes runtime risk posture and surfaces it through `GovernancePosture` / `r_memory_packet()`, but it is not yet a direct blocking gate |
 | 5 | **Lex Lattice** | Active governance framework | Theoretical framework based on MDL/information theory |
 | 6 | **LAR metric** | Computed accountability score | Specification only, no runtime calculation |
 | 7 | **Mirror Recursion (Axiom 5)** | Automatic self-reflection cycle | No implementation found |
 | 8 | **Semantic Field Conservation (Axiom 7)** | Active energy conservation tracking | Conceptual only |
-| 9 | **ContractObserver blocking** | Output contracts that block bad outputs | Verifier returns violations but never blocks |
+| 9 | **ContractObserver blocking** | Every output-contract violation blocks the response | `unified_pipeline.py` now blocks only `CRITICAL` violations; warning-level issues remain degraded telemetry |
 | 10 | **12-Layer Semantic Spine** | 12 active processing layers | Architectural model in law/, not runtime layers |
 
 ## Terms Safe For Engineering Reliance
