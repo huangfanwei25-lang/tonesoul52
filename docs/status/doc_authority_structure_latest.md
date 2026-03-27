@@ -1,14 +1,14 @@
 # Documentation Authority Structure Latest
 
-- generated_at: 2026-03-27T04:49:12Z
-- primary_status_line: `doc_authority_structure | groups=10 tracked=36 metadata_complete=36 metadata_missing=0`
-- runtime_status_line: `doc_retrieval_order=entrypoint_to_operational_to_canonical_to_deep_map_to_interpretive | generated_status_lane=5`
+- generated_at: 2026-03-27T06:03:57Z
+- primary_status_line: `doc_authority_structure | groups=10 tracked=37 metadata_complete=37 metadata_missing=0`
+- runtime_status_line: `doc_retrieval_order=entrypoint_to_operational_to_canonical_to_deep_map_to_interpretive | generated_status_lane=6`
 - artifact_policy_status_line: `structure_mode=retrieval_oriented | authority_roles=explicit | generated_status_preferred_for_current_state`
 
 ## Metrics
 - `group_count`: `10`
-- `tracked_file_count`: `36`
-- `metadata_complete_count`: `36`
+- `tracked_file_count`: `37`
+- `metadata_complete_count`: `37`
 - `metadata_missing_count`: `0`
 
 ## Groups
@@ -88,7 +88,7 @@
   - `docs/architecture/PRIVATE_MEMORY_SHADOW_BOUNDARY_MAP.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/PARADOX_FIXTURE_OWNERSHIP_MAP.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/ENGINEERING_MIRROR_OWNERSHIP_MAP.md` exists=`true` purpose=`true` date=`true`
-- `Generated Status` tracked=`5` metadata_complete=`5`
+- `Generated Status` tracked=`6` metadata_complete=`6`
   - description: machine-readable current posture for convergence-related lanes
   - authority_role: generated_status
   - use_when: when current machine-readable posture matters more than prose explanation
@@ -98,5 +98,6 @@
   - `docs/status/private_memory_shadow_latest.json` exists=`true` purpose=`true` date=`true`
   - `docs/status/paradox_fixture_ownership_latest.json` exists=`true` purpose=`true` date=`true`
   - `docs/status/engineering_mirror_ownership_latest.json` exists=`true` purpose=`true` date=`true`
+  - `docs/status/claim_authority_latest.json` exists=`true` purpose=`true` date=`true`
 
 ## Missing Metadata Files

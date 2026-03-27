@@ -1,5 +1,11 @@
 # Task
 
+## Phase 637: Machine-Readable Claim Authority Snapshot (2026-03-27)
+- [x] Parse Claude's claim-authority matrix and law/runtime boundary contract into one generated status artifact instead of leaving them prose-only
+- [x] Route the new machine-readable snapshot into onboarding, documentation indexes, and the generated-status lane so later agents can find it first
+- [x] Verify the generator and refresh affected status artifacts without promoting boundary aids above code, tests, or canonical contracts
+**Success Criteria**: A later agent can query one generated claim-authority snapshot for term status and confusion boundaries, while still being told that code, tests, `AXIOMS.json`, and canonical contracts outrank the snapshot.
+
 ## Phase 636: Extend Claude Work Order With Implementation-Gap Triage (2026-03-27)
 - [x] Append a follow-up implementation-gap triage stage to the same Claude authority-distillation work order instead of opening a second disconnected ticket
 - [x] Focus the extension on the highest-risk theory-vs-runtime gaps rather than asking Claude to mutate runtime code

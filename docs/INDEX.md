@@ -57,6 +57,8 @@ Use these after the canonical architecture anchor, not before it.
   - full cross-lane matrix for whether a term is canonical, runtime, vocabulary, theory, or projection
 - [architecture/TONESOUL_LAW_RUNTIME_BOUNDARY_CONTRACT.md](architecture/TONESOUL_LAW_RUNTIME_BOUNDARY_CONTRACT.md)
   - compact boundary contract for the highest-confusion `law/` and deep-prose terms
+- [status/claim_authority_latest.json](status/claim_authority_latest.json)
+  - machine-readable merge of the 75-term matrix, the 18-term quick lookup, and the overclaiming-risk list for fast agent-side term checks
 
 ## Developer Runtime Adapter Direction
 

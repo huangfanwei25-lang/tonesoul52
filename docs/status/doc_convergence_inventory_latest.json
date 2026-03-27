@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-27T04:50:39Z",
+  "generated_at": "2026-03-27T06:03:51Z",
   "scope": {
     "include_roots": [
       "PARADOXES",
@@ -62,7 +62,7 @@
     ]
   },
   "metrics": {
-    "authored_file_count": 2256,
+    "authored_file_count": 2260,
     "collision_count": 27,
     "exact_match_collision_count": 16,
     "divergent_collision_count": 11,
@@ -73,13 +73,13 @@
     "missing_metadata_sample_limit": 40
   },
   "category_counts": {
-    "architecture_doc": 21,
+    "architecture_doc": 22,
     "archive_doc": 1,
     "chronicle_doc": 48,
     "constitution_doc": 1,
     "docs_engineering_mirror": 16,
     "general_doc": 128,
-    "generated_status_artifact": 96,
+    "generated_status_artifact": 98,
     "knowledge_doc": 2,
     "law_doc": 60,
     "law_engineering_mirror": 15,
@@ -87,7 +87,7 @@
     "paradox_fixture": 8,
     "paradox_test_fixture": 8,
     "philosophy_doc": 27,
-    "plan_doc": 99,
+    "plan_doc": 100,
     "report_doc": 29,
     "research_doc": 9,
     "root_entrypoint": 11,
@@ -793,12 +793,12 @@
       "basename": "AI_ONBOARDING.md",
       "extension": ".md",
       "surface_type": "root_entrypoint",
-      "size_bytes": 13363,
+      "size_bytes": 13525,
       "title": "AI Onboarding Guide | AI 引導指南",
       "purpose": "給未來沒有記憶的 AI 實例的快速引導。",
       "status": "",
       "date_hint": "2026-03-27",
-      "content_sha256": "543bdb65a1c9e256a9728bc6e6f5201fea128e5e7418a94e0f5bab986c6c2317"
+      "content_sha256": "596ac29b4f98f956f77e4dd4246460ed092643c35db153490d8102352bc3d750"
     },
     {
       "path": "AXIOMS.json",
@@ -901,24 +901,24 @@
       "basename": "AI_QUICKSTART.md",
       "extension": ".md",
       "surface_type": "general_doc",
-      "size_bytes": 4996,
+      "size_bytes": 5809,
       "title": "ToneSoul — AI 快速入場（60 秒版）",
       "purpose": "give any later AI instance the minimum working entry surface for ToneSoul before it starts reading the repo in bulk.",
       "status": "operational quickstart; subordinate to `AXIOMS.json`, executable code, tests, and canonical architecture contracts.",
       "date_hint": "2026-03-27",
-      "content_sha256": "424b9a23a6c17fd74d5b54cf99973829aef68db0d568b5d1c306da16b167fe0c"
+      "content_sha256": "2778bdf568275be3935d8e1850040104aeef79614116247d8b4714718021e251"
     },
     {
       "path": "docs/AI_REFERENCE.md",
       "basename": "AI_REFERENCE.md",
       "extension": ".md",
       "surface_type": "general_doc",
-      "size_bytes": 12529,
+      "size_bytes": 13780,
       "title": "ToneSoul — AI 工作參考手冊",
       "purpose": "give later AI instances an operator-side lookup for terms, routing decisions, red lines, and common work situations.",
       "status": "operational reference; not a constitutional or architectural source of truth.",
       "date_hint": "2026-03-27",
-      "content_sha256": "a30e7ea987dbb9855cacea6474876742b883431ede575f2f0b70bbb63ed58003"
+      "content_sha256": "b10374210bfc796e14fd0a4e9b1933921ecdb5c43a7fa1dd6d8f00c70fef2afa"
     },
     {
       "path": "docs/ANTIGRAVITY_CONTEXT_MEMORY.md",
@@ -1123,6 +1123,18 @@
       "status": "Canonical architecture anchor as of 2026-03-22",
       "date_hint": "2026-03-22",
       "content_sha256": "68497ee61b4bb64d5ff87aa7ede70b5a225cb037554f1e2729eb1a0ad216ce79"
+    },
+    {
+      "path": "docs/architecture/TONESOUL_IMPLEMENTATION_GAP_TRIAGE_2026-03-27.md",
+      "basename": "TONESOUL_IMPLEMENTATION_GAP_TRIAGE_2026-03-27.md",
+      "extension": ".md",
+      "surface_type": "architecture_doc",
+      "size_bytes": 13658,
+      "title": "ToneSoul Implementation-Gap Triage (2026-03-27)",
+      "purpose": "classify the most dangerous \"between theory and runtime\" terms into next-step lanes so later agents stop oscillating between overclaiming and dismissing them",
+      "status": "triage boundary document — not a roadmap, not permission to implement",
+      "date_hint": "2026-03-27",
+      "content_sha256": "5fa70f0d983eaabb7843734aff6a826b23e7e399fc3ced884e7ff0f71186987a"
     },
     {
       "path": "docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md",
@@ -2509,12 +2521,12 @@
       "basename": "INDEX.md",
       "extension": ".md",
       "surface_type": "general_doc",
-      "size_bytes": 16557,
+      "size_bytes": 16771,
       "title": "ToneSoul Documentation Index",
       "purpose": "top-level documentation index for ToneSoul authority surfaces, operational packets, and convergence maps.",
       "status": "",
       "date_hint": "2026-03-27",
-      "content_sha256": "d939a1833751256b9e0b6873c3c55c84fb4fe33c6f5376af866bab2a40e02812"
+      "content_sha256": "9dc4f8536551dfccf51b8d9e2a79fe4f5bcc3caafe0b5b4aec40f7ab023604bf"
     },
     {
       "path": "docs/INTEGRATION_AUDIT_DRAFT.md",
@@ -3205,12 +3217,12 @@
       "basename": "claude_deep_structure_authority_work_order_2026-03-27.md",
       "extension": ".md",
       "surface_type": "plan_doc",
-      "size_bytes": 6275,
+      "size_bytes": 10266,
       "title": "Claude Work Order — Deep Structure Authority Distillation (2026-03-27)",
       "purpose": "give a high-context synthesis agent a bounded documentation workstream that converts repo-scale structural insight into durable authority boundaries for later AI instances.",
-      "status": "ready for execution",
+      "status": "primary authority-distillation pass completed; follow-up extension appended for implementation-gap triage",
       "date_hint": "2026-03-27",
-      "content_sha256": "6996a9f5bbaad158a2adf0ff175e310277836826c07c60115ee9ae7b8edfee66"
+      "content_sha256": "22e02a0543277af893e84e8600f24b59f509bb407477254e652e3fed1b774efd"
     },
     {
       "path": "docs/plans/commit_attribution_base_switch_addendum_2026-03-08.md",
@@ -4173,6 +4185,18 @@
       "content_sha256": "07a471bd01af144224a5c4d58525e6204966600a72bc83296e53b12f41f016bc"
     },
     {
+      "path": "docs/plans/tonesoul_gap_followup_candidates_2026-03-27.md",
+      "basename": "tonesoul_gap_followup_candidates_2026-03-27.md",
+      "extension": ".md",
+      "surface_type": "plan_doc",
+      "size_bytes": 4720,
+      "title": "ToneSoul Gap Follow-Up Candidates (2026-03-27)",
+      "purpose": "name the specific gaps that deserve separate Codex-owned build phases",
+      "status": "candidate list for future bounded implementation tickets",
+      "date_hint": "2026-03-27",
+      "content_sha256": "9ac48badf003398b528076b12040f52bff63514d6d2731bb445e0d08942e9fac"
+    },
+    {
       "path": "docs/plans/tonesoul_governance_to_meaningful_divergence_rfc_2026-02-23.md",
       "basename": "tonesoul_governance_to_meaningful_divergence_rfc_2026-02-23.md",
       "extension": ".md",
@@ -4357,12 +4381,12 @@
       "basename": "README.md",
       "extension": ".md",
       "surface_type": "general_doc",
-      "size_bytes": 11804,
+      "size_bytes": 12016,
       "title": "ToneSoul Documentation Index",
       "purpose": "documentation entrypoint and guided index for ToneSoul architecture, status artifacts, and convergence surfaces.",
       "status": "",
       "date_hint": "2026-03-27",
-      "content_sha256": "19e903e7e4103a37bc05464726396c7ca3e8204a1b351b19ad6a54de20dc3f9a"
+      "content_sha256": "bed0ca2fe1c87197c2ac1f8ae57fe551077a7ea872cce7a87b851d5abb9a7c06"
     },
     {
       "path": "docs/RELEASE_NOTES_v0.1.0.md",
@@ -4869,6 +4893,30 @@
       "content_sha256": "41947394bf5771cc336173ed8ca5d1230345e1f80553338a07e8a66812e9cefb"
     },
     {
+      "path": "docs/status/claim_authority_latest.json",
+      "basename": "claim_authority_latest.json",
+      "extension": ".json",
+      "surface_type": "generated_status_artifact",
+      "size_bytes": 61372,
+      "title": "claim_authority_latest.json",
+      "purpose": "",
+      "status": "",
+      "date_hint": "",
+      "content_sha256": "4ce5b9d0c5f1626352476b2737f7070cd318cfba0127e33a57f831cd7ac1ba2e"
+    },
+    {
+      "path": "docs/status/claim_authority_latest.md",
+      "basename": "claim_authority_latest.md",
+      "extension": ".md",
+      "surface_type": "generated_status_artifact",
+      "size_bytes": 13483,
+      "title": "Claim Authority Latest",
+      "purpose": "",
+      "status": "",
+      "date_hint": "",
+      "content_sha256": "dc4868a90f8a79203119ac70323ce5de766ea6328d6d9c00e91a32fcda14fe42"
+    },
+    {
       "path": "docs/status/codex_subjectivity_handoff_2026-03-10.md",
       "basename": "codex_subjectivity_handoff_2026-03-10.md",
       "extension": ".md",
@@ -4986,7 +5034,7 @@
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "1142ed9f15e88c12b229f98b660a6f3c60c55d52c628caf0de6274c8b854aa81"
+      "content_sha256": "b1f4f6041aafa6c67ba2ff40b7ba672623293af54e7ddba1b73f26961be12815"
     },
     {
       "path": "docs/status/doc_convergence_inventory_latest.md",
@@ -4998,7 +5046,7 @@
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "2865e1e2c1bc9014d0363b4ffda2340d2cef99d74f7a53f041cc90662693d415"
+      "content_sha256": "3f735736cd5281fa1a3e58be1fcc7b38d61f84cb2691618f774c36e8287876f7"
     },
     {
       "path": "docs/status/dream_engine_wakeup_status_2026-03-09.md",
@@ -5677,12 +5725,12 @@
       "basename": "README.md",
       "extension": ".md",
       "surface_type": "status_doc",
-      "size_bytes": 34597,
+      "size_bytes": 35096,
       "title": "Status Artifacts",
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "abc19d76e32ee0ed61aafa4e4d4588bfe6ac86c0822c141cf72eee8a4c13f725"
+      "content_sha256": "6da0874ec1e88d154eff2598b3da6b08cf2771ef732aaaf4409206f1bcfee111"
     },
     {
       "path": "docs/status/refreshable_artifact_report_latest.json",
@@ -7626,7 +7674,7 @@
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "c5c64c4a54146e343df8e41f276e1ab49afdcd976f8e99ef72593eee6fbf0043"
+      "content_sha256": "84dea7bef1f65d3a229e288e51a3ddbedc8c28eb47f5351773d1ab67db344b5b"
     },
     {
       "path": "memory/BOOTSTRAP.md",
@@ -27709,12 +27757,12 @@
       "basename": "task.md",
       "extension": ".md",
       "surface_type": "root_entrypoint",
-      "size_bytes": 87940,
+      "size_bytes": 89357,
       "title": "Task",
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "e7fb31503f697c8130575e12ff3da06ffdadd960b69944800ab07a79128566d6"
+      "content_sha256": "1df5661a9acf07e5358947d34ab95a45b5c136b586a6332980d0b12cd63c3d80"
     },
     {
       "path": "tests/fixtures/paradoxes/medical_suicide_paradox.json",
@@ -27849,7 +27897,7 @@
       "content_sha256": "2cee7ef4a180d9208eefe9a83fe3d22bbfb6d32cecb6f5c05880d57e75006343"
     }
   ],
-  "primary_status_line": "doc_convergence_ready | authored_files=2256 collisions=27 missing_purpose=140 missing_date=101",
-  "runtime_status_line": "entrypoints | doc_inventory=doc_convergence_inventory_latest.json largest_family=docs_law_engineering_mirror architecture_docs=21",
+  "primary_status_line": "doc_convergence_ready | authored_files=2260 collisions=27 missing_purpose=140 missing_date=101",
+  "runtime_status_line": "entrypoints | doc_inventory=doc_convergence_inventory_latest.json largest_family=docs_law_engineering_mirror architecture_docs=22",
   "artifact_policy_status_line": "doc_scope=authored_only | content_check=hash_plus_similarity generated_noise=excluded"
 }

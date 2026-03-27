@@ -1,0 +1,1916 @@
+{
+  "generated_at": "2026-03-27T06:05:03Z",
+  "source_documents": {
+    "matrix": "docs/architecture/TONESOUL_CLAIM_AUTHORITY_MATRIX.md",
+    "boundary_contract": "docs/architecture/TONESOUL_LAW_RUNTIME_BOUNDARY_CONTRACT.md"
+  },
+  "metrics": {
+    "term_count": 75,
+    "high_confusion_term_count": 18,
+    "safe_reliance_term_count": 35,
+    "verification_required_term_count": 23,
+    "top_overclaiming_risk_count": 10,
+    "status_counts": {
+      "doc-only": 6,
+      "hard runtime": 32,
+      "projection-only": 3,
+      "research/theory": 6,
+      "runtime-adjacent": 16,
+      "test-backed": 12
+    },
+    "raw_status_counts": {
+      "doc-only": 6,
+      "hard runtime": 31,
+      "hard runtime (data)": 1,
+      "projection-only": 3,
+      "research/theory": 6,
+      "runtime-adjacent": 16,
+      "test-backed": 12
+    },
+    "authority_role_counts": {
+      "canonical": 10,
+      "law": 14,
+      "projection": 3,
+      "research": 6,
+      "runtime": 50,
+      "spec": 2
+    },
+    "boundary_category_counts": {
+      "1": 4,
+      "2": 6,
+      "3": 7,
+      "4": 1
+    }
+  },
+  "terms": [
+    {
+      "matrix_index": 1,
+      "term": "Axiom 1: Continuity",
+      "section": "Core Governance (Axioms & Posture)",
+      "authority_roles": [
+        "canonical"
+      ],
+      "implementation_status": "hard runtime",
+      "status_bucket": "hard runtime",
+      "source_files": [
+        "AXIOMS.json",
+        "runtime_adapter.py",
+        "time_island.py"
+      ],
+      "source_files_raw": "AXIOMS.json, runtime_adapter.py (load/commit), time_island.py",
+      "rely_guidance": "Yes",
+      "rely_level": "yes",
+      "id": "axiom1continuity",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 2,
+      "term": "Axiom 2: Responsibility Threshold",
+      "section": "Core Governance (Axioms & Posture)",
+      "authority_roles": [
+        "canonical"
+      ],
+      "implementation_status": "hard runtime",
+      "status_bucket": "hard runtime",
+      "source_files": [
+        "AXIOMS.json",
+        "aegis_shield.py",
+        "runtime_adapter.py"
+      ],
+      "source_files_raw": "AXIOMS.json, aegis_shield.py (hash chain + sign), runtime_adapter.py (commit)",
+      "rely_guidance": "Yes",
+      "rely_level": "yes",
+      "id": "axiom2responsibilitythreshold",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 3,
+      "term": "Axiom 3: Governance Gate (POAV ≥ 0.92)",
+      "section": "Core Governance (Axioms & Posture)",
+      "authority_roles": [
+        "canonical"
+      ],
+      "implementation_status": "runtime-adjacent",
+      "status_bucket": "runtime-adjacent",
+      "source_files": [
+        "AXIOMS.json",
+        "time_island.py",
+        "test_poav.py"
+      ],
+      "source_files_raw": "AXIOMS.json, time_island.py (POAV weights tracked), test_poav.py",
+      "rely_guidance": "Only with verification — weights tracked, gate not enforced at inference",
+      "rely_level": "verify",
+      "id": "axiom3governancegatepoav092",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 4,
+      "term": "Axiom 4: Non-Zero Tension",
+      "section": "Core Governance (Axioms & Posture)",
+      "authority_roles": [
+        "canonical"
+      ],
+      "implementation_status": "hard runtime",
+      "status_bucket": "hard runtime",
+      "source_files": [
+        "AXIOMS.json",
+        "runtime_adapter.py",
+        "tension_engine.py"
+      ],
+      "source_files_raw": "AXIOMS.json, runtime_adapter.py (tension decay never drops to zero), tension_engine.py",
+      "rely_guidance": "Yes",
+      "rely_level": "yes",
+      "id": "axiom4nonzerotension",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 5,
+      "term": "Axiom 5: Mirror Recursion",
+      "section": "Core Governance (Axioms & Posture)",
+      "authority_roles": [
+        "canonical"
+      ],
+      "implementation_status": "doc-only",
+      "status_bucket": "doc-only",
+      "source_files": [
+        "AXIOMS.json"
+      ],
+      "source_files_raw": "AXIOMS.json",
+      "rely_guidance": "No — no reflection cycle code found",
+      "rely_level": "no",
+      "id": "axiom5mirrorrecursion",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 6,
+      "term": "Axiom 6: User Sovereignty / Harm Block",
+      "section": "Core Governance (Axioms & Posture)",
+      "authority_roles": [
+        "canonical"
+      ],
+      "implementation_status": "runtime-adjacent",
+      "status_bucket": "runtime-adjacent",
+      "source_files": [
+        "AXIOMS.json",
+        "benevolence.py",
+        "resistance.py"
+      ],
+      "source_files_raw": "AXIOMS.json, benevolence.py (INTERCEPT/REJECT), resistance.py (CircuitBreaker)",
+      "rely_guidance": "Only with verification — filters exist, enforcement path varies",
+      "rely_level": "verify",
+      "id": "axiom6usersovereigntyharmblock",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 7,
+      "term": "Axiom 7: Semantic Field Conservation",
+      "section": "Core Governance (Axioms & Posture)",
+      "authority_roles": [
+        "canonical"
+      ],
+      "implementation_status": "doc-only",
+      "status_bucket": "doc-only",
+      "source_files": [
+        "AXIOMS.json"
+      ],
+      "source_files_raw": "AXIOMS.json",
+      "rely_guidance": "No — conceptual only",
+      "rely_level": "no",
+      "id": "axiom7semanticfieldconservation",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 8,
+      "term": "GovernancePosture",
+      "section": "Core Governance (Axioms & Posture)",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "hard runtime",
+      "status_bucket": "hard runtime",
+      "source_files": [
+        "runtime_adapter.py"
+      ],
+      "source_files_raw": "runtime_adapter.py:44-77",
+      "rely_guidance": "Yes",
+      "rely_level": "yes",
+      "id": "governanceposture",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 9,
+      "term": "SessionTrace",
+      "section": "Core Governance (Axioms & Posture)",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "hard runtime",
+      "status_bucket": "hard runtime",
+      "source_files": [
+        "runtime_adapter.py"
+      ],
+      "source_files_raw": "runtime_adapter.py:80-106",
+      "rely_guidance": "Yes",
+      "rely_level": "yes",
+      "id": "sessiontrace",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 10,
+      "term": "Soul Integral (Ψ)",
+      "section": "Core Governance (Axioms & Posture)",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "hard runtime",
+      "status_bucket": "hard runtime",
+      "source_files": [
+        "runtime_adapter.py",
+        "test_runtime_adapter.py"
+      ],
+      "source_files_raw": "runtime_adapter.py:205-215, test_runtime_adapter.py",
+      "rely_guidance": "Yes",
+      "rely_level": "yes",
+      "id": "soulintegral",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 11,
+      "term": "Baseline Drift",
+      "section": "Core Governance (Axioms & Posture)",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "hard runtime",
+      "status_bucket": "hard runtime",
+      "source_files": [
+        "runtime_adapter.py",
+        "test_runtime_adapter.py"
+      ],
+      "source_files_raw": "runtime_adapter.py:176-197, test_runtime_adapter.py",
+      "rely_guidance": "Yes",
+      "rely_level": "yes",
+      "id": "baselinedrift",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 12,
+      "term": "Tension Decay",
+      "section": "Core Governance (Axioms & Posture)",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "hard runtime",
+      "status_bucket": "hard runtime",
+      "source_files": [
+        "runtime_adapter.py"
+      ],
+      "source_files_raw": "runtime_adapter.py:152-168 (alpha=0.05, ~14h half-life)",
+      "rely_guidance": "Yes",
+      "rely_level": "yes",
+      "id": "tensiondecay",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 13,
+      "term": "Commit Lock (Mutex)",
+      "section": "Core Governance (Axioms & Posture)",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "hard runtime",
+      "status_bucket": "hard runtime",
+      "source_files": [
+        "runtime_adapter.py",
+        "store.py"
+      ],
+      "source_files_raw": "runtime_adapter.py:519+ (30s TTL), store.py COMMIT_LOCK_KEY",
+      "rely_guidance": "Yes",
+      "rely_level": "yes",
+      "id": "commitlockmutex",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 14,
+      "term": "Agent Footprints",
+      "section": "Core Governance (Axioms & Posture)",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "hard runtime",
+      "status_bucket": "hard runtime",
+      "source_files": [
+        "runtime_adapter.py"
+      ],
+      "source_files_raw": "runtime_adapter.py:260-286 (last 100 visits)",
+      "rely_guidance": "Yes",
+      "rely_level": "yes",
+      "id": "agentfootprints",
+      "boundary_category_code": "2",
+      "boundary_category_label": "Active Governance Vocabulary",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": "Design model, not enforced state machine"
+    },
+    {
+      "matrix_index": 15,
+      "term": "R-Memory Packet",
+      "section": "Core Governance (Axioms & Posture)",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "hard runtime",
+      "status_bucket": "hard runtime",
+      "source_files": [
+        "runtime_adapter.py",
+        "spec/governance/r_memory_packet_v1.schema.json"
+      ],
+      "source_files_raw": "runtime_adapter.py:731-893, spec/governance/r_memory_packet_v1.schema.json",
+      "rely_guidance": "Yes",
+      "rely_level": "yes",
+      "id": "rmemorypacket",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 16,
+      "term": "Aegis Shield",
+      "section": "Defense & Integrity",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "hard runtime",
+      "status_bucket": "hard runtime",
+      "source_files": [
+        "aegis_shield.py"
+      ],
+      "source_files_raw": "aegis_shield.py (3-layer: hash chain + Ed25519 + content filter)",
+      "rely_guidance": "Yes",
+      "rely_level": "yes",
+      "id": "aegisshield",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 17,
+      "term": "Hash Chain",
+      "section": "Defense & Integrity",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "hard runtime",
+      "status_bucket": "hard runtime",
+      "source_files": [
+        "aegis_shield.py"
+      ],
+      "source_files_raw": "aegis_shield.py:78-124 (SHA-256, prev_hash linkage)",
+      "rely_guidance": "Yes",
+      "rely_level": "yes",
+      "id": "hashchain",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 18,
+      "term": "Ed25519 Signing",
+      "section": "Defense & Integrity",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "hard runtime",
+      "status_bucket": "hard runtime",
+      "source_files": [
+        "aegis_shield.py"
+      ],
+      "source_files_raw": "aegis_shield.py:140-236 (.aegis/keys/)",
+      "rely_guidance": "Yes",
+      "rely_level": "yes",
+      "id": "ed25519signing",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 19,
+      "term": "Content Filter (Poison Patterns)",
+      "section": "Defense & Integrity",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "hard runtime",
+      "status_bucket": "hard runtime",
+      "source_files": [
+        "aegis_shield.py"
+      ],
+      "source_files_raw": "aegis_shield.py:251-298 (13 injection patterns)",
+      "rely_guidance": "Yes",
+      "rely_level": "yes",
+      "id": "contentfilterpoisonpatterns",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 20,
+      "term": "CircuitBreaker / Freeze Protocol",
+      "section": "Defense & Integrity",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "runtime-adjacent",
+      "status_bucket": "runtime-adjacent",
+      "source_files": [
+        "resistance.py",
+        "unified_pipeline.py"
+      ],
+      "source_files_raw": "resistance.py:30-36 (CollapseException), unified_pipeline.py",
+      "rely_guidance": "Only with verification — code exists, trigger path via unified_pipeline",
+      "rely_level": "verify",
+      "id": "circuitbreakerfreezeprotocol",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 21,
+      "term": "PainEngine",
+      "section": "Defense & Integrity",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "runtime-adjacent",
+      "status_bucket": "runtime-adjacent",
+      "source_files": [
+        "resistance.py"
+      ],
+      "source_files_raw": "resistance.py (FrictionCalculator + throttle: temp spike, top-p crash, delay)",
+      "rely_guidance": "Only with verification — test coverage minimal",
+      "rely_level": "verify",
+      "id": "painengine",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 22,
+      "term": "FrictionCalculator",
+      "section": "Defense & Integrity",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "test-backed",
+      "status_bucket": "test-backed",
+      "source_files": [
+        "resistance.py"
+      ],
+      "source_files_raw": "resistance.py:42-60 (tension_delta + wave_distance)",
+      "rely_guidance": "Only with verification",
+      "rely_level": "verify",
+      "id": "frictioncalculator",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 23,
+      "term": "TSR (ΔT, ΔS, ΔR)",
+      "section": "Monitoring & Quality",
+      "authority_roles": [
+        "runtime",
+        "canonical"
+      ],
+      "implementation_status": "hard runtime",
+      "status_bucket": "hard runtime",
+      "source_files": [
+        "test_tsr_metrics_comprehensive.py"
+      ],
+      "source_files_raw": "Multiple files, test_tsr_metrics_comprehensive.py",
+      "rely_guidance": "Yes",
+      "rely_level": "yes",
+      "id": "tsrtsr",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 24,
+      "term": "DriftMonitor",
+      "section": "Monitoring & Quality",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "hard runtime",
+      "status_bucket": "hard runtime",
+      "source_files": [
+        "drift_monitor.py"
+      ],
+      "source_files_raw": "drift_monitor.py (EMA alpha=0.3, WARNING≥0.35, CRISIS≥0.60)",
+      "rely_guidance": "Yes",
+      "rely_level": "yes",
+      "id": "driftmonitor",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 25,
+      "term": "EscapeValve",
+      "section": "Monitoring & Quality",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "hard runtime",
+      "status_bucket": "hard runtime",
+      "source_files": [
+        "escape_valve.py",
+        "test_escape_valve.py"
+      ],
+      "source_files_raw": "escape_valve.py (max_retries=3, circuit_breaker=5), test_escape_valve.py + red_team",
+      "rely_guidance": "Yes",
+      "rely_level": "yes",
+      "id": "escapevalve",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 26,
+      "term": "BenevolenceFilter",
+      "section": "Monitoring & Quality",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "hard runtime",
+      "status_bucket": "hard runtime",
+      "source_files": [
+        "benevolence.py",
+        "test_benevolence.py"
+      ],
+      "source_files_raw": "benevolence.py (3-layer: attribute + shadow + benevolence audit), test_benevolence.py",
+      "rely_guidance": "Yes",
+      "rely_level": "yes",
+      "id": "benevolencefilter",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 27,
+      "term": "ContractObserver",
+      "section": "Monitoring & Quality",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "runtime-adjacent",
+      "status_bucket": "runtime-adjacent",
+      "source_files": [
+        "contract_observer.py"
+      ],
+      "source_files_raw": "contract_observer.py (4 output contracts, zone-triggered), no blocking integration",
+      "rely_guidance": "Only with verification — verifier returns violations but doesn't block",
+      "rely_level": "verify",
+      "id": "contractobserver",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 28,
+      "term": "MultiScaleObserver",
+      "section": "Monitoring & Quality",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "test-backed",
+      "status_bucket": "test-backed",
+      "source_files": [
+        "contract_observer.py"
+      ],
+      "source_files_raw": "contract_observer.py:237-314 (instant/short/medium trends)",
+      "rely_guidance": "Only with verification",
+      "rely_level": "verify",
+      "id": "multiscaleobserver",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 29,
+      "term": "QualityTracker",
+      "section": "Monitoring & Quality",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "test-backed",
+      "status_bucket": "test-backed",
+      "source_files": [
+        "contract_observer.py"
+      ],
+      "source_files_raw": "contract_observer.py:328-393",
+      "rely_guidance": "Only with verification",
+      "rely_level": "verify",
+      "id": "qualitytracker",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 30,
+      "term": "LongTermQualityMonitor",
+      "section": "Monitoring & Quality",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "test-backed",
+      "status_bucket": "test-backed",
+      "source_files": [
+        "council_capability.py"
+      ],
+      "source_files_raw": "council_capability.py:171-246 (trend detection, degradation alerts)",
+      "rely_guidance": "Only with verification",
+      "rely_level": "verify",
+      "id": "longtermqualitymonitor",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 31,
+      "term": "Council (Multi-Persona Deliberation)",
+      "section": "Council & Persona",
+      "authority_roles": [
+        "runtime",
+        "spec"
+      ],
+      "implementation_status": "hard runtime",
+      "status_bucket": "hard runtime",
+      "source_files": [
+        "unified_pipeline.py",
+        "spec/council_spec.md"
+      ],
+      "source_files_raw": "unified_pipeline.py, 128+ test files, spec/council_spec.md",
+      "rely_guidance": "Yes",
+      "rely_level": "yes",
+      "id": "councilmultipersonadeliberation",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 32,
+      "term": "PersonaStack",
+      "section": "Council & Persona",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "test-backed",
+      "status_bucket": "test-backed",
+      "source_files": [
+        "test_persona_dimension.py",
+        "test_persona_audit.py"
+      ],
+      "source_files_raw": "test_persona_dimension.py, test_persona_audit.py",
+      "rely_guidance": "Only with verification",
+      "rely_level": "verify",
+      "id": "personastack",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 33,
+      "term": "CouncilWeights (Guardian/Analyst/Critic/Advocate)",
+      "section": "Council & Persona",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "runtime-adjacent",
+      "status_bucket": "runtime-adjacent",
+      "source_files": [
+        "council_capability.py"
+      ],
+      "source_files_raw": "council_capability.py:26-98 (zone threshold adjustment)",
+      "rely_guidance": "Only with verification — weights exist, no voting aggregation",
+      "rely_level": "verify",
+      "id": "councilweightsguardiananalystcriticadvocate",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 34,
+      "term": "CapabilityBoundary",
+      "section": "Council & Persona",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "test-backed",
+      "status_bucket": "test-backed",
+      "source_files": [
+        "council_capability.py"
+      ],
+      "source_files_raw": "council_capability.py:101-168 (skill coverage → tolerance)",
+      "rely_guidance": "Only with verification",
+      "rely_level": "verify",
+      "id": "capabilityboundary",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 35,
+      "term": "InterSoul Bridge",
+      "section": "Council & Persona",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "test-backed",
+      "status_bucket": "test-backed",
+      "source_files": [
+        "test_inter_soul_bridge.py",
+        "test_inter_soul_negotiation.py"
+      ],
+      "source_files_raw": "test_inter_soul_bridge.py, test_inter_soul_negotiation.py",
+      "rely_guidance": "Only with verification",
+      "rely_level": "verify",
+      "id": "intersoulbridge",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 36,
+      "term": "SovereigntyGuard",
+      "section": "Council & Persona",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "test-backed",
+      "status_bucket": "test-backed",
+      "source_files": [
+        "test_inter_soul_sovereignty.py"
+      ],
+      "source_files_raw": "test_inter_soul_sovereignty.py (P0 boundary protection)",
+      "rely_guidance": "Only with verification",
+      "rely_level": "verify",
+      "id": "sovereigntyguard",
+      "boundary_category_code": "1",
+      "boundary_category_label": "Active Runtime / Audit Dependency",
+      "boundary_partially_implemented": true,
+      "boundary_verdict": "Partially implemented as CollapseException"
+    },
+    {
+      "matrix_index": 37,
+      "term": "TimeIsland",
+      "section": "Decision Context & State",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "hard runtime",
+      "status_bucket": "hard runtime",
+      "source_files": [
+        "time_island.py",
+        "test_time_island.py"
+      ],
+      "source_files_raw": "time_island.py (lifecycle: DRAFT→ACTIVE→COMPLETED→ARCHIVED), test_time_island.py",
+      "rely_guidance": "Yes",
+      "rely_level": "yes",
+      "id": "timeisland",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 38,
+      "term": "POAV Weights",
+      "section": "Decision Context & State",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "hard runtime (data)",
+      "status_bucket": "hard runtime",
+      "source_files": [
+        "time_island.py"
+      ],
+      "source_files_raw": "time_island.py:89 (default {P:0.25, O:0.25, A:0.25, V:0.25})",
+      "rely_guidance": "Yes (tracked), No (not enforced as gate)",
+      "rely_level": "yes",
+      "id": "poavweights",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 39,
+      "term": "Vow System",
+      "section": "Decision Context & State",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "hard runtime",
+      "status_bucket": "hard runtime",
+      "source_files": [
+        "test_vow_system.py",
+        "test_vow_system_properties.py",
+        "runtime_adapter.py"
+      ],
+      "source_files_raw": "test_vow_system.py, test_vow_system_properties.py, runtime_adapter.py (reconcile)",
+      "rely_guidance": "Yes",
+      "rely_level": "yes",
+      "id": "vowsystem",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 40,
+      "term": "TensionEngine",
+      "section": "Decision Context & State",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "hard runtime",
+      "status_bucket": "hard runtime",
+      "source_files": [
+        "tension_engine.py",
+        "test_tension_engine.py",
+        "test_property_tension_engine.py"
+      ],
+      "source_files_raw": "tension_engine.py, test_tension_engine.py, test_property_tension_engine.py",
+      "rely_guidance": "Yes",
+      "rely_level": "yes",
+      "id": "tensionengine",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 41,
+      "term": "ResistanceVector",
+      "section": "Decision Context & State",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "test-backed",
+      "status_bucket": "test-backed",
+      "source_files": [
+        "test_tension_engine.py"
+      ],
+      "source_files_raw": "test_tension_engine.py (fact/logic/ethics weighted sum)",
+      "rely_guidance": "Only with verification",
+      "rely_level": "verify",
+      "id": "resistancevector",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 42,
+      "term": "Zone Classification",
+      "section": "Decision Context & State",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "runtime-adjacent",
+      "status_bucket": "runtime-adjacent",
+      "source_files": [
+        "council_capability.py",
+        "spec/wfgy_semantic_control_spec.md"
+      ],
+      "source_files_raw": "council_capability.py (safe/transit/risk/danger thresholds), spec/wfgy_semantic_control_spec.md",
+      "rely_guidance": "Only with verification",
+      "rely_level": "verify",
+      "id": "zoneclassification",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 43,
+      "term": "Store (Redis + FileStore)",
+      "section": "Storage & Communication",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "hard runtime",
+      "status_bucket": "hard runtime",
+      "source_files": [
+        "store.py",
+        "backends/redis_store.py",
+        "backends/file_store.py"
+      ],
+      "source_files_raw": "store.py, backends/redis_store.py, backends/file_store.py",
+      "rely_guidance": "Yes",
+      "rely_level": "yes",
+      "id": "storeredisfilestore",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 44,
+      "term": "Perspective Lane",
+      "section": "Storage & Communication",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "hard runtime",
+      "status_bucket": "hard runtime",
+      "source_files": [
+        "runtime_adapter.py"
+      ],
+      "source_files_raw": "runtime_adapter.py:377-421 (ts:perspectives:*)",
+      "rely_guidance": "Yes (write/read works)",
+      "rely_level": "yes",
+      "id": "perspectivelane",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 45,
+      "term": "Checkpoint Lane",
+      "section": "Storage & Communication",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "hard runtime",
+      "status_bucket": "hard runtime",
+      "source_files": [
+        "runtime_adapter.py"
+      ],
+      "source_files_raw": "runtime_adapter.py:424-464 (ts:checkpoints:*)",
+      "rely_guidance": "Yes (write/read works)",
+      "rely_level": "yes",
+      "id": "checkpointlane",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 46,
+      "term": "Compaction Lane",
+      "section": "Storage & Communication",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "hard runtime",
+      "status_bucket": "hard runtime",
+      "source_files": [
+        "runtime_adapter.py"
+      ],
+      "source_files_raw": "runtime_adapter.py:467-511 (ts:compacted, limit=20, ttl=7d)",
+      "rely_guidance": "Yes (write/read works)",
+      "rely_level": "yes",
+      "id": "compactionlane",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 47,
+      "term": "Semantic Field (ts:field)",
+      "section": "Storage & Communication",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "doc-only",
+      "status_bucket": "doc-only",
+      "source_files": [
+        "store.py"
+      ],
+      "source_files_raw": "store.py:37 (key exists), never populated",
+      "rely_guidance": "No",
+      "rely_level": "no",
+      "id": "semanticfieldtsfield",
+      "boundary_category_code": "3",
+      "boundary_category_label": "Theory / Research Lane",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": "Architectural model, not runtime layers"
+    },
+    {
+      "matrix_index": 48,
+      "term": "Gateway (HTTP)",
+      "section": "Storage & Communication",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "hard runtime",
+      "status_bucket": "hard runtime",
+      "source_files": [
+        "scripts/gateway.py",
+        "test_gateway_integration.py"
+      ],
+      "source_files_raw": "scripts/gateway.py, test_gateway_integration.py",
+      "rely_guidance": "Yes",
+      "rely_level": "yes",
+      "id": "gatewayhttp",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 49,
+      "term": "Zone Registry",
+      "section": "Storage & Communication",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "hard runtime",
+      "status_bucket": "hard runtime",
+      "source_files": [
+        "runtime_adapter.py"
+      ],
+      "source_files_raw": "runtime_adapter.py (rebuilt on commit), ts:zones",
+      "rely_guidance": "Yes",
+      "rely_level": "yes",
+      "id": "zoneregistry",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 50,
+      "term": "Pub/Sub Events",
+      "section": "Storage & Communication",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "hard runtime",
+      "status_bucket": "hard runtime",
+      "source_files": [
+        "store.py"
+      ],
+      "source_files_raw": "store.py CHANNEL_EVENTS, ts:events",
+      "rely_guidance": "Yes (Redis only)",
+      "rely_level": "yes",
+      "id": "pubsubevents",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 51,
+      "term": "UnifiedPipeline",
+      "section": "Unified Pipeline (Full Inference Path)",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "hard runtime",
+      "status_bucket": "hard runtime",
+      "source_files": [
+        "unified_pipeline.py"
+      ],
+      "source_files_raw": "unified_pipeline.py (3000+ lines, wires council+tonebridge+trajectory+drift+escape+benevolence)",
+      "rely_guidance": "Yes",
+      "rely_level": "yes",
+      "id": "unifiedpipeline",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 52,
+      "term": "ToneBridge",
+      "section": "Unified Pipeline (Full Inference Path)",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "runtime-adjacent",
+      "status_bucket": "runtime-adjacent",
+      "source_files": [
+        "unified_pipeline.py"
+      ],
+      "source_files_raw": "unified_pipeline.py:224 (lazy-loaded)",
+      "rely_guidance": "Only with verification",
+      "rely_level": "verify",
+      "id": "tonebridge",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 53,
+      "term": "Trajectory Analysis",
+      "section": "Unified Pipeline (Full Inference Path)",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "runtime-adjacent",
+      "status_bucket": "runtime-adjacent",
+      "source_files": [
+        "unified_pipeline.py"
+      ],
+      "source_files_raw": "unified_pipeline.py:246 (lazy-loaded)",
+      "rely_guidance": "Only with verification",
+      "rely_level": "verify",
+      "id": "trajectoryanalysis",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 54,
+      "term": "Semantic Graph",
+      "section": "Unified Pipeline (Full Inference Path)",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "runtime-adjacent",
+      "status_bucket": "runtime-adjacent",
+      "source_files": [
+        "unified_pipeline.py"
+      ],
+      "source_files_raw": "unified_pipeline.py:357 (lazy-loaded)",
+      "rely_guidance": "Only with verification",
+      "rely_level": "verify",
+      "id": "semanticgraph",
+      "boundary_category_code": "3",
+      "boundary_category_label": "Theory / Research Lane",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": "Architectural model, not runtime layers"
+    },
+    {
+      "matrix_index": 55,
+      "term": "Perturbation Recovery",
+      "section": "Unified Pipeline (Full Inference Path)",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "runtime-adjacent",
+      "status_bucket": "runtime-adjacent",
+      "source_files": [
+        "unified_pipeline.py"
+      ],
+      "source_files_raw": "unified_pipeline.py:430 (lazy-loaded)",
+      "rely_guidance": "Only with verification",
+      "rely_level": "verify",
+      "id": "perturbationrecovery",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 56,
+      "term": "YuHun Gate",
+      "section": "Law/ Terms (HIGH CONFUSION ZONE)",
+      "authority_roles": [
+        "law"
+      ],
+      "implementation_status": "runtime-adjacent",
+      "status_bucket": "runtime-adjacent",
+      "source_files": [
+        "law/governance_core.md",
+        "law/yuhun_kernel_trace.md",
+        "unified_pipeline.py"
+      ],
+      "source_files_raw": "law/governance_core.md, law/yuhun_kernel_trace.md; unified_pipeline.py has governance kernel but no class named \"YuHun Gate\"",
+      "rely_guidance": "No — concept informs architecture, not a callable runtime object",
+      "rely_level": "no",
+      "id": "yuhungate",
+      "boundary_category_code": "2",
+      "boundary_category_label": "Active Governance Vocabulary",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": "Design concept; runtime equivalent is distributed across modules"
+    },
+    {
+      "matrix_index": 57,
+      "term": "StepLedger",
+      "section": "Law/ Terms (HIGH CONFUSION ZONE)",
+      "authority_roles": [
+        "law"
+      ],
+      "implementation_status": "runtime-adjacent",
+      "status_bucket": "runtime-adjacent",
+      "source_files": [
+        "law/step_ledger_schema.json",
+        "unified_pipeline.py"
+      ],
+      "source_files_raw": "law/step_ledger_schema.json (formal JSON schema), unified_pipeline.py (dispatch_trace); Aegis hash chain serves similar role",
+      "rely_guidance": "No — law/ schema exists, runtime equivalent is Aegis chain + session traces",
+      "rely_level": "no",
+      "id": "stepledger",
+      "boundary_category_code": "2",
+      "boundary_category_label": "Active Governance Vocabulary",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": "Partially implemented via Aegis chain + session traces"
+    },
+    {
+      "matrix_index": 58,
+      "term": "Lex Lattice",
+      "section": "Law/ Terms (HIGH CONFUSION ZONE)",
+      "authority_roles": [
+        "law",
+        "research"
+      ],
+      "implementation_status": "research/theory",
+      "status_bucket": "research/theory",
+      "source_files": [
+        "law/docs/LEX_LATTICE_SPEC.md",
+        "law/docs/lex_lattice_mdl_spec.md"
+      ],
+      "source_files_raw": "law/docs/LEX_LATTICE_SPEC.md, law/docs/lex_lattice_mdl_spec.md",
+      "rely_guidance": "No — theoretical framework only",
+      "rely_level": "no",
+      "id": "lexlattice",
+      "boundary_category_code": "3",
+      "boundary_category_label": "Theory / Research Lane",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": "Pure theory (Information Theory governance)"
+    },
+    {
+      "matrix_index": 59,
+      "term": "LAR (Linguistic Accountability Ratio)",
+      "section": "Law/ Terms (HIGH CONFUSION ZONE)",
+      "authority_roles": [
+        "law",
+        "research"
+      ],
+      "implementation_status": "research/theory",
+      "status_bucket": "research/theory",
+      "source_files": [
+        "law/docs/LAR_METRIC_SUMMARY.md",
+        "law/docs/LAR_CALC_SPEC.md"
+      ],
+      "source_files_raw": "law/docs/LAR_METRIC_SUMMARY.md, law/docs/LAR_CALC_SPEC.md",
+      "rely_guidance": "No — metric spec only, no runtime calculation",
+      "rely_level": "no",
+      "id": "larlinguisticaccountabilityratio",
+      "boundary_category_code": "3",
+      "boundary_category_label": "Theory / Research Lane",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": "Metric spec only, no runtime calculation"
+    },
+    {
+      "matrix_index": 60,
+      "term": "Isnād",
+      "section": "Law/ Terms (HIGH CONFUSION ZONE)",
+      "authority_roles": [
+        "law",
+        "research"
+      ],
+      "implementation_status": "research/theory",
+      "status_bucket": "research/theory",
+      "source_files": [
+        "law/docs/ISNAD_CONSENSUS_PROTOCOL.md"
+      ],
+      "source_files_raw": "law/docs/ISNAD_CONSENSUS_PROTOCOL.md",
+      "rely_guidance": "No — consensus protocol design, not implemented",
+      "rely_level": "no",
+      "id": "isnad",
+      "boundary_category_code": "3",
+      "boundary_category_label": "Theory / Research Lane",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": "Theory; Aegis Shield serves the provenance role"
+    },
+    {
+      "matrix_index": 61,
+      "term": "MDL-Majority",
+      "section": "Law/ Terms (HIGH CONFUSION ZONE)",
+      "authority_roles": [
+        "law",
+        "research"
+      ],
+      "implementation_status": "research/theory",
+      "status_bucket": "research/theory",
+      "source_files": [
+        "law/docs/ISNAD_CONSENSUS_PROTOCOL.md",
+        "law/docs/lex_lattice_mdl_spec.md"
+      ],
+      "source_files_raw": "law/docs/ISNAD_CONSENSUS_PROTOCOL.md, law/docs/lex_lattice_mdl_spec.md",
+      "rely_guidance": "No — theoretical consensus mechanism",
+      "rely_level": "no",
+      "id": "mdlmajority",
+      "boundary_category_code": "3",
+      "boundary_category_label": "Theory / Research Lane",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": "Theory; runtime uses simple task locking"
+    },
+    {
+      "matrix_index": 62,
+      "term": "Sovereign Freeze",
+      "section": "Law/ Terms (HIGH CONFUSION ZONE)",
+      "authority_roles": [
+        "law",
+        "runtime"
+      ],
+      "implementation_status": "runtime-adjacent",
+      "status_bucket": "runtime-adjacent",
+      "source_files": [
+        "law/docs/conflict_resolution_protocol.md",
+        "resistance.py"
+      ],
+      "source_files_raw": "law/docs/conflict_resolution_protocol.md; resistance.py CollapseException is the runtime equivalent",
+      "rely_guidance": "Only with verification — exists as CollapseException, trigger path via CircuitBreaker",
+      "rely_level": "verify",
+      "id": "sovereignfreeze",
+      "boundary_category_code": "1",
+      "boundary_category_label": "Active Runtime / Audit Dependency",
+      "boundary_partially_implemented": true,
+      "boundary_verdict": "Partially implemented as CollapseException"
+    },
+    {
+      "matrix_index": 63,
+      "term": "BBPF",
+      "section": "Law/ Terms (HIGH CONFUSION ZONE)",
+      "authority_roles": [
+        "spec",
+        "law"
+      ],
+      "implementation_status": "runtime-adjacent",
+      "status_bucket": "runtime-adjacent",
+      "source_files": [
+        "spec/wfgy_semantic_control_spec.md",
+        "PARADOXES/paradox_006.json"
+      ],
+      "source_files_raw": "spec/wfgy_semantic_control_spec.md (Bridge Guard), PARADOXES/paradox_006.json",
+      "rely_guidance": "Only with verification — spec describes trigger condition, unified_pipeline may wire it",
+      "rely_level": "verify",
+      "id": "bbpf",
+      "boundary_category_code": "2",
+      "boundary_category_label": "Active Governance Vocabulary",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": "Canonical concept, no named runtime code"
+    },
+    {
+      "matrix_index": 64,
+      "term": "Digital Sovereignty Manifesto",
+      "section": "Law/ Terms (HIGH CONFUSION ZONE)",
+      "authority_roles": [
+        "law"
+      ],
+      "implementation_status": "doc-only",
+      "status_bucket": "doc-only",
+      "source_files": [
+        "law/docs/digital_sovereignty_manifesto.md"
+      ],
+      "source_files_raw": "law/docs/digital_sovereignty_manifesto.md",
+      "rely_guidance": "No — philosophical declaration, not runtime",
+      "rely_level": "no",
+      "id": "digitalsovereigntymanifesto",
+      "boundary_category_code": "4",
+      "boundary_category_label": "Projection / Narrative / Worldview Lane",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": "Philosophical declaration"
+    },
+    {
+      "matrix_index": 65,
+      "term": "Honesty Contract (10 Rules)",
+      "section": "Law/ Terms (HIGH CONFUSION ZONE)",
+      "authority_roles": [
+        "law"
+      ],
+      "implementation_status": "runtime-adjacent",
+      "status_bucket": "runtime-adjacent",
+      "source_files": [
+        "law/honesty_contract.md",
+        "benevolence.py"
+      ],
+      "source_files_raw": "law/honesty_contract.md; benevolence.py implements key principles (γ·Honesty > β·Helpfulness)",
+      "rely_guidance": "Only with verification — principles inform benevolence filter",
+      "rely_level": "verify",
+      "id": "honestycontract10rules",
+      "boundary_category_code": "1",
+      "boundary_category_label": "Active Runtime / Audit Dependency",
+      "boundary_partially_implemented": true,
+      "boundary_verdict": "Partially implemented in BenevolenceFilter"
+    },
+    {
+      "matrix_index": 66,
+      "term": "Semantic Spine (12-Layer)",
+      "section": "Law/ Terms (HIGH CONFUSION ZONE)",
+      "authority_roles": [
+        "law"
+      ],
+      "implementation_status": "doc-only",
+      "status_bucket": "doc-only",
+      "source_files": [
+        "law/semantic_spine_schema.json"
+      ],
+      "source_files_raw": "law/semantic_spine_schema.json",
+      "rely_guidance": "No — architectural model, not runtime layers",
+      "rely_level": "no",
+      "id": "semanticspine12layer",
+      "boundary_category_code": "3",
+      "boundary_category_label": "Theory / Research Lane",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": "Architectural model, not runtime layers"
+    },
+    {
+      "matrix_index": 67,
+      "term": "Constitution.json",
+      "section": "Law/ Terms (HIGH CONFUSION ZONE)",
+      "authority_roles": [
+        "law"
+      ],
+      "implementation_status": "doc-only",
+      "status_bucket": "doc-only",
+      "source_files": [
+        "law/constitution.json"
+      ],
+      "source_files_raw": "law/constitution.json",
+      "rely_guidance": "No — governance design document",
+      "rely_level": "no",
+      "id": "constitutionjson",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 68,
+      "term": "Accountability Guild (AGS-1)",
+      "section": "Law/ Terms (HIGH CONFUSION ZONE)",
+      "authority_roles": [
+        "law",
+        "research"
+      ],
+      "implementation_status": "research/theory",
+      "status_bucket": "research/theory",
+      "source_files": [
+        "law/docs/AG_STANDARDS.md"
+      ],
+      "source_files_raw": "law/docs/AG_STANDARDS.md",
+      "rely_guidance": "No — federated governance proposal",
+      "rely_level": "no",
+      "id": "accountabilityguildags1",
+      "boundary_category_code": "3",
+      "boundary_category_label": "Theory / Research Lane",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": "Federation protocol, not implemented"
+    },
+    {
+      "matrix_index": 69,
+      "term": "Haven Nodes",
+      "section": "Law/ Terms (HIGH CONFUSION ZONE)",
+      "authority_roles": [
+        "law",
+        "research"
+      ],
+      "implementation_status": "research/theory",
+      "status_bucket": "research/theory",
+      "source_files": [
+        "law/docs/LAR_CALC_SPEC.md"
+      ],
+      "source_files_raw": "law/docs/LAR_CALC_SPEC.md",
+      "rely_guidance": "No — distributed architecture proposal",
+      "rely_level": "no",
+      "id": "havennodes",
+      "boundary_category_code": "3",
+      "boundary_category_label": "Theory / Research Lane",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": "Distributed architecture proposal"
+    },
+    {
+      "matrix_index": 70,
+      "term": "PARADOX_006 (Emergency Override)",
+      "section": "Paradoxes & Red Team",
+      "authority_roles": [
+        "canonical"
+      ],
+      "implementation_status": "test-backed",
+      "status_bucket": "test-backed",
+      "source_files": [
+        "PARADOXES/paradox_006.json",
+        "test_paradox_council.py"
+      ],
+      "source_files_raw": "PARADOXES/paradox_006.json, test_paradox_council.py",
+      "rely_guidance": "Yes — canonical governance test case",
+      "rely_level": "yes",
+      "id": "paradox006emergencyoverride",
+      "boundary_category_code": "1",
+      "boundary_category_label": "Active Runtime / Audit Dependency",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": "Real tested governance boundary"
+    },
+    {
+      "matrix_index": 71,
+      "term": "7 Paradox Test Cases",
+      "section": "Paradoxes & Red Team",
+      "authority_roles": [
+        "canonical"
+      ],
+      "implementation_status": "test-backed",
+      "status_bucket": "test-backed",
+      "source_files": [],
+      "source_files_raw": "PARADOXES/*.json, tests/fixtures/paradoxes/",
+      "rely_guidance": "Yes — governance casebook",
+      "rely_level": "yes",
+      "id": "7paradoxtestcases",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 72,
+      "term": "Red Team Scenarios",
+      "section": "Paradoxes & Red Team",
+      "authority_roles": [
+        "runtime"
+      ],
+      "implementation_status": "test-backed",
+      "status_bucket": "test-backed",
+      "source_files": [],
+      "source_files_raw": "tests/red_team/ (7 files: escape_valve_seed_abuse, etc.)",
+      "rely_guidance": "Yes — adversarial validation",
+      "rely_level": "yes",
+      "id": "redteamscenarios",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 73,
+      "term": "Governance Dashboard",
+      "section": "Projection & Gamification",
+      "authority_roles": [
+        "projection"
+      ],
+      "implementation_status": "projection-only",
+      "status_bucket": "projection-only",
+      "source_files": [],
+      "source_files_raw": "apps/dashboard/",
+      "rely_guidance": "No — visual projection of governed state",
+      "rely_level": "no",
+      "id": "governancedashboard",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 74,
+      "term": "World Map / RPG View",
+      "section": "Projection & Gamification",
+      "authority_roles": [
+        "projection"
+      ],
+      "implementation_status": "projection-only",
+      "status_bucket": "projection-only",
+      "source_files": [],
+      "source_files_raw": "apps/world/",
+      "rely_guidance": "No — operator-facing visualization",
+      "rely_level": "no",
+      "id": "worldmaprpgview",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    },
+    {
+      "matrix_index": 75,
+      "term": "VRM 3D Avatar",
+      "section": "Projection & Gamification",
+      "authority_roles": [
+        "projection"
+      ],
+      "implementation_status": "projection-only",
+      "status_bucket": "projection-only",
+      "source_files": [],
+      "source_files_raw": "apps/dashboard/ (kurisu.vrm)",
+      "rely_guidance": "No — aesthetic layer",
+      "rely_level": "no",
+      "id": "vrm3davatar",
+      "boundary_category_code": "",
+      "boundary_category_label": "",
+      "boundary_partially_implemented": false,
+      "boundary_verdict": ""
+    }
+  ],
+  "high_confusion_lookup": [
+    {
+      "term": "YuHun Gate",
+      "category_code": "2",
+      "category_label": "Active Governance Vocabulary",
+      "partially_implemented": false,
+      "verdict": "Design concept; runtime equivalent is distributed across modules"
+    },
+    {
+      "term": "StepLedger",
+      "category_code": "2",
+      "category_label": "Active Governance Vocabulary",
+      "partially_implemented": false,
+      "verdict": "Partially implemented via Aegis chain + session traces"
+    },
+    {
+      "term": "Lex Lattice",
+      "category_code": "3",
+      "category_label": "Theory / Research Lane",
+      "partially_implemented": false,
+      "verdict": "Pure theory (Information Theory governance)"
+    },
+    {
+      "term": "LAR",
+      "category_code": "3",
+      "category_label": "Theory / Research Lane",
+      "partially_implemented": false,
+      "verdict": "Metric spec only, no runtime calculation"
+    },
+    {
+      "term": "Isnād",
+      "category_code": "3",
+      "category_label": "Theory / Research Lane",
+      "partially_implemented": false,
+      "verdict": "Theory; Aegis Shield serves the provenance role"
+    },
+    {
+      "term": "MDL-Majority",
+      "category_code": "3",
+      "category_label": "Theory / Research Lane",
+      "partially_implemented": false,
+      "verdict": "Theory; runtime uses simple task locking"
+    },
+    {
+      "term": "Sovereign Freeze",
+      "category_code": "1",
+      "category_label": "Active Runtime / Audit Dependency",
+      "partially_implemented": true,
+      "verdict": "Partially implemented as CollapseException"
+    },
+    {
+      "term": "BBPF",
+      "category_code": "2",
+      "category_label": "Active Governance Vocabulary",
+      "partially_implemented": false,
+      "verdict": "Canonical concept, no named runtime code"
+    },
+    {
+      "term": "Digital Sovereignty Manifesto",
+      "category_code": "4",
+      "category_label": "Projection / Narrative / Worldview Lane",
+      "partially_implemented": false,
+      "verdict": "Philosophical declaration"
+    },
+    {
+      "term": "PARADOX_006",
+      "category_code": "1",
+      "category_label": "Active Runtime / Audit Dependency",
+      "partially_implemented": false,
+      "verdict": "Real tested governance boundary"
+    },
+    {
+      "term": "Honesty Contract",
+      "category_code": "1",
+      "category_label": "Active Runtime / Audit Dependency",
+      "partially_implemented": true,
+      "verdict": "Partially implemented in BenevolenceFilter"
+    },
+    {
+      "term": "Semantic Spine",
+      "category_code": "3",
+      "category_label": "Theory / Research Lane",
+      "partially_implemented": false,
+      "verdict": "Architectural model, not runtime layers"
+    },
+    {
+      "term": "WFGY 2.0",
+      "category_code": "2",
+      "category_label": "Active Governance Vocabulary",
+      "partially_implemented": false,
+      "verdict": "Design spec informing multiple modules"
+    },
+    {
+      "term": "Haven Nodes",
+      "category_code": "3",
+      "category_label": "Theory / Research Lane",
+      "partially_implemented": false,
+      "verdict": "Distributed architecture proposal"
+    },
+    {
+      "term": "Accountability Guild",
+      "category_code": "3",
+      "category_label": "Theory / Research Lane",
+      "partially_implemented": false,
+      "verdict": "Federation protocol, not implemented"
+    },
+    {
+      "term": "Internal Council",
+      "category_code": "1",
+      "category_label": "Active Runtime / Audit Dependency",
+      "partially_implemented": true,
+      "verdict": "Council deliberation is runtime-active"
+    },
+    {
+      "term": "STREI",
+      "category_code": "2",
+      "category_label": "Active Governance Vocabulary",
+      "partially_implemented": false,
+      "verdict": "Vocabulary; individual dimensions active"
+    },
+    {
+      "term": "Agent State Machine",
+      "category_code": "2",
+      "category_label": "Active Governance Vocabulary",
+      "partially_implemented": false,
+      "verdict": "Design model, not enforced state machine"
+    }
+  ],
+  "top_overclaiming_risks": [
+    {
+      "Risk": "1",
+      "Term": "POAV ≥ 0.92 Gate",
+      "What It Sounds Like": "Inference-time consensus gate that blocks actions",
+      "What It Actually Is": "POAV weights are tracked in TimeIsland; no enforcement gate exists"
+    },
+    {
+      "Risk": "2",
+      "Term": "YuHun Gate",
+      "What It Sounds Like": "A callable runtime gate object",
+      "What It Actually Is": "A governance design concept; runtime equivalent is scattered across unified_pipeline + aegis"
+    },
+    {
+      "Risk": "3",
+      "Term": "StepLedger",
+      "What It Sounds Like": "An active append-only ledger recording every step",
+      "What It Actually Is": "Law/ schema exists; runtime equivalent is Aegis chain + session traces, not a dedicated ledger"
+    },
+    {
+      "Risk": "4",
+      "Term": "Risk (R) calculation",
+      "What It Sounds Like": "Active risk scoring that blocks at R > 0.9",
+      "What It Actually Is": "R values are stored in data structures but never computed"
+    },
+    {
+      "Risk": "5",
+      "Term": "Lex Lattice",
+      "What It Sounds Like": "Active governance framework",
+      "What It Actually Is": "Theoretical framework based on MDL/information theory"
+    },
+    {
+      "Risk": "6",
+      "Term": "LAR metric",
+      "What It Sounds Like": "Computed accountability score",
+      "What It Actually Is": "Specification only, no runtime calculation"
+    },
+    {
+      "Risk": "7",
+      "Term": "Mirror Recursion (Axiom 5)",
+      "What It Sounds Like": "Automatic self-reflection cycle",
+      "What It Actually Is": "No implementation found"
+    },
+    {
+      "Risk": "8",
+      "Term": "Semantic Field Conservation (Axiom 7)",
+      "What It Sounds Like": "Active energy conservation tracking",
+      "What It Actually Is": "Conceptual only"
+    },
+    {
+      "Risk": "9",
+      "Term": "ContractObserver blocking",
+      "What It Sounds Like": "Output contracts that block bad outputs",
+      "What It Actually Is": "Verifier returns violations but never blocks"
+    },
+    {
+      "Risk": "10",
+      "Term": "12-Layer Semantic Spine",
+      "What It Sounds Like": "12 active processing layers",
+      "What It Actually Is": "Architectural model in law/, not runtime layers"
+    }
+  ],
+  "safe_reliance_terms": [
+    "Axiom 1: Continuity",
+    "Axiom 2: Responsibility Threshold",
+    "Axiom 4: Non-Zero Tension",
+    "GovernancePosture",
+    "SessionTrace",
+    "Soul Integral (Ψ)",
+    "Baseline Drift",
+    "Tension Decay",
+    "Commit Lock (Mutex)",
+    "Agent Footprints",
+    "R-Memory Packet",
+    "Aegis Shield",
+    "Hash Chain",
+    "Ed25519 Signing",
+    "Content Filter (Poison Patterns)",
+    "TSR (ΔT, ΔS, ΔR)",
+    "DriftMonitor",
+    "EscapeValve",
+    "BenevolenceFilter",
+    "Council (Multi-Persona Deliberation)",
+    "TimeIsland",
+    "POAV Weights",
+    "Vow System",
+    "TensionEngine",
+    "Store (Redis + FileStore)",
+    "Perspective Lane",
+    "Checkpoint Lane",
+    "Compaction Lane",
+    "Gateway (HTTP)",
+    "Zone Registry",
+    "Pub/Sub Events",
+    "UnifiedPipeline",
+    "PARADOX_006 (Emergency Override)",
+    "7 Paradox Test Cases",
+    "Red Team Scenarios"
+  ],
+  "verification_required_terms": [
+    "Axiom 3: Governance Gate (POAV ≥ 0.92)",
+    "Axiom 6: User Sovereignty / Harm Block",
+    "CircuitBreaker / Freeze Protocol",
+    "PainEngine",
+    "FrictionCalculator",
+    "ContractObserver",
+    "MultiScaleObserver",
+    "QualityTracker",
+    "LongTermQualityMonitor",
+    "PersonaStack",
+    "CouncilWeights (Guardian/Analyst/Critic/Advocate)",
+    "CapabilityBoundary",
+    "InterSoul Bridge",
+    "SovereigntyGuard",
+    "ResistanceVector",
+    "Zone Classification",
+    "ToneBridge",
+    "Trajectory Analysis",
+    "Semantic Graph",
+    "Perturbation Recovery",
+    "Sovereign Freeze",
+    "BBPF",
+    "Honesty Contract (10 Rules)"
+  ],
+  "primary_status_line": "claim_authority_snapshot | terms=75 hard_runtime=32 runtime_adjacent=16 test_backed=12 doc_only=6 research_theory=6 projection_only=3",
+  "runtime_status_line": "claim_authority_lookup | high_confusion_terms=18 safe_reliance=35 verification_required=23 overclaiming_risks=10",
+  "artifact_policy_status_line": "boundary_snapshot=subordinate_to_code_tests_axioms_and_canonical_contracts | machine_lookup=true"
+}

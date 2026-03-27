@@ -151,6 +151,7 @@ GROUPS = [
             "docs/status/private_memory_shadow_latest.json",
             "docs/status/paradox_fixture_ownership_latest.json",
             "docs/status/engineering_mirror_ownership_latest.json",
+            "docs/status/claim_authority_latest.json",
         ],
     },
 ]

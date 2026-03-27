@@ -84,6 +84,8 @@ Do not collapse these into one layer. Operational guides help an agent work; can
   - 75-term matrix for checking whether a ToneSoul term is canonical, runtime, law/spec vocabulary, research/theory, or projection, and whether it is safe to rely on operationally
 - `architecture/TONESOUL_LAW_RUNTIME_BOUNDARY_CONTRACT.md`
   - higher-signal boundary contract for the most confusing law/runtime terms so later agents stop mistaking theory, worldview, or design vocabulary for live implementation
+- `status/claim_authority_latest.json`
+  - machine-readable merge of the matrix, quick lookup, and overclaiming-risk list when later agents need fast term-status retrieval instead of re-reading long prose tables
 
 Treat these as boundary aids. They help later agents classify claims, but they do not outrank code, tests, `AXIOMS.json`, or canonical architecture contracts.
 

@@ -315,6 +315,7 @@
 
 - `docs/architecture/TONESOUL_CLAIM_AUTHORITY_MATRIX.md`
 - `docs/architecture/TONESOUL_LAW_RUNTIME_BOUNDARY_CONTRACT.md`
+- `docs/status/claim_authority_latest.json`
 
 建議操作順序：
 
