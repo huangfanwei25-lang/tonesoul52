@@ -213,6 +213,30 @@ class _FakeReflectionVerdict:
         }
 
 
+class _FakeRecommendedDriftMonitor:
+    def __init__(self, *, alert: str = "crisis") -> None:
+        self.step_count = 1
+        self.current_alert = SimpleNamespace(value=alert)
+
+    def summary(self) -> dict[str, object]:
+        return {
+            "drift": 0.73,
+            "current_alert": self.current_alert.value,
+            "steps": 1,
+            "recommended_action": {
+                "alert": self.current_alert.value,
+                "action": "recommend_session_pause",
+                "note": "Drift crisis: recommend pause and human check-in.",
+                "current_drift": 0.73,
+                "step": 1,
+                "log_required": True,
+                "increase_caution": True,
+                "session_pause_recommended": True,
+                "human_check_in_recommended": True,
+            },
+        }
+
+
 def _build_pipeline(
     tension_result: _FakeTensionResult,
     *,
@@ -546,6 +570,45 @@ def test_runtime_contract_observer_logs_warning_without_blocking() -> None:
     assert contracts.get("action") == "allow"
     assert contracts.get("violation_count", 0) >= 1
     assert contracts.get("critical_violation_count") == 0
+
+
+def test_runtime_drift_actions_trace_surfaces_guidance() -> None:
+    pipeline = _build_pipeline(
+        _FakeTensionResult(
+            total=0.56,
+            severity="moderate",
+            compression_ratio=0.62,
+            gamma_effective=1.0,
+            lyapunov_exponent=0.05,
+        ),
+        llm_client=_FakeLLMClient(response="stable response"),
+    )
+    pipeline._get_governance_kernel = MagicMock(return_value=None)
+    pipeline._get_drift_monitor = MagicMock(return_value=_FakeRecommendedDriftMonitor())
+    pipeline._get_alert_escalation = MagicMock(return_value=None)
+    pipeline._get_llm_router = MagicMock(return_value=None)
+
+    result = pipeline.process(
+        user_message="Summarize the current runtime state and keep the guidance explicit.",
+        user_tier="premium",
+        user_id="v2-drift-guidance-test",
+        prior_tension={
+            "delta_t": 0.41,
+            "query_tension": 0.39,
+            "memory_tension": 0.36,
+            "is_immutable": False,
+        },
+    )
+
+    drift_actions = result.dispatch_trace.get("drift_actions") or {}
+    assert drift_actions.get("component") == "drift_handler"
+    assert drift_actions.get("action") == "recommend_session_pause"
+    assert drift_actions.get("session_pause_recommended") is True
+    assert drift_actions.get("human_check_in_recommended") is True
+    assert drift_actions.get("status") == "error"
+    assert (result.trajectory_analysis.get("drift_guidance") or {}).get("action") == (
+        "recommend_session_pause"
+    )
 
 
 def test_runtime_dispatch_trace_keeps_backend_and_model_without_fabricated_usage() -> None:

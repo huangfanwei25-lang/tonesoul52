@@ -1,5 +1,11 @@
 # Task
 
+## Phase 639: Drift Alert Guidance Surface (2026-03-27)
+- [x] Turn `DriftMonitor` alert classification into machine-readable bounded guidance instead of raw `warning/crisis` labels alone
+- [x] Surface drift recommendations through `UnifiedPipeline` dispatch traces so later agents can see what the runtime suggests doing next
+- [x] Cover both the monitor summary and runtime trace wiring with tests so drift guidance does not regress back into passive telemetry
+**Success Criteria**: Drift alerts now carry explicit recommendations, `UnifiedPipeline` exposes them as `drift_actions` / `drift_guidance`, and tests prove both the monitor-level and runtime-level paths.
+
 ## Phase 638: ContractObserver Blocking Integration (2026-03-27)
 - [x] Wire `ContractVerifier.verify_all()` into `UnifiedPipeline.process()` after the final response-shaping path instead of leaving it as passive telemetry
 - [x] Block on `CRITICAL` contract violations while preserving warning-level observation as degraded-but-allowed output

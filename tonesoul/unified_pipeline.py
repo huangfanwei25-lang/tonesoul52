@@ -1863,6 +1863,14 @@ class UnifiedPipeline:
                     drift_summary,
                     status=drift_status,
                 )
+                drift_recommendation = drift_summary.get("recommended_action")
+                if isinstance(drift_recommendation, dict):
+                    dispatch_trace["drift_actions"] = self._build_trace_section(
+                        "drift_handler",
+                        drift_recommendation,
+                        status=drift_status,
+                    )
+                    trajectory_result["drift_guidance"] = dict(drift_recommendation)
             except Exception as e:
                 self._exc_trace.record(
                     "unified_pipeline",

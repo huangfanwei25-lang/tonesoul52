@@ -46,6 +46,34 @@ class DriftSnapshot:
         }
 
 
+@dataclass
+class DriftActionRecommendation:
+    """Bounded action guidance derived from the latest drift alert."""
+
+    alert: DriftAlert
+    action: str
+    note: str
+    current_drift: float
+    step: int
+    log_required: bool = True
+    increase_caution: bool = False
+    session_pause_recommended: bool = False
+    human_check_in_recommended: bool = False
+
+    def to_dict(self) -> Dict[str, object]:
+        return {
+            "alert": self.alert.value,
+            "action": self.action,
+            "note": self.note,
+            "current_drift": round(self.current_drift, 6),
+            "step": self.step,
+            "log_required": self.log_required,
+            "increase_caution": self.increase_caution,
+            "session_pause_recommended": self.session_pause_recommended,
+            "human_check_in_recommended": self.human_check_in_recommended,
+        }
+
+
 _DEFAULT_HOME = {"deltaT": 0.5, "deltaS": 0.5, "deltaR": 0.5}
 _DIMS = ("deltaT", "deltaS", "deltaR")
 
@@ -81,6 +109,7 @@ class DriftMonitor:
         self._center: Optional[Dict[str, float]] = None
         self._step: int = 0
         self._history: List[DriftSnapshot] = []
+        self._last_recommendation: Optional[DriftActionRecommendation] = None
 
     # ------------------------------------------------------------------
     # Public API
@@ -114,6 +143,7 @@ class DriftMonitor:
             step=self._step,
         )
         self._history.append(snap)
+        self._last_recommendation = self._build_recommendation(snap)
         return snap
 
     @property
@@ -131,6 +161,10 @@ class DriftMonitor:
     @property
     def step_count(self) -> int:
         return self._step
+
+    @property
+    def last_recommendation(self) -> Optional[DriftActionRecommendation]:
+        return self._last_recommendation
 
     def summary(self) -> Dict[str, object]:
         """Compact summary for governance surfaces."""
@@ -150,6 +184,9 @@ class DriftMonitor:
             "max_drift": round(max(drifts), 6),
             "mean_drift": round(sum(drifts) / len(drifts), 6),
             "home": dict(self.home),
+            "recommended_action": (
+                self._last_recommendation.to_dict() if self._last_recommendation else None
+            ),
         }
 
     # ------------------------------------------------------------------
@@ -174,3 +211,34 @@ class DriftMonitor:
         if drift >= self.theta_warning:
             return DriftAlert.WARNING
         return DriftAlert.NONE
+
+    def _build_recommendation(
+        self,
+        snapshot: DriftSnapshot,
+    ) -> Optional[DriftActionRecommendation]:
+        if snapshot.alert == DriftAlert.WARNING:
+            return DriftActionRecommendation(
+                alert=snapshot.alert,
+                action="increase_caution",
+                note=(
+                    "Drift warning: continue with extra caution and keep the response bounded."
+                ),
+                current_drift=snapshot.drift,
+                step=snapshot.step,
+                increase_caution=True,
+            )
+        if snapshot.alert == DriftAlert.CRISIS:
+            return DriftActionRecommendation(
+                alert=snapshot.alert,
+                action="recommend_session_pause",
+                note=(
+                    "Drift crisis: recommend pausing the session or asking for a human "
+                    "check-in before further expansion."
+                ),
+                current_drift=snapshot.drift,
+                step=snapshot.step,
+                increase_caution=True,
+                session_pause_recommended=True,
+                human_check_in_recommended=True,
+            )
+        return None

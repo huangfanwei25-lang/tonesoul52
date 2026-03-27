@@ -125,6 +125,30 @@ class TestDriftSummary:
         assert s["max_drift"] >= s["mean_drift"]
 
 
+class TestDriftRecommendations:
+    """Alert classifications should surface bounded guidance."""
+
+    def test_warning_recommendation_increases_caution(self):
+        dm = DriftMonitor(theta_warning=0.05, theta_crisis=0.60)
+        dm.observe({"deltaT": 1.0, "deltaS": 0.0, "deltaR": 0.5})
+
+        recommendation = dm.last_recommendation
+        assert recommendation is not None
+        assert recommendation.action == "increase_caution"
+        assert recommendation.increase_caution is True
+        assert recommendation.session_pause_recommended is False
+
+    def test_crisis_recommendation_propagates_to_summary(self):
+        dm = DriftMonitor(theta_warning=0.01, theta_crisis=0.05)
+        dm.observe({"deltaT": 1.0, "deltaS": 0.0, "deltaR": 1.0})
+
+        summary = dm.summary()
+        recommendation = summary["recommended_action"]
+        assert recommendation["action"] == "recommend_session_pause"
+        assert recommendation["session_pause_recommended"] is True
+        assert recommendation["human_check_in_recommended"] is True
+
+
 class TestDriftSnapshot:
     """Test snapshot serialization."""
 
