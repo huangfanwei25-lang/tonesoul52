@@ -1,5 +1,11 @@
 # Task
 
+## Phase 647: Packet-First Observer Regression Coverage (2026-03-27)
+- [x] Add a runtime-adapter regression test that simulates older traces plus a newer compaction handoff
+- [x] Prove `r_memory_packet()` still surfaces `recent_compactions` and `project_memory_summary` guidance even when the trace lane is stale
+- [x] Keep the coverage bounded to packet resumability semantics rather than introducing a second observer workflow
+**Success Criteria**: A future refactor cannot accidentally regress packet-first handoff quality back to "old traces dominate everything"; tests prove fresh compactions remain visible and actionable.
+
 ## Phase 646: Git Status Path Preservation in Repo Progress (2026-03-27)
 - [x] Preserve leading whitespace from `git status --short` output so the first modified path does not lose its initial character inside `repo_progress.path_preview`
 - [x] Extend repo-progress parsing tests to cover the real first-line `" M file"` case instead of only staged/untracked examples

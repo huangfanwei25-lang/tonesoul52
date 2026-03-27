@@ -429,6 +429,56 @@ def test_compactions_use_noncanonical_resumability_lane(tmp_path: Path) -> None:
     assert "repo_progress" in packet["project_memory_summary"]
 
 
+def test_r_memory_packet_surfaces_fresh_compaction_even_when_traces_are_older(
+    tmp_path: Path,
+) -> None:
+    from tonesoul.backends.file_store import FileStore
+
+    store = FileStore(
+        gov_path=tmp_path / "governance_state.json",
+        traces_path=tmp_path / "session_traces.jsonl",
+        zones_path=tmp_path / "zone_registry.json",
+        compactions_path=tmp_path / "compacted.json",
+    )
+
+    legacy_trace = SessionTrace(
+        agent="claude-opus-4-6",
+        session_id="trace-legacy",
+        timestamp="2026-03-25T05:09:48+00:00",
+        topics=["governance", "memory", "testing"],
+        key_decisions=["older trace should remain visible but not dominate handoff"],
+    )
+    store.append_trace(legacy_trace.to_dict())
+
+    compaction = write_compaction(
+        agent_id="codex",
+        session_id="2026-03-27-rmemory-refresh",
+        summary=(
+            "2026-03-27: bounded POAV gate is live on high-risk runtime paths; "
+            "repo_progress now surfaces current branch/head/dirty posture."
+        ),
+        carry_forward=["Prefer packet-first handoff before broad repo scans."],
+        pending_paths=["tonesoul/unified_pipeline.py", "scripts/run_r_memory_packet.py"],
+        evidence_refs=["docs/status/claim_authority_latest.md"],
+        next_action="Verify a fresh AI cites recent_compactions before stale traces.",
+        source="codex-r-memory-refresh",
+        store=store,
+    )
+
+    packet = r_memory_packet(posture=GovernancePosture(), store=store, trace_limit=5)
+
+    assert packet["recent_traces"][0]["session_id"] == "trace-legacy"
+    assert packet["recent_compactions"][0]["compaction_id"] == compaction["compaction_id"]
+    assert packet["recent_compactions"][0]["summary"].startswith("2026-03-27: bounded POAV gate")
+    assert packet["project_memory_summary"]["carry_forward"] == [
+        "Prefer packet-first handoff before broad repo scans."
+    ]
+    assert packet["project_memory_summary"]["next_actions"] == [
+        "Verify a fresh AI cites recent_compactions before stale traces."
+    ]
+    assert "tonesoul/unified_pipeline.py" in packet["project_memory_summary"]["pending_paths"]
+
+
 # ── decay_tensions() ────────────────────────────────────────────
 
 
