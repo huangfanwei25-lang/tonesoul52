@@ -507,9 +507,11 @@
       "required": [
         "backend_mode",
         "session_start",
+        "session_end",
         "coordination_commands",
         "recommended_order",
-        "current_reminders"
+        "current_reminders",
+        "completion_rule"
       ],
       "properties": {
         "backend_mode": {
@@ -517,6 +519,14 @@
           "enum": ["redis", "file", "unknown"]
         },
         "session_start": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "session_end": {
           "type": "array",
           "minItems": 1,
           "items": {
@@ -572,6 +582,10 @@
             "type": "string",
             "minLength": 1
           }
+        },
+        "completion_rule": {
+          "type": "string",
+          "minLength": 1
         }
       }
     }

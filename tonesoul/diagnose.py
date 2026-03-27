@@ -330,6 +330,11 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
             lines.append("  session_start:")
             for command in session_start[:3]:
                 lines.append(f"    {command}")
+        session_end = list(operator_guidance.get("session_end") or [])
+        if session_end:
+            lines.append("  session_end:")
+            for command in session_end[:3]:
+                lines.append(f"    {command}")
         commands = operator_guidance.get("coordination_commands") or {}
         if commands:
             lines.append("  coordination_commands:")
@@ -337,6 +342,9 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
                 command = str(commands.get(key, "")).strip()
                 if command:
                     lines.append(f"    {key}={command}")
+        completion_rule = str(operator_guidance.get("completion_rule", "")).strip()
+        if completion_rule:
+            lines.append(f"  completion_rule={_clip(completion_rule)}")
         reminders = list(operator_guidance.get("current_reminders") or [])
         if reminders:
             lines.append("  current_reminders:")

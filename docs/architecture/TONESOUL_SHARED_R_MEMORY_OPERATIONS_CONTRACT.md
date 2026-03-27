@@ -3,7 +3,7 @@
 > Status: operational architecture contract as of 2026-03-27
 > Scope: multi-agent shared runtime operations across diagnose, packet, claims, perspectives, checkpoints, compactions, and serialized canonical commit
 > Purpose: define what later agents must externalize into shared R-memory, what other agents can actually see there, and which operating order preserves continuity without overclaiming shared cognition.
-> Last Updated: 2026-03-27
+> Last Updated: 2026-03-28
 
 ## Disclaimer
 
@@ -74,6 +74,10 @@ Not visible by default:
 The core rule is:
 
 > if it was not written into the governed shell, another agent cannot be expected to inherit it from R-memory
+
+Default collaboration posture:
+
+> every collaborative AI session starts with diagnose + packet + claim inspection, and ends by externalizing checkpoint or compaction before releasing any shared claim
 
 ### 2. Session Start Handshake
 

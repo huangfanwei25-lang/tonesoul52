@@ -121,6 +121,8 @@ def test_run_r_memory_packet_emits_json(capsys, monkeypatch, tmp_path: Path) -> 
     assert "operator_guidance" in output
     assert output["operator_guidance"]["backend_mode"] == "file"
     assert "checkpoint" in output["operator_guidance"]["coordination_commands"]
+    assert output["operator_guidance"]["session_end"][1].startswith("python scripts/save_compaction.py")
+    assert "checkpoint or compaction" in output["operator_guidance"]["completion_rule"]
     assert output["recent_traces"][0]["agent"] == "codex"
     assert output["active_claims"][0]["task_id"] == "task-1"
     assert output["recent_compactions"][0]["compaction_id"] == "cmp-1"

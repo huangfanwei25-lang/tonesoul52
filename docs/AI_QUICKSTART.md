@@ -1,7 +1,7 @@
 # ToneSoul — AI 快速入場（60 秒版）
 
 > Purpose: give any later AI instance the minimum working entry surface for ToneSoul before it starts reading the repo in bulk.
-> Last Updated: 2026-03-27
+> Last Updated: 2026-03-28
 > Status: operational quickstart; subordinate to `AXIOMS.json`, executable code, tests, and canonical architecture contracts.
 > Use When: first minute of a session, before touching code or making architecture claims.
 > 如果這份文件和程式碼、測試、契約衝突：以 `AXIOMS.json`、`tonesoul/`、`tests/`、`docs/architecture/` 為準。
@@ -151,6 +151,8 @@ python scripts/run_task_claim.py release <task_id> --agent <your-id>
 最小正確順序：
 
 `load/diagnose -> packet -> claim -> work -> perspective/checkpoint/compaction -> commit -> release`
+
+所有協作型 AI 都預設走這一套，不要跳過 session start，也不要在 session end 留白離開。
 
 如果你不確定某個大詞是不是當前 runtime 真相，打開：
 

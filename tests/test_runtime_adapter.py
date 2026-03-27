@@ -290,7 +290,9 @@ def test_r_memory_packet_exposes_runtime_dominance_and_recent_trace(
     assert "repo_progress" in packet["project_memory_summary"]
     assert packet["operator_guidance"]["backend_mode"] == "file"
     assert packet["operator_guidance"]["session_start"][0].startswith("python -m tonesoul.diagnose")
+    assert packet["operator_guidance"]["session_end"][0].startswith("python scripts/save_checkpoint.py")
     assert "claim" in packet["operator_guidance"]["coordination_commands"]
+    assert "checkpoint or compaction" in packet["operator_guidance"]["completion_rule"]
     assert packet["recent_traces"][0]["agent"] == "codex"
     assert packet["recent_traces"][0]["topics"] == ["runtime", "redis"]
 
@@ -433,6 +435,9 @@ def test_compactions_use_noncanonical_resumability_lane(tmp_path: Path) -> None:
     assert (
         "Prefer recent_compactions and project_memory_summary before older recent_traces."
         in packet["operator_guidance"]["current_reminders"]
+    )
+    assert packet["operator_guidance"]["session_end"][2].startswith(
+        "python scripts/run_task_claim.py release"
     )
 
 

@@ -1,5 +1,11 @@
 # Task
 
+## Phase 650: Default Session Cadence as Shared Memory Contract (2026-03-28)
+- [x] Extend packet-visible operator guidance so every collaborative AI session has explicit start and end commands, not just mid-session coordination hints
+- [x] Update onboarding and quickstart language so `diagnose -> packet -> claims` at session start and `checkpoint/compaction -> release` at session end become the default rule for all collaborative agents
+- [x] Keep tests and schema aligned so the default cadence remains machine-readable and cannot silently drift back into prose-only guidance
+**Success Criteria**: Later agents are told by both docs and packet surfaces that all collaborative sessions start with `diagnose + packet + claim inspection` and end with `checkpoint or compaction` before `release`, without relying on human memory of the workflow.
+
 ## Phase 649: Packet-Visible Operator Guidance (2026-03-27)
 - [x] Surface shared R-memory operator commands and current reminders directly through `r_memory_packet()` instead of leaving them only in prose docs
 - [x] Render the same operator guidance inside `diagnose` so later agents see packet-first coordination steps at session start

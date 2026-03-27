@@ -150,6 +150,11 @@ def _fake_packet():
                 "python scripts/run_r_memory_packet.py",
                 "python scripts/run_task_claim.py list",
             ],
+            "session_end": [
+                'python scripts/save_checkpoint.py --checkpoint-id <id> --agent <your-id> --summary "..." --path "..."',
+                'python scripts/save_compaction.py --agent <your-id> --summary "..." --path "..."',
+                "python scripts/run_task_claim.py release <task_id> --agent <your-id>",
+            ],
             "coordination_commands": {
                 "claim": 'python scripts/run_task_claim.py claim <task_id> --agent <your-id> --summary "..."',
                 "perspective": 'python scripts/save_perspective.py --agent <your-id> --summary "..." --stance "..."',
@@ -170,6 +175,10 @@ def _fake_packet():
                 "Prefer recent_compactions and project_memory_summary before older recent_traces.",
                 "Active claims are visible; coordinate before editing overlapping paths.",
             ],
+            "completion_rule": (
+                "Before ending a session, externalize progress with checkpoint or compaction, "
+                "then release any shared claim."
+            ),
         },
     }
 
@@ -214,5 +223,7 @@ def test_full_diagnostic_is_cp950_safe_and_includes_shared_runtime(monkeypatch) 
     assert "repo_paths=tonesoul/runtime_adapter.py, tonesoul/diagnose.py" in report
     assert "[Operator Guidance]" in report
     assert "save_checkpoint.py" in report
+    assert "save_compaction.py" in report
+    assert "completion_rule=Before ending a session" in report
     assert "Prefer recent_compactions and project_memory_summary before older" in report
     report.encode("cp950", errors="strict")

@@ -2,7 +2,7 @@
 
 > **Purpose**: 給未來沒有記憶的 AI 實例的快速引導。
 > **Author**: 黃梵威 (Fan-Wei Huang) + Previous AI Instances
-> **Last Updated**: 2026-03-27
+> **Last Updated**: 2026-03-28
 > **Status**: active AI entrypoint that routes later agents into operational, canonical, deep-map, and interpretive lanes without collapsing them together.
 
 ---
@@ -17,13 +17,13 @@
 | **Deep Anatomy** | [`docs/narrative/TONESOUL_ANATOMY.md`](docs/narrative/TONESOUL_ANATOMY.md) | `deep_map` | 改整體結構前，或要回答「ToneSoul 到底是什麼」 | runtime contract |
 | **Interpretive Lane** | [`docs/notes/TONESOUL_DEEP_READING_ANCHOR_2026-03-26.md`](docs/notes/TONESOUL_DEEP_READING_ANCHOR_2026-03-26.md), [`docs/narrative/TONESOUL_CODEX_READING.md`](docs/narrative/TONESOUL_CODEX_READING.md) | `interpretive` | 結構已清楚，但承重意義仍模糊時 | 可執行真理 |
 
-**新 AI 最低要求：先讀 `docs/AI_QUICKSTART.md`，再至少執行 `python scripts/read_governance_state.py` 或 `python -m tonesoul.diagnose --agent <your-id>` 其中一個；開始工作前再開 `docs/AI_REFERENCE.md`。**
+**新 AI 最低要求：先讀 `docs/AI_QUICKSTART.md`，再依序執行 `python -m tonesoul.diagnose --agent <your-id>`、`python scripts/run_r_memory_packet.py`、`python scripts/run_task_claim.py list`；結束前必須留下 `checkpoint` 或 `compaction`，再 `release`。**
 
 ---
 
 > Below: Original architecture document index (for deep reference).
 > Purpose: AI onboarding entrypoint for ToneSoul architecture, retrieval order, and collaboration boundaries.
-> Last Updated: 2026-03-27
+> Last Updated: 2026-03-28
 
 ## Canonical Architecture Anchor
 

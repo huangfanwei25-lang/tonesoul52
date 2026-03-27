@@ -549,6 +549,11 @@ def _build_operator_guidance(
             "python scripts/run_r_memory_packet.py",
             "python scripts/run_task_claim.py list",
         ],
+        "session_end": [
+            'python scripts/save_checkpoint.py --checkpoint-id <id> --agent <your-id> --summary "..." --path "..."',
+            'python scripts/save_compaction.py --agent <your-id> --summary "..." --path "..."',
+            "python scripts/run_task_claim.py release <task_id> --agent <your-id>",
+        ],
         "coordination_commands": {
             "claim": 'python scripts/run_task_claim.py claim <task_id> --agent <your-id> --summary "..."',
             "perspective": 'python scripts/save_perspective.py --agent <your-id> --summary "..." --stance "..."',
@@ -566,6 +571,10 @@ def _build_operator_guidance(
             "release",
         ],
         "current_reminders": reminders,
+        "completion_rule": (
+            "Before ending a session, externalize progress with checkpoint or compaction, "
+            "then release any shared claim."
+        ),
     }
 
 
