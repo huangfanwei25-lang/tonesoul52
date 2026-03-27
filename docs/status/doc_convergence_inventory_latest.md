@@ -1,41 +1,41 @@
 # Document Convergence Inventory Latest
 
-- generated_at: 2026-03-23T13:36:10Z
-- primary_status_line: `doc_convergence_ready | authored_files=2211 collisions=27 missing_purpose=138 missing_date=100`
-- runtime_status_line: `entrypoints | doc_inventory=doc_convergence_inventory_latest.json largest_family=docs_law_engineering_mirror architecture_docs=15`
+- generated_at: 2026-03-27T03:36:32Z
+- primary_status_line: `doc_convergence_ready | authored_files=2252 collisions=27 missing_purpose=140 missing_date=101`
+- runtime_status_line: `entrypoints | doc_inventory=doc_convergence_inventory_latest.json largest_family=docs_law_engineering_mirror architecture_docs=18`
 - artifact_policy_status_line: `doc_scope=authored_only | content_check=hash_plus_similarity generated_noise=excluded`
 
 ## Metrics
-- `authored_file_count`: `2211`
+- `authored_file_count`: `2252`
 - `collision_count`: `27`
 - `exact_match_collision_count`: `16`
 - `divergent_collision_count`: `11`
-- `missing_purpose_count`: `138`
-- `missing_date_count`: `100`
+- `missing_purpose_count`: `140`
+- `missing_date_count`: `101`
 - `missing_purpose_sample_count`: `40`
 - `missing_date_sample_count`: `40`
 - `missing_metadata_sample_limit`: `40`
 
 ## Category Counts
-- `architecture_doc`: `15`
+- `architecture_doc`: `18`
 - `archive_doc`: `1`
-- `chronicle_doc`: `42`
+- `chronicle_doc`: `48`
 - `constitution_doc`: `1`
 - `docs_engineering_mirror`: `16`
-- `general_doc`: `118`
+- `general_doc`: `128`
 - `generated_status_artifact`: `96`
 - `knowledge_doc`: `2`
 - `law_doc`: `60`
 - `law_engineering_mirror`: `15`
-- `memory_doc_or_data`: `1589`
+- `memory_doc_or_data`: `1607`
 - `paradox_fixture`: `8`
 - `paradox_test_fixture`: `8`
 - `philosophy_doc`: `27`
-- `plan_doc`: `98`
+- `plan_doc`: `99`
 - `report_doc`: `29`
-- `research_doc`: `8`
+- `research_doc`: `9`
 - `root_entrypoint`: `11`
-- `spec_doc`: `40`
+- `spec_doc`: `42`
 - `status_doc`: `24`
 - `test_doc_or_fixture`: `3`
 
@@ -71,7 +71,7 @@
   - evidence: `HANDOFF.md`
   - evidence: `MEMORY.md`
 - `historical_doc_lane_contract_maintenance` [`medium`] Maintain the historical document lane contract so archive and chronicle surfaces stay governed without per-file manual metadata backfill.
-  - why: 43 historical-lane docs are now governed by a dedicated policy and report; current chronicle_markdown_count=19.
+  - why: 49 historical-lane docs are now governed by a dedicated policy and report; current chronicle_markdown_count=19.
   - evidence: `docs/archive/deprecated_modules/README.md`
   - evidence: `docs/chronicles/README.md`
   - evidence: `docs/chronicles/scribe_chronicle_20260312_232804.md`
@@ -95,6 +95,8 @@
 - `AGENTS.md`
 - `HANDOFF.md`
 - `MEMORY.md`
+- `docs/RFC-015_Self_Dogfooding_Runtime_Adapter.md`
+- `docs/notes/SESSION_JOURNAL_2026-03-24_ANTIGRAVITY.md`
 - `docs/plans/memory_subjectivity_review_discussion_brief_2026-03-10.md`
 - `docs/plans/memory_subjectivity_reviewed_rejection_producer_guard_addendum_2026-03-11.md`
 - `docs/plans/memory_subjectivity_runtime_summary_addendum_2026-03-10.md`
@@ -130,13 +132,12 @@
 - `docs/privacy_policy.md`
 - `docs/proposals/phase7_dream_engine.md`
 - `docs/releases/v1.0.0-stable-postmortem.md`
-- `docs/reproducibility_guide.md`
-- `docs/research/RESEARCH_CONTEXT_2.0.md`
 
 ## Top Missing Date Metadata
 - `AGENTS.md`
 - `HANDOFF.md`
 - `MEMORY.md`
+- `docs/RFC-015_Self_Dogfooding_Runtime_Adapter.md`
 - `docs/plans/scribe_architecture_evolution.md`
 - `docs/plans/status_handoff_grammar.md`
 - `docs/plans/tonesoul_market_mirror_roadmap.md`
@@ -173,7 +174,6 @@
 - `law/CONTRIBUTING.md`
 - `law/ENGINEERING_OVERVIEW.md`
 - `law/GOVERNANCE_LOG.md`
-- `law/README.md`
 
 ## Basename Collisions
 - `APPENDIX_ENGINEERING.md` [docs_law_engineering_mirror] exact=`true` divergent=`false` max_similarity=`1.0`

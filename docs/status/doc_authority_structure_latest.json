@@ -1,10 +1,10 @@
 {
-  "generated_at": "2026-03-22T16:31:17Z",
+  "generated_at": "2026-03-27T03:25:28Z",
   "inventory_path": "docs/status/doc_convergence_inventory_latest.json",
   "metrics": {
-    "group_count": 6,
-    "tracked_file_count": 28,
-    "metadata_complete_count": 28,
+    "group_count": 9,
+    "tracked_file_count": 33,
+    "metadata_complete_count": 33,
     "metadata_missing_count": 0
   },
   "groups": [
@@ -12,6 +12,9 @@
       "id": "entrypoints",
       "label": "Entry Points",
       "description": "first surfaces for orientation and collaboration posture",
+      "authority_role": "entrypoint",
+      "use_when": "first repo contact, before choosing which deeper lane to open",
+      "read_order": 1,
       "files": [
         {
           "path": "README.md",
@@ -53,9 +56,38 @@
       "metadata_complete_count": 5
     },
     {
+      "id": "ai_operational_guides",
+      "label": "AI Operational Guides",
+      "description": "minimal working entry and lookup surfaces for later agents",
+      "authority_role": "operational",
+      "use_when": "after entrypoint routing, before or during daily work",
+      "read_order": 2,
+      "files": [
+        {
+          "path": "docs/AI_QUICKSTART.md",
+          "exists": true,
+          "has_purpose": true,
+          "has_date": true,
+          "metadata_complete": true
+        },
+        {
+          "path": "docs/AI_REFERENCE.md",
+          "exists": true,
+          "has_purpose": true,
+          "has_date": true,
+          "metadata_complete": true
+        }
+      ],
+      "tracked_count": 2,
+      "metadata_complete_count": 2
+    },
+    {
       "id": "canonical_architecture",
       "label": "Canonical Architecture",
       "description": "canonical architectural north-star and layer maps",
+      "authority_role": "canonical",
+      "use_when": "before architecture claims, runtime authority claims, or boundary changes",
+      "read_order": 3,
       "files": [
         {
           "path": "docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md",
@@ -90,9 +122,57 @@
       "metadata_complete_count": 4
     },
     {
+      "id": "deep_system_maps",
+      "label": "Deep System Maps",
+      "description": "panoramic repository-wide maps that explain the whole system without becoming executable contracts",
+      "authority_role": "deep_map",
+      "use_when": "before repo-wide refactors or whole-system explanations",
+      "read_order": 4,
+      "files": [
+        {
+          "path": "docs/narrative/TONESOUL_ANATOMY.md",
+          "exists": true,
+          "has_purpose": true,
+          "has_date": true,
+          "metadata_complete": true
+        }
+      ],
+      "tracked_count": 1,
+      "metadata_complete_count": 1
+    },
+    {
+      "id": "interpretive_readings",
+      "label": "Interpretive Readings",
+      "description": "grounded narrative readings that help later agents inherit load-bearing meaning without outranking canonical contracts",
+      "authority_role": "interpretive",
+      "use_when": "when the architecture map is clear but the deeper load-bearing meaning is still not",
+      "read_order": 5,
+      "files": [
+        {
+          "path": "docs/notes/TONESOUL_DEEP_READING_ANCHOR_2026-03-26.md",
+          "exists": true,
+          "has_purpose": true,
+          "has_date": true,
+          "metadata_complete": true
+        },
+        {
+          "path": "docs/narrative/TONESOUL_CODEX_READING.md",
+          "exists": true,
+          "has_purpose": true,
+          "has_date": true,
+          "metadata_complete": true
+        }
+      ],
+      "tracked_count": 2,
+      "metadata_complete_count": 2
+    },
+    {
       "id": "governance_execution",
       "label": "Governance And Execution",
       "description": "runtime, audit, and API contracts",
+      "authority_role": "contract",
+      "use_when": "when moving from documentation into executable governance or API behavior",
+      "read_order": 6,
       "files": [
         {
           "path": "docs/7D_AUDIT_FRAMEWORK.md",
@@ -137,6 +217,9 @@
       "id": "doc_governance",
       "label": "Documentation Governance",
       "description": "naming, zoning, and convergence planning surfaces",
+      "authority_role": "doc_governance",
+      "use_when": "when retrieval quality, metadata posture, or naming collisions are the problem",
+      "read_order": 7,
       "files": [
         {
           "path": "docs/DOCS_INFORMATION_ARCHITECTURE_v1.md",
@@ -181,6 +264,9 @@
       "id": "convergence_contracts",
       "label": "Convergence Contracts",
       "description": "ownership and divergence boundaries for duplicate-like surfaces",
+      "authority_role": "boundary_contract",
+      "use_when": "when two similar-looking lanes need explicit ownership or split-brain control",
+      "read_order": 8,
       "files": [
         {
           "path": "docs/architecture/BASENAME_DIVERGENCE_DISTILLATION_MAP.md",
@@ -218,6 +304,9 @@
       "id": "generated_status",
       "label": "Generated Status",
       "description": "machine-readable current posture for convergence-related lanes",
+      "authority_role": "generated_status",
+      "use_when": "when current machine-readable posture matters more than prose explanation",
+      "read_order": 9,
       "files": [
         {
           "path": "docs/status/doc_convergence_inventory_latest.json",
@@ -260,7 +349,7 @@
     }
   ],
   "missing_metadata_files": [],
-  "primary_status_line": "doc_authority_structure | groups=6 tracked=28 metadata_complete=28 metadata_missing=0",
-  "runtime_status_line": "doc_retrieval_order=entrypoint_to_architecture_to_contracts | generated_status_lane=5",
+  "primary_status_line": "doc_authority_structure | groups=9 tracked=33 metadata_complete=33 metadata_missing=0",
+  "runtime_status_line": "doc_retrieval_order=entrypoint_to_operational_to_canonical_to_deep_map_to_interpretive | generated_status_lane=5",
   "artifact_policy_status_line": "structure_mode=retrieval_oriented | authority_roles=explicit | generated_status_preferred_for_current_state"
 }

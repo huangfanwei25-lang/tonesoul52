@@ -21,6 +21,9 @@ GROUPS = [
         "id": "entrypoints",
         "label": "Entry Points",
         "description": "first surfaces for orientation and collaboration posture",
+        "authority_role": "entrypoint",
+        "use_when": "first repo contact, before choosing which deeper lane to open",
+        "read_order": 1,
         "files": [
             "README.md",
             "README.zh-TW.md",
@@ -30,9 +33,24 @@ GROUPS = [
         ],
     },
     {
+        "id": "ai_operational_guides",
+        "label": "AI Operational Guides",
+        "description": "minimal working entry and lookup surfaces for later agents",
+        "authority_role": "operational",
+        "use_when": "after entrypoint routing, before or during daily work",
+        "read_order": 2,
+        "files": [
+            "docs/AI_QUICKSTART.md",
+            "docs/AI_REFERENCE.md",
+        ],
+    },
+    {
         "id": "canonical_architecture",
         "label": "Canonical Architecture",
         "description": "canonical architectural north-star and layer maps",
+        "authority_role": "canonical",
+        "use_when": "before architecture claims, runtime authority claims, or boundary changes",
+        "read_order": 3,
         "files": [
             "docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md",
             "docs/notes/TONESOUL_ARCHITECTURE_MEMORY_ANCHOR_2026-03-22.md",
@@ -41,9 +59,35 @@ GROUPS = [
         ],
     },
     {
+        "id": "deep_system_maps",
+        "label": "Deep System Maps",
+        "description": "panoramic repository-wide maps that explain the whole system without becoming executable contracts",
+        "authority_role": "deep_map",
+        "use_when": "before repo-wide refactors or whole-system explanations",
+        "read_order": 4,
+        "files": [
+            "docs/narrative/TONESOUL_ANATOMY.md",
+        ],
+    },
+    {
+        "id": "interpretive_readings",
+        "label": "Interpretive Readings",
+        "description": "grounded narrative readings that help later agents inherit load-bearing meaning without outranking canonical contracts",
+        "authority_role": "interpretive",
+        "use_when": "when the architecture map is clear but the deeper load-bearing meaning is still not",
+        "read_order": 5,
+        "files": [
+            "docs/notes/TONESOUL_DEEP_READING_ANCHOR_2026-03-26.md",
+            "docs/narrative/TONESOUL_CODEX_READING.md",
+        ],
+    },
+    {
         "id": "governance_execution",
         "label": "Governance And Execution",
         "description": "runtime, audit, and API contracts",
+        "authority_role": "contract",
+        "use_when": "when moving from documentation into executable governance or API behavior",
+        "read_order": 6,
         "files": [
             "docs/7D_AUDIT_FRAMEWORK.md",
             "docs/7D_EXECUTION_SPEC.md",
@@ -56,6 +100,9 @@ GROUPS = [
         "id": "doc_governance",
         "label": "Documentation Governance",
         "description": "naming, zoning, and convergence planning surfaces",
+        "authority_role": "doc_governance",
+        "use_when": "when retrieval quality, metadata posture, or naming collisions are the problem",
+        "read_order": 7,
         "files": [
             "docs/DOCS_INFORMATION_ARCHITECTURE_v1.md",
             "docs/DOCS_CLASSIFICATION_LEDGER_v1.md",
@@ -68,6 +115,9 @@ GROUPS = [
         "id": "convergence_contracts",
         "label": "Convergence Contracts",
         "description": "ownership and divergence boundaries for duplicate-like surfaces",
+        "authority_role": "boundary_contract",
+        "use_when": "when two similar-looking lanes need explicit ownership or split-brain control",
+        "read_order": 8,
         "files": [
             "docs/architecture/BASENAME_DIVERGENCE_DISTILLATION_MAP.md",
             "docs/architecture/PRIVATE_MEMORY_SHADOW_BOUNDARY_MAP.md",
@@ -79,6 +129,9 @@ GROUPS = [
         "id": "generated_status",
         "label": "Generated Status",
         "description": "machine-readable current posture for convergence-related lanes",
+        "authority_role": "generated_status",
+        "use_when": "when current machine-readable posture matters more than prose explanation",
+        "read_order": 9,
         "files": [
             "docs/status/doc_convergence_inventory_latest.json",
             "docs/status/basename_divergence_distillation_latest.json",
@@ -138,6 +191,9 @@ def build_report(repo_root: Path) -> dict[str, Any]:
                 "id": group["id"],
                 "label": group["label"],
                 "description": group["description"],
+                "authority_role": group["authority_role"],
+                "use_when": group["use_when"],
+                "read_order": group["read_order"],
                 "files": file_rows,
                 "tracked_count": len(file_rows),
                 "metadata_complete_count": sum(1 for row in file_rows if row["metadata_complete"]),
@@ -151,7 +207,7 @@ def build_report(repo_root: Path) -> dict[str, Any]:
         f"metadata_missing={len(missing_files)}"
     )
     runtime_status_line = (
-        "doc_retrieval_order=entrypoint_to_architecture_to_contracts | "
+        "doc_retrieval_order=entrypoint_to_operational_to_canonical_to_deep_map_to_interpretive | "
         f"generated_status_lane={len(generated_status_group['files'])}"
     )
     artifact_policy_status_line = "structure_mode=retrieval_oriented | authority_roles=explicit | generated_status_preferred_for_current_state"
@@ -194,6 +250,9 @@ def render_markdown(payload: dict[str, Any]) -> str:
             f"metadata_complete=`{group['metadata_complete_count']}`"
         )
         lines.append(f"  - description: {group['description']}")
+        lines.append(f"  - authority_role: {group['authority_role']}")
+        lines.append(f"  - use_when: {group['use_when']}")
+        lines.append(f"  - read_order: {group['read_order']}")
         for row in group["files"]:
             lines.append(
                 f"  - `{row['path']}` exists=`{str(row['exists']).lower()}` "

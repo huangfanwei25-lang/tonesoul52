@@ -2,12 +2,28 @@
 
 > **Purpose**: 給未來沒有記憶的 AI 實例的快速引導。
 > **Author**: 黃梵威 (Fan-Wei Huang) + Previous AI Instances
-> **Last Updated**: 2026-03-26
+> **Last Updated**: 2026-03-27
+> **Status**: active AI entrypoint that routes later agents into operational, canonical, deep-map, and interpretive lanes without collapsing them together.
 
 ---
 
+## AI Reading Stack（從這裡開始）
+
+| Lane | 文件 | Authority | Use When | 不要把它當成 |
+|------|------|-----------|----------|--------------|
+| **Operational Start** | [`docs/AI_QUICKSTART.md`](docs/AI_QUICKSTART.md) | `operational` | 第一次進 repo 的前 1 分鐘 | 架構真理面 |
+| **Working Reference** | [`docs/AI_REFERENCE.md`](docs/AI_REFERENCE.md) | `operational` | 工作中查術語、決策路徑、紅線 | 「所有詞都已進 runtime」的證據 |
+| **Canonical Anchor** | 下方 `Canonical Architecture Anchor` | `canonical` | 要做架構、runtime、權威順序判斷前 | 可選閱讀 |
+| **Deep Anatomy** | [`docs/narrative/TONESOUL_ANATOMY.md`](docs/narrative/TONESOUL_ANATOMY.md) | `deep_map` | 改整體結構前，或要回答「ToneSoul 到底是什麼」 | runtime contract |
+| **Interpretive Lane** | [`docs/notes/TONESOUL_DEEP_READING_ANCHOR_2026-03-26.md`](docs/notes/TONESOUL_DEEP_READING_ANCHOR_2026-03-26.md), [`docs/narrative/TONESOUL_CODEX_READING.md`](docs/narrative/TONESOUL_CODEX_READING.md) | `interpretive` | 結構已清楚，但承重意義仍模糊時 | 可執行真理 |
+
+**新 AI 最低要求：先讀 `docs/AI_QUICKSTART.md`，再至少執行 `python scripts/read_governance_state.py` 或 `python -m tonesoul.diagnose --agent <your-id>` 其中一個；開始工作前再開 `docs/AI_REFERENCE.md`。**
+
+---
+
+> Below: Original architecture document index (for deep reference).
 > Purpose: AI onboarding entrypoint for ToneSoul architecture, retrieval order, and collaboration boundaries.
-> Last Updated: 2026-03-26
+> Last Updated: 2026-03-27
 
 ## Canonical Architecture Anchor
 
@@ -35,6 +51,7 @@ If the next question is how Redis-backed shared runtime memory should fit into T
 If runtime state authority, Redis/file fallback truth, dashboard behavior, or commit-order safety are in conflict, open `docs/notes/TONESOUL_RUNTIME_REVIEW_LOGIC_ANCHOR_2026-03-26.md` before trusting the prettier surface.
 If the next question is whether multiple agents may safely share one hot runtime layer, or how far ToneSoul may push a "semantic field" idea without overclaiming, open `docs/architecture/TONESOUL_MULTI_AGENT_SEMANTIC_FIELD_CONTRACT.md` and `docs/research/tonesoul_multi_agent_semantic_field_evidence_map_2026-03-26.md` before proposing concurrent canonical state.
 If the next question is whether compaction memory, dashboard gamification, legacy trace repair, and security ideas should all enter the same runtime phase, open `docs/architecture/TONESOUL_RUNTIME_COMPACTION_AND_GAMIFICATION_CONTRACT.md` before bundling them together.
+If the repository layout is clear but the deeper internal shape still is not, open `docs/notes/TONESOUL_DEEP_READING_ANCHOR_2026-03-26.md` and then `docs/narrative/TONESOUL_CODEX_READING.md`; treat them as grounded interpretive aids, not as replacements for code or contracts.
 If you need the original draft idea for self-dogfooding ToneSoul on top of agent workflows, open `docs/RFC-015_Self_Dogfooding_Runtime_Adapter.md`, but treat it as a draft source until it is rewritten cleanly.
 If you need compact machine-readable guidance, open `docs/status/l7_retrieval_contract_latest.json` and `docs/status/l8_distillation_boundary_latest.json`.
 If you need the first directly usable operational layer, open `docs/status/l7_operational_packet_latest.json` and `docs/status/l8_adapter_dataset_gate_latest.json`.
@@ -55,10 +72,16 @@ If engineering-book mirrors are in scope, treat `docs/engineering/` as canonical
 > [!IMPORTANT]
 > **Every AI agent MUST do this as the FIRST action of every session.**
 
-Run the governance state reader to inherit prior session posture:
+Use the lightweight reader when you only need posture:
 
 ```bash
 python scripts/read_governance_state.py
+```
+
+Use the fuller diagnostic when you also need store/Aegis/world context:
+
+```bash
+python -m tonesoul.diagnose --agent <your-id>
 ```
 
 This auto-discovers `governance_state.json` from these locations:

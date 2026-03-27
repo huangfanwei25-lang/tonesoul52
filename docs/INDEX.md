@@ -1,9 +1,23 @@
 # ToneSoul Documentation Index
 
 > Purpose: top-level documentation index for ToneSoul authority surfaces, operational packets, and convergence maps.
-> Last Updated: 2026-03-26
+> Last Updated: 2026-03-27
 
 > 自動更新於 2026-03-22。按主題分類，方便快速導航。
+
+---
+
+## AI Reading Stack
+
+| Lane | Files | Authority | Use When |
+|------|-------|-----------|----------|
+| **Operational Start** | [AI_QUICKSTART.md](AI_QUICKSTART.md) | `operational` | first minute of a later agent session |
+| **Working Reference** | [AI_REFERENCE.md](AI_REFERENCE.md) | `operational` | term lookup, routing, red-line checks during work |
+| **Canonical Anchor** | see section below | `canonical` | before architecture or runtime claims |
+| **Deep Anatomy** | [narrative/TONESOUL_ANATOMY.md](narrative/TONESOUL_ANATOMY.md) | `deep_map` | before repo-wide refactor or whole-system explanation |
+| **Interpretive Lane** | [notes/TONESOUL_DEEP_READING_ANCHOR_2026-03-26.md](notes/TONESOUL_DEEP_READING_ANCHOR_2026-03-26.md), [narrative/TONESOUL_CODEX_READING.md](narrative/TONESOUL_CODEX_READING.md) | `interpretive` | when the map is clear but the load-bearing meaning still feels diffuse |
+
+Use these in order. Do not let a deep or interpretive document silently outrank code, tests, or architecture contracts.
 
 ---
 
@@ -17,6 +31,15 @@
 - [notes/TONESOUL_RUNTIME_REVIEW_LOGIC_ANCHOR_2026-03-26.md](notes/TONESOUL_RUNTIME_REVIEW_LOGIC_ANCHOR_2026-03-26.md)
 - [architecture/TONESOUL_MULTI_AGENT_SEMANTIC_FIELD_CONTRACT.md](architecture/TONESOUL_MULTI_AGENT_SEMANTIC_FIELD_CONTRACT.md)
 - [architecture/TONESOUL_RUNTIME_COMPACTION_AND_GAMIFICATION_CONTRACT.md](architecture/TONESOUL_RUNTIME_COMPACTION_AND_GAMIFICATION_CONTRACT.md)
+
+## Interpretive Reading Layer
+
+- [notes/TONESOUL_DEEP_READING_ANCHOR_2026-03-26.md](notes/TONESOUL_DEEP_READING_ANCHOR_2026-03-26.md)
+  - open this when the repository map is clear but the deeper load-bearing meaning still feels diffuse
+- [narrative/TONESOUL_CODEX_READING.md](narrative/TONESOUL_CODEX_READING.md)
+  - Codex's longer structural reading of ToneSoul as a constitutional continuity system rather than only a memory stack
+
+Use these after the canonical architecture anchor, not before it.
 
 ## Engineering Contracts
 

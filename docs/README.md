@@ -1,9 +1,23 @@
 # ToneSoul Documentation Index
 
 > Purpose: documentation entrypoint and guided index for ToneSoul architecture, status artifacts, and convergence surfaces.
-> Last Updated: 2026-03-26
+> Last Updated: 2026-03-27
 
 > 這是文檔的入口點。請從這裡開始閱讀。
+
+---
+
+## AI Reading Stack
+
+| Lane | Files | Authority | Use When |
+|------|-------|-----------|----------|
+| **Operational Start** | `AI_QUICKSTART.md` | `operational` | first minute of a later agent session |
+| **Working Reference** | `AI_REFERENCE.md` | `operational` | term lookup, routing, red-line checks during work |
+| **Canonical Anchor** | see section below | `canonical` | before architecture or runtime claims |
+| **Deep Anatomy** | `narrative/TONESOUL_ANATOMY.md` | `deep_map` | before repo-wide refactor or whole-system explanation |
+| **Interpretive Lane** | `notes/TONESOUL_DEEP_READING_ANCHOR_2026-03-26.md`, `narrative/TONESOUL_CODEX_READING.md` | `interpretive` | when the map is navigable but the deeper load-bearing meaning still feels unclear |
+
+Do not collapse these into one layer. Operational guides help an agent work; canonical anchors decide authority; deep and interpretive docs help explanation.
 
 ---
 
@@ -15,6 +29,13 @@
 4. [architecture/KNOWLEDGE_SURFACES_BOUNDARY_MAP.md](architecture/KNOWLEDGE_SURFACES_BOUNDARY_MAP.md)
 5. [architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md](architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md)
 6. [notes/TONESOUL_RUNTIME_REVIEW_LOGIC_ANCHOR_2026-03-26.md](notes/TONESOUL_RUNTIME_REVIEW_LOGIC_ANCHOR_2026-03-26.md)
+
+## Interpretive Readings
+
+- `notes/TONESOUL_DEEP_READING_ANCHOR_2026-03-26.md`
+  - compact handoff for Codex's deeper cross-repo reading after runtime-adapter and documentation-convergence work
+- `narrative/TONESOUL_CODEX_READING.md`
+  - Codex's longer interpretive reading of ToneSoul's load-bearing question, constitutional center, runtime narrow waist, anti-smuggling logic, and hidden temporal structure
 
 ## Retrieval Boundary
 

@@ -1,5 +1,23 @@
 # Task
 
+## Phase 633: External Deep-Structure Work Order for Claim Authority Distillation (2026-03-27)
+- [x] Write a bounded work order for a long-context synthesis agent instead of sending it into runtime code paths blindly
+- [x] Aim the external workstream at claim-authority mapping and law/runtime boundary clarification, where panoramic repo reading is strongest
+- [x] Keep the external ticket out of canonical runtime mutation so it complements, rather than collides with, the current Codex mainline
+**Success Criteria**: Another AI can pick up a precise structural-distillation task, produce authority/boundary artifacts, and avoid mistaking deep narrative understanding for permission to mutate runtime logic.
+
+## Phase 632: Layered AI Entry Stack and Authority Routing Cleanup (2026-03-27)
+- [x] Normalize the new AI-facing entry surfaces so later agents can distinguish operational guides, canonical anchors, deep maps, and interpretive readings
+- [x] Add explicit authority and use-when metadata to the onboarding/quickstart/reference/anatomy lane so repo structure is recoverable without chat memory
+- [x] Teach the documentation authority map to model the layered AI entry stack instead of treating every surface as the same kind of document
+**Success Criteria**: A later agent can enter the repo, choose the right surface for the task, and avoid mistaking quickstarts, deep anatomy, or interpretive readings for canonical runtime truth.
+
+## Phase 631: Deep Reading Anchor and Codex Interpretive Map (2026-03-26)
+- [x] Write a Codex-authored interpretive reading that explains ToneSoul in my own structure rather than copying the parallel anatomy draft
+- [x] Preserve a short time-stamped deep-reading anchor so later agents inherit the load-bearing patterns, not only the file taxonomy
+- [x] Wire the new interpretive layer into onboarding and documentation entrypoints while keeping code, contracts, and tests above interpretation in authority order
+**Success Criteria**: Later agents can recover both the canonical architecture anchor and a concise deeper reading of ToneSoul's real center, hidden adversary, anti-smuggling logic, and multi-clock structure without mistaking interpretation for executable truth.
+
 ## Phase 630: Non-Canonical Compaction Lane and Packet Handoff Surface (2026-03-26)
 - [x] Add a bounded resumability compaction lane (`ts:compacted` / `.aegis/compacted.json`) that stays outside canonical governance mutation
 - [x] Expose compaction summaries through runtime helpers, the R-memory packet schema, and a local `save_compaction.py` CLI

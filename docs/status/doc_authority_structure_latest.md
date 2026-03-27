@@ -1,32 +1,61 @@
 # Documentation Authority Structure Latest
 
-- generated_at: 2026-03-22T16:31:17Z
-- primary_status_line: `doc_authority_structure | groups=6 tracked=28 metadata_complete=28 metadata_missing=0`
-- runtime_status_line: `doc_retrieval_order=entrypoint_to_architecture_to_contracts | generated_status_lane=5`
+- generated_at: 2026-03-27T03:25:28Z
+- primary_status_line: `doc_authority_structure | groups=9 tracked=33 metadata_complete=33 metadata_missing=0`
+- runtime_status_line: `doc_retrieval_order=entrypoint_to_operational_to_canonical_to_deep_map_to_interpretive | generated_status_lane=5`
 - artifact_policy_status_line: `structure_mode=retrieval_oriented | authority_roles=explicit | generated_status_preferred_for_current_state`
 
 ## Metrics
-- `group_count`: `6`
-- `tracked_file_count`: `28`
-- `metadata_complete_count`: `28`
+- `group_count`: `9`
+- `tracked_file_count`: `33`
+- `metadata_complete_count`: `33`
 - `metadata_missing_count`: `0`
 
 ## Groups
 - `Entry Points` tracked=`5` metadata_complete=`5`
   - description: first surfaces for orientation and collaboration posture
+  - authority_role: entrypoint
+  - use_when: first repo contact, before choosing which deeper lane to open
+  - read_order: 1
   - `README.md` exists=`true` purpose=`true` date=`true`
   - `README.zh-TW.md` exists=`true` purpose=`true` date=`true`
   - `AI_ONBOARDING.md` exists=`true` purpose=`true` date=`true`
   - `docs/INDEX.md` exists=`true` purpose=`true` date=`true`
   - `docs/README.md` exists=`true` purpose=`true` date=`true`
+- `AI Operational Guides` tracked=`2` metadata_complete=`2`
+  - description: minimal working entry and lookup surfaces for later agents
+  - authority_role: operational
+  - use_when: after entrypoint routing, before or during daily work
+  - read_order: 2
+  - `docs/AI_QUICKSTART.md` exists=`true` purpose=`true` date=`true`
+  - `docs/AI_REFERENCE.md` exists=`true` purpose=`true` date=`true`
 - `Canonical Architecture` tracked=`4` metadata_complete=`4`
   - description: canonical architectural north-star and layer maps
+  - authority_role: canonical
+  - use_when: before architecture claims, runtime authority claims, or boundary changes
+  - read_order: 3
   - `docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md` exists=`true` purpose=`true` date=`true`
   - `docs/notes/TONESOUL_ARCHITECTURE_MEMORY_ANCHOR_2026-03-22.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/KNOWLEDGE_SURFACES_BOUNDARY_MAP.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md` exists=`true` purpose=`true` date=`true`
+- `Deep System Maps` tracked=`1` metadata_complete=`1`
+  - description: panoramic repository-wide maps that explain the whole system without becoming executable contracts
+  - authority_role: deep_map
+  - use_when: before repo-wide refactors or whole-system explanations
+  - read_order: 4
+  - `docs/narrative/TONESOUL_ANATOMY.md` exists=`true` purpose=`true` date=`true`
+- `Interpretive Readings` tracked=`2` metadata_complete=`2`
+  - description: grounded narrative readings that help later agents inherit load-bearing meaning without outranking canonical contracts
+  - authority_role: interpretive
+  - use_when: when the architecture map is clear but the deeper load-bearing meaning is still not
+  - read_order: 5
+  - `docs/notes/TONESOUL_DEEP_READING_ANCHOR_2026-03-26.md` exists=`true` purpose=`true` date=`true`
+  - `docs/narrative/TONESOUL_CODEX_READING.md` exists=`true` purpose=`true` date=`true`
 - `Governance And Execution` tracked=`5` metadata_complete=`5`
   - description: runtime, audit, and API contracts
+  - authority_role: contract
+  - use_when: when moving from documentation into executable governance or API behavior
+  - read_order: 6
   - `docs/7D_AUDIT_FRAMEWORK.md` exists=`true` purpose=`true` date=`true`
   - `docs/7D_EXECUTION_SPEC.md` exists=`true` purpose=`true` date=`true`
   - `docs/AUDIT_CONTRACT.md` exists=`true` purpose=`true` date=`true`
@@ -34,6 +63,9 @@
   - `docs/COUNCIL_RUNTIME.md` exists=`true` purpose=`true` date=`true`
 - `Documentation Governance` tracked=`5` metadata_complete=`5`
   - description: naming, zoning, and convergence planning surfaces
+  - authority_role: doc_governance
+  - use_when: when retrieval quality, metadata posture, or naming collisions are the problem
+  - read_order: 7
   - `docs/DOCS_INFORMATION_ARCHITECTURE_v1.md` exists=`true` purpose=`true` date=`true`
   - `docs/DOCS_CLASSIFICATION_LEDGER_v1.md` exists=`true` purpose=`true` date=`true`
   - `docs/FILE_PURPOSE_MAP.md` exists=`true` purpose=`true` date=`true`
@@ -41,12 +73,18 @@
   - `docs/plans/doc_convergence_cleanup_plan_2026-03-22.md` exists=`true` purpose=`true` date=`true`
 - `Convergence Contracts` tracked=`4` metadata_complete=`4`
   - description: ownership and divergence boundaries for duplicate-like surfaces
+  - authority_role: boundary_contract
+  - use_when: when two similar-looking lanes need explicit ownership or split-brain control
+  - read_order: 8
   - `docs/architecture/BASENAME_DIVERGENCE_DISTILLATION_MAP.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/PRIVATE_MEMORY_SHADOW_BOUNDARY_MAP.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/PARADOX_FIXTURE_OWNERSHIP_MAP.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/ENGINEERING_MIRROR_OWNERSHIP_MAP.md` exists=`true` purpose=`true` date=`true`
 - `Generated Status` tracked=`5` metadata_complete=`5`
   - description: machine-readable current posture for convergence-related lanes
+  - authority_role: generated_status
+  - use_when: when current machine-readable posture matters more than prose explanation
+  - read_order: 9
   - `docs/status/doc_convergence_inventory_latest.json` exists=`true` purpose=`true` date=`true`
   - `docs/status/basename_divergence_distillation_latest.json` exists=`true` purpose=`true` date=`true`
   - `docs/status/private_memory_shadow_latest.json` exists=`true` purpose=`true` date=`true`

@@ -1,5 +1,8 @@
 # ToneSoul: 語義責任作為 AI 治理的基礎
 
+> Purpose: narrative thesis draft explaining why ToneSoul centers accountable choice, tension metabolism, and governance-backed continuity rather than memory accumulation alone.
+> Last Updated: 2026-03-26
+
 > 一個不問「AI 有沒有意識」，而問「AI 能不能負責」的框架。
 
 **作者**: 黃梵威 (Fan-Wei Huang / Fan1234-1)
