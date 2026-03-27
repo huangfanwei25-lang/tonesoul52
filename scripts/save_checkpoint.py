@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Write a bounded non-canonical compaction summary to ToneSoul R-memory."""
+"""Write a bounded non-canonical checkpoint to ToneSoul shared R-memory."""
 
 from __future__ import annotations
 
@@ -38,12 +38,11 @@ def _load_payload(args) -> dict:
         if raw:
             return json.loads(raw)
     return {
+        "checkpoint_id": args.checkpoint_id,
         "agent": args.agent,
         "session_id": args.session_id,
         "summary": args.summary,
-        "carry_forward": list(args.carry_forward or []),
         "pending_paths": list(args.pending_paths or []),
-        "evidence_refs": list(args.evidence_refs or []),
         "next_action": args.next_action,
         "source": args.source,
     }
@@ -51,23 +50,25 @@ def _load_payload(args) -> dict:
 
 def main() -> None:
     _ensure_repo_root_on_path()
-    parser = argparse.ArgumentParser(description="Save a ToneSoul compaction summary")
+
+    parser = argparse.ArgumentParser(description="Save a ToneSoul checkpoint")
     parser.add_argument("--input", type=Path, default=None)
     parser.add_argument("--state-path", type=Path, default=None)
     parser.add_argument("--traces-path", type=Path, default=None)
+    parser.add_argument("--checkpoint-id", default="")
     parser.add_argument("--agent", default="unknown")
     parser.add_argument("--session-id", default="")
     parser.add_argument("--summary", default="")
-    parser.add_argument("--carry-forward", action="append", default=[])
     parser.add_argument("--path", action="append", dest="pending_paths", default=[])
-    parser.add_argument("--evidence-ref", action="append", dest="evidence_refs", default=[])
     parser.add_argument("--next-action", default="")
     parser.add_argument("--source", default="cli")
-    parser.add_argument("--ttl-seconds", type=int, default=604800)
-    parser.add_argument("--limit", type=int, default=20)
+    parser.add_argument("--ttl-seconds", type=int, default=86400)
     args = parser.parse_args()
 
     payload = _load_payload(args)
+    checkpoint_id = str(payload.get("checkpoint_id", args.checkpoint_id)).strip()
+    if not checkpoint_id:
+        parser.error("checkpoint_id is required")
 
     store = None
     if args.state_path is not None or args.traces_path is not None:
@@ -93,19 +94,17 @@ def main() -> None:
             compactions_path=_resolve_sidecar(root, "compacted.json"),
         )
 
-    from tonesoul.runtime_adapter import write_compaction
+    from tonesoul.runtime_adapter import write_checkpoint
 
-    result = write_compaction(
+    result = write_checkpoint(
+        checkpoint_id,
         agent_id=str(payload.get("agent", args.agent or "unknown")),
         session_id=str(payload.get("session_id", args.session_id)),
         summary=str(payload.get("summary", args.summary)),
-        carry_forward=list(payload.get("carry_forward") or []),
         pending_paths=list(payload.get("pending_paths") or []),
-        evidence_refs=list(payload.get("evidence_refs") or []),
         next_action=str(payload.get("next_action", args.next_action)),
         source=str(payload.get("source", args.source)),
         ttl_seconds=args.ttl_seconds,
-        limit=args.limit,
         store=store,
     )
     print(json.dumps(result, indent=2, ensure_ascii=False))

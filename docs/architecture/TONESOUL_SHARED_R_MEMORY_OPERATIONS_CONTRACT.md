@@ -34,6 +34,8 @@ This contract is grounded in the current executable and schema surfaces:
 - `tonesoul/diagnose.py`
 - `scripts/run_r_memory_packet.py`
 - `scripts/run_task_claim.py`
+- `scripts/save_perspective.py`
+- `scripts/save_checkpoint.py`
 - `scripts/save_compaction.py`
 - `spec/governance/r_memory_packet_v1.schema.json`
 - `docs/architecture/TONESOUL_R_MEMORY_STACK_RECOMMENDATION.md`
@@ -107,6 +109,11 @@ Rules:
 
 Use `write_perspective()` when your current line of work is materially relevant to another agent before final commit.
 
+Supported surfaces:
+
+- `python scripts/save_perspective.py --agent <name> --summary "..." --stance "..." --tension "..."`
+- `write_perspective()`
+
 Correct contents:
 
 - provisional stance
@@ -124,6 +131,11 @@ Incorrect use:
 
 Use `write_checkpoint()` when work is interrupted but should remain resumable inside the active operational window.
 
+Supported surfaces:
+
+- `python scripts/save_checkpoint.py --checkpoint-id <id> --agent <name> --summary "..." --path "..."`
+- `write_checkpoint()`
+
 Typical times to checkpoint:
 
 - before a context reset
@@ -140,6 +152,11 @@ Checkpoint semantics:
 ### 6. Compaction Protocol
 
 Use `write_compaction()` or `scripts/save_compaction.py` when you need a bounded later-agent handoff that survives longer than a short checkpoint but must not mutate canonical posture.
+
+Supported surfaces:
+
+- `python scripts/save_compaction.py --agent <name> --summary "..." --path "..."`
+- `write_compaction()`
 
 Compaction fields should answer:
 

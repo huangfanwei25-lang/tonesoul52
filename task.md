@@ -1,5 +1,11 @@
 # Task
 
+## Phase 648: Shared R-Memory Operator Surface Completion (2026-03-27)
+- [x] Make `run_task_claim.py` directly executable from the repo root instead of requiring manual import-path repair
+- [x] Add matching CLI entrypoints for `write_perspective()` and `write_checkpoint()` so the full non-canonical coordination cadence has first-class scripts
+- [x] Update quickstart/contract docs and script tests so later agents can actually run `claim -> perspective -> checkpoint -> compaction -> release` instead of only reading about it
+**Success Criteria**: The shared R-memory coordination lane now has direct repo-root scripts for claim, perspective, checkpoint, compaction, and release, and both tests and quickstart docs reflect the same operator-facing workflow.
+
 ## Phase 647: Packet-First Observer Regression Coverage (2026-03-27)
 - [x] Add a runtime-adapter regression test that simulates older traces plus a newer compaction handoff
 - [x] Prove `r_memory_packet()` still surfaces `recent_compactions` and `project_memory_summary` guidance even when the trace lane is stale
