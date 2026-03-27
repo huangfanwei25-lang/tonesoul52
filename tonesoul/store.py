@@ -35,6 +35,7 @@ PERSPECTIVE_PREFIX = "ts:perspectives:"  # Per-agent perspective lane
 CHECKPOINT_PREFIX = "ts:checkpoints:"  # Mid-session checkpoint lane
 KEY_COMPACTED = "ts:compacted"  # Non-canonical resumability/compaction lane
 KEY_SUBJECT_SNAPSHOTS = "ts:subject_snapshots"  # Stable non-canonical subject snapshot lane
+OBSERVER_CURSOR_PREFIX = "ts:observer_cursors:"  # Per-agent since-last-seen cursor
 FIELD_KEY = "ts:field"  # Experimental semantic-field synthesis surface
 
 

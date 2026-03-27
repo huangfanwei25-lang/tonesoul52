@@ -24,8 +24,10 @@ def test_run_r_memory_packet_emits_json(capsys, monkeypatch, tmp_path: Path) -> 
     traces_path = tmp_path / "session_traces.jsonl"
     sidecar_dir = tmp_path / ".aegis"
     claims_path = sidecar_dir / "task_claims.json"
+    checkpoints_path = sidecar_dir / "checkpoints.json"
     compactions_path = sidecar_dir / "compacted.json"
     subject_snapshots_path = sidecar_dir / "subject_snapshots.json"
+    observer_cursors_path = sidecar_dir / "observer_cursors.json"
     state_path.write_text(
         json.dumps(
             {
@@ -99,6 +101,24 @@ def test_run_r_memory_packet_emits_json(capsys, monkeypatch, tmp_path: Path) -> 
         ),
         encoding="utf-8",
     )
+    checkpoints_path.write_text(
+        json.dumps(
+            {
+                "cp-1": {
+                    "checkpoint_id": "cp-1",
+                    "agent": "codex",
+                    "session_id": "sess-1",
+                    "summary": "Ack-aware packet handoff still needs validation.",
+                    "pending_paths": ["tonesoul/diagnose.py"],
+                    "next_action": "re-run packet with observer cursor",
+                    "source": "cli",
+                    "updated_at": "2026-03-26T00:02:30+00:00",
+                    "expires_at": "4070908920.0"
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
     subject_snapshots_path.write_text(
         json.dumps(
             [
@@ -131,6 +151,9 @@ def test_run_r_memory_packet_emits_json(capsys, monkeypatch, tmp_path: Path) -> 
             str(state_path),
             "--traces-path",
             str(traces_path),
+            "--agent",
+            "observer-1",
+            "--ack",
         ],
     )
 
@@ -145,13 +168,22 @@ def test_run_r_memory_packet_emits_json(capsys, monkeypatch, tmp_path: Path) -> 
     assert output["operator_guidance"]["backend_mode"] == "file"
     assert "checkpoint" in output["operator_guidance"]["coordination_commands"]
     assert "subject_snapshot" in output["operator_guidance"]["coordination_commands"]
+    assert output["operator_guidance"]["session_start"][1].startswith(
+        "python scripts/run_r_memory_packet.py --agent"
+    )
     assert output["operator_guidance"]["session_end"][1].startswith("python scripts/save_compaction.py")
     assert "checkpoint or compaction" in output["operator_guidance"]["completion_rule"]
     assert output["recent_traces"][0]["agent"] == "codex"
     assert output["active_claims"][0]["task_id"] == "task-1"
+    assert output["recent_checkpoints"][0]["checkpoint_id"] == "cp-1"
     assert output["recent_compactions"][0]["compaction_id"] == "cmp-1"
     assert output["recent_subject_snapshots"][0]["snapshot_id"] == "subj-1"
     assert output["project_memory_summary"]["subject_anchor"]["summary"].startswith("Stay packet-first")
+    assert output["delta_feed"]["observer_id"] == "observer-1"
+    assert output["delta_feed"]["first_observation"] is True
+    cursor_data = json.loads(observer_cursors_path.read_text(encoding="utf-8"))
+    assert "observer-1" in cursor_data
+    assert cursor_data["observer-1"]["latest_checkpoint_id"] == "cp-1"
 
 
 def test_ensure_repo_root_on_path_adds_repo_root(monkeypatch) -> None:

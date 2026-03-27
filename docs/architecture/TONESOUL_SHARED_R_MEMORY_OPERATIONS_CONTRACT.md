@@ -61,6 +61,7 @@ Visible after explicit write:
 - `ts:perspectives:{agent_id}`
 - `ts:checkpoints:*`
 - `ts:compacted`
+- `ts:observer_cursors:{agent_id}`
 - `GET /packet`
 
 Not visible by default:
@@ -76,6 +77,11 @@ The core rule is:
 
 > if it was not written into the governed shell, another agent cannot be expected to inherit it from R-memory
 
+Observer note:
+
+- `--agent <your-id> --ack` establishes or advances a bounded since-last-seen baseline
+- the observer cursor is a per-agent coordination aid, not canonical truth
+
 Default collaboration posture:
 
 > every collaborative AI session starts with diagnose + packet + claim inspection, and ends by externalizing checkpoint or compaction before releasing any shared claim; when durable operator identity changes, add a subject snapshot before leaving.
@@ -85,7 +91,7 @@ Default collaboration posture:
 Every agent session should begin with:
 
 1. `python -m tonesoul.diagnose --agent <your-id>`
-2. `python scripts/run_r_memory_packet.py` or `GET /packet`
+2. `python scripts/run_r_memory_packet.py --agent <your-id> --ack` or `GET /packet`
 3. inspect active claims before touching shared work
 
 Use `python scripts/read_governance_state.py` only when you need a lighter posture read and do not need the fuller shared-runtime picture.
@@ -259,6 +265,7 @@ When multiple agents share one hot runtime, the correct order is:
 | `ts:checkpoints:*` | resumability checkpoint | non-canonical | visible after explicit write |
 | `ts:compacted` | bounded handoff summary | non-canonical | visible after explicit write |
 | `ts:subject_snapshots` | durable working identity snapshot | non-canonical | visible after explicit write |
+| `ts:observer_cursors:{agent_id}` | per-agent since-last-seen baseline | non-canonical | visible after explicit write |
 | `ts:field` | experimental synthesis | experimental | visible if implemented |
 | `GET /packet` | aggregated hot-state read surface | operational packet | read-only composite view |
 

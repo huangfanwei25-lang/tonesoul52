@@ -21,6 +21,7 @@ from tonesoul.store import (
     CHANNEL_EVENTS,
     CHECKPOINT_PREFIX,
     COMMIT_LOCK_KEY,
+    OBSERVER_CURSOR_PREFIX,
     KEY_COMPACTED,
     KEY_GOVERNANCE,
     KEY_SUBJECT_SNAPSHOTS,
@@ -263,6 +264,28 @@ return 0
             except json.JSONDecodeError:
                 continue
         return result
+
+    def set_observer_cursor(
+        self,
+        agent_id: str,
+        data: Dict[str, Any],
+        *,
+        ttl_seconds: int = 2592000,
+    ) -> None:
+        key = f"{OBSERVER_CURSOR_PREFIX}{agent_id}"
+        self._r.set(key, json.dumps(data, ensure_ascii=False), ex=int(ttl_seconds))
+        self.publish(CHANNEL_EVENTS, {"type": "observer_cursor:updated", "agent": agent_id})
+
+    def get_observer_cursor(self, agent_id: str) -> Dict[str, Any]:
+        key = f"{OBSERVER_CURSOR_PREFIX}{agent_id}"
+        raw = self._r.get(key)
+        if raw is None:
+            return {}
+        text = raw.decode("utf-8") if isinstance(raw, bytes) else raw
+        try:
+            return json.loads(text)
+        except json.JSONDecodeError:
+            return {}
 
     # ── Pub/sub ──────────────────────────────────────────────────────────────
 

@@ -17,6 +17,7 @@
     "recent_traces",
     "recent_visitors",
     "active_claims",
+    "recent_checkpoints",
     "recent_compactions",
     "recent_subject_snapshots",
     "operator_guidance"
@@ -80,6 +81,7 @@
         "checkpoints_surface",
         "compaction_surface",
         "subject_snapshot_surface",
+        "observer_cursor_surface",
         "field_surface"
       ],
       "properties": {
@@ -99,6 +101,10 @@
           "minLength": 1
         },
         "subject_snapshot_surface": {
+          "type": "string",
+          "minLength": 1
+        },
+        "observer_cursor_surface": {
           "type": "string",
           "minLength": 1
         },
@@ -186,6 +192,12 @@
         "$ref": "#/$defs/claim"
       }
     },
+    "recent_checkpoints": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/checkpoint"
+      }
+    },
     "recent_compactions": {
       "type": "array",
       "items": {
@@ -203,6 +215,9 @@
     },
     "operator_guidance": {
       "$ref": "#/$defs/operator_guidance"
+    },
+    "delta_feed": {
+      "$ref": "#/$defs/delta_feed"
     }
   },
   "$defs": {
@@ -367,6 +382,49 @@
           "type": "string"
         },
         "expires_at": {
+          "type": "string"
+        }
+      }
+    },
+    "checkpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "checkpoint_id",
+        "agent",
+        "session_id",
+        "summary",
+        "pending_paths",
+        "next_action",
+        "source",
+        "updated_at"
+      ],
+      "properties": {
+        "checkpoint_id": {
+          "type": "string"
+        },
+        "agent": {
+          "type": "string"
+        },
+        "session_id": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "pending_paths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "next_action": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "updated_at": {
           "type": "string"
         }
       }
@@ -603,7 +661,8 @@
         "pending_paths",
         "carry_forward",
         "next_actions",
-        "summary_text"
+        "summary_text",
+        "repo_progress"
       ],
       "properties": {
         "focus_topics": {
@@ -646,6 +705,56 @@
         "summary_text": {
           "type": "string",
           "minLength": 1
+        },
+        "repo_progress": {
+          "$ref": "#/$defs/repo_progress"
+        }
+      }
+    },
+    "repo_progress": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "available",
+        "branch",
+        "head",
+        "staged_count",
+        "modified_count",
+        "untracked_count",
+        "dirty_count",
+        "path_preview"
+      ],
+      "properties": {
+        "available": {
+          "type": "boolean"
+        },
+        "branch": {
+          "type": "string"
+        },
+        "head": {
+          "type": "string"
+        },
+        "staged_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "modified_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "untracked_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "dirty_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "path_preview": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -737,6 +846,218 @@
           }
         },
         "completion_rule": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "delta_compaction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["compaction_id", "agent", "summary", "updated_at"],
+      "properties": {
+        "compaction_id": {
+          "type": "string"
+        },
+        "agent": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        }
+      }
+    },
+    "delta_subject_snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["snapshot_id", "agent", "summary", "updated_at"],
+      "properties": {
+        "snapshot_id": {
+          "type": "string"
+        },
+        "agent": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        }
+      }
+    },
+    "delta_checkpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["checkpoint_id", "agent", "summary", "next_action", "updated_at"],
+      "properties": {
+        "checkpoint_id": {
+          "type": "string"
+        },
+        "agent": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "next_action": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        }
+      }
+    },
+    "delta_trace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["session_id", "agent", "timestamp", "topics"],
+      "properties": {
+        "session_id": {
+          "type": "string"
+        },
+        "agent": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "topics": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "delta_claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["task_id", "agent", "summary"],
+      "properties": {
+        "task_id": {
+          "type": "string"
+        },
+        "agent": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        }
+      }
+    },
+    "repo_change": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "changed",
+        "previous_head",
+        "current_head",
+        "previous_dirty_count",
+        "current_dirty_count"
+      ],
+      "properties": {
+        "changed": {
+          "type": "boolean"
+        },
+        "previous_head": {
+          "type": "string"
+        },
+        "current_head": {
+          "type": "string"
+        },
+        "previous_dirty_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "current_dirty_count": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "delta_feed": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "observer_id",
+        "first_observation",
+        "has_updates",
+        "update_count",
+        "previous_seen_at",
+        "summary_text",
+        "new_compactions",
+        "new_subject_snapshots",
+        "new_checkpoints",
+        "new_traces",
+        "new_claims",
+        "released_claim_ids",
+        "repo_change",
+        "ack_command"
+      ],
+      "properties": {
+        "observer_id": {
+          "type": "string"
+        },
+        "first_observation": {
+          "type": "boolean"
+        },
+        "has_updates": {
+          "type": "boolean"
+        },
+        "update_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "previous_seen_at": {
+          "type": "string"
+        },
+        "summary_text": {
+          "type": "string"
+        },
+        "new_compactions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/delta_compaction"
+          }
+        },
+        "new_subject_snapshots": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/delta_subject_snapshot"
+          }
+        },
+        "new_checkpoints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/delta_checkpoint"
+          }
+        },
+        "new_traces": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/delta_trace"
+          }
+        },
+        "new_claims": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/delta_claim"
+          }
+        },
+        "released_claim_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "repo_change": {
+          "$ref": "#/$defs/repo_change"
+        },
+        "ack_command": {
           "type": "string",
           "minLength": 1
         }

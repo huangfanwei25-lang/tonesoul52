@@ -106,6 +106,18 @@ def _fake_packet():
                 "paths": ["docs/architecture/TONESOUL_SHARED_R_MEMORY_OPERATIONS_CONTRACT.md"],
             }
         ],
+        "recent_checkpoints": [
+            {
+                "checkpoint_id": "cp-1",
+                "agent": "codex",
+                "session_id": "sess-1",
+                "summary": "Ack path is pending in the packet script.",
+                "pending_paths": ["scripts/run_r_memory_packet.py"],
+                "next_action": "add --agent and --ack support",
+                "source": "cli",
+                "updated_at": "2026-03-27T01:15:00Z",
+            }
+        ],
         "recent_compactions": [
             {
                 "agent": "claude",
@@ -173,7 +185,7 @@ def _fake_packet():
             "backend_mode": "redis",
             "session_start": [
                 "python -m tonesoul.diagnose --agent <your-id>",
-                "python scripts/run_r_memory_packet.py",
+                "python scripts/run_r_memory_packet.py --agent <your-id> --ack",
                 "python scripts/run_task_claim.py list",
             ],
             "session_end": [
@@ -202,11 +214,42 @@ def _fake_packet():
                 "Prefer recent_compactions and project_memory_summary before older recent_traces.",
                 "Active claims are visible; coordinate before editing overlapping paths.",
                 "A recent subject snapshot is visible; treat it as durable working identity, but still non-canonical.",
+                "A delta feed is visible for this agent; ack after review to advance the observer baseline.",
             ],
             "completion_rule": (
                 "Before ending a session, externalize progress with checkpoint or compaction, "
                 "then release any shared claim."
             ),
+        },
+        "delta_feed": {
+            "observer_id": "codex",
+            "first_observation": False,
+            "has_updates": True,
+            "update_count": 3,
+            "previous_seen_at": "2026-03-27T00:59:00Z",
+            "summary_text": "checkpoints=1 | claims(+0/-1) | repo=03fdabc->04c243d dirty=4->6",
+            "new_compactions": [],
+            "new_subject_snapshots": [],
+            "new_checkpoints": [
+                {
+                    "checkpoint_id": "cp-1",
+                    "agent": "codex",
+                    "summary": "Ack path is pending in the packet script.",
+                    "next_action": "add --agent and --ack support",
+                    "updated_at": "2026-03-27T01:15:00Z",
+                }
+            ],
+            "new_traces": [],
+            "new_claims": [],
+            "released_claim_ids": ["old-claim"],
+            "repo_change": {
+                "changed": True,
+                "previous_head": "03fdabc",
+                "current_head": "04c243d",
+                "previous_dirty_count": 4,
+                "current_dirty_count": 6,
+            },
+            "ack_command": "python scripts/run_r_memory_packet.py --agent codex --ack",
         },
     }
 
@@ -217,7 +260,7 @@ def test_compact_diagnostic_reports_shared_runtime_counts(monkeypatch) -> None:
     monkeypatch.setattr("tonesoul.runtime_adapter.load", lambda agent_id, source="diagnose": _fake_posture())
     monkeypatch.setattr(
         "tonesoul.runtime_adapter.r_memory_packet",
-        lambda posture=None, store=None, trace_limit=5, visitor_limit=5: _fake_packet(),
+        lambda posture=None, store=None, observer_id="", trace_limit=5, visitor_limit=5: _fake_packet(),
     )
     monkeypatch.setattr("tonesoul.aegis_shield.AegisShield", _FakeShield)
 
@@ -237,25 +280,29 @@ def test_full_diagnostic_is_cp950_safe_and_includes_shared_runtime(monkeypatch) 
     monkeypatch.setattr("tonesoul.runtime_adapter.load", lambda agent_id, source="diagnose": _fake_posture())
     monkeypatch.setattr(
         "tonesoul.runtime_adapter.r_memory_packet",
-        lambda posture=None, store=None, trace_limit=5, visitor_limit=5: _fake_packet(),
+        lambda posture=None, store=None, observer_id="", trace_limit=5, visitor_limit=5: _fake_packet(),
     )
     monkeypatch.setattr("tonesoul.aegis_shield.AegisShield", _FakeShield)
 
     report = full_diagnostic(agent_id="codex")
 
-    assert "[Shared Runtime] claims=1 visitors=1 compactions=1 subject_snapshots=1" in report
+    assert "[Shared Runtime] claims=1 visitors=1 checkpoints=1 compactions=1 subject_snapshots=1" in report
     assert "Risk Posture:" in report
     assert "[Project Memory Summary]" in report
     assert "[Subject Snapshot] count=1" in report
+    assert "[Since Last Seen]" in report
     assert "coord-contract" in report
     assert "diagnose/load -> packet -> claim" in report
     assert "repo=codex/r-memory-compaction-lane-20260326@04c243d dirty=6" in report
     assert "repo_paths=tonesoul/runtime_adapter.py, tonesoul/diagnose.py" in report
     assert "[Operator Guidance]" in report
+    assert "run_r_memory_packet.py --agent <your-id> --ack" in report
     assert "save_checkpoint.py" in report
     assert "save_compaction.py" in report
     assert "save_subject_snapshot.py" in report
     assert "completion_rule=Before ending a session" in report
     assert "subject_anchor:" in report
     assert "Prefer recent_compactions and project_memory_summary before older" in report
+    assert "ack_command=python scripts/run_r_memory_packet.py --agent codex --ack" in report
+    assert "released_claim_ids=old-claim" in report
     report.encode("cp950", errors="strict")

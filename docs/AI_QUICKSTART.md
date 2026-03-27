@@ -139,7 +139,7 @@ PARADOXES/   7 個道德邊界測試
 
 ```bash
 python -m tonesoul.diagnose --agent <your-id>
-python scripts/run_r_memory_packet.py
+python scripts/run_r_memory_packet.py --agent <your-id> --ack
 python scripts/run_task_claim.py list
 python scripts/run_task_claim.py claim <task_id> --agent <your-id> --summary "..."
 python scripts/save_perspective.py --agent <your-id> --summary "..." --stance "..."

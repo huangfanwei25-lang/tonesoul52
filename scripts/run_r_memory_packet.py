@@ -33,12 +33,21 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Emit ToneSoul R-memory packet")
     parser.add_argument("--state-path", type=Path, default=None)
     parser.add_argument("--traces-path", type=Path, default=None)
+    parser.add_argument("--agent", type=str, default="")
+    parser.add_argument("--ack", action="store_true")
     parser.add_argument("--trace-limit", type=int, default=5)
     parser.add_argument("--visitor-limit", type=int, default=5)
     parser.add_argument("--output", type=Path, default=None)
     args = parser.parse_args()
 
-    from tonesoul.runtime_adapter import load, r_memory_packet
+    if args.ack and not str(args.agent or "").strip():
+        parser.error("--ack requires --agent")
+
+    from tonesoul.runtime_adapter import (
+        acknowledge_observer_cursor,
+        load,
+        r_memory_packet,
+    )
 
     store = None
     posture = None
@@ -64,15 +73,19 @@ def main() -> None:
             checkpoints_path=_resolve_sidecar(claim_root, "checkpoints.json"),
             compactions_path=_resolve_sidecar(claim_root, "compacted.json"),
             subject_snapshots_path=_resolve_sidecar(claim_root, "subject_snapshots.json"),
+            observer_cursors_path=_resolve_sidecar(claim_root, "observer_cursors.json"),
         )
         posture = load(state_path=args.state_path)
 
     packet = r_memory_packet(
         posture=posture,
         store=store,
+        observer_id=str(args.agent or "").strip(),
         trace_limit=args.trace_limit,
         visitor_limit=args.visitor_limit,
     )
+    if args.ack:
+        acknowledge_observer_cursor(str(args.agent or "").strip(), packet=packet, store=store)
     text = json.dumps(packet, indent=2, ensure_ascii=False) + "\n"
 
     if args.output is not None:

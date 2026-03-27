@@ -44,13 +44,21 @@ def _clip(text: str, limit: int = 72) -> str:
     return f"{stripped[: limit - 3]}..."
 
 
-def _packet(store, posture, *, trace_limit: int = 5, visitor_limit: int = 5) -> dict[str, Any]:
+def _packet(
+    store,
+    posture,
+    *,
+    observer_id: str = "",
+    trace_limit: int = 5,
+    visitor_limit: int = 5,
+) -> dict[str, Any]:
     from tonesoul.runtime_adapter import r_memory_packet
 
     try:
         return r_memory_packet(
             posture=posture,
             store=store,
+            observer_id=observer_id,
             trace_limit=trace_limit,
             visitor_limit=visitor_limit,
         )
@@ -59,6 +67,7 @@ def _packet(store, posture, *, trace_limit: int = 5, visitor_limit: int = 5) -> 
             "recent_traces": [],
             "recent_visitors": [],
             "active_claims": [],
+            "recent_checkpoints": [],
             "recent_compactions": [],
             "recent_subject_snapshots": [],
             "parallel_lanes": {},
@@ -76,7 +85,13 @@ def compact_diagnostic(agent_id: str = "unknown") -> str:
 
         store = get_store()
         posture = load(agent_id=agent_id, source="diagnose")
-        packet = _packet(store, posture, trace_limit=3, visitor_limit=3)
+        packet = _packet(
+            store,
+            posture,
+            observer_id=agent_id,
+            trace_limit=3,
+            visitor_limit=3,
+        )
 
         traces_n = len(store.get_traces(n=999))
         zones_n = 0
@@ -131,6 +146,7 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
         "recent_traces": [],
         "recent_visitors": [],
         "active_claims": [],
+        "recent_checkpoints": [],
         "recent_compactions": [],
         "recent_subject_snapshots": [],
         "parallel_lanes": {},
@@ -158,7 +174,7 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
         from tonesoul.runtime_adapter import load
 
         posture = load(agent_id=agent_id, source="diagnose")
-        packet = _packet(store, posture) if store is not None else packet
+        packet = _packet(store, posture, observer_id=agent_id) if store is not None else packet
         lines.extend(
             [
                 "[Governance Posture]",
@@ -263,12 +279,14 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
     lines.append("")
 
     claims = packet.get("active_claims", [])
+    checkpoints = packet.get("recent_checkpoints", [])
     compactions = packet.get("recent_compactions", [])
     subject_snapshots = packet.get("recent_subject_snapshots", [])
     visitors = packet.get("recent_visitors", [])
     lines.append(
         "[Shared Runtime] "
-        f"claims={len(claims)} visitors={len(visitors)} compactions={len(compactions)} "
+        f"claims={len(claims)} visitors={len(visitors)} checkpoints={len(checkpoints)} "
+        f"compactions={len(compactions)} "
         f"subject_snapshots={len(subject_snapshots)}"
     )
     if claims:
@@ -290,6 +308,14 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
                 f"visitor {visitor.get('timestamp', '')[:19]} | "
                 f"{visitor.get('agent', '?')} | "
                 f"source={visitor.get('source', '?')}"
+            )
+    if checkpoints:
+        for entry in checkpoints[:3]:
+            lines.append(
+                "  "
+                f"checkpoint {entry.get('updated_at', '')[:16]} | "
+                f"{entry.get('agent', '?')} | "
+                f"next={_clip(entry.get('next_action', ''))}"
             )
     if compactions:
         for entry in compactions[:3]:
@@ -364,6 +390,50 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
             values = list(latest.get(key) or [])
             if values:
                 lines.append(f"  {key}={', '.join(values[:3])}")
+
+    delta_feed = packet.get("delta_feed") or {}
+    if delta_feed:
+        lines.append("")
+        lines.append("[Since Last Seen]")
+        lines.append(
+            "  "
+            f"observer={delta_feed.get('observer_id', '?')} "
+            f"updates={int(delta_feed.get('update_count', 0) or 0)} "
+            f"has_updates={bool(delta_feed.get('has_updates', False))}"
+        )
+        previous_seen_at = str(delta_feed.get("previous_seen_at", "")).strip()
+        if previous_seen_at:
+            lines.append(f"  previous_seen_at={previous_seen_at}")
+        summary_text = str(delta_feed.get("summary_text", "")).strip()
+        if summary_text:
+            lines.append(f"  summary={_clip(summary_text)}")
+        if delta_feed.get("first_observation"):
+            lines.append("  first_observation=true")
+        for key in (
+            "new_compactions",
+            "new_subject_snapshots",
+            "new_checkpoints",
+            "new_traces",
+            "new_claims",
+        ):
+            values = list(delta_feed.get(key) or [])
+            if values:
+                lines.append(f"  {key}={len(values)}")
+        released_claim_ids = list(delta_feed.get("released_claim_ids") or [])
+        if released_claim_ids:
+            lines.append(f"  released_claim_ids={', '.join(released_claim_ids[:3])}")
+        repo_change = delta_feed.get("repo_change") or {}
+        if repo_change.get("changed"):
+            lines.append(
+                "  repo_change="
+                f"{repo_change.get('previous_head', 'unknown')} -> "
+                f"{repo_change.get('current_head', 'unknown')} "
+                f"dirty={int(repo_change.get('previous_dirty_count', 0) or 0)}"
+                f"->{int(repo_change.get('current_dirty_count', 0) or 0)}"
+            )
+        ack_command = str(delta_feed.get("ack_command", "")).strip()
+        if ack_command:
+            lines.append(f"  ack_command={ack_command}")
 
     operator_guidance = packet.get("operator_guidance") or {}
     if operator_guidance:

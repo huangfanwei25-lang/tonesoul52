@@ -30,11 +30,13 @@
     "checkpoints_surface": "ts:checkpoints:*",
     "compaction_surface": "ts:compacted",
     "subject_snapshot_surface": "ts:subject_snapshots",
+    "observer_cursor_surface": "ts:observer_cursors:{agent_id}",
     "field_surface": "ts:field"
   },
   "canonical_sources": [
     "docs/architecture/TONESOUL_R_MEMORY_STACK_RECOMMENDATION.md",
     "docs/architecture/TONESOUL_MULTI_AGENT_SEMANTIC_FIELD_CONTRACT.md",
+    "docs/architecture/TONESOUL_SHARED_R_MEMORY_OPERATIONS_CONTRACT.md",
     "docs/architecture/TONESOUL_RUNTIME_COMPACTION_AND_GAMIFICATION_CONTRACT.md",
     "docs/notes/TONESOUL_RUNTIME_REVIEW_LOGIC_ANCHOR_2026-03-26.md",
     "docs/RFC-015_Self_Dogfooding_Runtime_Adapter.md"
@@ -116,6 +118,21 @@
       "source": "gateway",
       "created_at": "2026-03-26T11:57:00+00:00",
       "expires_at": "1774527120.0"
+    }
+  ],
+  "recent_checkpoints": [
+    {
+      "checkpoint_id": "cp-001",
+      "agent": "codex",
+      "session_id": "sess-001",
+      "summary": "Packet lane is stable; observer delta feed still needs the CLI ack path.",
+      "pending_paths": [
+        "scripts/run_r_memory_packet.py",
+        "tonesoul/diagnose.py"
+      ],
+      "next_action": "Expose an ack-aware packet entrypoint so later agents can advance their observer cursor.",
+      "source": "cli",
+      "updated_at": "2026-03-26T11:59:00+00:00"
     }
   ],
   "recent_compactions": [
@@ -228,7 +245,7 @@
     "backend_mode": "redis",
     "session_start": [
       "python -m tonesoul.diagnose --agent <your-id>",
-      "python scripts/run_r_memory_packet.py",
+      "python scripts/run_r_memory_packet.py --agent <your-id> --ack",
       "python scripts/run_task_claim.py list"
     ],
     "session_end": [
@@ -256,8 +273,69 @@
     "current_reminders": [
       "Prefer recent_compactions and project_memory_summary before older recent_traces.",
       "Active claims are visible; coordinate before editing overlapping paths.",
-      "A recent subject snapshot is visible; treat it as durable working identity, but still non-canonical."
+      "A recent subject snapshot is visible; treat it as durable working identity, but still non-canonical.",
+      "No since-last-seen baseline exists yet; ack the packet after review to establish one."
     ],
     "completion_rule": "Before ending a session, externalize progress with checkpoint or compaction, then release any shared claim."
+  },
+  "delta_feed": {
+    "observer_id": "codex-observer",
+    "first_observation": true,
+    "has_updates": true,
+    "update_count": 8,
+    "previous_seen_at": "",
+    "summary_text": "No observer cursor yet; current packet becomes the baseline after ack.",
+    "new_compactions": [
+      {
+        "compaction_id": "cmp-001",
+        "agent": "codex",
+        "summary": "Mutex landed; next agent should wire compaction summaries into gateway consumers only after packet stays stable.",
+        "updated_at": "2026-03-26T12:00:00+00:00"
+      }
+    ],
+    "new_subject_snapshots": [
+      {
+        "snapshot_id": "subj-001",
+        "agent": "codex",
+        "summary": "Operate as a packet-first runtime steward with explicit boundaries.",
+        "updated_at": "2026-03-26T12:01:00+00:00"
+      }
+    ],
+    "new_checkpoints": [
+      {
+        "checkpoint_id": "cp-001",
+        "agent": "codex",
+        "summary": "Packet lane is stable; observer delta feed still needs the CLI ack path.",
+        "next_action": "Expose an ack-aware packet entrypoint so later agents can advance their observer cursor.",
+        "updated_at": "2026-03-26T11:59:00+00:00"
+      }
+    ],
+    "new_traces": [
+      {
+        "session_id": "sess-001",
+        "agent": "codex",
+        "timestamp": "2026-03-26T11:55:00+00:00",
+        "topics": [
+          "runtime_adapter",
+          "redis"
+        ]
+      }
+    ],
+    "new_claims": [
+      {
+        "task_id": "launch-world-dedupe",
+        "agent": "codex",
+        "summary": "dedupe Redis world refresh after governance commit"
+      }
+    ],
+    "released_claim_ids": [],
+    "repo_change": {
+      "changed": true,
+      "previous_head": "",
+      "current_head": "abc1234",
+      "previous_dirty_count": 0,
+      "current_dirty_count": 4
+    },
+    "ack_command": "python scripts/run_r_memory_packet.py --agent codex-observer --ack"
   }
 }

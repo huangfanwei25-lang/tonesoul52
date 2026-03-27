@@ -568,10 +568,224 @@ def list_subject_snapshots(store=None, n: int = 3) -> List[Dict[str, Any]]:
         return []
 
 
+def get_observer_cursor(agent_id: str, store=None) -> Dict[str, Any]:
+    """Read the current since-last-seen cursor for an observing agent."""
+    observer_id = str(agent_id or "").strip()
+    if not observer_id:
+        return {}
+    if store is None:
+        from tonesoul.store import get_store
+
+        store = get_store()
+    try:
+        return dict(store.get_observer_cursor(observer_id) or {})
+    except Exception:
+        return {}
+
+
+def acknowledge_observer_cursor(
+    agent_id: str,
+    *,
+    packet: Dict[str, Any],
+    store=None,
+    ttl_seconds: int = 2592000,
+) -> Dict[str, Any]:
+    """Advance an observer cursor after the packet has been read."""
+    observer_id = str(agent_id or "").strip()
+    if not observer_id:
+        return {}
+    if store is None:
+        from tonesoul.store import get_store
+
+        store = get_store()
+    cursor = _build_observer_cursor(observer_id=observer_id, packet=packet)
+    try:
+        store.set_observer_cursor(observer_id, cursor, ttl_seconds=ttl_seconds)
+    except Exception:
+        return {}
+    return cursor
+
+
+def _build_observer_cursor(*, observer_id: str, packet: Dict[str, Any]) -> Dict[str, Any]:
+    traces = list(packet.get("recent_traces") or [])
+    compactions = list(packet.get("recent_compactions") or [])
+    subject_snapshots = list(packet.get("recent_subject_snapshots") or [])
+    checkpoints = list(packet.get("recent_checkpoints") or [])
+    claims = list(packet.get("active_claims") or [])
+    repo_progress = ((packet.get("project_memory_summary") or {}).get("repo_progress") or {})
+
+    latest_trace = traces[-1] if traces else {}
+    latest_compaction = compactions[0] if compactions else {}
+    latest_subject_snapshot = subject_snapshots[0] if subject_snapshots else {}
+    latest_checkpoint = checkpoints[0] if checkpoints else {}
+
+    return {
+        "agent": observer_id,
+        "last_seen_at": _utc_now(),
+        "packet_generated_at": str(packet.get("generated_at", "")),
+        "latest_trace_session_id": str(latest_trace.get("session_id", "")),
+        "latest_compaction_id": str(latest_compaction.get("compaction_id", "")),
+        "latest_subject_snapshot_id": str(latest_subject_snapshot.get("snapshot_id", "")),
+        "latest_checkpoint_id": str(latest_checkpoint.get("checkpoint_id", "")),
+        "active_claim_ids": [
+            str(claim.get("task_id", "")) for claim in claims if str(claim.get("task_id", "")).strip()
+        ],
+        "repo_head": str(repo_progress.get("head", "")),
+        "repo_dirty_count": int(repo_progress.get("dirty_count", 0) or 0),
+    }
+
+
+def _build_delta_feed(
+    *,
+    observer_id: str,
+    cursor: Dict[str, Any],
+    traces: List[Dict[str, Any]],
+    claims: List[Dict[str, Any]],
+    checkpoints: List[Dict[str, Any]],
+    compactions: List[Dict[str, Any]],
+    subject_snapshots: List[Dict[str, Any]],
+    project_memory_summary: Dict[str, Any],
+) -> Dict[str, Any]:
+    first_observation = not bool(cursor)
+
+    def _recent_since_marker(
+        entries: List[Dict[str, Any]],
+        *,
+        key: str,
+        fields: List[str],
+        marker: str,
+        limit: int = 3,
+    ) -> List[Dict[str, Any]]:
+        result: List[Dict[str, Any]] = []
+        for entry in entries:
+            entry_id = str(entry.get(key, ""))
+            if marker and entry_id == marker:
+                break
+            trimmed = {field: entry.get(field) for field in fields if field in entry}
+            result.append(trimmed)
+            if len(result) >= limit:
+                break
+        return result
+
+    new_compactions = _recent_since_marker(
+        compactions,
+        key="compaction_id",
+        fields=["compaction_id", "agent", "summary", "updated_at"],
+        marker=str(cursor.get("latest_compaction_id", "")),
+    )
+    new_subject_snapshots = _recent_since_marker(
+        subject_snapshots,
+        key="snapshot_id",
+        fields=["snapshot_id", "agent", "summary", "updated_at"],
+        marker=str(cursor.get("latest_subject_snapshot_id", "")),
+    )
+    new_checkpoints = _recent_since_marker(
+        checkpoints,
+        key="checkpoint_id",
+        fields=["checkpoint_id", "agent", "summary", "next_action", "updated_at"],
+        marker=str(cursor.get("latest_checkpoint_id", "")),
+    )
+
+    new_traces: List[Dict[str, Any]] = []
+    latest_trace_marker = str(cursor.get("latest_trace_session_id", ""))
+    for trace in reversed(traces):
+        trace_id = str(trace.get("session_id", ""))
+        if latest_trace_marker and trace_id == latest_trace_marker:
+            break
+        new_traces.append(
+            {
+                "session_id": trace_id,
+                "agent": trace.get("agent"),
+                "timestamp": trace.get("timestamp"),
+                "topics": list(trace.get("topics") or [])[:3],
+            }
+        )
+        if len(new_traces) >= 3:
+            break
+
+    previous_claim_ids = {
+        str(task_id).strip() for task_id in (cursor.get("active_claim_ids") or []) if str(task_id).strip()
+    }
+    current_claim_ids = {
+        str(claim.get("task_id", "")).strip() for claim in claims if str(claim.get("task_id", "")).strip()
+    }
+    new_claims = [
+        {
+            "task_id": str(claim.get("task_id", "")),
+            "agent": str(claim.get("agent", "")),
+            "summary": str(claim.get("summary", "")),
+        }
+        for claim in claims
+        if str(claim.get("task_id", "")).strip() and str(claim.get("task_id", "")).strip() not in previous_claim_ids
+    ][:3]
+    released_claim_ids = sorted(previous_claim_ids - current_claim_ids)[:3]
+
+    repo_progress = project_memory_summary.get("repo_progress") or {}
+    previous_head = str(cursor.get("repo_head", ""))
+    current_head = str(repo_progress.get("head", ""))
+    previous_dirty = int(cursor.get("repo_dirty_count", 0) or 0)
+    current_dirty = int(repo_progress.get("dirty_count", 0) or 0)
+    repo_changed = bool(previous_head and previous_head != current_head) or previous_dirty != current_dirty
+
+    update_count = (
+        len(new_compactions)
+        + len(new_subject_snapshots)
+        + len(new_checkpoints)
+        + len(new_traces)
+        + len(new_claims)
+        + len(released_claim_ids)
+        + (1 if repo_changed else 0)
+    )
+
+    summary_parts: List[str] = []
+    if first_observation:
+        summary_parts.append("No observer cursor yet; current packet becomes the baseline after ack.")
+    else:
+        if new_compactions:
+            summary_parts.append(f"compactions={len(new_compactions)}")
+        if new_subject_snapshots:
+            summary_parts.append(f"subject_snapshots={len(new_subject_snapshots)}")
+        if new_checkpoints:
+            summary_parts.append(f"checkpoints={len(new_checkpoints)}")
+        if new_traces:
+            summary_parts.append(f"accepted_traces={len(new_traces)}")
+        if new_claims or released_claim_ids:
+            summary_parts.append(f"claims(+{len(new_claims)}/-{len(released_claim_ids)})")
+        if repo_changed:
+            summary_parts.append(f"repo={previous_head or 'unknown'}->{current_head or 'unknown'} dirty={previous_dirty}->{current_dirty}")
+        if not summary_parts:
+            summary_parts.append("No changes since the last acknowledged observer baseline.")
+
+    return {
+        "observer_id": observer_id,
+        "first_observation": first_observation,
+        "has_updates": first_observation or update_count > 0,
+        "update_count": int(update_count),
+        "previous_seen_at": str(cursor.get("last_seen_at", "")),
+        "summary_text": " | ".join(summary_parts),
+        "new_compactions": new_compactions,
+        "new_subject_snapshots": new_subject_snapshots,
+        "new_checkpoints": new_checkpoints,
+        "new_traces": new_traces,
+        "new_claims": new_claims,
+        "released_claim_ids": released_claim_ids,
+        "repo_change": {
+            "changed": repo_changed,
+            "previous_head": previous_head,
+            "current_head": current_head,
+            "previous_dirty_count": previous_dirty,
+            "current_dirty_count": current_dirty,
+        },
+        "ack_command": f"python scripts/run_r_memory_packet.py --agent {observer_id} --ack",
+    }
+
+
 def _build_operator_guidance(
     *,
     backend_name: str,
     is_redis: bool,
+    observer_id: str,
+    delta_feed: Dict[str, Any],
     claims: List[Dict[str, Any]],
     compactions: List[Dict[str, Any]],
     subject_snapshots: List[Dict[str, Any]],
@@ -607,11 +821,17 @@ def _build_operator_guidance(
     else:
         reminders.append("Redis live surfaces are unavailable; coordination is currently file-backed.")
 
+    if observer_id:
+        if delta_feed.get("first_observation"):
+            reminders.append("No since-last-seen baseline exists yet; ack the packet after review to establish one.")
+        else:
+            reminders.append("A delta feed is visible for this agent; ack after review to advance the observer baseline.")
+
     return {
         "backend_mode": backend_name,
         "session_start": [
             "python -m tonesoul.diagnose --agent <your-id>",
-            "python scripts/run_r_memory_packet.py",
+            "python scripts/run_r_memory_packet.py --agent <your-id> --ack",
             "python scripts/run_task_claim.py list",
         ],
         "session_end": [
@@ -898,6 +1118,7 @@ def r_memory_packet(
     posture: Optional[GovernancePosture] = None,
     *,
     store=None,
+    observer_id: str = "",
     trace_limit: int = 5,
     visitor_limit: int = 5,
 ) -> Dict[str, Any]:
@@ -931,6 +1152,7 @@ def r_memory_packet(
 
     visitors = get_recent_visitors(store=store, n=visitor_limit)
     claims = list_active_claims(store=store)
+    checkpoints = list_checkpoints(store=store)[:trace_limit]
     compactions = list_compactions(store=store, n=trace_limit)
     subject_snapshots = list_subject_snapshots(store=store, n=max(3, min(trace_limit, 5)))
     from tonesoul.risk_calculator import build_project_memory_summary, compute_runtime_risk
@@ -998,6 +1220,18 @@ def r_memory_packet(
             "updated_at": str(entry.get("updated_at", "")),
         }
 
+    def _trim_checkpoint(entry: Dict[str, Any]) -> Dict[str, Any]:
+        return {
+            "checkpoint_id": str(entry.get("checkpoint_id", "")),
+            "agent": str(entry.get("agent", "")),
+            "session_id": str(entry.get("session_id", "")),
+            "summary": str(entry.get("summary", "")),
+            "pending_paths": list(entry.get("pending_paths") or []),
+            "next_action": str(entry.get("next_action", "")),
+            "source": str(entry.get("source", "")),
+            "updated_at": str(entry.get("updated_at", "")),
+        }
+
     def _trim_subject_snapshot(entry: Dict[str, Any]) -> Dict[str, Any]:
         return {
             "snapshot_id": str(entry.get("snapshot_id", "")),
@@ -1029,9 +1263,26 @@ def r_memory_packet(
         compactions=compactions,
         subject_snapshots=subject_snapshots,
     )
+    delta_feed = {}
+    observer_text = str(observer_id or "").strip()
+    if observer_text:
+        delta_feed = _build_delta_feed(
+            observer_id=observer_text,
+            cursor=get_observer_cursor(observer_text, store=store),
+            traces=[_trim_trace(t) for t in traces[-trace_limit:]],
+            claims=[_trim_claim(c) for c in claims],
+            checkpoints=[_trim_checkpoint(c) for c in checkpoints],
+            compactions=[_trim_compaction(c) for c in compactions[:trace_limit]],
+            subject_snapshots=[
+                _trim_subject_snapshot(snapshot) for snapshot in subject_snapshots[:trace_limit]
+            ],
+            project_memory_summary=project_memory_summary,
+        )
     operator_guidance = _build_operator_guidance(
         backend_name=getattr(store, "backend_name", "unknown"),
         is_redis=bool(getattr(store, "is_redis", False)),
+        observer_id=observer_text,
+        delta_feed=delta_feed,
         claims=claims,
         compactions=compactions,
         subject_snapshots=subject_snapshots,
@@ -1070,6 +1321,7 @@ def r_memory_packet(
             "checkpoints_surface": "ts:checkpoints:*",
             "compaction_surface": "ts:compacted",
             "subject_snapshot_surface": "ts:subject_snapshots",
+            "observer_cursor_surface": "ts:observer_cursors:{agent_id}",
             "field_surface": "ts:field",
         },
         "canonical_sources": [
@@ -1100,10 +1352,12 @@ def r_memory_packet(
         "recent_traces": [_trim_trace(t) for t in traces[-trace_limit:]],
         "recent_visitors": visitors[:visitor_limit],
         "active_claims": [_trim_claim(c) for c in claims],
+        "recent_checkpoints": [_trim_checkpoint(c) for c in checkpoints[:trace_limit]],
         "recent_compactions": [_trim_compaction(c) for c in compactions[:trace_limit]],
         "recent_subject_snapshots": [
             _trim_subject_snapshot(snapshot) for snapshot in subject_snapshots[:trace_limit]
         ],
         "project_memory_summary": project_memory_summary,
         "operator_guidance": operator_guidance,
+        **({"delta_feed": delta_feed} if observer_text else {}),
     }

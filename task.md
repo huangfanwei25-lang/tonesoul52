@@ -1,5 +1,11 @@
 # Task
 
+## Phase 652: Since-Last-Seen Delta Feed for Packet Observers (2026-03-28)
+- [x] Add a bounded per-agent observer cursor so packet readers can tell what changed since their last acknowledged baseline without background monitoring
+- [x] Expose the delta feed through `r_memory_packet()`, `diagnose`, and the direct packet CLI, including an explicit `--agent --ack` flow
+- [x] Align schema, example, and regression tests so observer deltas stay machine-readable and do not drift into undocumented behavior
+**Success Criteria**: A later agent can read packet/diagnose with an agent id, see a structured "since last seen" delta, and explicitly advance its observer baseline with `python scripts/run_r_memory_packet.py --agent <id> --ack`.
+
 ## Phase 651: Subject Snapshot Surface for Durable Working Identity (2026-03-28)
 - [x] Add a bounded `subject_snapshot` surface that is more durable than checkpoint/compaction but still explicitly non-canonical
 - [x] Route the latest subject snapshot through packet and diagnose so later agents can inherit stable boundaries, preferences, and verified routines without rereading the whole repo

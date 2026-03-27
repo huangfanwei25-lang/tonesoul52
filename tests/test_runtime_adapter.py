@@ -12,10 +12,12 @@ from tonesoul.runtime_adapter import (
     CommitConcurrencyError,
     GovernancePosture,
     SessionTrace,
+    acknowledge_observer_cursor,
     claim_task,
     commit,
     decay_tensions,
     drift_baseline,
+    get_observer_cursor,
     list_active_claims,
     list_checkpoints,
     list_compactions,
@@ -283,6 +285,7 @@ def test_r_memory_packet_exposes_runtime_dominance_and_recent_trace(
     assert packet["parallel_lanes"]["perspectives_surface"] == "ts:perspectives:{agent_id}"
     assert packet["parallel_lanes"]["compaction_surface"] == "ts:compacted"
     assert packet["parallel_lanes"]["subject_snapshot_surface"] == "ts:subject_snapshots"
+    assert packet["parallel_lanes"]["observer_cursor_surface"] == "ts:observer_cursors:{agent_id}"
     assert (
         "docs/architecture/TONESOUL_SHARED_R_MEMORY_OPERATIONS_CONTRACT.md"
         in packet["canonical_sources"]
@@ -294,12 +297,16 @@ def test_r_memory_packet_exposes_runtime_dominance_and_recent_trace(
     assert "repo_progress" in packet["project_memory_summary"]
     assert packet["operator_guidance"]["backend_mode"] == "file"
     assert packet["operator_guidance"]["session_start"][0].startswith("python -m tonesoul.diagnose")
+    assert packet["operator_guidance"]["session_start"][1].startswith(
+        "python scripts/run_r_memory_packet.py --agent"
+    )
     assert packet["operator_guidance"]["session_end"][0].startswith("python scripts/save_checkpoint.py")
     assert "claim" in packet["operator_guidance"]["coordination_commands"]
     assert "subject_snapshot" in packet["operator_guidance"]["coordination_commands"]
     assert "checkpoint or compaction" in packet["operator_guidance"]["completion_rule"]
     assert packet["recent_traces"][0]["agent"] == "codex"
     assert packet["recent_traces"][0]["topics"] == ["runtime", "redis"]
+    assert packet["recent_checkpoints"] == []
 
 
 def test_task_claims_prevent_collisions_and_appear_in_packet(tmp_path: Path) -> None:
@@ -541,6 +548,120 @@ def test_r_memory_packet_surfaces_fresh_compaction_even_when_traces_are_older(
     assert (
         "No active claims are visible; claim shared paths before editing them."
         in packet["operator_guidance"]["current_reminders"]
+    )
+
+
+def test_r_memory_packet_surfaces_since_last_seen_delta_and_ack(tmp_path: Path) -> None:
+    from tonesoul.backends.file_store import FileStore
+
+    store = FileStore(
+        gov_path=tmp_path / "governance_state.json",
+        traces_path=tmp_path / "session_traces.jsonl",
+        zones_path=tmp_path / "zone_registry.json",
+        claims_path=tmp_path / ".aegis" / "task_claims.json",
+        checkpoints_path=tmp_path / ".aegis" / "checkpoints.json",
+        compactions_path=tmp_path / ".aegis" / "compacted.json",
+        subject_snapshots_path=tmp_path / ".aegis" / "subject_snapshots.json",
+        observer_cursors_path=tmp_path / ".aegis" / "observer_cursors.json",
+    )
+
+    store.append_trace(
+        SessionTrace(
+            agent="codex",
+            session_id="sess-first",
+            timestamp="2026-03-28T00:00:00+00:00",
+            topics=["delta-feed"],
+            key_decisions=["establish observer baseline"],
+        ).to_dict()
+    )
+    claim_task(
+        "delta-lane",
+        agent_id="codex",
+        summary="wire since-last-seen observer cursor",
+        paths=["tonesoul/runtime_adapter.py"],
+        store=store,
+    )
+    write_checkpoint(
+        "cp-first",
+        agent_id="codex",
+        session_id="sess-first",
+        summary="packet now exposes recent checkpoints",
+        pending_paths=["tonesoul/diagnose.py"],
+        next_action="add ack-aware CLI",
+        store=store,
+    )
+    first_compaction = write_compaction(
+        agent_id="codex",
+        session_id="sess-first",
+        summary="Observer cursor lane is ready for first-baseline acknowledgement.",
+        carry_forward=["ack after review, not before"],
+        pending_paths=["scripts/run_r_memory_packet.py"],
+        next_action="teach the CLI to persist observer baselines",
+        store=store,
+    )
+    write_subject_snapshot(
+        agent_id="codex",
+        session_id="sess-first",
+        summary="Operate as a packet-first observer and advance baselines deliberately.",
+        stable_vows=["do not treat unread packet data as inherited"],
+        durable_boundaries=["observer cursor stays non-canonical"],
+        decision_preferences=["prefer deltas over broad rescans when possible"],
+        verified_routines=["ack only after reviewing the packet"],
+        active_threads=["delta-feed rollout"],
+        store=store,
+    )
+
+    first_packet = r_memory_packet(
+        posture=GovernancePosture(),
+        store=store,
+        observer_id="claude-observer",
+    )
+
+    assert first_packet["delta_feed"]["first_observation"] is True
+    assert first_packet["delta_feed"]["ack_command"] == (
+        "python scripts/run_r_memory_packet.py --agent claude-observer --ack"
+    )
+    assert first_packet["delta_feed"]["new_compactions"][0]["compaction_id"] == first_compaction["compaction_id"]
+    assert (
+        "No since-last-seen baseline exists yet; ack the packet after review to establish one."
+        in first_packet["operator_guidance"]["current_reminders"]
+    )
+
+    cursor = acknowledge_observer_cursor(
+        "claude-observer",
+        packet=first_packet,
+        store=store,
+    )
+    stored_cursor = get_observer_cursor("claude-observer", store=store)
+
+    assert cursor["latest_compaction_id"] == first_compaction["compaction_id"]
+    assert stored_cursor["latest_checkpoint_id"] == "cp-first"
+    assert stored_cursor["active_claim_ids"] == ["delta-lane"]
+
+    release_task_claim("delta-lane", agent_id="codex", store=store)
+    second_checkpoint = write_checkpoint(
+        "cp-second",
+        agent_id="codex",
+        session_id="sess-second",
+        summary="Ack path landed; re-read packet and observe only the new delta.",
+        pending_paths=["tonesoul/diagnose.py"],
+        next_action="show delta feed in diagnose",
+        store=store,
+    )
+
+    second_packet = r_memory_packet(
+        posture=GovernancePosture(),
+        store=store,
+        observer_id="claude-observer",
+    )
+
+    assert second_packet["delta_feed"]["first_observation"] is False
+    assert second_packet["delta_feed"]["has_updates"] is True
+    assert second_packet["delta_feed"]["new_checkpoints"][0]["checkpoint_id"] == second_checkpoint["checkpoint_id"]
+    assert second_packet["delta_feed"]["released_claim_ids"] == ["delta-lane"]
+    assert (
+        "A delta feed is visible for this agent; ack after review to advance the observer baseline."
+        in second_packet["operator_guidance"]["current_reminders"]
     )
 
 

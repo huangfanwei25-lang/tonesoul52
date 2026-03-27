@@ -27,6 +27,7 @@ _DEFAULT_PERSPECTIVES = _ROOT / ".aegis" / "perspectives.json"
 _DEFAULT_CHECKPOINTS = _ROOT / ".aegis" / "checkpoints.json"
 _DEFAULT_COMPACTIONS = _ROOT / ".aegis" / "compacted.json"
 _DEFAULT_SUBJECT_SNAPSHOTS = _ROOT / ".aegis" / "subject_snapshots.json"
+_DEFAULT_OBSERVER_CURSORS = _ROOT / ".aegis" / "observer_cursors.json"
 
 
 class FileStore:
@@ -43,6 +44,7 @@ class FileStore:
         checkpoints_path: Path | None = None,
         compactions_path: Path | None = None,
         subject_snapshots_path: Path | None = None,
+        observer_cursors_path: Path | None = None,
     ) -> None:
         self.gov_path = gov_path or _DEFAULT_GOV
         self.traces_path = traces_path or _DEFAULT_TRACES
@@ -53,6 +55,7 @@ class FileStore:
         self.checkpoints_path = checkpoints_path or _DEFAULT_CHECKPOINTS
         self.compactions_path = compactions_path or _DEFAULT_COMPACTIONS
         self.subject_snapshots_path = subject_snapshots_path or _DEFAULT_SUBJECT_SNAPSHOTS
+        self.observer_cursors_path = observer_cursors_path or _DEFAULT_OBSERVER_CURSORS
 
     # ── Governance state ────────────────────────────────────────────────────
 
@@ -319,6 +322,27 @@ class FileStore:
         self._purge_expired_list_entries(snapshots)
         self._write_list_registry(self.subject_snapshots_path, snapshots)
         return snapshots[: max(0, int(n))]
+
+    def set_observer_cursor(
+        self,
+        agent_id: str,
+        data: Dict[str, Any],
+        *,
+        ttl_seconds: int = 2592000,
+    ) -> None:
+        cursors = self._read_registry(self.observer_cursors_path)
+        entry = dict(data)
+        entry["agent"] = agent_id
+        entry["expires_at"] = str(_time() + float(ttl_seconds))
+        cursors[agent_id] = entry
+        self._purge_expired_entries(cursors)
+        self._write_registry(self.observer_cursors_path, cursors)
+
+    def get_observer_cursor(self, agent_id: str) -> Dict[str, Any]:
+        cursors = self._read_registry(self.observer_cursors_path)
+        self._purge_expired_entries(cursors)
+        self._write_registry(self.observer_cursors_path, cursors)
+        return dict(cursors.get(agent_id) or {})
 
     def _read_json_file(self, path: Path) -> Dict[str, Any]:
         if not path.exists():
