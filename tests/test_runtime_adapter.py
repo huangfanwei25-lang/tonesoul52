@@ -288,6 +288,9 @@ def test_r_memory_packet_exposes_runtime_dominance_and_recent_trace(
     assert "project_memory_summary" in packet
     assert "summary_text" in packet["project_memory_summary"]
     assert "repo_progress" in packet["project_memory_summary"]
+    assert packet["operator_guidance"]["backend_mode"] == "file"
+    assert packet["operator_guidance"]["session_start"][0].startswith("python -m tonesoul.diagnose")
+    assert "claim" in packet["operator_guidance"]["coordination_commands"]
     assert packet["recent_traces"][0]["agent"] == "codex"
     assert packet["recent_traces"][0]["topics"] == ["runtime", "redis"]
 
@@ -427,6 +430,10 @@ def test_compactions_use_noncanonical_resumability_lane(tmp_path: Path) -> None:
     assert "project_memory_summary" in packet
     assert packet["project_memory_summary"]["next_actions"][0] == "use packet consumption in UI"
     assert "repo_progress" in packet["project_memory_summary"]
+    assert (
+        "Prefer recent_compactions and project_memory_summary before older recent_traces."
+        in packet["operator_guidance"]["current_reminders"]
+    )
 
 
 def test_r_memory_packet_surfaces_fresh_compaction_even_when_traces_are_older(
@@ -477,6 +484,10 @@ def test_r_memory_packet_surfaces_fresh_compaction_even_when_traces_are_older(
         "Verify a fresh AI cites recent_compactions before stale traces."
     ]
     assert "tonesoul/unified_pipeline.py" in packet["project_memory_summary"]["pending_paths"]
+    assert (
+        "No active claims are visible; claim shared paths before editing them."
+        in packet["operator_guidance"]["current_reminders"]
+    )
 
 
 # ── decay_tensions() ────────────────────────────────────────────

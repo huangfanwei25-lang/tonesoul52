@@ -17,7 +17,8 @@
     "recent_traces",
     "recent_visitors",
     "active_claims",
-    "recent_compactions"
+    "recent_compactions",
+    "operator_guidance"
   ],
   "properties": {
     "contract_version": {
@@ -187,6 +188,9 @@
     },
     "project_memory_summary": {
       "$ref": "#/$defs/project_memory_summary"
+    },
+    "operator_guidance": {
+      "$ref": "#/$defs/operator_guidance"
     }
   },
   "$defs": {
@@ -494,6 +498,80 @@
         "summary_text": {
           "type": "string",
           "minLength": 1
+        }
+      }
+    },
+    "operator_guidance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "backend_mode",
+        "session_start",
+        "coordination_commands",
+        "recommended_order",
+        "current_reminders"
+      ],
+      "properties": {
+        "backend_mode": {
+          "type": "string",
+          "enum": ["redis", "file", "unknown"]
+        },
+        "session_start": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "coordination_commands": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "claim",
+            "perspective",
+            "checkpoint",
+            "compaction",
+            "release"
+          ],
+          "properties": {
+            "claim": {
+              "type": "string",
+              "minLength": 1
+            },
+            "perspective": {
+              "type": "string",
+              "minLength": 1
+            },
+            "checkpoint": {
+              "type": "string",
+              "minLength": 1
+            },
+            "compaction": {
+              "type": "string",
+              "minLength": 1
+            },
+            "release": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "recommended_order": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "current_reminders": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
         }
       }
     }

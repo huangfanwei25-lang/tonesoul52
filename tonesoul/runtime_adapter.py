@@ -513,6 +513,62 @@ def list_compactions(store=None, n: int = 5) -> List[Dict[str, Any]]:
         return []
 
 
+def _build_operator_guidance(
+    *,
+    backend_name: str,
+    is_redis: bool,
+    claims: List[Dict[str, Any]],
+    compactions: List[Dict[str, Any]],
+    project_memory_summary: Dict[str, Any],
+) -> Dict[str, Any]:
+    """Build packet-visible operator guidance for shared R-memory coordination."""
+    reminders: List[str] = []
+    if compactions:
+        reminders.append("Prefer recent_compactions and project_memory_summary before older recent_traces.")
+    else:
+        reminders.append("No recent compaction is visible; write one before handoff if you finish a chunk.")
+
+    if claims:
+        reminders.append("Active claims are visible; coordinate before editing overlapping paths.")
+    else:
+        reminders.append("No active claims are visible; claim shared paths before editing them.")
+
+    pending_paths = list(project_memory_summary.get("pending_paths") or [])
+    if pending_paths:
+        reminders.append("Pending paths are already externalized; reuse them before widening the scan.")
+
+    if is_redis:
+        reminders.append("Redis live surfaces are available; perspectives and checkpoints may be visible immediately.")
+    else:
+        reminders.append("Redis live surfaces are unavailable; coordination is currently file-backed.")
+
+    return {
+        "backend_mode": backend_name,
+        "session_start": [
+            "python -m tonesoul.diagnose --agent <your-id>",
+            "python scripts/run_r_memory_packet.py",
+            "python scripts/run_task_claim.py list",
+        ],
+        "coordination_commands": {
+            "claim": 'python scripts/run_task_claim.py claim <task_id> --agent <your-id> --summary "..."',
+            "perspective": 'python scripts/save_perspective.py --agent <your-id> --summary "..." --stance "..."',
+            "checkpoint": 'python scripts/save_checkpoint.py --checkpoint-id <id> --agent <your-id> --summary "..." --path "..."',
+            "compaction": 'python scripts/save_compaction.py --agent <your-id> --summary "..." --path "..."',
+            "release": "python scripts/run_task_claim.py release <task_id> --agent <your-id>",
+        },
+        "recommended_order": [
+            "diagnose/load",
+            "packet",
+            "claim",
+            "work",
+            "perspective/checkpoint/compaction",
+            "commit",
+            "release",
+        ],
+        "current_reminders": reminders,
+    }
+
+
 # ---------------------------------------------------------------------------
 # Public API: commit()
 # ---------------------------------------------------------------------------
@@ -875,6 +931,13 @@ def r_memory_packet(
         claims=claims,
         compactions=compactions,
     )
+    operator_guidance = _build_operator_guidance(
+        backend_name=getattr(store, "backend_name", "unknown"),
+        is_redis=bool(getattr(store, "is_redis", False)),
+        claims=claims,
+        compactions=compactions,
+        project_memory_summary=project_memory_summary,
+    )
 
     return {
         "contract_version": R_MEMORY_PACKET_VERSION,
@@ -939,4 +1002,5 @@ def r_memory_packet(
         "active_claims": [_trim_claim(c) for c in claims],
         "recent_compactions": [_trim_compaction(c) for c in compactions[:trace_limit]],
         "project_memory_summary": project_memory_summary,
+        "operator_guidance": operator_guidance,
     }

@@ -63,6 +63,7 @@ def _packet(store, posture, *, trace_limit: int = 5, visitor_limit: int = 5) -> 
             "parallel_lanes": {},
             "posture": {"risk_posture": {}},
             "project_memory_summary": {},
+            "operator_guidance": {},
         }
 
 
@@ -132,6 +133,7 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
         "parallel_lanes": {},
         "posture": {"risk_posture": {}},
         "project_memory_summary": {},
+        "operator_guidance": {},
     }
 
     try:
@@ -318,6 +320,28 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
             path_preview = list(repo_progress.get("path_preview") or [])
             if path_preview:
                 lines.append(f"  repo_paths={', '.join(path_preview[:3])}")
+
+    operator_guidance = packet.get("operator_guidance") or {}
+    if operator_guidance:
+        lines.append("")
+        lines.append("[Operator Guidance]")
+        session_start = list(operator_guidance.get("session_start") or [])
+        if session_start:
+            lines.append("  session_start:")
+            for command in session_start[:3]:
+                lines.append(f"    {command}")
+        commands = operator_guidance.get("coordination_commands") or {}
+        if commands:
+            lines.append("  coordination_commands:")
+            for key in ("claim", "perspective", "checkpoint", "compaction", "release"):
+                command = str(commands.get(key, "")).strip()
+                if command:
+                    lines.append(f"    {key}={command}")
+        reminders = list(operator_guidance.get("current_reminders") or [])
+        if reminders:
+            lines.append("  current_reminders:")
+            for reminder in reminders[:4]:
+                lines.append(f"    - {_clip(reminder)}")
 
     lanes = packet.get("parallel_lanes", {})
     if lanes:

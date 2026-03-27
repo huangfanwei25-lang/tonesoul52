@@ -1,5 +1,11 @@
 # Task
 
+## Phase 649: Packet-Visible Operator Guidance (2026-03-27)
+- [x] Surface shared R-memory operator commands and current reminders directly through `r_memory_packet()` instead of leaving them only in prose docs
+- [x] Render the same operator guidance inside `diagnose` so later agents see packet-first coordination steps at session start
+- [x] Extend packet, diagnose, and runtime-adapter tests so operator guidance stays machine-readable and synchronized with the actual scripts
+**Success Criteria**: A later agent can inspect packet/diagnose output and immediately see both the command-level coordination workflow and the current reminders about claims, compactions, and backend mode without rereading long architecture docs.
+
 ## Phase 648: Shared R-Memory Operator Surface Completion (2026-03-27)
 - [x] Make `run_task_claim.py` directly executable from the repo root instead of requiring manual import-path repair
 - [x] Add matching CLI entrypoints for `write_perspective()` and `write_checkpoint()` so the full non-canonical coordination cadence has first-class scripts

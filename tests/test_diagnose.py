@@ -143,6 +143,34 @@ def _fake_packet():
                 "repo=codex/r-memory-compaction-lane-20260326@04c243d dirty=6"
             ),
         },
+        "operator_guidance": {
+            "backend_mode": "redis",
+            "session_start": [
+                "python -m tonesoul.diagnose --agent <your-id>",
+                "python scripts/run_r_memory_packet.py",
+                "python scripts/run_task_claim.py list",
+            ],
+            "coordination_commands": {
+                "claim": 'python scripts/run_task_claim.py claim <task_id> --agent <your-id> --summary "..."',
+                "perspective": 'python scripts/save_perspective.py --agent <your-id> --summary "..." --stance "..."',
+                "checkpoint": 'python scripts/save_checkpoint.py --checkpoint-id <id> --agent <your-id> --summary "..." --path "..."',
+                "compaction": 'python scripts/save_compaction.py --agent <your-id> --summary "..." --path "..."',
+                "release": "python scripts/run_task_claim.py release <task_id> --agent <your-id>",
+            },
+            "recommended_order": [
+                "diagnose/load",
+                "packet",
+                "claim",
+                "work",
+                "perspective/checkpoint/compaction",
+                "commit",
+                "release",
+            ],
+            "current_reminders": [
+                "Prefer recent_compactions and project_memory_summary before older recent_traces.",
+                "Active claims are visible; coordinate before editing overlapping paths.",
+            ],
+        },
     }
 
 
@@ -184,4 +212,7 @@ def test_full_diagnostic_is_cp950_safe_and_includes_shared_runtime(monkeypatch) 
     assert "diagnose/load -> packet -> claim" in report
     assert "repo=codex/r-memory-compaction-lane-20260326@04c243d dirty=6" in report
     assert "repo_paths=tonesoul/runtime_adapter.py, tonesoul/diagnose.py" in report
+    assert "[Operator Guidance]" in report
+    assert "save_checkpoint.py" in report
+    assert "Prefer recent_compactions and project_memory_summary before older" in report
     report.encode("cp950", errors="strict")
