@@ -1018,3 +1018,9 @@
 - [x] bound the next Claude lane to documentation-only outputs for readiness gate, task tracks, and plan delta
 - [x] keep runtime implementation ownership on the Codex lane
 **Success Criteria**: Claude has one clear long-context workstream that strengthens ToneSoul control-plane discipline without touching runtime code.
+
+## Phase 663: Claude Council Dossier And Dissent Work Order (2026-03-28)
+- [x] extend `docs/plans/claude_deep_structure_authority_work_order_2026-03-27.md` with a documentation-only council dossier and adaptive deliberation pass
+- [x] keep the follow-up bounded to decision-dossier shape, dissent preservation, and deliberation-mode contracts instead of runtime mutation
+- [x] keep implementation ownership for any future council-surface changes on the Codex lane
+**Success Criteria**: Claude has one clear long-context workstream that strengthens ToneSoul council replayability and dissent preservation without touching runtime code, packet schema, or frontend surfaces.

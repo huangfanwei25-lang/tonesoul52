@@ -631,3 +631,176 @@ When done, report back with:
 - the safest default mapping for Quick Change / Feature Track / System Track
 - the most dangerous current plan-thrash patterns you found
 - which one bounded control-plane improvement Codex should implement first
+
+---
+
+## Follow-Up Extension: Council Dossier And Dissent Adaptation
+
+This extension exists because ToneSoul already has:
+
+- council personas,
+- verdicts,
+- coherence posture,
+- packet/compaction handoff,
+- and stronger control-plane discipline.
+
+What it still lacks is a cleaner answer to this question:
+
+> when multiple perspectives deliberate, what should a later agent or human inherit besides the final yes/no verdict?
+
+This is a bounded synthesis-and-contract ticket.
+It is not permission to redesign the runtime, replace the council, or rebuild the dashboard.
+
+## Why This Follow-Up Fits Claude
+
+This pass benefits from a long-context synthesis agent because it requires:
+
+- comparing current council/runtime outputs against missing decision-summary structure
+- separating final verdict, minority dissent, confidence posture, and change-of-mind evidence
+- translating good external multi-agent review patterns into ToneSoul-native naming
+- keeping the result legible for both future agents and human operators without overclaiming implementation
+
+## Follow-Up Objective
+
+Produce a bounded contract for **Council Dossier + Dissent Preservation + Adaptive Deliberation Modes** so later agents can answer:
+
+- what was the final decision?
+- how confident was the system?
+- which perspective disagreed, and why?
+- did the deliberation mode match the task risk/track?
+- what should be replayable later without pretending hidden reasoning was fully captured?
+
+The goal is to reduce four failure modes:
+
+1. **verdict flattening**: only the final answer survives, and all useful dissent is lost
+2. **false consensus**: a later agent assumes "council approved" means everyone agreed
+3. **mode mismatch**: trivial tasks get heavyweight deliberation or risky tasks get shallow deliberation
+4. **replay confusion**: later agents cannot tell what is genuinely recoverable versus what remained opaque
+
+## Mandatory Focus Areas
+
+At minimum, classify these output/deliberation questions:
+
+- `final_verdict`
+- `confidence_posture`
+- `minority_report`
+- `dissent_preservation`
+- `change_of_position`
+- `evidence_refs`
+- `deliberation_mode`
+- `replayable_summary`
+
+At minimum, evaluate these existing ToneSoul surfaces as inputs:
+
+- `docs/COUNCIL_RUNTIME.md`
+- `spec/council_spec.md`
+- `tonesoul/unified_pipeline.py`
+- `tonesoul/council/runtime.py`
+- `docs/architecture/TONESOUL_TASK_TRACK_AND_READINESS_CONTRACT.md`
+- `docs/architecture/TONESOUL_PLAN_DELTA_CONTRACT.md`
+- `docs/architecture/TONESOUL_OBSERVABLE_SHELL_OPACITY_CONTRACT.md`
+- `docs/architecture/TONESOUL_SHARED_R_MEMORY_OPERATIONS_CONTRACT.md`
+- `docs/status/claim_authority_latest.json`
+
+At minimum, propose bounded ToneSoul-native deliberation modes such as:
+
+- `lightweight_review`
+- `standard_council`
+- `elevated_council`
+
+You may rename them if a better ToneSoul-native vocabulary emerges.
+
+## Follow-Up Deliverables
+
+### Deliverable K
+
+Create:
+
+- `docs/architecture/TONESOUL_COUNCIL_DOSSIER_AND_DISSENT_CONTRACT.md`
+
+This should be a table-first contract that defines:
+
+- what fields belong in a future ToneSoul decision dossier
+- which dissent must be preserved
+- what counts as a minority report
+- what counts as confidence posture
+- what later agents may safely replay from a deliberation
+- what remains opaque even after a good dossier
+
+Each field or row should include at least:
+
+- field or concept
+- purpose
+- source surface
+- authority posture
+- whether it is required / optional / forbidden
+- risk if omitted or overclaimed
+- short rationale
+
+### Deliverable L
+
+Create:
+
+- `docs/architecture/TONESOUL_ADAPTIVE_DELIBERATION_MODE_CONTRACT.md`
+
+This should define when ToneSoul should conceptually prefer:
+
+- lightweight review
+- standard council
+- elevated council
+
+Map the modes against:
+
+- task track
+- readiness posture
+- risk posture
+- claim collision
+- human clarification requirement
+
+Do not implement mode selection.
+Define only the contract and decision boundary.
+
+### Deliverable M
+
+Optional, only if clearly justified by K/L:
+
+- `docs/plans/tonesoul_council_followup_candidates_2026-03-28.md`
+
+Use this only if there are 3-5 genuinely bounded future work items.
+Do not write a giant roadmap.
+
+## Follow-Up Boundaries
+
+Do not do these things in this extension:
+
+- do not modify `tonesoul/unified_pipeline.py`
+- do not modify `tonesoul/council/runtime.py`
+- do not modify packet schema
+- do not redesign dashboard/frontend
+- do not invent hidden-thought capture
+- do not rewrite `docs/COUNCIL_RUNTIME.md` beyond narrow factual corrections if absolutely necessary
+- do not convert dissent into a new constitutional authority surface
+
+If a council-output gap deserves future implementation:
+
+- bound it clearly
+- keep it small
+- leave runtime implementation to Codex
+
+## Follow-Up Acceptance Criteria
+
+This extension is successful if:
+
+- later agents can tell what a good ToneSoul decision dossier should contain
+- later agents can preserve dissent without pretending disagreement disappeared
+- later agents can classify when deliberation should stay light versus become elevated
+- the result improves replayability and human legibility without overclaiming access to hidden reasoning
+
+## Follow-Up Handoff Back To Codex
+
+When done, report back with:
+
+- the minimal safe shape of a ToneSoul council dossier
+- which dissent fields must survive even when the final verdict is clear
+- the safest default deliberation-mode mapping for quick/feature/system work
+- which one bounded council-surface improvement Codex should implement first
