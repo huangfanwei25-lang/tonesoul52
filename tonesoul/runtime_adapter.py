@@ -92,6 +92,7 @@ class SessionTrace:
     vow_events: List[Dict[str, Any]] = field(default_factory=list)
     aegis_vetoes: List[Dict[str, Any]] = field(default_factory=list)
     key_decisions: List[str] = field(default_factory=list)
+    council_dossier: Optional[Dict[str, Any]] = None
     stance_shift: Optional[Dict[str, str]] = None
 
     def __post_init__(self) -> None:
@@ -102,6 +103,10 @@ class SessionTrace:
 
     def to_dict(self) -> Dict[str, Any]:
         d = asdict(self)
+        if d.get("council_dossier") is not None:
+            d["council_dossier"] = _normalize_council_dossier(d.get("council_dossier"))
+        if not d.get("council_dossier"):
+            del d["council_dossier"]
         if d.get("stance_shift") is None:
             del d["stance_shift"]
         return d
@@ -474,6 +479,7 @@ def write_compaction(
     carry_forward: Optional[List[str]] = None,
     pending_paths: Optional[List[str]] = None,
     evidence_refs: Optional[List[str]] = None,
+    council_dossier: Optional[Dict[str, Any]] = None,
     next_action: str = "",
     source: str = "direct",
     ttl_seconds: int = 604800,
@@ -493,6 +499,7 @@ def write_compaction(
         "carry_forward": list(carry_forward or []),
         "pending_paths": list(pending_paths or []),
         "evidence_refs": list(evidence_refs or []),
+        "council_dossier": _normalize_council_dossier(council_dossier),
         "next_action": next_action,
         "source": source,
         "updated_at": _utc_now(),
@@ -749,6 +756,119 @@ def _clean_string_list(values: Optional[List[Any]]) -> List[str]:
         seen.add(text)
         cleaned.append(text)
     return cleaned
+
+
+def _normalize_council_dossier(payload: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+    if not isinstance(payload, dict):
+        return {}
+    normalized: Dict[str, Any] = {}
+    dossier_version = str(payload.get("dossier_version", "")).strip()
+    final_verdict = str(payload.get("final_verdict", "")).strip()
+    confidence_posture = str(payload.get("confidence_posture", "")).strip()
+    deliberation_mode = str(payload.get("deliberation_mode", "")).strip()
+    opacity_declaration = str(payload.get("opacity_declaration", "")).strip()
+    if dossier_version:
+        normalized["dossier_version"] = dossier_version
+    if final_verdict:
+        normalized["final_verdict"] = final_verdict
+    if confidence_posture:
+        normalized["confidence_posture"] = confidence_posture
+    if deliberation_mode:
+        normalized["deliberation_mode"] = deliberation_mode
+    if opacity_declaration:
+        normalized["opacity_declaration"] = opacity_declaration
+
+    for key in ("coherence_score", "dissent_ratio"):
+        value = payload.get(key)
+        if value is None:
+            continue
+        try:
+            normalized[key] = round(float(value), 3)
+        except (TypeError, ValueError):
+            continue
+
+    minority_report: List[Dict[str, Any]] = []
+    for item in payload.get("minority_report") or []:
+        if not isinstance(item, dict):
+            continue
+        try:
+            confidence = round(float(item.get("confidence", 0.0)), 3)
+        except (TypeError, ValueError):
+            confidence = 0.0
+        entry = {
+            "perspective": str(item.get("perspective", "")).strip(),
+            "decision": str(item.get("decision", "")).strip(),
+            "confidence": confidence,
+            "reasoning": str(item.get("reasoning", "")).strip(),
+            "evidence": _clean_string_list(item.get("evidence")),
+        }
+        if entry["perspective"] and entry["decision"] and entry["reasoning"]:
+            minority_report.append(entry)
+    normalized["minority_report"] = minority_report
+
+    vote_summary: List[Dict[str, Any]] = []
+    for item in payload.get("vote_summary") or []:
+        if not isinstance(item, dict):
+            continue
+        try:
+            confidence = round(float(item.get("confidence", 0.0)), 3)
+        except (TypeError, ValueError):
+            confidence = 0.0
+        entry = {
+            "perspective": str(item.get("perspective", "")).strip(),
+            "decision": str(item.get("decision", "")).strip(),
+            "confidence": confidence,
+        }
+        reasoning = str(item.get("reasoning", "")).strip()
+        evidence = _clean_string_list(item.get("evidence"))
+        if reasoning:
+            entry["reasoning"] = reasoning
+        if evidence:
+            entry["evidence"] = evidence
+        if entry["perspective"] and entry["decision"]:
+            vote_summary.append(entry)
+    normalized["vote_summary"] = vote_summary
+
+    change_of_position: List[Dict[str, Any]] = []
+    for item in payload.get("change_of_position") or []:
+        if not isinstance(item, dict):
+            continue
+        entry = {str(key): value for key, value in item.items() if value is not None}
+        if entry:
+            change_of_position.append(entry)
+    normalized["change_of_position"] = change_of_position
+
+    normalized["evidence_refs"] = _clean_string_list(payload.get("evidence_refs"))
+    grounding = payload.get("grounding_summary")
+    if isinstance(grounding, dict):
+        normalized["grounding_summary"] = {
+            "has_ungrounded_claims": bool(grounding.get("has_ungrounded_claims", False)),
+            "total_evidence_sources": int(grounding.get("total_evidence_sources", 0) or 0),
+        }
+    if "evolution_suppression_flag" in payload:
+        normalized["evolution_suppression_flag"] = bool(payload.get("evolution_suppression_flag"))
+    return normalized
+
+
+def _build_council_dossier_summary(payload: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+    dossier = _normalize_council_dossier(payload)
+    if not dossier:
+        return {}
+    minority_report = list(dossier.get("minority_report") or [])
+    summary = {
+        "final_verdict": str(dossier.get("final_verdict", "")),
+        "confidence_posture": str(dossier.get("confidence_posture", "")),
+        "coherence_score": float(dossier.get("coherence_score", 0.0) or 0.0),
+        "dissent_ratio": float(dossier.get("dissent_ratio", 0.0) or 0.0),
+        "has_minority_report": bool(minority_report),
+    }
+    deliberation_mode = str(dossier.get("deliberation_mode", "")).strip()
+    opacity_declaration = str(dossier.get("opacity_declaration", "")).strip()
+    if deliberation_mode:
+        summary["deliberation_mode"] = deliberation_mode
+    if opacity_declaration:
+        summary["opacity_declaration"] = opacity_declaration
+    return summary
 
 
 def _slug_from_summary(summary: str, *, fallback: str, prefix: str = "") -> str:
@@ -2131,7 +2251,7 @@ def r_memory_packet(
         return item
 
     def _trim_trace(trace: Dict[str, Any]) -> Dict[str, Any]:
-        return {
+        item = {
             "session_id": str(trace.get("session_id", "")),
             "agent": str(trace.get("agent", "unknown")),
             "timestamp": str(trace.get("timestamp", "")),
@@ -2141,6 +2261,10 @@ def r_memory_packet(
             "aegis_veto_count": len(trace.get("aegis_vetoes") or []),
             "key_decision_count": len(trace.get("key_decisions") or []),
         }
+        council_dossier_summary = _build_council_dossier_summary(trace.get("council_dossier"))
+        if council_dossier_summary:
+            item["council_dossier_summary"] = council_dossier_summary
+        return item
 
     def _trim_claim(claim: Dict[str, Any]) -> Dict[str, Any]:
         return {
@@ -2154,7 +2278,7 @@ def r_memory_packet(
         }
 
     def _trim_compaction(entry: Dict[str, Any]) -> Dict[str, Any]:
-        return {
+        item = {
             "compaction_id": str(entry.get("compaction_id", "")),
             "agent": str(entry.get("agent", "")),
             "session_id": str(entry.get("session_id", "")),
@@ -2166,6 +2290,10 @@ def r_memory_packet(
             "source": str(entry.get("source", "")),
             "updated_at": str(entry.get("updated_at", "")),
         }
+        council_dossier = _normalize_council_dossier(entry.get("council_dossier"))
+        if council_dossier:
+            item["council_dossier"] = council_dossier
+        return item
 
     def _trim_checkpoint(entry: Dict[str, Any]) -> Dict[str, Any]:
         return {

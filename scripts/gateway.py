@@ -161,6 +161,7 @@ def handle_compact(handler) -> None:
         carry_forward=list(body.get("carry_forward") or []),
         pending_paths=list(body.get("pending_paths") or []),
         evidence_refs=list(body.get("evidence_refs") or []),
+        council_dossier=dict(body.get("council_dossier")) if isinstance(body.get("council_dossier"), dict) else None,
         next_action=str(body.get("next_action", "")),
         source="gateway",
         ttl_seconds=int(body.get("ttl_seconds", 604800)),

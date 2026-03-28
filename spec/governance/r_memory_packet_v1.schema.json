@@ -344,6 +344,148 @@
         "key_decision_count": {
           "type": "integer",
           "minimum": 0
+        },
+        "council_dossier_summary": {
+          "$ref": "#/$defs/council_dossier_summary"
+        }
+      }
+    },
+    "council_dossier_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "final_verdict",
+        "confidence_posture",
+        "coherence_score",
+        "dissent_ratio",
+        "has_minority_report"
+      ],
+      "properties": {
+        "final_verdict": {
+          "type": "string"
+        },
+        "confidence_posture": {
+          "type": "string"
+        },
+        "coherence_score": {
+          "type": "number"
+        },
+        "dissent_ratio": {
+          "type": "number"
+        },
+        "has_minority_report": {
+          "type": "boolean"
+        },
+        "deliberation_mode": {
+          "type": "string"
+        },
+        "opacity_declaration": {
+          "type": "string"
+        }
+      }
+    },
+    "council_vote": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["perspective", "decision", "confidence"],
+      "properties": {
+        "perspective": {
+          "type": "string"
+        },
+        "decision": {
+          "type": "string"
+        },
+        "confidence": {
+          "type": "number"
+        },
+        "reasoning": {
+          "type": "string"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "council_dossier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dossier_version",
+        "final_verdict",
+        "confidence_posture",
+        "coherence_score",
+        "dissent_ratio",
+        "minority_report",
+        "vote_summary",
+        "change_of_position",
+        "evidence_refs",
+        "grounding_summary"
+      ],
+      "properties": {
+        "dossier_version": {
+          "type": "string"
+        },
+        "final_verdict": {
+          "type": "string"
+        },
+        "confidence_posture": {
+          "type": "string"
+        },
+        "coherence_score": {
+          "type": "number"
+        },
+        "dissent_ratio": {
+          "type": "number"
+        },
+        "minority_report": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/council_vote"
+          }
+        },
+        "vote_summary": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/council_vote"
+          }
+        },
+        "deliberation_mode": {
+          "type": "string"
+        },
+        "change_of_position": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "grounding_summary": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["has_ungrounded_claims", "total_evidence_sources"],
+          "properties": {
+            "has_ungrounded_claims": {
+              "type": "boolean"
+            },
+            "total_evidence_sources": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "opacity_declaration": {
+          "type": "string"
+        },
+        "evolution_suppression_flag": {
+          "type": "boolean"
         }
       }
     },
@@ -442,6 +584,9 @@
         },
         "updated_at": {
           "type": "string"
+        },
+        "council_dossier": {
+          "$ref": "#/$defs/council_dossier"
         }
       }
     },

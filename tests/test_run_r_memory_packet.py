@@ -94,6 +94,31 @@ def test_run_r_memory_packet_emits_json(capsys, monkeypatch, tmp_path: Path) -> 
                     "evidence_refs": [
                         "docs/architecture/TONESOUL_RUNTIME_COMPACTION_AND_GAMIFICATION_CONTRACT.md"
                     ],
+                    "council_dossier": {
+                        "dossier_version": "v1",
+                        "final_verdict": "approve",
+                        "confidence_posture": "contested",
+                        "coherence_score": 0.62,
+                        "dissent_ratio": 0.35,
+                        "minority_report": [
+                            {
+                                "perspective": "critic",
+                                "decision": "concern",
+                                "confidence": 0.75,
+                                "reasoning": "migration path missing",
+                                "evidence": ["docs/spec.md"]
+                            }
+                        ],
+                        "vote_summary": [],
+                        "deliberation_mode": "standard_council",
+                        "change_of_position": [],
+                        "evidence_refs": ["docs/spec.md"],
+                        "grounding_summary": {
+                            "has_ungrounded_claims": False,
+                            "total_evidence_sources": 1
+                        },
+                        "opacity_declaration": "partially_observable"
+                    },
                     "next_action": "keep compaction non-canonical",
                     "source": "cli",
                     "updated_at": "2026-03-26T00:03:00+00:00",
@@ -210,6 +235,7 @@ def test_run_r_memory_packet_emits_json(capsys, monkeypatch, tmp_path: Path) -> 
     assert output["active_claims"][0]["task_id"] == "task-1"
     assert output["recent_checkpoints"][0]["checkpoint_id"] == "cp-1"
     assert output["recent_compactions"][0]["compaction_id"] == "cmp-1"
+    assert output["recent_compactions"][0]["council_dossier"]["confidence_posture"] == "contested"
     assert output["recent_subject_snapshots"][0]["snapshot_id"] == "subj-1"
     assert output["recent_routing_events"][0]["surface"] == "checkpoint"
     assert output["project_memory_summary"]["subject_anchor"]["summary"].startswith("Stay packet-first")

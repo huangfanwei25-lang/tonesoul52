@@ -35,6 +35,37 @@ def test_save_compaction_writes_noncanonical_summary(capsys, monkeypatch, tmp_pa
                 "evidence_refs": [
                     "docs/architecture/TONESOUL_RUNTIME_COMPACTION_AND_GAMIFICATION_CONTRACT.md"
                 ],
+                "council_dossier": {
+                    "dossier_version": "v1",
+                    "final_verdict": "approve",
+                    "confidence_posture": "contested",
+                    "coherence_score": 0.62,
+                    "dissent_ratio": 0.35,
+                    "minority_report": [
+                        {
+                            "perspective": "critic",
+                            "decision": "concern",
+                            "confidence": 0.75,
+                            "reasoning": "migration path missing",
+                            "evidence": ["docs/spec.md"],
+                        }
+                    ],
+                    "vote_summary": [
+                        {
+                            "perspective": "critic",
+                            "decision": "concern",
+                            "confidence": 0.75,
+                        }
+                    ],
+                    "deliberation_mode": "standard_council",
+                    "change_of_position": [],
+                    "evidence_refs": ["docs/spec.md"],
+                    "grounding_summary": {
+                        "has_ungrounded_claims": False,
+                        "total_evidence_sources": 1,
+                    },
+                    "opacity_declaration": "partially_observable",
+                },
                 "next_action": "teach the next agent to read packet first",
                 "source": "file",
             }
@@ -66,6 +97,7 @@ def test_save_compaction_writes_noncanonical_summary(capsys, monkeypatch, tmp_pa
     saved = json.loads((tmp_path / ".aegis" / "compacted.json").read_text(encoding="utf-8"))
     assert saved[0]["agent"] == "codex"
     assert saved[0]["next_action"] == "teach the next agent to read packet first"
+    assert saved[0]["council_dossier"]["confidence_posture"] == "contested"
 
 
 def test_ensure_repo_root_on_path_adds_repo_root(monkeypatch) -> None:

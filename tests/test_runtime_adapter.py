@@ -94,7 +94,27 @@ def test_commit_increments_session_count(tmp_state: Path, tmp_traces: Path) -> N
 
 
 def test_commit_writes_trace_jsonl(tmp_state: Path, tmp_traces: Path) -> None:
-    trace = SessionTrace(agent="claude", key_decisions=["test"])
+    trace = SessionTrace(
+        agent="claude",
+        key_decisions=["test"],
+        council_dossier={
+            "dossier_version": "v1",
+            "final_verdict": "approve",
+            "confidence_posture": "moderate",
+            "coherence_score": 0.71,
+            "dissent_ratio": 0.0,
+            "minority_report": [],
+            "vote_summary": [],
+            "deliberation_mode": "standard_council",
+            "change_of_position": [],
+            "evidence_refs": [],
+            "grounding_summary": {
+                "has_ungrounded_claims": False,
+                "total_evidence_sources": 0,
+            },
+            "opacity_declaration": "partially_observable",
+        },
+    )
     commit(trace, state_path=tmp_state, traces_path=tmp_traces)
 
     lines = tmp_traces.read_text(encoding="utf-8").strip().split("\n")
@@ -102,6 +122,8 @@ def test_commit_writes_trace_jsonl(tmp_state: Path, tmp_traces: Path) -> None:
     record = json.loads(lines[0])
     assert record["agent"] == "claude"
     assert "test" in record["key_decisions"]
+    assert record["council_dossier"]["final_verdict"] == "approve"
+    assert record["council_dossier"]["confidence_posture"] == "moderate"
 
 
 def test_commit_merges_tension_events(tmp_state: Path, tmp_traces: Path) -> None:
@@ -267,6 +289,31 @@ def test_r_memory_packet_exposes_runtime_dominance_and_recent_trace(
         topics=["runtime", "redis"],
         tension_events=[{"topic": "safety vs speed", "severity": 0.7}],
         key_decisions=["emit packet"],
+        council_dossier={
+            "dossier_version": "v1",
+            "final_verdict": "approve",
+            "confidence_posture": "contested",
+            "coherence_score": 0.62,
+            "dissent_ratio": 0.35,
+            "minority_report": [
+                {
+                    "perspective": "critic",
+                    "decision": "concern",
+                    "confidence": 0.75,
+                    "reasoning": "migration path missing",
+                    "evidence": ["docs/spec.md"],
+                }
+            ],
+            "vote_summary": [],
+            "deliberation_mode": "standard_council",
+            "change_of_position": [],
+            "evidence_refs": ["docs/spec.md"],
+            "grounding_summary": {
+                "has_ungrounded_claims": False,
+                "total_evidence_sources": 1,
+            },
+            "opacity_declaration": "partially_observable",
+        },
     )
     commit(trace, state_path=tmp_state, traces_path=tmp_traces)
 
@@ -322,6 +369,8 @@ def test_r_memory_packet_exposes_runtime_dominance_and_recent_trace(
     assert packet["coordination_mode"]["surface_modes"]["claims"] == "file-backed"
     assert packet["coordination_mode"]["surface_modes"]["visitors"] == "unavailable"
     assert packet["recent_routing_events"][0]["surface"] == "checkpoint"
+    assert packet["recent_traces"][0]["council_dossier_summary"]["confidence_posture"] == "contested"
+    assert packet["recent_traces"][0]["council_dossier_summary"]["has_minority_report"] is True
     assert packet["operator_guidance"]["backend_mode"] == "file"
     assert packet["operator_guidance"]["session_start"][0].startswith(
         "python scripts/start_agent_session.py --agent"

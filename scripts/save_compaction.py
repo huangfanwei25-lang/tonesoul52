@@ -102,6 +102,11 @@ def main() -> None:
         carry_forward=list(payload.get("carry_forward") or []),
         pending_paths=list(payload.get("pending_paths") or []),
         evidence_refs=list(payload.get("evidence_refs") or []),
+        council_dossier=(
+            dict(payload.get("council_dossier"))
+            if isinstance(payload.get("council_dossier"), dict)
+            else None
+        ),
         next_action=str(payload.get("next_action", args.next_action)),
         source=str(payload.get("source", args.source)),
         ttl_seconds=args.ttl_seconds,

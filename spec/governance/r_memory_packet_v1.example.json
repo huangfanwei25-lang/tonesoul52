@@ -97,7 +97,16 @@
       "tension_count": 2,
       "vow_count": 0,
       "aegis_veto_count": 0,
-      "key_decision_count": 3
+      "key_decision_count": 3,
+      "council_dossier_summary": {
+        "final_verdict": "approve",
+        "confidence_posture": "contested",
+        "coherence_score": 0.62,
+        "dissent_ratio": 0.35,
+        "has_minority_report": true,
+        "deliberation_mode": "standard_council",
+        "opacity_declaration": "partially_observable"
+      }
     }
   ],
   "recent_visitors": [
@@ -153,6 +162,42 @@
       "evidence_refs": [
         "docs/architecture/TONESOUL_RUNTIME_COMPACTION_AND_GAMIFICATION_CONTRACT.md"
       ],
+      "council_dossier": {
+        "dossier_version": "v1",
+        "final_verdict": "approve",
+        "confidence_posture": "contested",
+        "coherence_score": 0.62,
+        "dissent_ratio": 0.35,
+        "minority_report": [
+          {
+            "perspective": "critic",
+            "decision": "concern",
+            "confidence": 0.75,
+            "reasoning": "Schema change affects downstream consumers without a migration plan.",
+            "evidence": ["docs/spec.md"]
+          }
+        ],
+        "vote_summary": [
+          {
+            "perspective": "guardian",
+            "decision": "approve",
+            "confidence": 0.8
+          },
+          {
+            "perspective": "critic",
+            "decision": "concern",
+            "confidence": 0.75
+          }
+        ],
+        "deliberation_mode": "standard_council",
+        "change_of_position": [],
+        "evidence_refs": ["docs/spec.md"],
+        "grounding_summary": {
+          "has_ungrounded_claims": false,
+          "total_evidence_sources": 1
+        },
+        "opacity_declaration": "partially_observable"
+      },
       "next_action": "Expose bounded compaction summaries in the operator shell without mutating governance posture.",
       "source": "cli",
       "updated_at": "2026-03-26T12:00:00+00:00"

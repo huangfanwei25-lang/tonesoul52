@@ -184,6 +184,9 @@ def main() -> None:
     next_action = str(payload.get("next_action", args.next_action or "")).strip()
     carry_forward = list(payload.get("carry_forward") or [])
     evidence_refs = list(payload.get("evidence_refs") or [])
+    council_dossier = (
+        dict(payload.get("council_dossier")) if isinstance(payload.get("council_dossier"), dict) else None
+    )
     release_task_ids = [
         str(value).strip()
         for value in (payload.get("release_task_ids") or [])
@@ -222,6 +225,7 @@ def main() -> None:
             carry_forward=carry_forward,
             pending_paths=pending_paths,
             evidence_refs=evidence_refs,
+            council_dossier=council_dossier,
             next_action=next_action,
             source=source,
             ttl_seconds=args.compaction_ttl_seconds,

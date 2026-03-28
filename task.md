@@ -15,6 +15,13 @@
 - Phase 662: translate the adoptable parts of external observability/falsifiability theory into ToneSoul-native boundary contracts without importing foreign naming or mutating `AXIOMS.json`
 - Phase 664: let the first bounded runtime subject-refresh heuristic actually write `active_threads` when compaction-backed evidence is clean enough, without promoting higher-risk identity fields
 - Phase 665: make council outputs replayable with a pure dossier extractor and a new council-discipline retrieval lane, without changing council verdict behavior yet
+- Phase 666: let traces and compactions carry bounded council dossier surfaces so later agents inherit dissent and confidence posture without replaying the whole council transcript
+
+## Phase 666: Bounded Council Dossier Carry Surfaces (2026-03-28)
+- [x] Let `SessionTrace` store an optional compact council dossier input while keeping the canonical trace schema backward-compatible
+- [x] Let compaction writes carry the full bounded dossier shape and surface it through packet/schema/example for later-agent replay
+- [x] Keep packet traces lighter than compactions by exposing only `council_dossier_summary` in recent traces while preserving the fuller dossier in compactions
+**Success Criteria**: A later agent can inspect packet surfaces and see verdict confidence + dissent from recent traces, read a fuller bounded dossier from recent compactions, and inherit that context without needing the original council transcript.
 
 ## Phase 665: Council Dossier Extraction Helper (2026-03-28)
 - [x] Add a pure `tonesoul/council/dossier.py` helper that extracts bounded dossier fields from `CouncilVerdict` without changing runtime deliberation
