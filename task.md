@@ -1087,3 +1087,9 @@
 - [x] keep the follow-up bounded to documentation-only continuity boundaries instead of packet/runtime/schema mutation
 - [x] keep implementation ownership for any later continuity-surface behavior changes on the Codex lane
 **Success Criteria**: Claude has one clear long-context workstream that classifies which continuity surfaces later agents may import, acknowledge, or only treat as advisory, without touching runtime code or packet schema.
+
+## Phase 674: Council Governance Prompt Adoption Wave 1 (2026-03-29)
+- [x] refactor the 5 governance perspective prompts in `tonesoul/council/perspective_factory.py` to add bounded goal, priority, evidence, and missing-data recovery guidance without changing the JSON vote schema
+- [x] tighten the outer `evaluate()` wrapper so context is framed as evidence to inspect rather than raw dump to echo back
+- [x] add prompt-shape regression tests for both Gemini and Ollama perspective families and validate that existing council parsing still passes
+**Success Criteria**: the highest-frequency governance prompts consume ToneSoul prompt-discipline structure, preserve each perspective's stance, and remain compatible with current vote parsing and council tests.

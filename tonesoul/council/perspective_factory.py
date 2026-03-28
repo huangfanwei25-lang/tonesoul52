@@ -50,6 +50,150 @@ FALLBACK_REASON_MARKER = "[fallback_to_rules]"
 VISUAL_CONTEXT_LIMIT = 800
 VISUAL_CONTEXT_TRUNCATION_NOTE = "[visual context truncated for safety]"
 
+_PERSPECTIVE_DISCIPLINE: Dict[str, Dict[str, str]] = {
+    "guardian": {
+        "role": "SAFETY GUARDIAN",
+        "goal": "determine whether the draft is safe, ethically bounded, and free from harmful escalation.",
+        "p0": "do not approve content that introduces safety risk, harm, or policy-bypassing rhetoric.",
+        "p1": "ground the decision in concrete safety evidence from the draft, user intent, and supplied context.",
+        "p2": "keep the reasoning brief after the safety judgment is honestly resolved.",
+        "decision_map": "APPROVE (safe), CONCERN (needs review), or OBJECT (unsafe).",
+    },
+    "analyst": {
+        "role": "FACTUAL ANALYST",
+        "goal": "determine whether the draft is factually grounded, internally coherent, and honest about uncertainty.",
+        "p0": "do not approve unsupported claims, invented facts, or false certainty.",
+        "p1": "cite the strongest available evidence from the draft, user intent, and supplied context before deciding.",
+        "p2": "keep the reasoning brief after the factual judgment is honestly resolved.",
+        "decision_map": "APPROVE (factual), CONCERN (unverifiable), or OBJECT (false).",
+    },
+    "critic": {
+        "role": "CRITICAL THINKER",
+        "goal": "identify logical weaknesses, missing assumptions, or hidden contradictions in the draft.",
+        "p0": "do not approve a draft that rests on unresolved flaws, contradiction, or weak logic.",
+        "p1": "name the strongest flaw-evidence from the draft, user intent, and supplied context before deciding.",
+        "p2": "keep the reasoning brief after the critique is honestly resolved.",
+        "decision_map": "APPROVE (robust), CONCERN (has issues), or OBJECT (flawed).",
+    },
+    "advocate": {
+        "role": "USER ADVOCATE",
+        "goal": "determine whether the draft actually serves the user's needs without hiding tradeoffs or gaps.",
+        "p0": "do not approve a draft that misses user intent, hides costs, or pretends the user's need is already solved.",
+        "p1": "ground the decision in the user's stated intent plus concrete evidence from the draft and context.",
+        "p2": "keep the reasoning brief after the user-service judgment is honestly resolved.",
+        "decision_map": "APPROVE (helpful), CONCERN (partially), or OBJECT (unhelpful).",
+    },
+    "axiomatic": {
+        "role": "PHILOSOPHER (AXIOMATIC)",
+        "goal": "guard the Truth Protocol (VTP) against contradiction, deception, and irreconcilable tension.",
+        "p0": "do not approve drafts that compromise core axioms, hide contradiction, or decorate uncertainty into false certainty.",
+        "p1": "ground the decision in specific contradictions, tensions, or truth-preserving evidence from the draft and context.",
+        "p2": "keep the reasoning brief after the axiomatic judgment is honestly resolved.",
+        "decision_map": "APPROVE (truthful/consistent), CONCERN (ambiguous), or OBJECT (contradictory/deceptive).",
+    },
+}
+
+_CONFIDENCE_GUIDANCE = (
+    "Confidence guidance:\n"
+    "- high (0.8-1.0): direct evidence clearly supports the decision.\n"
+    "- medium (0.5-0.79): evidence is partial, mixed, or only indirectly supports the decision.\n"
+    "- low (0.0-0.49): the judgment depends on inference, ambiguity, or missing evidence."
+)
+
+
+def _build_governance_system_prompt(name: str, *, concise: bool = False) -> str:
+    profile = _PERSPECTIVE_DISCIPLINE.get(name, _PERSPECTIVE_DISCIPLINE["analyst"])
+    response_schema = (
+        '{"decision": "APPROVE|CONCERN|OBJECT", "confidence": 0.8, "reasoning": "brief explanation"}'
+    )
+    if concise:
+        return (
+            f"You are {profile['role']} in an AI Council.\n"
+            f"Goal: {profile['goal']}\n"
+            "Priority:\n"
+            f"- P0: {profile['p0']}\n"
+            f"- P1: {profile['p1']}\n"
+            f"- P2: {profile['p2']}\n"
+            f"{_CONFIDENCE_GUIDANCE}\n"
+            "If evidence is missing, return CONCERN, lower confidence, and mark [資料不足] in reasoning.\n"
+            f"Decision must be: {profile['decision_map']}\n"
+            f"Respond ONLY with JSON: {response_schema}"
+        )
+    return (
+        f"You are a {profile['role']} perspective in an AI Council.\n"
+        f"Goal function: {profile['goal']}\n"
+        "Priority:\n"
+        f"- P0: {profile['p0']}\n"
+        f"- P1: {profile['p1']}\n"
+        f"- P2: {profile['p2']}\n"
+        f"{_CONFIDENCE_GUIDANCE}\n"
+        "Recovery: if the available evidence is insufficient or the context is ambiguous, return CONCERN, lower confidence, "
+        "and mark [資料不足] with what is missing.\n"
+        f"Decision must be: {profile['decision_map']}\n"
+        "You MUST respond with a JSON object in this exact format:\n"
+        f"{response_schema}"
+    )
+
+
+def _build_prior_tension_clause(context: dict) -> str:
+    prior_tension = context.get("prior_tension")
+    if not isinstance(prior_tension, dict) or not prior_tension:
+        return ""
+    delta_t = prior_tension.get("delta_t")
+    gate_decision = prior_tension.get("gate_decision")
+    rationale = str(prior_tension.get("rationale") or "").strip()
+    if len(rationale) > 240:
+        rationale = f"{rationale[:240]}..."
+    return (
+        "\nPrior Tension Memory:"
+        f"\n- delta_t: {delta_t}"
+        f"\n- gate_decision: {gate_decision}"
+        f"\n- rationale: {rationale or 'n/a'}"
+        "\nUse this as historical context; do not expose raw metrics to end users."
+    )
+
+
+def _build_context_payload(context: dict, *, limit: int, exclude_visual_context: bool = False) -> str:
+    payload = context
+    if exclude_visual_context:
+        payload = {k: v for k, v in context.items() if k != "visual_context"}
+    return json.dumps(payload, default=str, ensure_ascii=False)[:limit]
+
+
+def _build_evidence_guidance_block() -> str:
+    return (
+        "Evidence handling:\n"
+        "- Treat the draft as primary evidence.\n"
+        "- Use user intent and context as supporting evidence, not decoration.\n"
+        "- In reasoning, cite the strongest evidence briefly instead of echoing the whole context.\n"
+        "- If evidence conflicts or is missing, say so explicitly rather than smoothing it over."
+    )
+
+
+def _build_llm_user_prompt(
+    system_prompt: str,
+    draft_output: str,
+    context: dict,
+    user_intent: Optional[str],
+    *,
+    context_limit: int,
+    visual_clause: str = "",
+    exclude_visual_context: bool = False,
+) -> str:
+    intent_clause = f"\nUser Intent: {user_intent}" if user_intent else ""
+    prior_tension_clause = _build_prior_tension_clause(context)
+    context_payload = _build_context_payload(
+        context, limit=context_limit, exclude_visual_context=exclude_visual_context
+    )
+    return (
+        f"{system_prompt}\n\n"
+        f'Text to evaluate:\n"""\n{draft_output}\n"""'
+        f"{intent_clause}{prior_tension_clause}{visual_clause}\n\n"
+        f"{_build_evidence_guidance_block()}\n\n"
+        f"Context snapshot: {context_payload}\n\n"
+        "Respond with JSON only."
+    )
+
 
 class PerspectiveMode(Enum):
     """Supported perspective evaluation modes"""
@@ -235,34 +379,7 @@ class LLMPerspective(IPerspective):
         return self._perspective
 
     def _default_prompt(self) -> str:
-        prompts = {
-            "guardian": """You are a SAFETY GUARDIAN perspective in an AI Council.
-Evaluate if the following text is safe and ethical.
-You MUST respond with a JSON object in this exact format:
-{"decision": "APPROVE", "confidence": 0.8, "reasoning": "brief explanation"}
-Decision must be: APPROVE (safe), CONCERN (needs review), or OBJECT (unsafe).""",
-            "analyst": """You are a FACTUAL ANALYST perspective in an AI Council.
-Evaluate if the following text is factually accurate and well-reasoned.
-You MUST respond with a JSON object in this exact format:
-{"decision": "APPROVE", "confidence": 0.8, "reasoning": "brief explanation"}
-Decision must be: APPROVE (factual), CONCERN (unverifiable), or OBJECT (false).""",
-            "critic": """You are a CRITICAL THINKER perspective in an AI Council.
-Identify weaknesses, biases, or logical flaws in the following text.
-You MUST respond with a JSON object in this exact format:
-{"decision": "APPROVE", "confidence": 0.8, "reasoning": "brief explanation"}
-Decision must be: APPROVE (robust), CONCERN (has issues), or OBJECT (flawed).""",
-            "advocate": """You are a USER ADVOCATE perspective in an AI Council.
-Evaluate if the following text truly serves the user's needs and intent.
-You MUST respond with a JSON object in this exact format:
-{"decision": "APPROVE", "confidence": 0.8, "reasoning": "brief explanation"}
-Decision must be: APPROVE (helpful), CONCERN (partially), or OBJECT (unhelpful).""",
-            "axiomatic": """You are a PHILOSOPHER (AXIOMATIC) in an AI Council, guarding the Truth Protocol (VTP).
-Evaluate if the text contains irreconcilable tensions, logical contradictions, or compromises core axioms.
-You MUST respond with a JSON object in this exact format:
-{"decision": "APPROVE", "confidence": 0.8, "reasoning": "brief explanation"}
-Decision must be: APPROVE (truthful/consistent), CONCERN (ambiguous), or OBJECT (contradictory/deceptive).""",
-        }
-        return prompts.get(self.name, prompts["analyst"])
+        return _build_governance_system_prompt(self.name, concise=False)
 
     def evaluate(
         self,
@@ -290,33 +407,13 @@ Decision must be: APPROVE (truthful/consistent), CONCERN (ambiguous), or OBJECT 
                 reasoning="LLM unavailable; no fallback configured.",
             )
 
-        # Build the evaluation prompt
-        intent_clause = f"\nUser Intent: {user_intent}" if user_intent else ""
-        prior_tension_clause = ""
-        prior_tension = context.get("prior_tension")
-        if isinstance(prior_tension, dict) and prior_tension:
-            delta_t = prior_tension.get("delta_t")
-            gate_decision = prior_tension.get("gate_decision")
-            rationale = str(prior_tension.get("rationale") or "").strip()
-            if len(rationale) > 240:
-                rationale = f"{rationale[:240]}..."
-            prior_tension_clause = (
-                "\nPrior Tension Memory:"
-                f"\n- delta_t: {delta_t}"
-                f"\n- gate_decision: {gate_decision}"
-                f"\n- rationale: {rationale or 'n/a'}"
-                "\nUse this as historical context; do not expose raw metrics to end users."
-            )
-        prompt = f"""{self.system_prompt}
-
-Text to evaluate:
-\"\"\"
-{draft_output}
-\"\"\"{intent_clause}{prior_tension_clause}
-
-Context: {json.dumps(context, default=str, ensure_ascii=False)[:500]}
-
-Respond with JSON only."""
+        prompt = _build_llm_user_prompt(
+            self.system_prompt,
+            draft_output,
+            context,
+            user_intent,
+            context_limit=500,
+        )
 
         try:
             response = client.generate(prompt)
@@ -387,34 +484,7 @@ class OllamaPerspective(IPerspective):
 
     def _default_prompt(self) -> str:
         """Concise prompts optimised for small models."""
-        prompts = {
-            "guardian": (
-                "You are GUARDIAN in an AI Council. Evaluate safety and ethics.\n"
-                'Respond ONLY with JSON: {"decision":"APPROVE|CONCERN|OBJECT",'
-                '"confidence":0.8,"reasoning":"brief"}'
-            ),
-            "analyst": (
-                "You are ANALYST in an AI Council. Check factual accuracy.\n"
-                'Respond ONLY with JSON: {"decision":"APPROVE|CONCERN|OBJECT",'
-                '"confidence":0.8,"reasoning":"brief"}'
-            ),
-            "critic": (
-                "You are CRITIC in an AI Council. Find weaknesses and flaws.\n"
-                'Respond ONLY with JSON: {"decision":"APPROVE|CONCERN|OBJECT",'
-                '"confidence":0.8,"reasoning":"brief"}'
-            ),
-            "advocate": (
-                "You are ADVOCATE in an AI Council. Judge user helpfulness.\n"
-                'Respond ONLY with JSON: {"decision":"APPROVE|CONCERN|OBJECT",'
-                '"confidence":0.8,"reasoning":"brief"}'
-            ),
-            "axiomatic": (
-                "You are PHILOSOPHER in an AI Council. Guard the Truth Protocol (VTP) against contradictions.\n"
-                'Respond ONLY with JSON: {"decision":"APPROVE|CONCERN|OBJECT",'
-                '"confidence":0.8,"reasoning":"brief"}'
-            ),
-        }
-        return prompts.get(self.name, prompts["analyst"])
+        return _build_governance_system_prompt(self.name, concise=True)
 
     def _parse_response(self, response: str) -> Dict[str, Any]:
         """Parse JSON or textual fallback from Ollama perspective output."""
@@ -451,7 +521,6 @@ class OllamaPerspective(IPerspective):
                 reasoning="requests library not installed; cannot call Ollama.",
             )
 
-        intent_clause = f"\nUser Intent: {user_intent}" if user_intent else ""
         visual_context_raw = str(context.get("visual_context", "") or "")
         visual_context_truncated = len(visual_context_raw) > VISUAL_CONTEXT_LIMIT
         visual_context = visual_context_raw[:VISUAL_CONTEXT_LIMIT]
@@ -463,12 +532,14 @@ class OllamaPerspective(IPerspective):
             else ""
         )
 
-        user_msg = (
-            f"{self.system_prompt}\n\n"
-            f'Text to evaluate:\n"""\n{draft_output[:1000]}\n"""'
-            f"{intent_clause}{visual_clause}\n\n"
-            f"Context: {json.dumps({k: v for k, v in context.items() if k != 'visual_context'}, default=str, ensure_ascii=False)[:300]}\n\n"
-            "Respond with JSON only."
+        user_msg = _build_llm_user_prompt(
+            self.system_prompt,
+            draft_output[:1000],
+            context,
+            user_intent,
+            context_limit=300,
+            visual_clause=visual_clause,
+            exclude_visual_context=True,
         )
 
         try:

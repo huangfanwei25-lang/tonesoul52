@@ -128,6 +128,28 @@ def test_llm_with_google_api_key_initializes_client(monkeypatch):
     assert calls == [DEFAULT_LLM_MODEL]
 
 
+def test_llm_default_prompt_uses_bounded_governance_shape():
+    prompt = LLMPerspective(name="guardian", model=DEFAULT_LLM_MODEL, fallback=None)._default_prompt()
+
+    assert "Goal function:" in prompt
+    assert "- P0:" in prompt
+    assert "- P1:" in prompt
+    assert "- P2:" in prompt
+    assert "Confidence guidance:" in prompt
+    assert "[資料不足]" in prompt
+    assert '"decision": "APPROVE|CONCERN|OBJECT"' in prompt
+
+
+def test_ollama_default_prompt_keeps_concise_but_structured_governance_shape():
+    prompt = OllamaPerspective(name="critic", fallback=None)._default_prompt()
+
+    assert "Goal:" in prompt
+    assert "Priority:" in prompt
+    assert "Confidence guidance:" in prompt
+    assert "[資料不足]" in prompt
+    assert 'Respond ONLY with JSON:' in prompt
+
+
 def test_llm_perspective_uses_safe_parse_for_markdown_json(monkeypatch):
     class _FakeClient:
         def generate(self, prompt: str) -> str:
@@ -150,6 +172,36 @@ def test_llm_perspective_uses_safe_parse_for_markdown_json(monkeypatch):
     assert vote.decision == VoteDecision.APPROVE
     assert vote.confidence == 0.83
     assert "safe parse works" in vote.reasoning
+
+
+def test_llm_perspective_wrapper_frames_context_as_evidence(monkeypatch):
+    captured = {}
+
+    class _FakeClient:
+        def generate(self, prompt: str) -> str:
+            captured["prompt"] = prompt
+            return '{"decision":"APPROVE","confidence":0.83,"reasoning":"safe parse works"}'
+
+    monkeypatch.setattr(
+        LLMPerspective,
+        "_get_gemini_client",
+        classmethod(lambda cls, model=DEFAULT_LLM_MODEL: _FakeClient()),
+    )
+
+    perspective = LLMPerspective(name="analyst", model=DEFAULT_LLM_MODEL, fallback=None)
+    vote = perspective.evaluate(
+        "draft",
+        context={"topic": "migration", "prior_tension": {"delta_t": 0.4, "gate_decision": "repair"}},
+        user_intent="keep migration safe",
+    )
+
+    assert vote.decision == VoteDecision.APPROVE
+    prompt = captured["prompt"]
+    assert "Evidence handling:" in prompt
+    assert "Treat the draft as primary evidence." in prompt
+    assert "Context snapshot:" in prompt
+    assert "Prior Tension Memory:" in prompt
+    assert "User Intent: keep migration safe" in prompt
 
 
 def test_llm_perspective_keeps_text_fallback_for_non_json(monkeypatch):
@@ -226,6 +278,8 @@ def test_ollama_visual_context_truncation_adds_safety_note(monkeypatch):
 
     assert vote.decision == VoteDecision.APPROVE
     assert "[visual context truncated for safety]" in user_msg
+    assert "Evidence handling:" in user_msg
+    assert "Context snapshot:" in user_msg
     assert "X" * 800 in user_msg
     assert "X" * 900 not in user_msg
 
