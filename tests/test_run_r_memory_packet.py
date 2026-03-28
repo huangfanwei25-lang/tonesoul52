@@ -169,7 +169,10 @@ def test_run_r_memory_packet_emits_json(capsys, monkeypatch, tmp_path: Path) -> 
     assert "checkpoint" in output["operator_guidance"]["coordination_commands"]
     assert "signal_router" in output["operator_guidance"]["coordination_commands"]
     assert "subject_snapshot" in output["operator_guidance"]["coordination_commands"]
-    assert output["operator_guidance"]["session_start"][1].startswith(
+    assert output["operator_guidance"]["session_start"][0].startswith(
+        "python scripts/start_agent_session.py --agent"
+    )
+    assert output["operator_guidance"]["session_start"][2].startswith(
         "python scripts/run_r_memory_packet.py --agent"
     )
     assert output["operator_guidance"]["session_end"][1].startswith("python scripts/save_compaction.py")

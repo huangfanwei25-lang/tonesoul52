@@ -91,9 +91,11 @@ Default collaboration posture:
 
 Every agent session should begin with:
 
-1. `python -m tonesoul.diagnose --agent <your-id>`
-2. `python scripts/run_r_memory_packet.py --agent <your-id> --ack` or `GET /packet`
-3. inspect active claims before touching shared work
+1. `python scripts/start_agent_session.py --agent <your-id>`
+2. If debugging or tooling needs the explicit breakdown, expand the bundle to:
+   - `python -m tonesoul.diagnose --agent <your-id>`
+   - `python scripts/run_r_memory_packet.py --agent <your-id> --ack` or `GET /packet`
+   - inspect active claims before touching shared work
 
 Use `python scripts/read_governance_state.py` only when you need a lighter posture read and do not need the fuller shared-runtime picture.
 

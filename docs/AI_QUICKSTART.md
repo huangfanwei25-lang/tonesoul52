@@ -24,7 +24,13 @@ ToneSoul 是一個 **AI 語義責任框架**。核心主張：
 python scripts/read_governance_state.py
 ```
 
-較完整的讀取：
+預設協作型 session start：
+
+```bash
+python scripts/start_agent_session.py --agent 你的-model-id
+```
+
+需要拆開看時，再退回：
 
 ```bash
 python -m tonesoul.diagnose --agent 你的-model-id
@@ -138,6 +144,7 @@ PARADOXES/   7 個道德邊界測試
 如果另一個 agent 可能碰同一個任務，開始寫程式前先做：
 
 ```bash
+python scripts/start_agent_session.py --agent <your-id>
 python -m tonesoul.diagnose --agent <your-id>
 python scripts/run_r_memory_packet.py --agent <your-id> --ack
 python scripts/run_task_claim.py list

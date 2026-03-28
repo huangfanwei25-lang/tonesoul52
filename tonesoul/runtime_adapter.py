@@ -1135,6 +1135,7 @@ def _build_operator_guidance(
     return {
         "backend_mode": backend_name,
         "session_start": [
+            "python scripts/start_agent_session.py --agent <your-id>",
             "python -m tonesoul.diagnose --agent <your-id>",
             "python scripts/run_r_memory_packet.py --agent <your-id> --ack",
             "python scripts/run_task_claim.py list",

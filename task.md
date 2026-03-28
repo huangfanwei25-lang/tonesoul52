@@ -1,5 +1,23 @@
 # Task
 
+## Long Program: R-Memory Maturation Roadmap (2026-03-28)
+- Program Goal: move ToneSoul R-memory from a coordination-only hot-state layer toward a durable subject-aware working identity without collapsing canonical/runtime boundaries.
+- Execution Guardrails:
+  - Keep session-start and session-end rituals directly executable from the repo root instead of leaving them as prose-only discipline.
+  - Prefer bounded shared surfaces, delta-aware observation, and machine-readable artifacts over hidden context or broad markdown rereads.
+  - Promote only after proof: file-backed discipline first, then Redis/live coordination after the semantics stay stable under repeated agent handoffs.
+- Phase 654: compress session start into one direct repo-root bootstrap so later agents stop forgetting `diagnose + packet + claim list`
+- Phase 655: add a matching session-end bundle so `checkpoint/compaction -> release` becomes one deliberate close-out ritual
+- Phase 656: record signal-routing adoption and misroute patterns so the router can improve from real agent behavior instead of only synthetic tests
+- Phase 657: add bounded subject-refresh heuristics so durable working identity can be refreshed deliberately rather than only by manual intuition
+- Phase 658: harden Redis live surfaces and delta-aware coordination once file-backed discipline proves stable enough to deserve real-time promotion
+
+## Phase 654: One-Command Session Start Bundle (2026-03-28)
+- [x] Add a direct repo-root `start_agent_session.py` bundle that performs `diagnose + packet --ack + claim list` in one command
+- [x] Keep the bundle machine-readable and path-overridable so tests and later agents can use it without hidden assumptions
+- [x] Wire the bundle into onboarding/guidance surfaces so the lower-friction path becomes visible instead of tribal knowledge
+**Success Criteria**: A later agent can run one session-start command, receive the same hot-state posture plus delta feed and claim picture as the three-step flow, and still understand the underlying explicit commands when needed.
+
 ## Phase 653: Shared Signal Routing for Hot-State Surfaces (2026-03-28)
 - [x] Add a bounded signal router that classifies incoming runtime notes into claim, perspective, checkpoint, compaction, or subject snapshot instead of forcing each agent to guess the surface manually
 - [x] Expose the router through a direct repo-root CLI that can preview or write the selected surface deliberately

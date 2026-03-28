@@ -303,8 +303,11 @@ def test_r_memory_packet_exposes_runtime_dominance_and_recent_trace(
     assert "summary_text" in packet["project_memory_summary"]
     assert "repo_progress" in packet["project_memory_summary"]
     assert packet["operator_guidance"]["backend_mode"] == "file"
-    assert packet["operator_guidance"]["session_start"][0].startswith("python -m tonesoul.diagnose")
-    assert packet["operator_guidance"]["session_start"][1].startswith(
+    assert packet["operator_guidance"]["session_start"][0].startswith(
+        "python scripts/start_agent_session.py --agent"
+    )
+    assert packet["operator_guidance"]["session_start"][1].startswith("python -m tonesoul.diagnose")
+    assert packet["operator_guidance"]["session_start"][2].startswith(
         "python scripts/run_r_memory_packet.py --agent"
     )
     assert packet["operator_guidance"]["session_end"][0].startswith("python scripts/save_checkpoint.py")

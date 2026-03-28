@@ -17,7 +17,7 @@
 | **Deep Anatomy** | [`docs/narrative/TONESOUL_ANATOMY.md`](docs/narrative/TONESOUL_ANATOMY.md) | `deep_map` | 改整體結構前，或要回答「ToneSoul 到底是什麼」 | runtime contract |
 | **Interpretive Lane** | [`docs/notes/TONESOUL_DEEP_READING_ANCHOR_2026-03-26.md`](docs/notes/TONESOUL_DEEP_READING_ANCHOR_2026-03-26.md), [`docs/narrative/TONESOUL_CODEX_READING.md`](docs/narrative/TONESOUL_CODEX_READING.md) | `interpretive` | 結構已清楚，但承重意義仍模糊時 | 可執行真理 |
 
-**新 AI 最低要求：先讀 `docs/AI_QUICKSTART.md`，再依序執行 `python -m tonesoul.diagnose --agent <your-id>`、`python scripts/run_r_memory_packet.py --agent <your-id> --ack`、`python scripts/run_task_claim.py list`；結束前必須留下 `checkpoint` 或 `compaction`，再 `release`。**
+**新 AI 最低要求：先讀 `docs/AI_QUICKSTART.md`，再執行 `python scripts/start_agent_session.py --agent <your-id>`；結束前必須留下 `checkpoint` 或 `compaction`，再 `release`。若要拆解或除錯，再退回 `diagnose -> packet --ack -> claim list`。**
 
 ---
 
@@ -59,7 +59,7 @@ If the repository layout is clear but the deeper internal shape still is not, op
 If you need the original draft idea for self-dogfooding ToneSoul on top of agent workflows, open `docs/RFC-015_Self_Dogfooding_Runtime_Adapter.md`, but treat it as a draft source until it is rewritten cleanly.
 If you need compact machine-readable guidance, open `docs/status/l7_retrieval_contract_latest.json` and `docs/status/l8_distillation_boundary_latest.json`.
 If you need the first directly usable operational layer, open `docs/status/l7_operational_packet_latest.json` and `docs/status/l8_adapter_dataset_gate_latest.json`.
-If you need the live hot-state handoff surface for another agent or tool, run `python scripts/run_r_memory_packet.py --agent <your-id> --ack` or query `GET /packet`, and validate the shape against `spec/governance/r_memory_packet_v1.schema.json`.
+If you need the default repo-root session-start bundle, run `python scripts/start_agent_session.py --agent <your-id>`. If you need the live hot-state handoff surface itself for another agent or tool, run `python scripts/run_r_memory_packet.py --agent <your-id> --ack` or query `GET /packet`, and validate the shape against `spec/governance/r_memory_packet_v1.schema.json`.
 If you need to leave a bounded resumability handoff without mutating canonical governance posture, run `python scripts/save_compaction.py --agent <name> --summary "<short summary>"`, feed the same JSON shape into the script via `--input` / stdin, or call `POST /compact` on the gateway.
 If you are not sure whether a new runtime note belongs in claim, checkpoint, compaction, perspective, or subject snapshot, preview it with `python scripts/route_r_memory_signal.py --agent <name> --summary "<short summary>" --path "<path>" --next-action "<next>"`, then add `--write` only after the route looks right.
 If stable boundaries, decision preferences, or verified routines materially changed and later agents should inherit them as durable non-canonical structure, run `python scripts/save_subject_snapshot.py --agent <name> --summary "<short summary>" --boundary "<boundary>" --preference "<preference>"`.
@@ -84,15 +84,16 @@ Use the lightweight reader when you only need posture:
 python scripts/read_governance_state.py
 ```
 
-Use the fuller diagnostic when you also need store/Aegis/world context:
+Use the default collaborative bundle when you want the full session-start handshake in one command:
+
+```bash
+python scripts/start_agent_session.py --agent <your-id>
+```
+
+If you need the explicit breakdown for debugging or tooling, expand the bundle to:
 
 ```bash
 python -m tonesoul.diagnose --agent <your-id>
-```
-
-If multiple agents may touch the same task, follow immediately with:
-
-```bash
 python scripts/run_r_memory_packet.py --agent <your-id> --ack
 python scripts/run_task_claim.py list
 ```

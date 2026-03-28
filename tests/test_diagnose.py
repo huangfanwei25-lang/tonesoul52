@@ -184,6 +184,7 @@ def _fake_packet():
         "operator_guidance": {
             "backend_mode": "redis",
             "session_start": [
+                "python scripts/start_agent_session.py --agent <your-id>",
                 "python -m tonesoul.diagnose --agent <your-id>",
                 "python scripts/run_r_memory_packet.py --agent <your-id> --ack",
                 "python scripts/run_task_claim.py list",
@@ -297,6 +298,7 @@ def test_full_diagnostic_is_cp950_safe_and_includes_shared_runtime(monkeypatch) 
     assert "repo=codex/r-memory-compaction-lane-20260326@04c243d dirty=6" in report
     assert "repo_paths=tonesoul/runtime_adapter.py, tonesoul/diagnose.py" in report
     assert "[Operator Guidance]" in report
+    assert "start_agent_session.py --agent <your-id>" in report
     assert "run_r_memory_packet.py --agent <your-id> --ack" in report
     assert "save_checkpoint.py" in report
     assert "save_compaction.py" in report
