@@ -1093,3 +1093,9 @@
 - [x] tighten the outer `evaluate()` wrapper so context is framed as evidence to inspect rather than raw dump to echo back
 - [x] add prompt-shape regression tests for both Gemini and Ollama perspective families and validate that existing council parsing still passes
 **Success Criteria**: the highest-frequency governance prompts consume ToneSoul prompt-discipline structure, preserve each perspective's stance, and remain compatible with current vote parsing and council tests.
+
+## Phase 675: Claude Council Realism And Calibration Work Order (2026-03-29)
+- [x] extend `docs/plans/claude_deep_structure_authority_work_order_2026-03-27.md` with one large council realism / calibration / adversarial-deliberation program
+- [x] keep the follow-up bounded to documentation-only analysis of independence, confidence, and bounded adoption families instead of runtime mutation
+- [x] keep implementation ownership for any future council-quality changes on the Codex lane
+**Success Criteria**: Claude has one clear long-context workstream that classifies how real ToneSoul's current council is, where its confidence is descriptive versus calibrated, and which improvement families are truly next-safe without touching runtime code.

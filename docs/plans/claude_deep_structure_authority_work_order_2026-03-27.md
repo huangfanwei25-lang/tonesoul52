@@ -1163,3 +1163,160 @@ When done, report back with:
 - the cleanest distinction you found between `ack`, `apply`, and `promote`
 - the most useful lifecycle-lane split you found
 - which one bounded continuity improvement Codex should implement first without changing packet schema
+
+---
+
+## Follow-Up Extension: Council Realism, Calibration, And Adversarial Deliberation Program
+
+This extension exists because ToneSoul now has:
+
+- council dossier extraction
+- dissent preservation contracts
+- adaptive deliberation mode contracts
+- replayable dossier carry surfaces
+
+What is still under-specified is a harder question:
+
+> how close is ToneSoul's current council to a real multi-perspective deliberation system, and what should be improved first so the council does not become a polite pseudo-debate with uncalibrated confidence?
+
+This is a large documentation-and-boundary program.
+It is not permission to mutate council runtime, voting logic, evolution weights, packet schema, or frontend behavior.
+
+## Why This Fits Claude
+
+This next pass benefits from long-context structural synthesis because it requires:
+
+- comparing current council code and contracts against the deeper weaknesses already surfaced
+- separating "already replayable" from "actually independent"
+- naming which deliberation improvements are academically or industrially grounded versus merely attractive
+- turning multiple partially related ideas into a bounded adoption map instead of a giant speculative roadmap
+
+## Follow-Up Objective
+
+Produce a source-backed map that tells later agents:
+
+- where the current council is genuinely strong
+- where it is only simulating plurality without real independence
+- which known improvement families are safe, bounded next steps
+- which improvements require infrastructure that ToneSoul does not yet have
+
+The goal is to stop future agents from making two opposite mistakes:
+
+1. overstating the current council as already equivalent to real debate / calibrated ensemble deliberation
+2. dismissing the current council as fake when it already has valuable structure worth preserving
+
+## Mandatory Focus Problems
+
+At minimum, analyze these:
+
+- pseudo-debate risk: all perspectives reading the same draft/context and only differing by prompt voice
+- evolution weight suppression: dissent-heavy roles being downweighted for disagreeing
+- uncalibrated confidence: perspective confidence having no historical grounding
+- mode mismatch: quick-change tasks and system-track tasks receiving similar deliberation depth
+- verdict flattening risk: final outcome surviving while dissent detail disappears downstream
+
+## Mandatory Improvement Families
+
+At minimum, classify these:
+
+- forced adversarial / devil's advocate protocols
+- self-consistency / repeated independent council passes
+- pre-mortem / failure-backward reasoning
+- competing-hypotheses style evidence elimination
+- calibrated confidence / post-hoc confidence correction
+- outcome-tracking or impact-backed council learning
+
+You may add 3-6 more only if they are comparably bounded and materially relevant.
+
+## Follow-Up Deliverables
+
+### Deliverable V
+
+Create:
+
+- `docs/architecture/TONESOUL_COUNCIL_REALISM_AND_INDEPENDENCE_CONTRACT.md`
+
+This should define:
+
+- which parts of the current council are truly independent
+- which parts are perspective-voiced but not independent
+- which failure modes arise from that gap
+- which claims later agents must avoid making about current council realism
+
+### Deliverable W
+
+Create:
+
+- `docs/architecture/TONESOUL_COUNCIL_CONFIDENCE_AND_CALIBRATION_MAP.md`
+
+This should define:
+
+- the current confidence surfaces in council outputs
+- where confidence is descriptive versus calibrated
+- what evidence would be needed to call council confidence "calibrated"
+- which calibration approaches are plausible now versus infrastructure-blocked
+
+### Deliverable X
+
+Create:
+
+- `docs/architecture/TONESOUL_ADVERSARIAL_DELIBERATION_ADOPTION_MAP.md`
+
+This should organize bounded next-step improvement families into lanes such as:
+
+- safe prompt-level additions
+- safe evaluation-surface additions
+- helper-level additions requiring small code changes
+- infrastructure-blocked ideas
+- ideas ToneSoul should explicitly defer
+
+For each lane include:
+
+- representative methods
+- why they fit or do not fit current ToneSoul
+- the smallest credible next step
+- the main distortion risk if adopted badly
+
+### Deliverable Y
+
+Optional, only if clearly justified:
+
+- `docs/plans/tonesoul_council_realism_followup_candidates_2026-03-29.md`
+
+Use this only if you can produce 3-5 bounded candidates with clear safety ordering.
+Do not create a sprawling "next generation council" manifesto.
+
+## Follow-Up Boundaries
+
+Do not do these things in this extension:
+
+- do not modify `tonesoul/council/runtime.py`, `tonesoul/unified_pipeline.py`, or evolution-weight code
+- do not change council packet/schema surfaces
+- do not redesign frontend deliberation views
+- do not invent hidden-thought capture, secret chains-of-thought, or pseudo-private debate transcripts
+- do not claim academic methods are "implemented" unless the code path actually exists
+
+If you find a current council claim is too strong:
+
+- downgrade the prose or boundary wording
+- do not silently promote implementation status
+
+## Follow-Up Acceptance Criteria
+
+This extension is successful if:
+
+- a later agent can answer "how real is ToneSoul's council right now?" without reading the whole repo
+- confidence, dissent, and independence are clearly separated rather than smoothed together
+- at least one safe family of bounded next improvements is named without runtime overreach
+- blocked ideas are explicitly marked as blocked by missing infrastructure, not just "nice to have"
+- Codex receives a high-signal shortlist of what to implement first if council quality becomes the next mainline focus
+
+## Follow-Up Handoff Back To Codex
+
+When done, report back with:
+
+- the single clearest gap between current council plurality and real independent deliberation
+- the 3 safest improvement families to consider next
+- the 3 ideas that are most attractive but still infrastructure-blocked
+- the cleanest distinction you found between descriptive confidence and calibrated confidence
+- which one bounded council-quality improvement Codex should implement first without redesigning the whole council
