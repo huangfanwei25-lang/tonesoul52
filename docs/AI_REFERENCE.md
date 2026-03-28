@@ -395,6 +395,7 @@ When the question is not merely "what should continue" but "how should the extra
 
 - `docs/architecture/TONESOUL_PROMPT_DISCIPLINE_SKELETON.md`
 - `docs/architecture/TONESOUL_PROMPT_VARIANTS.md`
+- `docs/architecture/TONESOUL_PROMPT_STARTER_CARDS.md`
 
 Use it for:
 
@@ -406,5 +407,6 @@ Use it for:
 - compression ladder design
 - receiver instruction design
 - choosing between project continuity, meeting distillation, operator snapshot, council replay, and session-end handoff variants
+- starting from a bounded card instead of a blank prompt
 
 Treat it as a prompt-design companion, not as a universal runtime prompt or a replacement for code, schemas, or current contracts.

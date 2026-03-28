@@ -115,6 +115,8 @@ Use this when the question is not merely how to hand off current state, but what
   - prompt-side discipline skeleton for goal function, priority, evidence, recovery, stability bands, compression levels, and receiver instructions
 - [architecture/TONESOUL_PROMPT_VARIANTS.md](architecture/TONESOUL_PROMPT_VARIANTS.md)
   - practical prompt variants derived from the skeleton for common ToneSoul transfer and distillation tasks
+- [architecture/TONESOUL_PROMPT_STARTER_CARDS.md](architecture/TONESOUL_PROMPT_STARTER_CARDS.md)
+  - short starter cards for immediate use when there is no time to design a prompt from zero
 
 Use this when the question is not only what should be transferred, but how the extraction or transfer prompt should be structured in the first place.
 

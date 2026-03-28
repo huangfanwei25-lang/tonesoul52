@@ -123,6 +123,8 @@ For prompt-side discipline around goal function, priority, evidence, compression
 [`docs/architecture/TONESOUL_PROMPT_DISCIPLINE_SKELETON.md`](docs/architecture/TONESOUL_PROMPT_DISCIPLINE_SKELETON.md).
 For ToneSoul-native practical prompt variants built on top of that skeleton, open
 [`docs/architecture/TONESOUL_PROMPT_VARIANTS.md`](docs/architecture/TONESOUL_PROMPT_VARIANTS.md).
+For short ready-to-adapt cards that can be used immediately, open
+[`docs/architecture/TONESOUL_PROMPT_STARTER_CARDS.md`](docs/architecture/TONESOUL_PROMPT_STARTER_CARDS.md).
 For document-surface cleanup, same-basename collision review, and metadata backfill order, open
 [`docs/status/doc_convergence_inventory_latest.json`](docs/status/doc_convergence_inventory_latest.json)
 and

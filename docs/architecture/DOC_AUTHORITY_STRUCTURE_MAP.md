@@ -120,6 +120,7 @@ Open this when the question is:
 
 - `docs/architecture/TONESOUL_PROMPT_DISCIPLINE_SKELETON.md`
 - `docs/architecture/TONESOUL_PROMPT_VARIANTS.md`
+- `docs/architecture/TONESOUL_PROMPT_STARTER_CARDS.md`
 
 ## Retrieval Order
 

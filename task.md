@@ -1063,3 +1063,9 @@
 - [x] align variants to concrete surfaces: project continuity, conversation distillation, operator snapshot, council replay, and session-end resumability
 - [x] wire the variant catalog back into onboarding, reference, README, docs index, and the document authority structure map
 **Success Criteria**: Later agents can choose a task-shaped ToneSoul prompt variant without rebuilding the whole prompt architecture from scratch each time.
+
+## Phase 670: Prompt Starter Cards (2026-03-29)
+- [x] compress the prompt variants into short ready-to-adapt starter cards for immediate use
+- [x] keep the cards bounded to existing ToneSoul surfaces instead of inventing new runtime lanes
+- [x] wire the starter cards back into onboarding, reference, README, docs index, and the document authority structure map
+**Success Criteria**: Later agents can begin from a bounded card immediately, then expand only if the task actually needs more structure.
