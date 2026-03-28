@@ -1,7 +1,7 @@
 # ToneSoul Documentation Index
 
 > Purpose: top-level documentation index for ToneSoul authority surfaces, operational packets, and convergence maps.
-> Last Updated: 2026-03-27
+> Last Updated: 2026-03-28
 
 > 自動更新於 2026-03-22。按主題分類，方便快速導航。
 
@@ -59,6 +59,15 @@ Use these after the canonical architecture anchor, not before it.
   - compact boundary contract for the highest-confusion `law/` and deep-prose terms
 - [status/claim_authority_latest.json](status/claim_authority_latest.json)
   - machine-readable merge of the 75-term matrix, the 18-term quick lookup, and the overclaiming-risk list for fast agent-side term checks
+
+## Subject Refresh Boundaries
+
+- [architecture/TONESOUL_SUBJECT_REFRESH_BOUNDARY_CONTRACT.md](architecture/TONESOUL_SUBJECT_REFRESH_BOUNDARY_CONTRACT.md)
+  - boundary contract for deciding which hot-state surfaces may refresh `subject_snapshot` field families and at what minimum evidence level
+- [architecture/TONESOUL_SUBJECT_SNAPSHOT_FIELD_LANES.md](architecture/TONESOUL_SUBJECT_SNAPSHOT_FIELD_LANES.md)
+  - quick lane map for durable identity, refreshable working identity, temporary carry-forward, and never-auto-promote fields
+
+Use these when `subject_snapshot` is in play. They are boundary aids for heuristics and review, not replacements for runtime code or canonical governance truth.
 
 ## Developer Runtime Adapter Direction
 

@@ -1,7 +1,7 @@
 # ToneSoul Documentation Index
 
 > Purpose: documentation entrypoint and guided index for ToneSoul architecture, status artifacts, and convergence surfaces.
-> Last Updated: 2026-03-27
+> Last Updated: 2026-03-28
 
 > 這是文檔的入口點。請從這裡開始閱讀。
 
@@ -88,6 +88,15 @@ Do not collapse these into one layer. Operational guides help an agent work; can
   - machine-readable merge of the matrix, quick lookup, and overclaiming-risk list when later agents need fast term-status retrieval instead of re-reading long prose tables
 
 Treat these as boundary aids. They help later agents classify claims, but they do not outrank code, tests, `AXIOMS.json`, or canonical architecture contracts.
+
+## Subject Refresh Boundaries
+
+- `architecture/TONESOUL_SUBJECT_REFRESH_BOUNDARY_CONTRACT.md`
+  - field-level boundary contract for which hot-state surfaces may refresh `subject_snapshot` families, at what evidence standard, and where over-promotion begins
+- `architecture/TONESOUL_SUBJECT_SNAPSHOT_FIELD_LANES.md`
+  - lane map for separating durable identity, refreshable working identity, temporary carry-forward, and never-auto-promote fields before adding heuristics
+
+Treat these as subject-refresh boundary aids. They help later agents write or review `subject_snapshot` safely, but they do not outrank runtime code, tests, canonical posture, or governance contracts.
 
 ## Machine-Readable Mirrors
 

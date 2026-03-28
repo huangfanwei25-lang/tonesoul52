@@ -1,7 +1,7 @@
 # ToneSoul — AI 工作參考手冊
 
 > Purpose: give later AI instances an operator-side lookup for terms, routing decisions, red lines, and common work situations.
-> Last Updated: 2026-03-27
+> Last Updated: 2026-03-28
 > Status: operational reference; not a constitutional or architectural source of truth.
 > Use When: after `docs/AI_QUICKSTART.md`, during implementation, review, or routing confusion.
 > Authority Note: if a term here conflicts with code, tests, `AXIOMS.json`, or canonical contracts, those surfaces win.
@@ -316,6 +316,13 @@
 - `docs/architecture/TONESOUL_CLAIM_AUTHORITY_MATRIX.md`
 - `docs/architecture/TONESOUL_LAW_RUNTIME_BOUNDARY_CONTRACT.md`
 - `docs/status/claim_authority_latest.json`
+
+當問題不只是「要不要寫 subject_snapshot」，而是「哪些 surface 可以刷新哪些欄位」，請再讀：
+
+- `docs/architecture/TONESOUL_SUBJECT_REFRESH_BOUNDARY_CONTRACT.md`
+- `docs/architecture/TONESOUL_SUBJECT_SNAPSHOT_FIELD_LANES.md`
+
+這兩份文件是 subject-refresh 的 boundary aids。它們幫你判斷 `active_threads`、`decision_preferences`、`stable_vows` 等欄位能不能被熱狀態影響，但它們不會高過 code、tests、`AXIOMS.json`、canonical contracts，也不授權你自動升格 Durable Identity。
 
 建議操作順序：
 

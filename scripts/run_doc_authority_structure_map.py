@@ -110,12 +110,24 @@ GROUPS = [
         ],
     },
     {
+        "id": "subject_refresh_boundaries",
+        "label": "Subject Refresh Boundaries",
+        "description": "boundary aids for deciding when hot-state evidence may refresh subject snapshots without inflating durable identity",
+        "authority_role": "boundary_contract",
+        "use_when": "when writing, reviewing, or proposing heuristics around subject_snapshot refresh and promotion limits",
+        "read_order": 8,
+        "files": [
+            "docs/architecture/TONESOUL_SUBJECT_REFRESH_BOUNDARY_CONTRACT.md",
+            "docs/architecture/TONESOUL_SUBJECT_SNAPSHOT_FIELD_LANES.md",
+        ],
+    },
+    {
         "id": "doc_governance",
         "label": "Documentation Governance",
         "description": "naming, zoning, and convergence planning surfaces",
         "authority_role": "doc_governance",
         "use_when": "when retrieval quality, metadata posture, or naming collisions are the problem",
-        "read_order": 8,
+        "read_order": 9,
         "files": [
             "docs/DOCS_INFORMATION_ARCHITECTURE_v1.md",
             "docs/DOCS_CLASSIFICATION_LEDGER_v1.md",
@@ -130,7 +142,7 @@ GROUPS = [
         "description": "ownership and divergence boundaries for duplicate-like surfaces",
         "authority_role": "boundary_contract",
         "use_when": "when two similar-looking lanes need explicit ownership or split-brain control",
-        "read_order": 9,
+        "read_order": 10,
         "files": [
             "docs/architecture/BASENAME_DIVERGENCE_DISTILLATION_MAP.md",
             "docs/architecture/PRIVATE_MEMORY_SHADOW_BOUNDARY_MAP.md",
@@ -144,7 +156,7 @@ GROUPS = [
         "description": "machine-readable current posture for convergence-related lanes",
         "authority_role": "generated_status",
         "use_when": "when current machine-readable posture matters more than prose explanation",
-        "read_order": 10,
+        "read_order": 11,
         "files": [
             "docs/status/doc_convergence_inventory_latest.json",
             "docs/status/basename_divergence_distillation_latest.json",
@@ -221,7 +233,7 @@ def build_report(repo_root: Path) -> dict[str, Any]:
         f"metadata_missing={len(missing_files)}"
     )
     runtime_status_line = (
-        "doc_retrieval_order=entrypoint_to_operational_to_canonical_to_deep_map_to_interpretive | "
+        "doc_retrieval_order=entrypoint_to_operational_to_canonical_to_deep_map_to_interpretive_to_boundary_aids | "
         f"generated_status_lane={len(generated_status_group['files'])}"
     )
     artifact_policy_status_line = "structure_mode=retrieval_oriented | authority_roles=explicit | generated_status_preferred_for_current_state"
