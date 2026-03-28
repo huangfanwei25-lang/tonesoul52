@@ -12,6 +12,12 @@
 - Phase 657: add bounded subject-refresh heuristics so durable working identity can be refreshed deliberately rather than only by manual intuition
 - Phase 658: harden Redis live surfaces and delta-aware coordination once file-backed discipline proves stable enough to deserve real-time promotion
 
+## Phase 657: Subject Refresh Heuristics (2026-03-28)
+- [x] Add a bounded packet-visible `subject_refresh` summary that classifies which subject fields may be refreshed directly versus only reviewed manually
+- [x] Keep the heuristic recommendation-only: surface low-risk refresh candidates and promotion hazards without auto-writing new subject snapshots
+- [x] Wire the summary into diagnose/operator guidance, schema/example, and regression tests so later agents can see when identity refresh is safe and when it is not
+**Success Criteria**: A later agent can inspect packet/diagnose, see whether `subject_snapshot` looks stable, seedable, refreshable, or manual-review-only, and distinguish low-risk `active_threads` refresh from higher-risk vows/boundaries/preferences that still require deliberate confirmation.
+
 ## Phase 659: Claude Subject-Refresh Boundary Work Order (2026-03-28)
 - [x] Extend the existing Claude authority-distillation work order with a subject-refresh boundary pass instead of opening a disconnected second ticket
 - [x] Focus Claude on field-level promotion boundaries and evidence thresholds rather than runtime implementation details

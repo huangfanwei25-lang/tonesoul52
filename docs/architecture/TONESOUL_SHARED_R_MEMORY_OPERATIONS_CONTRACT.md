@@ -122,6 +122,19 @@ That telemetry is non-canonical. It exists so later agents can see:
 - which surfaces dominate real routing traffic
 - whether forced routes or overlapping signal shapes suggest likely misroutes
 
+### 2D. Subject Refresh Heuristics
+
+`project_memory_summary.subject_refresh` is recommendation-only.
+
+It exists so later agents can see:
+
+- whether `subject_snapshot` looks stable, seedable, refreshable, or manual-review-only
+- which field families may refresh directly with bounded evidence
+- which higher-risk fields must remain operator-reviewed
+- which hot-state signals would be dangerous to over-promote into durable identity
+
+It must not be treated as auto-promotion permission.
+
 ### 2A. Signal Routing Protocol
 
 If you have a bounded runtime note but are not sure whether it belongs in claim, perspective, checkpoint, compaction, or subject snapshot, route it before writing:

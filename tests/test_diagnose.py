@@ -188,6 +188,42 @@ def _fake_packet():
                     }
                 ],
             },
+            "subject_refresh": {
+                "status": "refresh_candidate",
+                "refresh_recommended": True,
+                "snapshot_present": True,
+                "latest_snapshot_id": "subj-1",
+                "snapshot_updated_at": "2026-03-28T00:04:00Z",
+                "risk_level": "high",
+                "newer_compaction_count": 1,
+                "newer_checkpoint_count": 1,
+                "active_claim_count": 1,
+                "routing_misroute_signal_count": 1,
+                "field_guidance": [
+                    {
+                        "field": "stable_vows",
+                        "action": "must_not_auto_promote",
+                        "evidence_level": "human_confirmation",
+                        "candidate_values": [],
+                        "reason": "vows stay operator-reviewed",
+                    },
+                    {
+                        "field": "active_threads",
+                        "action": "may_refresh_directly",
+                        "evidence_level": "compaction-backed",
+                        "candidate_values": ["shared-memory", "runtime"],
+                        "reason": "fresh compaction confirms current focus",
+                    },
+                ],
+                "promotion_hazards": [
+                    "Do not promote active claims into durable identity; claims are ownership signals, not selfhood."
+                ],
+                "recommended_command": (
+                    'python scripts/save_subject_snapshot.py --agent <your-id> --summary "..." '
+                    '--thread "shared-memory" --thread "runtime"'
+                ),
+                "summary_text": "subject_refresh=refresh_candidate direct=1 manual=2 hazards=1 evidence=c1/k1",
+            },
             "repo_progress": {
                 "available": True,
                 "branch": "codex/r-memory-compaction-lane-20260326",
@@ -204,7 +240,8 @@ def _fake_packet():
             "summary_text": (
                 "focus=shared-memory, runtime | next=integrate risk posture into packet | "
                 "repo=codex/r-memory-compaction-lane-20260326@04c243d dirty=6 | "
-                "router=writes=1 previews=1 overrides=1 overlap=1 misroute_signals=1 top=checkpoint"
+                "router=writes=1 previews=1 overrides=1 overlap=1 misroute_signals=1 top=checkpoint | "
+                "subject_refresh=refresh_candidate direct=1 manual=2 hazards=1 evidence=c1/k1"
             ),
         },
         "recent_routing_events": [
@@ -267,6 +304,7 @@ def _fake_packet():
                 "Prefer recent_compactions and project_memory_summary before older recent_traces.",
                 "Active claims are visible; coordinate before editing overlapping paths.",
                 "A recent subject snapshot is visible; treat it as durable working identity, but still non-canonical.",
+                "Subject-refresh heuristics found low-risk updates; review subject_refresh before writing the next snapshot.",
                 "A delta feed is visible for this agent; ack after review to advance the observer baseline.",
             ],
             "completion_rule": (
@@ -359,8 +397,12 @@ def test_full_diagnostic_is_cp950_safe_and_includes_shared_runtime(monkeypatch) 
     assert "completion_rule=Before ending a session" in report
     assert "subject_anchor:" in report
     assert "routing_summary:" in report
+    assert "subject_refresh:" in report
+    assert "status=refresh_candidate recommended=True newer_compactions=1 newer_checkpoints=1 hazards=1" in report
+    assert "active_threads=may_refresh_directly (compaction-backed)" in report
     assert "[Routing Telemetry] count=2" in report
     assert "Prefer recent_compactions and project_memory_summary before older" in report
+    assert "Subject-refresh heuristics found low-risk updates" in report
     assert "ack_command=python scripts/run_r_memory_packet.py --agent codex --ack" in report
     assert "released_claim_ids=old-claim" in report
     report.encode("cp950", errors="strict")

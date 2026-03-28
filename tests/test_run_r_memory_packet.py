@@ -214,6 +214,11 @@ def test_run_r_memory_packet_emits_json(capsys, monkeypatch, tmp_path: Path) -> 
     assert output["project_memory_summary"]["subject_anchor"]["summary"].startswith("Stay packet-first")
     assert output["project_memory_summary"]["routing_summary"]["total_events"] == 1
     assert output["project_memory_summary"]["routing_summary"]["summary_text"].startswith("router=writes=0 previews=1")
+    assert output["project_memory_summary"]["subject_refresh"]["status"] == "manual_review"
+    assert (
+        "Do not promote active claims into durable identity"
+        in output["project_memory_summary"]["subject_refresh"]["promotion_hazards"][0]
+    )
     assert output["delta_feed"]["observer_id"] == "observer-1"
     assert output["delta_feed"]["first_observation"] is True
     cursor_data = json.loads(observer_cursors_path.read_text(encoding="utf-8"))

@@ -723,6 +723,121 @@
         },
         "routing_summary": {
           "$ref": "#/$defs/routing_summary"
+        },
+        "subject_refresh": {
+          "$ref": "#/$defs/subject_refresh"
+        }
+      }
+    },
+    "subject_refresh": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "refresh_recommended",
+        "snapshot_present",
+        "latest_snapshot_id",
+        "snapshot_updated_at",
+        "risk_level",
+        "newer_compaction_count",
+        "newer_checkpoint_count",
+        "active_claim_count",
+        "routing_misroute_signal_count",
+        "field_guidance",
+        "promotion_hazards",
+        "recommended_command",
+        "summary_text"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "minLength": 1
+        },
+        "refresh_recommended": {
+          "type": "boolean"
+        },
+        "snapshot_present": {
+          "type": "boolean"
+        },
+        "latest_snapshot_id": {
+          "type": "string"
+        },
+        "snapshot_updated_at": {
+          "type": "string"
+        },
+        "risk_level": {
+          "type": "string",
+          "minLength": 1
+        },
+        "newer_compaction_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "newer_checkpoint_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "active_claim_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "routing_misroute_signal_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "field_guidance": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/subject_refresh_field"
+          }
+        },
+        "promotion_hazards": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "recommended_command": {
+          "type": "string"
+        },
+        "summary_text": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "subject_refresh_field": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "field",
+        "action",
+        "evidence_level",
+        "candidate_values",
+        "reason"
+      ],
+      "properties": {
+        "field": {
+          "type": "string",
+          "minLength": 1
+        },
+        "action": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence_level": {
+          "type": "string",
+          "minLength": 1
+        },
+        "candidate_values": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
         }
       }
     },

@@ -314,6 +314,8 @@ def test_r_memory_packet_exposes_runtime_dominance_and_recent_trace(
     assert "repo_progress" in packet["project_memory_summary"]
     assert packet["project_memory_summary"]["routing_summary"]["total_events"] == 1
     assert packet["project_memory_summary"]["routing_summary"]["dominant_surface"] == "checkpoint"
+    assert packet["project_memory_summary"]["subject_refresh"]["status"] == "no_snapshot"
+    assert packet["project_memory_summary"]["subject_refresh"]["refresh_recommended"] is False
     assert packet["recent_routing_events"][0]["surface"] == "checkpoint"
     assert packet["operator_guidance"]["backend_mode"] == "file"
     assert packet["operator_guidance"]["session_start"][0].startswith(
@@ -535,6 +537,41 @@ def test_subject_snapshots_surface_durable_subject_anchor(tmp_path: Path) -> Non
         refresh_signals=["refresh when durable boundaries change"],
         store=store,
     )
+    write_checkpoint(
+        "cp-refresh",
+        agent_id="codex",
+        session_id="sess-45",
+        summary="Packet-first rollout remains active.",
+        pending_paths=["tonesoul/runtime_adapter.py"],
+        next_action="refresh active threads after compaction review",
+        store=store,
+    )
+    write_compaction(
+        agent_id="codex",
+        session_id="sess-45",
+        summary="Runtime adapter and redis coordination remain active threads.",
+        carry_forward=["keep packet-first session cadence stable"],
+        pending_paths=["tonesoul/runtime_adapter.py"],
+        evidence_refs=["docs/AI_QUICKSTART.md"],
+        next_action="refresh subject snapshot active threads",
+        store=store,
+    )
+    route = route_r_memory_signal(
+        agent_id="codex",
+        summary="checkpoint still dominates bounded hot-state notes",
+        pending_paths=["tonesoul/runtime_adapter.py"],
+        next_action="refresh subject threads",
+    )
+    record_routing_event(route, action="preview", written=False, store=store)
+    store.append_trace(
+        SessionTrace(
+            agent="codex",
+            session_id="sess-45",
+            timestamp="2026-03-28T00:06:00+00:00",
+            topics=["runtime_adapter", "redis"],
+            key_decisions=["refresh active threads after compaction review"],
+        ).to_dict()
+    )
 
     snapshots = list_subject_snapshots(store=store, n=5)
     packet = r_memory_packet(posture=GovernancePosture(), store=store)
@@ -546,8 +583,24 @@ def test_subject_snapshots_surface_durable_subject_anchor(tmp_path: Path) -> Non
         packet["project_memory_summary"]["subject_anchor"]["summary"]
         == "Operate as a packet-first runtime steward with explicit boundaries."
     )
+    assert packet["project_memory_summary"]["subject_refresh"]["status"] == "refresh_candidate"
+    assert packet["project_memory_summary"]["subject_refresh"]["refresh_recommended"] is True
+    active_thread_guidance = next(
+        item
+        for item in packet["project_memory_summary"]["subject_refresh"]["field_guidance"]
+        if item["field"] == "active_threads"
+    )
+    assert active_thread_guidance["action"] == "may_refresh_directly"
+    assert "runtime_adapter" in active_thread_guidance["candidate_values"]
+    assert packet["project_memory_summary"]["subject_refresh"]["recommended_command"].startswith(
+        "python scripts/save_subject_snapshot.py --agent"
+    )
     assert (
         "A recent subject snapshot is visible; treat it as durable working identity, but still non-canonical."
+        in packet["operator_guidance"]["current_reminders"]
+    )
+    assert (
+        "Subject-refresh heuristics found low-risk updates; review subject_refresh before writing the next snapshot."
         in packet["operator_guidance"]["current_reminders"]
     )
 

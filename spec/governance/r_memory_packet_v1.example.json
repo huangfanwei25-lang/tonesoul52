@@ -292,7 +292,44 @@
         }
       ]
     },
-    "summary_text": "focus=runtime_adapter, redis | subject=Operate as a packet-first runtime steward with explicit boundaries. | claims=1 | pending=scripts/gateway.py, apps/dashboard/world.html | router=writes=1 previews=1 overrides=0 overlap=1 misroute_signals=1 top=checkpoint",
+    "subject_refresh": {
+      "status": "refresh_candidate",
+      "refresh_recommended": true,
+      "snapshot_present": true,
+      "latest_snapshot_id": "subj-001",
+      "snapshot_updated_at": "2026-03-26T12:01:00+00:00",
+      "risk_level": "stable",
+      "newer_compaction_count": 1,
+      "newer_checkpoint_count": 1,
+      "active_claim_count": 1,
+      "routing_misroute_signal_count": 1,
+      "field_guidance": [
+        {
+          "field": "stable_vows",
+          "action": "must_not_auto_promote",
+          "evidence_level": "human_confirmation",
+          "candidate_values": [],
+          "reason": "Stable vows are constitutional commitments and must never be inferred from hot-state coordination residue."
+        },
+        {
+          "field": "active_threads",
+          "action": "may_refresh_directly",
+          "evidence_level": "compaction-backed",
+          "candidate_values": [
+            "runtime_adapter",
+            "redis"
+          ],
+          "reason": "Fresh compactions newer than the latest snapshot confirm that current focus topics are durable enough to refresh active_threads."
+        }
+      ],
+      "promotion_hazards": [
+        "Do not promote active claims into durable identity; claims are ownership signals, not selfhood.",
+        "Do not promote routing ambiguity or forced routes into durable preferences or routines."
+      ],
+      "recommended_command": "python scripts/save_subject_snapshot.py --agent <your-id> --summary \"...\" --thread \"runtime_adapter\" --thread \"redis\" --refresh-signal \"subject-refresh heuristic reviewed\"",
+      "summary_text": "subject_refresh=refresh_candidate direct=1 manual=2 hazards=2 evidence=c1/k1"
+    },
+    "summary_text": "focus=runtime_adapter, redis | subject=Operate as a packet-first runtime steward with explicit boundaries. | claims=1 | pending=scripts/gateway.py, apps/dashboard/world.html | router=writes=1 previews=1 overrides=0 overlap=1 misroute_signals=1 top=checkpoint | subject_refresh=refresh_candidate direct=1 manual=2 hazards=2 evidence=c1/k1",
     "repo_progress": {
       "available": true,
       "branch": "codex/r-memory-compaction-lane-20260326",
@@ -343,6 +380,7 @@
       "Prefer recent_compactions and project_memory_summary before older recent_traces.",
       "Active claims are visible; coordinate before editing overlapping paths.",
       "A recent subject snapshot is visible; treat it as durable working identity, but still non-canonical.",
+      "Subject-refresh heuristics found low-risk updates; review subject_refresh before writing the next snapshot.",
       "No since-last-seen baseline exists yet; ack the packet after review to establish one."
     ],
     "completion_rule": "Before ending a session, externalize progress with checkpoint or compaction, then release any shared claim."

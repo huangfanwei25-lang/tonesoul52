@@ -384,6 +384,30 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
             dominant_surface = str(routing_summary.get("dominant_surface", "")).strip()
             if dominant_surface:
                 lines.append(f"    dominant_surface={dominant_surface}")
+        subject_refresh = project_memory_summary.get("subject_refresh") or {}
+        if subject_refresh:
+            lines.append("  subject_refresh:")
+            lines.append(
+                "    "
+                f"status={subject_refresh.get('status', 'unknown')} "
+                f"recommended={bool(subject_refresh.get('refresh_recommended', False))} "
+                f"newer_compactions={int(subject_refresh.get('newer_compaction_count', 0) or 0)} "
+                f"newer_checkpoints={int(subject_refresh.get('newer_checkpoint_count', 0) or 0)} "
+                f"hazards={len(subject_refresh.get('promotion_hazards') or [])}"
+            )
+            recommended_command = str(subject_refresh.get("recommended_command", "")).strip()
+            if recommended_command:
+                lines.append(f"    recommended_command={_clip(recommended_command)}")
+            field_guidance = list(subject_refresh.get("field_guidance") or [])
+            for item in field_guidance[:3]:
+                field_name = str(item.get("field", "")).strip()
+                action = str(item.get("action", "")).strip()
+                evidence_level = str(item.get("evidence_level", "")).strip()
+                if field_name and action:
+                    lines.append(
+                        f"    {field_name}={action}"
+                        + (f" ({evidence_level})" if evidence_level else "")
+                    )
 
     subject_snapshots = packet.get("recent_subject_snapshots", [])
     if subject_snapshots:
