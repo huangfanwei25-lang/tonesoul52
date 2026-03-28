@@ -12,6 +12,12 @@
 - Phase 657: add bounded subject-refresh heuristics so durable working identity can be refreshed deliberately rather than only by manual intuition
 - Phase 658: harden Redis live surfaces and delta-aware coordination once file-backed discipline proves stable enough to deserve real-time promotion
 
+## Phase 658: Coordination Mode For Redis Live Surfaces (2026-03-28)
+- [x] Add a packet-visible `coordination_mode` surface that makes `redis-live` versus `file-backed` behavior explicit instead of forcing later agents to infer it from backend name alone
+- [x] Surface which shared lanes are effectively live, which are only file-backed, and when a later agent should re-read the packet before shared edits
+- [x] Wire the same coordination-mode semantics into diagnose, operator guidance, schema/example, and regression tests so live-surface promotion stays machine-readable
+**Success Criteria**: A later agent can inspect packet/diagnose, tell whether shared coordination is live or file-backed, see which lanes update immediately, and know when to re-read packet before touching shared work.
+
 ## Phase 657: Subject Refresh Heuristics (2026-03-28)
 - [x] Add a bounded packet-visible `subject_refresh` summary that classifies which subject fields may be refreshed directly versus only reviewed manually
 - [x] Keep the heuristic recommendation-only: surface low-risk refresh candidates and promotion hazards without auto-writing new subject snapshots

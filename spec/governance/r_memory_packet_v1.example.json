@@ -344,6 +344,26 @@
       ]
     }
   },
+  "coordination_mode": {
+    "mode": "redis-live",
+    "live_surfaces_available": true,
+    "delta_feed_enabled": true,
+    "event_channel": "ts:events",
+    "surface_modes": {
+      "claims": "live",
+      "perspectives": "live",
+      "checkpoints": "live",
+      "compactions": "live",
+      "subject_snapshots": "live",
+      "observer_cursors": "live",
+      "routing_events": "live",
+      "visitors": "live"
+    },
+    "recheck_command": "python scripts/run_r_memory_packet.py --agent codex-observer",
+    "ack_command": "python scripts/run_r_memory_packet.py --agent codex-observer --ack",
+    "refresh_hint": "Redis live surfaces may change mid-session; re-read packet before shared edits after long work or when other agents arrive.",
+    "summary_text": "coordination=redis-live claims=live checkpoints=live subjects=live delta=enabled visitors=live active=claims:1/checkpoints:1/compactions:1/subjects:1/routing:2/visitors:1"
+  },
   "operator_guidance": {
     "backend_mode": "redis",
     "session_start": [
@@ -381,6 +401,7 @@
       "Active claims are visible; coordinate before editing overlapping paths.",
       "A recent subject snapshot is visible; treat it as durable working identity, but still non-canonical.",
       "Subject-refresh heuristics found low-risk updates; review subject_refresh before writing the next snapshot.",
+      "Redis live surfaces may change mid-session; re-read packet before shared edits after long work or when other agents arrive.",
       "No since-last-seen baseline exists yet; ack the packet after review to establish one."
     ],
     "completion_rule": "Before ending a session, externalize progress with checkpoint or compaction, then release any shared claim."

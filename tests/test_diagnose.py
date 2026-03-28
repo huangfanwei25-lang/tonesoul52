@@ -268,6 +268,31 @@ def _fake_packet():
                 "summary": "force a compaction lane despite overlap",
             },
         ],
+        "coordination_mode": {
+            "mode": "redis-live",
+            "live_surfaces_available": True,
+            "delta_feed_enabled": True,
+            "event_channel": "ts:events",
+            "surface_modes": {
+                "claims": "live",
+                "perspectives": "live",
+                "checkpoints": "live",
+                "compactions": "live",
+                "subject_snapshots": "live",
+                "observer_cursors": "live",
+                "routing_events": "live",
+                "visitors": "live",
+            },
+            "recheck_command": "python scripts/run_r_memory_packet.py --agent codex",
+            "ack_command": "python scripts/run_r_memory_packet.py --agent codex --ack",
+            "refresh_hint": (
+                "Redis live surfaces may change mid-session; re-read packet before shared edits after long work or when other agents arrive."
+            ),
+            "summary_text": (
+                "coordination=redis-live claims=live checkpoints=live subjects=live "
+                "delta=enabled visitors=live active=claims:1/checkpoints:1/compactions:1/subjects:1/routing:2/visitors:1"
+            ),
+        },
         "operator_guidance": {
             "backend_mode": "redis",
             "session_start": [
@@ -305,6 +330,7 @@ def _fake_packet():
                 "Active claims are visible; coordinate before editing overlapping paths.",
                 "A recent subject snapshot is visible; treat it as durable working identity, but still non-canonical.",
                 "Subject-refresh heuristics found low-risk updates; review subject_refresh before writing the next snapshot.",
+                "Redis live surfaces may change mid-session; re-read packet before shared edits after long work or when other agents arrive.",
                 "A delta feed is visible for this agent; ack after review to advance the observer baseline.",
             ],
             "completion_rule": (
@@ -361,6 +387,7 @@ def test_compact_diagnostic_reports_shared_runtime_counts(monkeypatch) -> None:
     assert "compactions=1" in text
     assert "subjects=1" in text
     assert "R=0.67/high" in text
+    assert "coord=redis-live" in text
     assert "git=04c243d/dirty=6" in text
     assert "aegis=intact" in text
 
@@ -401,8 +428,12 @@ def test_full_diagnostic_is_cp950_safe_and_includes_shared_runtime(monkeypatch) 
     assert "status=refresh_candidate recommended=True newer_compactions=1 newer_checkpoints=1 hazards=1" in report
     assert "active_threads=may_refresh_directly (compaction-backed)" in report
     assert "[Routing Telemetry] count=2" in report
+    assert "[Coordination Mode]" in report
+    assert "mode=redis-live live=True delta=True" in report
+    assert "surfaces=claims:live checkpoints:live subjects:live visitors:live" in report
     assert "Prefer recent_compactions and project_memory_summary before older" in report
     assert "Subject-refresh heuristics found low-risk updates" in report
+    assert "Redis live surfaces may change mid-session" in report
     assert "ack_command=python scripts/run_r_memory_packet.py --agent codex --ack" in report
     assert "released_claim_ids=old-claim" in report
     report.encode("cp950", errors="strict")

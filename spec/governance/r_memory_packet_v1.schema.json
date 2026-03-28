@@ -21,6 +21,7 @@
     "recent_compactions",
     "recent_subject_snapshots",
     "recent_routing_events",
+    "coordination_mode",
     "operator_guidance"
   ],
   "properties": {
@@ -224,6 +225,9 @@
     },
     "project_memory_summary": {
       "$ref": "#/$defs/project_memory_summary"
+    },
+    "coordination_mode": {
+      "$ref": "#/$defs/coordination_mode"
     },
     "operator_guidance": {
       "$ref": "#/$defs/operator_guidance"
@@ -836,6 +840,75 @@
           }
         },
         "reason": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "coordination_mode": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "live_surfaces_available",
+        "delta_feed_enabled",
+        "event_channel",
+        "surface_modes",
+        "recheck_command",
+        "ack_command",
+        "refresh_hint",
+        "summary_text"
+      ],
+      "properties": {
+        "mode": {
+          "type": "string",
+          "minLength": 1
+        },
+        "live_surfaces_available": {
+          "type": "boolean"
+        },
+        "delta_feed_enabled": {
+          "type": "boolean"
+        },
+        "event_channel": {
+          "type": "string"
+        },
+        "surface_modes": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "claims",
+            "perspectives",
+            "checkpoints",
+            "compactions",
+            "subject_snapshots",
+            "observer_cursors",
+            "routing_events",
+            "visitors"
+          ],
+          "properties": {
+            "claims": {"type": "string", "minLength": 1},
+            "perspectives": {"type": "string", "minLength": 1},
+            "checkpoints": {"type": "string", "minLength": 1},
+            "compactions": {"type": "string", "minLength": 1},
+            "subject_snapshots": {"type": "string", "minLength": 1},
+            "observer_cursors": {"type": "string", "minLength": 1},
+            "routing_events": {"type": "string", "minLength": 1},
+            "visitors": {"type": "string", "minLength": 1}
+          }
+        },
+        "recheck_command": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ack_command": {
+          "type": "string"
+        },
+        "refresh_hint": {
+          "type": "string",
+          "minLength": 1
+        },
+        "summary_text": {
           "type": "string",
           "minLength": 1
         }

@@ -219,6 +219,10 @@ def test_run_r_memory_packet_emits_json(capsys, monkeypatch, tmp_path: Path) -> 
         "Do not promote active claims into durable identity"
         in output["project_memory_summary"]["subject_refresh"]["promotion_hazards"][0]
     )
+    assert output["coordination_mode"]["mode"] == "file-backed"
+    assert output["coordination_mode"]["delta_feed_enabled"] is True
+    assert output["coordination_mode"]["surface_modes"]["checkpoints"] == "file-backed"
+    assert output["coordination_mode"]["surface_modes"]["visitors"] == "unavailable"
     assert output["delta_feed"]["observer_id"] == "observer-1"
     assert output["delta_feed"]["first_observation"] is True
     cursor_data = json.loads(observer_cursors_path.read_text(encoding="utf-8"))

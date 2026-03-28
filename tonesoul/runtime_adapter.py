@@ -1452,6 +1452,7 @@ def _build_operator_guidance(
     compactions: List[Dict[str, Any]],
     subject_snapshots: List[Dict[str, Any]],
     project_memory_summary: Dict[str, Any],
+    coordination_mode: Dict[str, Any],
 ) -> Dict[str, Any]:
     """Build packet-visible operator guidance for shared R-memory coordination."""
     reminders: List[str] = []
@@ -1499,7 +1500,10 @@ def _build_operator_guidance(
             "Subject-refresh heuristics found promotion hazards; keep higher-risk fields operator-reviewed instead of auto-promoting hot-state."
         )
 
-    if is_redis:
+    refresh_hint = str(coordination_mode.get("refresh_hint", "")).strip()
+    if refresh_hint:
+        reminders.append(refresh_hint)
+    elif is_redis:
         reminders.append("Redis live surfaces are available; perspectives and checkpoints may be visible immediately.")
     else:
         reminders.append("Redis live surfaces are unavailable; coordination is currently file-backed.")
@@ -1553,6 +1557,72 @@ def _build_operator_guidance(
             "Before ending a session, externalize progress with checkpoint or compaction, "
             "then release any shared claim."
         ),
+    }
+
+
+def _build_coordination_mode(
+    *,
+    is_redis: bool,
+    observer_id: str,
+    delta_feed: Dict[str, Any],
+    claims: List[Dict[str, Any]],
+    checkpoints: List[Dict[str, Any]],
+    compactions: List[Dict[str, Any]],
+    subject_snapshots: List[Dict[str, Any]],
+    routing_events: List[Dict[str, Any]],
+    visitors: List[Dict[str, Any]],
+) -> Dict[str, Any]:
+    surface_modes = {
+        "claims": "live" if is_redis else "file-backed",
+        "perspectives": "live" if is_redis else "file-backed",
+        "checkpoints": "live" if is_redis else "file-backed",
+        "compactions": "live" if is_redis else "file-backed",
+        "subject_snapshots": "live" if is_redis else "file-backed",
+        "observer_cursors": "live" if is_redis else "file-backed",
+        "routing_events": "live" if is_redis else "file-backed",
+        "visitors": "live" if is_redis else "unavailable",
+    }
+    mode = "redis-live" if is_redis else "file-backed"
+    observer_text = str(observer_id or "").strip()
+    recheck_command = (
+        f"python scripts/run_r_memory_packet.py --agent {observer_text}"
+        if observer_text
+        else "python scripts/run_r_memory_packet.py"
+    )
+    ack_command = str(delta_feed.get("ack_command", "")).strip() if observer_text else ""
+
+    if is_redis:
+        refresh_hint = (
+            "Redis live surfaces may change mid-session; re-read packet before shared edits after long work or when other agents arrive."
+        )
+    else:
+        refresh_hint = (
+            "File-backed coordination is not push-driven; re-read packet before touching shared paths after longer work or after another agent reports progress."
+        )
+
+    summary_text = (
+        "coordination="
+        f"{mode} claims={surface_modes['claims']} checkpoints={surface_modes['checkpoints']} "
+        f"subjects={surface_modes['subject_snapshots']} delta={'enabled' if observer_text else 'inactive'} "
+        f"visitors={surface_modes['visitors']}"
+    )
+    if claims or checkpoints or compactions or subject_snapshots or routing_events or visitors:
+        summary_text += (
+            " active="
+            f"claims:{len(claims)}/checkpoints:{len(checkpoints)}/compactions:{len(compactions)}/"
+            f"subjects:{len(subject_snapshots)}/routing:{len(routing_events)}/visitors:{len(visitors)}"
+        )
+
+    return {
+        "mode": mode,
+        "live_surfaces_available": bool(is_redis),
+        "delta_feed_enabled": bool(observer_text),
+        "event_channel": "ts:events" if is_redis else "",
+        "surface_modes": surface_modes,
+        "recheck_command": recheck_command,
+        "ack_command": ack_command,
+        "refresh_hint": refresh_hint,
+        "summary_text": summary_text,
     }
 
 
@@ -1987,6 +2057,17 @@ def r_memory_packet(
             ],
             project_memory_summary=project_memory_summary,
         )
+    coordination_mode = _build_coordination_mode(
+        is_redis=bool(getattr(store, "is_redis", False)),
+        observer_id=observer_text,
+        delta_feed=delta_feed,
+        claims=claims,
+        checkpoints=checkpoints[:trace_limit],
+        compactions=compactions[:trace_limit],
+        subject_snapshots=subject_snapshots[:trace_limit],
+        routing_events=routing_summary.get("recent_events", []),
+        visitors=visitors[:visitor_limit],
+    )
     operator_guidance = _build_operator_guidance(
         backend_name=getattr(store, "backend_name", "unknown"),
         is_redis=bool(getattr(store, "is_redis", False)),
@@ -1996,6 +2077,7 @@ def r_memory_packet(
         compactions=compactions,
         subject_snapshots=subject_snapshots,
         project_memory_summary=project_memory_summary,
+        coordination_mode=coordination_mode,
     )
 
     return {
@@ -2069,6 +2151,7 @@ def r_memory_packet(
         ],
         "recent_routing_events": routing_summary.get("recent_events", []),
         "project_memory_summary": project_memory_summary,
+        "coordination_mode": coordination_mode,
         "operator_guidance": operator_guidance,
         **({"delta_feed": delta_feed} if observer_text else {}),
     }

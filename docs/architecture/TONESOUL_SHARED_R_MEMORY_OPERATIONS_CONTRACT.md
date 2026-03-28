@@ -135,6 +135,19 @@ It exists so later agents can see:
 
 It must not be treated as auto-promotion permission.
 
+### 2E. Coordination Mode
+
+`coordination_mode` makes the current collaboration topology explicit.
+
+It exists so later agents can see:
+
+- whether shared coordination is currently `redis-live` or `file-backed`
+- which lanes update immediately versus only after the next packet reread
+- whether visitor presence is visible at all
+- when they should re-read packet before touching shared paths
+
+It is descriptive, not authoritative runtime law.
+
 ### 2A. Signal Routing Protocol
 
 If you have a bounded runtime note but are not sure whether it belongs in claim, perspective, checkpoint, compaction, or subject snapshot, route it before writing:

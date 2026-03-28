@@ -74,6 +74,7 @@ def _packet(
             "parallel_lanes": {},
             "posture": {"risk_posture": {}},
             "project_memory_summary": {},
+            "coordination_mode": {},
             "operator_guidance": {},
         }
 
@@ -116,6 +117,7 @@ def compact_diagnostic(agent_id: str = "unknown") -> str:
             f"vows={len(posture.active_vows)} tensions={len(posture.tension_history)} | "
             f"R={float(((packet.get('posture') or {}).get('risk_posture') or {}).get('score', 0.0)):.2f}"
             f"/{((packet.get('posture') or {}).get('risk_posture') or {}).get('level', 'unknown')} | "
+            f"coord={((packet.get('coordination_mode') or {}).get('mode', store.backend_name))} | "
             f"traces={traces_n} claims={len(packet.get('active_claims', []))} "
             f"compactions={len(packet.get('recent_compactions', []))} "
             f"subjects={len(packet.get('recent_subject_snapshots', []))} zones={zones_n} | "
@@ -154,6 +156,7 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
         "parallel_lanes": {},
         "posture": {"risk_posture": {}},
         "project_memory_summary": {},
+        "coordination_mode": {},
         "operator_guidance": {},
     }
 
@@ -442,6 +445,38 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
                 f"{event.get('action', '?')} -> {event.get('surface', '?')} | "
                 f"forced={bool(event.get('forced', False))} "
                 f"overlap={bool(event.get('overlap', False))}"
+            )
+
+    coordination_mode = packet.get("coordination_mode") or {}
+    if coordination_mode:
+        lines.append("")
+        lines.append("[Coordination Mode]")
+        lines.append(
+            "  "
+            f"mode={coordination_mode.get('mode', 'unknown')} "
+            f"live={bool(coordination_mode.get('live_surfaces_available', False))} "
+            f"delta={bool(coordination_mode.get('delta_feed_enabled', False))}"
+        )
+        summary_text = str(coordination_mode.get("summary_text", "")).strip()
+        if summary_text:
+            lines.append(f"  summary={_clip(summary_text)}")
+        refresh_hint = str(coordination_mode.get("refresh_hint", "")).strip()
+        if refresh_hint:
+            lines.append(f"  refresh_hint={_clip(refresh_hint)}")
+        recheck_command = str(coordination_mode.get("recheck_command", "")).strip()
+        if recheck_command:
+            lines.append(f"  recheck_command={recheck_command}")
+        ack_command = str(coordination_mode.get("ack_command", "")).strip()
+        if ack_command:
+            lines.append(f"  ack_command={ack_command}")
+        surface_modes = coordination_mode.get("surface_modes") or {}
+        if surface_modes:
+            lines.append(
+                "  surfaces="
+                f"claims:{surface_modes.get('claims', '?')} "
+                f"checkpoints:{surface_modes.get('checkpoints', '?')} "
+                f"subjects:{surface_modes.get('subject_snapshots', '?')} "
+                f"visitors:{surface_modes.get('visitors', '?')}"
             )
 
     delta_feed = packet.get("delta_feed") or {}
