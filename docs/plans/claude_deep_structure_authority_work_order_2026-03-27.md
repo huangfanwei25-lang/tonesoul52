@@ -990,3 +990,176 @@ When done, report back with:
 - the cleanest adoption rule for deciding `wording cleanup` vs `starter-card adoption`
 - the cleanest prompt-family split you found in the repo
 - which one bounded prompt-surface improvement Codex should implement first
+
+---
+
+## Follow-Up Extension: Continuity Import, Receiver, And Decay Program
+
+This extension exists because ToneSoul now has several continuity-bearing surfaces:
+
+- `r_memory_packet`
+- `delta_feed`
+- `claims`
+- `checkpoints`
+- `compactions`
+- `subject_snapshot`
+- `council_dossier`
+- `session-start` / `session-end` bundles
+
+Those surfaces now exist.
+What is still under-specified is a harder question:
+
+> when a later agent receives continuity material, what should it import directly, what should remain advisory, what should decay, and what must be explicitly re-confirmed?
+
+This is a documentation-and-boundary program.
+It is not permission to change runtime lifecycles, packet schema, or decay heuristics in code.
+
+## Why This Fits Claude
+
+This next pass again benefits from panoramic structural judgment:
+
+- it requires reading continuity docs, packet surfaces, handoff tooling, and prompt-discipline docs together
+- it requires distinguishing importable continuity from stale residue
+- it requires separating receiver obligations from sender formatting
+- it benefits from turning many overlapping continuity surfaces into a small number of lifecycle lanes
+
+## Follow-Up Objective
+
+Produce a bounded map that tells later agents:
+
+- which continuity surfaces are `authoritative`, `advisory`, `ephemeral`, or `manual-confirmation-only`
+- what a receiving agent is allowed to do after reading each surface
+- which continuity surfaces should decay quickly, slowly, or only by explicit human/operator review
+- where silent over-import is dangerous
+
+The goal is to stop future agents from making two opposite mistakes:
+
+1. treating every carried context artifact as durable truth
+2. ignoring continuity surfaces so aggressively that handoff value is lost
+
+## Mandatory Focus Surfaces
+
+At minimum, cover these:
+
+- `r_memory_packet.operator_guidance`
+- `delta_feed`
+- `claims`
+- `checkpoints`
+- `compactions`
+- `subject_snapshot`
+- `subject_refresh` recommendations
+- `council_dossier` and `council_dossier_summary`
+- `project_memory_summary`
+- `session-start readiness`
+- `session-end resumability handoff`
+
+You may add 3-6 more only if they are structurally equivalent and materially affect continuity import behavior.
+
+## Follow-Up Deliverables
+
+### Deliverable R
+
+Create:
+
+- `docs/architecture/TONESOUL_CONTINUITY_IMPORT_AND_DECAY_CONTRACT.md`
+
+This should define, per continuity surface:
+
+- import posture
+  - `directly importable`
+  - `advisory only`
+  - `ephemeral until acknowledged`
+  - `manual confirmation required`
+- receiver obligation
+  - `must read`
+  - `should consider`
+  - `must not silently promote`
+- decay posture
+  - `fast`
+  - `medium`
+  - `slow`
+  - `operator/human-only`
+- main failure mode if over-imported or under-imported
+
+### Deliverable S
+
+Create:
+
+- `docs/architecture/TONESOUL_RECEIVER_INTERPRETATION_BOUNDARY_CONTRACT.md`
+
+This should focus on the receiving agent rather than the sending surface.
+
+At minimum include:
+
+- what it means to `ack` a packet versus `apply` a continuity artifact
+- which surfaces may influence action selection directly
+- which surfaces may only influence planning or review posture
+- which surfaces must never be treated as durable identity without explicit confirmation
+- silent-override hazards for later agents
+
+### Deliverable T
+
+Create:
+
+- `docs/architecture/TONESOUL_CONTINUITY_SURFACE_LIFECYCLE_MAP.md`
+
+This should organize continuity surfaces into a small number of lifecycle lanes, for example:
+
+- immediate coordination
+- bounded handoff
+- working identity
+- replay / review memory
+- historical residue
+
+For each lane, include:
+
+- representative surfaces
+- expected lifetime
+- refresh trigger
+- decay trigger
+- receiver behavior
+
+### Deliverable U
+
+Optional, only if clearly justified:
+
+- `docs/plans/tonesoul_continuity_followup_candidates_2026-03-29.md`
+
+Use this only if you can name 3-5 bounded follow-up candidates that stay documentation-first or helper-level.
+Do not create a giant continuity-overhaul roadmap.
+
+## Follow-Up Boundaries
+
+Do not do these things in this extension:
+
+- do not modify `tonesoul/runtime_adapter.py`
+- do not modify packet schema or example JSON
+- do not change `start_agent_session.py` or `end_agent_session.py`
+- do not invent hidden-memory capture or private-thought replay
+- do not reclassify `subject_snapshot` into canonical identity
+- do not turn advisory surfaces into hard runtime authority in prose
+
+If you find a surface is easy to over-import:
+
+- tighten the boundary in documentation
+- do not silently promote runtime behavior to match the prose
+
+## Follow-Up Acceptance Criteria
+
+This extension is successful if:
+
+- a later agent can answer "what am I allowed to import from this continuity surface?" without rereading the whole repo
+- advisory, ephemeral, and durable continuity surfaces are clearly separated
+- receiver behavior is documented as distinctly as sender formatting
+- the most dangerous silent over-import patterns are explicitly named
+- Codex receives one bounded shortlist of future continuity improvements without runtime drift
+
+## Follow-Up Handoff Back To Codex
+
+When done, report back with:
+
+- the 3 continuity surfaces most safe to import directly
+- the 3 continuity surfaces most dangerous to over-import
+- the cleanest distinction you found between `ack`, `apply`, and `promote`
+- the most useful lifecycle-lane split you found
+- which one bounded continuity improvement Codex should implement first without changing packet schema

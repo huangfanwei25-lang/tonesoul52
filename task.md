@@ -1081,3 +1081,9 @@
 - [x] keep the follow-up bounded to documentation, topology, boundary, and wave planning instead of runtime prompt mutation
 - [x] keep implementation ownership for actual prompt-surface adoption on the Codex lane
 **Success Criteria**: Claude has one complex long-context workstream that maps ToneSoul prompt families, adoption boundaries, and the next safe implementation waves without touching runtime code.
+
+## Phase 673: Claude Continuity Import And Decay Work Order (2026-03-29)
+- [x] extend `docs/plans/claude_deep_structure_authority_work_order_2026-03-27.md` with one large continuity import / receiver / decay program
+- [x] keep the follow-up bounded to documentation-only continuity boundaries instead of packet/runtime/schema mutation
+- [x] keep implementation ownership for any later continuity-surface behavior changes on the Codex lane
+**Success Criteria**: Claude has one clear long-context workstream that classifies which continuity surfaces later agents may import, acknowledge, or only treat as advisory, without touching runtime code or packet schema.
