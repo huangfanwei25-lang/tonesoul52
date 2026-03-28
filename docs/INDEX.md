@@ -69,6 +69,17 @@ Use these after the canonical architecture anchor, not before it.
 
 Use these when `subject_snapshot` is in play. They are boundary aids for heuristics and review, not replacements for runtime code or canonical governance truth.
 
+## Control Plane Discipline
+
+- [architecture/TONESOUL_TASK_TRACK_AND_READINESS_CONTRACT.md](architecture/TONESOUL_TASK_TRACK_AND_READINESS_CONTRACT.md)
+  - readiness states, task tracks, exploration depth, and claim/review requirements for classifying work before it starts
+- [architecture/TONESOUL_PLAN_DELTA_CONTRACT.md](architecture/TONESOUL_PLAN_DELTA_CONTRACT.md)
+  - bounded rules for keep / append delta / fork new phase / stop and ask human when scope shifts
+- [plans/tonesoul_control_plane_followup_candidates_2026-03-28.md](plans/tonesoul_control_plane_followup_candidates_2026-03-28.md)
+  - small implementation candidate list derived from the control-plane contracts
+
+Use these when readiness, track classification, or `task.md` mutation discipline is the question. They are control-plane aids, not live runtime enforcement.
+
 ## Developer Runtime Adapter Direction
 
 - [notes/TONESOUL_RUNTIME_ADAPTER_MEMORY_ANCHOR_2026-03-23.md](notes/TONESOUL_RUNTIME_ADAPTER_MEMORY_ANCHOR_2026-03-23.md)

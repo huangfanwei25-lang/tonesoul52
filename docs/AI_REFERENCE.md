@@ -324,6 +324,14 @@
 
 這兩份文件是 subject-refresh 的 boundary aids。它們幫你判斷 `active_threads`、`decision_preferences`、`stable_vows` 等欄位能不能被熱狀態影響，但它們不會高過 code、tests、`AXIOMS.json`、canonical contracts，也不授權你自動升格 Durable Identity。
 
+當問題不只是「下一步做什麼」，而是「這個任務算哪一軌、是否已 ready、scope 改變時要 append 還是 fork」，請再讀：
+
+- `docs/architecture/TONESOUL_TASK_TRACK_AND_READINESS_CONTRACT.md`
+- `docs/architecture/TONESOUL_PLAN_DELTA_CONTRACT.md`
+- `docs/plans/tonesoul_control_plane_followup_candidates_2026-03-28.md`
+
+這三份文件是 control-plane discipline aids。它們幫你分類 `quick_change / feature_track / system_track`、`pass / needs_clarification / blocked`，也幫你避免靜默改寫 `task.md`；但它們不會高過現行 runtime code，也不會自動替你做 readiness gate。
+
 建議操作順序：
 
 1. `python -m tonesoul.diagnose --agent <id>`

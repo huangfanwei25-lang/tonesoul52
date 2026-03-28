@@ -98,6 +98,17 @@ Treat these as boundary aids. They help later agents classify claims, but they d
 
 Treat these as subject-refresh boundary aids. They help later agents write or review `subject_snapshot` safely, but they do not outrank runtime code, tests, canonical posture, or governance contracts.
 
+## Control Plane Discipline
+
+- `architecture/TONESOUL_TASK_TRACK_AND_READINESS_CONTRACT.md`
+  - defines readiness states, task tracks, exploration depth, and claim/review requirements so later agents stop treating every task like a full-system refactor
+- `architecture/TONESOUL_PLAN_DELTA_CONTRACT.md`
+  - defines when to keep a plan, append a bounded delta, fork a new phase, or stop and ask a human instead of silently rewriting `task.md`
+- `plans/tonesoul_control_plane_followup_candidates_2026-03-28.md`
+  - bounded implementation candidates for surfacing readiness, track hints, plan-delta telemetry, track-aware claim TTL, and exploration checkpoints
+
+Treat these as control-plane discipline aids. They help later agents classify work and manage plan changes, but they do not outrank runtime code, canonical governance truth, or the current session bundle output.
+
 ## Machine-Readable Mirrors
 
 - `status/l7_retrieval_contract_latest.json`
