@@ -804,3 +804,189 @@ When done, report back with:
 - which dissent fields must survive even when the final verdict is clear
 - the safest default deliberation-mode mapping for quick/feature/system work
 - which one bounded council-surface improvement Codex should implement first
+
+---
+
+## Follow-Up Extension: Prompt Surface Topology And Adoption Program
+
+This extension exists because ToneSoul now has:
+
+- a prompt discipline skeleton,
+- prompt variants,
+- prompt starter cards,
+- and two live prompt surfaces already adapted by Codex.
+
+What it still lacks is a clean answer to this question:
+
+> across the existing repository, what is the real topology of prompt surfaces, which starter-card lane each one belongs to, which ones should stay specialized, and what adoption order is actually safe?
+
+This is a large documentation-and-topology ticket.
+It is not permission to rewrite runtime prompts, touch packet/schema surfaces, or redesign agent personalities.
+
+## Why This Follow-Up Fits Claude
+
+This pass benefits from a long-context synthesis agent because it requires:
+
+- scanning many prompt-bearing files and separating high-frequency surfaces from low-value one-offs
+- comparing current prompt shapes against the new prompt discipline skeleton
+- deciding which surfaces match project continuity, meeting distillation, operator snapshot, council replay, or session-end resumability
+- identifying which surfaces are too risky, too opaque, or too legacy-bound to touch yet
+- grouping related prompt surfaces into reusable families instead of judging them one by one without system shape
+- producing one adoption program that Codex can execute incrementally without redoing the mapping later
+
+## Follow-Up Objective
+
+Produce a bounded adoption program for **existing prompt surfaces** so later agents can answer:
+
+- which prompts are already aligned enough and should stay as-is?
+- which prompts should adopt a starter card next?
+- which prompts need only wording cleanup versus structural rewrite?
+- which prompts are too specialized or too risky to touch yet?
+- which prompt families belong together as one adoption wave?
+- where does prompt discipline stop and domain-specific voice begin?
+
+The goal is to reduce four failure modes:
+
+1. **prompt drift**: high-frequency prompts remain vague even after the discipline docs exist
+2. **over-application**: every prompt gets forced into the same skeleton, including niche or low-value surfaces
+3. **surface mismatch**: a prompt adopts the wrong card and starts carrying the wrong kind of memory or evidence burden
+4. **silent priority collapse**: prompt surfaces still mix goal, evidence, confidence, and recovery in one blur
+
+## Mandatory Focus Areas
+
+At minimum, inspect and classify prompt-bearing surfaces across these areas:
+
+- `tonesoul/llm/`
+- `tonesoul/memory/`
+- `tonesoul/tonebridge/`
+- `tonesoul/market/`
+- `tonesoul/scribe/`
+- `scripts/` where explicit prompt strings or builder helpers exist
+- selected prompt-bearing docs only when they clearly act as active operator prompts or reusable task shells
+
+At minimum, classify surfaces against these ToneSoul prompt lanes:
+
+- `project_continuity_transfer`
+- `conversation_or_meeting_distillation`
+- `operator_or_user_snapshot`
+- `council_dossier_replay`
+- `session_end_resumability_handoff`
+- `no_adoption_yet`
+
+At minimum, group prompt surfaces into topology families such as:
+
+- governance / review prompts
+- handoff / resumability prompts
+- identity / snapshot prompts
+- deliberation / replay prompts
+- domain-specialized analysis prompts
+- narrative / stylistic prompts that should remain specialized
+
+At minimum, evaluate the current adapted examples as anchors:
+
+- `tonesoul/llm/gemini_client.py`
+- `tonesoul/memory/subjectivity_admissibility.py`
+- `docs/architecture/TONESOUL_PROMPT_DISCIPLINE_SKELETON.md`
+- `docs/architecture/TONESOUL_PROMPT_VARIANTS.md`
+- `docs/architecture/TONESOUL_PROMPT_STARTER_CARDS.md`
+
+## Follow-Up Deliverables
+
+### Deliverable N
+
+Create:
+
+- `docs/architecture/TONESOUL_PROMPT_SURFACE_ADOPTION_MATRIX.md`
+
+This should be table-first and classify at least 15-25 meaningful prompt surfaces.
+
+Each row should include at least:
+
+- file / function / prompt surface
+- current role
+- frequency / importance estimate
+- recommended starter-card lane
+- adoption status (`already_aligned`, `safe_next`, `defer`, `do_not_touch_yet`)
+- main risk if adapted badly
+- short rationale
+
+### Deliverable O
+
+Create:
+
+- `docs/architecture/TONESOUL_PROMPT_SURFACE_BOUNDARY_CONTRACT.md`
+
+This should define:
+
+- when a prompt should receive only wording cleanup
+- when it deserves full starter-card adoption
+- when it must stay specialized
+- when hidden/opaque/legacy surfaces should remain untouched for now
+
+The contract should be principle-first, not a giant roadmap.
+
+### Deliverable P
+
+Create:
+
+- `docs/architecture/TONESOUL_PROMPT_SURFACE_TOPOLOGY_MAP.md`
+
+This should organize the repo's prompt surfaces into a small number of meaningful families.
+
+At minimum include:
+
+- topology family
+- representative files/functions
+- dominant risk
+- recommended adoption posture
+- why the family should stay unified or split
+
+The goal is to give Codex a map of families, not just a flat spreadsheet of prompts.
+
+### Deliverable Q
+
+Optional, only if clearly justified:
+
+- `docs/plans/tonesoul_prompt_adoption_followup_candidates_2026-03-29.md`
+
+Use this only if there are 3-5 genuinely bounded next implementation candidates.
+Do not write a sprawling prompt-overhaul roadmap.
+If you add this file, organize candidates into 2-3 adoption waves instead of one flat list.
+
+## Follow-Up Boundaries
+
+Do not do these things in this extension:
+
+- do not modify runtime prompt code
+- do not modify packet/schema surfaces
+- do not rewrite `tonesoul/tonebridge/personas.py` wholesale
+- do not redesign market personas or Scribe voice as a style exercise
+- do not treat every string literal as a prompt surface worth triaging
+- do not create a universal prompt replacement plan
+- do not collapse specialized domain prompts into generic governance language if their domain signal would be lost
+
+If a prompt surface deserves future implementation:
+
+- keep it bounded
+- map it to one starter-card lane
+- leave runtime adoption to Codex
+
+## Follow-Up Acceptance Criteria
+
+This extension is successful if:
+
+- later agents can tell which prompt surfaces deserve adoption next
+- high-frequency and low-frequency prompt surfaces are clearly separated
+- starter-card lanes are used as classification aids rather than forced templates
+- Codex receives one clean short-list of the next safest prompt-surface adoptions
+- Codex can see prompt families and execute adoption in waves instead of one-off patches
+
+## Follow-Up Handoff Back To Codex
+
+When done, report back with:
+
+- the 3 safest next prompt surfaces Codex should adapt
+- the 3 prompt surfaces that should explicitly stay untouched for now
+- the cleanest adoption rule for deciding `wording cleanup` vs `starter-card adoption`
+- the cleanest prompt-family split you found in the repo
+- which one bounded prompt-surface improvement Codex should implement first
