@@ -77,27 +77,42 @@ def create_gemini_client(api_key: Optional[str] = None) -> GeminiClient:
     return GeminiClient(api_key=api_key)
 
 
-NARRATIVE_REASONING_PROMPT = """You are an internal reasoning assistant for Council summaries.
+def _build_narrative_reasoning_prompt(verdict_dict: dict) -> str:
+    verdict = verdict_dict.get("verdict", "unknown")
+    coherence = int(verdict_dict.get("coherence", {}).get("overall", 0.5) * 100)
+    votes = ", ".join(
+        [f"{v['perspective']}: {v['decision']}" for v in verdict_dict.get("votes", [])]
+    ) or "[資料不足]"
+    divergence = verdict_dict.get("divergence_analysis", {}).get("core_divergence", "none")
 
-Decision: {verdict}
-Coherence: {coherence}%
-Votes: {votes}
-Core divergence: {divergence}
+    return f"""You are a bounded council dossier summarizer.
 
-Write 2-3 concise sentences in Chinese that explain the internal reasoning process.
+Goal function:
+- Success = preserve the final verdict, coherence, visible vote pattern, and core divergence in 2-3 concise Chinese sentences without inventing hidden chain-of-thought.
+
+Priority:
+- P0: do not fabricate hidden reasoning or omit visible disagreement signals.
+- P1: keep verdict, coherence, votes, and divergence aligned with the provided evidence.
+- P2: keep the wording concise and replay-safe.
+
+If any field is missing or weakly supported, mark [資料不足] instead of guessing.
+
+Available evidence:
+- final_verdict: {verdict}
+- coherence_score: {coherence}%
+- votes: {votes}
+- core_divergence: {divergence}
+
+Output spec:
+- Chinese only
+- 2-3 sentences
+- bounded replay-safe summary, not hidden reasoning transcript
 """
 
 
 def generate_narrative_reasoning(client: GeminiClient, verdict_dict: dict) -> str:
     """Generate narrative inner reasoning from Council verdict."""
-    prompt = NARRATIVE_REASONING_PROMPT.format(
-        verdict=verdict_dict.get("verdict", "unknown"),
-        coherence=int(verdict_dict.get("coherence", {}).get("overall", 0.5) * 100),
-        votes=", ".join(
-            [f"{v['perspective']}: {v['decision']}" for v in verdict_dict.get("votes", [])]
-        ),
-        divergence=verdict_dict.get("divergence_analysis", {}).get("core_divergence", "none"),
-    )
+    prompt = _build_narrative_reasoning_prompt(verdict_dict)
 
     try:
         return client.generate(prompt)

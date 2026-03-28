@@ -1069,3 +1069,9 @@
 - [x] keep the cards bounded to existing ToneSoul surfaces instead of inventing new runtime lanes
 - [x] wire the starter cards back into onboarding, reference, README, docs index, and the document authority structure map
 **Success Criteria**: Later agents can begin from a bounded card immediately, then expand only if the task actually needs more structure.
+
+## Phase 671: Apply Prompt Cards To High-Frequency Prompt Surfaces (2026-03-29)
+- [x] refactor the council replay narrative prompt to use a bounded goal/priority/recovery shape instead of a flat freeform instruction
+- [x] refactor the subjectivity admissibility operator prompt to surface explicit goal, P0/P1 priority, and `[資料不足]` recovery
+- [x] add regression tests so these two prompt surfaces keep the new structure rather than drifting back into vague prompts
+**Success Criteria**: At least two live prompt surfaces now visibly consume the new prompt-discipline logic, proving the starter-card lane is not just documentation.

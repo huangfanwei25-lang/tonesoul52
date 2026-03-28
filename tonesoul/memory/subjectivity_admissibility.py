@@ -7,6 +7,20 @@ def _normalize_text(value: object) -> str:
     return str(value or "").strip()
 
 
+def _build_operator_prompt(topic_text: str, focus: str) -> str:
+    return (
+        f"Before approving `{topic_text}`, run a bounded admissibility review.\n"
+        "Goal function: confirm that the direction remains admissible under existing P0/P1 constraints, "
+        "rather than rewarding vivid narrative or repetition alone.\n"
+        "Priority:\n"
+        "- P0: do not approve if the direction violates active constraints or lacks sufficient evidence.\n"
+        "- P1: answer the admissibility questions explicitly and surface the relevant focus and risks.\n"
+        "- P2: keep the explanation concise after the gate is honestly resolved.\n"
+        f"Focus: {focus}.\n"
+        "If information is missing, mark [資料不足] and state what still needs confirmation."
+    )
+
+
 def _direction_from_text(text: str) -> str:
     haystack = str(text or "").strip().lower()
     if any(term in haystack for term in ("provenance", "traceable", "audit", "isnad")):
@@ -119,10 +133,7 @@ def build_axiomatic_admissibility_checklist(
 
     normalized_risk_tags = sorted({tag for tag in normalized_risk_tags if tag})
     topic_text = _normalize_text(topic) or "<unknown>"
-    operator_prompt = (
-        f"Before approving `{topic_text}`, explicitly answer the admissibility questions and confirm "
-        "that the direction does not violate existing P0/P1 constraints."
-    )
+    operator_prompt = _build_operator_prompt(topic_text, focus)
     status_line = build_axiomatic_admissibility_status_line(
         gate_posture=gate_posture,
         focus=focus,

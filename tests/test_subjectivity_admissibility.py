@@ -53,6 +53,9 @@ def test_build_axiomatic_admissibility_checklist_sets_posture_and_risk_tags():
         "tradeoff_honesty",
     ]
     assert "Budget guardrail" in checklist["operator_prompt"]
+    assert "Goal function:" in checklist["operator_prompt"]
+    assert "P0:" in checklist["operator_prompt"]
+    assert "[資料不足]" in checklist["operator_prompt"]
     assert "focus=resource_tradeoff_honesty" in checklist["status_line"]
 
 
@@ -88,3 +91,14 @@ def test_build_axiomatic_admissibility_status_line_handles_optional_tags():
         )
         == "manual | focus=focus"
     )
+
+
+def test_build_operator_prompt_uses_bounded_review_shape():
+    prompt = subject_mod._build_operator_prompt(
+        "Traceability", "traceability_and_accountability"
+    )
+
+    assert "Before approving `Traceability`" in prompt
+    assert "Goal function:" in prompt
+    assert "Focus: traceability_and_accountability." in prompt
+    assert "[資料不足]" in prompt
