@@ -394,6 +394,7 @@ Treat it as an adoption map, not as permission to move raw thought or full trans
 When the question is not merely "what should continue" but "how should the extraction or transfer prompt itself be structured", open:
 
 - `docs/architecture/TONESOUL_PROMPT_DISCIPLINE_SKELETON.md`
+- `docs/architecture/TONESOUL_PROMPT_VARIANTS.md`
 
 Use it for:
 
@@ -404,5 +405,6 @@ Use it for:
 - stability-band sorting
 - compression ladder design
 - receiver instruction design
+- choosing between project continuity, meeting distillation, operator snapshot, council replay, and session-end handoff variants
 
 Treat it as a prompt-design companion, not as a universal runtime prompt or a replacement for code, schemas, or current contracts.

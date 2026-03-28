@@ -142,6 +142,8 @@ Treat this as an adoption map. It helps later agents decide what should continue
 
 - `architecture/TONESOUL_PROMPT_DISCIPLINE_SKELETON.md`
   - translates prompt-side logic about goal function, rule priority, confidence, recovery, compression, and receiver instructions into ToneSoul-native control-plane language
+- `architecture/TONESOUL_PROMPT_VARIANTS.md`
+  - practical ToneSoul-native prompt variants for project continuity, meeting distillation, operator snapshot, council replay, and session-end resumability
 
 Treat this as a prompt-design companion. It helps later agents build better extraction, transfer, and summarization prompts, but it does not outrank runtime code, schemas, or existing governance contracts.
 

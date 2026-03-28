@@ -121,6 +121,8 @@ For context continuity across sessions, tasks, agents, and models without turnin
 [`docs/architecture/TONESOUL_CONTEXT_CONTINUITY_ADOPTION_MAP.md`](docs/architecture/TONESOUL_CONTEXT_CONTINUITY_ADOPTION_MAP.md).
 For prompt-side discipline around goal function, priority, evidence, compression, and receiver instructions, open
 [`docs/architecture/TONESOUL_PROMPT_DISCIPLINE_SKELETON.md`](docs/architecture/TONESOUL_PROMPT_DISCIPLINE_SKELETON.md).
+For ToneSoul-native practical prompt variants built on top of that skeleton, open
+[`docs/architecture/TONESOUL_PROMPT_VARIANTS.md`](docs/architecture/TONESOUL_PROMPT_VARIANTS.md).
 For document-surface cleanup, same-basename collision review, and metadata backfill order, open
 [`docs/status/doc_convergence_inventory_latest.json`](docs/status/doc_convergence_inventory_latest.json)
 and

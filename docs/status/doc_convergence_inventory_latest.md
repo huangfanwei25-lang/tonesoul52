@@ -1,12 +1,12 @@
 # Document Convergence Inventory Latest
 
-- generated_at: 2026-03-28T15:01:49Z
-- primary_status_line: `doc_convergence_ready | authored_files=2280 collisions=27 missing_purpose=145 missing_date=107`
-- runtime_status_line: `entrypoints | doc_inventory=doc_convergence_inventory_latest.json largest_family=docs_law_engineering_mirror architecture_docs=32`
+- generated_at: 2026-03-28T16:28:16Z
+- primary_status_line: `doc_convergence_ready | authored_files=2281 collisions=27 missing_purpose=145 missing_date=107`
+- runtime_status_line: `entrypoints | doc_inventory=doc_convergence_inventory_latest.json largest_family=docs_law_engineering_mirror architecture_docs=33`
 - artifact_policy_status_line: `doc_scope=authored_only | content_check=hash_plus_similarity generated_noise=excluded`
 
 ## Metrics
-- `authored_file_count`: `2280`
+- `authored_file_count`: `2281`
 - `collision_count`: `27`
 - `exact_match_collision_count`: `16`
 - `divergent_collision_count`: `11`
@@ -17,7 +17,7 @@
 - `missing_metadata_sample_limit`: `40`
 
 ## Category Counts
-- `architecture_doc`: `32`
+- `architecture_doc`: `33`
 - `archive_doc`: `1`
 - `chronicle_doc`: `48`
 - `constitution_doc`: `1`

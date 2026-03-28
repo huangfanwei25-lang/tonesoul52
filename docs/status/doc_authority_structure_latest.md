@@ -1,14 +1,14 @@
 # Documentation Authority Structure Latest
 
-- generated_at: 2026-03-28T15:00:29Z
-- primary_status_line: `doc_authority_structure | groups=16 tracked=50 metadata_complete=50 metadata_missing=0`
+- generated_at: 2026-03-28T16:27:01Z
+- primary_status_line: `doc_authority_structure | groups=16 tracked=51 metadata_complete=51 metadata_missing=0`
 - runtime_status_line: `doc_retrieval_order=entrypoint_to_operational_to_canonical_to_deep_map_to_interpretive_to_boundary_aids_to_control_plane | generated_status_lane=6`
 - artifact_policy_status_line: `structure_mode=retrieval_oriented | authority_roles=explicit | generated_status_preferred_for_current_state`
 
 ## Metrics
 - `group_count`: `16`
-- `tracked_file_count`: `50`
-- `metadata_complete_count`: `50`
+- `tracked_file_count`: `51`
+- `metadata_complete_count`: `51`
 - `metadata_missing_count`: `0`
 
 ## Groups
@@ -106,12 +106,13 @@
   - use_when: when the question is not merely how to hand off hot state, but what continuity discipline ToneSoul should adopt or defer
   - read_order: 12
   - `docs/architecture/TONESOUL_CONTEXT_CONTINUITY_ADOPTION_MAP.md` exists=`true` purpose=`true` date=`true`
-- `Prompt Discipline Skeleton` tracked=`1` metadata_complete=`1`
-  - description: prompt-side discipline aid for separating goal, priority, confidence, recovery, compression, and receiver instructions before building extraction or transfer prompts
+- `Prompt Discipline` tracked=`2` metadata_complete=`2`
+  - description: prompt-side discipline aids for separating goal, priority, confidence, recovery, compression, receiver instructions, and practical task-shaped variants before building extraction or transfer prompts
   - authority_role: discipline_contract
   - use_when: when the question is not what should be transferred, but how the prompt that extracts or transfers it should be structured
   - read_order: 13
   - `docs/architecture/TONESOUL_PROMPT_DISCIPLINE_SKELETON.md` exists=`true` purpose=`true` date=`true`
+  - `docs/architecture/TONESOUL_PROMPT_VARIANTS.md` exists=`true` purpose=`true` date=`true`
 - `Documentation Governance` tracked=`5` metadata_complete=`5`
   - description: naming, zoning, and convergence planning surfaces
   - authority_role: doc_governance

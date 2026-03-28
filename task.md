@@ -1057,3 +1057,9 @@
 - [x] map goal function, priority, confidence, recovery, stability bands, compression, and receiver instructions onto existing ToneSoul surfaces
 - [x] wire the skeleton back into onboarding, reference, README, docs index, and the document authority structure map
 **Success Criteria**: Later agents can answer "how should I structure an extraction or transfer prompt?" by opening one ToneSoul-native skeleton that aligns with readiness, subject snapshot, compaction, council dossier, and context continuity.
+
+## Phase 669: Prompt Variants (2026-03-29)
+- [x] derive practical ToneSoul-native prompt variants from the skeleton instead of leaving later agents with only abstract guidance
+- [x] align variants to concrete surfaces: project continuity, conversation distillation, operator snapshot, council replay, and session-end resumability
+- [x] wire the variant catalog back into onboarding, reference, README, docs index, and the document authority structure map
+**Success Criteria**: Later agents can choose a task-shaped ToneSoul prompt variant without rebuilding the whole prompt architecture from scratch each time.

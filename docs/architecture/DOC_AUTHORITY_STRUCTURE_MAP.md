@@ -119,6 +119,7 @@ Open this when the question is:
 - how receiver instructions should be made explicit instead of implied.
 
 - `docs/architecture/TONESOUL_PROMPT_DISCIPLINE_SKELETON.md`
+- `docs/architecture/TONESOUL_PROMPT_VARIANTS.md`
 
 ## Retrieval Order
 

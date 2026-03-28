@@ -173,13 +173,14 @@ GROUPS = [
     },
     {
         "id": "prompt_discipline_skeleton",
-        "label": "Prompt Discipline Skeleton",
-        "description": "prompt-side discipline aid for separating goal, priority, confidence, recovery, compression, and receiver instructions before building extraction or transfer prompts",
+        "label": "Prompt Discipline",
+        "description": "prompt-side discipline aids for separating goal, priority, confidence, recovery, compression, receiver instructions, and practical task-shaped variants before building extraction or transfer prompts",
         "authority_role": "discipline_contract",
         "use_when": "when the question is not what should be transferred, but how the prompt that extracts or transfers it should be structured",
         "read_order": 13,
         "files": [
             "docs/architecture/TONESOUL_PROMPT_DISCIPLINE_SKELETON.md",
+            "docs/architecture/TONESOUL_PROMPT_VARIANTS.md",
         ],
     },
     {

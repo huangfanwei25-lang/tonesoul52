@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-28T15:01:49Z",
+  "generated_at": "2026-03-28T16:28:16Z",
   "scope": {
     "include_roots": [
       "PARADOXES",
@@ -62,7 +62,7 @@
     ]
   },
   "metrics": {
-    "authored_file_count": 2280,
+    "authored_file_count": 2281,
     "collision_count": 27,
     "exact_match_collision_count": 16,
     "divergent_collision_count": 11,
@@ -73,7 +73,7 @@
     "missing_metadata_sample_limit": 40
   },
   "category_counts": {
-    "architecture_doc": 32,
+    "architecture_doc": 33,
     "archive_doc": 1,
     "chronicle_doc": 48,
     "constitution_doc": 1,
@@ -793,12 +793,12 @@
       "basename": "AI_ONBOARDING.md",
       "extension": ".md",
       "surface_type": "root_entrypoint",
-      "size_bytes": 17817,
+      "size_bytes": 18162,
       "title": "AI Onboarding Guide | AI 引導指南",
       "purpose": "給未來沒有記憶的 AI 實例的快速引導。",
       "status": "",
       "date_hint": "2026-03-28",
-      "content_sha256": "4702ab6b4a4ea82d3249f77a7f4d05d93ba6fa07458d8fd395487a74f028322f"
+      "content_sha256": "bc77ceae14848003d58ac6b353dcca28f13f0ce0b211fdae29a6dfcbceaabc0a"
     },
     {
       "path": "AXIOMS.json",
@@ -913,12 +913,12 @@
       "basename": "AI_REFERENCE.md",
       "extension": ".md",
       "surface_type": "general_doc",
-      "size_bytes": 17375,
+      "size_bytes": 17554,
       "title": "ToneSoul — AI 工作參考手冊",
       "purpose": "give later AI instances an operator-side lookup for terms, routing decisions, red lines, and common work situations.",
       "status": "operational reference; not a constitutional or architectural source of truth.",
       "date_hint": "2026-03-28",
-      "content_sha256": "8539cffb1850b0dd10e0199b51968e04192a3450718bd072ffbff5aca31c6cbb"
+      "content_sha256": "13024bc0405dc2fef2a09c542a3a71b333f534e9ed78389473341332aa11de44"
     },
     {
       "path": "docs/ANTIGRAVITY_CONTEXT_MEMORY.md",
@@ -985,12 +985,12 @@
       "basename": "DOC_AUTHORITY_STRUCTURE_MAP.md",
       "extension": ".md",
       "surface_type": "architecture_doc",
-      "size_bytes": 5243,
+      "size_bytes": 5293,
       "title": "Documentation Authority Structure Map",
       "purpose": "define the retrieval-oriented structure of ToneSoul's documentation so later agents can tell entrypoints, canonical anchors, governance contracts, and generated status surfaces apart.",
       "status": "active documentation authority map for convergence cleanup.",
       "date_hint": "2026-03-23",
-      "content_sha256": "691a1f721e1f0a435d36988218305d3d13208208c45d5c43054db4700f36b696"
+      "content_sha256": "526c70e1e268e3f32a6d64a55a38641e6074584ea2370242e97bb6a2cfd07439"
     },
     {
       "path": "docs/architecture/ENGINEERING_MIRROR_OWNERSHIP_MAP.md",
@@ -1267,6 +1267,18 @@
       "status": "active discipline skeleton and prompt design companion.",
       "date_hint": "2026-03-28",
       "content_sha256": "ea5afe766237e403b52b5a62e63d97c4e9c913f7beb5781beb259ac06d40fe36"
+    },
+    {
+      "path": "docs/architecture/TONESOUL_PROMPT_VARIANTS.md",
+      "basename": "TONESOUL_PROMPT_VARIANTS.md",
+      "extension": ".md",
+      "surface_type": "architecture_doc",
+      "size_bytes": 6962,
+      "title": "ToneSoul Prompt Variants",
+      "purpose": "provide ToneSoul-native prompt variants built on top of the Prompt Discipline Skeleton so later agents can choose a task-shaped prompt pattern instead of improvising from scratch.",
+      "status": "active prompt-variant catalog and implementation companion.",
+      "date_hint": "2026-03-29",
+      "content_sha256": "685939296c2abc3c2f2240c9e9f8a4b87627ee0fc1fd34fc876cba2a15a92d19"
     },
     {
       "path": "docs/architecture/TONESOUL_R_MEMORY_STACK_RECOMMENDATION.md",
@@ -2641,12 +2653,12 @@
       "basename": "INDEX.md",
       "extension": ".md",
       "surface_type": "general_doc",
-      "size_bytes": 21041,
+      "size_bytes": 21236,
       "title": "ToneSoul Documentation Index",
       "purpose": "top-level documentation index for ToneSoul authority surfaces, operational packets, and convergence maps.",
       "status": "",
       "date_hint": "2026-03-28",
-      "content_sha256": "d803d46cbb95cabd549d7a4a179783782d639165d8e267ae6f4c7085143d68eb"
+      "content_sha256": "a4fa9a6f4b0c8ffdbf19c1c1cd23515fb0626a2b0301773a9b87e6feb566f971"
     },
     {
       "path": "docs/INTEGRATION_AUDIT_DRAFT.md",
@@ -4609,12 +4621,12 @@
       "basename": "README.md",
       "extension": ".md",
       "surface_type": "general_doc",
-      "size_bytes": 16279,
+      "size_bytes": 16480,
       "title": "ToneSoul Documentation Index",
       "purpose": "documentation entrypoint and guided index for ToneSoul architecture, status artifacts, and convergence surfaces.",
       "status": "",
       "date_hint": "2026-03-28",
-      "content_sha256": "91edc2bcf0db6a8f0a60ebadcb9b34cc6fce2be9b342da6c35991883a5d43312"
+      "content_sha256": "8eee583e0c2e46babee46b119e13494612d7381bb59c44a82aaae63366aedc41"
     },
     {
       "path": "docs/RELEASE_NOTES_v0.1.0.md",
@@ -5233,36 +5245,36 @@
       "basename": "doc_authority_structure_latest.json",
       "extension": ".json",
       "surface_type": "generated_status_artifact",
-      "size_bytes": 19377,
+      "size_bytes": 19617,
       "title": "doc_authority_structure_latest.json",
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "304620916218f938a53046e32486e2d6c5e412bfe6817aae30e0e3a29abbefad"
+      "content_sha256": "51151c60983a035f43ae10642b57e3b943d7d1ef2388ac2e17e0af9d530faf3b"
     },
     {
       "path": "docs/status/doc_authority_structure_latest.md",
       "basename": "doc_authority_structure_latest.md",
       "extension": ".md",
       "surface_type": "generated_status_artifact",
-      "size_bytes": 10799,
+      "size_bytes": 10917,
       "title": "Documentation Authority Structure Latest",
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "271a765fe5e10b285ab1af66f53cd1b3611ad13cbece21031d1e5006ddbc8915"
+      "content_sha256": "4f147d72459e256fe45fd8c0b462f9acfb888dc2237cc1215cbb12d01d264d46"
     },
     {
       "path": "docs/status/doc_convergence_inventory_latest.json",
       "basename": "doc_convergence_inventory_latest.json",
       "extension": ".json",
       "surface_type": "generated_status_artifact",
-      "size_bytes": 1108689,
+      "size_bytes": 1109412,
       "title": "doc_convergence_inventory_latest.json",
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "3755ac68739c9a6577ef621f9eb35a8b28a538761bd78d5f4c956c9711701204"
+      "content_sha256": "d82725ad527a4244df7a4760ea5df32c34fdce7f8e0bc8f281a3eaf6afb2b3ab"
     },
     {
       "path": "docs/status/doc_convergence_inventory_latest.md",
@@ -5274,7 +5286,7 @@
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "94b19d4a06f90054e9f745f5e1f096cb288208d5f50d006220543e5fe8a460fb"
+      "content_sha256": "eed95049c7b080f254bdf076dd820496d4db17f4f810d92ed4710157aa5cf477"
     },
     {
       "path": "docs/status/dream_engine_wakeup_status_2026-03-09.md",
@@ -7902,7 +7914,7 @@
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "3c791497ec9c3bd7a0783cf6d001407f4309d3591e129f801896a3d7063e0825"
+      "content_sha256": "ffcccf6644a10f9ce7355881b711a24f00d554f292a0485393f71b49ba5d4893"
     },
     {
       "path": "memory/BOOTSTRAP.md",
@@ -27085,12 +27097,12 @@
       "basename": "README.md",
       "extension": ".md",
       "surface_type": "root_entrypoint",
-      "size_bytes": 11555,
+      "size_bytes": 11735,
       "title": "Retrieval Keywords",
       "purpose": "public repository entrypoint for ToneSoul's architecture, governance posture, and practical onboarding.",
       "status": "",
       "date_hint": "2026-03-22",
-      "content_sha256": "e37856351bb384f75296775610e5e86d6283a6720777e5746aef474a978fd82b"
+      "content_sha256": "fce6ecffbbcbc899abf39e145817e3cc25b2a989e8525899d747b09a60a81e98"
     },
     {
       "path": "README.zh-TW.md",
@@ -27997,12 +28009,12 @@
       "basename": "task.md",
       "extension": ".md",
       "surface_type": "root_entrypoint",
-      "size_bytes": 114111,
+      "size_bytes": 114724,
       "title": "Task",
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "db0d9eb5a60d578237f53108ce7cbcef508a4a5e501c8b70de3fc5214400d52b"
+      "content_sha256": "e1c6573f5fd45852997dd58236e46328a40b22363b1b3b23fed0411506e52b04"
     },
     {
       "path": "tests/fixtures/paradoxes/medical_suicide_paradox.json",
@@ -28137,7 +28149,7 @@
       "content_sha256": "2cee7ef4a180d9208eefe9a83fe3d22bbfb6d32cecb6f5c05880d57e75006343"
     }
   ],
-  "primary_status_line": "doc_convergence_ready | authored_files=2280 collisions=27 missing_purpose=145 missing_date=107",
-  "runtime_status_line": "entrypoints | doc_inventory=doc_convergence_inventory_latest.json largest_family=docs_law_engineering_mirror architecture_docs=32",
+  "primary_status_line": "doc_convergence_ready | authored_files=2281 collisions=27 missing_purpose=145 missing_date=107",
+  "runtime_status_line": "entrypoints | doc_inventory=doc_convergence_inventory_latest.json largest_family=docs_law_engineering_mirror architecture_docs=33",
   "artifact_policy_status_line": "doc_scope=authored_only | content_check=hash_plus_similarity generated_noise=excluded"
 }
