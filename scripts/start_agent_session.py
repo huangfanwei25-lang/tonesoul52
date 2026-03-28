@@ -4,8 +4,10 @@
 from __future__ import annotations
 
 import argparse
+import io
 import json
 import sys
+from contextlib import redirect_stdout
 from pathlib import Path
 
 
@@ -56,6 +58,12 @@ def _build_store(args):
     )
 
 
+def _quiet_call(fn, *args, **kwargs):
+    buffer = io.StringIO()
+    with redirect_stdout(buffer):
+        return fn(*args, **kwargs)
+
+
 def _build_compact_line(*, agent_id: str, backend_name: str, packet: dict, posture) -> str:
     risk_posture = ((packet.get("posture") or {}).get("risk_posture") or {})
     repo_progress = ((packet.get("project_memory_summary") or {}).get("repo_progress") or {})
@@ -71,6 +79,99 @@ def _build_compact_line(*, agent_id: str, backend_name: str, packet: dict, postu
         f"git={repo_progress.get('head', 'unknown')}/dirty={int(repo_progress.get('dirty_count', 0) or 0)} | "
         f"agent={agent_id}"
     )
+
+
+def _looks_like_stop(text: str) -> bool:
+    normalized = str(text or "").strip().upper()
+    return normalized.startswith("STOP:")
+
+
+def _build_readiness(*, agent_id: str, packet: dict, claims: list[dict]) -> dict:
+    risk_posture = ((packet.get("posture") or {}).get("risk_posture") or {})
+    delta_feed = packet.get("delta_feed") or {}
+    project_memory_summary = packet.get("project_memory_summary") or {}
+
+    risk_level = str(risk_posture.get("level", "unknown") or "unknown")
+    other_agent_claims = [
+        claim
+        for claim in list(claims or [])
+        if str(claim.get("agent", "")).strip() and str(claim.get("agent", "")).strip() != agent_id
+    ]
+    fresh_handoff_count = int(
+        len(delta_feed.get("new_compactions") or []) + len(delta_feed.get("new_checkpoints") or [])
+    )
+
+    recent_stop_actions = [
+        str(entry.get("next_action", "")).strip()
+        for entry in list(packet.get("recent_compactions") or [])[:3] + list(packet.get("recent_checkpoints") or [])[:3]
+        if _looks_like_stop(str(entry.get("next_action", "")).strip())
+    ]
+    next_actions = [
+        action
+        for action in (project_memory_summary.get("next_actions") or [])
+        if str(action or "").strip()
+    ]
+    stop_actions = [action for action in next_actions if _looks_like_stop(action)]
+
+    blocking_reasons: list[str] = []
+    clarification_reasons: list[str] = []
+
+    if risk_level == "critical":
+        blocking_reasons.append("risk_level_is_critical")
+    elif risk_level == "high":
+        clarification_reasons.append("risk_level_is_high")
+
+    if stop_actions or recent_stop_actions:
+        blocking_reasons.append("stop_handoff_present")
+
+    if other_agent_claims:
+        clarification_reasons.append("other_agent_claims_visible")
+
+    if not bool(delta_feed.get("first_observation")) and fresh_handoff_count > 0:
+        clarification_reasons.append("fresh_handoff_updates_visible")
+
+    if blocking_reasons:
+        status = "blocked"
+        recommended_action = (
+            "Resolve the blocking condition before editing shared work; if the STOP signal or critical risk is not yours to clear, ask a human."
+        )
+    elif clarification_reasons:
+        status = "needs_clarification"
+        recommended_action = (
+            "Review fresh handoff state, confirm claim overlap, and clarify ambiguous scope before shared edits."
+        )
+    else:
+        status = "pass"
+        recommended_action = "Session-start posture is clear enough to classify the task and begin work."
+
+    summary_parts = [
+        f"readiness={status}",
+        f"risk={risk_level}",
+        f"other_claims={len(other_agent_claims)}",
+        f"fresh_handoff={fresh_handoff_count}",
+        f"stops={len(stop_actions) + len(recent_stop_actions)}",
+    ]
+
+    return {
+        "status": status,
+        "ready": status == "pass",
+        "risk_level": risk_level,
+        "claim_conflict_count": len(other_agent_claims),
+        "other_agent_claims": [
+            {
+                "task_id": str(claim.get("task_id", "")),
+                "agent": str(claim.get("agent", "")),
+                "summary": str(claim.get("summary", "")),
+            }
+            for claim in other_agent_claims[:3]
+        ],
+        "fresh_handoff_count": fresh_handoff_count,
+        "stop_signal_count": len(stop_actions) + len(recent_stop_actions),
+        "blocking_reasons": blocking_reasons,
+        "clarification_reasons": clarification_reasons,
+        "recommended_action": recommended_action,
+        "summary_text": " | ".join(summary_parts),
+    }
 
 
 def main() -> None:
@@ -100,17 +201,19 @@ def main() -> None:
 
     store = _build_store(args)
     if store is None:
-        posture = load(agent_id=agent_id, source="start_agent_session")
-        backend_name = getattr(get_store(), "backend_name", "unknown")
+        posture = _quiet_call(load, agent_id=agent_id, source="start_agent_session")
+        backend_name = getattr(_quiet_call(get_store), "backend_name", "unknown")
     else:
-        posture = load(
+        posture = _quiet_call(
+            load,
             state_path=args.state_path,
             agent_id=agent_id,
             source="start_agent_session",
         )
         backend_name = getattr(store, "backend_name", "file")
 
-    packet = r_memory_packet(
+    packet = _quiet_call(
+        r_memory_packet,
         posture=posture,
         store=store,
         observer_id=agent_id,
@@ -120,7 +223,8 @@ def main() -> None:
     if not args.no_ack:
         acknowledge_observer_cursor(agent_id, packet=packet, store=store)
 
-    claims = list_active_claims(store=store)
+    claims = _quiet_call(list_active_claims, store=store)
+    readiness = _build_readiness(agent_id=agent_id, packet=packet, claims=claims)
     payload = {
         "contract_version": "v1",
         "bundle": "session_start",
@@ -132,7 +236,9 @@ def main() -> None:
             backend_name=backend_name,
             packet=packet,
             posture=posture,
-        ),
+        )
+        + f" | readiness={readiness['status']}",
+        "readiness": readiness,
         "claim_view": {
             "count": len(claims),
             "claims": claims,

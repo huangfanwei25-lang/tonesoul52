@@ -102,6 +102,14 @@ Every agent session should begin with:
 
 Use `python scripts/read_governance_state.py` only when you need a lighter posture read and do not need the fuller shared-runtime picture.
 
+The session-start bundle now also surfaces a bounded `readiness` classification:
+
+- `pass`
+- `needs_clarification`
+- `blocked`
+
+Treat this as an operator aid layered on top of the bundle, not as a replacement for human judgment or canonical governance truth.
+
 ### 2B. Session End Handshake
 
 Every collaborative session should end with:

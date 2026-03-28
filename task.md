@@ -11,6 +11,13 @@
 - Phase 656: record signal-routing adoption and misroute patterns so the router can improve from real agent behavior instead of only synthetic tests
 - Phase 657: add bounded subject-refresh heuristics so durable working identity can be refreshed deliberately rather than only by manual intuition
 - Phase 658: harden Redis live surfaces and delta-aware coordination once file-backed discipline proves stable enough to deserve real-time promotion
+- Phase 661: surface session-start readiness directly in the bundle so later agents stop inferring `pass / needs_clarification / blocked` only from prose contracts
+
+## Phase 661: Session-Start Readiness Surface (2026-03-28)
+- [x] Add a bounded `readiness` section to `start_agent_session.py` based on claim visibility, runtime risk, and fresh handoff/STOP signals
+- [x] Keep the output advisory and machine-readable instead of silently turning it into an enforced runtime gate
+- [x] Update entry docs and regression tests so later agents see readiness at session start without re-reading the full control-plane contracts
+**Success Criteria**: A later agent can run one session-start command, see whether the bundle is `pass`, `needs_clarification`, or `blocked`, and understand why without inferring the classification from scattered packet fields.
 
 ## Phase 658: Coordination Mode For Redis Live Surfaces (2026-03-28)
 - [x] Add a packet-visible `coordination_mode` surface that makes `redis-live` versus `file-backed` behavior explicit instead of forcing later agents to infer it from backend name alone

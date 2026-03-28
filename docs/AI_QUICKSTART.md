@@ -30,6 +30,11 @@ python scripts/read_governance_state.py
 python scripts/start_agent_session.py --agent 你的-model-id
 ```
 
+看它輸出的 `readiness`：
+- `pass`：可以開始分類任務並動工
+- `needs_clarification`：先釐清 claim / fresh handoff / scope，再動工
+- `blocked`：先解阻塞或找人類，不要直接開始
+
 需要拆開看時，再退回：
 
 ```bash
@@ -162,7 +167,7 @@ python scripts/run_task_claim.py release <task_id> --agent <your-id>
 
 `start_bundle -> diagnose/packet -> claim -> work -> perspective/checkpoint/compaction -> commit -> end_bundle/release`
 
-所有協作型 AI 都預設走這一套，不要跳過 session start，也不要在 session end 留白離開。
+所有協作型 AI 都預設走這一套，不要跳過 session start，也不要在 session end 留白離開。`start_agent_session.py` 已經會把 `readiness` 明確外化，不要假裝 bundle 有了就一定 ready。
 
 如果你不確定某個大詞是不是當前 runtime 真相，打開：
 

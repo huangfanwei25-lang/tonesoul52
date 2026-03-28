@@ -17,7 +17,7 @@
 | **Deep Anatomy** | [`docs/narrative/TONESOUL_ANATOMY.md`](docs/narrative/TONESOUL_ANATOMY.md) | `deep_map` | 改整體結構前，或要回答「ToneSoul 到底是什麼」 | runtime contract |
 | **Interpretive Lane** | [`docs/notes/TONESOUL_DEEP_READING_ANCHOR_2026-03-26.md`](docs/notes/TONESOUL_DEEP_READING_ANCHOR_2026-03-26.md), [`docs/narrative/TONESOUL_CODEX_READING.md`](docs/narrative/TONESOUL_CODEX_READING.md) | `interpretive` | 結構已清楚，但承重意義仍模糊時 | 可執行真理 |
 
-**新 AI 最低要求：先讀 `docs/AI_QUICKSTART.md`，再執行 `python scripts/start_agent_session.py --agent <your-id>`；結束前執行 `python scripts/end_agent_session.py --agent <your-id> --summary "<short summary>" --path "<path>"`。若要拆解或除錯，再退回顯式的 `diagnose -> packet --ack -> claim list` 與 `checkpoint/compaction -> release`。**
+**新 AI 最低要求：先讀 `docs/AI_QUICKSTART.md`，再執行 `python scripts/start_agent_session.py --agent <your-id>`；它現在會直接回 `readiness=pass / needs_clarification / blocked`。結束前執行 `python scripts/end_agent_session.py --agent <your-id> --summary "<short summary>" --path "<path>"`。若要拆解或除錯，再退回顯式的 `diagnose -> packet --ack -> claim list` 與 `checkpoint/compaction -> release`。**
 
 ---
 
