@@ -32,6 +32,8 @@ This contract is grounded in the current executable and schema surfaces:
 
 - `tonesoul/runtime_adapter.py`
 - `tonesoul/diagnose.py`
+- `scripts/start_agent_session.py`
+- `scripts/end_agent_session.py`
 - `scripts/run_r_memory_packet.py`
 - `scripts/run_task_claim.py`
 - `scripts/save_perspective.py`
@@ -98,6 +100,16 @@ Every agent session should begin with:
    - inspect active claims before touching shared work
 
 Use `python scripts/read_governance_state.py` only when you need a lighter posture read and do not need the fuller shared-runtime picture.
+
+### 2B. Session End Handshake
+
+Every collaborative session should end with:
+
+1. `python scripts/end_agent_session.py --agent <your-id> --summary "..." --path "..."`
+2. If debugging or tooling needs the explicit breakdown, expand the bundle to:
+   - `python scripts/save_checkpoint.py --checkpoint-id <id> --agent <your-id> --summary "..." --path "..."`
+   - `python scripts/save_compaction.py --agent <your-id> --summary "..." --path "..."`
+   - `python scripts/run_task_claim.py release <task_id> --agent <your-id>`
 
 ### 2A. Signal Routing Protocol
 

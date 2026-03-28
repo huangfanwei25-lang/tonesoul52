@@ -1141,6 +1141,7 @@ def _build_operator_guidance(
             "python scripts/run_task_claim.py list",
         ],
         "session_end": [
+            'python scripts/end_agent_session.py --agent <your-id> --summary "..." --path "..."',
             'python scripts/save_checkpoint.py --checkpoint-id <id> --agent <your-id> --summary "..." --path "..."',
             'python scripts/save_compaction.py --agent <your-id> --summary "..." --path "..."',
             "python scripts/run_task_claim.py release <task_id> --agent <your-id>",

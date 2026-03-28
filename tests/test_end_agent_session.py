@@ -1,0 +1,224 @@
+from __future__ import annotations
+
+import importlib.util
+import json
+import sys
+from pathlib import Path
+
+
+def _load_script_module():
+    module_name = "test_end_agent_session_module"
+    module_path = Path(__file__).resolve().parents[1] / "scripts" / "end_agent_session.py"
+    spec = importlib.util.spec_from_file_location(module_name, module_path)
+    assert spec is not None
+    assert spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[module_name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+def _write_state(state_path: Path) -> None:
+    state_path.write_text(
+        json.dumps(
+            {
+                "version": "0.1.0",
+                "last_updated": "2026-03-28T00:00:00+00:00",
+                "soul_integral": 0.72,
+                "tension_history": [{"topic": "session-end", "severity": 0.31}],
+                "active_vows": [{"id": "v1", "content": "leave explicit handoff state"}],
+                "aegis_vetoes": [],
+                "baseline_drift": {
+                    "caution_bias": 0.52,
+                    "innovation_bias": 0.58,
+                    "autonomy_level": 0.34,
+                },
+                "session_count": 7,
+            }
+        ),
+        encoding="utf-8",
+    )
+
+
+def _write_traces(traces_path: Path) -> None:
+    traces_path.write_text(
+        json.dumps(
+            {
+                "session_id": "sess-1",
+                "agent": "codex",
+                "timestamp": "2026-03-28T00:01:00+00:00",
+                "topics": ["session-end"],
+                "tension_events": [],
+                "vow_events": [],
+                "aegis_vetoes": [],
+                "key_decisions": ["bundle session end"],
+            }
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+
+def test_end_agent_session_compaction_and_release(capsys, monkeypatch, tmp_path: Path) -> None:
+    module = _load_script_module()
+    state_path = tmp_path / "governance_state.json"
+    traces_path = tmp_path / "session_traces.jsonl"
+    sidecar_dir = tmp_path / ".aegis"
+    claims_path = sidecar_dir / "task_claims.json"
+    compactions_path = sidecar_dir / "compacted.json"
+
+    _write_state(state_path)
+    _write_traces(traces_path)
+    claims_path.parent.mkdir(parents=True, exist_ok=True)
+    claims_path.write_text(
+        json.dumps(
+            {
+                "task-codex": {
+                    "task_id": "task-codex",
+                    "agent": "codex",
+                    "summary": "hold the runtime lane",
+                    "paths": ["tonesoul/runtime_adapter.py"],
+                    "source": "cli",
+                    "created_at": "2026-03-28T00:02:00+00:00",
+                    "expires_at": "4070908920.0",
+                },
+                "task-other": {
+                    "task_id": "task-other",
+                    "agent": "claude",
+                    "summary": "parallel lane",
+                    "paths": ["docs/AI_REFERENCE.md"],
+                    "source": "cli",
+                    "created_at": "2026-03-28T00:02:10+00:00",
+                    "expires_at": "4070908920.0",
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "end_agent_session.py",
+            "--state-path",
+            str(state_path),
+            "--traces-path",
+            str(traces_path),
+            "--agent",
+            "codex",
+            "--summary",
+            "leave a bounded handoff for the runtime lane",
+            "--path",
+            "tonesoul/runtime_adapter.py",
+            "--carry-forward",
+            "keep session-end bundle aligned with session-start bundle",
+            "--next-action",
+            "run the next observer handoff test",
+        ],
+    )
+
+    module.main()
+    output = json.loads(capsys.readouterr().out)
+
+    assert output["contract_version"] == "v1"
+    assert output["bundle"] == "session_end"
+    assert output["mode"] == "compaction"
+    assert output["checkpoint"] is None
+    assert output["compaction"]["agent"] == "codex"
+    assert output["released_claims"]["strategy"] == "all_for_agent"
+    assert output["released_claims"]["released_task_ids"] == ["task-codex"]
+    assert output["released_claims"]["not_released_task_ids"] == []
+    assert output["released_claims"]["remaining_claims"][0]["task_id"] == "task-other"
+    assert output["underlying_commands"][0].startswith("python scripts/save_compaction.py --agent codex")
+    assert output["underlying_commands"][1] == "python scripts/run_task_claim.py release <task_id> --agent codex"
+
+    stored_compactions = json.loads(compactions_path.read_text(encoding="utf-8"))
+    assert stored_compactions[0]["summary"] == "leave a bounded handoff for the runtime lane"
+    remaining_claims = json.loads(claims_path.read_text(encoding="utf-8"))
+    assert "task-codex" not in remaining_claims
+    assert "task-other" in remaining_claims
+
+
+def test_end_agent_session_both_mode_with_no_release(capsys, monkeypatch, tmp_path: Path) -> None:
+    module = _load_script_module()
+    state_path = tmp_path / "governance_state.json"
+    traces_path = tmp_path / "session_traces.jsonl"
+    sidecar_dir = tmp_path / ".aegis"
+    claims_path = sidecar_dir / "task_claims.json"
+    checkpoints_path = sidecar_dir / "checkpoints.json"
+
+    _write_state(state_path)
+    _write_traces(traces_path)
+    claims_path.parent.mkdir(parents=True, exist_ok=True)
+    claims_path.write_text(
+        json.dumps(
+            {
+                "task-codex": {
+                    "task_id": "task-codex",
+                    "agent": "codex",
+                    "summary": "hold the runtime lane",
+                    "paths": ["tonesoul/runtime_adapter.py"],
+                    "source": "cli",
+                    "created_at": "2026-03-28T00:02:00+00:00",
+                    "expires_at": "4070908920.0",
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "end_agent_session.py",
+            "--state-path",
+            str(state_path),
+            "--traces-path",
+            str(traces_path),
+            "--agent",
+            "codex",
+            "--mode",
+            "both",
+            "--checkpoint-id",
+            "cp-final",
+            "--summary",
+            "leave both a checkpoint and a compaction before a context reset",
+            "--path",
+            "tonesoul/diagnose.py",
+            "--next-action",
+            "verify the next session sees the new handoff",
+            "--no-release",
+        ],
+    )
+
+    module.main()
+    output = json.loads(capsys.readouterr().out)
+
+    assert output["mode"] == "both"
+    assert output["checkpoint"]["checkpoint_id"] == "cp-final"
+    assert output["compaction"]["summary"].startswith("leave both a checkpoint")
+    assert output["released_claims"]["strategy"] == "none"
+    assert output["released_claims"]["released_task_ids"] == []
+    assert output["underlying_commands"][0].startswith(
+        "python scripts/save_checkpoint.py --checkpoint-id cp-final --agent codex"
+    )
+    assert output["underlying_commands"][1].startswith("python scripts/save_compaction.py --agent codex")
+    assert len(output["underlying_commands"]) == 2
+
+    stored_checkpoints = json.loads(checkpoints_path.read_text(encoding="utf-8"))
+    assert stored_checkpoints["cp-final"]["next_action"] == "verify the next session sees the new handoff"
+    remaining_claims = json.loads(claims_path.read_text(encoding="utf-8"))
+    assert "task-codex" in remaining_claims
+
+
+def test_ensure_repo_root_on_path_adds_repo_root(monkeypatch) -> None:
+    module = _load_script_module()
+    repo_root = str(Path(__file__).resolve().parents[1])
+    monkeypatch.setattr(sys, "path", [entry for entry in sys.path if entry != repo_root])
+
+    resolved = module._ensure_repo_root_on_path()
+
+    assert str(resolved) == repo_root
+    assert sys.path[0] == repo_root

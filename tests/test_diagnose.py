@@ -190,6 +190,7 @@ def _fake_packet():
                 "python scripts/run_task_claim.py list",
             ],
             "session_end": [
+                'python scripts/end_agent_session.py --agent <your-id> --summary "..." --path "..."',
                 'python scripts/save_checkpoint.py --checkpoint-id <id> --agent <your-id> --summary "..." --path "..."',
                 'python scripts/save_compaction.py --agent <your-id> --summary "..." --path "..."',
                 "python scripts/run_task_claim.py release <task_id> --agent <your-id>",
@@ -299,6 +300,7 @@ def test_full_diagnostic_is_cp950_safe_and_includes_shared_runtime(monkeypatch) 
     assert "repo_paths=tonesoul/runtime_adapter.py, tonesoul/diagnose.py" in report
     assert "[Operator Guidance]" in report
     assert "start_agent_session.py --agent <your-id>" in report
+    assert "end_agent_session.py --agent <your-id>" in report
     assert "run_r_memory_packet.py --agent <your-id> --ack" in report
     assert "save_checkpoint.py" in report
     assert "save_compaction.py" in report

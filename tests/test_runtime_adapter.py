@@ -310,7 +310,10 @@ def test_r_memory_packet_exposes_runtime_dominance_and_recent_trace(
     assert packet["operator_guidance"]["session_start"][2].startswith(
         "python scripts/run_r_memory_packet.py --agent"
     )
-    assert packet["operator_guidance"]["session_end"][0].startswith("python scripts/save_checkpoint.py")
+    assert packet["operator_guidance"]["session_end"][0].startswith(
+        "python scripts/end_agent_session.py --agent"
+    )
+    assert packet["operator_guidance"]["session_end"][1].startswith("python scripts/save_checkpoint.py")
     assert "claim" in packet["operator_guidance"]["coordination_commands"]
     assert "signal_router" in packet["operator_guidance"]["coordination_commands"]
     assert "subject_snapshot" in packet["operator_guidance"]["coordination_commands"]
@@ -462,7 +465,7 @@ def test_compactions_use_noncanonical_resumability_lane(tmp_path: Path) -> None:
         "Prefer recent_compactions and project_memory_summary before older recent_traces."
         in packet["operator_guidance"]["current_reminders"]
     )
-    assert packet["operator_guidance"]["session_end"][2].startswith(
+    assert packet["operator_guidance"]["session_end"][3].startswith(
         "python scripts/run_task_claim.py release"
     )
 

@@ -150,6 +150,7 @@ python scripts/run_r_memory_packet.py --agent <your-id> --ack
 python scripts/run_task_claim.py list
 python scripts/run_task_claim.py claim <task_id> --agent <your-id> --summary "..."
 python scripts/save_perspective.py --agent <your-id> --summary "..." --stance "..."
+python scripts/end_agent_session.py --agent <your-id> --summary "..." --path "..."
 python scripts/save_checkpoint.py --checkpoint-id <id> --agent <your-id> --summary "..." --path "..."
 python scripts/save_compaction.py --agent <your-id> --summary "..." --path "..."
 python scripts/route_r_memory_signal.py --agent <your-id> --summary "..." --path "..." --next-action "..." --write
@@ -159,7 +160,7 @@ python scripts/run_task_claim.py release <task_id> --agent <your-id>
 
 最小正確順序：
 
-`load/diagnose -> packet -> claim -> work -> perspective/checkpoint/compaction -> commit -> release`
+`start_bundle -> diagnose/packet -> claim -> work -> perspective/checkpoint/compaction -> commit -> end_bundle/release`
 
 所有協作型 AI 都預設走這一套，不要跳過 session start，也不要在 session end 留白離開。
 

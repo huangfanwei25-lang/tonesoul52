@@ -18,6 +18,12 @@
 - [x] Wire the bundle into onboarding/guidance surfaces so the lower-friction path becomes visible instead of tribal knowledge
 **Success Criteria**: A later agent can run one session-start command, receive the same hot-state posture plus delta feed and claim picture as the three-step flow, and still understand the underlying explicit commands when needed.
 
+## Phase 655: One-Command Session End Bundle (2026-03-28)
+- [x] Add a direct repo-root `end_agent_session.py` bundle that performs `checkpoint and/or compaction -> release` in one command
+- [x] Keep the bundle machine-readable, claim-aware, and path-overridable so later agents can close out without tribal memory
+- [x] Wire the bundle into onboarding/guidance surfaces so every collaborative session has a visible closing ritual, not only a start ritual
+**Success Criteria**: A later agent can end a session with one command, leave either a checkpoint, a compaction, or both, release any owned claims deliberately, and still recover the underlying explicit commands when needed.
+
 ## Phase 653: Shared Signal Routing for Hot-State Surfaces (2026-03-28)
 - [x] Add a bounded signal router that classifies incoming runtime notes into claim, perspective, checkpoint, compaction, or subject snapshot instead of forcing each agent to guess the surface manually
 - [x] Expose the router through a direct repo-root CLI that can preview or write the selected surface deliberately
