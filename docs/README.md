@@ -138,6 +138,13 @@ Treat these as council-discipline aids. They help later agents decide what a ver
 
 Treat this as an adoption map. It helps later agents decide what should continue across sessions, tasks, agents, and models, but it does not authorize raw transcript carry, hidden-thought transfer, or automatic promotion into canonical truth.
 
+## Prompt Discipline Skeleton
+
+- `architecture/TONESOUL_PROMPT_DISCIPLINE_SKELETON.md`
+  - translates prompt-side logic about goal function, rule priority, confidence, recovery, compression, and receiver instructions into ToneSoul-native control-plane language
+
+Treat this as a prompt-design companion. It helps later agents build better extraction, transfer, and summarization prompts, but it does not outrank runtime code, schemas, or existing governance contracts.
+
 ## Machine-Readable Mirrors
 
 - `status/l7_retrieval_contract_latest.json`

@@ -388,3 +388,21 @@ Use it for:
 - deciding what should not be transferred at all
 
 Treat it as an adoption map, not as permission to move raw thought or full transcripts into shared memory.
+
+## Prompt Discipline Skeleton
+
+When the question is not merely "what should continue" but "how should the extraction or transfer prompt itself be structured", open:
+
+- `docs/architecture/TONESOUL_PROMPT_DISCIPLINE_SKELETON.md`
+
+Use it for:
+
+- one-line success state
+- `P0/P1/P2` prompt priority
+- high / medium / low confidence classification
+- `[資料不足]` recovery flow
+- stability-band sorting
+- compression ladder design
+- receiver instruction design
+
+Treat it as a prompt-design companion, not as a universal runtime prompt or a replacement for code, schemas, or current contracts.

@@ -109,6 +109,13 @@ Use these when the question is not only what verdict was produced, but whether d
 
 Use this when the question is not merely how to hand off current state, but what continuity discipline ToneSoul should adopt next. It is an adoption map, not live runtime permission.
 
+## Prompt Discipline Skeleton
+
+- [architecture/TONESOUL_PROMPT_DISCIPLINE_SKELETON.md](architecture/TONESOUL_PROMPT_DISCIPLINE_SKELETON.md)
+  - prompt-side discipline skeleton for goal function, priority, evidence, recovery, stability bands, compression levels, and receiver instructions
+
+Use this when the question is not only what should be transferred, but how the extraction or transfer prompt should be structured in the first place.
+
 ## Developer Runtime Adapter Direction
 
 - [notes/TONESOUL_RUNTIME_ADAPTER_MEMORY_ANCHOR_2026-03-23.md](notes/TONESOUL_RUNTIME_ADAPTER_MEMORY_ANCHOR_2026-03-23.md)

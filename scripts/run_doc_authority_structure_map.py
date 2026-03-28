@@ -172,12 +172,23 @@ GROUPS = [
         ],
     },
     {
+        "id": "prompt_discipline_skeleton",
+        "label": "Prompt Discipline Skeleton",
+        "description": "prompt-side discipline aid for separating goal, priority, confidence, recovery, compression, and receiver instructions before building extraction or transfer prompts",
+        "authority_role": "discipline_contract",
+        "use_when": "when the question is not what should be transferred, but how the prompt that extracts or transfers it should be structured",
+        "read_order": 13,
+        "files": [
+            "docs/architecture/TONESOUL_PROMPT_DISCIPLINE_SKELETON.md",
+        ],
+    },
+    {
         "id": "doc_governance",
         "label": "Documentation Governance",
         "description": "naming, zoning, and convergence planning surfaces",
         "authority_role": "doc_governance",
         "use_when": "when retrieval quality, metadata posture, or naming collisions are the problem",
-        "read_order": 13,
+        "read_order": 14,
         "files": [
             "docs/DOCS_INFORMATION_ARCHITECTURE_v1.md",
             "docs/DOCS_CLASSIFICATION_LEDGER_v1.md",
@@ -192,7 +203,7 @@ GROUPS = [
         "description": "ownership and divergence boundaries for duplicate-like surfaces",
         "authority_role": "boundary_contract",
         "use_when": "when two similar-looking lanes need explicit ownership or split-brain control",
-        "read_order": 14,
+        "read_order": 15,
         "files": [
             "docs/architecture/BASENAME_DIVERGENCE_DISTILLATION_MAP.md",
             "docs/architecture/PRIVATE_MEMORY_SHADOW_BOUNDARY_MAP.md",
@@ -206,7 +217,7 @@ GROUPS = [
         "description": "machine-readable current posture for convergence-related lanes",
         "authority_role": "generated_status",
         "use_when": "when current machine-readable posture matters more than prose explanation",
-        "read_order": 15,
+        "read_order": 16,
         "files": [
             "docs/status/doc_convergence_inventory_latest.json",
             "docs/status/basename_divergence_distillation_latest.json",

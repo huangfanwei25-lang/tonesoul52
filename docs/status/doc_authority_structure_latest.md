@@ -1,14 +1,14 @@
 # Documentation Authority Structure Latest
 
-- generated_at: 2026-03-28T14:06:08Z
-- primary_status_line: `doc_authority_structure | groups=15 tracked=49 metadata_complete=49 metadata_missing=0`
+- generated_at: 2026-03-28T15:00:29Z
+- primary_status_line: `doc_authority_structure | groups=16 tracked=50 metadata_complete=50 metadata_missing=0`
 - runtime_status_line: `doc_retrieval_order=entrypoint_to_operational_to_canonical_to_deep_map_to_interpretive_to_boundary_aids_to_control_plane | generated_status_lane=6`
 - artifact_policy_status_line: `structure_mode=retrieval_oriented | authority_roles=explicit | generated_status_preferred_for_current_state`
 
 ## Metrics
-- `group_count`: `15`
-- `tracked_file_count`: `49`
-- `metadata_complete_count`: `49`
+- `group_count`: `16`
+- `tracked_file_count`: `50`
+- `metadata_complete_count`: `50`
 - `metadata_missing_count`: `0`
 
 ## Groups
@@ -106,11 +106,17 @@
   - use_when: when the question is not merely how to hand off hot state, but what continuity discipline ToneSoul should adopt or defer
   - read_order: 12
   - `docs/architecture/TONESOUL_CONTEXT_CONTINUITY_ADOPTION_MAP.md` exists=`true` purpose=`true` date=`true`
+- `Prompt Discipline Skeleton` tracked=`1` metadata_complete=`1`
+  - description: prompt-side discipline aid for separating goal, priority, confidence, recovery, compression, and receiver instructions before building extraction or transfer prompts
+  - authority_role: discipline_contract
+  - use_when: when the question is not what should be transferred, but how the prompt that extracts or transfers it should be structured
+  - read_order: 13
+  - `docs/architecture/TONESOUL_PROMPT_DISCIPLINE_SKELETON.md` exists=`true` purpose=`true` date=`true`
 - `Documentation Governance` tracked=`5` metadata_complete=`5`
   - description: naming, zoning, and convergence planning surfaces
   - authority_role: doc_governance
   - use_when: when retrieval quality, metadata posture, or naming collisions are the problem
-  - read_order: 13
+  - read_order: 14
   - `docs/DOCS_INFORMATION_ARCHITECTURE_v1.md` exists=`true` purpose=`true` date=`true`
   - `docs/DOCS_CLASSIFICATION_LEDGER_v1.md` exists=`true` purpose=`true` date=`true`
   - `docs/FILE_PURPOSE_MAP.md` exists=`true` purpose=`true` date=`true`
@@ -120,7 +126,7 @@
   - description: ownership and divergence boundaries for duplicate-like surfaces
   - authority_role: boundary_contract
   - use_when: when two similar-looking lanes need explicit ownership or split-brain control
-  - read_order: 14
+  - read_order: 15
   - `docs/architecture/BASENAME_DIVERGENCE_DISTILLATION_MAP.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/PRIVATE_MEMORY_SHADOW_BOUNDARY_MAP.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/PARADOX_FIXTURE_OWNERSHIP_MAP.md` exists=`true` purpose=`true` date=`true`
@@ -129,7 +135,7 @@
   - description: machine-readable current posture for convergence-related lanes
   - authority_role: generated_status
   - use_when: when current machine-readable posture matters more than prose explanation
-  - read_order: 15
+  - read_order: 16
   - `docs/status/doc_convergence_inventory_latest.json` exists=`true` purpose=`true` date=`true`
   - `docs/status/basename_divergence_distillation_latest.json` exists=`true` purpose=`true` date=`true`
   - `docs/status/private_memory_shadow_latest.json` exists=`true` purpose=`true` date=`true`

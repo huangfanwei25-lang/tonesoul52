@@ -1051,3 +1051,9 @@
 - [x] classify which continuity ideas can land now, which need boundary contracts first, and which must stay out of runtime for now
 - [x] wire the adoption map back into onboarding, reference, README, docs index, and the document authority structure map
 **Success Criteria**: Later agents can answer "what should continue across sessions/tasks/agents/models?" by opening one ToneSoul-native adoption map instead of inventing hidden-memory logic or over-transferring raw context.
+
+## Phase 668: Prompt Discipline Skeleton (2026-03-28)
+- [x] translate the high-level prompt-logic skeleton into ToneSoul-native control-plane language instead of importing a generic mega-template
+- [x] map goal function, priority, confidence, recovery, stability bands, compression, and receiver instructions onto existing ToneSoul surfaces
+- [x] wire the skeleton back into onboarding, reference, README, docs index, and the document authority structure map
+**Success Criteria**: Later agents can answer "how should I structure an extraction or transfer prompt?" by opening one ToneSoul-native skeleton that aligns with readiness, subject snapshot, compaction, council dossier, and context continuity.
