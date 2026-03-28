@@ -996,3 +996,11 @@
 - [task_archive_phase_301-400.md](docs/chronicles/task_archive_phase_301-400.md) — Phase 301-400
 - [task_archive_phase_401-500.md](docs/chronicles/task_archive_phase_401-500.md) — Phase 401-500
 - [task_archive_phase_501-600.md](docs/chronicles/task_archive_phase_501-600.md) — Phase 501-569
+
+---
+
+## Phase 660: Claude Control-Plane Discipline Work Order (2026-03-28)
+- [x] extend `docs/plans/claude_deep_structure_authority_work_order_2026-03-27.md` with a long-form control-plane adaptation pass
+- [x] bound the next Claude lane to documentation-only outputs for readiness gate, task tracks, and plan delta
+- [x] keep runtime implementation ownership on the Codex lane
+**Success Criteria**: Claude has one clear long-context workstream that strengthens ToneSoul control-plane discipline without touching runtime code.

@@ -456,3 +456,178 @@ When done, report back with:
 - which field families must remain operator-only or human-confirmed
 - 5-10 highest-risk over-promotion patterns you found
 - which one bounded heuristic would be safest for Codex to implement first
+
+---
+
+## Follow-Up Extension: Control Plane Discipline Adaptation
+
+This extension exists because ToneSoul now has a stronger shared-memory handoff surface,
+but its next coordination bottleneck is no longer memory structure alone.
+
+It is:
+
+> how should later agents decide whether a task is ready to begin, what track it belongs to,
+> and when a plan change deserves a full rewrite versus a bounded delta?
+
+This is again a bounded synthesis-and-boundary ticket.
+It is not permission to modify runtime scripts, packet shape, or session-start/session-end code.
+
+## Why This Follow-Up Fits Claude
+
+This pass benefits from a panoramic synthesis agent because it requires:
+
+- comparing current ToneSoul session cadence against missing control-plane discipline
+- separating operator ritual from actual readiness
+- classifying tasks into bounded tracks without inventing another grand architecture
+- naming where plan deltas should exist without forcing Codex to implement them prematurely
+
+## Follow-Up Objective
+
+Produce a bounded contract for **Readiness Gate + Task Tracks + Plan Delta** so later agents can answer:
+
+- is this task ready to start now?
+- what kind of task is this really?
+- how much exploration is justified?
+- when scope shifts, should we rewrite the full plan or append a delta?
+
+The goal is to reduce three failure modes:
+
+1. **false readiness**: the agent has context but not enough authority/evidence to start
+2. **track collapse**: every task gets treated like a full-system refactor
+3. **plan thrash**: every scope change rewrites the whole plan instead of leaving a bounded delta
+
+## Mandatory Focus Areas
+
+At minimum, classify these control-plane questions:
+
+- `readiness gate`
+- `task track`
+- `exploration depth`
+- `plan delta`
+- `session-start bundle`
+- `claim requirement`
+- `review requirement`
+- `human clarification requirement`
+
+At minimum, map these three task tracks:
+
+- `Quick Change`
+- `Feature Track`
+- `System Track`
+
+At minimum, evaluate these existing ToneSoul surfaces as inputs:
+
+- `AI_ONBOARDING.md`
+- `docs/AI_QUICKSTART.md`
+- `docs/AI_REFERENCE.md`
+- `docs/architecture/TONESOUL_SHARED_R_MEMORY_OPERATIONS_CONTRACT.md`
+- `tonesoul/runtime_adapter.py`
+- `tonesoul/diagnose.py`
+- `scripts/start_agent_session.py`
+- `scripts/end_agent_session.py`
+- `task.md`
+
+## Follow-Up Deliverables
+
+### Deliverable H
+
+Create:
+
+- `docs/architecture/TONESOUL_TASK_TRACK_AND_READINESS_CONTRACT.md`
+
+This should be a table-first contract that defines:
+
+- readiness states
+  - `pass`
+  - `needs_clarification`
+  - `blocked`
+- task tracks
+  - `quick_change`
+  - `feature_track`
+  - `system_track`
+- minimum required surfaces before starting
+- default exploration depth
+  - `x0`
+  - `x1`
+  - `x2`
+  - `x3`
+- whether claim is required
+- whether explicit review is required
+- when a human must be asked before continuing
+
+Each row should include at least:
+
+- task pattern
+- recommended track
+- readiness state
+- minimum evidence
+- exploration depth
+- risk if misclassified
+- short rationale
+
+### Deliverable I
+
+Create:
+
+- `docs/architecture/TONESOUL_PLAN_DELTA_CONTRACT.md`
+
+This should define when later agents should:
+
+- keep the existing plan
+- append a bounded delta
+- fork a new phase
+- stop and ask a human
+
+At minimum, include:
+
+- what counts as a plan delta
+- what counts as a plan rewrite
+- what belongs in `task.md`
+- what belongs only in compaction or checkpoint
+- what must not silently overwrite an existing plan
+
+### Deliverable J
+
+Optional, only if clearly justified by H/I:
+
+- `docs/plans/tonesoul_control_plane_followup_candidates_2026-03-28.md`
+
+Use this only if there are 3-5 genuinely bounded future work items.
+Do not write a giant roadmap.
+
+## Follow-Up Boundaries
+
+Do not do these things in this extension:
+
+- do not modify `tonesoul/runtime_adapter.py`
+- do not modify `tonesoul/diagnose.py`
+- do not modify `scripts/start_agent_session.py`
+- do not modify `scripts/end_agent_session.py`
+- do not change packet schema
+- do not implement a readiness gate in code
+- do not implement automatic track assignment
+- do not rewrite `AI_ONBOARDING.md` or `docs/AI_QUICKSTART.md` beyond narrow wording corrections if absolutely necessary
+
+If a control-plane gap deserves future implementation:
+
+- bound it clearly
+- keep it small
+- leave runtime implementation to Codex
+
+## Follow-Up Acceptance Criteria
+
+This extension is successful if:
+
+- later agents can tell whether a task is truly ready before starting
+- later agents can distinguish quick changes from feature work from system work
+- later agents can tell when to append a bounded plan delta instead of rewriting everything
+- the result reduces coordination drift without inventing a second runtime architecture
+
+## Follow-Up Handoff Back To Codex
+
+When done, report back with:
+
+- the cleanest readiness gate you would recommend for ToneSoul
+- the safest default mapping for Quick Change / Feature Track / System Track
+- the most dangerous current plan-thrash patterns you found
+- which one bounded control-plane improvement Codex should implement first
