@@ -70,6 +70,7 @@ def _packet(
             "recent_checkpoints": [],
             "recent_compactions": [],
             "recent_subject_snapshots": [],
+            "recent_routing_events": [],
             "parallel_lanes": {},
             "posture": {"risk_posture": {}},
             "project_memory_summary": {},
@@ -149,6 +150,7 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
         "recent_checkpoints": [],
         "recent_compactions": [],
         "recent_subject_snapshots": [],
+        "recent_routing_events": [],
         "parallel_lanes": {},
         "posture": {"risk_posture": {}},
         "project_memory_summary": {},
@@ -369,6 +371,19 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
                 values = list(subject_anchor.get(key) or [])
                 if values:
                     lines.append(f"    {key}={', '.join(values[:3])}")
+        routing_summary = project_memory_summary.get("routing_summary") or {}
+        if routing_summary:
+            lines.append("  routing_summary:")
+            lines.append(
+                "    "
+                f"events={int(routing_summary.get('total_events', 0) or 0)} "
+                f"writes={int(routing_summary.get('write_count', 0) or 0)} "
+                f"previews={int(routing_summary.get('preview_count', 0) or 0)} "
+                f"misroute_signals={int(routing_summary.get('misroute_signal_count', 0) or 0)}"
+            )
+            dominant_surface = str(routing_summary.get("dominant_surface", "")).strip()
+            if dominant_surface:
+                lines.append(f"    dominant_surface={dominant_surface}")
 
     subject_snapshots = packet.get("recent_subject_snapshots", [])
     if subject_snapshots:
@@ -390,6 +405,20 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
             values = list(latest.get(key) or [])
             if values:
                 lines.append(f"  {key}={', '.join(values[:3])}")
+
+    routing_events = packet.get("recent_routing_events", [])
+    if routing_events:
+        lines.append("")
+        lines.append(f"[Routing Telemetry] count={len(routing_events)}")
+        for event in routing_events[:3]:
+            lines.append(
+                "  "
+                f"{event.get('updated_at', '')[:16]} | "
+                f"{event.get('agent', '?')} | "
+                f"{event.get('action', '?')} -> {event.get('surface', '?')} | "
+                f"forced={bool(event.get('forced', False))} "
+                f"overlap={bool(event.get('overlap', False))}"
+            )
 
     delta_feed = packet.get("delta_feed") or {}
     if delta_feed:

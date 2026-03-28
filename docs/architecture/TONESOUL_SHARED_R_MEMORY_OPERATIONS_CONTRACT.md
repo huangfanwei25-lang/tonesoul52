@@ -24,6 +24,7 @@ Agents share one hot runtime only to the extent that they deliberately read and 
 - perspectives
 - checkpoints
 - compactions
+- routing telemetry
 - accepted canonical commits
 
 ## Operational Source Basis
@@ -110,6 +111,16 @@ Every collaborative session should end with:
    - `python scripts/save_checkpoint.py --checkpoint-id <id> --agent <your-id> --summary "..." --path "..."`
    - `python scripts/save_compaction.py --agent <your-id> --summary "..." --path "..."`
    - `python scripts/run_task_claim.py release <task_id> --agent <your-id>`
+
+### 2C. Routing Telemetry
+
+`python scripts/route_r_memory_signal.py` now leaves bounded adoption telemetry behind.
+
+That telemetry is non-canonical. It exists so later agents can see:
+
+- whether the router is actually being used
+- which surfaces dominate real routing traffic
+- whether forced routes or overlapping signal shapes suggest likely misroutes
 
 ### 2A. Signal Routing Protocol
 

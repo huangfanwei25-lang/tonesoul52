@@ -120,6 +120,7 @@ def build_project_memory_summary(
     claims: List[Dict[str, Any]] | None = None,
     compactions: List[Dict[str, Any]] | None = None,
     subject_snapshots: List[Dict[str, Any]] | None = None,
+    routing_summary: Dict[str, Any] | None = None,
     repo_root: str | Path | None = None,
 ) -> Dict[str, Any]:
     """Build a compact handoff-ready summary of the current project memory."""
@@ -127,6 +128,7 @@ def build_project_memory_summary(
     claims = list(claims or [])
     compactions = list(compactions or [])
     subject_snapshots = list(subject_snapshots or [])
+    routing_summary = dict(routing_summary or {})
 
     topic_counter: Counter[str] = Counter()
     recent_agents: List[str] = []
@@ -187,6 +189,8 @@ def build_project_memory_summary(
             f"{repo_progress.get('branch', 'unknown')}@{repo_progress.get('head', 'unknown')}"
             f" dirty={int(repo_progress.get('dirty_count', 0) or 0)}"
         )
+    if int(routing_summary.get("total_events", 0) or 0) > 0:
+        summary_lines.append(str(routing_summary.get("summary_text", "")).strip())
     if not summary_lines:
         summary_lines.append("No active carry-forward surface is visible yet.")
 
@@ -202,6 +206,8 @@ def build_project_memory_summary(
     }
     if subject_anchor:
         result["subject_anchor"] = subject_anchor
+    if routing_summary:
+        result["routing_summary"] = routing_summary
     return result
 
 

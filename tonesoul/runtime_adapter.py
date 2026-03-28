@@ -873,6 +873,154 @@ def write_routed_signal(
     raise ValueError(f"Unsupported routed surface: {surface}")
 
 
+def record_routing_event(
+    route: Dict[str, Any],
+    *,
+    action: str = "preview",
+    written: bool = False,
+    store=None,
+    ttl_seconds: int = 1209600,
+    limit: int = 50,
+) -> Dict[str, Any]:
+    """Persist a bounded router adoption/ambiguity event."""
+    normalized_action = str(action or "preview").strip() or "preview"
+    if normalized_action not in {"preview", "write"}:
+        raise ValueError("action must be preview or write")
+    if store is None:
+        from tonesoul.store import get_store
+
+        store = get_store()
+
+    payload = dict(route.get("payload") or {})
+    secondary_signals = {
+        key: bool(value) for key, value in dict(route.get("secondary_signals") or {}).items()
+    }
+    secondary_signal_count = sum(1 for value in secondary_signals.values() if value)
+    forced = str(route.get("confidence", "")).strip() == "forced"
+    overlap = secondary_signal_count > 1
+    event = {
+        "event_id": str(uuid.uuid4()),
+        "agent": str(payload.get("agent", "unknown")).strip() or "unknown",
+        "session_id": str(payload.get("session_id", "")).strip(),
+        "summary": str(payload.get("summary", "")).strip(),
+        "surface": str(route.get("surface", "")).strip(),
+        "action": normalized_action,
+        "written": bool(written),
+        "confidence": str(route.get("confidence", "")).strip(),
+        "reason": str(route.get("reason", "")).strip(),
+        "forced": forced,
+        "overlap": overlap,
+        "misroute_signal": forced or overlap,
+        "secondary_signal_count": int(secondary_signal_count),
+        "secondary_signals": secondary_signals,
+        "source": str(payload.get("source", "")).strip(),
+        "updated_at": _utc_now(),
+    }
+    store.append_routing_event(event, ttl_seconds=int(ttl_seconds), limit=int(limit))
+    return event
+
+
+def list_routing_events(store=None, n: int = 10) -> List[Dict[str, Any]]:
+    """List recent router telemetry events."""
+    if store is None:
+        from tonesoul.store import get_store
+
+        store = get_store()
+    try:
+        return list(store.get_routing_events(n=n))
+    except Exception:
+        return []
+
+
+def _build_routing_summary(events: List[Dict[str, Any]]) -> Dict[str, Any]:
+    if not events:
+        return {
+            "total_events": 0,
+            "preview_count": 0,
+            "write_count": 0,
+            "forced_count": 0,
+            "overlap_count": 0,
+            "misroute_signal_count": 0,
+            "surface_counts": {},
+            "recent_agents": [],
+            "dominant_surface": "",
+            "summary_text": "router=no recent adoption telemetry",
+            "recent_events": [],
+        }
+
+    preview_count = 0
+    write_count = 0
+    forced_count = 0
+    overlap_count = 0
+    misroute_signal_count = 0
+    surface_counts: Dict[str, int] = {}
+    recent_agents: List[str] = []
+    recent_events: List[Dict[str, Any]] = []
+
+    for event in events:
+        action = str(event.get("action", "")).strip()
+        if action == "write":
+            write_count += 1
+        else:
+            preview_count += 1
+
+        surface = str(event.get("surface", "")).strip()
+        if surface:
+            surface_counts[surface] = int(surface_counts.get(surface, 0)) + 1
+
+        if bool(event.get("forced", False)):
+            forced_count += 1
+        if bool(event.get("overlap", False)):
+            overlap_count += 1
+        if bool(event.get("misroute_signal", False)):
+            misroute_signal_count += 1
+
+        agent = str(event.get("agent", "")).strip()
+        if agent and agent not in recent_agents:
+            recent_agents.append(agent)
+
+        recent_events.append(
+            {
+                "event_id": str(event.get("event_id", "")),
+                "agent": agent,
+                "surface": surface,
+                "action": action,
+                "forced": bool(event.get("forced", False)),
+                "overlap": bool(event.get("overlap", False)),
+                "misroute_signal": bool(event.get("misroute_signal", False)),
+                "updated_at": str(event.get("updated_at", "")),
+                "summary": str(event.get("summary", "")),
+            }
+        )
+
+    dominant_surface = ""
+    if surface_counts:
+        dominant_surface = sorted(surface_counts.items(), key=lambda item: (-item[1], item[0]))[0][0]
+
+    summary_text = (
+        "router="
+        f"writes={write_count} previews={preview_count} "
+        f"overrides={forced_count} overlap={overlap_count} "
+        f"misroute_signals={misroute_signal_count}"
+    )
+    if dominant_surface:
+        summary_text += f" top={dominant_surface}"
+
+    return {
+        "total_events": len(events),
+        "preview_count": preview_count,
+        "write_count": write_count,
+        "forced_count": forced_count,
+        "overlap_count": overlap_count,
+        "misroute_signal_count": misroute_signal_count,
+        "surface_counts": surface_counts,
+        "recent_agents": recent_agents[:5],
+        "dominant_surface": dominant_surface,
+        "summary_text": summary_text,
+        "recent_events": recent_events[:5],
+    }
+
+
 def get_observer_cursor(agent_id: str, store=None) -> Dict[str, Any]:
     """Read the current since-last-seen cursor for an observing agent."""
     observer_id = str(agent_id or "").strip()
@@ -1111,6 +1259,16 @@ def _build_operator_guidance(
     pending_paths = list(project_memory_summary.get("pending_paths") or [])
     if pending_paths:
         reminders.append("Pending paths are already externalized; reuse them before widening the scan.")
+
+    routing_summary = project_memory_summary.get("routing_summary") or {}
+    if int(routing_summary.get("total_events", 0) or 0) <= 0:
+        reminders.append(
+            "No router telemetry is visible yet; use route_r_memory_signal.py when a note does not fit a surface cleanly."
+        )
+    elif int(routing_summary.get("misroute_signal_count", 0) or 0) > 0:
+        reminders.append(
+            "Router ambiguity signals are visible; review forced routes or multi-signal overlaps before assuming the chosen surface is obvious."
+        )
 
     if subject_snapshots:
         reminders.append(
@@ -1466,6 +1624,7 @@ def r_memory_packet(
     checkpoints = list_checkpoints(store=store)[:trace_limit]
     compactions = list_compactions(store=store, n=trace_limit)
     subject_snapshots = list_subject_snapshots(store=store, n=max(3, min(trace_limit, 5)))
+    routing_events = list_routing_events(store=store, n=max(5, trace_limit))
     from tonesoul.risk_calculator import build_project_memory_summary, compute_runtime_risk
 
     def _trim_tension(event: Dict[str, Any]) -> Dict[str, Any]:
@@ -1567,12 +1726,14 @@ def r_memory_packet(
         compactions=compactions,
     )
     posture.risk_posture = dict(risk_posture)
+    routing_summary = _build_routing_summary(routing_events)
     project_memory_summary = build_project_memory_summary(
         posture=posture,
         recent_traces=traces[-trace_limit:],
         claims=claims,
         compactions=compactions,
         subject_snapshots=subject_snapshots,
+        routing_summary=routing_summary,
     )
     delta_feed = {}
     observer_text = str(observer_id or "").strip()
@@ -1633,6 +1794,7 @@ def r_memory_packet(
             "compaction_surface": "ts:compacted",
             "subject_snapshot_surface": "ts:subject_snapshots",
             "observer_cursor_surface": "ts:observer_cursors:{agent_id}",
+            "routing_events_surface": "ts:routing_events",
             "field_surface": "ts:field",
         },
         "canonical_sources": [
@@ -1668,6 +1830,7 @@ def r_memory_packet(
         "recent_subject_snapshots": [
             _trim_subject_snapshot(snapshot) for snapshot in subject_snapshots[:trace_limit]
         ],
+        "recent_routing_events": routing_summary.get("recent_events", []),
         "project_memory_summary": project_memory_summary,
         "operator_guidance": operator_guidance,
         **({"delta_feed": delta_feed} if observer_text else {}),

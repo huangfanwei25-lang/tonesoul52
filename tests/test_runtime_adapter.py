@@ -22,9 +22,11 @@ from tonesoul.runtime_adapter import (
     list_checkpoints,
     list_compactions,
     list_perspectives,
+    list_routing_events,
     list_subject_snapshots,
     load,
     r_memory_packet,
+    record_routing_event,
     release_task_claim,
     route_r_memory_signal,
     summary,
@@ -280,6 +282,13 @@ def test_r_memory_packet_exposes_runtime_dominance_and_recent_trace(
         subject_snapshots_path=tmp_traces.parent / "subject_snapshots.json",
         observer_cursors_path=tmp_traces.parent / "observer_cursors.json",
     )
+    route = route_r_memory_signal(
+        agent_id="codex",
+        summary="resume packet cleanup",
+        pending_paths=["tonesoul/diagnose.py"],
+        next_action="finish delta formatting",
+    )
+    record_routing_event(route, action="preview", written=False, store=store)
     posture = load(state_path=tmp_state)
     packet = r_memory_packet(posture=posture, store=store, trace_limit=3, visitor_limit=3)
 
@@ -293,6 +302,7 @@ def test_r_memory_packet_exposes_runtime_dominance_and_recent_trace(
     assert packet["parallel_lanes"]["compaction_surface"] == "ts:compacted"
     assert packet["parallel_lanes"]["subject_snapshot_surface"] == "ts:subject_snapshots"
     assert packet["parallel_lanes"]["observer_cursor_surface"] == "ts:observer_cursors:{agent_id}"
+    assert packet["parallel_lanes"]["routing_events_surface"] == "ts:routing_events"
     assert (
         "docs/architecture/TONESOUL_SHARED_R_MEMORY_OPERATIONS_CONTRACT.md"
         in packet["canonical_sources"]
@@ -302,6 +312,9 @@ def test_r_memory_packet_exposes_runtime_dominance_and_recent_trace(
     assert "project_memory_summary" in packet
     assert "summary_text" in packet["project_memory_summary"]
     assert "repo_progress" in packet["project_memory_summary"]
+    assert packet["project_memory_summary"]["routing_summary"]["total_events"] == 1
+    assert packet["project_memory_summary"]["routing_summary"]["dominant_surface"] == "checkpoint"
+    assert packet["recent_routing_events"][0]["surface"] == "checkpoint"
     assert packet["operator_guidance"]["backend_mode"] == "file"
     assert packet["operator_guidance"]["session_start"][0].startswith(
         "python scripts/start_agent_session.py --agent"
@@ -321,6 +334,35 @@ def test_r_memory_packet_exposes_runtime_dominance_and_recent_trace(
     assert packet["recent_traces"][0]["agent"] == "codex"
     assert packet["recent_traces"][0]["topics"] == ["runtime", "redis"]
     assert packet["recent_checkpoints"] == []
+
+
+def test_record_routing_event_persists_telemetry_summary(tmp_path: Path) -> None:
+    from tonesoul.backends.file_store import FileStore
+
+    store = FileStore(
+        gov_path=tmp_path / "governance_state.json",
+        traces_path=tmp_path / "session_traces.jsonl",
+        zones_path=tmp_path / "zone_registry.json",
+        claims_path=tmp_path / "task_claims.json",
+    )
+
+    route = route_r_memory_signal(
+        agent_id="codex",
+        summary="force a compaction lane despite checkpoint cues",
+        pending_paths=["tonesoul/runtime_adapter.py"],
+        next_action="review lane choice",
+        carry_forward=["preserve the observer baseline"],
+        prefer_surface="compaction",
+    )
+
+    event = record_routing_event(route, action="write", written=True, store=store)
+    events = list_routing_events(store=store)
+
+    assert event["surface"] == "compaction"
+    assert event["forced"] is True
+    assert event["overlap"] is True
+    assert event["misroute_signal"] is True
+    assert events[0]["event_id"] == event["event_id"]
 
 
 def test_task_claims_prevent_collisions_and_appear_in_packet(tmp_path: Path) -> None:

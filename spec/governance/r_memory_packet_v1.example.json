@@ -31,6 +31,7 @@
     "compaction_surface": "ts:compacted",
     "subject_snapshot_surface": "ts:subject_snapshots",
     "observer_cursor_surface": "ts:observer_cursors:{agent_id}",
+    "routing_events_surface": "ts:routing_events",
     "field_surface": "ts:field"
   },
   "canonical_sources": [
@@ -188,6 +189,30 @@
       "updated_at": "2026-03-26T12:01:00+00:00"
     }
   ],
+  "recent_routing_events": [
+    {
+      "event_id": "route-001",
+      "agent": "codex",
+      "surface": "checkpoint",
+      "action": "preview",
+      "forced": false,
+      "overlap": false,
+      "misroute_signal": false,
+      "updated_at": "2026-03-26T12:02:00+00:00",
+      "summary": "resume packet cleanup"
+    },
+    {
+      "event_id": "route-002",
+      "agent": "codex",
+      "surface": "subject_snapshot",
+      "action": "write",
+      "forced": false,
+      "overlap": true,
+      "misroute_signal": true,
+      "updated_at": "2026-03-26T12:04:00+00:00",
+      "summary": "packet-first startup is now a durable operating preference"
+    }
+  ],
   "project_memory_summary": {
     "focus_topics": [
       "runtime_adapter",
@@ -226,7 +251,48 @@
         "subject-snapshot rollout"
       ]
     },
-    "summary_text": "focus=runtime_adapter, redis | subject=Operate as a packet-first runtime steward with explicit boundaries. | claims=1 | pending=scripts/gateway.py, apps/dashboard/world.html",
+    "routing_summary": {
+      "total_events": 2,
+      "preview_count": 1,
+      "write_count": 1,
+      "forced_count": 0,
+      "overlap_count": 1,
+      "misroute_signal_count": 1,
+      "surface_counts": {
+        "checkpoint": 1,
+        "subject_snapshot": 1
+      },
+      "recent_agents": [
+        "codex"
+      ],
+      "dominant_surface": "checkpoint",
+      "summary_text": "router=writes=1 previews=1 overrides=0 overlap=1 misroute_signals=1 top=checkpoint",
+      "recent_events": [
+        {
+          "event_id": "route-001",
+          "agent": "codex",
+          "surface": "checkpoint",
+          "action": "preview",
+          "forced": false,
+          "overlap": false,
+          "misroute_signal": false,
+          "updated_at": "2026-03-26T12:02:00+00:00",
+          "summary": "resume packet cleanup"
+        },
+        {
+          "event_id": "route-002",
+          "agent": "codex",
+          "surface": "subject_snapshot",
+          "action": "write",
+          "forced": false,
+          "overlap": true,
+          "misroute_signal": true,
+          "updated_at": "2026-03-26T12:04:00+00:00",
+          "summary": "packet-first startup is now a durable operating preference"
+        }
+      ]
+    },
+    "summary_text": "focus=runtime_adapter, redis | subject=Operate as a packet-first runtime steward with explicit boundaries. | claims=1 | pending=scripts/gateway.py, apps/dashboard/world.html | router=writes=1 previews=1 overrides=0 overlap=1 misroute_signals=1 top=checkpoint",
     "repo_progress": {
       "available": true,
       "branch": "codex/r-memory-compaction-lane-20260326",

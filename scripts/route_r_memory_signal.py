@@ -136,7 +136,11 @@ def main() -> None:
             subject_snapshots_path=_resolve_sidecar(root, "subject_snapshots.json"),
         )
 
-    from tonesoul.runtime_adapter import route_r_memory_signal, write_routed_signal
+    from tonesoul.runtime_adapter import (
+        record_routing_event,
+        route_r_memory_signal,
+        write_routed_signal,
+    )
 
     route = route_r_memory_signal(
         agent_id=str(payload.get("agent", args.agent or "unknown")),
@@ -170,6 +174,14 @@ def main() -> None:
             ttl_seconds=args.ttl_seconds,
             limit=args.limit,
         )
+    output["routing_event"] = record_routing_event(
+        route,
+        action="write" if args.write else "preview",
+        written=bool(args.write),
+        store=store,
+        ttl_seconds=int(args.ttl_seconds) if args.ttl_seconds is not None else 1209600,
+        limit=int(args.limit) if args.limit is not None else 50,
+    )
 
     print(json.dumps(output, indent=2, ensure_ascii=False))
 

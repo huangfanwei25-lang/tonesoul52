@@ -28,6 +28,7 @@ def test_run_r_memory_packet_emits_json(capsys, monkeypatch, tmp_path: Path) -> 
     compactions_path = sidecar_dir / "compacted.json"
     subject_snapshots_path = sidecar_dir / "subject_snapshots.json"
     observer_cursors_path = sidecar_dir / "observer_cursors.json"
+    routing_events_path = sidecar_dir / "routing_events.json"
     state_path.write_text(
         json.dumps(
             {
@@ -141,6 +142,30 @@ def test_run_r_memory_packet_emits_json(capsys, monkeypatch, tmp_path: Path) -> 
         ),
         encoding="utf-8",
     )
+    routing_events_path.write_text(
+        json.dumps(
+            [
+                {
+                    "event_id": "route-1",
+                    "agent": "codex",
+                    "summary": "resume packet cleanup",
+                    "surface": "checkpoint",
+                    "action": "preview",
+                    "written": False,
+                    "confidence": "high",
+                    "reason": "pending paths or next action indicate resumability state",
+                    "forced": False,
+                    "overlap": False,
+                    "misroute_signal": False,
+                    "secondary_signal_count": 1,
+                    "secondary_signals": {"checkpoint": True},
+                    "source": "cli",
+                    "updated_at": "2026-03-28T00:05:00+00:00",
+                }
+            ]
+        ),
+        encoding="utf-8",
+    )
 
     monkeypatch.setattr(
         sys,
@@ -185,7 +210,10 @@ def test_run_r_memory_packet_emits_json(capsys, monkeypatch, tmp_path: Path) -> 
     assert output["recent_checkpoints"][0]["checkpoint_id"] == "cp-1"
     assert output["recent_compactions"][0]["compaction_id"] == "cmp-1"
     assert output["recent_subject_snapshots"][0]["snapshot_id"] == "subj-1"
+    assert output["recent_routing_events"][0]["surface"] == "checkpoint"
     assert output["project_memory_summary"]["subject_anchor"]["summary"].startswith("Stay packet-first")
+    assert output["project_memory_summary"]["routing_summary"]["total_events"] == 1
+    assert output["project_memory_summary"]["routing_summary"]["summary_text"].startswith("router=writes=0 previews=1")
     assert output["delta_feed"]["observer_id"] == "observer-1"
     assert output["delta_feed"]["first_observation"] is True
     cursor_data = json.loads(observer_cursors_path.read_text(encoding="utf-8"))

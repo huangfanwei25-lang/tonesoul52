@@ -28,6 +28,7 @@ _DEFAULT_CHECKPOINTS = _ROOT / ".aegis" / "checkpoints.json"
 _DEFAULT_COMPACTIONS = _ROOT / ".aegis" / "compacted.json"
 _DEFAULT_SUBJECT_SNAPSHOTS = _ROOT / ".aegis" / "subject_snapshots.json"
 _DEFAULT_OBSERVER_CURSORS = _ROOT / ".aegis" / "observer_cursors.json"
+_DEFAULT_ROUTING_EVENTS = _ROOT / ".aegis" / "routing_events.json"
 
 
 class FileStore:
@@ -45,6 +46,7 @@ class FileStore:
         compactions_path: Path | None = None,
         subject_snapshots_path: Path | None = None,
         observer_cursors_path: Path | None = None,
+        routing_events_path: Path | None = None,
     ) -> None:
         self.gov_path = gov_path or _DEFAULT_GOV
         self.traces_path = traces_path or _DEFAULT_TRACES
@@ -56,6 +58,10 @@ class FileStore:
         self.compactions_path = compactions_path or _DEFAULT_COMPACTIONS
         self.subject_snapshots_path = subject_snapshots_path or _DEFAULT_SUBJECT_SNAPSHOTS
         self.observer_cursors_path = observer_cursors_path or _DEFAULT_OBSERVER_CURSORS
+        self.routing_events_path = (
+            routing_events_path
+            or (self.claims_path.with_name("routing_events.json") if claims_path is not None else _DEFAULT_ROUTING_EVENTS)
+        )
 
     # ── Governance state ────────────────────────────────────────────────────
 
@@ -343,6 +349,29 @@ class FileStore:
         self._purge_expired_entries(cursors)
         self._write_registry(self.observer_cursors_path, cursors)
         return dict(cursors.get(agent_id) or {})
+
+    def append_routing_event(
+        self,
+        data: Dict[str, Any],
+        *,
+        limit: int = 50,
+        ttl_seconds: int = 1209600,
+    ) -> None:
+        events = self._read_list_registry(self.routing_events_path)
+        self._purge_expired_list_entries(events)
+        entry = dict(data)
+        if ttl_seconds > 0:
+            entry["expires_at"] = str(_time() + float(ttl_seconds))
+        events.insert(0, entry)
+        if limit > 0:
+            events = events[: int(limit)]
+        self._write_list_registry(self.routing_events_path, events)
+
+    def get_routing_events(self, n: int = 10) -> List[Dict[str, Any]]:
+        events = self._read_list_registry(self.routing_events_path)
+        self._purge_expired_list_entries(events)
+        self._write_list_registry(self.routing_events_path, events)
+        return events[: max(0, int(n))]
 
     def _read_json_file(self, path: Path) -> Dict[str, Any]:
         if not path.exists():

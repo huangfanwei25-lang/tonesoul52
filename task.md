@@ -24,6 +24,12 @@
 - [x] Wire the bundle into onboarding/guidance surfaces so every collaborative session has a visible closing ritual, not only a start ritual
 **Success Criteria**: A later agent can end a session with one command, leave either a checkpoint, a compaction, or both, release any owned claims deliberately, and still recover the underlying explicit commands when needed.
 
+## Phase 656: Routing Telemetry and Misroute Signals (2026-03-28)
+- [x] Record real router preview/write adoption events into a bounded shared surface instead of leaving route usage invisible
+- [x] Summarize override/overlap-based misroute signals inside packet/project-memory surfaces so later agents can see whether the router is being used cleanly
+- [x] Keep the telemetry bounded, machine-readable, and non-canonical so it improves future routing without turning router notes into another hidden truth lane
+**Success Criteria**: A later agent can read packet/diagnose and see that router usage is happening, which surfaces dominate, and whether forced routes or overlapping signals suggest likely misroutes that deserve a better heuristic later.
+
 ## Phase 653: Shared Signal Routing for Hot-State Surfaces (2026-03-28)
 - [x] Add a bounded signal router that classifies incoming runtime notes into claim, perspective, checkpoint, compaction, or subject snapshot instead of forcing each agent to guess the surface manually
 - [x] Expose the router through a direct repo-root CLI that can preview or write the selected surface deliberately

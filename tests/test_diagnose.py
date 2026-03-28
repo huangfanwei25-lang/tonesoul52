@@ -163,6 +163,31 @@ def _fake_packet():
                 "verified_routines": ["leave compaction before release"],
                 "active_threads": ["subject-snapshot rollout"],
             },
+            "routing_summary": {
+                "total_events": 2,
+                "preview_count": 1,
+                "write_count": 1,
+                "forced_count": 1,
+                "overlap_count": 1,
+                "misroute_signal_count": 1,
+                "surface_counts": {"checkpoint": 1, "compaction": 1},
+                "recent_agents": ["codex", "claude"],
+                "dominant_surface": "checkpoint",
+                "summary_text": "router=writes=1 previews=1 overrides=1 overlap=1 misroute_signals=1 top=checkpoint",
+                "recent_events": [
+                    {
+                        "event_id": "route-1",
+                        "agent": "codex",
+                        "surface": "checkpoint",
+                        "action": "preview",
+                        "forced": False,
+                        "overlap": False,
+                        "misroute_signal": False,
+                        "updated_at": "2026-03-27T01:17:00Z",
+                        "summary": "resume packet cleanup",
+                    }
+                ],
+            },
             "repo_progress": {
                 "available": True,
                 "branch": "codex/r-memory-compaction-lane-20260326",
@@ -178,9 +203,34 @@ def _fake_packet():
             },
             "summary_text": (
                 "focus=shared-memory, runtime | next=integrate risk posture into packet | "
-                "repo=codex/r-memory-compaction-lane-20260326@04c243d dirty=6"
+                "repo=codex/r-memory-compaction-lane-20260326@04c243d dirty=6 | "
+                "router=writes=1 previews=1 overrides=1 overlap=1 misroute_signals=1 top=checkpoint"
             ),
         },
+        "recent_routing_events": [
+            {
+                "event_id": "route-1",
+                "agent": "codex",
+                "surface": "checkpoint",
+                "action": "preview",
+                "forced": False,
+                "overlap": False,
+                "misroute_signal": False,
+                "updated_at": "2026-03-27T01:17:00Z",
+                "summary": "resume packet cleanup",
+            },
+            {
+                "event_id": "route-2",
+                "agent": "claude",
+                "surface": "compaction",
+                "action": "write",
+                "forced": True,
+                "overlap": True,
+                "misroute_signal": True,
+                "updated_at": "2026-03-27T01:18:00Z",
+                "summary": "force a compaction lane despite overlap",
+            },
+        ],
         "operator_guidance": {
             "backend_mode": "redis",
             "session_start": [
@@ -308,6 +358,8 @@ def test_full_diagnostic_is_cp950_safe_and_includes_shared_runtime(monkeypatch) 
     assert "save_subject_snapshot.py" in report
     assert "completion_rule=Before ending a session" in report
     assert "subject_anchor:" in report
+    assert "routing_summary:" in report
+    assert "[Routing Telemetry] count=2" in report
     assert "Prefer recent_compactions and project_memory_summary before older" in report
     assert "ack_command=python scripts/run_r_memory_packet.py --agent codex --ack" in report
     assert "released_claim_ids=old-claim" in report

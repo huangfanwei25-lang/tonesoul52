@@ -21,12 +21,13 @@ from tonesoul.store import (
     CHANNEL_EVENTS,
     CHECKPOINT_PREFIX,
     COMMIT_LOCK_KEY,
-    OBSERVER_CURSOR_PREFIX,
     KEY_COMPACTED,
     KEY_GOVERNANCE,
+    KEY_ROUTING_EVENTS,
     KEY_SUBJECT_SNAPSHOTS,
     KEY_ZONES,
     LOCK_PREFIX,
+    OBSERVER_CURSOR_PREFIX,
     PERSPECTIVE_PREFIX,
     STREAM_TRACES,
 )
@@ -286,6 +287,30 @@ return 0
             return json.loads(text)
         except json.JSONDecodeError:
             return {}
+
+    def append_routing_event(
+        self,
+        data: Dict[str, Any],
+        *,
+        limit: int = 50,
+        ttl_seconds: int = 1209600,
+    ) -> None:
+        self._r.lpush(KEY_ROUTING_EVENTS, json.dumps(data, ensure_ascii=False))
+        self._r.ltrim(KEY_ROUTING_EVENTS, 0, max(0, int(limit) - 1))
+        if ttl_seconds > 0:
+            self._r.expire(KEY_ROUTING_EVENTS, int(ttl_seconds))
+        self.publish(CHANNEL_EVENTS, {"type": "routing_events:updated"})
+
+    def get_routing_events(self, n: int = 10) -> List[Dict[str, Any]]:
+        raw_list = self._r.lrange(KEY_ROUTING_EVENTS, 0, max(0, int(n) - 1))
+        result: List[Dict[str, Any]] = []
+        for raw in raw_list:
+            text = raw.decode("utf-8") if isinstance(raw, bytes) else raw
+            try:
+                result.append(json.loads(text))
+            except json.JSONDecodeError:
+                continue
+        return result
 
     # ── Pub/sub ──────────────────────────────────────────────────────────────
 
