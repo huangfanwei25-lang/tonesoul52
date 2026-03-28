@@ -314,6 +314,7 @@ def _fake_packet():
                 "compaction": 'python scripts/save_compaction.py --agent <your-id> --summary "..." --path "..."',
                 "signal_router": 'python scripts/route_r_memory_signal.py --agent <your-id> --summary "..." --path "..." --next-action "..." --write',
                 "subject_snapshot": 'python scripts/save_subject_snapshot.py --agent <your-id> --summary "..." --boundary "..." --preference "..."',
+                "apply_subject_refresh": 'python scripts/apply_subject_refresh.py --agent <your-id> --field active_threads',
                 "release": "python scripts/run_task_claim.py release <task_id> --agent <your-id>",
             },
             "recommended_order": [
@@ -421,6 +422,7 @@ def test_full_diagnostic_is_cp950_safe_and_includes_shared_runtime(monkeypatch) 
     assert "save_compaction.py" in report
     assert "route_r_memory_signal.py" in report
     assert "save_subject_snapshot.py" in report
+    assert "apply_subject_refresh.py" in report
     assert "completion_rule=Before ending a session" in report
     assert "subject_anchor:" in report
     assert "routing_summary:" in report

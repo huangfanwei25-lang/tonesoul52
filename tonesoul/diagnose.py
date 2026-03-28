@@ -547,6 +547,7 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
                 "compaction",
                 "signal_router",
                 "subject_snapshot",
+                "apply_subject_refresh",
                 "release",
             ):
                 command = str(commands.get(key, "")).strip()

@@ -13,6 +13,7 @@ from tonesoul.runtime_adapter import (
     GovernancePosture,
     SessionTrace,
     acknowledge_observer_cursor,
+    apply_subject_refresh,
     claim_task,
     commit,
     decay_tensions,
@@ -336,6 +337,7 @@ def test_r_memory_packet_exposes_runtime_dominance_and_recent_trace(
     assert "claim" in packet["operator_guidance"]["coordination_commands"]
     assert "signal_router" in packet["operator_guidance"]["coordination_commands"]
     assert "subject_snapshot" in packet["operator_guidance"]["coordination_commands"]
+    assert "apply_subject_refresh" in packet["operator_guidance"]["coordination_commands"]
     assert "checkpoint or compaction" in packet["operator_guidance"]["completion_rule"]
     assert packet["recent_traces"][0]["agent"] == "codex"
     assert packet["recent_traces"][0]["topics"] == ["runtime", "redis"]
@@ -597,7 +599,7 @@ def test_subject_snapshots_surface_durable_subject_anchor(tmp_path: Path) -> Non
     assert active_thread_guidance["action"] == "may_refresh_directly"
     assert "runtime_adapter" in active_thread_guidance["candidate_values"]
     assert packet["project_memory_summary"]["subject_refresh"]["recommended_command"].startswith(
-        "python scripts/save_subject_snapshot.py --agent"
+        "python scripts/apply_subject_refresh.py --agent"
     )
     assert packet["coordination_mode"]["mode"] == "file-backed"
     assert packet["coordination_mode"]["delta_feed_enabled"] is False
@@ -612,6 +614,160 @@ def test_subject_snapshots_surface_durable_subject_anchor(tmp_path: Path) -> Non
     assert (
         "File-backed coordination is not push-driven; re-read packet before touching shared paths after longer work or after another agent reports progress."
         in packet["operator_guidance"]["current_reminders"]
+    )
+
+
+def test_apply_subject_refresh_updates_active_threads_when_compaction_backed_and_clean(
+    tmp_path: Path,
+) -> None:
+    from tonesoul.backends.file_store import FileStore
+
+    store = FileStore(
+        gov_path=tmp_path / "governance_state.json",
+        traces_path=tmp_path / "session_traces.jsonl",
+        zones_path=tmp_path / "zone_registry.json",
+        claims_path=tmp_path / ".aegis" / "task_claims.json",
+        compactions_path=tmp_path / ".aegis" / "compacted.json",
+        subject_snapshots_path=tmp_path / ".aegis" / "subject_snapshots.json",
+        routing_events_path=tmp_path / ".aegis" / "routing_events.json",
+    )
+
+    original_snapshot = write_subject_snapshot(
+        agent_id="codex",
+        session_id="sess-44",
+        summary="Operate as a packet-first runtime steward with explicit boundaries.",
+        stable_vows=["never smuggle theory into runtime truth"],
+        durable_boundaries=["do not edit protected human-managed files"],
+        decision_preferences=["prefer packet before broad repo scan"],
+        verified_routines=["end sessions with checkpoint or compaction before release"],
+        active_threads=["subject snapshot hardening"],
+        evidence_refs=["docs/AI_QUICKSTART.md"],
+        refresh_signals=["refresh when durable boundaries change"],
+        store=store,
+    )
+    store.append_trace(
+        SessionTrace(
+            agent="codex",
+            session_id="sess-45",
+            timestamp="2026-03-28T00:06:00+00:00",
+            topics=["runtime_adapter", "redis"],
+            key_decisions=["refresh active threads after compaction review"],
+        ).to_dict()
+    )
+    compaction = write_compaction(
+        agent_id="codex",
+        session_id="sess-45",
+        summary="Runtime adapter and redis coordination remain active threads.",
+        carry_forward=["keep packet-first session cadence stable"],
+        pending_paths=["tonesoul/runtime_adapter.py"],
+        evidence_refs=["docs/AI_QUICKSTART.md"],
+        next_action="refresh subject snapshot active threads",
+        store=store,
+    )
+
+    packet = r_memory_packet(posture=GovernancePosture(), store=store)
+
+    assert packet["project_memory_summary"]["subject_refresh"]["recommended_command"].startswith(
+        "python scripts/apply_subject_refresh.py --agent"
+    )
+
+    result = apply_subject_refresh(
+        agent_id="codex",
+        field="active_threads",
+        summary="Refresh bounded active threads from clean compaction-backed evidence.",
+        session_id="sess-45",
+        source="test",
+        refresh_signals=["manual review complete"],
+        store=store,
+    )
+
+    assert result["ok"] is True
+    assert result["reason"] == "applied"
+    assert result["candidate_values"] == ["runtime_adapter", "redis"]
+    applied = result["applied_snapshot"]
+    assert applied is not None
+    assert applied["summary"].startswith("Refresh bounded active threads")
+    assert applied["stable_vows"] == original_snapshot["stable_vows"]
+    assert applied["durable_boundaries"] == original_snapshot["durable_boundaries"]
+    assert applied["decision_preferences"] == original_snapshot["decision_preferences"]
+    assert applied["verified_routines"] == original_snapshot["verified_routines"]
+    assert applied["active_threads"] == ["subject snapshot hardening", "runtime_adapter", "redis"]
+    assert f"compaction:{compaction['compaction_id']}" in applied["evidence_refs"]
+    assert "manual review complete" in applied["refresh_signals"]
+    assert "active_threads compaction-backed refresh applied" in applied["refresh_signals"]
+
+    snapshots = list_subject_snapshots(store=store, n=5)
+    assert snapshots[0]["snapshot_id"] == applied["snapshot_id"]
+    assert snapshots[1]["snapshot_id"] == original_snapshot["snapshot_id"]
+
+
+def test_apply_subject_refresh_rejects_when_promotion_hazards_are_present(
+    tmp_path: Path,
+) -> None:
+    from tonesoul.backends.file_store import FileStore
+
+    store = FileStore(
+        gov_path=tmp_path / "governance_state.json",
+        traces_path=tmp_path / "session_traces.jsonl",
+        zones_path=tmp_path / "zone_registry.json",
+        claims_path=tmp_path / ".aegis" / "task_claims.json",
+        compactions_path=tmp_path / ".aegis" / "compacted.json",
+        subject_snapshots_path=tmp_path / ".aegis" / "subject_snapshots.json",
+        routing_events_path=tmp_path / ".aegis" / "routing_events.json",
+    )
+
+    write_subject_snapshot(
+        agent_id="codex",
+        session_id="sess-44",
+        summary="Operate as a packet-first runtime steward with explicit boundaries.",
+        stable_vows=["never smuggle theory into runtime truth"],
+        durable_boundaries=["do not edit protected human-managed files"],
+        decision_preferences=["prefer packet before broad repo scan"],
+        verified_routines=["end sessions with checkpoint or compaction before release"],
+        active_threads=["subject snapshot hardening"],
+        store=store,
+    )
+    store.append_trace(
+        SessionTrace(
+            agent="codex",
+            session_id="sess-45",
+            timestamp="2026-03-28T00:06:00+00:00",
+            topics=["runtime_adapter", "redis"],
+            key_decisions=["refresh active threads after compaction review"],
+        ).to_dict()
+    )
+    write_compaction(
+        agent_id="codex",
+        session_id="sess-45",
+        summary="Runtime adapter and redis coordination remain active threads.",
+        carry_forward=["keep packet-first session cadence stable"],
+        pending_paths=["tonesoul/runtime_adapter.py"],
+        next_action="refresh subject snapshot active threads",
+        store=store,
+    )
+    claim_task(
+        "runtime-lane",
+        agent_id="claude",
+        summary="hold the runtime lane",
+        paths=["tonesoul/runtime_adapter.py"],
+        store=store,
+    )
+
+    result = apply_subject_refresh(
+        agent_id="codex",
+        field="active_threads",
+        summary="Do not apply when hazards remain visible.",
+        session_id="sess-45",
+        source="test",
+        store=store,
+    )
+
+    assert result["ok"] is False
+    assert result["reason"] == "promotion_hazards_present"
+    assert result["applied_snapshot"] is None
+    assert (
+        "Do not promote active claims into durable identity"
+        in result["subject_refresh"]["promotion_hazards"][0]
     )
 
 

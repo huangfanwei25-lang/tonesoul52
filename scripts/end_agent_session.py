@@ -116,6 +116,30 @@ def _release_claims(*, task_ids: list[str], agent_id: str, store=None) -> dict:
     }
 
 
+def _apply_subject_refresh_bundle(
+    *,
+    enabled: bool,
+    agent_id: str,
+    summary: str,
+    session_id: str,
+    source: str,
+    store=None,
+) -> dict | None:
+    if not enabled:
+        return None
+    from tonesoul.runtime_adapter import apply_subject_refresh
+
+    return apply_subject_refresh(
+        agent_id=agent_id,
+        field="active_threads",
+        summary=summary,
+        session_id=session_id,
+        source=f"{source}-subject-refresh",
+        refresh_signals=["session-end active_threads refresh requested"],
+        store=store,
+    )
+
+
 def main() -> None:
     _ensure_repo_root_on_path()
 
@@ -132,6 +156,7 @@ def main() -> None:
     parser.add_argument("--evidence-ref", action="append", dest="evidence_refs", default=[])
     parser.add_argument("--release-task", action="append", dest="release_task_ids", default=[])
     parser.add_argument("--no-release", action="store_true")
+    parser.add_argument("--refresh-active-threads", action="store_true")
     parser.add_argument("--source", default="cli")
     parser.add_argument("--state-path", type=Path, default=None)
     parser.add_argument("--traces-path", type=Path, default=None)
@@ -171,6 +196,7 @@ def main() -> None:
     store = _build_store(args)
     checkpoint = None
     compaction = None
+    subject_refresh_application = None
 
     if mode in {"checkpoint", "both"}:
         checkpoint_id = (
@@ -202,6 +228,14 @@ def main() -> None:
             limit=args.compaction_limit,
             store=store,
         )
+        subject_refresh_application = _apply_subject_refresh_bundle(
+            enabled=bool(args.refresh_active_threads),
+            agent_id=agent_id,
+            summary=summary,
+            session_id=session_id,
+            source=source,
+            store=store,
+        )
 
     release_summary = {
         "strategy": "none",
@@ -226,6 +260,7 @@ def main() -> None:
         "mode": mode,
         "checkpoint": checkpoint,
         "compaction": compaction,
+        "subject_refresh_application": subject_refresh_application,
         "released_claims": release_summary,
         "underlying_commands": [],
     }
@@ -237,6 +272,10 @@ def main() -> None:
     if compaction is not None:
         payload_out["underlying_commands"].append(
             f"python scripts/save_compaction.py --agent {agent_id} {shared_args_text}"
+        )
+    if subject_refresh_application is not None:
+        payload_out["underlying_commands"].append(
+            f'python scripts/apply_subject_refresh.py --agent {agent_id} --field active_threads --summary "{summary}"'
         )
     if not args.no_release:
         payload_out["underlying_commands"].append(

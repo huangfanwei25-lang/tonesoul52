@@ -1122,6 +1122,7 @@
             "compaction",
             "signal_router",
             "subject_snapshot",
+            "apply_subject_refresh",
             "release"
           ],
           "properties": {
@@ -1146,6 +1147,10 @@
               "minLength": 1
             },
             "subject_snapshot": {
+              "type": "string",
+              "minLength": 1
+            },
+            "apply_subject_refresh": {
               "type": "string",
               "minLength": 1
             },

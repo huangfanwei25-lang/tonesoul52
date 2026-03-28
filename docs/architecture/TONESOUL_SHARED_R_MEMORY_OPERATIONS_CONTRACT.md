@@ -262,6 +262,7 @@ Use `write_subject_snapshot()` or `scripts/save_subject_snapshot.py` when stable
 Supported surfaces:
 
 - `python scripts/save_subject_snapshot.py --agent <name> --summary "..." --boundary "..." --preference "..."`
+- `python scripts/apply_subject_refresh.py --agent <name> --field active_threads`
 - `write_subject_snapshot()`
 
 Subject snapshot fields should answer:
@@ -281,6 +282,9 @@ Subject snapshot semantics:
 Forbidden move:
 
 - treating a subject snapshot as canonical posture or constitutional truth
+- treating every low-risk hint as permission to auto-refresh identity fields
+
+The first bounded exception is `active_threads` compaction-backed refresh through `apply_subject_refresh.py`, and only when the packet heuristic exposes `may_refresh_directly` without promotion hazards.
 
 ### 8. Canonical Commit Protocol
 

@@ -13,6 +13,13 @@
 - Phase 658: harden Redis live surfaces and delta-aware coordination once file-backed discipline proves stable enough to deserve real-time promotion
 - Phase 661: surface session-start readiness directly in the bundle so later agents stop inferring `pass / needs_clarification / blocked` only from prose contracts
 - Phase 662: translate the adoptable parts of external observability/falsifiability theory into ToneSoul-native boundary contracts without importing foreign naming or mutating `AXIOMS.json`
+- Phase 664: let the first bounded runtime subject-refresh heuristic actually write `active_threads` when compaction-backed evidence is clean enough, without promoting higher-risk identity fields
+
+## Phase 664: Bounded Active-Threads Subject Refresh (2026-03-28)
+- [x] Add an explicit `apply_subject_refresh.py` repo-root path for the first bounded refresh heuristic instead of overloading `save_subject_snapshot.py`
+- [x] Keep the runtime write path limited to `active_threads`, compaction-backed evidence, and zero promotion hazards so vows/boundaries/preferences remain manual
+- [x] Wire the same bounded exception into session-end bundles, operator guidance, schema/example, and regression tests so later agents can use it deliberately
+**Success Criteria**: A later agent can see `active_threads=may_refresh_directly (compaction-backed)`, run one explicit command to refresh only that field, and know the write will abort whenever claims, routing ambiguity, or elevated risk make the promotion unsafe.
 
 ## Phase 662: Observable-Shell And Axiom Boundary Adoption (2026-03-28)
 - [x] Review the extracted external theory proposals and translate only the adoptable parts into ToneSoul-native naming and architecture lanes

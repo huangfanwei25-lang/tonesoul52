@@ -213,6 +213,92 @@ def test_end_agent_session_both_mode_with_no_release(capsys, monkeypatch, tmp_pa
     assert "task-codex" in remaining_claims
 
 
+def test_end_agent_session_can_apply_bounded_subject_refresh(capsys, monkeypatch, tmp_path: Path) -> None:
+    module = _load_script_module()
+    state_path = tmp_path / "governance_state.json"
+    traces_path = tmp_path / "session_traces.jsonl"
+    subject_snapshots_path = tmp_path / ".aegis" / "subject_snapshots.json"
+
+    _write_state(state_path)
+    traces_path.write_text(
+        json.dumps(
+            {
+                "session_id": "sess-1",
+                "agent": "codex",
+                "timestamp": "2026-03-28T00:01:00+00:00",
+                "topics": ["runtime_adapter", "redis"],
+                "tension_events": [],
+                "vow_events": [],
+                "aegis_vetoes": [],
+                "key_decisions": ["bundle session end with bounded subject refresh"],
+            }
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    subject_snapshots_path.parent.mkdir(parents=True, exist_ok=True)
+    subject_snapshots_path.write_text(
+        json.dumps(
+            [
+                {
+                    "snapshot_id": "subj-1",
+                    "agent": "codex",
+                    "session_id": "sess-0",
+                    "summary": "Operate as a packet-first runtime steward with explicit boundaries.",
+                    "stable_vows": ["never smuggle theory into runtime truth"],
+                    "durable_boundaries": ["do not edit protected human-managed files"],
+                    "decision_preferences": ["prefer packet before broad repo scan"],
+                    "verified_routines": ["end sessions with checkpoint or compaction before release"],
+                    "active_threads": ["subject snapshot hardening"],
+                    "evidence_refs": ["docs/AI_QUICKSTART.md"],
+                    "refresh_signals": ["refresh when durable boundaries change"],
+                    "source": "cli",
+                    "updated_at": "2026-03-28T00:00:30+00:00",
+                }
+            ]
+        ),
+        encoding="utf-8",
+    )
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "end_agent_session.py",
+            "--state-path",
+            str(state_path),
+            "--traces-path",
+            str(traces_path),
+            "--agent",
+            "codex",
+            "--summary",
+            "leave a bounded handoff for the runtime lane",
+            "--path",
+            "tonesoul/runtime_adapter.py",
+            "--next-action",
+            "run the next observer handoff test",
+            "--refresh-active-threads",
+            "--no-release",
+        ],
+    )
+
+    module.main()
+    output = json.loads(capsys.readouterr().out)
+
+    assert output["mode"] == "compaction"
+    assert output["subject_refresh_application"]["ok"] is True
+    assert output["subject_refresh_application"]["field"] == "active_threads"
+    assert output["subject_refresh_application"]["candidate_values"] == ["runtime_adapter", "redis"]
+    assert output["underlying_commands"][0].startswith("python scripts/save_compaction.py --agent codex")
+    assert output["underlying_commands"][1].startswith(
+        "python scripts/apply_subject_refresh.py --agent codex --field active_threads"
+    )
+
+    saved = json.loads(subject_snapshots_path.read_text(encoding="utf-8"))
+    assert saved[0]["active_threads"] == ["subject snapshot hardening", "runtime_adapter", "redis"]
+    assert "active_threads compaction-backed refresh applied" in saved[0]["refresh_signals"]
+
+
 def test_ensure_repo_root_on_path_adds_repo_root(monkeypatch) -> None:
     module = _load_script_module()
     repo_root = str(Path(__file__).resolve().parents[1])

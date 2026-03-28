@@ -568,6 +568,177 @@ def list_subject_snapshots(store=None, n: int = 3) -> List[Dict[str, Any]]:
         return []
 
 
+def apply_subject_refresh(
+    *,
+    agent_id: str,
+    field: str = "active_threads",
+    summary: str = "",
+    session_id: str = "",
+    source: str = "subject-refresh-cli",
+    refresh_signals: Optional[List[str]] = None,
+    store=None,
+) -> Dict[str, Any]:
+    """Apply one bounded subject-refresh heuristic to the latest snapshot lane.
+
+    Current scope is intentionally narrow:
+
+    - only `active_threads`
+    - only when the field is `may_refresh_directly`
+    - only when the evidence is `compaction-backed`
+    - only when no promotion hazards are present
+
+    This keeps the first runtime heuristic aligned with the documented boundary
+    contract instead of silently auto-promoting broader identity fields.
+    """
+    refresh_field = str(field or "").strip() or "active_threads"
+    if refresh_field != "active_threads":
+        raise ValueError("only active_threads refresh is currently supported")
+    if store is None:
+        from tonesoul.store import get_store
+
+        store = get_store()
+
+    raw_posture = {}
+    try:
+        raw_posture = store.get_state()
+    except Exception:
+        raw_posture = {}
+    if raw_posture:
+        posture = GovernancePosture.from_dict(raw_posture)
+        posture.tension_history = decay_tensions(posture.tension_history)
+    else:
+        posture = GovernancePosture(last_updated=_utc_now())
+
+    traces: List[Dict[str, Any]] = []
+    try:
+        traces = list(store.get_traces(n=5))
+    except Exception:
+        traces = []
+
+    subject_snapshots = list_subject_snapshots(store=store, n=5)
+    checkpoints = list_checkpoints(store=store)[:5]
+    compactions = list_compactions(store=store, n=5)
+    claims = list_active_claims(store=store)
+    routing_events = list_routing_events(store=store, n=5)
+
+    from tonesoul.risk_calculator import build_project_memory_summary, compute_runtime_risk
+
+    risk_posture = compute_runtime_risk(
+        posture=posture,
+        recent_traces=traces[-5:],
+        claims=claims,
+        compactions=compactions,
+    )
+    routing_summary = _build_routing_summary(routing_events)
+    project_memory_summary = build_project_memory_summary(
+        posture=posture,
+        recent_traces=traces[-5:],
+        claims=claims,
+        compactions=compactions,
+        subject_snapshots=subject_snapshots,
+        routing_summary=routing_summary,
+    )
+    subject_refresh = _build_subject_refresh_summary(
+        subject_snapshots=subject_snapshots,
+        checkpoints=checkpoints,
+        compactions=compactions,
+        claims=claims,
+        routing_summary=routing_summary,
+        project_memory_summary=project_memory_summary,
+        risk_posture=risk_posture,
+    )
+    guidance = next(
+        (
+            item
+            for item in list(subject_refresh.get("field_guidance") or [])
+            if str(item.get("field", "")).strip() == refresh_field
+        ),
+        {},
+    )
+    candidate_values = _clean_string_list(guidance.get("candidate_values") or [])
+    action = str(guidance.get("action", "")).strip()
+    evidence_level = str(guidance.get("evidence_level", "")).strip()
+    hazards = list(subject_refresh.get("promotion_hazards") or [])
+
+    if action != "may_refresh_directly":
+        return {
+            "ok": False,
+            "field": refresh_field,
+            "reason": "field_not_refreshable",
+            "subject_refresh": subject_refresh,
+            "applied_snapshot": None,
+        }
+    if evidence_level != "compaction-backed":
+        return {
+            "ok": False,
+            "field": refresh_field,
+            "reason": "evidence_not_compaction_backed",
+            "subject_refresh": subject_refresh,
+            "applied_snapshot": None,
+        }
+    if hazards:
+        return {
+            "ok": False,
+            "field": refresh_field,
+            "reason": "promotion_hazards_present",
+            "subject_refresh": subject_refresh,
+            "applied_snapshot": None,
+        }
+    if not candidate_values:
+        return {
+            "ok": False,
+            "field": refresh_field,
+            "reason": "no_candidate_values",
+            "subject_refresh": subject_refresh,
+            "applied_snapshot": None,
+        }
+
+    latest_snapshot = subject_snapshots[0] if subject_snapshots else {}
+    merged_threads = _clean_string_list(
+        list(latest_snapshot.get("active_threads") or []) + candidate_values
+    )
+    latest_compaction_ids = [
+        f"compaction:{str(entry.get('compaction_id', '')).strip()}"
+        for entry in list(compactions)[:2]
+        if str(entry.get("compaction_id", "")).strip()
+    ]
+    merged_evidence_refs = _clean_string_list(
+        list(latest_snapshot.get("evidence_refs") or []) + latest_compaction_ids
+    )
+    signal_list = _clean_string_list(
+        list(latest_snapshot.get("refresh_signals") or [])
+        + list(refresh_signals or [])
+        + ["active_threads compaction-backed refresh applied"]
+    )
+    snapshot_summary = str(summary or "").strip() or str(
+        latest_snapshot.get("summary")
+        or "Bounded subject refresh kept active_threads aligned with recent compaction-backed focus."
+    ).strip()
+
+    applied_snapshot = write_subject_snapshot(
+        agent_id=agent_id,
+        session_id=session_id or str(latest_snapshot.get("session_id", "")),
+        summary=snapshot_summary,
+        stable_vows=list(latest_snapshot.get("stable_vows") or []),
+        durable_boundaries=list(latest_snapshot.get("durable_boundaries") or []),
+        decision_preferences=list(latest_snapshot.get("decision_preferences") or []),
+        verified_routines=list(latest_snapshot.get("verified_routines") or []),
+        active_threads=merged_threads,
+        evidence_refs=merged_evidence_refs,
+        refresh_signals=signal_list,
+        source=source,
+        store=store,
+    )
+    return {
+        "ok": True,
+        "field": refresh_field,
+        "reason": "applied",
+        "candidate_values": candidate_values,
+        "subject_refresh": subject_refresh,
+        "applied_snapshot": applied_snapshot,
+    }
+
+
 def _clean_string_list(values: Optional[List[Any]]) -> List[str]:
     cleaned: List[str] = []
     seen = set()
@@ -1196,14 +1367,26 @@ def _build_subject_refresh_summary(
 
     recommended_command = ""
     if refresh_recommended:
-        command_parts = [
-            'python scripts/save_subject_snapshot.py --agent <your-id> --summary "..."',
-        ]
-        for thread in candidate_threads[:2]:
-            command_parts.append(f'--thread "{thread}"')
-        if direct_fields:
-            command_parts.append('--refresh-signal "subject-refresh heuristic reviewed"')
-        recommended_command = " ".join(command_parts)
+        can_apply_active_threads = (
+            active_thread_action == "may_refresh_directly"
+            and active_thread_evidence == "compaction-backed"
+            and not promotion_hazards
+            and bool(candidate_threads)
+        )
+        if can_apply_active_threads:
+            recommended_command = (
+                'python scripts/apply_subject_refresh.py --agent <your-id> '
+                '--field active_threads --refresh-signal "subject-refresh heuristic reviewed"'
+            )
+        else:
+            command_parts = [
+                'python scripts/save_subject_snapshot.py --agent <your-id> --summary "..."',
+            ]
+            for thread in candidate_threads[:2]:
+                command_parts.append(f'--thread "{thread}"')
+            if direct_fields:
+                command_parts.append('--refresh-signal "subject-refresh heuristic reviewed"')
+            recommended_command = " ".join(command_parts)
 
     summary_text = (
         "subject_refresh="
@@ -1540,6 +1723,10 @@ def _build_operator_guidance(
             "subject_snapshot": (
                 'python scripts/save_subject_snapshot.py --agent <your-id> --summary "..." '
                 '--boundary "..." --preference "..."'
+            ),
+            "apply_subject_refresh": (
+                'python scripts/apply_subject_refresh.py --agent <your-id> '
+                '--field active_threads --refresh-signal "subject-refresh heuristic reviewed"'
             ),
             "release": "python scripts/run_task_claim.py release <task_id> --agent <your-id>",
         },

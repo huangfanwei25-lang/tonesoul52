@@ -160,6 +160,7 @@ python scripts/save_checkpoint.py --checkpoint-id <id> --agent <your-id> --summa
 python scripts/save_compaction.py --agent <your-id> --summary "..." --path "..."
 python scripts/route_r_memory_signal.py --agent <your-id> --summary "..." --path "..." --next-action "..." --write
 python scripts/save_subject_snapshot.py --agent <your-id> --summary "..." --boundary "..." --preference "..."
+python scripts/apply_subject_refresh.py --agent <your-id> --field active_threads
 python scripts/run_task_claim.py release <task_id> --agent <your-id>
 ```
 
@@ -168,6 +169,8 @@ python scripts/run_task_claim.py release <task_id> --agent <your-id>
 `start_bundle -> diagnose/packet -> claim -> work -> perspective/checkpoint/compaction -> commit -> end_bundle/release`
 
 所有協作型 AI 都預設走這一套，不要跳過 session start，也不要在 session end 留白離開。`start_agent_session.py` 已經會把 `readiness` 明確外化，不要假裝 bundle 有了就一定 ready。
+
+只有當 `subject_refresh` 明確顯示 `active_threads` 可 `compaction-backed` 直接刷新、且沒有 promotion hazards 時，才使用 `apply_subject_refresh.py`。
 
 如果你不確定某個大詞是不是當前 runtime 真相，打開：
 
