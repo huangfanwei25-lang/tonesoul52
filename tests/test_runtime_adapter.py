@@ -26,11 +26,13 @@ from tonesoul.runtime_adapter import (
     load,
     r_memory_packet,
     release_task_claim,
+    route_r_memory_signal,
     summary,
     update_soul_integral,
     write_checkpoint,
     write_compaction,
     write_perspective,
+    write_routed_signal,
     write_subject_snapshot,
 )
 
@@ -271,7 +273,12 @@ def test_r_memory_packet_exposes_runtime_dominance_and_recent_trace(
         gov_path=tmp_state,
         traces_path=tmp_traces,
         zones_path=tmp_traces.parent / "zone_registry.json",
+        claims_path=tmp_traces.parent / "task_claims.json",
+        perspectives_path=tmp_traces.parent / "perspectives.json",
+        checkpoints_path=tmp_traces.parent / "checkpoints.json",
+        compactions_path=tmp_traces.parent / "compacted.json",
         subject_snapshots_path=tmp_traces.parent / "subject_snapshots.json",
+        observer_cursors_path=tmp_traces.parent / "observer_cursors.json",
     )
     posture = load(state_path=tmp_state)
     packet = r_memory_packet(posture=posture, store=store, trace_limit=3, visitor_limit=3)
@@ -302,6 +309,7 @@ def test_r_memory_packet_exposes_runtime_dominance_and_recent_trace(
     )
     assert packet["operator_guidance"]["session_end"][0].startswith("python scripts/save_checkpoint.py")
     assert "claim" in packet["operator_guidance"]["coordination_commands"]
+    assert "signal_router" in packet["operator_guidance"]["coordination_commands"]
     assert "subject_snapshot" in packet["operator_guidance"]["coordination_commands"]
     assert "checkpoint or compaction" in packet["operator_guidance"]["completion_rule"]
     assert packet["recent_traces"][0]["agent"] == "codex"
@@ -663,6 +671,74 @@ def test_r_memory_packet_surfaces_since_last_seen_delta_and_ack(tmp_path: Path) 
         "A delta feed is visible for this agent; ack after review to advance the observer baseline."
         in second_packet["operator_guidance"]["current_reminders"]
     )
+
+
+def test_route_r_memory_signal_classifies_surfaces() -> None:
+    claim_route = route_r_memory_signal(
+        agent_id="codex",
+        summary="claim the runtime adapter lane",
+        task_id="runtime-adapter-lane",
+        paths=["tonesoul/runtime_adapter.py"],
+    )
+    checkpoint_route = route_r_memory_signal(
+        agent_id="codex",
+        summary="pause for handoff",
+        pending_paths=["tonesoul/diagnose.py"],
+        next_action="resume packet output cleanup",
+    )
+    compaction_route = route_r_memory_signal(
+        agent_id="codex",
+        summary="handoff across sessions",
+        carry_forward=["keep packet-first discipline"],
+        evidence_refs=["docs/AI_QUICKSTART.md"],
+    )
+    perspective_route = route_r_memory_signal(
+        agent_id="codex",
+        summary="temporary stance while evidence is incomplete",
+        stance="provisional",
+        tensions=["safety vs speed"],
+    )
+    subject_route = route_r_memory_signal(
+        agent_id="codex",
+        summary="durable operating boundary changed",
+        durable_boundaries=["do not bypass packet-first startup"],
+        decision_preferences=["route summary-only state into checkpoints first"],
+    )
+
+    assert claim_route["surface"] == "claim"
+    assert checkpoint_route["surface"] == "checkpoint"
+    assert compaction_route["surface"] == "compaction"
+    assert perspective_route["surface"] == "perspective"
+    assert subject_route["surface"] == "subject_snapshot"
+
+
+def test_write_routed_signal_persists_to_selected_surface(tmp_path: Path) -> None:
+    from tonesoul.backends.file_store import FileStore
+
+    store = FileStore(
+        gov_path=tmp_path / "governance_state.json",
+        traces_path=tmp_path / "session_traces.jsonl",
+        zones_path=tmp_path / "zone_registry.json",
+        claims_path=tmp_path / ".aegis" / "task_claims.json",
+        checkpoints_path=tmp_path / ".aegis" / "checkpoints.json",
+        compactions_path=tmp_path / ".aegis" / "compacted.json",
+        subject_snapshots_path=tmp_path / ".aegis" / "subject_snapshots.json",
+    )
+
+    route = route_r_memory_signal(
+        agent_id="codex",
+        summary="resume packet delta follow-up",
+        pending_paths=["tonesoul/runtime_adapter.py"],
+        next_action="finish router integration",
+        source="test",
+    )
+    written = write_routed_signal(route, store=store)
+    packet = r_memory_packet(posture=GovernancePosture(), store=store)
+
+    assert route["surface"] == "checkpoint"
+    assert written["checkpoint_id"].startswith("cp-")
+    assert packet["recent_checkpoints"][0]["checkpoint_id"] == written["checkpoint_id"]
+    assert packet["recent_checkpoints"][0]["next_action"] == "finish router integration"
 
 
 # ── decay_tensions() ────────────────────────────────────────────

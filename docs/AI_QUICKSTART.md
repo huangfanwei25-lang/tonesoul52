@@ -145,6 +145,7 @@ python scripts/run_task_claim.py claim <task_id> --agent <your-id> --summary "..
 python scripts/save_perspective.py --agent <your-id> --summary "..." --stance "..."
 python scripts/save_checkpoint.py --checkpoint-id <id> --agent <your-id> --summary "..." --path "..."
 python scripts/save_compaction.py --agent <your-id> --summary "..." --path "..."
+python scripts/route_r_memory_signal.py --agent <your-id> --summary "..." --path "..." --next-action "..." --write
 python scripts/save_subject_snapshot.py --agent <your-id> --summary "..." --boundary "..." --preference "..."
 python scripts/run_task_claim.py release <task_id> --agent <your-id>
 ```

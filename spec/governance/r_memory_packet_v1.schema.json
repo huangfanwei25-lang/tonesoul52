@@ -799,6 +799,7 @@
             "perspective",
             "checkpoint",
             "compaction",
+            "signal_router",
             "subject_snapshot",
             "release"
           ],
@@ -816,6 +817,10 @@
               "minLength": 1
             },
             "compaction": {
+              "type": "string",
+              "minLength": 1
+            },
+            "signal_router": {
               "type": "string",
               "minLength": 1
             },

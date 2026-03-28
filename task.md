@@ -1,5 +1,11 @@
 # Task
 
+## Phase 653: Shared Signal Routing for Hot-State Surfaces (2026-03-28)
+- [x] Add a bounded signal router that classifies incoming runtime notes into claim, perspective, checkpoint, compaction, or subject snapshot instead of forcing each agent to guess the surface manually
+- [x] Expose the router through a direct repo-root CLI that can preview or write the selected surface deliberately
+- [x] Wire the router into packet/diagnose guidance and regression tests so later agents can discover and trust the new path
+**Success Criteria**: A collaborative AI can hand one bounded runtime note to the router, see which shared surface it belongs to, and optionally persist it without smuggling everything into the wrong lane.
+
 ## Phase 652: Since-Last-Seen Delta Feed for Packet Observers (2026-03-28)
 - [x] Add a bounded per-agent observer cursor so packet readers can tell what changed since their last acknowledged baseline without background monitoring
 - [x] Expose the delta feed through `r_memory_packet()`, `diagnose`, and the direct packet CLI, including an explicit `--agent --ack` flow

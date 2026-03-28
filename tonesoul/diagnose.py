@@ -457,6 +457,7 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
                 "perspective",
                 "checkpoint",
                 "compaction",
+                "signal_router",
                 "subject_snapshot",
                 "release",
             ):

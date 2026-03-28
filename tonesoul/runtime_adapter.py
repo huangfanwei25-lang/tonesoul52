@@ -568,6 +568,311 @@ def list_subject_snapshots(store=None, n: int = 3) -> List[Dict[str, Any]]:
         return []
 
 
+def _clean_string_list(values: Optional[List[Any]]) -> List[str]:
+    cleaned: List[str] = []
+    seen = set()
+    for value in values or []:
+        text = str(value or "").strip()
+        if not text or text in seen:
+            continue
+        seen.add(text)
+        cleaned.append(text)
+    return cleaned
+
+
+def _slug_from_summary(summary: str, *, fallback: str, prefix: str = "") -> str:
+    raw = str(summary or "").strip().lower()
+    chars: List[str] = []
+    previous_dash = False
+    for char in raw:
+        if char.isalnum():
+            chars.append(char)
+            previous_dash = False
+            continue
+        if previous_dash:
+            continue
+        chars.append("-")
+        previous_dash = True
+    text = "".join(chars).strip("-")
+    if not text:
+        text = fallback
+    if prefix:
+        return f"{prefix}-{text}"
+    return text
+
+
+def route_r_memory_signal(
+    *,
+    agent_id: str,
+    summary: str = "",
+    task_id: str = "",
+    session_id: str = "",
+    paths: Optional[List[str]] = None,
+    pending_paths: Optional[List[str]] = None,
+    next_action: str = "",
+    stance: str = "",
+    tensions: Optional[List[str]] = None,
+    proposed_drift: Optional[Dict[str, float]] = None,
+    proposed_vows: Optional[List[str]] = None,
+    carry_forward: Optional[List[str]] = None,
+    evidence_refs: Optional[List[str]] = None,
+    stable_vows: Optional[List[str]] = None,
+    durable_boundaries: Optional[List[str]] = None,
+    decision_preferences: Optional[List[str]] = None,
+    verified_routines: Optional[List[str]] = None,
+    active_threads: Optional[List[str]] = None,
+    refresh_signals: Optional[List[str]] = None,
+    source: str = "direct",
+    prefer_surface: str = "",
+) -> Dict[str, Any]:
+    """Route a bounded runtime signal toward the most plausible shared surface.
+
+    This does not mutate state by itself. It only classifies and normalizes the
+    signal so callers can preview or persist the result deliberately.
+    """
+
+    normalized_summary = str(summary or "").strip()
+    normalized_task_id = str(task_id or "").strip()
+    normalized_session_id = str(session_id or "").strip()
+    normalized_paths = _clean_string_list(paths)
+    normalized_pending_paths = _clean_string_list(pending_paths)
+    normalized_tensions = _clean_string_list(tensions)
+    normalized_proposed_vows = _clean_string_list(proposed_vows)
+    normalized_carry_forward = _clean_string_list(carry_forward)
+    normalized_evidence_refs = _clean_string_list(evidence_refs)
+    normalized_stable_vows = _clean_string_list(stable_vows)
+    normalized_durable_boundaries = _clean_string_list(durable_boundaries)
+    normalized_decision_preferences = _clean_string_list(decision_preferences)
+    normalized_verified_routines = _clean_string_list(verified_routines)
+    normalized_active_threads = _clean_string_list(active_threads)
+    normalized_refresh_signals = _clean_string_list(refresh_signals)
+    normalized_next_action = str(next_action or "").strip()
+    normalized_stance = str(stance or "").strip()
+    normalized_source = str(source or "direct").strip() or "direct"
+    normalized_prefer_surface = str(prefer_surface or "").strip()
+
+    has_subject_shape = any(
+        (
+            normalized_stable_vows,
+            normalized_durable_boundaries,
+            normalized_decision_preferences,
+            normalized_verified_routines,
+            normalized_active_threads,
+            normalized_refresh_signals,
+        )
+    )
+    has_compaction_shape = bool(normalized_carry_forward or normalized_evidence_refs)
+    has_perspective_shape = bool(
+        normalized_stance or normalized_tensions or (proposed_drift or {}) or normalized_proposed_vows
+    )
+    has_checkpoint_shape = bool(normalized_pending_paths or normalized_next_action)
+    has_claim_shape = bool(normalized_task_id)
+
+    valid_surfaces = {
+        "claim",
+        "perspective",
+        "checkpoint",
+        "compaction",
+        "subject_snapshot",
+    }
+    if normalized_prefer_surface and normalized_prefer_surface not in valid_surfaces:
+        raise ValueError(f"Unknown preferred surface: {normalized_prefer_surface}")
+
+    if normalized_prefer_surface:
+        surface = normalized_prefer_surface
+        reason = "preferred surface was explicitly requested"
+        confidence = "forced"
+    elif has_subject_shape:
+        surface = "subject_snapshot"
+        reason = "stable vows/boundaries/preferences indicate durable working identity"
+        confidence = "high"
+    elif has_claim_shape and not (has_compaction_shape or has_perspective_shape or has_checkpoint_shape):
+        surface = "claim"
+        reason = "task_id without richer handoff fields indicates task ownership intent"
+        confidence = "high"
+    elif has_compaction_shape:
+        surface = "compaction"
+        reason = "carry-forward or evidence refs indicate bounded cross-session handoff"
+        confidence = "high"
+    elif has_perspective_shape:
+        surface = "perspective"
+        reason = "stance/tension/proposed drift indicate provisional interpretation"
+        confidence = "high"
+    elif has_checkpoint_shape:
+        surface = "checkpoint"
+        reason = "pending paths or next action indicate resumability state"
+        confidence = "high"
+    elif has_claim_shape:
+        surface = "claim"
+        reason = "task_id is the strongest remaining ownership signal"
+        confidence = "medium"
+    else:
+        surface = "checkpoint"
+        reason = "summary-only updates are safest as resumability checkpoints until a stronger shape appears"
+        confidence = "low"
+
+    payload: Dict[str, Any] = {
+        "agent": agent_id,
+        "summary": normalized_summary,
+        "session_id": normalized_session_id,
+        "source": normalized_source,
+    }
+
+    if surface == "claim":
+        payload.update(
+            {
+                "task_id": normalized_task_id or _slug_from_summary(normalized_summary, fallback="task-signal"),
+                "paths": normalized_paths or normalized_pending_paths,
+            }
+        )
+    elif surface == "perspective":
+        payload.update(
+            {
+                "stance": normalized_stance or "provisional",
+                "tensions": normalized_tensions,
+                "proposed_drift": dict(proposed_drift or {}),
+                "proposed_vows": normalized_proposed_vows,
+                "evidence_refs": normalized_evidence_refs,
+            }
+        )
+    elif surface == "checkpoint":
+        payload.update(
+            {
+                "checkpoint_id": _slug_from_summary(
+                    normalized_summary,
+                    fallback="checkpoint-signal",
+                    prefix="cp",
+                ),
+                "pending_paths": normalized_pending_paths or normalized_paths,
+                "next_action": normalized_next_action,
+            }
+        )
+    elif surface == "compaction":
+        payload.update(
+            {
+                "pending_paths": normalized_pending_paths or normalized_paths,
+                "carry_forward": normalized_carry_forward,
+                "evidence_refs": normalized_evidence_refs,
+                "next_action": normalized_next_action,
+            }
+        )
+    elif surface == "subject_snapshot":
+        payload.update(
+            {
+                "stable_vows": normalized_stable_vows,
+                "durable_boundaries": normalized_durable_boundaries,
+                "decision_preferences": normalized_decision_preferences,
+                "verified_routines": normalized_verified_routines,
+                "active_threads": normalized_active_threads,
+                "evidence_refs": normalized_evidence_refs,
+                "refresh_signals": normalized_refresh_signals,
+            }
+        )
+
+    return {
+        "surface": surface,
+        "confidence": confidence,
+        "reason": reason,
+        "payload": payload,
+        "secondary_signals": {
+            "claim": has_claim_shape,
+            "checkpoint": has_checkpoint_shape,
+            "compaction": has_compaction_shape,
+            "perspective": has_perspective_shape,
+            "subject_snapshot": has_subject_shape,
+        },
+    }
+
+
+def write_routed_signal(
+    route: Dict[str, Any],
+    *,
+    store=None,
+    ttl_seconds: Optional[int] = None,
+    limit: Optional[int] = None,
+) -> Dict[str, Any]:
+    """Persist a routed signal into the selected shared surface."""
+    payload = dict(route.get("payload") or {})
+    surface = str(route.get("surface", "")).strip()
+    if not surface:
+        raise ValueError("route.surface is required")
+
+    if surface == "claim":
+        task_id = str(payload.get("task_id", "")).strip()
+        return claim_task(
+            task_id,
+            agent_id=str(payload.get("agent", "unknown")),
+            summary=str(payload.get("summary", "")),
+            paths=list(payload.get("paths") or []),
+            source=str(payload.get("source", "direct")),
+            ttl_seconds=int(ttl_seconds) if ttl_seconds is not None else 1800,
+            store=store,
+        )
+
+    if surface == "perspective":
+        return write_perspective(
+            str(payload.get("agent", "unknown")),
+            session_id=str(payload.get("session_id", "")),
+            summary=str(payload.get("summary", "")),
+            stance=str(payload.get("stance", "")),
+            tensions=list(payload.get("tensions") or []),
+            proposed_drift=dict(payload.get("proposed_drift") or {}),
+            proposed_vows=list(payload.get("proposed_vows") or []),
+            evidence_refs=list(payload.get("evidence_refs") or []),
+            source=str(payload.get("source", "direct")),
+            ttl_seconds=int(ttl_seconds) if ttl_seconds is not None else 7200,
+            store=store,
+        )
+
+    if surface == "checkpoint":
+        return write_checkpoint(
+            str(payload.get("checkpoint_id", "")),
+            agent_id=str(payload.get("agent", "unknown")),
+            session_id=str(payload.get("session_id", "")),
+            summary=str(payload.get("summary", "")),
+            pending_paths=list(payload.get("pending_paths") or []),
+            next_action=str(payload.get("next_action", "")),
+            source=str(payload.get("source", "direct")),
+            ttl_seconds=int(ttl_seconds) if ttl_seconds is not None else 86400,
+            store=store,
+        )
+
+    if surface == "compaction":
+        return write_compaction(
+            agent_id=str(payload.get("agent", "unknown")),
+            session_id=str(payload.get("session_id", "")),
+            summary=str(payload.get("summary", "")),
+            carry_forward=list(payload.get("carry_forward") or []),
+            pending_paths=list(payload.get("pending_paths") or []),
+            evidence_refs=list(payload.get("evidence_refs") or []),
+            next_action=str(payload.get("next_action", "")),
+            source=str(payload.get("source", "direct")),
+            ttl_seconds=int(ttl_seconds) if ttl_seconds is not None else 604800,
+            limit=int(limit) if limit is not None else 20,
+            store=store,
+        )
+
+    if surface == "subject_snapshot":
+        return write_subject_snapshot(
+            agent_id=str(payload.get("agent", "unknown")),
+            session_id=str(payload.get("session_id", "")),
+            summary=str(payload.get("summary", "")),
+            stable_vows=list(payload.get("stable_vows") or []),
+            durable_boundaries=list(payload.get("durable_boundaries") or []),
+            decision_preferences=list(payload.get("decision_preferences") or []),
+            verified_routines=list(payload.get("verified_routines") or []),
+            active_threads=list(payload.get("active_threads") or []),
+            evidence_refs=list(payload.get("evidence_refs") or []),
+            refresh_signals=list(payload.get("refresh_signals") or []),
+            source=str(payload.get("source", "direct")),
+            ttl_seconds=int(ttl_seconds) if ttl_seconds is not None else 2592000,
+            limit=int(limit) if limit is not None else 12,
+            store=store,
+        )
+
+    raise ValueError(f"Unsupported routed surface: {surface}")
+
+
 def get_observer_cursor(agent_id: str, store=None) -> Dict[str, Any]:
     """Read the current since-last-seen cursor for an observing agent."""
     observer_id = str(agent_id or "").strip()
@@ -844,6 +1149,10 @@ def _build_operator_guidance(
             "perspective": 'python scripts/save_perspective.py --agent <your-id> --summary "..." --stance "..."',
             "checkpoint": 'python scripts/save_checkpoint.py --checkpoint-id <id> --agent <your-id> --summary "..." --path "..."',
             "compaction": 'python scripts/save_compaction.py --agent <your-id> --summary "..." --path "..."',
+            "signal_router": (
+                'python scripts/route_r_memory_signal.py --agent <your-id> --summary "..." '
+                '--path "..." --next-action "..." --write'
+            ),
             "subject_snapshot": (
                 'python scripts/save_subject_snapshot.py --agent <your-id> --summary "..." '
                 '--boundary "..." --preference "..."'

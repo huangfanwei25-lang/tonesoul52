@@ -167,6 +167,7 @@ def test_run_r_memory_packet_emits_json(capsys, monkeypatch, tmp_path: Path) -> 
     assert "operator_guidance" in output
     assert output["operator_guidance"]["backend_mode"] == "file"
     assert "checkpoint" in output["operator_guidance"]["coordination_commands"]
+    assert "signal_router" in output["operator_guidance"]["coordination_commands"]
     assert "subject_snapshot" in output["operator_guidance"]["coordination_commands"]
     assert output["operator_guidance"]["session_start"][1].startswith(
         "python scripts/run_r_memory_packet.py --agent"

@@ -37,6 +37,7 @@ This contract is grounded in the current executable and schema surfaces:
 - `scripts/save_perspective.py`
 - `scripts/save_checkpoint.py`
 - `scripts/save_compaction.py`
+- `scripts/route_r_memory_signal.py`
 - `scripts/save_subject_snapshot.py`
 - `spec/governance/r_memory_packet_v1.schema.json`
 - `docs/architecture/TONESOUL_R_MEMORY_STACK_RECOMMENDATION.md`
@@ -95,6 +96,14 @@ Every agent session should begin with:
 3. inspect active claims before touching shared work
 
 Use `python scripts/read_governance_state.py` only when you need a lighter posture read and do not need the fuller shared-runtime picture.
+
+### 2A. Signal Routing Protocol
+
+If you have a bounded runtime note but are not sure whether it belongs in claim, perspective, checkpoint, compaction, or subject snapshot, route it before writing:
+
+- `python scripts/route_r_memory_signal.py --agent <name> --summary "..." --path "..." --next-action "..."`
+
+Add `--write` only after the proposed surface looks correct.
 
 ### 3. Task Claim Protocol
 
