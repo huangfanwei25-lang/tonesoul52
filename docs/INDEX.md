@@ -91,6 +91,17 @@ Use these when readiness, track classification, or `task.md` mutation discipline
 
 Use these when the question is not "what is the runtime path" but "how honest can I be about opacity" or "what would actually weaken an axiom claim." They are boundary aids, not runtime gates.
 
+## Council Deliberation Discipline
+
+- [architecture/TONESOUL_COUNCIL_DOSSIER_AND_DISSENT_CONTRACT.md](architecture/TONESOUL_COUNCIL_DOSSIER_AND_DISSENT_CONTRACT.md)
+  - minimum dossier shape for verdict replay, dissent preservation, and confidence posture
+- [architecture/TONESOUL_ADAPTIVE_DELIBERATION_MODE_CONTRACT.md](architecture/TONESOUL_ADAPTIVE_DELIBERATION_MODE_CONTRACT.md)
+  - mode contract for lightweight review, standard council, and elevated council depth
+- [plans/tonesoul_council_followup_candidates_2026-03-28.md](plans/tonesoul_council_followup_candidates_2026-03-28.md)
+  - bounded implementation candidates derived from the council discipline contracts
+
+Use these when the question is not only what verdict was produced, but whether dissent survived and whether the deliberation depth matched the task.
+
 ## Developer Runtime Adapter Direction
 
 - [notes/TONESOUL_RUNTIME_ADAPTER_MEMORY_ANCHOR_2026-03-23.md](notes/TONESOUL_RUNTIME_ADAPTER_MEMORY_ANCHOR_2026-03-23.md)

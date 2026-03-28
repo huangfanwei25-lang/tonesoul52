@@ -1,14 +1,14 @@
 # Documentation Authority Structure Latest
 
-- generated_at: 2026-03-28T12:51:42Z
-- primary_status_line: `doc_authority_structure | groups=13 tracked=45 metadata_complete=45 metadata_missing=0`
+- generated_at: 2026-03-28T13:43:34Z
+- primary_status_line: `doc_authority_structure | groups=14 tracked=48 metadata_complete=48 metadata_missing=0`
 - runtime_status_line: `doc_retrieval_order=entrypoint_to_operational_to_canonical_to_deep_map_to_interpretive_to_boundary_aids_to_control_plane | generated_status_lane=6`
 - artifact_policy_status_line: `structure_mode=retrieval_oriented | authority_roles=explicit | generated_status_preferred_for_current_state`
 
 ## Metrics
-- `group_count`: `13`
-- `tracked_file_count`: `45`
-- `metadata_complete_count`: `45`
+- `group_count`: `14`
+- `tracked_file_count`: `48`
+- `metadata_complete_count`: `48`
 - `metadata_missing_count`: `0`
 
 ## Groups
@@ -92,11 +92,19 @@
   - `docs/architecture/TONESOUL_OBSERVABLE_SHELL_OPACITY_CONTRACT.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/TONESOUL_AXIOM_FALSIFICATION_MAP.md` exists=`true` purpose=`true` date=`true`
   - `docs/plans/tonesoul_observability_and_axiom_adoption_review_2026-03-28.md` exists=`true` purpose=`true` date=`true`
+- `Council Deliberation Discipline` tracked=`3` metadata_complete=`3`
+  - description: discipline aids for preserving dissent, replaying verdicts honestly, and matching deliberation depth to task stakes
+  - authority_role: discipline_contract
+  - use_when: when a council result needs bounded dossier extraction, minority preservation, or mode-depth guidance without mutating runtime behavior from prose alone
+  - read_order: 11
+  - `docs/architecture/TONESOUL_COUNCIL_DOSSIER_AND_DISSENT_CONTRACT.md` exists=`true` purpose=`true` date=`true`
+  - `docs/architecture/TONESOUL_ADAPTIVE_DELIBERATION_MODE_CONTRACT.md` exists=`true` purpose=`true` date=`true`
+  - `docs/plans/tonesoul_council_followup_candidates_2026-03-28.md` exists=`true` purpose=`true` date=`true`
 - `Documentation Governance` tracked=`5` metadata_complete=`5`
   - description: naming, zoning, and convergence planning surfaces
   - authority_role: doc_governance
   - use_when: when retrieval quality, metadata posture, or naming collisions are the problem
-  - read_order: 11
+  - read_order: 12
   - `docs/DOCS_INFORMATION_ARCHITECTURE_v1.md` exists=`true` purpose=`true` date=`true`
   - `docs/DOCS_CLASSIFICATION_LEDGER_v1.md` exists=`true` purpose=`true` date=`true`
   - `docs/FILE_PURPOSE_MAP.md` exists=`true` purpose=`true` date=`true`
@@ -106,7 +114,7 @@
   - description: ownership and divergence boundaries for duplicate-like surfaces
   - authority_role: boundary_contract
   - use_when: when two similar-looking lanes need explicit ownership or split-brain control
-  - read_order: 12
+  - read_order: 13
   - `docs/architecture/BASENAME_DIVERGENCE_DISTILLATION_MAP.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/PRIVATE_MEMORY_SHADOW_BOUNDARY_MAP.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/PARADOX_FIXTURE_OWNERSHIP_MAP.md` exists=`true` purpose=`true` date=`true`
@@ -115,7 +123,7 @@
   - description: machine-readable current posture for convergence-related lanes
   - authority_role: generated_status
   - use_when: when current machine-readable posture matters more than prose explanation
-  - read_order: 13
+  - read_order: 14
   - `docs/status/doc_convergence_inventory_latest.json` exists=`true` purpose=`true` date=`true`
   - `docs/status/basename_divergence_distillation_latest.json` exists=`true` purpose=`true` date=`true`
   - `docs/status/private_memory_shadow_latest.json` exists=`true` purpose=`true` date=`true`

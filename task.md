@@ -14,6 +14,13 @@
 - Phase 661: surface session-start readiness directly in the bundle so later agents stop inferring `pass / needs_clarification / blocked` only from prose contracts
 - Phase 662: translate the adoptable parts of external observability/falsifiability theory into ToneSoul-native boundary contracts without importing foreign naming or mutating `AXIOMS.json`
 - Phase 664: let the first bounded runtime subject-refresh heuristic actually write `active_threads` when compaction-backed evidence is clean enough, without promoting higher-risk identity fields
+- Phase 665: make council outputs replayable with a pure dossier extractor and a new council-discipline retrieval lane, without changing council verdict behavior yet
+
+## Phase 665: Council Dossier Extraction Helper (2026-03-28)
+- [x] Add a pure `tonesoul/council/dossier.py` helper that extracts bounded dossier fields from `CouncilVerdict` without changing runtime deliberation
+- [x] Preserve dissent, confidence posture, evidence refs, and opacity declaration in a stable replay-friendly shape for later consumers
+- [x] Wire the new council-discipline docs into onboarding, indexes, and authority-map generation so later agents can discover the lane before inventing their own verdict summaries
+**Success Criteria**: Later agents and future runtime surfaces can call one helper to derive `final_verdict`, `confidence_posture`, `coherence_score`, `dissent_ratio`, `minority_report`, and related dossier fields from a `CouncilVerdict`, while docs clearly classify council dossier / deliberation-mode contracts as discipline aids rather than live runtime behavior.
 
 ## Phase 664: Bounded Active-Threads Subject Refresh (2026-03-28)
 - [x] Add an explicit `apply_subject_refresh.py` repo-root path for the first bounded refresh heuristic instead of overloading `save_subject_snapshot.py`

@@ -88,14 +88,27 @@ Open these when the question is:
 - `docs/architecture/TONESOUL_AXIOM_FALSIFICATION_MAP.md`
 - `docs/plans/tonesoul_observability_and_axiom_adoption_review_2026-03-28.md`
 
+### 8. Council deliberation discipline lane
+
+Open these when the question is:
+
+- what a council verdict should preserve beyond the flat verdict word,
+- how dissent survives into later-agent handoff,
+- when deliberation should stay lightweight versus escalate.
+
+- `docs/architecture/TONESOUL_COUNCIL_DOSSIER_AND_DISSENT_CONTRACT.md`
+- `docs/architecture/TONESOUL_ADAPTIVE_DELIBERATION_MODE_CONTRACT.md`
+- `docs/plans/tonesoul_council_followup_candidates_2026-03-28.md`
+
 ## Retrieval Order
 
 1. Start in the entrypoint lane.
 2. Move to the canonical architecture lane when making system claims.
 3. Move to governance/execution when implementing or verifying behavior.
 4. Move to the observable-shell and axiom challenge lane when overclaim risk or constitutional challengeability is the issue.
-5. Move to documentation governance and convergence contracts when restructuring docs.
-6. Prefer generated status surfaces over stale prose when checking current posture.
+5. Move to the council deliberation discipline lane when replayable verdict structure or deliberation depth is the issue.
+6. Move to documentation governance and convergence contracts when restructuring docs.
+7. Prefer generated status surfaces over stale prose when checking current posture.
 
 ## Current Rule
 

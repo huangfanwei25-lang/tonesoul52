@@ -356,3 +356,19 @@
 
 - 寫入後才可見：claims、perspectives、checkpoints、compactions、accepted traces
 - 預設不可見：私有推理、本地 context window、未 staged 編輯、沒寫出的工作進度
+## Council Replay And Deliberation Discipline
+
+When the question is about preserving dissent, replaying a verdict safely, or deciding whether council depth matched task stakes, open:
+
+- `docs/architecture/TONESOUL_COUNCIL_DOSSIER_AND_DISSENT_CONTRACT.md`
+- `docs/architecture/TONESOUL_ADAPTIVE_DELIBERATION_MODE_CONTRACT.md`
+
+Use them for:
+
+- `final_verdict` vs `confidence_posture`
+- `minority_report` preservation
+- `dissent_ratio` interpretation
+- `lightweight_review / standard_council / elevated_council`
+- replay-safe vs opaque council fields
+
+Do not treat them as live runtime truth by themselves. Current code and tests still decide what the council actually emits.

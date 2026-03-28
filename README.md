@@ -113,6 +113,10 @@ For observable-shell honesty and bounded axiom challenge posture, open
 [`docs/architecture/TONESOUL_OBSERVABLE_SHELL_OPACITY_CONTRACT.md`](docs/architecture/TONESOUL_OBSERVABLE_SHELL_OPACITY_CONTRACT.md)
 and
 [`docs/architecture/TONESOUL_AXIOM_FALSIFICATION_MAP.md`](docs/architecture/TONESOUL_AXIOM_FALSIFICATION_MAP.md).
+For council replayability, dissent preservation, and deliberation-depth discipline, open
+[`docs/architecture/TONESOUL_COUNCIL_DOSSIER_AND_DISSENT_CONTRACT.md`](docs/architecture/TONESOUL_COUNCIL_DOSSIER_AND_DISSENT_CONTRACT.md)
+and
+[`docs/architecture/TONESOUL_ADAPTIVE_DELIBERATION_MODE_CONTRACT.md`](docs/architecture/TONESOUL_ADAPTIVE_DELIBERATION_MODE_CONTRACT.md).
 For document-surface cleanup, same-basename collision review, and metadata backfill order, open
 [`docs/status/doc_convergence_inventory_latest.json`](docs/status/doc_convergence_inventory_latest.json)
 and

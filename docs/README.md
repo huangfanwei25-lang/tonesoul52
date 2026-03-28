@@ -120,6 +120,17 @@ Treat these as control-plane discipline aids. They help later agents classify wo
 
 Treat these as observability and methodological boundary aids. They help later agents stay honest about opacity and challengeability, but they do not outrank runtime code, tests, `AXIOMS.json`, or canonical architecture contracts.
 
+## Council Deliberation Discipline
+
+- `architecture/TONESOUL_COUNCIL_DOSSIER_AND_DISSENT_CONTRACT.md`
+  - defines the minimum dossier shape that preserves dissent, confidence posture, replay safety, and bounded council output semantics
+- `architecture/TONESOUL_ADAPTIVE_DELIBERATION_MODE_CONTRACT.md`
+  - defines when work should stay in lightweight review, move through standard council, or escalate to elevated council depth
+- `plans/tonesoul_council_followup_candidates_2026-03-28.md`
+  - bounded follow-up list for dossier extraction, mode selection, change-of-position tracking, and evolution suppression flags
+
+Treat these as council-discipline aids. They help later agents decide what a verdict preserved and whether deliberation depth matched task stakes, but they do not outrank runtime code or current council behavior.
+
 ## Machine-Readable Mirrors
 
 - `status/l7_retrieval_contract_latest.json`
