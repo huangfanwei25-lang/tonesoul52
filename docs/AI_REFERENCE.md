@@ -372,3 +372,19 @@ Use them for:
 - replay-safe vs opaque council fields
 
 Do not treat them as live runtime truth by themselves. Current code and tests still decide what the council actually emits.
+
+## Context Continuity Adoption
+
+When the question is not merely "how do I leave a handoff" but "what should continue across sessions, tasks, agents, or models", open:
+
+- `docs/architecture/TONESOUL_CONTEXT_CONTINUITY_ADOPTION_MAP.md`
+
+Use it for:
+
+- packet / compaction / delta-feed continuity
+- plan-delta continuity
+- replay-safe dissent continuity
+- subject working-identity carry
+- deciding what should not be transferred at all
+
+Treat it as an adoption map, not as permission to move raw thought or full transcripts into shared memory.

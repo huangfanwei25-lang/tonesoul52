@@ -100,6 +100,16 @@ Open these when the question is:
 - `docs/architecture/TONESOUL_ADAPTIVE_DELIBERATION_MODE_CONTRACT.md`
 - `docs/plans/tonesoul_council_followup_candidates_2026-03-28.md`
 
+### 9. Context continuity adoption lane
+
+Open this when the question is:
+
+- what structure should survive across sessions, tasks, agents, or models,
+- which transfer instincts already fit ToneSoul surfaces,
+- which transfer ideas still need boundary contracts before implementation.
+
+- `docs/architecture/TONESOUL_CONTEXT_CONTINUITY_ADOPTION_MAP.md`
+
 ## Retrieval Order
 
 1. Start in the entrypoint lane.
@@ -107,8 +117,9 @@ Open these when the question is:
 3. Move to governance/execution when implementing or verifying behavior.
 4. Move to the observable-shell and axiom challenge lane when overclaim risk or constitutional challengeability is the issue.
 5. Move to the council deliberation discipline lane when replayable verdict structure or deliberation depth is the issue.
-6. Move to documentation governance and convergence contracts when restructuring docs.
-7. Prefer generated status surfaces over stale prose when checking current posture.
+6. Move to the context continuity adoption lane when the question is no longer "how do I hand off now" but "what should continuity mean in ToneSoul."
+7. Move to documentation governance and convergence contracts when restructuring docs.
+8. Prefer generated status surfaces over stale prose when checking current posture.
 
 ## Current Rule
 

@@ -131,6 +131,13 @@ Treat these as observability and methodological boundary aids. They help later a
 
 Treat these as council-discipline aids. They help later agents decide what a verdict preserved and whether deliberation depth matched task stakes, but they do not outrank runtime code or current council behavior.
 
+## Context Continuity Adoption
+
+- `architecture/TONESOUL_CONTEXT_CONTINUITY_ADOPTION_MAP.md`
+  - translates broad context-transfer instincts into ToneSoul-native continuity lanes across packet, compaction, subject snapshot, council dossier, and plan-delta surfaces
+
+Treat this as an adoption map. It helps later agents decide what should continue across sessions, tasks, agents, and models, but it does not authorize raw transcript carry, hidden-thought transfer, or automatic promotion into canonical truth.
+
 ## Machine-Readable Mirrors
 
 - `status/l7_retrieval_contract_latest.json`

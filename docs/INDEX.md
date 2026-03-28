@@ -102,6 +102,13 @@ Use these when the question is not "what is the runtime path" but "how honest ca
 
 Use these when the question is not only what verdict was produced, but whether dissent survived and whether the deliberation depth matched the task.
 
+## Context Continuity Adoption
+
+- [architecture/TONESOUL_CONTEXT_CONTINUITY_ADOPTION_MAP.md](architecture/TONESOUL_CONTEXT_CONTINUITY_ADOPTION_MAP.md)
+  - ToneSoul-native adoption map for what should continue across sessions, tasks, agents, and models, and what must stay bounded or not transfer at all
+
+Use this when the question is not merely how to hand off current state, but what continuity discipline ToneSoul should adopt next. It is an adoption map, not live runtime permission.
+
 ## Developer Runtime Adapter Direction
 
 - [notes/TONESOUL_RUNTIME_ADAPTER_MEMORY_ANCHOR_2026-03-23.md](notes/TONESOUL_RUNTIME_ADAPTER_MEMORY_ANCHOR_2026-03-23.md)

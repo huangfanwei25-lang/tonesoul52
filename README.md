@@ -117,6 +117,8 @@ For council replayability, dissent preservation, and deliberation-depth discipli
 [`docs/architecture/TONESOUL_COUNCIL_DOSSIER_AND_DISSENT_CONTRACT.md`](docs/architecture/TONESOUL_COUNCIL_DOSSIER_AND_DISSENT_CONTRACT.md)
 and
 [`docs/architecture/TONESOUL_ADAPTIVE_DELIBERATION_MODE_CONTRACT.md`](docs/architecture/TONESOUL_ADAPTIVE_DELIBERATION_MODE_CONTRACT.md).
+For context continuity across sessions, tasks, agents, and models without turning transfer into hidden-memory folklore, open
+[`docs/architecture/TONESOUL_CONTEXT_CONTINUITY_ADOPTION_MAP.md`](docs/architecture/TONESOUL_CONTEXT_CONTINUITY_ADOPTION_MAP.md).
 For document-surface cleanup, same-basename collision review, and metadata backfill order, open
 [`docs/status/doc_convergence_inventory_latest.json`](docs/status/doc_convergence_inventory_latest.json)
 and

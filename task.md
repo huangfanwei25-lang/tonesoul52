@@ -1045,3 +1045,9 @@
 - [x] keep the follow-up bounded to decision-dossier shape, dissent preservation, and deliberation-mode contracts instead of runtime mutation
 - [x] keep implementation ownership for any future council-surface changes on the Codex lane
 **Success Criteria**: Claude has one clear long-context workstream that strengthens ToneSoul council replayability and dissent preservation without touching runtime code, packet schema, or frontend surfaces.
+
+## Phase 667: Context Continuity Adoption Map (2026-03-28)
+- [x] translate high-level context-transfer ideas into ToneSoul-native continuity lanes instead of importing external framework vocabulary raw
+- [x] classify which continuity ideas can land now, which need boundary contracts first, and which must stay out of runtime for now
+- [x] wire the adoption map back into onboarding, reference, README, docs index, and the document authority structure map
+**Success Criteria**: Later agents can answer "what should continue across sessions/tasks/agents/models?" by opening one ToneSoul-native adoption map instead of inventing hidden-memory logic or over-transferring raw context.

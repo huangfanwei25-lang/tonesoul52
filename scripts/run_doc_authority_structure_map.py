@@ -161,12 +161,23 @@ GROUPS = [
         ],
     },
     {
+        "id": "context_continuity_adoption",
+        "label": "Context Continuity Adoption",
+        "description": "adoption aid for deciding what structure should continue across sessions, tasks, agents, and models without turning handoff memory into hidden truth",
+        "authority_role": "adoption_map",
+        "use_when": "when the question is not merely how to hand off hot state, but what continuity discipline ToneSoul should adopt or defer",
+        "read_order": 12,
+        "files": [
+            "docs/architecture/TONESOUL_CONTEXT_CONTINUITY_ADOPTION_MAP.md",
+        ],
+    },
+    {
         "id": "doc_governance",
         "label": "Documentation Governance",
         "description": "naming, zoning, and convergence planning surfaces",
         "authority_role": "doc_governance",
         "use_when": "when retrieval quality, metadata posture, or naming collisions are the problem",
-        "read_order": 12,
+        "read_order": 13,
         "files": [
             "docs/DOCS_INFORMATION_ARCHITECTURE_v1.md",
             "docs/DOCS_CLASSIFICATION_LEDGER_v1.md",
@@ -181,7 +192,7 @@ GROUPS = [
         "description": "ownership and divergence boundaries for duplicate-like surfaces",
         "authority_role": "boundary_contract",
         "use_when": "when two similar-looking lanes need explicit ownership or split-brain control",
-        "read_order": 13,
+        "read_order": 14,
         "files": [
             "docs/architecture/BASENAME_DIVERGENCE_DISTILLATION_MAP.md",
             "docs/architecture/PRIVATE_MEMORY_SHADOW_BOUNDARY_MAP.md",
@@ -195,7 +206,7 @@ GROUPS = [
         "description": "machine-readable current posture for convergence-related lanes",
         "authority_role": "generated_status",
         "use_when": "when current machine-readable posture matters more than prose explanation",
-        "read_order": 14,
+        "read_order": 15,
         "files": [
             "docs/status/doc_convergence_inventory_latest.json",
             "docs/status/basename_divergence_distillation_latest.json",
