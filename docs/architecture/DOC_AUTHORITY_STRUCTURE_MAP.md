@@ -76,13 +76,26 @@ Open these when you need the current machine-readable posture instead of prose:
 - `docs/status/engineering_mirror_ownership_latest.json`
 - `docs/status/doc_convergence_inventory_latest.json`
 
+### 7. Observable-shell and axiom challenge lane
+
+Open these when the question is:
+
+- what is honestly observable,
+- what remains opaque,
+- what would actually weaken an axiom claim.
+
+- `docs/architecture/TONESOUL_OBSERVABLE_SHELL_OPACITY_CONTRACT.md`
+- `docs/architecture/TONESOUL_AXIOM_FALSIFICATION_MAP.md`
+- `docs/plans/tonesoul_observability_and_axiom_adoption_review_2026-03-28.md`
+
 ## Retrieval Order
 
 1. Start in the entrypoint lane.
 2. Move to the canonical architecture lane when making system claims.
 3. Move to governance/execution when implementing or verifying behavior.
-4. Move to documentation governance and convergence contracts when restructuring docs.
-5. Prefer generated status surfaces over stale prose when checking current posture.
+4. Move to the observable-shell and axiom challenge lane when overclaim risk or constitutional challengeability is the issue.
+5. Move to documentation governance and convergence contracts when restructuring docs.
+6. Prefer generated status surfaces over stale prose when checking current posture.
 
 ## Current Rule
 

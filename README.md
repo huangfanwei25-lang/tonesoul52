@@ -109,6 +109,10 @@ For claim-boundary and theory/mechanism separation, open
 [`docs/architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md`](docs/architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md)
 and
 [`docs/status/abc_firewall_latest.json`](docs/status/abc_firewall_latest.json).
+For observable-shell honesty and bounded axiom challenge posture, open
+[`docs/architecture/TONESOUL_OBSERVABLE_SHELL_OPACITY_CONTRACT.md`](docs/architecture/TONESOUL_OBSERVABLE_SHELL_OPACITY_CONTRACT.md)
+and
+[`docs/architecture/TONESOUL_AXIOM_FALSIFICATION_MAP.md`](docs/architecture/TONESOUL_AXIOM_FALSIFICATION_MAP.md).
 For document-surface cleanup, same-basename collision review, and metadata backfill order, open
 [`docs/status/doc_convergence_inventory_latest.json`](docs/status/doc_convergence_inventory_latest.json)
 and

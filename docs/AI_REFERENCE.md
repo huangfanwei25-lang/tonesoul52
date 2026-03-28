@@ -324,6 +324,13 @@
 
 這兩份文件是 subject-refresh 的 boundary aids。它們幫你判斷 `active_threads`、`decision_preferences`、`stable_vows` 等欄位能不能被熱狀態影響，但它們不會高過 code、tests、`AXIOMS.json`、canonical contracts，也不授權你自動升格 Durable Identity。
 
+當問題不只是「這個 trace 看起來很完整」，而是「它到底可不可以被說成已審計、已理解、已驗證」，請再讀：
+
+- `docs/architecture/TONESOUL_OBSERVABLE_SHELL_OPACITY_CONTRACT.md`
+- `docs/architecture/TONESOUL_AXIOM_FALSIFICATION_MAP.md`
+
+這兩份文件是 observability / axiom 方法論 aids。前者幫你分清 `observable / partially_observable / opaque`，避免把 shell traces 說成看穿內部推理；後者幫你分清每條公理目前有哪些支持訊號、哪些會削弱它，但它不會高過 `AXIOMS.json`，也不會自動改寫公理。
+
 當問題不只是「下一步做什麼」，而是「這個任務算哪一軌、是否已 ready、scope 改變時要 append 還是 fork」，請再讀：
 
 - `docs/architecture/TONESOUL_TASK_TRACK_AND_READINESS_CONTRACT.md`

@@ -12,6 +12,13 @@
 - Phase 657: add bounded subject-refresh heuristics so durable working identity can be refreshed deliberately rather than only by manual intuition
 - Phase 658: harden Redis live surfaces and delta-aware coordination once file-backed discipline proves stable enough to deserve real-time promotion
 - Phase 661: surface session-start readiness directly in the bundle so later agents stop inferring `pass / needs_clarification / blocked` only from prose contracts
+- Phase 662: translate the adoptable parts of external observability/falsifiability theory into ToneSoul-native boundary contracts without importing foreign naming or mutating `AXIOMS.json`
+
+## Phase 662: Observable-Shell And Axiom Boundary Adoption (2026-03-28)
+- [x] Review the extracted external theory proposals and translate only the adoptable parts into ToneSoul-native naming and architecture lanes
+- [x] Publish one observable-shell opacity contract and one axiom falsification companion map instead of importing `blackbox` language or directly editing `AXIOMS.json`
+- [x] Wire the new boundary aids into onboarding, documentation indexes, and authority-structure generation while keeping them below runtime code, tests, and canonical contracts
+**Success Criteria**: Later agents can discover a ToneSoul-native answer to "what is actually observable?" and "what would weaken this axiom?" without mistaking those aids for new runtime gates or constitutional rewrites.
 
 ## Phase 661: Session-Start Readiness Surface (2026-03-28)
 - [x] Add a bounded `readiness` section to `start_agent_session.py` based on claim visibility, runtime risk, and fresh handoff/STOP signals

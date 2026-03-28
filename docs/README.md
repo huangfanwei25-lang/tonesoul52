@@ -109,6 +109,17 @@ Treat these as subject-refresh boundary aids. They help later agents write or re
 
 Treat these as control-plane discipline aids. They help later agents classify work and manage plan changes, but they do not outrank runtime code, canonical governance truth, or the current session bundle output.
 
+## Observable-Shell And Axiom Boundaries
+
+- `architecture/TONESOUL_OBSERVABLE_SHELL_OPACITY_CONTRACT.md`
+  - defines what ToneSoul may honestly call observable, partially observable, or opaque when describing traces, packets, council outputs, and hidden reasoning
+- `architecture/TONESOUL_AXIOM_FALSIFICATION_MAP.md`
+  - defines what currently supports or weakens each axiom without mutating `AXIOMS.json` or pretending theory-only axioms are already runtime-hard
+- `plans/tonesoul_observability_and_axiom_adoption_review_2026-03-28.md`
+  - records why these two ideas were adopted now while impact tracking, decision-path marking, and tension-delayed commit remain deferred
+
+Treat these as observability and methodological boundary aids. They help later agents stay honest about opacity and challengeability, but they do not outrank runtime code, tests, `AXIOMS.json`, or canonical architecture contracts.
+
 ## Machine-Readable Mirrors
 
 - `status/l7_retrieval_contract_latest.json`

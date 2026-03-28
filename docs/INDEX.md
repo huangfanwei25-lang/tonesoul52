@@ -80,6 +80,17 @@ Use these when `subject_snapshot` is in play. They are boundary aids for heurist
 
 Use these when readiness, track classification, or `task.md` mutation discipline is the question. They are control-plane aids, not live runtime enforcement.
 
+## Observable-Shell And Axiom Boundaries
+
+- [architecture/TONESOUL_OBSERVABLE_SHELL_OPACITY_CONTRACT.md](architecture/TONESOUL_OBSERVABLE_SHELL_OPACITY_CONTRACT.md)
+  - observable-shell honesty contract for distinguishing what ToneSoul can really audit from what remains opaque
+- [architecture/TONESOUL_AXIOM_FALSIFICATION_MAP.md](architecture/TONESOUL_AXIOM_FALSIFICATION_MAP.md)
+  - support/weakening map for the 7 axioms so later agents can challenge claims without rewriting the constitution
+- [plans/tonesoul_observability_and_axiom_adoption_review_2026-03-28.md](plans/tonesoul_observability_and_axiom_adoption_review_2026-03-28.md)
+  - adoption review for the extracted external theory proposals, including what was translated into ToneSoul-native naming and what remains deferred
+
+Use these when the question is not "what is the runtime path" but "how honest can I be about opacity" or "what would actually weaken an axiom claim." They are boundary aids, not runtime gates.
+
 ## Developer Runtime Adapter Direction
 
 - [notes/TONESOUL_RUNTIME_ADAPTER_MEMORY_ANCHOR_2026-03-23.md](notes/TONESOUL_RUNTIME_ADAPTER_MEMORY_ANCHOR_2026-03-23.md)
