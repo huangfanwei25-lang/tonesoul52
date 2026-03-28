@@ -12,6 +12,12 @@
 - Phase 657: add bounded subject-refresh heuristics so durable working identity can be refreshed deliberately rather than only by manual intuition
 - Phase 658: harden Redis live surfaces and delta-aware coordination once file-backed discipline proves stable enough to deserve real-time promotion
 
+## Phase 659: Claude Subject-Refresh Boundary Work Order (2026-03-28)
+- [x] Extend the existing Claude authority-distillation work order with a subject-refresh boundary pass instead of opening a disconnected second ticket
+- [x] Focus Claude on field-level promotion boundaries and evidence thresholds rather than runtime implementation details
+- [x] Keep the workstream documentation-only so Codex can later implement heuristics without mixing synthesis and runtime mutation
+**Success Criteria**: Claude can continue inside the same work-order file, classify which surfaces may refresh `subject_snapshot` fields and under what evidence level, and return a bounded map of over-promotion hazards without touching runtime code.
+
 ## Phase 654: One-Command Session Start Bundle (2026-03-28)
 - [x] Add a direct repo-root `start_agent_session.py` bundle that performs `diagnose + packet --ack + claim list` in one command
 - [x] Keep the bundle machine-readable and path-overridable so tests and later agents can use it without hidden assumptions

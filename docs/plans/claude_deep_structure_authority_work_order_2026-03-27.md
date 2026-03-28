@@ -314,3 +314,145 @@ When done, report back with:
 - which terms should remain explicitly theory-only
 - which terms are best handled by small future implementation tickets
 - whether any one item is urgent enough to deserve the next Codex build phase
+
+---
+
+## Follow-Up Extension: Subject Refresh Heuristics And Promotion Boundaries
+
+This extension exists because ToneSoul now has a live `subject_snapshot` surface,
+but the next hard question is not "can we store a snapshot?"
+
+It is:
+
+> what kinds of evidence are strong enough to refresh durable working identity,
+> and what must never be auto-promoted from hot-state coordination surfaces?
+
+This is again a bounded synthesis-and-boundary ticket.
+It is not permission to mutate the runtime or invent auto-promotion logic in code.
+
+## Why This Follow-Up Fits Claude
+
+This pass is strongest in a panoramic synthesis agent because it requires:
+
+- comparing `subject_snapshot`, `checkpoint`, `compaction`, `claim`, `perspective`, and `posture` as distinct memory lanes
+- deciding what kind of evidence is durable enough to shape a later agent's working identity
+- separating "refreshable identity" from "temporary heat" without collapsing them together
+- naming field-level promotion boundaries before Codex turns them into runtime heuristics
+
+## Follow-Up Objective
+
+Produce a bounded contract for **subject refresh heuristics** so later agents can answer:
+
+- what may refresh a `subject_snapshot`
+- what may only influence it indirectly
+- what must stay ephemeral
+- what requires deliberate operator or human confirmation
+
+The goal is to reduce two future failure modes:
+
+1. **over-promotion**: every hot-state signal starts rewriting identity
+2. **under-promotion**: durable patterns never graduate beyond compactions and are repeatedly rediscovered
+
+## Mandatory Focus Areas
+
+At minimum, classify these surfaces and evidence types:
+
+- `subject_snapshot`
+- `checkpoint`
+- `compaction`
+- `perspective`
+- `claim`
+- `governance posture`
+- `risk_posture`
+- `router telemetry / misroute signals`
+- `recent_traces`
+- `delta feed`
+
+At minimum, classify these candidate field families inside `subject_snapshot`:
+
+- stable vows / durable boundaries
+- decision preferences
+- verified routines
+- active threads
+- carry-forward items
+- anti-patterns / known failure modes
+
+## Follow-Up Deliverables
+
+### Deliverable F
+
+Create:
+
+- `docs/architecture/TONESOUL_SUBJECT_REFRESH_BOUNDARY_CONTRACT.md`
+
+This should be a table-first contract that classifies which source surfaces may
+refresh which `subject_snapshot` field families, and under what evidence level.
+
+Each row should include at least:
+
+- source surface
+- candidate target field family
+- allowed action
+  - `may refresh directly`
+  - `may influence but not promote directly`
+  - `manual/operator-only`
+  - `must not promote`
+- minimum evidence shape
+  - `single signal`
+  - `repeat pattern`
+  - `compaction-backed`
+  - `subject-snapshot-only`
+  - `human confirmation`
+- risk if misapplied
+- short rationale
+
+### Deliverable G
+
+Optional, only if it materially clarifies Deliverable F:
+
+- `docs/architecture/TONESOUL_SUBJECT_SNAPSHOT_FIELD_LANES.md`
+
+Use this only if the current `subject_snapshot` fields need a compact lane map
+such as:
+
+- durable identity
+- refreshable working identity
+- temporary carry-forward
+- never-auto-promote
+
+Do not create this file unless the boundary contract clearly benefits from it.
+
+## Follow-Up Boundaries
+
+Do not do these things in this extension:
+
+- do not modify `tonesoul/runtime_adapter.py`
+- do not modify `tonesoul/risk_calculator.py`
+- do not modify `scripts/save_subject_snapshot.py`
+- do not modify `scripts/route_r_memory_signal.py`
+- do not modify `spec/governance/subject_snapshot_v1.schema.json`
+- do not invent auto-refresh code paths
+- do not rewrite onboarding or quickstart unless a narrow wording correction is absolutely necessary
+
+If a field or signal deserves future runtime heuristics:
+
+- say so explicitly
+- bound it explicitly
+- leave implementation to Codex
+
+## Follow-Up Acceptance Criteria
+
+This extension is successful if:
+
+- later agents can tell which hot-state surfaces are allowed to shape durable working identity
+- the biggest over-promotion hazards are named explicitly
+- the result gives Codex a bounded map for Phase 657 heuristics without silently promoting prose into code
+
+## Follow-Up Handoff Back To Codex
+
+When done, report back with:
+
+- which source surfaces are safe to use for direct subject refresh
+- which field families must remain operator-only or human-confirmed
+- 5-10 highest-risk over-promotion patterns you found
+- which one bounded heuristic would be safest for Codex to implement first
