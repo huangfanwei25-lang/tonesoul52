@@ -29,12 +29,19 @@
 - Phase 689: adopt prompt discipline for the reflection revision prompt so revision loops stop relying on an underspecified rewrite instruction
 - Phase 690: surface council dossier interpretation guards at session start so later agents stop reading descriptive agreement metrics as calibrated truth
 - Phase 691: integrate reality-alignment and render-boundary aids into the authority lanes so later agents can verify entry routing, counts, and display artifacts against a measured baseline instead of stale prose
+- Phase 692: surface bounded working-style continuity so later agents can inherit operating habits and prompt discipline without mistaking them for shared identity or canonical truth
 
 ## Phase 691: Reality Alignment Lane Integration (2026-03-29)
 - [x] Add a dedicated reality-alignment lane to the doc authority map for entry-surface baselines, count methods, render/encoding boundaries, and drift registers
 - [x] Wire the lane into README, docs README, and docs index so later agents can discover the corrected baseline through normal entrypoints
 - [x] Keep older drifted audience/historical cleanup drafts out of authority routing until they are re-grounded against the current repo state
 **Success Criteria**: Later agents can find the corrected entry-surface baseline and render/count boundary aids from the normal doc entrypoints, while the authority lane still excludes older cleanup notes that have not been reality-checked.
+
+## Phase 692: Working-Style Continuity Readout (2026-03-29)
+- [x] Define a ToneSoul-native continuity contract for sharing operating habits, prompt structure defaults, and render caveats without inflating them into identity or governance truth
+- [x] Derive a bounded `working_style_anchor` from the latest `subject_snapshot` so packet/session-start can expose shared habits without inventing a new event lane
+- [x] Surface the same anchor in session-start and diagnose as advisory-only continuity, with explicit non-promotion wording
+**Success Criteria**: Later agents can see a bounded shared working-style anchor at session start, understand that it comes from subject-snapshot continuity rather than canonical truth, and reuse habits without confusing them with vows or governance rules.
 
 ## Phase 679: Continuity Freshness And Import Posture (2026-03-29)
 - [x] Add bounded `freshness_hours` to the packet continuity surfaces that later agents actually inherit at session start

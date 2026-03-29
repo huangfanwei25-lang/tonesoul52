@@ -854,6 +854,56 @@
         }
       }
     },
+    "working_style_anchor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "summary",
+        "decision_preferences",
+        "verified_routines",
+        "guardrail_boundaries",
+        "receiver_posture",
+        "prompt_defaults",
+        "render_caveat"
+      ],
+      "properties": {
+        "summary": {
+          "type": "string"
+        },
+        "decision_preferences": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "verified_routines": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "guardrail_boundaries": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "receiver_posture": {
+          "type": "string",
+          "minLength": 1
+        },
+        "prompt_defaults": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "render_caveat": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
     "risk_posture": {
       "type": "object",
       "additionalProperties": false,
@@ -936,6 +986,9 @@
         },
         "subject_anchor": {
           "$ref": "#/$defs/subject_anchor"
+        },
+        "working_style_anchor": {
+          "$ref": "#/$defs/working_style_anchor"
         },
         "summary_text": {
           "type": "string",

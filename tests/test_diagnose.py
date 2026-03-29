@@ -163,6 +163,19 @@ def _fake_packet():
                 "verified_routines": ["leave compaction before release"],
                 "active_threads": ["subject-snapshot rollout"],
             },
+            "working_style_anchor": {
+                "summary": "prefs=prefer packet before broad repo scan | routines=leave compaction before release",
+                "decision_preferences": ["prefer packet before broad repo scan"],
+                "verified_routines": ["leave compaction before release"],
+                "guardrail_boundaries": ["protected files stay human-managed"],
+                "receiver_posture": "advisory_apply_not_promote",
+                "prompt_defaults": [
+                    "state the goal function before long transfer or extraction prompts",
+                    "keep P0/P1/P2 explicit when constraints may conflict",
+                    "mark [資料不足] instead of filling gaps with unsupported guesses",
+                ],
+                "render_caveat": "Treat shell `??` or garbled CJK as render-layer noise until a UTF-8 file read proves real corruption.",
+            },
             "routing_summary": {
                 "total_events": 2,
                 "preview_count": 1,
@@ -425,6 +438,8 @@ def test_full_diagnostic_is_cp950_safe_and_includes_shared_runtime(monkeypatch) 
     assert "apply_subject_refresh.py" in report
     assert "completion_rule=Before ending a session" in report
     assert "subject_anchor:" in report
+    assert "working_style_anchor:" in report
+    assert "receiver_posture=advisory_apply_not_promote" in report
     assert "routing_summary:" in report
     assert "subject_refresh:" in report
     assert "status=refresh_candidate recommended=True newer_compactions=1 newer_checkpoints=1 hazards=1" in report

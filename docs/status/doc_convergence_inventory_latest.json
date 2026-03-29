@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-29T10:00:51Z",
+  "generated_at": "2026-03-29T10:47:12Z",
   "scope": {
     "include_roots": [
       "PARADOXES",
@@ -62,7 +62,7 @@
     ]
   },
   "metrics": {
-    "authored_file_count": 2309,
+    "authored_file_count": 2310,
     "collision_count": 27,
     "exact_match_collision_count": 16,
     "divergent_collision_count": 11,
@@ -73,7 +73,7 @@
     "missing_metadata_sample_limit": 40
   },
   "category_counts": {
-    "architecture_doc": 54,
+    "architecture_doc": 55,
     "archive_doc": 1,
     "chronicle_doc": 48,
     "constitution_doc": 1,
@@ -985,12 +985,12 @@
       "basename": "DOC_AUTHORITY_STRUCTURE_MAP.md",
       "extension": ".md",
       "surface_type": "architecture_doc",
-      "size_bytes": 8199,
+      "size_bytes": 8267,
       "title": "Documentation Authority Structure Map",
       "purpose": "define the retrieval-oriented structure of ToneSoul's documentation so later agents can tell entrypoints, canonical anchors, governance contracts, and generated status surfaces apart.",
       "status": "active documentation authority map for convergence cleanup.",
       "date_hint": "2026-03-29",
-      "content_sha256": "4b6c83ce5a5e22bfb8ef614475b3994240cae3a1804c1fa06b91d15f8e068ccf"
+      "content_sha256": "9eaf7461118dc439386330b3481b663cee84f60daec547e338332736e384d3b7"
     },
     {
       "path": "docs/architecture/ENGINEERING_MIRROR_OWNERSHIP_MAP.md",
@@ -1603,6 +1603,18 @@
       "status": "architectural topology document",
       "date_hint": "2026-03-29",
       "content_sha256": "d640d8a02032d84e9eab5fc723a309400203783e916df6e9e2eda0f1dd96f024"
+    },
+    {
+      "path": "docs/architecture/TONESOUL_WORKING_STYLE_CONTINUITY_CONTRACT.md",
+      "basename": "TONESOUL_WORKING_STYLE_CONTINUITY_CONTRACT.md",
+      "extension": ".md",
+      "surface_type": "architecture_doc",
+      "size_bytes": 4388,
+      "title": "ToneSoul Working-Style Continuity Contract",
+      "purpose": "define how later agents may inherit operating style, prompt discipline, and render/encoding habits without pretending that shared memory makes multiple models think as one.",
+      "status": "",
+      "date_hint": "2026-03-29",
+      "content_sha256": "7471151e1390d254ba916e48e235d8d5c73acadbb04d4a8fb7f9f71711413c71"
     },
     {
       "path": "docs/architecture-notes.md",
@@ -2905,12 +2917,12 @@
       "basename": "INDEX.md",
       "extension": ".md",
       "surface_type": "general_doc",
-      "size_bytes": 25711,
+      "size_bytes": 25946,
       "title": "ToneSoul Documentation Index",
       "purpose": "top-level documentation index for ToneSoul authority surfaces, operational packets, and convergence maps.",
       "status": "",
       "date_hint": "2026-03-29",
-      "content_sha256": "cbaadbfbd7e1679b2a2ad815369dd03c6928232627e1ae8c41a5cf6a5845a26f"
+      "content_sha256": "50a65faf835f4a42aa52b6d899d3fdd13dd00fc61945d46849716417a6005c33"
     },
     {
       "path": "docs/INTEGRATION_AUDIT_DRAFT.md",
@@ -4957,12 +4969,12 @@
       "basename": "README.md",
       "extension": ".md",
       "surface_type": "general_doc",
-      "size_bytes": 20409,
+      "size_bytes": 20599,
       "title": "ToneSoul Documentation Index",
       "purpose": "documentation entrypoint and guided index for ToneSoul architecture, status artifacts, and convergence surfaces.",
       "status": "",
       "date_hint": "2026-03-29",
-      "content_sha256": "dc4b3934728e96ed865bd8ed90318467210f930c09ab9414453cee37b4548d05"
+      "content_sha256": "5e68737b55b77d916b20117497467d0e6b4d82a36c8cbc90a7b305e96d818130"
     },
     {
       "path": "docs/RELEASE_NOTES_v0.1.0.md",
@@ -5581,48 +5593,48 @@
       "basename": "doc_authority_structure_latest.json",
       "extension": ".json",
       "surface_type": "generated_status_artifact",
-      "size_bytes": 26177,
+      "size_bytes": 26411,
       "title": "doc_authority_structure_latest.json",
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "9a76f4a72626f7b559ce5e07bd81fd6aebc2d0b2dd72ddfb0f280f4cf5c4e767"
+      "content_sha256": "4b4eac5b9190f91e81c081e89285698e24619e969aa83fa2add4eae2969fa018"
     },
     {
       "path": "docs/status/doc_authority_structure_latest.md",
       "basename": "doc_authority_structure_latest.md",
       "extension": ".md",
       "surface_type": "generated_status_artifact",
-      "size_bytes": 14745,
+      "size_bytes": 14857,
       "title": "Documentation Authority Structure Latest",
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "f60036950b00a767e359aedccf0f3acb6c12890c0b887d720b51fe73f2c9d12d"
+      "content_sha256": "64754663933f7067705e421f79e2a2ee7771503830c34fa2e3410ca4edf7c3f1"
     },
     {
       "path": "docs/status/doc_convergence_inventory_latest.json",
       "basename": "doc_convergence_inventory_latest.json",
       "extension": ".json",
       "surface_type": "generated_status_artifact",
-      "size_bytes": 1110769,
+      "size_bytes": 1128726,
       "title": "doc_convergence_inventory_latest.json",
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "f13bd5b7555d092336d63dfab79e12c28cb2635ea2a951a345af1ce0fecaa5e0"
+      "content_sha256": "79ad42373868df13bdfecedc5817d63172c69d8f5fd66b827befad542d615a5c"
     },
     {
       "path": "docs/status/doc_convergence_inventory_latest.md",
       "basename": "doc_convergence_inventory_latest.md",
       "extension": ".md",
       "surface_type": "generated_status_artifact",
-      "size_bytes": 17278,
+      "size_bytes": 17253,
       "title": "Document Convergence Inventory Latest",
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "d807679584c4869298cff308f657190a7523ca41641de16d9ffacd157969ad17"
+      "content_sha256": "b81e6ecd8d629893f09037112779905c5ba0541f903c3a7ad9c24532c5009fb2"
     },
     {
       "path": "docs/status/dream_engine_wakeup_status_2026-03-09.md",
@@ -8250,7 +8262,7 @@
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "4289ae766a0a9abf5cd7236141c3c0a63126566168dab3c3c6bef36510af5b8c"
+      "content_sha256": "c972742d2b56968e035e223271edd22f579811fa678d12f042de8d62194ba4e2"
     },
     {
       "path": "memory/BOOTSTRAP.md",
@@ -28057,24 +28069,24 @@
       "basename": "r_memory_packet_v1.example.json",
       "extension": ".json",
       "surface_type": "spec_doc",
-      "size_bytes": 19316,
+      "size_bytes": 20153,
       "title": "r_memory_packet_v1.example.json",
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "2ac34ada59bb1179f56b516d1d8c8990b62bbb1c91838c0754b24f5f86ca2146"
+      "content_sha256": "b666315e05f2d6b4fafdf075b3bdd35334798f4fd8476e5aba28a11f8e9a3c6c"
     },
     {
       "path": "spec/governance/r_memory_packet_v1.schema.json",
       "basename": "r_memory_packet_v1.schema.json",
       "extension": ".json",
       "surface_type": "spec_doc",
-      "size_bytes": 36786,
+      "size_bytes": 37999,
       "title": "r_memory_packet_v1.schema.json",
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "7a77268cf003877436d3e8a4f712d43326ea3dbefd2d3c83d6fee79b7e2ad316"
+      "content_sha256": "e5c0d12150033d1a29318b1f3cdef1b288381718c4b23a5f8941cb9349e7cd61"
     },
     {
       "path": "spec/governance/role_catalog.yaml",
@@ -28345,12 +28357,12 @@
       "basename": "task.md",
       "extension": ".md",
       "surface_type": "root_entrypoint",
-      "size_bytes": 132661,
+      "size_bytes": 133636,
       "title": "Task",
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "cdfe102566a27aa1e2738b50be0d492dfb0d2ba9fa1f27d99bf2d50f141c9c60"
+      "content_sha256": "fb6da99c4ac440116312f5a842681d4222bf1eefab778ed396bff7f7a14efd3b"
     },
     {
       "path": "tests/fixtures/paradoxes/medical_suicide_paradox.json",
@@ -28485,7 +28497,7 @@
       "content_sha256": "2cee7ef4a180d9208eefe9a83fe3d22bbfb6d32cecb6f5c05880d57e75006343"
     }
   ],
-  "primary_status_line": "doc_convergence_ready | authored_files=2309 collisions=27 missing_purpose=147 missing_date=107",
-  "runtime_status_line": "entrypoints | doc_inventory=doc_convergence_inventory_latest.json largest_family=docs_law_engineering_mirror architecture_docs=54",
+  "primary_status_line": "doc_convergence_ready | authored_files=2310 collisions=27 missing_purpose=147 missing_date=107",
+  "runtime_status_line": "entrypoints | doc_inventory=doc_convergence_inventory_latest.json largest_family=docs_law_engineering_mirror architecture_docs=55",
   "artifact_policy_status_line": "doc_scope=authored_only | content_check=hash_plus_similarity generated_noise=excluded"
 }

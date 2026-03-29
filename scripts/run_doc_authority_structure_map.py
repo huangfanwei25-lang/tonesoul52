@@ -185,6 +185,7 @@ GROUPS = [
             "docs/architecture/TONESOUL_CONTINUITY_IMPORT_AND_DECAY_CONTRACT.md",
             "docs/architecture/TONESOUL_RECEIVER_INTERPRETATION_BOUNDARY_CONTRACT.md",
             "docs/architecture/TONESOUL_CONTINUITY_SURFACE_LIFECYCLE_MAP.md",
+            "docs/architecture/TONESOUL_WORKING_STYLE_CONTINUITY_CONTRACT.md",
             "docs/plans/tonesoul_continuity_followup_candidates_2026-03-29.md",
         ],
     },

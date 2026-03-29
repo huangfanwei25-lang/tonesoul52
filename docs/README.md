@@ -172,6 +172,8 @@ Treat this as an adoption map. It helps later agents decide what should continue
   - defines the receiver-side difference between `ack`, `apply`, and `promote`, and names the most dangerous silent-override hazards
 - `architecture/TONESOUL_CONTINUITY_SURFACE_LIFECYCLE_MAP.md`
   - groups continuity surfaces into immediate coordination, bounded handoff, working identity, replay/review, and canonical foundation lanes
+- `architecture/TONESOUL_WORKING_STYLE_CONTINUITY_CONTRACT.md`
+  - defines how later agents may inherit operating habits and prompt style without turning them into canonical identity or law
 - `plans/tonesoul_continuity_followup_candidates_2026-03-29.md`
   - bounded follow-up list for freshness, import posture surfacing, promotion guards, and decay reporting
 

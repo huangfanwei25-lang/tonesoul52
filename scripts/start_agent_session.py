@@ -275,6 +275,7 @@ def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
     traces = list(packet.get("recent_traces") or [])
     delta_feed = packet.get("delta_feed") or {}
     project_memory_summary = packet.get("project_memory_summary") or {}
+    working_style_anchor = project_memory_summary.get("working_style_anchor") or {}
     subject_refresh = project_memory_summary.get("subject_refresh") or {}
     carry_forward_hazards = _carry_forward_promotion_hazards(subject_refresh)
 
@@ -365,6 +366,18 @@ def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
             "freshness_hours": _latest_freshness(subject_snapshots, timestamp_key="updated_at"),
             "note": "Working identity is inheritable but non-canonical; do not promote it into governance truth.",
         },
+        "working_style": {
+            "present": bool(working_style_anchor),
+            "import_posture": "advisory",
+            "receiver_obligation": "should_consider",
+            "decay_posture": "slow",
+            "freshness_hours": _latest_freshness(subject_snapshots, timestamp_key="updated_at"),
+            "note": (
+                "Shared operating style may guide scan order, evidence discipline, and prompt shape, "
+                "but it must not be promoted into vows, canonical rules, or durable identity without fresh proof."
+            ),
+            "working_style_anchor": working_style_anchor,
+        },
         "subject_refresh": {
             "present": bool(subject_refresh),
             "import_posture": "advisory",
@@ -411,6 +424,7 @@ def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
         "delta_feed",
         "compactions",
         "subject_snapshot",
+        "working_style",
         "council_dossier",
     ]
     summary_parts = []
@@ -444,6 +458,10 @@ def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
     if bool(latest_dossier_snapshot.get("evolution_suppression_flag")):
         receiver_alerts.append(
             "Latest council dossier indicates potential evolution suppression on repeated dissent; review minority signals carefully before dismissing objections."
+        )
+    if working_style_anchor:
+        receiver_alerts.append(
+            "Working-style continuity is advisory only; reuse decision preferences and verified routines as habits, but do not promote them into vows, canonical rules, or durable identity."
         )
 
     return {

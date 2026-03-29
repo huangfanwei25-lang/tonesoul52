@@ -98,6 +98,18 @@ def test_build_project_memory_summary_aggregates_focus_pending_and_repo_progress
     assert "tonesoul/runtime_adapter.py" in summary["pending_paths"]
     assert summary["carry_forward"] == ["keep packet readable"]
     assert summary["subject_anchor"]["summary"].startswith("Stay packet-first")
+    assert summary["working_style_anchor"]["summary"].startswith("prefs=prefer packet before broad repo scan")
+    assert summary["working_style_anchor"]["decision_preferences"] == [
+        "prefer packet before broad repo scan"
+    ]
+    assert summary["working_style_anchor"]["verified_routines"] == [
+        "leave compaction before release"
+    ]
+    assert summary["working_style_anchor"]["guardrail_boundaries"] == [
+        "protected files stay human-managed"
+    ]
+    assert summary["working_style_anchor"]["receiver_posture"] == "advisory_apply_not_promote"
+    assert "render-layer noise" in summary["working_style_anchor"]["render_caveat"]
     assert summary["repo_progress"]["branch"] == "feature/r-memory"
     assert "focus=risk, runtime" in summary["summary_text"]
     assert "subject=Stay packet-first and keep theory out of runtime truth." in summary["summary_text"]

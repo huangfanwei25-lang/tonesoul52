@@ -374,6 +374,19 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
                 values = list(subject_anchor.get(key) or [])
                 if values:
                     lines.append(f"    {key}={', '.join(values[:3])}")
+        working_style_anchor = project_memory_summary.get("working_style_anchor") or {}
+        if working_style_anchor:
+            lines.append("  working_style_anchor:")
+            summary = str(working_style_anchor.get("summary", "")).strip()
+            if summary:
+                lines.append(f"    summary={_clip(summary)}")
+            for key in ("decision_preferences", "verified_routines", "guardrail_boundaries"):
+                values = list(working_style_anchor.get(key) or [])
+                if values:
+                    lines.append(f"    {key}={', '.join(values[:3])}")
+            receiver_posture = str(working_style_anchor.get("receiver_posture", "")).strip()
+            if receiver_posture:
+                lines.append(f"    receiver_posture={receiver_posture}")
         routing_summary = project_memory_summary.get("routing_summary") or {}
         if routing_summary:
             lines.append("  routing_summary:")

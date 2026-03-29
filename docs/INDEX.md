@@ -141,6 +141,8 @@ Use this when the question is not merely how to hand off current state, but what
   - receiver-side boundary contract for `ack`, `apply`, `promote`, and silent-override hazards
 - [architecture/TONESOUL_CONTINUITY_SURFACE_LIFECYCLE_MAP.md](architecture/TONESOUL_CONTINUITY_SURFACE_LIFECYCLE_MAP.md)
   - temporal lane map for continuity surfaces from immediate coordination to canonical foundation
+- [architecture/TONESOUL_WORKING_STYLE_CONTINUITY_CONTRACT.md](architecture/TONESOUL_WORKING_STYLE_CONTINUITY_CONTRACT.md)
+  - bounded contract for sharing operating style, prompt habits, and render caveats without over-promoting them
 - [plans/tonesoul_continuity_followup_candidates_2026-03-29.md](plans/tonesoul_continuity_followup_candidates_2026-03-29.md)
   - bounded implementation candidates for freshness, import posture surfacing, promotion guards, and decay reporting
 

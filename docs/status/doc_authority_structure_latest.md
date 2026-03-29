@@ -1,14 +1,14 @@
 # Documentation Authority Structure Latest
 
-- generated_at: 2026-03-29T09:58:25Z
-- primary_status_line: `doc_authority_structure | groups=20 tracked=68 metadata_complete=68 metadata_missing=0`
+- generated_at: 2026-03-29T10:45:38Z
+- primary_status_line: `doc_authority_structure | groups=20 tracked=69 metadata_complete=69 metadata_missing=0`
 - runtime_status_line: `doc_retrieval_order=entrypoint_to_operational_to_canonical_to_deep_map_to_interpretive_to_boundary_aids_to_control_plane | generated_status_lane=6`
 - artifact_policy_status_line: `structure_mode=retrieval_oriented | authority_roles=explicit | generated_status_preferred_for_current_state`
 
 ## Metrics
 - `group_count`: `20`
-- `tracked_file_count`: `68`
-- `metadata_complete_count`: `68`
+- `tracked_file_count`: `69`
+- `metadata_complete_count`: `69`
 - `metadata_missing_count`: `0`
 
 ## Groups
@@ -109,7 +109,7 @@
   - `docs/architecture/TONESOUL_COUNCIL_DOSSIER_AND_DISSENT_CONTRACT.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/TONESOUL_ADAPTIVE_DELIBERATION_MODE_CONTRACT.md` exists=`true` purpose=`true` date=`true`
   - `docs/plans/tonesoul_council_followup_candidates_2026-03-28.md` exists=`true` purpose=`true` date=`true`
-- `Continuity Import And Receiver Discipline` tracked=`4` metadata_complete=`4`
+- `Continuity Import And Receiver Discipline` tracked=`5` metadata_complete=`5`
   - description: receiver-side continuity aids for deciding what may be acknowledged, applied, promoted, or discounted by decay across packet, handoff, and subject surfaces
   - authority_role: discipline_contract
   - use_when: when the question is not merely what should continue, but what a later agent may safely import from continuity surfaces and how long that import remains fresh
@@ -117,6 +117,7 @@
   - `docs/architecture/TONESOUL_CONTINUITY_IMPORT_AND_DECAY_CONTRACT.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/TONESOUL_RECEIVER_INTERPRETATION_BOUNDARY_CONTRACT.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/TONESOUL_CONTINUITY_SURFACE_LIFECYCLE_MAP.md` exists=`true` purpose=`true` date=`true`
+  - `docs/architecture/TONESOUL_WORKING_STYLE_CONTINUITY_CONTRACT.md` exists=`true` purpose=`true` date=`true`
   - `docs/plans/tonesoul_continuity_followup_candidates_2026-03-29.md` exists=`true` purpose=`true` date=`true`
 - `Council Realism And Calibration` tracked=`4` metadata_complete=`4`
   - description: honesty and adoption aids for separating perspective plurality from real independence, and descriptive confidence from calibrated confidence

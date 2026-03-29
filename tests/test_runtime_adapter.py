@@ -676,6 +676,17 @@ def test_subject_snapshots_surface_durable_subject_anchor(tmp_path: Path) -> Non
         packet["project_memory_summary"]["subject_anchor"]["summary"]
         == "Operate as a packet-first runtime steward with explicit boundaries."
     )
+    working_style_anchor = packet["project_memory_summary"]["working_style_anchor"]
+    assert working_style_anchor["summary"].startswith("prefs=prefer packet before broad repo scan")
+    assert working_style_anchor["decision_preferences"] == ["prefer packet before broad repo scan"]
+    assert working_style_anchor["verified_routines"] == [
+        "end sessions with checkpoint or compaction before release"
+    ]
+    assert working_style_anchor["guardrail_boundaries"] == [
+        "do not edit protected human-managed files"
+    ]
+    assert working_style_anchor["receiver_posture"] == "advisory_apply_not_promote"
+    assert "render-layer noise" in working_style_anchor["render_caveat"]
     assert packet["project_memory_summary"]["subject_refresh"]["status"] == "refresh_candidate"
     assert packet["project_memory_summary"]["subject_refresh"]["refresh_recommended"] is True
     active_thread_guidance = next(
@@ -692,6 +703,10 @@ def test_subject_snapshots_surface_durable_subject_anchor(tmp_path: Path) -> Non
     assert packet["coordination_mode"]["delta_feed_enabled"] is False
     assert (
         "A recent subject snapshot is visible; treat it as durable working identity, but still non-canonical."
+        in packet["operator_guidance"]["current_reminders"]
+    )
+    assert (
+        "A working-style anchor is visible; reuse its decision preferences and verified routines before defaulting to model-native habits."
         in packet["operator_guidance"]["current_reminders"]
     )
     assert (

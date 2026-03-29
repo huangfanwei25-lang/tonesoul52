@@ -1889,6 +1889,12 @@ def _build_operator_guidance(
             "No subject snapshot is visible; write one when stable boundaries, preferences, or verified routines change."
         )
 
+    working_style_anchor = project_memory_summary.get("working_style_anchor") or {}
+    if working_style_anchor:
+        reminders.append(
+            "A working-style anchor is visible; reuse its decision preferences and verified routines before defaulting to model-native habits."
+        )
+
     subject_refresh = project_memory_summary.get("subject_refresh") or {}
     refresh_status = str(subject_refresh.get("status", "")).strip()
     if refresh_status in {"seed_snapshot", "refresh_candidate"}:

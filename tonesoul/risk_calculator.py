@@ -12,6 +12,15 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, Iterable, List
 
+_PROMPT_STYLE_DEFAULTS = [
+    "state the goal function before long transfer or extraction prompts",
+    "keep P0/P1/P2 explicit when constraints may conflict",
+    "mark [資料不足] instead of filling gaps with unsupported guesses",
+]
+_RENDER_BOUNDARY_CAVEAT = (
+    "Treat shell `??` or garbled CJK as render-layer noise until a UTF-8 file read proves real corruption."
+)
+
 
 @dataclass(frozen=True)
 class RiskAssessment:
@@ -171,6 +180,7 @@ def build_project_memory_summary(
     repo_progress = _build_repo_progress_snapshot(repo_root=repo_root)
     latest_subject_snapshot = subject_snapshots[0] if subject_snapshots else {}
     subject_anchor = _build_subject_anchor(latest_subject_snapshot)
+    working_style_anchor = _build_working_style_anchor(latest_subject_snapshot)
 
     summary_lines: List[str] = []
     if focus_topics:
@@ -206,6 +216,8 @@ def build_project_memory_summary(
     }
     if subject_anchor:
         result["subject_anchor"] = subject_anchor
+    if working_style_anchor:
+        result["working_style_anchor"] = working_style_anchor
     if routing_summary:
         result["routing_summary"] = routing_summary
     return result
@@ -221,6 +233,37 @@ def _build_subject_anchor(snapshot: Dict[str, Any]) -> Dict[str, Any]:
         "decision_preferences": _slice_strings(snapshot.get("decision_preferences"), 4),
         "verified_routines": _slice_strings(snapshot.get("verified_routines"), 4),
         "active_threads": _slice_strings(snapshot.get("active_threads"), 4),
+    }
+
+
+def _build_working_style_anchor(snapshot: Dict[str, Any]) -> Dict[str, Any]:
+    if not snapshot:
+        return {}
+
+    decision_preferences = _slice_strings(snapshot.get("decision_preferences"), 4)
+    verified_routines = _slice_strings(snapshot.get("verified_routines"), 4)
+    guardrail_boundaries = _slice_strings(snapshot.get("durable_boundaries"), 3)
+    base_summary = str(snapshot.get("summary", "")).strip()
+
+    if not any((decision_preferences, verified_routines, guardrail_boundaries, base_summary)):
+        return {}
+
+    summary_parts: List[str] = []
+    if decision_preferences:
+        summary_parts.append(f"prefs={'; '.join(decision_preferences[:2])}")
+    if verified_routines:
+        summary_parts.append(f"routines={'; '.join(verified_routines[:2])}")
+    if not summary_parts and base_summary:
+        summary_parts.append(base_summary)
+
+    return {
+        "summary": " | ".join(summary_parts) if summary_parts else base_summary,
+        "decision_preferences": decision_preferences,
+        "verified_routines": verified_routines,
+        "guardrail_boundaries": guardrail_boundaries,
+        "receiver_posture": "advisory_apply_not_promote",
+        "prompt_defaults": list(_PROMPT_STYLE_DEFAULTS),
+        "render_caveat": _RENDER_BOUNDARY_CAVEAT,
     }
 
 

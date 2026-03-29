@@ -424,12 +424,33 @@ def test_start_agent_session_marks_recycled_carry_forward_as_must_not_promote(
     output = json.loads(capsys.readouterr().out)
 
     compaction_surface = output["import_posture"]["surfaces"]["compactions"]
+    working_style_surface = output["import_posture"]["surfaces"]["working_style"]
     assert compaction_surface["import_posture"] == "advisory"
     assert compaction_surface["receiver_obligation"] == "must_not_promote"
     assert any("recycled carry_forward" in hazard for hazard in compaction_surface["promotion_hazards"])
+    assert working_style_surface["present"] is True
+    assert working_style_surface["import_posture"] == "advisory"
+    assert working_style_surface["receiver_obligation"] == "should_consider"
+    assert working_style_surface["decay_posture"] == "slow"
+    assert (
+        working_style_surface["working_style_anchor"]["decision_preferences"]
+        == ["prefer packet before broad repo scan"]
+    )
+    assert (
+        working_style_surface["working_style_anchor"]["verified_routines"]
+        == ["end sessions with checkpoint or compaction before release"]
+    )
+    assert (
+        working_style_surface["working_style_anchor"]["receiver_posture"]
+        == "advisory_apply_not_promote"
+    )
     assert any(
         "Latest carry-forward repeats an older handoff without new evidence"
         in alert
+        for alert in output["import_posture"]["receiver_alerts"]
+    )
+    assert any(
+        "Working-style continuity is advisory only" in alert
         for alert in output["import_posture"]["receiver_alerts"]
     )
 
