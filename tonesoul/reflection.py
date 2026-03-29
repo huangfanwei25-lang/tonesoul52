@@ -78,8 +78,39 @@ def build_revision_prompt(draft: str, verdict: ReflectionVerdict) -> str:
             f"{REFLECTION_TENSION_THRESHOLD:.2f}; current delta={verdict.tension_delta:.4f}."
         )
 
+    evidence_lines = [
+        "Treat the reflection reasons, council decision, vow result, and tension delta below as the only repair evidence.",
+        "Do not invent support for claims that the draft itself and the listed evidence do not justify.",
+    ]
+    if verdict.vow_result is not None:
+        evidence_lines.append("When vow checks are present, blocked content must be removed rather than rephrased.")
+    if verdict.council_decision:
+        evidence_lines.append("Use the council signal as a bounded repair instruction, not as narration to expose.")
+    if verdict.tension_delta is not None:
+        evidence_lines.append("Where the drift signal is high, prefer the smallest safe correction over wider rewrites.")
+
+    recovery_lines = [
+        "If the draft cannot be safely repaired in full, keep the smallest bounded answer that still serves the user's request.",
+        "If a sentence cannot be supported after repair, remove or soften it instead of guessing.",
+        "Do not mention hidden review steps, internal tools, or reflection mechanics in the final answer.",
+    ]
+
     lines = [
         "Revise the draft below to resolve the detected issues.",
+        "",
+        "Goal function:",
+        "- Produce the smallest revised answer that still satisfies the user's request while resolving the detected issues.",
+        "",
+        "Priority rules:",
+        "- P0: Remove blocked, unsafe, fabricated, or unsupported content.",
+        "- P1: Repair the listed issues while preserving valid content that still serves the user.",
+        "- P2: Improve clarity and compression only after P0 and P1 are satisfied.",
+        "",
+        "Evidence discipline:",
+        *[f"- {item}" for item in evidence_lines],
+        "",
+        "Recovery instructions:",
+        *[f"- {item}" for item in recovery_lines],
         "",
         "Why rewrite:",
         *[f"- {reason}" for reason in reasons],

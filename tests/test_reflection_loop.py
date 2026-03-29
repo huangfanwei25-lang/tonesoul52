@@ -87,6 +87,31 @@ def test_build_revision_prompt_includes_reasons_and_constraints() -> None:
     assert "council:block" in prompt
     assert "Revision constraints:" in prompt
     assert "Draft to revise:" in prompt
+    assert "Goal function:" in prompt
+    assert "Priority rules:" in prompt
+    assert "- P0:" in prompt
+    assert "- P1:" in prompt
+    assert "- P2:" in prompt
+    assert "Evidence discipline:" in prompt
+    assert "Recovery instructions:" in prompt
+
+
+def test_build_revision_prompt_uses_bounded_evidence_and_recovery_guidance() -> None:
+    verdict = ReflectionVerdict(
+        should_revise=True,
+        reasons=["repair"],
+        severity=0.6,
+        council_decision="refine",
+        tension_delta=0.31,
+    )
+
+    prompt = build_revision_prompt("Draft answer.", verdict)
+
+    assert "only repair evidence" in prompt
+    assert "Do not invent support for claims" in prompt
+    assert "bounded repair instruction" in prompt
+    assert "smallest safe correction" in prompt
+    assert "remove or soften it instead of guessing" in prompt
 
 
 def test_build_revision_prompt_truncates_long_draft() -> None:
@@ -137,6 +162,7 @@ def test_process_runs_one_revision_then_stops() -> None:
     assert result.dispatch_trace["reflection_count"] == 1
     assert len(result.dispatch_trace["reflection_verdicts"]) == 2
     assert router.prompts[1].startswith("Revise the draft below")
+    assert "Goal function:" in router.prompts[1]
 
 
 def test_process_caps_revisions_at_max_two() -> None:

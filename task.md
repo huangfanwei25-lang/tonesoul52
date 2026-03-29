@@ -26,6 +26,7 @@
 - Phase 686: surface receiver-side import guards at session start so later agents stop silently promoting advisory compactions into planning or identity
 - Phase 687: surface council evolution suppression visibility so later agents can see when repeated dissent may be getting conformity-biased below baseline weight
 - Phase 688: run a Claude-owned reality-alignment pass so entrypoint cleanup and encoding guidance are re-grounded against the current README, real doc counts, and display-vs-file boundaries
+- Phase 689: adopt prompt discipline for the reflection revision prompt so revision loops stop relying on an underspecified rewrite instruction
 
 ## Phase 679: Continuity Freshness And Import Posture (2026-03-29)
 - [x] Add bounded `freshness_hours` to the packet continuity surfaces that later agents actually inherit at session start
@@ -86,6 +87,12 @@
 - [x] explicitly feed back the previous docs-program's under-verified assumptions so the next Claude pass starts from correction rather than repetition
 - [x] keep the workstream bounded to documentation-only baselines, drift registers, and measurement methods instead of runtime or README mutation
 **Success Criteria**: Claude has one clear long-context correction program that tells Codex which doc-entry assumptions still survive current repo reality, which metrics were overstated, and which cleanup advice should be kept versus retired.
+
+## Phase 689: Reflection Prompt Discipline Adoption (2026-03-29)
+- [x] refactor `tonesoul/reflection.py:build_revision_prompt()` to add bounded goal, P0/P1/P2 priorities, evidence discipline, and recovery instructions without changing reflection loop control flow
+- [x] keep the first-line revision command stable so router-based reflection loops and existing call sites do not break
+- [x] add regression tests that lock the new prompt shape while preserving the existing revision-loop behavior
+**Success Criteria**: Reflection-triggered rewrites stop relying on a flat freeform "revise this draft" instruction and instead expose explicit goal, priority, evidence, and recovery guidance, while all existing revision-loop tests continue to pass.
 
 ## Phase 666: Bounded Council Dossier Carry Surfaces (2026-03-28)
 - [x] Let `SessionTrace` store an optional compact council dossier input while keeping the canonical trace schema backward-compatible
