@@ -1744,3 +1744,277 @@ When done, report back with:
 - the 3 highest-severity mojibake or readability hazards
 - which historical surfaces still deserve first-page visibility and which should only remain as labeled lineage references
 - which one cleanup wave Codex should implement first for maximum reader relief with minimum authority damage
+
+---
+
+## Follow-Up Extension: Reality Alignment, Metric Baseline, And Drift Reconciliation Program
+
+This is a correction-heavy long-context program.
+It exists because the previous entrypoint / historical / encoding pass was useful, but its synthesis still had several repo-grounding gaps that later agents must not repeat.
+
+### What Was Insufficient In The Previous Pass
+
+Before starting, explicitly correct for these failure modes:
+
+1. **Count inflation without runtime verification**
+   - The previous pass treated `docs/architecture/TONESOUL_*_CONTRACT.md` as "46 architecture contracts".
+   - Codex verified the actual current counts are different:
+     - `docs/architecture/*` files: 50
+     - `docs/architecture/TONESOUL_*` files: 40
+     - `docs/architecture/TONESOUL_*_CONTRACT.md` files: 19
+   - Do not reuse stale or inferred counts.
+
+2. **Entrypoint drift from the actual current README**
+   - The previous pass partially reasoned as if AI routing had a single first-hop document.
+   - Codex has already rewritten `README.md` so the current public AI entry is a triad:
+     - `AI_ONBOARDING.md`
+     - `docs/AI_QUICKSTART.md`
+     - `python scripts/start_agent_session.py --agent <id>`
+   - Do not recommend a new entry path without first reconciling it to the live README.
+
+3. **Display-layer ambiguity versus file-layer encoding truth**
+   - Shell output may display `??` or cp950 noise even when the file content is valid UTF-8.
+   - The next pass must distinguish:
+     - actual file corruption
+     - terminal rendering noise
+     - structural readability hazards
+
+4. **Plan-level recommendations that outran current repo reality**
+   - Some cleanup recommendations assumed surfaces had not already been improved by Codex.
+   - The next pass must separate:
+     - already fixed
+     - still true
+     - partly true but drifted
+     - invalid because the repo has changed
+
+This extension is therefore not just another cleanup map.
+It is a **reality-alignment and drift-reconciliation program**.
+
+## Program Goal
+
+Produce a repo-grounded baseline that later agents can trust when they ask:
+
+- what the current entry surfaces actually are
+- which doc counts are real versus stale prose
+- which "hazards" are file-content problems versus terminal-display noise
+- which cleanup recommendations still remain valid after Codex's recent rewrites
+
+## Mandatory Scope
+
+You must verify, not infer, at minimum:
+
+- current public entry surfaces
+  - `README.md`
+  - `README.zh-TW.md`
+  - `SOUL.md`
+  - `LETTER_TO_AI.md`
+- AI/operator entry surfaces
+  - `AI_ONBOARDING.md`
+  - `docs/AI_QUICKSTART.md`
+  - `docs/AI_REFERENCE.md`
+  - `docs/README.md`
+  - `docs/INDEX.md`
+- the previous five deliverables from the entrypoint program
+  - `docs/architecture/TONESOUL_AUDIENCE_ROUTING_AND_ENTRY_CONTRACT.md`
+  - `docs/architecture/TONESOUL_HISTORICAL_SPEC_AND_LEGACY_SURFACE_MAP.md`
+  - `docs/architecture/TONESOUL_ENCODING_AND_MOJIBAKE_HAZARD_REGISTER.md`
+  - `docs/architecture/TONESOUL_DOC_SURFACE_SIMPLIFICATION_BOUNDARY_CONTRACT.md`
+  - `docs/plans/tonesoul_docs_cleanup_wave_candidates_2026-03-29.md`
+- representative historical and metadata-sensitive surfaces
+  - `MGGI_SPEC.md`
+  - `TAE-01_Architecture_Spec.md`
+  - root `TONESOUL_*.txt` founding documents
+- machine-readable inventory and authority outputs
+  - `docs/status/doc_convergence_inventory_latest.json`
+  - `docs/status/doc_authority_structure_latest.json`
+
+You may inspect more if needed, but do not drift into a blind all-doc dump.
+
+## Program Deliverables
+
+### Deliverable AI
+
+Create:
+
+- `docs/architecture/TONESOUL_ENTRY_SURFACE_REALITY_BASELINE.md`
+
+This should answer:
+
+- what the current first-hop entry really is for each audience
+- which surfaces are currently live in the README path
+- which surfaces are companion versus optional follow-up
+- which recommendations from the prior pass conflict with the current repo state
+
+Keep it table-first and explicitly mark:
+
+- `current`
+- `stale`
+- `drifted`
+- `requires human choice`
+
+### Deliverable AJ
+
+Create:
+
+- `docs/architecture/TONESOUL_DOC_METRIC_AND_COUNT_METHOD.md`
+
+This must define a reproducible counting method for:
+
+- root markdown entry surfaces
+- docs-level files
+- `docs/architecture/*`
+- `docs/architecture/TONESOUL_*`
+- `docs/architecture/TONESOUL_*_CONTRACT.md`
+
+For each metric include:
+
+- exact pattern
+- what is included
+- what is excluded
+- why later prose should quote that metric carefully
+
+### Deliverable AK
+
+Create:
+
+- `docs/architecture/TONESOUL_RENDER_LAYER_AND_ENCODING_BOUNDARY_CONTRACT.md`
+
+This must explicitly separate:
+
+1. real file corruption
+2. terminal rendering / locale noise
+3. structural readability hazards
+4. metadata drift that only looks like an encoding problem
+
+This document should stop later agents from calling every `??` rendering artifact "mojibake".
+
+### Deliverable AL
+
+Create:
+
+- `docs/architecture/TONESOUL_DOC_DRIFT_AND_CONFLICT_REGISTER.md`
+
+This should compare:
+
+- current repo state
+- the prior entrypoint cleanup recommendations
+- Codex's already-applied README and routing changes
+
+For each conflict include:
+
+- what the prior pass claimed
+- what the repo currently says
+- whether the claim is still valid
+- the safest correction
+
+### Deliverable AM
+
+Optional, only if clearly justified:
+
+- `docs/plans/tonesoul_docs_reality_alignment_followup_candidates_2026-03-29.md`
+
+Only create this if the earlier deliverables naturally imply a bounded next-wave sequence.
+Do not turn it into a giant rewrite manifesto.
+
+## Required Method
+
+Do this in stages.
+
+### Stage 0: Self-correction pass
+
+Re-open the previous five deliverables and explicitly list where:
+
+- counts were inferred instead of measured
+- current README routing was not fully re-verified
+- terminal-display noise may have been over-read
+- cleanup advice now conflicts with Codex-owned rewrites
+
+### Stage 1: Live entry-surface verification
+
+Verify the actual current path for:
+
+- developer
+- researcher
+- AI agent
+- curious human
+
+Do not restate an audience-routing table until it has been reconciled against the **current** `README.md`.
+
+### Stage 2: Metric methodology pass
+
+Measure the relevant doc families directly and define the pattern logic behind each count.
+The purpose is to stop prose from casually saying "46 contracts" when the directory shape means something else.
+
+### Stage 3: Render-layer versus file-layer pass
+
+Where shell output or terminal display shows `??`, verify whether:
+
+- the underlying file is fine
+- the file actually contains broken characters
+- the problem is structural, not encoding-based
+
+Use this to build the encoding/render boundary contract.
+
+### Stage 4: Drift reconciliation pass
+
+Compare the previous cleanup recommendations against the current repo state and classify each recommendation as:
+
+- still valid
+- partially valid
+- already fixed
+- invalidated by later changes
+
+### Stage 5: Handoff synthesis
+
+Return one clear answer for:
+
+- the single biggest reality-gap later agents still have about the current doc entry stack
+- the single most misleading stale metric in the docs
+- the single most overused false-positive "mojibake" diagnosis
+- which earlier cleanup recommendation Codex should keep
+- which earlier cleanup recommendation Codex should discard
+
+## Program Boundaries
+
+Do not do these things in this extension:
+
+- do not modify `README.md`
+- do not modify `AI_ONBOARDING.md`
+- do not modify `docs/README.md`
+- do not modify `docs/INDEX.md`
+- do not modify the five previous deliverables
+- do not modify runtime code, packet schema, or session scripts
+- do not touch protected files
+- do not silently "fix" counts by editing inventories yourself
+
+This is a reality-check and correction program.
+Codex will own the actual follow-up edits.
+
+## Non-Goals
+
+This extension is not asking for:
+
+- a new README rewrite
+- a translation pass
+- a runtime behavior change
+- a new philosophy layer
+- a one-shot cleanup of every stale document
+
+## Acceptance Criteria
+
+This extension is successful if:
+
+- a later agent can tell the difference between measured counts and loose prose
+- audience routing reflects the current live README rather than an outdated mental model
+- rendering noise and actual encoding corruption are no longer conflated
+- Codex can decide which cleanup advice to keep or discard without rereading every prior deliverable
+
+## Handoff Back To Codex
+
+When done, report back with:
+
+- the 3 clearest places where your previous entrypoint pass under-verified the repo
+- the corrected current AI entry route in one line
+- the corrected count triplet for `docs/architecture/*`, `TONESOUL_*`, and `TONESOUL_*_CONTRACT.md`
+- the single highest-value cleanup recommendation that still survives this reality pass
+- the single previous recommendation that should now be retired

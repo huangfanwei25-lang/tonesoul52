@@ -25,6 +25,7 @@
 - Phase 685: block recycled carry-forward from silently refreshing subject identity when a new compaction repeats the same handoff without new evidence
 - Phase 686: surface receiver-side import guards at session start so later agents stop silently promoting advisory compactions into planning or identity
 - Phase 687: surface council evolution suppression visibility so later agents can see when repeated dissent may be getting conformity-biased below baseline weight
+- Phase 688: run a Claude-owned reality-alignment pass so entrypoint cleanup and encoding guidance are re-grounded against the current README, real doc counts, and display-vs-file boundaries
 
 ## Phase 679: Continuity Freshness And Import Posture (2026-03-29)
 - [x] Add bounded `freshness_hours` to the packet continuity surfaces that later agents actually inherit at session start
@@ -79,6 +80,12 @@
 - [x] Let `build_dossier()` and packet dossier summaries inherit the suppression flag from transcript-level council evolution observability
 - [x] Lock the new visibility with evolution, dossier, runtime-adapter, and packet regression tests
 **Success Criteria**: Later agents can inspect a council evolution summary, dossier, or packet surface and tell when repeated dissent may be experiencing conformity bias, without mistaking that flag for calibrated quality or altering council verdict behavior.
+
+## Phase 688: Claude Reality Alignment And Drift Reconciliation Work Order (2026-03-29)
+- [x] extend `docs/plans/claude_deep_structure_authority_work_order_2026-03-27.md` with one large reality-alignment pass that forces count verification, live entry-surface re-grounding, and render-vs-file encoding separation
+- [x] explicitly feed back the previous docs-program's under-verified assumptions so the next Claude pass starts from correction rather than repetition
+- [x] keep the workstream bounded to documentation-only baselines, drift registers, and measurement methods instead of runtime or README mutation
+**Success Criteria**: Claude has one clear long-context correction program that tells Codex which doc-entry assumptions still survive current repo reality, which metrics were overstated, and which cleanup advice should be kept versus retired.
 
 ## Phase 666: Bounded Council Dossier Carry Surfaces (2026-03-28)
 - [x] Let `SessionTrace` store an optional compact council dossier input while keeping the canonical trace schema backward-compatible
