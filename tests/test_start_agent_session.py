@@ -129,9 +129,19 @@ def test_start_agent_session_emits_machine_readable_bundle(capsys, monkeypatch, 
     assert output["import_posture"]["surfaces"]["claims"]["receiver_obligation"] == "must_read"
     assert "TTL" in output["import_posture"]["surfaces"]["claims"]["note"]
     assert output["import_posture"]["surfaces"]["delta_feed"]["import_posture"] == "ephemeral_until_acked"
+    assert output["import_posture"]["surfaces"]["evidence_readout"]["import_posture"] == "advisory"
+    assert output["import_posture"]["surfaces"]["evidence_readout"]["receiver_obligation"] == "should_consider"
+    assert (
+        output["import_posture"]["surfaces"]["evidence_readout"]["evidence_readout_posture"]["classification_counts"]["tested"]
+        == 2
+    )
     assert output["import_posture"]["surfaces"]["subject_snapshot"]["present"] is False
     assert output["import_posture"]["readiness_alignment"] == "needs_clarification"
     assert output["import_posture"]["summary_text"].startswith("posture=directly_importable")
+    assert any(
+        "continuity effectiveness is only runtime_present" in alert
+        for alert in output["import_posture"]["receiver_alerts"]
+    )
     assert output["task_track_hint"]["present"] is True
     assert output["task_track_hint"]["suggested_track"] == "feature_track"
     assert output["task_track_hint"]["exploration_depth_hint"] == "x2"

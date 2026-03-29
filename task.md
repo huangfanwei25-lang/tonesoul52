@@ -1389,6 +1389,12 @@
 - [ ] keep the work readout-only, without changing council runtime, packet authority, or import semantics
 **Success Criteria**: A later agent reading packet, session-start, or diagnose sees the same bounded story about realism and receiver posture instead of slightly different interpretations that drift apart over time.
 
+## Phase 716: Bounded Evidence Readout Posture (2026-03-30)
+- [x] derive one compact `evidence_readout_posture` from the current ToneSoul evidence posture so later agents can see what is tested, runtime-present, descriptive-only, or document-backed without opening long evidence docs first
+- [x] surface the readout in packet/project-memory, session-start import posture, diagnose, and operator guidance without pretending it replaces the full evidence ladder
+- [x] lock the readout into runtime/session-start/diagnose regressions so future changes do not silently flatten descriptive or document-backed lanes into "implemented truth"
+**Success Criteria**: A later agent can open packet, session-start, or diagnose and immediately see a bounded evidence honesty shortcut for the current system, while still being pointed back to the longer evidence lane when precision matters.
+
 ## Phase 718: Whole-System Explanation And Control-Plane Rationale (2026-03-30)
 - [x] write one grounded system-overview guide that explains what each load-bearing subsystem does, why it exists, what breaks without it, and what it is not
 - [x] formalize mirror rupture, fail-stop, and low-drift anchors as a control-plane discipline contract rather than new ontology or runtime law

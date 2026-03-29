@@ -716,6 +716,17 @@ def test_subject_snapshots_surface_durable_subject_anchor(tmp_path: Path) -> Non
         item.startswith("durable_identity:")
         for item in working_style_import_limits["must_not_import"]
     )
+    evidence_readout = packet["project_memory_summary"]["evidence_readout_posture"]
+    assert evidence_readout["classification_counts"]["tested"] == 2
+    assert evidence_readout["classification_counts"]["runtime_present"] == 1
+    assert any(
+        lane["lane"] == "continuity_effectiveness" and lane["classification"] == "runtime_present"
+        for lane in evidence_readout["lanes"]
+    )
+    assert any(
+        lane["lane"] == "council_decision_quality" and lane["classification"] == "descriptive_only"
+        for lane in evidence_readout["lanes"]
+    )
     assert packet["project_memory_summary"]["subject_refresh"]["status"] == "refresh_candidate"
     assert packet["project_memory_summary"]["subject_refresh"]["refresh_recommended"] is True
     active_thread_guidance = next(
@@ -749,6 +760,10 @@ def test_subject_snapshots_surface_durable_subject_anchor(tmp_path: Path) -> Non
     assert (
         "Working-style import stays bounded to scan order, evidence handling, prompt shape, session cadence, and render interpretation."
         in packet["operator_guidance"]["current_reminders"]
+    )
+    assert any(
+        reminder.startswith("Evidence posture: evidence=tested(session_control_and_handoff,council_mechanics)")
+        for reminder in packet["operator_guidance"]["current_reminders"]
     )
     assert (
         "Subject-refresh heuristics found low-risk updates; review subject_refresh before writing the next snapshot."

@@ -584,6 +584,7 @@ def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
     working_style_anchor = project_memory_summary.get("working_style_anchor") or {}
     working_style_observability = project_memory_summary.get("working_style_observability") or {}
     working_style_import_limits = project_memory_summary.get("working_style_import_limits") or {}
+    evidence_readout_posture = project_memory_summary.get("evidence_readout_posture") or {}
     subject_refresh = project_memory_summary.get("subject_refresh") or {}
     carry_forward_hazards = _carry_forward_promotion_hazards(subject_refresh)
 
@@ -666,6 +667,18 @@ def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
             "freshness_hours": 0.0,
             "note": "Packet-level aggregation is useful for planning, but it remains a read-time summary surface.",
         },
+        "evidence_readout": {
+            "present": bool(evidence_readout_posture),
+            "import_posture": "advisory",
+            "receiver_obligation": "should_consider",
+            "decay_posture": "slow",
+            "freshness_hours": 0.0 if evidence_readout_posture else None,
+            "note": (
+                "Use this as a fast honesty shortcut: tested means regression-backed enough for workflow assumptions, "
+                "runtime_present means mechanism presence, descriptive_only means context not proof, and document_backed means intent or boundary rather than runtime fact."
+            ),
+            "evidence_readout_posture": evidence_readout_posture,
+        },
         "subject_snapshot": {
             "present": bool(subject_snapshots),
             "import_posture": "advisory",
@@ -735,6 +748,7 @@ def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
         "claims",
         "delta_feed",
         "compactions",
+        "evidence_readout",
         "subject_snapshot",
         "working_style",
         "council_dossier",
@@ -781,6 +795,10 @@ def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
     if str(latest_dossier_snapshot.get("calibration_status", "")).strip() == "descriptive_only":
         receiver_alerts.append(
             "Latest council dossier confidence is descriptive_only; treat coherence and confidence posture as internal agreement context, not as an accuracy prediction."
+        )
+    if evidence_readout_posture:
+        receiver_alerts.append(
+            "Evidence readout is a bounded honesty shortcut: continuity effectiveness is only runtime_present, council decision quality is descriptive_only, and higher-order axioms/theory remain document_backed unless separately proven."
         )
     if bool(latest_dossier_snapshot.get("has_minority_report")):
         receiver_alerts.append(

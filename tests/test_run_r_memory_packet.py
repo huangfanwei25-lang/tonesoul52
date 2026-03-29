@@ -268,10 +268,19 @@ def test_run_r_memory_packet_emits_json(capsys, monkeypatch, tmp_path: Path) -> 
     assert output["project_memory_summary"]["subject_anchor"]["summary"].startswith("Stay packet-first")
     assert output["project_memory_summary"]["routing_summary"]["total_events"] == 1
     assert output["project_memory_summary"]["routing_summary"]["summary_text"].startswith("router=writes=0 previews=1")
+    assert output["project_memory_summary"]["evidence_readout_posture"]["classification_counts"]["tested"] == 2
+    assert any(
+        lane["lane"] == "axiom_and_theory_claims" and lane["classification"] == "document_backed"
+        for lane in output["project_memory_summary"]["evidence_readout_posture"]["lanes"]
+    )
     assert output["project_memory_summary"]["subject_refresh"]["status"] == "manual_review"
     assert (
         "Do not promote active claims into durable identity"
         in output["project_memory_summary"]["subject_refresh"]["promotion_hazards"][0]
+    )
+    assert any(
+        reminder.startswith("Evidence posture: evidence=tested(session_control_and_handoff,council_mechanics)")
+        for reminder in output["operator_guidance"]["current_reminders"]
     )
     assert output["coordination_mode"]["mode"] == "file-backed"
     assert output["coordination_mode"]["delta_feed_enabled"] is True

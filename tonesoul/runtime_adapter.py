@@ -1970,6 +1970,11 @@ def _build_operator_guidance(
             "Subject-refresh heuristics found promotion hazards; keep higher-risk fields operator-reviewed instead of auto-promoting hot-state."
         )
 
+    evidence_readout_posture = project_memory_summary.get("evidence_readout_posture") or {}
+    evidence_summary = str(evidence_readout_posture.get("summary_text", "")).strip()
+    if evidence_summary:
+        reminders.append(f"Evidence posture: {evidence_summary}")
+
     latest_dossier_payload: Dict[str, Any] = {}
     for entry in compactions:
         candidate = entry.get("council_dossier")

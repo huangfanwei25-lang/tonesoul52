@@ -186,6 +186,7 @@ def build_project_memory_summary(
     latest_subject_snapshot = subject_snapshots[0] if subject_snapshots else {}
     subject_anchor = _build_subject_anchor(latest_subject_snapshot)
     working_style_anchor = _build_working_style_anchor(latest_subject_snapshot)
+    evidence_readout_posture = _build_evidence_readout_posture()
     working_style_observability = build_working_style_observability(
         working_style_anchor,
         carry_forward=carry_forward,
@@ -218,6 +219,8 @@ def build_project_memory_summary(
         summary_lines.append(str(routing_summary.get("summary_text", "")).strip())
     if working_style_observability and str(working_style_observability.get("status", "")) != "reinforced":
         summary_lines.append(str(working_style_observability.get("summary_text", "")).strip())
+    if evidence_readout_posture:
+        summary_lines.append(str(evidence_readout_posture.get("summary_text", "")).strip())
     if not summary_lines:
         summary_lines.append("No active carry-forward surface is visible yet.")
 
@@ -239,9 +242,78 @@ def build_project_memory_summary(
         result["working_style_observability"] = working_style_observability
     if working_style_import_limits:
         result["working_style_import_limits"] = working_style_import_limits
+    if evidence_readout_posture:
+        result["evidence_readout_posture"] = evidence_readout_posture
     if routing_summary:
         result["routing_summary"] = routing_summary
     return result
+
+
+def _build_evidence_readout_posture() -> Dict[str, Any]:
+    lanes = [
+        {
+            "lane": "session_control_and_handoff",
+            "classification": "tested",
+            "receiver_use": "safe_workflow_assumption",
+            "note": (
+                "Session-start/session-end, packet, delta, readiness, and receiver guards are regression-backed enough "
+                "to reuse as current workflow discipline."
+            ),
+        },
+        {
+            "lane": "continuity_effectiveness",
+            "classification": "runtime_present",
+            "receiver_use": "bounded_continuity_help",
+            "note": (
+                "Claims, checkpoints, compactions, and subject/working-style surfaces are live and partially tested, "
+                "but broader cross-session effectiveness is still a bounded runtime claim rather than a proven quality guarantee."
+            ),
+        },
+        {
+            "lane": "council_mechanics",
+            "classification": "tested",
+            "receiver_use": "safe_mechanism_assumption",
+            "note": (
+                "Council mechanics, dossier extraction, and suppression visibility are backed well enough to trust the mechanism shape."
+            ),
+        },
+        {
+            "lane": "council_decision_quality",
+            "classification": "descriptive_only",
+            "receiver_use": "context_only",
+            "note": (
+                "Agreement, coherence, and confidence posture still describe internal review context, not calibrated correctness."
+            ),
+        },
+        {
+            "lane": "axiom_and_theory_claims",
+            "classification": "document_backed",
+            "receiver_use": "intent_and_boundary_only",
+            "note": (
+                "Higher-order axioms and philosophical claims remain important, but they are not uniformly runtime-hard or regression-backed."
+            ),
+        },
+    ]
+    counts = Counter(str(entry["classification"]) for entry in lanes)
+    return {
+        "summary_text": (
+            "evidence=tested(session_control_and_handoff,council_mechanics) "
+            "runtime_present(continuity_effectiveness) "
+            "descriptive_only(council_decision_quality) "
+            "document_backed(axiom_and_theory_claims)"
+        ),
+        "classification_counts": {
+            "tested": int(counts.get("tested", 0)),
+            "runtime_present": int(counts.get("runtime_present", 0)),
+            "descriptive_only": int(counts.get("descriptive_only", 0)),
+            "document_backed": int(counts.get("document_backed", 0)),
+        },
+        "lanes": lanes,
+        "receiver_rule": (
+            "Use tested lanes for current workflow assumptions, runtime_present lanes as bounded mechanism presence, "
+            "descriptive_only lanes as context not proof, and document_backed lanes as intent/boundary rather than runtime fact."
+        ),
+    }
 
 
 def _build_subject_anchor(snapshot: Dict[str, Any]) -> Dict[str, Any]:

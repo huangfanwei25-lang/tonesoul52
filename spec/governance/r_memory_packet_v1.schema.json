@@ -1100,6 +1100,9 @@
         "working_style_import_limits": {
           "$ref": "#/$defs/working_style_import_limits"
         },
+        "evidence_readout_posture": {
+          "$ref": "#/$defs/evidence_readout_posture"
+        },
         "summary_text": {
           "type": "string",
           "minLength": 1
@@ -1112,6 +1115,93 @@
         },
         "subject_refresh": {
           "$ref": "#/$defs/subject_refresh"
+        }
+      }
+    },
+    "evidence_readout_posture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "summary_text",
+        "classification_counts",
+        "lanes",
+        "receiver_rule"
+      ],
+      "properties": {
+        "summary_text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "classification_counts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "tested",
+            "runtime_present",
+            "descriptive_only",
+            "document_backed"
+          ],
+          "properties": {
+            "tested": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "runtime_present": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "descriptive_only": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "document_backed": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "lanes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/evidence_readout_lane"
+          }
+        },
+        "receiver_rule": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "evidence_readout_lane": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "lane",
+        "classification",
+        "receiver_use",
+        "note"
+      ],
+      "properties": {
+        "lane": {
+          "type": "string",
+          "minLength": 1
+        },
+        "classification": {
+          "type": "string",
+          "enum": [
+            "tested",
+            "runtime_present",
+            "descriptive_only",
+            "document_backed"
+          ]
+        },
+        "receiver_use": {
+          "type": "string",
+          "minLength": 1
+        },
+        "note": {
+          "type": "string",
+          "minLength": 1
         }
       }
     },

@@ -447,6 +447,29 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
             receiver_guidance = str(working_style_import_limits.get("receiver_guidance", "")).strip()
             if receiver_guidance:
                 lines.append(f"    guidance={_clip(receiver_guidance)}")
+        evidence_readout_posture = project_memory_summary.get("evidence_readout_posture") or {}
+        if evidence_readout_posture:
+            lines.append("  evidence_readout_posture:")
+            summary_text = str(evidence_readout_posture.get("summary_text", "")).strip()
+            if summary_text:
+                lines.append(f"    summary={_clip(summary_text, limit=110)}")
+            classification_counts = evidence_readout_posture.get("classification_counts") or {}
+            if classification_counts:
+                lines.append(
+                    "    "
+                    f"tested={int(classification_counts.get('tested', 0) or 0)} "
+                    f"runtime_present={int(classification_counts.get('runtime_present', 0) or 0)} "
+                    f"descriptive_only={int(classification_counts.get('descriptive_only', 0) or 0)} "
+                    f"document_backed={int(classification_counts.get('document_backed', 0) or 0)}"
+                )
+            for lane in list(evidence_readout_posture.get("lanes") or [])[:3]:
+                lane_name = str(lane.get("lane", "")).strip()
+                classification = str(lane.get("classification", "")).strip()
+                if lane_name and classification:
+                    lines.append(f"    {lane_name}={classification}")
+            receiver_rule = str(evidence_readout_posture.get("receiver_rule", "")).strip()
+            if receiver_rule:
+                lines.append(f"    receiver_rule={_clip(receiver_rule, limit=120)}")
         routing_summary = project_memory_summary.get("routing_summary") or {}
         if routing_summary:
             lines.append("  routing_summary:")

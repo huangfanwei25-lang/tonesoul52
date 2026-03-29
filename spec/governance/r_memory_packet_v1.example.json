@@ -389,6 +389,48 @@
       "receiver_guidance": "Only part of the shared style is still echoed. Reuse it deliberately and keep checking task-local evidence instead of assuming full continuity.",
       "summary_text": "working_style_import=explicit_reuse_only safe=5 blocked=4 drift=medium"
     },
+    "evidence_readout_posture": {
+      "summary_text": "evidence=tested(session_control_and_handoff,council_mechanics) runtime_present(continuity_effectiveness) descriptive_only(council_decision_quality) document_backed(axiom_and_theory_claims)",
+      "classification_counts": {
+        "tested": 2,
+        "runtime_present": 1,
+        "descriptive_only": 1,
+        "document_backed": 1
+      },
+      "lanes": [
+        {
+          "lane": "session_control_and_handoff",
+          "classification": "tested",
+          "receiver_use": "safe_workflow_assumption",
+          "note": "Session-start/session-end, packet, delta, readiness, and receiver guards are regression-backed enough to reuse as current workflow discipline."
+        },
+        {
+          "lane": "continuity_effectiveness",
+          "classification": "runtime_present",
+          "receiver_use": "bounded_continuity_help",
+          "note": "Claims, checkpoints, compactions, and subject/working-style surfaces are live and partially tested, but broader cross-session effectiveness is still a bounded runtime claim rather than a proven quality guarantee."
+        },
+        {
+          "lane": "council_mechanics",
+          "classification": "tested",
+          "receiver_use": "safe_mechanism_assumption",
+          "note": "Council mechanics, dossier extraction, and suppression visibility are backed well enough to trust the mechanism shape."
+        },
+        {
+          "lane": "council_decision_quality",
+          "classification": "descriptive_only",
+          "receiver_use": "context_only",
+          "note": "Agreement, coherence, and confidence posture still describe internal review context, not calibrated correctness."
+        },
+        {
+          "lane": "axiom_and_theory_claims",
+          "classification": "document_backed",
+          "receiver_use": "intent_and_boundary_only",
+          "note": "Higher-order axioms and philosophical claims remain important, but they are not uniformly runtime-hard or regression-backed."
+        }
+      ],
+      "receiver_rule": "Use tested lanes for current workflow assumptions, runtime_present lanes as bounded mechanism presence, descriptive_only lanes as context not proof, and document_backed lanes as intent/boundary rather than runtime fact."
+    },
     "routing_summary": {
       "total_events": 2,
       "preview_count": 1,
@@ -469,7 +511,7 @@
       "recommended_command": "python scripts/apply_subject_refresh.py --agent <your-id> --field active_threads --refresh-signal \"subject-refresh heuristic reviewed\"",
       "summary_text": "subject_refresh=refresh_candidate direct=1 manual=2 hazards=2 evidence=c1/k1"
     },
-    "summary_text": "focus=runtime_adapter, redis | subject=Operate as a packet-first runtime steward with explicit boundaries. | claims=1 | pending=scripts/gateway.py, apps/dashboard/world.html | router=writes=1 previews=1 overrides=0 overlap=1 misroute_signals=1 top=checkpoint | working_style=partial reinforced=1/2 signals=6 drift=medium | subject_refresh=refresh_candidate direct=1 manual=2 hazards=2 evidence=c1/k1",
+    "summary_text": "focus=runtime_adapter, redis | subject=Operate as a packet-first runtime steward with explicit boundaries. | claims=1 | pending=scripts/gateway.py, apps/dashboard/world.html | router=writes=1 previews=1 overrides=0 overlap=1 misroute_signals=1 top=checkpoint | working_style=partial reinforced=1/2 signals=6 drift=medium | evidence=tested(session_control_and_handoff,council_mechanics) runtime_present(continuity_effectiveness) descriptive_only(council_decision_quality) document_backed(axiom_and_theory_claims) | subject_refresh=refresh_candidate direct=1 manual=2 hazards=2 evidence=c1/k1",
     "repo_progress": {
       "available": true,
       "branch": "codex/r-memory-compaction-lane-20260326",

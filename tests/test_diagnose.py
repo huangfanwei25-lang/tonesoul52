@@ -218,6 +218,41 @@ def _fake_packet():
                 "receiver_guidance": "Only part of the shared style is still echoed. Reuse it deliberately and keep checking task-local evidence instead of assuming full continuity.",
                 "summary_text": "working_style_import=explicit_reuse_only safe=2 blocked=2 drift=medium",
             },
+            "evidence_readout_posture": {
+                "summary_text": (
+                    "evidence=tested(session_control_and_handoff,council_mechanics) "
+                    "runtime_present(continuity_effectiveness) "
+                    "descriptive_only(council_decision_quality) "
+                    "document_backed(axiom_and_theory_claims)"
+                ),
+                "classification_counts": {
+                    "tested": 2,
+                    "runtime_present": 1,
+                    "descriptive_only": 1,
+                    "document_backed": 1,
+                },
+                "lanes": [
+                    {
+                        "lane": "session_control_and_handoff",
+                        "classification": "tested",
+                        "receiver_use": "safe_workflow_assumption",
+                        "note": "Session-start/session-end, packet, delta, readiness, and receiver guards are regression-backed enough to reuse as current workflow discipline.",
+                    },
+                    {
+                        "lane": "continuity_effectiveness",
+                        "classification": "runtime_present",
+                        "receiver_use": "bounded_continuity_help",
+                        "note": "Claims, checkpoints, compactions, and subject/working-style surfaces are live and partially tested, but broader cross-session effectiveness is still a bounded runtime claim rather than a proven quality guarantee.",
+                    },
+                    {
+                        "lane": "council_decision_quality",
+                        "classification": "descriptive_only",
+                        "receiver_use": "context_only",
+                        "note": "Agreement, coherence, and confidence posture still describe internal review context, not calibrated correctness.",
+                    },
+                ],
+                "receiver_rule": "Use tested lanes for current workflow assumptions, runtime_present lanes as bounded mechanism presence, descriptive_only lanes as context not proof, and document_backed lanes as intent/boundary rather than runtime fact.",
+            },
             "routing_summary": {
                 "total_events": 2,
                 "preview_count": 1,
@@ -502,6 +537,9 @@ def test_full_diagnostic_is_cp950_safe_and_includes_shared_runtime(monkeypatch) 
     assert "apply_posture=explicit_reuse_only safe=2 blocked=2" in report
     assert "safe_apply=scan_order: use shared packet/claim surfaces" in report
     assert "must_not_import=canonical_governance_truth: habits must not become runtime law" in report
+    assert "evidence_readout_posture:" in report
+    assert "tested=2 runtime_present=1 descriptive_only=1 document_backed=1" in report
+    assert "continuity_effectiveness=runtime_present" in report
     assert "routing_summary:" in report
     assert "subject_refresh:" in report
     assert "status=refresh_candidate recommended=True newer_compactions=1 newer_checkpoints=1 hazards=1" in report
