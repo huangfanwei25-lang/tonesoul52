@@ -127,6 +127,12 @@
 - [x] remove the untracked PATH source-material drafts after distillation so they stop masquerading as pending authority surfaces
 **Success Criteria**: The useful PATH-derived decisions remain discoverable in ToneSoul-native form, while the raw `path_integration_*` drafts are no longer cluttering the worktree or competing with existing boundary contracts.
 
+## Phase 706: Stale Source-Material Supersession Cleanup (2026-03-29)
+- [x] review the remaining untracked implementation-gap, prompt-source, and README-source drafts against current runtime, README, and authority lanes
+- [x] keep only the useful decisions in one ToneSoul-native supersession review instead of promoting stale or mojibake-heavy raw drafts
+- [x] remove the superseded raw drafts from the worktree so later agents stop mistaking them for pending authority or unfinished roadmap items
+**Success Criteria**: The useful decisions from the stale source-material layer remain discoverable in one review note, while the outdated raw drafts no longer compete with current runtime truth, prompt-discipline docs, or the live README entry surfaces.
+
 ## Phase 679: Continuity Freshness And Import Posture (2026-03-29)
 - [x] Add bounded `freshness_hours` to the packet continuity surfaces that later agents actually inherit at session start
 - [x] Add a machine-readable `import_posture` section to `start_agent_session.py` so agents can distinguish directly importable posture/claims from advisory compactions, snapshots, and dossiers

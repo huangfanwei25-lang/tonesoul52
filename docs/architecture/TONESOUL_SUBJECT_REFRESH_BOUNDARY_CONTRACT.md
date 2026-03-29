@@ -287,7 +287,7 @@ When both `newer_compactions > 0` and `newer_checkpoints > 0` and `misroute_sign
 | `TONESOUL_SHARED_R_MEMORY_OPERATIONS_CONTRACT.md` | Defines the operational semantics of each source surface |
 | `TONESOUL_CLAIM_AUTHORITY_MATRIX.md` | Provides term-level authority context; this contract operates at the field-family level |
 | `TONESOUL_LAW_RUNTIME_BOUNDARY_CONTRACT.md` | Classifies law/ terms; this contract classifies runtime coordination surfaces |
-| `TONESOUL_IMPLEMENTATION_GAP_TRIAGE_2026-03-27.md` | Identifies gap terms; this contract addresses the specific gap of subject refresh heuristics |
+| `tonesoul_stale_source_material_supersession_review_2026-03-29.md` | Records that the earlier implementation-gap triage draft was a source-material step later superseded by current runtime and authority surfaces |
 | `subject_snapshot_v1.schema.json` | Defines the schema fields this contract governs |
 
 ---

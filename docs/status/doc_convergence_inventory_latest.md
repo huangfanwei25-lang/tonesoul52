@@ -1,23 +1,23 @@
 # Document Convergence Inventory Latest
 
-- generated_at: 2026-03-29T10:47:12Z
-- primary_status_line: `doc_convergence_ready | authored_files=2310 collisions=27 missing_purpose=147 missing_date=107`
-- runtime_status_line: `entrypoints | doc_inventory=doc_convergence_inventory_latest.json largest_family=docs_law_engineering_mirror architecture_docs=55`
+- generated_at: 2026-03-29T15:43:42Z
+- primary_status_line: `doc_convergence_ready | authored_files=2302 collisions=27 missing_purpose=140 missing_date=101`
+- runtime_status_line: `entrypoints | doc_inventory=doc_convergence_inventory_latest.json largest_family=docs_law_engineering_mirror architecture_docs=54`
 - artifact_policy_status_line: `doc_scope=authored_only | content_check=hash_plus_similarity generated_noise=excluded`
 
 ## Metrics
-- `authored_file_count`: `2310`
+- `authored_file_count`: `2302`
 - `collision_count`: `27`
 - `exact_match_collision_count`: `16`
 - `divergent_collision_count`: `11`
-- `missing_purpose_count`: `147`
-- `missing_date_count`: `107`
+- `missing_purpose_count`: `140`
+- `missing_date_count`: `101`
 - `missing_purpose_sample_count`: `40`
 - `missing_date_sample_count`: `40`
 - `missing_metadata_sample_limit`: `40`
 
 ## Category Counts
-- `architecture_doc`: `55`
+- `architecture_doc`: `54`
 - `archive_doc`: `1`
 - `chronicle_doc`: `48`
 - `constitution_doc`: `1`
@@ -31,7 +31,7 @@
 - `paradox_fixture`: `8`
 - `paradox_test_fixture`: `8`
 - `philosophy_doc`: `27`
-- `plan_doc`: `116`
+- `plan_doc`: `109`
 - `report_doc`: `29`
 - `research_doc`: `9`
 - `root_entrypoint`: `11`
@@ -97,19 +97,12 @@
 - `MEMORY.md`
 - `docs/RFC-015_Self_Dogfooding_Runtime_Adapter.md`
 - `docs/notes/SESSION_JOURNAL_2026-03-24_ANTIGRAVITY.md`
-- `docs/plans/borrowable_prompt_patterns_from_industry_2026-03-29.md`
 - `docs/plans/memory_subjectivity_review_discussion_brief_2026-03-10.md`
 - `docs/plans/memory_subjectivity_reviewed_rejection_producer_guard_addendum_2026-03-11.md`
 - `docs/plans/memory_subjectivity_runtime_summary_addendum_2026-03-10.md`
 - `docs/plans/memory_subjectivity_shared_handoff_surface_utility_addendum_2026-03-11.md`
 - `docs/plans/memory_subjectivity_tension_grouping_addendum_2026-03-10.md`
 - `docs/plans/memory_subjectivity_worktree_settlement_handoff_preview_addendum_2026-03-11.md`
-- `docs/plans/path_integration_01_blackbox_boundary.md`
-- `docs/plans/path_integration_02_impact_tracking.md`
-- `docs/plans/path_integration_03_path_semantic_marking.md`
-- `docs/plans/path_integration_04_tension_delayed_commit.md`
-- `docs/plans/path_integration_05_falsifiability_conditions.md`
-- `docs/plans/readme_restructure_plan_2026-03-29.md`
 - `docs/plans/release_readiness_staging.md`
 - `docs/plans/release_v1.0_go_nogo_2026-02-24.md`
 - `docs/plans/repo_governance_settlement_addendum_2026-03-08.md`
@@ -132,18 +125,19 @@
 - `docs/plans/true_verification_host_schedule_runbook_2026-03-08.md`
 - `docs/plans/true_verification_task_runtime_hygiene_addendum_2026-03-08.md`
 - `docs/plans/true_verification_task_scheduler_install_addendum_2026-03-08.md`
+- `docs/plans/true_verification_task_scheduler_template_addendum_2026-03-08.md`
+- `docs/plans/true_verification_task_status_addendum_2026-03-08.md`
+- `docs/plans/wfgy_problem_map_fit_for_tonesoul_2026-03-14.md`
+- `docs/plans/worktree_settlement_mainline_addendum_2026-03-08.md`
+- `docs/privacy_policy.md`
+- `docs/proposals/phase7_dream_engine.md`
+- `docs/releases/v1.0.0-stable-postmortem.md`
 
 ## Top Missing Date Metadata
 - `AGENTS.md`
 - `HANDOFF.md`
 - `MEMORY.md`
 - `docs/RFC-015_Self_Dogfooding_Runtime_Adapter.md`
-- `docs/plans/path_integration_01_blackbox_boundary.md`
-- `docs/plans/path_integration_02_impact_tracking.md`
-- `docs/plans/path_integration_03_path_semantic_marking.md`
-- `docs/plans/path_integration_04_tension_delayed_commit.md`
-- `docs/plans/path_integration_05_falsifiability_conditions.md`
-- `docs/plans/path_integration_codex_handoff.md`
 - `docs/plans/scribe_architecture_evolution.md`
 - `docs/plans/status_handoff_grammar.md`
 - `docs/plans/tonesoul_market_mirror_roadmap.md`
@@ -174,6 +168,12 @@
 - `docs/環境設定.md`
 - `law/.github/ISSUE_TEMPLATE.md`
 - `law/.github/ISSUE_TEMPLATE/ethics-safety-report.md`
+- `law/.github/ISSUE_TEMPLATE/general_issue.md`
+- `law/.github/PULL_REQUEST_TEMPLATE.md`
+- `law/CODE_OF_CONDUCT.md`
+- `law/CONTRIBUTING.md`
+- `law/ENGINEERING_OVERVIEW.md`
+- `law/GOVERNANCE_LOG.md`
 
 ## Basename Collisions
 - `APPENDIX_ENGINEERING.md` [docs_law_engineering_mirror] exact=`true` divergent=`false` max_similarity=`1.0`

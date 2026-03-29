@@ -254,7 +254,7 @@ You may add 2-6 more only if they are comparably dangerous or structurally impor
 
 Create:
 
-- `docs/architecture/TONESOUL_IMPLEMENTATION_GAP_TRIAGE_2026-03-27.md`
+- one bounded implementation-gap triage note for the selected high-gap terms
 
 This should be a table-first triage for the selected high-gap terms.
 
@@ -275,11 +275,16 @@ Each row should include at least:
 
 Optional, only if clearly justified by Deliverable D:
 
-- `docs/plans/tonesoul_gap_followup_candidates_2026-03-27.md`
+- one small follow-up candidate list if several items truly deserve separate future work tickets
 
 Use this only if several items truly deserve separate future work tickets.
 Do not generate a large roadmap.
 Keep it to a small candidate list with one paragraph per item.
+
+Historical note:
+
+- the original raw outputs for this extension were later superseded and retired during source-material cleanup
+- see `docs/plans/tonesoul_stale_source_material_supersession_review_2026-03-29.md`
 
 ## Follow-Up Boundaries
 
