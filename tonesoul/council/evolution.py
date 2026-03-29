@@ -66,6 +66,9 @@ class CouncilEvolution:
     DEFAULT_PERSPECTIVES = ("guardian", "analyst", "critic", "advocate", "axiomatic")
     MIN_WEIGHT = 0.5
     MAX_WEIGHT = 2.0
+    SUPPRESSION_WEIGHT_THRESHOLD = 0.95
+    SUPPRESSION_DISSENT_FLOOR = 2
+    SUPPRESSION_ALIGNMENT_CEILING = 0.5
 
     def __init__(self, state_path: Path | str | None = None) -> None:
         self._state_path = Path(state_path) if state_path else _DEFAULT_STATE_PATH
@@ -124,10 +127,51 @@ class CouncilEvolution:
     def get_weights(self) -> Dict[str, float]:
         return dict(self._weights)
 
+    def _build_suppression_observability(self) -> Dict[str, object]:
+        suppressed: list[Dict[str, object]] = []
+        for name, history in self._history.items():
+            weight = float(self._weights.get(name, 1.0))
+            dissent_rate = round(
+                history.dissent_count / history.total_votes, 3
+            ) if history.total_votes else 0.0
+            if (
+                history.total_votes >= 3
+                and history.dissent_count >= self.SUPPRESSION_DISSENT_FLOOR
+                and history.alignment_rate <= self.SUPPRESSION_ALIGNMENT_CEILING
+                and weight < self.SUPPRESSION_WEIGHT_THRESHOLD
+            ):
+                suppressed.append(
+                    {
+                        "perspective": name,
+                        "weight": round(weight, 3),
+                        "baseline_weight": 1.0,
+                        "alignment_rate": round(history.alignment_rate, 3),
+                        "dissent_rate": dissent_rate,
+                        "avg_confidence": round(history.avg_confidence, 3),
+                        "reason": "weight_below_baseline_with_repeated_dissent",
+                    }
+                )
+
+        if suppressed:
+            summary_text = (
+                "Repeated dissenting perspectives now sit below baseline weight; "
+                "treat agreement-heavy council outcomes as potentially conformity-biased."
+            )
+        else:
+            summary_text = (
+                "No repeated dissenting perspective currently falls below the suppression threshold."
+            )
+        return {
+            "flag": bool(suppressed),
+            "suppressed_perspectives": suppressed,
+            "summary_text": summary_text,
+        }
+
     def get_summary(self) -> Dict[str, object]:
         return {
             "weights": self.get_weights(),
             "history": {name: history.to_dict() for name, history in self._history.items()},
+            "suppression_observability": self._build_suppression_observability(),
         }
 
     # ------------------------------------------------------------------ #

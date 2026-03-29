@@ -220,6 +220,20 @@ def _transcript_list(transcript: dict[str, Any] | None, key: str) -> list[dict[s
     return []
 
 
+def _transcript_evolution_suppression_flag(transcript: dict[str, Any] | None) -> bool | None:
+    if not isinstance(transcript, dict):
+        return None
+    evolution = transcript.get("council_evolution")
+    if not isinstance(evolution, dict):
+        return None
+    suppression = evolution.get("suppression_observability")
+    if not isinstance(suppression, dict):
+        return None
+    if "flag" not in suppression:
+        return None
+    return bool(suppression.get("flag"))
+
+
 def build_dossier(
     verdict: CouncilVerdict,
     *,
@@ -238,6 +252,11 @@ def build_dossier(
         change_of_position
         if change_of_position is not None
         else _transcript_list(transcript, "change_of_position")
+    )
+    resolved_evolution_suppression_flag = (
+        evolution_suppression_flag
+        if evolution_suppression_flag is not None
+        else _transcript_evolution_suppression_flag(transcript)
     )
     grounding_summary = _build_grounding_summary(verdict.votes)
     payload: dict[str, Any] = {
@@ -263,6 +282,6 @@ def build_dossier(
         ),
         "opacity_declaration": opacity_declaration,
     }
-    if evolution_suppression_flag is not None:
-        payload["evolution_suppression_flag"] = bool(evolution_suppression_flag)
+    if resolved_evolution_suppression_flag is not None:
+        payload["evolution_suppression_flag"] = bool(resolved_evolution_suppression_flag)
     return payload

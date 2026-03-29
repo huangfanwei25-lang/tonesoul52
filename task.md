@@ -24,6 +24,7 @@
 - Phase 684: surface descriptive council confidence decomposition so later agents stop reading one agreement number as if it were calibrated accuracy
 - Phase 685: block recycled carry-forward from silently refreshing subject identity when a new compaction repeats the same handoff without new evidence
 - Phase 686: surface receiver-side import guards at session start so later agents stop silently promoting advisory compactions into planning or identity
+- Phase 687: surface council evolution suppression visibility so later agents can see when repeated dissent may be getting conformity-biased below baseline weight
 
 ## Phase 679: Continuity Freshness And Import Posture (2026-03-29)
 - [x] Add bounded `freshness_hours` to the packet continuity surfaces that later agents actually inherit at session start
@@ -72,6 +73,12 @@
 - [x] Emit explicit receiver alerts when the latest carry-forward is resumability memory only and should not be promoted into subject identity or canonical planning
 - [x] Lock the new session-start behavior with script-level regression tests
 **Success Criteria**: A later agent running the session-start bundle can see, before editing anything, that the newest compaction is advisory-only due to recycled carry-forward and must not be promoted beyond bounded review.
+
+## Phase 687: Council Evolution Suppression Visibility (2026-03-29)
+- [x] Add a descriptive `suppression_observability` surface to `CouncilEvolution.get_summary()` so repeated dissenting perspectives below baseline weight become visible without changing weight logic
+- [x] Let `build_dossier()` and packet dossier summaries inherit the suppression flag from transcript-level council evolution observability
+- [x] Lock the new visibility with evolution, dossier, runtime-adapter, and packet regression tests
+**Success Criteria**: Later agents can inspect a council evolution summary, dossier, or packet surface and tell when repeated dissent may be experiencing conformity bias, without mistaking that flag for calibrated quality or altering council verdict behavior.
 
 ## Phase 666: Bounded Council Dossier Carry Surfaces (2026-03-28)
 - [x] Let `SessionTrace` store an optional compact council dossier input while keeping the canonical trace schema backward-compatible

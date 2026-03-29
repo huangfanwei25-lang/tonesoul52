@@ -122,6 +122,7 @@ def test_commit_writes_trace_jsonl(tmp_state: Path, tmp_traces: Path) -> None:
                 "grounding_posture": "not_required",
                 "adversarial_posture": "not_tested",
             },
+            "evolution_suppression_flag": True,
             "opacity_declaration": "partially_observable",
         },
     )
@@ -135,6 +136,7 @@ def test_commit_writes_trace_jsonl(tmp_state: Path, tmp_traces: Path) -> None:
     assert record["council_dossier"]["final_verdict"] == "approve"
     assert record["council_dossier"]["confidence_posture"] == "moderate"
     assert record["council_dossier"]["confidence_decomposition"]["calibration_status"] == "descriptive_only"
+    assert record["council_dossier"]["evolution_suppression_flag"] is True
 
 
 def test_commit_merges_tension_events(tmp_state: Path, tmp_traces: Path) -> None:
@@ -333,6 +335,7 @@ def test_r_memory_packet_exposes_runtime_dominance_and_recent_trace(
                 "grounding_posture": "not_required",
                 "adversarial_posture": "survived_dissent",
             },
+            "evolution_suppression_flag": True,
             "opacity_declaration": "partially_observable",
         },
     )
@@ -398,6 +401,7 @@ def test_r_memory_packet_exposes_runtime_dominance_and_recent_trace(
         packet["recent_traces"][0]["council_dossier_summary"]["confidence_decomposition"]["adversarial_posture"]
         == "survived_dissent"
     )
+    assert packet["recent_traces"][0]["council_dossier_summary"]["evolution_suppression_flag"] is True
     assert packet["recent_traces"][0]["freshness_hours"] >= 0.0
     assert packet["operator_guidance"]["backend_mode"] == "file"
     assert packet["operator_guidance"]["session_start"][0].startswith(

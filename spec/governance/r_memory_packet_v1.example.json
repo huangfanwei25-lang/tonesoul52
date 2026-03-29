@@ -108,6 +108,7 @@
         "has_minority_report": true,
         "deliberation_mode": "standard_council",
         "opacity_declaration": "partially_observable",
+        "evolution_suppression_flag": true,
         "confidence_decomposition": {
           "calibration_status": "descriptive_only",
           "agreement_score": 0.5,

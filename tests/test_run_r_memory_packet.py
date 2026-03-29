@@ -127,6 +127,7 @@ def test_run_r_memory_packet_emits_json(capsys, monkeypatch, tmp_path: Path) -> 
                             "grounding_posture": "not_required",
                             "adversarial_posture": "survived_dissent"
                         },
+                        "evolution_suppression_flag": True,
                         "opacity_declaration": "partially_observable"
                     },
                     "next_action": "keep compaction non-canonical",
@@ -255,6 +256,7 @@ def test_run_r_memory_packet_emits_json(capsys, monkeypatch, tmp_path: Path) -> 
         output["recent_compactions"][0]["council_dossier"]["confidence_decomposition"]["calibration_status"]
         == "descriptive_only"
     )
+    assert output["recent_compactions"][0]["council_dossier"]["evolution_suppression_flag"] is True
     assert output["recent_subject_snapshots"][0]["snapshot_id"] == "subj-1"
     assert output["recent_subject_snapshots"][0]["freshness_hours"] >= 0.0
     assert output["recent_routing_events"][0]["surface"] == "checkpoint"

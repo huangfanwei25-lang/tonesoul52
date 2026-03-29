@@ -89,3 +89,40 @@ def test_alignment_rate_computation():
     history.record_vote(matched_final=False)
 
     assert abs(history.alignment_rate - (2 / 3)) < 1e-6
+
+
+def test_summary_surfaces_suppression_observability_for_repeated_dissent(
+    evolution: CouncilEvolution,
+):
+    for _ in range(5):
+        evolution.record_deliberation(
+            perspective_verdicts={
+                "guardian": "approve",
+                "analyst": "approve",
+                "critic": "block",
+                "advocate": "approve",
+                "axiomatic": "approve",
+            },
+            final_verdict="approve",
+            perspective_confidences={
+                "guardian": 0.8,
+                "analyst": 0.8,
+                "critic": 0.91,
+                "advocate": 0.8,
+                "axiomatic": 0.8,
+            },
+        )
+        evolution.evolve_weights()
+
+    summary = evolution.get_summary()
+    suppression = summary["suppression_observability"]
+
+    assert suppression["flag"] is True
+    critic_entry = next(
+        entry
+        for entry in suppression["suppressed_perspectives"]
+        if entry["perspective"] == "critic"
+    )
+    assert critic_entry["weight"] < 1.0
+    assert critic_entry["dissent_rate"] == 1.0
+    assert critic_entry["reason"] == "weight_below_baseline_with_repeated_dissent"

@@ -952,6 +952,8 @@ def _build_council_dossier_summary(payload: Optional[Dict[str, Any]]) -> Dict[st
     decomposition = dossier.get("confidence_decomposition")
     if isinstance(decomposition, dict) and decomposition:
         summary["confidence_decomposition"] = decomposition
+    if "evolution_suppression_flag" in dossier:
+        summary["evolution_suppression_flag"] = bool(dossier.get("evolution_suppression_flag"))
     return summary
 
 

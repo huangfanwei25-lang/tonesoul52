@@ -390,6 +390,9 @@
         "opacity_declaration": {
           "type": "string"
         },
+        "evolution_suppression_flag": {
+          "type": "boolean"
+        },
         "confidence_decomposition": {
           "$ref": "#/$defs/confidence_decomposition"
         }

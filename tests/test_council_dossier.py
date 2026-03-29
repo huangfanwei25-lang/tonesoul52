@@ -210,3 +210,39 @@ def test_build_dossier_aggregates_unique_evidence_and_grounding_summary():
     }
     assert dossier["change_of_position"] == [{"perspective": "critic"}]
     assert dossier["opacity_declaration"] == "partially_observable"
+
+
+def test_build_dossier_derives_evolution_suppression_flag_from_transcript():
+    votes = [
+        _vote(PerspectiveType.ANALYST, VoteDecision.APPROVE, 0.84, "Looks fine"),
+        _vote(PerspectiveType.CRITIC, VoteDecision.OBJECT, 0.9, "Boundary issue"),
+    ]
+    verdict = _verdict(
+        votes,
+        verdict=VerdictType.APPROVE,
+        c_inter=0.62,
+        approval_rate=0.5,
+        min_confidence=0.84,
+        transcript={
+            "council_evolution": {
+                "suppression_observability": {
+                    "flag": True,
+                    "suppressed_perspectives": [
+                        {
+                            "perspective": "critic",
+                            "weight": 0.91,
+                            "baseline_weight": 1.0,
+                            "alignment_rate": 0.0,
+                            "dissent_rate": 1.0,
+                            "avg_confidence": 0.9,
+                            "reason": "weight_below_baseline_with_repeated_dissent",
+                        }
+                    ],
+                }
+            }
+        },
+    )
+
+    dossier = build_dossier(verdict)
+
+    assert dossier["evolution_suppression_flag"] is True
