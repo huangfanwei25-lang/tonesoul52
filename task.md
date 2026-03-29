@@ -19,6 +19,8 @@
 - Phase 679: surface continuity freshness and receiver import posture so session-start bundles stop treating all shared surfaces as equally current or equally authoritative
 - Phase 680: integrate evidence topology into the authority lanes so later agents stop collapsing high authority and high evidence into the same claim
 - Phase 681: deepen checkpoint and compaction regression coverage so continuity claims are defended by tests rather than prose alone
+- Phase 682: restructure the public README into a guided entrypoint so humans and AI stop facing an undifferentiated architecture link wall
+- Phase 683: run a Claude-owned docs mega-program for audience routing, historical-surface mapping, and mojibake hazard registration without colliding with Codex's entrypoint rewrites
 
 ## Phase 679: Continuity Freshness And Import Posture (2026-03-29)
 - [x] Add bounded `freshness_hours` to the packet continuity surfaces that later agents actually inherit at session start
@@ -37,6 +39,18 @@
 - [x] Add more script-level tests for `save_compaction.py` covering empty carry-forward, limit behavior, stdin import, and legacy-sidecar continuity
 - [x] Keep the wave test-only: strengthen regression confidence for continuity surfaces without changing runtime semantics
 **Success Criteria**: `checkpoint` and `compaction` stop looking like two-test happy-path surfaces and instead have enough script-level regression coverage to support stronger continuity claims.
+
+## Phase 682: Public README Entrypoint Restructure (2026-03-29)
+- [x] Replace the long architecture link wall with a 30-second system map, audience split, five grouped system areas, and a short evidence-honesty section
+- [x] Route AI readers to `AI_ONBOARDING`, `docs/AI_QUICKSTART`, and `start_agent_session.py` instead of local collaborator notes
+- [x] Preserve deeper architecture coverage behind categorized links rather than deleting it outright
+**Success Criteria**: A first-time human or AI reader can identify what ToneSoul is, where to start, and which lane to open next without scanning dozens of undifferentiated links.
+
+## Phase 683: Claude Entrypoint Simplification And Encoding Program (2026-03-29)
+- [x] Extend the standing Claude work order with a documentation-only mega-program for audience routing, historical-spec lineage, encoding hazards, and safe simplification boundaries
+- [x] Keep the workstream explicitly away from `README.md`, `docs/README.md`, `docs/INDEX.md`, and runtime surfaces so Codex retains implementation ownership
+- [x] Require staged deliverables substantial enough to guide several cleanup waves rather than one small contract note
+**Success Criteria**: Claude has one large, detailed, non-overlapping work order that can occupy a long synthesis pass while directly improving future entrypoint cleanup and documentation hygiene.
 
 ## Phase 666: Bounded Council Dossier Carry Surfaces (2026-03-28)
 - [x] Let `SessionTrace` store an optional compact council dossier input while keeping the canonical trace schema backward-compatible

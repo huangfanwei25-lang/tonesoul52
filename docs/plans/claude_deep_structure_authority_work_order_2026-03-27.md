@@ -1491,3 +1491,256 @@ When done, report back with:
 - the 3 claim families most likely to be overstated if later agents are careless
 - the cleanest evidence-ladder split you found
 - which one bounded evidence-surface improvement Codex should implement first without starting a full verification overhaul
+
+---
+
+## Follow-Up Extension: Entrypoint Simplification, Historical Surface, And Encoding Recovery Program
+
+This extension is intentionally larger than the earlier follow-ups.
+It is a documentation-architecture program, not a one-note contract ticket.
+
+Its purpose is to answer a repo-wide usability question that still remains open:
+
+> how should a human or later AI move through ToneSoul's public document surfaces without getting lost in legacy specs, authority collisions, mojibake-corrupted notes, or giant undifferentiated link walls?
+
+This is the kind of work that can easily absorb 6+ focused hours if done seriously.
+
+## Why This Fits Claude
+
+This program requires the same strengths as the earlier deep-structure passes, but across a wider documentation hygiene surface:
+
+- scanning many root and `docs/` surfaces without losing audience distinctions
+- recognizing which files are current entrypoints versus historical lineage versus auxiliary reference
+- identifying encoding / mojibake hazards that make otherwise-good docs unreadable to later agents
+- writing crisp boundary artifacts that help Codex simplify entrypoints without flattening legitimate depth
+
+This is still documentation-only.
+It is not permission to rewrite runtime code, packet schema, or protected files.
+
+## Program Objective
+
+Produce a repo-backed simplification and hazard map for ToneSoul's public-facing documentation surfaces so that:
+
+- human developers,
+- researchers,
+- later AI agents,
+- and curious non-operators
+
+can each find the right entry lane quickly without mistaking historical, corrupted, or over-deep surfaces for the first thing to read.
+
+## Mandatory Scope
+
+This program must examine at minimum:
+
+- root entry surfaces
+  - `README.md`
+  - `README.zh-TW.md`
+  - `SOUL.md`
+  - `LETTER_TO_AI.md`
+- AI/operator entry surfaces
+  - `AI_ONBOARDING.md`
+  - `docs/AI_QUICKSTART.md`
+  - `docs/AI_REFERENCE.md`
+  - `docs/README.md`
+  - `docs/INDEX.md`
+- canonical architecture and runtime companion surfaces
+  - `docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md`
+  - `docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md`
+  - `docs/architecture/TONESOUL_SHARED_R_MEMORY_OPERATIONS_CONTRACT.md`
+  - `docs/architecture/DOC_AUTHORITY_STRUCTURE_MAP.md`
+- historical and legacy spec surfaces
+  - `MGGI_SPEC.md`
+  - `TAE-01_Architecture_Spec.md`
+  - `RFC-015_Self_Dogfooding_Runtime_Adapter.md`
+  - older notes that still attract search traffic or link gravity
+- generated and status surfaces that affect navigation truth
+  - `docs/status/doc_convergence_inventory_latest.json`
+  - `docs/status/doc_authority_structure_latest.json`
+
+You may read more, but do not turn this into a blind all-doc dump.
+
+## Program Deliverables
+
+### Deliverable AD
+
+Create:
+
+- `docs/architecture/TONESOUL_AUDIENCE_ROUTING_AND_ENTRY_CONTRACT.md`
+
+This should answer:
+
+- what a developer should open first
+- what a researcher should open first
+- what a later AI agent should open first
+- what a curious human should open first
+
+For each audience define:
+
+- first document
+- second document
+- third document or first command
+- what to avoid opening first
+- the most common navigation mistake
+
+Keep it table-first.
+
+### Deliverable AE
+
+Create:
+
+- `docs/architecture/TONESOUL_HISTORICAL_SPEC_AND_LEGACY_SURFACE_MAP.md`
+
+This should separate:
+
+1. current canonical surfaces
+2. active companion surfaces
+3. historical-but-useful lineage docs
+4. legacy docs that should not be read first
+5. deferred or archived surfaces that still create search gravity
+
+For each major historical surface include:
+
+- current role
+- why it still exists
+- whether later agents may cite it directly
+- what current canonical file supersedes or reframes it
+
+### Deliverable AF
+
+Create:
+
+- `docs/architecture/TONESOUL_ENCODING_AND_MOJIBAKE_HAZARD_REGISTER.md`
+
+This should be a hazard register for high-traffic docs with:
+
+- encoding corruption
+- garbled headers
+- broken section labels
+- unreadable mixed-language spans
+- likely copy/paste artifacts that would mislead later agents
+
+For each affected file include:
+
+- severity
+  - `critical`
+  - `high`
+  - `medium`
+  - `low`
+- whether the file is a public entrypoint, an AI entrypoint, a canonical contract, a historical doc, or a low-traffic side lane
+- what type of corruption is present
+- whether the corruption is merely cosmetic or structurally misleading
+- the safest cleanup order
+
+### Deliverable AG
+
+Create:
+
+- `docs/architecture/TONESOUL_DOC_SURFACE_SIMPLIFICATION_BOUNDARY_CONTRACT.md`
+
+This should name the simplification rules Codex may safely apply when reducing entrypoint complexity.
+
+Include rules such as:
+
+- when a long link wall may be collapsed into categories
+- when a deep lane must remain visible instead of hidden
+- when evidence posture must be surfaced near a claim
+- when an AI entrypoint must use operational docs instead of local collaborator notes
+- when a historical doc may remain linked but must be explicitly labeled as lineage or non-first-read
+
+This document should help Codex simplify public docs without flattening authority.
+
+### Deliverable AH
+
+Optional, only if clearly justified:
+
+- `docs/plans/tonesoul_docs_cleanup_wave_candidates_2026-03-29.md`
+
+Use this only if the earlier deliverables naturally imply a bounded cleanup sequence.
+If you create it, keep it to 5-8 waves max and phrase them as realistic bounded waves, not a giant perfect-doc manifesto.
+
+## Required Method
+
+Do this in stages.
+
+### Stage 0: Entry surface inventory
+
+List the top public and AI-facing entry surfaces and classify their audience and current authority role.
+
+### Stage 1: Audience routing pass
+
+Determine the cleanest first-hop reading path for:
+
+- developer
+- researcher
+- AI agent
+- curious human
+
+Name the first-read hazards for each.
+
+### Stage 2: Historical and legacy pass
+
+Map the current relationship between canonical architecture, active companions, and historical specs.
+Do not treat "older but meaningful" and "obsolete" as the same category.
+
+### Stage 3: Encoding and readability pass
+
+Audit high-traffic docs for mojibake, broken section headers, or unreadable mixed encoding.
+Focus on documents that later agents are most likely to open first, not obscure side notes.
+
+### Stage 4: Simplification boundary pass
+
+Decide what Codex may safely compress, collapse, relabel, or move behind `<details>` without harming authority clarity.
+
+### Stage 5: Handoff synthesis
+
+Return one clear recommendation for:
+
+- what should be simplified now
+- what should stay visible even if it is long
+- what must be repaired before any further simplification
+
+## Program Boundaries
+
+Do not do these things in this extension:
+
+- do not modify `README.md`
+- do not modify `docs/README.md`
+- do not modify `docs/INDEX.md`
+- do not modify `AI_ONBOARDING.md`
+- do not modify `docs/AI_QUICKSTART.md`
+- do not modify `docs/AI_REFERENCE.md`
+- do not change runtime code, packet schema, or session scripts
+- do not touch protected files like `AGENTS.md`
+- do not silently rewrite history or rename many files
+
+This is a map-and-boundary program.
+Codex will own the actual entrypoint rewrites.
+
+## Non-Goals
+
+This extension is not asking for:
+
+- a brand-new philosophy layer
+- a frontend redesign
+- a giant translation effort
+- runtime behavior changes
+- speculative cleanup of low-value obscure docs
+
+## Acceptance Criteria
+
+This extension is successful if:
+
+- a later agent can tell which document should be read first for each audience
+- canonical, companion, historical, and low-priority legacy surfaces are visibly separated
+- mojibake and readability hazards are surfaced in a way that helps cleanup ordering
+- Codex can simplify README and entry lanes later without guessing what depth is safe to hide
+
+## Handoff Back To Codex
+
+When done, report back with:
+
+- the single highest-value simplification ToneSoul can safely make now
+- the single most dangerous entrypoint mistake later agents currently make
+- the 3 highest-severity mojibake or readability hazards
+- which historical surfaces still deserve first-page visibility and which should only remain as labeled lineage references
+- which one cleanup wave Codex should implement first for maximum reader relief with minimum authority damage

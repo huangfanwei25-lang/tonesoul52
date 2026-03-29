@@ -86,86 +86,15 @@ python scripts/tension_dashboard.py --work-category research
 
 ![ToneSoul Dashboard](docs/images/dashboard_preview.png)
 
-## Architecture (2 minutes)
+## 30-Second System Map
 
-ToneSoul should be read as an externalized cognitive operating system, not just a prompt stack.
-The canonical architecture anchor is
-[`docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md`](docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md).
-For the layer-by-layer bridge from the older six-layer runtime to the newer model-attachment path, open
-[`docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md`](docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md).
-For the concrete operational boundaries, open
-[`docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md`](docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md)
-and
-[`docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md`](docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md).
-For compact machine-readable mirrors, open
-[`docs/status/l7_retrieval_contract_latest.json`](docs/status/l7_retrieval_contract_latest.json)
-and
-[`docs/status/l8_distillation_boundary_latest.json`](docs/status/l8_distillation_boundary_latest.json).
-For the first directly usable operational packet and gate report, open
-[`docs/status/l7_operational_packet_latest.json`](docs/status/l7_operational_packet_latest.json)
-and
-[`docs/status/l8_adapter_dataset_gate_latest.json`](docs/status/l8_adapter_dataset_gate_latest.json).
-For claim-boundary and theory/mechanism separation, open
-[`docs/architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md`](docs/architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md)
-and
-[`docs/status/abc_firewall_latest.json`](docs/status/abc_firewall_latest.json).
-For claim strength and evidence honesty, open
-[`docs/architecture/TONESOUL_CLAIM_TO_EVIDENCE_MATRIX.md`](docs/architecture/TONESOUL_CLAIM_TO_EVIDENCE_MATRIX.md),
-[`docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md`](docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md),
-and
-[`docs/architecture/TONESOUL_TEST_AND_VALIDATION_TOPOLOGY_MAP.md`](docs/architecture/TONESOUL_TEST_AND_VALIDATION_TOPOLOGY_MAP.md).
-For observable-shell honesty and bounded axiom challenge posture, open
-[`docs/architecture/TONESOUL_OBSERVABLE_SHELL_OPACITY_CONTRACT.md`](docs/architecture/TONESOUL_OBSERVABLE_SHELL_OPACITY_CONTRACT.md)
-and
-[`docs/architecture/TONESOUL_AXIOM_FALSIFICATION_MAP.md`](docs/architecture/TONESOUL_AXIOM_FALSIFICATION_MAP.md).
-For council replayability, dissent preservation, and deliberation-depth discipline, open
-[`docs/architecture/TONESOUL_COUNCIL_DOSSIER_AND_DISSENT_CONTRACT.md`](docs/architecture/TONESOUL_COUNCIL_DOSSIER_AND_DISSENT_CONTRACT.md)
-and
-[`docs/architecture/TONESOUL_ADAPTIVE_DELIBERATION_MODE_CONTRACT.md`](docs/architecture/TONESOUL_ADAPTIVE_DELIBERATION_MODE_CONTRACT.md).
-For council honesty about independence, descriptive confidence, and bounded adversarial-upgrade paths, open
-[`docs/architecture/TONESOUL_COUNCIL_REALISM_AND_INDEPENDENCE_CONTRACT.md`](docs/architecture/TONESOUL_COUNCIL_REALISM_AND_INDEPENDENCE_CONTRACT.md),
-[`docs/architecture/TONESOUL_COUNCIL_CONFIDENCE_AND_CALIBRATION_MAP.md`](docs/architecture/TONESOUL_COUNCIL_CONFIDENCE_AND_CALIBRATION_MAP.md),
-and
-[`docs/architecture/TONESOUL_ADVERSARIAL_DELIBERATION_ADOPTION_MAP.md`](docs/architecture/TONESOUL_ADVERSARIAL_DELIBERATION_ADOPTION_MAP.md).
-For context continuity across sessions, tasks, agents, and models without turning transfer into hidden-memory folklore, open
-[`docs/architecture/TONESOUL_CONTEXT_CONTINUITY_ADOPTION_MAP.md`](docs/architecture/TONESOUL_CONTEXT_CONTINUITY_ADOPTION_MAP.md).
-For receiver-side continuity discipline around what may be acknowledged, applied, promoted, or allowed to decay, open
-[`docs/architecture/TONESOUL_CONTINUITY_IMPORT_AND_DECAY_CONTRACT.md`](docs/architecture/TONESOUL_CONTINUITY_IMPORT_AND_DECAY_CONTRACT.md),
-[`docs/architecture/TONESOUL_RECEIVER_INTERPRETATION_BOUNDARY_CONTRACT.md`](docs/architecture/TONESOUL_RECEIVER_INTERPRETATION_BOUNDARY_CONTRACT.md),
-and
-[`docs/architecture/TONESOUL_CONTINUITY_SURFACE_LIFECYCLE_MAP.md`](docs/architecture/TONESOUL_CONTINUITY_SURFACE_LIFECYCLE_MAP.md).
-For prompt-side discipline around goal function, priority, evidence, compression, and receiver instructions, open
-[`docs/architecture/TONESOUL_PROMPT_DISCIPLINE_SKELETON.md`](docs/architecture/TONESOUL_PROMPT_DISCIPLINE_SKELETON.md).
-For ToneSoul-native practical prompt variants built on top of that skeleton, open
-[`docs/architecture/TONESOUL_PROMPT_VARIANTS.md`](docs/architecture/TONESOUL_PROMPT_VARIANTS.md).
-For short ready-to-adapt cards that can be used immediately, open
-[`docs/architecture/TONESOUL_PROMPT_STARTER_CARDS.md`](docs/architecture/TONESOUL_PROMPT_STARTER_CARDS.md).
-For document-surface cleanup, same-basename collision review, and metadata backfill order, open
-[`docs/status/doc_convergence_inventory_latest.json`](docs/status/doc_convergence_inventory_latest.json)
-and
-[`docs/plans/doc_convergence_cleanup_plan_2026-03-22.md`](docs/plans/doc_convergence_cleanup_plan_2026-03-22.md).
-For the full multi-wave documentation convergence roadmap, open
-[`docs/plans/doc_convergence_master_plan_2026-03-23.md`](docs/plans/doc_convergence_master_plan_2026-03-23.md).
-For a finer document authority map that separates entrypoints, canonical anchors, contracts, and generated status lanes, open
-[`docs/architecture/DOC_AUTHORITY_STRUCTURE_MAP.md`](docs/architecture/DOC_AUTHORITY_STRUCTURE_MAP.md)
-and
-[`docs/status/doc_authority_structure_latest.json`](docs/status/doc_authority_structure_latest.json).
-For the distilled handling rules behind same-basename but non-duplicate files, open
-[`docs/architecture/BASENAME_DIVERGENCE_DISTILLATION_MAP.md`](docs/architecture/BASENAME_DIVERGENCE_DISTILLATION_MAP.md)
-and
-[`docs/status/basename_divergence_distillation_latest.json`](docs/status/basename_divergence_distillation_latest.json).
-For nested private-memory shadow lanes that must not be deduped during public cleanup, open
-[`docs/architecture/PRIVATE_MEMORY_SHADOW_BOUNDARY_MAP.md`](docs/architecture/PRIVATE_MEMORY_SHADOW_BOUNDARY_MAP.md)
-and
-[`docs/status/private_memory_shadow_latest.json`](docs/status/private_memory_shadow_latest.json).
-For paradox casebook versus test-fixture ownership, open
-[`docs/architecture/PARADOX_FIXTURE_OWNERSHIP_MAP.md`](docs/architecture/PARADOX_FIXTURE_OWNERSHIP_MAP.md)
-and
-[`docs/status/paradox_fixture_ownership_latest.json`](docs/status/paradox_fixture_ownership_latest.json).
-For engineering-book mirror ownership and sync posture, open
-[`docs/architecture/ENGINEERING_MIRROR_OWNERSHIP_MAP.md`](docs/architecture/ENGINEERING_MIRROR_OWNERSHIP_MAP.md)
-and
-[`docs/status/engineering_mirror_ownership_latest.json`](docs/status/engineering_mirror_ownership_latest.json).
+ToneSoul is not just a chat wrapper. It is a governance stack with five load-bearing areas:
+
+- Governance: what the system is allowed to do, and what it must never silently overclaim.
+- Council: how disagreement, dissent, and review survive before output is finalized.
+- Memory and continuity: what continues across sessions, what decays, and what must never be promoted silently.
+- Safety and protection: how unsafe, incoherent, or ungrounded outputs are blocked, rewritten, or audited.
+- Observability and evidence: how the system reports what is tested, what is only documented, and what is still philosophical.
 
 ```text
 User Input
@@ -174,16 +103,129 @@ User Input
     ↓
 [TensionEngine] Compute semantic deviation
     ↓
-[Council] Philosopher / Engineer / Guardian deliberate
+[Council] Guardian / Analyst / Critic / Advocate deliberate
     ↓
 [ComputeGate] approve / block / rewrite
-    ↓
-[ResonanceClassifier] flow / resonance / deep_resonance / divergence
     ↓
 [Journal + Crystallizer] remember what matters, forget the rest
     ↓
 Response
 ```
+
+## Choose Your Entry
+
+| Reader | Start Here | Why |
+|---|---|---|
+| Developer | [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md), [docs/README.md](docs/README.md), [docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md](docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md) | install, orient, then read the canonical system map |
+| Researcher | [docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md](docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md), [docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md](docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md), [docs/architecture/TONESOUL_COUNCIL_REALISM_AND_INDEPENDENCE_CONTRACT.md](docs/architecture/TONESOUL_COUNCIL_REALISM_AND_INDEPENDENCE_CONTRACT.md) | architecture, evidence posture, and council honesty |
+| AI Agent | [AI_ONBOARDING.md](AI_ONBOARDING.md), [docs/AI_QUICKSTART.md](docs/AI_QUICKSTART.md), `python scripts/start_agent_session.py --agent <your-id>` | operational entry, packet-first session start, and bounded shared-memory posture |
+| Curious Human | [SOUL.md](SOUL.md), [LETTER_TO_AI.md](LETTER_TO_AI.md), [README.zh-TW.md](README.zh-TW.md) | identity layer, intent, and a more narrative introduction |
+
+## Five System Areas
+
+### 1. Governance
+
+ToneSoul defines what is permitted before it optimizes what is persuasive. This is the constitutional layer, not a bag of prompts.
+
+Read first:
+- [AXIOMS.json](AXIOMS.json)
+- [docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md](docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md)
+- [docs/architecture/TONESOUL_TASK_TRACK_AND_READINESS_CONTRACT.md](docs/architecture/TONESOUL_TASK_TRACK_AND_READINESS_CONTRACT.md)
+
+### 2. Council And Deliberation
+
+ToneSoul does not treat final output as a single voice. It treats dissent, confidence posture, and deliberation depth as part of the result.
+
+Read first:
+- [docs/architecture/TONESOUL_COUNCIL_DOSSIER_AND_DISSENT_CONTRACT.md](docs/architecture/TONESOUL_COUNCIL_DOSSIER_AND_DISSENT_CONTRACT.md)
+- [docs/architecture/TONESOUL_ADAPTIVE_DELIBERATION_MODE_CONTRACT.md](docs/architecture/TONESOUL_ADAPTIVE_DELIBERATION_MODE_CONTRACT.md)
+- [docs/architecture/TONESOUL_COUNCIL_REALISM_AND_INDEPENDENCE_CONTRACT.md](docs/architecture/TONESOUL_COUNCIL_REALISM_AND_INDEPENDENCE_CONTRACT.md)
+
+### 3. Memory And Continuity
+
+ToneSoul does not try to preserve everything. It preserves the right hot state, lets some signals decay, and separates handoff from identity.
+
+Read first:
+- [docs/architecture/TONESOUL_SHARED_R_MEMORY_OPERATIONS_CONTRACT.md](docs/architecture/TONESOUL_SHARED_R_MEMORY_OPERATIONS_CONTRACT.md)
+- [docs/architecture/TONESOUL_CONTINUITY_SURFACE_LIFECYCLE_MAP.md](docs/architecture/TONESOUL_CONTINUITY_SURFACE_LIFECYCLE_MAP.md)
+- [docs/architecture/TONESOUL_CONTEXT_CONTINUITY_ADOPTION_MAP.md](docs/architecture/TONESOUL_CONTEXT_CONTINUITY_ADOPTION_MAP.md)
+
+### 4. Safety And Protection
+
+Safety here is not only filtering bad output. It is boundary honesty, auditability, and the ability to stop or rewrite before drift becomes action.
+
+Read first:
+- [docs/architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md](docs/architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md)
+- [docs/architecture/TONESOUL_OBSERVABLE_SHELL_OPACITY_CONTRACT.md](docs/architecture/TONESOUL_OBSERVABLE_SHELL_OPACITY_CONTRACT.md)
+- [docs/7D_AUDIT_FRAMEWORK.md](docs/7D_AUDIT_FRAMEWORK.md)
+
+### 5. Observability And Evidence
+
+ToneSoul distinguishes authority from evidence. Some claims are constitutional, some are heavily tested, and some are still design pressure rather than verified runtime truth.
+
+Read first:
+- [docs/architecture/TONESOUL_CLAIM_TO_EVIDENCE_MATRIX.md](docs/architecture/TONESOUL_CLAIM_TO_EVIDENCE_MATRIX.md)
+- [docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md](docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md)
+- [docs/architecture/TONESOUL_TEST_AND_VALIDATION_TOPOLOGY_MAP.md](docs/architecture/TONESOUL_TEST_AND_VALIDATION_TOPOLOGY_MAP.md)
+
+## Evidence Honesty
+
+When this README says ToneSoul "has" something, read it through this filter:
+
+- `E1 test-backed`: CI would catch a regression in the claimed property.
+- `E3 runtime-present`: code exists and runs, but test depth is still thin.
+- `E4 document-backed`: a contract describes the intended behavior, but runtime does not yet prove it.
+- `E5 philosophical`: a design thesis or constitutional idea, not a verified mechanism.
+
+If the distinction matters, open [docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md](docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md) before repeating the claim.
+
+## Architecture Links By Category
+
+<details>
+<summary>Open the categorized architecture wall</summary>
+
+### Canonical Architecture
+
+- [docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md](docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md)
+- [docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md](docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md)
+- [docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md](docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md)
+- [docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md](docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md)
+
+### Governance, Safety, And Boundaries
+
+- [docs/architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md](docs/architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md)
+- [docs/architecture/TONESOUL_OBSERVABLE_SHELL_OPACITY_CONTRACT.md](docs/architecture/TONESOUL_OBSERVABLE_SHELL_OPACITY_CONTRACT.md)
+- [docs/architecture/TONESOUL_AXIOM_FALSIFICATION_MAP.md](docs/architecture/TONESOUL_AXIOM_FALSIFICATION_MAP.md)
+- [docs/7D_AUDIT_FRAMEWORK.md](docs/7D_AUDIT_FRAMEWORK.md)
+- [docs/7D_EXECUTION_SPEC.md](docs/7D_EXECUTION_SPEC.md)
+
+### Council And Deliberation
+
+- [docs/architecture/TONESOUL_COUNCIL_DOSSIER_AND_DISSENT_CONTRACT.md](docs/architecture/TONESOUL_COUNCIL_DOSSIER_AND_DISSENT_CONTRACT.md)
+- [docs/architecture/TONESOUL_ADAPTIVE_DELIBERATION_MODE_CONTRACT.md](docs/architecture/TONESOUL_ADAPTIVE_DELIBERATION_MODE_CONTRACT.md)
+- [docs/architecture/TONESOUL_COUNCIL_REALISM_AND_INDEPENDENCE_CONTRACT.md](docs/architecture/TONESOUL_COUNCIL_REALISM_AND_INDEPENDENCE_CONTRACT.md)
+- [docs/architecture/TONESOUL_COUNCIL_CONFIDENCE_AND_CALIBRATION_MAP.md](docs/architecture/TONESOUL_COUNCIL_CONFIDENCE_AND_CALIBRATION_MAP.md)
+- [docs/architecture/TONESOUL_ADVERSARIAL_DELIBERATION_ADOPTION_MAP.md](docs/architecture/TONESOUL_ADVERSARIAL_DELIBERATION_ADOPTION_MAP.md)
+
+### Memory And Continuity
+
+- [docs/architecture/TONESOUL_SHARED_R_MEMORY_OPERATIONS_CONTRACT.md](docs/architecture/TONESOUL_SHARED_R_MEMORY_OPERATIONS_CONTRACT.md)
+- [docs/architecture/TONESOUL_CONTINUITY_IMPORT_AND_DECAY_CONTRACT.md](docs/architecture/TONESOUL_CONTINUITY_IMPORT_AND_DECAY_CONTRACT.md)
+- [docs/architecture/TONESOUL_RECEIVER_INTERPRETATION_BOUNDARY_CONTRACT.md](docs/architecture/TONESOUL_RECEIVER_INTERPRETATION_BOUNDARY_CONTRACT.md)
+- [docs/architecture/TONESOUL_CONTINUITY_SURFACE_LIFECYCLE_MAP.md](docs/architecture/TONESOUL_CONTINUITY_SURFACE_LIFECYCLE_MAP.md)
+- [docs/architecture/TONESOUL_CONTEXT_CONTINUITY_ADOPTION_MAP.md](docs/architecture/TONESOUL_CONTEXT_CONTINUITY_ADOPTION_MAP.md)
+- [docs/architecture/TONESOUL_SUBJECT_REFRESH_BOUNDARY_CONTRACT.md](docs/architecture/TONESOUL_SUBJECT_REFRESH_BOUNDARY_CONTRACT.md)
+
+### Evidence, Status, And Documentation Governance
+
+- [docs/architecture/TONESOUL_CLAIM_TO_EVIDENCE_MATRIX.md](docs/architecture/TONESOUL_CLAIM_TO_EVIDENCE_MATRIX.md)
+- [docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md](docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md)
+- [docs/architecture/TONESOUL_TEST_AND_VALIDATION_TOPOLOGY_MAP.md](docs/architecture/TONESOUL_TEST_AND_VALIDATION_TOPOLOGY_MAP.md)
+- [docs/architecture/DOC_AUTHORITY_STRUCTURE_MAP.md](docs/architecture/DOC_AUTHORITY_STRUCTURE_MAP.md)
+- [docs/status/doc_authority_structure_latest.json](docs/status/doc_authority_structure_latest.json)
+- [docs/status/doc_convergence_inventory_latest.json](docs/status/doc_convergence_inventory_latest.json)
+
+</details>
 
 ## Spec Entry Points
 
