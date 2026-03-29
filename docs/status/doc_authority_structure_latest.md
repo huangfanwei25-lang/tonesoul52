@@ -1,14 +1,14 @@
 # Documentation Authority Structure Latest
 
-- generated_at: 2026-03-29T14:58:25Z
-- primary_status_line: `doc_authority_structure | groups=21 tracked=74 metadata_complete=74 metadata_missing=0`
+- generated_at: 2026-03-29T15:22:27Z
+- primary_status_line: `doc_authority_structure | groups=22 tracked=78 metadata_complete=78 metadata_missing=0`
 - runtime_status_line: `doc_retrieval_order=entrypoint_to_operational_to_canonical_to_deep_map_to_interpretive_to_boundary_aids_to_control_plane | generated_status_lane=6`
 - artifact_policy_status_line: `structure_mode=retrieval_oriented | authority_roles=explicit | generated_status_preferred_for_current_state`
 
 ## Metrics
-- `group_count`: `21`
-- `tracked_file_count`: `74`
-- `metadata_complete_count`: `74`
+- `group_count`: `22`
+- `tracked_file_count`: `78`
+- `metadata_complete_count`: `78`
 - `metadata_missing_count`: `0`
 
 ## Groups
@@ -142,11 +142,20 @@
   - `docs/architecture/TONESOUL_PROMPT_DISCIPLINE_SKELETON.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/TONESOUL_PROMPT_VARIANTS.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/TONESOUL_PROMPT_STARTER_CARDS.md` exists=`true` purpose=`true` date=`true`
+- `Prompt Surface Topology And Adoption` tracked=`4` metadata_complete=`4`
+  - description: topology and adoption aids that classify which live prompt families are already aligned, which are the next short board, and which should remain specialized
+  - authority_role: adoption_map
+  - use_when: when the question is not how prompt discipline works in theory, but which concrete prompt families should be adopted next and which should stay untouched
+  - read_order: 17
+  - `docs/architecture/TONESOUL_PROMPT_SURFACE_ADOPTION_MATRIX.md` exists=`true` purpose=`true` date=`true`
+  - `docs/architecture/TONESOUL_PROMPT_SURFACE_BOUNDARY_CONTRACT.md` exists=`true` purpose=`true` date=`true`
+  - `docs/architecture/TONESOUL_PROMPT_SURFACE_TOPOLOGY_MAP.md` exists=`true` purpose=`true` date=`true`
+  - `docs/plans/tonesoul_prompt_adoption_followup_candidates_2026-03-29.md` exists=`true` purpose=`true` date=`true`
 - `Reality Alignment And Render Boundaries` tracked=`4` metadata_complete=`4`
   - description: doc-reality aids that distinguish live entry surfaces from stale assumptions, separate file-layer truth from terminal noise, and keep directory counts reproducible
   - authority_role: doc_reality_aid
   - use_when: when entry routing, document counts, or encoding reports may have drifted from the current repo state and you need a measured baseline before repeating them
-  - read_order: 17
+  - read_order: 18
   - `docs/architecture/TONESOUL_ENTRY_SURFACE_REALITY_BASELINE.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/TONESOUL_DOC_METRIC_AND_COUNT_METHOD.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/TONESOUL_RENDER_LAYER_AND_ENCODING_BOUNDARY_CONTRACT.md` exists=`true` purpose=`true` date=`true`
@@ -155,7 +164,7 @@
   - description: cleanup and routing aids for audience entry paths, historical-versus-current surface distinction, safe simplification moves, and bounded docs cleanup sequencing
   - authority_role: doc_cleanup_aid
   - use_when: when the problem is how a reader should enter, what should remain visible as lineage, or which cleanup moves are safe without flattening authority
-  - read_order: 18
+  - read_order: 19
   - `docs/architecture/TONESOUL_AUDIENCE_ROUTING_AND_ENTRY_CONTRACT.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/TONESOUL_HISTORICAL_SPEC_AND_LEGACY_SURFACE_MAP.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/TONESOUL_DOC_SURFACE_SIMPLIFICATION_BOUNDARY_CONTRACT.md` exists=`true` purpose=`true` date=`true`
@@ -165,7 +174,7 @@
   - description: naming, zoning, and convergence planning surfaces
   - authority_role: doc_governance
   - use_when: when retrieval quality, metadata posture, or naming collisions are the problem
-  - read_order: 19
+  - read_order: 20
   - `docs/DOCS_INFORMATION_ARCHITECTURE_v1.md` exists=`true` purpose=`true` date=`true`
   - `docs/DOCS_CLASSIFICATION_LEDGER_v1.md` exists=`true` purpose=`true` date=`true`
   - `docs/FILE_PURPOSE_MAP.md` exists=`true` purpose=`true` date=`true`
@@ -175,7 +184,7 @@
   - description: ownership and divergence boundaries for duplicate-like surfaces
   - authority_role: boundary_contract
   - use_when: when two similar-looking lanes need explicit ownership or split-brain control
-  - read_order: 20
+  - read_order: 21
   - `docs/architecture/BASENAME_DIVERGENCE_DISTILLATION_MAP.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/PRIVATE_MEMORY_SHADOW_BOUNDARY_MAP.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/PARADOX_FIXTURE_OWNERSHIP_MAP.md` exists=`true` purpose=`true` date=`true`

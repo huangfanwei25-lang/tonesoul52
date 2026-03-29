@@ -175,7 +175,33 @@ Open these when the question is:
 - `docs/architecture/TONESOUL_RENDER_LAYER_AND_ENCODING_BOUNDARY_CONTRACT.md`
 - `docs/architecture/TONESOUL_DOC_DRIFT_AND_CONFLICT_REGISTER.md`
 
-### 15. Entry simplification and lineage routing lane
+### 15. Prompt surface topology and adoption lane
+
+Open these when the question is:
+
+- which prompt families are already at baseline,
+- which prompt family is the next short board,
+- which prompt surfaces should remain specialized or helper-only.
+
+- `docs/architecture/TONESOUL_PROMPT_SURFACE_ADOPTION_MATRIX.md`
+- `docs/architecture/TONESOUL_PROMPT_SURFACE_BOUNDARY_CONTRACT.md`
+- `docs/architecture/TONESOUL_PROMPT_SURFACE_TOPOLOGY_MAP.md`
+- `docs/plans/tonesoul_prompt_adoption_followup_candidates_2026-03-29.md`
+
+### 16. Reality alignment and render boundary lane
+
+Open these when the question is:
+
+- whether an entrypoint recommendation still matches the live repo,
+- whether a count claim is measured or hand-wavy,
+- whether `??` is file corruption or only terminal-display noise.
+
+- `docs/architecture/TONESOUL_ENTRY_SURFACE_REALITY_BASELINE.md`
+- `docs/architecture/TONESOUL_DOC_METRIC_AND_COUNT_METHOD.md`
+- `docs/architecture/TONESOUL_RENDER_LAYER_AND_ENCODING_BOUNDARY_CONTRACT.md`
+- `docs/architecture/TONESOUL_DOC_DRIFT_AND_CONFLICT_REGISTER.md`
+
+### 17. Entry simplification and lineage routing lane
 
 Open these when the question is:
 
@@ -201,10 +227,11 @@ Open these when the question is:
 8. Move to the continuity import and receiver lane when the question is no longer only "what should continue" but "what may the receiver safely import or let decay."
 9. Move to the council realism and calibration lane when a verdict sounds stronger than its real independence or confidence backing.
 10. Move to the prompt discipline skeleton lane when the question is no longer "what should transfer" but "how should the prompt be built."
-11. Move to the reality alignment and render boundary lane when doc counts, audience routing, or encoding alarms may be stale, display-dependent, or loosely measured.
-12. Move to the entry simplification and lineage routing lane when the problem is how a reader should enter, what should stay visible as lineage, or which cleanup moves are safe.
-13. Move to documentation governance and convergence contracts when restructuring docs.
-14. Prefer generated status surfaces over stale prose when checking current posture.
+11. Move to the prompt surface topology and adoption lane when the question is which prompt families are already aligned, which are the next short board, or which should remain specialized.
+12. Move to the reality alignment and render boundary lane when doc counts, audience routing, or encoding alarms may be stale, display-dependent, or loosely measured.
+13. Move to the entry simplification and lineage routing lane when the problem is how a reader should enter, what should stay visible as lineage, or which cleanup moves are safe.
+14. Move to documentation governance and convergence contracts when restructuring docs.
+15. Prefer generated status surfaces over stale prose when checking current posture.
 
 ## Current Rule
 

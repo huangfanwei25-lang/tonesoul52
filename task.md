@@ -115,6 +115,12 @@
 - [x] wire the lane into README, docs README, docs INDEX, and authority-map generation while leaving stale implementation-gap drafts and private/local artifacts outside the integration set
 **Success Criteria**: Later agents can discover the repaired audience-routing, lineage, simplification, and encoding-hazard aids from the normal doc entrypoints, while stale gap drafts and private memory files remain outside the committed surface.
 
+## Phase 704: Prompt Surface Topology And Adoption Integration (2026-03-29)
+- [x] rewrite the untracked prompt-topology docs so they reflect the current runtime state instead of reopening already-completed council, reflection, dream, and stale-rule prompt waves
+- [x] add a dedicated authority lane for prompt surface adoption matrix, boundary rules, topology families, and bounded follow-up candidates
+- [x] wire the lane into README, docs README, docs INDEX, and authority-map generation while keeping stale gap drafts and unrelated private artifacts outside the integration set
+**Success Criteria**: Later agents can discover a current-state prompt adoption map from normal doc entrypoints, see that council/reflection/refinement waves are already baseline-complete, and identify context injection as the next short board instead of reopening finished work.
+
 ## Phase 679: Continuity Freshness And Import Posture (2026-03-29)
 - [x] Add bounded `freshness_hours` to the packet continuity surfaces that later agents actually inherit at session start
 - [x] Add a machine-readable `import_posture` section to `start_agent_session.py` so agents can distinguish directly importable posture/claims from advisory compactions, snapshots, and dossiers

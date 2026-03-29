@@ -227,6 +227,17 @@ Use these when a document claim sounds too clean, too rounded, or too shell-depe
 - [plans/tonesoul_docs_cleanup_wave_candidates_2026-03-29.md](plans/tonesoul_docs_cleanup_wave_candidates_2026-03-29.md)
   - bounded cleanup wave plan for metadata hygiene, if-wall restructuring, index differentiation, and lineage labeling
 
+## Prompt Surface Topology And Adoption
+
+- [architecture/TONESOUL_PROMPT_SURFACE_ADOPTION_MATRIX.md](architecture/TONESOUL_PROMPT_SURFACE_ADOPTION_MATRIX.md)
+  - current-state classification of live prompt families, helper-only surfaces, and the next adoption short board
+- [architecture/TONESOUL_PROMPT_SURFACE_BOUNDARY_CONTRACT.md](architecture/TONESOUL_PROMPT_SURFACE_BOUNDARY_CONTRACT.md)
+  - rules for when starter-card adoption is justified versus when a prompt should remain specialized
+- [architecture/TONESOUL_PROMPT_SURFACE_TOPOLOGY_MAP.md](architecture/TONESOUL_PROMPT_SURFACE_TOPOLOGY_MAP.md)
+  - family map for governance prompts, context injection, refinement, domain pipelines, and persona voice
+- [plans/tonesoul_prompt_adoption_followup_candidates_2026-03-29.md](plans/tonesoul_prompt_adoption_followup_candidates_2026-03-29.md)
+  - bounded next-wave candidates after the already-completed council and refinement waves
+
 ## 🧭 Documentation Governance v1
 
 | 文件 | 說明 |

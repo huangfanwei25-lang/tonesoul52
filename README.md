@@ -224,6 +224,7 @@ If the distinction matters, open [docs/architecture/TONESOUL_EVIDENCE_LADDER_AND
 - [docs/architecture/TONESOUL_ENTRY_SURFACE_REALITY_BASELINE.md](docs/architecture/TONESOUL_ENTRY_SURFACE_REALITY_BASELINE.md)
 - [docs/architecture/TONESOUL_AUDIENCE_ROUTING_AND_ENTRY_CONTRACT.md](docs/architecture/TONESOUL_AUDIENCE_ROUTING_AND_ENTRY_CONTRACT.md)
 - [docs/architecture/TONESOUL_HISTORICAL_SPEC_AND_LEGACY_SURFACE_MAP.md](docs/architecture/TONESOUL_HISTORICAL_SPEC_AND_LEGACY_SURFACE_MAP.md)
+- [docs/architecture/TONESOUL_PROMPT_SURFACE_ADOPTION_MATRIX.md](docs/architecture/TONESOUL_PROMPT_SURFACE_ADOPTION_MATRIX.md)
 - [docs/architecture/TONESOUL_RENDER_LAYER_AND_ENCODING_BOUNDARY_CONTRACT.md](docs/architecture/TONESOUL_RENDER_LAYER_AND_ENCODING_BOUNDARY_CONTRACT.md)
 - [docs/architecture/DOC_AUTHORITY_STRUCTURE_MAP.md](docs/architecture/DOC_AUTHORITY_STRUCTURE_MAP.md)
 - [docs/status/doc_authority_structure_latest.json](docs/status/doc_authority_structure_latest.json)

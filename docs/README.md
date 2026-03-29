@@ -273,6 +273,19 @@ Treat these as reality-alignment aids. They help later agents avoid stale counts
 
 Treat these as entry-cleanup aids. They help later agents choose the right first surface and keep lineage legible, but they do not outrank current canonical architecture or runtime surfaces.
 
+## Prompt Surface Topology And Adoption
+
+- `architecture/TONESOUL_PROMPT_SURFACE_ADOPTION_MATRIX.md`
+  - current-state classification of live prompt families, helpers, and the next adoption short board
+- `architecture/TONESOUL_PROMPT_SURFACE_BOUNDARY_CONTRACT.md`
+  - boundary rules for when starter-card adoption is justified versus when a prompt should stay specialized
+- `architecture/TONESOUL_PROMPT_SURFACE_TOPOLOGY_MAP.md`
+  - family map for council governance, governance review, context injection, output refinement, ToneBridge pipeline, persona voice, and helper-only surfaces
+- `plans/tonesoul_prompt_adoption_followup_candidates_2026-03-29.md`
+  - bounded next-wave candidates after the already-completed council and refinement waves
+
+Treat these as prompt-adoption aids. They help later agents avoid reopening finished waves and point them toward the current short board, but they do not outrank live prompt code or tests.
+
 ## 🎯 快速開始
 
 1. [AI_ONBOARDING.md](../AI_ONBOARDING.md) — 給新 AI 的引導

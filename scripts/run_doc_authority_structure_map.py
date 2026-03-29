@@ -228,12 +228,26 @@ GROUPS = [
         ],
     },
     {
+        "id": "prompt_surface_topology_and_adoption",
+        "label": "Prompt Surface Topology And Adoption",
+        "description": "topology and adoption aids that classify which live prompt families are already aligned, which are the next short board, and which should remain specialized",
+        "authority_role": "adoption_map",
+        "use_when": "when the question is not how prompt discipline works in theory, but which concrete prompt families should be adopted next and which should stay untouched",
+        "read_order": 17,
+        "files": [
+            "docs/architecture/TONESOUL_PROMPT_SURFACE_ADOPTION_MATRIX.md",
+            "docs/architecture/TONESOUL_PROMPT_SURFACE_BOUNDARY_CONTRACT.md",
+            "docs/architecture/TONESOUL_PROMPT_SURFACE_TOPOLOGY_MAP.md",
+            "docs/plans/tonesoul_prompt_adoption_followup_candidates_2026-03-29.md",
+        ],
+    },
+    {
         "id": "reality_alignment_and_render_boundaries",
         "label": "Reality Alignment And Render Boundaries",
         "description": "doc-reality aids that distinguish live entry surfaces from stale assumptions, separate file-layer truth from terminal noise, and keep directory counts reproducible",
         "authority_role": "doc_reality_aid",
         "use_when": "when entry routing, document counts, or encoding reports may have drifted from the current repo state and you need a measured baseline before repeating them",
-        "read_order": 17,
+        "read_order": 18,
         "files": [
             "docs/architecture/TONESOUL_ENTRY_SURFACE_REALITY_BASELINE.md",
             "docs/architecture/TONESOUL_DOC_METRIC_AND_COUNT_METHOD.md",
@@ -247,7 +261,7 @@ GROUPS = [
         "description": "cleanup and routing aids for audience entry paths, historical-versus-current surface distinction, safe simplification moves, and bounded docs cleanup sequencing",
         "authority_role": "doc_cleanup_aid",
         "use_when": "when the problem is how a reader should enter, what should remain visible as lineage, or which cleanup moves are safe without flattening authority",
-        "read_order": 18,
+        "read_order": 19,
         "files": [
             "docs/architecture/TONESOUL_AUDIENCE_ROUTING_AND_ENTRY_CONTRACT.md",
             "docs/architecture/TONESOUL_HISTORICAL_SPEC_AND_LEGACY_SURFACE_MAP.md",
@@ -262,7 +276,7 @@ GROUPS = [
         "description": "naming, zoning, and convergence planning surfaces",
         "authority_role": "doc_governance",
         "use_when": "when retrieval quality, metadata posture, or naming collisions are the problem",
-        "read_order": 19,
+        "read_order": 20,
         "files": [
             "docs/DOCS_INFORMATION_ARCHITECTURE_v1.md",
             "docs/DOCS_CLASSIFICATION_LEDGER_v1.md",
@@ -277,7 +291,7 @@ GROUPS = [
         "description": "ownership and divergence boundaries for duplicate-like surfaces",
         "authority_role": "boundary_contract",
         "use_when": "when two similar-looking lanes need explicit ownership or split-brain control",
-        "read_order": 20,
+        "read_order": 21,
         "files": [
             "docs/architecture/BASENAME_DIVERGENCE_DISTILLATION_MAP.md",
             "docs/architecture/PRIVATE_MEMORY_SHADOW_BOUNDARY_MAP.md",
