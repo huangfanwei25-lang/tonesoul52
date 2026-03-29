@@ -1,7 +1,7 @@
 # ToneSoul — AI 工作參考手冊
 
 > Purpose: give later AI instances an operator-side lookup for terms, routing decisions, red lines, and common work situations.
-> Last Updated: 2026-03-28
+> Last Updated: 2026-03-29
 > Status: operational reference; not a constitutional or architectural source of truth.
 > Use When: after `docs/AI_QUICKSTART.md`, during implementation, review, or routing confusion.
 > Authority Note: if a term here conflicts with code, tests, `AXIOMS.json`, or canonical contracts, those surfaces win.
@@ -388,6 +388,42 @@ Use it for:
 - deciding what should not be transferred at all
 
 Treat it as an adoption map, not as permission to move raw thought or full transcripts into shared memory.
+
+## Continuity Import, Receiver, And Decay
+
+When the continuity surface already exists and the real question becomes "what may I safely do with it now", open:
+
+- `docs/architecture/TONESOUL_CONTINUITY_IMPORT_AND_DECAY_CONTRACT.md`
+- `docs/architecture/TONESOUL_RECEIVER_INTERPRETATION_BOUNDARY_CONTRACT.md`
+- `docs/architecture/TONESOUL_CONTINUITY_SURFACE_LIFECYCLE_MAP.md`
+- `docs/plans/tonesoul_continuity_followup_candidates_2026-03-29.md`
+
+Use them for:
+
+- `directly_importable / advisory / ephemeral_until_acked / manual_confirmation`
+- `ack / apply / promote`
+- immediate coordination vs bounded handoff vs working identity vs replay vs canonical foundation
+- TTL / freshness / decay posture
+- spotting silent over-import, especially compaction carry-forward, subject snapshot, and dossier over-promotion
+
+Treat them as receiver-side continuity discipline aids. They tell you how to import and discount continuity surfaces, but they do not override packet truth, canonical governance posture, or human decisions.
+
+## Council Realism And Calibration
+
+When the question is not just "what did council output" but "how real is this plurality and what do the confidence numbers actually mean", open:
+
+- `docs/architecture/TONESOUL_COUNCIL_REALISM_AND_INDEPENDENCE_CONTRACT.md`
+- `docs/architecture/TONESOUL_COUNCIL_CONFIDENCE_AND_CALIBRATION_MAP.md`
+- `docs/architecture/TONESOUL_ADVERSARIAL_DELIBERATION_ADOPTION_MAP.md`
+
+Use them for:
+
+- perspective multiplication vs genuine independence
+- descriptive confidence vs calibrated confidence
+- forced devil's advocate / pre-mortem / self-consistency lanes
+- identifying infrastructure-blocked ideas that should not be overclaimed as already present
+
+Treat them as council realism aids. They help later agents describe the current council honestly and choose bounded improvements, but they do not magically calibrate current confidence surfaces or convert one-model prompting into a true ensemble.
 
 ## Prompt Discipline Skeleton
 

@@ -146,8 +146,19 @@ def test_ollama_default_prompt_keeps_concise_but_structured_governance_shape():
     assert "Goal:" in prompt
     assert "Priority:" in prompt
     assert "Confidence guidance:" in prompt
+    assert "Forced devil's advocate:" in prompt
+    assert "strongest concrete objection" in prompt
     assert "[資料不足]" in prompt
     assert 'Respond ONLY with JSON:' in prompt
+
+
+def test_llm_critic_prompt_requires_bounded_adversarial_pass():
+    prompt = LLMPerspective(name="critic", model=DEFAULT_LLM_MODEL, fallback=None)._default_prompt()
+
+    assert "Forced devil's advocate:" in prompt
+    assert "before you APPROVE" in prompt
+    assert "strongest concrete objection" in prompt
+    assert "survives that objection" in prompt
 
 
 def test_llm_perspective_uses_safe_parse_for_markdown_json(monkeypatch):

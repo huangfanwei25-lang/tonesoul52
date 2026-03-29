@@ -1105,3 +1105,15 @@
 - [x] keep the follow-up bounded to documentation-only classification of claim families, evidence ladders, and validation topology instead of runtime or test mutation
 - [x] keep implementation ownership for any later evidence-surface changes on the Codex lane
 **Success Criteria**: Claude has one clear long-context workstream that separates authority from evidence, maps which ToneSoul claims are strongly validated versus thinly or only narratively backed, and yields one bounded shortlist of future evidence improvements without starting a full verification overhaul.
+
+## Phase 677: Integrate Continuity And Council-Realism Doc Lanes (2026-03-29)
+- [x] audit Claude's continuity and council-realism outputs for naming drift and overclaim risk before promoting them into repo entrypoints
+- [x] wire the approved continuity receiver / lifecycle docs and council realism / calibration docs into onboarding, reference, README, docs index, and authority-map generation
+- [x] keep these new lanes explicitly below runtime code, tests, packet truth, and canonical governance posture
+**Success Criteria**: Later agents can discover continuity receiver rules and council realism limits from the normal entry stack without mistaking those documents for live runtime authority.
+
+## Phase 678: Council Prompt Adoption Wave 2 - Forced Devil's Advocate (2026-03-29)
+- [x] add a bounded devil's-advocate protocol to the Critic governance prompt without changing vote schema or council runtime logic
+- [x] keep the change prompt-level only so Critic must surface a strongest objection before approving rather than silently converging with the rest
+- [x] add regression coverage so future prompt edits do not remove the bounded adversarial pass by accident
+**Success Criteria**: Critic prompts in both cloud and local council paths visibly require a strongest objection before APPROVE, while existing council parsing and tests remain compatible.

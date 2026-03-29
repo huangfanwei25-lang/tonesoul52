@@ -74,6 +74,11 @@ _PERSPECTIVE_DISCIPLINE: Dict[str, Dict[str, str]] = {
         "p1": "name the strongest flaw-evidence from the draft, user intent, and supplied context before deciding.",
         "p2": "keep the reasoning brief after the critique is honestly resolved.",
         "decision_map": "APPROVE (robust), CONCERN (has issues), or OBJECT (flawed).",
+        "special_protocol": (
+            "Forced devil's advocate: before you APPROVE, you must state the strongest concrete objection, "
+            "hidden assumption, or failure interpretation you can construct. If you still APPROVE, explain why "
+            "the draft survives that objection."
+        ),
     },
     "advocate": {
         "role": "USER ADVOCATE",
@@ -106,6 +111,10 @@ def _build_governance_system_prompt(name: str, *, concise: bool = False) -> str:
     response_schema = (
         '{"decision": "APPROVE|CONCERN|OBJECT", "confidence": 0.8, "reasoning": "brief explanation"}'
     )
+    special_protocol = profile.get("special_protocol")
+    special_protocol_block = (
+        f"{special_protocol}\n" if isinstance(special_protocol, str) and special_protocol else ""
+    )
     if concise:
         return (
             f"You are {profile['role']} in an AI Council.\n"
@@ -117,6 +126,7 @@ def _build_governance_system_prompt(name: str, *, concise: bool = False) -> str:
             f"{_CONFIDENCE_GUIDANCE}\n"
             "If evidence is missing, return CONCERN, lower confidence, and mark [資料不足] in reasoning.\n"
             f"Decision must be: {profile['decision_map']}\n"
+            f"{special_protocol_block}"
             f"Respond ONLY with JSON: {response_schema}"
         )
     return (
@@ -130,6 +140,7 @@ def _build_governance_system_prompt(name: str, *, concise: bool = False) -> str:
         "Recovery: if the available evidence is insufficient or the context is ambiguous, return CONCERN, lower confidence, "
         "and mark [資料不足] with what is missing.\n"
         f"Decision must be: {profile['decision_map']}\n"
+        f"{special_protocol_block}"
         "You MUST respond with a JSON object in this exact format:\n"
         f"{response_schema}"
     )

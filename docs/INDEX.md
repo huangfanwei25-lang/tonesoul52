@@ -1,7 +1,7 @@
 # ToneSoul Documentation Index
 
 > Purpose: top-level documentation index for ToneSoul authority surfaces, operational packets, and convergence maps.
-> Last Updated: 2026-03-28
+> Last Updated: 2026-03-29
 
 > 自動更新於 2026-03-22。按主題分類，方便快速導航。
 
@@ -102,12 +102,38 @@ Use these when the question is not "what is the runtime path" but "how honest ca
 
 Use these when the question is not only what verdict was produced, but whether dissent survived and whether the deliberation depth matched the task.
 
+## Council Realism And Calibration
+
+- [architecture/TONESOUL_COUNCIL_REALISM_AND_INDEPENDENCE_CONTRACT.md](architecture/TONESOUL_COUNCIL_REALISM_AND_INDEPENDENCE_CONTRACT.md)
+  - honesty contract for where ToneSoul council is truly plural versus only perspective-voiced
+- [architecture/TONESOUL_COUNCIL_CONFIDENCE_AND_CALIBRATION_MAP.md](architecture/TONESOUL_COUNCIL_CONFIDENCE_AND_CALIBRATION_MAP.md)
+  - map of confidence surfaces, descriptive-vs-calibrated boundaries, and the infrastructure gap to true calibration
+- [architecture/TONESOUL_ADVERSARIAL_DELIBERATION_ADOPTION_MAP.md](architecture/TONESOUL_ADVERSARIAL_DELIBERATION_ADOPTION_MAP.md)
+  - adoption map for devil's advocate, pre-mortem, self-consistency, confidence decomposition, and blocked future upgrades
+- [plans/tonesoul_council_realism_followup_candidates_2026-03-29.md](plans/tonesoul_council_realism_followup_candidates_2026-03-29.md)
+  - small next-step list derived from the realism/calibration pass
+
+Use these when the question is not merely "what did council output" but "how real is this plurality, what do the confidence numbers actually mean, and which next upgrade is honest to implement now."
+
 ## Context Continuity Adoption
 
 - [architecture/TONESOUL_CONTEXT_CONTINUITY_ADOPTION_MAP.md](architecture/TONESOUL_CONTEXT_CONTINUITY_ADOPTION_MAP.md)
   - ToneSoul-native adoption map for what should continue across sessions, tasks, agents, and models, and what must stay bounded or not transfer at all
 
 Use this when the question is not merely how to hand off current state, but what continuity discipline ToneSoul should adopt next. It is an adoption map, not live runtime permission.
+
+## Continuity Import And Receiver Discipline
+
+- [architecture/TONESOUL_CONTINUITY_IMPORT_AND_DECAY_CONTRACT.md](architecture/TONESOUL_CONTINUITY_IMPORT_AND_DECAY_CONTRACT.md)
+  - import-posture contract for deciding what may be trusted directly, treated as advisory, or discounted by decay
+- [architecture/TONESOUL_RECEIVER_INTERPRETATION_BOUNDARY_CONTRACT.md](architecture/TONESOUL_RECEIVER_INTERPRETATION_BOUNDARY_CONTRACT.md)
+  - receiver-side boundary contract for `ack`, `apply`, `promote`, and silent-override hazards
+- [architecture/TONESOUL_CONTINUITY_SURFACE_LIFECYCLE_MAP.md](architecture/TONESOUL_CONTINUITY_SURFACE_LIFECYCLE_MAP.md)
+  - temporal lane map for continuity surfaces from immediate coordination to canonical foundation
+- [plans/tonesoul_continuity_followup_candidates_2026-03-29.md](plans/tonesoul_continuity_followup_candidates_2026-03-29.md)
+  - bounded implementation candidates for freshness, import posture surfacing, promotion guards, and decay reporting
+
+Use these when the question is no longer only what should continue, but what the receiver may safely import, how long it stays fresh, and what must never be silently promoted.
 
 ## Prompt Discipline Skeleton
 

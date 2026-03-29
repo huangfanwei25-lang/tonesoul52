@@ -2,7 +2,7 @@
 
 > Purpose: define the retrieval-oriented structure of ToneSoul's documentation so later agents can tell entrypoints, canonical anchors, governance contracts, and generated status surfaces apart.
 > Status: active documentation authority map for convergence cleanup.
-> Last Updated: 2026-03-23
+> Last Updated: 2026-03-29
 
 ---
 
@@ -122,6 +122,32 @@ Open this when the question is:
 - `docs/architecture/TONESOUL_PROMPT_VARIANTS.md`
 - `docs/architecture/TONESOUL_PROMPT_STARTER_CARDS.md`
 
+### 11. Continuity import and receiver lane
+
+Open these when the question is:
+
+- what a later agent may safely `ack`, `apply`, or `promote`,
+- how continuity surfaces decay across minutes, days, or weeks,
+- which continuity surfaces are most dangerous to over-import.
+
+- `docs/architecture/TONESOUL_CONTINUITY_IMPORT_AND_DECAY_CONTRACT.md`
+- `docs/architecture/TONESOUL_RECEIVER_INTERPRETATION_BOUNDARY_CONTRACT.md`
+- `docs/architecture/TONESOUL_CONTINUITY_SURFACE_LIFECYCLE_MAP.md`
+- `docs/plans/tonesoul_continuity_followup_candidates_2026-03-29.md`
+
+### 12. Council realism and calibration lane
+
+Open these when the question is:
+
+- how independent the current council really is,
+- whether a confidence surface is descriptive or calibrated,
+- which adversarial or deliberation-quality upgrades are safe now versus blocked.
+
+- `docs/architecture/TONESOUL_COUNCIL_REALISM_AND_INDEPENDENCE_CONTRACT.md`
+- `docs/architecture/TONESOUL_COUNCIL_CONFIDENCE_AND_CALIBRATION_MAP.md`
+- `docs/architecture/TONESOUL_ADVERSARIAL_DELIBERATION_ADOPTION_MAP.md`
+- `docs/plans/tonesoul_council_realism_followup_candidates_2026-03-29.md`
+
 ## Retrieval Order
 
 1. Start in the entrypoint lane.
@@ -130,9 +156,11 @@ Open this when the question is:
 4. Move to the observable-shell and axiom challenge lane when overclaim risk or constitutional challengeability is the issue.
 5. Move to the council deliberation discipline lane when replayable verdict structure or deliberation depth is the issue.
 6. Move to the context continuity adoption lane when the question is no longer "how do I hand off now" but "what should continuity mean in ToneSoul."
-7. Move to the prompt discipline skeleton lane when the question is no longer "what should transfer" but "how should the prompt be built."
-8. Move to documentation governance and convergence contracts when restructuring docs.
-9. Prefer generated status surfaces over stale prose when checking current posture.
+7. Move to the continuity import and receiver lane when the question is no longer only "what should continue" but "what may the receiver safely import or let decay."
+8. Move to the council realism and calibration lane when a verdict sounds stronger than its real independence or confidence backing.
+9. Move to the prompt discipline skeleton lane when the question is no longer "what should transfer" but "how should the prompt be built."
+10. Move to documentation governance and convergence contracts when restructuring docs.
+11. Prefer generated status surfaces over stale prose when checking current posture.
 
 ## Current Rule
 

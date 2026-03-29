@@ -6,7 +6,7 @@
 > ToneSoul is an externalized cognitive architecture for AI governance, ethical memory systems, verifier-first agents, knowledge-graph retrieval, and adapter-ready semantic governance.
 
 > Purpose: public repository entrypoint for ToneSoul's architecture, governance posture, and practical onboarding.
-> Last Updated: 2026-03-22
+> Last Updated: 2026-03-29
 
 ---
 
@@ -117,8 +117,18 @@ For council replayability, dissent preservation, and deliberation-depth discipli
 [`docs/architecture/TONESOUL_COUNCIL_DOSSIER_AND_DISSENT_CONTRACT.md`](docs/architecture/TONESOUL_COUNCIL_DOSSIER_AND_DISSENT_CONTRACT.md)
 and
 [`docs/architecture/TONESOUL_ADAPTIVE_DELIBERATION_MODE_CONTRACT.md`](docs/architecture/TONESOUL_ADAPTIVE_DELIBERATION_MODE_CONTRACT.md).
+For council honesty about independence, descriptive confidence, and bounded adversarial-upgrade paths, open
+[`docs/architecture/TONESOUL_COUNCIL_REALISM_AND_INDEPENDENCE_CONTRACT.md`](docs/architecture/TONESOUL_COUNCIL_REALISM_AND_INDEPENDENCE_CONTRACT.md),
+[`docs/architecture/TONESOUL_COUNCIL_CONFIDENCE_AND_CALIBRATION_MAP.md`](docs/architecture/TONESOUL_COUNCIL_CONFIDENCE_AND_CALIBRATION_MAP.md),
+and
+[`docs/architecture/TONESOUL_ADVERSARIAL_DELIBERATION_ADOPTION_MAP.md`](docs/architecture/TONESOUL_ADVERSARIAL_DELIBERATION_ADOPTION_MAP.md).
 For context continuity across sessions, tasks, agents, and models without turning transfer into hidden-memory folklore, open
 [`docs/architecture/TONESOUL_CONTEXT_CONTINUITY_ADOPTION_MAP.md`](docs/architecture/TONESOUL_CONTEXT_CONTINUITY_ADOPTION_MAP.md).
+For receiver-side continuity discipline around what may be acknowledged, applied, promoted, or allowed to decay, open
+[`docs/architecture/TONESOUL_CONTINUITY_IMPORT_AND_DECAY_CONTRACT.md`](docs/architecture/TONESOUL_CONTINUITY_IMPORT_AND_DECAY_CONTRACT.md),
+[`docs/architecture/TONESOUL_RECEIVER_INTERPRETATION_BOUNDARY_CONTRACT.md`](docs/architecture/TONESOUL_RECEIVER_INTERPRETATION_BOUNDARY_CONTRACT.md),
+and
+[`docs/architecture/TONESOUL_CONTINUITY_SURFACE_LIFECYCLE_MAP.md`](docs/architecture/TONESOUL_CONTINUITY_SURFACE_LIFECYCLE_MAP.md).
 For prompt-side discipline around goal function, priority, evidence, compression, and receiver instructions, open
 [`docs/architecture/TONESOUL_PROMPT_DISCIPLINE_SKELETON.md`](docs/architecture/TONESOUL_PROMPT_DISCIPLINE_SKELETON.md).
 For ToneSoul-native practical prompt variants built on top of that skeleton, open

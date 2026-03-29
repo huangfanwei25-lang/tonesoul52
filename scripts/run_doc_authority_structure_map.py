@@ -161,12 +161,40 @@ GROUPS = [
         ],
     },
     {
+        "id": "continuity_import_and_receiver_discipline",
+        "label": "Continuity Import And Receiver Discipline",
+        "description": "receiver-side continuity aids for deciding what may be acknowledged, applied, promoted, or discounted by decay across packet, handoff, and subject surfaces",
+        "authority_role": "discipline_contract",
+        "use_when": "when the question is not merely what should continue, but what a later agent may safely import from continuity surfaces and how long that import remains fresh",
+        "read_order": 12,
+        "files": [
+            "docs/architecture/TONESOUL_CONTINUITY_IMPORT_AND_DECAY_CONTRACT.md",
+            "docs/architecture/TONESOUL_RECEIVER_INTERPRETATION_BOUNDARY_CONTRACT.md",
+            "docs/architecture/TONESOUL_CONTINUITY_SURFACE_LIFECYCLE_MAP.md",
+            "docs/plans/tonesoul_continuity_followup_candidates_2026-03-29.md",
+        ],
+    },
+    {
+        "id": "council_realism_and_calibration",
+        "label": "Council Realism And Calibration",
+        "description": "honesty and adoption aids for separating perspective plurality from real independence, and descriptive confidence from calibrated confidence",
+        "authority_role": "boundary_contract",
+        "use_when": "when describing how real the current council is, what its confidence numbers actually mean, or which bounded adversarial upgrades are safe to consider next",
+        "read_order": 13,
+        "files": [
+            "docs/architecture/TONESOUL_COUNCIL_REALISM_AND_INDEPENDENCE_CONTRACT.md",
+            "docs/architecture/TONESOUL_COUNCIL_CONFIDENCE_AND_CALIBRATION_MAP.md",
+            "docs/architecture/TONESOUL_ADVERSARIAL_DELIBERATION_ADOPTION_MAP.md",
+            "docs/plans/tonesoul_council_realism_followup_candidates_2026-03-29.md",
+        ],
+    },
+    {
         "id": "context_continuity_adoption",
         "label": "Context Continuity Adoption",
         "description": "adoption aid for deciding what structure should continue across sessions, tasks, agents, and models without turning handoff memory into hidden truth",
         "authority_role": "adoption_map",
         "use_when": "when the question is not merely how to hand off hot state, but what continuity discipline ToneSoul should adopt or defer",
-        "read_order": 12,
+        "read_order": 14,
         "files": [
             "docs/architecture/TONESOUL_CONTEXT_CONTINUITY_ADOPTION_MAP.md",
         ],
@@ -177,7 +205,7 @@ GROUPS = [
         "description": "prompt-side discipline aids for separating goal, priority, confidence, recovery, compression, receiver instructions, and practical task-shaped variants before building extraction or transfer prompts",
         "authority_role": "discipline_contract",
         "use_when": "when the question is not what should be transferred, but how the prompt that extracts or transfers it should be structured",
-        "read_order": 13,
+        "read_order": 15,
         "files": [
             "docs/architecture/TONESOUL_PROMPT_DISCIPLINE_SKELETON.md",
             "docs/architecture/TONESOUL_PROMPT_VARIANTS.md",
@@ -190,7 +218,7 @@ GROUPS = [
         "description": "naming, zoning, and convergence planning surfaces",
         "authority_role": "doc_governance",
         "use_when": "when retrieval quality, metadata posture, or naming collisions are the problem",
-        "read_order": 14,
+        "read_order": 16,
         "files": [
             "docs/DOCS_INFORMATION_ARCHITECTURE_v1.md",
             "docs/DOCS_CLASSIFICATION_LEDGER_v1.md",
@@ -205,7 +233,7 @@ GROUPS = [
         "description": "ownership and divergence boundaries for duplicate-like surfaces",
         "authority_role": "boundary_contract",
         "use_when": "when two similar-looking lanes need explicit ownership or split-brain control",
-        "read_order": 15,
+        "read_order": 17,
         "files": [
             "docs/architecture/BASENAME_DIVERGENCE_DISTILLATION_MAP.md",
             "docs/architecture/PRIVATE_MEMORY_SHADOW_BOUNDARY_MAP.md",
@@ -219,7 +247,7 @@ GROUPS = [
         "description": "machine-readable current posture for convergence-related lanes",
         "authority_role": "generated_status",
         "use_when": "when current machine-readable posture matters more than prose explanation",
-        "read_order": 16,
+        "read_order": 18,
         "files": [
             "docs/status/doc_convergence_inventory_latest.json",
             "docs/status/basename_divergence_distillation_latest.json",

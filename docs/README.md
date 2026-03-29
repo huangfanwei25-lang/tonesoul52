@@ -1,7 +1,7 @@
 # ToneSoul Documentation Index
 
 > Purpose: documentation entrypoint and guided index for ToneSoul architecture, status artifacts, and convergence surfaces.
-> Last Updated: 2026-03-28
+> Last Updated: 2026-03-29
 
 > 這是文檔的入口點。請從這裡開始閱讀。
 
@@ -131,12 +131,38 @@ Treat these as observability and methodological boundary aids. They help later a
 
 Treat these as council-discipline aids. They help later agents decide what a verdict preserved and whether deliberation depth matched task stakes, but they do not outrank runtime code or current council behavior.
 
+## Council Realism And Calibration
+
+- `architecture/TONESOUL_COUNCIL_REALISM_AND_INDEPENDENCE_CONTRACT.md`
+  - explains where ToneSoul's council is genuinely plural versus where it is still one-model perspective multiplication
+- `architecture/TONESOUL_COUNCIL_CONFIDENCE_AND_CALIBRATION_MAP.md`
+  - maps confidence-bearing council surfaces and separates descriptive agreement metrics from true calibration
+- `architecture/TONESOUL_ADVERSARIAL_DELIBERATION_ADOPTION_MAP.md`
+  - bounded adoption map for devil's advocate, pre-mortem, self-consistency, calibration, and blocked future improvements
+- `plans/tonesoul_council_realism_followup_candidates_2026-03-29.md`
+  - small next-step list derived from the realism/calibration pass
+
+Treat these as realism and calibration aids. They help later agents describe the current council honestly and choose bounded quality improvements, but they do not outrank runtime code or mutate current council behavior by themselves.
+
 ## Context Continuity Adoption
 
 - `architecture/TONESOUL_CONTEXT_CONTINUITY_ADOPTION_MAP.md`
   - translates broad context-transfer instincts into ToneSoul-native continuity lanes across packet, compaction, subject snapshot, council dossier, and plan-delta surfaces
 
 Treat this as an adoption map. It helps later agents decide what should continue across sessions, tasks, agents, and models, but it does not authorize raw transcript carry, hidden-thought transfer, or automatic promotion into canonical truth.
+
+## Continuity Import And Receiver Discipline
+
+- `architecture/TONESOUL_CONTINUITY_IMPORT_AND_DECAY_CONTRACT.md`
+  - classifies which continuity surfaces are directly importable, advisory, ephemeral, or manual-confirmation only
+- `architecture/TONESOUL_RECEIVER_INTERPRETATION_BOUNDARY_CONTRACT.md`
+  - defines the receiver-side difference between `ack`, `apply`, and `promote`, and names the most dangerous silent-override hazards
+- `architecture/TONESOUL_CONTINUITY_SURFACE_LIFECYCLE_MAP.md`
+  - groups continuity surfaces into immediate coordination, bounded handoff, working identity, replay/review, and canonical foundation lanes
+- `plans/tonesoul_continuity_followup_candidates_2026-03-29.md`
+  - bounded follow-up list for freshness, import posture surfacing, promotion guards, and decay reporting
+
+Treat these as receiver-side continuity discipline aids. They help later agents import packet / compaction / checkpoint / snapshot surfaces without over-trusting them, but they do not outrank live runtime posture or canonical governance truth.
 
 ## Prompt Discipline Skeleton
 
