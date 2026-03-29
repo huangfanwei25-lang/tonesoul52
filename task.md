@@ -1343,3 +1343,9 @@
 - [x] keep the change prompt-level only so Critic must surface a strongest objection before approving rather than silently converging with the rest
 - [x] add regression coverage so future prompt edits do not remove the bounded adversarial pass by accident
 **Success Criteria**: Critic prompts in both cloud and local council paths visibly require a strongest objection before APPROVE, while existing council parsing and tests remain compatible.
+
+## Phase 711: Diagnose Council Realism Readout (2026-03-30)
+- [x] add a dedicated `Council Realism` section to `tonesoul/diagnose.py` so full diagnostics stop relying on packet/session-start alone for realism warnings
+- [x] prefer latest `recent_traces[*].council_dossier_summary` and fall back to compaction dossier payloads when traces do not expose the latest realism cues
+- [x] lock the readout with `tests/test_diagnose.py` so calibration/descriptive-only, minority dissent, and suppression flags remain visible in future diagnostics
+**Success Criteria**: A fresh agent running the full diagnostic can directly see that council confidence is descriptive, whether minority dissent exists, and whether suppression risk is flagged, without opening packet JSON or session-start bundles.

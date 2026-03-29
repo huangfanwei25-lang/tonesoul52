@@ -46,6 +46,18 @@ def _clip(text: str, limit: int = 72) -> str:
     return f"{stripped[: limit - 3]}..."
 
 
+def _latest_council_dossier_summary(packet: dict[str, Any]) -> dict[str, Any]:
+    for trace in list(packet.get("recent_traces") or []):
+        summary = trace.get("council_dossier_summary")
+        if isinstance(summary, dict) and summary:
+            return summary
+    for compaction in list(packet.get("recent_compactions") or []):
+        dossier = compaction.get("council_dossier")
+        if isinstance(dossier, dict) and dossier:
+            return dossier
+    return {}
+
+
 def _packet(
     store,
     posture,
@@ -622,6 +634,39 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
             lines.append("  current_reminders:")
             for reminder in reminders[:4]:
                 lines.append(f"    - {_clip(reminder)}")
+
+    council_dossier = _latest_council_dossier_summary(packet)
+    if council_dossier:
+        realism_lines: list[str] = []
+        confidence_posture = str(council_dossier.get("confidence_posture", "")).strip()
+        if confidence_posture:
+            realism_lines.append(f"  confidence_posture={confidence_posture}")
+        decomposition = council_dossier.get("confidence_decomposition") or {}
+        calibration_status = str(decomposition.get("calibration_status", "")).strip()
+        if calibration_status:
+            realism_lines.append(f"  calibration_status={calibration_status}")
+        coverage_posture = str(decomposition.get("coverage_posture", "")).strip()
+        if coverage_posture:
+            realism_lines.append(f"  coverage_posture={coverage_posture}")
+        adversarial_posture = str(decomposition.get("adversarial_posture", "")).strip()
+        if adversarial_posture:
+            realism_lines.append(f"  adversarial_posture={adversarial_posture}")
+        if "has_minority_report" in council_dossier:
+            realism_lines.append(
+                f"  has_minority_report={bool(council_dossier.get('has_minority_report'))}"
+            )
+        if "evolution_suppression_flag" in council_dossier:
+            realism_lines.append(
+                "  evolution_suppression_flag="
+                f"{bool(council_dossier.get('evolution_suppression_flag'))}"
+            )
+        realism_note = str(council_dossier.get("realism_note", "")).strip()
+        if realism_note:
+            realism_lines.append(f"  note={_clip(realism_note, limit=110)}")
+        if realism_lines:
+            lines.append("")
+            lines.append("[Council Realism]")
+            lines.extend(realism_lines)
 
     lanes = packet.get("parallel_lanes", {})
     if lanes:

@@ -89,6 +89,20 @@ def _fake_packet():
                 "timestamp": "2026-03-27T01:02:03Z",
                 "topics": ["shared-memory"],
                 "key_decision_count": 1,
+                "council_dossier_summary": {
+                    "confidence_posture": "contested",
+                    "has_minority_report": True,
+                    "confidence_decomposition": {
+                        "calibration_status": "descriptive_only",
+                        "coverage_posture": "partial",
+                        "adversarial_posture": "visible_dissent",
+                    },
+                    "evolution_suppression_flag": True,
+                    "realism_note": (
+                        "Descriptive agreement record only; dissent is visible and suppression "
+                        "risk is flagged, so review minority signals before treating approval as settled."
+                    ),
+                },
             }
         ],
         "recent_visitors": [
@@ -465,6 +479,14 @@ def test_full_diagnostic_is_cp950_safe_and_includes_shared_runtime(monkeypatch) 
     assert "save_subject_snapshot.py" in report
     assert "apply_subject_refresh.py" in report
     assert "completion_rule=Before ending a session" in report
+    assert "[Council Realism]" in report
+    assert "confidence_posture=contested" in report
+    assert "calibration_status=descriptive_only" in report
+    assert "coverage_posture=partial" in report
+    assert "adversarial_posture=visible_dissent" in report
+    assert "has_minority_report=True" in report
+    assert "evolution_suppression_flag=True" in report
+    assert "Descriptive agreement record only; dissent is visible" in report
     assert "subject_anchor:" in report
     assert "working_style_anchor:" in report
     assert "working_style_playbook:" in report
