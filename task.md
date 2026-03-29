@@ -37,6 +37,18 @@
 - Phase 697: define and test receiver-side style import limits so playbook advice influences workflow without silently promoting into durable identity, vows, or canonical planning
 - Phase 698: run a bounded multi-agent continuity validation wave so fresh agents can be scored on whether they follow shared operating style, not just shared task state
 
+## Long Program: Cross-Surface Consistency And Theme Rotation (2026-03-30)
+- Program Goal: keep packet, session-start, diagnose, and generic prompt surfaces aligned enough that later agents inherit the same receiver discipline and operating style before Codex rotates to the next short board.
+- Execution Guardrails:
+  - Prefer helper extraction, readout parity, and regression coverage over new conceptual lanes.
+  - Keep the work bounded to generic or coordination-facing surfaces; defer domain-heavy voice layers until they clearly become the shortest board.
+  - Treat `ToneBridge analyzer`, `ToneBridge personas/navigation`, `market/world_model`, and other domain/voice prompts as deferred unless a concrete baseline gap forces them into scope.
+- Phase 713: close the next-safe prompt/readout topology so Codex knows which surfaces are still worth touching and which ones should be explicitly deferred
+- Phase 714: adopt prompt discipline for one more low-risk generic iteration surface instead of reopening already-baseline council/reflection/dream prompts
+- Phase 715: tighten cross-surface receiver parity so packet, session-start, and diagnose stop drifting in how they describe council realism and continuity import posture
+- Phase 716: expose one bounded evidence/readout posture so later agents can see what is tested/runtime-present/document-backed without opening long evidence docs first
+- Phase 717: refresh the water-bucket snapshot and rotate away from prompt/readout work once the remaining generic baseline gaps are clearly closed
+
 ## Water-Bucket Snapshot (2026-03-30)
 - Baseline reached:
   - session-start / session-end / packet / delta / readiness / receiver-guard continuity
@@ -46,8 +58,9 @@
   - context-injection prompt adoption (`value_accumulator` and `self_commit`)
   - unified runtime context prompt framing
 - Current short board:
-  - broader prompt-adoption baseline, starting only with low-risk generic surfaces
+  - cross-surface receiver parity after the generic prompt-adoption baseline started to stabilize
 - After that:
+  - one bounded evidence/readout posture if parity closes cleanly
   - move to the next non-baseline theme instead of reopening prompt refinements unless a clearly safe gap remains
   - only then further optimization
 
@@ -1355,3 +1368,21 @@
 - [x] preserve loop state transitions, promise detection semantics, and the handler contract instead of widening the loop engine into a new governance lane
 - [x] add regression coverage so the iteration prompt keeps the new structure and explicit completion discipline
 **Success Criteria**: Iteration loops still behave the same at runtime, but the prompt handed to each loop step is no longer a flat task dump and instead carries bounded goal, priority, and completion instructions.
+
+## Phase 713: Prompt/Readout Topology Closure (2026-03-30)
+- [x] rank the next still-safe generic surfaces so future adoption stops drifting by intuition
+- [x] keep `LoopEngine`, cross-surface receiver parity, and bounded evidence readout in the local queue while explicitly deferring `ToneBridge analyzer`, `ToneBridge personas/navigation`, and `market/world_model`
+- [x] treat already-baseline council/reflection/dream/stale-rule prompt lanes as closed unless a new regression appears
+**Success Criteria**: Codex has one explicit stop-line map for safe generic prompt/readout work, so later changes do not reopen finished lanes or wander into domain-specific voice surfaces too early.
+
+## Phase 714: Loop Engine Prompt Discipline Adoption (2026-03-30)
+- [x] treat Phase 712 as the already-completed implementation wave for this slot instead of reopening another generic iteration-surface change
+- [x] keep the cross-surface program focused on what remains below baseline after the loop-engine adoption, not on duplicating the same prompt wave under a new phase number
+- [x] use the completed loop-engine wave as the stop-line proving that the generic prompt-adoption lane is active, then rotate to parity work
+**Success Criteria**: The cross-surface program can reference a completed low-risk generic prompt adoption wave without reopening it, keeping the next short board on parity rather than duplicative prompt edits.
+
+## Phase 715: Cross-Surface Receiver Parity (2026-03-30, planned)
+- [ ] align packet/session-start/diagnose readouts around the same bounded council-realism and continuity-import interpretation
+- [ ] add regression coverage so future changes do not let one surface understate dissent, descriptive-only confidence, or continuity guardrails compared to the others
+- [ ] keep the work readout-only, without changing council runtime, packet authority, or import semantics
+**Success Criteria**: A later agent reading packet, session-start, or diagnose sees the same bounded story about realism and receiver posture instead of slightly different interpretations that drift apart over time.
