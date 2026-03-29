@@ -321,6 +321,119 @@ def test_start_agent_session_blocks_on_stop_handoff(capsys, monkeypatch, tmp_pat
     assert output["readiness"]["stop_signal_count"] >= 1
 
 
+def test_start_agent_session_marks_recycled_carry_forward_as_must_not_promote(
+    capsys,
+    monkeypatch,
+    tmp_path: Path,
+) -> None:
+    module = _load_script_module()
+    state_path = tmp_path / "governance_state.json"
+    traces_path = tmp_path / "session_traces.jsonl"
+    sidecar_dir = tmp_path / ".aegis"
+    subject_snapshots_path = sidecar_dir / "subject_snapshots.json"
+    compactions_path = sidecar_dir / "compacted.json"
+
+    _write_state(state_path)
+    traces_path.write_text(
+        json.dumps(
+            {
+                "session_id": "sess-2",
+                "agent": "codex",
+                "timestamp": "2026-03-28T00:05:00+00:00",
+                "topics": ["runtime_adapter", "redis"],
+                "tension_events": [],
+                "vow_events": [],
+                "aegis_vetoes": [],
+                "key_decisions": ["observe recycled carry-forward at session start"],
+            }
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    sidecar_dir.mkdir(parents=True, exist_ok=True)
+    subject_snapshots_path.write_text(
+        json.dumps(
+            [
+                {
+                    "snapshot_id": "subj-1",
+                    "agent": "codex",
+                    "session_id": "sess-0",
+                    "summary": "Operate as a packet-first runtime steward with explicit boundaries.",
+                    "stable_vows": ["never smuggle theory into runtime truth"],
+                    "durable_boundaries": ["do not edit protected human-managed files"],
+                    "decision_preferences": ["prefer packet before broad repo scan"],
+                    "verified_routines": ["end sessions with checkpoint or compaction before release"],
+                    "active_threads": ["subject snapshot hardening"],
+                    "evidence_refs": ["docs/AI_QUICKSTART.md"],
+                    "refresh_signals": ["refresh when durable boundaries change"],
+                    "source": "cli",
+                    "updated_at": "2026-03-28T00:00:30+00:00",
+                }
+            ]
+        ),
+        encoding="utf-8",
+    )
+    compactions_path.write_text(
+        json.dumps(
+            [
+                {
+                    "compaction_id": "cmp-new",
+                    "agent": "codex",
+                    "session_id": "sess-2",
+                    "summary": "Repeated bounded handoff with no new backing evidence.",
+                    "carry_forward": ["keep packet-first session cadence stable"],
+                    "pending_paths": ["tonesoul/runtime_adapter.py"],
+                    "evidence_refs": ["docs/AI_QUICKSTART.md"],
+                    "next_action": "refresh subject snapshot active threads",
+                    "source": "cli",
+                    "updated_at": "2026-03-28T00:05:00+00:00",
+                },
+                {
+                    "compaction_id": "cmp-old",
+                    "agent": "codex",
+                    "session_id": "sess-1",
+                    "summary": "Previous bounded handoff for the runtime lane.",
+                    "carry_forward": ["keep packet-first session cadence stable"],
+                    "pending_paths": ["tonesoul/runtime_adapter.py"],
+                    "evidence_refs": ["docs/AI_QUICKSTART.md"],
+                    "next_action": "refresh subject snapshot active threads",
+                    "source": "cli",
+                    "updated_at": "2026-03-28T00:04:00+00:00",
+                }
+            ]
+        ),
+        encoding="utf-8",
+    )
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "start_agent_session.py",
+            "--state-path",
+            str(state_path),
+            "--traces-path",
+            str(traces_path),
+            "--agent",
+            "observer-carry-forward",
+            "--no-ack",
+        ],
+    )
+
+    module.main()
+    output = json.loads(capsys.readouterr().out)
+
+    compaction_surface = output["import_posture"]["surfaces"]["compactions"]
+    assert compaction_surface["import_posture"] == "advisory"
+    assert compaction_surface["receiver_obligation"] == "must_not_promote"
+    assert any("recycled carry_forward" in hazard for hazard in compaction_surface["promotion_hazards"])
+    assert any(
+        "Latest carry-forward repeats an older handoff without new evidence"
+        in alert
+        for alert in output["import_posture"]["receiver_alerts"]
+    )
+
+
 def test_ensure_repo_root_on_path_adds_repo_root(monkeypatch) -> None:
     module = _load_script_module()
     repo_root = str(Path(__file__).resolve().parents[1])

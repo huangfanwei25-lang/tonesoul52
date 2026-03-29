@@ -138,6 +138,15 @@ def _min_claim_ttl_minutes(claims: list[dict]) -> float | None:
     return round(min(remaining), 1)
 
 
+def _carry_forward_promotion_hazards(subject_refresh: dict) -> list[str]:
+    hazards: list[str] = []
+    for hazard in list(subject_refresh.get("promotion_hazards") or []):
+        text = str(hazard or "").strip()
+        if "carry_forward" in text:
+            hazards.append(text)
+    return hazards
+
+
 def _build_readiness(*, agent_id: str, packet: dict, claims: list[dict]) -> dict:
     risk_posture = ((packet.get("posture") or {}).get("risk_posture") or {})
     delta_feed = packet.get("delta_feed") or {}
@@ -235,6 +244,7 @@ def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
     delta_feed = packet.get("delta_feed") or {}
     project_memory_summary = packet.get("project_memory_summary") or {}
     subject_refresh = project_memory_summary.get("subject_refresh") or {}
+    carry_forward_hazards = _carry_forward_promotion_hazards(subject_refresh)
 
     claim_ttl_minutes = _min_claim_ttl_minutes(claims)
     latest_compaction = compactions[0] if compactions else {}
@@ -293,10 +303,15 @@ def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
         "compactions": {
             "present": bool(compactions),
             "import_posture": "advisory",
-            "receiver_obligation": "should_consider",
+            "receiver_obligation": "must_not_promote" if carry_forward_hazards else "should_consider",
             "decay_posture": "medium",
             "freshness_hours": _latest_freshness(compactions, timestamp_key="updated_at"),
-            "note": "Carry-forward is resumability memory; apply cautiously and never silently promote.",
+            "promotion_hazards": carry_forward_hazards,
+            "note": (
+                "Carry-forward is resumability memory; the latest compaction repeats an older handoff without new evidence, so it may guide review but must not be promoted."
+                if carry_forward_hazards
+                else "Carry-forward is resumability memory; apply cautiously and never silently promote."
+            ),
         },
         "project_memory_summary": {
             "present": bool(project_memory_summary),
@@ -368,11 +383,24 @@ def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
             detail += f"@{float(freshness):.1f}h"
         if name == "claims" and claim_ttl_minutes is not None:
             detail += f"/ttl≈{claim_ttl_minutes:.0f}m"
+        if name == "claims" and claim_ttl_minutes is not None and "/ttl" in detail:
+            detail = detail.split("/ttl", 1)[0] + f"/ttl≈{claim_ttl_minutes:.0f}m"
         summary_parts.append(f"{name}={detail}")
+
+    receiver_alerts: list[str] = []
+    if carry_forward_hazards:
+        receiver_alerts.append(
+            "Latest carry-forward repeats an older handoff without new evidence; ack or review it, but do not promote it into subject identity or canonical planning."
+        )
+    if carry_forward_hazards and subject_refresh:
+        receiver_alerts.append(
+            "Compaction-backed subject refresh is currently blocked by recycled carry-forward evidence; wait for a fresh compaction or stronger evidence before applying active_threads refresh."
+        )
 
     return {
         "summary_text": " | ".join(summary_parts),
         "surfaces": surfaces,
+        "receiver_alerts": receiver_alerts,
         "receiver_rule": "ack is safe, apply is bounded, promote requires explicit justification and human confirmation.",
         "readiness_alignment": str(readiness.get("status", "")),
     }

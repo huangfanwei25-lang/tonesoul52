@@ -23,6 +23,7 @@
 - Phase 683: run a Claude-owned docs mega-program for audience routing, historical-surface mapping, and mojibake hazard registration without colliding with Codex's entrypoint rewrites
 - Phase 684: surface descriptive council confidence decomposition so later agents stop reading one agreement number as if it were calibrated accuracy
 - Phase 685: block recycled carry-forward from silently refreshing subject identity when a new compaction repeats the same handoff without new evidence
+- Phase 686: surface receiver-side import guards at session start so later agents stop silently promoting advisory compactions into planning or identity
 
 ## Phase 679: Continuity Freshness And Import Posture (2026-03-29)
 - [x] Add bounded `freshness_hours` to the packet continuity surfaces that later agents actually inherit at session start
@@ -65,6 +66,12 @@
 - [x] Surface that condition as a `subject_refresh` promotion hazard instead of silently treating the repeated handoff as fresh compaction-backed evidence
 - [x] Lock the guard with runtime and session-end regression tests so repeated reminders cannot refresh `active_threads` by accident
 **Success Criteria**: A repeated compaction that only replays an old carry-forward memo, without any new evidence, stops qualifying as low-risk backing for `active_threads` refresh and is visibly rejected by both packet surfaces and session-end refresh attempts.
+
+## Phase 686: Session-Start Receiver Guard For Advisory Compactions (2026-03-29)
+- [x] Reflect recycled carry-forward hazards into `start_agent_session.py` so `import_posture` can mark compactions as `must_not_promote`
+- [x] Emit explicit receiver alerts when the latest carry-forward is resumability memory only and should not be promoted into subject identity or canonical planning
+- [x] Lock the new session-start behavior with script-level regression tests
+**Success Criteria**: A later agent running the session-start bundle can see, before editing anything, that the newest compaction is advisory-only due to recycled carry-forward and must not be promoted beyond bounded review.
 
 ## Phase 666: Bounded Council Dossier Carry Surfaces (2026-03-28)
 - [x] Let `SessionTrace` store an optional compact council dossier input while keeping the canonical trace schema backward-compatible
