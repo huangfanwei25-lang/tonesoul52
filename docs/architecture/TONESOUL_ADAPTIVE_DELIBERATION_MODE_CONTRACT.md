@@ -214,6 +214,8 @@ The contract proposes three mode names. These may be renamed if better ToneSoul-
 
 ## Relationship To Other Documents
 
+Implementation note (2026-03-29): `scripts/start_agent_session.py` now surfaces a bounded machine-readable `deliberation_mode_hint` derived from `task_track_hint`, readiness, risk, and claim collision. This readout is advisory only; it does not yet select runtime council depth automatically.
+
 | Document | Relationship |
 |----------|-------------|
 | `TONESOUL_COUNCIL_DOSSIER_AND_DISSENT_CONTRACT.md` | Defines the dossier shape that each mode must produce; lightweight produces minimal dossier, elevated produces extended dossier |

@@ -417,6 +417,135 @@ def _build_task_track_hint(*, packet: dict, readiness: dict) -> dict:
     }
 
 
+def _normalize_risk_bucket(risk_level: str) -> str:
+    normalized = str(risk_level or "").strip().lower()
+    if normalized == "critical":
+        return "critical"
+    if normalized == "high":
+        return "elevated"
+    return "normal"
+
+
+def _select_resume_deliberation_mode(
+    *,
+    task_track: str,
+    risk_bucket: str,
+    claim_collision: bool,
+    readiness_state: str,
+) -> tuple[str, bool, list[str]]:
+    reasons: list[str] = [f"task_track_{task_track}", f"risk_bucket_{risk_bucket}"]
+    if claim_collision:
+        reasons.append("claim_collision_visible")
+    if readiness_state == "needs_clarification":
+        reasons.append("readiness_needs_clarification")
+
+    if task_track == "quick_change":
+        if claim_collision:
+            return "standard_council", False, reasons
+        if risk_bucket == "elevated":
+            return "standard_council", False, reasons
+        return "lightweight_review", False, reasons
+
+    if task_track == "feature_track":
+        if readiness_state == "needs_clarification":
+            return "standard_council", False, reasons
+        if risk_bucket in {"elevated", "critical"}:
+            return "elevated_council", risk_bucket == "critical", reasons
+        return "standard_council", False, reasons
+
+    if task_track == "system_track":
+        return "elevated_council", risk_bucket == "critical", reasons
+
+    return "unclassified", False, reasons
+
+
+def _build_deliberation_mode_hint(*, task_track_hint: dict, readiness: dict) -> dict:
+    if not bool(task_track_hint.get("present")):
+        return {
+            "present": False,
+            "suggested_mode": "unclassified",
+            "resume_mode_after_unblock": None,
+            "human_required": False,
+            "confidence": "low",
+            "risk_bucket": "unknown",
+            "claim_state": "unknown",
+            "readiness_state": str((readiness or {}).get("status", "unknown") or "unknown"),
+            "reasons": ["task_track_unclassified"],
+            "receiver_note": (
+                "No visible task track is available yet. Read the explicit task objective before assigning deliberation depth."
+            ),
+            "summary_text": "deliberation_mode=unclassified confidence=low",
+        }
+
+    readiness_state = str((readiness or {}).get("status", "unknown") or "unknown")
+    risk_bucket = _normalize_risk_bucket(str((readiness or {}).get("risk_level", "unknown") or "unknown"))
+    claim_collision = int((readiness or {}).get("claim_conflict_count", 0) or 0) > 0
+    claim_state = "active_collision" if claim_collision else "none"
+    task_track = str(task_track_hint.get("suggested_track", "unclassified") or "unclassified")
+    base_mode, base_human_required, reasons = _select_resume_deliberation_mode(
+        task_track=task_track,
+        risk_bucket=risk_bucket,
+        claim_collision=claim_collision,
+        readiness_state=readiness_state,
+    )
+
+    if readiness_state == "blocked":
+        human_required = (
+            bool(base_human_required)
+            or int((readiness or {}).get("stop_signal_count", 0) or 0) > 0
+            or risk_bucket == "critical"
+        )
+        reasons = reasons + ["readiness_blocked"]
+        if int((readiness or {}).get("stop_signal_count", 0) or 0) > 0:
+            reasons.append("stop_handoff_present")
+        if human_required:
+            reasons.append("human_clearance_required")
+        return {
+            "present": True,
+            "suggested_mode": "do_not_deliberate",
+            "resume_mode_after_unblock": base_mode if base_mode != "unclassified" else None,
+            "human_required": human_required,
+            "confidence": str(task_track_hint.get("confidence", "low") or "low"),
+            "risk_bucket": risk_bucket,
+            "claim_state": claim_state,
+            "readiness_state": readiness_state,
+            "reasons": reasons,
+            "receiver_note": (
+                "The task is blocked, so deliberation should not run yet. Clear the blocking condition first; if a STOP signal or critical risk is present, involve a human before resuming."
+            ),
+            "summary_text": (
+                f"deliberation_mode=do_not_deliberate blocked resume={base_mode} "
+                f"human_required={'yes' if human_required else 'no'}"
+            ),
+        }
+
+    human_required = bool(base_human_required)
+    if human_required:
+        reasons.append("human_clearance_required")
+    receiver_note = (
+        "This deliberation-mode hint is advisory and derived from task track, readiness, risk, and claim collision. It does not yet change council runtime depth automatically."
+    )
+    if readiness_state == "needs_clarification":
+        receiver_note += " Clarify the task first, then treat this as the default deliberation depth."
+
+    return {
+        "present": True,
+        "suggested_mode": base_mode,
+        "resume_mode_after_unblock": None,
+        "human_required": human_required,
+        "confidence": str(task_track_hint.get("confidence", "low") or "low"),
+        "risk_bucket": risk_bucket,
+        "claim_state": claim_state,
+        "readiness_state": readiness_state,
+        "reasons": reasons,
+        "receiver_note": receiver_note,
+        "summary_text": (
+            f"deliberation_mode={base_mode} claim_state={claim_state} "
+            f"risk_bucket={risk_bucket} human_required={'yes' if human_required else 'no'}"
+        ),
+    }
+
+
 def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
     claims = list(packet.get("active_claims") or [])
     checkpoints = list(packet.get("recent_checkpoints") or [])
@@ -604,6 +733,15 @@ def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
             for item in summary_parts
         ]
 
+    if claim_ttl_minutes is not None:
+        normalized_summary_parts: list[str] = []
+        for item in summary_parts:
+            if item.startswith("claims="):
+                base = item.split("/ttl", 1)[0]
+                item = f"{base}/ttl={claim_ttl_minutes:.0f}m"
+            normalized_summary_parts.append(item)
+        summary_parts = normalized_summary_parts
+
     receiver_alerts: list[str] = []
     if carry_forward_hazards:
         receiver_alerts.append(
@@ -713,6 +851,10 @@ def main() -> None:
         import_limits=working_style_import_limits,
     )
     task_track_hint = _build_task_track_hint(packet=packet, readiness=readiness)
+    deliberation_mode_hint = _build_deliberation_mode_hint(
+        task_track_hint=task_track_hint,
+        readiness=readiness,
+    )
     payload = {
         "contract_version": "v1",
         "bundle": "session_start",
@@ -728,6 +870,7 @@ def main() -> None:
         + f" | readiness={readiness['status']}",
         "readiness": readiness,
         "task_track_hint": task_track_hint,
+        "deliberation_mode_hint": deliberation_mode_hint,
         "import_posture": _build_import_posture(packet=packet, readiness=readiness),
         "working_style_playbook": working_style_playbook,
         "working_style_validation": working_style_validation,

@@ -136,6 +136,11 @@ def test_start_agent_session_emits_machine_readable_bundle(capsys, monkeypatch, 
     assert output["task_track_hint"]["suggested_track"] == "feature_track"
     assert output["task_track_hint"]["exploration_depth_hint"] == "x2"
     assert output["task_track_hint"]["claim_recommendation"] == "required"
+    assert output["deliberation_mode_hint"]["present"] is True
+    assert output["deliberation_mode_hint"]["suggested_mode"] == "standard_council"
+    assert output["deliberation_mode_hint"]["claim_state"] == "active_collision"
+    assert output["deliberation_mode_hint"]["readiness_state"] == "needs_clarification"
+    assert output["deliberation_mode_hint"]["human_required"] is False
     assert output["working_style_playbook"]["present"] is False
     assert output["working_style_playbook"]["checklist"] == []
     assert "No shared working-style anchor is visible" in output["working_style_playbook"]["application_rule"]
@@ -186,6 +191,8 @@ def test_start_agent_session_can_skip_ack(capsys, monkeypatch, tmp_path: Path) -
     assert output["readiness"]["ready"] is True
     assert output["task_track_hint"]["present"] is False
     assert output["task_track_hint"]["suggested_track"] == "unclassified"
+    assert output["deliberation_mode_hint"]["present"] is False
+    assert output["deliberation_mode_hint"]["suggested_mode"] == "unclassified"
     assert output["import_posture"]["surfaces"]["delta_feed"]["present"] is True
     assert output["underlying_commands"][1] == (
         "python scripts/run_r_memory_packet.py --agent observer-preview"
@@ -332,6 +339,11 @@ def test_start_agent_session_blocks_on_stop_handoff(capsys, monkeypatch, tmp_pat
     assert output["readiness"]["status"] == "blocked"
     assert "stop_handoff_present" in output["readiness"]["blocking_reasons"]
     assert output["readiness"]["stop_signal_count"] >= 1
+    assert output["task_track_hint"]["suggested_track"] == "system_track"
+    assert output["deliberation_mode_hint"]["present"] is True
+    assert output["deliberation_mode_hint"]["suggested_mode"] == "do_not_deliberate"
+    assert output["deliberation_mode_hint"]["resume_mode_after_unblock"] == "elevated_council"
+    assert output["deliberation_mode_hint"]["human_required"] is True
 
 
 def test_start_agent_session_surfaces_system_track_hint_from_canonical_scope(
@@ -401,6 +413,72 @@ def test_start_agent_session_surfaces_system_track_hint_from_canonical_scope(
     assert "pending_path_count_ge_5" in track_hint["reasons"]
     assert "cross_family_scope_visible" in track_hint["reasons"]
     assert "task.md" in track_hint["scope_basis"]["pending_paths"]
+    mode_hint = output["deliberation_mode_hint"]
+    assert mode_hint["present"] is True
+    assert mode_hint["suggested_mode"] == "elevated_council"
+    assert mode_hint["human_required"] is False
+    assert mode_hint["claim_state"] == "none"
+
+
+def test_start_agent_session_surfaces_lightweight_review_for_quick_change(
+    capsys,
+    monkeypatch,
+    tmp_path: Path,
+) -> None:
+    module = _load_script_module()
+    state_path = tmp_path / "governance_state.json"
+    traces_path = tmp_path / "session_traces.jsonl"
+    compactions_path = tmp_path / ".aegis" / "compacted.json"
+
+    _write_state(state_path)
+    _write_traces(traces_path)
+    compactions_path.parent.mkdir(parents=True, exist_ok=True)
+    compactions_path.write_text(
+        json.dumps(
+            [
+                {
+                    "compaction_id": "cmp-quick",
+                    "agent": "codex",
+                    "session_id": "sess-quick",
+                    "summary": "Tight docs-only wording fix.",
+                    "carry_forward": ["tighten one line in AI reference"],
+                    "pending_paths": ["docs/AI_REFERENCE.md"],
+                    "evidence_refs": ["docs/architecture/TONESOUL_PROMPT_DISCIPLINE_SKELETON.md"],
+                    "next_action": "tighten one sentence without changing structure",
+                    "source": "cli",
+                    "updated_at": "2026-03-29T00:11:00+00:00",
+                }
+            ]
+        ),
+        encoding="utf-8",
+    )
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "start_agent_session.py",
+            "--state-path",
+            str(state_path),
+            "--traces-path",
+            str(traces_path),
+            "--agent",
+            "observer-quick-track",
+            "--no-ack",
+        ],
+    )
+
+    module.main()
+    output = json.loads(capsys.readouterr().out)
+
+    track_hint = output["task_track_hint"]
+    assert track_hint["present"] is True
+    assert track_hint["suggested_track"] == "quick_change"
+    assert track_hint["exploration_depth_hint"] == "x0"
+    mode_hint = output["deliberation_mode_hint"]
+    assert mode_hint["present"] is True
+    assert mode_hint["suggested_mode"] == "lightweight_review"
+    assert mode_hint["human_required"] is False
 
 
 def test_start_agent_session_marks_recycled_carry_forward_as_must_not_promote(

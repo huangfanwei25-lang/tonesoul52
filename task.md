@@ -97,6 +97,12 @@
 - [x] add regression coverage for unclassified, feature-track, and system-track cases so control-plane classification stays machine-readable
 **Success Criteria**: A later agent opening the session-start bundle can see an explicit suggested task track, exploration depth hint, and claim/review recommendation derived from visible scope, while still treating the result as an overrideable starting classification rather than a gate.
 
+## Phase 701: Session-Start Deliberation Mode Hint (2026-03-29)
+- [x] derive a bounded `deliberation_mode_hint` from `task_track_hint`, readiness, risk, and claim collision so later agents stop guessing whether the current continuation should stay lightweight, use standard council, or elevate
+- [x] keep the result advisory-only and explicitly surface blocked-state `do_not_deliberate` cases without changing actual council runtime depth
+- [x] add regression coverage for quick-change, feature-track, system-track, and blocked handoff cases so mode guidance stays machine-readable
+**Success Criteria**: A later agent opening the session-start bundle can see a clear suggested deliberation depth, human-required flag, and blocked-state override note that follow the Adaptive Deliberation Mode Contract without silently changing runtime behavior.
+
 ## Phase 679: Continuity Freshness And Import Posture (2026-03-29)
 - [x] Add bounded `freshness_hours` to the packet continuity surfaces that later agents actually inherit at session start
 - [x] Add a machine-readable `import_posture` section to `start_agent_session.py` so agents can distinguish directly importable posture/claims from advisory compactions, snapshots, and dossiers
