@@ -286,6 +286,7 @@ def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
     project_memory_summary = packet.get("project_memory_summary") or {}
     working_style_anchor = project_memory_summary.get("working_style_anchor") or {}
     working_style_observability = project_memory_summary.get("working_style_observability") or {}
+    working_style_import_limits = project_memory_summary.get("working_style_import_limits") or {}
     subject_refresh = project_memory_summary.get("subject_refresh") or {}
     carry_forward_hazards = _carry_forward_promotion_hazards(subject_refresh)
 
@@ -390,6 +391,7 @@ def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
             ),
             "working_style_anchor": working_style_anchor,
             "working_style_observability": working_style_observability,
+            "working_style_import_limits": working_style_import_limits,
         },
         "subject_refresh": {
             "present": bool(subject_refresh),
@@ -483,6 +485,10 @@ def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
     elif str(working_style_observability.get("status", "")).strip() == "unreinforced":
         receiver_alerts.append(
             "Shared working-style continuity is currently unreinforced by recent handoff surfaces; apply it explicitly if it still fits, but do not assume the latest agent actually followed it."
+        )
+    if working_style_import_limits:
+        receiver_alerts.append(
+            "Working-style import is bounded to scan order, evidence handling, prompt shape, session cadence, and render interpretation; it must not override vows, canonical governance, durable identity, or task scope."
         )
 
     return {

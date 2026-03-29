@@ -964,6 +964,47 @@
         }
       }
     },
+    "working_style_import_limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apply_posture",
+        "safe_apply",
+        "must_not_import",
+        "stop_conditions",
+        "receiver_guidance",
+        "summary_text"
+      ],
+      "properties": {
+        "apply_posture": {
+          "type": "string"
+        },
+        "safe_apply": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "must_not_import": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "stop_conditions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "receiver_guidance": {
+          "type": "string"
+        },
+        "summary_text": {
+          "type": "string"
+        }
+      }
+    },
     "risk_posture": {
       "type": "object",
       "additionalProperties": false,
@@ -1052,6 +1093,9 @@
         },
         "working_style_observability": {
           "$ref": "#/$defs/working_style_observability"
+        },
+        "working_style_import_limits": {
+          "$ref": "#/$defs/working_style_import_limits"
         },
         "summary_text": {
           "type": "string",

@@ -419,6 +419,22 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
             receiver_note = str(working_style_observability.get("receiver_note", "")).strip()
             if receiver_note:
                 lines.append(f"    note={_clip(receiver_note)}")
+        working_style_import_limits = project_memory_summary.get("working_style_import_limits") or {}
+        if working_style_import_limits:
+            lines.append("  working_style_import_limits:")
+            lines.append(
+                "    "
+                f"apply_posture={working_style_import_limits.get('apply_posture', 'unknown')} "
+                f"safe={len(working_style_import_limits.get('safe_apply') or [])} "
+                f"blocked={len(working_style_import_limits.get('must_not_import') or [])}"
+            )
+            for item in list(working_style_import_limits.get("safe_apply") or [])[:2]:
+                lines.append(f"    safe_apply={_clip(item)}")
+            for item in list(working_style_import_limits.get("must_not_import") or [])[:2]:
+                lines.append(f"    must_not_import={_clip(item)}")
+            receiver_guidance = str(working_style_import_limits.get("receiver_guidance", "")).strip()
+            if receiver_guidance:
+                lines.append(f"    guidance={_clip(receiver_guidance)}")
         routing_summary = project_memory_summary.get("routing_summary") or {}
         if routing_summary:
             lines.append("  routing_summary:")

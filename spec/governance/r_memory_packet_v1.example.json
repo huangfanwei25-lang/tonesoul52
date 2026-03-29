@@ -365,6 +365,29 @@
       "summary_text": "working_style=partial reinforced=1/2 signals=6 drift=medium",
       "receiver_note": "Only part of the shared working style is echoed by recent handoff surfaces. Keep the playbook visible instead of assuming full continuity."
     },
+    "working_style_import_limits": {
+      "apply_posture": "explicit_reuse_only",
+      "safe_apply": [
+        "scan_order: use shared packet/claim surfaces before widening the repo scan when they still fit the task.",
+        "evidence_handling: keep the shared evidence discipline instead of replacing it with model-native guessing.",
+        "prompt_shape: keep goal function and P0/P1/P2 explicit when a prompt is doing transfer, extraction, or bounded review work.",
+        "session_cadence: preserve the shared start/end rhythm when collaborative work is actually happening.",
+        "render_interpretation: treat shell mojibake as a render-layer suspicion before declaring the file itself corrupted."
+      ],
+      "must_not_import": [
+        "vows_or_permissions: working style must not rewrite what the system is allowed to do.",
+        "canonical_governance_truth: habits must not become runtime law, axiom enforcement, or authority truth.",
+        "durable_identity: style continuity must not silently become stable selfhood or subject promotion.",
+        "task_scope_or_success_criteria: inherited habits must not override the current task's objective or human-given scope."
+      ],
+      "stop_conditions": [
+        "current task or human instruction conflicts with the inherited habit",
+        "shared surfaces show recycled carry-forward without new evidence",
+        "a newer subject snapshot or compaction points to a different routine"
+      ],
+      "receiver_guidance": "Only part of the shared style is still echoed. Reuse it deliberately and keep checking task-local evidence instead of assuming full continuity.",
+      "summary_text": "working_style_import=explicit_reuse_only safe=5 blocked=4 drift=medium"
+    },
     "routing_summary": {
       "total_events": 2,
       "preview_count": 1,

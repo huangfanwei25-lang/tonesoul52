@@ -180,6 +180,87 @@ def build_working_style_observability(
     }
 
 
+def build_working_style_import_limits(
+    anchor: Dict[str, Any],
+    *,
+    observability: Dict[str, Any] | None = None,
+) -> Dict[str, Any]:
+    if not anchor:
+        return {}
+
+    observability = dict(observability or {})
+    status = str(observability.get("status", "")).strip() or "unknown"
+    drift_risk = str(observability.get("drift_risk", "")).strip() or "medium"
+
+    safe_apply: List[str] = []
+    if list(anchor.get("decision_preferences") or []):
+        safe_apply.append(
+            "scan_order: use shared packet/claim surfaces before widening the repo scan when they still fit the task."
+        )
+        safe_apply.append(
+            "evidence_handling: keep the shared evidence discipline instead of replacing it with model-native guessing."
+        )
+    if list(anchor.get("prompt_defaults") or []):
+        safe_apply.append(
+            "prompt_shape: keep goal function and P0/P1/P2 explicit when a prompt is doing transfer, extraction, or bounded review work."
+        )
+    if list(anchor.get("verified_routines") or []):
+        safe_apply.append(
+            "session_cadence: preserve the shared start/end rhythm when collaborative work is actually happening."
+        )
+    if str(anchor.get("render_caveat", "")).strip():
+        safe_apply.append(
+            "render_interpretation: treat shell mojibake as a render-layer suspicion before declaring the file itself corrupted."
+        )
+
+    safe_apply = safe_apply[:5]
+
+    must_not_import = [
+        "vows_or_permissions: working style must not rewrite what the system is allowed to do.",
+        "canonical_governance_truth: habits must not become runtime law, axiom enforcement, or authority truth.",
+        "durable_identity: style continuity must not silently become stable selfhood or subject promotion.",
+        "task_scope_or_success_criteria: inherited habits must not override the current task's objective or human-given scope.",
+    ]
+
+    if status == "reinforced":
+        apply_posture = "bounded_default"
+        receiver_guidance = (
+            "Recent handoff surfaces still echo this style, so it may be used as the default working rhythm for the current session."
+        )
+    elif status == "partial":
+        apply_posture = "explicit_reuse_only"
+        receiver_guidance = (
+            "Only part of the shared style is still echoed. Reuse it deliberately and keep checking task-local evidence instead of assuming full continuity."
+        )
+    else:
+        apply_posture = "review_before_apply"
+        receiver_guidance = (
+            "Recent shared surfaces no longer echo this style strongly enough. Review it first; only reuse the parts that still fit the current task."
+        )
+
+    stop_conditions = [
+        "current task or human instruction conflicts with the inherited habit",
+        "shared surfaces show recycled carry-forward without new evidence",
+        "a newer subject snapshot or compaction points to a different routine",
+    ]
+    if drift_risk == "high":
+        stop_conditions.append(
+            "working-style observability is high-drift or unreinforced, so habits must not be assumed silently"
+        )
+
+    return {
+        "apply_posture": apply_posture,
+        "safe_apply": safe_apply,
+        "must_not_import": must_not_import,
+        "stop_conditions": stop_conditions,
+        "receiver_guidance": receiver_guidance,
+        "summary_text": (
+            f"working_style_import={apply_posture} safe={len(safe_apply)} "
+            f"blocked={len(must_not_import)} drift={drift_risk}"
+        ),
+    }
+
+
 def build_working_style_playbook(anchor: Dict[str, Any]) -> Dict[str, Any]:
     if not anchor:
         return {

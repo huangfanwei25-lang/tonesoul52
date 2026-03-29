@@ -127,6 +127,15 @@ def test_build_project_memory_summary_aggregates_focus_pending_and_repo_progress
     assert "verified_routines: leave compaction before release" in summary[
         "working_style_observability"
     ]["reinforced_items"]
+    assert summary["working_style_import_limits"]["apply_posture"] == "bounded_default"
+    assert any(
+        item.startswith("scan_order:")
+        for item in summary["working_style_import_limits"]["safe_apply"]
+    )
+    assert any(
+        item.startswith("canonical_governance_truth:")
+        for item in summary["working_style_import_limits"]["must_not_import"]
+    )
     assert summary["repo_progress"]["branch"] == "feature/r-memory"
     assert "focus=risk, runtime" in summary["summary_text"]
     assert "subject=Stay packet-first and keep theory out of runtime truth." in summary["summary_text"]

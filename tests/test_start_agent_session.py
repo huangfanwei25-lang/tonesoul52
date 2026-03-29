@@ -460,6 +460,16 @@ def test_start_agent_session_marks_recycled_carry_forward_as_must_not_promote(
         "verified_routines: end sessions with checkpoint or compaction before release"
         in working_style_observability["unreinforced_items"]
     )
+    working_style_import_limits = working_style_surface["working_style_import_limits"]
+    assert working_style_import_limits["apply_posture"] == "explicit_reuse_only"
+    assert any(
+        item.startswith("scan_order:")
+        for item in working_style_import_limits["safe_apply"]
+    )
+    assert any(
+        item.startswith("task_scope_or_success_criteria:")
+        for item in working_style_import_limits["must_not_import"]
+    )
     playbook = output["working_style_playbook"]
     assert playbook["present"] is True
     assert playbook["summary_text"].startswith("prefs=prefer packet before broad repo scan")
@@ -480,6 +490,11 @@ def test_start_agent_session_marks_recycled_carry_forward_as_must_not_promote(
     )
     assert any(
         "Shared working-style continuity is only partially reinforced" in alert
+        for alert in output["import_posture"]["receiver_alerts"]
+    )
+    assert any(
+        "Working-style import is bounded to scan order, evidence handling, prompt shape, session cadence, and render interpretation"
+        in alert
         for alert in output["import_posture"]["receiver_alerts"]
     )
 

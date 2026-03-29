@@ -698,6 +698,16 @@ def test_subject_snapshots_surface_durable_subject_anchor(tmp_path: Path) -> Non
         "verified_routines: end sessions with checkpoint or compaction before release"
         in working_style_observability["reinforced_items"]
     )
+    working_style_import_limits = packet["project_memory_summary"]["working_style_import_limits"]
+    assert working_style_import_limits["apply_posture"] == "bounded_default"
+    assert any(
+        item.startswith("scan_order:")
+        for item in working_style_import_limits["safe_apply"]
+    )
+    assert any(
+        item.startswith("durable_identity:")
+        for item in working_style_import_limits["must_not_import"]
+    )
     assert packet["project_memory_summary"]["subject_refresh"]["status"] == "refresh_candidate"
     assert packet["project_memory_summary"]["subject_refresh"]["refresh_recommended"] is True
     active_thread_guidance = next(
@@ -726,6 +736,10 @@ def test_subject_snapshots_surface_durable_subject_anchor(tmp_path: Path) -> Non
     )
     assert (
         "Working-style: Routine: end sessions with checkpoint or compaction before release"
+        in packet["operator_guidance"]["current_reminders"]
+    )
+    assert (
+        "Working-style import stays bounded to scan order, evidence handling, prompt shape, session cadence, and render interpretation."
         in packet["operator_guidance"]["current_reminders"]
     )
     assert (

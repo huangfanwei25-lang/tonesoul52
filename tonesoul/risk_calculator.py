@@ -12,7 +12,10 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, Iterable, List
 
-from tonesoul.working_style import build_working_style_observability
+from tonesoul.working_style import (
+    build_working_style_import_limits,
+    build_working_style_observability,
+)
 
 _PROMPT_STYLE_DEFAULTS = [
     "state the goal function before long transfer or extraction prompts",
@@ -189,6 +192,10 @@ def build_project_memory_summary(
         next_actions=next_actions,
         routing_summary=routing_summary,
     )
+    working_style_import_limits = build_working_style_import_limits(
+        working_style_anchor,
+        observability=working_style_observability,
+    )
 
     summary_lines: List[str] = []
     if focus_topics:
@@ -230,6 +237,8 @@ def build_project_memory_summary(
         result["working_style_anchor"] = working_style_anchor
     if working_style_observability:
         result["working_style_observability"] = working_style_observability
+    if working_style_import_limits:
+        result["working_style_import_limits"] = working_style_import_limits
     if routing_summary:
         result["routing_summary"] = routing_summary
     return result

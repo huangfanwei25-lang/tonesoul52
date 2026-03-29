@@ -188,6 +188,22 @@ def _fake_packet():
                 "summary_text": "working_style=partial reinforced=1/2 signals=3 drift=medium",
                 "receiver_note": "Only part of the shared working style is echoed by recent handoff surfaces. Keep the playbook visible instead of assuming full continuity.",
             },
+            "working_style_import_limits": {
+                "apply_posture": "explicit_reuse_only",
+                "safe_apply": [
+                    "scan_order: use shared packet/claim surfaces before widening the repo scan when they still fit the task.",
+                    "evidence_handling: keep the shared evidence discipline instead of replacing it with model-native guessing.",
+                ],
+                "must_not_import": [
+                    "canonical_governance_truth: habits must not become runtime law, axiom enforcement, or authority truth.",
+                    "durable_identity: style continuity must not silently become stable selfhood or subject promotion.",
+                ],
+                "stop_conditions": [
+                    "current task or human instruction conflicts with the inherited habit",
+                ],
+                "receiver_guidance": "Only part of the shared style is still echoed. Reuse it deliberately and keep checking task-local evidence instead of assuming full continuity.",
+                "summary_text": "working_style_import=explicit_reuse_only safe=2 blocked=2 drift=medium",
+            },
             "routing_summary": {
                 "total_events": 2,
                 "preview_count": 1,
@@ -460,6 +476,10 @@ def test_full_diagnostic_is_cp950_safe_and_includes_shared_runtime(monkeypatch) 
     assert "working_style_observability:" in report
     assert "status=partial drift=medium reinforced=1/2 signals=3" in report
     assert "unreinforced=verified_routines: leave compaction before release" in report
+    assert "working_style_import_limits:" in report
+    assert "apply_posture=explicit_reuse_only safe=2 blocked=2" in report
+    assert "safe_apply=scan_order: use shared packet/claim surfaces" in report
+    assert "must_not_import=canonical_governance_truth: habits must not become runtime law" in report
     assert "routing_summary:" in report
     assert "subject_refresh:" in report
     assert "status=refresh_candidate recommended=True newer_compactions=1 newer_checkpoints=1 hazards=1" in report

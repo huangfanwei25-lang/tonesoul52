@@ -1895,11 +1895,16 @@ def _build_operator_guidance(
 
         playbook = build_working_style_playbook(working_style_anchor)
         observability = project_memory_summary.get("working_style_observability") or {}
+        import_limits = project_memory_summary.get("working_style_import_limits") or {}
         reminders.append(
             "A working-style playbook is visible; apply it as advisory workflow, not as durable identity or policy."
         )
         for item in list(playbook.get("checklist") or [])[:2]:
             reminders.append(f"Working-style: {item}")
+        if import_limits:
+            reminders.append(
+                "Working-style import stays bounded to scan order, evidence handling, prompt shape, session cadence, and render interpretation."
+            )
         status = str(observability.get("status", "")).strip()
         if status == "partial":
             reminders.append(

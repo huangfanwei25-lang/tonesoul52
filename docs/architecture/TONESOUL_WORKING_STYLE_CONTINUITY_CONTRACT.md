@@ -100,6 +100,27 @@ This surface is descriptive only.
 It does not certify obedience, alignment, or hidden cognition.
 It only says whether recent shared residue still re-mentions the same operating habits.
 
+## Receiver-Side Import Limits
+
+Working style may be imported only as bounded workflow help.
+
+Safe apply lanes:
+
+- scan order
+- evidence handling
+- prompt shape
+- session cadence
+- render interpretation
+
+Must-not-import lanes:
+
+- vows or permissions
+- canonical governance truth
+- durable identity
+- task scope or success criteria
+
+If a later agent needs to change what the system is *allowed* to do, or what the current task *is*, working-style continuity must stop there.
+
 ## Receiver Rules
 
 When a later agent sees working-style continuity:

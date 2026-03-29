@@ -73,6 +73,12 @@
 - [x] keep the result descriptive-only so later agents can see reinforcement vs drift risk without promoting style into policy, vows, or durable identity
 **Success Criteria**: Later agents can tell whether the shared working-style anchor is currently reinforced, partial, or unreinforced by recent handoff surfaces, and can respond to drift risk without mythologizing hidden shared cognition.
 
+## Phase 697: Receiver-Side Working-Style Import Limits (2026-03-29)
+- [x] define explicit `working_style_import_limits` so later agents do not have to infer safe-apply versus must-not-import lanes from prose alone
+- [x] surface those limits in packet/project-memory, session-start import posture, diagnose output, and operator guidance
+- [x] keep the limits bounded to workflow help so shared style still cannot silently rewrite vows, canonical governance, durable identity, or task scope
+**Success Criteria**: Later agents can see exactly where shared working style may be reused and where it must stop, without mistaking style continuity for permission, law, or selfhood.
+
 ## Phase 679: Continuity Freshness And Import Posture (2026-03-29)
 - [x] Add bounded `freshness_hours` to the packet continuity surfaces that later agents actually inherit at session start
 - [x] Add a machine-readable `import_posture` section to `start_agent_session.py` so agents can distinguish directly importable posture/claims from advisory compactions, snapshots, and dossiers
