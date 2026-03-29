@@ -8,6 +8,7 @@ import io
 import json
 import sys
 from contextlib import redirect_stdout
+from datetime import datetime, timezone
 from pathlib import Path
 
 
@@ -84,6 +85,57 @@ def _build_compact_line(*, agent_id: str, backend_name: str, packet: dict, postu
 def _looks_like_stop(text: str) -> bool:
     normalized = str(text or "").strip().upper()
     return normalized.startswith("STOP:")
+
+
+def _parse_iso(text: str) -> datetime | None:
+    value = str(text or "").strip()
+    if not value:
+        return None
+    if value.endswith("Z"):
+        value = f"{value[:-1]}+00:00"
+    try:
+        dt = datetime.fromisoformat(value)
+    except ValueError:
+        return None
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    return dt
+
+
+def _hours_since(timestamp: str) -> float | None:
+    dt = _parse_iso(timestamp)
+    if dt is None:
+        return None
+    return round(max(0.0, (datetime.now(timezone.utc) - dt).total_seconds() / 3600.0), 3)
+
+
+def _latest_freshness(entries: list[dict], *, freshness_key: str = "freshness_hours", timestamp_key: str) -> float | None:
+    if not entries:
+        return None
+    latest = entries[0]
+    raw_freshness = latest.get(freshness_key)
+    if raw_freshness is not None:
+        try:
+            return round(float(raw_freshness), 3)
+        except (TypeError, ValueError):
+            pass
+    return _hours_since(str(latest.get(timestamp_key, "")))
+
+
+def _min_claim_ttl_minutes(claims: list[dict]) -> float | None:
+    remaining: list[float] = []
+    now = datetime.now(timezone.utc).timestamp()
+    for claim in claims:
+        raw = str(claim.get("expires_at", "")).strip()
+        if not raw:
+            continue
+        try:
+            remaining.append(max(0.0, (float(raw) - now) / 60.0))
+        except ValueError:
+            continue
+    if not remaining:
+        return None
+    return round(min(remaining), 1)
 
 
 def _build_readiness(*, agent_id: str, packet: dict, claims: list[dict]) -> dict:
@@ -174,6 +226,158 @@ def _build_readiness(*, agent_id: str, packet: dict, claims: list[dict]) -> dict
     }
 
 
+def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
+    claims = list(packet.get("active_claims") or [])
+    checkpoints = list(packet.get("recent_checkpoints") or [])
+    compactions = list(packet.get("recent_compactions") or [])
+    subject_snapshots = list(packet.get("recent_subject_snapshots") or [])
+    traces = list(packet.get("recent_traces") or [])
+    delta_feed = packet.get("delta_feed") or {}
+    project_memory_summary = packet.get("project_memory_summary") or {}
+    subject_refresh = project_memory_summary.get("subject_refresh") or {}
+
+    claim_ttl_minutes = _min_claim_ttl_minutes(claims)
+    latest_compaction = compactions[0] if compactions else {}
+    latest_trace = traces[0] if traces else {}
+    latest_dossier_freshness = None
+    if latest_compaction.get("council_dossier"):
+        latest_dossier_freshness = _latest_freshness(compactions, timestamp_key="updated_at")
+    elif latest_trace.get("council_dossier_summary"):
+        latest_dossier_freshness = _latest_freshness(traces, timestamp_key="timestamp")
+
+    surfaces = {
+        "posture": {
+            "present": True,
+            "import_posture": "directly_importable",
+            "receiver_obligation": "must_read",
+            "decay_posture": "none",
+            "freshness_hours": float((packet.get("posture") or {}).get("freshness_hours", 0.0) or 0.0),
+            "note": "Canonical governance context; use directly for current operating posture.",
+        },
+        "readiness": {
+            "present": True,
+            "import_posture": "directly_importable",
+            "receiver_obligation": "must_read",
+            "decay_posture": "fast",
+            "freshness_hours": 0.0,
+            "note": "Computed at session start; safe to apply to the current task classification.",
+        },
+        "claims": {
+            "present": bool(claims),
+            "import_posture": "directly_importable",
+            "receiver_obligation": "must_read",
+            "decay_posture": "fast",
+            "freshness_hours": _latest_freshness(claims, timestamp_key="created_at"),
+            "note": (
+                f"Check TTL before overlapping work; shortest remaining claim window is ~{claim_ttl_minutes} minutes."
+                if claim_ttl_minutes is not None
+                else "Check TTL before overlapping work; active claims are short-lived coordination signals."
+            ),
+        },
+        "delta_feed": {
+            "present": bool(delta_feed),
+            "import_posture": "ephemeral_until_acked",
+            "receiver_obligation": "must_read",
+            "decay_posture": "medium",
+            "freshness_hours": 0.0,
+            "note": "Ack advances the observer cursor; safe to apply after review, never to promote.",
+        },
+        "checkpoints": {
+            "present": bool(checkpoints),
+            "import_posture": "advisory",
+            "receiver_obligation": "should_consider",
+            "decay_posture": "medium",
+            "freshness_hours": _latest_freshness(checkpoints, timestamp_key="updated_at"),
+            "note": "Checkpoint next_action can guide resumability, but it is not a canonical work order.",
+        },
+        "compactions": {
+            "present": bool(compactions),
+            "import_posture": "advisory",
+            "receiver_obligation": "should_consider",
+            "decay_posture": "medium",
+            "freshness_hours": _latest_freshness(compactions, timestamp_key="updated_at"),
+            "note": "Carry-forward is resumability memory; apply cautiously and never silently promote.",
+        },
+        "project_memory_summary": {
+            "present": bool(project_memory_summary),
+            "import_posture": "advisory",
+            "receiver_obligation": "should_consider",
+            "decay_posture": "medium",
+            "freshness_hours": 0.0,
+            "note": "Packet-level aggregation is useful for planning, but it remains a read-time summary surface.",
+        },
+        "subject_snapshot": {
+            "present": bool(subject_snapshots),
+            "import_posture": "advisory",
+            "receiver_obligation": "should_consider",
+            "decay_posture": "slow",
+            "freshness_hours": _latest_freshness(subject_snapshots, timestamp_key="updated_at"),
+            "note": "Working identity is inheritable but non-canonical; do not promote it into governance truth.",
+        },
+        "subject_refresh": {
+            "present": bool(subject_refresh),
+            "import_posture": "advisory",
+            "receiver_obligation": "must_not_promote",
+            "decay_posture": "medium",
+            "freshness_hours": 0.0 if subject_refresh else None,
+            "note": "Refresh guidance may influence review, but it must never auto-promote higher-authority identity fields.",
+        },
+        "council_dossier": {
+            "present": bool(latest_compaction.get("council_dossier") or latest_trace.get("council_dossier_summary")),
+            "import_posture": "advisory",
+            "receiver_obligation": "should_consider",
+            "decay_posture": "slow",
+            "freshness_hours": latest_dossier_freshness,
+            "note": "Council verdict memory can inform follow-up decisions, but it is not binding precedent.",
+        },
+        "recent_traces": {
+            "present": bool(traces),
+            "import_posture": "advisory",
+            "receiver_obligation": "should_consider",
+            "decay_posture": "slow",
+            "freshness_hours": _latest_freshness(traces, timestamp_key="timestamp"),
+            "note": "Historical traces are descriptive context, not current operational truth.",
+        },
+        "operator_guidance": {
+            "present": bool(packet.get("operator_guidance")),
+            "import_posture": "advisory",
+            "receiver_obligation": "should_consider",
+            "decay_posture": "medium",
+            "freshness_hours": 0.0,
+            "note": "Operator guidance should shape workflow order, not become a new P0 constraint.",
+        },
+    }
+
+    summary_order = [
+        "posture",
+        "readiness",
+        "claims",
+        "delta_feed",
+        "compactions",
+        "subject_snapshot",
+        "council_dossier",
+    ]
+    summary_parts = []
+    for name in summary_order:
+        surface = surfaces[name]
+        if not surface["present"]:
+            continue
+        detail = surface["import_posture"]
+        freshness = surface.get("freshness_hours")
+        if freshness is not None and name not in {"readiness", "delta_feed", "operator_guidance", "project_memory_summary", "subject_refresh"}:
+            detail += f"@{float(freshness):.1f}h"
+        if name == "claims" and claim_ttl_minutes is not None:
+            detail += f"/ttl≈{claim_ttl_minutes:.0f}m"
+        summary_parts.append(f"{name}={detail}")
+
+    return {
+        "summary_text": " | ".join(summary_parts),
+        "surfaces": surfaces,
+        "receiver_rule": "ack is safe, apply is bounded, promote requires explicit justification and human confirmation.",
+        "readiness_alignment": str(readiness.get("status", "")),
+    }
+
+
 def main() -> None:
     _ensure_repo_root_on_path()
 
@@ -239,6 +443,7 @@ def main() -> None:
         )
         + f" | readiness={readiness['status']}",
         "readiness": readiness,
+        "import_posture": _build_import_posture(packet=packet, readiness=readiness),
         "claim_view": {
             "count": len(claims),
             "claims": claims,

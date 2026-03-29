@@ -46,6 +46,7 @@
     "soul_integral": 0.82,
     "session_count": 12,
     "last_updated": "2026-03-26T11:55:00+00:00",
+    "freshness_hours": 0.083,
     "baseline_drift": {
       "caution_bias": 0.55,
       "innovation_bias": 0.61,
@@ -93,6 +94,7 @@
       "session_id": "sess-001",
       "agent": "codex",
       "timestamp": "2026-03-26T11:55:00+00:00",
+      "freshness_hours": 0.083,
       "topics": ["runtime_adapter", "redis"],
       "tension_count": 2,
       "vow_count": 0,
@@ -127,7 +129,8 @@
       ],
       "source": "gateway",
       "created_at": "2026-03-26T11:57:00+00:00",
-      "expires_at": "1774527120.0"
+      "expires_at": "1774527120.0",
+      "freshness_hours": 0.05
     }
   ],
   "recent_checkpoints": [
@@ -142,7 +145,8 @@
       ],
       "next_action": "Expose an ack-aware packet entrypoint so later agents can advance their observer cursor.",
       "source": "cli",
-      "updated_at": "2026-03-26T11:59:00+00:00"
+      "updated_at": "2026-03-26T11:59:00+00:00",
+      "freshness_hours": 0.017
     }
   ],
   "recent_compactions": [
@@ -200,7 +204,8 @@
       },
       "next_action": "Expose bounded compaction summaries in the operator shell without mutating governance posture.",
       "source": "cli",
-      "updated_at": "2026-03-26T12:00:00+00:00"
+      "updated_at": "2026-03-26T12:00:00+00:00",
+      "freshness_hours": 0.0
     }
   ],
   "recent_subject_snapshots": [
@@ -231,7 +236,8 @@
         "refresh when durable boundaries change"
       ],
       "source": "cli",
-      "updated_at": "2026-03-26T12:01:00+00:00"
+      "updated_at": "2026-03-26T12:01:00+00:00",
+      "freshness_hours": 0.0
     }
   ],
   "recent_routing_events": [
@@ -244,6 +250,7 @@
       "overlap": false,
       "misroute_signal": false,
       "updated_at": "2026-03-26T12:02:00+00:00",
+      "freshness_hours": 0.0,
       "summary": "resume packet cleanup"
     },
     {
@@ -255,6 +262,7 @@
       "overlap": true,
       "misroute_signal": true,
       "updated_at": "2026-03-26T12:04:00+00:00",
+      "freshness_hours": 0.0,
       "summary": "packet-first startup is now a durable operating preference"
     }
   ],
@@ -322,6 +330,7 @@
           "overlap": false,
           "misroute_signal": false,
           "updated_at": "2026-03-26T12:02:00+00:00",
+          "freshness_hours": 0.0,
           "summary": "resume packet cleanup"
         },
         {
@@ -333,6 +342,7 @@
           "overlap": true,
           "misroute_signal": true,
           "updated_at": "2026-03-26T12:04:00+00:00",
+          "freshness_hours": 0.0,
           "summary": "packet-first startup is now a durable operating preference"
         }
       ]

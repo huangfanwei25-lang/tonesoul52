@@ -123,6 +123,14 @@ def test_start_agent_session_emits_machine_readable_bundle(capsys, monkeypatch, 
     assert output["readiness"]["ready"] is False
     assert output["readiness"]["claim_conflict_count"] == 1
     assert output["readiness"]["clarification_reasons"] == ["other_agent_claims_visible"]
+    assert output["import_posture"]["surfaces"]["posture"]["import_posture"] == "directly_importable"
+    assert output["import_posture"]["surfaces"]["claims"]["import_posture"] == "directly_importable"
+    assert output["import_posture"]["surfaces"]["claims"]["receiver_obligation"] == "must_read"
+    assert "TTL" in output["import_posture"]["surfaces"]["claims"]["note"]
+    assert output["import_posture"]["surfaces"]["delta_feed"]["import_posture"] == "ephemeral_until_acked"
+    assert output["import_posture"]["surfaces"]["subject_snapshot"]["present"] is False
+    assert output["import_posture"]["readiness_alignment"] == "needs_clarification"
+    assert output["import_posture"]["summary_text"].startswith("posture=directly_importable")
     assert output["underlying_commands"][0] == "python -m tonesoul.diagnose --agent observer-start"
     assert output["underlying_commands"][1] == (
         "python scripts/run_r_memory_packet.py --agent observer-start --ack"
@@ -165,6 +173,7 @@ def test_start_agent_session_can_skip_ack(capsys, monkeypatch, tmp_path: Path) -
     assert output["acknowledged_observer_cursor"] is False
     assert output["readiness"]["status"] == "pass"
     assert output["readiness"]["ready"] is True
+    assert output["import_posture"]["surfaces"]["delta_feed"]["present"] is True
     assert output["underlying_commands"][1] == (
         "python scripts/run_r_memory_packet.py --agent observer-preview"
     )
@@ -258,6 +267,7 @@ def test_start_agent_session_blocks_on_critical_risk(capsys, monkeypatch, tmp_pa
     assert output["readiness"]["ready"] is False
     assert "risk_level_is_critical" in output["readiness"]["blocking_reasons"]
     assert output["readiness"]["risk_level"] == "critical"
+    assert output["import_posture"]["surfaces"]["readiness"]["freshness_hours"] == 0.0
 
 
 def test_start_agent_session_blocks_on_stop_handoff(capsys, monkeypatch, tmp_path: Path) -> None:

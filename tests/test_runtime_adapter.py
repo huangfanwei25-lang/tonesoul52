@@ -357,6 +357,7 @@ def test_r_memory_packet_exposes_runtime_dominance_and_recent_trace(
     )
     assert packet["posture"]["session_count"] == 1
     assert set(packet["posture"]["risk_posture"]) >= {"score", "level", "recommended_action"}
+    assert packet["posture"]["freshness_hours"] >= 0.0
     assert "project_memory_summary" in packet
     assert "summary_text" in packet["project_memory_summary"]
     assert "repo_progress" in packet["project_memory_summary"]
@@ -369,8 +370,10 @@ def test_r_memory_packet_exposes_runtime_dominance_and_recent_trace(
     assert packet["coordination_mode"]["surface_modes"]["claims"] == "file-backed"
     assert packet["coordination_mode"]["surface_modes"]["visitors"] == "unavailable"
     assert packet["recent_routing_events"][0]["surface"] == "checkpoint"
+    assert packet["recent_routing_events"][0]["freshness_hours"] >= 0.0
     assert packet["recent_traces"][0]["council_dossier_summary"]["confidence_posture"] == "contested"
     assert packet["recent_traces"][0]["council_dossier_summary"]["has_minority_report"] is True
+    assert packet["recent_traces"][0]["freshness_hours"] >= 0.0
     assert packet["operator_guidance"]["backend_mode"] == "file"
     assert packet["operator_guidance"]["session_start"][0].startswith(
         "python scripts/start_agent_session.py --agent"
@@ -458,6 +461,7 @@ def test_task_claims_prevent_collisions_and_appear_in_packet(tmp_path: Path) -> 
     packet = r_memory_packet(posture=GovernancePosture(), store=store)
     assert packet["active_claims"][0]["task_id"] == "launch-world-dedupe"
     assert packet["active_claims"][0]["agent"] == "codex"
+    assert packet["active_claims"][0]["freshness_hours"] >= 0.0
 
     released = release_task_claim("launch-world-dedupe", agent_id="codex", store=store)
     assert released["ok"] is True
@@ -557,6 +561,7 @@ def test_compactions_use_noncanonical_resumability_lane(tmp_path: Path) -> None:
     packet = r_memory_packet(posture=GovernancePosture(), store=store)
     assert packet["recent_compactions"][0]["agent"] == "gemini"
     assert packet["recent_compactions"][1]["agent"] == "codex"
+    assert packet["recent_compactions"][0]["freshness_hours"] >= 0.0
     assert "project_memory_summary" in packet
     assert packet["project_memory_summary"]["next_actions"][0] == "use packet consumption in UI"
     assert "repo_progress" in packet["project_memory_summary"]
@@ -634,6 +639,7 @@ def test_subject_snapshots_surface_durable_subject_anchor(tmp_path: Path) -> Non
     assert snapshot["agent"] == "codex"
     assert snapshots[0]["summary"].startswith("Operate as a packet-first runtime steward")
     assert packet["recent_subject_snapshots"][0]["snapshot_id"] == snapshot["snapshot_id"]
+    assert packet["recent_subject_snapshots"][0]["freshness_hours"] >= 0.0
     assert (
         packet["project_memory_summary"]["subject_anchor"]["summary"]
         == "Operate as a packet-first runtime steward with explicit boundaries."

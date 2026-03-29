@@ -212,6 +212,7 @@ def test_run_r_memory_packet_emits_json(capsys, monkeypatch, tmp_path: Path) -> 
     assert output["contract_version"] == "v1"
     assert output["posture"]["session_count"] == 4
     assert set(output["posture"]["risk_posture"]) >= {"score", "level", "recommended_action"}
+    assert output["posture"]["freshness_hours"] >= 0.0
     assert "project_memory_summary" in output
     assert "repo_progress" in output["project_memory_summary"]
     assert "operator_guidance" in output
@@ -232,12 +233,18 @@ def test_run_r_memory_packet_emits_json(capsys, monkeypatch, tmp_path: Path) -> 
     assert output["operator_guidance"]["session_end"][2].startswith("python scripts/save_compaction.py")
     assert "checkpoint or compaction" in output["operator_guidance"]["completion_rule"]
     assert output["recent_traces"][0]["agent"] == "codex"
+    assert output["recent_traces"][0]["freshness_hours"] >= 0.0
     assert output["active_claims"][0]["task_id"] == "task-1"
+    assert output["active_claims"][0]["freshness_hours"] >= 0.0
     assert output["recent_checkpoints"][0]["checkpoint_id"] == "cp-1"
+    assert output["recent_checkpoints"][0]["freshness_hours"] >= 0.0
     assert output["recent_compactions"][0]["compaction_id"] == "cmp-1"
+    assert output["recent_compactions"][0]["freshness_hours"] >= 0.0
     assert output["recent_compactions"][0]["council_dossier"]["confidence_posture"] == "contested"
     assert output["recent_subject_snapshots"][0]["snapshot_id"] == "subj-1"
+    assert output["recent_subject_snapshots"][0]["freshness_hours"] >= 0.0
     assert output["recent_routing_events"][0]["surface"] == "checkpoint"
+    assert output["recent_routing_events"][0]["freshness_hours"] >= 0.0
     assert output["project_memory_summary"]["subject_anchor"]["summary"].startswith("Stay packet-first")
     assert output["project_memory_summary"]["routing_summary"]["total_events"] == 1
     assert output["project_memory_summary"]["routing_summary"]["summary_text"].startswith("router=writes=0 previews=1")

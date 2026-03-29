@@ -152,6 +152,10 @@
         "last_updated": {
           "type": "string"
         },
+        "freshness_hours": {
+          "type": "number",
+          "minimum": 0.0
+        },
         "baseline_drift": {
           "type": "object",
           "additionalProperties": {
@@ -322,6 +326,10 @@
         },
         "timestamp": {
           "type": "string"
+        },
+        "freshness_hours": {
+          "type": "number",
+          "minimum": 0.0
         },
         "topics": {
           "type": "array",
@@ -541,6 +549,10 @@
         },
         "expires_at": {
           "type": "string"
+        },
+        "freshness_hours": {
+          "type": "number",
+          "minimum": 0.0
         }
       }
     },
@@ -584,6 +596,10 @@
         },
         "updated_at": {
           "type": "string"
+        },
+        "freshness_hours": {
+          "type": "number",
+          "minimum": 0.0
         },
         "council_dossier": {
           "$ref": "#/$defs/council_dossier"
@@ -644,6 +660,10 @@
         },
         "updated_at": {
           "type": "string"
+        },
+        "freshness_hours": {
+          "type": "number",
+          "minimum": 0.0
         }
       }
     },
@@ -730,6 +750,10 @@
         "updated_at": {
           "type": "string",
           "minLength": 1
+        },
+        "freshness_hours": {
+          "type": "number",
+          "minimum": 0.0
         }
       }
     },
@@ -1171,6 +1195,10 @@
         "updated_at": {
           "type": "string",
           "minLength": 1
+        },
+        "freshness_hours": {
+          "type": "number",
+          "minimum": 0.0
         },
         "summary": {
           "type": "string"

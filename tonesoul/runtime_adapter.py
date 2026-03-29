@@ -151,6 +151,17 @@ def _hours_since(iso_str: str) -> float:
     return max(0.0, delta)
 
 
+def _freshness_hours(raw_timestamp: Any) -> Optional[float]:
+    """Return bounded freshness for a timestamp-like value."""
+    text = str(raw_timestamp or "").strip()
+    if not text:
+        return None
+    dt = _parse_dt(text)
+    if dt is None:
+        return None
+    return round(_hours_since(text), 3)
+
+
 # ---------------------------------------------------------------------------
 # Core: tension decay (RFC-015 §5.1)
 # ---------------------------------------------------------------------------
@@ -1281,6 +1292,11 @@ def _build_routing_summary(events: List[Dict[str, Any]]) -> Dict[str, Any]:
                 "misroute_signal": bool(event.get("misroute_signal", False)),
                 "updated_at": str(event.get("updated_at", "")),
                 "summary": str(event.get("summary", "")),
+                **(
+                    {"freshness_hours": freshness}
+                    if (freshness := _freshness_hours(event.get("updated_at", ""))) is not None
+                    else {}
+                ),
             }
         )
 
@@ -2261,13 +2277,16 @@ def r_memory_packet(
             "aegis_veto_count": len(trace.get("aegis_vetoes") or []),
             "key_decision_count": len(trace.get("key_decisions") or []),
         }
+        freshness = _freshness_hours(item.get("timestamp", ""))
+        if freshness is not None:
+            item["freshness_hours"] = freshness
         council_dossier_summary = _build_council_dossier_summary(trace.get("council_dossier"))
         if council_dossier_summary:
             item["council_dossier_summary"] = council_dossier_summary
         return item
 
     def _trim_claim(claim: Dict[str, Any]) -> Dict[str, Any]:
-        return {
+        item = {
             "task_id": str(claim.get("task_id", "")),
             "agent": str(claim.get("agent", "")),
             "summary": str(claim.get("summary", "")),
@@ -2276,6 +2295,10 @@ def r_memory_packet(
             "created_at": str(claim.get("created_at", "")),
             "expires_at": str(claim.get("expires_at", "")),
         }
+        freshness = _freshness_hours(item.get("created_at", ""))
+        if freshness is not None:
+            item["freshness_hours"] = freshness
+        return item
 
     def _trim_compaction(entry: Dict[str, Any]) -> Dict[str, Any]:
         item = {
@@ -2290,13 +2313,16 @@ def r_memory_packet(
             "source": str(entry.get("source", "")),
             "updated_at": str(entry.get("updated_at", "")),
         }
+        freshness = _freshness_hours(item.get("updated_at", ""))
+        if freshness is not None:
+            item["freshness_hours"] = freshness
         council_dossier = _normalize_council_dossier(entry.get("council_dossier"))
         if council_dossier:
             item["council_dossier"] = council_dossier
         return item
 
     def _trim_checkpoint(entry: Dict[str, Any]) -> Dict[str, Any]:
-        return {
+        item = {
             "checkpoint_id": str(entry.get("checkpoint_id", "")),
             "agent": str(entry.get("agent", "")),
             "session_id": str(entry.get("session_id", "")),
@@ -2306,9 +2332,13 @@ def r_memory_packet(
             "source": str(entry.get("source", "")),
             "updated_at": str(entry.get("updated_at", "")),
         }
+        freshness = _freshness_hours(item.get("updated_at", ""))
+        if freshness is not None:
+            item["freshness_hours"] = freshness
+        return item
 
     def _trim_subject_snapshot(entry: Dict[str, Any]) -> Dict[str, Any]:
-        return {
+        item = {
             "snapshot_id": str(entry.get("snapshot_id", "")),
             "agent": str(entry.get("agent", "")),
             "session_id": str(entry.get("session_id", "")),
@@ -2323,6 +2353,10 @@ def r_memory_packet(
             "source": str(entry.get("source", "")),
             "updated_at": str(entry.get("updated_at", "")),
         }
+        freshness = _freshness_hours(item.get("updated_at", ""))
+        if freshness is not None:
+            item["freshness_hours"] = freshness
+        return item
 
     risk_posture = compute_runtime_risk(
         posture=posture,
@@ -2443,6 +2477,11 @@ def r_memory_packet(
             "soul_integral": posture.soul_integral,
             "session_count": posture.session_count,
             "last_updated": posture.last_updated,
+            **(
+                {"freshness_hours": freshness}
+                if (freshness := _freshness_hours(posture.last_updated)) is not None
+                else {}
+            ),
             "baseline_drift": dict(posture.baseline_drift),
             "risk_posture": dict(risk_posture),
             "active_vows": [
