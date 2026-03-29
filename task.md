@@ -37,18 +37,18 @@
 - Phase 697: define and test receiver-side style import limits so playbook advice influences workflow without silently promoting into durable identity, vows, or canonical planning
 - Phase 698: run a bounded multi-agent continuity validation wave so fresh agents can be scored on whether they follow shared operating style, not just shared task state
 
-## Water-Bucket Snapshot (2026-03-29)
+## Water-Bucket Snapshot (2026-03-30)
 - Baseline reached:
   - session-start / session-end / packet / delta / readiness / receiver-guard continuity
   - subject snapshot + bounded subject refresh + working-style continuity readout
-  - council dossier / descriptive confidence / suppression visibility readout
+  - council dossier / descriptive confidence / suppression visibility / council-realism readout
   - README / authority-lane / evidence-lane / stale-source cleanup
   - context-injection prompt adoption (`value_accumulator` and `self_commit`)
   - unified runtime context prompt framing
 - Current short board:
-  - low-risk council-realism readout improvements after the new realism-note baseline
+  - broader prompt-adoption baseline, starting only with low-risk generic surfaces
 - After that:
-  - broader prompt-adoption baseline only if a clearly safe next surface remains
+  - move to the next non-baseline theme instead of reopening prompt refinements unless a clearly safe gap remains
   - only then further optimization
 
 ## Phase 691: Reality Alignment Lane Integration (2026-03-29)
@@ -1349,3 +1349,9 @@
 - [x] prefer latest `recent_traces[*].council_dossier_summary` and fall back to compaction dossier payloads when traces do not expose the latest realism cues
 - [x] lock the readout with `tests/test_diagnose.py` so calibration/descriptive-only, minority dissent, and suppression flags remain visible in future diagnostics
 **Success Criteria**: A fresh agent running the full diagnostic can directly see that council confidence is descriptive, whether minority dissent exists, and whether suppression risk is flagged, without opening packet JSON or session-start bundles.
+
+## Phase 712: Loop Engine Prompt Discipline Adoption (2026-03-30)
+- [x] reshape `LoopEngine._build_iteration_prompt()` into a bounded iteration prompt with explicit goal, P0-P2 priority, and recovery guidance
+- [x] preserve loop state transitions, promise detection semantics, and the handler contract instead of widening the loop engine into a new governance lane
+- [x] add regression coverage so the iteration prompt keeps the new structure and explicit completion discipline
+**Success Criteria**: Iteration loops still behave the same at runtime, but the prompt handed to each loop step is no longer a flat task dump and instead carries bounded goal, priority, and completion instructions.

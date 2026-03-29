@@ -214,9 +214,33 @@ class LoopEngine:
 
     def _build_iteration_prompt(self) -> str:
         """Build prompt for current iteration"""
-        return (
-            f"[Iteration {self._iteration}/{self._config.max_iterations}]\n\n{self._config.prompt}"
+        parts = [
+            f"[Iteration {self._iteration}/{self._config.max_iterations}]",
+            "",
+            "Goal function:",
+            "- Advance the current task toward one concrete next-step outcome.",
+            "",
+            "Priority rules:",
+            "- P0: Stay grounded in the task below; do not invent scope or claim completion early.",
+            "- P1: Prefer one clear next-step result over repeating the task prompt.",
+            "- P2: Keep the response concise and iteration-aware.",
+            "",
+            "Recovery:",
+            "- If task details are insufficient, state the missing information instead of guessing.",
+        ]
+        promise_phrase = str(self._config.promise_phrase or "").strip()
+        if promise_phrase:
+            parts.append(
+                f"- Only emit <promise>{promise_phrase}</promise> when the task is actually complete."
+            )
+        parts.extend(
+            [
+                "",
+                "Task:",
+                self._config.prompt,
+            ]
         )
+        return "\n".join(parts)
 
     def _detect_promise(self, text: str) -> bool:
         """

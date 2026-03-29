@@ -217,6 +217,21 @@ class TestLoopEngineEvents:
 class TestLoopEngineState:
     """Tests for state machine"""
 
+    def test_build_iteration_prompt_uses_bounded_structure(self):
+        """Iteration prompt carries goal, priority, recovery, and completion discipline."""
+        config = build_config(prompt="Fix this bug", max_iterations=5, promise_phrase="DONE")
+        engine = LoopEngine(config=config)
+        engine._iteration = 1
+
+        prompt = engine._build_iteration_prompt()
+
+        assert "[Iteration 1/5]" in prompt
+        assert "Goal function:" in prompt
+        assert "Priority rules:" in prompt
+        assert "Recovery:" in prompt
+        assert "Task:\nFix this bug" in prompt
+        assert "Only emit <promise>DONE</promise> when the task is actually complete." in prompt
+
     def test_initial_state_is_idle(self):
         """Engine starts in idle state"""
         engine = LoopEngine()
