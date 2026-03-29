@@ -293,6 +293,130 @@ def _build_readiness(*, agent_id: str, packet: dict, claims: list[dict]) -> dict
     }
 
 
+def _clean_path_list(values: list[object] | None) -> list[str]:
+    result: list[str] = []
+    for value in values or []:
+        text = str(value or "").strip().replace("\\", "/")
+        if text and text not in result:
+            result.append(text)
+    return result
+
+
+def _is_system_track_path(path: str) -> bool:
+    return (
+        path == "task.md"
+        or path == "AXIOMS.json"
+        or path == "README.md"
+        or path == "AI_ONBOARDING.md"
+        or path == "docs/README.md"
+        or path == "docs/INDEX.md"
+        or path.startswith("docs/architecture/")
+        or path.startswith("spec/")
+    )
+
+
+def _build_task_track_hint(*, packet: dict, readiness: dict) -> dict:
+    project_memory_summary = packet.get("project_memory_summary") or {}
+    pending_paths = _clean_path_list(project_memory_summary.get("pending_paths") or [])
+    carry_forward = [
+        str(item or "").strip()
+        for item in (project_memory_summary.get("carry_forward") or [])
+        if str(item or "").strip()
+    ]
+    next_actions = [
+        str(item or "").strip()
+        for item in (project_memory_summary.get("next_actions") or [])
+        if str(item or "").strip()
+    ]
+    focus_topics = [
+        str(item or "").strip()
+        for item in (project_memory_summary.get("focus_topics") or [])
+        if str(item or "").strip()
+    ]
+    risk_level = str((readiness or {}).get("risk_level", "unknown") or "unknown")
+
+    if not pending_paths and not carry_forward and not next_actions:
+        return {
+            "present": False,
+            "suggested_track": "unclassified",
+            "confidence": "low",
+            "exploration_depth_hint": "x0",
+            "claim_recommendation": "unknown_until_objective_is_visible",
+            "review_recommendation": "unknown_until_objective_is_visible",
+            "reasons": ["no_visible_scope_surface"],
+            "scope_basis": {"pending_paths": [], "focus_topics": [], "next_actions": []},
+            "receiver_note": (
+                "No resumability scope is visible yet. Read the explicit task objective before assigning a task track."
+            ),
+            "summary_text": "task_track=unclassified depth=x0 confidence=low scope=none",
+        }
+
+    root_families = sorted({path.split("/", 1)[0] for path in pending_paths if path})
+    system_paths = [path for path in pending_paths if _is_system_track_path(path)]
+    has_cross_family_scope = len(root_families) >= 3
+    path_count = len(pending_paths)
+
+    reasons: list[str] = []
+    if system_paths:
+        reasons.append("canonical_or_architecture_surface_visible")
+    if path_count >= 5:
+        reasons.append("pending_path_count_ge_5")
+    if has_cross_family_scope:
+        reasons.append("cross_family_scope_visible")
+    if any(path.startswith("tests/") for path in pending_paths) and any(
+        path.startswith("tonesoul/") or path.startswith("scripts/") for path in pending_paths
+    ):
+        reasons.append("implementation_plus_test_scope_visible")
+    if risk_level in {"high", "critical"}:
+        reasons.append(f"risk_level_{risk_level}")
+
+    if system_paths or path_count >= 5 or has_cross_family_scope:
+        suggested_track = "system_track"
+        exploration_depth_hint = "x3"
+        claim_recommendation = "required"
+        review_recommendation = "required"
+        confidence = "high" if (system_paths or path_count >= 5) else "medium"
+    elif path_count >= 2 or any(path.startswith(("tonesoul/", "scripts/", "tests/")) for path in pending_paths):
+        suggested_track = "feature_track"
+        exploration_depth_hint = "x2"
+        claim_recommendation = "required"
+        review_recommendation = "conditional"
+        confidence = "medium"
+    else:
+        doc_only = all(path.startswith("docs/") for path in pending_paths)
+        suggested_track = "quick_change"
+        exploration_depth_hint = "x0" if doc_only and path_count <= 1 else "x1"
+        claim_recommendation = "not_required"
+        review_recommendation = "not_required"
+        confidence = "medium"
+
+    receiver_note = (
+        "This task-track hint is advisory and based only on visible session-start scope. The explicit task objective or work order may justify an override."
+    )
+    if str((readiness or {}).get("status", "")) in {"blocked", "needs_clarification"}:
+        receiver_note += " Resolve readiness first, then treat this track as the default starting classification."
+
+    return {
+        "present": True,
+        "suggested_track": suggested_track,
+        "confidence": confidence,
+        "exploration_depth_hint": exploration_depth_hint,
+        "claim_recommendation": claim_recommendation,
+        "review_recommendation": review_recommendation,
+        "reasons": reasons,
+        "scope_basis": {
+            "pending_paths": pending_paths[:8],
+            "focus_topics": focus_topics[:3],
+            "next_actions": next_actions[:3],
+        },
+        "receiver_note": receiver_note,
+        "summary_text": (
+            f"task_track={suggested_track} depth={exploration_depth_hint} "
+            f"claim={claim_recommendation} review={review_recommendation} confidence={confidence}"
+        ),
+    }
+
+
 def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
     claims = list(packet.get("active_claims") or [])
     checkpoints = list(packet.get("recent_checkpoints") or [])
@@ -474,6 +598,12 @@ def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
             detail = detail.split("/ttl", 1)[0] + f"/ttl≈{claim_ttl_minutes:.0f}m"
         summary_parts.append(f"{name}={detail}")
 
+    if claim_ttl_minutes is not None:
+        summary_parts = [
+            item.replace("/ttl?claim_ttl_minutes:.0f}m", f"/ttl={claim_ttl_minutes:.0f}m")
+            for item in summary_parts
+        ]
+
     receiver_alerts: list[str] = []
     if carry_forward_hazards:
         receiver_alerts.append(
@@ -582,6 +712,7 @@ def main() -> None:
         observability=working_style_observability,
         import_limits=working_style_import_limits,
     )
+    task_track_hint = _build_task_track_hint(packet=packet, readiness=readiness)
     payload = {
         "contract_version": "v1",
         "bundle": "session_start",
@@ -596,6 +727,7 @@ def main() -> None:
         )
         + f" | readiness={readiness['status']}",
         "readiness": readiness,
+        "task_track_hint": task_track_hint,
         "import_posture": _build_import_posture(packet=packet, readiness=readiness),
         "working_style_playbook": working_style_playbook,
         "working_style_validation": working_style_validation,

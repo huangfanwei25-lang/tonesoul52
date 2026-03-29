@@ -132,6 +132,10 @@ def test_start_agent_session_emits_machine_readable_bundle(capsys, monkeypatch, 
     assert output["import_posture"]["surfaces"]["subject_snapshot"]["present"] is False
     assert output["import_posture"]["readiness_alignment"] == "needs_clarification"
     assert output["import_posture"]["summary_text"].startswith("posture=directly_importable")
+    assert output["task_track_hint"]["present"] is True
+    assert output["task_track_hint"]["suggested_track"] == "feature_track"
+    assert output["task_track_hint"]["exploration_depth_hint"] == "x2"
+    assert output["task_track_hint"]["claim_recommendation"] == "required"
     assert output["working_style_playbook"]["present"] is False
     assert output["working_style_playbook"]["checklist"] == []
     assert "No shared working-style anchor is visible" in output["working_style_playbook"]["application_rule"]
@@ -180,6 +184,8 @@ def test_start_agent_session_can_skip_ack(capsys, monkeypatch, tmp_path: Path) -
     assert output["acknowledged_observer_cursor"] is False
     assert output["readiness"]["status"] == "pass"
     assert output["readiness"]["ready"] is True
+    assert output["task_track_hint"]["present"] is False
+    assert output["task_track_hint"]["suggested_track"] == "unclassified"
     assert output["import_posture"]["surfaces"]["delta_feed"]["present"] is True
     assert output["underlying_commands"][1] == (
         "python scripts/run_r_memory_packet.py --agent observer-preview"
@@ -328,6 +334,75 @@ def test_start_agent_session_blocks_on_stop_handoff(capsys, monkeypatch, tmp_pat
     assert output["readiness"]["stop_signal_count"] >= 1
 
 
+def test_start_agent_session_surfaces_system_track_hint_from_canonical_scope(
+    capsys,
+    monkeypatch,
+    tmp_path: Path,
+) -> None:
+    module = _load_script_module()
+    state_path = tmp_path / "governance_state.json"
+    traces_path = tmp_path / "session_traces.jsonl"
+    compactions_path = tmp_path / ".aegis" / "compacted.json"
+
+    _write_state(state_path)
+    _write_traces(traces_path)
+    compactions_path.parent.mkdir(parents=True, exist_ok=True)
+    compactions_path.write_text(
+        json.dumps(
+            [
+                {
+                    "compaction_id": "cmp-system",
+                    "agent": "codex",
+                    "session_id": "sess-system",
+                    "summary": "Cross-lane authority cleanup touching canonical surfaces.",
+                    "carry_forward": ["keep counts reality-checked before simplification"],
+                    "pending_paths": [
+                        "task.md",
+                        "docs/architecture/TONESOUL_TASK_TRACK_AND_READINESS_CONTRACT.md",
+                        "spec/governance/r_memory_packet_v1.schema.json",
+                        "scripts/start_agent_session.py",
+                        "tests/test_start_agent_session.py",
+                    ],
+                    "evidence_refs": ["docs/architecture/TONESOUL_DOC_METRIC_AND_COUNT_METHOD.md"],
+                    "next_action": "reconcile control-plane entrypoint and schema scope",
+                    "source": "cli",
+                    "updated_at": "2026-03-29T00:09:00+00:00",
+                }
+            ]
+        ),
+        encoding="utf-8",
+    )
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "start_agent_session.py",
+            "--state-path",
+            str(state_path),
+            "--traces-path",
+            str(traces_path),
+            "--agent",
+            "observer-system-track",
+            "--no-ack",
+        ],
+    )
+
+    module.main()
+    output = json.loads(capsys.readouterr().out)
+
+    track_hint = output["task_track_hint"]
+    assert track_hint["present"] is True
+    assert track_hint["suggested_track"] == "system_track"
+    assert track_hint["exploration_depth_hint"] == "x3"
+    assert track_hint["claim_recommendation"] == "required"
+    assert track_hint["review_recommendation"] == "required"
+    assert "canonical_or_architecture_surface_visible" in track_hint["reasons"]
+    assert "pending_path_count_ge_5" in track_hint["reasons"]
+    assert "cross_family_scope_visible" in track_hint["reasons"]
+    assert "task.md" in track_hint["scope_basis"]["pending_paths"]
+
+
 def test_start_agent_session_marks_recycled_carry_forward_as_must_not_promote(
     capsys,
     monkeypatch,
@@ -451,6 +526,12 @@ def test_start_agent_session_marks_recycled_carry_forward_as_must_not_promote(
         working_style_surface["working_style_anchor"]["receiver_posture"]
         == "advisory_apply_not_promote"
     )
+    track_hint = output["task_track_hint"]
+    assert track_hint["present"] is True
+    assert track_hint["suggested_track"] == "feature_track"
+    assert track_hint["exploration_depth_hint"] == "x2"
+    assert track_hint["claim_recommendation"] == "required"
+    assert track_hint["review_recommendation"] == "conditional"
     working_style_observability = working_style_surface["working_style_observability"]
     assert working_style_observability["status"] == "partial"
     assert working_style_observability["drift_risk"] == "medium"

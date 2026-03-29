@@ -182,6 +182,8 @@ This classification is currently advisory — the agent reads the bundle and app
 
 ## Relationship To Other Documents
 
+Implementation note (2026-03-29): `scripts/start_agent_session.py` now surfaces a machine-readable `readiness` section and a bounded `task_track_hint` derived from visible session-start scope. The hint remains advisory; the explicit task objective or work order may still justify an override.
+
 | Document | Relationship |
 |----------|-------------|
 | `TONESOUL_SHARED_R_MEMORY_OPERATIONS_CONTRACT.md` | Defines the shared surfaces this contract's readiness gate reads from |

@@ -91,6 +91,12 @@
 - [x] add regression coverage for replay-safe evidence discipline so Dream Engine reflections do not quietly invent hidden governance support
 **Success Criteria**: Dream Engine reflections keep their existing two-sentence shape while gaining explicit bounded evidence and recovery rules, making offline reflection more consistent with the shared ToneSoul prompt discipline.
 
+## Phase 700: Session-Start Task Track Hint (2026-03-29)
+- [x] derive a bounded `task_track_hint` from visible session-start scope so later agents do not have to guess whether the current continuation looks like quick_change, feature_track, or system_track
+- [x] keep the hint advisory-only and tied to visible pending paths / scope surfaces instead of pretending session-start can infer the full human objective
+- [x] add regression coverage for unclassified, feature-track, and system-track cases so control-plane classification stays machine-readable
+**Success Criteria**: A later agent opening the session-start bundle can see an explicit suggested task track, exploration depth hint, and claim/review recommendation derived from visible scope, while still treating the result as an overrideable starting classification rather than a gate.
+
 ## Phase 679: Continuity Freshness And Import Posture (2026-03-29)
 - [x] Add bounded `freshness_hours` to the packet continuity surfaces that later agents actually inherit at session start
 - [x] Add a machine-readable `import_posture` section to `start_agent_session.py` so agents can distinguish directly importable posture/claims from advisory compactions, snapshots, and dossiers
