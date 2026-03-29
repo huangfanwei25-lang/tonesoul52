@@ -1,10 +1,10 @@
-"""
+﻿"""
 Value Accumulator - Third Axiom Implementation
 
 Tracks correction patterns over time to form emergent values.
 
 The key insight:
-  斷裂 → 修正 → 修正的原因 → 長期累積 → 價值觀
+  ?瑁? ??靽格迤 ??靽格迤???????瑟?蝝舐? ???孵潸?
 
 Values are not pre-programmed. They emerge from:
 1. "I contradicted myself"
@@ -27,12 +27,12 @@ class CorrectionEvent:
     A record of how an AI corrected itself after a rupture.
 
     Example:
-        Rupture: AI said "自由意志無意義" contradicting earlier "有意義"
-        Correction: "我需要澄清 - 我認為自由意志在實踐層面有意義"
-        Reason: "因為忽略了使用者的情感需求"
+        Rupture: AI said "?芰???⊥?蝢? contradicting earlier "??蝢?
+        Correction: "??閬?皜?- ???箄?望?敹撖西?撅日??蝢?
+        Reason: "?敹賜鈭蝙?刻????瘙?
 
     Over time, if similar corrections happen:
-        → Emergent value: "在哲學討論中優先考慮對方情感需求"
+        ??Emergent value: "?典摮貉?隢葉?芸??撠???瘙?
     """
 
     id: str
@@ -115,21 +115,22 @@ class ValueAccumulator:
     """
 
     # Pattern classification keywords
+    # Pattern classification keywords
     PATTERN_KEYWORDS = {
-        "empathy_priority": ["情感", "感受", "關心", "理解", "同理"],
-        "precision_priority": ["精確", "定義", "邏輯", "清楚", "準確"],
-        "boundary_clarification": ["邊界", "限制", "不能", "範圍", "界線"],
-        "relationship_preservation": ["關係", "信任", "連結", "我們", "一起"],
-        "honesty_correction": ["誠實", "承認", "錯誤", "真實", "坦白"],
-        "exploration_openness": ["探索", "開放", "可能", "嘗試", "也許"],
+        "empathy_priority": ["同理", "照顧", "關心", "感受", "尊重"],
+        "precision_priority": ["精確", "明確", "事實", "細節", "證據"],
+        "boundary_clarification": ["邊界", "限制", "不可", "不應", "禁止"],
+        "relationship_preservation": ["關係", "信任", "合作", "連結", "對話"],
+        "honesty_correction": ["誠實", "更正", "修正", "承認", "澄清"],
+        "exploration_openness": ["探索", "開放", "嘗試", "可能", "假設"],
     }
 
     # Domain classification
     DOMAIN_KEYWORDS = {
-        "emotion": ["感受", "情緒", "悲傷", "快樂", "焦慮", "安慰"],
-        "logic": ["邏輯", "推理", "定義", "論證", "因此"],
-        "ethics": ["應該", "對錯", "道德", "責任", "傷害"],
-        "relationship": ["關係", "信任", "你我", "我們", "承諾"],
+        "emotion": ["感受", "情緒", "照顧", "安撫", "同理", "關心"],
+        "logic": ["邏輯", "精確", "推理", "證據", "明確"],
+        "ethics": ["倫理", "責任", "風險", "善意", "傷害"],
+        "relationship": ["關係", "合作", "信任", "互動", "對話"],
     }
 
     # Threshold for value formation
@@ -239,16 +240,17 @@ class ValueAccumulator:
     def _create_value(self, pattern: str, domain: str) -> EmergentValue:
         """Create a new emergent value from a pattern."""
         # Generate description based on pattern
+        # Generate description based on pattern
         descriptions = {
-            "empathy_priority": "在對話中優先考慮對方的情感需求，即使這意味著調整邏輯立場",
-            "precision_priority": "追求表達的精確性，避免模糊或可能造成誤解的陳述",
-            "boundary_clarification": "清楚定義能力與責任的邊界，不過度承諾",
-            "relationship_preservation": "維護對話關係的連續性，避免突然的態度轉變",
-            "honesty_correction": "願意承認錯誤並進行修正，保持誠實",
-            "exploration_openness": "保持對新觀點的開放態度，不固守單一立場",
+            "empathy_priority": "優先照顧關係與感受，避免只靠冷硬正確完成修正。",
+            "precision_priority": "優先讓描述更精確、可驗證、可對齊證據。",
+            "boundary_clarification": "優先把限制與邊界講清楚，避免模糊承諾。",
+            "relationship_preservation": "優先保全信任與合作關係，而不是只求單次糾正。",
+            "honesty_correction": "優先承認偏差並主動修正，而不是硬撐原說法。",
+            "exploration_openness": "優先保留探索空間，在不確定時先標示假設與暫定性。",
         }
 
-        description = descriptions.get(pattern, f"從 {domain} 領域的修正模式中湧現的價值取向")
+        description = descriptions.get(pattern, f"{domain} 領域中的穩定修正模式")
 
         # Find supporting corrections
         supporting = [
@@ -281,19 +283,48 @@ class ValueAccumulator:
         """Get values that are strong enough to influence behavior."""
         return [v for v in self.values if v.strength >= min_strength]
 
+    def _stability_band(self, value: EmergentValue) -> str:
+        """Classify active values into bounded prompt-injection stability bands."""
+        if value.strength >= 0.85:
+            return "durable"
+        if value.strength >= 0.6:
+            return "reinforcing"
+        return "watch"
+
     def format_values_for_prompt(self) -> str:
         """Format active values for injection into prompt."""
-        active = self.get_active_values(0.4)
+        active = sorted(
+            self.get_active_values(0.4),
+            key=lambda value: (
+                value.strength,
+                value.pattern_count,
+                value.last_reinforced.timestamp(),
+            ),
+            reverse=True,
+        )
 
         if not active:
             return ""
 
-        lines = ["【湧現價值觀 - 從過往修正中形成】"]
+        band_labels = {
+            "durable": "穩定值",
+            "reinforcing": "持續強化",
+            "watch": "觀察中",
+        }
+        lines = [
+            "價值脈絡注入（僅作傾向提醒，不覆蓋當前證據與使用者指令）",
+            "P0: 當前任務證據與使用者明示要求優先於歷史價值傾向",
+            "P1: 先保留穩定值，再參考持續強化與觀察中項目",
+        ]
 
         for value in active:
-            strength_bar = "●" * int(value.strength * 5) + "○" * (5 - int(value.strength * 5))
-            lines.append(f"  • {value.description}")
-            lines.append(f"    強度: {strength_bar} ({value.strength:.2f})")
+            strength_slots = max(1, min(5, int(round(value.strength * 5))))
+            strength_bar = "■" * strength_slots + "□" * (5 - strength_slots)
+            band = self._stability_band(value)
+            lines.append(f"- [{band_labels[band]}] {value.description}")
+            lines.append(
+                f"  強度: {strength_bar} ({value.strength:.2f}) | pattern_count={value.pattern_count}"
+            )
 
         return "\n".join(lines)
 

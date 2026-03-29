@@ -109,6 +109,7 @@
         "deliberation_mode": "standard_council",
         "opacity_declaration": "partially_observable",
         "evolution_suppression_flag": true,
+        "realism_note": "Descriptive agreement record only; dissent is visible and suppression risk is flagged, so review minority signals before treating approval as settled.",
         "confidence_decomposition": {
           "calibration_status": "descriptive_only",
           "agreement_score": 0.5,

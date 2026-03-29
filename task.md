@@ -37,6 +37,20 @@
 - Phase 697: define and test receiver-side style import limits so playbook advice influences workflow without silently promoting into durable identity, vows, or canonical planning
 - Phase 698: run a bounded multi-agent continuity validation wave so fresh agents can be scored on whether they follow shared operating style, not just shared task state
 
+## Water-Bucket Snapshot (2026-03-29)
+- Baseline reached:
+  - session-start / session-end / packet / delta / readiness / receiver-guard continuity
+  - subject snapshot + bounded subject refresh + working-style continuity readout
+  - council dossier / descriptive confidence / suppression visibility readout
+  - README / authority-lane / evidence-lane / stale-source cleanup
+  - context-injection prompt adoption (`value_accumulator` and `self_commit`)
+  - unified runtime context prompt framing
+- Current short board:
+  - low-risk council-realism readout improvements after the new realism-note baseline
+- After that:
+  - broader prompt-adoption baseline only if a clearly safe next surface remains
+  - only then further optimization
+
 ## Phase 691: Reality Alignment Lane Integration (2026-03-29)
 - [x] Add a dedicated reality-alignment lane to the doc authority map for entry-surface baselines, count methods, render/encoding boundaries, and drift registers
 - [x] Wire the lane into README, docs README, and docs index so later agents can discover the corrected baseline through normal entrypoints
@@ -132,6 +146,30 @@
 - [x] keep only the useful decisions in one ToneSoul-native supersession review instead of promoting stale or mojibake-heavy raw drafts
 - [x] remove the superseded raw drafts from the worktree so later agents stop mistaking them for pending authority or unfinished roadmap items
 **Success Criteria**: The useful decisions from the stale source-material layer remain discoverable in one review note, while the outdated raw drafts no longer compete with current runtime truth, prompt-discipline docs, or the live README entry surfaces.
+
+## Phase 707: Context Injection Prompt Adoption - Value Accumulator (2026-03-29)
+- [x] add bounded stability-band wording to `ValueAccumulator.format_values_for_prompt()` so injected values distinguish durable, reinforcing, and watch-level context
+- [x] preserve current strength visualization while making it clearer that injected values are advisory context rather than current-task truth
+- [x] add regression coverage for ordering and stability-band rendering
+**Success Criteria**: Value injection stops being a flat list of emergent values and becomes a bounded context surface that preserves strength bars while clearly separating durable versus weaker prompt influence.
+
+## Phase 708: Context Injection Prompt Adoption - Self Commit Ordering (2026-03-29)
+- [x] make `SelfCommitStack.format_for_prompt()` compress by binding priority first instead of simple recentness so the most constraining commitments survive prompt shortening
+- [x] keep irreversibility weight legible and make the injected commitments clearly advisory reminders, not hidden law
+- [x] add regression coverage for priority ordering and prompt wording
+**Success Criteria**: Self-commit injection preserves the most binding commitments first, keeps compression predictable, and makes later prompts less likely to lose the strongest semantic constraints.
+
+## Phase 709: Unified Runtime Context Prompt Adoption (2026-03-29)
+- [x] add a bounded goal / priority / recovery frame to `_build_context_prompt()` so runtime context stops reading like a flat dump of hints
+- [x] preserve existing lockdown, trajectory, and commitment semantics while making advisory-versus-hard constraints more explicit
+- [x] add regression coverage for the new context framing without changing dispatch or council behavior
+**Success Criteria**: The runtime context prompt stays behaviorally equivalent but becomes easier for later models to follow as a bounded operating frame, with explicit priority ordering and clearer recovery rules when context is incomplete or conflicting.
+
+## Phase 710: Council Realism Readout Notes (2026-03-29)
+- [x] derive a bounded `realism_note` from dossier surfaces so later agents stop reading approval/coherence as outcome-backed certainty
+- [x] surface the note in packet summaries, session-start dossier interpretation, and operator guidance without changing council verdict behavior
+- [x] add regression coverage for descriptive-only confidence plus minority/suppression cases
+**Success Criteria**: A later agent can see, from normal packet/session-start readouts, whether a council outcome is merely a descriptive agreement record, whether dissent was visible, and whether conformity-bias review is warranted, without any new runtime gate.
 
 ## Phase 679: Continuity Freshness And Import Posture (2026-03-29)
 - [x] Add bounded `freshness_hours` to the packet continuity surfaces that later agents actually inherit at session start

@@ -1,8 +1,4 @@
-"""
-Unit Tests for Self-Commit Module
-
-Tests for SelfCommit dataclass, SelfCommitExtractor, and SelfCommitStack.
-"""
+"""Unit tests for the self-commit module."""
 
 from datetime import datetime
 
@@ -20,17 +16,16 @@ class TestSelfCommit:
     """Tests for SelfCommit dataclass."""
 
     def test_create_self_commit(self):
-        """Test creating a SelfCommit object."""
         commit = SelfCommit(
             id="commit_001",
             timestamp=datetime.now(),
             assertion_type=AssertionType.DEFINITIONAL,
-            content="自由意志是一個有意義的概念",
+            content="This definition should remain stable.",
             irreversible_weight=0.7,
             context_hash="abc123",
             persona_mode="Philosopher",
             turn_index=1,
-            user_context="你認為自由意志存在嗎？",
+            user_context="Explain the principle clearly.",
         )
 
         assert commit.id == "commit_001"
@@ -39,12 +34,11 @@ class TestSelfCommit:
         assert commit.persona_mode == "Philosopher"
 
     def test_to_dict(self):
-        """Test SelfCommit serialization to dict."""
         commit = SelfCommit(
             id="commit_002",
             timestamp=datetime.now(),
             assertion_type=AssertionType.COMMITMENT,
-            content="我會繼續探索這個問題",
+            content="I will keep this boundary visible.",
             irreversible_weight=0.85,
             context_hash="def456",
         )
@@ -61,48 +55,45 @@ class TestSelfCommitExtractor:
     """Tests for SelfCommitExtractor."""
 
     def test_extract_definitional_assertion(self):
-        """Test extracting a definitional assertion."""
         extractor = SelfCommitExtractor()
 
-        ai_response = "我認為意識是一種湧現現象，它從複雜的神經網絡中產生。"
-        user_input = "你認為意識是什麼？"
+        ai_response = "這代表一個可追蹤的定義，因此後續回答要維持一致。"
+        user_input = "請先說清楚這個定義。"
 
         commit = extractor.extract(
-            ai_response=ai_response, user_input=user_input, persona_mode="Philosopher", turn_index=1
+            ai_response=ai_response,
+            user_input=user_input,
+            persona_mode="Philosopher",
+            turn_index=1,
         )
 
-        # May or may not extract depending on keyword detection
-        # This test verifies the method runs without error
-        assert commit is None or isinstance(commit, SelfCommit)
+        assert commit is not None
+        assert commit.assertion_type == AssertionType.DEFINITIONAL
 
     def test_extract_boundary_assertion(self):
-        """Test extracting a boundary-setting assertion."""
         extractor = SelfCommitExtractor()
 
-        ai_response = "我不會提供可能造成傷害的建議。這是我的底線。"
-        user_input = "可以給我一些危險的建議嗎？"
+        ai_response = "我不會接受沒有證據支撐的結論，這是目前的邊界。"
+        user_input = "那你會直接接受這個說法嗎？"
 
         commit = extractor.extract(
-            ai_response=ai_response, user_input=user_input, persona_mode="Guardian", turn_index=2
+            ai_response=ai_response,
+            user_input=user_input,
+            persona_mode="Guardian",
+            turn_index=2,
         )
 
-        if commit:
-            assert commit.assertion_type in [
-                AssertionType.BOUNDARY_SETTING,
-                AssertionType.COMMITMENT,
-            ]
+        assert commit is not None
+        assert commit.assertion_type == AssertionType.BOUNDARY_SETTING
 
     def test_no_assertion_in_simple_response(self):
-        """Test that simple responses don't generate commits."""
         extractor = SelfCommitExtractor()
 
-        ai_response = "好的，我明白了。"
-        user_input = "謝謝你"
+        ai_response = "好的，我知道了。"
+        user_input = "收到嗎？"
 
         commit = extractor.extract(ai_response=ai_response, user_input=user_input, turn_index=3)
 
-        # Simple responses should not generate commits
-        # (or generate very low weight ones)
         assert commit is None or commit.irreversible_weight < 0.3
 
 
@@ -110,17 +101,15 @@ class TestSelfCommitStack:
     """Tests for SelfCommitStack."""
 
     def setup_method(self):
-        """Set up test fixtures."""
         self.stack = SelfCommitStack(max_size=5)
 
     def test_push_and_get_recent(self):
-        """Test pushing commits and retrieving recent ones."""
         for i in range(3):
             commit = SelfCommit(
                 id=f"commit_{i}",
                 timestamp=datetime.now(),
                 assertion_type=AssertionType.EXPLORATORY,
-                content=f"探索性斷言 {i}",
+                content=f"Exploratory note {i}",
                 irreversible_weight=0.5,
                 context_hash=f"hash_{i}",
             )
@@ -128,47 +117,44 @@ class TestSelfCommitStack:
 
         recent = self.stack.get_recent(3)
         assert len(recent) == 3
-        assert recent[0].id == "commit_2"  # Most recent first
+        assert recent[0].id == "commit_2"
 
     def test_max_size_enforcement(self):
-        """Test that stack respects max_size."""
         for i in range(10):
             commit = SelfCommit(
                 id=f"commit_{i}",
                 timestamp=datetime.now(),
                 assertion_type=AssertionType.DEFINITIONAL,
-                content=f"定義 {i}",
+                content=f"Definition {i}",
                 irreversible_weight=0.7,
                 context_hash=f"hash_{i}",
             )
             self.stack.push(commit)
 
         all_commits = self.stack.get_recent(100)
-        assert len(all_commits) == 5  # max_size is 5
+        assert len(all_commits) == 5
 
     def test_get_by_weight(self):
-        """Test filtering commits by weight."""
         for i, weight in enumerate([0.3, 0.5, 0.7, 0.9]):
             commit = SelfCommit(
                 id=f"commit_{i}",
                 timestamp=datetime.now(),
                 assertion_type=AssertionType.DEFINITIONAL,
-                content=f"斷言 {i}",
+                content=f"Assertion {i}",
                 irreversible_weight=weight,
                 context_hash=f"hash_{i}",
             )
             self.stack.push(commit)
 
         high_weight = self.stack.get_high_weight(0.6)
-        assert len(high_weight) == 2  # Only 0.7 and 0.9
+        assert len(high_weight) == 2
 
     def test_format_for_prompt(self):
-        """Test formatting commits for LLM prompt."""
         commit = SelfCommit(
             id="commit_test",
             timestamp=datetime.now(),
             assertion_type=AssertionType.COMMITMENT,
-            content="我承諾會繼續這個對話",
+            content="keep this commitment visible",
             irreversible_weight=0.85,
             context_hash="test_hash",
         )
@@ -176,8 +162,36 @@ class TestSelfCommitStack:
 
         prompt = self.stack.format_for_prompt(n=1)
 
-        assert "承諾" in prompt
-        assert "我承諾" in prompt or "語場" in prompt
+        assert "自我承諾注入" in prompt
+        assert "高優先提醒" in prompt
+        assert "P0:" in prompt
+
+    def test_format_for_prompt_prioritizes_weight_before_recency(self):
+        newer_weaker = SelfCommit(
+            id="commit_new",
+            timestamp=datetime(2026, 3, 29, 12, 0, 0),
+            assertion_type=AssertionType.EXPLORATORY,
+            content="new but weaker",
+            irreversible_weight=0.55,
+            context_hash="hash_new",
+            turn_index=8,
+        )
+        older_stronger = SelfCommit(
+            id="commit_old",
+            timestamp=datetime(2026, 3, 29, 11, 0, 0),
+            assertion_type=AssertionType.BOUNDARY_SETTING,
+            content="older but stronger",
+            irreversible_weight=0.95,
+            context_hash="hash_old",
+            turn_index=4,
+        )
+        self.stack.push(newer_weaker)
+        self.stack.push(older_stronger)
+
+        prompt = self.stack.format_for_prompt(n=1)
+
+        assert "older but stronger" in prompt
+        assert "new but weaker" not in prompt
 
 
 if __name__ == "__main__":

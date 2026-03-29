@@ -760,8 +760,16 @@ def test_start_agent_session_surfaces_council_dossier_interpretation_guard(
     assert dossier_surface["dossier_interpretation"]["adversarial_posture"] == "survived_dissent"
     assert dossier_surface["dossier_interpretation"]["has_minority_report"] is True
     assert dossier_surface["dossier_interpretation"]["evolution_suppression_flag"] is True
+    assert (
+        "Descriptive agreement record only"
+        in dossier_surface["dossier_interpretation"]["realism_note"]
+    )
     assert any(
         "descriptive_only" in alert
+        for alert in output["import_posture"]["receiver_alerts"]
+    )
+    assert any(
+        "minority dissent" in alert
         for alert in output["import_posture"]["receiver_alerts"]
     )
     assert any(

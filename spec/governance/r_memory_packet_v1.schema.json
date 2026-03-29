@@ -393,6 +393,9 @@
         "evolution_suppression_flag": {
           "type": "boolean"
         },
+        "realism_note": {
+          "type": "string"
+        },
         "confidence_decomposition": {
           "$ref": "#/$defs/confidence_decomposition"
         }

@@ -402,6 +402,10 @@ def test_r_memory_packet_exposes_runtime_dominance_and_recent_trace(
         == "survived_dissent"
     )
     assert packet["recent_traces"][0]["council_dossier_summary"]["evolution_suppression_flag"] is True
+    assert (
+        "Descriptive agreement record only"
+        in packet["recent_traces"][0]["council_dossier_summary"]["realism_note"]
+    )
     assert packet["recent_traces"][0]["freshness_hours"] >= 0.0
     assert packet["operator_guidance"]["backend_mode"] == "file"
     assert packet["operator_guidance"]["session_start"][0].startswith(
@@ -420,6 +424,10 @@ def test_r_memory_packet_exposes_runtime_dominance_and_recent_trace(
     assert "subject_snapshot" in packet["operator_guidance"]["coordination_commands"]
     assert "apply_subject_refresh" in packet["operator_guidance"]["coordination_commands"]
     assert "checkpoint or compaction" in packet["operator_guidance"]["completion_rule"]
+    assert any(
+        reminder.startswith("Council realism: Descriptive agreement record only")
+        for reminder in packet["operator_guidance"]["current_reminders"]
+    )
     assert packet["recent_traces"][0]["agent"] == "codex"
     assert packet["recent_traces"][0]["topics"] == ["runtime", "redis"]
     assert packet["recent_checkpoints"] == []

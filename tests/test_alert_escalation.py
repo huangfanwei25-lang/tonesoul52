@@ -323,18 +323,23 @@ class TestSeabedLockdownPromptInjection:
         pipeline = self._make_pipeline()
         prompt = pipeline._build_context_prompt(None, lockdown_active=False)
         assert "SEABED LOCKDOWN" not in prompt
+        assert "Goal: respond with bounded, evidence-aware guidance" in prompt
+        assert "P0:" in prompt
+        assert "Recovery:" in prompt
 
     def test_lockdown_active_includes_seabed_block(self):
         pipeline = self._make_pipeline()
         prompt = pipeline._build_context_prompt(None, lockdown_active=True)
         assert "[SEABED LOCKDOWN ACTIVE]" in prompt
         assert "Allowed actions:" in prompt
+        assert "Recent commitments (advisory reminders):" not in prompt
 
     def test_lockdown_prompt_restricts_creative_content(self):
         pipeline = self._make_pipeline()
         prompt = pipeline._build_context_prompt(None, lockdown_active=True)
         assert "Do NOT generate creative" in prompt
         assert "verifiable facts" in prompt
+        assert "If context support is thin, say so explicitly" in prompt
 
     def test_lockdown_lists_correct_actions(self):
         from tonesoul.action_set import ACTION_POLICY
@@ -353,6 +358,16 @@ class TestSeabedLockdownPromptInjection:
         )
         assert "Persona mode: Guardian" in prompt
         assert "[SEABED LOCKDOWN ACTIVE]" in prompt
+
+    def test_context_prompt_marks_commitments_as_advisory(self):
+        pipeline = self._make_pipeline()
+        prompt = pipeline._build_context_prompt(
+            None,
+            commitment_prompt="Boundary reminder",
+            lockdown_active=False,
+        )
+        assert "Recent commitments (advisory reminders):" in prompt
+        assert "Boundary reminder" in prompt
 
 
 class TestSeabedLockdownDispatchTrace:

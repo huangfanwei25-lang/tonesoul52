@@ -177,6 +177,50 @@ def test_get_active_values_and_prompt_formatting() -> None:
     assert [value.name for value in active] == ["precision_priority"]
     assert "Prefer precision over blur" in prompt
     assert "(0.80)" in prompt
+    assert "價值脈絡注入" in prompt
+    assert "[持續強化]" in prompt
+    assert "P0:" in prompt
+
+
+def test_format_values_for_prompt_orders_by_strength_and_marks_bands() -> None:
+    accumulator = ValueAccumulator()
+    accumulator.values.extend(
+        [
+            EmergentValue(
+                id="value-1",
+                name="watch_value",
+                description="Watch weaker pattern",
+                formation_date=datetime(2026, 3, 19, 12, 0, 0),
+                supporting_corrections=["c1", "c2", "c3"],
+                pattern_count=3,
+                strength=0.45,
+                last_reinforced=datetime(2026, 3, 19, 12, 4, 0),
+                domain="logic",
+            ),
+            EmergentValue(
+                id="value-2",
+                name="durable_value",
+                description="Keep this durable value first",
+                formation_date=datetime(2026, 3, 19, 12, 1, 0),
+                supporting_corrections=["c4", "c5", "c6", "c7"],
+                pattern_count=4,
+                strength=0.92,
+                last_reinforced=datetime(2026, 3, 19, 12, 6, 0),
+                domain="emotion",
+            ),
+        ]
+    )
+
+    prompt = accumulator.format_values_for_prompt()
+    durable_index = prompt.find("Keep this durable value first")
+    watch_index = prompt.find("Watch weaker pattern")
+
+    assert durable_index != -1
+    assert watch_index != -1
+    assert durable_index < watch_index
+    assert "[穩定值]" in prompt
+    assert "[觀察中]" in prompt
+    assert "■" in prompt
 
 
 def test_get_summary_and_to_dict_report_strongest_value() -> None:

@@ -257,6 +257,10 @@ def test_run_r_memory_packet_emits_json(capsys, monkeypatch, tmp_path: Path) -> 
         == "descriptive_only"
     )
     assert output["recent_compactions"][0]["council_dossier"]["evolution_suppression_flag"] is True
+    assert (
+        "Descriptive agreement record only"
+        in output["recent_compactions"][0]["council_dossier"]["realism_note"]
+    )
     assert output["recent_subject_snapshots"][0]["snapshot_id"] == "subj-1"
     assert output["recent_subject_snapshots"][0]["freshness_hours"] >= 0.0
     assert output["recent_routing_events"][0]["surface"] == "checkpoint"

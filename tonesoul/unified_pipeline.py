@@ -3140,10 +3140,19 @@ Respond with a clear, practical answer."""
     ) -> str:
         """Build runtime context prompt for the LLM call."""
         lines: List[str] = []
-        lines.append(f"Persona mode: {persona_mode}")
+        lines.extend(
+            [
+                "Runtime context frame",
+                "Goal: respond with bounded, evidence-aware guidance using the current runtime context as support, not as hidden law.",
+                "P0: user-visible evidence, active safety restrictions, and explicit task constraints outrank historical or advisory hints.",
+                "P1: commitments, trajectory, tone, and motive cues are bounded reminders; if they conflict with current evidence, surface the conflict instead of silently inheriting them.",
+                "Recovery: if the runtime context is incomplete, stale, or internally conflicting, ask a clarifying question or state the uncertainty instead of inventing continuity.",
+                f"Persona mode: {persona_mode}",
+            ]
+        )
 
         if commitment_prompt:
-            lines.append("Recent commitments:")
+            lines.append("Recent commitments (advisory reminders):")
             lines.append(commitment_prompt)
 
         if trajectory_result:
@@ -3206,7 +3215,9 @@ Respond with a clear, practical answer."""
                 "Respond only with verifiable facts, cited sources, or clarifying questions."
             )
 
-        lines.append("Reply with factual, concise, and safe guidance.")
+        lines.append(
+            "Output: reply with factual, concise, and safe guidance. If context support is thin, say so explicitly before proceeding."
+        )
         return "\n".join(lines)
 
     def _generate_narrative(self, tb_result, verdict_dict: Dict) -> str:

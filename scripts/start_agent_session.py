@@ -202,6 +202,33 @@ def _latest_council_dossier_snapshot(*, latest_compaction: dict, latest_trace: d
     coverage_posture = str(decomposition.get("coverage_posture", "")).strip()
     if coverage_posture:
         snapshot["coverage_posture"] = coverage_posture
+    realism_note = str(payload.get("realism_note", "")).strip()
+    if not realism_note:
+        has_minority_report = bool(snapshot.get("has_minority_report"))
+        suppression_flag = bool(snapshot.get("evolution_suppression_flag"))
+        if calibration_status == "descriptive_only":
+            if suppression_flag and has_minority_report:
+                realism_note = (
+                    "Descriptive agreement record only; dissent is visible and suppression risk is flagged, "
+                    "so review minority signals before treating approval as settled."
+                )
+            elif has_minority_report or adversarial_posture == "survived_dissent":
+                realism_note = (
+                    "Descriptive agreement record only; visible dissent survived review, "
+                    "so approval is not equivalent to proven correctness."
+                )
+            else:
+                realism_note = (
+                    "Descriptive agreement record only; coherence and confidence posture are not calibrated accuracy signals."
+                )
+        elif suppression_flag and has_minority_report:
+            realism_note = (
+                "Dissent and possible suppression are both visible; review minority signals before treating the verdict as settled."
+            )
+        elif has_minority_report:
+            realism_note = "Minority dissent is visible; review it before treating approval as settled."
+    if realism_note:
+        snapshot["realism_note"] = realism_note
     return snapshot
 
 
@@ -754,6 +781,10 @@ def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
     if str(latest_dossier_snapshot.get("calibration_status", "")).strip() == "descriptive_only":
         receiver_alerts.append(
             "Latest council dossier confidence is descriptive_only; treat coherence and confidence posture as internal agreement context, not as an accuracy prediction."
+        )
+    if bool(latest_dossier_snapshot.get("has_minority_report")):
+        receiver_alerts.append(
+            "Latest council dossier carries minority dissent; review it before treating approval as settled."
         )
     if bool(latest_dossier_snapshot.get("evolution_suppression_flag")):
         receiver_alerts.append(

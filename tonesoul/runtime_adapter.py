@@ -928,7 +928,47 @@ def _normalize_council_dossier(payload: Optional[Dict[str, Any]]) -> Dict[str, A
             normalized["confidence_decomposition"] = entry
     if "evolution_suppression_flag" in payload:
         normalized["evolution_suppression_flag"] = bool(payload.get("evolution_suppression_flag"))
+    realism_note = str(payload.get("realism_note", "")).strip()
+    if not realism_note:
+        realism_note = _derive_council_realism_note_from_normalized(normalized)
+    if realism_note:
+        normalized["realism_note"] = realism_note
     return normalized
+
+
+def _derive_council_realism_note_from_normalized(dossier: Dict[str, Any]) -> str:
+    if not dossier:
+        return ""
+
+    decomposition = dossier.get("confidence_decomposition") or {}
+    calibration_status = str(decomposition.get("calibration_status", "")).strip()
+    has_minority_report = bool(dossier.get("minority_report"))
+    adversarial_posture = str(decomposition.get("adversarial_posture", "")).strip()
+    suppression_flag = bool(dossier.get("evolution_suppression_flag"))
+
+    if calibration_status == "descriptive_only":
+        if suppression_flag and has_minority_report:
+            return (
+                "Descriptive agreement record only; dissent is visible and suppression risk is flagged, "
+                "so review minority signals before treating approval as settled."
+            )
+        if has_minority_report or adversarial_posture == "survived_dissent":
+            return (
+                "Descriptive agreement record only; visible dissent survived review, "
+                "so approval is not equivalent to proven correctness."
+            )
+        return "Descriptive agreement record only; coherence and confidence posture are not calibrated accuracy signals."
+
+    if suppression_flag and has_minority_report:
+        return "Dissent and possible suppression are both visible; review minority signals before treating the verdict as settled."
+    if has_minority_report:
+        return "Minority dissent is visible; review it before treating approval as settled."
+    return ""
+
+
+def _derive_council_realism_note(payload: Optional[Dict[str, Any]]) -> str:
+    dossier = _normalize_council_dossier(payload)
+    return _derive_council_realism_note_from_normalized(dossier)
 
 
 def _build_council_dossier_summary(payload: Optional[Dict[str, Any]]) -> Dict[str, Any]:
@@ -954,6 +994,9 @@ def _build_council_dossier_summary(payload: Optional[Dict[str, Any]]) -> Dict[st
         summary["confidence_decomposition"] = decomposition
     if "evolution_suppression_flag" in dossier:
         summary["evolution_suppression_flag"] = bool(dossier.get("evolution_suppression_flag"))
+    realism_note = _derive_council_realism_note(dossier)
+    if realism_note:
+        summary["realism_note"] = realism_note
     return summary
 
 
@@ -1850,6 +1893,7 @@ def _build_operator_guidance(
     delta_feed: Dict[str, Any],
     claims: List[Dict[str, Any]],
     compactions: List[Dict[str, Any]],
+    traces: List[Dict[str, Any]],
     subject_snapshots: List[Dict[str, Any]],
     project_memory_summary: Dict[str, Any],
     coordination_mode: Dict[str, Any],
@@ -1925,6 +1969,22 @@ def _build_operator_guidance(
         reminders.append(
             "Subject-refresh heuristics found promotion hazards; keep higher-risk fields operator-reviewed instead of auto-promoting hot-state."
         )
+
+    latest_dossier_payload: Dict[str, Any] = {}
+    for entry in compactions:
+        candidate = entry.get("council_dossier")
+        if isinstance(candidate, dict) and candidate:
+            latest_dossier_payload = candidate
+            break
+    if not latest_dossier_payload:
+        for entry in traces:
+            candidate = entry.get("council_dossier")
+            if isinstance(candidate, dict) and candidate:
+                latest_dossier_payload = candidate
+                break
+    realism_note = _derive_council_realism_note(latest_dossier_payload)
+    if realism_note:
+        reminders.append(f"Council realism: {realism_note}")
 
     refresh_hint = str(coordination_mode.get("refresh_hint", "")).strip()
     if refresh_hint:
@@ -2531,6 +2591,7 @@ def r_memory_packet(
         delta_feed=delta_feed,
         claims=claims,
         compactions=compactions,
+        traces=traces,
         subject_snapshots=subject_snapshots,
         project_memory_summary=project_memory_summary,
         coordination_mode=coordination_mode,
