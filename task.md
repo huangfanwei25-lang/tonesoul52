@@ -121,6 +121,12 @@
 - [x] wire the lane into README, docs README, docs INDEX, and authority-map generation while keeping stale gap drafts and unrelated private artifacts outside the integration set
 **Success Criteria**: Later agents can discover a current-state prompt adoption map from normal doc entrypoints, see that council/reflection/refinement waves are already baseline-complete, and identify context injection as the next short board instead of reopening finished work.
 
+## Phase 705: PATH Source-Material Distillation Cleanup (2026-03-29)
+- [x] review the `path_integration_*` source-material docs against current ToneSoul-native contracts and earlier adoption decisions
+- [x] keep only the useful adoption outcome in a ToneSoul-native review record instead of promoting raw PATH-framed source docs
+- [x] remove the untracked PATH source-material drafts after distillation so they stop masquerading as pending authority surfaces
+**Success Criteria**: The useful PATH-derived decisions remain discoverable in ToneSoul-native form, while the raw `path_integration_*` drafts are no longer cluttering the worktree or competing with existing boundary contracts.
+
 ## Phase 679: Continuity Freshness And Import Posture (2026-03-29)
 - [x] Add bounded `freshness_hours` to the packet continuity surfaces that later agents actually inherit at session start
 - [x] Add a machine-readable `import_posture` section to `start_agent_session.py` so agents can distinguish directly importable posture/claims from advisory compactions, snapshots, and dossiers
