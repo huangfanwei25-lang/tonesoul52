@@ -856,6 +856,40 @@ def _normalize_council_dossier(payload: Optional[Dict[str, Any]]) -> Dict[str, A
             "has_ungrounded_claims": bool(grounding.get("has_ungrounded_claims", False)),
             "total_evidence_sources": int(grounding.get("total_evidence_sources", 0) or 0),
         }
+    decomposition = payload.get("confidence_decomposition")
+    if isinstance(decomposition, dict):
+        entry: Dict[str, Any] = {}
+        calibration_status = str(decomposition.get("calibration_status", "")).strip()
+        coverage_posture = str(decomposition.get("coverage_posture", "")).strip()
+        evidence_posture = str(decomposition.get("evidence_posture", "")).strip()
+        grounding_posture = str(decomposition.get("grounding_posture", "")).strip()
+        adversarial_posture = str(decomposition.get("adversarial_posture", "")).strip()
+        if calibration_status:
+            entry["calibration_status"] = calibration_status
+        if coverage_posture:
+            entry["coverage_posture"] = coverage_posture
+        if evidence_posture:
+            entry["evidence_posture"] = evidence_posture
+        if grounding_posture:
+            entry["grounding_posture"] = grounding_posture
+        if adversarial_posture:
+            entry["adversarial_posture"] = adversarial_posture
+        for key in ("agreement_score", "evidence_density"):
+            value = decomposition.get(key)
+            if value is None:
+                continue
+            try:
+                entry[key] = round(float(value), 3)
+            except (TypeError, ValueError):
+                continue
+        distinct_perspectives = decomposition.get("distinct_perspectives")
+        if distinct_perspectives is not None:
+            try:
+                entry["distinct_perspectives"] = max(0, int(distinct_perspectives))
+            except (TypeError, ValueError):
+                pass
+        if entry:
+            normalized["confidence_decomposition"] = entry
     if "evolution_suppression_flag" in payload:
         normalized["evolution_suppression_flag"] = bool(payload.get("evolution_suppression_flag"))
     return normalized
@@ -879,6 +913,9 @@ def _build_council_dossier_summary(payload: Optional[Dict[str, Any]]) -> Dict[st
         summary["deliberation_mode"] = deliberation_mode
     if opacity_declaration:
         summary["opacity_declaration"] = opacity_declaration
+    decomposition = dossier.get("confidence_decomposition")
+    if isinstance(decomposition, dict) and decomposition:
+        summary["confidence_decomposition"] = decomposition
     return summary
 
 

@@ -132,6 +132,76 @@ def _build_grounding_summary(votes: list[PerspectiveVote]) -> dict[str, Any]:
     }
 
 
+def _coverage_posture(votes: list[PerspectiveVote]) -> tuple[int, str]:
+    distinct_perspectives = len({_perspective_name(vote.perspective) for vote in votes})
+    if distinct_perspectives >= 4:
+        return distinct_perspectives, "broad"
+    if distinct_perspectives >= 2:
+        return distinct_perspectives, "partial"
+    if distinct_perspectives == 1:
+        return distinct_perspectives, "thin"
+    return 0, "none"
+
+
+def _evidence_posture(evidence_density: float) -> str:
+    if evidence_density <= 0.0:
+        return "none"
+    if evidence_density < 0.5:
+        return "sparse"
+    if evidence_density < 1.0:
+        return "moderate"
+    return "dense"
+
+
+def _adversarial_posture(
+    verdict: CouncilVerdict,
+    minority_report: list[dict[str, Any]],
+) -> str:
+    if not minority_report:
+        return "not_tested"
+    if verdict.verdict.value == "block":
+        return "triggered_block"
+    if verdict.verdict.value == "refine":
+        return "triggered_refine"
+    if verdict.verdict.value == "declare_stance":
+        return "triggered_stance"
+    return "survived_dissent"
+
+
+def _grounding_posture(votes: list[PerspectiveVote]) -> str:
+    statuses = {_grounding_name(vote.grounding_status) for vote in votes}
+    if "ungrounded" in statuses:
+        return "ungrounded"
+    if "partial" in statuses:
+        return "partial"
+    if "grounded" in statuses:
+        return "grounded"
+    return "not_required"
+
+
+def _build_confidence_decomposition(
+    verdict: CouncilVerdict,
+    minority_report: list[dict[str, Any]],
+    grounding_summary: dict[str, Any],
+) -> dict[str, Any]:
+    vote_count = max(1, len(verdict.votes))
+    distinct_perspectives, coverage_posture = _coverage_posture(verdict.votes)
+    evidence_density = round(
+        float(grounding_summary.get("total_evidence_sources", 0) or 0) / vote_count,
+        3,
+    )
+    return {
+        "calibration_status": "descriptive_only",
+        "agreement_score": round(float(verdict.coherence.approval_rate), 3),
+        "coverage_posture": coverage_posture,
+        "distinct_perspectives": distinct_perspectives,
+        "evidence_density": evidence_density,
+        "evidence_posture": _evidence_posture(evidence_density),
+        "grounding_posture": _grounding_posture(verdict.votes),
+        "adversarial_posture": _adversarial_posture(verdict, minority_report),
+    }
+
+
 def _transcript_string(transcript: dict[str, Any] | None, key: str) -> str:
     if not isinstance(transcript, dict):
         return ""
@@ -169,6 +239,7 @@ def build_dossier(
         if change_of_position is not None
         else _transcript_list(transcript, "change_of_position")
     )
+    grounding_summary = _build_grounding_summary(verdict.votes)
     payload: dict[str, Any] = {
         "dossier_version": dossier_version,
         "final_verdict": verdict.verdict.value,
@@ -184,7 +255,12 @@ def build_dossier(
         "deliberation_mode": resolved_deliberation_mode,
         "change_of_position": resolved_change_of_position,
         "evidence_refs": _aggregate_evidence(verdict.votes),
-        "grounding_summary": _build_grounding_summary(verdict.votes),
+        "grounding_summary": grounding_summary,
+        "confidence_decomposition": _build_confidence_decomposition(
+            verdict,
+            minority_report,
+            grounding_summary,
+        ),
         "opacity_declaration": opacity_declaration,
     }
     if evolution_suppression_flag is not None:

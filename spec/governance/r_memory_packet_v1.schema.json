@@ -389,6 +389,50 @@
         },
         "opacity_declaration": {
           "type": "string"
+        },
+        "confidence_decomposition": {
+          "$ref": "#/$defs/confidence_decomposition"
+        }
+      }
+    },
+    "confidence_decomposition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "calibration_status",
+        "agreement_score",
+        "coverage_posture",
+        "distinct_perspectives",
+        "evidence_density",
+        "evidence_posture",
+        "grounding_posture",
+        "adversarial_posture"
+      ],
+      "properties": {
+        "calibration_status": {
+          "type": "string"
+        },
+        "agreement_score": {
+          "type": "number"
+        },
+        "coverage_posture": {
+          "type": "string"
+        },
+        "distinct_perspectives": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "evidence_density": {
+          "type": "number"
+        },
+        "evidence_posture": {
+          "type": "string"
+        },
+        "grounding_posture": {
+          "type": "string"
+        },
+        "adversarial_posture": {
+          "type": "string"
         }
       }
     },
@@ -488,6 +532,9 @@
               "minimum": 0
             }
           }
+        },
+        "confidence_decomposition": {
+          "$ref": "#/$defs/confidence_decomposition"
         },
         "opacity_declaration": {
           "type": "string"

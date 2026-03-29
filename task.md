@@ -21,6 +21,7 @@
 - Phase 681: deepen checkpoint and compaction regression coverage so continuity claims are defended by tests rather than prose alone
 - Phase 682: restructure the public README into a guided entrypoint so humans and AI stop facing an undifferentiated architecture link wall
 - Phase 683: run a Claude-owned docs mega-program for audience routing, historical-surface mapping, and mojibake hazard registration without colliding with Codex's entrypoint rewrites
+- Phase 684: surface descriptive council confidence decomposition so later agents stop reading one agreement number as if it were calibrated accuracy
 
 ## Phase 679: Continuity Freshness And Import Posture (2026-03-29)
 - [x] Add bounded `freshness_hours` to the packet continuity surfaces that later agents actually inherit at session start
@@ -51,6 +52,12 @@
 - [x] Keep the workstream explicitly away from `README.md`, `docs/README.md`, `docs/INDEX.md`, and runtime surfaces so Codex retains implementation ownership
 - [x] Require staged deliverables substantial enough to guide several cleanup waves rather than one small contract note
 **Success Criteria**: Claude has one large, detailed, non-overlapping work order that can occupy a long synthesis pass while directly improving future entrypoint cleanup and documentation hygiene.
+
+## Phase 684: Council Descriptive Confidence Decomposition (2026-03-29)
+- [x] Add a bounded `confidence_decomposition` surface to council dossier extraction so agreement, coverage, evidence density, and adversarial posture stop collapsing into one confidence word
+- [x] Carry the new decomposition through runtime normalization and packet summaries without changing council verdict behavior or pretending the result is calibrated
+- [x] Update schema/example and regression tests so later agents can consume the new surface safely
+**Success Criteria**: Later agents can inspect a council dossier or packet summary and distinguish descriptive agreement from coverage, evidence density, grounding posture, and whether dissent was actually survived, without mistaking any of it for outcome-backed calibration.
 
 ## Phase 666: Bounded Council Dossier Carry Surfaces (2026-03-28)
 - [x] Let `SessionTrace` store an optional compact council dossier input while keeping the canonical trace schema backward-compatible

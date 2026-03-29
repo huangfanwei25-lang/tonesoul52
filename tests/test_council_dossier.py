@@ -198,5 +198,15 @@ def test_build_dossier_aggregates_unique_evidence_and_grounding_summary():
         "has_ungrounded_claims": True,
         "total_evidence_sources": 4,
     }
+    assert dossier["confidence_decomposition"] == {
+        "calibration_status": "descriptive_only",
+        "agreement_score": 0.5,
+        "coverage_posture": "partial",
+        "distinct_perspectives": 2,
+        "evidence_density": 2.0,
+        "evidence_posture": "dense",
+        "grounding_posture": "ungrounded",
+        "adversarial_posture": "survived_dissent",
+    }
     assert dossier["change_of_position"] == [{"perspective": "critic"}]
     assert dossier["opacity_declaration"] == "partially_observable"

@@ -117,6 +117,16 @@ def test_run_r_memory_packet_emits_json(capsys, monkeypatch, tmp_path: Path) -> 
                             "has_ungrounded_claims": False,
                             "total_evidence_sources": 1
                         },
+                        "confidence_decomposition": {
+                            "calibration_status": "descriptive_only",
+                            "agreement_score": 0.5,
+                            "coverage_posture": "partial",
+                            "distinct_perspectives": 2,
+                            "evidence_density": 0.5,
+                            "evidence_posture": "moderate",
+                            "grounding_posture": "not_required",
+                            "adversarial_posture": "survived_dissent"
+                        },
                         "opacity_declaration": "partially_observable"
                     },
                     "next_action": "keep compaction non-canonical",
@@ -241,6 +251,10 @@ def test_run_r_memory_packet_emits_json(capsys, monkeypatch, tmp_path: Path) -> 
     assert output["recent_compactions"][0]["compaction_id"] == "cmp-1"
     assert output["recent_compactions"][0]["freshness_hours"] >= 0.0
     assert output["recent_compactions"][0]["council_dossier"]["confidence_posture"] == "contested"
+    assert (
+        output["recent_compactions"][0]["council_dossier"]["confidence_decomposition"]["calibration_status"]
+        == "descriptive_only"
+    )
     assert output["recent_subject_snapshots"][0]["snapshot_id"] == "subj-1"
     assert output["recent_subject_snapshots"][0]["freshness_hours"] >= 0.0
     assert output["recent_routing_events"][0]["surface"] == "checkpoint"

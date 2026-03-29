@@ -107,7 +107,17 @@
         "dissent_ratio": 0.35,
         "has_minority_report": true,
         "deliberation_mode": "standard_council",
-        "opacity_declaration": "partially_observable"
+        "opacity_declaration": "partially_observable",
+        "confidence_decomposition": {
+          "calibration_status": "descriptive_only",
+          "agreement_score": 0.5,
+          "coverage_posture": "partial",
+          "distinct_perspectives": 2,
+          "evidence_density": 0.5,
+          "evidence_posture": "moderate",
+          "grounding_posture": "not_required",
+          "adversarial_posture": "survived_dissent"
+        }
       }
     }
   ],
@@ -199,6 +209,16 @@
         "grounding_summary": {
           "has_ungrounded_claims": false,
           "total_evidence_sources": 1
+        },
+        "confidence_decomposition": {
+          "calibration_status": "descriptive_only",
+          "agreement_score": 0.5,
+          "coverage_posture": "partial",
+          "distinct_perspectives": 2,
+          "evidence_density": 0.5,
+          "evidence_posture": "moderate",
+          "grounding_posture": "not_required",
+          "adversarial_posture": "survived_dissent"
         },
         "opacity_declaration": "partially_observable"
       },
