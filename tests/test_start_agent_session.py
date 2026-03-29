@@ -434,6 +434,109 @@ def test_start_agent_session_marks_recycled_carry_forward_as_must_not_promote(
     )
 
 
+def test_start_agent_session_surfaces_council_dossier_interpretation_guard(
+    capsys,
+    monkeypatch,
+    tmp_path: Path,
+) -> None:
+    module = _load_script_module()
+    state_path = tmp_path / "governance_state.json"
+    traces_path = tmp_path / "session_traces.jsonl"
+    compactions_path = tmp_path / ".aegis" / "compacted.json"
+
+    _write_state(state_path)
+    _write_traces(traces_path)
+    compactions_path.parent.mkdir(parents=True, exist_ok=True)
+    compactions_path.write_text(
+        json.dumps(
+            [
+                {
+                    "compaction_id": "cmp-dossier",
+                    "agent": "codex",
+                    "session_id": "sess-3",
+                    "summary": "Carry bounded council dissent forward for the next agent.",
+                    "carry_forward": ["review contested decision before further edits"],
+                    "pending_paths": ["tonesoul/council/dossier.py"],
+                    "evidence_refs": ["tests/test_council_dossier.py"],
+                    "next_action": "review dossier before mutating council logic",
+                    "source": "cli",
+                    "updated_at": "2026-03-28T00:06:00+00:00",
+                    "council_dossier": {
+                        "final_verdict": "approve",
+                        "confidence_posture": "contested",
+                        "coherence_score": 0.74,
+                        "dissent_ratio": 0.2,
+                        "minority_report": [
+                            {
+                                "perspective": "critic",
+                                "decision": "concern",
+                                "confidence": 0.81,
+                                "reasoning": "The draft may be overclaiming calibration.",
+                                "evidence": ["docs/architecture/TONESOUL_COUNCIL_CONFIDENCE_AND_CALIBRATION_MAP.md"],
+                            }
+                        ],
+                        "vote_summary": [],
+                        "evidence_refs": ["docs/architecture/TONESOUL_COUNCIL_CONFIDENCE_AND_CALIBRATION_MAP.md"],
+                        "grounding_summary": {
+                            "has_ungrounded_claims": False,
+                            "total_evidence_sources": 2,
+                        },
+                        "confidence_decomposition": {
+                            "calibration_status": "descriptive_only",
+                            "agreement_score": 0.8,
+                            "coverage_posture": "partial",
+                            "distinct_perspectives": 4,
+                            "evidence_density": 0.5,
+                            "evidence_posture": "moderate",
+                            "grounding_posture": "grounded",
+                            "adversarial_posture": "survived_dissent",
+                        },
+                        "evolution_suppression_flag": True,
+                        "opacity_declaration": "partially_observable",
+                    },
+                }
+            ]
+        ),
+        encoding="utf-8",
+    )
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "start_agent_session.py",
+            "--state-path",
+            str(state_path),
+            "--traces-path",
+            str(traces_path),
+            "--agent",
+            "observer-dossier",
+            "--no-ack",
+        ],
+    )
+
+    module.main()
+    output = json.loads(capsys.readouterr().out)
+
+    dossier_surface = output["import_posture"]["surfaces"]["council_dossier"]
+    assert dossier_surface["import_posture"] == "advisory"
+    assert dossier_surface["receiver_obligation"] == "should_consider"
+    assert "descriptive agreement signals" in dossier_surface["note"]
+    assert dossier_surface["dossier_interpretation"]["confidence_posture"] == "contested"
+    assert dossier_surface["dossier_interpretation"]["calibration_status"] == "descriptive_only"
+    assert dossier_surface["dossier_interpretation"]["adversarial_posture"] == "survived_dissent"
+    assert dossier_surface["dossier_interpretation"]["has_minority_report"] is True
+    assert dossier_surface["dossier_interpretation"]["evolution_suppression_flag"] is True
+    assert any(
+        "descriptive_only" in alert
+        for alert in output["import_posture"]["receiver_alerts"]
+    )
+    assert any(
+        "evolution suppression" in alert
+        for alert in output["import_posture"]["receiver_alerts"]
+    )
+
+
 def test_ensure_repo_root_on_path_adds_repo_root(monkeypatch) -> None:
     module = _load_script_module()
     repo_root = str(Path(__file__).resolve().parents[1])

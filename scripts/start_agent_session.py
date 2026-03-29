@@ -147,6 +147,38 @@ def _carry_forward_promotion_hazards(subject_refresh: dict) -> list[str]:
     return hazards
 
 
+def _latest_council_dossier_snapshot(*, latest_compaction: dict, latest_trace: dict) -> dict:
+    if isinstance(latest_compaction.get("council_dossier"), dict):
+        payload = latest_compaction.get("council_dossier") or {}
+    elif isinstance(latest_trace.get("council_dossier_summary"), dict):
+        payload = latest_trace.get("council_dossier_summary") or {}
+    else:
+        return {}
+
+    decomposition = payload.get("confidence_decomposition") or {}
+    snapshot: dict[str, object] = {}
+    confidence_posture = str(payload.get("confidence_posture", "")).strip()
+    if confidence_posture:
+        snapshot["confidence_posture"] = confidence_posture
+    if "has_minority_report" in payload:
+        snapshot["has_minority_report"] = bool(payload.get("has_minority_report"))
+    elif isinstance(payload.get("minority_report"), list):
+        snapshot["has_minority_report"] = bool(payload.get("minority_report"))
+    if "evolution_suppression_flag" in payload:
+        snapshot["evolution_suppression_flag"] = bool(payload.get("evolution_suppression_flag"))
+
+    calibration_status = str(decomposition.get("calibration_status", "")).strip()
+    if calibration_status:
+        snapshot["calibration_status"] = calibration_status
+    adversarial_posture = str(decomposition.get("adversarial_posture", "")).strip()
+    if adversarial_posture:
+        snapshot["adversarial_posture"] = adversarial_posture
+    coverage_posture = str(decomposition.get("coverage_posture", "")).strip()
+    if coverage_posture:
+        snapshot["coverage_posture"] = coverage_posture
+    return snapshot
+
+
 def _build_readiness(*, agent_id: str, packet: dict, claims: list[dict]) -> dict:
     risk_posture = ((packet.get("posture") or {}).get("risk_posture") or {})
     delta_feed = packet.get("delta_feed") or {}
@@ -249,6 +281,10 @@ def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
     claim_ttl_minutes = _min_claim_ttl_minutes(claims)
     latest_compaction = compactions[0] if compactions else {}
     latest_trace = traces[0] if traces else {}
+    latest_dossier_snapshot = _latest_council_dossier_snapshot(
+        latest_compaction=latest_compaction,
+        latest_trace=latest_trace,
+    )
     latest_dossier_freshness = None
     if latest_compaction.get("council_dossier"):
         latest_dossier_freshness = _latest_freshness(compactions, timestamp_key="updated_at")
@@ -343,7 +379,12 @@ def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
             "receiver_obligation": "should_consider",
             "decay_posture": "slow",
             "freshness_hours": latest_dossier_freshness,
-            "note": "Council verdict memory can inform follow-up decisions, but it is not binding precedent.",
+            "note": (
+                "Council verdict memory can inform follow-up decisions, but it is not binding precedent; confidence surfaces remain descriptive agreement signals, not calibrated accuracy predictors."
+                if str(latest_dossier_snapshot.get("calibration_status", "")).strip() == "descriptive_only"
+                else "Council verdict memory can inform follow-up decisions, but it is not binding precedent."
+            ),
+            "dossier_interpretation": latest_dossier_snapshot,
         },
         "recent_traces": {
             "present": bool(traces),
@@ -395,6 +436,14 @@ def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
     if carry_forward_hazards and subject_refresh:
         receiver_alerts.append(
             "Compaction-backed subject refresh is currently blocked by recycled carry-forward evidence; wait for a fresh compaction or stronger evidence before applying active_threads refresh."
+        )
+    if str(latest_dossier_snapshot.get("calibration_status", "")).strip() == "descriptive_only":
+        receiver_alerts.append(
+            "Latest council dossier confidence is descriptive_only; treat coherence and confidence posture as internal agreement context, not as an accuracy prediction."
+        )
+    if bool(latest_dossier_snapshot.get("evolution_suppression_flag")):
+        receiver_alerts.append(
+            "Latest council dossier indicates potential evolution suppression on repeated dissent; review minority signals carefully before dismissing objections."
         )
 
     return {

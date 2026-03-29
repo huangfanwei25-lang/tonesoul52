@@ -27,6 +27,7 @@
 - Phase 687: surface council evolution suppression visibility so later agents can see when repeated dissent may be getting conformity-biased below baseline weight
 - Phase 688: run a Claude-owned reality-alignment pass so entrypoint cleanup and encoding guidance are re-grounded against the current README, real doc counts, and display-vs-file boundaries
 - Phase 689: adopt prompt discipline for the reflection revision prompt so revision loops stop relying on an underspecified rewrite instruction
+- Phase 690: surface council dossier interpretation guards at session start so later agents stop reading descriptive agreement metrics as calibrated truth
 
 ## Phase 679: Continuity Freshness And Import Posture (2026-03-29)
 - [x] Add bounded `freshness_hours` to the packet continuity surfaces that later agents actually inherit at session start
@@ -93,6 +94,12 @@
 - [x] keep the first-line revision command stable so router-based reflection loops and existing call sites do not break
 - [x] add regression tests that lock the new prompt shape while preserving the existing revision-loop behavior
 **Success Criteria**: Reflection-triggered rewrites stop relying on a flat freeform "revise this draft" instruction and instead expose explicit goal, priority, evidence, and recovery guidance, while all existing revision-loop tests continue to pass.
+
+## Phase 690: Session-Start Council Dossier Interpretation Guard (2026-03-29)
+- [x] surface a bounded `dossier_interpretation` snapshot inside `start_agent_session.py` so later agents can see calibration status, adversarial posture, minority-report presence, and suppression risk without re-parsing the full packet
+- [x] emit explicit receiver alerts when the latest council dossier is `descriptive_only` or carries an evolution suppression flag
+- [x] keep the change receiver-side and descriptive only: no council behavior changes, no new gates, no schema mutation
+**Success Criteria**: A later agent running the session-start bundle can tell that council confidence is descriptive agreement rather than calibrated accuracy, can see whether dissent survived or may be conformity-biased, and can treat the latest dossier as advisory context instead of precedent.
 
 ## Phase 666: Bounded Council Dossier Carry Surfaces (2026-03-28)
 - [x] Let `SessionTrace` store an optional compact council dossier input while keeping the canonical trace schema backward-compatible
