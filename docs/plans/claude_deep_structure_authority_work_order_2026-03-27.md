@@ -1320,3 +1320,174 @@ When done, report back with:
 - the 3 ideas that are most attractive but still infrastructure-blocked
 - the cleanest distinction you found between descriptive confidence and calibrated confidence
 - which one bounded council-quality improvement Codex should implement first without redesigning the whole council
+
+---
+
+## Follow-Up Extension: Evidence Topology, Test Backing, And Claim Verifiability Program
+
+This extension exists because ToneSoul now has:
+
+- claim-authority matrices
+- law / runtime boundary contracts
+- council dossier and dissent contracts
+- continuity import / decay contracts
+- a large live test suite and many narrative claims about what that suite proves
+
+What is still under-specified is a harder question:
+
+> which system claims are actually backed by tests, which are only code-backed or document-backed, and how should later agents describe ToneSoul's evidence posture without overclaiming?
+
+This is a large documentation-and-boundary program.
+It is not permission to rewrite tests, mutate runtime, inflate implementation status, or declare that every claim already has full empirical backing.
+
+## Why This Fits Claude
+
+This next pass benefits from long-context structural synthesis because it requires:
+
+- reading across tests, docs, contracts, and runtime surfaces at once
+- separating "there is code" from "there is evidence" from "there is repeated validation"
+- classifying strong, partial, weak, and missing evidence without collapsing everything into one score
+- turning many scattered assertions into a bounded evidence topology rather than another sprawling manifesto
+
+## Follow-Up Objective
+
+Produce a source-backed map that tells later agents:
+
+- which ToneSoul claims are strongly test-backed
+- which are runtime-backed but thinly tested
+- which are document / philosophy / narrative claims with little or no direct verification
+- how to speak honestly about the system's evidence posture without underselling or mythologizing it
+
+The goal is to stop future agents from making two opposite mistakes:
+
+1. treating every well-written claim as if it has equivalent empirical support
+2. dismissing the value of existing tests because they do not cover every philosophical layer
+
+## Mandatory Focus Areas
+
+At minimum, analyze these evidence families:
+
+- governance posture and runtime packet surfaces
+- council / dossier / dissent surfaces
+- continuity / handoff / subject snapshot surfaces
+- risk / readiness / claim / checkpoint / compaction coordination surfaces
+- AXIOMS / law / philosophy / manifesto style claims
+- frontend / projection / dashboard style claims only if they materially affect what later agents say is "observable"
+
+At minimum, analyze these evidence modes:
+
+- direct automated test backing
+- helper-level or schema-level validation
+- runtime-path existence without strong test depth
+- document-only or narrative-only support
+- blocked or currently unverifiable claims
+
+## Follow-Up Deliverables
+
+### Deliverable Z
+
+Create:
+
+- `docs/architecture/TONESOUL_CLAIM_TO_EVIDENCE_MATRIX.md`
+
+This should cover a bounded but substantial set of high-value claims or surfaces, for example 40-80 rows.
+For each row include at least:
+
+- claim / surface name
+- claim family
+- current authority level
+- evidence level
+- strongest backing source
+- weakest link or gap
+- safest phrasing later agents should use
+
+Do not turn this into a giant file inventory.
+Prefer high-value system claims over exhaustive enumeration.
+
+### Deliverable AA
+
+Create:
+
+- `docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md`
+
+This should define a small number of evidence levels, for example:
+
+- test-backed
+- schema / helper backed
+- runtime-present but thinly verified
+- document-backed
+- philosophical / narrative only
+- blocked / unverifiable for now
+
+For each level include:
+
+- what later agents may and may not claim
+- what kind of language is honest at that level
+- what common overclaiming pattern to avoid
+- what kind of upgrade would move a claim to the next level
+
+### Deliverable AB
+
+Create:
+
+- `docs/architecture/TONESOUL_TEST_AND_VALIDATION_TOPOLOGY_MAP.md`
+
+This should organize the repo's validation surfaces into a small number of lanes, such as:
+
+- critical runtime protections
+- coordination and continuity
+- council and deliberation
+- memory / subject / handoff
+- projection / surface / interface
+- narrative or doctrine without direct verification
+
+For each lane include:
+
+- representative tests or validation tools
+- what kind of confidence that lane really buys
+- what it still does not prove
+- the most dangerous false inference later agents might make from that lane
+
+### Deliverable AC
+
+Optional, only if clearly justified:
+
+- `docs/plans/tonesoul_evidence_followup_candidates_2026-03-29.md`
+
+Use this only if you can produce 3-5 bounded candidates with clear evidence-ordering.
+Do not create a giant "prove everything" roadmap.
+
+## Follow-Up Boundaries
+
+Do not do these things in this extension:
+
+- do not modify tests, runtime code, packet schema, or frontend code
+- do not inflate weak evidence into stronger categories because the prose sounds compelling
+- do not restate philosophical claims as if they were empirically verified mechanisms
+- do not collapse document-backed and test-backed into one generic "supported" bucket
+- do not claim outcome calibration or real-world production validation unless the repo actually contains it
+
+If you find current docs overstate evidence:
+
+- tighten the prose or evidence classification
+- do not silently promote implementation or validation status
+
+## Follow-Up Acceptance Criteria
+
+This extension is successful if:
+
+- a later agent can answer "how strongly is this claim actually backed?" without reading the whole repo
+- evidence strength and authority strength are clearly separated rather than blended
+- at least one strong warning exists against equating narrative elegance with runtime proof
+- tests, schema checks, runtime-path existence, and philosophy are all visibly distinct lanes
+- Codex receives one bounded shortlist of future evidence improvements without drifting into a giant verification manifesto
+
+## Follow-Up Handoff Back To Codex
+
+When done, report back with:
+
+- the single clearest difference between authority and evidence in ToneSoul
+- the 3 claim families most strongly backed today
+- the 3 claim families most likely to be overstated if later agents are careless
+- the cleanest evidence-ladder split you found
+- which one bounded evidence-surface improvement Codex should implement first without starting a full verification overhaul

@@ -1099,3 +1099,9 @@
 - [x] keep the follow-up bounded to documentation-only analysis of independence, confidence, and bounded adoption families instead of runtime mutation
 - [x] keep implementation ownership for any future council-quality changes on the Codex lane
 **Success Criteria**: Claude has one clear long-context workstream that classifies how real ToneSoul's current council is, where its confidence is descriptive versus calibrated, and which improvement families are truly next-safe without touching runtime code.
+
+## Phase 676: Claude Evidence Topology And Verifiability Work Order (2026-03-29)
+- [x] extend `docs/plans/claude_deep_structure_authority_work_order_2026-03-27.md` with one large evidence-topology and claim-verifiability program
+- [x] keep the follow-up bounded to documentation-only classification of claim families, evidence ladders, and validation topology instead of runtime or test mutation
+- [x] keep implementation ownership for any later evidence-surface changes on the Codex lane
+**Success Criteria**: Claude has one clear long-context workstream that separates authority from evidence, maps which ToneSoul claims are strongly validated versus thinly or only narratively backed, and yields one bounded shortlist of future evidence improvements without starting a full verification overhaul.
