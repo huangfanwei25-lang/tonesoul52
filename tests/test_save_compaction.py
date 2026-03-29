@@ -100,6 +100,164 @@ def test_save_compaction_writes_noncanonical_summary(capsys, monkeypatch, tmp_pa
     assert saved[0]["council_dossier"]["confidence_posture"] == "contested"
 
 
+def test_save_compaction_accepts_minimal_input_payload(
+    capsys,
+    monkeypatch,
+    tmp_path: Path,
+) -> None:
+    module = _load_script_module()
+    state_path = tmp_path / "governance_state.json"
+    traces_path = tmp_path / "session_traces.jsonl"
+    payload_path = tmp_path / "compaction.json"
+    payload_path.write_text(
+        json.dumps(
+            {
+                "agent": "codex",
+                "summary": "Minimal compaction payload.",
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "save_compaction.py",
+            "--input",
+            str(payload_path),
+            "--state-path",
+            str(state_path),
+            "--traces-path",
+            str(traces_path),
+        ],
+    )
+
+    module.main()
+    output = json.loads(capsys.readouterr().out)
+
+    assert output["agent"] == "codex"
+    assert output["carry_forward"] == []
+    assert output["evidence_refs"] == []
+    assert output["council_dossier"] == {}
+
+
+def test_save_compaction_reads_payload_from_stdin(
+    capsys,
+    monkeypatch,
+    tmp_path: Path,
+) -> None:
+    module = _load_script_module()
+    state_path = tmp_path / "governance_state.json"
+    traces_path = tmp_path / "session_traces.jsonl"
+
+    class _FakeStdin:
+        def isatty(self) -> bool:
+            return False
+
+        def read(self) -> str:
+            return json.dumps(
+                {
+                    "agent": "observer",
+                    "session_id": "sess-stdin",
+                    "summary": "Compaction loaded from stdin.",
+                    "carry_forward": ["re-check freshness before import"],
+                    "pending_paths": ["scripts/start_agent_session.py"],
+                    "source": "stdin",
+                }
+            )
+
+    monkeypatch.setattr(sys, "stdin", _FakeStdin())
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "save_compaction.py",
+            "--state-path",
+            str(state_path),
+            "--traces-path",
+            str(traces_path),
+        ],
+    )
+
+    module.main()
+    output = json.loads(capsys.readouterr().out)
+
+    assert output["source"] == "stdin"
+    saved = json.loads((tmp_path / ".aegis" / "compacted.json").read_text(encoding="utf-8"))
+    assert saved[0]["carry_forward"] == ["re-check freshness before import"]
+
+
+def test_save_compaction_respects_limit_and_newest_first_order(
+    capsys,
+    monkeypatch,
+    tmp_path: Path,
+) -> None:
+    module = _load_script_module()
+    state_path = tmp_path / "governance_state.json"
+    traces_path = tmp_path / "session_traces.jsonl"
+
+    for summary in ["first", "second", "third"]:
+        monkeypatch.setattr(
+            sys,
+            "argv",
+            [
+                "save_compaction.py",
+                "--state-path",
+                str(state_path),
+                "--traces-path",
+                str(traces_path),
+                "--agent",
+                "codex",
+                "--summary",
+                summary,
+                "--limit",
+                "2",
+            ],
+        )
+        module.main()
+        capsys.readouterr()
+
+    saved = json.loads((tmp_path / ".aegis" / "compacted.json").read_text(encoding="utf-8"))
+    assert [entry["summary"] for entry in saved] == ["third", "second"]
+
+
+def test_save_compaction_prefers_legacy_sidecar_when_present(
+    capsys,
+    monkeypatch,
+    tmp_path: Path,
+) -> None:
+    module = _load_script_module()
+    state_path = tmp_path / "governance_state.json"
+    traces_path = tmp_path / "session_traces.jsonl"
+    legacy_path = tmp_path / "compacted.json"
+    legacy_path.write_text("[]", encoding="utf-8")
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "save_compaction.py",
+            "--state-path",
+            str(state_path),
+            "--traces-path",
+            str(traces_path),
+            "--agent",
+            "codex",
+            "--summary",
+            "Write to the existing legacy compaction sidecar.",
+        ],
+    )
+
+    module.main()
+    output = json.loads(capsys.readouterr().out)
+
+    assert output["summary"] == "Write to the existing legacy compaction sidecar."
+    saved = json.loads(legacy_path.read_text(encoding="utf-8"))
+    assert saved[0]["agent"] == "codex"
+    assert not (tmp_path / ".aegis" / "compacted.json").exists()
+
+
 def test_ensure_repo_root_on_path_adds_repo_root(monkeypatch) -> None:
     module = _load_script_module()
     repo_root = str(Path(__file__).resolve().parents[1])

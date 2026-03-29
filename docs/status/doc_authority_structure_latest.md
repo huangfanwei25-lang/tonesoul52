@@ -1,14 +1,14 @@
 # Documentation Authority Structure Latest
 
-- generated_at: 2026-03-29T02:20:06Z
-- primary_status_line: `doc_authority_structure | groups=18 tracked=60 metadata_complete=60 metadata_missing=0`
+- generated_at: 2026-03-29T02:46:24Z
+- primary_status_line: `doc_authority_structure | groups=19 tracked=64 metadata_complete=64 metadata_missing=0`
 - runtime_status_line: `doc_retrieval_order=entrypoint_to_operational_to_canonical_to_deep_map_to_interpretive_to_boundary_aids_to_control_plane | generated_status_lane=6`
 - artifact_policy_status_line: `structure_mode=retrieval_oriented | authority_roles=explicit | generated_status_preferred_for_current_state`
 
 ## Metrics
-- `group_count`: `18`
-- `tracked_file_count`: `60`
-- `metadata_complete_count`: `60`
+- `group_count`: `19`
+- `tracked_file_count`: `64`
+- `metadata_complete_count`: `64`
 - `metadata_missing_count`: `0`
 
 ## Groups
@@ -69,18 +69,27 @@
   - read_order: 7
   - `docs/architecture/TONESOUL_CLAIM_AUTHORITY_MATRIX.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/TONESOUL_LAW_RUNTIME_BOUNDARY_CONTRACT.md` exists=`true` purpose=`true` date=`true`
+- `Evidence And Verifiability` tracked=`4` metadata_complete=`4`
+  - description: evidence ladders and topology aids that separate what is tested, structurally enforced, runtime-present, document-backed, philosophical, or currently blocked
+  - authority_role: evidence_map
+  - use_when: when a claim sounds important and you need to know whether it is regression-backed, schema-backed, thinly tested, or merely documented before repeating it
+  - read_order: 8
+  - `docs/architecture/TONESOUL_CLAIM_TO_EVIDENCE_MATRIX.md` exists=`true` purpose=`true` date=`true`
+  - `docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md` exists=`true` purpose=`true` date=`true`
+  - `docs/architecture/TONESOUL_TEST_AND_VALIDATION_TOPOLOGY_MAP.md` exists=`true` purpose=`true` date=`true`
+  - `docs/plans/tonesoul_evidence_followup_candidates_2026-03-29.md` exists=`true` purpose=`true` date=`true`
 - `Subject Refresh Boundaries` tracked=`2` metadata_complete=`2`
   - description: boundary aids for deciding when hot-state evidence may refresh subject snapshots without inflating durable identity
   - authority_role: boundary_contract
   - use_when: when writing, reviewing, or proposing heuristics around subject_snapshot refresh and promotion limits
-  - read_order: 8
+  - read_order: 9
   - `docs/architecture/TONESOUL_SUBJECT_REFRESH_BOUNDARY_CONTRACT.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/TONESOUL_SUBJECT_SNAPSHOT_FIELD_LANES.md` exists=`true` purpose=`true` date=`true`
 - `Control Plane Discipline` tracked=`3` metadata_complete=`3`
   - description: readiness, task-track, and plan-delta discipline surfaces for coordinating work before and during execution
   - authority_role: discipline_contract
   - use_when: when the question is whether a task is ready, what track it belongs to, or how plan changes should be recorded
-  - read_order: 9
+  - read_order: 10
   - `docs/architecture/TONESOUL_TASK_TRACK_AND_READINESS_CONTRACT.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/TONESOUL_PLAN_DELTA_CONTRACT.md` exists=`true` purpose=`true` date=`true`
   - `docs/plans/tonesoul_control_plane_followup_candidates_2026-03-28.md` exists=`true` purpose=`true` date=`true`
@@ -88,7 +97,7 @@
   - description: boundary aids for epistemic honesty about opacity and for challenging axiom claims without silently rewriting the constitution
   - authority_role: boundary_contract
   - use_when: when an agent is about to overclaim auditability of hidden reasoning or repeat an axiom without checking what would weaken it
-  - read_order: 10
+  - read_order: 11
   - `docs/architecture/TONESOUL_OBSERVABLE_SHELL_OPACITY_CONTRACT.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/TONESOUL_AXIOM_FALSIFICATION_MAP.md` exists=`true` purpose=`true` date=`true`
   - `docs/plans/tonesoul_observability_and_axiom_adoption_review_2026-03-28.md` exists=`true` purpose=`true` date=`true`
@@ -96,7 +105,7 @@
   - description: discipline aids for preserving dissent, replaying verdicts honestly, and matching deliberation depth to task stakes
   - authority_role: discipline_contract
   - use_when: when a council result needs bounded dossier extraction, minority preservation, or mode-depth guidance without mutating runtime behavior from prose alone
-  - read_order: 11
+  - read_order: 12
   - `docs/architecture/TONESOUL_COUNCIL_DOSSIER_AND_DISSENT_CONTRACT.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/TONESOUL_ADAPTIVE_DELIBERATION_MODE_CONTRACT.md` exists=`true` purpose=`true` date=`true`
   - `docs/plans/tonesoul_council_followup_candidates_2026-03-28.md` exists=`true` purpose=`true` date=`true`
@@ -104,7 +113,7 @@
   - description: receiver-side continuity aids for deciding what may be acknowledged, applied, promoted, or discounted by decay across packet, handoff, and subject surfaces
   - authority_role: discipline_contract
   - use_when: when the question is not merely what should continue, but what a later agent may safely import from continuity surfaces and how long that import remains fresh
-  - read_order: 12
+  - read_order: 13
   - `docs/architecture/TONESOUL_CONTINUITY_IMPORT_AND_DECAY_CONTRACT.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/TONESOUL_RECEIVER_INTERPRETATION_BOUNDARY_CONTRACT.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/TONESOUL_CONTINUITY_SURFACE_LIFECYCLE_MAP.md` exists=`true` purpose=`true` date=`true`
@@ -113,7 +122,7 @@
   - description: honesty and adoption aids for separating perspective plurality from real independence, and descriptive confidence from calibrated confidence
   - authority_role: boundary_contract
   - use_when: when describing how real the current council is, what its confidence numbers actually mean, or which bounded adversarial upgrades are safe to consider next
-  - read_order: 13
+  - read_order: 14
   - `docs/architecture/TONESOUL_COUNCIL_REALISM_AND_INDEPENDENCE_CONTRACT.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/TONESOUL_COUNCIL_CONFIDENCE_AND_CALIBRATION_MAP.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/TONESOUL_ADVERSARIAL_DELIBERATION_ADOPTION_MAP.md` exists=`true` purpose=`true` date=`true`
@@ -122,13 +131,13 @@
   - description: adoption aid for deciding what structure should continue across sessions, tasks, agents, and models without turning handoff memory into hidden truth
   - authority_role: adoption_map
   - use_when: when the question is not merely how to hand off hot state, but what continuity discipline ToneSoul should adopt or defer
-  - read_order: 14
+  - read_order: 15
   - `docs/architecture/TONESOUL_CONTEXT_CONTINUITY_ADOPTION_MAP.md` exists=`true` purpose=`true` date=`true`
 - `Prompt Discipline` tracked=`3` metadata_complete=`3`
   - description: prompt-side discipline aids for separating goal, priority, confidence, recovery, compression, receiver instructions, and practical task-shaped variants before building extraction or transfer prompts
   - authority_role: discipline_contract
   - use_when: when the question is not what should be transferred, but how the prompt that extracts or transfers it should be structured
-  - read_order: 15
+  - read_order: 16
   - `docs/architecture/TONESOUL_PROMPT_DISCIPLINE_SKELETON.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/TONESOUL_PROMPT_VARIANTS.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/TONESOUL_PROMPT_STARTER_CARDS.md` exists=`true` purpose=`true` date=`true`
@@ -136,7 +145,7 @@
   - description: naming, zoning, and convergence planning surfaces
   - authority_role: doc_governance
   - use_when: when retrieval quality, metadata posture, or naming collisions are the problem
-  - read_order: 16
+  - read_order: 17
   - `docs/DOCS_INFORMATION_ARCHITECTURE_v1.md` exists=`true` purpose=`true` date=`true`
   - `docs/DOCS_CLASSIFICATION_LEDGER_v1.md` exists=`true` purpose=`true` date=`true`
   - `docs/FILE_PURPOSE_MAP.md` exists=`true` purpose=`true` date=`true`
@@ -146,7 +155,7 @@
   - description: ownership and divergence boundaries for duplicate-like surfaces
   - authority_role: boundary_contract
   - use_when: when two similar-looking lanes need explicit ownership or split-brain control
-  - read_order: 17
+  - read_order: 18
   - `docs/architecture/BASENAME_DIVERGENCE_DISTILLATION_MAP.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/PRIVATE_MEMORY_SHADOW_BOUNDARY_MAP.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/PARADOX_FIXTURE_OWNERSHIP_MAP.md` exists=`true` purpose=`true` date=`true`
@@ -155,7 +164,7 @@
   - description: machine-readable current posture for convergence-related lanes
   - authority_role: generated_status
   - use_when: when current machine-readable posture matters more than prose explanation
-  - read_order: 18
+  - read_order: 19
   - `docs/status/doc_convergence_inventory_latest.json` exists=`true` purpose=`true` date=`true`
   - `docs/status/basename_divergence_distillation_latest.json` exists=`true` purpose=`true` date=`true`
   - `docs/status/private_memory_shadow_latest.json` exists=`true` purpose=`true` date=`true`

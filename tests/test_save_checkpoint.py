@@ -60,6 +60,135 @@ def test_save_checkpoint_writes_noncanonical_checkpoint(
     assert saved["cp-20260327"]["pending_paths"] == ["tonesoul/unified_pipeline.py"]
 
 
+def test_save_checkpoint_accepts_minimal_input_payload(
+    capsys,
+    monkeypatch,
+    tmp_path: Path,
+) -> None:
+    module = _load_script_module()
+    state_path = tmp_path / "governance_state.json"
+    traces_path = tmp_path / "session_traces.jsonl"
+    payload_path = tmp_path / "checkpoint.json"
+    payload_path.write_text(
+        json.dumps(
+            {
+                "checkpoint_id": "cp-minimal",
+                "agent": "codex",
+                "summary": "Minimal checkpoint payload.",
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "save_checkpoint.py",
+            "--input",
+            str(payload_path),
+            "--state-path",
+            str(state_path),
+            "--traces-path",
+            str(traces_path),
+        ],
+    )
+
+    module.main()
+    output = json.loads(capsys.readouterr().out)
+
+    assert output["checkpoint_id"] == "cp-minimal"
+    assert output["pending_paths"] == []
+    assert output["next_action"] == ""
+    assert output["source"] == "cli"
+
+
+def test_save_checkpoint_reads_payload_from_stdin(
+    capsys,
+    monkeypatch,
+    tmp_path: Path,
+) -> None:
+    module = _load_script_module()
+    state_path = tmp_path / "governance_state.json"
+    traces_path = tmp_path / "session_traces.jsonl"
+
+    class _FakeStdin:
+        def isatty(self) -> bool:
+            return False
+
+        def read(self) -> str:
+            return json.dumps(
+                {
+                    "checkpoint_id": "cp-stdin",
+                    "agent": "observer",
+                    "session_id": "sess-stdin",
+                    "summary": "Read checkpoint from stdin payload.",
+                    "pending_paths": ["docs/README.md"],
+                    "next_action": "verify continuity import posture",
+                    "source": "stdin",
+                }
+            )
+
+    monkeypatch.setattr(sys, "stdin", _FakeStdin())
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "save_checkpoint.py",
+            "--state-path",
+            str(state_path),
+            "--traces-path",
+            str(traces_path),
+        ],
+    )
+
+    module.main()
+    output = json.loads(capsys.readouterr().out)
+
+    assert output["checkpoint_id"] == "cp-stdin"
+    assert output["source"] == "stdin"
+    saved = json.loads((tmp_path / ".aegis" / "checkpoints.json").read_text(encoding="utf-8"))
+    assert saved["cp-stdin"]["pending_paths"] == ["docs/README.md"]
+
+
+def test_save_checkpoint_prefers_legacy_sidecar_when_present(
+    capsys,
+    monkeypatch,
+    tmp_path: Path,
+) -> None:
+    module = _load_script_module()
+    state_path = tmp_path / "governance_state.json"
+    traces_path = tmp_path / "session_traces.jsonl"
+    legacy_path = tmp_path / "checkpoints.json"
+    legacy_path.write_text("{}", encoding="utf-8")
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "save_checkpoint.py",
+            "--state-path",
+            str(state_path),
+            "--traces-path",
+            str(traces_path),
+            "--checkpoint-id",
+            "cp-legacy",
+            "--agent",
+            "codex",
+            "--summary",
+            "Write to the existing legacy sidecar.",
+        ],
+    )
+
+    module.main()
+    output = json.loads(capsys.readouterr().out)
+
+    assert output["checkpoint_id"] == "cp-legacy"
+    saved = json.loads(legacy_path.read_text(encoding="utf-8"))
+    assert "cp-legacy" in saved
+    assert not (tmp_path / ".aegis" / "checkpoints.json").exists()
+
+
 def test_ensure_repo_root_on_path_adds_repo_root(monkeypatch) -> None:
     module = _load_script_module()
     repo_root = str(Path(__file__).resolve().parents[1])

@@ -60,6 +60,17 @@ Use these after the canonical architecture anchor, not before it.
 - [status/claim_authority_latest.json](status/claim_authority_latest.json)
   - machine-readable merge of the 75-term matrix, the 18-term quick lookup, and the overclaiming-risk list for fast agent-side term checks
 
+## Evidence And Verifiability
+
+- [architecture/TONESOUL_CLAIM_TO_EVIDENCE_MATRIX.md](architecture/TONESOUL_CLAIM_TO_EVIDENCE_MATRIX.md)
+  - maps high-value ToneSoul claims to their current evidence level, strongest backing source, weakest link, and safest phrasing
+- [architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md](architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md)
+  - defines the six evidence levels and the honest language each level allows
+- [architecture/TONESOUL_TEST_AND_VALIDATION_TOPOLOGY_MAP.md](architecture/TONESOUL_TEST_AND_VALIDATION_TOPOLOGY_MAP.md)
+  - groups test and validation lanes by what confidence they actually buy and what false inference they do not justify
+- [plans/tonesoul_evidence_followup_candidates_2026-03-29.md](plans/tonesoul_evidence_followup_candidates_2026-03-29.md)
+  - bounded follow-up list for lifting thinly tested continuity claims toward regression-backed status
+
 ## Subject Refresh Boundaries
 
 - [architecture/TONESOUL_SUBJECT_REFRESH_BOUNDARY_CONTRACT.md](architecture/TONESOUL_SUBJECT_REFRESH_BOUNDARY_CONTRACT.md)

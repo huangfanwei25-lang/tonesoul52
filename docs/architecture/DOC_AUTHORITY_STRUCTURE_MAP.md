@@ -88,7 +88,20 @@ Open these when the question is:
 - `docs/architecture/TONESOUL_AXIOM_FALSIFICATION_MAP.md`
 - `docs/plans/tonesoul_observability_and_axiom_adoption_review_2026-03-28.md`
 
-### 8. Council deliberation discipline lane
+### 8. Evidence and verifiability lane
+
+Open these when the question is:
+
+- which claims are regression-backed versus merely documented,
+- whether a high-authority claim is actually thinly evidenced,
+- what phrasing is honest for a claim's current validation depth.
+
+- `docs/architecture/TONESOUL_CLAIM_TO_EVIDENCE_MATRIX.md`
+- `docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md`
+- `docs/architecture/TONESOUL_TEST_AND_VALIDATION_TOPOLOGY_MAP.md`
+- `docs/plans/tonesoul_evidence_followup_candidates_2026-03-29.md`
+
+### 9. Council deliberation discipline lane
 
 Open these when the question is:
 
@@ -100,7 +113,7 @@ Open these when the question is:
 - `docs/architecture/TONESOUL_ADAPTIVE_DELIBERATION_MODE_CONTRACT.md`
 - `docs/plans/tonesoul_council_followup_candidates_2026-03-28.md`
 
-### 9. Context continuity adoption lane
+### 10. Context continuity adoption lane
 
 Open this when the question is:
 
@@ -110,7 +123,7 @@ Open this when the question is:
 
 - `docs/architecture/TONESOUL_CONTEXT_CONTINUITY_ADOPTION_MAP.md`
 
-### 10. Prompt discipline skeleton lane
+### 11. Prompt discipline skeleton lane
 
 Open this when the question is:
 
@@ -122,7 +135,7 @@ Open this when the question is:
 - `docs/architecture/TONESOUL_PROMPT_VARIANTS.md`
 - `docs/architecture/TONESOUL_PROMPT_STARTER_CARDS.md`
 
-### 11. Continuity import and receiver lane
+### 12. Continuity import and receiver lane
 
 Open these when the question is:
 
@@ -135,7 +148,7 @@ Open these when the question is:
 - `docs/architecture/TONESOUL_CONTINUITY_SURFACE_LIFECYCLE_MAP.md`
 - `docs/plans/tonesoul_continuity_followup_candidates_2026-03-29.md`
 
-### 12. Council realism and calibration lane
+### 13. Council realism and calibration lane
 
 Open these when the question is:
 
@@ -154,13 +167,14 @@ Open these when the question is:
 2. Move to the canonical architecture lane when making system claims.
 3. Move to governance/execution when implementing or verifying behavior.
 4. Move to the observable-shell and axiom challenge lane when overclaim risk or constitutional challengeability is the issue.
-5. Move to the council deliberation discipline lane when replayable verdict structure or deliberation depth is the issue.
-6. Move to the context continuity adoption lane when the question is no longer "how do I hand off now" but "what should continuity mean in ToneSoul."
-7. Move to the continuity import and receiver lane when the question is no longer only "what should continue" but "what may the receiver safely import or let decay."
-8. Move to the council realism and calibration lane when a verdict sounds stronger than its real independence or confidence backing.
-9. Move to the prompt discipline skeleton lane when the question is no longer "what should transfer" but "how should the prompt be built."
-10. Move to documentation governance and convergence contracts when restructuring docs.
-11. Prefer generated status surfaces over stale prose when checking current posture.
+5. Move to the evidence and verifiability lane when a claim sounds load-bearing but you need to know whether tests, schemas, runtime presence, or only prose actually support it.
+6. Move to the council deliberation discipline lane when replayable verdict structure or deliberation depth is the issue.
+7. Move to the context continuity adoption lane when the question is no longer "how do I hand off now" but "what should continuity mean in ToneSoul."
+8. Move to the continuity import and receiver lane when the question is no longer only "what should continue" but "what may the receiver safely import or let decay."
+9. Move to the council realism and calibration lane when a verdict sounds stronger than its real independence or confidence backing.
+10. Move to the prompt discipline skeleton lane when the question is no longer "what should transfer" but "how should the prompt be built."
+11. Move to documentation governance and convergence contracts when restructuring docs.
+12. Prefer generated status surfaces over stale prose when checking current posture.
 
 ## Current Rule
 

@@ -109,6 +109,11 @@ For claim-boundary and theory/mechanism separation, open
 [`docs/architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md`](docs/architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md)
 and
 [`docs/status/abc_firewall_latest.json`](docs/status/abc_firewall_latest.json).
+For claim strength and evidence honesty, open
+[`docs/architecture/TONESOUL_CLAIM_TO_EVIDENCE_MATRIX.md`](docs/architecture/TONESOUL_CLAIM_TO_EVIDENCE_MATRIX.md),
+[`docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md`](docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md),
+and
+[`docs/architecture/TONESOUL_TEST_AND_VALIDATION_TOPOLOGY_MAP.md`](docs/architecture/TONESOUL_TEST_AND_VALIDATION_TOPOLOGY_MAP.md).
 For observable-shell honesty and bounded axiom challenge posture, open
 [`docs/architecture/TONESOUL_OBSERVABLE_SHELL_OPACITY_CONTRACT.md`](docs/architecture/TONESOUL_OBSERVABLE_SHELL_OPACITY_CONTRACT.md)
 and

@@ -89,6 +89,19 @@ Do not collapse these into one layer. Operational guides help an agent work; can
 
 Treat these as boundary aids. They help later agents classify claims, but they do not outrank code, tests, `AXIOMS.json`, or canonical architecture contracts.
 
+## Evidence And Verifiability
+
+- `architecture/TONESOUL_CLAIM_TO_EVIDENCE_MATRIX.md`
+  - maps high-value ToneSoul claims to their actual evidence level, strongest backing source, weakest link, and safest phrasing
+- `architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md`
+  - defines the six evidence levels and the honest language that belongs to each
+- `architecture/TONESOUL_TEST_AND_VALIDATION_TOPOLOGY_MAP.md`
+  - organizes the repo's validation lanes and names what each lane does and does not prove
+- `plans/tonesoul_evidence_followup_candidates_2026-03-29.md`
+  - bounded next-step list for moving continuity and other thinly tested claims from E3 toward E1
+
+Treat these as evidence aids. They help later agents distinguish authority from proof strength, but they do not outrank runtime code, tests, or canonical governance truth.
+
 ## Subject Refresh Boundaries
 
 - `architecture/TONESOUL_SUBJECT_REFRESH_BOUNDARY_CONTRACT.md`

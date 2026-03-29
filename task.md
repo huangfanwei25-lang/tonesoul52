@@ -17,12 +17,26 @@
 - Phase 665: make council outputs replayable with a pure dossier extractor and a new council-discipline retrieval lane, without changing council verdict behavior yet
 - Phase 666: let traces and compactions carry bounded council dossier surfaces so later agents inherit dissent and confidence posture without replaying the whole council transcript
 - Phase 679: surface continuity freshness and receiver import posture so session-start bundles stop treating all shared surfaces as equally current or equally authoritative
+- Phase 680: integrate evidence topology into the authority lanes so later agents stop collapsing high authority and high evidence into the same claim
+- Phase 681: deepen checkpoint and compaction regression coverage so continuity claims are defended by tests rather than prose alone
 
 ## Phase 679: Continuity Freshness And Import Posture (2026-03-29)
 - [x] Add bounded `freshness_hours` to the packet continuity surfaces that later agents actually inherit at session start
 - [x] Add a machine-readable `import_posture` section to `start_agent_session.py` so agents can distinguish directly importable posture/claims from advisory compactions, snapshots, and dossiers
 - [x] Keep the change advisory-only: no new gates, no silent promotion, just visibility into age and receiver stance
 **Success Criteria**: A later agent can run the session-start bundle, see how fresh key continuity surfaces are, and distinguish `directly_importable`, `advisory`, and `ephemeral_until_acked` surfaces without manually re-reading the continuity contracts.
+
+## Phase 680: Evidence Topology Lane Integration (2026-03-29)
+- [x] Add a dedicated `Evidence And Verifiability` lane to the documentation authority map instead of burying evidence posture under claim-boundary prose
+- [x] Wire the new lane into the repo README, docs README, docs index, and authority-map generation so later agents can discover it through normal entrypoints
+- [x] Keep the lane documentary and honesty-oriented: it clarifies proof strength without silently mutating runtime authority
+**Success Criteria**: Later agents can discover the evidence ladder, claim-to-evidence matrix, and validation topology from the normal doc entrypoints and authority map before repeating large ToneSoul claims.
+
+## Phase 681: Continuity Surface Regression Deepening (2026-03-29)
+- [x] Add more script-level tests for `save_checkpoint.py` covering minimal payloads, stdin import, and legacy-sidecar continuity
+- [x] Add more script-level tests for `save_compaction.py` covering empty carry-forward, limit behavior, stdin import, and legacy-sidecar continuity
+- [x] Keep the wave test-only: strengthen regression confidence for continuity surfaces without changing runtime semantics
+**Success Criteria**: `checkpoint` and `compaction` stop looking like two-test happy-path surfaces and instead have enough script-level regression coverage to support stronger continuity claims.
 
 ## Phase 666: Bounded Council Dossier Carry Surfaces (2026-03-28)
 - [x] Let `SessionTrace` store an optional compact council dossier input while keeping the canonical trace schema backward-compatible
