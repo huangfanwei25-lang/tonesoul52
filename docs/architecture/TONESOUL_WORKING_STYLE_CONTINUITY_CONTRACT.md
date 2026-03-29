@@ -121,6 +121,21 @@ Must-not-import lanes:
 
 If a later agent needs to change what the system is *allowed* to do, or what the current task *is*, working-style continuity must stop there.
 
+## Fresh-Agent Validation
+
+`session-start` may derive a bounded validation summary for fresh agents:
+
+- is a shared working-style anchor visible?
+- is a playbook visible?
+- are import limits visible?
+- is observability visible?
+- is a non-promotion guard visible?
+
+This validation does not prove that all agents now think the same way.
+It only answers a narrower question:
+
+`does the receiver have enough shared style structure to inherit bounded habits safely?`
+
 ## Receiver Rules
 
 When a later agent sees working-style continuity:

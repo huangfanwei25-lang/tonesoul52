@@ -79,6 +79,12 @@
 - [x] keep the limits bounded to workflow help so shared style still cannot silently rewrite vows, canonical governance, durable identity, or task scope
 **Success Criteria**: Later agents can see exactly where shared working style may be reused and where it must stop, without mistaking style continuity for permission, law, or selfhood.
 
+## Phase 698: Multi-Agent Working-Style Continuity Validation (2026-03-29)
+- [x] derive a bounded `working_style_validation` summary at session start so a fresh agent can be scored on whether enough shared style structure is visible to inherit safely
+- [x] keep that validation limited to receiver readiness, not hidden-cognition claims or pseudo-personality scoring
+- [x] add regression coverage for no-anchor, partial continuity, and direct CLI session-start cases so the validation survives real entry flows
+**Success Criteria**: A fresh agent opening the session-start bundle can see whether shared working-style continuity is sufficient, cautionary, or insufficient, based on visible surfaces rather than mythology about shared minds.
+
 ## Phase 679: Continuity Freshness And Import Posture (2026-03-29)
 - [x] Add bounded `freshness_hours` to the packet continuity surfaces that later agents actually inherit at session start
 - [x] Add a machine-readable `import_posture` section to `start_agent_session.py` so agents can distinguish directly importable posture/claims from advisory compactions, snapshots, and dossiers

@@ -135,6 +135,9 @@ def test_start_agent_session_emits_machine_readable_bundle(capsys, monkeypatch, 
     assert output["working_style_playbook"]["present"] is False
     assert output["working_style_playbook"]["checklist"] == []
     assert "No shared working-style anchor is visible" in output["working_style_playbook"]["application_rule"]
+    assert output["working_style_validation"]["status"] == "insufficient"
+    assert output["working_style_validation"]["checks"]["anchor_visible"] is False
+    assert "style continuity cannot be validated" in output["working_style_validation"]["receiver_note"]
     assert output["underlying_commands"][0] == "python -m tonesoul.diagnose --agent observer-start"
     assert output["underlying_commands"][1] == (
         "python scripts/run_r_memory_packet.py --agent observer-start --ack"
@@ -479,6 +482,12 @@ def test_start_agent_session_marks_recycled_carry_forward_as_must_not_promote(
     assert any(item.startswith("Render caveat: Treat shell `??`") for item in playbook["checklist"])
     assert "bounded operating habits" in playbook["application_rule"]
     assert "Do not promote this playbook" in playbook["non_promotion_rule"]
+    validation = output["working_style_validation"]
+    assert validation["status"] == "caution"
+    assert validation["score"] == 1.0
+    assert validation["checks"]["anchor_visible"] is True
+    assert validation["checks"]["import_limits_visible"] is True
+    assert "explicit reuse beats assumption" in validation["receiver_note"]
     assert any(
         "Latest carry-forward repeats an older handoff without new evidence"
         in alert
@@ -602,6 +611,119 @@ def test_start_agent_session_surfaces_council_dossier_interpretation_guard(
     )
 
 
+def test_start_agent_session_scores_reinforced_working_style_as_sufficient(
+    capsys,
+    monkeypatch,
+    tmp_path: Path,
+) -> None:
+    module = _load_script_module()
+    state_path = tmp_path / "governance_state.json"
+    traces_path = tmp_path / "session_traces.jsonl"
+    sidecar_dir = tmp_path / ".aegis"
+    subject_snapshots_path = sidecar_dir / "subject_snapshots.json"
+    compactions_path = sidecar_dir / "compacted.json"
+    routing_events_path = sidecar_dir / "routing_events.json"
+
+    _write_state(state_path)
+    _write_traces(traces_path)
+    sidecar_dir.mkdir(parents=True, exist_ok=True)
+    subject_snapshots_path.write_text(
+        json.dumps(
+            [
+                {
+                    "snapshot_id": "subj-r1",
+                    "agent": "codex",
+                    "session_id": "sess-r1",
+                    "summary": "Operate as a packet-first runtime steward.",
+                    "stable_vows": ["never smuggle theory into runtime truth"],
+                    "durable_boundaries": ["do not edit protected human-managed files"],
+                    "decision_preferences": [
+                        "prefer packet before broad repo scan",
+                        "prefer bounded shared surfaces over long interpretive prose",
+                    ],
+                    "verified_routines": [
+                        "start collaborative sessions with diagnose then packet",
+                        "end sessions with checkpoint or compaction before release",
+                    ],
+                    "active_threads": ["working-style continuity"],
+                    "evidence_refs": ["docs/AI_QUICKSTART.md"],
+                    "refresh_signals": ["refresh when durable boundaries change"],
+                    "source": "cli",
+                    "updated_at": "2026-03-28T00:00:30+00:00",
+                }
+            ]
+        ),
+        encoding="utf-8",
+    )
+    compactions_path.write_text(
+        json.dumps(
+            [
+                {
+                    "compaction_id": "cmp-r1",
+                    "agent": "codex",
+                    "session_id": "sess-r2",
+                    "summary": "Packet-first runtime handoff stays bounded.",
+                    "carry_forward": [
+                        "prefer packet before broad repo scan",
+                        "end sessions with checkpoint or compaction before release",
+                    ],
+                    "pending_paths": ["tonesoul/runtime_adapter.py"],
+                    "evidence_refs": ["docs/AI_QUICKSTART.md", "tests/test_runtime_adapter.py"],
+                    "next_action": "start collaborative sessions with diagnose then packet",
+                    "source": "cli",
+                    "updated_at": "2026-03-28T00:05:00+00:00",
+                }
+            ]
+        ),
+        encoding="utf-8",
+    )
+    routing_events_path.write_text(
+        json.dumps(
+            [
+                {
+                    "event_id": "route-r1",
+                    "agent": "codex",
+                    "surface": "checkpoint",
+                    "action": "preview",
+                    "forced": False,
+                    "overlap": False,
+                    "misroute_signal": False,
+                    "updated_at": "2026-03-28T00:05:30+00:00",
+                    "summary": "prefer bounded shared surfaces over long interpretive prose",
+                }
+            ]
+        ),
+        encoding="utf-8",
+    )
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "start_agent_session.py",
+            "--state-path",
+            str(state_path),
+            "--traces-path",
+            str(traces_path),
+            "--agent",
+            "observer-reinforced",
+            "--no-ack",
+        ],
+    )
+
+    module.main()
+    output = json.loads(capsys.readouterr().out)
+
+    validation = output["working_style_validation"]
+    assert validation["status"] == "sufficient"
+    assert validation["score"] == 1.0
+    assert validation["checks"]["anchor_visible"] is True
+    assert validation["checks"]["playbook_visible"] is True
+    assert validation["checks"]["observability_visible"] is True
+    assert validation["checks"]["import_limits_visible"] is True
+    assert "enough shared style material" in validation["receiver_note"]
+
+
 def test_start_agent_session_cli_executes_directly(tmp_path: Path) -> None:
     state_path = tmp_path / "governance_state.json"
     traces_path = tmp_path / "session_traces.jsonl"
@@ -631,6 +753,7 @@ def test_start_agent_session_cli_executes_directly(tmp_path: Path) -> None:
     payload = json.loads(completed.stdout)
     assert payload["agent"] == "cli-smoke"
     assert "working_style_playbook" in payload
+    assert "working_style_validation" in payload
 
 
 def test_ensure_repo_root_on_path_adds_repo_root(monkeypatch) -> None:

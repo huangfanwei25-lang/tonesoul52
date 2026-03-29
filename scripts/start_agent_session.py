@@ -29,6 +29,23 @@ def _build_working_style_playbook(anchor: dict) -> dict:
     return build_working_style_playbook(anchor)
 
 
+def _build_working_style_validation(
+    *,
+    anchor: dict,
+    playbook: dict,
+    observability: dict,
+    import_limits: dict,
+) -> dict:
+    from tonesoul.working_style import build_working_style_continuity_validation
+
+    return build_working_style_continuity_validation(
+        anchor=anchor,
+        playbook=playbook,
+        observability=observability,
+        import_limits=import_limits,
+    )
+
+
 def _resolve_sidecar(root: Path, name: str) -> Path:
     canonical = root / ".aegis" / name
     legacy = root / name
@@ -551,8 +568,19 @@ def main() -> None:
 
     claims = _quiet_call(list_active_claims, store=store)
     readiness = _build_readiness(agent_id=agent_id, packet=packet, claims=claims)
-    working_style_playbook = _build_working_style_playbook(
-        ((packet.get("project_memory_summary") or {}).get("working_style_anchor") or {})
+    working_style_anchor = ((packet.get("project_memory_summary") or {}).get("working_style_anchor") or {})
+    working_style_observability = (
+        ((packet.get("project_memory_summary") or {}).get("working_style_observability") or {})
+    )
+    working_style_import_limits = (
+        ((packet.get("project_memory_summary") or {}).get("working_style_import_limits") or {})
+    )
+    working_style_playbook = _build_working_style_playbook(working_style_anchor)
+    working_style_validation = _build_working_style_validation(
+        anchor=working_style_anchor,
+        playbook=working_style_playbook,
+        observability=working_style_observability,
+        import_limits=working_style_import_limits,
     )
     payload = {
         "contract_version": "v1",
@@ -570,6 +598,7 @@ def main() -> None:
         "readiness": readiness,
         "import_posture": _build_import_posture(packet=packet, readiness=readiness),
         "working_style_playbook": working_style_playbook,
+        "working_style_validation": working_style_validation,
         "claim_view": {
             "count": len(claims),
             "claims": claims,

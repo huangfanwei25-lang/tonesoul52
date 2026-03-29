@@ -261,6 +261,60 @@ def build_working_style_import_limits(
     }
 
 
+def build_working_style_continuity_validation(
+    *,
+    anchor: Dict[str, Any],
+    playbook: Dict[str, Any],
+    observability: Dict[str, Any] | None = None,
+    import_limits: Dict[str, Any] | None = None,
+) -> Dict[str, Any]:
+    observability = dict(observability or {})
+    import_limits = dict(import_limits or {})
+
+    checks = {
+        "anchor_visible": bool(anchor),
+        "playbook_visible": bool(playbook.get("present")),
+        "observability_visible": bool(observability),
+        "import_limits_visible": bool(import_limits),
+        "non_promotion_guard_visible": bool(playbook.get("non_promotion_rule"))
+        or bool(import_limits.get("must_not_import")),
+    }
+    passed = sum(1 for value in checks.values() if value)
+    total = len(checks)
+    score = round(passed / total, 2) if total else 0.0
+
+    status = "insufficient"
+    if checks["anchor_visible"] and checks["playbook_visible"] and checks["import_limits_visible"]:
+        status = "sufficient"
+        if str(observability.get("status", "")).strip() in {"partial", "unreinforced"}:
+            status = "caution"
+
+    if not checks["anchor_visible"]:
+        receiver_note = (
+            "No shared working-style anchor is visible yet. This session can still proceed, but style continuity cannot be validated."
+        )
+    elif status == "sufficient":
+        receiver_note = (
+            "A fresh agent has enough shared style material to inherit bounded operating habits without confusing them with policy or identity."
+        )
+    elif status == "caution":
+        receiver_note = (
+            "A fresh agent can inherit bounded working style, but recent shared surfaces do not fully reinforce it, so explicit reuse beats assumption."
+        )
+    else:
+        receiver_note = (
+            "Shared working-style continuity is incomplete. The agent should fall back to repo-level discipline rather than improvising from partial residue."
+        )
+
+    return {
+        "status": status,
+        "score": score,
+        "checks": checks,
+        "summary_text": f"working_style_validation={status} score={score:.2f} checks={passed}/{total}",
+        "receiver_note": receiver_note,
+    }
+
+
 def build_working_style_playbook(anchor: Dict[str, Any]) -> Dict[str, Any]:
     if not anchor:
         return {
