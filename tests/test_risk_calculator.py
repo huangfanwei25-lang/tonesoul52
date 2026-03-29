@@ -76,7 +76,7 @@ def test_build_project_memory_summary_aggregates_focus_pending_and_repo_progress
                 {
                     "pending_paths": ["tonesoul/diagnose.py"],
                     "carry_forward": ["keep packet readable"],
-                    "next_action": "wire project memory summary into diagnose",
+                    "next_action": "leave compaction before release once diagnose catches up",
                 }
             ],
             subject_snapshots=[
@@ -89,6 +89,14 @@ def test_build_project_memory_summary_aggregates_focus_pending_and_repo_progress
                     "active_threads": ["subject-snapshot rollout"],
                 }
             ],
+            routing_summary={
+                "summary_text": "router=writes=1 previews=0 overrides=0 overlap=0 misroute_signals=0 top=checkpoint",
+                "recent_events": [
+                    {
+                        "summary": "checkpoint before release remains the default handoff rhythm",
+                    }
+                ],
+            },
         )
     finally:
         risk_calculator._build_repo_progress_snapshot = original_repo_snapshot
@@ -110,6 +118,15 @@ def test_build_project_memory_summary_aggregates_focus_pending_and_repo_progress
     ]
     assert summary["working_style_anchor"]["receiver_posture"] == "advisory_apply_not_promote"
     assert "render-layer noise" in summary["working_style_anchor"]["render_caveat"]
+    assert summary["working_style_observability"]["status"] == "reinforced"
+    assert summary["working_style_observability"]["drift_risk"] == "low"
+    assert summary["working_style_observability"]["reinforced_item_count"] == 2
+    assert "decision_preferences: prefer packet before broad repo scan" in summary[
+        "working_style_observability"
+    ]["reinforced_items"]
+    assert "verified_routines: leave compaction before release" in summary[
+        "working_style_observability"
+    ]["reinforced_items"]
     assert summary["repo_progress"]["branch"] == "feature/r-memory"
     assert "focus=risk, runtime" in summary["summary_text"]
     assert "subject=Stay packet-first and keep theory out of runtime truth." in summary["summary_text"]

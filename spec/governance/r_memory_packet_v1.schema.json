@@ -904,6 +904,66 @@
         }
       }
     },
+    "working_style_observability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "drift_risk",
+        "trackable_item_count",
+        "reinforced_item_count",
+        "signal_count",
+        "signal_sources",
+        "reinforced_items",
+        "unreinforced_items",
+        "summary_text",
+        "receiver_note"
+      ],
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "drift_risk": {
+          "type": "string"
+        },
+        "trackable_item_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "reinforced_item_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "signal_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "signal_sources": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "reinforced_items": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "unreinforced_items": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "summary_text": {
+          "type": "string"
+        },
+        "receiver_note": {
+          "type": "string"
+        }
+      }
+    },
     "risk_posture": {
       "type": "object",
       "additionalProperties": false,
@@ -989,6 +1049,9 @@
         },
         "working_style_anchor": {
           "$ref": "#/$defs/working_style_anchor"
+        },
+        "working_style_observability": {
+          "$ref": "#/$defs/working_style_observability"
         },
         "summary_text": {
           "type": "string",

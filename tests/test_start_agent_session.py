@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import subprocess
 import sys
 from pathlib import Path
 
@@ -447,6 +448,18 @@ def test_start_agent_session_marks_recycled_carry_forward_as_must_not_promote(
         working_style_surface["working_style_anchor"]["receiver_posture"]
         == "advisory_apply_not_promote"
     )
+    working_style_observability = working_style_surface["working_style_observability"]
+    assert working_style_observability["status"] == "partial"
+    assert working_style_observability["drift_risk"] == "medium"
+    assert working_style_observability["reinforced_item_count"] == 1
+    assert (
+        "decision_preferences: prefer packet before broad repo scan"
+        in working_style_observability["reinforced_items"]
+    )
+    assert (
+        "verified_routines: end sessions with checkpoint or compaction before release"
+        in working_style_observability["unreinforced_items"]
+    )
     playbook = output["working_style_playbook"]
     assert playbook["present"] is True
     assert playbook["summary_text"].startswith("prefs=prefer packet before broad repo scan")
@@ -463,6 +476,10 @@ def test_start_agent_session_marks_recycled_carry_forward_as_must_not_promote(
     )
     assert any(
         "Working-style continuity is advisory only" in alert
+        for alert in output["import_posture"]["receiver_alerts"]
+    )
+    assert any(
+        "Shared working-style continuity is only partially reinforced" in alert
         for alert in output["import_posture"]["receiver_alerts"]
     )
 
@@ -568,6 +585,37 @@ def test_start_agent_session_surfaces_council_dossier_interpretation_guard(
         "evolution suppression" in alert
         for alert in output["import_posture"]["receiver_alerts"]
     )
+
+
+def test_start_agent_session_cli_executes_directly(tmp_path: Path) -> None:
+    state_path = tmp_path / "governance_state.json"
+    traces_path = tmp_path / "session_traces.jsonl"
+    _write_state(state_path)
+    _write_traces(traces_path)
+
+    script_path = Path(__file__).resolve().parents[1] / "scripts" / "start_agent_session.py"
+    completed = subprocess.run(
+        [
+            sys.executable,
+            str(script_path),
+            "--state-path",
+            str(state_path),
+            "--traces-path",
+            str(traces_path),
+            "--agent",
+            "cli-smoke",
+            "--no-ack",
+        ],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        check=False,
+    )
+
+    assert completed.returncode == 0, completed.stderr
+    payload = json.loads(completed.stdout)
+    assert payload["agent"] == "cli-smoke"
+    assert "working_style_playbook" in payload
 
 
 def test_ensure_repo_root_on_path_adds_repo_root(monkeypatch) -> None:

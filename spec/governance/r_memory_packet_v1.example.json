@@ -344,6 +344,27 @@
       ],
       "render_caveat": "Treat shell `??` or garbled CJK as render-layer noise until a UTF-8 file read proves real corruption."
     },
+    "working_style_observability": {
+      "status": "partial",
+      "drift_risk": "medium",
+      "trackable_item_count": 2,
+      "reinforced_item_count": 1,
+      "signal_count": 6,
+      "signal_sources": [
+        "carry_forward",
+        "next_actions",
+        "routing_event",
+        "routing_summary"
+      ],
+      "reinforced_items": [
+        "decision_preferences: prefer packet before broad repo scan"
+      ],
+      "unreinforced_items": [
+        "verified_routines: leave compaction before release"
+      ],
+      "summary_text": "working_style=partial reinforced=1/2 signals=6 drift=medium",
+      "receiver_note": "Only part of the shared working style is echoed by recent handoff surfaces. Keep the playbook visible instead of assuming full continuity."
+    },
     "routing_summary": {
       "total_events": 2,
       "preview_count": 1,
@@ -424,7 +445,7 @@
       "recommended_command": "python scripts/apply_subject_refresh.py --agent <your-id> --field active_threads --refresh-signal \"subject-refresh heuristic reviewed\"",
       "summary_text": "subject_refresh=refresh_candidate direct=1 manual=2 hazards=2 evidence=c1/k1"
     },
-    "summary_text": "focus=runtime_adapter, redis | subject=Operate as a packet-first runtime steward with explicit boundaries. | claims=1 | pending=scripts/gateway.py, apps/dashboard/world.html | router=writes=1 previews=1 overrides=0 overlap=1 misroute_signals=1 top=checkpoint | subject_refresh=refresh_candidate direct=1 manual=2 hazards=2 evidence=c1/k1",
+    "summary_text": "focus=runtime_adapter, redis | subject=Operate as a packet-first runtime steward with explicit boundaries. | claims=1 | pending=scripts/gateway.py, apps/dashboard/world.html | router=writes=1 previews=1 overrides=0 overlap=1 misroute_signals=1 top=checkpoint | working_style=partial reinforced=1/2 signals=6 drift=medium | subject_refresh=refresh_candidate direct=1 manual=2 hazards=2 evidence=c1/k1",
     "repo_progress": {
       "available": true,
       "branch": "codex/r-memory-compaction-lane-20260326",

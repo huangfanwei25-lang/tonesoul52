@@ -403,6 +403,22 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
                 non_promotion_rule = str(playbook.get("non_promotion_rule", "")).strip()
                 if non_promotion_rule:
                     lines.append(f"    guard={_clip(non_promotion_rule)}")
+        working_style_observability = project_memory_summary.get("working_style_observability") or {}
+        if working_style_observability:
+            lines.append("  working_style_observability:")
+            lines.append(
+                "    "
+                f"status={working_style_observability.get('status', 'unknown')} "
+                f"drift={working_style_observability.get('drift_risk', 'unknown')} "
+                f"reinforced={int(working_style_observability.get('reinforced_item_count', 0) or 0)}"
+                f"/{int(working_style_observability.get('trackable_item_count', 0) or 0)} "
+                f"signals={int(working_style_observability.get('signal_count', 0) or 0)}"
+            )
+            for item in list(working_style_observability.get("unreinforced_items") or [])[:2]:
+                lines.append(f"    unreinforced={_clip(item)}")
+            receiver_note = str(working_style_observability.get("receiver_note", "")).strip()
+            if receiver_note:
+                lines.append(f"    note={_clip(receiver_note)}")
         routing_summary = project_memory_summary.get("routing_summary") or {}
         if routing_summary:
             lines.append("  routing_summary:")

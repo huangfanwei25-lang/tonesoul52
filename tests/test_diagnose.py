@@ -176,6 +176,18 @@ def _fake_packet():
                 ],
                 "render_caveat": "Treat shell `??` or garbled CJK as render-layer noise until a UTF-8 file read proves real corruption.",
             },
+            "working_style_observability": {
+                "status": "partial",
+                "drift_risk": "medium",
+                "trackable_item_count": 2,
+                "reinforced_item_count": 1,
+                "signal_count": 3,
+                "signal_sources": ["carry_forward", "routing_summary"],
+                "reinforced_items": ["decision_preferences: prefer packet before broad repo scan"],
+                "unreinforced_items": ["verified_routines: leave compaction before release"],
+                "summary_text": "working_style=partial reinforced=1/2 signals=3 drift=medium",
+                "receiver_note": "Only part of the shared working style is echoed by recent handoff surfaces. Keep the playbook visible instead of assuming full continuity.",
+            },
             "routing_summary": {
                 "total_events": 2,
                 "preview_count": 1,
@@ -445,6 +457,9 @@ def test_full_diagnostic_is_cp950_safe_and_includes_shared_runtime(monkeypatch) 
     assert "apply=Apply these items as bounded operating habits" in report
     assert "guard=Do not promote this playbook" in report
     assert "receiver_posture=advisory_apply_not_promote" in report
+    assert "working_style_observability:" in report
+    assert "status=partial drift=medium reinforced=1/2 signals=3" in report
+    assert "unreinforced=verified_routines: leave compaction before release" in report
     assert "routing_summary:" in report
     assert "subject_refresh:" in report
     assert "status=refresh_candidate recommended=True newer_compactions=1 newer_checkpoints=1 hazards=1" in report

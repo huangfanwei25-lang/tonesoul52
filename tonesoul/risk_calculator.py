@@ -12,6 +12,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, Iterable, List
 
+from tonesoul.working_style import build_working_style_observability
+
 _PROMPT_STYLE_DEFAULTS = [
     "state the goal function before long transfer or extraction prompts",
     "keep P0/P1/P2 explicit when constraints may conflict",
@@ -181,6 +183,12 @@ def build_project_memory_summary(
     latest_subject_snapshot = subject_snapshots[0] if subject_snapshots else {}
     subject_anchor = _build_subject_anchor(latest_subject_snapshot)
     working_style_anchor = _build_working_style_anchor(latest_subject_snapshot)
+    working_style_observability = build_working_style_observability(
+        working_style_anchor,
+        carry_forward=carry_forward,
+        next_actions=next_actions,
+        routing_summary=routing_summary,
+    )
 
     summary_lines: List[str] = []
     if focus_topics:
@@ -201,6 +209,8 @@ def build_project_memory_summary(
         )
     if int(routing_summary.get("total_events", 0) or 0) > 0:
         summary_lines.append(str(routing_summary.get("summary_text", "")).strip())
+    if working_style_observability and str(working_style_observability.get("status", "")) != "reinforced":
+        summary_lines.append(str(working_style_observability.get("summary_text", "")).strip())
     if not summary_lines:
         summary_lines.append("No active carry-forward surface is visible yet.")
 
@@ -218,6 +228,8 @@ def build_project_memory_summary(
         result["subject_anchor"] = subject_anchor
     if working_style_anchor:
         result["working_style_anchor"] = working_style_anchor
+    if working_style_observability:
+        result["working_style_observability"] = working_style_observability
     if routing_summary:
         result["routing_summary"] = routing_summary
     return result

@@ -67,6 +67,12 @@
 - [x] Teach `diagnose` to render a concise working-style playbook block so later agents can act on shared habits without reconstructing them manually
 **Success Criteria**: A later agent reading packet guidance or diagnose output can see a concrete, bounded working-style checklist and apply it immediately, while the same playbook shape stays aligned with session-start output.
 
+## Phase 696: Working-Style Drift Observability (2026-03-29)
+- [x] derive a bounded `working_style_observability` summary from recent carry-forward, next-action, and routing telemetry instead of pretending style continuity is either perfect or absent
+- [x] surface that observability summary in packet/project-memory, session-start import posture, diagnose output, and operator guidance
+- [x] keep the result descriptive-only so later agents can see reinforcement vs drift risk without promoting style into policy, vows, or durable identity
+**Success Criteria**: Later agents can tell whether the shared working-style anchor is currently reinforced, partial, or unreinforced by recent handoff surfaces, and can respond to drift risk without mythologizing hidden shared cognition.
+
 ## Phase 679: Continuity Freshness And Import Posture (2026-03-29)
 - [x] Add bounded `freshness_hours` to the packet continuity surfaces that later agents actually inherit at session start
 - [x] Add a machine-readable `import_posture` section to `start_agent_session.py` so agents can distinguish directly importable posture/claims from advisory compactions, snapshots, and dossiers

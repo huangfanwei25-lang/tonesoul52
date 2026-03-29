@@ -11,8 +11,6 @@ from contextlib import redirect_stdout
 from datetime import datetime, timezone
 from pathlib import Path
 
-from tonesoul.working_style import build_working_style_playbook
-
 
 def _ensure_repo_root_on_path() -> Path:
     repo_root = Path(__file__).resolve().parents[1]
@@ -20,6 +18,15 @@ def _ensure_repo_root_on_path() -> Path:
     if repo_root_str not in sys.path:
         sys.path.insert(0, repo_root_str)
     return repo_root
+
+
+_REPO_ROOT = _ensure_repo_root_on_path()
+
+
+def _build_working_style_playbook(anchor: dict) -> dict:
+    from tonesoul.working_style import build_working_style_playbook
+
+    return build_working_style_playbook(anchor)
 
 
 def _resolve_sidecar(root: Path, name: str) -> Path:
@@ -278,6 +285,7 @@ def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
     delta_feed = packet.get("delta_feed") or {}
     project_memory_summary = packet.get("project_memory_summary") or {}
     working_style_anchor = project_memory_summary.get("working_style_anchor") or {}
+    working_style_observability = project_memory_summary.get("working_style_observability") or {}
     subject_refresh = project_memory_summary.get("subject_refresh") or {}
     carry_forward_hazards = _carry_forward_promotion_hazards(subject_refresh)
 
@@ -377,8 +385,11 @@ def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
             "note": (
                 "Shared operating style may guide scan order, evidence discipline, and prompt shape, "
                 "but it must not be promoted into vows, canonical rules, or durable identity without fresh proof."
+                if str(working_style_observability.get("status", "")).strip() in {"", "reinforced"}
+                else str(working_style_observability.get("receiver_note", "")).strip()
             ),
             "working_style_anchor": working_style_anchor,
+            "working_style_observability": working_style_observability,
         },
         "subject_refresh": {
             "present": bool(subject_refresh),
@@ -465,6 +476,14 @@ def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
         receiver_alerts.append(
             "Working-style continuity is advisory only; reuse decision preferences and verified routines as habits, but do not promote them into vows, canonical rules, or durable identity."
         )
+    if str(working_style_observability.get("status", "")).strip() == "partial":
+        receiver_alerts.append(
+            "Shared working-style continuity is only partially reinforced by recent handoff surfaces; keep the playbook visible instead of assuming full habit continuity."
+        )
+    elif str(working_style_observability.get("status", "")).strip() == "unreinforced":
+        receiver_alerts.append(
+            "Shared working-style continuity is currently unreinforced by recent handoff surfaces; apply it explicitly if it still fits, but do not assume the latest agent actually followed it."
+        )
 
     return {
         "summary_text": " | ".join(summary_parts),
@@ -526,7 +545,7 @@ def main() -> None:
 
     claims = _quiet_call(list_active_claims, store=store)
     readiness = _build_readiness(agent_id=agent_id, packet=packet, claims=claims)
-    working_style_playbook = build_working_style_playbook(
+    working_style_playbook = _build_working_style_playbook(
         ((packet.get("project_memory_summary") or {}).get("working_style_anchor") or {})
     )
     payload = {

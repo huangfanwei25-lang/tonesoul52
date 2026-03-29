@@ -80,6 +80,26 @@ The current bounded home is the latest `subject_snapshot`, especially:
 Packet/session-start readouts may derive a `working_style_anchor` from those fields.
 That anchor is advisory only.
 
+## Observability Before Promotion
+
+Seeing a working-style anchor is not the same as knowing later agents are still following it.
+
+ToneSoul may therefore derive a bounded `working_style_observability` summary from recent:
+
+- `carry_forward`
+- `next_actions`
+- routing telemetry
+
+Its purpose is narrow:
+
+- show whether recent handoff surfaces still echo the shared style
+- warn when style continuity is only partial or currently unreinforced
+- reduce the temptation to pretend multiple agents already share one mind
+
+This surface is descriptive only.
+It does not certify obedience, alignment, or hidden cognition.
+It only says whether recent shared residue still re-mentions the same operating habits.
+
 ## Receiver Rules
 
 When a later agent sees working-style continuity:

@@ -687,6 +687,17 @@ def test_subject_snapshots_surface_durable_subject_anchor(tmp_path: Path) -> Non
     ]
     assert working_style_anchor["receiver_posture"] == "advisory_apply_not_promote"
     assert "render-layer noise" in working_style_anchor["render_caveat"]
+    working_style_observability = packet["project_memory_summary"]["working_style_observability"]
+    assert working_style_observability["status"] == "reinforced"
+    assert working_style_observability["drift_risk"] == "low"
+    assert working_style_observability["reinforced_item_count"] == 2
+    assert "decision_preferences: prefer packet before broad repo scan" in working_style_observability[
+        "reinforced_items"
+    ]
+    assert (
+        "verified_routines: end sessions with checkpoint or compaction before release"
+        in working_style_observability["reinforced_items"]
+    )
     assert packet["project_memory_summary"]["subject_refresh"]["status"] == "refresh_candidate"
     assert packet["project_memory_summary"]["subject_refresh"]["refresh_recommended"] is True
     active_thread_guidance = next(

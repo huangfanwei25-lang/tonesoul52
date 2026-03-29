@@ -1894,11 +1894,21 @@ def _build_operator_guidance(
         from tonesoul.working_style import build_working_style_playbook
 
         playbook = build_working_style_playbook(working_style_anchor)
+        observability = project_memory_summary.get("working_style_observability") or {}
         reminders.append(
             "A working-style playbook is visible; apply it as advisory workflow, not as durable identity or policy."
         )
         for item in list(playbook.get("checklist") or [])[:2]:
             reminders.append(f"Working-style: {item}")
+        status = str(observability.get("status", "")).strip()
+        if status == "partial":
+            reminders.append(
+                "Only part of the shared working-style anchor is echoed by recent handoff surfaces; keep the playbook visible instead of assuming full continuity."
+            )
+        elif status == "unreinforced":
+            reminders.append(
+                "The shared working-style anchor is currently unreinforced by recent handoff surfaces; re-apply the playbook explicitly before defaulting to model-native habits."
+            )
 
     subject_refresh = project_memory_summary.get("subject_refresh") or {}
     refresh_status = str(subject_refresh.get("status", "")).strip()
