@@ -30,6 +30,7 @@
 - Phase 690: surface council dossier interpretation guards at session start so later agents stop reading descriptive agreement metrics as calibrated truth
 - Phase 691: integrate reality-alignment and render-boundary aids into the authority lanes so later agents can verify entry routing, counts, and display artifacts against a measured baseline instead of stale prose
 - Phase 692: surface bounded working-style continuity so later agents can inherit operating habits and prompt discipline without mistaking them for shared identity or canonical truth
+- Phase 693: turn working-style continuity into a session-start playbook so later agents can apply shared habits directly instead of reconstructing them from raw anchor fields
 
 ## Phase 691: Reality Alignment Lane Integration (2026-03-29)
 - [x] Add a dedicated reality-alignment lane to the doc authority map for entry-surface baselines, count methods, render/encoding boundaries, and drift registers
@@ -42,6 +43,12 @@
 - [x] Derive a bounded `working_style_anchor` from the latest `subject_snapshot` so packet/session-start can expose shared habits without inventing a new event lane
 - [x] Surface the same anchor in session-start and diagnose as advisory-only continuity, with explicit non-promotion wording
 **Success Criteria**: Later agents can see a bounded shared working-style anchor at session start, understand that it comes from subject-snapshot continuity rather than canonical truth, and reuse habits without confusing them with vows or governance rules.
+
+## Phase 693: Working-Style Session-Start Playbook (2026-03-29)
+- [x] Derive a bounded session-start playbook from `working_style_anchor` so later agents can see concrete preferences, routines, prompt defaults, and render caveats without reconstructing them manually
+- [x] Keep the playbook advisory-only, with explicit non-promotion wording and no new runtime authority
+- [x] Lock the new playbook into session-start regression tests so continuity of operating style stays machine-readable
+**Success Criteria**: A later agent can open the session-start bundle, find a concise working-style playbook, and apply shared operating habits directly without mistaking them for vows, canonical law, or durable identity.
 
 ## Phase 679: Continuity Freshness And Import Posture (2026-03-29)
 - [x] Add bounded `freshness_hours` to the packet continuity surfaces that later agents actually inherit at session start

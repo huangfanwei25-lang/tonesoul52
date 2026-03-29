@@ -131,6 +131,9 @@ def test_start_agent_session_emits_machine_readable_bundle(capsys, monkeypatch, 
     assert output["import_posture"]["surfaces"]["subject_snapshot"]["present"] is False
     assert output["import_posture"]["readiness_alignment"] == "needs_clarification"
     assert output["import_posture"]["summary_text"].startswith("posture=directly_importable")
+    assert output["working_style_playbook"]["present"] is False
+    assert output["working_style_playbook"]["checklist"] == []
+    assert "No shared working-style anchor is visible" in output["working_style_playbook"]["application_rule"]
     assert output["underlying_commands"][0] == "python -m tonesoul.diagnose --agent observer-start"
     assert output["underlying_commands"][1] == (
         "python scripts/run_r_memory_packet.py --agent observer-start --ack"
@@ -444,6 +447,15 @@ def test_start_agent_session_marks_recycled_carry_forward_as_must_not_promote(
         working_style_surface["working_style_anchor"]["receiver_posture"]
         == "advisory_apply_not_promote"
     )
+    playbook = output["working_style_playbook"]
+    assert playbook["present"] is True
+    assert playbook["summary_text"].startswith("prefs=prefer packet before broad repo scan")
+    assert "Preference: prefer packet before broad repo scan" in playbook["checklist"]
+    assert "Routine: end sessions with checkpoint or compaction before release" in playbook["checklist"]
+    assert any(item.startswith("Prompt default: keep P0/P1/P2 explicit") for item in playbook["checklist"])
+    assert any(item.startswith("Render caveat: Treat shell `??`") for item in playbook["checklist"])
+    assert "bounded operating habits" in playbook["application_rule"]
+    assert "Do not promote this playbook" in playbook["non_promotion_rule"]
     assert any(
         "Latest carry-forward repeats an older handoff without new evidence"
         in alert
