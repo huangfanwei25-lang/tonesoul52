@@ -258,6 +258,21 @@ Treat this as a prompt-design companion. It helps later agents build better extr
 
 Treat these as reality-alignment aids. They help later agents avoid stale counts, loose entrypoint claims, and false mojibake reports, but they do not outrank runtime code or canonical architecture contracts.
 
+## Entry Simplification And Lineage Routing
+
+- `architecture/TONESOUL_AUDIENCE_ROUTING_AND_ENTRY_CONTRACT.md`
+  - bounded first-hop routing for developers, researchers, AI agents, and curious humans
+- `architecture/TONESOUL_HISTORICAL_SPEC_AND_LEGACY_SURFACE_MAP.md`
+  - separates canonical, companion, lineage, and legacy surfaces without flattening them
+- `architecture/TONESOUL_DOC_SURFACE_SIMPLIFICATION_BOUNDARY_CONTRACT.md`
+  - names which simplification moves are safe and which would hide authority or depth
+- `architecture/TONESOUL_ENCODING_AND_MOJIBAKE_HAZARD_REGISTER.md`
+  - distinguishes file corruption from render-layer noise and structural readability hazards
+- `plans/tonesoul_docs_cleanup_wave_candidates_2026-03-29.md`
+  - staged cleanup sequence for metadata hygiene, if-wall cleanup, index differentiation, and lineage labeling
+
+Treat these as entry-cleanup aids. They help later agents choose the right first surface and keep lineage legible, but they do not outrank current canonical architecture or runtime surfaces.
+
 ## 🎯 快速開始
 
 1. [AI_ONBOARDING.md](../AI_ONBOARDING.md) — 給新 AI 的引導

@@ -214,6 +214,19 @@ Use this when the question is not only what should be transferred, but how the e
 
 Use these when a document claim sounds too clean, too rounded, or too shell-dependent to trust without measurement.
 
+## Entry Simplification And Lineage Routing
+
+- [architecture/TONESOUL_AUDIENCE_ROUTING_AND_ENTRY_CONTRACT.md](architecture/TONESOUL_AUDIENCE_ROUTING_AND_ENTRY_CONTRACT.md)
+  - audience-specific first-hop routing for developers, researchers, AI agents, and curious humans
+- [architecture/TONESOUL_HISTORICAL_SPEC_AND_LEGACY_SURFACE_MAP.md](architecture/TONESOUL_HISTORICAL_SPEC_AND_LEGACY_SURFACE_MAP.md)
+  - category map for canonical, companion, historical-lineage, and legacy surfaces
+- [architecture/TONESOUL_DOC_SURFACE_SIMPLIFICATION_BOUNDARY_CONTRACT.md](architecture/TONESOUL_DOC_SURFACE_SIMPLIFICATION_BOUNDARY_CONTRACT.md)
+  - safe-versus-unsafe simplification rules for entry surfaces and deep lanes
+- [architecture/TONESOUL_ENCODING_AND_MOJIBAKE_HAZARD_REGISTER.md](architecture/TONESOUL_ENCODING_AND_MOJIBAKE_HAZARD_REGISTER.md)
+  - hazard register for structural readability, stale metadata, and render-layer noise
+- [plans/tonesoul_docs_cleanup_wave_candidates_2026-03-29.md](plans/tonesoul_docs_cleanup_wave_candidates_2026-03-29.md)
+  - bounded cleanup wave plan for metadata hygiene, if-wall restructuring, index differentiation, and lineage labeling
+
 ## 🧭 Documentation Governance v1
 
 | 文件 | 說明 |

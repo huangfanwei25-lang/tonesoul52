@@ -175,6 +175,20 @@ Open these when the question is:
 - `docs/architecture/TONESOUL_RENDER_LAYER_AND_ENCODING_BOUNDARY_CONTRACT.md`
 - `docs/architecture/TONESOUL_DOC_DRIFT_AND_CONFLICT_REGISTER.md`
 
+### 15. Entry simplification and lineage routing lane
+
+Open these when the question is:
+
+- which audience should open which surface first,
+- how historical lineage should remain visible without being mistaken for current architecture,
+- which simplification moves are safe and which would flatten authority.
+
+- `docs/architecture/TONESOUL_AUDIENCE_ROUTING_AND_ENTRY_CONTRACT.md`
+- `docs/architecture/TONESOUL_HISTORICAL_SPEC_AND_LEGACY_SURFACE_MAP.md`
+- `docs/architecture/TONESOUL_DOC_SURFACE_SIMPLIFICATION_BOUNDARY_CONTRACT.md`
+- `docs/architecture/TONESOUL_ENCODING_AND_MOJIBAKE_HAZARD_REGISTER.md`
+- `docs/plans/tonesoul_docs_cleanup_wave_candidates_2026-03-29.md`
+
 ## Retrieval Order
 
 1. Start in the entrypoint lane.
@@ -188,8 +202,9 @@ Open these when the question is:
 9. Move to the council realism and calibration lane when a verdict sounds stronger than its real independence or confidence backing.
 10. Move to the prompt discipline skeleton lane when the question is no longer "what should transfer" but "how should the prompt be built."
 11. Move to the reality alignment and render boundary lane when doc counts, audience routing, or encoding alarms may be stale, display-dependent, or loosely measured.
-12. Move to documentation governance and convergence contracts when restructuring docs.
-13. Prefer generated status surfaces over stale prose when checking current posture.
+12. Move to the entry simplification and lineage routing lane when the problem is how a reader should enter, what should stay visible as lineage, or which cleanup moves are safe.
+13. Move to documentation governance and convergence contracts when restructuring docs.
+14. Prefer generated status surfaces over stale prose when checking current posture.
 
 ## Current Rule
 

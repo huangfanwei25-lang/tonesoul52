@@ -109,6 +109,12 @@
 - [x] add regression coverage for very-stale, moderately-stale, and source-pattern context cases
 **Success Criteria**: Stale rule verification tasks keep their existing scheduling behavior while the generated verification challenge becomes harder to misread as vague intuition and easier for later agents or models to execute consistently.
 
+## Phase 703: Entry Cleanup And Lineage Routing Integration (2026-03-29)
+- [x] rewrite the useful untracked cleanup docs into clean ToneSoul-native versions with current measured counts and the correct AI entry triad
+- [x] add a dedicated authority lane for audience routing, lineage distinction, simplification boundaries, and cleanup wave planning
+- [x] wire the lane into README, docs README, docs INDEX, and authority-map generation while leaving stale implementation-gap drafts and private/local artifacts outside the integration set
+**Success Criteria**: Later agents can discover the repaired audience-routing, lineage, simplification, and encoding-hazard aids from the normal doc entrypoints, while stale gap drafts and private memory files remain outside the committed surface.
+
 ## Phase 679: Continuity Freshness And Import Posture (2026-03-29)
 - [x] Add bounded `freshness_hours` to the packet continuity surfaces that later agents actually inherit at session start
 - [x] Add a machine-readable `import_posture` section to `start_agent_session.py` so agents can distinguish directly importable posture/claims from advisory compactions, snapshots, and dossiers
