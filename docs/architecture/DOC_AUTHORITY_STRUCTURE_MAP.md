@@ -161,6 +161,19 @@ Open these when the question is:
 - `docs/architecture/TONESOUL_ADVERSARIAL_DELIBERATION_ADOPTION_MAP.md`
 - `docs/plans/tonesoul_council_realism_followup_candidates_2026-03-29.md`
 
+### 14. Reality alignment and render boundary lane
+
+Open these when the question is:
+
+- whether an entrypoint recommendation still matches the live repo,
+- whether a count claim is measured or hand-wavy,
+- whether `??` is file corruption or only terminal-display noise.
+
+- `docs/architecture/TONESOUL_ENTRY_SURFACE_REALITY_BASELINE.md`
+- `docs/architecture/TONESOUL_DOC_METRIC_AND_COUNT_METHOD.md`
+- `docs/architecture/TONESOUL_RENDER_LAYER_AND_ENCODING_BOUNDARY_CONTRACT.md`
+- `docs/architecture/TONESOUL_DOC_DRIFT_AND_CONFLICT_REGISTER.md`
+
 ## Retrieval Order
 
 1. Start in the entrypoint lane.
@@ -173,8 +186,9 @@ Open these when the question is:
 8. Move to the continuity import and receiver lane when the question is no longer only "what should continue" but "what may the receiver safely import or let decay."
 9. Move to the council realism and calibration lane when a verdict sounds stronger than its real independence or confidence backing.
 10. Move to the prompt discipline skeleton lane when the question is no longer "what should transfer" but "how should the prompt be built."
-11. Move to documentation governance and convergence contracts when restructuring docs.
-12. Prefer generated status surfaces over stale prose when checking current posture.
+11. Move to the reality alignment and render boundary lane when doc counts, audience routing, or encoding alarms may be stale, display-dependent, or loosely measured.
+12. Move to documentation governance and convergence contracts when restructuring docs.
+13. Prefer generated status surfaces over stale prose when checking current posture.
 
 ## Current Rule
 

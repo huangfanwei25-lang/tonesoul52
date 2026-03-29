@@ -221,6 +221,8 @@ If the distinction matters, open [docs/architecture/TONESOUL_EVIDENCE_LADDER_AND
 - [docs/architecture/TONESOUL_CLAIM_TO_EVIDENCE_MATRIX.md](docs/architecture/TONESOUL_CLAIM_TO_EVIDENCE_MATRIX.md)
 - [docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md](docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md)
 - [docs/architecture/TONESOUL_TEST_AND_VALIDATION_TOPOLOGY_MAP.md](docs/architecture/TONESOUL_TEST_AND_VALIDATION_TOPOLOGY_MAP.md)
+- [docs/architecture/TONESOUL_ENTRY_SURFACE_REALITY_BASELINE.md](docs/architecture/TONESOUL_ENTRY_SURFACE_REALITY_BASELINE.md)
+- [docs/architecture/TONESOUL_RENDER_LAYER_AND_ENCODING_BOUNDARY_CONTRACT.md](docs/architecture/TONESOUL_RENDER_LAYER_AND_ENCODING_BOUNDARY_CONTRACT.md)
 - [docs/architecture/DOC_AUTHORITY_STRUCTURE_MAP.md](docs/architecture/DOC_AUTHORITY_STRUCTURE_MAP.md)
 - [docs/status/doc_authority_structure_latest.json](docs/status/doc_authority_structure_latest.json)
 - [docs/status/doc_convergence_inventory_latest.json](docs/status/doc_convergence_inventory_latest.json)

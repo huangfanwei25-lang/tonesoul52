@@ -1,23 +1,23 @@
 # Document Convergence Inventory Latest
 
-- generated_at: 2026-03-28T16:49:45Z
-- primary_status_line: `doc_convergence_ready | authored_files=2282 collisions=27 missing_purpose=145 missing_date=107`
-- runtime_status_line: `entrypoints | doc_inventory=doc_convergence_inventory_latest.json largest_family=docs_law_engineering_mirror architecture_docs=34`
+- generated_at: 2026-03-29T10:00:51Z
+- primary_status_line: `doc_convergence_ready | authored_files=2309 collisions=27 missing_purpose=147 missing_date=107`
+- runtime_status_line: `entrypoints | doc_inventory=doc_convergence_inventory_latest.json largest_family=docs_law_engineering_mirror architecture_docs=54`
 - artifact_policy_status_line: `doc_scope=authored_only | content_check=hash_plus_similarity generated_noise=excluded`
 
 ## Metrics
-- `authored_file_count`: `2282`
+- `authored_file_count`: `2309`
 - `collision_count`: `27`
 - `exact_match_collision_count`: `16`
 - `divergent_collision_count`: `11`
-- `missing_purpose_count`: `145`
+- `missing_purpose_count`: `147`
 - `missing_date_count`: `107`
 - `missing_purpose_sample_count`: `40`
 - `missing_date_sample_count`: `40`
 - `missing_metadata_sample_limit`: `40`
 
 ## Category Counts
-- `architecture_doc`: `34`
+- `architecture_doc`: `54`
 - `archive_doc`: `1`
 - `chronicle_doc`: `48`
 - `constitution_doc`: `1`
@@ -31,7 +31,7 @@
 - `paradox_fixture`: `8`
 - `paradox_test_fixture`: `8`
 - `philosophy_doc`: `27`
-- `plan_doc`: `109`
+- `plan_doc`: `116`
 - `report_doc`: `29`
 - `research_doc`: `9`
 - `root_entrypoint`: `11`
@@ -97,6 +97,7 @@
 - `MEMORY.md`
 - `docs/RFC-015_Self_Dogfooding_Runtime_Adapter.md`
 - `docs/notes/SESSION_JOURNAL_2026-03-24_ANTIGRAVITY.md`
+- `docs/plans/borrowable_prompt_patterns_from_industry_2026-03-29.md`
 - `docs/plans/memory_subjectivity_review_discussion_brief_2026-03-10.md`
 - `docs/plans/memory_subjectivity_reviewed_rejection_producer_guard_addendum_2026-03-11.md`
 - `docs/plans/memory_subjectivity_runtime_summary_addendum_2026-03-10.md`
@@ -108,6 +109,7 @@
 - `docs/plans/path_integration_03_path_semantic_marking.md`
 - `docs/plans/path_integration_04_tension_delayed_commit.md`
 - `docs/plans/path_integration_05_falsifiability_conditions.md`
+- `docs/plans/readme_restructure_plan_2026-03-29.md`
 - `docs/plans/release_readiness_staging.md`
 - `docs/plans/release_v1.0_go_nogo_2026-02-24.md`
 - `docs/plans/repo_governance_settlement_addendum_2026-03-08.md`
@@ -130,8 +132,6 @@
 - `docs/plans/true_verification_host_schedule_runbook_2026-03-08.md`
 - `docs/plans/true_verification_task_runtime_hygiene_addendum_2026-03-08.md`
 - `docs/plans/true_verification_task_scheduler_install_addendum_2026-03-08.md`
-- `docs/plans/true_verification_task_scheduler_template_addendum_2026-03-08.md`
-- `docs/plans/true_verification_task_status_addendum_2026-03-08.md`
 
 ## Top Missing Date Metadata
 - `AGENTS.md`

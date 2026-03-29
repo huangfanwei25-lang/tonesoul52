@@ -243,6 +243,19 @@ Treat this as a prompt-design companion. It helps later agents build better extr
 - `status/historical_doc_lane_latest.json`
   - machine-readable report for chronicle pairs, generated-at markers, archive presence, and historical-lane governance posture
 
+## Reality Alignment And Render Boundaries
+
+- `architecture/TONESOUL_ENTRY_SURFACE_REALITY_BASELINE.md`
+  - measured baseline for current README / AI entry routing after correcting older cleanup drift
+- `architecture/TONESOUL_DOC_METRIC_AND_COUNT_METHOD.md`
+  - reproducible counting rules for `docs/architecture/`, `TONESOUL_*`, and `*_CONTRACT.md` claims
+- `architecture/TONESOUL_RENDER_LAYER_AND_ENCODING_BOUNDARY_CONTRACT.md`
+  - separates real file corruption from terminal rendering noise and structural readability hazards
+- `architecture/TONESOUL_DOC_DRIFT_AND_CONFLICT_REGISTER.md`
+  - register of which older cleanup recommendations remain valid, drifted, or already invalidated
+
+Treat these as reality-alignment aids. They help later agents avoid stale counts, loose entrypoint claims, and false mojibake reports, but they do not outrank runtime code or canonical architecture contracts.
+
 ## 🎯 快速開始
 
 1. [AI_ONBOARDING.md](../AI_ONBOARDING.md) — 給新 AI 的引導

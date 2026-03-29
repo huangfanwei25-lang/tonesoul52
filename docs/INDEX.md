@@ -199,6 +199,19 @@ Use this when the question is not only what should be transferred, but how the e
 - [architecture/HISTORICAL_DOC_LANE_POLICY.md](architecture/HISTORICAL_DOC_LANE_POLICY.md)
 - [status/historical_doc_lane_latest.json](status/historical_doc_lane_latest.json)
 
+## Reality Alignment And Render Boundaries
+
+- [architecture/TONESOUL_ENTRY_SURFACE_REALITY_BASELINE.md](architecture/TONESOUL_ENTRY_SURFACE_REALITY_BASELINE.md)
+  - measured baseline for current README / AI entry routing and active entry surfaces
+- [architecture/TONESOUL_DOC_METRIC_AND_COUNT_METHOD.md](architecture/TONESOUL_DOC_METRIC_AND_COUNT_METHOD.md)
+  - reproducible count patterns for architecture files, `TONESOUL_*`, and actual contracts
+- [architecture/TONESOUL_RENDER_LAYER_AND_ENCODING_BOUNDARY_CONTRACT.md](architecture/TONESOUL_RENDER_LAYER_AND_ENCODING_BOUNDARY_CONTRACT.md)
+  - separates file corruption from terminal-display noise and structural readability hazards
+- [architecture/TONESOUL_DOC_DRIFT_AND_CONFLICT_REGISTER.md](architecture/TONESOUL_DOC_DRIFT_AND_CONFLICT_REGISTER.md)
+  - drift register for earlier cleanup advice versus current repo reality
+
+Use these when a document claim sounds too clean, too rounded, or too shell-dependent to trust without measurement.
+
 ## 🧭 Documentation Governance v1
 
 | 文件 | 說明 |

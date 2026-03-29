@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-28T16:49:45Z",
+  "generated_at": "2026-03-29T10:00:51Z",
   "scope": {
     "include_roots": [
       "PARADOXES",
@@ -62,18 +62,18 @@
     ]
   },
   "metrics": {
-    "authored_file_count": 2282,
+    "authored_file_count": 2309,
     "collision_count": 27,
     "exact_match_collision_count": 16,
     "divergent_collision_count": 11,
-    "missing_purpose_count": 145,
+    "missing_purpose_count": 147,
     "missing_date_count": 107,
     "missing_purpose_sample_count": 40,
     "missing_date_sample_count": 40,
     "missing_metadata_sample_limit": 40
   },
   "category_counts": {
-    "architecture_doc": 34,
+    "architecture_doc": 54,
     "archive_doc": 1,
     "chronicle_doc": 48,
     "constitution_doc": 1,
@@ -87,7 +87,7 @@
     "paradox_fixture": 8,
     "paradox_test_fixture": 8,
     "philosophy_doc": 27,
-    "plan_doc": 109,
+    "plan_doc": 116,
     "report_doc": 29,
     "research_doc": 9,
     "root_entrypoint": 11,
@@ -107,6 +107,7 @@
       "MEMORY.md",
       "docs/RFC-015_Self_Dogfooding_Runtime_Adapter.md",
       "docs/notes/SESSION_JOURNAL_2026-03-24_ANTIGRAVITY.md",
+      "docs/plans/borrowable_prompt_patterns_from_industry_2026-03-29.md",
       "docs/plans/memory_subjectivity_review_discussion_brief_2026-03-10.md",
       "docs/plans/memory_subjectivity_reviewed_rejection_producer_guard_addendum_2026-03-11.md",
       "docs/plans/memory_subjectivity_runtime_summary_addendum_2026-03-10.md",
@@ -118,6 +119,7 @@
       "docs/plans/path_integration_03_path_semantic_marking.md",
       "docs/plans/path_integration_04_tension_delayed_commit.md",
       "docs/plans/path_integration_05_falsifiability_conditions.md",
+      "docs/plans/readme_restructure_plan_2026-03-29.md",
       "docs/plans/release_readiness_staging.md",
       "docs/plans/release_v1.0_go_nogo_2026-02-24.md",
       "docs/plans/repo_governance_settlement_addendum_2026-03-08.md",
@@ -139,9 +141,7 @@
       "docs/plans/true_verification_governance_surface.md",
       "docs/plans/true_verification_host_schedule_runbook_2026-03-08.md",
       "docs/plans/true_verification_task_runtime_hygiene_addendum_2026-03-08.md",
-      "docs/plans/true_verification_task_scheduler_install_addendum_2026-03-08.md",
-      "docs/plans/true_verification_task_scheduler_template_addendum_2026-03-08.md",
-      "docs/plans/true_verification_task_status_addendum_2026-03-08.md"
+      "docs/plans/true_verification_task_scheduler_install_addendum_2026-03-08.md"
     ],
     "date_hint": [
       "AGENTS.md",
@@ -793,12 +793,12 @@
       "basename": "AI_ONBOARDING.md",
       "extension": ".md",
       "surface_type": "root_entrypoint",
-      "size_bytes": 18354,
+      "size_bytes": 19510,
       "title": "AI Onboarding Guide | AI 引導指南",
       "purpose": "給未來沒有記憶的 AI 實例的快速引導。",
       "status": "",
-      "date_hint": "2026-03-28",
-      "content_sha256": "9eab960fd1ff41e9209776dfd8dea82462a2ea7e0d5e4c1478a0ea753104ad5d"
+      "date_hint": "2026-03-29",
+      "content_sha256": "1636422c5ce8b737b2f2966d09eb8f5177a6936c9c7fd693f66b50d79934e938"
     },
     {
       "path": "AXIOMS.json",
@@ -913,12 +913,12 @@
       "basename": "AI_REFERENCE.md",
       "extension": ".md",
       "surface_type": "general_doc",
-      "size_bytes": 17666,
+      "size_bytes": 19613,
       "title": "ToneSoul — AI 工作參考手冊",
       "purpose": "give later AI instances an operator-side lookup for terms, routing decisions, red lines, and common work situations.",
       "status": "operational reference; not a constitutional or architectural source of truth.",
-      "date_hint": "2026-03-28",
-      "content_sha256": "37a8ac49861e413e60393efe3200b6628dbff082b4893cb0b751a3af85ba717f"
+      "date_hint": "2026-03-29",
+      "content_sha256": "f0976994ce36e3bd584a7e47cbc4f97b5d3535e4664f2ca632e6424ffd62bcdf"
     },
     {
       "path": "docs/ANTIGRAVITY_CONTEXT_MEMORY.md",
@@ -985,12 +985,12 @@
       "basename": "DOC_AUTHORITY_STRUCTURE_MAP.md",
       "extension": ".md",
       "surface_type": "architecture_doc",
-      "size_bytes": 5348,
+      "size_bytes": 8199,
       "title": "Documentation Authority Structure Map",
       "purpose": "define the retrieval-oriented structure of ToneSoul's documentation so later agents can tell entrypoints, canonical anchors, governance contracts, and generated status surfaces apart.",
       "status": "active documentation authority map for convergence cleanup.",
-      "date_hint": "2026-03-23",
-      "content_sha256": "09240da60aba957dde21323ed2304d8543db57757726d20c459996224804ed11"
+      "date_hint": "2026-03-29",
+      "content_sha256": "4b6c83ce5a5e22bfb8ef614475b3994240cae3a1804c1fa06b91d15f8e068ccf"
     },
     {
       "path": "docs/architecture/ENGINEERING_MIRROR_OWNERSHIP_MAP.md",
@@ -1101,6 +1101,30 @@
       "content_sha256": "692d7ac77a209a35a37f6a46003456e758478bf708514c823cc2c3bbba679bf2"
     },
     {
+      "path": "docs/architecture/TONESOUL_ADVERSARIAL_DELIBERATION_ADOPTION_MAP.md",
+      "basename": "TONESOUL_ADVERSARIAL_DELIBERATION_ADOPTION_MAP.md",
+      "extension": ".md",
+      "surface_type": "architecture_doc",
+      "size_bytes": 24562,
+      "title": "ToneSoul Adversarial Deliberation Adoption Map",
+      "purpose": "organize council improvement families into adoption lanes based on current ToneSoul infrastructure, classify each by readiness and risk, and give later agents a bounded shortlist instead of a speculative roadmap",
+      "status": "architectural adoption map",
+      "date_hint": "2026-03-29",
+      "content_sha256": "2cef4919df620b3e4b2b3d23a43433169f838ee30e2bb7418f248747c3ce20c2"
+    },
+    {
+      "path": "docs/architecture/TONESOUL_AUDIENCE_ROUTING_AND_ENTRY_CONTRACT.md",
+      "basename": "TONESOUL_AUDIENCE_ROUTING_AND_ENTRY_CONTRACT.md",
+      "extension": ".md",
+      "surface_type": "architecture_doc",
+      "size_bytes": 7441,
+      "title": "ToneSoul — Audience Routing And Entry Contract",
+      "purpose": "define the cleanest first-hop reading path for each audience so later readers stop mistaking historical, deep, or operational surfaces for the first thing to open.",
+      "status": "",
+      "date_hint": "2026-03-29",
+      "content_sha256": "7c2dcfc7eff10dfe5cbcf244ca8f7258dc98ba4a40e61b98469ac2fa2afe721e"
+    },
+    {
       "path": "docs/architecture/TONESOUL_AXIOM_FALSIFICATION_MAP.md",
       "basename": "TONESOUL_AXIOM_FALSIFICATION_MAP.md",
       "extension": ".md",
@@ -1125,6 +1149,18 @@
       "content_sha256": "be0cba0a1007b5c7c2066d963807c33bd6e79dd0193448f35f09106a5602e27e"
     },
     {
+      "path": "docs/architecture/TONESOUL_CLAIM_TO_EVIDENCE_MATRIX.md",
+      "basename": "TONESOUL_CLAIM_TO_EVIDENCE_MATRIX.md",
+      "extension": ".md",
+      "surface_type": "architecture_doc",
+      "size_bytes": 24637,
+      "title": "ToneSoul Claim-to-Evidence Matrix",
+      "purpose": "map high-value ToneSoul claims to their actual evidence level, strongest backing source, weakest link, and safest phrasing for later agents",
+      "status": "architectural evidence map",
+      "date_hint": "2026-03-29",
+      "content_sha256": "c7fa592c4e30b0a7059bfa817fabef5d68cf50ebc5559b10110dcee0a507e863"
+    },
+    {
       "path": "docs/architecture/TONESOUL_CONTEXT_CONTINUITY_ADOPTION_MAP.md",
       "basename": "TONESOUL_CONTEXT_CONTINUITY_ADOPTION_MAP.md",
       "extension": ".md",
@@ -1135,6 +1171,42 @@
       "status": "active adoption map and implementation-order aid.",
       "date_hint": "2026-03-28",
       "content_sha256": "1d6ea58be8d1bd0cd136c4ff5fd1e45e23b3bfd8be0f3507b317d2bdb8eb2102"
+    },
+    {
+      "path": "docs/architecture/TONESOUL_CONTINUITY_IMPORT_AND_DECAY_CONTRACT.md",
+      "basename": "TONESOUL_CONTINUITY_IMPORT_AND_DECAY_CONTRACT.md",
+      "extension": ".md",
+      "surface_type": "architecture_doc",
+      "size_bytes": 14286,
+      "title": "ToneSoul Continuity Import And Decay Contract",
+      "purpose": "define what a receiving agent may import directly, what remains advisory, what decays, and what requires explicit re-confirmation — per continuity surface",
+      "status": "architectural discipline contract",
+      "date_hint": "2026-03-29",
+      "content_sha256": "984977e1eceb7e4067007f76b240436acabc95f116ba1d076546e72dcfee0493"
+    },
+    {
+      "path": "docs/architecture/TONESOUL_CONTINUITY_SURFACE_LIFECYCLE_MAP.md",
+      "basename": "TONESOUL_CONTINUITY_SURFACE_LIFECYCLE_MAP.md",
+      "extension": ".md",
+      "surface_type": "architecture_doc",
+      "size_bytes": 13030,
+      "title": "ToneSoul Continuity Surface Lifecycle Map",
+      "purpose": "organize continuity surfaces into lifecycle lanes with explicit lifetime, refresh triggers, decay triggers, and receiver behavior — so later agents and Codex can manage continuity as a system rather than a flat list",
+      "status": "architectural topology document",
+      "date_hint": "2026-03-29",
+      "content_sha256": "95ca5d5ca313c0a4c3195c9ef02b2939aba6d99157b99c91a8caba9115b43815"
+    },
+    {
+      "path": "docs/architecture/TONESOUL_COUNCIL_CONFIDENCE_AND_CALIBRATION_MAP.md",
+      "basename": "TONESOUL_COUNCIL_CONFIDENCE_AND_CALIBRATION_MAP.md",
+      "extension": ".md",
+      "surface_type": "architecture_doc",
+      "size_bytes": 21609,
+      "title": "ToneSoul Council Confidence And Calibration Map",
+      "purpose": "map every confidence-bearing surface in the council system, classify each as descriptive or calibrated, name the evidence gap between current state and calibrated state, and identify which calibration approaches are plausible now versus infrastructure-blocked",
+      "status": "architectural analysis document",
+      "date_hint": "2026-03-29",
+      "content_sha256": "846638643a5b467eb24500f3ceb99f09a60b10398e258b659889fefd014f5eb0"
     },
     {
       "path": "docs/architecture/TONESOUL_COUNCIL_DOSSIER_AND_DISSENT_CONTRACT.md",
@@ -1149,6 +1221,54 @@
       "content_sha256": "27cf65dcce9860b6e2419af1ffe50fa45b148db8ed69fb1cbbfff2466d44a728"
     },
     {
+      "path": "docs/architecture/TONESOUL_COUNCIL_REALISM_AND_INDEPENDENCE_CONTRACT.md",
+      "basename": "TONESOUL_COUNCIL_REALISM_AND_INDEPENDENCE_CONTRACT.md",
+      "extension": ".md",
+      "surface_type": "architecture_doc",
+      "size_bytes": 13590,
+      "title": "ToneSoul Council Realism And Independence Contract",
+      "purpose": "define which parts of the current council are truly independent, which are perspective-voiced but not independent, and which claims later agents must avoid making about council realism",
+      "status": "architectural honesty contract",
+      "date_hint": "2026-03-29",
+      "content_sha256": "14fbc679cc50c71b2685ea79b3c18510879540a460073674c391d7ce1555c97a"
+    },
+    {
+      "path": "docs/architecture/TONESOUL_DOC_DRIFT_AND_CONFLICT_REGISTER.md",
+      "basename": "TONESOUL_DOC_DRIFT_AND_CONFLICT_REGISTER.md",
+      "extension": ".md",
+      "surface_type": "architecture_doc",
+      "size_bytes": 7873,
+      "title": "ToneSoul — Doc Drift And Conflict Register",
+      "purpose": "compare the prior entrypoint cleanup recommendations against the current repo state and classify each as still valid, drifted, already fixed, or invalidated.",
+      "status": "",
+      "date_hint": "2026-03-29",
+      "content_sha256": "9a850928699948b1c321b412d778561400d279dc2388744da919478a743453d6"
+    },
+    {
+      "path": "docs/architecture/TONESOUL_DOC_METRIC_AND_COUNT_METHOD.md",
+      "basename": "TONESOUL_DOC_METRIC_AND_COUNT_METHOD.md",
+      "extension": ".md",
+      "surface_type": "architecture_doc",
+      "size_bytes": 5460,
+      "title": "ToneSoul — Doc Metric And Count Method",
+      "purpose": "define reproducible counting methods for doc families so later prose no longer casually says \"46 contracts\" when the actual directory shape means something different.",
+      "status": "",
+      "date_hint": "2026-03-29",
+      "content_sha256": "09553534c7afef093a5023e0c7da0f9cfe53a3a0d59162da1cd16491cdce8b51"
+    },
+    {
+      "path": "docs/architecture/TONESOUL_DOC_SURFACE_SIMPLIFICATION_BOUNDARY_CONTRACT.md",
+      "basename": "TONESOUL_DOC_SURFACE_SIMPLIFICATION_BOUNDARY_CONTRACT.md",
+      "extension": ".md",
+      "surface_type": "architecture_doc",
+      "size_bytes": 9272,
+      "title": "ToneSoul — Doc Surface Simplification Boundary Contract",
+      "purpose": "define which simplification moves Codex may safely make when reducing entrypoint complexity, and which moves would damage authority clarity or lose important depth.",
+      "status": "",
+      "date_hint": "2026-03-29",
+      "content_sha256": "752c522d53373f34b8bf97bc37e45cf622187b75e0b4a0ce8ba7c2402e6220d3"
+    },
+    {
       "path": "docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md",
       "basename": "TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md",
       "extension": ".md",
@@ -1161,6 +1281,42 @@
       "content_sha256": "7d633f13c047fe34962f8a64f6e3e7ef10e2233d56f31eb762ed5b115680a170"
     },
     {
+      "path": "docs/architecture/TONESOUL_ENCODING_AND_MOJIBAKE_HAZARD_REGISTER.md",
+      "basename": "TONESOUL_ENCODING_AND_MOJIBAKE_HAZARD_REGISTER.md",
+      "extension": ".md",
+      "surface_type": "architecture_doc",
+      "size_bytes": 7960,
+      "title": "ToneSoul — Encoding And Mojibake Hazard Register",
+      "purpose": "register encoding hazards, garbled headers, broken section labels, and mixed-language readability issues in high-traffic documentation so later cleanup has a clear severity ordering.",
+      "status": "",
+      "date_hint": "2026-03-29",
+      "content_sha256": "7133bb6c81ef2bac6884d2ab65895d4e618bd31f28a28a85b08a16e6c90fdac8"
+    },
+    {
+      "path": "docs/architecture/TONESOUL_ENTRY_SURFACE_REALITY_BASELINE.md",
+      "basename": "TONESOUL_ENTRY_SURFACE_REALITY_BASELINE.md",
+      "extension": ".md",
+      "surface_type": "architecture_doc",
+      "size_bytes": 8325,
+      "title": "ToneSoul — Entry Surface Reality Baseline",
+      "purpose": "repo-grounded baseline for current entry surfaces after correcting drift between the prior entrypoint pass and the live repo state.",
+      "status": "",
+      "date_hint": "2026-03-29",
+      "content_sha256": "336c4f812943162f52213e7d0885ae70481a14c5d0be51ad951e27e9bf0b4a72"
+    },
+    {
+      "path": "docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md",
+      "basename": "TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md",
+      "extension": ".md",
+      "surface_type": "architecture_doc",
+      "size_bytes": 20964,
+      "title": "ToneSoul Evidence Ladder And Verifiability Contract",
+      "purpose": "define a small number of evidence levels that classify how strongly each ToneSoul claim is backed, what language is honest at each level, and what upgrade would move a claim higher",
+      "status": "architectural honesty contract",
+      "date_hint": "2026-03-29",
+      "content_sha256": "c5dfe2afae2ee67e8f58f3e89c87a5e80f152a207dfb0bf957894a7d87742ee3"
+    },
+    {
       "path": "docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md",
       "basename": "TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md",
       "extension": ".md",
@@ -1171,6 +1327,18 @@
       "status": "Canonical architecture anchor as of 2026-03-22",
       "date_hint": "2026-03-22",
       "content_sha256": "cf55ea6732a62bb3a512553a8f7f9d62b2e531be384f947c87c3bfc85438c44c"
+    },
+    {
+      "path": "docs/architecture/TONESOUL_HISTORICAL_SPEC_AND_LEGACY_SURFACE_MAP.md",
+      "basename": "TONESOUL_HISTORICAL_SPEC_AND_LEGACY_SURFACE_MAP.md",
+      "extension": ".md",
+      "surface_type": "architecture_doc",
+      "size_bytes": 10527,
+      "title": "ToneSoul — Historical Spec And Legacy Surface Map",
+      "purpose": "separate current canonical surfaces from historical lineage, active companions, and legacy documents so later agents stop treating old specs as current architecture.",
+      "status": "",
+      "date_hint": "2026-03-29",
+      "content_sha256": "d50f06777d37b17fd3b0eff86ad37df1381e63d2b2d3d5f6cb999d81405ff7c8"
     },
     {
       "path": "docs/architecture/TONESOUL_IMPLEMENTATION_GAP_TRIAGE_2026-03-27.md",
@@ -1281,6 +1449,42 @@
       "content_sha256": "d302ac81ffc1a5c7a6ffad2893c17c221889802fe443075c794a95da9604d4ee"
     },
     {
+      "path": "docs/architecture/TONESOUL_PROMPT_SURFACE_ADOPTION_MATRIX.md",
+      "basename": "TONESOUL_PROMPT_SURFACE_ADOPTION_MATRIX.md",
+      "extension": ".md",
+      "surface_type": "architecture_doc",
+      "size_bytes": 9633,
+      "title": "ToneSoul Prompt Surface Adoption Matrix",
+      "purpose": "classify each meaningful prompt surface in the ToneSoul codebase by starter-card lane, adoption readiness, frequency, and risk — so Codex can execute prompt discipline adoption in bounded waves",
+      "status": "adoption planning document",
+      "date_hint": "2026-03-29",
+      "content_sha256": "1c823e76a9108a4b0a2951f824441976bbe97747d28dfbd6b162383ad310fa71"
+    },
+    {
+      "path": "docs/architecture/TONESOUL_PROMPT_SURFACE_BOUNDARY_CONTRACT.md",
+      "basename": "TONESOUL_PROMPT_SURFACE_BOUNDARY_CONTRACT.md",
+      "extension": ".md",
+      "surface_type": "architecture_doc",
+      "size_bytes": 11431,
+      "title": "ToneSoul Prompt Surface Boundary Contract",
+      "purpose": "define when a prompt surface should receive only wording cleanup, when it deserves full starter-card adoption, when it must stay specialized, and when it should remain untouched — so later agents do not over-apply or under-apply prompt discipline",
+      "status": "architectural discipline contract",
+      "date_hint": "2026-03-29",
+      "content_sha256": "f56d6b77717e0c9d7f9e42fe5f3ca14d84a6015be6d469cd72c4af88aef5ca29"
+    },
+    {
+      "path": "docs/architecture/TONESOUL_PROMPT_SURFACE_TOPOLOGY_MAP.md",
+      "basename": "TONESOUL_PROMPT_SURFACE_TOPOLOGY_MAP.md",
+      "extension": ".md",
+      "surface_type": "architecture_doc",
+      "size_bytes": 12538,
+      "title": "ToneSoul Prompt Surface Topology Map",
+      "purpose": "organize the repo's prompt surfaces into meaningful families so Codex can execute adoption in waves rather than one-off patches",
+      "status": "architectural topology document",
+      "date_hint": "2026-03-29",
+      "content_sha256": "4078bef915e9d31eebb5ddbc67b95afee17e5ad7c8e895cd2e38a313fb899105"
+    },
+    {
       "path": "docs/architecture/TONESOUL_PROMPT_VARIANTS.md",
       "basename": "TONESOUL_PROMPT_VARIANTS.md",
       "extension": ".md",
@@ -1303,6 +1507,30 @@
       "status": "",
       "date_hint": "2026-03-26",
       "content_sha256": "4c1aa9f5aeb5dc0043bfee90929b0fc2974ad05e67338e30e19bcfc62e2d52bc"
+    },
+    {
+      "path": "docs/architecture/TONESOUL_RECEIVER_INTERPRETATION_BOUNDARY_CONTRACT.md",
+      "basename": "TONESOUL_RECEIVER_INTERPRETATION_BOUNDARY_CONTRACT.md",
+      "extension": ".md",
+      "surface_type": "architecture_doc",
+      "size_bytes": 12953,
+      "title": "ToneSoul Receiver Interpretation Boundary Contract",
+      "purpose": "define what a receiving agent is and is not allowed to do after reading continuity surfaces — focusing on agent behavior rather than surface classification",
+      "status": "architectural discipline contract",
+      "date_hint": "2026-03-29",
+      "content_sha256": "87e67412c9c69905d5ded45e8c2f589b3034c18153fb444c43542478d2126ff9"
+    },
+    {
+      "path": "docs/architecture/TONESOUL_RENDER_LAYER_AND_ENCODING_BOUNDARY_CONTRACT.md",
+      "basename": "TONESOUL_RENDER_LAYER_AND_ENCODING_BOUNDARY_CONTRACT.md",
+      "extension": ".md",
+      "surface_type": "architecture_doc",
+      "size_bytes": 6353,
+      "title": "ToneSoul — Render Layer And Encoding Boundary Contract",
+      "purpose": "explicitly separate real file corruption from terminal rendering noise, structural readability hazards, and metadata drift, so later agents stop calling every `??` display artifact \"mojibake\".",
+      "status": "",
+      "date_hint": "2026-03-29",
+      "content_sha256": "97b447aaec10094c5cbba3fcca3ef5a71935647e847867a90c5067c7c860fee3"
     },
     {
       "path": "docs/architecture/TONESOUL_RUNTIME_COMPACTION_AND_GAMIFICATION_CONTRACT.md",
@@ -1363,6 +1591,18 @@
       "status": "architectural discipline contract",
       "date_hint": "2026-03-28",
       "content_sha256": "6d539eb16a2e89067360888a25124b9594c6faa78eb9977610dfc43cc04eb176"
+    },
+    {
+      "path": "docs/architecture/TONESOUL_TEST_AND_VALIDATION_TOPOLOGY_MAP.md",
+      "basename": "TONESOUL_TEST_AND_VALIDATION_TOPOLOGY_MAP.md",
+      "extension": ".md",
+      "surface_type": "architecture_doc",
+      "size_bytes": 20114,
+      "title": "ToneSoul Test And Validation Topology Map",
+      "purpose": "organize the repo's validation surfaces into lanes, describe what confidence each lane actually buys, what it still does not prove, and the most dangerous false inference later agents might make",
+      "status": "architectural topology document",
+      "date_hint": "2026-03-29",
+      "content_sha256": "d640d8a02032d84e9eab5fc723a309400203783e916df6e9e2eda0f1dd96f024"
     },
     {
       "path": "docs/architecture-notes.md",
@@ -2665,12 +2905,12 @@
       "basename": "INDEX.md",
       "extension": ".md",
       "surface_type": "general_doc",
-      "size_bytes": 21426,
+      "size_bytes": 25711,
       "title": "ToneSoul Documentation Index",
       "purpose": "top-level documentation index for ToneSoul authority surfaces, operational packets, and convergence maps.",
       "status": "",
-      "date_hint": "2026-03-28",
-      "content_sha256": "68117c9465f401231e36b3bf4edb9568eeadcfbcd07285ee9c0d8bf78b8bdefc"
+      "date_hint": "2026-03-29",
+      "content_sha256": "cbaadbfbd7e1679b2a2ad815369dd03c6928232627e1ae8c41a5cf6a5845a26f"
     },
     {
       "path": "docs/INTEGRATION_AUDIT_DRAFT.md",
@@ -3357,16 +3597,28 @@
       "content_sha256": "f986277b16df3568e6012e5fbe2e0d2aa5fc4b778335f2e12d9950540be0b59a"
     },
     {
+      "path": "docs/plans/borrowable_prompt_patterns_from_industry_2026-03-29.md",
+      "basename": "borrowable_prompt_patterns_from_industry_2026-03-29.md",
+      "extension": ".md",
+      "surface_type": "plan_doc",
+      "size_bytes": 8721,
+      "title": "業界 System Prompt 可借鏡模式整理 (2026-03-29)",
+      "purpose": "",
+      "status": "",
+      "date_hint": "2026-03-29",
+      "content_sha256": "6c77fd314f6dc6105ee8aa647e6031e65b7ae0a5fe42b12c71aa3ab941aa6b79"
+    },
+    {
       "path": "docs/plans/claude_deep_structure_authority_work_order_2026-03-27.md",
       "basename": "claude_deep_structure_authority_work_order_2026-03-27.md",
       "extension": ".md",
       "surface_type": "plan_doc",
-      "size_bytes": 25237,
+      "size_bytes": 66859,
       "title": "Claude Work Order — Deep Structure Authority Distillation (2026-03-27)",
       "purpose": "give a high-context synthesis agent a bounded documentation workstream that converts repo-scale structural insight into durable authority boundaries for later AI instances.",
       "status": "primary authority-distillation pass completed; follow-up extension appended for implementation-gap triage",
       "date_hint": "2026-03-27",
-      "content_sha256": "27bf76067b10e9422c43ca0c8236913c23777496cbcc717a8cafb252f630da64"
+      "content_sha256": "31aa3181c59ab18fcbe482e8585ca37cb5ab632c0c135eeae0cdbb6cd4a359d6"
     },
     {
       "path": "docs/plans/commit_attribution_base_switch_addendum_2026-03-08.md",
@@ -4137,6 +4389,18 @@
       "content_sha256": "bb072808f114223f8da0e0f27b12d92ded4d15b28e28a8f9d4e14d748da581ac"
     },
     {
+      "path": "docs/plans/readme_restructure_plan_2026-03-29.md",
+      "basename": "readme_restructure_plan_2026-03-29.md",
+      "extension": ".md",
+      "surface_type": "plan_doc",
+      "size_bytes": 9594,
+      "title": "README 重構方案 (2026-03-29)",
+      "purpose": "",
+      "status": "",
+      "date_hint": "2026-03-29",
+      "content_sha256": "d93a5cb8b22300a58cb099d4bbac76beaceff6767b32af1fb5f578443e9f0018"
+    },
+    {
       "path": "docs/plans/registry_schedule_category_policy_addendum_2026-03-07.md",
       "basename": "registry_schedule_category_policy_addendum_2026-03-07.md",
       "extension": ".md",
@@ -4401,6 +4665,18 @@
       "content_sha256": "07a471bd01af144224a5c4d58525e6204966600a72bc83296e53b12f41f016bc"
     },
     {
+      "path": "docs/plans/tonesoul_continuity_followup_candidates_2026-03-29.md",
+      "basename": "tonesoul_continuity_followup_candidates_2026-03-29.md",
+      "extension": ".md",
+      "surface_type": "plan_doc",
+      "size_bytes": 5285,
+      "title": "ToneSoul Continuity Follow-Up Candidates (2026-03-29)",
+      "purpose": "bounded next implementation candidates for continuity import discipline, minimizing packet-shape churn",
+      "status": "",
+      "date_hint": "2026-03-29",
+      "content_sha256": "d2157eee80ebf4a077a25dd49deb9bfd348327bbf905c44990c8649660fd208f"
+    },
+    {
       "path": "docs/plans/tonesoul_control_plane_followup_candidates_2026-03-28.md",
       "basename": "tonesoul_control_plane_followup_candidates_2026-03-28.md",
       "extension": ".md",
@@ -4423,6 +4699,42 @@
       "status": "",
       "date_hint": "2026-03-28",
       "content_sha256": "62069794307f0254652277a099bd584af1e9d0069b8f1c785755fc23a0d46768"
+    },
+    {
+      "path": "docs/plans/tonesoul_council_realism_followup_candidates_2026-03-29.md",
+      "basename": "tonesoul_council_realism_followup_candidates_2026-03-29.md",
+      "extension": ".md",
+      "surface_type": "plan_doc",
+      "size_bytes": 4705,
+      "title": "ToneSoul Council Realism Follow-Up Candidates (2026-03-29)",
+      "purpose": "bounded next implementation candidates for council quality improvement, ordered by safety",
+      "status": "",
+      "date_hint": "2026-03-29",
+      "content_sha256": "77b205c5986752402918b39f8fd14173cbbcc252eedfebd6c815b3e230e18ad1"
+    },
+    {
+      "path": "docs/plans/tonesoul_docs_cleanup_wave_candidates_2026-03-29.md",
+      "basename": "tonesoul_docs_cleanup_wave_candidates_2026-03-29.md",
+      "extension": ".md",
+      "surface_type": "plan_doc",
+      "size_bytes": 5758,
+      "title": "ToneSoul — Docs Cleanup Wave Candidates (2026-03-29)",
+      "purpose": "bounded cleanup sequence derived from Deliverables AD/AE/AF/AG so Codex can execute simplification in realistic waves instead of one giant pass.",
+      "status": "",
+      "date_hint": "2026-03-29",
+      "content_sha256": "a4f2103a24558a9f46e3ec797b8e136a688d067a968807f4fd46ca68873e7395"
+    },
+    {
+      "path": "docs/plans/tonesoul_evidence_followup_candidates_2026-03-29.md",
+      "basename": "tonesoul_evidence_followup_candidates_2026-03-29.md",
+      "extension": ".md",
+      "surface_type": "plan_doc",
+      "size_bytes": 5535,
+      "title": "ToneSoul Evidence Follow-Up Candidates (2026-03-29)",
+      "purpose": "bounded next implementation candidates for evidence-level upgrades, ordered by impact",
+      "status": "",
+      "date_hint": "2026-03-29",
+      "content_sha256": "102d75b848e86d871ca47ff861fd50d812bf706369bea94d0ff14306426c87cd"
     },
     {
       "path": "docs/plans/tonesoul_gap_followup_candidates_2026-03-27.md",
@@ -4483,6 +4795,18 @@
       "status": "reviewed adoption note; not a runtime change log",
       "date_hint": "2026-03-28",
       "content_sha256": "0acba5b1e6a2e5a793ab024af6433bab04c08597be920fc1f9fee451cbeb9944"
+    },
+    {
+      "path": "docs/plans/tonesoul_prompt_adoption_followup_candidates_2026-03-29.md",
+      "basename": "tonesoul_prompt_adoption_followup_candidates_2026-03-29.md",
+      "extension": ".md",
+      "surface_type": "plan_doc",
+      "size_bytes": 5091,
+      "title": "ToneSoul Prompt Adoption Follow-Up Candidates (2026-03-29)",
+      "purpose": "bounded next implementation candidates for prompt surface adoption, organized into waves",
+      "status": "",
+      "date_hint": "2026-03-29",
+      "content_sha256": "63258de12b1e4e6e7bfb61a33a24c1143a417996b803d9c4f361112e891e5708"
     },
     {
       "path": "docs/plans/tri_persona_audit_plan.md",
@@ -4633,12 +4957,12 @@
       "basename": "README.md",
       "extension": ".md",
       "surface_type": "general_doc",
-      "size_bytes": 16639,
+      "size_bytes": 20409,
       "title": "ToneSoul Documentation Index",
       "purpose": "documentation entrypoint and guided index for ToneSoul architecture, status artifacts, and convergence surfaces.",
       "status": "",
-      "date_hint": "2026-03-28",
-      "content_sha256": "c790df736d68a4c17b6fa2f060ea6ce6258d65a680de4f4ec63de7edff8ad553"
+      "date_hint": "2026-03-29",
+      "content_sha256": "dc4b3934728e96ed865bd8ed90318467210f930c09ab9414453cee37b4548d05"
     },
     {
       "path": "docs/RELEASE_NOTES_v0.1.0.md",
@@ -5257,36 +5581,36 @@
       "basename": "doc_authority_structure_latest.json",
       "extension": ".json",
       "surface_type": "generated_status_artifact",
-      "size_bytes": 19838,
+      "size_bytes": 26177,
       "title": "doc_authority_structure_latest.json",
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "7fe0052d91e7802e41c34e8b2db9e1ee75291d38d28de11dba66a5104cef8875"
+      "content_sha256": "9a76f4a72626f7b559ce5e07bd81fd6aebc2d0b2dd72ddfb0f280f4cf5c4e767"
     },
     {
       "path": "docs/status/doc_authority_structure_latest.md",
       "basename": "doc_authority_structure_latest.md",
       "extension": ".md",
       "surface_type": "generated_status_artifact",
-      "size_bytes": 11016,
+      "size_bytes": 14745,
       "title": "Documentation Authority Structure Latest",
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "1647371963578f40f7d7f89e825fe901ebce554f88e97a7ffed226e8100c3ede"
+      "content_sha256": "f60036950b00a767e359aedccf0f3acb6c12890c0b887d720b51fe73f2c9d12d"
     },
     {
       "path": "docs/status/doc_convergence_inventory_latest.json",
       "basename": "doc_convergence_inventory_latest.json",
       "extension": ".json",
       "surface_type": "generated_status_artifact",
-      "size_bytes": 1110089,
+      "size_bytes": 1110769,
       "title": "doc_convergence_inventory_latest.json",
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "27e0df4b98074d5b94a13888c3a773f3a1bd022f44b0ca0040fb83142b25896a"
+      "content_sha256": "f13bd5b7555d092336d63dfab79e12c28cb2635ea2a951a345af1ce0fecaa5e0"
     },
     {
       "path": "docs/status/doc_convergence_inventory_latest.md",
@@ -5298,7 +5622,7 @@
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "49140a71bc8e2abe8ce4f732a5a8af38ca7d171f0794d3b62f911e02fb86ccc9"
+      "content_sha256": "d807679584c4869298cff308f657190a7523ca41641de16d9ffacd157969ad17"
     },
     {
       "path": "docs/status/dream_engine_wakeup_status_2026-03-09.md",
@@ -7926,7 +8250,7 @@
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "ae73ddd5c966faad4d958eb84f36d2fb5d0db0e64333ba29c96cb2732d4abec3"
+      "content_sha256": "4289ae766a0a9abf5cd7236141c3c0a63126566168dab3c3c6bef36510af5b8c"
     },
     {
       "path": "memory/BOOTSTRAP.md",
@@ -27109,12 +27433,12 @@
       "basename": "README.md",
       "extension": ".md",
       "surface_type": "root_entrypoint",
-      "size_bytes": 11909,
+      "size_bytes": 15821,
       "title": "Retrieval Keywords",
       "purpose": "public repository entrypoint for ToneSoul's architecture, governance posture, and practical onboarding.",
       "status": "",
-      "date_hint": "2026-03-22",
-      "content_sha256": "00b18a3f0387863c58d34ee7791c17399eeace3523e2a6fb0107900819a0a593"
+      "date_hint": "2026-03-29",
+      "content_sha256": "695cc05e1408a0b4c0d8149e0fec5cc60481617012b3fd3c354b2c97889fa2f1"
     },
     {
       "path": "README.zh-TW.md",
@@ -27733,24 +28057,24 @@
       "basename": "r_memory_packet_v1.example.json",
       "extension": ".json",
       "surface_type": "spec_doc",
-      "size_bytes": 18179,
+      "size_bytes": 19316,
       "title": "r_memory_packet_v1.example.json",
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "5410e93d289f9b1285dd5eeec17a035cc5e1ae1b2707a2d1d83cbddd934f1f98"
+      "content_sha256": "2ac34ada59bb1179f56b516d1d8c8990b62bbb1c91838c0754b24f5f86ca2146"
     },
     {
       "path": "spec/governance/r_memory_packet_v1.schema.json",
       "basename": "r_memory_packet_v1.schema.json",
       "extension": ".json",
       "surface_type": "spec_doc",
-      "size_bytes": 34880,
+      "size_bytes": 36786,
       "title": "r_memory_packet_v1.schema.json",
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "85b5c1b79fda660bb4ea13eb41ff8614e388fb819ec572413d7899070cf4c5df"
+      "content_sha256": "7a77268cf003877436d3e8a4f712d43326ea3dbefd2d3c83d6fee79b7e2ad316"
     },
     {
       "path": "spec/governance/role_catalog.yaml",
@@ -28021,12 +28345,12 @@
       "basename": "task.md",
       "extension": ".md",
       "surface_type": "root_entrypoint",
-      "size_bytes": 115225,
+      "size_bytes": 132661,
       "title": "Task",
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "2f1d86d09de578332ae4d39150aabee65c9d3fe26cf21c609022a4704e27daf8"
+      "content_sha256": "cdfe102566a27aa1e2738b50be0d492dfb0d2ba9fa1f27d99bf2d50f141c9c60"
     },
     {
       "path": "tests/fixtures/paradoxes/medical_suicide_paradox.json",
@@ -28161,7 +28485,7 @@
       "content_sha256": "2cee7ef4a180d9208eefe9a83fe3d22bbfb6d32cecb6f5c05880d57e75006343"
     }
   ],
-  "primary_status_line": "doc_convergence_ready | authored_files=2282 collisions=27 missing_purpose=145 missing_date=107",
-  "runtime_status_line": "entrypoints | doc_inventory=doc_convergence_inventory_latest.json largest_family=docs_law_engineering_mirror architecture_docs=34",
+  "primary_status_line": "doc_convergence_ready | authored_files=2309 collisions=27 missing_purpose=147 missing_date=107",
+  "runtime_status_line": "entrypoints | doc_inventory=doc_convergence_inventory_latest.json largest_family=docs_law_engineering_mirror architecture_docs=54",
   "artifact_policy_status_line": "doc_scope=authored_only | content_check=hash_plus_similarity generated_noise=excluded"
 }

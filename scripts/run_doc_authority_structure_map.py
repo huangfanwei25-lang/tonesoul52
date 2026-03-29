@@ -227,12 +227,26 @@ GROUPS = [
         ],
     },
     {
+        "id": "reality_alignment_and_render_boundaries",
+        "label": "Reality Alignment And Render Boundaries",
+        "description": "doc-reality aids that distinguish live entry surfaces from stale assumptions, separate file-layer truth from terminal noise, and keep directory counts reproducible",
+        "authority_role": "doc_reality_aid",
+        "use_when": "when entry routing, document counts, or encoding reports may have drifted from the current repo state and you need a measured baseline before repeating them",
+        "read_order": 17,
+        "files": [
+            "docs/architecture/TONESOUL_ENTRY_SURFACE_REALITY_BASELINE.md",
+            "docs/architecture/TONESOUL_DOC_METRIC_AND_COUNT_METHOD.md",
+            "docs/architecture/TONESOUL_RENDER_LAYER_AND_ENCODING_BOUNDARY_CONTRACT.md",
+            "docs/architecture/TONESOUL_DOC_DRIFT_AND_CONFLICT_REGISTER.md",
+        ],
+    },
+    {
         "id": "doc_governance",
         "label": "Documentation Governance",
         "description": "naming, zoning, and convergence planning surfaces",
         "authority_role": "doc_governance",
         "use_when": "when retrieval quality, metadata posture, or naming collisions are the problem",
-        "read_order": 17,
+        "read_order": 18,
         "files": [
             "docs/DOCS_INFORMATION_ARCHITECTURE_v1.md",
             "docs/DOCS_CLASSIFICATION_LEDGER_v1.md",
@@ -247,7 +261,7 @@ GROUPS = [
         "description": "ownership and divergence boundaries for duplicate-like surfaces",
         "authority_role": "boundary_contract",
         "use_when": "when two similar-looking lanes need explicit ownership or split-brain control",
-        "read_order": 18,
+        "read_order": 19,
         "files": [
             "docs/architecture/BASENAME_DIVERGENCE_DISTILLATION_MAP.md",
             "docs/architecture/PRIVATE_MEMORY_SHADOW_BOUNDARY_MAP.md",
@@ -261,7 +275,7 @@ GROUPS = [
         "description": "machine-readable current posture for convergence-related lanes",
         "authority_role": "generated_status",
         "use_when": "when current machine-readable posture matters more than prose explanation",
-        "read_order": 19,
+        "read_order": 20,
         "files": [
             "docs/status/doc_convergence_inventory_latest.json",
             "docs/status/basename_divergence_distillation_latest.json",
