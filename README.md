@@ -6,7 +6,7 @@
 > ToneSoul is an externalized cognitive architecture for AI governance, ethical memory systems, verifier-first agents, knowledge-graph retrieval, and adapter-ready semantic governance.
 
 > Purpose: public repository entrypoint for ToneSoul's architecture, governance posture, and practical onboarding.
-> Last Updated: 2026-03-29
+> Last Updated: 2026-03-30
 
 ---
 
@@ -112,12 +112,14 @@ User Input
 Response
 ```
 
+If you need one file that explains the whole stack and why each subsystem exists, open [docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md](docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md) before diving into narrower contracts.
+
 ## Choose Your Entry
 
 | Reader | Start Here | Why |
 |---|---|---|
-| Developer | [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md), [docs/README.md](docs/README.md), [docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md](docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md) | install, orient, then read the canonical system map |
-| Researcher | [docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md](docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md), [docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md](docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md), [docs/architecture/TONESOUL_COUNCIL_REALISM_AND_INDEPENDENCE_CONTRACT.md](docs/architecture/TONESOUL_COUNCIL_REALISM_AND_INDEPENDENCE_CONTRACT.md) | architecture, evidence posture, and council honesty |
+| Developer | [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md), [docs/README.md](docs/README.md), [docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md](docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md) | install, orient, then read one grounded whole-system map before drilling into contracts |
+| Researcher | [docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md](docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md), [docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md](docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md), [docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md](docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md) | whole-system rationale, canonical architecture, and evidence posture |
 | AI Agent | [AI_ONBOARDING.md](AI_ONBOARDING.md), [docs/AI_QUICKSTART.md](docs/AI_QUICKSTART.md), `python scripts/start_agent_session.py --agent <your-id>` | operational entry, packet-first session start, and bounded shared-memory posture |
 | Curious Human | [SOUL.md](SOUL.md), [LETTER_TO_AI.md](LETTER_TO_AI.md), [README.zh-TW.md](README.zh-TW.md) | identity layer, intent, and a more narrative introduction |
 
@@ -125,12 +127,13 @@ Response
 
 ### 1. Governance
 
-ToneSoul defines what is permitted before it optimizes what is persuasive. This is the constitutional layer, not a bag of prompts.
+ToneSoul defines what is permitted before it optimizes what is persuasive. This is the constitutional layer, not a bag of prompts. It is also where interaction posture becomes explicit: when to clarify, when to stop, and when to refuse smooth continuation on broken premises.
 
 Read first:
 - [AXIOMS.json](AXIOMS.json)
 - [docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md](docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md)
 - [docs/architecture/TONESOUL_TASK_TRACK_AND_READINESS_CONTRACT.md](docs/architecture/TONESOUL_TASK_TRACK_AND_READINESS_CONTRACT.md)
+- [docs/architecture/TONESOUL_MIRROR_RUPTURE_FAIL_STOP_AND_LOW_DRIFT_ANCHOR_CONTRACT.md](docs/architecture/TONESOUL_MIRROR_RUPTURE_FAIL_STOP_AND_LOW_DRIFT_ANCHOR_CONTRACT.md)
 
 ### 2. Council And Deliberation
 
@@ -186,6 +189,7 @@ If the distinction matters, open [docs/architecture/TONESOUL_EVIDENCE_LADDER_AND
 
 ### Canonical Architecture
 
+- [docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md](docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md)
 - [docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md](docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md)
 - [docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md](docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md)
 - [docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md](docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md)
@@ -194,6 +198,7 @@ If the distinction matters, open [docs/architecture/TONESOUL_EVIDENCE_LADDER_AND
 ### Governance, Safety, And Boundaries
 
 - [docs/architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md](docs/architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md)
+- [docs/architecture/TONESOUL_MIRROR_RUPTURE_FAIL_STOP_AND_LOW_DRIFT_ANCHOR_CONTRACT.md](docs/architecture/TONESOUL_MIRROR_RUPTURE_FAIL_STOP_AND_LOW_DRIFT_ANCHOR_CONTRACT.md)
 - [docs/architecture/TONESOUL_OBSERVABLE_SHELL_OPACITY_CONTRACT.md](docs/architecture/TONESOUL_OBSERVABLE_SHELL_OPACITY_CONTRACT.md)
 - [docs/architecture/TONESOUL_AXIOM_FALSIFICATION_MAP.md](docs/architecture/TONESOUL_AXIOM_FALSIFICATION_MAP.md)
 - [docs/7D_AUDIT_FRAMEWORK.md](docs/7D_AUDIT_FRAMEWORK.md)

@@ -48,6 +48,7 @@
 - Phase 715: tighten cross-surface receiver parity so packet, session-start, and diagnose stop drifting in how they describe council realism and continuity import posture
 - Phase 716: expose one bounded evidence/readout posture so later agents can see what is tested/runtime-present/document-backed without opening long evidence docs first
 - Phase 717: refresh the water-bucket snapshot and rotate away from prompt/readout work once the remaining generic baseline gaps are clearly closed
+- Phase 718: add one grounded whole-system guide and one control-plane posture contract so later readers can understand why the stack is split this way without reverse-engineering dozens of narrower files
 
 ## Water-Bucket Snapshot (2026-03-30)
 - Baseline reached:
@@ -55,6 +56,7 @@
   - subject snapshot + bounded subject refresh + working-style continuity readout
   - council dossier / descriptive confidence / suppression visibility / council-realism readout
   - README / authority-lane / evidence-lane / stale-source cleanup
+  - one grounded whole-system guide plus one bounded cold-audit / fail-stop / anchor posture contract
   - context-injection prompt adoption (`value_accumulator` and `self_commit`)
   - unified runtime context prompt framing
 - Current short board:
@@ -1386,3 +1388,9 @@
 - [ ] add regression coverage so future changes do not let one surface understate dissent, descriptive-only confidence, or continuity guardrails compared to the others
 - [ ] keep the work readout-only, without changing council runtime, packet authority, or import semantics
 **Success Criteria**: A later agent reading packet, session-start, or diagnose sees the same bounded story about realism and receiver posture instead of slightly different interpretations that drift apart over time.
+
+## Phase 718: Whole-System Explanation And Control-Plane Rationale (2026-03-30)
+- [x] write one grounded system-overview guide that explains what each load-bearing subsystem does, why it exists, what breaks without it, and what it is not
+- [x] formalize mirror rupture, fail-stop, and low-drift anchors as a control-plane discipline contract rather than new ontology or runtime law
+- [x] wire both surfaces into README, docs indexes, and the documentation authority structure so later readers can discover them before drowning in narrower contracts
+**Success Criteria**: A later human or AI reader can open one whole-system guide to understand ToneSoul's subsystem split and one control-plane contract to understand bounded cold-audit / fail-stop / anchor behavior, without mistaking either document for runtime code or canonical law by itself.

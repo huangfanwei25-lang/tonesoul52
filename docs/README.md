@@ -1,10 +1,7 @@
-# ToneSoul Documentation Index
+﻿# ToneSoul Documentation Index
 
 > Purpose: documentation entrypoint and guided index for ToneSoul architecture, status artifacts, and convergence surfaces.
-> Last Updated: 2026-03-29
-
-> 這是文檔的入口點。請從這裡開始閱讀。
-
+> Last Updated: 2026-03-30
 ---
 
 ## AI Reading Stack
@@ -14,6 +11,7 @@
 | **Operational Start** | `AI_QUICKSTART.md` | `operational` | first minute of a later agent session |
 | **Working Reference** | `AI_REFERENCE.md` | `operational` | term lookup, routing, red-line checks during work |
 | **Canonical Anchor** | see section below | `canonical` | before architecture or runtime claims |
+| **Whole-System Guide** | `architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md` | `deep_map` | when you need one grounded explanation of the whole stack and why the subsystems are separated |
 | **Deep Anatomy** | `narrative/TONESOUL_ANATOMY.md` | `deep_map` | before repo-wide refactor or whole-system explanation |
 | **Interpretive Lane** | `notes/TONESOUL_DEEP_READING_ANCHOR_2026-03-26.md`, `narrative/TONESOUL_CODEX_READING.md` | `interpretive` | when the map is navigable but the deeper load-bearing meaning still feels unclear |
 
@@ -36,6 +34,13 @@ Do not collapse these into one layer. Operational guides help an agent work; can
   - compact handoff for Codex's deeper cross-repo reading after runtime-adapter and documentation-convergence work
 - `narrative/TONESOUL_CODEX_READING.md`
   - Codex's longer interpretive reading of ToneSoul's load-bearing question, constitutional center, runtime narrow waist, anti-smuggling logic, and hidden temporal structure
+
+## Whole-System Guide
+
+- `architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md`
+  - one-pass explanation of what each load-bearing subsystem does, why it exists, what it prevents, and what it should not be confused with
+
+Open this when you need to explain ToneSoul as a whole without flattening governance, council, continuity, evidence, and safety into one vague "AI memory system."
 
 ## Retrieval Boundary
 
@@ -117,6 +122,8 @@ Treat these as subject-refresh boundary aids. They help later agents write or re
   - defines readiness states, task tracks, exploration depth, and claim/review requirements so later agents stop treating every task like a full-system refactor
 - `architecture/TONESOUL_PLAN_DELTA_CONTRACT.md`
   - defines when to keep a plan, append a bounded delta, fork a new phase, or stop and ask a human instead of silently rewriting `task.md`
+- `architecture/TONESOUL_MIRROR_RUPTURE_FAIL_STOP_AND_LOW_DRIFT_ANCHOR_CONTRACT.md`
+  - formalizes when ToneSoul should stop mirroring, refuse unsupported L3 filler, and return current reasoning to a validated anchor center instead of continuing on drifted premises
 - `plans/tonesoul_control_plane_followup_candidates_2026-03-28.md`
   - bounded implementation candidates for surfacing readiness, track hints, plan-delta telemetry, track-aware claim TTL, and exploration checkpoints
 
@@ -286,67 +293,59 @@ Treat these as entry-cleanup aids. They help later agents choose the right first
 
 Treat these as prompt-adoption aids. They help later agents avoid reopening finished waves and point them toward the current short board, but they do not outrank live prompt code or tests.
 
-## 🎯 快速開始
-
-1. [AI_ONBOARDING.md](../AI_ONBOARDING.md) — 給新 AI 的引導
-2. [terminology.md](terminology.md) — **核心術語定義**
-3. [core_concepts.md](core_concepts.md) — 核心概念說明
+## ? 敹恍?憪?
+1. [AI_ONBOARDING.md](../AI_ONBOARDING.md) ??蝯行 AI ??撠?2. [terminology.md](terminology.md) ??**?詨?銵?摰儔**
+3. [core_concepts.md](core_concepts.md) ???詨?璁艙隤芣?
 
 ---
 
 
-## 📚 文檔結構
+## ?? ??蝯?
 
-| 類別 | 檔案 | 說明 |
+| 憿 | 瑼? | 隤芣? |
 |------|------|------|
-| **入門** | `core_concepts.md` | 核心概念 |
-| **術語** | `terminology.md` | TSR, STREI, POAV 等定義 |
-| **白皮書** | `WHITEPAPER.md` | 完整技術白皮書 |
-| **FAQ** | `faq.md` | 常見問題 |
+| **?仿?** | `core_concepts.md` | ?詨?璁艙 |
+| **銵?** | `terminology.md` | TSR, STREI, POAV 蝑?蝢?|
+| **?賜??* | `WHITEPAPER.md` | 摰?銵?格 |
+| **FAQ** | `faq.md` | 撣貉??? |
 
 ---
 
 
-## 📂 子目錄
-
-### `/philosophy/` — 哲學層
-
-| 檔案 | 說明 |
+## ?? 摮??
+### `/philosophy/` ???脣飛撅?
+| 瑼? | 隤芣? |
 |------|------|
-| `axioms.md` | Axiom 系統詳解 |
-| `truth_vector_architecture.md` | 真理向量架構 |
-| `collective_consciousness.md` | 集體意識概念 |
-| `manifesto.md` | 項目宣言 |
+| `axioms.md` | Axiom 蝟餌絞閰唾圾 |
+| `truth_vector_architecture.md` | ?????嗆? |
+| `collective_consciousness.md` | ????璁艙 |
+| `manifesto.md` | ?摰?? |
 
-### `/engineering/` — 工程層
-
-| 檔案 | 說明 |
+### `/engineering/` ??撌亦?撅?
+| 瑼? | 隤芣? |
 |------|------|
-| `OVERVIEW.md` | 工程概覽 |
+| `OVERVIEW.md` | 撌亦?璁汗 |
 
-### `/governance/` — 治理層
-
-| 檔案 | 說明 |
+### `/governance/` ??瘝餌?撅?
+| 瑼? | 隤芣? |
 |------|------|
-| `STREI_OPERATIONAL_PROTOCOL.md` | STREI 操作協議 |
+| `STREI_OPERATIONAL_PROTOCOL.md` | STREI ???降 |
 
-### `/research/` — 研究與外部對照
-
-| 檔案 | 說明 |
+### `/research/` ???弦???典???
+| 瑼? | 隤芣? |
 |------|------|
-| `RESEARCH_CONTEXT_2.0.md` | 2.0 研究脈絡與演進背景 |
-| `experimental_design.md` | 指標驗證與實驗設計 |
-| `multi_agent_architecture_patterns.md` | OpenClaw 與主流框架對照、導入 CP 評估 |
-| `tonesoul_l7_l8_open_source_evidence_map_2026-03-22.md` | L7/L8 的開源框架、benchmark、與可採納邊界整理 |
+| `RESEARCH_CONTEXT_2.0.md` | 2.0 ?弦?窗???脰???|
+| `experimental_design.md` | ??撽??祕撽身閮?|
+| `multi_agent_architecture_patterns.md` | OpenClaw ?蜓瘚??嗅??扼???CP 閰摯 |
+| `tonesoul_l7_l8_open_source_evidence_map_2026-03-22.md` | L7/L8 ??皞??嗚enchmark???舀蝝????|
 
 ---
 
 
-## 🔗 相關文件
+## ?? ?賊??辣
 
-- [/spec/council_spec.md](../spec/council_spec.md) — 多人格會議系統規格
-- [/AXIOMS.json](../AXIOMS.json) — 核心法則 (JSON)
-- [/README.md](../README.md) — 項目入口
+- [/spec/council_spec.md](../spec/council_spec.md) ??憭犖?潭?霅啁頂蝯梯???- [/AXIOMS.json](../AXIOMS.json) ???詨?瘜? (JSON)
+- [/README.md](../README.md) ????亙
 
 ---
 

@@ -66,6 +66,7 @@ GROUPS = [
         "use_when": "before repo-wide refactors or whole-system explanations",
         "read_order": 4,
         "files": [
+            "docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md",
             "docs/narrative/TONESOUL_ANATOMY.md",
         ],
     },
@@ -145,6 +146,7 @@ GROUPS = [
         "files": [
             "docs/architecture/TONESOUL_TASK_TRACK_AND_READINESS_CONTRACT.md",
             "docs/architecture/TONESOUL_PLAN_DELTA_CONTRACT.md",
+            "docs/architecture/TONESOUL_MIRROR_RUPTURE_FAIL_STOP_AND_LOW_DRIFT_ANCHOR_CONTRACT.md",
             "docs/plans/tonesoul_control_plane_followup_candidates_2026-03-28.md",
         ],
     },

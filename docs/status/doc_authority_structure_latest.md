@@ -1,14 +1,14 @@
 # Documentation Authority Structure Latest
 
-- generated_at: 2026-03-29T15:22:27Z
-- primary_status_line: `doc_authority_structure | groups=22 tracked=78 metadata_complete=78 metadata_missing=0`
+- generated_at: 2026-03-29T17:44:11Z
+- primary_status_line: `doc_authority_structure | groups=22 tracked=80 metadata_complete=80 metadata_missing=0`
 - runtime_status_line: `doc_retrieval_order=entrypoint_to_operational_to_canonical_to_deep_map_to_interpretive_to_boundary_aids_to_control_plane | generated_status_lane=6`
 - artifact_policy_status_line: `structure_mode=retrieval_oriented | authority_roles=explicit | generated_status_preferred_for_current_state`
 
 ## Metrics
 - `group_count`: `22`
-- `tracked_file_count`: `78`
-- `metadata_complete_count`: `78`
+- `tracked_file_count`: `80`
+- `metadata_complete_count`: `80`
 - `metadata_missing_count`: `0`
 
 ## Groups
@@ -38,11 +38,12 @@
   - `docs/notes/TONESOUL_ARCHITECTURE_MEMORY_ANCHOR_2026-03-22.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/KNOWLEDGE_SURFACES_BOUNDARY_MAP.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md` exists=`true` purpose=`true` date=`true`
-- `Deep System Maps` tracked=`1` metadata_complete=`1`
+- `Deep System Maps` tracked=`2` metadata_complete=`2`
   - description: panoramic repository-wide maps that explain the whole system without becoming executable contracts
   - authority_role: deep_map
   - use_when: before repo-wide refactors or whole-system explanations
   - read_order: 4
+  - `docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md` exists=`true` purpose=`true` date=`true`
   - `docs/narrative/TONESOUL_ANATOMY.md` exists=`true` purpose=`true` date=`true`
 - `Interpretive Readings` tracked=`2` metadata_complete=`2`
   - description: grounded narrative readings that help later agents inherit load-bearing meaning without outranking canonical contracts
@@ -85,13 +86,14 @@
   - read_order: 9
   - `docs/architecture/TONESOUL_SUBJECT_REFRESH_BOUNDARY_CONTRACT.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/TONESOUL_SUBJECT_SNAPSHOT_FIELD_LANES.md` exists=`true` purpose=`true` date=`true`
-- `Control Plane Discipline` tracked=`3` metadata_complete=`3`
+- `Control Plane Discipline` tracked=`4` metadata_complete=`4`
   - description: readiness, task-track, and plan-delta discipline surfaces for coordinating work before and during execution
   - authority_role: discipline_contract
   - use_when: when the question is whether a task is ready, what track it belongs to, or how plan changes should be recorded
   - read_order: 10
   - `docs/architecture/TONESOUL_TASK_TRACK_AND_READINESS_CONTRACT.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/TONESOUL_PLAN_DELTA_CONTRACT.md` exists=`true` purpose=`true` date=`true`
+  - `docs/architecture/TONESOUL_MIRROR_RUPTURE_FAIL_STOP_AND_LOW_DRIFT_ANCHOR_CONTRACT.md` exists=`true` purpose=`true` date=`true`
   - `docs/plans/tonesoul_control_plane_followup_candidates_2026-03-28.md` exists=`true` purpose=`true` date=`true`
 - `Observable-Shell And Axiom Boundaries` tracked=`3` metadata_complete=`3`
   - description: boundary aids for epistemic honesty about opacity and for challenging axiom claims without silently rewriting the constitution

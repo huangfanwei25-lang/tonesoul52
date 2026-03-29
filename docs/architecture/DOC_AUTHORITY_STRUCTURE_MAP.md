@@ -2,7 +2,7 @@
 
 > Purpose: define the retrieval-oriented structure of ToneSoul's documentation so later agents can tell entrypoints, canonical anchors, governance contracts, and generated status surfaces apart.
 > Status: active documentation authority map for convergence cleanup.
-> Last Updated: 2026-03-29
+> Last Updated: 2026-03-30
 
 ---
 
@@ -32,6 +32,7 @@ Open these when you are orienting to the repo:
 
 Open these before making architecture claims:
 
+- `docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md`
 - `docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md`
 - `docs/notes/TONESOUL_ARCHITECTURE_MEMORY_ANCHOR_2026-03-22.md`
 - `docs/architecture/KNOWLEDGE_SURFACES_BOUNDARY_MAP.md`
@@ -188,18 +189,17 @@ Open these when the question is:
 - `docs/architecture/TONESOUL_PROMPT_SURFACE_TOPOLOGY_MAP.md`
 - `docs/plans/tonesoul_prompt_adoption_followup_candidates_2026-03-29.md`
 
-### 16. Reality alignment and render boundary lane
+### 16. Whole-system explanation and control-plane posture lane
 
 Open these when the question is:
 
-- whether an entrypoint recommendation still matches the live repo,
-- whether a count claim is measured or hand-wavy,
-- whether `??` is file corruption or only terminal-display noise.
+- what the whole stack is and why the subsystems are separated,
+- when the system should stop mirroring and switch to colder audit posture,
+- when L1/L2 support is too weak and the right move is fail-stop instead of smooth filler,
+- when current reasoning should be pulled back toward a validated anchor center.
 
-- `docs/architecture/TONESOUL_ENTRY_SURFACE_REALITY_BASELINE.md`
-- `docs/architecture/TONESOUL_DOC_METRIC_AND_COUNT_METHOD.md`
-- `docs/architecture/TONESOUL_RENDER_LAYER_AND_ENCODING_BOUNDARY_CONTRACT.md`
-- `docs/architecture/TONESOUL_DOC_DRIFT_AND_CONFLICT_REGISTER.md`
+- `docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md`
+- `docs/architecture/TONESOUL_MIRROR_RUPTURE_FAIL_STOP_AND_LOW_DRIFT_ANCHOR_CONTRACT.md`
 
 ### 17. Entry simplification and lineage routing lane
 
@@ -219,19 +219,20 @@ Open these when the question is:
 
 1. Start in the entrypoint lane.
 2. Move to the canonical architecture lane when making system claims.
-3. Move to governance/execution when implementing or verifying behavior.
-4. Move to the observable-shell and axiom challenge lane when overclaim risk or constitutional challengeability is the issue.
-5. Move to the evidence and verifiability lane when a claim sounds load-bearing but you need to know whether tests, schemas, runtime presence, or only prose actually support it.
-6. Move to the council deliberation discipline lane when replayable verdict structure or deliberation depth is the issue.
-7. Move to the context continuity adoption lane when the question is no longer "how do I hand off now" but "what should continuity mean in ToneSoul."
-8. Move to the continuity import and receiver lane when the question is no longer only "what should continue" but "what may the receiver safely import or let decay."
-9. Move to the council realism and calibration lane when a verdict sounds stronger than its real independence or confidence backing.
-10. Move to the prompt discipline skeleton lane when the question is no longer "what should transfer" but "how should the prompt be built."
-11. Move to the prompt surface topology and adoption lane when the question is which prompt families are already aligned, which are the next short board, or which should remain specialized.
-12. Move to the reality alignment and render boundary lane when doc counts, audience routing, or encoding alarms may be stale, display-dependent, or loosely measured.
-13. Move to the entry simplification and lineage routing lane when the problem is how a reader should enter, what should stay visible as lineage, or which cleanup moves are safe.
-14. Move to documentation governance and convergence contracts when restructuring docs.
-15. Prefer generated status surfaces over stale prose when checking current posture.
+3. Move to the whole-system explanation and control-plane posture lane when the architecture map is still too abstract and you need subsystem rationale or bounded cold-audit / fail-stop / anchor discipline.
+4. Move to governance/execution when implementing or verifying behavior.
+5. Move to the observable-shell and axiom challenge lane when overclaim risk or constitutional challengeability is the issue.
+6. Move to the evidence and verifiability lane when a claim sounds load-bearing but you need to know whether tests, schemas, runtime presence, or only prose actually support it.
+7. Move to the council deliberation discipline lane when replayable verdict structure or deliberation depth is the issue.
+8. Move to the context continuity adoption lane when the question is no longer "how do I hand off now" but "what should continuity mean in ToneSoul."
+9. Move to the continuity import and receiver lane when the question is no longer only "what should continue" but "what may the receiver safely import or let decay."
+10. Move to the council realism and calibration lane when a verdict sounds stronger than its real independence or confidence backing.
+11. Move to the prompt discipline skeleton lane when the question is no longer "what should transfer" but "how should the prompt be built."
+12. Move to the prompt surface topology and adoption lane when the question is which prompt families are already aligned, which are the next short board, or which should remain specialized.
+13. Move to the reality alignment and render boundary lane when doc counts, audience routing, or encoding alarms may be stale, display-dependent, or loosely measured.
+14. Move to the entry simplification and lineage routing lane when the problem is how a reader should enter, what should stay visible as lineage, or which cleanup moves are safe.
+15. Move to documentation governance and convergence contracts when restructuring docs.
+16. Prefer generated status surfaces over stale prose when checking current posture.
 
 ## Current Rule
 
