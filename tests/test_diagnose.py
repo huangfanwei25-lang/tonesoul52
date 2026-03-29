@@ -439,6 +439,11 @@ def test_full_diagnostic_is_cp950_safe_and_includes_shared_runtime(monkeypatch) 
     assert "completion_rule=Before ending a session" in report
     assert "subject_anchor:" in report
     assert "working_style_anchor:" in report
+    assert "working_style_playbook:" in report
+    assert "Preference: prefer packet before broad repo scan" in report
+    assert "Routine: leave compaction before release" in report
+    assert "apply=Apply these items as bounded operating habits" in report
+    assert "guard=Do not promote this playbook" in report
     assert "receiver_posture=advisory_apply_not_promote" in report
     assert "routing_summary:" in report
     assert "subject_refresh:" in report

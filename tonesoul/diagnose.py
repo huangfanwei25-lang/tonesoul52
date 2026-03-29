@@ -14,6 +14,8 @@ import sys
 from datetime import datetime, timezone
 from typing import Any
 
+from tonesoul.working_style import build_working_style_playbook
+
 
 def _utc_now_trimmed() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
@@ -387,6 +389,20 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
             receiver_posture = str(working_style_anchor.get("receiver_posture", "")).strip()
             if receiver_posture:
                 lines.append(f"    receiver_posture={receiver_posture}")
+            playbook = build_working_style_playbook(working_style_anchor)
+            if playbook.get("present"):
+                lines.append("  working_style_playbook:")
+                playbook_summary = str(playbook.get("summary_text", "")).strip()
+                if playbook_summary:
+                    lines.append(f"    summary={_clip(playbook_summary)}")
+                for item in list(playbook.get("checklist") or [])[:4]:
+                    lines.append(f"    - {_clip(item)}")
+                application_rule = str(playbook.get("application_rule", "")).strip()
+                if application_rule:
+                    lines.append(f"    apply={_clip(application_rule)}")
+                non_promotion_rule = str(playbook.get("non_promotion_rule", "")).strip()
+                if non_promotion_rule:
+                    lines.append(f"    guard={_clip(non_promotion_rule)}")
         routing_summary = project_memory_summary.get("routing_summary") or {}
         if routing_summary:
             lines.append("  routing_summary:")

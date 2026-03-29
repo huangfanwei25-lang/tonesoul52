@@ -706,7 +706,15 @@ def test_subject_snapshots_surface_durable_subject_anchor(tmp_path: Path) -> Non
         in packet["operator_guidance"]["current_reminders"]
     )
     assert (
-        "A working-style anchor is visible; reuse its decision preferences and verified routines before defaulting to model-native habits."
+        "A working-style playbook is visible; apply it as advisory workflow, not as durable identity or policy."
+        in packet["operator_guidance"]["current_reminders"]
+    )
+    assert (
+        "Working-style: Preference: prefer packet before broad repo scan"
+        in packet["operator_guidance"]["current_reminders"]
+    )
+    assert (
+        "Working-style: Routine: end sessions with checkpoint or compaction before release"
         in packet["operator_guidance"]["current_reminders"]
     )
     assert (

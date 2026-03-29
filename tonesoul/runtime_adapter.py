@@ -1891,9 +1891,14 @@ def _build_operator_guidance(
 
     working_style_anchor = project_memory_summary.get("working_style_anchor") or {}
     if working_style_anchor:
+        from tonesoul.working_style import build_working_style_playbook
+
+        playbook = build_working_style_playbook(working_style_anchor)
         reminders.append(
-            "A working-style anchor is visible; reuse its decision preferences and verified routines before defaulting to model-native habits."
+            "A working-style playbook is visible; apply it as advisory workflow, not as durable identity or policy."
         )
+        for item in list(playbook.get("checklist") or [])[:2]:
+            reminders.append(f"Working-style: {item}")
 
     subject_refresh = project_memory_summary.get("subject_refresh") or {}
     refresh_status = str(subject_refresh.get("status", "")).strip()

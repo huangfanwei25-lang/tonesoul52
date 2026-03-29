@@ -11,6 +11,8 @@ from contextlib import redirect_stdout
 from datetime import datetime, timezone
 from pathlib import Path
 
+from tonesoul.working_style import build_working_style_playbook
+
 
 def _ensure_repo_root_on_path() -> Path:
     repo_root = Path(__file__).resolve().parents[1]
@@ -177,55 +179,6 @@ def _latest_council_dossier_snapshot(*, latest_compaction: dict, latest_trace: d
     if coverage_posture:
         snapshot["coverage_posture"] = coverage_posture
     return snapshot
-
-
-def _build_working_style_playbook(anchor: dict) -> dict:
-    if not anchor:
-        return {
-            "present": False,
-            "summary_text": "",
-            "checklist": [],
-            "application_rule": (
-                "No shared working-style anchor is visible; default to repo-level prompt discipline and current task constraints."
-            ),
-            "non_promotion_rule": (
-                "Without a visible working-style anchor, do not infer habits into durable identity or governance truth."
-            ),
-        }
-
-    checklist: list[str] = []
-    for preference in list(anchor.get("decision_preferences") or [])[:2]:
-        text = str(preference or "").strip()
-        if text:
-            checklist.append(f"Preference: {text}")
-    for routine in list(anchor.get("verified_routines") or [])[:2]:
-        text = str(routine or "").strip()
-        if text:
-            checklist.append(f"Routine: {text}")
-    for prompt_default in list(anchor.get("prompt_defaults") or [])[:2]:
-        text = str(prompt_default or "").strip()
-        if text:
-            checklist.append(f"Prompt default: {text}")
-
-    render_caveat = str(anchor.get("render_caveat", "")).strip()
-    if render_caveat:
-        checklist.append(f"Render caveat: {render_caveat}")
-
-    summary_text = str(anchor.get("summary", "")).strip()
-    if not summary_text and checklist:
-        summary_text = " | ".join(checklist[:2])
-
-    return {
-        "present": True,
-        "summary_text": summary_text,
-        "checklist": checklist,
-        "application_rule": (
-            "Apply these items as bounded operating habits for scan order, evidence handling, and prompt shape."
-        ),
-        "non_promotion_rule": (
-            "Do not promote this playbook into vows, canonical rules, or durable identity without fresh evidence and explicit review."
-        ),
-    }
 
 
 def _build_readiness(*, agent_id: str, packet: dict, claims: list[dict]) -> dict:
@@ -573,7 +526,7 @@ def main() -> None:
 
     claims = _quiet_call(list_active_claims, store=store)
     readiness = _build_readiness(agent_id=agent_id, packet=packet, claims=claims)
-    working_style_playbook = _build_working_style_playbook(
+    working_style_playbook = build_working_style_playbook(
         ((packet.get("project_memory_summary") or {}).get("working_style_anchor") or {})
     )
     payload = {

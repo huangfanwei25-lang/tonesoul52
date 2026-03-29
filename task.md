@@ -61,6 +61,12 @@
 - [ ] Use the ranked topology to choose one local implementation wave and one deferred wave
 **Success Criteria**: ToneSoul has a concrete ranked list of the next working-style consumers, so future adoption follows topology and frequency rather than intuition.
 
+## Phase 695: Working-Style Adoption Wave 1 (2026-03-29)
+- [x] Move working-style playbook generation into a shared ToneSoul helper so session-start, diagnose, and future readouts stay aligned
+- [x] Teach `operator_guidance` to expose the first concrete working-style checklist items instead of only a generic anchor reminder
+- [x] Teach `diagnose` to render a concise working-style playbook block so later agents can act on shared habits without reconstructing them manually
+**Success Criteria**: A later agent reading packet guidance or diagnose output can see a concrete, bounded working-style checklist and apply it immediately, while the same playbook shape stays aligned with session-start output.
+
 ## Phase 679: Continuity Freshness And Import Posture (2026-03-29)
 - [x] Add bounded `freshness_hours` to the packet continuity surfaces that later agents actually inherit at session start
 - [x] Add a machine-readable `import_posture` section to `start_agent_session.py` so agents can distinguish directly importable posture/claims from advisory compactions, snapshots, and dossiers
