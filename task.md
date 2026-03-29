@@ -85,6 +85,12 @@
 - [x] add regression coverage for no-anchor, partial continuity, and direct CLI session-start cases so the validation survives real entry flows
 **Success Criteria**: A fresh agent opening the session-start bundle can see whether shared working-style continuity is sufficient, cautionary, or insufficient, based on visible surfaces rather than mythology about shared minds.
 
+## Phase 699: Dream Engine Prompt Discipline Adoption (2026-03-29)
+- [x] adopt bounded prompt-discipline structure in `DreamEngine._reflection_prompt()` so offline reflection follows the same goal / P0-P2 / evidence / recovery pattern as other governance-facing prompt surfaces
+- [x] preserve the existing dream-cycle control flow and 2-sentence output contract instead of widening the reflection surface
+- [x] add regression coverage for replay-safe evidence discipline so Dream Engine reflections do not quietly invent hidden governance support
+**Success Criteria**: Dream Engine reflections keep their existing two-sentence shape while gaining explicit bounded evidence and recovery rules, making offline reflection more consistent with the shared ToneSoul prompt discipline.
+
 ## Phase 679: Continuity Freshness And Import Posture (2026-03-29)
 - [x] Add bounded `freshness_hours` to the packet continuity surfaces that later agents actually inherit at session start
 - [x] Add a machine-readable `import_posture` section to `start_agent_session.py` so agents can distinguish directly importable posture/claims from advisory compactions, snapshots, and dossiers

@@ -78,6 +78,56 @@ def dream_engine_with_mocks(
 class TestDreamEngineStaleRuleIntegration:
     """Test DreamEngine integration with stale rule verification."""
 
+    def test_reflection_prompt_includes_bounded_prompt_discipline(
+        self,
+        dream_engine_with_mocks,
+    ):
+        prompt = dream_engine_with_mocks._reflection_prompt(
+            payload={
+                "topic": "memory drift",
+                "summary": "Recent handoff feels thinner than expected.",
+                "tags": ["continuity", "handoff"],
+            },
+            related_memories=[
+                {"title": "Old continuity repair"},
+                {"title": "Shared working-style anchor"},
+            ],
+            crystal_rules=[
+                "Preserve continuity without promoting advisory memory into canon.",
+                "Prefer bounded review when evidence is thin.",
+            ],
+            friction_score=0.42,
+            council_reason="Review before promoting stale handoff guidance.",
+            llm_backend="mock-backend",
+        )
+
+        assert "Goal function:" in prompt
+        assert "Priority rules:" in prompt
+        assert "- P0:" in prompt
+        assert "- P1:" in prompt
+        assert "- P2:" in prompt
+        assert "Evidence discipline:" in prompt
+        assert "Recovery instructions:" in prompt
+        assert "Output spec:" in prompt
+        assert "Exactly 2 concise sentences" in prompt
+
+    def test_reflection_prompt_warns_against_invented_governance_support(
+        self,
+        dream_engine_with_mocks,
+    ):
+        prompt = dream_engine_with_mocks._reflection_prompt(
+            payload={"topic": "stale rule", "summary": "A rule may no longer hold.", "tags": []},
+            related_memories=[],
+            crystal_rules=["Outdated heuristics need re-verification."],
+            friction_score=0.15,
+            council_reason="Seek evidence before changing governance posture.",
+            llm_backend=None,
+        )
+
+        assert "Do not invent hidden memories" in prompt
+        assert "If the evidence is thin or conflicting, say so directly" in prompt
+        assert "smallest bounded review or follow-up step" in prompt
+
     def test_run_cycle_generates_verification_tasks(
         self,
         dream_engine_with_mocks,

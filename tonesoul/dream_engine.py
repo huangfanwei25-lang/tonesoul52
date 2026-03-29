@@ -899,9 +899,35 @@ class DreamEngine:
         llm_backend: Optional[str],
     ) -> str:
         related_titles = [str(item.get("title") or "") for item in related_memories]
+        evidence_lines = [
+            "Treat the stimulus, related memory titles, durable rules, governance friction, and council recommendation below as the only evidence.",
+            "Do not invent hidden memories, unseen rules, or extra governance facts that are not listed here.",
+            "Keep the reflection replay-safe: describe the observed collision and next governance move without narrating hidden chain-of-thought.",
+        ]
+        recovery_lines = [
+            "If the evidence is thin or conflicting, say so directly instead of forcing a dramatic collision.",
+            "If no safe governance move is strongly supported, recommend the smallest bounded review or follow-up step.",
+            "Keep the final output to exactly 2 concise sentences.",
+        ]
         prompt_lines = [
             "You are ToneSoul's offline Dream Engine.",
             "Review one environmental stimulus against recalled memory and durable rules.",
+            "",
+            "Goal function:",
+            "- Produce a replay-safe 2-sentence reflection that names the dream collision and the next bounded governance move.",
+            "",
+            "Priority rules:",
+            "- P0: Do not fabricate memories, rules, evidence, or governance conclusions beyond the provided inputs.",
+            "- P1: Keep the reflection grounded in the listed stimulus, memory titles, durable rules, friction, and council signal.",
+            "- P2: Preserve compression and tone only after P0 and P1 are satisfied.",
+            "",
+            "Evidence discipline:",
+            *[f"- {item}" for item in evidence_lines],
+            "",
+            "Recovery instructions:",
+            *[f"- {item}" for item in recovery_lines],
+            "",
+            "Available evidence:",
             f"Backend: {llm_backend or 'none'}",
             f"Stimulus topic: {payload.get('topic') or ''}",
             f"Stimulus summary: {payload.get('summary') or ''}",
@@ -912,7 +938,11 @@ class DreamEngine:
             *[f"- {title}" for title in related_titles[:5]],
             "Durable rules:",
             *[f"- {rule}" for rule in crystal_rules[:5]],
-            "Write 2 concise sentences describing the dream collision and the next governance move.",
+            "",
+            "Output spec:",
+            "- Exactly 2 concise sentences",
+            "- Sentence 1: the collision between stimulus, recalled memory, and durable rules",
+            "- Sentence 2: the next bounded governance move",
         ]
         return "\n".join(prompt_lines)
 
