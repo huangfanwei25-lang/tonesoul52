@@ -35,6 +35,43 @@ def _parse_iso(value: str) -> Optional[datetime]:
     return dt.astimezone(timezone.utc)
 
 
+def _build_verification_challenge(
+    *,
+    rule_text: str,
+    freshness_score: float,
+    decay_percentage: float,
+    source_pattern: Optional[str],
+) -> str:
+    context_hint = (
+        f"Context hint: {source_pattern}."
+        if str(source_pattern or "").strip()
+        else "Context hint: none recorded."
+    )
+    if freshness_score < 0.15:
+        focus_line = (
+            "Focus: find EVIDENCE that re-confirms this rule in recent observable contexts, "
+            "or find a COUNTER-EXAMPLE showing it has become invalid."
+        )
+    else:
+        focus_line = "Focus: find a recent case that validates or refutes it."
+
+    return "\n".join(
+        [
+            "Goal function: determine whether this stale rule still holds in recent observable contexts before keeping or decomissioning it.",
+            "Priority rules:",
+            "- P0: do not re-confirm the rule without recent evidence and do not invent support that is not actually present.",
+            "- P1: prefer the strongest counter-example or supporting case over generic intuition or legacy habit.",
+            "- P2: if the pattern appears conditional or time-bounded, name that boundary instead of overstating the rule.",
+            f"Rule under review: {rule_text!r}.",
+            f"Freshness score: {freshness_score:.2f} (decayed {decay_percentage}%).",
+            context_hint,
+            focus_line,
+            "Recovery instructions: if evidence is thin, mixed, or missing, mark the result inconclusive and name the smallest bounded next verification step.",
+            "Output expectation: summarize the best supporting evidence, the best contradicting evidence, and whether the rule should be re-confirmed, decomissioned, or left inconclusive.",
+        ]
+    )
+
+
 @dataclass
 class VerificationQuery:
     """A structured query prompt for verifying a stale rule."""
@@ -75,21 +112,22 @@ class VerificationQuery:
 
         # Generate challenge based on decay severity
         if freshness_score < 0.15:
-            challenge = (
-                f"This rule has decayed by {decay_percentage}% (score: {freshness_score:.2f}). "
-                f"Rule: '{rule_text}'. "
-                f"Find EVIDENCE to either re-confirm this rule holds in recent contexts, "
-                f"or find a COUNTER-EXAMPLE showing it has become invalid."
+            challenge = _build_verification_challenge(
+                rule_text=rule_text,
+                freshness_score=freshness_score,
+                decay_percentage=decay_percentage,
+                source_pattern=source_pattern,
             )
             evidence_types = ["counter_example", "supporting_case", "temporal_exception"]
             decomission_hint = (
                 "If no supporting evidence found in 3 attempts, consider decomissioning."
             )
         else:
-            challenge = (
-                f"This rule is aging (score: {freshness_score:.2f}). "
-                f"Rule: '{rule_text}'. "
-                f"Does this still hold? Find a recent case that validates or refutes it."
+            challenge = _build_verification_challenge(
+                rule_text=rule_text,
+                freshness_score=freshness_score,
+                decay_percentage=decay_percentage,
+                source_pattern=source_pattern,
             )
             evidence_types = ["supporting_case", "research_update", "recent_pattern"]
             decomission_hint = None

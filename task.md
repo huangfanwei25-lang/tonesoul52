@@ -103,6 +103,12 @@
 - [x] add regression coverage for quick-change, feature-track, system-track, and blocked handoff cases so mode guidance stays machine-readable
 **Success Criteria**: A later agent opening the session-start bundle can see a clear suggested deliberation depth, human-required flag, and blocked-state override note that follow the Adaptive Deliberation Mode Contract without silently changing runtime behavior.
 
+## Phase 702: Stale Rule Verification Prompt Discipline (2026-03-29)
+- [x] reshape `VerificationQuery.for_stale_rule()` into a bounded verification prompt with explicit goal function, priority rules, recovery instructions, and output expectation
+- [x] keep the existing evidence types / confidence thresholds / task lifecycle intact so this remains a prompt-only adoption step
+- [x] add regression coverage for very-stale, moderately-stale, and source-pattern context cases
+**Success Criteria**: Stale rule verification tasks keep their existing scheduling behavior while the generated verification challenge becomes harder to misread as vague intuition and easier for later agents or models to execute consistently.
+
 ## Phase 679: Continuity Freshness And Import Posture (2026-03-29)
 - [x] Add bounded `freshness_hours` to the packet continuity surfaces that later agents actually inherit at session start
 - [x] Add a machine-readable `import_posture` section to `start_agent_session.py` so agents can distinguish directly importable posture/claims from advisory compactions, snapshots, and dossiers

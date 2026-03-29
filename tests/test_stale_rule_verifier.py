@@ -99,6 +99,9 @@ class TestVerificationQuery:
         )
         assert vq.rule_text == "Old rule text"
         assert "EVIDENCE" in vq.challenge.upper()
+        assert "Goal function:" in vq.challenge
+        assert "- P0:" in vq.challenge
+        assert "Recovery instructions:" in vq.challenge
         assert "counter_example" in vq.evidence_types
         assert vq.confidence_threshold == 0.75
         assert vq.decomission_reason is not None
@@ -111,8 +114,19 @@ class TestVerificationQuery:
         )
         assert vq.rule_text == "Moderately old rule"
         assert "recent case" in vq.challenge.lower()
+        assert "Output expectation:" in vq.challenge
+        assert "inconclusive" in vq.challenge.lower()
         assert "supporting_case" in vq.evidence_types
         assert vq.confidence_threshold == 0.60
+
+    def test_for_stale_rule_includes_source_pattern_context_hint(self):
+        """Test source pattern is preserved as bounded context instead of hidden assumption."""
+        vq = VerificationQuery.for_stale_rule(
+            rule_text="Rule with source",
+            freshness_score=0.22,
+            source_pattern="runtime_observability",
+        )
+        assert "Context hint: runtime_observability." in vq.challenge
 
     def test_verification_query_to_dict(self):
         """Test serialization of VerificationQuery."""
