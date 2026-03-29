@@ -22,6 +22,7 @@
 - Phase 682: restructure the public README into a guided entrypoint so humans and AI stop facing an undifferentiated architecture link wall
 - Phase 683: run a Claude-owned docs mega-program for audience routing, historical-surface mapping, and mojibake hazard registration without colliding with Codex's entrypoint rewrites
 - Phase 684: surface descriptive council confidence decomposition so later agents stop reading one agreement number as if it were calibrated accuracy
+- Phase 685: block recycled carry-forward from silently refreshing subject identity when a new compaction repeats the same handoff without new evidence
 
 ## Phase 679: Continuity Freshness And Import Posture (2026-03-29)
 - [x] Add bounded `freshness_hours` to the packet continuity surfaces that later agents actually inherit at session start
@@ -58,6 +59,12 @@
 - [x] Carry the new decomposition through runtime normalization and packet summaries without changing council verdict behavior or pretending the result is calibrated
 - [x] Update schema/example and regression tests so later agents can consume the new surface safely
 **Success Criteria**: Later agents can inspect a council dossier or packet summary and distinguish descriptive agreement from coverage, evidence density, grounding posture, and whether dissent was actually survived, without mistaking any of it for outcome-backed calibration.
+
+## Phase 685: Recycled Carry-Forward Promotion Guard (2026-03-29)
+- [x] Detect when the newest compaction repeats the same `carry_forward` as an earlier compaction without introducing any new `evidence_refs`
+- [x] Surface that condition as a `subject_refresh` promotion hazard instead of silently treating the repeated handoff as fresh compaction-backed evidence
+- [x] Lock the guard with runtime and session-end regression tests so repeated reminders cannot refresh `active_threads` by accident
+**Success Criteria**: A repeated compaction that only replays an old carry-forward memo, without any new evidence, stops qualifying as low-risk backing for `active_threads` refresh and is visibly rejected by both packet surfaces and session-end refresh attempts.
 
 ## Phase 666: Bounded Council Dossier Carry Surfaces (2026-03-28)
 - [x] Let `SessionTrace` store an optional compact council dossier input while keeping the canonical trace schema backward-compatible

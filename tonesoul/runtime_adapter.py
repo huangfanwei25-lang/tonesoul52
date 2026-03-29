@@ -769,6 +769,42 @@ def _clean_string_list(values: Optional[List[Any]]) -> List[str]:
     return cleaned
 
 
+def _find_recycled_carry_forward_hazard(
+    *,
+    newer_compactions: List[Dict[str, Any]],
+    all_compactions: List[Dict[str, Any]],
+) -> str:
+    if not newer_compactions:
+        return ""
+
+    latest = newer_compactions[0]
+    latest_carry = _clean_string_list(latest.get("carry_forward") or [])
+    if not latest_carry:
+        return ""
+
+    latest_carry_key = tuple(latest_carry)
+    latest_evidence = set(_clean_string_list(latest.get("evidence_refs") or []))
+    latest_id = str(latest.get("compaction_id", "")).strip()
+
+    for previous in all_compactions[1:]:
+        previous_id = str(previous.get("compaction_id", "")).strip()
+        if previous_id and latest_id and previous_id == latest_id:
+            continue
+
+        previous_carry = _clean_string_list(previous.get("carry_forward") or [])
+        if tuple(previous_carry) != latest_carry_key:
+            continue
+
+        previous_evidence = set(_clean_string_list(previous.get("evidence_refs") or []))
+        if latest_evidence.issubset(previous_evidence):
+            return (
+                "Do not promote recycled carry_forward into durable identity when the latest "
+                "compaction repeats the same handoff without any new evidence."
+            )
+
+    return ""
+
+
 def _normalize_council_dossier(payload: Optional[Dict[str, Any]]) -> Dict[str, Any]:
     if not isinstance(payload, dict):
         return {}
@@ -1507,6 +1543,12 @@ def _build_subject_refresh_summary(
         promotion_hazards.append(
             "Checkpoint-only evidence is too weak for durable identity promotion without compaction-backed confirmation."
         )
+    recycled_carry_forward_hazard = _find_recycled_carry_forward_hazard(
+        newer_compactions=newer_compactions,
+        all_compactions=compactions,
+    )
+    if recycled_carry_forward_hazard:
+        promotion_hazards.append(recycled_carry_forward_hazard)
     if not latest_snapshot and not compactions:
         promotion_hazards.append(
             "Do not infer durable identity from traces alone when no subject snapshot or compaction-backed evidence exists yet."

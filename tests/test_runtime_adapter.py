@@ -606,7 +606,10 @@ def test_subject_snapshots_surface_durable_subject_anchor(tmp_path: Path) -> Non
         gov_path=tmp_path / "governance_state.json",
         traces_path=tmp_path / "session_traces.jsonl",
         zones_path=tmp_path / "zone_registry.json",
+        checkpoints_path=tmp_path / ".aegis" / "checkpoints.json",
+        compactions_path=tmp_path / ".aegis" / "compacted.json",
         subject_snapshots_path=tmp_path / "subject_snapshots.json",
+        routing_events_path=tmp_path / ".aegis" / "routing_events.json",
     )
 
     snapshot = write_subject_snapshot(
@@ -849,6 +852,87 @@ def test_apply_subject_refresh_rejects_when_promotion_hazards_are_present(
         "Do not promote active claims into durable identity"
         in result["subject_refresh"]["promotion_hazards"][0]
     )
+
+
+def test_apply_subject_refresh_rejects_recycled_carry_forward_without_new_evidence(
+    tmp_path: Path,
+) -> None:
+    from tonesoul.backends.file_store import FileStore
+
+    store = FileStore(
+        gov_path=tmp_path / "governance_state.json",
+        traces_path=tmp_path / "session_traces.jsonl",
+        zones_path=tmp_path / "zone_registry.json",
+        claims_path=tmp_path / ".aegis" / "task_claims.json",
+        compactions_path=tmp_path / ".aegis" / "compacted.json",
+        subject_snapshots_path=tmp_path / ".aegis" / "subject_snapshots.json",
+        routing_events_path=tmp_path / ".aegis" / "routing_events.json",
+    )
+
+    write_subject_snapshot(
+        agent_id="codex",
+        session_id="sess-44",
+        summary="Operate as a packet-first runtime steward with explicit boundaries.",
+        stable_vows=["never smuggle theory into runtime truth"],
+        durable_boundaries=["do not edit protected human-managed files"],
+        decision_preferences=["prefer packet before broad repo scan"],
+        verified_routines=["end sessions with checkpoint or compaction before release"],
+        active_threads=["subject snapshot hardening"],
+        store=store,
+    )
+    store.append_trace(
+        SessionTrace(
+            agent="codex",
+            session_id="sess-45",
+            timestamp="2026-03-28T00:06:00+00:00",
+            topics=["runtime_adapter", "redis"],
+            key_decisions=["refresh active threads after compaction review"],
+        ).to_dict()
+    )
+    write_compaction(
+        agent_id="codex",
+        session_id="sess-45",
+        summary="First bounded handoff for the runtime lane.",
+        carry_forward=["keep packet-first session cadence stable"],
+        pending_paths=["tonesoul/runtime_adapter.py"],
+        evidence_refs=["docs/AI_QUICKSTART.md"],
+        next_action="refresh subject snapshot active threads",
+        store=store,
+    )
+    write_compaction(
+        agent_id="codex",
+        session_id="sess-46",
+        summary="Repeated bounded handoff with no new backing evidence.",
+        carry_forward=["keep packet-first session cadence stable"],
+        pending_paths=["tonesoul/runtime_adapter.py"],
+        evidence_refs=["docs/AI_QUICKSTART.md"],
+        next_action="refresh subject snapshot active threads",
+        store=store,
+    )
+
+    packet = r_memory_packet(posture=GovernancePosture(), store=store)
+
+    assert packet["project_memory_summary"]["subject_refresh"]["refresh_recommended"] is True
+    assert not packet["project_memory_summary"]["subject_refresh"]["recommended_command"].startswith(
+        "python scripts/apply_subject_refresh.py --agent"
+    )
+    assert any(
+        "recycled carry_forward" in hazard
+        for hazard in packet["project_memory_summary"]["subject_refresh"]["promotion_hazards"]
+    )
+
+    result = apply_subject_refresh(
+        agent_id="codex",
+        field="active_threads",
+        summary="Do not promote recycled carry-forward without new evidence.",
+        session_id="sess-46",
+        source="test",
+        store=store,
+    )
+
+    assert result["ok"] is False
+    assert result["reason"] == "promotion_hazards_present"
+    assert any("recycled carry_forward" in hazard for hazard in result["subject_refresh"]["promotion_hazards"])
 
 
 def test_r_memory_packet_surfaces_fresh_compaction_even_when_traces_are_older(
