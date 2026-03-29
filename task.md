@@ -31,6 +31,11 @@
 - Phase 691: integrate reality-alignment and render-boundary aids into the authority lanes so later agents can verify entry routing, counts, and display artifacts against a measured baseline instead of stale prose
 - Phase 692: surface bounded working-style continuity so later agents can inherit operating habits and prompt discipline without mistaking them for shared identity or canonical truth
 - Phase 693: turn working-style continuity into a session-start playbook so later agents can apply shared habits directly instead of reconstructing them from raw anchor fields
+- Phase 694: classify the next high-frequency prompt and readout surfaces that should consume the working-style playbook without drifting into high-risk domain-specific voice layers
+- Phase 695: adopt working-style playbook guidance in one or two additional low-risk, high-frequency surfaces so shared habits start shaping live behavior beyond session-start
+- Phase 696: add style-drift observability so later agents can see when model-native habits are diverging from the shared working-style anchor
+- Phase 697: define and test receiver-side style import limits so playbook advice influences workflow without silently promoting into durable identity, vows, or canonical planning
+- Phase 698: run a bounded multi-agent continuity validation wave so fresh agents can be scored on whether they follow shared operating style, not just shared task state
 
 ## Phase 691: Reality Alignment Lane Integration (2026-03-29)
 - [x] Add a dedicated reality-alignment lane to the doc authority map for entry-surface baselines, count methods, render/encoding boundaries, and drift registers
@@ -49,6 +54,12 @@
 - [x] Keep the playbook advisory-only, with explicit non-promotion wording and no new runtime authority
 - [x] Lock the new playbook into session-start regression tests so continuity of operating style stays machine-readable
 **Success Criteria**: A later agent can open the session-start bundle, find a concise working-style playbook, and apply shared operating habits directly without mistaking them for vows, canonical law, or durable identity.
+
+## Phase 694: Working-Style Adoption Topology (2026-03-29, planned)
+- [ ] Rank the next high-frequency prompt/readout surfaces by value, drift risk, and fit for working-style continuity
+- [ ] Exclude high-risk domain-specific or voice-critical families unless there is strong evidence they need bounded style adoption
+- [ ] Use the ranked topology to choose one local implementation wave and one deferred wave
+**Success Criteria**: ToneSoul has a concrete ranked list of the next working-style consumers, so future adoption follows topology and frequency rather than intuition.
 
 ## Phase 679: Continuity Freshness And Import Posture (2026-03-29)
 - [x] Add bounded `freshness_hours` to the packet continuity surfaces that later agents actually inherit at session start
