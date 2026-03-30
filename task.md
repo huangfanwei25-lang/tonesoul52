@@ -51,6 +51,19 @@
 - Phase 718: add one grounded whole-system guide and one control-plane posture contract so later readers can understand why the stack is split this way without reverse-engineering dozens of narrower files
 - Phase 719: run one bounded live continuity validation wave so a fresh agent must follow the shared receiver posture and working-style playbook instead of merely reading contracts
 
+## Long Program: Launch Maturity And Go/No-Go Baseline (2026-03-30)
+- Program Goal: move ToneSoul from a strong internal coordination prototype to an honestly launchable collaborator-beta system without overclaiming maturity or collapsing evidence boundaries.
+- Execution Guardrails:
+  - Prefer real repeated validation, bounded launch posture, and honest backend defaults over new abstract theory lanes.
+  - Treat collaborator beta as the next meaningful target; do not optimize for public launch language before beta-level honesty exists.
+  - Keep public claims bounded by evidence level: tested, runtime-present, descriptive-only, and document-backed must remain distinct.
+- Phase 721: consolidate the current launch baseline so internal alpha / collaborator beta / public launch are defined in one current plan instead of scattered judgment
+- Phase 722: run repeated live continuity validation waves so receiver posture and handoff resilience are proven under multiple real states instead of one clean demo
+- Phase 723: make one explicit shared-coordination backend decision so file-backed vs Redis-backed launch claims stop drifting
+- Phase 724: consolidate one current launch-operations surface so readiness, health, rollback, and freeze posture stop living only in historical docs
+- Phase 725: add a bounded public-claim honesty gate so continuity/council/evidence wording cannot outrun the evidence ladder
+- Phase 726: run a collaborator-beta go/no-go review that classifies blockers explicitly instead of silently treating optimism as readiness
+
 ## Water-Bucket Snapshot (2026-03-30)
 - Baseline reached:
   - session-start / session-end / packet / delta / readiness / receiver-guard continuity
@@ -1421,3 +1434,39 @@
 - [x] remove clearly local residues that should not stay in the worktree (`repo-sync` draft, polluted journal backup, empty backend stub)
 - [x] keep human/private or OS-level leftovers out of this cleanup pass (`CLAUDE.md`, nested repos, protected memory data, permission-locked `.claude`)
 **Success Criteria**: Tools already referenced by docs are tracked and regression-tested, obvious local residue is gone, and the remaining dirty paths are either human-managed, protected memory data, nested repos, or OS-level leftovers rather than ambiguous repo junk.
+
+## Phase 721: Launch Baseline Consolidation (2026-03-30, planned)
+- [ ] freeze the current maturity estimate and launch-tier vocabulary (`internal alpha`, `collaborator beta`, `public launch`)
+- [ ] align the estimate with current continuity, evidence, and council-honesty surfaces so the maturity claim stops floating free of artifacts
+- [ ] keep one current launch-baseline plan discoverable from `docs/plans/` and `task.md`
+**Success Criteria**: Later agents can answer "how mature is ToneSoul right now?" with one bounded current baseline instead of reconstructing it from scattered chat, docs, and code impressions.
+
+## Phase 722: Repeated Live Continuity Validation (2026-03-30, planned)
+- [ ] run fresh-agent validation under multiple real states (`pass`, claim conflict, stale compaction, contested dossier)
+- [ ] record repeated failure modes rather than single-run curiosities
+- [ ] turn only repeated failures into bounded fixes, not new theory lanes
+**Success Criteria**: ToneSoul has at least one repeated live validation set that shows what still fails under real handoff conditions, and the next fixes are chosen from those failures.
+
+## Phase 723: Shared-Coordination Backend Decision (2026-03-30, planned)
+- [ ] classify file-backed coordination versus Redis-backed coordination by actual launch readiness, not conceptual attractiveness
+- [ ] choose one honest launch-default coordination mode
+- [ ] label the other mode as optional, experimental, or deferred
+**Success Criteria**: Later agents and humans can say what shared-coordination mode ToneSoul is actually launching with, without drifting between file-backed and Redis-live language.
+
+## Phase 724: Launch Operations Surface (2026-03-30, planned)
+- [ ] consolidate the current readiness, health, rollback, and freeze posture into one up-to-date launch operations surface
+- [ ] identify the minimum command/check bundle required before collaborator beta
+- [ ] keep historical release/runbook docs as lineage, not as the current default operations story
+**Success Criteria**: A later operator can answer "what do I run before launch, and how do I rollback?" from one current ToneSoul-native surface.
+
+## Phase 725: Public-Claim Honesty Gate (2026-03-30, planned)
+- [ ] bind launch-tier wording to the evidence ladder and current council/continuity reality
+- [ ] define which claims are safe for alpha, beta, and public-facing language
+- [ ] explicitly block the most likely maturity overclaims (`continuity effectiveness`, `council quality`, `live shared memory`)
+**Success Criteria**: Launch-facing language is bounded by evidence level, and later agents stop overstating what ToneSoul has actually proven.
+
+## Phase 726: Collaborator-Beta Go/No-Go Review (2026-03-30, planned)
+- [ ] review outputs from Phases 721-725
+- [ ] classify remaining gaps into blocking vs non-blocking
+- [ ] decide whether ToneSoul stays internal alpha or opens collaborator beta
+**Success Criteria**: The next launch decision is evidence-based and explicit, with unresolved blockers still visible instead of being socially ignored.
