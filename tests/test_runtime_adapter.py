@@ -731,8 +731,8 @@ def test_subject_snapshots_surface_durable_subject_anchor(tmp_path: Path) -> Non
         for lane in evidence_readout["lanes"]
     )
     launch_claim_posture = packet["project_memory_summary"]["launch_claim_posture"]
-    assert launch_claim_posture["current_tier"] == "internal_alpha"
-    assert launch_claim_posture["next_target_tier"] == "collaborator_beta"
+    assert launch_claim_posture["current_tier"] == "collaborator_beta"
+    assert launch_claim_posture["next_target_tier"] == "public_launch"
     assert launch_claim_posture["public_launch_ready"] is False
     assert any(
         item.startswith("coordination_backend=file-backed:")
@@ -786,7 +786,7 @@ def test_subject_snapshots_surface_durable_subject_anchor(tmp_path: Path) -> Non
         for reminder in packet["operator_guidance"]["current_reminders"]
     )
     assert any(
-        reminder.startswith("Launch claim posture: launch_claims=internal_alpha:safe")
+        reminder.startswith("Launch claim posture: launch_claims=current:collaborator_beta")
         for reminder in packet["operator_guidance"]["current_reminders"]
     )
     assert any(

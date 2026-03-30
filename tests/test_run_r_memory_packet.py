@@ -273,8 +273,8 @@ def test_run_r_memory_packet_emits_json(capsys, monkeypatch, tmp_path: Path) -> 
         lane["lane"] == "axiom_and_theory_claims" and lane["classification"] == "document_backed"
         for lane in output["project_memory_summary"]["evidence_readout_posture"]["lanes"]
     )
-    assert output["project_memory_summary"]["launch_claim_posture"]["current_tier"] == "internal_alpha"
-    assert output["project_memory_summary"]["launch_claim_posture"]["next_target_tier"] == "collaborator_beta"
+    assert output["project_memory_summary"]["launch_claim_posture"]["current_tier"] == "collaborator_beta"
+    assert output["project_memory_summary"]["launch_claim_posture"]["next_target_tier"] == "public_launch"
     assert any(
         item["claim"] == "council_decision_quality" and item["current_classification"] == "descriptive_only"
         for item in output["project_memory_summary"]["launch_claim_posture"]["blocked_overclaims"]
@@ -289,7 +289,7 @@ def test_run_r_memory_packet_emits_json(capsys, monkeypatch, tmp_path: Path) -> 
         for reminder in output["operator_guidance"]["current_reminders"]
     )
     assert any(
-        reminder.startswith("Launch claim posture: launch_claims=internal_alpha:safe")
+        reminder.startswith("Launch claim posture: launch_claims=current:collaborator_beta")
         for reminder in output["operator_guidance"]["current_reminders"]
     )
     assert any(

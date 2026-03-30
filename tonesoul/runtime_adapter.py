@@ -2250,19 +2250,19 @@ def _build_launch_claim_posture(
     ]
 
     return {
-        "current_tier": "internal_alpha",
-        "next_target_tier": "collaborator_beta",
+        "current_tier": "collaborator_beta",
+        "next_target_tier": "public_launch",
         "public_launch_ready": False,
         "tier_guidance": tier_guidance,
         "safe_now": safe_now,
         "blocked_overclaims": blocked_overclaims,
         "receiver_rule": (
-            "Use internal-alpha wording for tested workflow and explicit file-backed coordination, allow "
-            "collaborator-beta language only with bounded guidance, and keep public-launch language deferred until "
+            "Use collaborator-beta wording only for guided file-backed workflow and explicit evidence-bounded surfaces, "
+            "and keep public-launch language deferred until "
             "evidence moves beyond runtime_present/descriptive_only on the known short boards."
         ),
         "summary_text": (
-            "launch_claims=internal_alpha:safe collaborator_beta:guided public_launch:deferred "
+            "launch_claims=current:collaborator_beta public_launch:deferred "
             "blocked=continuity_effectiveness,council_decision_quality,live_shared_memory"
         ),
     }

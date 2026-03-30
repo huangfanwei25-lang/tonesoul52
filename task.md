@@ -75,9 +75,9 @@
   - context-injection prompt adoption (`value_accumulator` and `self_commit`)
   - unified runtime context prompt framing
 - Current short board:
-  - collaborator-beta go/no-go review now that launch wording, backend posture, and repeated validation all have current bounded surfaces
+  - broader collaborator-beta validation and packaging/hygiene so the new beta posture survives real use with lower operator friction
 - After that:
-  - classify remaining blockers explicitly before widening launch language
+  - only after broader beta use should public-launch maturity be reconsidered
   - only then further optimization
 
 ## Phase 691: Reality Alignment Lane Integration (2026-03-29)
@@ -1465,8 +1465,8 @@
 - [x] explicitly block the most likely maturity overclaims (`continuity effectiveness`, `council quality`, `live shared memory`)
 **Success Criteria**: Launch-facing language is bounded by evidence level, and later agents stop overstating what ToneSoul has actually proven.
 
-## Phase 726: Collaborator-Beta Go/No-Go Review (2026-03-30, planned)
-- [ ] review outputs from Phases 721-725
-- [ ] classify remaining gaps into blocking vs non-blocking
-- [ ] decide whether ToneSoul stays internal alpha or opens collaborator beta
+## Phase 726: Collaborator-Beta Go/No-Go Review (2026-03-30, completed)
+- [x] review outputs from Phases 721-725
+- [x] classify remaining gaps into blocking vs non-blocking
+- [x] decide whether ToneSoul stays internal alpha or opens collaborator beta
 **Success Criteria**: The next launch decision is evidence-based and explicit, with unresolved blockers still visible instead of being socially ignored.

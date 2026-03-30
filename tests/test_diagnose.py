@@ -254,8 +254,8 @@ def _fake_packet():
                 "receiver_rule": "Use tested lanes for current workflow assumptions, runtime_present lanes as bounded mechanism presence, descriptive_only lanes as context not proof, and document_backed lanes as intent/boundary rather than runtime fact.",
             },
             "launch_claim_posture": {
-                "current_tier": "internal_alpha",
-                "next_target_tier": "collaborator_beta",
+                "current_tier": "collaborator_beta",
+                "next_target_tier": "public_launch",
                 "public_launch_ready": False,
                 "tier_guidance": [
                     {
@@ -295,8 +295,8 @@ def _fake_packet():
                         "reason": "Do not present Redis/live shared memory as the launch-default or hardened public story while launch_default_mode remains file-backed and launch_alignment is runtime_override_not_launch_default.",
                     },
                 ],
-                "receiver_rule": "Use internal-alpha wording for tested workflow and explicit file-backed coordination, allow collaborator-beta language only with bounded guidance, and keep public-launch language deferred until evidence moves beyond runtime_present/descriptive_only on the known short boards.",
-                "summary_text": "launch_claims=internal_alpha:safe collaborator_beta:guided public_launch:deferred blocked=continuity_effectiveness,council_decision_quality,live_shared_memory",
+                "receiver_rule": "Use collaborator-beta wording only for guided file-backed workflow and explicit evidence-bounded surfaces, and keep public-launch language deferred until evidence moves beyond runtime_present/descriptive_only on the known short boards.",
+                "summary_text": "launch_claims=current:collaborator_beta public_launch:deferred blocked=continuity_effectiveness,council_decision_quality,live_shared_memory",
             },
             "routing_summary": {
                 "total_events": 2,
@@ -597,7 +597,7 @@ def test_full_diagnostic_is_cp950_safe_and_includes_shared_runtime(monkeypatch) 
     assert "tested=2 runtime_present=1 descriptive_only=1 document_backed=1" in report
     assert "continuity_effectiveness=runtime_present" in report
     assert "launch_claim_posture:" in report
-    assert "current=internal_alpha next=collaborator_beta public_ready=False" in report
+    assert "current=collaborator_beta next=public_launch public_ready=False" in report
     assert "tier=internal_alpha:safe_current_claims_only" in report
     assert "blocked=live_shared_memory:not_launch_default" in report
     assert "routing_summary:" in report

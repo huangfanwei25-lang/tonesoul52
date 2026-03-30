@@ -139,7 +139,7 @@ def test_start_agent_session_emits_machine_readable_bundle(capsys, monkeypatch, 
     assert output["import_posture"]["surfaces"]["launch_claims"]["receiver_obligation"] == "should_consider"
     assert (
         output["import_posture"]["surfaces"]["launch_claims"]["launch_claim_posture"]["current_tier"]
-        == "internal_alpha"
+        == "collaborator_beta"
     )
     assert output["import_posture"]["surfaces"]["subject_snapshot"]["present"] is False
     assert output["import_posture"]["readiness_alignment"] == "needs_clarification"

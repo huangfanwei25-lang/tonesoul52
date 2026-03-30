@@ -14,7 +14,7 @@
 ## 1. Current Operational Truth
 
 ToneSoul is currently:
-- usable as a strong internal alpha
+- open for a bounded collaborator beta
 - not yet ready to claim mature public launch
 - not yet ready to blur internal file-backed discipline into mature live shared-memory infrastructure
 
@@ -22,8 +22,8 @@ ToneSoul is currently:
 
 | Axis | Current truth |
 |---|---|
-| Launch tier | `internal alpha` |
-| Next target | `collaborator beta` |
+| Launch tier | `collaborator beta` |
+| Next target | `public launch` |
 | Shared-coordination default | `file-backed` |
 | Redis/live shared memory | present as a path, not yet the launch-default story |
 | Council confidence | descriptive, not calibrated |
@@ -76,7 +76,7 @@ These confirm that:
 
 ## 4. Current Go / No-Go Rules
 
-### GO for internal alpha usage
+### GO for current collaborator-beta usage
 
 Proceed only if:
 - entry-stack checks are green
@@ -84,13 +84,13 @@ Proceed only if:
 - protected-path verification is green
 - no new overclaim was introduced in the touched surface
 
-### NOT YET GO for collaborator beta
+### GO for bounded collaborator beta
 
-Collaborator beta remains blocked until:
-- repeated live validation exists beyond one neat bounded demo
-- one honest coordination backend default is explicitly settled
+Collaborator beta is open only because:
+- repeated validation now exists beyond one neat bounded demo
+- the launch-default coordination backend is explicit
 - one current launch posture is discoverable without rereading historical runbooks
-- current public-facing claims are explicitly bounded by evidence level
+- public-facing claims are explicitly bounded by evidence level
 
 ### NO-GO for public launch language
 

@@ -26,6 +26,12 @@ But it is not yet honest to call it "maturely launch-ready" for broad public cla
 | Collaborator beta | 65% | careful external collaborators could test it with guidance |
 | Public launch maturity | 60% | too many surfaces are still honest-but-thin rather than hardened |
 
+### Current Launch-State Update
+
+After Phase 726, the current operating decision is:
+- `GO` for a bounded `collaborator beta`
+- `NO-GO` for public-launch maturity claims
+
 ## 2. What "Mature Enough To Launch" Means
 
 This program does not define "launch" as "the repo looks impressive."
@@ -173,6 +179,9 @@ Success criteria:
 ### Phase 726: Beta Go/No-Go Review
 
 **Goal**: decide whether ToneSoul is ready for collaborator beta.
+
+Current note:
+- `docs/plans/tonesoul_collaborator_beta_go_nogo_review_2026-03-30.md`
 
 Tasks:
 - review outputs of WS1-WS5
