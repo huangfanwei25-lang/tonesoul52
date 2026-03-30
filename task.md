@@ -1435,10 +1435,10 @@
 - [x] keep human/private or OS-level leftovers out of this cleanup pass (`CLAUDE.md`, nested repos, protected memory data, permission-locked `.claude`)
 **Success Criteria**: Tools already referenced by docs are tracked and regression-tested, obvious local residue is gone, and the remaining dirty paths are either human-managed, protected memory data, nested repos, or OS-level leftovers rather than ambiguous repo junk.
 
-## Phase 721: Launch Baseline Consolidation (2026-03-30, planned)
-- [ ] freeze the current maturity estimate and launch-tier vocabulary (`internal alpha`, `collaborator beta`, `public launch`)
-- [ ] align the estimate with current continuity, evidence, and council-honesty surfaces so the maturity claim stops floating free of artifacts
-- [ ] keep one current launch-baseline plan discoverable from `docs/plans/` and `task.md`
+## Phase 721: Launch Baseline Consolidation (2026-03-30)
+- [x] freeze the current maturity estimate and launch-tier vocabulary (`internal alpha`, `collaborator beta`, `public launch`)
+- [x] align the estimate with current continuity, evidence, and council-honesty surfaces so the maturity claim stops floating free of artifacts
+- [x] keep one current launch-baseline plan discoverable from `docs/plans/` and `task.md`
 **Success Criteria**: Later agents can answer "how mature is ToneSoul right now?" with one bounded current baseline instead of reconstructing it from scattered chat, docs, and code impressions.
 
 ## Phase 722: Repeated Live Continuity Validation (2026-03-30, planned)
@@ -1453,10 +1453,10 @@
 - [ ] label the other mode as optional, experimental, or deferred
 **Success Criteria**: Later agents and humans can say what shared-coordination mode ToneSoul is actually launching with, without drifting between file-backed and Redis-live language.
 
-## Phase 724: Launch Operations Surface (2026-03-30, planned)
-- [ ] consolidate the current readiness, health, rollback, and freeze posture into one up-to-date launch operations surface
-- [ ] identify the minimum command/check bundle required before collaborator beta
-- [ ] keep historical release/runbook docs as lineage, not as the current default operations story
+## Phase 724: Launch Operations Surface (2026-03-30)
+- [x] consolidate the current readiness, health, rollback, and freeze posture into one up-to-date launch operations surface
+- [x] identify the minimum command/check bundle required before collaborator beta
+- [x] keep historical release/runbook docs as lineage, not as the current default operations story
 **Success Criteria**: A later operator can answer "what do I run before launch, and how do I rollback?" from one current ToneSoul-native surface.
 
 ## Phase 725: Public-Claim Honesty Gate (2026-03-30, planned)
