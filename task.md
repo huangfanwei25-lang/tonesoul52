@@ -1414,3 +1414,10 @@
 - [x] record the outcome so the next short board is based on live adoption evidence rather than more local theory
 - [x] centralize the `ack/apply/promote` ladder in `receiver_parity` after the live validation showed that the boundary was still too distributed across surfaces
 **Success Criteria**: A fresh agent can enter through the normal entry stack, describe the same bounded council/continuity/style story, and pick a first step that respects the current receiver posture without needing hidden chat history.
+
+## Phase 720: Legacy Tool Hygiene And Local Residue Cleanup (2026-03-30)
+- [x] normalize `scripts/migrate_to_redis.py` into a tracked, tested utility instead of leaving it as a mojibake draft
+- [x] normalize `scripts/split_task_archive.py` into a tracked, tested utility so plan-delta docs stop pointing at a ghost script
+- [x] remove clearly local residues that should not stay in the worktree (`repo-sync` draft, polluted journal backup, empty backend stub)
+- [x] keep human/private or OS-level leftovers out of this cleanup pass (`CLAUDE.md`, nested repos, protected memory data, permission-locked `.claude`)
+**Success Criteria**: Tools already referenced by docs are tracked and regression-tested, obvious local residue is gone, and the remaining dirty paths are either human-managed, protected memory data, nested repos, or OS-level leftovers rather than ambiguous repo junk.
