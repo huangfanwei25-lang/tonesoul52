@@ -11,6 +11,7 @@
 | **Operational Start** | [AI_QUICKSTART.md](AI_QUICKSTART.md) | `operational` | first minute of a later agent session |
 | **Working Reference** | [AI_REFERENCE.md](AI_REFERENCE.md) | `operational` | term lookup, routing, red-line checks during work |
 | **Canonical Anchor** | see section below | `canonical` | before architecture or runtime claims |
+| **Design Center** | [../DESIGN.md](../DESIGN.md) | `design_center` | when you need the durable design rationale and invariants before opening narrow contracts |
 | **Whole-System Guide** | [architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md](architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md) | `deep_map` | when you need one grounded explanation of the whole stack and why the subsystems are separated |
 | **Deep Anatomy** | [narrative/TONESOUL_ANATOMY.md](narrative/TONESOUL_ANATOMY.md) | `deep_map` | before repo-wide refactor or whole-system explanation |
 | **Interpretive Lane** | [notes/TONESOUL_DEEP_READING_ANCHOR_2026-03-26.md](notes/TONESOUL_DEEP_READING_ANCHOR_2026-03-26.md), [narrative/TONESOUL_CODEX_READING.md](narrative/TONESOUL_CODEX_READING.md) | `interpretive` | when the map is clear but the load-bearing meaning still feels diffuse |
@@ -46,6 +47,13 @@ Use these after the canonical architecture anchor, not before it.
   - one-pass explanation of what each load-bearing subsystem does, why it exists, what it prevents, and what it should not be confused with
 
 Use this when you need to explain ToneSoul as a whole without flattening governance, council, continuity, evidence, and safety into one vague "AI memory system."
+
+## Design Center
+
+- [../DESIGN.md](../DESIGN.md)
+  - durable design rationale for why ToneSoul is layered this way, what invariants must not drift, and why continuity/evidence/style are kept separate
+
+Use this when you need the architectural "why" before drilling into subsystem-specific contracts.
 
 ## Engineering Contracts
 
@@ -196,6 +204,11 @@ Use this when the question is not only what should be transferred, but how the e
 - [status/collaborator_beta_preflight_latest.md](status/collaborator_beta_preflight_latest.md)
 - [status/collaborator_beta_entry_validation_latest.json](status/collaborator_beta_entry_validation_latest.json)
 - [status/collaborator_beta_entry_validation_latest.md](status/collaborator_beta_entry_validation_latest.md)
+
+## Current Continuation Surfaces
+
+- [plans/tonesoul_3day_execution_program_2026-03-30.md](plans/tonesoul_3day_execution_program_2026-03-30.md)
+- [status/codex_handoff_2026-03-30.md](status/codex_handoff_2026-03-30.md)
 
 ## Documentation Convergence
 

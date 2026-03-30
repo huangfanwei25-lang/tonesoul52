@@ -113,13 +113,14 @@ Response
 ```
 
 If you need one file that explains the whole stack and why each subsystem exists, open [docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md](docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md) before diving into narrower contracts.
+If you need the durable design center, invariants, and continuation logic that tie those subsystems together, open [DESIGN.md](DESIGN.md).
 
 ## Choose Your Entry
 
 | Reader | Start Here | Why |
 |---|---|---|
 | Developer | [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md), [docs/README.md](docs/README.md), [docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md](docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md) | install, orient, then read one grounded whole-system map before drilling into contracts |
-| Researcher | [docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md](docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md), [docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md](docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md), [docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md](docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md) | whole-system rationale, canonical architecture, and evidence posture |
+| Researcher | [DESIGN.md](DESIGN.md), [docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md](docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md), [docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md](docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md) | design rationale first, then the whole-system map, then canonical architecture |
 | AI Agent | [AI_ONBOARDING.md](AI_ONBOARDING.md), [docs/AI_QUICKSTART.md](docs/AI_QUICKSTART.md), `python scripts/start_agent_session.py --agent <your-id>` | operational entry, packet-first session start, and bounded shared-memory posture |
 | Curious Human | [SOUL.md](SOUL.md), [LETTER_TO_AI.md](LETTER_TO_AI.md), [README.zh-TW.md](README.zh-TW.md) | identity layer, intent, and a more narrative introduction |
 

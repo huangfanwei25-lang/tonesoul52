@@ -11,6 +11,7 @@
 | **Operational Start** | `AI_QUICKSTART.md` | `operational` | first minute of a later agent session |
 | **Working Reference** | `AI_REFERENCE.md` | `operational` | term lookup, routing, red-line checks during work |
 | **Canonical Anchor** | see section below | `canonical` | before architecture or runtime claims |
+| **Design Center** | `../DESIGN.md` | `design_center` | when you need to know why the layers are split this way and which invariants must not drift |
 | **Whole-System Guide** | `architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md` | `deep_map` | when you need one grounded explanation of the whole stack and why the subsystems are separated |
 | **Deep Anatomy** | `narrative/TONESOUL_ANATOMY.md` | `deep_map` | before repo-wide refactor or whole-system explanation |
 | **Interpretive Lane** | `notes/TONESOUL_DEEP_READING_ANCHOR_2026-03-26.md`, `narrative/TONESOUL_CODEX_READING.md` | `interpretive` | when the map is navigable but the deeper load-bearing meaning still feels unclear |
@@ -41,6 +42,13 @@ Do not collapse these into one layer. Operational guides help an agent work; can
   - one-pass explanation of what each load-bearing subsystem does, why it exists, what it prevents, and what it should not be confused with
 
 Open this when you need to explain ToneSoul as a whole without flattening governance, council, continuity, evidence, and safety into one vague "AI memory system."
+
+## Design Center
+
+- `../DESIGN.md`
+  - durable design rationale for why ToneSoul is layered this way, which invariants must not drift, and why later agents should not collapse authority, evidence, continuity, and style into one story
+
+Open this when you do not just need subsystem descriptions, but the design logic that holds them together.
 
 ## Retrieval Boundary
 
@@ -229,6 +237,13 @@ Treat this as a prompt-design companion. It helps later agents build better extr
   - bounded external-style validation record showing what a lower-context collaborator agent still found ambiguous after using only the normal entry surfaces
 - `status/collaborator_beta_entry_validation_latest.md`
   - readable version of the same collaborator-beta validation result and remaining frictions
+
+## Current Continuation Surfaces
+
+- `plans/tonesoul_3day_execution_program_2026-03-30.md`
+  - concrete 3-day continuation program for the next agent, with bucket rotation and stop conditions
+- `status/codex_handoff_2026-03-30.md`
+  - current branch-local handoff note capturing today's working truth, private residues to avoid, and the next shortest board
  
 ## Documentation Convergence
  

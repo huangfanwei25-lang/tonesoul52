@@ -64,6 +64,16 @@
 - Phase 725: add a bounded public-claim honesty gate so continuity/council/evidence wording cannot outrun the evidence ladder
 - Phase 726: run a collaborator-beta go/no-go review that classifies blockers explicitly instead of silently treating optimism as readiness
 
+## Long Program: Design Center And Successor Continuation (2026-03-30)
+- Program Goal: make the current design center, near-term continuation plan, and branch-local handoff legible enough that later agents can continue from docs plus bounded hot state instead of missing chat history.
+- Execution Guardrails:
+  - Prefer one durable design center over several overlapping "overview" files.
+  - Keep the handoff note factual, branch-local, and explicit about private residue boundaries.
+  - Turn the next short board into a 3-day program so successors inherit bucket rotation, not just a to-do list.
+- Phase 729: add one top-level design center that explains why ToneSoul is layered this way, what invariants must not drift, and what current launch truth actually is
+- Phase 730: add one detailed 3-day execution program so the next agent can continue the current short board without reopening settled launch wording
+- Phase 731: add one current Codex handoff note so branch state, latest commits, private residues, and next actions survive beyond chat history
+
 ## Water-Bucket Snapshot (2026-03-30)
 - Baseline reached:
   - session-start / session-end / packet / delta / readiness / receiver-guard continuity
@@ -74,10 +84,12 @@
   - one grounded whole-system guide plus one bounded cold-audit / fail-stop / anchor posture contract
   - context-injection prompt adoption (`value_accumulator` and `self_commit`)
   - unified runtime context prompt framing
+  - collaborator-beta preflight, entry-validation, and discoverable beta-facing status surfaces
 - Current short board:
-  - reduce remaining collaborator-beta packaging/hygiene friction only where it materially affects guided beta use
+  - establish a low-drift anchor / observer-window baseline for later agents so stable vs contested vs stale state stops requiring multi-surface reconstruction
 - After that:
-  - move to the next non-launch short board once collaborator-beta entry friction is no longer the shortest bucket
+  - validate that observer-window readout under repeated fresh-agent entry
+  - then rotate to the next non-launch short board instead of over-optimizing readout theory
   - only after broader beta use should public-launch maturity be reconsidered
   - only then further optimization
 
@@ -1483,3 +1495,21 @@
 - [x] reduce the biggest remaining entry frictions by surfacing claim-trigger wording, guided-beta scope posture, roadmap-target wording, and visible `aegis` caution directly in the preflight bundle
 - [x] keep the fixes bounded to collaborator-beta entry/readout surfaces instead of reopening global launch semantics
 **Success Criteria**: A later agent can run the collaborator-beta preflight and understand that beta remains guided/file-backed/not-public, that claim is required only when shared paths are about to be edited, and that `aegis_compromised` is a visible caution rather than a hidden blocker or a public-launch permission slip.
+
+## Phase 729: Whole-System Design Center (2026-03-30, completed)
+- [x] add one top-level `DESIGN.md` that explains why ToneSoul is layered this way and what current invariants later agents must not drift across
+- [x] keep the file complementary to `README.md` and the subsystem guide rather than turning it into a duplicate architecture wall
+- [x] make the file explicit about current launch truth, continuity limits, and the next short board
+**Success Criteria**: A later agent can read one design-centered file and understand why ToneSoul separates governance, continuity, style, evidence, and launch posture without treating any one narrow contract as the whole system.
+
+## Phase 730: Three-Day Successor Execution Program (2026-03-30, completed)
+- [x] add one bounded 3-day execution plan that names the next short board, stop conditions, validation expectations, and bucket rotation logic
+- [x] keep the plan specific enough to execute without chat memory, but bounded enough that it does not become a pseudo-roadmap for the whole year
+- [x] tie the plan to current repo truth: guided collaborator beta, file-backed default, and observer-window as the next bucket
+**Success Criteria**: A successor agent can open one plan file and know what the next 3 days should focus on, what not to touch, and how to tell whether the bucket is complete enough to rotate away.
+
+## Phase 731: Current Codex Handoff Record (2026-03-30, completed)
+- [x] add one current handoff note that captures branch/head state, today's key commits, protected private residues, first commands, and the next recommended move
+- [x] make the note branch-local and reality-based rather than a generic architectural summary
+- [x] wire the new handoff and plan into the normal docs entrypoints so they are discoverable without chat history
+**Success Criteria**: A fresh agent can follow the normal entry stack, open one current handoff note, and continue work with accurate branch-local context and no pressure to guess which residue or launch claims are in-bounds.
