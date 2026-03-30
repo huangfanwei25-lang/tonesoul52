@@ -75,9 +75,9 @@
   - context-injection prompt adoption (`value_accumulator` and `self_commit`)
   - unified runtime context prompt framing
 - Current short board:
-  - broader collaborator-beta validation under less curated real use, now that one-command beta preflight exists
+  - reduce remaining collaborator-beta packaging/hygiene friction only where it materially affects guided beta use
 - After that:
-  - reduce remaining packaging/hygiene friction only where it materially affects collaborator-beta use
+  - move to the next non-launch short board once collaborator-beta entry friction is no longer the shortest bucket
   - only after broader beta use should public-launch maturity be reconsidered
   - only then further optimization
 
@@ -1477,3 +1477,9 @@
 - [x] keep the bundle narrower than the full repo healthcheck so beta operators can answer launch-tier / backend-default / continuity-wave questions without rerunning the entire repo gate
 - [x] wire the command into the current launch operations surface
 **Success Criteria**: A collaborator-beta operator can run one command and see whether the current entry stack, launch tier, backend default, and validation-wave posture still align with the bounded beta story.
+
+## Phase 728: Collaborator-Beta Entry Clarity Adjustments (2026-03-30, completed)
+- [x] run a fresh collaborator-beta validation pass with a separate agent that only used the normal AI entry surfaces and the new beta preflight
+- [x] reduce the biggest remaining entry frictions by surfacing claim-trigger wording, guided-beta scope posture, roadmap-target wording, and visible `aegis` caution directly in the preflight bundle
+- [x] keep the fixes bounded to collaborator-beta entry/readout surfaces instead of reopening global launch semantics
+**Success Criteria**: A later agent can run the collaborator-beta preflight and understand that beta remains guided/file-backed/not-public, that claim is required only when shared paths are about to be edited, and that `aegis_compromised` is a visible caution rather than a hidden blocker or a public-launch permission slip.

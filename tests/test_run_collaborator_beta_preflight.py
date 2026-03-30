@@ -21,9 +21,9 @@ def _load_script_module():
 def _sample_start_payload() -> dict:
     return {
         "readiness": {"status": "pass"},
-        "task_track_hint": {"suggested_track": "feature_track"},
+        "task_track_hint": {"suggested_track": "feature_track", "claim_recommendation": "required"},
         "deliberation_mode_hint": {"suggested_mode": "standard_council"},
-        "compact_diagnostic": "[ToneSoul] file | R=0.04/stable | readiness=pass",
+        "compact_diagnostic": "[ToneSoul] file | R=0.04/stable | readiness=pass | aegis=compromised",
     }
 
 
@@ -104,11 +104,18 @@ def test_run_preflight_reports_go(monkeypatch, tmp_path: Path) -> None:
     assert result["overall_ok"] is True
     assert result["overall_status"] == "go"
     assert result["entry_stack"]["packet"]["current_tier"] == "collaborator_beta"
+    assert result["entry_stack"]["session_start"]["claim_recommendation"] == "required"
+    assert result["entry_stack"]["diagnose"]["aegis_status"] == "compromised"
+    assert result["scope_posture"]["guided_beta_only"] is True
+    assert result["scope_posture"]["target_reading"] == "roadmap_target_only"
+    assert result["claim_posture"]["claim_trigger"].startswith("claim when you are about to edit a shared path")
+    assert result["aegis_posture"]["blocks_beta_entry"] is False
     assert result["validation_wave"]["scenario_count"] == 3
     assert result["validation_wave"]["stale_compaction_guarded"] is True
     assert result["validation_wave"]["contested_dossier_visible"] is True
     assert result["blocking_findings"] == []
     assert "continuity_effectiveness" in result["cautions"]
+    assert "aegis_compromised" in result["cautions"]
 
 
 def test_run_preflight_holds_when_launch_defaults_drift(monkeypatch, tmp_path: Path) -> None:
@@ -143,6 +150,7 @@ def test_render_markdown_contains_core_sections() -> None:
                 "session_start": {
                     "readiness": "pass",
                     "task_track": "feature_track",
+                    "claim_recommendation": "required",
                     "deliberation_mode": "standard_council",
                 },
                 "packet": {
@@ -153,7 +161,19 @@ def test_render_markdown_contains_core_sections() -> None:
                 "diagnose": {
                     "ok": True,
                     "compact_line": "[ToneSoul] file | R=0.04/stable",
+                    "aegis_status": "compromised",
                 },
+            },
+            "scope_posture": {
+                "scope_note": "guided collaborator beta only; file-backed remains launch default and public launch stays deferred",
+                "target_note": "next_target_tier names the next maturity target, not current readiness or public-launch permission.",
+            },
+            "claim_posture": {
+                "claim_trigger": "claim when you are about to edit a shared path; read-only inspection can stay unclaimed",
+            },
+            "aegis_posture": {
+                "status": "compromised",
+                "note": "Treat aegis_compromised as a visible caution in the current beta posture, not as an implicit public-launch stop or a reason to ignore the rest of the bounded receiver checks.",
             },
             "validation_wave": {
                 "scenario_count": 4,
@@ -172,7 +192,11 @@ def test_render_markdown_contains_core_sections() -> None:
     )
 
     assert "# ToneSoul Collaborator-Beta Preflight" in markdown
-    assert "| session-start | ok | readiness=pass track=feature_track mode=standard_council |" in markdown
+    assert "| session-start | ok | readiness=pass track=feature_track claim=required mode=standard_council |" in markdown
+    assert "- Scope posture: `guided collaborator beta only; file-backed remains launch default and public launch stays deferred`" in markdown
+    assert "- Target reading: `next_target_tier names the next maturity target, not current readiness or public-launch permission.`" in markdown
+    assert "- Claim trigger: `claim when you are about to edit a shared path; read-only inspection can stay unclaimed`" in markdown
+    assert "- Aegis posture: `compromised` / `Treat aegis_compromised as a visible caution in the current beta posture, not as an implicit public-launch stop or a reason to ignore the rest of the bounded receiver checks.`" in markdown
     assert "- Scenario count: `4`" in markdown
     assert "- `continuity_effectiveness` = `runtime_present`" in markdown
 
@@ -212,10 +236,13 @@ def test_main_writes_optional_outputs(tmp_path: Path, monkeypatch, capsys) -> No
             "overall_ok": True,
             "overall_status": "go",
             "entry_stack": {
-                "session_start": {"readiness": "pass", "task_track": "feature_track", "deliberation_mode": "standard_council"},
+                "session_start": {"readiness": "pass", "task_track": "feature_track", "claim_recommendation": "required", "deliberation_mode": "standard_council"},
                 "packet": {"current_tier": "collaborator_beta", "next_target_tier": "public_launch", "launch_default_mode": "file-backed"},
-                "diagnose": {"ok": True, "compact_line": "compact"},
+                "diagnose": {"ok": True, "compact_line": "compact", "aegis_status": "compromised"},
             },
+            "scope_posture": {"scope_note": "guided collaborator beta only; file-backed remains launch default and public launch stays deferred"},
+            "claim_posture": {"claim_trigger": "claim when you are about to edit a shared path; read-only inspection can stay unclaimed"},
+            "aegis_posture": {"status": "compromised", "note": "Treat aegis_compromised as a visible caution in the current beta posture, not as an implicit public-launch stop or a reason to ignore the rest of the bounded receiver checks."},
             "validation_wave": {"scenario_count": 4, "max_receiver_alert_count": 4, "contested_dossier_visible": True, "stale_compaction_guarded": True},
             "launch_claim_posture": {"summary_text": "launch_claims=current:collaborator_beta", "blocked_overclaims": []},
             "blocking_findings": [],

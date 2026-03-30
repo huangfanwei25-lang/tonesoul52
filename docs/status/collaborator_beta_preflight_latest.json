@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-30T11:31:27Z",
+  "generated_at": "2026-03-30T11:37:26Z",
   "overall_ok": true,
   "overall_status": "go",
   "repo_root": "C:\\Users\\user\\Desktop\\倉庫",
@@ -14,6 +14,7 @@
       "ok": true,
       "readiness": "pass",
       "task_track": "feature_track",
+      "claim_recommendation": "required",
       "deliberation_mode": "standard_council"
     },
     "packet": {
@@ -27,8 +28,26 @@
     "diagnose": {
       "ok": true,
       "mode": "compact_subprocess",
-      "compact_line": "[ToneSoul] file | SI=0.45 | vows=3 tensions=0 | R=0.03/stable | coord=file-backed | traces=2 claims=0 compactions=3 subjects=1 zones=9 | git=7e3a246/dirty=10 | aegis=compromised | agent=beta-smoke"
+      "compact_line": "[ToneSoul] file | SI=0.45 | vows=3 tensions=0 | R=0.03/stable | coord=file-backed | traces=2 claims=0 compactions=3 subjects=1 zones=9 | git=15cb9c6/dirty=10 | aegis=compromised | agent=beta-smoke",
+      "aegis_status": "compromised"
     }
+  },
+  "scope_posture": {
+    "guided_beta_only": true,
+    "launch_default_mode": "file-backed",
+    "public_launch_ready": false,
+    "scope_note": "guided collaborator beta only; file-backed remains launch default and public launch stays deferred",
+    "target_reading": "roadmap_target_only",
+    "target_note": "next_target_tier names the next maturity target, not current readiness or public-launch permission."
+  },
+  "claim_posture": {
+    "claim_recommendation": "required",
+    "claim_trigger": "claim when you are about to edit a shared path; read-only inspection can stay unclaimed"
+  },
+  "aegis_posture": {
+    "status": "compromised",
+    "blocks_beta_entry": false,
+    "note": "Treat aegis_compromised as a visible caution in the current beta posture, not as an implicit public-launch stop or a reason to ignore the rest of the bounded receiver checks."
   },
   "launch_claim_posture": {
     "current_tier": "collaborator_beta",
@@ -94,7 +113,8 @@
   "cautions": [
     "continuity_effectiveness",
     "council_decision_quality",
-    "live_shared_memory"
+    "live_shared_memory",
+    "aegis_compromised"
   ],
   "summary_text": "collaborator_beta_preflight=go tier=collaborator_beta backend=file-backed validation_wave=4 blocked=0"
 }

@@ -65,6 +65,8 @@ Use this when the goal is not a full repo healthcheck, but one current answer to
 - is collaborator-beta still the current tier
 - is file-backed still the launch-default story
 - is the latest continuity wave still discoverable
+- if claim is really required now or only once a shared path will be edited
+- whether current `aegis` posture is a visible caution inside the guided-beta story
 
 These confirm that:
 - session-start still renders

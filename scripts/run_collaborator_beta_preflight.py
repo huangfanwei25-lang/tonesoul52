@@ -57,6 +57,15 @@ def _normalize_compact_diagnostic(text: str) -> str:
     return ""
 
 
+def _extract_compact_signal(text: str, *, prefix: str) -> str:
+    for chunk in str(text).split("|"):
+        candidate = chunk.strip()
+        marker = f"{prefix}="
+        if candidate.startswith(marker):
+            return candidate[len(marker) :].strip()
+    return ""
+
+
 def _parse_json_stdout(stdout: str, *, command: list[str]) -> dict[str, Any]:
     payload = safe_parse_json(stdout)
     if payload is None:
@@ -151,6 +160,7 @@ def run_preflight(
         diagnose_mode = "embedded_from_session_start"
         compact_diagnostic = _normalize_compact_diagnostic(start_payload.get("compact_diagnostic", ""))
 
+    task_track_hint = start_payload.get("task_track_hint") or {}
     launch_claim_posture = (
         ((packet_payload.get("project_memory_summary") or {}).get("launch_claim_posture") or {})
     )
@@ -159,6 +169,14 @@ def run_preflight(
         ((packet_payload.get("project_memory_summary") or {}).get("evidence_readout_posture") or {})
     )
     validation_wave = _load_validation_wave(validation_wave_path or Path(""))
+    aegis_status = _extract_compact_signal(compact_diagnostic, prefix="aegis") or _extract_compact_signal(
+        start_payload.get("compact_diagnostic", ""),
+        prefix="aegis",
+    )
+    claim_recommendation = str(task_track_hint.get("claim_recommendation", "unknown"))
+    scope_note = (
+        "guided collaborator beta only; file-backed remains launch default and public launch stays deferred"
+    )
 
     blocking_findings: list[str] = []
     if str(launch_claim_posture.get("current_tier", "")) != "collaborator_beta":
@@ -177,6 +195,8 @@ def run_preflight(
         for item in list(launch_claim_posture.get("blocked_overclaims") or [])
         if str(item.get("claim", "")).strip()
     ]
+    if aegis_status == "compromised":
+        cautions.append("aegis_compromised")
 
     max_alert_count = max((int(item.get("receiver_alert_count", 0) or 0) for item in validation_wave), default=0)
     contested_dossier_visible = any(
@@ -208,7 +228,8 @@ def run_preflight(
             "session_start": {
                 "ok": True,
                 "readiness": str((start_payload.get("readiness") or {}).get("status", "unknown")),
-                "task_track": str((start_payload.get("task_track_hint") or {}).get("suggested_track", "unknown")),
+                "task_track": str(task_track_hint.get("suggested_track", "unknown")),
+                "claim_recommendation": claim_recommendation,
                 "deliberation_mode": str(
                     (start_payload.get("deliberation_mode_hint") or {}).get("suggested_mode", "unknown")
                 ),
@@ -225,7 +246,25 @@ def run_preflight(
                 "ok": bool(compact_diagnostic),
                 "mode": diagnose_mode,
                 "compact_line": compact_diagnostic,
+                "aegis_status": aegis_status or "unknown",
             },
+        },
+        "scope_posture": {
+            "guided_beta_only": True,
+            "launch_default_mode": str(coordination_mode.get("launch_default_mode", "unknown")),
+            "public_launch_ready": bool(launch_claim_posture.get("public_launch_ready", False)),
+            "scope_note": scope_note,
+            "target_reading": "roadmap_target_only",
+            "target_note": "next_target_tier names the next maturity target, not current readiness or public-launch permission.",
+        },
+        "claim_posture": {
+            "claim_recommendation": claim_recommendation,
+            "claim_trigger": "claim when you are about to edit a shared path; read-only inspection can stay unclaimed",
+        },
+        "aegis_posture": {
+            "status": aegis_status or "unknown",
+            "blocks_beta_entry": False,
+            "note": "Treat aegis_compromised as a visible caution in the current beta posture, not as an implicit public-launch stop or a reason to ignore the rest of the bounded receiver checks.",
         },
         "launch_claim_posture": launch_claim_posture,
         "validation_wave": {
@@ -254,6 +293,9 @@ def render_markdown(payload: dict[str, Any]) -> str:
     session_start = entry.get("session_start") or {}
     packet = entry.get("packet") or {}
     diagnose = entry.get("diagnose") or {}
+    claim_posture = payload.get("claim_posture") or {}
+    scope_posture = payload.get("scope_posture") or {}
+    aegis_posture = payload.get("aegis_posture") or {}
     validation_wave = payload.get("validation_wave") or {}
     launch_claim_posture = payload.get("launch_claim_posture") or {}
     lines = [
@@ -265,6 +307,10 @@ def render_markdown(payload: dict[str, Any]) -> str:
         f"- Current tier: `{packet.get('current_tier', 'unknown')}`",
         f"- Next target: `{packet.get('next_target_tier', 'unknown')}`",
         f"- Launch-default backend: `{packet.get('launch_default_mode', 'unknown')}`",
+        f"- Scope posture: `{scope_posture.get('scope_note', '')}`",
+        f"- Target reading: `{scope_posture.get('target_note', '')}`",
+        f"- Claim trigger: `{claim_posture.get('claim_trigger', '')}`",
+        f"- Aegis posture: `{aegis_posture.get('status', 'unknown')}` / `{aegis_posture.get('note', '')}`",
         "",
         "## Entry Stack",
         "",
@@ -273,6 +319,7 @@ def render_markdown(payload: dict[str, Any]) -> str:
         (
             f"| session-start | ok | readiness={session_start.get('readiness', 'unknown')} "
             f"track={session_start.get('task_track', 'unknown')} "
+            f"claim={session_start.get('claim_recommendation', 'unknown')} "
             f"mode={session_start.get('deliberation_mode', 'unknown')} |"
         ),
         (
@@ -282,7 +329,8 @@ def render_markdown(payload: dict[str, Any]) -> str:
         ),
         (
             f"| diagnose | {'ok' if diagnose.get('ok') else 'fail'} | "
-            f"{str(diagnose.get('compact_line', '')).strip()} |"
+            f"{str(diagnose.get('compact_line', '')).strip()} "
+            f"(aegis={diagnose.get('aegis_status', 'unknown')}) |"
         ),
         "",
         "## Validation Wave",
