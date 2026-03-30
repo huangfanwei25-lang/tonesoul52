@@ -216,6 +216,19 @@ Treat this as a prompt-design companion. It helps later agents build better extr
   - schema for the compact hot-state packet emitted by `python scripts/run_r_memory_packet.py` or `GET /packet`
 - `../scripts/run_task_claim.py`
   - local CLI for claim/release/list task locks before multiple terminals touch the same surface
+
+## Current Collaborator-Beta Surfaces
+
+- `plans/tonesoul_launch_operations_surface_2026-03-30.md`
+  - current operator-facing launch posture for guided collaborator beta, freeze rules, and bounded public-claim language
+- `status/collaborator_beta_preflight_latest.json`
+  - latest one-command collaborator-beta preflight bundle showing entry-stack health, launch scope, claim trigger, and visible `aegis` caution
+- `status/collaborator_beta_preflight_latest.md`
+  - markdown rendering of the same preflight bundle for quick human review
+- `status/collaborator_beta_entry_validation_latest.json`
+  - bounded external-style validation record showing what a lower-context collaborator agent still found ambiguous after using only the normal entry surfaces
+- `status/collaborator_beta_entry_validation_latest.md`
+  - readable version of the same collaborator-beta validation result and remaining frictions
  
 ## Documentation Convergence
  

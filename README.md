@@ -324,7 +324,7 @@ In plain words: important things are auto-kept, chatter is auto-forgotten.
 | Tested `tonesoul/` modules | 186 / 186 |
 | RDD posture | baseline active in `tests/red_team/`; still staged below full blocking maturity |
 | DDD posture | hygiene + curated audit active; freshness remains an explicit staged rule |
-| Machine-readable status | `docs/status/repo_healthcheck_latest.json`, `docs/status/7d_snapshot.json` |
+| Machine-readable status | `docs/status/repo_healthcheck_latest.json`, `docs/status/7d_snapshot.json`, `docs/status/collaborator_beta_preflight_latest.json`, `docs/status/collaborator_beta_entry_validation_latest.json` |
 | Default CI gates | `ruff check tonesoul tests` + `pytest tests/ -x --tb=short -q` |
 
 ## License

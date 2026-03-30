@@ -189,6 +189,14 @@ Use this when the question is not only what should be transferred, but how the e
 - [../spec/governance/r_memory_packet_v1.schema.json](../spec/governance/r_memory_packet_v1.schema.json)
 - [../scripts/run_task_claim.py](../scripts/run_task_claim.py)
 
+## Current Collaborator-Beta Surfaces
+
+- [plans/tonesoul_launch_operations_surface_2026-03-30.md](plans/tonesoul_launch_operations_surface_2026-03-30.md)
+- [status/collaborator_beta_preflight_latest.json](status/collaborator_beta_preflight_latest.json)
+- [status/collaborator_beta_preflight_latest.md](status/collaborator_beta_preflight_latest.md)
+- [status/collaborator_beta_entry_validation_latest.json](status/collaborator_beta_entry_validation_latest.json)
+- [status/collaborator_beta_entry_validation_latest.md](status/collaborator_beta_entry_validation_latest.md)
+
 ## Documentation Convergence
 
 - [status/doc_convergence_inventory_latest.json](status/doc_convergence_inventory_latest.json)
