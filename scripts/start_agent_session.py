@@ -46,6 +46,15 @@ def _build_working_style_validation(
     )
 
 
+def _build_receiver_parity(*, council_snapshot: dict, project_memory_summary: dict) -> dict:
+    from tonesoul.receiver_posture import build_receiver_parity_readout
+
+    return build_receiver_parity_readout(
+        council_snapshot=council_snapshot,
+        project_memory_summary=project_memory_summary,
+    )
+
+
 def _resolve_sidecar(root: Path, name: str) -> Path:
     canonical = root / ".aegis" / name
     legacy = root / name
@@ -783,51 +792,16 @@ def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
             normalized_summary_parts.append(item)
         summary_parts = normalized_summary_parts
 
-    receiver_alerts: list[str] = []
-    if carry_forward_hazards:
-        receiver_alerts.append(
-            "Latest carry-forward repeats an older handoff without new evidence; ack or review it, but do not promote it into subject identity or canonical planning."
-        )
-    if carry_forward_hazards and subject_refresh:
-        receiver_alerts.append(
-            "Compaction-backed subject refresh is currently blocked by recycled carry-forward evidence; wait for a fresh compaction or stronger evidence before applying active_threads refresh."
-        )
-    if str(latest_dossier_snapshot.get("calibration_status", "")).strip() == "descriptive_only":
-        receiver_alerts.append(
-            "Latest council dossier confidence is descriptive_only; treat coherence and confidence posture as internal agreement context, not as an accuracy prediction."
-        )
-    if evidence_readout_posture:
-        receiver_alerts.append(
-            "Evidence readout is a bounded honesty shortcut: continuity effectiveness is only runtime_present, council decision quality is descriptive_only, and higher-order axioms/theory remain document_backed unless separately proven."
-        )
-    if bool(latest_dossier_snapshot.get("has_minority_report")):
-        receiver_alerts.append(
-            "Latest council dossier carries minority dissent; review it before treating approval as settled."
-        )
-    if bool(latest_dossier_snapshot.get("evolution_suppression_flag")):
-        receiver_alerts.append(
-            "Latest council dossier indicates potential evolution suppression on repeated dissent; review minority signals carefully before dismissing objections."
-        )
-    if working_style_anchor:
-        receiver_alerts.append(
-            "Working-style continuity is advisory only; reuse decision preferences and verified routines as habits, but do not promote them into vows, canonical rules, or durable identity."
-        )
-    if str(working_style_observability.get("status", "")).strip() == "partial":
-        receiver_alerts.append(
-            "Shared working-style continuity is only partially reinforced by recent handoff surfaces; keep the playbook visible instead of assuming full habit continuity."
-        )
-    elif str(working_style_observability.get("status", "")).strip() == "unreinforced":
-        receiver_alerts.append(
-            "Shared working-style continuity is currently unreinforced by recent handoff surfaces; apply it explicitly if it still fits, but do not assume the latest agent actually followed it."
-        )
-    if working_style_import_limits:
-        receiver_alerts.append(
-            "Working-style import is bounded to scan order, evidence handling, prompt shape, session cadence, and render interpretation; it must not override vows, canonical governance, durable identity, or task scope."
-        )
+    receiver_parity = _build_receiver_parity(
+        council_snapshot=latest_dossier_snapshot,
+        project_memory_summary=project_memory_summary,
+    )
+    receiver_alerts = list(receiver_parity.get("alerts") or [])
 
     return {
         "summary_text": " | ".join(summary_parts),
         "surfaces": surfaces,
+        "receiver_parity": receiver_parity,
         "receiver_alerts": receiver_alerts,
         "receiver_rule": "ack is safe, apply is bounded, promote requires explicit justification and human confirmation.",
         "readiness_alignment": str(readiness.get("status", "")),
@@ -904,6 +878,7 @@ def main() -> None:
         task_track_hint=task_track_hint,
         readiness=readiness,
     )
+    import_posture = _build_import_posture(packet=packet, readiness=readiness)
     payload = {
         "contract_version": "v1",
         "bundle": "session_start",
@@ -920,7 +895,8 @@ def main() -> None:
         "readiness": readiness,
         "task_track_hint": task_track_hint,
         "deliberation_mode_hint": deliberation_mode_hint,
-        "import_posture": _build_import_posture(packet=packet, readiness=readiness),
+        "import_posture": import_posture,
+        "receiver_parity": import_posture.get("receiver_parity", {}),
         "working_style_playbook": working_style_playbook,
         "working_style_validation": working_style_validation,
         "claim_view": {

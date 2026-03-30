@@ -49,21 +49,22 @@
 - Phase 716: expose one bounded evidence/readout posture so later agents can see what is tested/runtime-present/document-backed without opening long evidence docs first
 - Phase 717: refresh the water-bucket snapshot and rotate away from prompt/readout work once the remaining generic baseline gaps are clearly closed
 - Phase 718: add one grounded whole-system guide and one control-plane posture contract so later readers can understand why the stack is split this way without reverse-engineering dozens of narrower files
+- Phase 719: run one bounded live continuity validation wave so a fresh agent must follow the shared receiver posture and working-style playbook instead of merely reading contracts
 
 ## Water-Bucket Snapshot (2026-03-30)
 - Baseline reached:
   - session-start / session-end / packet / delta / readiness / receiver-guard continuity
   - subject snapshot + bounded subject refresh + working-style continuity readout
   - council dossier / descriptive confidence / suppression visibility / council-realism readout
+  - cross-surface receiver parity plus one bounded evidence/readout posture
   - README / authority-lane / evidence-lane / stale-source cleanup
   - one grounded whole-system guide plus one bounded cold-audit / fail-stop / anchor posture contract
   - context-injection prompt adoption (`value_accumulator` and `self_commit`)
   - unified runtime context prompt framing
 - Current short board:
-  - cross-surface receiver parity after the generic prompt-adoption baseline started to stabilize
+  - one bounded live continuity validation wave using current session-start / receiver-posture / working-style surfaces
 - After that:
-  - one bounded evidence/readout posture if parity closes cleanly
-  - move to the next non-baseline theme instead of reopening prompt refinements unless a clearly safe gap remains
+  - move to the next non-baseline theme instead of reopening prompt refinements unless live validation reveals a real short board
   - only then further optimization
 
 ## Phase 691: Reality Alignment Lane Integration (2026-03-29)
@@ -1383,10 +1384,10 @@
 - [x] use the completed loop-engine wave as the stop-line proving that the generic prompt-adoption lane is active, then rotate to parity work
 **Success Criteria**: The cross-surface program can reference a completed low-risk generic prompt adoption wave without reopening it, keeping the next short board on parity rather than duplicative prompt edits.
 
-## Phase 715: Cross-Surface Receiver Parity (2026-03-30, planned)
-- [ ] align packet/session-start/diagnose readouts around the same bounded council-realism and continuity-import interpretation
-- [ ] add regression coverage so future changes do not let one surface understate dissent, descriptive-only confidence, or continuity guardrails compared to the others
-- [ ] keep the work readout-only, without changing council runtime, packet authority, or import semantics
+## Phase 715: Cross-Surface Receiver Parity (2026-03-30)
+- [x] align packet/session-start/diagnose readouts around the same bounded council-realism and continuity-import interpretation
+- [x] add regression coverage so future changes do not let one surface understate dissent, descriptive-only confidence, or continuity guardrails compared to the others
+- [x] keep the work readout-only, without changing council runtime, packet authority, or import semantics
 **Success Criteria**: A later agent reading packet, session-start, or diagnose sees the same bounded story about realism and receiver posture instead of slightly different interpretations that drift apart over time.
 
 ## Phase 716: Bounded Evidence Readout Posture (2026-03-30)
@@ -1395,8 +1396,21 @@
 - [x] lock the readout into runtime/session-start/diagnose regressions so future changes do not silently flatten descriptive or document-backed lanes into "implemented truth"
 **Success Criteria**: A later agent can open packet, session-start, or diagnose and immediately see a bounded evidence honesty shortcut for the current system, while still being pointed back to the longer evidence lane when precision matters.
 
+## Phase 717: Water-Bucket Rotation Checkpoint (2026-03-30)
+- [x] refresh the snapshot after receiver parity and bounded evidence posture closed cleanly
+- [x] mark prompt/readout parity as baseline-complete instead of leaving the short board stale
+- [x] rotate the next short board to one bounded live continuity validation wave before reopening prompt refinements
+**Success Criteria**: Task planning no longer treats parity/evidence as the active short board, and the next implementation wave is a live validation of current receiver and working-style surfaces rather than more local readout invention.
+
 ## Phase 718: Whole-System Explanation And Control-Plane Rationale (2026-03-30)
 - [x] write one grounded system-overview guide that explains what each load-bearing subsystem does, why it exists, what breaks without it, and what it is not
 - [x] formalize mirror rupture, fail-stop, and low-drift anchors as a control-plane discipline contract rather than new ontology or runtime law
 - [x] wire both surfaces into README, docs indexes, and the documentation authority structure so later readers can discover them before drowning in narrower contracts
 **Success Criteria**: A later human or AI reader can open one whole-system guide to understand ToneSoul's subsystem split and one control-plane contract to understand bounded cold-audit / fail-stop / anchor behavior, without mistaking either document for runtime code or canonical law by itself.
+
+## Phase 719: Bounded Live Continuity Validation (2026-03-30)
+- [x] run one fresh-agent validation wave that only uses onboarding plus session-start surfaces, then inspect whether the agent follows receiver posture and working-style guidance instead of improvising
+- [x] keep the validation bounded to observation and small follow-up fixes, not a new swarm-control architecture
+- [x] record the outcome so the next short board is based on live adoption evidence rather than more local theory
+- [x] centralize the `ack/apply/promote` ladder in `receiver_parity` after the live validation showed that the boundary was still too distributed across surfaces
+**Success Criteria**: A fresh agent can enter through the normal entry stack, describe the same bounded council/continuity/style story, and pick a first step that respects the current receiver posture without needing hidden chat history.

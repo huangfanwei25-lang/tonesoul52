@@ -765,6 +765,14 @@ def test_subject_snapshots_surface_durable_subject_anchor(tmp_path: Path) -> Non
         reminder.startswith("Evidence posture: evidence=tested(session_control_and_handoff,council_mechanics)")
         for reminder in packet["operator_guidance"]["current_reminders"]
     )
+    assert any(
+        reminder.startswith("Receiver posture: receiver_parity council=unflagged")
+        for reminder in packet["operator_guidance"]["current_reminders"]
+    )
+    assert any(
+        reminder.startswith("Receiver ladder: ack is safe visibility only")
+        for reminder in packet["operator_guidance"]["current_reminders"]
+    )
     assert (
         "Subject-refresh heuristics found low-risk updates; review subject_refresh before writing the next snapshot."
         in packet["operator_guidance"]["current_reminders"]

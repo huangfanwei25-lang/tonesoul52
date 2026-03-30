@@ -14,6 +14,7 @@ import sys
 from datetime import datetime, timezone
 from typing import Any
 
+from tonesoul.receiver_posture import build_receiver_parity_readout
 from tonesoul.working_style import build_working_style_playbook
 
 
@@ -690,6 +691,21 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
             lines.append("")
             lines.append("[Council Realism]")
             lines.extend(realism_lines)
+    receiver_parity = build_receiver_parity_readout(
+        council_snapshot=council_dossier,
+        project_memory_summary=project_memory_summary,
+    )
+    if receiver_parity.get("present"):
+        lines.append("")
+        lines.append("[Receiver Posture]")
+        summary_text = str(receiver_parity.get("summary_text", "")).strip()
+        if summary_text:
+            lines.append(f"  summary={_clip(summary_text, limit=110)}")
+        receiver_rule = str(receiver_parity.get("rule", "")).strip()
+        if receiver_rule:
+            lines.append(f"  rule={_clip(receiver_rule, limit=120)}")
+        for alert in list(receiver_parity.get("alerts") or [])[:5]:
+            lines.append(f"  - {_clip(str(alert), limit=120)}")
 
     lanes = packet.get("parallel_lanes", {})
     if lanes:

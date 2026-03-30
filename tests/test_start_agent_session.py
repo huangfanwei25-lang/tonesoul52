@@ -138,6 +138,9 @@ def test_start_agent_session_emits_machine_readable_bundle(capsys, monkeypatch, 
     assert output["import_posture"]["surfaces"]["subject_snapshot"]["present"] is False
     assert output["import_posture"]["readiness_alignment"] == "needs_clarification"
     assert output["import_posture"]["summary_text"].startswith("posture=directly_importable")
+    assert output["receiver_parity"]["continuity"]["classification"] == "runtime_present"
+    assert output["receiver_parity"]["working_style"]["status"] == "none"
+    assert output["receiver_parity"]["rule"].startswith("ack is safe visibility only")
     assert any(
         "continuity effectiveness is only runtime_present" in alert
         for alert in output["import_posture"]["receiver_alerts"]
@@ -774,6 +777,14 @@ def test_start_agent_session_surfaces_council_dossier_interpretation_guard(
         "Descriptive agreement record only"
         in dossier_surface["dossier_interpretation"]["realism_note"]
     )
+    receiver_parity = output["receiver_parity"]
+    assert receiver_parity["council"]["calibration_status"] == "descriptive_only"
+    assert receiver_parity["council"]["has_minority_report"] is True
+    assert receiver_parity["council"]["evolution_suppression_flag"] is True
+    assert receiver_parity["summary_text"].startswith(
+        "receiver_parity council=descriptive_only dissent=visible suppression=flagged"
+    )
+    assert receiver_parity["rule"].startswith("ack is safe visibility only")
     assert any(
         "descriptive_only" in alert
         for alert in output["import_posture"]["receiver_alerts"]

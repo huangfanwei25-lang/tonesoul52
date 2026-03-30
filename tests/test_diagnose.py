@@ -522,6 +522,11 @@ def test_full_diagnostic_is_cp950_safe_and_includes_shared_runtime(monkeypatch) 
     assert "has_minority_report=True" in report
     assert "evolution_suppression_flag=True" in report
     assert "Descriptive agreement record only; dissent is visible" in report
+    assert "[Receiver Posture]" in report
+    assert "summary=receiver_parity council=descriptive_only dissent=visible suppression=flagged" in report
+    assert "rule=ack is safe visibility only; apply is bounded workflow use only" in report
+    assert "Latest council dossier confidence is descriptive_only" in report
+    assert "Latest council dossier carries minority dissent" in report
     assert "subject_anchor:" in report
     assert "working_style_anchor:" in report
     assert "working_style_playbook:" in report

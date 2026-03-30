@@ -1899,6 +1899,8 @@ def _build_operator_guidance(
     coordination_mode: Dict[str, Any],
 ) -> Dict[str, Any]:
     """Build packet-visible operator guidance for shared R-memory coordination."""
+    from tonesoul.receiver_posture import build_receiver_parity_readout
+
     reminders: List[str] = []
     if compactions:
         reminders.append("Prefer recent_compactions and project_memory_summary before older recent_traces.")
@@ -1990,6 +1992,16 @@ def _build_operator_guidance(
     realism_note = _derive_council_realism_note(latest_dossier_payload)
     if realism_note:
         reminders.append(f"Council realism: {realism_note}")
+    receiver_parity = build_receiver_parity_readout(
+        council_snapshot=_build_council_dossier_summary(latest_dossier_payload) if latest_dossier_payload else {},
+        project_memory_summary=project_memory_summary,
+    )
+    receiver_summary = str(receiver_parity.get("summary_text", "")).strip()
+    if receiver_summary:
+        reminders.append(f"Receiver posture: {receiver_summary}")
+    receiver_rule = str(receiver_parity.get("rule", "")).strip()
+    if receiver_rule:
+        reminders.append(f"Receiver ladder: {receiver_rule}")
 
     refresh_hint = str(coordination_mode.get("refresh_hint", "")).strip()
     if refresh_hint:
