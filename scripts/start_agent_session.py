@@ -792,11 +792,23 @@ def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
             normalized_summary_parts.append(item)
         summary_parts = normalized_summary_parts
 
+    claims_surface = surfaces["claims"]
+    if claims_surface["present"] and claim_ttl_minutes is not None:
+        claims_detail = str(claims_surface.get("import_posture", "")).strip()
+        claims_freshness = claims_surface.get("freshness_hours")
+        if claims_freshness is not None:
+            claims_detail += f"@{float(claims_freshness):.1f}h"
+        claims_detail += f"/ttl={claim_ttl_minutes:.0f}m"
+        summary_parts = [
+            f"claims={claims_detail}" if item.startswith("claims=") else item
+            for item in summary_parts
+        ]
+
     receiver_parity = _build_receiver_parity(
         council_snapshot=latest_dossier_snapshot,
         project_memory_summary=project_memory_summary,
     )
-    receiver_alerts = list(receiver_parity.get("alerts") or [])
+    receiver_alerts = list(receiver_parity.get("primary_alerts") or receiver_parity.get("alerts") or [])
 
     return {
         "summary_text": " | ".join(summary_parts),

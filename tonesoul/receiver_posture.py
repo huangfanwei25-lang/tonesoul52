@@ -19,6 +19,19 @@ def _has_carry_forward_hazard(subject_refresh: dict[str, Any]) -> bool:
     return False
 
 
+def _build_primary_alerts(alert_entries: list[tuple[int, str]], *, limit: int = 4) -> list[str]:
+    """Return a short session-start-friendly alert list without losing the full diagnostic set."""
+
+    primary_alerts: list[str] = []
+    for _priority, alert in sorted(alert_entries, key=lambda item: item[0], reverse=True):
+        if alert in primary_alerts:
+            continue
+        primary_alerts.append(alert)
+        if len(primary_alerts) >= limit:
+            break
+    return primary_alerts
+
+
 def build_receiver_parity_readout(
     *,
     council_snapshot: dict[str, Any],
@@ -50,47 +63,80 @@ def build_receiver_parity_readout(
         style_status = "present" if working_style_anchor else "none"
     promotion_state = "guarded" if _has_carry_forward_hazard(subject_refresh) else "normal"
 
-    alerts: list[str] = []
+    alert_entries: list[tuple[int, str]] = []
     if promotion_state == "guarded":
-        alerts.append(
-            "Latest carry-forward repeats an older handoff without new evidence; ack or review it, but do not promote it into subject identity or canonical planning."
+        alert_entries.append(
+            (
+                100,
+                "Latest carry-forward repeats an older handoff without new evidence; ack or review it, but do not promote it into subject identity or canonical planning.",
+            )
         )
         if subject_refresh:
-            alerts.append(
-                "Compaction-backed subject refresh is currently blocked by recycled carry-forward evidence; wait for a fresh compaction or stronger evidence before applying active_threads refresh."
+            alert_entries.append(
+                (
+                    95,
+                    "Compaction-backed subject refresh is currently blocked by recycled carry-forward evidence; wait for a fresh compaction or stronger evidence before applying active_threads refresh.",
+                )
             )
     if calibration_status == "descriptive_only":
-        alerts.append(
-            "Latest council dossier confidence is descriptive_only; treat coherence and confidence posture as internal agreement context, not as an accuracy prediction."
+        alert_entries.append(
+            (
+                90,
+                "Latest council dossier confidence is descriptive_only; treat coherence and confidence posture as internal agreement context, not as an accuracy prediction.",
+            )
         )
     if evidence_readout_posture:
-        alerts.append(
-            "Evidence readout is a bounded honesty shortcut: continuity effectiveness is only runtime_present, council decision quality is descriptive_only, and higher-order axioms/theory remain document_backed unless separately proven."
+        alert_entries.append(
+            (
+                20,
+                "Evidence readout is a bounded honesty shortcut: continuity effectiveness is only runtime_present, council decision quality is descriptive_only, and higher-order axioms/theory remain document_backed unless separately proven.",
+            )
         )
     if has_minority_report:
-        alerts.append(
-            "Latest council dossier carries minority dissent; review it before treating approval as settled."
+        alert_entries.append(
+            (
+                85,
+                "Latest council dossier carries minority dissent; review it before treating approval as settled.",
+            )
         )
     if suppression_flag:
-        alerts.append(
-            "Latest council dossier indicates potential evolution suppression on repeated dissent; review minority signals carefully before dismissing objections."
+        alert_entries.append(
+            (
+                80,
+                "Latest council dossier indicates potential evolution suppression on repeated dissent; review minority signals carefully before dismissing objections.",
+            )
         )
     if working_style_anchor:
-        alerts.append(
-            "Working-style continuity is advisory only; reuse decision preferences and verified routines as habits, but do not promote them into vows, canonical rules, or durable identity."
+        alert_entries.append(
+            (
+                70,
+                "Working-style continuity is advisory only; reuse decision preferences and verified routines as habits, but do not promote them into vows, canonical rules, or durable identity.",
+            )
         )
     if style_status == "partial":
-        alerts.append(
-            "Shared working-style continuity is only partially reinforced by recent handoff surfaces; keep the playbook visible instead of assuming full habit continuity."
+        alert_entries.append(
+            (
+                68,
+                "Shared working-style continuity is only partially reinforced by recent handoff surfaces; keep the playbook visible instead of assuming full habit continuity.",
+            )
         )
     elif style_status == "unreinforced":
-        alerts.append(
-            "Shared working-style continuity is currently unreinforced by recent handoff surfaces; apply it explicitly if it still fits, but do not assume the latest agent actually followed it."
+        alert_entries.append(
+            (
+                68,
+                "Shared working-style continuity is currently unreinforced by recent handoff surfaces; apply it explicitly if it still fits, but do not assume the latest agent actually followed it.",
+            )
         )
     if working_style_import_limits:
-        alerts.append(
-            "Working-style import is bounded to scan order, evidence handling, prompt shape, session cadence, and render interpretation; it must not override vows, canonical governance, durable identity, or task scope."
+        alert_entries.append(
+            (
+                60,
+                "Working-style import is bounded to scan order, evidence handling, prompt shape, session cadence, and render interpretation; it must not override vows, canonical governance, durable identity, or task scope.",
+            )
         )
+
+    alerts = [alert for _priority, alert in alert_entries]
+    primary_alerts = _build_primary_alerts(alert_entries)
 
     summary_text = (
         "receiver_parity "
@@ -116,6 +162,7 @@ def build_receiver_parity_readout(
         "rule": rule,
         "action_ladder": action_ladder,
         "alerts": alerts,
+        "primary_alerts": primary_alerts,
         "council": {
             "calibration_status": calibration_status or "unflagged",
             "has_minority_report": has_minority_report,

@@ -673,10 +673,15 @@ def test_start_agent_session_marks_recycled_carry_forward_as_must_not_promote(
         "Shared working-style continuity is only partially reinforced" in alert
         for alert in output["import_posture"]["receiver_alerts"]
     )
-    assert any(
+    assert not any(
         "Working-style import is bounded to scan order, evidence handling, prompt shape, session cadence, and render interpretation"
         in alert
         for alert in output["import_posture"]["receiver_alerts"]
+    )
+    assert any(
+        "Working-style import is bounded to scan order, evidence handling, prompt shape, session cadence, and render interpretation"
+        in alert
+        for alert in output["receiver_parity"]["alerts"]
     )
 
 

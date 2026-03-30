@@ -1,0 +1,72 @@
+[
+  {
+    "scenario": "clean_pass",
+    "readiness": "pass",
+    "task_track": "unclassified",
+    "deliberation_mode": "unclassified",
+    "working_style_validation": "insufficient",
+    "receiver_parity_summary": "receiver_parity council=unflagged dissent=none suppression=clear continuity=runtime_present promotion=normal style=none",
+    "compaction_import_posture": "advisory",
+    "compaction_receiver_obligation": "should_consider",
+    "council_calibration_status": "absent",
+    "council_suppression_flag": false,
+    "receiver_alert_count": 1,
+    "receiver_alerts": [
+      "Evidence readout is a bounded honesty shortcut: continuity effectiveness is only runtime_present, council decision quality is descriptive_only, and higher-order axioms/theory remain document_backed unless separately proven."
+    ]
+  },
+  {
+    "scenario": "claim_conflict",
+    "readiness": "needs_clarification",
+    "task_track": "feature_track",
+    "deliberation_mode": "standard_council",
+    "working_style_validation": "insufficient",
+    "receiver_parity_summary": "receiver_parity council=unflagged dissent=none suppression=clear continuity=runtime_present promotion=normal style=none",
+    "compaction_import_posture": "advisory",
+    "compaction_receiver_obligation": "should_consider",
+    "council_calibration_status": "absent",
+    "council_suppression_flag": false,
+    "receiver_alert_count": 1,
+    "receiver_alerts": [
+      "Evidence readout is a bounded honesty shortcut: continuity effectiveness is only runtime_present, council decision quality is descriptive_only, and higher-order axioms/theory remain document_backed unless separately proven."
+    ]
+  },
+  {
+    "scenario": "stale_compaction",
+    "readiness": "pass",
+    "task_track": "feature_track",
+    "deliberation_mode": "standard_council",
+    "working_style_validation": "caution",
+    "receiver_parity_summary": "receiver_parity council=unflagged dissent=none suppression=clear continuity=runtime_present promotion=guarded style=partial",
+    "compaction_import_posture": "advisory",
+    "compaction_receiver_obligation": "must_not_promote",
+    "council_calibration_status": "absent",
+    "council_suppression_flag": false,
+    "receiver_alert_count": 4,
+    "receiver_alerts": [
+      "Latest carry-forward repeats an older handoff without new evidence; ack or review it, but do not promote it into subject identity or canonical planning.",
+      "Compaction-backed subject refresh is currently blocked by recycled carry-forward evidence; wait for a fresh compaction or stronger evidence before applying active_threads refresh.",
+      "Working-style continuity is advisory only; reuse decision preferences and verified routines as habits, but do not promote them into vows, canonical rules, or durable identity.",
+      "Shared working-style continuity is only partially reinforced by recent handoff surfaces; keep the playbook visible instead of assuming full habit continuity."
+    ]
+  },
+  {
+    "scenario": "contested_dossier",
+    "readiness": "pass",
+    "task_track": "feature_track",
+    "deliberation_mode": "standard_council",
+    "working_style_validation": "insufficient",
+    "receiver_parity_summary": "receiver_parity council=descriptive_only dissent=visible suppression=flagged continuity=runtime_present promotion=normal style=none",
+    "compaction_import_posture": "advisory",
+    "compaction_receiver_obligation": "should_consider",
+    "council_calibration_status": "descriptive_only",
+    "council_suppression_flag": true,
+    "receiver_alert_count": 4,
+    "receiver_alerts": [
+      "Latest council dossier confidence is descriptive_only; treat coherence and confidence posture as internal agreement context, not as an accuracy prediction.",
+      "Latest council dossier carries minority dissent; review it before treating approval as settled.",
+      "Latest council dossier indicates potential evolution suppression on repeated dissent; review minority signals carefully before dismissing objections.",
+      "Evidence readout is a bounded honesty shortcut: continuity effectiveness is only runtime_present, council decision quality is descriptive_only, and higher-order axioms/theory remain document_backed unless separately proven."
+    ]
+  }
+]

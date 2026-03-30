@@ -75,9 +75,9 @@
   - context-injection prompt adoption (`value_accumulator` and `self_commit`)
   - unified runtime context prompt framing
 - Current short board:
-  - one bounded live continuity validation wave using current session-start / receiver-posture / working-style surfaces
+  - one explicit shared-coordination backend decision so launch language stops drifting between file-backed discipline and Redis-live aspiration
 - After that:
-  - move to the next non-baseline theme instead of reopening prompt refinements unless live validation reveals a real short board
+  - bind public launch language to the evidence ladder before reopening deeper prompt or memory refinements
   - only then further optimization
 
 ## Phase 691: Reality Alignment Lane Integration (2026-03-29)
@@ -1441,10 +1441,10 @@
 - [x] keep one current launch-baseline plan discoverable from `docs/plans/` and `task.md`
 **Success Criteria**: Later agents can answer "how mature is ToneSoul right now?" with one bounded current baseline instead of reconstructing it from scattered chat, docs, and code impressions.
 
-## Phase 722: Repeated Live Continuity Validation (2026-03-30, planned)
-- [ ] run fresh-agent validation under multiple real states (`pass`, claim conflict, stale compaction, contested dossier)
-- [ ] record repeated failure modes rather than single-run curiosities
-- [ ] turn only repeated failures into bounded fixes, not new theory lanes
+## Phase 722: Repeated Live Continuity Validation (2026-03-30)
+- [x] run fresh-agent validation under multiple real states (`pass`, claim conflict, stale compaction, contested dossier)
+- [x] record repeated failure modes rather than single-run curiosities
+- [x] turn only repeated failures into bounded fixes, not new theory lanes
 **Success Criteria**: ToneSoul has at least one repeated live validation set that shows what still fails under real handoff conditions, and the next fixes are chosen from those failures.
 
 ## Phase 723: Shared-Coordination Backend Decision (2026-03-30, planned)
