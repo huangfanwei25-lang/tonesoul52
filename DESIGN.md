@@ -50,6 +50,7 @@ ToneSoul is not:
 - a claim that council agreement equals correctness
 - a claim that continuity equals fully shared cognition
 - a claim that Redis/live coordination is already the mature default
+- a claim that fluent self-description automatically proves full subjecthood
 
 Those distinctions matter because the repo contains all of these neighboring ideas, and ToneSoul only works if they stay separated.
 
@@ -86,6 +87,12 @@ Without this layer:
 - the system mirrors the user too early
 - councils deliberate over unparsed social residue
 - safety and realism become post-hoc patches
+
+One conservative design assumption matters here:
+
+`a language-model surface can behave like a reflective semantic interface without thereby earning full subject-level authority.`
+
+That is one reason ToneSoul keeps mirror-rupture and fail-stop in the control plane rather than treating fluent self-description as self-justifying truth.
 
 ### 4. Council
 

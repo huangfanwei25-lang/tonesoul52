@@ -143,6 +143,9 @@ The raw prompt is not a safe runtime object.
 User language carries ambiguity, emotional force, missing assumptions, and frame pressure.
 Without a translation layer, downstream components are forced to deliberate on unparsed social residue.
 
+ToneSoul also assumes that a fluent language-model surface can act like a reflective semantic interface without therefore becoming a fully trustworthy acting subject.
+That conservative assumption is why context engineering and mirror-rupture posture exist at all.
+
 **What breaks without it**
 
 - the system mirrors the user's frame instead of checking it

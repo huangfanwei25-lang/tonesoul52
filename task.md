@@ -1513,3 +1513,9 @@
 - [x] make the note branch-local and reality-based rather than a generic architectural summary
 - [x] wire the new handoff and plan into the normal docs entrypoints so they are discoverable without chat history
 **Success Criteria**: A fresh agent can follow the normal entry stack, open one current handoff note, and continue work with accurate branch-local context and no pressure to guess which residue or launch claims are in-bounds.
+
+## Phase 732: Distill Useful Mirror / Fail-Stop Heuristics (2026-03-30, completed)
+- [x] absorb only the useful parts of recent external theory notes into existing ToneSoul-native files instead of importing their naming systems
+- [x] strengthen the mirror/fail-stop contract with anti-anthropomorphic mirror realism and a cleaner operator-facing stop-reason taxonomy
+- [x] keep the result bounded to current control-plane posture and design rationale, not a new philosophical subsystem
+**Success Criteria**: ToneSoul retains the practically useful parts of those external notes inside its existing control-plane and design files, while the original naming worlds and unhelpful theory residue do not become new canonical surfaces.

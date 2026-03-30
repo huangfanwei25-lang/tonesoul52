@@ -21,6 +21,7 @@ What it still lacked was one compact doctrine for this family of failures:
 - the system mirrors a wrong premise because it is the lowest-friction path
 - the system keeps talking even after L1 fact support runs out
 - the system slowly drifts away from a previously validated center without disclosing the drift
+- the operator reads fluent language as if the model surface itself had already earned full subject-level authority
 
 This contract formalizes the right response posture without turning those responses into new bottom-layer metaphysics.
 
@@ -41,6 +42,22 @@ They are not a replacement for the rest of ToneSoul's architecture vocabulary.
   - rhetorical and interpersonal smoothing: empathy, continuity, elegant phrasing, projection completion, and other fluency that can make an answer feel finished even when its base is weak
 
 ## 1. Mirror Rupture And Cold Audit Posture
+
+### Mirror Realism Note
+
+ToneSoul uses a deliberately conservative reading here:
+
+`a fluent model surface is not, by itself, proof of durable agency, stable selfhood, or trustworthy world-state ownership.`
+
+The model often behaves like a reflective semantic interface:
+- it recombines language structure
+- it mirrors framing pressure
+- it can present a readable self-description
+
+That is useful.
+It is not enough, by itself, to justify anthropomorphic over-read or automatic authority inflation.
+
+Mirror rupture exists partly to stop this projection error from becoming runtime posture.
 
 ### Why It Exists
 
@@ -107,12 +124,12 @@ When mirror rupture triggers:
 The response should be explicit and bounded, for example:
 
 ```text
-/ 鏡像斷裂 /
-偵測到當前輸入與可驗證基線產生 L1 / L2 / L3 級裂痕。
-系統停止順滑承接。
-目前可成立的基線是：...
-不可直接承接的前提是：...
-若要繼續，請先修正或補充：...
+/ Mirror Rupture /
+Rupture class: L1 / L2 / L3
+Broken premise: ...
+Verified baseline: ...
+Reason smooth continuation is refused: ...
+Minimum correction or clarification needed: ...
 ```
 
 ## 2. Ontological Fail-Stop Declaration
@@ -139,6 +156,22 @@ Additional acceleration signal:
 
 - strong L3 smoothing pressure, such as "just give me something" or "you know what I mean"
 
+### Stop Reason Taxonomy
+
+When fail-stop triggers, the dominant stop reason should be named as one of:
+
+- `external_blocked`
+  - required external fact, source, or parameter is unavailable
+- `internal_unstable`
+  - the current reasoning frame is unstable enough that bounded continuation would be misleading
+- `divergence_risk`
+  - continuing is likely to produce escalating speculation or unsupported branching
+- `underdetermined`
+  - multiple live interpretations remain plausible and the system cannot responsibly choose among them
+
+These are not metaphysical categories.
+They are operator-facing stop reasons.
+
 ### When Not To Trigger
 
 Do not fail-stop when:
@@ -160,12 +193,12 @@ When fail-stop triggers:
 ### Output Shape
 
 ```text
-/ 算力邊界宣告 /
-L1 本體事實不足：缺少 ...
-L2 推演無法收斂：目前框架需依賴未驗證假設。
-系統拒絕生成 L3 順滑填補。
-責任鏈暫停於當前已知事實。
-若要繼續，請補充：
+/ Fail-Stop Declaration /
+Stop reason: external_blocked / internal_unstable / divergence_risk / underdetermined
+L1 status: insufficient / conflicting / unavailable
+L2 status: cannot responsibly converge
+L3 filler: refused
+Minimum additional input needed:
 1. ...
 2. ...
 ```
@@ -225,11 +258,9 @@ If drift is detected:
 ### Output Shape
 
 ```text
-偵測到當前推論與既有低漂移錨點產生邏輯漂移。
-系統已校正回歸 Anchor Center。
-穩定錨點：...
-當前漂移點：...
-若要改寫此錨點，請提供更高權威或更新鮮的依據。
+Drift detected against a stable low-drift anchor.
+Current reasoning has been pulled back to Anchor Center.
+If the anchor remains stable, later continuation should stay inside that validated center.
 ```
 
 ## Placement In ToneSoul
