@@ -1329,6 +1329,9 @@
         "recheck_command",
         "ack_command",
         "refresh_hint",
+        "launch_default_mode",
+        "launch_alignment",
+        "launch_posture_note",
         "summary_text"
       ],
       "properties": {
@@ -1377,6 +1380,18 @@
           "type": "string"
         },
         "refresh_hint": {
+          "type": "string",
+          "minLength": 1
+        },
+        "launch_default_mode": {
+          "type": "string",
+          "minLength": 1
+        },
+        "launch_alignment": {
+          "type": "string",
+          "minLength": 1
+        },
+        "launch_posture_note": {
           "type": "string",
           "minLength": 1
         },

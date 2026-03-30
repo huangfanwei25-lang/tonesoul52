@@ -560,6 +560,17 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
         refresh_hint = str(coordination_mode.get("refresh_hint", "")).strip()
         if refresh_hint:
             lines.append(f"  refresh_hint={_clip(refresh_hint)}")
+        launch_default = str(coordination_mode.get("launch_default_mode", "")).strip()
+        launch_alignment = str(coordination_mode.get("launch_alignment", "")).strip()
+        if launch_default:
+            lines.append(
+                "  "
+                f"launch_default={launch_default} "
+                f"alignment={launch_alignment or 'unknown'}"
+            )
+        launch_posture_note = str(coordination_mode.get("launch_posture_note", "")).strip()
+        if launch_posture_note:
+            lines.append(f"  launch_note={_clip(launch_posture_note)}")
         recheck_command = str(coordination_mode.get("recheck_command", "")).strip()
         if recheck_command:
             lines.append(f"  recheck_command={recheck_command}")

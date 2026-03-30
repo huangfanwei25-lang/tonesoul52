@@ -9,6 +9,7 @@
 > Companion:
 >   - `docs/plans/tonesoul_launch_maturity_program_2026-03-30.md`
 >   - `docs/plans/tonesoul_launch_validation_matrix_2026-03-30.md`
+>   - `docs/plans/tonesoul_coordination_backend_decision_2026-03-30.md`
 
 ## 1. Current Operational Truth
 

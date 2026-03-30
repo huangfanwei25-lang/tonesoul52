@@ -75,9 +75,9 @@
   - context-injection prompt adoption (`value_accumulator` and `self_commit`)
   - unified runtime context prompt framing
 - Current short board:
-  - one explicit shared-coordination backend decision so launch language stops drifting between file-backed discipline and Redis-live aspiration
+  - one bounded public-claim honesty gate so launch wording cannot outrun the evidence ladder or the current backend decision
 - After that:
-  - bind public launch language to the evidence ladder before reopening deeper prompt or memory refinements
+  - run collaborator-beta go/no-go review only after public claims and backend default are both explicit
   - only then further optimization
 
 ## Phase 691: Reality Alignment Lane Integration (2026-03-29)
@@ -1447,10 +1447,10 @@
 - [x] turn only repeated failures into bounded fixes, not new theory lanes
 **Success Criteria**: ToneSoul has at least one repeated live validation set that shows what still fails under real handoff conditions, and the next fixes are chosen from those failures.
 
-## Phase 723: Shared-Coordination Backend Decision (2026-03-30, planned)
-- [ ] classify file-backed coordination versus Redis-backed coordination by actual launch readiness, not conceptual attractiveness
-- [ ] choose one honest launch-default coordination mode
-- [ ] label the other mode as optional, experimental, or deferred
+## Phase 723: Shared-Coordination Backend Decision (2026-03-30)
+- [x] classify file-backed coordination versus Redis-backed coordination by actual launch readiness, not conceptual attractiveness
+- [x] choose one honest launch-default coordination mode
+- [x] label the other mode as optional, experimental, or deferred
 **Success Criteria**: Later agents and humans can say what shared-coordination mode ToneSoul is actually launching with, without drifting between file-backed and Redis-live language.
 
 ## Phase 724: Launch Operations Surface (2026-03-30)

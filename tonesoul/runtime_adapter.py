@@ -2011,6 +2011,10 @@ def _build_operator_guidance(
     else:
         reminders.append("Redis live surfaces are unavailable; coordination is currently file-backed.")
 
+    launch_posture_note = str(coordination_mode.get("launch_posture_note", "")).strip()
+    if launch_posture_note:
+        reminders.append(f"Launch coordination default: {launch_posture_note}")
+
     if observer_id:
         if delta_feed.get("first_observation"):
             reminders.append("No since-last-seen baseline exists yet; ack the packet after review to establish one.")
@@ -2102,15 +2106,24 @@ def _build_coordination_mode(
         refresh_hint = (
             "Redis live surfaces may change mid-session; re-read packet before shared edits after long work or when other agents arrive."
         )
+        launch_alignment = "runtime_override_not_launch_default"
+        launch_posture_note = (
+            "Current runtime is redis-live, but the launch-default coordination story remains file-backed until Redis hardening is explicitly promoted."
+        )
     else:
         refresh_hint = (
             "File-backed coordination is not push-driven; re-read packet before touching shared paths after longer work or after another agent reports progress."
+        )
+        launch_alignment = "aligned_with_launch_default"
+        launch_posture_note = (
+            "Current runtime matches the launch-default coordination story: file-backed continuity with receiver guards."
         )
 
     summary_text = (
         "coordination="
         f"{mode} claims={surface_modes['claims']} checkpoints={surface_modes['checkpoints']} "
-        f"subjects={surface_modes['subject_snapshots']} delta={'enabled' if observer_text else 'inactive'} "
+        f"subjects={surface_modes['subject_snapshots']} launch_default=file-backed "
+        f"delta={'enabled' if observer_text else 'inactive'} "
         f"visitors={surface_modes['visitors']}"
     )
     if claims or checkpoints or compactions or subject_snapshots or routing_events or visitors:
@@ -2129,6 +2142,9 @@ def _build_coordination_mode(
         "recheck_command": recheck_command,
         "ack_command": ack_command,
         "refresh_hint": refresh_hint,
+        "launch_default_mode": "file-backed",
+        "launch_alignment": launch_alignment,
+        "launch_posture_note": launch_posture_note,
         "summary_text": summary_text,
     }
 

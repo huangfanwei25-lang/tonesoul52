@@ -393,6 +393,9 @@ def test_r_memory_packet_exposes_runtime_dominance_and_recent_trace(
     assert packet["coordination_mode"]["live_surfaces_available"] is False
     assert packet["coordination_mode"]["surface_modes"]["claims"] == "file-backed"
     assert packet["coordination_mode"]["surface_modes"]["visitors"] == "unavailable"
+    assert packet["coordination_mode"]["launch_default_mode"] == "file-backed"
+    assert packet["coordination_mode"]["launch_alignment"] == "aligned_with_launch_default"
+    assert "launch-default coordination story" in packet["coordination_mode"]["launch_posture_note"]
     assert packet["recent_routing_events"][0]["surface"] == "checkpoint"
     assert packet["recent_routing_events"][0]["freshness_hours"] >= 0.0
     assert packet["recent_traces"][0]["council_dossier_summary"]["confidence_posture"] == "contested"
@@ -741,6 +744,7 @@ def test_subject_snapshots_surface_durable_subject_anchor(tmp_path: Path) -> Non
     )
     assert packet["coordination_mode"]["mode"] == "file-backed"
     assert packet["coordination_mode"]["delta_feed_enabled"] is False
+    assert packet["coordination_mode"]["launch_default_mode"] == "file-backed"
     assert (
         "A recent subject snapshot is visible; treat it as durable working identity, but still non-canonical."
         in packet["operator_guidance"]["current_reminders"]
@@ -779,6 +783,10 @@ def test_subject_snapshots_surface_durable_subject_anchor(tmp_path: Path) -> Non
     )
     assert (
         "File-backed coordination is not push-driven; re-read packet before touching shared paths after longer work or after another agent reports progress."
+        in packet["operator_guidance"]["current_reminders"]
+    )
+    assert (
+        "Launch coordination default: Current runtime matches the launch-default coordination story: file-backed continuity with receiver guards."
         in packet["operator_guidance"]["current_reminders"]
     )
 

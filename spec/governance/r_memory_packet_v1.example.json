@@ -544,7 +544,10 @@
     "recheck_command": "python scripts/run_r_memory_packet.py --agent codex-observer",
     "ack_command": "python scripts/run_r_memory_packet.py --agent codex-observer --ack",
     "refresh_hint": "Redis live surfaces may change mid-session; re-read packet before shared edits after long work or when other agents arrive.",
-    "summary_text": "coordination=redis-live claims=live checkpoints=live subjects=live delta=enabled visitors=live active=claims:1/checkpoints:1/compactions:1/subjects:1/routing:2/visitors:1"
+    "launch_default_mode": "file-backed",
+    "launch_alignment": "runtime_override_not_launch_default",
+    "launch_posture_note": "Current runtime is redis-live, but the launch-default coordination story remains file-backed until Redis hardening is explicitly promoted.",
+    "summary_text": "coordination=redis-live claims=live checkpoints=live subjects=live launch_default=file-backed delta=enabled visitors=live active=claims:1/checkpoints:1/compactions:1/subjects:1/routing:2/visitors:1"
   },
   "operator_guidance": {
     "backend_mode": "redis",

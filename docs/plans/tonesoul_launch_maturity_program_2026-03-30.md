@@ -138,6 +138,9 @@ Success criteria:
 - later agents can answer "what coordination mode is ToneSoul actually using?" without ambiguity
 - public claims about Redis/live surfaces become honest
 
+Current note:
+- `docs/plans/tonesoul_coordination_backend_decision_2026-03-30.md`
+
 ### Phase 724: Launch Operations Surface
 
 **Goal**: expose one modern launch/readiness posture for current ToneSoul.

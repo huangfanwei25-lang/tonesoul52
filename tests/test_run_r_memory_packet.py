@@ -282,10 +282,16 @@ def test_run_r_memory_packet_emits_json(capsys, monkeypatch, tmp_path: Path) -> 
         reminder.startswith("Evidence posture: evidence=tested(session_control_and_handoff,council_mechanics)")
         for reminder in output["operator_guidance"]["current_reminders"]
     )
+    assert any(
+        reminder.startswith("Launch coordination default: Current runtime matches the launch-default coordination story")
+        for reminder in output["operator_guidance"]["current_reminders"]
+    )
     assert output["coordination_mode"]["mode"] == "file-backed"
     assert output["coordination_mode"]["delta_feed_enabled"] is True
     assert output["coordination_mode"]["surface_modes"]["checkpoints"] == "file-backed"
     assert output["coordination_mode"]["surface_modes"]["visitors"] == "unavailable"
+    assert output["coordination_mode"]["launch_default_mode"] == "file-backed"
+    assert output["coordination_mode"]["launch_alignment"] == "aligned_with_launch_default"
     assert output["delta_feed"]["observer_id"] == "observer-1"
     assert output["delta_feed"]["first_observation"] is True
     cursor_data = json.loads(observer_cursors_path.read_text(encoding="utf-8"))

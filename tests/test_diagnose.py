@@ -378,8 +378,13 @@ def _fake_packet():
             "refresh_hint": (
                 "Redis live surfaces may change mid-session; re-read packet before shared edits after long work or when other agents arrive."
             ),
+            "launch_default_mode": "file-backed",
+            "launch_alignment": "runtime_override_not_launch_default",
+            "launch_posture_note": (
+                "Current runtime is redis-live, but the launch-default coordination story remains file-backed until Redis hardening is explicitly promoted."
+            ),
             "summary_text": (
-                "coordination=redis-live claims=live checkpoints=live subjects=live "
+                "coordination=redis-live claims=live checkpoints=live subjects=live launch_default=file-backed "
                 "delta=enabled visitors=live active=claims:1/checkpoints:1/compactions:1/subjects:1/routing:2/visitors:1"
             ),
         },
@@ -422,6 +427,7 @@ def _fake_packet():
                 "A recent subject snapshot is visible; treat it as durable working identity, but still non-canonical.",
                 "Subject-refresh heuristics found low-risk updates; review subject_refresh before writing the next snapshot.",
                 "Redis live surfaces may change mid-session; re-read packet before shared edits after long work or when other agents arrive.",
+                "Launch coordination default: Current runtime is redis-live, but the launch-default coordination story remains file-backed until Redis hardening is explicitly promoted.",
                 "A delta feed is visible for this agent; ack after review to advance the observer baseline.",
             ],
             "completion_rule": (
@@ -552,6 +558,8 @@ def test_full_diagnostic_is_cp950_safe_and_includes_shared_runtime(monkeypatch) 
     assert "[Routing Telemetry] count=2" in report
     assert "[Coordination Mode]" in report
     assert "mode=redis-live live=True delta=True" in report
+    assert "launch_default=file-backed alignment=runtime_override_not_launch_default" in report
+    assert "launch_note=Current runtime is redis-live, but the launch-default coordination st..." in report
     assert "surfaces=claims:live checkpoints:live subjects:live visitors:live" in report
     assert "Prefer recent_compactions and project_memory_summary before older" in report
     assert "Subject-refresh heuristics found low-risk updates" in report
