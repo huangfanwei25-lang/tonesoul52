@@ -54,6 +54,18 @@ python scripts/run_r_memory_packet.py --agent launch-smoke
 python -m tonesoul.diagnose --agent launch-smoke
 ```
 
+### One-command collaborator-beta preflight
+
+```bash
+python scripts/run_collaborator_beta_preflight.py --agent beta-smoke
+```
+
+Use this when the goal is not a full repo healthcheck, but one current answer to:
+- is the entry stack alive
+- is collaborator-beta still the current tier
+- is file-backed still the launch-default story
+- is the latest continuity wave still discoverable
+
 These confirm that:
 - session-start still renders
 - packet still renders

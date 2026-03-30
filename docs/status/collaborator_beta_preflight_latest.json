@@ -1,0 +1,100 @@
+{
+  "generated_at": "2026-03-30T11:31:27Z",
+  "overall_ok": true,
+  "overall_status": "go",
+  "repo_root": "C:\\Users\\user\\Desktop\\倉庫",
+  "agent": "beta-smoke",
+  "commands": {
+    "session_start": "C:\\Python313\\python.exe C:\\Users\\user\\Desktop\\倉庫\\scripts\\start_agent_session.py --agent beta-smoke --no-ack",
+    "packet": "C:\\Python313\\python.exe C:\\Users\\user\\Desktop\\倉庫\\scripts\\run_r_memory_packet.py --agent beta-smoke",
+    "diagnose": "C:\\Python313\\python.exe -m tonesoul.diagnose --compact --agent beta-smoke"
+  },
+  "entry_stack": {
+    "session_start": {
+      "ok": true,
+      "readiness": "pass",
+      "task_track": "feature_track",
+      "deliberation_mode": "standard_council"
+    },
+    "packet": {
+      "ok": true,
+      "launch_default_mode": "file-backed",
+      "launch_alignment": "aligned_with_launch_default",
+      "current_tier": "collaborator_beta",
+      "next_target_tier": "public_launch",
+      "public_launch_ready": false
+    },
+    "diagnose": {
+      "ok": true,
+      "mode": "compact_subprocess",
+      "compact_line": "[ToneSoul] file | SI=0.45 | vows=3 tensions=0 | R=0.03/stable | coord=file-backed | traces=2 claims=0 compactions=3 subjects=1 zones=9 | git=7e3a246/dirty=10 | aegis=compromised | agent=beta-smoke"
+    }
+  },
+  "launch_claim_posture": {
+    "current_tier": "collaborator_beta",
+    "next_target_tier": "public_launch",
+    "public_launch_ready": false,
+    "tier_guidance": [
+      {
+        "tier": "internal_alpha",
+        "posture": "safe_current_claims_only",
+        "note": "Safe to say trusted internal operators can use the current file-backed session-start/packet/diagnose workflow with tested receiver and council-mechanism readouts."
+      },
+      {
+        "tier": "collaborator_beta",
+        "posture": "guided_and_bounded",
+        "note": "Safe only as a guided beta target: repeated validation exists and the launch-default coordination story is explicit, but continuity effectiveness and council decision quality remain bounded rather than proven."
+      },
+      {
+        "tier": "public_launch",
+        "posture": "deferred",
+        "note": "Not yet honest to present ToneSoul as broadly launch-mature; public language must not overstate continuity effectiveness, council decision quality, or Redis/live shared memory."
+      }
+    ],
+    "safe_now": [
+      "session_control_and_handoff=tested: describe session-start, packet, delta, readiness, and receiver guards as the current tested coordination workflow.",
+      "coordination_backend=file-backed: describe file-backed coordination with receiver guards as the current launch-default story.",
+      "council_mechanics=tested: describe council structure, dossier extraction, and suppression visibility as mechanism-level support, not outcome proof."
+    ],
+    "blocked_overclaims": [
+      {
+        "claim": "continuity_effectiveness",
+        "current_classification": "runtime_present",
+        "reason": "Do not claim broadly proven cross-session continuity; current evidence supports bounded runtime presence and repeated validation, not public-grade proof."
+      },
+      {
+        "claim": "council_decision_quality",
+        "current_classification": "descriptive_only",
+        "reason": "Do not present council agreement or coherence as calibrated correctness; current confidence surfaces are descriptive, not accuracy-backed."
+      },
+      {
+        "claim": "live_shared_memory",
+        "current_classification": "not_launch_default",
+        "reason": "Do not present Redis/live shared memory as the launch-default or hardened public story while launch_default_mode remains file-backed and launch_alignment is aligned_with_launch_default."
+      }
+    ],
+    "receiver_rule": "Use collaborator-beta wording only for guided file-backed workflow and explicit evidence-bounded surfaces, and keep public-launch language deferred until evidence moves beyond runtime_present/descriptive_only on the known short boards.",
+    "summary_text": "launch_claims=current:collaborator_beta public_launch:deferred blocked=continuity_effectiveness,council_decision_quality,live_shared_memory"
+  },
+  "validation_wave": {
+    "present": true,
+    "path": "C:\\Users\\user\\Desktop\\倉庫\\docs\\status\\launch_continuity_validation_wave_latest.json",
+    "scenario_count": 4,
+    "scenario_names": [
+      "clean_pass",
+      "claim_conflict",
+      "stale_compaction",
+      "contested_dossier"
+    ],
+    "max_receiver_alert_count": 4,
+    "contested_dossier_visible": true,
+    "stale_compaction_guarded": true
+  },
+  "blocking_findings": [],
+  "cautions": [
+    "continuity_effectiveness",
+    "council_decision_quality",
+    "live_shared_memory"
+  ],
+  "summary_text": "collaborator_beta_preflight=go tier=collaborator_beta backend=file-backed validation_wave=4 blocked=0"
+}

@@ -75,8 +75,9 @@
   - context-injection prompt adoption (`value_accumulator` and `self_commit`)
   - unified runtime context prompt framing
 - Current short board:
-  - broader collaborator-beta validation and packaging/hygiene so the new beta posture survives real use with lower operator friction
+  - broader collaborator-beta validation under less curated real use, now that one-command beta preflight exists
 - After that:
+  - reduce remaining packaging/hygiene friction only where it materially affects collaborator-beta use
   - only after broader beta use should public-launch maturity be reconsidered
   - only then further optimization
 
@@ -1470,3 +1471,9 @@
 - [x] classify remaining gaps into blocking vs non-blocking
 - [x] decide whether ToneSoul stays internal alpha or opens collaborator beta
 **Success Criteria**: The next launch decision is evidence-based and explicit, with unresolved blockers still visible instead of being socially ignored.
+
+## Phase 727: Collaborator-Beta Preflight Bundle (2026-03-30, completed)
+- [x] add one command that composes session-start, packet, compact diagnose, and the latest validation-wave artifact into a bounded collaborator-beta preflight
+- [x] keep the bundle narrower than the full repo healthcheck so beta operators can answer launch-tier / backend-default / continuity-wave questions without rerunning the entire repo gate
+- [x] wire the command into the current launch operations surface
+**Success Criteria**: A collaborator-beta operator can run one command and see whether the current entry stack, launch tier, backend default, and validation-wave posture still align with the bounded beta story.
