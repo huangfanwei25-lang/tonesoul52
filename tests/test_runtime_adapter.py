@@ -730,6 +730,22 @@ def test_subject_snapshots_surface_durable_subject_anchor(tmp_path: Path) -> Non
         lane["lane"] == "council_decision_quality" and lane["classification"] == "descriptive_only"
         for lane in evidence_readout["lanes"]
     )
+    launch_claim_posture = packet["project_memory_summary"]["launch_claim_posture"]
+    assert launch_claim_posture["current_tier"] == "internal_alpha"
+    assert launch_claim_posture["next_target_tier"] == "collaborator_beta"
+    assert launch_claim_posture["public_launch_ready"] is False
+    assert any(
+        item.startswith("coordination_backend=file-backed:")
+        for item in launch_claim_posture["safe_now"]
+    )
+    assert any(
+        item["claim"] == "continuity_effectiveness" and item["current_classification"] == "runtime_present"
+        for item in launch_claim_posture["blocked_overclaims"]
+    )
+    assert any(
+        item["claim"] == "live_shared_memory" and item["current_classification"] == "not_launch_default"
+        for item in launch_claim_posture["blocked_overclaims"]
+    )
     assert packet["project_memory_summary"]["subject_refresh"]["status"] == "refresh_candidate"
     assert packet["project_memory_summary"]["subject_refresh"]["refresh_recommended"] is True
     active_thread_guidance = next(
@@ -767,6 +783,10 @@ def test_subject_snapshots_surface_durable_subject_anchor(tmp_path: Path) -> Non
     )
     assert any(
         reminder.startswith("Evidence posture: evidence=tested(session_control_and_handoff,council_mechanics)")
+        for reminder in packet["operator_guidance"]["current_reminders"]
+    )
+    assert any(
+        reminder.startswith("Launch claim posture: launch_claims=internal_alpha:safe")
         for reminder in packet["operator_guidance"]["current_reminders"]
     )
     assert any(

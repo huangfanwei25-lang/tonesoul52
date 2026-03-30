@@ -594,6 +594,7 @@ def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
     working_style_observability = project_memory_summary.get("working_style_observability") or {}
     working_style_import_limits = project_memory_summary.get("working_style_import_limits") or {}
     evidence_readout_posture = project_memory_summary.get("evidence_readout_posture") or {}
+    launch_claim_posture = project_memory_summary.get("launch_claim_posture") or {}
     subject_refresh = project_memory_summary.get("subject_refresh") or {}
     carry_forward_hazards = _carry_forward_promotion_hazards(subject_refresh)
 
@@ -688,6 +689,17 @@ def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
             ),
             "evidence_readout_posture": evidence_readout_posture,
         },
+        "launch_claims": {
+            "present": bool(launch_claim_posture),
+            "import_posture": "advisory",
+            "receiver_obligation": "should_consider",
+            "decay_posture": "slow",
+            "freshness_hours": 0.0 if launch_claim_posture else None,
+            "note": (
+                "Use this to bound maturity and launch wording; it is a claim-language guard, not a runtime permission surface."
+            ),
+            "launch_claim_posture": launch_claim_posture,
+        },
         "subject_snapshot": {
             "present": bool(subject_snapshots),
             "import_posture": "advisory",
@@ -758,6 +770,7 @@ def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
         "delta_feed",
         "compactions",
         "evidence_readout",
+        "launch_claims",
         "subject_snapshot",
         "working_style",
         "council_dossier",

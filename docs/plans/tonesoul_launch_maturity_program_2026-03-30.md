@@ -158,6 +158,9 @@ Success criteria:
 
 **Goal**: prevent public launch language from outrunning evidence.
 
+Current note:
+- `docs/plans/tonesoul_public_claim_honesty_gate_2026-03-30.md`
+
 Tasks:
 - bind current launch claims to the evidence ladder
 - identify which statements are safe at alpha/beta/public levels

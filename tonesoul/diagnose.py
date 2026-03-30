@@ -471,6 +471,31 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
             receiver_rule = str(evidence_readout_posture.get("receiver_rule", "")).strip()
             if receiver_rule:
                 lines.append(f"    receiver_rule={_clip(receiver_rule, limit=120)}")
+        launch_claim_posture = project_memory_summary.get("launch_claim_posture") or {}
+        if launch_claim_posture:
+            lines.append("  launch_claim_posture:")
+            summary_text = str(launch_claim_posture.get("summary_text", "")).strip()
+            if summary_text:
+                lines.append(f"    summary={_clip(summary_text, limit=110)}")
+            lines.append(
+                "    "
+                f"current={launch_claim_posture.get('current_tier', 'unknown')} "
+                f"next={launch_claim_posture.get('next_target_tier', 'unknown')} "
+                f"public_ready={bool(launch_claim_posture.get('public_launch_ready', False))}"
+            )
+            for tier in list(launch_claim_posture.get("tier_guidance") or [])[:3]:
+                tier_name = str(tier.get("tier", "")).strip()
+                posture = str(tier.get("posture", "")).strip()
+                if tier_name and posture:
+                    lines.append(f"    tier={tier_name}:{posture}")
+            for item in list(launch_claim_posture.get("blocked_overclaims") or [])[:3]:
+                claim = str(item.get("claim", "")).strip()
+                classification = str(item.get("current_classification", "")).strip()
+                if claim and classification:
+                    lines.append(f"    blocked={claim}:{classification}")
+            receiver_rule = str(launch_claim_posture.get("receiver_rule", "")).strip()
+            if receiver_rule:
+                lines.append(f"    receiver_rule={_clip(receiver_rule, limit=120)}")
         routing_summary = project_memory_summary.get("routing_summary") or {}
         if routing_summary:
             lines.append("  routing_summary:")

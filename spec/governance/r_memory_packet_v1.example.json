@@ -431,6 +431,52 @@
       ],
       "receiver_rule": "Use tested lanes for current workflow assumptions, runtime_present lanes as bounded mechanism presence, descriptive_only lanes as context not proof, and document_backed lanes as intent/boundary rather than runtime fact."
     },
+    "launch_claim_posture": {
+      "current_tier": "internal_alpha",
+      "next_target_tier": "collaborator_beta",
+      "public_launch_ready": false,
+      "tier_guidance": [
+        {
+          "tier": "internal_alpha",
+          "posture": "safe_current_claims_only",
+          "note": "Safe to say trusted internal operators can use the current file-backed session-start/packet/diagnose workflow with tested receiver and council-mechanism readouts."
+        },
+        {
+          "tier": "collaborator_beta",
+          "posture": "guided_and_bounded",
+          "note": "Safe only as a guided beta target: repeated validation exists and the launch-default coordination story is explicit, but continuity effectiveness and council decision quality remain bounded rather than proven."
+        },
+        {
+          "tier": "public_launch",
+          "posture": "deferred",
+          "note": "Not yet honest to present ToneSoul as broadly launch-mature; public language must not overstate continuity effectiveness, council decision quality, or Redis/live shared memory."
+        }
+      ],
+      "safe_now": [
+        "session_control_and_handoff=tested: describe session-start, packet, delta, readiness, and receiver guards as the current tested coordination workflow.",
+        "coordination_backend=file-backed: describe file-backed coordination with receiver guards as the current launch-default story.",
+        "council_mechanics=tested: describe council structure, dossier extraction, and suppression visibility as mechanism-level support, not outcome proof."
+      ],
+      "blocked_overclaims": [
+        {
+          "claim": "continuity_effectiveness",
+          "current_classification": "runtime_present",
+          "reason": "Do not claim broadly proven cross-session continuity; current evidence supports bounded runtime presence and repeated validation, not public-grade proof."
+        },
+        {
+          "claim": "council_decision_quality",
+          "current_classification": "descriptive_only",
+          "reason": "Do not present council agreement or coherence as calibrated correctness; current confidence surfaces are descriptive, not accuracy-backed."
+        },
+        {
+          "claim": "live_shared_memory",
+          "current_classification": "not_launch_default",
+          "reason": "Do not present Redis/live shared memory as the launch-default or hardened public story while launch_default_mode remains file-backed and launch_alignment is runtime_override_not_launch_default."
+        }
+      ],
+      "receiver_rule": "Use internal-alpha wording for tested workflow and explicit file-backed coordination, allow collaborator-beta language only with bounded guidance, and keep public-launch language deferred until evidence moves beyond runtime_present/descriptive_only on the known short boards.",
+      "summary_text": "launch_claims=internal_alpha:safe collaborator_beta:guided public_launch:deferred blocked=continuity_effectiveness,council_decision_quality,live_shared_memory"
+    },
     "routing_summary": {
       "total_events": 2,
       "preview_count": 1,

@@ -1103,6 +1103,9 @@
         "evidence_readout_posture": {
           "$ref": "#/$defs/evidence_readout_posture"
         },
+        "launch_claim_posture": {
+          "$ref": "#/$defs/launch_claim_posture"
+        },
         "summary_text": {
           "type": "string",
           "minLength": 1
@@ -1200,6 +1203,117 @@
           "minLength": 1
         },
         "note": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "launch_claim_posture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "current_tier",
+        "next_target_tier",
+        "public_launch_ready",
+        "tier_guidance",
+        "safe_now",
+        "blocked_overclaims",
+        "receiver_rule",
+        "summary_text"
+      ],
+      "properties": {
+        "current_tier": {
+          "type": "string",
+          "enum": [
+            "internal_alpha",
+            "collaborator_beta",
+            "public_launch"
+          ]
+        },
+        "next_target_tier": {
+          "type": "string",
+          "enum": [
+            "internal_alpha",
+            "collaborator_beta",
+            "public_launch"
+          ]
+        },
+        "public_launch_ready": {
+          "type": "boolean"
+        },
+        "tier_guidance": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/launch_claim_tier_guidance"
+          }
+        },
+        "safe_now": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "blocked_overclaims": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/launch_claim_block"
+          }
+        },
+        "receiver_rule": {
+          "type": "string",
+          "minLength": 1
+        },
+        "summary_text": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "launch_claim_tier_guidance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tier",
+        "posture",
+        "note"
+      ],
+      "properties": {
+        "tier": {
+          "type": "string",
+          "enum": [
+            "internal_alpha",
+            "collaborator_beta",
+            "public_launch"
+          ]
+        },
+        "posture": {
+          "type": "string",
+          "minLength": 1
+        },
+        "note": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "launch_claim_block": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "claim",
+        "current_classification",
+        "reason"
+      ],
+      "properties": {
+        "claim": {
+          "type": "string",
+          "minLength": 1
+        },
+        "current_classification": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reason": {
           "type": "string",
           "minLength": 1
         }

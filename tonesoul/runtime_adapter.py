@@ -1977,6 +1977,11 @@ def _build_operator_guidance(
     if evidence_summary:
         reminders.append(f"Evidence posture: {evidence_summary}")
 
+    launch_claim_posture = project_memory_summary.get("launch_claim_posture") or {}
+    launch_claim_summary = str(launch_claim_posture.get("summary_text", "")).strip()
+    if launch_claim_summary:
+        reminders.append(f"Launch claim posture: {launch_claim_summary}")
+
     latest_dossier_payload: Dict[str, Any] = {}
     for entry in compactions:
         candidate = entry.get("council_dossier")
@@ -2146,6 +2151,120 @@ def _build_coordination_mode(
         "launch_alignment": launch_alignment,
         "launch_posture_note": launch_posture_note,
         "summary_text": summary_text,
+    }
+
+
+def _build_launch_claim_posture(
+    *,
+    project_memory_summary: Dict[str, Any],
+    coordination_mode: Dict[str, Any],
+) -> Dict[str, Any]:
+    evidence_readout = project_memory_summary.get("evidence_readout_posture") or {}
+    lanes = list(evidence_readout.get("lanes") or [])
+    lane_map = {
+        str(item.get("lane", "")).strip(): str(item.get("classification", "")).strip()
+        for item in lanes
+        if str(item.get("lane", "")).strip()
+    }
+
+    continuity_classification = lane_map.get("continuity_effectiveness", "unknown")
+    council_quality_classification = lane_map.get("council_decision_quality", "unknown")
+    session_control_classification = lane_map.get("session_control_and_handoff", "unknown")
+    council_mechanics_classification = lane_map.get("council_mechanics", "unknown")
+
+    launch_default_mode = str(coordination_mode.get("launch_default_mode", "unknown")).strip() or "unknown"
+    launch_alignment = str(coordination_mode.get("launch_alignment", "unknown")).strip() or "unknown"
+    live_shared_memory_classification = (
+        "not_launch_default"
+        if launch_default_mode != "redis-live"
+        else "launch_default"
+    )
+
+    tier_guidance = [
+        {
+            "tier": "internal_alpha",
+            "posture": "safe_current_claims_only",
+            "note": (
+                "Safe to say trusted internal operators can use the current file-backed session-start/packet/diagnose "
+                "workflow with tested receiver and council-mechanism readouts."
+            ),
+        },
+        {
+            "tier": "collaborator_beta",
+            "posture": "guided_and_bounded",
+            "note": (
+                "Safe only as a guided beta target: repeated validation exists and the launch-default coordination story "
+                "is explicit, but continuity effectiveness and council decision quality remain bounded rather than proven."
+            ),
+        },
+        {
+            "tier": "public_launch",
+            "posture": "deferred",
+            "note": (
+                "Not yet honest to present ToneSoul as broadly launch-mature; public language must not overstate "
+                "continuity effectiveness, council decision quality, or Redis/live shared memory."
+            ),
+        },
+    ]
+
+    safe_now = [
+        (
+            f"session_control_and_handoff={session_control_classification}: describe session-start, packet, delta, "
+            "readiness, and receiver guards as the current tested coordination workflow."
+        ),
+        (
+            f"coordination_backend={launch_default_mode}: describe file-backed coordination with receiver guards as "
+            "the current launch-default story."
+        ),
+        (
+            f"council_mechanics={council_mechanics_classification}: describe council structure, dossier extraction, "
+            "and suppression visibility as mechanism-level support, not outcome proof."
+        ),
+    ]
+
+    blocked_overclaims = [
+        {
+            "claim": "continuity_effectiveness",
+            "current_classification": continuity_classification,
+            "reason": (
+                "Do not claim broadly proven cross-session continuity; current evidence supports bounded runtime "
+                "presence and repeated validation, not public-grade proof."
+            ),
+        },
+        {
+            "claim": "council_decision_quality",
+            "current_classification": council_quality_classification,
+            "reason": (
+                "Do not present council agreement or coherence as calibrated correctness; current confidence surfaces "
+                "are descriptive, not accuracy-backed."
+            ),
+        },
+        {
+            "claim": "live_shared_memory",
+            "current_classification": live_shared_memory_classification,
+            "reason": (
+                "Do not present Redis/live shared memory as the launch-default or hardened public story while "
+                f"launch_default_mode remains {launch_default_mode} and launch_alignment is {launch_alignment}."
+            ),
+        },
+    ]
+
+    return {
+        "current_tier": "internal_alpha",
+        "next_target_tier": "collaborator_beta",
+        "public_launch_ready": False,
+        "tier_guidance": tier_guidance,
+        "safe_now": safe_now,
+        "blocked_overclaims": blocked_overclaims,
+        "receiver_rule": (
+            "Use internal-alpha wording for tested workflow and explicit file-backed coordination, allow "
+            "collaborator-beta language only with bounded guidance, and keep public-launch language deferred until "
+            "evidence moves beyond runtime_present/descriptive_only on the known short boards."
+        ),
+        "summary_text": (
+            "launch_claims=internal_alpha:safe collaborator_beta:guided public_launch:deferred "
+            "blocked=continuity_effectiveness,council_decision_quality,live_shared_memory"
+        ),
     }
 
 
@@ -2617,6 +2736,18 @@ def r_memory_packet(
         routing_events=routing_summary.get("recent_events", []),
         visitors=visitors[:visitor_limit],
     )
+    launch_claim_posture = _build_launch_claim_posture(
+        project_memory_summary=project_memory_summary,
+        coordination_mode=coordination_mode,
+    )
+    if launch_claim_posture:
+        project_memory_summary["launch_claim_posture"] = launch_claim_posture
+        launch_summary = str(launch_claim_posture.get("summary_text", "")).strip()
+        if launch_summary:
+            base_summary = str(project_memory_summary.get("summary_text", "")).strip()
+            project_memory_summary["summary_text"] = (
+                f"{base_summary} | {launch_summary}" if base_summary else launch_summary
+            )
     operator_guidance = _build_operator_guidance(
         backend_name=getattr(store, "backend_name", "unknown"),
         is_redis=bool(getattr(store, "is_redis", False)),

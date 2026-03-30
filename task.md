@@ -75,9 +75,9 @@
   - context-injection prompt adoption (`value_accumulator` and `self_commit`)
   - unified runtime context prompt framing
 - Current short board:
-  - one bounded public-claim honesty gate so launch wording cannot outrun the evidence ladder or the current backend decision
+  - collaborator-beta go/no-go review now that launch wording, backend posture, and repeated validation all have current bounded surfaces
 - After that:
-  - run collaborator-beta go/no-go review only after public claims and backend default are both explicit
+  - classify remaining blockers explicitly before widening launch language
   - only then further optimization
 
 ## Phase 691: Reality Alignment Lane Integration (2026-03-29)
@@ -1459,10 +1459,10 @@
 - [x] keep historical release/runbook docs as lineage, not as the current default operations story
 **Success Criteria**: A later operator can answer "what do I run before launch, and how do I rollback?" from one current ToneSoul-native surface.
 
-## Phase 725: Public-Claim Honesty Gate (2026-03-30, planned)
-- [ ] bind launch-tier wording to the evidence ladder and current council/continuity reality
-- [ ] define which claims are safe for alpha, beta, and public-facing language
-- [ ] explicitly block the most likely maturity overclaims (`continuity effectiveness`, `council quality`, `live shared memory`)
+## Phase 725: Public-Claim Honesty Gate (2026-03-30, completed)
+- [x] bind launch-tier wording to the evidence ladder and current council/continuity reality
+- [x] define which claims are safe for alpha, beta, and public-facing language
+- [x] explicitly block the most likely maturity overclaims (`continuity effectiveness`, `council quality`, `live shared memory`)
 **Success Criteria**: Launch-facing language is bounded by evidence level, and later agents stop overstating what ToneSoul has actually proven.
 
 ## Phase 726: Collaborator-Beta Go/No-Go Review (2026-03-30, planned)

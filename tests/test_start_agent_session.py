@@ -135,6 +135,12 @@ def test_start_agent_session_emits_machine_readable_bundle(capsys, monkeypatch, 
         output["import_posture"]["surfaces"]["evidence_readout"]["evidence_readout_posture"]["classification_counts"]["tested"]
         == 2
     )
+    assert output["import_posture"]["surfaces"]["launch_claims"]["import_posture"] == "advisory"
+    assert output["import_posture"]["surfaces"]["launch_claims"]["receiver_obligation"] == "should_consider"
+    assert (
+        output["import_posture"]["surfaces"]["launch_claims"]["launch_claim_posture"]["current_tier"]
+        == "internal_alpha"
+    )
     assert output["import_posture"]["surfaces"]["subject_snapshot"]["present"] is False
     assert output["import_posture"]["readiness_alignment"] == "needs_clarification"
     assert output["import_posture"]["summary_text"].startswith("posture=directly_importable")

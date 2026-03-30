@@ -253,6 +253,51 @@ def _fake_packet():
                 ],
                 "receiver_rule": "Use tested lanes for current workflow assumptions, runtime_present lanes as bounded mechanism presence, descriptive_only lanes as context not proof, and document_backed lanes as intent/boundary rather than runtime fact.",
             },
+            "launch_claim_posture": {
+                "current_tier": "internal_alpha",
+                "next_target_tier": "collaborator_beta",
+                "public_launch_ready": False,
+                "tier_guidance": [
+                    {
+                        "tier": "internal_alpha",
+                        "posture": "safe_current_claims_only",
+                        "note": "Safe to say trusted internal operators can use the current file-backed session-start/packet/diagnose workflow with tested receiver and council-mechanism readouts.",
+                    },
+                    {
+                        "tier": "collaborator_beta",
+                        "posture": "guided_and_bounded",
+                        "note": "Safe only as a guided beta target: repeated validation exists and the launch-default coordination story is explicit, but continuity effectiveness and council decision quality remain bounded rather than proven.",
+                    },
+                    {
+                        "tier": "public_launch",
+                        "posture": "deferred",
+                        "note": "Not yet honest to present ToneSoul as broadly launch-mature; public language must not overstate continuity effectiveness, council decision quality, or Redis/live shared memory.",
+                    },
+                ],
+                "safe_now": [
+                    "session_control_and_handoff=tested: describe session-start, packet, delta, readiness, and receiver guards as the current tested coordination workflow.",
+                    "coordination_backend=file-backed: describe file-backed coordination with receiver guards as the current launch-default story.",
+                ],
+                "blocked_overclaims": [
+                    {
+                        "claim": "continuity_effectiveness",
+                        "current_classification": "runtime_present",
+                        "reason": "Do not claim broadly proven cross-session continuity; current evidence supports bounded runtime presence and repeated validation, not public-grade proof.",
+                    },
+                    {
+                        "claim": "council_decision_quality",
+                        "current_classification": "descriptive_only",
+                        "reason": "Do not present council agreement or coherence as calibrated correctness; current confidence surfaces are descriptive, not accuracy-backed.",
+                    },
+                    {
+                        "claim": "live_shared_memory",
+                        "current_classification": "not_launch_default",
+                        "reason": "Do not present Redis/live shared memory as the launch-default or hardened public story while launch_default_mode remains file-backed and launch_alignment is runtime_override_not_launch_default.",
+                    },
+                ],
+                "receiver_rule": "Use internal-alpha wording for tested workflow and explicit file-backed coordination, allow collaborator-beta language only with bounded guidance, and keep public-launch language deferred until evidence moves beyond runtime_present/descriptive_only on the known short boards.",
+                "summary_text": "launch_claims=internal_alpha:safe collaborator_beta:guided public_launch:deferred blocked=continuity_effectiveness,council_decision_quality,live_shared_memory",
+            },
             "routing_summary": {
                 "total_events": 2,
                 "preview_count": 1,
@@ -551,6 +596,10 @@ def test_full_diagnostic_is_cp950_safe_and_includes_shared_runtime(monkeypatch) 
     assert "evidence_readout_posture:" in report
     assert "tested=2 runtime_present=1 descriptive_only=1 document_backed=1" in report
     assert "continuity_effectiveness=runtime_present" in report
+    assert "launch_claim_posture:" in report
+    assert "current=internal_alpha next=collaborator_beta public_ready=False" in report
+    assert "tier=internal_alpha:safe_current_claims_only" in report
+    assert "blocked=live_shared_memory:not_launch_default" in report
     assert "routing_summary:" in report
     assert "subject_refresh:" in report
     assert "status=refresh_candidate recommended=True newer_compactions=1 newer_checkpoints=1 hazards=1" in report
