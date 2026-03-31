@@ -201,6 +201,151 @@ def _scenario_contested_dossier(root: Path) -> None:
             }
         ],
     )
+def _recent_iso() -> str:
+    """Return an ISO timestamp within the last hour, so traces are not stale."""
+    from datetime import datetime, timedelta, timezone
+
+    recent = datetime.now(timezone.utc) - timedelta(minutes=30)
+    return recent.isoformat()
+
+
+def _scenario_session_end_lifecycle(root: Path) -> None:
+    """Scenario: session was recently ended with a fresh compaction + checkpoint.
+
+    This exercises the trace-freshening path — observer window should NOT
+    report stale traces because the timestamps are recent.
+    """
+    _write_json(root / "governance_state.json", _base_state())
+    # Fresh trace with recent timestamp
+    fresh_trace = _base_trace()
+    fresh_trace["timestamp"] = _recent_iso()
+    fresh_trace["session_id"] = "sess-lifecycle"
+    fresh_trace["key_decisions"] = ["completed observer-window baseline", "rotating to next board"]
+    _write_jsonl(root / "session_traces.jsonl", fresh_trace)
+    # Fresh checkpoint
+    _write_json(
+        root / ".aegis" / "checkpoints.json",
+        [
+            {
+                "checkpoint_id": "chk-lifecycle",
+                "agent": "codex",
+                "session_id": "sess-lifecycle",
+                "summary": "Observer window baseline complete, rotating.",
+                "pending_paths": ["scripts/run_observer_window.py"],
+                "next_action": "broader collaborator-beta validation",
+                "source": "cli",
+                "updated_at": _recent_iso(),
+                "expires_at": "4070908920.0",
+            }
+        ],
+    )
+    # Fresh compaction with carry_forward
+    _write_json(
+        root / ".aegis" / "compacted.json",
+        [
+            {
+                "compaction_id": "cmp-lifecycle",
+                "agent": "codex",
+                "session_id": "sess-lifecycle",
+                "summary": "Observer window baseline complete.",
+                "carry_forward": ["observer window is baseline-complete"],
+                "pending_paths": ["scripts/run_observer_window.py"],
+                "evidence_refs": ["docs/status/codex_handoff_2026-03-31.md"],
+                "next_action": "broader collaborator-beta validation",
+                "source": "cli",
+                "updated_at": _recent_iso(),
+            }
+        ],
+    )
+
+
+def _scenario_concurrent_claims(root: Path) -> None:
+    """Scenario: two agents hold claims on overlapping paths.
+
+    This tests multi-agent claim collision detection. The fresh agent
+    should see needs_clarification because paths overlap.
+    """
+    _scenario_clean_pass(root)
+    _write_json(
+        root / ".aegis" / "task_claims.json",
+        {
+            "task-alpha": {
+                "task_id": "task-alpha",
+                "agent": "agent-alpha",
+                "summary": "refactor runtime_adapter store layer",
+                "paths": ["tonesoul/runtime_adapter.py", "tonesoul/store.py"],
+                "source": "cli",
+                "created_at": "2026-03-30T00:02:00+00:00",
+                "expires_at": "4070908920.0",
+            },
+            "task-beta": {
+                "task_id": "task-beta",
+                "agent": "agent-beta",
+                "summary": "add redis backend to store",
+                "paths": ["tonesoul/store.py", "tonesoul/backends/redis_store.py"],
+                "source": "cli",
+                "created_at": "2026-03-30T00:03:00+00:00",
+                "expires_at": "4070908920.0",
+            },
+        },
+    )
+
+
+def _scenario_working_style_reinforced(root: Path) -> None:
+    """Scenario: subject snapshot has working style anchor with decision_preferences
+    and verified_routines, AND the compaction carry_forward echoes them.
+
+    This should make working_style_validation = sufficient.
+    """
+    _scenario_clean_pass(root)
+    _write_json(
+        root / ".aegis" / "subject_snapshots.json",
+        [
+            {
+                "snapshot_id": "subj-style",
+                "agent": "codex",
+                "session_id": "sess-style",
+                "summary": "Packet-first runtime steward with bounded observer discipline.",
+                "stable_vows": ["never smuggle theory into runtime truth"],
+                "durable_boundaries": ["do not edit protected human-managed files"],
+                "decision_preferences": [
+                    "prefer packet before broad repo scan",
+                    "run observer window before session start",
+                ],
+                "verified_routines": [
+                    "end sessions with compaction before release",
+                    "run regression tests before commit",
+                ],
+                "active_threads": ["broader collaborator-beta validation"],
+                "evidence_refs": ["docs/status/codex_handoff_2026-03-31.md"],
+                "refresh_signals": ["refresh when durable boundaries change"],
+                "source": "cli",
+                "updated_at": _recent_iso(),
+            }
+        ],
+    )
+    _write_json(
+        root / ".aegis" / "compacted.json",
+        [
+            {
+                "compaction_id": "cmp-style",
+                "agent": "codex",
+                "session_id": "sess-style",
+                "summary": "Completed observer window with packet-first discipline.",
+                "carry_forward": [
+                    "prefer packet before broad repo scan",
+                    "run observer window before session start",
+                    "end sessions with compaction before release",
+                    "run regression tests before commit",
+                ],
+                "pending_paths": ["scripts/run_observer_window.py"],
+                "evidence_refs": ["docs/status/codex_handoff_2026-03-31.md"],
+                "next_action": "broader collaborator-beta validation",
+                "source": "cli",
+                "updated_at": _recent_iso(),
+            }
+        ],
+    )
 
 
 SCENARIO_BUILDERS = {
@@ -208,6 +353,9 @@ SCENARIO_BUILDERS = {
     "claim_conflict": _scenario_claim_conflict,
     "stale_compaction": _scenario_stale_compaction,
     "contested_dossier": _scenario_contested_dossier,
+    "session_end_lifecycle": _scenario_session_end_lifecycle,
+    "concurrent_claims": _scenario_concurrent_claims,
+    "working_style_reinforced": _scenario_working_style_reinforced,
 }
 
 

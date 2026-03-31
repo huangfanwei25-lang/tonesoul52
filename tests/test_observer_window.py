@@ -12,10 +12,7 @@ All inputs are synthesised dicts that mirror real packet/import_posture shapes.
 
 from __future__ import annotations
 
-import pytest
-
 from tonesoul.observer_window import build_low_drift_anchor
-
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -312,3 +309,136 @@ class TestStaleCarryForwardCase:
         match = re.search(r"stale=(\d+)", text)
         assert match is not None, f"Could not find stale= in summary_text: {text}"
         assert int(match.group(1)) >= 2
+
+
+# ---------------------------------------------------------------------------
+# Case 4: Session-end lifecycle (fresh traces → not stale)
+# ---------------------------------------------------------------------------
+
+class TestSessionEndLifecycle:
+    """
+    After a session-end that wrote fresh compaction + traces, the observer
+    window should NOT report traces or compaction as stale.
+    """
+
+    def setup_method(self):
+        self.anchor = build_low_drift_anchor(
+            packet=_make_packet(
+                first_observation=False,
+                delta_new_compactions=1,
+                delta_new_checkpoints=1,
+                delta_new_traces=1,
+            ),
+            import_posture=_make_import_posture(
+                compaction_freshness_hours=0.5,   # 30 min old
+                trace_freshness_hours=0.5,        # 30 min old
+                snapshot_freshness_hours=0.5,
+            ),
+            readiness=_make_readiness(),
+        )
+
+    def test_no_stale_items(self):
+        assert len(self.anchor["stale"]) == 0, (
+            f"Fresh traces/compaction should not be stale. Got: {self.anchor['stale']}"
+        )
+
+    def test_delta_shows_updates(self):
+        delta = self.anchor["delta_summary"]
+        assert delta["has_updates"] is True
+        assert delta["new_compaction_count"] == 1
+        assert delta["new_checkpoint_count"] == 1
+        assert delta["new_trace_count"] == 1
+
+    def test_stable_items_present(self):
+        assert len(self.anchor["stable"]) >= 3, (
+            "Expected at least 3 stable items after fresh session-end"
+        )
+
+    def test_summary_stale_zero(self):
+        assert "stale=0" in self.anchor["summary_text"]
+
+
+# ---------------------------------------------------------------------------
+# Case 5: Concurrent claims (multiple agents, overlapping paths)
+# ---------------------------------------------------------------------------
+
+class TestConcurrentClaims:
+    """
+    Two agents hold claims on overlapping paths.
+    The observer should flag this in contested.
+    """
+
+    def setup_method(self):
+        self.anchor = build_low_drift_anchor(
+            packet=_make_packet(first_observation=False),
+            import_posture=_make_import_posture(),
+            readiness=_make_readiness(claim_conflict_count=2, status="needs_clarification"),
+        )
+
+    def test_claim_collision_in_contested(self):
+        contested_claims = [item["claim"] for item in self.anchor["contested"]]
+        assert any("collision" in c or "conflict" in c for c in contested_claims), (
+            f"Expected claim collision in contested. Got: {contested_claims}"
+        )
+
+    def test_collision_count_visible(self):
+        collisions = [
+            item for item in self.anchor["contested"]
+            if "collision" in item.get("claim", "") or "conflict" in item.get("claim", "")
+        ]
+        assert len(collisions) >= 1
+        detail = collisions[0].get("detail", "")
+        assert "2" in detail, f"Expected conflict_count=2 in detail. Got: {detail}"
+
+    def test_stable_still_valid(self):
+        assert len(self.anchor["stable"]) >= 1, "Stable items should survive despite claim conflicts"
+
+    def test_stale_unaffected(self):
+        # Fresh data — stale should be 0
+        assert len(self.anchor["stale"]) == 0
+
+
+# ---------------------------------------------------------------------------
+# Case 6: Working-style fully reinforced
+# ---------------------------------------------------------------------------
+
+class TestWorkingStyleReinforced:
+    """
+    When observability status is 'reinforced', working_style drift should
+    NOT appear in contested.
+    """
+
+    def setup_method(self):
+        self.anchor = build_low_drift_anchor(
+            packet=_make_packet(),
+            import_posture=_make_import_posture(
+                ws_observability_status="reinforced",
+            ),
+            readiness=_make_readiness(),
+        )
+
+    def test_no_drift_in_contested(self):
+        contested_claims = [item["claim"] for item in self.anchor["contested"]]
+        assert not any("working_style" in c and "drift" in c for c in contested_claims), (
+            f"Reinforced working style should NOT have drift in contested. Got: {contested_claims}"
+        )
+
+    def test_working_style_partial_in_contested(self):
+        """When status is partial, drift SHOULD appear."""
+        anchor_partial = build_low_drift_anchor(
+            packet=_make_packet(),
+            import_posture=_make_import_posture(
+                ws_observability_status="partial",
+            ),
+            readiness=_make_readiness(),
+        )
+        contested_claims = [item["claim"] for item in anchor_partial["contested"]]
+        assert any("working_style" in c for c in contested_claims), (
+            f"Partial working style should appear in contested. Got: {contested_claims}"
+        )
+
+    def test_stable_count_unchanged(self):
+        assert len(self.anchor["stable"]) >= 3, (
+            "Stable items should not be affected by working style reinforcement"
+        )
+

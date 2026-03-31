@@ -68,5 +68,55 @@
       "Latest council dossier indicates potential evolution suppression on repeated dissent; review minority signals carefully before dismissing objections.",
       "Evidence readout is a bounded honesty shortcut: continuity effectiveness is only runtime_present, council decision quality is descriptive_only, and higher-order axioms/theory remain document_backed unless separately proven."
     ]
+  },
+  {
+    "scenario": "session_end_lifecycle",
+    "readiness": "pass",
+    "task_track": "feature_track",
+    "deliberation_mode": "standard_council",
+    "working_style_validation": "insufficient",
+    "receiver_parity_summary": "receiver_parity council=unflagged dissent=none suppression=clear continuity=runtime_present promotion=normal style=none",
+    "compaction_import_posture": "advisory",
+    "compaction_receiver_obligation": "should_consider",
+    "council_calibration_status": "absent",
+    "council_suppression_flag": false,
+    "receiver_alert_count": 1,
+    "receiver_alerts": [
+      "Evidence readout is a bounded honesty shortcut: continuity effectiveness is only runtime_present, council decision quality is descriptive_only, and higher-order axioms/theory remain document_backed unless separately proven."
+    ]
+  },
+  {
+    "scenario": "concurrent_claims",
+    "readiness": "needs_clarification",
+    "task_track": "feature_track",
+    "deliberation_mode": "standard_council",
+    "working_style_validation": "insufficient",
+    "receiver_parity_summary": "receiver_parity council=unflagged dissent=none suppression=clear continuity=runtime_present promotion=normal style=none",
+    "compaction_import_posture": "advisory",
+    "compaction_receiver_obligation": "should_consider",
+    "council_calibration_status": "absent",
+    "council_suppression_flag": false,
+    "receiver_alert_count": 1,
+    "receiver_alerts": [
+      "Evidence readout is a bounded honesty shortcut: continuity effectiveness is only runtime_present, council decision quality is descriptive_only, and higher-order axioms/theory remain document_backed unless separately proven."
+    ]
+  },
+  {
+    "scenario": "working_style_reinforced",
+    "readiness": "pass",
+    "task_track": "feature_track",
+    "deliberation_mode": "standard_council",
+    "working_style_validation": "sufficient",
+    "receiver_parity_summary": "receiver_parity council=unflagged dissent=none suppression=clear continuity=runtime_present promotion=normal style=reinforced",
+    "compaction_import_posture": "advisory",
+    "compaction_receiver_obligation": "should_consider",
+    "council_calibration_status": "absent",
+    "council_suppression_flag": false,
+    "receiver_alert_count": 3,
+    "receiver_alerts": [
+      "Working-style continuity is advisory only; reuse decision preferences and verified routines as habits, but do not promote them into vows, canonical rules, or durable identity.",
+      "Working-style import is bounded to scan order, evidence handling, prompt shape, session cadence, and render interpretation; it must not override vows, canonical governance, durable identity, or task scope.",
+      "Evidence readout is a bounded honesty shortcut: continuity effectiveness is only runtime_present, council decision quality is descriptive_only, and higher-order axioms/theory remain document_backed unless separately proven."
+    ]
   }
 ]
