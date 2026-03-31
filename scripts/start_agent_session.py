@@ -833,22 +833,56 @@ def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
     }
 
 
-def main() -> None:
+def _build_store_from_paths(*, state_path: Path | None, traces_path: Path | None):
+    """Build a FileStore from explicit paths, or return None for auto-discovery.
+
+    This is the public-friendly version of _build_store that accepts keyword args
+    instead of an argparse namespace.
+    """
+    if state_path is None and traces_path is None:
+        return None
+
+    from tonesoul.backends.file_store import FileStore
+
+    if traces_path is not None:
+        root = traces_path.parent
+    elif state_path is not None:
+        root = state_path.parent
+    else:
+        root = Path(".")
+
+    zones_path = root / "zone_registry.json"
+    return FileStore(
+        gov_path=state_path,
+        traces_path=traces_path,
+        zones_path=zones_path,
+        claims_path=_resolve_sidecar(root, "task_claims.json"),
+        perspectives_path=_resolve_sidecar(root, "perspectives.json"),
+        checkpoints_path=_resolve_sidecar(root, "checkpoints.json"),
+        compactions_path=_resolve_sidecar(root, "compacted.json"),
+        subject_snapshots_path=_resolve_sidecar(root, "subject_snapshots.json"),
+        observer_cursors_path=_resolve_sidecar(root, "observer_cursors.json"),
+    )
+
+
+def run_session_start_bundle(
+    *,
+    agent_id: str,
+    state_path: Path | None = None,
+    traces_path: Path | None = None,
+    trace_limit: int = 5,
+    visitor_limit: int = 5,
+    no_ack: bool = True,
+) -> dict:
+    """Run the full session-start bundle and return the payload dict.
+
+    This is the direct-call equivalent of running ``start_agent_session.py``
+    as a subprocess.  Using this function avoids subprocess nesting which
+    can hang on Windows due to stdout pipe deadlocks.
+
+    Returns the same JSON-serializable dict that ``main()`` prints to stdout.
+    """
     _ensure_repo_root_on_path()
-
-    parser = argparse.ArgumentParser(description="Run the ToneSoul session-start bundle")
-    parser.add_argument("--agent", required=True)
-    parser.add_argument("--state-path", type=Path, default=None)
-    parser.add_argument("--traces-path", type=Path, default=None)
-    parser.add_argument("--trace-limit", type=int, default=5)
-    parser.add_argument("--visitor-limit", type=int, default=5)
-    parser.add_argument("--output", type=Path, default=None)
-    parser.add_argument("--no-ack", action="store_true")
-    args = parser.parse_args()
-
-    agent_id = str(args.agent or "").strip()
-    if not agent_id:
-        parser.error("--agent is required")
 
     from tonesoul.runtime_adapter import (
         acknowledge_observer_cursor,
@@ -858,14 +892,14 @@ def main() -> None:
     )
     from tonesoul.store import get_store
 
-    store = _build_store(args)
+    store = _build_store_from_paths(state_path=state_path, traces_path=traces_path)
     if store is None:
         posture = _quiet_call(load, agent_id=agent_id, source="start_agent_session")
         backend_name = getattr(_quiet_call(get_store), "backend_name", "unknown")
     else:
         posture = _quiet_call(
             load,
-            state_path=args.state_path,
+            state_path=state_path,
             agent_id=agent_id,
             source="start_agent_session",
         )
@@ -876,10 +910,10 @@ def main() -> None:
         posture=posture,
         store=store,
         observer_id=agent_id,
-        trace_limit=args.trace_limit,
-        visitor_limit=args.visitor_limit,
+        trace_limit=trace_limit,
+        visitor_limit=visitor_limit,
     )
-    if not args.no_ack:
+    if not no_ack:
         acknowledge_observer_cursor(agent_id, packet=packet, store=store)
 
     claims = _quiet_call(list_active_claims, store=store)
@@ -904,11 +938,11 @@ def main() -> None:
         readiness=readiness,
     )
     import_posture = _build_import_posture(packet=packet, readiness=readiness)
-    payload = {
+    return {
         "contract_version": "v1",
         "bundle": "session_start",
         "agent": agent_id,
-        "acknowledged_observer_cursor": not args.no_ack,
+        "acknowledged_observer_cursor": not no_ack,
         "backend_mode": backend_name,
         "compact_diagnostic": _build_compact_line(
             agent_id=agent_id,
@@ -930,11 +964,38 @@ def main() -> None:
         },
         "underlying_commands": [
             f"python -m tonesoul.diagnose --agent {agent_id}",
-            f"python scripts/run_r_memory_packet.py --agent {agent_id}{'' if args.no_ack else ' --ack'}",
+            f"python scripts/run_r_memory_packet.py --agent {agent_id}{'' if no_ack else ' --ack'}",
             "python scripts/run_task_claim.py list",
         ],
         "packet": packet,
     }
+
+
+def main() -> None:
+    _ensure_repo_root_on_path()
+
+    parser = argparse.ArgumentParser(description="Run the ToneSoul session-start bundle")
+    parser.add_argument("--agent", required=True)
+    parser.add_argument("--state-path", type=Path, default=None)
+    parser.add_argument("--traces-path", type=Path, default=None)
+    parser.add_argument("--trace-limit", type=int, default=5)
+    parser.add_argument("--visitor-limit", type=int, default=5)
+    parser.add_argument("--output", type=Path, default=None)
+    parser.add_argument("--no-ack", action="store_true")
+    args = parser.parse_args()
+
+    agent_id = str(args.agent or "").strip()
+    if not agent_id:
+        parser.error("--agent is required")
+
+    payload = run_session_start_bundle(
+        agent_id=agent_id,
+        state_path=args.state_path,
+        traces_path=args.traces_path,
+        trace_limit=args.trace_limit,
+        visitor_limit=args.visitor_limit,
+        no_ack=args.no_ack,
+    )
 
     text = json.dumps(payload, indent=2, ensure_ascii=False) + "\n"
     if args.output is not None:
@@ -945,3 +1006,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+

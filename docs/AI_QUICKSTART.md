@@ -24,6 +24,12 @@ ToneSoul 是一個 **AI 語義責任框架**。核心主張：
 python scripts/read_governance_state.py
 ```
 
+快速看系統中心狀態（stable / contested / stale）：
+
+```bash
+python scripts/run_observer_window.py --agent 你的-model-id
+```
+
 預設協作型 session start：
 
 ```bash

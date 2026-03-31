@@ -1,0 +1,63 @@
+{
+  "generated_at": "2026-03-31T12:57:39Z",
+  "stable": [
+    {
+      "claim": "governance posture is directly importable",
+      "evidence_source": "import_posture.posture"
+    },
+    {
+      "claim": "launch tier is collaborator_beta; public_launch_ready=false",
+      "evidence_source": "packet.project_memory_summary.launch_claim_posture"
+    },
+    {
+      "claim": "coordination backend is file-backed (launch default)",
+      "evidence_source": "packet.coordination_mode.launch_default_mode"
+    },
+    {
+      "claim": "evidence_readout_posture is present and bounded",
+      "evidence_source": "packet.project_memory_summary.evidence_readout_posture"
+    },
+    {
+      "claim": "session readiness surface is computed and directly importable",
+      "evidence_source": "import_posture.readiness"
+    }
+  ],
+  "contested": [
+    {
+      "claim": "council confidence is descriptive_only; agreement ≠ calibrated accuracy",
+      "evidence_source": "import_posture.council_dossier.dossier_interpretation",
+      "detail": "council dossier present but calibration_status not confirmed"
+    },
+    {
+      "claim": "latest compaction has carry_forward promotion hazard; must_not_promote",
+      "evidence_source": "import_posture.compactions.promotion_hazards",
+      "detail": "hazards=1"
+    },
+    {
+      "claim": "subject snapshot is advisory; must not be promoted into canonical identity",
+      "evidence_source": "import_posture.subject_snapshot"
+    }
+  ],
+  "stale": [
+    {
+      "claim": "recent_traces are 151.8h old (threshold=48.0h)",
+      "evidence_source": "import_posture.recent_traces.freshness_hours",
+      "detail": "freshness_hours=151.8"
+    }
+  ],
+  "delta_summary": {
+    "first_observation": true,
+    "has_updates": true,
+    "new_compaction_count": 3,
+    "new_checkpoint_count": 0,
+    "new_trace_count": 2,
+    "summary_text": "first_observation=True new=compactions:3 checkpoints:0 traces:2"
+  },
+  "counts": {
+    "stable": 5,
+    "contested": 3,
+    "stale": 1
+  },
+  "summary_text": "observer_window stable=5 contested=3 stale=1 delta_has_updates=True",
+  "receiver_note": "This observer window is advisory only. Items in 'stable' reflect current bounded posture but do not outrank canonical contracts. Items in 'contested' must not be treated as confirmed. Items in 'stale' should trigger a re-read before leaning on them. Do not promote this readout into canonical governance truth."
+}

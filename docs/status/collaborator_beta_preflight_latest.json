@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-03-30T11:37:26Z",
+  "generated_at": "2026-03-31T01:45:52Z",
   "overall_ok": true,
   "overall_status": "go",
   "repo_root": "C:\\Users\\user\\Desktop\\倉庫",
-  "agent": "beta-smoke",
+  "agent": "beta-preflight",
   "commands": {
-    "session_start": "C:\\Python313\\python.exe C:\\Users\\user\\Desktop\\倉庫\\scripts\\start_agent_session.py --agent beta-smoke --no-ack",
-    "packet": "C:\\Python313\\python.exe C:\\Users\\user\\Desktop\\倉庫\\scripts\\run_r_memory_packet.py --agent beta-smoke",
-    "diagnose": "C:\\Python313\\python.exe -m tonesoul.diagnose --compact --agent beta-smoke"
+    "session_start": "run_session_start_bundle(agent_id='beta-preflight')",
+    "packet": "extracted from session_start bundle payload['packet']",
+    "diagnose": "embedded_from_session_start"
   },
   "entry_stack": {
     "session_start": {
@@ -27,9 +27,9 @@
     },
     "diagnose": {
       "ok": true,
-      "mode": "compact_subprocess",
-      "compact_line": "[ToneSoul] file | SI=0.45 | vows=3 tensions=0 | R=0.03/stable | coord=file-backed | traces=2 claims=0 compactions=3 subjects=1 zones=9 | git=15cb9c6/dirty=10 | aegis=compromised | agent=beta-smoke",
-      "aegis_status": "compromised"
+      "mode": "embedded_from_session_start",
+      "compact_line": "[ToneSoul] file | SI=0.45 | vows=3 tensions=0 | R=0.04/stable | claims=0 checkpoints=0 compactions=5 subjects=1 | git=6d6538e/dirty=20 | agent=beta-preflight | readiness=pass",
+      "aegis_status": "unknown"
     }
   },
   "scope_posture": {
@@ -45,7 +45,7 @@
     "claim_trigger": "claim when you are about to edit a shared path; read-only inspection can stay unclaimed"
   },
   "aegis_posture": {
-    "status": "compromised",
+    "status": "unknown",
     "blocks_beta_entry": false,
     "note": "Treat aegis_compromised as a visible caution in the current beta posture, not as an implicit public-launch stop or a reason to ignore the rest of the bounded receiver checks."
   },
@@ -113,8 +113,7 @@
   "cautions": [
     "continuity_effectiveness",
     "council_decision_quality",
-    "live_shared_memory",
-    "aegis_compromised"
+    "live_shared_memory"
   ],
   "summary_text": "collaborator_beta_preflight=go tier=collaborator_beta backend=file-backed validation_wave=4 blocked=0"
 }

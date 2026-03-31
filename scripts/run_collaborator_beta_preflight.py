@@ -136,29 +136,22 @@ def run_preflight(
     traces_path: Path | None = None,
     validation_wave_path: Path | None = None,
 ) -> dict[str, Any]:
-    start_command = _build_command(
-        START_AGENT_SESSION,
-        agent=agent,
+    from scripts.start_agent_session import run_session_start_bundle
+
+    start_payload = run_session_start_bundle(
+        agent_id=agent,
         state_path=state_path,
         traces_path=traces_path,
-    ) + ["--no-ack"]
-    packet_command = _build_command(
-        RUN_PACKET,
-        agent=agent,
-        state_path=state_path,
-        traces_path=traces_path,
+        no_ack=True,
     )
+    # The session-start bundle includes the full packet
+    packet_payload = start_payload.get("packet") or {}
 
-    start_payload = _run_json_command(start_command)
-    packet_payload = _run_json_command(packet_command)
 
-    diagnose_mode = "compact_subprocess"
-    diagnose_command = [sys.executable, "-m", "tonesoul.diagnose", "--compact", "--agent", agent]
-    if state_path is None and traces_path is None:
-        compact_diagnostic = _normalize_compact_diagnostic(_run_text_command(diagnose_command))
-    else:
-        diagnose_mode = "embedded_from_session_start"
-        compact_diagnostic = _normalize_compact_diagnostic(start_payload.get("compact_diagnostic", ""))
+    # compact_diagnostic is already available in start_payload — no need to
+    # spawn a separate subprocess which can hang on Windows.
+    diagnose_mode = "embedded_from_session_start"
+    compact_diagnostic = _normalize_compact_diagnostic(start_payload.get("compact_diagnostic", ""))
 
     task_track_hint = start_payload.get("task_track_hint") or {}
     launch_claim_posture = (
@@ -220,9 +213,9 @@ def run_preflight(
         "repo_root": str(REPO_ROOT),
         "agent": agent,
         "commands": {
-            "session_start": " ".join(start_command),
-            "packet": " ".join(packet_command),
-            "diagnose": " ".join(diagnose_command) if diagnose_mode == "compact_subprocess" else "embedded_from_session_start",
+            "session_start": f"run_session_start_bundle(agent_id={agent!r})",
+            "packet": "extracted from session_start bundle payload['packet']",
+            "diagnose": "embedded_from_session_start",
         },
         "entry_stack": {
             "session_start": {

@@ -55,6 +55,15 @@ dev = [
     "black>=26.0.0,<27.0.0",
     "ruff>=0.1",
 ]
+redis = [
+    "redis>=4.5",
+]
+aegis = [
+    "pynacl>=1.5",
+]
+monitoring = [
+    "psutil>=5.9",
+]
 ystm_viz = [
     "cairosvg>=2.7",
     "pillow>=10.0",

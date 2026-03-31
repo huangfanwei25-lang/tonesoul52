@@ -5,13 +5,13 @@ from __future__ import annotations
 
 import argparse
 import json
-import subprocess
 import sys
 from pathlib import Path
 from typing import Any
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-START_AGENT_SESSION = REPO_ROOT / "scripts" / "start_agent_session.py"
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -229,24 +229,14 @@ def build_scenarios(workspace: Path) -> list[dict[str, Any]]:
 
 
 def run_session_start(*, agent_id: str, state_path: Path, traces_path: Path) -> dict[str, Any]:
-    proc = subprocess.run(
-        [
-            sys.executable,
-            str(START_AGENT_SESSION),
-            "--agent",
-            agent_id,
-            "--state-path",
-            str(state_path),
-            "--traces-path",
-            str(traces_path),
-            "--no-ack",
-        ],
-        cwd=REPO_ROOT,
-        check=True,
-        capture_output=True,
-        text=True,
+    from scripts.start_agent_session import run_session_start_bundle
+
+    return run_session_start_bundle(
+        agent_id=agent_id,
+        state_path=state_path,
+        traces_path=traces_path,
+        no_ack=True,
     )
-    return json.loads(proc.stdout)
 
 
 def summarize_payload(name: str, payload: dict[str, Any]) -> dict[str, Any]:

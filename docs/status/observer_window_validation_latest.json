@@ -1,0 +1,273 @@
+{
+  "generated_at": "2026-03-30T13:38:23Z",
+  "overall_ok": false,
+  "overall_status": "needs_fix",
+  "scenario_count": 4,
+  "total_passed": 37,
+  "total_failed": 1,
+  "total_high_friction_fails": 0,
+  "top_friction_scenario": "none",
+  "top_friction_checks": [],
+  "scenarios": [
+    {
+      "scenario": "clean_state",
+      "passed": 9,
+      "failed": 0,
+      "high_friction_fails": 0,
+      "findings": [
+        {
+          "check": "stable_bucket_nonempty",
+          "result": "pass",
+          "friction": "high"
+        },
+        {
+          "check": "contested_bucket_nonempty",
+          "result": "pass",
+          "friction": "high"
+        },
+        {
+          "check": "summary_has_stable_count",
+          "result": "pass",
+          "friction": "medium"
+        },
+        {
+          "check": "summary_has_contested_count",
+          "result": "pass",
+          "friction": "medium"
+        },
+        {
+          "check": "summary_has_stale_count",
+          "result": "pass",
+          "friction": "medium"
+        },
+        {
+          "check": "receiver_note_present",
+          "result": "pass",
+          "friction": "low"
+        },
+        {
+          "check": "stable_has_launch_tier",
+          "result": "pass",
+          "friction": "medium"
+        },
+        {
+          "check": "stale_is_empty_in_clean_state",
+          "result": "pass",
+          "friction": "medium"
+        },
+        {
+          "check": "no_false_all_clear",
+          "result": "pass",
+          "friction": "high"
+        }
+      ],
+      "anchor_counts": {
+        "stable": 5,
+        "contested": 1,
+        "stale": 0
+      },
+      "anchor_summary": "observer_window stable=5 contested=1 stale=0 delta_has_updates=False",
+      "council_calibration_status": "n/a",
+      "compaction_receiver_obligation": "see_import_posture",
+      "receiver_alert_count": 0
+    },
+    {
+      "scenario": "contested_dossier",
+      "passed": 9,
+      "failed": 1,
+      "high_friction_fails": 0,
+      "findings": [
+        {
+          "check": "stable_bucket_nonempty",
+          "result": "pass",
+          "friction": "high"
+        },
+        {
+          "check": "contested_bucket_nonempty",
+          "result": "pass",
+          "friction": "high"
+        },
+        {
+          "check": "summary_has_stable_count",
+          "result": "pass",
+          "friction": "medium"
+        },
+        {
+          "check": "summary_has_contested_count",
+          "result": "pass",
+          "friction": "medium"
+        },
+        {
+          "check": "summary_has_stale_count",
+          "result": "pass",
+          "friction": "medium"
+        },
+        {
+          "check": "receiver_note_present",
+          "result": "pass",
+          "friction": "low"
+        },
+        {
+          "check": "stable_has_launch_tier",
+          "result": "pass",
+          "friction": "medium"
+        },
+        {
+          "check": "contested_has_council_calibration",
+          "result": "pass",
+          "friction": "high"
+        },
+        {
+          "check": "contested_has_suppression_note",
+          "result": "FAIL",
+          "friction": "medium"
+        },
+        {
+          "check": "no_false_all_clear",
+          "result": "pass",
+          "friction": "high"
+        }
+      ],
+      "anchor_counts": {
+        "stable": 5,
+        "contested": 2,
+        "stale": 0
+      },
+      "anchor_summary": "observer_window stable=5 contested=2 stale=0 delta_has_updates=False",
+      "council_calibration_status": "n/a",
+      "compaction_receiver_obligation": "see_import_posture",
+      "receiver_alert_count": 0
+    },
+    {
+      "scenario": "stale_compaction",
+      "passed": 10,
+      "failed": 0,
+      "high_friction_fails": 0,
+      "findings": [
+        {
+          "check": "stable_bucket_nonempty",
+          "result": "pass",
+          "friction": "high"
+        },
+        {
+          "check": "contested_bucket_nonempty",
+          "result": "pass",
+          "friction": "high"
+        },
+        {
+          "check": "summary_has_stable_count",
+          "result": "pass",
+          "friction": "medium"
+        },
+        {
+          "check": "summary_has_contested_count",
+          "result": "pass",
+          "friction": "medium"
+        },
+        {
+          "check": "summary_has_stale_count",
+          "result": "pass",
+          "friction": "medium"
+        },
+        {
+          "check": "receiver_note_present",
+          "result": "pass",
+          "friction": "low"
+        },
+        {
+          "check": "stable_has_launch_tier",
+          "result": "pass",
+          "friction": "medium"
+        },
+        {
+          "check": "stale_has_compaction",
+          "result": "pass",
+          "friction": "high"
+        },
+        {
+          "check": "stale_has_absent_evidence",
+          "result": "pass",
+          "friction": "high"
+        },
+        {
+          "check": "no_false_all_clear",
+          "result": "pass",
+          "friction": "high"
+        }
+      ],
+      "anchor_counts": {
+        "stable": 4,
+        "contested": 2,
+        "stale": 3
+      },
+      "anchor_summary": "observer_window stable=4 contested=2 stale=3 delta_has_updates=False",
+      "council_calibration_status": "n/a",
+      "compaction_receiver_obligation": "see_import_posture",
+      "receiver_alert_count": 0
+    },
+    {
+      "scenario": "claim_collision",
+      "passed": 9,
+      "failed": 0,
+      "high_friction_fails": 0,
+      "findings": [
+        {
+          "check": "stable_bucket_nonempty",
+          "result": "pass",
+          "friction": "high"
+        },
+        {
+          "check": "contested_bucket_nonempty",
+          "result": "pass",
+          "friction": "high"
+        },
+        {
+          "check": "summary_has_stable_count",
+          "result": "pass",
+          "friction": "medium"
+        },
+        {
+          "check": "summary_has_contested_count",
+          "result": "pass",
+          "friction": "medium"
+        },
+        {
+          "check": "summary_has_stale_count",
+          "result": "pass",
+          "friction": "medium"
+        },
+        {
+          "check": "receiver_note_present",
+          "result": "pass",
+          "friction": "low"
+        },
+        {
+          "check": "stable_has_launch_tier",
+          "result": "pass",
+          "friction": "medium"
+        },
+        {
+          "check": "contested_has_claim_conflict",
+          "result": "pass",
+          "friction": "high"
+        },
+        {
+          "check": "no_false_all_clear",
+          "result": "pass",
+          "friction": "high"
+        }
+      ],
+      "anchor_counts": {
+        "stable": 5,
+        "contested": 2,
+        "stale": 0
+      },
+      "anchor_summary": "observer_window stable=5 contested=2 stale=0 delta_has_updates=True",
+      "council_calibration_status": "n/a",
+      "compaction_receiver_obligation": "see_import_posture",
+      "receiver_alert_count": 0
+    }
+  ],
+  "receiver_note": "This validation wave is advisory. High-friction failures indicate places where a fresh agent may misread stable vs contested. Fix only the highest-friction misunderstanding per Day 2 plan.",
+  "summary_text": "observer_window_validation status=needs_fix scenarios=4 passed=37 failed=1 high_friction=0 top_friction_scenario=none"
+}
