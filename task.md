@@ -1,5 +1,10 @@
 # Task
 
+## Task.md Scope Guard (2026-04-01)
+- `task.md` only tracks current accepted programs, active short boards, and already-ratified follow-through.
+- External theory imports, speculative ecosystem borrowing, and unratified side-roadmaps must live under `docs/plans/` until they are explicitly pulled into the live short board.
+- If a later agent discovers a useful outside idea, park it in a separate plan file first; do not overwrite the active bucket rotation here.
+
 ## Long Program: R-Memory Maturation Roadmap (2026-03-28)
 - Program Goal: move ToneSoul R-memory from a coordination-only hot-state layer toward a durable subject-aware working identity without collapsing canonical/runtime boundaries.
 - Execution Guardrails:
