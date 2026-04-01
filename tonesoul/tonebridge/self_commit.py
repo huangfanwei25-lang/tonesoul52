@@ -208,12 +208,7 @@ class SelfCommitExtractor:
         Focus on first meaningful statement.
         """
         # Split by common delimiters
-        sentences = (
-            text.replace("。", ".")
-            .replace("！", ".")
-            .replace("？", ".")
-            .split(".")
-        )
+        sentences = text.replace("。", ".").replace("！", ".").replace("？", ".").split(".")
         for sentence in sentences:
             sentence = sentence.strip()
             if len(sentence) > 10:  # Skip very short fragments
@@ -332,7 +327,9 @@ class SelfCommitStack:
                 f"  {i}. [{type_label}] {commit.content} (不可逆權重: {commit.irreversible_weight})"
             )
 
-        lines.append("只把這些承諾當作高優先提醒；若與當前證據衝突，先顯式處理衝突，再決定是否沿用。")
+        lines.append(
+            "只把這些承諾當作高優先提醒；若與當前證據衝突，先顯式處理衝突，再決定是否沿用。"
+        )
         return "\n".join(lines)
 
     def to_dict(self) -> dict:

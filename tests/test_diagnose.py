@@ -454,7 +454,7 @@ def _fake_packet():
                 "compaction": 'python scripts/save_compaction.py --agent <your-id> --summary "..." --path "..."',
                 "signal_router": 'python scripts/route_r_memory_signal.py --agent <your-id> --summary "..." --path "..." --next-action "..." --write',
                 "subject_snapshot": 'python scripts/save_subject_snapshot.py --agent <your-id> --summary "..." --boundary "..." --preference "..."',
-                "apply_subject_refresh": 'python scripts/apply_subject_refresh.py --agent <your-id> --field active_threads',
+                "apply_subject_refresh": "python scripts/apply_subject_refresh.py --agent <your-id> --field active_threads",
                 "release": "python scripts/run_task_claim.py release <task_id> --agent <your-id>",
             },
             "recommended_order": [
@@ -516,7 +516,9 @@ def _fake_packet():
 def test_compact_diagnostic_reports_shared_runtime_counts(monkeypatch) -> None:
     store = _FakeStore()
     monkeypatch.setattr("tonesoul.store.get_store", lambda: store)
-    monkeypatch.setattr("tonesoul.runtime_adapter.load", lambda agent_id, source="diagnose": _fake_posture())
+    monkeypatch.setattr(
+        "tonesoul.runtime_adapter.load", lambda agent_id, source="diagnose": _fake_posture()
+    )
     monkeypatch.setattr(
         "tonesoul.runtime_adapter.r_memory_packet",
         lambda posture=None, store=None, observer_id="", trace_limit=5, visitor_limit=5: _fake_packet(),
@@ -537,7 +539,9 @@ def test_compact_diagnostic_reports_shared_runtime_counts(monkeypatch) -> None:
 def test_full_diagnostic_is_cp950_safe_and_includes_shared_runtime(monkeypatch) -> None:
     store = _FakeStore()
     monkeypatch.setattr("tonesoul.store.get_store", lambda: store)
-    monkeypatch.setattr("tonesoul.runtime_adapter.load", lambda agent_id, source="diagnose": _fake_posture())
+    monkeypatch.setattr(
+        "tonesoul.runtime_adapter.load", lambda agent_id, source="diagnose": _fake_posture()
+    )
     monkeypatch.setattr(
         "tonesoul.runtime_adapter.r_memory_packet",
         lambda posture=None, store=None, observer_id="", trace_limit=5, visitor_limit=5: _fake_packet(),
@@ -546,7 +550,10 @@ def test_full_diagnostic_is_cp950_safe_and_includes_shared_runtime(monkeypatch) 
 
     report = full_diagnostic(agent_id="codex")
 
-    assert "[Shared Runtime] claims=1 visitors=1 checkpoints=1 compactions=1 subject_snapshots=1" in report
+    assert (
+        "[Shared Runtime] claims=1 visitors=1 checkpoints=1 compactions=1 subject_snapshots=1"
+        in report
+    )
     assert "Risk Posture:" in report
     assert "[Project Memory Summary]" in report
     assert "[Subject Snapshot] count=1" in report
@@ -574,7 +581,10 @@ def test_full_diagnostic_is_cp950_safe_and_includes_shared_runtime(monkeypatch) 
     assert "evolution_suppression_flag=True" in report
     assert "Descriptive agreement record only; dissent is visible" in report
     assert "[Receiver Posture]" in report
-    assert "summary=receiver_parity council=descriptive_only dissent=visible suppression=flagged" in report
+    assert (
+        "summary=receiver_parity council=descriptive_only dissent=visible suppression=flagged"
+        in report
+    )
     assert "rule=ack is safe visibility only; apply is bounded workflow use only" in report
     assert "Latest council dossier confidence is descriptive_only" in report
     assert "Latest council dossier carries minority dissent" in report
@@ -592,7 +602,9 @@ def test_full_diagnostic_is_cp950_safe_and_includes_shared_runtime(monkeypatch) 
     assert "working_style_import_limits:" in report
     assert "apply_posture=explicit_reuse_only safe=2 blocked=2" in report
     assert "safe_apply=scan_order: use shared packet/claim surfaces" in report
-    assert "must_not_import=canonical_governance_truth: habits must not become runtime law" in report
+    assert (
+        "must_not_import=canonical_governance_truth: habits must not become runtime law" in report
+    )
     assert "evidence_readout_posture:" in report
     assert "tested=2 runtime_present=1 descriptive_only=1 document_backed=1" in report
     assert "continuity_effectiveness=runtime_present" in report
@@ -602,13 +614,19 @@ def test_full_diagnostic_is_cp950_safe_and_includes_shared_runtime(monkeypatch) 
     assert "blocked=live_shared_memory:not_launch_default" in report
     assert "routing_summary:" in report
     assert "subject_refresh:" in report
-    assert "status=refresh_candidate recommended=True newer_compactions=1 newer_checkpoints=1 hazards=1" in report
+    assert (
+        "status=refresh_candidate recommended=True newer_compactions=1 newer_checkpoints=1 hazards=1"
+        in report
+    )
     assert "active_threads=may_refresh_directly (compaction-backed)" in report
     assert "[Routing Telemetry] count=2" in report
     assert "[Coordination Mode]" in report
     assert "mode=redis-live live=True delta=True" in report
     assert "launch_default=file-backed alignment=runtime_override_not_launch_default" in report
-    assert "launch_note=Current runtime is redis-live, but the launch-default coordination st..." in report
+    assert (
+        "launch_note=Current runtime is redis-live, but the launch-default coordination st..."
+        in report
+    )
     assert "surfaces=claims:live checkpoints:live subjects:live visitors:live" in report
     assert "Prefer recent_compactions and project_memory_summary before older" in report
     assert "Subject-refresh heuristics found low-risk updates" in report

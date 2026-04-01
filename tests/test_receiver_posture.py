@@ -39,10 +39,21 @@ def test_receiver_parity_prioritizes_scenario_specific_alerts_over_generic_evide
         "Evidence readout is a bounded honesty shortcut" not in alert
         for alert in readout["primary_alerts"]
     )
-    assert "Latest carry-forward repeats an older handoff without new evidence" in readout["primary_alerts"][0]
-    assert any("Compaction-backed subject refresh is currently blocked" in alert for alert in readout["primary_alerts"])
-    assert any("Working-style continuity is advisory only" in alert for alert in readout["primary_alerts"])
-    assert any("Shared working-style continuity is only partially reinforced" in alert for alert in readout["primary_alerts"])
+    assert (
+        "Latest carry-forward repeats an older handoff without new evidence"
+        in readout["primary_alerts"][0]
+    )
+    assert any(
+        "Compaction-backed subject refresh is currently blocked" in alert
+        for alert in readout["primary_alerts"]
+    )
+    assert any(
+        "Working-style continuity is advisory only" in alert for alert in readout["primary_alerts"]
+    )
+    assert any(
+        "Shared working-style continuity is only partially reinforced" in alert
+        for alert in readout["primary_alerts"]
+    )
 
 
 def test_receiver_parity_keeps_generic_evidence_alert_when_no_higher_signal_exists() -> None:

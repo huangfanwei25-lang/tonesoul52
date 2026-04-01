@@ -33,7 +33,9 @@ def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="Run the ToneSoul observer-window / low-drift-anchor readout.",
     )
-    parser.add_argument("--agent", default="observer-window-cli", help="Agent ID for session-start query")
+    parser.add_argument(
+        "--agent", default="observer-window-cli", help="Agent ID for session-start query"
+    )
     parser.add_argument("--state-path", type=Path, default=None)
     parser.add_argument("--traces-path", type=Path, default=None)
     parser.add_argument(
@@ -110,16 +112,18 @@ def _render_markdown(anchor: dict[str, Any]) -> str:
 
     # Delta
     delta = anchor.get("delta_summary") or {}
-    lines.extend([
-        "## Delta Since Last Seen",
-        "",
-        f"- First observation: `{delta.get('first_observation', False)}`",
-        f"- Has updates: `{delta.get('has_updates', False)}`",
-        f"- New compactions: `{delta.get('new_compaction_count', 0)}`",
-        f"- New checkpoints: `{delta.get('new_checkpoint_count', 0)}`",
-        f"- New traces: `{delta.get('new_trace_count', 0)}`",
-        "",
-    ])
+    lines.extend(
+        [
+            "## Delta Since Last Seen",
+            "",
+            f"- First observation: `{delta.get('first_observation', False)}`",
+            f"- Has updates: `{delta.get('has_updates', False)}`",
+            f"- New compactions: `{delta.get('new_compaction_count', 0)}`",
+            f"- New checkpoints: `{delta.get('new_checkpoint_count', 0)}`",
+            f"- New traces: `{delta.get('new_trace_count', 0)}`",
+            "",
+        ]
+    )
 
     return "\n".join(lines)
 

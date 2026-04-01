@@ -9,6 +9,7 @@ Usage:
     python scripts/launch_dashboard.py --state path/to/governance_state.json
     python scripts/launch_dashboard.py --port 8765
 """
+
 from __future__ import annotations
 
 import argparse
@@ -58,6 +59,7 @@ def _relative_date_label(date_str: str, today: str) -> str:
     """Return '今天', '昨天', 'N 天前' relative to today."""
     try:
         from datetime import date as date_cls
+
         d = date_cls.fromisoformat(date_str)
         t = date_cls.fromisoformat(today)
         delta = (t - d).days
@@ -88,7 +90,16 @@ def load_journal_entries(journal_path: Path | None, limit: int = 50) -> dict:
                 path = p
                 break
 
-    empty: dict = {"groups": [], "verdict_summary": {"approve": 0, "block": 0, "concern": 0, "dominant": "", "stress_level": 0.0}}
+    empty: dict = {
+        "groups": [],
+        "verdict_summary": {
+            "approve": 0,
+            "block": 0,
+            "concern": 0,
+            "dominant": "",
+            "stress_level": 0.0,
+        },
+    }
     if path is None or not path.exists():
         return empty
 
@@ -129,16 +140,18 @@ def load_journal_entries(journal_path: Path | None, limit: int = 50) -> dict:
         core_divergence = payload.get("core_divergence", "")
         key_decision = payload.get("key_decision", "")
 
-        entries.append({
-            "date": date_str,
-            "label": _relative_date_label(date_str, today),
-            "title": title,
-            "body": reflection or "（無反思文字）",
-            "verdict": verdict,
-            "coherence": round(coherence, 3) if isinstance(coherence, float) else None,
-            "core_divergence": core_divergence[:120] if core_divergence else "",
-            "key_decision": key_decision[:120] if key_decision else "",
-        })
+        entries.append(
+            {
+                "date": date_str,
+                "label": _relative_date_label(date_str, today),
+                "title": title,
+                "body": reflection or "（無反思文字）",
+                "verdict": verdict,
+                "coherence": round(coherence, 3) if isinstance(coherence, float) else None,
+                "core_divergence": core_divergence[:120] if core_divergence else "",
+                "key_decision": key_decision[:120] if key_decision else "",
+            }
+        )
 
     # Group by date (preserve newest-first order)
     groups_map: dict[str, dict] = {}
@@ -216,7 +229,9 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Launch ToneSoul governance dashboard")
     parser.add_argument("--state", type=Path, default=None, help="Path to governance_state.json")
     parser.add_argument("--journal", type=Path, default=None, help="Path to self_journal.jsonl")
-    parser.add_argument("--journal-limit", type=int, default=50, help="Max journal entries to load (default: 50)")
+    parser.add_argument(
+        "--journal-limit", type=int, default=50, help="Max journal entries to load (default: 50)"
+    )
     parser.add_argument("--port", type=int, default=0, help="HTTP port (0 = auto)")
     parser.add_argument("--no-browser", action="store_true", help="Don't auto-open browser")
     args = parser.parse_args()

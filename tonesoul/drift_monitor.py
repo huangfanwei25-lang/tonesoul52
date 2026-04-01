@@ -220,9 +220,7 @@ class DriftMonitor:
             return DriftActionRecommendation(
                 alert=snapshot.alert,
                 action="increase_caution",
-                note=(
-                    "Drift warning: continue with extra caution and keep the response bounded."
-                ),
+                note=("Drift warning: continue with extra caution and keep the response bounded."),
                 current_drift=snapshot.drift,
                 step=snapshot.step,
                 increase_caution=True,

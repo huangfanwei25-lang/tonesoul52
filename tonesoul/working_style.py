@@ -147,21 +147,15 @@ def build_working_style_observability(
     if reinforced_count == 0:
         status = "unreinforced"
         drift_risk = "high"
-        receiver_note = (
-            "No recent handoff surface re-echoes the shared working style. Apply the playbook explicitly if it still fits, and expect model-native drift unless new evidence appears."
-        )
+        receiver_note = "No recent handoff surface re-echoes the shared working style. Apply the playbook explicitly if it still fits, and expect model-native drift unless new evidence appears."
     elif reinforced_count < trackable_count:
         status = "partial"
         drift_risk = "medium"
-        receiver_note = (
-            "Only part of the shared working style is echoed by recent handoff surfaces. Keep the playbook visible instead of assuming full continuity."
-        )
+        receiver_note = "Only part of the shared working style is echoed by recent handoff surfaces. Keep the playbook visible instead of assuming full continuity."
     else:
         status = "reinforced"
         drift_risk = "low"
-        receiver_note = (
-            "Recent handoff surfaces re-echo the shared working style. Apply it as a bounded workflow habit, but do not promote it into policy or identity."
-        )
+        receiver_note = "Recent handoff surfaces re-echo the shared working style. Apply it as a bounded workflow habit, but do not promote it into policy or identity."
 
     return {
         "status": status,
@@ -224,19 +218,13 @@ def build_working_style_import_limits(
 
     if status == "reinforced":
         apply_posture = "bounded_default"
-        receiver_guidance = (
-            "Recent handoff surfaces still echo this style, so it may be used as the default working rhythm for the current session."
-        )
+        receiver_guidance = "Recent handoff surfaces still echo this style, so it may be used as the default working rhythm for the current session."
     elif status == "partial":
         apply_posture = "explicit_reuse_only"
-        receiver_guidance = (
-            "Only part of the shared style is still echoed. Reuse it deliberately and keep checking task-local evidence instead of assuming full continuity."
-        )
+        receiver_guidance = "Only part of the shared style is still echoed. Reuse it deliberately and keep checking task-local evidence instead of assuming full continuity."
     else:
         apply_posture = "review_before_apply"
-        receiver_guidance = (
-            "Recent shared surfaces no longer echo this style strongly enough. Review it first; only reuse the parts that still fit the current task."
-        )
+        receiver_guidance = "Recent shared surfaces no longer echo this style strongly enough. Review it first; only reuse the parts that still fit the current task."
 
     stop_conditions = [
         "current task or human instruction conflicts with the inherited habit",
@@ -290,21 +278,13 @@ def build_working_style_continuity_validation(
             status = "caution"
 
     if not checks["anchor_visible"]:
-        receiver_note = (
-            "No shared working-style anchor is visible yet. This session can still proceed, but style continuity cannot be validated."
-        )
+        receiver_note = "No shared working-style anchor is visible yet. This session can still proceed, but style continuity cannot be validated."
     elif status == "sufficient":
-        receiver_note = (
-            "A fresh agent has enough shared style material to inherit bounded operating habits without confusing them with policy or identity."
-        )
+        receiver_note = "A fresh agent has enough shared style material to inherit bounded operating habits without confusing them with policy or identity."
     elif status == "caution":
-        receiver_note = (
-            "A fresh agent can inherit bounded working style, but recent shared surfaces do not fully reinforce it, so explicit reuse beats assumption."
-        )
+        receiver_note = "A fresh agent can inherit bounded working style, but recent shared surfaces do not fully reinforce it, so explicit reuse beats assumption."
     else:
-        receiver_note = (
-            "Shared working-style continuity is incomplete. The agent should fall back to repo-level discipline rather than improvising from partial residue."
-        )
+        receiver_note = "Shared working-style continuity is incomplete. The agent should fall back to repo-level discipline rather than improvising from partial residue."
 
     return {
         "status": status,

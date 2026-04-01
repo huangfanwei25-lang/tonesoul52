@@ -17,6 +17,7 @@ GIT_HYGIENE_WORKFLOW_PATH = Path(".github/workflows/git_hygiene.yml")
 POST_RELEASE_MONITOR_WORKFLOW_PATH = Path(".github/workflows/post_release_monitor.yml")
 FRICTION_SHADOW_WORKFLOW_PATH = Path(".github/workflows/friction_shadow_calibration.yml")
 AGENT_INTEGRITY_WORKFLOW_PATH = Path(".github/workflows/agent-integrity-check.yml")
+LEGACY_CI_WORKFLOW_PATH = Path(".github/workflows/ci.yml")
 
 
 def _load_yaml(path: Path) -> dict[str, Any]:
@@ -418,6 +419,40 @@ def test_commit_attribution_workflow_uses_backfill_schedule_path() -> None:
     assert '--equivalent-ref "$GITHUB_SHA"' in run_cmd
     assert "--require-tree-equivalence" in run_cmd
     assert "python scripts/verify_incremental_commit_attribution.py --strict" in run_cmd
+
+
+def test_test_workflow_uses_black_gate_script_and_uploads_artifact() -> None:
+    payload = _load_yaml(Path(".github/workflows/test.yml"))
+    steps = _job_steps(payload, "lint")
+
+    black_step = _find_step(steps, "Check formatting with black gate")
+    black_cmd = black_step.get("run", "")
+    assert isinstance(black_cmd, str)
+    assert "python scripts/run_black_gate.py --strict" in black_cmd
+    black_env = black_step.get("env", {})
+    assert isinstance(black_env, dict)
+    assert black_env.get("EVENT_NAME") == "${{ github.event_name }}"
+    assert black_env.get("GITHUB_SHA") == "${{ github.sha }}"
+
+    artifact_step = _find_step(steps, "Upload black gate report")
+    artifact_with = artifact_step.get("with", {})
+    assert isinstance(artifact_with, dict)
+    assert artifact_with.get("path") == "black_gate_report.json"
+
+
+def test_legacy_ci_workflow_uses_black_gate_script_and_uploads_artifact() -> None:
+    payload = _load_yaml(LEGACY_CI_WORKFLOW_PATH)
+    steps = _job_steps(payload, "lint")
+
+    black_step = _find_step(steps, "Check formatting with black gate")
+    black_cmd = black_step.get("run", "")
+    assert isinstance(black_cmd, str)
+    assert "python scripts/run_black_gate.py --strict" in black_cmd
+
+    artifact_step = _find_step(steps, "Upload black gate report")
+    artifact_with = artifact_step.get("with", {})
+    assert isinstance(artifact_with, dict)
+    assert artifact_with.get("path") == "black_gate_report.json"
 
 
 def test_friction_shadow_workflow_triggers_and_blocking_runners() -> None:

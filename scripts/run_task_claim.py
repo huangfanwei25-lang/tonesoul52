@@ -78,6 +78,7 @@ def main() -> None:
     args = parser.parse_args()
 
     from tonesoul.runtime_adapter import claim_task, list_active_claims, release_task_claim
+
     store = _build_store(args)
 
     if args.command == "claim":

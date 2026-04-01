@@ -65,7 +65,11 @@ def _extract_tables(text: str) -> list[dict[str, Any]]:
             index += 1
             continue
 
-        if stripped.startswith("|") and index + 1 < len(lines) and _is_separator_line(lines[index + 1]):
+        if (
+            stripped.startswith("|")
+            and index + 1 < len(lines)
+            and _is_separator_line(lines[index + 1])
+        ):
             headers = [_clean_inline(cell) for cell in _split_markdown_row(lines[index])]
             index += 2
             rows: list[dict[str, str]] = []
@@ -174,9 +178,7 @@ def _build_matrix_terms(text: str) -> list[dict[str, Any]]:
                     "term": row.get("Term", ""),
                     "section": section,
                     "authority_roles": [
-                        part.strip()
-                        for part in row.get("Authority", "").split(",")
-                        if part.strip()
+                        part.strip() for part in row.get("Authority", "").split(",") if part.strip()
                     ],
                     "implementation_status": row.get("Status", ""),
                     "status_bucket": _status_bucket(row.get("Status", "")),

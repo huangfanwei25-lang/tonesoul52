@@ -45,9 +45,14 @@ def test_build_report_uses_inventory_metadata_posture(tmp_path: Path) -> None:
     assert "docs/API_SPEC.md" in payload["missing_metadata_files"]
     assert "docs/COUNCIL_RUNTIME.md" in payload["missing_metadata_files"]
     entrypoints = next(group for group in payload["groups"] if group["id"] == "entrypoints")
-    generated_status = next(group for group in payload["groups"] if group["id"] == "generated_status")
+    generated_status = next(
+        group for group in payload["groups"] if group["id"] == "generated_status"
+    )
     assert entrypoints["metadata_complete_count"] >= 5
-    assert any(row["path"] == "docs/status/claim_authority_latest.json" for row in generated_status["files"])
+    assert any(
+        row["path"] == "docs/status/claim_authority_latest.json"
+        for row in generated_status["files"]
+    )
 
 
 def test_main_writes_structure_artifacts(tmp_path: Path) -> None:

@@ -146,7 +146,9 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Run the ToneSoul session-end bundle")
     parser.add_argument("--input", type=Path, default=None)
     parser.add_argument("--agent", required=True)
-    parser.add_argument("--mode", choices=("checkpoint", "compaction", "both"), default="compaction")
+    parser.add_argument(
+        "--mode", choices=("checkpoint", "compaction", "both"), default="compaction"
+    )
     parser.add_argument("--checkpoint-id", default="")
     parser.add_argument("--session-id", default="")
     parser.add_argument("--summary", default="")
@@ -185,7 +187,9 @@ def main() -> None:
     carry_forward = list(payload.get("carry_forward") or [])
     evidence_refs = list(payload.get("evidence_refs") or [])
     council_dossier = (
-        dict(payload.get("council_dossier")) if isinstance(payload.get("council_dossier"), dict) else None
+        dict(payload.get("council_dossier"))
+        if isinstance(payload.get("council_dossier"), dict)
+        else None
     )
     release_task_ids = [
         str(value).strip()
@@ -202,8 +206,8 @@ def main() -> None:
     subject_refresh_application = None
 
     if mode in {"checkpoint", "both"}:
-        checkpoint_id = (
-            str(payload.get("checkpoint_id", args.checkpoint_id or "")).strip() or str(uuid.uuid4())
+        checkpoint_id = str(payload.get("checkpoint_id", args.checkpoint_id or "")).strip() or str(
+            uuid.uuid4()
         )
         checkpoint = write_checkpoint(
             checkpoint_id,

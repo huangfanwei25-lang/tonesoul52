@@ -129,7 +129,9 @@ def test_llm_with_google_api_key_initializes_client(monkeypatch):
 
 
 def test_llm_default_prompt_uses_bounded_governance_shape():
-    prompt = LLMPerspective(name="guardian", model=DEFAULT_LLM_MODEL, fallback=None)._default_prompt()
+    prompt = LLMPerspective(
+        name="guardian", model=DEFAULT_LLM_MODEL, fallback=None
+    )._default_prompt()
 
     assert "Goal function:" in prompt
     assert "- P0:" in prompt
@@ -149,7 +151,7 @@ def test_ollama_default_prompt_keeps_concise_but_structured_governance_shape():
     assert "Forced devil's advocate:" in prompt
     assert "strongest concrete objection" in prompt
     assert "[資料不足]" in prompt
-    assert 'Respond ONLY with JSON:' in prompt
+    assert "Respond ONLY with JSON:" in prompt
 
 
 def test_llm_critic_prompt_requires_bounded_adversarial_pass():
@@ -202,7 +204,10 @@ def test_llm_perspective_wrapper_frames_context_as_evidence(monkeypatch):
     perspective = LLMPerspective(name="analyst", model=DEFAULT_LLM_MODEL, fallback=None)
     vote = perspective.evaluate(
         "draft",
-        context={"topic": "migration", "prior_tension": {"delta_t": 0.4, "gate_decision": "repair"}},
+        context={
+            "topic": "migration",
+            "prior_tension": {"delta_t": 0.4, "gate_decision": "repair"},
+        },
         user_intent="keep migration safe",
     )
 

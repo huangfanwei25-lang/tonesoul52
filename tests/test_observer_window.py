@@ -18,6 +18,7 @@ from tonesoul.observer_window import build_low_drift_anchor
 # Helpers
 # ---------------------------------------------------------------------------
 
+
 def _make_packet(
     *,
     launch_tier: str = "collaborator_beta",
@@ -30,7 +31,9 @@ def _make_packet(
     first_observation: bool = True,
     has_coord_mode: bool = True,
 ) -> dict:
-    evidence_readout: dict = {"present": True, "tiers": ["tested", "runtime_present"]} if has_evidence_readout else {}
+    evidence_readout: dict = (
+        {"present": True, "tiers": ["tested", "runtime_present"]} if has_evidence_readout else {}
+    )
     coord_mode: dict = (
         {"launch_default_mode": launch_default, "launch_alignment": "aligned"}
         if has_coord_mode
@@ -108,7 +111,7 @@ def _make_import_posture(
             "dossier_interpretation": (
                 {
                     "calibration_status": council_calibration,
-                    **(  {"evolution_suppression_flag": True} if council_suppression_flag else {} ),
+                    **({"evolution_suppression_flag": True} if council_suppression_flag else {}),
                 }
                 if council_present
                 else {}
@@ -125,7 +128,9 @@ def _make_import_posture(
     }
 
 
-def _make_readiness(*, claim_conflict_count: int = 0, status: str = "pass", risk_level: str = "low") -> dict:
+def _make_readiness(
+    *, claim_conflict_count: int = 0, status: str = "pass", risk_level: str = "low"
+) -> dict:
     return {
         "status": status,
         "ready": status == "pass",
@@ -138,6 +143,7 @@ def _make_readiness(*, claim_conflict_count: int = 0, status: str = "pass", risk
 # ---------------------------------------------------------------------------
 # Case 1: Clean stable state
 # ---------------------------------------------------------------------------
+
 
 class TestCleanStableCase:
     """
@@ -168,28 +174,28 @@ class TestCleanStableCase:
 
     def test_launch_tier_in_stable(self):
         claims = [item["claim"] for item in self.anchor["stable"]]
-        assert any("collaborator_beta" in c for c in claims), (
-            "Expected collaborator_beta launch tier in stable items"
-        )
+        assert any(
+            "collaborator_beta" in c for c in claims
+        ), "Expected collaborator_beta launch tier in stable items"
 
     def test_file_backed_in_stable(self):
         claims = [item["claim"] for item in self.anchor["stable"]]
-        assert any("file-backed" in c for c in claims), (
-            "Expected file-backed backend in stable items"
-        )
+        assert any(
+            "file-backed" in c for c in claims
+        ), "Expected file-backed backend in stable items"
 
     def test_council_always_contested(self):
         # Council calibration is always contested by design
         contested_claims = [item["claim"] for item in self.anchor["contested"]]
-        assert any("descriptive_only" in c or "council" in c for c in contested_claims), (
-            "Expected council to be contested even in clean state"
-        )
+        assert any(
+            "descriptive_only" in c or "council" in c for c in contested_claims
+        ), "Expected council to be contested even in clean state"
 
     def test_no_stale_items_in_clean_state(self):
         # All surfaces fresh and present → stale bucket should be empty
-        assert len(self.anchor["stale"]) == 0, (
-            f"Expected no stale items in clean state, got: {self.anchor['stale']}"
-        )
+        assert (
+            len(self.anchor["stale"]) == 0
+        ), f"Expected no stale items in clean state, got: {self.anchor['stale']}"
 
     def test_delta_first_observation(self):
         delta = self.anchor["delta_summary"]
@@ -215,6 +221,7 @@ class TestCleanStableCase:
 # Case 2: Conflicting continuity
 # ---------------------------------------------------------------------------
 
+
 class TestConflictingContinuityCase:
     """
     Compaction promotion hazard + claim collision.
@@ -233,15 +240,16 @@ class TestConflictingContinuityCase:
 
     def test_promotion_hazard_in_contested(self):
         contested_claims = [item["claim"] for item in self.anchor["contested"]]
-        assert any("must_not_promote" in c or "carry_forward" in c or "hazard" in c for c in contested_claims), (
-            f"Expected carry_forward promotion hazard in contested. Got: {contested_claims}"
-        )
+        assert any(
+            "must_not_promote" in c or "carry_forward" in c or "hazard" in c
+            for c in contested_claims
+        ), f"Expected carry_forward promotion hazard in contested. Got: {contested_claims}"
 
     def test_claim_collision_in_contested(self):
         contested_claims = [item["claim"] for item in self.anchor["contested"]]
-        assert any("claim collision" in c or "conflict" in c for c in contested_claims), (
-            f"Expected claim collision in contested. Got: {contested_claims}"
-        )
+        assert any(
+            "claim collision" in c or "conflict" in c for c in contested_claims
+        ), f"Expected claim collision in contested. Got: {contested_claims}"
 
     def test_delta_has_updates(self):
         delta = self.anchor["delta_summary"]
@@ -261,6 +269,7 @@ class TestConflictingContinuityCase:
 # Case 3: Stale carry-forward
 # ---------------------------------------------------------------------------
 
+
 class TestStaleCarryForwardCase:
     """
     Stale compaction (>72h) + absent evidence readout.
@@ -268,7 +277,7 @@ class TestStaleCarryForwardCase:
     """
 
     _STALE_COMPACTION_HOURS = 120.0  # deliberately older than threshold (72h)
-    _STALE_TRACE_HOURS = 96.0        # also older than threshold (48h)
+    _STALE_TRACE_HOURS = 96.0  # also older than threshold (48h)
 
     def setup_method(self):
         self.anchor = build_low_drift_anchor(
@@ -283,26 +292,26 @@ class TestStaleCarryForwardCase:
 
     def test_stale_compaction_flagged(self):
         stale_claims = [item["claim"] for item in self.anchor["stale"]]
-        assert any("compaction" in c for c in stale_claims), (
-            f"Expected stale compaction in stale bucket. Got: {stale_claims}"
-        )
+        assert any(
+            "compaction" in c for c in stale_claims
+        ), f"Expected stale compaction in stale bucket. Got: {stale_claims}"
 
     def test_stale_trace_flagged(self):
         stale_claims = [item["claim"] for item in self.anchor["stale"]]
-        assert any("trace" in c or "recent_trace" in c for c in stale_claims), (
-            f"Expected stale traces in stale bucket. Got: {stale_claims}"
-        )
+        assert any(
+            "trace" in c or "recent_trace" in c for c in stale_claims
+        ), f"Expected stale traces in stale bucket. Got: {stale_claims}"
 
     def test_absent_evidence_readout_flagged(self):
         stale_claims = [item["claim"] for item in self.anchor["stale"]]
-        assert any("evidence_readout" in c or "evidence" in c for c in stale_claims), (
-            f"Expected absent evidence_readout in stale bucket. Got: {stale_claims}"
-        )
+        assert any(
+            "evidence_readout" in c or "evidence" in c for c in stale_claims
+        ), f"Expected absent evidence_readout in stale bucket. Got: {stale_claims}"
 
     def test_stale_bucket_not_empty(self):
-        assert len(self.anchor["stale"]) >= 2, (
-            f"Expected at least 2 stale items. Got: {len(self.anchor['stale'])}"
-        )
+        assert (
+            len(self.anchor["stale"]) >= 2
+        ), f"Expected at least 2 stale items. Got: {len(self.anchor['stale'])}"
 
     def test_contested_still_has_council(self):
         contested_claims = [item["claim"] for item in self.anchor["contested"]]
@@ -312,6 +321,7 @@ class TestStaleCarryForwardCase:
         text = self.anchor["summary_text"]
         # stale= should be > 0
         import re
+
         match = re.search(r"stale=(\d+)", text)
         assert match is not None, f"Could not find stale= in summary_text: {text}"
         assert int(match.group(1)) >= 2
@@ -320,6 +330,7 @@ class TestStaleCarryForwardCase:
 # ---------------------------------------------------------------------------
 # Case 4: Session-end lifecycle (fresh traces → not stale)
 # ---------------------------------------------------------------------------
+
 
 class TestSessionEndLifecycle:
     """
@@ -336,17 +347,17 @@ class TestSessionEndLifecycle:
                 delta_new_traces=1,
             ),
             import_posture=_make_import_posture(
-                compaction_freshness_hours=0.5,   # 30 min old
-                trace_freshness_hours=0.5,        # 30 min old
+                compaction_freshness_hours=0.5,  # 30 min old
+                trace_freshness_hours=0.5,  # 30 min old
                 snapshot_freshness_hours=0.5,
             ),
             readiness=_make_readiness(),
         )
 
     def test_no_stale_items(self):
-        assert len(self.anchor["stale"]) == 0, (
-            f"Fresh traces/compaction should not be stale. Got: {self.anchor['stale']}"
-        )
+        assert (
+            len(self.anchor["stale"]) == 0
+        ), f"Fresh traces/compaction should not be stale. Got: {self.anchor['stale']}"
 
     def test_delta_shows_updates(self):
         delta = self.anchor["delta_summary"]
@@ -356,9 +367,9 @@ class TestSessionEndLifecycle:
         assert delta["new_trace_count"] == 1
 
     def test_stable_items_present(self):
-        assert len(self.anchor["stable"]) >= 3, (
-            "Expected at least 3 stable items after fresh session-end"
-        )
+        assert (
+            len(self.anchor["stable"]) >= 3
+        ), "Expected at least 3 stable items after fresh session-end"
 
     def test_summary_stale_zero(self):
         assert "stale=0" in self.anchor["summary_text"]
@@ -367,6 +378,7 @@ class TestSessionEndLifecycle:
 # ---------------------------------------------------------------------------
 # Case 5: Concurrent claims (multiple agents, overlapping paths)
 # ---------------------------------------------------------------------------
+
 
 class TestConcurrentClaims:
     """
@@ -383,13 +395,14 @@ class TestConcurrentClaims:
 
     def test_claim_collision_in_contested(self):
         contested_claims = [item["claim"] for item in self.anchor["contested"]]
-        assert any("collision" in c or "conflict" in c for c in contested_claims), (
-            f"Expected claim collision in contested. Got: {contested_claims}"
-        )
+        assert any(
+            "collision" in c or "conflict" in c for c in contested_claims
+        ), f"Expected claim collision in contested. Got: {contested_claims}"
 
     def test_collision_count_visible(self):
         collisions = [
-            item for item in self.anchor["contested"]
+            item
+            for item in self.anchor["contested"]
             if "collision" in item.get("claim", "") or "conflict" in item.get("claim", "")
         ]
         assert len(collisions) >= 1
@@ -397,7 +410,9 @@ class TestConcurrentClaims:
         assert "2" in detail, f"Expected conflict_count=2 in detail. Got: {detail}"
 
     def test_stable_still_valid(self):
-        assert len(self.anchor["stable"]) >= 1, "Stable items should survive despite claim conflicts"
+        assert (
+            len(self.anchor["stable"]) >= 1
+        ), "Stable items should survive despite claim conflicts"
 
     def test_stale_unaffected(self):
         # Fresh data — stale should be 0
@@ -407,6 +422,7 @@ class TestConcurrentClaims:
 # ---------------------------------------------------------------------------
 # Case 6: Working-style fully reinforced
 # ---------------------------------------------------------------------------
+
 
 class TestWorkingStyleReinforced:
     """
@@ -425,9 +441,9 @@ class TestWorkingStyleReinforced:
 
     def test_no_drift_in_contested(self):
         contested_claims = [item["claim"] for item in self.anchor["contested"]]
-        assert not any("working_style" in c and "drift" in c for c in contested_claims), (
-            f"Reinforced working style should NOT have drift in contested. Got: {contested_claims}"
-        )
+        assert not any(
+            "working_style" in c and "drift" in c for c in contested_claims
+        ), f"Reinforced working style should NOT have drift in contested. Got: {contested_claims}"
 
     def test_working_style_partial_in_contested(self):
         """When status is partial, drift SHOULD appear."""
@@ -439,19 +455,20 @@ class TestWorkingStyleReinforced:
             readiness=_make_readiness(),
         )
         contested_claims = [item["claim"] for item in anchor_partial["contested"]]
-        assert any("working_style" in c for c in contested_claims), (
-            f"Partial working style should appear in contested. Got: {contested_claims}"
-        )
+        assert any(
+            "working_style" in c for c in contested_claims
+        ), f"Partial working style should appear in contested. Got: {contested_claims}"
 
     def test_stable_count_unchanged(self):
-        assert len(self.anchor["stable"]) >= 3, (
-            "Stable items should not be affected by working style reinforcement"
-        )
+        assert (
+            len(self.anchor["stable"]) >= 3
+        ), "Stable items should not be affected by working style reinforcement"
 
 
 # ---------------------------------------------------------------------------
 # Case 7: Council evolution suppression flagged
 # ---------------------------------------------------------------------------
+
 
 class TestCouncilSuppressionFlagged:
     """
@@ -471,31 +488,32 @@ class TestCouncilSuppressionFlagged:
 
     def test_suppression_note_in_contested(self):
         contested_claims = [item["claim"] for item in self.anchor["contested"]]
-        assert any("suppression" in c for c in contested_claims), (
-            f"Expected suppression note in contested when evolution_suppression_flag=True. Got: {contested_claims}"
-        )
+        assert any(
+            "suppression" in c for c in contested_claims
+        ), f"Expected suppression note in contested when evolution_suppression_flag=True. Got: {contested_claims}"
 
     def test_suppression_note_has_correct_source(self):
         suppression_items = [
-            item for item in self.anchor["contested"]
-            if "suppression" in item.get("claim", "")
+            item for item in self.anchor["contested"] if "suppression" in item.get("claim", "")
         ]
         assert suppression_items, "Suppression item not found"
-        assert suppression_items[0]["evidence_source"] == "import_posture.council_dossier.dossier_interpretation"
+        assert (
+            suppression_items[0]["evidence_source"]
+            == "import_posture.council_dossier.dossier_interpretation"
+        )
 
     def test_suppression_note_detail(self):
         suppression_items = [
-            item for item in self.anchor["contested"]
-            if "suppression" in item.get("claim", "")
+            item for item in self.anchor["contested"] if "suppression" in item.get("claim", "")
         ]
         assert suppression_items[0].get("detail") == "evolution_suppression_flag=True"
 
     def test_council_calibration_still_present(self):
         # The calibration item should still be there alongside the suppression note
         contested_claims = [item["claim"] for item in self.anchor["contested"]]
-        assert any("descriptive_only" in c or "calibrated accuracy" in c for c in contested_claims), (
-            "Council calibration item should still appear alongside suppression note"
-        )
+        assert any(
+            "descriptive_only" in c or "calibrated accuracy" in c for c in contested_claims
+        ), "Council calibration item should still appear alongside suppression note"
 
     def test_no_suppression_when_flag_absent(self):
         """Without suppression flag, no suppression note in contested."""
@@ -508,7 +526,6 @@ class TestCouncilSuppressionFlagged:
             readiness=_make_readiness(),
         )
         contested_claims = [item["claim"] for item in anchor_no_flag["contested"]]
-        assert not any("suppression" in c for c in contested_claims), (
-            f"No suppression note expected when flag is absent. Got: {contested_claims}"
-        )
-
+        assert not any(
+            "suppression" in c for c in contested_claims
+        ), f"No suppression note expected when flag is absent. Got: {contested_claims}"

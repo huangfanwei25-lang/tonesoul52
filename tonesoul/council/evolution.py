@@ -131,9 +131,11 @@ class CouncilEvolution:
         suppressed: list[Dict[str, object]] = []
         for name, history in self._history.items():
             weight = float(self._weights.get(name, 1.0))
-            dissent_rate = round(
-                history.dissent_count / history.total_votes, 3
-            ) if history.total_votes else 0.0
+            dissent_rate = (
+                round(history.dissent_count / history.total_votes, 3)
+                if history.total_votes
+                else 0.0
+            )
             if (
                 history.total_votes >= 3
                 and history.dissent_count >= self.SUPPRESSION_DISSENT_FLOOR
@@ -158,9 +160,7 @@ class CouncilEvolution:
                 "treat agreement-heavy council outcomes as potentially conformity-biased."
             )
         else:
-            summary_text = (
-                "No repeated dissenting perspective currently falls below the suppression threshold."
-            )
+            summary_text = "No repeated dissenting perspective currently falls below the suppression threshold."
         return {
             "flag": bool(suppressed),
             "suppressed_perspectives": suppressed,

@@ -422,7 +422,9 @@ def build_knowledge_graph(
                 add_edge(edges, edge_seen, lane_node_id, node_id_for_file(member_path), "contains")
         for neighbor in lane.get("neighbors", ()):
             if neighbor in lane_map:
-                add_edge(edges, edge_seen, lane_node_id, node_id_for_lane(str(neighbor)), "neighbors")
+                add_edge(
+                    edges, edge_seen, lane_node_id, node_id_for_lane(str(neighbor)), "neighbors"
+                )
 
     normalized_source_docs = [normalize_repo_path(str(item)) for item in source_docs]
     for source_path in normalized_source_docs:
@@ -441,9 +443,7 @@ def build_knowledge_graph(
             )
 
     file_paths = [
-        node["path"]
-        for node in nodes.values()
-        if node.get("path") and node.get("kind") != "lane"
+        node["path"] for node in nodes.values() if node.get("path") and node.get("kind") != "lane"
     ]
     for repo_path in sorted(set(str(path) for path in file_paths)):
         for source, target, edge_type in extract_import_edges(repo_path, repo_root):
@@ -504,7 +504,9 @@ def build_knowledge_graph(
                     for member in lane.get("members", ())
                     if path_exists(repo_root, normalize_repo_path(str(member)))
                 ],
-                "neighbors": [neighbor for neighbor in lane.get("neighbors", ()) if neighbor in lane_map],
+                "neighbors": [
+                    neighbor for neighbor in lane.get("neighbors", ()) if neighbor in lane_map
+                ],
             }
         )
 
@@ -515,7 +517,9 @@ def build_knowledge_graph(
             "node_count": len(nodes),
             "edge_count": len(edges),
             "lane_count": len(lane_payload),
-            "source_doc_count": sum(1 for item in normalized_source_docs if path_exists(repo_root, item)),
+            "source_doc_count": sum(
+                1 for item in normalized_source_docs if path_exists(repo_root, item)
+            ),
         },
         "retrieval_protocol": list(RETRIEVAL_PROTOCOL),
         "source_docs": [item for item in normalized_source_docs if path_exists(repo_root, item)],

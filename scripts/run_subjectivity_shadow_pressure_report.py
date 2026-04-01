@@ -57,7 +57,9 @@ def _read_query_file(path: Path) -> list[str]:
     return rows
 
 
-def _resolve_queries(explicit_queries: list[str], query_file: Path | None) -> tuple[list[str], bool]:
+def _resolve_queries(
+    explicit_queries: list[str], query_file: Path | None
+) -> tuple[list[str], bool]:
     resolved = [str(query or "").strip() for query in explicit_queries if str(query or "").strip()]
     if query_file is not None:
         resolved.extend(_read_query_file(query_file))
@@ -98,7 +100,9 @@ def build_report(
 
     warnings: list[str] = []
     if not db_exists:
-        warnings.append(f"soul db path did not exist before shadow pressure run: {db_path.as_posix()}")
+        warnings.append(
+            f"soul db path did not exist before shadow pressure run: {db_path.as_posix()}"
+        )
     if used_default_queries:
         warnings.append("no explicit queries provided; used default subjectivity shadow query set")
     if int(pressure["metrics"]["no_hit_query_count"]) == int(pressure["metrics"]["query_count"]):

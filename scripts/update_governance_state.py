@@ -18,6 +18,7 @@ Core operations:
   5. Apply baseline drift
   6. Increment session_count
 """
+
 from __future__ import annotations
 
 import argparse
@@ -28,10 +29,10 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 # --- Constants (aligned with RFC-015) ---
-TENSION_DECAY_ALPHA = 0.05        # per hour
+TENSION_DECAY_ALPHA = 0.05  # per hour
 TENSION_PRUNE_THRESHOLD = 0.01
 DRIFT_RATE = 0.001
-MAX_TENSION_HISTORY = 50          # cap to prevent unbounded growth
+MAX_TENSION_HISTORY = 50  # cap to prevent unbounded growth
 
 
 def parse_iso(ts: str) -> datetime:
@@ -56,17 +57,13 @@ def decay_tensions(tensions: list[dict], now: datetime) -> list[dict]:
     return kept
 
 
-def update_soul_integral(
-    current: float, hours_since_last: float, max_tension: float
-) -> float:
+def update_soul_integral(current: float, hours_since_last: float, max_tension: float) -> float:
     """S_new = S_old * e^(-alpha * hours) + max_tension_this_session."""
     decayed = current * math.exp(-TENSION_DECAY_ALPHA * hours_since_last)
     return round(decayed + max_tension, 6)
 
 
-def apply_drift(
-    baseline: dict[str, float], session_signals: dict[str, float]
-) -> dict[str, float]:
+def apply_drift(baseline: dict[str, float], session_signals: dict[str, float]) -> dict[str, float]:
     """Apply 0.1% baseline drift toward session signals."""
     result = {}
     for key, old_val in baseline.items():
@@ -101,8 +98,9 @@ def main() -> None:
     parser.add_argument("--state", type=Path, required=True, help="Path to governance_state.json")
     parser.add_argument("--trace", type=Path, default=None, help="Path to session trace JSON")
     parser.add_argument("--stdin", action="store_true", help="Read trace from stdin")
-    parser.add_argument("--trace-log", type=Path, default=None,
-                        help="Append trace to this JSONL log file")
+    parser.add_argument(
+        "--trace-log", type=Path, default=None, help="Append trace to this JSONL log file"
+    )
     args = parser.parse_args()
 
     # Load state
@@ -131,8 +129,7 @@ def main() -> None:
 
     # 2. Append new tension events (with dedup)
     existing_keys = {
-        (t.get("topic", ""), t.get("resolution", ""))
-        for t in state["tension_history"]
+        (t.get("topic", ""), t.get("resolution", "")) for t in state["tension_history"]
     }
     for event in trace.get("tension_events", []):
         event.setdefault("timestamp", now.isoformat())
@@ -161,16 +158,17 @@ def main() -> None:
     # 4. Reconcile vows
     for vow_event in trace.get("vow_events", []):
         if vow_event["action"] == "created":
-            state["active_vows"].append({
-                "id": vow_event["vow_id"],
-                "content": vow_event.get("detail", ""),
-                "created": now.isoformat(),
-                "source": "session",
-            })
+            state["active_vows"].append(
+                {
+                    "id": vow_event["vow_id"],
+                    "content": vow_event.get("detail", ""),
+                    "created": now.isoformat(),
+                    "source": "session",
+                }
+            )
         elif vow_event["action"] == "retired":
             state["active_vows"] = [
-                v for v in state["active_vows"]
-                if v["id"] != vow_event["vow_id"]
+                v for v in state["active_vows"] if v["id"] != vow_event["vow_id"]
             ]
 
     # 5. Append aegis vetoes from trace
@@ -180,9 +178,7 @@ def main() -> None:
 
     # 6. Apply baseline drift
     session_signals = infer_session_signals(trace)
-    state["baseline_drift"] = apply_drift(
-        state["baseline_drift"], session_signals
-    )
+    state["baseline_drift"] = apply_drift(state["baseline_drift"], session_signals)
 
     # 7. Increment session count
     state["session_count"] += 1
@@ -201,9 +197,11 @@ def main() -> None:
             f.write(json.dumps(trace, ensure_ascii=False) + "\n")
         print(f"Trace appended to: {args.trace_log}")
 
-    print(f"State updated: session_count={state['session_count']}, "
-          f"soul_integral={state['soul_integral']:.4f}, "
-          f"active_tensions={len(state['tension_history'])}")
+    print(
+        f"State updated: session_count={state['session_count']}, "
+        f"soul_integral={state['soul_integral']:.4f}, "
+        f"active_tensions={len(state['tension_history'])}"
+    )
 
 
 if __name__ == "__main__":

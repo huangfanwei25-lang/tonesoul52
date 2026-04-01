@@ -26,6 +26,7 @@ Key storage (File fallback):
     .aegis/keys/{agent_id}.pub
     .aegis/keys/{agent_id}.key  (private, gitignored)
 """
+
 from __future__ import annotations
 
 import hashlib
@@ -64,7 +65,7 @@ _MAX_FIELD_LENGTHS: Dict[str, int] = {
     "session_id": 128,
     "agent": 64,
     "timestamp": 64,
-    "topics": 50,       # max items
+    "topics": 50,  # max items
     "key_decisions": 20,
     "tension_events": 50,
     "vow_events": 20,
@@ -74,6 +75,7 @@ _MAX_FIELD_LENGTHS: Dict[str, int] = {
 # ---------------------------------------------------------------------------
 # Hash chain
 # ---------------------------------------------------------------------------
+
 
 def compute_hash(data: str, prev_hash: str = "") -> str:
     """SHA-256 of content + previous hash → chain link."""
@@ -115,9 +117,7 @@ def verify_chain(traces: List[Dict[str, Any]]) -> Tuple[bool, List[str]]:
         content = json.dumps(trace_copy, sort_keys=True, ensure_ascii=False)
         recomputed = compute_hash(content, chain.get("prev_hash", ""))
         if recomputed != chain.get("hash", ""):
-            errors.append(
-                f"Entry {i}: content hash mismatch — trace was tampered."
-            )
+            errors.append(f"Entry {i}: content hash mismatch — trace was tampered.")
 
         expected_prev = chain.get("hash", "")
 
@@ -127,6 +127,7 @@ def verify_chain(traces: List[Dict[str, Any]]) -> Tuple[bool, List[str]]:
 # ---------------------------------------------------------------------------
 # Agent identity (Ed25519)
 # ---------------------------------------------------------------------------
+
 
 def _ensure_keys_dir() -> Path:
     _KEYS_DIR.mkdir(parents=True, exist_ok=True)
@@ -140,6 +141,7 @@ def _ensure_keys_dir() -> Path:
 def generate_agent_keys(agent_id: str) -> Tuple[str, str]:
     """Generate Ed25519 keypair for an agent. Returns (public_hex, private_hex)."""
     from nacl.signing import SigningKey
+
     sk = SigningKey.generate()
     vk = sk.verify_key
 
@@ -157,6 +159,7 @@ def load_signing_key(agent_id: str) -> Optional[Any]:
         return None
     try:
         from nacl.signing import SigningKey
+
         hex_key = key_file.read_text(encoding="utf-8").strip()
         return SigningKey(bytes.fromhex(hex_key))
     except Exception:
@@ -170,6 +173,7 @@ def load_verify_key(agent_id: str) -> Optional[Any]:
         return None
     try:
         from nacl.signing import VerifyKey
+
         hex_key = pub_file.read_text(encoding="utf-8").strip()
         return VerifyKey(bytes.fromhex(hex_key))
     except Exception:
@@ -190,7 +194,8 @@ def sign_trace(trace_dict: Dict[str, Any], agent_id: str) -> Dict[str, Any]:
     # Sign the content (excluding existing signature)
     content = json.dumps(
         {k: v for k, v in trace_dict.items() if k not in ("_signature", "_chain")},
-        sort_keys=True, ensure_ascii=False,
+        sort_keys=True,
+        ensure_ascii=False,
     )
     signed = sk.sign(content.encode("utf-8"))
 
@@ -219,10 +224,12 @@ def verify_signature(trace_dict: Dict[str, Any]) -> Tuple[bool, str]:
 
     try:
         from nacl.signing import VerifyKey
+
         vk = VerifyKey(bytes.fromhex(pubkey_hex))
         content = json.dumps(
             {k: v for k, v in trace_dict.items() if k not in ("_signature", "_chain")},
-            sort_keys=True, ensure_ascii=False,
+            sort_keys=True,
+            ensure_ascii=False,
         )
         vk.verify(content.encode("utf-8"), bytes.fromhex(sig_hex))
 
@@ -240,9 +247,11 @@ def verify_signature(trace_dict: Dict[str, Any]) -> Tuple[bool, str]:
 # Content filter (prompt injection / poisoning detection)
 # ---------------------------------------------------------------------------
 
+
 @dataclass
 class ContentCheck:
     """Result of content validation."""
+
     clean: bool = True
     violations: List[str] = field(default_factory=list)
     severity: str = "safe"  # safe / warning / blocked
@@ -302,6 +311,7 @@ def _extract_text(obj: Any, depth: int = 0) -> str:
 # Integrated shield: wraps all three defenses
 # ---------------------------------------------------------------------------
 
+
 class AegisShield:
     """Unified defense layer — call before and after every memory write."""
 
@@ -330,9 +340,7 @@ class AegisShield:
             store._r.set("ts:aegis:chain_head", self.chain_head)
         else:
             _AEGIS_DIR.mkdir(parents=True, exist_ok=True)
-            (_AEGIS_DIR / "chain_head.txt").write_text(
-                self.chain_head, encoding="utf-8"
-            )
+            (_AEGIS_DIR / "chain_head.txt").write_text(self.chain_head, encoding="utf-8")
 
     def protect_trace(
         self,

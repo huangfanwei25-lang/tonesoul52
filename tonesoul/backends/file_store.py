@@ -58,9 +58,10 @@ class FileStore:
         self.compactions_path = compactions_path or _DEFAULT_COMPACTIONS
         self.subject_snapshots_path = subject_snapshots_path or _DEFAULT_SUBJECT_SNAPSHOTS
         self.observer_cursors_path = observer_cursors_path or _DEFAULT_OBSERVER_CURSORS
-        self.routing_events_path = (
-            routing_events_path
-            or (self.claims_path.with_name("routing_events.json") if claims_path is not None else _DEFAULT_ROUTING_EVENTS)
+        self.routing_events_path = routing_events_path or (
+            self.claims_path.with_name("routing_events.json")
+            if claims_path is not None
+            else _DEFAULT_ROUTING_EVENTS
         )
 
     # ── Governance state ────────────────────────────────────────────────────

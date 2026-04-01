@@ -79,8 +79,8 @@ def derive_confidence_posture(
     minority_report: list[dict[str, Any]] | None = None,
 ) -> str:
     coherence_score = verdict.coherence.overall
-    minority_report = minority_report if minority_report is not None else extract_minority_report(
-        verdict.votes
+    minority_report = (
+        minority_report if minority_report is not None else extract_minority_report(verdict.votes)
     )
     has_high_confidence_dissent = any(
         float(entry.get("confidence", 0.0)) >= 0.7 for entry in minority_report
@@ -247,7 +247,9 @@ def build_dossier(
     transcript = verdict.transcript if isinstance(verdict.transcript, dict) else {}
     minority_report = extract_minority_report(verdict.votes)
     computed_dissent_ratio = derive_dissent_ratio(verdict.votes, dissent_ratio)
-    resolved_deliberation_mode = (deliberation_mode or _transcript_string(transcript, "deliberation_mode")).strip()
+    resolved_deliberation_mode = (
+        deliberation_mode or _transcript_string(transcript, "deliberation_mode")
+    ).strip()
     resolved_change_of_position = (
         change_of_position
         if change_of_position is not None

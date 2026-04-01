@@ -83,11 +83,17 @@ def build_revision_prompt(draft: str, verdict: ReflectionVerdict) -> str:
         "Do not invent support for claims that the draft itself and the listed evidence do not justify.",
     ]
     if verdict.vow_result is not None:
-        evidence_lines.append("When vow checks are present, blocked content must be removed rather than rephrased.")
+        evidence_lines.append(
+            "When vow checks are present, blocked content must be removed rather than rephrased."
+        )
     if verdict.council_decision:
-        evidence_lines.append("Use the council signal as a bounded repair instruction, not as narration to expose.")
+        evidence_lines.append(
+            "Use the council signal as a bounded repair instruction, not as narration to expose."
+        )
     if verdict.tension_delta is not None:
-        evidence_lines.append("Where the drift signal is high, prefer the smallest safe correction over wider rewrites.")
+        evidence_lines.append(
+            "Where the drift signal is high, prefer the smallest safe correction over wider rewrites."
+        )
 
     recovery_lines = [
         "If the draft cannot be safely repaired in full, keep the smallest bounded answer that still serves the user's request.",

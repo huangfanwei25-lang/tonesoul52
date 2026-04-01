@@ -8,6 +8,7 @@ Usage:
 This script is safe to run multiple times; it will NOT overwrite an existing
 file unless --force is passed.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -105,8 +106,7 @@ def main() -> None:
             state["baseline_drift"] = profile["baseline_drift"]
         if "initial_vows" in profile:
             state["active_vows"] = [
-                {**v, "created": state["last_updated"][:10]}
-                for v in profile["initial_vows"]
+                {**v, "created": state["last_updated"][:10]} for v in profile["initial_vows"]
             ]
 
     args.output.parent.mkdir(parents=True, exist_ok=True)

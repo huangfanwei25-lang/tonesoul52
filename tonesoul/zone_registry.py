@@ -97,17 +97,28 @@ def _match_topic_to_zone(topic: str) -> Optional[str]:
             return key
     # Fuzzy: check Chinese keywords
     cn_map = {
-        "股": "stock", "投資": "stock", "市場": "stock",
-        "治理": "governance", "議會": "governance", "council": "governance",
-        "記憶": "memory", "memory": "memory",
-        "架構": "architecture", "結構": "architecture",
-        "測試": "testing", "test": "testing",
-        "除錯": "debug", "bug": "debug", "修復": "debug",
+        "股": "stock",
+        "投資": "stock",
+        "市場": "stock",
+        "治理": "governance",
+        "議會": "governance",
+        "council": "governance",
+        "記憶": "memory",
+        "memory": "memory",
+        "架構": "architecture",
+        "結構": "architecture",
+        "測試": "testing",
+        "test": "testing",
+        "除錯": "debug",
+        "bug": "debug",
+        "修復": "debug",
         "基礎": "infrastructure",
         "仁慈": "benevolence",
         "診斷": "diagnostic",
-        "遊戲": "gamification", "視覺": "gamification",
-        "儀表": "dashboard", "觀測": "dashboard",
+        "遊戲": "gamification",
+        "視覺": "gamification",
+        "儀表": "dashboard",
+        "觀測": "dashboard",
     }
     for keyword, zone_key in cn_map.items():
         if keyword in topic_lower:
@@ -218,18 +229,20 @@ def rebuild_from_traces(
     for zone_key, count in topic_counter.most_common():
         preset = _ZONE_PRESETS.get(zone_key, {})
         level = min(5, 1 + count // 3)
-        zones.append(Zone(
-            zone_id=zone_key,
-            name=preset.get("name", zone_key.replace("_", " ").title()),
-            icon=preset.get("icon", "star"),
-            color=preset.get("color", "#7c5cfc"),
-            topics=[zone_key],
-            visit_count=count,
-            artifact_count=zone_artifacts.get(zone_key, 0),
-            first_seen=zone_first_seen.get(zone_key, ""),
-            last_seen=zone_last_seen.get(zone_key, ""),
-            level=level,
-        ))
+        zones.append(
+            Zone(
+                zone_id=zone_key,
+                name=preset.get("name", zone_key.replace("_", " ").title()),
+                icon=preset.get("icon", "star"),
+                color=preset.get("color", "#7c5cfc"),
+                topics=[zone_key],
+                visit_count=count,
+                artifact_count=zone_artifacts.get(zone_key, 0),
+                first_seen=zone_first_seen.get(zone_key, ""),
+                last_seen=zone_last_seen.get(zone_key, ""),
+                level=level,
+            )
+        )
 
     _assign_grid_positions(zones)
 
@@ -335,18 +348,20 @@ def _rebuild_from_store(store) -> WorldState:
     zones: List[Zone] = []
     for zone_key, count in topic_counter.most_common():
         preset = _ZONE_PRESETS.get(zone_key, {})
-        zones.append(Zone(
-            zone_id=zone_key,
-            name=preset.get("name", zone_key.replace("_", " ").title()),
-            icon=preset.get("icon", "star"),
-            color=preset.get("color", "#7c5cfc"),
-            topics=[zone_key],
-            visit_count=count,
-            artifact_count=zone_artifacts.get(zone_key, 0),
-            first_seen=zone_first_seen.get(zone_key, ""),
-            last_seen=zone_last_seen.get(zone_key, ""),
-            level=min(5, 1 + count // 3),
-        ))
+        zones.append(
+            Zone(
+                zone_id=zone_key,
+                name=preset.get("name", zone_key.replace("_", " ").title()),
+                icon=preset.get("icon", "star"),
+                color=preset.get("color", "#7c5cfc"),
+                topics=[zone_key],
+                visit_count=count,
+                artifact_count=zone_artifacts.get(zone_key, 0),
+                first_seen=zone_first_seen.get(zone_key, ""),
+                last_seen=zone_last_seen.get(zone_key, ""),
+                level=min(5, 1 + count // 3),
+            )
+        )
 
     _assign_grid_positions(zones)
 

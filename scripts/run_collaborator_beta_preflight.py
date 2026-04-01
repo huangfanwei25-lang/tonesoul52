@@ -120,7 +120,9 @@ def _load_validation_wave(path: Path) -> list[dict[str, Any]]:
     return [item for item in payload if isinstance(item, dict)]
 
 
-def _build_command(base: Path, *, agent: str, state_path: Path | None, traces_path: Path | None) -> list[str]:
+def _build_command(
+    base: Path, *, agent: str, state_path: Path | None, traces_path: Path | None
+) -> list[str]:
     command = [sys.executable, str(base), "--agent", agent]
     if state_path is not None:
         command.extend(["--state-path", str(state_path)])
@@ -147,29 +149,28 @@ def run_preflight(
     # The session-start bundle includes the full packet
     packet_payload = start_payload.get("packet") or {}
 
-
     # compact_diagnostic is already available in start_payload — no need to
     # spawn a separate subprocess which can hang on Windows.
     diagnose_mode = "embedded_from_session_start"
     compact_diagnostic = _normalize_compact_diagnostic(start_payload.get("compact_diagnostic", ""))
 
     task_track_hint = start_payload.get("task_track_hint") or {}
-    launch_claim_posture = (
-        ((packet_payload.get("project_memory_summary") or {}).get("launch_claim_posture") or {})
-    )
+    launch_claim_posture = (packet_payload.get("project_memory_summary") or {}).get(
+        "launch_claim_posture"
+    ) or {}
     coordination_mode = packet_payload.get("coordination_mode") or {}
-    evidence_readout = (
-        ((packet_payload.get("project_memory_summary") or {}).get("evidence_readout_posture") or {})
-    )
+    evidence_readout = (packet_payload.get("project_memory_summary") or {}).get(
+        "evidence_readout_posture"
+    ) or {}
     validation_wave = _load_validation_wave(validation_wave_path or Path(""))
-    aegis_status = _extract_compact_signal(compact_diagnostic, prefix="aegis") or _extract_compact_signal(
+    aegis_status = _extract_compact_signal(
+        compact_diagnostic, prefix="aegis"
+    ) or _extract_compact_signal(
         start_payload.get("compact_diagnostic", ""),
         prefix="aegis",
     )
     claim_recommendation = str(task_track_hint.get("claim_recommendation", "unknown"))
-    scope_note = (
-        "guided collaborator beta only; file-backed remains launch default and public launch stays deferred"
-    )
+    scope_note = "guided collaborator beta only; file-backed remains launch default and public launch stays deferred"
 
     blocking_findings: list[str] = []
     if str(launch_claim_posture.get("current_tier", "")) != "collaborator_beta":
@@ -191,7 +192,9 @@ def run_preflight(
     if aegis_status == "compromised":
         cautions.append("aegis_compromised")
 
-    max_alert_count = max((int(item.get("receiver_alert_count", 0) or 0) for item in validation_wave), default=0)
+    max_alert_count = max(
+        (int(item.get("receiver_alert_count", 0) or 0) for item in validation_wave), default=0
+    )
     contested_dossier_visible = any(
         str(item.get("scenario", "")) == "contested_dossier"
         and str(item.get("council_calibration_status", "")) == "descriptive_only"
@@ -224,7 +227,9 @@ def run_preflight(
                 "task_track": str(task_track_hint.get("suggested_track", "unknown")),
                 "claim_recommendation": claim_recommendation,
                 "deliberation_mode": str(
-                    (start_payload.get("deliberation_mode_hint") or {}).get("suggested_mode", "unknown")
+                    (start_payload.get("deliberation_mode_hint") or {}).get(
+                        "suggested_mode", "unknown"
+                    )
                 ),
             },
             "packet": {

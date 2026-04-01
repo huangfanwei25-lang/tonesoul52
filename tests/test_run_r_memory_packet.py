@@ -106,7 +106,7 @@ def test_run_r_memory_packet_emits_json(capsys, monkeypatch, tmp_path: Path) -> 
                                 "decision": "concern",
                                 "confidence": 0.75,
                                 "reasoning": "migration path missing",
-                                "evidence": ["docs/spec.md"]
+                                "evidence": ["docs/spec.md"],
                             }
                         ],
                         "vote_summary": [],
@@ -115,7 +115,7 @@ def test_run_r_memory_packet_emits_json(capsys, monkeypatch, tmp_path: Path) -> 
                         "evidence_refs": ["docs/spec.md"],
                         "grounding_summary": {
                             "has_ungrounded_claims": False,
-                            "total_evidence_sources": 1
+                            "total_evidence_sources": 1,
                         },
                         "confidence_decomposition": {
                             "calibration_status": "descriptive_only",
@@ -125,10 +125,10 @@ def test_run_r_memory_packet_emits_json(capsys, monkeypatch, tmp_path: Path) -> 
                             "evidence_density": 0.5,
                             "evidence_posture": "moderate",
                             "grounding_posture": "not_required",
-                            "adversarial_posture": "survived_dissent"
+                            "adversarial_posture": "survived_dissent",
                         },
                         "evolution_suppression_flag": True,
-                        "opacity_declaration": "partially_observable"
+                        "opacity_declaration": "partially_observable",
                     },
                     "next_action": "keep compaction non-canonical",
                     "source": "cli",
@@ -150,7 +150,7 @@ def test_run_r_memory_packet_emits_json(capsys, monkeypatch, tmp_path: Path) -> 
                     "next_action": "re-run packet with observer cursor",
                     "source": "cli",
                     "updated_at": "2026-03-26T00:02:30+00:00",
-                    "expires_at": "4070908920.0"
+                    "expires_at": "4070908920.0",
                 }
             }
         ),
@@ -172,7 +172,7 @@ def test_run_r_memory_packet_emits_json(capsys, monkeypatch, tmp_path: Path) -> 
                     "evidence_refs": ["docs/AI_QUICKSTART.md"],
                     "refresh_signals": ["refresh when session cadence changes"],
                     "source": "cli",
-                    "updated_at": "2026-03-28T00:04:00+00:00"
+                    "updated_at": "2026-03-28T00:04:00+00:00",
                 }
             ]
         ),
@@ -241,7 +241,9 @@ def test_run_r_memory_packet_emits_json(capsys, monkeypatch, tmp_path: Path) -> 
     assert output["operator_guidance"]["session_end"][0].startswith(
         "python scripts/end_agent_session.py --agent"
     )
-    assert output["operator_guidance"]["session_end"][2].startswith("python scripts/save_compaction.py")
+    assert output["operator_guidance"]["session_end"][2].startswith(
+        "python scripts/save_compaction.py"
+    )
     assert "checkpoint or compaction" in output["operator_guidance"]["completion_rule"]
     assert output["recent_traces"][0]["agent"] == "codex"
     assert output["recent_traces"][0]["freshness_hours"] >= 0.0
@@ -253,7 +255,9 @@ def test_run_r_memory_packet_emits_json(capsys, monkeypatch, tmp_path: Path) -> 
     assert output["recent_compactions"][0]["freshness_hours"] >= 0.0
     assert output["recent_compactions"][0]["council_dossier"]["confidence_posture"] == "contested"
     assert (
-        output["recent_compactions"][0]["council_dossier"]["confidence_decomposition"]["calibration_status"]
+        output["recent_compactions"][0]["council_dossier"]["confidence_decomposition"][
+            "calibration_status"
+        ]
         == "descriptive_only"
     )
     assert output["recent_compactions"][0]["council_dossier"]["evolution_suppression_flag"] is True
@@ -265,18 +269,34 @@ def test_run_r_memory_packet_emits_json(capsys, monkeypatch, tmp_path: Path) -> 
     assert output["recent_subject_snapshots"][0]["freshness_hours"] >= 0.0
     assert output["recent_routing_events"][0]["surface"] == "checkpoint"
     assert output["recent_routing_events"][0]["freshness_hours"] >= 0.0
-    assert output["project_memory_summary"]["subject_anchor"]["summary"].startswith("Stay packet-first")
+    assert output["project_memory_summary"]["subject_anchor"]["summary"].startswith(
+        "Stay packet-first"
+    )
     assert output["project_memory_summary"]["routing_summary"]["total_events"] == 1
-    assert output["project_memory_summary"]["routing_summary"]["summary_text"].startswith("router=writes=0 previews=1")
-    assert output["project_memory_summary"]["evidence_readout_posture"]["classification_counts"]["tested"] == 2
+    assert output["project_memory_summary"]["routing_summary"]["summary_text"].startswith(
+        "router=writes=0 previews=1"
+    )
+    assert (
+        output["project_memory_summary"]["evidence_readout_posture"]["classification_counts"][
+            "tested"
+        ]
+        == 2
+    )
     assert any(
         lane["lane"] == "axiom_and_theory_claims" and lane["classification"] == "document_backed"
         for lane in output["project_memory_summary"]["evidence_readout_posture"]["lanes"]
     )
-    assert output["project_memory_summary"]["launch_claim_posture"]["current_tier"] == "collaborator_beta"
-    assert output["project_memory_summary"]["launch_claim_posture"]["next_target_tier"] == "public_launch"
+    assert (
+        output["project_memory_summary"]["launch_claim_posture"]["current_tier"]
+        == "collaborator_beta"
+    )
+    assert (
+        output["project_memory_summary"]["launch_claim_posture"]["next_target_tier"]
+        == "public_launch"
+    )
     assert any(
-        item["claim"] == "council_decision_quality" and item["current_classification"] == "descriptive_only"
+        item["claim"] == "council_decision_quality"
+        and item["current_classification"] == "descriptive_only"
         for item in output["project_memory_summary"]["launch_claim_posture"]["blocked_overclaims"]
     )
     assert output["project_memory_summary"]["subject_refresh"]["status"] == "manual_review"
@@ -285,7 +305,9 @@ def test_run_r_memory_packet_emits_json(capsys, monkeypatch, tmp_path: Path) -> 
         in output["project_memory_summary"]["subject_refresh"]["promotion_hazards"][0]
     )
     assert any(
-        reminder.startswith("Evidence posture: evidence=tested(session_control_and_handoff,council_mechanics)")
+        reminder.startswith(
+            "Evidence posture: evidence=tested(session_control_and_handoff,council_mechanics)"
+        )
         for reminder in output["operator_guidance"]["current_reminders"]
     )
     assert any(
@@ -293,7 +315,9 @@ def test_run_r_memory_packet_emits_json(capsys, monkeypatch, tmp_path: Path) -> 
         for reminder in output["operator_guidance"]["current_reminders"]
     )
     assert any(
-        reminder.startswith("Launch coordination default: Current runtime matches the launch-default coordination story")
+        reminder.startswith(
+            "Launch coordination default: Current runtime matches the launch-default coordination story"
+        )
         for reminder in output["operator_guidance"]["current_reminders"]
     )
     assert output["coordination_mode"]["mode"] == "file-backed"

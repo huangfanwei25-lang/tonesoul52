@@ -16,6 +16,7 @@ If no --state is given, searches these locations in order:
     3. ~/.codex/memories/governance_state.json   (Codex)
     4. ~/.tonesoul/governance_state.json         (generic)
 """
+
 from __future__ import annotations
 
 import argparse
@@ -53,8 +54,12 @@ def severity_bar(severity: float) -> str:
 def main() -> None:
     parser = argparse.ArgumentParser(description="Read governance state")
     parser.add_argument("--state", type=Path, default=None)
-    parser.add_argument("--json", action="store_true", dest="json_output",
-                        help="Output raw JSON for machine consumption")
+    parser.add_argument(
+        "--json",
+        action="store_true",
+        dest="json_output",
+        help="Output raw JSON for machine consumption",
+    )
     args = parser.parse_args()
 
     state_path = args.state or find_state_file()

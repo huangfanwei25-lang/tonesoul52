@@ -57,7 +57,9 @@ def _build_store(args):
 
 def main() -> None:
     _ensure_repo_root_on_path()
-    parser = argparse.ArgumentParser(description="Apply a bounded ToneSoul subject-refresh heuristic")
+    parser = argparse.ArgumentParser(
+        description="Apply a bounded ToneSoul subject-refresh heuristic"
+    )
     parser.add_argument("--agent", required=True)
     parser.add_argument("--field", choices=("active_threads",), default="active_threads")
     parser.add_argument("--summary", default="")

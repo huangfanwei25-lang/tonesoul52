@@ -328,7 +328,12 @@ def build_check_plan(
         add(
             _planned_check(
                 name="layer_boundaries",
-                argv=[python_executable, "scripts/verify_layer_boundaries.py", "--project-root", "."],
+                argv=[
+                    python_executable,
+                    "scripts/verify_layer_boundaries.py",
+                    "--project-root",
+                    ".",
+                ],
                 reason="Core runtime edits must preserve explicit architecture boundaries.",
                 surface_ids=["core_runtime"],
                 blocking=True,
@@ -383,9 +388,14 @@ def build_check_plan(
                 name="python_full_regression",
                 argv=[python_executable, "-m", "pytest", "tests", "-x", "--tb=short", "-q"],
                 reason="The change surface is broad or critical enough to require full Python regression.",
-                surface_ids=["core_runtime"] if any(
-                    _matches_any_prefix(path, CORE_RUNTIME_PREFIXES) for path in normalized_paths
-                ) else surface_ids or ["all_changes"],
+                surface_ids=(
+                    ["core_runtime"]
+                    if any(
+                        _matches_any_prefix(path, CORE_RUNTIME_PREFIXES)
+                        for path in normalized_paths
+                    )
+                    else surface_ids or ["all_changes"]
+                ),
                 blocking=True,
             )
         )
@@ -461,9 +471,7 @@ def render_markdown(payload: dict[str, Any]) -> str:
     surfaces = payload.get("surfaces") or []
     if isinstance(surfaces, list) and surfaces:
         for surface in surfaces:
-            lines.append(
-                f"- `{surface['id']}` ({surface['path_count']}): {surface['summary']}"
-            )
+            lines.append(f"- `{surface['id']}` ({surface['path_count']}): {surface['summary']}")
             for path in surface.get("paths", [])[:8]:
                 lines.append(f"  - `{path}`")
     else:
@@ -474,9 +482,7 @@ def render_markdown(payload: dict[str, Any]) -> str:
     checks = payload.get("checks") or []
     if isinstance(checks, list) and checks:
         for check in checks:
-            lines.append(
-                f"- `{check['name']}` [{check['status']}]: `{check['command']}`"
-            )
+            lines.append(f"- `{check['name']}` [{check['status']}]: `{check['command']}`")
             lines.append(f"  - reason: {check['reason']}")
             lines.append(f"  - blocking: {str(check['blocking']).lower()}")
             if check.get("surface_ids"):
@@ -602,7 +608,9 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--repo-root", default=".", help="Repository root path.")
     parser.add_argument("--out-dir", default="docs/status", help="Output directory for artifacts.")
-    parser.add_argument("--changed-file", action="append", default=[], help="Explicit changed path.")
+    parser.add_argument(
+        "--changed-file", action="append", default=[], help="Explicit changed path."
+    )
     parser.add_argument(
         "--changed-file-list",
         default=None,
@@ -610,9 +618,13 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--staged", action="store_true", help="Inspect staged changes.")
     parser.add_argument("--base-ref", default=None, help="Compare against git base ref.")
-    parser.add_argument("--allow-path", action="append", default=[], help="Protected-path allowlist.")
+    parser.add_argument(
+        "--allow-path", action="append", default=[], help="Protected-path allowlist."
+    )
     parser.add_argument("--execute", action="store_true", help="Run the planned checks.")
-    parser.add_argument("--strict", action="store_true", help="Exit non-zero when planning or checks fail.")
+    parser.add_argument(
+        "--strict", action="store_true", help="Exit non-zero when planning or checks fail."
+    )
     return parser
 
 

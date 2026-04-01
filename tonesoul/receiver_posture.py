@@ -47,17 +47,21 @@ def build_receiver_parity_readout(
     subject_refresh = project_memory_summary.get("subject_refresh") or {}
 
     calibration_status = str(
-        council_snapshot.get("calibration_status", "") or decomposition.get("calibration_status", "")
+        council_snapshot.get("calibration_status", "")
+        or decomposition.get("calibration_status", "")
     ).strip()
     has_minority_report = bool(
         council_snapshot.get("has_minority_report")
         or list(council_snapshot.get("minority_report") or [])
     )
     suppression_flag = bool(council_snapshot.get("evolution_suppression_flag"))
-    continuity_classification = _lane_classification(
-        evidence_readout_posture,
-        "continuity_effectiveness",
-    ) or "unknown"
+    continuity_classification = (
+        _lane_classification(
+            evidence_readout_posture,
+            "continuity_effectiveness",
+        )
+        or "unknown"
+    )
     style_status = str(working_style_observability.get("status", "")).strip()
     if not style_status:
         style_status = "present" if working_style_anchor else "none"

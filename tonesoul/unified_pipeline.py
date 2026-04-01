@@ -523,7 +523,9 @@ class UnifiedPipeline:
             return response, False, {}
 
         details = dict(gate_result.details) if isinstance(gate_result.details, dict) else {}
-        components = details.get("components") if isinstance(details.get("components"), dict) else {}
+        components = (
+            details.get("components") if isinstance(details.get("components"), dict) else {}
+        )
         poav_total = float(components.get("total", 0.0) or 0.0)
         issues = list(gate_result.issues or [])
         blocked = bool(enforce and not gate_result.passed)
@@ -545,9 +547,11 @@ class UnifiedPipeline:
             "passed": bool(gate_result.passed),
             "issues": issues,
             "issue_count": len(issues),
-            "action": "blocked"
-            if blocked
-            else str(details.get("decision") or ("record_only" if issues else "allow")),
+            "action": (
+                "blocked"
+                if blocked
+                else str(details.get("decision") or ("record_only" if issues else "allow"))
+            ),
             "poav_total": round(poav_total, 3),
         }
         dispatch_trace["poav"] = self._build_trace_section(
@@ -1792,10 +1796,12 @@ class UnifiedPipeline:
                     attempt_after_tension=False,
                 )
             else:
-                local_response, blocked_by_contracts, contract_result = self._enforce_output_contracts(
-                    response=local_response,
-                    current_zone="safe",
-                    dispatch_trace=local_dispatch_trace,
+                local_response, blocked_by_contracts, contract_result = (
+                    self._enforce_output_contracts(
+                        response=local_response,
+                        current_zone="safe",
+                        dispatch_trace=local_dispatch_trace,
+                    )
                 )
                 if contract_result:
                     verdict_metadata = local_verdict.get("metadata")

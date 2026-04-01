@@ -323,7 +323,9 @@ def main() -> int:
     print(json.dumps(report, ensure_ascii=False, indent=2))
 
     if args.require_tree_equivalence and not _tree_equivalence_satisfied(report):
-        print("::error::Expected tree-equivalent compare ref when --require-tree-equivalence is enabled.")
+        print(
+            "::error::Expected tree-equivalent compare ref when --require-tree-equivalence is enabled."
+        )
         return 1
 
     if args.strict and not report["ok"]:

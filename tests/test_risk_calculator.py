@@ -106,7 +106,9 @@ def test_build_project_memory_summary_aggregates_focus_pending_and_repo_progress
     assert "tonesoul/runtime_adapter.py" in summary["pending_paths"]
     assert summary["carry_forward"] == ["keep packet readable"]
     assert summary["subject_anchor"]["summary"].startswith("Stay packet-first")
-    assert summary["working_style_anchor"]["summary"].startswith("prefs=prefer packet before broad repo scan")
+    assert summary["working_style_anchor"]["summary"].startswith(
+        "prefs=prefer packet before broad repo scan"
+    )
     assert summary["working_style_anchor"]["decision_preferences"] == [
         "prefer packet before broad repo scan"
     ]
@@ -121,12 +123,14 @@ def test_build_project_memory_summary_aggregates_focus_pending_and_repo_progress
     assert summary["working_style_observability"]["status"] == "reinforced"
     assert summary["working_style_observability"]["drift_risk"] == "low"
     assert summary["working_style_observability"]["reinforced_item_count"] == 2
-    assert "decision_preferences: prefer packet before broad repo scan" in summary[
-        "working_style_observability"
-    ]["reinforced_items"]
-    assert "verified_routines: leave compaction before release" in summary[
-        "working_style_observability"
-    ]["reinforced_items"]
+    assert (
+        "decision_preferences: prefer packet before broad repo scan"
+        in summary["working_style_observability"]["reinforced_items"]
+    )
+    assert (
+        "verified_routines: leave compaction before release"
+        in summary["working_style_observability"]["reinforced_items"]
+    )
     assert summary["working_style_import_limits"]["apply_posture"] == "bounded_default"
     assert any(
         item.startswith("scan_order:")
@@ -138,7 +142,9 @@ def test_build_project_memory_summary_aggregates_focus_pending_and_repo_progress
     )
     assert summary["repo_progress"]["branch"] == "feature/r-memory"
     assert "focus=risk, runtime" in summary["summary_text"]
-    assert "subject=Stay packet-first and keep theory out of runtime truth." in summary["summary_text"]
+    assert (
+        "subject=Stay packet-first and keep theory out of runtime truth." in summary["summary_text"]
+    )
     assert "repo=feature/r-memory@abc1234 dirty=6" in summary["summary_text"]
 
 

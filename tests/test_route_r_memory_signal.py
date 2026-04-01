@@ -18,7 +18,9 @@ def _load_script_module():
     return module
 
 
-def test_route_r_memory_signal_previews_checkpoint_route(capsys, monkeypatch, tmp_path: Path) -> None:
+def test_route_r_memory_signal_previews_checkpoint_route(
+    capsys, monkeypatch, tmp_path: Path
+) -> None:
     module = _load_script_module()
     state_path = tmp_path / "governance_state.json"
     traces_path = tmp_path / "session_traces.jsonl"
@@ -56,7 +58,9 @@ def test_route_r_memory_signal_previews_checkpoint_route(capsys, monkeypatch, tm
     assert "written" not in output
 
 
-def test_route_r_memory_signal_can_write_subject_snapshot(capsys, monkeypatch, tmp_path: Path) -> None:
+def test_route_r_memory_signal_can_write_subject_snapshot(
+    capsys, monkeypatch, tmp_path: Path
+) -> None:
     module = _load_script_module()
     state_path = tmp_path / "governance_state.json"
     traces_path = tmp_path / "session_traces.jsonl"

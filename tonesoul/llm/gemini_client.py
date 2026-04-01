@@ -80,9 +80,10 @@ def create_gemini_client(api_key: Optional[str] = None) -> GeminiClient:
 def _build_narrative_reasoning_prompt(verdict_dict: dict) -> str:
     verdict = verdict_dict.get("verdict", "unknown")
     coherence = int(verdict_dict.get("coherence", {}).get("overall", 0.5) * 100)
-    votes = ", ".join(
-        [f"{v['perspective']}: {v['decision']}" for v in verdict_dict.get("votes", [])]
-    ) or "[資料不足]"
+    votes = (
+        ", ".join([f"{v['perspective']}: {v['decision']}" for v in verdict_dict.get("votes", [])])
+        or "[資料不足]"
+    )
     divergence = verdict_dict.get("divergence_analysis", {}).get("core_divergence", "none")
 
     return f"""You are a bounded council dossier summarizer.

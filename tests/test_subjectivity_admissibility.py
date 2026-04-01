@@ -94,9 +94,7 @@ def test_build_axiomatic_admissibility_status_line_handles_optional_tags():
 
 
 def test_build_operator_prompt_uses_bounded_review_shape():
-    prompt = subject_mod._build_operator_prompt(
-        "Traceability", "traceability_and_accountability"
-    )
+    prompt = subject_mod._build_operator_prompt("Traceability", "traceability_and_accountability")
 
     assert "Before approving `Traceability`" in prompt
     assert "Goal function:" in prompt

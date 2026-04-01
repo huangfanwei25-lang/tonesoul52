@@ -8,7 +8,9 @@ from pathlib import Path
 
 def _load_script_module():
     module_name = "test_run_collaborator_beta_preflight_module"
-    module_path = Path(__file__).resolve().parents[1] / "scripts" / "run_collaborator_beta_preflight.py"
+    module_path = (
+        Path(__file__).resolve().parents[1] / "scripts" / "run_collaborator_beta_preflight.py"
+    )
     spec = importlib.util.spec_from_file_location(module_name, module_path)
     assert spec is not None
     assert spec.loader is not None
@@ -105,7 +107,9 @@ def test_run_preflight_reports_go(monkeypatch, tmp_path: Path) -> None:
     assert result["entry_stack"]["diagnose"]["aegis_status"] == "compromised"
     assert result["scope_posture"]["guided_beta_only"] is True
     assert result["scope_posture"]["target_reading"] == "roadmap_target_only"
-    assert result["claim_posture"]["claim_trigger"].startswith("claim when you are about to edit a shared path")
+    assert result["claim_posture"]["claim_trigger"].startswith(
+        "claim when you are about to edit a shared path"
+    )
     assert result["aegis_posture"]["blocks_beta_entry"] is False
     assert result["validation_wave"]["scenario_count"] == 3
     assert result["validation_wave"]["stale_compaction_guarded"] is True
@@ -121,7 +125,9 @@ def test_run_preflight_holds_when_launch_defaults_drift(monkeypatch, tmp_path: P
     validation_path.write_text("[]\n", encoding="utf-8")
 
     packet_payload = _sample_packet_payload()
-    packet_payload["project_memory_summary"]["launch_claim_posture"]["current_tier"] = "internal_alpha"
+    packet_payload["project_memory_summary"]["launch_claim_posture"][
+        "current_tier"
+    ] = "internal_alpha"
     packet_payload["coordination_mode"]["launch_default_mode"] = "redis-live"
 
     start_payload = _sample_start_payload()
@@ -135,7 +141,9 @@ def test_run_preflight_holds_when_launch_defaults_drift(monkeypatch, tmp_path: P
 
     assert result["overall_ok"] is False
     assert result["overall_status"] == "hold"
-    assert "launch_claim_posture.current_tier is not collaborator_beta" in result["blocking_findings"]
+    assert (
+        "launch_claim_posture.current_tier is not collaborator_beta" in result["blocking_findings"]
+    )
     assert "launch_default_mode is not file-backed" in result["blocking_findings"]
     assert "launch_continuity_validation_wave artifact is missing" in result["blocking_findings"]
 
@@ -184,7 +192,10 @@ def test_render_markdown_contains_core_sections() -> None:
             "launch_claim_posture": {
                 "summary_text": "launch_claims=current:collaborator_beta public_launch:deferred",
                 "blocked_overclaims": [
-                    {"claim": "continuity_effectiveness", "current_classification": "runtime_present"}
+                    {
+                        "claim": "continuity_effectiveness",
+                        "current_classification": "runtime_present",
+                    }
                 ],
             },
             "blocking_findings": [],
@@ -192,11 +203,26 @@ def test_render_markdown_contains_core_sections() -> None:
     )
 
     assert "# ToneSoul Collaborator-Beta Preflight" in markdown
-    assert "| session-start | ok | readiness=pass track=feature_track claim=required mode=standard_council |" in markdown
-    assert "- Scope posture: `guided collaborator beta only; file-backed remains launch default and public launch stays deferred`" in markdown
-    assert "- Target reading: `next_target_tier names the next maturity target, not current readiness or public-launch permission.`" in markdown
-    assert "- Claim trigger: `claim when you are about to edit a shared path; read-only inspection can stay unclaimed`" in markdown
-    assert "- Aegis posture: `compromised` / `Treat aegis_compromised as a visible caution in the current beta posture, not as an implicit public-launch stop or a reason to ignore the rest of the bounded receiver checks.`" in markdown
+    assert (
+        "| session-start | ok | readiness=pass track=feature_track claim=required mode=standard_council |"
+        in markdown
+    )
+    assert (
+        "- Scope posture: `guided collaborator beta only; file-backed remains launch default and public launch stays deferred`"
+        in markdown
+    )
+    assert (
+        "- Target reading: `next_target_tier names the next maturity target, not current readiness or public-launch permission.`"
+        in markdown
+    )
+    assert (
+        "- Claim trigger: `claim when you are about to edit a shared path; read-only inspection can stay unclaimed`"
+        in markdown
+    )
+    assert (
+        "- Aegis posture: `compromised` / `Treat aegis_compromised as a visible caution in the current beta posture, not as an implicit public-launch stop or a reason to ignore the rest of the bounded receiver checks.`"
+        in markdown
+    )
     assert "- Scenario count: `4`" in markdown
     assert "- `continuity_effectiveness` = `runtime_present`" in markdown
 
@@ -236,15 +262,39 @@ def test_main_writes_optional_outputs(tmp_path: Path, monkeypatch, capsys) -> No
             "overall_ok": True,
             "overall_status": "go",
             "entry_stack": {
-                "session_start": {"readiness": "pass", "task_track": "feature_track", "claim_recommendation": "required", "deliberation_mode": "standard_council"},
-                "packet": {"current_tier": "collaborator_beta", "next_target_tier": "public_launch", "launch_default_mode": "file-backed"},
+                "session_start": {
+                    "readiness": "pass",
+                    "task_track": "feature_track",
+                    "claim_recommendation": "required",
+                    "deliberation_mode": "standard_council",
+                },
+                "packet": {
+                    "current_tier": "collaborator_beta",
+                    "next_target_tier": "public_launch",
+                    "launch_default_mode": "file-backed",
+                },
                 "diagnose": {"ok": True, "compact_line": "compact", "aegis_status": "compromised"},
             },
-            "scope_posture": {"scope_note": "guided collaborator beta only; file-backed remains launch default and public launch stays deferred"},
-            "claim_posture": {"claim_trigger": "claim when you are about to edit a shared path; read-only inspection can stay unclaimed"},
-            "aegis_posture": {"status": "compromised", "note": "Treat aegis_compromised as a visible caution in the current beta posture, not as an implicit public-launch stop or a reason to ignore the rest of the bounded receiver checks."},
-            "validation_wave": {"scenario_count": 4, "max_receiver_alert_count": 4, "contested_dossier_visible": True, "stale_compaction_guarded": True},
-            "launch_claim_posture": {"summary_text": "launch_claims=current:collaborator_beta", "blocked_overclaims": []},
+            "scope_posture": {
+                "scope_note": "guided collaborator beta only; file-backed remains launch default and public launch stays deferred"
+            },
+            "claim_posture": {
+                "claim_trigger": "claim when you are about to edit a shared path; read-only inspection can stay unclaimed"
+            },
+            "aegis_posture": {
+                "status": "compromised",
+                "note": "Treat aegis_compromised as a visible caution in the current beta posture, not as an implicit public-launch stop or a reason to ignore the rest of the bounded receiver checks.",
+            },
+            "validation_wave": {
+                "scenario_count": 4,
+                "max_receiver_alert_count": 4,
+                "contested_dossier_visible": True,
+                "stale_compaction_guarded": True,
+            },
+            "launch_claim_posture": {
+                "summary_text": "launch_claims=current:collaborator_beta",
+                "blocked_overclaims": [],
+            },
             "blocking_findings": [],
         },
     )

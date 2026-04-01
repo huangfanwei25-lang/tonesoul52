@@ -89,9 +89,24 @@ jobs:
         python -m pip install --upgrade pip
         pip install 'black==26.1.0' ruff
     
-    - name: Check formatting with black (blocking)
+    - name: Check formatting with black gate
+      env:
+        EVENT_NAME: ${{ github.event_name }}
+        GITHUB_SHA: ${{ github.sha }}
+        BEFORE_SHA: ${{ github.event.before }}
+        PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
       run: |
-        black --check --diff --line-length 100 tonesoul tests
+        python scripts/run_black_gate.py --strict
+
+    - name: Upload black gate report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: black-gate-${{ github.run_id }}
+        path: black_gate_report.json
+        if-no-files-found: ignore
+        retention-days: 14
 
     - name: Lint with ruff (blocking)
       run: |

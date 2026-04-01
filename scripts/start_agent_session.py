@@ -101,8 +101,8 @@ def _quiet_call(fn, *args, **kwargs):
 
 
 def _build_compact_line(*, agent_id: str, backend_name: str, packet: dict, posture) -> str:
-    risk_posture = ((packet.get("posture") or {}).get("risk_posture") or {})
-    repo_progress = ((packet.get("project_memory_summary") or {}).get("repo_progress") or {})
+    risk_posture = (packet.get("posture") or {}).get("risk_posture") or {}
+    repo_progress = (packet.get("project_memory_summary") or {}).get("repo_progress") or {}
     return (
         f"[ToneSoul] {backend_name} | SI={float(getattr(posture, 'soul_integral', 0.0)):.2f} | "
         f"vows={len(getattr(posture, 'active_vows', []) or [])} "
@@ -144,7 +144,9 @@ def _hours_since(timestamp: str) -> float | None:
     return round(max(0.0, (datetime.now(timezone.utc) - dt).total_seconds() / 3600.0), 3)
 
 
-def _latest_freshness(entries: list[dict], *, freshness_key: str = "freshness_hours", timestamp_key: str) -> float | None:
+def _latest_freshness(
+    entries: list[dict], *, freshness_key: str = "freshness_hours", timestamp_key: str
+) -> float | None:
     if not entries:
         return None
     latest = entries[0]
@@ -227,22 +229,20 @@ def _latest_council_dossier_snapshot(*, latest_compaction: dict, latest_trace: d
                     "so approval is not equivalent to proven correctness."
                 )
             else:
-                realism_note = (
-                    "Descriptive agreement record only; coherence and confidence posture are not calibrated accuracy signals."
-                )
+                realism_note = "Descriptive agreement record only; coherence and confidence posture are not calibrated accuracy signals."
         elif suppression_flag and has_minority_report:
-            realism_note = (
-                "Dissent and possible suppression are both visible; review minority signals before treating the verdict as settled."
-            )
+            realism_note = "Dissent and possible suppression are both visible; review minority signals before treating the verdict as settled."
         elif has_minority_report:
-            realism_note = "Minority dissent is visible; review it before treating approval as settled."
+            realism_note = (
+                "Minority dissent is visible; review it before treating approval as settled."
+            )
     if realism_note:
         snapshot["realism_note"] = realism_note
     return snapshot
 
 
 def _build_readiness(*, agent_id: str, packet: dict, claims: list[dict]) -> dict:
-    risk_posture = ((packet.get("posture") or {}).get("risk_posture") or {})
+    risk_posture = (packet.get("posture") or {}).get("risk_posture") or {}
     delta_feed = packet.get("delta_feed") or {}
     project_memory_summary = packet.get("project_memory_summary") or {}
 
@@ -258,7 +258,8 @@ def _build_readiness(*, agent_id: str, packet: dict, claims: list[dict]) -> dict
 
     recent_stop_actions = [
         str(entry.get("next_action", "")).strip()
-        for entry in list(packet.get("recent_compactions") or [])[:3] + list(packet.get("recent_checkpoints") or [])[:3]
+        for entry in list(packet.get("recent_compactions") or [])[:3]
+        + list(packet.get("recent_checkpoints") or [])[:3]
         if _looks_like_stop(str(entry.get("next_action", "")).strip())
     ]
     next_actions = [
@@ -287,17 +288,15 @@ def _build_readiness(*, agent_id: str, packet: dict, claims: list[dict]) -> dict
 
     if blocking_reasons:
         status = "blocked"
-        recommended_action = (
-            "Resolve the blocking condition before editing shared work; if the STOP signal or critical risk is not yours to clear, ask a human."
-        )
+        recommended_action = "Resolve the blocking condition before editing shared work; if the STOP signal or critical risk is not yours to clear, ask a human."
     elif clarification_reasons:
         status = "needs_clarification"
-        recommended_action = (
-            "Review fresh handoff state, confirm claim overlap, and clarify ambiguous scope before shared edits."
-        )
+        recommended_action = "Review fresh handoff state, confirm claim overlap, and clarify ambiguous scope before shared edits."
     else:
         status = "pass"
-        recommended_action = "Session-start posture is clear enough to classify the task and begin work."
+        recommended_action = (
+            "Session-start posture is clear enough to classify the task and begin work."
+        )
 
     summary_parts = [
         f"readiness={status}",
@@ -412,7 +411,9 @@ def _build_task_track_hint(*, packet: dict, readiness: dict) -> dict:
         claim_recommendation = "required"
         review_recommendation = "required"
         confidence = "high" if (system_paths or path_count >= 5) else "medium"
-    elif path_count >= 2 or any(path.startswith(("tonesoul/", "scripts/", "tests/")) for path in pending_paths):
+    elif path_count >= 2 or any(
+        path.startswith(("tonesoul/", "scripts/", "tests/")) for path in pending_paths
+    ):
         suggested_track = "feature_track"
         exploration_depth_hint = "x2"
         claim_recommendation = "required"
@@ -426,9 +427,7 @@ def _build_task_track_hint(*, packet: dict, readiness: dict) -> dict:
         review_recommendation = "not_required"
         confidence = "medium"
 
-    receiver_note = (
-        "This task-track hint is advisory and based only on visible session-start scope. The explicit task objective or work order may justify an override."
-    )
+    receiver_note = "This task-track hint is advisory and based only on visible session-start scope. The explicit task objective or work order may justify an override."
     if str((readiness or {}).get("status", "")) in {"blocked", "needs_clarification"}:
         receiver_note += " Resolve readiness first, then treat this track as the default starting classification."
 
@@ -514,7 +513,9 @@ def _build_deliberation_mode_hint(*, task_track_hint: dict, readiness: dict) -> 
         }
 
     readiness_state = str((readiness or {}).get("status", "unknown") or "unknown")
-    risk_bucket = _normalize_risk_bucket(str((readiness or {}).get("risk_level", "unknown") or "unknown"))
+    risk_bucket = _normalize_risk_bucket(
+        str((readiness or {}).get("risk_level", "unknown") or "unknown")
+    )
     claim_collision = int((readiness or {}).get("claim_conflict_count", 0) or 0) > 0
     claim_state = "active_collision" if claim_collision else "none"
     task_track = str(task_track_hint.get("suggested_track", "unclassified") or "unclassified")
@@ -558,11 +559,11 @@ def _build_deliberation_mode_hint(*, task_track_hint: dict, readiness: dict) -> 
     human_required = bool(base_human_required)
     if human_required:
         reasons.append("human_clearance_required")
-    receiver_note = (
-        "This deliberation-mode hint is advisory and derived from task track, readiness, risk, and claim collision. It does not yet change council runtime depth automatically."
-    )
+    receiver_note = "This deliberation-mode hint is advisory and derived from task track, readiness, risk, and claim collision. It does not yet change council runtime depth automatically."
     if readiness_state == "needs_clarification":
-        receiver_note += " Clarify the task first, then treat this as the default deliberation depth."
+        receiver_note += (
+            " Clarify the task first, then treat this as the default deliberation depth."
+        )
 
     return {
         "present": True,
@@ -617,7 +618,9 @@ def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
             "import_posture": "directly_importable",
             "receiver_obligation": "must_read",
             "decay_posture": "none",
-            "freshness_hours": float((packet.get("posture") or {}).get("freshness_hours", 0.0) or 0.0),
+            "freshness_hours": float(
+                (packet.get("posture") or {}).get("freshness_hours", 0.0) or 0.0
+            ),
             "note": "Canonical governance context; use directly for current operating posture.",
         },
         "readiness": {
@@ -659,7 +662,9 @@ def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
         "compactions": {
             "present": bool(compactions),
             "import_posture": "advisory",
-            "receiver_obligation": "must_not_promote" if carry_forward_hazards else "should_consider",
+            "receiver_obligation": (
+                "must_not_promote" if carry_forward_hazards else "should_consider"
+            ),
             "decay_posture": "medium",
             "freshness_hours": _latest_freshness(compactions, timestamp_key="updated_at"),
             "promotion_hazards": carry_forward_hazards,
@@ -733,14 +738,18 @@ def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
             "note": "Refresh guidance may influence review, but it must never auto-promote higher-authority identity fields.",
         },
         "council_dossier": {
-            "present": bool(latest_compaction.get("council_dossier") or latest_trace.get("council_dossier_summary")),
+            "present": bool(
+                latest_compaction.get("council_dossier")
+                or latest_trace.get("council_dossier_summary")
+            ),
             "import_posture": "advisory",
             "receiver_obligation": "should_consider",
             "decay_posture": "slow",
             "freshness_hours": latest_dossier_freshness,
             "note": (
                 "Council verdict memory can inform follow-up decisions, but it is not binding precedent; confidence surfaces remain descriptive agreement signals, not calibrated accuracy predictors."
-                if str(latest_dossier_snapshot.get("calibration_status", "")).strip() == "descriptive_only"
+                if str(latest_dossier_snapshot.get("calibration_status", "")).strip()
+                == "descriptive_only"
                 else "Council verdict memory can inform follow-up decisions, but it is not binding precedent."
             ),
             "dossier_interpretation": latest_dossier_snapshot,
@@ -782,7 +791,13 @@ def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
             continue
         detail = surface["import_posture"]
         freshness = surface.get("freshness_hours")
-        if freshness is not None and name not in {"readiness", "delta_feed", "operator_guidance", "project_memory_summary", "subject_refresh"}:
+        if freshness is not None and name not in {
+            "readiness",
+            "delta_feed",
+            "operator_guidance",
+            "project_memory_summary",
+            "subject_refresh",
+        }:
             detail += f"@{float(freshness):.1f}h"
         if name == "claims" and claim_ttl_minutes is not None:
             detail += f"/ttl≈{claim_ttl_minutes:.0f}m"
@@ -821,7 +836,9 @@ def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
         council_snapshot=latest_dossier_snapshot,
         project_memory_summary=project_memory_summary,
     )
-    receiver_alerts = list(receiver_parity.get("primary_alerts") or receiver_parity.get("alerts") or [])
+    receiver_alerts = list(
+        receiver_parity.get("primary_alerts") or receiver_parity.get("alerts") or []
+    )
 
     return {
         "summary_text": " | ".join(summary_parts),
@@ -918,13 +935,15 @@ def run_session_start_bundle(
 
     claims = _quiet_call(list_active_claims, store=store)
     readiness = _build_readiness(agent_id=agent_id, packet=packet, claims=claims)
-    working_style_anchor = ((packet.get("project_memory_summary") or {}).get("working_style_anchor") or {})
-    working_style_observability = (
-        ((packet.get("project_memory_summary") or {}).get("working_style_observability") or {})
-    )
-    working_style_import_limits = (
-        ((packet.get("project_memory_summary") or {}).get("working_style_import_limits") or {})
-    )
+    working_style_anchor = (packet.get("project_memory_summary") or {}).get(
+        "working_style_anchor"
+    ) or {}
+    working_style_observability = (packet.get("project_memory_summary") or {}).get(
+        "working_style_observability"
+    ) or {}
+    working_style_import_limits = (packet.get("project_memory_summary") or {}).get(
+        "working_style_import_limits"
+    ) or {}
     working_style_playbook = _build_working_style_playbook(working_style_anchor)
     working_style_validation = _build_working_style_validation(
         anchor=working_style_anchor,
@@ -1006,4 +1025,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

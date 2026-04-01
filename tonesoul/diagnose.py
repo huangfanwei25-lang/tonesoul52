@@ -209,7 +209,7 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
                 f"  Recent Tensions: {len(posture.tension_history)}",
             ]
         )
-        risk_posture = ((packet.get("posture") or {}).get("risk_posture") or {})
+        risk_posture = (packet.get("posture") or {}).get("risk_posture") or {}
         if risk_posture:
             lines.extend(
                 [
@@ -416,7 +416,9 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
                 non_promotion_rule = str(playbook.get("non_promotion_rule", "")).strip()
                 if non_promotion_rule:
                     lines.append(f"    guard={_clip(non_promotion_rule)}")
-        working_style_observability = project_memory_summary.get("working_style_observability") or {}
+        working_style_observability = (
+            project_memory_summary.get("working_style_observability") or {}
+        )
         if working_style_observability:
             lines.append("  working_style_observability:")
             lines.append(
@@ -432,7 +434,9 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
             receiver_note = str(working_style_observability.get("receiver_note", "")).strip()
             if receiver_note:
                 lines.append(f"    note={_clip(receiver_note)}")
-        working_style_import_limits = project_memory_summary.get("working_style_import_limits") or {}
+        working_style_import_limits = (
+            project_memory_summary.get("working_style_import_limits") or {}
+        )
         if working_style_import_limits:
             lines.append("  working_style_import_limits:")
             lines.append(
@@ -445,7 +449,9 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
                 lines.append(f"    safe_apply={_clip(item)}")
             for item in list(working_style_import_limits.get("must_not_import") or [])[:2]:
                 lines.append(f"    must_not_import={_clip(item)}")
-            receiver_guidance = str(working_style_import_limits.get("receiver_guidance", "")).strip()
+            receiver_guidance = str(
+                working_style_import_limits.get("receiver_guidance", "")
+            ).strip()
             if receiver_guidance:
                 lines.append(f"    guidance={_clip(receiver_guidance)}")
         evidence_readout_posture = project_memory_summary.get("evidence_readout_posture") or {}
@@ -779,7 +785,9 @@ def main() -> None:
 
     parser = argparse.ArgumentParser(description="ToneSoul System Diagnostic")
     parser.add_argument("--agent", default="unknown")
-    parser.add_argument("--compact", action="store_true", help="One-line output, minimal context cost")
+    parser.add_argument(
+        "--compact", action="store_true", help="One-line output, minimal context cost"
+    )
     args = parser.parse_args()
 
     os.environ.setdefault("TONESOUL_REDIS_URL", "redis://:tonesoul-2026@localhost:6379/0")

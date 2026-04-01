@@ -135,7 +135,10 @@ def test_commit_writes_trace_jsonl(tmp_state: Path, tmp_traces: Path) -> None:
     assert "test" in record["key_decisions"]
     assert record["council_dossier"]["final_verdict"] == "approve"
     assert record["council_dossier"]["confidence_posture"] == "moderate"
-    assert record["council_dossier"]["confidence_decomposition"]["calibration_status"] == "descriptive_only"
+    assert (
+        record["council_dossier"]["confidence_decomposition"]["calibration_status"]
+        == "descriptive_only"
+    )
     assert record["council_dossier"]["evolution_suppression_flag"] is True
 
 
@@ -398,13 +401,19 @@ def test_r_memory_packet_exposes_runtime_dominance_and_recent_trace(
     assert "launch-default coordination story" in packet["coordination_mode"]["launch_posture_note"]
     assert packet["recent_routing_events"][0]["surface"] == "checkpoint"
     assert packet["recent_routing_events"][0]["freshness_hours"] >= 0.0
-    assert packet["recent_traces"][0]["council_dossier_summary"]["confidence_posture"] == "contested"
+    assert (
+        packet["recent_traces"][0]["council_dossier_summary"]["confidence_posture"] == "contested"
+    )
     assert packet["recent_traces"][0]["council_dossier_summary"]["has_minority_report"] is True
     assert (
-        packet["recent_traces"][0]["council_dossier_summary"]["confidence_decomposition"]["adversarial_posture"]
+        packet["recent_traces"][0]["council_dossier_summary"]["confidence_decomposition"][
+            "adversarial_posture"
+        ]
         == "survived_dissent"
     )
-    assert packet["recent_traces"][0]["council_dossier_summary"]["evolution_suppression_flag"] is True
+    assert (
+        packet["recent_traces"][0]["council_dossier_summary"]["evolution_suppression_flag"] is True
+    )
     assert (
         "Descriptive agreement record only"
         in packet["recent_traces"][0]["council_dossier_summary"]["realism_note"]
@@ -421,7 +430,9 @@ def test_r_memory_packet_exposes_runtime_dominance_and_recent_trace(
     assert packet["operator_guidance"]["session_end"][0].startswith(
         "python scripts/end_agent_session.py --agent"
     )
-    assert packet["operator_guidance"]["session_end"][1].startswith("python scripts/save_checkpoint.py")
+    assert packet["operator_guidance"]["session_end"][1].startswith(
+        "python scripts/save_checkpoint.py"
+    )
     assert "claim" in packet["operator_guidance"]["coordination_commands"]
     assert "signal_router" in packet["operator_guidance"]["coordination_commands"]
     assert "subject_snapshot" in packet["operator_guidance"]["coordination_commands"]
@@ -702,19 +713,17 @@ def test_subject_snapshots_surface_durable_subject_anchor(tmp_path: Path) -> Non
     assert working_style_observability["status"] == "reinforced"
     assert working_style_observability["drift_risk"] == "low"
     assert working_style_observability["reinforced_item_count"] == 2
-    assert "decision_preferences: prefer packet before broad repo scan" in working_style_observability[
-        "reinforced_items"
-    ]
+    assert (
+        "decision_preferences: prefer packet before broad repo scan"
+        in working_style_observability["reinforced_items"]
+    )
     assert (
         "verified_routines: end sessions with checkpoint or compaction before release"
         in working_style_observability["reinforced_items"]
     )
     working_style_import_limits = packet["project_memory_summary"]["working_style_import_limits"]
     assert working_style_import_limits["apply_posture"] == "bounded_default"
-    assert any(
-        item.startswith("scan_order:")
-        for item in working_style_import_limits["safe_apply"]
-    )
+    assert any(item.startswith("scan_order:") for item in working_style_import_limits["safe_apply"])
     assert any(
         item.startswith("durable_identity:")
         for item in working_style_import_limits["must_not_import"]
@@ -739,11 +748,13 @@ def test_subject_snapshots_surface_durable_subject_anchor(tmp_path: Path) -> Non
         for item in launch_claim_posture["safe_now"]
     )
     assert any(
-        item["claim"] == "continuity_effectiveness" and item["current_classification"] == "runtime_present"
+        item["claim"] == "continuity_effectiveness"
+        and item["current_classification"] == "runtime_present"
         for item in launch_claim_posture["blocked_overclaims"]
     )
     assert any(
-        item["claim"] == "live_shared_memory" and item["current_classification"] == "not_launch_default"
+        item["claim"] == "live_shared_memory"
+        and item["current_classification"] == "not_launch_default"
         for item in launch_claim_posture["blocked_overclaims"]
     )
     assert packet["project_memory_summary"]["subject_refresh"]["status"] == "refresh_candidate"
@@ -782,7 +793,9 @@ def test_subject_snapshots_surface_durable_subject_anchor(tmp_path: Path) -> Non
         in packet["operator_guidance"]["current_reminders"]
     )
     assert any(
-        reminder.startswith("Evidence posture: evidence=tested(session_control_and_handoff,council_mechanics)")
+        reminder.startswith(
+            "Evidence posture: evidence=tested(session_control_and_handoff,council_mechanics)"
+        )
         for reminder in packet["operator_guidance"]["current_reminders"]
     )
     assert any(
@@ -1024,9 +1037,9 @@ def test_apply_subject_refresh_rejects_recycled_carry_forward_without_new_eviden
     packet = r_memory_packet(posture=GovernancePosture(), store=store)
 
     assert packet["project_memory_summary"]["subject_refresh"]["refresh_recommended"] is True
-    assert not packet["project_memory_summary"]["subject_refresh"]["recommended_command"].startswith(
-        "python scripts/apply_subject_refresh.py --agent"
-    )
+    assert not packet["project_memory_summary"]["subject_refresh"][
+        "recommended_command"
+    ].startswith("python scripts/apply_subject_refresh.py --agent")
     assert any(
         "recycled carry_forward" in hazard
         for hazard in packet["project_memory_summary"]["subject_refresh"]["promotion_hazards"]
@@ -1043,7 +1056,10 @@ def test_apply_subject_refresh_rejects_recycled_carry_forward_without_new_eviden
 
     assert result["ok"] is False
     assert result["reason"] == "promotion_hazards_present"
-    assert any("recycled carry_forward" in hazard for hazard in result["subject_refresh"]["promotion_hazards"])
+    assert any(
+        "recycled carry_forward" in hazard
+        for hazard in result["subject_refresh"]["promotion_hazards"]
+    )
 
 
 def test_r_memory_packet_surfaces_fresh_compaction_even_when_traces_are_older(
@@ -1171,7 +1187,10 @@ def test_r_memory_packet_surfaces_since_last_seen_delta_and_ack(tmp_path: Path) 
     assert first_packet["delta_feed"]["ack_command"] == (
         "python scripts/run_r_memory_packet.py --agent claude-observer --ack"
     )
-    assert first_packet["delta_feed"]["new_compactions"][0]["compaction_id"] == first_compaction["compaction_id"]
+    assert (
+        first_packet["delta_feed"]["new_compactions"][0]["compaction_id"]
+        == first_compaction["compaction_id"]
+    )
     assert (
         "No since-last-seen baseline exists yet; ack the packet after review to establish one."
         in first_packet["operator_guidance"]["current_reminders"]
@@ -1207,7 +1226,10 @@ def test_r_memory_packet_surfaces_since_last_seen_delta_and_ack(tmp_path: Path) 
 
     assert second_packet["delta_feed"]["first_observation"] is False
     assert second_packet["delta_feed"]["has_updates"] is True
-    assert second_packet["delta_feed"]["new_checkpoints"][0]["checkpoint_id"] == second_checkpoint["checkpoint_id"]
+    assert (
+        second_packet["delta_feed"]["new_checkpoints"][0]["checkpoint_id"]
+        == second_checkpoint["checkpoint_id"]
+    )
     assert second_packet["delta_feed"]["released_claim_ids"] == ["delta-lane"]
     assert (
         "A delta feed is visible for this agent; ack after review to advance the observer baseline."

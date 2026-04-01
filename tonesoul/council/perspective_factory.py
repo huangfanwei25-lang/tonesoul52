@@ -108,9 +108,7 @@ _CONFIDENCE_GUIDANCE = (
 
 def _build_governance_system_prompt(name: str, *, concise: bool = False) -> str:
     profile = _PERSPECTIVE_DISCIPLINE.get(name, _PERSPECTIVE_DISCIPLINE["analyst"])
-    response_schema = (
-        '{"decision": "APPROVE|CONCERN|OBJECT", "confidence": 0.8, "reasoning": "brief explanation"}'
-    )
+    response_schema = '{"decision": "APPROVE|CONCERN|OBJECT", "confidence": 0.8, "reasoning": "brief explanation"}'
     special_protocol = profile.get("special_protocol")
     special_protocol_block = (
         f"{special_protocol}\n" if isinstance(special_protocol, str) and special_protocol else ""
@@ -164,7 +162,9 @@ def _build_prior_tension_clause(context: dict) -> str:
     )
 
 
-def _build_context_payload(context: dict, *, limit: int, exclude_visual_context: bool = False) -> str:
+def _build_context_payload(
+    context: dict, *, limit: int, exclude_visual_context: bool = False
+) -> str:
     payload = context
     if exclude_visual_context:
         payload = {k: v for k, v in context.items() if k != "visual_context"}

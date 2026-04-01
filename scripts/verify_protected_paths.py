@@ -76,7 +76,11 @@ def _parse_changed_lines(text: str) -> list[str]:
         if not raw.strip():
             continue
         parts = raw.split("\t")
-        if len(parts) >= 2 and parts[0] and parts[0][0].upper() in {"A", "C", "M", "R", "D", "T", "U"}:
+        if (
+            len(parts) >= 2
+            and parts[0]
+            and parts[0][0].upper() in {"A", "C", "M", "R", "D", "T", "U"}
+        ):
             candidates = parts[1:]
         elif len(raw) >= 4 and raw[2] == " " and any(token.strip() for token in raw[:2]):
             candidates = [raw[3:].strip()]
@@ -128,9 +132,25 @@ def collect_changed_paths(
         }
 
     if staged:
-        command = ["git", "-C", str(repo_root), "diff", "--name-only", "--cached", "--diff-filter=ACMRD"]
+        command = [
+            "git",
+            "-C",
+            str(repo_root),
+            "diff",
+            "--name-only",
+            "--cached",
+            "--diff-filter=ACMRD",
+        ]
     elif base_ref:
-        command = ["git", "-C", str(repo_root), "diff", "--name-only", "--diff-filter=ACMRD", f"{base_ref}...HEAD"]
+        command = [
+            "git",
+            "-C",
+            str(repo_root),
+            "diff",
+            "--name-only",
+            "--diff-filter=ACMRD",
+            f"{base_ref}...HEAD",
+        ]
     else:
         command = ["git", "-C", str(repo_root), "status", "--porcelain=v1"]
 
@@ -242,7 +262,9 @@ def build_report(
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Verify protected paths are untouched.")
     parser.add_argument("--repo-root", type=Path, default=Path("."))
-    parser.add_argument("--changed-file", action="append", default=[], help="Explicit changed path.")
+    parser.add_argument(
+        "--changed-file", action="append", default=[], help="Explicit changed path."
+    )
     parser.add_argument(
         "--changed-file-list",
         type=Path,
@@ -264,7 +286,9 @@ def main(argv: list[str] | None = None) -> int:
         changed_file_list=args.changed_file_list.resolve() if args.changed_file_list else None,
         staged=bool(args.staged),
         base_ref=str(args.base_ref).strip() if args.base_ref else None,
-        allowed_paths=tuple(_normalize_path(item) for item in (args.allow_path or []) if _normalize_path(item)),
+        allowed_paths=tuple(
+            _normalize_path(item) for item in (args.allow_path or []) if _normalize_path(item)
+        ),
     )
     print(json.dumps(payload, ensure_ascii=False, indent=2))
     if payload["collection"]["exit_code"] != 0:

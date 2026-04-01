@@ -28,9 +28,9 @@ from typing import Any
 # Thresholds (tuned conservatively; only raise after repeated validation)
 # ---------------------------------------------------------------------------
 
-_STALE_TRACE_HOURS = 48.0       # traces older than this are stale
+_STALE_TRACE_HOURS = 48.0  # traces older than this are stale
 _STALE_COMPACTION_HOURS = 72.0  # compactions older than this are stale
-_STALE_SNAPSHOT_HOURS = 96.0    # subject snapshots older than this are stale
+_STALE_SNAPSHOT_HOURS = 96.0  # subject snapshots older than this are stale
 
 
 def _iso_now() -> str:
@@ -57,17 +57,22 @@ def _item(claim: str, *, evidence_source: str, detail: str = "") -> dict[str, st
 # Stable bucket
 # ---------------------------------------------------------------------------
 
-def _build_stable(*, packet: dict[str, Any], import_posture: dict[str, Any]) -> list[dict[str, str]]:
+
+def _build_stable(
+    *, packet: dict[str, Any], import_posture: dict[str, Any]
+) -> list[dict[str, str]]:
     """Items we can honestly call stable right now."""
     items: list[dict[str, str]] = []
 
     # Posture is directly importable — most stable surface
     posture_surface = import_posture.get("posture") or {}
     if str(posture_surface.get("import_posture", "")) == "directly_importable":
-        items.append(_item(
-            "governance posture is directly importable",
-            evidence_source="import_posture.posture",
-        ))
+        items.append(
+            _item(
+                "governance posture is directly importable",
+                evidence_source="import_posture.posture",
+            )
+        )
 
     # Launch tier — if collaborator_beta is confirmed
     project_memory = packet.get("project_memory_summary") or {}
@@ -75,35 +80,43 @@ def _build_stable(*, packet: dict[str, Any], import_posture: dict[str, Any]) -> 
     current_tier = str(launch_claim.get("current_tier", "")).strip()
     public_launch_ready = bool(launch_claim.get("public_launch_ready", False))
     if current_tier == "collaborator_beta" and not public_launch_ready:
-        items.append(_item(
-            "launch tier is collaborator_beta; public_launch_ready=false",
-            evidence_source="packet.project_memory_summary.launch_claim_posture",
-        ))
+        items.append(
+            _item(
+                "launch tier is collaborator_beta; public_launch_ready=false",
+                evidence_source="packet.project_memory_summary.launch_claim_posture",
+            )
+        )
 
     # Coordination backend — file-backed is the stable default
     coord_mode = packet.get("coordination_mode") or {}
     launch_default = str(coord_mode.get("launch_default_mode", "")).strip()
     if launch_default == "file-backed":
-        items.append(_item(
-            "coordination backend is file-backed (launch default)",
-            evidence_source="packet.coordination_mode.launch_default_mode",
-        ))
+        items.append(
+            _item(
+                "coordination backend is file-backed (launch default)",
+                evidence_source="packet.coordination_mode.launch_default_mode",
+            )
+        )
 
     # Evidence readout posture — present = stable enough to use
     evidence_readout = project_memory.get("evidence_readout_posture") or {}
     if evidence_readout:
-        items.append(_item(
-            "evidence_readout_posture is present and bounded",
-            evidence_source="packet.project_memory_summary.evidence_readout_posture",
-        ))
+        items.append(
+            _item(
+                "evidence_readout_posture is present and bounded",
+                evidence_source="packet.project_memory_summary.evidence_readout_posture",
+            )
+        )
 
     # Readiness — if pass
     readiness_surface = import_posture.get("readiness") or {}
     if str(readiness_surface.get("import_posture", "")) == "directly_importable":
-        items.append(_item(
-            "session readiness surface is computed and directly importable",
-            evidence_source="import_posture.readiness",
-        ))
+        items.append(
+            _item(
+                "session readiness surface is computed and directly importable",
+                evidence_source="import_posture.readiness",
+            )
+        )
 
     return items
 
@@ -112,7 +125,10 @@ def _build_stable(*, packet: dict[str, Any], import_posture: dict[str, Any]) -> 
 # Contested bucket
 # ---------------------------------------------------------------------------
 
-def _build_contested(*, packet: dict[str, Any], import_posture: dict[str, Any], readiness: dict[str, Any]) -> list[dict[str, str]]:
+
+def _build_contested(
+    *, packet: dict[str, Any], import_posture: dict[str, Any], readiness: dict[str, Any]
+) -> list[dict[str, str]]:
     """Items that are present but not yet settled or calibrated."""
     items: list[dict[str, str]] = []
 
@@ -121,61 +137,74 @@ def _build_contested(*, packet: dict[str, Any], import_posture: dict[str, Any], 
     dossier = council_surface.get("dossier_interpretation") or {}
     calibration = str(dossier.get("calibration_status", "")).strip()
     if calibration == "descriptive_only" or council_surface.get("present"):
-        items.append(_item(
-            "council confidence is descriptive_only; agreement does not equal calibrated accuracy",
-            evidence_source="import_posture.council_dossier.dossier_interpretation",
-            detail=(
-                f"calibration_status={calibration}" if calibration else
-                "council dossier present but calibration_status not confirmed"
-            ),
-        ))
+        items.append(
+            _item(
+                "council confidence is descriptive_only; agreement does not equal calibrated accuracy",
+                evidence_source="import_posture.council_dossier.dossier_interpretation",
+                detail=(
+                    f"calibration_status={calibration}"
+                    if calibration
+                    else "council dossier present but calibration_status not confirmed"
+                ),
+            )
+        )
 
     # Council evolution suppression - flag when minority dissent may be getting conformity-biased
     if dossier.get("evolution_suppression_flag"):
-        items.append(_item(
-            "council evolution suppression risk flagged; review minority signals before treating verdict as settled",
-            evidence_source="import_posture.council_dossier.dossier_interpretation",
-            detail="evolution_suppression_flag=True",
-        ))
+        items.append(
+            _item(
+                "council evolution suppression risk flagged; review minority signals before treating verdict as settled",
+                evidence_source="import_posture.council_dossier.dossier_interpretation",
+                detail="evolution_suppression_flag=True",
+            )
+        )
 
     # Compaction promotion hazards
     compaction_surface = import_posture.get("compactions") or {}
     hazards = list(compaction_surface.get("promotion_hazards") or [])
     obligation = str(compaction_surface.get("receiver_obligation", "")).strip()
     if hazards or obligation == "must_not_promote":
-        items.append(_item(
-            "latest compaction has carry_forward promotion hazard; must_not_promote",
-            evidence_source="import_posture.compactions.promotion_hazards",
-            detail=f"hazards={len(hazards)}",
-        ))
+        items.append(
+            _item(
+                "latest compaction has carry_forward promotion hazard; must_not_promote",
+                evidence_source="import_posture.compactions.promotion_hazards",
+                detail=f"hazards={len(hazards)}",
+            )
+        )
 
     # Claim conflicts
     claim_conflicts = int((readiness or {}).get("claim_conflict_count", 0) or 0)
     if claim_conflicts > 0:
-        items.append(_item(
-            f"other-agent claim collision detected ({claim_conflicts} conflict(s))",
-            evidence_source="readiness.other_agent_claims",
-            detail=f"conflict_count={claim_conflicts}",
-        ))
+        items.append(
+            _item(
+                f"other-agent claim collision detected ({claim_conflicts} conflict(s))",
+                evidence_source="readiness.other_agent_claims",
+                detail=f"conflict_count={claim_conflicts}",
+            )
+        )
 
     # Subject snapshot advisory note
     snapshot_surface = import_posture.get("subject_snapshot") or {}
     if snapshot_surface.get("present"):
-        items.append(_item(
-            "subject snapshot is advisory; must not be promoted into canonical identity",
-            evidence_source="import_posture.subject_snapshot",
-        ))
+        items.append(
+            _item(
+                "subject snapshot is advisory; must not be promoted into canonical identity",
+                evidence_source="import_posture.subject_snapshot",
+            )
+        )
 
     # Working-style drift risk
     ws_surface = import_posture.get("working_style") or {}
     observability = ws_surface.get("working_style_observability") or {}
     ws_status = str(observability.get("status", "")).strip()
     if ws_status and ws_status != "reinforced":
-        items.append(_item(
-            f"working_style observability status is '{ws_status}'; monitor for drift",
-            evidence_source="import_posture.working_style.working_style_observability",
-            detail=f"status={ws_status}",
-        ))
+        items.append(
+            _item(
+                f"working_style observability status is '{ws_status}'; monitor for drift",
+                evidence_source="import_posture.working_style.working_style_observability",
+                detail=f"status={ws_status}",
+            )
+        )
 
     return items
 
@@ -183,6 +212,7 @@ def _build_contested(*, packet: dict[str, Any], import_posture: dict[str, Any], 
 # ---------------------------------------------------------------------------
 # Stale bucket
 # ---------------------------------------------------------------------------
+
 
 def _build_stale(*, import_posture: dict[str, Any]) -> list[dict[str, str]]:
     """Items that may be outdated or missing."""
@@ -192,49 +222,65 @@ def _build_stale(*, import_posture: dict[str, Any]) -> list[dict[str, str]]:
     traces_surface = import_posture.get("recent_traces") or {}
     trace_hours = _hours(traces_surface.get("freshness_hours"))
     if not traces_surface.get("present"):
-        items.append(_item(
-            "recent_traces surface is absent; no session trace available",
-            evidence_source="import_posture.recent_traces",
-        ))
+        items.append(
+            _item(
+                "recent_traces surface is absent; no session trace available",
+                evidence_source="import_posture.recent_traces",
+            )
+        )
     elif trace_hours is not None and trace_hours > _STALE_TRACE_HOURS:
-        items.append(_item(
-            f"recent_traces are {trace_hours:.1f}h old (threshold={_STALE_TRACE_HOURS}h)",
-            evidence_source="import_posture.recent_traces.freshness_hours",
-            detail=f"freshness_hours={trace_hours:.1f}",
-        ))
+        items.append(
+            _item(
+                f"recent_traces are {trace_hours:.1f}h old (threshold={_STALE_TRACE_HOURS}h)",
+                evidence_source="import_posture.recent_traces.freshness_hours",
+                detail=f"freshness_hours={trace_hours:.1f}",
+            )
+        )
 
     # Compaction freshness
     compaction_surface = import_posture.get("compactions") or {}
     compaction_hours = _hours(compaction_surface.get("freshness_hours"))
     if not compaction_surface.get("present"):
-        items.append(_item(
-            "compactions surface is absent; no resumability handoff available",
-            evidence_source="import_posture.compactions",
-        ))
+        items.append(
+            _item(
+                "compactions surface is absent; no resumability handoff available",
+                evidence_source="import_posture.compactions",
+            )
+        )
     elif compaction_hours is not None and compaction_hours > _STALE_COMPACTION_HOURS:
-        items.append(_item(
-            f"latest compaction is {compaction_hours:.1f}h old (threshold={_STALE_COMPACTION_HOURS}h)",
-            evidence_source="import_posture.compactions.freshness_hours",
-            detail=f"freshness_hours={compaction_hours:.1f}",
-        ))
+        items.append(
+            _item(
+                f"latest compaction is {compaction_hours:.1f}h old (threshold={_STALE_COMPACTION_HOURS}h)",
+                evidence_source="import_posture.compactions.freshness_hours",
+                detail=f"freshness_hours={compaction_hours:.1f}",
+            )
+        )
 
     # Subject snapshot freshness
     snapshot_surface = import_posture.get("subject_snapshot") or {}
     snapshot_hours = _hours(snapshot_surface.get("freshness_hours"))
-    if snapshot_surface.get("present") and snapshot_hours is not None and snapshot_hours > _STALE_SNAPSHOT_HOURS:
-        items.append(_item(
-            f"subject snapshot is {snapshot_hours:.1f}h old (threshold={_STALE_SNAPSHOT_HOURS}h)",
-            evidence_source="import_posture.subject_snapshot.freshness_hours",
-            detail=f"freshness_hours={snapshot_hours:.1f}",
-        ))
+    if (
+        snapshot_surface.get("present")
+        and snapshot_hours is not None
+        and snapshot_hours > _STALE_SNAPSHOT_HOURS
+    ):
+        items.append(
+            _item(
+                f"subject snapshot is {snapshot_hours:.1f}h old (threshold={_STALE_SNAPSHOT_HOURS}h)",
+                evidence_source="import_posture.subject_snapshot.freshness_hours",
+                detail=f"freshness_hours={snapshot_hours:.1f}",
+            )
+        )
 
     # Evidence readout absent
     evidence_surface = import_posture.get("evidence_readout") or {}
     if not evidence_surface.get("present"):
-        items.append(_item(
-            "evidence_readout_posture is absent; cannot verify claim-to-evidence boundaries",
-            evidence_source="import_posture.evidence_readout",
-        ))
+        items.append(
+            _item(
+                "evidence_readout_posture is absent; cannot verify claim-to-evidence boundaries",
+                evidence_source="import_posture.evidence_readout",
+            )
+        )
 
     return items
 
@@ -242,6 +288,7 @@ def _build_stale(*, import_posture: dict[str, Any]) -> list[dict[str, str]]:
 # ---------------------------------------------------------------------------
 # Delta summary
 # ---------------------------------------------------------------------------
+
 
 def _build_delta_summary(*, packet: dict[str, Any]) -> dict[str, Any]:
     """Compact summary of what changed since last agent observation."""
@@ -270,6 +317,7 @@ def _build_delta_summary(*, packet: dict[str, Any]) -> dict[str, Any]:
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
+
 
 def build_low_drift_anchor(
     *,

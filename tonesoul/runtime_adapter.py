@@ -728,10 +728,13 @@ def apply_subject_refresh(
         + list(refresh_signals or [])
         + ["active_threads compaction-backed refresh applied"]
     )
-    snapshot_summary = str(summary or "").strip() or str(
-        latest_snapshot.get("summary")
-        or "Bounded subject refresh kept active_threads aligned with recent compaction-backed focus."
-    ).strip()
+    snapshot_summary = (
+        str(summary or "").strip()
+        or str(
+            latest_snapshot.get("summary")
+            or "Bounded subject refresh kept active_threads aligned with recent compaction-backed focus."
+        ).strip()
+    )
 
     applied_snapshot = write_subject_snapshot(
         agent_id=agent_id,
@@ -1083,7 +1086,10 @@ def route_r_memory_signal(
     )
     has_compaction_shape = bool(normalized_carry_forward or normalized_evidence_refs)
     has_perspective_shape = bool(
-        normalized_stance or normalized_tensions or (proposed_drift or {}) or normalized_proposed_vows
+        normalized_stance
+        or normalized_tensions
+        or (proposed_drift or {})
+        or normalized_proposed_vows
     )
     has_checkpoint_shape = bool(normalized_pending_paths or normalized_next_action)
     has_claim_shape = bool(normalized_task_id)
@@ -1106,7 +1112,9 @@ def route_r_memory_signal(
         surface = "subject_snapshot"
         reason = "stable vows/boundaries/preferences indicate durable working identity"
         confidence = "high"
-    elif has_claim_shape and not (has_compaction_shape or has_perspective_shape or has_checkpoint_shape):
+    elif has_claim_shape and not (
+        has_compaction_shape or has_perspective_shape or has_checkpoint_shape
+    ):
         surface = "claim"
         reason = "task_id without richer handoff fields indicates task ownership intent"
         confidence = "high"
@@ -1141,7 +1149,8 @@ def route_r_memory_signal(
     if surface == "claim":
         payload.update(
             {
-                "task_id": normalized_task_id or _slug_from_summary(normalized_summary, fallback="task-signal"),
+                "task_id": normalized_task_id
+                or _slug_from_summary(normalized_summary, fallback="task-signal"),
                 "paths": normalized_paths or normalized_pending_paths,
             }
         )
@@ -1420,7 +1429,9 @@ def _build_routing_summary(events: List[Dict[str, Any]]) -> Dict[str, Any]:
 
     dominant_surface = ""
     if surface_counts:
-        dominant_surface = sorted(surface_counts.items(), key=lambda item: (-item[1], item[0]))[0][0]
+        dominant_surface = sorted(surface_counts.items(), key=lambda item: (-item[1], item[0]))[0][
+            0
+        ]
 
     summary_text = (
         "router="
@@ -1509,7 +1520,9 @@ def _build_subject_refresh_summary(
             "action": "may_influence_only" if routing_total > 0 else "manual_operator_only",
             "evidence_level": "repeat_pattern" if routing_total > 0 else "human_confirmation",
             "candidate_values": (
-                [f"dominant routing surface: {dominant_surface}"] if dominant_surface and routing_total > 0 else []
+                [f"dominant routing surface: {dominant_surface}"]
+                if dominant_surface and routing_total > 0
+                else []
             ),
             "reason": (
                 "Routing behavior can inform working preferences, but it should not auto-promote into durable preferences without operator review."
@@ -1541,27 +1554,19 @@ def _build_subject_refresh_summary(
     if not latest_snapshot and (compactions or checkpoints) and candidate_threads:
         active_thread_action = "may_refresh_directly"
         active_thread_evidence = "compaction-backed" if compactions else "single_signal"
-        active_thread_reason = (
-            "No subject snapshot exists yet; current focus topics can seed the initial active_threads lane without promoting higher-risk identity fields."
-        )
+        active_thread_reason = "No subject snapshot exists yet; current focus topics can seed the initial active_threads lane without promoting higher-risk identity fields."
     elif candidate_threads and newer_compactions:
         active_thread_action = "may_refresh_directly"
         active_thread_evidence = "compaction-backed"
-        active_thread_reason = (
-            "Fresh compactions newer than the latest snapshot confirm that current focus topics are durable enough to refresh active_threads."
-        )
+        active_thread_reason = "Fresh compactions newer than the latest snapshot confirm that current focus topics are durable enough to refresh active_threads."
     elif candidate_threads and len(newer_checkpoints) >= 2:
         active_thread_action = "may_refresh_directly"
         active_thread_evidence = "repeat_pattern"
-        active_thread_reason = (
-            "Repeated newer checkpoints suggest the current work focus is persistent enough to refresh active_threads."
-        )
+        active_thread_reason = "Repeated newer checkpoints suggest the current work focus is persistent enough to refresh active_threads."
     else:
         active_thread_action = "may_influence_only"
         active_thread_evidence = "single_signal" if candidate_threads else "subject_snapshot_only"
-        active_thread_reason = (
-            "Active threads may track current heat, but weak or stale evidence should not rewrite them automatically."
-        )
+        active_thread_reason = "Active threads may track current heat, but weak or stale evidence should not rewrite them automatically."
 
     field_guidance.append(
         {
@@ -1575,7 +1580,9 @@ def _build_subject_refresh_summary(
 
     promotion_hazards: List[str] = []
     if claim_count > 0:
-        promotion_hazards.append("Do not promote active claims into durable identity; claims are ownership signals, not selfhood.")
+        promotion_hazards.append(
+            "Do not promote active claims into durable identity; claims are ownership signals, not selfhood."
+        )
     if routing_misroute > 0:
         promotion_hazards.append(
             "Do not promote routing ambiguity or forced routes into durable preferences or routines."
@@ -1599,7 +1606,9 @@ def _build_subject_refresh_summary(
             "Do not infer durable identity from traces alone when no subject snapshot or compaction-backed evidence exists yet."
         )
 
-    direct_fields = [item["field"] for item in field_guidance if item["action"] == "may_refresh_directly"]
+    direct_fields = [
+        item["field"] for item in field_guidance if item["action"] == "may_refresh_directly"
+    ]
     manual_fields = [
         item["field"]
         for item in field_guidance
@@ -1635,7 +1644,7 @@ def _build_subject_refresh_summary(
         )
         if can_apply_active_threads:
             recommended_command = (
-                'python scripts/apply_subject_refresh.py --agent <your-id> '
+                "python scripts/apply_subject_refresh.py --agent <your-id> "
                 '--field active_threads --refresh-signal "subject-refresh heuristic reviewed"'
             )
         else:
@@ -1717,7 +1726,7 @@ def _build_observer_cursor(*, observer_id: str, packet: Dict[str, Any]) -> Dict[
     subject_snapshots = list(packet.get("recent_subject_snapshots") or [])
     checkpoints = list(packet.get("recent_checkpoints") or [])
     claims = list(packet.get("active_claims") or [])
-    repo_progress = ((packet.get("project_memory_summary") or {}).get("repo_progress") or {})
+    repo_progress = (packet.get("project_memory_summary") or {}).get("repo_progress") or {}
 
     latest_trace = traces[-1] if traces else {}
     latest_compaction = compactions[0] if compactions else {}
@@ -1733,7 +1742,9 @@ def _build_observer_cursor(*, observer_id: str, packet: Dict[str, Any]) -> Dict[
         "latest_subject_snapshot_id": str(latest_subject_snapshot.get("snapshot_id", "")),
         "latest_checkpoint_id": str(latest_checkpoint.get("checkpoint_id", "")),
         "active_claim_ids": [
-            str(claim.get("task_id", "")) for claim in claims if str(claim.get("task_id", "")).strip()
+            str(claim.get("task_id", ""))
+            for claim in claims
+            if str(claim.get("task_id", "")).strip()
         ],
         "repo_head": str(repo_progress.get("head", "")),
         "repo_dirty_count": int(repo_progress.get("dirty_count", 0) or 0),
@@ -1809,10 +1820,14 @@ def _build_delta_feed(
             break
 
     previous_claim_ids = {
-        str(task_id).strip() for task_id in (cursor.get("active_claim_ids") or []) if str(task_id).strip()
+        str(task_id).strip()
+        for task_id in (cursor.get("active_claim_ids") or [])
+        if str(task_id).strip()
     }
     current_claim_ids = {
-        str(claim.get("task_id", "")).strip() for claim in claims if str(claim.get("task_id", "")).strip()
+        str(claim.get("task_id", "")).strip()
+        for claim in claims
+        if str(claim.get("task_id", "")).strip()
     }
     new_claims = [
         {
@@ -1821,7 +1836,8 @@ def _build_delta_feed(
             "summary": str(claim.get("summary", "")),
         }
         for claim in claims
-        if str(claim.get("task_id", "")).strip() and str(claim.get("task_id", "")).strip() not in previous_claim_ids
+        if str(claim.get("task_id", "")).strip()
+        and str(claim.get("task_id", "")).strip() not in previous_claim_ids
     ][:3]
     released_claim_ids = sorted(previous_claim_ids - current_claim_ids)[:3]
 
@@ -1830,7 +1846,9 @@ def _build_delta_feed(
     current_head = str(repo_progress.get("head", ""))
     previous_dirty = int(cursor.get("repo_dirty_count", 0) or 0)
     current_dirty = int(repo_progress.get("dirty_count", 0) or 0)
-    repo_changed = bool(previous_head and previous_head != current_head) or previous_dirty != current_dirty
+    repo_changed = (
+        bool(previous_head and previous_head != current_head) or previous_dirty != current_dirty
+    )
 
     update_count = (
         len(new_compactions)
@@ -1844,7 +1862,9 @@ def _build_delta_feed(
 
     summary_parts: List[str] = []
     if first_observation:
-        summary_parts.append("No observer cursor yet; current packet becomes the baseline after ack.")
+        summary_parts.append(
+            "No observer cursor yet; current packet becomes the baseline after ack."
+        )
     else:
         if new_compactions:
             summary_parts.append(f"compactions={len(new_compactions)}")
@@ -1857,7 +1877,9 @@ def _build_delta_feed(
         if new_claims or released_claim_ids:
             summary_parts.append(f"claims(+{len(new_claims)}/-{len(released_claim_ids)})")
         if repo_changed:
-            summary_parts.append(f"repo={previous_head or 'unknown'}->{current_head or 'unknown'} dirty={previous_dirty}->{current_dirty}")
+            summary_parts.append(
+                f"repo={previous_head or 'unknown'}->{current_head or 'unknown'} dirty={previous_dirty}->{current_dirty}"
+            )
         if not summary_parts:
             summary_parts.append("No changes since the last acknowledged observer baseline.")
 
@@ -1903,9 +1925,13 @@ def _build_operator_guidance(
 
     reminders: List[str] = []
     if compactions:
-        reminders.append("Prefer recent_compactions and project_memory_summary before older recent_traces.")
+        reminders.append(
+            "Prefer recent_compactions and project_memory_summary before older recent_traces."
+        )
     else:
-        reminders.append("No recent compaction is visible; write one before handoff if you finish a chunk.")
+        reminders.append(
+            "No recent compaction is visible; write one before handoff if you finish a chunk."
+        )
 
     if claims:
         reminders.append("Active claims are visible; coordinate before editing overlapping paths.")
@@ -1914,7 +1940,9 @@ def _build_operator_guidance(
 
     pending_paths = list(project_memory_summary.get("pending_paths") or [])
     if pending_paths:
-        reminders.append("Pending paths are already externalized; reuse them before widening the scan.")
+        reminders.append(
+            "Pending paths are already externalized; reuse them before widening the scan."
+        )
 
     routing_summary = project_memory_summary.get("routing_summary") or {}
     if int(routing_summary.get("total_events", 0) or 0) <= 0:
@@ -1998,7 +2026,9 @@ def _build_operator_guidance(
     if realism_note:
         reminders.append(f"Council realism: {realism_note}")
     receiver_parity = build_receiver_parity_readout(
-        council_snapshot=_build_council_dossier_summary(latest_dossier_payload) if latest_dossier_payload else {},
+        council_snapshot=(
+            _build_council_dossier_summary(latest_dossier_payload) if latest_dossier_payload else {}
+        ),
         project_memory_summary=project_memory_summary,
     )
     receiver_summary = str(receiver_parity.get("summary_text", "")).strip()
@@ -2012,9 +2042,13 @@ def _build_operator_guidance(
     if refresh_hint:
         reminders.append(refresh_hint)
     elif is_redis:
-        reminders.append("Redis live surfaces are available; perspectives and checkpoints may be visible immediately.")
+        reminders.append(
+            "Redis live surfaces are available; perspectives and checkpoints may be visible immediately."
+        )
     else:
-        reminders.append("Redis live surfaces are unavailable; coordination is currently file-backed.")
+        reminders.append(
+            "Redis live surfaces are unavailable; coordination is currently file-backed."
+        )
 
     launch_posture_note = str(coordination_mode.get("launch_posture_note", "")).strip()
     if launch_posture_note:
@@ -2022,9 +2056,13 @@ def _build_operator_guidance(
 
     if observer_id:
         if delta_feed.get("first_observation"):
-            reminders.append("No since-last-seen baseline exists yet; ack the packet after review to establish one.")
+            reminders.append(
+                "No since-last-seen baseline exists yet; ack the packet after review to establish one."
+            )
         else:
-            reminders.append("A delta feed is visible for this agent; ack after review to advance the observer baseline.")
+            reminders.append(
+                "A delta feed is visible for this agent; ack after review to advance the observer baseline."
+            )
 
     return {
         "backend_mode": backend_name,
@@ -2054,7 +2092,7 @@ def _build_operator_guidance(
                 '--boundary "..." --preference "..."'
             ),
             "apply_subject_refresh": (
-                'python scripts/apply_subject_refresh.py --agent <your-id> '
+                "python scripts/apply_subject_refresh.py --agent <your-id> "
                 '--field active_threads --refresh-signal "subject-refresh heuristic reviewed"'
             ),
             "release": "python scripts/run_task_claim.py release <task_id> --agent <your-id>",
@@ -2108,21 +2146,13 @@ def _build_coordination_mode(
     ack_command = str(delta_feed.get("ack_command", "")).strip() if observer_text else ""
 
     if is_redis:
-        refresh_hint = (
-            "Redis live surfaces may change mid-session; re-read packet before shared edits after long work or when other agents arrive."
-        )
+        refresh_hint = "Redis live surfaces may change mid-session; re-read packet before shared edits after long work or when other agents arrive."
         launch_alignment = "runtime_override_not_launch_default"
-        launch_posture_note = (
-            "Current runtime is redis-live, but the launch-default coordination story remains file-backed until Redis hardening is explicitly promoted."
-        )
+        launch_posture_note = "Current runtime is redis-live, but the launch-default coordination story remains file-backed until Redis hardening is explicitly promoted."
     else:
-        refresh_hint = (
-            "File-backed coordination is not push-driven; re-read packet before touching shared paths after longer work or after another agent reports progress."
-        )
+        refresh_hint = "File-backed coordination is not push-driven; re-read packet before touching shared paths after longer work or after another agent reports progress."
         launch_alignment = "aligned_with_launch_default"
-        launch_posture_note = (
-            "Current runtime matches the launch-default coordination story: file-backed continuity with receiver guards."
-        )
+        launch_posture_note = "Current runtime matches the launch-default coordination story: file-backed continuity with receiver guards."
 
     summary_text = (
         "coordination="
@@ -2172,12 +2202,14 @@ def _build_launch_claim_posture(
     session_control_classification = lane_map.get("session_control_and_handoff", "unknown")
     council_mechanics_classification = lane_map.get("council_mechanics", "unknown")
 
-    launch_default_mode = str(coordination_mode.get("launch_default_mode", "unknown")).strip() or "unknown"
-    launch_alignment = str(coordination_mode.get("launch_alignment", "unknown")).strip() or "unknown"
+    launch_default_mode = (
+        str(coordination_mode.get("launch_default_mode", "unknown")).strip() or "unknown"
+    )
+    launch_alignment = (
+        str(coordination_mode.get("launch_alignment", "unknown")).strip() or "unknown"
+    )
     live_shared_memory_classification = (
-        "not_launch_default"
-        if launch_default_mode != "redis-live"
-        else "launch_default"
+        "not_launch_default" if launch_default_mode != "redis-live" else "launch_default"
     )
 
     tier_guidance = [

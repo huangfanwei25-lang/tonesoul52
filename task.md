@@ -1556,8 +1556,8 @@
 - [x] move `verify_7d.py` TDD from duplicate full-suite execution to a bounded blocking tier while leaving the full regression in main CI
 **Success Criteria**: Monthly consolidation no longer acts as a second full-suite lane, blocking TDD remains explicit and reproducible, and full regression still survives in ToneSoul CI / burn-in.
 
-## Phase 733: ToneSoul LLM Classic Paper Map (2026-03-30, completed)
-- [x] distill a selective classic-paper map that keeps only the LLM papers still relevant to ToneSoul architecture, continuity, retrieval, governance, adaptation, and council design
-- [x] connect the map back to ToneSoul-native follow-up contracts instead of turning it into a generic literature museum wall
-- [x] wire the map into the documentation entry surfaces so later agents can find the reading ladder without browsing external lists first
-**Success Criteria**: A later agent can open one ToneSoul-native research note, understand which classic LLM papers actually matter for this repo's design decisions, and continue into the right internal architecture/evidence files without mistaking the note for runtime authority.
+## Phase 736: Bounded Black Gate And CI Baseline Alignment (2026-04-02)
+- [ ] replace repo-wide blocking Black scans with a bounded changed-file gate for push/pull_request
+- [ ] keep scheduled/full-repo Black visibility as advisory telemetry instead of a permanent red baseline
+- [ ] align workflow contracts and script-level tests so the gate is reproducible outside GitHub
+**Success Criteria**: PR/push CI only blocks on formatting drift introduced by the current change set, scheduled runs still expose repo-wide drift without becoming a chronic red gate, and the rule is encoded in one script plus workflow tests instead of duplicated shell walls.

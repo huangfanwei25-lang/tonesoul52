@@ -16,6 +16,7 @@ This script:
   3. Calls ask_my_brain.py --profile tonesoul --learn [summary] with
      appropriate tension, kind, tags, and wave parameters
 """
+
 from __future__ import annotations
 
 import argparse
@@ -38,9 +39,7 @@ def build_summary(trace: dict) -> str:
 
     if tensions:
         top = max(tensions, key=lambda t: t.get("severity", 0))
-        parts.append(
-            f"Top tension: {top['topic']} ({top.get('severity', 0):.2f})"
-        )
+        parts.append(f"Top tension: {top['topic']} ({top.get('severity', 0):.2f})")
 
     shift = trace.get("stance_shift")
     if shift:
@@ -54,9 +53,7 @@ def compute_wave_args(trace: dict) -> dict[str, float]:
     tensions = trace.get("tension_events", [])
     vetoes = trace.get("aegis_vetoes", [])
 
-    max_tension = max(
-        (t.get("severity", 0) for t in tensions), default=0.0
-    )
+    max_tension = max((t.get("severity", 0) for t in tensions), default=0.0)
     has_shift = bool(trace.get("stance_shift"))
     has_vetoes = bool(vetoes)
 
@@ -69,9 +66,7 @@ def compute_wave_args(trace: dict) -> dict[str, float]:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(
-        description="Commit session trace to OpenClaw-Memory"
-    )
+    parser = argparse.ArgumentParser(description="Commit session trace to OpenClaw-Memory")
     parser.add_argument("--trace", type=Path, default=None)
     parser.add_argument("--stdin", action="store_true")
     parser.add_argument(
@@ -104,9 +99,7 @@ def main() -> None:
 
     summary = build_summary(trace)
     tensions = trace.get("tension_events", [])
-    max_tension = max(
-        (t.get("severity", 0) for t in tensions), default=0.0
-    )
+    max_tension = max((t.get("severity", 0) for t in tensions), default=0.0)
     waves = compute_wave_args(trace)
 
     # Build tags
@@ -118,15 +111,24 @@ def main() -> None:
     cmd = [
         sys.executable,
         str(ask_brain),
-        "--profile", "tonesoul",
-        "--learn", summary,
-        "--kind", "session_trace",
-        "--tension", f"{max_tension:.2f}",
-        "--tag", ",".join(tags[:5]),
-        f"--wave-uncertainty", f"{waves['uncertainty']:.2f}",
-        f"--wave-divergence", f"{waves['divergence']:.2f}",
-        f"--wave-risk", f"{waves['risk']:.2f}",
-        f"--wave-revision", f"{waves['revision']:.2f}",
+        "--profile",
+        "tonesoul",
+        "--learn",
+        summary,
+        "--kind",
+        "session_trace",
+        "--tension",
+        f"{max_tension:.2f}",
+        "--tag",
+        ",".join(tags[:5]),
+        f"--wave-uncertainty",
+        f"{waves['uncertainty']:.2f}",
+        f"--wave-divergence",
+        f"{waves['divergence']:.2f}",
+        f"--wave-risk",
+        f"{waves['risk']:.2f}",
+        f"--wave-revision",
+        f"{waves['revision']:.2f}",
     ]
 
     if args.dry_run:

@@ -8,7 +8,9 @@ from pathlib import Path
 
 def _load_script_module():
     module_name = "test_run_launch_continuity_validation_wave_module"
-    module_path = Path(__file__).resolve().parents[1] / "scripts" / "run_launch_continuity_validation_wave.py"
+    module_path = (
+        Path(__file__).resolve().parents[1] / "scripts" / "run_launch_continuity_validation_wave.py"
+    )
     spec = importlib.util.spec_from_file_location(module_name, module_path)
     assert spec is not None
     assert spec.loader is not None
@@ -54,9 +56,18 @@ def test_run_validation_wave_returns_expected_summaries(tmp_path: Path) -> None:
     assert by_name["contested_dossier"]["council_calibration_status"] == "descriptive_only"
     assert by_name["contested_dossier"]["council_suppression_flag"] is True
     assert by_name["contested_dossier"]["receiver_alert_count"] == 4
-    assert "Latest council dossier confidence is descriptive_only" in by_name["contested_dossier"]["receiver_alerts"][0]
-    assert "Latest council dossier carries minority dissent" in by_name["contested_dossier"]["receiver_alerts"][1]
-    assert "Latest council dossier indicates potential evolution suppression" in by_name["contested_dossier"]["receiver_alerts"][2]
+    assert (
+        "Latest council dossier confidence is descriptive_only"
+        in by_name["contested_dossier"]["receiver_alerts"][0]
+    )
+    assert (
+        "Latest council dossier carries minority dissent"
+        in by_name["contested_dossier"]["receiver_alerts"][1]
+    )
+    assert (
+        "Latest council dossier indicates potential evolution suppression"
+        in by_name["contested_dossier"]["receiver_alerts"][2]
+    )
     assert by_name["session_end_lifecycle"]["readiness"] == "pass"
     assert by_name["concurrent_claims"]["readiness"] == "needs_clarification"
     assert by_name["working_style_reinforced"]["working_style_validation"] == "sufficient"
@@ -68,7 +79,10 @@ def test_render_markdown_contains_key_columns(tmp_path: Path) -> None:
     results = module.run_validation_wave(tmp_path)
     markdown = module.render_markdown(results)
 
-    assert "| Scenario | Readiness | Track | Mode | Style | Compaction posture | Council | Alerts |" in markdown
+    assert (
+        "| Scenario | Readiness | Track | Mode | Style | Compaction posture | Council | Alerts |"
+        in markdown
+    )
     assert "clean_pass" in markdown
     assert "contested_dossier" in markdown
 

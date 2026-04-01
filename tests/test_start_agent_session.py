@@ -33,8 +33,16 @@ def _write_state(
                 "version": "0.1.0",
                 "last_updated": "2026-03-28T00:00:00+00:00",
                 "soul_integral": soul_integral,
-                "tension_history": tensions if tensions is not None else [{"topic": "shared-start", "severity": 0.31}],
-                "active_vows": vows if vows is not None else [{"id": "v1", "content": "leave explicit handoff state"}],
+                "tension_history": (
+                    tensions
+                    if tensions is not None
+                    else [{"topic": "shared-start", "severity": 0.31}]
+                ),
+                "active_vows": (
+                    vows
+                    if vows is not None
+                    else [{"id": "v1", "content": "leave explicit handoff state"}]
+                ),
                 "aegis_vetoes": aegis_vetoes if aegis_vetoes is not None else [],
                 "baseline_drift": {
                     "caution_bias": 0.52,
@@ -67,7 +75,9 @@ def _write_traces(traces_path: Path) -> None:
     )
 
 
-def test_start_agent_session_emits_machine_readable_bundle(capsys, monkeypatch, tmp_path: Path) -> None:
+def test_start_agent_session_emits_machine_readable_bundle(
+    capsys, monkeypatch, tmp_path: Path
+) -> None:
     module = _load_script_module()
     state_path = tmp_path / "governance_state.json"
     traces_path = tmp_path / "session_traces.jsonl"
@@ -124,21 +134,36 @@ def test_start_agent_session_emits_machine_readable_bundle(capsys, monkeypatch, 
     assert output["readiness"]["ready"] is False
     assert output["readiness"]["claim_conflict_count"] == 1
     assert output["readiness"]["clarification_reasons"] == ["other_agent_claims_visible"]
-    assert output["import_posture"]["surfaces"]["posture"]["import_posture"] == "directly_importable"
+    assert (
+        output["import_posture"]["surfaces"]["posture"]["import_posture"] == "directly_importable"
+    )
     assert output["import_posture"]["surfaces"]["claims"]["import_posture"] == "directly_importable"
     assert output["import_posture"]["surfaces"]["claims"]["receiver_obligation"] == "must_read"
     assert "TTL" in output["import_posture"]["surfaces"]["claims"]["note"]
-    assert output["import_posture"]["surfaces"]["delta_feed"]["import_posture"] == "ephemeral_until_acked"
-    assert output["import_posture"]["surfaces"]["evidence_readout"]["import_posture"] == "advisory"
-    assert output["import_posture"]["surfaces"]["evidence_readout"]["receiver_obligation"] == "should_consider"
     assert (
-        output["import_posture"]["surfaces"]["evidence_readout"]["evidence_readout_posture"]["classification_counts"]["tested"]
+        output["import_posture"]["surfaces"]["delta_feed"]["import_posture"]
+        == "ephemeral_until_acked"
+    )
+    assert output["import_posture"]["surfaces"]["evidence_readout"]["import_posture"] == "advisory"
+    assert (
+        output["import_posture"]["surfaces"]["evidence_readout"]["receiver_obligation"]
+        == "should_consider"
+    )
+    assert (
+        output["import_posture"]["surfaces"]["evidence_readout"]["evidence_readout_posture"][
+            "classification_counts"
+        ]["tested"]
         == 2
     )
     assert output["import_posture"]["surfaces"]["launch_claims"]["import_posture"] == "advisory"
-    assert output["import_posture"]["surfaces"]["launch_claims"]["receiver_obligation"] == "should_consider"
     assert (
-        output["import_posture"]["surfaces"]["launch_claims"]["launch_claim_posture"]["current_tier"]
+        output["import_posture"]["surfaces"]["launch_claims"]["receiver_obligation"]
+        == "should_consider"
+    )
+    assert (
+        output["import_posture"]["surfaces"]["launch_claims"]["launch_claim_posture"][
+            "current_tier"
+        ]
         == "collaborator_beta"
     )
     assert output["import_posture"]["surfaces"]["subject_snapshot"]["present"] is False
@@ -162,10 +187,16 @@ def test_start_agent_session_emits_machine_readable_bundle(capsys, monkeypatch, 
     assert output["deliberation_mode_hint"]["human_required"] is False
     assert output["working_style_playbook"]["present"] is False
     assert output["working_style_playbook"]["checklist"] == []
-    assert "No shared working-style anchor is visible" in output["working_style_playbook"]["application_rule"]
+    assert (
+        "No shared working-style anchor is visible"
+        in output["working_style_playbook"]["application_rule"]
+    )
     assert output["working_style_validation"]["status"] == "insufficient"
     assert output["working_style_validation"]["checks"]["anchor_visible"] is False
-    assert "style continuity cannot be validated" in output["working_style_validation"]["receiver_note"]
+    assert (
+        "style continuity cannot be validated"
+        in output["working_style_validation"]["receiver_note"]
+    )
     assert output["underlying_commands"][0] == "python -m tonesoul.diagnose --agent observer-start"
     assert output["underlying_commands"][1] == (
         "python scripts/run_r_memory_packet.py --agent observer-start --ack"
@@ -279,7 +310,7 @@ def test_start_agent_session_blocks_on_critical_risk(capsys, monkeypatch, tmp_pa
                     "source": "cli",
                     "created_at": "2026-03-28T00:02:30+00:00",
                     "expires_at": "4070908920.0",
-                }
+                },
             }
         ),
         encoding="utf-8",
@@ -541,7 +572,9 @@ def test_start_agent_session_marks_recycled_carry_forward_as_must_not_promote(
                     "stable_vows": ["never smuggle theory into runtime truth"],
                     "durable_boundaries": ["do not edit protected human-managed files"],
                     "decision_preferences": ["prefer packet before broad repo scan"],
-                    "verified_routines": ["end sessions with checkpoint or compaction before release"],
+                    "verified_routines": [
+                        "end sessions with checkpoint or compaction before release"
+                    ],
                     "active_threads": ["subject snapshot hardening"],
                     "evidence_refs": ["docs/AI_QUICKSTART.md"],
                     "refresh_signals": ["refresh when durable boundaries change"],
@@ -578,7 +611,7 @@ def test_start_agent_session_marks_recycled_carry_forward_as_must_not_promote(
                     "next_action": "refresh subject snapshot active threads",
                     "source": "cli",
                     "updated_at": "2026-03-28T00:04:00+00:00",
-                }
+                },
             ]
         ),
         encoding="utf-8",
@@ -606,19 +639,19 @@ def test_start_agent_session_marks_recycled_carry_forward_as_must_not_promote(
     working_style_surface = output["import_posture"]["surfaces"]["working_style"]
     assert compaction_surface["import_posture"] == "advisory"
     assert compaction_surface["receiver_obligation"] == "must_not_promote"
-    assert any("recycled carry_forward" in hazard for hazard in compaction_surface["promotion_hazards"])
+    assert any(
+        "recycled carry_forward" in hazard for hazard in compaction_surface["promotion_hazards"]
+    )
     assert working_style_surface["present"] is True
     assert working_style_surface["import_posture"] == "advisory"
     assert working_style_surface["receiver_obligation"] == "should_consider"
     assert working_style_surface["decay_posture"] == "slow"
-    assert (
-        working_style_surface["working_style_anchor"]["decision_preferences"]
-        == ["prefer packet before broad repo scan"]
-    )
-    assert (
-        working_style_surface["working_style_anchor"]["verified_routines"]
-        == ["end sessions with checkpoint or compaction before release"]
-    )
+    assert working_style_surface["working_style_anchor"]["decision_preferences"] == [
+        "prefer packet before broad repo scan"
+    ]
+    assert working_style_surface["working_style_anchor"]["verified_routines"] == [
+        "end sessions with checkpoint or compaction before release"
+    ]
     assert (
         working_style_surface["working_style_anchor"]["receiver_posture"]
         == "advisory_apply_not_promote"
@@ -643,10 +676,7 @@ def test_start_agent_session_marks_recycled_carry_forward_as_must_not_promote(
     )
     working_style_import_limits = working_style_surface["working_style_import_limits"]
     assert working_style_import_limits["apply_posture"] == "explicit_reuse_only"
-    assert any(
-        item.startswith("scan_order:")
-        for item in working_style_import_limits["safe_apply"]
-    )
+    assert any(item.startswith("scan_order:") for item in working_style_import_limits["safe_apply"])
     assert any(
         item.startswith("task_scope_or_success_criteria:")
         for item in working_style_import_limits["must_not_import"]
@@ -655,8 +685,13 @@ def test_start_agent_session_marks_recycled_carry_forward_as_must_not_promote(
     assert playbook["present"] is True
     assert playbook["summary_text"].startswith("prefs=prefer packet before broad repo scan")
     assert "Preference: prefer packet before broad repo scan" in playbook["checklist"]
-    assert "Routine: end sessions with checkpoint or compaction before release" in playbook["checklist"]
-    assert any(item.startswith("Prompt default: keep P0/P1/P2 explicit") for item in playbook["checklist"])
+    assert (
+        "Routine: end sessions with checkpoint or compaction before release"
+        in playbook["checklist"]
+    )
+    assert any(
+        item.startswith("Prompt default: keep P0/P1/P2 explicit") for item in playbook["checklist"]
+    )
     assert any(item.startswith("Render caveat: Treat shell `??`") for item in playbook["checklist"])
     assert "bounded operating habits" in playbook["application_rule"]
     assert "Do not promote this playbook" in playbook["non_promotion_rule"]
@@ -667,8 +702,7 @@ def test_start_agent_session_marks_recycled_carry_forward_as_must_not_promote(
     assert validation["checks"]["import_limits_visible"] is True
     assert "explicit reuse beats assumption" in validation["receiver_note"]
     assert any(
-        "Latest carry-forward repeats an older handoff without new evidence"
-        in alert
+        "Latest carry-forward repeats an older handoff without new evidence" in alert
         for alert in output["import_posture"]["receiver_alerts"]
     )
     assert any(
@@ -729,11 +763,15 @@ def test_start_agent_session_surfaces_council_dossier_interpretation_guard(
                                 "decision": "concern",
                                 "confidence": 0.81,
                                 "reasoning": "The draft may be overclaiming calibration.",
-                                "evidence": ["docs/architecture/TONESOUL_COUNCIL_CONFIDENCE_AND_CALIBRATION_MAP.md"],
+                                "evidence": [
+                                    "docs/architecture/TONESOUL_COUNCIL_CONFIDENCE_AND_CALIBRATION_MAP.md"
+                                ],
                             }
                         ],
                         "vote_summary": [],
-                        "evidence_refs": ["docs/architecture/TONESOUL_COUNCIL_CONFIDENCE_AND_CALIBRATION_MAP.md"],
+                        "evidence_refs": [
+                            "docs/architecture/TONESOUL_COUNCIL_CONFIDENCE_AND_CALIBRATION_MAP.md"
+                        ],
                         "grounding_summary": {
                             "has_ungrounded_claims": False,
                             "total_evidence_sources": 2,
@@ -796,17 +834,10 @@ def test_start_agent_session_surfaces_council_dossier_interpretation_guard(
         "receiver_parity council=descriptive_only dissent=visible suppression=flagged"
     )
     assert receiver_parity["rule"].startswith("ack is safe visibility only")
+    assert any("descriptive_only" in alert for alert in output["import_posture"]["receiver_alerts"])
+    assert any("minority dissent" in alert for alert in output["import_posture"]["receiver_alerts"])
     assert any(
-        "descriptive_only" in alert
-        for alert in output["import_posture"]["receiver_alerts"]
-    )
-    assert any(
-        "minority dissent" in alert
-        for alert in output["import_posture"]["receiver_alerts"]
-    )
-    assert any(
-        "evolution suppression" in alert
-        for alert in output["import_posture"]["receiver_alerts"]
+        "evolution suppression" in alert for alert in output["import_posture"]["receiver_alerts"]
     )
 
 

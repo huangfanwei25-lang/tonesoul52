@@ -22,9 +22,7 @@ _PROMPT_STYLE_DEFAULTS = [
     "keep P0/P1/P2 explicit when constraints may conflict",
     "mark [資料不足] instead of filling gaps with unsupported guesses",
 ]
-_RENDER_BOUNDARY_CAVEAT = (
-    "Treat shell `??` or garbled CJK as render-layer noise until a UTF-8 file read proves real corruption."
-)
+_RENDER_BOUNDARY_CAVEAT = "Treat shell `??` or garbled CJK as render-layer noise until a UTF-8 file read proves real corruption."
 
 
 @dataclass(frozen=True)
@@ -155,9 +153,7 @@ def build_project_memory_summary(
             if normalized:
                 topic_counter[normalized] += 1
 
-    pending_paths = _unique_ordered(
-        path for claim in claims for path in (claim.get("paths") or [])
-    )
+    pending_paths = _unique_ordered(path for claim in claims for path in (claim.get("paths") or []))
     pending_paths.extend(
         path
         for entry in compactions[:5]
@@ -217,7 +213,10 @@ def build_project_memory_summary(
         )
     if int(routing_summary.get("total_events", 0) or 0) > 0:
         summary_lines.append(str(routing_summary.get("summary_text", "")).strip())
-    if working_style_observability and str(working_style_observability.get("status", "")) != "reinforced":
+    if (
+        working_style_observability
+        and str(working_style_observability.get("status", "")) != "reinforced"
+    ):
         summary_lines.append(str(working_style_observability.get("summary_text", "")).strip())
     if evidence_readout_posture:
         summary_lines.append(str(evidence_readout_posture.get("summary_text", "")).strip())

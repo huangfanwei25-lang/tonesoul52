@@ -56,9 +56,7 @@ def test_build_report_merges_matrix_and_boundary_lookup(tmp_path: Path) -> None:
     assert yuhun_gate["boundary_category_code"] == "2"
     assert yuhun_gate["boundary_category_label"] == runner.CATEGORY_LABELS["2"]
 
-    honesty_contract = next(
-        term for term in payload["terms"] if term["term"] == "Honesty Contract"
-    )
+    honesty_contract = next(term for term in payload["terms"] if term["term"] == "Honesty Contract")
     assert honesty_contract["boundary_partially_implemented"] is True
     assert honesty_contract["source_files"] == ["law/honesty_contract.md", "benevolence.py"]
 
@@ -93,9 +91,7 @@ def test_main_writes_claim_authority_artifacts(tmp_path: Path) -> None:
     payload = json.loads(
         (tmp_path / "docs" / "status" / runner.JSON_FILENAME).read_text(encoding="utf-8")
     )
-    markdown = (
-        tmp_path / "docs" / "status" / runner.MARKDOWN_FILENAME
-    ).read_text(encoding="utf-8")
+    markdown = (tmp_path / "docs" / "status" / runner.MARKDOWN_FILENAME).read_text(encoding="utf-8")
 
     assert payload["primary_status_line"].startswith("claim_authority_snapshot |")
     assert payload["metrics"]["term_count"] == 1

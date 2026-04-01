@@ -158,7 +158,9 @@ def _scenario_contested_dossier(root: Path) -> None:
                 "summary": "Carry bounded council realism into the handoff.",
                 "carry_forward": ["review minority signals before treating approval as settled"],
                 "pending_paths": ["tonesoul/council/dossier.py"],
-                "evidence_refs": ["docs/architecture/TONESOUL_COUNCIL_DOSSIER_AND_DISSENT_CONTRACT.md"],
+                "evidence_refs": [
+                    "docs/architecture/TONESOUL_COUNCIL_DOSSIER_AND_DISSENT_CONTRACT.md"
+                ],
                 "council_dossier": {
                     "dossier_version": "v1",
                     "final_verdict": "approve",
@@ -201,6 +203,8 @@ def _scenario_contested_dossier(root: Path) -> None:
             }
         ],
     )
+
+
 def _recent_iso() -> str:
     """Return an ISO timestamp within the last hour, so traces are not stale."""
     from datetime import datetime, timedelta, timezone
@@ -388,8 +392,12 @@ def run_session_start(*, agent_id: str, state_path: Path, traces_path: Path) -> 
 
 
 def summarize_payload(name: str, payload: dict[str, Any]) -> dict[str, Any]:
-    compaction_surface = ((payload.get("import_posture") or {}).get("surfaces") or {}).get("compactions") or {}
-    dossier_surface = ((payload.get("import_posture") or {}).get("surfaces") or {}).get("council_dossier") or {}
+    compaction_surface = ((payload.get("import_posture") or {}).get("surfaces") or {}).get(
+        "compactions"
+    ) or {}
+    dossier_surface = ((payload.get("import_posture") or {}).get("surfaces") or {}).get(
+        "council_dossier"
+    ) or {}
     interpretation = dossier_surface.get("dossier_interpretation") or {}
     receiver_parity = payload.get("receiver_parity") or {}
     alerts = list((payload.get("import_posture") or {}).get("receiver_alerts") or [])
@@ -397,12 +405,20 @@ def summarize_payload(name: str, payload: dict[str, Any]) -> dict[str, Any]:
     return {
         "scenario": name,
         "readiness": ((payload.get("readiness") or {}).get("status") or "unknown"),
-        "task_track": ((payload.get("task_track_hint") or {}).get("suggested_track") or "unclassified"),
-        "deliberation_mode": ((payload.get("deliberation_mode_hint") or {}).get("suggested_mode") or "unclassified"),
-        "working_style_validation": ((payload.get("working_style_validation") or {}).get("status") or "unknown"),
+        "task_track": (
+            (payload.get("task_track_hint") or {}).get("suggested_track") or "unclassified"
+        ),
+        "deliberation_mode": (
+            (payload.get("deliberation_mode_hint") or {}).get("suggested_mode") or "unclassified"
+        ),
+        "working_style_validation": (
+            (payload.get("working_style_validation") or {}).get("status") or "unknown"
+        ),
         "receiver_parity_summary": str(receiver_parity.get("summary_text", "")),
         "compaction_import_posture": str(compaction_surface.get("import_posture", "absent")),
-        "compaction_receiver_obligation": str(compaction_surface.get("receiver_obligation", "absent")),
+        "compaction_receiver_obligation": str(
+            compaction_surface.get("receiver_obligation", "absent")
+        ),
         "council_calibration_status": str(interpretation.get("calibration_status", "absent")),
         "council_suppression_flag": bool(interpretation.get("evolution_suppression_flag")),
         "receiver_alert_count": len(alerts),

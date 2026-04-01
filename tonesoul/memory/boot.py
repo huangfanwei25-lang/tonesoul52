@@ -46,6 +46,7 @@ def memory_boot(
     governance_summary: Optional[str] = None
     try:
         from tonesoul.runtime_adapter import load, summary
+
         posture = load()
         governance_summary = summary(posture)
     except Exception:

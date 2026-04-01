@@ -130,8 +130,13 @@ def test_end_agent_session_compaction_and_release(capsys, monkeypatch, tmp_path:
     assert output["released_claims"]["released_task_ids"] == ["task-codex"]
     assert output["released_claims"]["not_released_task_ids"] == []
     assert output["released_claims"]["remaining_claims"][0]["task_id"] == "task-other"
-    assert output["underlying_commands"][0].startswith("python scripts/save_compaction.py --agent codex")
-    assert output["underlying_commands"][1] == "python scripts/run_task_claim.py release <task_id> --agent codex"
+    assert output["underlying_commands"][0].startswith(
+        "python scripts/save_compaction.py --agent codex"
+    )
+    assert (
+        output["underlying_commands"][1]
+        == "python scripts/run_task_claim.py release <task_id> --agent codex"
+    )
 
     stored_compactions = json.loads(compactions_path.read_text(encoding="utf-8"))
     assert stored_compactions[0]["summary"] == "leave a bounded handoff for the runtime lane"
@@ -204,16 +209,23 @@ def test_end_agent_session_both_mode_with_no_release(capsys, monkeypatch, tmp_pa
     assert output["underlying_commands"][0].startswith(
         "python scripts/save_checkpoint.py --checkpoint-id cp-final --agent codex"
     )
-    assert output["underlying_commands"][1].startswith("python scripts/save_compaction.py --agent codex")
+    assert output["underlying_commands"][1].startswith(
+        "python scripts/save_compaction.py --agent codex"
+    )
     assert len(output["underlying_commands"]) == 2
 
     stored_checkpoints = json.loads(checkpoints_path.read_text(encoding="utf-8"))
-    assert stored_checkpoints["cp-final"]["next_action"] == "verify the next session sees the new handoff"
+    assert (
+        stored_checkpoints["cp-final"]["next_action"]
+        == "verify the next session sees the new handoff"
+    )
     remaining_claims = json.loads(claims_path.read_text(encoding="utf-8"))
     assert "task-codex" in remaining_claims
 
 
-def test_end_agent_session_can_apply_bounded_subject_refresh(capsys, monkeypatch, tmp_path: Path) -> None:
+def test_end_agent_session_can_apply_bounded_subject_refresh(
+    capsys, monkeypatch, tmp_path: Path
+) -> None:
     module = _load_script_module()
     state_path = tmp_path / "governance_state.json"
     traces_path = tmp_path / "session_traces.jsonl"
@@ -248,7 +260,9 @@ def test_end_agent_session_can_apply_bounded_subject_refresh(capsys, monkeypatch
                     "stable_vows": ["never smuggle theory into runtime truth"],
                     "durable_boundaries": ["do not edit protected human-managed files"],
                     "decision_preferences": ["prefer packet before broad repo scan"],
-                    "verified_routines": ["end sessions with checkpoint or compaction before release"],
+                    "verified_routines": [
+                        "end sessions with checkpoint or compaction before release"
+                    ],
                     "active_threads": ["subject snapshot hardening"],
                     "evidence_refs": ["docs/AI_QUICKSTART.md"],
                     "refresh_signals": ["refresh when durable boundaries change"],
@@ -289,7 +303,9 @@ def test_end_agent_session_can_apply_bounded_subject_refresh(capsys, monkeypatch
     assert output["subject_refresh_application"]["ok"] is True
     assert output["subject_refresh_application"]["field"] == "active_threads"
     assert output["subject_refresh_application"]["candidate_values"] == ["runtime_adapter", "redis"]
-    assert output["underlying_commands"][0].startswith("python scripts/save_compaction.py --agent codex")
+    assert output["underlying_commands"][0].startswith(
+        "python scripts/save_compaction.py --agent codex"
+    )
     assert output["underlying_commands"][1].startswith(
         "python scripts/apply_subject_refresh.py --agent codex --field active_threads"
     )
@@ -340,7 +356,9 @@ def test_end_agent_session_does_not_promote_recycled_carry_forward_without_new_e
                     "stable_vows": ["never smuggle theory into runtime truth"],
                     "durable_boundaries": ["do not edit protected human-managed files"],
                     "decision_preferences": ["prefer packet before broad repo scan"],
-                    "verified_routines": ["end sessions with checkpoint or compaction before release"],
+                    "verified_routines": [
+                        "end sessions with checkpoint or compaction before release"
+                    ],
                     "active_threads": ["subject snapshot hardening"],
                     "evidence_refs": ["docs/AI_QUICKSTART.md"],
                     "refresh_signals": ["refresh when durable boundaries change"],

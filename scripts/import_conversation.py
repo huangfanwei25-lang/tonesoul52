@@ -19,6 +19,7 @@ Usage:
     # Dry run — show what would be extracted
     python scripts/import_conversation.py --input conversations.json --format chatgpt --dry-run
 """
+
 from __future__ import annotations
 
 import argparse
@@ -123,6 +124,7 @@ def detect_stance_shift(messages: list[dict]) -> dict | None:
 
 # --- Parsers ---
 
+
 def parse_chatgpt_json(data: Any) -> list[dict]:
     """Parse ChatGPT conversations.json export."""
     conversations = []
@@ -138,23 +140,24 @@ def parse_chatgpt_json(data: Any) -> list[dict]:
             msg = node.get("message")
             if msg and msg.get("content", {}).get("parts"):
                 role = msg.get("author", {}).get("role", "unknown")
-                text = "\n".join(
-                    p for p in msg["content"]["parts"]
-                    if isinstance(p, str)
-                )
+                text = "\n".join(p for p in msg["content"]["parts"] if isinstance(p, str))
                 if text.strip():
-                    messages.append({
-                        "role": role,
-                        "text": text,
-                        "timestamp": msg.get("create_time", create_time),
-                    })
+                    messages.append(
+                        {
+                            "role": role,
+                            "text": text,
+                            "timestamp": msg.get("create_time", create_time),
+                        }
+                    )
 
         if messages:
-            conversations.append({
-                "title": title,
-                "messages": messages,
-                "timestamp": create_time,
-            })
+            conversations.append(
+                {
+                    "title": title,
+                    "messages": messages,
+                    "timestamp": create_time,
+                }
+            )
 
     return conversations
 
@@ -206,10 +209,12 @@ def parse_document(text: str, filename: str = "unknown") -> list[dict]:
         heading = parts[i].strip()
         content = parts[i + 1].strip() if i + 1 < len(parts) else ""
         if content and len(content) > 20:  # skip tiny sections
-            messages.append({
-                "role": "assistant",
-                "text": f"{heading}\n{content}",
-            })
+            messages.append(
+                {
+                    "role": "assistant",
+                    "text": f"{heading}\n{content}",
+                }
+            )
 
     title = filename
     # Try to extract title from first line
@@ -230,10 +235,12 @@ def parse_jsonl(text: str) -> list[dict]:
         if line:
             try:
                 msg = json.loads(line)
-                messages.append({
-                    "role": msg.get("role", "unknown"),
-                    "text": msg.get("content", msg.get("text", "")),
-                })
+                messages.append(
+                    {
+                        "role": msg.get("role", "unknown"),
+                        "text": msg.get("content", msg.get("text", "")),
+                    }
+                )
             except json.JSONDecodeError:
                 continue
 
@@ -243,6 +250,7 @@ def parse_jsonl(text: str) -> list[dict]:
 
 
 # --- Distillation ---
+
 
 def distill_conversation(conv: dict) -> dict:
     """Distill a conversation into a session_trace record."""
@@ -255,12 +263,14 @@ def distill_conversation(conv: dict) -> dict:
         text = msg.get("text", "")
         severity = score_tension(text)
         if severity > 0.20:  # only notable tensions
-            tension_events.append({
-                "topic": extract_topic(text),
-                "severity": float(round(severity * 100)) / 100,
-                "type": classify_memory(text),
-                "resolution": "",
-            })
+            tension_events.append(
+                {
+                    "topic": extract_topic(text),
+                    "severity": float(round(severity * 100)) / 100,
+                    "type": classify_memory(text),
+                    "resolution": "",
+                }
+            )
 
     # Cap to top 5 by severity
     tension_events.sort(key=lambda t: t["severity"], reverse=True)
@@ -284,11 +294,13 @@ def distill_conversation(conv: dict) -> dict:
     for msg in messages:
         text = msg.get("text", "")
         if COMMITMENT_PATTERNS.search(text):
-            vow_events.append({
-                "vow_id": f"imported-{len(vow_events) + 1}",
-                "action": "created",
-                "detail": extract_topic(text, 100),
-            })
+            vow_events.append(
+                {
+                    "vow_id": f"imported-{len(vow_events) + 1}",
+                    "action": "created",
+                    "detail": extract_topic(text, 100),
+                }
+            )
 
     # Timestamp
     ts = conv.get("timestamp", 0)
@@ -317,6 +329,7 @@ def distill_conversation(conv: dict) -> dict:
 
 # --- Main ---
 
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Import external AI conversations into ToneSoul traces"
@@ -329,8 +342,9 @@ def main() -> None:
         help="Input format (default: auto-detect)",
     )
     parser.add_argument("--output", type=Path, default=None, help="Output directory for traces")
-    parser.add_argument("--update-state", type=Path, default=None,
-                        help="Directly update this governance_state.json")
+    parser.add_argument(
+        "--update-state", type=Path, default=None, help="Directly update this governance_state.json"
+    )
     parser.add_argument("--dry-run", action="store_true", help="Show extraction without writing")
     args = parser.parse_args()
 
@@ -379,10 +393,7 @@ def main() -> None:
     traces = [distill_conversation(c) for c in conversations]
 
     # Filter out empty traces
-    traces = [
-        t for t in traces
-        if t["tension_events"] or t["key_decisions"] or t["vow_events"]
-    ]
+    traces = [t for t in traces if t["tension_events"] or t["key_decisions"] or t["vow_events"]]
 
     print(f"Distilled {len(traces)} trace(s) with governance content")
 
@@ -420,7 +431,8 @@ def main() -> None:
                 [
                     sys.executable,
                     "scripts/update_governance_state.py",
-                    "--state", str(args.update_state),
+                    "--state",
+                    str(args.update_state),
                     "--stdin",
                 ],
                 input=trace_json,
