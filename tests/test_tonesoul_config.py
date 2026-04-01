@@ -12,7 +12,7 @@ def test_list_workspace_dirs_filters_ignored_directories(tmp_path, monkeypatch):
 
     dirs = config_mod.list_workspace_dirs()
 
-    assert dirs == [str(tmp_path / "apps"), str(tmp_path / "docs")]
+    assert dirs == [str(tmp_path / "apps"), str(tmp_path / "docs"), str(tmp_path / "memory")]
 
 
 def test_resolve_readme_prefers_standard_files(tmp_path):

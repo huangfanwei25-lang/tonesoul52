@@ -120,6 +120,12 @@ def test_check_tdd_uses_extended_pytest_timeout(monkeypatch):
 
     assert result.status == "pass"
     assert captured["timeout"] == verify_7d.TDD_PYTEST_TIMEOUT
+    assert captured["command"] == [
+        verify_7d.sys.executable,
+        "scripts/run_test_tier.py",
+        "--tier",
+        verify_7d.DEFAULT_TDD_TEST_TIER,
+    ]
 
 
 def test_check_ddd_freshness_passes_for_recent_discussion(tmp_path):

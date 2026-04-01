@@ -222,6 +222,12 @@ jobs:
       with:
         fetch-depth: 0
 
+    - name: Fetch attribution backfill ref for scheduled checks
+      if: github.event_name == 'schedule'
+      run: |
+        git fetch --no-tags --depth=1 origin \
+          feat/env-perception-attribution-backfill:refs/remotes/origin/feat/env-perception-attribution-backfill
+
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
@@ -235,7 +241,15 @@ jobs:
         PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
         PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
       run: |
-        python scripts/verify_incremental_commit_attribution.py --strict
+        if [ "$EVENT_NAME" = "schedule" ]; then
+          python scripts/verify_incremental_commit_attribution.py \
+            --strict \
+            --head-sha origin/feat/env-perception-attribution-backfill \
+            --equivalent-ref "$GITHUB_SHA" \
+            --require-tree-equivalence
+        else
+          python scripts/verify_incremental_commit_attribution.py --strict
+        fi
 
     - name: Upload commit attribution report
       if: always()

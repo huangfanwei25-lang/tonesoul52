@@ -284,7 +284,7 @@ EXACT_PRODUCERS: dict[str, dict[str, str]] = {
         "source": "scripts/verify_incremental_commit_attribution.py",
     },
     "docs/status/commit_attribution_backfill_branch.json": {
-        "command": "python scripts/verify_incremental_commit_attribution.py --strict --head-sha feat/env-perception-attribution-backfill --equivalent-ref HEAD --artifact-path docs/status/commit_attribution_backfill_branch.json",
+        "command": "python scripts/verify_incremental_commit_attribution.py --strict --head-sha feat/env-perception-attribution-backfill --equivalent-ref HEAD --require-tree-equivalence --artifact-path docs/status/commit_attribution_backfill_branch.json",
         "source": "scripts/verify_incremental_commit_attribution.py",
     },
     "docs/status/commit_attribution_base_switch_latest.json": {

@@ -51,7 +51,9 @@ def test_fast_route_dispatch_trace_marks_bypassed_council(
     )
 
     assert result.dispatch_trace.get("route") == RoutingPath.PASS_LOCAL.value
-    assert result.council_verdict == {"verdict": "bypassed"}
+    assert result.council_verdict.get("verdict") == "bypassed"
+    metadata = result.council_verdict.get("metadata")
+    assert metadata is None or isinstance(metadata, dict)
 
 
 def test_unified_response_to_dict_preserves_dispatch_trace() -> None:

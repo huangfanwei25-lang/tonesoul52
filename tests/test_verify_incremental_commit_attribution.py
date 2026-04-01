@@ -252,3 +252,13 @@ def test_build_report_marks_tree_equivalence_false_when_compare_ref_differs(monk
     assert report["equivalence"]["tree_equal"] is False
     assert report["equivalence"]["head_tree"] == "tree-123"
     assert report["equivalence"]["compare_tree"] == "tree-999"
+
+
+def test_tree_equivalence_satisfied_only_when_tree_equal_true() -> None:
+    assert incremental._tree_equivalence_satisfied(
+        {"equivalence": {"tree_equal": True}}
+    ) is True
+    assert incremental._tree_equivalence_satisfied(
+        {"equivalence": {"tree_equal": False}}
+    ) is False
+    assert incremental._tree_equivalence_satisfied({}) is False

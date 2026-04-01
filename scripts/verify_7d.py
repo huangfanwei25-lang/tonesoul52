@@ -32,6 +32,7 @@ AUDIT_WEB_BASE_ENV = "TONESOUL_AUDIT_WEB_BASE"
 AUDIT_API_BASE_ENV = "TONESOUL_AUDIT_API_BASE"
 COMMAND_TIMEOUT_ENV = "TONESOUL_VERIFY_COMMAND_TIMEOUT"
 TDD_PYTEST_TIMEOUT_ENV = "TONESOUL_TDD_PYTEST_TIMEOUT"
+TDD_TEST_TIER_ENV = "TONESOUL_TDD_TEST_TIER"
 
 
 def _resolve_timeout_env(name: str, default: int) -> int:
@@ -47,6 +48,7 @@ def _resolve_timeout_env(name: str, default: int) -> int:
 
 DEFAULT_COMMAND_TIMEOUT = _resolve_timeout_env(COMMAND_TIMEOUT_ENV, 1200)
 TDD_PYTEST_TIMEOUT = _resolve_timeout_env(TDD_PYTEST_TIMEOUT_ENV, 2400)
+DEFAULT_TDD_TEST_TIER = os.environ.get(TDD_TEST_TIER_ENV, "blocking").strip() or "blocking"
 
 
 @dataclass
@@ -177,7 +179,7 @@ def _check_ddd_freshness(path: Path, stale_days: int) -> CheckResult:
 
 
 def _check_tdd() -> CheckResult:
-    cmd = [sys.executable, "-m", "pytest", str(Path("tests/")), "-q"]
+    cmd = [sys.executable, "scripts/run_test_tier.py", "--tier", DEFAULT_TDD_TEST_TIER]
     ok, _, stderr, code = _run(cmd, timeout=TDD_PYTEST_TIMEOUT)
     if ok:
         return _result("TDD", "BLOCKING", "pass", cmd)

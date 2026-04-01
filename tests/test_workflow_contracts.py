@@ -374,6 +374,7 @@ def test_post_release_monitor_workflow_triggers_and_checks() -> None:
     assert "python scripts/verify_web_api.py" in smoke_cmd
     assert "--same-origin" in smoke_cmd
     assert "--elisa-scenario" in smoke_cmd
+    assert smoke_step.get("continue-on-error") is True
 
     preflight_step = _find_step(steps, "Run governance preflight probe")
     preflight_cmd = preflight_step.get("run", "")
@@ -382,6 +383,9 @@ def test_post_release_monitor_workflow_triggers_and_checks() -> None:
     assert "--strict" in preflight_cmd
     assert "--same-origin" in preflight_cmd
     assert "--probe-governance-status" in preflight_cmd
+
+    note_step = _find_step(steps, "Note deferred public-launch same-origin degradation")
+    assert note_step.get("if") == "steps.same_origin_smoke.outcome == 'failure'"
 
 
 def test_post_release_monitor_workflow_uploads_logs() -> None:
@@ -394,6 +398,26 @@ def test_post_release_monitor_workflow_uploads_logs() -> None:
     assert isinstance(path_value, str)
     assert "post_release_web_api.log" in path_value
     assert "post_release_preflight.log" in path_value
+
+
+def test_commit_attribution_workflow_uses_backfill_schedule_path() -> None:
+    payload = _load_yaml(Path(".github/workflows/test.yml"))
+    steps = _job_steps(payload, "commit_attribution")
+
+    fetch_step = _find_step(steps, "Fetch attribution backfill ref for scheduled checks")
+    assert fetch_step.get("if") == "github.event_name == 'schedule'"
+    fetch_cmd = fetch_step.get("run", "")
+    assert isinstance(fetch_cmd, str)
+    assert "feat/env-perception-attribution-backfill" in fetch_cmd
+
+    run_step = _find_step(steps, "Evaluate incremental commit attribution trailers (blocking)")
+    run_cmd = run_step.get("run", "")
+    assert isinstance(run_cmd, str)
+    assert 'if [ "$EVENT_NAME" = "schedule" ]' in run_cmd
+    assert "--head-sha origin/feat/env-perception-attribution-backfill" in run_cmd
+    assert '--equivalent-ref "$GITHUB_SHA"' in run_cmd
+    assert "--require-tree-equivalence" in run_cmd
+    assert "python scripts/verify_incremental_commit_attribution.py --strict" in run_cmd
 
 
 def test_friction_shadow_workflow_triggers_and_blocking_runners() -> None:

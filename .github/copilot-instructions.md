@@ -10,9 +10,9 @@
 
 在閱讀或修改程式前，先依序做：
 
-1. 讀 [`../AI_ONBOARDING.md`](../AI_ONBOARDING.md)
-2. 讀 [`../docs/AI_QUICKSTART.md`](../docs/AI_QUICKSTART.md)
-3. 讀 [`../DESIGN.md`](../DESIGN.md)
+1. 讀 `AI_ONBOARDING.md`
+2. 讀 `docs/AI_QUICKSTART.md`
+3. 讀 `DESIGN.md`
 4. 執行：
 
 ```bash
@@ -86,13 +86,13 @@ tonesoul/
 
 | 文件 | 用途 |
 |------|------|
-| [`../AGENTS.md`](../AGENTS.md) | 全域協作哲學、禁區、三次失敗規則 |
-| [`../AI_ONBOARDING.md`](../AI_ONBOARDING.md) | AI 入口總覽 |
-| [`../docs/AI_QUICKSTART.md`](../docs/AI_QUICKSTART.md) | session-start / packet / claim 的最小正確流程 |
-| [`../DESIGN.md`](../DESIGN.md) | 系統為什麼分層、哪些 invariant 不能漂移 |
-| [`../task.md`](../task.md) | 當前 phase、短板與下一桶 |
-| [`../docs/architecture/TONESOUL_SHARED_R_MEMORY_OPERATIONS_CONTRACT.md`](../docs/architecture/TONESOUL_SHARED_R_MEMORY_OPERATIONS_CONTRACT.md) | R-memory 操作節奏 |
-| [`../docs/architecture/TONESOUL_WORKING_STYLE_CONTINUITY_CONTRACT.md`](../docs/architecture/TONESOUL_WORKING_STYLE_CONTINUITY_CONTRACT.md) | 共享作風的 apply / import / limit 邊界 |
+| `AGENTS.md` | 全域協作哲學、禁區、三次失敗規則 |
+| `AI_ONBOARDING.md` | AI 入口總覽 |
+| `docs/AI_QUICKSTART.md` | session-start / packet / claim 的最小正確流程 |
+| `DESIGN.md` | 系統為什麼分層、哪些 invariant 不能漂移 |
+| `task.md` | 當前 phase、短板與下一桶 |
+| `docs/architecture/TONESOUL_SHARED_R_MEMORY_OPERATIONS_CONTRACT.md` | R-memory 操作節奏 |
+| `docs/architecture/TONESOUL_WORKING_STYLE_CONTINUITY_CONTRACT.md` | 共享作風的 apply / import / limit 邊界 |
 
 ---
 

@@ -27,6 +27,9 @@ def test_build_scenarios_writes_expected_fixture_files(tmp_path: Path) -> None:
         "claim_conflict",
         "stale_compaction",
         "contested_dossier",
+        "session_end_lifecycle",
+        "concurrent_claims",
+        "working_style_reinforced",
     ]
     for scenario in scenarios:
         assert scenario["state_path"].exists()
@@ -54,6 +57,10 @@ def test_run_validation_wave_returns_expected_summaries(tmp_path: Path) -> None:
     assert "Latest council dossier confidence is descriptive_only" in by_name["contested_dossier"]["receiver_alerts"][0]
     assert "Latest council dossier carries minority dissent" in by_name["contested_dossier"]["receiver_alerts"][1]
     assert "Latest council dossier indicates potential evolution suppression" in by_name["contested_dossier"]["receiver_alerts"][2]
+    assert by_name["session_end_lifecycle"]["readiness"] == "pass"
+    assert by_name["concurrent_claims"]["readiness"] == "needs_clarification"
+    assert by_name["working_style_reinforced"]["working_style_validation"] == "sufficient"
+    assert by_name["working_style_reinforced"]["receiver_alert_count"] == 3
 
 
 def test_render_markdown_contains_key_columns(tmp_path: Path) -> None:
@@ -85,4 +92,4 @@ def test_main_writes_optional_outputs(tmp_path: Path, capsys) -> None:
 
     assert json_out.exists()
     assert markdown_out.exists()
-    assert len(payload) == 4
+    assert len(payload) == 7

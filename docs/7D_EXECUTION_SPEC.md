@@ -19,7 +19,7 @@
 
 | 維度 | 最小檢查 | 指令/來源 | Gate |
 |---|---|---|---|
-| TDD | 全量測試 | `pytest tests/ -q` | BLOCKING |
+| TDD | blocking 測試層 | `python scripts/run_test_tier.py --tier blocking` | BLOCKING |
 | RDD | 對抗測試 baseline（至少 20 cases） | `pytest tests/red_team/ -q` | SOFT_FAIL（先） |
 | DDD | 討論通道資料完整性（curated） | `python tools/agent_discussion_tool.py audit --path memory/agent_discussion_curated.jsonl` | BLOCKING |
 | DDD | 討論通道資料新鮮度（7 天） | `python scripts/verify_7d.py` 內建檢查 | SOFT_FAIL |
@@ -58,17 +58,19 @@ python tools/agent_discussion_tool.py append-lessons --author codex --topic phas
 
 ### 現況
 - 已有：
-  - Python tests
+  - ToneSoul CI 主流程中的 full regression
   - `web_api_smoke`（整鏈 smoke）
 - 缺口：
   - 尚無單一入口彙整 7D 成績與狀態
   - RDD 僅有 baseline，仍需擴充攻擊樣本
+  - 月度 consolidation 一度重複執行完整 `pytest tests -q`
 
 ### 建議
 1. 新增 `scripts/verify_7d.py` 作為 7D 聚合入口。
 2. CI 先分兩層：
    - `7d-core`（TDD/DDD/XDD/GDD/CDD）：BLOCKING
    - `7d-extended`（RDD/SDH）：SOFT_FAIL
+   - 其中 `TDD` 使用 `python scripts/run_test_tier.py --tier blocking`，而完整 `pytest tests -q` 保留在主 CI / burn-in，不再由 monthly consolidation 重複執行第二次。
 3. RDD 成熟後，把 `7d-extended` 中 RDD 提升為 BLOCKING。
 4. 增加 `scripts/verify_docs_consistency.py`，鎖定文件與 gate 常數一致性。
 5. 每月執行 `scripts/run_monthly_consolidation.py` 產生 `docs/status/*.json` 作為狀態來源。

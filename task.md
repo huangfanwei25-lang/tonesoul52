@@ -1550,6 +1550,12 @@
 - [x] fix observer-window wording drift so runtime readouts stop leaking mojibake into contested-state claims
 **Success Criteria**: Lower-context GitHub/Copilot agents can enter through a current-state repo instruction file, observer-window output no longer leaks broken characters, and the useful external Agent-OS lessons survive in one bounded ToneSoul-native distillation note rather than a messy external assessment dump.
 
+## Phase 735: Test Stratification And Monthly Gate De-Duplication (2026-04-02, completed)
+- [x] fix stale blockers until `pytest tests -q` and `run_monthly_consolidation.py --strict` both return green again
+- [x] add one curated test-tier runner so operational gates stop hard-coding ad hoc pytest command walls
+- [x] move `verify_7d.py` TDD from duplicate full-suite execution to a bounded blocking tier while leaving the full regression in main CI
+**Success Criteria**: Monthly consolidation no longer acts as a second full-suite lane, blocking TDD remains explicit and reproducible, and full regression still survives in ToneSoul CI / burn-in.
+
 ## Phase 733: ToneSoul LLM Classic Paper Map (2026-03-30, completed)
 - [x] distill a selective classic-paper map that keeps only the LLM papers still relevant to ToneSoul architecture, continuity, retrieval, governance, adaptation, and council design
 - [x] connect the map back to ToneSoul-native follow-up contracts instead of turning it into a generic literature museum wall

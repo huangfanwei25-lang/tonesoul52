@@ -24,6 +24,7 @@ def _sample_start_payload() -> dict:
         "task_track_hint": {"suggested_track": "feature_track", "claim_recommendation": "required"},
         "deliberation_mode_hint": {"suggested_mode": "standard_council"},
         "compact_diagnostic": "[ToneSoul] file | R=0.04/stable | readiness=pass | aegis=compromised",
+        "packet": _sample_packet_payload(),
     }
 
 
@@ -90,13 +91,9 @@ def test_run_preflight_reports_go(monkeypatch, tmp_path: Path) -> None:
         encoding="utf-8",
     )
 
-    payloads = [_sample_start_payload(), _sample_packet_payload()]
-
-    monkeypatch.setattr(module, "_run_json_command", lambda command: payloads.pop(0))
     monkeypatch.setattr(
-        module,
-        "_run_text_command",
-        lambda command: "[ToneSoul] file | R=0.04/stable | agent=beta-preflight | readiness=pass",
+        "scripts.start_agent_session.run_session_start_bundle",
+        lambda **kwargs: _sample_start_payload(),
     )
 
     result = module.run_preflight(agent="beta-preflight", validation_wave_path=validation_path)
@@ -127,9 +124,12 @@ def test_run_preflight_holds_when_launch_defaults_drift(monkeypatch, tmp_path: P
     packet_payload["project_memory_summary"]["launch_claim_posture"]["current_tier"] = "internal_alpha"
     packet_payload["coordination_mode"]["launch_default_mode"] = "redis-live"
 
-    payloads = [_sample_start_payload(), packet_payload]
-    monkeypatch.setattr(module, "_run_json_command", lambda command: payloads.pop(0))
-    monkeypatch.setattr(module, "_run_text_command", lambda command: "compact")
+    start_payload = _sample_start_payload()
+    start_payload["packet"] = packet_payload
+    monkeypatch.setattr(
+        "scripts.start_agent_session.run_session_start_bundle",
+        lambda **kwargs: start_payload,
+    )
 
     result = module.run_preflight(agent="beta-preflight", validation_wave_path=validation_path)
 

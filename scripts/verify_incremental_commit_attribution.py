@@ -224,6 +224,11 @@ def build_report(
     return report
 
 
+def _tree_equivalence_satisfied(report: dict[str, Any]) -> bool:
+    equivalence = report.get("equivalence")
+    return isinstance(equivalence, dict) and equivalence.get("tree_equal") is True
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Verify incremental commit attribution trailers.")
     parser.add_argument(
@@ -272,6 +277,11 @@ def build_parser() -> argparse.ArgumentParser:
         default="",
         help="Optional ref to compare tree-equivalence against the inspected head revision.",
     )
+    parser.add_argument(
+        "--require-tree-equivalence",
+        action="store_true",
+        help="Return non-zero unless --equivalent-ref resolves to a tree-equivalent revision.",
+    )
     return parser
 
 
@@ -311,6 +321,10 @@ def main() -> int:
         encoding="utf-8",
     )
     print(json.dumps(report, ensure_ascii=False, indent=2))
+
+    if args.require_tree_equivalence and not _tree_equivalence_satisfied(report):
+        print("::error::Expected tree-equivalent compare ref when --require-tree-equivalence is enabled.")
+        return 1
 
     if args.strict and not report["ok"]:
         print("::error::Missing Agent/Trace-Topic trailers in incremental commits.")
