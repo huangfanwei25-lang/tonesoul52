@@ -2023,3 +2023,275 @@ When done, report back with:
 - the corrected count triplet for `docs/architecture/*`, `TONESOUL_*`, and `TONESOUL_*_CONTRACT.md`
 - the single highest-value cleanup recommendation that still survives this reality pass
 - the single previous recommendation that should now be retired
+
+---
+
+## Follow-Up Extension: Low-Drift Anchor, Observer Window, And Successor Coherence Program
+
+This is a large, multi-stage, documentation-only program intended to absorb at least 6 focused hours.
+
+It exists because ToneSoul now has:
+
+- session-start bundle
+- packet / import posture / receiver parity
+- observer window
+- closeout grammar
+- successor/hot-memory program docs
+
+But a deeper question remains open:
+
+> how should a later AI reconstruct the current center of gravity, distinguish stable from merely smooth handoff, and know what is safe to continue without silently mutating the wrong layer?
+
+This extension should not implement runtime behavior.
+It should give Codex a repo-grounded, high-resolution map for the next runtime waves.
+
+## Why This Fits Claude
+
+This program benefits from a long-context synthesis agent because it requires:
+
+- comparing many adjacent continuity surfaces without collapsing them together
+- tracing parent-child authority between packet, import posture, observer window, compaction, subject snapshot, and docs
+- naming recurrent successor misreads before Codex turns them into tighter runtime guards
+- writing dense but bounded contracts and scenario maps instead of another philosophy lane
+
+## Program Goal
+
+Produce a successor-coherence map that lets a later AI answer all of these quickly:
+
+1. what is truly low-drift right now
+2. what is only advisory or resumability memory
+3. what kind of closeout is visible
+4. when a smooth handoff is actually incomplete
+5. which surfaces may influence continuation
+6. which surfaces must never be silently promoted
+
+## Mandatory Scope
+
+You must inspect at minimum:
+
+- `DESIGN.md`
+- `AI_ONBOARDING.md`
+- `docs/AI_QUICKSTART.md`
+- `task.md`
+- `docs/architecture/TONESOUL_SUCCESSOR_COLLABORATION_AND_HOT_MEMORY_CONTRACT.md`
+- `docs/architecture/TONESOUL_MIRROR_RUPTURE_FAIL_STOP_AND_LOW_DRIFT_ANCHOR_CONTRACT.md`
+- `docs/architecture/TONESOUL_SHARED_R_MEMORY_OPERATIONS_CONTRACT.md`
+- `docs/architecture/TONESOUL_WORKING_STYLE_CONTINUITY_CONTRACT.md`
+- `tonesoul/runtime_adapter.py`
+- `tonesoul/observer_window.py`
+- `scripts/start_agent_session.py`
+- `scripts/end_agent_session.py`
+- `scripts/save_compaction.py`
+- `tests/test_observer_window.py`
+- `tests/test_start_agent_session.py`
+- `tests/test_end_agent_session.py`
+- `docs/plans/tonesoul_successor_collaboration_and_hot_memory_program_2026-04-02.md`
+- `docs/plans/tonesoul_subsystem_parity_and_gap_map_2026-04-02.md`
+- `docs/plans/wfgy_avatar_deep_analysis_2026-04-02.md`
+
+You may inspect more, but do not turn this into a blind full-repo survey.
+
+## Program Deliverables
+
+### Deliverable AN
+
+Create:
+
+- `docs/architecture/TONESOUL_LOW_DRIFT_ANCHOR_SOURCE_PRECEDENCE_CONTRACT.md`
+
+This should define:
+
+- which surfaces are allowed to contribute to a low-drift anchor
+- what precedence order they should have
+- what disqualifies a surface from anchor use
+- what states a candidate anchor item may take
+  - `stable`
+  - `contested`
+  - `stale`
+  - `retired`
+
+For each source family include:
+
+- source surface
+- authority role
+- freshness expectations
+- anchor eligibility
+- disqualifiers
+- promotion risk
+- one-line rationale
+
+### Deliverable AO
+
+Create:
+
+- `docs/architecture/TONESOUL_OBSERVER_WINDOW_MISREAD_AND_CORRECTION_MAP.md`
+
+This should be scenario-first.
+It must catalog the most likely ways a later AI will misread observer-window and session-start surfaces.
+
+Each row should include:
+
+- misread pattern
+- what the agent sees
+- what it is likely to incorrectly conclude
+- the correct reading
+- which parent surface should be checked
+- whether Codex should fix this with wording, readout shape, or runtime guard
+
+At minimum include scenarios for:
+
+- descriptive council data read as calibrated truth
+- advisory compaction read as completed work
+- working-style continuity read as shared identity
+- subject snapshot read as canonical selfhood
+- observer-window stable bucket read as sovereign truth
+- launch tier read as runtime permission
+
+### Deliverable AP
+
+Create:
+
+- `docs/architecture/TONESOUL_SUCCESSOR_MUTATION_BOUNDARY_AND_CLOSEOUT_CONTRACT.md`
+
+This should define the successor-side mutation boundary using current ToneSoul-native terms.
+
+At minimum classify:
+
+- when a successor may continue work directly
+- when it must pause and review
+- when it must fail-stop
+- when human choice is required
+- when closeout status should block further mutation
+
+This contract must explicitly align:
+
+- `ack / apply / promote`
+- `complete / partial / blocked / underdetermined`
+- parent/child non-equivalence
+- shell / resolver / execution separation
+
+### Deliverable AQ
+
+Create:
+
+- `docs/architecture/TONESOUL_HOT_MEMORY_DECAY_AND_COMPRESSION_MAP.md`
+
+This should map:
+
+- which hot-memory surfaces should decay quickly
+- which should remain medium-lived
+- which should be treated as long-lived but non-canonical
+- which should never be used as compression targets
+
+For each surface include:
+
+- default lifespan expectation
+- compression safety
+- what can be summarized away
+- what must remain explicit
+- what should move into local residue instead of shared continuity
+
+### Deliverable AR
+
+Optional, only if clearly justified:
+
+- `docs/plans/tonesoul_successor_hot_memory_followup_candidates_2026-04-02.md`
+
+Only create this if the four mandatory deliverables naturally imply 3-6 bounded future waves.
+Do not create a giant perfect-system roadmap.
+
+## Required Method
+
+Do this in stages.
+
+### Stage 0: Current-center reconstruction
+
+Reconstruct the current successor path from the live repo, not from prior memory:
+
+- onboarding
+- quickstart
+- design center
+- session-start
+- observer window
+- deeper packet / diagnose
+
+Explicitly mark where a successor currently still has to infer too much.
+
+### Stage 1: Source precedence pass
+
+Measure which surfaces are actually carrying low-drift information today, and which only look important because they are smooth summaries.
+
+Do not assume that because a surface is recent, it is anchor-worthy.
+
+### Stage 2: Misread-pattern pass
+
+List the most dangerous successor misreads in current ToneSoul.
+Prioritize misreads that would cause:
+
+- false completion
+- false authority
+- false identity continuity
+- false launch maturity
+
+### Stage 3: Mutation-boundary pass
+
+Write the successor mutation boundary using current control-plane language, not foreign names.
+Make it explicit where continuation is safe, where it is conditional, and where it is prohibited.
+
+### Stage 4: Decay/compression pass
+
+Map which hot-memory surfaces should decay, which should persist, and which should never be collapsed behind a smooth summary.
+
+### Stage 5: Handoff synthesis
+
+Return one concise high-signal handoff that tells Codex:
+
+- the single most dangerous successor confusion still present
+- the single cleanest low-drift anchor rule to implement next
+- the single continuity surface most likely to be over-promoted
+- the single closeout/mutation boundary that should be made more explicit in runtime next
+
+## Program Boundaries
+
+Do not do these things in this extension:
+
+- do not modify runtime code
+- do not modify packet schema
+- do not modify `task.md`
+- do not modify `README.md`, `AI_ONBOARDING.md`, or `docs/AI_QUICKSTART.md`
+- do not modify `DESIGN.md`
+- do not rewrite current contracts unless a narrow factual correction is absolutely necessary
+- do not invent new foreign naming systems
+- do not turn this into a full launch-roadmap rewrite
+
+This is a mapping and boundary program.
+Codex owns runtime implementation.
+
+## Non-Goals
+
+This extension is not asking for:
+
+- another philosophy treatise
+- another personality ontology
+- a hidden-thought transfer design
+- a total observer-window redesign
+- a new shared-self theory
+
+## Acceptance Criteria
+
+This extension is successful if:
+
+- a later agent can tell which current surfaces truly deserve low-drift treatment
+- successor misreads are named in a way Codex can directly act on
+- closeout and mutation boundaries are mapped without touching runtime
+- hot-memory decay/compression is made explicit enough that future cleanup or compaction does not become accidental amnesia
+
+## Handoff Back To Codex
+
+When done, report back with:
+
+- the single most dangerous successor confusion still present in ToneSoul
+- the 3 strongest low-drift anchor candidates today
+- the 3 surfaces most likely to be over-promoted by a careless later agent
+- the cleanest closeout-status rule Codex should tighten next
+- the single bounded runtime follow-up you recommend first

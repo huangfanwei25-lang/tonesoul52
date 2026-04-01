@@ -1600,3 +1600,9 @@
 - [x] teach `save_compaction.py` and `end_agent_session.py` to emit explicit or derived closeout state, including stop reason, unresolved items, and human-input requirement
 - [x] surface closeout interpretation in session-start, observer-window, packet compactions, and operator guidance so later agents do not misread unresolved work as finished
 **Success Criteria**: A later agent can inspect the latest compaction/session-end surfaces and immediately tell whether the previous session actually finished cleanly, is blocked, or remains underdetermined, without replaying chat history.
+
+## Phase 742: Claude Successor Coherence Mega-Pass (2026-04-02)
+- [x] extend `docs/plans/claude_deep_structure_authority_work_order_2026-03-27.md` with one long successor/hot-memory mapping program that stays documentation-only and does not collide with Codex runtime work
+- [x] keep the pass focused on low-drift anchor precedence, observer-window misreads, successor mutation boundaries, closeout interpretation, and hot-memory decay/compression
+- [x] keep the program parked as a Claude-owned sidecar so `task.md` remains a short board rather than another sprawling roadmap
+**Success Criteria**: Claude has one large, multi-stage, repo-grounded work order that can run in parallel without overwriting the active runtime short board, and later Codex work can consume its output as bounded architecture guidance instead of chat-memory folklore.
