@@ -428,6 +428,12 @@ def test_test_workflow_uses_black_gate_script_and_uploads_artifact() -> None:
     payload = _load_yaml(Path(".github/workflows/test.yml"))
     steps = _job_steps(payload, "lint")
 
+    checkout_step = steps[0]
+    assert checkout_step.get("uses") == "actions/checkout@v4"
+    checkout_with = checkout_step.get("with", {})
+    assert isinstance(checkout_with, dict)
+    assert checkout_with.get("fetch-depth") == 0
+
     black_step = _find_step(steps, "Check formatting with black gate")
     black_cmd = black_step.get("run", "")
     assert isinstance(black_cmd, str)
@@ -446,6 +452,12 @@ def test_test_workflow_uses_black_gate_script_and_uploads_artifact() -> None:
 def test_legacy_ci_workflow_uses_black_gate_script_and_uploads_artifact() -> None:
     payload = _load_yaml(LEGACY_CI_WORKFLOW_PATH)
     steps = _job_steps(payload, "lint")
+
+    checkout_step = steps[0]
+    assert checkout_step.get("uses") == "actions/checkout@v4"
+    checkout_with = checkout_step.get("with", {})
+    assert isinstance(checkout_with, dict)
+    assert checkout_with.get("fetch-depth") == 0
 
     black_step = _find_step(steps, "Check formatting with black gate")
     black_cmd = black_step.get("run", "")

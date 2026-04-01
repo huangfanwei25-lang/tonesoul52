@@ -102,6 +102,23 @@ def _verify_revision(revision: str) -> dict[str, Any]:
     return payload
 
 
+def _is_synthetic_merge_commit(payload: dict[str, Any]) -> bool:
+    summary = str(payload.get("summary") or "")
+    changed_files = payload.get("changed_files")
+    if not isinstance(changed_files, list):
+        return False
+    return summary.startswith("Merge ") and not changed_files
+
+
+def _normalize_payload(payload: dict[str, Any]) -> dict[str, Any]:
+    normalized = dict(payload)
+    if _is_synthetic_merge_commit(normalized):
+        normalized["ok"] = True
+        normalized["exempted"] = True
+        normalized["exemption_reason"] = "synthetic_merge_commit"
+    return normalized
+
+
 def resolve_revision_plan(
     *,
     event_name: str,
@@ -202,7 +219,7 @@ def build_report(
     missing: list[dict[str, str]] = []
     for revision in plan["checked_revisions"]:
         try:
-            payload = _verify_revision(str(revision))
+            payload = _normalize_payload(_verify_revision(str(revision)))
         except RuntimeError as exc:
             payload = {
                 "rev": str(revision),

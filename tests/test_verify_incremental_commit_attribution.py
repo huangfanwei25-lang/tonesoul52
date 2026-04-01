@@ -176,6 +176,49 @@ def test_build_report_keeps_unexpected_revision_error_in_context(monkeypatch) ->
     assert report["missing"][0]["error"] == "git log failed"
 
 
+def test_build_report_exempts_synthetic_merge_commit(monkeypatch) -> None:
+    monkeypatch.setattr(
+        incremental,
+        "resolve_revision_plan",
+        lambda **kwargs: {
+            "event_name": "pull_request",
+            "mode": "anchored_incremental",
+            "range_spec": "anchor..HEAD",
+            "base_ref": "anchor",
+            "checked_revisions": ["merge-1"],
+        },
+    )
+    monkeypatch.setattr(
+        incremental,
+        "_verify_revision",
+        lambda revision: {
+            "rev": revision,
+            "ok": False,
+            "summary": "Merge feature-head into base-head",
+            "has_agent": False,
+            "has_topic": False,
+            "changed_files": [],
+            "exempted": False,
+            "exemption_reason": None,
+        },
+    )
+
+    report = incremental.build_report(
+        event_name="pull_request",
+        head_sha="HEAD",
+        before_sha=None,
+        pr_base_sha="base",
+        pr_head_sha="head",
+        local_base_candidates=["origin/master"],
+    )
+
+    assert report["ok"] is True
+    assert report["missing_count"] == 0
+    assert report["results"][0]["ok"] is True
+    assert report["results"][0]["exempted"] is True
+    assert report["results"][0]["exemption_reason"] == "synthetic_merge_commit"
+
+
 def test_build_report_can_include_tree_equivalence(monkeypatch) -> None:
     monkeypatch.setattr(
         incremental,
