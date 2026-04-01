@@ -66,6 +66,25 @@ def _build_canonical_center() -> dict:
     return build_canonical_center(task_text=task_text)
 
 
+def _build_mutation_preflight(
+    *,
+    readiness: dict,
+    task_track_hint: dict,
+    deliberation_mode_hint: dict,
+    import_posture: dict,
+    canonical_center: dict,
+) -> dict:
+    from tonesoul.mutation_preflight import build_mutation_preflight
+
+    return build_mutation_preflight(
+        readiness=readiness,
+        task_track_hint=task_track_hint,
+        deliberation_mode_hint=deliberation_mode_hint,
+        import_posture=import_posture,
+        canonical_center=canonical_center,
+    )
+
+
 def _resolve_sidecar(root: Path, name: str) -> Path:
     canonical = root / ".aegis" / name
     legacy = root / name
@@ -1024,6 +1043,13 @@ def run_session_start_bundle(
         readiness=readiness,
     )
     import_posture = _build_import_posture(packet=packet, readiness=readiness)
+    mutation_preflight = _build_mutation_preflight(
+        readiness=readiness,
+        task_track_hint=task_track_hint,
+        deliberation_mode_hint=deliberation_mode_hint,
+        import_posture=import_posture,
+        canonical_center=canonical_center,
+    )
     return {
         "contract_version": "v1",
         "bundle": "session_start",
@@ -1043,6 +1069,7 @@ def run_session_start_bundle(
         "import_posture": import_posture,
         "receiver_parity": import_posture.get("receiver_parity", {}),
         "canonical_center": canonical_center,
+        "mutation_preflight": mutation_preflight,
         "working_style_playbook": working_style_playbook,
         "working_style_validation": working_style_validation,
         "claim_view": {

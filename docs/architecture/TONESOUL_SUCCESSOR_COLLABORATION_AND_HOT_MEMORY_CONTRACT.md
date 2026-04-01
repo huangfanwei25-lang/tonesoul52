@@ -184,6 +184,7 @@ Target states:
 - task track hint
 - deliberation mode hint
 - claims
+- mutation preflight
 - packet freshness
 - import posture
 - receiver parity
@@ -234,6 +235,20 @@ Within the first 10 minutes, a successor AI should be able to answer:
 7. What current launch tier may I honestly claim?
 
 If the current stack cannot answer those quickly, hot-memory design is not good enough yet.
+
+## Successor Mutation Preflight
+
+Successors should not infer mutation permission from observer prose alone.
+
+The session-start bundle should expose one bounded `mutation_preflight` that answers:
+
+- where shared mutation is blocked, claim-first, or locally safe
+- which write lanes are already hook-guarded in runtime
+- which surfaces remain human-gated
+- where the next bounded write-hook follow-up belongs
+
+This surface is advisory shell/resolver guidance.
+It does not replace runtime locks, Aegis checks, or human-owned task-board ratification.
 
 ## External Patterns Worth Keeping
 

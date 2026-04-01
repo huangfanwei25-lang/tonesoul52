@@ -93,10 +93,10 @@
   - collaborator-beta preflight, entry-validation, and discoverable beta-facing status surfaces
   - low-drift anchor / observer-window baseline (Day 1 complete): `tonesoul/observer_window.py`, `scripts/run_observer_window.py`, `tests/test_observer_window.py`, `docs/status/observer_window_latest.{json,md}`
 - Current short board:
-  - Phase 746: map mutation-preflight / write-hook chain without reopening launch wording or new ontology lanes
+  - Phase 747: surface subsystem parity / gap posture so successors can see what is baseline, partial, or deferred without reading long plan files
 - After that:
   - Day 3: rotation checkpoint — freeze observer-window bucket if baseline-complete, name next shortest board
-  - only after Phase 746 closes should the bucket rotate
+  - only after Phase 747 closes should the bucket rotate
   - only after broader beta use should public-launch maturity be reconsidered
   - only then further optimization
 
@@ -1626,8 +1626,14 @@
 - [x] keep the result bounded to layer hygiene instead of inventing a new memory ontology
 **Success Criteria**: Later agents can tell which hot-memory layers remain operational, which should only be replayed, and which should be quarantined instead of leaned on.
 
-## Phase 746: Successor Mutation Preflight And Hook Map (2026-04-02, planned)
-- [ ] map current mutate/write/publish decision points across session-end, memory writes, task-board changes, and launch-facing claim language
-- [ ] classify which points need hooks, which only need clearer readout posture, and which remain human-gated
-- [ ] keep the result concrete enough for runtime follow-up without reopening launch wording or theory-heavy contracts
+## Phase 746: Successor Mutation Preflight And Hook Map (2026-04-02)
+- [x] map current mutate/write/publish decision points across session-end, memory writes, task-board changes, and launch-facing claim language
+- [x] classify which points need hooks, which only need clearer readout posture, and which remain human-gated
+- [x] keep the result concrete enough for runtime follow-up without reopening launch wording or theory-heavy contracts
 **Success Criteria**: A successor can tell where mutation discipline actually lives, which writes are guarded today, and where the next bounded hook/readout follow-up belongs.
+
+## Phase 747: Subsystem Parity Readout And Gap Surfacing (2026-04-02, planned)
+- [ ] distill the existing subsystem parity / gap planning map into one bounded successor-facing readout
+- [ ] expose `baseline / partial / deferred / beta-usable` for the highest-signal subsystem families without reopening maturity theory
+- [ ] keep the result tied to evidence posture and launch honesty instead of turning it into a second roadmap
+**Success Criteria**: A successor entering through normal surfaces can see which major subsystems are baseline-complete, partial, or deferred without reading long planning docs first.

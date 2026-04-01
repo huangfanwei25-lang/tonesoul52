@@ -206,6 +206,10 @@ This keeps the bucket successor-facing and operational:
 - then correct the highest-friction misread
 - only then tighten decay/compression and mutation discipline
 
+Current rotation note:
+
+- once `Phase 746` is baseline-complete, rotate the short board out of observer/hot-memory hygiene and into bounded subsystem parity readout
+
 ## What Not To Do
 
 - do not import external naming systems directly

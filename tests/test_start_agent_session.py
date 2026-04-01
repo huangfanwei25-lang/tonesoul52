@@ -185,6 +185,17 @@ def test_start_agent_session_emits_machine_readable_bundle(
     assert output["deliberation_mode_hint"]["claim_state"] == "active_collision"
     assert output["deliberation_mode_hint"]["readiness_state"] == "needs_clarification"
     assert output["deliberation_mode_hint"]["human_required"] is False
+    mutation_preflight = output["mutation_preflight"]
+    assert mutation_preflight["present"] is True
+    assert mutation_preflight["current_context"]["task_track"] == "feature_track"
+    assert mutation_preflight["current_context"]["claim_conflict_count"] == 1
+    assert mutation_preflight["next_followup"]["target"] == "shared_code_edit.path_overlap_preflight"
+    by_name = {item["name"]: item for item in mutation_preflight["decision_points"]}
+    assert by_name["shared_code_edit"]["posture"] == "coordinate_before_shared_edits"
+    assert by_name["claim_write"]["posture"] == "expected_on_shared_paths"
+    assert by_name["canonical_commit"]["posture"] == "aegis_locked_commit"
+    assert by_name["task_board_update"]["control_type"] == "human_gated"
+    assert by_name["launch_claim_language"]["posture"] == "bounded_collaborator_beta_only"
     assert output["working_style_playbook"]["present"] is False
     assert output["working_style_playbook"]["checklist"] == []
     assert (
@@ -1069,6 +1080,11 @@ def test_start_agent_session_cli_executes_directly(tmp_path: Path) -> None:
     assert (
         payload["canonical_center"]["successor_correction"]["highest_risk_misread"]
         == "observer_stable_is_execution_permission"
+    )
+    assert "mutation_preflight" in payload
+    assert (
+        payload["mutation_preflight"]["next_followup"]["target"]
+        == "shared_code_edit.path_overlap_preflight"
     )
     assert "working_style_playbook" in payload
     assert "working_style_validation" in payload
