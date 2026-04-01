@@ -1,86 +1,92 @@
-# Observer Window — Day 2 Validation Wave
+# Successor Entry Validation Wave
 
-> Generated at `2026-03-30T13:38:23Z`. Advisory only.
+> Generated at `2026-04-01T23:30:42Z`. Advisory only.
 
-**Status**: `needs_fix`  
-**Scenarios**: 4 | **Passed**: 37 | **Failed**: 1 | **High-friction fails**: 0
+**Status**: `pass`  
+**Scenarios**: 4 | **Passed**: 27 | **Failed**: 0 | **High-friction fails**: 0
 
 **Top friction scenario**: `none`  
 **Top friction checks**: `none`
 
-## ✅ Scenario: `clean_state`
+## Scenario: `clean_pass`
 
-- Passed: 9 | Failed: 0 | High-friction: 0
-- Counts: `{'stable': 5, 'contested': 1, 'stale': 0}`
-- Summary: `observer_window stable=5 contested=1 stale=0 delta_has_updates=False`
-
-| Check | Result | Friction |
-|-------|--------|---------|
-| `stable_bucket_nonempty` | pass | high |
-| `contested_bucket_nonempty` | pass | high |
-| `summary_has_stable_count` | pass | medium |
-| `summary_has_contested_count` | pass | medium |
-| `summary_has_stale_count` | pass | medium |
-| `receiver_note_present` | pass | low |
-| `stable_has_launch_tier` | pass | medium |
-| `stale_is_empty_in_clean_state` | pass | medium |
-| `no_false_all_clear` | pass | high |
-
-## ❌ Scenario: `contested_dossier`
-
-- Passed: 9 | Failed: 1 | High-friction: 0
-- Counts: `{'stable': 5, 'contested': 2, 'stale': 0}`
-- Summary: `observer_window stable=5 contested=2 stale=0 delta_has_updates=False`
+- Passed: 6 | Failed: 0 | High-friction: 0
+- Readiness: `pass`
+- Misread focus: `observer_stable_is_execution_permission`
+- Correction: `observer stable != execution permission; confirm live_coordination first`
+- Counts: `{'stable': 5, 'contested': 0, 'stale': 2}`
+- Summary: `observer_window stable=5 contested=0 stale=2 delta_has_updates=True`
+- Ladder: `canonical_center=stable | low_drift_anchor=stale | live_coordination=stable | bounded_handoff=stable | working_identity=stale | replay_review=stable`
 
 | Check | Result | Friction |
 |-------|--------|---------|
-| `stable_bucket_nonempty` | pass | high |
-| `contested_bucket_nonempty` | pass | high |
-| `summary_has_stable_count` | pass | medium |
-| `summary_has_contested_count` | pass | medium |
-| `summary_has_stale_count` | pass | medium |
-| `receiver_note_present` | pass | low |
-| `stable_has_launch_tier` | pass | medium |
-| `contested_has_council_calibration` | pass | high |
-| `contested_has_suppression_note` | FAIL | medium |
-| `no_false_all_clear` | pass | high |
+| `canonical_center_present` | pass | high |
+| `short_board_visible` | pass | high |
+| `hot_memory_ladder_present` | pass | high |
+| `hot_memory_ladder_starts_with_canonical_center` | pass | medium |
+| `successor_correction_present` | pass | high |
+| `correction_mentions_live_coordination` | pass | high |
 
-## ✅ Scenario: `stale_compaction`
+## Scenario: `claim_conflict`
 
-- Passed: 10 | Failed: 0 | High-friction: 0
-- Counts: `{'stable': 4, 'contested': 2, 'stale': 3}`
-- Summary: `observer_window stable=4 contested=2 stale=3 delta_has_updates=False`
-
-| Check | Result | Friction |
-|-------|--------|---------|
-| `stable_bucket_nonempty` | pass | high |
-| `contested_bucket_nonempty` | pass | high |
-| `summary_has_stable_count` | pass | medium |
-| `summary_has_contested_count` | pass | medium |
-| `summary_has_stale_count` | pass | medium |
-| `receiver_note_present` | pass | low |
-| `stable_has_launch_tier` | pass | medium |
-| `stale_has_compaction` | pass | high |
-| `stale_has_absent_evidence` | pass | high |
-| `no_false_all_clear` | pass | high |
-
-## ✅ Scenario: `claim_collision`
-
-- Passed: 9 | Failed: 0 | High-friction: 0
-- Counts: `{'stable': 5, 'contested': 2, 'stale': 0}`
-- Summary: `observer_window stable=5 contested=2 stale=0 delta_has_updates=True`
+- Passed: 7 | Failed: 0 | High-friction: 0
+- Readiness: `needs_clarification`
+- Misread focus: `observer_stable_is_execution_permission`
+- Correction: `observer stable != execution permission; confirm live_coordination first`
+- Counts: `{'stable': 5, 'contested': 1, 'stale': 2}`
+- Summary: `observer_window stable=5 contested=1 stale=2 delta_has_updates=True`
+- Ladder: `canonical_center=stable | low_drift_anchor=stale | live_coordination=contested | bounded_handoff=stable | working_identity=stale | replay_review=stable`
 
 | Check | Result | Friction |
 |-------|--------|---------|
-| `stable_bucket_nonempty` | pass | high |
-| `contested_bucket_nonempty` | pass | high |
-| `summary_has_stable_count` | pass | medium |
-| `summary_has_contested_count` | pass | medium |
-| `summary_has_stale_count` | pass | medium |
-| `receiver_note_present` | pass | low |
-| `stable_has_launch_tier` | pass | medium |
-| `contested_has_claim_conflict` | pass | high |
-| `no_false_all_clear` | pass | high |
+| `canonical_center_present` | pass | high |
+| `short_board_visible` | pass | high |
+| `hot_memory_ladder_present` | pass | high |
+| `hot_memory_ladder_starts_with_canonical_center` | pass | medium |
+| `successor_correction_present` | pass | high |
+| `correction_mentions_live_coordination` | pass | high |
+| `claim_conflict_keeps_live_coordination_contested` | pass | high |
+
+## Scenario: `stale_compaction`
+
+- Passed: 7 | Failed: 0 | High-friction: 0
+- Readiness: `pass`
+- Misread focus: `observer_stable_is_execution_permission`
+- Correction: `observer stable != execution permission; confirm live_coordination first`
+- Counts: `{'stable': 5, 'contested': 4, 'stale': 3}`
+- Summary: `observer_window stable=5 contested=4 stale=3 delta_has_updates=True`
+- Ladder: `canonical_center=stable | low_drift_anchor=stale | live_coordination=stable | bounded_handoff=contested | working_identity=contested | replay_review=stable`
+
+| Check | Result | Friction |
+|-------|--------|---------|
+| `canonical_center_present` | pass | high |
+| `short_board_visible` | pass | high |
+| `hot_memory_ladder_present` | pass | high |
+| `hot_memory_ladder_starts_with_canonical_center` | pass | medium |
+| `successor_correction_present` | pass | high |
+| `correction_mentions_live_coordination` | pass | high |
+| `stale_compaction_keeps_bounded_handoff_contested` | pass | high |
+
+## Scenario: `contested_dossier`
+
+- Passed: 7 | Failed: 0 | High-friction: 0
+- Readiness: `pass`
+- Misread focus: `observer_stable_is_execution_permission`
+- Correction: `observer stable != execution permission; confirm live_coordination first`
+- Counts: `{'stable': 5, 'contested': 3, 'stale': 1}`
+- Summary: `observer_window stable=5 contested=3 stale=1 delta_has_updates=True`
+- Ladder: `canonical_center=stable | low_drift_anchor=stale | live_coordination=stable | bounded_handoff=contested | working_identity=stale | replay_review=contested`
+
+| Check | Result | Friction |
+|-------|--------|---------|
+| `canonical_center_present` | pass | high |
+| `short_board_visible` | pass | high |
+| `hot_memory_ladder_present` | pass | high |
+| `hot_memory_ladder_starts_with_canonical_center` | pass | medium |
+| `successor_correction_present` | pass | high |
+| `correction_mentions_live_coordination` | pass | high |
+| `contested_dossier_keeps_replay_review_contested` | pass | high |
 
 > [!NOTE]
-> This validation wave is advisory. High-friction failures indicate places where a fresh agent may misread stable vs contested. Fix only the highest-friction misunderstanding per Day 2 plan.
+> This validation wave is advisory. It checks whether a fresh successor can see the canonical center,
+> the hot-memory ladder, and the explicit correction that observer stable output is not execution permission.

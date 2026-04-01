@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-01T19:01:59Z",
+  "generated_at": "2026-04-01T23:30:41Z",
   "canonical_center": {
     "present": true,
     "parent_surfaces": [
@@ -7,15 +7,25 @@
       "DESIGN.md"
     ],
     "receiver_rule": "Treat the canonical center as parent planning truth. Observer/readout children may orient continuation, but they do not override task.md or DESIGN.md.",
+    "successor_correction": {
+      "highest_risk_misread": "observer_stable_is_execution_permission",
+      "correction_rule": "Stable observer output is shell-order orientation only. Before shared edits, confirm live_coordination directly: check readiness status, visible claims, and bounded_handoff receiver obligation.",
+      "required_checks": [
+        "readiness.status",
+        "claim_view.claims",
+        "import_posture.surfaces.compactions.receiver_obligation"
+      ],
+      "summary_text": "observer stable != execution permission; confirm live_coordination first"
+    },
     "current_short_board": {
       "present": true,
       "status": "visible",
       "items": [
-        "Phase 743: add `canonical_center` and `hot_memory_ladder` so observer/start surfaces show parent truth vs child layer order explicitly",
-        "Phase 744: run successor-misread correction wave against observer-window and session-start entry, then tighten the highest-friction correction rule"
+        "Phase 745: map hot-memory decay/compression and quarantine posture once the ladder is legible",
+        "Phase 746: map mutation-preflight / write-hook chain without reopening launch wording or new ontology lanes"
       ],
       "source": "task.md > Water-Bucket Snapshot > Current short board",
-      "summary_text": "Phase 743: add `canonical_center` and `hot_memory_ladder` so observer/start surfaces show parent truth vs child layer order explicitly"
+      "summary_text": "Phase 745: map hot-memory decay/compression and quarantine posture once the ladder is legible"
     },
     "summary_text": "canonical_center short_board_items=2 source=task.md > Water-Bucket Snapshot > Current short board"
   },
@@ -138,9 +148,9 @@
   ],
   "stale": [
     {
-      "claim": "recent_traces are 181.9h old (threshold=48.0h)",
+      "claim": "recent_traces are 186.3h old (threshold=48.0h)",
       "evidence_source": "import_posture.recent_traces.freshness_hours",
-      "detail": "freshness_hours=181.9"
+      "detail": "freshness_hours=186.3"
     }
   ],
   "delta_summary": {

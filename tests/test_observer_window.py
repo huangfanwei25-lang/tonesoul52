@@ -618,6 +618,12 @@ class TestCanonicalCenterAndHotMemoryLadder:
             "Phase 744: observer-window misread correction",
         ]
 
+    def test_canonical_center_exposes_successor_correction(self):
+        correction = self.anchor["canonical_center"]["successor_correction"]
+        assert correction["highest_risk_misread"] == "observer_stable_is_execution_permission"
+        assert "confirm live_coordination first" in correction["summary_text"]
+        assert "claim_view.claims" in correction["required_checks"]
+
     def test_hot_memory_ladder_has_expected_layers(self):
         layers = self.anchor["hot_memory_ladder"]["layers"]
         assert [layer["layer"] for layer in layers] == [

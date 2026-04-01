@@ -1,273 +1,221 @@
 {
-  "generated_at": "2026-03-30T13:38:23Z",
-  "overall_ok": false,
-  "overall_status": "needs_fix",
+  "generated_at": "2026-04-01T23:30:42Z",
+  "overall_ok": true,
+  "overall_status": "pass",
   "scenario_count": 4,
-  "total_passed": 37,
-  "total_failed": 1,
+  "total_passed": 27,
+  "total_failed": 0,
   "total_high_friction_fails": 0,
   "top_friction_scenario": "none",
   "top_friction_checks": [],
+  "summary_text": "successor_entry_validation status=pass scenarios=4 passed=27 failed=0 high_friction=0 top_friction_scenario=none",
   "scenarios": [
     {
-      "scenario": "clean_state",
-      "passed": 9,
+      "scenario": "clean_pass",
+      "passed": 6,
       "failed": 0,
       "high_friction_fails": 0,
       "findings": [
         {
-          "check": "stable_bucket_nonempty",
+          "check": "canonical_center_present",
           "result": "pass",
           "friction": "high"
         },
         {
-          "check": "contested_bucket_nonempty",
+          "check": "short_board_visible",
           "result": "pass",
           "friction": "high"
         },
         {
-          "check": "summary_has_stable_count",
+          "check": "hot_memory_ladder_present",
+          "result": "pass",
+          "friction": "high"
+        },
+        {
+          "check": "hot_memory_ladder_starts_with_canonical_center",
           "result": "pass",
           "friction": "medium"
         },
         {
-          "check": "summary_has_contested_count",
+          "check": "successor_correction_present",
           "result": "pass",
-          "friction": "medium"
+          "friction": "high"
         },
         {
-          "check": "summary_has_stale_count",
-          "result": "pass",
-          "friction": "medium"
-        },
-        {
-          "check": "receiver_note_present",
-          "result": "pass",
-          "friction": "low"
-        },
-        {
-          "check": "stable_has_launch_tier",
-          "result": "pass",
-          "friction": "medium"
-        },
-        {
-          "check": "stale_is_empty_in_clean_state",
-          "result": "pass",
-          "friction": "medium"
-        },
-        {
-          "check": "no_false_all_clear",
+          "check": "correction_mentions_live_coordination",
           "result": "pass",
           "friction": "high"
         }
       ],
+      "readiness": "pass",
+      "anchor_counts": {
+        "stable": 5,
+        "contested": 0,
+        "stale": 2
+      },
+      "anchor_summary": "observer_window stable=5 contested=0 stale=2 delta_has_updates=True",
+      "ladder_summary": "canonical_center=stable | low_drift_anchor=stale | live_coordination=stable | bounded_handoff=stable | working_identity=stale | replay_review=stable",
+      "misread_focus": "observer_stable_is_execution_permission",
+      "correction_summary": "observer stable != execution permission; confirm live_coordination first"
+    },
+    {
+      "scenario": "claim_conflict",
+      "passed": 7,
+      "failed": 0,
+      "high_friction_fails": 0,
+      "findings": [
+        {
+          "check": "canonical_center_present",
+          "result": "pass",
+          "friction": "high"
+        },
+        {
+          "check": "short_board_visible",
+          "result": "pass",
+          "friction": "high"
+        },
+        {
+          "check": "hot_memory_ladder_present",
+          "result": "pass",
+          "friction": "high"
+        },
+        {
+          "check": "hot_memory_ladder_starts_with_canonical_center",
+          "result": "pass",
+          "friction": "medium"
+        },
+        {
+          "check": "successor_correction_present",
+          "result": "pass",
+          "friction": "high"
+        },
+        {
+          "check": "correction_mentions_live_coordination",
+          "result": "pass",
+          "friction": "high"
+        },
+        {
+          "check": "claim_conflict_keeps_live_coordination_contested",
+          "result": "pass",
+          "friction": "high"
+        }
+      ],
+      "readiness": "needs_clarification",
       "anchor_counts": {
         "stable": 5,
         "contested": 1,
-        "stale": 0
+        "stale": 2
       },
-      "anchor_summary": "observer_window stable=5 contested=1 stale=0 delta_has_updates=False",
-      "council_calibration_status": "n/a",
-      "compaction_receiver_obligation": "see_import_posture",
-      "receiver_alert_count": 0
-    },
-    {
-      "scenario": "contested_dossier",
-      "passed": 9,
-      "failed": 1,
-      "high_friction_fails": 0,
-      "findings": [
-        {
-          "check": "stable_bucket_nonempty",
-          "result": "pass",
-          "friction": "high"
-        },
-        {
-          "check": "contested_bucket_nonempty",
-          "result": "pass",
-          "friction": "high"
-        },
-        {
-          "check": "summary_has_stable_count",
-          "result": "pass",
-          "friction": "medium"
-        },
-        {
-          "check": "summary_has_contested_count",
-          "result": "pass",
-          "friction": "medium"
-        },
-        {
-          "check": "summary_has_stale_count",
-          "result": "pass",
-          "friction": "medium"
-        },
-        {
-          "check": "receiver_note_present",
-          "result": "pass",
-          "friction": "low"
-        },
-        {
-          "check": "stable_has_launch_tier",
-          "result": "pass",
-          "friction": "medium"
-        },
-        {
-          "check": "contested_has_council_calibration",
-          "result": "pass",
-          "friction": "high"
-        },
-        {
-          "check": "contested_has_suppression_note",
-          "result": "FAIL",
-          "friction": "medium"
-        },
-        {
-          "check": "no_false_all_clear",
-          "result": "pass",
-          "friction": "high"
-        }
-      ],
-      "anchor_counts": {
-        "stable": 5,
-        "contested": 2,
-        "stale": 0
-      },
-      "anchor_summary": "observer_window stable=5 contested=2 stale=0 delta_has_updates=False",
-      "council_calibration_status": "n/a",
-      "compaction_receiver_obligation": "see_import_posture",
-      "receiver_alert_count": 0
+      "anchor_summary": "observer_window stable=5 contested=1 stale=2 delta_has_updates=True",
+      "ladder_summary": "canonical_center=stable | low_drift_anchor=stale | live_coordination=contested | bounded_handoff=stable | working_identity=stale | replay_review=stable",
+      "misread_focus": "observer_stable_is_execution_permission",
+      "correction_summary": "observer stable != execution permission; confirm live_coordination first"
     },
     {
       "scenario": "stale_compaction",
-      "passed": 10,
+      "passed": 7,
       "failed": 0,
       "high_friction_fails": 0,
       "findings": [
         {
-          "check": "stable_bucket_nonempty",
+          "check": "canonical_center_present",
           "result": "pass",
           "friction": "high"
         },
         {
-          "check": "contested_bucket_nonempty",
+          "check": "short_board_visible",
           "result": "pass",
           "friction": "high"
         },
         {
-          "check": "summary_has_stable_count",
-          "result": "pass",
-          "friction": "medium"
-        },
-        {
-          "check": "summary_has_contested_count",
-          "result": "pass",
-          "friction": "medium"
-        },
-        {
-          "check": "summary_has_stale_count",
-          "result": "pass",
-          "friction": "medium"
-        },
-        {
-          "check": "receiver_note_present",
-          "result": "pass",
-          "friction": "low"
-        },
-        {
-          "check": "stable_has_launch_tier",
-          "result": "pass",
-          "friction": "medium"
-        },
-        {
-          "check": "stale_has_compaction",
+          "check": "hot_memory_ladder_present",
           "result": "pass",
           "friction": "high"
         },
         {
-          "check": "stale_has_absent_evidence",
+          "check": "hot_memory_ladder_starts_with_canonical_center",
+          "result": "pass",
+          "friction": "medium"
+        },
+        {
+          "check": "successor_correction_present",
           "result": "pass",
           "friction": "high"
         },
         {
-          "check": "no_false_all_clear",
+          "check": "correction_mentions_live_coordination",
+          "result": "pass",
+          "friction": "high"
+        },
+        {
+          "check": "stale_compaction_keeps_bounded_handoff_contested",
           "result": "pass",
           "friction": "high"
         }
       ],
-      "anchor_counts": {
-        "stable": 4,
-        "contested": 2,
-        "stale": 3
-      },
-      "anchor_summary": "observer_window stable=4 contested=2 stale=3 delta_has_updates=False",
-      "council_calibration_status": "n/a",
-      "compaction_receiver_obligation": "see_import_posture",
-      "receiver_alert_count": 0
-    },
-    {
-      "scenario": "claim_collision",
-      "passed": 9,
-      "failed": 0,
-      "high_friction_fails": 0,
-      "findings": [
-        {
-          "check": "stable_bucket_nonempty",
-          "result": "pass",
-          "friction": "high"
-        },
-        {
-          "check": "contested_bucket_nonempty",
-          "result": "pass",
-          "friction": "high"
-        },
-        {
-          "check": "summary_has_stable_count",
-          "result": "pass",
-          "friction": "medium"
-        },
-        {
-          "check": "summary_has_contested_count",
-          "result": "pass",
-          "friction": "medium"
-        },
-        {
-          "check": "summary_has_stale_count",
-          "result": "pass",
-          "friction": "medium"
-        },
-        {
-          "check": "receiver_note_present",
-          "result": "pass",
-          "friction": "low"
-        },
-        {
-          "check": "stable_has_launch_tier",
-          "result": "pass",
-          "friction": "medium"
-        },
-        {
-          "check": "contested_has_claim_conflict",
-          "result": "pass",
-          "friction": "high"
-        },
-        {
-          "check": "no_false_all_clear",
-          "result": "pass",
-          "friction": "high"
-        }
-      ],
+      "readiness": "pass",
       "anchor_counts": {
         "stable": 5,
-        "contested": 2,
-        "stale": 0
+        "contested": 4,
+        "stale": 3
       },
-      "anchor_summary": "observer_window stable=5 contested=2 stale=0 delta_has_updates=True",
-      "council_calibration_status": "n/a",
-      "compaction_receiver_obligation": "see_import_posture",
-      "receiver_alert_count": 0
+      "anchor_summary": "observer_window stable=5 contested=4 stale=3 delta_has_updates=True",
+      "ladder_summary": "canonical_center=stable | low_drift_anchor=stale | live_coordination=stable | bounded_handoff=contested | working_identity=contested | replay_review=stable",
+      "misread_focus": "observer_stable_is_execution_permission",
+      "correction_summary": "observer stable != execution permission; confirm live_coordination first"
+    },
+    {
+      "scenario": "contested_dossier",
+      "passed": 7,
+      "failed": 0,
+      "high_friction_fails": 0,
+      "findings": [
+        {
+          "check": "canonical_center_present",
+          "result": "pass",
+          "friction": "high"
+        },
+        {
+          "check": "short_board_visible",
+          "result": "pass",
+          "friction": "high"
+        },
+        {
+          "check": "hot_memory_ladder_present",
+          "result": "pass",
+          "friction": "high"
+        },
+        {
+          "check": "hot_memory_ladder_starts_with_canonical_center",
+          "result": "pass",
+          "friction": "medium"
+        },
+        {
+          "check": "successor_correction_present",
+          "result": "pass",
+          "friction": "high"
+        },
+        {
+          "check": "correction_mentions_live_coordination",
+          "result": "pass",
+          "friction": "high"
+        },
+        {
+          "check": "contested_dossier_keeps_replay_review_contested",
+          "result": "pass",
+          "friction": "high"
+        }
+      ],
+      "readiness": "pass",
+      "anchor_counts": {
+        "stable": 5,
+        "contested": 3,
+        "stale": 1
+      },
+      "anchor_summary": "observer_window stable=5 contested=3 stale=1 delta_has_updates=True",
+      "ladder_summary": "canonical_center=stable | low_drift_anchor=stale | live_coordination=stable | bounded_handoff=contested | working_identity=stale | replay_review=contested",
+      "misread_focus": "observer_stable_is_execution_permission",
+      "correction_summary": "observer stable != execution permission; confirm live_coordination first"
     }
-  ],
-  "receiver_note": "This validation wave is advisory. High-friction failures indicate places where a fresh agent may misread stable vs contested. Fix only the highest-friction misunderstanding per Day 2 plan.",
-  "summary_text": "observer_window_validation status=needs_fix scenarios=4 passed=37 failed=1 high_friction=0 top_friction_scenario=none"
+  ]
 }

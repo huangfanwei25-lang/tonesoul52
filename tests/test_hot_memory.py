@@ -41,6 +41,10 @@ def test_build_canonical_center_marks_visible_short_board() -> None:
     assert payload["current_short_board"]["present"] is True
     assert payload["current_short_board"]["items"] == ["Phase 743: hot-memory ladder readout"]
     assert "short_board_items=1" in payload["summary_text"]
+    correction = payload["successor_correction"]
+    assert correction["highest_risk_misread"] == "observer_stable_is_execution_permission"
+    assert "confirm live_coordination first" in correction["summary_text"]
+    assert "readiness.status" in correction["required_checks"]
 
 
 def test_build_canonical_center_marks_missing_short_board() -> None:

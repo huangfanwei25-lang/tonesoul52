@@ -55,6 +55,20 @@ def build_canonical_center(*, task_text: str) -> dict[str, Any]:
             "Treat the canonical center as parent planning truth. "
             "Observer/readout children may orient continuation, but they do not override task.md or DESIGN.md."
         ),
+        "successor_correction": {
+            "highest_risk_misread": "observer_stable_is_execution_permission",
+            "correction_rule": (
+                "Stable observer output is shell-order orientation only. "
+                "Before shared edits, confirm live_coordination directly: check readiness status, visible claims, "
+                "and bounded_handoff receiver obligation."
+            ),
+            "required_checks": [
+                "readiness.status",
+                "claim_view.claims",
+                "import_posture.surfaces.compactions.receiver_obligation",
+            ],
+            "summary_text": "observer stable != execution permission; confirm live_coordination first",
+        },
         "current_short_board": {
             "present": short_board_present,
             "status": "visible" if short_board_present else "not_visible",

@@ -10,17 +10,15 @@ Usage:
     python scripts/run_observer_window.py --agent <your-id> --json-out docs/status/observer_window_latest.json
     python scripts/run_observer_window.py --agent <your-id> --markdown-out docs/status/observer_window_latest.md
 
-Authority: advisory only — output must not be promoted into canonical governance truth.
-Last Updated: 2026-03-30
+Authority: advisory only - output must not be promoted into canonical governance truth.
+Last Updated: 2026-04-02
 """
 
 from __future__ import annotations
 
 import argparse
-import io
 import json
 import sys
-from contextlib import redirect_stdout
 from pathlib import Path
 from typing import Any
 
@@ -53,13 +51,6 @@ def _build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def _quiet_call(fn, *args, **kwargs):
-    """Call a function while suppressing stdout (e.g. store init banners)."""
-    buffer = io.StringIO()
-    with redirect_stdout(buffer):
-        return fn(*args, **kwargs)
-
-
 def _write_json(path: Path, payload: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
@@ -84,11 +75,18 @@ def _render_markdown(anchor: dict[str, Any]) -> str:
     hot_memory_ladder = anchor.get("hot_memory_ladder") or {}
 
     lines.extend(["## Canonical Center", ""])
-    lines.append(f"- Parent surfaces: `{', '.join(canonical_center.get('parent_surfaces') or [])}`")
-    lines.append(f"- Receiver rule: `{canonical_center.get('receiver_rule', '')}`")
     lines.append(
-        f"- Current short board visible: `{current_short_board.get('present', False)}`"
+        f"- Parent surfaces: `{', '.join(canonical_center.get('parent_surfaces') or [])}`"
     )
+    lines.append(f"- Receiver rule: `{canonical_center.get('receiver_rule', '')}`")
+    correction = canonical_center.get("successor_correction") or {}
+    if correction:
+        lines.append(f"- Successor correction: `{correction.get('summary_text', '')}`")
+        lines.append(f"- Correction rule: `{correction.get('correction_rule', '')}`")
+        required_checks = correction.get("required_checks") or []
+        if required_checks:
+            lines.append(f"- Required checks: `{', '.join(required_checks)}`")
+    lines.append(f"- Current short board visible: `{current_short_board.get('present', False)}`")
     if current_short_board.get("items"):
         lines.append("- Current short board:")
         for item in current_short_board.get("items") or []:
@@ -104,9 +102,7 @@ def _render_markdown(anchor: dict[str, Any]) -> str:
     lines.append(f"- Receiver note: `{hot_memory_ladder.get('receiver_note', '')}`")
     lines.append("")
     for layer in hot_memory_ladder.get("layers") or []:
-        lines.append(
-            f"- `{layer.get('layer', 'unknown')}`: `{layer.get('status', 'unknown')}`"
-        )
+        lines.append(f"- `{layer.get('layer', 'unknown')}`: `{layer.get('status', 'unknown')}`")
         lines.append(f"  - sources: `{', '.join(layer.get('primary_sources') or [])}`")
         lines.append(f"  - receiver_rule: `{layer.get('receiver_rule', '')}`")
         lines.append(f"  - note: {layer.get('note', '')}")
@@ -114,37 +110,33 @@ def _render_markdown(anchor: dict[str, Any]) -> str:
         lines.append("- *(none)*")
     lines.append("")
 
-    # Stable
     lines.extend(["## Stable", "", f"({counts.get('stable', 0)} items)", ""])
     for item in anchor.get("stable") or []:
-        detail = f" — `{item['detail']}`" if item.get("detail") else ""
+        detail = f" - `{item['detail']}`" if item.get("detail") else ""
         lines.append(f"- **{item['claim']}**{detail}")
         lines.append(f"  - source: `{item['evidence_source']}`")
     if not anchor.get("stable"):
         lines.append("- *(none)*")
     lines.append("")
 
-    # Contested
     lines.extend(["## Contested", "", f"({counts.get('contested', 0)} items)", ""])
     for item in anchor.get("contested") or []:
-        detail = f" — `{item['detail']}`" if item.get("detail") else ""
+        detail = f" - `{item['detail']}`" if item.get("detail") else ""
         lines.append(f"- **{item['claim']}**{detail}")
         lines.append(f"  - source: `{item['evidence_source']}`")
     if not anchor.get("contested"):
         lines.append("- *(none)*")
     lines.append("")
 
-    # Stale
     lines.extend(["## Stale", "", f"({counts.get('stale', 0)} items)", ""])
     for item in anchor.get("stale") or []:
-        detail = f" — `{item['detail']}`" if item.get("detail") else ""
+        detail = f" - `{item['detail']}`" if item.get("detail") else ""
         lines.append(f"- **{item['claim']}**{detail}")
         lines.append(f"  - source: `{item['evidence_source']}`")
     if not anchor.get("stale"):
         lines.append("- *(none)*")
     lines.append("")
 
-    # Delta
     delta = anchor.get("delta_summary") or {}
     lines.extend(
         [
@@ -221,18 +213,14 @@ def run_observer_window(
     readiness = payload.get("readiness") or {}
     raw_import_posture = payload.get("import_posture") or {}
     canonical_center = payload.get("canonical_center") or {}
-    # _build_import_posture wraps surfaces under "surfaces" key;
-    # observer_window expects them at the top level
     import_posture = raw_import_posture.get("surfaces") or raw_import_posture
 
-    anchor = build_low_drift_anchor(
+    return build_low_drift_anchor(
         packet=packet,
         import_posture=import_posture,
         readiness=readiness,
         canonical_center=canonical_center,
     )
-
-    return anchor
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -252,9 +240,8 @@ def main(argv: list[str] | None = None) -> int:
     if args.json_out is not None:
         _write_json(args.json_out, anchor)
     if args.markdown_out is not None:
-        md = _render_markdown(anchor)
         args.markdown_out.parent.mkdir(parents=True, exist_ok=True)
-        args.markdown_out.write_text(md, encoding="utf-8")
+        args.markdown_out.write_text(_render_markdown(anchor), encoding="utf-8")
 
     print(json.dumps(anchor, indent=2, ensure_ascii=False))
     return 0

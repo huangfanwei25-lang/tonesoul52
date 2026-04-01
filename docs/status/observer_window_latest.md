@@ -1,6 +1,6 @@
 # ToneSoul Observer Window / Low-Drift Anchor
 
-> Generated at `2026-04-01T19:01:59Z`. Advisory only.
+> Generated at `2026-04-01T23:30:41Z`. Advisory only.
 
 **Summary**: `observer_window stable=5 contested=4 stale=1 delta_has_updates=True`
 
@@ -11,10 +11,13 @@
 
 - Parent surfaces: `task.md, DESIGN.md`
 - Receiver rule: `Treat the canonical center as parent planning truth. Observer/readout children may orient continuation, but they do not override task.md or DESIGN.md.`
+- Successor correction: `observer stable != execution permission; confirm live_coordination first`
+- Correction rule: `Stable observer output is shell-order orientation only. Before shared edits, confirm live_coordination directly: check readiness status, visible claims, and bounded_handoff receiver obligation.`
+- Required checks: `readiness.status, claim_view.claims, import_posture.surfaces.compactions.receiver_obligation`
 - Current short board visible: `True`
 - Current short board:
-  - Phase 743: add `canonical_center` and `hot_memory_ladder` so observer/start surfaces show parent truth vs child layer order explicitly
-  - Phase 744: run successor-misread correction wave against observer-window and session-start entry, then tighten the highest-friction correction rule
+  - Phase 745: map hot-memory decay/compression and quarantine posture once the ladder is legible
+  - Phase 746: map mutation-preflight / write-hook chain without reopening launch wording or new ontology lanes
 
 ## Hot-Memory Ladder
 
@@ -65,11 +68,11 @@
 
 (4 items)
 
-- **council confidence is descriptive_only; agreement does not equal calibrated accuracy** — `council dossier present but calibration_status not confirmed`
+- **council confidence is descriptive_only; agreement does not equal calibrated accuracy** - `council dossier present but calibration_status not confirmed`
   - source: `import_posture.council_dossier.dossier_interpretation`
-- **latest compaction has carry_forward promotion hazard; must_not_promote** — `hazards=1`
+- **latest compaction has carry_forward promotion hazard; must_not_promote** - `hazards=1`
   - source: `import_posture.compactions.promotion_hazards`
-- **latest compaction closeout is 'partial'; do not read the handoff as completed work** — `status=partial unresolved=0`
+- **latest compaction closeout is 'partial'; do not read the handoff as completed work** - `status=partial unresolved=0`
   - source: `import_posture.compactions.closeout_status`
 - **subject snapshot is advisory; must not be promoted into canonical identity**
   - source: `import_posture.subject_snapshot`
@@ -78,7 +81,7 @@
 
 (1 items)
 
-- **recent_traces are 181.9h old (threshold=48.0h)** — `freshness_hours=181.9`
+- **recent_traces are 186.3h old (threshold=48.0h)** - `freshness_hours=186.3`
   - source: `import_posture.recent_traces.freshness_hours`
 
 ## Delta Since Last Seen
