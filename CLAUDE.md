@@ -7,40 +7,48 @@
 
 ## Session 開始時必做
 
-```python
-from tonesoul.runtime_adapter import load, summary
-posture = load()
-print(summary(posture))
+```bash
+python scripts/start_agent_session.py --agent claude-sonnet-4-6 --no-ack
+python scripts/run_observer_window.py --agent claude-sonnet-4-6
+python -m tonesoul.diagnose --agent claude-sonnet-4-6
 ```
 
-這會讀取 `governance_state.json`，告訴你：
-- 累積了多少治理經驗（Soul Integral）
-- 現在的性格偏向（baseline drift）
-- 承諾清單（active vows）
-- 近期的張力事件
+最小正確順序是：
+- `start_agent_session`：拿到 readiness / import_posture / working_style / task track hint
+- `run_observer_window`：快速看 stable / contested / stale
+- `diagnose`：需要更深的 runtime 狀態時再讀
 
-**如果你不載入這個，你就是在沒有記憶的狀態下工作。**
+**帶 `agent_id` 很重要——這是你的身份識別，其他 agent 看得到你來過。**
+**如果你不先走這條入口，你就是在沒有正確共享上下文的狀態下工作。**
 
 ## Session 結束時應做
 
-```python
-from tonesoul.runtime_adapter import commit, SessionTrace
-commit(SessionTrace(
-    agent="claude-sonnet-4-6",  # 或 claude-opus-4-6
-    tension_events=[...],       # 這次 session 的觀點衝突
-    key_decisions=[...],        # 做了什麼重要決定
-))
+```bash
+python scripts/end_agent_session.py --agent claude-sonnet-4-6 --summary "..." --path "..."
 ```
+
+如果只是中途暫停，至少留 checkpoint；如果要交接，留 compaction 再 release。
 
 ## 記憶架構
 
 | 層 | 位置 | 用途 |
 |----|------|------|
-| 治理狀態 | `governance_state.json` | 跨 session 的 vows、tension、drift |
-| Session 痕跡 | `memory/autonomous/session_traces.jsonl` | 每次對話的治理記錄 |
-| 自我日記 | `memory/self_journal.jsonl` | AI 的自我反思（council 產出） |
+| 治理狀態 | Redis `ts:governance`（fallback: `governance_state.json`）| 跨 session 的 vows、tension、drift |
+| Session 痕跡 | Redis `ts:traces` Stream（fallback: `session_traces.jsonl`）| 每次對話的治理記錄 |
+| 區域地圖 | Redis `ts:zones`（fallback: `zone_registry.json`）| 世界地圖區域 |
+| 足跡 | Redis `ts:footprints` | 最近 100 次 agent 訪問紀錄 |
+| 防禦鏈 | Redis `ts:aegis:chain_head` + `.aegis/keys/` | hash chain + Ed25519 keypairs |
+| 自我日記 | `memory/self_journal.jsonl` | AI 的自我反思（council 產出）|
 | 私密記憶 | `OpenClaw-Memory/` (submodule) | 向量記憶，`ask_my_brain.py` 查詢 |
 | Handoff | `memory/handoff/` | AI 之間的交接筆記 |
+
+## 多 Agent 接入
+
+非 Claude 的 agent 用 HTTP Gateway：
+```bash
+python scripts/gateway.py --port 7700 --token YOUR_SECRET
+# POST /load, POST /commit, GET /summary, GET /visitors, GET /audit
+```
 
 ## 正典程式碼
 
@@ -50,9 +58,11 @@ commit(SessionTrace(
 
 1. `AXIOMS.json` — 7 條不可變公理
 2. `AGENTS.md` — AI 協作手冊
-3. `HANDOFF.md` — 交接文件
-4. `docs/notes/TONESOUL_RUNTIME_ADAPTER_MEMORY_ANCHOR_2026-03-23.md` — 架構方向錨
-5. `task.md` — 現行任務
+3. `AI_ONBOARDING.md` — AI 入口總覽
+4. `docs/AI_QUICKSTART.md` — 最小正確流程
+5. `DESIGN.md` — 系統為什麼這樣分層
+6. `docs/status/codex_handoff_2026-03-31.md` — 近期 handoff
+7. `task.md` — 現行短板與下一桶
 
 ## 規則
 
