@@ -1561,3 +1561,36 @@
 - [x] keep scheduled/full-repo Black visibility as advisory telemetry instead of a permanent red baseline
 - [x] align workflow contracts and script-level tests so the gate is reproducible outside GitHub
 **Success Criteria**: PR/push CI only blocks on formatting drift introduced by the current change set, scheduled runs still expose repo-wide drift without becoming a chronic red gate, and the rule is encoded in one script plus workflow tests instead of duplicated shell walls.
+
+## Parked Strategic Program: Successor Collaboration And Hot-Memory Coherence (2026-04-02)
+- Status: planning-approved, not the only active short board until explicitly ratified into implementation.
+- Purpose: make bounded hot memory, observer/entry surfaces, and subsystem maturity legible enough that any successor AI can continue safely from repo-native surfaces without chat-history dependence.
+- Canonical planning surfaces:
+  - `docs/architecture/TONESOUL_SUCCESSOR_COLLABORATION_AND_HOT_MEMORY_CONTRACT.md`
+  - `docs/plans/tonesoul_successor_collaboration_and_hot_memory_program_2026-04-02.md`
+  - `docs/plans/tonesoul_subsystem_parity_and_gap_map_2026-04-02.md`
+- Guardrail: keep this program parked in docs until the next bounded bucket is explicitly activated; do not let it silently overwrite the current short board.
+
+## Phase 737: Successor Collaboration And Hot-Memory Contract (2026-04-02, completed)
+- [x] write one ToneSoul-native contract that explains how successors should enter, what hot-memory layers exist, which surfaces are parent truth vs child summaries, and what must never be silently promoted
+- [x] distill only the useful external patterns (`claw-code`, WFGY Avatar, Agent-OS, Seiryu, Genbu) without importing foreign naming systems
+- [x] keep the contract architectural and bounded instead of turning it into a new ontology or runtime law
+**Success Criteria**: A later agent can open one contract and understand how ToneSoul wants successor collaboration and hot-memory layering to work, what not to promote, and why current continuity still stops short of shared-self mythology.
+
+## Phase 738: ToneSoul Subsystem Parity And Gap Map (2026-04-02, completed)
+- [x] add one current-state parity/gap map that classifies key subsystems as `baseline`, `beta_usable`, `partial`, or `deferred`
+- [x] attach each subsystem to its strongest truth, main gap, next bounded move, and biggest overclaim risk
+- [x] keep the map ToneSoul-native and honest enough for collaborator-beta successors instead of imitating an external product parity ledger
+**Success Criteria**: A successor can open one map and immediately tell which lanes are good enough to trust operationally, which still need caution, and which overclaims to avoid when continuing work.
+
+## Phase 739: Successor / Hot-Memory Deep Program (2026-04-02, completed)
+- [x] write one detailed workstream program that turns current continuity surfaces into a successor-safe collaboration stack
+- [x] make the program explicit about target state, current failure modes, imported mechanism patterns, activation order, and non-goals
+- [x] keep the program parked under `docs/plans/` rather than silently replacing the current short board inside `task.md`
+**Success Criteria**: ToneSoul has one durable deep-planning document for successor collaboration and hot memory that any later AI can read to continue the direction without reconstructing it from chat history.
+
+## Phase 740: Current Successor Handoff Refresh (2026-04-02, completed)
+- [x] add a current handoff note that records today's CI closeout, current launch truth, new successor/hot-memory planning surfaces, and the next design pressure
+- [x] point repo-local AI entry instructions at the current handoff and new planning surfaces
+- [x] keep older handoff notes as lineage, not as the current default continuation story
+**Success Criteria**: A fresh successor can follow the normal repo entry stack, open one current handoff note, and know both what was truly fixed today and what long-horizon continuity work is now prepared without reopening older buckets by accident.

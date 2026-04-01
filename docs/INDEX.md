@@ -208,7 +208,15 @@ Use this when the question is not only what should be transferred, but how the e
 ## Current Continuation Surfaces
 
 - [plans/tonesoul_3day_execution_program_2026-03-30.md](plans/tonesoul_3day_execution_program_2026-03-30.md)
-- [status/codex_handoff_2026-03-30.md](status/codex_handoff_2026-03-30.md)
+- [status/codex_handoff_2026-04-02.md](status/codex_handoff_2026-04-02.md)
+- [plans/tonesoul_successor_collaboration_and_hot_memory_program_2026-04-02.md](plans/tonesoul_successor_collaboration_and_hot_memory_program_2026-04-02.md)
+- [plans/tonesoul_subsystem_parity_and_gap_map_2026-04-02.md](plans/tonesoul_subsystem_parity_and_gap_map_2026-04-02.md)
+
+## Successor Continuity And Hot Memory
+
+- [architecture/TONESOUL_SUCCESSOR_COLLABORATION_AND_HOT_MEMORY_CONTRACT.md](architecture/TONESOUL_SUCCESSOR_COLLABORATION_AND_HOT_MEMORY_CONTRACT.md)
+- [plans/tonesoul_successor_collaboration_and_hot_memory_program_2026-04-02.md](plans/tonesoul_successor_collaboration_and_hot_memory_program_2026-04-02.md)
+- [plans/tonesoul_subsystem_parity_and_gap_map_2026-04-02.md](plans/tonesoul_subsystem_parity_and_gap_map_2026-04-02.md)
 
 ## Documentation Convergence
 
@@ -418,6 +426,7 @@ Use these when a document claim sounds too clean, too rounded, or too shell-depe
 | [research/tonesoul_multi_agent_semantic_field_evidence_map_2026-03-26.md](research/tonesoul_multi_agent_semantic_field_evidence_map_2026-03-26.md) | official-source evidence map for semantic-field claims |
 | [research/tonesoul_llm_classic_paper_map_2026-03-30.md](research/tonesoul_llm_classic_paper_map_2026-03-30.md) | selective map of classic LLM papers that still matter for ToneSoul design decisions |
 | [plans/tonesoul_agent_os_pattern_distillation_2026-04-01.md](plans/tonesoul_agent_os_pattern_distillation_2026-04-01.md) | distilled Agent-OS patterns ToneSoul should learn without importing a foreign naming universe |
+| [plans/tonesoul_successor_collaboration_and_hot_memory_program_2026-04-02.md](plans/tonesoul_successor_collaboration_and_hot_memory_program_2026-04-02.md) | successor/hot-memory planning that translates useful external frameworks into ToneSoul-native workstreams |
 | [zenodo_publishing_guide.md](zenodo_publishing_guide.md) | Zenodo publishing guide |
 | [research/](research/) | research working directory (12 files) |
 

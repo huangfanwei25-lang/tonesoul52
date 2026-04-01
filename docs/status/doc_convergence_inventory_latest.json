@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-29T15:43:42Z",
+  "generated_at": "2026-04-01T18:09:18Z",
   "scope": {
     "include_roots": [
       "PARADOXES",
@@ -62,37 +62,37 @@
     ]
   },
   "metrics": {
-    "authored_file_count": 2302,
+    "authored_file_count": 2354,
     "collision_count": 27,
     "exact_match_collision_count": 16,
     "divergent_collision_count": 11,
-    "missing_purpose_count": 140,
+    "missing_purpose_count": 141,
     "missing_date_count": 101,
     "missing_purpose_sample_count": 40,
     "missing_date_sample_count": 40,
     "missing_metadata_sample_limit": 40
   },
   "category_counts": {
-    "architecture_doc": 54,
+    "architecture_doc": 57,
     "archive_doc": 1,
     "chronicle_doc": 48,
     "constitution_doc": 1,
     "docs_engineering_mirror": 16,
     "general_doc": 128,
-    "generated_status_artifact": 98,
+    "generated_status_artifact": 108,
     "knowledge_doc": 2,
     "law_doc": 60,
     "law_engineering_mirror": 15,
-    "memory_doc_or_data": 1608,
+    "memory_doc_or_data": 1628,
     "paradox_fixture": 8,
     "paradox_test_fixture": 8,
     "philosophy_doc": 27,
-    "plan_doc": 109,
+    "plan_doc": 123,
     "report_doc": 29,
-    "research_doc": 9,
+    "research_doc": 10,
     "root_entrypoint": 11,
     "spec_doc": 43,
-    "status_doc": 24,
+    "status_doc": 28,
     "test_doc_or_fixture": 3
   },
   "collision_family_counts": {
@@ -137,11 +137,11 @@
       "docs/plans/true_verification_task_scheduler_install_addendum_2026-03-08.md",
       "docs/plans/true_verification_task_scheduler_template_addendum_2026-03-08.md",
       "docs/plans/true_verification_task_status_addendum_2026-03-08.md",
+      "docs/plans/wfgy_avatar_deep_analysis_2026-04-02.md",
       "docs/plans/wfgy_problem_map_fit_for_tonesoul_2026-03-14.md",
       "docs/plans/worktree_settlement_mainline_addendum_2026-03-08.md",
       "docs/privacy_policy.md",
-      "docs/proposals/phase7_dream_engine.md",
-      "docs/releases/v1.0.0-stable-postmortem.md"
+      "docs/proposals/phase7_dream_engine.md"
     ],
     "date_hint": [
       "AGENTS.md",
@@ -829,24 +829,24 @@
       "basename": "7D_AUDIT_FRAMEWORK.md",
       "extension": ".md",
       "surface_type": "general_doc",
-      "size_bytes": 4074,
+      "size_bytes": 4250,
       "title": "為什麼是 7D",
       "purpose": "explain ToneSoul's seven-dimensional audit model for verification, accountability, and system calibration.",
       "status": "",
       "date_hint": "2026-03-23",
-      "content_sha256": "908b7f90c37b2d9110e01aebc0baee78f40a48c40582b7c92bde39198e5152e9"
+      "content_sha256": "b9043d0ebfaea59f4652ac9f83397669ba1c50c03d09d6daad85af1f9f01b336"
     },
     {
       "path": "docs/7D_EXECUTION_SPEC.md",
       "basename": "7D_EXECUTION_SPEC.md",
       "extension": ".md",
       "surface_type": "general_doc",
-      "size_bytes": 4230,
+      "size_bytes": 4556,
       "title": "Gate 等級",
       "purpose": "translate the 7D audit model into executable checks, CI gates, and operational enforcement posture.",
       "status": "",
       "date_hint": "2026-03-23",
-      "content_sha256": "d5e91d7cfd4f64e69b89aa89d66edc2507d1f6ecaeae7fe593f15545e178c156"
+      "content_sha256": "25d851c07e14195c9d86976a791cf3b859618de6bad089d4bc9fadd93e4fc73a"
     },
     {
       "path": "docs/academic_comparison.md",
@@ -901,12 +901,12 @@
       "basename": "AI_QUICKSTART.md",
       "extension": ".md",
       "surface_type": "general_doc",
-      "size_bytes": 7364,
+      "size_bytes": 7503,
       "title": "ToneSoul — AI 快速入場（60 秒版）",
       "purpose": "give any later AI instance the minimum working entry surface for ToneSoul before it starts reading the repo in bulk.",
       "status": "operational quickstart; subordinate to `AXIOMS.json`, executable code, tests, and canonical architecture contracts.",
       "date_hint": "2026-03-28",
-      "content_sha256": "1cac4a7e11265ff379d887002e2618deeb9b6e49ec9c481ade60a0beed280376"
+      "content_sha256": "f0b788f53994815537adab8b9c4a8e918d605d07e5af3bce0361722b7ebd6809"
     },
     {
       "path": "docs/AI_REFERENCE.md",
@@ -985,12 +985,12 @@
       "basename": "DOC_AUTHORITY_STRUCTURE_MAP.md",
       "extension": ".md",
       "surface_type": "architecture_doc",
-      "size_bytes": 10367,
+      "size_bytes": 10674,
       "title": "Documentation Authority Structure Map",
       "purpose": "define the retrieval-oriented structure of ToneSoul's documentation so later agents can tell entrypoints, canonical anchors, governance contracts, and generated status surfaces apart.",
       "status": "active documentation authority map for convergence cleanup.",
-      "date_hint": "2026-03-29",
-      "content_sha256": "6e8ea8fc8e419d2d28300dccaa07147113074dd8043a2fd28e915bf1d87dd444"
+      "date_hint": "2026-03-30",
+      "content_sha256": "e5df2f632e35e345a27713afdde39b2e66f4b74ac63f940a2fc9d15c1121cdf5"
     },
     {
       "path": "docs/architecture/ENGINEERING_MIRROR_OWNERSHIP_MAP.md",
@@ -1377,6 +1377,18 @@
       "content_sha256": "be87d03fcc8a5b3cfa286bb9ec7466bdfbcdc1a83e87fe650e4075185cdba53a"
     },
     {
+      "path": "docs/architecture/TONESOUL_MIRROR_RUPTURE_FAIL_STOP_AND_LOW_DRIFT_ANCHOR_CONTRACT.md",
+      "basename": "TONESOUL_MIRROR_RUPTURE_FAIL_STOP_AND_LOW_DRIFT_ANCHOR_CONTRACT.md",
+      "extension": ".md",
+      "surface_type": "architecture_doc",
+      "size_bytes": 10017,
+      "title": "ToneSoul Mirror Rupture, Fail-Stop, And Low-Drift Anchor Contract",
+      "purpose": "define when ToneSoul should stop smooth mirroring, refuse L3 filler, and return current reasoning to a validated anchor center instead of continuing on drifted premises.",
+      "status": "",
+      "date_hint": "2026-03-30",
+      "content_sha256": "745e2b2d9905262ff3ca70f7cef92ba2439db27bc3a8163143fede26071903b4"
+    },
+    {
       "path": "docs/architecture/TONESOUL_MULTI_AGENT_SEMANTIC_FIELD_CONTRACT.md",
       "basename": "TONESOUL_MULTI_AGENT_SEMANTIC_FIELD_CONTRACT.md",
       "extension": ".md",
@@ -1567,6 +1579,30 @@
       "status": "companion to TONESOUL_SUBJECT_REFRESH_BOUNDARY_CONTRACT.md",
       "date_hint": "2026-03-28",
       "content_sha256": "521d330ab7dd02df82c15641ba5d2a04cba8ba4ad0d41edfb2d026f3d4341559"
+    },
+    {
+      "path": "docs/architecture/TONESOUL_SUCCESSOR_COLLABORATION_AND_HOT_MEMORY_CONTRACT.md",
+      "basename": "TONESOUL_SUCCESSOR_COLLABORATION_AND_HOT_MEMORY_CONTRACT.md",
+      "extension": ".md",
+      "surface_type": "architecture_doc",
+      "size_bytes": 6843,
+      "title": "ToneSoul Successor Collaboration And Hot-Memory Contract",
+      "purpose": "define how ToneSoul should externalize enough hot memory, design center, and collaboration posture that a successor AI can continue work safely without hidden chat history.",
+      "status": "",
+      "date_hint": "2026-04-02",
+      "content_sha256": "06806b841ddff0168451e0774ee7cb7707ac83a62b72cd29e0c0c1350938b6e5"
+    },
+    {
+      "path": "docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md",
+      "basename": "TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md",
+      "extension": ".md",
+      "surface_type": "architecture_doc",
+      "size_bytes": 13434,
+      "title": "ToneSoul System Overview And Subsystem Guide",
+      "purpose": "explain what the whole ToneSoul stack is, why each load-bearing subsystem exists, and what later agents should not confuse it with.",
+      "status": "",
+      "date_hint": "2026-03-30",
+      "content_sha256": "9cbb4f0bcaa1c13c9916d17ca7fcc85538ef9e9be467a5f50ed418fee17f2bda"
     },
     {
       "path": "docs/architecture/TONESOUL_TASK_TRACK_AND_READINESS_CONTRACT.md",
@@ -2905,12 +2941,12 @@
       "basename": "INDEX.md",
       "extension": ".md",
       "surface_type": "general_doc",
-      "size_bytes": 28052,
-      "title": "ToneSoul Documentation Index",
+      "size_bytes": 32646,
+      "title": "AI Reading Stack",
       "purpose": "top-level documentation index for ToneSoul authority surfaces, operational packets, and convergence maps.",
       "status": "",
-      "date_hint": "2026-03-29",
-      "content_sha256": "5313c130f936cadc5f71290aae2559422c165f63fc9e54362fc3601050d29d13"
+      "date_hint": "2026-03-30",
+      "content_sha256": "e921149eccb302efbcc1926502a119b6bca85011e9ea0626db212c03b8b7ec29"
     },
     {
       "path": "docs/INTEGRATION_AUDIT_DRAFT.md",
@@ -4557,6 +4593,18 @@
       "content_sha256": "49a6f16de594484295d6090ec0a96e01f9bef2a94549ab15f2017f5d6c3d330e"
     },
     {
+      "path": "docs/plans/tonesoul_3day_execution_program_2026-03-30.md",
+      "basename": "tonesoul_3day_execution_program_2026-03-30.md",
+      "extension": ".md",
+      "surface_type": "plan_doc",
+      "size_bytes": 6541,
+      "title": "ToneSoul 3-Day Execution Program (2026-03-30)",
+      "purpose": "give the next agent a concrete 3-day continuation plan that can be executed from current repo truth instead of chat memory.",
+      "status": "active successor plan",
+      "date_hint": "2026-03-30",
+      "content_sha256": "ffecac201599e0193c016700f0aa1be4f584b7caf0de83b924c7901666ffbb6f"
+    },
+    {
       "path": "docs/plans/tonesoul_agent_enforcement_plan_2026-03-21.md",
       "basename": "tonesoul_agent_enforcement_plan_2026-03-21.md",
       "extension": ".md",
@@ -4567,6 +4615,30 @@
       "status": "",
       "date_hint": "2026-03-21",
       "content_sha256": "07a471bd01af144224a5c4d58525e6204966600a72bc83296e53b12f41f016bc"
+    },
+    {
+      "path": "docs/plans/tonesoul_agent_os_pattern_distillation_2026-04-01.md",
+      "basename": "tonesoul_agent_os_pattern_distillation_2026-04-01.md",
+      "extension": ".md",
+      "surface_type": "plan_doc",
+      "size_bytes": 4876,
+      "title": "ToneSoul Agent-OS Pattern Distillation (2026-04-01)",
+      "purpose": "keep only the external agent-architecture patterns that materially help ToneSoul's next design decisions.",
+      "status": "",
+      "date_hint": "2026-04-01",
+      "content_sha256": "50ca1b222a1de7bafcda05f4da09d1915e6e4d128845236f173f95e78d25c1b3"
+    },
+    {
+      "path": "docs/plans/tonesoul_collaborator_beta_go_nogo_review_2026-03-30.md",
+      "basename": "tonesoul_collaborator_beta_go_nogo_review_2026-03-30.md",
+      "extension": ".md",
+      "surface_type": "plan_doc",
+      "size_bytes": 5098,
+      "title": "ToneSoul Collaborator-Beta Go / No-Go Review (2026-03-30)",
+      "purpose": "make one explicit, evidence-based decision after Phases 721-725.",
+      "status": "",
+      "date_hint": "2026-03-30",
+      "content_sha256": "7ab4ea7cff54bac7f6b7dffc602981dbe4ea670a4ef707836ecb2b9b92ece128"
     },
     {
       "path": "docs/plans/tonesoul_continuity_followup_candidates_2026-03-29.md",
@@ -4591,6 +4663,18 @@
       "status": "",
       "date_hint": "2026-03-28",
       "content_sha256": "3d31f45e3708d882cbbc88e900d3729596e7f13b10750c4ea8a7389016bc1cef"
+    },
+    {
+      "path": "docs/plans/tonesoul_coordination_backend_decision_2026-03-30.md",
+      "basename": "tonesoul_coordination_backend_decision_2026-03-30.md",
+      "extension": ".md",
+      "surface_type": "plan_doc",
+      "size_bytes": 2659,
+      "title": "ToneSoul Coordination Backend Decision (2026-03-30)",
+      "purpose": "state one honest launch-default coordination story for the current ToneSoul stack.",
+      "status": "current backend decision note",
+      "date_hint": "2026-03-30",
+      "content_sha256": "d031faff09b8d813d0763b163fc936c2619938e35dcea18c662dfd1612ded00a"
     },
     {
       "path": "docs/plans/tonesoul_council_followup_candidates_2026-03-28.md",
@@ -4641,6 +4725,18 @@
       "content_sha256": "102d75b848e86d871ca47ff861fd50d812bf706369bea94d0ff14306426c87cd"
     },
     {
+      "path": "docs/plans/tonesoul_external_ecosystem_integration_roadmap_2026-04-01.md",
+      "basename": "tonesoul_external_ecosystem_integration_roadmap_2026-04-01.md",
+      "extension": ".md",
+      "surface_type": "plan_doc",
+      "size_bytes": 5127,
+      "title": "ToneSoul External Ecosystem Integration Roadmap (2026-04-01)",
+      "purpose": "preserve the useful external-integration ideas in one bounded plan file instead of leaving them as a dirty `task.md` branch.",
+      "status": "candidate roadmap, not current shortest board.",
+      "date_hint": "2026-04-01",
+      "content_sha256": "d828323ff8b89706898f7e696c00615f9aff7471048dff4aa6154c440eeb2de4"
+    },
+    {
       "path": "docs/plans/tonesoul_governance_to_meaningful_divergence_rfc_2026-02-23.md",
       "basename": "tonesoul_governance_to_meaningful_divergence_rfc_2026-02-23.md",
       "extension": ".md",
@@ -4663,6 +4759,54 @@
       "status": "",
       "date_hint": "2026-03-21",
       "content_sha256": "c13839ec698a56c294c76694f70d7b6ad4bf96ac75af823872aec2b18e155511"
+    },
+    {
+      "path": "docs/plans/tonesoul_launch_maturity_program_2026-03-30.md",
+      "basename": "tonesoul_launch_maturity_program_2026-03-30.md",
+      "extension": ".md",
+      "surface_type": "plan_doc",
+      "size_bytes": 8082,
+      "title": "ToneSoul Launch Maturity Program (2026-03-30)",
+      "purpose": "turn the current \"almost mature but not yet launch-safe\" judgment into a bounded execution program.",
+      "status": "active planning baseline",
+      "date_hint": "2026-03-30",
+      "content_sha256": "dcf0d1f3769a5793bfd2c92c82cbbb71a874f351c2e96957024df4ae5ade8893"
+    },
+    {
+      "path": "docs/plans/tonesoul_launch_operations_surface_2026-03-30.md",
+      "basename": "tonesoul_launch_operations_surface_2026-03-30.md",
+      "extension": ".md",
+      "surface_type": "plan_doc",
+      "size_bytes": 6308,
+      "title": "ToneSoul Launch Operations Surface (2026-03-30)",
+      "purpose": "give one current operator-facing launch posture for the present ToneSoul stack.",
+      "status": "current operations surface",
+      "date_hint": "2026-03-30",
+      "content_sha256": "33682fdfa053712c819bcd7efa2b83f6bccb8d8413df2622849974e807265e95"
+    },
+    {
+      "path": "docs/plans/tonesoul_launch_validation_matrix_2026-03-30.md",
+      "basename": "tonesoul_launch_validation_matrix_2026-03-30.md",
+      "extension": ".md",
+      "surface_type": "plan_doc",
+      "size_bytes": 4278,
+      "title": "ToneSoul Launch Validation Matrix (2026-03-30)",
+      "purpose": "define the minimum validation and decision surfaces for moving from internal alpha toward collaborator beta.",
+      "status": "",
+      "date_hint": "2026-03-30",
+      "content_sha256": "31b1815c889ffad59c17d3dbf4dd3f03f22787af7ebb4b679f65431d4e224086"
+    },
+    {
+      "path": "docs/plans/tonesoul_launch_workstream_breakdown_2026-03-30.md",
+      "basename": "tonesoul_launch_workstream_breakdown_2026-03-30.md",
+      "extension": ".md",
+      "surface_type": "plan_doc",
+      "size_bytes": 4499,
+      "title": "ToneSoul Launch Workstream Breakdown (2026-03-30)",
+      "purpose": "break the launch maturity program into concrete workstreams with tasks, risks, and done conditions.",
+      "status": "",
+      "date_hint": "2026-03-30",
+      "content_sha256": "8f8a20043e3cec9fc16466cfa80d0bc6810655611c68ca328f7e3a91a7ddac67"
     },
     {
       "path": "docs/plans/tonesoul_market_mirror_roadmap.md",
@@ -4713,6 +4857,18 @@
       "content_sha256": "bbc9193a7e505c456342aeee0e59b666ee7b7dc53364d4dfea65e96b920f6e48"
     },
     {
+      "path": "docs/plans/tonesoul_public_claim_honesty_gate_2026-03-30.md",
+      "basename": "tonesoul_public_claim_honesty_gate_2026-03-30.md",
+      "extension": ".md",
+      "surface_type": "plan_doc",
+      "size_bytes": 3242,
+      "title": "ToneSoul Public-Claim Honesty Gate (2026-03-30)",
+      "purpose": "keep launch and maturity language aligned with the current evidence ladder, council realism boundaries, and the explicit file-backed launch-default coordination story.",
+      "status": "",
+      "date_hint": "2026-03-30",
+      "content_sha256": "0b2f42dcc840d5a95e032b04b9eb9d630bb89c7acf634d0d03bbc722b2226154"
+    },
+    {
       "path": "docs/plans/tonesoul_stale_source_material_supersession_review_2026-03-29.md",
       "basename": "tonesoul_stale_source_material_supersession_review_2026-03-29.md",
       "extension": ".md",
@@ -4723,6 +4879,42 @@
       "status": "cleanup review",
       "date_hint": "2026-03-29",
       "content_sha256": "eb5e228618ecc0c48c538749dfa1122c981d50cac75f28ccadc68e96197764a4"
+    },
+    {
+      "path": "docs/plans/tonesoul_subsystem_parity_and_gap_map_2026-04-02.md",
+      "basename": "tonesoul_subsystem_parity_and_gap_map_2026-04-02.md",
+      "extension": ".md",
+      "surface_type": "plan_doc",
+      "size_bytes": 5643,
+      "title": "ToneSoul Subsystem Parity And Gap Map (2026-04-02)",
+      "purpose": "give successors one honest map of which subsystems are already usable, which are still partial, and which gaps matter most next.",
+      "status": "",
+      "date_hint": "2026-04-02",
+      "content_sha256": "651654d15ba3bced8fb98b2c613aac851582f78aba53a8598692218fb1d6998a"
+    },
+    {
+      "path": "docs/plans/tonesoul_successor_collaboration_and_hot_memory_program_2026-04-02.md",
+      "basename": "tonesoul_successor_collaboration_and_hot_memory_program_2026-04-02.md",
+      "extension": ".md",
+      "surface_type": "plan_doc",
+      "size_bytes": 7829,
+      "title": "ToneSoul Successor Collaboration And Hot-Memory Program (2026-04-02)",
+      "purpose": "turn the current continuity stack into a successor-safe collaboration system where any later AI can continue work from repo-native surfaces instead of chat-history guesswork.",
+      "status": "approved planning program, not yet the only active short board",
+      "date_hint": "2026-04-02",
+      "content_sha256": "0cae38f28dbe8b5ec4b545fa512d0fc558d7951e81dd04a7bd3fd852ef3d4d5c"
+    },
+    {
+      "path": "docs/plans/tonesoul_test_stratification_program_2026-04-02.md",
+      "basename": "tonesoul_test_stratification_program_2026-04-02.md",
+      "extension": ".md",
+      "surface_type": "plan_doc",
+      "size_bytes": 3407,
+      "title": "ToneSoul Test Stratification Program (2026-04-02)",
+      "purpose": "stop monthly/operational gates from behaving like a second full CI lane while keeping full regression coverage in the main CI path.",
+      "status": "",
+      "date_hint": "2026-04-02",
+      "content_sha256": "4bdfeec7fd5f9c944adc1d593053bb6b97ddde3ddb2a0262991213475383f23d"
     },
     {
       "path": "docs/plans/tri_persona_audit_plan.md",
@@ -4821,6 +5013,18 @@
       "content_sha256": "095cc8d5ce9854184e2e3597a64f059d8c6827b51830570f54e6e185a7cd52e1"
     },
     {
+      "path": "docs/plans/wfgy_avatar_deep_analysis_2026-04-02.md",
+      "basename": "wfgy_avatar_deep_analysis_2026-04-02.md",
+      "extension": ".md",
+      "surface_type": "plan_doc",
+      "size_bytes": 20743,
+      "title": "WFGY 5.0 Avatar 深度架構分析與 ToneSoul 借鏡指南",
+      "purpose": "",
+      "status": "",
+      "date_hint": "2026-04-02",
+      "content_sha256": "0e6c12abc60c22b7880347f0ddbaa7df8c4f50917c9973b3e1bda31a7d440c41"
+    },
+    {
       "path": "docs/plans/wfgy_problem_map_fit_for_tonesoul_2026-03-14.md",
       "basename": "wfgy_problem_map_fit_for_tonesoul_2026-03-14.md",
       "extension": ".md",
@@ -4873,12 +5077,12 @@
       "basename": "README.md",
       "extension": ".md",
       "surface_type": "general_doc",
-      "size_bytes": 22577,
-      "title": "ToneSoul Documentation Index",
+      "size_bytes": 27344,
+      "title": "AI Reading Stack",
       "purpose": "documentation entrypoint and guided index for ToneSoul architecture, status artifacts, and convergence surfaces.",
       "status": "",
-      "date_hint": "2026-03-29",
-      "content_sha256": "8c950df8a2ac7ba6d8f15b29397455e45d0799962dd5023e47bd5ec8bfa576b5"
+      "date_hint": "2026-03-30",
+      "content_sha256": "ccd18481233871e02ddb4b013532a5f1dde4c9fa6a7987aab776a691b96fc0a3"
     },
     {
       "path": "docs/RELEASE_NOTES_v0.1.0.md",
@@ -5035,6 +5239,18 @@
       "status": "",
       "date_hint": "2026-03-22",
       "content_sha256": "1c20a01ecce0ebc3c03b0037c755313a10cb27c12ac128abb6918f42581563cd"
+    },
+    {
+      "path": "docs/research/tonesoul_llm_classic_paper_map_2026-03-30.md",
+      "basename": "tonesoul_llm_classic_paper_map_2026-03-30.md",
+      "extension": ".md",
+      "surface_type": "research_doc",
+      "size_bytes": 10573,
+      "title": "ToneSoul LLM Classic Paper Map (2026-03-30)",
+      "purpose": "keep only the classic LLM papers that materially help ToneSoul's current architecture, governance, continuity, retrieval, adapter, and council design.",
+      "status": "current research companion",
+      "date_hint": "2026-03-30",
+      "content_sha256": "e86d58a11c40b7f71b399cceeeb06c0356ba4cc4006b061428868201e299ac3a"
     },
     {
       "path": "docs/research/tonesoul_multi_agent_semantic_field_evidence_map_2026-03-26.md",
@@ -5269,7 +5485,7 @@
       "basename": "7d_snapshot.json",
       "extension": ".json",
       "surface_type": "status_doc",
-      "size_bytes": 2817,
+      "size_bytes": 2727,
       "title": "7d_snapshot.json",
       "purpose": "",
       "status": "",
@@ -5299,6 +5515,18 @@
       "status": "",
       "date_hint": "",
       "content_sha256": "ac3c3a77ff111243e47f5035cc27fe55b15ece080af725a3b415ff2f75b156ac"
+    },
+    {
+      "path": "docs/status/architecture_dependency_diagnostic_2026-03-30.md",
+      "basename": "architecture_dependency_diagnostic_2026-03-30.md",
+      "extension": ".md",
+      "surface_type": "status_doc",
+      "size_bytes": 5558,
+      "title": "ToneSoul 架構與依賴診斷報告",
+      "purpose": "",
+      "status": "",
+      "date_hint": "2026-03-30",
+      "content_sha256": "a77782d7286b1a5d4b93c86c7bc9771a8441c54d37dc90aa995784c3ac9643a9"
     },
     {
       "path": "docs/status/autonomous_registry_schedule_latest.json",
@@ -5409,6 +5637,42 @@
       "content_sha256": "55bbaffbe3e4d451f73ec53ea3046183077b82c659ab031e4454c033ddb371fb"
     },
     {
+      "path": "docs/status/codex_handoff_2026-03-30.md",
+      "basename": "codex_handoff_2026-03-30.md",
+      "extension": ".md",
+      "surface_type": "status_doc",
+      "size_bytes": 4630,
+      "title": "Codex Handoff (2026-03-30)",
+      "purpose": "preserve today's working state, current truths, and next-shortest-board guidance for the next AI without requiring hidden chat history.",
+      "status": "current handoff note",
+      "date_hint": "2026-03-30",
+      "content_sha256": "0cc279984fa177695e9093f243c8bc0e28ee07e887b7a60954b7fc2354fc1a75"
+    },
+    {
+      "path": "docs/status/codex_handoff_2026-03-31.md",
+      "basename": "codex_handoff_2026-03-31.md",
+      "extension": ".md",
+      "surface_type": "status_doc",
+      "size_bytes": 6900,
+      "title": "Codex Handoff (2026-03-31)",
+      "purpose": "rotation checkpoint after completing the observer-window 3-day execution program.",
+      "status": "current handoff note (supersedes `codex_handoff_2026-03-30.md`)",
+      "date_hint": "2026-03-31",
+      "content_sha256": "b16cdf1e43853124c85a95759c055a992efb62cc5f41bf25fe8ace96de9d2385"
+    },
+    {
+      "path": "docs/status/codex_handoff_2026-04-02.md",
+      "basename": "codex_handoff_2026-04-02.md",
+      "extension": ".md",
+      "surface_type": "status_doc",
+      "size_bytes": 4386,
+      "title": "Codex Handoff (2026-04-02)",
+      "purpose": "preserve today's working state, what was actually fixed, and the next successor-facing design move without requiring hidden chat history.",
+      "status": "current handoff note (supersedes older handoff notes when the task is successor continuity and hot-memory coherence)",
+      "date_hint": "2026-04-02",
+      "content_sha256": "49dcbaadfcbb6ed74a5a83374ee32996a195fdccab37bc7fb08383e4629cb52d"
+    },
+    {
       "path": "docs/status/codex_subjectivity_handoff_2026-03-10.md",
       "basename": "codex_subjectivity_handoff_2026-03-10.md",
       "extension": ".md",
@@ -5419,6 +5683,54 @@
       "status": "",
       "date_hint": "2026-03-10",
       "content_sha256": "913f7ef5cab32a7bebdf6c69ec42932440f8cd2905069a46bcf55a458b9d5462"
+    },
+    {
+      "path": "docs/status/collaborator_beta_entry_validation_latest.json",
+      "basename": "collaborator_beta_entry_validation_latest.json",
+      "extension": ".json",
+      "surface_type": "generated_status_artifact",
+      "size_bytes": 1757,
+      "title": "collaborator_beta_entry_validation_latest.json",
+      "purpose": "",
+      "status": "",
+      "date_hint": "",
+      "content_sha256": "c5a4609153b1659cfb918c689d93ff72a9b1f2836a9b8bcb2286e9b54867e486"
+    },
+    {
+      "path": "docs/status/collaborator_beta_entry_validation_latest.md",
+      "basename": "collaborator_beta_entry_validation_latest.md",
+      "extension": ".md",
+      "surface_type": "generated_status_artifact",
+      "size_bytes": 2014,
+      "title": "ToneSoul Collaborator-Beta Entry Validation",
+      "purpose": "",
+      "status": "",
+      "date_hint": "",
+      "content_sha256": "5fe4635baef080272258a69a54e96ee8a590de1e5f232ab73b7af12f55dec287"
+    },
+    {
+      "path": "docs/status/collaborator_beta_preflight_latest.json",
+      "basename": "collaborator_beta_preflight_latest.json",
+      "extension": ".json",
+      "surface_type": "generated_status_artifact",
+      "size_bytes": 5730,
+      "title": "collaborator_beta_preflight_latest.json",
+      "purpose": "",
+      "status": "",
+      "date_hint": "",
+      "content_sha256": "81edaa6cc277f3320be368f11387db53230cc57ddb50e84ded0c58767728bd7b"
+    },
+    {
+      "path": "docs/status/collaborator_beta_preflight_latest.md",
+      "basename": "collaborator_beta_preflight_latest.md",
+      "extension": ".md",
+      "surface_type": "generated_status_artifact",
+      "size_bytes": 1799,
+      "title": "ToneSoul Collaborator-Beta Preflight",
+      "purpose": "",
+      "status": "",
+      "date_hint": "",
+      "content_sha256": "fe1d14cb8a9fb1dc39148be45c647604537960ea0b8febe1248a25d042ab01bf"
     },
     {
       "path": "docs/status/command_registry_latest.json",
@@ -5497,48 +5809,48 @@
       "basename": "doc_authority_structure_latest.json",
       "extension": ".json",
       "surface_type": "generated_status_artifact",
-      "size_bytes": 29818,
+      "size_bytes": 30309,
       "title": "doc_authority_structure_latest.json",
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "ec8b02d239074b3de7fc47e987cca56c80e5d4d351db1ece45e47fefa1f9c571"
+      "content_sha256": "0845276e9c9843084772a075a7752db3cb77522e7bebb78d1c6e09fb5f329e34"
     },
     {
       "path": "docs/status/doc_authority_structure_latest.md",
       "basename": "doc_authority_structure_latest.md",
       "extension": ".md",
       "surface_type": "generated_status_artifact",
-      "size_bytes": 16834,
+      "size_bytes": 17081,
       "title": "Documentation Authority Structure Latest",
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "b0fd2da139a384e0788e7b13f8f39a5e299d89d2a4b79f569276e4ebbb84f789"
+      "content_sha256": "c3ad7757e4197228bfbd2d4d110bdaff5252f8cf3693815c29d6d6b45a256413"
     },
     {
       "path": "docs/status/doc_convergence_inventory_latest.json",
       "basename": "doc_convergence_inventory_latest.json",
       "extension": ".json",
       "surface_type": "generated_status_artifact",
-      "size_bytes": 1129391,
+      "size_bytes": 1124949,
       "title": "doc_convergence_inventory_latest.json",
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "5d358b417b2c37e5f6dee9bcb3fda75c03c34301a54a2f9ca1c4715881cf9f52"
+      "content_sha256": "43304cabab7396195ac425ffdad9828125223fff20a613e0b571b7de1a232495"
     },
     {
       "path": "docs/status/doc_convergence_inventory_latest.md",
       "basename": "doc_convergence_inventory_latest.md",
       "extension": ".md",
       "surface_type": "generated_status_artifact",
-      "size_bytes": 17253,
+      "size_bytes": 17082,
       "title": "Document Convergence Inventory Latest",
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "ab2fa8574f5dff95436a9930c92cb4017cd1d1357b30f0ee80b8423579ecff40"
+      "content_sha256": "e09dc3b6bc362de0c01e32a4defdabc9b039e27e2828cd5083fd1774defb2960"
     },
     {
       "path": "docs/status/dream_engine_wakeup_status_2026-03-09.md",
@@ -5853,6 +6165,30 @@
       "content_sha256": "3c6405dfe7285e6f541e6aea45051da07b8297c814e0f47b90f9ae13c4c674ac"
     },
     {
+      "path": "docs/status/launch_continuity_validation_wave_latest.json",
+      "basename": "launch_continuity_validation_wave_latest.json",
+      "extension": ".json",
+      "surface_type": "generated_status_artifact",
+      "size_bytes": 7298,
+      "title": "launch_continuity_validation_wave_latest.json",
+      "purpose": "",
+      "status": "",
+      "date_hint": "",
+      "content_sha256": "fc55450c3d20dec19e9cc34e71462a05b049dd9b5476e3c0fcdacaf44f84339d"
+    },
+    {
+      "path": "docs/status/launch_continuity_validation_wave_latest.md",
+      "basename": "launch_continuity_validation_wave_latest.md",
+      "extension": ".md",
+      "surface_type": "generated_status_artifact",
+      "size_bytes": 2638,
+      "title": "ToneSoul Repeated Live Continuity Validation Wave",
+      "purpose": "",
+      "status": "",
+      "date_hint": "",
+      "content_sha256": "7f635b22933d1f77b8d73b7fbce6f90fa1f6c29048cfa5acdd319cfac545a7fc"
+    },
+    {
       "path": "docs/status/memory_governance_contract_latest.json",
       "basename": "memory_governance_contract_latest.json",
       "extension": ".json",
@@ -5929,7 +6265,7 @@
       "basename": "monthly_consolidation_report.json",
       "extension": ".json",
       "surface_type": "status_doc",
-      "size_bytes": 13012,
+      "size_bytes": 12615,
       "title": "monthly_consolidation_report.json",
       "purpose": "",
       "status": "",
@@ -5971,6 +6307,54 @@
       "status": "",
       "date_hint": "",
       "content_sha256": "c76543f584bd228e032fceb7af411ff60a5db80de69773d729057a5c6909e6ec"
+    },
+    {
+      "path": "docs/status/observer_window_latest.json",
+      "basename": "observer_window_latest.json",
+      "extension": ".json",
+      "surface_type": "generated_status_artifact",
+      "size_bytes": 2492,
+      "title": "observer_window_latest.json",
+      "purpose": "",
+      "status": "",
+      "date_hint": "",
+      "content_sha256": "6025bf4a5a0328cf77b9e8369596f50df946ad4a8b928e14c2da158205771993"
+    },
+    {
+      "path": "docs/status/observer_window_latest.md",
+      "basename": "observer_window_latest.md",
+      "extension": ".md",
+      "surface_type": "generated_status_artifact",
+      "size_bytes": 1968,
+      "title": "ToneSoul Observer Window / Low-Drift Anchor",
+      "purpose": "",
+      "status": "",
+      "date_hint": "",
+      "content_sha256": "68f13e26cb781c60786223649b18e22181410905b45fea34147b1ed51c85340c"
+    },
+    {
+      "path": "docs/status/observer_window_validation_latest.json",
+      "basename": "observer_window_validation_latest.json",
+      "extension": ".json",
+      "surface_type": "generated_status_artifact",
+      "size_bytes": 7587,
+      "title": "observer_window_validation_latest.json",
+      "purpose": "",
+      "status": "",
+      "date_hint": "",
+      "content_sha256": "67b8d3df0021b829610110131fa69d0c7b374423ddbd527a387649eaf04be848"
+    },
+    {
+      "path": "docs/status/observer_window_validation_latest.md",
+      "basename": "observer_window_validation_latest.md",
+      "extension": ".md",
+      "surface_type": "generated_status_artifact",
+      "size_bytes": 3388,
+      "title": "Observer Window — Day 2 Validation Wave",
+      "purpose": "",
+      "status": "",
+      "date_hint": "",
+      "content_sha256": "543fc325b503f2b342bcb2299280014464c2bb6aec6d5a2075b26511545fd30f"
     },
     {
       "path": "docs/status/orphan_modules_audit_detail.json",
@@ -6061,12 +6445,12 @@
       "basename": "persona_track_record_latest.json",
       "extension": ".json",
       "surface_type": "generated_status_artifact",
-      "size_bytes": 1287,
+      "size_bytes": 1290,
       "title": "persona_track_record_latest.json",
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "8662ee192482d31049c22d6f29fb39620f714df74e3dd428faa593c074f83004"
+      "content_sha256": "09a93185b863feddbbb0311bf6554812a1f4e50d7d08ee0610f04d9612993f55"
     },
     {
       "path": "docs/status/phase547_exception_observability_2026-03-19.md",
@@ -8154,19 +8538,19 @@
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "bd50975a5abafbab651e9da31f24d62986d1a2a8392c2f5875fe01acb9b8b153"
+      "content_sha256": "1cee2bb8049061dd37f9761ae101e23de8c05be5e1d8b815a386eeb69b699f28"
     },
     {
       "path": "memory/autonomous/zone_registry.json",
       "basename": "zone_registry.json",
       "extension": ".json",
       "surface_type": "memory_doc_or_data",
-      "size_bytes": 3801,
+      "size_bytes": 3649,
       "title": "zone_registry.json",
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "0062f0cd83e6508c9e940eb7e23bba7b9ec21ffc16cb3fc9747047a15faaf80b"
+      "content_sha256": "56bdee48e9357d6f5882d82fea2f459b83f81d405bc2ef964122ea7474846af8"
     },
     {
       "path": "memory/BOOTSTRAP.md",
@@ -26913,6 +27297,246 @@
       "content_sha256": "c14c6b0dd8b9e54baeb55876fe6ff3367ae1008e876a52645da0148169a753c5"
     },
     {
+      "path": "memory/handoff/handoff_2026-04-01T14-41-36Z.json",
+      "basename": "handoff_2026-04-01T14-41-36Z.json",
+      "extension": ".json",
+      "surface_type": "memory_doc_or_data",
+      "size_bytes": 620,
+      "title": "handoff_2026-04-01T14-41-36Z.json",
+      "purpose": "",
+      "status": "",
+      "date_hint": "2026-04-01",
+      "content_sha256": "6ce6cdd196f9282a585f7338032107177a70cfca98902586a932b325ca77fbbf"
+    },
+    {
+      "path": "memory/handoff/handoff_2026-04-01T14-42-33Z.json",
+      "basename": "handoff_2026-04-01T14-42-33Z.json",
+      "extension": ".json",
+      "surface_type": "memory_doc_or_data",
+      "size_bytes": 626,
+      "title": "handoff_2026-04-01T14-42-33Z.json",
+      "purpose": "",
+      "status": "",
+      "date_hint": "2026-04-01",
+      "content_sha256": "074f07c3ed28f0c912eafd30a20ddffe59a0f65bb6c34d806cf402d113175415"
+    },
+    {
+      "path": "memory/handoff/handoff_2026-04-01T15-05-26Z.json",
+      "basename": "handoff_2026-04-01T15-05-26Z.json",
+      "extension": ".json",
+      "surface_type": "memory_doc_or_data",
+      "size_bytes": 620,
+      "title": "handoff_2026-04-01T15-05-26Z.json",
+      "purpose": "",
+      "status": "",
+      "date_hint": "2026-04-01",
+      "content_sha256": "a97199de34724bc88925f380eccafc83592f4f513ed99881d4f60f4a782aceee"
+    },
+    {
+      "path": "memory/handoff/handoff_2026-04-01T15-05-56Z.json",
+      "basename": "handoff_2026-04-01T15-05-56Z.json",
+      "extension": ".json",
+      "surface_type": "memory_doc_or_data",
+      "size_bytes": 620,
+      "title": "handoff_2026-04-01T15-05-56Z.json",
+      "purpose": "",
+      "status": "",
+      "date_hint": "2026-04-01",
+      "content_sha256": "a2b4e73c0d97114e3fbd36fccb00f417582ffac5daa44ef1665050b6790898f2"
+    },
+    {
+      "path": "memory/handoff/handoff_2026-04-01T15-06-27Z.json",
+      "basename": "handoff_2026-04-01T15-06-27Z.json",
+      "extension": ".json",
+      "surface_type": "memory_doc_or_data",
+      "size_bytes": 626,
+      "title": "handoff_2026-04-01T15-06-27Z.json",
+      "purpose": "",
+      "status": "",
+      "date_hint": "2026-04-01",
+      "content_sha256": "f54a67bd00f0475c49480bc93341aaed552be30d2320fffaf3251db8c93e5158"
+    },
+    {
+      "path": "memory/handoff/handoff_2026-04-01T15-07-00Z.json",
+      "basename": "handoff_2026-04-01T15-07-00Z.json",
+      "extension": ".json",
+      "surface_type": "memory_doc_or_data",
+      "size_bytes": 626,
+      "title": "handoff_2026-04-01T15-07-00Z.json",
+      "purpose": "",
+      "status": "",
+      "date_hint": "2026-04-01",
+      "content_sha256": "c71fa9a267226586477e006eff6b9cbde9d972fa225677024dd7dae00a94c9e2"
+    },
+    {
+      "path": "memory/handoff/handoff_2026-04-01T15-27-19Z.json",
+      "basename": "handoff_2026-04-01T15-27-19Z.json",
+      "extension": ".json",
+      "surface_type": "memory_doc_or_data",
+      "size_bytes": 620,
+      "title": "handoff_2026-04-01T15-27-19Z.json",
+      "purpose": "",
+      "status": "",
+      "date_hint": "2026-04-01",
+      "content_sha256": "618accb0a94be9aed58cd87e0d455be5bef630f1dad6fd8a69b45dd59a98343e"
+    },
+    {
+      "path": "memory/handoff/handoff_2026-04-01T15-28-13Z.json",
+      "basename": "handoff_2026-04-01T15-28-13Z.json",
+      "extension": ".json",
+      "surface_type": "memory_doc_or_data",
+      "size_bytes": 626,
+      "title": "handoff_2026-04-01T15-28-13Z.json",
+      "purpose": "",
+      "status": "",
+      "date_hint": "2026-04-01",
+      "content_sha256": "583b876a5d5eec4ef2a0dadaf895ad7c290c15eaac5c9e69090cbad5502d1f66"
+    },
+    {
+      "path": "memory/handoff/handoff_2026-04-01T15-36-36Z.json",
+      "basename": "handoff_2026-04-01T15-36-36Z.json",
+      "extension": ".json",
+      "surface_type": "memory_doc_or_data",
+      "size_bytes": 620,
+      "title": "handoff_2026-04-01T15-36-36Z.json",
+      "purpose": "",
+      "status": "",
+      "date_hint": "2026-04-01",
+      "content_sha256": "1524471fe70118e0e5bb4bf6938e18134d3e04b371fcf5f2058a21966fea5d09"
+    },
+    {
+      "path": "memory/handoff/handoff_2026-04-01T15-37-32Z.json",
+      "basename": "handoff_2026-04-01T15-37-32Z.json",
+      "extension": ".json",
+      "surface_type": "memory_doc_or_data",
+      "size_bytes": 881,
+      "title": "handoff_2026-04-01T15-37-32Z.json",
+      "purpose": "",
+      "status": "",
+      "date_hint": "2026-04-01",
+      "content_sha256": "1a22ad4d3120d6596e615ac65ad765b8b7531062ef1dc8e61a1c9ecbc4d1ed28"
+    },
+    {
+      "path": "memory/handoff/handoff_2026-04-01T15-37-33Z.json",
+      "basename": "handoff_2026-04-01T15-37-33Z.json",
+      "extension": ".json",
+      "surface_type": "memory_doc_or_data",
+      "size_bytes": 626,
+      "title": "handoff_2026-04-01T15-37-33Z.json",
+      "purpose": "",
+      "status": "",
+      "date_hint": "2026-04-01",
+      "content_sha256": "72abf827e9dcd4f6ce2517f2421872783763a72585f08e02ede6824161036213"
+    },
+    {
+      "path": "memory/handoff/handoff_2026-04-01T15-45-50Z.json",
+      "basename": "handoff_2026-04-01T15-45-50Z.json",
+      "extension": ".json",
+      "surface_type": "memory_doc_or_data",
+      "size_bytes": 620,
+      "title": "handoff_2026-04-01T15-45-50Z.json",
+      "purpose": "",
+      "status": "",
+      "date_hint": "2026-04-01",
+      "content_sha256": "55d0b4d90229b8214a52edba5597eadac732fd68c269c2bfd789556a8a4082bd"
+    },
+    {
+      "path": "memory/handoff/handoff_2026-04-01T15-46-48Z.json",
+      "basename": "handoff_2026-04-01T15-46-48Z.json",
+      "extension": ".json",
+      "surface_type": "memory_doc_or_data",
+      "size_bytes": 626,
+      "title": "handoff_2026-04-01T15-46-48Z.json",
+      "purpose": "",
+      "status": "",
+      "date_hint": "2026-04-01",
+      "content_sha256": "8d5853bdfb22682886c7f4aba4494c5446fd2fb517b43f409797ccf9a9acdf71"
+    },
+    {
+      "path": "memory/handoff/handoff_2026-04-01T16-10-06Z.json",
+      "basename": "handoff_2026-04-01T16-10-06Z.json",
+      "extension": ".json",
+      "surface_type": "memory_doc_or_data",
+      "size_bytes": 620,
+      "title": "handoff_2026-04-01T16-10-06Z.json",
+      "purpose": "",
+      "status": "",
+      "date_hint": "2026-04-01",
+      "content_sha256": "0cd4f18b8dcbf7f260f2b2c3fc90c4d0e879864e9eb599b4280fa95e2f45967b"
+    },
+    {
+      "path": "memory/handoff/handoff_2026-04-01T16-11-07Z.json",
+      "basename": "handoff_2026-04-01T16-11-07Z.json",
+      "extension": ".json",
+      "surface_type": "memory_doc_or_data",
+      "size_bytes": 626,
+      "title": "handoff_2026-04-01T16-11-07Z.json",
+      "purpose": "",
+      "status": "",
+      "date_hint": "2026-04-01",
+      "content_sha256": "3025285f99a993e2cd28e2e1b6c2c5015c39c1d4966d85cbc8c0ea9ef8b6afa8"
+    },
+    {
+      "path": "memory/handoff/handoff_2026-04-01T16-19-54Z.json",
+      "basename": "handoff_2026-04-01T16-19-54Z.json",
+      "extension": ".json",
+      "surface_type": "memory_doc_or_data",
+      "size_bytes": 620,
+      "title": "handoff_2026-04-01T16-19-54Z.json",
+      "purpose": "",
+      "status": "",
+      "date_hint": "2026-04-01",
+      "content_sha256": "08686812e88a2c905af8c28d82fe08d56956330e71dea89e95c39637710eac0e"
+    },
+    {
+      "path": "memory/handoff/handoff_2026-04-01T16-20-48Z.json",
+      "basename": "handoff_2026-04-01T16-20-48Z.json",
+      "extension": ".json",
+      "surface_type": "memory_doc_or_data",
+      "size_bytes": 626,
+      "title": "handoff_2026-04-01T16-20-48Z.json",
+      "purpose": "",
+      "status": "",
+      "date_hint": "2026-04-01",
+      "content_sha256": "6cb27a57ea95d858d9dbb646b016ec27486ebc53607fff3fd1ed35753dc8d172"
+    },
+    {
+      "path": "memory/handoff/handoff_2026-04-01T16-29-52Z.json",
+      "basename": "handoff_2026-04-01T16-29-52Z.json",
+      "extension": ".json",
+      "surface_type": "memory_doc_or_data",
+      "size_bytes": 620,
+      "title": "handoff_2026-04-01T16-29-52Z.json",
+      "purpose": "",
+      "status": "",
+      "date_hint": "2026-04-01",
+      "content_sha256": "d0b6784bd2c58cca1948095f57c6e3d5c7127aceaba8d65692cfbfbefbe52f84"
+    },
+    {
+      "path": "memory/handoff/handoff_2026-04-01T16-30-51Z.json",
+      "basename": "handoff_2026-04-01T16-30-51Z.json",
+      "extension": ".json",
+      "surface_type": "memory_doc_or_data",
+      "size_bytes": 881,
+      "title": "handoff_2026-04-01T16-30-51Z.json",
+      "purpose": "",
+      "status": "",
+      "date_hint": "2026-04-01",
+      "content_sha256": "e6fbce3c0d748c23deee4c115480cb3d35c4ed32113244337eb7aa6f77a33528"
+    },
+    {
+      "path": "memory/handoff/handoff_2026-04-01T16-30-52Z.json",
+      "basename": "handoff_2026-04-01T16-30-52Z.json",
+      "extension": ".json",
+      "surface_type": "memory_doc_or_data",
+      "size_bytes": 626,
+      "title": "handoff_2026-04-01T16-30-52Z.json",
+      "purpose": "",
+      "status": "",
+      "date_hint": "2026-04-01",
+      "content_sha256": "c020ae9ef655f9a6db4954c1c5922f0c105d3fd742a60919539ce6720697d867"
+    },
+    {
       "path": "memory/handoff/multi_model_council_handoff.md",
       "basename": "multi_model_council_handoff.md",
       "extension": ".md",
@@ -27349,12 +27973,12 @@
       "basename": "README.md",
       "extension": ".md",
       "surface_type": "root_entrypoint",
-      "size_bytes": 16228,
+      "size_bytes": 17303,
       "title": "Retrieval Keywords",
       "purpose": "public repository entrypoint for ToneSoul's architecture, governance posture, and practical onboarding.",
       "status": "",
-      "date_hint": "2026-03-29",
-      "content_sha256": "9583512a72040e613dff73d2c8f77a212eeb481971fa2ba63b56005757f9eb55"
+      "date_hint": "2026-03-30",
+      "content_sha256": "67f72c39ad7488428a2dd60c07a3aa017166908e02614c98062a9de3a09d7336"
     },
     {
       "path": "README.zh-TW.md",
@@ -27973,24 +28597,24 @@
       "basename": "r_memory_packet_v1.example.json",
       "extension": ".json",
       "surface_type": "spec_doc",
-      "size_bytes": 22750,
+      "size_bytes": 28687,
       "title": "r_memory_packet_v1.example.json",
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "060f076f1943c79a84c2e538a880f1f510361f2e11e4d116ac61c8f2fb9c0b5e"
+      "content_sha256": "45735589bccaa45928781d15d6dfde2e384f5bb26b661b5c932c240c08b0b711"
     },
     {
       "path": "spec/governance/r_memory_packet_v1.schema.json",
       "basename": "r_memory_packet_v1.schema.json",
       "extension": ".json",
       "surface_type": "spec_doc",
-      "size_bytes": 40458,
+      "size_bytes": 45583,
       "title": "r_memory_packet_v1.schema.json",
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "4f2e47d418523b8616b6e793e205515c326e3cbe7bae0b64c5b5bf9eff2b80d8"
+      "content_sha256": "ed7755fc926ea3cc6ff2d5e745cf2e4cd4b088db125ba82801007f2a87688d71"
     },
     {
       "path": "spec/governance/role_catalog.yaml",
@@ -28261,12 +28885,12 @@
       "basename": "task.md",
       "extension": ".md",
       "surface_type": "root_entrypoint",
-      "size_bytes": 145142,
+      "size_bytes": 176566,
       "title": "Task",
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "7fd8f23215c1c35c652db2678045bf2a21cd2dc17c98b86010737ac7d5fa039f"
+      "content_sha256": "30d751e1c6011a0201716db46e55d40dfb26035ce7b7eb39ff5ef64afdc9208f"
     },
     {
       "path": "tests/fixtures/paradoxes/medical_suicide_paradox.json",
@@ -28401,7 +29025,7 @@
       "content_sha256": "2cee7ef4a180d9208eefe9a83fe3d22bbfb6d32cecb6f5c05880d57e75006343"
     }
   ],
-  "primary_status_line": "doc_convergence_ready | authored_files=2302 collisions=27 missing_purpose=140 missing_date=101",
-  "runtime_status_line": "entrypoints | doc_inventory=doc_convergence_inventory_latest.json largest_family=docs_law_engineering_mirror architecture_docs=54",
+  "primary_status_line": "doc_convergence_ready | authored_files=2354 collisions=27 missing_purpose=141 missing_date=101",
+  "runtime_status_line": "entrypoints | doc_inventory=doc_convergence_inventory_latest.json largest_family=docs_law_engineering_mirror architecture_docs=57",
   "artifact_policy_status_line": "doc_scope=authored_only | content_check=hash_plus_similarity generated_noise=excluded"
 }

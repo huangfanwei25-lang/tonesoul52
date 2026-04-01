@@ -242,8 +242,21 @@ Treat this as a prompt-design companion. It helps later agents build better extr
 
 - `plans/tonesoul_3day_execution_program_2026-03-30.md`
   - concrete 3-day continuation program for the next agent, with bucket rotation and stop conditions
-- `status/codex_handoff_2026-03-30.md`
-  - current branch-local handoff note capturing today's working truth, private residues to avoid, and the next shortest board
+- `status/codex_handoff_2026-04-02.md`
+  - current branch-local handoff note after CI closeout and successor/hot-memory planning; use this instead of older handoff notes when continuing current work
+- `plans/tonesoul_successor_collaboration_and_hot_memory_program_2026-04-02.md`
+  - deep planning program for making hot memory and successor collaboration legible enough that any later AI can continue safely from repo-native surfaces
+- `plans/tonesoul_subsystem_parity_and_gap_map_2026-04-02.md`
+  - ToneSoul-native parity/gap map showing which subsystems are baseline, beta-usable, partial, or deferred, and what overclaim each lane must avoid
+
+## Successor Continuity And Hot Memory
+
+- `architecture/TONESOUL_SUCCESSOR_COLLABORATION_AND_HOT_MEMORY_CONTRACT.md`
+  - architecture contract for bounded successor entry, hot-memory laddering, summary-parent hierarchy, and external pattern distillation without foreign naming import
+- `plans/tonesoul_successor_collaboration_and_hot_memory_program_2026-04-02.md`
+  - actionable program for turning current continuity surfaces into a safer successor collaboration stack
+- `plans/tonesoul_subsystem_parity_and_gap_map_2026-04-02.md`
+  - one current map of what is already usable, what is still partial, and which next bounded moves matter most
  
 ## Documentation Convergence
  
@@ -369,6 +382,7 @@ Treat these as prompt-adoption aids. They help later agents avoid reopening fini
 | `tonesoul_multi_agent_semantic_field_evidence_map_2026-03-26.md` | official-source evidence map for multi-agent semantic-field claims |
 | `tonesoul_llm_classic_paper_map_2026-03-30.md` | selective map of classic LLM papers that still matter for ToneSoul architecture, continuity, retrieval, governance, and adaptation |
 | `../plans/tonesoul_agent_os_pattern_distillation_2026-04-01.md` | distilled Agent-OS patterns ToneSoul should learn without importing a foreign naming universe |
+| `../plans/tonesoul_successor_collaboration_and_hot_memory_program_2026-04-02.md` | successor/hot-memory planning that translates useful external frameworks into ToneSoul-native workstreams |
 
 ---
 

@@ -236,26 +236,28 @@ As of 2026-03-30, ToneSoul should be read as:
 
 ## The Current Short Board
 
-The next shortest board is no longer launch wording.
+The next shortest board is no longer launch wording, and no longer "make observer window exist at all."
 
 It is:
 
-`low-drift anchor / observer-window baseline`
+`successor collaboration / hot-memory coherence`
 
 The system already has:
 - packet
 - delta
 - receiver posture
 - working-style continuity
+- observer window
 - evidence posture
 
-What it does not yet have is a cleaner observer-facing center that says:
-- what is currently stable
-- what is contested
-- what is stale
-- what changed since last seen
+What it still does not fully have is a successor-safe center that makes it obvious:
+- which surfaces are parent truth versus child summary
+- which hot-memory layer is canonical, low-drift, handoff, working identity, replay, or residue
+- which current subsystem gaps matter next
+- how a fresh agent should reconstruct the same center without hidden chat history
 
-without forcing later agents to reassemble that picture from many adjacent surfaces.
+That is why the next continuity bucket is no longer "invent more surfaces."
+It is "make the current center easier for a successor to see and continue safely."
 
 ## Recommended Reading Order
 
@@ -271,8 +273,9 @@ If you are a new agent or a future maintainer:
 
 If you are continuing implementation work, also read:
 - `task.md`
-- `docs/plans/tonesoul_3day_execution_program_2026-03-30.md`
-- `docs/status/codex_handoff_2026-03-30.md`
+- `docs/plans/tonesoul_successor_collaboration_and_hot_memory_program_2026-04-02.md`
+- `docs/plans/tonesoul_subsystem_parity_and_gap_map_2026-04-02.md`
+- `docs/status/codex_handoff_2026-04-02.md`
 
 ## Non-Goals For The Next Continuation Wave
 

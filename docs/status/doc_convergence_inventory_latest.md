@@ -1,42 +1,42 @@
 # Document Convergence Inventory Latest
 
-- generated_at: 2026-03-29T15:43:42Z
-- primary_status_line: `doc_convergence_ready | authored_files=2302 collisions=27 missing_purpose=140 missing_date=101`
-- runtime_status_line: `entrypoints | doc_inventory=doc_convergence_inventory_latest.json largest_family=docs_law_engineering_mirror architecture_docs=54`
+- generated_at: 2026-04-01T18:09:18Z
+- primary_status_line: `doc_convergence_ready | authored_files=2354 collisions=27 missing_purpose=141 missing_date=101`
+- runtime_status_line: `entrypoints | doc_inventory=doc_convergence_inventory_latest.json largest_family=docs_law_engineering_mirror architecture_docs=57`
 - artifact_policy_status_line: `doc_scope=authored_only | content_check=hash_plus_similarity generated_noise=excluded`
 
 ## Metrics
-- `authored_file_count`: `2302`
+- `authored_file_count`: `2354`
 - `collision_count`: `27`
 - `exact_match_collision_count`: `16`
 - `divergent_collision_count`: `11`
-- `missing_purpose_count`: `140`
+- `missing_purpose_count`: `141`
 - `missing_date_count`: `101`
 - `missing_purpose_sample_count`: `40`
 - `missing_date_sample_count`: `40`
 - `missing_metadata_sample_limit`: `40`
 
 ## Category Counts
-- `architecture_doc`: `54`
+- `architecture_doc`: `57`
 - `archive_doc`: `1`
 - `chronicle_doc`: `48`
 - `constitution_doc`: `1`
 - `docs_engineering_mirror`: `16`
 - `general_doc`: `128`
-- `generated_status_artifact`: `98`
+- `generated_status_artifact`: `108`
 - `knowledge_doc`: `2`
 - `law_doc`: `60`
 - `law_engineering_mirror`: `15`
-- `memory_doc_or_data`: `1608`
+- `memory_doc_or_data`: `1628`
 - `paradox_fixture`: `8`
 - `paradox_test_fixture`: `8`
 - `philosophy_doc`: `27`
-- `plan_doc`: `109`
+- `plan_doc`: `123`
 - `report_doc`: `29`
-- `research_doc`: `9`
+- `research_doc`: `10`
 - `root_entrypoint`: `11`
 - `spec_doc`: `43`
-- `status_doc`: `24`
+- `status_doc`: `28`
 - `test_doc_or_fixture`: `3`
 
 ## Collision Families
@@ -127,11 +127,11 @@
 - `docs/plans/true_verification_task_scheduler_install_addendum_2026-03-08.md`
 - `docs/plans/true_verification_task_scheduler_template_addendum_2026-03-08.md`
 - `docs/plans/true_verification_task_status_addendum_2026-03-08.md`
+- `docs/plans/wfgy_avatar_deep_analysis_2026-04-02.md`
 - `docs/plans/wfgy_problem_map_fit_for_tonesoul_2026-03-14.md`
 - `docs/plans/worktree_settlement_mainline_addendum_2026-03-08.md`
 - `docs/privacy_policy.md`
 - `docs/proposals/phase7_dream_engine.md`
-- `docs/releases/v1.0.0-stable-postmortem.md`
 
 ## Top Missing Date Metadata
 - `AGENTS.md`
