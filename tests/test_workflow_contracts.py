@@ -419,6 +419,9 @@ def test_commit_attribution_workflow_uses_backfill_schedule_path() -> None:
     assert '--equivalent-ref "$GITHUB_SHA"' in run_cmd
     assert "--require-tree-equivalence" in run_cmd
     assert "python scripts/verify_incremental_commit_attribution.py --strict" in run_cmd
+    run_env = run_step.get("env", {})
+    assert isinstance(run_env, dict)
+    assert run_env.get("COMMIT_ATTRIBUTION_ANCHOR") == "3a0b48ae92f907b96b180558044aae6c8bf5cc92"
 
 
 def test_test_workflow_uses_black_gate_script_and_uploads_artifact() -> None:

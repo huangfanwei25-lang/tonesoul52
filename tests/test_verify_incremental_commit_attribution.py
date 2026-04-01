@@ -69,6 +69,28 @@ def test_resolve_revision_plan_for_local_uses_merge_base(monkeypatch) -> None:
     assert plan["checked_revisions"] == ["commit-local"]
 
 
+def test_resolve_revision_plan_prefers_enforcement_anchor_when_available(monkeypatch) -> None:
+    monkeypatch.setattr(incremental, "_sha_exists", lambda revision: revision in {"anchor-1", "HEAD"})
+    monkeypatch.setattr(incremental, "_is_ancestor", lambda ancestor, head: (ancestor, head) == ("anchor-1", "HEAD"))
+    monkeypatch.setattr(incremental, "_rev_list", lambda spec: ["anchored-a", "anchored-b"])
+
+    plan = incremental.resolve_revision_plan(
+        event_name="pull_request",
+        head_sha="HEAD",
+        before_sha=None,
+        pr_base_sha="base-sha",
+        pr_head_sha="head-sha",
+        local_base_candidates=["origin/master"],
+        enforcement_anchor="anchor-1",
+    )
+
+    assert plan["mode"] == "anchored_incremental"
+    assert plan["range_spec"] == "anchor-1..HEAD"
+    assert plan["base_ref"] == "anchor-1"
+    assert plan["checked_revisions"] == ["anchored-a", "anchored-b"]
+    assert plan["anchor_override_used"] is True
+
+
 def test_build_report_collects_missing_context(monkeypatch) -> None:
     monkeypatch.setattr(
         incremental,

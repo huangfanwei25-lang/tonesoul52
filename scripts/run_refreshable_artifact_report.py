@@ -280,7 +280,7 @@ EXACT_PRODUCERS: dict[str, dict[str, str]] = {
         "source": "scripts/report_true_verification_task_status.py",
     },
     "docs/status/commit_attribution_local.json": {
-        "command": "python scripts/verify_incremental_commit_attribution.py --strict --artifact-path docs/status/commit_attribution_local.json",
+        "command": "python scripts/verify_incremental_commit_attribution.py --strict --enforcement-anchor 3a0b48ae92f907b96b180558044aae6c8bf5cc92 --artifact-path docs/status/commit_attribution_local.json",
         "source": "scripts/verify_incremental_commit_attribution.py",
     },
     "docs/status/commit_attribution_backfill_branch.json": {

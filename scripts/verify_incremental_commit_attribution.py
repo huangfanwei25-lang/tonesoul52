@@ -51,6 +51,15 @@ def _merge_base(base_ref: str, head_sha: str) -> str | None:
     return value or None
 
 
+def _is_ancestor(ancestor: str, descendant: str) -> bool:
+    normalized_ancestor = str(ancestor or "").strip()
+    normalized_descendant = str(descendant or "").strip()
+    if not normalized_ancestor or not normalized_descendant:
+        return False
+    proc = _run_git(["merge-base", "--is-ancestor", normalized_ancestor, normalized_descendant])
+    return proc.returncode == 0
+
+
 def _tree_hash(revision: str) -> str | None:
     candidate = str(revision or "").strip()
     if not candidate:
@@ -101,6 +110,7 @@ def resolve_revision_plan(
     pr_base_sha: str | None,
     pr_head_sha: str | None,
     local_base_candidates: list[str],
+    enforcement_anchor: str | None = None,
 ) -> dict[str, Any]:
     normalized_event = str(event_name or "").strip()
     normalized_head = str(head_sha or "HEAD").strip() or "HEAD"
@@ -145,12 +155,26 @@ def resolve_revision_plan(
     if not revisions:
         revisions = [normalized_head]
 
+    anchor_ref = str(enforcement_anchor or "").strip()
+    anchor_used = False
+    if anchor_ref and _sha_exists(anchor_ref) and _is_ancestor(anchor_ref, normalized_head):
+        anchored_range = f"{anchor_ref}..{normalized_head}"
+        anchored_revisions = _rev_list(anchored_range)
+        if anchored_revisions:
+            mode = "anchored_incremental"
+            range_spec = anchored_range
+            base_ref = anchor_ref
+            revisions = anchored_revisions
+            anchor_used = True
+
     return {
         "event_name": normalized_event or "local",
         "mode": mode,
         "range_spec": range_spec,
         "base_ref": base_ref,
         "checked_revisions": revisions,
+        "enforcement_anchor": anchor_ref or None,
+        "anchor_override_used": anchor_used,
     }
 
 
@@ -163,6 +187,7 @@ def build_report(
     pr_head_sha: str | None,
     local_base_candidates: list[str],
     equivalent_ref: str | None = None,
+    enforcement_anchor: str | None = None,
 ) -> dict[str, Any]:
     plan = resolve_revision_plan(
         event_name=event_name,
@@ -171,6 +196,7 @@ def build_report(
         pr_base_sha=pr_base_sha,
         pr_head_sha=pr_head_sha,
         local_base_candidates=local_base_candidates,
+        enforcement_anchor=enforcement_anchor,
     )
     results: list[dict[str, Any]] = []
     missing: list[dict[str, str]] = []
@@ -229,6 +255,13 @@ def _tree_equivalence_satisfied(report: dict[str, Any]) -> bool:
     return isinstance(equivalence, dict) and equivalence.get("tree_equal") is True
 
 
+def _emit_json(payload: dict[str, Any]) -> None:
+    text = json.dumps(payload, ensure_ascii=False, indent=2)
+    encoding = getattr(sys.stdout, "encoding", None) or "utf-8"
+    safe_text = text.encode(encoding, errors="replace").decode(encoding, errors="replace")
+    print(safe_text)
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Verify incremental commit attribution trailers.")
     parser.add_argument(
@@ -261,6 +294,11 @@ def build_parser() -> argparse.ArgumentParser:
         action="append",
         default=[],
         help="Local-mode base ref candidate (repeatable). Defaults to origin/master, origin/main, master, main.",
+    )
+    parser.add_argument(
+        "--enforcement-anchor",
+        default=os.environ.get("COMMIT_ATTRIBUTION_ANCHOR", ""),
+        help="Optional revision after which commit attribution becomes blocking.",
     )
     parser.add_argument(
         "--artifact-path",
@@ -301,6 +339,7 @@ def main() -> int:
             pr_head_sha=args.pr_head_sha,
             local_base_candidates=local_base_candidates,
             equivalent_ref=args.equivalent_ref,
+            enforcement_anchor=args.enforcement_anchor,
         )
     except RuntimeError as exc:
         payload = {
@@ -313,14 +352,14 @@ def main() -> int:
             json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
             encoding="utf-8",
         )
-        print(json.dumps(payload, ensure_ascii=False, indent=2))
+        _emit_json(payload)
         return 1
 
     Path(args.artifact_path).write_text(
         json.dumps(report, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
-    print(json.dumps(report, ensure_ascii=False, indent=2))
+    _emit_json(report)
 
     if args.require_tree_equivalence and not _tree_equivalence_satisfied(report):
         print(
