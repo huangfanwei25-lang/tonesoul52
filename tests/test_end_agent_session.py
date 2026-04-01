@@ -124,8 +124,10 @@ def test_end_agent_session_compaction_and_release(capsys, monkeypatch, tmp_path:
     assert output["contract_version"] == "v1"
     assert output["bundle"] == "session_end"
     assert output["mode"] == "compaction"
+    assert output["closeout"]["status"] == "partial"
     assert output["checkpoint"] is None
     assert output["compaction"]["agent"] == "codex"
+    assert output["compaction"]["closeout"]["status"] == "partial"
     assert output["released_claims"]["strategy"] == "all_for_agent"
     assert output["released_claims"]["released_task_ids"] == ["task-codex"]
     assert output["released_claims"]["not_released_task_ids"] == []
@@ -140,6 +142,7 @@ def test_end_agent_session_compaction_and_release(capsys, monkeypatch, tmp_path:
 
     stored_compactions = json.loads(compactions_path.read_text(encoding="utf-8"))
     assert stored_compactions[0]["summary"] == "leave a bounded handoff for the runtime lane"
+    assert stored_compactions[0]["closeout"]["status"] == "partial"
     remaining_claims = json.loads(claims_path.read_text(encoding="utf-8"))
     assert "task-codex" not in remaining_claims
     assert "task-other" in remaining_claims
@@ -202,8 +205,10 @@ def test_end_agent_session_both_mode_with_no_release(capsys, monkeypatch, tmp_pa
     output = json.loads(capsys.readouterr().out)
 
     assert output["mode"] == "both"
+    assert output["closeout"]["status"] == "partial"
     assert output["checkpoint"]["checkpoint_id"] == "cp-final"
     assert output["compaction"]["summary"].startswith("leave both a checkpoint")
+    assert output["compaction"]["closeout"]["status"] == "partial"
     assert output["released_claims"]["strategy"] == "none"
     assert output["released_claims"]["released_task_ids"] == []
     assert output["underlying_commands"][0].startswith(
@@ -300,6 +305,7 @@ def test_end_agent_session_can_apply_bounded_subject_refresh(
     output = json.loads(capsys.readouterr().out)
 
     assert output["mode"] == "compaction"
+    assert output["closeout"]["status"] == "partial"
     assert output["subject_refresh_application"]["ok"] is True
     assert output["subject_refresh_application"]["field"] == "active_threads"
     assert output["subject_refresh_application"]["candidate_values"] == ["runtime_adapter", "redis"]
@@ -419,6 +425,7 @@ def test_end_agent_session_does_not_promote_recycled_carry_forward_without_new_e
     output = json.loads(capsys.readouterr().out)
 
     assert output["mode"] == "compaction"
+    assert output["closeout"]["status"] == "partial"
     assert output["subject_refresh_application"]["ok"] is False
     assert output["subject_refresh_application"]["reason"] == "promotion_hazards_present"
     assert any(
@@ -438,3 +445,53 @@ def test_ensure_repo_root_on_path_adds_repo_root(monkeypatch) -> None:
 
     assert str(resolved) == repo_root
     assert sys.path[0] == repo_root
+
+
+def test_end_agent_session_accepts_blocked_closeout_grammar(
+    capsys, monkeypatch, tmp_path: Path
+) -> None:
+    module = _load_script_module()
+    state_path = tmp_path / "governance_state.json"
+    traces_path = tmp_path / "session_traces.jsonl"
+
+    _write_state(state_path)
+    _write_traces(traces_path)
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "end_agent_session.py",
+            "--state-path",
+            str(state_path),
+            "--traces-path",
+            str(traces_path),
+            "--agent",
+            "codex",
+            "--summary",
+            "Stop here until a human resolves the authority fork.",
+            "--path",
+            "task.md",
+            "--next-action",
+            "STOP: requires human decision on authority fork",
+            "--closeout-status",
+            "blocked",
+            "--stop-reason",
+            "external_blocked",
+            "--unresolved-item",
+            "human must choose which authority surface wins",
+            "--human-input-required",
+        ],
+    )
+
+    module.main()
+    output = json.loads(capsys.readouterr().out)
+
+    assert output["closeout"]["status"] == "blocked"
+    assert output["closeout"]["stop_reason"] == "external_blocked"
+    assert output["closeout"]["human_input_required"] is True
+    assert output["closeout"]["unresolved_items"] == [
+        "human must choose which authority surface wins"
+    ]
+    assert output["compaction"]["closeout"]["status"] == "blocked"
+    assert "--closeout-status blocked" in output["underlying_commands"][0]

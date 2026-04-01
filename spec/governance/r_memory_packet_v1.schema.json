@@ -717,6 +717,42 @@
         "freshness_hours": {
           "type": "number",
           "minimum": 0.0
+        },
+        "closeout": {
+          "$ref": "#/$defs/closeout"
+        }
+      }
+    },
+    "closeout": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "stop_reason",
+        "unresolved_items",
+        "human_input_required",
+        "note"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["complete", "partial", "blocked", "underdetermined"]
+        },
+        "stop_reason": {
+          "type": "string"
+        },
+        "unresolved_items": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "human_input_required": {
+          "type": "boolean"
+        },
+        "note": {
+          "type": "string",
+          "minLength": 1
         }
       }
     },

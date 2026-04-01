@@ -470,6 +470,94 @@ def write_checkpoint(
     return payload
 
 
+_CLOSEOUT_STATUSES = {"complete", "partial", "blocked", "underdetermined"}
+_CLOSEOUT_STOP_REASONS = {
+    "external_blocked",
+    "internal_unstable",
+    "divergence_risk",
+    "underdetermined",
+}
+
+
+def _clean_text_list(values: Optional[List[Any]]) -> List[str]:
+    result: List[str] = []
+    for value in values or []:
+        text = str(value or "").strip()
+        if text and text not in result:
+            result.append(text)
+    return result
+
+
+def _looks_like_stop_action(text: str) -> bool:
+    return str(text or "").strip().upper().startswith("STOP:")
+
+
+def normalize_closeout_payload(
+    closeout: Optional[Dict[str, Any]] = None,
+    *,
+    status: str = "",
+    stop_reason: str = "",
+    unresolved_items: Optional[List[str]] = None,
+    human_input_required: bool = False,
+    note: str = "",
+    pending_paths: Optional[List[str]] = None,
+    next_action: str = "",
+) -> Dict[str, Any]:
+    payload = dict(closeout or {})
+    normalized_status = str(payload.get("status", status or "")).strip().lower()
+    normalized_stop_reason = str(payload.get("stop_reason", stop_reason or "")).strip().lower()
+    unresolved = _clean_text_list(
+        list(payload.get("unresolved_items") or []) + list(unresolved_items or [])
+    )
+    human_required = bool(payload.get("human_input_required", human_input_required))
+    note_text = str(payload.get("note", note or "")).strip()
+    pending = _clean_text_list(list(payload.get("pending_paths") or []) + list(pending_paths or []))
+    next_action_text = str(payload.get("next_action", next_action or "")).strip()
+
+    if normalized_status not in _CLOSEOUT_STATUSES:
+        normalized_status = ""
+    if normalized_stop_reason not in _CLOSEOUT_STOP_REASONS:
+        normalized_stop_reason = ""
+
+    if not normalized_status:
+        if normalized_stop_reason == "underdetermined":
+            normalized_status = "underdetermined"
+        elif normalized_stop_reason or human_required or _looks_like_stop_action(next_action_text):
+            normalized_status = "blocked"
+        elif unresolved or pending or next_action_text:
+            normalized_status = "partial"
+        else:
+            normalized_status = "complete"
+
+    if normalized_status == "complete":
+        if normalized_stop_reason == "underdetermined":
+            normalized_status = "underdetermined"
+        elif normalized_stop_reason or human_required or _looks_like_stop_action(next_action_text):
+            normalized_status = "blocked"
+        elif unresolved or pending or next_action_text:
+            normalized_status = "partial"
+
+    if normalized_status == "underdetermined" and not normalized_stop_reason:
+        normalized_stop_reason = "underdetermined"
+
+    if not note_text:
+        note_map = {
+            "complete": "Closeout reports no unresolved handoff items.",
+            "partial": "Closeout remains bounded but incomplete; review pending paths and next action before continuing.",
+            "blocked": "Closeout is blocked; do not treat this handoff as completed work.",
+            "underdetermined": "Closeout is underdetermined; gather stronger evidence or request human clarification before continuing.",
+        }
+        note_text = note_map[normalized_status]
+
+    return {
+        "status": normalized_status,
+        "stop_reason": normalized_stop_reason,
+        "unresolved_items": unresolved,
+        "human_input_required": human_required,
+        "note": note_text,
+    }
+
+
 def list_checkpoints(store=None) -> List[Dict[str, Any]]:
     """List active resumability checkpoints from the experimental lane."""
     if store is None:
@@ -491,6 +579,7 @@ def write_compaction(
     pending_paths: Optional[List[str]] = None,
     evidence_refs: Optional[List[str]] = None,
     council_dossier: Optional[Dict[str, Any]] = None,
+    closeout: Optional[Dict[str, Any]] = None,
     next_action: str = "",
     source: str = "direct",
     ttl_seconds: int = 604800,
@@ -511,6 +600,11 @@ def write_compaction(
         "pending_paths": list(pending_paths or []),
         "evidence_refs": list(evidence_refs or []),
         "council_dossier": _normalize_council_dossier(council_dossier),
+        "closeout": normalize_closeout_payload(
+            closeout,
+            pending_paths=list(pending_paths or []),
+            next_action=next_action,
+        ),
         "next_action": next_action,
         "source": source,
         "updated_at": _utc_now(),
@@ -1924,6 +2018,12 @@ def _build_operator_guidance(
     from tonesoul.receiver_posture import build_receiver_parity_readout
 
     reminders: List[str] = []
+    latest_compaction = compactions[0] if compactions else {}
+    latest_compaction_closeout = normalize_closeout_payload(
+        latest_compaction.get("closeout") if isinstance(latest_compaction.get("closeout"), dict) else None,
+        pending_paths=list(latest_compaction.get("pending_paths") or []),
+        next_action=str(latest_compaction.get("next_action", "")),
+    )
     if compactions:
         reminders.append(
             "Prefer recent_compactions and project_memory_summary before older recent_traces."
@@ -1942,6 +2042,12 @@ def _build_operator_guidance(
     if pending_paths:
         reminders.append(
             "Pending paths are already externalized; reuse them before widening the scan."
+        )
+
+    closeout_status = str(latest_compaction_closeout.get("status", "")).strip()
+    if compactions and closeout_status in {"partial", "blocked", "underdetermined"}:
+        reminders.append(
+            f"Latest compaction closeout is {closeout_status}; do not read the handoff as completed work."
         )
 
     routing_summary = project_memory_summary.get("routing_summary") or {}
@@ -2109,6 +2215,7 @@ def _build_operator_guidance(
         "current_reminders": reminders,
         "completion_rule": (
             "Before ending a session, externalize progress with checkpoint or compaction, "
+            "mark closeout as complete/partial/blocked/underdetermined honestly, "
             "then release any shared claim."
         ),
     }
@@ -2670,6 +2777,13 @@ def r_memory_packet(
         council_dossier = _normalize_council_dossier(entry.get("council_dossier"))
         if council_dossier:
             item["council_dossier"] = council_dossier
+        closeout = normalize_closeout_payload(
+            entry.get("closeout") if isinstance(entry.get("closeout"), dict) else None,
+            pending_paths=item.get("pending_paths"),
+            next_action=item.get("next_action", ""),
+        )
+        if closeout:
+            item["closeout"] = closeout
         return item
 
     def _trim_checkpoint(entry: Dict[str, Any]) -> Dict[str, Any]:

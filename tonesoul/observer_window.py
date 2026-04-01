@@ -163,12 +163,26 @@ def _build_contested(
     compaction_surface = import_posture.get("compactions") or {}
     hazards = list(compaction_surface.get("promotion_hazards") or [])
     obligation = str(compaction_surface.get("receiver_obligation", "")).strip()
+    closeout_status = str(compaction_surface.get("closeout_status", "")).strip()
+    unresolved_count = int(compaction_surface.get("unresolved_count", 0) or 0)
+    stop_reason = str(compaction_surface.get("stop_reason", "")).strip()
     if hazards or obligation == "must_not_promote":
         items.append(
             _item(
                 "latest compaction has carry_forward promotion hazard; must_not_promote",
                 evidence_source="import_posture.compactions.promotion_hazards",
                 detail=f"hazards={len(hazards)}",
+            )
+        )
+    if closeout_status in {"partial", "blocked", "underdetermined"}:
+        detail_parts = [f"status={closeout_status}", f"unresolved={unresolved_count}"]
+        if stop_reason:
+            detail_parts.append(f"stop_reason={stop_reason}")
+        items.append(
+            _item(
+                f"latest compaction closeout is '{closeout_status}'; do not read the handoff as completed work",
+                evidence_source="import_posture.compactions.closeout_status",
+                detail=" ".join(detail_parts),
             )
         )
 

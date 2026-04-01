@@ -639,6 +639,10 @@ def test_start_agent_session_marks_recycled_carry_forward_as_must_not_promote(
     working_style_surface = output["import_posture"]["surfaces"]["working_style"]
     assert compaction_surface["import_posture"] == "advisory"
     assert compaction_surface["receiver_obligation"] == "must_not_promote"
+    assert compaction_surface["closeout_status"] == "partial"
+    assert compaction_surface["stop_reason"] == ""
+    assert compaction_surface["unresolved_count"] == 0
+    assert compaction_surface["human_input_required"] is False
     assert any(
         "recycled carry_forward" in hazard for hazard in compaction_surface["promotion_hazards"]
     )
@@ -706,6 +710,10 @@ def test_start_agent_session_marks_recycled_carry_forward_as_must_not_promote(
         for alert in output["import_posture"]["receiver_alerts"]
     )
     assert any(
+        "Latest compaction closeout is partial" in alert
+        for alert in output["import_posture"]["receiver_alerts"]
+    )
+    assert any(
         "Working-style continuity is advisory only" in alert
         for alert in output["import_posture"]["receiver_alerts"]
     )
@@ -722,6 +730,80 @@ def test_start_agent_session_marks_recycled_carry_forward_as_must_not_promote(
         "Working-style import is bounded to scan order, evidence handling, prompt shape, session cadence, and render interpretation"
         in alert
         for alert in output["receiver_parity"]["alerts"]
+    )
+
+
+def test_start_agent_session_surfaces_blocked_compaction_closeout(
+    capsys,
+    monkeypatch,
+    tmp_path: Path,
+) -> None:
+    module = _load_script_module()
+    state_path = tmp_path / "governance_state.json"
+    traces_path = tmp_path / "session_traces.jsonl"
+    compactions_path = tmp_path / ".aegis" / "compacted.json"
+
+    _write_state(state_path)
+    _write_traces(traces_path)
+    compactions_path.parent.mkdir(parents=True, exist_ok=True)
+    compactions_path.write_text(
+        json.dumps(
+            [
+                {
+                    "compaction_id": "cmp-blocked",
+                    "agent": "codex",
+                    "session_id": "sess-blocked",
+                    "summary": "Stop here until a human resolves the authority fork.",
+                    "carry_forward": ["hold current authority boundaries steady"],
+                    "pending_paths": ["task.md"],
+                    "evidence_refs": ["docs/architecture/TONESOUL_PLAN_DELTA_CONTRACT.md"],
+                    "next_action": "STOP: requires human decision on authority fork",
+                    "source": "cli",
+                    "updated_at": "2026-03-28T00:06:00+00:00",
+                    "closeout": {
+                        "status": "blocked",
+                        "stop_reason": "external_blocked",
+                        "unresolved_items": ["human must choose which authority surface wins"],
+                        "human_input_required": True,
+                        "note": "Blocked on human confirmation before the next mutation."
+                    },
+                }
+            ]
+        ),
+        encoding="utf-8",
+    )
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "start_agent_session.py",
+            "--state-path",
+            str(state_path),
+            "--traces-path",
+            str(traces_path),
+            "--agent",
+            "observer-blocked-closeout",
+            "--no-ack",
+        ],
+    )
+
+    module.main()
+    output = json.loads(capsys.readouterr().out)
+
+    compaction_surface = output["import_posture"]["surfaces"]["compactions"]
+    assert compaction_surface["closeout_status"] == "blocked"
+    assert compaction_surface["stop_reason"] == "external_blocked"
+    assert compaction_surface["unresolved_count"] == 1
+    assert compaction_surface["human_input_required"] is True
+    assert compaction_surface["receiver_obligation"] == "must_review"
+    assert any(
+        "Latest compaction closeout is blocked" in alert
+        for alert in output["import_posture"]["receiver_alerts"]
+    )
+    assert any(
+        "stop_reason=external_blocked" in alert
+        for alert in output["import_posture"]["receiver_alerts"]
     )
 
 

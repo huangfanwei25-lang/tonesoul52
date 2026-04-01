@@ -1594,3 +1594,9 @@
 - [x] point repo-local AI entry instructions at the current handoff and new planning surfaces
 - [x] keep older handoff notes as lineage, not as the current default continuation story
 **Success Criteria**: A fresh successor can follow the normal repo entry stack, open one current handoff note, and know both what was truly fixed today and what long-horizon continuity work is now prepared without reopening older buckets by accident.
+
+## Phase 741: Anti-Fake-Completion Closeout Grammar (2026-04-02)
+- [x] add a structured compaction closeout grammar so bounded handoffs can say `complete / partial / blocked / underdetermined` instead of relying on smooth summaries alone
+- [x] teach `save_compaction.py` and `end_agent_session.py` to emit explicit or derived closeout state, including stop reason, unresolved items, and human-input requirement
+- [x] surface closeout interpretation in session-start, observer-window, packet compactions, and operator guidance so later agents do not misread unresolved work as finished
+**Success Criteria**: A later agent can inspect the latest compaction/session-end surfaces and immediately tell whether the previous session actually finished cleanly, is blocked, or remains underdetermined, without replaying chat history.

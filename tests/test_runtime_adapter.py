@@ -613,11 +613,16 @@ def test_compactions_use_noncanonical_resumability_lane(tmp_path: Path) -> None:
     assert packet["recent_compactions"][0]["agent"] == "gemini"
     assert packet["recent_compactions"][1]["agent"] == "codex"
     assert packet["recent_compactions"][0]["freshness_hours"] >= 0.0
+    assert packet["recent_compactions"][0]["closeout"]["status"] == "partial"
     assert "project_memory_summary" in packet
     assert packet["project_memory_summary"]["next_actions"][0] == "use packet consumption in UI"
     assert "repo_progress" in packet["project_memory_summary"]
     assert (
         "Prefer recent_compactions and project_memory_summary before older recent_traces."
+        in packet["operator_guidance"]["current_reminders"]
+    )
+    assert (
+        "Latest compaction closeout is partial; do not read the handoff as completed work."
         in packet["operator_guidance"]["current_reminders"]
     )
     assert packet["operator_guidance"]["session_end"][3].startswith(

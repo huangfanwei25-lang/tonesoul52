@@ -117,6 +117,21 @@ Every bounded handoff should preserve at least:
 - what is only advisory
 - what is blocked on missing evidence or human choice
 
+The preferred closeout grammar for resumability handoffs is:
+
+- `complete`
+- `partial`
+- `blocked`
+- `underdetermined`
+
+And, when relevant:
+
+- `stop_reason`
+- `unresolved_items`
+- `human_input_required`
+
+A smooth summary without those signals must not be treated as proof that a session actually ended cleanly.
+
 ### 6. Descriptive And Calibrated Layers Must Stay Separate
 
 ToneSoul may expose descriptive numeric or semantic summaries.

@@ -156,6 +156,19 @@ def main() -> None:
     parser.add_argument("--next-action", default="")
     parser.add_argument("--carry-forward", action="append", default=[])
     parser.add_argument("--evidence-ref", action="append", dest="evidence_refs", default=[])
+    parser.add_argument(
+        "--closeout-status",
+        choices=("complete", "partial", "blocked", "underdetermined"),
+        default="",
+    )
+    parser.add_argument(
+        "--stop-reason",
+        choices=("external_blocked", "internal_unstable", "divergence_risk", "underdetermined"),
+        default="",
+    )
+    parser.add_argument("--unresolved-item", action="append", dest="unresolved_items", default=[])
+    parser.add_argument("--human-input-required", action="store_true")
+    parser.add_argument("--closeout-note", default="")
     parser.add_argument("--release-task", action="append", dest="release_task_ids", default=[])
     parser.add_argument("--no-release", action="store_true")
     parser.add_argument("--refresh-active-threads", action="store_true")
@@ -197,8 +210,30 @@ def main() -> None:
         if str(value).strip()
     ]
     source = str(payload.get("source", args.source or "cli"))
+    unresolved_items = [
+        str(value).strip()
+        for value in (payload.get("unresolved_items") or args.unresolved_items or [])
+        if str(value).strip()
+    ]
 
-    from tonesoul.runtime_adapter import write_checkpoint, write_compaction
+    from tonesoul.runtime_adapter import (
+        normalize_closeout_payload,
+        write_checkpoint,
+        write_compaction,
+    )
+
+    closeout = normalize_closeout_payload(
+        status=str(payload.get("closeout_status", args.closeout_status or "")).strip(),
+        stop_reason=str(payload.get("stop_reason", args.stop_reason or "")).strip(),
+        unresolved_items=unresolved_items,
+        human_input_required=bool(
+            payload.get("human_input_required", args.human_input_required)
+        ),
+        note=str(payload.get("closeout_note", args.closeout_note or "")).strip(),
+        pending_paths=pending_paths,
+        next_action=next_action,
+        closeout=dict(payload.get("closeout")) if isinstance(payload.get("closeout"), dict) else None,
+    )
 
     store = _build_store(args)
     checkpoint = None
@@ -230,6 +265,7 @@ def main() -> None:
             pending_paths=pending_paths,
             evidence_refs=evidence_refs,
             council_dossier=council_dossier,
+            closeout=closeout,
             next_action=next_action,
             source=source,
             ttl_seconds=args.compaction_ttl_seconds,
@@ -259,13 +295,24 @@ def main() -> None:
         shared_args.append(f'--path "{path}"')
     if next_action:
         shared_args.append(f'--next-action "{next_action}"')
+    closeout_args = [f"--closeout-status {closeout['status']}"]
+    if closeout.get("stop_reason"):
+        closeout_args.append(f"--stop-reason {closeout['stop_reason']}")
+    for item in list(closeout.get("unresolved_items") or []):
+        closeout_args.append(f'--unresolved-item "{item}"')
+    if closeout.get("human_input_required"):
+        closeout_args.append("--human-input-required")
+    if str(closeout.get("note", "")).strip():
+        closeout_args.append(f'--closeout-note "{closeout["note"]}"')
     shared_args_text = " ".join(shared_args)
+    closeout_args_text = " ".join(closeout_args)
 
     payload_out = {
         "contract_version": "v1",
         "bundle": "session_end",
         "agent": agent_id,
         "mode": mode,
+        "closeout": closeout,
         "checkpoint": checkpoint,
         "compaction": compaction,
         "subject_refresh_application": subject_refresh_application,
@@ -279,7 +326,7 @@ def main() -> None:
         )
     if compaction is not None:
         payload_out["underlying_commands"].append(
-            f"python scripts/save_compaction.py --agent {agent_id} {shared_args_text}"
+            f"python scripts/save_compaction.py --agent {agent_id} {shared_args_text} {closeout_args_text}".strip()
         )
     if subject_refresh_application is not None:
         payload_out["underlying_commands"].append(

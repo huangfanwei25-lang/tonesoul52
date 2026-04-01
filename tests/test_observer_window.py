@@ -64,6 +64,9 @@ def _make_import_posture(
     compaction_freshness_hours: float = 12.0,
     compaction_hazards: list | None = None,
     compaction_obligation: str = "should_consider",
+    compaction_closeout_status: str = "",
+    compaction_stop_reason: str = "",
+    compaction_unresolved_count: int = 0,
     trace_present: bool = True,
     trace_freshness_hours: float = 6.0,
     snapshot_present: bool = True,
@@ -90,6 +93,9 @@ def _make_import_posture(
             "freshness_hours": compaction_freshness_hours if compaction_present else None,
             "promotion_hazards": compaction_hazards,
             "receiver_obligation": compaction_obligation,
+            "closeout_status": compaction_closeout_status,
+            "stop_reason": compaction_stop_reason,
+            "unresolved_count": compaction_unresolved_count,
         },
         "recent_traces": {
             "present": trace_present,
@@ -263,6 +269,40 @@ class TestConflictingContinuityCase:
     def test_counts_still_correct(self):
         counts = self.anchor["counts"]
         assert counts["contested"] == len(self.anchor["contested"])
+
+
+class TestBlockedCloseoutCase:
+    """
+    A blocked compaction closeout should surface as contested even without
+    promotion hazards, so later agents do not mistake the handoff for done work.
+    """
+
+    def setup_method(self):
+        self.anchor = build_low_drift_anchor(
+            packet=_make_packet(first_observation=False),
+            import_posture=_make_import_posture(
+                compaction_closeout_status="blocked",
+                compaction_stop_reason="external_blocked",
+                compaction_unresolved_count=1,
+                compaction_obligation="must_review",
+            ),
+            readiness=_make_readiness(status="needs_clarification"),
+        )
+
+    def test_blocked_closeout_in_contested(self):
+        contested_claims = [item["claim"] for item in self.anchor["contested"]]
+        assert any(
+            "closeout is 'blocked'" in c for c in contested_claims
+        ), f"Expected blocked closeout in contested. Got: {contested_claims}"
+
+    def test_blocked_closeout_detail_contains_stop_reason(self):
+        items = [
+            item
+            for item in self.anchor["contested"]
+            if "closeout is 'blocked'" in item.get("claim", "")
+        ]
+        assert items
+        assert "stop_reason=external_blocked" in items[0].get("detail", "")
 
 
 # ---------------------------------------------------------------------------

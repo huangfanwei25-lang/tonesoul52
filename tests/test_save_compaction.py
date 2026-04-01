@@ -93,11 +93,14 @@ def test_save_compaction_writes_noncanonical_summary(capsys, monkeypatch, tmp_pa
     assert output["agent"] == "codex"
     assert output["session_id"] == "sess-101"
     assert output["summary"].startswith("Condense the runtime state")
+    assert output["closeout"]["status"] == "partial"
+    assert output["closeout"]["unresolved_items"] == []
 
     saved = json.loads((tmp_path / ".aegis" / "compacted.json").read_text(encoding="utf-8"))
     assert saved[0]["agent"] == "codex"
     assert saved[0]["next_action"] == "teach the next agent to read packet first"
     assert saved[0]["council_dossier"]["confidence_posture"] == "contested"
+    assert saved[0]["closeout"]["status"] == "partial"
 
 
 def test_save_compaction_accepts_minimal_input_payload(
@@ -140,6 +143,7 @@ def test_save_compaction_accepts_minimal_input_payload(
     assert output["carry_forward"] == []
     assert output["evidence_refs"] == []
     assert output["council_dossier"] == {}
+    assert output["closeout"]["status"] == "complete"
 
 
 def test_save_compaction_reads_payload_from_stdin(
@@ -186,6 +190,7 @@ def test_save_compaction_reads_payload_from_stdin(
     assert output["source"] == "stdin"
     saved = json.loads((tmp_path / ".aegis" / "compacted.json").read_text(encoding="utf-8"))
     assert saved[0]["carry_forward"] == ["re-check freshness before import"]
+    assert saved[0]["closeout"]["status"] == "partial"
 
 
 def test_save_compaction_respects_limit_and_newest_first_order(
@@ -256,6 +261,52 @@ def test_save_compaction_prefers_legacy_sidecar_when_present(
     saved = json.loads(legacy_path.read_text(encoding="utf-8"))
     assert saved[0]["agent"] == "codex"
     assert not (tmp_path / ".aegis" / "compacted.json").exists()
+
+
+def test_save_compaction_accepts_explicit_blocked_closeout(capsys, monkeypatch, tmp_path: Path) -> None:
+    module = _load_script_module()
+    state_path = tmp_path / "governance_state.json"
+    traces_path = tmp_path / "session_traces.jsonl"
+    payload_path = tmp_path / "blocked_compaction.json"
+    payload_path.write_text(
+        json.dumps(
+            {
+                "agent": "codex",
+                "summary": "Pause before mutating the shared runtime lane.",
+                "pending_paths": ["tonesoul/runtime_adapter.py"],
+                "closeout_status": "blocked",
+                "stop_reason": "external_blocked",
+                "human_input_required": True,
+                "unresolved_items": ["human must confirm whether to reopen the runtime lane"],
+                "closeout_note": "Blocked on human confirmation before the next mutation.",
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "save_compaction.py",
+            "--input",
+            str(payload_path),
+            "--state-path",
+            str(state_path),
+            "--traces-path",
+            str(traces_path),
+        ],
+    )
+
+    module.main()
+    output = json.loads(capsys.readouterr().out)
+
+    assert output["closeout"]["status"] == "blocked"
+    assert output["closeout"]["stop_reason"] == "external_blocked"
+    assert output["closeout"]["human_input_required"] is True
+    assert output["closeout"]["unresolved_items"] == [
+        "human must confirm whether to reopen the runtime lane"
+    ]
 
 
 def test_ensure_repo_root_on_path_adds_repo_root(monkeypatch) -> None:

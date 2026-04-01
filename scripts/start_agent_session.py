@@ -584,6 +584,8 @@ def _build_deliberation_mode_hint(*, task_track_hint: dict, readiness: dict) -> 
 
 
 def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
+    from tonesoul.runtime_adapter import normalize_closeout_payload
+
     claims = list(packet.get("active_claims") or [])
     checkpoints = list(packet.get("recent_checkpoints") or [])
     compactions = list(packet.get("recent_compactions") or [])
@@ -601,6 +603,19 @@ def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
 
     claim_ttl_minutes = _min_claim_ttl_minutes(claims)
     latest_compaction = compactions[0] if compactions else {}
+    latest_compaction_closeout = normalize_closeout_payload(
+        latest_compaction.get("closeout") if isinstance(latest_compaction.get("closeout"), dict) else None,
+        pending_paths=list(latest_compaction.get("pending_paths") or []),
+        next_action=str(latest_compaction.get("next_action", "")),
+    )
+    latest_compaction_closeout_status = str(latest_compaction_closeout.get("status", "")).strip()
+    latest_compaction_stop_reason = str(latest_compaction_closeout.get("stop_reason", "")).strip()
+    latest_compaction_unresolved_count = len(
+        latest_compaction_closeout.get("unresolved_items") or []
+    )
+    latest_compaction_human_required = bool(
+        latest_compaction_closeout.get("human_input_required", False)
+    )
     latest_trace = traces[0] if traces else {}
     latest_dossier_snapshot = _latest_council_dossier_snapshot(
         latest_compaction=latest_compaction,
@@ -663,15 +678,35 @@ def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
             "present": bool(compactions),
             "import_posture": "advisory",
             "receiver_obligation": (
-                "must_not_promote" if carry_forward_hazards else "should_consider"
+                "must_not_promote"
+                if carry_forward_hazards
+                else (
+                    "must_review"
+                    if latest_compaction_closeout_status in {"blocked", "underdetermined"}
+                    or latest_compaction_human_required
+                    else (
+                        "review_before_apply"
+                        if latest_compaction_closeout_status == "partial"
+                        or latest_compaction_unresolved_count > 0
+                        else "should_consider"
+                    )
+                )
             ),
             "decay_posture": "medium",
             "freshness_hours": _latest_freshness(compactions, timestamp_key="updated_at"),
             "promotion_hazards": carry_forward_hazards,
+            "closeout_status": latest_compaction_closeout_status,
+            "stop_reason": latest_compaction_stop_reason,
+            "unresolved_count": latest_compaction_unresolved_count,
+            "human_input_required": latest_compaction_human_required,
             "note": (
                 "Carry-forward is resumability memory; the latest compaction repeats an older handoff without new evidence, so it may guide review but must not be promoted."
                 if carry_forward_hazards
-                else "Carry-forward is resumability memory; apply cautiously and never silently promote."
+                else (
+                    f"Carry-forward is resumability memory; latest closeout is {latest_compaction_closeout_status or 'complete'}, so review it before continuing."
+                    if latest_compaction_closeout_status in {"partial", "blocked", "underdetermined"}
+                    else "Carry-forward is resumability memory; apply cautiously and never silently promote."
+                )
             ),
         },
         "project_memory_summary": {
@@ -839,12 +874,32 @@ def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
     receiver_alerts = list(
         receiver_parity.get("primary_alerts") or receiver_parity.get("alerts") or []
     )
+    if latest_compaction_closeout_status in {"partial", "blocked", "underdetermined"}:
+        receiver_alerts.append(
+            f"Latest compaction closeout is {latest_compaction_closeout_status}; do not treat the handoff as completed work."
+        )
+    if latest_compaction_stop_reason:
+        receiver_alerts.append(
+            f"Latest compaction stop_reason={latest_compaction_stop_reason}; keep the next step bounded to current evidence."
+        )
+    if latest_compaction_human_required:
+        receiver_alerts.append(
+            "Latest compaction closeout still requires human input before the next mutation."
+        )
+    if latest_compaction_unresolved_count > 0:
+        receiver_alerts.append(
+            f"Latest compaction still carries {latest_compaction_unresolved_count} unresolved item(s); review them before applying the handoff."
+        )
+    deduped_alerts: list[str] = []
+    for alert in receiver_alerts:
+        if alert not in deduped_alerts:
+            deduped_alerts.append(alert)
 
     return {
         "summary_text": " | ".join(summary_parts),
         "surfaces": surfaces,
         "receiver_parity": receiver_parity,
-        "receiver_alerts": receiver_alerts,
+        "receiver_alerts": deduped_alerts,
         "receiver_rule": "ack is safe, apply is bounded, promote requires explicit justification and human confirmation.",
         "readiness_alignment": str(readiness.get("status", "")),
     }

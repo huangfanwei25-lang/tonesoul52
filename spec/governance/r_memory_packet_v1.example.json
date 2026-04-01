@@ -223,9 +223,18 @@
           "adversarial_posture": "survived_dissent"
         },
         "opacity_declaration": "partially_observable"
-      },
-      "next_action": "Expose bounded compaction summaries in the operator shell without mutating governance posture.",
-      "source": "cli",
+        },
+        "closeout": {
+          "status": "partial",
+          "stop_reason": "",
+          "unresolved_items": [
+            "gateway consumer still needs packet wiring review"
+          ],
+          "human_input_required": false,
+          "note": "Closeout remains bounded but incomplete; review pending paths and next action before continuing."
+        },
+        "next_action": "Expose bounded compaction summaries in the operator shell without mutating governance posture.",
+        "source": "cli",
       "updated_at": "2026-03-26T12:00:00+00:00",
       "freshness_hours": 0.0
     }

@@ -37,16 +37,21 @@ def _load_payload(args) -> dict:
             raw = ""
         if raw:
             return json.loads(raw)
-    return {
-        "agent": args.agent,
-        "session_id": args.session_id,
-        "summary": args.summary,
-        "carry_forward": list(args.carry_forward or []),
-        "pending_paths": list(args.pending_paths or []),
-        "evidence_refs": list(args.evidence_refs or []),
-        "next_action": args.next_action,
-        "source": args.source,
-    }
+        return {
+            "agent": args.agent,
+            "session_id": args.session_id,
+            "summary": args.summary,
+            "carry_forward": list(args.carry_forward or []),
+            "pending_paths": list(args.pending_paths or []),
+            "evidence_refs": list(args.evidence_refs or []),
+            "next_action": args.next_action,
+            "closeout_status": args.closeout_status,
+            "stop_reason": args.stop_reason,
+            "unresolved_items": list(args.unresolved_items or []),
+            "human_input_required": bool(args.human_input_required),
+            "closeout_note": args.closeout_note,
+            "source": args.source,
+        }
 
 
 def main() -> None:
@@ -62,6 +67,19 @@ def main() -> None:
     parser.add_argument("--path", action="append", dest="pending_paths", default=[])
     parser.add_argument("--evidence-ref", action="append", dest="evidence_refs", default=[])
     parser.add_argument("--next-action", default="")
+    parser.add_argument(
+        "--closeout-status",
+        choices=("complete", "partial", "blocked", "underdetermined"),
+        default="",
+    )
+    parser.add_argument(
+        "--stop-reason",
+        choices=("external_blocked", "internal_unstable", "divergence_risk", "underdetermined"),
+        default="",
+    )
+    parser.add_argument("--unresolved-item", action="append", dest="unresolved_items", default=[])
+    parser.add_argument("--human-input-required", action="store_true")
+    parser.add_argument("--closeout-note", default="")
     parser.add_argument("--source", default="cli")
     parser.add_argument("--ttl-seconds", type=int, default=604800)
     parser.add_argument("--limit", type=int, default=20)
@@ -93,7 +111,24 @@ def main() -> None:
             compactions_path=_resolve_sidecar(root, "compacted.json"),
         )
 
-    from tonesoul.runtime_adapter import write_compaction
+    from tonesoul.runtime_adapter import normalize_closeout_payload, write_compaction
+
+    closeout = normalize_closeout_payload(
+        status=str(payload.get("closeout_status", args.closeout_status or "")).strip(),
+        stop_reason=str(payload.get("stop_reason", args.stop_reason or "")).strip(),
+        unresolved_items=list(payload.get("unresolved_items") or []),
+        human_input_required=bool(
+            payload.get("human_input_required", args.human_input_required)
+        ),
+        note=str(payload.get("closeout_note", args.closeout_note or "")).strip(),
+        pending_paths=list(payload.get("pending_paths") or []),
+        next_action=str(payload.get("next_action", args.next_action)),
+        closeout=(
+            dict(payload.get("closeout"))
+            if isinstance(payload.get("closeout"), dict)
+            else None
+        ),
+    )
 
     result = write_compaction(
         agent_id=str(payload.get("agent", args.agent or "unknown")),
@@ -107,6 +142,7 @@ def main() -> None:
             if isinstance(payload.get("council_dossier"), dict)
             else None
         ),
+        closeout=closeout,
         next_action=str(payload.get("next_action", args.next_action)),
         source=str(payload.get("source", args.source)),
         ttl_seconds=args.ttl_seconds,
