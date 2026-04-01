@@ -652,3 +652,20 @@ class TestCanonicalCenterAndHotMemoryLadder:
         )
         assert layer["status"] == "contested"
         assert "must_not_promote" in layer["note"]
+
+    def test_hot_memory_decay_map_quarantines_bounded_handoff(self):
+        layer = next(
+            entry
+            for entry in self.anchor["hot_memory_decay_map"]["layers"]
+            if entry["layer"] == "bounded_handoff"
+        )
+        assert layer["use_posture"] == "quarantine"
+        assert layer["compression_posture"] == "compress_with_closeout_guards"
+
+    def test_hot_memory_decay_map_keeps_canonical_center_operational(self):
+        layer = next(
+            entry
+            for entry in self.anchor["hot_memory_decay_map"]["layers"]
+            if entry["layer"] == "canonical_center"
+        )
+        assert layer["use_posture"] == "operational"

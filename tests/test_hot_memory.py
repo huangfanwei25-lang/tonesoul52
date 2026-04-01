@@ -1,6 +1,11 @@
 from __future__ import annotations
 
-from tonesoul.hot_memory import build_canonical_center, extract_current_short_board_items
+from tonesoul.hot_memory import (
+    build_canonical_center,
+    build_hot_memory_decay_map,
+    build_hot_memory_ladder,
+    extract_current_short_board_items,
+)
 
 
 def test_extract_current_short_board_items_returns_nested_bullets() -> None:
@@ -52,3 +57,47 @@ def test_build_canonical_center_marks_missing_short_board() -> None:
 
     assert payload["current_short_board"]["present"] is False
     assert payload["current_short_board"]["status"] == "not_visible"
+
+
+def test_build_hot_memory_decay_map_quarantines_contested_handoff() -> None:
+    ladder = build_hot_memory_ladder(
+        canonical_center=build_canonical_center(
+            task_text=(
+                "## Water-Bucket Snapshot\n"
+                "- Current short board:\n"
+                "  - Phase 745: hot-memory decay map\n"
+            )
+        ),
+        import_posture={
+            "posture": {"present": True},
+            "readiness": {"present": True},
+            "compactions": {
+                "present": True,
+                "receiver_obligation": "must_not_promote",
+                "closeout_status": "partial",
+            },
+            "recent_traces": {"present": True},
+            "subject_snapshot": {"present": True},
+            "working_style": {
+                "present": True,
+                "working_style_observability": {"status": "reinforced"},
+            },
+            "council_dossier": {
+                "present": True,
+                "dossier_interpretation": {"calibration_status": "descriptive_only"},
+            },
+        },
+        readiness={"status": "pass"},
+        stable_count=5,
+        contested_count=2,
+        stale_count=0,
+    )
+
+    decay_map = build_hot_memory_decay_map(hot_memory_ladder=ladder)
+    by_layer = {item["layer"]: item for item in decay_map["layers"]}
+
+    assert by_layer["canonical_center"]["use_posture"] == "operational"
+    assert by_layer["bounded_handoff"]["use_posture"] == "quarantine"
+    assert by_layer["bounded_handoff"]["compression_posture"] == "compress_with_closeout_guards"
+    assert by_layer["working_identity"]["use_posture"] == "review_only"
+    assert "bounded_handoff" in decay_map["summary_text"]

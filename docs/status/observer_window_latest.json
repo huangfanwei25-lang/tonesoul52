@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-01T23:30:41Z",
+  "generated_at": "2026-04-01T23:34:46Z",
   "canonical_center": {
     "present": true,
     "parent_surfaces": [
@@ -21,13 +21,12 @@
       "present": true,
       "status": "visible",
       "items": [
-        "Phase 745: map hot-memory decay/compression and quarantine posture once the ladder is legible",
         "Phase 746: map mutation-preflight / write-hook chain without reopening launch wording or new ontology lanes"
       ],
       "source": "task.md > Water-Bucket Snapshot > Current short board",
-      "summary_text": "Phase 745: map hot-memory decay/compression and quarantine posture once the ladder is legible"
+      "summary_text": "Phase 746: map mutation-preflight / write-hook chain without reopening launch wording or new ontology lanes"
     },
-    "summary_text": "canonical_center short_board_items=2 source=task.md > Water-Bucket Snapshot > Current short board"
+    "summary_text": "canonical_center short_board_items=1 source=task.md > Water-Bucket Snapshot > Current short board"
   },
   "hot_memory_ladder": {
     "layers": [
@@ -103,6 +102,66 @@
     "summary_text": "canonical_center=stable | low_drift_anchor=stale | live_coordination=stable | bounded_handoff=contested | working_identity=stable | replay_review=stable",
     "receiver_note": "Read the ladder from canonical_center downward. Parent layers orient or constrain child layers. Child summaries do not outrank parent truth."
   },
+  "hot_memory_decay_map": {
+    "layers": [
+      {
+        "layer": "canonical_center",
+        "status": "stable",
+        "use_posture": "operational",
+        "decay_posture": "human_refresh_only",
+        "compression_posture": "never_compress",
+        "quarantine_reason": "",
+        "note": "Parent truth; successors should re-read when the short board is not visible."
+      },
+      {
+        "layer": "low_drift_anchor",
+        "status": "stale",
+        "use_posture": "review_only",
+        "decay_posture": "recompute_each_session",
+        "compression_posture": "already_compact_do_not_recompress",
+        "quarantine_reason": "",
+        "note": "Observer summary should be rebuilt, not carried forward as its own authority."
+      },
+      {
+        "layer": "live_coordination",
+        "status": "stable",
+        "use_posture": "operational",
+        "decay_posture": "expire_fast",
+        "compression_posture": "do_not_compress_live_signals",
+        "quarantine_reason": "",
+        "note": "Claims, readiness, and mode hints are only valid for the current coordination moment."
+      },
+      {
+        "layer": "bounded_handoff",
+        "status": "contested",
+        "use_posture": "quarantine",
+        "decay_posture": "ttl_then_compress",
+        "compression_posture": "compress_with_closeout_guards",
+        "quarantine_reason": "receiver_obligation=must_not_promote closeout=partial",
+        "note": "Compactions may orient resumability, but incomplete closeout or promotion hazards require quarantine."
+      },
+      {
+        "layer": "working_identity",
+        "status": "stable",
+        "use_posture": "review_only",
+        "decay_posture": "slow_decay_with_refresh",
+        "compression_posture": "do_not_compress_snapshot",
+        "quarantine_reason": "",
+        "note": "Working identity is inheritable but non-canonical; stale or contested identity should not be leaned on."
+      },
+      {
+        "layer": "replay_review",
+        "status": "stable",
+        "use_posture": "review_only",
+        "decay_posture": "prune_by_cardinality",
+        "compression_posture": "preserve_dissent_then_prune_oldest",
+        "quarantine_reason": "",
+        "note": "Replay helps context and audit, not authority or execution permission."
+      }
+    ],
+    "summary_text": "operational=canonical_center,live_coordination review_only=low_drift_anchor,working_identity,replay_review quarantine=bounded_handoff",
+    "receiver_note": "Operational layers may orient immediate work. Review-only layers may inform resumability or context but should not be leaned on as authority. Quarantined layers should be refreshed or resolved before they influence edits."
+  },
   "stable": [
     {
       "claim": "governance posture is directly importable",
@@ -148,9 +207,9 @@
   ],
   "stale": [
     {
-      "claim": "recent_traces are 186.3h old (threshold=48.0h)",
+      "claim": "recent_traces are 186.4h old (threshold=48.0h)",
       "evidence_source": "import_posture.recent_traces.freshness_hours",
-      "detail": "freshness_hours=186.3"
+      "detail": "freshness_hours=186.4"
     }
   ],
   "delta_summary": {

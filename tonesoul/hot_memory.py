@@ -8,6 +8,50 @@ from typing import Any
 _SHORT_BOARD_HEADER = "- Current short board:"
 _SHORT_BOARD_SOURCE = "task.md > Water-Bucket Snapshot > Current short board"
 _PARENT_SURFACES = ["task.md", "DESIGN.md"]
+_HOT_MEMORY_DECAY_RULES = {
+    "canonical_center": {
+        "stable_use_posture": "operational",
+        "nonstable_use_posture": "quarantine",
+        "decay_posture": "human_refresh_only",
+        "compression_posture": "never_compress",
+        "base_note": "Parent truth; successors should re-read when the short board is not visible.",
+    },
+    "low_drift_anchor": {
+        "stable_use_posture": "operational",
+        "nonstable_use_posture": "review_only",
+        "decay_posture": "recompute_each_session",
+        "compression_posture": "already_compact_do_not_recompress",
+        "base_note": "Observer summary should be rebuilt, not carried forward as its own authority.",
+    },
+    "live_coordination": {
+        "stable_use_posture": "operational",
+        "nonstable_use_posture": "review_only",
+        "decay_posture": "expire_fast",
+        "compression_posture": "do_not_compress_live_signals",
+        "base_note": "Claims, readiness, and mode hints are only valid for the current coordination moment.",
+    },
+    "bounded_handoff": {
+        "stable_use_posture": "review_only",
+        "nonstable_use_posture": "quarantine",
+        "decay_posture": "ttl_then_compress",
+        "compression_posture": "compress_with_closeout_guards",
+        "base_note": "Compactions may orient resumability, but incomplete closeout or promotion hazards require quarantine.",
+    },
+    "working_identity": {
+        "stable_use_posture": "review_only",
+        "nonstable_use_posture": "quarantine",
+        "decay_posture": "slow_decay_with_refresh",
+        "compression_posture": "do_not_compress_snapshot",
+        "base_note": "Working identity is inheritable but non-canonical; stale or contested identity should not be leaned on.",
+    },
+    "replay_review": {
+        "stable_use_posture": "review_only",
+        "nonstable_use_posture": "review_only",
+        "decay_posture": "prune_by_cardinality",
+        "compression_posture": "preserve_dissent_then_prune_oldest",
+        "base_note": "Replay helps context and audit, not authority or execution permission.",
+    },
+}
 
 
 def extract_current_short_board_items(task_text: str) -> list[str]:
@@ -241,5 +285,63 @@ def build_hot_memory_ladder(
         "receiver_note": (
             "Read the ladder from canonical_center downward. Parent layers orient or constrain child layers. "
             "Child summaries do not outrank parent truth."
+        ),
+    }
+
+
+def build_hot_memory_decay_map(*, hot_memory_ladder: dict[str, Any]) -> dict[str, Any]:
+    """Classify which hot-memory layers are operational, review-only, or quarantined."""
+    entries = list(hot_memory_ladder.get("layers") or [])
+    mapped_layers: list[dict[str, Any]] = []
+    operational_layers: list[str] = []
+    review_only_layers: list[str] = []
+    quarantine_layers: list[str] = []
+
+    for entry in entries:
+        layer_name = str(entry.get("layer", "")).strip()
+        status = str(entry.get("status", "")).strip() or "unknown"
+        rules = _HOT_MEMORY_DECAY_RULES.get(layer_name)
+        if not rules:
+            continue
+
+        use_posture = (
+            rules["stable_use_posture"]
+            if status == "stable"
+            else rules["nonstable_use_posture"]
+        )
+        if use_posture == "operational":
+            operational_layers.append(layer_name)
+        elif use_posture == "review_only":
+            review_only_layers.append(layer_name)
+        else:
+            quarantine_layers.append(layer_name)
+
+        mapped_layers.append(
+            {
+                "layer": layer_name,
+                "status": status,
+                "use_posture": use_posture,
+                "decay_posture": rules["decay_posture"],
+                "compression_posture": rules["compression_posture"],
+                "quarantine_reason": (
+                    str(entry.get("note", "")).strip()
+                    if use_posture == "quarantine"
+                    else ""
+                ),
+                "note": rules["base_note"],
+            }
+        )
+
+    return {
+        "layers": mapped_layers,
+        "summary_text": (
+            f"operational={','.join(operational_layers) or 'none'} "
+            f"review_only={','.join(review_only_layers) or 'none'} "
+            f"quarantine={','.join(quarantine_layers) or 'none'}"
+        ),
+        "receiver_note": (
+            "Operational layers may orient immediate work. Review-only layers may inform resumability or context "
+            "but should not be leaned on as authority. Quarantined layers should be refreshed or resolved before "
+            "they influence edits."
         ),
     }

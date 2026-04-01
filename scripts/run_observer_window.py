@@ -73,6 +73,7 @@ def _render_markdown(anchor: dict[str, Any]) -> str:
     canonical_center = anchor.get("canonical_center") or {}
     current_short_board = canonical_center.get("current_short_board") or {}
     hot_memory_ladder = anchor.get("hot_memory_ladder") or {}
+    hot_memory_decay_map = anchor.get("hot_memory_decay_map") or {}
 
     lines.extend(["## Canonical Center", ""])
     lines.append(
@@ -107,6 +108,22 @@ def _render_markdown(anchor: dict[str, Any]) -> str:
         lines.append(f"  - receiver_rule: `{layer.get('receiver_rule', '')}`")
         lines.append(f"  - note: {layer.get('note', '')}")
     if not hot_memory_ladder.get("layers"):
+        lines.append("- *(none)*")
+    lines.append("")
+
+    lines.extend(["## Hot-Memory Decay / Compression", ""])
+    lines.append(f"- Summary: `{hot_memory_decay_map.get('summary_text', '')}`")
+    lines.append(f"- Receiver note: `{hot_memory_decay_map.get('receiver_note', '')}`")
+    lines.append("")
+    for layer in hot_memory_decay_map.get("layers") or []:
+        lines.append(f"- `{layer.get('layer', 'unknown')}`: `{layer.get('use_posture', 'unknown')}`")
+        lines.append(f"  - status: `{layer.get('status', 'unknown')}`")
+        lines.append(f"  - decay_posture: `{layer.get('decay_posture', '')}`")
+        lines.append(f"  - compression_posture: `{layer.get('compression_posture', '')}`")
+        if layer.get("quarantine_reason"):
+            lines.append(f"  - quarantine_reason: `{layer.get('quarantine_reason', '')}`")
+        lines.append(f"  - note: {layer.get('note', '')}")
+    if not hot_memory_decay_map.get("layers"):
         lines.append("- *(none)*")
     lines.append("")
 

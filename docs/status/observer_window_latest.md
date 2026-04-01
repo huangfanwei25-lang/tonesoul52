@@ -1,6 +1,6 @@
 # ToneSoul Observer Window / Low-Drift Anchor
 
-> Generated at `2026-04-01T23:30:41Z`. Advisory only.
+> Generated at `2026-04-01T23:34:46Z`. Advisory only.
 
 **Summary**: `observer_window stable=5 contested=4 stale=1 delta_has_updates=True`
 
@@ -16,7 +16,6 @@
 - Required checks: `readiness.status, claim_view.claims, import_posture.surfaces.compactions.receiver_obligation`
 - Current short board visible: `True`
 - Current short board:
-  - Phase 745: map hot-memory decay/compression and quarantine posture once the ladder is legible
   - Phase 746: map mutation-preflight / write-hook chain without reopening launch wording or new ontology lanes
 
 ## Hot-Memory Ladder
@@ -48,6 +47,43 @@
   - sources: `recent_traces, council_dossier, validation_artifacts`
   - receiver_rule: `review_for_context_not_for_authority`
   - note: Replay surfaces are available without current descriptive-only flags.
+
+## Hot-Memory Decay / Compression
+
+- Summary: `operational=canonical_center,live_coordination review_only=low_drift_anchor,working_identity,replay_review quarantine=bounded_handoff`
+- Receiver note: `Operational layers may orient immediate work. Review-only layers may inform resumability or context but should not be leaned on as authority. Quarantined layers should be refreshed or resolved before they influence edits.`
+
+- `canonical_center`: `operational`
+  - status: `stable`
+  - decay_posture: `human_refresh_only`
+  - compression_posture: `never_compress`
+  - note: Parent truth; successors should re-read when the short board is not visible.
+- `low_drift_anchor`: `review_only`
+  - status: `stale`
+  - decay_posture: `recompute_each_session`
+  - compression_posture: `already_compact_do_not_recompress`
+  - note: Observer summary should be rebuilt, not carried forward as its own authority.
+- `live_coordination`: `operational`
+  - status: `stable`
+  - decay_posture: `expire_fast`
+  - compression_posture: `do_not_compress_live_signals`
+  - note: Claims, readiness, and mode hints are only valid for the current coordination moment.
+- `bounded_handoff`: `quarantine`
+  - status: `contested`
+  - decay_posture: `ttl_then_compress`
+  - compression_posture: `compress_with_closeout_guards`
+  - quarantine_reason: `receiver_obligation=must_not_promote closeout=partial`
+  - note: Compactions may orient resumability, but incomplete closeout or promotion hazards require quarantine.
+- `working_identity`: `review_only`
+  - status: `stable`
+  - decay_posture: `slow_decay_with_refresh`
+  - compression_posture: `do_not_compress_snapshot`
+  - note: Working identity is inheritable but non-canonical; stale or contested identity should not be leaned on.
+- `replay_review`: `review_only`
+  - status: `stable`
+  - decay_posture: `prune_by_cardinality`
+  - compression_posture: `preserve_dissent_then_prune_oldest`
+  - note: Replay helps context and audit, not authority or execution permission.
 
 ## Stable
 
@@ -81,7 +117,7 @@
 
 (1 items)
 
-- **recent_traces are 186.3h old (threshold=48.0h)** - `freshness_hours=186.3`
+- **recent_traces are 186.4h old (threshold=48.0h)** - `freshness_hours=186.4`
   - source: `import_posture.recent_traces.freshness_hours`
 
 ## Delta Since Last Seen

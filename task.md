@@ -93,10 +93,10 @@
   - collaborator-beta preflight, entry-validation, and discoverable beta-facing status surfaces
   - low-drift anchor / observer-window baseline (Day 1 complete): `tonesoul/observer_window.py`, `scripts/run_observer_window.py`, `tests/test_observer_window.py`, `docs/status/observer_window_latest.{json,md}`
 - Current short board:
-  - Phase 745: map hot-memory decay/compression and quarantine posture once the ladder is legible
   - Phase 746: map mutation-preflight / write-hook chain without reopening launch wording or new ontology lanes
 - After that:
   - Day 3: rotation checkpoint — freeze observer-window bucket if baseline-complete, name next shortest board
+  - only after Phase 746 closes should the bucket rotate
   - only after broader beta use should public-launch maturity be reconsidered
   - only then further optimization
 
@@ -1620,10 +1620,10 @@
 - [x] tighten one correction rule in the smallest surface that can fix it without reopening global architecture wording
 **Success Criteria**: A fresh successor can follow the normal entry stack, read the observer/session-start center, and avoid the highest-friction remaining overread without extra chat explanation.
 
-## Phase 745: Hot-Memory Decay / Compression Map (2026-04-02, planned)
-- [ ] classify which hot-memory layers should stay stable, decay, compress, or quarantine as they age
-- [ ] separate resumability residue from replay/review residue more explicitly so old compactions stop carrying too much semantic weight
-- [ ] keep the result bounded to layer hygiene instead of inventing a new memory ontology
+## Phase 745: Hot-Memory Decay / Compression Map (2026-04-02)
+- [x] classify which hot-memory layers should stay stable, decay, compress, or quarantine as they age
+- [x] separate resumability residue from replay/review residue more explicitly so old compactions stop carrying too much semantic weight
+- [x] keep the result bounded to layer hygiene instead of inventing a new memory ontology
 **Success Criteria**: Later agents can tell which hot-memory layers remain operational, which should only be replayed, and which should be quarantined instead of leaned on.
 
 ## Phase 746: Successor Mutation Preflight And Hook Map (2026-04-02, planned)

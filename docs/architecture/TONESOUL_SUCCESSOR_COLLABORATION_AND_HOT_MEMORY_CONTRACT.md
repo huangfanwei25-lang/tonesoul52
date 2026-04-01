@@ -170,6 +170,7 @@ In current runtime/readout form, later agents should see this alongside:
 
 - a bounded `canonical_center` derived from the accepted `task.md` short board
 - a bounded `hot_memory_ladder` that states which layer is parent truth and which layers are advisory children
+- a bounded `hot_memory_decay_map` that states which layers are operational, review-only, or quarantined
 
 Target states:
 

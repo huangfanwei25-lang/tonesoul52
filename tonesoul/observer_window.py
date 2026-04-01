@@ -24,7 +24,11 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from typing import Any
 
-from tonesoul.hot_memory import build_canonical_center, build_hot_memory_ladder
+from tonesoul.hot_memory import (
+    build_canonical_center,
+    build_hot_memory_decay_map,
+    build_hot_memory_ladder,
+)
 
 # ---------------------------------------------------------------------------
 # Thresholds (tuned conservatively; only raise after repeated validation)
@@ -373,11 +377,15 @@ def build_low_drift_anchor(
         contested_count=contested_count,
         stale_count=stale_count,
     )
+    hot_memory_decay_map = build_hot_memory_decay_map(
+        hot_memory_ladder=hot_memory_ladder
+    )
 
     return {
         "generated_at": _iso_now(),
         "canonical_center": canonical_center,
         "hot_memory_ladder": hot_memory_ladder,
+        "hot_memory_decay_map": hot_memory_decay_map,
         "stable": stable,
         "contested": contested,
         "stale": stale,
