@@ -404,19 +404,22 @@ Use these when a document claim sounds too clean, too rounded, or too shell-depe
 ---
 
 
-## ?? Research & Publications
+## Research & Publications
 
-| ?辣 | 隤芣? |
+| File | Purpose |
 |------|------|
-| [RESEARCH_EVIDENCE.md](RESEARCH_EVIDENCE.md) | ?弦霅? |
-| [academic_comparison.md](academic_comparison.md) | 摮貉?瘥? |
-| [bayesian_accountability_literature.md](bayesian_accountability_literature.md) | 鞎??臬?鞎祆???|
-| [bayesian_accountability_plan.md](bayesian_accountability_plan.md) | 鞎??臬?鞎祈???|
-| [reproducibility_guide.md](reproducibility_guide.md) | ?舫??暹扳???|
-| [rmf_crosswalk.md](rmf_crosswalk.md) | RMF 鈭文?撘 |
-| [research/tonesoul_l7_l8_open_source_evidence_map_2026-03-22.md](research/tonesoul_l7_l8_open_source_evidence_map_2026-03-22.md) | L7/L8 ??獢?祕霅?隢??|
-| [zenodo_publishing_guide.md](zenodo_publishing_guide.md) | Zenodo ?澆??? |
-| [research/](research/) | ?弦摮??(10 files) |
+| [RESEARCH_EVIDENCE.md](RESEARCH_EVIDENCE.md) | research evidence and citation surface |
+| [academic_comparison.md](academic_comparison.md) | academic comparison notes |
+| [bayesian_accountability_literature.md](bayesian_accountability_literature.md) | literature review for Bayesian accountability direction |
+| [bayesian_accountability_plan.md](bayesian_accountability_plan.md) | planning companion for the same accountability lane |
+| [reproducibility_guide.md](reproducibility_guide.md) | reproducibility guidance |
+| [rmf_crosswalk.md](rmf_crosswalk.md) | RMF crosswalk notes |
+| [research/tonesoul_l7_l8_open_source_evidence_map_2026-03-22.md](research/tonesoul_l7_l8_open_source_evidence_map_2026-03-22.md) | earlier L7/L8 evidence map |
+| [research/tonesoul_multi_agent_semantic_field_evidence_map_2026-03-26.md](research/tonesoul_multi_agent_semantic_field_evidence_map_2026-03-26.md) | official-source evidence map for semantic-field claims |
+| [research/tonesoul_llm_classic_paper_map_2026-03-30.md](research/tonesoul_llm_classic_paper_map_2026-03-30.md) | selective map of classic LLM papers that still matter for ToneSoul design decisions |
+| [plans/tonesoul_agent_os_pattern_distillation_2026-04-01.md](plans/tonesoul_agent_os_pattern_distillation_2026-04-01.md) | distilled Agent-OS patterns ToneSoul should learn without importing a foreign naming universe |
+| [zenodo_publishing_guide.md](zenodo_publishing_guide.md) | Zenodo publishing guide |
+| [research/](research/) | research working directory (12 files) |
 
 ---
 

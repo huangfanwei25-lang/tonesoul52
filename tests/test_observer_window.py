@@ -68,6 +68,7 @@ def _make_import_posture(
     evidence_present: bool = True,
     council_present: bool = True,
     council_calibration: str = "descriptive_only",
+    council_suppression_flag: bool = False,
     ws_observability_status: str = "reinforced",
 ) -> dict:
     compaction_hazards = compaction_hazards or []
@@ -104,9 +105,14 @@ def _make_import_posture(
         "council_dossier": {
             "present": council_present,
             "import_posture": "advisory",
-            "dossier_interpretation": {
-                "calibration_status": council_calibration,
-            } if council_present else {},
+            "dossier_interpretation": (
+                {
+                    "calibration_status": council_calibration,
+                    **(  {"evolution_suppression_flag": True} if council_suppression_flag else {} ),
+                }
+                if council_present
+                else {}
+            ),
         },
         "working_style": {
             "present": True,
@@ -440,5 +446,69 @@ class TestWorkingStyleReinforced:
     def test_stable_count_unchanged(self):
         assert len(self.anchor["stable"]) >= 3, (
             "Stable items should not be affected by working style reinforcement"
+        )
+
+
+# ---------------------------------------------------------------------------
+# Case 7: Council evolution suppression flagged
+# ---------------------------------------------------------------------------
+
+class TestCouncilSuppressionFlagged:
+    """
+    When evolution_suppression_flag=True in council dossier interpretation,
+    a suppression-note item should appear in contested.
+    """
+
+    def setup_method(self):
+        self.anchor = build_low_drift_anchor(
+            packet=_make_packet(),
+            import_posture=_make_import_posture(
+                council_calibration="descriptive_only",
+                council_suppression_flag=True,
+            ),
+            readiness=_make_readiness(),
+        )
+
+    def test_suppression_note_in_contested(self):
+        contested_claims = [item["claim"] for item in self.anchor["contested"]]
+        assert any("suppression" in c for c in contested_claims), (
+            f"Expected suppression note in contested when evolution_suppression_flag=True. Got: {contested_claims}"
+        )
+
+    def test_suppression_note_has_correct_source(self):
+        suppression_items = [
+            item for item in self.anchor["contested"]
+            if "suppression" in item.get("claim", "")
+        ]
+        assert suppression_items, "Suppression item not found"
+        assert suppression_items[0]["evidence_source"] == "import_posture.council_dossier.dossier_interpretation"
+
+    def test_suppression_note_detail(self):
+        suppression_items = [
+            item for item in self.anchor["contested"]
+            if "suppression" in item.get("claim", "")
+        ]
+        assert suppression_items[0].get("detail") == "evolution_suppression_flag=True"
+
+    def test_council_calibration_still_present(self):
+        # The calibration item should still be there alongside the suppression note
+        contested_claims = [item["claim"] for item in self.anchor["contested"]]
+        assert any("descriptive_only" in c or "calibrated accuracy" in c for c in contested_claims), (
+            "Council calibration item should still appear alongside suppression note"
+        )
+
+    def test_no_suppression_when_flag_absent(self):
+        """Without suppression flag, no suppression note in contested."""
+        anchor_no_flag = build_low_drift_anchor(
+            packet=_make_packet(),
+            import_posture=_make_import_posture(
+                council_calibration="descriptive_only",
+                council_suppression_flag=False,
+            ),
+            readiness=_make_readiness(),
+        )
+        contested_claims = [item["claim"] for item in anchor_no_flag["contested"]]
+        assert not any("suppression" in c for c in contested_claims), (
+            f"No suppression note expected when flag is absent. Got: {contested_claims}"
         )
 

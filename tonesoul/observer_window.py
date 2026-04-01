@@ -116,18 +116,26 @@ def _build_contested(*, packet: dict[str, Any], import_posture: dict[str, Any], 
     """Items that are present but not yet settled or calibrated."""
     items: list[dict[str, str]] = []
 
-    # Council calibration — always contested until proven
+    # Council calibration - always contested until proven
     council_surface = import_posture.get("council_dossier") or {}
     dossier = council_surface.get("dossier_interpretation") or {}
     calibration = str(dossier.get("calibration_status", "")).strip()
     if calibration == "descriptive_only" or council_surface.get("present"):
         items.append(_item(
-            "council confidence is descriptive_only; agreement ≠ calibrated accuracy",
+            "council confidence is descriptive_only; agreement does not equal calibrated accuracy",
             evidence_source="import_posture.council_dossier.dossier_interpretation",
             detail=(
                 f"calibration_status={calibration}" if calibration else
                 "council dossier present but calibration_status not confirmed"
             ),
+        ))
+
+    # Council evolution suppression - flag when minority dissent may be getting conformity-biased
+    if dossier.get("evolution_suppression_flag"):
+        items.append(_item(
+            "council evolution suppression risk flagged; review minority signals before treating verdict as settled",
+            evidence_source="import_posture.council_dossier.dossier_interpretation",
+            detail="evolution_suppression_flag=True",
         ))
 
     # Compaction promotion hazards

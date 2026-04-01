@@ -73,6 +73,7 @@
 - Phase 729: add one top-level design center that explains why ToneSoul is layered this way, what invariants must not drift, and what current launch truth actually is
 - Phase 730: add one detailed 3-day execution program so the next agent can continue the current short board without reopening settled launch wording
 - Phase 731: add one current Codex handoff note so branch state, latest commits, private residues, and next actions survive beyond chat history
+- Phase 732: implement low-drift anchor / observer-window baseline (Day 1)
 
 ## Water-Bucket Snapshot (2026-03-30)
 - Baseline reached:
@@ -85,13 +86,25 @@
   - context-injection prompt adoption (`value_accumulator` and `self_commit`)
   - unified runtime context prompt framing
   - collaborator-beta preflight, entry-validation, and discoverable beta-facing status surfaces
+  - low-drift anchor / observer-window baseline (Day 1 complete): `tonesoul/observer_window.py`, `scripts/run_observer_window.py`, `tests/test_observer_window.py`, `docs/status/observer_window_latest.{json,md}`
 - Current short board:
-  - establish a low-drift anchor / observer-window baseline for later agents so stable vs contested vs stale state stops requiring multi-surface reconstruction
+  - Day 2: run bounded fresh-agent validation wave against observer window; fix highest-friction misread
 - After that:
-  - validate that observer-window readout under repeated fresh-agent entry
-  - then rotate to the next non-launch short board instead of over-optimizing readout theory
+  - Day 3: rotation checkpoint — freeze observer-window bucket if baseline-complete, name next shortest board
   - only after broader beta use should public-launch maturity be reconsidered
   - only then further optimization
+
+## Phase 732: Low-Drift Anchor / Observer-Window Baseline — Day 1 (2026-03-30)
+- [x] Define observer-window contract in ToneSoul-native terms: stable / contested / stale + delta_summary
+- [x] Implement bounded `build_low_drift_anchor()` in `tonesoul/observer_window.py`, derived from packet / import_posture / readiness surfaces only
+- [x] Add `scripts/run_observer_window.py` CLI with `--json-out` and `--markdown-out` flags
+- [x] Add regression tests for: clean stable case, conflicting continuity case (promotion hazard + claim collision), stale carry-forward case (old compaction + absent evidence readout)
+- [x] Generate initial `docs/status/observer_window_latest.{json,md}` from live repo state
+**Success Criteria**: A fresh agent can run `python scripts/run_observer_window.py --agent <id>` and receive a compact bounded view of what is stable, contested, and stale without reading the full stack. All 21 regression tests pass. `verify_docs_consistency.py` passes with no issues.
+**Validation**:
+- `python -m pytest tests/test_observer_window.py -v` → 21 passed
+- `python scripts/verify_docs_consistency.py --repo-root .` → `"issues": []`
+- `python scripts/run_observer_window.py --agent antigravity-claude --json-out docs/status/observer_window_latest.json --markdown-out docs/status/observer_window_latest.md` → passed
 
 ## Phase 691: Reality Alignment Lane Integration (2026-03-29)
 - [x] Add a dedicated reality-alignment lane to the doc authority map for entry-surface baselines, count methods, render/encoding boundaries, and drift registers
@@ -1519,3 +1532,21 @@
 - [x] strengthen the mirror/fail-stop contract with anti-anthropomorphic mirror realism and a cleaner operator-facing stop-reason taxonomy
 - [x] keep the result bounded to current control-plane posture and design rationale, not a new philosophical subsystem
 **Success Criteria**: ToneSoul retains the practically useful parts of those external notes inside its existing control-plane and design files, while the original naming worlds and unhelpful theory residue do not become new canonical surfaces.
+
+## Phase 733: ToneSoul LLM Classic Paper Map (2026-03-30, completed)
+- [x] distill a selective classic-paper map that keeps only the LLM papers still relevant to ToneSoul architecture, continuity, retrieval, governance, adaptation, and council design
+- [x] connect the map back to ToneSoul-native follow-up contracts instead of turning it into a generic literature museum wall
+- [x] wire the map into the documentation entry surfaces so later agents can find the reading ladder without browsing external lists first
+**Success Criteria**: A later agent can open one ToneSoul-native research note, understand which classic LLM papers actually matter for this repo's design decisions, and continue into the right internal architecture/evidence files without mistaking the note for runtime authority.
+
+## Phase 734: Agent-OS Pattern Distillation And GitHub Entry Alignment (2026-04-01, completed)
+- [x] distill only the useful outer-shell patterns from the recent AI agent deep-dive material into a ToneSoul-native note instead of keeping a broad external-project shopping list
+- [x] realign `.github/copilot-instructions.md` to the current ToneSoul entry stack, collaborator-beta truth, and observer-window posture
+- [x] fix observer-window wording drift so runtime readouts stop leaking mojibake into contested-state claims
+**Success Criteria**: Lower-context GitHub/Copilot agents can enter through a current-state repo instruction file, observer-window output no longer leaks broken characters, and the useful external Agent-OS lessons survive in one bounded ToneSoul-native distillation note rather than a messy external assessment dump.
+
+## Phase 733: ToneSoul LLM Classic Paper Map (2026-03-30, completed)
+- [x] distill a selective classic-paper map that keeps only the LLM papers still relevant to ToneSoul architecture, continuity, retrieval, governance, adaptation, and council design
+- [x] connect the map back to ToneSoul-native follow-up contracts instead of turning it into a generic literature museum wall
+- [x] wire the map into the documentation entry surfaces so later agents can find the reading ladder without browsing external lists first
+**Success Criteria**: A later agent can open one ToneSoul-native research note, understand which classic LLM papers actually matter for this repo's design decisions, and continue into the right internal architecture/evidence files without mistaking the note for runtime authority.

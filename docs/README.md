@@ -359,23 +359,26 @@ Treat these as prompt-adoption aids. They help later agents avoid reopening fini
 |------|------|
 | `STREI_OPERATIONAL_PROTOCOL.md` | STREI ???降 |
 
-### `/research/` ???弦???典???
-| 瑼? | 隤芣? |
+### `/research/` Research Notes
+| File | Purpose |
 |------|------|
-| `RESEARCH_CONTEXT_2.0.md` | 2.0 ?弦?窗???脰???|
-| `experimental_design.md` | ??撽??祕撽身閮?|
-| `multi_agent_architecture_patterns.md` | OpenClaw ?蜓瘚??嗅??扼???CP 閰摯 |
-| `tonesoul_l7_l8_open_source_evidence_map_2026-03-22.md` | L7/L8 ??皞??嗚enchmark???舀蝝????|
+| `RESEARCH_CONTEXT_2.0.md` | older research context bundle and exploratory framing |
+| `experimental_design.md` | experiment-design scratch surface for research planning |
+| `multi_agent_architecture_patterns.md` | external architecture-pattern notes kept as background material |
+| `tonesoul_l7_l8_open_source_evidence_map_2026-03-22.md` | L7/L8 evidence map from the earlier open-source review |
+| `tonesoul_multi_agent_semantic_field_evidence_map_2026-03-26.md` | official-source evidence map for multi-agent semantic-field claims |
+| `tonesoul_llm_classic_paper_map_2026-03-30.md` | selective map of classic LLM papers that still matter for ToneSoul architecture, continuity, retrieval, governance, and adaptation |
+| `../plans/tonesoul_agent_os_pattern_distillation_2026-04-01.md` | distilled Agent-OS patterns ToneSoul should learn without importing a foreign naming universe |
+
+---
+
+## Related Root Documents
+
+- [/spec/council_spec.md](../spec/council_spec.md) canonical council protocol source note
+- [/AXIOMS.json](../AXIOMS.json) core axioms in JSON form
+- [/README.md](../README.md) public repo entrypoint
 
 ---
 
 
-## ?? ?賊??辣
-
-- [/spec/council_spec.md](../spec/council_spec.md) ??憭犖?潭?霅啁頂蝯梯???- [/AXIOMS.json](../AXIOMS.json) ???詨?瘜? (JSON)
-- [/README.md](../README.md) ????亙
-
----
-
-
-*Last updated: 2026-03-22*
+*Last updated: 2026-03-30*
