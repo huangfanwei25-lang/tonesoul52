@@ -70,8 +70,12 @@ def test_resolve_revision_plan_for_local_uses_merge_base(monkeypatch) -> None:
 
 
 def test_resolve_revision_plan_prefers_enforcement_anchor_when_available(monkeypatch) -> None:
-    monkeypatch.setattr(incremental, "_sha_exists", lambda revision: revision in {"anchor-1", "HEAD"})
-    monkeypatch.setattr(incremental, "_is_ancestor", lambda ancestor, head: (ancestor, head) == ("anchor-1", "HEAD"))
+    monkeypatch.setattr(
+        incremental, "_sha_exists", lambda revision: revision in {"anchor-1", "HEAD"}
+    )
+    monkeypatch.setattr(
+        incremental, "_is_ancestor", lambda ancestor, head: (ancestor, head) == ("anchor-1", "HEAD")
+    )
     monkeypatch.setattr(incremental, "_rev_list", lambda spec: ["anchored-a", "anchored-b"])
 
     plan = incremental.resolve_revision_plan(
