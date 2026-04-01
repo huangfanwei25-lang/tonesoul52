@@ -1064,6 +1064,8 @@ def test_start_agent_session_cli_executes_directly(tmp_path: Path) -> None:
     assert completed.returncode == 0, completed.stderr
     payload = json.loads(completed.stdout)
     assert payload["agent"] == "cli-smoke"
+    assert "canonical_center" in payload
+    assert payload["canonical_center"]["parent_surfaces"] == ["task.md", "DESIGN.md"]
     assert "working_style_playbook" in payload
     assert "working_style_validation" in payload
 

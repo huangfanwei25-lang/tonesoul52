@@ -79,6 +79,40 @@ def _render_markdown(anchor: dict[str, Any]) -> str:
     ]
 
     counts = anchor.get("counts") or {}
+    canonical_center = anchor.get("canonical_center") or {}
+    current_short_board = canonical_center.get("current_short_board") or {}
+    hot_memory_ladder = anchor.get("hot_memory_ladder") or {}
+
+    lines.extend(["## Canonical Center", ""])
+    lines.append(f"- Parent surfaces: `{', '.join(canonical_center.get('parent_surfaces') or [])}`")
+    lines.append(f"- Receiver rule: `{canonical_center.get('receiver_rule', '')}`")
+    lines.append(
+        f"- Current short board visible: `{current_short_board.get('present', False)}`"
+    )
+    if current_short_board.get("items"):
+        lines.append("- Current short board:")
+        for item in current_short_board.get("items") or []:
+            lines.append(f"  - {item}")
+    else:
+        lines.append(
+            f"- Short board note: `{current_short_board.get('summary_text', 'not visible')}`"
+        )
+    lines.append("")
+
+    lines.extend(["## Hot-Memory Ladder", ""])
+    lines.append(f"- Summary: `{hot_memory_ladder.get('summary_text', '')}`")
+    lines.append(f"- Receiver note: `{hot_memory_ladder.get('receiver_note', '')}`")
+    lines.append("")
+    for layer in hot_memory_ladder.get("layers") or []:
+        lines.append(
+            f"- `{layer.get('layer', 'unknown')}`: `{layer.get('status', 'unknown')}`"
+        )
+        lines.append(f"  - sources: `{', '.join(layer.get('primary_sources') or [])}`")
+        lines.append(f"  - receiver_rule: `{layer.get('receiver_rule', '')}`")
+        lines.append(f"  - note: {layer.get('note', '')}")
+    if not hot_memory_ladder.get("layers"):
+        lines.append("- *(none)*")
+    lines.append("")
 
     # Stable
     lines.extend(["## Stable", "", f"({counts.get('stable', 0)} items)", ""])
@@ -186,6 +220,7 @@ def run_observer_window(
     packet = payload.get("packet") or {}
     readiness = payload.get("readiness") or {}
     raw_import_posture = payload.get("import_posture") or {}
+    canonical_center = payload.get("canonical_center") or {}
     # _build_import_posture wraps surfaces under "surfaces" key;
     # observer_window expects them at the top level
     import_posture = raw_import_posture.get("surfaces") or raw_import_posture
@@ -194,6 +229,7 @@ def run_observer_window(
         packet=packet,
         import_posture=import_posture,
         readiness=readiness,
+        canonical_center=canonical_center,
     )
 
     return anchor

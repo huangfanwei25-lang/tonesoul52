@@ -166,6 +166,11 @@ This is the observer-facing center of gravity:
 - agreed L2 definitions
 - current launch truth
 
+In current runtime/readout form, later agents should see this alongside:
+
+- a bounded `canonical_center` derived from the accepted `task.md` short board
+- a bounded `hot_memory_ladder` that states which layer is parent truth and which layers are advisory children
+
 Target states:
 
 - `stable`

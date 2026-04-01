@@ -55,6 +55,17 @@ def _build_receiver_parity(*, council_snapshot: dict, project_memory_summary: di
     )
 
 
+def _build_canonical_center() -> dict:
+    from tonesoul.hot_memory import build_canonical_center
+
+    task_path = _REPO_ROOT / "task.md"
+    try:
+        task_text = task_path.read_text(encoding="utf-8")
+    except OSError:
+        task_text = ""
+    return build_canonical_center(task_text=task_text)
+
+
 def _resolve_sidecar(root: Path, name: str) -> Path:
     canonical = root / ".aegis" / name
     legacy = root / name
@@ -1006,6 +1017,7 @@ def run_session_start_bundle(
         observability=working_style_observability,
         import_limits=working_style_import_limits,
     )
+    canonical_center = _build_canonical_center()
     task_track_hint = _build_task_track_hint(packet=packet, readiness=readiness)
     deliberation_mode_hint = _build_deliberation_mode_hint(
         task_track_hint=task_track_hint,
@@ -1030,6 +1042,7 @@ def run_session_start_bundle(
         "deliberation_mode_hint": deliberation_mode_hint,
         "import_posture": import_posture,
         "receiver_parity": import_posture.get("receiver_parity", {}),
+        "canonical_center": canonical_center,
         "working_style_playbook": working_style_playbook,
         "working_style_validation": working_style_validation,
         "claim_view": {

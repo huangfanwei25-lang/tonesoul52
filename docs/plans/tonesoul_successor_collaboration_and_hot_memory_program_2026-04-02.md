@@ -191,6 +191,21 @@ If this program becomes the next active bucket, the safest order is:
 5. Anti-fake-completion closeout grammar
 6. Hooks and mutation preflight
 
+## Current Activation Wave (2026-04-02)
+
+The current bounded implementation wave is:
+
+1. `Phase 743` - canonical center and hot-memory ladder readout
+2. `Phase 744` - successor misread correction wave
+3. `Phase 745` - hot-memory decay / compression map
+4. `Phase 746` - mutation preflight / hook map
+
+This keeps the bucket successor-facing and operational:
+
+- first make the current center visible
+- then correct the highest-friction misread
+- only then tighten decay/compression and mutation discipline
+
 ## What Not To Do
 
 - do not import external naming systems directly

@@ -24,6 +24,8 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from typing import Any
 
+from tonesoul.hot_memory import build_canonical_center, build_hot_memory_ladder
+
 # ---------------------------------------------------------------------------
 # Thresholds (tuned conservatively; only raise after repeated validation)
 # ---------------------------------------------------------------------------
@@ -338,6 +340,7 @@ def build_low_drift_anchor(
     packet: dict[str, Any],
     import_posture: dict[str, Any],
     readiness: dict[str, Any],
+    canonical_center: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """
     Derive a bounded low_drift_anchor from visible packet/session-start surfaces.
@@ -357,13 +360,24 @@ def build_low_drift_anchor(
     contested = _build_contested(packet=packet, import_posture=import_posture, readiness=readiness)
     stale = _build_stale(import_posture=import_posture)
     delta_summary = _build_delta_summary(packet=packet)
+    canonical_center = canonical_center or build_canonical_center(task_text="")
 
     stable_count = len(stable)
     contested_count = len(contested)
     stale_count = len(stale)
+    hot_memory_ladder = build_hot_memory_ladder(
+        canonical_center=canonical_center,
+        import_posture=import_posture,
+        readiness=readiness,
+        stable_count=stable_count,
+        contested_count=contested_count,
+        stale_count=stale_count,
+    )
 
     return {
         "generated_at": _iso_now(),
+        "canonical_center": canonical_center,
+        "hot_memory_ladder": hot_memory_ladder,
         "stable": stable,
         "contested": contested,
         "stale": stale,

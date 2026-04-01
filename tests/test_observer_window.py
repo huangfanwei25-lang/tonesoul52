@@ -12,6 +12,7 @@ All inputs are synthesised dicts that mirror real packet/import_posture shapes.
 
 from __future__ import annotations
 
+from tonesoul.hot_memory import build_canonical_center
 from tonesoul.observer_window import build_low_drift_anchor
 
 # ---------------------------------------------------------------------------
@@ -144,6 +145,22 @@ def _make_readiness(
         "claim_conflict_count": claim_conflict_count,
         "other_agent_claims": [],
     }
+
+
+def _make_canonical_center(*short_board_items: str) -> dict:
+    items = list(short_board_items or ("Phase 743: hot-memory ladder readout",))
+    task_text = "\n".join(
+        [
+            "# Task",
+            "",
+            "## Water-Bucket Snapshot",
+            "- Current short board:",
+            *[f"  - {item}" for item in items],
+            "- After that:",
+            "  - rotate to the next shortest board",
+        ]
+    )
+    return build_canonical_center(task_text=task_text)
 
 
 # ---------------------------------------------------------------------------
@@ -569,3 +586,63 @@ class TestCouncilSuppressionFlagged:
         assert not any(
             "suppression" in c for c in contested_claims
         ), f"No suppression note expected when flag is absent. Got: {contested_claims}"
+
+
+class TestCanonicalCenterAndHotMemoryLadder:
+    def setup_method(self):
+        self.anchor = build_low_drift_anchor(
+            packet=_make_packet(first_observation=False),
+            import_posture=_make_import_posture(
+                compaction_hazards=["recycled_carry_forward_without_new_evidence"],
+                compaction_obligation="must_not_promote",
+                council_calibration="descriptive_only",
+                ws_observability_status="partial",
+            ),
+            readiness=_make_readiness(status="needs_clarification"),
+            canonical_center=_make_canonical_center(
+                "Phase 743: hot-memory ladder readout",
+                "Phase 744: observer-window misread correction",
+            ),
+        )
+
+    def test_canonical_center_present(self):
+        canonical_center = self.anchor["canonical_center"]
+        assert canonical_center["present"] is True
+        assert canonical_center["parent_surfaces"] == ["task.md", "DESIGN.md"]
+        assert canonical_center["current_short_board"]["present"] is True
+
+    def test_canonical_center_exposes_short_board_items(self):
+        items = self.anchor["canonical_center"]["current_short_board"]["items"]
+        assert items == [
+            "Phase 743: hot-memory ladder readout",
+            "Phase 744: observer-window misread correction",
+        ]
+
+    def test_hot_memory_ladder_has_expected_layers(self):
+        layers = self.anchor["hot_memory_ladder"]["layers"]
+        assert [layer["layer"] for layer in layers] == [
+            "canonical_center",
+            "low_drift_anchor",
+            "live_coordination",
+            "bounded_handoff",
+            "working_identity",
+            "replay_review",
+        ]
+
+    def test_hot_memory_ladder_marks_canonical_center_stable(self):
+        layer = next(
+            entry
+            for entry in self.anchor["hot_memory_ladder"]["layers"]
+            if entry["layer"] == "canonical_center"
+        )
+        assert layer["status"] == "stable"
+        assert layer["receiver_rule"] == "treat_as_parent_truth"
+
+    def test_hot_memory_ladder_marks_handoff_contested_when_not_promotable(self):
+        layer = next(
+            entry
+            for entry in self.anchor["hot_memory_ladder"]["layers"]
+            if entry["layer"] == "bounded_handoff"
+        )
+        assert layer["status"] == "contested"
+        assert "must_not_promote" in layer["note"]

@@ -93,9 +93,12 @@
   - collaborator-beta preflight, entry-validation, and discoverable beta-facing status surfaces
   - low-drift anchor / observer-window baseline (Day 1 complete): `tonesoul/observer_window.py`, `scripts/run_observer_window.py`, `tests/test_observer_window.py`, `docs/status/observer_window_latest.{json,md}`
 - Current short board:
-  - Day 2: run bounded fresh-agent validation wave against observer window; fix highest-friction misread
+  - Phase 743: add `canonical_center` and `hot_memory_ladder` so observer/start surfaces show parent truth vs child layer order explicitly
+  - Phase 744: run successor-misread correction wave against observer-window and session-start entry, then tighten the highest-friction correction rule
 - After that:
   - Day 3: rotation checkpoint — freeze observer-window bucket if baseline-complete, name next shortest board
+  - Phase 745: map hot-memory decay/compression and quarantine posture once the ladder is legible
+  - Phase 746: map mutation-preflight / write-hook chain without reopening launch wording or new ontology lanes
   - only after broader beta use should public-launch maturity be reconsidered
   - only then further optimization
 
@@ -1606,3 +1609,27 @@
 - [x] keep the pass focused on low-drift anchor precedence, observer-window misreads, successor mutation boundaries, closeout interpretation, and hot-memory decay/compression
 - [x] keep the program parked as a Claude-owned sidecar so `task.md` remains a short board rather than another sprawling roadmap
 **Success Criteria**: Claude has one large, multi-stage, repo-grounded work order that can run in parallel without overwriting the active runtime short board, and later Codex work can consume its output as bounded architecture guidance instead of chat-memory folklore.
+
+## Phase 743: Canonical Center And Hot-Memory Ladder Readout (2026-04-02)
+- [x] derive one bounded `canonical_center` from the current `task.md` short board so session-start and observer-window stop depending on hidden chat memory for the current center of gravity
+- [x] add one explicit `hot_memory_ladder` readout so successors can see parent truth, low-drift anchor, live coordination, bounded handoff, working identity, and replay/review in order
+- [x] keep the new readouts advisory and successor-facing; do not turn them into sovereign governance or new packet authority
+**Success Criteria**: A successor opening session-start or observer-window can see the current short board plus a bounded hot-memory layer order, understand which layer outranks which, and continue without treating summaries as law.
+
+## Phase 744: Successor Misread Correction Wave (2026-04-02, planned)
+- [ ] run a bounded fresh-agent validation pass using the new canonical-center and ladder readouts
+- [ ] identify the single highest-friction successor misread that remains after Phase 743
+- [ ] tighten one correction rule in the smallest surface that can fix it without reopening global architecture wording
+**Success Criteria**: A fresh successor can follow the normal entry stack, read the observer/session-start center, and avoid the highest-friction remaining overread without extra chat explanation.
+
+## Phase 745: Hot-Memory Decay / Compression Map (2026-04-02, planned)
+- [ ] classify which hot-memory layers should stay stable, decay, compress, or quarantine as they age
+- [ ] separate resumability residue from replay/review residue more explicitly so old compactions stop carrying too much semantic weight
+- [ ] keep the result bounded to layer hygiene instead of inventing a new memory ontology
+**Success Criteria**: Later agents can tell which hot-memory layers remain operational, which should only be replayed, and which should be quarantined instead of leaned on.
+
+## Phase 746: Successor Mutation Preflight And Hook Map (2026-04-02, planned)
+- [ ] map current mutate/write/publish decision points across session-end, memory writes, task-board changes, and launch-facing claim language
+- [ ] classify which points need hooks, which only need clearer readout posture, and which remain human-gated
+- [ ] keep the result concrete enough for runtime follow-up without reopening launch wording or theory-heavy contracts
+**Success Criteria**: A successor can tell where mutation discipline actually lives, which writes are guarded today, and where the next bounded hook/readout follow-up belongs.
