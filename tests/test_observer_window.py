@@ -32,6 +32,11 @@ def _make_packet(
     delta_new_traces: int = 0,
     first_observation: bool = True,
     has_coord_mode: bool = True,
+    repo_head: str = "abc123",
+    repo_dirty_count: int = 0,
+    repo_change_changed: bool = False,
+    repo_previous_head: str = "",
+    repo_previous_dirty_count: int = 0,
 ) -> dict:
     evidence_readout: dict = (
         {"present": True, "tiers": ["tested", "runtime_present"]} if has_evidence_readout else {}
@@ -49,12 +54,23 @@ def _make_packet(
                 "public_launch_ready": public_launch_ready,
             },
             "evidence_readout_posture": evidence_readout,
+            "repo_progress": {
+                "head": repo_head,
+                "dirty_count": repo_dirty_count,
+            },
         },
         "delta_feed": {
             "first_observation": first_observation,
             "new_compactions": [{"id": f"c{i}"} for i in range(delta_new_compactions)],
             "new_checkpoints": [{"id": f"ck{i}"} for i in range(delta_new_checkpoints)],
             "new_traces": [{"id": f"t{i}"} for i in range(delta_new_traces)],
+            "repo_change": {
+                "changed": repo_change_changed,
+                "previous_head": repo_previous_head,
+                "current_head": repo_head,
+                "previous_dirty_count": repo_previous_dirty_count,
+                "current_dirty_count": repo_dirty_count,
+            },
         },
     }
 
@@ -257,6 +273,13 @@ class TestCleanStableCase:
         assert "stable=" in text
         assert "contested=" in text
         assert "stale=" in text
+        assert "repo_state=baseline_unset" in text
+
+    def test_repo_state_awareness_is_visible(self):
+        repo_state = self.anchor["repo_state_awareness"]
+        assert repo_state["classification"] == "baseline_unset"
+        assert repo_state["misread_risk"] is True
+        assert "does not imply" in repo_state["receiver_note"]
 
 
 # ---------------------------------------------------------------------------
@@ -339,6 +362,26 @@ class TestBlockedCloseoutCase:
         ]
         assert items
         assert "stop_reason=external_blocked" in items[0].get("detail", "")
+
+
+class TestRepoChangedWithoutCoordinationCase:
+    def setup_method(self):
+        self.anchor = build_low_drift_anchor(
+            packet=_make_packet(
+                first_observation=False,
+                repo_change_changed=True,
+                repo_previous_head="old123",
+                repo_head="new456",
+            ),
+            import_posture=_make_import_posture(),
+            readiness=_make_readiness(),
+        )
+
+    def test_repo_state_awareness_flags_misread_risk(self):
+        repo_state = self.anchor["repo_state_awareness"]
+        assert repo_state["classification"] == "repo_changed_without_coordination"
+        assert repo_state["misread_risk"] is True
+        assert "without fresh coordination surfaces" in repo_state["receiver_note"]
 
 
 # ---------------------------------------------------------------------------

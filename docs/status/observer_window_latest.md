@@ -1,8 +1,8 @@
 # ToneSoul Observer Window / Low-Drift Anchor
 
-> Generated at `2026-04-02T03:58:46Z`. Advisory only.
+> Generated at `2026-04-02T05:56:34Z`. Advisory only.
 
-**Summary**: `observer_window stable=5 contested=4 stale=1 delta_has_updates=True`
+**Summary**: `observer_window stable=5 contested=4 stale=1 delta_has_updates=True repo_state=baseline_unset`
 
 > [!NOTE]
 > This observer window is advisory only. Items in 'stable' reflect current bounded posture but do not outrank canonical contracts. Items in 'contested' must not be treated as confirmed. Items in 'stale' should trigger a re-read before leaning on them. Do not promote this readout into canonical governance truth.
@@ -18,7 +18,7 @@
 - Required checks: `readiness.status, claim_view.claims, import_posture.surfaces.compactions.receiver_obligation`
 - Current short board visible: `True`
 - Current short board:
-  - Phase 752: triage the remaining successor/hot-memory sidecar residue so only one active runtime-aligned story remains
+  - Phase 754: reality-check the deferred working-style wave-2 surface (`tonesoul/tonebridge/personas.py::build_hardened_prompt()`) and either adopt bounded playbook hints or explicitly defer it again
 
 ## Hot-Memory Ladder
 
@@ -86,6 +86,13 @@
   - decay_posture: `prune_by_cardinality`
   - compression_posture: `preserve_dissent_then_prune_oldest`
   - note: Replay helps context and audit, not authority or execution permission.
+
+## Repo-State Awareness
+
+- Summary: `classification=baseline_unset head=e65b5aa dirty=10 repo_changed=True coordination_updates=7`
+- Receiver note: `No observer baseline exists yet. Current git state is visible, but a quiet delta does not imply that nothing changed before this session-start snapshot.`
+- Action hint: `Ack after review to establish a baseline before treating later quiet delta as stability.`
+- Non-authority rule: `Repo-state awareness is descriptive only. It does not authorize scope, override canonical planning, or replace readiness/claim checks.`
 
 ## Subsystem Parity
 
@@ -192,7 +199,7 @@
 
 (1 items)
 
-- **recent_traces are 190.8h old (threshold=48.0h)** - `freshness_hours=190.8`
+- **recent_traces are 192.8h old (threshold=48.0h)** - `freshness_hours=192.8`
   - source: `import_posture.recent_traces.freshness_hours`
 
 ## Delta Since Last Seen

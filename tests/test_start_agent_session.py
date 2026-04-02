@@ -169,11 +169,21 @@ def test_start_agent_session_emits_machine_readable_bundle(
     assert output["import_posture"]["surfaces"]["subject_snapshot"]["present"] is False
     assert output["import_posture"]["readiness_alignment"] == "needs_clarification"
     assert output["import_posture"]["summary_text"].startswith("posture=directly_importable")
+    repo_state = output["repo_state_awareness"]
+    assert repo_state["present"] is True
+    assert repo_state["classification"] == "baseline_unset"
+    assert repo_state["misread_risk"] is True
+    assert "does not imply" in repo_state["receiver_note"]
+    assert "descriptive only" in repo_state["non_authority_rule"]
     assert output["receiver_parity"]["continuity"]["classification"] == "runtime_present"
     assert output["receiver_parity"]["working_style"]["status"] == "none"
     assert output["receiver_parity"]["rule"].startswith("ack is safe visibility only")
     assert any(
         "continuity effectiveness is only runtime_present" in alert
+        for alert in output["import_posture"]["receiver_alerts"]
+    )
+    assert any(
+        "No observer baseline yet" in alert
         for alert in output["import_posture"]["receiver_alerts"]
     )
     assert output["task_track_hint"]["present"] is True
@@ -271,6 +281,7 @@ def test_start_agent_session_can_skip_ack(capsys, monkeypatch, tmp_path: Path) -
     assert output["task_track_hint"]["suggested_track"] == "unclassified"
     assert output["deliberation_mode_hint"]["present"] is False
     assert output["deliberation_mode_hint"]["suggested_mode"] == "unclassified"
+    assert output["repo_state_awareness"]["classification"] == "baseline_unset"
     assert output["import_posture"]["surfaces"]["delta_feed"]["present"] is True
     assert output["underlying_commands"][1] == (
         "python scripts/run_r_memory_packet.py --agent observer-preview"

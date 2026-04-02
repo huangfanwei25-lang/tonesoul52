@@ -29,6 +29,7 @@ from tonesoul.hot_memory import (
     build_hot_memory_decay_map,
     build_hot_memory_ladder,
 )
+from tonesoul.repo_state_awareness import build_repo_state_awareness
 
 # ---------------------------------------------------------------------------
 # Thresholds (tuned conservatively; only raise after repeated validation)
@@ -382,6 +383,10 @@ def build_low_drift_anchor(
     hot_memory_decay_map = build_hot_memory_decay_map(
         hot_memory_ladder=hot_memory_ladder
     )
+    repo_state_awareness = build_repo_state_awareness(
+        project_memory_summary=packet.get("project_memory_summary") or {},
+        delta_feed=packet.get("delta_feed") or {},
+    )
 
     return {
         "generated_at": _iso_now(),
@@ -389,6 +394,7 @@ def build_low_drift_anchor(
         "subsystem_parity": subsystem_parity,
         "hot_memory_ladder": hot_memory_ladder,
         "hot_memory_decay_map": hot_memory_decay_map,
+        "repo_state_awareness": repo_state_awareness,
         "stable": stable,
         "contested": contested,
         "stale": stale,
@@ -400,7 +406,8 @@ def build_low_drift_anchor(
         },
         "summary_text": (
             f"observer_window stable={stable_count} contested={contested_count} stale={stale_count} "
-            f"delta_has_updates={delta_summary['has_updates']}"
+            f"delta_has_updates={delta_summary['has_updates']} "
+            f"repo_state={repo_state_awareness.get('classification', 'unknown')}"
         ),
         "receiver_note": (
             "This observer window is advisory only. "

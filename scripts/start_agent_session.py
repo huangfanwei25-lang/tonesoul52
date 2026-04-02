@@ -66,6 +66,15 @@ def _build_canonical_center() -> dict:
     return build_canonical_center(task_text=task_text)
 
 
+def _build_repo_state_awareness(*, packet: dict) -> dict:
+    from tonesoul.repo_state_awareness import build_repo_state_awareness
+
+    return build_repo_state_awareness(
+        project_memory_summary=packet.get("project_memory_summary") or {},
+        delta_feed=packet.get("delta_feed") or {},
+    )
+
+
 def _build_mutation_preflight(
     *,
     readiness: dict,
@@ -1060,12 +1069,19 @@ def run_session_start_bundle(
         import_limits=working_style_import_limits,
     )
     canonical_center = _build_canonical_center()
+    repo_state_awareness = _build_repo_state_awareness(packet=packet)
     task_track_hint = _build_task_track_hint(packet=packet, readiness=readiness)
     deliberation_mode_hint = _build_deliberation_mode_hint(
         task_track_hint=task_track_hint,
         readiness=readiness,
     )
     import_posture = _build_import_posture(packet=packet, readiness=readiness)
+    repo_state_alert = str(repo_state_awareness.get("alert_text", "")).strip()
+    if repo_state_alert:
+        receiver_alerts = list(import_posture.get("receiver_alerts") or [])
+        if repo_state_alert not in receiver_alerts:
+            receiver_alerts.append(repo_state_alert)
+        import_posture["receiver_alerts"] = receiver_alerts
     mutation_preflight = _build_mutation_preflight(
         readiness=readiness,
         task_track_hint=task_track_hint,
@@ -1101,6 +1117,7 @@ def run_session_start_bundle(
         "import_posture": import_posture,
         "receiver_parity": import_posture.get("receiver_parity", {}),
         "canonical_center": canonical_center,
+        "repo_state_awareness": repo_state_awareness,
         "mutation_preflight": mutation_preflight,
         "subsystem_parity": subsystem_parity,
         "working_style_playbook": working_style_playbook,

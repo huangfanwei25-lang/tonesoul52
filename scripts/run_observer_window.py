@@ -74,6 +74,7 @@ def _render_markdown(anchor: dict[str, Any]) -> str:
     current_short_board = canonical_center.get("current_short_board") or {}
     hot_memory_ladder = anchor.get("hot_memory_ladder") or {}
     hot_memory_decay_map = anchor.get("hot_memory_decay_map") or {}
+    repo_state_awareness = anchor.get("repo_state_awareness") or {}
     subsystem_parity = anchor.get("subsystem_parity") or {}
 
     lines.extend(["## Canonical Center", ""])
@@ -133,6 +134,13 @@ def _render_markdown(anchor: dict[str, Any]) -> str:
         lines.append(f"  - note: {layer.get('note', '')}")
     if not hot_memory_decay_map.get("layers"):
         lines.append("- *(none)*")
+    lines.append("")
+
+    lines.extend(["## Repo-State Awareness", ""])
+    lines.append(f"- Summary: `{repo_state_awareness.get('summary_text', '')}`")
+    lines.append(f"- Receiver note: `{repo_state_awareness.get('receiver_note', '')}`")
+    lines.append(f"- Action hint: `{repo_state_awareness.get('action_hint', '')}`")
+    lines.append(f"- Non-authority rule: `{repo_state_awareness.get('non_authority_rule', '')}`")
     lines.append("")
 
     lines.extend(["## Subsystem Parity", ""])

@@ -93,7 +93,7 @@
   - collaborator-beta preflight, entry-validation, and discoverable beta-facing status surfaces
   - low-drift anchor / observer-window baseline (Day 1 complete): `tonesoul/observer_window.py`, `scripts/run_observer_window.py`, `tests/test_observer_window.py`, `docs/status/observer_window_latest.{json,md}`
 - Current short board:
-  - Phase 753: add bounded repo-state awareness to successor entry so `no delta` is not misread as `no change`
+  - Phase 754: reality-check the deferred working-style wave-2 surface (`tonesoul/tonebridge/personas.py::build_hardened_prompt()`) and either adopt bounded playbook hints or explicitly defer it again
 - After that:
   - Day 3: rotation checkpoint -- successor/hot-memory bucket is frozen once Phase 748 closes without reopening launch wording
   - only after Phase 748 closes should the bucket rotate
@@ -1669,7 +1669,13 @@
 **Success Criteria**: The remaining successor/hot-memory sidecar files no longer compete with the active runtime-aligned story, and later agents can tell which residue is still sidecar-only.
 
 ## Phase 753: Successor Repo-State Awareness (2026-04-02, planned)
-- [ ] expose one bounded repo-state signal near delta/session-start so successors do not equate `no coordination updates` with `no repo changes`
-- [ ] keep the wave additive and descriptive, not a new coordination authority surface
-- [ ] verify the wording stays aligned with launch honesty and successor-shell discipline
+- [x] expose one bounded repo-state signal near delta/session-start so successors do not equate `no coordination updates` with `no repo changes`
+- [x] keep the wave additive and descriptive, not a new coordination authority surface
+- [x] verify the wording stays aligned with launch honesty and successor-shell discipline
 **Success Criteria**: A later agent can tell when git/repo state changed even if no new compaction/checkpoint appeared, without mistaking that signal for canonical task authority.
+
+## Phase 754: Deferred Working-Style Wave-2 Reality-Check (2026-04-02, planned)
+- [ ] inspect `tonesoul/tonebridge/personas.py::build_hardened_prompt()` against the current prompt adoption matrix and working-style wave-2 selection
+- [ ] only adopt bounded working-style guidance if the surface still looks low-risk and non-voice-defining; otherwise explicitly defer it again
+- [ ] keep the wave local to that one deferred surface instead of reopening broader prompt-topology theory
+**Success Criteria**: ToneSoul either lands one bounded working-style consumer on the deferred wave-2 surface, or records a clear renewed deferral without reopening the prompt-adoption bucket broadly.

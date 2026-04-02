@@ -186,6 +186,7 @@ Target states:
 - readiness
 - task track hint
 - deliberation mode hint
+- repo-state awareness
 - claims
 - mutation preflight
 - shared edit preflight
@@ -237,6 +238,7 @@ Within the first 10 minutes, a successor AI should be able to answer:
 5. What may I safely apply?
 6. What must I not promote?
 7. What current launch tier may I honestly claim?
+8. Did the repo move even if coordination delta stayed quiet?
 
 If the current stack cannot answer those quickly, hot-memory design is not good enough yet.
 
