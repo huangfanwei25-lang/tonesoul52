@@ -93,7 +93,7 @@
   - collaborator-beta preflight, entry-validation, and discoverable beta-facing status surfaces
   - low-drift anchor / observer-window baseline (Day 1 complete): `tonesoul/observer_window.py`, `scripts/run_observer_window.py`, `tests/test_observer_window.py`, `docs/status/observer_window_latest.{json,md}`
 - Current short board:
-  - Phase 749: choose the next low-risk working-style wave-2 surface so bucket rotation resumes after the shared-edit preflight closes
+  - Phase 750: adopt working-style playbook guidance in shared_edit_preflight so the next post-successor bucket is coordination-facing instead of hot-memory-theoretical
 - After that:
   - Day 3: rotation checkpoint -- successor/hot-memory bucket is frozen once Phase 748 closes without reopening launch wording
   - only after Phase 748 closes should the bucket rotate
@@ -130,10 +130,10 @@
 - [x] Lock the new playbook into session-start regression tests so continuity of operating style stays machine-readable
 **Success Criteria**: A later agent can open the session-start bundle, find a concise working-style playbook, and apply shared operating habits directly without mistaking them for vows, canonical law, or durable identity.
 
-## Phase 694: Working-Style Adoption Topology (2026-03-29, planned)
-- [ ] Rank the next high-frequency prompt/readout surfaces by value, drift risk, and fit for working-style continuity
-- [ ] Exclude high-risk domain-specific or voice-critical families unless there is strong evidence they need bounded style adoption
-- [ ] Use the ranked topology to choose one local implementation wave and one deferred wave
+## Phase 694: Working-Style Adoption Topology (2026-03-29, completed 2026-04-02)
+- [x] Rank the next high-frequency prompt/readout surfaces by value, drift risk, and fit for working-style continuity
+- [x] Exclude high-risk domain-specific or voice-critical families unless there is strong evidence they need bounded style adoption
+- [x] Use the ranked topology to choose one local implementation wave and one deferred wave
 **Success Criteria**: ToneSoul has a concrete ranked list of the next working-style consumers, so future adoption follows topology and frequency rather than intuition.
 
 ## Phase 695: Working-Style Adoption Wave 1 (2026-03-29)
@@ -1644,8 +1644,14 @@
 - [x] wire the result back into successor-facing surfaces without reopening launch or maturity wording
 **Success Criteria**: A successor about to edit shared code can see one explicit preflight answer about claim/path overlap instead of reconstructing it manually from multiple surfaces.
 
-## Phase 749: Working-Style Wave-2 Surface Selection (2026-04-02, planned)
-- [ ] choose the next low-risk working-style consumer after the successor/hot-memory bucket freeze
-- [ ] keep the choice bounded to generic or coordination-facing surfaces instead of reopening voice-heavy families
-- [ ] name one implementation wave and one deferred wave so bucket rotation is explicit before more adoption work starts
+## Phase 749: Working-Style Wave-2 Surface Selection (2026-04-02, completed)
+- [x] choose the next low-risk working-style consumer after the successor/hot-memory bucket freeze
+- [x] keep the choice bounded to generic or coordination-facing surfaces instead of reopening voice-heavy families
+- [x] name one implementation wave and one deferred wave so bucket rotation is explicit before more adoption work starts
 **Success Criteria**: ToneSoul has one explicit post-successor bucket to continue with, so later agents rotate cleanly instead of drifting back into hot-memory theory.
+
+## Phase 750: Working-Style Wave-2 Shared-Edit Consumer (2026-04-02, planned)
+- [ ] let `shared_edit_preflight` reuse the visible working-style playbook as bounded workflow guidance
+- [ ] expose only the first one or two actionable habits plus the non-promotion rule
+- [ ] keep the wave coordination-facing and avoid reopening persona/navigation families
+**Success Criteria**: A collaborator about to edit shared paths can see not only overlap status, but also one bounded slice of the shared working-style playbook without mistaking it for policy or identity.

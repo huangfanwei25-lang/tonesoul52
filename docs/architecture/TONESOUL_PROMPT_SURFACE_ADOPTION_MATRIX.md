@@ -40,8 +40,8 @@
 | 14 | `tonesoul/tonebridge/personas.py` | `build_hardened_prompt()` | persona mode hardening | high | critical | persona_and_voice | `defer` | persona drift | maybe adopt later with operator/user snapshot discipline |
 | 15 | `tonesoul/tonebridge/personas.py` | `generate_internal_monologue_prompt()` | internal monologue activation | high | high | persona_and_voice | `do_not_touch_yet` | voice flattening | value is specialized persona voice |
 | 16 | `tonesoul/tonebridge/personas.py` | `build_navigation_prompt()` | full navigation system prompt | high | critical | persona_and_voice | `do_not_touch_yet` | navigation breakage | largest and most coupled persona prompt |
-| 17 | `tonesoul/tonebridge/value_accumulator.py` | `format_values_for_prompt()` | value injection template | medium | medium | context_injection | `safe_next` | stale-value noise | good next candidate for stability bands / ordering |
-| 18 | `tonesoul/tonebridge/self_commit.py` | `format_for_prompt()` | commitment injection template | medium | high | context_injection | `safe_next` | commitment weighting drift | good next candidate for priority ordering |
+| 17 | `tonesoul/tonebridge/value_accumulator.py` | `format_values_for_prompt()` | value injection template | medium | medium | context_injection | `already_aligned` | stale-value noise | already carries stability bands and priority ordering |
+| 18 | `tonesoul/tonebridge/self_commit.py` | `format_for_prompt()` | commitment injection template | medium | high | context_injection | `already_aligned` | commitment weighting drift | already carries weighted priority ordering and conflict note |
 | 19 | `tonesoul/reflection.py` | `build_revision_prompt()` | revision prompt | medium | high | output_refinement | `already_aligned` | permissive rewrites | adopted already |
 | 20 | `tonesoul/dream_engine.py` | `_reflection_prompt()` | dream reflection prompt | medium | medium | output_refinement | `already_aligned` | speculative reflection drift | adopted already |
 | 21 | `tonesoul/stale_rule_verifier.py` | `_build_verification_challenge()` / `for_stale_rule()` | stale-rule verification prompt | medium | high | output_refinement | `already_aligned` | vague re-confirmation | adopted already |
@@ -55,8 +55,8 @@
 
 | Status | Count |
 |--------|------:|
-| `already_aligned` | 11 |
-| `safe_next` | 2 |
+| `already_aligned` | 13 |
+| `safe_next` | 0 |
 | `defer` | 2 |
 | `do_not_touch_yet` | 7 |
 | `helper_only` | 2 |
@@ -65,18 +65,19 @@
 
 ## Recommended Next Wave
 
-### Immediate Wave: Context Injection Templates
+### Immediate Prompt-Adoption Wave
 
-The most reasonable next implementation wave is:
+There is no remaining low-risk prompt-adoption wave inside this matrix that outranks current runtime work.
+
+The previously identified context-injection templates are already aligned:
 
 - `tonesoul/tonebridge/value_accumulator.py::format_values_for_prompt()`
 - `tonesoul/tonebridge/self_commit.py::format_for_prompt()`
 
-Why:
-- both are high-value prompt-adjacent injectors
-- both shape downstream behavior
-- neither is as tightly coupled as ToneBridge analysis or persona navigation
-- both fit the working-style / stability / priority discipline already added elsewhere
+That means the next bounded implementation wave should rotate out of prompt-family work and into a
+coordination-facing working-style consumer. See:
+
+- `docs/plans/tonesoul_working_style_wave2_selection_2026-04-02.md`
 
 ### Do Not Reopen Already-Finished Work
 
@@ -92,4 +93,7 @@ These surfaces are no longer next-wave candidates:
 
 ## Handoff Line
 
-The current short board is no longer council prompt discipline. That baseline is already in place. The next prompt-adoption wave should target context injection templates, while persona/voice and ToneBridge pipeline prompts remain explicitly out of scope.
+The current short board is no longer generic prompt-discipline adoption. That baseline is already in
+place for low-risk governance, refinement, and context-injection surfaces. The next bounded wave should
+target a coordination-facing working-style consumer, while persona/voice and ToneBridge pipeline prompts
+remain explicitly out of scope.
