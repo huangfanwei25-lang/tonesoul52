@@ -1,6 +1,6 @@
 # ToneSoul Observer Window / Low-Drift Anchor
 
-> Generated at `2026-04-02T01:59:45Z`. Advisory only.
+> Generated at `2026-04-02T03:58:46Z`. Advisory only.
 
 **Summary**: `observer_window stable=5 contested=4 stale=1 delta_has_updates=True`
 
@@ -10,13 +10,15 @@
 ## Canonical Center
 
 - Parent surfaces: `task.md, DESIGN.md`
-- Receiver rule: `Treat the canonical center as parent planning truth. Observer/readout children may orient continuation, but they do not override task.md or DESIGN.md.`
+- Canonical anchor references: `AXIOMS.json, DESIGN.md, canonical architecture contracts, task.md.current_short_board`
+- Source precedence: `canonical_anchors > live_coordination_truth > derived_orientation_shells > bounded_handoff > working_identity_and_replay`
+- Receiver rule: `Treat the canonical center as parent planning truth. Observer/readout children may orient continuation, but they do not override AXIOMS.json, DESIGN.md, canonical contracts, or the accepted short board.`
 - Successor correction: `observer stable != execution permission; confirm live_coordination first`
 - Correction rule: `Stable observer output is shell-order orientation only. Before shared edits, confirm live_coordination directly: check readiness status, visible claims, and bounded_handoff receiver obligation.`
 - Required checks: `readiness.status, claim_view.claims, import_posture.surfaces.compactions.receiver_obligation`
 - Current short board visible: `True`
 - Current short board:
-  - Phase 748: tighten shared path-overlap preflight before shared edits so mutation_preflight points at a real narrow hook instead of only a named gap
+  - Phase 752: triage the remaining successor/hot-memory sidecar residue so only one active runtime-aligned story remains
 
 ## Hot-Memory Ladder
 
@@ -87,9 +89,9 @@
 
 ## Subsystem Parity
 
-- Summary: `subsystem_parity baseline=3 beta_usable=4 partial=3 deferred=1 launch=collaborator_beta readiness=pass`
+- Summary: `subsystem_parity baseline=3 beta_usable=5 partial=2 deferred=1 launch=collaborator_beta readiness=pass`
 - Receiver rule: `Use baseline lanes for normal continuation, beta_usable lanes for guided collaborator-beta work, partial lanes with explicit gap awareness, and deferred lanes as out of current scope.`
-- Next focus: `shared_code_edit.path_overlap_preflight` - Mutation preflight is now visible, but the narrowest remaining runtime gap is still explicit path-overlap preflight before shared edits.
+- Next focus: `working_style.wave_2_surface_selection` - Shared-edit preflight is now real enough to stop being the shortest board; rotate to the next bounded non-successor bucket instead of reopening hot-memory theory.
 
 - `session_start_bundle`: `baseline`
   - current_signal: `readiness=pass track=feature_track claim=required`
@@ -145,12 +147,12 @@
   - main_gap: External deployment and broader live validation are still thinner than the internal story.
   - next_bounded_move: `continue bounded beta validation without widening claims`
   - overclaim_to_avoid: public launch maturity is ready
-- `mutation_preflight_hooks`: `partial`
+- `mutation_preflight_hooks`: `beta_usable`
   - current_signal: `shared_code=claim_before_shared_edits compaction=review_only_handoff task_board=ratified_short_board_only commit=aegis_locked_commit launch_claims=bounded_collaborator_beta_only`
   - strongest_truth: Successor-facing mutation preflight now maps current write/mutate/publish decision points.
-  - main_gap: The actual shared path-overlap decision is still a manual read, not a dedicated hook.
+  - main_gap: The path-overlap hook is now real, but it remains intentionally narrow and only sees visible claims plus candidate paths.
   - next_bounded_move: `shared_code_edit.path_overlap_preflight`
-  - overclaim_to_avoid: guard rails are already fully explicit
+  - overclaim_to_avoid: shared-edit mutation is now a full permission system
 - `external_transport_plugins`: `deferred`
   - current_signal: `not_in_launch_default_story`
   - strongest_truth: External transport, MCP, and plugin packaging are known future-value lanes.
@@ -190,7 +192,7 @@
 
 (1 items)
 
-- **recent_traces are 188.8h old (threshold=48.0h)** - `freshness_hours=188.8`
+- **recent_traces are 190.8h old (threshold=48.0h)** - `freshness_hours=190.8`
   - source: `import_posture.recent_traces.freshness_hours`
 
 ## Delta Since Last Seen

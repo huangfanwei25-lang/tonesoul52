@@ -8,6 +8,65 @@ from typing import Any
 _SHORT_BOARD_HEADER = "- Current short board:"
 _SHORT_BOARD_SOURCE = "task.md > Water-Bucket Snapshot > Current short board"
 _PARENT_SURFACES = ["task.md", "DESIGN.md"]
+_CANONICAL_ANCHOR_REFERENCES = [
+    "AXIOMS.json",
+    "DESIGN.md",
+    "canonical architecture contracts",
+    "task.md.current_short_board",
+]
+_SOURCE_PRECEDENCE = [
+    {
+        "layer": "canonical_anchors",
+        "receiver_rule": "highest_parent_truth",
+        "surfaces": [
+            "AXIOMS.json",
+            "DESIGN.md",
+            "canonical architecture contracts",
+            "task.md.current_short_board",
+        ],
+    },
+    {
+        "layer": "live_coordination_truth",
+        "receiver_rule": "authoritative_for_current_session",
+        "surfaces": [
+            "packet.posture",
+            "packet.project_memory_summary.launch_claim_posture",
+            "packet.coordination_mode",
+            "readiness",
+        ],
+    },
+    {
+        "layer": "derived_orientation_shells",
+        "receiver_rule": "advisory_children_of_parents",
+        "surfaces": [
+            "session_start.import_posture",
+            "canonical_center",
+            "observer_window",
+            "hot_memory_ladder",
+            "subsystem_parity",
+        ],
+    },
+    {
+        "layer": "bounded_handoff",
+        "receiver_rule": "review_before_apply_never_self_promote",
+        "surfaces": [
+            "compactions",
+            "checkpoints",
+            "delta_feed",
+            "recent_traces",
+        ],
+    },
+    {
+        "layer": "working_identity_and_replay",
+        "receiver_rule": "context_only_not_authority",
+        "surfaces": [
+            "subject_snapshot",
+            "working_style_anchor",
+            "working_style_playbook",
+            "council_dossier",
+        ],
+    },
+]
 _HOT_MEMORY_DECAY_RULES = {
     "canonical_center": {
         "stable_use_posture": "operational",
@@ -95,9 +154,15 @@ def build_canonical_center(*, task_text: str) -> dict[str, Any]:
     return {
         "present": True,
         "parent_surfaces": list(_PARENT_SURFACES),
+        "canonical_anchor_references": list(_CANONICAL_ANCHOR_REFERENCES),
+        "source_precedence": list(_SOURCE_PRECEDENCE),
+        "source_precedence_summary": (
+            "canonical_anchors > live_coordination_truth > derived_orientation_shells > "
+            "bounded_handoff > working_identity_and_replay"
+        ),
         "receiver_rule": (
             "Treat the canonical center as parent planning truth. "
-            "Observer/readout children may orient continuation, but they do not override task.md or DESIGN.md."
+            "Observer/readout children may orient continuation, but they do not override AXIOMS.json, DESIGN.md, canonical contracts, or the accepted short board."
         ),
         "successor_correction": {
             "highest_risk_misread": "observer_stable_is_execution_permission",

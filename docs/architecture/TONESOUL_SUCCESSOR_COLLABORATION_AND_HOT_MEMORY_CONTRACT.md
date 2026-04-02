@@ -169,6 +169,7 @@ This is the observer-facing center of gravity:
 In current runtime/readout form, later agents should see this alongside:
 
 - a bounded `canonical_center` derived from the accepted `task.md` short board
+- a bounded source-order rule that keeps canonical anchors, live coordination truth, derived observer shells, and lower-authority handoff surfaces separate
 - a bounded `hot_memory_ladder` that states which layer is parent truth and which layers are advisory children
 - a bounded `hot_memory_decay_map` that states which layers are operational, review-only, or quarantined
 - a bounded `subsystem_parity` readout that states which major subsystem families are baseline, beta-usable, partial, or deferred

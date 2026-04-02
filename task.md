@@ -93,7 +93,7 @@
   - collaborator-beta preflight, entry-validation, and discoverable beta-facing status surfaces
   - low-drift anchor / observer-window baseline (Day 1 complete): `tonesoul/observer_window.py`, `scripts/run_observer_window.py`, `tests/test_observer_window.py`, `docs/status/observer_window_latest.{json,md}`
 - Current short board:
-  - Phase 751: reality-check the low-drift anchor source-precedence sidecar docs before any of them are allowed to shape live observer/runtime readouts
+  - Phase 752: triage the remaining successor/hot-memory sidecar residue so only one active runtime-aligned story remains
 - After that:
   - Day 3: rotation checkpoint -- successor/hot-memory bucket is frozen once Phase 748 closes without reopening launch wording
   - only after Phase 748 closes should the bucket rotate
@@ -1656,8 +1656,14 @@
 - [x] keep the wave coordination-facing and avoid reopening persona/navigation families
 **Success Criteria**: A collaborator about to edit shared paths can see not only overlap status, but also one bounded slice of the shared working-style playbook without mistaking it for policy or identity.
 
-## Phase 751: Low-Drift Anchor Source Precedence Reality-Check (2026-04-02, planned)
-- [ ] compare the Claude sidecar low-drift anchor source-precedence doc against current runtime truth, `observer_window`, and `hot_memory` surfaces
-- [ ] decide what can be integrated, what stays sidecar, and what should be discarded instead of letting multiple precedence stories coexist
-- [ ] keep any follow-up bounded to one source-order clarification or one runtime readout fix, not a new hot-memory theory expansion
+## Phase 751: Low-Drift Anchor Source Precedence Reality-Check (2026-04-02, completed)
+- [x] compare the Claude sidecar low-drift anchor source-precedence doc against current runtime truth, `observer_window`, and `hot_memory` surfaces
+- [x] decide what can be integrated, what stays sidecar, and what should be discarded instead of letting multiple precedence stories coexist
+- [x] keep any follow-up bounded to one source-order clarification or one runtime readout fix, not a new hot-memory theory expansion
 **Success Criteria**: ToneSoul has one vetted story about low-drift anchor source precedence, so later agents do not read two competing source-order rules across sidecar docs and live runtime surfaces.
+
+## Phase 752: Successor Sidecar Residue Triage (2026-04-02, planned)
+- [ ] reality-check the remaining successor/hot-memory sidecar docs against current runtime and integrated contracts
+- [ ] integrate at most one more residue file if it matches live behavior; otherwise leave it parked or retire it
+- [ ] avoid reopening hot-memory theory expansion while cleaning the residue set
+**Success Criteria**: The remaining successor/hot-memory sidecar files no longer compete with the active runtime-aligned story, and later agents can tell which residue is still sidecar-only.

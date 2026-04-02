@@ -1094,6 +1094,8 @@ def test_start_agent_session_cli_executes_directly(tmp_path: Path) -> None:
     assert payload["agent"] == "cli-smoke"
     assert "canonical_center" in payload
     assert payload["canonical_center"]["parent_surfaces"] == ["task.md", "DESIGN.md"]
+    assert payload["canonical_center"]["canonical_anchor_references"][0] == "AXIOMS.json"
+    assert payload["canonical_center"]["source_precedence"][1]["layer"] == "live_coordination_truth"
     assert (
         payload["canonical_center"]["successor_correction"]["highest_risk_misread"]
         == "observer_stable_is_execution_permission"

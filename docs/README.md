@@ -253,6 +253,8 @@ Treat this as a prompt-design companion. It helps later agents build better extr
 
 - `architecture/TONESOUL_SUCCESSOR_COLLABORATION_AND_HOT_MEMORY_CONTRACT.md`
   - architecture contract for bounded successor entry, hot-memory laddering, summary-parent hierarchy, and external pattern distillation without foreign naming import
+- `architecture/TONESOUL_LOW_DRIFT_ANCHOR_SOURCE_PRECEDENCE_CONTRACT.md`
+  - single vetted source-order story for canonical anchors, live coordination truth, advisory observer shells, and lower-authority handoff/identity surfaces
 - `plans/tonesoul_successor_collaboration_and_hot_memory_program_2026-04-02.md`
   - actionable program for turning current continuity surfaces into a safer successor collaboration stack
 - `plans/tonesoul_subsystem_parity_and_gap_map_2026-04-02.md`

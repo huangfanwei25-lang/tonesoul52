@@ -636,6 +636,8 @@ class TestCanonicalCenterAndHotMemoryLadder:
         canonical_center = self.anchor["canonical_center"]
         assert canonical_center["present"] is True
         assert canonical_center["parent_surfaces"] == ["task.md", "DESIGN.md"]
+        assert canonical_center["canonical_anchor_references"][0] == "AXIOMS.json"
+        assert canonical_center["source_precedence"][0]["layer"] == "canonical_anchors"
         assert canonical_center["current_short_board"]["present"] is True
 
     def test_canonical_center_exposes_short_board_items(self):

@@ -80,6 +80,13 @@ def _render_markdown(anchor: dict[str, Any]) -> str:
     lines.append(
         f"- Parent surfaces: `{', '.join(canonical_center.get('parent_surfaces') or [])}`"
     )
+    lines.append(
+        "- Canonical anchor references: "
+        f"`{', '.join(canonical_center.get('canonical_anchor_references') or [])}`"
+    )
+    lines.append(
+        f"- Source precedence: `{canonical_center.get('source_precedence_summary', '')}`"
+    )
     lines.append(f"- Receiver rule: `{canonical_center.get('receiver_rule', '')}`")
     correction = canonical_center.get("successor_correction") or {}
     if correction:

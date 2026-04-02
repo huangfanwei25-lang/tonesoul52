@@ -1,12 +1,72 @@
 {
-  "generated_at": "2026-04-02T01:59:45Z",
+  "generated_at": "2026-04-02T03:58:46Z",
   "canonical_center": {
     "present": true,
     "parent_surfaces": [
       "task.md",
       "DESIGN.md"
     ],
-    "receiver_rule": "Treat the canonical center as parent planning truth. Observer/readout children may orient continuation, but they do not override task.md or DESIGN.md.",
+    "canonical_anchor_references": [
+      "AXIOMS.json",
+      "DESIGN.md",
+      "canonical architecture contracts",
+      "task.md.current_short_board"
+    ],
+    "source_precedence": [
+      {
+        "layer": "canonical_anchors",
+        "receiver_rule": "highest_parent_truth",
+        "surfaces": [
+          "AXIOMS.json",
+          "DESIGN.md",
+          "canonical architecture contracts",
+          "task.md.current_short_board"
+        ]
+      },
+      {
+        "layer": "live_coordination_truth",
+        "receiver_rule": "authoritative_for_current_session",
+        "surfaces": [
+          "packet.posture",
+          "packet.project_memory_summary.launch_claim_posture",
+          "packet.coordination_mode",
+          "readiness"
+        ]
+      },
+      {
+        "layer": "derived_orientation_shells",
+        "receiver_rule": "advisory_children_of_parents",
+        "surfaces": [
+          "session_start.import_posture",
+          "canonical_center",
+          "observer_window",
+          "hot_memory_ladder",
+          "subsystem_parity"
+        ]
+      },
+      {
+        "layer": "bounded_handoff",
+        "receiver_rule": "review_before_apply_never_self_promote",
+        "surfaces": [
+          "compactions",
+          "checkpoints",
+          "delta_feed",
+          "recent_traces"
+        ]
+      },
+      {
+        "layer": "working_identity_and_replay",
+        "receiver_rule": "context_only_not_authority",
+        "surfaces": [
+          "subject_snapshot",
+          "working_style_anchor",
+          "working_style_playbook",
+          "council_dossier"
+        ]
+      }
+    ],
+    "source_precedence_summary": "canonical_anchors > live_coordination_truth > derived_orientation_shells > bounded_handoff > working_identity_and_replay",
+    "receiver_rule": "Treat the canonical center as parent planning truth. Observer/readout children may orient continuation, but they do not override AXIOMS.json, DESIGN.md, canonical contracts, or the accepted short board.",
     "successor_correction": {
       "highest_risk_misread": "observer_stable_is_execution_permission",
       "correction_rule": "Stable observer output is shell-order orientation only. Before shared edits, confirm live_coordination directly: check readiness status, visible claims, and bounded_handoff receiver obligation.",
@@ -21,10 +81,10 @@
       "present": true,
       "status": "visible",
       "items": [
-        "Phase 748: tighten shared path-overlap preflight before shared edits so mutation_preflight points at a real narrow hook instead of only a named gap"
+        "Phase 752: triage the remaining successor/hot-memory sidecar residue so only one active runtime-aligned story remains"
       ],
       "source": "task.md > Water-Bucket Snapshot > Current short board",
-      "summary_text": "Phase 748: tighten shared path-overlap preflight before shared edits so mutation_preflight points at a real narrow hook instead of only a named gap"
+      "summary_text": "Phase 752: triage the remaining successor/hot-memory sidecar residue so only one active runtime-aligned story remains"
     },
     "summary_text": "canonical_center short_board_items=1 source=task.md > Water-Bucket Snapshot > Current short board"
   },
@@ -114,12 +174,12 @@
       },
       {
         "name": "mutation_preflight_hooks",
-        "status": "partial",
+        "status": "beta_usable",
         "current_signal": "shared_code=claim_before_shared_edits compaction=review_only_handoff task_board=ratified_short_board_only commit=aegis_locked_commit launch_claims=bounded_collaborator_beta_only",
         "strongest_truth": "Successor-facing mutation preflight now maps current write/mutate/publish decision points.",
-        "main_gap": "The actual shared path-overlap decision is still a manual read, not a dedicated hook.",
+        "main_gap": "The path-overlap hook is now real, but it remains intentionally narrow and only sees visible claims plus candidate paths.",
         "next_bounded_move": "shared_code_edit.path_overlap_preflight",
-        "overclaim_to_avoid": "guard rails are already fully explicit"
+        "overclaim_to_avoid": "shared-edit mutation is now a full permission system"
       },
       {
         "name": "external_transport_plugins",
@@ -133,17 +193,17 @@
     ],
     "counts": {
       "baseline": 3,
-      "beta_usable": 4,
-      "partial": 3,
+      "beta_usable": 5,
+      "partial": 2,
       "deferred": 1
     },
     "receiver_rule": "Use baseline lanes for normal continuation, beta_usable lanes for guided collaborator-beta work, partial lanes with explicit gap awareness, and deferred lanes as out of current scope.",
     "next_focus": {
-      "target": "mutation_preflight.next_followup",
-      "resolved_to": "shared_code_edit.path_overlap_preflight",
-      "reason": "Mutation preflight is now visible, but the narrowest remaining runtime gap is still explicit path-overlap preflight before shared edits."
+      "target": "working_style.wave_2_selection",
+      "resolved_to": "working_style.wave_2_surface_selection",
+      "reason": "Shared-edit preflight is now real enough to stop being the shortest board; rotate to the next bounded non-successor bucket instead of reopening hot-memory theory."
     },
-    "summary_text": "subsystem_parity baseline=3 beta_usable=4 partial=3 deferred=1 launch=collaborator_beta readiness=pass"
+    "summary_text": "subsystem_parity baseline=3 beta_usable=5 partial=2 deferred=1 launch=collaborator_beta readiness=pass"
   },
   "hot_memory_ladder": {
     "layers": [
@@ -324,9 +384,9 @@
   ],
   "stale": [
     {
-      "claim": "recent_traces are 188.8h old (threshold=48.0h)",
+      "claim": "recent_traces are 190.8h old (threshold=48.0h)",
       "evidence_source": "import_posture.recent_traces.freshness_hours",
-      "detail": "freshness_hours=188.8"
+      "detail": "freshness_hours=190.8"
     }
   ],
   "delta_summary": {

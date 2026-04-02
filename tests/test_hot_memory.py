@@ -43,7 +43,15 @@ def test_build_canonical_center_marks_visible_short_board() -> None:
 
     assert payload["present"] is True
     assert payload["parent_surfaces"] == ["task.md", "DESIGN.md"]
+    assert payload["canonical_anchor_references"] == [
+        "AXIOMS.json",
+        "DESIGN.md",
+        "canonical architecture contracts",
+        "task.md.current_short_board",
+    ]
     assert payload["current_short_board"]["present"] is True
+    assert payload["source_precedence_summary"].startswith("canonical_anchors >")
+    assert payload["source_precedence"][0]["layer"] == "canonical_anchors"
     assert payload["current_short_board"]["items"] == ["Phase 743: hot-memory ladder readout"]
     assert "short_board_items=1" in payload["summary_text"]
     correction = payload["successor_correction"]
