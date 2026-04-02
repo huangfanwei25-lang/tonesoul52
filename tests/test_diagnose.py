@@ -447,6 +447,24 @@ def _fake_packet():
                 'python scripts/save_compaction.py --agent <your-id> --summary "..." --path "..."',
                 "python scripts/run_task_claim.py release <task_id> --agent <your-id>",
             ],
+            "preflight_chain": {
+                "present": True,
+                "summary_text": "hook_chain=shared_edit_path_overlap -> publish_push_posture -> task_board_parking",
+                "stages": [
+                    {
+                        "name": "shared_edit_path_overlap",
+                        "command": "python scripts/run_shared_edit_preflight.py --agent codex --path <repo-path>",
+                    },
+                    {
+                        "name": "publish_push_posture",
+                        "command": "python scripts/run_publish_push_preflight.py --agent codex",
+                    },
+                    {
+                        "name": "task_board_parking",
+                        "command": "python scripts/run_task_board_preflight.py --agent codex --proposal-kind external_idea --target-path task.md",
+                    },
+                ],
+            },
             "coordination_commands": {
                 "claim": 'python scripts/run_task_claim.py claim <task_id> --agent <your-id> --summary "..."',
                 "perspective": 'python scripts/save_perspective.py --agent <your-id> --summary "..." --stance "..."',
@@ -568,6 +586,10 @@ def test_full_diagnostic_is_cp950_safe_and_includes_shared_runtime(monkeypatch) 
     assert "run_r_memory_packet.py --agent <your-id> --ack" in report
     assert "save_checkpoint.py" in report
     assert "save_compaction.py" in report
+    assert "preflight_chain:" in report
+    assert "shared_edit_path_overlap=python scripts/run_shared_edit_preflight.py" in report
+    assert "publish_push_posture=python scripts/run_publish_push_preflight.py" in report
+    assert "task_board_parking=python scripts/run_task_board_preflight.py" in report
     assert "route_r_memory_signal.py" in report
     assert "save_subject_snapshot.py" in report
     assert "apply_subject_refresh.py" in report

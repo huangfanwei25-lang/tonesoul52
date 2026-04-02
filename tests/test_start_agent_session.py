@@ -214,6 +214,15 @@ def test_start_agent_session_emits_machine_readable_bundle(
     assert publish_push_preflight["present"] is True
     assert publish_push_preflight["classification"] == "review_before_push"
     assert publish_push_preflight["repo_state_classification"] == "baseline_unset"
+    hook_chain = output["hook_chain"]
+    assert hook_chain["present"] is True
+    assert hook_chain["stages"][0]["name"] == "shared_edit_path_overlap"
+    assert hook_chain["stages"][1]["name"] == "publish_push_posture"
+    assert hook_chain["stages"][2]["name"] == "task_board_parking"
+    assert (
+        hook_chain["stages"][0]["command"]
+        == "python scripts/run_shared_edit_preflight.py --agent observer-start --path <repo-path>"
+    )
     task_board_preflight = output["task_board_preflight"]
     assert task_board_preflight["present"] is True
     assert task_board_preflight["classification"] == "docs_plans_first"
@@ -1136,6 +1145,8 @@ def test_start_agent_session_cli_executes_directly(tmp_path: Path) -> None:
         == "existing_runtime_hook"
     )
     assert payload["publish_push_preflight"]["present"] is True
+    assert payload["hook_chain"]["present"] is True
+    assert payload["hook_chain"]["stages"][2]["name"] == "task_board_parking"
     assert payload["task_board_preflight"]["present"] is True
     assert "subsystem_parity" in payload
     assert (

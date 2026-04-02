@@ -692,6 +692,18 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
                 command = str(commands.get(key, "")).strip()
                 if command:
                     lines.append(f"    {key}={command}")
+        preflight_chain = operator_guidance.get("preflight_chain") or {}
+        if preflight_chain.get("present"):
+            lines.append("  preflight_chain:")
+            summary_text = str(preflight_chain.get("summary_text", "")).strip()
+            if summary_text:
+                lines.append(f"    summary={summary_text}")
+            for stage in list(preflight_chain.get("stages") or [])[:3]:
+                lines.append(
+                    "    "
+                    f"{stage.get('name', 'unknown')}="
+                    f"{str(stage.get('command', '')).strip()}"
+                )
         completion_rule = str(operator_guidance.get("completion_rule", "")).strip()
         if completion_rule:
             lines.append(f"  completion_rule={_clip(completion_rule)}")

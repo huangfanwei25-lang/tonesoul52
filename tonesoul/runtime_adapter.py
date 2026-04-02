@@ -2015,6 +2015,7 @@ def _build_operator_guidance(
     coordination_mode: Dict[str, Any],
 ) -> Dict[str, Any]:
     """Build packet-visible operator guidance for shared R-memory coordination."""
+    from tonesoul.hook_chain import build_hook_chain_readout
     from tonesoul.receiver_posture import build_receiver_parity_readout
 
     reminders: List[str] = []
@@ -2170,6 +2171,8 @@ def _build_operator_guidance(
                 "A delta feed is visible for this agent; ack after review to advance the observer baseline."
             )
 
+    hook_chain = build_hook_chain_readout(agent_id=observer_id or "<your-id>")
+
     return {
         "backend_mode": backend_name,
         "session_start": [
@@ -2184,6 +2187,7 @@ def _build_operator_guidance(
             'python scripts/save_compaction.py --agent <your-id> --summary "..." --path "..."',
             "python scripts/run_task_claim.py release <task_id> --agent <your-id>",
         ],
+        "preflight_chain": hook_chain,
         "coordination_commands": {
             "claim": 'python scripts/run_task_claim.py claim <task_id> --agent <your-id> --summary "..."',
             "perspective": 'python scripts/save_perspective.py --agent <your-id> --summary "..." --stance "..."',

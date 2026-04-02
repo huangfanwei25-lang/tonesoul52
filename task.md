@@ -1706,8 +1706,14 @@
 - [x] verify the resulting guidance stays aligned with the existing `task.md` scope guard and current collaborator-beta short-board rotation
 **Success Criteria**: Later agents stop trying to land outside ideas directly in `task.md`, and the ratified short board remains the only active execution lane unless a human or accepted program explicitly promotes a new bucket.
 
-## Phase 759: Hook-Chain Operator Discoverability (2026-04-02, planned)
-- [ ] expose one bounded operator-facing surface that lists the current preflight chain for shared edits, publish/push, and task-board parking
-- [ ] keep the lane focused on discoverability and first-hop usability, not a new permission or transport architecture
-- [ ] verify the result stays aligned with session-start, AI quickstart, and collaborator-beta wording
+## Phase 759: Hook-Chain Operator Discoverability (2026-04-02, completed)
+- [x] expose one bounded operator-facing surface that lists the current preflight chain for shared edits, publish/push, and task-board parking
+- [x] keep the lane focused on discoverability and first-hop usability, not a new permission or transport architecture
+- [x] verify the result stays aligned with session-start, AI quickstart, and collaborator-beta wording
 **Success Criteria**: A fresh agent can see the current bounded hook chain quickly, without re-reading multiple successor surfaces or treating preflight helpers as a sovereign permission system.
+
+## Phase 760: Successor Sidecar Residue Admission Triage (2026-04-02, planned)
+- [ ] reality-check the remaining successor/hot-memory sidecar docs against the now-integrated low-drift, closeout, mutation, and observer surfaces
+- [ ] integrate only the residue files that match current runtime truth; retire or keep parked anything that now competes with the live story
+- [ ] keep the lane bounded to residue admission/retirement instead of reopening new successor-memory theory
+**Success Criteria**: The remaining successor sidecar files no longer compete with the live runtime/readout story, and later agents can tell what is integrated versus still parked residue.

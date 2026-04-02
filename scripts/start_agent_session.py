@@ -107,6 +107,12 @@ def _build_task_board_preflight(
     )
 
 
+def _build_hook_chain(*, agent_id: str) -> dict:
+    from tonesoul.hook_chain import build_hook_chain_readout
+
+    return build_hook_chain_readout(agent_id=agent_id)
+
+
 def _build_mutation_preflight(
     *,
     readiness: dict,
@@ -1123,6 +1129,7 @@ def run_session_start_bundle(
         import_posture=import_posture,
         repo_state_awareness=repo_state_awareness,
     )
+    hook_chain = _build_hook_chain(agent_id=agent_id)
     task_board_preflight = _build_task_board_preflight(
         readiness=readiness,
         canonical_center=canonical_center,
@@ -1167,6 +1174,7 @@ def run_session_start_bundle(
         "canonical_center": canonical_center,
         "repo_state_awareness": repo_state_awareness,
         "publish_push_preflight": publish_push_preflight,
+        "hook_chain": hook_chain,
         "task_board_preflight": task_board_preflight,
         "mutation_preflight": mutation_preflight,
         "subsystem_parity": subsystem_parity,
