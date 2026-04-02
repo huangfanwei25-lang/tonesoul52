@@ -159,6 +159,104 @@ def _build_subsystem_parity(
     )
 
 
+def _build_tier0_canonical_center(canonical_center: dict) -> dict:
+    current_short_board = canonical_center.get("current_short_board") or {}
+    successor_correction = canonical_center.get("successor_correction") or {}
+    return {
+        "present": bool(canonical_center.get("present")),
+        "source_precedence_summary": str(
+            canonical_center.get("source_precedence_summary", "")
+        ).strip(),
+        "current_short_board": {
+            "present": bool(current_short_board.get("present")),
+            "summary_text": str(current_short_board.get("summary_text", "")).strip(),
+        },
+        "successor_correction": {
+            "summary_text": str(successor_correction.get("summary_text", "")).strip(),
+        },
+        "summary_text": (
+            f"{str(current_short_board.get('summary_text', '')).strip()} | "
+            f"{str(successor_correction.get('summary_text', '')).strip()}"
+        ).strip(" |"),
+    }
+
+
+def _build_tier0_mutation_preflight(mutation_preflight: dict) -> dict:
+    current_context = mutation_preflight.get("current_context") or {}
+    next_followup = mutation_preflight.get("next_followup") or {}
+    return {
+        "present": bool(mutation_preflight.get("present")),
+        "summary_text": str(mutation_preflight.get("summary_text", "")).strip(),
+        "receiver_rule": str(mutation_preflight.get("receiver_rule", "")).strip(),
+        "current_context": {
+            "readiness_status": str(current_context.get("readiness_status", "")).strip(),
+            "task_track": str(current_context.get("task_track", "")).strip(),
+            "deliberation_mode": str(current_context.get("deliberation_mode", "")).strip(),
+            "claim_conflict_count": int(current_context.get("claim_conflict_count", 0) or 0),
+        },
+        "next_followup": {
+            "target": str(next_followup.get("target", "")).strip(),
+            "classification": str(next_followup.get("classification", "")).strip(),
+            "command": str(next_followup.get("command", "")).strip(),
+            "reason": str(next_followup.get("reason", "")).strip(),
+        },
+    }
+
+
+def _build_tier0_payload(
+    *,
+    agent_id: str,
+    no_ack: bool,
+    backend_name: str,
+    packet: dict,
+    posture,
+    readiness: dict,
+    task_track_hint: dict,
+    deliberation_mode_hint: dict,
+    canonical_center: dict,
+    hook_chain: dict,
+    mutation_preflight: dict,
+) -> dict:
+    return {
+        "contract_version": "v1",
+        "bundle": "session_start",
+        "tier": 0,
+        "bundle_posture": "fast_path",
+        "agent": agent_id,
+        "acknowledged_observer_cursor": not no_ack,
+        "backend_mode": backend_name,
+        "compact_diagnostic": _build_compact_line(
+            agent_id=agent_id,
+            backend_name=backend_name,
+            packet=packet,
+            posture=posture,
+        )
+        + f" | readiness={readiness['status']}",
+        "readiness": readiness,
+        "task_track_hint": task_track_hint,
+        "deliberation_mode_hint": deliberation_mode_hint,
+        "canonical_center": _build_tier0_canonical_center(canonical_center),
+        "hook_chain": hook_chain,
+        "mutation_preflight": _build_tier0_mutation_preflight(mutation_preflight),
+        "next_pull": {
+            "receiver_rule": (
+                "Tier 0 is a minimum safe start. Pull deeper surfaces only if the task is not local/clear, "
+                "if claims collide, or if readiness is not pass."
+            ),
+            "recommended_commands": [
+                f"python scripts/start_agent_session.py --agent {agent_id}",
+                f"python -m tonesoul.diagnose --agent {agent_id}",
+                f"python scripts/run_observer_window.py --agent {agent_id}",
+            ],
+        },
+        "underlying_commands": [
+            f"python scripts/start_agent_session.py --agent {agent_id}",
+            f"python -m tonesoul.diagnose --agent {agent_id}",
+            f"python scripts/run_observer_window.py --agent {agent_id}",
+        ],
+    }
+
+
 def _resolve_sidecar(root: Path, name: str) -> Path:
     canonical = root / ".aegis" / name
     legacy = root / name
@@ -1049,6 +1147,7 @@ def run_session_start_bundle(
     trace_limit: int = 5,
     visitor_limit: int = 5,
     no_ack: bool = True,
+    tier: int = 2,
 ) -> dict:
     """Run the full session-start bundle and return the payload dict.
 
@@ -1144,6 +1243,20 @@ def run_session_start_bundle(
         publish_push_preflight=publish_push_preflight,
         task_board_preflight=task_board_preflight,
     )
+    if int(tier) == 0:
+        return _build_tier0_payload(
+            agent_id=agent_id,
+            no_ack=no_ack,
+            backend_name=backend_name,
+            packet=packet,
+            posture=posture,
+            readiness=readiness,
+            task_track_hint=task_track_hint,
+            deliberation_mode_hint=deliberation_mode_hint,
+            canonical_center=canonical_center,
+            hook_chain=hook_chain,
+            mutation_preflight=mutation_preflight,
+        )
     subsystem_parity = _build_subsystem_parity(
         packet=packet,
         import_posture=import_posture,
@@ -1156,6 +1269,8 @@ def run_session_start_bundle(
     return {
         "contract_version": "v1",
         "bundle": "session_start",
+        "tier": 2,
+        "bundle_posture": "full",
         "agent": agent_id,
         "acknowledged_observer_cursor": not no_ack,
         "backend_mode": backend_name,
@@ -1208,6 +1323,7 @@ def main() -> None:
     parser.add_argument("--traces-path", type=Path, default=None)
     parser.add_argument("--trace-limit", type=int, default=5)
     parser.add_argument("--visitor-limit", type=int, default=5)
+    parser.add_argument("--tier", type=int, choices=(0, 2), default=2)
     parser.add_argument("--output", type=Path, default=None)
     parser.add_argument("--no-ack", action="store_true")
     args = parser.parse_args()
@@ -1223,6 +1339,7 @@ def main() -> None:
         trace_limit=args.trace_limit,
         visitor_limit=args.visitor_limit,
         no_ack=args.no_ack,
+        tier=args.tier,
     )
 
     text = json.dumps(payload, indent=2, ensure_ascii=False) + "\n"

@@ -314,6 +314,68 @@ def test_start_agent_session_can_skip_ack(capsys, monkeypatch, tmp_path: Path) -
     assert "observer-preview" not in cursor_data
 
 
+def test_start_agent_session_tier0_returns_fast_path_bundle(
+    capsys, monkeypatch, tmp_path: Path
+) -> None:
+    module = _load_script_module()
+    state_path = tmp_path / "governance_state.json"
+    traces_path = tmp_path / "session_traces.jsonl"
+
+    _write_state(state_path)
+    _write_traces(traces_path)
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "start_agent_session.py",
+            "--state-path",
+            str(state_path),
+            "--traces-path",
+            str(traces_path),
+            "--agent",
+            "tier0-fast",
+            "--tier",
+            "0",
+            "--no-ack",
+        ],
+    )
+
+    module.main()
+    output = json.loads(capsys.readouterr().out)
+
+    assert output["tier"] == 0
+    assert output["bundle_posture"] == "fast_path"
+    assert output["readiness"]["status"] == "pass"
+    assert output["task_track_hint"]["suggested_track"] == "unclassified"
+    assert output["deliberation_mode_hint"]["suggested_mode"] == "unclassified"
+    assert output["canonical_center"]["present"] is True
+    assert output["canonical_center"]["current_short_board"]["present"] is True
+    assert "observer stable != execution permission" in output["canonical_center"]["summary_text"]
+    assert output["hook_chain"]["present"] is True
+    assert output["hook_chain"]["stages"][2]["name"] == "task_board_parking"
+    assert output["mutation_preflight"]["present"] is True
+    assert output["mutation_preflight"]["current_context"]["task_track"] == "unclassified"
+    assert output["mutation_preflight"]["next_followup"]["target"] == "task_board.parking_preflight"
+    assert output["next_pull"]["recommended_commands"][0] == (
+        "python scripts/start_agent_session.py --agent tier0-fast"
+    )
+    assert output["underlying_commands"] == [
+        "python scripts/start_agent_session.py --agent tier0-fast",
+        "python -m tonesoul.diagnose --agent tier0-fast",
+        "python scripts/run_observer_window.py --agent tier0-fast",
+    ]
+    assert "packet" not in output
+    assert "import_posture" not in output
+    assert "receiver_parity" not in output
+    assert "publish_push_preflight" not in output
+    assert "task_board_preflight" not in output
+    assert "subsystem_parity" not in output
+    assert "working_style_playbook" not in output
+    assert "working_style_validation" not in output
+    assert "claim_view" not in output
+
+
 def test_start_agent_session_blocks_on_critical_risk(capsys, monkeypatch, tmp_path: Path) -> None:
     module = _load_script_module()
     state_path = tmp_path / "governance_state.json"
@@ -1155,6 +1217,45 @@ def test_start_agent_session_cli_executes_directly(tmp_path: Path) -> None:
     )
     assert "working_style_playbook" in payload
     assert "working_style_validation" in payload
+
+
+def test_start_agent_session_cli_tier0_executes_directly(tmp_path: Path) -> None:
+    state_path = tmp_path / "governance_state.json"
+    traces_path = tmp_path / "session_traces.jsonl"
+    _write_state(state_path)
+    _write_traces(traces_path)
+
+    script_path = Path(__file__).resolve().parents[1] / "scripts" / "start_agent_session.py"
+    completed = subprocess.run(
+        [
+            sys.executable,
+            str(script_path),
+            "--state-path",
+            str(state_path),
+            "--traces-path",
+            str(traces_path),
+            "--agent",
+            "cli-tier0",
+            "--tier",
+            "0",
+            "--no-ack",
+        ],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        check=False,
+    )
+
+    assert completed.returncode == 0, completed.stderr
+    payload = json.loads(completed.stdout)
+    assert payload["tier"] == 0
+    assert payload["bundle_posture"] == "fast_path"
+    assert payload["canonical_center"]["current_short_board"]["present"] is True
+    assert payload["hook_chain"]["present"] is True
+    assert payload["mutation_preflight"]["present"] is True
+    assert "packet" not in payload
+    assert "subsystem_parity" not in payload
+    assert "working_style_playbook" not in payload
 
 
 def test_ensure_repo_root_on_path_adds_repo_root(monkeypatch) -> None:
