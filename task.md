@@ -93,7 +93,7 @@
   - collaborator-beta preflight, entry-validation, and discoverable beta-facing status surfaces
   - low-drift anchor / observer-window baseline (Day 1 complete): `tonesoul/observer_window.py`, `scripts/run_observer_window.py`, `tests/test_observer_window.py`, `docs/status/observer_window_latest.{json,md}`
 - Current short board:
-  - Phase 754: reality-check the deferred working-style wave-2 surface (`tonesoul/tonebridge/personas.py::build_hardened_prompt()`) and either adopt bounded playbook hints or explicitly defer it again
+  - Phase 755: scan the next bounded tool-permission / hook gap so the post-successor bucket rotates into a real outer-shell improvement instead of drifting back into prompt theory
 - After that:
   - Day 3: rotation checkpoint -- successor/hot-memory bucket is frozen once Phase 748 closes without reopening launch wording
   - only after Phase 748 closes should the bucket rotate
@@ -1675,7 +1675,13 @@
 **Success Criteria**: A later agent can tell when git/repo state changed even if no new compaction/checkpoint appeared, without mistaking that signal for canonical task authority.
 
 ## Phase 754: Deferred Working-Style Wave-2 Reality-Check (2026-04-02, planned)
-- [ ] inspect `tonesoul/tonebridge/personas.py::build_hardened_prompt()` against the current prompt adoption matrix and working-style wave-2 selection
-- [ ] only adopt bounded working-style guidance if the surface still looks low-risk and non-voice-defining; otherwise explicitly defer it again
-- [ ] keep the wave local to that one deferred surface instead of reopening broader prompt-topology theory
+- [x] inspect `tonesoul/tonebridge/personas.py::build_hardened_prompt()` against the current prompt adoption matrix and working-style wave-2 selection
+- [x] only adopt bounded working-style guidance if the surface still looks low-risk and non-voice-defining; otherwise explicitly defer it again
+- [x] keep the wave local to that one deferred surface instead of reopening broader prompt-topology theory
 **Success Criteria**: ToneSoul either lands one bounded working-style consumer on the deferred wave-2 surface, or records a clear renewed deferral without reopening the prompt-adoption bucket broadly.
+
+## Phase 755: Tool-Permission / Hook Gap Scan (2026-04-02, planned)
+- [ ] inspect the current outer-shell hook chain after `mutation_preflight` and `shared_edit_preflight` to find the next bounded missing check
+- [ ] keep the scan focused on one concrete hook or permission gap, not a new transport/plugin architecture
+- [ ] tie the result back to the Agent-OS distillation so the next bucket is about outer-shell reliability, not prompt-theory recursion
+**Success Criteria**: ToneSoul identifies one concrete next hook/permission gap that improves collaborator-beta reliability without reopening successor/hot-memory or broad prompt-topology buckets.

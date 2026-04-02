@@ -143,6 +143,7 @@ Why deferred:
 - belongs to `persona_and_voice`
 - needs a separate boundary review before adoption
 - should not be reopened under the label of "low-risk working-style continuity"
+- reality-checked on 2026-04-02: still deferred because no explicit working-style playbook input path exists yet, and the ripple radius reaches `build_navigation_prompt()`
 
 ---
 
