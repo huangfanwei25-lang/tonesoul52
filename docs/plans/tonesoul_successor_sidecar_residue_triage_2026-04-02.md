@@ -45,13 +45,33 @@ The following useful ideas were kept through integration or short-board rotation
 - shared mutation needs a bounded preflight
 - low-drift anchor requires one explicit source-order rule
 - hot-memory should be layered by authority and decay posture
+- the operator-facing hook chain should stay bounded to shared-edit, publish/push, and task-board parking preflights
 
 These now live in active surfaces and contracts rather than sidecar drafts.
+
+---
+
+## Current Repo-State Note
+
+As of the current repo state:
+
+- the three retired sidecar files above are no longer present in `docs/architecture/` or `docs/plans/`
+- the active successor/hot-memory story now lives in:
+  - `TONESOUL_SUCCESSOR_COLLABORATION_AND_HOT_MEMORY_CONTRACT.md`
+  - `TONESOUL_LOW_DRIFT_ANCHOR_SOURCE_PRECEDENCE_CONTRACT.md`
+  - `TONESOUL_HOT_MEMORY_DECAY_AND_COMPRESSION_MAP.md`
+  - runtime/readout surfaces such as `hot_memory`, `observer_window`, `mutation_preflight`, and `hook_chain`
+
+This note remains as a residue decision ledger, not as a second successor authority lane.
 
 ---
 
 ## What Remains Out Of Scope
 
 - `.claude/`
+- external draft notes such as:
+  - `docs/plans/tonesoul_anti_fake_completion_design_2026-04-02.md`
+  - `docs/plans/tonesoul_dual_layer_numeric_design_2026-04-02.md`
+  - `docs/plans/tonesoul_three_order_isolation_design_2026-04-02.md`
 
-This remains local residue and is not part of the active successor/hot-memory story.
+These remain local or parked draft residue and are not part of the active successor/hot-memory story.

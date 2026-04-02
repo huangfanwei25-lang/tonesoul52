@@ -1712,8 +1712,14 @@
 - [x] verify the result stays aligned with session-start, AI quickstart, and collaborator-beta wording
 **Success Criteria**: A fresh agent can see the current bounded hook chain quickly, without re-reading multiple successor surfaces or treating preflight helpers as a sovereign permission system.
 
-## Phase 760: Successor Sidecar Residue Admission Triage (2026-04-02, planned)
-- [ ] reality-check the remaining successor/hot-memory sidecar docs against the now-integrated low-drift, closeout, mutation, and observer surfaces
-- [ ] integrate only the residue files that match current runtime truth; retire or keep parked anything that now competes with the live story
-- [ ] keep the lane bounded to residue admission/retirement instead of reopening new successor-memory theory
+## Phase 760: Successor Sidecar Residue Admission Triage (2026-04-02, completed)
+- [x] reality-check the remaining successor/hot-memory sidecar docs against the now-integrated low-drift, closeout, mutation, and observer surfaces
+- [x] integrate only the residue files that match current runtime truth; retire or keep parked anything that now competes with the live story
+- [x] keep the lane bounded to residue admission/retirement instead of reopening new successor-memory theory
 **Success Criteria**: The remaining successor sidecar files no longer compete with the live runtime/readout story, and later agents can tell what is integrated versus still parked residue.
+
+## Phase 761: AI Entry Encoding And Render Cleanup (2026-04-02, planned)
+- [ ] reality-check `AI_ONBOARDING.md` and `docs/AI_QUICKSTART.md` for true file-level mojibake versus terminal render noise
+- [ ] repair only the genuinely corrupted lines that block first-hop AI/operator readability
+- [ ] keep the lane bounded to entry-surface readability, not a full documentation rewrite
+**Success Criteria**: The AI entry stack stays first-hop readable without creating a second cleanup megaproject or flattening the authority model.
