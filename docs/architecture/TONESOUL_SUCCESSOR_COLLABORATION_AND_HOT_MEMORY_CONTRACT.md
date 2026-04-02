@@ -132,6 +132,14 @@ And, when relevant:
 
 A smooth summary without those signals must not be treated as proof that a session actually ended cleanly.
 
+Observer-facing shells should therefore lift any latest compaction closeout that is:
+
+- `partial`
+- `blocked`
+- `underdetermined`
+
+so a successor reading the observer window first still sees that the last handoff is not equivalent to completed work.
+
 ### 6. Descriptive And Calibrated Layers Must Stay Separate
 
 ToneSoul may expose descriptive numeric or semantic summaries.

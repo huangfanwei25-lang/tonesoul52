@@ -60,6 +60,45 @@ def _item(claim: str, *, evidence_source: str, detail: str = "") -> dict[str, st
     return result
 
 
+def _build_closeout_attention(*, import_posture: dict[str, Any]) -> dict[str, Any]:
+    """Lift non-complete compaction closeout into a dedicated successor-facing alert."""
+
+    compaction_surface = import_posture.get("compactions") or {}
+    closeout_status = str(compaction_surface.get("closeout_status", "")).strip() or "complete"
+    stop_reason = str(compaction_surface.get("stop_reason", "")).strip()
+    unresolved_count = int(compaction_surface.get("unresolved_count", 0) or 0)
+    human_input_required = bool(compaction_surface.get("human_input_required", False))
+
+    if closeout_status not in {"partial", "blocked", "underdetermined"}:
+        return {
+            "present": False,
+            "status": "complete",
+            "summary_text": "latest compaction closeout is complete or not currently contested",
+            "receiver_rule": "No extra observer-window closeout lift is needed when the latest closeout is complete.",
+        }
+
+    detail_parts = [f"status={closeout_status}", f"unresolved={unresolved_count}"]
+    if stop_reason:
+        detail_parts.append(f"stop_reason={stop_reason}")
+    if human_input_required:
+        detail_parts.append("human_input_required=true")
+
+    return {
+        "present": True,
+        "status": closeout_status,
+        "stop_reason": stop_reason,
+        "unresolved_count": unresolved_count,
+        "human_input_required": human_input_required,
+        "summary_text": (
+            f"latest compaction closeout is {closeout_status}; do not treat the handoff summary as completed work"
+        ),
+        "detail": " ".join(detail_parts),
+        "receiver_rule": (
+            "Read the closeout before the summary. A smooth compaction summary does not imply the previous session finished cleanly."
+        ),
+    }
+
+
 # ---------------------------------------------------------------------------
 # Stable bucket
 # ---------------------------------------------------------------------------
@@ -139,6 +178,32 @@ def _build_contested(
     """Items that are present but not yet settled or calibrated."""
     items: list[dict[str, str]] = []
 
+    compaction_surface = import_posture.get("compactions") or {}
+    hazards = list(compaction_surface.get("promotion_hazards") or [])
+    obligation = str(compaction_surface.get("receiver_obligation", "")).strip()
+    closeout_status = str(compaction_surface.get("closeout_status", "")).strip()
+    unresolved_count = int(compaction_surface.get("unresolved_count", 0) or 0)
+    stop_reason = str(compaction_surface.get("stop_reason", "")).strip()
+    if closeout_status in {"partial", "blocked", "underdetermined"}:
+        detail_parts = [f"status={closeout_status}", f"unresolved={unresolved_count}"]
+        if stop_reason:
+            detail_parts.append(f"stop_reason={stop_reason}")
+        items.append(
+            _item(
+                f"latest compaction closeout is '{closeout_status}'; do not read the handoff as completed work",
+                evidence_source="import_posture.compactions.closeout_status",
+                detail=" ".join(detail_parts),
+            )
+        )
+    if hazards or obligation == "must_not_promote":
+        items.append(
+            _item(
+                "latest compaction has carry_forward promotion hazard; must_not_promote",
+                evidence_source="import_posture.compactions.promotion_hazards",
+                detail=f"hazards={len(hazards)}",
+            )
+        )
+
     # Council calibration - always contested until proven
     council_surface = import_posture.get("council_dossier") or {}
     dossier = council_surface.get("dossier_interpretation") or {}
@@ -163,33 +228,6 @@ def _build_contested(
                 "council evolution suppression risk flagged; review minority signals before treating verdict as settled",
                 evidence_source="import_posture.council_dossier.dossier_interpretation",
                 detail="evolution_suppression_flag=True",
-            )
-        )
-
-    # Compaction promotion hazards
-    compaction_surface = import_posture.get("compactions") or {}
-    hazards = list(compaction_surface.get("promotion_hazards") or [])
-    obligation = str(compaction_surface.get("receiver_obligation", "")).strip()
-    closeout_status = str(compaction_surface.get("closeout_status", "")).strip()
-    unresolved_count = int(compaction_surface.get("unresolved_count", 0) or 0)
-    stop_reason = str(compaction_surface.get("stop_reason", "")).strip()
-    if hazards or obligation == "must_not_promote":
-        items.append(
-            _item(
-                "latest compaction has carry_forward promotion hazard; must_not_promote",
-                evidence_source="import_posture.compactions.promotion_hazards",
-                detail=f"hazards={len(hazards)}",
-            )
-        )
-    if closeout_status in {"partial", "blocked", "underdetermined"}:
-        detail_parts = [f"status={closeout_status}", f"unresolved={unresolved_count}"]
-        if stop_reason:
-            detail_parts.append(f"stop_reason={stop_reason}")
-        items.append(
-            _item(
-                f"latest compaction closeout is '{closeout_status}'; do not read the handoff as completed work",
-                evidence_source="import_posture.compactions.closeout_status",
-                detail=" ".join(detail_parts),
             )
         )
 
@@ -387,6 +425,8 @@ def build_low_drift_anchor(
         project_memory_summary=packet.get("project_memory_summary") or {},
         delta_feed=packet.get("delta_feed") or {},
     )
+    closeout_attention = _build_closeout_attention(import_posture=import_posture)
+    closeout_status = str(closeout_attention.get("status", "complete") or "complete")
 
     return {
         "generated_at": _iso_now(),
@@ -395,6 +435,7 @@ def build_low_drift_anchor(
         "hot_memory_ladder": hot_memory_ladder,
         "hot_memory_decay_map": hot_memory_decay_map,
         "repo_state_awareness": repo_state_awareness,
+        "closeout_attention": closeout_attention,
         "stable": stable,
         "contested": contested,
         "stale": stale,
@@ -407,7 +448,8 @@ def build_low_drift_anchor(
         "summary_text": (
             f"observer_window stable={stable_count} contested={contested_count} stale={stale_count} "
             f"delta_has_updates={delta_summary['has_updates']} "
-            f"repo_state={repo_state_awareness.get('classification', 'unknown')}"
+            f"repo_state={repo_state_awareness.get('classification', 'unknown')} "
+            f"closeout_attention={closeout_status}"
         ),
         "receiver_note": (
             "This observer window is advisory only. "

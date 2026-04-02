@@ -93,10 +93,10 @@
   - collaborator-beta preflight, entry-validation, and discoverable beta-facing status surfaces
   - low-drift anchor / observer-window baseline (Day 1 complete): `tonesoul/observer_window.py`, `scripts/run_observer_window.py`, `tests/test_observer_window.py`, `docs/status/observer_window_latest.{json,md}`
 - Current short board:
-  - Phase 757: make observer-window contested bucket surface non-complete compaction closeout more prominently so smooth summaries are not misread as completed work
+  - Phase 758: tighten task-board parking discipline so outside ideas keep landing in `docs/plans/` instead of trying to compete with the ratified short board
 - After that:
-  - Day 3: rotation checkpoint -- successor/hot-memory bucket should freeze once closeout surfacing and anchor-order readouts stop leaving obvious successor misreads
-  - only after the observer-window closeout surfacing gap closes should the bucket rotate
+  - successor/hot-memory bucket is now baseline-frozen unless a fresh real-world misread reopens it
+  - task-board governance should stay boring and explicit before any new theory bucket opens
   - only after broader beta use should public-launch maturity be reconsidered
   - only then further optimization
 
@@ -1692,8 +1692,14 @@
 - [x] keep the result outer-shell and collaborator-beta oriented; do not reopen transport/plugin architecture or public-launch overclaim language
 **Success Criteria**: A later agent can see one explicit publish/push posture before side-effectful release actions, with honest reasons when the action should pause for review or stop completely.
 
-## Phase 757: Observer-Window Closeout Surfacing (2026-04-02, planned)
-- [ ] surface non-complete compaction closeout more prominently in the observer-window contested bucket so smooth summary prose is not misread as completed work
-- [ ] keep the wave additive and successor-facing; do not reopen closeout grammar, packet schema, or hot-memory theory
-- [ ] verify the new readout stays aligned with import posture, repo-state awareness, and anti-fake-completion language
+## Phase 757: Observer-Window Closeout Surfacing (2026-04-02, completed)
+- [x] surface non-complete compaction closeout more prominently in the observer-window contested bucket so smooth summary prose is not misread as completed work
+- [x] keep the wave additive and successor-facing; do not reopen closeout grammar, packet schema, or hot-memory theory
+- [x] verify the new readout stays aligned with import posture, repo-state awareness, and anti-fake-completion language
 **Success Criteria**: A successor reading observer-window first can immediately tell when the latest compaction remains `partial`, `blocked`, or `underdetermined`, without having to inspect deeper import-posture details.
+
+## Phase 758: Task-Board Parking Discipline (2026-04-02, planned)
+- [ ] expose one bounded rule or helper that tells later agents when a new idea belongs in `task.md` versus `docs/plans/`
+- [ ] keep the lane focused on ratified short-board hygiene rather than reopening design-center or successor-memory theory
+- [ ] verify the resulting guidance stays aligned with the existing `task.md` scope guard and current collaborator-beta short-board rotation
+**Success Criteria**: Later agents stop trying to land outside ideas directly in `task.md`, and the ratified short board remains the only active execution lane unless a human or accepted program explicitly promotes a new bucket.

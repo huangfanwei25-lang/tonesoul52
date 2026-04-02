@@ -75,6 +75,7 @@ def _render_markdown(anchor: dict[str, Any]) -> str:
     hot_memory_ladder = anchor.get("hot_memory_ladder") or {}
     hot_memory_decay_map = anchor.get("hot_memory_decay_map") or {}
     repo_state_awareness = anchor.get("repo_state_awareness") or {}
+    closeout_attention = anchor.get("closeout_attention") or {}
     subsystem_parity = anchor.get("subsystem_parity") or {}
 
     lines.extend(["## Canonical Center", ""])
@@ -141,6 +142,15 @@ def _render_markdown(anchor: dict[str, Any]) -> str:
     lines.append(f"- Receiver note: `{repo_state_awareness.get('receiver_note', '')}`")
     lines.append(f"- Action hint: `{repo_state_awareness.get('action_hint', '')}`")
     lines.append(f"- Non-authority rule: `{repo_state_awareness.get('non_authority_rule', '')}`")
+    lines.append("")
+
+    lines.extend(["## Compaction Closeout Attention", ""])
+    lines.append(f"- Present: `{closeout_attention.get('present', False)}`")
+    lines.append(f"- Summary: `{closeout_attention.get('summary_text', '')}`")
+    if closeout_attention.get("present"):
+        lines.append(f"- Status: `{closeout_attention.get('status', '')}`")
+        lines.append(f"- Detail: `{closeout_attention.get('detail', '')}`")
+        lines.append(f"- Receiver rule: `{closeout_attention.get('receiver_rule', '')}`")
     lines.append("")
 
     lines.extend(["## Subsystem Parity", ""])

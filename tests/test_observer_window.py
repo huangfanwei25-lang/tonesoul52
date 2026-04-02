@@ -222,6 +222,7 @@ class TestCleanStableCase:
         assert "contested" in self.anchor
         assert "stale" in self.anchor
         assert "delta_summary" in self.anchor
+        assert "closeout_attention" in self.anchor
         assert "generated_at" in self.anchor
         assert "receiver_note" in self.anchor
         assert "summary_text" in self.anchor
@@ -259,6 +260,11 @@ class TestCleanStableCase:
         delta = self.anchor["delta_summary"]
         assert delta["first_observation"] is True
 
+    def test_closeout_attention_not_lifted_when_complete(self):
+        attention = self.anchor["closeout_attention"]
+        assert attention["present"] is False
+        assert attention["status"] == "complete"
+
     def test_counts_match_lists(self):
         counts = self.anchor["counts"]
         assert counts["stable"] == len(self.anchor["stable"])
@@ -274,6 +280,7 @@ class TestCleanStableCase:
         assert "contested=" in text
         assert "stale=" in text
         assert "repo_state=baseline_unset" in text
+        assert "closeout_attention=complete" in text
 
     def test_repo_state_awareness_is_visible(self):
         repo_state = self.anchor["repo_state_awareness"]
@@ -362,6 +369,16 @@ class TestBlockedCloseoutCase:
         ]
         assert items
         assert "stop_reason=external_blocked" in items[0].get("detail", "")
+
+    def test_closeout_attention_is_lifted_to_top_level(self):
+        attention = self.anchor["closeout_attention"]
+        assert attention["present"] is True
+        assert attention["status"] == "blocked"
+        assert "do not treat the handoff summary as completed work" in attention["summary_text"]
+        assert "stop_reason=external_blocked" in attention["detail"]
+
+    def test_summary_text_includes_closeout_attention_status(self):
+        assert "closeout_attention=blocked" in self.anchor["summary_text"]
 
 
 class TestRepoChangedWithoutCoordinationCase:
