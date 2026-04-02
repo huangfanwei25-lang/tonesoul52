@@ -171,10 +171,10 @@ def build_subsystem_parity_readout(
             status="beta_usable",
             current_signal=str(mutation_preflight.get("summary_text", "") or "preflight_present"),
             strongest_truth="Successor-facing mutation preflight now maps current write/mutate/publish decision points.",
-            main_gap="Shared-edit overlap is now real, but the outer shell still needs bounded publish/push posture before outward-facing side effects.",
+            main_gap="Shared-edit overlap and publish/push posture are real, but task-board parking still depends too much on later agents remembering the scope guard from prose.",
             next_bounded_move=str(
                 ((mutation_preflight.get("next_followup") or {}).get("target"))
-                or "publish_push.posture_preflight"
+                or "task_board.parking_preflight"
             ),
             overclaim_to_avoid="shared-edit mutation is now a full permission system",
         ),
@@ -198,9 +198,9 @@ def build_subsystem_parity_readout(
             "Use baseline lanes for normal continuation, beta_usable lanes for guided collaborator-beta work, partial lanes with explicit gap awareness, and deferred lanes as out of current scope."
         ),
         "next_focus": {
-            "target": "publish_push.posture_preflight",
-            "resolved_to": "tool_permission.publish_push_preflight",
-            "reason": "Shared-edit overlap is already a real hook; the next bounded outer-shell gain is publish/push posture before outward-facing side effects.",
+            "target": "task_board.parking_preflight",
+            "resolved_to": "task_board_governance.parking_preflight",
+            "reason": "Publish/push posture is now real; the next bounded governance gain is keeping outside ideas in docs/plans until the short board explicitly ratifies them.",
         },
         "summary_text": (
             f"subsystem_parity baseline={counts['baseline']} beta_usable={counts['beta_usable']} "

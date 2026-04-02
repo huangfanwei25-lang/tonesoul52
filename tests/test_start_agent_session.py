@@ -199,9 +199,9 @@ def test_start_agent_session_emits_machine_readable_bundle(
     assert mutation_preflight["present"] is True
     assert mutation_preflight["current_context"]["task_track"] == "feature_track"
     assert mutation_preflight["current_context"]["claim_conflict_count"] == 1
-    assert mutation_preflight["next_followup"]["target"] == "publish_push.posture_preflight"
+    assert mutation_preflight["next_followup"]["target"] == "task_board.parking_preflight"
     assert mutation_preflight["next_followup"]["classification"] == "existing_runtime_hook"
-    assert "run_publish_push_preflight.py" in mutation_preflight["next_followup"]["command"]
+    assert "run_task_board_preflight.py" in mutation_preflight["next_followup"]["command"]
     by_name = {item["name"]: item for item in mutation_preflight["decision_points"]}
     assert by_name["shared_code_edit"]["posture"] == "coordinate_before_shared_edits"
     assert by_name["shared_code_edit"]["control_type"] == "existing_runtime_hook"
@@ -214,13 +214,17 @@ def test_start_agent_session_emits_machine_readable_bundle(
     assert publish_push_preflight["present"] is True
     assert publish_push_preflight["classification"] == "review_before_push"
     assert publish_push_preflight["repo_state_classification"] == "baseline_unset"
+    task_board_preflight = output["task_board_preflight"]
+    assert task_board_preflight["present"] is True
+    assert task_board_preflight["classification"] == "docs_plans_first"
+    assert task_board_preflight["suggested_destination"] == "docs/plans/"
     subsystem_parity = output["subsystem_parity"]
     assert subsystem_parity["present"] is True
     assert subsystem_parity["counts"]["baseline"] == 3
     assert subsystem_parity["counts"]["beta_usable"] == 5
     assert subsystem_parity["counts"]["partial"] == 2
     assert subsystem_parity["counts"]["deferred"] == 1
-    assert subsystem_parity["next_focus"]["resolved_to"] == "tool_permission.publish_push_preflight"
+    assert subsystem_parity["next_focus"]["resolved_to"] == "task_board_governance.parking_preflight"
     parity_by_name = {item["name"]: item for item in subsystem_parity["families"]}
     assert parity_by_name["session_start_bundle"]["status"] == "baseline"
     assert parity_by_name["packet_hot_state"]["status"] == "beta_usable"
@@ -246,6 +250,9 @@ def test_start_agent_session_emits_machine_readable_bundle(
     )
     assert output["underlying_commands"][4] == (
         "python scripts/run_publish_push_preflight.py --agent observer-start"
+    )
+    assert output["underlying_commands"][5] == (
+        "python scripts/run_task_board_preflight.py --agent observer-start --proposal-kind external_idea --target-path task.md"
     )
     assert output["packet"]["delta_feed"]["observer_id"] == "observer-start"
     assert output["packet"]["delta_feed"]["first_observation"] is True
@@ -1122,17 +1129,18 @@ def test_start_agent_session_cli_executes_directly(tmp_path: Path) -> None:
     assert "mutation_preflight" in payload
     assert (
         payload["mutation_preflight"]["next_followup"]["target"]
-        == "publish_push.posture_preflight"
+        == "task_board.parking_preflight"
     )
     assert (
         payload["mutation_preflight"]["next_followup"]["classification"]
         == "existing_runtime_hook"
     )
     assert payload["publish_push_preflight"]["present"] is True
+    assert payload["task_board_preflight"]["present"] is True
     assert "subsystem_parity" in payload
     assert (
         payload["subsystem_parity"]["next_focus"]["resolved_to"]
-        == "tool_permission.publish_push_preflight"
+        == "task_board_governance.parking_preflight"
     )
     assert "working_style_playbook" in payload
     assert "working_style_validation" in payload

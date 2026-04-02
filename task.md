@@ -92,11 +92,13 @@
   - unified runtime context prompt framing
   - collaborator-beta preflight, entry-validation, and discoverable beta-facing status surfaces
   - low-drift anchor / observer-window baseline (Day 1 complete): `tonesoul/observer_window.py`, `scripts/run_observer_window.py`, `tests/test_observer_window.py`, `docs/status/observer_window_latest.{json,md}`
+  - bounded outer-shell preflight chain for shared edits, publish/push posture, and task-board parking discipline
 - Current short board:
-  - Phase 758: tighten task-board parking discipline so outside ideas keep landing in `docs/plans/` instead of trying to compete with the ratified short board
+  - Phase 759: make the bounded hook chain more operator-discoverable so fresh agents can find shared-edit, publish/push, and task-board preflights without re-reading multiple surfaces
 - After that:
   - successor/hot-memory bucket is now baseline-frozen unless a fresh real-world misread reopens it
   - task-board governance should stay boring and explicit before any new theory bucket opens
+  - hook-chain discoverability should stay packaging-oriented, not a new permission universe
   - only after broader beta use should public-launch maturity be reconsidered
   - only then further optimization
 
@@ -1698,8 +1700,14 @@
 - [x] verify the new readout stays aligned with import posture, repo-state awareness, and anti-fake-completion language
 **Success Criteria**: A successor reading observer-window first can immediately tell when the latest compaction remains `partial`, `blocked`, or `underdetermined`, without having to inspect deeper import-posture details.
 
-## Phase 758: Task-Board Parking Discipline (2026-04-02, planned)
-- [ ] expose one bounded rule or helper that tells later agents when a new idea belongs in `task.md` versus `docs/plans/`
-- [ ] keep the lane focused on ratified short-board hygiene rather than reopening design-center or successor-memory theory
-- [ ] verify the resulting guidance stays aligned with the existing `task.md` scope guard and current collaborator-beta short-board rotation
+## Phase 758: Task-Board Parking Discipline (2026-04-02, completed)
+- [x] expose one bounded rule or helper that tells later agents when a new idea belongs in `task.md` versus `docs/plans/`
+- [x] keep the lane focused on ratified short-board hygiene rather than reopening design-center or successor-memory theory
+- [x] verify the resulting guidance stays aligned with the existing `task.md` scope guard and current collaborator-beta short-board rotation
 **Success Criteria**: Later agents stop trying to land outside ideas directly in `task.md`, and the ratified short board remains the only active execution lane unless a human or accepted program explicitly promotes a new bucket.
+
+## Phase 759: Hook-Chain Operator Discoverability (2026-04-02, planned)
+- [ ] expose one bounded operator-facing surface that lists the current preflight chain for shared edits, publish/push, and task-board parking
+- [ ] keep the lane focused on discoverability and first-hop usability, not a new permission or transport architecture
+- [ ] verify the result stays aligned with session-start, AI quickstart, and collaborator-beta wording
+**Success Criteria**: A fresh agent can see the current bounded hook chain quickly, without re-reading multiple successor surfaces or treating preflight helpers as a sovereign permission system.

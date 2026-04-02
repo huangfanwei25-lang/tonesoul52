@@ -32,6 +32,7 @@ def build_mutation_preflight(
     import_posture: dict[str, Any],
     canonical_center: dict[str, Any],
     publish_push_preflight: dict[str, Any] | None = None,
+    task_board_preflight: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Build a bounded mutation/write/publish guard map for successors."""
     surfaces = import_posture.get("surfaces") or {}
@@ -42,6 +43,7 @@ def build_mutation_preflight(
     launch_claims_surface = surfaces.get("launch_claims") or {}
     launch_claim_posture = launch_claims_surface.get("launch_claim_posture") or {}
     publish_push_preflight = dict(publish_push_preflight or {})
+    task_board_preflight = dict(task_board_preflight or {})
 
     readiness_status = str(readiness.get("status", "unknown") or "unknown")
     claim_conflict_count = int(readiness.get("claim_conflict_count", 0) or 0)
@@ -172,12 +174,15 @@ def build_mutation_preflight(
             posture="ratified_short_board_only",
             source_of_truth=["task.md", "canonical_center.current_short_board"],
             current_guard=(
-                "task.md tracks only accepted programs and ratified short boards; external theory and side-roadmaps stay in docs/plans until explicitly pulled in."
+                "task.md tracks only accepted programs and ratified short boards; run run_task_board_preflight.py before changing task.md and keep outside ideas in docs/plans until explicitly ratified."
             ),
-            receiver_note=(
-                "The short board is visible and human-managed."
-                if short_board_present
-                else "Do not mutate task.md blindly while the current short board is not visible."
+            receiver_note=str(
+                task_board_preflight.get("receiver_note", "")
+                or (
+                    "The short board is visible and human-managed."
+                    if short_board_present
+                    else "Do not mutate task.md blindly while the current short board is not visible."
+                )
             ),
         ),
         _point(
@@ -221,13 +226,18 @@ def build_mutation_preflight(
     ]
 
     next_followup = {
-        "target": "publish_push.posture_preflight",
+        "target": "task_board.parking_preflight",
         "classification": "existing_runtime_hook",
-        "command": "python scripts/run_publish_push_preflight.py --agent <your-id>",
-        "reason": (
-            "Use the bounded publish/push preflight before outward-facing side effects; it keeps repo-state, closeout, and launch honesty visible without inventing a sovereign permission system."
+        "command": (
+            "python scripts/run_task_board_preflight.py --agent <your-id> "
+            "--proposal-kind external_idea --target-path task.md"
         ),
-        "why_here": "This is the next outer-shell guard after shared-edit overlap became a real runtime hook.",
+        "reason": (
+            "Use the bounded task-board preflight before changing task.md; it keeps outside ideas parked in docs/plans until a human or accepted program explicitly ratifies them."
+        ),
+        "why_here": (
+            "Publish/push posture is now a real hook. The next bounded governance friction is preventing outside ideas from competing with the ratified short board."
+        ),
     }
 
     return {

@@ -90,6 +90,23 @@ def _build_publish_push_preflight(
     )
 
 
+def _build_task_board_preflight(
+    *,
+    readiness: dict,
+    canonical_center: dict,
+    task_track_hint: dict,
+) -> dict:
+    from tonesoul.task_board_preflight import build_task_board_preflight
+
+    return build_task_board_preflight(
+        readiness=readiness,
+        canonical_center=canonical_center,
+        task_track_hint=task_track_hint,
+        proposal_kind="external_idea",
+        target_path="task.md",
+    )
+
+
 def _build_mutation_preflight(
     *,
     readiness: dict,
@@ -98,6 +115,7 @@ def _build_mutation_preflight(
     import_posture: dict,
     canonical_center: dict,
     publish_push_preflight: dict,
+    task_board_preflight: dict,
 ) -> dict:
     from tonesoul.mutation_preflight import build_mutation_preflight
 
@@ -108,6 +126,7 @@ def _build_mutation_preflight(
         import_posture=import_posture,
         canonical_center=canonical_center,
         publish_push_preflight=publish_push_preflight,
+        task_board_preflight=task_board_preflight,
     )
 
 
@@ -1104,6 +1123,11 @@ def run_session_start_bundle(
         import_posture=import_posture,
         repo_state_awareness=repo_state_awareness,
     )
+    task_board_preflight = _build_task_board_preflight(
+        readiness=readiness,
+        canonical_center=canonical_center,
+        task_track_hint=task_track_hint,
+    )
     mutation_preflight = _build_mutation_preflight(
         readiness=readiness,
         task_track_hint=task_track_hint,
@@ -1111,6 +1135,7 @@ def run_session_start_bundle(
         import_posture=import_posture,
         canonical_center=canonical_center,
         publish_push_preflight=publish_push_preflight,
+        task_board_preflight=task_board_preflight,
     )
     subsystem_parity = _build_subsystem_parity(
         packet=packet,
@@ -1142,6 +1167,7 @@ def run_session_start_bundle(
         "canonical_center": canonical_center,
         "repo_state_awareness": repo_state_awareness,
         "publish_push_preflight": publish_push_preflight,
+        "task_board_preflight": task_board_preflight,
         "mutation_preflight": mutation_preflight,
         "subsystem_parity": subsystem_parity,
         "working_style_playbook": working_style_playbook,
@@ -1156,6 +1182,10 @@ def run_session_start_bundle(
             "python scripts/run_task_claim.py list",
             f"python scripts/run_shared_edit_preflight.py --agent {agent_id} --path <repo-path>",
             f"python scripts/run_publish_push_preflight.py --agent {agent_id}",
+            (
+                f"python scripts/run_task_board_preflight.py --agent {agent_id} "
+                "--proposal-kind external_idea --target-path task.md"
+            ),
         ],
         "packet": packet,
     }
