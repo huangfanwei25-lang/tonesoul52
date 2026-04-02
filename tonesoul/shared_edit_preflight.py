@@ -90,6 +90,48 @@ def _claim_command(agent_id: str, candidate_paths: list[str]) -> str:
     ).strip()
 
 
+def _build_working_style_consumer(playbook: dict[str, Any] | None) -> dict[str, Any]:
+    playbook = dict(playbook or {})
+    if not playbook.get("present"):
+        return {
+            "present": False,
+            "summary_text": "",
+            "selected_habits": [],
+            "application_rule": "",
+            "non_promotion_rule": "",
+        }
+
+    selected_habits: list[str] = []
+    for item in list(playbook.get("checklist") or [])[:2]:
+        text = str(item or "").strip()
+        if text:
+            selected_habits.append(text)
+
+    summary_text = str(playbook.get("summary_text", "")).strip()
+    if not summary_text and selected_habits:
+        summary_text = " | ".join(selected_habits)
+
+    application_rule = str(playbook.get("application_rule", "")).strip()
+    if not application_rule:
+        application_rule = (
+            "Apply the visible working-style playbook only as bounded workflow guidance."
+        )
+
+    non_promotion_rule = str(playbook.get("non_promotion_rule", "")).strip()
+    if not non_promotion_rule:
+        non_promotion_rule = (
+            "Do not promote the visible working-style playbook into vows, canonical rules, or durable identity."
+        )
+
+    return {
+        "present": True,
+        "summary_text": summary_text,
+        "selected_habits": selected_habits,
+        "application_rule": application_rule,
+        "non_promotion_rule": non_promotion_rule,
+    }
+
+
 def build_shared_edit_preflight(
     *,
     agent_id: str,
@@ -98,6 +140,7 @@ def build_shared_edit_preflight(
     claims: list[dict[str, Any]],
     task_track_hint: dict[str, Any],
     mutation_preflight: dict[str, Any],
+    working_style_playbook: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Build a bounded shared-edit preflight answer from visible claims and paths."""
     normalized_candidate_paths = _clean_paths(list(candidate_paths or []))
@@ -107,6 +150,7 @@ def build_shared_edit_preflight(
     )
     task_track = str(task_track_hint.get("suggested_track", "unclassified") or "unclassified")
     mutation_summary = str(mutation_preflight.get("summary_text", "") or "").strip()
+    working_style_consumer = _build_working_style_consumer(working_style_playbook)
 
     self_records, other_records = _claim_overlap_records(
         agent_id=agent_id,
@@ -164,11 +208,13 @@ def build_shared_edit_preflight(
         "overlaps": overlap_records,
         "receiver_rule": receiver_rule,
         "recommended_command": recommended_command,
+        "working_style_consumer": working_style_consumer,
         "summary_text": (
             f"shared_edit_preflight={decision} "
             f"candidates={len(normalized_candidate_paths)} "
             f"overlaps={len(overlap_records)} "
-            f"self_cover={'yes' if self_claim_covers_all else 'no'}"
+            f"self_cover={'yes' if self_claim_covers_all else 'no'} "
+            f"style={'yes' if working_style_consumer.get('present') else 'no'}"
         ),
         "context": {
             "mutation_summary": mutation_summary,

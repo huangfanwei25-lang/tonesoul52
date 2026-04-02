@@ -55,6 +55,7 @@ def main() -> None:
         claims=list((session_start.get("claim_view") or {}).get("claims") or []),
         task_track_hint=session_start.get("task_track_hint") or {},
         mutation_preflight=session_start.get("mutation_preflight") or {},
+        working_style_playbook=session_start.get("working_style_playbook") or {},
     )
     payload = {
         "contract_version": "v1",

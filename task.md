@@ -93,7 +93,7 @@
   - collaborator-beta preflight, entry-validation, and discoverable beta-facing status surfaces
   - low-drift anchor / observer-window baseline (Day 1 complete): `tonesoul/observer_window.py`, `scripts/run_observer_window.py`, `tests/test_observer_window.py`, `docs/status/observer_window_latest.{json,md}`
 - Current short board:
-  - Phase 750: adopt working-style playbook guidance in shared_edit_preflight so the next post-successor bucket is coordination-facing instead of hot-memory-theoretical
+  - Phase 751: reality-check the low-drift anchor source-precedence sidecar docs before any of them are allowed to shape live observer/runtime readouts
 - After that:
   - Day 3: rotation checkpoint -- successor/hot-memory bucket is frozen once Phase 748 closes without reopening launch wording
   - only after Phase 748 closes should the bucket rotate
@@ -1650,8 +1650,14 @@
 - [x] name one implementation wave and one deferred wave so bucket rotation is explicit before more adoption work starts
 **Success Criteria**: ToneSoul has one explicit post-successor bucket to continue with, so later agents rotate cleanly instead of drifting back into hot-memory theory.
 
-## Phase 750: Working-Style Wave-2 Shared-Edit Consumer (2026-04-02, planned)
-- [ ] let `shared_edit_preflight` reuse the visible working-style playbook as bounded workflow guidance
-- [ ] expose only the first one or two actionable habits plus the non-promotion rule
-- [ ] keep the wave coordination-facing and avoid reopening persona/navigation families
+## Phase 750: Working-Style Wave-2 Shared-Edit Consumer (2026-04-02, completed)
+- [x] let `shared_edit_preflight` reuse the visible working-style playbook as bounded workflow guidance
+- [x] expose only the first one or two actionable habits plus the non-promotion rule
+- [x] keep the wave coordination-facing and avoid reopening persona/navigation families
 **Success Criteria**: A collaborator about to edit shared paths can see not only overlap status, but also one bounded slice of the shared working-style playbook without mistaking it for policy or identity.
+
+## Phase 751: Low-Drift Anchor Source Precedence Reality-Check (2026-04-02, planned)
+- [ ] compare the Claude sidecar low-drift anchor source-precedence doc against current runtime truth, `observer_window`, and `hot_memory` surfaces
+- [ ] decide what can be integrated, what stays sidecar, and what should be discarded instead of letting multiple precedence stories coexist
+- [ ] keep any follow-up bounded to one source-order clarification or one runtime readout fix, not a new hot-memory theory expansion
+**Success Criteria**: ToneSoul has one vetted story about low-drift anchor source precedence, so later agents do not read two competing source-order rules across sidecar docs and live runtime surfaces.

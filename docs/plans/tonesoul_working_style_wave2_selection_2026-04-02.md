@@ -148,7 +148,7 @@ Why deferred:
 
 ## Operational Line
 
-The next bounded move after this selection is:
+The selected implementation wave is:
 
 `Phase 750: Working-Style Wave-2 Shared-Edit Consumer`
 

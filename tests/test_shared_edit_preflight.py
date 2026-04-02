@@ -97,3 +97,34 @@ def test_shared_edit_preflight_treats_parent_child_paths_as_overlap() -> None:
     assert payload["decision"] == "coordinate"
     assert payload["normalized_candidate_paths"] == ["tonesoul/council"]
     assert payload["overlaps"][0]["overlap_paths"] == ["tonesoul/council"]
+
+
+def test_shared_edit_preflight_carries_bounded_working_style_consumer() -> None:
+    payload = build_shared_edit_preflight(
+        agent_id="codex",
+        candidate_paths=["task.md"],
+        readiness={"status": "pass"},
+        claims=[],
+        task_track_hint={"claim_recommendation": "optional", "suggested_track": "quick_change"},
+        mutation_preflight={"summary_text": "shared_code=clear"},
+        working_style_playbook={
+            "present": True,
+            "summary_text": "Preference: scan canonical first",
+            "checklist": [
+                "Preference: scan canonical first",
+                "Routine: verify before overclaiming",
+                "Prompt default: keep P0/P1/P2 explicit",
+            ],
+            "application_rule": "Apply these items as bounded operating habits for scan order, evidence handling, and prompt shape.",
+            "non_promotion_rule": "Do not promote this playbook into vows, canonical rules, or durable identity without fresh evidence and explicit review.",
+        },
+    )
+
+    consumer = payload["working_style_consumer"]
+    assert consumer["present"] is True
+    assert consumer["selected_habits"] == [
+        "Preference: scan canonical first",
+        "Routine: verify before overclaiming",
+    ]
+    assert consumer["application_rule"].startswith("Apply these items as bounded operating habits")
+    assert "style=yes" in payload["summary_text"]
