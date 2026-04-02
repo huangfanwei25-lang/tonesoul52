@@ -4,6 +4,41 @@
 > Last Updated: 2026-03-28
 > Status: operational quickstart; subordinate to `AXIOMS.json`, executable code, tests, and canonical architecture contracts.
 > Use When: first minute of a session, before touching code or making architecture claims.
+
+## Clean First 60 Seconds
+
+Run these in order:
+
+```bash
+python scripts/start_agent_session.py --agent <your-id>
+python -m tonesoul.diagnose --agent <your-id>
+python scripts/run_r_memory_packet.py --agent <your-id> --ack
+python scripts/run_task_claim.py list
+```
+
+Then read these first:
+
+- `readiness`
+- `canonical_center`
+- `hook_chain`
+- `mutation_preflight`
+- `subsystem_parity`
+
+Current bounded preflight chain:
+
+```bash
+python scripts/run_shared_edit_preflight.py --agent <your-id> --path <repo-path>
+python scripts/run_publish_push_preflight.py --agent <your-id>
+python scripts/run_task_board_preflight.py --agent <your-id> --proposal-kind external_idea --target-path task.md
+```
+
+Use them narrowly:
+
+- shared-edit preflight: before touching shared paths
+- publish/push preflight: before outward actions
+- task-board preflight: before promoting new ideas into `task.md`
+
+The older sections below remain useful as deeper reference, but this clean block is the current first-hop path.
 > 如果這份文件和程式碼、測試、契約衝突：以 `AXIOMS.json`、`tonesoul/`、`tests/`、`docs/architecture/` 為準。
 
 ## 你在哪裡

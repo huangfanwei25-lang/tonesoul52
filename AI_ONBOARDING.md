@@ -5,6 +5,32 @@
 > **Last Updated**: 2026-03-29
 > **Status**: active AI entrypoint that routes later agents into operational, canonical, deep-map, and interpretive lanes without collapsing them together.
 
+## Clean First-Hop Route
+
+Use this route before reading the repo in bulk:
+
+1. Open `docs/AI_QUICKSTART.md`
+2. Run `python scripts/start_agent_session.py --agent <your-id>`
+3. Read `readiness`, `canonical_center`, and `hook_chain`
+4. If needed, run:
+   - `python -m tonesoul.diagnose --agent <your-id>`
+   - `python scripts/run_r_memory_packet.py --agent <your-id> --ack`
+   - `python scripts/run_observer_window.py --agent <your-id>`
+5. Only then widen into `DESIGN.md`, `docs/architecture/`, or code
+
+Current first-hop rule:
+
+- `docs/AI_QUICKSTART.md` = operational entry
+- `AI_ONBOARDING.md` = routing map
+- `DESIGN.md` = system center
+- `task.md` = ratified short board only
+
+Do not:
+
+- treat observer prose as execution permission
+- treat compaction summary as completed work
+- write outside ideas into `task.md` before running task-board parking preflight
+
 ---
 
 ## AI Reading Stack（從這裡開始）

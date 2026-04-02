@@ -1718,8 +1718,14 @@
 - [x] keep the lane bounded to residue admission/retirement instead of reopening new successor-memory theory
 **Success Criteria**: The remaining successor sidecar files no longer compete with the live runtime/readout story, and later agents can tell what is integrated versus still parked residue.
 
-## Phase 761: AI Entry Encoding And Render Cleanup (2026-04-02, planned)
-- [ ] reality-check `AI_ONBOARDING.md` and `docs/AI_QUICKSTART.md` for true file-level mojibake versus terminal render noise
-- [ ] repair only the genuinely corrupted lines that block first-hop AI/operator readability
-- [ ] keep the lane bounded to entry-surface readability, not a full documentation rewrite
+## Phase 761: AI Entry Encoding And Render Cleanup (2026-04-02, completed)
+- [x] reality-check `AI_ONBOARDING.md` and `docs/AI_QUICKSTART.md` for true file-level mojibake versus terminal render noise
+- [x] repair only the genuinely corrupted lines that block first-hop AI/operator readability
+- [x] keep the lane bounded to entry-surface readability, not a full documentation rewrite
 **Success Criteria**: The AI entry stack stays first-hop readable without creating a second cleanup megaproject or flattening the authority model.
+
+## Phase 762: External Draft Parking And Distillation Triage (2026-04-02, planned)
+- [ ] inspect the currently parked external draft notes and local reference repo residue (`claw-code-main/`, untracked design notes) without letting them compete with the ratified short board
+- [ ] extract only the bounded patterns that improve ToneSoul's active lanes; move or retire the rest into explicit parking
+- [ ] keep the lane about parking and distillation discipline, not a new external-framework roadmap
+**Success Criteria**: Parked external drafts stop being ambiguous residue, and any useful borrowing is distilled into ToneSoul-native notes without reopening task-board confusion.
