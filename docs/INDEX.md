@@ -216,8 +216,10 @@ Use this when the question is not only what should be transferred, but how the e
 
 - [architecture/TONESOUL_SUCCESSOR_COLLABORATION_AND_HOT_MEMORY_CONTRACT.md](architecture/TONESOUL_SUCCESSOR_COLLABORATION_AND_HOT_MEMORY_CONTRACT.md)
 - [architecture/TONESOUL_LOW_DRIFT_ANCHOR_SOURCE_PRECEDENCE_CONTRACT.md](architecture/TONESOUL_LOW_DRIFT_ANCHOR_SOURCE_PRECEDENCE_CONTRACT.md)
+- [architecture/TONESOUL_HOT_MEMORY_DECAY_AND_COMPRESSION_MAP.md](architecture/TONESOUL_HOT_MEMORY_DECAY_AND_COMPRESSION_MAP.md)
 - [plans/tonesoul_successor_collaboration_and_hot_memory_program_2026-04-02.md](plans/tonesoul_successor_collaboration_and_hot_memory_program_2026-04-02.md)
 - [plans/tonesoul_subsystem_parity_and_gap_map_2026-04-02.md](plans/tonesoul_subsystem_parity_and_gap_map_2026-04-02.md)
+- [plans/tonesoul_successor_sidecar_residue_triage_2026-04-02.md](plans/tonesoul_successor_sidecar_residue_triage_2026-04-02.md)
 
 ## Documentation Convergence
 

@@ -255,10 +255,14 @@ Treat this as a prompt-design companion. It helps later agents build better extr
   - architecture contract for bounded successor entry, hot-memory laddering, summary-parent hierarchy, and external pattern distillation without foreign naming import
 - `architecture/TONESOUL_LOW_DRIFT_ANCHOR_SOURCE_PRECEDENCE_CONTRACT.md`
   - single vetted source-order story for canonical anchors, live coordination truth, advisory observer shells, and lower-authority handoff/identity surfaces
+- `architecture/TONESOUL_HOT_MEMORY_DECAY_AND_COMPRESSION_MAP.md`
+  - runtime-aligned explanation of which hot-memory layers are operational, review-only, quarantined, recomputed, or never compressed
 - `plans/tonesoul_successor_collaboration_and_hot_memory_program_2026-04-02.md`
   - actionable program for turning current continuity surfaces into a safer successor collaboration stack
 - `plans/tonesoul_subsystem_parity_and_gap_map_2026-04-02.md`
   - one current map of what is already usable, what is still partial, and which next bounded moves matter most
+- `plans/tonesoul_successor_sidecar_residue_triage_2026-04-02.md`
+  - residue decision note recording which sidecar files were integrated, retired, or kept out of the active authority lane
  
 ## Documentation Convergence
  

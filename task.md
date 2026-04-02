@@ -93,7 +93,7 @@
   - collaborator-beta preflight, entry-validation, and discoverable beta-facing status surfaces
   - low-drift anchor / observer-window baseline (Day 1 complete): `tonesoul/observer_window.py`, `scripts/run_observer_window.py`, `tests/test_observer_window.py`, `docs/status/observer_window_latest.{json,md}`
 - Current short board:
-  - Phase 752: triage the remaining successor/hot-memory sidecar residue so only one active runtime-aligned story remains
+  - Phase 753: add bounded repo-state awareness to successor entry so `no delta` is not misread as `no change`
 - After that:
   - Day 3: rotation checkpoint -- successor/hot-memory bucket is frozen once Phase 748 closes without reopening launch wording
   - only after Phase 748 closes should the bucket rotate
@@ -1662,8 +1662,14 @@
 - [x] keep any follow-up bounded to one source-order clarification or one runtime readout fix, not a new hot-memory theory expansion
 **Success Criteria**: ToneSoul has one vetted story about low-drift anchor source precedence, so later agents do not read two competing source-order rules across sidecar docs and live runtime surfaces.
 
-## Phase 752: Successor Sidecar Residue Triage (2026-04-02, planned)
-- [ ] reality-check the remaining successor/hot-memory sidecar docs against current runtime and integrated contracts
-- [ ] integrate at most one more residue file if it matches live behavior; otherwise leave it parked or retire it
-- [ ] avoid reopening hot-memory theory expansion while cleaning the residue set
+## Phase 752: Successor Sidecar Residue Triage (2026-04-02, completed)
+- [x] reality-check the remaining successor/hot-memory sidecar docs against current runtime and integrated contracts
+- [x] integrate at most one more residue file if it matches live behavior; otherwise leave it parked or retire it
+- [x] avoid reopening hot-memory theory expansion while cleaning the residue set
 **Success Criteria**: The remaining successor/hot-memory sidecar files no longer compete with the active runtime-aligned story, and later agents can tell which residue is still sidecar-only.
+
+## Phase 753: Successor Repo-State Awareness (2026-04-02, planned)
+- [ ] expose one bounded repo-state signal near delta/session-start so successors do not equate `no coordination updates` with `no repo changes`
+- [ ] keep the wave additive and descriptive, not a new coordination authority surface
+- [ ] verify the wording stays aligned with launch honesty and successor-shell discipline
+**Success Criteria**: A later agent can tell when git/repo state changed even if no new compaction/checkpoint appeared, without mistaking that signal for canonical task authority.
