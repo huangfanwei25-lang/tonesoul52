@@ -69,7 +69,7 @@ Match deliberation depth to task stakes. A typo fix needs a gate check, not a sy
 **Runtime equivalent**: the current default council path in `unified_pipeline.py` (lines ~2727-2771) when `_resolve_council_decision()` returns true.
 
 **Appropriate for**:
-- Feature implementation with bounded scope
+- Feature implementation when clarification pressure, claim collision, or elevated risk makes multi-perspective review worth the cost
 - Schema additions with identified consumers
 - Contract observer or gate wiring
 - Any task where perspectives are valuable but adversarial multi-round debate is not needed
@@ -99,7 +99,7 @@ Match deliberation depth to task stakes. A typo fix needs a gate check, not a sy
 | quick_change | normal | none | needs_clarification | lightweight_review | Clarification needed but deliberation depth is not the issue |
 | quick_change | elevated | none | pass | standard_council | Elevated risk on a quick change is unusual — council should verify |
 | quick_change | any | active collision | any | standard_council | Claim collision means coordination complexity; council should arbitrate |
-| feature_track | normal | none | pass | standard_council | Bounded feature work benefits from multi-perspective review |
+| feature_track | normal | none | pass | lightweight_review | Bounded feature work should stay on the fast path unless ambiguity, collision, or elevated risk earns deeper review |
 | feature_track | normal | active collision | pass | standard_council | Collision adds coordination complexity |
 | feature_track | elevated | any | pass | elevated_council | Elevated risk on feature work warrants adversarial scrutiny |
 | feature_track | any | any | needs_clarification | standard_council | Clarification needed; council can help identify what is unclear |
@@ -214,7 +214,7 @@ The contract proposes three mode names. These may be renamed if better ToneSoul-
 
 ## Relationship To Other Documents
 
-Implementation note (2026-03-29): `scripts/start_agent_session.py` now surfaces a bounded machine-readable `deliberation_mode_hint` derived from `task_track_hint`, readiness, risk, and claim collision. This readout is advisory only; it does not yet select runtime council depth automatically.
+Implementation note (2026-04-02): `scripts/start_agent_session.py` now surfaces a bounded machine-readable `deliberation_mode_hint` derived from `task_track_hint`, readiness, risk, and claim collision. For `feature_track + normal risk + no collision + pass`, the default successor-facing hint is now `lightweight_review`; deeper council is treated as earned escalation rather than default overhead. This readout remains advisory only and still does not select runtime council depth automatically.
 
 | Document | Relationship |
 |----------|-------------|
@@ -231,4 +231,4 @@ Implementation note (2026-03-29): `scripts/start_agent_session.py` now surfaces 
 
 ## Canonical Handoff Line
 
-Not every decision needs a tribunal. Not every decision can afford a rubber stamp. Match the deliberation depth to what is at stake: lightweight for bounded corrections, standard for bounded features, elevated for boundary-defining work. The system already has the mechanisms — this contract tells it when to use which one.
+Not every decision needs a tribunal. Not every decision can afford a rubber stamp. Match the deliberation depth to what is at stake: lightweight for bounded corrections and clear feature work, standard when ambiguity or coordination pressure appears, elevated for boundary-defining work. The system already has the mechanisms — this contract tells it when to use which one.

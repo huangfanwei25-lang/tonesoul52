@@ -94,7 +94,7 @@
   - low-drift anchor / observer-window baseline (Day 1 complete): `tonesoul/observer_window.py`, `scripts/run_observer_window.py`, `tests/test_observer_window.py`, `docs/status/observer_window_latest.{json,md}`
   - bounded outer-shell preflight chain for shared edits, publish/push posture, and task-board parking discipline
 - Current short board:
-  - Phase 765: tighten deliberation escalation so deeper council use is more clearly earned by task/risk state instead of default overhead
+  - Phase 766: define a tiered agent workspace spec so a future IDE/frontend can present Tier 0 / 1 / 2 without collapsing boundaries
 - After that:
   - successor/hot-memory bucket is now baseline-frozen unless a fresh real-world misread reopens it
   - task-board governance should stay boring and explicit before any new theory bucket opens
@@ -1742,8 +1742,14 @@
 - [x] add regression coverage so Tier-1 includes `canonical_center`, `subsystem_parity`, `closeout_attention`, and bounded observer-facing orientation without reopening full packet/detail surfaces
 **Success Criteria**: A feature-track successor can pull a bounded orientation shell that is richer than Tier-0 but still materially smaller than the full session-start bundle, while all existing default/full consumers remain backward compatible.
 
-## Phase 765: Deliberation Escalation Tightening (2026-04-02, planned)
-- [ ] make deeper council use more explicitly tied to task/risk state in successor-facing routing and orientation surfaces
-- [ ] keep the wave bounded to readout and routing discipline first instead of rewriting council runtime semantics
-- [ ] add regression coverage so quick-change and narrow feature-track continuations do not look like they require full multi-agent overhead by default
+## Phase 765: Deliberation Escalation Tightening (2026-04-02, completed)
+- [x] make deeper council use more explicitly tied to task/risk state in successor-facing routing and orientation surfaces
+- [x] keep the wave bounded to readout and routing discipline first instead of rewriting council runtime semantics
+- [x] add regression coverage so quick-change and narrow feature-track continuations do not look like they require full multi-agent overhead by default
 **Success Criteria**: ToneSoul keeps multi-agent/council value for ambiguous or risky work, while normal continuation flows stop presenting deep deliberation as default overhead.
+
+## Phase 766: Tiered Agent Workspace Spec (2026-04-02, planned)
+- [ ] define a ToneSoul-native workspace/IDE surface map that presents Tier 0, Tier 1, and Tier 2 as distinct panels instead of one flat control surface
+- [ ] map current runtime/readout surfaces into UI-safe panels without collapsing `canonical`, `advisory`, `descriptive`, and `mutation-preflight` boundaries
+- [ ] keep the phase spec-first: write the bounded workspace contract before touching frontend code
+**Success Criteria**: A future agent IDE/frontend has one clear ToneSoul-native panel model for instant gate, orientation shell, and deep governance, so UI work can improve discoverability without turning every surface into one noisy dashboard.

@@ -195,6 +195,8 @@ def test_start_agent_session_emits_machine_readable_bundle(
     assert output["deliberation_mode_hint"]["claim_state"] == "active_collision"
     assert output["deliberation_mode_hint"]["readiness_state"] == "needs_clarification"
     assert output["deliberation_mode_hint"]["human_required"] is False
+    assert "claim_collision_visible" in output["deliberation_mode_hint"]["escalation_triggers"]
+    assert "readiness_needs_clarification" in output["deliberation_mode_hint"]["escalation_triggers"]
     mutation_preflight = output["mutation_preflight"]
     assert mutation_preflight["present"] is True
     assert mutation_preflight["current_context"]["task_track"] == "feature_track"
@@ -900,6 +902,12 @@ def test_start_agent_session_marks_recycled_carry_forward_as_must_not_promote(
         "Latest compaction closeout is partial" in alert
         for alert in output["import_posture"]["receiver_alerts"]
     )
+    mode_hint = output["deliberation_mode_hint"]
+    assert mode_hint["suggested_mode"] == "lightweight_review"
+    assert mode_hint["human_required"] is False
+    assert "risk_bucket_elevated_or_critical" in mode_hint["escalation_triggers"]
+    assert "claim_collision_visible" in mode_hint["escalation_triggers"]
+    assert "Bounded feature work now defaults to lightweight review" in mode_hint["receiver_note"]
     assert any(
         "Working-style continuity is advisory only" in alert
         for alert in output["import_posture"]["receiver_alerts"]

@@ -788,16 +788,48 @@ def _select_resume_deliberation_mode(
         return "lightweight_review", False, reasons
 
     if task_track == "feature_track":
-        if readiness_state == "needs_clarification":
-            return "standard_council", False, reasons
         if risk_bucket in {"elevated", "critical"}:
             return "elevated_council", risk_bucket == "critical", reasons
-        return "standard_council", False, reasons
+        if claim_collision:
+            return "standard_council", False, reasons
+        if readiness_state == "needs_clarification":
+            return "standard_council", False, reasons
+        return "lightweight_review", False, reasons
 
     if task_track == "system_track":
         return "elevated_council", risk_bucket == "critical", reasons
 
     return "unclassified", False, reasons
+
+
+def _build_deliberation_escalation_triggers(
+    *,
+    task_track: str,
+    risk_bucket: str,
+    claim_collision: bool,
+    readiness_state: str,
+) -> list[str]:
+    triggers: list[str] = []
+    if task_track == "quick_change":
+        triggers = ["claim_collision_visible", "risk_bucket_elevated_or_critical"]
+    elif task_track == "feature_track":
+        triggers = [
+            "claim_collision_visible",
+            "readiness_needs_clarification",
+            "risk_bucket_elevated_or_critical",
+        ]
+    elif task_track == "system_track":
+        triggers = ["system_track_scope", "claim_collision_visible", "risk_bucket_elevated_or_critical"]
+
+    if readiness_state == "blocked" and "blocked_state_requires_unblock_first" not in triggers:
+        triggers.append("blocked_state_requires_unblock_first")
+    if claim_collision and "claim_collision_visible" not in triggers:
+        triggers.append("claim_collision_visible")
+    if risk_bucket in {"elevated", "critical"} and "risk_bucket_elevated_or_critical" not in triggers:
+        triggers.append("risk_bucket_elevated_or_critical")
+    if readiness_state == "needs_clarification" and "readiness_needs_clarification" not in triggers:
+        triggers.append("readiness_needs_clarification")
+    return triggers
 
 
 def _build_deliberation_mode_hint(*, task_track_hint: dict, readiness: dict) -> dict:
@@ -831,6 +863,12 @@ def _build_deliberation_mode_hint(*, task_track_hint: dict, readiness: dict) -> 
         claim_collision=claim_collision,
         readiness_state=readiness_state,
     )
+    escalation_triggers = _build_deliberation_escalation_triggers(
+        task_track=task_track,
+        risk_bucket=risk_bucket,
+        claim_collision=claim_collision,
+        readiness_state=readiness_state,
+    )
 
     if readiness_state == "blocked":
         human_required = (
@@ -852,6 +890,7 @@ def _build_deliberation_mode_hint(*, task_track_hint: dict, readiness: dict) -> 
             "risk_bucket": risk_bucket,
             "claim_state": claim_state,
             "readiness_state": readiness_state,
+            "escalation_triggers": escalation_triggers,
             "reasons": reasons,
             "receiver_note": (
                 "The task is blocked, so deliberation should not run yet. Clear the blocking condition first; if a STOP signal or critical risk is present, involve a human before resuming."
@@ -870,6 +909,10 @@ def _build_deliberation_mode_hint(*, task_track_hint: dict, readiness: dict) -> 
         receiver_note += (
             " Clarify the task first, then treat this as the default deliberation depth."
         )
+    elif base_mode == "lightweight_review" and task_track == "feature_track":
+        receiver_note += (
+            " Bounded feature work now defaults to lightweight review; pull deeper council only when risk, collision, or clarification pressure appears."
+        )
 
     return {
         "present": True,
@@ -880,6 +923,7 @@ def _build_deliberation_mode_hint(*, task_track_hint: dict, readiness: dict) -> 
         "risk_bucket": risk_bucket,
         "claim_state": claim_state,
         "readiness_state": readiness_state,
+        "escalation_triggers": escalation_triggers,
         "reasons": reasons,
         "receiver_note": receiver_note,
         "summary_text": (
