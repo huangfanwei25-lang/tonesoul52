@@ -94,7 +94,7 @@
   - low-drift anchor / observer-window baseline (Day 1 complete): `tonesoul/observer_window.py`, `scripts/run_observer_window.py`, `tests/test_observer_window.py`, `docs/status/observer_window_latest.{json,md}`
   - bounded outer-shell preflight chain for shared edits, publish/push posture, and task-board parking discipline
 - Current short board:
-  - Phase 759: make the bounded hook chain more operator-discoverable so fresh agents can find shared-edit, publish/push, and task-board preflights without re-reading multiple surfaces
+  - Phase 763: add a Tier-0 session-start fast path so quick-change and narrow continuation flows stop paying full deep-governance startup cost
 - After that:
   - successor/hot-memory bucket is now baseline-frozen unless a fresh real-world misread reopens it
   - task-board governance should stay boring and explicit before any new theory bucket opens
@@ -1724,8 +1724,14 @@
 - [x] keep the lane bounded to entry-surface readability, not a full documentation rewrite
 **Success Criteria**: The AI entry stack stays first-hop readable without creating a second cleanup megaproject or flattening the authority model.
 
-## Phase 762: External Draft Parking And Distillation Triage (2026-04-02, planned)
-- [ ] inspect the currently parked external draft notes and local reference repo residue (`claw-code-main/`, untracked design notes) without letting them compete with the ratified short board
-- [ ] extract only the bounded patterns that improve ToneSoul's active lanes; move or retire the rest into explicit parking
-- [ ] keep the lane about parking and distillation discipline, not a new external-framework roadmap
+## Phase 762: External Draft Parking And Distillation Triage (2026-04-02, completed)
+- [x] inspect the currently parked external draft notes and local reference repo residue (`claw-code-main/`, untracked design notes) without letting them compete with the ratified short board
+- [x] extract only the bounded patterns that improve ToneSoul's active lanes; move or retire the rest into explicit parking
+- [x] keep the lane about parking and distillation discipline, not a new external-framework roadmap
 **Success Criteria**: Parked external drafts stop being ambiguous residue, and any useful borrowing is distilled into ToneSoul-native notes without reopening task-board confusion.
+
+## Phase 763: Tier-0 Session-Start Fast Path (2026-04-02, planned)
+- [ ] add a bounded `--tier 0` entry path to `scripts/start_agent_session.py` that returns only the minimum safe orientation bundle for quick-change or narrow continuation work
+- [ ] keep the current default full bundle behavior backward compatible so existing automation and deeper successor flows do not break
+- [ ] add regression coverage for tiered output shape and ensure Tier-0 still exposes readiness, hook-chain, mutation summary, and one-line canonical center guidance
+**Success Criteria**: A quick-change or narrow continuation agent can start from a much smaller session-start bundle without losing the minimum safety/orientation surfaces, while the existing full bundle remains unchanged by default.
