@@ -93,9 +93,9 @@
   - collaborator-beta preflight, entry-validation, and discoverable beta-facing status surfaces
   - low-drift anchor / observer-window baseline (Day 1 complete): `tonesoul/observer_window.py`, `scripts/run_observer_window.py`, `tests/test_observer_window.py`, `docs/status/observer_window_latest.{json,md}`
 - Current short board:
-  - Phase 748: tighten shared path-overlap preflight before shared edits so mutation_preflight points at a real narrow hook instead of only a named gap
+  - Phase 749: choose the next low-risk working-style wave-2 surface so bucket rotation resumes after the shared-edit preflight closes
 - After that:
-  - Day 3: rotation checkpoint — freeze successor/hot-memory bucket if the shared-edit preflight closes without reopening launch wording
+  - Day 3: rotation checkpoint -- successor/hot-memory bucket is frozen once Phase 748 closes without reopening launch wording
   - only after Phase 748 closes should the bucket rotate
   - only after broader beta use should public-launch maturity be reconsidered
   - only then further optimization
@@ -1638,8 +1638,14 @@
 - [x] keep the result tied to evidence posture and launch honesty instead of turning it into a second roadmap
 **Success Criteria**: A successor entering through normal surfaces can see which major subsystems are baseline-complete, partial, or deferred without reading long planning docs first.
 
-## Phase 748: Shared Path-Overlap Preflight Hook (2026-04-02, planned)
-- [ ] turn the current mutation-preflight `shared_code_edit.path_overlap_preflight` gap into one bounded runtime/readout check
-- [ ] keep it limited to shared-path overlap and visible claims instead of inventing a full new permission system
-- [ ] wire the result back into successor-facing surfaces without reopening launch or maturity wording
+## Phase 748: Shared Path-Overlap Preflight Hook (2026-04-02, completed)
+- [x] turn the current mutation-preflight `shared_code_edit.path_overlap_preflight` gap into one bounded runtime/readout check
+- [x] keep it limited to shared-path overlap and visible claims instead of inventing a full new permission system
+- [x] wire the result back into successor-facing surfaces without reopening launch or maturity wording
 **Success Criteria**: A successor about to edit shared code can see one explicit preflight answer about claim/path overlap instead of reconstructing it manually from multiple surfaces.
+
+## Phase 749: Working-Style Wave-2 Surface Selection (2026-04-02, planned)
+- [ ] choose the next low-risk working-style consumer after the successor/hot-memory bucket freeze
+- [ ] keep the choice bounded to generic or coordination-facing surfaces instead of reopening voice-heavy families
+- [ ] name one implementation wave and one deferred wave so bucket rotation is explicit before more adoption work starts
+**Success Criteria**: ToneSoul has one explicit post-successor bucket to continue with, so later agents rotate cleanly instead of drifting back into hot-memory theory.

@@ -1113,6 +1113,7 @@ def run_session_start_bundle(
             f"python -m tonesoul.diagnose --agent {agent_id}",
             f"python scripts/run_r_memory_packet.py --agent {agent_id}{'' if no_ack else ' --ack'}",
             "python scripts/run_task_claim.py list",
+            f"python scripts/run_shared_edit_preflight.py --agent {agent_id} --path <repo-path>",
         ],
         "packet": packet,
     }

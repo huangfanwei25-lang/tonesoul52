@@ -701,13 +701,14 @@ class TestCanonicalCenterAndHotMemoryLadder:
         parity = self.anchor["subsystem_parity"]
         assert parity["present"] is True
         assert parity["counts"]["baseline"] == 3
-        assert parity["counts"]["beta_usable"] == 4
-        assert parity["counts"]["partial"] == 3
+        assert parity["counts"]["beta_usable"] == 5
+        assert parity["counts"]["partial"] == 2
         assert parity["counts"]["deferred"] == 1
 
     def test_subsystem_parity_marks_observer_window_baseline(self):
         by_name = {item["name"]: item for item in self.anchor["subsystem_parity"]["families"]}
         assert by_name["observer_window"]["status"] == "baseline"
+        assert by_name["mutation_preflight_hooks"]["status"] == "beta_usable"
         assert by_name["mutation_preflight_hooks"]["next_bounded_move"] == (
             "shared_code_edit.path_overlap_preflight"
         )

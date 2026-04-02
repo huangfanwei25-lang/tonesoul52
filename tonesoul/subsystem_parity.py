@@ -168,15 +168,15 @@ def build_subsystem_parity_readout(
         ),
         _family(
             "mutation_preflight_hooks",
-            status="partial",
+            status="beta_usable",
             current_signal=str(mutation_preflight.get("summary_text", "") or "preflight_present"),
             strongest_truth="Successor-facing mutation preflight now maps current write/mutate/publish decision points.",
-            main_gap="The actual shared path-overlap decision is still a manual read, not a dedicated hook.",
+            main_gap="The path-overlap hook is now real, but it remains intentionally narrow and only sees visible claims plus candidate paths.",
             next_bounded_move=str(
                 ((mutation_preflight.get("next_followup") or {}).get("target"))
                 or "shared_code_edit.path_overlap_preflight"
             ),
-            overclaim_to_avoid="guard rails are already fully explicit",
+            overclaim_to_avoid="shared-edit mutation is now a full permission system",
         ),
         _family(
             "external_transport_plugins",
@@ -198,12 +198,9 @@ def build_subsystem_parity_readout(
             "Use baseline lanes for normal continuation, beta_usable lanes for guided collaborator-beta work, partial lanes with explicit gap awareness, and deferred lanes as out of current scope."
         ),
         "next_focus": {
-            "target": "mutation_preflight.next_followup",
-            "resolved_to": str(
-                ((mutation_preflight.get("next_followup") or {}).get("target"))
-                or "shared_code_edit.path_overlap_preflight"
-            ),
-            "reason": "Mutation preflight is now visible, but the narrowest remaining runtime gap is still explicit path-overlap preflight before shared edits.",
+            "target": "working_style.wave_2_selection",
+            "resolved_to": "working_style.wave_2_surface_selection",
+            "reason": "Shared-edit preflight is now real enough to stop being the shortest board; rotate to the next bounded non-successor bucket instead of reopening hot-memory theory.",
         },
         "summary_text": (
             f"subsystem_parity baseline={counts['baseline']} beta_usable={counts['beta_usable']} "

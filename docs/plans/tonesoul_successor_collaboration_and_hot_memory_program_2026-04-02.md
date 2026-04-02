@@ -199,6 +199,7 @@ The current bounded implementation wave is:
 2. `Phase 744` - successor misread correction wave
 3. `Phase 745` - hot-memory decay / compression map
 4. `Phase 746` - mutation preflight / hook map
+5. `Phase 748` - shared path-overlap preflight hook
 
 This keeps the bucket successor-facing and operational:
 
@@ -208,7 +209,7 @@ This keeps the bucket successor-facing and operational:
 
 Current rotation note:
 
-- once `Phase 746` is baseline-complete, rotate the short board out of observer/hot-memory hygiene and into bounded subsystem parity readout
+- once `Phase 748` is baseline-complete, freeze the successor/hot-memory bucket and rotate the short board into the next bounded non-successor bucket
 
 ## What Not To Do
 

@@ -186,6 +186,7 @@ Target states:
 - deliberation mode hint
 - claims
 - mutation preflight
+- shared edit preflight
 - packet freshness
 - import posture
 - receiver parity

@@ -99,10 +99,12 @@ def build_mutation_preflight(
     decision_points = [
         _point(
             "shared_code_edit",
-            control_type="guarded_readout",
+            control_type="existing_runtime_hook",
             posture=shared_code_posture,
             source_of_truth=["readiness", "claim_view", "task_track_hint"],
-            current_guard="Resolve readiness first, then read live claims before touching shared paths.",
+            current_guard=(
+                "Resolve readiness first, then run run_shared_edit_preflight.py before touching shared paths."
+            ),
             receiver_note=shared_code_note,
         ),
         _point(
@@ -200,11 +202,12 @@ def build_mutation_preflight(
 
     next_followup = {
         "target": "shared_code_edit.path_overlap_preflight",
-        "classification": "hook_candidate",
+        "classification": "existing_runtime_hook",
+        "command": "python scripts/run_shared_edit_preflight.py --agent <your-id> --path <repo-path>",
         "reason": (
-            "Readiness and live claims are already visible, but the actual path-overlap decision still depends on the successor reading claim paths manually."
+            "Use the narrow path-overlap preflight before shared edits; it resolves visible claim/path collisions without inventing a new permission system."
         ),
-        "why_here": "This is the smallest missing hook between orientation and shared mutation.",
+        "why_here": "This is the narrowest runtime gate between orientation and shared mutation.",
     }
 
     return {

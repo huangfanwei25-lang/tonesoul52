@@ -41,7 +41,10 @@ def _make_import_posture() -> dict:
 def _make_mutation_preflight() -> dict:
     return {
         "summary_text": "shared_code=claim_before_shared_edits compaction=review_only_handoff",
-        "next_followup": {"target": "shared_code_edit.path_overlap_preflight"},
+        "next_followup": {
+            "target": "shared_code_edit.path_overlap_preflight",
+            "classification": "existing_runtime_hook",
+        },
     }
 
 
@@ -59,18 +62,19 @@ def test_build_subsystem_parity_readout_emits_expected_status_mix() -> None:
     assert payload["present"] is True
     assert payload["counts"] == {
         "baseline": 3,
-        "beta_usable": 4,
-        "partial": 3,
+        "beta_usable": 5,
+        "partial": 2,
         "deferred": 1,
     }
-    assert payload["next_focus"]["resolved_to"] == "shared_code_edit.path_overlap_preflight"
-    assert payload["summary_text"].startswith("subsystem_parity baseline=3 beta_usable=4")
+    assert payload["next_focus"]["resolved_to"] == "working_style.wave_2_surface_selection"
+    assert payload["summary_text"].startswith("subsystem_parity baseline=3 beta_usable=5")
 
     by_name = {item["name"]: item for item in payload["families"]}
     assert by_name["session_start_bundle"]["status"] == "baseline"
     assert by_name["packet_hot_state"]["status"] == "beta_usable"
     assert by_name["subject_working_style"]["status"] == "partial"
     assert by_name["external_transport_plugins"]["status"] == "deferred"
+    assert by_name["mutation_preflight_hooks"]["status"] == "beta_usable"
     assert by_name["mutation_preflight_hooks"]["next_bounded_move"] == (
         "shared_code_edit.path_overlap_preflight"
     )

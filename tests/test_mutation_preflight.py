@@ -59,10 +59,12 @@ def test_build_mutation_preflight_blocks_shared_edit_when_readiness_is_blocked()
 
     by_name = {item["name"]: item for item in payload["decision_points"]}
     assert by_name["shared_code_edit"]["posture"] == "blocked"
+    assert by_name["shared_code_edit"]["control_type"] == "existing_runtime_hook"
     assert by_name["compaction_write"]["posture"] == "honest_closeout_required"
     assert by_name["task_board_update"]["control_type"] == "human_gated"
     assert payload["current_context"]["deliberation_mode"] == "do_not_deliberate"
     assert payload["next_followup"]["target"] == "shared_code_edit.path_overlap_preflight"
+    assert payload["next_followup"]["classification"] == "existing_runtime_hook"
 
 
 def test_build_mutation_preflight_prefers_claim_before_shared_edits() -> None:
@@ -77,6 +79,7 @@ def test_build_mutation_preflight_prefers_claim_before_shared_edits() -> None:
     by_name = {item["name"]: item for item in payload["decision_points"]}
     assert by_name["shared_code_edit"]["posture"] == "claim_before_shared_edits"
     assert by_name["claim_write"]["control_type"] == "existing_runtime_hook"
+    assert "run_shared_edit_preflight.py" in by_name["shared_code_edit"]["current_guard"]
     assert by_name["subject_refresh_write"]["posture"] == "must_not_promote"
     assert by_name["launch_claim_language"]["posture"] == "bounded_collaborator_beta_only"
     assert payload["summary_text"].startswith("shared_code=claim_before_shared_edits")
