@@ -94,7 +94,7 @@
   - low-drift anchor / observer-window baseline (Day 1 complete): `tonesoul/observer_window.py`, `scripts/run_observer_window.py`, `tests/test_observer_window.py`, `docs/status/observer_window_latest.{json,md}`
   - bounded outer-shell preflight chain for shared edits, publish/push posture, and task-board parking discipline
 - Current short board:
-  - Phase 764: add a Tier-1 orientation shell so feature-track successors can pull bounded context without paying the full Tier-2 governance bundle
+  - Phase 765: tighten deliberation escalation so deeper council use is more clearly earned by task/risk state instead of default overhead
 - After that:
   - successor/hot-memory bucket is now baseline-frozen unless a fresh real-world misread reopens it
   - task-board governance should stay boring and explicit before any new theory bucket opens
@@ -1736,8 +1736,14 @@
 - [x] add regression coverage for tiered output shape and ensure Tier-0 still exposes readiness, hook-chain, mutation summary, and one-line canonical center guidance
 **Success Criteria**: A quick-change or narrow continuation agent can start from a much smaller session-start bundle without losing the minimum safety/orientation surfaces, while the existing full bundle remains unchanged by default.
 
-## Phase 764: Tier-1 Orientation Shell (2026-04-02, planned)
-- [ ] add a bounded `--tier 1` path to `scripts/start_agent_session.py` that returns orientation-shell surfaces without the full Tier-2 payload
-- [ ] keep `--tier 0` and the default full bundle behavior stable while defining one honest middle band for feature-track continuation
-- [ ] add regression coverage so Tier-1 includes `canonical_center`, `subsystem_parity`, `closeout_attention`, and bounded observer-facing orientation without reopening full packet/detail surfaces
+## Phase 764: Tier-1 Orientation Shell (2026-04-02, completed)
+- [x] add a bounded `--tier 1` path to `scripts/start_agent_session.py` that returns orientation-shell surfaces without the full Tier-2 payload
+- [x] keep `--tier 0` and the default full bundle behavior stable while defining one honest middle band for feature-track continuation
+- [x] add regression coverage so Tier-1 includes `canonical_center`, `subsystem_parity`, `closeout_attention`, and bounded observer-facing orientation without reopening full packet/detail surfaces
 **Success Criteria**: A feature-track successor can pull a bounded orientation shell that is richer than Tier-0 but still materially smaller than the full session-start bundle, while all existing default/full consumers remain backward compatible.
+
+## Phase 765: Deliberation Escalation Tightening (2026-04-02, planned)
+- [ ] make deeper council use more explicitly tied to task/risk state in successor-facing routing and orientation surfaces
+- [ ] keep the wave bounded to readout and routing discipline first instead of rewriting council runtime semantics
+- [ ] add regression coverage so quick-change and narrow feature-track continuations do not look like they require full multi-agent overhead by default
+**Success Criteria**: ToneSoul keeps multi-agent/council value for ambiguous or risky work, while normal continuation flows stop presenting deep deliberation as default overhead.

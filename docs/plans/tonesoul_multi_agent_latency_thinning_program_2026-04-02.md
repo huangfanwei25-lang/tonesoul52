@@ -189,8 +189,13 @@ This program succeeds when:
 
 ## Current Recommendation
 
-Accept this as the next live short-board direction.
+Accept this as the current live short-board direction.
+
+Completed:
+
+- `Phase 763: Tier-0 Session-Start Fast Path`
+- `Phase 764: Tier-1 Orientation Shell`
 
 The next bounded implementation move should be:
 
-`Phase 763: Tier-0 Session-Start Fast Path`
+`Phase 765: Deliberation Escalation Tightening`

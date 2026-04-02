@@ -203,6 +203,50 @@ def _build_tier0_mutation_preflight(mutation_preflight: dict) -> dict:
     }
 
 
+def _build_tier1_observer_shell(observer_window: dict) -> dict:
+    repo_state_awareness = observer_window.get("repo_state_awareness") or {}
+    hot_memory_ladder = observer_window.get("hot_memory_ladder") or {}
+    return {
+        "present": True,
+        "summary_text": str(observer_window.get("summary_text", "")).strip(),
+        "receiver_note": str(observer_window.get("receiver_note", "")).strip(),
+        "counts": dict(observer_window.get("counts") or {}),
+        "delta_summary": dict(observer_window.get("delta_summary") or {}),
+        "closeout_attention": dict(observer_window.get("closeout_attention") or {}),
+        "repo_state_awareness": {
+            "classification": str(repo_state_awareness.get("classification", "")).strip(),
+            "summary_text": str(repo_state_awareness.get("summary_text", "")).strip(),
+            "misread_risk": bool(repo_state_awareness.get("misread_risk", False)),
+            "receiver_note": str(repo_state_awareness.get("receiver_note", "")).strip(),
+        },
+        "hot_memory_ladder": {
+            "summary_text": str(hot_memory_ladder.get("summary_text", "")).strip(),
+            "layers": [
+                {
+                    "layer": str(layer.get("layer", "")).strip(),
+                    "status": str(layer.get("status", "")).strip(),
+                }
+                for layer in list(hot_memory_ladder.get("layers") or [])
+            ],
+        },
+        "stable_headlines": [
+            str(item.get("claim", "")).strip()
+            for item in list(observer_window.get("stable") or [])[:3]
+            if str(item.get("claim", "")).strip()
+        ],
+        "contested_headlines": [
+            str(item.get("claim", "")).strip()
+            for item in list(observer_window.get("contested") or [])[:3]
+            if str(item.get("claim", "")).strip()
+        ],
+        "stale_headlines": [
+            str(item.get("claim", "")).strip()
+            for item in list(observer_window.get("stale") or [])[:2]
+            if str(item.get("claim", "")).strip()
+        ],
+    }
+
+
 def _build_tier0_payload(
     *,
     agent_id: str,
@@ -253,6 +297,66 @@ def _build_tier0_payload(
             f"python scripts/start_agent_session.py --agent {agent_id}",
             f"python -m tonesoul.diagnose --agent {agent_id}",
             f"python scripts/run_observer_window.py --agent {agent_id}",
+        ],
+    }
+
+
+def _build_tier1_payload(
+    *,
+    agent_id: str,
+    no_ack: bool,
+    backend_name: str,
+    packet: dict,
+    posture,
+    readiness: dict,
+    task_track_hint: dict,
+    deliberation_mode_hint: dict,
+    canonical_center: dict,
+    hook_chain: dict,
+    mutation_preflight: dict,
+    subsystem_parity: dict,
+    observer_window: dict,
+) -> dict:
+    observer_shell = _build_tier1_observer_shell(observer_window)
+    return {
+        "contract_version": "v1",
+        "bundle": "session_start",
+        "tier": 1,
+        "bundle_posture": "orientation_shell",
+        "agent": agent_id,
+        "acknowledged_observer_cursor": not no_ack,
+        "backend_mode": backend_name,
+        "compact_diagnostic": _build_compact_line(
+            agent_id=agent_id,
+            backend_name=backend_name,
+            packet=packet,
+            posture=posture,
+        )
+        + f" | readiness={readiness['status']}",
+        "readiness": readiness,
+        "task_track_hint": task_track_hint,
+        "deliberation_mode_hint": deliberation_mode_hint,
+        "canonical_center": canonical_center,
+        "hook_chain": hook_chain,
+        "mutation_preflight": _build_tier0_mutation_preflight(mutation_preflight),
+        "subsystem_parity": subsystem_parity,
+        "observer_shell": observer_shell,
+        "closeout_attention": dict(observer_window.get("closeout_attention") or {}),
+        "next_pull": {
+            "receiver_rule": (
+                "Tier 1 is an orientation shell. Pull the full Tier-2 bundle when shared mutation, "
+                "deep continuity, or contested governance details must be read directly."
+            ),
+            "recommended_commands": [
+                f"python scripts/start_agent_session.py --agent {agent_id}",
+                f"python scripts/run_observer_window.py --agent {agent_id}",
+                f"python -m tonesoul.diagnose --agent {agent_id}",
+            ],
+        },
+        "underlying_commands": [
+            f"python scripts/start_agent_session.py --agent {agent_id}",
+            f"python scripts/run_observer_window.py --agent {agent_id}",
+            f"python -m tonesoul.diagnose --agent {agent_id}",
         ],
     }
 
@@ -1266,6 +1370,31 @@ def run_session_start_bundle(
         mutation_preflight=mutation_preflight,
         canonical_center=canonical_center,
     )
+    if int(tier) == 1:
+        from tonesoul.observer_window import build_low_drift_anchor
+
+        observer_window = build_low_drift_anchor(
+            packet=packet,
+            import_posture=import_posture.get("surfaces") or {},
+            readiness=readiness,
+            canonical_center=canonical_center,
+            subsystem_parity=subsystem_parity,
+        )
+        return _build_tier1_payload(
+            agent_id=agent_id,
+            no_ack=no_ack,
+            backend_name=backend_name,
+            packet=packet,
+            posture=posture,
+            readiness=readiness,
+            task_track_hint=task_track_hint,
+            deliberation_mode_hint=deliberation_mode_hint,
+            canonical_center=canonical_center,
+            hook_chain=hook_chain,
+            mutation_preflight=mutation_preflight,
+            subsystem_parity=subsystem_parity,
+            observer_window=observer_window,
+        )
     return {
         "contract_version": "v1",
         "bundle": "session_start",
@@ -1323,7 +1452,7 @@ def main() -> None:
     parser.add_argument("--traces-path", type=Path, default=None)
     parser.add_argument("--trace-limit", type=int, default=5)
     parser.add_argument("--visitor-limit", type=int, default=5)
-    parser.add_argument("--tier", type=int, choices=(0, 2), default=2)
+    parser.add_argument("--tier", type=int, choices=(0, 1, 2), default=2)
     parser.add_argument("--output", type=Path, default=None)
     parser.add_argument("--no-ack", action="store_true")
     args = parser.parse_args()

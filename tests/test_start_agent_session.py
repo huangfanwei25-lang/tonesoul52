@@ -376,6 +376,68 @@ def test_start_agent_session_tier0_returns_fast_path_bundle(
     assert "claim_view" not in output
 
 
+def test_start_agent_session_tier1_returns_orientation_shell(
+    capsys, monkeypatch, tmp_path: Path
+) -> None:
+    module = _load_script_module()
+    state_path = tmp_path / "governance_state.json"
+    traces_path = tmp_path / "session_traces.jsonl"
+
+    _write_state(state_path)
+    _write_traces(traces_path)
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "start_agent_session.py",
+            "--state-path",
+            str(state_path),
+            "--traces-path",
+            str(traces_path),
+            "--agent",
+            "tier1-shell",
+            "--tier",
+            "1",
+            "--no-ack",
+        ],
+    )
+
+    module.main()
+    output = json.loads(capsys.readouterr().out)
+
+    assert output["tier"] == 1
+    assert output["bundle_posture"] == "orientation_shell"
+    assert output["canonical_center"]["parent_surfaces"] == ["task.md", "DESIGN.md"]
+    assert output["subsystem_parity"]["present"] is True
+    assert output["observer_shell"]["present"] is True
+    assert "stable" in output["observer_shell"]["counts"]
+    assert "contested" in output["observer_shell"]["counts"]
+    assert "stale" in output["observer_shell"]["counts"]
+    assert output["observer_shell"]["closeout_attention"]["summary_text"].startswith(
+        "latest compaction closeout"
+    )
+    assert output["observer_shell"]["hot_memory_ladder"]["layers"][0]["layer"] == "canonical_center"
+    assert output["closeout_attention"]["status"] in {
+        "complete",
+        "partial",
+        "blocked",
+        "underdetermined",
+    }
+    assert output["mutation_preflight"]["present"] is True
+    assert output["next_pull"]["recommended_commands"][0] == (
+        "python scripts/start_agent_session.py --agent tier1-shell"
+    )
+    assert "packet" not in output
+    assert "import_posture" not in output
+    assert "receiver_parity" not in output
+    assert "publish_push_preflight" not in output
+    assert "task_board_preflight" not in output
+    assert "working_style_playbook" not in output
+    assert "working_style_validation" not in output
+    assert "claim_view" not in output
+
+
 def test_start_agent_session_blocks_on_critical_risk(capsys, monkeypatch, tmp_path: Path) -> None:
     module = _load_script_module()
     state_path = tmp_path / "governance_state.json"
@@ -1255,6 +1317,44 @@ def test_start_agent_session_cli_tier0_executes_directly(tmp_path: Path) -> None
     assert payload["mutation_preflight"]["present"] is True
     assert "packet" not in payload
     assert "subsystem_parity" not in payload
+    assert "working_style_playbook" not in payload
+
+
+def test_start_agent_session_cli_tier1_executes_directly(tmp_path: Path) -> None:
+    state_path = tmp_path / "governance_state.json"
+    traces_path = tmp_path / "session_traces.jsonl"
+    _write_state(state_path)
+    _write_traces(traces_path)
+
+    script_path = Path(__file__).resolve().parents[1] / "scripts" / "start_agent_session.py"
+    completed = subprocess.run(
+        [
+            sys.executable,
+            str(script_path),
+            "--state-path",
+            str(state_path),
+            "--traces-path",
+            str(traces_path),
+            "--agent",
+            "cli-tier1",
+            "--tier",
+            "1",
+            "--no-ack",
+        ],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        check=False,
+    )
+
+    assert completed.returncode == 0, completed.stderr
+    payload = json.loads(completed.stdout)
+    assert payload["tier"] == 1
+    assert payload["bundle_posture"] == "orientation_shell"
+    assert payload["observer_shell"]["present"] is True
+    assert payload["subsystem_parity"]["present"] is True
+    assert "packet" not in payload
+    assert "import_posture" not in payload
     assert "working_style_playbook" not in payload
 
 
