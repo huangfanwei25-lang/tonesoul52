@@ -40,9 +40,12 @@ def _make_import_posture() -> dict:
 
 def _make_mutation_preflight() -> dict:
     return {
-        "summary_text": "shared_code=claim_before_shared_edits compaction=review_only_handoff",
+        "summary_text": (
+            "shared_code=claim_before_shared_edits "
+            "compaction=review_only_handoff publish_push=review_before_push"
+        ),
         "next_followup": {
-            "target": "shared_code_edit.path_overlap_preflight",
+            "target": "publish_push.posture_preflight",
             "classification": "existing_runtime_hook",
         },
     }
@@ -66,7 +69,7 @@ def test_build_subsystem_parity_readout_emits_expected_status_mix() -> None:
         "partial": 2,
         "deferred": 1,
     }
-    assert payload["next_focus"]["resolved_to"] == "working_style.wave_2_surface_selection"
+    assert payload["next_focus"]["resolved_to"] == "tool_permission.publish_push_preflight"
     assert payload["summary_text"].startswith("subsystem_parity baseline=3 beta_usable=5")
 
     by_name = {item["name"]: item for item in payload["families"]}
@@ -76,5 +79,5 @@ def test_build_subsystem_parity_readout_emits_expected_status_mix() -> None:
     assert by_name["external_transport_plugins"]["status"] == "deferred"
     assert by_name["mutation_preflight_hooks"]["status"] == "beta_usable"
     assert by_name["mutation_preflight_hooks"]["next_bounded_move"] == (
-        "shared_code_edit.path_overlap_preflight"
+        "publish_push.posture_preflight"
     )

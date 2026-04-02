@@ -93,10 +93,10 @@
   - collaborator-beta preflight, entry-validation, and discoverable beta-facing status surfaces
   - low-drift anchor / observer-window baseline (Day 1 complete): `tonesoul/observer_window.py`, `scripts/run_observer_window.py`, `tests/test_observer_window.py`, `docs/status/observer_window_latest.{json,md}`
 - Current short board:
-  - Phase 755: scan the next bounded tool-permission / hook gap so the post-successor bucket rotates into a real outer-shell improvement instead of drifting back into prompt theory
+  - Phase 757: make observer-window contested bucket surface non-complete compaction closeout more prominently so smooth summaries are not misread as completed work
 - After that:
-  - Day 3: rotation checkpoint -- successor/hot-memory bucket is frozen once Phase 748 closes without reopening launch wording
-  - only after Phase 748 closes should the bucket rotate
+  - Day 3: rotation checkpoint -- successor/hot-memory bucket should freeze once closeout surfacing and anchor-order readouts stop leaving obvious successor misreads
+  - only after the observer-window closeout surfacing gap closes should the bucket rotate
   - only after broader beta use should public-launch maturity be reconsidered
   - only then further optimization
 
@@ -1668,20 +1668,32 @@
 - [x] avoid reopening hot-memory theory expansion while cleaning the residue set
 **Success Criteria**: The remaining successor/hot-memory sidecar files no longer compete with the active runtime-aligned story, and later agents can tell which residue is still sidecar-only.
 
-## Phase 753: Successor Repo-State Awareness (2026-04-02, planned)
+## Phase 753: Successor Repo-State Awareness (2026-04-02, completed)
 - [x] expose one bounded repo-state signal near delta/session-start so successors do not equate `no coordination updates` with `no repo changes`
 - [x] keep the wave additive and descriptive, not a new coordination authority surface
 - [x] verify the wording stays aligned with launch honesty and successor-shell discipline
 **Success Criteria**: A later agent can tell when git/repo state changed even if no new compaction/checkpoint appeared, without mistaking that signal for canonical task authority.
 
-## Phase 754: Deferred Working-Style Wave-2 Reality-Check (2026-04-02, planned)
+## Phase 754: Deferred Working-Style Wave-2 Reality-Check (2026-04-02, completed)
 - [x] inspect `tonesoul/tonebridge/personas.py::build_hardened_prompt()` against the current prompt adoption matrix and working-style wave-2 selection
 - [x] only adopt bounded working-style guidance if the surface still looks low-risk and non-voice-defining; otherwise explicitly defer it again
 - [x] keep the wave local to that one deferred surface instead of reopening broader prompt-topology theory
 **Success Criteria**: ToneSoul either lands one bounded working-style consumer on the deferred wave-2 surface, or records a clear renewed deferral without reopening the prompt-adoption bucket broadly.
 
-## Phase 755: Tool-Permission / Hook Gap Scan (2026-04-02, planned)
-- [ ] inspect the current outer-shell hook chain after `mutation_preflight` and `shared_edit_preflight` to find the next bounded missing check
-- [ ] keep the scan focused on one concrete hook or permission gap, not a new transport/plugin architecture
-- [ ] tie the result back to the Agent-OS distillation so the next bucket is about outer-shell reliability, not prompt-theory recursion
+## Phase 755: Tool-Permission / Hook Gap Scan (2026-04-02, completed)
+- [x] inspect the current outer-shell hook chain after `mutation_preflight` and `shared_edit_preflight` to find the next bounded missing check
+- [x] keep the scan focused on one concrete hook or permission gap, not a new transport/plugin architecture
+- [x] tie the result back to the Agent-OS distillation so the next bucket is about outer-shell reliability, not prompt-theory recursion
 **Success Criteria**: ToneSoul identifies one concrete next hook/permission gap that improves collaborator-beta reliability without reopening successor/hot-memory or broad prompt-topology buckets.
+
+## Phase 756: Publish/Push Posture Preflight (2026-04-02, completed)
+- [x] expose one bounded successor-facing preflight that classifies publish/push posture as `clear`, `review_before_push`, or `blocked`
+- [x] derive it from visible repo-state awareness, launch-claim posture, and unresolved closeout signals instead of inventing a new sovereign permission system
+- [x] keep the result outer-shell and collaborator-beta oriented; do not reopen transport/plugin architecture or public-launch overclaim language
+**Success Criteria**: A later agent can see one explicit publish/push posture before side-effectful release actions, with honest reasons when the action should pause for review or stop completely.
+
+## Phase 757: Observer-Window Closeout Surfacing (2026-04-02, planned)
+- [ ] surface non-complete compaction closeout more prominently in the observer-window contested bucket so smooth summary prose is not misread as completed work
+- [ ] keep the wave additive and successor-facing; do not reopen closeout grammar, packet schema, or hot-memory theory
+- [ ] verify the new readout stays aligned with import posture, repo-state awareness, and anti-fake-completion language
+**Success Criteria**: A successor reading observer-window first can immediately tell when the latest compaction remains `partial`, `blocked`, or `underdetermined`, without having to inspect deeper import-posture details.

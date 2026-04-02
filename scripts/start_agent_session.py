@@ -75,6 +75,21 @@ def _build_repo_state_awareness(*, packet: dict) -> dict:
     )
 
 
+def _build_publish_push_preflight(
+    *,
+    readiness: dict,
+    import_posture: dict,
+    repo_state_awareness: dict,
+) -> dict:
+    from tonesoul.publish_push_preflight import build_publish_push_preflight
+
+    return build_publish_push_preflight(
+        readiness=readiness,
+        import_posture=import_posture,
+        repo_state_awareness=repo_state_awareness,
+    )
+
+
 def _build_mutation_preflight(
     *,
     readiness: dict,
@@ -82,6 +97,7 @@ def _build_mutation_preflight(
     deliberation_mode_hint: dict,
     import_posture: dict,
     canonical_center: dict,
+    publish_push_preflight: dict,
 ) -> dict:
     from tonesoul.mutation_preflight import build_mutation_preflight
 
@@ -91,6 +107,7 @@ def _build_mutation_preflight(
         deliberation_mode_hint=deliberation_mode_hint,
         import_posture=import_posture,
         canonical_center=canonical_center,
+        publish_push_preflight=publish_push_preflight,
     )
 
 
@@ -1082,12 +1099,18 @@ def run_session_start_bundle(
         if repo_state_alert not in receiver_alerts:
             receiver_alerts.append(repo_state_alert)
         import_posture["receiver_alerts"] = receiver_alerts
+    publish_push_preflight = _build_publish_push_preflight(
+        readiness=readiness,
+        import_posture=import_posture,
+        repo_state_awareness=repo_state_awareness,
+    )
     mutation_preflight = _build_mutation_preflight(
         readiness=readiness,
         task_track_hint=task_track_hint,
         deliberation_mode_hint=deliberation_mode_hint,
         import_posture=import_posture,
         canonical_center=canonical_center,
+        publish_push_preflight=publish_push_preflight,
     )
     subsystem_parity = _build_subsystem_parity(
         packet=packet,
@@ -1118,6 +1141,7 @@ def run_session_start_bundle(
         "receiver_parity": import_posture.get("receiver_parity", {}),
         "canonical_center": canonical_center,
         "repo_state_awareness": repo_state_awareness,
+        "publish_push_preflight": publish_push_preflight,
         "mutation_preflight": mutation_preflight,
         "subsystem_parity": subsystem_parity,
         "working_style_playbook": working_style_playbook,
@@ -1131,6 +1155,7 @@ def run_session_start_bundle(
             f"python scripts/run_r_memory_packet.py --agent {agent_id}{'' if no_ack else ' --ack'}",
             "python scripts/run_task_claim.py list",
             f"python scripts/run_shared_edit_preflight.py --agent {agent_id} --path <repo-path>",
+            f"python scripts/run_publish_push_preflight.py --agent {agent_id}",
         ],
         "packet": packet,
     }

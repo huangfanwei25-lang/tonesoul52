@@ -171,10 +171,10 @@ def build_subsystem_parity_readout(
             status="beta_usable",
             current_signal=str(mutation_preflight.get("summary_text", "") or "preflight_present"),
             strongest_truth="Successor-facing mutation preflight now maps current write/mutate/publish decision points.",
-            main_gap="The path-overlap hook is now real, but it remains intentionally narrow and only sees visible claims plus candidate paths.",
+            main_gap="Shared-edit overlap is now real, but the outer shell still needs bounded publish/push posture before outward-facing side effects.",
             next_bounded_move=str(
                 ((mutation_preflight.get("next_followup") or {}).get("target"))
-                or "shared_code_edit.path_overlap_preflight"
+                or "publish_push.posture_preflight"
             ),
             overclaim_to_avoid="shared-edit mutation is now a full permission system",
         ),
@@ -198,9 +198,9 @@ def build_subsystem_parity_readout(
             "Use baseline lanes for normal continuation, beta_usable lanes for guided collaborator-beta work, partial lanes with explicit gap awareness, and deferred lanes as out of current scope."
         ),
         "next_focus": {
-            "target": "working_style.wave_2_selection",
-            "resolved_to": "working_style.wave_2_surface_selection",
-            "reason": "Shared-edit preflight is now real enough to stop being the shortest board; rotate to the next bounded non-successor bucket instead of reopening hot-memory theory.",
+            "target": "publish_push.posture_preflight",
+            "resolved_to": "tool_permission.publish_push_preflight",
+            "reason": "Shared-edit overlap is already a real hook; the next bounded outer-shell gain is publish/push posture before outward-facing side effects.",
         },
         "summary_text": (
             f"subsystem_parity baseline={counts['baseline']} beta_usable={counts['beta_usable']} "

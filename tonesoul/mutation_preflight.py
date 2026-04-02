@@ -31,6 +31,7 @@ def build_mutation_preflight(
     deliberation_mode_hint: dict[str, Any],
     import_posture: dict[str, Any],
     canonical_center: dict[str, Any],
+    publish_push_preflight: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Build a bounded mutation/write/publish guard map for successors."""
     surfaces = import_posture.get("surfaces") or {}
@@ -40,6 +41,7 @@ def build_mutation_preflight(
     subject_refresh_surface = surfaces.get("subject_refresh") or {}
     launch_claims_surface = surfaces.get("launch_claims") or {}
     launch_claim_posture = launch_claims_surface.get("launch_claim_posture") or {}
+    publish_push_preflight = dict(publish_push_preflight or {})
 
     readiness_status = str(readiness.get("status", "unknown") or "unknown")
     claim_conflict_count = int(readiness.get("claim_conflict_count", 0) or 0)
@@ -95,6 +97,11 @@ def build_mutation_preflight(
         launch_claim_language_posture = "internal_alpha_only"
     else:
         launch_claim_language_posture = "deferred_or_unknown"
+
+    publish_push_posture = str(
+        publish_push_preflight.get("classification", "review_before_push")
+        or "review_before_push"
+    )
 
     decision_points = [
         _point(
@@ -198,16 +205,29 @@ def build_mutation_preflight(
                 or "Launch claim language is a wording guard, not a runtime permission surface."
             ),
         ),
+        _point(
+            "publish_push",
+            control_type="existing_runtime_hook",
+            posture=publish_push_posture,
+            source_of_truth=["repo_state_awareness", "launch_claim_posture", "compaction_closeout"],
+            current_guard=(
+                "Run run_publish_push_preflight.py before git push, deployment, or other outward-facing publish actions."
+            ),
+            receiver_note=str(
+                publish_push_preflight.get("receiver_note", "")
+                or "Publish/push posture should stay bounded by repo-state, closeout, and launch honesty surfaces."
+            ),
+        ),
     ]
 
     next_followup = {
-        "target": "shared_code_edit.path_overlap_preflight",
+        "target": "publish_push.posture_preflight",
         "classification": "existing_runtime_hook",
-        "command": "python scripts/run_shared_edit_preflight.py --agent <your-id> --path <repo-path>",
+        "command": "python scripts/run_publish_push_preflight.py --agent <your-id>",
         "reason": (
-            "Use the narrow path-overlap preflight before shared edits; it resolves visible claim/path collisions without inventing a new permission system."
+            "Use the bounded publish/push preflight before outward-facing side effects; it keeps repo-state, closeout, and launch honesty visible without inventing a sovereign permission system."
         ),
-        "why_here": "This is the narrowest runtime gate between orientation and shared mutation.",
+        "why_here": "This is the next outer-shell guard after shared-edit overlap became a real runtime hook.",
     }
 
     return {
@@ -217,7 +237,8 @@ def build_mutation_preflight(
             f"compaction={compaction_posture} "
             f"task_board=ratified_short_board_only "
             f"commit=aegis_locked_commit "
-            f"launch_claims={launch_claim_language_posture}"
+            f"launch_claims={launch_claim_language_posture} "
+            f"publish_push={publish_push_posture}"
         ),
         "receiver_rule": (
             "Readiness and live coordination gate shared mutation first; use the narrowest write lane available, keep closeout honest, and treat launch wording as separate from execution permission."

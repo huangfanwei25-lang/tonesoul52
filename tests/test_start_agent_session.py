@@ -199,9 +199,9 @@ def test_start_agent_session_emits_machine_readable_bundle(
     assert mutation_preflight["present"] is True
     assert mutation_preflight["current_context"]["task_track"] == "feature_track"
     assert mutation_preflight["current_context"]["claim_conflict_count"] == 1
-    assert mutation_preflight["next_followup"]["target"] == "shared_code_edit.path_overlap_preflight"
+    assert mutation_preflight["next_followup"]["target"] == "publish_push.posture_preflight"
     assert mutation_preflight["next_followup"]["classification"] == "existing_runtime_hook"
-    assert "run_shared_edit_preflight.py" in mutation_preflight["next_followup"]["command"]
+    assert "run_publish_push_preflight.py" in mutation_preflight["next_followup"]["command"]
     by_name = {item["name"]: item for item in mutation_preflight["decision_points"]}
     assert by_name["shared_code_edit"]["posture"] == "coordinate_before_shared_edits"
     assert by_name["shared_code_edit"]["control_type"] == "existing_runtime_hook"
@@ -209,13 +209,18 @@ def test_start_agent_session_emits_machine_readable_bundle(
     assert by_name["canonical_commit"]["posture"] == "aegis_locked_commit"
     assert by_name["task_board_update"]["control_type"] == "human_gated"
     assert by_name["launch_claim_language"]["posture"] == "bounded_collaborator_beta_only"
+    assert by_name["publish_push"]["posture"] == "review_before_push"
+    publish_push_preflight = output["publish_push_preflight"]
+    assert publish_push_preflight["present"] is True
+    assert publish_push_preflight["classification"] == "review_before_push"
+    assert publish_push_preflight["repo_state_classification"] == "baseline_unset"
     subsystem_parity = output["subsystem_parity"]
     assert subsystem_parity["present"] is True
     assert subsystem_parity["counts"]["baseline"] == 3
     assert subsystem_parity["counts"]["beta_usable"] == 5
     assert subsystem_parity["counts"]["partial"] == 2
     assert subsystem_parity["counts"]["deferred"] == 1
-    assert subsystem_parity["next_focus"]["resolved_to"] == "working_style.wave_2_surface_selection"
+    assert subsystem_parity["next_focus"]["resolved_to"] == "tool_permission.publish_push_preflight"
     parity_by_name = {item["name"]: item for item in subsystem_parity["families"]}
     assert parity_by_name["session_start_bundle"]["status"] == "baseline"
     assert parity_by_name["packet_hot_state"]["status"] == "beta_usable"
@@ -238,6 +243,9 @@ def test_start_agent_session_emits_machine_readable_bundle(
     )
     assert output["underlying_commands"][3] == (
         "python scripts/run_shared_edit_preflight.py --agent observer-start --path <repo-path>"
+    )
+    assert output["underlying_commands"][4] == (
+        "python scripts/run_publish_push_preflight.py --agent observer-start"
     )
     assert output["packet"]["delta_feed"]["observer_id"] == "observer-start"
     assert output["packet"]["delta_feed"]["first_observation"] is True
@@ -1114,16 +1122,17 @@ def test_start_agent_session_cli_executes_directly(tmp_path: Path) -> None:
     assert "mutation_preflight" in payload
     assert (
         payload["mutation_preflight"]["next_followup"]["target"]
-        == "shared_code_edit.path_overlap_preflight"
+        == "publish_push.posture_preflight"
     )
     assert (
         payload["mutation_preflight"]["next_followup"]["classification"]
         == "existing_runtime_hook"
     )
+    assert payload["publish_push_preflight"]["present"] is True
     assert "subsystem_parity" in payload
     assert (
         payload["subsystem_parity"]["next_focus"]["resolved_to"]
-        == "working_style.wave_2_surface_selection"
+        == "tool_permission.publish_push_preflight"
     )
     assert "working_style_playbook" in payload
     assert "working_style_validation" in payload

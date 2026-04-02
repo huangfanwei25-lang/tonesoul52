@@ -192,7 +192,7 @@ def _make_subsystem_parity(*, packet: dict, import_posture: dict, readiness: dic
         working_style_validation={"status": "caution"},
         mutation_preflight={
             "summary_text": "shared_code=claim_before_shared_edits",
-            "next_followup": {"target": "shared_code_edit.path_overlap_preflight"},
+            "next_followup": {"target": "publish_push.posture_preflight"},
         },
         canonical_center=_make_canonical_center("Phase 743: hot-memory ladder readout"),
     )
@@ -755,5 +755,5 @@ class TestCanonicalCenterAndHotMemoryLadder:
         assert by_name["observer_window"]["status"] == "baseline"
         assert by_name["mutation_preflight_hooks"]["status"] == "beta_usable"
         assert by_name["mutation_preflight_hooks"]["next_bounded_move"] == (
-            "shared_code_edit.path_overlap_preflight"
+            "publish_push.posture_preflight"
         )
