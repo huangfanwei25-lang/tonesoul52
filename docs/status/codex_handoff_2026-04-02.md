@@ -47,6 +47,21 @@ The new file points successors to:
 
 instead of expecting repo-wide guessing.
 
+### Tiered successor entry
+
+The session-start surface now has three bounded pull levels:
+
+- `Tier 0` = instant gate
+- `Tier 1` = orientation shell
+- `Tier 2` = full bundle
+
+Most relevant commits from this wave:
+
+- `6d3d1d2` `feat: add tier-0 session-start fast path`
+- `2dbe7c8` `feat: add tier-1 orientation shell`
+- `fff7984` `feat: tighten deliberation escalation hints`
+- `952685d` `docs: define tiered agent workspace spec`
+
 ## 3. What Was Added Today
 
 ### Successor / hot-memory design surfaces
@@ -63,6 +78,18 @@ Purpose:
 - turn scattered continuity wisdom into one successor-facing contract
 - translate useful external patterns into ToneSoul-native terms
 - make subsystem maturity and overclaim risks legible
+
+### Tiered workspace spec
+
+New file:
+
+- `docs/plans/tonesoul_tiered_agent_workspace_spec_2026-04-02.md`
+
+Purpose:
+
+- define how a future agent IDE/frontend should map `Tier 0 / 1 / 2`
+- stop future UI work from collapsing `canonical`, `advisory`, `descriptive`, and `preflight` surfaces into one dashboard
+- keep frontend work spec-first before any implementation wave
 
 ## 4. Current Truths The Next Agent Should Not Forget
 
@@ -115,12 +142,18 @@ Read, in this order:
 Then run:
 
 ```bash
-python scripts/start_agent_session.py --agent <your-id> --no-ack
+python scripts/start_agent_session.py --agent <your-id> --tier 0 --no-ack
 python scripts/run_observer_window.py --agent <your-id>
 python scripts/run_r_memory_packet.py --agent <your-id>
 ```
 
 Use `diagnose` only if the shorter surfaces leave a real ambiguity.
+
+If local work is not obviously bounded after `Tier 0`, pull:
+
+```bash
+python scripts/start_agent_session.py --agent <your-id> --tier 1 --no-ack
+```
 
 ## 7. What Still Must Not Be Touched Casually
 
@@ -139,8 +172,23 @@ Do not reopen old launch or prompt-adoption buckets.
 
 The best next move is:
 
-1. use the new parity/gap map to ratify the next active short board
-2. if activated, push `low-drift anchor / hot-memory ladder` from day-1 observer baseline toward clearer successor coherence
+1. keep `Phase 767: Workspace Frontend Readiness Map` as the live short board
+2. map existing `Tier 0 / 1 / 2` runtime surfaces into:
+   - render-direct
+   - adapter-needed
+   - deep-pull-only
+3. do not implement frontend panels until that map exists
+
+Current tracked repo state is clean.
+
+Still-parked local residue:
+
+- `.claude/`
+- `claw-code-main/`
+- `docs/plans/tonesoul_anti_fake_completion_design_2026-04-02.md`
+- `docs/plans/tonesoul_architecture_thinning_and_tiered_flow_design_2026-04-02.md`
+- `docs/plans/tonesoul_dual_layer_numeric_design_2026-04-02.md`
+- `docs/plans/tonesoul_three_order_isolation_design_2026-04-02.md`
 
 ## 9. Compressed Thesis
 
