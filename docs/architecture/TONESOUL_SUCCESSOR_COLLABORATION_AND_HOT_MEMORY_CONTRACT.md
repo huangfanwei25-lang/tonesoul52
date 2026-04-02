@@ -171,6 +171,7 @@ In current runtime/readout form, later agents should see this alongside:
 - a bounded `canonical_center` derived from the accepted `task.md` short board
 - a bounded `hot_memory_ladder` that states which layer is parent truth and which layers are advisory children
 - a bounded `hot_memory_decay_map` that states which layers are operational, review-only, or quarantined
+- a bounded `subsystem_parity` readout that states which major subsystem families are baseline, beta-usable, partial, or deferred
 
 Target states:
 
@@ -249,6 +250,19 @@ The session-start bundle should expose one bounded `mutation_preflight` that ans
 
 This surface is advisory shell/resolver guidance.
 It does not replace runtime locks, Aegis checks, or human-owned task-board ratification.
+
+## Subsystem Parity Readout
+
+Successors also need one bounded maturity map so they do not treat every ToneSoul lane as equally finished.
+
+The successor-facing `subsystem_parity` readout should:
+
+- expose only the highest-signal subsystem families
+- use bounded labels: `baseline`, `beta_usable`, `partial`, `deferred`
+- tie each family to one strongest current truth, one main gap, one next bounded move, and one overclaim to avoid
+
+This readout is not another roadmap.
+It is a successor compression surface for maturity and honesty posture.
 
 ## External Patterns Worth Keeping
 

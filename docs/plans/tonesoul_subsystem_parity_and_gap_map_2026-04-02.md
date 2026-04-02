@@ -77,3 +77,13 @@ These lanes are no longer the shortest board:
 
 ToneSoul is no longer missing core structure.
 It is now in the phase where successor coherence, hot-memory layering, and honest subsystem maturity matter more than new theory.
+
+## Runtime Distillation Note
+
+This map now has a bounded successor-facing runtime distillation:
+
+- `session-start bundle -> subsystem_parity`
+- `observer window -> subsystem_parity`
+
+That readout is intentionally smaller than this planning map.
+It exists so later agents can see maturity posture without opening long plan files first.

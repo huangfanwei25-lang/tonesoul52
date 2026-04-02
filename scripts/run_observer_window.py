@@ -74,6 +74,7 @@ def _render_markdown(anchor: dict[str, Any]) -> str:
     current_short_board = canonical_center.get("current_short_board") or {}
     hot_memory_ladder = anchor.get("hot_memory_ladder") or {}
     hot_memory_decay_map = anchor.get("hot_memory_decay_map") or {}
+    subsystem_parity = anchor.get("subsystem_parity") or {}
 
     lines.extend(["## Canonical Center", ""])
     lines.append(
@@ -124,6 +125,26 @@ def _render_markdown(anchor: dict[str, Any]) -> str:
             lines.append(f"  - quarantine_reason: `{layer.get('quarantine_reason', '')}`")
         lines.append(f"  - note: {layer.get('note', '')}")
     if not hot_memory_decay_map.get("layers"):
+        lines.append("- *(none)*")
+    lines.append("")
+
+    lines.extend(["## Subsystem Parity", ""])
+    lines.append(f"- Summary: `{subsystem_parity.get('summary_text', '')}`")
+    lines.append(f"- Receiver rule: `{subsystem_parity.get('receiver_rule', '')}`")
+    next_focus = subsystem_parity.get("next_focus") or {}
+    if next_focus:
+        lines.append(
+            f"- Next focus: `{next_focus.get('resolved_to', '')}` - {next_focus.get('reason', '')}"
+        )
+    lines.append("")
+    for family in subsystem_parity.get("families") or []:
+        lines.append(f"- `{family.get('name', 'unknown')}`: `{family.get('status', 'unknown')}`")
+        lines.append(f"  - current_signal: `{family.get('current_signal', '')}`")
+        lines.append(f"  - strongest_truth: {family.get('strongest_truth', '')}")
+        lines.append(f"  - main_gap: {family.get('main_gap', '')}")
+        lines.append(f"  - next_bounded_move: `{family.get('next_bounded_move', '')}`")
+        lines.append(f"  - overclaim_to_avoid: {family.get('overclaim_to_avoid', '')}")
+    if not subsystem_parity.get("families"):
         lines.append("- *(none)*")
     lines.append("")
 
@@ -230,6 +251,7 @@ def run_observer_window(
     readiness = payload.get("readiness") or {}
     raw_import_posture = payload.get("import_posture") or {}
     canonical_center = payload.get("canonical_center") or {}
+    subsystem_parity = payload.get("subsystem_parity") or {}
     import_posture = raw_import_posture.get("surfaces") or raw_import_posture
 
     return build_low_drift_anchor(
@@ -237,6 +259,7 @@ def run_observer_window(
         import_posture=import_posture,
         readiness=readiness,
         canonical_center=canonical_center,
+        subsystem_parity=subsystem_parity,
     )
 
 

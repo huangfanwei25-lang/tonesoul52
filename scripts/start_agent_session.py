@@ -85,6 +85,29 @@ def _build_mutation_preflight(
     )
 
 
+def _build_subsystem_parity(
+    *,
+    packet: dict,
+    import_posture: dict,
+    readiness: dict,
+    task_track_hint: dict,
+    working_style_validation: dict,
+    mutation_preflight: dict,
+    canonical_center: dict,
+) -> dict:
+    from tonesoul.subsystem_parity import build_subsystem_parity_readout
+
+    return build_subsystem_parity_readout(
+        project_memory_summary=packet.get("project_memory_summary") or {},
+        import_posture=import_posture,
+        readiness=readiness,
+        task_track_hint=task_track_hint,
+        working_style_validation=working_style_validation,
+        mutation_preflight=mutation_preflight,
+        canonical_center=canonical_center,
+    )
+
+
 def _resolve_sidecar(root: Path, name: str) -> Path:
     canonical = root / ".aegis" / name
     legacy = root / name
@@ -1050,6 +1073,15 @@ def run_session_start_bundle(
         import_posture=import_posture,
         canonical_center=canonical_center,
     )
+    subsystem_parity = _build_subsystem_parity(
+        packet=packet,
+        import_posture=import_posture,
+        readiness=readiness,
+        task_track_hint=task_track_hint,
+        working_style_validation=working_style_validation,
+        mutation_preflight=mutation_preflight,
+        canonical_center=canonical_center,
+    )
     return {
         "contract_version": "v1",
         "bundle": "session_start",
@@ -1070,6 +1102,7 @@ def run_session_start_bundle(
         "receiver_parity": import_posture.get("receiver_parity", {}),
         "canonical_center": canonical_center,
         "mutation_preflight": mutation_preflight,
+        "subsystem_parity": subsystem_parity,
         "working_style_playbook": working_style_playbook,
         "working_style_validation": working_style_validation,
         "claim_view": {

@@ -93,10 +93,10 @@
   - collaborator-beta preflight, entry-validation, and discoverable beta-facing status surfaces
   - low-drift anchor / observer-window baseline (Day 1 complete): `tonesoul/observer_window.py`, `scripts/run_observer_window.py`, `tests/test_observer_window.py`, `docs/status/observer_window_latest.{json,md}`
 - Current short board:
-  - Phase 747: surface subsystem parity / gap posture so successors can see what is baseline, partial, or deferred without reading long plan files
+  - Phase 748: tighten shared path-overlap preflight before shared edits so mutation_preflight points at a real narrow hook instead of only a named gap
 - After that:
-  - Day 3: rotation checkpoint — freeze observer-window bucket if baseline-complete, name next shortest board
-  - only after Phase 747 closes should the bucket rotate
+  - Day 3: rotation checkpoint — freeze successor/hot-memory bucket if the shared-edit preflight closes without reopening launch wording
+  - only after Phase 748 closes should the bucket rotate
   - only after broader beta use should public-launch maturity be reconsidered
   - only then further optimization
 
@@ -1632,8 +1632,14 @@
 - [x] keep the result concrete enough for runtime follow-up without reopening launch wording or theory-heavy contracts
 **Success Criteria**: A successor can tell where mutation discipline actually lives, which writes are guarded today, and where the next bounded hook/readout follow-up belongs.
 
-## Phase 747: Subsystem Parity Readout And Gap Surfacing (2026-04-02, planned)
-- [ ] distill the existing subsystem parity / gap planning map into one bounded successor-facing readout
-- [ ] expose `baseline / partial / deferred / beta-usable` for the highest-signal subsystem families without reopening maturity theory
-- [ ] keep the result tied to evidence posture and launch honesty instead of turning it into a second roadmap
+## Phase 747: Subsystem Parity Readout And Gap Surfacing (2026-04-02)
+- [x] distill the existing subsystem parity / gap planning map into one bounded successor-facing readout
+- [x] expose `baseline / partial / deferred / beta-usable` for the highest-signal subsystem families without reopening maturity theory
+- [x] keep the result tied to evidence posture and launch honesty instead of turning it into a second roadmap
 **Success Criteria**: A successor entering through normal surfaces can see which major subsystems are baseline-complete, partial, or deferred without reading long planning docs first.
+
+## Phase 748: Shared Path-Overlap Preflight Hook (2026-04-02, planned)
+- [ ] turn the current mutation-preflight `shared_code_edit.path_overlap_preflight` gap into one bounded runtime/readout check
+- [ ] keep it limited to shared-path overlap and visible claims instead of inventing a full new permission system
+- [ ] wire the result back into successor-facing surfaces without reopening launch or maturity wording
+**Success Criteria**: A successor about to edit shared code can see one explicit preflight answer about claim/path overlap instead of reconstructing it manually from multiple surfaces.

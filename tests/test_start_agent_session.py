@@ -196,6 +196,17 @@ def test_start_agent_session_emits_machine_readable_bundle(
     assert by_name["canonical_commit"]["posture"] == "aegis_locked_commit"
     assert by_name["task_board_update"]["control_type"] == "human_gated"
     assert by_name["launch_claim_language"]["posture"] == "bounded_collaborator_beta_only"
+    subsystem_parity = output["subsystem_parity"]
+    assert subsystem_parity["present"] is True
+    assert subsystem_parity["counts"]["baseline"] == 3
+    assert subsystem_parity["counts"]["beta_usable"] == 4
+    assert subsystem_parity["counts"]["partial"] == 3
+    assert subsystem_parity["counts"]["deferred"] == 1
+    assert subsystem_parity["next_focus"]["resolved_to"] == "shared_code_edit.path_overlap_preflight"
+    parity_by_name = {item["name"]: item for item in subsystem_parity["families"]}
+    assert parity_by_name["session_start_bundle"]["status"] == "baseline"
+    assert parity_by_name["packet_hot_state"]["status"] == "beta_usable"
+    assert parity_by_name["mutation_preflight_hooks"]["status"] == "partial"
     assert output["working_style_playbook"]["present"] is False
     assert output["working_style_playbook"]["checklist"] == []
     assert (
@@ -1085,6 +1096,10 @@ def test_start_agent_session_cli_executes_directly(tmp_path: Path) -> None:
     assert (
         payload["mutation_preflight"]["next_followup"]["target"]
         == "shared_code_edit.path_overlap_preflight"
+    )
+    assert "subsystem_parity" in payload
+    assert payload["subsystem_parity"]["next_focus"]["resolved_to"] == (
+        "shared_code_edit.path_overlap_preflight"
     )
     assert "working_style_playbook" in payload
     assert "working_style_validation" in payload

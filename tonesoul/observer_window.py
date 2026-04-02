@@ -345,6 +345,7 @@ def build_low_drift_anchor(
     import_posture: dict[str, Any],
     readiness: dict[str, Any],
     canonical_center: dict[str, Any] | None = None,
+    subsystem_parity: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """
     Derive a bounded low_drift_anchor from visible packet/session-start surfaces.
@@ -365,6 +366,7 @@ def build_low_drift_anchor(
     stale = _build_stale(import_posture=import_posture)
     delta_summary = _build_delta_summary(packet=packet)
     canonical_center = canonical_center or build_canonical_center(task_text="")
+    subsystem_parity = subsystem_parity or {}
 
     stable_count = len(stable)
     contested_count = len(contested)
@@ -384,6 +386,7 @@ def build_low_drift_anchor(
     return {
         "generated_at": _iso_now(),
         "canonical_center": canonical_center,
+        "subsystem_parity": subsystem_parity,
         "hot_memory_ladder": hot_memory_ladder,
         "hot_memory_decay_map": hot_memory_decay_map,
         "stable": stable,

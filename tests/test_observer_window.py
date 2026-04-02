@@ -14,6 +14,7 @@ from __future__ import annotations
 
 from tonesoul.hot_memory import build_canonical_center
 from tonesoul.observer_window import build_low_drift_anchor
+from tonesoul.subsystem_parity import build_subsystem_parity_readout
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -161,6 +162,24 @@ def _make_canonical_center(*short_board_items: str) -> dict:
         ]
     )
     return build_canonical_center(task_text=task_text)
+
+
+def _make_subsystem_parity(*, packet: dict, import_posture: dict, readiness: dict) -> dict:
+    return build_subsystem_parity_readout(
+        project_memory_summary=packet.get("project_memory_summary") or {},
+        import_posture={"receiver_rule": "ack/apply/promote ladder visible", "surfaces": import_posture},
+        readiness=readiness,
+        task_track_hint={
+            "suggested_track": "feature_track",
+            "claim_recommendation": "required",
+        },
+        working_style_validation={"status": "caution"},
+        mutation_preflight={
+            "summary_text": "shared_code=claim_before_shared_edits",
+            "next_followup": {"target": "shared_code_edit.path_overlap_preflight"},
+        },
+        canonical_center=_make_canonical_center("Phase 743: hot-memory ladder readout"),
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -590,18 +609,26 @@ class TestCouncilSuppressionFlagged:
 
 class TestCanonicalCenterAndHotMemoryLadder:
     def setup_method(self):
+        packet = _make_packet(first_observation=False)
+        import_posture = _make_import_posture(
+            compaction_hazards=["recycled_carry_forward_without_new_evidence"],
+            compaction_obligation="must_not_promote",
+            council_calibration="descriptive_only",
+            ws_observability_status="partial",
+        )
+        readiness = _make_readiness(status="needs_clarification")
         self.anchor = build_low_drift_anchor(
-            packet=_make_packet(first_observation=False),
-            import_posture=_make_import_posture(
-                compaction_hazards=["recycled_carry_forward_without_new_evidence"],
-                compaction_obligation="must_not_promote",
-                council_calibration="descriptive_only",
-                ws_observability_status="partial",
-            ),
-            readiness=_make_readiness(status="needs_clarification"),
+            packet=packet,
+            import_posture=import_posture,
+            readiness=readiness,
             canonical_center=_make_canonical_center(
                 "Phase 743: hot-memory ladder readout",
                 "Phase 744: observer-window misread correction",
+            ),
+            subsystem_parity=_make_subsystem_parity(
+                packet=packet,
+                import_posture=import_posture,
+                readiness=readiness,
             ),
         )
 
@@ -669,3 +696,18 @@ class TestCanonicalCenterAndHotMemoryLadder:
             if entry["layer"] == "canonical_center"
         )
         assert layer["use_posture"] == "operational"
+
+    def test_subsystem_parity_is_present(self):
+        parity = self.anchor["subsystem_parity"]
+        assert parity["present"] is True
+        assert parity["counts"]["baseline"] == 3
+        assert parity["counts"]["beta_usable"] == 4
+        assert parity["counts"]["partial"] == 3
+        assert parity["counts"]["deferred"] == 1
+
+    def test_subsystem_parity_marks_observer_window_baseline(self):
+        by_name = {item["name"]: item for item in self.anchor["subsystem_parity"]["families"]}
+        assert by_name["observer_window"]["status"] == "baseline"
+        assert by_name["mutation_preflight_hooks"]["next_bounded_move"] == (
+            "shared_code_edit.path_overlap_preflight"
+        )

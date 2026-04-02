@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-01T23:34:46Z",
+  "generated_at": "2026-04-02T01:59:45Z",
   "canonical_center": {
     "present": true,
     "parent_surfaces": [
@@ -21,12 +21,129 @@
       "present": true,
       "status": "visible",
       "items": [
-        "Phase 746: map mutation-preflight / write-hook chain without reopening launch wording or new ontology lanes"
+        "Phase 748: tighten shared path-overlap preflight before shared edits so mutation_preflight points at a real narrow hook instead of only a named gap"
       ],
       "source": "task.md > Water-Bucket Snapshot > Current short board",
-      "summary_text": "Phase 746: map mutation-preflight / write-hook chain without reopening launch wording or new ontology lanes"
+      "summary_text": "Phase 748: tighten shared path-overlap preflight before shared edits so mutation_preflight points at a real narrow hook instead of only a named gap"
     },
     "summary_text": "canonical_center short_board_items=1 source=task.md > Water-Bucket Snapshot > Current short board"
+  },
+  "subsystem_parity": {
+    "present": true,
+    "families": [
+      {
+        "name": "session_start_bundle",
+        "status": "baseline",
+        "current_signal": "readiness=pass track=feature_track claim=required",
+        "strongest_truth": "Session-start exposes readiness, task/deliberation hints, import posture, and bounded successor guards.",
+        "main_gap": "Cold successors still need one tighter parity readout for overall subsystem maturity.",
+        "next_bounded_move": "keep first-hop bundle stable and successor-focused",
+        "overclaim_to_avoid": "session-start alone captures the whole system"
+      },
+      {
+        "name": "observer_window",
+        "status": "baseline",
+        "current_signal": "short_board_visible",
+        "strongest_truth": "Stable/contested/stale observer window exists and is regression-backed.",
+        "main_gap": "Anchor ordering is better than before but still relies on successor discipline.",
+        "next_bounded_move": "keep observer output bounded to shell-order orientation",
+        "overclaim_to_avoid": "observer window is canonical truth"
+      },
+      {
+        "name": "receiver_posture",
+        "status": "baseline",
+        "current_signal": "ack is safe, apply is bounded, promote requires explicit justification and human confirmation.",
+        "strongest_truth": "ack/apply/promote ladder is visible across session-start, packet, and diagnose.",
+        "main_gap": "Cold readers can still miss it if they skip first-hop surfaces.",
+        "next_bounded_move": "keep the ladder concentrated in successor-facing surfaces",
+        "overclaim_to_avoid": "every agent will interpret the ladder identically"
+      },
+      {
+        "name": "packet_hot_state",
+        "status": "beta_usable",
+        "current_signal": "continuity=runtime_present evidence_tested=2",
+        "strongest_truth": "Packet carries freshness, evidence posture, launch claim posture, and realism notes.",
+        "main_gap": "Too many adjacent readouts still compete for attention.",
+        "next_bounded_move": "keep canonical-center and parity ordering visible",
+        "overclaim_to_avoid": "packet equals complete memory"
+      },
+      {
+        "name": "compaction_checkpoint_handoff",
+        "status": "beta_usable",
+        "current_signal": "receiver_obligation=must_not_promote closeout=partial",
+        "strongest_truth": "Bounded resumability, closeout grammar, and promotion hazards are visible.",
+        "main_gap": "Smooth summaries can still be over-read if successors ignore closeout and receiver posture.",
+        "next_bounded_move": "tighten closeout surfacing where successors actually read first",
+        "overclaim_to_avoid": "compaction is full task truth"
+      },
+      {
+        "name": "subject_working_style",
+        "status": "partial",
+        "current_signal": "validation=sufficient",
+        "strongest_truth": "Working-style continuity exists with playbook, limits, observability, and validation.",
+        "main_gap": "Successors can still confuse shared style with identity or authority.",
+        "next_bounded_move": "keep style bounded to advisory workflow habits",
+        "overclaim_to_avoid": "shared style means shared selfhood"
+      },
+      {
+        "name": "council_realism",
+        "status": "partial",
+        "current_signal": "calibration=unknown",
+        "strongest_truth": "Descriptive-only, dissent, suppression, and realism notes are visible.",
+        "main_gap": "No outcome calibration exists yet.",
+        "next_bounded_move": "preserve realism warnings without pretending calibrated accuracy",
+        "overclaim_to_avoid": "council confidence predicts correctness"
+      },
+      {
+        "name": "evidence_posture",
+        "status": "beta_usable",
+        "current_signal": "tested=2 runtime_present=1 descriptive_only=1",
+        "strongest_truth": "Evidence posture separates tested, runtime_present, descriptive_only, and document_backed lanes.",
+        "main_gap": "Operator-facing storytelling still needs to stay aligned with this ladder.",
+        "next_bounded_move": "keep evidence posture visible in successor surfaces and launch language",
+        "overclaim_to_avoid": "all current claims are equally proven"
+      },
+      {
+        "name": "collaborator_beta_launch",
+        "status": "beta_usable",
+        "current_signal": "current_tier=collaborator_beta public_ready=no",
+        "strongest_truth": "Guided collaborator beta is current truth and public launch remains deferred.",
+        "main_gap": "External deployment and broader live validation are still thinner than the internal story.",
+        "next_bounded_move": "continue bounded beta validation without widening claims",
+        "overclaim_to_avoid": "public launch maturity is ready"
+      },
+      {
+        "name": "mutation_preflight_hooks",
+        "status": "partial",
+        "current_signal": "shared_code=claim_before_shared_edits compaction=review_only_handoff task_board=ratified_short_board_only commit=aegis_locked_commit launch_claims=bounded_collaborator_beta_only",
+        "strongest_truth": "Successor-facing mutation preflight now maps current write/mutate/publish decision points.",
+        "main_gap": "The actual shared path-overlap decision is still a manual read, not a dedicated hook.",
+        "next_bounded_move": "shared_code_edit.path_overlap_preflight",
+        "overclaim_to_avoid": "guard rails are already fully explicit"
+      },
+      {
+        "name": "external_transport_plugins",
+        "status": "deferred",
+        "current_signal": "not_in_launch_default_story",
+        "strongest_truth": "External transport, MCP, and plugin packaging are known future-value lanes.",
+        "main_gap": "They are not needed for current collaborator-beta truth.",
+        "next_bounded_move": "keep parked under external roadmap until current launch-default story is stronger",
+        "overclaim_to_avoid": "ToneSoul already has a mature transport shell"
+      }
+    ],
+    "counts": {
+      "baseline": 3,
+      "beta_usable": 4,
+      "partial": 3,
+      "deferred": 1
+    },
+    "receiver_rule": "Use baseline lanes for normal continuation, beta_usable lanes for guided collaborator-beta work, partial lanes with explicit gap awareness, and deferred lanes as out of current scope.",
+    "next_focus": {
+      "target": "mutation_preflight.next_followup",
+      "resolved_to": "shared_code_edit.path_overlap_preflight",
+      "reason": "Mutation preflight is now visible, but the narrowest remaining runtime gap is still explicit path-overlap preflight before shared edits."
+    },
+    "summary_text": "subsystem_parity baseline=3 beta_usable=4 partial=3 deferred=1 launch=collaborator_beta readiness=pass"
   },
   "hot_memory_ladder": {
     "layers": [
@@ -207,9 +324,9 @@
   ],
   "stale": [
     {
-      "claim": "recent_traces are 186.4h old (threshold=48.0h)",
+      "claim": "recent_traces are 188.8h old (threshold=48.0h)",
       "evidence_source": "import_posture.recent_traces.freshness_hours",
-      "detail": "freshness_hours=186.4"
+      "detail": "freshness_hours=188.8"
     }
   ],
   "delta_summary": {
