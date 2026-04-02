@@ -2,7 +2,7 @@
 
 > **Purpose**: 給未來沒有記憶的 AI 實例的快速引導。
 > **Author**: 黃梵威 (Fan-Wei Huang) + Previous AI Instances
-> **Last Updated**: 2026-03-29
+> **Last Updated**: 2026-04-02
 > **Status**: active AI entrypoint that routes later agents into operational, canonical, deep-map, and interpretive lanes without collapsing them together.
 
 ## Clean First-Hop Route
@@ -17,6 +17,12 @@ Use this route before reading the repo in bulk:
    - `python scripts/run_r_memory_packet.py --agent <your-id> --ack`
    - `python scripts/run_observer_window.py --agent <your-id>`
 5. Only then widen into `DESIGN.md`, `docs/architecture/`, or code
+
+Tiered entry options:
+
+- `--tier 0` = instant gate for quick bounded work
+- `--tier 1` = orientation shell for feature continuation
+- default / `--tier 2` = full bundle for deeper governance
 
 Current first-hop rule:
 

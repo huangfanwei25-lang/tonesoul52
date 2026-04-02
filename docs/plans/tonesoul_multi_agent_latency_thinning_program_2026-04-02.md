@@ -196,7 +196,8 @@ Completed:
 - `Phase 763: Tier-0 Session-Start Fast Path`
 - `Phase 764: Tier-1 Orientation Shell`
 - `Phase 765: Deliberation Escalation Tightening`
+- `Phase 766: Tiered Agent Workspace Spec`
 
 The next bounded translation move should be:
 
-`Phase 766: Tiered Agent Workspace Spec`
+`Phase 767: Workspace Frontend Readiness Map`

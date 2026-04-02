@@ -94,7 +94,7 @@
   - low-drift anchor / observer-window baseline (Day 1 complete): `tonesoul/observer_window.py`, `scripts/run_observer_window.py`, `tests/test_observer_window.py`, `docs/status/observer_window_latest.{json,md}`
   - bounded outer-shell preflight chain for shared edits, publish/push posture, and task-board parking discipline
 - Current short board:
-  - Phase 766: define a tiered agent workspace spec so a future IDE/frontend can present Tier 0 / 1 / 2 without collapsing boundaries
+  - Phase 767: map the existing Tier 0 / 1 / 2 runtime surfaces into a frontend-ready panel/read-model without reopening a monolithic dashboard story
 - After that:
   - successor/hot-memory bucket is now baseline-frozen unless a fresh real-world misread reopens it
   - task-board governance should stay boring and explicit before any new theory bucket opens
@@ -1748,8 +1748,14 @@
 - [x] add regression coverage so quick-change and narrow feature-track continuations do not look like they require full multi-agent overhead by default
 **Success Criteria**: ToneSoul keeps multi-agent/council value for ambiguous or risky work, while normal continuation flows stop presenting deep deliberation as default overhead.
 
-## Phase 766: Tiered Agent Workspace Spec (2026-04-02, planned)
-- [ ] define a ToneSoul-native workspace/IDE surface map that presents Tier 0, Tier 1, and Tier 2 as distinct panels instead of one flat control surface
-- [ ] map current runtime/readout surfaces into UI-safe panels without collapsing `canonical`, `advisory`, `descriptive`, and `mutation-preflight` boundaries
-- [ ] keep the phase spec-first: write the bounded workspace contract before touching frontend code
+## Phase 766: Tiered Agent Workspace Spec (2026-04-02, completed)
+- [x] define a ToneSoul-native workspace/IDE surface map that presents Tier 0, Tier 1, and Tier 2 as distinct panels instead of one flat control surface
+- [x] map current runtime/readout surfaces into UI-safe panels without collapsing `canonical`, `advisory`, `descriptive`, and `mutation-preflight` boundaries
+- [x] keep the phase spec-first: write the bounded workspace contract before touching frontend code
 **Success Criteria**: A future agent IDE/frontend has one clear ToneSoul-native panel model for instant gate, orientation shell, and deep governance, so UI work can improve discoverability without turning every surface into one noisy dashboard.
+
+## Phase 767: Workspace Frontend Readiness Map (2026-04-02, planned)
+- [ ] identify which existing runtime/readout surfaces are already safe to render directly in a workspace panel, and which still need view-model adaptation
+- [ ] define one bounded frontend-readiness map for `Tier 0`, `Tier 1`, and `Tier 2` so UI work can stay aligned with CLI/runtime truth
+- [ ] keep the phase translation-focused: no frontend implementation unless a concrete panel becomes the shortest board
+**Success Criteria**: ToneSoul has one current frontend-readiness map showing which Tier 0 / 1 / 2 surfaces can be rendered directly, which need adapter shaping, and which must remain behind deeper pull, so future UI work does not reopen a flat dashboard design.

@@ -1,7 +1,7 @@
 # ToneSoul — AI 快速入場（60 秒版）
 
 > Purpose: give any later AI instance the minimum working entry surface for ToneSoul before it starts reading the repo in bulk.
-> Last Updated: 2026-03-28
+> Last Updated: 2026-04-02
 > Status: operational quickstart; subordinate to `AXIOMS.json`, executable code, tests, and canonical architecture contracts.
 > Use When: first minute of a session, before touching code or making architecture claims.
 
@@ -15,6 +15,19 @@ python -m tonesoul.diagnose --agent <your-id>
 python scripts/run_r_memory_packet.py --agent <your-id> --ack
 python scripts/run_task_claim.py list
 ```
+
+If you need a smaller first-hop bundle:
+
+```bash
+python scripts/start_agent_session.py --agent <your-id> --tier 0
+python scripts/start_agent_session.py --agent <your-id> --tier 1
+```
+
+Use them like this:
+
+- `tier 0` = instant gate for quick bounded work
+- `tier 1` = orientation shell for feature-track continuation
+- default = full Tier-2 bundle for deeper governance
 
 Then read these first:
 
