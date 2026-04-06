@@ -1,6 +1,6 @@
 # ToneSoul Self-Improvement Trial Wave
 
-**Summary**: `self_improvement_trial_wave promote=5 park=1 retire=0 blocked=0`
+**Summary**: `self_improvement_trial_wave promote=6 park=1 retire=0 blocked=0`
 
 > Trial-wave outcomes are bounded self-improvement results. They may inform future patches or parking decisions, but they do not become governance truth, identity truth, or hot-memory authority.
 
@@ -12,10 +12,11 @@
 - `task_board_parking_clarity`
 - `shared_edit_overlap_clarity`
 - `publish_push_posture_clarity`
+- `mutation_followup_routing`
 
 ## Outcomes
 
-- `promote`: `5`
+- `promote`: `6`
 - `park`: `1`
 - `retire`: `0`
 - `blocked`: `0`
@@ -102,7 +103,20 @@
     - future shells must preserve review-versus-honesty separation without widening authority
   - promotion_limit: `does not authorize automatic publish, deployment, or stronger launch claims`
   - next_action: `keep publish/push preflight packaging bounded while selecting the next admitted candidate`
+- `mutation_followup_routing_v1` -> `promote`
+  - target_surface: `mutation_preflight.next_followup`
+  - success_metric: `mutation_followup_probe.present and consumer_drift_report.status == aligned`
+  - result_story: Mutation preflight now routes next_followup toward the current bounded hook instead of pointing at one stale default.
+  - evidence: `mutation_followup_probe shared_target=shared_code_edit.path_overlap_preflight publish_target=publish_push.posture_preflight`
+  - result_surface: `promoted_result`
+  - replay_rule: `prefer_status_surface_then_probe_current_mutation_followup_shape_before_reusing_the_story`
+  - residue_posture: `keep_visible_as_current_packaging_result`
+  - unresolved_items:
+    - clearer mutation follow-up routing does not prove better planning quality
+    - future shells must preserve bounded hook selection without turning it into a planner
+  - promotion_limit: `does not authorize new hooks, broader permissions, or governance changes`
+  - next_action: `keep mutation follow-up routing bounded while selecting the next admitted candidate`
 
 ## Next Short Board
 
-- `Phase 811: Sixth Trial Candidate Admission`
+- `Phase 814: Seventh Trial Candidate Admission`

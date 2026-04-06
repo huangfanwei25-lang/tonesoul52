@@ -61,6 +61,9 @@ def build_subsystem_parity_readout(
     working_style_status = str(
         working_style_validation.get("status", "insufficient") or "insufficient"
     )
+    next_followup_target = str(
+        ((mutation_preflight.get("next_followup") or {}).get("target")) or ""
+    ).strip()
     current_tier = str(launch_claim_posture.get("current_tier", "unknown") or "unknown")
     public_launch_ready = bool(launch_claim_posture.get("public_launch_ready", False))
     evidence_counts = evidence_readout.get("classification_counts") or {}
@@ -198,9 +201,11 @@ def build_subsystem_parity_readout(
             "Use baseline lanes for normal continuation, beta_usable lanes for guided collaborator-beta work, partial lanes with explicit gap awareness, and deferred lanes as out of current scope."
         ),
         "next_focus": {
-            "target": "task_board.parking_preflight",
-            "resolved_to": "task_board_governance.parking_preflight",
-            "reason": "Publish/push posture is now real; the next bounded governance gain is keeping outside ideas in docs/plans until the short board explicitly ratifies them.",
+            "target": next_followup_target or "shared_code_edit.path_overlap_preflight",
+            "resolved_to": next_followup_target or "shared_code_edit.path_overlap_preflight",
+            "reason": (
+                "Follow the next bounded mutation hook surfaced by mutation_preflight instead of assuming task-board parking is always the shortest remaining lane."
+            ),
         },
         "summary_text": (
             f"subsystem_parity baseline={counts['baseline']} beta_usable={counts['beta_usable']} "

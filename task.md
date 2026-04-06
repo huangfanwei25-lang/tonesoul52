@@ -142,6 +142,9 @@
 - Phase 809: run one fifth bounded self-improvement trial on publish/push posture clarity without widening release authority or launch maturity claims
 - Phase 810: classify and register the fifth bounded trial result before admitting any broader candidate
 - Phase 811: admit one sixth bounded self-improvement candidate after the fifth trial result is classified and registered
+- Phase 812: run one sixth bounded self-improvement trial on mutation follow-up routing without inventing a new hook family or permission layer
+- Phase 813: classify and register the sixth bounded trial result before admitting any broader candidate
+- Phase 814: admit one seventh bounded self-improvement candidate after the sixth trial result is classified and registered
 
 ## Water-Bucket Snapshot (2026-03-30)
 - Baseline reached:
@@ -158,7 +161,7 @@
   - bounded outer-shell preflight chain for shared edits, publish/push posture, and task-board parking discipline
   - bounded self-improvement foundation: evaluator harness, experiment lineage boundary, mutation space, analyzer gate, first trial wave, and promotion-ready result surface discipline
 - Current short board:
-  - Phase 811: admit the sixth bounded self-improvement candidate without reopening retrieval mythology or governance semantics
+  - Phase 814: admit the seventh bounded self-improvement candidate without reopening retrieval mythology or governance semantics
 - After that:
   - `ToneSoul Self-Improvement Loop v0` is now the active bucket, with `Phase 790-804` landed and the next work focused on fourth-candidate selection rather than expanding shell surface area
   - successor/hot-memory bucket is now baseline-frozen unless a fresh real-world misread reopens it
@@ -2083,8 +2086,26 @@
 - [x] register the result in a bounded status/registry surface without leaking it into first-hop shells
 **Success Criteria**: ToneSoul has one honest fifth-trial result classification and registry-ready record for `publish_push_posture_clarity_v1`.
 
-## Phase 811: Sixth Trial Candidate Admission (2026-04-07, planned)
-- [ ] choose the next bounded self-improvement candidate after the fifth trial result and current registry/status surface are visible
-- [ ] keep the next candidate inside allowed mutation classes and away from retrieval mythology, governance semantics, identity, and transport claims
-- [ ] make the no-go list explicit before opening a sixth trial wave
+## Phase 811: Sixth Trial Candidate Admission (2026-04-07)
+- [x] choose the next bounded self-improvement candidate after the fifth trial result and current registry/status surface are visible
+- [x] keep the next candidate inside allowed mutation classes and away from retrieval mythology, governance semantics, identity, and transport claims
+- [x] make the no-go list explicit before opening a sixth trial wave
 **Success Criteria**: ToneSoul has one admitted sixth candidate that is narrower than shell redesign and still worth real operator leverage.
+
+## Phase 812: Sixth Bounded Trial Wave - Mutation Follow-Up Routing (2026-04-07)
+- [x] refine `mutation_preflight.next_followup` so it routes to the narrowest current bounded hook instead of always pointing at task-board parking
+- [x] preserve the existing hook set (`shared_edit_path_overlap / publish_push_posture / task_board_parking`) and avoid inventing a planner or permission layer
+- [x] add regression coverage proving the new routing stays bounded, parity-safe, and non-promoting
+**Success Criteria**: ToneSoul lands one bounded sixth-trial implementation for `mutation_followup_routing_v1` that reduces successor-routing ambiguity without inventing a new hook family or authority myth.
+
+## Phase 813: Sixth Trial Evaluation And Registry Entry (2026-04-07)
+- [x] evaluate the `mutation_followup_routing_v1` trial against the existing evaluator harness and analyzer gate
+- [x] classify the result as `promote`, `park`, `retire`, `blocked`, or `not_ready_for_trial` without inflating follow-up routing into governance quality
+- [x] register the result in a bounded status/registry surface without leaking it into first-hop shells
+**Success Criteria**: ToneSoul has one honest sixth-trial result classification and registry-ready record for `mutation_followup_routing_v1`.
+
+## Phase 814: Seventh Trial Candidate Admission (2026-04-07, planned)
+- [ ] choose the next bounded self-improvement candidate after the sixth trial result and current registry/status surface are visible
+- [ ] keep the next candidate inside allowed mutation classes and away from retrieval mythology, governance semantics, identity, and transport claims
+- [ ] make the no-go list explicit before opening a seventh trial wave
+**Success Criteria**: ToneSoul has one admitted seventh candidate that is narrower than shell redesign and still worth real operator leverage.

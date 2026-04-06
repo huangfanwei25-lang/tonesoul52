@@ -227,9 +227,9 @@ def test_start_agent_session_emits_machine_readable_bundle(
     assert mutation_preflight["present"] is True
     assert mutation_preflight["current_context"]["task_track"] == "feature_track"
     assert mutation_preflight["current_context"]["claim_conflict_count"] == 1
-    assert mutation_preflight["next_followup"]["target"] == "task_board.parking_preflight"
+    assert mutation_preflight["next_followup"]["target"] == "shared_code_edit.path_overlap_preflight"
     assert mutation_preflight["next_followup"]["classification"] == "existing_runtime_hook"
-    assert "run_task_board_preflight.py" in mutation_preflight["next_followup"]["command"]
+    assert "run_shared_edit_preflight.py" in mutation_preflight["next_followup"]["command"]
     by_name = {item["name"]: item for item in mutation_preflight["decision_points"]}
     assert by_name["shared_code_edit"]["posture"] == "coordinate_before_shared_edits"
     assert by_name["shared_code_edit"]["control_type"] == "existing_runtime_hook"
@@ -284,7 +284,7 @@ def test_start_agent_session_emits_machine_readable_bundle(
     assert subsystem_parity["counts"]["beta_usable"] == 5
     assert subsystem_parity["counts"]["partial"] == 2
     assert subsystem_parity["counts"]["deferred"] == 1
-    assert subsystem_parity["next_focus"]["resolved_to"] == "task_board_governance.parking_preflight"
+    assert subsystem_parity["next_focus"]["resolved_to"] == "shared_code_edit.path_overlap_preflight"
     parity_by_name = {item["name"]: item for item in subsystem_parity["families"]}
     assert parity_by_name["session_start_bundle"]["status"] == "baseline"
     assert parity_by_name["packet_hot_state"]["status"] == "beta_usable"
@@ -407,7 +407,7 @@ def test_start_agent_session_tier0_returns_fast_path_bundle(
     assert output["hook_chain"]["stages"][2]["name"] == "task_board_parking"
     assert output["mutation_preflight"]["present"] is True
     assert output["mutation_preflight"]["current_context"]["task_track"] == "unclassified"
-    assert output["mutation_preflight"]["next_followup"]["target"] == "task_board.parking_preflight"
+    assert output["mutation_preflight"]["next_followup"]["target"] == "publish_push.posture_preflight"
     assert output["consumer_contract"]["present"] is True
     assert output["consumer_contract"]["first_hop_surfaces"] == [
         "readiness",
@@ -1408,7 +1408,7 @@ def test_start_agent_session_cli_executes_directly(tmp_path: Path) -> None:
     assert "mutation_preflight" in payload
     assert (
         payload["mutation_preflight"]["next_followup"]["target"]
-        == "task_board.parking_preflight"
+        == "publish_push.posture_preflight"
     )
     assert (
         payload["mutation_preflight"]["next_followup"]["classification"]
@@ -1421,7 +1421,7 @@ def test_start_agent_session_cli_executes_directly(tmp_path: Path) -> None:
     assert "subsystem_parity" in payload
     assert (
         payload["subsystem_parity"]["next_focus"]["resolved_to"]
-        == "task_board_governance.parking_preflight"
+        == "shared_code_edit.path_overlap_preflight"
     )
     assert "working_style_playbook" in payload
     assert "working_style_validation" in payload

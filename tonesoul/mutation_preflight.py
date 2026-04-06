@@ -24,6 +24,74 @@ def _point(
     }
 
 
+def _build_next_followup(
+    *,
+    shared_code_posture: str,
+    publish_push_posture: str,
+    task_board_posture: str,
+) -> dict[str, str]:
+    if shared_code_posture in {
+        "blocked",
+        "coordinate_before_shared_edits",
+        "claim_before_shared_edits",
+    }:
+        return {
+            "target": "shared_code_edit.path_overlap_preflight",
+            "classification": "existing_runtime_hook",
+            "command": (
+                "python scripts/run_shared_edit_preflight.py --agent <your-id> "
+                "--path <repo-path>"
+            ),
+            "reason": (
+                "Use the shared-edit preflight first; current readiness or claim pressure says path-level coordination is the shortest side-effect lane."
+            ),
+            "why_here": (
+                "Shared code mutation is the current friction point, so overlap and claim pressure should be resolved before broader publish or board actions."
+            ),
+        }
+    if publish_push_posture in {"blocked", "review_before_push"}:
+        return {
+            "target": "publish_push.posture_preflight",
+            "classification": "existing_runtime_hook",
+            "command": "python scripts/run_publish_push_preflight.py --agent <your-id>",
+            "reason": (
+                "Use the publish/push preflight first; current repo, closeout, or launch posture makes outward-facing side effects the shortest bounded review lane."
+            ),
+            "why_here": (
+                "Publish/push posture is the current friction point, so side-effect review should stay ahead of broader planning changes."
+            ),
+        }
+    if task_board_posture in {"docs_plans_first", "human_review_required"}:
+        return {
+            "target": "task_board.parking_preflight",
+            "classification": "existing_runtime_hook",
+            "command": (
+                "python scripts/run_task_board_preflight.py --agent <your-id> "
+                "--proposal-kind external_idea --target-path task.md"
+            ),
+            "reason": (
+                "Use the bounded task-board preflight before changing task.md; it keeps outside ideas parked in docs/plans until a human or accepted program explicitly ratifies them."
+            ),
+            "why_here": (
+                "Task-board routing is the current friction point, so parking discipline should stay ahead of short-board mutation."
+            ),
+        }
+    return {
+        "target": "shared_code_edit.path_overlap_preflight",
+        "classification": "existing_runtime_hook",
+        "command": (
+            "python scripts/run_shared_edit_preflight.py --agent <your-id> "
+            "--path <repo-path>"
+        ),
+        "reason": (
+            "If the next step mutates repo paths, start with the bounded shared-edit preflight rather than assuming local isolation."
+        ),
+        "why_here": (
+            "No stronger mutation friction is visible right now, so shared-edit overlap remains the narrowest reusable hook."
+        ),
+    }
+
+
 def build_mutation_preflight(
     *,
     readiness: dict[str, Any],
@@ -235,20 +303,11 @@ def build_mutation_preflight(
         ),
     ]
 
-    next_followup = {
-        "target": "task_board.parking_preflight",
-        "classification": "existing_runtime_hook",
-        "command": (
-            "python scripts/run_task_board_preflight.py --agent <your-id> "
-            "--proposal-kind external_idea --target-path task.md"
-        ),
-        "reason": (
-            "Use the bounded task-board preflight before changing task.md; it keeps outside ideas parked in docs/plans until a human or accepted program explicitly ratifies them."
-        ),
-        "why_here": (
-            "Publish/push posture is now a real hook. The next bounded governance friction is preventing outside ideas from competing with the ratified short board."
-        ),
-    }
+    next_followup = _build_next_followup(
+        shared_code_posture=shared_code_posture,
+        publish_push_posture=publish_push_posture,
+        task_board_posture=task_board_posture,
+    )
 
     return {
         "present": True,

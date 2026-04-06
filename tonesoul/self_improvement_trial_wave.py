@@ -100,6 +100,7 @@ def build_self_improvement_trial_wave(
     task_board_probe: dict[str, Any],
     shared_edit_probe: dict[str, Any],
     publish_push_probe: dict[str, Any],
+    mutation_followup_probe: dict[str, Any],
     operator_retrieval_contract_present: bool,
     compiled_landing_zone_spec_present: bool,
     retrieval_runner_present: bool,
@@ -116,6 +117,10 @@ def build_self_improvement_trial_wave(
     shared_edit_summary = str((shared_edit_probe or {}).get("summary_text") or "").strip()
     publish_push_ready = bool((publish_push_probe or {}).get("present"))
     publish_push_summary = str((publish_push_probe or {}).get("summary_text") or "").strip()
+    mutation_followup_ready = bool((mutation_followup_probe or {}).get("present"))
+    mutation_followup_summary = str(
+        (mutation_followup_probe or {}).get("summary_text") or ""
+    ).strip()
 
     consumer_candidate = {
         "candidate_record": _build_candidate_record(
@@ -527,6 +532,73 @@ def build_self_improvement_trial_wave(
         ),
     )
 
+    mutation_followup_candidate = {
+        "candidate_record": _build_candidate_record(
+            candidate_id="mutation_followup_routing_v1",
+            target_surface="mutation_preflight.next_followup",
+            target_consumer="codex_claude_dashboard_observer_operator_shells",
+            baseline_story=(
+                "Mutation preflight already exposed decision points, but next_followup still pointed too statically and could lag behind the current bounded friction."
+            ),
+            candidate_story=(
+                "Mutation preflight now routes next_followup to the current narrowest bounded hook so successors can move toward shared-edit, publish/push, or task-board review without stale defaults."
+            ),
+            success_metric="mutation_followup_probe.present and consumer_drift_report.status == aligned",
+            failure_mode_watch="dynamic follow-up routing behaves like a hidden planner or diverges across consumers",
+            rollback_path="restore the prior static next_followup packaging and keep the result as history only",
+            overclaim_to_avoid="better follow-up routing is not better governance or broader autonomy",
+            scope_limit="mutation-followup packaging only; no new hook family, no planner, no permission-system expansion",
+        ),
+        "analyzer_closeout": _build_analyzer_closeout(
+            status="promote" if (mutation_followup_ready and consumer_aligned) else "park",
+            result_story=(
+                "Mutation preflight now routes next_followup toward the current bounded hook instead of pointing at one stale default."
+                if (mutation_followup_ready and consumer_aligned)
+                else "Mutation follow-up routing is not yet stable enough to promote."
+            ),
+            evidence_bundle_summary=mutation_followup_summary or "mutation_followup_probe unavailable",
+            unresolved_items=(
+                [
+                    "clearer mutation follow-up routing does not prove better planning quality",
+                    "future shells must preserve bounded hook selection without turning it into a planner",
+                ]
+                if (mutation_followup_ready and consumer_aligned)
+                else [
+                    "mutation follow-up routing is not yet visible enough across scenarios",
+                    "consumer parity must stay aligned before promotion",
+                ]
+            ),
+            failure_pressure="low" if (mutation_followup_ready and consumer_aligned) else "meaningful",
+            rollback_posture="bounded_restore",
+            promotion_limit="does not authorize new hooks, broader permissions, or governance changes",
+            overclaim_warning="better mutation follow-up routing is not better governance, launch maturity, or safe autonomy",
+            next_action=(
+                "keep mutation follow-up routing bounded while selecting the next admitted candidate"
+                if (mutation_followup_ready and consumer_aligned)
+                else "repair mutation follow-up routing drift before reopening this candidate"
+            ),
+        ),
+    }
+    mutation_followup_candidate["result_surface"] = _build_result_surface(
+        status=mutation_followup_candidate["analyzer_closeout"]["status"],
+        registry_recommendation=(
+            "promotion_ready_result"
+            if (mutation_followup_ready and consumer_aligned)
+            else "distilled_lesson"
+        ),
+        supersession_posture="active_until_newer_mutation_followup_trials_exist",
+        replay_rule="prefer_status_surface_then_probe_current_mutation_followup_shape_before_reusing_the_story",
+        residue_posture=(
+            "keep_visible_as_current_packaging_result"
+            if (mutation_followup_ready and consumer_aligned)
+            else "park_in_status_surface_until_mutation_followup_routing_is_stable"
+        ),
+        visibility="status_surface_only",
+        carry_forward_rule=(
+            "may inform future mutation-preflight packaging trials, but does not authorize new hooks or stronger permissions"
+        ),
+    )
+
     candidates = [
         consumer_candidate,
         retrieval_candidate,
@@ -534,6 +606,7 @@ def build_self_improvement_trial_wave(
         task_board_candidate,
         shared_edit_candidate,
         publish_push_candidate,
+        mutation_followup_candidate,
     ]
     outcome_counts = _count_outcomes(candidates)
     status = "completed"
@@ -559,8 +632,9 @@ def build_self_improvement_trial_wave(
             "task_board_parking_clarity",
             "shared_edit_overlap_clarity",
             "publish_push_posture_clarity",
+            "mutation_followup_routing",
         ],
         "outcome_counts": outcome_counts,
         "candidates": candidates,
-        "next_short_board": "Phase 811: Sixth Trial Candidate Admission",
+        "next_short_board": "Phase 814: Seventh Trial Candidate Admission",
     }

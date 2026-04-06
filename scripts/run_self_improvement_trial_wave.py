@@ -217,6 +217,69 @@ def _probe_publish_push_preflight() -> dict[str, Any]:
     }
 
 
+def _probe_mutation_followup_routing() -> dict[str, Any]:
+    from tonesoul.mutation_preflight import build_mutation_preflight
+
+    shared_edit_payload = build_mutation_preflight(
+        readiness={"status": "pass", "claim_conflict_count": 1},
+        task_track_hint={"suggested_track": "feature_track", "claim_recommendation": "required"},
+        deliberation_mode_hint={"suggested_mode": "standard_council"},
+        import_posture={
+            "surfaces": {
+                "claims": {},
+                "checkpoints": {},
+                "compactions": {"receiver_obligation": "should_consider", "closeout_status": ""},
+                "subject_refresh": {"receiver_obligation": "must_not_promote"},
+                "launch_claims": {
+                    "launch_claim_posture": {
+                        "current_tier": "collaborator_beta",
+                        "public_launch_ready": False,
+                    }
+                },
+            }
+        },
+        canonical_center={"current_short_board": {"present": True}},
+        publish_push_preflight={"classification": "review_before_push"},
+        task_board_preflight={"classification": "docs_plans_first", "task_md_write_allowed": False},
+    )
+    publish_payload = build_mutation_preflight(
+        readiness={"status": "pass", "claim_conflict_count": 0},
+        task_track_hint={"suggested_track": "quick_change", "claim_recommendation": "not_required"},
+        deliberation_mode_hint={"suggested_mode": "lightweight_review"},
+        import_posture={
+            "surfaces": {
+                "claims": {},
+                "checkpoints": {},
+                "compactions": {"receiver_obligation": "should_consider", "closeout_status": ""},
+                "subject_refresh": {"receiver_obligation": "must_not_promote"},
+                "launch_claims": {
+                    "launch_claim_posture": {
+                        "current_tier": "collaborator_beta",
+                        "public_launch_ready": False,
+                    }
+                },
+            }
+        },
+        canonical_center={"current_short_board": {"present": True}},
+        publish_push_preflight={"classification": "review_before_push"},
+        task_board_preflight={"classification": "docs_plans_first", "task_md_write_allowed": False},
+    )
+    shared_target = str((shared_edit_payload.get("next_followup") or {}).get("target", "")).strip()
+    publish_target = str((publish_payload.get("next_followup") or {}).get("target", "")).strip()
+    present = (
+        shared_target == "shared_code_edit.path_overlap_preflight"
+        and publish_target == "publish_push.posture_preflight"
+    )
+    return {
+        "present": present,
+        "summary_text": (
+            "mutation_followup_probe "
+            f"shared_target={shared_target or 'missing'} "
+            f"publish_target={publish_target or 'missing'}"
+        ),
+    }
+
+
 def _render_markdown(report: dict[str, Any]) -> str:
     lines = [
         "# ToneSoul Self-Improvement Trial Wave",
@@ -284,6 +347,7 @@ def run_self_improvement_trial_wave(
     )
     shared_edit_probe = _probe_shared_edit_preflight()
     publish_push_probe = _probe_publish_push_preflight()
+    mutation_followup_probe = _probe_mutation_followup_routing()
     operator_retrieval_contract_present = (
         REPO_ROOT / "docs/architecture/TONESOUL_OPERATOR_RETRIEVAL_QUERY_CONTRACT.md"
     ).exists()
@@ -299,6 +363,7 @@ def run_self_improvement_trial_wave(
         task_board_probe=task_board_probe,
         shared_edit_probe=shared_edit_probe,
         publish_push_probe=publish_push_probe,
+        mutation_followup_probe=mutation_followup_probe,
         operator_retrieval_contract_present=operator_retrieval_contract_present,
         compiled_landing_zone_spec_present=compiled_landing_zone_spec_present,
         retrieval_runner_present=retrieval_runner_present,

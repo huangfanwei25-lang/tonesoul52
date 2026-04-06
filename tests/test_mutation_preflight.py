@@ -93,7 +93,7 @@ def test_build_mutation_preflight_blocks_shared_edit_when_readiness_is_blocked()
     assert by_name["task_board_update"]["posture"] == "human_review_required"
     assert payload["current_context"]["deliberation_mode"] == "do_not_deliberate"
     assert by_name["publish_push"]["posture"] == "blocked"
-    assert payload["next_followup"]["target"] == "task_board.parking_preflight"
+    assert payload["next_followup"]["target"] == "shared_code_edit.path_overlap_preflight"
     assert payload["next_followup"]["classification"] == "existing_runtime_hook"
 
 
@@ -118,6 +118,8 @@ def test_build_mutation_preflight_prefers_claim_before_shared_edits() -> None:
     assert by_name["task_board_update"]["posture"] == "docs_plans_first"
     assert "run_task_board_preflight.py" in by_name["task_board_update"]["current_guard"]
     assert "task_board=docs_plans_first" in payload["summary_text"]
+    assert payload["next_followup"]["target"] == "shared_code_edit.path_overlap_preflight"
+    assert "run_shared_edit_preflight.py" in payload["next_followup"]["command"]
 
 
 def test_build_mutation_preflight_marks_task_board_as_human_gated_when_short_board_missing() -> None:
@@ -137,3 +139,19 @@ def test_build_mutation_preflight_marks_task_board_as_human_gated_when_short_boa
     assert by_name["task_board_update"]["posture"] == "human_review_required"
     assert "not visible" in by_name["task_board_update"]["receiver_note"]
     assert payload["receiver_rule"].startswith("Readiness and live coordination gate")
+    assert payload["next_followup"]["target"] == "shared_code_edit.path_overlap_preflight"
+
+
+def test_build_mutation_preflight_prefers_publish_push_when_shared_edit_is_bounded() -> None:
+    payload = build_mutation_preflight(
+        readiness={"status": "pass", "claim_conflict_count": 0},
+        task_track_hint={"suggested_track": "quick_change", "claim_recommendation": "not_required"},
+        deliberation_mode_hint={"suggested_mode": "lightweight_review"},
+        import_posture=_make_import_posture(),
+        canonical_center=_make_canonical_center(),
+        publish_push_preflight=_make_publish_push_preflight("review_before_push"),
+        task_board_preflight=_make_task_board_preflight("docs_plans_first"),
+    )
+
+    assert payload["next_followup"]["target"] == "publish_push.posture_preflight"
+    assert "run_publish_push_preflight.py" in payload["next_followup"]["command"]

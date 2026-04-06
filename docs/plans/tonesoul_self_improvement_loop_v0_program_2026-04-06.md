@@ -593,6 +593,60 @@ Current implementation target:
 - one recommended sixth-trial family
 - one explicit no-go list for what must stay parked
 
+### Phase 812: Sixth Bounded Trial Wave - Mutation Follow-Up Routing
+
+Bounded scope:
+
+- refine `mutation_preflight.next_followup` so it routes to the current narrowest bounded hook instead of always pointing at one static target
+- preserve the existing hook set and recommended-command posture
+- keep the change inside packaging/readout space only: no new hook family, no planner, no permission-system story
+
+Success criteria:
+
+- ToneSoul lands one bounded sixth-trial implementation that lowers successor-routing ambiguity without widening mutation authority
+
+Current implementation target:
+
+- one mutation-followup routing refinement
+- one new probe or regression proving dynamic hook selection stays visible
+- no shell redesign and no change to governance truth
+
+### Phase 813: Sixth Trial Evaluation And Registry Entry
+
+Bounded scope:
+
+- evaluate the mutation-followup routing trial using the existing evaluator harness and analyzer gate
+- classify the result honestly as `promote`, `park`, `retire`, `blocked`, or `not_ready_for_trial`
+- register the outcome in the bounded status surface without leaking it into first-hop shells
+
+Success criteria:
+
+- ToneSoul has one honest registry-ready sixth-trial result and clear promotion limit for mutation-followup routing
+
+Current implementation target:
+
+- one evaluator-ready record for the sixth trial
+- one analyzer conclusion
+- one status-surface update with no shell creep
+
+### Phase 814: Seventh Trial Candidate Admission
+
+Bounded scope:
+
+- choose the next bounded candidate only after the sixth trial result is visible
+- keep the candidate inside already-allowed mutation classes
+- make the no-go list explicit before a seventh trial wave opens
+
+Success criteria:
+
+- ToneSoul has one admitted seventh candidate with real operator leverage and no new authority mythology
+
+Current implementation target:
+
+- one candidate-admission note
+- one recommended seventh-trial family
+- one explicit no-go list for what must stay parked
+
 ---
 
 ## Safe First Trial Families
@@ -653,18 +707,18 @@ This is the key improvement over the current gap:
 
 ## Current Recommendation
 
-The program is now active through `Phase 810`.
+The program is now active through `Phase 813`.
 
 Current short board:
 
-- `Phase 811: Sixth Trial Candidate Admission`
+- `Phase 814: Seventh Trial Candidate Admission`
 
 Recommended discipline:
 
 - keep trial outcomes visible through dedicated status artifacts first
 - do not push self-improvement history into `session-start`, `observer-window`, or packet defaults yet
 - keep new trials inside already-allowed mutation classes until a compact result-surface design proves stable
-- prefer packaging refinements that reduce operator latency, shared-edit ambiguity, and outward-action ambiguity before opening broader retrieval or governance experiments
+- prefer packaging refinements that reduce operator latency, shared-edit ambiguity, outward-action ambiguity, and stale follow-up routing before opening broader retrieval or governance experiments
 
 ---
 
