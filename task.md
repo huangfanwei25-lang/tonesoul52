@@ -129,6 +129,7 @@
 - Phase 796: define one compact self-improvement result cue design so later shells can optionally reference current improvement posture without bloating session-start, observer-window, or packet defaults
 - Phase 797: pilot one dashboard-only self-improvement cue that points back to the dedicated status surface without entering default first-hop runtime shells
 - Phase 798: validate that the self-improvement cue stays dashboard-only and does not creep into packet, observer-window, or default session-start shells
+- Phase 799: admit one next bounded self-improvement candidate using the first trial wave, cue hardening, and existing mutation-space limits
 
 ## Water-Bucket Snapshot (2026-03-30)
 - Baseline reached:
@@ -145,9 +146,9 @@
   - bounded outer-shell preflight chain for shared edits, publish/push posture, and task-board parking discipline
   - bounded self-improvement foundation: evaluator harness, experiment lineage boundary, mutation space, analyzer gate, first trial wave, and promotion-ready result surface discipline
 - Current short board:
-  - Phase 798: validate that the dashboard-only self-improvement cue stays out of first-hop runtime shells and remains a bounded secondary surface
+  - Phase 799: admit the next bounded self-improvement candidate without reopening governance, identity, or transport mythology
 - After that:
-  - `ToneSoul Self-Improvement Loop v0` is now the active bucket, with `Phase 790-797` landed and the next work focused on proving the new cue remains dashboard-local and non-authoritative
+  - `ToneSoul Self-Improvement Loop v0` is now the active bucket, with `Phase 790-798` landed and the next work focused on selecting the next safe candidate rather than expanding shell surface area
   - successor/hot-memory bucket is now baseline-frozen unless a fresh real-world misread reopens it
   - task-board governance should stay boring and explicit before any new theory bucket opens
   - hook-chain discoverability should stay packaging-oriented, not a new permission universe
@@ -1992,8 +1993,14 @@
 - [x] avoid touching packet, observer stable/contested/stale buckets, or default `session-start` payloads
 **Success Criteria**: ToneSoul can test a compact self-improvement cue in the operator dashboard without turning trial posture into a new authority tier or bloating first-hop shells.
 
-## Phase 798: Self-Improvement Cue Shell-Exclusion Guard (2026-04-07, planned)
-- [ ] validate that the current self-improvement cue stays dashboard-only and absent from packet, observer-window, and default `session-start` payloads
-- [ ] add one regression guard so future changes do not quietly import trial posture into first-hop runtime truth
-- [ ] keep the phase validation-only: no new cue surfaces and no broad dashboard redesign
+## Phase 798: Self-Improvement Cue Shell-Exclusion Guard (2026-04-07)
+- [x] validate that the current self-improvement cue stays dashboard-only and absent from packet, observer-window, and default `session-start` payloads
+- [x] add one regression guard so future changes do not quietly import trial posture into first-hop runtime truth
+- [x] keep the phase validation-only: no new cue surfaces and no broad dashboard redesign
 **Success Criteria**: ToneSoul can prove the self-improvement cue remains a dashboard-local secondary surface instead of relying on memory or convention to keep first-hop shells clean.
+
+## Phase 799: Second Trial Candidate Admission (2026-04-07, planned)
+- [ ] choose one next bounded self-improvement candidate using the first trial wave, current result surfaces, and cue-hardening results as the admission baseline
+- [ ] keep the admitted candidate inside already-allowed mutation classes and require explicit rollback posture, evidence path, and overclaim warning
+- [ ] make the no-go list explicit so the second wave does not accidentally drift into retrieval mythology, identity semantics, or governance truth
+**Success Criteria**: ToneSoul has one admitted next bounded self-improvement candidate that is specific, testable, and clearly inside the allowed mutation space.

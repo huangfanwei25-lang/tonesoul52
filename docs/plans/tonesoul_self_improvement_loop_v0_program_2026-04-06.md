@@ -347,6 +347,24 @@ Current implementation target:
 - one regression check for no first-hop cue creep
 - no new user-facing surfaces
 
+### Phase 799: Second Trial Candidate Admission
+
+Bounded scope:
+
+- choose the next safe self-improvement candidate after the first trial wave and cue-visibility hardening
+- keep admission inside already-allowed mutation classes
+- require explicit baseline, rollback posture, and overclaim warning before any second trial opens
+
+Success criteria:
+
+- ToneSoul has one admitted next candidate that is specific enough to trial and narrow enough not to reopen governance, identity, or transport mythology
+
+Current implementation target:
+
+- one candidate-admission note
+- one recommended next trial family
+- one explicit no-go list for what should not enter the second wave
+
 ---
 
 ## Safe First Trial Families
@@ -411,7 +429,7 @@ The program is now active through `Phase 794`.
 
 Current short board:
 
-- `Phase 798: Self-Improvement Cue Shell-Exclusion Guard`
+- `Phase 799: Second Trial Candidate Admission`
 
 Recommended discipline:
 
