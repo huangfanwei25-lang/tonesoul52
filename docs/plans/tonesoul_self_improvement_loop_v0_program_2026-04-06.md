@@ -219,6 +219,15 @@ Success criteria:
 
 - a later agent cannot honestly claim "self-improvement" while still mutating vows, identity, or canonical truth
 
+Current implementation target:
+
+- one mutation-space contract
+- explicit split:
+  - allowed now
+  - human-gated
+  - forbidden in v0
+- no automatic mutator yet
+
 ### Phase 793: Analyzer And Promotion Gate
 
 Bounded scope:

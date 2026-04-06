@@ -304,6 +304,7 @@ GROUPS = [
             "docs/architecture/TONESOUL_SELF_IMPROVEMENT_LOOP_V0_SPEC.md",
             "docs/architecture/TONESOUL_SELF_IMPROVEMENT_EVALUATOR_HARNESS_CONTRACT.md",
             "docs/architecture/TONESOUL_EXPERIMENT_REGISTRY_AND_LINEAGE_BOUNDARY_CONTRACT.md",
+            "docs/architecture/TONESOUL_BOUNDED_MUTATION_SPACE_CONTRACT.md",
             "docs/plans/tonesoul_self_improvement_loop_v0_program_2026-04-06.md",
         ],
     },

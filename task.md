@@ -1951,8 +1951,14 @@
 - [x] keep storage posture and retention rules explicit without choosing a full runtime backend yet
 **Success Criteria**: Later agents can tell experiment lineage from hot coordination and from compiled knowledge, so future self-improvement work gains memory without turning R-memory into an experiment bucket.
 
-## Phase 792: Bounded Mutation Space Contract (2026-04-07, planned)
-- [ ] define exactly which v0 surfaces may be mutated and which remain forbidden or human-gated
-- [ ] tie the mutation map back to existing governance, identity, and hot-memory transport boundaries
-- [ ] keep the contract narrow enough that future trial waves still stay in operator/runtime territory rather than sprawling into architecture mythology
+## Phase 792: Bounded Mutation Space Contract (2026-04-07)
+- [x] define exactly which v0 surfaces may be mutated and which remain forbidden or human-gated
+- [x] tie the mutation map back to existing governance, identity, and hot-memory transport boundaries
+- [x] keep the contract narrow enough that future trial waves still stay in operator/runtime territory rather than sprawling into architecture mythology
 **Success Criteria**: A later agent can open the v0 self-improvement lane and tell, without guessing, which mutation classes are safe now, which are blocked, and which require stronger human-governed lanes.
+
+## Phase 793: Analyzer And Promotion Gate (2026-04-07, planned)
+- [ ] define how experiment closeout becomes analyzer output without letting partial/blocked trials sound like clean success
+- [ ] make promote / park / retire / blocked outcomes explicit and reusable across future bounded trials
+- [ ] keep unresolved items, overclaim warnings, and rollback posture visible all the way to closeout
+**Success Criteria**: ToneSoul can finish a bounded self-improvement trial with an honest analyzer-style outcome that preserves failure, unresolved items, and promotion limits instead of smoothing them away.

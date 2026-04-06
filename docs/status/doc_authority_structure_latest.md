@@ -1,14 +1,14 @@
 # Documentation Authority Structure Latest
 
-- generated_at: 2026-04-06T15:11:52Z
-- primary_status_line: `doc_authority_structure | groups=25 tracked=100 metadata_complete=100 metadata_missing=0`
+- generated_at: 2026-04-06T15:15:50Z
+- primary_status_line: `doc_authority_structure | groups=25 tracked=101 metadata_complete=101 metadata_missing=0`
 - runtime_status_line: `doc_retrieval_order=entrypoint_to_operational_to_canonical_to_deep_map_to_interpretive_to_boundary_aids_to_control_plane | generated_status_lane=6`
 - artifact_policy_status_line: `structure_mode=retrieval_oriented | authority_roles=explicit | generated_status_preferred_for_current_state`
 
 ## Metrics
 - `group_count`: `25`
-- `tracked_file_count`: `100`
-- `metadata_complete_count`: `100`
+- `tracked_file_count`: `101`
+- `metadata_complete_count`: `101`
 - `metadata_missing_count`: `0`
 
 ## Groups
@@ -188,7 +188,7 @@
   - `docs/architecture/TONESOUL_COMPILED_KNOWLEDGE_LANDING_ZONE_SPEC.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/TONESOUL_OPERATOR_RETRIEVAL_QUERY_CONTRACT.md` exists=`true` purpose=`true` date=`true`
   - `docs/plans/tonesoul_research_lines_and_memory_interop_program_2026-04-06.md` exists=`true` purpose=`true` date=`true`
-- `Bounded Self-Improvement Loop` tracked=`4` metadata_complete=`4`
+- `Bounded Self-Improvement Loop` tracked=`5` metadata_complete=`5`
   - description: bounded improvement-loop surfaces that define how ToneSoul may propose, evaluate, and promote operator/runtime improvements without crossing governance, identity, or hot-memory transport boundaries
   - authority_role: improvement_contract
   - use_when: when the question is how ToneSoul may safely improve operator/runtime surfaces, where experiment lineage belongs, or which mutation classes remain forbidden or human-gated in v0
@@ -196,6 +196,7 @@
   - `docs/architecture/TONESOUL_SELF_IMPROVEMENT_LOOP_V0_SPEC.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/TONESOUL_SELF_IMPROVEMENT_EVALUATOR_HARNESS_CONTRACT.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/TONESOUL_EXPERIMENT_REGISTRY_AND_LINEAGE_BOUNDARY_CONTRACT.md` exists=`true` purpose=`true` date=`true`
+  - `docs/architecture/TONESOUL_BOUNDED_MUTATION_SPACE_CONTRACT.md` exists=`true` purpose=`true` date=`true`
   - `docs/plans/tonesoul_self_improvement_loop_v0_program_2026-04-06.md` exists=`true` purpose=`true` date=`true`
 - `Entry Simplification And Lineage Routing` tracked=`5` metadata_complete=`5`
   - description: cleanup and routing aids for audience entry paths, historical-versus-current surface distinction, safe simplification moves, and bounded docs cleanup sequencing

@@ -404,6 +404,12 @@ That order is also deliberate.
 
 ToneSoul should not build a trial-memory habit until it can keep experiment lineage separate from hot coordination, compiled knowledge, and identity.
 
+The third required contract is:
+
+- `TONESOUL_BOUNDED_MUTATION_SPACE_CONTRACT.md`
+
+This is the line that keeps the loop from wandering into governance, identity, vow, or transport mutation while still calling itself "bounded."
+
 ---
 
 ## One-Sentence Summary
