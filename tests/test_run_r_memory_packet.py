@@ -294,6 +294,19 @@ def test_run_r_memory_packet_emits_json(capsys, monkeypatch, tmp_path: Path) -> 
         output["project_memory_summary"]["launch_claim_posture"]["next_target_tier"]
         == "public_launch"
     )
+    assert (
+        output["project_memory_summary"]["launch_health_trend_posture"]["current_state"][
+            "launch_default_mode"
+        ]
+        == "file-backed"
+    )
+    assert any(
+        item["metric"] == "coordination_backend_alignment"
+        and item["classification"] == "trendable"
+        for item in output["project_memory_summary"]["launch_health_trend_posture"][
+            "metric_classes"
+        ]
+    )
     assert any(
         item["claim"] == "council_decision_quality"
         and item["current_classification"] == "descriptive_only"
@@ -312,6 +325,10 @@ def test_run_r_memory_packet_emits_json(capsys, monkeypatch, tmp_path: Path) -> 
     )
     assert any(
         reminder.startswith("Launch claim posture: launch_claims=current:collaborator_beta")
+        for reminder in output["operator_guidance"]["current_reminders"]
+    )
+    assert any(
+        reminder.startswith("Launch health posture: launch_health current=collaborator_beta")
         for reminder in output["operator_guidance"]["current_reminders"]
     )
     assert any(

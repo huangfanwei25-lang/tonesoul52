@@ -779,6 +779,19 @@ def test_subject_snapshots_surface_durable_subject_anchor(tmp_path: Path) -> Non
         and item["current_classification"] == "not_launch_default"
         for item in launch_claim_posture["blocked_overclaims"]
     )
+    launch_health_trend_posture = packet["project_memory_summary"]["launch_health_trend_posture"]
+    assert launch_health_trend_posture["current_state"]["current_tier"] == "collaborator_beta"
+    assert launch_health_trend_posture["current_state"]["launch_default_mode"] == "file-backed"
+    assert any(
+        item["metric"] == "coordination_backend_alignment"
+        and item["classification"] == "trendable"
+        for item in launch_health_trend_posture["metric_classes"]
+    )
+    assert any(
+        item["metric"] == "public_launch_forecast"
+        and item["classification"] == "forecast_later"
+        for item in launch_health_trend_posture["metric_classes"]
+    )
     assert packet["project_memory_summary"]["subject_refresh"]["status"] == "refresh_candidate"
     assert packet["project_memory_summary"]["subject_refresh"]["refresh_recommended"] is True
     active_thread_guidance = next(
@@ -822,6 +835,10 @@ def test_subject_snapshots_surface_durable_subject_anchor(tmp_path: Path) -> Non
     )
     assert any(
         reminder.startswith("Launch claim posture: launch_claims=current:collaborator_beta")
+        for reminder in packet["operator_guidance"]["current_reminders"]
+    )
+    assert any(
+        reminder.startswith("Launch health posture: launch_health current=collaborator_beta")
         for reminder in packet["operator_guidance"]["current_reminders"]
     )
     assert any(

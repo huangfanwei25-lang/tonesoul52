@@ -298,6 +298,36 @@ def _fake_packet():
                 "receiver_rule": "Use collaborator-beta wording only for guided file-backed workflow and explicit evidence-bounded surfaces, and keep public-launch language deferred until evidence moves beyond runtime_present/descriptive_only on the known short boards.",
                 "summary_text": "launch_claims=current:collaborator_beta public_launch:deferred blocked=continuity_effectiveness,council_decision_quality,live_shared_memory",
             },
+            "launch_health_trend_posture": {
+                "summary_text": (
+                    "launch_health current=collaborator_beta public_ready=false "
+                    "descriptive=current_launch_tier,public_launch_ready_flag "
+                    "trendable=coordination_backend_alignment,collaborator_beta_validation_health "
+                    "forecast_later=public_launch_forecast"
+                ),
+                "current_state": {
+                    "current_tier": "collaborator_beta",
+                    "public_launch_ready": False,
+                    "launch_default_mode": "file-backed",
+                    "launch_alignment": "runtime_override_not_launch_default",
+                },
+                "metric_classes": [
+                    {
+                        "metric": "current_launch_tier",
+                        "classification": "descriptive_only",
+                    },
+                    {
+                        "metric": "coordination_backend_alignment",
+                        "classification": "trendable",
+                    },
+                    {
+                        "metric": "public_launch_forecast",
+                        "classification": "forecast_later",
+                    },
+                ],
+                "forecast_boundary": "Do not emit predictive launch numbers until trendable metrics are separately calibrated.",
+                "receiver_rule": "Treat launch health as present-tense posture plus future trend lane.",
+            },
             "routing_summary": {
                 "total_events": 2,
                 "preview_count": 1,
@@ -634,6 +664,9 @@ def test_full_diagnostic_is_cp950_safe_and_includes_shared_runtime(monkeypatch) 
     assert "current=collaborator_beta next=public_launch public_ready=False" in report
     assert "tier=internal_alpha:safe_current_claims_only" in report
     assert "blocked=live_shared_memory:not_launch_default" in report
+    assert "launch_health_trend_posture:" in report
+    assert "metric=coordination_backend_alignment:trendable" in report
+    assert "metric=public_launch_forecast:forecast_later" in report
     assert "routing_summary:" in report
     assert "subject_refresh:" in report
     assert (

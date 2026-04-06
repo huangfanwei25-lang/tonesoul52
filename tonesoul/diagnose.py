@@ -502,6 +502,34 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
             receiver_rule = str(launch_claim_posture.get("receiver_rule", "")).strip()
             if receiver_rule:
                 lines.append(f"    receiver_rule={_clip(receiver_rule, limit=120)}")
+        launch_health_trend_posture = project_memory_summary.get("launch_health_trend_posture") or {}
+        if launch_health_trend_posture:
+            lines.append("  launch_health_trend_posture:")
+            summary_text = str(launch_health_trend_posture.get("summary_text", "")).strip()
+            if summary_text:
+                lines.append(f"    summary={_clip(summary_text, limit=110)}")
+            current_state = launch_health_trend_posture.get("current_state") or {}
+            if current_state:
+                lines.append(
+                    "    "
+                    f"current={current_state.get('current_tier', 'unknown')} "
+                    f"public_ready={bool(current_state.get('public_launch_ready', False))} "
+                    f"backend={current_state.get('launch_default_mode', 'unknown')} "
+                    f"alignment={current_state.get('launch_alignment', 'unknown')}"
+                )
+            for item in list(launch_health_trend_posture.get("metric_classes") or [])[:4]:
+                metric = str(item.get("metric", "")).strip()
+                classification = str(item.get("classification", "")).strip()
+                if metric and classification:
+                    lines.append(f"    metric={metric}:{classification}")
+            forecast_boundary = str(
+                launch_health_trend_posture.get("forecast_boundary", "")
+            ).strip()
+            if forecast_boundary:
+                lines.append(f"    boundary={_clip(forecast_boundary, limit=120)}")
+            receiver_rule = str(launch_health_trend_posture.get("receiver_rule", "")).strip()
+            if receiver_rule:
+                lines.append(f"    receiver_rule={_clip(receiver_rule, limit=120)}")
         routing_summary = project_memory_summary.get("routing_summary") or {}
         if routing_summary:
             lines.append("  routing_summary:")

@@ -265,6 +265,16 @@ Success criteria:
 
 - future launch-health forecasting has a clean home without polluting council confidence today
 
+Current implementation target:
+
+- one bounded `launch_health_trend_posture` shared across packet, session-start import posture, and diagnose
+- explicit separation between:
+  - `descriptive_only`
+  - `trendable`
+  - `forecast_later`
+- no predictive numbers, no launch probability, no fake calibration
+- operator guidance may mention the posture, but it must stay advisory and present-tense
+
 ### Phase 779: Bounded Internal-State Observability Reality Check
 
 Bounded scope:

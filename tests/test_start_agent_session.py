@@ -166,6 +166,18 @@ def test_start_agent_session_emits_machine_readable_bundle(
         ]
         == "collaborator_beta"
     )
+    assert output["import_posture"]["surfaces"]["launch_health_trend"]["import_posture"] == "advisory"
+    assert (
+        output["import_posture"]["surfaces"]["launch_health_trend"]["receiver_obligation"]
+        == "should_consider"
+    )
+    assert any(
+        item["metric"] == "public_launch_forecast"
+        and item["classification"] == "forecast_later"
+        for item in output["import_posture"]["surfaces"]["launch_health_trend"][
+            "launch_health_trend_posture"
+        ]["metric_classes"]
+    )
     assert output["import_posture"]["surfaces"]["subject_snapshot"]["present"] is False
     assert output["import_posture"]["readiness_alignment"] == "needs_clarification"
     assert output["import_posture"]["summary_text"].startswith("posture=directly_importable")

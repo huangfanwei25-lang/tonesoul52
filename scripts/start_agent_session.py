@@ -991,6 +991,7 @@ def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
     working_style_import_limits = project_memory_summary.get("working_style_import_limits") or {}
     evidence_readout_posture = project_memory_summary.get("evidence_readout_posture") or {}
     launch_claim_posture = project_memory_summary.get("launch_claim_posture") or {}
+    launch_health_trend_posture = project_memory_summary.get("launch_health_trend_posture") or {}
     subject_refresh = project_memory_summary.get("subject_refresh") or {}
     carry_forward_hazards = _carry_forward_promotion_hazards(subject_refresh)
 
@@ -1132,6 +1133,17 @@ def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
                 "Use this to bound maturity and launch wording; it is a claim-language guard, not a runtime permission surface."
             ),
             "launch_claim_posture": launch_claim_posture,
+        },
+        "launch_health_trend": {
+            "present": bool(launch_health_trend_posture),
+            "import_posture": "advisory",
+            "receiver_obligation": "should_consider",
+            "decay_posture": "slow",
+            "freshness_hours": 0.0 if launch_health_trend_posture else None,
+            "note": (
+                "Use this to keep descriptive launch posture separate from future trend or forecast lanes; it is not a prediction surface."
+            ),
+            "launch_health_trend_posture": launch_health_trend_posture,
         },
         "subject_snapshot": {
             "present": bool(subject_snapshots),

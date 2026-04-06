@@ -215,6 +215,20 @@ Open these when the question is:
 - `docs/architecture/TONESOUL_ENCODING_AND_MOJIBAKE_HAZARD_REGISTER.md`
 - `docs/plans/tonesoul_docs_cleanup_wave_candidates_2026-03-29.md`
 
+### 18. Research-driven memory interop and knowledge layer lane
+
+Open these when the question is:
+
+- how different agent shells should consume the same ToneSoul memory surfaces,
+- where a future knowledge layer belongs without collapsing into continuity or identity,
+- how launch-health readouts should stay descriptive or trendable without pretending predictive calibration exists.
+
+- `docs/architecture/TONESOUL_CROSS_AGENT_MEMORY_CONSUMER_CONTRACT.md`
+- `docs/architecture/TONESOUL_CLAUDE_COMPATIBLE_ENTRY_ADAPTER_CONTRACT.md`
+- `docs/architecture/TONESOUL_KNOWLEDGE_LAYER_BOUNDARY_CONTRACT.md`
+- `docs/architecture/TONESOUL_LAUNCH_HEALTH_TREND_READOUT_CONTRACT.md`
+- `docs/plans/tonesoul_research_lines_and_memory_interop_program_2026-04-06.md`
+
 ## Retrieval Order
 
 1. Start in the entrypoint lane.
@@ -231,8 +245,9 @@ Open these when the question is:
 12. Move to the prompt surface topology and adoption lane when the question is which prompt families are already aligned, which are the next short board, or which should remain specialized.
 13. Move to the reality alignment and render boundary lane when doc counts, audience routing, or encoding alarms may be stale, display-dependent, or loosely measured.
 14. Move to the entry simplification and lineage routing lane when the problem is how a reader should enter, what should stay visible as lineage, or which cleanup moves are safe.
-15. Move to documentation governance and convergence contracts when restructuring docs.
-16. Prefer generated status surfaces over stale prose when checking current posture.
+15. Move to the research-driven memory interop and knowledge layer lane when the problem is shared interpretation, future retrieval boundaries, or descriptive-versus-trendable launch posture.
+16. Move to documentation governance and convergence contracts when restructuring docs.
+17. Prefer generated status surfaces over stale prose when checking current posture.
 
 ## Current Rule
 

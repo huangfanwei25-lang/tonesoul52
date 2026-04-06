@@ -1,14 +1,14 @@
 # Documentation Authority Structure Latest
 
-- generated_at: 2026-04-02T06:36:23Z
-- primary_status_line: `doc_authority_structure | groups=23 tracked=86 metadata_complete=86 metadata_missing=0`
+- generated_at: 2026-04-06T10:45:39Z
+- primary_status_line: `doc_authority_structure | groups=24 tracked=91 metadata_complete=91 metadata_missing=0`
 - runtime_status_line: `doc_retrieval_order=entrypoint_to_operational_to_canonical_to_deep_map_to_interpretive_to_boundary_aids_to_control_plane | generated_status_lane=6`
 - artifact_policy_status_line: `structure_mode=retrieval_oriented | authority_roles=explicit | generated_status_preferred_for_current_state`
 
 ## Metrics
-- `group_count`: `23`
-- `tracked_file_count`: `86`
-- `metadata_complete_count`: `86`
+- `group_count`: `24`
+- `tracked_file_count`: `91`
+- `metadata_complete_count`: `91`
 - `metadata_missing_count`: `0`
 
 ## Groups
@@ -173,11 +173,21 @@
   - `docs/plans/tonesoul_successor_collaboration_and_hot_memory_program_2026-04-02.md` exists=`true` purpose=`true` date=`true`
   - `docs/plans/tonesoul_subsystem_parity_and_gap_map_2026-04-02.md` exists=`true` purpose=`true` date=`true`
   - `docs/plans/tonesoul_successor_sidecar_residue_triage_2026-04-02.md` exists=`true` purpose=`true` date=`true`
+- `Research-Driven Memory Interop And Knowledge Layer` tracked=`5` metadata_complete=`5`
+  - description: repo-native bridge contracts for cross-agent consumer parity, Claude-compatible first-hop entry, future knowledge-layer separation, and bounded launch-health trend posture
+  - authority_role: interop_contract
+  - use_when: when the question is how different agent shells should read the same memory surfaces, where future retrieval belongs, or how launch-health readouts should stay descriptive without fake forecasting
+  - read_order: 20
+  - `docs/architecture/TONESOUL_CROSS_AGENT_MEMORY_CONSUMER_CONTRACT.md` exists=`true` purpose=`true` date=`true`
+  - `docs/architecture/TONESOUL_CLAUDE_COMPATIBLE_ENTRY_ADAPTER_CONTRACT.md` exists=`true` purpose=`true` date=`true`
+  - `docs/architecture/TONESOUL_KNOWLEDGE_LAYER_BOUNDARY_CONTRACT.md` exists=`true` purpose=`true` date=`true`
+  - `docs/architecture/TONESOUL_LAUNCH_HEALTH_TREND_READOUT_CONTRACT.md` exists=`true` purpose=`true` date=`true`
+  - `docs/plans/tonesoul_research_lines_and_memory_interop_program_2026-04-06.md` exists=`true` purpose=`true` date=`true`
 - `Entry Simplification And Lineage Routing` tracked=`5` metadata_complete=`5`
   - description: cleanup and routing aids for audience entry paths, historical-versus-current surface distinction, safe simplification moves, and bounded docs cleanup sequencing
   - authority_role: doc_cleanup_aid
   - use_when: when the problem is how a reader should enter, what should remain visible as lineage, or which cleanup moves are safe without flattening authority
-  - read_order: 20
+  - read_order: 21
   - `docs/architecture/TONESOUL_AUDIENCE_ROUTING_AND_ENTRY_CONTRACT.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/TONESOUL_HISTORICAL_SPEC_AND_LEGACY_SURFACE_MAP.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/TONESOUL_DOC_SURFACE_SIMPLIFICATION_BOUNDARY_CONTRACT.md` exists=`true` purpose=`true` date=`true`
@@ -187,7 +197,7 @@
   - description: naming, zoning, and convergence planning surfaces
   - authority_role: doc_governance
   - use_when: when retrieval quality, metadata posture, or naming collisions are the problem
-  - read_order: 21
+  - read_order: 22
   - `docs/DOCS_INFORMATION_ARCHITECTURE_v1.md` exists=`true` purpose=`true` date=`true`
   - `docs/DOCS_CLASSIFICATION_LEDGER_v1.md` exists=`true` purpose=`true` date=`true`
   - `docs/FILE_PURPOSE_MAP.md` exists=`true` purpose=`true` date=`true`
@@ -197,7 +207,7 @@
   - description: ownership and divergence boundaries for duplicate-like surfaces
   - authority_role: boundary_contract
   - use_when: when two similar-looking lanes need explicit ownership or split-brain control
-  - read_order: 22
+  - read_order: 23
   - `docs/architecture/BASENAME_DIVERGENCE_DISTILLATION_MAP.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/PRIVATE_MEMORY_SHADOW_BOUNDARY_MAP.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/PARADOX_FIXTURE_OWNERSHIP_MAP.md` exists=`true` purpose=`true` date=`true`
@@ -206,7 +216,7 @@
   - description: machine-readable current posture for convergence-related lanes
   - authority_role: generated_status
   - use_when: when current machine-readable posture matters more than prose explanation
-  - read_order: 23
+  - read_order: 24
   - `docs/status/doc_convergence_inventory_latest.json` exists=`true` purpose=`true` date=`true`
   - `docs/status/basename_divergence_distillation_latest.json` exists=`true` purpose=`true` date=`true`
   - `docs/status/private_memory_shadow_latest.json` exists=`true` purpose=`true` date=`true`

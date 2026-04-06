@@ -2117,6 +2117,10 @@ def _build_operator_guidance(
     launch_claim_summary = str(launch_claim_posture.get("summary_text", "")).strip()
     if launch_claim_summary:
         reminders.append(f"Launch claim posture: {launch_claim_summary}")
+    launch_health_trend_posture = project_memory_summary.get("launch_health_trend_posture") or {}
+    launch_health_summary = str(launch_health_trend_posture.get("summary_text", "")).strip()
+    if launch_health_summary:
+        reminders.append(f"Launch health posture: {launch_health_summary}")
 
     latest_dossier_payload: Dict[str, Any] = {}
     for entry in compactions:
@@ -2426,6 +2430,92 @@ def _build_launch_claim_posture(
         "summary_text": (
             "launch_claims=current:collaborator_beta public_launch:deferred "
             "blocked=continuity_effectiveness,council_decision_quality,live_shared_memory"
+        ),
+    }
+
+
+def _build_launch_health_trend_posture(
+    *,
+    project_memory_summary: Dict[str, Any],
+    coordination_mode: Dict[str, Any],
+    launch_claim_posture: Dict[str, Any],
+) -> Dict[str, Any]:
+    evidence_readout = project_memory_summary.get("evidence_readout_posture") or {}
+    lanes = list(evidence_readout.get("lanes") or [])
+    lane_map = {
+        str(item.get("lane", "")).strip(): str(item.get("classification", "")).strip()
+        for item in lanes
+        if str(item.get("lane", "")).strip()
+    }
+
+    continuity_classification = lane_map.get("continuity_effectiveness", "unknown")
+    council_quality_classification = lane_map.get("council_decision_quality", "unknown")
+    current_tier = str(launch_claim_posture.get("current_tier", "unknown") or "unknown")
+    public_launch_ready = bool(launch_claim_posture.get("public_launch_ready", False))
+    launch_default_mode = (
+        str(coordination_mode.get("launch_default_mode", "unknown")).strip() or "unknown"
+    )
+    launch_alignment = (
+        str(coordination_mode.get("launch_alignment", "unknown")).strip() or "unknown"
+    )
+
+    metric_classes = [
+        {
+            "metric": "current_launch_tier",
+            "classification": "descriptive_only",
+            "receiver_use": "current_posture_only",
+            "note": "Current launch tier is a bounded operating posture, not a forecast of next-tier success.",
+        },
+        {
+            "metric": "public_launch_ready_flag",
+            "classification": "descriptive_only",
+            "receiver_use": "current_boundary_only",
+            "note": "The public_launch_ready flag is a present-tense boundary, not a probability of launch success.",
+        },
+        {
+            "metric": "coordination_backend_alignment",
+            "classification": "trendable",
+            "receiver_use": "trend_watch_only",
+            "note": "Backend mode and launch-default alignment can be trended later across validation waves without becoming predictive today.",
+        },
+        {
+            "metric": "collaborator_beta_validation_health",
+            "classification": "trendable",
+            "receiver_use": "trend_watch_only",
+            "note": "Repeated collaborator-beta validation can become a trend series later, but current packet/session-start still expose only bounded snapshots.",
+        },
+        {
+            "metric": "public_launch_forecast",
+            "classification": "forecast_later",
+            "receiver_use": "deferred",
+            "note": (
+                "No calibrated forecast exists yet because continuity effectiveness remains "
+                f"{continuity_classification} and council decision quality remains {council_quality_classification}."
+            ),
+        },
+    ]
+
+    return {
+        "summary_text": (
+            f"launch_health current={current_tier} public_ready={str(public_launch_ready).lower()} "
+            "descriptive=current_launch_tier,public_launch_ready_flag "
+            "trendable=coordination_backend_alignment,collaborator_beta_validation_health "
+            "forecast_later=public_launch_forecast"
+        ),
+        "current_state": {
+            "current_tier": current_tier,
+            "public_launch_ready": public_launch_ready,
+            "launch_default_mode": launch_default_mode,
+            "launch_alignment": launch_alignment,
+            "continuity_effectiveness": continuity_classification,
+            "council_decision_quality": council_quality_classification,
+        },
+        "metric_classes": metric_classes,
+        "forecast_boundary": (
+            "Do not emit predictive launch numbers or success probabilities until trendable metrics are collected over time and calibrated separately from descriptive confidence."
+        ),
+        "receiver_rule": (
+            "Treat launch health as a present-tense posture plus future trend lane. Descriptive metrics may orient current honesty, trendable metrics may justify later monitoring, and forecast_later metrics must remain non-numeric for now."
         ),
     }
 
@@ -2916,6 +3006,19 @@ def r_memory_packet(
             base_summary = str(project_memory_summary.get("summary_text", "")).strip()
             project_memory_summary["summary_text"] = (
                 f"{base_summary} | {launch_summary}" if base_summary else launch_summary
+            )
+    launch_health_trend_posture = _build_launch_health_trend_posture(
+        project_memory_summary=project_memory_summary,
+        coordination_mode=coordination_mode,
+        launch_claim_posture=launch_claim_posture,
+    )
+    if launch_health_trend_posture:
+        project_memory_summary["launch_health_trend_posture"] = launch_health_trend_posture
+        launch_health_summary = str(launch_health_trend_posture.get("summary_text", "")).strip()
+        if launch_health_summary:
+            base_summary = str(project_memory_summary.get("summary_text", "")).strip()
+            project_memory_summary["summary_text"] = (
+                f"{base_summary} | {launch_health_summary}" if base_summary else launch_health_summary
             )
     operator_guidance = _build_operator_guidance(
         backend_name=getattr(store, "backend_name", "unknown"),

@@ -221,6 +221,19 @@ Use this when the question is not only what should be transferred, but how the e
 - [plans/tonesoul_subsystem_parity_and_gap_map_2026-04-02.md](plans/tonesoul_subsystem_parity_and_gap_map_2026-04-02.md)
 - [plans/tonesoul_successor_sidecar_residue_triage_2026-04-02.md](plans/tonesoul_successor_sidecar_residue_triage_2026-04-02.md)
 
+## Research-Driven Memory Interop And Knowledge Layer
+
+- [architecture/TONESOUL_CROSS_AGENT_MEMORY_CONSUMER_CONTRACT.md](architecture/TONESOUL_CROSS_AGENT_MEMORY_CONSUMER_CONTRACT.md)
+  - shared first-hop reading contract for Codex, Claude-style shells, and dashboard/operator surfaces
+- [architecture/TONESOUL_CLAUDE_COMPATIBLE_ENTRY_ADAPTER_CONTRACT.md](architecture/TONESOUL_CLAUDE_COMPATIBLE_ENTRY_ADAPTER_CONTRACT.md)
+  - repo-native adapter boundary for Claude-style entry without pretending first-party vendor interop
+- [architecture/TONESOUL_KNOWLEDGE_LAYER_BOUNDARY_CONTRACT.md](architecture/TONESOUL_KNOWLEDGE_LAYER_BOUNDARY_CONTRACT.md)
+  - boundary between hot coordination state, compiled knowledge, exploratory residue, and future retrieval
+- [architecture/TONESOUL_LAUNCH_HEALTH_TREND_READOUT_CONTRACT.md](architecture/TONESOUL_LAUNCH_HEALTH_TREND_READOUT_CONTRACT.md)
+  - bounded contract for separating descriptive launch posture from trendable signals and deferred forecasting
+- [plans/tonesoul_research_lines_and_memory_interop_program_2026-04-06.md](plans/tonesoul_research_lines_and_memory_interop_program_2026-04-06.md)
+  - active research-driven follow-through for cross-agent parity, knowledge layering, and predictive-boundary honesty
+
 ## Documentation Convergence
 
 - [status/doc_convergence_inventory_latest.json](status/doc_convergence_inventory_latest.json)
