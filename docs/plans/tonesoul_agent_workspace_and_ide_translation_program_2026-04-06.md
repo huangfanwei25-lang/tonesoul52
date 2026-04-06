@@ -135,4 +135,4 @@ Accept this as the live long program for the frontend / IDE translation lane.
 
 The current short board remains:
 
-`Phase 770: Deep-Governance Drawer Budget`
+`Phase 771: Public / Demo Surface Alignment`

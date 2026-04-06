@@ -106,7 +106,7 @@
   - low-drift anchor / observer-window baseline (Day 1 complete): `tonesoul/observer_window.py`, `scripts/run_observer_window.py`, `tests/test_observer_window.py`, `docs/status/observer_window_latest.{json,md}`
   - bounded outer-shell preflight chain for shared edits, publish/push posture, and task-board parking discipline
 - Current short board:
-  - Phase 770: define the Tier-2 deep-governance drawer budget so the dashboard shell can escalate without flooding the default workspace
+  - Phase 771: decide what part of the tier model, if any, belongs in `apps/web` without turning the public/demo site into the operator console
 - After that:
   - successor/hot-memory bucket is now baseline-frozen unless a fresh real-world misread reopens it
   - task-board governance should stay boring and explicit before any new theory bucket opens
@@ -1772,7 +1772,7 @@
 - [x] keep the phase translation-focused: no frontend implementation unless a concrete panel becomes the shortest board
 **Success Criteria**: ToneSoul has one current frontend-readiness map showing which Tier 0 / 1 / 2 surfaces can be rendered directly, which need adapter shaping, and which must remain behind deeper pull, so future UI work does not reopen a flat dashboard design.
 
-## Phase 768: Workspace View-Model Adapter Contract (2026-04-06, planned)
+## Phase 768: Workspace View-Model Adapter Contract (2026-04-06, completed)
 - [x] define one bounded adapter shape for `canonical_center` cards, including short-board focus, successor correction, and source-precedence summary
 - [x] define one bounded adapter shape for `subsystem_parity` and `observer_shell` so Tier 1 can render stable orientation without dumping raw JSON
 - [x] define one compact operator-card shape for `mutation_preflight` and related Tier-0/Tier-1 action hints
@@ -1784,8 +1784,14 @@
 - [x] keep this phase bounded to the dashboard operator shell; do not rewrite `apps/web` or public/demo surfaces
 **Success Criteria**: The dashboard workspace has one clear operator-shell implementation path that matches the Tier 0 / 1 adapter contract and keeps Tier 2 as an explicit pull, so frontend execution can start without reopening a monolithic dashboard design.
 
-## Phase 770: Deep-Governance Drawer Budget (2026-04-06, planned)
-- [ ] define which Tier-2 surfaces may open by default in the dashboard shell, and which must stay behind explicit operator pull
-- [ ] cap the first deep-governance drawer to bounded preflight, closeout, and contested continuity surfaces before wider packet/detail expansion
-- [ ] keep the phase dashboard-scoped: no `apps/web` redesign and no new runtime semantics
+## Phase 770: Deep-Governance Drawer Budget (2026-04-06, completed)
+- [x] define which Tier-2 surfaces may open by default in the dashboard shell, and which must stay behind explicit operator pull
+- [x] cap the first deep-governance drawer to bounded preflight, closeout, and contested continuity surfaces before wider packet/detail expansion
+- [x] keep the phase dashboard-scoped: no `apps/web` redesign and no new runtime semantics
 **Success Criteria**: ToneSoul has one bounded Tier-2 drawer budget for the operator shell, so deeper governance remains available when needed without turning the dashboard into a default packet dump.
+
+## Phase 771: Public / Demo Surface Alignment (2026-04-06, planned)
+- [ ] decide what part of the tier model, if any, should surface in `apps/web` as educational or bounded operational cues
+- [ ] keep the public/demo site subordinate to the dashboard operator shell and CLI entry flow
+- [ ] avoid teaching `apps/web` to impersonate the canonical operator console
+**Success Criteria**: ToneSoul has one explicit rule for what Tier-model elements belong in `apps/web`, what stays dashboard-only, and how the public/demo surface remains aligned without becoming a second control center.
