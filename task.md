@@ -106,7 +106,7 @@
   - low-drift anchor / observer-window baseline (Day 1 complete): `tonesoul/observer_window.py`, `scripts/run_observer_window.py`, `tests/test_observer_window.py`, `docs/status/observer_window_latest.{json,md}`
   - bounded outer-shell preflight chain for shared edits, publish/push posture, and task-board parking discipline
 - Current short board:
-  - Phase 768: define the workspace view-model adapter contract so Tier 0 / 1 shells can be rendered cleanly without consuming raw runtime JSON
+  - Phase 769: adapt the dashboard workspace into the first operator shell using the new Tier 0 / 1 adapter contract, without reopening a whole-frontend rewrite
 - After that:
   - successor/hot-memory bucket is now baseline-frozen unless a fresh real-world misread reopens it
   - task-board governance should stay boring and explicit before any new theory bucket opens
@@ -1773,7 +1773,13 @@
 **Success Criteria**: ToneSoul has one current frontend-readiness map showing which Tier 0 / 1 / 2 surfaces can be rendered directly, which need adapter shaping, and which must remain behind deeper pull, so future UI work does not reopen a flat dashboard design.
 
 ## Phase 768: Workspace View-Model Adapter Contract (2026-04-06, planned)
-- [ ] define one bounded adapter shape for `canonical_center` cards, including short-board focus, successor correction, and source-precedence summary
-- [ ] define one bounded adapter shape for `subsystem_parity` and `observer_shell` so Tier 1 can render stable orientation without dumping raw JSON
-- [ ] define one compact operator-card shape for `mutation_preflight` and related Tier-0/Tier-1 action hints
+- [x] define one bounded adapter shape for `canonical_center` cards, including short-board focus, successor correction, and source-precedence summary
+- [x] define one bounded adapter shape for `subsystem_parity` and `observer_shell` so Tier 1 can render stable orientation without dumping raw JSON
+- [x] define one compact operator-card shape for `mutation_preflight` and related Tier-0/Tier-1 action hints
 **Success Criteria**: ToneSoul has one current adapter contract for Tier 0 / Tier 1 panels, so a future workspace can render cleanly from stable view-models instead of binding directly to runtime JSON or recreating hierarchy in ad hoc frontend code.
+
+## Phase 769: Dashboard Operator Shell Adoption (2026-04-06, planned)
+- [ ] map the existing `apps/dashboard/frontend/pages/workspace.py` layout into a Tier-0 start strip, Tier-1 orientation region, and explicit Tier-2 pull path
+- [ ] keep council and memory as secondary panes so the orientation center stops competing with every other panel
+- [ ] keep this phase bounded to the dashboard operator shell; do not rewrite `apps/web` or public/demo surfaces
+**Success Criteria**: The dashboard workspace has one clear operator-shell implementation path that matches the Tier 0 / 1 adapter contract and keeps Tier 2 as an explicit pull, so frontend execution can start without reopening a monolithic dashboard design.

@@ -135,4 +135,4 @@ Accept this as the live long program for the frontend / IDE translation lane.
 
 The current short board remains:
 
-`Phase 767: Workspace Frontend Readiness Map`
+`Phase 768: Workspace View-Model Adapter Contract`
