@@ -198,6 +198,15 @@ Success criteria:
 
 - later agents can tell experimental lineage from hot coordination and from compiled knowledge
 
+Current implementation target:
+
+- one experiment-registry boundary contract
+- three-way split:
+  - raw run
+  - distilled lesson
+  - promotion-ready result
+- no runtime registry backend yet
+
 ### Phase 792: Bounded Mutation Space Contract
 
 Bounded scope:

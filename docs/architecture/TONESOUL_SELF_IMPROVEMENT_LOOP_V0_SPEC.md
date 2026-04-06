@@ -396,6 +396,14 @@ That order is deliberate.
 
 ToneSoul should not open experiment lineage, mutation-space expansion, or trial waves before the evaluator harness exists.
 
+The second required contract is:
+
+- `TONESOUL_EXPERIMENT_REGISTRY_AND_LINEAGE_BOUNDARY_CONTRACT.md`
+
+That order is also deliberate.
+
+ToneSoul should not build a trial-memory habit until it can keep experiment lineage separate from hot coordination, compiled knowledge, and identity.
+
 ---
 
 ## One-Sentence Summary
