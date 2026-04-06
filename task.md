@@ -135,6 +135,7 @@
 - Phase 802: admit one third bounded self-improvement candidate after the second trial result is classified and parked in the registry surface
 - Phase 803: run one third bounded self-improvement trial on task-board parking clarity without turning helpers into a new permission system
 - Phase 804: classify and register the third bounded trial result before admitting any broader candidate
+- Phase 805: admit one fourth bounded self-improvement candidate after the third trial result is classified and registered
 
 ## Water-Bucket Snapshot (2026-03-30)
 - Baseline reached:
@@ -151,9 +152,9 @@
   - bounded outer-shell preflight chain for shared edits, publish/push posture, and task-board parking discipline
   - bounded self-improvement foundation: evaluator harness, experiment lineage boundary, mutation space, analyzer gate, first trial wave, and promotion-ready result surface discipline
 - Current short board:
-  - Phase 804: evaluate and register the third bounded self-improvement trial before reopening candidate admission
+  - Phase 805: admit the fourth bounded self-improvement candidate without reopening retrieval mythology or governance semantics
 - After that:
-  - `ToneSoul Self-Improvement Loop v0` is now the active bucket, with `Phase 790-803` landed and the next work focused on honest third-trial classification rather than expanding shell surface area
+  - `ToneSoul Self-Improvement Loop v0` is now the active bucket, with `Phase 790-804` landed and the next work focused on fourth-candidate selection rather than expanding shell surface area
   - successor/hot-memory bucket is now baseline-frozen unless a fresh real-world misread reopens it
   - task-board governance should stay boring and explicit before any new theory bucket opens
   - hook-chain discoverability should stay packaging-oriented, not a new permission universe
@@ -2034,8 +2035,14 @@
 - [x] add regression coverage proving parking clarity improves without widening task-board authority or shell surface area
 **Success Criteria**: ToneSoul lands one bounded third-trial implementation for `task_board_parking_clarity_v1` that reduces task-board routing ambiguity without changing governance semantics.
 
-## Phase 804: Third Trial Evaluation And Registry Entry (2026-04-07, planned)
-- [ ] evaluate the `task_board_parking_clarity_v1` trial against the existing evaluator harness and analyzer gate
-- [ ] classify the result as `promote`, `park`, `retire`, `blocked`, or `not_ready_for_trial` without inflating parking clarity into planning quality
-- [ ] register the result in a bounded status/registry surface without leaking it into first-hop shells
+## Phase 804: Third Trial Evaluation And Registry Entry (2026-04-07)
+- [x] evaluate the `task_board_parking_clarity_v1` trial against the existing evaluator harness and analyzer gate
+- [x] classify the result as `promote`, `park`, `retire`, `blocked`, or `not_ready_for_trial` without inflating parking clarity into planning quality
+- [x] register the result in a bounded status/registry surface without leaking it into first-hop shells
 **Success Criteria**: ToneSoul has one honest third-trial result classification and registry-ready record for `task_board_parking_clarity_v1`.
+
+## Phase 805: Fourth Trial Candidate Admission (2026-04-07, planned)
+- [ ] choose the next bounded self-improvement candidate after the third trial result and current registry/status surface are visible
+- [ ] keep the next candidate inside allowed mutation classes and away from retrieval mythology, governance semantics, identity, and transport claims
+- [ ] make the no-go list explicit before opening a fourth trial wave
+**Success Criteria**: ToneSoul has one admitted fourth candidate that is narrower than shell redesign and still worth real operator leverage.

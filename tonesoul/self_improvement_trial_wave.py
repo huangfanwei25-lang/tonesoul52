@@ -97,6 +97,7 @@ def build_self_improvement_trial_wave(
     agent: str,
     consumer_drift_report: dict[str, Any],
     deliberation_hint_probe: dict[str, Any],
+    task_board_probe: dict[str, Any],
     operator_retrieval_contract_present: bool,
     compiled_landing_zone_spec_present: bool,
     retrieval_runner_present: bool,
@@ -107,6 +108,8 @@ def build_self_improvement_trial_wave(
     deliberation_hint_summary = str(
         (deliberation_hint_probe or {}).get("summary_text") or ""
     ).strip()
+    task_board_ready = bool((task_board_probe or {}).get("present"))
+    task_board_summary = str((task_board_probe or {}).get("summary_text") or "").strip()
 
     consumer_candidate = {
         "candidate_record": _build_candidate_record(
@@ -320,7 +323,72 @@ def build_self_improvement_trial_wave(
         ),
     )
 
-    candidates = [consumer_candidate, retrieval_candidate, deliberation_candidate]
+    task_board_candidate = {
+        "candidate_record": _build_candidate_record(
+            candidate_id="task_board_parking_clarity_v1",
+            target_surface="task_board_preflight + mutation_preflight.next_followup",
+            target_consumer="codex_claude_dashboard_operator_shells",
+            baseline_story=(
+                "Task-board parking helpers existed, but later agents could still read parking guidance as soft prose rather than a routing outcome."
+            ),
+            candidate_story=(
+                "Task-board parking now surfaces routing outcome, task.md write allowance, and promotion posture explicitly, while mutation preflight carries the same story forward."
+            ),
+            success_metric="task_board_probe.present and consumer_drift_report.status == aligned",
+            failure_mode_watch="parking clarity turns into a permission myth or makes ratified follow-through harder than necessary",
+            rollback_path="restore the prior task-board parking packaging and keep the result as history only",
+            overclaim_to_avoid="better parking clarity is not better planning quality or better governance",
+            scope_limit="task-board routing packaging only; no task.md authority rewrite or auto-promotion",
+        ),
+        "analyzer_closeout": _build_analyzer_closeout(
+            status="promote" if (task_board_ready and consumer_aligned) else "park",
+            result_story=(
+                "Task-board parking now reads as a bounded routing outcome instead of soft parking prose."
+                if (task_board_ready and consumer_aligned)
+                else "Task-board parking clarity is not yet stable enough to promote."
+            ),
+            evidence_bundle_summary=task_board_summary or "task_board_probe unavailable",
+            unresolved_items=(
+                [
+                    "parking clarity does not prove better planning quality",
+                    "future shells must preserve docs_plans_first as routing, not ratification",
+                ]
+                if (task_board_ready and consumer_aligned)
+                else [
+                    "task-board routing is not yet visible enough across consumers",
+                    "parking clarity still needs parity-safe packaging",
+                ]
+            ),
+            failure_pressure="low" if (task_board_ready and consumer_aligned) else "meaningful",
+            rollback_posture="bounded_restore",
+            promotion_limit="does not authorize task.md auto-promotion, governance semantics changes, or new permission systems",
+            overclaim_warning="better parking clarity is not better planning, authority, or human approval",
+            next_action=(
+                "keep the task-board routing story stable while selecting the next bounded candidate"
+                if (task_board_ready and consumer_aligned)
+                else "repair task-board packaging drift before reopening this candidate"
+            ),
+        ),
+    }
+    task_board_candidate["result_surface"] = _build_result_surface(
+        status=task_board_candidate["analyzer_closeout"]["status"],
+        registry_recommendation=(
+            "promotion_ready_result" if (task_board_ready and consumer_aligned) else "distilled_lesson"
+        ),
+        supersession_posture="active_until_newer_task_board_parking_trials_exist",
+        replay_rule="prefer_status_surface_then_probe_current_task_board_shape_before_reusing_the_story",
+        residue_posture=(
+            "keep_visible_as_current_packaging_result"
+            if (task_board_ready and consumer_aligned)
+            else "park_in_status_surface_until_task_board_routing_is_stable"
+        ),
+        visibility="status_surface_only",
+        carry_forward_rule=(
+            "may inform future task-board routing trials, but does not authorize task.md promotion by itself"
+        ),
+    )
+
+    candidates = [consumer_candidate, retrieval_candidate, deliberation_candidate, task_board_candidate]
     outcome_counts = _count_outcomes(candidates)
     status = "completed"
     summary_text = (
@@ -342,8 +410,9 @@ def build_self_improvement_trial_wave(
             "cross_consumer_parity_packaging",
             "bounded_operator_retrieval_cueing",
             "deliberation_mode_hint_packaging",
+            "task_board_parking_clarity",
         ],
         "outcome_counts": outcome_counts,
         "candidates": candidates,
-        "next_short_board": "Phase 802: Third Trial Candidate Admission",
+        "next_short_board": "Phase 805: Fourth Trial Candidate Admission",
     }

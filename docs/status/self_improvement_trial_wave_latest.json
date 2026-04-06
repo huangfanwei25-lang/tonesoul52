@@ -1,17 +1,18 @@
 {
   "contract_version": "v1",
   "bundle": "self_improvement_trial_wave",
-  "agent": "codex-phase801-smoke",
+  "agent": "codex-phase804-smoke",
   "status": "completed",
-  "summary_text": "self_improvement_trial_wave promote=2 park=1 retire=0 blocked=0",
+  "summary_text": "self_improvement_trial_wave promote=3 park=1 retire=0 blocked=0",
   "receiver_rule": "Trial-wave outcomes are bounded self-improvement results. They may inform future patches or parking decisions, but they do not become governance truth, identity truth, or hot-memory authority.",
   "trial_families": [
     "cross_consumer_parity_packaging",
     "bounded_operator_retrieval_cueing",
-    "deliberation_mode_hint_packaging"
+    "deliberation_mode_hint_packaging",
+    "task_board_parking_clarity"
   ],
   "outcome_counts": {
-    "promote": 2,
+    "promote": 3,
     "park": 1,
     "retire": 0,
     "blocked": 0,
@@ -129,7 +130,44 @@
         "visibility": "status_surface_only",
         "carry_forward_rule": "may inform future routing-packaging trials, but does not authorize deeper council by default"
       }
+    },
+    {
+      "candidate_record": {
+        "candidate_id": "task_board_parking_clarity_v1",
+        "target_surface": "task_board_preflight + mutation_preflight.next_followup",
+        "target_consumer": "codex_claude_dashboard_operator_shells",
+        "baseline_story": "Task-board parking helpers existed, but later agents could still read parking guidance as soft prose rather than a routing outcome.",
+        "candidate_story": "Task-board parking now surfaces routing outcome, task.md write allowance, and promotion posture explicitly, while mutation preflight carries the same story forward.",
+        "success_metric": "task_board_probe.present and consumer_drift_report.status == aligned",
+        "failure_mode_watch": "parking clarity turns into a permission myth or makes ratified follow-through harder than necessary",
+        "rollback_path": "restore the prior task-board parking packaging and keep the result as history only",
+        "overclaim_to_avoid": "better parking clarity is not better planning quality or better governance",
+        "scope_limit": "task-board routing packaging only; no task.md authority rewrite or auto-promotion"
+      },
+      "analyzer_closeout": {
+        "status": "promote",
+        "result_story": "Task-board parking now reads as a bounded routing outcome instead of soft parking prose.",
+        "evidence_bundle_summary": "task_board_probe classification=docs_plans_first write_task_md=no promotion=parking_only routing=yes",
+        "unresolved_items": [
+          "parking clarity does not prove better planning quality",
+          "future shells must preserve docs_plans_first as routing, not ratification"
+        ],
+        "failure_pressure": "low",
+        "rollback_posture": "bounded_restore",
+        "promotion_limit": "does not authorize task.md auto-promotion, governance semantics changes, or new permission systems",
+        "overclaim_warning": "better parking clarity is not better planning, authority, or human approval",
+        "next_action": "keep the task-board routing story stable while selecting the next bounded candidate"
+      },
+      "result_surface": {
+        "surface_status": "promoted_result",
+        "registry_recommendation": "promotion_ready_result",
+        "supersession_posture": "active_until_newer_task_board_parking_trials_exist",
+        "replay_rule": "prefer_status_surface_then_probe_current_task_board_shape_before_reusing_the_story",
+        "residue_posture": "keep_visible_as_current_packaging_result",
+        "visibility": "status_surface_only",
+        "carry_forward_rule": "may inform future task-board routing trials, but does not authorize task.md promotion by itself"
+      }
     }
   ],
-  "next_short_board": "Phase 802: Third Trial Candidate Admission"
+  "next_short_board": "Phase 805: Fourth Trial Candidate Admission"
 }

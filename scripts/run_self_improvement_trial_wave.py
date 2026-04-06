@@ -101,6 +101,39 @@ def _probe_deliberation_hint(
     }
 
 
+def _probe_task_board_parking(
+    *,
+    agent: str,
+    state_path: Path | None,
+    traces_path: Path | None,
+) -> dict[str, Any]:
+    from scripts.run_task_board_preflight import run_task_board_preflight
+
+    payload = run_task_board_preflight(
+        agent=agent,
+        proposal_kind="external_idea",
+        target_path="task.md",
+        state_path=state_path,
+        traces_path=traces_path,
+    )
+    preflight = dict(payload.get("preflight") or {})
+    present = bool(
+        isinstance(preflight.get("routing_outcome"), str)
+        and isinstance(preflight.get("task_md_write_allowed"), bool)
+        and isinstance(preflight.get("promotion_posture"), str)
+    )
+    return {
+        "present": present,
+        "summary_text": (
+            "task_board_probe "
+            f"classification={str(preflight.get('classification', '') or 'unknown')} "
+            f"write_task_md={'yes' if bool(preflight.get('task_md_write_allowed')) else 'no'} "
+            f"promotion={str(preflight.get('promotion_posture', '') or 'unknown')} "
+            f"routing={'yes' if present else 'no'}"
+        ),
+    }
+
+
 def _render_markdown(report: dict[str, Any]) -> str:
     lines = [
         "# ToneSoul Self-Improvement Trial Wave",
@@ -161,6 +194,11 @@ def run_self_improvement_trial_wave(
         state_path=state_path,
         traces_path=traces_path,
     )
+    task_board_probe = _probe_task_board_parking(
+        agent=agent,
+        state_path=state_path,
+        traces_path=traces_path,
+    )
     operator_retrieval_contract_present = (
         REPO_ROOT / "docs/architecture/TONESOUL_OPERATOR_RETRIEVAL_QUERY_CONTRACT.md"
     ).exists()
@@ -173,6 +211,7 @@ def run_self_improvement_trial_wave(
         agent=agent,
         consumer_drift_report=consumer_drift_report,
         deliberation_hint_probe=deliberation_hint_probe,
+        task_board_probe=task_board_probe,
         operator_retrieval_contract_present=operator_retrieval_contract_present,
         compiled_landing_zone_spec_present=compiled_landing_zone_spec_present,
         retrieval_runner_present=retrieval_runner_present,

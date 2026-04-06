@@ -1,6 +1,6 @@
 # ToneSoul Self-Improvement Trial Wave
 
-**Summary**: `self_improvement_trial_wave promote=2 park=1 retire=0 blocked=0`
+**Summary**: `self_improvement_trial_wave promote=3 park=1 retire=0 blocked=0`
 
 > Trial-wave outcomes are bounded self-improvement results. They may inform future patches or parking decisions, but they do not become governance truth, identity truth, or hot-memory authority.
 
@@ -9,10 +9,11 @@
 - `cross_consumer_parity_packaging`
 - `bounded_operator_retrieval_cueing`
 - `deliberation_mode_hint_packaging`
+- `task_board_parking_clarity`
 
 ## Outcomes
 
-- `promote`: `2`
+- `promote`: `3`
 - `park`: `1`
 - `retire`: `0`
 - `blocked`: `0`
@@ -60,7 +61,20 @@
     - future shell consumers must preserve the active/conditional distinction
   - promotion_limit: `does not authorize council runtime depth changes, confidence math changes, or broader shell expansion`
   - next_action: `keep this split stable while evaluating one next admitted self-improvement candidate`
+- `task_board_parking_clarity_v1` -> `promote`
+  - target_surface: `task_board_preflight + mutation_preflight.next_followup`
+  - success_metric: `task_board_probe.present and consumer_drift_report.status == aligned`
+  - result_story: Task-board parking now reads as a bounded routing outcome instead of soft parking prose.
+  - evidence: `task_board_probe classification=docs_plans_first write_task_md=no promotion=parking_only routing=yes`
+  - result_surface: `promoted_result`
+  - replay_rule: `prefer_status_surface_then_probe_current_task_board_shape_before_reusing_the_story`
+  - residue_posture: `keep_visible_as_current_packaging_result`
+  - unresolved_items:
+    - parking clarity does not prove better planning quality
+    - future shells must preserve docs_plans_first as routing, not ratification
+  - promotion_limit: `does not authorize task.md auto-promotion, governance semantics changes, or new permission systems`
+  - next_action: `keep the task-board routing story stable while selecting the next bounded candidate`
 
 ## Next Short Board
 
-- `Phase 802: Third Trial Candidate Admission`
+- `Phase 805: Fourth Trial Candidate Admission`
