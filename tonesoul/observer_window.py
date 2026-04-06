@@ -24,6 +24,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from typing import Any
 
+from tonesoul.consumer_contract import build_memory_consumer_contract
 from tonesoul.hot_memory import (
     build_canonical_center,
     build_hot_memory_decay_map,
@@ -385,6 +386,7 @@ def build_low_drift_anchor(
     readiness: dict[str, Any],
     canonical_center: dict[str, Any] | None = None,
     subsystem_parity: dict[str, Any] | None = None,
+    mutation_preflight: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """
     Derive a bounded low_drift_anchor from visible packet/session-start surfaces.
@@ -426,6 +428,15 @@ def build_low_drift_anchor(
         delta_feed=packet.get("delta_feed") or {},
     )
     closeout_attention = _build_closeout_attention(import_posture=import_posture)
+    consumer_contract = build_memory_consumer_contract(
+        readiness_status=str(readiness.get("status", "") or "unknown"),
+        canonical_center=canonical_center,
+        closeout_attention=closeout_attention,
+        mutation_preflight=mutation_preflight,
+        deep_surface_note=(
+            "Observer shell is for orientation first. Pull full packet/import detail only if the task is contested, blocked, or about to mutate shared state."
+        ),
+    )
     closeout_status = str(closeout_attention.get("status", "complete") or "complete")
 
     return {
@@ -436,6 +447,7 @@ def build_low_drift_anchor(
         "hot_memory_decay_map": hot_memory_decay_map,
         "repo_state_awareness": repo_state_awareness,
         "closeout_attention": closeout_attention,
+        "consumer_contract": consumer_contract,
         "stable": stable,
         "contested": contested,
         "stale": stale,

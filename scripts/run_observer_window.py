@@ -77,6 +77,7 @@ def _render_markdown(anchor: dict[str, Any]) -> str:
     repo_state_awareness = anchor.get("repo_state_awareness") or {}
     closeout_attention = anchor.get("closeout_attention") or {}
     subsystem_parity = anchor.get("subsystem_parity") or {}
+    consumer_contract = anchor.get("consumer_contract") or {}
 
     lines.extend(["## Canonical Center", ""])
     lines.append(
@@ -151,6 +152,21 @@ def _render_markdown(anchor: dict[str, Any]) -> str:
         lines.append(f"- Status: `{closeout_attention.get('status', '')}`")
         lines.append(f"- Detail: `{closeout_attention.get('detail', '')}`")
         lines.append(f"- Receiver rule: `{closeout_attention.get('receiver_rule', '')}`")
+    lines.append("")
+
+    lines.extend(["## Consumer Contract", ""])
+    lines.append(f"- Summary: `{consumer_contract.get('summary_text', '')}`")
+    lines.append(f"- Receiver rule: `{consumer_contract.get('receiver_rule', '')}`")
+    lines.append(
+        f"- Compatible consumers: `{', '.join(consumer_contract.get('compatible_consumers') or [])}`"
+    )
+    lines.append(f"- Source precedence: `{consumer_contract.get('source_precedence_summary', '')}`")
+    for step in consumer_contract.get("required_read_order") or []:
+        lines.append(
+            f"- Step {step.get('step', '?')}: `{step.get('surface', '')}` - {step.get('receiver_rule', '')}"
+        )
+    for guard in consumer_contract.get("misread_guards") or []:
+        lines.append(f"- Guard `{guard.get('name', '')}`: {guard.get('rule', '')}")
     lines.append("")
 
     lines.extend(["## Subsystem Parity", ""])
@@ -285,6 +301,7 @@ def run_observer_window(
         readiness=readiness,
         canonical_center=canonical_center,
         subsystem_parity=subsystem_parity,
+        mutation_preflight=payload.get("mutation_preflight") or {},
     )
 
 

@@ -2015,6 +2015,7 @@ def _build_operator_guidance(
     coordination_mode: Dict[str, Any],
 ) -> Dict[str, Any]:
     """Build packet-visible operator guidance for shared R-memory coordination."""
+    from tonesoul.consumer_contract import build_memory_consumer_contract
     from tonesoul.hook_chain import build_hook_chain_readout
     from tonesoul.receiver_posture import build_receiver_parity_readout
 
@@ -2172,6 +2173,23 @@ def _build_operator_guidance(
             )
 
     hook_chain = build_hook_chain_readout(agent_id=observer_id or "<your-id>")
+    consumer_contract = build_memory_consumer_contract(
+        readiness_status="unknown_until_session_start",
+        canonical_center={},
+        closeout_attention={
+            "status": closeout_status or "complete",
+            "summary_text": (
+                "latest compaction closeout is complete"
+                if not closeout_status or closeout_status == "complete"
+                else f"latest compaction closeout is {closeout_status}"
+            ),
+        },
+        mutation_preflight={},
+        deep_surface_note=(
+            "Packet is a deeper surface. Read session-start readiness and canonical center first, then pull packet detail if the task is ambiguous or shared-state heavy."
+        ),
+    )
+    reminders.append(f"Consumer contract: {consumer_contract.get('summary_text', '')}")
 
     return {
         "backend_mode": backend_name,
@@ -2188,6 +2206,7 @@ def _build_operator_guidance(
             "python scripts/run_task_claim.py release <task_id> --agent <your-id>",
         ],
         "preflight_chain": hook_chain,
+        "consumer_contract": consumer_contract,
         "coordination_commands": {
             "claim": 'python scripts/run_task_claim.py claim <task_id> --agent <your-id> --summary "..."',
             "perspective": 'python scripts/save_perspective.py --agent <your-id> --summary "..." --stance "..."',
@@ -2910,6 +2929,11 @@ def r_memory_packet(
         project_memory_summary=project_memory_summary,
         coordination_mode=coordination_mode,
     )
+    consumer_contract = (
+        (operator_guidance.get("consumer_contract") or {})
+        if isinstance(operator_guidance, dict)
+        else {}
+    )
 
     return {
         "contract_version": R_MEMORY_PACKET_VERSION,
@@ -2988,6 +3012,7 @@ def r_memory_packet(
         "recent_routing_events": routing_summary.get("recent_events", []),
         "project_memory_summary": project_memory_summary,
         "coordination_mode": coordination_mode,
+        "consumer_contract": consumer_contract,
         "operator_guidance": operator_guidance,
         **({"delta_feed": delta_feed} if observer_text else {}),
     }

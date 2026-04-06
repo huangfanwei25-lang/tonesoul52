@@ -204,6 +204,13 @@ Success criteria:
 
 - Codex, Claude-style, and dashboard consumers can be judged against one shared interpretation contract
 
+Current implementation target:
+
+- one bounded `consumer_contract` visible in session-start, observer-window, and packet surfaces
+- one shared first-hop order
+- one shared misread-guard set
+- no transport rewrite and no fake first-party vendor interop claim
+
 ### Phase 776: Claude-Compatible Entry Adapter
 
 Bounded scope:

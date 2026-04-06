@@ -445,8 +445,18 @@ def test_r_memory_packet_exposes_runtime_dominance_and_recent_trace(
     assert "subject_snapshot" in packet["operator_guidance"]["coordination_commands"]
     assert "apply_subject_refresh" in packet["operator_guidance"]["coordination_commands"]
     assert "checkpoint or compaction" in packet["operator_guidance"]["completion_rule"]
+    assert packet["consumer_contract"]["present"] is True
+    assert packet["consumer_contract"]["required_read_order"][0]["surface"] == "readiness"
+    assert (
+        packet["operator_guidance"]["consumer_contract"]["source_precedence_summary"]
+        == packet["consumer_contract"]["source_precedence_summary"]
+    )
     assert any(
         reminder.startswith("Council realism: Descriptive agreement record only")
+        for reminder in packet["operator_guidance"]["current_reminders"]
+    )
+    assert any(
+        reminder.startswith("Consumer contract: consumer_order=")
         for reminder in packet["operator_guidance"]["current_reminders"]
     )
     assert packet["recent_traces"][0]["agent"] == "codex"

@@ -113,6 +113,33 @@ def _build_hook_chain(*, agent_id: str) -> dict:
     return build_hook_chain_readout(agent_id=agent_id)
 
 
+def _build_consumer_contract(
+    *,
+    readiness: dict,
+    canonical_center: dict,
+    import_posture: dict,
+    mutation_preflight: dict,
+) -> dict:
+    from tonesoul.consumer_contract import build_memory_consumer_contract
+
+    compaction_surface = (import_posture.get("surfaces") or {}).get("compactions") or {}
+    closeout_status = str(compaction_surface.get("closeout_status", "") or "complete").strip() or "complete"
+    closeout_attention = {
+        "status": closeout_status,
+        "summary_text": (
+            "latest compaction closeout is complete"
+            if closeout_status == "complete"
+            else f"latest compaction closeout is {closeout_status}"
+        ),
+    }
+    return build_memory_consumer_contract(
+        readiness_status=str(readiness.get("status", "") or "unknown"),
+        canonical_center=canonical_center,
+        closeout_attention=closeout_attention,
+        mutation_preflight=mutation_preflight,
+    )
+
+
 def _build_mutation_preflight(
     *,
     readiness: dict,
@@ -203,6 +230,18 @@ def _build_tier0_mutation_preflight(mutation_preflight: dict) -> dict:
     }
 
 
+def _build_tier0_consumer_contract(consumer_contract: dict) -> dict:
+    required = list(consumer_contract.get("required_read_order") or [])
+    guards = list(consumer_contract.get("misread_guards") or [])
+    return {
+        "present": bool(consumer_contract.get("present")),
+        "summary_text": str(consumer_contract.get("summary_text", "")).strip(),
+        "first_hop_surfaces": [str(item.get("surface", "")).strip() for item in required[:4]],
+        "top_misread_guard": str((guards[0] or {}).get("rule", "")).strip() if guards else "",
+        "receiver_rule": str(consumer_contract.get("receiver_rule", "")).strip(),
+    }
+
+
 def _build_tier1_observer_shell(observer_window: dict) -> dict:
     repo_state_awareness = observer_window.get("repo_state_awareness") or {}
     hot_memory_ladder = observer_window.get("hot_memory_ladder") or {}
@@ -260,6 +299,7 @@ def _build_tier0_payload(
     canonical_center: dict,
     hook_chain: dict,
     mutation_preflight: dict,
+    consumer_contract: dict,
 ) -> dict:
     return {
         "contract_version": "v1",
@@ -282,6 +322,7 @@ def _build_tier0_payload(
         "canonical_center": _build_tier0_canonical_center(canonical_center),
         "hook_chain": hook_chain,
         "mutation_preflight": _build_tier0_mutation_preflight(mutation_preflight),
+        "consumer_contract": _build_tier0_consumer_contract(consumer_contract),
         "next_pull": {
             "receiver_rule": (
                 "Tier 0 is a minimum safe start. Pull deeper surfaces only if the task is not local/clear, "
@@ -316,6 +357,7 @@ def _build_tier1_payload(
     mutation_preflight: dict,
     subsystem_parity: dict,
     observer_window: dict,
+    consumer_contract: dict,
 ) -> dict:
     observer_shell = _build_tier1_observer_shell(observer_window)
     return {
@@ -339,6 +381,7 @@ def _build_tier1_payload(
         "canonical_center": canonical_center,
         "hook_chain": hook_chain,
         "mutation_preflight": _build_tier0_mutation_preflight(mutation_preflight),
+        "consumer_contract": consumer_contract,
         "subsystem_parity": subsystem_parity,
         "observer_shell": observer_shell,
         "closeout_attention": dict(observer_window.get("closeout_attention") or {}),
@@ -1391,6 +1434,12 @@ def run_session_start_bundle(
         publish_push_preflight=publish_push_preflight,
         task_board_preflight=task_board_preflight,
     )
+    consumer_contract = _build_consumer_contract(
+        readiness=readiness,
+        canonical_center=canonical_center,
+        import_posture=import_posture,
+        mutation_preflight=mutation_preflight,
+    )
     if int(tier) == 0:
         return _build_tier0_payload(
             agent_id=agent_id,
@@ -1404,6 +1453,7 @@ def run_session_start_bundle(
             canonical_center=canonical_center,
             hook_chain=hook_chain,
             mutation_preflight=mutation_preflight,
+            consumer_contract=consumer_contract,
         )
     subsystem_parity = _build_subsystem_parity(
         packet=packet,
@@ -1423,6 +1473,7 @@ def run_session_start_bundle(
             readiness=readiness,
             canonical_center=canonical_center,
             subsystem_parity=subsystem_parity,
+            mutation_preflight=mutation_preflight,
         )
         return _build_tier1_payload(
             agent_id=agent_id,
@@ -1438,6 +1489,7 @@ def run_session_start_bundle(
             mutation_preflight=mutation_preflight,
             subsystem_parity=subsystem_parity,
             observer_window=observer_window,
+            consumer_contract=consumer_contract,
         )
     return {
         "contract_version": "v1",
@@ -1465,6 +1517,7 @@ def run_session_start_bundle(
         "hook_chain": hook_chain,
         "task_board_preflight": task_board_preflight,
         "mutation_preflight": mutation_preflight,
+        "consumer_contract": consumer_contract,
         "subsystem_parity": subsystem_parity,
         "working_style_playbook": working_style_playbook,
         "working_style_validation": working_style_validation,

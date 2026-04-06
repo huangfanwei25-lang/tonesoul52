@@ -223,10 +223,22 @@ class TestCleanStableCase:
         assert "stale" in self.anchor
         assert "delta_summary" in self.anchor
         assert "closeout_attention" in self.anchor
+        assert "consumer_contract" in self.anchor
         assert "generated_at" in self.anchor
         assert "receiver_note" in self.anchor
         assert "summary_text" in self.anchor
         assert "counts" in self.anchor
+
+    def test_consumer_contract_lifts_first_hop_order(self):
+        consumer_contract = self.anchor["consumer_contract"]
+        assert consumer_contract["present"] is True
+        assert consumer_contract["required_read_order"][0]["surface"] == "readiness"
+        assert consumer_contract["required_read_order"][1]["surface"] == "canonical_center"
+        assert consumer_contract["required_read_order"][2]["surface"] == "closeout_attention"
+        assert any(
+            guard["name"] == "working_style_not_identity"
+            for guard in consumer_contract["misread_guards"]
+        )
 
     def test_stable_has_items(self):
         assert len(self.anchor["stable"]) >= 1, "Expected at least one stable item in clean state"

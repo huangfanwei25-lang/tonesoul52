@@ -138,6 +138,12 @@
 - `python scripts/verify_docs_consistency.py --repo-root .` → `"issues": []`
 - `python scripts/run_observer_window.py --agent antigravity-claude --json-out docs/status/observer_window_latest.json --markdown-out docs/status/observer_window_latest.md` → passed
 
+## Phase 775: Cross-Agent Memory Consumer Contract (2026-04-06)
+- [x] Define one bounded `consumer_contract` so Codex-style shells, Claude-style shells, and dashboard/operator surfaces preserve the same first-hop read order
+- [x] Surface that contract in `session-start`, `observer-window`, and packet-facing guidance without rewriting transport or pretending first-party cross-vendor interop exists
+- [x] Lock the parity with regression coverage for tiered session-start bundles, observer-window output, and packet/operator-guidance readouts
+**Success Criteria**: Different ToneSoul consumer shells can still render different panes, but they no longer drift on the first-hop order, compaction-vs-closeout meaning, or the main non-promotion guards.
+
 ## Phase 691: Reality Alignment Lane Integration (2026-03-29)
 - [x] Add a dedicated reality-alignment lane to the doc authority map for entry-surface baselines, count methods, render/encoding boundaries, and drift registers
 - [x] Wire the lane into README, docs README, and docs index so later agents can discover the corrected baseline through normal entrypoints

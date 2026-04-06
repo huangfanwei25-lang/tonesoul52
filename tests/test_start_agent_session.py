@@ -216,6 +216,25 @@ def test_start_agent_session_emits_machine_readable_bundle(
     assert publish_push_preflight["present"] is True
     assert publish_push_preflight["classification"] == "review_before_push"
     assert publish_push_preflight["repo_state_classification"] == "baseline_unset"
+    consumer_contract = output["consumer_contract"]
+    assert consumer_contract["present"] is True
+    assert consumer_contract["compatible_consumers"] == [
+        "codex_cli",
+        "claude_style_shell",
+        "dashboard_operator_shell",
+    ]
+    assert consumer_contract["required_read_order"][0]["surface"] == "readiness"
+    assert consumer_contract["required_read_order"][1]["surface"] == "canonical_center"
+    assert consumer_contract["current_context"]["closeout_status"] in {
+        "complete",
+        "partial",
+        "blocked",
+        "underdetermined",
+    }
+    assert any(
+        guard["name"] == "compaction_not_completion"
+        for guard in consumer_contract["misread_guards"]
+    )
     hook_chain = output["hook_chain"]
     assert hook_chain["present"] is True
     assert hook_chain["stages"][0]["name"] == "shared_edit_path_overlap"
@@ -359,6 +378,14 @@ def test_start_agent_session_tier0_returns_fast_path_bundle(
     assert output["mutation_preflight"]["present"] is True
     assert output["mutation_preflight"]["current_context"]["task_track"] == "unclassified"
     assert output["mutation_preflight"]["next_followup"]["target"] == "task_board.parking_preflight"
+    assert output["consumer_contract"]["present"] is True
+    assert output["consumer_contract"]["first_hop_surfaces"] == [
+        "readiness",
+        "canonical_center",
+        "closeout_attention",
+        "mutation_preflight",
+    ]
+    assert "bounded orientation" in output["consumer_contract"]["top_misread_guard"]
     assert output["next_pull"]["recommended_commands"][0] == (
         "python scripts/start_agent_session.py --agent tier0-fast"
     )
@@ -419,6 +446,9 @@ def test_start_agent_session_tier1_returns_orientation_shell(
     assert output["observer_shell"]["closeout_attention"]["summary_text"].startswith(
         "latest compaction closeout"
     )
+    assert output["consumer_contract"]["present"] is True
+    assert output["consumer_contract"]["required_read_order"][0]["surface"] == "readiness"
+    assert output["consumer_contract"]["required_read_order"][2]["surface"] == "closeout_attention"
     assert output["observer_shell"]["hot_memory_ladder"]["layers"][0]["layer"] == "canonical_center"
     assert output["closeout_attention"]["status"] in {
         "complete",
