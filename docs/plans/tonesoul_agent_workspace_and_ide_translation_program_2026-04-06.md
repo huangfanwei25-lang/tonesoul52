@@ -97,6 +97,12 @@ while keeping multi-agent architecture as escalation, not default tax.
 - check that dashboard still follows CLI/runtime truth while `apps/web` stays educational/demo-first
 - keep the lane parity-focused; do not reopen monolithic UI redesign
 
+### Phase 774: Dashboard Status Panel Tier Alignment
+
+- realign the dashboard status panel to the new tier model instead of legacy generic status storytelling
+- keep the panel subordinate to the operator shell and deep-governance drawer
+- reduce mixed authority language before any broader workspace polish
+
 ---
 
 ## Existing Frontend Reality
