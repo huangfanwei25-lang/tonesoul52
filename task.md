@@ -127,6 +127,7 @@
 - Phase 794: run one first bounded self-improvement trial wave on safe surfaces such as operator workspace tiering, escalation hinting, consumer parity packaging, or bounded retrieval cueing
 - Phase 795: define one promotion-ready result surface contract so trial outcomes remain visible, supersedable, and secondary to runtime truth instead of leaking into first-hop shells
 - Phase 796: define one compact self-improvement result cue design so later shells can optionally reference current improvement posture without bloating session-start, observer-window, or packet defaults
+- Phase 797: pilot one dashboard-only self-improvement cue that points back to the dedicated status surface without entering default first-hop runtime shells
 
 ## Water-Bucket Snapshot (2026-03-30)
 - Baseline reached:
@@ -143,9 +144,9 @@
   - bounded outer-shell preflight chain for shared edits, publish/push posture, and task-board parking discipline
   - bounded self-improvement foundation: evaluator harness, experiment lineage boundary, mutation space, analyzer gate, first trial wave, and promotion-ready result surface discipline
 - Current short board:
-  - Phase 796: define one compact self-improvement result cue design so later agents can see current trial posture without bloating session-start, observer-window, or packet defaults
+  - Phase 797: pilot one dashboard-only self-improvement cue so operators can glance at current trial posture without importing trial history into Tier 0 / Tier 1 runtime truth
 - After that:
-  - `ToneSoul Self-Improvement Loop v0` is now the active bucket, with `Phase 790-795` landed and the next work focused on compact, non-bloating result visibility
+  - `ToneSoul Self-Improvement Loop v0` is now the active bucket, with `Phase 790-796` landed and the next work focused on a dashboard-only cue that still preserves status-surface-first discipline
   - successor/hot-memory bucket is now baseline-frozen unless a fresh real-world misread reopens it
   - task-board governance should stay boring and explicit before any new theory bucket opens
   - hook-chain discoverability should stay packaging-oriented, not a new permission universe
@@ -1978,8 +1979,14 @@
 - [x] make replay, supersession, and residue posture explicit so future trial waves do not accumulate as a new hidden status swamp
 **Success Criteria**: Later agents can see the bounded result of self-improvement trials without confusing them with runtime truth or rereading raw trial artifacts.
 
-## Phase 796: Compact Self-Improvement Result Cue Design (2026-04-07, planned)
-- [ ] define whether any compact self-improvement result cue belongs in later shells, and if so keep it opt-in, secondary, and visibly below runtime truth
-- [ ] preserve the status-surface-first rule while deciding what minimum cue a later agent may see without opening raw trial artifacts
-- [ ] avoid turning session-start, observer-window, or packet into a trial-history bundle
+## Phase 796: Compact Self-Improvement Result Cue Design (2026-04-07)
+- [x] define whether any compact self-improvement result cue belongs in later shells, and if so keep it opt-in, secondary, and visibly below runtime truth
+- [x] preserve the status-surface-first rule while deciding what minimum cue a later agent may see without opening raw trial artifacts
+- [x] avoid turning session-start, observer-window, or packet into a trial-history bundle
 **Success Criteria**: ToneSoul has one explicit design for if and how current self-improvement posture may surface to later agents as a compact cue, without flattening the dedicated result surface into first-hop runtime truth.
+
+## Phase 797: Dashboard-Only Self-Improvement Cue Pilot (2026-04-07, planned)
+- [ ] add one small dashboard-only cue that surfaces the current bounded self-improvement posture while remaining secondary to Tier 0 / Tier 1 runtime truth
+- [ ] keep the cue visually collapsed or subordinate by default and point operators back to `docs/status/self_improvement_trial_wave_latest.*`
+- [ ] avoid touching packet, observer stable/contested/stale buckets, or default `session-start` payloads
+**Success Criteria**: ToneSoul can test a compact self-improvement cue in the operator dashboard without turning trial posture into a new authority tier or bloating first-hop shells.

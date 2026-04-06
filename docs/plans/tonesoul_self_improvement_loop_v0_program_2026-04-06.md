@@ -311,6 +311,24 @@ Current implementation target:
 - no new first-hop payloads yet
 - explicit `do_not_default_load` rule for trial-history surfaces
 
+### Phase 797: Dashboard-Only Self-Improvement Cue Pilot
+
+Bounded scope:
+
+- if a cue is implemented, keep it dashboard-only and secondary to Tier 0 / Tier 1 runtime truth
+- point the cue back to the dedicated status artifact instead of inlining raw trial history
+- avoid touching packet, observer buckets, or default `session-start` payloads
+
+Success criteria:
+
+- ToneSoul can test whether a compact cue is useful for operators without flattening trial posture into first-hop runtime truth
+
+Current implementation target:
+
+- one small dashboard-only cue
+- collapsed or visually secondary by default
+- clear source-path and receiver rule
+
 ---
 
 ## Safe First Trial Families
@@ -375,7 +393,7 @@ The program is now active through `Phase 794`.
 
 Current short board:
 
-- `Phase 796: Compact Self-Improvement Result Cue Design`
+- `Phase 797: Dashboard-Only Self-Improvement Cue Pilot`
 
 Recommended discipline:
 
