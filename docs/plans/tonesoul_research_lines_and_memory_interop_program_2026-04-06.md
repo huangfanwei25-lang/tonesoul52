@@ -413,6 +413,7 @@ Current implementation target:
 - one bounded query contract
 - provenance-first result shape
 - no live retrieval runner yet
+- if this lands cleanly, queue the first self-improvement-loop contract instead of opening a larger retrieval runtime
 
 ---
 
@@ -437,6 +438,13 @@ The next research-driven short board should open:
 `Phase 789: Bounded Operator-Retrieval Query Contract`
 
 Keep the work repo-native, bounded, and testable.
+
+After that, do not jump directly to a retrieval engine or a grand self-evolution claim.
+Open the separate:
+
+`ToneSoul Self-Improvement Loop v0`
+
+program starting with an evaluator harness contract.
 
 ---
 

@@ -293,12 +293,24 @@ GROUPS = [
         ],
     },
     {
+        "id": "bounded_self_improvement_loop",
+        "label": "Bounded Self-Improvement Loop",
+        "description": "bounded improvement-loop surfaces that define how ToneSoul may propose, evaluate, and promote operator/runtime improvements without crossing governance, identity, or hot-memory transport boundaries",
+        "authority_role": "improvement_contract",
+        "use_when": "when the question is how ToneSoul may safely improve operator/runtime surfaces, where experiment lineage belongs, or which mutation classes remain forbidden or human-gated in v0",
+        "read_order": 21,
+        "files": [
+            "docs/architecture/TONESOUL_SELF_IMPROVEMENT_LOOP_V0_SPEC.md",
+            "docs/plans/tonesoul_self_improvement_loop_v0_program_2026-04-06.md",
+        ],
+    },
+    {
         "id": "entry_simplification_and_lineage_routing",
         "label": "Entry Simplification And Lineage Routing",
         "description": "cleanup and routing aids for audience entry paths, historical-versus-current surface distinction, safe simplification moves, and bounded docs cleanup sequencing",
         "authority_role": "doc_cleanup_aid",
         "use_when": "when the problem is how a reader should enter, what should remain visible as lineage, or which cleanup moves are safe without flattening authority",
-        "read_order": 21,
+        "read_order": 22,
         "files": [
             "docs/architecture/TONESOUL_AUDIENCE_ROUTING_AND_ENTRY_CONTRACT.md",
             "docs/architecture/TONESOUL_HISTORICAL_SPEC_AND_LEGACY_SURFACE_MAP.md",
@@ -313,7 +325,7 @@ GROUPS = [
         "description": "naming, zoning, and convergence planning surfaces",
         "authority_role": "doc_governance",
         "use_when": "when retrieval quality, metadata posture, or naming collisions are the problem",
-        "read_order": 22,
+        "read_order": 23,
         "files": [
             "docs/DOCS_INFORMATION_ARCHITECTURE_v1.md",
             "docs/DOCS_CLASSIFICATION_LEDGER_v1.md",
@@ -328,7 +340,7 @@ GROUPS = [
         "description": "ownership and divergence boundaries for duplicate-like surfaces",
         "authority_role": "boundary_contract",
         "use_when": "when two similar-looking lanes need explicit ownership or split-brain control",
-        "read_order": 23,
+        "read_order": 24,
         "files": [
             "docs/architecture/BASENAME_DIVERGENCE_DISTILLATION_MAP.md",
             "docs/architecture/PRIVATE_MEMORY_SHADOW_BOUNDARY_MAP.md",
@@ -342,7 +354,7 @@ GROUPS = [
         "description": "machine-readable current posture for convergence-related lanes",
         "authority_role": "generated_status",
         "use_when": "when current machine-readable posture matters more than prose explanation",
-        "read_order": 24,
+        "read_order": 25,
         "files": [
             "docs/status/doc_convergence_inventory_latest.json",
             "docs/status/basename_divergence_distillation_latest.json",

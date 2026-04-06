@@ -234,6 +234,17 @@ Open these when the question is:
 - `docs/architecture/TONESOUL_COMPILED_KNOWLEDGE_LANDING_ZONE_SPEC.md`
 - `docs/plans/tonesoul_research_lines_and_memory_interop_program_2026-04-06.md`
 
+### 19. Bounded self-improvement loop lane
+
+Open these when the question is:
+
+- how ToneSoul may improve bounded operator/runtime surfaces without crossing identity or governance boundaries,
+- what experiment lineage should look like without reusing hot coordination state,
+- which mutation classes belong to v0 and which must stay forbidden or human-gated.
+
+- `docs/architecture/TONESOUL_SELF_IMPROVEMENT_LOOP_V0_SPEC.md`
+- `docs/plans/tonesoul_self_improvement_loop_v0_program_2026-04-06.md`
+
 ## Retrieval Order
 
 1. Start in the entrypoint lane.
@@ -251,8 +262,9 @@ Open these when the question is:
 13. Move to the reality alignment and render boundary lane when doc counts, audience routing, or encoding alarms may be stale, display-dependent, or loosely measured.
 14. Move to the entry simplification and lineage routing lane when the problem is how a reader should enter, what should stay visible as lineage, or which cleanup moves are safe.
 15. Move to the research-driven memory interop and knowledge layer lane when the problem is shared interpretation, future retrieval boundaries, or descriptive-versus-trendable launch posture.
-16. Move to documentation governance and convergence contracts when restructuring docs.
-17. Prefer generated status surfaces over stale prose when checking current posture.
+16. Move to the bounded self-improvement loop lane when the problem is how ToneSoul may improve operator/runtime surfaces without turning improvement into identity drift, memory rewrite, or hidden self-modification.
+17. Move to documentation governance and convergence contracts when restructuring docs.
+18. Prefer generated status surfaces over stale prose when checking current posture.
 
 ## Current Rule
 

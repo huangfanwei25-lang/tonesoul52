@@ -114,6 +114,18 @@
 - Phase 788: define one compiled-knowledge landing-zone spec so future distillations can be stored, health-checked, and queried without reusing hot coordination lanes
 - Phase 789: define one bounded operator-retrieval query contract so future compiled-knowledge access stays auxiliary, provenance-aware, and non-promoting
 
+## Long Program: ToneSoul Self-Improvement Loop v0 (2026-04-06)
+- Program Goal: let ToneSoul improve bounded operator/runtime surfaces through explicit evaluation, experiment lineage, and promotion discipline without crossing governance, identity, or hot-memory transport boundaries.
+- Execution Guardrails:
+  - Do not open this program until `Phase 789` lands; self-improvement must not begin before the retrieval/compiled-knowledge boundary is explicit.
+  - Treat this as a bounded improvement loop for operator surfaces, routing/readout quality, and consumer parity; do not turn it into an identity-rewrite or constitution-rewrite lane.
+  - Keep `R-memory`, `compiled knowledge`, `experiment lineage`, and `canonical governance truth` visibly separate at all times.
+- Phase 790: define one self-improvement evaluator harness contract so candidates are judged by explicit baseline, success metric, failure watch, and rollback path instead of narrative smoothness
+- Phase 791: define one experiment-registry and lineage boundary so future trial outputs have a home without reusing hot coordination state as experimental memory
+- Phase 792: define one bounded mutation-space contract so v0 improvements stay inside operator/readout/retrieval packaging and do not touch vows, identity, or canonical governance
+- Phase 793: define one analyzer and promotion gate so trials end with honest park/retire/promote outcomes instead of fake completion
+- Phase 794: run one first bounded self-improvement trial wave on safe surfaces such as operator workspace tiering, escalation hinting, consumer parity packaging, or bounded retrieval cueing
+
 ## Water-Bucket Snapshot (2026-03-30)
 - Baseline reached:
   - session-start / session-end / packet / delta / readiness / receiver-guard continuity
@@ -130,6 +142,7 @@
 - Current short board:
   - Phase 789: define one bounded operator-retrieval query contract so future compiled-knowledge access stays auxiliary, provenance-aware, and non-promoting
 - After that:
+  - if Phase 789 lands cleanly, open `ToneSoul Self-Improvement Loop v0` starting with `Phase 790: Self-Improvement Evaluator Harness Contract`
   - successor/hot-memory bucket is now baseline-frozen unless a fresh real-world misread reopens it
   - task-board governance should stay boring and explicit before any new theory bucket opens
   - hook-chain discoverability should stay packaging-oriented, not a new permission universe
