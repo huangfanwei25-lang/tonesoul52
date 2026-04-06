@@ -197,7 +197,8 @@ Completed:
 - `Phase 764: Tier-1 Orientation Shell`
 - `Phase 765: Deliberation Escalation Tightening`
 - `Phase 766: Tiered Agent Workspace Spec`
+- `Phase 767: Workspace Frontend Readiness Map`
 
 The next bounded translation move should be:
 
-`Phase 767: Workspace Frontend Readiness Map`
+`Phase 768: Workspace View-Model Adapter Contract`

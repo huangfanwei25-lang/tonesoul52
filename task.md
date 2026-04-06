@@ -80,6 +80,18 @@
 - Phase 731: add one current Codex handoff note so branch state, latest commits, private residues, and next actions survive beyond chat history
 - Phase 732: implement low-drift anchor / observer-window baseline (Day 1)
 
+## Long Program: Agent Workspace And IDE Translation (2026-04-06)
+- Program Goal: translate ToneSoul's tiered runtime surfaces into a future operator workspace / IDE without collapsing bounded pull discipline into one monolithic dashboard.
+- Execution Guardrails:
+  - Prefer view-model adapters and render budgets over raw packet or observer dumps.
+  - Treat `apps/dashboard` as the first likely operator-workspace target; keep `apps/web` public/demo-facing until a concrete operator need proves otherwise.
+  - Preserve CLI parity and label discipline: `canonical`, `operational`, `advisory`, `descriptive`, and `preflight` must remain visibly distinct.
+- Phase 767: classify current Tier 0 / 1 / 2 runtime surfaces as render-direct, adapter-needed, deep-pull-only, or defer before any UI implementation starts
+- Phase 768: define a bounded workspace view-model adapter contract for Tier 0 and Tier 1 shells so frontend work does not consume raw runtime JSON directly
+- Phase 769: adapt `apps/dashboard` workspace into the first operator shell instead of rewriting every frontend surface at once
+- Phase 770: define the Tier-2 deep-governance drawer budget so escalation surfaces stay available without becoming universal default load
+- Phase 771: decide what part of the tier model, if any, belongs in `apps/web` without turning the public/demo site into the canonical operator console
+
 ## Water-Bucket Snapshot (2026-03-30)
 - Baseline reached:
   - session-start / session-end / packet / delta / readiness / receiver-guard continuity
@@ -94,7 +106,7 @@
   - low-drift anchor / observer-window baseline (Day 1 complete): `tonesoul/observer_window.py`, `scripts/run_observer_window.py`, `tests/test_observer_window.py`, `docs/status/observer_window_latest.{json,md}`
   - bounded outer-shell preflight chain for shared edits, publish/push posture, and task-board parking discipline
 - Current short board:
-  - Phase 767: map the existing Tier 0 / 1 / 2 runtime surfaces into a frontend-ready panel/read-model without reopening a monolithic dashboard story
+  - Phase 768: define the workspace view-model adapter contract so Tier 0 / 1 shells can be rendered cleanly without consuming raw runtime JSON
 - After that:
   - successor/hot-memory bucket is now baseline-frozen unless a fresh real-world misread reopens it
   - task-board governance should stay boring and explicit before any new theory bucket opens
@@ -1754,8 +1766,14 @@
 - [x] keep the phase spec-first: write the bounded workspace contract before touching frontend code
 **Success Criteria**: A future agent IDE/frontend has one clear ToneSoul-native panel model for instant gate, orientation shell, and deep governance, so UI work can improve discoverability without turning every surface into one noisy dashboard.
 
-## Phase 767: Workspace Frontend Readiness Map (2026-04-02, planned)
-- [ ] identify which existing runtime/readout surfaces are already safe to render directly in a workspace panel, and which still need view-model adaptation
-- [ ] define one bounded frontend-readiness map for `Tier 0`, `Tier 1`, and `Tier 2` so UI work can stay aligned with CLI/runtime truth
-- [ ] keep the phase translation-focused: no frontend implementation unless a concrete panel becomes the shortest board
+## Phase 767: Workspace Frontend Readiness Map (2026-04-06, completed)
+- [x] identify which existing runtime/readout surfaces are already safe to render directly in a workspace panel, and which still need view-model adaptation
+- [x] define one bounded frontend-readiness map for `Tier 0`, `Tier 1`, and `Tier 2` so UI work can stay aligned with CLI/runtime truth
+- [x] keep the phase translation-focused: no frontend implementation unless a concrete panel becomes the shortest board
 **Success Criteria**: ToneSoul has one current frontend-readiness map showing which Tier 0 / 1 / 2 surfaces can be rendered directly, which need adapter shaping, and which must remain behind deeper pull, so future UI work does not reopen a flat dashboard design.
+
+## Phase 768: Workspace View-Model Adapter Contract (2026-04-06, planned)
+- [ ] define one bounded adapter shape for `canonical_center` cards, including short-board focus, successor correction, and source-precedence summary
+- [ ] define one bounded adapter shape for `subsystem_parity` and `observer_shell` so Tier 1 can render stable orientation without dumping raw JSON
+- [ ] define one compact operator-card shape for `mutation_preflight` and related Tier-0/Tier-1 action hints
+**Success Criteria**: ToneSoul has one current adapter contract for Tier 0 / Tier 1 panels, so a future workspace can render cleanly from stable view-models instead of binding directly to runtime JSON or recreating hierarchy in ad hoc frontend code.
