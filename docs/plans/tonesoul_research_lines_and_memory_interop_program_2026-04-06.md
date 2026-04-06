@@ -393,6 +393,27 @@ Current implementation target:
 - no vector-db choice yet
 - no retrieval runtime claim yet
 
+### Phase 789: Bounded Operator-Retrieval Query Contract
+
+Bounded scope:
+
+- define one future query contract for compiled-knowledge access
+- make query scope, provenance return shape, and non-promotion rules explicit
+- keep operator retrieval auxiliary to:
+  - session-start
+  - observer-window
+  - current runtime truth
+
+Success criteria:
+
+- future operator-facing query tools can be added without making retrieval answers sound like hot coordination or canonical authority
+
+Current implementation target:
+
+- one bounded query contract
+- provenance-first result shape
+- no live retrieval runner yet
+
 ---
 
 ## What This Program Must Not Become
@@ -413,7 +434,7 @@ The workspace bucket is now baseline-stable through `Phase 784`.
 
 The next research-driven short board should open:
 
-`Phase 788: Compiled-Knowledge Landing-Zone Spec`
+`Phase 789: Bounded Operator-Retrieval Query Contract`
 
 Keep the work repo-native, bounded, and testable.
 

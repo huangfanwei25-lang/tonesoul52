@@ -112,6 +112,7 @@
 - Phase 786: run one cross-consumer drift validation wave so CLI, dashboard, observer-window, and Claude-style shells keep the same short-board, closeout, and fallback story over time
 - Phase 787: define one knowledge-layer source taxonomy and parking policy so raw sources, compiled notes, parked drafts, and operator retrieval do not blur back into one memory bucket
 - Phase 788: define one compiled-knowledge landing-zone spec so future distillations can be stored, health-checked, and queried without reusing hot coordination lanes
+- Phase 789: define one bounded operator-retrieval query contract so future compiled-knowledge access stays auxiliary, provenance-aware, and non-promoting
 
 ## Water-Bucket Snapshot (2026-03-30)
 - Baseline reached:
@@ -127,7 +128,7 @@
   - low-drift anchor / observer-window baseline (Day 1 complete): `tonesoul/observer_window.py`, `scripts/run_observer_window.py`, `tests/test_observer_window.py`, `docs/status/observer_window_latest.{json,md}`
   - bounded outer-shell preflight chain for shared edits, publish/push posture, and task-board parking discipline
 - Current short board:
-  - Phase 788: define one compiled-knowledge landing-zone spec so future distillations can be stored, health-checked, and queried without reusing hot coordination lanes
+  - Phase 789: define one bounded operator-retrieval query contract so future compiled-knowledge access stays auxiliary, provenance-aware, and non-promoting
 - After that:
   - successor/hot-memory bucket is now baseline-frozen unless a fresh real-world misread reopens it
   - task-board governance should stay boring and explicit before any new theory bucket opens
@@ -1913,8 +1914,14 @@
 - [x] keep hot coordination, continuity, and identity visibly separate from future knowledge-layer storage
 **Success Criteria**: Later agents can tell which knowledge surfaces are raw, compiled, parked, or operator-facing, so external research and repo memory no longer drift back into one blurred bucket.
 
-## Phase 788: Compiled-Knowledge Landing-Zone Spec (2026-04-06, planned)
-- [ ] define one bounded landing-zone shape for future compiled knowledge surfaces, including storage posture, health-check expectations, and consumer-facing query assumptions
-- [ ] keep the landing zone explicitly separate from raw sources, exploratory residue, and hot coordination state
-- [ ] avoid committing to any specific vector-db or retrieval runtime before the landing zone shape is stable
+## Phase 788: Compiled-Knowledge Landing-Zone Spec (2026-04-06, completed)
+- [x] define one bounded landing-zone shape for future compiled knowledge surfaces, including storage posture, health-check expectations, and consumer-facing query assumptions
+- [x] keep the landing zone explicitly separate from raw sources, exploratory residue, and hot coordination state
+- [x] avoid committing to any specific vector-db or retrieval runtime before the landing zone shape is stable
 **Success Criteria**: ToneSoul has one clear home for future compiled-knowledge artifacts, so research distillations can grow toward a queryable layer without leaking back into R-memory or parked residue.
+
+## Phase 789: Bounded Operator-Retrieval Query Contract (2026-04-06, planned)
+- [ ] define one future query contract for compiled-knowledge access, including query scope, provenance return shape, and non-promotion rules
+- [ ] keep operator retrieval auxiliary to session-start, observer-window, and current runtime truth
+- [ ] avoid pretending compiled-knowledge query is already live before the landing zone and collection health rules exist
+**Success Criteria**: ToneSoul can later add operator-facing compiled-knowledge queries without letting retrieval answers masquerade as hot coordination state, canonical authority, or durable identity.

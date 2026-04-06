@@ -237,6 +237,8 @@ Use this when the question is not only what should be transferred, but how the e
   - bounded versioning and fallback contract for session-start, observer-window, dashboard shells, and Claude-style adapters
 - [architecture/TONESOUL_KNOWLEDGE_LAYER_SOURCE_TAXONOMY_AND_PARKING_CONTRACT.md](architecture/TONESOUL_KNOWLEDGE_LAYER_SOURCE_TAXONOMY_AND_PARKING_CONTRACT.md)
   - taxonomy and parking rule for raw sources, compiled knowledge, exploratory residue, operator retrieval, and public teaching
+- [architecture/TONESOUL_COMPILED_KNOWLEDGE_LANDING_ZONE_SPEC.md](architecture/TONESOUL_COMPILED_KNOWLEDGE_LANDING_ZONE_SPEC.md)
+  - future landing-zone spec for compiled artifacts, collection metadata, health checks, and queryable indexes
 - [plans/tonesoul_research_lines_and_memory_interop_program_2026-04-06.md](plans/tonesoul_research_lines_and_memory_interop_program_2026-04-06.md)
   - active research-driven follow-through for cross-agent parity, knowledge layering, and predictive-boundary honesty
 
