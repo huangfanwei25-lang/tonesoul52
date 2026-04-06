@@ -69,21 +69,29 @@ def build_task_board_preflight(
 
     if classification == "task_md_allowed":
         suggested_destination = "task.md"
+        task_md_write_allowed = True
+        promotion_posture = "ratified_followthrough_only"
         receiver_note = (
             "This looks like ratified short-board follow-through. Keep the task.md change narrow and aligned with the visible short board."
         )
     elif classification == "parking_clear":
         suggested_destination = normalized_target
+        task_md_write_allowed = False
+        promotion_posture = "parking_only"
         receiver_note = (
             "This idea belongs in docs/plans for now. Keep it out of task.md until a human or accepted program explicitly ratifies it."
         )
     elif classification == "docs_plans_first":
         suggested_destination = "docs/plans/"
+        task_md_write_allowed = False
+        promotion_posture = "parking_only"
         receiver_note = (
-            "This looks like a new idea or unratified follow-up. Park it in docs/plans first instead of competing with the active short board."
+            "This looks like a new idea or unratified follow-up. Route it to docs/plans first instead of competing with the active short board in task.md."
         )
     else:
         suggested_destination = "human_review"
+        task_md_write_allowed = False
+        promotion_posture = "human_review_required"
         if "current_short_board_not_visible" in reasons:
             receiver_note = (
                 "Do not mutate task.md yet. The current short board is not visible, so the repo cannot confirm that this change belongs in the ratified board."
@@ -103,13 +111,17 @@ def build_task_board_preflight(
         "proposal_kind": normalized_kind,
         "target_path": normalized_target,
         "suggested_destination": suggested_destination,
+        "routing_outcome": classification,
+        "task_md_write_allowed": task_md_write_allowed,
+        "promotion_posture": promotion_posture,
         "readiness_status": readiness_status,
         "task_track": suggested_track,
         "short_board_visible": short_board_visible,
         "current_short_board": short_board_summary,
         "reasons": reasons,
         "summary_text": (
-            f"task_board={classification} proposal={normalized_kind} target={normalized_target} track={suggested_track}"
+            f"task_board={classification} write_task_md={'yes' if task_md_write_allowed else 'no'} "
+            f"promotion={promotion_posture} proposal={normalized_kind} target={normalized_target} track={suggested_track}"
         ),
         "receiver_rule": (
             "task.md only carries accepted programs, active short boards, and ratified follow-through. New ideas belong in docs/plans until explicitly promoted."

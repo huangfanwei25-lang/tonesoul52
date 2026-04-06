@@ -104,6 +104,16 @@ def build_mutation_preflight(
         publish_push_preflight.get("classification", "review_before_push")
         or "review_before_push"
     )
+    task_board_classification = str(
+        task_board_preflight.get("classification", "human_review") or "human_review"
+    )
+    task_board_write_allowed = bool(task_board_preflight.get("task_md_write_allowed", False))
+    if task_board_classification == "task_md_allowed" and task_board_write_allowed:
+        task_board_posture = "ratified_followthrough_only"
+    elif task_board_classification in {"docs_plans_first", "parking_clear"}:
+        task_board_posture = "docs_plans_first"
+    else:
+        task_board_posture = "human_review_required"
 
     decision_points = [
         _point(
@@ -171,7 +181,7 @@ def build_mutation_preflight(
         _point(
             "task_board_update",
             control_type="human_gated",
-            posture="ratified_short_board_only",
+            posture=task_board_posture,
             source_of_truth=["task.md", "canonical_center.current_short_board"],
             current_guard=(
                 "task.md tracks only accepted programs and ratified short boards; run run_task_board_preflight.py before changing task.md and keep outside ideas in docs/plans until explicitly ratified."
@@ -245,7 +255,7 @@ def build_mutation_preflight(
         "summary_text": (
             f"shared_code={shared_code_posture} "
             f"compaction={compaction_posture} "
-            f"task_board=ratified_short_board_only "
+            f"task_board={task_board_posture} "
             f"commit=aegis_locked_commit "
             f"launch_claims={launch_claim_language_posture} "
             f"publish_push={publish_push_posture}"

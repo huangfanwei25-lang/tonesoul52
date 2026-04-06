@@ -60,10 +60,16 @@ def _make_task_board_preflight(classification: str = "docs_plans_first") -> dict
         receiver_note = (
             "Do not mutate task.md yet. The current short board is not visible, so the repo cannot confirm that this change belongs in the ratified board."
         )
+        task_md_write_allowed = False
+    elif classification == "task_md_allowed":
+        receiver_note = "This looks like ratified short-board follow-through."
+        task_md_write_allowed = True
     else:
         receiver_note = "Park outside ideas in docs/plans until they are explicitly ratified."
+        task_md_write_allowed = False
     return {
         "classification": classification,
+        "task_md_write_allowed": task_md_write_allowed,
         "receiver_note": receiver_note,
     }
 
@@ -84,6 +90,7 @@ def test_build_mutation_preflight_blocks_shared_edit_when_readiness_is_blocked()
     assert by_name["shared_code_edit"]["control_type"] == "existing_runtime_hook"
     assert by_name["compaction_write"]["posture"] == "honest_closeout_required"
     assert by_name["task_board_update"]["control_type"] == "human_gated"
+    assert by_name["task_board_update"]["posture"] == "human_review_required"
     assert payload["current_context"]["deliberation_mode"] == "do_not_deliberate"
     assert by_name["publish_push"]["posture"] == "blocked"
     assert payload["next_followup"]["target"] == "task_board.parking_preflight"
@@ -108,8 +115,9 @@ def test_build_mutation_preflight_prefers_claim_before_shared_edits() -> None:
     assert by_name["subject_refresh_write"]["posture"] == "must_not_promote"
     assert by_name["launch_claim_language"]["posture"] == "bounded_collaborator_beta_only"
     assert by_name["publish_push"]["posture"] == "review_before_push"
+    assert by_name["task_board_update"]["posture"] == "docs_plans_first"
     assert "run_task_board_preflight.py" in by_name["task_board_update"]["current_guard"]
-    assert payload["summary_text"].startswith("shared_code=claim_before_shared_edits")
+    assert "task_board=docs_plans_first" in payload["summary_text"]
 
 
 def test_build_mutation_preflight_marks_task_board_as_human_gated_when_short_board_missing() -> None:
@@ -126,5 +134,6 @@ def test_build_mutation_preflight_marks_task_board_as_human_gated_when_short_boa
     by_name = {item["name"]: item for item in payload["decision_points"]}
     assert by_name["shared_code_edit"]["posture"] == "coordinate_before_shared_edits"
     assert by_name["compaction_write"]["posture"] == "review_only_handoff"
+    assert by_name["task_board_update"]["posture"] == "human_review_required"
     assert "not visible" in by_name["task_board_update"]["receiver_note"]
     assert payload["receiver_rule"].startswith("Readiness and live coordination gate")

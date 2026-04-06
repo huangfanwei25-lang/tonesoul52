@@ -425,6 +425,46 @@ Current implementation target:
 - one recommended third-trial family
 - one explicit no-go list for what must stay parked
 
+### Phase 803: Third Bounded Trial Wave - Task-Board Parking Clarity
+
+Bounded scope:
+
+- refine `task_board_preflight` and adjacent packaging so shells read `docs_plans_first` as a routing outcome, not a soft suggestion
+- preserve already-ratified follow-through into `task.md`
+- avoid turning parking helpers into a new permission or promotion system
+
+Success criteria:
+
+- ToneSoul lands one bounded third-trial implementation for `task_board_parking_clarity_v1`
+- new idea flows read more clearly as `docs_plans_first`
+- ratified follow-through remains narrow and boring
+
+Current implementation target:
+
+- one packaging refinement in `tonesoul/task_board_preflight.py`
+- one follow-through alignment pass in adjacent shell-facing readouts
+- one targeted regression wave for parking clarity without shell sprawl
+
+### Phase 804: Third Trial Evaluation And Registry Entry
+
+Bounded scope:
+
+- evaluate the `task_board_parking_clarity_v1` implementation against the existing evaluator harness
+- classify the trial honestly through the analyzer/promotion gate
+- register the result without pushing task-board improvement history into first-hop shells
+
+Success criteria:
+
+- ToneSoul has one honest third-trial classification for `task_board_parking_clarity_v1`
+- the result remains secondary to runtime truth and does not overclaim better planning quality
+- the registry/result surface remains bounded and supersedable
+
+Current implementation target:
+
+- one evaluator-ready record for the third trial
+- one analyzer conclusion (`promote / park / retire / blocked / not_ready_for_trial`)
+- one registry/status update without shell creep
+
 ---
 
 ## Safe First Trial Families
@@ -485,11 +525,11 @@ This is the key improvement over the current gap:
 
 ## Current Recommendation
 
-The program is now active through `Phase 801`.
+The program is now active through `Phase 803`.
 
 Current short board:
 
-- `Phase 802: Third Trial Candidate Admission`
+- `Phase 804: Third Trial Evaluation And Registry Entry`
 
 Recommended discipline:
 

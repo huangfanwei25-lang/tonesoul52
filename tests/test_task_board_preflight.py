@@ -22,8 +22,12 @@ def test_task_board_preflight_defaults_to_docs_plans_for_external_ideas() -> Non
     )
 
     assert payload["classification"] == "docs_plans_first"
+    assert payload["routing_outcome"] == "docs_plans_first"
+    assert payload["task_md_write_allowed"] is False
+    assert payload["promotion_posture"] == "parking_only"
     assert payload["suggested_destination"] == "docs/plans/"
     assert "proposal_not_ratified_for_task_md" in payload["reasons"]
+    assert "write_task_md=no" in payload["summary_text"]
 
 
 def test_task_board_preflight_allows_ratified_followthrough_into_task_md() -> None:
@@ -36,6 +40,8 @@ def test_task_board_preflight_allows_ratified_followthrough_into_task_md() -> No
     )
 
     assert payload["classification"] == "task_md_allowed"
+    assert payload["task_md_write_allowed"] is True
+    assert payload["promotion_posture"] == "ratified_followthrough_only"
     assert payload["suggested_destination"] == "task.md"
     assert "proposal_is_ratified_followthrough" in payload["reasons"]
 
@@ -50,6 +56,8 @@ def test_task_board_preflight_requests_human_review_when_short_board_missing() -
     )
 
     assert payload["classification"] == "human_review"
+    assert payload["task_md_write_allowed"] is False
+    assert payload["promotion_posture"] == "human_review_required"
     assert "current_short_board_not_visible" in payload["reasons"]
 
 
@@ -63,5 +71,7 @@ def test_task_board_preflight_can_clear_docs_plans_target() -> None:
     )
 
     assert payload["classification"] == "parking_clear"
+    assert payload["task_md_write_allowed"] is False
+    assert payload["promotion_posture"] == "parking_only"
     assert payload["suggested_destination"] == "docs/plans/new_note.md"
     assert "docs_plans_is_correct_parking_lane" in payload["reasons"]
