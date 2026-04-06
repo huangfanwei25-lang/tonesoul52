@@ -98,6 +98,7 @@ def build_self_improvement_trial_wave(
     consumer_drift_report: dict[str, Any],
     deliberation_hint_probe: dict[str, Any],
     task_board_probe: dict[str, Any],
+    shared_edit_probe: dict[str, Any],
     operator_retrieval_contract_present: bool,
     compiled_landing_zone_spec_present: bool,
     retrieval_runner_present: bool,
@@ -110,6 +111,8 @@ def build_self_improvement_trial_wave(
     ).strip()
     task_board_ready = bool((task_board_probe or {}).get("present"))
     task_board_summary = str((task_board_probe or {}).get("summary_text") or "").strip()
+    shared_edit_ready = bool((shared_edit_probe or {}).get("present"))
+    shared_edit_summary = str((shared_edit_probe or {}).get("summary_text") or "").strip()
 
     consumer_candidate = {
         "candidate_record": _build_candidate_record(
@@ -388,7 +391,80 @@ def build_self_improvement_trial_wave(
         ),
     )
 
-    candidates = [consumer_candidate, retrieval_candidate, deliberation_candidate, task_board_candidate]
+    shared_edit_candidate = {
+        "candidate_record": _build_candidate_record(
+            candidate_id="shared_edit_overlap_clarity_v1",
+            target_surface="shared_edit_preflight.result_shape",
+            target_consumer="codex_claude_dashboard_operator_shells",
+            baseline_story=(
+                "Shared-edit preflight already guarded blocked, coordinate, claim-first, and clear outcomes, "
+                "but shells could still blur path collision with self-claim gaps into one generic caution."
+            ),
+            candidate_story=(
+                "Shared-edit preflight now surfaces decision basis, explicit other-overlap paths, claim-gap paths, "
+                "and bounded pressure flags so later agents can tell coordination friction from claim discipline at a glance."
+            ),
+            success_metric="shared_edit_probe.present and consumer_drift_report.status == aligned",
+            failure_mode_watch="clearer overlap packaging turns into a fake permission system or hides the need to coordinate first",
+            rollback_path="restore the prior shared-edit preflight packaging and keep the result as history only",
+            overclaim_to_avoid="better shared-edit overlap clarity is not better collaboration quality or broader mutation authority",
+            scope_limit="shared-edit packaging only; no new permission layer, no transport change, no governance semantics rewrite",
+        ),
+        "analyzer_closeout": _build_analyzer_closeout(
+            status="promote" if (shared_edit_ready and consumer_aligned) else "park",
+            result_story=(
+                "Shared-edit preflight now shows overlap pressure and claim-gap pressure as separate bounded signals."
+                if (shared_edit_ready and consumer_aligned)
+                else "Shared-edit overlap packaging is not yet stable enough to promote."
+            ),
+            evidence_bundle_summary=shared_edit_summary or "shared_edit_probe unavailable",
+            unresolved_items=(
+                [
+                    "clearer shared-edit packaging does not prove better collaboration outcomes",
+                    "future shells must preserve overlap-versus-claim-gap separation without inventing new authority",
+                ]
+                if (shared_edit_ready and consumer_aligned)
+                else [
+                    "shared-edit overlap and claim-gap signals are not yet packaged clearly enough",
+                    "consumer parity must stay aligned before promotion",
+                ]
+            ),
+            failure_pressure="low" if (shared_edit_ready and consumer_aligned) else "meaningful",
+            rollback_posture="bounded_restore",
+            promotion_limit="does not authorize automatic claims, path locks, broader write permissions, or governance changes",
+            overclaim_warning="better shared-edit packaging is not better planning, coordination quality, or human approval",
+            next_action=(
+                "keep shared-edit preflight packaging bounded while selecting the next admitted candidate"
+                if (shared_edit_ready and consumer_aligned)
+                else "repair shared-edit packaging drift before reopening this candidate"
+            ),
+        ),
+    }
+    shared_edit_candidate["result_surface"] = _build_result_surface(
+        status=shared_edit_candidate["analyzer_closeout"]["status"],
+        registry_recommendation=(
+            "promotion_ready_result" if (shared_edit_ready and consumer_aligned) else "distilled_lesson"
+        ),
+        supersession_posture="active_until_newer_shared_edit_trials_exist",
+        replay_rule="prefer_status_surface_then_probe_current_shared_edit_shape_before_reusing_the_story",
+        residue_posture=(
+            "keep_visible_as_current_packaging_result"
+            if (shared_edit_ready and consumer_aligned)
+            else "park_in_status_surface_until_shared_edit_packaging_is_stable"
+        ),
+        visibility="status_surface_only",
+        carry_forward_rule=(
+            "may inform future shared-edit packaging trials, but does not authorize new write permissions or claim promotion"
+        ),
+    )
+
+    candidates = [
+        consumer_candidate,
+        retrieval_candidate,
+        deliberation_candidate,
+        task_board_candidate,
+        shared_edit_candidate,
+    ]
     outcome_counts = _count_outcomes(candidates)
     status = "completed"
     summary_text = (
@@ -411,8 +487,9 @@ def build_self_improvement_trial_wave(
             "bounded_operator_retrieval_cueing",
             "deliberation_mode_hint_packaging",
             "task_board_parking_clarity",
+            "shared_edit_overlap_clarity",
         ],
         "outcome_counts": outcome_counts,
         "candidates": candidates,
-        "next_short_board": "Phase 805: Fourth Trial Candidate Admission",
+        "next_short_board": "Phase 808: Fifth Trial Candidate Admission",
     }

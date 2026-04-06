@@ -485,6 +485,60 @@ Current implementation target:
 - one recommended fourth-trial family
 - one explicit no-go list for what must stay parked
 
+### Phase 806: Fourth Bounded Trial Wave - Shared-Edit Overlap Clarity
+
+Bounded scope:
+
+- refine `shared_edit_preflight` packaging so later agents can distinguish other-agent overlap pressure from self-claim-gap pressure
+- preserve the current bounded decision set and recommended-command posture
+- keep the change inside packaging/readout space only: no new permission layer, no auto-claiming, no path-lock story
+
+Success criteria:
+
+- ToneSoul lands one bounded fourth-trial implementation that lowers shared-edit ambiguity without widening mutation authority
+
+Current implementation target:
+
+- one shared-edit packaging refinement
+- one new probe or regression proving overlap-versus-gap separation stays visible
+- no shell redesign and no change to readiness or claim truth
+
+### Phase 807: Fourth Trial Evaluation And Registry Entry
+
+Bounded scope:
+
+- evaluate the shared-edit overlap clarity trial using the existing evaluator harness and analyzer gate
+- classify the result honestly as `promote`, `park`, `retire`, `blocked`, or `not_ready_for_trial`
+- register the outcome in the bounded status surface without leaking it into first-hop shells
+
+Success criteria:
+
+- ToneSoul has one honest registry-ready fourth-trial result and clear promotion limit for shared-edit packaging
+
+Current implementation target:
+
+- one evaluator-ready record for the fourth trial
+- one analyzer conclusion
+- one status-surface update with no shell creep
+
+### Phase 808: Fifth Trial Candidate Admission
+
+Bounded scope:
+
+- choose the next bounded candidate only after the fourth trial result is visible
+- keep the candidate inside already-allowed mutation classes
+- make the no-go list explicit before a fifth trial wave opens
+
+Success criteria:
+
+- ToneSoul has one admitted fifth candidate with real operator leverage and no new authority mythology
+
+Current implementation target:
+
+- one candidate-admission note
+- one recommended fifth-trial family
+- one explicit no-go list for what must stay parked
+
 ---
 
 ## Safe First Trial Families
@@ -545,18 +599,18 @@ This is the key improvement over the current gap:
 
 ## Current Recommendation
 
-The program is now active through `Phase 804`.
+The program is now active through `Phase 807`.
 
 Current short board:
 
-- `Phase 805: Fourth Trial Candidate Admission`
+- `Phase 808: Fifth Trial Candidate Admission`
 
 Recommended discipline:
 
 - keep trial outcomes visible through dedicated status artifacts first
 - do not push self-improvement history into `session-start`, `observer-window`, or packet defaults yet
 - keep new trials inside already-allowed mutation classes until a compact result-surface design proves stable
-- prefer packaging refinements that reduce operator latency before opening broader retrieval or governance experiments
+- prefer packaging refinements that reduce operator latency and shared-edit ambiguity before opening broader retrieval or governance experiments
 
 ---
 

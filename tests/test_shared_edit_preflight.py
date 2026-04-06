@@ -14,6 +14,8 @@ def test_shared_edit_preflight_blocks_when_readiness_is_blocked() -> None:
     )
 
     assert payload["decision"] == "blocked"
+    assert payload["decision_basis"] == "blocked_readiness"
+    assert payload["decision_pressures"]["blocked_readiness"] is True
     assert payload["receiver_rule"].startswith("Readiness is blocked")
 
 
@@ -35,7 +37,10 @@ def test_shared_edit_preflight_coordinates_on_other_agent_overlap() -> None:
     )
 
     assert payload["decision"] == "coordinate"
+    assert payload["decision_basis"] == "other_agent_overlap"
     assert payload["overlap_count"] == 1
+    assert payload["other_overlap_paths"] == ["tonesoul/runtime_adapter.py"]
+    assert payload["claim_gap_paths"] == ["tonesoul/runtime_adapter.py"]
     assert payload["overlaps"][0]["ownership"] == "other"
     assert payload["recommended_command"] == "python scripts/run_task_claim.py list"
 
@@ -51,6 +56,11 @@ def test_shared_edit_preflight_requires_claim_when_feature_track_has_no_self_cla
     )
 
     assert payload["decision"] == "claim_first"
+    assert payload["decision_basis"] == "missing_self_claim_coverage"
+    assert payload["claim_gap_paths"] == [
+        "scripts/start_agent_session.py",
+        "tests/test_start_agent_session.py",
+    ]
     assert '--path "scripts/start_agent_session.py"' in payload["recommended_command"]
     assert '--path "tests/test_start_agent_session.py"' in payload["recommended_command"]
 
@@ -73,7 +83,10 @@ def test_shared_edit_preflight_clears_when_self_claim_covers_candidate_paths() -
     )
 
     assert payload["decision"] == "clear"
+    assert payload["decision_basis"] == "self_claim_covers_all"
     assert payload["self_claim_covers_all"] is True
+    assert payload["claim_gap_paths"] == []
+    assert payload["other_overlap_paths"] == []
     assert payload["overlaps"][0]["ownership"] == "self"
 
 
@@ -97,6 +110,41 @@ def test_shared_edit_preflight_treats_parent_child_paths_as_overlap() -> None:
     assert payload["decision"] == "coordinate"
     assert payload["normalized_candidate_paths"] == ["tonesoul/council"]
     assert payload["overlaps"][0]["overlap_paths"] == ["tonesoul/council"]
+    assert payload["other_overlap_paths"] == ["tonesoul/council"]
+
+
+def test_shared_edit_preflight_keeps_overlap_and_claim_gap_visible_together() -> None:
+    payload = build_shared_edit_preflight(
+        agent_id="codex",
+        candidate_paths=["tonesoul/runtime_adapter.py", "scripts/start_agent_session.py"],
+        readiness={"status": "pass"},
+        claims=[
+            {
+                "task_id": "task-other",
+                "agent": "other-agent",
+                "summary": "hold runtime lane",
+                "paths": ["tonesoul/runtime_adapter.py"],
+            }
+        ],
+        task_track_hint={"claim_recommendation": "required", "suggested_track": "feature_track"},
+        mutation_preflight={"summary_text": "shared_code=coordinate_before_shared_edits"},
+    )
+
+    assert payload["decision"] == "coordinate"
+    assert payload["decision_basis"] == "other_agent_overlap"
+    assert payload["decision_pressures"] == {
+        "blocked_readiness": False,
+        "other_agent_overlap": True,
+        "missing_self_claim_coverage": True,
+    }
+    assert payload["other_overlap_paths"] == ["tonesoul/runtime_adapter.py"]
+    assert payload["claim_gap_paths"] == [
+        "tonesoul/runtime_adapter.py",
+        "scripts/start_agent_session.py",
+    ]
+    assert "basis=other_agent_overlap" in payload["summary_text"]
+    assert "other=1" in payload["summary_text"]
+    assert "gaps=2" in payload["summary_text"]
 
 
 def test_shared_edit_preflight_carries_bounded_working_style_consumer() -> None:

@@ -134,6 +134,46 @@ def _probe_task_board_parking(
     }
 
 
+def _probe_shared_edit_preflight() -> dict[str, Any]:
+    from tonesoul.shared_edit_preflight import build_shared_edit_preflight
+
+    payload = build_shared_edit_preflight(
+        agent_id="trial-wave",
+        candidate_paths=["tonesoul/runtime_adapter.py", "scripts/start_agent_session.py"],
+        readiness={"status": "pass"},
+        claims=[
+            {
+                "task_id": "task-other",
+                "agent": "other-agent",
+                "summary": "hold runtime lane",
+                "paths": ["tonesoul/runtime_adapter.py"],
+            }
+        ],
+        task_track_hint={
+            "claim_recommendation": "required",
+            "suggested_track": "feature_track",
+        },
+        mutation_preflight={"summary_text": "shared_code=coordinate_before_shared_edits"},
+    )
+    present = bool(
+        isinstance(payload.get("decision_basis"), str)
+        and isinstance(payload.get("other_overlap_paths"), list)
+        and isinstance(payload.get("claim_gap_paths"), list)
+        and isinstance(payload.get("decision_pressures"), dict)
+    )
+    return {
+        "present": present,
+        "summary_text": (
+            "shared_edit_probe "
+            f"decision={str(payload.get('decision', '') or 'unknown')} "
+            f"basis={str(payload.get('decision_basis', '') or 'unknown')} "
+            f"other={len(list(payload.get('other_overlap_paths') or []))} "
+            f"gaps={len(list(payload.get('claim_gap_paths') or []))} "
+            f"pressures={'yes' if isinstance(payload.get('decision_pressures'), dict) else 'no'}"
+        ),
+    }
+
+
 def _render_markdown(report: dict[str, Any]) -> str:
     lines = [
         "# ToneSoul Self-Improvement Trial Wave",
@@ -199,6 +239,7 @@ def run_self_improvement_trial_wave(
         state_path=state_path,
         traces_path=traces_path,
     )
+    shared_edit_probe = _probe_shared_edit_preflight()
     operator_retrieval_contract_present = (
         REPO_ROOT / "docs/architecture/TONESOUL_OPERATOR_RETRIEVAL_QUERY_CONTRACT.md"
     ).exists()
@@ -212,6 +253,7 @@ def run_self_improvement_trial_wave(
         consumer_drift_report=consumer_drift_report,
         deliberation_hint_probe=deliberation_hint_probe,
         task_board_probe=task_board_probe,
+        shared_edit_probe=shared_edit_probe,
         operator_retrieval_contract_present=operator_retrieval_contract_present,
         compiled_landing_zone_spec_present=compiled_landing_zone_spec_present,
         retrieval_runner_present=retrieval_runner_present,

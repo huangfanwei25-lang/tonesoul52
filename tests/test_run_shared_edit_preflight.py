@@ -115,5 +115,7 @@ def test_run_shared_edit_preflight_emits_coordinate_decision(
     assert output["readiness"] == "needs_clarification"
     assert output["task_track"] == "feature_track"
     assert output["preflight"]["decision"] == "coordinate"
+    assert output["preflight"]["decision_basis"] == "other_agent_overlap"
+    assert output["preflight"]["other_overlap_paths"] == ["tonesoul/runtime_adapter.py"]
     assert output["preflight"]["overlaps"][0]["task_id"] == "task-1"
     assert output["underlying_commands"][0] == "python scripts/run_task_claim.py list"

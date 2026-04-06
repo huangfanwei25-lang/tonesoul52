@@ -136,6 +136,9 @@
 - Phase 803: run one third bounded self-improvement trial on task-board parking clarity without turning helpers into a new permission system
 - Phase 804: classify and register the third bounded trial result before admitting any broader candidate
 - Phase 805: admit one fourth bounded self-improvement candidate after the third trial result is classified and registered
+- Phase 806: run one fourth bounded self-improvement trial on shared-edit overlap clarity without inventing a new permission or path-lock layer
+- Phase 807: classify and register the fourth bounded trial result before admitting any broader candidate
+- Phase 808: admit one fifth bounded self-improvement candidate after the fourth trial result is classified and registered
 
 ## Water-Bucket Snapshot (2026-03-30)
 - Baseline reached:
@@ -152,7 +155,7 @@
   - bounded outer-shell preflight chain for shared edits, publish/push posture, and task-board parking discipline
   - bounded self-improvement foundation: evaluator harness, experiment lineage boundary, mutation space, analyzer gate, first trial wave, and promotion-ready result surface discipline
 - Current short board:
-  - Phase 805: admit the fourth bounded self-improvement candidate without reopening retrieval mythology or governance semantics
+  - Phase 808: admit the fifth bounded self-improvement candidate without reopening retrieval mythology or governance semantics
 - After that:
   - `ToneSoul Self-Improvement Loop v0` is now the active bucket, with `Phase 790-804` landed and the next work focused on fourth-candidate selection rather than expanding shell surface area
   - successor/hot-memory bucket is now baseline-frozen unless a fresh real-world misread reopens it
@@ -2041,8 +2044,26 @@
 - [x] register the result in a bounded status/registry surface without leaking it into first-hop shells
 **Success Criteria**: ToneSoul has one honest third-trial result classification and registry-ready record for `task_board_parking_clarity_v1`.
 
-## Phase 805: Fourth Trial Candidate Admission (2026-04-07, planned)
-- [ ] choose the next bounded self-improvement candidate after the third trial result and current registry/status surface are visible
-- [ ] keep the next candidate inside allowed mutation classes and away from retrieval mythology, governance semantics, identity, and transport claims
-- [ ] make the no-go list explicit before opening a fourth trial wave
+## Phase 805: Fourth Trial Candidate Admission (2026-04-07)
+- [x] choose the next bounded self-improvement candidate after the third trial result and current registry/status surface are visible
+- [x] keep the next candidate inside allowed mutation classes and away from retrieval mythology, governance semantics, identity, and transport claims
+- [x] make the no-go list explicit before opening a fourth trial wave
 **Success Criteria**: ToneSoul has one admitted fourth candidate that is narrower than shell redesign and still worth real operator leverage.
+
+## Phase 806: Fourth Bounded Trial Wave - Shared-Edit Overlap Clarity (2026-04-07)
+- [x] refine `shared_edit_preflight` so later agents can distinguish other-agent overlap pressure from self-claim-gap pressure without widening mutation authority
+- [x] preserve the current bounded decision set (`blocked / coordinate / claim_first / clear`) and recommended command posture
+- [x] add regression coverage proving the new packaging stays bounded, parity-safe, and non-promoting
+**Success Criteria**: ToneSoul lands one bounded fourth-trial implementation for `shared_edit_overlap_clarity_v1` that reduces shared-edit ambiguity without inventing a permission system or path-lock myth.
+
+## Phase 807: Fourth Trial Evaluation And Registry Entry (2026-04-07)
+- [x] evaluate the `shared_edit_overlap_clarity_v1` trial against the existing evaluator harness and analyzer gate
+- [x] classify the result as `promote`, `park`, `retire`, `blocked`, or `not_ready_for_trial` without inflating shared-edit clarity into collaboration quality
+- [x] register the result in a bounded status/registry surface without leaking it into first-hop shells
+**Success Criteria**: ToneSoul has one honest fourth-trial result classification and registry-ready record for `shared_edit_overlap_clarity_v1`.
+
+## Phase 808: Fifth Trial Candidate Admission (2026-04-07, planned)
+- [ ] choose the next bounded self-improvement candidate after the fourth trial result and current registry/status surface are visible
+- [ ] keep the next candidate inside allowed mutation classes and away from retrieval mythology, governance semantics, identity, and transport claims
+- [ ] make the no-go list explicit before opening a fifth trial wave
+**Success Criteria**: ToneSoul has one admitted fifth candidate that is narrower than shell redesign and still worth real operator leverage.

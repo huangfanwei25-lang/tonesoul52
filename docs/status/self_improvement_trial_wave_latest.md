@@ -1,6 +1,6 @@
 # ToneSoul Self-Improvement Trial Wave
 
-**Summary**: `self_improvement_trial_wave promote=3 park=1 retire=0 blocked=0`
+**Summary**: `self_improvement_trial_wave promote=4 park=1 retire=0 blocked=0`
 
 > Trial-wave outcomes are bounded self-improvement results. They may inform future patches or parking decisions, but they do not become governance truth, identity truth, or hot-memory authority.
 
@@ -10,10 +10,11 @@
 - `bounded_operator_retrieval_cueing`
 - `deliberation_mode_hint_packaging`
 - `task_board_parking_clarity`
+- `shared_edit_overlap_clarity`
 
 ## Outcomes
 
-- `promote`: `3`
+- `promote`: `4`
 - `park`: `1`
 - `retire`: `0`
 - `blocked`: `0`
@@ -74,7 +75,20 @@
     - future shells must preserve docs_plans_first as routing, not ratification
   - promotion_limit: `does not authorize task.md auto-promotion, governance semantics changes, or new permission systems`
   - next_action: `keep the task-board routing story stable while selecting the next bounded candidate`
+- `shared_edit_overlap_clarity_v1` -> `promote`
+  - target_surface: `shared_edit_preflight.result_shape`
+  - success_metric: `shared_edit_probe.present and consumer_drift_report.status == aligned`
+  - result_story: Shared-edit preflight now shows overlap pressure and claim-gap pressure as separate bounded signals.
+  - evidence: `shared_edit_probe decision=coordinate basis=other_agent_overlap other=1 gaps=2 pressures=yes`
+  - result_surface: `promoted_result`
+  - replay_rule: `prefer_status_surface_then_probe_current_shared_edit_shape_before_reusing_the_story`
+  - residue_posture: `keep_visible_as_current_packaging_result`
+  - unresolved_items:
+    - clearer shared-edit packaging does not prove better collaboration outcomes
+    - future shells must preserve overlap-versus-claim-gap separation without inventing new authority
+  - promotion_limit: `does not authorize automatic claims, path locks, broader write permissions, or governance changes`
+  - next_action: `keep shared-edit preflight packaging bounded while selecting the next admitted candidate`
 
 ## Next Short Board
 
-- `Phase 805: Fourth Trial Candidate Admission`
+- `Phase 808: Fifth Trial Candidate Admission`
