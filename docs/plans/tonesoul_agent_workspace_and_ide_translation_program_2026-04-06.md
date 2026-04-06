@@ -129,6 +129,12 @@ while keeping multi-agent architecture as escalation, not default tax.
 
 ### Phase 784: Retrieval Preview Strip
 
+- add one bounded retrieval-preview strip for search-assisted chat turns in the dashboard workspace
+- surface local/web provenance so operators can inspect auxiliary context without mistaking it for current runtime truth
+- keep the preview beneath Tier 0 / Tier 1 / Tier 2 instead of turning it into a fourth workspace tier
+
+### Phase 784: Retrieval Preview Strip
+
 - add one bounded retrieval-preview strip for local/web-assisted chat turns
 - show what auxiliary context is feeding the workspace chat loop without treating that preview as operator truth
 - keep provenance and authority labels visible so the preview stays below Tier 0 / Tier 1 / Tier 2
@@ -181,6 +187,4 @@ This program succeeds when:
 
 Accept this as the live long program for the frontend / IDE translation lane.
 
-The current short board rotates to:
-
-`Phase 784: Retrieval Preview Strip`
+Once `Phase 784` lands, freeze this bucket unless a concrete workspace misread or role-parity regression reopens it.

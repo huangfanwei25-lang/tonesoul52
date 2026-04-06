@@ -12,9 +12,12 @@ from components.status_panel import render_status_panel
 from utils.llm import chat_with_council
 from utils.memory import list_seeds, list_skills
 from utils.search import (
-    build_search_context,
     build_search_context_boundary_cue,
+    build_search_context_from_hits,
+    build_search_preview_model,
     default_search_roots,
+    search_local,
+    search_web,
 )
 from utils.session_start import (
     build_dashboard_command_shelf,
@@ -89,6 +92,8 @@ def render():
         st.session_state.council_discussion = None
     if "selected_memories" not in st.session_state:
         st.session_state.selected_memories = []
+    if "search_preview" not in st.session_state:
+        st.session_state.search_preview = {}
 
     workspace = Path(__file__).parent.parent.parent
     seeds = list_seeds()
@@ -301,6 +306,18 @@ def render():
             st.caption(
                 f"{search_boundary_cue['summary']} {search_boundary_cue['boundary']}"
             )
+            search_preview = st.session_state.get("search_preview") or {}
+            if search_preview.get("present"):
+                st.markdown("**Retrieval Preview**")
+                st.caption(search_preview.get("operator_rule") or "")
+                with st.expander("Open retrieval preview", expanded=False):
+                    st.caption(f"Query: {search_preview.get('query') or 'n/a'}")
+                    for item in search_preview.get("items") or []:
+                        st.markdown(f"**{item['source']}** · {item['label']}")
+                        if item.get("detail"):
+                            st.caption(item["detail"])
+                        if item.get("snippet"):
+                            st.markdown(f"- {item['snippet']}")
 
             if st.session_state.council_discussion:
                 with st.expander("🧠 我在想...", expanded=False):
@@ -319,12 +336,19 @@ def render():
             search_context = ""
             if use_local_search or use_web_search:
                 roots = default_search_roots(workspace)
-                search_context = build_search_context(
-                    user_input,
-                    roots,
-                    enable_local=use_local_search,
-                    enable_web=use_web_search,
+                local_hits = search_local(user_input, roots) if use_local_search else []
+                web_hits = search_web(user_input) if use_web_search else []
+                search_context = build_search_context_from_hits(
+                    local_hits=local_hits,
+                    web_hits=web_hits,
                 )
+                st.session_state.search_preview = build_search_preview_model(
+                    query=user_input,
+                    local_hits=local_hits,
+                    web_hits=web_hits,
+                )
+            else:
+                st.session_state.search_preview = {}
             st.session_state.messages.append({"role": "user", "content": user_input})
 
             with st.spinner("讓我想想..."):

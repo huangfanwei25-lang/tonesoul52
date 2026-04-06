@@ -301,6 +301,31 @@ Current implementation target:
 - explicit `selfhood_boundary` and `receiver_rule`
 - no emotion taxonomy, no selfhood claim, no hidden-thought narration
 
+### Phase 785: Surface Versioning And Consumer-Lineage Policy
+
+Bounded scope:
+
+- define one repo-native versioning/lineage map for:
+  - `session-start` tiers
+  - `observer-window`
+  - dashboard tier shells
+  - Claude-compatible entry adapters
+- make it explicit which surfaces are:
+  - direct runtime readouts
+  - bounded adapters
+  - consumer-specific shells
+- keep current transport and packet semantics unchanged
+
+Success criteria:
+
+- later consumers stop drifting silently because they can see what each surface derives from, which compatibility assumptions it makes, and when fallback to deeper runtime truth is required
+
+Current implementation target:
+
+- one bounded `surface_versioning` / `consumer_lineage` contract
+- repo-native compatibility notes for CLI, dashboard, and Claude-style shells
+- no vendor fantasy lane, no new shared transport story
+
 ---
 
 ## What This Program Must Not Become
@@ -317,12 +342,13 @@ Current implementation target:
 
 Accept this as the next research-driven follow-through after the current workspace short board.
 
-Do **not** preempt the current dashboard/tier work.
-Instead:
+The workspace bucket is now baseline-stable through `Phase 784`.
 
-1. let the current operator-workspace short board finish cleanly
-2. then open `Phase 775`
-3. keep the work repo-native, bounded, and testable
+The next research-driven short board should open:
+
+`Phase 785: Surface Versioning And Consumer-Lineage Policy`
+
+Keep the work repo-native, bounded, and testable.
 
 ---
 

@@ -108,6 +108,7 @@
 - Phase 777: define the future knowledge-layer boundary so raw sources, compiled knowledge, exploratory residue, and operator retrieval surfaces stop living as one blurred category
 - Phase 778: define a launch-health trend readout design that separates descriptive metrics from future predictive envelopes without fabricating calibration now
 - Phase 779: run a bounded internal-state observability reality check so future fail-stop / drift / strain surfaces can improve without inflating interpretability into selfhood claims
+- Phase 785: define one surface-versioning and consumer-lineage policy so session-start, observer-window, dashboard shells, and Claude-style adapters stop drifting silently as more consumers appear
 
 ## Water-Bucket Snapshot (2026-03-30)
 - Baseline reached:
@@ -123,7 +124,7 @@
   - low-drift anchor / observer-window baseline (Day 1 complete): `tonesoul/observer_window.py`, `scripts/run_observer_window.py`, `tests/test_observer_window.py`, `docs/status/observer_window_latest.{json,md}`
   - bounded outer-shell preflight chain for shared edits, publish/push posture, and task-board parking discipline
 - Current short board:
-  - Phase 784: add one bounded retrieval-preview strip so operators can inspect auxiliary local/web context without promoting search into a fourth authority tier
+  - Phase 785: define one surface-versioning and consumer-lineage policy so session-start, observer-window, dashboard shells, and Claude-style adapters stop drifting silently as more consumers appear
 - After that:
   - successor/hot-memory bucket is now baseline-frozen unless a fresh real-world misread reopens it
   - task-board governance should stay boring and explicit before any new theory bucket opens
@@ -1885,8 +1886,14 @@
 - [x] avoid turning search options into a hidden fourth tier or a second operator state model
 **Success Criteria**: Later agents and humans can use local/web retrieval from the dashboard without mistaking search results for current bounded runtime truth, preserving the operator shell's authority hierarchy.
 
-## Phase 784: Retrieval Preview Strip (2026-04-06, planned)
-- [ ] add one bounded retrieval-preview strip to the dashboard workspace so operators can inspect the local/web context payload that is about to feed or just fed a search-assisted chat turn
-- [ ] keep the preview explicitly auxiliary, with local/web provenance and a rule that the preview never outranks Tier 0 / Tier 1 / Tier 2 operator truth
-- [ ] avoid turning retrieval preview into a packet dump, search debugger, or hidden fourth workspace tier
+## Phase 784: Retrieval Preview Strip (2026-04-06, completed)
+- [x] add one bounded retrieval-preview strip to the dashboard workspace so operators can inspect the local/web context payload that is about to feed or just fed a search-assisted chat turn
+- [x] keep the preview explicitly auxiliary, with local/web provenance and a rule that the preview never outranks Tier 0 / Tier 1 / Tier 2 operator truth
+- [x] avoid turning retrieval preview into a packet dump, search debugger, or hidden fourth workspace tier
 **Success Criteria**: Operators can inspect auxiliary retrieval context from the dashboard without mistaking that preview for current runtime truth or reopening a broad knowledge-layer implementation.
+
+## Phase 785: Surface Versioning And Consumer-Lineage Policy (2026-04-06, planned)
+- [ ] define one bounded versioning/lineage contract for `session-start`, `observer-window`, dashboard tier shells, and Claude-style entry adapters
+- [ ] make compatibility expectations explicit so new consumers can tell when they are reading a direct runtime surface, a view-model adapter, or a fallback shell
+- [ ] avoid turning the phase into a new transport layer or vendor-integration fantasy; keep it to current repo-native consumers only
+**Success Criteria**: Later agents and humans can see which consumer surface they are reading, what it derives from, and when they must fall back to deeper runtime truth instead of silently trusting a stale or mismatched adapter.

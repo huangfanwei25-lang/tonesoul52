@@ -5,7 +5,7 @@ Local and optional web search helpers for chat retrieval.
 import json
 import os
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 import requests
 
@@ -131,22 +131,27 @@ def build_search_context(
     enable_local: bool = True,
     enable_web: bool = False,
 ) -> str:
+    local_hits = search_local(query, roots) if enable_local else []
+    web_hits = search_web(query) if enable_web else []
+    return build_search_context_from_hits(local_hits=local_hits, web_hits=web_hits)
+
+
+def build_search_context_from_hits(
+    *,
+    local_hits: List[Dict[str, str]] | None,
+    web_hits: List[Dict[str, str]] | None,
+) -> str:
     lines: List[str] = []
-    if enable_local:
-        local_hits = search_local(query, roots)
-        if local_hits:
-            lines.append("Local search hits:")
-            for idx, hit in enumerate(local_hits, 1):
-                lines.append(f"[{idx}] {hit['path']}: {hit['snippet']}")
-    if enable_web:
-        web_hits = search_web(query)
-        if web_hits:
+    for idx, hit in enumerate(list(local_hits or []), 1):
+        lines.append("Local search hits:" if idx == 1 else "")
+        lines.append(f"[{idx}] {hit['path']}: {hit['snippet']}")
+    for idx, hit in enumerate(list(web_hits or []), 1):
+        if idx == 1:
             lines.append("Web search hits:")
-            for idx, hit in enumerate(web_hits, 1):
-                title = hit.get("title") or hit.get("url") or f"Result {idx}"
-                snippet = hit.get("snippet") or ""
-                lines.append(f"[{idx}] {title} - {snippet}")
-    return "\n".join(lines).strip()
+        title = hit.get("title") or hit.get("url") or f"Result {idx}"
+        snippet = hit.get("snippet") or ""
+        lines.append(f"[{idx}] {title} - {snippet}")
+    return "\n".join(line for line in lines if line).strip()
 
 
 def build_search_context_boundary_cue(
@@ -182,4 +187,58 @@ def build_search_context_boundary_cue(
         "mode": mode,
         "summary": summary,
         "boundary": boundary,
+    }
+
+
+def build_search_preview_model(
+    *,
+    query: str,
+    local_hits: List[Dict[str, str]] | None,
+    web_hits: List[Dict[str, str]] | None,
+) -> Dict[str, Any]:
+    query_text = str(query or "").strip()
+    local_items = list(local_hits or [])
+    web_items = list(web_hits or [])
+    if not query_text or (not local_items and not web_items):
+        return {
+            "present": False,
+            "query": query_text,
+            "summary_text": "No auxiliary retrieval preview is currently visible.",
+            "operator_rule": (
+                "Search preview stays auxiliary. Tier 0 / Tier 1 / Tier 2 operator truth still outranks anything shown here."
+            ),
+            "items": [],
+        }
+
+    preview_items: List[Dict[str, str]] = []
+    for hit in local_items[:3]:
+        path_text = str(hit.get("path", "")).strip()
+        preview_items.append(
+            {
+                "source": "local",
+                "label": Path(path_text).name or path_text or "local-hit",
+                "detail": path_text,
+                "snippet": str(hit.get("snippet", "")).strip(),
+            }
+        )
+    for hit in web_items[:3]:
+        title = str(hit.get("title", "")).strip()
+        url = str(hit.get("url", "")).strip()
+        preview_items.append(
+            {
+                "source": "web",
+                "label": title or url or "web-hit",
+                "detail": url,
+                "snippet": str(hit.get("snippet", "")).strip(),
+            }
+        )
+
+    return {
+        "present": True,
+        "query": query_text,
+        "summary_text": f"retrieval_preview local={len(local_items)} web={len(web_items)}",
+        "operator_rule": (
+            "This preview shows auxiliary retrieval context only. Re-check against Tier 0 / Tier 1 / Tier 2 before treating anything here as current operator truth."
+        ),
+        "items": preview_items[:6],
     }
