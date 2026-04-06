@@ -12,9 +12,15 @@ from components.status_panel import render_status_panel
 from utils.llm import chat_with_council
 from utils.memory import list_seeds, list_skills
 from utils.search import build_search_context, default_search_roots
+from utils.session_start import (
+    build_tier0_start_strip,
+    build_tier1_orientation_shell,
+    run_session_start_bundle,
+)
 
 WORKSPACE_PANEL_HEIGHT = 680
 CHAT_CONTAINER_HEIGHT = 420
+WORKSPACE_AGENT_ID = "dashboard-workspace"
 
 
 def _latest_run_summary() -> dict:
@@ -81,6 +87,10 @@ def render():
     seeds = list_seeds()
     skills = list_skills()
     latest = _latest_run_summary()
+    tier0_bundle = run_session_start_bundle(agent_id=WORKSPACE_AGENT_ID, tier=0, repo_root=workspace)
+    tier1_bundle = run_session_start_bundle(agent_id=WORKSPACE_AGENT_ID, tier=1, repo_root=workspace)
+    tier0_shell = build_tier0_start_strip(tier0_bundle) if tier0_bundle.get("present") else {}
+    tier1_shell = build_tier1_orientation_shell(tier1_bundle) if tier1_bundle.get("present") else {}
 
     col_a, col_b, col_c = st.columns(3)
     with col_a:
@@ -95,6 +105,98 @@ def render():
         st.metric("最近決策", _status_label(latest["status"]))
         if latest.get("status") in {None, "N/A", "unknown"}:
             st.caption("尚無決策紀錄。")
+
+    st.markdown("### Tiered Operator Shell")
+    shell_col_a, shell_col_b = st.columns([1.25, 1.75], gap="large")
+
+    with shell_col_a:
+        st.markdown("**Tier 0 · Instant Gate**")
+        if not tier0_bundle.get("present"):
+            st.warning(tier0_bundle.get("error") or "無法載入 Tier 0 session-start")
+        else:
+            gate_row_a, gate_row_b, gate_row_c = st.columns(3)
+            with gate_row_a:
+                st.metric("Readiness", tier0_shell.get("readiness_status") or "unknown")
+            with gate_row_b:
+                st.metric("Track", tier0_shell.get("task_track") or "unclassified")
+            with gate_row_c:
+                st.metric("Mode", tier0_shell.get("deliberation_mode") or "unknown")
+
+            if tier0_shell.get("canonical_summary"):
+                st.caption(tier0_shell["canonical_summary"])
+
+            next_followup = tier0_shell.get("next_followup") or {}
+            st.markdown("**Next bounded move**")
+            st.code(next_followup.get("command") or "n/a", language="bash")
+            if next_followup.get("reason"):
+                st.caption(next_followup["reason"])
+
+            hook_badges = tier0_shell.get("hook_badges") or []
+            if hook_badges:
+                hooks_text = " | ".join(
+                    f"{item['name']}:{item['status']}" for item in hook_badges[:3]
+                )
+                st.caption(f"Hooks: {hooks_text}")
+
+    with shell_col_b:
+        st.markdown("**Tier 1 · Orientation Shell**")
+        if not tier1_bundle.get("present"):
+            st.warning(tier1_bundle.get("error") or "無法載入 Tier 1 session-start")
+        else:
+            canonical_cards = tier1_shell.get("canonical_cards") or {}
+            st.info(canonical_cards.get("short_board") or "current short board not visible")
+            if canonical_cards.get("successor_correction"):
+                st.caption(canonical_cards["successor_correction"])
+
+            parity_counts = tier1_shell.get("parity_counts") or {}
+            parity_cols = st.columns(4)
+            parity_labels = [
+                ("Baseline", "baseline"),
+                ("Beta", "beta_usable"),
+                ("Partial", "partial"),
+                ("Deferred", "deferred"),
+            ]
+            for col, (label, key) in zip(parity_cols, parity_labels):
+                with col:
+                    st.metric(label, int(parity_counts.get(key, 0) or 0))
+
+            closeout_attention = tier1_shell.get("closeout_attention") or {}
+            if closeout_attention.get("present"):
+                st.warning(closeout_attention.get("summary_text") or "closeout attention present")
+            else:
+                st.caption("Closeout attention: none")
+
+            observer_shell = tier1_shell.get("observer_shell") or {}
+            counts = observer_shell.get("counts") or {}
+            st.caption(
+                "Observer shell: "
+                f"stable={int(counts.get('stable', 0) or 0)} | "
+                f"contested={int(counts.get('contested', 0) or 0)} | "
+                f"stale={int(counts.get('stale', 0) or 0)}"
+            )
+
+            with st.expander("Tier 1 details", expanded=False):
+                if canonical_cards.get("source_precedence"):
+                    st.markdown(f"**Source precedence**  \n{canonical_cards['source_precedence']}")
+
+                family_cards = tier1_shell.get("family_cards") or []
+                if family_cards:
+                    st.markdown("**Subsystem gaps**")
+                    for family in family_cards:
+                        st.markdown(
+                            f"- `{family['name']}` [{family['status']}]"
+                            f" — gap: {family['main_gap']} | next: {family['next_move']}"
+                        )
+
+                for label, items in (
+                    ("Stable", observer_shell.get("stable_headlines") or []),
+                    ("Contested", observer_shell.get("contested_headlines") or []),
+                    ("Stale", observer_shell.get("stale_headlines") or []),
+                ):
+                    if items:
+                        st.markdown(f"**{label}**")
+                        for item in items:
+                            st.markdown(f"- {item}")
 
     col_main, col_side = st.columns([3, 1.1], gap="large")
 
