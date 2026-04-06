@@ -110,6 +110,7 @@
 - Phase 779: run a bounded internal-state observability reality check so future fail-stop / drift / strain surfaces can improve without inflating interpretability into selfhood claims
 - Phase 785: define one surface-versioning and consumer-lineage policy so session-start, observer-window, dashboard shells, and Claude-style adapters stop drifting silently as more consumers appear
 - Phase 786: run one cross-consumer drift validation wave so CLI, dashboard, observer-window, and Claude-style shells keep the same short-board, closeout, and fallback story over time
+- Phase 787: define one knowledge-layer source taxonomy and parking policy so raw sources, compiled notes, parked drafts, and operator retrieval do not blur back into one memory bucket
 
 ## Water-Bucket Snapshot (2026-03-30)
 - Baseline reached:
@@ -125,7 +126,7 @@
   - low-drift anchor / observer-window baseline (Day 1 complete): `tonesoul/observer_window.py`, `scripts/run_observer_window.py`, `tests/test_observer_window.py`, `docs/status/observer_window_latest.{json,md}`
   - bounded outer-shell preflight chain for shared edits, publish/push posture, and task-board parking discipline
 - Current short board:
-  - Phase 786: run one cross-consumer drift validation wave so CLI, dashboard, observer-window, and Claude-style shells keep the same short-board, closeout, and fallback story over time
+  - Phase 787: define one knowledge-layer source taxonomy and parking policy so raw sources, compiled notes, parked drafts, and operator retrieval do not blur back into one memory bucket
 - After that:
   - successor/hot-memory bucket is now baseline-frozen unless a fresh real-world misread reopens it
   - task-board governance should stay boring and explicit before any new theory bucket opens
@@ -1899,8 +1900,14 @@
 - [x] avoid turning the phase into a new transport layer or vendor-integration fantasy; keep it to current repo-native consumers only
 **Success Criteria**: Later agents and humans can see which consumer surface they are reading, what it derives from, and when they must fall back to deeper runtime truth instead of silently trusting a stale or mismatched adapter.
 
-## Phase 786: Cross-Consumer Drift Validation Wave (2026-04-06, planned)
-- [ ] run one bounded validation wave across `session-start`, `observer-window`, dashboard tier shells, and Claude-style entry adapters
-- [ ] check that short-board recovery, closeout meaning, and fallback order still align after the new surface-versioning layer lands
-- [ ] keep the wave regression-focused: no new transport, no new shell family, no vendor-integration story
+## Phase 786: Cross-Consumer Drift Validation Wave (2026-04-06, completed)
+- [x] run one bounded validation wave across `session-start`, `observer-window`, dashboard tier shells, and Claude-style entry adapters
+- [x] check that short-board recovery, closeout meaning, and fallback order still align after the new surface-versioning layer lands
+- [x] keep the wave regression-focused: no new transport, no new shell family, no vendor-integration story
 **Success Criteria**: ToneSoul can detect consumer drift early instead of discovering weeks later that different shells are quietly teaching different authority stories.
+
+## Phase 787: Knowledge-Layer Source Taxonomy And Parking Policy (2026-04-06, planned)
+- [ ] classify current repo knowledge-bearing surfaces into raw sources, compiled knowledge, exploratory residue, operator retrieval, and public teaching surfaces
+- [ ] define where parked external research and parked design drafts belong without letting them silently re-enter runtime truth lanes
+- [ ] keep hot coordination, continuity, and identity visibly separate from future knowledge-layer storage
+**Success Criteria**: Later agents can tell which knowledge surfaces are raw, compiled, parked, or operator-facing, so external research and repo memory no longer drift back into one blurred bucket.

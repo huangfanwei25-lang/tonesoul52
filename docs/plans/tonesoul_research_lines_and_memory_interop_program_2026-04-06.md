@@ -350,6 +350,28 @@ Current implementation target:
 - one bounded validation/report surface
 - no new transport, no vendor bridge, no new control plane
 
+### Phase 787: Knowledge-Layer Source Taxonomy And Parking Policy
+
+Bounded scope:
+
+- classify current repo knowledge-bearing surfaces into:
+  - raw sources
+  - compiled knowledge
+  - exploratory residue
+  - operator retrieval
+  - public teaching
+- define how parked external research and parked design drafts relate to that taxonomy
+- keep hot coordination, continuity, and identity out of the knowledge layer
+
+Success criteria:
+
+- later agents stop confusing parked theory, compiled notes, and bounded operator retrieval with one another
+
+Current implementation target:
+
+- one bounded taxonomy/parking map for repo-native knowledge surfaces
+- no retrieval runtime yet, no identity promotion, no memory rewrite
+
 ---
 
 ## What This Program Must Not Become
@@ -370,7 +392,7 @@ The workspace bucket is now baseline-stable through `Phase 784`.
 
 The next research-driven short board should open:
 
-`Phase 786: Cross-Consumer Drift Validation Wave`
+`Phase 787: Knowledge-Layer Source Taxonomy And Parking Policy`
 
 Keep the work repo-native, bounded, and testable.
 
