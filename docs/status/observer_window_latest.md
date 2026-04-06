@@ -1,8 +1,8 @@
 # ToneSoul Observer Window / Low-Drift Anchor
 
-> Generated at `2026-04-02T05:56:34Z`. Advisory only.
+> Generated at `2026-04-06T10:24:26Z`. Advisory only.
 
-**Summary**: `observer_window stable=5 contested=4 stale=1 delta_has_updates=True repo_state=baseline_unset`
+**Summary**: `observer_window stable=5 contested=5 stale=3 delta_has_updates=True repo_state=baseline_unset closeout_attention=partial`
 
 > [!NOTE]
 > This observer window is advisory only. Items in 'stable' reflect current bounded posture but do not outrank canonical contracts. Items in 'contested' must not be treated as confirmed. Items in 'stale' should trigger a re-read before leaning on them. Do not promote this readout into canonical governance truth.
@@ -18,11 +18,11 @@
 - Required checks: `readiness.status, claim_view.claims, import_posture.surfaces.compactions.receiver_obligation`
 - Current short board visible: `True`
 - Current short board:
-  - Phase 754: reality-check the deferred working-style wave-2 surface (`tonesoul/tonebridge/personas.py::build_hardened_prompt()`) and either adopt bounded playbook hints or explicitly defer it again
+  - Phase 774: realign the dashboard status panel to the tier model so it reinforces the operator shell instead of flattening authority
 
 ## Hot-Memory Ladder
 
-- Summary: `canonical_center=stable | low_drift_anchor=stale | live_coordination=stable | bounded_handoff=contested | working_identity=stable | replay_review=stable`
+- Summary: `canonical_center=stable | low_drift_anchor=stale | live_coordination=stable | bounded_handoff=contested | working_identity=contested | replay_review=stable`
 - Receiver note: `Read the ladder from canonical_center downward. Parent layers orient or constrain child layers. Child summaries do not outrank parent truth.`
 
 - `canonical_center`: `stable`
@@ -32,7 +32,7 @@
 - `low_drift_anchor`: `stale`
   - sources: `import_posture.posture, packet.launch_claim_posture, packet.coordination_mode, import_posture.readiness`
   - receiver_rule: `apply_when_stable_review_when_contested`
-  - note: observer_window counts: stable=5 contested=4 stale=1
+  - note: observer_window counts: stable=5 contested=5 stale=3
 - `live_coordination`: `stable`
   - sources: `readiness, claims, task_track_hint, deliberation_mode_hint`
   - receiver_rule: `must_read_before_shared_edits`
@@ -41,10 +41,10 @@
   - sources: `compactions, checkpoints, delta_feed, recent_traces`
   - receiver_rule: `ack_or_review_never_self_promote`
   - note: receiver_obligation=must_not_promote closeout=partial
-- `working_identity`: `stable`
+- `working_identity`: `contested`
   - sources: `subject_snapshot, working_style_anchor, working_style_playbook`
   - receiver_rule: `advisory_only_do_not_promote`
-  - note: working_style_status=reinforced
+  - note: working_style_status=partial
 - `replay_review`: `stable`
   - sources: `recent_traces, council_dossier, validation_artifacts`
   - receiver_rule: `review_for_context_not_for_authority`
@@ -52,7 +52,7 @@
 
 ## Hot-Memory Decay / Compression
 
-- Summary: `operational=canonical_center,live_coordination review_only=low_drift_anchor,working_identity,replay_review quarantine=bounded_handoff`
+- Summary: `operational=canonical_center,live_coordination review_only=low_drift_anchor,replay_review quarantine=bounded_handoff,working_identity`
 - Receiver note: `Operational layers may orient immediate work. Review-only layers may inform resumability or context but should not be leaned on as authority. Quarantined layers should be refreshed or resolved before they influence edits.`
 
 - `canonical_center`: `operational`
@@ -76,10 +76,11 @@
   - compression_posture: `compress_with_closeout_guards`
   - quarantine_reason: `receiver_obligation=must_not_promote closeout=partial`
   - note: Compactions may orient resumability, but incomplete closeout or promotion hazards require quarantine.
-- `working_identity`: `review_only`
-  - status: `stable`
+- `working_identity`: `quarantine`
+  - status: `contested`
   - decay_posture: `slow_decay_with_refresh`
   - compression_posture: `do_not_compress_snapshot`
+  - quarantine_reason: `working_style_status=partial`
   - note: Working identity is inheritable but non-canonical; stale or contested identity should not be leaned on.
 - `replay_review`: `review_only`
   - status: `stable`
@@ -89,19 +90,43 @@
 
 ## Repo-State Awareness
 
-- Summary: `classification=baseline_unset head=e65b5aa dirty=10 repo_changed=True coordination_updates=7`
+- Summary: `classification=baseline_unset head=56452d3 dirty=19 repo_changed=True coordination_updates=7`
 - Receiver note: `No observer baseline exists yet. Current git state is visible, but a quiet delta does not imply that nothing changed before this session-start snapshot.`
 - Action hint: `Ack after review to establish a baseline before treating later quiet delta as stability.`
 - Non-authority rule: `Repo-state awareness is descriptive only. It does not authorize scope, override canonical planning, or replace readiness/claim checks.`
+
+## Compaction Closeout Attention
+
+- Present: `True`
+- Summary: `latest compaction closeout is partial; do not treat the handoff summary as completed work`
+- Status: `partial`
+- Detail: `status=partial unresolved=0`
+- Receiver rule: `Read the closeout before the summary. A smooth compaction summary does not imply the previous session finished cleanly.`
+
+## Consumer Contract
+
+- Summary: `consumer_order=readiness -> canonical_center -> closeout_attention -> mutation_preflight -> deep_pull_only | closeout=partial | readiness=pass`
+- Receiver rule: `All consumers should recover the same parent truth, the same closeout meaning, and the same mutation gates before they widen context or act.`
+- Compatible consumers: `codex_cli, claude_style_shell, dashboard_operator_shell`
+- Source precedence: `canonical_anchors > live_coordination_truth > derived_orientation_shells > bounded_handoff > working_identity_and_replay`
+- Step 1: `readiness` - Read session readiness before trusting any summary or orientation shell.
+- Step 2: `canonical_center` - Use canonical center to recover the accepted short board and source precedence before deeper interpretation.
+- Step 3: `closeout_attention` - Read closeout state before reusing any compaction summary or next-action prose.
+- Step 4: `mutation_preflight` - Use bounded preflight before side effects; hook posture is narrower than general shell confidence.
+- Step 5: `deep_packet_or_observer_pull` - Observer shell is for orientation first. Pull full packet/import detail only if the task is contested, blocked, or about to mutate shared state.
+- Guard `observer_stable_not_verified`: Observer-window `stable` means currently unchallenged bounded orientation, not verified truth.
+- Guard `compaction_not_completion`: Compaction summaries remain subordinate to closeout status and unresolved items.
+- Guard `working_style_not_identity`: Working-style continuity can shape workflow, but must not be promoted into durable identity or policy.
+- Guard `council_agreement_not_accuracy`: Council agreement and coherence remain descriptive unless separately calibrated by outcome evidence.
 
 ## Subsystem Parity
 
 - Summary: `subsystem_parity baseline=3 beta_usable=5 partial=2 deferred=1 launch=collaborator_beta readiness=pass`
 - Receiver rule: `Use baseline lanes for normal continuation, beta_usable lanes for guided collaborator-beta work, partial lanes with explicit gap awareness, and deferred lanes as out of current scope.`
-- Next focus: `working_style.wave_2_surface_selection` - Shared-edit preflight is now real enough to stop being the shortest board; rotate to the next bounded non-successor bucket instead of reopening hot-memory theory.
+- Next focus: `task_board_governance.parking_preflight` - Publish/push posture is now real; the next bounded governance gain is keeping outside ideas in docs/plans until the short board explicitly ratifies them.
 
 - `session_start_bundle`: `baseline`
-  - current_signal: `readiness=pass track=feature_track claim=required`
+  - current_signal: `readiness=pass track=quick_change claim=not_required`
   - strongest_truth: Session-start exposes readiness, task/deliberation hints, import posture, and bounded successor guards.
   - main_gap: Cold successors still need one tighter parity readout for overall subsystem maturity.
   - next_bounded_move: `keep first-hop bundle stable and successor-focused`
@@ -131,7 +156,7 @@
   - next_bounded_move: `tighten closeout surfacing where successors actually read first`
   - overclaim_to_avoid: compaction is full task truth
 - `subject_working_style`: `partial`
-  - current_signal: `validation=sufficient`
+  - current_signal: `validation=caution`
   - strongest_truth: Working-style continuity exists with playbook, limits, observability, and validation.
   - main_gap: Successors can still confuse shared style with identity or authority.
   - next_bounded_move: `keep style bounded to advisory workflow habits`
@@ -155,10 +180,10 @@
   - next_bounded_move: `continue bounded beta validation without widening claims`
   - overclaim_to_avoid: public launch maturity is ready
 - `mutation_preflight_hooks`: `beta_usable`
-  - current_signal: `shared_code=claim_before_shared_edits compaction=review_only_handoff task_board=ratified_short_board_only commit=aegis_locked_commit launch_claims=bounded_collaborator_beta_only`
+  - current_signal: `shared_code=bounded_local_edit_first compaction=review_only_handoff task_board=ratified_short_board_only commit=aegis_locked_commit launch_claims=bounded_collaborator_beta_only publish_push=review_before_push`
   - strongest_truth: Successor-facing mutation preflight now maps current write/mutate/publish decision points.
-  - main_gap: The path-overlap hook is now real, but it remains intentionally narrow and only sees visible claims plus candidate paths.
-  - next_bounded_move: `shared_code_edit.path_overlap_preflight`
+  - main_gap: Shared-edit overlap and publish/push posture are real, but task-board parking still depends too much on later agents remembering the scope guard from prose.
+  - next_bounded_move: `task_board.parking_preflight`
   - overclaim_to_avoid: shared-edit mutation is now a full permission system
 - `external_transport_plugins`: `deferred`
   - current_signal: `not_in_launch_default_story`
@@ -184,23 +209,29 @@
 
 ## Contested
 
-(4 items)
+(5 items)
 
-- **council confidence is descriptive_only; agreement does not equal calibrated accuracy** - `council dossier present but calibration_status not confirmed`
-  - source: `import_posture.council_dossier.dossier_interpretation`
-- **latest compaction has carry_forward promotion hazard; must_not_promote** - `hazards=1`
-  - source: `import_posture.compactions.promotion_hazards`
 - **latest compaction closeout is 'partial'; do not read the handoff as completed work** - `status=partial unresolved=0`
   - source: `import_posture.compactions.closeout_status`
+- **latest compaction has carry_forward promotion hazard; must_not_promote** - `hazards=1`
+  - source: `import_posture.compactions.promotion_hazards`
+- **council confidence is descriptive_only; agreement does not equal calibrated accuracy** - `council dossier present but calibration_status not confirmed`
+  - source: `import_posture.council_dossier.dossier_interpretation`
 - **subject snapshot is advisory; must not be promoted into canonical identity**
   - source: `import_posture.subject_snapshot`
+- **working_style observability status is 'partial'; monitor for drift** - `status=partial`
+  - source: `import_posture.working_style.working_style_observability`
 
 ## Stale
 
-(1 items)
+(3 items)
 
-- **recent_traces are 192.8h old (threshold=48.0h)** - `freshness_hours=192.8`
+- **recent_traces are 293.2h old (threshold=48.0h)** - `freshness_hours=293.2`
   - source: `import_posture.recent_traces.freshness_hours`
+- **latest compaction is 140.6h old (threshold=72.0h)** - `freshness_hours=140.6`
+  - source: `import_posture.compactions.freshness_hours`
+- **subject snapshot is 140.7h old (threshold=96.0h)** - `freshness_hours=140.7`
+  - source: `import_posture.subject_snapshot.freshness_hours`
 
 ## Delta Since Last Seen
 
