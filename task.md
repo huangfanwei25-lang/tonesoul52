@@ -92,6 +92,18 @@
 - Phase 770: define the Tier-2 deep-governance drawer budget so escalation surfaces stay available without becoming universal default load
 - Phase 774: realign the dashboard status panel to the tier model so it reinforces the operator shell instead of flattening authority
 
+## Long Program: Research-Driven Memory Interop And Knowledge Layer (2026-04-06)
+- Program Goal: turn the latest research distillations into bounded ToneSoul workstreams that improve cross-agent interpretation parity, establish a future knowledge layer, and keep predictive and internal-state claims honest.
+- Execution Guardrails:
+  - Treat this as a repo-native bridge program, not a vendor-integration fantasy lane.
+  - Do not reopen or bloat the current workspace short board; queue these phases behind the active operator-workspace work unless a concrete interoperability failure forces escalation.
+  - Keep `retrieval`, `continuity`, `identity`, `descriptive confidence`, and `predictive operations` visibly separate.
+- Phase 775: define one cross-agent memory consumer contract so Codex, Claude-style shells, and dashboard paths stop drifting in how they read session-start, observer, packet, and closeout surfaces
+- Phase 776: add one bounded Claude-compatible entry adapter that preserves ToneSoul's first-hop ordering without assuming first-party cross-vendor interoperability
+- Phase 777: define the future knowledge-layer boundary so raw sources, compiled knowledge, exploratory residue, and operator retrieval surfaces stop living as one blurred category
+- Phase 778: define a launch-health trend readout design that separates descriptive metrics from future predictive envelopes without fabricating calibration now
+- Phase 779: run a bounded internal-state observability reality check so future fail-stop / drift / strain surfaces can improve without inflating interpretability into selfhood claims
+
 ## Water-Bucket Snapshot (2026-03-30)
 - Baseline reached:
   - session-start / session-end / packet / delta / readiness / receiver-guard continuity
