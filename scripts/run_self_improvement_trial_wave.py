@@ -312,6 +312,48 @@ def _probe_surface_versioning_lineage() -> dict[str, Any]:
     }
 
 
+def _probe_launch_health_trend_clarity() -> dict[str, Any]:
+    from tonesoul.runtime_adapter import _build_launch_health_trend_posture
+
+    payload = _build_launch_health_trend_posture(
+        project_memory_summary={
+            "evidence_readout_posture": {
+                "lanes": [
+                    {"lane": "continuity_effectiveness", "classification": "runtime_present"},
+                    {"lane": "council_decision_quality", "classification": "descriptive_only"},
+                ]
+            }
+        },
+        coordination_mode={
+            "launch_default_mode": "file-backed",
+            "launch_alignment": "aligned_with_launch_default",
+        },
+        launch_claim_posture={
+            "current_tier": "collaborator_beta",
+            "public_launch_ready": False,
+        },
+    )
+    trend_watch_cues = list(payload.get("trend_watch_cues") or [])
+    forecast_blockers = list(payload.get("forecast_blockers") or [])
+    operator_actions = list(payload.get("operator_actions") or [])
+    trend_metrics = [str(item.get("metric", "")).strip() for item in trend_watch_cues]
+    blocker_metrics = [str(item.get("metric", "")).strip() for item in forecast_blockers]
+    present = (
+        trend_metrics == ["coordination_backend_alignment", "collaborator_beta_validation_health"]
+        and blocker_metrics[:2] == ["continuity_effectiveness", "council_decision_quality"]
+        and len(operator_actions) >= 3
+    )
+    return {
+        "present": present,
+        "summary_text": (
+            "launch_health_probe "
+            f"trend_watch={','.join(trend_metrics) or 'missing'} "
+            f"forecast_blockers={','.join(blocker_metrics) or 'missing'} "
+            f"actions={len(operator_actions)}"
+        ),
+    }
+
+
 def _render_markdown(report: dict[str, Any]) -> str:
     lines = [
         "# ToneSoul Self-Improvement Trial Wave",
@@ -381,6 +423,7 @@ def run_self_improvement_trial_wave(
     publish_push_probe = _probe_publish_push_preflight()
     mutation_followup_probe = _probe_mutation_followup_routing()
     surface_versioning_probe = _probe_surface_versioning_lineage()
+    launch_health_probe = _probe_launch_health_trend_clarity()
     operator_retrieval_contract_present = (
         REPO_ROOT / "docs/architecture/TONESOUL_OPERATOR_RETRIEVAL_QUERY_CONTRACT.md"
     ).exists()
@@ -398,6 +441,7 @@ def run_self_improvement_trial_wave(
         publish_push_probe=publish_push_probe,
         mutation_followup_probe=mutation_followup_probe,
         surface_versioning_probe=surface_versioning_probe,
+        launch_health_probe=launch_health_probe,
         operator_retrieval_contract_present=operator_retrieval_contract_present,
         compiled_landing_zone_spec_present=compiled_landing_zone_spec_present,
         retrieval_runner_present=retrieval_runner_present,

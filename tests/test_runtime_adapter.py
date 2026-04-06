@@ -798,6 +798,11 @@ def test_subject_snapshots_surface_durable_subject_anchor(tmp_path: Path) -> Non
         and item["classification"] == "forecast_later"
         for item in launch_health_trend_posture["metric_classes"]
     )
+    assert launch_health_trend_posture["trend_watch_cues"][0]["metric"] == "coordination_backend_alignment"
+    assert launch_health_trend_posture["forecast_blockers"][0]["metric"] == "continuity_effectiveness"
+    assert launch_health_trend_posture["operator_actions"][2] == (
+        "Do not emit predictive launch numbers or success probabilities."
+    )
     internal_state_observability = packet["project_memory_summary"]["internal_state_observability"]
     assert internal_state_observability["current_state"]["coordination_strain"] == "low"
     assert internal_state_observability["current_state"]["continuity_drift"] == "low"

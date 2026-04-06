@@ -701,6 +701,60 @@ Current implementation target:
 - one recommended eighth-trial family
 - one explicit no-go list for what must stay parked
 
+### Phase 818: Eighth Bounded Trial Wave - Launch Health Trend Clarity
+
+Bounded scope:
+
+- refine `launch_health_trend_posture` so it shows what operators may do now, what trend lanes to watch, and why forecast language remains blocked
+- preserve the descriptive-vs-trendable-vs-forecast_later split
+- keep the change in readout packaging only: no predictive math, no launch-tier rewrite, no stronger deployment authority
+
+Success criteria:
+
+- ToneSoul lands one bounded eighth-trial implementation that improves launch-health honesty and operator clarity without turning posture into fake prediction
+
+Current implementation target:
+
+- one launch-health packaging refinement
+- one new probe or regression proving trend-watch cues and forecast blockers stay explicit
+- no forecast numbers and no maturity-story inflation
+
+### Phase 819: Eighth Trial Evaluation And Registry Entry
+
+Bounded scope:
+
+- evaluate the launch-health clarity trial using the existing evaluator harness and analyzer gate
+- classify the result honestly as `promote`, `park`, `retire`, `blocked`, or `not_ready_for_trial`
+- register the outcome in the bounded status surface without leaking it into first-hop shells
+
+Success criteria:
+
+- ToneSoul has one honest registry-ready eighth-trial result and clear promotion limit for launch-health trend clarity
+
+Current implementation target:
+
+- one evaluator-ready record for the eighth trial
+- one analyzer conclusion
+- one status-surface update with no shell creep
+
+### Phase 820: Ninth Trial Candidate Admission
+
+Bounded scope:
+
+- choose the next bounded candidate only after the eighth trial result is visible
+- keep the candidate inside already-allowed mutation classes
+- make the no-go list explicit before a ninth trial wave opens
+
+Success criteria:
+
+- ToneSoul has one admitted ninth candidate with real operator leverage and no new authority mythology
+
+Current implementation target:
+
+- one candidate-admission note
+- one recommended ninth-trial family
+- one explicit no-go list for what must stay parked
+
 ---
 
 ## Safe First Trial Families
@@ -761,18 +815,18 @@ This is the key improvement over the current gap:
 
 ## Current Recommendation
 
-The program is now active through `Phase 816`.
+The program is now active through `Phase 819`.
 
 Current short board:
 
-- `Phase 817: Eighth Trial Candidate Admission`
+- `Phase 820: Ninth Trial Candidate Admission`
 
 Recommended discipline:
 
 - keep trial outcomes visible through dedicated status artifacts first
 - do not push self-improvement history into `session-start`, `observer-window`, or packet defaults yet
 - keep new trials inside already-allowed mutation classes until a compact result-surface design proves stable
-- prefer packaging refinements that reduce operator latency, shared-edit ambiguity, outward-action ambiguity, stale follow-up routing, and consumer-lineage ambiguity before opening broader retrieval or governance experiments
+- prefer packaging refinements that reduce operator latency, shared-edit ambiguity, outward-action ambiguity, stale follow-up routing, consumer-lineage ambiguity, and launch-health honesty before opening broader retrieval or governance experiments
 
 ---
 

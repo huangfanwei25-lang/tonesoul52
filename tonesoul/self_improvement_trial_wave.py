@@ -102,6 +102,7 @@ def build_self_improvement_trial_wave(
     publish_push_probe: dict[str, Any],
     mutation_followup_probe: dict[str, Any],
     surface_versioning_probe: dict[str, Any],
+    launch_health_probe: dict[str, Any],
     operator_retrieval_contract_present: bool,
     compiled_landing_zone_spec_present: bool,
     retrieval_runner_present: bool,
@@ -126,6 +127,8 @@ def build_self_improvement_trial_wave(
     surface_versioning_summary = str(
         (surface_versioning_probe or {}).get("summary_text") or ""
     ).strip()
+    launch_health_ready = bool((launch_health_probe or {}).get("present"))
+    launch_health_summary = str((launch_health_probe or {}).get("summary_text") or "").strip()
 
     consumer_candidate = {
         "candidate_record": _build_candidate_record(
@@ -671,6 +674,71 @@ def build_self_improvement_trial_wave(
         ),
     )
 
+    launch_health_candidate = {
+        "candidate_record": _build_candidate_record(
+            candidate_id="launch_health_trend_clarity_v1",
+            target_surface="launch_health_trend_posture",
+            target_consumer="codex_claude_dashboard_operator_shells",
+            baseline_story=(
+                "Launch-health posture already separated descriptive, trendable, and forecast-later metrics, but operators still had to infer what to watch next and why forecast language remained blocked."
+            ),
+            candidate_story=(
+                "Launch-health posture now exposes trend-watch cues, forecast blockers, and operator actions so current honesty and future trend watching are clearer without adding fake predictive math."
+            ),
+            success_metric="launch_health_probe.present and consumer_drift_report.status == aligned",
+            failure_mode_watch="launch-health packaging starts reading like predictive maturity or inflated launch readiness",
+            rollback_path="remove the added launch-health packaging cues and keep the prior posture plus registry history only",
+            overclaim_to_avoid="clearer launch-health packaging is not predictive launch scoring or broader public readiness",
+            scope_limit="launch and validation readout packaging only; no forecast math, no launch-tier rewrite, no deployment authority change",
+        ),
+        "analyzer_closeout": _build_analyzer_closeout(
+            status="promote" if (launch_health_ready and consumer_aligned) else "park",
+            result_story=(
+                "Launch-health posture now says what to watch, what blocks forecasting, and what operators may safely do now without implying predictive math."
+                if (launch_health_ready and consumer_aligned)
+                else "Launch-health trend clarity is not yet stable enough to promote."
+            ),
+            evidence_bundle_summary=launch_health_summary or "launch_health_probe unavailable",
+            unresolved_items=(
+                [
+                    "clearer launch-health packaging does not create predictive launch numbers",
+                    "future consumers must keep trend-watch cues subordinate to present-tense launch posture",
+                ]
+                if (launch_health_ready and consumer_aligned)
+                else [
+                    "launch-health trend cues are not yet visible enough across bounded consumers",
+                    "consumer drift must stay aligned before promotion",
+                ]
+            ),
+            failure_pressure="low" if (launch_health_ready and consumer_aligned) else "meaningful",
+            rollback_posture="bounded_restore",
+            promotion_limit="does not authorize predictive launch math, stronger maturity claims, or deployment authority changes",
+            overclaim_warning="clearer launch-health packaging is not public-launch readiness or predictive success scoring",
+            next_action=(
+                "keep launch-health cues bounded while admitting the next candidate"
+                if (launch_health_ready and consumer_aligned)
+                else "repair launch-health trend clarity before reopening this candidate"
+            ),
+        ),
+    }
+    launch_health_candidate["result_surface"] = _build_result_surface(
+        status=launch_health_candidate["analyzer_closeout"]["status"],
+        registry_recommendation=(
+            "promotion_ready_result" if (launch_health_ready and consumer_aligned) else "distilled_lesson"
+        ),
+        supersession_posture="active_until_newer_launch_health_trials_exist",
+        replay_rule="prefer_status_surface_then_probe_current_launch_health_shape_before_reusing_the_story",
+        residue_posture=(
+            "keep_visible_as_current_packaging_result"
+            if (launch_health_ready and consumer_aligned)
+            else "park_in_status_surface_until_launch_health_trend_clarity_is_stable"
+        ),
+        visibility="status_surface_only",
+        carry_forward_rule=(
+            "may inform future launch and validation readout trials, but does not authorize predictive launch math or stronger public claims"
+        ),
+    )
+
     candidates = [
         consumer_candidate,
         retrieval_candidate,
@@ -680,6 +748,7 @@ def build_self_improvement_trial_wave(
         publish_push_candidate,
         mutation_followup_candidate,
         surface_versioning_candidate,
+        launch_health_candidate,
     ]
     outcome_counts = _count_outcomes(candidates)
     status = "completed"
@@ -707,8 +776,9 @@ def build_self_improvement_trial_wave(
             "publish_push_posture_clarity",
             "mutation_followup_routing",
             "surface_versioning_lineage_clarity",
+            "launch_health_trend_clarity",
         ],
         "outcome_counts": outcome_counts,
         "candidates": candidates,
-        "next_short_board": "Phase 817: Eighth Trial Candidate Admission",
+        "next_short_board": "Phase 820: Ninth Trial Candidate Admission",
     }

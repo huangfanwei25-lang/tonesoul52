@@ -522,6 +522,20 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
                 classification = str(item.get("classification", "")).strip()
                 if metric and classification:
                     lines.append(f"    metric={metric}:{classification}")
+            for item in list(launch_health_trend_posture.get("trend_watch_cues") or [])[:2]:
+                metric = str(item.get("metric", "")).strip()
+                watch_for = str(item.get("watch_for", "")).strip()
+                if metric and watch_for:
+                    lines.append(f"    watch={metric}:{watch_for}")
+            for item in list(launch_health_trend_posture.get("forecast_blockers") or [])[:2]:
+                metric = str(item.get("metric", "")).strip()
+                classification = str(item.get("classification", "")).strip()
+                if metric and classification:
+                    lines.append(f"    blocker={metric}:{classification}")
+            for action in list(launch_health_trend_posture.get("operator_actions") or [])[:2]:
+                action_text = str(action).strip()
+                if action_text:
+                    lines.append(f"    action={_clip(action_text, limit=120)}")
             forecast_boundary = str(
                 launch_health_trend_posture.get("forecast_boundary", "")
             ).strip()

@@ -148,6 +148,9 @@
 - Phase 815: run one seventh bounded self-improvement trial on surface-versioning lineage clarity without widening transport semantics
 - Phase 816: classify and register the seventh bounded trial result before admitting any broader candidate
 - Phase 817: admit one eighth bounded self-improvement candidate after the seventh trial result is classified and registered
+- Phase 818: run one eighth bounded self-improvement trial on launch-health trend clarity without inventing predictive math or widening launch authority
+- Phase 819: classify and register the eighth bounded trial result before admitting any broader candidate
+- Phase 820: admit one ninth bounded self-improvement candidate after the eighth trial result is classified and registered
 
 ## Water-Bucket Snapshot (2026-03-30)
 - Baseline reached:
@@ -164,7 +167,7 @@
   - bounded outer-shell preflight chain for shared edits, publish/push posture, and task-board parking discipline
   - bounded self-improvement foundation: evaluator harness, experiment lineage boundary, mutation space, analyzer gate, first trial wave, and promotion-ready result surface discipline
 - Current short board:
-  - Phase 817: admit the eighth bounded self-improvement candidate without reopening retrieval mythology or governance semantics
+  - Phase 820: admit the ninth bounded self-improvement candidate without reopening retrieval mythology or governance semantics
 - After that:
   - `ToneSoul Self-Improvement Loop v0` is now the active bucket, with `Phase 790-804` landed and the next work focused on fourth-candidate selection rather than expanding shell surface area
   - successor/hot-memory bucket is now baseline-frozen unless a fresh real-world misread reopens it
@@ -2125,8 +2128,26 @@
 - [x] register the result in a bounded status/registry surface without leaking it into first-hop shells
 **Success Criteria**: ToneSoul has one honest seventh-trial result classification and registry-ready record for `surface_versioning_lineage_clarity_v1`.
 
-## Phase 817: Eighth Trial Candidate Admission (2026-04-07, planned)
-- [ ] choose the next bounded self-improvement candidate after the seventh trial result and current registry/status surface are visible
-- [ ] keep the next candidate inside allowed mutation classes and away from retrieval mythology, governance semantics, identity, and transport claims
-- [ ] make the no-go list explicit before opening an eighth trial wave
+## Phase 817: Eighth Trial Candidate Admission (2026-04-07)
+- [x] choose the next bounded self-improvement candidate after the seventh trial result and current registry/status surface are visible
+- [x] keep the next candidate inside allowed mutation classes and away from retrieval mythology, governance semantics, identity, and transport claims
+- [x] make the no-go list explicit before opening an eighth trial wave
 **Success Criteria**: ToneSoul has one admitted eighth candidate that is narrower than shell redesign and still worth real operator leverage.
+
+## Phase 818: Eighth Bounded Trial Wave - Launch Health Trend Clarity (2026-04-07)
+- [x] refine `launch_health_trend_posture` so it shows what operators may do now, what trend lanes to watch, and why forecast language remains blocked
+- [x] preserve the descriptive-vs-trendable-vs-forecast_later split while avoiding any predictive-math or launch-authority widening
+- [x] add regression coverage proving trend-watch cues, forecast blockers, and operator actions stay explicit and non-predictive
+**Success Criteria**: ToneSoul lands one bounded eighth-trial implementation for `launch_health_trend_clarity_v1` that improves launch-health honesty and operator clarity without turning posture into fake prediction.
+
+## Phase 819: Eighth Trial Evaluation And Registry Entry (2026-04-07)
+- [x] evaluate the `launch_health_trend_clarity_v1` trial against the existing evaluator harness and analyzer gate
+- [x] classify the result as `promote`, `park`, `retire`, `blocked`, or `not_ready_for_trial` without inflating readout packaging into launch readiness
+- [x] register the result in a bounded status/registry surface without leaking it into first-hop shells
+**Success Criteria**: ToneSoul has one honest eighth-trial result classification and registry-ready record for `launch_health_trend_clarity_v1`.
+
+## Phase 820: Ninth Trial Candidate Admission (2026-04-07, planned)
+- [ ] choose the next bounded self-improvement candidate after the eighth trial result and current registry/status surface are visible
+- [ ] keep the next candidate inside allowed mutation classes and away from retrieval mythology, governance semantics, identity, transport claims, and predictive-math inflation
+- [ ] make the no-go list explicit before opening a ninth trial wave
+**Success Criteria**: ToneSoul has one admitted ninth candidate that is narrower than shell redesign and still worth real operator leverage.

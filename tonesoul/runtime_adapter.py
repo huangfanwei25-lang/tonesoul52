@@ -2502,6 +2502,42 @@ def _build_launch_health_trend_posture(
             ),
         },
     ]
+    trend_watch_cues = [
+        {
+            "metric": "coordination_backend_alignment",
+            "current_value": launch_alignment,
+            "watch_for": "alignment_stays_consistent_across_validation_waves",
+            "note": "Track whether launch-default coordination stays aligned instead of inferring maturity from one snapshot.",
+        },
+        {
+            "metric": "collaborator_beta_validation_health",
+            "current_value": "guided_beta_active" if current_tier == "collaborator_beta" else "not_in_beta_focus",
+            "watch_for": "repeated_validation_without_new_overclaim_pressure",
+            "note": "Track repeated collaborator-beta validation quality over time before promoting any broader launch story.",
+        },
+    ]
+    forecast_blockers = [
+        {
+            "metric": "continuity_effectiveness",
+            "classification": continuity_classification,
+            "reason": "Continuity effectiveness is still not outcome-calibrated enough to support predictive launch language.",
+        },
+        {
+            "metric": "council_decision_quality",
+            "classification": council_quality_classification,
+            "reason": "Council decision quality remains descriptive and cannot yet anchor a predictive launch story.",
+        },
+        {
+            "metric": "public_launch_ready_flag",
+            "classification": "descriptive_only",
+            "reason": "Public launch remains a present-tense boundary rather than a probability estimate.",
+        },
+    ]
+    operator_actions = [
+        "Use current launch language as collaborator-beta-only unless a human explicitly narrows it further.",
+        "Track trendable metrics across repeated validation waves before changing launch posture wording.",
+        "Do not emit predictive launch numbers or success probabilities.",
+    ]
 
     return {
         "summary_text": (
@@ -2519,6 +2555,9 @@ def _build_launch_health_trend_posture(
             "council_decision_quality": council_quality_classification,
         },
         "metric_classes": metric_classes,
+        "trend_watch_cues": trend_watch_cues,
+        "forecast_blockers": forecast_blockers,
+        "operator_actions": operator_actions,
         "forecast_boundary": (
             "Do not emit predictive launch numbers or success probabilities until trendable metrics are collected over time and calibrated separately from descriptive confidence."
         ),

@@ -1,6 +1,6 @@
 # ToneSoul Self-Improvement Trial Wave
 
-**Summary**: `self_improvement_trial_wave promote=7 park=1 retire=0 blocked=0`
+**Summary**: `self_improvement_trial_wave promote=8 park=1 retire=0 blocked=0`
 
 > Trial-wave outcomes are bounded self-improvement results. They may inform future patches or parking decisions, but they do not become governance truth, identity truth, or hot-memory authority.
 
@@ -14,10 +14,11 @@
 - `publish_push_posture_clarity`
 - `mutation_followup_routing`
 - `surface_versioning_lineage_clarity`
+- `launch_health_trend_clarity`
 
 ## Outcomes
 
-- `promote`: `7`
+- `promote`: `8`
 - `park`: `1`
 - `retire`: `0`
 - `blocked`: `0`
@@ -130,7 +131,20 @@
     - future shells must keep the fallback chain subordinate to parent runtime truth
   - promotion_limit: `does not authorize new transport semantics, shell promotion, or vendor-native interoperability claims`
   - next_action: `keep compatibility posture bounded while admitting the next candidate`
+- `launch_health_trend_clarity_v1` -> `promote`
+  - target_surface: `launch_health_trend_posture`
+  - success_metric: `launch_health_probe.present and consumer_drift_report.status == aligned`
+  - result_story: Launch-health posture now says what to watch, what blocks forecasting, and what operators may safely do now without implying predictive math.
+  - evidence: `launch_health_probe trend_watch=coordination_backend_alignment,collaborator_beta_validation_health forecast_blockers=continuity_effectiveness,council_decision_quality,public_launch_ready_flag actions=3`
+  - result_surface: `promoted_result`
+  - replay_rule: `prefer_status_surface_then_probe_current_launch_health_shape_before_reusing_the_story`
+  - residue_posture: `keep_visible_as_current_packaging_result`
+  - unresolved_items:
+    - clearer launch-health packaging does not create predictive launch numbers
+    - future consumers must keep trend-watch cues subordinate to present-tense launch posture
+  - promotion_limit: `does not authorize predictive launch math, stronger maturity claims, or deployment authority changes`
+  - next_action: `keep launch-health cues bounded while admitting the next candidate`
 
 ## Next Short Board
 
-- `Phase 817: Eighth Trial Candidate Admission`
+- `Phase 820: Ninth Trial Candidate Admission`

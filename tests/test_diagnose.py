@@ -325,6 +325,31 @@ def _fake_packet():
                         "classification": "forecast_later",
                     },
                 ],
+                "trend_watch_cues": [
+                    {
+                        "metric": "coordination_backend_alignment",
+                        "watch_for": "alignment_stays_consistent_across_validation_waves",
+                    },
+                    {
+                        "metric": "collaborator_beta_validation_health",
+                        "watch_for": "repeated_validation_without_new_overclaim_pressure",
+                    },
+                ],
+                "forecast_blockers": [
+                    {
+                        "metric": "continuity_effectiveness",
+                        "classification": "runtime_present",
+                    },
+                    {
+                        "metric": "council_decision_quality",
+                        "classification": "descriptive_only",
+                    },
+                ],
+                "operator_actions": [
+                    "Use current launch language as collaborator-beta-only unless a human explicitly narrows it further.",
+                    "Track trendable metrics across repeated validation waves before changing launch posture wording.",
+                    "Do not emit predictive launch numbers or success probabilities.",
+                ],
                 "forecast_boundary": "Do not emit predictive launch numbers until trendable metrics are separately calibrated.",
                 "receiver_rule": "Treat launch health as present-tense posture plus future trend lane.",
             },
@@ -688,6 +713,9 @@ def test_full_diagnostic_is_cp950_safe_and_includes_shared_runtime(monkeypatch) 
     assert "launch_health_trend_posture:" in report
     assert "metric=coordination_backend_alignment:trendable" in report
     assert "metric=public_launch_forecast:forecast_later" in report
+    assert "watch=coordination_backend_alignment:alignment_stays_consistent_across_validation_waves" in report
+    assert "blocker=continuity_effectiveness:runtime_present" in report
+    assert "action=Use current launch language as collaborator-beta-only" in report
     assert "internal_state_observability:" in report
     assert "coordination=low drift=medium stop=medium deliberation=visible" in report
     assert "evidence=risk_posture:stable" in report
