@@ -223,6 +223,13 @@ Success criteria:
 
 - a Claude-like shell can cold-start from a bounded adapter without immediately drifting from Codex's reading order
 
+Current implementation target:
+
+- one repo-native `run_claude_entry_adapter.py`
+- built from Tier-1 session-start, not from raw packet
+- preserves the same first-hop order already established by the consumer contract
+- explicitly avoids any claim of official first-party vendor interop
+
 ### Phase 777: Knowledge Layer Boundary Contract
 
 Bounded scope:

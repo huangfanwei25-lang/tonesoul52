@@ -144,6 +144,12 @@
 - [x] Lock the parity with regression coverage for tiered session-start bundles, observer-window output, and packet/operator-guidance readouts
 **Success Criteria**: Different ToneSoul consumer shells can still render different panes, but they no longer drift on the first-hop order, compaction-vs-closeout meaning, or the main non-promotion guards.
 
+## Phase 776: Claude-Compatible Entry Adapter (2026-04-06)
+- [x] Add one repo-native Claude-compatible adapter built from Tier-1 session-start instead of raw packet or observer dumps
+- [x] Preserve the same first-hop order and misread guards already established by the consumer contract
+- [x] Keep the adapter explicit about its limit: it is a shell adapter, not official first-party cross-vendor interop
+**Success Criteria**: A Claude-style shell can cold-start from a bounded adapter that keeps ToneSoul's first-hop ordering, anti-fake-completion reading, and deep-pull discipline without inventing a second memory transport story.
+
 ## Phase 691: Reality Alignment Lane Integration (2026-03-29)
 - [x] Add a dedicated reality-alignment lane to the doc authority map for entry-surface baselines, count methods, render/encoding boundaries, and drift registers
 - [x] Wire the lane into README, docs README, and docs index so later agents can discover the corrected baseline through normal entrypoints

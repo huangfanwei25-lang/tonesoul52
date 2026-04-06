@@ -1,0 +1,68 @@
+"""Bounded Claude-style entry adapter for ToneSoul session-start shells."""
+
+from __future__ import annotations
+
+from typing import Any
+
+
+def build_claude_entry_adapter(*, session_start_payload: dict[str, Any]) -> dict[str, Any]:
+    """Translate a Tier-1 session-start bundle into a Claude-style entry shell."""
+
+    payload = dict(session_start_payload or {})
+    consumer_contract = dict(payload.get("consumer_contract") or {})
+    canonical_center = dict(payload.get("canonical_center") or {})
+    closeout_attention = dict(payload.get("closeout_attention") or {})
+    mutation_preflight = dict(payload.get("mutation_preflight") or {})
+    deliberation_mode_hint = dict(payload.get("deliberation_mode_hint") or {})
+    subsystem_parity = dict(payload.get("subsystem_parity") or {})
+    next_pull = dict(payload.get("next_pull") or {})
+
+    required_read_order = list(consumer_contract.get("required_read_order") or [])
+    first_hop_order = [str(item.get("surface", "")).strip() for item in required_read_order]
+    must_read_now = [
+        {
+            "surface": str(item.get("surface", "")).strip(),
+            "receiver_rule": str(item.get("receiver_rule", "")).strip(),
+        }
+        for item in required_read_order[:4]
+    ]
+
+    short_board = dict(canonical_center.get("current_short_board") or {})
+    next_focus = dict(subsystem_parity.get("next_focus") or {})
+    current_context = {
+        "readiness": str((payload.get("readiness") or {}).get("status", "") or "unknown"),
+        "deliberation_mode": str(
+            deliberation_mode_hint.get("suggested_mode", "") or "unclassified"
+        ),
+        "closeout_status": str(closeout_attention.get("status", "") or "complete"),
+        "short_board": str(short_board.get("summary_text", "")).strip(),
+        "next_followup_target": str(
+            (mutation_preflight.get("next_followup") or {}).get("target", "")
+        ).strip(),
+    }
+
+    return {
+        "present": True,
+        "shell": "claude_style_shell",
+        "source_bundle_tier": int(payload.get("tier", 1) or 1),
+        "summary_text": (
+            f"claude_entry_adapter readiness={current_context['readiness']} "
+            f"closeout={current_context['closeout_status']} "
+            f"short_board_visible={bool(short_board.get('present'))} "
+            f"next_focus={str(next_focus.get('resolved_to', '') or 'none')}"
+        ),
+        "first_hop_order": first_hop_order,
+        "must_read_now": must_read_now,
+        "must_not_assume": list(consumer_contract.get("misread_guards") or []),
+        "receiver_rule": str(consumer_contract.get("receiver_rule", "")).strip(),
+        "shell_rule": (
+            "Start from the bounded Tier-1 orientation shell. Do not skip directly to packet detail or smooth handoff prose."
+        ),
+        "current_context": current_context,
+        "bounded_pulls": {
+            "observe_first": True,
+            "deep_pull_only_when": str(next_pull.get("receiver_rule", "")).strip(),
+            "recommended_commands": list(next_pull.get("recommended_commands") or []),
+        },
+        "next_focus": next_focus,
+    }
