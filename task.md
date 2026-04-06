@@ -90,7 +90,7 @@
 - Phase 768: define a bounded workspace view-model adapter contract for Tier 0 and Tier 1 shells so frontend work does not consume raw runtime JSON directly
 - Phase 769: adapt `apps/dashboard` workspace into the first operator shell instead of rewriting every frontend surface at once
 - Phase 770: define the Tier-2 deep-governance drawer budget so escalation surfaces stay available without becoming universal default load
-- Phase 773: validate dashboard/operator and public/demo role separation after the new tier-model surfaces landed
+- Phase 774: realign the dashboard status panel to the tier model so it reinforces the operator shell instead of flattening authority
 
 ## Water-Bucket Snapshot (2026-03-30)
 - Baseline reached:
@@ -106,7 +106,7 @@
   - low-drift anchor / observer-window baseline (Day 1 complete): `tonesoul/observer_window.py`, `scripts/run_observer_window.py`, `tests/test_observer_window.py`, `docs/status/observer_window_latest.{json,md}`
   - bounded outer-shell preflight chain for shared edits, publish/push posture, and task-board parking discipline
 - Current short board:
-  - Phase 773: validate dashboard/operator and public/demo role separation after the new tier-model surfaces landed
+  - Phase 774: realign the dashboard status panel to the tier model so it reinforces the operator shell instead of flattening authority
 - After that:
   - successor/hot-memory bucket is now baseline-frozen unless a fresh real-world misread reopens it
   - task-board governance should stay boring and explicit before any new theory bucket opens
@@ -1802,7 +1802,7 @@
 - [x] surface mutation, closeout, and contested continuity first; keep packet/detail payloads behind deeper pull
 **Success Criteria**: The dashboard workspace exposes a real Tier-2 drawer that matches the bounded budget, stays opt-in, and improves operator boundary handling without turning the workspace into a packet dump.
 
-## Phase 773: Workspace Role-Parity Validation (2026-04-06, planned)
+## Phase 773: Workspace Role-Parity Validation (2026-04-06, completed)
 - [x] validate that `apps/dashboard` and `apps/web` now expose clearly separated operator/demo roles
 - [x] confirm dashboard still follows CLI/runtime truth while `apps/web` remains educational and non-authoritative
 - [x] keep the wave parity-focused rather than reopening a broad UI redesign

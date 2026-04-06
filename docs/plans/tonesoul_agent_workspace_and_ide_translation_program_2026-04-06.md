@@ -153,4 +153,4 @@ Accept this as the live long program for the frontend / IDE translation lane.
 
 The current short board remains:
 
-`Phase 773: Workspace Role-Parity Validation`
+`Phase 774: Dashboard Status Panel Tier Alignment`
