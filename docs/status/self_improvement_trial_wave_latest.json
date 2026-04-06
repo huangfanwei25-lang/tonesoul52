@@ -1,9 +1,9 @@
 {
   "contract_version": "v1",
   "bundle": "self_improvement_trial_wave",
-  "agent": "codex-phase813-smoke",
+  "agent": "codex-phase816-smoke",
   "status": "completed",
-  "summary_text": "self_improvement_trial_wave promote=6 park=1 retire=0 blocked=0",
+  "summary_text": "self_improvement_trial_wave promote=7 park=1 retire=0 blocked=0",
   "receiver_rule": "Trial-wave outcomes are bounded self-improvement results. They may inform future patches or parking decisions, but they do not become governance truth, identity truth, or hot-memory authority.",
   "trial_families": [
     "cross_consumer_parity_packaging",
@@ -12,10 +12,11 @@
     "task_board_parking_clarity",
     "shared_edit_overlap_clarity",
     "publish_push_posture_clarity",
-    "mutation_followup_routing"
+    "mutation_followup_routing",
+    "surface_versioning_lineage_clarity"
   ],
   "outcome_counts": {
-    "promote": 6,
+    "promote": 7,
     "park": 1,
     "retire": 0,
     "blocked": 0,
@@ -281,7 +282,44 @@
         "visibility": "status_surface_only",
         "carry_forward_rule": "may inform future mutation-preflight packaging trials, but does not authorize new hooks or stronger permissions"
       }
+    },
+    {
+      "candidate_record": {
+        "candidate_id": "surface_versioning_lineage_clarity_v1",
+        "target_surface": "surface_versioning.compatibility_posture",
+        "target_consumer": "codex_claude_dashboard_observer_operator_shells",
+        "baseline_story": "Surface versioning already exposed versions and parent lineage, but it still lacked one explicit compatibility posture showing which shells are repo-native entries, which are bounded adapters, and what fallback chain preserves parity.",
+        "candidate_story": "Surface versioning now exposes compatibility posture so later agents can recover consumer roles and shared fallback order without guessing.",
+        "success_metric": "surface_versioning_probe.present and consumer_drift_report.status == aligned",
+        "failure_mode_watch": "compatibility packaging starts sounding like stronger interop truth or reopens transport mythology",
+        "rollback_path": "remove compatibility posture and keep the prior versioning readout plus drift-wave history only",
+        "overclaim_to_avoid": "clearer lineage packaging is not stronger vendor interop, shared cognition, or transport promotion",
+        "scope_limit": "surface-versioning and consumer-lineage packaging only; no transport, hook, or governance mutation"
+      },
+      "analyzer_closeout": {
+        "status": "promote",
+        "result_story": "Surface versioning now exposes compatibility posture and fallback lineage clearly enough for later shells to recover parent truth without guessing.",
+        "evidence_bundle_summary": "surface_versioning_probe consumers=codex_cli,dashboard_operator_shell,claude_style_shell compatibility=repo_native_entry,bounded_adapter,bounded_adapter fallback=session_start:tiered_v1>observer_window:anchor_window_v1>r_memory_packet:packet_v1",
+        "unresolved_items": [
+          "compatibility posture improves lineage clarity, not actual cross-vendor transport",
+          "future shells must keep the fallback chain subordinate to parent runtime truth"
+        ],
+        "failure_pressure": "low",
+        "rollback_posture": "bounded_restore",
+        "promotion_limit": "does not authorize new transport semantics, shell promotion, or vendor-native interoperability claims",
+        "overclaim_warning": "clearer versioning lineage is not stronger shared understanding or transport truth",
+        "next_action": "keep compatibility posture bounded while admitting the next candidate"
+      },
+      "result_surface": {
+        "surface_status": "promoted_result",
+        "registry_recommendation": "promotion_ready_result",
+        "supersession_posture": "active_until_newer_versioning_lineage_trials_exist",
+        "replay_rule": "prefer_status_surface_then_probe_current_surface_versioning_shape_before_reusing_the_story",
+        "residue_posture": "keep_visible_as_current_packaging_result",
+        "visibility": "status_surface_only",
+        "carry_forward_rule": "may inform future consumer-lineage packaging trials, but does not authorize transport promotion or stronger interoperability claims"
+      }
     }
   ],
-  "next_short_board": "Phase 814: Seventh Trial Candidate Admission"
+  "next_short_board": "Phase 817: Eighth Trial Candidate Admission"
 }

@@ -1,6 +1,6 @@
 # ToneSoul Self-Improvement Trial Wave
 
-**Summary**: `self_improvement_trial_wave promote=6 park=1 retire=0 blocked=0`
+**Summary**: `self_improvement_trial_wave promote=7 park=1 retire=0 blocked=0`
 
 > Trial-wave outcomes are bounded self-improvement results. They may inform future patches or parking decisions, but they do not become governance truth, identity truth, or hot-memory authority.
 
@@ -13,10 +13,11 @@
 - `shared_edit_overlap_clarity`
 - `publish_push_posture_clarity`
 - `mutation_followup_routing`
+- `surface_versioning_lineage_clarity`
 
 ## Outcomes
 
-- `promote`: `6`
+- `promote`: `7`
 - `park`: `1`
 - `retire`: `0`
 - `blocked`: `0`
@@ -116,7 +117,20 @@
     - future shells must preserve bounded hook selection without turning it into a planner
   - promotion_limit: `does not authorize new hooks, broader permissions, or governance changes`
   - next_action: `keep mutation follow-up routing bounded while selecting the next admitted candidate`
+- `surface_versioning_lineage_clarity_v1` -> `promote`
+  - target_surface: `surface_versioning.compatibility_posture`
+  - success_metric: `surface_versioning_probe.present and consumer_drift_report.status == aligned`
+  - result_story: Surface versioning now exposes compatibility posture and fallback lineage clearly enough for later shells to recover parent truth without guessing.
+  - evidence: `surface_versioning_probe consumers=codex_cli,dashboard_operator_shell,claude_style_shell compatibility=repo_native_entry,bounded_adapter,bounded_adapter fallback=session_start:tiered_v1>observer_window:anchor_window_v1>r_memory_packet:packet_v1`
+  - result_surface: `promoted_result`
+  - replay_rule: `prefer_status_surface_then_probe_current_surface_versioning_shape_before_reusing_the_story`
+  - residue_posture: `keep_visible_as_current_packaging_result`
+  - unresolved_items:
+    - compatibility posture improves lineage clarity, not actual cross-vendor transport
+    - future shells must keep the fallback chain subordinate to parent runtime truth
+  - promotion_limit: `does not authorize new transport semantics, shell promotion, or vendor-native interoperability claims`
+  - next_action: `keep compatibility posture bounded while admitting the next candidate`
 
 ## Next Short Board
 
-- `Phase 814: Seventh Trial Candidate Admission`
+- `Phase 817: Eighth Trial Candidate Admission`

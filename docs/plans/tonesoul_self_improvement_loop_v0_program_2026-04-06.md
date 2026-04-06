@@ -647,6 +647,60 @@ Current implementation target:
 - one recommended seventh-trial family
 - one explicit no-go list for what must stay parked
 
+### Phase 815: Seventh Bounded Trial Wave - Surface Versioning Lineage Clarity
+
+Bounded scope:
+
+- refine `surface_versioning` with one clearer compatibility-posture layer so later agents can see repo-native entry vs bounded-adapter roles without inferring them from multiple fields
+- preserve the existing runtime surface list, consumer-shell list, and fallback rule
+- keep the change in packaging/readout space only: no new transport layer, no vendor-native interop story, and no authority promotion
+
+Success criteria:
+
+- ToneSoul lands one bounded seventh-trial implementation that improves consumer-lineage readability without reopening transport mythology
+
+Current implementation target:
+
+- one `surface_versioning.compatibility_posture` refinement
+- one new probe or regression proving fallback lineage stays shared across consumers
+- no packet/schema redesign and no governance-story changes
+
+### Phase 816: Seventh Trial Evaluation And Registry Entry
+
+Bounded scope:
+
+- evaluate the surface-versioning lineage trial using the existing evaluator harness and analyzer gate
+- classify the result honestly as `promote`, `park`, `retire`, `blocked`, or `not_ready_for_trial`
+- register the outcome in the bounded status surface without leaking it into first-hop shells
+
+Success criteria:
+
+- ToneSoul has one honest registry-ready seventh-trial result and clear promotion limit for surface-versioning lineage clarity
+
+Current implementation target:
+
+- one evaluator-ready record for the seventh trial
+- one analyzer conclusion
+- one status-surface update with no shell creep
+
+### Phase 817: Eighth Trial Candidate Admission
+
+Bounded scope:
+
+- choose the next bounded candidate only after the seventh trial result is visible
+- keep the candidate inside already-allowed mutation classes
+- make the no-go list explicit before an eighth trial wave opens
+
+Success criteria:
+
+- ToneSoul has one admitted eighth candidate with real operator leverage and no new authority mythology
+
+Current implementation target:
+
+- one candidate-admission note
+- one recommended eighth-trial family
+- one explicit no-go list for what must stay parked
+
 ---
 
 ## Safe First Trial Families
@@ -707,18 +761,18 @@ This is the key improvement over the current gap:
 
 ## Current Recommendation
 
-The program is now active through `Phase 813`.
+The program is now active through `Phase 816`.
 
 Current short board:
 
-- `Phase 814: Seventh Trial Candidate Admission`
+- `Phase 817: Eighth Trial Candidate Admission`
 
 Recommended discipline:
 
 - keep trial outcomes visible through dedicated status artifacts first
 - do not push self-improvement history into `session-start`, `observer-window`, or packet defaults yet
 - keep new trials inside already-allowed mutation classes until a compact result-surface design proves stable
-- prefer packaging refinements that reduce operator latency, shared-edit ambiguity, outward-action ambiguity, and stale follow-up routing before opening broader retrieval or governance experiments
+- prefer packaging refinements that reduce operator latency, shared-edit ambiguity, outward-action ambiguity, stale follow-up routing, and consumer-lineage ambiguity before opening broader retrieval or governance experiments
 
 ---
 

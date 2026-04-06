@@ -280,6 +280,38 @@ def _probe_mutation_followup_routing() -> dict[str, Any]:
     }
 
 
+def _probe_surface_versioning_lineage() -> dict[str, Any]:
+    from tonesoul.surface_versioning import build_surface_versioning_readout
+
+    payload = build_surface_versioning_readout()
+    compatibility = dict(payload.get("compatibility_posture") or {})
+    fallback_chain = list(compatibility.get("fallback_chain") or [])
+    consumer_statuses = list(compatibility.get("consumer_statuses") or [])
+    consumer_labels = [str(item.get("consumer", "")).strip() for item in consumer_statuses]
+    compatibility_values = [str(item.get("compatibility", "")).strip() for item in consumer_statuses]
+    present = (
+        fallback_chain
+        == [
+            "session_start:tiered_v1",
+            "observer_window:anchor_window_v1",
+            "r_memory_packet:packet_v1",
+        ]
+        and consumer_labels
+        == ["codex_cli", "dashboard_operator_shell", "claude_style_shell"]
+        and compatibility_values
+        == ["repo_native_entry", "bounded_adapter", "bounded_adapter"]
+    )
+    return {
+        "present": present,
+        "summary_text": (
+            "surface_versioning_probe "
+            f"consumers={','.join(consumer_labels) or 'missing'} "
+            f"compatibility={','.join(compatibility_values) or 'missing'} "
+            f"fallback={'>'.join(fallback_chain) or 'missing'}"
+        ),
+    }
+
+
 def _render_markdown(report: dict[str, Any]) -> str:
     lines = [
         "# ToneSoul Self-Improvement Trial Wave",
@@ -348,6 +380,7 @@ def run_self_improvement_trial_wave(
     shared_edit_probe = _probe_shared_edit_preflight()
     publish_push_probe = _probe_publish_push_preflight()
     mutation_followup_probe = _probe_mutation_followup_routing()
+    surface_versioning_probe = _probe_surface_versioning_lineage()
     operator_retrieval_contract_present = (
         REPO_ROOT / "docs/architecture/TONESOUL_OPERATOR_RETRIEVAL_QUERY_CONTRACT.md"
     ).exists()
@@ -364,6 +397,7 @@ def run_self_improvement_trial_wave(
         shared_edit_probe=shared_edit_probe,
         publish_push_probe=publish_push_probe,
         mutation_followup_probe=mutation_followup_probe,
+        surface_versioning_probe=surface_versioning_probe,
         operator_retrieval_contract_present=operator_retrieval_contract_present,
         compiled_landing_zone_spec_present=compiled_landing_zone_spec_present,
         retrieval_runner_present=retrieval_runner_present,

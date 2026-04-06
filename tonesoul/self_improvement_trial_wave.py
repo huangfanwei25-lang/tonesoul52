@@ -101,6 +101,7 @@ def build_self_improvement_trial_wave(
     shared_edit_probe: dict[str, Any],
     publish_push_probe: dict[str, Any],
     mutation_followup_probe: dict[str, Any],
+    surface_versioning_probe: dict[str, Any],
     operator_retrieval_contract_present: bool,
     compiled_landing_zone_spec_present: bool,
     retrieval_runner_present: bool,
@@ -120,6 +121,10 @@ def build_self_improvement_trial_wave(
     mutation_followup_ready = bool((mutation_followup_probe or {}).get("present"))
     mutation_followup_summary = str(
         (mutation_followup_probe or {}).get("summary_text") or ""
+    ).strip()
+    surface_versioning_ready = bool((surface_versioning_probe or {}).get("present"))
+    surface_versioning_summary = str(
+        (surface_versioning_probe or {}).get("summary_text") or ""
     ).strip()
 
     consumer_candidate = {
@@ -599,6 +604,73 @@ def build_self_improvement_trial_wave(
         ),
     )
 
+    surface_versioning_candidate = {
+        "candidate_record": _build_candidate_record(
+            candidate_id="surface_versioning_lineage_clarity_v1",
+            target_surface="surface_versioning.compatibility_posture",
+            target_consumer="codex_claude_dashboard_observer_operator_shells",
+            baseline_story=(
+                "Surface versioning already exposed versions and parent lineage, but it still lacked one explicit compatibility posture showing which shells are repo-native entries, which are bounded adapters, and what fallback chain preserves parity."
+            ),
+            candidate_story=(
+                "Surface versioning now exposes compatibility posture so later agents can recover consumer roles and shared fallback order without guessing."
+            ),
+            success_metric="surface_versioning_probe.present and consumer_drift_report.status == aligned",
+            failure_mode_watch="compatibility packaging starts sounding like stronger interop truth or reopens transport mythology",
+            rollback_path="remove compatibility posture and keep the prior versioning readout plus drift-wave history only",
+            overclaim_to_avoid="clearer lineage packaging is not stronger vendor interop, shared cognition, or transport promotion",
+            scope_limit="surface-versioning and consumer-lineage packaging only; no transport, hook, or governance mutation",
+        ),
+        "analyzer_closeout": _build_analyzer_closeout(
+            status="promote" if (surface_versioning_ready and consumer_aligned) else "park",
+            result_story=(
+                "Surface versioning now exposes compatibility posture and fallback lineage clearly enough for later shells to recover parent truth without guessing."
+                if (surface_versioning_ready and consumer_aligned)
+                else "Surface-versioning lineage clarity is not yet stable enough to promote."
+            ),
+            evidence_bundle_summary=surface_versioning_summary or "surface_versioning_probe unavailable",
+            unresolved_items=(
+                [
+                    "compatibility posture improves lineage clarity, not actual cross-vendor transport",
+                    "future shells must keep the fallback chain subordinate to parent runtime truth",
+                ]
+                if (surface_versioning_ready and consumer_aligned)
+                else [
+                    "compatibility posture is not yet visible enough across bounded consumers",
+                    "consumer drift must stay aligned before promotion",
+                ]
+            ),
+            failure_pressure="low" if (surface_versioning_ready and consumer_aligned) else "meaningful",
+            rollback_posture="bounded_restore",
+            promotion_limit="does not authorize new transport semantics, shell promotion, or vendor-native interoperability claims",
+            overclaim_warning="clearer versioning lineage is not stronger shared understanding or transport truth",
+            next_action=(
+                "keep compatibility posture bounded while admitting the next candidate"
+                if (surface_versioning_ready and consumer_aligned)
+                else "repair versioning lineage clarity before reopening this candidate"
+            ),
+        ),
+    }
+    surface_versioning_candidate["result_surface"] = _build_result_surface(
+        status=surface_versioning_candidate["analyzer_closeout"]["status"],
+        registry_recommendation=(
+            "promotion_ready_result"
+            if (surface_versioning_ready and consumer_aligned)
+            else "distilled_lesson"
+        ),
+        supersession_posture="active_until_newer_versioning_lineage_trials_exist",
+        replay_rule="prefer_status_surface_then_probe_current_surface_versioning_shape_before_reusing_the_story",
+        residue_posture=(
+            "keep_visible_as_current_packaging_result"
+            if (surface_versioning_ready and consumer_aligned)
+            else "park_in_status_surface_until_surface_versioning_lineage_is_stable"
+        ),
+        visibility="status_surface_only",
+        carry_forward_rule=(
+            "may inform future consumer-lineage packaging trials, but does not authorize transport promotion or stronger interoperability claims"
+        ),
+    )
+
     candidates = [
         consumer_candidate,
         retrieval_candidate,
@@ -607,6 +679,7 @@ def build_self_improvement_trial_wave(
         shared_edit_candidate,
         publish_push_candidate,
         mutation_followup_candidate,
+        surface_versioning_candidate,
     ]
     outcome_counts = _count_outcomes(candidates)
     status = "completed"
@@ -633,8 +706,9 @@ def build_self_improvement_trial_wave(
             "shared_edit_overlap_clarity",
             "publish_push_posture_clarity",
             "mutation_followup_routing",
+            "surface_versioning_lineage_clarity",
         ],
         "outcome_counts": outcome_counts,
         "candidates": candidates,
-        "next_short_board": "Phase 814: Seventh Trial Candidate Admission",
+        "next_short_board": "Phase 817: Eighth Trial Candidate Admission",
     }

@@ -66,6 +66,26 @@ Consumer surfaces may differ in shape and emphasis, but they must stay explicit 
 
 ---
 
+## Compatibility Posture
+
+`surface_versioning` may expose one bounded `compatibility_posture`.
+
+It may clarify:
+
+- which consumers are repo-native entries
+- which consumers are bounded adapters
+- which shared fallback chain preserves parity
+
+It must **not** imply:
+
+- stronger transport semantics
+- vendor-native shared cognition
+- authority promotion for a consumer shell
+
+This posture exists only to make lineage and fallback easier to read.
+
+---
+
 ## Fallback Rule
 
 If a consumer shell is missing fields, looks stale, or conflicts with another consumer:
