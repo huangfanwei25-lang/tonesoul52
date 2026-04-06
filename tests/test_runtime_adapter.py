@@ -808,6 +808,11 @@ def test_subject_snapshots_surface_durable_subject_anchor(tmp_path: Path) -> Non
     assert internal_state_observability["current_state"]["continuity_drift"] == "low"
     assert internal_state_observability["current_state"]["deliberation_conflict"] == "clear"
     assert internal_state_observability["current_state"]["stop_reason_pressure"] == "medium"
+    assert internal_state_observability["pressure_watch_cues"][0]["signal"] == "coordination_strain"
+    assert internal_state_observability["pressure_watch_cues"][2]["signal"] == "stop_reason_pressure"
+    assert internal_state_observability["operator_actions"][1] == (
+        "Keep continuity cues subordinate to current runtime truth."
+    )
     assert packet["project_memory_summary"]["subject_refresh"]["status"] == "refresh_candidate"
     assert packet["project_memory_summary"]["subject_refresh"]["refresh_recommended"] is True
     active_thread_guidance = next(

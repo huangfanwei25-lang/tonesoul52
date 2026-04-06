@@ -563,6 +563,15 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
                 )
             for item in list(internal_state_observability.get("evidence_sources") or [])[:4]:
                 lines.append(f"    evidence={_clip(str(item))}")
+            for item in list(internal_state_observability.get("pressure_watch_cues") or [])[:2]:
+                signal = str(item.get("signal", "")).strip()
+                current_value = str(item.get("current_value", "")).strip()
+                if signal and current_value:
+                    lines.append(f"    watch={signal}:{current_value}")
+            for action in list(internal_state_observability.get("operator_actions") or [])[:2]:
+                action_text = str(action).strip()
+                if action_text:
+                    lines.append(f"    action={_clip(action_text, limit=120)}")
             selfhood_boundary = str(
                 internal_state_observability.get("selfhood_boundary", "")
             ).strip()

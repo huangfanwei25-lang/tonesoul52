@@ -151,6 +151,9 @@
 - Phase 818: run one eighth bounded self-improvement trial on launch-health trend clarity without inventing predictive math or widening launch authority
 - Phase 819: classify and register the eighth bounded trial result before admitting any broader candidate
 - Phase 820: admit one ninth bounded self-improvement candidate after the eighth trial result is classified and registered
+- Phase 821: run one ninth bounded self-improvement trial on internal-state action clarity without inflating selfhood or emotion claims
+- Phase 822: classify and register the ninth bounded trial result before admitting any broader candidate
+- Phase 823: admit one tenth bounded self-improvement candidate after the ninth trial result is classified and registered
 
 ## Water-Bucket Snapshot (2026-03-30)
 - Baseline reached:
@@ -167,7 +170,7 @@
   - bounded outer-shell preflight chain for shared edits, publish/push posture, and task-board parking discipline
   - bounded self-improvement foundation: evaluator harness, experiment lineage boundary, mutation space, analyzer gate, first trial wave, and promotion-ready result surface discipline
 - Current short board:
-  - Phase 820: admit the ninth bounded self-improvement candidate without reopening retrieval mythology or governance semantics
+  - Phase 823: admit the tenth bounded self-improvement candidate without reopening retrieval mythology, governance semantics, or selfhood inflation
 - After that:
   - `ToneSoul Self-Improvement Loop v0` is now the active bucket, with `Phase 790-804` landed and the next work focused on fourth-candidate selection rather than expanding shell surface area
   - successor/hot-memory bucket is now baseline-frozen unless a fresh real-world misread reopens it
@@ -2146,8 +2149,26 @@
 - [x] register the result in a bounded status/registry surface without leaking it into first-hop shells
 **Success Criteria**: ToneSoul has one honest eighth-trial result classification and registry-ready record for `launch_health_trend_clarity_v1`.
 
-## Phase 820: Ninth Trial Candidate Admission (2026-04-07, planned)
-- [ ] choose the next bounded self-improvement candidate after the eighth trial result and current registry/status surface are visible
-- [ ] keep the next candidate inside allowed mutation classes and away from retrieval mythology, governance semantics, identity, transport claims, and predictive-math inflation
-- [ ] make the no-go list explicit before opening a ninth trial wave
+## Phase 820: Ninth Trial Candidate Admission (2026-04-07)
+- [x] choose the next bounded self-improvement candidate after the eighth trial result and current registry/status surface are visible
+- [x] keep the next candidate inside allowed mutation classes and away from retrieval mythology, governance semantics, identity, transport claims, and predictive-math inflation
+- [x] make the no-go list explicit before opening a ninth trial wave
 **Success Criteria**: ToneSoul has one admitted ninth candidate that is narrower than shell redesign and still worth real operator leverage.
+
+## Phase 821: Ninth Bounded Trial Wave - Internal-State Action Clarity (2026-04-07)
+- [x] refine `internal_state_observability` so it exposes pressure-watch cues and bounded operator actions without changing the selfhood boundary
+- [x] preserve the current pressure taxonomy while avoiding emotion claims, selfhood inflation, or hidden-thought storytelling
+- [x] add regression coverage proving internal-state cues stay explicit, functional, and anti-mythological
+**Success Criteria**: ToneSoul lands one bounded ninth-trial implementation for `internal_state_observability_clarity_v1` that improves practical handling of visible pressures without turning functional observability into mythology.
+
+## Phase 822: Ninth Trial Evaluation And Registry Entry (2026-04-07)
+- [x] evaluate the `internal_state_observability_clarity_v1` trial against the existing evaluator harness and analyzer gate
+- [x] classify the result as `promote`, `park`, `retire`, `blocked`, or `not_ready_for_trial` without inflating packaging into selfhood or emotion
+- [x] register the result in a bounded status/registry surface without leaking it into first-hop shells
+**Success Criteria**: ToneSoul has one honest ninth-trial result classification and registry-ready record for `internal_state_observability_clarity_v1`.
+
+## Phase 823: Tenth Trial Candidate Admission (2026-04-07, planned)
+- [ ] choose the next bounded self-improvement candidate after the ninth trial result and current registry/status surface are visible
+- [ ] keep the next candidate inside allowed mutation classes and away from retrieval mythology, governance semantics, identity, transport claims, predictive-math inflation, and selfhood mythology
+- [ ] make the no-go list explicit before opening a tenth trial wave
+**Success Criteria**: ToneSoul has one admitted tenth candidate that is narrower than shell redesign and still worth real operator leverage.

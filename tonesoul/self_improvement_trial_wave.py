@@ -103,6 +103,7 @@ def build_self_improvement_trial_wave(
     mutation_followup_probe: dict[str, Any],
     surface_versioning_probe: dict[str, Any],
     launch_health_probe: dict[str, Any],
+    internal_state_probe: dict[str, Any],
     operator_retrieval_contract_present: bool,
     compiled_landing_zone_spec_present: bool,
     retrieval_runner_present: bool,
@@ -129,6 +130,8 @@ def build_self_improvement_trial_wave(
     ).strip()
     launch_health_ready = bool((launch_health_probe or {}).get("present"))
     launch_health_summary = str((launch_health_probe or {}).get("summary_text") or "").strip()
+    internal_state_ready = bool((internal_state_probe or {}).get("present"))
+    internal_state_summary = str((internal_state_probe or {}).get("summary_text") or "").strip()
 
     consumer_candidate = {
         "candidate_record": _build_candidate_record(
@@ -739,6 +742,71 @@ def build_self_improvement_trial_wave(
         ),
     )
 
+    internal_state_candidate = {
+        "candidate_record": _build_candidate_record(
+            candidate_id="internal_state_observability_clarity_v1",
+            target_surface="internal_state_observability.pressure_watch_cues",
+            target_consumer="codex_claude_dashboard_operator_shells",
+            baseline_story=(
+                "Internal-state observability already surfaced functional pressures, but operators still had to infer what practical action each pressure implied."
+            ),
+            candidate_story=(
+                "Internal-state observability now exposes pressure-watch cues and bounded operator actions so strain, drift, stop pressure, and deliberation conflict can guide handling without turning into selfhood or emotion claims."
+            ),
+            success_metric="internal_state_probe.present and consumer_drift_report.status == aligned",
+            failure_mode_watch="internal-state packaging starts sounding like emotion, hidden thought, or personhood",
+            rollback_path="remove the added internal-state cues/actions and keep the prior observability posture plus registry history only",
+            overclaim_to_avoid="clearer functional pressure cues are not self-awareness, emotion detection, or deeper consciousness",
+            scope_limit="internal-state observability packaging only; no selfhood claims, no hidden-thought inference, no governance mutation",
+        ),
+        "analyzer_closeout": _build_analyzer_closeout(
+            status="promote" if (internal_state_ready and consumer_aligned) else "park",
+            result_story=(
+                "Internal-state observability now says what pressures are visible and what bounded operator response fits each pressure without crossing into selfhood language."
+                if (internal_state_ready and consumer_aligned)
+                else "Internal-state action clarity is not yet stable enough to promote."
+            ),
+            evidence_bundle_summary=internal_state_summary or "internal_state_probe unavailable",
+            unresolved_items=(
+                [
+                    "functional pressure cues do not prove subjective feeling or self-awareness",
+                    "future consumers must keep action cues subordinate to the selfhood boundary",
+                ]
+                if (internal_state_ready and consumer_aligned)
+                else [
+                    "internal-state action cues are not yet visible enough across bounded consumers",
+                    "consumer drift must stay aligned before promotion",
+                ]
+            ),
+            failure_pressure="low" if (internal_state_ready and consumer_aligned) else "meaningful",
+            rollback_posture="bounded_restore",
+            promotion_limit="does not authorize emotion claims, hidden-thought inference, or stronger agency claims",
+            overclaim_warning="clearer internal-state packaging is not selfhood, emotion, or consciousness",
+            next_action=(
+                "keep internal-state cues bounded while admitting the next candidate"
+                if (internal_state_ready and consumer_aligned)
+                else "repair internal-state action clarity before reopening this candidate"
+            ),
+        ),
+    }
+    internal_state_candidate["result_surface"] = _build_result_surface(
+        status=internal_state_candidate["analyzer_closeout"]["status"],
+        registry_recommendation=(
+            "promotion_ready_result" if (internal_state_ready and consumer_aligned) else "distilled_lesson"
+        ),
+        supersession_posture="active_until_newer_internal_state_trials_exist",
+        replay_rule="prefer_status_surface_then_probe_current_internal_state_shape_before_reusing_the_story",
+        residue_posture=(
+            "keep_visible_as_current_packaging_result"
+            if (internal_state_ready and consumer_aligned)
+            else "park_in_status_surface_until_internal_state_action_clarity_is_stable"
+        ),
+        visibility="status_surface_only",
+        carry_forward_rule=(
+            "may inform future functional-pressure readout trials, but does not authorize selfhood, emotion, or hidden-thought claims"
+        ),
+    )
+
     candidates = [
         consumer_candidate,
         retrieval_candidate,
@@ -749,6 +817,7 @@ def build_self_improvement_trial_wave(
         mutation_followup_candidate,
         surface_versioning_candidate,
         launch_health_candidate,
+        internal_state_candidate,
     ]
     outcome_counts = _count_outcomes(candidates)
     status = "completed"
@@ -777,8 +846,9 @@ def build_self_improvement_trial_wave(
             "mutation_followup_routing",
             "surface_versioning_lineage_clarity",
             "launch_health_trend_clarity",
+            "internal_state_observability_clarity",
         ],
         "outcome_counts": outcome_counts,
         "candidates": candidates,
-        "next_short_board": "Phase 820: Ninth Trial Candidate Admission",
+        "next_short_board": "Phase 823: Tenth Trial Candidate Admission",
     }

@@ -371,6 +371,20 @@ def _fake_packet():
                     "closeout:partial",
                     "deliberation_conflict:visible",
                 ],
+                "pressure_watch_cues": [
+                    {
+                        "signal": "coordination_strain",
+                        "current_value": "low",
+                    },
+                    {
+                        "signal": "continuity_drift",
+                        "current_value": "medium",
+                    },
+                ],
+                "operator_actions": [
+                    "Keep shared side effects bounded and keep readiness/claim checks ahead of broader edits.",
+                    "Re-read working-style and closeout surfaces before promoting continuity stories.",
+                ],
                 "selfhood_boundary": "These are functional coordination pressures inferred from observable runtime surfaces, not proof of subjective feeling, emotion, or selfhood.",
                 "receiver_rule": "Use this readout to notice strain, drift, stop pressure, and visible disagreement early.",
             },
@@ -719,6 +733,8 @@ def test_full_diagnostic_is_cp950_safe_and_includes_shared_runtime(monkeypatch) 
     assert "internal_state_observability:" in report
     assert "coordination=low drift=medium stop=medium deliberation=visible" in report
     assert "evidence=risk_posture:stable" in report
+    assert "watch=coordination_strain:low" in report
+    assert "action=Keep shared side effects bounded and keep readiness/claim checks ahead of broader edits." in report
     assert "routing_summary:" in report
     assert "subject_refresh:" in report
     assert (

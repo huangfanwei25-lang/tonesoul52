@@ -84,12 +84,25 @@ Use this readout to:
 - notice bounded strain early
 - understand why fail-stop or caution may be rising
 - keep successor reasoning honest about drift and unresolved conflict
+- expose bounded operator actions for visible pressures
 
 Do not use it to:
 
 - anthropomorphize the system
 - justify unsupported self-narration
 - replace current task evidence or closeout truth
+
+If operator-facing action cues are added, they must stay:
+
+- functional
+- bounded
+- subordinate to the selfhood boundary
+
+They must not become:
+
+- emotional self-report
+- implied private introspection
+- a stronger agency or personhood claim
 
 ## Non-Goals
 

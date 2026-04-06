@@ -354,6 +354,57 @@ def _probe_launch_health_trend_clarity() -> dict[str, Any]:
     }
 
 
+def _probe_internal_state_action_clarity() -> dict[str, Any]:
+    from tonesoul.runtime_adapter import _build_internal_state_observability
+
+    payload = _build_internal_state_observability(
+        project_memory_summary={
+            "working_style_observability": {
+                "drift_risk": "medium",
+            }
+        },
+        risk_posture={"level": "stable"},
+        compactions=[
+            {
+                "closeout": {
+                    "status": "partial",
+                    "stop_reason": "",
+                },
+                "next_action": "",
+                "pending_paths": [],
+                "council_dossier": {
+                    "confidence_posture": "contested",
+                    "has_minority_report": True,
+                    "evolution_suppression_flag": False,
+                },
+            }
+        ],
+        recent_traces=[],
+    )
+    cues = list(payload.get("pressure_watch_cues") or [])
+    actions = list(payload.get("operator_actions") or [])
+    cue_signals = [str(item.get("signal", "")).strip() for item in cues]
+    present = (
+        cue_signals
+        == [
+            "coordination_strain",
+            "continuity_drift",
+            "stop_reason_pressure",
+            "deliberation_conflict",
+        ]
+        and len(actions) >= 4
+        and "not proof of subjective feeling" in str(payload.get("selfhood_boundary", ""))
+    )
+    return {
+        "present": present,
+        "summary_text": (
+            "internal_state_probe "
+            f"signals={','.join(cue_signals) or 'missing'} "
+            f"actions={len(actions)}"
+        ),
+    }
+
+
 def _render_markdown(report: dict[str, Any]) -> str:
     lines = [
         "# ToneSoul Self-Improvement Trial Wave",
@@ -424,6 +475,7 @@ def run_self_improvement_trial_wave(
     mutation_followup_probe = _probe_mutation_followup_routing()
     surface_versioning_probe = _probe_surface_versioning_lineage()
     launch_health_probe = _probe_launch_health_trend_clarity()
+    internal_state_probe = _probe_internal_state_action_clarity()
     operator_retrieval_contract_present = (
         REPO_ROOT / "docs/architecture/TONESOUL_OPERATOR_RETRIEVAL_QUERY_CONTRACT.md"
     ).exists()
@@ -442,6 +494,7 @@ def run_self_improvement_trial_wave(
         mutation_followup_probe=mutation_followup_probe,
         surface_versioning_probe=surface_versioning_probe,
         launch_health_probe=launch_health_probe,
+        internal_state_probe=internal_state_probe,
         operator_retrieval_contract_present=operator_retrieval_contract_present,
         compiled_landing_zone_spec_present=compiled_landing_zone_spec_present,
         retrieval_runner_present=retrieval_runner_present,

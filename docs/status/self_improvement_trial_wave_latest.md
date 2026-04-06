@@ -1,6 +1,6 @@
 # ToneSoul Self-Improvement Trial Wave
 
-**Summary**: `self_improvement_trial_wave promote=8 park=1 retire=0 blocked=0`
+**Summary**: `self_improvement_trial_wave promote=9 park=1 retire=0 blocked=0`
 
 > Trial-wave outcomes are bounded self-improvement results. They may inform future patches or parking decisions, but they do not become governance truth, identity truth, or hot-memory authority.
 
@@ -15,10 +15,11 @@
 - `mutation_followup_routing`
 - `surface_versioning_lineage_clarity`
 - `launch_health_trend_clarity`
+- `internal_state_observability_clarity`
 
 ## Outcomes
 
-- `promote`: `8`
+- `promote`: `9`
 - `park`: `1`
 - `retire`: `0`
 - `blocked`: `0`
@@ -144,7 +145,20 @@
     - future consumers must keep trend-watch cues subordinate to present-tense launch posture
   - promotion_limit: `does not authorize predictive launch math, stronger maturity claims, or deployment authority changes`
   - next_action: `keep launch-health cues bounded while admitting the next candidate`
+- `internal_state_observability_clarity_v1` -> `promote`
+  - target_surface: `internal_state_observability.pressure_watch_cues`
+  - success_metric: `internal_state_probe.present and consumer_drift_report.status == aligned`
+  - result_story: Internal-state observability now says what pressures are visible and what bounded operator response fits each pressure without crossing into selfhood language.
+  - evidence: `internal_state_probe signals=coordination_strain,continuity_drift,stop_reason_pressure,deliberation_conflict actions=4`
+  - result_surface: `promoted_result`
+  - replay_rule: `prefer_status_surface_then_probe_current_internal_state_shape_before_reusing_the_story`
+  - residue_posture: `keep_visible_as_current_packaging_result`
+  - unresolved_items:
+    - functional pressure cues do not prove subjective feeling or self-awareness
+    - future consumers must keep action cues subordinate to the selfhood boundary
+  - promotion_limit: `does not authorize emotion claims, hidden-thought inference, or stronger agency claims`
+  - next_action: `keep internal-state cues bounded while admitting the next candidate`
 
 ## Next Short Board
 
-- `Phase 820: Ninth Trial Candidate Admission`
+- `Phase 823: Tenth Trial Candidate Admission`

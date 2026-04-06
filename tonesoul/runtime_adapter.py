@@ -2646,6 +2646,45 @@ def _build_internal_state_observability(
     ]
     if stop_reason:
         evidence_sources.append(f"stop_reason:{stop_reason}")
+    pressure_watch_cues = [
+        {
+            "signal": "coordination_strain",
+            "current_value": coordination_strain,
+            "operator_action": (
+                "Slow shared side effects and re-read readiness/claims before broader edits."
+                if coordination_strain in {"medium", "high"}
+                else "Keep shared side effects bounded and keep readiness/claim checks ahead of broader edits."
+            ),
+        },
+        {
+            "signal": "continuity_drift",
+            "current_value": continuity_drift,
+            "operator_action": (
+                "Re-read working-style and closeout surfaces before promoting continuity stories."
+                if continuity_drift in {"medium", "high"}
+                else "Keep continuity cues subordinate to current runtime truth."
+            ),
+        },
+        {
+            "signal": "stop_reason_pressure",
+            "current_value": stop_reason_pressure,
+            "operator_action": (
+                "Keep closeout honest and request missing inputs before smooth continuation."
+                if stop_reason_pressure in {"medium", "high"}
+                else "Preserve explicit closeout even when continuation looks smooth."
+            ),
+        },
+        {
+            "signal": "deliberation_conflict",
+            "current_value": deliberation_conflict,
+            "operator_action": (
+                "Treat visible disagreement as real and consider deeper review before forcing consensus."
+                if deliberation_conflict != "clear"
+                else "Keep disagreement checks available even when current deliberation looks clear."
+            ),
+        },
+    ]
+    operator_actions = [str(item.get("operator_action", "")).strip() for item in pressure_watch_cues]
 
     return {
         "summary_text": (
@@ -2664,6 +2703,8 @@ def _build_internal_state_observability(
             "evolution_suppression_flag": evolution_suppression_flag,
         },
         "evidence_sources": evidence_sources,
+        "pressure_watch_cues": pressure_watch_cues,
+        "operator_actions": operator_actions,
         "selfhood_boundary": (
             "These are functional coordination pressures inferred from observable runtime surfaces, not proof of subjective feeling, emotion, or selfhood."
         ),

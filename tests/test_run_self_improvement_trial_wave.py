@@ -8,6 +8,6 @@ def test_run_self_improvement_trial_wave_returns_completed_report() -> None:
 
     assert report["status"] == "completed"
     assert report["bundle"] == "self_improvement_trial_wave"
-    assert report["next_short_board"] == "Phase 820: Ninth Trial Candidate Admission"
-    assert len(report["candidates"]) == 9
+    assert report["next_short_board"] == "Phase 823: Tenth Trial Candidate Admission"
+    assert len(report["candidates"]) == 10
     assert report["candidates"][0]["result_surface"]["surface_status"] == "promoted_result"
