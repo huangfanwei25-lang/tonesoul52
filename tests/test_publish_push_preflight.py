@@ -45,6 +45,7 @@ def test_publish_push_preflight_blocks_on_blocked_readiness() -> None:
 
     assert payload["classification"] == "blocked"
     assert payload["safe_scope"] == "hold_publish"
+    assert payload["decision_basis"] == "blocked_reasons_present"
     assert "readiness_blocked" in payload["blocked_reasons"]
     assert "closeout_blocked" in payload["blocked_reasons"]
     assert "human_input_required" in payload["blocked_reasons"]
@@ -66,12 +67,18 @@ def test_publish_push_preflight_requests_review_for_bounded_beta_repo_misread() 
 
     assert payload["classification"] == "review_before_push"
     assert payload["safe_scope"] == "feature_branch_or_guided_beta_only"
-    assert "repo_state_baseline_unset" in payload["review_reasons"]
-    assert "closeout_partial" in payload["review_reasons"]
-    assert "bounded_handoff_must_not_promote" in payload["review_reasons"]
-    assert "unresolved_items_visible" in payload["review_reasons"]
-    assert "bounded_collaborator_beta_only" in payload["review_reasons"]
-    assert "launch_overclaim_boundaries_visible" in payload["review_reasons"]
+    assert payload["decision_basis"] == "review_and_honesty_cues_present"
+    assert payload["review_cues"] == [
+        "repo_state_baseline_unset",
+        "closeout_partial",
+        "bounded_handoff_must_not_promote",
+        "unresolved_items_visible",
+    ]
+    assert payload["honesty_cues"] == [
+        "bounded_collaborator_beta_only",
+        "launch_overclaim_boundaries_visible",
+    ]
+    assert payload["review_reasons"] == payload["review_cues"] + payload["honesty_cues"]
 
 
 def test_publish_push_preflight_can_be_clear_when_repo_and_launch_are_clean() -> None:
@@ -88,6 +95,11 @@ def test_publish_push_preflight_can_be_clear_when_repo_and_launch_are_clean() ->
 
     assert payload["classification"] == "clear"
     assert payload["safe_scope"] == "bounded_branch_push"
+    assert payload["decision_basis"] == "no_visible_publish_friction"
     assert payload["blocked_reasons"] == []
+    assert payload["review_cues"] == []
+    assert payload["honesty_cues"] == []
     assert payload["review_reasons"] == []
-    assert payload["summary_text"].startswith("publish_push=clear repo=steady")
+    assert payload["summary_text"].startswith(
+        "publish_push=clear basis=no_visible_publish_friction repo=steady"
+    )

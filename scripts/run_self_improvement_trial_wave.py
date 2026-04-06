@@ -174,6 +174,49 @@ def _probe_shared_edit_preflight() -> dict[str, Any]:
     }
 
 
+def _probe_publish_push_preflight() -> dict[str, Any]:
+    from tonesoul.publish_push_preflight import build_publish_push_preflight
+
+    payload = build_publish_push_preflight(
+        readiness={"status": "needs_clarification"},
+        import_posture={
+            "surfaces": {
+                "compactions": {
+                    "closeout_status": "partial",
+                    "receiver_obligation": "must_not_promote",
+                    "unresolved_count": 2,
+                    "human_input_required": False,
+                },
+                "launch_claims": {
+                    "launch_claim_posture": {
+                        "current_tier": "collaborator_beta",
+                        "public_launch_ready": False,
+                        "blocked_overclaims": ["live_shared_memory"],
+                    }
+                },
+            }
+        },
+        repo_state_awareness={"classification": "baseline_unset"},
+    )
+    present = bool(
+        isinstance(payload.get("decision_basis"), str)
+        and isinstance(payload.get("review_cues"), list)
+        and isinstance(payload.get("honesty_cues"), list)
+        and payload.get("classification") == "review_before_push"
+    )
+    return {
+        "present": present,
+        "summary_text": (
+            "publish_push_probe "
+            f"classification={str(payload.get('classification', '') or 'unknown')} "
+            f"basis={str(payload.get('decision_basis', '') or 'unknown')} "
+            f"review={len(list(payload.get('review_cues') or []))} "
+            f"honesty={len(list(payload.get('honesty_cues') or []))} "
+            f"blocked={len(list(payload.get('blocked_reasons') or []))}"
+        ),
+    }
+
+
 def _render_markdown(report: dict[str, Any]) -> str:
     lines = [
         "# ToneSoul Self-Improvement Trial Wave",
@@ -240,6 +283,7 @@ def run_self_improvement_trial_wave(
         traces_path=traces_path,
     )
     shared_edit_probe = _probe_shared_edit_preflight()
+    publish_push_probe = _probe_publish_push_preflight()
     operator_retrieval_contract_present = (
         REPO_ROOT / "docs/architecture/TONESOUL_OPERATOR_RETRIEVAL_QUERY_CONTRACT.md"
     ).exists()
@@ -254,6 +298,7 @@ def run_self_improvement_trial_wave(
         deliberation_hint_probe=deliberation_hint_probe,
         task_board_probe=task_board_probe,
         shared_edit_probe=shared_edit_probe,
+        publish_push_probe=publish_push_probe,
         operator_retrieval_contract_present=operator_retrieval_contract_present,
         compiled_landing_zone_spec_present=compiled_landing_zone_spec_present,
         retrieval_runner_present=retrieval_runner_present,

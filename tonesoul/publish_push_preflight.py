@@ -33,7 +33,8 @@ def build_publish_push_preflight(
     blocked_overclaims = list(launch_claim_posture.get("blocked_overclaims") or [])
 
     blocked_reasons: list[str] = []
-    review_reasons: list[str] = []
+    review_cues: list[str] = []
+    honesty_cues: list[str] = []
 
     if readiness_status == "blocked":
         blocked_reasons.append("readiness_blocked")
@@ -47,21 +48,34 @@ def build_publish_push_preflight(
         "repo_changed_without_coordination",
         "repo_dirty_without_coordination",
     }:
-        review_reasons.append(f"repo_state_{repo_classification}")
+        review_cues.append(f"repo_state_{repo_classification}")
     if closeout_status == "partial":
-        review_reasons.append("closeout_partial")
+        review_cues.append("closeout_partial")
     if receiver_obligation == "must_not_promote":
-        review_reasons.append("bounded_handoff_must_not_promote")
+        review_cues.append("bounded_handoff_must_not_promote")
     if unresolved_count > 0:
-        review_reasons.append("unresolved_items_visible")
+        review_cues.append("unresolved_items_visible")
     if current_tier == "collaborator_beta" and not public_launch_ready:
-        review_reasons.append("bounded_collaborator_beta_only")
+        honesty_cues.append("bounded_collaborator_beta_only")
     elif current_tier == "internal_alpha":
-        review_reasons.append("internal_alpha_only")
+        honesty_cues.append("internal_alpha_only")
     elif current_tier not in {"public_launch", "unknown"}:
-        review_reasons.append(f"tier_{current_tier}")
+        honesty_cues.append(f"tier_{current_tier}")
     if blocked_overclaims:
-        review_reasons.append("launch_overclaim_boundaries_visible")
+        honesty_cues.append("launch_overclaim_boundaries_visible")
+
+    review_reasons = review_cues + honesty_cues
+
+    if blocked_reasons:
+        decision_basis = "blocked_reasons_present"
+    elif review_cues and honesty_cues:
+        decision_basis = "review_and_honesty_cues_present"
+    elif review_cues:
+        decision_basis = "review_cues_present"
+    elif honesty_cues:
+        decision_basis = "honesty_cues_present"
+    else:
+        decision_basis = "no_visible_publish_friction"
 
     if blocked_reasons:
         classification = "blocked"
@@ -94,11 +108,15 @@ def build_publish_push_preflight(
         "closeout_status": closeout_status or "complete",
         "current_tier": current_tier,
         "public_launch_ready": public_launch_ready,
+        "decision_basis": decision_basis,
         "blocked_reasons": blocked_reasons,
+        "review_cues": review_cues,
+        "honesty_cues": honesty_cues,
         "review_reasons": review_reasons,
         "summary_text": (
-            f"publish_push={classification} repo={repo_classification} "
-            f"closeout={closeout_status or 'complete'} tier={current_tier}"
+            f"publish_push={classification} basis={decision_basis} repo={repo_classification} "
+            f"closeout={closeout_status or 'complete'} tier={current_tier} "
+            f"review={len(review_cues)} honesty={len(honesty_cues)} blocked={len(blocked_reasons)}"
         ),
         "receiver_note": receiver_note,
         "recommended_command": "python scripts/run_publish_push_preflight.py --agent <your-id>",

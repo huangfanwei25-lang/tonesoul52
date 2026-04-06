@@ -1,6 +1,6 @@
 # ToneSoul Self-Improvement Trial Wave
 
-**Summary**: `self_improvement_trial_wave promote=4 park=1 retire=0 blocked=0`
+**Summary**: `self_improvement_trial_wave promote=5 park=1 retire=0 blocked=0`
 
 > Trial-wave outcomes are bounded self-improvement results. They may inform future patches or parking decisions, but they do not become governance truth, identity truth, or hot-memory authority.
 
@@ -11,10 +11,11 @@
 - `deliberation_mode_hint_packaging`
 - `task_board_parking_clarity`
 - `shared_edit_overlap_clarity`
+- `publish_push_posture_clarity`
 
 ## Outcomes
 
-- `promote`: `4`
+- `promote`: `5`
 - `park`: `1`
 - `retire`: `0`
 - `blocked`: `0`
@@ -88,7 +89,20 @@
     - future shells must preserve overlap-versus-claim-gap separation without inventing new authority
   - promotion_limit: `does not authorize automatic claims, path locks, broader write permissions, or governance changes`
   - next_action: `keep shared-edit preflight packaging bounded while selecting the next admitted candidate`
+- `publish_push_posture_clarity_v1` -> `promote`
+  - target_surface: `publish_push_preflight.result_shape`
+  - success_metric: `publish_push_probe.present and consumer_drift_report.status == aligned`
+  - result_story: Publish/push preflight now separates review posture from launch-honesty posture as bounded signals.
+  - evidence: `publish_push_probe classification=review_before_push basis=review_and_honesty_cues_present review=4 honesty=2 blocked=0`
+  - result_surface: `promoted_result`
+  - replay_rule: `prefer_status_surface_then_probe_current_publish_push_shape_before_reusing_the_story`
+  - residue_posture: `keep_visible_as_current_packaging_result`
+  - unresolved_items:
+    - clearer publish/push packaging does not prove safer deployment outcomes
+    - future shells must preserve review-versus-honesty separation without widening authority
+  - promotion_limit: `does not authorize automatic publish, deployment, or stronger launch claims`
+  - next_action: `keep publish/push preflight packaging bounded while selecting the next admitted candidate`
 
 ## Next Short Board
 
-- `Phase 808: Fifth Trial Candidate Admission`
+- `Phase 811: Sixth Trial Candidate Admission`

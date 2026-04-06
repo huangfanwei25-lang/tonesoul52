@@ -139,6 +139,9 @@
 - Phase 806: run one fourth bounded self-improvement trial on shared-edit overlap clarity without inventing a new permission or path-lock layer
 - Phase 807: classify and register the fourth bounded trial result before admitting any broader candidate
 - Phase 808: admit one fifth bounded self-improvement candidate after the fourth trial result is classified and registered
+- Phase 809: run one fifth bounded self-improvement trial on publish/push posture clarity without widening release authority or launch maturity claims
+- Phase 810: classify and register the fifth bounded trial result before admitting any broader candidate
+- Phase 811: admit one sixth bounded self-improvement candidate after the fifth trial result is classified and registered
 
 ## Water-Bucket Snapshot (2026-03-30)
 - Baseline reached:
@@ -155,7 +158,7 @@
   - bounded outer-shell preflight chain for shared edits, publish/push posture, and task-board parking discipline
   - bounded self-improvement foundation: evaluator harness, experiment lineage boundary, mutation space, analyzer gate, first trial wave, and promotion-ready result surface discipline
 - Current short board:
-  - Phase 808: admit the fifth bounded self-improvement candidate without reopening retrieval mythology or governance semantics
+  - Phase 811: admit the sixth bounded self-improvement candidate without reopening retrieval mythology or governance semantics
 - After that:
   - `ToneSoul Self-Improvement Loop v0` is now the active bucket, with `Phase 790-804` landed and the next work focused on fourth-candidate selection rather than expanding shell surface area
   - successor/hot-memory bucket is now baseline-frozen unless a fresh real-world misread reopens it
@@ -2062,8 +2065,26 @@
 - [x] register the result in a bounded status/registry surface without leaking it into first-hop shells
 **Success Criteria**: ToneSoul has one honest fourth-trial result classification and registry-ready record for `shared_edit_overlap_clarity_v1`.
 
-## Phase 808: Fifth Trial Candidate Admission (2026-04-07, planned)
-- [ ] choose the next bounded self-improvement candidate after the fourth trial result and current registry/status surface are visible
-- [ ] keep the next candidate inside allowed mutation classes and away from retrieval mythology, governance semantics, identity, and transport claims
-- [ ] make the no-go list explicit before opening a fifth trial wave
+## Phase 808: Fifth Trial Candidate Admission (2026-04-07)
+- [x] choose the next bounded self-improvement candidate after the fourth trial result and current registry/status surface are visible
+- [x] keep the next candidate inside allowed mutation classes and away from retrieval mythology, governance semantics, identity, and transport claims
+- [x] make the no-go list explicit before opening a fifth trial wave
 **Success Criteria**: ToneSoul has one admitted fifth candidate that is narrower than shell redesign and still worth real operator leverage.
+
+## Phase 809: Fifth Bounded Trial Wave - Publish/Push Posture Clarity (2026-04-07)
+- [x] refine `publish_push_preflight` so later agents can distinguish blocked reasons, review cues, and launch-honesty cues without widening release authority
+- [x] preserve the current bounded decision set (`clear / review_before_push / blocked`) and recommended command posture
+- [x] add regression coverage proving the new packaging stays bounded, parity-safe, and non-promoting
+**Success Criteria**: ToneSoul lands one bounded fifth-trial implementation for `publish_push_posture_clarity_v1` that reduces publish/push ambiguity without inventing release automation or stronger launch authority.
+
+## Phase 810: Fifth Trial Evaluation And Registry Entry (2026-04-07)
+- [x] evaluate the `publish_push_posture_clarity_v1` trial against the existing evaluator harness and analyzer gate
+- [x] classify the result as `promote`, `park`, `retire`, `blocked`, or `not_ready_for_trial` without inflating publish/push clarity into launch maturity
+- [x] register the result in a bounded status/registry surface without leaking it into first-hop shells
+**Success Criteria**: ToneSoul has one honest fifth-trial result classification and registry-ready record for `publish_push_posture_clarity_v1`.
+
+## Phase 811: Sixth Trial Candidate Admission (2026-04-07, planned)
+- [ ] choose the next bounded self-improvement candidate after the fifth trial result and current registry/status surface are visible
+- [ ] keep the next candidate inside allowed mutation classes and away from retrieval mythology, governance semantics, identity, and transport claims
+- [ ] make the no-go list explicit before opening a sixth trial wave
+**Success Criteria**: ToneSoul has one admitted sixth candidate that is narrower than shell redesign and still worth real operator leverage.

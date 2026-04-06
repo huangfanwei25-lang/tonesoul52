@@ -96,7 +96,8 @@ def test_run_publish_push_preflight_emits_review_before_push(
     assert output["repo_state"] == "baseline_unset"
     assert output["launch_tier"] == "collaborator_beta"
     assert output["preflight"]["classification"] == "review_before_push"
-    assert "bounded_collaborator_beta_only" in output["preflight"]["review_reasons"]
+    assert output["preflight"]["decision_basis"] == "review_and_honesty_cues_present"
+    assert "bounded_collaborator_beta_only" in output["preflight"]["honesty_cues"]
     assert output["underlying_commands"][0] == (
         "python scripts/start_agent_session.py --agent observer-publish-preflight --no-ack"
     )

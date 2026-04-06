@@ -99,6 +99,7 @@ def build_self_improvement_trial_wave(
     deliberation_hint_probe: dict[str, Any],
     task_board_probe: dict[str, Any],
     shared_edit_probe: dict[str, Any],
+    publish_push_probe: dict[str, Any],
     operator_retrieval_contract_present: bool,
     compiled_landing_zone_spec_present: bool,
     retrieval_runner_present: bool,
@@ -113,6 +114,8 @@ def build_self_improvement_trial_wave(
     task_board_summary = str((task_board_probe or {}).get("summary_text") or "").strip()
     shared_edit_ready = bool((shared_edit_probe or {}).get("present"))
     shared_edit_summary = str((shared_edit_probe or {}).get("summary_text") or "").strip()
+    publish_push_ready = bool((publish_push_probe or {}).get("present"))
+    publish_push_summary = str((publish_push_probe or {}).get("summary_text") or "").strip()
 
     consumer_candidate = {
         "candidate_record": _build_candidate_record(
@@ -458,12 +461,79 @@ def build_self_improvement_trial_wave(
         ),
     )
 
+    publish_push_candidate = {
+        "candidate_record": _build_candidate_record(
+            candidate_id="publish_push_posture_clarity_v1",
+            target_surface="publish_push_preflight.result_shape",
+            target_consumer="codex_claude_dashboard_operator_shells",
+            baseline_story=(
+                "Publish/push preflight already separated blocked reasons from review posture, "
+                "but review cues and launch-claim honesty cues still traveled as one blended list."
+            ),
+            candidate_story=(
+                "Publish/push preflight now separates decision basis, review cues, and honesty cues so later agents can tell side-effect risk from launch-language limits at a glance."
+            ),
+            success_metric="publish_push_probe.present and consumer_drift_report.status == aligned",
+            failure_mode_watch="clearer publish packaging turns into release optimism or hides hard stop conditions",
+            rollback_path="restore the prior publish/push preflight packaging and keep the result as history only",
+            overclaim_to_avoid="better publish/push posture clarity is not better launch maturity or safer deployment authority",
+            scope_limit="publish/push packaging only; no deployment automation, no launch-tier rewrite, no outward-permission expansion",
+        ),
+        "analyzer_closeout": _build_analyzer_closeout(
+            status="promote" if (publish_push_ready and consumer_aligned) else "park",
+            result_story=(
+                "Publish/push preflight now separates review posture from launch-honesty posture as bounded signals."
+                if (publish_push_ready and consumer_aligned)
+                else "Publish/push posture packaging is not yet stable enough to promote."
+            ),
+            evidence_bundle_summary=publish_push_summary or "publish_push_probe unavailable",
+            unresolved_items=(
+                [
+                    "clearer publish/push packaging does not prove safer deployment outcomes",
+                    "future shells must preserve review-versus-honesty separation without widening authority",
+                ]
+                if (publish_push_ready and consumer_aligned)
+                else [
+                    "publish/push review and honesty cues are not yet separated clearly enough",
+                    "consumer parity must stay aligned before promotion",
+                ]
+            ),
+            failure_pressure="low" if (publish_push_ready and consumer_aligned) else "meaningful",
+            rollback_posture="bounded_restore",
+            promotion_limit="does not authorize automatic publish, deployment, or stronger launch claims",
+            overclaim_warning="better publish/push packaging is not better release readiness, launch maturity, or human approval",
+            next_action=(
+                "keep publish/push preflight packaging bounded while selecting the next admitted candidate"
+                if (publish_push_ready and consumer_aligned)
+                else "repair publish/push packaging drift before reopening this candidate"
+            ),
+        ),
+    }
+    publish_push_candidate["result_surface"] = _build_result_surface(
+        status=publish_push_candidate["analyzer_closeout"]["status"],
+        registry_recommendation=(
+            "promotion_ready_result" if (publish_push_ready and consumer_aligned) else "distilled_lesson"
+        ),
+        supersession_posture="active_until_newer_publish_push_trials_exist",
+        replay_rule="prefer_status_surface_then_probe_current_publish_push_shape_before_reusing_the_story",
+        residue_posture=(
+            "keep_visible_as_current_packaging_result"
+            if (publish_push_ready and consumer_aligned)
+            else "park_in_status_surface_until_publish_push_packaging_is_stable"
+        ),
+        visibility="status_surface_only",
+        carry_forward_rule=(
+            "may inform future publish/push packaging trials, but does not authorize release automation or stronger public claims"
+        ),
+    )
+
     candidates = [
         consumer_candidate,
         retrieval_candidate,
         deliberation_candidate,
         task_board_candidate,
         shared_edit_candidate,
+        publish_push_candidate,
     ]
     outcome_counts = _count_outcomes(candidates)
     status = "completed"
@@ -488,8 +558,9 @@ def build_self_improvement_trial_wave(
             "deliberation_mode_hint_packaging",
             "task_board_parking_clarity",
             "shared_edit_overlap_clarity",
+            "publish_push_posture_clarity",
         ],
         "outcome_counts": outcome_counts,
         "candidates": candidates,
-        "next_short_board": "Phase 808: Fifth Trial Candidate Admission",
+        "next_short_board": "Phase 811: Sixth Trial Candidate Admission",
     }
