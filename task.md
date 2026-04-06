@@ -150,6 +150,12 @@
 - [x] Keep the adapter explicit about its limit: it is a shell adapter, not official first-party cross-vendor interop
 **Success Criteria**: A Claude-style shell can cold-start from a bounded adapter that keeps ToneSoul's first-hop ordering, anti-fake-completion reading, and deep-pull discipline without inventing a second memory transport story.
 
+## Phase 777: Knowledge Layer Boundary Contract (2026-04-06)
+- [x] Define one explicit boundary between canonical anchors, hot coordination state, compiled knowledge, exploratory residue, and operator retrieval surfaces
+- [x] Keep retrieval, continuity, and identity visibly separate instead of letting R-memory become a pseudo knowledge index
+- [x] Leave implementation open: no fake retrieval runtime, only a clean home for future indexing and query work
+**Success Criteria**: ToneSoul can explain where future knowledge indexing belongs, what it should not replace, and why R-memory remains hot coordination rather than retrieval truth.
+
 ## Phase 691: Reality Alignment Lane Integration (2026-03-29)
 - [x] Add a dedicated reality-alignment lane to the doc authority map for entry-surface baselines, count methods, render/encoding boundaries, and drift registers
 - [x] Wire the lane into README, docs README, and docs index so later agents can discover the corrected baseline through normal entrypoints

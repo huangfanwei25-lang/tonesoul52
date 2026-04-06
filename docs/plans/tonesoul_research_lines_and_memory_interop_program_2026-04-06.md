@@ -245,6 +245,12 @@ Success criteria:
 
 - ToneSoul can explain where future knowledge indexing belongs without colliding with R-memory
 
+Current implementation target:
+
+- one explicit boundary between canonical anchors, hot coordination state, compiled knowledge, exploratory residue, and operator retrieval surfaces
+- no fake retrieval runtime yet
+- no collapse of retrieval into memory or identity
+
 ### Phase 778: Launch Health Trend Readout Design
 
 Bounded scope:
