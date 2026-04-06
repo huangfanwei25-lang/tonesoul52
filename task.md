@@ -140,9 +140,9 @@
   - low-drift anchor / observer-window baseline (Day 1 complete): `tonesoul/observer_window.py`, `scripts/run_observer_window.py`, `tests/test_observer_window.py`, `docs/status/observer_window_latest.{json,md}`
   - bounded outer-shell preflight chain for shared edits, publish/push posture, and task-board parking discipline
 - Current short board:
-  - Phase 789: define one bounded operator-retrieval query contract so future compiled-knowledge access stays auxiliary, provenance-aware, and non-promoting
+  - Phase 790: define one self-improvement evaluator harness contract so future improvement candidates are judged by explicit baseline, success metric, failure watch, and rollback path
 - After that:
-  - if Phase 789 lands cleanly, open `ToneSoul Self-Improvement Loop v0` starting with `Phase 790: Self-Improvement Evaluator Harness Contract`
+  - `ToneSoul Self-Improvement Loop v0` is now the next active bucket, beginning with `Phase 790: Self-Improvement Evaluator Harness Contract`
   - successor/hot-memory bucket is now baseline-frozen unless a fresh real-world misread reopens it
   - task-board governance should stay boring and explicit before any new theory bucket opens
   - hook-chain discoverability should stay packaging-oriented, not a new permission universe
@@ -1933,8 +1933,14 @@
 - [x] avoid committing to any specific vector-db or retrieval runtime before the landing zone shape is stable
 **Success Criteria**: ToneSoul has one clear home for future compiled-knowledge artifacts, so research distillations can grow toward a queryable layer without leaking back into R-memory or parked residue.
 
-## Phase 789: Bounded Operator-Retrieval Query Contract (2026-04-06, planned)
-- [ ] define one future query contract for compiled-knowledge access, including query scope, provenance return shape, and non-promotion rules
-- [ ] keep operator retrieval auxiliary to session-start, observer-window, and current runtime truth
-- [ ] avoid pretending compiled-knowledge query is already live before the landing zone and collection health rules exist
+## Phase 789: Bounded Operator-Retrieval Query Contract (2026-04-07)
+- [x] define one future query contract for compiled-knowledge access, including query scope, provenance return shape, and non-promotion rules
+- [x] keep operator retrieval auxiliary to session-start, observer-window, and current runtime truth
+- [x] avoid pretending compiled-knowledge query is already live before the landing zone and collection health rules exist
 **Success Criteria**: ToneSoul can later add operator-facing compiled-knowledge queries without letting retrieval answers masquerade as hot coordination state, canonical authority, or durable identity.
+
+## Phase 790: Self-Improvement Evaluator Harness Contract (2026-04-07, planned)
+- [ ] define one evaluator harness contract for bounded self-improvement candidates, including baseline, candidate, success metric, failure watch, and rollback path
+- [ ] keep the harness scoped to operator/runtime surfaces and explicitly out of identity, vows, canonical governance, and hot-memory transport mutation
+- [ ] ensure future improvement trials can end in promote / park / retire without anti-fake-completion drift
+**Success Criteria**: ToneSoul has one explicit evaluator shape for bounded improvement candidates, so future self-improvement work is judged by evidence and rollback discipline rather than narrative confidence.

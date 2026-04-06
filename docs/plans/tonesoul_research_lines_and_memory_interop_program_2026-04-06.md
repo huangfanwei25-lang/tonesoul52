@@ -413,7 +413,7 @@ Current implementation target:
 - one bounded query contract
 - provenance-first result shape
 - no live retrieval runner yet
-- if this lands cleanly, queue the first self-improvement-loop contract instead of opening a larger retrieval runtime
+- with the contract now landed, rotate the next short board to the first self-improvement-loop contract instead of opening a larger retrieval runtime
 
 ---
 
@@ -433,13 +433,13 @@ Accept this as the next research-driven follow-through after the current workspa
 
 The workspace bucket is now baseline-stable through `Phase 784`.
 
-The next research-driven short board should open:
+The last research-driven short board in this lane was:
 
 `Phase 789: Bounded Operator-Retrieval Query Contract`
 
-Keep the work repo-native, bounded, and testable.
+It has now been landed as a bounded contract. Keep the result repo-native, bounded, and testable.
 
-After that, do not jump directly to a retrieval engine or a grand self-evolution claim.
+Now, do not jump directly to a retrieval engine or a grand self-evolution claim.
 Open the separate:
 
 `ToneSoul Self-Improvement Loop v0`

@@ -289,6 +289,7 @@ GROUPS = [
             "docs/architecture/TONESOUL_SURFACE_VERSIONING_AND_CONSUMER_LINEAGE_CONTRACT.md",
             "docs/architecture/TONESOUL_KNOWLEDGE_LAYER_SOURCE_TAXONOMY_AND_PARKING_CONTRACT.md",
             "docs/architecture/TONESOUL_COMPILED_KNOWLEDGE_LANDING_ZONE_SPEC.md",
+            "docs/architecture/TONESOUL_OPERATOR_RETRIEVAL_QUERY_CONTRACT.md",
             "docs/plans/tonesoul_research_lines_and_memory_interop_program_2026-04-06.md",
         ],
     },

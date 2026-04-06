@@ -1,14 +1,14 @@
 # Documentation Authority Structure Latest
 
-- generated_at: 2026-04-06T13:05:42Z
-- primary_status_line: `doc_authority_structure | groups=25 tracked=97 metadata_complete=97 metadata_missing=0`
+- generated_at: 2026-04-06T13:22:15Z
+- primary_status_line: `doc_authority_structure | groups=25 tracked=98 metadata_complete=98 metadata_missing=0`
 - runtime_status_line: `doc_retrieval_order=entrypoint_to_operational_to_canonical_to_deep_map_to_interpretive_to_boundary_aids_to_control_plane | generated_status_lane=6`
 - artifact_policy_status_line: `structure_mode=retrieval_oriented | authority_roles=explicit | generated_status_preferred_for_current_state`
 
 ## Metrics
 - `group_count`: `25`
-- `tracked_file_count`: `97`
-- `metadata_complete_count`: `97`
+- `tracked_file_count`: `98`
+- `metadata_complete_count`: `98`
 - `metadata_missing_count`: `0`
 
 ## Groups
@@ -173,7 +173,7 @@
   - `docs/plans/tonesoul_successor_collaboration_and_hot_memory_program_2026-04-02.md` exists=`true` purpose=`true` date=`true`
   - `docs/plans/tonesoul_subsystem_parity_and_gap_map_2026-04-02.md` exists=`true` purpose=`true` date=`true`
   - `docs/plans/tonesoul_successor_sidecar_residue_triage_2026-04-02.md` exists=`true` purpose=`true` date=`true`
-- `Research-Driven Memory Interop And Knowledge Layer` tracked=`9` metadata_complete=`9`
+- `Research-Driven Memory Interop And Knowledge Layer` tracked=`10` metadata_complete=`10`
   - description: repo-native bridge contracts for cross-agent consumer parity, Claude-compatible first-hop entry, future knowledge-layer separation, bounded launch-health trend posture, and bounded internal-state observability
   - authority_role: interop_contract
   - use_when: when the question is how different agent shells should read the same memory surfaces, where future retrieval belongs, how launch-health readouts should stay descriptive without fake forecasting, or how internal-state pressure may be externalized without selfhood inflation
@@ -186,6 +186,7 @@
   - `docs/architecture/TONESOUL_SURFACE_VERSIONING_AND_CONSUMER_LINEAGE_CONTRACT.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/TONESOUL_KNOWLEDGE_LAYER_SOURCE_TAXONOMY_AND_PARKING_CONTRACT.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/TONESOUL_COMPILED_KNOWLEDGE_LANDING_ZONE_SPEC.md` exists=`true` purpose=`true` date=`true`
+  - `docs/architecture/TONESOUL_OPERATOR_RETRIEVAL_QUERY_CONTRACT.md` exists=`true` purpose=`true` date=`true`
   - `docs/plans/tonesoul_research_lines_and_memory_interop_program_2026-04-06.md` exists=`true` purpose=`true` date=`true`
 - `Bounded Self-Improvement Loop` tracked=`2` metadata_complete=`2`
   - description: bounded improvement-loop surfaces that define how ToneSoul may propose, evaluate, and promote operator/runtime improvements without crossing governance, identity, or hot-memory transport boundaries

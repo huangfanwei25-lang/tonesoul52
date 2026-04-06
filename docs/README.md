@@ -282,6 +282,8 @@ Treat this as a prompt-design companion. It helps later agents build better extr
   - taxonomy and parking rule for raw sources, compiled knowledge, exploratory residue, operator retrieval, and public teaching
 - `architecture/TONESOUL_COMPILED_KNOWLEDGE_LANDING_ZONE_SPEC.md`
   - future landing-zone spec for compiled artifacts, collection metadata, health checks, and queryable indexes
+- `architecture/TONESOUL_OPERATOR_RETRIEVAL_QUERY_CONTRACT.md`
+  - bounded contract for future operator-facing compiled-knowledge queries with provenance-first results and explicit non-promotion posture
 - `plans/tonesoul_research_lines_and_memory_interop_program_2026-04-06.md`
   - active follow-through program for cross-agent consumer parity, knowledge layering, and predictive-boundary honesty
 
