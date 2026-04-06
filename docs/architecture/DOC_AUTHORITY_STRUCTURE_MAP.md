@@ -241,13 +241,15 @@ Open these when the question is:
 
 - how ToneSoul may improve bounded operator/runtime surfaces without crossing identity or governance boundaries,
 - what experiment lineage should look like without reusing hot coordination state,
-- which mutation classes belong to v0 and which must stay forbidden or human-gated.
+- which mutation classes belong to v0 and which must stay forbidden or human-gated,
+- or how trial outcomes may surface without turning experiment history into runtime truth.
 
 - `docs/architecture/TONESOUL_SELF_IMPROVEMENT_LOOP_V0_SPEC.md`
 - `docs/architecture/TONESOUL_SELF_IMPROVEMENT_EVALUATOR_HARNESS_CONTRACT.md`
 - `docs/architecture/TONESOUL_EXPERIMENT_REGISTRY_AND_LINEAGE_BOUNDARY_CONTRACT.md`
 - `docs/architecture/TONESOUL_BOUNDED_MUTATION_SPACE_CONTRACT.md`
 - `docs/architecture/TONESOUL_ANALYZER_AND_PROMOTION_GATE_CONTRACT.md`
+- `docs/architecture/TONESOUL_PROMOTION_READY_RESULT_SURFACE_CONTRACT.md`
 - `docs/plans/tonesoul_self_improvement_loop_v0_program_2026-04-06.md`
 
 ## Retrieval Order

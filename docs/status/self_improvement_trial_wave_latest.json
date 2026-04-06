@@ -1,0 +1,97 @@
+{
+  "contract_version": "v1",
+  "bundle": "self_improvement_trial_wave",
+  "agent": "codex-self-improvement-smoke",
+  "status": "completed",
+  "summary_text": "self_improvement_trial_wave promote=1 park=1 retire=0 blocked=0",
+  "receiver_rule": "Trial-wave outcomes are bounded self-improvement results. They may inform future patches or parking decisions, but they do not become governance truth, identity truth, or hot-memory authority.",
+  "trial_families": [
+    "cross_consumer_parity_packaging",
+    "bounded_operator_retrieval_cueing"
+  ],
+  "outcome_counts": {
+    "promote": 1,
+    "park": 1,
+    "retire": 0,
+    "blocked": 0,
+    "not_ready_for_trial": 0
+  },
+  "candidates": [
+    {
+      "candidate_record": {
+        "candidate_id": "consumer_parity_packaging_v1",
+        "target_surface": "consumer_contract.first_hop_order",
+        "target_consumer": "codex_claude_dashboard_observer",
+        "baseline_story": "Consumer shells historically risked drifting on short-board meaning, closeout reading, surface-versioning summaries, and fallback order.",
+        "candidate_story": "The bounded consumer contract, surface versioning, and drift-validation wave now keep the same first-hop story across Codex-style, Claude-style, dashboard, and observer consumers.",
+        "success_metric": "cross_consumer_drift_validation_wave.status == aligned",
+        "failure_mode_watch": "shared interpretation fracture while one shell still looks cleaner locally",
+        "rollback_path": "revert packaging/readout changes and fall back to Tier-1 session-start ordering",
+        "overclaim_to_avoid": "aligned packaging is not improved reasoning or governance quality",
+        "scope_limit": "packaging and shared interpretation only; no reasoning-runtime or identity change"
+      },
+      "analyzer_closeout": {
+        "status": "promote",
+        "result_story": "Consumer-parity packaging now reads as aligned across the bounded shells that matter most.",
+        "evidence_bundle_summary": "consumer_drift status=aligned checks=4",
+        "unresolved_items": [
+          "alignment is packaging-level only, not proof of better reasoning",
+          "future consumer changes must keep running the same drift wave"
+        ],
+        "failure_pressure": "low",
+        "rollback_posture": "bounded_restore",
+        "promotion_limit": "does not authorize council, identity, or transport-semantics changes",
+        "overclaim_warning": "cross-consumer alignment is not outcome calibration or self-improvement of cognition",
+        "next_action": "reuse this drift-validation wave whenever shared consumer packaging changes"
+      },
+      "result_surface": {
+        "surface_status": "promoted_result",
+        "registry_recommendation": "promotion_ready_result",
+        "supersession_posture": "active_until_superseded_by_newer_consumer_parity_trial",
+        "replay_rule": "read_status_surface_first_open_raw_run_only_if_consumer_story_is_disputed",
+        "residue_posture": "keep_visible_in_latest_status_surface",
+        "visibility": "status_surface_only",
+        "carry_forward_rule": "may inform future consumer-packaging trials, but does not authorize runtime, governance, or identity promotion"
+      }
+    },
+    {
+      "candidate_record": {
+        "candidate_id": "operator_retrieval_cueing_v1",
+        "target_surface": "operator_retrieval.result_shape",
+        "target_consumer": "operator_shells",
+        "baseline_story": "Operator retrieval had boundaries and landing-zone ideas, but no final query contract and no safe carry-forward posture for later operator use.",
+        "candidate_story": "The operator-retrieval contract now defines query classes, provenance-first return shape, and non-promotion rules so retrieval can stay auxiliary.",
+        "success_metric": "operator_retrieval_contract_present and compiled_landing_zone_spec_present and live runner maturity",
+        "failure_mode_watch": "retrieval reading as runtime truth before a real compiled corpus and safe runner exist",
+        "rollback_path": "revert retrieval-facing packaging and keep retrieval in planning-only posture",
+        "overclaim_to_avoid": "a query contract is not a live retrieval system or solved memory layer",
+        "scope_limit": "operator-facing retrieval packaging only; no runtime truth or identity promotion"
+      },
+      "analyzer_closeout": {
+        "status": "park",
+        "result_story": "Operator retrieval packaging is now bounded and safer to reason about, but it is not live enough to promote as an active capability.",
+        "evidence_bundle_summary": "operator retrieval contract present; compiled landing-zone spec present; no live retrieval runner",
+        "unresolved_items": [
+          "no live operator-retrieval runner is in the mainline yet",
+          "no compiled corpus or collection health lane exists yet",
+          "no operator validation wave has tested retrieval against real use"
+        ],
+        "failure_pressure": "meaningful",
+        "rollback_posture": "clean_revert",
+        "promotion_limit": "does not authorize retrieval answers to outrank session-start, observer-window, packet, or identity surfaces",
+        "overclaim_warning": "operator-retrieval packaging is not solved knowledge memory and not runtime authority",
+        "next_action": "revisit only after a live bounded retrieval runner and compiled collections exist"
+      },
+      "result_surface": {
+        "surface_status": "parked_result",
+        "registry_recommendation": "distilled_lesson",
+        "supersession_posture": "active_until_live_operator_retrieval_trials_exist",
+        "replay_rule": "prefer_status_surface_then_follow_contracts_then_open_raw_run_if_retrieval_posture_is_contested",
+        "residue_posture": "park_in_status_surface_and_reopen_only_when_live_retrieval_lane_exists",
+        "visibility": "status_surface_only",
+        "carry_forward_rule": "may guide future retrieval packaging, but does not authorize retrieval answers to outrank runtime truth"
+      }
+    }
+  ],
+  "next_short_board": "Phase 796: Compact Self-Improvement Result Cue Design"
+}

@@ -298,7 +298,7 @@ GROUPS = [
         "label": "Bounded Self-Improvement Loop",
         "description": "bounded improvement-loop surfaces that define how ToneSoul may propose, evaluate, and promote operator/runtime improvements without crossing governance, identity, or hot-memory transport boundaries",
         "authority_role": "improvement_contract",
-        "use_when": "when the question is how ToneSoul may safely improve operator/runtime surfaces, where experiment lineage belongs, or which mutation classes remain forbidden or human-gated in v0",
+        "use_when": "when the question is how ToneSoul may safely improve operator/runtime surfaces, where experiment lineage belongs, which mutation classes remain forbidden or human-gated in v0, or how trial outcomes may surface without becoming runtime truth",
         "read_order": 21,
         "files": [
             "docs/architecture/TONESOUL_SELF_IMPROVEMENT_LOOP_V0_SPEC.md",
@@ -306,6 +306,7 @@ GROUPS = [
             "docs/architecture/TONESOUL_EXPERIMENT_REGISTRY_AND_LINEAGE_BOUNDARY_CONTRACT.md",
             "docs/architecture/TONESOUL_BOUNDED_MUTATION_SPACE_CONTRACT.md",
             "docs/architecture/TONESOUL_ANALYZER_AND_PROMOTION_GATE_CONTRACT.md",
+            "docs/architecture/TONESOUL_PROMOTION_READY_RESULT_SURFACE_CONTRACT.md",
             "docs/plans/tonesoul_self_improvement_loop_v0_program_2026-04-06.md",
         ],
     },

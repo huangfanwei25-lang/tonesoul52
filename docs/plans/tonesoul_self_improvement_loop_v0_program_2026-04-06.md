@@ -263,6 +263,54 @@ Success criteria:
 
 - ToneSoul produces one explicit promoted lesson or one explicit retired lesson without crossing governance or identity boundaries
 
+Current implementation target:
+
+- `scripts/run_self_improvement_trial_wave.py`
+- `tonesoul/self_improvement_trial_wave.py`
+- `docs/status/self_improvement_trial_wave_latest.{json,md}`
+- one promoted result and one parked result, both with explicit promotion limits and replay rules
+
+### Phase 795: Promotion-Ready Result Surface Contract
+
+Bounded scope:
+
+- define how promoted, parked, retired, and blocked trial outcomes may surface to later agents
+- keep the first surfaced result layer in dedicated status artifacts instead of bloating `session-start`, `observer-window`, or packet defaults
+- make replay, supersession, and residue posture explicit so trial results do not become a hidden status swamp
+
+Success criteria:
+
+- later agents can read bounded trial outcomes from a dedicated result surface without confusing them with runtime truth or reopening raw trial artifacts first
+
+Current implementation target:
+
+- one promotion-ready result-surface contract
+- enriched self-improvement trial-wave status output
+- explicit result-surface fields:
+  - `surface_status`
+  - `replay_rule`
+  - `supersession_posture`
+  - `residue_posture`
+  - `carry_forward_rule`
+
+### Phase 796: Compact Self-Improvement Result Cue Design
+
+Bounded scope:
+
+- decide whether any compact self-improvement result cue belongs in later shells
+- keep the status surface primary while designing the smallest possible secondary cue
+- avoid bloating `session-start`, `observer-window`, packet, or dashboard Tier 0 / Tier 1 with trial-history storytelling
+
+Success criteria:
+
+- ToneSoul has one explicit compact-cue design that preserves dedicated result surfaces as the parent lane and keeps any later shell cue opt-in and secondary
+
+Current implementation target:
+
+- one compact-cue design note or contract
+- no new first-hop payloads yet
+- explicit `do_not_default_load` rule for trial-history surfaces
+
 ---
 
 ## Safe First Trial Families
@@ -323,19 +371,17 @@ This is the key improvement over the current gap:
 
 ## Current Recommendation
 
-Accept this program now, but do not open it yet.
+The program is now active through `Phase 794`.
 
-Open it only after:
+Current short board:
 
-`Phase 789: Bounded Operator-Retrieval Query Contract`
+- `Phase 796: Compact Self-Improvement Result Cue Design`
 
-lands cleanly.
+Recommended discipline:
 
-Then start with:
-
-`Phase 790: Self-Improvement Evaluator Harness Contract`
-
-not with an experiment runner.
+- keep trial outcomes visible through dedicated status artifacts first
+- do not push self-improvement history into `session-start`, `observer-window`, or packet defaults yet
+- keep new trials inside already-allowed mutation classes until a compact result-surface design proves stable
 
 ---
 

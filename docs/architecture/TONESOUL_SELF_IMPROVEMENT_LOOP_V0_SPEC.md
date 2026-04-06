@@ -416,6 +416,12 @@ The fourth required contract is:
 
 Without it, the loop could still evaluate and record trials, then over-smooth the closeout into false success.
 
+The fifth required contract after the first trial wave is:
+
+- `TONESOUL_PROMOTION_READY_RESULT_SURFACE_CONTRACT.md`
+
+Without it, bounded trial outcomes would either stay too hidden to help later agents or leak upward into first-hop shells as if experiment history were runtime truth.
+
 ---
 
 ## One-Sentence Summary

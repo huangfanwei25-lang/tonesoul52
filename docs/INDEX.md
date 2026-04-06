@@ -256,8 +256,12 @@ Use this when the question is not only what should be transferred, but how the e
   - mutation-space contract that splits self-improvement targets into allowed-now, human-gated, and forbidden-in-v0 classes
 - [architecture/TONESOUL_ANALYZER_AND_PROMOTION_GATE_CONTRACT.md](architecture/TONESOUL_ANALYZER_AND_PROMOTION_GATE_CONTRACT.md)
   - analyzer closeout and promotion-gate contract that preserves unresolved items, rollback posture, and honest promote / park / retire / blocked outcomes
+- [architecture/TONESOUL_PROMOTION_READY_RESULT_SURFACE_CONTRACT.md](architecture/TONESOUL_PROMOTION_READY_RESULT_SURFACE_CONTRACT.md)
+  - result-surface contract for how trial outcomes stay visible, supersedable, and secondary to runtime truth without bloating first-hop shells
+- [status/self_improvement_trial_wave_latest.md](status/self_improvement_trial_wave_latest.md)
+  - latest bounded self-improvement trial-wave summary with result-surface posture, replay rule, and promotion limits
 - [plans/tonesoul_self_improvement_loop_v0_program_2026-04-06.md](plans/tonesoul_self_improvement_loop_v0_program_2026-04-06.md)
-  - queued follow-through program for evaluator harness, experiment lineage, mutation-space boundaries, promotion gate, and first safe trial wave
+  - active follow-through program for evaluator harness, experiment lineage, mutation-space boundaries, promotion gate, and bounded result surfacing
 
 ## Documentation Convergence
 

@@ -125,6 +125,8 @@
 - Phase 792: define one bounded mutation-space contract so v0 improvements stay inside operator/readout/retrieval packaging and do not touch vows, identity, or canonical governance
 - Phase 793: define one analyzer and promotion gate so trials end with honest park/retire/promote outcomes instead of fake completion
 - Phase 794: run one first bounded self-improvement trial wave on safe surfaces such as operator workspace tiering, escalation hinting, consumer parity packaging, or bounded retrieval cueing
+- Phase 795: define one promotion-ready result surface contract so trial outcomes remain visible, supersedable, and secondary to runtime truth instead of leaking into first-hop shells
+- Phase 796: define one compact self-improvement result cue design so later shells can optionally reference current improvement posture without bloating session-start, observer-window, or packet defaults
 
 ## Water-Bucket Snapshot (2026-03-30)
 - Baseline reached:
@@ -139,10 +141,11 @@
   - collaborator-beta preflight, entry-validation, and discoverable beta-facing status surfaces
   - low-drift anchor / observer-window baseline (Day 1 complete): `tonesoul/observer_window.py`, `scripts/run_observer_window.py`, `tests/test_observer_window.py`, `docs/status/observer_window_latest.{json,md}`
   - bounded outer-shell preflight chain for shared edits, publish/push posture, and task-board parking discipline
+  - bounded self-improvement foundation: evaluator harness, experiment lineage boundary, mutation space, analyzer gate, first trial wave, and promotion-ready result surface discipline
 - Current short board:
-  - Phase 790: define one self-improvement evaluator harness contract so future improvement candidates are judged by explicit baseline, success metric, failure watch, and rollback path
+  - Phase 796: define one compact self-improvement result cue design so later agents can see current trial posture without bloating session-start, observer-window, or packet defaults
 - After that:
-  - `ToneSoul Self-Improvement Loop v0` is now the next active bucket, beginning with `Phase 790: Self-Improvement Evaluator Harness Contract`
+  - `ToneSoul Self-Improvement Loop v0` is now the active bucket, with `Phase 790-795` landed and the next work focused on compact, non-bloating result visibility
   - successor/hot-memory bucket is now baseline-frozen unless a fresh real-world misread reopens it
   - task-board governance should stay boring and explicit before any new theory bucket opens
   - hook-chain discoverability should stay packaging-oriented, not a new permission universe
@@ -1963,8 +1966,20 @@
 - [x] keep unresolved items, overclaim warnings, and rollback posture visible all the way to closeout
 **Success Criteria**: ToneSoul can finish a bounded self-improvement trial with an honest analyzer-style outcome that preserves failure, unresolved items, and promotion limits instead of smoothing them away.
 
-## Phase 794: First Bounded Self-Improvement Trial Wave (2026-04-07, planned)
-- [ ] choose one or two safe trial families from operator workspace tiering, escalation-hint refinement, cross-consumer parity packaging, or bounded retrieval cueing
-- [ ] keep the wave fully inside allowed-now mutation classes with explicit rollback and parity surfaces
-- [ ] ensure at least one outcome can honestly end in promote, park, retire, or blocked without drifting into system-wide claims
+## Phase 794: First Bounded Self-Improvement Trial Wave (2026-04-07)
+- [x] choose one or two safe trial families from operator workspace tiering, escalation-hint refinement, cross-consumer parity packaging, or bounded retrieval cueing
+- [x] keep the wave fully inside allowed-now mutation classes with explicit rollback and parity surfaces
+- [x] ensure at least one outcome can honestly end in promote, park, retire, or blocked without drifting into system-wide claims
 **Success Criteria**: ToneSoul completes its first bounded self-improvement trial wave using the evaluator harness, experiment-lineage boundary, mutation-space contract, and analyzer gate without crossing governance, identity, or transport boundaries.
+
+## Phase 795: Promotion-Ready Result Surface Contract (2026-04-07)
+- [x] define how promoted, parked, retired, and blocked trial outcomes may surface to later agents without bloating session-start or observer-window
+- [x] keep self-improvement result surfaces secondary to runtime truth, canonical governance, and hot-memory transport
+- [x] make replay, supersession, and residue posture explicit so future trial waves do not accumulate as a new hidden status swamp
+**Success Criteria**: Later agents can see the bounded result of self-improvement trials without confusing them with runtime truth or rereading raw trial artifacts.
+
+## Phase 796: Compact Self-Improvement Result Cue Design (2026-04-07, planned)
+- [ ] define whether any compact self-improvement result cue belongs in later shells, and if so keep it opt-in, secondary, and visibly below runtime truth
+- [ ] preserve the status-surface-first rule while deciding what minimum cue a later agent may see without opening raw trial artifacts
+- [ ] avoid turning session-start, observer-window, or packet into a trial-history bundle
+**Success Criteria**: ToneSoul has one explicit design for if and how current self-improvement posture may surface to later agents as a compact cue, without flattening the dedicated result surface into first-hop runtime truth.
