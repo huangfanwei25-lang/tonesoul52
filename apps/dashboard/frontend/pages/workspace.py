@@ -15,6 +15,7 @@ from utils.search import build_search_context, default_search_roots
 from utils.session_start import (
     build_tier0_start_strip,
     build_tier1_orientation_shell,
+    build_tier2_deep_governance_drawer,
     run_session_start_bundle,
 )
 
@@ -89,8 +90,14 @@ def render():
     latest = _latest_run_summary()
     tier0_bundle = run_session_start_bundle(agent_id=WORKSPACE_AGENT_ID, tier=0, repo_root=workspace)
     tier1_bundle = run_session_start_bundle(agent_id=WORKSPACE_AGENT_ID, tier=1, repo_root=workspace)
+    tier2_bundle = run_session_start_bundle(agent_id=WORKSPACE_AGENT_ID, tier=2, repo_root=workspace)
     tier0_shell = build_tier0_start_strip(tier0_bundle) if tier0_bundle.get("present") else {}
     tier1_shell = build_tier1_orientation_shell(tier1_bundle) if tier1_bundle.get("present") else {}
+    tier2_drawer = (
+        build_tier2_deep_governance_drawer(tier2_bundle)
+        if tier2_bundle.get("present")
+        else {}
+    )
 
     col_a, col_b, col_c = st.columns(3)
     with col_a:
@@ -197,6 +204,40 @@ def render():
                         st.markdown(f"**{label}**")
                         for item in items:
                             st.markdown(f"- {item}")
+
+            st.markdown("**Tier 2 · Deep Governance**")
+            if not tier2_drawer.get("present"):
+                st.caption("Tier 2 drawer unavailable")
+            else:
+                if tier2_drawer.get("recommended_open"):
+                    st.warning(
+                        "Deep governance review recommended: "
+                        + ", ".join(tier2_drawer.get("trigger_reasons") or [])
+                    )
+                else:
+                    st.caption("No default Tier 2 trigger is active. Open only for contested or risky work.")
+
+                with st.expander("Open Tier 2 drawer", expanded=False):
+                    st.caption(tier2_drawer.get("summary_text") or "drawer summary unavailable")
+                    active_groups = tier2_drawer.get("active_group_names") or []
+                    if active_groups:
+                        st.caption("Active groups: " + " | ".join(active_groups))
+
+                    for group in tier2_drawer.get("groups") or []:
+                        st.markdown(f"**{group['name']}**")
+                        for card in group.get("cards") or []:
+                            st.markdown(
+                                f"- `{card['title']}` [{card['status']}]"
+                                f" — {card['summary']}"
+                            )
+                            if card.get("guard"):
+                                st.caption(card["guard"])
+
+                    commands = tier2_drawer.get("next_pull_commands") or []
+                    if commands:
+                        st.markdown("**Next deeper pull**")
+                        for command in commands:
+                            st.code(command, language="bash")
 
     col_main, col_side = st.columns([3, 1.1], gap="large")
 

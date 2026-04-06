@@ -90,7 +90,7 @@
 - Phase 768: define a bounded workspace view-model adapter contract for Tier 0 and Tier 1 shells so frontend work does not consume raw runtime JSON directly
 - Phase 769: adapt `apps/dashboard` workspace into the first operator shell instead of rewriting every frontend surface at once
 - Phase 770: define the Tier-2 deep-governance drawer budget so escalation surfaces stay available without becoming universal default load
-- Phase 772: translate the existing Tier-2 drawer budget into a real bounded pull path inside `apps/dashboard/frontend/pages/workspace.py`
+- Phase 773: validate dashboard/operator and public/demo role separation after the new tier-model surfaces landed
 
 ## Water-Bucket Snapshot (2026-03-30)
 - Baseline reached:
@@ -106,7 +106,7 @@
   - low-drift anchor / observer-window baseline (Day 1 complete): `tonesoul/observer_window.py`, `scripts/run_observer_window.py`, `tests/test_observer_window.py`, `docs/status/observer_window_latest.{json,md}`
   - bounded outer-shell preflight chain for shared edits, publish/push posture, and task-board parking discipline
 - Current short board:
-  - Phase 772: translate the existing Tier-2 drawer budget into a real bounded pull path inside `apps/dashboard/frontend/pages/workspace.py`
+  - Phase 773: validate dashboard/operator and public/demo role separation after the new tier-model surfaces landed
 - After that:
   - successor/hot-memory bucket is now baseline-frozen unless a fresh real-world misread reopens it
   - task-board governance should stay boring and explicit before any new theory bucket opens
@@ -1797,7 +1797,13 @@
 **Success Criteria**: ToneSoul has one explicit rule for what Tier-model elements belong in `apps/web`, what stays dashboard-only, and how the public/demo surface remains aligned without becoming a second control center.
 
 ## Phase 772: Dashboard Deep-Governance Drawer Implementation (2026-04-06, planned)
-- [ ] translate the existing Tier-2 drawer budget into a real bounded pull path inside `apps/dashboard/frontend/pages/workspace.py`
-- [ ] keep default workspace load on Tier 0 / Tier 1 and require explicit operator action before deeper governance opens
-- [ ] surface mutation, closeout, and contested continuity first; keep packet/detail payloads behind deeper pull
+- [x] translate the existing Tier-2 drawer budget into a real bounded pull path inside `apps/dashboard/frontend/pages/workspace.py`
+- [x] keep default workspace load on Tier 0 / Tier 1 and require explicit operator action before deeper governance opens
+- [x] surface mutation, closeout, and contested continuity first; keep packet/detail payloads behind deeper pull
 **Success Criteria**: The dashboard workspace exposes a real Tier-2 drawer that matches the bounded budget, stays opt-in, and improves operator boundary handling without turning the workspace into a packet dump.
+
+## Phase 773: Workspace Role-Parity Validation (2026-04-06, planned)
+- [ ] validate that `apps/dashboard` and `apps/web` now expose clearly separated operator/demo roles
+- [ ] confirm dashboard still follows CLI/runtime truth while `apps/web` remains educational and non-authoritative
+- [ ] keep the wave parity-focused rather than reopening a broad UI redesign
+**Success Criteria**: A fresh agent or human can distinguish the dashboard operator shell from the public/demo site without mistaking either surface for a second control plane.

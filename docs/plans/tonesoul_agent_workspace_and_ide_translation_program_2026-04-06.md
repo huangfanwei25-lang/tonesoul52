@@ -91,6 +91,12 @@ while keeping multi-agent architecture as escalation, not default tax.
 - keep default workspace load on Tier 0 / Tier 1 and require explicit operator action for deeper governance
 - surface mutation, closeout, and contested continuity first; keep packet/detail payloads behind deeper pull
 
+### Phase 773: Workspace Role-Parity Validation
+
+- validate that `apps/dashboard` and `apps/web` now present distinct roles without role drift
+- check that dashboard still follows CLI/runtime truth while `apps/web` stays educational/demo-first
+- keep the lane parity-focused; do not reopen monolithic UI redesign
+
 ---
 
 ## Existing Frontend Reality
@@ -141,4 +147,4 @@ Accept this as the live long program for the frontend / IDE translation lane.
 
 The current short board remains:
 
-`Phase 772: Dashboard Deep-Governance Drawer Implementation`
+`Phase 773: Workspace Role-Parity Validation`

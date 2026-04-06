@@ -5,6 +5,7 @@ from pathlib import Path
 from apps.dashboard.frontend.utils.session_start import (
     build_tier0_start_strip,
     build_tier1_orientation_shell,
+    build_tier2_deep_governance_drawer,
     run_session_start_bundle,
 )
 
@@ -112,3 +113,95 @@ def test_run_session_start_bundle_parses_json(monkeypatch, tmp_path: Path):
     assert result["present"] is True
     assert result["tier"] == 0
     assert result["readiness"]["status"] == "pass"
+
+
+def test_build_tier2_deep_governance_drawer_extracts_budgeted_groups():
+    bundle = {
+        "present": True,
+        "tier": 2,
+        "readiness": {"status": "needs_clarification", "claim_conflict_count": 1},
+        "import_posture": {
+            "surfaces": {
+                "compactions": {
+                    "receiver_obligation": "must_not_promote",
+                    "closeout_status": "partial",
+                    "note": "Carry-forward is resumability memory only.",
+                },
+                "council_dossier": {
+                    "note": "Treat council review as bounded context.",
+                    "dossier_interpretation": {"calibration_status": "descriptive_only"},
+                },
+                "subject_snapshot": {"note": "non-canonical working identity"},
+                "working_style": {"note": "advisory only"},
+            }
+        },
+        "mutation_preflight": {
+            "next_followup": {
+                "command": "python scripts/run_shared_edit_preflight.py --agent test --path task.md"
+            },
+            "decision_points": [
+                {
+                    "name": "shared_code_edit",
+                    "posture": "coordinate_before_shared_edits",
+                    "receiver_note": "Coordinate shared paths first.",
+                    "current_guard": "run_shared_edit_preflight.py",
+                },
+                {
+                    "name": "compaction_write",
+                    "posture": "honest_closeout_required",
+                    "receiver_note": "Keep closeout honest.",
+                    "current_guard": "save_compaction.py",
+                },
+            ],
+        },
+        "publish_push_preflight": {
+            "classification": "review_before_push",
+            "summary_text": "publish_push=review_before_push",
+            "receiver_note": "Review before outward push.",
+            "recommended_command": "python scripts/run_publish_push_preflight.py --agent test",
+        },
+        "task_board_preflight": {
+            "classification": "docs_plans_first",
+            "summary_text": "task_board=docs_plans_first",
+            "receiver_note": "Park new ideas in docs/plans first.",
+            "recommended_command": "python scripts/run_task_board_preflight.py --agent test --proposal-kind external_idea --target-path task.md",
+        },
+        "closeout_attention": {
+            "present": True,
+            "status": "partial",
+            "summary_text": "latest closeout is partial",
+            "receiver_rule": "read closeout first",
+        },
+        "observer_shell": {
+            "receiver_note": "observer shell is descriptive",
+            "contested_headlines": ["council confidence is descriptive_only"],
+        },
+    }
+
+    result = build_tier2_deep_governance_drawer(bundle)
+
+    assert result["recommended_open"] is True
+    assert "Mutation And Closeout" in result["active_group_names"]
+    assert "Contested Continuity" in result["active_group_names"]
+    assert result["groups"][0]["cards"][0]["title"] == "closeout attention"
+    assert result["groups"][1]["cards"][0]["title"] == "compaction carry-forward"
+    assert result["next_pull_commands"][0].startswith("python scripts/run_shared_edit_preflight.py")
+
+
+def test_build_tier2_deep_governance_drawer_stays_manual_when_clean():
+    bundle = {
+        "present": True,
+        "tier": 2,
+        "readiness": {"status": "pass", "claim_conflict_count": 0},
+        "import_posture": {"surfaces": {}},
+        "mutation_preflight": {"decision_points": []},
+        "publish_push_preflight": {"classification": "clear", "recommended_command": ""},
+        "task_board_preflight": {"classification": "parking_clear", "recommended_command": ""},
+        "closeout_attention": {"present": False},
+        "observer_shell": {"contested_headlines": []},
+    }
+
+    result = build_tier2_deep_governance_drawer(bundle)
+
+    assert result["recommended_open"] is False
+    assert result["trigger_reasons"] == []
