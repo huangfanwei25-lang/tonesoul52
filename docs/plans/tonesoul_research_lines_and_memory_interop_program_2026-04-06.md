@@ -372,6 +372,27 @@ Current implementation target:
 - one bounded taxonomy/parking map for repo-native knowledge surfaces
 - no retrieval runtime yet, no identity promotion, no memory rewrite
 
+### Phase 788: Compiled-Knowledge Landing-Zone Spec
+
+Bounded scope:
+
+- define one future landing zone for compiled-knowledge artifacts
+- make storage posture, health-check expectations, and consumer-facing query assumptions explicit
+- keep that landing zone separate from:
+  - raw sources
+  - exploratory residue
+  - hot coordination state
+
+Success criteria:
+
+- later distillations have a clean home that can become queryable later without reusing R-memory or parked-draft lanes
+
+Current implementation target:
+
+- one bounded landing-zone spec
+- no vector-db choice yet
+- no retrieval runtime claim yet
+
 ---
 
 ## What This Program Must Not Become
@@ -392,7 +413,7 @@ The workspace bucket is now baseline-stable through `Phase 784`.
 
 The next research-driven short board should open:
 
-`Phase 787: Knowledge-Layer Source Taxonomy And Parking Policy`
+`Phase 788: Compiled-Knowledge Landing-Zone Spec`
 
 Keep the work repo-native, bounded, and testable.
 

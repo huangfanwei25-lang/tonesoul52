@@ -1,14 +1,14 @@
 # Documentation Authority Structure Latest
 
-- generated_at: 2026-04-06T12:42:33Z
-- primary_status_line: `doc_authority_structure | groups=24 tracked=93 metadata_complete=93 metadata_missing=0`
+- generated_at: 2026-04-06T12:49:34Z
+- primary_status_line: `doc_authority_structure | groups=24 tracked=94 metadata_complete=94 metadata_missing=0`
 - runtime_status_line: `doc_retrieval_order=entrypoint_to_operational_to_canonical_to_deep_map_to_interpretive_to_boundary_aids_to_control_plane | generated_status_lane=6`
 - artifact_policy_status_line: `structure_mode=retrieval_oriented | authority_roles=explicit | generated_status_preferred_for_current_state`
 
 ## Metrics
 - `group_count`: `24`
-- `tracked_file_count`: `93`
-- `metadata_complete_count`: `93`
+- `tracked_file_count`: `94`
+- `metadata_complete_count`: `94`
 - `metadata_missing_count`: `0`
 
 ## Groups
@@ -173,7 +173,7 @@
   - `docs/plans/tonesoul_successor_collaboration_and_hot_memory_program_2026-04-02.md` exists=`true` purpose=`true` date=`true`
   - `docs/plans/tonesoul_subsystem_parity_and_gap_map_2026-04-02.md` exists=`true` purpose=`true` date=`true`
   - `docs/plans/tonesoul_successor_sidecar_residue_triage_2026-04-02.md` exists=`true` purpose=`true` date=`true`
-- `Research-Driven Memory Interop And Knowledge Layer` tracked=`7` metadata_complete=`7`
+- `Research-Driven Memory Interop And Knowledge Layer` tracked=`8` metadata_complete=`8`
   - description: repo-native bridge contracts for cross-agent consumer parity, Claude-compatible first-hop entry, future knowledge-layer separation, bounded launch-health trend posture, and bounded internal-state observability
   - authority_role: interop_contract
   - use_when: when the question is how different agent shells should read the same memory surfaces, where future retrieval belongs, how launch-health readouts should stay descriptive without fake forecasting, or how internal-state pressure may be externalized without selfhood inflation
@@ -184,6 +184,7 @@
   - `docs/architecture/TONESOUL_LAUNCH_HEALTH_TREND_READOUT_CONTRACT.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/TONESOUL_INTERNAL_STATE_OBSERVABILITY_REALITY_CHECK_CONTRACT.md` exists=`true` purpose=`true` date=`true`
   - `docs/architecture/TONESOUL_SURFACE_VERSIONING_AND_CONSUMER_LINEAGE_CONTRACT.md` exists=`true` purpose=`true` date=`true`
+  - `docs/architecture/TONESOUL_KNOWLEDGE_LAYER_SOURCE_TAXONOMY_AND_PARKING_CONTRACT.md` exists=`true` purpose=`true` date=`true`
   - `docs/plans/tonesoul_research_lines_and_memory_interop_program_2026-04-06.md` exists=`true` purpose=`true` date=`true`
 - `Entry Simplification And Lineage Routing` tracked=`5` metadata_complete=`5`
   - description: cleanup and routing aids for audience entry paths, historical-versus-current surface distinction, safe simplification moves, and bounded docs cleanup sequencing
