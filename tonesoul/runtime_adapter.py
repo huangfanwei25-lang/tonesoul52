@@ -2121,6 +2121,10 @@ def _build_operator_guidance(
     launch_health_summary = str(launch_health_trend_posture.get("summary_text", "")).strip()
     if launch_health_summary:
         reminders.append(f"Launch health posture: {launch_health_summary}")
+    internal_state_observability = project_memory_summary.get("internal_state_observability") or {}
+    internal_state_summary = str(internal_state_observability.get("summary_text", "")).strip()
+    if internal_state_summary:
+        reminders.append(f"Internal state posture: {internal_state_summary}")
 
     latest_dossier_payload: Dict[str, Any] = {}
     for entry in compactions:
@@ -2516,6 +2520,112 @@ def _build_launch_health_trend_posture(
         ),
         "receiver_rule": (
             "Treat launch health as a present-tense posture plus future trend lane. Descriptive metrics may orient current honesty, trendable metrics may justify later monitoring, and forecast_later metrics must remain non-numeric for now."
+        ),
+    }
+
+
+def _build_internal_state_observability(
+    *,
+    project_memory_summary: Dict[str, Any],
+    risk_posture: Dict[str, Any],
+    compactions: list[Dict[str, Any]],
+    recent_traces: list[Dict[str, Any]],
+) -> Dict[str, Any]:
+    risk_level = str(risk_posture.get("level", "unknown") or "unknown").strip()
+    coordination_strain = {
+        "stable": "low",
+        "elevated": "medium",
+        "critical": "high",
+    }.get(risk_level, "unknown")
+
+    working_style_observability = project_memory_summary.get("working_style_observability") or {}
+    continuity_drift = (
+        str(working_style_observability.get("drift_risk", "")).strip() or "unknown"
+    )
+
+    latest_closeout: Dict[str, Any] = {}
+    for entry in compactions:
+        normalized_closeout = normalize_closeout_payload(
+            entry.get("closeout") if isinstance(entry.get("closeout"), dict) else None,
+            pending_paths=list(entry.get("pending_paths") or []),
+            next_action=str(entry.get("next_action", "")),
+        )
+        if normalized_closeout:
+            latest_closeout = normalized_closeout
+            break
+
+    closeout_status = str(latest_closeout.get("status", "complete") or "complete").strip()
+    stop_reason = str(latest_closeout.get("stop_reason", "")).strip()
+    if closeout_status in {"blocked", "underdetermined"} or stop_reason in {
+        "external_blocked",
+        "internal_unstable",
+        "divergence_risk",
+        "underdetermined",
+    }:
+        stop_reason_pressure = "high"
+    elif closeout_status == "partial" or stop_reason:
+        stop_reason_pressure = "medium"
+    else:
+        stop_reason_pressure = "low"
+
+    council_snapshot: Dict[str, Any] = {}
+    for entry in compactions:
+        normalized_dossier = _normalize_council_dossier(entry.get("council_dossier"))
+        if normalized_dossier:
+            council_snapshot = normalized_dossier
+            break
+    if not council_snapshot:
+        for trace in recent_traces:
+            summary = _build_council_dossier_summary(trace.get("council_dossier"))
+            if summary:
+                council_snapshot = summary
+                break
+
+    has_minority_report = bool(
+        council_snapshot.get("has_minority_report")
+        or council_snapshot.get("minority_report")
+    )
+    evolution_suppression_flag = bool(council_snapshot.get("evolution_suppression_flag", False))
+    confidence_posture = str(council_snapshot.get("confidence_posture", "")).strip()
+    deliberation_conflict = (
+        "visible"
+        if has_minority_report
+        or evolution_suppression_flag
+        or confidence_posture == "contested"
+        else "clear"
+    )
+
+    evidence_sources = [
+        f"risk_posture:{risk_level}",
+        f"working_style_drift:{continuity_drift}",
+        f"closeout:{closeout_status}",
+        f"deliberation_conflict:{deliberation_conflict}",
+    ]
+    if stop_reason:
+        evidence_sources.append(f"stop_reason:{stop_reason}")
+
+    return {
+        "summary_text": (
+            f"internal_state coordination={coordination_strain} "
+            f"drift={continuity_drift} stop_pressure={stop_reason_pressure} "
+            f"deliberation={deliberation_conflict}"
+        ),
+        "current_state": {
+            "coordination_strain": coordination_strain,
+            "continuity_drift": continuity_drift,
+            "stop_reason_pressure": stop_reason_pressure,
+            "deliberation_conflict": deliberation_conflict,
+            "closeout_status": closeout_status,
+            "has_stop_reason": bool(stop_reason),
+            "has_minority_report": has_minority_report,
+            "evolution_suppression_flag": evolution_suppression_flag,
+        },
+        "evidence_sources": evidence_sources,
+        "selfhood_boundary": (
+            "These are functional coordination pressures inferred from observable runtime surfaces, not proof of subjective feeling, emotion, or selfhood."
+        ),
+        "receiver_rule": (
+            "Use this readout to notice strain, drift, stop pressure, and visible disagreement early. Do not restate it as hidden-thought access or emotional self-report."
         ),
     }
 
@@ -3019,6 +3129,22 @@ def r_memory_packet(
             base_summary = str(project_memory_summary.get("summary_text", "")).strip()
             project_memory_summary["summary_text"] = (
                 f"{base_summary} | {launch_health_summary}" if base_summary else launch_health_summary
+            )
+    internal_state_observability = _build_internal_state_observability(
+        project_memory_summary=project_memory_summary,
+        risk_posture=risk_posture,
+        compactions=compactions,
+        recent_traces=traces[-trace_limit:],
+    )
+    if internal_state_observability:
+        project_memory_summary["internal_state_observability"] = internal_state_observability
+        internal_state_summary = str(internal_state_observability.get("summary_text", "")).strip()
+        if internal_state_summary:
+            base_summary = str(project_memory_summary.get("summary_text", "")).strip()
+            project_memory_summary["summary_text"] = (
+                f"{base_summary} | {internal_state_summary}"
+                if base_summary
+                else internal_state_summary
             )
     operator_guidance = _build_operator_guidance(
         backend_name=getattr(store, "backend_name", "unknown"),

@@ -274,6 +274,8 @@ Treat this as a prompt-design companion. It helps later agents build better extr
   - boundary between hot coordination state, compiled knowledge, exploratory residue, and future retrieval
 - `architecture/TONESOUL_LAUNCH_HEALTH_TREND_READOUT_CONTRACT.md`
   - bounded contract for separating descriptive launch posture from trendable signals and deferred forecasting
+- `architecture/TONESOUL_INTERNAL_STATE_OBSERVABILITY_REALITY_CHECK_CONTRACT.md`
+  - bounded contract for exposing strain, drift, stop-pressure, and deliberation-conflict signals without inflating observability into selfhood
 - `plans/tonesoul_research_lines_and_memory_interop_program_2026-04-06.md`
   - active follow-through program for cross-agent consumer parity, knowledge layering, and predictive-boundary honesty
  

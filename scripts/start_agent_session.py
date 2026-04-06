@@ -992,6 +992,7 @@ def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
     evidence_readout_posture = project_memory_summary.get("evidence_readout_posture") or {}
     launch_claim_posture = project_memory_summary.get("launch_claim_posture") or {}
     launch_health_trend_posture = project_memory_summary.get("launch_health_trend_posture") or {}
+    internal_state_observability = project_memory_summary.get("internal_state_observability") or {}
     subject_refresh = project_memory_summary.get("subject_refresh") or {}
     carry_forward_hazards = _carry_forward_promotion_hazards(subject_refresh)
 
@@ -1144,6 +1145,17 @@ def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
                 "Use this to keep descriptive launch posture separate from future trend or forecast lanes; it is not a prediction surface."
             ),
             "launch_health_trend_posture": launch_health_trend_posture,
+        },
+        "internal_state_observability": {
+            "present": bool(internal_state_observability),
+            "import_posture": "advisory",
+            "receiver_obligation": "should_consider",
+            "decay_posture": "medium",
+            "freshness_hours": 0.0 if internal_state_observability else None,
+            "note": (
+                "Treat this as a functional pressure readout built from observable runtime surfaces; it is not emotion, selfhood, or hidden-thought access."
+            ),
+            "internal_state_observability": internal_state_observability,
         },
         "subject_snapshot": {
             "present": bool(subject_snapshots),

@@ -276,15 +276,16 @@ GROUPS = [
     {
         "id": "research_driven_memory_interop_and_knowledge_layer",
         "label": "Research-Driven Memory Interop And Knowledge Layer",
-        "description": "repo-native bridge contracts for cross-agent consumer parity, Claude-compatible first-hop entry, future knowledge-layer separation, and bounded launch-health trend posture",
+        "description": "repo-native bridge contracts for cross-agent consumer parity, Claude-compatible first-hop entry, future knowledge-layer separation, bounded launch-health trend posture, and bounded internal-state observability",
         "authority_role": "interop_contract",
-        "use_when": "when the question is how different agent shells should read the same memory surfaces, where future retrieval belongs, or how launch-health readouts should stay descriptive without fake forecasting",
+        "use_when": "when the question is how different agent shells should read the same memory surfaces, where future retrieval belongs, how launch-health readouts should stay descriptive without fake forecasting, or how internal-state pressure may be externalized without selfhood inflation",
         "read_order": 20,
         "files": [
             "docs/architecture/TONESOUL_CROSS_AGENT_MEMORY_CONSUMER_CONTRACT.md",
             "docs/architecture/TONESOUL_CLAUDE_COMPATIBLE_ENTRY_ADAPTER_CONTRACT.md",
             "docs/architecture/TONESOUL_KNOWLEDGE_LAYER_BOUNDARY_CONTRACT.md",
             "docs/architecture/TONESOUL_LAUNCH_HEALTH_TREND_READOUT_CONTRACT.md",
+            "docs/architecture/TONESOUL_INTERNAL_STATE_OBSERVABILITY_REALITY_CHECK_CONTRACT.md",
             "docs/plans/tonesoul_research_lines_and_memory_interop_program_2026-04-06.md",
         ],
     },

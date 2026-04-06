@@ -530,6 +530,33 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
             receiver_rule = str(launch_health_trend_posture.get("receiver_rule", "")).strip()
             if receiver_rule:
                 lines.append(f"    receiver_rule={_clip(receiver_rule, limit=120)}")
+        internal_state_observability = (
+            project_memory_summary.get("internal_state_observability") or {}
+        )
+        if internal_state_observability:
+            lines.append("  internal_state_observability:")
+            summary_text = str(internal_state_observability.get("summary_text", "")).strip()
+            if summary_text:
+                lines.append(f"    summary={_clip(summary_text, limit=110)}")
+            current_state = internal_state_observability.get("current_state") or {}
+            if current_state:
+                lines.append(
+                    "    "
+                    f"coordination={current_state.get('coordination_strain', 'unknown')} "
+                    f"drift={current_state.get('continuity_drift', 'unknown')} "
+                    f"stop={current_state.get('stop_reason_pressure', 'unknown')} "
+                    f"deliberation={current_state.get('deliberation_conflict', 'unknown')}"
+                )
+            for item in list(internal_state_observability.get("evidence_sources") or [])[:4]:
+                lines.append(f"    evidence={_clip(str(item))}")
+            selfhood_boundary = str(
+                internal_state_observability.get("selfhood_boundary", "")
+            ).strip()
+            if selfhood_boundary:
+                lines.append(f"    boundary={_clip(selfhood_boundary, limit=120)}")
+            receiver_rule = str(internal_state_observability.get("receiver_rule", "")).strip()
+            if receiver_rule:
+                lines.append(f"    receiver_rule={_clip(receiver_rule, limit=120)}")
         routing_summary = project_memory_summary.get("routing_summary") or {}
         if routing_summary:
             lines.append("  routing_summary:")

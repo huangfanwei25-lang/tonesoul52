@@ -162,6 +162,12 @@
 - [x] Keep the metric classes explicit: `descriptive_only`, `trendable`, and `forecast_later`
 **Success Criteria**: Later agents can tell which launch-health signals are present-tense posture, which may become trend lines later, and which must remain non-numeric until real calibration exists.
 
+## Phase 779: Bounded Internal-State Observability Reality Check (2026-04-06)
+- [x] Define one bounded `internal_state_observability` readout that externalizes functional runtime pressure without making selfhood or emotion claims
+- [x] Surface the readout in packet, session-start import posture, diagnose, and operator guidance using only visible runtime evidence
+- [x] Keep the boundary explicit with `selfhood_boundary`, `receiver_rule`, and regression coverage for packet / session-start / diagnose consumers
+**Success Criteria**: Later agents can see bounded strain, drift, stop-pressure, and deliberation-conflict signals from visible runtime surfaces, while ToneSoul stays explicit that this is observability rather than subjective self-report.
+
 ## Phase 691: Reality Alignment Lane Integration (2026-03-29)
 - [x] Add a dedicated reality-alignment lane to the doc authority map for entry-surface baselines, count methods, render/encoding boundaries, and drift registers
 - [x] Wire the lane into README, docs README, and docs index so later agents can discover the corrected baseline through normal entrypoints

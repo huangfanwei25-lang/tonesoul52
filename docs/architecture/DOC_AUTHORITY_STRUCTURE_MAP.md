@@ -221,12 +221,14 @@ Open these when the question is:
 
 - how different agent shells should consume the same ToneSoul memory surfaces,
 - where a future knowledge layer belongs without collapsing into continuity or identity,
-- how launch-health readouts should stay descriptive or trendable without pretending predictive calibration exists.
+- how launch-health readouts should stay descriptive or trendable without pretending predictive calibration exists,
+- or how bounded internal-state pressure may be externalized without turning observability into selfhood claims.
 
 - `docs/architecture/TONESOUL_CROSS_AGENT_MEMORY_CONSUMER_CONTRACT.md`
 - `docs/architecture/TONESOUL_CLAUDE_COMPATIBLE_ENTRY_ADAPTER_CONTRACT.md`
 - `docs/architecture/TONESOUL_KNOWLEDGE_LAYER_BOUNDARY_CONTRACT.md`
 - `docs/architecture/TONESOUL_LAUNCH_HEALTH_TREND_READOUT_CONTRACT.md`
+- `docs/architecture/TONESOUL_INTERNAL_STATE_OBSERVABILITY_REALITY_CHECK_CONTRACT.md`
 - `docs/plans/tonesoul_research_lines_and_memory_interop_program_2026-04-06.md`
 
 ## Retrieval Order

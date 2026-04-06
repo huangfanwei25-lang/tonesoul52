@@ -1145,6 +1145,9 @@
         "launch_health_trend_posture": {
           "$ref": "#/$defs/launch_health_trend_posture"
         },
+        "internal_state_observability": {
+          "$ref": "#/$defs/internal_state_observability"
+        },
         "summary_text": {
           "type": "string",
           "minLength": 1
@@ -1459,6 +1462,84 @@
           "minLength": 1
         },
         "note": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "internal_state_observability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "summary_text",
+        "current_state",
+        "evidence_sources",
+        "selfhood_boundary",
+        "receiver_rule"
+      ],
+      "properties": {
+        "summary_text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "current_state": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "coordination_strain",
+            "continuity_drift",
+            "stop_reason_pressure",
+            "deliberation_conflict",
+            "closeout_status",
+            "has_stop_reason",
+            "has_minority_report",
+            "evolution_suppression_flag"
+          ],
+          "properties": {
+            "coordination_strain": {
+              "type": "string",
+              "enum": ["low", "medium", "high", "unknown"]
+            },
+            "continuity_drift": {
+              "type": "string",
+              "enum": ["low", "medium", "high", "unknown"]
+            },
+            "stop_reason_pressure": {
+              "type": "string",
+              "enum": ["low", "medium", "high", "unknown"]
+            },
+            "deliberation_conflict": {
+              "type": "string",
+              "enum": ["clear", "visible", "unknown"]
+            },
+            "closeout_status": {
+              "type": "string",
+              "enum": ["complete", "partial", "blocked", "underdetermined"]
+            },
+            "has_stop_reason": {
+              "type": "boolean"
+            },
+            "has_minority_report": {
+              "type": "boolean"
+            },
+            "evolution_suppression_flag": {
+              "type": "boolean"
+            }
+          }
+        },
+        "evidence_sources": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "selfhood_boundary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "receiver_rule": {
           "type": "string",
           "minLength": 1
         }

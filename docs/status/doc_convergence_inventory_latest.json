@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-06T10:47:00Z",
+  "generated_at": "2026-04-06T10:57:23Z",
   "scope": {
     "include_roots": [
       "PARADOXES",
@@ -62,7 +62,7 @@
     ]
   },
   "metrics": {
-    "authored_file_count": 2384,
+    "authored_file_count": 2385,
     "collision_count": 27,
     "exact_match_collision_count": 16,
     "divergent_collision_count": 11,
@@ -73,7 +73,7 @@
     "missing_metadata_sample_limit": 40
   },
   "category_counts": {
-    "architecture_doc": 63,
+    "architecture_doc": 64,
     "archive_doc": 1,
     "chronicle_doc": 48,
     "constitution_doc": 1,
@@ -985,12 +985,12 @@
       "basename": "DOC_AUTHORITY_STRUCTURE_MAP.md",
       "extension": ".md",
       "surface_type": "architecture_doc",
-      "size_bytes": 11616,
+      "size_bytes": 11815,
       "title": "Documentation Authority Structure Map",
       "purpose": "define the retrieval-oriented structure of ToneSoul's documentation so later agents can tell entrypoints, canonical anchors, governance contracts, and generated status surfaces apart.",
       "status": "active documentation authority map for convergence cleanup.",
       "date_hint": "2026-03-30",
-      "content_sha256": "ec64949ea02bcd582a0db82fd220021357b9733d1f39ac5f4cd77fb9dac512bd"
+      "content_sha256": "96d41785b7f8d2867684cff86f5bf2ad6403e18e4801f5d1ce4a6337830eb47e"
     },
     {
       "path": "docs/architecture/ENGINEERING_MIRROR_OWNERSHIP_MAP.md",
@@ -1375,6 +1375,18 @@
       "status": "",
       "date_hint": "2026-04-02",
       "content_sha256": "488641ae49d5a280474a1b488259378dc852dca1126b57e65252dbddee7c06d5"
+    },
+    {
+      "path": "docs/architecture/TONESOUL_INTERNAL_STATE_OBSERVABILITY_REALITY_CHECK_CONTRACT.md",
+      "basename": "TONESOUL_INTERNAL_STATE_OBSERVABILITY_REALITY_CHECK_CONTRACT.md",
+      "extension": ".md",
+      "surface_type": "architecture_doc",
+      "size_bytes": 2409,
+      "title": "ToneSoul Internal-State Observability Reality-Check Contract",
+      "purpose": "define how ToneSoul may externalize bounded functional pressure signals without turning observability into selfhood claims.",
+      "status": "",
+      "date_hint": "2026-04-06",
+      "content_sha256": "c1bd766c5c8e2110aae83d7ceb33cfd7270227632de87ce91853d9d584a93a95"
     },
     {
       "path": "docs/architecture/TONESOUL_KNOWLEDGE_LAYER_BOUNDARY_CONTRACT.md",
@@ -3013,12 +3025,12 @@
       "basename": "INDEX.md",
       "extension": ".md",
       "surface_type": "general_doc",
-      "size_bytes": 34308,
+      "size_bytes": 34611,
       "title": "AI Reading Stack",
       "purpose": "top-level documentation index for ToneSoul authority surfaces, operational packets, and convergence maps.",
       "status": "",
       "date_hint": "2026-03-30",
-      "content_sha256": "c8899253ac9805cd5b0f188a70994632e1107985382c79be0a6cb8ae6263470b"
+      "content_sha256": "6b7da19ee9e587e589055d40495ac145599eff11f0c75d2a04e751084341f939"
     },
     {
       "path": "docs/INTEGRATION_AUDIT_DRAFT.md",
@@ -5053,12 +5065,12 @@
       "basename": "tonesoul_research_lines_and_memory_interop_program_2026-04-06.md",
       "extension": ".md",
       "surface_type": "plan_doc",
-      "size_bytes": 8502,
+      "size_bytes": 8914,
       "title": "ToneSoul Research Lines And Memory Interop Program (2026-04-06)",
       "purpose": "turn the latest external research distillations into a bounded ToneSoul work program that improves cross-agent coherence without reopening mythology-heavy architecture drift.",
       "status": "accepted planning candidate",
       "date_hint": "2026-04-06",
-      "content_sha256": "b85fb57ff95c6061b64304c9ec07f11cc8968c767435626225cc0dabfab4d78e"
+      "content_sha256": "32199aaf1f9002894b4765fce412bd2fc62f30f0ea9a92ecd9d89fd44cdfc3d6"
     },
     {
       "path": "docs/plans/tonesoul_stale_source_material_supersession_review_2026-03-29.md",
@@ -5377,12 +5389,12 @@
       "basename": "README.md",
       "extension": ".md",
       "surface_type": "general_doc",
-      "size_bytes": 28898,
+      "size_bytes": 29123,
       "title": "AI Reading Stack",
       "purpose": "documentation entrypoint and guided index for ToneSoul architecture, status artifacts, and convergence surfaces.",
       "status": "",
       "date_hint": "2026-03-30",
-      "content_sha256": "db9c37217b7a9798982c85602570be84297452b0c85878c0214ffe31f91fa40c"
+      "content_sha256": "1392613117c3357fd6830a6e4ca7bc79989d1b6f7fa605eaeb636f65f3589ea4"
     },
     {
       "path": "docs/RELEASE_NOTES_v0.1.0.md",
@@ -6193,12 +6205,12 @@
       "basename": "doc_convergence_inventory_latest.json",
       "extension": ".json",
       "surface_type": "generated_status_artifact",
-      "size_bytes": 1152588,
+      "size_bytes": 1172612,
       "title": "doc_convergence_inventory_latest.json",
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "2c8125d8c029840e1cf17c74d29d67b970f455dd3c438ea37fd248b0d8f22d53"
+      "content_sha256": "74b117a5692feb61ff945578a44708df69ef646f3756aea199c8921bce69aa00"
     },
     {
       "path": "docs/status/doc_convergence_inventory_latest.md",
@@ -6210,7 +6222,7 @@
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "2ef3ef5e2e3456cbffbf9488679a9ec7c1c4ae70d8d591b4e69cedecf4142f8a"
+      "content_sha256": "c269a7b7cf6a4c1350eb8ea4bc4913a981847d5d271548766c8bc0a1f4ef6596"
     },
     {
       "path": "docs/status/dream_engine_wakeup_status_2026-03-09.md",
@@ -28957,24 +28969,24 @@
       "basename": "r_memory_packet_v1.example.json",
       "extension": ".json",
       "surface_type": "spec_doc",
-      "size_bytes": 32174,
+      "size_bytes": 33417,
       "title": "r_memory_packet_v1.example.json",
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "2353d548c94f303e729eefc4e02d5ca18016a152e65c14fa9bb88ea557a26304"
+      "content_sha256": "e0c9137136550848258105d6a7478e82b683d6a76af305f5fa93b582d3434aa2"
     },
     {
       "path": "spec/governance/r_memory_packet_v1.schema.json",
       "basename": "r_memory_packet_v1.schema.json",
       "extension": ".json",
       "surface_type": "spec_doc",
-      "size_bytes": 49114,
+      "size_bytes": 51414,
       "title": "r_memory_packet_v1.schema.json",
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "e58175f3fb449fbf4b7c53289076d3ca01d5b50a1bd8cff7e84c2a088f43a601"
+      "content_sha256": "270ce9ce78a036b1e43365038eeaca0907c5620ac47e21c3921670e84cf9cc68"
     },
     {
       "path": "spec/governance/role_catalog.yaml",
@@ -29245,12 +29257,12 @@
       "basename": "task.md",
       "extension": ".md",
       "surface_type": "root_entrypoint",
-      "size_bytes": 205057,
+      "size_bytes": 205810,
       "title": "Task",
       "purpose": "",
       "status": "",
       "date_hint": "",
-      "content_sha256": "4e1a1cda22c52844ebb8509baafdb6d190a751dadfd05835fb099e55668f8c04"
+      "content_sha256": "619f7a763e4a07bc1a68718b131c069e04bf350d3e6f734d63a896e7ed43eedb"
     },
     {
       "path": "tests/fixtures/paradoxes/medical_suicide_paradox.json",
@@ -29385,7 +29397,7 @@
       "content_sha256": "2cee7ef4a180d9208eefe9a83fe3d22bbfb6d32cecb6f5c05880d57e75006343"
     }
   ],
-  "primary_status_line": "doc_convergence_ready | authored_files=2384 collisions=27 missing_purpose=141 missing_date=101",
-  "runtime_status_line": "entrypoints | doc_inventory=doc_convergence_inventory_latest.json largest_family=docs_law_engineering_mirror architecture_docs=63",
+  "primary_status_line": "doc_convergence_ready | authored_files=2385 collisions=27 missing_purpose=141 missing_date=101",
+  "runtime_status_line": "entrypoints | doc_inventory=doc_convergence_inventory_latest.json largest_family=docs_law_engineering_mirror architecture_docs=64",
   "artifact_policy_status_line": "doc_scope=authored_only | content_check=hash_plus_similarity generated_noise=excluded"
 }

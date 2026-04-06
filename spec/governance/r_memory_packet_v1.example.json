@@ -531,6 +531,27 @@
       "forecast_boundary": "Do not emit predictive launch numbers or success probabilities until trendable metrics are collected over time and calibrated separately from descriptive confidence.",
       "receiver_rule": "Treat launch health as a present-tense posture plus future trend lane. Descriptive metrics may orient current honesty, trendable metrics may justify later monitoring, and forecast_later metrics must remain non-numeric for now."
     },
+    "internal_state_observability": {
+      "summary_text": "internal_state coordination=low drift=medium stop_pressure=medium deliberation=visible",
+      "current_state": {
+        "coordination_strain": "low",
+        "continuity_drift": "medium",
+        "stop_reason_pressure": "medium",
+        "deliberation_conflict": "visible",
+        "closeout_status": "partial",
+        "has_stop_reason": false,
+        "has_minority_report": true,
+        "evolution_suppression_flag": true
+      },
+      "evidence_sources": [
+        "risk_posture:stable",
+        "working_style_drift:medium",
+        "closeout:partial",
+        "deliberation_conflict:visible"
+      ],
+      "selfhood_boundary": "These are functional coordination pressures inferred from observable runtime surfaces, not proof of subjective feeling, emotion, or selfhood.",
+      "receiver_rule": "Use this readout to notice strain, drift, stop pressure, and visible disagreement early. Do not restate it as hidden-thought access or emotional self-report."
+    },
     "routing_summary": {
       "total_events": 2,
       "preview_count": 1,
@@ -611,7 +632,7 @@
       "recommended_command": "python scripts/apply_subject_refresh.py --agent <your-id> --field active_threads --refresh-signal \"subject-refresh heuristic reviewed\"",
       "summary_text": "subject_refresh=refresh_candidate direct=1 manual=2 hazards=2 evidence=c1/k1"
     },
-    "summary_text": "focus=runtime_adapter, redis | subject=Operate as a packet-first runtime steward with explicit boundaries. | claims=1 | pending=scripts/gateway.py, apps/dashboard/world.html | router=writes=1 previews=1 overrides=0 overlap=1 misroute_signals=1 top=checkpoint | working_style=partial reinforced=1/2 signals=6 drift=medium | evidence=tested(session_control_and_handoff,council_mechanics) runtime_present(continuity_effectiveness) descriptive_only(council_decision_quality) document_backed(axiom_and_theory_claims) | subject_refresh=refresh_candidate direct=1 manual=2 hazards=2 evidence=c1/k1 | launch_health current=collaborator_beta public_ready=false descriptive=current_launch_tier,public_launch_ready_flag trendable=coordination_backend_alignment,collaborator_beta_validation_health forecast_later=public_launch_forecast",
+    "summary_text": "focus=runtime_adapter, redis | subject=Operate as a packet-first runtime steward with explicit boundaries. | claims=1 | pending=scripts/gateway.py, apps/dashboard/world.html | router=writes=1 previews=1 overrides=0 overlap=1 misroute_signals=1 top=checkpoint | working_style=partial reinforced=1/2 signals=6 drift=medium | evidence=tested(session_control_and_handoff,council_mechanics) runtime_present(continuity_effectiveness) descriptive_only(council_decision_quality) document_backed(axiom_and_theory_claims) | subject_refresh=refresh_candidate direct=1 manual=2 hazards=2 evidence=c1/k1 | launch_health current=collaborator_beta public_ready=false descriptive=current_launch_tier,public_launch_ready_flag trendable=coordination_backend_alignment,collaborator_beta_validation_health forecast_later=public_launch_forecast | internal_state coordination=low drift=medium stop_pressure=medium deliberation=visible",
     "repo_progress": {
       "available": true,
       "branch": "codex/r-memory-compaction-lane-20260326",
@@ -688,6 +709,7 @@
       "A recent subject snapshot is visible; treat it as durable working identity, but still non-canonical.",
       "Subject-refresh heuristics found low-risk updates; review subject_refresh before writing the next snapshot.",
       "Launch health posture: launch_health current=collaborator_beta public_ready=false descriptive=current_launch_tier,public_launch_ready_flag trendable=coordination_backend_alignment,collaborator_beta_validation_health forecast_later=public_launch_forecast",
+      "Internal state posture: internal_state coordination=low drift=medium stop_pressure=medium deliberation=visible",
       "Redis live surfaces may change mid-session; re-read packet before shared edits after long work or when other agents arrive.",
       "No since-last-seen baseline exists yet; ack the packet after review to establish one."
     ],

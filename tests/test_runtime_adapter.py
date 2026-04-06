@@ -792,6 +792,11 @@ def test_subject_snapshots_surface_durable_subject_anchor(tmp_path: Path) -> Non
         and item["classification"] == "forecast_later"
         for item in launch_health_trend_posture["metric_classes"]
     )
+    internal_state_observability = packet["project_memory_summary"]["internal_state_observability"]
+    assert internal_state_observability["current_state"]["coordination_strain"] == "low"
+    assert internal_state_observability["current_state"]["continuity_drift"] == "low"
+    assert internal_state_observability["current_state"]["deliberation_conflict"] == "clear"
+    assert internal_state_observability["current_state"]["stop_reason_pressure"] == "medium"
     assert packet["project_memory_summary"]["subject_refresh"]["status"] == "refresh_candidate"
     assert packet["project_memory_summary"]["subject_refresh"]["refresh_recommended"] is True
     active_thread_guidance = next(
@@ -839,6 +844,10 @@ def test_subject_snapshots_surface_durable_subject_anchor(tmp_path: Path) -> Non
     )
     assert any(
         reminder.startswith("Launch health posture: launch_health current=collaborator_beta")
+        for reminder in packet["operator_guidance"]["current_reminders"]
+    )
+    assert any(
+        reminder.startswith("Internal state posture: internal_state coordination=low")
         for reminder in packet["operator_guidance"]["current_reminders"]
     )
     assert any(

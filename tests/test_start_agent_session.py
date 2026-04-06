@@ -178,6 +178,18 @@ def test_start_agent_session_emits_machine_readable_bundle(
             "launch_health_trend_posture"
         ]["metric_classes"]
     )
+    assert (
+        output["import_posture"]["surfaces"]["internal_state_observability"][
+            "import_posture"
+        ]
+        == "advisory"
+    )
+    assert (
+        output["import_posture"]["surfaces"]["internal_state_observability"][
+            "internal_state_observability"
+        ]["current_state"]["deliberation_conflict"]
+        in {"clear", "visible"}
+    )
     assert output["import_posture"]["surfaces"]["subject_snapshot"]["present"] is False
     assert output["import_posture"]["readiness_alignment"] == "needs_clarification"
     assert output["import_posture"]["summary_text"].startswith("posture=directly_importable")

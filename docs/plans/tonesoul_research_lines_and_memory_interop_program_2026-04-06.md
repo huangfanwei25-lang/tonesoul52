@@ -290,6 +290,17 @@ Success criteria:
 
 - ToneSoul gets a cleaner observability lane without pretending mapped states equal subjective experience
 
+Current implementation target:
+
+- one bounded `internal_state_observability` readout shared across packet, session-start import posture, and diagnose
+- inputs limited to:
+  - `risk_posture`
+  - `working_style_observability`
+  - compaction `closeout`
+  - visible council dissent/suppression
+- explicit `selfhood_boundary` and `receiver_rule`
+- no emotion taxonomy, no selfhood claim, no hidden-thought narration
+
 ---
 
 ## What This Program Must Not Become

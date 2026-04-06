@@ -328,6 +328,27 @@ def _fake_packet():
                 "forecast_boundary": "Do not emit predictive launch numbers until trendable metrics are separately calibrated.",
                 "receiver_rule": "Treat launch health as present-tense posture plus future trend lane.",
             },
+            "internal_state_observability": {
+                "summary_text": "internal_state coordination=low drift=medium stop_pressure=medium deliberation=visible",
+                "current_state": {
+                    "coordination_strain": "low",
+                    "continuity_drift": "medium",
+                    "stop_reason_pressure": "medium",
+                    "deliberation_conflict": "visible",
+                    "closeout_status": "partial",
+                    "has_stop_reason": False,
+                    "has_minority_report": True,
+                    "evolution_suppression_flag": True,
+                },
+                "evidence_sources": [
+                    "risk_posture:stable",
+                    "working_style_drift:medium",
+                    "closeout:partial",
+                    "deliberation_conflict:visible",
+                ],
+                "selfhood_boundary": "These are functional coordination pressures inferred from observable runtime surfaces, not proof of subjective feeling, emotion, or selfhood.",
+                "receiver_rule": "Use this readout to notice strain, drift, stop pressure, and visible disagreement early.",
+            },
             "routing_summary": {
                 "total_events": 2,
                 "preview_count": 1,
@@ -667,6 +688,9 @@ def test_full_diagnostic_is_cp950_safe_and_includes_shared_runtime(monkeypatch) 
     assert "launch_health_trend_posture:" in report
     assert "metric=coordination_backend_alignment:trendable" in report
     assert "metric=public_launch_forecast:forecast_later" in report
+    assert "internal_state_observability:" in report
+    assert "coordination=low drift=medium stop=medium deliberation=visible" in report
+    assert "evidence=risk_posture:stable" in report
     assert "routing_summary:" in report
     assert "subject_refresh:" in report
     assert (

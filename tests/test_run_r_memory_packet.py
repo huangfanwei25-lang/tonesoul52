@@ -307,6 +307,18 @@ def test_run_r_memory_packet_emits_json(capsys, monkeypatch, tmp_path: Path) -> 
             "metric_classes"
         ]
     )
+    assert (
+        output["project_memory_summary"]["internal_state_observability"]["current_state"][
+            "coordination_strain"
+        ]
+        == "low"
+    )
+    assert (
+        output["project_memory_summary"]["internal_state_observability"]["current_state"][
+            "stop_reason_pressure"
+        ]
+        == "medium"
+    )
     assert any(
         item["claim"] == "council_decision_quality"
         and item["current_classification"] == "descriptive_only"
@@ -329,6 +341,10 @@ def test_run_r_memory_packet_emits_json(capsys, monkeypatch, tmp_path: Path) -> 
     )
     assert any(
         reminder.startswith("Launch health posture: launch_health current=collaborator_beta")
+        for reminder in output["operator_guidance"]["current_reminders"]
+    )
+    assert any(
+        reminder.startswith("Internal state posture: internal_state coordination=low")
         for reminder in output["operator_guidance"]["current_reminders"]
     )
     assert any(
