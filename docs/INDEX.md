@@ -233,6 +233,8 @@ Use this when the question is not only what should be transferred, but how the e
   - bounded contract for separating descriptive launch posture from trendable signals and deferred forecasting
 - [architecture/TONESOUL_INTERNAL_STATE_OBSERVABILITY_REALITY_CHECK_CONTRACT.md](architecture/TONESOUL_INTERNAL_STATE_OBSERVABILITY_REALITY_CHECK_CONTRACT.md)
   - bounded contract for exposing strain, drift, stop-pressure, and deliberation-conflict signals without inflating observability into selfhood
+- [architecture/TONESOUL_SURFACE_VERSIONING_AND_CONSUMER_LINEAGE_CONTRACT.md](architecture/TONESOUL_SURFACE_VERSIONING_AND_CONSUMER_LINEAGE_CONTRACT.md)
+  - bounded versioning and fallback contract for session-start, observer-window, dashboard shells, and Claude-style adapters
 - [plans/tonesoul_research_lines_and_memory_interop_program_2026-04-06.md](plans/tonesoul_research_lines_and_memory_interop_program_2026-04-06.md)
   - active research-driven follow-through for cross-agent parity, knowledge layering, and predictive-boundary honesty
 

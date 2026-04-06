@@ -286,6 +286,7 @@ GROUPS = [
             "docs/architecture/TONESOUL_KNOWLEDGE_LAYER_BOUNDARY_CONTRACT.md",
             "docs/architecture/TONESOUL_LAUNCH_HEALTH_TREND_READOUT_CONTRACT.md",
             "docs/architecture/TONESOUL_INTERNAL_STATE_OBSERVABILITY_REALITY_CHECK_CONTRACT.md",
+            "docs/architecture/TONESOUL_SURFACE_VERSIONING_AND_CONSUMER_LINEAGE_CONTRACT.md",
             "docs/plans/tonesoul_research_lines_and_memory_interop_program_2026-04-06.md",
         ],
     },

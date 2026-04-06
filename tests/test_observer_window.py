@@ -240,6 +240,12 @@ class TestCleanStableCase:
             for guard in consumer_contract["misread_guards"]
         )
 
+    def test_surface_versioning_stays_visible(self):
+        surface_versioning = self.anchor["surface_versioning"]
+        assert surface_versioning["present"] is True
+        assert surface_versioning["runtime_surfaces"][1]["surface"] == "observer_window"
+        assert surface_versioning["consumer_shells"][2]["consumer"] == "claude_style_shell"
+
     def test_stable_has_items(self):
         assert len(self.anchor["stable"]) >= 1, "Expected at least one stable item in clean state"
 

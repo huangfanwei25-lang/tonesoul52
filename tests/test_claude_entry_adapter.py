@@ -61,4 +61,6 @@ def test_build_claude_entry_adapter_preserves_first_hop_order() -> None:
     assert adapter["current_context"]["short_board"] == (
         "Phase 774: dashboard status panel tier alignment"
     )
+    assert adapter["surface_versioning"]["present"] is True
+    assert adapter["surface_versioning"]["consumer_shells"][2]["consumer"] == "claude_style_shell"
     assert adapter["bounded_pulls"]["observe_first"] is True

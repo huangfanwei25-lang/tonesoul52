@@ -326,6 +326,30 @@ Current implementation target:
 - repo-native compatibility notes for CLI, dashboard, and Claude-style shells
 - no vendor fantasy lane, no new shared transport story
 
+### Phase 786: Cross-Consumer Drift Validation Wave
+
+Bounded scope:
+
+- run one explicit validation wave across:
+  - `session-start`
+  - `observer-window`
+  - dashboard tier shells
+  - Claude-compatible entry adapter
+- confirm they still agree on:
+  - current short board
+  - closeout meaning
+  - fallback order
+- keep the wave regression-focused instead of reopening consumer design
+
+Success criteria:
+
+- new consumers or shell tweaks stop drifting silently because parity is checked as a first-class follow-up step
+
+Current implementation target:
+
+- one bounded validation/report surface
+- no new transport, no vendor bridge, no new control plane
+
 ---
 
 ## What This Program Must Not Become
@@ -346,7 +370,7 @@ The workspace bucket is now baseline-stable through `Phase 784`.
 
 The next research-driven short board should open:
 
-`Phase 785: Surface Versioning And Consumer-Lineage Policy`
+`Phase 786: Cross-Consumer Drift Validation Wave`
 
 Keep the work repo-native, bounded, and testable.
 

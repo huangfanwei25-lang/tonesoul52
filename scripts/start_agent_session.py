@@ -113,6 +113,12 @@ def _build_hook_chain(*, agent_id: str) -> dict:
     return build_hook_chain_readout(agent_id=agent_id)
 
 
+def _build_surface_versioning() -> dict:
+    from tonesoul.surface_versioning import build_surface_versioning_readout
+
+    return build_surface_versioning_readout()
+
+
 def _build_consumer_contract(
     *,
     readiness: dict,
@@ -300,6 +306,7 @@ def _build_tier0_payload(
     hook_chain: dict,
     mutation_preflight: dict,
     consumer_contract: dict,
+    surface_versioning: dict,
 ) -> dict:
     return {
         "contract_version": "v1",
@@ -323,6 +330,7 @@ def _build_tier0_payload(
         "hook_chain": hook_chain,
         "mutation_preflight": _build_tier0_mutation_preflight(mutation_preflight),
         "consumer_contract": _build_tier0_consumer_contract(consumer_contract),
+        "surface_versioning": surface_versioning,
         "next_pull": {
             "receiver_rule": (
                 "Tier 0 is a minimum safe start. Pull deeper surfaces only if the task is not local/clear, "
@@ -358,6 +366,7 @@ def _build_tier1_payload(
     subsystem_parity: dict,
     observer_window: dict,
     consumer_contract: dict,
+    surface_versioning: dict,
 ) -> dict:
     observer_shell = _build_tier1_observer_shell(observer_window)
     return {
@@ -382,6 +391,7 @@ def _build_tier1_payload(
         "hook_chain": hook_chain,
         "mutation_preflight": _build_tier0_mutation_preflight(mutation_preflight),
         "consumer_contract": consumer_contract,
+        "surface_versioning": surface_versioning,
         "subsystem_parity": subsystem_parity,
         "observer_shell": observer_shell,
         "closeout_attention": dict(observer_window.get("closeout_attention") or {}),
@@ -1464,6 +1474,7 @@ def run_session_start_bundle(
         import_posture=import_posture,
         mutation_preflight=mutation_preflight,
     )
+    surface_versioning = _build_surface_versioning()
     if int(tier) == 0:
         return _build_tier0_payload(
             agent_id=agent_id,
@@ -1478,6 +1489,7 @@ def run_session_start_bundle(
             hook_chain=hook_chain,
             mutation_preflight=mutation_preflight,
             consumer_contract=consumer_contract,
+            surface_versioning=surface_versioning,
         )
     subsystem_parity = _build_subsystem_parity(
         packet=packet,
@@ -1514,6 +1526,7 @@ def run_session_start_bundle(
             subsystem_parity=subsystem_parity,
             observer_window=observer_window,
             consumer_contract=consumer_contract,
+            surface_versioning=surface_versioning,
         )
     return {
         "contract_version": "v1",
@@ -1542,6 +1555,7 @@ def run_session_start_bundle(
         "task_board_preflight": task_board_preflight,
         "mutation_preflight": mutation_preflight,
         "consumer_contract": consumer_contract,
+        "surface_versioning": surface_versioning,
         "subsystem_parity": subsystem_parity,
         "working_style_playbook": working_style_playbook,
         "working_style_validation": working_style_validation,

@@ -109,6 +109,7 @@
 - Phase 778: define a launch-health trend readout design that separates descriptive metrics from future predictive envelopes without fabricating calibration now
 - Phase 779: run a bounded internal-state observability reality check so future fail-stop / drift / strain surfaces can improve without inflating interpretability into selfhood claims
 - Phase 785: define one surface-versioning and consumer-lineage policy so session-start, observer-window, dashboard shells, and Claude-style adapters stop drifting silently as more consumers appear
+- Phase 786: run one cross-consumer drift validation wave so CLI, dashboard, observer-window, and Claude-style shells keep the same short-board, closeout, and fallback story over time
 
 ## Water-Bucket Snapshot (2026-03-30)
 - Baseline reached:
@@ -124,7 +125,7 @@
   - low-drift anchor / observer-window baseline (Day 1 complete): `tonesoul/observer_window.py`, `scripts/run_observer_window.py`, `tests/test_observer_window.py`, `docs/status/observer_window_latest.{json,md}`
   - bounded outer-shell preflight chain for shared edits, publish/push posture, and task-board parking discipline
 - Current short board:
-  - Phase 785: define one surface-versioning and consumer-lineage policy so session-start, observer-window, dashboard shells, and Claude-style adapters stop drifting silently as more consumers appear
+  - Phase 786: run one cross-consumer drift validation wave so CLI, dashboard, observer-window, and Claude-style shells keep the same short-board, closeout, and fallback story over time
 - After that:
   - successor/hot-memory bucket is now baseline-frozen unless a fresh real-world misread reopens it
   - task-board governance should stay boring and explicit before any new theory bucket opens
@@ -1892,8 +1893,14 @@
 - [x] avoid turning retrieval preview into a packet dump, search debugger, or hidden fourth workspace tier
 **Success Criteria**: Operators can inspect auxiliary retrieval context from the dashboard without mistaking that preview for current runtime truth or reopening a broad knowledge-layer implementation.
 
-## Phase 785: Surface Versioning And Consumer-Lineage Policy (2026-04-06, planned)
-- [ ] define one bounded versioning/lineage contract for `session-start`, `observer-window`, dashboard tier shells, and Claude-style entry adapters
-- [ ] make compatibility expectations explicit so new consumers can tell when they are reading a direct runtime surface, a view-model adapter, or a fallback shell
-- [ ] avoid turning the phase into a new transport layer or vendor-integration fantasy; keep it to current repo-native consumers only
+## Phase 785: Surface Versioning And Consumer-Lineage Policy (2026-04-06, completed)
+- [x] define one bounded versioning/lineage contract for `session-start`, `observer-window`, dashboard tier shells, and Claude-style entry adapters
+- [x] make compatibility expectations explicit so new consumers can tell when they are reading a direct runtime surface, a view-model adapter, or a fallback shell
+- [x] avoid turning the phase into a new transport layer or vendor-integration fantasy; keep it to current repo-native consumers only
 **Success Criteria**: Later agents and humans can see which consumer surface they are reading, what it derives from, and when they must fall back to deeper runtime truth instead of silently trusting a stale or mismatched adapter.
+
+## Phase 786: Cross-Consumer Drift Validation Wave (2026-04-06, planned)
+- [ ] run one bounded validation wave across `session-start`, `observer-window`, dashboard tier shells, and Claude-style entry adapters
+- [ ] check that short-board recovery, closeout meaning, and fallback order still align after the new surface-versioning layer lands
+- [ ] keep the wave regression-focused: no new transport, no new shell family, no vendor-integration story
+**Success Criteria**: ToneSoul can detect consumer drift early instead of discovering weeks later that different shells are quietly teaching different authority stories.

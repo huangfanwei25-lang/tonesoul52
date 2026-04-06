@@ -451,6 +451,12 @@ def test_r_memory_packet_exposes_runtime_dominance_and_recent_trace(
         packet["operator_guidance"]["consumer_contract"]["source_precedence_summary"]
         == packet["consumer_contract"]["source_precedence_summary"]
     )
+    assert packet["surface_versioning"]["present"] is True
+    assert packet["surface_versioning"]["runtime_surfaces"][2]["surface"] == "r_memory_packet"
+    assert (
+        packet["operator_guidance"]["surface_versioning"]["consumer_shells"][0]["consumer"]
+        == "codex_cli"
+    )
     assert any(
         reminder.startswith("Council realism: Descriptive agreement record only")
         for reminder in packet["operator_guidance"]["current_reminders"]

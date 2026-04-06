@@ -31,6 +31,7 @@ from tonesoul.hot_memory import (
     build_hot_memory_ladder,
 )
 from tonesoul.repo_state_awareness import build_repo_state_awareness
+from tonesoul.surface_versioning import build_surface_versioning_readout
 
 # ---------------------------------------------------------------------------
 # Thresholds (tuned conservatively; only raise after repeated validation)
@@ -437,6 +438,7 @@ def build_low_drift_anchor(
             "Observer shell is for orientation first. Pull full packet/import detail only if the task is contested, blocked, or about to mutate shared state."
         ),
     )
+    surface_versioning = build_surface_versioning_readout()
     closeout_status = str(closeout_attention.get("status", "complete") or "complete")
 
     return {
@@ -448,6 +450,7 @@ def build_low_drift_anchor(
         "repo_state_awareness": repo_state_awareness,
         "closeout_attention": closeout_attention,
         "consumer_contract": consumer_contract,
+        "surface_versioning": surface_versioning,
         "stable": stable,
         "contested": contested,
         "stale": stale,

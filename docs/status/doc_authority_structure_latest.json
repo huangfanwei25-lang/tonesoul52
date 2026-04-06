@@ -1,10 +1,10 @@
 {
-  "generated_at": "2026-04-06T10:57:29Z",
+  "generated_at": "2026-04-06T12:42:33Z",
   "inventory_path": "docs/status/doc_convergence_inventory_latest.json",
   "metrics": {
     "group_count": 24,
-    "tracked_file_count": 92,
-    "metadata_complete_count": 92,
+    "tracked_file_count": 93,
+    "metadata_complete_count": 93,
     "metadata_missing_count": 0
   },
   "groups": [
@@ -742,6 +742,13 @@
           "metadata_complete": true
         },
         {
+          "path": "docs/architecture/TONESOUL_SURFACE_VERSIONING_AND_CONSUMER_LINEAGE_CONTRACT.md",
+          "exists": true,
+          "has_purpose": true,
+          "has_date": true,
+          "metadata_complete": true
+        },
+        {
           "path": "docs/plans/tonesoul_research_lines_and_memory_interop_program_2026-04-06.md",
           "exists": true,
           "has_purpose": true,
@@ -749,8 +756,8 @@
           "metadata_complete": true
         }
       ],
-      "tracked_count": 6,
-      "metadata_complete_count": 6
+      "tracked_count": 7,
+      "metadata_complete_count": 7
     },
     {
       "id": "entry_simplification_and_lineage_routing",
@@ -942,7 +949,7 @@
     }
   ],
   "missing_metadata_files": [],
-  "primary_status_line": "doc_authority_structure | groups=24 tracked=92 metadata_complete=92 metadata_missing=0",
+  "primary_status_line": "doc_authority_structure | groups=24 tracked=93 metadata_complete=93 metadata_missing=0",
   "runtime_status_line": "doc_retrieval_order=entrypoint_to_operational_to_canonical_to_deep_map_to_interpretive_to_boundary_aids_to_control_plane | generated_status_lane=6",
   "artifact_policy_status_line": "structure_mode=retrieval_oriented | authority_roles=explicit | generated_status_preferred_for_current_state"
 }

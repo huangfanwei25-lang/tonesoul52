@@ -259,6 +259,10 @@ def test_start_agent_session_emits_machine_readable_bundle(
         guard["name"] == "compaction_not_completion"
         for guard in consumer_contract["misread_guards"]
     )
+    surface_versioning = output["surface_versioning"]
+    assert surface_versioning["present"] is True
+    assert surface_versioning["runtime_surfaces"][0]["surface"] == "session_start"
+    assert surface_versioning["consumer_shells"][1]["consumer"] == "dashboard_operator_shell"
     hook_chain = output["hook_chain"]
     assert hook_chain["present"] is True
     assert hook_chain["stages"][0]["name"] == "shared_edit_path_overlap"
