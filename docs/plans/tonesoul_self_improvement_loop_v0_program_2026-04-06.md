@@ -240,6 +240,13 @@ Success criteria:
 
 - ToneSoul can end an improvement trial honestly even when the result is only partial or blocked
 
+Current implementation target:
+
+- one analyzer/promotion-gate contract
+- explicit closeout shape
+- explicit promote / park / retire / blocked carry-forward rules
+- no experiment runner yet
+
 ### Phase 794: First Bounded Self-Improvement Trial Wave
 
 Bounded scope:

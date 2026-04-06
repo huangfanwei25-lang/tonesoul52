@@ -1957,8 +1957,14 @@
 - [x] keep the contract narrow enough that future trial waves still stay in operator/runtime territory rather than sprawling into architecture mythology
 **Success Criteria**: A later agent can open the v0 self-improvement lane and tell, without guessing, which mutation classes are safe now, which are blocked, and which require stronger human-governed lanes.
 
-## Phase 793: Analyzer And Promotion Gate (2026-04-07, planned)
-- [ ] define how experiment closeout becomes analyzer output without letting partial/blocked trials sound like clean success
-- [ ] make promote / park / retire / blocked outcomes explicit and reusable across future bounded trials
-- [ ] keep unresolved items, overclaim warnings, and rollback posture visible all the way to closeout
+## Phase 793: Analyzer And Promotion Gate (2026-04-07)
+- [x] define how experiment closeout becomes analyzer output without letting partial/blocked trials sound like clean success
+- [x] make promote / park / retire / blocked outcomes explicit and reusable across future bounded trials
+- [x] keep unresolved items, overclaim warnings, and rollback posture visible all the way to closeout
 **Success Criteria**: ToneSoul can finish a bounded self-improvement trial with an honest analyzer-style outcome that preserves failure, unresolved items, and promotion limits instead of smoothing them away.
+
+## Phase 794: First Bounded Self-Improvement Trial Wave (2026-04-07, planned)
+- [ ] choose one or two safe trial families from operator workspace tiering, escalation-hint refinement, cross-consumer parity packaging, or bounded retrieval cueing
+- [ ] keep the wave fully inside allowed-now mutation classes with explicit rollback and parity surfaces
+- [ ] ensure at least one outcome can honestly end in promote, park, retire, or blocked without drifting into system-wide claims
+**Success Criteria**: ToneSoul completes its first bounded self-improvement trial wave using the evaluator harness, experiment-lineage boundary, mutation-space contract, and analyzer gate without crossing governance, identity, or transport boundaries.

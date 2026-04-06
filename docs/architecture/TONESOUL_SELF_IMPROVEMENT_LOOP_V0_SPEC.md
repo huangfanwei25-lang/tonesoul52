@@ -410,6 +410,12 @@ The third required contract is:
 
 This is the line that keeps the loop from wandering into governance, identity, vow, or transport mutation while still calling itself "bounded."
 
+The fourth required contract is:
+
+- `TONESOUL_ANALYZER_AND_PROMOTION_GATE_CONTRACT.md`
+
+Without it, the loop could still evaluate and record trials, then over-smooth the closeout into false success.
+
 ---
 
 ## One-Sentence Summary
