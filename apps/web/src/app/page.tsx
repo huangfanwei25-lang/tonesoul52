@@ -12,6 +12,7 @@ import EntropyChart from "@/components/EntropyChart";
 import TensionTimeline from "@/components/TensionTimeline";
 import DataManager from "@/components/DataManager";
 import PersonaSettings, { PersonaConfig, getStoredPersona } from "@/components/PersonaSettings";
+import TierModelPublicCue from "@/components/TierModelPublicCue";
 import { SoulState, loadSoulState, getInitialSoulState } from "@/lib/soulEngine";
 import OnboardingGuide, { hasCompletedOnboarding } from "@/components/OnboardingGuide";
 import {
@@ -323,6 +324,10 @@ export default function Home() {
             <Settings className={`w-5 h-5 ${apiSettings?.apiKey ? 'text-emerald-500' : 'text-amber-500'}`} />
           </button>
         </header>
+
+        <div className="border-b border-slate-200 bg-slate-50 px-4 py-3">
+          <TierModelPublicCue variant="compact" />
+        </div>
 
         {/* Chat Interface */}
         <div className="flex-1 overflow-hidden">

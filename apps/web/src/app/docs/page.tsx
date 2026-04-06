@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Brain, Mail, Github, ExternalLink, BookOpen, Shield, BarChart3, FileText, Lightbulb, Heart } from "lucide-react";
 import SevenDimensionCards from "@/components/SevenDimensionCards";
 import SevenParadoxCards from "@/components/SevenParadoxCards";
+import TierModelPublicCue from "@/components/TierModelPublicCue";
 
 // Schema.org JSON-LD for AI Search Optimization
 const jsonLd = {
@@ -123,6 +124,8 @@ export default function DocsPage() {
                             </Link>
                         </div>
                     </section>
+
+                    <TierModelPublicCue variant="full" />
 
                     {/* Getting Started */}
                     <section id="getting-started" className="scroll-mt-28 bg-gradient-to-r from-sky-500/10 to-rose-500/10 border border-slate-700/45 rounded-2xl p-8">

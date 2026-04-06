@@ -85,6 +85,12 @@ while keeping multi-agent architecture as escalation, not default tax.
 - keep public/demo surfaces subordinate to operator-truth surfaces
 - do not let the public site invent a competing control center
 
+### Phase 772: Dashboard Deep-Governance Drawer Implementation
+
+- translate the bounded Tier-2 drawer budget into a real dashboard pull path
+- keep default workspace load on Tier 0 / Tier 1 and require explicit operator action for deeper governance
+- surface mutation, closeout, and contested continuity first; keep packet/detail payloads behind deeper pull
+
 ---
 
 ## Existing Frontend Reality
@@ -135,4 +141,4 @@ Accept this as the live long program for the frontend / IDE translation lane.
 
 The current short board remains:
 
-`Phase 771: Public / Demo Surface Alignment`
+`Phase 772: Dashboard Deep-Governance Drawer Implementation`

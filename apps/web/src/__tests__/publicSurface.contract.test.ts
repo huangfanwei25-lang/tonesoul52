@@ -11,6 +11,10 @@ function readAppFile(relativePath: string): string {
 describe("public surface contract", () => {
     it("docs page keeps required section anchors and cards", () => {
         const docsPage = readAppFile(path.join("docs", "page.tsx"));
+        const cueComponent = fs.readFileSync(
+            path.resolve(process.cwd(), "src", "components", "TierModelPublicCue.tsx"),
+            "utf-8",
+        );
 
         for (const anchor of ["paradoxes", "protocols", "audit", "research"]) {
             expect(docsPage).toContain(`id="${anchor}"`);
@@ -18,6 +22,8 @@ describe("public surface contract", () => {
 
         expect(docsPage).toContain("SevenParadoxCards");
         expect(docsPage).toContain("SevenDimensionCards");
+        expect(docsPage).toContain('TierModelPublicCue variant="full"');
+        expect(cueComponent).toContain('id="workspace-tiers"');
     });
 
     it("showcase page keeps primary sections", () => {
@@ -37,5 +43,17 @@ describe("public surface contract", () => {
             robots?: { index?: boolean; follow?: boolean };
         };
         expect(metadata.robots).toEqual({ index: false, follow: false });
+    });
+
+    it("home page keeps public tier cue and does not pretend to be the operator console", () => {
+        const homePage = readAppFile("page.tsx");
+        const cueComponent = fs.readFileSync(
+            path.resolve(process.cwd(), "src", "components", "TierModelPublicCue.tsx"),
+            "utf-8",
+        );
+
+        expect(homePage).toContain('TierModelPublicCue variant="compact"');
+        expect(cueComponent).toContain("not the canonical operator console");
+        expect(cueComponent).toContain('href="/docs#workspace-tiers"');
     });
 });
