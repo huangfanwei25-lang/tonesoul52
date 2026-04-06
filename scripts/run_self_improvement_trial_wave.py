@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import subprocess
 import sys
 from pathlib import Path
 from typing import Any
@@ -29,6 +30,75 @@ def _build_parser() -> argparse.ArgumentParser:
 def _write_json(path: Path, payload: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+
+
+def _probe_deliberation_hint(
+    *,
+    agent: str,
+    state_path: Path | None,
+    traces_path: Path | None,
+) -> dict[str, Any]:
+    command = [
+        sys.executable,
+        str(REPO_ROOT / "scripts" / "start_agent_session.py"),
+        "--agent",
+        agent,
+        "--tier",
+        "1",
+        "--no-ack",
+    ]
+    if state_path is not None:
+        command.extend(["--state-path", str(state_path)])
+    if traces_path is not None:
+        command.extend(["--traces-path", str(traces_path)])
+
+    try:
+        result = subprocess.run(
+            command,
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+    except OSError as exc:
+        return {
+            "present": False,
+            "summary_text": f"deliberation_hint_probe failed_to_run={exc}",
+        }
+
+    if result.returncode != 0:
+        message = (result.stderr or result.stdout or "session-start failed").strip()
+        return {
+            "present": False,
+            "summary_text": f"deliberation_hint_probe failed_to_run={message}",
+        }
+
+    try:
+        payload = json.loads(result.stdout)
+    except json.JSONDecodeError as exc:
+        return {
+            "present": False,
+            "summary_text": f"deliberation_hint_probe invalid_json={exc}",
+        }
+
+    hint = dict((payload or {}).get("deliberation_mode_hint") or {})
+    active = list(hint.get("active_escalation_signals") or [])
+    conditional = list(hint.get("conditional_escalation_triggers") or hint.get("escalation_triggers") or [])
+    review_cues = list(hint.get("review_cues") or [])
+    split_present = bool(
+        isinstance(hint.get("active_escalation_signals"), list)
+        and isinstance(hint.get("conditional_escalation_triggers"), list)
+        and isinstance(hint.get("review_cues"), list)
+    )
+    return {
+        "present": split_present,
+        "summary_text": (
+            "deliberation_hint_probe "
+            f"mode={str(hint.get('suggested_mode', '') or 'unclassified')} "
+            f"active={len(active)} conditional={len(conditional)} review={len(review_cues)} "
+            f"split={'yes' if split_present else 'no'}"
+        ),
+    }
 
 
 def _render_markdown(report: dict[str, Any]) -> str:
@@ -86,6 +156,11 @@ def run_self_improvement_trial_wave(
         state_path=state_path,
         traces_path=traces_path,
     )
+    deliberation_hint_probe = _probe_deliberation_hint(
+        agent=agent,
+        state_path=state_path,
+        traces_path=traces_path,
+    )
     operator_retrieval_contract_present = (
         REPO_ROOT / "docs/architecture/TONESOUL_OPERATOR_RETRIEVAL_QUERY_CONTRACT.md"
     ).exists()
@@ -97,6 +172,7 @@ def run_self_improvement_trial_wave(
     return build_self_improvement_trial_wave(
         agent=agent,
         consumer_drift_report=consumer_drift_report,
+        deliberation_hint_probe=deliberation_hint_probe,
         operator_retrieval_contract_present=operator_retrieval_contract_present,
         compiled_landing_zone_spec_present=compiled_landing_zone_spec_present,
         retrieval_runner_present=retrieval_runner_present,

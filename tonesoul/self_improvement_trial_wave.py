@@ -96,12 +96,17 @@ def build_self_improvement_trial_wave(
     *,
     agent: str,
     consumer_drift_report: dict[str, Any],
+    deliberation_hint_probe: dict[str, Any],
     operator_retrieval_contract_present: bool,
     compiled_landing_zone_spec_present: bool,
     retrieval_runner_present: bool,
 ) -> dict[str, Any]:
     consumer_aligned = str(consumer_drift_report.get("status") or "") == "aligned"
     consumer_summary = str(consumer_drift_report.get("summary_text") or "").strip()
+    deliberation_hint_ready = bool((deliberation_hint_probe or {}).get("present"))
+    deliberation_hint_summary = str(
+        (deliberation_hint_probe or {}).get("summary_text") or ""
+    ).strip()
 
     consumer_candidate = {
         "candidate_record": _build_candidate_record(
@@ -239,7 +244,83 @@ def build_self_improvement_trial_wave(
         ),
     )
 
-    candidates = [consumer_candidate, retrieval_candidate]
+    deliberation_candidate = {
+        "candidate_record": _build_candidate_record(
+            candidate_id="deliberation_mode_hint_latency_v2",
+            target_surface="session_start.deliberation_mode_hint",
+            target_consumer="codex_claude_dashboard_operator_shells",
+            baseline_story=(
+                "Deliberation-mode hinting already pushed bounded feature work toward lightweight review, "
+                "but shells could still over-read escalation ladders as active current pressure."
+            ),
+            candidate_story=(
+                "The deliberation-mode hint now separates `active_escalation_signals`, "
+                "`conditional_escalation_triggers`, and `review_cues` so later agents can keep a "
+                "lightweight path lightweight without hiding real escalation pressure."
+            ),
+            success_metric=(
+                "deliberation_hint_probe.present and consumer_drift_report.status == aligned"
+            ),
+            failure_mode_watch=(
+                "lightweight paths still look heavier than they are, or shells drift on escalation meaning"
+            ),
+            rollback_path="revert to the prior deliberation-hint packaging and keep the admitted candidate as history only",
+            overclaim_to_avoid="better deliberation hinting is not better deliberation quality or better reasoning",
+            scope_limit="session-start packaging only; no council-runtime, claim-truth, or identity change",
+        ),
+        "analyzer_closeout": _build_analyzer_closeout(
+            status="promote" if (deliberation_hint_ready and consumer_aligned) else "park",
+            result_story=(
+                "Deliberation-mode hint packaging now cleanly separates active escalation pressure from conditional escalation ladders."
+                if (deliberation_hint_ready and consumer_aligned)
+                else "Deliberation-mode hint packaging is not yet stable enough to promote."
+            ),
+            evidence_bundle_summary=(
+                deliberation_hint_summary or "deliberation-hint probe unavailable"
+            ),
+            unresolved_items=(
+                [
+                    "packaging wins do not prove better reasoning quality",
+                    "future shell consumers must preserve the active/conditional distinction",
+                ]
+                if (deliberation_hint_ready and consumer_aligned)
+                else [
+                    "active versus conditional escalation is not yet visible enough",
+                    "consumer parity must stay aligned before promotion",
+                ]
+            ),
+            failure_pressure="low" if (deliberation_hint_ready and consumer_aligned) else "meaningful",
+            rollback_posture="bounded_restore",
+            promotion_limit="does not authorize council runtime depth changes, confidence math changes, or broader shell expansion",
+            overclaim_warning="better escalation packaging is not better council independence, accuracy, or calibration",
+            next_action=(
+                "keep this split stable while evaluating one next admitted self-improvement candidate"
+                if (deliberation_hint_ready and consumer_aligned)
+                else "repair the deliberation hint split or parity drift before reopening this candidate"
+            ),
+        ),
+    }
+    deliberation_candidate["result_surface"] = _build_result_surface(
+        status=deliberation_candidate["analyzer_closeout"]["status"],
+        registry_recommendation=(
+            "promotion_ready_result"
+            if (deliberation_hint_ready and consumer_aligned)
+            else "distilled_lesson"
+        ),
+        supersession_posture="active_until_newer_deliberation_hint_trials_exist",
+        replay_rule="prefer_status_surface_then_probe_current_hint_shape_before_reusing_the_story",
+        residue_posture=(
+            "keep_visible_as_current_packaging_result"
+            if (deliberation_hint_ready and consumer_aligned)
+            else "park_in_status_surface_until_hint_split_is_stable"
+        ),
+        visibility="status_surface_only",
+        carry_forward_rule=(
+            "may inform future routing-packaging trials, but does not authorize deeper council by default"
+        ),
+    )
+
+    candidates = [consumer_candidate, retrieval_candidate, deliberation_candidate]
     outcome_counts = _count_outcomes(candidates)
     status = "completed"
     summary_text = (
@@ -260,8 +341,9 @@ def build_self_improvement_trial_wave(
         "trial_families": [
             "cross_consumer_parity_packaging",
             "bounded_operator_retrieval_cueing",
+            "deliberation_mode_hint_packaging",
         ],
         "outcome_counts": outcome_counts,
         "candidates": candidates,
-        "next_short_board": "Phase 796: Compact Self-Improvement Result Cue Design",
+        "next_short_board": "Phase 802: Third Trial Candidate Admission",
     }

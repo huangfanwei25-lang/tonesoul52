@@ -405,6 +405,26 @@ Current implementation target:
 - one analyzer conclusion (`promote / park / retire / blocked / not_ready_for_trial`)
 - one registry/status update without shell creep
 
+### Phase 802: Third Trial Candidate Admission
+
+Bounded scope:
+
+- choose the next bounded candidate after the second trial result is visible in the status surface
+- keep the candidate inside already-allowed mutation classes
+- make the no-go list explicit before a third trial wave opens
+
+Success criteria:
+
+- ToneSoul has one admitted third candidate with real operator leverage
+- the candidate stays narrower than shell redesign, retrieval mythology, or governance semantics
+- the admission note is explicit enough that a later agent can run the third trial without improvising scope
+
+Current implementation target:
+
+- one candidate-admission note
+- one recommended third-trial family
+- one explicit no-go list for what must stay parked
+
 ---
 
 ## Safe First Trial Families
@@ -465,11 +485,11 @@ This is the key improvement over the current gap:
 
 ## Current Recommendation
 
-The program is now active through `Phase 800`.
+The program is now active through `Phase 801`.
 
 Current short board:
 
-- `Phase 801: Second Trial Evaluation And Registry Entry`
+- `Phase 802: Third Trial Candidate Admission`
 
 Recommended discipline:
 
