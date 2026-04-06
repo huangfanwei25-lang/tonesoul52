@@ -885,6 +885,55 @@ def _build_deliberation_escalation_triggers(
     return triggers
 
 
+def _build_deliberation_active_signals(
+    *,
+    task_track: str,
+    risk_bucket: str,
+    claim_collision: bool,
+    readiness_state: str,
+) -> list[str]:
+    signals: list[str] = []
+    if readiness_state == "blocked":
+        signals.append("blocked_state_requires_unblock_first")
+    if task_track == "system_track":
+        signals.append("system_track_scope")
+    if claim_collision:
+        signals.append("claim_collision_visible")
+    if readiness_state == "needs_clarification":
+        signals.append("readiness_needs_clarification")
+    if risk_bucket in {"elevated", "critical"}:
+        signals.append("risk_bucket_elevated_or_critical")
+    return signals
+
+
+def _build_deliberation_review_cues(
+    *,
+    task_track: str,
+    risk_bucket: str,
+    claim_collision: bool,
+    readiness_state: str,
+) -> list[str]:
+    cues: list[str] = []
+    if task_track == "quick_change":
+        cues.append("quick_change_scope")
+    elif task_track == "feature_track":
+        cues.append("feature_track_scope")
+    elif task_track == "system_track":
+        cues.append("system_track_scope")
+
+    if task_track == "feature_track" and not claim_collision and readiness_state == "pass" and risk_bucket == "normal":
+        cues.append("bounded_feature_track_can_stay_lightweight")
+    if task_track == "quick_change" and not claim_collision and risk_bucket == "normal":
+        cues.append("quick_change_can_stay_lightweight")
+    if not claim_collision:
+        cues.append("no_claim_collision_visible")
+    if readiness_state == "pass":
+        cues.append("readiness_pass")
+    if risk_bucket == "normal":
+        cues.append("risk_bucket_normal")
+    return cues
+
+
 def _build_deliberation_mode_hint(*, task_track_hint: dict, readiness: dict) -> dict:
     if not bool(task_track_hint.get("present")):
         return {
@@ -896,7 +945,10 @@ def _build_deliberation_mode_hint(*, task_track_hint: dict, readiness: dict) -> 
             "risk_bucket": "unknown",
             "claim_state": "unknown",
             "readiness_state": str((readiness or {}).get("status", "unknown") or "unknown"),
+            "active_escalation_signals": [],
+            "conditional_escalation_triggers": [],
             "reasons": ["task_track_unclassified"],
+            "review_cues": [],
             "receiver_note": (
                 "No visible task track is available yet. Read the explicit task objective before assigning deliberation depth."
             ),
@@ -916,11 +968,26 @@ def _build_deliberation_mode_hint(*, task_track_hint: dict, readiness: dict) -> 
         claim_collision=claim_collision,
         readiness_state=readiness_state,
     )
-    escalation_triggers = _build_deliberation_escalation_triggers(
+    conditional_escalation_triggers = _build_deliberation_escalation_triggers(
         task_track=task_track,
         risk_bucket=risk_bucket,
         claim_collision=claim_collision,
         readiness_state=readiness_state,
+    )
+    active_escalation_signals = _build_deliberation_active_signals(
+        task_track=task_track,
+        risk_bucket=risk_bucket,
+        claim_collision=claim_collision,
+        readiness_state=readiness_state,
+    )
+    review_cues = _build_deliberation_review_cues(
+        task_track=task_track,
+        risk_bucket=risk_bucket,
+        claim_collision=claim_collision,
+        readiness_state=readiness_state,
+    )
+    active_signal_summary = (
+        ",".join(active_escalation_signals) if active_escalation_signals else "none"
     )
 
     if readiness_state == "blocked":
@@ -943,13 +1010,16 @@ def _build_deliberation_mode_hint(*, task_track_hint: dict, readiness: dict) -> 
             "risk_bucket": risk_bucket,
             "claim_state": claim_state,
             "readiness_state": readiness_state,
-            "escalation_triggers": escalation_triggers,
+            "escalation_triggers": conditional_escalation_triggers,
+            "conditional_escalation_triggers": conditional_escalation_triggers,
+            "active_escalation_signals": active_escalation_signals,
             "reasons": reasons,
+            "review_cues": review_cues,
             "receiver_note": (
-                "The task is blocked, so deliberation should not run yet. Clear the blocking condition first; if a STOP signal or critical risk is present, involve a human before resuming."
+                "The task is blocked, so deliberation should not run yet. Clear the blocking condition first; if a STOP signal or critical risk is present, involve a human before resuming. `active_escalation_signals` shows pressure already visible now; `escalation_triggers` remains the conditional escalation ladder after unblock."
             ),
             "summary_text": (
-                f"deliberation_mode=do_not_deliberate blocked resume={base_mode} "
+                f"deliberation_mode=do_not_deliberate blocked active_escalation={active_signal_summary} resume={base_mode} "
                 f"human_required={'yes' if human_required else 'no'}"
             ),
         }
@@ -958,6 +1028,10 @@ def _build_deliberation_mode_hint(*, task_track_hint: dict, readiness: dict) -> 
     if human_required:
         reasons.append("human_clearance_required")
     receiver_note = "This deliberation-mode hint is advisory and derived from task track, readiness, risk, and claim collision. It does not yet change council runtime depth automatically."
+    receiver_note += (
+        " `active_escalation_signals` means pressure already visible now; "
+        "`escalation_triggers` lists the conditions that should push the shell deeper if they appear."
+    )
     if readiness_state == "needs_clarification":
         receiver_note += (
             " Clarify the task first, then treat this as the default deliberation depth."
@@ -965,6 +1039,14 @@ def _build_deliberation_mode_hint(*, task_track_hint: dict, readiness: dict) -> 
     elif base_mode == "lightweight_review" and task_track == "feature_track":
         receiver_note += (
             " Bounded feature work now defaults to lightweight review; pull deeper council only when risk, collision, or clarification pressure appears."
+        )
+    if base_mode == "lightweight_review" and not active_escalation_signals:
+        receiver_note += " No active escalation signals are currently visible."
+    elif active_escalation_signals:
+        receiver_note += (
+            " Current active escalation signals: "
+            + ", ".join(active_escalation_signals)
+            + "."
         )
 
     return {
@@ -976,11 +1058,14 @@ def _build_deliberation_mode_hint(*, task_track_hint: dict, readiness: dict) -> 
         "risk_bucket": risk_bucket,
         "claim_state": claim_state,
         "readiness_state": readiness_state,
-        "escalation_triggers": escalation_triggers,
+        "escalation_triggers": conditional_escalation_triggers,
+        "conditional_escalation_triggers": conditional_escalation_triggers,
+        "active_escalation_signals": active_escalation_signals,
         "reasons": reasons,
+        "review_cues": review_cues,
         "receiver_note": receiver_note,
         "summary_text": (
-            f"deliberation_mode={base_mode} claim_state={claim_state} "
+            f"deliberation_mode={base_mode} active_escalation={active_signal_summary} claim_state={claim_state} "
             f"risk_bucket={risk_bucket} human_required={'yes' if human_required else 'no'}"
         ),
     }

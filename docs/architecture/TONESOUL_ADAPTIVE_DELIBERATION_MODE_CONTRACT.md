@@ -2,7 +2,7 @@
 
 > Status: architectural discipline contract
 > Purpose: define when ToneSoul deliberation should stay lightweight, use standard council, or elevate to full multi-round council — mapped against task track, readiness, risk, and claim state
-> Last Updated: 2026-03-28
+> Last Updated: 2026-04-07
 > Produced By: Claude Opus
 > Depends On:
 >   - docs/architecture/TONESOUL_COUNCIL_DOSSIER_AND_DISSENT_CONTRACT.md (dossier shape)
@@ -214,7 +214,13 @@ The contract proposes three mode names. These may be renamed if better ToneSoul-
 
 ## Relationship To Other Documents
 
-Implementation note (2026-04-02): `scripts/start_agent_session.py` now surfaces a bounded machine-readable `deliberation_mode_hint` derived from `task_track_hint`, readiness, risk, and claim collision. For `feature_track + normal risk + no collision + pass`, the default successor-facing hint is now `lightweight_review`; deeper council is treated as earned escalation rather than default overhead. This readout remains advisory only and still does not select runtime council depth automatically.
+Implementation note (2026-04-07): `scripts/start_agent_session.py` now surfaces a bounded machine-readable `deliberation_mode_hint` derived from `task_track_hint`, readiness, risk, and claim collision. For `feature_track + normal risk + no collision + pass`, the default successor-facing hint is `lightweight_review`; deeper council is treated as earned escalation rather than default overhead. The hint now separates:
+
+- `active_escalation_signals`: pressure already visible now
+- `escalation_triggers`: conditional reasons to pull deeper if they appear
+- `review_cues`: signals explaining why a bounded shell can stay lightweight
+
+This readout remains advisory only and still does not select runtime council depth automatically.
 
 | Document | Relationship |
 |----------|-------------|

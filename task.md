@@ -130,6 +130,8 @@
 - Phase 797: pilot one dashboard-only self-improvement cue that points back to the dedicated status surface without entering default first-hop runtime shells
 - Phase 798: validate that the self-improvement cue stays dashboard-only and does not creep into packet, observer-window, or default session-start shells
 - Phase 799: admit one next bounded self-improvement candidate using the first trial wave, cue hardening, and existing mutation-space limits
+- Phase 800: run one second bounded self-improvement trial on `deliberation_mode_hint` packaging without changing council runtime semantics or widening first-hop shells
+- Phase 801: classify and register the second bounded trial result before any broader candidate is admitted
 
 ## Water-Bucket Snapshot (2026-03-30)
 - Baseline reached:
@@ -146,9 +148,9 @@
   - bounded outer-shell preflight chain for shared edits, publish/push posture, and task-board parking discipline
   - bounded self-improvement foundation: evaluator harness, experiment lineage boundary, mutation space, analyzer gate, first trial wave, and promotion-ready result surface discipline
 - Current short board:
-  - Phase 799: admit the next bounded self-improvement candidate without reopening governance, identity, or transport mythology
+  - Phase 801: evaluate and register the second bounded self-improvement trial before opening any broader candidate
 - After that:
-  - `ToneSoul Self-Improvement Loop v0` is now the active bucket, with `Phase 790-798` landed and the next work focused on selecting the next safe candidate rather than expanding shell surface area
+  - `ToneSoul Self-Improvement Loop v0` is now the active bucket, with `Phase 790-800` landed and the next work focused on honest result classification rather than expanding shell surface area
   - successor/hot-memory bucket is now baseline-frozen unless a fresh real-world misread reopens it
   - task-board governance should stay boring and explicit before any new theory bucket opens
   - hook-chain discoverability should stay packaging-oriented, not a new permission universe
@@ -1999,8 +2001,20 @@
 - [x] keep the phase validation-only: no new cue surfaces and no broad dashboard redesign
 **Success Criteria**: ToneSoul can prove the self-improvement cue remains a dashboard-local secondary surface instead of relying on memory or convention to keep first-hop shells clean.
 
-## Phase 799: Second Trial Candidate Admission (2026-04-07, planned)
-- [ ] choose one next bounded self-improvement candidate using the first trial wave, current result surfaces, and cue-hardening results as the admission baseline
-- [ ] keep the admitted candidate inside already-allowed mutation classes and require explicit rollback posture, evidence path, and overclaim warning
-- [ ] make the no-go list explicit so the second wave does not accidentally drift into retrieval mythology, identity semantics, or governance truth
+## Phase 799: Second Trial Candidate Admission (2026-04-07)
+- [x] choose one next bounded self-improvement candidate using the first trial wave, current result surfaces, and cue-hardening results as the admission baseline
+- [x] keep the admitted candidate inside already-allowed mutation classes and require explicit rollback posture, evidence path, and overclaim warning
+- [x] make the no-go list explicit so the second wave does not accidentally drift into retrieval mythology, identity semantics, or governance truth
 **Success Criteria**: ToneSoul has one admitted next bounded self-improvement candidate that is specific, testable, and clearly inside the allowed mutation space.
+
+## Phase 800: Second Bounded Trial Wave - Deliberation Hint Packaging (2026-04-07)
+- [x] refine `scripts/start_agent_session.py` so `deliberation_mode_hint` separates active escalation pressure from conditional escalation ladders while preserving the current suggested mode
+- [x] keep the change inside packaging/readout space only: no council runtime rewrite, no claim/readiness truth rewrite, no new first-hop shells
+- [x] add regression coverage proving lightweight paths stay lightweight, blocked paths still block honestly, and escalation pressure remains visible when present
+**Success Criteria**: ToneSoul lands one bounded second-trial implementation for `deliberation_mode_hint_latency_v2` that reduces over-escalation ambiguity without changing council runtime semantics.
+
+## Phase 801: Second Trial Evaluation And Registry Entry (2026-04-07, planned)
+- [ ] evaluate the `deliberation_mode_hint_latency_v2` trial against the existing self-improvement evaluator harness and analyzer gate
+- [ ] classify the result as `promote`, `park`, `retire`, `blocked`, or `not_ready_for_trial` without inflating packaging wins into reasoning wins
+- [ ] register the result in a bounded status/registry surface without leaking it into first-hop shells
+**Success Criteria**: ToneSoul has one honest second-trial result classification and registry-ready record for `deliberation_mode_hint_latency_v2`.

@@ -219,6 +219,8 @@ def test_start_agent_session_emits_machine_readable_bundle(
     assert output["deliberation_mode_hint"]["claim_state"] == "active_collision"
     assert output["deliberation_mode_hint"]["readiness_state"] == "needs_clarification"
     assert output["deliberation_mode_hint"]["human_required"] is False
+    assert "claim_collision_visible" in output["deliberation_mode_hint"]["active_escalation_signals"]
+    assert "readiness_needs_clarification" in output["deliberation_mode_hint"]["active_escalation_signals"]
     assert "claim_collision_visible" in output["deliberation_mode_hint"]["escalation_triggers"]
     assert "readiness_needs_clarification" in output["deliberation_mode_hint"]["escalation_triggers"]
     mutation_preflight = output["mutation_preflight"]
@@ -641,6 +643,10 @@ def test_start_agent_session_blocks_on_stop_handoff(capsys, monkeypatch, tmp_pat
     assert output["deliberation_mode_hint"]["suggested_mode"] == "do_not_deliberate"
     assert output["deliberation_mode_hint"]["resume_mode_after_unblock"] == "elevated_council"
     assert output["deliberation_mode_hint"]["human_required"] is True
+    assert (
+        "blocked_state_requires_unblock_first"
+        in output["deliberation_mode_hint"]["active_escalation_signals"]
+    )
 
 
 def test_start_agent_session_surfaces_system_track_hint_from_canonical_scope(
@@ -776,6 +782,77 @@ def test_start_agent_session_surfaces_lightweight_review_for_quick_change(
     assert mode_hint["present"] is True
     assert mode_hint["suggested_mode"] == "lightweight_review"
     assert mode_hint["human_required"] is False
+    assert mode_hint["active_escalation_signals"] == []
+    assert "quick_change_can_stay_lightweight" in mode_hint["review_cues"]
+    assert "no_claim_collision_visible" in mode_hint["review_cues"]
+    assert "No active escalation signals are currently visible" in mode_hint["receiver_note"]
+    assert "active_escalation=none" in mode_hint["summary_text"]
+
+
+def test_start_agent_session_distinguishes_active_and_conditional_escalation_for_feature_track(
+    capsys,
+    monkeypatch,
+    tmp_path: Path,
+) -> None:
+    module = _load_script_module()
+    state_path = tmp_path / "governance_state.json"
+    traces_path = tmp_path / "session_traces.jsonl"
+    compactions_path = tmp_path / ".aegis" / "compacted.json"
+
+    _write_state(state_path)
+    _write_traces(traces_path)
+    compactions_path.parent.mkdir(parents=True, exist_ok=True)
+    compactions_path.write_text(
+        json.dumps(
+            [
+                {
+                    "compaction_id": "cmp-feature-light",
+                    "agent": "codex",
+                    "session_id": "sess-feature-light",
+                    "summary": "Implement one bounded feature without coordination pressure.",
+                    "carry_forward": ["keep the feature lane scoped to a single runtime path"],
+                    "pending_paths": ["tonesoul/runtime_adapter.py", "tests/test_runtime_adapter.py"],
+                    "evidence_refs": ["docs/architecture/TONESOUL_SHARED_R_MEMORY_OPERATIONS_CONTRACT.md"],
+                    "next_action": "tighten one runtime readout and its regression test",
+                    "source": "cli",
+                    "updated_at": "2026-03-29T00:11:00+00:00",
+                }
+            ]
+        ),
+        encoding="utf-8",
+    )
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "start_agent_session.py",
+            "--state-path",
+            str(state_path),
+            "--traces-path",
+            str(traces_path),
+            "--agent",
+            "observer-feature-light",
+            "--no-ack",
+        ],
+    )
+
+    module.main()
+    output = json.loads(capsys.readouterr().out)
+
+    track_hint = output["task_track_hint"]
+    assert track_hint["present"] is True
+    assert track_hint["suggested_track"] == "feature_track"
+    mode_hint = output["deliberation_mode_hint"]
+    assert mode_hint["present"] is True
+    assert mode_hint["suggested_mode"] == "lightweight_review"
+    assert mode_hint["active_escalation_signals"] == []
+    assert "claim_collision_visible" in mode_hint["conditional_escalation_triggers"]
+    assert "readiness_needs_clarification" in mode_hint["conditional_escalation_triggers"]
+    assert "risk_bucket_elevated_or_critical" in mode_hint["conditional_escalation_triggers"]
+    assert "bounded_feature_track_can_stay_lightweight" in mode_hint["review_cues"]
+    assert "No active escalation signals are currently visible" in mode_hint["receiver_note"]
+    assert "active_escalation=none" in mode_hint["summary_text"]
 
 
 def test_start_agent_session_marks_recycled_carry_forward_as_must_not_promote(
@@ -963,9 +1040,12 @@ def test_start_agent_session_marks_recycled_carry_forward_as_must_not_promote(
     mode_hint = output["deliberation_mode_hint"]
     assert mode_hint["suggested_mode"] == "lightweight_review"
     assert mode_hint["human_required"] is False
+    assert mode_hint["active_escalation_signals"] == []
+    assert "feature_track_scope" in mode_hint["review_cues"]
     assert "risk_bucket_elevated_or_critical" in mode_hint["escalation_triggers"]
     assert "claim_collision_visible" in mode_hint["escalation_triggers"]
     assert "Bounded feature work now defaults to lightweight review" in mode_hint["receiver_note"]
+    assert "No active escalation signals are currently visible" in mode_hint["receiver_note"]
     assert any(
         "Working-style continuity is advisory only" in alert
         for alert in output["import_posture"]["receiver_alerts"]

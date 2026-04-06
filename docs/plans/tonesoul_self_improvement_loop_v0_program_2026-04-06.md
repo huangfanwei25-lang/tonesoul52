@@ -365,6 +365,46 @@ Current implementation target:
 - one recommended next trial family
 - one explicit no-go list for what should not enter the second wave
 
+### Phase 800: Second Bounded Trial Wave - Deliberation Hint Packaging
+
+Bounded scope:
+
+- refine `session_start.deliberation_mode_hint` so shells can distinguish active escalation pressure from conditional escalation ladders
+- keep the change inside packaging/readout space only
+- preserve the current suggested-mode semantics while making lightweight paths easier to trust
+
+Success criteria:
+
+- ToneSoul lands one bounded second-trial implementation for `deliberation_mode_hint_latency_v2`
+- blocked, collided, and elevated-risk cases still surface honest escalation pressure
+- lightweight paths stop looking artificially heavier than they are
+
+Current implementation target:
+
+- one runtime packaging refinement in `scripts/start_agent_session.py`
+- one targeted regression wave in `tests/test_start_agent_session.py`
+- one contract refresh for the deliberation-mode hint surface
+
+### Phase 801: Second Trial Evaluation And Registry Entry
+
+Bounded scope:
+
+- evaluate the `deliberation_mode_hint_latency_v2` implementation against the existing evaluator harness
+- classify the trial honestly through the analyzer/promotion gate
+- register the result without pushing self-improvement history into first-hop shells
+
+Success criteria:
+
+- ToneSoul has one honest second-trial classification for `deliberation_mode_hint_latency_v2`
+- the result remains secondary to runtime truth and does not overclaim better reasoning quality
+- the registry/result surface remains bounded and supersedable
+
+Current implementation target:
+
+- one evaluator-ready record for the second trial
+- one analyzer conclusion (`promote / park / retire / blocked / not_ready_for_trial`)
+- one registry/status update without shell creep
+
 ---
 
 ## Safe First Trial Families
@@ -425,17 +465,18 @@ This is the key improvement over the current gap:
 
 ## Current Recommendation
 
-The program is now active through `Phase 794`.
+The program is now active through `Phase 800`.
 
 Current short board:
 
-- `Phase 799: Second Trial Candidate Admission`
+- `Phase 801: Second Trial Evaluation And Registry Entry`
 
 Recommended discipline:
 
 - keep trial outcomes visible through dedicated status artifacts first
 - do not push self-improvement history into `session-start`, `observer-window`, or packet defaults yet
 - keep new trials inside already-allowed mutation classes until a compact result-surface design proves stable
+- prefer packaging refinements that reduce operator latency before opening broader retrieval or governance experiments
 
 ---
 
