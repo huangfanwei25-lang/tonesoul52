@@ -291,6 +291,8 @@ Treat this as a prompt-design companion. It helps later agents build better extr
 
 - `architecture/TONESOUL_SELF_IMPROVEMENT_LOOP_V0_SPEC.md`
   - bounded architecture spec for how ToneSoul may improve operator/runtime surfaces without mutating identity, vows, governance truth, or hot-memory transport
+- `architecture/TONESOUL_SELF_IMPROVEMENT_EVALUATOR_HARNESS_CONTRACT.md`
+  - evaluator contract for baseline, candidate, success metric, failure watch, rollback path, and honest promote / park / retire outcomes
 - `plans/tonesoul_self_improvement_loop_v0_program_2026-04-06.md`
   - queued follow-through program for evaluator harness, experiment lineage, mutation-space boundaries, promotion gate, and first safe trial wave
  

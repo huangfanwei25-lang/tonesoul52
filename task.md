@@ -1939,8 +1939,14 @@
 - [x] avoid pretending compiled-knowledge query is already live before the landing zone and collection health rules exist
 **Success Criteria**: ToneSoul can later add operator-facing compiled-knowledge queries without letting retrieval answers masquerade as hot coordination state, canonical authority, or durable identity.
 
-## Phase 790: Self-Improvement Evaluator Harness Contract (2026-04-07, planned)
-- [ ] define one evaluator harness contract for bounded self-improvement candidates, including baseline, candidate, success metric, failure watch, and rollback path
-- [ ] keep the harness scoped to operator/runtime surfaces and explicitly out of identity, vows, canonical governance, and hot-memory transport mutation
-- [ ] ensure future improvement trials can end in promote / park / retire without anti-fake-completion drift
+## Phase 790: Self-Improvement Evaluator Harness Contract (2026-04-07)
+- [x] define one evaluator harness contract for bounded self-improvement candidates, including baseline, candidate, success metric, failure watch, and rollback path
+- [x] keep the harness scoped to operator/runtime surfaces and explicitly out of identity, vows, canonical governance, and hot-memory transport mutation
+- [x] ensure future improvement trials can end in promote / park / retire without anti-fake-completion drift
 **Success Criteria**: ToneSoul has one explicit evaluator shape for bounded improvement candidates, so future self-improvement work is judged by evidence and rollback discipline rather than narrative confidence.
+
+## Phase 791: Experiment Registry And Lineage Boundary (2026-04-07, planned)
+- [ ] define where bounded self-improvement trial outputs belong so experiment lineage does not collapse back into R-memory or canonical identity
+- [ ] distinguish raw run artifacts, distilled lessons, and promotion-ready results
+- [ ] keep storage posture and retention rules explicit without choosing a full runtime backend yet
+**Success Criteria**: Later agents can tell experiment lineage from hot coordination and from compiled knowledge, so future self-improvement work gains memory without turning R-memory into an experiment bucket.

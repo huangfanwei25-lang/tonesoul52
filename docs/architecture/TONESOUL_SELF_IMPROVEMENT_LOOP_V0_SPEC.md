@@ -386,6 +386,18 @@ Until then, this remains a bounded program, not a grand capability claim.
 
 ---
 
+## First Required Contract
+
+The first contract this loop depends on is:
+
+- `TONESOUL_SELF_IMPROVEMENT_EVALUATOR_HARNESS_CONTRACT.md`
+
+That order is deliberate.
+
+ToneSoul should not open experiment lineage, mutation-space expansion, or trial waves before the evaluator harness exists.
+
+---
+
 ## One-Sentence Summary
 
 `ToneSoul Self-Improvement Loop v0 = a bounded, evidence-first way to improve operator/runtime surfaces without letting self-modification outrun governance, identity, or truth boundaries.`

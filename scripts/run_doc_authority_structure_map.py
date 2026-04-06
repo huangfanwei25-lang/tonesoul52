@@ -302,6 +302,7 @@ GROUPS = [
         "read_order": 21,
         "files": [
             "docs/architecture/TONESOUL_SELF_IMPROVEMENT_LOOP_V0_SPEC.md",
+            "docs/architecture/TONESOUL_SELF_IMPROVEMENT_EVALUATOR_HARNESS_CONTRACT.md",
             "docs/plans/tonesoul_self_improvement_loop_v0_program_2026-04-06.md",
         ],
     },

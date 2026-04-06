@@ -179,6 +179,13 @@ Success criteria:
 
 - ToneSoul can judge a candidate improvement without relying on narrative quality or selective memory
 
+Current implementation target:
+
+- one evaluator harness contract
+- explicit candidate record
+- explicit outcome classes
+- no experiment runner yet
+
 ### Phase 791: Experiment Registry And Lineage Boundary
 
 Bounded scope:

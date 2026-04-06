@@ -244,6 +244,7 @@ Open these when the question is:
 - which mutation classes belong to v0 and which must stay forbidden or human-gated.
 
 - `docs/architecture/TONESOUL_SELF_IMPROVEMENT_LOOP_V0_SPEC.md`
+- `docs/architecture/TONESOUL_SELF_IMPROVEMENT_EVALUATOR_HARNESS_CONTRACT.md`
 - `docs/plans/tonesoul_self_improvement_loop_v0_program_2026-04-06.md`
 
 ## Retrieval Order
