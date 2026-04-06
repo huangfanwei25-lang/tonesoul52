@@ -22,9 +22,12 @@ _SPEC.loader.exec_module(_MODULE)
 build_status_panel_view_model = _MODULE.build_status_panel_view_model
 
 
-def test_build_status_panel_view_model_reinforces_tier_model():
+def test_build_status_panel_view_model_reinforces_tier_model() -> None:
     snapshot = {
-        "conversation": {"count": 3, "last": {"status": "success", "timestamp": "2026-04-06T12:00:00+00:00"}},
+        "conversation": {
+            "count": 3,
+            "last": {"status": "success", "timestamp": "2026-04-06T12:00:00+00:00"},
+        },
         "persona": {"id": "dashboard-workspace"},
         "run_id": "run-001",
     }
@@ -33,8 +36,8 @@ def test_build_status_panel_view_model_reinforces_tier_model():
         "control": {"status": "success"},
         "persona": {"id": "dashboard-workspace"},
         "run_id": "run-001",
-        "user_message": "整理目前短板",
-        "assistant_summary": "短板是 Phase 774。",
+        "user_message": "user message",
+        "assistant_summary": "assistant summary",
     }
     tier0_shell = {
         "readiness_status": "pass",
@@ -59,7 +62,18 @@ def test_build_status_panel_view_model_reinforces_tier_model():
         "trigger_reasons": ["closeout_attention_present", "claim_conflict_visible"],
         "active_group_names": ["Mutation And Closeout", "Contested Continuity"],
         "summary_text": "tier2_drawer=recommended groups=2 triggers=2",
-        "next_pull_commands": ["python scripts/run_publish_push_preflight.py --agent dashboard-workspace"],
+        "next_pull_commands": [
+            "python scripts/run_publish_push_preflight.py --agent dashboard-workspace"
+        ],
+    }
+    improvement_cue = {
+        "present": True,
+        "summary_text": "self_improvement_trial_wave promote=1 park=1 | status surface only",
+        "top_result": "consumer_parity_packaging_v1 / promoted_result",
+        "next_action": "reuse this drift-validation wave whenever shared consumer packaging changes",
+        "receiver_rule": "Secondary only. Open the dedicated self-improvement status surface first.",
+        "source_path": "docs/status/self_improvement_trial_wave_latest.md",
+        "outcome_counts": {"promote": 1, "park": 1, "retire": 0, "blocked": 0},
     }
 
     result = build_status_panel_view_model(
@@ -68,20 +82,23 @@ def test_build_status_panel_view_model_reinforces_tier_model():
         tier0_shell=tier0_shell,
         tier1_shell=tier1_shell,
         tier2_drawer=tier2_drawer,
+        improvement_cue=improvement_cue,
     )
 
     assert result["tier0"]["readiness"] == "pass"
-    assert result["tier0"]["next_followup_command"].startswith("python scripts/run_shared_edit_preflight.py")
+    assert result["tier0"]["next_followup_command"].startswith(
+        "python scripts/run_shared_edit_preflight.py"
+    )
     assert result["tier1"]["short_board"] == "Phase 774"
     assert result["tier1"]["closeout_attention"] == "latest closeout is partial"
     assert result["tier2"]["recommended_open"] is True
     assert result["tier2"]["active_groups"] == ["Mutation And Closeout", "Contested Continuity"]
-    assert result["telemetry"]["conversation_status"] == "可用"
-    assert result["telemetry"]["intent_status"] == "達成"
-    assert result["telemetry"]["control_status"] == "成功"
+    assert result["self_improvement"]["present"] is True
+    assert result["self_improvement"]["top_result"] == "consumer_parity_packaging_v1 / promoted_result"
+    assert result["telemetry"]["conversation_count"] == 3
 
 
-def test_build_status_panel_view_model_handles_missing_tier_shells():
+def test_build_status_panel_view_model_handles_missing_tier_shells() -> None:
     result = build_status_panel_view_model(
         snapshot={"conversation": {"count": 0, "last": {}}},
         summary=None,
@@ -93,4 +110,5 @@ def test_build_status_panel_view_model_handles_missing_tier_shells():
     assert result["tier0"]["readiness"] == "unknown"
     assert result["tier1"]["short_board"] == "current short board not visible"
     assert result["tier2"]["recommended_open"] is False
+    assert result["self_improvement"]["present"] is False
     assert result["telemetry"]["conversation_count"] == 0

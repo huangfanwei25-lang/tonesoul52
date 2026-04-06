@@ -329,6 +329,24 @@ Current implementation target:
 - collapsed or visually secondary by default
 - clear source-path and receiver rule
 
+### Phase 798: Self-Improvement Cue Shell-Exclusion Guard
+
+Bounded scope:
+
+- verify the new cue stays dashboard-only and does not appear in packet, observer-window, or default `session-start` payloads
+- add one regression guard so future shells cannot quietly import trial posture into first-hop runtime truth
+- keep the wave validation-focused instead of expanding the cue into more surfaces
+
+Success criteria:
+
+- ToneSoul can prove the cue remains secondary and dashboard-local rather than relying on memory or convention
+
+Current implementation target:
+
+- one shell-exclusion validation pass
+- one regression check for no first-hop cue creep
+- no new user-facing surfaces
+
 ---
 
 ## Safe First Trial Families
@@ -393,7 +411,7 @@ The program is now active through `Phase 794`.
 
 Current short board:
 
-- `Phase 797: Dashboard-Only Self-Improvement Cue Pilot`
+- `Phase 798: Self-Improvement Cue Shell-Exclusion Guard`
 
 Recommended discipline:
 

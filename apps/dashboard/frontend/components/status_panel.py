@@ -4,12 +4,18 @@ Tier-aligned status panel for the dashboard workspace.
 
 from __future__ import annotations
 
+import json
 from datetime import datetime
 from pathlib import Path
 from typing import Any
 
 import streamlit as st
 from utils.status import build_status_snapshot, load_latest_summary
+
+_REPO_ROOT = Path(__file__).resolve().parents[4]
+_SELF_IMPROVEMENT_STATUS_PATH = (
+    _REPO_ROOT / "docs" / "status" / "self_improvement_trial_wave_latest.json"
+)
 
 
 def _format_timestamp(value: object) -> str:
@@ -63,6 +69,63 @@ def _truncate(text: object, limit: int = 120) -> str:
     return value[:limit].rstrip() + "..."
 
 
+def _load_self_improvement_result_cue() -> dict[str, Any]:
+    default = {
+        "present": False,
+        "summary_text": "",
+        "top_result": "",
+        "next_action": "",
+        "receiver_rule": "",
+        "source_path": "",
+        "outcome_counts": {},
+    }
+    if not _SELF_IMPROVEMENT_STATUS_PATH.exists():
+        return default
+
+    try:
+        payload = json.loads(_SELF_IMPROVEMENT_STATUS_PATH.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return default
+
+    candidates = list(payload.get("candidates") or [])
+    primary = next(
+        (
+            item
+            for item in candidates
+            if str(((item.get("analyzer_closeout") or {}).get("status") or "")).strip() == "promote"
+        ),
+        candidates[0] if candidates else {},
+    )
+    candidate_record = primary.get("candidate_record") or {}
+    closeout = primary.get("analyzer_closeout") or {}
+    result_surface = primary.get("result_surface") or {}
+    outcome_counts = payload.get("outcome_counts") or {}
+
+    candidate_id = str(candidate_record.get("candidate_id", "")).strip()
+    surface_status = str(result_surface.get("surface_status", "")).strip()
+    top_result = " / ".join(part for part in [candidate_id, surface_status] if part)
+    summary_text = str(payload.get("summary_text", "")).strip()
+    if summary_text:
+        summary_text += " | status surface only"
+
+    return {
+        "present": True,
+        "summary_text": summary_text,
+        "top_result": top_result,
+        "next_action": str(closeout.get("next_action", "")).strip(),
+        "receiver_rule": (
+            "Secondary only. Open the dedicated self-improvement status surface before treating any trial result as guidance."
+        ),
+        "source_path": "docs/status/self_improvement_trial_wave_latest.md",
+        "outcome_counts": {
+            "promote": int(outcome_counts.get("promote", 0) or 0),
+            "park": int(outcome_counts.get("park", 0) or 0),
+            "retire": int(outcome_counts.get("retire", 0) or 0),
+            "blocked": int(outcome_counts.get("blocked", 0) or 0),
+        },
+    }
+
+
 def build_status_panel_view_model(
     *,
     snapshot: dict[str, Any],
@@ -70,6 +133,7 @@ def build_status_panel_view_model(
     tier0_shell: dict[str, Any] | None,
     tier1_shell: dict[str, Any] | None,
     tier2_drawer: dict[str, Any] | None,
+    improvement_cue: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     tier0_shell = tier0_shell or {}
     tier1_shell = tier1_shell or {}
@@ -87,6 +151,7 @@ def build_status_panel_view_model(
         if isinstance(tier1_shell.get("closeout_attention"), dict)
         else {}
     )
+    improvement_cue = improvement_cue or {}
 
     return {
         "operator_posture": {
@@ -133,6 +198,20 @@ def build_status_panel_view_model(
             "summary_text": str(tier2_drawer.get("summary_text", "")).strip(),
             "next_pull_commands": list(tier2_drawer.get("next_pull_commands") or [])[:2],
         },
+        "self_improvement": {
+            "present": bool(improvement_cue.get("present")),
+            "summary_text": str(improvement_cue.get("summary_text", "")).strip(),
+            "top_result": str(improvement_cue.get("top_result", "")).strip(),
+            "next_action": str(improvement_cue.get("next_action", "")).strip(),
+            "receiver_rule": str(improvement_cue.get("receiver_rule", "")).strip(),
+            "source_path": str(improvement_cue.get("source_path", "")).strip(),
+            "outcome_counts": {
+                "promote": int(((improvement_cue.get("outcome_counts") or {}).get("promote", 0)) or 0),
+                "park": int(((improvement_cue.get("outcome_counts") or {}).get("park", 0)) or 0),
+                "retire": int(((improvement_cue.get("outcome_counts") or {}).get("retire", 0)) or 0),
+                "blocked": int(((improvement_cue.get("outcome_counts") or {}).get("blocked", 0)) or 0),
+            },
+        },
         "telemetry": {
             "conversation_status": _format_conversation_status(last_entry.get("status")),
             "conversation_count": int(conversation.get("count", 0) or 0),
@@ -156,18 +235,21 @@ def render_status_panel(
 ) -> None:
     snapshot = build_status_snapshot(workspace)
     summary = load_latest_summary(workspace)
+    improvement_cue = _load_self_improvement_result_cue()
     view_model = build_status_panel_view_model(
         snapshot=snapshot,
         summary=summary,
         tier0_shell=tier0_shell,
         tier1_shell=tier1_shell,
         tier2_drawer=tier2_drawer,
+        improvement_cue=improvement_cue,
     )
 
     operator_posture = view_model["operator_posture"]
     tier0 = view_model["tier0"]
     tier1 = view_model["tier1"]
     tier2 = view_model["tier2"]
+    self_improvement = view_model["self_improvement"]
     telemetry = view_model["telemetry"]
 
     st.markdown("### Tier-Aligned Status")
@@ -223,6 +305,23 @@ def render_status_panel(
         if tier1["source_precedence"]:
             with st.expander("Source precedence", expanded=False):
                 st.caption(tier1["source_precedence"])
+
+    if self_improvement["present"]:
+        st.caption("Secondary self-improvement posture: " + self_improvement["summary_text"])
+        with st.expander("Self-improvement result surface", expanded=False):
+            st.caption(self_improvement["receiver_rule"])
+            if self_improvement["top_result"]:
+                st.markdown(f"- Top result: `{self_improvement['top_result']}`")
+            counts = self_improvement["outcome_counts"]
+            st.markdown(
+                "- Outcome counts: "
+                f"promote={counts['promote']} | park={counts['park']} | "
+                f"retire={counts['retire']} | blocked={counts['blocked']}"
+            )
+            if self_improvement["next_action"]:
+                st.markdown(f"- Next action: `{self_improvement['next_action']}`")
+            if self_improvement["source_path"]:
+                st.markdown(f"- Source: `{self_improvement['source_path']}`")
 
     with st.container(border=True):
         st.markdown("**Tier 2 · Deep Governance**")
