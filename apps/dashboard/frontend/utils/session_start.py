@@ -310,3 +310,151 @@ def build_tier2_deep_governance_drawer(bundle: dict[str, Any]) -> dict[str, Any]
             "Use Tier 2 only when mutation, closeout, or contested continuity requires deeper review. Keep packet/detail payloads behind deeper pull."
         ),
     }
+
+
+def build_operator_walkthrough_pack(
+    *,
+    tier0_shell: dict[str, Any] | None,
+    tier1_shell: dict[str, Any] | None,
+    tier2_drawer: dict[str, Any] | None,
+) -> dict[str, Any]:
+    tier0_shell = tier0_shell or {}
+    tier1_shell = tier1_shell or {}
+    tier2_drawer = tier2_drawer or {}
+
+    next_followup = tier0_shell.get("next_followup") or {}
+    tier1_cards = tier1_shell.get("canonical_cards") or {}
+    closeout_attention = tier1_shell.get("closeout_attention") or {}
+    parity_counts = tier1_shell.get("parity_counts") or {}
+
+    walkthrough = [
+        {
+            "name": "Quick bounded change",
+            "default_tier": "Tier 0",
+            "use_when": (
+                "Readiness is pass, the task is still narrow, and one bounded follow-up is already visible."
+            ),
+            "stop_here_rule": (
+                "Stay in Tier 0 when the next move is clear and you do not need short-board archaeology or contested continuity review."
+            ),
+            "next_move": str(next_followup.get("command", "")).strip() or "No bounded follow-up command is currently visible.",
+            "escalate_when": (
+                "Pull Tier 1 if the short board is unclear, if the next step touches broader subsystem context, or if the bounded move no longer fits the task."
+            ),
+        },
+        {
+            "name": "Feature continuation",
+            "default_tier": "Tier 1",
+            "use_when": (
+                "The task needs short-board recovery, subsystem parity, or closeout interpretation before acting."
+            ),
+            "stop_here_rule": (
+                "Stay in Tier 1 when the short board, parity gaps, and observer shell are enough to orient bounded work."
+            ),
+            "next_move": str(tier1_cards.get("short_board", "")).strip() or "Current short board not visible.",
+            "escalate_when": (
+                "Open Tier 2 only if closeout attention is present, subsystem gaps imply risky mutation, or the observer shell shows contested continuity that affects action."
+            ),
+        },
+        {
+            "name": "Contested or risky work",
+            "default_tier": "Tier 2",
+            "use_when": (
+                "Mutation, closeout, publish/push, or contested continuity now materially changes what may be done next."
+            ),
+            "stop_here_rule": (
+                "Do not auto-open Tier 2 for every task; use it only when explicit triggers are active."
+            ),
+            "next_move": (
+                ", ".join(tier2_drawer.get("next_pull_commands") or [])
+                or "No deep-pull command is currently required."
+            ),
+            "escalate_when": (
+                "Tier 2 is already the escalation lane. If no trigger is active, close it again and return to Tier 0 or Tier 1."
+            ),
+        },
+    ]
+
+    return {
+        "present": True,
+        "summary_text": (
+            "walkthrough=Tier0_if_bounded "
+            f"Tier1_if_orientation_needed Tier2_if_triggers={len(tier2_drawer.get('trigger_reasons') or [])}"
+        ),
+        "public_boundary": (
+            "This pack is dashboard/operator-facing. Public/demo surfaces should explain the tier model, not run this walkthrough as a control surface."
+        ),
+        "operator_rule": (
+            "Use the smallest tier that keeps the next move honest. Tier 0 is the default start, Tier 1 recovers orientation, and Tier 2 is explicit escalation."
+        ),
+        "current_signals": {
+            "tier0_readiness": str(tier0_shell.get("readiness_status", "")).strip() or "unknown",
+            "tier1_short_board_visible": bool(str(tier1_cards.get("short_board", "")).strip()),
+            "tier1_closeout_attention_present": bool(closeout_attention.get("present")),
+            "tier1_partial_count": int(parity_counts.get("partial", 0) or 0),
+            "tier2_recommended_open": bool(tier2_drawer.get("recommended_open")),
+        },
+        "scenarios": walkthrough,
+    }
+
+
+def build_dashboard_command_shelf(
+    *,
+    agent_id: str,
+    tier0_shell: dict[str, Any] | None,
+    tier2_drawer: dict[str, Any] | None,
+) -> dict[str, Any]:
+    tier0_shell = tier0_shell or {}
+    tier2_drawer = tier2_drawer or {}
+    next_followup = tier0_shell.get("next_followup") or {}
+    deeper_pulls = list(tier2_drawer.get("next_pull_commands") or [])
+
+    commands = [
+        {
+            "label": "Start gate",
+            "command": f"python scripts/start_agent_session.py --agent {agent_id} --tier 0 --no-ack",
+            "tier": "Tier 0",
+            "purpose": "Recover the smallest honest start posture before work begins.",
+        },
+        {
+            "label": "Orientation shell",
+            "command": f"python scripts/start_agent_session.py --agent {agent_id} --tier 1 --no-ack",
+            "tier": "Tier 1",
+            "purpose": "Pull short-board and observer orientation when Tier 0 is no longer enough.",
+        },
+        {
+            "label": "Ack + packet",
+            "command": f"python scripts/run_r_memory_packet.py --agent {agent_id} --ack",
+            "tier": "Tier 1+",
+            "purpose": "Advance observer state and re-read bounded shared surfaces.",
+        },
+    ]
+
+    if str(next_followup.get("command", "")).strip():
+        commands.append(
+            {
+                "label": "Next bounded move",
+                "command": str(next_followup.get("command", "")).strip(),
+                "tier": "Tier 0",
+                "purpose": "Use the already-visible bounded next move before inventing a broader workflow.",
+            }
+        )
+
+    if deeper_pulls:
+        commands.append(
+            {
+                "label": "Deep pull",
+                "command": deeper_pulls[0],
+                "tier": "Tier 2",
+                "purpose": "Only use when mutation, closeout, or contested continuity explicitly requires deeper review.",
+            }
+        )
+
+    return {
+        "present": True,
+        "summary_text": f"command_shelf={len(commands)} tier-aware commands",
+        "operator_rule": (
+            "Use the dashboard as a thin operator shell over CLI/runtime truth. Commands here point back to the real entry surfaces; they do not replace them."
+        ),
+        "commands": commands[:5],
+    }

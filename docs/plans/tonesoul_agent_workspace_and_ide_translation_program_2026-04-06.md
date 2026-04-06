@@ -109,6 +109,30 @@ while keeping multi-agent architecture as escalation, not default tax.
 - teach first-hop usage with scenario-first examples instead of raw surface dumps
 - keep the pack operator-facing and route public/demo readers back to educational surfaces instead of creating a second console
 
+### Phase 781: Memory Panel Tier Subordination
+
+- realign the dashboard memory panel so it stays a reference selector, not a competing operator-truth region
+- keep selected memories subordinate to `Tier 0 / Tier 1` orientation and `Tier 2` deep pulls
+- avoid turning reference selection into a pseudo hot-memory or operator-governance console
+
+### Phase 782: Dashboard Command Shelf Parity
+
+- add one compact command shelf that points back to core CLI/runtime commands
+- keep the shelf tier-aware instead of turning it into a browser-side workflow engine
+- reinforce that dashboard is an operator shell layered on top of CLI/runtime truth, not a separate control plane
+
+### Phase 783: Search Context Boundary Cue
+
+- add one bounded cue around local/web search toggles so retrieval stays visibly auxiliary
+- keep search context beneath tiered operator truth instead of letting it impersonate the current runtime state
+- avoid reopening retrieval architecture or a new search control plane inside the workspace
+
+### Phase 784: Retrieval Preview Strip
+
+- add one bounded retrieval-preview strip for local/web-assisted chat turns
+- show what auxiliary context is feeding the workspace chat loop without treating that preview as operator truth
+- keep provenance and authority labels visible so the preview stays below Tier 0 / Tier 1 / Tier 2
+
 ---
 
 ## Existing Frontend Reality
@@ -159,4 +183,4 @@ Accept this as the live long program for the frontend / IDE translation lane.
 
 The current short board rotates to:
 
-`Phase 780: Operator Walkthrough Pack`
+`Phase 784: Retrieval Preview Strip`

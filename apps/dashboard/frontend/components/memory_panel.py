@@ -1,8 +1,11 @@
-﻿"""
-記憶面板元件 - 可拖拉的參考資料
+"""
+記憶面板元件 - 參考資料選取面板
 """
 
+from __future__ import annotations
+
 from pathlib import Path
+from typing import Any
 
 import streamlit as st
 from utils.memory import (
@@ -11,6 +14,31 @@ from utils.memory import (
     list_skills,
     load_conversation_entry,
 )
+
+
+def build_memory_panel_view_model(
+    *,
+    tier0_shell: dict[str, Any] | None,
+    tier1_shell: dict[str, Any] | None,
+    selected_count: int,
+) -> dict[str, Any]:
+    tier0_shell = tier0_shell or {}
+    tier1_shell = tier1_shell or {}
+    canonical_cards = tier1_shell.get("canonical_cards") or {}
+    closeout_attention = tier1_shell.get("closeout_attention") or {}
+
+    return {
+        "title": "參考資料",
+        "subtitle": "這裡只做 reference selection，不是 operator truth。",
+        "operator_note": (
+            "先看 Tier 0 / Tier 1 的 readiness、short board、closeout，再決定是否拉入額外參考。"
+            " 被選取的資料只輔助理解，不等於目前的治理真相或完成狀態。"
+        ),
+        "tier0_readiness": str(tier0_shell.get("readiness_status", "")).strip() or "unknown",
+        "current_short_board": str((canonical_cards or {}).get("short_board", "")).strip(),
+        "closeout_attention": str((closeout_attention or {}).get("summary_text", "")).strip(),
+        "selected_count": int(selected_count),
+    }
 
 
 def _render_memory_group(
@@ -37,16 +65,37 @@ def _render_memory_group(
                 st.session_state.selected_memories.remove(entry["path"])
 
 
-def render_memory_panel():
+def render_memory_panel(
+    *,
+    tier0_shell: dict[str, Any] | None = None,
+    tier1_shell: dict[str, Any] | None = None,
+) -> None:
     """渲染記憶面板（側邊欄）"""
-
-    st.subheader("參考資料")
-    st.caption("選擇要參考的記憶")
-
-    search = st.text_input("搜尋", "", key="memory_panel_search")
 
     if "selected_memories" not in st.session_state:
         st.session_state.selected_memories = []
+
+    view_model = build_memory_panel_view_model(
+        tier0_shell=tier0_shell,
+        tier1_shell=tier1_shell,
+        selected_count=len(st.session_state.selected_memories),
+    )
+
+    st.subheader(view_model["title"])
+    st.caption(view_model["subtitle"])
+    st.info(
+        f"Tier 0 readiness: `{view_model['tier0_readiness']}`"
+        + (
+            f" | short board: {view_model['current_short_board']}"
+            if view_model["current_short_board"]
+            else ""
+        )
+    )
+    if view_model["closeout_attention"]:
+        st.warning(f"Closeout attention: {view_model['closeout_attention']}")
+    st.caption(view_model["operator_note"])
+
+    search = st.text_input("搜尋", "", key="memory_panel_search")
 
     skills = list_skills()
     entries = list_memory_entries()
@@ -94,7 +143,7 @@ def render_memory_panel():
         _render_memory_group("代理記憶", layered["agent"], "agent")
 
     st.markdown("---")
-    st.caption(f"已選擇 {len(st.session_state.selected_memories)} 個參考")
+    st.caption(f"已選擇 {view_model['selected_count']} 個參考")
 
     if st.button("新增參考"):
         st.info("新增參考功能開發中")
@@ -122,12 +171,12 @@ def load_memory_content(path: str) -> str:
             f"回覆: {response}\n"
         )
 
-    path = Path(path_str)
-    if not path.exists():
+    path_obj = Path(path_str)
+    if not path_obj.exists():
         return ""
 
     try:
-        content = path.read_text(encoding="utf-8")
+        content = path_obj.read_text(encoding="utf-8")
     except Exception as exc:
         return f"[載入失敗: {exc}]"
 

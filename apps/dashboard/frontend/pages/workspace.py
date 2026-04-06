@@ -11,8 +11,14 @@ from components.memory_panel import render_memory_panel
 from components.status_panel import render_status_panel
 from utils.llm import chat_with_council
 from utils.memory import list_seeds, list_skills
-from utils.search import build_search_context, default_search_roots
+from utils.search import (
+    build_search_context,
+    build_search_context_boundary_cue,
+    default_search_roots,
+)
 from utils.session_start import (
+    build_dashboard_command_shelf,
+    build_operator_walkthrough_pack,
     build_tier0_start_strip,
     build_tier1_orientation_shell,
     build_tier2_deep_governance_drawer,
@@ -97,6 +103,16 @@ def render():
         build_tier2_deep_governance_drawer(tier2_bundle)
         if tier2_bundle.get("present")
         else {}
+    )
+    walkthrough_pack = build_operator_walkthrough_pack(
+        tier0_shell=tier0_shell,
+        tier1_shell=tier1_shell,
+        tier2_drawer=tier2_drawer,
+    )
+    command_shelf = build_dashboard_command_shelf(
+        agent_id=WORKSPACE_AGENT_ID,
+        tier0_shell=tier0_shell,
+        tier2_drawer=tier2_drawer,
     )
 
     col_a, col_b, col_c = st.columns(3)
@@ -239,6 +255,28 @@ def render():
                         for command in commands:
                             st.code(command, language="bash")
 
+            st.markdown("**Operator Walkthrough Pack**")
+            st.caption(walkthrough_pack.get("operator_rule") or "Use the smallest honest tier.")
+            with st.expander("Open walkthrough pack", expanded=False):
+                st.caption(walkthrough_pack.get("public_boundary") or "")
+                for scenario in walkthrough_pack.get("scenarios") or []:
+                    st.markdown(
+                        f"**{scenario['name']}**  \n"
+                        f"Default: `{scenario['default_tier']}`"
+                    )
+                    st.markdown(f"- Use when: {scenario['use_when']}")
+                    st.markdown(f"- Stay here when: {scenario['stop_here_rule']}")
+                    st.markdown(f"- Current move: {scenario['next_move']}")
+                    st.markdown(f"- Escalate when: {scenario['escalate_when']}")
+
+            st.markdown("**Command Shelf**")
+            st.caption(command_shelf.get("operator_rule") or "Keep CLI/runtime parity visible.")
+            with st.expander("Open command shelf", expanded=False):
+                for item in command_shelf.get("commands") or []:
+                    st.markdown(f"**{item['label']}**  \n{item['purpose']}")
+                    st.caption(item["tier"])
+                    st.code(item["command"], language="bash")
+
     col_main, col_side = st.columns([3, 1.1], gap="large")
 
     with col_main:
@@ -256,6 +294,13 @@ def render():
                 use_local_search = st.checkbox("本地檢索", value=False, key="workspace_local_search")
             with search_col2:
                 use_web_search = st.checkbox("網路檢索", value=False, key="workspace_web_search")
+            search_boundary_cue = build_search_context_boundary_cue(
+                enable_local=use_local_search,
+                enable_web=use_web_search,
+            )
+            st.caption(
+                f"{search_boundary_cue['summary']} {search_boundary_cue['boundary']}"
+            )
 
             if st.session_state.council_discussion:
                 with st.expander("🧠 我在想...", expanded=False):
@@ -306,4 +351,7 @@ def render():
                     tier2_drawer=tier2_drawer,
                 )
             with tab_memory:
-                render_memory_panel()
+                render_memory_panel(
+                    tier0_shell=tier0_shell,
+                    tier1_shell=tier1_shell,
+                )

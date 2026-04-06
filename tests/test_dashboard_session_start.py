@@ -3,6 +3,8 @@ from __future__ import annotations
 from pathlib import Path
 
 from apps.dashboard.frontend.utils.session_start import (
+    build_dashboard_command_shelf,
+    build_operator_walkthrough_pack,
     build_tier0_start_strip,
     build_tier1_orientation_shell,
     build_tier2_deep_governance_drawer,
@@ -205,3 +207,59 @@ def test_build_tier2_deep_governance_drawer_stays_manual_when_clean():
 
     assert result["recommended_open"] is False
     assert result["trigger_reasons"] == []
+
+
+def test_build_operator_walkthrough_pack_stays_tiered():
+    tier0_shell = {
+        "readiness_status": "pass",
+        "next_followup": {
+            "command": "python scripts/run_shared_edit_preflight.py --agent test --path task.md"
+        },
+    }
+    tier1_shell = {
+        "canonical_cards": {"short_board": "Phase 780"},
+        "closeout_attention": {"present": True},
+        "parity_counts": {"partial": 2},
+    }
+    tier2_drawer = {
+        "recommended_open": True,
+        "trigger_reasons": ["closeout_attention_present"],
+        "next_pull_commands": ["python scripts/run_publish_push_preflight.py --agent test"],
+    }
+
+    result = build_operator_walkthrough_pack(
+        tier0_shell=tier0_shell,
+        tier1_shell=tier1_shell,
+        tier2_drawer=tier2_drawer,
+    )
+
+    assert result["current_signals"]["tier0_readiness"] == "pass"
+    assert result["current_signals"]["tier1_short_board_visible"] is True
+    assert result["current_signals"]["tier2_recommended_open"] is True
+    assert result["scenarios"][0]["default_tier"] == "Tier 0"
+    assert result["scenarios"][1]["next_move"] == "Phase 780"
+    assert result["scenarios"][2]["next_move"].startswith("python scripts/run_publish_push_preflight.py")
+
+
+def test_build_dashboard_command_shelf_points_back_to_cli_runtime():
+    tier0_shell = {
+        "next_followup": {
+            "command": "python scripts/run_shared_edit_preflight.py --agent test --path task.md"
+        }
+    }
+    tier2_drawer = {
+        "next_pull_commands": ["python scripts/run_publish_push_preflight.py --agent test"]
+    }
+
+    result = build_dashboard_command_shelf(
+        agent_id="dashboard-workspace",
+        tier0_shell=tier0_shell,
+        tier2_drawer=tier2_drawer,
+    )
+
+    assert result["present"] is True
+    assert result["commands"][0]["command"].endswith("--tier 0 --no-ack")
+    assert result["commands"][1]["command"].endswith("--tier 1 --no-ack")
+    assert result["commands"][2]["command"].endswith("--ack")
+    assert result["commands"][3]["command"].startswith("python scripts/run_shared_edit_preflight.py")
+    assert result["commands"][4]["tier"] == "Tier 2"

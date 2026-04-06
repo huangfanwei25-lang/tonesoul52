@@ -92,6 +92,10 @@
 - Phase 770: define the Tier-2 deep-governance drawer budget so escalation surfaces stay available without becoming universal default load
 - Phase 774: realign the dashboard status panel to the tier model so it reinforces the operator shell instead of flattening authority
 - Phase 780: add one bounded operator walkthrough pack so humans and later agents can learn when to stop at Tier 0 / Tier 1 and when to open Tier 2 without turning demo surfaces into a second console
+- Phase 781: subordinate the dashboard memory panel to the tier model so reference selection stays secondary to operator truth instead of reading like a competing memory surface
+- Phase 782: add one bounded dashboard command shelf so the operator workspace keeps pointing back to CLI/runtime truth instead of drifting toward browser-only workflow
+- Phase 783: add one bounded search-context boundary cue so local/web retrieval in the workspace stays visibly auxiliary and does not impersonate operator truth
+- Phase 784: add one bounded retrieval-preview strip so operators can inspect auxiliary local/web context without promoting search into a fourth authority tier
 
 ## Long Program: Research-Driven Memory Interop And Knowledge Layer (2026-04-06)
 - Program Goal: turn the latest research distillations into bounded ToneSoul workstreams that improve cross-agent interpretation parity, establish a future knowledge layer, and keep predictive and internal-state claims honest.
@@ -119,7 +123,7 @@
   - low-drift anchor / observer-window baseline (Day 1 complete): `tonesoul/observer_window.py`, `scripts/run_observer_window.py`, `tests/test_observer_window.py`, `docs/status/observer_window_latest.{json,md}`
   - bounded outer-shell preflight chain for shared edits, publish/push posture, and task-board parking discipline
 - Current short board:
-  - Phase 780: add one bounded operator walkthrough pack so humans and later agents can learn when to stop at Tier 0 / Tier 1 and when to open Tier 2 without turning demo surfaces into a second console
+  - Phase 784: add one bounded retrieval-preview strip so operators can inspect auxiliary local/web context without promoting search into a fourth authority tier
 - After that:
   - successor/hot-memory bucket is now baseline-frozen unless a fresh real-world misread reopens it
   - task-board governance should stay boring and explicit before any new theory bucket opens
@@ -1857,8 +1861,32 @@
 - [x] avoid reopening a broad dashboard redesign while cleaning copy, grouping, and authority cues
 **Success Criteria**: The dashboard status panel reinforces the operator shell instead of flattening authority and status into one mixed block.
 
-## Phase 780: Operator Walkthrough Pack (2026-04-06, planned)
-- [ ] add one bounded walkthrough pack for `Tier 0 / Tier 1 / Tier 2` that teaches first-hop operator use without duplicating CLI/runtime truth
-- [ ] keep the walkthrough pack dashboard/operator-facing and route public/demo readers back to `apps/web` educational cues instead of turning the pack into a second control plane
-- [ ] make the pack scenario-first so later agents and humans can see when to stay in instant gate, when to read orientation shell, and when to open deep governance
+## Phase 780: Operator Walkthrough Pack (2026-04-06, completed)
+- [x] add one bounded walkthrough pack for `Tier 0 / Tier 1 / Tier 2` that teaches first-hop operator use without duplicating CLI/runtime truth
+- [x] keep the walkthrough pack dashboard/operator-facing and route public/demo readers back to `apps/web` educational cues instead of turning the pack into a second control plane
+- [x] make the pack scenario-first so later agents and humans can see when to stay in instant gate, when to read orientation shell, and when to open deep governance
 **Success Criteria**: ToneSoul has one compact operator walkthrough surface that shortens first-hop confusion without flattening authority or expanding `apps/web` into an operator console.
+
+## Phase 781: Memory Panel Tier Subordination (2026-04-06, completed)
+- [x] realign `apps/dashboard/frontend/components/memory_panel.py` so it reads as reference selection, not as a competing operator-truth surface
+- [x] keep memory/reference choices explicitly subordinate to Tier 0 / Tier 1 operator orientation and Tier 2 deep pulls
+- [x] avoid reopening broad retrieval or knowledge-layer implementation; stay bounded to dashboard panel language and grouping
+**Success Criteria**: The dashboard memory panel remains useful for reference selection while clearly staying secondary to the operator shell, reducing the chance that selected memories are misread as current operational truth.
+
+## Phase 782: Dashboard Command Shelf Parity (2026-04-06, completed)
+- [x] add one bounded command shelf to the dashboard workspace that points back to the core CLI/runtime commands instead of duplicating runtime truth in prose
+- [x] keep the shelf compact and tier-aware: start, recheck, ack, and one deeper pull are enough
+- [x] avoid turning the shelf into a second automation runner or hidden workflow engine
+**Success Criteria**: The dashboard operator shell reinforces CLI/runtime parity with a compact command shelf, helping later agents and humans act from the same bounded commands instead of treating the browser as a separate control plane.
+
+## Phase 783: Search Context Boundary Cue (2026-04-06, completed)
+- [x] add one bounded cue around local/web search toggles so retrieval is clearly treated as auxiliary context, not current operator truth
+- [x] keep the cue inside the workspace shell instead of reopening retrieval or knowledge-layer implementation
+- [x] avoid turning search options into a hidden fourth tier or a second operator state model
+**Success Criteria**: Later agents and humans can use local/web retrieval from the dashboard without mistaking search results for current bounded runtime truth, preserving the operator shell's authority hierarchy.
+
+## Phase 784: Retrieval Preview Strip (2026-04-06, planned)
+- [ ] add one bounded retrieval-preview strip to the dashboard workspace so operators can inspect the local/web context payload that is about to feed or just fed a search-assisted chat turn
+- [ ] keep the preview explicitly auxiliary, with local/web provenance and a rule that the preview never outranks Tier 0 / Tier 1 / Tier 2 operator truth
+- [ ] avoid turning retrieval preview into a packet dump, search debugger, or hidden fourth workspace tier
+**Success Criteria**: Operators can inspect auxiliary retrieval context from the dashboard without mistaking that preview for current runtime truth or reopening a broad knowledge-layer implementation.
