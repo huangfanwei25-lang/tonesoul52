@@ -1,293 +1,260 @@
 """
-Workspace status panel for system linkage and summaries.
+Tier-aligned status panel for the dashboard workspace.
 """
 
 from __future__ import annotations
 
-import html
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Any
 
 import streamlit as st
 from utils.status import build_status_snapshot, load_latest_summary
 
 
-def _format_timestamp(value: Optional[str]) -> str:
+def _format_timestamp(value: object) -> str:
     if not value:
-        return ""
+        return "n/a"
+    text = str(value)
     try:
-        return datetime.fromisoformat(value.replace("Z", "+00:00")).strftime("%Y-%m-%d %H:%M:%S")
+        return datetime.fromisoformat(text.replace("Z", "+00:00")).strftime("%Y-%m-%d %H:%M:%S")
     except ValueError:
-        return value
+        return text
 
 
-def _conversation_status_label(status: Optional[str]) -> str:
-    if not status:
-        return "未知"
-    status_text = str(status).lower()
+def _format_conversation_status(value: object) -> str:
+    status = str(value or "").strip().lower()
     label_map = {
-        "success": "成功",
-        "error": "失敗",
-        "connection_error": "連線失敗",
+        "success": "可用",
+        "error": "錯誤",
+        "connection_error": "連線錯誤",
         "exception": "例外",
-        "empty_response": "空回覆",
+        "empty_response": "空回應",
     }
-    return label_map.get(status_text, status_text)
+    return label_map.get(status, status or "未知")
 
 
-def _intent_status_label(status: Optional[str]) -> str:
-    if not status:
-        return "未知"
-    status_text = str(status).lower()
+def _format_intent_status(value: object) -> str:
+    status = str(value or "").strip().lower()
     label_map = {
         "achieved": "達成",
         "failed": "失敗",
-        "inconclusive": "證據不足",
+        "inconclusive": "未定",
         "unknown": "未知",
     }
-    return label_map.get(status_text, status_text)
+    return label_map.get(status, status or "未知")
 
 
-def _control_status_label(status: Optional[str]) -> str:
-    if not status:
-        return "未知"
-    status_text = str(status).lower()
+def _format_control_status(value: object) -> str:
+    status = str(value or "").strip().lower()
     label_map = {
         "success": "成功",
         "failed": "失敗",
-        "pending": "處理中",
+        "pending": "等待中",
         "unknown": "未知",
     }
-    return label_map.get(status_text, status_text)
+    return label_map.get(status, status or "未知")
 
 
-def _dimension_status_label(valid: Optional[bool]) -> str:
-    if valid is None:
-        return "未知"
-    return "有效" if valid else "需調整"
+def _truncate(text: object, limit: int = 120) -> str:
+    value = str(text or "").strip()
+    if len(value) <= limit:
+        return value
+    return value[:limit].rstrip() + "..."
 
 
-def _format_number(value: object) -> str:
-    if isinstance(value, (int, float)):
-        return f"{value:.2f}"
-    if value is None:
-        return "n/a"
-    return str(value)
+def build_status_panel_view_model(
+    *,
+    snapshot: dict[str, Any],
+    summary: dict[str, Any] | None,
+    tier0_shell: dict[str, Any] | None,
+    tier1_shell: dict[str, Any] | None,
+    tier2_drawer: dict[str, Any] | None,
+) -> dict[str, Any]:
+    tier0_shell = tier0_shell or {}
+    tier1_shell = tier1_shell or {}
+    tier2_drawer = tier2_drawer or {}
+    conversation = snapshot.get("conversation") if isinstance(snapshot.get("conversation"), dict) else {}
+    last_entry = conversation.get("last") if isinstance(conversation.get("last"), dict) else {}
+    intent = summary.get("intent") if isinstance((summary or {}).get("intent"), dict) else {}
+    control = summary.get("control") if isinstance((summary or {}).get("control"), dict) else {}
+    persona = summary.get("persona") if isinstance((summary or {}).get("persona"), dict) else {}
 
-
-def _format_vector(vector: Optional[Dict[str, object]]) -> str:
-    if not isinstance(vector, dict):
-        return "向量未建立"
-    delta_t = _format_number(vector.get("deltaT"))
-    delta_s = _format_number(vector.get("deltaS"))
-    delta_r = _format_number(vector.get("deltaR"))
-    return f"ΔT {delta_t} · ΔS {delta_s} · ΔR {delta_r}"
-
-
-def _truncate(text: str, limit: int = 140) -> str:
-    if len(text) <= limit:
-        return text
-    return text[:limit].rstrip() + "..."
-
-
-def _extract_intent_fields(payload: Optional[Dict[str, object]]) -> Dict[str, object]:
-    if not payload:
-        return {}
-    audit = payload.get("audit") if isinstance(payload.get("audit"), dict) else {}
-    status = audit.get("status") or payload.get("status")
-    confidence = audit.get("confidence") if audit else payload.get("confidence")
-    reason = audit.get("reason") or payload.get("reason")
-    return {
-        "status": status,
-        "confidence": confidence,
-        "reason": reason,
-        "run_id": payload.get("_run_id"),
-    }
-
-
-def _extract_control_fields(payload: Optional[Dict[str, object]]) -> Dict[str, object]:
-    if not payload:
-        return {}
-    return {
-        "status": payload.get("status"),
-        "log": payload.get("log"),
-        "timestamp": payload.get("timestamp"),
-        "screenshot_path": payload.get("screenshot_path"),
-    }
-
-
-def _summary_from_snapshot(snapshot: Dict[str, object]) -> Optional[Dict[str, object]]:
-    conversation = snapshot.get("conversation", {})
-    last_entry = conversation.get("last") if isinstance(conversation, dict) else None
-    if not isinstance(last_entry, dict):
-        return None
-
-    context = last_entry.get("context") if isinstance(last_entry.get("context"), dict) else {}
-    user_message = context.get("user_message") or last_entry.get("user_message") or ""
-    response = last_entry.get("response") or ""
-
-    persona = snapshot.get("persona", {})
-    trace = persona.get("trace") if isinstance(persona.get("trace"), dict) else {}
-    shadow = trace.get("shadow") if isinstance(trace.get("shadow"), dict) else {}
+    parity_counts = tier1_shell.get("parity_counts") if isinstance(tier1_shell.get("parity_counts"), dict) else {}
+    observer_shell = tier1_shell.get("observer_shell") if isinstance(tier1_shell.get("observer_shell"), dict) else {}
+    closeout_attention = (
+        tier1_shell.get("closeout_attention")
+        if isinstance(tier1_shell.get("closeout_attention"), dict)
+        else {}
+    )
 
     return {
-        "timestamp": last_entry.get("timestamp"),
-        "status": last_entry.get("status"),
-        "user_message": user_message,
-        "assistant_summary": _truncate(response),
-        "persona": {
-            "id": persona.get("id"),
-            "vector_estimate": shadow.get("vector_estimate"),
-            "vector_distance": shadow.get("vector_distance"),
-            "profile": persona.get("profile"),
+        "operator_posture": {
+            "title": "Tier-aligned Operator Status",
+            "note": (
+                "這個面板只做 tier 狀態對齊。真正的操作真相仍在 Tier 0 / Tier 1 shell，"
+                "Tier 2 只在需要時展開。"
+            ),
         },
-        "intent": _extract_intent_fields(snapshot.get("intent_verification")),
-        "control": _extract_control_fields(snapshot.get("control_result")),
-        "run_id": snapshot.get("run_id"),
+        "tier0": {
+            "readiness": str(tier0_shell.get("readiness_status", "")).strip() or "unknown",
+            "task_track": str(tier0_shell.get("task_track", "")).strip() or "unclassified",
+            "deliberation_mode": str(tier0_shell.get("deliberation_mode", "")).strip() or "unknown",
+            "next_followup_command": str(
+                (tier0_shell.get("next_followup") or {}).get("command", "")
+            ).strip(),
+            "receiver_rule": str(tier0_shell.get("receiver_rule", "")).strip(),
+            "hook_badges": list(tier0_shell.get("hook_badges") or [])[:3],
+        },
+        "tier1": {
+            "short_board": str(
+                ((tier1_shell.get("canonical_cards") or {}).get("short_board", ""))
+            ).strip()
+            or "current short board not visible",
+            "source_precedence": str(
+                ((tier1_shell.get("canonical_cards") or {}).get("source_precedence", ""))
+            ).strip(),
+            "successor_correction": str(
+                ((tier1_shell.get("canonical_cards") or {}).get("successor_correction", ""))
+            ).strip(),
+            "closeout_attention": str(closeout_attention.get("summary_text", "")).strip(),
+            "observer_summary": str(observer_shell.get("summary_text", "")).strip(),
+            "parity_counts": {
+                "baseline": int(parity_counts.get("baseline", 0) or 0),
+                "beta_usable": int(parity_counts.get("beta_usable", 0) or 0),
+                "partial": int(parity_counts.get("partial", 0) or 0),
+                "deferred": int(parity_counts.get("deferred", 0) or 0),
+            },
+        },
+        "tier2": {
+            "recommended_open": bool(tier2_drawer.get("recommended_open")),
+            "trigger_reasons": list(tier2_drawer.get("trigger_reasons") or [])[:4],
+            "active_groups": list(tier2_drawer.get("active_group_names") or [])[:3],
+            "summary_text": str(tier2_drawer.get("summary_text", "")).strip(),
+            "next_pull_commands": list(tier2_drawer.get("next_pull_commands") or [])[:2],
+        },
+        "telemetry": {
+            "conversation_status": _format_conversation_status(last_entry.get("status")),
+            "conversation_count": int(conversation.get("count", 0) or 0),
+            "conversation_time": _format_timestamp(last_entry.get("timestamp")),
+            "intent_status": _format_intent_status(intent.get("status")),
+            "control_status": _format_control_status(control.get("status")),
+            "persona_id": str(persona.get("id", "")).strip() or str(snapshot.get("persona", {}).get("id", "base")),
+            "run_id": str((summary or {}).get("run_id") or snapshot.get("run_id") or "n/a"),
+            "user_message": _truncate((summary or {}).get("user_message", "")),
+            "assistant_summary": _truncate((summary or {}).get("assistant_summary", "")),
+        },
     }
 
 
-def render_status_panel(workspace: Path) -> None:
+def render_status_panel(
+    workspace: Path,
+    *,
+    tier0_shell: dict[str, Any] | None = None,
+    tier1_shell: dict[str, Any] | None = None,
+    tier2_drawer: dict[str, Any] | None = None,
+) -> None:
     snapshot = build_status_snapshot(workspace)
-    summary = load_latest_summary(workspace) or _summary_from_snapshot(snapshot)
-
-    conversation = snapshot.get("conversation", {})
-    last_entry = conversation.get("last") if isinstance(conversation, dict) else {}
-    conversation_status = _conversation_status_label(
-        last_entry.get("status") if isinstance(last_entry, dict) else None
-    )
-    conversation_time = _format_timestamp(
-        last_entry.get("timestamp") if isinstance(last_entry, dict) else None
-    )
-    conversation_count = conversation.get("count") if isinstance(conversation, dict) else 0
-
-    persona = snapshot.get("persona", {})
-    trace = persona.get("trace") if isinstance(persona.get("trace"), dict) else {}
-    shadow = trace.get("shadow") if isinstance(trace.get("shadow"), dict) else {}
-    vector_text = _format_vector(shadow.get("vector_estimate"))
-
-    dimension = snapshot.get("dimension", {}).get("last") or {}
-    dimension_valid = dimension.get("valid") if isinstance(dimension, dict) else None
-    dimension_label = _dimension_status_label(dimension_valid)
-    reasons = dimension.get("reasons") if isinstance(dimension.get("reasons"), list) else []
-    reason_text = " / ".join(str(r) for r in reasons[:2]) if reasons else "無"
-
-    intent_fields = _extract_intent_fields(snapshot.get("intent_verification"))
-    intent_label = _intent_status_label(intent_fields.get("status"))
-    intent_confidence = intent_fields.get("confidence")
-    intent_conf_text = _format_number(intent_confidence) if intent_confidence is not None else "n/a"
-    intent_reason = intent_fields.get("reason") or "無"
-
-    control_fields = _extract_control_fields(snapshot.get("control_result"))
-    control_label = _control_status_label(control_fields.get("status"))
-    control_log = control_fields.get("log") or "無"
-    control_time = _format_timestamp(control_fields.get("timestamp"))
-
-    persona_id = persona.get("id") or "base"
-
-    st.markdown('<div class="ts-section-title">功能聯動狀態</div>', unsafe_allow_html=True)
-    st.markdown(
-        f"""
-        <div class="ts-card">
-          <div class="ts-pill">狀態摘要</div>
-          <p class="ts-muted">對話記錄: {conversation_count} · {conversation_time or "尚無"} · {conversation_status}</p>
-          <p class="ts-muted">人格追蹤: {html.escape(persona_id)} · {html.escape(vector_text)}</p>
-          <p class="ts-muted">人格維度: {dimension_label} · {html.escape(reason_text)}</p>
-          <p class="ts-muted">意圖驗證: {intent_label} · 信心 {html.escape(intent_conf_text)} · {html.escape(intent_reason)}</p>
-          <p class="ts-muted">控制結果: {control_label} · {html.escape(_truncate(control_log, 60))}</p>
-          <p class="ts-muted">控制時間: {control_time or "尚無"}</p>
-          <p class="ts-muted">摘要記錄: {snapshot.get("summary_count", 0)} 筆</p>
-        </div>
-        """,
-        unsafe_allow_html=True,
+    summary = load_latest_summary(workspace)
+    view_model = build_status_panel_view_model(
+        snapshot=snapshot,
+        summary=summary,
+        tier0_shell=tier0_shell,
+        tier1_shell=tier1_shell,
+        tier2_drawer=tier2_drawer,
     )
 
-    st.markdown('<div class="ts-section-title">對話摘要</div>', unsafe_allow_html=True)
-    if summary:
-        summary_time = _format_timestamp(summary.get("timestamp"))
-        summary_status = _conversation_status_label(summary.get("status"))
-        summary_persona = summary.get("persona") if isinstance(summary.get("persona"), dict) else {}
-        summary_intent = summary.get("intent") if isinstance(summary.get("intent"), dict) else {}
-        summary_control = summary.get("control") if isinstance(summary.get("control"), dict) else {}
+    operator_posture = view_model["operator_posture"]
+    tier0 = view_model["tier0"]
+    tier1 = view_model["tier1"]
+    tier2 = view_model["tier2"]
+    telemetry = view_model["telemetry"]
 
-        summary_intent_label = _intent_status_label(summary_intent.get("status"))
-        summary_control_label = _control_status_label(summary_control.get("status"))
-        run_id = summary.get("run_id") or snapshot.get("run_id") or "n/a"
+    st.markdown("### Tier-Aligned Status")
+    st.caption(operator_posture["note"])
 
-        st.markdown(
-            f"""
-            <div class="ts-card">
-              <div class="ts-pill">最新摘要</div>
-              <p class="ts-muted">時間: {summary_time or "尚無"}</p>
-              <p class="ts-muted">狀態: {summary_status}</p>
-              <p class="ts-muted">人格: {html.escape(summary_persona.get("id") or persona_id)}</p>
-              <p class="ts-muted">意圖: {summary_intent_label} · 控制: {summary_control_label}</p>
-              <p class="ts-muted">Run: {html.escape(str(run_id))}</p>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-        st.text_area("使用者摘要", summary.get("user_message") or "", height=70)
-        st.text_area("助手摘要", summary.get("assistant_summary") or "", height=90)
-    else:
-        st.caption("尚無對話摘要，完成一次對話後會自動生成。")
+    with st.container(border=True):
+        st.markdown("**Tier 0 · Instant Gate**")
+        col_a, col_b, col_c = st.columns(3)
+        with col_a:
+            st.metric("Readiness", tier0["readiness"])
+        with col_b:
+            st.metric("Track", tier0["task_track"])
+        with col_c:
+            st.metric("Mode", tier0["deliberation_mode"])
 
-    profile = persona.get("profile") if isinstance(persona.get("profile"), dict) else {}
-    with st.expander("人格板模（Architecture B）", expanded=False):
-        if not profile:
-            st.caption("尚未載入人格檔案。")
-            return
-        home_vector = (
-            profile.get("home_vector") if isinstance(profile.get("home_vector"), dict) else {}
-        )
-        tolerance = profile.get("tolerance") if isinstance(profile.get("tolerance"), dict) else {}
-        council_weights = (
-            profile.get("council_weights")
-            if isinstance(profile.get("council_weights"), dict)
-            else {}
-        )
-        goal_weights = (
-            profile.get("goal_weights") if isinstance(profile.get("goal_weights"), dict) else {}
-        )
-        vector_estimate = (
-            shadow.get("vector_estimate") if isinstance(shadow.get("vector_estimate"), dict) else {}
-        )
-        vector_distance = (
-            shadow.get("vector_distance") if isinstance(shadow.get("vector_distance"), dict) else {}
-        )
-
-        st.markdown(
-            f"**人格**: {profile.get('name') or persona_id} ({profile.get('id') or persona_id})"
-        )
-        st.markdown(
-            f"- Home Vector: ΔT {_format_number(home_vector.get('deltaT'))} · ΔS {_format_number(home_vector.get('deltaS'))} · ΔR {_format_number(home_vector.get('deltaR'))}"
-        )
-        st.markdown(
-            f"- 容忍區間: ΔT ±{_format_number(tolerance.get('deltaT'))} · ΔS ±{_format_number(tolerance.get('deltaS'))} · ΔR ±{_format_number(tolerance.get('deltaR'))}"
-        )
-        if council_weights:
-            st.markdown(
-                "- Council 權重: "
-                f"Guardian {council_weights.get('guardian', 'n/a')}, "
-                f"Analyst {council_weights.get('analyst', 'n/a')}, "
-                f"Critic {council_weights.get('critic', 'n/a')}, "
-                f"Advocate {council_weights.get('advocate', 'n/a')}"
-            )
-        if goal_weights:
-            st.markdown(
-                "- 目標權重: "
-                + ", ".join(
-                    f"{key}={_format_number(value)}"
-                    for key, value in goal_weights.items()
-                    if isinstance(value, (int, float))
+        if tier0["next_followup_command"]:
+            st.caption("Next bounded move")
+            st.code(tier0["next_followup_command"], language="bash")
+        if tier0["receiver_rule"]:
+            st.caption(tier0["receiver_rule"])
+        if tier0["hook_badges"]:
+            st.caption(
+                "Hooks: "
+                + " | ".join(
+                    f"{item.get('name', 'unknown')}:{item.get('status', 'unknown')}"
+                    for item in tier0["hook_badges"]
                 )
             )
-        if vector_estimate:
-            st.markdown(f"- 最新向量: {_format_vector(vector_estimate)}")
-        if vector_distance:
-            st.markdown(
-                "- 距離量測: "
-                f"mean {_format_number(vector_distance.get('mean'))} · "
-                f"max {_format_number(vector_distance.get('max'))}"
+
+    with st.container(border=True):
+        st.markdown("**Tier 1 · Orientation Shell**")
+        st.markdown(tier1["short_board"])
+        if tier1["successor_correction"]:
+            st.caption(tier1["successor_correction"])
+        if tier1["closeout_attention"]:
+            st.warning(tier1["closeout_attention"])
+        elif tier1["observer_summary"]:
+            st.caption(tier1["observer_summary"])
+
+        parity_cols = st.columns(4)
+        for col, (label, key) in zip(
+            parity_cols,
+            [
+                ("Baseline", "baseline"),
+                ("Beta", "beta_usable"),
+                ("Partial", "partial"),
+                ("Deferred", "deferred"),
+            ],
+        ):
+            with col:
+                st.metric(label, tier1["parity_counts"][key])
+
+        if tier1["source_precedence"]:
+            with st.expander("Source precedence", expanded=False):
+                st.caption(tier1["source_precedence"])
+
+    with st.container(border=True):
+        st.markdown("**Tier 2 · Deep Governance**")
+        if tier2["recommended_open"]:
+            st.warning(
+                "Only open when needed: " + ", ".join(tier2["trigger_reasons"])
+                if tier2["trigger_reasons"]
+                else "Only open when needed."
             )
+        else:
+            st.caption("Manual only. Keep deep governance behind explicit operator pull.")
+
+        if tier2["active_groups"]:
+            st.caption("Active groups: " + " | ".join(tier2["active_groups"]))
+        if tier2["summary_text"]:
+            st.caption(tier2["summary_text"])
+        if tier2["next_pull_commands"]:
+            with st.expander("Suggested deep pulls", expanded=False):
+                for command in tier2["next_pull_commands"]:
+                    st.code(command, language="bash")
+
+    with st.expander("Secondary telemetry", expanded=False):
+        st.markdown(
+            f"- Conversation: `{telemetry['conversation_status']}`"
+            f" | count={telemetry['conversation_count']}"
+            f" | last={telemetry['conversation_time']}"
+        )
+        st.markdown(
+            f"- Intent / Control: `{telemetry['intent_status']}` / `{telemetry['control_status']}`"
+        )
+        st.markdown(f"- Persona: `{telemetry['persona_id']}` | Run: `{telemetry['run_id']}`")
+        if telemetry["user_message"]:
+            st.text_area("Latest user message", telemetry["user_message"], height=70)
+        if telemetry["assistant_summary"]:
+            st.text_area("Latest assistant summary", telemetry["assistant_summary"], height=90)

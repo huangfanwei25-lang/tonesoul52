@@ -91,6 +91,7 @@
 - Phase 769: adapt `apps/dashboard` workspace into the first operator shell instead of rewriting every frontend surface at once
 - Phase 770: define the Tier-2 deep-governance drawer budget so escalation surfaces stay available without becoming universal default load
 - Phase 774: realign the dashboard status panel to the tier model so it reinforces the operator shell instead of flattening authority
+- Phase 780: add one bounded operator walkthrough pack so humans and later agents can learn when to stop at Tier 0 / Tier 1 and when to open Tier 2 without turning demo surfaces into a second console
 
 ## Long Program: Research-Driven Memory Interop And Knowledge Layer (2026-04-06)
 - Program Goal: turn the latest research distillations into bounded ToneSoul workstreams that improve cross-agent interpretation parity, establish a future knowledge layer, and keep predictive and internal-state claims honest.
@@ -118,7 +119,7 @@
   - low-drift anchor / observer-window baseline (Day 1 complete): `tonesoul/observer_window.py`, `scripts/run_observer_window.py`, `tests/test_observer_window.py`, `docs/status/observer_window_latest.{json,md}`
   - bounded outer-shell preflight chain for shared edits, publish/push posture, and task-board parking discipline
 - Current short board:
-  - Phase 774: realign the dashboard status panel to the tier model so it reinforces the operator shell instead of flattening authority
+  - Phase 780: add one bounded operator walkthrough pack so humans and later agents can learn when to stop at Tier 0 / Tier 1 and when to open Tier 2 without turning demo surfaces into a second console
 - After that:
   - successor/hot-memory bucket is now baseline-frozen unless a fresh real-world misread reopens it
   - task-board governance should stay boring and explicit before any new theory bucket opens
@@ -1850,8 +1851,14 @@
 - [x] keep the wave parity-focused rather than reopening a broad UI redesign
 **Success Criteria**: A fresh agent or human can distinguish the dashboard operator shell from the public/demo site without mistaking either surface for a second control plane.
 
-## Phase 774: Dashboard Status Panel Tier Alignment (2026-04-06, planned)
-- [ ] realign `apps/dashboard/frontend/components/status_panel.py` to the tier model so it stops telling a mixed generic status story beside the operator shell
-- [ ] keep the panel subordinate to Tier 0 / Tier 1 / Tier 2 instead of competing with them
-- [ ] avoid reopening a broad dashboard redesign while cleaning copy, grouping, and authority cues
+## Phase 774: Dashboard Status Panel Tier Alignment (2026-04-06, completed)
+- [x] realign `apps/dashboard/frontend/components/status_panel.py` to the tier model so it stops telling a mixed generic status story beside the operator shell
+- [x] keep the panel subordinate to Tier 0 / Tier 1 / Tier 2 instead of competing with them
+- [x] avoid reopening a broad dashboard redesign while cleaning copy, grouping, and authority cues
 **Success Criteria**: The dashboard status panel reinforces the operator shell instead of flattening authority and status into one mixed block.
+
+## Phase 780: Operator Walkthrough Pack (2026-04-06, planned)
+- [ ] add one bounded walkthrough pack for `Tier 0 / Tier 1 / Tier 2` that teaches first-hop operator use without duplicating CLI/runtime truth
+- [ ] keep the walkthrough pack dashboard/operator-facing and route public/demo readers back to `apps/web` educational cues instead of turning the pack into a second control plane
+- [ ] make the pack scenario-first so later agents and humans can see when to stay in instant gate, when to read orientation shell, and when to open deep governance
+**Success Criteria**: ToneSoul has one compact operator walkthrough surface that shortens first-hop confusion without flattening authority or expanding `apps/web` into an operator console.

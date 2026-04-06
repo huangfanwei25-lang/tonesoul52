@@ -103,6 +103,12 @@ while keeping multi-agent architecture as escalation, not default tax.
 - keep the panel subordinate to the operator shell and deep-governance drawer
 - reduce mixed authority language before any broader workspace polish
 
+### Phase 780: Operator Walkthrough Pack
+
+- add one bounded operator walkthrough pack for `Tier 0 / Tier 1 / Tier 2`
+- teach first-hop usage with scenario-first examples instead of raw surface dumps
+- keep the pack operator-facing and route public/demo readers back to educational surfaces instead of creating a second console
+
 ---
 
 ## Existing Frontend Reality
@@ -151,6 +157,6 @@ This program succeeds when:
 
 Accept this as the live long program for the frontend / IDE translation lane.
 
-The current short board remains:
+The current short board rotates to:
 
-`Phase 774: Dashboard Status Panel Tier Alignment`
+`Phase 780: Operator Walkthrough Pack`

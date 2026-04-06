@@ -299,6 +299,11 @@ def render():
         with side_panel:
             tab_status, tab_memory = st.tabs(["系統狀態", "參考資料"])
             with tab_status:
-                render_status_panel(workspace)
+                render_status_panel(
+                    workspace,
+                    tier0_shell=tier0_shell,
+                    tier1_shell=tier1_shell,
+                    tier2_drawer=tier2_drawer,
+                )
             with tab_memory:
                 render_memory_panel()
