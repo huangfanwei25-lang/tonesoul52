@@ -274,6 +274,13 @@ def test_start_agent_session_emits_machine_readable_bundle(
         hook_chain["stages"][0]["command"]
         == "python scripts/run_shared_edit_preflight.py --agent observer-start --path <repo-path>"
     )
+    assert hook_chain["hooks"][0]["name"] == "shared_edit_path_overlap"
+    assert hook_chain["current_recommendation"]["present"] is True
+    assert (
+        hook_chain["current_recommendation"]["target"]
+        == output["mutation_preflight"]["next_followup"]["target"]
+    )
+    assert any(item["status"] == "recommended_now" for item in hook_chain["hooks"])
     task_board_preflight = output["task_board_preflight"]
     assert task_board_preflight["present"] is True
     assert task_board_preflight["classification"] == "docs_plans_first"
@@ -1421,7 +1428,7 @@ def test_start_agent_session_cli_executes_directly(tmp_path: Path) -> None:
     assert "subsystem_parity" in payload
     assert (
         payload["subsystem_parity"]["next_focus"]["resolved_to"]
-        == "shared_code_edit.path_overlap_preflight"
+        == payload["mutation_preflight"]["next_followup"]["target"]
     )
     assert "working_style_playbook" in payload
     assert "working_style_validation" in payload

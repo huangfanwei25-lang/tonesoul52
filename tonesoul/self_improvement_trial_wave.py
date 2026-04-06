@@ -104,6 +104,7 @@ def build_self_improvement_trial_wave(
     surface_versioning_probe: dict[str, Any],
     launch_health_probe: dict[str, Any],
     internal_state_probe: dict[str, Any],
+    hook_chain_probe: dict[str, Any] | None = None,
     operator_retrieval_contract_present: bool,
     compiled_landing_zone_spec_present: bool,
     retrieval_runner_present: bool,
@@ -132,6 +133,8 @@ def build_self_improvement_trial_wave(
     launch_health_summary = str((launch_health_probe or {}).get("summary_text") or "").strip()
     internal_state_ready = bool((internal_state_probe or {}).get("present"))
     internal_state_summary = str((internal_state_probe or {}).get("summary_text") or "").strip()
+    hook_chain_ready = bool((hook_chain_probe or {}).get("present"))
+    hook_chain_summary = str((hook_chain_probe or {}).get("summary_text") or "").strip()
 
     consumer_candidate = {
         "candidate_record": _build_candidate_record(
@@ -807,6 +810,73 @@ def build_self_improvement_trial_wave(
         ),
     )
 
+    hook_chain_candidate = {
+        "candidate_record": _build_candidate_record(
+            candidate_id="hook_chain_trigger_clarity_v1",
+            target_surface="hook_chain.current_recommendation",
+            target_consumer="codex_dashboard_packet_operator_shells",
+            baseline_story=(
+                "Hook-chain stages were visible, but later agents still had to infer which hook mattered now "
+                "from mutation_preflight.next_followup or raw stage order."
+            ),
+            candidate_story=(
+                "Hook chain now exposes hooks, selection rule, and a current recommendation so the narrowest "
+                "bounded preflight reads as part of the hook shell instead of a separate guess."
+            ),
+            success_metric="hook_chain_probe.present and consumer_drift_report.status == aligned",
+            failure_mode_watch="hook-chain packaging turns into a planner myth or implies new hook authority",
+            rollback_path="remove current_recommendation packaging and keep the prior static stage list plus registry history only",
+            overclaim_to_avoid="clearer hook-chain packaging is not stronger permissions, autonomy, or planning quality",
+            scope_limit="hook-chain packaging only; no new hooks, no permission expansion, no governance mutation",
+        ),
+        "analyzer_closeout": _build_analyzer_closeout(
+            status="promote" if (hook_chain_ready and consumer_aligned) else "park",
+            result_story=(
+                "Hook chain now says which bounded preflight is currently relevant and why, without inventing a new hook family."
+                if (hook_chain_ready and consumer_aligned)
+                else "Hook-chain trigger clarity is not yet stable enough to promote."
+            ),
+            evidence_bundle_summary=hook_chain_summary or "hook_chain_probe unavailable",
+            unresolved_items=(
+                [
+                    "clearer hook-chain packaging does not prove better planning quality or stronger permissions",
+                    "future shells must keep current_recommendation subordinate to mutation_preflight and bounded hook scope",
+                ]
+                if (hook_chain_ready and consumer_aligned)
+                else [
+                    "hook-chain recommendation is not yet visible enough in the live shell",
+                    "consumer drift must stay aligned before promotion",
+                ]
+            ),
+            failure_pressure="low" if (hook_chain_ready and consumer_aligned) else "meaningful",
+            rollback_posture="bounded_restore",
+            promotion_limit="does not authorize new hooks, stronger permissions, or planner-style mutation authority",
+            overclaim_warning="clearer hook-chain packaging is not a new permission system or autonomous planner",
+            next_action=(
+                "keep hook-chain recommendations bounded while admitting the next candidate"
+                if (hook_chain_ready and consumer_aligned)
+                else "repair hook-chain trigger clarity before reopening this candidate"
+            ),
+        ),
+    }
+    hook_chain_candidate["result_surface"] = _build_result_surface(
+        status=hook_chain_candidate["analyzer_closeout"]["status"],
+        registry_recommendation=(
+            "promotion_ready_result" if (hook_chain_ready and consumer_aligned) else "distilled_lesson"
+        ),
+        supersession_posture="active_until_newer_hook_chain_trials_exist",
+        replay_rule="prefer_status_surface_then_probe_current_hook_chain_shape_before_reusing_the_story",
+        residue_posture=(
+            "keep_visible_as_current_packaging_result"
+            if (hook_chain_ready and consumer_aligned)
+            else "park_in_status_surface_until_hook_chain_trigger_clarity_is_stable"
+        ),
+        visibility="status_surface_only",
+        carry_forward_rule=(
+            "may inform future hook-shell packaging trials, but does not authorize new hooks, permissions, or broader planning authority"
+        ),
+    )
+
     candidates = [
         consumer_candidate,
         retrieval_candidate,
@@ -818,6 +888,7 @@ def build_self_improvement_trial_wave(
         surface_versioning_candidate,
         launch_health_candidate,
         internal_state_candidate,
+        hook_chain_candidate,
     ]
     outcome_counts = _count_outcomes(candidates)
     status = "completed"
@@ -847,8 +918,9 @@ def build_self_improvement_trial_wave(
             "surface_versioning_lineage_clarity",
             "launch_health_trend_clarity",
             "internal_state_observability_clarity",
+            "hook_chain_trigger_clarity",
         ],
         "outcome_counts": outcome_counts,
         "candidates": candidates,
-        "next_short_board": "Phase 823: Tenth Trial Candidate Admission",
+        "next_short_board": "Phase 826: Eleventh Trial Candidate Admission",
     }

@@ -2167,8 +2167,26 @@
 - [x] register the result in a bounded status/registry surface without leaking it into first-hop shells
 **Success Criteria**: ToneSoul has one honest ninth-trial result classification and registry-ready record for `internal_state_observability_clarity_v1`.
 
-## Phase 823: Tenth Trial Candidate Admission (2026-04-07, planned)
-- [ ] choose the next bounded self-improvement candidate after the ninth trial result and current registry/status surface are visible
-- [ ] keep the next candidate inside allowed mutation classes and away from retrieval mythology, governance semantics, identity, transport claims, predictive-math inflation, and selfhood mythology
-- [ ] make the no-go list explicit before opening a tenth trial wave
+## Phase 823: Tenth Trial Candidate Admission (2026-04-07)
+- [x] choose the next bounded self-improvement candidate after the ninth trial result and current registry/status surface are visible
+- [x] keep the next candidate inside allowed mutation classes and away from retrieval mythology, governance semantics, identity, transport claims, predictive-math inflation, and selfhood mythology
+- [x] make the no-go list explicit before opening a tenth trial wave
 **Success Criteria**: ToneSoul has one admitted tenth candidate that is narrower than shell redesign and still worth real operator leverage.
+
+## Phase 824: Tenth Bounded Trial Wave - Hook-Chain Trigger Clarity (2026-04-07)
+- [x] refine `hook_chain` so it exposes `hooks`, `selection_rule`, and one bounded `current_recommendation`
+- [x] preserve the current hook family and keep the change inside packaging/readout space only
+- [x] add regression coverage proving hook-shell recommendation stays aligned with `mutation_preflight.next_followup` without inventing a planner or stronger permissions
+**Success Criteria**: ToneSoul lands one bounded tenth-trial implementation for `hook_chain_trigger_clarity_v1` that makes the current hook choice visible without widening mutation authority.
+
+## Phase 825: Tenth Trial Evaluation And Registry Entry (2026-04-07)
+- [x] evaluate the `hook_chain_trigger_clarity_v1` trial against the existing evaluator harness and analyzer gate
+- [x] classify the result as `promote`, `park`, `retire`, `blocked`, or `not_ready_for_trial` without inflating hook packaging into planner quality or stronger permissions
+- [x] register the result in a bounded status/registry surface without leaking it into first-hop shells
+**Success Criteria**: ToneSoul has one honest tenth-trial result classification and registry-ready record for `hook_chain_trigger_clarity_v1`.
+
+## Phase 826: Eleventh Trial Candidate Admission (2026-04-07, planned)
+- [ ] choose the next bounded self-improvement candidate after the tenth trial result and current registry/status surface are visible
+- [ ] keep the next candidate inside allowed mutation classes and away from retrieval mythology, governance semantics, identity, transport claims, predictive-math inflation, selfhood mythology, and permission-system creep
+- [ ] make the no-go list explicit before opening an eleventh trial wave
+**Success Criteria**: ToneSoul has one admitted eleventh candidate that is narrower than shell redesign and still worth real operator leverage.

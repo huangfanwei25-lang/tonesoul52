@@ -809,6 +809,60 @@ Current implementation target:
 - one recommended tenth-trial family
 - one explicit no-go list for what must stay parked
 
+### Phase 824: Tenth Bounded Trial Wave - Hook-Chain Trigger Clarity
+
+Bounded scope:
+
+- refine `hook_chain` so it exposes `hooks`, `selection_rule`, and one bounded `current_recommendation`
+- preserve the current hook family (`shared_edit_path_overlap / publish_push_posture / task_board_parking`)
+- keep the change inside packaging/readout space only: no new hooks, no planner, no stronger permission story
+
+Success criteria:
+
+- ToneSoul lands one bounded tenth-trial implementation that makes the current hook choice visible without widening mutation authority
+
+Current implementation target:
+
+- one hook-chain packaging refinement
+- one live probe proving the recommendation aligns with `mutation_preflight.next_followup`
+- no readiness/claim/governance truth rewrite
+
+### Phase 825: Tenth Trial Evaluation And Registry Entry
+
+Bounded scope:
+
+- evaluate the hook-chain trigger clarity trial using the existing evaluator harness and analyzer gate
+- classify the result honestly as `promote`, `park`, `retire`, `blocked`, or `not_ready_for_trial`
+- register the outcome in the bounded status surface without leaking it into first-hop shells
+
+Success criteria:
+
+- ToneSoul has one honest registry-ready tenth-trial result and clear promotion limit for hook-chain packaging
+
+Current implementation target:
+
+- one evaluator-ready record for the tenth trial
+- one analyzer conclusion
+- one status-surface update with no shell creep
+
+### Phase 826: Eleventh Trial Candidate Admission
+
+Bounded scope:
+
+- choose the next bounded candidate only after the tenth trial result is visible
+- keep the candidate inside already-allowed mutation classes
+- make the no-go list explicit before an eleventh trial wave opens
+
+Success criteria:
+
+- ToneSoul has one admitted eleventh candidate with real operator leverage and no new authority mythology
+
+Current implementation target:
+
+- one candidate-admission note
+- one recommended eleventh-trial family
+- one explicit no-go list for what must stay parked
+
 ---
 
 ## Safe First Trial Families
@@ -869,18 +923,18 @@ This is the key improvement over the current gap:
 
 ## Current Recommendation
 
-The program is now active through `Phase 822`.
+The program is now active through `Phase 825`.
 
 Current short board:
 
-- `Phase 823: Tenth Trial Candidate Admission`
+- `Phase 826: Eleventh Trial Candidate Admission`
 
 Recommended discipline:
 
 - keep trial outcomes visible through dedicated status artifacts first
 - do not push self-improvement history into `session-start`, `observer-window`, or packet defaults yet
 - keep new trials inside already-allowed mutation classes until a compact result-surface design proves stable
-- prefer packaging refinements that reduce operator latency, shared-edit ambiguity, outward-action ambiguity, stale follow-up routing, consumer-lineage ambiguity, launch-health honesty, and internal-state handling clarity before opening broader retrieval or governance experiments
+- prefer packaging refinements that reduce operator latency, shared-edit ambiguity, outward-action ambiguity, stale follow-up routing, consumer-lineage ambiguity, launch-health honesty, internal-state handling clarity, and hook-selection ambiguity before opening broader retrieval or governance experiments
 
 ---
 

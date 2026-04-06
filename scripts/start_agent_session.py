@@ -107,10 +107,17 @@ def _build_task_board_preflight(
     )
 
 
-def _build_hook_chain(*, agent_id: str) -> dict:
+def _build_hook_chain(*, agent_id: str, mutation_preflight: dict | None = None) -> dict:
     from tonesoul.hook_chain import build_hook_chain_readout
 
-    return build_hook_chain_readout(agent_id=agent_id)
+    next_followup = dict((mutation_preflight or {}).get("next_followup") or {})
+    return build_hook_chain_readout(
+        agent_id=agent_id,
+        recommended_target=str(next_followup.get("target", "")).strip(),
+        recommended_reason=str(
+            next_followup.get("why_here") or next_followup.get("reason") or ""
+        ).strip(),
+    )
 
 
 def _build_surface_versioning() -> dict:
@@ -1538,7 +1545,6 @@ def run_session_start_bundle(
         import_posture=import_posture,
         repo_state_awareness=repo_state_awareness,
     )
-    hook_chain = _build_hook_chain(agent_id=agent_id)
     task_board_preflight = _build_task_board_preflight(
         readiness=readiness,
         canonical_center=canonical_center,
@@ -1552,6 +1558,10 @@ def run_session_start_bundle(
         canonical_center=canonical_center,
         publish_push_preflight=publish_push_preflight,
         task_board_preflight=task_board_preflight,
+    )
+    hook_chain = _build_hook_chain(
+        agent_id=agent_id,
+        mutation_preflight=mutation_preflight,
     )
     consumer_contract = _build_consumer_contract(
         readiness=readiness,

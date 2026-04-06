@@ -405,6 +405,56 @@ def _probe_internal_state_action_clarity() -> dict[str, Any]:
     }
 
 
+def _probe_hook_chain_trigger_clarity(
+    *,
+    agent: str,
+    state_path: Path | None,
+    traces_path: Path | None,
+) -> dict[str, Any]:
+    from scripts.start_agent_session import run_session_start_bundle
+
+    payload = run_session_start_bundle(
+        agent_id=agent,
+        state_path=state_path,
+        traces_path=traces_path,
+        no_ack=True,
+        tier=0,
+    )
+    hook_chain = dict(payload.get("hook_chain") or {})
+    mutation_preflight = dict(payload.get("mutation_preflight") or {})
+    next_followup = dict(mutation_preflight.get("next_followup") or {})
+    hooks = list(hook_chain.get("hooks") or [])
+    current_recommendation = dict(hook_chain.get("current_recommendation") or {})
+    stages = list(hook_chain.get("stages") or [])
+    recommended_hooks = [
+        str(item.get("name", "")).strip()
+        for item in hooks
+        if str(item.get("status", "")).strip() == "recommended_now"
+    ]
+    activation_present = all(
+        isinstance(stage.get("activation_signals"), list) and bool(stage.get("activation_signals"))
+        for stage in stages
+    )
+    present = bool(
+        hooks
+        and current_recommendation.get("present")
+        and str(current_recommendation.get("target", "")).strip()
+        == str(next_followup.get("target", "")).strip()
+        and len(recommended_hooks) == 1
+        and activation_present
+    )
+    return {
+        "present": present,
+        "summary_text": (
+            "hook_chain_probe "
+            f"recommended={recommended_hooks[0] if recommended_hooks else 'missing'} "
+            f"target={str(current_recommendation.get('target', '')).strip() or 'missing'} "
+            f"selection={'yes' if bool(hook_chain.get('selection_rule')) else 'no'} "
+            f"hooks={len(hooks)}"
+        ),
+    }
+
+
 def _render_markdown(report: dict[str, Any]) -> str:
     lines = [
         "# ToneSoul Self-Improvement Trial Wave",
@@ -476,6 +526,11 @@ def run_self_improvement_trial_wave(
     surface_versioning_probe = _probe_surface_versioning_lineage()
     launch_health_probe = _probe_launch_health_trend_clarity()
     internal_state_probe = _probe_internal_state_action_clarity()
+    hook_chain_probe = _probe_hook_chain_trigger_clarity(
+        agent=agent,
+        state_path=state_path,
+        traces_path=traces_path,
+    )
     operator_retrieval_contract_present = (
         REPO_ROOT / "docs/architecture/TONESOUL_OPERATOR_RETRIEVAL_QUERY_CONTRACT.md"
     ).exists()
@@ -495,6 +550,7 @@ def run_self_improvement_trial_wave(
         surface_versioning_probe=surface_versioning_probe,
         launch_health_probe=launch_health_probe,
         internal_state_probe=internal_state_probe,
+        hook_chain_probe=hook_chain_probe,
         operator_retrieval_contract_present=operator_retrieval_contract_present,
         compiled_landing_zone_spec_present=compiled_landing_zone_spec_present,
         retrieval_runner_present=retrieval_runner_present,

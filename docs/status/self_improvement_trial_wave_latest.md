@@ -1,6 +1,6 @@
 # ToneSoul Self-Improvement Trial Wave
 
-**Summary**: `self_improvement_trial_wave promote=9 park=1 retire=0 blocked=0`
+**Summary**: `self_improvement_trial_wave promote=10 park=1 retire=0 blocked=0`
 
 > Trial-wave outcomes are bounded self-improvement results. They may inform future patches or parking decisions, but they do not become governance truth, identity truth, or hot-memory authority.
 
@@ -16,10 +16,11 @@
 - `surface_versioning_lineage_clarity`
 - `launch_health_trend_clarity`
 - `internal_state_observability_clarity`
+- `hook_chain_trigger_clarity`
 
 ## Outcomes
 
-- `promote`: `9`
+- `promote`: `10`
 - `park`: `1`
 - `retire`: `0`
 - `blocked`: `0`
@@ -158,7 +159,20 @@
     - future consumers must keep action cues subordinate to the selfhood boundary
   - promotion_limit: `does not authorize emotion claims, hidden-thought inference, or stronger agency claims`
   - next_action: `keep internal-state cues bounded while admitting the next candidate`
+- `hook_chain_trigger_clarity_v1` -> `promote`
+  - target_surface: `hook_chain.current_recommendation`
+  - success_metric: `hook_chain_probe.present and consumer_drift_report.status == aligned`
+  - result_story: Hook chain now says which bounded preflight is currently relevant and why, without inventing a new hook family.
+  - evidence: `hook_chain_probe recommended=publish_push_posture target=publish_push.posture_preflight selection=yes hooks=3`
+  - result_surface: `promoted_result`
+  - replay_rule: `prefer_status_surface_then_probe_current_hook_chain_shape_before_reusing_the_story`
+  - residue_posture: `keep_visible_as_current_packaging_result`
+  - unresolved_items:
+    - clearer hook-chain packaging does not prove better planning quality or stronger permissions
+    - future shells must keep current_recommendation subordinate to mutation_preflight and bounded hook scope
+  - promotion_limit: `does not authorize new hooks, stronger permissions, or planner-style mutation authority`
+  - next_action: `keep hook-chain recommendations bounded while admitting the next candidate`
 
 ## Next Short Board
 
-- `Phase 823: Tenth Trial Candidate Admission`
+- `Phase 826: Eleventh Trial Candidate Admission`

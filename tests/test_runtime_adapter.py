@@ -434,6 +434,8 @@ def test_r_memory_packet_exposes_runtime_dominance_and_recent_trace(
     assert packet["operator_guidance"]["preflight_chain"]["stages"][2]["command"].startswith(
         "python scripts/run_task_board_preflight.py --agent"
     )
+    assert packet["operator_guidance"]["preflight_chain"]["hooks"][0]["status"] == "available"
+    assert packet["operator_guidance"]["preflight_chain"]["current_recommendation"]["present"] is False
     assert packet["operator_guidance"]["session_end"][0].startswith(
         "python scripts/end_agent_session.py --agent"
     )
