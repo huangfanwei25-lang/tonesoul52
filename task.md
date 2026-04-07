@@ -2239,8 +2239,26 @@
 - [x] register the outcome in the bounded status surface without leaking it into first-hop shells
 **Success Criteria**: ToneSoul has one honest thirteenth-trial result classification and registry-ready record for `closeout_attention_action_clarity_v1`.
 
-## Phase 835: Fourteenth Trial Candidate Admission (2026-04-07, planned)
-- [ ] choose the next bounded self-improvement candidate after the thirteenth trial result and current registry/status surface are visible
-- [ ] keep the next candidate inside allowed mutation classes and away from retrieval mythology, governance semantics, identity, transport claims, predictive-math inflation, selfhood mythology, permission-system creep, consumer-shell planner drift, subsystem-parity authority inflation, and closeout-attention planner drift
-- [ ] make the no-go list explicit before opening a fourteenth trial wave
+## Phase 835: Fourteenth Trial Candidate Admission (2026-04-07)
+- [x] choose the next bounded self-improvement candidate after the thirteenth trial result and current registry/status surface are visible
+- [x] keep the next candidate inside allowed mutation classes and away from retrieval mythology, governance semantics, identity, transport claims, predictive-math inflation, selfhood mythology, permission-system creep, consumer-shell planner drift, subsystem-parity authority inflation, and closeout-attention planner drift
+- [x] make the no-go list explicit before opening a fourteenth trial wave
 **Success Criteria**: ToneSoul has one admitted fourteenth candidate that is narrower than shell redesign and still worth real operator leverage.
+
+## Phase 836: Fourteenth Bounded Trial Wave - Claude Priority-Correction Clarity (2026-04-07)
+- [x] refine `claude_entry_adapter` so it exposes one bounded `priority_correction`
+- [x] preserve the same first-hop order and consumer-contract priority guard without inventing a planner
+- [x] keep the change inside Claude-style shell packaging only: no transport story, no stronger permissions, no governance widening
+**Success Criteria**: ToneSoul lands one bounded fourteenth-trial implementation for `claude_priority_correction_clarity_v1` that improves Claude-style recovery discipline without widening authority.
+
+## Phase 837: Fourteenth Trial Evaluation And Registry Entry (2026-04-07)
+- [x] evaluate the `claude_priority_correction_clarity_v1` trial against the existing evaluator harness and analyzer gate
+- [x] classify the result honestly as `promote`, `park`, `retire`, `blocked`, or `not_ready_for_trial`
+- [x] register the outcome in the bounded status surface without leaking it into first-hop shells
+**Success Criteria**: ToneSoul has one honest fourteenth-trial result classification and registry-ready record for `claude_priority_correction_clarity_v1`.
+
+## Phase 838: Fifteenth Trial Candidate Admission (2026-04-07, planned)
+- [ ] choose the next bounded self-improvement candidate after the fourteenth trial result and current registry/status surface are visible
+- [ ] keep the next candidate inside allowed mutation classes and away from retrieval mythology, governance semantics, identity, transport claims, predictive-math inflation, selfhood mythology, permission-system creep, consumer-shell planner drift, subsystem-parity authority inflation, closeout-attention planner drift, and vendor-interop mythology
+- [ ] make the no-go list explicit before opening a fifteenth trial wave
+**Success Criteria**: ToneSoul has one admitted fifteenth candidate that is narrower than shell redesign and still worth real operator leverage.

@@ -923,18 +923,18 @@ This is the key improvement over the current gap:
 
 ## Current Recommendation
 
-The program is now active through `Phase 834`.
+The program is now active through `Phase 837`.
 
 Current short board:
 
-- `Phase 835: Fourteenth Trial Candidate Admission`
+- `Phase 838: Fifteenth Trial Candidate Admission`
 
 Recommended discipline:
 
 - keep trial outcomes visible through dedicated status artifacts first
 - do not push self-improvement history into `session-start`, `observer-window`, or packet defaults yet
 - keep new trials inside already-allowed mutation classes until a compact result-surface design proves stable
-- prefer packaging refinements that reduce operator latency, shared-edit ambiguity, outward-action ambiguity, stale follow-up routing, consumer-lineage ambiguity, launch-health honesty, internal-state handling clarity, hook-selection ambiguity, cross-shell misread-correction ambiguity, successor focus ambiguity, and anti-fake-completion handling ambiguity before opening broader retrieval or governance experiments
+- prefer packaging refinements that reduce operator latency, shared-edit ambiguity, outward-action ambiguity, stale follow-up routing, consumer-lineage ambiguity, launch-health honesty, internal-state handling clarity, hook-selection ambiguity, cross-shell misread-correction ambiguity, successor focus ambiguity, anti-fake-completion handling ambiguity, and Claude-style correction ambiguity before opening broader retrieval or governance experiments
 
 ### Phase 827: Eleventh Bounded Trial Wave - Consumer Misread-Guard Clarity
 
@@ -1096,6 +1096,60 @@ Current implementation target:
 
 - one candidate-admission note
 - one recommended fourteenth-trial family
+- one explicit no-go list for what must stay parked
+
+### Phase 836: Fourteenth Bounded Trial Wave - Claude Priority-Correction Clarity
+
+Bounded scope:
+
+- refine `claude_entry_adapter` so it exposes one bounded `priority_correction`
+- preserve the same first-hop order and consumer-contract priority guard
+- keep the change inside Claude-style shell packaging only
+
+Success criteria:
+
+- ToneSoul lands one bounded fourteenth-trial implementation that improves Claude-style recovery discipline without widening transport claims, permissions, or governance semantics
+
+Current implementation target:
+
+- one `priority_correction` packet
+- one live probe proving re-read order and bounded next-step target stay explicit
+- no planner story, no stronger vendor interop story
+
+### Phase 837: Fourteenth Trial Evaluation And Registry Entry
+
+Bounded scope:
+
+- evaluate the fourteenth-trial candidate against the existing evaluator harness
+- classify it honestly as `promote`, `park`, `retire`, `blocked`, or `not_ready_for_trial`
+- register the result in the bounded status surface only
+
+Success criteria:
+
+- ToneSoul has one honest fourteenth-trial result classification and registry-ready record for the Claude-style correction packet
+
+Current implementation target:
+
+- one evaluator-ready record for the fourteenth trial
+- one analyzer conclusion
+- one status-surface update with no shell creep
+
+### Phase 838: Fifteenth Trial Candidate Admission
+
+Bounded scope:
+
+- choose the next bounded candidate only after the fourteenth trial result is visible
+- keep the candidate inside already-allowed mutation classes
+- make the no-go list explicit before a fifteenth trial wave opens
+
+Success criteria:
+
+- ToneSoul has one admitted fifteenth candidate with real operator leverage and no new authority mythology
+
+Current implementation target:
+
+- one candidate-admission note
+- one recommended fifteenth-trial family
 - one explicit no-go list for what must stay parked
 
 ---

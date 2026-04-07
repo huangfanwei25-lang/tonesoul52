@@ -97,6 +97,10 @@ def test_run_claude_entry_adapter_emits_orientation_shell(
         "closeout_attention",
     ]
     assert "closeout_focus" in output["adapter"]
+    assert "priority_correction" in output["adapter"]
+    assert output["adapter"]["priority_correction"]["receiver_rule"].startswith(
+        "Recover the blocked assumption"
+    )
     assert output["adapter"]["closeout_focus"]["status"] in {
         "complete",
         "partial",

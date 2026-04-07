@@ -640,6 +640,89 @@ def _probe_closeout_attention_action_clarity() -> dict[str, Any]:
     }
 
 
+def _probe_claude_priority_correction_clarity() -> dict[str, Any]:
+    from tonesoul.claude_entry_adapter import build_claude_entry_adapter
+
+    session_payload = {
+        "tier": 1,
+        "readiness": {"status": "needs_clarification"},
+        "deliberation_mode_hint": {"suggested_mode": "lightweight_review"},
+        "canonical_center": {
+            "current_short_board": {
+                "present": True,
+                "summary_text": "Phase 835: fourteenth trial candidate admission",
+            }
+        },
+        "closeout_attention": {
+            "status": "partial",
+            "source_family": "bounded_handoff_closeout",
+            "operator_action": "Review unresolved items before treating the handoff as resumable work.",
+            "attention_pressures": ["status=partial", "unresolved=1"],
+            "why_now": "latest compaction closeout is partial",
+        },
+        "mutation_preflight": {
+            "next_followup": {"target": "shared_code_edit.path_overlap_preflight"}
+        },
+        "subsystem_parity": {"next_focus": {"resolved_to": "shared_code_edit.path_overlap_preflight"}},
+        "next_pull": {
+            "receiver_rule": "Pull the full Tier-2 bundle only when shared mutation or contested governance detail is required.",
+            "recommended_commands": [
+                "python scripts/start_agent_session.py --agent trial-wave --tier 2 --no-ack"
+            ],
+        },
+        "consumer_contract": {
+            "receiver_rule": "Recover parent truth before widening context.",
+            "required_read_order": [
+                {"surface": "readiness", "receiver_rule": "gate first"},
+                {"surface": "canonical_center", "receiver_rule": "read parent truth"},
+                {
+                    "surface": "closeout_attention",
+                    "receiver_rule": "read closeout before summary",
+                },
+                {
+                    "surface": "mutation_preflight",
+                    "receiver_rule": "check side effects before action",
+                },
+            ],
+            "misread_guards": [
+                {
+                    "name": "compaction_not_completion",
+                    "rule": "Compaction summaries remain subordinate to closeout status.",
+                    "trigger_surface": "closeout_attention + compaction summary",
+                    "operator_action": "read closeout first",
+                }
+            ],
+            "priority_misread_guard": {
+                "name": "compaction_not_completion",
+                "rule": "Compaction summaries remain subordinate to closeout status.",
+                "trigger_surface": "closeout_attention + compaction summary",
+                "operator_action": "read closeout first",
+                "why_now": "latest closeout is partial",
+            },
+        },
+    }
+    adapter = build_claude_entry_adapter(session_start_payload=session_payload)
+    correction = dict(adapter.get("priority_correction") or {})
+    reread = list(correction.get("re_read_now") or [])
+    present = bool(
+        str(correction.get("name", "")).strip()
+        and str(correction.get("blocked_assumption", "")).strip()
+        and reread == ["readiness", "canonical_center", "closeout_attention", "mutation_preflight"]
+        and str(correction.get("bounded_next_step_target", "")).strip()
+        == "shared_code_edit.path_overlap_preflight"
+    )
+    return {
+        "present": present,
+        "summary_text": (
+            "claude_priority_correction_probe "
+            f"name={str(correction.get('name', '')).strip() or 'missing'} "
+            f"reread={len(reread)} "
+            f"next={str(correction.get('bounded_next_step_target', '')).strip() or 'missing'} "
+            f"rule={'yes' if str(correction.get('receiver_rule', '')).strip() else 'no'}"
+        ),
+    }
+
+
 def _render_markdown(report: dict[str, Any]) -> str:
     lines = [
         "# ToneSoul Self-Improvement Trial Wave",
@@ -727,6 +810,7 @@ def run_self_improvement_trial_wave(
         traces_path=traces_path,
     )
     closeout_attention_probe = _probe_closeout_attention_action_clarity()
+    claude_priority_correction_probe = _probe_claude_priority_correction_clarity()
     operator_retrieval_contract_present = (
         REPO_ROOT / "docs/architecture/TONESOUL_OPERATOR_RETRIEVAL_QUERY_CONTRACT.md"
     ).exists()
@@ -750,6 +834,7 @@ def run_self_improvement_trial_wave(
         consumer_misread_guard_probe=consumer_misread_guard_probe,
         subsystem_parity_focus_probe=subsystem_parity_focus_probe,
         closeout_attention_probe=closeout_attention_probe,
+        claude_priority_correction_probe=claude_priority_correction_probe,
         operator_retrieval_contract_present=operator_retrieval_contract_present,
         compiled_landing_zone_spec_present=compiled_landing_zone_spec_present,
         retrieval_runner_present=retrieval_runner_present,

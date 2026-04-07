@@ -108,6 +108,7 @@ def build_self_improvement_trial_wave(
     consumer_misread_guard_probe: dict[str, Any] | None = None,
     subsystem_parity_focus_probe: dict[str, Any] | None = None,
     closeout_attention_probe: dict[str, Any] | None = None,
+    claude_priority_correction_probe: dict[str, Any] | None = None,
     operator_retrieval_contract_present: bool,
     compiled_landing_zone_spec_present: bool,
     retrieval_runner_present: bool,
@@ -149,6 +150,12 @@ def build_self_improvement_trial_wave(
     closeout_attention_ready = bool((closeout_attention_probe or {}).get("present"))
     closeout_attention_summary = str(
         (closeout_attention_probe or {}).get("summary_text") or ""
+    ).strip()
+    claude_priority_correction_ready = bool(
+        (claude_priority_correction_probe or {}).get("present")
+    )
+    claude_priority_correction_summary = str(
+        (claude_priority_correction_probe or {}).get("summary_text") or ""
     ).strip()
 
     consumer_candidate = {
@@ -1101,6 +1108,77 @@ def build_self_improvement_trial_wave(
         ),
     )
 
+    claude_priority_correction_candidate = {
+        "candidate_record": _build_candidate_record(
+            candidate_id="claude_priority_correction_clarity_v1",
+            target_surface="claude_entry_adapter.priority_correction",
+            target_consumer="claude_style_shell",
+            baseline_story=(
+                "Claude-style entry shells already preserved first-hop order and one must-correct-first object, "
+                "but the actual correction path still required inference."
+            ),
+            candidate_story=(
+                "The Claude-compatible adapter now exposes one bounded priority_correction with blocked assumption, "
+                "re-read order, and bounded next-step target so the shell can recover the same first correction without acting like a planner."
+            ),
+            success_metric="claude_priority_correction_probe.present and consumer_drift_report.status == aligned",
+            failure_mode_watch="adapter correction turns into planner behavior or drifts away from the same first-hop contract",
+            rollback_path="remove priority_correction packaging and fall back to must_correct_first only",
+            overclaim_to_avoid="clearer Claude correction packaging is not vendor-native interop, shared cognition, or stronger transport",
+            scope_limit="Claude-style shell packaging only; no transport change, no permission widening, no governance promotion",
+        ),
+        "analyzer_closeout": _build_analyzer_closeout(
+            status="promote" if (claude_priority_correction_ready and consumer_aligned) else "park",
+            result_story=(
+                "Claude-style entry now recovers one bounded priority correction with enough structure to re-read the same parent surfaces before acting."
+                if (claude_priority_correction_ready and consumer_aligned)
+                else "Claude priority-correction packaging is not yet stable enough to promote."
+            ),
+            evidence_bundle_summary=(
+                claude_priority_correction_summary or "claude_priority_correction_probe unavailable"
+            ),
+            unresolved_items=(
+                [
+                    "clearer Claude correction packaging improves shell parity, not transport or reasoning quality",
+                    "future shells must keep priority correction subordinate to the same consumer contract and first-hop order",
+                ]
+                if (claude_priority_correction_ready and consumer_aligned)
+                else [
+                    "adapter correction packaging is not yet preserved cleanly enough",
+                    "consumer drift must stay aligned before promotion",
+                ]
+            ),
+            failure_pressure="low" if (claude_priority_correction_ready and consumer_aligned) else "meaningful",
+            rollback_posture="bounded_restore",
+            promotion_limit="does not authorize vendor-native interop claims, stronger permissions, or transport promotion",
+            overclaim_warning="clearer Claude correction packaging is not shared cognition, better transport, or stronger authority",
+            next_action=(
+                "keep Claude priority correction bounded while admitting the next candidate"
+                if (claude_priority_correction_ready and consumer_aligned)
+                else "repair Claude priority-correction packaging before reopening this candidate"
+            ),
+        ),
+    }
+    claude_priority_correction_candidate["result_surface"] = _build_result_surface(
+        status=claude_priority_correction_candidate["analyzer_closeout"]["status"],
+        registry_recommendation=(
+            "promotion_ready_result"
+            if (claude_priority_correction_ready and consumer_aligned)
+            else "distilled_lesson"
+        ),
+        supersession_posture="active_until_newer_claude_priority_correction_trials_exist",
+        replay_rule="prefer_status_surface_then_probe_current_claude_entry_adapter_shape_before_reusing_the_story",
+        residue_posture=(
+            "keep_visible_as_current_packaging_result"
+            if (claude_priority_correction_ready and consumer_aligned)
+            else "park_in_status_surface_until_claude_priority_correction_clarity_is_stable"
+        ),
+        visibility="status_surface_only",
+        carry_forward_rule=(
+            "may inform future Claude-style shell packaging trials, but does not authorize transport promotion or stronger vendor interop claims"
+        ),
+    )
+
     candidates = [
         consumer_candidate,
         retrieval_candidate,
@@ -1116,6 +1194,7 @@ def build_self_improvement_trial_wave(
         consumer_misread_guard_candidate,
         subsystem_parity_focus_candidate,
         closeout_attention_candidate,
+        claude_priority_correction_candidate,
     ]
     outcome_counts = _count_outcomes(candidates)
     status = "completed"
@@ -1149,8 +1228,9 @@ def build_self_improvement_trial_wave(
             "consumer_misread_guard_clarity",
             "subsystem_parity_focus_clarity",
             "closeout_attention_action_clarity",
+            "claude_priority_correction_clarity",
         ],
         "outcome_counts": outcome_counts,
         "candidates": candidates,
-        "next_short_board": "Phase 835: Fourteenth Trial Candidate Admission",
+        "next_short_board": "Phase 838: Fifteenth Trial Candidate Admission",
     }

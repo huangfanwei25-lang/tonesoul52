@@ -44,6 +44,7 @@ The adapter should preserve:
 - `first_hop_order`
 - `must_read_now`
 - `must_not_assume`
+- `priority_correction`
 - `current_context`
 - `closeout_focus`
 - `bounded_pulls`
@@ -84,6 +85,20 @@ When `closeout_attention` is present, the adapter should preserve one bounded `c
 
 This remains orientation-only packaging.
 It must not become a planner or a stronger authority lane.
+
+When a `priority_misread_guard` is present, the adapter should also preserve one bounded
+`priority_correction` with:
+
+- the current misread `name`
+- the `trigger_surface`
+- the blocked assumption
+- the bounded `operator_action`
+- `re_read_now`
+- the current `bounded_next_step_target`
+
+This is still orientation-only packaging.
+It should help a Claude-style shell recover the same first correction as other consumers,
+but it must not become a planner, transport story, or permission system.
 
 ## Non-Goals
 

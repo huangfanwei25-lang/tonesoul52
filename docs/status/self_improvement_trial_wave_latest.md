@@ -1,6 +1,6 @@
 # ToneSoul Self-Improvement Trial Wave
 
-**Summary**: `self_improvement_trial_wave promote=13 park=1 retire=0 blocked=0`
+**Summary**: `self_improvement_trial_wave promote=14 park=1 retire=0 blocked=0`
 
 > Trial-wave outcomes are bounded self-improvement results. They may inform future patches or parking decisions, but they do not become governance truth, identity truth, or hot-memory authority.
 
@@ -20,10 +20,11 @@
 - `consumer_misread_guard_clarity`
 - `subsystem_parity_focus_clarity`
 - `closeout_attention_action_clarity`
+- `claude_priority_correction_clarity`
 
 ## Outcomes
 
-- `promote`: `13`
+- `promote`: `14`
 - `park`: `1`
 - `retire`: `0`
 - `blocked`: `0`
@@ -214,7 +215,20 @@
     - future shells must keep closeout attention subordinate to consumer contract and bounded handoff truth
   - promotion_limit: `does not authorize planner behavior, stronger permissions, or governance promotion`
   - next_action: `keep closeout-attention handling bounded while admitting the next candidate`
+- `claude_priority_correction_clarity_v1` -> `promote`
+  - target_surface: `claude_entry_adapter.priority_correction`
+  - success_metric: `claude_priority_correction_probe.present and consumer_drift_report.status == aligned`
+  - result_story: Claude-style entry now recovers one bounded priority correction with enough structure to re-read the same parent surfaces before acting.
+  - evidence: `claude_priority_correction_probe name=compaction_not_completion reread=4 next=shared_code_edit.path_overlap_preflight rule=yes`
+  - result_surface: `promoted_result`
+  - replay_rule: `prefer_status_surface_then_probe_current_claude_entry_adapter_shape_before_reusing_the_story`
+  - residue_posture: `keep_visible_as_current_packaging_result`
+  - unresolved_items:
+    - clearer Claude correction packaging improves shell parity, not transport or reasoning quality
+    - future shells must keep priority correction subordinate to the same consumer contract and first-hop order
+  - promotion_limit: `does not authorize vendor-native interop claims, stronger permissions, or transport promotion`
+  - next_action: `keep Claude priority correction bounded while admitting the next candidate`
 
 ## Next Short Board
 
-- `Phase 835: Fourteenth Trial Candidate Admission`
+- `Phase 838: Fifteenth Trial Candidate Admission`

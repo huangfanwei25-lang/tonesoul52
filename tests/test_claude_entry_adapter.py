@@ -80,6 +80,20 @@ def test_build_claude_entry_adapter_preserves_first_hop_order() -> None:
     assert adapter["must_correct_first"]["name"] == "compaction_not_completion"
     assert adapter["must_correct_first"]["trigger_surface"] == "closeout_attention + compaction summary"
     assert adapter["must_correct_first"]["operator_action"] == "read closeout first"
+    assert adapter["priority_correction"]["name"] == "compaction_not_completion"
+    assert adapter["priority_correction"]["blocked_assumption"] == (
+        "Compaction summaries remain subordinate to closeout status."
+    )
+    assert adapter["priority_correction"]["re_read_now"] == [
+        "readiness",
+        "canonical_center",
+        "closeout_attention",
+        "mutation_preflight",
+    ]
+    assert (
+        adapter["priority_correction"]["bounded_next_step_target"]
+        == "shared_code_edit.path_overlap_preflight"
+    )
     assert adapter["current_context"]["closeout_status"] == "partial"
     assert adapter["closeout_focus"]["source_family"] == "bounded_handoff_closeout"
     assert adapter["closeout_focus"]["attention_pressures"] == [

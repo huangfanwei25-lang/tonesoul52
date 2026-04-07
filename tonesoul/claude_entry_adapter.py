@@ -5,6 +5,26 @@ from __future__ import annotations
 from typing import Any
 
 
+def _build_priority_correction(
+    *,
+    priority_misread_guard: dict[str, Any],
+    first_hop_order: list[str],
+    next_followup_target: str,
+) -> dict[str, Any]:
+    return {
+        "name": str(priority_misread_guard.get("name", "")).strip(),
+        "trigger_surface": str(priority_misread_guard.get("trigger_surface", "")).strip(),
+        "blocked_assumption": str(priority_misread_guard.get("rule", "")).strip(),
+        "operator_action": str(priority_misread_guard.get("operator_action", "")).strip(),
+        "why_now": str(priority_misread_guard.get("why_now", "")).strip(),
+        "re_read_now": [surface for surface in first_hop_order[:4] if surface],
+        "bounded_next_step_target": str(next_followup_target).strip(),
+        "receiver_rule": (
+            "Recover the blocked assumption through the same first-hop order before widening context or acting."
+        ),
+    }
+
+
 def build_claude_entry_adapter(*, session_start_payload: dict[str, Any]) -> dict[str, Any]:
     """Translate a Tier-1 session-start bundle into a Claude-style entry shell."""
 
@@ -51,6 +71,11 @@ def build_claude_entry_adapter(*, session_start_payload: dict[str, Any]) -> dict
             (mutation_preflight.get("next_followup") or {}).get("target", "")
         ).strip(),
     }
+    priority_correction = _build_priority_correction(
+        priority_misread_guard=priority_misread_guard,
+        first_hop_order=first_hop_order,
+        next_followup_target=current_context["next_followup_target"],
+    )
 
     return {
         "present": True,
@@ -71,6 +96,7 @@ def build_claude_entry_adapter(*, session_start_payload: dict[str, Any]) -> dict
             "operator_action": str(priority_misread_guard.get("operator_action", "")).strip(),
             "why_now": str(priority_misread_guard.get("why_now", "")).strip(),
         },
+        "priority_correction": priority_correction,
         "receiver_rule": str(consumer_contract.get("receiver_rule", "")).strip(),
         "surface_versioning": surface_versioning,
         "shell_rule": (
