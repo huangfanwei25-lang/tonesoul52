@@ -923,18 +923,18 @@ This is the key improvement over the current gap:
 
 ## Current Recommendation
 
-The program is now active through `Phase 840`.
+The program is now active through `Phase 843`.
 
 Current short board:
 
-- `Phase 841: Sixteenth Trial Candidate Admission`
+- `Phase 844: Seventeenth Trial Candidate Admission`
 
 Recommended discipline:
 
 - keep trial outcomes visible through dedicated status artifacts first
 - do not push self-improvement history into `session-start`, `observer-window`, or packet defaults yet
 - keep new trials inside already-allowed mutation classes until a compact result-surface design proves stable
-- prefer packaging refinements that reduce operator latency, shared-edit ambiguity, outward-action ambiguity, stale follow-up routing, consumer-lineage ambiguity, launch-health honesty, internal-state handling clarity, hook-selection ambiguity, cross-shell misread-correction ambiguity, successor focus ambiguity, anti-fake-completion handling ambiguity, Claude-style correction ambiguity, and hot-memory pull-boundary ambiguity before opening broader retrieval or governance experiments
+- prefer packaging refinements that reduce operator latency, shared-edit ambiguity, outward-action ambiguity, stale follow-up routing, consumer-lineage ambiguity, launch-health honesty, internal-state handling clarity, hook-selection ambiguity, cross-shell misread-correction ambiguity, successor focus ambiguity, anti-fake-completion handling ambiguity, Claude-style correction ambiguity, hot-memory pull-boundary ambiguity, and dashboard reference-authority ambiguity before opening broader retrieval or governance experiments
 
 ### Phase 827: Eleventh Bounded Trial Wave - Consumer Misread-Guard Clarity
 
@@ -1205,6 +1205,42 @@ Current implementation target:
 - one candidate-admission note
 - one recommended sixteenth-trial family
 - one explicit no-go list for what must stay parked
+
+### Phase 842: Sixteenth Bounded Trial Wave - Memory-Panel Tier Subordination
+
+Bounded scope:
+
+- refine `dashboard.memory_panel` so it states `auxiliary_only` reference boundaries explicitly
+- preserve the panel as reference selection, not operator truth, hot-memory truth, or a second control plane
+- keep closeout caution visible when partial work is still active
+
+Success criteria:
+
+- ToneSoul lands one bounded sixteenth-trial implementation that improves dashboard reference discipline without widening retrieval or governance authority
+
+Current implementation target:
+
+- one memory-panel view-model refinement
+- one probe proving boundary class, closeout caution, and selected-count summary are explicit
+- no retrieval runner, no new control plane, no first-hop shell creep
+
+### Phase 843: Sixteenth Trial Evaluation And Registry Entry
+
+Bounded scope:
+
+- evaluate the sixteenth-trial candidate against the existing evaluator harness
+- classify it honestly as `promote`, `park`, `retire`, `blocked`, or `not_ready_for_trial`
+- register the result in the bounded status surface only
+
+Success criteria:
+
+- ToneSoul has one honest sixteenth-trial result classification and registry-ready record for the dashboard memory-panel boundary packet
+
+Current implementation target:
+
+- one evaluator-ready record for the sixteenth trial
+- one analyzer conclusion
+- one status-surface update with no shell creep
 
 ---
 

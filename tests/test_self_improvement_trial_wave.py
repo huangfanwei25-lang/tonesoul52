@@ -68,6 +68,10 @@ def _build_report(**overrides):
             "present": True,
             "summary_text": "hot_memory_pull_boundary_probe posture=review_handoff_before_deeper_pull stop_at=bounded_handoff dashboard_sync=yes",
         },
+        "memory_panel_probe": {
+            "present": True,
+            "summary_text": "memory_panel_probe boundary=auxiliary_only caution=yes selected=2",
+        },
         "operator_retrieval_contract_present": True,
         "compiled_landing_zone_spec_present": True,
         "retrieval_runner_present": False,
@@ -83,12 +87,13 @@ def test_build_self_improvement_trial_wave_yields_expected_outcomes() -> None:
     surface_statuses = [item["result_surface"]["surface_status"] for item in report["candidates"]]
 
     assert report["status"] == "completed"
-    assert report["outcome_counts"]["promote"] == 15
+    assert report["outcome_counts"]["promote"] == 16
     assert report["outcome_counts"]["park"] == 1
-    assert report["next_short_board"] == "Phase 841: Sixteenth Trial Candidate Admission"
+    assert report["next_short_board"] == "Phase 844: Seventeenth Trial Candidate Admission"
     assert statuses == [
         "promote",
         "park",
+        "promote",
         "promote",
         "promote",
         "promote",
@@ -140,6 +145,7 @@ def test_build_self_improvement_trial_wave_parks_consumer_candidate_on_drift() -
         ("closeout_attention_probe", 13, "closeout_attention_action_clarity_v1"),
         ("claude_priority_correction_probe", 14, "claude_priority_correction_clarity_v1"),
         ("hot_memory_pull_boundary_probe", 15, "hot_memory_pull_boundary_clarity_v1"),
+        ("memory_panel_probe", 16, "memory_panel_tier_subordination_v1"),
     ],
 )
 def test_build_self_improvement_trial_wave_parks_candidate_when_probe_missing(

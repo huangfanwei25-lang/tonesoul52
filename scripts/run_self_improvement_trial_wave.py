@@ -805,6 +805,51 @@ def _probe_hot_memory_pull_boundary_clarity() -> dict[str, Any]:
     }
 
 
+def _probe_memory_panel_tier_subordination() -> dict[str, Any]:
+    import importlib.util
+
+    module_path = (
+        REPO_ROOT / "apps" / "dashboard" / "frontend" / "components" / "memory_panel.py"
+    )
+    frontend_root = module_path.parents[1]
+    if str(frontend_root) not in sys.path:
+        sys.path.insert(0, str(frontend_root))
+    spec = importlib.util.spec_from_file_location("dashboard_memory_panel_probe", module_path)
+    if spec is None or spec.loader is None:
+        return {
+            "present": False,
+            "summary_text": "memory_panel_probe loader=missing",
+        }
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    build_memory_panel_view_model = module.build_memory_panel_view_model
+
+    payload = build_memory_panel_view_model(
+        tier0_shell={"readiness_status": "pass"},
+        tier1_shell={
+            "canonical_cards": {"short_board": "Phase 781"},
+            "closeout_attention": {"summary_text": "latest closeout is partial"},
+        },
+        selected_count=2,
+    )
+    present = bool(
+        str(payload.get("reference_boundary_class", "")).strip() == "auxiliary_only"
+        and "reference selection" in str(payload.get("subtitle", ""))
+        and "Tier 0 / Tier 1" in str(payload.get("operator_note", ""))
+        and str(payload.get("selection_caution", "")).strip()
+        and str(payload.get("selected_count_summary", "")).strip() == "已選 2 份參考資料"
+    )
+    return {
+        "present": present,
+        "summary_text": (
+            "memory_panel_probe "
+            f"boundary={str(payload.get('reference_boundary_class', '')).strip() or 'missing'} "
+            f"caution={'yes' if str(payload.get('selection_caution', '')).strip() else 'no'} "
+            f"selected={str(payload.get('selected_count', '')).strip() or 'missing'}"
+        ),
+    }
+
+
 def _render_markdown(report: dict[str, Any]) -> str:
     lines = [
         "# ToneSoul Self-Improvement Trial Wave",
@@ -894,6 +939,7 @@ def run_self_improvement_trial_wave(
     closeout_attention_probe = _probe_closeout_attention_action_clarity()
     claude_priority_correction_probe = _probe_claude_priority_correction_clarity()
     hot_memory_pull_boundary_probe = _probe_hot_memory_pull_boundary_clarity()
+    memory_panel_probe = _probe_memory_panel_tier_subordination()
     operator_retrieval_contract_present = (
         REPO_ROOT / "docs/architecture/TONESOUL_OPERATOR_RETRIEVAL_QUERY_CONTRACT.md"
     ).exists()
@@ -919,6 +965,7 @@ def run_self_improvement_trial_wave(
         closeout_attention_probe=closeout_attention_probe,
         claude_priority_correction_probe=claude_priority_correction_probe,
         hot_memory_pull_boundary_probe=hot_memory_pull_boundary_probe,
+        memory_panel_probe=memory_panel_probe,
         operator_retrieval_contract_present=operator_retrieval_contract_present,
         compiled_landing_zone_spec_present=compiled_landing_zone_spec_present,
         retrieval_runner_present=retrieval_runner_present,

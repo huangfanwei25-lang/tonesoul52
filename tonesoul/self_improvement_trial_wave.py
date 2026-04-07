@@ -110,6 +110,7 @@ def build_self_improvement_trial_wave(
     closeout_attention_probe: dict[str, Any] | None = None,
     claude_priority_correction_probe: dict[str, Any] | None = None,
     hot_memory_pull_boundary_probe: dict[str, Any] | None = None,
+    memory_panel_probe: dict[str, Any] | None = None,
     operator_retrieval_contract_present: bool,
     compiled_landing_zone_spec_present: bool,
     retrieval_runner_present: bool,
@@ -162,6 +163,8 @@ def build_self_improvement_trial_wave(
     hot_memory_pull_boundary_summary = str(
         (hot_memory_pull_boundary_probe or {}).get("summary_text") or ""
     ).strip()
+    memory_panel_ready = bool((memory_panel_probe or {}).get("present"))
+    memory_panel_summary = str((memory_panel_probe or {}).get("summary_text") or "").strip()
 
     consumer_candidate = {
         "candidate_record": _build_candidate_record(
@@ -1253,6 +1256,71 @@ def build_self_improvement_trial_wave(
         ),
     )
 
+    memory_panel_candidate = {
+        "candidate_record": _build_candidate_record(
+            candidate_id="memory_panel_tier_subordination_v1",
+            target_surface="dashboard.memory_panel.reference_boundary",
+            target_consumer="dashboard_operator_shell",
+            baseline_story=(
+                "The dashboard memory panel already behaved like a secondary reference selector, but its boundary language was weak and the display layer still had encoding noise."
+            ),
+            candidate_story=(
+                "Memory panel now says clearly that reference selection is auxiliary-only, keeps closeout caution visible, and stays subordinate to Tier 0 / Tier 1 operator truth."
+            ),
+            success_metric="memory_panel_probe.present and consumer_drift_report.status == aligned",
+            failure_mode_watch="reference selection starts reading like operator truth, hot-memory truth, or a second control panel",
+            rollback_path="restore the previous memory-panel wording and drop the extra boundary cues",
+            overclaim_to_avoid="a cleaner memory panel is not better memory semantics, retrieval quality, or shared cognition",
+            scope_limit="dashboard memory-panel packaging only; no retrieval runtime, no identity change, no governance promotion",
+        ),
+        "analyzer_closeout": _build_analyzer_closeout(
+            status="promote" if (memory_panel_ready and consumer_aligned) else "park",
+            result_story=(
+                "Dashboard memory panel now presents reference selection as an explicitly auxiliary layer and keeps closeout caution visible."
+                if (memory_panel_ready and consumer_aligned)
+                else "Dashboard memory-panel tier subordination is not yet stable enough to promote."
+            ),
+            evidence_bundle_summary=(memory_panel_summary or "memory_panel_probe unavailable"),
+            unresolved_items=(
+                [
+                    "clearer memory-panel packaging improves operator discipline, not retrieval quality or memory semantics",
+                    "future dashboard changes must keep reference selection subordinate to Tier 0 / Tier 1 / Tier 2 operator truth",
+                ]
+                if (memory_panel_ready and consumer_aligned)
+                else [
+                    "memory-panel boundary language is not yet preserved cleanly enough",
+                    "consumer drift must stay aligned before promotion",
+                ]
+            ),
+            failure_pressure="low" if (memory_panel_ready and consumer_aligned) else "meaningful",
+            rollback_posture="bounded_restore",
+            promotion_limit="does not authorize retrieval promotion, hotter memory claims, or a second operator control plane",
+            overclaim_warning="clearer memory-panel boundaries are not improved memory transport, retrieval quality, or shared selfhood",
+            next_action=(
+                "keep the memory panel subordinate while admitting the next candidate"
+                if (memory_panel_ready and consumer_aligned)
+                else "repair memory-panel boundary packaging before reopening this candidate"
+            ),
+        ),
+    }
+    memory_panel_candidate["result_surface"] = _build_result_surface(
+        status=memory_panel_candidate["analyzer_closeout"]["status"],
+        registry_recommendation=(
+            "promotion_ready_result" if (memory_panel_ready and consumer_aligned) else "distilled_lesson"
+        ),
+        supersession_posture="active_until_newer_memory_panel_boundary_trials_exist",
+        replay_rule="prefer_status_surface_then_probe_current_memory_panel_view_model_before_reusing_the_story",
+        residue_posture=(
+            "keep_visible_as_current_packaging_result"
+            if (memory_panel_ready and consumer_aligned)
+            else "park_in_status_surface_until_memory_panel_tier_subordination_is_stable"
+        ),
+        visibility="status_surface_only",
+        carry_forward_rule=(
+            "may inform future dashboard reference-panel packaging, but does not authorize retrieval promotion or a second operator truth surface"
+        ),
+    )
+
     candidates = [
         consumer_candidate,
         retrieval_candidate,
@@ -1270,6 +1338,7 @@ def build_self_improvement_trial_wave(
         closeout_attention_candidate,
         claude_priority_correction_candidate,
         hot_memory_pull_boundary_candidate,
+        memory_panel_candidate,
     ]
     outcome_counts = _count_outcomes(candidates)
     status = "completed"
@@ -1305,8 +1374,9 @@ def build_self_improvement_trial_wave(
             "closeout_attention_action_clarity",
             "claude_priority_correction_clarity",
             "hot_memory_pull_boundary_clarity",
+            "memory_panel_tier_subordination_clarity",
         ],
         "outcome_counts": outcome_counts,
         "candidates": candidates,
-        "next_short_board": "Phase 841: Sixteenth Trial Candidate Admission",
+        "next_short_board": "Phase 844: Seventeenth Trial Candidate Admission",
     }

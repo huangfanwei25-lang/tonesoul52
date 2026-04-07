@@ -39,8 +39,13 @@ def test_build_memory_panel_view_model_keeps_reference_surface_secondary():
     assert result["current_short_board"] == "Phase 781"
     assert result["closeout_attention"] == "latest closeout is partial"
     assert result["selected_count"] == 3
+    assert result["reference_boundary_class"] == "auxiliary_only"
+    assert result["selected_count_summary"] == "已選 3 份參考資料"
     assert "reference selection" in result["subtitle"]
     assert "Tier 0 / Tier 1" in result["operator_note"]
+    assert "must not override Tier 0 / Tier 1 / Tier 2 operator truth" in result["reference_boundary"]
+    assert "Do not use reference material to smooth over partial or blocked work." in result["selection_caution"]
+    assert result["section_labels"]["conversation"] == "對話記錄"
 
 
 def test_build_memory_panel_view_model_handles_missing_shells():
@@ -53,3 +58,6 @@ def test_build_memory_panel_view_model_handles_missing_shells():
     assert result["tier0_readiness"] == "unknown"
     assert result["current_short_board"] == ""
     assert result["closeout_attention"] == ""
+    assert result["reference_boundary_class"] == "auxiliary_only"
+    assert result["selection_caution"] == ""
+    assert result["selected_count_summary"] == "已選 0 份參考資料"

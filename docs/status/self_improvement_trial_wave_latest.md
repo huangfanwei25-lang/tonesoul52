@@ -1,6 +1,6 @@
 # ToneSoul Self-Improvement Trial Wave
 
-**Summary**: `self_improvement_trial_wave promote=15 park=1 retire=0 blocked=0`
+**Summary**: `self_improvement_trial_wave promote=16 park=1 retire=0 blocked=0`
 
 > Trial-wave outcomes are bounded self-improvement results. They may inform future patches or parking decisions, but they do not become governance truth, identity truth, or hot-memory authority.
 
@@ -22,10 +22,11 @@
 - `closeout_attention_action_clarity`
 - `claude_priority_correction_clarity`
 - `hot_memory_pull_boundary_clarity`
+- `memory_panel_tier_subordination_clarity`
 
 ## Outcomes
 
-- `promote`: `15`
+- `promote`: `16`
 - `park`: `1`
 - `retire`: `0`
 - `blocked`: `0`
@@ -242,7 +243,20 @@
     - future shells must keep current_pull_boundary subordinate to canonical_center and live coordination truth
   - promotion_limit: `does not authorize deeper default pulls, retrieval promotion, or transport claims`
   - next_action: `keep hot-memory pull boundaries bounded while admitting the next candidate`
+- `memory_panel_tier_subordination_v1` -> `promote`
+  - target_surface: `dashboard.memory_panel.reference_boundary`
+  - success_metric: `memory_panel_probe.present and consumer_drift_report.status == aligned`
+  - result_story: Dashboard memory panel now presents reference selection as an explicitly auxiliary layer and keeps closeout caution visible.
+  - evidence: `memory_panel_probe boundary=auxiliary_only caution=yes selected=2`
+  - result_surface: `promoted_result`
+  - replay_rule: `prefer_status_surface_then_probe_current_memory_panel_view_model_before_reusing_the_story`
+  - residue_posture: `keep_visible_as_current_packaging_result`
+  - unresolved_items:
+    - clearer memory-panel packaging improves operator discipline, not retrieval quality or memory semantics
+    - future dashboard changes must keep reference selection subordinate to Tier 0 / Tier 1 / Tier 2 operator truth
+  - promotion_limit: `does not authorize retrieval promotion, hotter memory claims, or a second operator control plane`
+  - next_action: `keep the memory panel subordinate while admitting the next candidate`
 
 ## Next Short Board
 
-- `Phase 841: Sixteenth Trial Candidate Admission`
+- `Phase 844: Seventeenth Trial Candidate Admission`

@@ -170,9 +170,9 @@
   - bounded outer-shell preflight chain for shared edits, publish/push posture, and task-board parking discipline
   - bounded self-improvement foundation: evaluator harness, experiment lineage boundary, mutation space, analyzer gate, first trial wave, and promotion-ready result surface discipline
 - Current short board:
-  - Phase 823: admit the tenth bounded self-improvement candidate without reopening retrieval mythology, governance semantics, or selfhood inflation
+  - Phase 844: admit the seventeenth bounded self-improvement candidate without reopening retrieval mythology, governance semantics, selfhood inflation, or dashboard reference-surface authority drift
 - After that:
-  - `ToneSoul Self-Improvement Loop v0` is now the active bucket, with `Phase 790-804` landed and the next work focused on fourth-candidate selection rather than expanding shell surface area
+  - `ToneSoul Self-Improvement Loop v0` is now the active bucket, with `Phase 790-843` landed and the next work focused on seventeenth-candidate selection rather than expanding shell surface area
   - successor/hot-memory bucket is now baseline-frozen unless a fresh real-world misread reopens it
   - task-board governance should stay boring and explicit before any new theory bucket opens
   - hook-chain discoverability should stay packaging-oriented, not a new permission universe
@@ -2275,8 +2275,26 @@
 - [x] register the outcome in the bounded status surface without leaking it into first-hop shells
 **Success Criteria**: ToneSoul has one honest fifteenth-trial result classification and registry-ready record for `hot_memory_pull_boundary_clarity_v1`.
 
-## Phase 841: Sixteenth Trial Candidate Admission (2026-04-07, planned)
-- [ ] choose the next bounded self-improvement candidate after the fifteenth trial result and current registry/status surface are visible
-- [ ] keep the next candidate inside allowed mutation classes and away from retrieval mythology, governance semantics, identity, transport claims, predictive-math inflation, selfhood mythology, permission-system creep, consumer-shell planner drift, subsystem-parity authority inflation, closeout-attention planner drift, vendor-interop mythology, and hot-memory planner drift
-- [ ] make the no-go list explicit before opening a sixteenth trial wave
+## Phase 841: Sixteenth Trial Candidate Admission (2026-04-07)
+- [x] choose the next bounded self-improvement candidate after the fifteenth trial result and current registry/status surface are visible
+- [x] keep the next candidate inside allowed mutation classes and away from retrieval mythology, governance semantics, identity, transport claims, predictive-math inflation, selfhood mythology, permission-system creep, consumer-shell planner drift, subsystem-parity authority inflation, closeout-attention planner drift, vendor-interop mythology, and hot-memory planner drift
+- [x] make the no-go list explicit before opening a sixteenth trial wave
 **Success Criteria**: ToneSoul has one admitted sixteenth candidate that is narrower than shell redesign and still worth real operator leverage.
+
+## Phase 842: Sixteenth Bounded Trial Wave - Memory-Panel Tier Subordination (2026-04-07)
+- [x] refine `dashboard.memory_panel` so it states `auxiliary_only` reference boundaries explicitly instead of relying on implied secondariness
+- [x] preserve the panel's role as reference selection while surfacing closeout caution and Tier 0 / Tier 1 dependence more clearly
+- [x] keep the change inside dashboard packaging only: no retrieval promotion, no second control plane, no operator-truth flattening
+**Success Criteria**: ToneSoul lands one bounded sixteenth-trial implementation for `memory_panel_tier_subordination_v1` that improves dashboard reference discipline without widening authority.
+
+## Phase 843: Sixteenth Trial Evaluation And Registry Entry (2026-04-07)
+- [x] evaluate the `memory_panel_tier_subordination_v1` trial against the existing evaluator harness and analyzer gate
+- [x] classify the result honestly as `promote`, `park`, `retire`, `blocked`, or `not_ready_for_trial`
+- [x] register the outcome in the bounded status surface without leaking it into first-hop shells
+**Success Criteria**: ToneSoul has one honest sixteenth-trial result classification and registry-ready record for `memory_panel_tier_subordination_v1`.
+
+## Phase 844: Seventeenth Trial Candidate Admission (2026-04-07, planned)
+- [ ] choose the next bounded self-improvement candidate after the sixteenth trial result and current registry/status surface are visible
+- [ ] keep the next candidate inside allowed mutation classes and away from retrieval mythology, governance semantics, identity, transport claims, predictive-math inflation, selfhood mythology, permission-system creep, dashboard-control-plane drift, and memory-panel authority inflation
+- [ ] make the no-go list explicit before opening a seventeenth trial wave
+**Success Criteria**: ToneSoul has one admitted seventeenth candidate that is narrower than shell redesign and still worth real operator leverage.
