@@ -41,7 +41,8 @@ from typing import Any, Dict, List, Optional, Tuple
 # Constants
 # ---------------------------------------------------------------------------
 
-_AEGIS_DIR = Path(".aegis")
+_REPO_ROOT = Path(__file__).resolve().parents[1]
+_AEGIS_DIR = _REPO_ROOT / ".aegis"
 _KEYS_DIR = _AEGIS_DIR / "keys"
 
 # Prompt injection / poisoning patterns (defensive, not exhaustive)
@@ -304,7 +305,7 @@ def validate_content(trace_dict: Dict[str, Any]) -> ContentCheck:
 
     # Set severity
     if not result.clean:
-        result.severity = "blocked" if len(result.violations) >= 3 else "warning"
+        result.severity = "blocked" if len(result.violations) >= 2 else "warning"
 
     return result
 

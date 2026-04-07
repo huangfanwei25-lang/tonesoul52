@@ -66,9 +66,10 @@ class EscapeValve:
         self._consecutive_failures: int = 0
 
     def reset(self) -> None:
-        """Reset failure history and consecutive counts for a new attempt sequence."""
+        """Reset failure history, consecutive counts, and circuit breaker."""
         self._failure_history = []
         self._consecutive_failures = 0
+        self._circuit_open = False
 
     def record_failure(self, reason: str) -> None:
         """Record one failure."""

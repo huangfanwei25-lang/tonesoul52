@@ -395,11 +395,11 @@ class ReflexEvaluator:
             # Hard enforcement in hard mode, soften in soft mode
             trigger_reflection = True
             if self.mode == "hard":
-                disclaimer = (
+                blocked_message = (
                     "[治理危機] soul integral 處於危機狀態 "
-                    f"({snapshot.soul_integral:.2f})。"
+                    f"({snapshot.soul_integral:.2f})，已攔截輸出。"
                 )
-                action = ReflexAction.SOFTEN  # Escalated in Phase 2 to BLOCK
+                action = ReflexAction.BLOCK
             else:
                 disclaimer = (
                     "[治理危機] soul integral 處於危機狀態 "
@@ -522,11 +522,13 @@ def enforce_vows_lightweight(
             ),
         }
     except Exception as exc:
-        logger.warning("enforce_vows_lightweight failed: %s", exc)
+        logger.warning("enforce_vows_lightweight failed: %s — failing closed", exc)
         return {
-            "passed": True,
-            "blocked": False,
-            "repair_needed": False,
+            "passed": False,
+            "blocked": True,
+            "repair_needed": True,
             "flags": [f"vow_check_error: {exc}"],
-            "replacement": None,
+            "replacement": (
+                "此回應未能通過誓言檢查（內部錯誤），已被預防性攔截。"
+            ),
         }
