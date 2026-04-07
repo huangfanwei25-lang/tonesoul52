@@ -256,22 +256,23 @@ def render_status_panel(
     self_improvement = view_model["self_improvement"]
     telemetry = view_model["telemetry"]
 
-    st.markdown("### Tier-Aligned Status")
+    st.markdown("### 系統狀態總覽")
     st.caption(operator_posture["note"])
     st.caption(operator_posture["primary_rule"])
 
+    # Tier 0 · Instant Gate
     with st.container(border=True):
-        st.markdown("**Tier 0 · Instant Gate**")
+        st.markdown("**快速狀態**")
         col_a, col_b, col_c = st.columns(3)
         with col_a:
-            st.metric("Readiness", tier0["readiness"])
+            st.metric("就緒", tier0["readiness"])
         with col_b:
-            st.metric("Track", tier0["task_track"])
+            st.metric("路徑", tier0["task_track"])
         with col_c:
-            st.metric("Mode", tier0["deliberation_mode"])
+            st.metric("模式", tier0["deliberation_mode"])
 
         if tier0["next_followup_command"]:
-            st.caption("Next bounded move")
+            st.caption("下一步建議")
             st.code(tier0["next_followup_command"], language="bash")
         if tier0["receiver_rule"]:
             st.caption(tier0["receiver_rule"])
@@ -284,8 +285,9 @@ def render_status_panel(
                 )
             )
 
+    # Tier 1 · Orientation Shell
     with st.container(border=True):
-        st.markdown("**Tier 1 · Orientation Shell**")
+        st.markdown("**工作方向**")
         st.markdown(tier1["short_board"])
         if tier1["successor_correction"]:
             st.caption(tier1["successor_correction"])
@@ -298,68 +300,69 @@ def render_status_panel(
         for col, (label, key) in zip(
             parity_cols,
             [
-                ("Baseline", "baseline"),
-                ("Beta", "beta_usable"),
-                ("Partial", "partial"),
-                ("Deferred", "deferred"),
+                ("基線", "baseline"),
+                ("Beta 可用", "beta_usable"),
+                ("部分完成", "partial"),
+                ("延後", "deferred"),
             ],
         ):
             with col:
                 st.metric(label, tier1["parity_counts"][key])
 
         if tier1["source_precedence"]:
-            with st.expander("Source precedence", expanded=False):
+            with st.expander("來源優先序", expanded=False):
                 st.caption(tier1["source_precedence"])
 
     if self_improvement["present"]:
         st.caption(operator_posture["secondary_rule"])
-        st.caption("Secondary self-improvement posture: " + self_improvement["summary_text"])
-        with st.expander("Self-improvement result surface", expanded=False):
+        st.caption("自我改善狀態: " + self_improvement["summary_text"])
+        with st.expander("自我改善結果", expanded=False):
             st.caption(self_improvement["receiver_rule"])
             if self_improvement["top_result"]:
-                st.markdown(f"- Top result: `{self_improvement['top_result']}`")
+                st.markdown(f"- 最佳結果: `{self_improvement['top_result']}`")
             counts = self_improvement["outcome_counts"]
             st.markdown(
-                "- Outcome counts: "
-                f"promote={counts['promote']} | park={counts['park']} | "
-                f"retire={counts['retire']} | blocked={counts['blocked']}"
+                "- 結果統計: "
+                f"升級={counts['promote']} | 暫存={counts['park']} | "
+                f"淘汰={counts['retire']} | 受阻={counts['blocked']}"
             )
             if self_improvement["next_action"]:
-                st.markdown(f"- Next action: `{self_improvement['next_action']}`")
+                st.markdown(f"- 下一步: `{self_improvement['next_action']}`")
             if self_improvement["source_path"]:
-                st.markdown(f"- Source: `{self_improvement['source_path']}`")
+                st.markdown(f"- 來源: `{self_improvement['source_path']}`")
 
+    # Tier 2 · Deep Governance
     with st.container(border=True):
-        st.markdown("**Tier 2 · Deep Governance**")
+        st.markdown("**深層治理**")
         if tier2["recommended_open"]:
             st.warning(
-                "Only open when needed: " + ", ".join(tier2["trigger_reasons"])
+                "建議開啟: " + ", ".join(tier2["trigger_reasons"])
                 if tier2["trigger_reasons"]
-                else "Only open when needed."
+                else "僅在需要時開啟。"
             )
         else:
-            st.caption("Manual only. Keep deep governance behind explicit operator pull.")
+            st.caption("僅手動開啟。深層治理需要明確的操作者指令。")
 
         if tier2["active_groups"]:
-            st.caption("Active groups: " + " | ".join(tier2["active_groups"]))
+            st.caption("活躍群組: " + " | ".join(tier2["active_groups"]))
         if tier2["summary_text"]:
             st.caption(tier2["summary_text"])
         if tier2["next_pull_commands"]:
-            with st.expander("Suggested deep pulls", expanded=False):
+            with st.expander("建議的深層指令", expanded=False):
                 for command in tier2["next_pull_commands"]:
                     st.code(command, language="bash")
 
-    with st.expander("Secondary telemetry", expanded=False):
+    with st.expander("遙測資料", expanded=False):
         st.markdown(
-            f"- Conversation: `{telemetry['conversation_status']}`"
-            f" | count={telemetry['conversation_count']}"
-            f" | last={telemetry['conversation_time']}"
+            f"- 對話: `{telemetry['conversation_status']}`"
+            f" | 次數={telemetry['conversation_count']}"
+            f" | 最後={telemetry['conversation_time']}"
         )
         st.markdown(
-            f"- Intent / Control: `{telemetry['intent_status']}` / `{telemetry['control_status']}`"
+            f"- 意圖 / 控制: `{telemetry['intent_status']}` / `{telemetry['control_status']}`"
         )
-        st.markdown(f"- Persona: `{telemetry['persona_id']}` | Run: `{telemetry['run_id']}`")
+        st.markdown(f"- 人格: `{telemetry['persona_id']}` | 執行: `{telemetry['run_id']}`")
         if telemetry["user_message"]:
-            st.text_area("Latest user message", telemetry["user_message"], height=70)
+            st.text_area("最近使用者訊息", telemetry["user_message"], height=70)
         if telemetry["assistant_summary"]:
-            st.text_area("Latest assistant summary", telemetry["assistant_summary"], height=90)
+            st.text_area("最近助手摘要", telemetry["assistant_summary"], height=90)

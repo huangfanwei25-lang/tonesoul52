@@ -272,7 +272,36 @@ def load(
     if agent_id and store.is_redis:
         _record_footprint(store, agent_id, source=source)
 
+    # Attach reflex arc evaluation (Phase 1: soft enforcement)
+    _attach_reflex_state(posture)
+
     return posture
+
+
+def _attach_reflex_state(posture: GovernancePosture) -> None:
+    """Compute and attach reflex arc state to posture.
+
+    Sets posture.reflex_decision (ReflexDecision) as a runtime attribute.
+    Silently skips if reflex module is unavailable or config says disabled.
+    """
+    try:
+        from tonesoul.governance.reflex import (
+            GovernanceSnapshot,
+            ReflexEvaluator,
+        )
+        from tonesoul.governance.reflex_config import load_reflex_config
+
+        config = load_reflex_config()
+        if not config.enabled:
+            return
+
+        snapshot = GovernanceSnapshot.from_posture(posture)
+        evaluator = ReflexEvaluator(config=config)
+        decision = evaluator.evaluate(snapshot)
+        # Attach as runtime attribute (not part of dataclass schema)
+        posture.reflex_decision = decision  # type: ignore[attr-defined]
+    except Exception:
+        pass  # Reflex is optional — failure must not break load()
 
 
 def _record_footprint(store, agent_id: str, *, source: str = "direct") -> None:

@@ -231,12 +231,19 @@ class AdaptiveGate:
         return min(1.0, max(0.0, blended))
 
     @staticmethod
-    def _action_from_tension(value: float) -> GateAction:
-        """Map scalar tension to gate level using semantic zone thresholds."""
-        if value >= 0.85:
+    def _action_from_tension(value: float, gate_modifier: float = 1.0) -> GateAction:
+        """Map scalar tension to gate level using semantic zone thresholds.
+
+        Args:
+            value: Scalar tension in [0, 1].
+            gate_modifier: Multiplier from the reflex arc's SoulBand.
+                1.0 = default thresholds; < 1.0 = tighter (more sensitive).
+        """
+        m = max(0.55, min(1.0, float(gate_modifier)))  # floor at 0.55
+        if value >= 0.85 * m:
             return GateAction.BLOCK
-        if value >= 0.60:
+        if value >= 0.60 * m:
             return GateAction.REVIEW
-        if value >= 0.40:
+        if value >= 0.40 * m:
             return GateAction.WARN
         return GateAction.PASS

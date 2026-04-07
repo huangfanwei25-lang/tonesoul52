@@ -7,11 +7,11 @@ ToneSoul 5.2 Frontend
 """
 
 import streamlit as st
-from pages import history, memory, skills, terrain, workspace
+from pages import history, memory, overview, skills, terrain, workspace
 from utils.theme import apply_theme
 
 st.set_page_config(
-    page_title="語魂工作區",
+    page_title="ToneSoul / 語魂",
     page_icon="語魂",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -21,19 +21,26 @@ apply_theme()
 
 st.sidebar.title("語魂")
 
-page = st.sidebar.radio(
-    "導航",
-    ["技能區", "工作區", "我的記憶", "語義地圖", "回顧"],
-    format_func=lambda x: x,
-)
+_PAGES = [
+    "首頁",
+    "對話工作區",
+    "技能控制台",
+    "AI 記憶",
+    "語義地圖",
+    "決策回顧",
+]
 
-if page == "技能區":
-    skills.render()
-elif page == "工作區":
+page = st.sidebar.radio("導航", _PAGES, format_func=lambda x: x)
+
+if page == "首頁":
+    overview.render()
+elif page == "對話工作區":
     workspace.render()
-elif page == "我的記憶":
+elif page == "技能控制台":
+    skills.render()
+elif page == "AI 記憶":
     memory.render()
 elif page == "語義地圖":
     terrain.render()
-elif page == "回顧":
+elif page == "決策回顧":
     history.render()

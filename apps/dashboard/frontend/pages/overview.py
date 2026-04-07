@@ -1,0 +1,269 @@
+"""
+首頁 — 30 秒內讓新來的人理解 ToneSoul 是什麼
+"""
+
+from __future__ import annotations
+
+from pathlib import Path
+from typing import Any
+
+import streamlit as st
+
+
+def _load_governance_snapshot() -> dict[str, Any]:
+    """Load current governance posture for the overview cards."""
+    try:
+        from tonesoul.runtime_adapter import load, summary
+
+        posture = load(agent_id="dashboard-overview", source="dashboard")
+        return {
+            "soul_integral": round(posture.soul_integral, 4),
+            "session_count": posture.session_count,
+            "active_vows": len(posture.active_vows),
+            "active_tensions": len(posture.tension_history),
+            "last_updated": posture.last_updated or "from_empty",
+            "summary": summary(posture),
+        }
+    except Exception:
+        return {
+            "soul_integral": 0.0,
+            "session_count": 0,
+            "active_vows": 0,
+            "active_tensions": 0,
+            "last_updated": "unavailable",
+            "summary": "unable to load governance state",
+        }
+
+
+def _load_health_snapshot() -> dict[str, Any]:
+    """Load system health for the overview cards."""
+    try:
+        from tonesoul.store import get_store
+
+        store = get_store()
+        backend = store.backend_name
+    except Exception:
+        backend = "unknown"
+
+    try:
+        from tonesoul.aegis_shield import AegisShield
+        from tonesoul.store import get_store
+
+        store = get_store()
+        shield = AegisShield.load(store)
+        chain_status = "intact" if shield.chain_head else "empty"
+    except Exception:
+        chain_status = "unknown"
+
+    try:
+        from tonesoul.runtime_adapter import get_recent_visitors
+
+        visitors = get_recent_visitors(n=3)
+        recent_visitors = [
+            str(v.get("agent", "unknown")) for v in visitors
+        ]
+    except Exception:
+        recent_visitors = []
+
+    return {
+        "backend": backend,
+        "chain_status": chain_status,
+        "recent_visitors": recent_visitors,
+    }
+
+
+def _load_vow_snapshot() -> dict[str, Any]:
+    """Load vow enforcement state."""
+    try:
+        from tonesoul.vow_system import VowRegistry
+
+        registry = VowRegistry()
+        active = registry.active_vows()
+        return {
+            "total": len(registry.all_vows()),
+            "active": len(active),
+            "vow_names": [v.title for v in active[:5]],
+        }
+    except Exception:
+        return {
+            "total": 0,
+            "active": 0,
+            "vow_names": [],
+        }
+
+
+def render() -> None:
+    """Render the overview landing page."""
+
+    st.markdown(
+        """
+        <div class="ts-hero">
+          <h1>ToneSoul / 語魂</h1>
+          <p>AI 治理框架 — 讓 AI 對自己說過的話負責</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    st.markdown("")
+    st.markdown(
+        "語魂是一套**語義責任系統**：AI 在對話中做出的承諾（Vow）會被記錄、追蹤、驗證。"
+        "每次對話都經過內部 Council 審議，治理狀態跨 session 存續。"
+    )
+
+    # ── Three overview cards ──────────────────────────────────────────────
+
+    gov = _load_governance_snapshot()
+    vows = _load_vow_snapshot()
+    health = _load_health_snapshot()
+
+    col_a, col_b, col_c = st.columns(3)
+
+    with col_a:
+        st.markdown(
+            """
+            <div class="ts-card">
+              <div class="ts-pill">AI 的承諾</div>
+              <h4>語義誓言 (Vow)</h4>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+        st.metric("啟用中的誓言", f"{vows['active']} / {vows['total']}")
+        if vows["vow_names"]:
+            for name in vows["vow_names"]:
+                st.caption(f"  - {name}")
+        else:
+            st.caption("使用預設誓言：不誤導、揭露不確定性、不造成傷害")
+
+    with col_b:
+        st.markdown(
+            """
+            <div class="ts-card">
+              <div class="ts-pill">治理狀態</div>
+              <h4>靈魂積分 / 會話數</h4>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+        metric_a, metric_b = st.columns(2)
+        with metric_a:
+            st.metric("Soul Integral", gov["soul_integral"])
+        with metric_b:
+            st.metric("Sessions", gov["session_count"])
+        if gov["active_tensions"] > 0:
+            st.caption(f"目前有 {gov['active_tensions']} 個活躍 tension")
+        else:
+            st.caption("目前沒有活躍的內部 tension")
+
+    with col_c:
+        st.markdown(
+            """
+            <div class="ts-card">
+              <div class="ts-pill">系統健康</div>
+              <h4>後端 / 完整性</h4>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+        st.metric("儲存後端", health["backend"].upper())
+        st.caption(f"Aegis 鏈: {health['chain_status']}")
+        if health["recent_visitors"]:
+            st.caption("最近訪客: " + ", ".join(health["recent_visitors"]))
+        else:
+            st.caption("尚無訪客記錄")
+
+    # ── Quick start ───────────────────────────────────────────────────────
+
+    st.markdown("---")
+    st.markdown("### 快速開始")
+    st.markdown("選擇你想做的事：")
+
+    qs_a, qs_b, qs_c = st.columns(3)
+
+    with qs_a:
+        st.markdown(
+            """
+            <div class="ts-card" style="text-align: center;">
+              <h4>跟 AI 對話</h4>
+              <p class="ts-muted">在對話工作區中，AI 的每個回應都經過 Council 審議。你可以看到它在想什麼。</p>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+        st.caption("從左側導航進入「對話工作區」")
+
+    with qs_b:
+        st.markdown(
+            """
+            <div class="ts-card" style="text-align: center;">
+              <h4>看 AI 的記憶</h4>
+              <p class="ts-muted">AI 的技能、筆記、對話記錄都在這裡。你可以幫它記住重要的事。</p>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+        st.caption("從左側導航進入「AI 記憶」")
+
+    with qs_c:
+        st.markdown(
+            """
+            <div class="ts-card" style="text-align: center;">
+              <h4>看決策歷史</h4>
+              <p class="ts-muted">每次決策都有記錄：通過了哪些內在守門、收斂到什麼狀態。</p>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+        st.caption("從左側導航進入「決策回顧」")
+
+    # ── How it works ──────────────────────────────────────────────────────
+
+    st.markdown("---")
+    st.markdown("### 運作原理")
+    st.markdown(
+        """
+        ```
+        Session 開始            對話中               Session 結束
+        ┌──────────┐    ┌─────────────────┐    ┌──────────────┐
+        │  Load    │───>│  Council 審議    │───>│   Commit     │
+        │ 載入治理  │    │ 多角度內部討論    │    │  寫入治理記錄  │
+        │ 狀態     │    │ Vow 誓言驗證     │    │  更新積分     │
+        └──────────┘    └─────────────────┘    └──────────────┘
+              │                                        │
+              └────────── 跨 Session 存續 ──────────────┘
+        ```
+
+        - **Load**: 每次對話開始，AI 載入上次的治理狀態（tensions, vows, drift）
+        - **Council**: 對話過程中，內部 Council（多個觀點角色）對每個回應進行審議
+        - **Vow Check**: 在輸出前驗證是否符合所有語義誓言
+        - **Commit**: 對話結束後，將本次 session 的治理記錄寫回，更新 soul integral
+        """
+    )
+
+    # ── For developers / AI agents ────────────────────────────────────────
+
+    with st.expander("開發者 / AI Agent 入口", expanded=False):
+        st.markdown(
+            """
+            如果你是開發者或 AI agent，可以用 CLI 直接接入：
+
+            ```bash
+            # Session 開始
+            python scripts/start_agent_session.py --agent your-id --no-ack
+
+            # 查看治理狀態
+            python -m tonesoul.diagnose --agent your-id
+
+            # Session 結束
+            python scripts/end_agent_session.py --agent your-id --summary "..."
+            ```
+
+            或透過 HTTP Gateway（任何能發 HTTP 的 agent 都能用）：
+
+            ```bash
+            python scripts/gateway.py --port 7700 --token YOUR_SECRET
+            # POST /load, POST /commit, GET /summary, GET /audit
+            ```
+            """
+        )

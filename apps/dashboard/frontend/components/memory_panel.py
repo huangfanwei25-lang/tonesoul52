@@ -110,15 +110,15 @@ def render_memory_panel(
     st.subheader(view_model["title"])
     st.caption(view_model["subtitle"])
     st.info(
-        f"Tier 0 readiness: `{view_model['tier0_readiness']}`"
+        f"就緒狀態: `{view_model['tier0_readiness']}`"
         + (
-            f" | short board: {view_model['current_short_board']}"
+            f" | 短板: {view_model['current_short_board']}"
             if view_model["current_short_board"]
             else ""
         )
     )
     if view_model["closeout_attention"]:
-        st.warning(f"Closeout attention: {view_model['closeout_attention']}")
+        st.warning(f"收尾注意: {view_model['closeout_attention']}")
     st.caption(view_model["operator_note"])
     st.caption(view_model["reference_boundary"])
     if view_model["selection_caution"]:

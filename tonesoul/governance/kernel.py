@@ -203,13 +203,21 @@ class GovernanceKernel:
         message_length: int = 0,
         min_council_tension: float = 0.4,
         min_council_friction: float = 0.62,
+        force_convene: bool = False,
     ) -> tuple[bool, str]:
         """
         Decide whether the Council should be convened for this turn.
 
+        Args:
+            force_convene: If True, always convene (set by reflex arc
+                when soul_integral is in strained/critical band).
+
         Returns:
             (should_convene, reason)
         """
+        if force_convene:
+            return True, "Forced by governance reflex arc (soul band strained/critical)"
+
         effective_tension = max(0.0, min(1.0, float(tension)))
 
         if isinstance(friction_score, (int, float)):

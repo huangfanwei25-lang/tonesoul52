@@ -516,8 +516,8 @@ def render() -> None:
     st.markdown(
         """
         <div class="ts-hero">
-          <h1>語魂控制台</h1>
-          <p>讓人與人工智慧對話，同步技能與開源分享，並連接遠端畫面控制。</p>
+          <h1>技能控制台</h1>
+          <p>管理 AI 技能、瀏覽開源工具分享，並連接遠端畫面控制。</p>
         </div>
         """,
         unsafe_allow_html=True,

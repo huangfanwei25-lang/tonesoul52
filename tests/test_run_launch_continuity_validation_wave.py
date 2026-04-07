@@ -44,18 +44,18 @@ def test_run_validation_wave_returns_expected_summaries(tmp_path: Path) -> None:
     by_name = {item["scenario"]: item for item in results}
 
     assert by_name["clean_pass"]["readiness"] == "pass"
-    assert by_name["clean_pass"]["receiver_alert_count"] == 1
+    assert by_name["clean_pass"]["receiver_alert_count"] == 2
     assert by_name["claim_conflict"]["readiness"] == "needs_clarification"
-    assert by_name["claim_conflict"]["receiver_alert_count"] == 1
+    assert by_name["claim_conflict"]["receiver_alert_count"] == 2
     assert by_name["stale_compaction"]["compaction_receiver_obligation"] == "must_not_promote"
-    assert by_name["stale_compaction"]["receiver_alert_count"] == 4
+    assert by_name["stale_compaction"]["receiver_alert_count"] == 6
     assert all(
         "Evidence readout is a bounded honesty shortcut" not in alert
         for alert in by_name["stale_compaction"]["receiver_alerts"]
     )
     assert by_name["contested_dossier"]["council_calibration_status"] == "descriptive_only"
     assert by_name["contested_dossier"]["council_suppression_flag"] is True
-    assert by_name["contested_dossier"]["receiver_alert_count"] == 4
+    assert by_name["contested_dossier"]["receiver_alert_count"] == 6
     assert (
         "Latest council dossier confidence is descriptive_only"
         in by_name["contested_dossier"]["receiver_alerts"][0]
@@ -71,7 +71,7 @@ def test_run_validation_wave_returns_expected_summaries(tmp_path: Path) -> None:
     assert by_name["session_end_lifecycle"]["readiness"] == "pass"
     assert by_name["concurrent_claims"]["readiness"] == "needs_clarification"
     assert by_name["working_style_reinforced"]["working_style_validation"] == "sufficient"
-    assert by_name["working_style_reinforced"]["receiver_alert_count"] == 3
+    assert by_name["working_style_reinforced"]["receiver_alert_count"] == 5
 
 
 def test_render_markdown_contains_key_columns(tmp_path: Path) -> None:

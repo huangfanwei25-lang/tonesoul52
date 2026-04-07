@@ -134,27 +134,30 @@ def render():
         if latest.get("status") in {None, "N/A", "unknown"}:
             st.caption("尚無決策紀錄。")
 
-    st.markdown("### Tiered Operator Shell")
-    shell_col_a, shell_col_b = st.columns([1.25, 1.75], gap="large")
+    # ── Quick status strip (always visible) ─────────────────────────────
+    readiness = tier0_shell.get("readiness_status") or "unknown"
+    track = tier0_shell.get("task_track") or "unclassified"
+    mode = tier0_shell.get("deliberation_mode") or "unknown"
+    strip_a, strip_b, strip_c = st.columns(3)
+    with strip_a:
+        st.metric("就緒狀態", readiness)
+    with strip_b:
+        st.metric("任務路徑", track)
+    with strip_c:
+        st.metric("審議模式", mode)
 
-    with shell_col_a:
-        st.markdown("**Tier 0 · Instant Gate**")
+    # ── Tiered Operator Shell — Collapsible operator panels ────────────
+
+    # Tier 0 · Instant Gate
+    with st.expander("快速狀態檢查", expanded=False):
         if not tier0_bundle.get("present"):
-            st.warning(tier0_bundle.get("error") or "無法載入 Tier 0 session-start")
+            st.warning(tier0_bundle.get("error") or "無法載入狀態")
         else:
-            gate_row_a, gate_row_b, gate_row_c = st.columns(3)
-            with gate_row_a:
-                st.metric("Readiness", tier0_shell.get("readiness_status") or "unknown")
-            with gate_row_b:
-                st.metric("Track", tier0_shell.get("task_track") or "unclassified")
-            with gate_row_c:
-                st.metric("Mode", tier0_shell.get("deliberation_mode") or "unknown")
-
             if tier0_shell.get("canonical_summary"):
                 st.caption(tier0_shell["canonical_summary"])
 
             next_followup = tier0_shell.get("next_followup") or {}
-            st.markdown("**Next bounded move**")
+            st.markdown("**下一步建議**")
             st.code(next_followup.get("command") or "n/a", language="bash")
             if next_followup.get("reason"):
                 st.caption(next_followup["reason"])
@@ -166,23 +169,23 @@ def render():
                 )
                 st.caption(f"Hooks: {hooks_text}")
 
-    with shell_col_b:
-        st.markdown("**Tier 1 · Orientation Shell**")
+    # Tier 1 · Orientation Shell
+    with st.expander("當前工作方向", expanded=False):
         if not tier1_bundle.get("present"):
-            st.warning(tier1_bundle.get("error") or "無法載入 Tier 1 session-start")
+            st.warning(tier1_bundle.get("error") or "無法載入方向資訊")
         else:
             canonical_cards = tier1_shell.get("canonical_cards") or {}
-            st.info(canonical_cards.get("short_board") or "current short board not visible")
+            st.info(canonical_cards.get("short_board") or "目前沒有明確的短板")
             if canonical_cards.get("successor_correction"):
                 st.caption(canonical_cards["successor_correction"])
 
             parity_counts = tier1_shell.get("parity_counts") or {}
             parity_cols = st.columns(4)
             parity_labels = [
-                ("Baseline", "baseline"),
-                ("Beta", "beta_usable"),
-                ("Partial", "partial"),
-                ("Deferred", "deferred"),
+                ("基線", "baseline"),
+                ("Beta 可用", "beta_usable"),
+                ("部分完成", "partial"),
+                ("延後", "deferred"),
             ]
             for col, (label, key) in zip(parity_cols, parity_labels):
                 with col:
@@ -190,97 +193,68 @@ def render():
 
             closeout_attention = tier1_shell.get("closeout_attention") or {}
             if closeout_attention.get("present"):
-                st.warning(closeout_attention.get("summary_text") or "closeout attention present")
+                st.warning(closeout_attention.get("summary_text") or "有需要注意的收尾事項")
             else:
-                st.caption("Closeout attention: none")
+                st.caption("沒有需要特別注意的收尾事項")
 
             observer_shell = tier1_shell.get("observer_shell") or {}
             counts = observer_shell.get("counts") or {}
             st.caption(
-                "Observer shell: "
-                f"stable={int(counts.get('stable', 0) or 0)} | "
-                f"contested={int(counts.get('contested', 0) or 0)} | "
-                f"stale={int(counts.get('stale', 0) or 0)}"
+                "觀察窗口: "
+                f"穩定={int(counts.get('stable', 0) or 0)} | "
+                f"爭議={int(counts.get('contested', 0) or 0)} | "
+                f"過時={int(counts.get('stale', 0) or 0)}"
             )
 
-            with st.expander("Tier 1 details", expanded=False):
-                if canonical_cards.get("source_precedence"):
-                    st.markdown(f"**Source precedence**  \n{canonical_cards['source_precedence']}")
-
-                family_cards = tier1_shell.get("family_cards") or []
-                if family_cards:
-                    st.markdown("**Subsystem gaps**")
-                    for family in family_cards:
-                        st.markdown(
-                            f"- `{family['name']}` [{family['status']}]"
-                            f" — gap: {family['main_gap']} | next: {family['next_move']}"
-                        )
-
-                for label, items in (
-                    ("Stable", observer_shell.get("stable_headlines") or []),
-                    ("Contested", observer_shell.get("contested_headlines") or []),
-                    ("Stale", observer_shell.get("stale_headlines") or []),
-                ):
-                    if items:
-                        st.markdown(f"**{label}**")
-                        for item in items:
-                            st.markdown(f"- {item}")
-
-            st.markdown("**Tier 2 · Deep Governance**")
-            if not tier2_drawer.get("present"):
-                st.caption("Tier 2 drawer unavailable")
-            else:
-                if tier2_drawer.get("recommended_open"):
-                    st.warning(
-                        "Deep governance review recommended: "
-                        + ", ".join(tier2_drawer.get("trigger_reasons") or [])
-                    )
-                else:
-                    st.caption("No default Tier 2 trigger is active. Open only for contested or risky work.")
-
-                with st.expander("Open Tier 2 drawer", expanded=False):
-                    st.caption(tier2_drawer.get("summary_text") or "drawer summary unavailable")
-                    active_groups = tier2_drawer.get("active_group_names") or []
-                    if active_groups:
-                        st.caption("Active groups: " + " | ".join(active_groups))
-
-                    for group in tier2_drawer.get("groups") or []:
-                        st.markdown(f"**{group['name']}**")
-                        for card in group.get("cards") or []:
-                            st.markdown(
-                                f"- `{card['title']}` [{card['status']}]"
-                                f" — {card['summary']}"
-                            )
-                            if card.get("guard"):
-                                st.caption(card["guard"])
-
-                    commands = tier2_drawer.get("next_pull_commands") or []
-                    if commands:
-                        st.markdown("**Next deeper pull**")
-                        for command in commands:
-                            st.code(command, language="bash")
-
-            st.markdown("**Operator Walkthrough Pack**")
-            st.caption(walkthrough_pack.get("operator_rule") or "Use the smallest honest tier.")
-            with st.expander("Open walkthrough pack", expanded=False):
-                st.caption(walkthrough_pack.get("public_boundary") or "")
-                for scenario in walkthrough_pack.get("scenarios") or []:
+            family_cards = tier1_shell.get("family_cards") or []
+            if family_cards:
+                st.markdown("**子系統缺口**")
+                for family in family_cards:
                     st.markdown(
-                        f"**{scenario['name']}**  \n"
-                        f"Default: `{scenario['default_tier']}`"
+                        f"- `{family['name']}` [{family['status']}]"
+                        f" — 缺口: {family['main_gap']} | 下一步: {family['next_move']}"
                     )
-                    st.markdown(f"- Use when: {scenario['use_when']}")
-                    st.markdown(f"- Stay here when: {scenario['stop_here_rule']}")
-                    st.markdown(f"- Current move: {scenario['next_move']}")
-                    st.markdown(f"- Escalate when: {scenario['escalate_when']}")
 
-            st.markdown("**Command Shelf**")
-            st.caption(command_shelf.get("operator_rule") or "Keep CLI/runtime parity visible.")
-            with st.expander("Open command shelf", expanded=False):
-                for item in command_shelf.get("commands") or []:
-                    st.markdown(f"**{item['label']}**  \n{item['purpose']}")
-                    st.caption(item["tier"])
-                    st.code(item["command"], language="bash")
+    # Tier 2 · Deep Governance — Open Tier 2 drawer
+    with st.expander("深層治理審查", expanded=False):
+        if not tier2_drawer.get("present"):
+            st.caption("深層審查不可用")
+        else:
+            if tier2_drawer.get("recommended_open"):
+                st.warning(
+                    "建議開啟深層審查: "
+                    + ", ".join(tier2_drawer.get("trigger_reasons") or [])
+                )
+            else:
+                st.caption("目前不需要深層審查。僅在有爭議或高風險操作時開啟。")
+
+            st.caption(tier2_drawer.get("summary_text") or "")
+            for group in tier2_drawer.get("groups") or []:
+                st.markdown(f"**{group['name']}**")
+                for card in group.get("cards") or []:
+                    st.markdown(
+                        f"- `{card['title']}` [{card['status']}] — {card['summary']}"
+                    )
+
+            commands = tier2_drawer.get("next_pull_commands") or []
+            if commands:
+                st.markdown("**建議的深層指令**")
+                for command in commands:
+                    st.code(command, language="bash")
+
+    with st.expander("操作指南", expanded=False):
+        st.caption(walkthrough_pack.get("operator_rule") or "使用最小必要的層級。")
+        for scenario in walkthrough_pack.get("scenarios") or []:
+            st.markdown(f"**{scenario['name']}** — 預設: `{scenario['default_tier']}`")
+            st.markdown(f"- 使用時機: {scenario['use_when']}")
+            st.markdown(f"- 目前動作: {scenario['next_move']}")
+
+    with st.expander("常用指令", expanded=False):
+        st.caption(command_shelf.get("operator_rule") or "Dashboard 是 CLI 的薄殼，不是替代品。")
+        for item in command_shelf.get("commands") or []:
+            st.markdown(f"**{item['label']}** ({item['tier']})")
+            st.caption(item["purpose"])
+            st.code(item["command"], language="bash")
 
     col_main, col_side = st.columns([3, 1.1], gap="large")
 
