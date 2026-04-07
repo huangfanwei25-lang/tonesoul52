@@ -155,6 +155,21 @@
 - Phase 822: classify and register the ninth bounded trial result before admitting any broader candidate
 - Phase 823: admit one tenth bounded self-improvement candidate after the ninth trial result is classified and registered
 
+## Long Program: Consistency-First Governance Depth And High-Risk Validation (2026-04-07)
+- Program Goal: make ToneSoul faster on low-risk turns, stricter on high-risk turns, and more consistent across Codex-style, Claude-style, and dashboard consumers before any serious domain-validation claim is attempted.
+- Execution Guardrails:
+  - Keep the current active short board on the self-improvement loop; this program is queued follow-through, not a replacement bucket.
+  - Reuse existing ToneSoul seams such as `ComputeGate`, `AdaptiveGate`, `ReflexEvaluator`, `session-start`, and `consumer_contract`; do not import a fresh `Module 0 / A / B / C` architecture.
+  - Preserve non-zero governance: fast paths may shrink governance cost, but must not bypass reflex, basic vow posture, closeout honesty, or bounded output edges.
+  - Treat future stock analysis or other finance-heavy work as deferred acceptance tests, not present capability claims.
+- Phase 848: refresh AI first-hop discoverability for `Take E` / hot-memory compression so later agents stop missing the existing compression boundary map when compaction or resumability is in scope
+- Phase 849: define a bounded `governance_depth` story (`light / standard / full`) that remains orthogonal to model/path routing and preserves non-zero governance
+- Phase 850: map the smallest runtime seam for governance-depth routing in `ComputeGate` / `UnifiedPipeline` without silently changing current default behavior
+- Phase 851: define one bounded high-risk grounding-check design for fact-heavy, verify-heavy, or finance-heavy turns without pretending token-level source pointers exist
+- Phase 852: define one verification over-budget fail-stop design so repeated grounding failure or non-converging revision loops stop honestly instead of spending more compute theatre
+- Phase 853: run one cross-agent consistency acceptance wave on the same bounded task so Codex-style and Claude-style consumers can be judged on first-hop parity, closeout reading, compression reading, and governance-depth recommendation
+- Phase 854: define the deferred high-risk domain-trial gate so future stock-analysis validation only opens after governance depth, grounding, fail-stop, and cross-agent parity are all strong enough to justify it
+
 ## Water-Bucket Snapshot (2026-03-30)
 - Baseline reached:
   - session-start / session-end / packet / delta / readiness / receiver-guard continuity

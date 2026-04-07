@@ -1,6 +1,6 @@
 # Documentation Authority Structure Latest
 
-- generated_at: 2026-04-06T15:32:52Z
+- generated_at: 2026-04-07T13:09:21Z
 - primary_status_line: `doc_authority_structure | groups=25 tracked=103 metadata_complete=103 metadata_missing=0`
 - runtime_status_line: `doc_retrieval_order=entrypoint_to_operational_to_canonical_to_deep_map_to_interpretive_to_boundary_aids_to_control_plane | generated_status_lane=6`
 - artifact_policy_status_line: `structure_mode=retrieval_oriented | authority_roles=explicit | generated_status_preferred_for_current_state`

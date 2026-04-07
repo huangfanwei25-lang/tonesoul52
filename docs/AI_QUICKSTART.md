@@ -1,7 +1,7 @@
 # ToneSoul — AI 快速入場（60 秒版）
 
 > Purpose: give any later AI instance the minimum working entry surface for ToneSoul before it starts reading the repo in bulk.
-> Last Updated: 2026-04-02
+> Last Updated: 2026-04-07
 > Status: operational quickstart; subordinate to `AXIOMS.json`, executable code, tests, and canonical architecture contracts.
 > Use When: first minute of a session, before touching code or making architecture claims.
 
@@ -36,6 +36,7 @@ Then read these first:
 - `hook_chain`
 - `mutation_preflight`
 - `subsystem_parity`
+- if the task touches compaction, handoff survival, or "what may be compressed", open `docs/architecture/TONESOUL_HOT_MEMORY_DECAY_AND_COMPRESSION_MAP.md` before inferring a new compression story from observer prose
 
 Current bounded preflight chain:
 

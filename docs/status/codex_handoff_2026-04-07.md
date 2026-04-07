@@ -8,7 +8,7 @@
 
 ## 1. Current Branch State
 
-- Branch: `codex/r-memory-compaction-lane-20260326`
+- Branch: `master`
 - Current active bucket:
   - `ToneSoul Self-Improvement Loop v0`
 - Honest current short board:
@@ -86,15 +86,26 @@ Why still parked:
 - operator retrieval remains auxiliary and parked
 - do not reopen retrieval mythology without a live bounded runner and collection-health lane
 
+### Hot-memory compression boundaries
+
+- `Take E` is real and already lives in `docs/architecture/TONESOUL_HOT_MEMORY_DECAY_AND_COMPRESSION_MAP.md`
+- if the question is not merely "what survives" but "what may be compressed, recomputed, quarantined, or never compressed", read that map before trusting observer prose alone
+- compaction summary is not a substitute for the compression map, closeout grammar, or source-precedence rules
+
 ## 5. Recommended First 10 Minutes For The Successor
 
 Read:
 
 1. `AI_ONBOARDING.md`
-2. `DESIGN.md`
-3. `task.md`
-4. this handoff note
-5. `docs/plans/tonesoul_self_improvement_loop_v0_program_2026-04-06.md`
+2. `docs/AI_QUICKSTART.md`
+3. `DESIGN.md`
+4. `task.md`
+5. this handoff note
+6. `docs/plans/tonesoul_self_improvement_loop_v0_program_2026-04-06.md`
+
+If compaction / resumability / hot-memory compression is in scope, also open:
+
+- `docs/architecture/TONESOUL_HOT_MEMORY_DECAY_AND_COMPRESSION_MAP.md`
 
 Then run:
 

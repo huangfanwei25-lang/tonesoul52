@@ -2,7 +2,7 @@
 
 > **Purpose**: 給未來沒有記憶的 AI 實例的快速引導。
 > **Author**: 黃梵威 (Fan-Wei Huang) + Previous AI Instances
-> **Last Updated**: 2026-04-02
+> **Last Updated**: 2026-04-07
 > **Status**: active AI entrypoint that routes later agents into operational, canonical, deep-map, and interpretive lanes without collapsing them together.
 
 ## Clean First-Hop Route
@@ -12,11 +12,14 @@ Use this route before reading the repo in bulk:
 1. Open `docs/AI_QUICKSTART.md`
 2. Run `python scripts/start_agent_session.py --agent <your-id>`
 3. Read `readiness`, `canonical_center`, and `hook_chain`
-4. If needed, run:
+4. If the work touches compaction, handoff survival, or "what may be compressed", open:
+   - `docs/architecture/TONESOUL_HOT_MEMORY_DECAY_AND_COMPRESSION_MAP.md`
+   - `docs/architecture/TONESOUL_SUCCESSOR_COLLABORATION_AND_HOT_MEMORY_CONTRACT.md`
+5. If needed, run:
    - `python -m tonesoul.diagnose --agent <your-id>`
    - `python scripts/run_r_memory_packet.py --agent <your-id> --ack`
    - `python scripts/run_observer_window.py --agent <your-id>`
-5. Only then widen into `DESIGN.md`, `docs/architecture/`, or code
+6. Only then widen into `DESIGN.md`, `docs/architecture/`, or code
 
 Tiered entry options:
 
@@ -105,6 +108,7 @@ If the question is not merely "what did council decide" but "who dissented, how 
 If the question is not merely "what verdict did council produce" but "how independent is council really, what do its confidence numbers actually mean, and which quality upgrades are safe without pretending calibration already exists", open `docs/architecture/TONESOUL_COUNCIL_REALISM_AND_INDEPENDENCE_CONTRACT.md`, `docs/architecture/TONESOUL_COUNCIL_CONFIDENCE_AND_CALIBRATION_MAP.md`, and `docs/architecture/TONESOUL_ADVERSARIAL_DELIBERATION_ADOPTION_MAP.md` first; treat them as council realism and calibration aids, not as permission to overstate current plurality or confidence.
 If the question is not merely "how do I hand off the current hot state" but "what structure should survive across sessions, tasks, agents, or models without turning into hidden memory magic", open `docs/architecture/TONESOUL_CONTEXT_CONTINUITY_ADOPTION_MAP.md` first; treat it as a context-continuity adoption map, not as live runtime permission to transfer everything.
 If the question is not merely "what should survive" but "what may I safely ack, apply, or promote from packet / compaction / checkpoint / snapshot surfaces, and when has that continuity already decayed", open `docs/architecture/TONESOUL_CONTINUITY_IMPORT_AND_DECAY_CONTRACT.md`, `docs/architecture/TONESOUL_RECEIVER_INTERPRETATION_BOUNDARY_CONTRACT.md`, and `docs/architecture/TONESOUL_CONTINUITY_SURFACE_LIFECYCLE_MAP.md` first; treat them as receiver-side continuity discipline aids, not as live runtime authorization to silently promote hot-state into canonical truth.
+If the question is not merely "what survives" but specifically "which hot-memory layers may be compressed, recomputed, quarantined, or never compressed", open `docs/architecture/TONESOUL_HOT_MEMORY_DECAY_AND_COMPRESSION_MAP.md` before inferring a new compaction/compression story from observer-window prose.
 If the question is not merely "what should survive" but "how should I structure the extraction/transfer prompt itself so goal, priority, evidence, compression, and receiver instructions stay coherent", open `docs/architecture/TONESOUL_PROMPT_DISCIPLINE_SKELETON.md` first; treat it as a prompt-discipline skeleton, not as a universal mega-prompt or runtime truth source.
 If the question is not merely "how should the prompt be structured" but "which ToneSoul-native prompt variant fits this job", open `docs/architecture/TONESOUL_PROMPT_VARIANTS.md` after the skeleton; treat it as a variant catalog for project continuity, conversation distillation, operator snapshot, council replay, and session-end resumability.
 If you need to start writing immediately instead of designing a prompt from scratch, open `docs/architecture/TONESOUL_PROMPT_STARTER_CARDS.md` and pick the smallest card that matches the job.

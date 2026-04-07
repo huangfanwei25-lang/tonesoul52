@@ -263,6 +263,15 @@ Use this when the question is not only what should be transferred, but how the e
 - [plans/tonesoul_self_improvement_loop_v0_program_2026-04-06.md](plans/tonesoul_self_improvement_loop_v0_program_2026-04-06.md)
   - active follow-through program for evaluator harness, experiment lineage, mutation-space boundaries, promotion gate, and bounded result surfacing
 
+## Governance Depth And Consistency-First Validation
+
+- [architecture/TONESOUL_GOVERNANCE_DEPTH_ROUTING_V0_SPEC.md](architecture/TONESOUL_GOVERNANCE_DEPTH_ROUTING_V0_SPEC.md)
+  - bounded spec for reducing default governance cost through `light / standard / full` routing without deleting reflex, vow posture, or output-edge honesty
+- [plans/tonesoul_consistency_first_governance_depth_program_2026-04-07.md](plans/tonesoul_consistency_first_governance_depth_program_2026-04-07.md)
+  - queued follow-through program for first-hop consistency, governance-depth routing, high-risk grounding, fail-stop budget discipline, and deferred domain-trial gating
+- [research/tonesoul_neurosymbolic_governance_depth_distillation_2026-04-07.md](research/tonesoul_neurosymbolic_governance_depth_distillation_2026-04-07.md)
+  - ToneSoul-native distillation of recent neuro-symbolic efficiency ideas into what should be absorbed, what should be rejected, and why this should stay a bounded routing/grounding line instead of a new mythology
+
 ## Documentation Convergence
 
 - [status/doc_convergence_inventory_latest.json](status/doc_convergence_inventory_latest.json)

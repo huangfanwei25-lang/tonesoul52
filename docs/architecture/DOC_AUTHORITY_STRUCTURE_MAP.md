@@ -252,6 +252,18 @@ Open these when the question is:
 - `docs/architecture/TONESOUL_PROMOTION_READY_RESULT_SURFACE_CONTRACT.md`
 - `docs/plans/tonesoul_self_improvement_loop_v0_program_2026-04-06.md`
 
+### 20. Governance-depth routing and consistency-first validation lane
+
+Open these when the question is:
+
+- how ToneSoul should reduce default governance cost without deleting non-zero governance,
+- which parts of neuro-symbolic efficiency thinking can be translated into ToneSoul without inventing a second architecture universe,
+- how first-hop consistency, grounding burden, and fail-stop budget should mature before any serious high-risk domain validation.
+
+- `docs/architecture/TONESOUL_GOVERNANCE_DEPTH_ROUTING_V0_SPEC.md`
+- `docs/plans/tonesoul_consistency_first_governance_depth_program_2026-04-07.md`
+- `docs/research/tonesoul_neurosymbolic_governance_depth_distillation_2026-04-07.md`
+
 ## Retrieval Order
 
 1. Start in the entrypoint lane.
@@ -270,8 +282,9 @@ Open these when the question is:
 14. Move to the entry simplification and lineage routing lane when the problem is how a reader should enter, what should stay visible as lineage, or which cleanup moves are safe.
 15. Move to the research-driven memory interop and knowledge layer lane when the problem is shared interpretation, future retrieval boundaries, or descriptive-versus-trendable launch posture.
 16. Move to the bounded self-improvement loop lane when the problem is how ToneSoul may improve operator/runtime surfaces without turning improvement into identity drift, memory rewrite, or hidden self-modification.
-17. Move to documentation governance and convergence contracts when restructuring docs.
-18. Prefer generated status surfaces over stale prose when checking current posture.
+17. Move to the governance-depth routing and consistency-first validation lane when the problem is earned governance cost, first-hop consistency before domain trials, or bounded grounding/fail-stop maturity.
+18. Move to documentation governance and convergence contracts when restructuring docs.
+19. Prefer generated status surfaces over stale prose when checking current posture.
 
 ## Current Rule
 
