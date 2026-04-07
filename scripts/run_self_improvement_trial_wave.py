@@ -501,6 +501,48 @@ def _probe_consumer_misread_guard_clarity(
     }
 
 
+def _probe_subsystem_parity_focus_clarity(
+    *,
+    agent: str,
+    state_path: Path | None,
+    traces_path: Path | None,
+) -> dict[str, Any]:
+    from apps.dashboard.frontend.utils.session_start import build_tier1_orientation_shell
+    from scripts.start_agent_session import run_session_start_bundle
+    from tonesoul.claude_entry_adapter import build_claude_entry_adapter
+
+    session_payload = run_session_start_bundle(
+        agent_id=agent,
+        state_path=state_path,
+        traces_path=traces_path,
+        no_ack=True,
+        tier=1,
+    )
+    next_focus = dict((session_payload.get("subsystem_parity") or {}).get("next_focus") or {})
+    claude_adapter = build_claude_entry_adapter(session_start_payload=session_payload)
+    dashboard_shell = build_tier1_orientation_shell(session_payload)
+    dashboard_next_focus = dict(dashboard_shell.get("next_focus") or {})
+    claude_next_focus = dict(claude_adapter.get("next_focus") or {})
+    focus_pressures = list(next_focus.get("focus_pressures") or [])
+    present = bool(
+        str(next_focus.get("source_family", "")).strip()
+        and focus_pressures
+        and str(next_focus.get("operator_action", "")).strip()
+        and dashboard_next_focus.get("source_family") == next_focus.get("source_family")
+        and claude_next_focus.get("source_family") == next_focus.get("source_family")
+    )
+    return {
+        "present": present,
+        "summary_text": (
+            "subsystem_parity_focus_probe "
+            f"target={str(next_focus.get('resolved_to', '')).strip() or 'missing'} "
+            f"source={str(next_focus.get('source_family', '')).strip() or 'missing'} "
+            f"pressures={len(focus_pressures)} "
+            f"shell_sync={'yes' if dashboard_next_focus.get('source_family') == next_focus.get('source_family') == claude_next_focus.get('source_family') else 'no'}"
+        ),
+    }
+
+
 def _render_markdown(report: dict[str, Any]) -> str:
     lines = [
         "# ToneSoul Self-Improvement Trial Wave",
@@ -582,6 +624,11 @@ def run_self_improvement_trial_wave(
         state_path=state_path,
         traces_path=traces_path,
     )
+    subsystem_parity_focus_probe = _probe_subsystem_parity_focus_clarity(
+        agent=agent,
+        state_path=state_path,
+        traces_path=traces_path,
+    )
     operator_retrieval_contract_present = (
         REPO_ROOT / "docs/architecture/TONESOUL_OPERATOR_RETRIEVAL_QUERY_CONTRACT.md"
     ).exists()
@@ -603,6 +650,7 @@ def run_self_improvement_trial_wave(
         internal_state_probe=internal_state_probe,
         hook_chain_probe=hook_chain_probe,
         consumer_misread_guard_probe=consumer_misread_guard_probe,
+        subsystem_parity_focus_probe=subsystem_parity_focus_probe,
         operator_retrieval_contract_present=operator_retrieval_contract_present,
         compiled_landing_zone_spec_present=compiled_landing_zone_spec_present,
         retrieval_runner_present=retrieval_runner_present,

@@ -274,6 +274,15 @@ The successor-facing `subsystem_parity` readout should:
 - expose only the highest-signal subsystem families
 - use bounded labels: `baseline`, `beta_usable`, `partial`, `deferred`
 - tie each family to one strongest current truth, one main gap, one next bounded move, and one overclaim to avoid
+- keep `next_focus` subordinate to `mutation_preflight` and `canonical_center`
+- when a next focus is surfaced, expose:
+  - `resolved_to`
+  - `source_family`
+  - `focus_pressures`
+  - `operator_action`
+
+Clearer `next_focus` packaging improves successor orientation only.
+It must not be read as autonomous planning, stronger mutation authority, or governance truth.
 
 This readout is not another roadmap.
 It is a successor compression surface for maturity and honesty posture.

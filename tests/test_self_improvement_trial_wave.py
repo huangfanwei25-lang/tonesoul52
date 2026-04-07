@@ -52,6 +52,10 @@ def _build_report(**overrides):
             "present": True,
             "summary_text": "consumer_misread_guard_probe guards=4 priority=observer_stable_not_verified surface=observer_window.stable claude_sync=yes",
         },
+        "subsystem_parity_focus_probe": {
+            "present": True,
+            "summary_text": "subsystem_parity_focus_probe target=shared_code_edit.path_overlap_preflight source=mutation_preflight_hooks pressures=3 shell_sync=yes",
+        },
         "operator_retrieval_contract_present": True,
         "compiled_landing_zone_spec_present": True,
         "retrieval_runner_present": False,
@@ -67,12 +71,13 @@ def test_build_self_improvement_trial_wave_yields_expected_outcomes() -> None:
     surface_statuses = [item["result_surface"]["surface_status"] for item in report["candidates"]]
 
     assert report["status"] == "completed"
-    assert report["outcome_counts"]["promote"] == 11
+    assert report["outcome_counts"]["promote"] == 12
     assert report["outcome_counts"]["park"] == 1
-    assert report["next_short_board"] == "Phase 829: Twelfth Trial Candidate Admission"
+    assert report["next_short_board"] == "Phase 832: Thirteenth Trial Candidate Admission"
     assert statuses == [
         "promote",
         "park",
+        "promote",
         "promote",
         "promote",
         "promote",
@@ -116,6 +121,7 @@ def test_build_self_improvement_trial_wave_parks_consumer_candidate_on_drift() -
         ("internal_state_probe", 9, "internal_state_observability_clarity_v1"),
         ("hook_chain_probe", 10, "hook_chain_trigger_clarity_v1"),
         ("consumer_misread_guard_probe", 11, "consumer_misread_guard_clarity_v1"),
+        ("subsystem_parity_focus_probe", 12, "subsystem_parity_focus_clarity_v1"),
     ],
 )
 def test_build_self_improvement_trial_wave_parks_candidate_when_probe_missing(

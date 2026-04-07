@@ -296,6 +296,12 @@ def test_start_agent_session_emits_machine_readable_bundle(
     assert subsystem_parity["counts"]["partial"] == 2
     assert subsystem_parity["counts"]["deferred"] == 1
     assert subsystem_parity["next_focus"]["resolved_to"] == "shared_code_edit.path_overlap_preflight"
+    assert subsystem_parity["next_focus"]["source_family"] == "mutation_preflight_hooks"
+    assert subsystem_parity["next_focus"]["focus_pressures"] == [
+        "readiness=needs_clarification",
+        "task_track=feature_track",
+        "claim_recommendation=required",
+    ]
     parity_by_name = {item["name"]: item for item in subsystem_parity["families"]}
     assert parity_by_name["session_start_bundle"]["status"] == "baseline"
     assert parity_by_name["packet_hot_state"]["status"] == "beta_usable"

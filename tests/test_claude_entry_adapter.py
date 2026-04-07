@@ -20,7 +20,12 @@ def test_build_claude_entry_adapter_preserves_first_hop_order() -> None:
                 "next_followup": {"target": "shared_code_edit.path_overlap_preflight"}
             },
             "subsystem_parity": {
-                "next_focus": {"resolved_to": "task_board_governance.parking_preflight"}
+                "next_focus": {
+                    "resolved_to": "task_board_governance.parking_preflight",
+                    "source_family": "mutation_preflight_hooks",
+                    "operator_action": "Run task-board parking review first.",
+                    "focus_pressures": ["readiness=pass", "task_track=feature_track"],
+                }
             },
             "next_pull": {
                 "receiver_rule": "Pull the full Tier-2 bundle only when shared mutation or contested governance detail is required.",
@@ -73,6 +78,7 @@ def test_build_claude_entry_adapter_preserves_first_hop_order() -> None:
     assert adapter["current_context"]["short_board"] == (
         "Phase 774: dashboard status panel tier alignment"
     )
+    assert adapter["next_focus"]["source_family"] == "mutation_preflight_hooks"
     assert adapter["surface_versioning"]["present"] is True
     assert adapter["surface_versioning"]["consumer_shells"][2]["consumer"] == "claude_style_shell"
     assert adapter["bounded_pulls"]["observe_first"] is True

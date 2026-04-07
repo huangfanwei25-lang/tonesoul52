@@ -106,6 +106,7 @@ def build_self_improvement_trial_wave(
     internal_state_probe: dict[str, Any],
     hook_chain_probe: dict[str, Any] | None = None,
     consumer_misread_guard_probe: dict[str, Any] | None = None,
+    subsystem_parity_focus_probe: dict[str, Any] | None = None,
     operator_retrieval_contract_present: bool,
     compiled_landing_zone_spec_present: bool,
     retrieval_runner_present: bool,
@@ -139,6 +140,10 @@ def build_self_improvement_trial_wave(
     consumer_misread_guard_ready = bool((consumer_misread_guard_probe or {}).get("present"))
     consumer_misread_guard_summary = str(
         (consumer_misread_guard_probe or {}).get("summary_text") or ""
+    ).strip()
+    subsystem_parity_focus_ready = bool((subsystem_parity_focus_probe or {}).get("present"))
+    subsystem_parity_focus_summary = str(
+        (subsystem_parity_focus_probe or {}).get("summary_text") or ""
     ).strip()
 
     consumer_candidate = {
@@ -953,6 +958,75 @@ def build_self_improvement_trial_wave(
         ),
     )
 
+    subsystem_parity_focus_candidate = {
+        "candidate_record": _build_candidate_record(
+            candidate_id="subsystem_parity_focus_clarity_v1",
+            target_surface="subsystem_parity.next_focus",
+            target_consumer="codex_claude_dashboard_operator_shells",
+            baseline_story=(
+                "Subsystem parity already exposed family status and one next_focus target, but successors still had to infer which family produced that focus and why it mattered now."
+            ),
+            candidate_story=(
+                "Subsystem parity now exposes source_family, focus_pressures, and operator_action so Codex-style, Claude-style, and dashboard shells recover the same next-focus rationale without widening authority."
+            ),
+            success_metric="subsystem_parity_focus_probe.present and consumer_drift_report.status == aligned",
+            failure_mode_watch="next_focus packaging turns into a planner story or drifts across shells",
+            rollback_path="remove next_focus rationale packaging and fall back to target-plus-reason only",
+            overclaim_to_avoid="clearer next_focus packaging is not better planning quality or stronger authority",
+            scope_limit="subsystem-parity packaging only; no shell redesign, no planner, no governance widening",
+        ),
+        "analyzer_closeout": _build_analyzer_closeout(
+            status="promote" if (subsystem_parity_focus_ready and consumer_aligned) else "park",
+            result_story=(
+                "Subsystem parity now says which family produced the current focus, what pressures made it current, and what bounded operator action follows."
+                if (subsystem_parity_focus_ready and consumer_aligned)
+                else "Subsystem-parity focus clarity is not yet stable enough to promote."
+            ),
+            evidence_bundle_summary=(
+                subsystem_parity_focus_summary or "subsystem_parity_focus_probe unavailable"
+            ),
+            unresolved_items=(
+                [
+                    "clearer next_focus rationale improves orientation, not planning quality or authority",
+                    "future shells must keep next_focus subordinate to mutation_preflight and canonical_center",
+                ]
+                if (subsystem_parity_focus_ready and consumer_aligned)
+                else [
+                    "next_focus rationale is not yet visible enough across bounded consumers",
+                    "consumer drift must stay aligned before promotion",
+                ]
+            ),
+            failure_pressure="low" if (subsystem_parity_focus_ready and consumer_aligned) else "meaningful",
+            rollback_posture="bounded_restore",
+            promotion_limit="does not authorize planner behavior, stronger permissions, or governance promotion",
+            overclaim_warning="clearer next_focus packaging is not autonomous planning or stronger runtime truth",
+            next_action=(
+                "keep subsystem-parity focus bounded while admitting the next candidate"
+                if (subsystem_parity_focus_ready and consumer_aligned)
+                else "repair subsystem-parity focus clarity before reopening this candidate"
+            ),
+        ),
+    }
+    subsystem_parity_focus_candidate["result_surface"] = _build_result_surface(
+        status=subsystem_parity_focus_candidate["analyzer_closeout"]["status"],
+        registry_recommendation=(
+            "promotion_ready_result"
+            if (subsystem_parity_focus_ready and consumer_aligned)
+            else "distilled_lesson"
+        ),
+        supersession_posture="active_until_newer_subsystem_parity_focus_trials_exist",
+        replay_rule="prefer_status_surface_then_probe_current_subsystem_parity_shape_before_reusing_the_story",
+        residue_posture=(
+            "keep_visible_as_current_packaging_result"
+            if (subsystem_parity_focus_ready and consumer_aligned)
+            else "park_in_status_surface_until_subsystem_parity_focus_clarity_is_stable"
+        ),
+        visibility="status_surface_only",
+        carry_forward_rule=(
+            "may inform future orientation-shell packaging trials, but does not authorize planner behavior or stronger authority"
+        ),
+    )
+
     candidates = [
         consumer_candidate,
         retrieval_candidate,
@@ -966,6 +1040,7 @@ def build_self_improvement_trial_wave(
         internal_state_candidate,
         hook_chain_candidate,
         consumer_misread_guard_candidate,
+        subsystem_parity_focus_candidate,
     ]
     outcome_counts = _count_outcomes(candidates)
     status = "completed"
@@ -997,8 +1072,9 @@ def build_self_improvement_trial_wave(
             "internal_state_observability_clarity",
             "hook_chain_trigger_clarity",
             "consumer_misread_guard_clarity",
+            "subsystem_parity_focus_clarity",
         ],
         "outcome_counts": outcome_counts,
         "candidates": candidates,
-        "next_short_board": "Phase 829: Twelfth Trial Candidate Admission",
+        "next_short_board": "Phase 832: Thirteenth Trial Candidate Admission",
     }

@@ -2203,8 +2203,26 @@
 - [x] register the result in a bounded status/registry surface without leaking it into first-hop shells
 **Success Criteria**: ToneSoul has one honest eleventh-trial result classification and registry-ready record for `consumer_misread_guard_clarity_v1`.
 
-## Phase 829: Twelfth Trial Candidate Admission (2026-04-07, planned)
-- [ ] choose the next bounded self-improvement candidate after the eleventh trial result and current registry/status surface are visible
-- [ ] keep the next candidate inside allowed mutation classes and away from retrieval mythology, governance semantics, identity, transport claims, predictive-math inflation, selfhood mythology, permission-system creep, and consumer-shell planner drift
-- [ ] make the no-go list explicit before opening a twelfth trial wave
+## Phase 829: Twelfth Trial Candidate Admission (2026-04-07)
+- [x] choose the next bounded self-improvement candidate after the eleventh trial result and current registry/status surface are visible
+- [x] keep the next candidate inside allowed mutation classes and away from retrieval mythology, governance semantics, identity, transport claims, predictive-math inflation, selfhood mythology, permission-system creep, and consumer-shell planner drift
+- [x] make the no-go list explicit before opening a twelfth trial wave
 **Success Criteria**: ToneSoul has one admitted twelfth candidate that is narrower than shell redesign and still worth real operator leverage.
+
+## Phase 830: Twelfth Bounded Trial Wave - Subsystem-Parity Focus Clarity (2026-04-07)
+- [x] refine `subsystem_parity.next_focus` so it exposes `source_family`, `focus_pressures`, and `operator_action`
+- [x] preserve the current family list, count structure, and bounded target resolution
+- [x] keep the change inside successor-facing packaging only: no planner story, no governance widening, no stronger permissions
+**Success Criteria**: ToneSoul lands one bounded twelfth-trial implementation for `subsystem_parity_focus_clarity_v1` that improves successor orientation without turning subsystem parity into a planner or authority lane.
+
+## Phase 831: Twelfth Trial Evaluation And Registry Entry (2026-04-07)
+- [x] evaluate the `subsystem_parity_focus_clarity_v1` trial against the existing evaluator harness and analyzer gate
+- [x] classify the result honestly as `promote`, `park`, `retire`, `blocked`, or `not_ready_for_trial`
+- [x] register the outcome in the bounded status surface without leaking it into first-hop shells
+**Success Criteria**: ToneSoul has one honest twelfth-trial result classification and registry-ready record for `subsystem_parity_focus_clarity_v1`.
+
+## Phase 832: Thirteenth Trial Candidate Admission (2026-04-07, planned)
+- [ ] choose the next bounded self-improvement candidate after the twelfth trial result and current registry/status surface are visible
+- [ ] keep the next candidate inside allowed mutation classes and away from retrieval mythology, governance semantics, identity, transport claims, predictive-math inflation, selfhood mythology, permission-system creep, consumer-shell planner drift, and subsystem-parity authority inflation
+- [ ] make the no-go list explicit before opening a thirteenth trial wave
+**Success Criteria**: ToneSoul has one admitted thirteenth candidate that is narrower than shell redesign and still worth real operator leverage.

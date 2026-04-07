@@ -108,6 +108,7 @@ def build_tier1_orientation_shell(bundle: dict[str, Any]) -> dict[str, Any]:
     current_short_board = canonical_center.get("current_short_board") or {}
     successor_correction = canonical_center.get("successor_correction") or {}
     subsystem_parity = bundle.get("subsystem_parity") or {}
+    next_focus = subsystem_parity.get("next_focus") or {}
     observer_shell = bundle.get("observer_shell") or {}
     closeout_attention = bundle.get("closeout_attention") or {}
 
@@ -131,6 +132,12 @@ def build_tier1_orientation_shell(bundle: dict[str, Any]) -> dict[str, Any]:
             "source_precedence": str(canonical_center.get("source_precedence_summary", "")).strip(),
         },
         "parity_counts": dict(subsystem_parity.get("counts") or {}),
+        "next_focus": {
+            "resolved_to": str(next_focus.get("resolved_to", "")).strip(),
+            "source_family": str(next_focus.get("source_family", "")).strip(),
+            "operator_action": str(next_focus.get("operator_action", "")).strip(),
+            "focus_pressures": list(next_focus.get("focus_pressures") or []),
+        },
         "family_cards": family_cards,
         "closeout_attention": {
             "present": bool(closeout_attention.get("present")),

@@ -70,6 +70,13 @@ def test_build_subsystem_parity_readout_emits_expected_status_mix() -> None:
         "deferred": 1,
     }
     assert payload["next_focus"]["resolved_to"] == "shared_code_edit.path_overlap_preflight"
+    assert payload["next_focus"]["source_family"] == "mutation_preflight_hooks"
+    assert payload["next_focus"]["focus_pressures"] == [
+        "readiness=pass",
+        "task_track=feature_track",
+        "claim_recommendation=required",
+    ]
+    assert "shared-edit preflight" in payload["next_focus"]["operator_action"]
     assert payload["summary_text"].startswith("subsystem_parity baseline=3 beta_usable=5")
 
     by_name = {item["name"]: item for item in payload["families"]}

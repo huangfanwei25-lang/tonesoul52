@@ -35,6 +35,57 @@ def _class_counts(families: list[dict[str, str]]) -> dict[str, int]:
     return counts
 
 
+def _build_next_focus(
+    *,
+    next_followup_target: str,
+    readiness_status: str,
+    task_track: str,
+    claim_recommendation: str,
+) -> dict[str, Any]:
+    target = next_followup_target or "shared_code_edit.path_overlap_preflight"
+    source_family = "mutation_preflight_hooks"
+    focus_pressures = [f"readiness={readiness_status}", f"task_track={task_track}"]
+    operator_action = "Follow the currently surfaced bounded hook before widening context or opening a broader redesign lane."
+    reason = (
+        "Follow the next bounded mutation hook surfaced by mutation_preflight instead of assuming task-board parking is always the shortest remaining lane."
+    )
+
+    if target.startswith("shared_code_edit."):
+        focus_pressures.append(f"claim_recommendation={claim_recommendation}")
+        operator_action = (
+            "Run the shared-edit preflight first so path overlap and claim gaps are resolved before broader mutation."
+        )
+        reason = (
+            "The current shortest board is still shared mutation clarity, so the successor should resolve overlap pressure before broader shell work."
+        )
+    elif target.startswith("publish_push."):
+        focus_pressures.append("outward_action_review=yes")
+        operator_action = (
+            "Run the publish/push preflight first so review cues, honesty cues, and hard blocks are separated before any outward action."
+        )
+        reason = (
+            "The current bounded friction is outward action posture, so publish/push review should be resolved before broader shell work."
+        )
+    elif target.startswith("task_board."):
+        focus_pressures.append("parking_scope_review=yes")
+        operator_action = (
+            "Run the task-board preflight first so new ideas are parked or ratified without mutating the short board by assumption."
+        )
+        reason = (
+            "The current bounded friction is task-board parking scope, so the successor should resolve parking posture before broader shell work."
+        )
+
+    return {
+        "target": target,
+        "resolved_to": target,
+        "source_family": source_family,
+        "focus_pressures": focus_pressures,
+        "operator_action": operator_action,
+        "reason": reason,
+        "why_now": reason,
+    }
+
+
 def build_subsystem_parity_readout(
     *,
     project_memory_summary: dict[str, Any],
@@ -193,6 +244,12 @@ def build_subsystem_parity_readout(
     ]
 
     counts = _class_counts(families)
+    next_focus = _build_next_focus(
+        next_followup_target=next_followup_target,
+        readiness_status=readiness_status,
+        task_track=task_track,
+        claim_recommendation=claim_recommendation,
+    )
     return {
         "present": True,
         "families": families,
@@ -200,13 +257,7 @@ def build_subsystem_parity_readout(
         "receiver_rule": (
             "Use baseline lanes for normal continuation, beta_usable lanes for guided collaborator-beta work, partial lanes with explicit gap awareness, and deferred lanes as out of current scope."
         ),
-        "next_focus": {
-            "target": next_followup_target or "shared_code_edit.path_overlap_preflight",
-            "resolved_to": next_followup_target or "shared_code_edit.path_overlap_preflight",
-            "reason": (
-                "Follow the next bounded mutation hook surfaced by mutation_preflight instead of assuming task-board parking is always the shortest remaining lane."
-            ),
-        },
+        "next_focus": next_focus,
         "summary_text": (
             f"subsystem_parity baseline={counts['baseline']} beta_usable={counts['beta_usable']} "
             f"partial={counts['partial']} deferred={counts['deferred']} "

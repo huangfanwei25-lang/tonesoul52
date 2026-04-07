@@ -1,6 +1,6 @@
 # ToneSoul Self-Improvement Trial Wave
 
-**Summary**: `self_improvement_trial_wave promote=11 park=1 retire=0 blocked=0`
+**Summary**: `self_improvement_trial_wave promote=12 park=1 retire=0 blocked=0`
 
 > Trial-wave outcomes are bounded self-improvement results. They may inform future patches or parking decisions, but they do not become governance truth, identity truth, or hot-memory authority.
 
@@ -18,10 +18,11 @@
 - `internal_state_observability_clarity`
 - `hook_chain_trigger_clarity`
 - `consumer_misread_guard_clarity`
+- `subsystem_parity_focus_clarity`
 
 ## Outcomes
 
-- `promote`: `11`
+- `promote`: `12`
 - `park`: `1`
 - `retire`: `0`
 - `blocked`: `0`
@@ -186,7 +187,20 @@
     - future consumers must keep the same guard set and priority rule
   - promotion_limit: `does not authorize new planners, stronger permissions, or stronger cross-vendor interoperability claims`
   - next_action: `keep consumer misread correction bounded while admitting the next candidate`
+- `subsystem_parity_focus_clarity_v1` -> `promote`
+  - target_surface: `subsystem_parity.next_focus`
+  - success_metric: `subsystem_parity_focus_probe.present and consumer_drift_report.status == aligned`
+  - result_story: Subsystem parity now says which family produced the current focus, what pressures made it current, and what bounded operator action follows.
+  - evidence: `subsystem_parity_focus_probe target=publish_push.posture_preflight source=mutation_preflight_hooks pressures=3 shell_sync=yes`
+  - result_surface: `promoted_result`
+  - replay_rule: `prefer_status_surface_then_probe_current_subsystem_parity_shape_before_reusing_the_story`
+  - residue_posture: `keep_visible_as_current_packaging_result`
+  - unresolved_items:
+    - clearer next_focus rationale improves orientation, not planning quality or authority
+    - future shells must keep next_focus subordinate to mutation_preflight and canonical_center
+  - promotion_limit: `does not authorize planner behavior, stronger permissions, or governance promotion`
+  - next_action: `keep subsystem-parity focus bounded while admitting the next candidate`
 
 ## Next Short Board
 
-- `Phase 829: Twelfth Trial Candidate Admission`
+- `Phase 832: Thirteenth Trial Candidate Admission`

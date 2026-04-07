@@ -923,18 +923,18 @@ This is the key improvement over the current gap:
 
 ## Current Recommendation
 
-The program is now active through `Phase 825`.
+The program is now active through `Phase 831`.
 
 Current short board:
 
-- `Phase 829: Twelfth Trial Candidate Admission`
+- `Phase 832: Thirteenth Trial Candidate Admission`
 
 Recommended discipline:
 
 - keep trial outcomes visible through dedicated status artifacts first
 - do not push self-improvement history into `session-start`, `observer-window`, or packet defaults yet
 - keep new trials inside already-allowed mutation classes until a compact result-surface design proves stable
-- prefer packaging refinements that reduce operator latency, shared-edit ambiguity, outward-action ambiguity, stale follow-up routing, consumer-lineage ambiguity, launch-health honesty, internal-state handling clarity, hook-selection ambiguity, and cross-shell misread-correction ambiguity before opening broader retrieval or governance experiments
+- prefer packaging refinements that reduce operator latency, shared-edit ambiguity, outward-action ambiguity, stale follow-up routing, consumer-lineage ambiguity, launch-health honesty, internal-state handling clarity, hook-selection ambiguity, cross-shell misread-correction ambiguity, and successor focus ambiguity before opening broader retrieval or governance experiments
 
 ### Phase 827: Eleventh Bounded Trial Wave - Consumer Misread-Guard Clarity
 
@@ -988,6 +988,60 @@ Current implementation target:
 
 - one candidate-admission note
 - one recommended twelfth-trial family
+- one explicit no-go list for what must stay parked
+
+### Phase 830: Twelfth Bounded Trial Wave - Subsystem-Parity Focus Clarity
+
+Bounded scope:
+
+- refine `subsystem_parity.next_focus` so it exposes `source_family`, `focus_pressures`, and `operator_action`
+- preserve the current family list, count structure, and bounded target resolution
+- keep the change inside successor-facing packaging only: no planner story, no governance widening, no stronger permissions
+
+Success criteria:
+
+- ToneSoul lands one bounded twelfth-trial implementation that improves successor orientation without turning subsystem parity into a planner or authority lane
+
+Current implementation target:
+
+- one subsystem-parity packaging refinement
+- one cross-shell probe proving Codex-style, Claude-style, and dashboard shells preserve the same next-focus family
+- no shell redesign and no change to mutation/governance truth
+
+### Phase 831: Twelfth Trial Evaluation And Registry Entry
+
+Bounded scope:
+
+- evaluate the subsystem-parity focus clarity trial using the existing evaluator harness and analyzer gate
+- classify the result honestly as `promote`, `park`, `retire`, `blocked`, or `not_ready_for_trial`
+- register the outcome in the bounded status surface without leaking it into first-hop shells
+
+Success criteria:
+
+- ToneSoul has one honest registry-ready twelfth-trial result and clear promotion limit for subsystem-parity focus packaging
+
+Current implementation target:
+
+- one evaluator-ready record for the twelfth trial
+- one analyzer conclusion
+- one status-surface update with no shell creep
+
+### Phase 832: Thirteenth Trial Candidate Admission
+
+Bounded scope:
+
+- choose the next bounded candidate only after the twelfth trial result is visible
+- keep the candidate inside already-allowed mutation classes
+- make the no-go list explicit before a thirteenth trial wave opens
+
+Success criteria:
+
+- ToneSoul has one admitted thirteenth candidate with real operator leverage and no new authority mythology
+
+Current implementation target:
+
+- one candidate-admission note
+- one recommended thirteenth-trial family
 - one explicit no-go list for what must stay parked
 
 ---

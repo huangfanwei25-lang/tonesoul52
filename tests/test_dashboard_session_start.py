@@ -58,6 +58,12 @@ def test_build_tier1_orientation_shell_extracts_cards():
         },
         "subsystem_parity": {
             "counts": {"baseline": 2, "beta_usable": 1, "partial": 1, "deferred": 0},
+            "next_focus": {
+                "resolved_to": "shared_code_edit.path_overlap_preflight",
+                "source_family": "mutation_preflight_hooks",
+                "operator_action": "Run the shared-edit preflight first.",
+                "focus_pressures": ["readiness=pass", "task_track=feature_track"],
+            },
             "families": [
                 {
                     "name": "session_start_bundle",
@@ -88,6 +94,8 @@ def test_build_tier1_orientation_shell_extracts_cards():
     assert result["canonical_cards"]["short_board"] == "Phase 768"
     assert result["canonical_cards"]["successor_correction"] == "observer stable != permission"
     assert result["parity_counts"]["baseline"] == 2
+    assert result["next_focus"]["resolved_to"] == "shared_code_edit.path_overlap_preflight"
+    assert result["next_focus"]["source_family"] == "mutation_preflight_hooks"
     assert result["closeout_attention"]["status"] == "partial"
     assert result["observer_shell"]["contested_headlines"] == [
         "council confidence is descriptive_only"
