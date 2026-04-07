@@ -76,6 +76,9 @@ def test_build_tier1_orientation_shell_extracts_cards():
         "closeout_attention": {
             "present": True,
             "status": "partial",
+            "source_family": "bounded_handoff_closeout",
+            "operator_action": "Review unresolved items before treating the handoff as resumable work.",
+            "attention_pressures": ["status=partial", "unresolved=1"],
             "summary_text": "latest closeout is partial",
             "receiver_rule": "read closeout first",
         },
@@ -97,6 +100,11 @@ def test_build_tier1_orientation_shell_extracts_cards():
     assert result["next_focus"]["resolved_to"] == "shared_code_edit.path_overlap_preflight"
     assert result["next_focus"]["source_family"] == "mutation_preflight_hooks"
     assert result["closeout_attention"]["status"] == "partial"
+    assert result["closeout_attention"]["source_family"] == "bounded_handoff_closeout"
+    assert result["closeout_attention"]["attention_pressures"] == [
+        "status=partial",
+        "unresolved=1",
+    ]
     assert result["observer_shell"]["contested_headlines"] == [
         "council confidence is descriptive_only"
     ]

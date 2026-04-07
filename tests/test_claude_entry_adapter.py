@@ -15,7 +15,13 @@ def test_build_claude_entry_adapter_preserves_first_hop_order() -> None:
                     "summary_text": "Phase 774: dashboard status panel tier alignment",
                 }
             },
-            "closeout_attention": {"status": "partial"},
+            "closeout_attention": {
+                "status": "partial",
+                "source_family": "bounded_handoff_closeout",
+                "operator_action": "Review unresolved items before treating the handoff as resumable work.",
+                "attention_pressures": ["status=partial", "unresolved=1"],
+                "why_now": "latest compaction closeout is partial",
+            },
             "mutation_preflight": {
                 "next_followup": {"target": "shared_code_edit.path_overlap_preflight"}
             },
@@ -75,6 +81,11 @@ def test_build_claude_entry_adapter_preserves_first_hop_order() -> None:
     assert adapter["must_correct_first"]["trigger_surface"] == "closeout_attention + compaction summary"
     assert adapter["must_correct_first"]["operator_action"] == "read closeout first"
     assert adapter["current_context"]["closeout_status"] == "partial"
+    assert adapter["closeout_focus"]["source_family"] == "bounded_handoff_closeout"
+    assert adapter["closeout_focus"]["attention_pressures"] == [
+        "status=partial",
+        "unresolved=1",
+    ]
     assert adapter["current_context"]["short_board"] == (
         "Phase 774: dashboard status panel tier alignment"
     )

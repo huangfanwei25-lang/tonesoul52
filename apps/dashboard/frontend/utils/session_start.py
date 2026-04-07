@@ -142,6 +142,9 @@ def build_tier1_orientation_shell(bundle: dict[str, Any]) -> dict[str, Any]:
         "closeout_attention": {
             "present": bool(closeout_attention.get("present")),
             "status": str(closeout_attention.get("status", "")).strip(),
+            "source_family": str(closeout_attention.get("source_family", "")).strip(),
+            "operator_action": str(closeout_attention.get("operator_action", "")).strip(),
+            "attention_pressures": list(closeout_attention.get("attention_pressures") or []),
             "summary_text": str(closeout_attention.get("summary_text", "")).strip(),
             "receiver_rule": str(closeout_attention.get("receiver_rule", "")).strip(),
         },

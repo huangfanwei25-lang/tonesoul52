@@ -140,6 +140,15 @@ Observer-facing shells should therefore lift any latest compaction closeout that
 
 so a successor reading the observer window first still sees that the last handoff is not equivalent to completed work.
 
+When `closeout_attention` is lifted, it should stay bounded and action-shaped:
+
+- `source_family`
+- `attention_pressures`
+- `operator_action`
+
+This improves successor handling only.
+It must not be promoted into planner behavior, stronger permissions, or governance truth.
+
 ### 6. Descriptive And Calibrated Layers Must Stay Separate
 
 ToneSoul may expose descriptive numeric or semantic summaries.

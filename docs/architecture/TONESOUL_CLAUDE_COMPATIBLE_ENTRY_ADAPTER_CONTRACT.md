@@ -1,7 +1,7 @@
 # ToneSoul Claude-Compatible Entry Adapter Contract
 
 > Purpose: define one repo-native adapter that lets Claude-style shells cold-start from ToneSoul without drifting away from the same first-hop order used by Codex and dashboard/operator shells.
-> Last Updated: 2026-04-06
+> Last Updated: 2026-04-07
 > Authority: bounded adapter contract. Does not imply official first-party cross-vendor interoperability.
 
 ---
@@ -45,6 +45,7 @@ The adapter should preserve:
 - `must_read_now`
 - `must_not_assume`
 - `current_context`
+- `closeout_focus`
 - `bounded_pulls`
 
 At minimum, the first-hop order should stay:
@@ -73,6 +74,16 @@ Deeper packet or observer surfaces should only be pulled when the task is:
 - blocked
 - ambiguous
 - shared-state heavy
+
+When `closeout_attention` is present, the adapter should preserve one bounded `closeout_focus` with:
+
+- closeout `status`
+- `source_family`
+- `attention_pressures`
+- `operator_action`
+
+This remains orientation-only packaging.
+It must not become a planner or a stronger authority lane.
 
 ## Non-Goals
 

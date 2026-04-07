@@ -2221,8 +2221,26 @@
 - [x] register the outcome in the bounded status surface without leaking it into first-hop shells
 **Success Criteria**: ToneSoul has one honest twelfth-trial result classification and registry-ready record for `subsystem_parity_focus_clarity_v1`.
 
-## Phase 832: Thirteenth Trial Candidate Admission (2026-04-07, planned)
-- [ ] choose the next bounded self-improvement candidate after the twelfth trial result and current registry/status surface are visible
-- [ ] keep the next candidate inside allowed mutation classes and away from retrieval mythology, governance semantics, identity, transport claims, predictive-math inflation, selfhood mythology, permission-system creep, consumer-shell planner drift, and subsystem-parity authority inflation
-- [ ] make the no-go list explicit before opening a thirteenth trial wave
+## Phase 832: Thirteenth Trial Candidate Admission (2026-04-07)
+- [x] choose the next bounded self-improvement candidate after the twelfth trial result and current registry/status surface are visible
+- [x] keep the next candidate inside allowed mutation classes and away from retrieval mythology, governance semantics, identity, transport claims, predictive-math inflation, selfhood mythology, permission-system creep, consumer-shell planner drift, and subsystem-parity authority inflation
+- [x] make the no-go list explicit before opening a thirteenth trial wave
 **Success Criteria**: ToneSoul has one admitted thirteenth candidate that is narrower than shell redesign and still worth real operator leverage.
+
+## Phase 833: Thirteenth Bounded Trial Wave - Closeout-Attention Action Clarity (2026-04-07)
+- [x] refine `closeout_attention` so it exposes `source_family`, `attention_pressures`, and `operator_action`
+- [x] preserve the current closeout lift, anti-fake-completion meaning, and bounded handoff status semantics
+- [x] keep the change inside successor-facing packaging only: no planner story, no governance widening, no stronger permissions
+**Success Criteria**: ToneSoul lands one bounded thirteenth-trial implementation for `closeout_attention_action_clarity_v1` that improves closeout handling without turning closeout attention into a planner or authority lane.
+
+## Phase 834: Thirteenth Trial Evaluation And Registry Entry (2026-04-07)
+- [x] evaluate the `closeout_attention_action_clarity_v1` trial against the existing evaluator harness and analyzer gate
+- [x] classify the result honestly as `promote`, `park`, `retire`, `blocked`, or `not_ready_for_trial`
+- [x] register the outcome in the bounded status surface without leaking it into first-hop shells
+**Success Criteria**: ToneSoul has one honest thirteenth-trial result classification and registry-ready record for `closeout_attention_action_clarity_v1`.
+
+## Phase 835: Fourteenth Trial Candidate Admission (2026-04-07, planned)
+- [ ] choose the next bounded self-improvement candidate after the thirteenth trial result and current registry/status surface are visible
+- [ ] keep the next candidate inside allowed mutation classes and away from retrieval mythology, governance semantics, identity, transport claims, predictive-math inflation, selfhood mythology, permission-system creep, consumer-shell planner drift, subsystem-parity authority inflation, and closeout-attention planner drift
+- [ ] make the no-go list explicit before opening a fourteenth trial wave
+**Success Criteria**: ToneSoul has one admitted fourteenth candidate that is narrower than shell redesign and still worth real operator leverage.

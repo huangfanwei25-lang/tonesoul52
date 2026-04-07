@@ -923,18 +923,18 @@ This is the key improvement over the current gap:
 
 ## Current Recommendation
 
-The program is now active through `Phase 831`.
+The program is now active through `Phase 834`.
 
 Current short board:
 
-- `Phase 832: Thirteenth Trial Candidate Admission`
+- `Phase 835: Fourteenth Trial Candidate Admission`
 
 Recommended discipline:
 
 - keep trial outcomes visible through dedicated status artifacts first
 - do not push self-improvement history into `session-start`, `observer-window`, or packet defaults yet
 - keep new trials inside already-allowed mutation classes until a compact result-surface design proves stable
-- prefer packaging refinements that reduce operator latency, shared-edit ambiguity, outward-action ambiguity, stale follow-up routing, consumer-lineage ambiguity, launch-health honesty, internal-state handling clarity, hook-selection ambiguity, cross-shell misread-correction ambiguity, and successor focus ambiguity before opening broader retrieval or governance experiments
+- prefer packaging refinements that reduce operator latency, shared-edit ambiguity, outward-action ambiguity, stale follow-up routing, consumer-lineage ambiguity, launch-health honesty, internal-state handling clarity, hook-selection ambiguity, cross-shell misread-correction ambiguity, successor focus ambiguity, and anti-fake-completion handling ambiguity before opening broader retrieval or governance experiments
 
 ### Phase 827: Eleventh Bounded Trial Wave - Consumer Misread-Guard Clarity
 
@@ -1042,6 +1042,60 @@ Current implementation target:
 
 - one candidate-admission note
 - one recommended thirteenth-trial family
+- one explicit no-go list for what must stay parked
+
+### Phase 833: Thirteenth Bounded Trial Wave - Closeout-Attention Action Clarity
+
+Bounded scope:
+
+- refine `closeout_attention` so it exposes `source_family`, `attention_pressures`, and `operator_action`
+- preserve the current closeout lift, anti-fake-completion meaning, and bounded handoff status semantics
+- keep the change inside successor-facing packaging only: no planner story, no governance widening, no stronger permissions
+
+Success criteria:
+
+- ToneSoul lands one bounded thirteenth-trial implementation that improves closeout handling across observer, Claude-style, and dashboard shells without turning closeout attention into a planner or authority lane
+
+Current implementation target:
+
+- one closeout-attention packaging refinement
+- one cross-shell probe proving observer, Claude-style, and dashboard shells preserve the same closeout handling story
+- no shell redesign and no change to closeout truth or mutation authority
+
+### Phase 834: Thirteenth Trial Evaluation And Registry Entry
+
+Bounded scope:
+
+- evaluate the closeout-attention action-clarity trial using the existing evaluator harness and analyzer gate
+- classify the result honestly as `promote`, `park`, `retire`, `blocked`, or `not_ready_for_trial`
+- register the outcome in the bounded status surface without leaking it into first-hop shells
+
+Success criteria:
+
+- ToneSoul has one honest registry-ready thirteenth-trial result and clear promotion limit for closeout-attention packaging
+
+Current implementation target:
+
+- one evaluator-ready record for the thirteenth trial
+- one analyzer conclusion
+- one status-surface update with no shell creep
+
+### Phase 835: Fourteenth Trial Candidate Admission
+
+Bounded scope:
+
+- choose the next bounded candidate only after the thirteenth trial result is visible
+- keep the candidate inside already-allowed mutation classes
+- make the no-go list explicit before a fourteenth trial wave opens
+
+Success criteria:
+
+- ToneSoul has one admitted fourteenth candidate with real operator leverage and no new authority mythology
+
+Current implementation target:
+
+- one candidate-admission note
+- one recommended fourteenth-trial family
 - one explicit no-go list for what must stay parked
 
 ---

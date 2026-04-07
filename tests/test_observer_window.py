@@ -85,6 +85,7 @@ def _make_import_posture(
     compaction_closeout_status: str = "",
     compaction_stop_reason: str = "",
     compaction_unresolved_count: int = 0,
+    compaction_human_input_required: bool = False,
     trace_present: bool = True,
     trace_freshness_hours: float = 6.0,
     snapshot_present: bool = True,
@@ -114,6 +115,7 @@ def _make_import_posture(
             "closeout_status": compaction_closeout_status,
             "stop_reason": compaction_stop_reason,
             "unresolved_count": compaction_unresolved_count,
+            "human_input_required": compaction_human_input_required,
         },
         "recent_traces": {
             "present": trace_present,
@@ -287,6 +289,9 @@ class TestCleanStableCase:
         attention = self.anchor["closeout_attention"]
         assert attention["present"] is False
         assert attention["status"] == "complete"
+        assert attention["source_family"] == ""
+        assert attention["attention_pressures"] == []
+        assert attention["operator_action"] == ""
 
     def test_counts_match_lists(self):
         counts = self.anchor["counts"]
@@ -373,6 +378,7 @@ class TestBlockedCloseoutCase:
                 compaction_closeout_status="blocked",
                 compaction_stop_reason="external_blocked",
                 compaction_unresolved_count=1,
+                compaction_human_input_required=True,
                 compaction_obligation="must_review",
             ),
             readiness=_make_readiness(status="needs_clarification"),
@@ -397,6 +403,10 @@ class TestBlockedCloseoutCase:
         attention = self.anchor["closeout_attention"]
         assert attention["present"] is True
         assert attention["status"] == "blocked"
+        assert attention["source_family"] == "bounded_handoff_closeout"
+        assert "status=blocked" in attention["attention_pressures"]
+        assert "human_input_required=true" in attention["attention_pressures"]
+        assert "Do not continue shared mutation yet" in attention["operator_action"]
         assert "do not treat the handoff summary as completed work" in attention["summary_text"]
         assert "stop_reason=external_blocked" in attention["detail"]
 

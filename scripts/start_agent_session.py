@@ -1600,17 +1600,17 @@ def run_session_start_bundle(
         mutation_preflight=mutation_preflight,
         canonical_center=canonical_center,
     )
-    if int(tier) == 1:
-        from tonesoul.observer_window import build_low_drift_anchor
+    from tonesoul.observer_window import build_low_drift_anchor
 
-        observer_window = build_low_drift_anchor(
-            packet=packet,
-            import_posture=import_posture.get("surfaces") or {},
-            readiness=readiness,
-            canonical_center=canonical_center,
-            subsystem_parity=subsystem_parity,
-            mutation_preflight=mutation_preflight,
-        )
+    observer_window = build_low_drift_anchor(
+        packet=packet,
+        import_posture=import_posture.get("surfaces") or {},
+        readiness=readiness,
+        canonical_center=canonical_center,
+        subsystem_parity=subsystem_parity,
+        mutation_preflight=mutation_preflight,
+    )
+    if int(tier) == 1:
         return _build_tier1_payload(
             agent_id=agent_id,
             no_ack=no_ack,
@@ -1657,6 +1657,7 @@ def run_session_start_bundle(
         "consumer_contract": consumer_contract,
         "surface_versioning": surface_versioning,
         "subsystem_parity": subsystem_parity,
+        "closeout_attention": dict(observer_window.get("closeout_attention") or {}),
         "working_style_playbook": working_style_playbook,
         "working_style_validation": working_style_validation,
         "claim_view": {

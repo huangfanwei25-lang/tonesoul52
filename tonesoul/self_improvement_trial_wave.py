@@ -107,6 +107,7 @@ def build_self_improvement_trial_wave(
     hook_chain_probe: dict[str, Any] | None = None,
     consumer_misread_guard_probe: dict[str, Any] | None = None,
     subsystem_parity_focus_probe: dict[str, Any] | None = None,
+    closeout_attention_probe: dict[str, Any] | None = None,
     operator_retrieval_contract_present: bool,
     compiled_landing_zone_spec_present: bool,
     retrieval_runner_present: bool,
@@ -144,6 +145,10 @@ def build_self_improvement_trial_wave(
     subsystem_parity_focus_ready = bool((subsystem_parity_focus_probe or {}).get("present"))
     subsystem_parity_focus_summary = str(
         (subsystem_parity_focus_probe or {}).get("summary_text") or ""
+    ).strip()
+    closeout_attention_ready = bool((closeout_attention_probe or {}).get("present"))
+    closeout_attention_summary = str(
+        (closeout_attention_probe or {}).get("summary_text") or ""
     ).strip()
 
     consumer_candidate = {
@@ -1027,6 +1032,75 @@ def build_self_improvement_trial_wave(
         ),
     )
 
+    closeout_attention_candidate = {
+        "candidate_record": _build_candidate_record(
+            candidate_id="closeout_attention_action_clarity_v1",
+            target_surface="closeout_attention.operator_action",
+            target_consumer="observer_claude_dashboard_operator_shells",
+            baseline_story=(
+                "Closeout attention already lifted incomplete handoffs, but successors still had to infer what practical action followed from partial or blocked closeout."
+            ),
+            candidate_story=(
+                "Closeout attention now exposes source_family, attention_pressures, and operator_action so observer, Claude-style, and dashboard shells recover the same bounded handling story."
+            ),
+            success_metric="closeout_attention_probe.present and consumer_drift_report.status == aligned",
+            failure_mode_watch="closeout attention turns into a planner story or shells drift on anti-fake-completion handling",
+            rollback_path="remove closeout rationale packaging and fall back to status-plus-summary only",
+            overclaim_to_avoid="clearer closeout handling is not stronger authority, better planning, or solved mutation safety",
+            scope_limit="closeout-attention packaging only; no planner, no new permissions, no governance widening",
+        ),
+        "analyzer_closeout": _build_analyzer_closeout(
+            status="promote" if (closeout_attention_ready and consumer_aligned) else "park",
+            result_story=(
+                "Closeout attention now says which bounded handoff family triggered attention, what pressures are active, and what operator action follows."
+                if (closeout_attention_ready and consumer_aligned)
+                else "Closeout-attention action clarity is not yet stable enough to promote."
+            ),
+            evidence_bundle_summary=(
+                closeout_attention_summary or "closeout_attention_probe unavailable"
+            ),
+            unresolved_items=(
+                [
+                    "clearer closeout handling improves anti-fake-completion, not planning quality or authority",
+                    "future shells must keep closeout attention subordinate to consumer contract and bounded handoff truth",
+                ]
+                if (closeout_attention_ready and consumer_aligned)
+                else [
+                    "closeout action grammar is not yet preserved across bounded shells",
+                    "consumer drift must stay aligned before promotion",
+                ]
+            ),
+            failure_pressure="low" if (closeout_attention_ready and consumer_aligned) else "meaningful",
+            rollback_posture="bounded_restore",
+            promotion_limit="does not authorize planner behavior, stronger permissions, or governance promotion",
+            overclaim_warning="clearer closeout-attention packaging is not stronger runtime truth, stronger authority, or solved mutation safety",
+            next_action=(
+                "keep closeout-attention handling bounded while admitting the next candidate"
+                if (closeout_attention_ready and consumer_aligned)
+                else "repair closeout-attention action clarity before reopening this candidate"
+            ),
+        ),
+    }
+    closeout_attention_candidate["result_surface"] = _build_result_surface(
+        status=closeout_attention_candidate["analyzer_closeout"]["status"],
+        registry_recommendation=(
+            "promotion_ready_result"
+            if (closeout_attention_ready and consumer_aligned)
+            else "distilled_lesson"
+        ),
+        supersession_posture="active_until_newer_closeout_attention_trials_exist",
+        replay_rule="prefer_status_surface_then_probe_current_closeout_attention_shape_before_reusing_the_story",
+        residue_posture=(
+            "keep_visible_as_current_packaging_result"
+            if (closeout_attention_ready and consumer_aligned)
+            else "park_in_status_surface_until_closeout_attention_action_clarity_is_stable"
+        ),
+        visibility="status_surface_only",
+        carry_forward_rule=(
+            "may inform future anti-fake-completion packaging trials, but does not authorize planner behavior or stronger authority"
+        ),
+    )
+
     candidates = [
         consumer_candidate,
         retrieval_candidate,
@@ -1041,6 +1115,7 @@ def build_self_improvement_trial_wave(
         hook_chain_candidate,
         consumer_misread_guard_candidate,
         subsystem_parity_focus_candidate,
+        closeout_attention_candidate,
     ]
     outcome_counts = _count_outcomes(candidates)
     status = "completed"
@@ -1073,8 +1148,9 @@ def build_self_improvement_trial_wave(
             "hook_chain_trigger_clarity",
             "consumer_misread_guard_clarity",
             "subsystem_parity_focus_clarity",
+            "closeout_attention_action_clarity",
         ],
         "outcome_counts": outcome_counts,
         "candidates": candidates,
-        "next_short_board": "Phase 832: Thirteenth Trial Candidate Admission",
+        "next_short_board": "Phase 835: Fourteenth Trial Candidate Admission",
     }

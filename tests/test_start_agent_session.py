@@ -495,6 +495,15 @@ def test_start_agent_session_tier1_returns_orientation_shell(
     assert output["observer_shell"]["closeout_attention"]["summary_text"].startswith(
         "latest compaction closeout"
     )
+    assert output["observer_shell"]["closeout_attention"]["status"] in {
+        "complete",
+        "partial",
+        "blocked",
+        "underdetermined",
+    }
+    assert "source_family" in output["observer_shell"]["closeout_attention"]
+    assert "operator_action" in output["observer_shell"]["closeout_attention"]
+    assert "attention_pressures" in output["observer_shell"]["closeout_attention"]
     assert output["consumer_contract"]["present"] is True
     assert output["consumer_contract"]["required_read_order"][0]["surface"] == "readiness"
     assert output["consumer_contract"]["required_read_order"][2]["surface"] == "closeout_attention"
@@ -1149,6 +1158,10 @@ def test_start_agent_session_surfaces_blocked_compaction_closeout(
     assert compaction_surface["unresolved_count"] == 1
     assert compaction_surface["human_input_required"] is True
     assert compaction_surface["receiver_obligation"] == "must_review"
+    assert output["closeout_attention"]["source_family"] == "bounded_handoff_closeout"
+    assert "status=blocked" in output["closeout_attention"]["attention_pressures"]
+    assert "human_input_required=true" in output["closeout_attention"]["attention_pressures"]
+    assert "Do not continue shared mutation yet" in output["closeout_attention"]["operator_action"]
     assert any(
         "Latest compaction closeout is blocked" in alert
         for alert in output["import_posture"]["receiver_alerts"]

@@ -543,6 +543,103 @@ def _probe_subsystem_parity_focus_clarity(
     }
 
 
+def _probe_closeout_attention_action_clarity() -> dict[str, Any]:
+    from apps.dashboard.frontend.utils.session_start import build_tier1_orientation_shell
+    from tonesoul.claude_entry_adapter import build_claude_entry_adapter
+    from tonesoul.observer_window import _build_closeout_attention
+
+    closeout_attention = _build_closeout_attention(
+        import_posture={
+            "compactions": {
+                "closeout_status": "partial",
+                "unresolved_count": 2,
+                "stop_reason": "underdetermined",
+                "human_input_required": True,
+            }
+        }
+    )
+    session_payload = {
+        "tier": 1,
+        "readiness": {"status": "needs_clarification"},
+        "canonical_center": {
+            "current_short_board": {
+                "present": True,
+                "summary_text": "Phase 832: thirteenth trial candidate admission",
+            }
+        },
+        "closeout_attention": closeout_attention,
+        "mutation_preflight": {
+            "next_followup": {"target": "shared_code_edit.path_overlap_preflight"}
+        },
+        "subsystem_parity": {
+            "counts": {"baseline": 3, "beta_usable": 5, "partial": 2, "deferred": 1},
+            "families": [],
+            "next_focus": {
+                "resolved_to": "shared_code_edit.path_overlap_preflight",
+                "source_family": "mutation_preflight_hooks",
+                "operator_action": "Run the shared-edit preflight first.",
+                "focus_pressures": ["readiness=needs_clarification"],
+            },
+        },
+        "observer_shell": {
+            "summary_text": "observer ready",
+            "receiver_note": "observer shell only",
+            "counts": {"stable": 1, "contested": 1, "stale": 0},
+            "stable_headlines": [],
+            "contested_headlines": [],
+            "stale_headlines": [],
+        },
+        "next_pull": {
+            "receiver_rule": "Pull the full Tier-2 bundle only when shared mutation or contested governance detail is required.",
+            "recommended_commands": [
+                "python scripts/start_agent_session.py --agent trial-wave --tier 2 --no-ack"
+            ],
+        },
+        "consumer_contract": {
+            "receiver_rule": "Recover parent truth before widening context.",
+            "required_read_order": [
+                {"surface": "readiness", "receiver_rule": "gate first"},
+                {"surface": "canonical_center", "receiver_rule": "read parent truth"},
+                {
+                    "surface": "closeout_attention",
+                    "receiver_rule": "read closeout before summary",
+                },
+                {
+                    "surface": "mutation_preflight",
+                    "receiver_rule": "check side effects before action",
+                },
+            ],
+            "misread_guards": [],
+            "priority_misread_guard": {},
+        },
+    }
+    claude_adapter = build_claude_entry_adapter(session_start_payload=session_payload)
+    dashboard_shell = build_tier1_orientation_shell(session_payload)
+    dashboard_closeout = dict(dashboard_shell.get("closeout_attention") or {})
+    claude_closeout = dict(claude_adapter.get("closeout_focus") or {})
+    attention_pressures = list(closeout_attention.get("attention_pressures") or [])
+    present = bool(
+        closeout_attention.get("present")
+        and str(closeout_attention.get("source_family", "")).strip()
+        and str(closeout_attention.get("operator_action", "")).strip()
+        and attention_pressures
+        and dashboard_closeout.get("source_family") == closeout_attention.get("source_family")
+        and claude_closeout.get("source_family") == closeout_attention.get("source_family")
+        and dashboard_closeout.get("operator_action") == closeout_attention.get("operator_action")
+        and claude_closeout.get("operator_action") == closeout_attention.get("operator_action")
+    )
+    return {
+        "present": present,
+        "summary_text": (
+            "closeout_attention_probe "
+            f"status={str(closeout_attention.get('status', '')).strip() or 'missing'} "
+            f"source={str(closeout_attention.get('source_family', '')).strip() or 'missing'} "
+            f"pressures={len(attention_pressures)} "
+            f"shell_sync={'yes' if present else 'no'}"
+        ),
+    }
+
+
 def _render_markdown(report: dict[str, Any]) -> str:
     lines = [
         "# ToneSoul Self-Improvement Trial Wave",
@@ -629,6 +726,7 @@ def run_self_improvement_trial_wave(
         state_path=state_path,
         traces_path=traces_path,
     )
+    closeout_attention_probe = _probe_closeout_attention_action_clarity()
     operator_retrieval_contract_present = (
         REPO_ROOT / "docs/architecture/TONESOUL_OPERATOR_RETRIEVAL_QUERY_CONTRACT.md"
     ).exists()
@@ -651,6 +749,7 @@ def run_self_improvement_trial_wave(
         hook_chain_probe=hook_chain_probe,
         consumer_misread_guard_probe=consumer_misread_guard_probe,
         subsystem_parity_focus_probe=subsystem_parity_focus_probe,
+        closeout_attention_probe=closeout_attention_probe,
         operator_retrieval_contract_present=operator_retrieval_contract_present,
         compiled_landing_zone_spec_present=compiled_landing_zone_spec_present,
         retrieval_runner_present=retrieval_runner_present,

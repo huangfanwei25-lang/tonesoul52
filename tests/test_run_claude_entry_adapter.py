@@ -96,6 +96,13 @@ def test_run_claude_entry_adapter_emits_orientation_shell(
         "canonical_center",
         "closeout_attention",
     ]
+    assert "closeout_focus" in output["adapter"]
+    assert output["adapter"]["closeout_focus"]["status"] in {
+        "complete",
+        "partial",
+        "blocked",
+        "underdetermined",
+    }
     assert output["adapter"]["bounded_pulls"]["observe_first"] is True
     assert output["underlying_commands"][0] == (
         "python scripts/start_agent_session.py --agent claude-shell --tier 1 --no-ack"

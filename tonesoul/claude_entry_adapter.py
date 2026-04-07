@@ -33,6 +33,13 @@ def build_claude_entry_adapter(*, session_start_payload: dict[str, Any]) -> dict
 
     short_board = dict(canonical_center.get("current_short_board") or {})
     next_focus = dict(subsystem_parity.get("next_focus") or {})
+    closeout_focus = {
+        "status": str(closeout_attention.get("status", "") or "complete"),
+        "source_family": str(closeout_attention.get("source_family", "")).strip(),
+        "operator_action": str(closeout_attention.get("operator_action", "")).strip(),
+        "attention_pressures": list(closeout_attention.get("attention_pressures") or []),
+        "why_now": str(closeout_attention.get("why_now", "")).strip(),
+    }
     current_context = {
         "readiness": str((payload.get("readiness") or {}).get("status", "") or "unknown"),
         "deliberation_mode": str(
@@ -70,6 +77,7 @@ def build_claude_entry_adapter(*, session_start_payload: dict[str, Any]) -> dict
             "Start from the bounded Tier-1 orientation shell. Do not skip directly to packet detail or smooth handoff prose."
         ),
         "current_context": current_context,
+        "closeout_focus": closeout_focus,
         "bounded_pulls": {
             "observe_first": True,
             "deep_pull_only_when": str(next_pull.get("receiver_rule", "")).strip(),

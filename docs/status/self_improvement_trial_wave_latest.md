@@ -1,6 +1,6 @@
 # ToneSoul Self-Improvement Trial Wave
 
-**Summary**: `self_improvement_trial_wave promote=12 park=1 retire=0 blocked=0`
+**Summary**: `self_improvement_trial_wave promote=13 park=1 retire=0 blocked=0`
 
 > Trial-wave outcomes are bounded self-improvement results. They may inform future patches or parking decisions, but they do not become governance truth, identity truth, or hot-memory authority.
 
@@ -19,10 +19,11 @@
 - `hook_chain_trigger_clarity`
 - `consumer_misread_guard_clarity`
 - `subsystem_parity_focus_clarity`
+- `closeout_attention_action_clarity`
 
 ## Outcomes
 
-- `promote`: `12`
+- `promote`: `13`
 - `park`: `1`
 - `retire`: `0`
 - `blocked`: `0`
@@ -200,7 +201,20 @@
     - future shells must keep next_focus subordinate to mutation_preflight and canonical_center
   - promotion_limit: `does not authorize planner behavior, stronger permissions, or governance promotion`
   - next_action: `keep subsystem-parity focus bounded while admitting the next candidate`
+- `closeout_attention_action_clarity_v1` -> `promote`
+  - target_surface: `closeout_attention.operator_action`
+  - success_metric: `closeout_attention_probe.present and consumer_drift_report.status == aligned`
+  - result_story: Closeout attention now says which bounded handoff family triggered attention, what pressures are active, and what operator action follows.
+  - evidence: `closeout_attention_probe status=partial source=bounded_handoff_closeout pressures=4 shell_sync=yes`
+  - result_surface: `promoted_result`
+  - replay_rule: `prefer_status_surface_then_probe_current_closeout_attention_shape_before_reusing_the_story`
+  - residue_posture: `keep_visible_as_current_packaging_result`
+  - unresolved_items:
+    - clearer closeout handling improves anti-fake-completion, not planning quality or authority
+    - future shells must keep closeout attention subordinate to consumer contract and bounded handoff truth
+  - promotion_limit: `does not authorize planner behavior, stronger permissions, or governance promotion`
+  - next_action: `keep closeout-attention handling bounded while admitting the next candidate`
 
 ## Next Short Board
 
-- `Phase 832: Thirteenth Trial Candidate Admission`
+- `Phase 835: Fourteenth Trial Candidate Admission`

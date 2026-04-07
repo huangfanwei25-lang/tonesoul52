@@ -75,19 +75,39 @@ def _build_closeout_attention(*, import_posture: dict[str, Any]) -> dict[str, An
         return {
             "present": False,
             "status": "complete",
+            "source_family": "",
+            "attention_pressures": [],
+            "operator_action": "",
+            "why_now": "",
             "summary_text": "latest compaction closeout is complete or not currently contested",
             "receiver_rule": "No extra observer-window closeout lift is needed when the latest closeout is complete.",
         }
 
     detail_parts = [f"status={closeout_status}", f"unresolved={unresolved_count}"]
+    attention_pressures = [f"status={closeout_status}", f"unresolved={unresolved_count}"]
     if stop_reason:
         detail_parts.append(f"stop_reason={stop_reason}")
+        attention_pressures.append(f"stop_reason={stop_reason}")
     if human_input_required:
         detail_parts.append("human_input_required=true")
+        attention_pressures.append("human_input_required=true")
+
+    if closeout_status == "partial":
+        operator_action = (
+            "Review unresolved items, stop reason, and next-action prose before treating the handoff as resumable work."
+        )
+    else:
+        operator_action = (
+            "Do not continue shared mutation yet; resolve the blocked or underdetermined closeout before treating the handoff as resumable work."
+        )
 
     return {
         "present": True,
         "status": closeout_status,
+        "source_family": "bounded_handoff_closeout",
+        "attention_pressures": attention_pressures,
+        "operator_action": operator_action,
+        "why_now": f"latest compaction closeout is {closeout_status}",
         "stop_reason": stop_reason,
         "unresolved_count": unresolved_count,
         "human_input_required": human_input_required,
