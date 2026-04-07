@@ -8,7 +8,7 @@ def test_run_self_improvement_trial_wave_returns_completed_report() -> None:
 
     assert report["status"] == "completed"
     assert report["bundle"] == "self_improvement_trial_wave"
-    assert report["next_short_board"] == "Phase 844: Seventeenth Trial Candidate Admission"
-    assert len(report["candidates"]) == 17
+    assert report["next_short_board"] == "Phase 847: Eighteenth Trial Candidate Admission"
+    assert len(report["candidates"]) == 18
     assert report["candidates"][0]["result_surface"]["surface_status"] == "promoted_result"
-    assert report["candidates"][-1]["candidate_record"]["candidate_id"] == "memory_panel_tier_subordination_v1"
+    assert report["candidates"][-1]["candidate_record"]["candidate_id"] == "status_panel_operator_copy_clarity_v1"

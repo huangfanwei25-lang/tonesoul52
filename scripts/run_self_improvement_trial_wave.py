@@ -850,6 +850,94 @@ def _probe_memory_panel_tier_subordination() -> dict[str, Any]:
     }
 
 
+def _probe_status_panel_operator_copy_clarity() -> dict[str, Any]:
+    import importlib.util
+
+    module_path = (
+        REPO_ROOT / "apps" / "dashboard" / "frontend" / "components" / "status_panel.py"
+    )
+    frontend_root = module_path.parents[1]
+    if str(frontend_root) not in sys.path:
+        sys.path.insert(0, str(frontend_root))
+    spec = importlib.util.spec_from_file_location("dashboard_status_panel_probe", module_path)
+    if spec is None or spec.loader is None:
+        return {
+            "present": False,
+            "summary_text": "status_panel_probe loader=missing",
+        }
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    build_status_panel_view_model = module.build_status_panel_view_model
+
+    payload = build_status_panel_view_model(
+        snapshot={
+            "conversation": {"count": 1, "last": {"status": "success", "timestamp": "2026-04-07T00:00:00+00:00"}},
+            "persona": {"id": "dashboard-workspace"},
+            "run_id": "run-001",
+        },
+        summary={
+            "intent": {"status": "achieved"},
+            "control": {"status": "success"},
+            "persona": {"id": "dashboard-workspace"},
+            "run_id": "run-001",
+        },
+        tier0_shell={
+            "readiness_status": "pass",
+            "task_track": "feature_track",
+            "deliberation_mode": "lightweight_review",
+            "next_followup": {"command": "python scripts/run_shared_edit_preflight.py --path task.md"},
+            "receiver_rule": "bounded only",
+            "hook_badges": [{"name": "shared_edit_path_overlap", "status": "active"}],
+        },
+        tier1_shell={
+            "canonical_cards": {
+                "short_board": "Phase 774",
+                "successor_correction": "closeout overrides smooth compaction prose",
+                "source_precedence": "canonical > live > derived",
+            },
+            "parity_counts": {"baseline": 2, "beta_usable": 1, "partial": 1, "deferred": 0},
+            "closeout_attention": {"summary_text": "latest closeout is partial"},
+            "observer_shell": {"summary_text": "observer stable=2 contested=1 stale=0"},
+        },
+        tier2_drawer={
+            "recommended_open": True,
+            "trigger_reasons": ["closeout_attention_present"],
+            "active_group_names": ["Mutation And Closeout"],
+            "summary_text": "tier2_drawer=recommended groups=1 triggers=1",
+            "next_pull_commands": ["python scripts/run_publish_push_preflight.py --agent dashboard-workspace"],
+        },
+        improvement_cue={
+            "present": True,
+            "summary_text": "self_improvement_trial_wave promote=1 park=1 | status surface only",
+            "top_result": "consumer_parity_packaging_v1 / promoted_result",
+            "next_action": "reuse this drift-validation wave whenever shared consumer packaging changes",
+            "receiver_rule": "Secondary only. Open the dedicated self-improvement status surface first.",
+            "source_path": "docs/status/self_improvement_trial_wave_latest.md",
+            "outcome_counts": {"promote": 1, "park": 1, "retire": 0, "blocked": 0},
+        },
+    )
+    operator_posture = dict(payload.get("operator_posture") or {})
+    telemetry = dict(payload.get("telemetry") or {})
+    present = bool(
+        "Tier 0 / Tier 1" in str(operator_posture.get("note", ""))
+        and "parent action path" in str(operator_posture.get("primary_rule", ""))
+        and str(operator_posture.get("secondary_rule", "")).strip()
+        == "Self-improvement posture and telemetry stay secondary."
+        and str(telemetry.get("conversation_status", "")).strip() == "成功"
+        and str(telemetry.get("intent_status", "")).strip() == "達成"
+        and str(telemetry.get("control_status", "")).strip() == "成功"
+    )
+    return {
+        "present": present,
+        "summary_text": (
+            "status_panel_probe "
+            f"primary={'yes' if str(operator_posture.get('primary_rule', '')).strip() else 'no'} "
+            f"secondary={'yes' if str(operator_posture.get('secondary_rule', '')).strip() else 'no'} "
+            f"telemetry={str(telemetry.get('conversation_status', '')).strip() or 'missing'}"
+        ),
+    }
+
+
 def _render_markdown(report: dict[str, Any]) -> str:
     lines = [
         "# ToneSoul Self-Improvement Trial Wave",
@@ -940,6 +1028,7 @@ def run_self_improvement_trial_wave(
     claude_priority_correction_probe = _probe_claude_priority_correction_clarity()
     hot_memory_pull_boundary_probe = _probe_hot_memory_pull_boundary_clarity()
     memory_panel_probe = _probe_memory_panel_tier_subordination()
+    status_panel_probe = _probe_status_panel_operator_copy_clarity()
     operator_retrieval_contract_present = (
         REPO_ROOT / "docs/architecture/TONESOUL_OPERATOR_RETRIEVAL_QUERY_CONTRACT.md"
     ).exists()
@@ -966,6 +1055,7 @@ def run_self_improvement_trial_wave(
         claude_priority_correction_probe=claude_priority_correction_probe,
         hot_memory_pull_boundary_probe=hot_memory_pull_boundary_probe,
         memory_panel_probe=memory_panel_probe,
+        status_panel_probe=status_panel_probe,
         operator_retrieval_contract_present=operator_retrieval_contract_present,
         compiled_landing_zone_spec_present=compiled_landing_zone_spec_present,
         retrieval_runner_present=retrieval_runner_present,

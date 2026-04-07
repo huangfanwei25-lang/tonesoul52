@@ -923,18 +923,18 @@ This is the key improvement over the current gap:
 
 ## Current Recommendation
 
-The program is now active through `Phase 843`.
+The program is now active through `Phase 846`.
 
 Current short board:
 
-- `Phase 844: Seventeenth Trial Candidate Admission`
+- `Phase 847: Eighteenth Trial Candidate Admission`
 
 Recommended discipline:
 
 - keep trial outcomes visible through dedicated status artifacts first
 - do not push self-improvement history into `session-start`, `observer-window`, or packet defaults yet
 - keep new trials inside already-allowed mutation classes until a compact result-surface design proves stable
-- prefer packaging refinements that reduce operator latency, shared-edit ambiguity, outward-action ambiguity, stale follow-up routing, consumer-lineage ambiguity, launch-health honesty, internal-state handling clarity, hook-selection ambiguity, cross-shell misread-correction ambiguity, successor focus ambiguity, anti-fake-completion handling ambiguity, Claude-style correction ambiguity, hot-memory pull-boundary ambiguity, and dashboard reference-authority ambiguity before opening broader retrieval or governance experiments
+- prefer packaging refinements that reduce operator latency, shared-edit ambiguity, outward-action ambiguity, stale follow-up routing, consumer-lineage ambiguity, launch-health honesty, internal-state handling clarity, hook-selection ambiguity, cross-shell misread-correction ambiguity, successor focus ambiguity, anti-fake-completion handling ambiguity, Claude-style correction ambiguity, hot-memory pull-boundary ambiguity, dashboard reference-authority ambiguity, and operator-status readability ambiguity before opening broader retrieval or governance experiments
 
 ### Phase 827: Eleventh Bounded Trial Wave - Consumer Misread-Guard Clarity
 
@@ -1239,6 +1239,60 @@ Success criteria:
 Current implementation target:
 
 - one evaluator-ready record for the sixteenth trial
+- one analyzer conclusion
+- one status-surface update with no shell creep
+
+### Phase 844: Seventeenth Trial Candidate Admission
+
+Bounded scope:
+
+- choose the next bounded candidate only after the sixteenth trial result is visible
+- keep the candidate inside already-allowed mutation classes
+- make the no-go list explicit before a seventeenth trial wave opens
+
+Success criteria:
+
+- ToneSoul has one admitted seventeenth candidate with real operator leverage and no new authority mythology
+
+Current implementation target:
+
+- one candidate-admission note
+- one recommended seventeenth-trial family
+- one explicit no-go list for what must stay parked
+
+### Phase 845: Seventeenth Bounded Trial Wave - Status-Panel Operator Copy Clarity
+
+Bounded scope:
+
+- refine `dashboard.status_panel` so operator-facing copy and telemetry labels are clean and explicit about primary vs secondary surfaces
+- preserve the existing Tier 0 / Tier 1 / Tier 2 structure and self-improvement secondary posture
+- keep the change inside dashboard packaging only
+
+Success criteria:
+
+- ToneSoul lands one bounded seventeenth-trial implementation that improves operator readability without widening runtime authority or turning the panel into a second control plane
+
+Current implementation target:
+
+- one status-panel view-model refinement
+- one live probe proving primary-rule, secondary-rule, and telemetry readability stay explicit
+- no runtime-semantic mutation, no new control plane, no shell expansion
+
+### Phase 846: Seventeenth Trial Evaluation And Registry Entry
+
+Bounded scope:
+
+- evaluate the seventeenth-trial candidate against the existing evaluator harness
+- classify it honestly as `promote`, `park`, `retire`, `blocked`, or `not_ready_for_trial`
+- register the result in the bounded status surface only
+
+Success criteria:
+
+- ToneSoul has one honest seventeenth-trial result classification and registry-ready record for the dashboard status-panel copy packet
+
+Current implementation target:
+
+- one evaluator-ready record for the seventeenth trial
 - one analyzer conclusion
 - one status-surface update with no shell creep
 

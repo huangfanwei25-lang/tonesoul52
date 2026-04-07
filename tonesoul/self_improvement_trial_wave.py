@@ -111,6 +111,7 @@ def build_self_improvement_trial_wave(
     claude_priority_correction_probe: dict[str, Any] | None = None,
     hot_memory_pull_boundary_probe: dict[str, Any] | None = None,
     memory_panel_probe: dict[str, Any] | None = None,
+    status_panel_probe: dict[str, Any] | None = None,
     operator_retrieval_contract_present: bool,
     compiled_landing_zone_spec_present: bool,
     retrieval_runner_present: bool,
@@ -165,6 +166,8 @@ def build_self_improvement_trial_wave(
     ).strip()
     memory_panel_ready = bool((memory_panel_probe or {}).get("present"))
     memory_panel_summary = str((memory_panel_probe or {}).get("summary_text") or "").strip()
+    status_panel_ready = bool((status_panel_probe or {}).get("present"))
+    status_panel_summary = str((status_panel_probe or {}).get("summary_text") or "").strip()
 
     consumer_candidate = {
         "candidate_record": _build_candidate_record(
@@ -1321,6 +1324,71 @@ def build_self_improvement_trial_wave(
         ),
     )
 
+    status_panel_candidate = {
+        "candidate_record": _build_candidate_record(
+            candidate_id="status_panel_operator_copy_clarity_v1",
+            target_surface="dashboard.status_panel.operator_posture",
+            target_consumer="dashboard_operator_shell",
+            baseline_story=(
+                "The dashboard status panel was structurally tier-aligned, but some operator-facing copy and telemetry labels still carried display noise that weakened first-hop readability."
+            ),
+            candidate_story=(
+                "Status panel now exposes a clean operator note, a primary-vs-secondary boundary, and readable telemetry labels without changing the tier model itself."
+            ),
+            success_metric="status_panel_probe.present and consumer_drift_report.status == aligned",
+            failure_mode_watch="status panel drifts into a second control plane or hides primary-vs-secondary boundaries behind smoother copy",
+            rollback_path="restore the prior status-panel copy and drop the extra operator-boundary cues",
+            overclaim_to_avoid="cleaner status-panel copy is not better runtime truth, planning quality, or shared cognition",
+            scope_limit="dashboard status-panel packaging only; no runtime semantics change, no new authority, no shell expansion",
+        ),
+        "analyzer_closeout": _build_analyzer_closeout(
+            status="promote" if (status_panel_ready and consumer_aligned) else "park",
+            result_story=(
+                "Dashboard status panel now states operator boundaries cleanly and renders telemetry in a readable form without changing tier authority."
+                if (status_panel_ready and consumer_aligned)
+                else "Dashboard status-panel operator-copy packaging is not yet stable enough to promote."
+            ),
+            evidence_bundle_summary=(status_panel_summary or "status_panel_probe unavailable"),
+            unresolved_items=(
+                [
+                    "clearer status-panel copy improves operator readability, not runtime truth or planning quality",
+                    "future dashboard changes must keep primary-versus-secondary boundaries explicit",
+                ]
+                if (status_panel_ready and consumer_aligned)
+                else [
+                    "status-panel boundary language is not yet preserved cleanly enough",
+                    "consumer drift must stay aligned before promotion",
+                ]
+            ),
+            failure_pressure="low" if (status_panel_ready and consumer_aligned) else "meaningful",
+            rollback_posture="bounded_restore",
+            promotion_limit="does not authorize new control planes, stronger runtime claims, or shell expansion",
+            overclaim_warning="cleaner status-panel copy is not better reasoning, stronger authority, or improved memory transport",
+            next_action=(
+                "keep the status panel readable and subordinate while admitting the next candidate"
+                if (status_panel_ready and consumer_aligned)
+                else "repair status-panel operator-copy packaging before reopening this candidate"
+            ),
+        ),
+    }
+    status_panel_candidate["result_surface"] = _build_result_surface(
+        status=status_panel_candidate["analyzer_closeout"]["status"],
+        registry_recommendation=(
+            "promotion_ready_result" if (status_panel_ready and consumer_aligned) else "distilled_lesson"
+        ),
+        supersession_posture="active_until_newer_status_panel_copy_trials_exist",
+        replay_rule="prefer_status_surface_then_probe_current_status_panel_view_model_before_reusing_the_story",
+        residue_posture=(
+            "keep_visible_as_current_packaging_result"
+            if (status_panel_ready and consumer_aligned)
+            else "park_in_status_surface_until_status_panel_operator_copy_is_stable"
+        ),
+        visibility="status_surface_only",
+        carry_forward_rule=(
+            "may inform future dashboard status-panel packaging, but does not authorize new authority or a second operator control plane"
+        ),
+    )
+
     candidates = [
         consumer_candidate,
         retrieval_candidate,
@@ -1339,6 +1407,7 @@ def build_self_improvement_trial_wave(
         claude_priority_correction_candidate,
         hot_memory_pull_boundary_candidate,
         memory_panel_candidate,
+        status_panel_candidate,
     ]
     outcome_counts = _count_outcomes(candidates)
     status = "completed"
@@ -1375,8 +1444,9 @@ def build_self_improvement_trial_wave(
             "claude_priority_correction_clarity",
             "hot_memory_pull_boundary_clarity",
             "memory_panel_tier_subordination_clarity",
+            "status_panel_operator_copy_clarity",
         ],
         "outcome_counts": outcome_counts,
         "candidates": candidates,
-        "next_short_board": "Phase 844: Seventeenth Trial Candidate Admission",
+        "next_short_board": "Phase 847: Eighteenth Trial Candidate Admission",
     }

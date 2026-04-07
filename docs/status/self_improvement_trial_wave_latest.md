@@ -1,6 +1,6 @@
 # ToneSoul Self-Improvement Trial Wave
 
-**Summary**: `self_improvement_trial_wave promote=16 park=1 retire=0 blocked=0`
+**Summary**: `self_improvement_trial_wave promote=17 park=1 retire=0 blocked=0`
 
 > Trial-wave outcomes are bounded self-improvement results. They may inform future patches or parking decisions, but they do not become governance truth, identity truth, or hot-memory authority.
 
@@ -23,10 +23,11 @@
 - `claude_priority_correction_clarity`
 - `hot_memory_pull_boundary_clarity`
 - `memory_panel_tier_subordination_clarity`
+- `status_panel_operator_copy_clarity`
 
 ## Outcomes
 
-- `promote`: `16`
+- `promote`: `17`
 - `park`: `1`
 - `retire`: `0`
 - `blocked`: `0`
@@ -256,7 +257,20 @@
     - future dashboard changes must keep reference selection subordinate to Tier 0 / Tier 1 / Tier 2 operator truth
   - promotion_limit: `does not authorize retrieval promotion, hotter memory claims, or a second operator control plane`
   - next_action: `keep the memory panel subordinate while admitting the next candidate`
+- `status_panel_operator_copy_clarity_v1` -> `promote`
+  - target_surface: `dashboard.status_panel.operator_posture`
+  - success_metric: `status_panel_probe.present and consumer_drift_report.status == aligned`
+  - result_story: Dashboard status panel now states operator boundaries cleanly and renders telemetry in a readable form without changing tier authority.
+  - evidence: `status_panel_probe primary=yes secondary=yes telemetry=成功`
+  - result_surface: `promoted_result`
+  - replay_rule: `prefer_status_surface_then_probe_current_status_panel_view_model_before_reusing_the_story`
+  - residue_posture: `keep_visible_as_current_packaging_result`
+  - unresolved_items:
+    - clearer status-panel copy improves operator readability, not runtime truth or planning quality
+    - future dashboard changes must keep primary-versus-secondary boundaries explicit
+  - promotion_limit: `does not authorize new control planes, stronger runtime claims, or shell expansion`
+  - next_action: `keep the status panel readable and subordinate while admitting the next candidate`
 
 ## Next Short Board
 
-- `Phase 844: Seventeenth Trial Candidate Admission`
+- `Phase 847: Eighteenth Trial Candidate Admission`

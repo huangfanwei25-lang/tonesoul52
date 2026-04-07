@@ -31,7 +31,7 @@ def _format_timestamp(value: object) -> str:
 def _format_conversation_status(value: object) -> str:
     status = str(value or "").strip().lower()
     label_map = {
-        "success": "可用",
+        "success": "成功",
         "error": "錯誤",
         "connection_error": "連線錯誤",
         "exception": "例外",
@@ -56,7 +56,7 @@ def _format_control_status(value: object) -> str:
     label_map = {
         "success": "成功",
         "failed": "失敗",
-        "pending": "等待中",
+        "pending": "待處理",
         "unknown": "未知",
     }
     return label_map.get(status, status or "未知")
@@ -157,9 +157,13 @@ def build_status_panel_view_model(
         "operator_posture": {
             "title": "Tier-aligned Operator Status",
             "note": (
-                "這個面板只做 tier 狀態對齊。真正的操作真相仍在 Tier 0 / Tier 1 shell，"
-                "Tier 2 只在需要時展開。"
+                "先讀 Tier 0 / Tier 1 shell，再決定是否真的需要打開 Tier 2。"
+                " 這裡是 operator-facing 狀態板，不是新的控制平面。"
             ),
+            "primary_rule": (
+                "Status panel summarizes operator truth, but CLI/runtime commands remain the parent action path."
+            ),
+            "secondary_rule": "Self-improvement posture and telemetry stay secondary.",
         },
         "tier0": {
             "readiness": str(tier0_shell.get("readiness_status", "")).strip() or "unknown",
@@ -254,6 +258,7 @@ def render_status_panel(
 
     st.markdown("### Tier-Aligned Status")
     st.caption(operator_posture["note"])
+    st.caption(operator_posture["primary_rule"])
 
     with st.container(border=True):
         st.markdown("**Tier 0 · Instant Gate**")
@@ -307,6 +312,7 @@ def render_status_panel(
                 st.caption(tier1["source_precedence"])
 
     if self_improvement["present"]:
+        st.caption(operator_posture["secondary_rule"])
         st.caption("Secondary self-improvement posture: " + self_improvement["summary_text"])
         with st.expander("Self-improvement result surface", expanded=False):
             st.caption(self_improvement["receiver_rule"])
