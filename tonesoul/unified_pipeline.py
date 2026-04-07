@@ -5,6 +5,7 @@ Combines ToneBridge psychological analysis with Council deliberation.
 
 from __future__ import annotations
 
+import inspect
 import os
 import re
 import time
@@ -107,6 +108,7 @@ class UnifiedPipeline:
         self._governance_kernel = None
         self._exc_trace = ExceptionTrace()
         self._reflex_gate_modifier: float = 1.0
+        self._current_governance_depth: str = "standard"
         self._mirror = None
         self._mirror_enabled = (
             _read_bool_env("TONESOUL_MIRROR_ENABLED", default=True)
@@ -502,6 +504,21 @@ class UnifiedPipeline:
             normalized_zone = "safe"
         return normalized_zone
 
+    @staticmethod
+    def _normalize_governance_depth_plan(plan: Any) -> Dict[str, Any]:
+        if plan is None:
+            return {}
+        if isinstance(plan, dict):
+            return dict(plan)
+        to_dict = getattr(plan, "to_dict", None)
+        if callable(to_dict):
+            try:
+                normalized = to_dict()
+            except Exception:
+                return {}
+            return dict(normalized) if isinstance(normalized, dict) else {}
+        return {}
+
     # --- Governance Reflex Arc helpers ---
 
     def _compute_reflex_decision(
@@ -816,8 +833,30 @@ class UnifiedPipeline:
             boost = (1.0 - self._reflex_gate_modifier) * 0.3  # up to +0.135 at critical
             severity = min(1.0, severity + boost)
 
+        # Phase 851: Post-hoc grounding check for high-risk turns.
+        # Only runs when governance_depth is "full" (set by ComputeGate).
+        grounding_result = None
+        if getattr(self, "_current_governance_depth", "standard") == "full":
+            try:
+                from tonesoul.grounding_check import grounding_check
+
+                ctx_keywords: list[str] = []
+                ctx = safe_context.get("graph_rag_keywords")
+                if isinstance(ctx, list):
+                    ctx_keywords = [str(k) for k in ctx]
+                grounding_result = grounding_check(
+                    draft,
+                    safe_context.get("raw_user_message", ""),
+                    context_keywords=ctx_keywords,
+                )
+                if grounding_result.thin_support:
+                    reasons.append("grounding:thin_support")
+                    severity = max(severity, 0.4)
+            except Exception as e:
+                self._exc_trace.record("unified_pipeline", "_self_check.grounding", e)
+
         should_revise = bool(reasons) and severity > 0.2
-        return ReflectionVerdict(
+        verdict = ReflectionVerdict(
             should_revise=should_revise,
             reasons=reasons,
             severity=round(severity, 4),
@@ -825,6 +864,10 @@ class UnifiedPipeline:
             council_decision=council_decision,
             tension_delta=round(tension_delta, 4) if tension_delta is not None else None,
         )
+        # Attach grounding result to verdict for trace visibility
+        if grounding_result is not None:
+            verdict.grounding_result = grounding_result  # type: ignore[attr-defined]
+        return verdict
 
     def _apply_mirror_step(
         self,
@@ -1811,6 +1854,12 @@ class UnifiedPipeline:
             user_id=user_id,
             friction_score=governance_friction,
         )
+        governance_depth_plan = self._normalize_governance_depth_plan(
+            getattr(routing_decision, "governance_depth_plan", None)
+        )
+        self._current_governance_depth = getattr(
+            routing_decision, "governance_depth", "standard"
+        )
         governance_kernel = self._get_governance_kernel()
 
         def _base_dispatch_trace() -> Dict[str, Any]:
@@ -1818,10 +1867,33 @@ class UnifiedPipeline:
                 "route": routing_decision.path.value,
                 "journal_eligible": routing_decision.journal_eligible,
                 "reason": routing_decision.reason,
+                "governance_depth": getattr(routing_decision, "governance_depth", "standard"),
+                "governance_depth_plan": governance_depth_plan,
             }
             if governance_kernel is not None:
                 try:
-                    routing_trace = governance_kernel.build_routing_trace(**routing_trace)
+                    build_routing_trace = governance_kernel.build_routing_trace
+                    routing_kwargs = {
+                        "route": routing_decision.path.value,
+                        "journal_eligible": routing_decision.journal_eligible,
+                        "reason": routing_decision.reason,
+                    }
+                    try:
+                        signature = inspect.signature(build_routing_trace)
+                    except (TypeError, ValueError):
+                        signature = None
+                    if signature is None or any(
+                        parameter.kind == inspect.Parameter.VAR_KEYWORD
+                        for parameter in signature.parameters.values()
+                    ) or (
+                        "governance_depth" in signature.parameters
+                        and "governance_depth_plan" in signature.parameters
+                    ):
+                        routing_kwargs["governance_depth"] = getattr(
+                            routing_decision, "governance_depth", "standard"
+                        )
+                        routing_kwargs["governance_depth_plan"] = governance_depth_plan
+                    routing_trace = build_routing_trace(**routing_kwargs)
                 except Exception as e:
                     self._exc_trace.record(
                         "unified_pipeline",
@@ -1834,7 +1906,23 @@ class UnifiedPipeline:
                     "route": routing_decision.path.value,
                     "journal_eligible": routing_decision.journal_eligible,
                     "reason": routing_decision.reason,
+                    "governance_depth": getattr(routing_decision, "governance_depth", "standard"),
+                    "governance_depth_plan": governance_depth_plan,
                 }
+            if "governance_depth" not in routing_trace:
+                routing_trace["governance_depth"] = getattr(
+                    routing_decision, "governance_depth", "standard"
+                )
+            if "governance_depth_plan" not in routing_trace and governance_depth_plan:
+                routing_trace["governance_depth_plan"] = governance_depth_plan
+            detail = routing_trace.get("detail")
+            if isinstance(detail, dict):
+                detail.setdefault(
+                    "governance_depth",
+                    getattr(routing_decision, "governance_depth", "standard"),
+                )
+                if governance_depth_plan:
+                    detail.setdefault("governance_depth_plan", governance_depth_plan)
             if "component" not in routing_trace or "timestamp" not in routing_trace:
                 routing_trace = self._build_trace_section(
                     "compute_gate",
@@ -1845,6 +1933,14 @@ class UnifiedPipeline:
                 "route": routing_trace.get("route"),
                 "journal_eligible": routing_trace.get("journal_eligible"),
                 "reason": routing_trace.get("reason"),
+                "governance_depth": routing_trace.get("governance_depth"),
+                "governance_depth_plan": self._build_trace_section(
+                    "governance_depth_plan",
+                    governance_depth_plan,
+                    status="ok",
+                )
+                if governance_depth_plan
+                else {},
                 "routing_trace": dict(routing_trace),
                 "pre_gate_initial_tension": initial_tension,
                 "pre_gate_governance_friction": governance_friction,
@@ -1949,10 +2045,14 @@ class UnifiedPipeline:
             )
 
         # ========== Cross-Session Recovery (first non-fast path call only) ==========
-        user_message = self._try_cross_session_recovery(raw_user_message)
+        if governance_depth_plan.get("skip_cross_session_recovery"):
+            user_message = raw_user_message
+        else:
+            user_message = self._try_cross_session_recovery(raw_user_message)
 
         # ========== 注入 Adapter（persona + context）==========
-        user_message = self.build_injection_context(user_message, persona_config=persona_config)
+        if not governance_depth_plan.get("skip_injection_context"):
+            user_message = self.build_injection_context(user_message, persona_config=persona_config)
 
         # ========== 0. 重建 Third Axiom 狀態 ==========
         # 從歷史記錄重建 commit_stack，確保每次 request 狀態一致
@@ -2730,15 +2830,23 @@ Respond with a clear, practical answer."""
             "reflection_confidence": (getattr(tb_result, "confidence", 0.8) if tb_result else 0.8),
             "prior_tension": prior_tension if isinstance(prior_tension, dict) else {},
             "reflection_skip_council": not bool(council and council_should_convene),
+            "raw_user_message": raw_user_message,
         }
         try:
             from tonesoul.llm.router import ThinkingTier
             from tonesoul.reflection import (
                 MAX_REVISIONS,
+                VERIFICATION_BUDGET,
+                VERIFICATION_BUDGET_EXCEEDED_MSG,
                 ReflectionStats,
                 ReflectionVerdict,
                 build_revision_prompt,
             )
+
+            # Phase 852: Track total LLM calls for fail-stop budget.
+            # The initial LLM call counts as 1; each revision adds 1 more.
+            _llm_call_count = 1  # initial generation already consumed 1
+            _budget_exceeded = False
 
             while revision_count < MAX_REVISIONS:
                 try:
@@ -2753,6 +2861,11 @@ Respond with a clear, practical answer."""
 
                 reflection_verdicts.append(current_verdict)
                 if not current_verdict.should_revise:
+                    break
+
+                # Phase 852: Check verification budget before spending another LLM call
+                if _llm_call_count >= VERIFICATION_BUDGET:
+                    _budget_exceeded = True
                     break
 
                 revision_prompt = build_revision_prompt(response, current_verdict)
@@ -2783,6 +2896,7 @@ Respond with a clear, practical answer."""
                     else:
                         break
                     revision_count += 1
+                    _llm_call_count += 1
                     observability_client = llm_client
                     if router is not None:
                         try:
@@ -2838,6 +2952,20 @@ Respond with a clear, practical answer."""
                 final_reflection_verdict.to_dict(),
                 status=reflection_status,
             )
+
+            # Phase 852: Verification over-budget fail-stop
+            if _budget_exceeded and final_reflection_verdict.should_revise:
+                dispatch_trace["verification_budget"] = self._build_trace_section(
+                    "verification_budget",
+                    {
+                        "budget": VERIFICATION_BUDGET,
+                        "llm_calls_used": _llm_call_count,
+                        "converged": False,
+                        "final_severity": round(final_reflection_verdict.severity, 4),
+                    },
+                    status="error",
+                )
+                response = f"{response}\n\n---\n{VERIFICATION_BUDGET_EXCEEDED_MSG}"
         except Exception as e:
             self._exc_trace.record(
                 "unified_pipeline",

@@ -13,6 +13,17 @@ if TYPE_CHECKING:
 MAX_REVISIONS: int = 2
 REFLECTION_TENSION_THRESHOLD: float = 0.25
 
+# Phase 852: Verification over-budget fail-stop.
+# Total LLM calls (initial + revisions) allowed per request.
+# When exhausted without convergence, emit honest failure instead of retrying.
+VERIFICATION_BUDGET: int = 4
+
+# Message emitted when the verification budget is exhausted.
+VERIFICATION_BUDGET_EXCEEDED_MSG: str = (
+    "此回應在內部驗證過程中未能充分收斂。"
+    "建議使用者自行查核關鍵事實後再依據此回應行動。"
+)
+
 
 @dataclass
 class ReflectionVerdict:
