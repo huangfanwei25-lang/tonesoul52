@@ -2185,8 +2185,26 @@
 - [x] register the result in a bounded status/registry surface without leaking it into first-hop shells
 **Success Criteria**: ToneSoul has one honest tenth-trial result classification and registry-ready record for `hook_chain_trigger_clarity_v1`.
 
-## Phase 826: Eleventh Trial Candidate Admission (2026-04-07, planned)
-- [ ] choose the next bounded self-improvement candidate after the tenth trial result and current registry/status surface are visible
-- [ ] keep the next candidate inside allowed mutation classes and away from retrieval mythology, governance semantics, identity, transport claims, predictive-math inflation, selfhood mythology, and permission-system creep
-- [ ] make the no-go list explicit before opening an eleventh trial wave
+## Phase 826: Eleventh Trial Candidate Admission (2026-04-07)
+- [x] choose the next bounded self-improvement candidate after the tenth trial result and current registry/status surface are visible
+- [x] keep the next candidate inside allowed mutation classes and away from retrieval mythology, governance semantics, identity, transport claims, predictive-math inflation, selfhood mythology, and permission-system creep
+- [x] make the no-go list explicit before opening an eleventh trial wave
 **Success Criteria**: ToneSoul has one admitted eleventh candidate that is narrower than shell redesign and still worth real operator leverage.
+
+## Phase 827: Eleventh Bounded Trial Wave - Consumer Misread-Guard Clarity (2026-04-07)
+- [x] refine `consumer_contract` so misread guards expose `trigger_surface` and `operator_action`, not only `name + rule`
+- [x] add one bounded `priority_misread_guard` so shells can foreground the current highest-risk correction without inventing a planner
+- [x] keep the change inside packaging/readout space only: no new permissions, no transport-story widening, no governance rewrite
+**Success Criteria**: ToneSoul lands one bounded eleventh-trial implementation for `consumer_misread_guard_clarity_v1` that reduces cross-shell correction ambiguity without widening authority.
+
+## Phase 828: Eleventh Trial Evaluation And Registry Entry (2026-04-07)
+- [x] evaluate the `consumer_misread_guard_clarity_v1` trial against the existing evaluator harness and analyzer gate
+- [x] classify the result as `promote`, `park`, `retire`, `blocked`, or `not_ready_for_trial` without inflating packaging clarity into shared cognition or transport truth
+- [x] register the result in a bounded status/registry surface without leaking it into first-hop shells
+**Success Criteria**: ToneSoul has one honest eleventh-trial result classification and registry-ready record for `consumer_misread_guard_clarity_v1`.
+
+## Phase 829: Twelfth Trial Candidate Admission (2026-04-07, planned)
+- [ ] choose the next bounded self-improvement candidate after the eleventh trial result and current registry/status surface are visible
+- [ ] keep the next candidate inside allowed mutation classes and away from retrieval mythology, governance semantics, identity, transport claims, predictive-math inflation, selfhood mythology, permission-system creep, and consumer-shell planner drift
+- [ ] make the no-go list explicit before opening a twelfth trial wave
+**Success Criteria**: ToneSoul has one admitted twelfth candidate that is narrower than shell redesign and still worth real operator leverage.

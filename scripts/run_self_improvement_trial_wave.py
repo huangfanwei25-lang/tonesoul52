@@ -455,6 +455,52 @@ def _probe_hook_chain_trigger_clarity(
     }
 
 
+def _probe_consumer_misread_guard_clarity(
+    *,
+    agent: str,
+    state_path: Path | None,
+    traces_path: Path | None,
+) -> dict[str, Any]:
+    from scripts.start_agent_session import run_session_start_bundle
+    from tonesoul.claude_entry_adapter import build_claude_entry_adapter
+
+    session_payload = run_session_start_bundle(
+        agent_id=agent,
+        state_path=state_path,
+        traces_path=traces_path,
+        no_ack=True,
+        tier=1,
+    )
+    consumer_contract = dict(session_payload.get("consumer_contract") or {})
+    guards = list(consumer_contract.get("misread_guards") or [])
+    priority_guard = dict(consumer_contract.get("priority_misread_guard") or {})
+    claude_adapter = build_claude_entry_adapter(session_start_payload=session_payload)
+    must_correct_first = dict(claude_adapter.get("must_correct_first") or {})
+    all_guard_fields_present = all(
+        str(item.get("trigger_surface", "")).strip()
+        and str(item.get("operator_action", "")).strip()
+        for item in guards
+    )
+    present = bool(
+        guards
+        and all_guard_fields_present
+        and str(priority_guard.get("trigger_surface", "")).strip()
+        and str(priority_guard.get("operator_action", "")).strip()
+        and must_correct_first.get("trigger_surface") == priority_guard.get("trigger_surface")
+        and must_correct_first.get("operator_action") == priority_guard.get("operator_action")
+    )
+    return {
+        "present": present,
+        "summary_text": (
+            "consumer_misread_guard_probe "
+            f"guards={len(guards)} "
+            f"priority={str(priority_guard.get('name', '')).strip() or 'missing'} "
+            f"surface={str(priority_guard.get('trigger_surface', '')).strip() or 'missing'} "
+            f"claude_sync={'yes' if must_correct_first.get('trigger_surface') == priority_guard.get('trigger_surface') else 'no'}"
+        ),
+    }
+
+
 def _render_markdown(report: dict[str, Any]) -> str:
     lines = [
         "# ToneSoul Self-Improvement Trial Wave",
@@ -531,6 +577,11 @@ def run_self_improvement_trial_wave(
         state_path=state_path,
         traces_path=traces_path,
     )
+    consumer_misread_guard_probe = _probe_consumer_misread_guard_clarity(
+        agent=agent,
+        state_path=state_path,
+        traces_path=traces_path,
+    )
     operator_retrieval_contract_present = (
         REPO_ROOT / "docs/architecture/TONESOUL_OPERATOR_RETRIEVAL_QUERY_CONTRACT.md"
     ).exists()
@@ -551,6 +602,7 @@ def run_self_improvement_trial_wave(
         launch_health_probe=launch_health_probe,
         internal_state_probe=internal_state_probe,
         hook_chain_probe=hook_chain_probe,
+        consumer_misread_guard_probe=consumer_misread_guard_probe,
         operator_retrieval_contract_present=operator_retrieval_contract_present,
         compiled_landing_zone_spec_present=compiled_landing_zone_spec_present,
         retrieval_runner_present=retrieval_runner_present,

@@ -246,11 +246,16 @@ def _build_tier0_mutation_preflight(mutation_preflight: dict) -> dict:
 def _build_tier0_consumer_contract(consumer_contract: dict) -> dict:
     required = list(consumer_contract.get("required_read_order") or [])
     guards = list(consumer_contract.get("misread_guards") or [])
+    priority_guard = dict(consumer_contract.get("priority_misread_guard") or {})
+    if not priority_guard and guards:
+        priority_guard = dict(guards[0] or {})
     return {
         "present": bool(consumer_contract.get("present")),
         "summary_text": str(consumer_contract.get("summary_text", "")).strip(),
         "first_hop_surfaces": [str(item.get("surface", "")).strip() for item in required[:4]],
-        "top_misread_guard": str((guards[0] or {}).get("rule", "")).strip() if guards else "",
+        "top_misread_guard": str(priority_guard.get("rule", "")).strip(),
+        "top_misread_surface": str(priority_guard.get("trigger_surface", "")).strip(),
+        "top_misread_action": str(priority_guard.get("operator_action", "")).strip(),
         "receiver_rule": str(consumer_contract.get("receiver_rule", "")).strip(),
     }
 

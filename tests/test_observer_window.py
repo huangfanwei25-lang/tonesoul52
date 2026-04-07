@@ -239,6 +239,11 @@ class TestCleanStableCase:
             guard["name"] == "working_style_not_identity"
             for guard in consumer_contract["misread_guards"]
         )
+        assert consumer_contract["priority_misread_guard"]["name"] == "observer_stable_not_verified"
+        assert (
+            consumer_contract["priority_misread_guard"]["trigger_surface"]
+            == "observer_window.stable"
+        )
 
     def test_surface_versioning_stays_visible(self):
         surface_versioning = self.anchor["surface_versioning"]

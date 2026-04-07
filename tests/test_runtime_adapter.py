@@ -450,6 +450,10 @@ def test_r_memory_packet_exposes_runtime_dominance_and_recent_trace(
     assert packet["consumer_contract"]["present"] is True
     assert packet["consumer_contract"]["required_read_order"][0]["surface"] == "readiness"
     assert (
+        packet["consumer_contract"]["priority_misread_guard"]["name"]
+        == "observer_stable_not_verified"
+    )
+    assert (
         packet["operator_guidance"]["consumer_contract"]["source_precedence_summary"]
         == packet["consumer_contract"]["source_precedence_summary"]
     )

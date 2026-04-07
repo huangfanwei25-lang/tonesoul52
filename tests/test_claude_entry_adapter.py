@@ -40,8 +40,17 @@ def test_build_claude_entry_adapter_preserves_first_hop_order() -> None:
                     {
                         "name": "compaction_not_completion",
                         "rule": "Compaction summaries remain subordinate to closeout status.",
+                        "trigger_surface": "closeout_attention + compaction summary",
+                        "operator_action": "read closeout first",
                     }
                 ],
+                "priority_misread_guard": {
+                    "name": "compaction_not_completion",
+                    "rule": "Compaction summaries remain subordinate to closeout status.",
+                    "trigger_surface": "closeout_attention + compaction summary",
+                    "operator_action": "read closeout first",
+                    "why_now": "latest closeout is partial",
+                },
             },
         }
     )
@@ -57,6 +66,9 @@ def test_build_claude_entry_adapter_preserves_first_hop_order() -> None:
     ]
     assert adapter["must_read_now"][0]["surface"] == "readiness"
     assert adapter["must_not_assume"][0]["name"] == "compaction_not_completion"
+    assert adapter["must_correct_first"]["name"] == "compaction_not_completion"
+    assert adapter["must_correct_first"]["trigger_surface"] == "closeout_attention + compaction summary"
+    assert adapter["must_correct_first"]["operator_action"] == "read closeout first"
     assert adapter["current_context"]["closeout_status"] == "partial"
     assert adapter["current_context"]["short_board"] == (
         "Phase 774: dashboard status panel tier alignment"

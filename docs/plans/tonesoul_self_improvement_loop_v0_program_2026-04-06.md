@@ -927,14 +927,68 @@ The program is now active through `Phase 825`.
 
 Current short board:
 
-- `Phase 826: Eleventh Trial Candidate Admission`
+- `Phase 829: Twelfth Trial Candidate Admission`
 
 Recommended discipline:
 
 - keep trial outcomes visible through dedicated status artifacts first
 - do not push self-improvement history into `session-start`, `observer-window`, or packet defaults yet
 - keep new trials inside already-allowed mutation classes until a compact result-surface design proves stable
-- prefer packaging refinements that reduce operator latency, shared-edit ambiguity, outward-action ambiguity, stale follow-up routing, consumer-lineage ambiguity, launch-health honesty, internal-state handling clarity, and hook-selection ambiguity before opening broader retrieval or governance experiments
+- prefer packaging refinements that reduce operator latency, shared-edit ambiguity, outward-action ambiguity, stale follow-up routing, consumer-lineage ambiguity, launch-health honesty, internal-state handling clarity, hook-selection ambiguity, and cross-shell misread-correction ambiguity before opening broader retrieval or governance experiments
+
+### Phase 827: Eleventh Bounded Trial Wave - Consumer Misread-Guard Clarity
+
+Bounded scope:
+
+- refine `consumer_contract` so misread guards expose `trigger_surface` and `operator_action`
+- add one bounded `priority_misread_guard` that foregrounds the highest-risk correction without inventing a planner
+- preserve the current guard set and keep the change inside packaging/readout space only
+
+Success criteria:
+
+- ToneSoul lands one bounded eleventh-trial implementation that reduces cross-shell correction ambiguity without widening permissions, transport claims, or governance semantics
+
+Current implementation target:
+
+- one consumer-contract packaging refinement
+- one live probe proving Claude-style and repo-native shells preserve the same first correction
+- no new shell family, no new mutation authority, no transport-story widening
+
+### Phase 828: Eleventh Trial Evaluation And Registry Entry
+
+Bounded scope:
+
+- evaluate the consumer misread-guard clarity trial using the existing evaluator harness and analyzer gate
+- classify the result honestly as `promote`, `park`, `retire`, `blocked`, or `not_ready_for_trial`
+- register the outcome in the bounded status surface without leaking it into first-hop shells
+
+Success criteria:
+
+- ToneSoul has one honest registry-ready eleventh-trial result and clear promotion limit for consumer misread correction packaging
+
+Current implementation target:
+
+- one evaluator-ready record for the eleventh trial
+- one analyzer conclusion
+- one status-surface update with no shell creep
+
+### Phase 829: Twelfth Trial Candidate Admission
+
+Bounded scope:
+
+- choose the next bounded candidate only after the eleventh trial result is visible
+- keep the candidate inside already-allowed mutation classes
+- make the no-go list explicit before a twelfth trial wave opens
+
+Success criteria:
+
+- ToneSoul has one admitted twelfth candidate with real operator leverage and no new authority mythology
+
+Current implementation target:
+
+- one candidate-admission note
+- one recommended twelfth-trial family
+- one explicit no-go list for what must stay parked
 
 ---
 

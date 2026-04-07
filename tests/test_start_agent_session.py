@@ -261,6 +261,10 @@ def test_start_agent_session_emits_machine_readable_bundle(
         guard["name"] == "compaction_not_completion"
         for guard in consumer_contract["misread_guards"]
     )
+    priority_guard = consumer_contract["priority_misread_guard"]
+    assert priority_guard["name"] == "observer_stable_not_verified"
+    assert priority_guard["trigger_surface"] == "observer_window.stable"
+    assert "check readiness and canonical_center" in priority_guard["operator_action"]
     surface_versioning = output["surface_versioning"]
     assert surface_versioning["present"] is True
     assert surface_versioning["runtime_surfaces"][0]["surface"] == "session_start"
@@ -423,6 +427,8 @@ def test_start_agent_session_tier0_returns_fast_path_bundle(
         "mutation_preflight",
     ]
     assert "bounded orientation" in output["consumer_contract"]["top_misread_guard"]
+    assert output["consumer_contract"]["top_misread_surface"] == "observer_window.stable"
+    assert "check readiness and canonical_center" in output["consumer_contract"]["top_misread_action"]
     assert output["next_pull"]["recommended_commands"][0] == (
         "python scripts/start_agent_session.py --agent tier0-fast"
     )

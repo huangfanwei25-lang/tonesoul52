@@ -1,6 +1,6 @@
 # ToneSoul Self-Improvement Trial Wave
 
-**Summary**: `self_improvement_trial_wave promote=10 park=1 retire=0 blocked=0`
+**Summary**: `self_improvement_trial_wave promote=11 park=1 retire=0 blocked=0`
 
 > Trial-wave outcomes are bounded self-improvement results. They may inform future patches or parking decisions, but they do not become governance truth, identity truth, or hot-memory authority.
 
@@ -17,10 +17,11 @@
 - `launch_health_trend_clarity`
 - `internal_state_observability_clarity`
 - `hook_chain_trigger_clarity`
+- `consumer_misread_guard_clarity`
 
 ## Outcomes
 
-- `promote`: `10`
+- `promote`: `11`
 - `park`: `1`
 - `retire`: `0`
 - `blocked`: `0`
@@ -172,7 +173,20 @@
     - future shells must keep current_recommendation subordinate to mutation_preflight and bounded hook scope
   - promotion_limit: `does not authorize new hooks, stronger permissions, or planner-style mutation authority`
   - next_action: `keep hook-chain recommendations bounded while admitting the next candidate`
+- `consumer_misread_guard_clarity_v1` -> `promote`
+  - target_surface: `consumer_contract.priority_misread_guard`
+  - success_metric: `consumer_misread_guard_probe.present and consumer_drift_report.status == aligned`
+  - result_story: Consumer misread guards now say where the misread appears, what correction to apply, and which correction matters first.
+  - evidence: `consumer_misread_guard_probe guards=4 priority=compaction_not_completion surface=closeout_attention + compaction summary claude_sync=yes`
+  - result_surface: `promoted_result`
+  - replay_rule: `prefer_status_surface_then_probe_current_consumer_contract_shape_before_reusing_the_story`
+  - residue_posture: `keep_visible_as_current_packaging_result`
+  - unresolved_items:
+    - priority misread correction improves shared interpretation, not transport or reasoning quality
+    - future consumers must keep the same guard set and priority rule
+  - promotion_limit: `does not authorize new planners, stronger permissions, or stronger cross-vendor interoperability claims`
+  - next_action: `keep consumer misread correction bounded while admitting the next candidate`
 
 ## Next Short Board
 
-- `Phase 826: Eleventh Trial Candidate Admission`
+- `Phase 829: Twelfth Trial Candidate Admission`

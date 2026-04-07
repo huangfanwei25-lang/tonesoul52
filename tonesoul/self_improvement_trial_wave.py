@@ -105,6 +105,7 @@ def build_self_improvement_trial_wave(
     launch_health_probe: dict[str, Any],
     internal_state_probe: dict[str, Any],
     hook_chain_probe: dict[str, Any] | None = None,
+    consumer_misread_guard_probe: dict[str, Any] | None = None,
     operator_retrieval_contract_present: bool,
     compiled_landing_zone_spec_present: bool,
     retrieval_runner_present: bool,
@@ -135,6 +136,10 @@ def build_self_improvement_trial_wave(
     internal_state_summary = str((internal_state_probe or {}).get("summary_text") or "").strip()
     hook_chain_ready = bool((hook_chain_probe or {}).get("present"))
     hook_chain_summary = str((hook_chain_probe or {}).get("summary_text") or "").strip()
+    consumer_misread_guard_ready = bool((consumer_misread_guard_probe or {}).get("present"))
+    consumer_misread_guard_summary = str(
+        (consumer_misread_guard_probe or {}).get("summary_text") or ""
+    ).strip()
 
     consumer_candidate = {
         "candidate_record": _build_candidate_record(
@@ -877,6 +882,77 @@ def build_self_improvement_trial_wave(
         ),
     )
 
+    consumer_misread_guard_candidate = {
+        "candidate_record": _build_candidate_record(
+            candidate_id="consumer_misread_guard_clarity_v1",
+            target_surface="consumer_contract.priority_misread_guard",
+            target_consumer="codex_claude_dashboard_operator_shells",
+            baseline_story=(
+                "Consumer misread guards already existed, but they still read like a static list of warnings. "
+                "Later agents had to infer where a misread would show up and what concrete correction to apply."
+            ),
+            candidate_story=(
+                "Consumer misread guards now expose trigger_surface, operator_action, and one bounded priority correction "
+                "so Codex-style, Claude-style, and dashboard shells can recover the same first correction without inventing a planner."
+            ),
+            success_metric="consumer_misread_guard_probe.present and consumer_drift_report.status == aligned",
+            failure_mode_watch="misread corrections become a second planner story or drift across shells",
+            rollback_path="remove priority misread packaging and fall back to the prior name-plus-rule guard list",
+            overclaim_to_avoid="clearer misread correction is not stronger transport, deeper cognition, or safer mutation by itself",
+            scope_limit="consumer-guard packaging only; no new permissions, no new transport semantics, no governance widening",
+        ),
+        "analyzer_closeout": _build_analyzer_closeout(
+            status="promote" if (consumer_misread_guard_ready and consumer_aligned) else "park",
+            result_story=(
+                "Consumer misread guards now say where the misread appears, what correction to apply, and which correction matters first."
+                if (consumer_misread_guard_ready and consumer_aligned)
+                else "Consumer misread-guard packaging is not yet stable enough to promote."
+            ),
+            evidence_bundle_summary=(
+                consumer_misread_guard_summary or "consumer_misread_guard_probe unavailable"
+            ),
+            unresolved_items=(
+                [
+                    "priority misread correction improves shared interpretation, not transport or reasoning quality",
+                    "future consumers must keep the same guard set and priority rule",
+                ]
+                if (consumer_misread_guard_ready and consumer_aligned)
+                else [
+                    "priority correction or trigger/action fields are not yet visible enough across consumers",
+                    "consumer drift must stay aligned before promotion",
+                ]
+            ),
+            failure_pressure="low" if (consumer_misread_guard_ready and consumer_aligned) else "meaningful",
+            rollback_posture="bounded_restore",
+            promotion_limit="does not authorize new planners, stronger permissions, or stronger cross-vendor interoperability claims",
+            overclaim_warning="clearer misread guards are not proof of shared cognition, safer mutation, or better reasoning",
+            next_action=(
+                "keep consumer misread correction bounded while admitting the next candidate"
+                if (consumer_misread_guard_ready and consumer_aligned)
+                else "repair consumer misread correction packaging before reopening this candidate"
+            ),
+        ),
+    }
+    consumer_misread_guard_candidate["result_surface"] = _build_result_surface(
+        status=consumer_misread_guard_candidate["analyzer_closeout"]["status"],
+        registry_recommendation=(
+            "promotion_ready_result"
+            if (consumer_misread_guard_ready and consumer_aligned)
+            else "distilled_lesson"
+        ),
+        supersession_posture="active_until_newer_consumer_misread_guard_trials_exist",
+        replay_rule="prefer_status_surface_then_probe_current_consumer_contract_shape_before_reusing_the_story",
+        residue_posture=(
+            "keep_visible_as_current_packaging_result"
+            if (consumer_misread_guard_ready and consumer_aligned)
+            else "park_in_status_surface_until_consumer_misread_guard_clarity_is_stable"
+        ),
+        visibility="status_surface_only",
+        carry_forward_rule=(
+            "may inform future consumer-shell packaging trials, but does not authorize transport promotion, new planners, or stronger permissions"
+        ),
+    )
+
     candidates = [
         consumer_candidate,
         retrieval_candidate,
@@ -889,6 +965,7 @@ def build_self_improvement_trial_wave(
         launch_health_candidate,
         internal_state_candidate,
         hook_chain_candidate,
+        consumer_misread_guard_candidate,
     ]
     outcome_counts = _count_outcomes(candidates)
     status = "completed"
@@ -919,8 +996,9 @@ def build_self_improvement_trial_wave(
             "launch_health_trend_clarity",
             "internal_state_observability_clarity",
             "hook_chain_trigger_clarity",
+            "consumer_misread_guard_clarity",
         ],
         "outcome_counts": outcome_counts,
         "candidates": candidates,
-        "next_short_board": "Phase 826: Eleventh Trial Candidate Admission",
+        "next_short_board": "Phase 829: Twelfth Trial Candidate Admission",
     }

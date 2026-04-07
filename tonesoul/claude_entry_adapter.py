@@ -21,6 +21,7 @@ def build_claude_entry_adapter(*, session_start_payload: dict[str, Any]) -> dict
     next_pull = dict(payload.get("next_pull") or {})
 
     required_read_order = list(consumer_contract.get("required_read_order") or [])
+    priority_misread_guard = dict(consumer_contract.get("priority_misread_guard") or {})
     first_hop_order = [str(item.get("surface", "")).strip() for item in required_read_order]
     must_read_now = [
         {
@@ -57,6 +58,12 @@ def build_claude_entry_adapter(*, session_start_payload: dict[str, Any]) -> dict
         "first_hop_order": first_hop_order,
         "must_read_now": must_read_now,
         "must_not_assume": list(consumer_contract.get("misread_guards") or []),
+        "must_correct_first": {
+            "name": str(priority_misread_guard.get("name", "")).strip(),
+            "trigger_surface": str(priority_misread_guard.get("trigger_surface", "")).strip(),
+            "operator_action": str(priority_misread_guard.get("operator_action", "")).strip(),
+            "why_now": str(priority_misread_guard.get("why_now", "")).strip(),
+        },
         "receiver_rule": str(consumer_contract.get("receiver_rule", "")).strip(),
         "surface_versioning": surface_versioning,
         "shell_rule": (

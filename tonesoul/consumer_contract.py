@@ -34,8 +34,46 @@ def _step(
     }
 
 
-def _guard(name: str, rule: str) -> dict[str, str]:
-    return {"name": name, "rule": rule}
+def _guard(
+    name: str,
+    rule: str,
+    *,
+    trigger_surface: str,
+    operator_action: str,
+) -> dict[str, str]:
+    return {
+        "name": name,
+        "rule": rule,
+        "trigger_surface": trigger_surface,
+        "operator_action": operator_action,
+    }
+
+
+def _priority_misread_guard(
+    *,
+    guards: list[dict[str, str]],
+    readiness_status: str,
+    closeout_status: str,
+) -> dict[str, str]:
+    by_name = {str(item.get("name", "")).strip(): item for item in guards}
+    target_name = "observer_stable_not_verified"
+    why_now = "bounded first-hop order still starts by rejecting observer smoothness as start permission."
+    if closeout_status != "complete":
+        target_name = "compaction_not_completion"
+        why_now = (
+            f"latest closeout is {closeout_status}; read closeout state before treating any compaction summary as finished work."
+        )
+    elif readiness_status != "pass":
+        target_name = "observer_stable_not_verified"
+        why_now = (
+            f"readiness is {readiness_status}; observer or shell stability must not be read as execution permission."
+        )
+
+    selected = dict(by_name.get(target_name) or (guards[0] if guards else {}))
+    if not selected:
+        return {}
+    selected["why_now"] = why_now
+    return selected
 
 
 def build_memory_consumer_contract(
@@ -107,20 +145,33 @@ def build_memory_consumer_contract(
         _guard(
             "observer_stable_not_verified",
             "Observer-window `stable` means currently unchallenged bounded orientation, not verified truth.",
+            trigger_surface="observer_window.stable",
+            operator_action="check readiness and canonical_center before trusting stable headlines or smooth shell summaries.",
         ),
         _guard(
             "compaction_not_completion",
             "Compaction summaries remain subordinate to closeout status and unresolved items.",
+            trigger_surface="closeout_attention + compaction summary",
+            operator_action="read closeout status and unresolved items before reusing any next-action prose from the handoff.",
         ),
         _guard(
             "working_style_not_identity",
             "Working-style continuity can shape workflow, but must not be promoted into durable identity or policy.",
+            trigger_surface="working_style continuity + subject_snapshot",
+            operator_action="apply workflow habits only; do not promote them into vows, durable identity, or policy.",
         ),
         _guard(
             "council_agreement_not_accuracy",
             "Council agreement and coherence remain descriptive unless separately calibrated by outcome evidence.",
+            trigger_surface="council_dossier confidence surfaces",
+            operator_action="treat agreement as descriptive only unless separate outcome-backed calibration evidence exists.",
         ),
     ]
+    priority_guard = _priority_misread_guard(
+        guards=misread_guards,
+        readiness_status=str(readiness_status or "unknown").strip(),
+        closeout_status=closeout_status,
+    )
 
     summary_bits = [
         "readiness",
@@ -150,6 +201,7 @@ def build_memory_consumer_contract(
         "source_precedence_summary": source_precedence_summary,
         "required_read_order": required_read_order,
         "misread_guards": misread_guards,
+        "priority_misread_guard": priority_guard,
         "receiver_rule": (
             "All consumers should recover the same parent truth, the same closeout meaning, and the same mutation gates before they widen context or act."
         ),
