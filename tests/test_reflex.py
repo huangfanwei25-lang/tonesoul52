@@ -15,23 +15,18 @@ Tests:
 from __future__ import annotations
 
 import json
-import pytest
-from pathlib import Path
 
 from tonesoul.governance.reflex import (
-    DriftSignal,
     GovernanceSnapshot,
     ReflexAction,
     ReflexDecision,
     ReflexEvaluator,
-    SoulBand,
     SoulBandLevel,
     classify_soul_band,
     enforce_vows_lightweight,
     evaluate_drift,
 )
 from tonesoul.governance.reflex_config import ReflexConfig, load_reflex_config
-
 
 # ---------------------------------------------------------------------------
 # SoulBand Classification
@@ -270,6 +265,39 @@ class TestReflexEvaluatorSoftMode:
         decision = ev.evaluate(snap)
         assert decision.trigger_reflection is True
 
+    def test_custom_band_thresholds_are_used(self):
+        ev = self._make_evaluator(
+            soul_band_thresholds={"alert": 0.10, "strained": 0.20, "critical": 0.30}
+        )
+        snap = GovernanceSnapshot(soul_integral=0.25, tension=0.30)
+        decision = ev.evaluate(snap)
+        assert decision.soul_band is not None
+        assert decision.soul_band.level == SoulBandLevel.STRAINED
+        assert decision.gate_modifier == 0.75
+
+    def test_custom_drift_thresholds_are_used(self):
+        ev = self._make_evaluator(
+            caution_prompt_threshold=0.70,
+            risk_prompt_threshold=0.90,
+        )
+        snap = GovernanceSnapshot(
+            soul_integral=0.10,
+            baseline_drift={"caution_bias": 0.65, "autonomy_level": 0.35},
+        )
+        decision = ev.evaluate(snap)
+        steps = [e["step"] for e in decision.enforcement_log]
+        assert "drift_caution_inject" not in steps
+        assert "drift_risk_inject" not in steps
+
+    def test_custom_reflection_thresholds_are_used(self):
+        ev = self._make_evaluator(
+            tension_reflection_threshold=0.40,
+            soul_integral_reflection_threshold=0.20,
+        )
+        snap = GovernanceSnapshot(soul_integral=0.25, tension=0.45)
+        decision = ev.evaluate(snap)
+        assert decision.trigger_reflection is True
+
     def test_disabled_always_passes(self):
         ev = self._make_evaluator(enabled=False)
         snap = GovernanceSnapshot(soul_integral=0.99, tension=0.99, vow_blocked=True)
@@ -304,6 +332,18 @@ class TestReflexEvaluatorHardMode:
         assert decision.action == ReflexAction.BLOCK
         assert decision.blocked_message is not None
         assert "Council" in decision.blocked_message
+
+    def test_council_block_respects_config_switch(self):
+        config = ReflexConfig(
+            vow_enforcement_mode="hard",
+            council_block_enforcement=False,
+        )
+        ev = ReflexEvaluator(config=config)
+        snap = GovernanceSnapshot(soul_integral=0.1, council_verdict="BLOCK")
+        decision = ev.evaluate(snap)
+        assert decision.action == ReflexAction.PASS
+        steps = [e["step"] for e in decision.enforcement_log]
+        assert "council_block_ignored_by_config" in steps
 
 
 # ---------------------------------------------------------------------------
@@ -463,7 +503,7 @@ class TestAdaptiveGateModifier:
         assert AdaptiveGate._action_from_tension(0.35, gate_modifier=0.75) == GateAction.WARN
 
     def test_modifier_floor(self):
-        from tonesoul.adaptive_gate import AdaptiveGate, GateAction
+        from tonesoul.adaptive_gate import AdaptiveGate
 
         # Modifier below 0.55 is clamped to 0.55
         result_low = AdaptiveGate._action_from_tension(0.50, gate_modifier=0.10)

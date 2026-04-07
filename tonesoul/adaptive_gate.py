@@ -69,8 +69,15 @@ class AdaptiveGate:
         self,
         tension_result: Optional[object] = None,
         persona_evaluation: Optional[Dict[str, object]] = None,
+        gate_modifier: float = 1.0,
     ) -> GateDecision:
-        """Compute gate decision from tension and persona signals."""
+        """Compute gate decision from tension and persona signals.
+
+        Args:
+            gate_modifier: Optional reflex-arc multiplier that tightens the
+                T_align thresholds. `1.0` keeps the legacy thresholds;
+                values below `1.0` make WARN/REVIEW/BLOCK trigger sooner.
+        """
         reasons: List[str] = []
         signals: Dict[str, float] = {}
 
@@ -126,6 +133,7 @@ class AdaptiveGate:
             t_ecs=t_ecs,
         )
         signals["t_align"] = t_align
+        signals["gate_modifier"] = max(0.55, min(1.0, float(gate_modifier)))
 
         # Baseline zone rules (backward-compatible)
         if zone_str == "danger":
@@ -153,7 +161,7 @@ class AdaptiveGate:
                 reasons.append("persona_invalid in safe zone: minor deviation logged")
 
         # WFGY refinement: promote severity by T_align (never demote baseline)
-        align_action = self._action_from_tension(t_align)
+        align_action = self._action_from_tension(t_align, gate_modifier=gate_modifier)
         if self._severity(align_action) > self._severity(action):
             original = action
             action = align_action

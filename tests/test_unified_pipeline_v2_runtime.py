@@ -969,3 +969,39 @@ def test_graph_rag_trace_not_injected_without_summary() -> None:
     assert updated == source
     assert trace.get("applied") is False
     assert trace.get("reason") == "no_summary"
+
+
+def test_compute_reflex_decision_includes_current_turn_vow_and_council(monkeypatch) -> None:
+    pipeline = UnifiedPipeline(mirror_enabled=False)
+
+    fake_posture = SimpleNamespace(
+        soul_integral=0.15,
+        baseline_drift={"caution_bias": 0.5, "autonomy_level": 0.35},
+    )
+
+    monkeypatch.setattr("tonesoul.runtime_adapter.load", lambda *args, **kwargs: fake_posture)
+
+    from tonesoul.governance.reflex_config import ReflexConfig
+
+    monkeypatch.setattr(
+        "tonesoul.governance.reflex_config.load_reflex_config",
+        lambda *args, **kwargs: ReflexConfig(vow_enforcement_mode="hard"),
+    )
+
+    vow_result = SimpleNamespace(
+        blocked=True,
+        repair_needed=False,
+        flags=["BLOCKED by vow_truth: Truthfulness"],
+    )
+
+    decision = pipeline._compute_reflex_decision(
+        0.2,
+        vow_result=vow_result,
+        council_verdict={"verdict": "block"},
+    )
+
+    assert decision is not None
+    assert decision.action.value == "block"
+    steps = [entry["step"] for entry in decision.enforcement_log]
+    assert "vow_block" in steps
+    assert "council_block" in steps

@@ -169,6 +169,21 @@ class TestWFGYAlignmentRefinement:
         )
         assert decision.action == GateAction.REVIEW
 
+    def test_gate_modifier_tightens_alignment_escalation(self):
+        gate = AdaptiveGate()
+        decision = gate.evaluate(
+            tension_result=FakeTensionResult(
+                zone="safe",
+                total=0.1,
+                semantic_delta=0.7,
+                t_ecs=0.7,
+            ),
+            persona_evaluation={"valid": True, "distance": 0.7},
+            gate_modifier=0.75,
+        )
+        assert decision.action == GateAction.BLOCK
+        assert decision.signals["gate_modifier"] == 0.75
+
 
 class TestDecisionHelpers:
     def test_should_intercept_on_review(self):

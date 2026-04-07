@@ -198,6 +198,17 @@ class UnifiedPipeline:
         except Exception:
             return dict(payload) if isinstance(payload, dict) else {}
 
+    def _extract_council_verdict_name(self, payload: Any) -> Optional[str]:
+        normalized = self._normalize_council_verdict_payload(payload)
+        verdict = normalized.get("verdict")
+        if verdict is None:
+            if isinstance(payload, str):
+                normalized_text = payload.strip().lower()
+                return normalized_text or None
+            return None
+        normalized_text = str(verdict).strip().lower()
+        return normalized_text or None
+
     def _get_llm_client(self):
         if self._llm_client is not None:
             router = self._get_llm_router()
@@ -493,7 +504,13 @@ class UnifiedPipeline:
 
     # --- Governance Reflex Arc helpers ---
 
-    def _compute_reflex_decision(self, tension: float) -> Optional[Any]:
+    def _compute_reflex_decision(
+        self,
+        tension: float,
+        *,
+        vow_result: Any = None,
+        council_verdict: Any = None,
+    ) -> Optional[Any]:
         """Compute reflex arc decision from current governance posture.
 
         Loads governance state, classifies soul band, evaluates drift/vow/council
@@ -510,7 +527,18 @@ class UnifiedPipeline:
                 return None
 
             posture = load_posture()
-            snapshot = GovernanceSnapshot.from_posture(posture, tension=tension)
+            vow_blocked = bool(getattr(vow_result, "blocked", False))
+            vow_repair_needed = bool(getattr(vow_result, "repair_needed", False))
+            raw_vow_flags = getattr(vow_result, "flags", []) if vow_result is not None else []
+            vow_flags = list(raw_vow_flags or [])
+            snapshot = GovernanceSnapshot.from_posture(
+                posture,
+                tension=tension,
+                vow_blocked=vow_blocked,
+                vow_repair_needed=vow_repair_needed,
+                vow_flags=vow_flags,
+                council_verdict=self._extract_council_verdict_name(council_verdict),
+            )
             evaluator = ReflexEvaluator(config=config)
             return evaluator.evaluate(snapshot)
         except Exception as e:
@@ -1754,6 +1782,7 @@ class UnifiedPipeline:
         """
         history = history or []
         self._exc_trace = ExceptionTrace()
+        self._reflex_gate_modifier = 1.0
         raw_user_message = user_message
 
         # ========== Phase V: Compute Gate (Revenue / API Protection) ==========
@@ -2694,6 +2723,7 @@ Respond with a clear, practical answer."""
         reflection_verdicts: List[Any] = []
         reflection_tiers: List[str] = []
         revision_count = 0
+        final_reflection_verdict = None
         reflection_context = {
             "language": "zh",
             "tension_score": tone_strength,
@@ -3121,8 +3151,35 @@ Respond with a clear, practical answer."""
         )
 
         # ========== Reflex Arc Final Gate ==========
-        if reflex_decision is not None:
-            response = self._apply_reflex_final_gate(response, reflex_decision, repair_stages)
+        final_reflex_decision = reflex_decision
+        final_council_signal = verdict_dict
+        if not final_council_signal and final_reflection_verdict is not None:
+            final_council_signal = getattr(final_reflection_verdict, "council_decision", None)
+        final_vow_result = (
+            getattr(final_reflection_verdict, "vow_result", None)
+            if final_reflection_verdict is not None
+            else None
+        )
+        if final_vow_result is not None or final_council_signal:
+            final_reflex_decision = self._compute_reflex_decision(
+                max(float(tone_strength or 0.0), float(initial_tension or 0.0)),
+                vow_result=final_vow_result,
+                council_verdict=final_council_signal,
+            )
+            if final_reflex_decision is not None:
+                final_reflex_status = "ok"
+                final_reflex_action = str(getattr(final_reflex_decision, "action", None))
+                if "BLOCK" in final_reflex_action.upper():
+                    final_reflex_status = "error"
+                elif "SOFTEN" in final_reflex_action.upper() or "WARN" in final_reflex_action.upper():
+                    final_reflex_status = "degraded"
+                dispatch_trace["reflex_arc_final"] = self._build_trace_section(
+                    "reflex_arc_final",
+                    final_reflex_decision.to_dict(),
+                    status=final_reflex_status,
+                )
+        if final_reflex_decision is not None:
+            response = self._apply_reflex_final_gate(response, final_reflex_decision, repair_stages)
 
         current_zone = getattr(getattr(tension_result, "zone", None), "value", "safe")
         response, blocked_by_poav, poav_result = self._enforce_poav_gate(

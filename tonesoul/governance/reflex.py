@@ -19,12 +19,10 @@ Date: 2026-04-07
 
 from __future__ import annotations
 
-import json
 import logging
-from dataclasses import asdict, dataclass, field
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
-from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
@@ -310,11 +308,40 @@ class ReflexEvaluator:
         if not self.enabled:
             return ReflexDecision(action=ReflexAction.PASS, gate_modifier=1.0)
 
+        config = self._config
+
         log: List[Dict[str, Any]] = []
         timestamp = datetime.now(timezone.utc).isoformat()
 
+        band_thresholds = None
+        caution_threshold = 0.60
+        risk_threshold = 0.75
+        tension_reflection_threshold = 0.70
+        soul_integral_reflection_threshold = 0.55
+        council_block_enforcement = True
+
+        if config is not None:
+            raw_thresholds = getattr(config, "soul_band_thresholds", None)
+            if isinstance(raw_thresholds, dict):
+                band_thresholds = raw_thresholds
+            caution_threshold = float(getattr(config, "caution_prompt_threshold", caution_threshold))
+            risk_threshold = float(getattr(config, "risk_prompt_threshold", risk_threshold))
+            tension_reflection_threshold = float(
+                getattr(config, "tension_reflection_threshold", tension_reflection_threshold)
+            )
+            soul_integral_reflection_threshold = float(
+                getattr(
+                    config,
+                    "soul_integral_reflection_threshold",
+                    soul_integral_reflection_threshold,
+                )
+            )
+            council_block_enforcement = bool(
+                getattr(config, "council_block_enforcement", council_block_enforcement)
+            )
+
         # 1. Classify soul band
-        band = classify_soul_band(snapshot.soul_integral)
+        band = classify_soul_band(snapshot.soul_integral, thresholds=band_thresholds)
         gate_modifier = band.gate_modifier
         trigger_reflection = False
         action = ReflexAction.PASS
@@ -333,6 +360,8 @@ class ReflexEvaluator:
         drift_signal = evaluate_drift(
             snapshot.baseline_drift,
             max_autonomy=band.max_autonomy,
+            caution_threshold=caution_threshold,
+            risk_threshold=risk_threshold,
         )
         if drift_signal.autonomy_capped:
             log.append({
@@ -380,7 +409,10 @@ class ReflexEvaluator:
             log.append({"step": "critical_enforcement", "mode": self.mode})
 
         # 4. Tension + soul_integral combined trigger
-        if snapshot.tension > 0.7 and snapshot.soul_integral > 0.55:
+        if (
+            snapshot.tension > tension_reflection_threshold
+            and snapshot.soul_integral > soul_integral_reflection_threshold
+        ):
             trigger_reflection = True
             log.append({
                 "step": "tension_reflection_trigger",
@@ -413,7 +445,9 @@ class ReflexEvaluator:
 
         # 6. Council BLOCK enforcement
         if snapshot.council_verdict == "BLOCK":
-            if self.mode == "hard":
+            if not council_block_enforcement:
+                log.append({"step": "council_block_ignored_by_config"})
+            elif self.mode == "hard":
                 blocked_message = "此回應被 Council 判定為 BLOCK，已被攔截。"
                 action = ReflexAction.BLOCK
                 log.append({"step": "council_block"})
