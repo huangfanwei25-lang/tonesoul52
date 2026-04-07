@@ -566,7 +566,8 @@ def test_runtime_contract_observer_logs_warning_without_blocking() -> None:
     )
 
     assert result.council_verdict.get("verdict") != "blocked_by_contracts"
-    assert result.response == "This is definitely correct."
+    # Response starts with original text; reflex arc may append a disclaimer
+    assert result.response.startswith("This is definitely correct.")
     contracts = result.dispatch_trace.get("contracts") or {}
     assert contracts.get("action") == "allow"
     assert contracts.get("violation_count", 0) >= 1
@@ -849,7 +850,7 @@ def test_pipeline_mirror_disabled_default() -> None:
     )
 
     fake_mirror.reflect.assert_not_called()
-    assert result.response == "mirror disabled response"
+    assert result.response.startswith("mirror disabled response")
     assert "mirror" not in result.dispatch_trace
     assert "mirror_delta" not in result.trajectory_analysis
 
@@ -888,7 +889,7 @@ def test_pipeline_mirror_enabled_trajectory(monkeypatch) -> None:
     )
 
     fake_mirror.reflect.assert_called_once()
-    assert result.response == "mock llm response"
+    assert result.response.startswith("mock llm response")
     mirror_trace = result.dispatch_trace.get("mirror") or {}
     assert mirror_trace.get("enabled") is True
     assert mirror_trace.get("available") is True
@@ -934,7 +935,7 @@ def test_pipeline_mirror_enforce_mode_applies_governed_response(monkeypatch) -> 
     )
 
     fake_mirror.reflect.assert_called_once()
-    assert result.response == "mock governed response"
+    assert result.response.startswith("mock governed response")
     mirror_trace = result.dispatch_trace.get("mirror") or {}
     assert mirror_trace.get("mode") == "enforce"
     assert mirror_trace.get("enforced") is True

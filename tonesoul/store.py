@@ -20,6 +20,7 @@ Pub/sub (Redis only — FileStore silently skips):
 from __future__ import annotations
 
 import os
+import threading
 
 # ---------------------------------------------------------------------------
 # Redis key / channel constants  (shared by RedisStore + any subscriber)
@@ -45,6 +46,7 @@ FIELD_KEY = "ts:field"  # Experimental semantic-field synthesis surface
 # ---------------------------------------------------------------------------
 
 _store_singleton = None
+_store_lock = threading.Lock()
 
 
 def get_store(redis_url: str | None = None, *, force_file: bool = False):
@@ -58,19 +60,25 @@ def get_store(redis_url: str | None = None, *, force_file: bool = False):
     if _store_singleton is not None:
         return _store_singleton
 
-    if force_file:
-        _store_singleton = _make_file_store()
-        return _store_singleton
+    with _store_lock:
+        # Double-check after acquiring lock
+        if _store_singleton is not None:
+            return _store_singleton
 
-    url = redis_url or os.environ.get("TONESOUL_REDIS_URL", "redis://localhost:6379/0")
-    _store_singleton = _try_redis(url) or _make_file_store()
-    return _store_singleton
+        if force_file:
+            _store_singleton = _make_file_store()
+            return _store_singleton
+
+        url = redis_url or os.environ.get("TONESOUL_REDIS_URL", "redis://localhost:6379/0")
+        _store_singleton = _try_redis(url) or _make_file_store()
+        return _store_singleton
 
 
 def reset_store() -> None:
     """Reset singleton (for tests)."""
     global _store_singleton
-    _store_singleton = None
+    with _store_lock:
+        _store_singleton = None
 
 
 # ---------------------------------------------------------------------------

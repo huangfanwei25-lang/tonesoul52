@@ -211,7 +211,10 @@ def drift_baseline(
 
     new["caution_bias"] = round(caution + rate * (avg_severity - caution), 4)
     new["innovation_bias"] = round(innovation + rate * ((1.0 - avg_severity) - innovation), 4)
-    # autonomy_level stays put unless explicitly shifted
+    # Autonomy drifts inversely with tension — high-tension sessions reduce autonomy
+    autonomy = float(new.get("autonomy_level", 0.35))
+    target_autonomy = max(0.1, 1.0 - avg_severity)  # high severity → low target
+    new["autonomy_level"] = round(autonomy + rate * (target_autonomy - autonomy), 4)
     return new
 
 
@@ -226,11 +229,25 @@ def update_soul_integral(
     session_tensions: List[Dict[str, Any]],
     alpha: float = TENSION_DECAY_ALPHA,
 ) -> float:
-    """S_new = S_old * e^(-alpha * hours) + max_tension_this_session"""
+    """Update soul integral as an exponentially-weighted moving integral.
+
+    Formula: S_new = S_old * e^(-alpha * hours) + blend_rate * max_tension
+    Clamped to [0.0, 1.0].
+
+    The blend_rate (0.3) prevents a single high-tension session from
+    spiking the integral to 1.0, while preserving the decay behavior
+    that gradually relaxes stress back toward zero.
+
+    When session_tensions is empty, the integral purely decays — it does
+    NOT reset to zero. The decay half-life (~14h) ensures historical
+    stress fades naturally.
+    """
     hours = _hours_since(last_updated)
     decayed = current * math.exp(-alpha * hours)
     max_t = max((float(t.get("severity", 0.0)) for t in session_tensions), default=0.0)
-    return round(decayed + max_t, 4)
+    blend_rate = 0.3  # how much of max_tension is absorbed per session
+    result = decayed + blend_rate * max_t
+    return round(max(0.0, min(1.0, result)), 4)
 
 
 # ---------------------------------------------------------------------------

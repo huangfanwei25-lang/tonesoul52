@@ -18,12 +18,15 @@ Any AI agent that can make HTTP requests can:
 from __future__ import annotations
 
 import argparse
+import hmac
 import http.server
 import json
 import os
 import sys
 from pathlib import Path
 from typing import Any, Dict, Optional
+
+_MAX_BODY_SIZE = 1024 * 1024  # 1 MB — reject oversized payloads
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
@@ -33,6 +36,8 @@ _AUTH_TOKEN: Optional[str] = None
 
 def _read_body(handler) -> bytes:
     length = int(handler.headers.get("Content-Length", 0))
+    if length > _MAX_BODY_SIZE:
+        raise ValueError(f"Request body too large: {length} bytes (max {_MAX_BODY_SIZE})")
     return handler.rfile.read(length) if length > 0 else b""
 
 
@@ -67,7 +72,8 @@ def _check_auth(handler) -> bool:
     if _AUTH_TOKEN is None:
         return True
     auth = handler.headers.get("Authorization", "")
-    if auth == f"Bearer {_AUTH_TOKEN}":
+    expected = f"Bearer {_AUTH_TOKEN}"
+    if hmac.compare_digest(auth, expected):
         return True
     _send_json(handler, {"error": "unauthorized"}, 401)
     return False
@@ -249,9 +255,10 @@ class GatewayHandler(http.server.BaseHTTPRequestHandler):
             try:
                 handler(self)
             except Exception as exc:
-                _send_json(self, {"error": str(exc)}, 500)
+                print(f"  [ERROR] GET {self.path}: {exc}")
+                _send_json(self, {"error": "internal server error"}, 500)
         else:
-            _send_json(self, {"error": "not found", "routes": list(ROUTES_GET)}, 404)
+            _send_json(self, {"error": "not found"}, 404)
 
     def do_POST(self) -> None:
         if not _check_auth(self):
@@ -261,9 +268,10 @@ class GatewayHandler(http.server.BaseHTTPRequestHandler):
             try:
                 handler(self)
             except Exception as exc:
-                _send_json(self, {"error": str(exc)}, 500)
+                print(f"  [ERROR] POST {self.path}: {exc}")
+                _send_json(self, {"error": "internal server error"}, 500)
         else:
-            _send_json(self, {"error": "not found", "routes": list(ROUTES_POST)}, 404)
+            _send_json(self, {"error": "not found"}, 404)
 
     def do_OPTIONS(self) -> None:
         self.send_response(204)

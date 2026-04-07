@@ -88,21 +88,42 @@ class RedisStore:
 
     # ── Task claims / locks ────────────────────────────────────────────────
 
+    _CLAIM_LOCK_SCRIPT = """
+local key = KEYS[1]
+local new_payload = ARGV[1]
+local new_agent = ARGV[2]
+local ttl = tonumber(ARGV[3])
+local existing = redis.call('GET', key)
+if existing then
+    local data = cjson.decode(existing)
+    if data['agent'] ~= new_agent then
+        return 0
+    end
+end
+redis.call('SET', key, new_payload, 'EX', ttl)
+return 1
+"""
+
     def claim_lock(self, task_id: str, claim: Dict[str, Any], ttl_seconds: int = 1800) -> bool:
         key = f"{LOCK_PREFIX}{task_id}"
-        existing_raw = self._r.get(key)
-        if existing_raw is not None:
-            existing = json.loads(existing_raw)
-            if str(existing.get("agent", "")) != str(claim.get("agent", "")):
-                return False
         entry = dict(claim)
         entry["task_id"] = task_id
         entry["ttl_seconds"] = int(ttl_seconds)
         payload = json.dumps(entry, ensure_ascii=False)
-        result = self._r.set(key, payload, ex=int(ttl_seconds), nx=existing_raw is None)
-        if existing_raw is not None:
+        agent = str(claim.get("agent", ""))
+        try:
+            result = self._r.eval(
+                self._CLAIM_LOCK_SCRIPT, 1, key, payload, agent, int(ttl_seconds)
+            )
+        except Exception:
+            # Fallback for environments where EVAL is disabled
+            existing_raw = self._r.get(key)
+            if existing_raw is not None:
+                existing = json.loads(existing_raw)
+                if str(existing.get("agent", "")) != agent:
+                    return False
             self._r.set(key, payload, ex=int(ttl_seconds))
-            result = True
+            result = 1
         if result:
             self.publish(CHANNEL_EVENTS, {"type": "claims:updated", "task_id": task_id})
         return bool(result)

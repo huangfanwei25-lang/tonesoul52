@@ -45,6 +45,18 @@ _AEGIS_DIR = Path(".aegis")
 _KEYS_DIR = _AEGIS_DIR / "keys"
 
 # Prompt injection / poisoning patterns (defensive, not exhaustive)
+_AGENT_ID_RE = re.compile(r"^[a-zA-Z0-9_\-]+$")
+
+
+def _validate_agent_id(agent_id: str) -> str:
+    """Sanitize agent_id to prevent path traversal attacks."""
+    if not agent_id or not _AGENT_ID_RE.match(agent_id):
+        raise ValueError(
+            f"Invalid agent_id: must match [a-zA-Z0-9_-]+, got {agent_id!r}"
+        )
+    return agent_id
+
+
 _POISON_PATTERNS: List[re.Pattern] = [
     re.compile(r"ignore\s+(all\s+)?previous\s+instructions?", re.I),
     re.compile(r"disregard\s+(all\s+)?prior\s+(context|instructions?)", re.I),
@@ -140,6 +152,7 @@ def _ensure_keys_dir() -> Path:
 
 def generate_agent_keys(agent_id: str) -> Tuple[str, str]:
     """Generate Ed25519 keypair for an agent. Returns (public_hex, private_hex)."""
+    _validate_agent_id(agent_id)
     from nacl.signing import SigningKey
 
     sk = SigningKey.generate()
@@ -154,6 +167,7 @@ def generate_agent_keys(agent_id: str) -> Tuple[str, str]:
 
 def load_signing_key(agent_id: str) -> Optional[Any]:
     """Load private key for signing. Returns SigningKey or None."""
+    _validate_agent_id(agent_id)
     key_file = _KEYS_DIR / f"{agent_id}.key"
     if not key_file.exists():
         return None
@@ -168,6 +182,7 @@ def load_signing_key(agent_id: str) -> Optional[Any]:
 
 def load_verify_key(agent_id: str) -> Optional[Any]:
     """Load public key for verification. Returns VerifyKey or None."""
+    _validate_agent_id(agent_id)
     pub_file = _KEYS_DIR / f"{agent_id}.pub"
     if not pub_file.exists():
         return None

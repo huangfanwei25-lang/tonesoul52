@@ -99,9 +99,11 @@ def _check_low_high_tension() -> list[CheckResult]:
 
 
 def _check_regression(command: str) -> CheckResult:
+    import shlex
+
     completed = subprocess.run(
-        command,
-        shell=True,
+        shlex.split(command),
+        shell=False,
         check=False,
         capture_output=True,
         text=True,

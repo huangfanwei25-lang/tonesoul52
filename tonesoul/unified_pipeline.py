@@ -106,6 +106,7 @@ class UnifiedPipeline:
         self._llm_router = None
         self._governance_kernel = None
         self._exc_trace = ExceptionTrace()
+        self._reflex_gate_modifier: float = 1.0
         self._mirror = None
         self._mirror_enabled = (
             _read_bool_env("TONESOUL_MIRROR_ENABLED", default=True)
@@ -490,6 +491,59 @@ class UnifiedPipeline:
             normalized_zone = "safe"
         return normalized_zone
 
+    # --- Governance Reflex Arc helpers ---
+
+    def _compute_reflex_decision(self, tension: float) -> Optional[Any]:
+        """Compute reflex arc decision from current governance posture.
+
+        Loads governance state, classifies soul band, evaluates drift/vow/council
+        signals, and returns a ReflexDecision. Returns None if reflex is
+        unavailable or disabled.
+        """
+        try:
+            from tonesoul.governance.reflex import GovernanceSnapshot, ReflexEvaluator
+            from tonesoul.governance.reflex_config import load_reflex_config
+            from tonesoul.runtime_adapter import load as load_posture
+
+            config = load_reflex_config()
+            if not config.enabled:
+                return None
+
+            posture = load_posture()
+            snapshot = GovernanceSnapshot.from_posture(posture, tension=tension)
+            evaluator = ReflexEvaluator(config=config)
+            return evaluator.evaluate(snapshot)
+        except Exception as e:
+            self._exc_trace.record("unified_pipeline", "_compute_reflex_decision", e)
+            return None
+
+    @staticmethod
+    def _apply_reflex_final_gate(
+        response: str,
+        reflex_decision: Any,
+        repair_stages: List[str],
+    ) -> str:
+        """Apply the reflex arc's final gate to the response.
+
+        - BLOCK: replace response with blocked message (counts as repair)
+        - SOFTEN/WARN: append disclaimer (does NOT count as repair —
+          disclaimers are governance annotations, not content repairs)
+        - PASS: no change
+        """
+        from tonesoul.governance.reflex import ReflexAction
+
+        action = getattr(reflex_decision, "action", ReflexAction.PASS)
+        if action == ReflexAction.BLOCK:
+            blocked_msg = getattr(reflex_decision, "blocked_message", None)
+            if blocked_msg:
+                repair_stages.append("reflex_block")
+                return str(blocked_msg)
+        elif action in (ReflexAction.SOFTEN, ReflexAction.WARN):
+            disclaimer = getattr(reflex_decision, "disclaimer", None)
+            if disclaimer:
+                return f"{response}\n\n---\n{disclaimer}"
+        return response
+
     def _enforce_poav_gate(
         self,
         *,
@@ -726,6 +780,13 @@ class UnifiedPipeline:
                     severity = max(severity, min(1.0, 0.3 + tension_delta))
         except Exception as e:
             self._exc_trace.record("unified_pipeline", "_self_check.tension", e)
+
+        # Reflex arc severity boost: tighter gate → higher effective severity
+        # Only boost when severity is already non-trivial (≥0.3) to avoid
+        # promoting informational FLAGs into unnecessary revisions
+        if self._reflex_gate_modifier < 1.0 and severity >= 0.3:
+            boost = (1.0 - self._reflex_gate_modifier) * 0.3  # up to +0.135 at critical
+            severity = min(1.0, severity + boost)
 
         should_revise = bool(reasons) and severity > 0.2
         return ReflectionVerdict(
@@ -1626,6 +1687,7 @@ class UnifiedPipeline:
         governance_friction: Optional[float],
         user_tier: str,
         user_message: str,
+        force_convene: bool = False,
     ) -> tuple[bool, Optional[str], Optional[float]]:
         friction_score = self._coerce_friction_score(runtime_friction)
         if friction_score is None:
@@ -1641,6 +1703,7 @@ class UnifiedPipeline:
                 friction_score=friction_score,
                 user_tier=user_tier,
                 message_length=len(str(user_message or "")),
+                force_convene=force_convene,
             )
         except Exception:
             return True, None, friction_score
@@ -1991,6 +2054,28 @@ class UnifiedPipeline:
                     e,
                 )
                 pass
+
+        # ========== Governance Reflex Arc ==========
+        reflex_decision = self._compute_reflex_decision(initial_tension)
+        reflex_force_convene = False
+        if reflex_decision is not None:
+            reflex_force_convene = (
+                getattr(reflex_decision, "trigger_reflection", False)
+                and getattr(getattr(reflex_decision, "soul_band", None), "force_council", False)
+            )
+            self._reflex_gate_modifier = getattr(reflex_decision, "gate_modifier", 1.0)
+            reflex_status = "ok"
+            reflex_action = str(getattr(reflex_decision, "action", None))
+            if "BLOCK" in reflex_action.upper():
+                reflex_status = "error"
+            elif "SOFTEN" in reflex_action.upper() or "WARN" in reflex_action.upper():
+                reflex_status = "degraded"
+            dispatch_trace["reflex_arc"] = self._build_trace_section(
+                "reflex_arc",
+                reflex_decision.to_dict(),
+                status=reflex_status,
+            )
+
         # Attach TensionEngine detail to dispatch trace
         if tension_result is not None:
             try:
@@ -2593,6 +2678,7 @@ Respond with a clear, practical answer."""
                 governance_friction=governance_friction,
                 user_tier=user_tier,
                 user_message=raw_user_message,
+                force_convene=reflex_force_convene,
             )
         )
         if council_reason or council_friction_score is not None:
@@ -3034,6 +3120,10 @@ Respond with a clear, practical answer."""
             confidence=(getattr(tb_result, "confidence", 0.8) if tb_result else 0.8),
         )
 
+        # ========== Reflex Arc Final Gate ==========
+        if reflex_decision is not None:
+            response = self._apply_reflex_final_gate(response, reflex_decision, repair_stages)
+
         current_zone = getattr(getattr(tension_result, "zone", None), "value", "safe")
         response, blocked_by_poav, poav_result = self._enforce_poav_gate(
             response=response,
@@ -3221,10 +3311,59 @@ Respond with a clear, practical answer."""
                 "Respond only with verifiable facts, cited sources, or clarifying questions."
             )
 
+        # Governance drift guidance (injected by reflex arc)
+        drift_lines = self._build_drift_guidance()
+        if drift_lines:
+            lines.append("")
+            lines.extend(drift_lines)
+
         lines.append(
             "Output: reply with factual, concise, and safe guidance. If context support is thin, say so explicitly before proceeding."
         )
         return "\n".join(lines)
+
+    def _build_drift_guidance(self) -> List[str]:
+        """Build LLM prompt lines from baseline drift signals.
+
+        Reads the current governance posture's drift and the reflex arc's
+        evaluation to inject caution/risk guidance into the LLM context.
+        This is where baseline_drift finally influences behavior.
+        """
+        try:
+            from tonesoul.governance.reflex import evaluate_drift
+            from tonesoul.runtime_adapter import load as load_posture
+
+            posture = load_posture()
+            drift = dict(getattr(posture, "baseline_drift", {}) or {})
+            if not drift:
+                return []
+
+            signal = evaluate_drift(drift)
+            lines: List[str] = []
+
+            if signal.inject_risk_prompt:
+                lines.append("[GOVERNANCE DRIFT: HIGH CAUTION]")
+                lines.append(
+                    f"Baseline caution bias is elevated ({signal.caution_bias:.2f}). "
+                    "Prioritize safety, cite sources, and flag uncertainty explicitly. "
+                    "Avoid speculative or high-risk recommendations."
+                )
+            elif signal.inject_caution_prompt:
+                lines.append("[GOVERNANCE DRIFT: CAUTION ADVISORY]")
+                lines.append(
+                    f"Baseline caution is above normal ({signal.caution_bias:.2f}). "
+                    "Be methodical and prefer conservative approaches."
+                )
+
+            if signal.autonomy_capped:
+                lines.append(
+                    "[AUTONOMY CAPPED] Autonomy level exceeds soul band limit. "
+                    "Defer to operator judgment on ambiguous decisions."
+                )
+
+            return lines
+        except Exception:
+            return []
 
     def _generate_narrative(self, tb_result, verdict_dict: Dict) -> str:
         """Generate a compact narrative summary for observability."""

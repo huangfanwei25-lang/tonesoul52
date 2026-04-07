@@ -1416,12 +1416,35 @@ def test_soul_integral_accumulates() -> None:
     from datetime import datetime, timezone
 
     now = datetime.now(timezone.utc).isoformat()
+    # blend_rate=0.3: 0.0 * decay + 0.3 * 0.7 = 0.21
     result = update_soul_integral(0.0, now, [{"severity": 0.7}])
-    assert result == pytest.approx(0.7, abs=0.01)
+    assert result == pytest.approx(0.21, abs=0.01)
+
+
+def test_soul_integral_accumulates_over_sessions() -> None:
+    from datetime import datetime, timezone
+
+    now = datetime.now(timezone.utc).isoformat()
+    # Multiple high-tension sessions should build up, but stay bounded
+    si = 0.0
+    for _ in range(10):
+        si = update_soul_integral(si, now, [{"severity": 0.9}])
+    assert 0.0 < si <= 1.0
+    # After 10 consecutive 0.9-severity sessions (no decay), should be high but capped
+    assert si <= 1.0
+
+
+def test_soul_integral_clamped_to_unit() -> None:
+    from datetime import datetime, timezone
+
+    now = datetime.now(timezone.utc).isoformat()
+    # Even with very high current + high tension, stays at 1.0
+    result = update_soul_integral(0.95, now, [{"severity": 1.0}])
+    assert result <= 1.0
 
 
 def test_soul_integral_decays_old() -> None:
-    result = update_soul_integral(10.0, "2020-01-01T00:00:00+00:00", [])
+    result = update_soul_integral(1.0, "2020-01-01T00:00:00+00:00", [])
     assert result < 0.01  # years of decay
 
 

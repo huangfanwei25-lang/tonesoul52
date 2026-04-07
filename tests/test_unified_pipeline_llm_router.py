@@ -61,5 +61,5 @@ def test_pipeline_uses_llm_router_chat_for_generation() -> None:
     assert kwargs["history"] == []
     assert "Please outline a practical engineering plan" in kwargs["prompt"]
     assert kwargs["alert_level"] == AlertLevel.CLEAR
-    assert result.response == "router-mediated response"
+    assert result.response.startswith("router-mediated response")
     assert result.dispatch_trace["thinking_tier"] == "local"
