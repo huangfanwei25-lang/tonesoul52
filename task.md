@@ -158,7 +158,7 @@
 ## Long Program: Consistency-First Governance Depth And High-Risk Validation (2026-04-07)
 - Program Goal: make ToneSoul faster on low-risk turns, stricter on high-risk turns, and more consistent across Codex-style, Claude-style, and dashboard consumers before any serious domain-validation claim is attempted.
 - Execution Guardrails:
-  - Keep the current active short board on the self-improvement loop; this program is queued follow-through, not a replacement bucket.
+  - This program is now active after explicit ratification; keep the first move bounded to design/spec and seam-mapping work before any runtime mutation or domain-validation claim.
   - Reuse existing ToneSoul seams such as `ComputeGate`, `AdaptiveGate`, `ReflexEvaluator`, `session-start`, and `consumer_contract`; do not import a fresh `Module 0 / A / B / C` architecture.
   - Preserve non-zero governance: fast paths may shrink governance cost, but must not bypass reflex, basic vow posture, closeout honesty, or bounded output edges.
   - Treat future stock analysis or other finance-heavy work as deferred acceptance tests, not present capability claims.
@@ -185,9 +185,14 @@
   - bounded outer-shell preflight chain for shared edits, publish/push posture, and task-board parking discipline
   - bounded self-improvement foundation: evaluator harness, experiment lineage boundary, mutation space, analyzer gate, first trial wave, and promotion-ready result surface discipline
 - Current short board:
-  - Phase 847: admit the eighteenth bounded self-improvement candidate without reopening retrieval mythology, governance semantics, selfhood inflation, dashboard reference-surface authority drift, or status-panel control-plane drift
+  - Governance-depth program (Phase 848-854) is now fully closed. Next active bucket returns to Self-Improvement Loop v0 or the next human-ratified program.
 - After that:
-  - `ToneSoul Self-Improvement Loop v0` is now the active bucket, with `Phase 790-846` landed and the next work focused on eighteenth-candidate selection rather than expanding shell surface area
+  - `Phase 848-850` (governance depth spec + runtime seam) landed by Codex
+  - `Phase 851` (high-risk grounding check) landed: `tonesoul/grounding_check.py` — post-hoc claim extraction + source trace, activates on `governance_depth == full`
+  - `Phase 852` (verification fail-stop) landed: `VERIFICATION_BUDGET = 4`, honest failure on non-convergence
+  - `Phase 853` (cross-agent consistency wave) landed: `scripts/run_cross_agent_consistency_wave.py` — 7/7 checks passing
+  - `Phase 854` (deferred domain-trial gate) landed: `docs/plans/tonesoul_high_risk_domain_trial_gate_2026-04-08.md` — 5 gate conditions (G1-G5) before domain validation opens
+  - `ToneSoul Self-Improvement Loop v0` promote=17, park=1 — eighteenth candidate already admitted by Codex
   - successor/hot-memory bucket is now baseline-frozen unless a fresh real-world misread reopens it
   - task-board governance should stay boring and explicit before any new theory bucket opens
   - hook-chain discoverability should stay packaging-oriented, not a new permission universe
@@ -2327,7 +2332,43 @@
 **Success Criteria**: ToneSoul has one honest seventeenth-trial result classification and registry-ready record for `status_panel_operator_copy_clarity_v1`.
 
 ## Phase 847: Eighteenth Trial Candidate Admission (2026-04-07, planned)
-- [ ] choose the next bounded self-improvement candidate after the seventeenth trial result and current registry/status surface are visible
-- [ ] keep the next candidate inside allowed mutation classes and away from retrieval mythology, governance semantics, identity, transport claims, predictive-math inflation, selfhood mythology, permission-system creep, dashboard-control-plane drift, memory-panel authority inflation, and status-panel overclaim drift
-- [ ] make the no-go list explicit before opening an eighteenth trial wave
+- [x] choose the next bounded self-improvement candidate after the seventeenth trial result and current registry/status surface are visible
+- [x] keep the next candidate inside allowed mutation classes and away from retrieval mythology, governance semantics, identity, transport claims, predictive-math inflation, selfhood mythology, permission-system creep, dashboard-control-plane drift, memory-panel authority inflation, and status-panel overclaim drift
+- [x] make the no-go list explicit before opening an eighteenth trial wave
 **Success Criteria**: ToneSoul has one admitted eighteenth candidate that is narrower than shell redesign and still worth real operator leverage.
+**Admitted Candidate**: `dashboard_command_shelf_activation_clarity_v1`
+- Target surface: `dashboard.command_shelf.commands`
+- Admission note: `docs/plans/tonesoul_eighteenth_trial_candidate_admission_2026-04-07.md`
+- Why now: the command shelf already points back to CLI/runtime truth, but dynamic commands still lack source / activation / return packaging and can read too much like a browser-side workflow menu
+**Follow-Through Outcome**: `promoted_result`
+- Trial wave status: `promote=18 park=1 retire=0 blocked=0`
+- Status surface: `docs/status/self_improvement_trial_wave_latest.{json,md}`
+- Next short board: explicitly ratify the next active bucket instead of silently opening queued governance-depth work
+
+## Phase 849: Governance Depth Routing v0 Spec (2026-04-07, landed)
+- [x] formalize `light / standard / full`
+- [x] keep routing orthogonal to model/path routing
+- [x] explicitly preserve reflex, vow, and output-edge posture
+**Success Criteria**: ToneSoul has one formal shared story for earned governance cost that later agents can implement without importing a foreign module universe.
+**Artifacts**:
+- `docs/architecture/TONESOUL_GOVERNANCE_DEPTH_ROUTING_V0_SPEC.md`
+- `docs/plans/tonesoul_consistency_first_governance_depth_program_2026-04-07.md`
+**Outcome**: governance-depth routing is now formalized as a bounded spec; runtime behavior remains unchanged until `Phase 850+` lands.
+
+## Phase 850: Governance-Depth Runtime Pilot Design (2026-04-07, landed)
+- [x] identify the smallest live seam for `governance_depth`
+- [x] keep current default behavior safe and backward compatible
+- [x] decide which heavy subpaths are actually skippable under `light`
+**Artifacts**:
+- `docs/plans/tonesoul_governance_depth_runtime_pilot_design_2026-04-07.md`
+- `tonesoul/gates/compute.py`
+- `tonesoul/unified_pipeline.py`
+- `tests/test_compute_gate.py`
+- `tests/test_pipeline_compute_gate.py`
+**Outcome**: `ComputeGate` now emits conservative `governance_depth` + `governance_depth_plan`, `UnifiedPipeline` propagates them into dispatch trace and pre-recovery / pre-injection seams, and non-local default behavior remains unchanged until a later activation wave explicitly turns on `light` skips.
+
+## Phase 851: High-Risk Grounding Check Design (2026-04-07, active)
+- [ ] define one bounded post-hoc grounding pass for verify-heavy / fact-heavy / high-risk turns
+- [ ] make the fail-stop trigger visible when support is too thin for a safe answer
+- [ ] keep the design explicit about its limit: bounded support tracing, not token-level proof
+**Success Criteria**: ToneSoul has one honest grounding-check design that can gate risky answers without pretending it already has perfect claim provenance.
