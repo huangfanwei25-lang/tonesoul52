@@ -89,6 +89,15 @@ def test_build_tier1_orientation_shell_extracts_cards():
             "stable_headlines": ["launch tier is collaborator_beta"],
             "contested_headlines": ["council confidence is descriptive_only"],
             "stale_headlines": [],
+            "hot_memory_ladder": {
+                "current_pull_boundary": {
+                    "pull_posture": "review_handoff_before_deeper_pull",
+                    "preferred_stop_at": "bounded_handoff",
+                    "operator_action": "Review closeout before deeper pulls.",
+                    "why_now": "bounded handoff remains contested",
+                    "receiver_rule": "read handoff before replay",
+                }
+            },
         },
     }
 
@@ -108,6 +117,8 @@ def test_build_tier1_orientation_shell_extracts_cards():
     assert result["observer_shell"]["contested_headlines"] == [
         "council confidence is descriptive_only"
     ]
+    assert result["hot_memory_boundary"]["preferred_stop_at"] == "bounded_handoff"
+    assert result["hot_memory_boundary"]["pull_posture"] == "review_handoff_before_deeper_pull"
 
 
 def test_run_session_start_bundle_parses_json(monkeypatch, tmp_path: Path):

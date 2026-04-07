@@ -723,6 +723,88 @@ def _probe_claude_priority_correction_clarity() -> dict[str, Any]:
     }
 
 
+def _probe_hot_memory_pull_boundary_clarity() -> dict[str, Any]:
+    from apps.dashboard.frontend.utils.session_start import build_tier1_orientation_shell
+    from tonesoul.hot_memory import build_canonical_center, build_hot_memory_ladder
+
+    canonical_center = build_canonical_center(
+        task_text=(
+            "## Water-Bucket Snapshot\n"
+            "- Current short board:\n"
+            "  - Phase 838: fifteenth trial candidate admission\n"
+        )
+    )
+    hot_memory_ladder = build_hot_memory_ladder(
+        canonical_center=canonical_center,
+        import_posture={
+            "posture": {"present": True},
+            "readiness": {"present": True},
+            "compactions": {
+                "present": True,
+                "receiver_obligation": "must_review",
+                "closeout_status": "partial",
+            },
+            "recent_traces": {"present": True},
+            "subject_snapshot": {"present": False},
+            "working_style": {"present": False},
+            "council_dossier": {"present": False},
+        },
+        readiness={"status": "pass"},
+        stable_count=3,
+        contested_count=1,
+        stale_count=0,
+    )
+    session_payload = {
+        "present": True,
+        "tier": 1,
+        "canonical_center": canonical_center,
+        "subsystem_parity": {
+            "counts": {"baseline": 3, "beta_usable": 5, "partial": 2, "deferred": 1},
+            "next_focus": {
+                "resolved_to": "shared_code_edit.path_overlap_preflight",
+                "source_family": "mutation_preflight_hooks",
+                "operator_action": "Run the shared-edit preflight first.",
+                "focus_pressures": ["readiness=pass"],
+            },
+            "families": [],
+        },
+        "closeout_attention": {
+            "present": True,
+            "status": "partial",
+            "summary_text": "latest closeout is partial",
+            "receiver_rule": "read closeout first",
+        },
+        "observer_shell": {
+            "summary_text": "observer ready",
+            "receiver_note": "shell only",
+            "counts": {"stable": 3, "contested": 1, "stale": 0},
+            "stable_headlines": [],
+            "contested_headlines": [],
+            "stale_headlines": [],
+            "hot_memory_ladder": hot_memory_ladder,
+        },
+    }
+    dashboard_shell = build_tier1_orientation_shell(session_payload)
+    boundary = dict(hot_memory_ladder.get("current_pull_boundary") or {})
+    dashboard_boundary = dict(dashboard_shell.get("hot_memory_boundary") or {})
+    present = bool(
+        str(boundary.get("pull_posture", "")).strip()
+        and str(boundary.get("preferred_stop_at", "")).strip()
+        and str(boundary.get("operator_action", "")).strip()
+        and dashboard_boundary.get("pull_posture") == boundary.get("pull_posture")
+        and dashboard_boundary.get("preferred_stop_at") == boundary.get("preferred_stop_at")
+    )
+    return {
+        "present": present,
+        "summary_text": (
+            "hot_memory_pull_boundary_probe "
+            f"posture={str(boundary.get('pull_posture', '')).strip() or 'missing'} "
+            f"stop_at={str(boundary.get('preferred_stop_at', '')).strip() or 'missing'} "
+            f"dashboard_sync={'yes' if present else 'no'}"
+        ),
+    }
+
+
 def _render_markdown(report: dict[str, Any]) -> str:
     lines = [
         "# ToneSoul Self-Improvement Trial Wave",
@@ -811,6 +893,7 @@ def run_self_improvement_trial_wave(
     )
     closeout_attention_probe = _probe_closeout_attention_action_clarity()
     claude_priority_correction_probe = _probe_claude_priority_correction_clarity()
+    hot_memory_pull_boundary_probe = _probe_hot_memory_pull_boundary_clarity()
     operator_retrieval_contract_present = (
         REPO_ROOT / "docs/architecture/TONESOUL_OPERATOR_RETRIEVAL_QUERY_CONTRACT.md"
     ).exists()
@@ -835,6 +918,7 @@ def run_self_improvement_trial_wave(
         subsystem_parity_focus_probe=subsystem_parity_focus_probe,
         closeout_attention_probe=closeout_attention_probe,
         claude_priority_correction_probe=claude_priority_correction_probe,
+        hot_memory_pull_boundary_probe=hot_memory_pull_boundary_probe,
         operator_retrieval_contract_present=operator_retrieval_contract_present,
         compiled_landing_zone_spec_present=compiled_landing_zone_spec_present,
         retrieval_runner_present=retrieval_runner_present,

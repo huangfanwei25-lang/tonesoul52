@@ -109,6 +109,7 @@ def build_self_improvement_trial_wave(
     subsystem_parity_focus_probe: dict[str, Any] | None = None,
     closeout_attention_probe: dict[str, Any] | None = None,
     claude_priority_correction_probe: dict[str, Any] | None = None,
+    hot_memory_pull_boundary_probe: dict[str, Any] | None = None,
     operator_retrieval_contract_present: bool,
     compiled_landing_zone_spec_present: bool,
     retrieval_runner_present: bool,
@@ -156,6 +157,10 @@ def build_self_improvement_trial_wave(
     )
     claude_priority_correction_summary = str(
         (claude_priority_correction_probe or {}).get("summary_text") or ""
+    ).strip()
+    hot_memory_pull_boundary_ready = bool((hot_memory_pull_boundary_probe or {}).get("present"))
+    hot_memory_pull_boundary_summary = str(
+        (hot_memory_pull_boundary_probe or {}).get("summary_text") or ""
     ).strip()
 
     consumer_candidate = {
@@ -1179,6 +1184,75 @@ def build_self_improvement_trial_wave(
         ),
     )
 
+    hot_memory_pull_boundary_candidate = {
+        "candidate_record": _build_candidate_record(
+            candidate_id="hot_memory_pull_boundary_clarity_v1",
+            target_surface="hot_memory_ladder.current_pull_boundary",
+            target_consumer="observer_dashboard_operator_shells",
+            baseline_story=(
+                "The hot-memory ladder already showed layer statuses, but successors still had to infer how deep they should pull before widening context."
+            ),
+            candidate_story=(
+                "Hot-memory ladder now exposes one bounded current_pull_boundary so observer and dashboard shells can preserve the same stop layer, pull posture, and operator action."
+            ),
+            success_metric="hot_memory_pull_boundary_probe.present and consumer_drift_report.status == aligned",
+            failure_mode_watch="pull-boundary packaging turns into planner behavior or starts authorizing deeper pulls by default",
+            rollback_path="remove current_pull_boundary packaging and fall back to layer statuses only",
+            overclaim_to_avoid="clearer pull boundaries are not stronger memory, retrieval, or transport semantics",
+            scope_limit="hot-memory packaging only; no retrieval runtime, no transport change, no governance promotion",
+        ),
+        "analyzer_closeout": _build_analyzer_closeout(
+            status="promote" if (hot_memory_pull_boundary_ready and consumer_aligned) else "park",
+            result_story=(
+                "Hot-memory ladder now says where a bounded successor should stop pulling and why, without widening authority."
+                if (hot_memory_pull_boundary_ready and consumer_aligned)
+                else "Hot-memory pull-boundary packaging is not yet stable enough to promote."
+            ),
+            evidence_bundle_summary=(
+                hot_memory_pull_boundary_summary or "hot_memory_pull_boundary_probe unavailable"
+            ),
+            unresolved_items=(
+                [
+                    "clearer pull boundaries improve latency discipline, not memory quality or transport strength",
+                    "future shells must keep current_pull_boundary subordinate to canonical_center and live coordination truth",
+                ]
+                if (hot_memory_pull_boundary_ready and consumer_aligned)
+                else [
+                    "pull-boundary packaging is not yet preserved cleanly enough across bounded shells",
+                    "consumer drift must stay aligned before promotion",
+                ]
+            ),
+            failure_pressure="low" if (hot_memory_pull_boundary_ready and consumer_aligned) else "meaningful",
+            rollback_posture="bounded_restore",
+            promotion_limit="does not authorize deeper default pulls, retrieval promotion, or transport claims",
+            overclaim_warning="clearer hot-memory pull boundaries are not better memory, retrieval, or shared cognition",
+            next_action=(
+                "keep hot-memory pull boundaries bounded while admitting the next candidate"
+                if (hot_memory_pull_boundary_ready and consumer_aligned)
+                else "repair hot-memory pull-boundary packaging before reopening this candidate"
+            ),
+        ),
+    }
+    hot_memory_pull_boundary_candidate["result_surface"] = _build_result_surface(
+        status=hot_memory_pull_boundary_candidate["analyzer_closeout"]["status"],
+        registry_recommendation=(
+            "promotion_ready_result"
+            if (hot_memory_pull_boundary_ready and consumer_aligned)
+            else "distilled_lesson"
+        ),
+        supersession_posture="active_until_newer_hot_memory_pull_boundary_trials_exist",
+        replay_rule="prefer_status_surface_then_probe_current_hot_memory_ladder_shape_before_reusing_the_story",
+        residue_posture=(
+            "keep_visible_as_current_packaging_result"
+            if (hot_memory_pull_boundary_ready and consumer_aligned)
+            else "park_in_status_surface_until_hot_memory_pull_boundary_clarity_is_stable"
+        ),
+        visibility="status_surface_only",
+        carry_forward_rule=(
+            "may inform future hot-memory and latency-packaging trials, but does not authorize retrieval promotion or deeper default pulls"
+        ),
+    )
+
     candidates = [
         consumer_candidate,
         retrieval_candidate,
@@ -1195,6 +1269,7 @@ def build_self_improvement_trial_wave(
         subsystem_parity_focus_candidate,
         closeout_attention_candidate,
         claude_priority_correction_candidate,
+        hot_memory_pull_boundary_candidate,
     ]
     outcome_counts = _count_outcomes(candidates)
     status = "completed"
@@ -1229,8 +1304,9 @@ def build_self_improvement_trial_wave(
             "subsystem_parity_focus_clarity",
             "closeout_attention_action_clarity",
             "claude_priority_correction_clarity",
+            "hot_memory_pull_boundary_clarity",
         ],
         "outcome_counts": outcome_counts,
         "candidates": candidates,
-        "next_short_board": "Phase 838: Fifteenth Trial Candidate Admission",
+        "next_short_board": "Phase 841: Sixteenth Trial Candidate Admission",
     }

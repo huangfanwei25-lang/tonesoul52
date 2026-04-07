@@ -2257,8 +2257,26 @@
 - [x] register the outcome in the bounded status surface without leaking it into first-hop shells
 **Success Criteria**: ToneSoul has one honest fourteenth-trial result classification and registry-ready record for `claude_priority_correction_clarity_v1`.
 
-## Phase 838: Fifteenth Trial Candidate Admission (2026-04-07, planned)
-- [ ] choose the next bounded self-improvement candidate after the fourteenth trial result and current registry/status surface are visible
-- [ ] keep the next candidate inside allowed mutation classes and away from retrieval mythology, governance semantics, identity, transport claims, predictive-math inflation, selfhood mythology, permission-system creep, consumer-shell planner drift, subsystem-parity authority inflation, closeout-attention planner drift, and vendor-interop mythology
-- [ ] make the no-go list explicit before opening a fifteenth trial wave
+## Phase 838: Fifteenth Trial Candidate Admission (2026-04-07)
+- [x] choose the next bounded self-improvement candidate after the fourteenth trial result and current registry/status surface are visible
+- [x] keep the next candidate inside allowed mutation classes and away from retrieval mythology, governance semantics, identity, transport claims, predictive-math inflation, selfhood mythology, permission-system creep, consumer-shell planner drift, subsystem-parity authority inflation, closeout-attention planner drift, and vendor-interop mythology
+- [x] make the no-go list explicit before opening a fifteenth trial wave
 **Success Criteria**: ToneSoul has one admitted fifteenth candidate that is narrower than shell redesign and still worth real operator leverage.
+
+## Phase 839: Fifteenth Bounded Trial Wave - Hot-Memory Pull-Boundary Clarity (2026-04-07)
+- [x] refine `hot_memory_ladder` so it exposes one bounded `current_pull_boundary`
+- [x] preserve current layer ordering, parent-child authority boundaries, and bounded-handoff caution semantics
+- [x] keep the change inside latency/readout packaging only: no planner story, no retrieval promotion, no deeper default pulls
+**Success Criteria**: ToneSoul lands one bounded fifteenth-trial implementation for `hot_memory_pull_boundary_clarity_v1` that clarifies where successors should stop pulling without widening authority.
+
+## Phase 840: Fifteenth Trial Evaluation And Registry Entry (2026-04-07)
+- [x] evaluate the `hot_memory_pull_boundary_clarity_v1` trial against the existing evaluator harness and analyzer gate
+- [x] classify the result honestly as `promote`, `park`, `retire`, `blocked`, or `not_ready_for_trial`
+- [x] register the outcome in the bounded status surface without leaking it into first-hop shells
+**Success Criteria**: ToneSoul has one honest fifteenth-trial result classification and registry-ready record for `hot_memory_pull_boundary_clarity_v1`.
+
+## Phase 841: Sixteenth Trial Candidate Admission (2026-04-07, planned)
+- [ ] choose the next bounded self-improvement candidate after the fifteenth trial result and current registry/status surface are visible
+- [ ] keep the next candidate inside allowed mutation classes and away from retrieval mythology, governance semantics, identity, transport claims, predictive-math inflation, selfhood mythology, permission-system creep, consumer-shell planner drift, subsystem-parity authority inflation, closeout-attention planner drift, vendor-interop mythology, and hot-memory planner drift
+- [ ] make the no-go list explicit before opening a sixteenth trial wave
+**Success Criteria**: ToneSoul has one admitted sixteenth candidate that is narrower than shell redesign and still worth real operator leverage.

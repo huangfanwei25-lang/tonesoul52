@@ -209,6 +209,62 @@ def _build_layer(
     }
 
 
+def _build_current_pull_boundary(*, layers: list[dict[str, Any]]) -> dict[str, Any]:
+    by_layer = {
+        str(entry.get("layer", "")).strip(): str(entry.get("status", "")).strip() or "unknown"
+        for entry in layers
+    }
+    canonical_status = by_layer.get("canonical_center", "unknown")
+    anchor_status = by_layer.get("low_drift_anchor", "unknown")
+    live_status = by_layer.get("live_coordination", "unknown")
+    handoff_status = by_layer.get("bounded_handoff", "unknown")
+
+    if canonical_status != "stable":
+        return {
+            "present": True,
+            "pull_posture": "recover_parent_truth_first",
+            "preferred_stop_at": "canonical_center",
+            "why_now": "canonical_center is not currently stable enough to trust child shells by default.",
+            "operator_action": "Stop at canonical_center and recover the accepted short board before trusting child shells or deeper replay.",
+            "receiver_rule": "Recover parent truth first; do not keep pulling downward when canonical_center is contested.",
+        }
+    if live_status != "stable":
+        return {
+            "present": True,
+            "pull_posture": "resolve_live_coordination_first",
+            "preferred_stop_at": "live_coordination",
+            "why_now": "live_coordination is not stable, so readiness and current coordination truth still need direct handling.",
+            "operator_action": "Stop at live_coordination and resolve readiness, claim, or escalation pressure before deeper pulls.",
+            "receiver_rule": "When live_coordination is not stable, treat deeper pulls as secondary until current coordination truth is handled.",
+        }
+    if handoff_status == "contested":
+        return {
+            "present": True,
+            "pull_posture": "review_handoff_before_deeper_pull",
+            "preferred_stop_at": "bounded_handoff",
+            "why_now": "bounded_handoff is still contested, so closeout or receiver-obligation pressure remains active.",
+            "operator_action": "Stop at bounded_handoff and review closeout plus receiver obligation before replay or working-identity surfaces.",
+            "receiver_rule": "Read contested handoff state before deeper replay; smooth summaries do not remove closeout pressure.",
+        }
+    if anchor_status == "stale":
+        return {
+            "present": True,
+            "pull_posture": "refresh_anchor_before_deeper_pull",
+            "preferred_stop_at": "low_drift_anchor",
+            "why_now": "the low-drift anchor is stale, so deeper context should wait until the orientation shell is refreshed.",
+            "operator_action": "Refresh the low-drift anchor before trusting deeper replay or working-identity surfaces.",
+            "receiver_rule": "Refresh stale orientation first; deeper pulls should not compensate for a stale anchor shell.",
+        }
+    return {
+        "present": True,
+        "pull_posture": "tier1_enough",
+        "preferred_stop_at": "low_drift_anchor",
+        "why_now": "canonical_center, live_coordination, and bounded_handoff are stable enough for a bounded orientation-first start.",
+        "operator_action": "Tier-1 orientation is currently enough; do not deep-pull unless mutation, ambiguity, or conflict increases.",
+        "receiver_rule": "Prefer the current bounded shell and stop at low_drift_anchor unless a later signal justifies deeper pull.",
+    }
+
+
 def build_hot_memory_ladder(
     *,
     canonical_center: dict[str, Any],
@@ -342,8 +398,10 @@ def build_hot_memory_ladder(
         ),
     ]
 
+    current_pull_boundary = _build_current_pull_boundary(layers=layers)
     return {
         "layers": layers,
+        "current_pull_boundary": current_pull_boundary,
         "summary_text": " | ".join(
             f"{entry['layer']}={entry['status']}" for entry in layers
         ),

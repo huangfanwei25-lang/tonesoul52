@@ -923,18 +923,18 @@ This is the key improvement over the current gap:
 
 ## Current Recommendation
 
-The program is now active through `Phase 837`.
+The program is now active through `Phase 840`.
 
 Current short board:
 
-- `Phase 838: Fifteenth Trial Candidate Admission`
+- `Phase 841: Sixteenth Trial Candidate Admission`
 
 Recommended discipline:
 
 - keep trial outcomes visible through dedicated status artifacts first
 - do not push self-improvement history into `session-start`, `observer-window`, or packet defaults yet
 - keep new trials inside already-allowed mutation classes until a compact result-surface design proves stable
-- prefer packaging refinements that reduce operator latency, shared-edit ambiguity, outward-action ambiguity, stale follow-up routing, consumer-lineage ambiguity, launch-health honesty, internal-state handling clarity, hook-selection ambiguity, cross-shell misread-correction ambiguity, successor focus ambiguity, anti-fake-completion handling ambiguity, and Claude-style correction ambiguity before opening broader retrieval or governance experiments
+- prefer packaging refinements that reduce operator latency, shared-edit ambiguity, outward-action ambiguity, stale follow-up routing, consumer-lineage ambiguity, launch-health honesty, internal-state handling clarity, hook-selection ambiguity, cross-shell misread-correction ambiguity, successor focus ambiguity, anti-fake-completion handling ambiguity, Claude-style correction ambiguity, and hot-memory pull-boundary ambiguity before opening broader retrieval or governance experiments
 
 ### Phase 827: Eleventh Bounded Trial Wave - Consumer Misread-Guard Clarity
 
@@ -1150,6 +1150,60 @@ Current implementation target:
 
 - one candidate-admission note
 - one recommended fifteenth-trial family
+- one explicit no-go list for what must stay parked
+
+### Phase 839: Fifteenth Bounded Trial Wave - Hot-Memory Pull-Boundary Clarity
+
+Bounded scope:
+
+- refine `hot_memory_ladder` so it exposes one bounded `current_pull_boundary`
+- preserve current layer ordering and parent-child authority boundaries
+- keep the change inside latency/readout packaging only
+
+Success criteria:
+
+- ToneSoul lands one bounded fifteenth-trial implementation that clarifies where successors should stop pulling without widening authority
+
+Current implementation target:
+
+- one `current_pull_boundary` packet
+- one live probe proving observer/session-start/dashboard preserve the same stop layer
+- no planner story, no retrieval promotion, no deeper default-pull story
+
+### Phase 840: Fifteenth Trial Evaluation And Registry Entry
+
+Bounded scope:
+
+- evaluate the fifteenth-trial candidate against the existing evaluator harness
+- classify it honestly as `promote`, `park`, `retire`, `blocked`, or `not_ready_for_trial`
+- register the result in the bounded status surface only
+
+Success criteria:
+
+- ToneSoul has one honest fifteenth-trial result classification and registry-ready record for the hot-memory pull-boundary packet
+
+Current implementation target:
+
+- one evaluator-ready record for the fifteenth trial
+- one analyzer conclusion
+- one status-surface update with no shell creep
+
+### Phase 841: Sixteenth Trial Candidate Admission
+
+Bounded scope:
+
+- choose the next bounded candidate only after the fifteenth trial result is visible
+- keep the candidate inside already-allowed mutation classes
+- make the no-go list explicit before a sixteenth trial wave opens
+
+Success criteria:
+
+- ToneSoul has one admitted sixteenth candidate with real operator leverage and no new authority mythology
+
+Current implementation target:
+
+- one candidate-admission note
+- one recommended sixteenth-trial family
 - one explicit no-go list for what must stay parked
 
 ---

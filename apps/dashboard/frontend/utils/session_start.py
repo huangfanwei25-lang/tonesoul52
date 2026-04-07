@@ -111,6 +111,8 @@ def build_tier1_orientation_shell(bundle: dict[str, Any]) -> dict[str, Any]:
     next_focus = subsystem_parity.get("next_focus") or {}
     observer_shell = bundle.get("observer_shell") or {}
     closeout_attention = bundle.get("closeout_attention") or {}
+    hot_memory_ladder = observer_shell.get("hot_memory_ladder") or {}
+    current_pull_boundary = hot_memory_ladder.get("current_pull_boundary") or {}
 
     family_cards = []
     for family in list(subsystem_parity.get("families") or [])[:4]:
@@ -155,6 +157,13 @@ def build_tier1_orientation_shell(bundle: dict[str, Any]) -> dict[str, Any]:
             "stable_headlines": list(observer_shell.get("stable_headlines") or []),
             "contested_headlines": list(observer_shell.get("contested_headlines") or []),
             "stale_headlines": list(observer_shell.get("stale_headlines") or []),
+        },
+        "hot_memory_boundary": {
+            "pull_posture": str(current_pull_boundary.get("pull_posture", "")).strip(),
+            "preferred_stop_at": str(current_pull_boundary.get("preferred_stop_at", "")).strip(),
+            "operator_action": str(current_pull_boundary.get("operator_action", "")).strip(),
+            "why_now": str(current_pull_boundary.get("why_now", "")).strip(),
+            "receiver_rule": str(current_pull_boundary.get("receiver_rule", "")).strip(),
         },
     }
 

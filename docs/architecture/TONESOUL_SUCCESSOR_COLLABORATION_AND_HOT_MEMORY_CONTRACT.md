@@ -189,9 +189,20 @@ In current runtime/readout form, later agents should see this alongside:
 - a bounded `consumer_contract` that keeps Codex-style shells, Claude-style shells, and dashboard/operator shells aligned on the same first-hop read order
 - a bounded source-order rule that keeps canonical anchors, live coordination truth, derived observer shells, and lower-authority handoff surfaces separate
 - a bounded `hot_memory_ladder` that states which layer is parent truth and which layers are advisory children
+- a bounded `hot_memory_ladder.current_pull_boundary` that says where a successor should stop pulling before deeper context becomes latency tax or authority drift
 - a bounded `hot_memory_decay_map` that states which layers are operational, review-only, or quarantined
 - a runtime-aligned decay/compression explanation so later agents do not invent a second ladder from sidecar notes
 - a bounded `subsystem_parity` readout that states which major subsystem families are baseline, beta-usable, partial, or deferred
+
+`current_pull_boundary` may preserve:
+
+- `pull_posture`
+- `preferred_stop_at`
+- `why_now`
+- `operator_action`
+
+This remains a bounded latency and interpretation aid only.
+It must not become a planner, retrieval myth, or deeper-pull permission system.
 
 Target states:
 

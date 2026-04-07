@@ -109,3 +109,37 @@ def test_build_hot_memory_decay_map_quarantines_contested_handoff() -> None:
     assert by_layer["bounded_handoff"]["compression_posture"] == "compress_with_closeout_guards"
     assert by_layer["working_identity"]["use_posture"] == "review_only"
     assert "bounded_handoff" in decay_map["summary_text"]
+
+
+def test_build_hot_memory_ladder_surfaces_current_pull_boundary() -> None:
+    ladder = build_hot_memory_ladder(
+        canonical_center=build_canonical_center(
+            task_text=(
+                "## Water-Bucket Snapshot\n"
+                "- Current short board:\n"
+                "  - Phase 789: operator retrieval contract\n"
+            )
+        ),
+        import_posture={
+            "posture": {"present": True},
+            "readiness": {"present": True},
+            "compactions": {
+                "present": True,
+                "receiver_obligation": "must_review",
+                "closeout_status": "partial",
+            },
+            "recent_traces": {"present": True},
+            "subject_snapshot": {"present": False},
+            "working_style": {"present": False},
+            "council_dossier": {"present": False},
+        },
+        readiness={"status": "pass"},
+        stable_count=3,
+        contested_count=1,
+        stale_count=0,
+    )
+
+    boundary = ladder["current_pull_boundary"]
+    assert boundary["pull_posture"] == "review_handoff_before_deeper_pull"
+    assert boundary["preferred_stop_at"] == "bounded_handoff"
+    assert "closeout" in boundary["operator_action"]

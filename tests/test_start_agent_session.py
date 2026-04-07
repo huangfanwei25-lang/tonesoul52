@@ -508,6 +508,13 @@ def test_start_agent_session_tier1_returns_orientation_shell(
     assert output["consumer_contract"]["required_read_order"][0]["surface"] == "readiness"
     assert output["consumer_contract"]["required_read_order"][2]["surface"] == "closeout_attention"
     assert output["observer_shell"]["hot_memory_ladder"]["layers"][0]["layer"] == "canonical_center"
+    assert output["observer_shell"]["hot_memory_ladder"]["current_pull_boundary"]["pull_posture"] in {
+        "tier1_enough",
+        "recover_parent_truth_first",
+        "resolve_live_coordination_first",
+        "review_handoff_before_deeper_pull",
+        "refresh_anchor_before_deeper_pull",
+    }
     assert output["closeout_attention"]["status"] in {
         "complete",
         "partial",

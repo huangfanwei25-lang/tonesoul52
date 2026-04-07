@@ -1,6 +1,6 @@
 # ToneSoul Self-Improvement Trial Wave
 
-**Summary**: `self_improvement_trial_wave promote=14 park=1 retire=0 blocked=0`
+**Summary**: `self_improvement_trial_wave promote=15 park=1 retire=0 blocked=0`
 
 > Trial-wave outcomes are bounded self-improvement results. They may inform future patches or parking decisions, but they do not become governance truth, identity truth, or hot-memory authority.
 
@@ -21,10 +21,11 @@
 - `subsystem_parity_focus_clarity`
 - `closeout_attention_action_clarity`
 - `claude_priority_correction_clarity`
+- `hot_memory_pull_boundary_clarity`
 
 ## Outcomes
 
-- `promote`: `14`
+- `promote`: `15`
 - `park`: `1`
 - `retire`: `0`
 - `blocked`: `0`
@@ -228,7 +229,20 @@
     - future shells must keep priority correction subordinate to the same consumer contract and first-hop order
   - promotion_limit: `does not authorize vendor-native interop claims, stronger permissions, or transport promotion`
   - next_action: `keep Claude priority correction bounded while admitting the next candidate`
+- `hot_memory_pull_boundary_clarity_v1` -> `promote`
+  - target_surface: `hot_memory_ladder.current_pull_boundary`
+  - success_metric: `hot_memory_pull_boundary_probe.present and consumer_drift_report.status == aligned`
+  - result_story: Hot-memory ladder now says where a bounded successor should stop pulling and why, without widening authority.
+  - evidence: `hot_memory_pull_boundary_probe posture=review_handoff_before_deeper_pull stop_at=bounded_handoff dashboard_sync=yes`
+  - result_surface: `promoted_result`
+  - replay_rule: `prefer_status_surface_then_probe_current_hot_memory_ladder_shape_before_reusing_the_story`
+  - residue_posture: `keep_visible_as_current_packaging_result`
+  - unresolved_items:
+    - clearer pull boundaries improve latency discipline, not memory quality or transport strength
+    - future shells must keep current_pull_boundary subordinate to canonical_center and live coordination truth
+  - promotion_limit: `does not authorize deeper default pulls, retrieval promotion, or transport claims`
+  - next_action: `keep hot-memory pull boundaries bounded while admitting the next candidate`
 
 ## Next Short Board
 
-- `Phase 838: Fifteenth Trial Candidate Admission`
+- `Phase 841: Sixteenth Trial Candidate Admission`

@@ -278,6 +278,7 @@ def _build_tier1_observer_shell(observer_window: dict) -> dict:
         },
         "hot_memory_ladder": {
             "summary_text": str(hot_memory_ladder.get("summary_text", "")).strip(),
+            "current_pull_boundary": dict(hot_memory_ladder.get("current_pull_boundary") or {}),
             "layers": [
                 {
                     "layer": str(layer.get("layer", "")).strip(),
