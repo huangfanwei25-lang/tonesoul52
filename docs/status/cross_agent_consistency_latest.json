@@ -1,0 +1,101 @@
+{
+  "agent": "claude-opus-4-6",
+  "timestamp": "2026-04-07T19:50:27.097903+00:00",
+  "wave": "cross_agent_consistency_v1",
+  "all_ok": true,
+  "checks_total": 7,
+  "checks_ok": 7,
+  "checks_degraded": 0,
+  "checks_error": 0,
+  "results": [
+    {
+      "check": "first_hop_short_board",
+      "description": "All agents read the same current short board from task.md",
+      "surface": "session_start.canonical_center.current_short_board",
+      "status": "ok",
+      "detail": {
+        "status": "ok",
+        "value": "- Phase 730: add one detailed 3-day execution program so the next agent can continue the current short board without reopening settled launch wording"
+      }
+    },
+    {
+      "check": "governance_depth_recommendation",
+      "description": "All agents emit governance_depth (light/standard/full) for the same input class",
+      "surface": "compute_gate.governance_depth",
+      "status": "ok",
+      "detail": {
+        "status": "ok",
+        "low_risk_depth": "light",
+        "high_risk_depth": "full",
+        "enum_values": [
+          "light",
+          "standard",
+          "full"
+        ]
+      }
+    },
+    {
+      "check": "closeout_reading",
+      "description": "All agents read the same closeout/handoff state from codex_handoff",
+      "surface": "session_start.bounded_handoff.closeout_status",
+      "status": "ok",
+      "detail": {
+        "status": "ok",
+        "latest_handoff": "codex_handoff_2026-04-07.md",
+        "has_branch_state": true,
+        "has_next_move": true
+      }
+    },
+    {
+      "check": "compression_reading",
+      "description": "All agents know where the compression map lives and its decay posture",
+      "surface": "hot_memory_ladder.compression_posture",
+      "status": "ok",
+      "detail": {
+        "status": "ok",
+        "path": "docs\\architecture\\TONESOUL_HOT_MEMORY_DECAY_AND_COMPRESSION_MAP.md",
+        "has_ladder": true,
+        "has_decay_posture": true
+      }
+    },
+    {
+      "check": "reflex_arc_posture",
+      "description": "All agents agree on the current soul band and vow enforcement mode",
+      "surface": "reflex_config.vow_enforcement_mode + soul_band",
+      "status": "ok",
+      "detail": {
+        "status": "ok",
+        "enabled": true,
+        "vow_enforcement_mode": "soft",
+        "soul_band_thresholds": {
+          "alert": 0.3,
+          "strained": 0.55,
+          "critical": 0.8
+        }
+      }
+    },
+    {
+      "check": "grounding_check_awareness",
+      "description": "All agents know that grounding check only activates on governance_depth=full",
+      "surface": "grounding_check.activation_condition",
+      "status": "ok",
+      "detail": {
+        "status": "ok",
+        "activation_condition": "governance_depth == full",
+        "module": "tonesoul.grounding_check",
+        "test_result_reason": "no_factual_claims"
+      }
+    },
+    {
+      "check": "verification_budget_awareness",
+      "description": "All agents respect the verification budget fail-stop",
+      "surface": "reflection.VERIFICATION_BUDGET",
+      "status": "ok",
+      "detail": {
+        "status": "ok",
+        "budget": 4,
+        "msg_length": 41
+      }
+    }
+  ]
+}
