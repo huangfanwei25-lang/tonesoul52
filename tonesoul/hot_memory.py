@@ -5,7 +5,10 @@ from __future__ import annotations
 import re
 from typing import Any
 
-_SHORT_BOARD_HEADER = "- Current short board:"
+_SHORT_BOARD_HEADERS = [
+    "- Current short board:",
+    "**Current short board:**",
+]
 _SHORT_BOARD_SOURCE = "task.md > Water-Bucket Snapshot > Current short board"
 _PARENT_SURFACES = ["task.md", "DESIGN.md"]
 _CANONICAL_ANCHOR_REFERENCES = [
@@ -117,17 +120,20 @@ def extract_current_short_board_items(task_text: str) -> list[str]:
     """Extract the current short-board bullets from task.md-like text."""
     items: list[str] = []
     collecting = False
+    nested = False  # True when header is a list item (items must be indented)
 
     for raw_line in str(task_text or "").splitlines():
         stripped = raw_line.strip()
-        if stripped.startswith(_SHORT_BOARD_HEADER):
-            collecting = True
-            continue
-
         if not collecting:
+            for h in _SHORT_BOARD_HEADERS:
+                if stripped.startswith(h):
+                    collecting = True
+                    nested = h.startswith("- ")
+                    break
             continue
 
-        if re.match(r"^\s{2,}-\s+", raw_line):
+        item_pattern = r"^\s{2,}-\s+" if nested else r"^-\s+"
+        if re.match(item_pattern, raw_line):
             item = re.sub(r"^\s*-\s+", "", raw_line).strip()
             if item:
                 items.append(item)

@@ -6,7 +6,7 @@
 > ToneSoul is an externalized cognitive architecture for AI governance, ethical memory systems, verifier-first agents, knowledge-graph retrieval, and adapter-ready semantic governance.
 
 > Purpose: public repository entrypoint for ToneSoul's architecture, governance posture, and practical onboarding.
-> Last Updated: 2026-03-30
+> Last Updated: 2026-04-08
 
 ---
 
@@ -317,15 +317,18 @@ then crystallizes repeated high-value patterns into durable rules.
 In plain words: important things are auto-kept, chatter is auto-forgotten.
 </details>
 
-## Quality Snapshot (2026-03-22)
+## Quality Snapshot (2026-04-08)
 
 | Metric | Value |
 |---|---|
-| Tests passing | 2,610 (local full regression on 2026-03-22) |
-| Tested `tonesoul/` modules | 186 / 186 |
+| Tests passing | 3,019 (local full regression on 2026-04-08) |
+| Tested `tonesoul/` modules | 166 / 204 (81%) |
+| Code lines | 72,631 across 235 files |
+| Bare `except:` / TODO / FIXME | 0 / 0 / 0 |
+| Red team findings | 18 found, 17 fixed, 1 deferred (semantic analysis) |
 | RDD posture | baseline active in `tests/red_team/`; still staged below full blocking maturity |
 | DDD posture | hygiene + curated audit active; freshness remains an explicit staged rule |
-| Machine-readable status | `docs/status/repo_healthcheck_latest.json`, `docs/status/7d_snapshot.json`, `docs/status/collaborator_beta_preflight_latest.json`, `docs/status/collaborator_beta_entry_validation_latest.json` |
+| Machine-readable status | `docs/status/repo_healthcheck_latest.json`, `docs/status/7d_snapshot.json`, `docs/status/architecture_audit_2026-04-08.md` |
 | Default CI gates | `ruff check tonesoul tests` + `pytest tests/ -x --tb=short -q` |
 
 ## License

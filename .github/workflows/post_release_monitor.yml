@@ -1,8 +1,9 @@
 name: Post Release Monitor
 
 on:
-  schedule:
-    - cron: "40 2 * * *"
+  # schedule disabled — no Vercel backend deployed yet; re-enable when production surface is live
+  # schedule:
+  #   - cron: "40 2 * * *"
   workflow_dispatch:
     inputs:
       web_base:
