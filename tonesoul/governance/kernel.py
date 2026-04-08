@@ -401,7 +401,9 @@ class GovernanceKernel:
                 state["lyapunov_exponent"] = round(float(lyapunov_exponent), 6)
             return "ok", None, state
         except Exception as exc:
-            if exc.__class__.__name__ == "CollapseException":
+            from tonesoul.resistance import CollapseException
+
+            if isinstance(exc, CollapseException):
                 state = breaker.state.to_dict()
                 reason = str(getattr(exc, "reason", str(exc))).strip() or None
                 state["status"] = "frozen"
@@ -441,6 +443,8 @@ class GovernanceKernel:
         route: Any,
         journal_eligible: Any,
         reason: Any,
+        governance_depth: Any = None,
+        governance_depth_plan: Any = None,
     ) -> DispatchTraceSection:
         """Build the canonical routing-trace payload used by orchestration layers."""
         detail = {
@@ -448,6 +452,11 @@ class GovernanceKernel:
             "journal_eligible": bool(journal_eligible),
             "reason": str(reason or ""),
         }
+        normalized_depth = str(governance_depth or "").strip().lower()
+        if normalized_depth:
+            detail["governance_depth"] = normalized_depth
+        if isinstance(governance_depth_plan, dict) and governance_depth_plan:
+            detail["governance_depth_plan"] = dict(governance_depth_plan)
         if self._exc_trace.has_errors:
             detail["suppressed_errors"] = self._exc_trace.summary()
         routing_trace: Dict[str, Any] = dict(detail)

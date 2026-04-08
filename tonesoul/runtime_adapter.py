@@ -14,12 +14,15 @@ Design principles:
 from __future__ import annotations
 
 import json
+import logging
 import math
 import uuid
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+
+logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
 # Constants (from RFC-015 §5)
@@ -62,7 +65,12 @@ class GovernancePosture:
     session_count: int = 0
 
     def to_dict(self) -> Dict[str, Any]:
-        return asdict(self)
+        d = asdict(self)
+        # Include runtime-attached reflex_decision if present
+        reflex = getattr(self, "reflex_decision", None)
+        if reflex is not None and hasattr(reflex, "to_dict"):
+            d["reflex_decision"] = reflex.to_dict()
+        return d
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> GovernancePosture:
@@ -317,8 +325,8 @@ def _attach_reflex_state(posture: GovernancePosture) -> None:
         decision = evaluator.evaluate(snapshot)
         # Attach as runtime attribute (not part of dataclass schema)
         posture.reflex_decision = decision  # type: ignore[attr-defined]
-    except Exception:
-        pass  # Reflex is optional — failure must not break load()
+    except Exception as exc:
+        logger.debug("Reflex arc skipped: %s", exc)  # optional — failure must not break load()
 
 
 def _record_footprint(store, agent_id: str, *, source: str = "direct") -> None:
@@ -346,8 +354,8 @@ def _record_footprint(store, agent_id: str, *, source: str = "direct") -> None:
                 "agent": agent_id,
             },
         )
-    except Exception:
-        pass
+    except Exception as exc:
+        logger.warning("Failed to record footprint for %s: %s", agent_id, exc)
 
 
 def get_recent_visitors(store=None, n: int = 10) -> List[Dict[str, Any]]:

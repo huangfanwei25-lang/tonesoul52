@@ -257,22 +257,23 @@ class TestVowEnforcer:
         assert result.all_passed is True
         assert result.results[0].details["test_metric"]["actual"] == 0.95
 
-    def test_unknown_metric_defaults_to_pass(self):
-        """Unknown metrics should not fail enforcement."""
+    def test_unknown_metric_defaults_to_fail(self):
+        """Unknown metrics fail closed (red team fix #6)."""
         registry = VowRegistry(
             vows=[
                 Vow(
                     id="unknown_metric",
                     title="Unknown metric",
-                    description="Should default to pass",
+                    description="Should fail closed",
                     expected={"mystery_metric": 0.5},
                 )
             ]
         )
         enforcer = VowEnforcer(registry=registry)
         result = enforcer.enforce("Test output")
-        assert result.all_passed is True
+        assert result.all_passed is False
         assert result.results[0].details["mystery_metric"]["actual"] is None
+        assert result.results[0].details["mystery_metric"]["passed"] is False
 
 
 class TestVowConvenience:

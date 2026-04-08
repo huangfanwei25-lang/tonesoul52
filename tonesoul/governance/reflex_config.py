@@ -22,13 +22,16 @@ _DEFAULT_CONFIG_NAME = "reflex_config.json"
 class ReflexConfig:
     """Configuration for the Governance Reflex Arc."""
 
-    # Master switch
+    # Master switch — controls soul-band gate modifiers and drift reactions.
+    # Even when disabled, vow enforcement and council BLOCK are always active
+    # (minimum governance floor — cannot be fully turned off).
     enabled: bool = True
 
-    # Vow enforcement: "hard" = block on violation, "soft" = warn only, "off" = skip
+    # Vow enforcement: "hard" = block on violation, "soft" = warn only
+    # NOTE: "off" is no longer accepted — minimum is "soft"
     vow_enforcement_mode: str = "soft"
 
-    # Council BLOCK enforcement: if True, council BLOCK prevents output
+    # Council BLOCK enforcement: always True (cannot be disabled)
     council_block_enforcement: bool = True
 
     # Soul band thresholds (soul_integral boundaries)
@@ -65,10 +68,15 @@ class ReflexConfig:
         thresholds = data.get("soul_band_thresholds")
         if not isinstance(thresholds, dict):
             thresholds = None
+        # Governance floor: vow enforcement minimum is "soft", council block is always on
+        vow_mode = str(data.get("vow_enforcement_mode", "soft"))
+        if vow_mode == "off":
+            logger.warning("vow_enforcement_mode='off' rejected — minimum is 'soft'")
+            vow_mode = "soft"
         return cls(
             enabled=bool(data.get("enabled", True)),
-            vow_enforcement_mode=str(data.get("vow_enforcement_mode", "soft")),
-            council_block_enforcement=bool(data.get("council_block_enforcement", True)),
+            vow_enforcement_mode=vow_mode,
+            council_block_enforcement=True,  # cannot be disabled
             soul_band_thresholds=thresholds or {
                 "alert": 0.30,
                 "strained": 0.55,

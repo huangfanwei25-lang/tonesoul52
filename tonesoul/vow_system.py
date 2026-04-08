@@ -322,9 +322,9 @@ class VowEnforcer:
                 }
                 scores.append(actual_value / expected_value if expected_value > 0 else 1.0)
             else:
-                # Unknown metric - assume pass
-                details[metric] = {"expected": expected_value, "actual": None, "passed": True}
-                scores.append(1.0)
+                # Unknown metric — fail-closed (cannot verify → assume fail)
+                details[metric] = {"expected": expected_value, "actual": None, "passed": False}
+                scores.append(0.0)
 
         overall_score = sum(scores) / len(scores) if scores else 1.0
         passed = overall_score >= (1.0 - vow.violation_threshold)

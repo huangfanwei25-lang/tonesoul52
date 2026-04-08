@@ -18,7 +18,7 @@ Memory Eligibility:
 
 import threading
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 from typing import Dict, Optional
 
@@ -30,16 +30,48 @@ class RoutingPath(Enum):
     BLOCK_RATE_LIMIT = "block_rate_limit"
 
 
+class GovernanceDepth(Enum):
+    LIGHT = "light"
+    STANDARD = "standard"
+    FULL = "full"
+
+
+@dataclass(frozen=True)
+class GovernanceDepthPlan:
+    depth: str = GovernanceDepth.STANDARD.value
+    reason: str = "Current standard governance posture remains active."
+    preserve_default_behavior: bool = True
+    skip_cross_session_recovery: bool = False
+    skip_injection_context: bool = False
+    candidate_light_skips: tuple[str, ...] = ()
+    required_edges: tuple[str, ...] = ("reflex_arc", "basic_output_honesty")
+
+    def to_dict(self) -> Dict[str, object]:
+        return {
+            "depth": self.depth,
+            "reason": self.reason,
+            "preserve_default_behavior": self.preserve_default_behavior,
+            "skip_cross_session_recovery": self.skip_cross_session_recovery,
+            "skip_injection_context": self.skip_injection_context,
+            "candidate_light_skips": list(self.candidate_light_skips),
+            "required_edges": list(self.required_edges),
+        }
+
+
 @dataclass
 class RoutingDecision:
     path: RoutingPath
     journal_eligible: bool
     reason: str
     risk_level: str = "low"
+    governance_depth: str = GovernanceDepth.STANDARD.value
+    governance_depth_plan: GovernanceDepthPlan = field(default_factory=GovernanceDepthPlan)
 
 
 class RateLimiter:
     """Simple in-memory token bucket rate limiter (thread-safe)."""
+
+    _MAX_BUCKETS = 10_000  # prevent unbounded memory growth
 
     def __init__(self, capacity: float, refill_rate: float):
         self.capacity = capacity
@@ -47,6 +79,13 @@ class RateLimiter:
         self.refill_rate = refill_rate
         self.buckets: Dict[str, dict] = {}
         self._lock = threading.Lock()
+
+    def _evict_oldest(self) -> None:
+        """Remove the oldest bucket when limit is reached (caller holds lock)."""
+        if len(self.buckets) <= self._MAX_BUCKETS:
+            return
+        oldest_key = min(self.buckets, key=lambda k: self.buckets[k]["last_update"])
+        del self.buckets[oldest_key]
 
     def consume(self, key: str, amount: float = 1.0) -> bool:
         with self._lock:
@@ -57,6 +96,9 @@ class RateLimiter:
             elapsed = now - bucket["last_update"]
             bucket["tokens"] = min(self.capacity, bucket["tokens"] + elapsed * self.refill_rate)
             bucket["last_update"] = now
+
+            # Evict stale buckets if over limit
+            self._evict_oldest()
 
             if bucket["tokens"] >= amount:
                 bucket["tokens"] -= amount
@@ -82,6 +124,102 @@ class ComputeGate:
         self.MIN_COUNCIL_TENSION = 0.4
         self.MIN_COUNCIL_FRICTION = 0.62
         self.MIN_CLOUD_LEN = 15
+
+    @staticmethod
+    def _classify_risk_level(effective_tension: float) -> str:
+        risk_level = "low"
+        if effective_tension >= 0.8:
+            risk_level = "high"
+        elif effective_tension >= 0.4:
+            risk_level = "medium"
+        return risk_level
+
+    def _build_governance_depth_plan(
+        self,
+        *,
+        path: RoutingPath,
+        msg_len: int,
+        effective_tension: float,
+        friction_score: Optional[float],
+    ) -> GovernanceDepthPlan:
+        if path == RoutingPath.PASS_LOCAL:
+            return GovernanceDepthPlan(
+                depth=GovernanceDepth.LIGHT.value,
+                reason=(
+                    "Short, low-tension prompt already qualifies for the bounded local fast path."
+                ),
+                skip_cross_session_recovery=True,
+                skip_injection_context=True,
+                candidate_light_skips=(
+                    "cross_session_recovery",
+                    "context_injection",
+                ),
+            )
+
+        if path == RoutingPath.PASS_COUNCIL:
+            return GovernanceDepthPlan(
+                depth=GovernanceDepth.FULL.value,
+                reason=(
+                    "Council routing keeps the full governance posture because the turn is "
+                    "high-tension or high-friction."
+                ),
+                required_edges=(
+                    "reflex_arc",
+                    "basic_output_honesty",
+                    "council_deliberation",
+                ),
+            )
+
+        if path == RoutingPath.BLOCK_RATE_LIMIT:
+            return GovernanceDepthPlan(
+                depth=GovernanceDepth.STANDARD.value,
+                reason=(
+                    "Rate-limit blocks happen before any additional governance-depth reduction."
+                ),
+            )
+
+        light_candidates: tuple[str, ...] = ()
+        if msg_len <= 160 and effective_tension < 0.2 and (
+            friction_score is None or friction_score < 0.2
+        ):
+            light_candidates = (
+                "cross_session_recovery",
+                "context_injection",
+            )
+
+        return GovernanceDepthPlan(
+            depth=GovernanceDepth.STANDARD.value,
+            reason=(
+                "Single-cloud routing stays on the standard posture until a later light-path "
+                "activation wave lands."
+            ),
+            candidate_light_skips=light_candidates,
+        )
+
+    def _make_decision(
+        self,
+        *,
+        path: RoutingPath,
+        journal_eligible: bool,
+        reason: str,
+        msg_len: int,
+        effective_tension: float,
+        friction_score: Optional[float],
+    ) -> RoutingDecision:
+        governance_depth_plan = self._build_governance_depth_plan(
+            path=path,
+            msg_len=msg_len,
+            effective_tension=effective_tension,
+            friction_score=friction_score,
+        )
+        return RoutingDecision(
+            path=path,
+            journal_eligible=journal_eligible,
+            reason=reason,
+            risk_level=self._classify_risk_level(effective_tension),
+            governance_depth=governance_depth_plan.depth,
+            governance_depth_plan=governance_depth_plan,
+        )
 
     @staticmethod
     def _clamp_unit(value: float) -> float:
@@ -179,23 +317,29 @@ class ComputeGate:
             and (friction_score is None or friction_score < self.MIN_COUNCIL_FRICTION)
         ):
             if self.local_model_enabled:
-                return RoutingDecision(
+                return self._make_decision(
                     path=RoutingPath.PASS_LOCAL,
                     journal_eligible=False,  # Never journal pleasantries
                     reason=(
                         f"Message length ({msg_len}) below threshold. "
                         "Routing to local model to save cloud tokens."
                     ),
+                    msg_len=msg_len,
+                    effective_tension=effective_tension,
+                    friction_score=friction_score,
                 )
 
         # 3. Fast Rate Limiting (Protects Cloud APIs only; local route bypasses)
         if user_tier == "free":
             # Limits based on user_id, defaults to a global "anonymous" bucket if not provided
             if not _free_tier_limiter.consume(user_id, 1.0):
-                return RoutingDecision(
+                return self._make_decision(
                     path=RoutingPath.BLOCK_RATE_LIMIT,
                     journal_eligible=False,
                     reason="Rate limit exceeded for free tier. Please try again later.",
+                    msg_len=msg_len,
+                    effective_tension=effective_tension,
+                    friction_score=friction_score,
                 )
 
         # 4. Tension Cost Threshold
@@ -205,10 +349,13 @@ class ComputeGate:
             and effective_tension < 0.8
             and (friction_score is None or friction_score < self.MIN_COUNCIL_FRICTION)
         ):
-            return RoutingDecision(
+            return self._make_decision(
                 path=RoutingPath.PASS_SINGLE,
                 journal_eligible=False,
                 reason="Free tier user. Tension sub-critical. Routing to single cloud agent.",
+                msg_len=msg_len,
+                effective_tension=effective_tension,
+                friction_score=friction_score,
             )
 
         # High Tension (>0.4) or Premium user requiring full deliberation
@@ -226,22 +373,21 @@ class ComputeGate:
                     f"High Tension detected ({effective_tension:.2f}). "
                     "Scaling up to full Council debate."
                 )
-            return RoutingDecision(
+            return self._make_decision(
                 path=RoutingPath.PASS_COUNCIL,
                 journal_eligible=journal_eligible,
                 reason=reason,
+                msg_len=msg_len,
+                effective_tension=effective_tension,
+                friction_score=friction_score,
             )
 
         # Default standard processing
-        risk_level = "low"
-        if effective_tension >= 0.8:
-            risk_level = "high"
-        elif effective_tension >= self.MIN_COUNCIL_TENSION:
-            risk_level = "medium"
-
-        return RoutingDecision(
+        return self._make_decision(
             path=RoutingPath.PASS_SINGLE,
             journal_eligible=journal_eligible,
             reason="Standard complexity. Routing to single cloud agent.",
-            risk_level=risk_level,
+            msg_len=msg_len,
+            effective_tension=effective_tension,
+            friction_score=friction_score,
         )

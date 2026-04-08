@@ -197,10 +197,22 @@ def load_verify_key(agent_id: str) -> Optional[Any]:
 
 
 def sign_trace(trace_dict: Dict[str, Any], agent_id: str) -> Dict[str, Any]:
-    """Sign a trace with the agent's Ed25519 private key."""
+    """Sign a trace with the agent's Ed25519 private key.
+
+    If the agent already has a registered public key but no private key
+    on this machine, signing is refused to prevent impersonation.
+    """
     sk = load_signing_key(agent_id)
     if sk is None:
-        # Auto-generate keys for new agent
+        existing_pub = load_verify_key(agent_id)
+        if existing_pub is not None:
+            # Public key exists but no private key — possible impersonation
+            trace_dict["_signature"] = {
+                "agent": agent_id,
+                "error": "pubkey_exists_no_private_key",
+            }
+            return trace_dict
+        # Genuinely new agent — auto-generate keys
         generate_agent_keys(agent_id)
         sk = load_signing_key(agent_id)
     if sk is None:

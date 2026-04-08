@@ -118,7 +118,7 @@
 > 執行者: Claude Opus 4.6 (deep audit agent)
 > 新增發現: 18 個（2 CRITICAL, 4 HIGH, 7 MEDIUM, 3 LOW）
 
-## 本次修復
+## 本次修復（第一批）
 
 | # | Finding | Severity | Fix |
 |---|---|---|---|
@@ -128,35 +128,27 @@
 | 8 | Aegis shield 用相對路徑 `.aegis/` | MEDIUM | 改為 `Path(__file__).resolve().parents[1] / ".aegis"` |
 | 10 | Content filter 要 3+ violations 才 block | MEDIUM | 閾值降為 `>= 2` |
 
-## 待處理（需人類決定）
+## 本次修復（第二批 — 2026-04-08 全面掃蕩）
 
-### CRITICAL
-| # | Finding | File | 建議 |
+| # | Finding | Severity | Fix |
 |---|---|---|---|
-| 1 | Redis 密碼 `tonesoul-2026` 硬編碼 | `tonesoul/diagnose.py:883` | 移到 `.env`，輪換密碼 |
+| 1 | Redis 密碼 `tonesoul-2026` 硬編碼 | CRITICAL | `diagnose.py` 移除硬編碼密碼，改用環境變數 |
+| 4 | Gateway 預設無認證 | HIGH | `_check_auth()` 在無 token 時拒絕請求（403） |
+| 5 | Gateway CORS `*` | HIGH | 改為 `http://localhost:8501`，可透過 `--cors-origin` 設定 |
+| 6 | VowEnforcer 未知 metric 自動得分 1.0 | HIGH | 改為 0.0（fail-closed），測試同步更新 |
+| 7 | RateLimiter 無限記憶體增長 | MEDIUM | 加入 `_MAX_BUCKETS=10000`，滿時淘汰最舊 bucket |
+| 9 | config 可完全關閉 reflex arc | MEDIUM | `vow_enforcement_mode="off"` 不再接受（最低 "soft"），`council_block_enforcement` 永遠為 True |
+| 12 | governance/__init__.py wildcard import | LOW | 改為明確 import 所有公開名稱 |
+| 13 | CircuitBreaker 用類名字串比對 | MEDIUM | 改用 `isinstance(exc, CollapseException)` |
+| 16 | _record_footprint 吞所有異常 | LOW | 改為 `logger.warning()` |
+| 17 | reflex_decision 不在 GovernancePosture.to_dict() 中 | LOW | `to_dict()` 現在包含 runtime reflex_decision |
+| 18 | Aegis 首次使用可冒充任何 agent | MEDIUM | `sign_trace()` 拒絕為已有公鑰但無私鑰的 agent 簽名 |
 
-### HIGH
-| # | Finding | File | 建議 |
-|---|---|---|---|
-| 4 | Gateway 預設無認證 | `scripts/gateway.py` | `--token` 改為必填 |
-| 5 | Gateway CORS `*` | `scripts/gateway.py` | 限制為 localhost |
-| 6 | VowEnforcer 未知 metric 自動得分 1.0 | `tonesoul/vow_system.py:325` | 改為 0.0（fail-closed）|
-| 14 | Vow evaluator 僅用關鍵字比對 | `tonesoul/vow_system.py:248` | 加入語義分析 |
+## 仍待處理（需人類決定或後續迭代）
 
-### MEDIUM（待處理）
-| # | Finding | File | 建議 |
+| # | Finding | Severity | 狀態 |
 |---|---|---|---|
-| 7 | RateLimiter 無限記憶體增長 | `tonesoul/gates/compute.py:78` | 加 LRU / max bucket |
-| 9 | config 可完全關閉 reflex arc | `tonesoul/governance/reflex_config.py` | 加最低執行保底 |
-| 13 | CircuitBreaker 用類名字串比對 | `tonesoul/governance/kernel.py:404` | 改用 isinstance() |
-| 18 | Aegis 首次使用可冒充任何 agent | `tonesoul/aegis_shield.py` | 要求預註冊 |
-
-### LOW（待處理）
-| # | Finding | File | 建議 |
-|---|---|---|---|
-| 12 | governance/__init__.py wildcard import | `tonesoul/governance/__init__.py` | 改為明確 import |
-| 16 | _record_footprint 吞所有異常 | `tonesoul/runtime_adapter.py` | 至少 log |
-| 17 | reflex_decision 不在 GovernancePosture.to_dict() 中 | `tonesoul/runtime_adapter.py` | 加欄位或獨立序列化 |
+| 14 | Vow evaluator 僅用關鍵字比對 | HIGH | 需語義分析模型，超出純 code fix 範圍 |
 
 ## 驗證
 

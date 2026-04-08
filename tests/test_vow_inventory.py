@@ -311,19 +311,21 @@ class TestVowEnforcerInventoryWiring:
             assert safety_state.violations >= 1
             assert safety_state.last_violation_reason is not None
 
-    def test_unknown_metric_defaults_to_pass(self):
+    def test_unknown_metric_defaults_to_fail(self):
+        """Unknown metrics fail closed (red team fix #6)."""
         enforcer = VowEnforcer(VowRegistry(vows=[]))
         vow = Vow(
             id="custom_vow",
             title="Custom",
-            description="Unknown metric should not fail closed.",
+            description="Unknown metric should fail closed.",
             expected={"custom_metric": 0.9},
         )
 
         result = enforcer.check_vow(vow, "plain output")
 
-        assert result.passed is True
+        assert result.passed is False
         assert result.details["custom_metric"]["actual"] is None
+        assert result.details["custom_metric"]["passed"] is False
 
     def test_multiple_enforce_calls_accumulate_conviction(self):
         inv = VowInventory()

@@ -32,6 +32,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
 _AUTH_TOKEN: Optional[str] = None
+_CORS_ORIGIN: str = "http://localhost:8501"  # default: Streamlit dashboard
 
 
 def _read_body(handler) -> bytes:
@@ -52,7 +53,7 @@ def _send_json(handler, data: Any, status: int = 200) -> None:
     body = json.dumps(data, ensure_ascii=False, indent=2).encode("utf-8")
     handler.send_response(status)
     handler.send_header("Content-Type", "application/json; charset=utf-8")
-    handler.send_header("Access-Control-Allow-Origin", "*")
+    handler.send_header("Access-Control-Allow-Origin", _CORS_ORIGIN)
     handler.send_header("Content-Length", str(len(body)))
     handler.end_headers()
     handler.wfile.write(body)
@@ -62,7 +63,7 @@ def _send_text(handler, text: str, status: int = 200) -> None:
     body = text.encode("utf-8")
     handler.send_response(status)
     handler.send_header("Content-Type", "text/plain; charset=utf-8")
-    handler.send_header("Access-Control-Allow-Origin", "*")
+    handler.send_header("Access-Control-Allow-Origin", _CORS_ORIGIN)
     handler.send_header("Content-Length", str(len(body)))
     handler.end_headers()
     handler.wfile.write(body)
@@ -70,7 +71,8 @@ def _send_text(handler, text: str, status: int = 200) -> None:
 
 def _check_auth(handler) -> bool:
     if _AUTH_TOKEN is None:
-        return True
+        _send_json(handler, {"error": "no auth token configured — start with --token"}, 403)
+        return False
     auth = handler.headers.get("Authorization", "")
     expected = f"Bearer {_AUTH_TOKEN}"
     if hmac.compare_digest(auth, expected):
@@ -275,7 +277,7 @@ class GatewayHandler(http.server.BaseHTTPRequestHandler):
 
     def do_OPTIONS(self) -> None:
         self.send_response(204)
-        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Origin", _CORS_ORIGIN)
         self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
         self.end_headers()
@@ -287,14 +289,21 @@ class GatewayHandler(http.server.BaseHTTPRequestHandler):
 
 
 def main() -> None:
-    global _AUTH_TOKEN
+    global _AUTH_TOKEN, _CORS_ORIGIN
 
     parser = argparse.ArgumentParser(description="ToneSoul Gateway API")
     parser.add_argument("--port", type=int, default=7700)
     parser.add_argument("--token", type=str, default=None, help="Require Bearer token")
+    parser.add_argument(
+        "--cors-origin",
+        type=str,
+        default="http://localhost:8501",
+        help="Allowed CORS origin (default: http://localhost:8501)",
+    )
     args = parser.parse_args()
 
     _AUTH_TOKEN = args.token
+    _CORS_ORIGIN = args.cors_origin
 
     os.environ.setdefault("TONESOUL_REDIS_URL", "redis://localhost:6379/0")
     from tonesoul.store import get_store
@@ -305,7 +314,8 @@ def main() -> None:
 
     print(f"\n[ToneSoul Gateway] http://127.0.0.1:{port}")
     print(f"  Backend: {store.backend_name}")
-    print(f"  Auth:    {'token required' if _AUTH_TOKEN else 'open (use --token for auth)'}")
+    print(f"  Auth:    {'token required' if _AUTH_TOKEN else 'LOCKED — pass --token to enable'}")
+    print(f"  CORS:    {_CORS_ORIGIN}")
     print("\n  POST /load      載入治理狀態 + 留足跡")
     print("  POST /commit    提交 session trace（Aegis 保護）")
     print("  POST /claim     佔用任務鎖")

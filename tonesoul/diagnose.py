@@ -880,7 +880,7 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    os.environ.setdefault("TONESOUL_REDIS_URL", "redis://:tonesoul-2026@localhost:6379/0")
+    os.environ.setdefault("TONESOUL_REDIS_URL", "redis://localhost:6379/0")
 
     if args.compact:
         _emit_text(compact_diagnostic(agent_id=args.agent))
