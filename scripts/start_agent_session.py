@@ -342,6 +342,10 @@ def _build_tier0_payload(
         "canonical_center": _build_tier0_canonical_center(canonical_center),
         "mutation_preflight": _build_tier0_mutation_preflight(mutation_preflight),
         "consumer_contract": _build_tier0_consumer_contract(consumer_contract),
+        "claim_boundary": {
+            "current_tier": "collaborator_beta",
+            "receiver_note": "Do not claim production readiness, AI consciousness, or council-as-truth.",
+        },
         # hook_chain and surface_versioning deferred to tier 1 — not needed for minimum safe start
         "next_pull": {
             "receiver_rule": (
@@ -1657,6 +1661,28 @@ def run_session_start_bundle(
         "claim_view": {
             "count": len(claims),
             "claims": claims,
+        },
+        "claim_boundary": {
+            "current_tier": "collaborator_beta",
+            "safe_claims": [
+                "ToneSoul is an AI governance framework under active development",
+                "Session continuity works across agent handoffs (file-backed)",
+                "Governance state (soul integral, vows, tension, drift) is computed and persisted",
+                "Council deliberation produces structured dossiers with dissent visibility",
+                "3019 tests pass including red team coverage",
+            ],
+            "unsafe_claims": [
+                "ToneSoul is production-ready or mature",
+                "AI has consciousness, emotions, or genuine self-awareness",
+                "Council agreement equals correctness or calibrated accuracy",
+                "Governance prevents all harmful outputs",
+                "Redis/live coordination is the default or validated at scale",
+            ],
+            "receiver_note": (
+                "This boundary exists to prevent overclaiming. "
+                "If you are about to write public-facing text about ToneSoul, "
+                "check each claim against this list before publishing."
+            ),
         },
         "underlying_commands": [
             f"python -m tonesoul.diagnose --agent {agent_id}",
