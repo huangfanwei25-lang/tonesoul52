@@ -340,26 +340,19 @@ def _build_tier0_payload(
         "task_track_hint": task_track_hint,
         "deliberation_mode_hint": deliberation_mode_hint,
         "canonical_center": _build_tier0_canonical_center(canonical_center),
-        "hook_chain": hook_chain,
         "mutation_preflight": _build_tier0_mutation_preflight(mutation_preflight),
         "consumer_contract": _build_tier0_consumer_contract(consumer_contract),
-        "surface_versioning": surface_versioning,
+        # hook_chain and surface_versioning deferred to tier 1 — not needed for minimum safe start
         "next_pull": {
             "receiver_rule": (
                 "Tier 0 is a minimum safe start. Pull deeper surfaces only if the task is not local/clear, "
                 "if claims collide, or if readiness is not pass."
             ),
             "recommended_commands": [
-                f"python scripts/start_agent_session.py --agent {agent_id}",
+                f"python scripts/start_agent_session.py --agent {agent_id} --tier 1",
                 f"python -m tonesoul.diagnose --agent {agent_id}",
-                f"python scripts/run_observer_window.py --agent {agent_id}",
             ],
         },
-        "underlying_commands": [
-            f"python scripts/start_agent_session.py --agent {agent_id}",
-            f"python -m tonesoul.diagnose --agent {agent_id}",
-            f"python scripts/run_observer_window.py --agent {agent_id}",
-        ],
     }
 
 

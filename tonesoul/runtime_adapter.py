@@ -133,6 +133,16 @@ def _utc_now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
+def _offset_utc(iso_str: str, seconds: int) -> str:
+    """Add seconds to an ISO datetime string. Returns ISO string."""
+    from datetime import timedelta
+
+    dt = _parse_dt(iso_str)
+    if dt is None:
+        dt = datetime.now(timezone.utc)
+    return (dt + timedelta(seconds=seconds)).isoformat()
+
+
 def _parse_dt(iso_str: str) -> Optional[datetime]:
     """Parse ISO datetime string, tolerant of Z suffix."""
     text = str(iso_str or "").strip()
@@ -645,6 +655,7 @@ def write_compaction(
         from tonesoul.store import get_store
 
         store = get_store()
+    now = _utc_now()
     payload = {
         "compaction_id": str(uuid.uuid4()),
         "agent": agent_id,
@@ -661,7 +672,13 @@ def write_compaction(
         ),
         "next_action": next_action,
         "source": source,
-        "updated_at": _utc_now(),
+        "updated_at": now,
+        # Temporal validity window — when was this compaction's content true?
+        # Inspired by MemPalace's temporal knowledge graph.
+        # valid_from: when this snapshot of reality began (session start)
+        # valid_until: when it should be considered stale (updated_at + TTL)
+        "valid_from": now,
+        "valid_until": _offset_utc(now, ttl_seconds),
     }
     store.append_compaction(payload, limit=limit, ttl_seconds=ttl_seconds)
     return payload
@@ -703,6 +720,7 @@ def write_subject_snapshot(
         from tonesoul.store import get_store
 
         store = get_store()
+    now = _utc_now()
     payload = {
         "snapshot_id": str(uuid.uuid4()),
         "agent": agent_id,
@@ -716,7 +734,9 @@ def write_subject_snapshot(
         "evidence_refs": list(evidence_refs or []),
         "refresh_signals": list(refresh_signals or []),
         "source": source,
-        "updated_at": _utc_now(),
+        "updated_at": now,
+        "valid_from": now,
+        "valid_until": _offset_utc(now, ttl_seconds),
     }
     store.append_subject_snapshot(payload, limit=limit, ttl_seconds=ttl_seconds)
     return payload
