@@ -257,7 +257,7 @@ jobs:
         BEFORE_SHA: ${{ github.event.before }}
         PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
         PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-        COMMIT_ATTRIBUTION_ANCHOR: 3a0b48ae92f907b96b180558044aae6c8bf5cc92
+        COMMIT_ATTRIBUTION_ANCHOR: db93191c7af2b01c7cf6bbb78f94703dc32db3e3
       run: |
         if [ "$EVENT_NAME" = "schedule" ]; then
           python scripts/verify_incremental_commit_attribution.py \

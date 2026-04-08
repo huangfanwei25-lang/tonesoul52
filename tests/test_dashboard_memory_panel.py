@@ -4,6 +4,8 @@ import importlib.util
 import sys
 from pathlib import Path
 
+import pytest
+
 _MODULE_PATH = (
     Path(__file__).resolve().parents[1]
     / "apps"
@@ -15,6 +17,11 @@ _MODULE_PATH = (
 _FRONTEND_ROOT = _MODULE_PATH.parents[1]
 if str(_FRONTEND_ROOT) not in sys.path:
     sys.path.insert(0, str(_FRONTEND_ROOT))
+
+_streamlit_available = importlib.util.find_spec("streamlit") is not None
+if not _streamlit_available:
+    pytest.skip("streamlit not installed", allow_module_level=True)
+
 _SPEC = importlib.util.spec_from_file_location("dashboard_memory_panel", _MODULE_PATH)
 assert _SPEC is not None and _SPEC.loader is not None
 _MODULE = importlib.util.module_from_spec(_SPEC)
