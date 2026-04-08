@@ -15,13 +15,13 @@
   - Prefer real repeated validation and honest backend defaults over abstract theory lanes.
   - Keep public claims bounded by evidence level: tested, runtime-present, descriptive-only, and document-backed must remain distinct.
   - One durable design center over several overlapping "overview" files.
-- Phase 721: consolidate the current launch baseline so internal alpha / collaborator beta / public launch are defined in one current plan
-- Phase 722: run repeated live continuity validation waves so receiver posture and handoff resilience are proven under multiple real states
-- Phase 723: make one explicit shared-coordination backend decision (file-backed vs Redis-backed)
+- Phase 721: ~~consolidate launch baseline~~ → **done** (`docs/plans/tonesoul_launch_baseline_2026-04-08.md`)
+- Phase 722: run repeated live continuity validation waves (1 wave done, need more + human e2e)
+- Phase 723: ~~backend decision~~ → **done** (file-backed, see `tonesoul_coordination_backend_decision_2026-03-30.md`)
 - Phase 724: consolidate one current launch-operations surface (readiness, health, rollback, freeze)
-- Phase 725: add a bounded public-claim honesty gate so wording cannot outrun the evidence ladder
-- Phase 726: **collaborator-beta go/no-go review** — classify blockers explicitly instead of silently treating optimism as readiness
-- Phase 729: add one top-level design center explaining ToneSoul's layering, invariants, and current launch truth
+- Phase 725: ~~public-claim honesty gate~~ → **done** (`claim_boundary` in session-start tier 0+2)
+- Phase 726: **collaborator-beta go/no-go review** — next milestone, blocked by B1 (e2e validation)
+- Phase 729: ~~design center~~ → **done** (`DESIGN.md`, 293 lines)
 - Phase 730: add one 3-day execution program so the next agent can continue without reopening settled wording
 
 ## Active Program: Agent Workspace And IDE Translation (2026-04-06)
