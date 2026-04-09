@@ -365,7 +365,7 @@ def test_git_hygiene_workflow_uses_strict_threshold_28() -> None:
 def test_post_release_monitor_workflow_triggers_and_checks() -> None:
     payload = _load_yaml(POST_RELEASE_MONITOR_WORKFLOW_PATH)
     on_section = _on_section(payload)
-    assert "schedule" in on_section
+    # schedule is disabled (commented out) while Vercel backend is not deployed
     assert "workflow_dispatch" in on_section
 
     steps = _job_steps(payload, "monitor")
@@ -421,7 +421,7 @@ def test_commit_attribution_workflow_uses_backfill_schedule_path() -> None:
     assert "python scripts/verify_incremental_commit_attribution.py --strict" in run_cmd
     run_env = run_step.get("env", {})
     assert isinstance(run_env, dict)
-    assert run_env.get("COMMIT_ATTRIBUTION_ANCHOR") == "3a0b48ae92f907b96b180558044aae6c8bf5cc92"
+    assert run_env.get("COMMIT_ATTRIBUTION_ANCHOR") == "db93191c7af2b01c7cf6bbb78f94703dc32db3e3"
 
 
 def test_test_workflow_uses_black_gate_script_and_uploads_artifact() -> None:

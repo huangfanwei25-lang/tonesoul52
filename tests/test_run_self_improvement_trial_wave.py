@@ -1,5 +1,12 @@
 from __future__ import annotations
 
+import importlib.util
+
+import pytest
+
+if not importlib.util.find_spec("streamlit"):
+    pytest.skip("streamlit not installed", allow_module_level=True)
+
 from scripts.run_self_improvement_trial_wave import run_self_improvement_trial_wave
 
 
@@ -8,7 +15,12 @@ def test_run_self_improvement_trial_wave_returns_completed_report() -> None:
 
     assert report["status"] == "completed"
     assert report["bundle"] == "self_improvement_trial_wave"
-    assert report["next_short_board"] == "Phase 847: Eighteenth Trial Candidate Admission"
-    assert len(report["candidates"]) == 18
+    assert report["next_short_board"] == (
+        "Explicitly ratify the next active bucket; do not silently auto-open queued governance-depth work."
+    )
+    assert len(report["candidates"]) == 19
     assert report["candidates"][0]["result_surface"]["surface_status"] == "promoted_result"
-    assert report["candidates"][-1]["candidate_record"]["candidate_id"] == "status_panel_operator_copy_clarity_v1"
+    assert (
+        report["candidates"][-1]["candidate_record"]["candidate_id"]
+        == "dashboard_command_shelf_activation_clarity_v1"
+    )
