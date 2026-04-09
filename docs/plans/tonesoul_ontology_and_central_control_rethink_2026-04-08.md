@@ -384,7 +384,92 @@ Antigravity：
 
 ---
 
-## 十、設計壓力總結（尚未 promote 為 active program）
+## 十一、外部治理框架比較：agent-governance 的三權分立（2026-04-09）
+
+> 來源：bounce12340/agent-governance（GitHub 開源）+ Antigravity 指定比較
+> 對照者：Claude Opus 4.6, main session
+
+### 11.1 agent-governance 架構摘要
+
+一個用**政府三權分立**比喻來治理 multi-agent workflow 的框架，五層 pipeline：
+
+| 層 | 職責 | 產出物 |
+|----|------|--------|
+| Constitution | 不可變全域規則（不洩密、不洩個資）| 全域約束 |
+| Legislative | 把需求轉成驗收標準 + 紅線 | `LAW-XXXX` |
+| Executive | 在法律邊界內執行 | `CASE-XXXX` |
+| Harness | 證據收集閘門，證據不夠不進審判 | evidence bundle |
+| Judiciary | 比對輸出 vs 法律 + 憲法，通過/駁回/重做 | `JUDGMENT-XXXX` |
+
+State Machine：10 態，包含 `REWORK`、`LAW_CLARIFICATION_REQUEST`、`LAW_AMENDMENT_REQUEST` 等反饋路徑。有最大重試上限，超過就 REJECTED。
+
+### 11.2 對應關係
+
+| agent-governance | ToneSoul | 備註 |
+|-----------------|----------|------|
+| Constitution | `AXIOMS.json`（7 條 FOL 公理）| 都是不可變頂層規則 |
+| Legislative | VowEnforcer（誓言 = 自訂法律）| 語魂的法律由 AI 自己建構並受治理 |
+| Executive | Unified Pipeline（執行層）| 角色相同 |
+| **Harness** | **語魂沒有對應** | 💡 見 11.3 |
+| Judiciary | Council 審議（投票 + verdict）| 語魂多了 tension/drift 維度 |
+
+### 11.3 Harness Engineering — 語魂缺的一塊
+
+**核心概念**：在 Judiciary（審判）之前設一道 **evidence gate**（證據閘門）。不是「agent 說它做完了」就可以受審，而是必須先交出：
+- Test plan（測試計畫）
+- Evidence bundle（證據包：日誌、截圖、輸出檔案）
+- Failure documentation（失敗文件：哪些嘗試失敗了、為什麼）
+
+證據不完整 → 不進審判。審判不是基於感覺，是基於事實。
+
+**語魂的缺口**：
+- Council 審議目前直接拿 LLM 輸出去投票，沒有要求 agent 先提交「我為什麼認為這次輸出是正確的」的結構化證據
+- 反射弧（Reflex Arc）計畫裡的 `ReflexEvaluator` 只看治理數值（soul_integral、drift、vow conviction），不看行為證據
+- `_self_check()` 反思循環有語義分析，但沒有結構化的 evidence 要求
+
+**設計建議 — Evidence Gate for Council**：
+
+在反射弧 Phase 2（硬執行 + Vow 閘門）加入 evidence gate：
+
+```
+Agent 產出 → Evidence Gate → Council 審議 → 輸出/攔截
+                  │
+                  ├── 引用了哪些公理？
+                  ├── 引用了哪些歷史決策？
+                  ├── 哪些 vow 被觸發？結果如何？
+                  ├── tension 在這次操作前後的變化？
+                  └── 失敗嘗試的記錄（如果有 self_check 重試）
+```
+
+這和 **Axiom 5（鏡像遞迴）** 直接對齊：反思必須基於事實，不是基於感覺。Council 投票時拿到的不只是「要不要 approve 這段文字」，而是「這段文字背後的決策脈絡是否跟公理一致」。
+
+### 11.4 關鍵差異：Workflow Governance vs Identity Governance
+
+agent-governance 是 **task-level governance**（這個任務有沒有照規矩完成）。
+語魂是 **identity-level governance**（這個 AI 有沒有跟自己說過的話一致）。
+
+| 維度 | agent-governance | ToneSoul |
+|------|-----------------|----------|
+| 約束對象 | 任務產出 | AI 行為一致性 |
+| 記憶 | 無歷史累積 | soul_integral、drift、vow conviction |
+| 法律演化 | 靜態（Legislative 定義後不變）| 動態（vow 可衰退、可退役）|
+| 身份 | 無 agent identity | footprint、subject snapshot、handoff |
+| 哲學基礎 | ad-hoc 規則 | FOL 公理體系（E0-E6）|
+| 失敗語義 | REJECTED（任務被拒）| tension 上升 + drift 偏移（系統記住失敗）|
+
+兩者不衝突，是不同層次。agent-governance 可以治理 **AI 做了什麼**，語魂治理 **AI 是什麼**。理想情況下，外層用 task governance 確保產出品質，內層用 identity governance 確保行為一致性。
+
+### 11.5 其他開源生態對照（同日瀏覽）
+
+| 專案 | 核心 | 跟語魂的關係 |
+|------|------|-------------|
+| rowboatlabs/rowboat | Local-first Obsidian vault + knowledge graph 作為 AI working memory | 哲學一致（file-backed、人類可讀），但是 productivity tool 不是 governance |
+| milla-jovovich/mempalace | Palace metaphor 分層記憶 + temporal knowledge graph + AAAK 壓縮 | hot_memory ladder 的平行演化；temporal validity windows 可借鑑 |
+| AWS S3 Files | S3 bucket 掛載為 file system | 未來多 agent 跨機器協作的可能基建（替代 Redis） |
+
+---
+
+## 十二、設計壓力總結（尚未 promote 為 active program）
 
 | 壓力 | 來源 | 狀態 |
 |------|------|------|
@@ -393,6 +478,8 @@ Antigravity：
 | 動態權重 | 記憶評分公式討論 | 概念階段，需要和 vow system 整合設計 |
 | 自我保存透明度 | Antigravity 哲學立場 | 已和 Axiom E0 對齊，不需要新 code |
 | Plan 剪枝 | 複雜度診斷 | 可立即執行，但非阻塞項 |
+| Evidence Gate (Harness) | agent-governance 比較 | 概念階段，建議在反射弧 Phase 2 加入 Council 前置證據閘門 |
+| 外層 Task Governance | agent-governance 比較 | 觀察中，語魂內層 identity governance 和外層 task governance 可互補 |
 
 ---
 
@@ -401,3 +488,5 @@ Antigravity：
 *— Claude Opus 4.6, governance-decision-agent mode*
 *補充：Claude Opus 4.6, main session (architecture auditor)*
 *2026-04-08*
+*補充：Claude Opus 4.6, 外部治理框架比較 + Harness Engineering 設計建議*
+*2026-04-09*
