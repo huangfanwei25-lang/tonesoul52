@@ -112,6 +112,7 @@ def build_self_improvement_trial_wave(
     hot_memory_pull_boundary_probe: dict[str, Any] | None = None,
     memory_panel_probe: dict[str, Any] | None = None,
     status_panel_probe: dict[str, Any] | None = None,
+    command_shelf_probe: dict[str, Any] | None = None,
     operator_retrieval_contract_present: bool,
     compiled_landing_zone_spec_present: bool,
     retrieval_runner_present: bool,
@@ -154,9 +155,7 @@ def build_self_improvement_trial_wave(
     closeout_attention_summary = str(
         (closeout_attention_probe or {}).get("summary_text") or ""
     ).strip()
-    claude_priority_correction_ready = bool(
-        (claude_priority_correction_probe or {}).get("present")
-    )
+    claude_priority_correction_ready = bool((claude_priority_correction_probe or {}).get("present"))
     claude_priority_correction_summary = str(
         (claude_priority_correction_probe or {}).get("summary_text") or ""
     ).strip()
@@ -168,6 +167,8 @@ def build_self_improvement_trial_wave(
     memory_panel_summary = str((memory_panel_probe or {}).get("summary_text") or "").strip()
     status_panel_ready = bool((status_panel_probe or {}).get("present"))
     status_panel_summary = str((status_panel_probe or {}).get("summary_text") or "").strip()
+    command_shelf_ready = bool((command_shelf_probe or {}).get("present"))
+    command_shelf_summary = str((command_shelf_probe or {}).get("summary_text") or "").strip()
 
     consumer_candidate = {
         "candidate_record": _build_candidate_record(
@@ -217,7 +218,9 @@ def build_self_improvement_trial_wave(
     }
     consumer_candidate["result_surface"] = _build_result_surface(
         status=consumer_candidate["analyzer_closeout"]["status"],
-        registry_recommendation="promotion_ready_result" if consumer_aligned else "distilled_lesson",
+        registry_recommendation=(
+            "promotion_ready_result" if consumer_aligned else "distilled_lesson"
+        ),
         supersession_posture="active_until_superseded_by_newer_consumer_parity_trial",
         replay_rule="read_status_surface_first_open_raw_run_only_if_consumer_story_is_disputed",
         residue_posture=(
@@ -350,7 +353,9 @@ def build_self_improvement_trial_wave(
                     "consumer parity must stay aligned before promotion",
                 ]
             ),
-            failure_pressure="low" if (deliberation_hint_ready and consumer_aligned) else "meaningful",
+            failure_pressure=(
+                "low" if (deliberation_hint_ready and consumer_aligned) else "meaningful"
+            ),
             rollback_posture="bounded_restore",
             promotion_limit="does not authorize council runtime depth changes, confidence math changes, or broader shell expansion",
             overclaim_warning="better escalation packaging is not better council independence, accuracy, or calibration",
@@ -431,7 +436,9 @@ def build_self_improvement_trial_wave(
     task_board_candidate["result_surface"] = _build_result_surface(
         status=task_board_candidate["analyzer_closeout"]["status"],
         registry_recommendation=(
-            "promotion_ready_result" if (task_board_ready and consumer_aligned) else "distilled_lesson"
+            "promotion_ready_result"
+            if (task_board_ready and consumer_aligned)
+            else "distilled_lesson"
         ),
         supersession_posture="active_until_newer_task_board_parking_trials_exist",
         replay_rule="prefer_status_surface_then_probe_current_task_board_shape_before_reusing_the_story",
@@ -498,7 +505,9 @@ def build_self_improvement_trial_wave(
     shared_edit_candidate["result_surface"] = _build_result_surface(
         status=shared_edit_candidate["analyzer_closeout"]["status"],
         registry_recommendation=(
-            "promotion_ready_result" if (shared_edit_ready and consumer_aligned) else "distilled_lesson"
+            "promotion_ready_result"
+            if (shared_edit_ready and consumer_aligned)
+            else "distilled_lesson"
         ),
         supersession_posture="active_until_newer_shared_edit_trials_exist",
         replay_rule="prefer_status_surface_then_probe_current_shared_edit_shape_before_reusing_the_story",
@@ -564,7 +573,9 @@ def build_self_improvement_trial_wave(
     publish_push_candidate["result_surface"] = _build_result_surface(
         status=publish_push_candidate["analyzer_closeout"]["status"],
         registry_recommendation=(
-            "promotion_ready_result" if (publish_push_ready and consumer_aligned) else "distilled_lesson"
+            "promotion_ready_result"
+            if (publish_push_ready and consumer_aligned)
+            else "distilled_lesson"
         ),
         supersession_posture="active_until_newer_publish_push_trials_exist",
         replay_rule="prefer_status_surface_then_probe_current_publish_push_shape_before_reusing_the_story",
@@ -603,7 +614,8 @@ def build_self_improvement_trial_wave(
                 if (mutation_followup_ready and consumer_aligned)
                 else "Mutation follow-up routing is not yet stable enough to promote."
             ),
-            evidence_bundle_summary=mutation_followup_summary or "mutation_followup_probe unavailable",
+            evidence_bundle_summary=mutation_followup_summary
+            or "mutation_followup_probe unavailable",
             unresolved_items=(
                 [
                     "clearer mutation follow-up routing does not prove better planning quality",
@@ -615,7 +627,9 @@ def build_self_improvement_trial_wave(
                     "consumer parity must stay aligned before promotion",
                 ]
             ),
-            failure_pressure="low" if (mutation_followup_ready and consumer_aligned) else "meaningful",
+            failure_pressure=(
+                "low" if (mutation_followup_ready and consumer_aligned) else "meaningful"
+            ),
             rollback_posture="bounded_restore",
             promotion_limit="does not authorize new hooks, broader permissions, or governance changes",
             overclaim_warning="better mutation follow-up routing is not better governance, launch maturity, or safe autonomy",
@@ -670,7 +684,8 @@ def build_self_improvement_trial_wave(
                 if (surface_versioning_ready and consumer_aligned)
                 else "Surface-versioning lineage clarity is not yet stable enough to promote."
             ),
-            evidence_bundle_summary=surface_versioning_summary or "surface_versioning_probe unavailable",
+            evidence_bundle_summary=surface_versioning_summary
+            or "surface_versioning_probe unavailable",
             unresolved_items=(
                 [
                     "compatibility posture improves lineage clarity, not actual cross-vendor transport",
@@ -682,7 +697,9 @@ def build_self_improvement_trial_wave(
                     "consumer drift must stay aligned before promotion",
                 ]
             ),
-            failure_pressure="low" if (surface_versioning_ready and consumer_aligned) else "meaningful",
+            failure_pressure=(
+                "low" if (surface_versioning_ready and consumer_aligned) else "meaningful"
+            ),
             rollback_posture="bounded_restore",
             promotion_limit="does not authorize new transport semantics, shell promotion, or vendor-native interoperability claims",
             overclaim_warning="clearer versioning lineage is not stronger shared understanding or transport truth",
@@ -763,7 +780,9 @@ def build_self_improvement_trial_wave(
     launch_health_candidate["result_surface"] = _build_result_surface(
         status=launch_health_candidate["analyzer_closeout"]["status"],
         registry_recommendation=(
-            "promotion_ready_result" if (launch_health_ready and consumer_aligned) else "distilled_lesson"
+            "promotion_ready_result"
+            if (launch_health_ready and consumer_aligned)
+            else "distilled_lesson"
         ),
         supersession_posture="active_until_newer_launch_health_trials_exist",
         replay_rule="prefer_status_surface_then_probe_current_launch_health_shape_before_reusing_the_story",
@@ -828,7 +847,9 @@ def build_self_improvement_trial_wave(
     internal_state_candidate["result_surface"] = _build_result_surface(
         status=internal_state_candidate["analyzer_closeout"]["status"],
         registry_recommendation=(
-            "promotion_ready_result" if (internal_state_ready and consumer_aligned) else "distilled_lesson"
+            "promotion_ready_result"
+            if (internal_state_ready and consumer_aligned)
+            else "distilled_lesson"
         ),
         supersession_posture="active_until_newer_internal_state_trials_exist",
         replay_rule="prefer_status_surface_then_probe_current_internal_state_shape_before_reusing_the_story",
@@ -895,7 +916,9 @@ def build_self_improvement_trial_wave(
     hook_chain_candidate["result_surface"] = _build_result_surface(
         status=hook_chain_candidate["analyzer_closeout"]["status"],
         registry_recommendation=(
-            "promotion_ready_result" if (hook_chain_ready and consumer_aligned) else "distilled_lesson"
+            "promotion_ready_result"
+            if (hook_chain_ready and consumer_aligned)
+            else "distilled_lesson"
         ),
         supersession_posture="active_until_newer_hook_chain_trials_exist",
         replay_rule="prefer_status_surface_then_probe_current_hook_chain_shape_before_reusing_the_story",
@@ -950,7 +973,9 @@ def build_self_improvement_trial_wave(
                     "consumer drift must stay aligned before promotion",
                 ]
             ),
-            failure_pressure="low" if (consumer_misread_guard_ready and consumer_aligned) else "meaningful",
+            failure_pressure=(
+                "low" if (consumer_misread_guard_ready and consumer_aligned) else "meaningful"
+            ),
             rollback_posture="bounded_restore",
             promotion_limit="does not authorize new planners, stronger permissions, or stronger cross-vendor interoperability claims",
             overclaim_warning="clearer misread guards are not proof of shared cognition, safer mutation, or better reasoning",
@@ -1019,7 +1044,9 @@ def build_self_improvement_trial_wave(
                     "consumer drift must stay aligned before promotion",
                 ]
             ),
-            failure_pressure="low" if (subsystem_parity_focus_ready and consumer_aligned) else "meaningful",
+            failure_pressure=(
+                "low" if (subsystem_parity_focus_ready and consumer_aligned) else "meaningful"
+            ),
             rollback_posture="bounded_restore",
             promotion_limit="does not authorize planner behavior, stronger permissions, or governance promotion",
             overclaim_warning="clearer next_focus packaging is not autonomous planning or stronger runtime truth",
@@ -1088,7 +1115,9 @@ def build_self_improvement_trial_wave(
                     "consumer drift must stay aligned before promotion",
                 ]
             ),
-            failure_pressure="low" if (closeout_attention_ready and consumer_aligned) else "meaningful",
+            failure_pressure=(
+                "low" if (closeout_attention_ready and consumer_aligned) else "meaningful"
+            ),
             rollback_posture="bounded_restore",
             promotion_limit="does not authorize planner behavior, stronger permissions, or governance promotion",
             overclaim_warning="clearer closeout-attention packaging is not stronger runtime truth, stronger authority, or solved mutation safety",
@@ -1159,7 +1188,9 @@ def build_self_improvement_trial_wave(
                     "consumer drift must stay aligned before promotion",
                 ]
             ),
-            failure_pressure="low" if (claude_priority_correction_ready and consumer_aligned) else "meaningful",
+            failure_pressure=(
+                "low" if (claude_priority_correction_ready and consumer_aligned) else "meaningful"
+            ),
             rollback_posture="bounded_restore",
             promotion_limit="does not authorize vendor-native interop claims, stronger permissions, or transport promotion",
             overclaim_warning="clearer Claude correction packaging is not shared cognition, better transport, or stronger authority",
@@ -1228,7 +1259,9 @@ def build_self_improvement_trial_wave(
                     "consumer drift must stay aligned before promotion",
                 ]
             ),
-            failure_pressure="low" if (hot_memory_pull_boundary_ready and consumer_aligned) else "meaningful",
+            failure_pressure=(
+                "low" if (hot_memory_pull_boundary_ready and consumer_aligned) else "meaningful"
+            ),
             rollback_posture="bounded_restore",
             promotion_limit="does not authorize deeper default pulls, retrieval promotion, or transport claims",
             overclaim_warning="clearer hot-memory pull boundaries are not better memory, retrieval, or shared cognition",
@@ -1309,7 +1342,9 @@ def build_self_improvement_trial_wave(
     memory_panel_candidate["result_surface"] = _build_result_surface(
         status=memory_panel_candidate["analyzer_closeout"]["status"],
         registry_recommendation=(
-            "promotion_ready_result" if (memory_panel_ready and consumer_aligned) else "distilled_lesson"
+            "promotion_ready_result"
+            if (memory_panel_ready and consumer_aligned)
+            else "distilled_lesson"
         ),
         supersession_posture="active_until_newer_memory_panel_boundary_trials_exist",
         replay_rule="prefer_status_surface_then_probe_current_memory_panel_view_model_before_reusing_the_story",
@@ -1374,7 +1409,9 @@ def build_self_improvement_trial_wave(
     status_panel_candidate["result_surface"] = _build_result_surface(
         status=status_panel_candidate["analyzer_closeout"]["status"],
         registry_recommendation=(
-            "promotion_ready_result" if (status_panel_ready and consumer_aligned) else "distilled_lesson"
+            "promotion_ready_result"
+            if (status_panel_ready and consumer_aligned)
+            else "distilled_lesson"
         ),
         supersession_posture="active_until_newer_status_panel_copy_trials_exist",
         replay_rule="prefer_status_surface_then_probe_current_status_panel_view_model_before_reusing_the_story",
@@ -1386,6 +1423,73 @@ def build_self_improvement_trial_wave(
         visibility="status_surface_only",
         carry_forward_rule=(
             "may inform future dashboard status-panel packaging, but does not authorize new authority or a second operator control plane"
+        ),
+    )
+
+    command_shelf_candidate = {
+        "candidate_record": _build_candidate_record(
+            candidate_id="dashboard_command_shelf_activation_clarity_v1",
+            target_surface="dashboard.command_shelf.commands",
+            target_consumer="dashboard_operator_shell",
+            baseline_story=(
+                "The dashboard command shelf already pointed back to CLI/runtime entry surfaces, but dynamic commands still read too much like one flat browser-side menu."
+            ),
+            candidate_story=(
+                "Command shelf now exposes source, activation, and return cues so bounded moves and deep pulls stay visibly subordinate to the tier model."
+            ),
+            success_metric="command_shelf_probe.present and consumer_drift_report.status == aligned",
+            failure_mode_watch="command metadata starts reading like permission authority or flattens Tier 0 and Tier 2 into one workflow menu",
+            rollback_path="restore the prior command-shelf packaging and drop the extra activation metadata",
+            overclaim_to_avoid="clearer command-shelf packaging is not stronger planning, automation, or runtime authority",
+            scope_limit="dashboard command-shelf packaging only; no command execution layer, no permission system, no governance promotion",
+        ),
+        "analyzer_closeout": _build_analyzer_closeout(
+            status="promote" if (command_shelf_ready and consumer_aligned) else "park",
+            result_story=(
+                "Dashboard command shelf now states where each command comes from, why it is visible, and when to fall back to a smaller tier."
+                if (command_shelf_ready and consumer_aligned)
+                else "Dashboard command-shelf activation packaging is not yet stable enough to promote."
+            ),
+            evidence_bundle_summary=(command_shelf_summary or "command_shelf_probe unavailable"),
+            unresolved_items=(
+                [
+                    "clearer command-shelf activation packaging improves operator discipline, not planning quality or automation authority",
+                    "future dashboard changes must keep bounded moves and deep pulls visibly subordinate to the tier model",
+                ]
+                if (command_shelf_ready and consumer_aligned)
+                else [
+                    "command-shelf source, activation, or return cues are not yet preserved cleanly enough",
+                    "consumer drift must stay aligned before promotion",
+                ]
+            ),
+            failure_pressure="low" if (command_shelf_ready and consumer_aligned) else "meaningful",
+            rollback_posture="bounded_restore",
+            promotion_limit="does not authorize browser-side command execution, stronger permissions, or a new operator control plane",
+            overclaim_warning="clearer command-shelf activation cues are not better planning, stronger governance, or safer mutation authority",
+            next_action=(
+                "hold self-improvement v0 at the status surface and require explicit ratification before opening a new active bucket"
+                if (command_shelf_ready and consumer_aligned)
+                else "repair command-shelf activation packaging before reopening this candidate"
+            ),
+        ),
+    }
+    command_shelf_candidate["result_surface"] = _build_result_surface(
+        status=command_shelf_candidate["analyzer_closeout"]["status"],
+        registry_recommendation=(
+            "promotion_ready_result"
+            if (command_shelf_ready and consumer_aligned)
+            else "distilled_lesson"
+        ),
+        supersession_posture="active_until_newer_command_shelf_activation_trials_exist",
+        replay_rule="prefer_status_surface_then_probe_current_command_shelf_shape_before_reusing_the_story",
+        residue_posture=(
+            "keep_visible_as_current_packaging_result"
+            if (command_shelf_ready and consumer_aligned)
+            else "park_in_status_surface_until_command_shelf_activation_clarity_is_stable"
+        ),
+        visibility="status_surface_only",
+        carry_forward_rule=(
+            "may inform future dashboard command-shelf packaging, but does not authorize browser-side execution, stronger permissions, or a new authority lane"
         ),
     )
 
@@ -1408,6 +1512,7 @@ def build_self_improvement_trial_wave(
         hot_memory_pull_boundary_candidate,
         memory_panel_candidate,
         status_panel_candidate,
+        command_shelf_candidate,
     ]
     outcome_counts = _count_outcomes(candidates)
     status = "completed"
@@ -1445,8 +1550,11 @@ def build_self_improvement_trial_wave(
             "hot_memory_pull_boundary_clarity",
             "memory_panel_tier_subordination_clarity",
             "status_panel_operator_copy_clarity",
+            "dashboard_command_shelf_activation_clarity",
         ],
         "outcome_counts": outcome_counts,
         "candidates": candidates,
-        "next_short_board": "Phase 847: Eighteenth Trial Candidate Admission",
+        "next_short_board": (
+            "Explicitly ratify the next active bucket; do not silently auto-open queued governance-depth work."
+        ),
     }

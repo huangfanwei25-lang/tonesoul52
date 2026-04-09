@@ -427,6 +427,9 @@ def build_dashboard_command_shelf(
     tier2_drawer = tier2_drawer or {}
     next_followup = tier0_shell.get("next_followup") or {}
     deeper_pulls = list(tier2_drawer.get("next_pull_commands") or [])
+    tier2_trigger_reasons = [
+        str(item).strip() for item in list(tier2_drawer.get("trigger_reasons") or []) if str(item).strip()
+    ]
 
     commands = [
         {
@@ -434,18 +437,27 @@ def build_dashboard_command_shelf(
             "command": f"python scripts/start_agent_session.py --agent {agent_id} --tier 0 --no-ack",
             "tier": "Tier 0",
             "purpose": "Recover the smallest honest start posture before work begins.",
+            "source_surface": "session_start.tier0",
+            "activation_reason": "Always available as the smallest honest entry command.",
+            "return_rule": "If Tier 0 already exposes a bounded next move, use that before pulling broader context.",
         },
         {
             "label": "Orientation shell",
             "command": f"python scripts/start_agent_session.py --agent {agent_id} --tier 1 --no-ack",
             "tier": "Tier 1",
             "purpose": "Pull short-board and observer orientation when Tier 0 is no longer enough.",
+            "source_surface": "session_start.tier1",
+            "activation_reason": "Use when the short board or observer orientation must be recovered before acting.",
+            "return_rule": "Return to Tier 0 once the next bounded move is visible again.",
         },
         {
             "label": "Ack + packet",
             "command": f"python scripts/run_r_memory_packet.py --agent {agent_id} --ack",
             "tier": "Tier 1+",
             "purpose": "Advance observer state and re-read bounded shared surfaces.",
+            "source_surface": "r_memory_packet.ack",
+            "activation_reason": "Use when bounded shared surfaces need a fresh observer refresh after orientation work.",
+            "return_rule": "If packet refresh does not change the next bounded move, go back to Tier 0 or Tier 1 instead of pulling deeper.",
         },
     ]
 
@@ -456,16 +468,29 @@ def build_dashboard_command_shelf(
                 "command": str(next_followup.get("command", "")).strip(),
                 "tier": "Tier 0",
                 "purpose": "Use the already-visible bounded next move before inventing a broader workflow.",
+                "source_surface": str(next_followup.get("target", "")).strip()
+                or "mutation_preflight.next_followup",
+                "activation_reason": str(next_followup.get("reason", "")).strip()
+                or "Visible because Tier 0 already exposes one bounded follow-up.",
+                "return_rule": "If this move broadens scope or loses fit, reopen Tier 1 before choosing a broader command.",
             }
         )
 
     if deeper_pulls:
+        trigger_story = (
+            "Visible because Tier 2 trigger(s) are active: " + ", ".join(tier2_trigger_reasons)
+            if tier2_trigger_reasons
+            else "Visible only when mutation, closeout, or contested continuity requires deeper review."
+        )
         commands.append(
             {
                 "label": "Deep pull",
                 "command": deeper_pulls[0],
                 "tier": "Tier 2",
                 "purpose": "Only use when mutation, closeout, or contested continuity explicitly requires deeper review.",
+                "source_surface": "tier2_deep_governance_drawer.next_pull_commands",
+                "activation_reason": trigger_story,
+                "return_rule": "When Tier 2 trigger reasons clear, close the drawer and return to the smallest tier that keeps the next move honest.",
             }
         )
 
@@ -473,7 +498,7 @@ def build_dashboard_command_shelf(
         "present": True,
         "summary_text": f"command_shelf={len(commands)} tier-aware commands",
         "operator_rule": (
-            "Use the dashboard as a thin operator shell over CLI/runtime truth. Commands here point back to the real entry surfaces; they do not replace them."
+            "Use the dashboard as a thin operator shell over CLI/runtime truth. Commands here point back to the real entry surfaces; read each item's source, activation, and return cues before treating it as the next move."
         ),
         "commands": commands[:5],
     }

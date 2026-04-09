@@ -254,6 +254,12 @@ def render():
         for item in command_shelf.get("commands") or []:
             st.markdown(f"**{item['label']}** ({item['tier']})")
             st.caption(item["purpose"])
+            if item.get("source_surface"):
+                st.caption(f"來源面: {item['source_surface']}")
+            if item.get("activation_reason"):
+                st.caption(f"顯示原因: {item['activation_reason']}")
+            if item.get("return_rule"):
+                st.caption(f"退回規則: {item['return_rule']}")
             st.code(item["command"], language="bash")
 
     col_main, col_side = st.columns([3, 1.1], gap="large")

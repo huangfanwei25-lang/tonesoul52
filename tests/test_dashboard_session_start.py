@@ -265,17 +265,22 @@ def test_build_operator_walkthrough_pack_stays_tiered():
     assert result["current_signals"]["tier2_recommended_open"] is True
     assert result["scenarios"][0]["default_tier"] == "Tier 0"
     assert result["scenarios"][1]["next_move"] == "Phase 780"
-    assert result["scenarios"][2]["next_move"].startswith("python scripts/run_publish_push_preflight.py")
+    assert result["scenarios"][2]["next_move"].startswith(
+        "python scripts/run_publish_push_preflight.py"
+    )
 
 
 def test_build_dashboard_command_shelf_points_back_to_cli_runtime():
     tier0_shell = {
         "next_followup": {
-            "command": "python scripts/run_shared_edit_preflight.py --agent test --path task.md"
+            "target": "mutation_preflight.next_followup",
+            "command": "python scripts/run_shared_edit_preflight.py --agent test --path task.md",
+            "reason": "Visible because Tier 0 already exposes one bounded follow-up.",
         }
     }
     tier2_drawer = {
-        "next_pull_commands": ["python scripts/run_publish_push_preflight.py --agent test"]
+        "trigger_reasons": ["closeout_attention_present", "claim_conflict_visible"],
+        "next_pull_commands": ["python scripts/run_publish_push_preflight.py --agent test"],
     }
 
     result = build_dashboard_command_shelf(
@@ -286,7 +291,20 @@ def test_build_dashboard_command_shelf_points_back_to_cli_runtime():
 
     assert result["present"] is True
     assert result["commands"][0]["command"].endswith("--tier 0 --no-ack")
+    assert result["commands"][0]["source_surface"] == "session_start.tier0"
     assert result["commands"][1]["command"].endswith("--tier 1 --no-ack")
     assert result["commands"][2]["command"].endswith("--ack")
-    assert result["commands"][3]["command"].startswith("python scripts/run_shared_edit_preflight.py")
+    assert result["commands"][3]["command"].startswith(
+        "python scripts/run_shared_edit_preflight.py"
+    )
+    assert result["commands"][3]["source_surface"] == "mutation_preflight.next_followup"
+    assert result["commands"][3]["activation_reason"] == (
+        "Visible because Tier 0 already exposes one bounded follow-up."
+    )
+    assert result["commands"][3]["return_rule"].startswith("If this move broadens scope")
     assert result["commands"][4]["tier"] == "Tier 2"
+    assert (
+        result["commands"][4]["source_surface"] == "tier2_deep_governance_drawer.next_pull_commands"
+    )
+    assert "closeout_attention_present" in result["commands"][4]["activation_reason"]
+    assert result["commands"][4]["return_rule"].startswith("When Tier 2 trigger reasons clear")

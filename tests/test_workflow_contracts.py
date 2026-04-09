@@ -278,12 +278,12 @@ def test_external_source_workflow_uploads_status_artifacts() -> None:
     assert "docs/status/external_source_registry_latest.md" in path_value
 
 
-def test_pytest_ci_workflow_triggers_and_blocking_runner() -> None:
+def test_pytest_ci_workflow_is_manual_only_and_has_blocking_runner() -> None:
     payload = _load_yaml(PYTEST_CI_WORKFLOW_PATH)
     on_section = _on_section(payload)
-    assert "push" in on_section
-    assert "pull_request" in on_section
     assert "workflow_dispatch" in on_section
+    assert "push" not in on_section
+    assert "pull_request" not in on_section
 
     steps = _job_steps(payload, "pytest")
     install_step = _find_step(steps, "Install dependencies")
@@ -449,8 +449,15 @@ def test_test_workflow_uses_black_gate_script_and_uploads_artifact() -> None:
     assert artifact_with.get("path") == "black_gate_report.json"
 
 
-def test_legacy_ci_workflow_uses_black_gate_script_and_uploads_artifact() -> None:
+def test_legacy_ci_workflow_is_manual_only_and_uses_black_gate_script_and_uploads_artifact() -> (
+    None
+):
     payload = _load_yaml(LEGACY_CI_WORKFLOW_PATH)
+    on_section = _on_section(payload)
+    assert "workflow_dispatch" in on_section
+    assert "push" not in on_section
+    assert "pull_request" not in on_section
+
     steps = _job_steps(payload, "lint")
 
     checkout_step = steps[0]
@@ -468,6 +475,18 @@ def test_legacy_ci_workflow_uses_black_gate_script_and_uploads_artifact() -> Non
     artifact_with = artifact_step.get("with", {})
     assert isinstance(artifact_with, dict)
     assert artifact_with.get("path") == "black_gate_report.json"
+
+
+def test_legacy_ci_workflow_exposes_manual_quality_replay_lane() -> None:
+    payload = _load_yaml(LEGACY_CI_WORKFLOW_PATH)
+    steps = _job_steps(payload, "web_api_quality_replay")
+
+    replay_step = _find_step(steps, "Run integrated web+backend quality replay")
+    replay_cmd = replay_step.get("run", "")
+    assert isinstance(replay_cmd, str)
+    assert "python scripts/verify_web_api.py" in replay_cmd
+    assert "--require-backend" in replay_cmd
+    assert "--elisa-scenario" in replay_cmd
 
 
 def test_friction_shadow_workflow_triggers_and_blocking_runners() -> None:

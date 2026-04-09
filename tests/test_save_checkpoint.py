@@ -198,3 +198,44 @@ def test_ensure_repo_root_on_path_adds_repo_root(monkeypatch) -> None:
 
     assert str(returned) == repo_root
     assert sys.path[0] == repo_root
+
+
+def test_save_checkpoint_force_file_store_env_builds_explicit_store(capsys, monkeypatch) -> None:
+    module = _load_script_module()
+    captured: dict[str, object] = {}
+
+    class _StubFileStore:
+        def __init__(self, *args, **kwargs) -> None:
+            pass
+
+        def set_checkpoint(self, checkpoint_id, payload, *, ttl_seconds: int) -> None:
+            captured["checkpoint_id"] = checkpoint_id
+            captured["payload"] = dict(payload)
+            captured["ttl_seconds"] = ttl_seconds
+
+    def _unexpected_get_store(*args, **kwargs):
+        raise AssertionError("save_checkpoint should not fall back to tonesoul.store.get_store")
+
+    monkeypatch.setenv("TONESOUL_FORCE_FILE_STORE", "1")
+    monkeypatch.setattr("tonesoul.backends.file_store.FileStore", _StubFileStore)
+    monkeypatch.setattr("tonesoul.store.get_store", _unexpected_get_store)
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "save_checkpoint.py",
+            "--checkpoint-id",
+            "cp-force-file",
+            "--agent",
+            "codex",
+            "--summary",
+            "Checkpoint through explicit file-backed store.",
+        ],
+    )
+
+    module.main()
+    output = json.loads(capsys.readouterr().out)
+
+    assert output["checkpoint_id"] == "cp-force-file"
+    assert captured["checkpoint_id"] == "cp-force-file"
+    assert captured["payload"]["summary"] == "Checkpoint through explicit file-backed store."

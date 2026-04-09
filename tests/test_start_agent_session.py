@@ -75,6 +75,15 @@ def _write_traces(traces_path: Path) -> None:
     )
 
 
+class _FakeShield:
+    @classmethod
+    def load(cls, store):
+        return cls()
+
+    def audit(self, store):
+        return {"integrity": "intact"}
+
+
 def test_start_agent_session_emits_machine_readable_bundle(
     capsys, monkeypatch, tmp_path: Path
 ) -> None:
@@ -104,6 +113,7 @@ def test_start_agent_session_emits_machine_readable_bundle(
         ),
         encoding="utf-8",
     )
+    monkeypatch.setattr("tonesoul.aegis_shield.AegisShield", _FakeShield)
 
     monkeypatch.setattr(
         sys,
@@ -129,6 +139,7 @@ def test_start_agent_session_emits_machine_readable_bundle(
     assert output["claim_view"]["count"] == 1
     assert output["claim_view"]["claims"][0]["task_id"] == "task-1"
     assert output["compact_diagnostic"].startswith("[ToneSoul] file | SI=0.72")
+    assert "aegis=intact" in output["compact_diagnostic"]
     assert output["compact_diagnostic"].endswith("| readiness=needs_clarification")
     assert output["readiness"]["status"] == "needs_clarification"
     assert output["readiness"]["ready"] is False
@@ -166,30 +177,26 @@ def test_start_agent_session_emits_machine_readable_bundle(
         ]
         == "collaborator_beta"
     )
-    assert output["import_posture"]["surfaces"]["launch_health_trend"]["import_posture"] == "advisory"
+    assert (
+        output["import_posture"]["surfaces"]["launch_health_trend"]["import_posture"] == "advisory"
+    )
     assert (
         output["import_posture"]["surfaces"]["launch_health_trend"]["receiver_obligation"]
         == "should_consider"
     )
     assert any(
-        item["metric"] == "public_launch_forecast"
-        and item["classification"] == "forecast_later"
+        item["metric"] == "public_launch_forecast" and item["classification"] == "forecast_later"
         for item in output["import_posture"]["surfaces"]["launch_health_trend"][
             "launch_health_trend_posture"
         ]["metric_classes"]
     )
     assert (
-        output["import_posture"]["surfaces"]["internal_state_observability"][
-            "import_posture"
-        ]
+        output["import_posture"]["surfaces"]["internal_state_observability"]["import_posture"]
         == "advisory"
     )
-    assert (
-        output["import_posture"]["surfaces"]["internal_state_observability"][
-            "internal_state_observability"
-        ]["current_state"]["deliberation_conflict"]
-        in {"clear", "visible"}
-    )
+    assert output["import_posture"]["surfaces"]["internal_state_observability"][
+        "internal_state_observability"
+    ]["current_state"]["deliberation_conflict"] in {"clear", "visible"}
     assert output["import_posture"]["surfaces"]["subject_snapshot"]["present"] is False
     assert output["import_posture"]["readiness_alignment"] == "needs_clarification"
     assert output["import_posture"]["summary_text"].startswith("posture=directly_importable")
@@ -207,8 +214,7 @@ def test_start_agent_session_emits_machine_readable_bundle(
         for alert in output["import_posture"]["receiver_alerts"]
     )
     assert any(
-        "No observer baseline yet" in alert
-        for alert in output["import_posture"]["receiver_alerts"]
+        "No observer baseline yet" in alert for alert in output["import_posture"]["receiver_alerts"]
     )
     assert output["task_track_hint"]["present"] is True
     assert output["task_track_hint"]["suggested_track"] == "feature_track"
@@ -219,15 +225,24 @@ def test_start_agent_session_emits_machine_readable_bundle(
     assert output["deliberation_mode_hint"]["claim_state"] == "active_collision"
     assert output["deliberation_mode_hint"]["readiness_state"] == "needs_clarification"
     assert output["deliberation_mode_hint"]["human_required"] is False
-    assert "claim_collision_visible" in output["deliberation_mode_hint"]["active_escalation_signals"]
-    assert "readiness_needs_clarification" in output["deliberation_mode_hint"]["active_escalation_signals"]
+    assert (
+        "claim_collision_visible" in output["deliberation_mode_hint"]["active_escalation_signals"]
+    )
+    assert (
+        "readiness_needs_clarification"
+        in output["deliberation_mode_hint"]["active_escalation_signals"]
+    )
     assert "claim_collision_visible" in output["deliberation_mode_hint"]["escalation_triggers"]
-    assert "readiness_needs_clarification" in output["deliberation_mode_hint"]["escalation_triggers"]
+    assert (
+        "readiness_needs_clarification" in output["deliberation_mode_hint"]["escalation_triggers"]
+    )
     mutation_preflight = output["mutation_preflight"]
     assert mutation_preflight["present"] is True
     assert mutation_preflight["current_context"]["task_track"] == "feature_track"
     assert mutation_preflight["current_context"]["claim_conflict_count"] == 1
-    assert mutation_preflight["next_followup"]["target"] == "shared_code_edit.path_overlap_preflight"
+    assert (
+        mutation_preflight["next_followup"]["target"] == "shared_code_edit.path_overlap_preflight"
+    )
     assert mutation_preflight["next_followup"]["classification"] == "existing_runtime_hook"
     assert "run_shared_edit_preflight.py" in mutation_preflight["next_followup"]["command"]
     by_name = {item["name"]: item for item in mutation_preflight["decision_points"]}
@@ -287,7 +302,11 @@ def test_start_agent_session_emits_machine_readable_bundle(
     assert any(item["status"] == "recommended_now" for item in hook_chain["hooks"])
     task_board_preflight = output["task_board_preflight"]
     assert task_board_preflight["present"] is True
-    assert task_board_preflight["classification"] in {"docs_plans_first", "human_review", "parking_clear"}
+    assert task_board_preflight["classification"] in {
+        "docs_plans_first",
+        "human_review",
+        "parking_clear",
+    }
     assert "suggested_destination" in task_board_preflight or "summary_text" in task_board_preflight
     subsystem_parity = output["subsystem_parity"]
     assert subsystem_parity["present"] is True
@@ -295,7 +314,9 @@ def test_start_agent_session_emits_machine_readable_bundle(
     assert subsystem_parity["counts"]["beta_usable"] == 5
     assert subsystem_parity["counts"]["partial"] == 2
     assert subsystem_parity["counts"]["deferred"] == 1
-    assert subsystem_parity["next_focus"]["resolved_to"] == "shared_code_edit.path_overlap_preflight"
+    assert (
+        subsystem_parity["next_focus"]["resolved_to"] == "shared_code_edit.path_overlap_preflight"
+    )
     assert subsystem_parity["next_focus"]["source_family"] == "mutation_preflight_hooks"
     assert subsystem_parity["next_focus"]["focus_pressures"] == [
         "readiness=needs_clarification",
@@ -493,7 +514,9 @@ def test_start_agent_session_tier1_returns_orientation_shell(
     assert output["consumer_contract"]["required_read_order"][0]["surface"] == "readiness"
     assert output["consumer_contract"]["required_read_order"][2]["surface"] == "closeout_attention"
     assert output["observer_shell"]["hot_memory_ladder"]["layers"][0]["layer"] == "canonical_center"
-    assert output["observer_shell"]["hot_memory_ladder"]["current_pull_boundary"]["pull_posture"] in {
+    assert output["observer_shell"]["hot_memory_ladder"]["current_pull_boundary"][
+        "pull_posture"
+    ] in {
         "tier1_enough",
         "recover_parent_truth_first",
         "resolve_live_coordination_first",
@@ -831,8 +854,13 @@ def test_start_agent_session_distinguishes_active_and_conditional_escalation_for
                     "session_id": "sess-feature-light",
                     "summary": "Implement one bounded feature without coordination pressure.",
                     "carry_forward": ["keep the feature lane scoped to a single runtime path"],
-                    "pending_paths": ["tonesoul/runtime_adapter.py", "tests/test_runtime_adapter.py"],
-                    "evidence_refs": ["docs/architecture/TONESOUL_SHARED_R_MEMORY_OPERATIONS_CONTRACT.md"],
+                    "pending_paths": [
+                        "tonesoul/runtime_adapter.py",
+                        "tests/test_runtime_adapter.py",
+                    ],
+                    "evidence_refs": [
+                        "docs/architecture/TONESOUL_SHARED_R_MEMORY_OPERATIONS_CONTRACT.md"
+                    ],
                     "next_action": "tighten one runtime readout and its regression test",
                     "source": "cli",
                     "updated_at": "2026-03-29T00:11:00+00:00",
@@ -1118,7 +1146,7 @@ def test_start_agent_session_surfaces_blocked_compaction_closeout(
                         "stop_reason": "external_blocked",
                         "unresolved_items": ["human must choose which authority surface wins"],
                         "human_input_required": True,
-                        "note": "Blocked on human confirmation before the next mutation."
+                        "note": "Blocked on human confirmation before the next mutation.",
                     },
                 }
             ]
@@ -1431,12 +1459,10 @@ def test_start_agent_session_cli_executes_directly(tmp_path: Path) -> None:
     )
     assert "mutation_preflight" in payload
     assert (
-        payload["mutation_preflight"]["next_followup"]["target"]
-        == "publish_push.posture_preflight"
+        payload["mutation_preflight"]["next_followup"]["target"] == "publish_push.posture_preflight"
     )
     assert (
-        payload["mutation_preflight"]["next_followup"]["classification"]
-        == "existing_runtime_hook"
+        payload["mutation_preflight"]["next_followup"]["classification"] == "existing_runtime_hook"
     )
     assert payload["publish_push_preflight"]["present"] is True
     assert payload["hook_chain"]["present"] is True

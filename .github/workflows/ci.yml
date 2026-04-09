@@ -1,18 +1,7 @@
-name: CI
+name: CI (Legacy Manual Replay)
 
 on:
-  push:
-    branches: [ main, master, dev ]
-    paths:
-      - "tonesoul/**"
-      - "tests/**"
-      - "apps/**"
-      - "scripts/**"
-      - "AXIOMS.json"
-      - "law/**"
-      - "pyproject.toml"
-      - "requirements*.txt"
-      - ".github/workflows/ci.yml"
+  # Legacy replay lane kept for manual comparison. Automatic gating lives in test.yml.
   workflow_dispatch:
 
 concurrency:
@@ -102,7 +91,8 @@ jobs:
         run: |
           python scripts/verify_submodule_integrity.py --strict || true
 
-  web_api_smoke:
+  web_api_quality_replay:
+    name: Legacy web/API quality replay
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -134,7 +124,7 @@ jobs:
       - name: Build web app
         run: npm --prefix apps/web run build
 
-      - name: Run integrated web+backend smoke
+      - name: Run integrated web+backend quality replay
         env:
           TONESOUL_BACKEND_URL: http://127.0.0.1:5000
         run: |

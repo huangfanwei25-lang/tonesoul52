@@ -58,8 +58,9 @@ python tools/agent_discussion_tool.py append-lessons --author codex --topic phas
 
 ### 現況
 - 已有：
-  - ToneSoul CI 主流程中的 full regression
-  - `web_api_smoke`（整鏈 smoke）
+  - `ToneSoul CI` 主流程中的 full regression
+  - `Pytest CI (Manual Focused Rerun)`：手動 Python-only rerun lane
+  - `CI (Legacy Manual Replay)`：手動 legacy replay lane，保留 `web_api_quality_replay` 這種整鏈 quality replay 供比對
 - 缺口：
   - 尚無單一入口彙整 7D 成績與狀態
   - RDD 僅有 baseline，仍需擴充攻擊樣本
