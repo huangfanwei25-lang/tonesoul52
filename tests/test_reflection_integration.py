@@ -68,6 +68,8 @@ def _pipeline(*, router: _FakeRouter, alert_level: AlertLevel | None = None) -> 
     pipeline._get_governance_kernel = MagicMock(return_value=None)
     pipeline._get_drift_monitor = MagicMock(return_value=None)
     pipeline._get_alert_escalation = MagicMock(return_value=_FakeAlertEscalation(alert_level))
+    # Reflection tier behavior should stay deterministic and not depend on live reflex posture.
+    pipeline._compute_reflex_decision = MagicMock(return_value=None)
     return pipeline
 
 

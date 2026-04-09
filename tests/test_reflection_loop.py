@@ -69,6 +69,8 @@ def _pipeline(*, router: _FakeRouter, council: object | None = None) -> UnifiedP
     pipeline._get_council = MagicMock(return_value=council)
     pipeline._get_governance_kernel = MagicMock(return_value=None)
     pipeline._get_drift_monitor = MagicMock(return_value=None)
+    # Reflection-loop coverage should not depend on live reflex posture or persisted soul state.
+    pipeline._compute_reflex_decision = MagicMock(return_value=None)
     return pipeline
 
 

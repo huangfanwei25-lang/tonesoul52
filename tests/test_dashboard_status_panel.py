@@ -101,10 +101,15 @@ def test_build_status_panel_view_model_reinforces_tier_model() -> None:
     assert result["tier2"]["recommended_open"] is True
     assert result["tier2"]["active_groups"] == ["Mutation And Closeout", "Contested Continuity"]
     assert result["self_improvement"]["present"] is True
-    assert result["self_improvement"]["top_result"] == "consumer_parity_packaging_v1 / promoted_result"
+    assert (
+        result["self_improvement"]["top_result"] == "consumer_parity_packaging_v1 / promoted_result"
+    )
     assert "Tier 0 / Tier 1" in result["operator_posture"]["note"]
     assert "parent action path" in result["operator_posture"]["primary_rule"]
-    assert result["operator_posture"]["secondary_rule"] == "Self-improvement posture and telemetry stay secondary."
+    assert (
+        result["operator_posture"]["secondary_rule"]
+        == "Self-improvement posture and telemetry stay secondary."
+    )
     assert result["telemetry"]["conversation_status"] == "成功"
     assert result["telemetry"]["intent_status"] == "達成"
     assert result["telemetry"]["control_status"] == "成功"
@@ -124,5 +129,8 @@ def test_build_status_panel_view_model_handles_missing_tier_shells() -> None:
     assert result["tier1"]["short_board"] == "current short board not visible"
     assert result["tier2"]["recommended_open"] is False
     assert result["self_improvement"]["present"] is False
-    assert result["operator_posture"]["secondary_rule"] == "Self-improvement posture and telemetry stay secondary."
+    assert (
+        result["operator_posture"]["secondary_rule"]
+        == "Self-improvement posture and telemetry stay secondary."
+    )
     assert result["telemetry"]["conversation_count"] == 0
