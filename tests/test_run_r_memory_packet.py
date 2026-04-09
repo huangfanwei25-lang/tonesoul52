@@ -242,11 +242,16 @@ def test_run_r_memory_packet_emits_json(capsys, monkeypatch, tmp_path: Path) -> 
         "python scripts/end_agent_session.py --agent"
     )
     assert output["operator_guidance"]["session_end"][2].startswith(
+        "python scripts/save_checkpoint.py"
+    )
+    assert output["operator_guidance"]["session_end"][3].startswith(
         "python scripts/save_compaction.py"
     )
     assert "checkpoint or compaction" in output["operator_guidance"]["completion_rule"]
     assert output["operator_guidance"]["preflight_chain"]["hooks"][0]["status"] == "available"
-    assert output["operator_guidance"]["preflight_chain"]["current_recommendation"]["present"] is False
+    assert (
+        output["operator_guidance"]["preflight_chain"]["current_recommendation"]["present"] is False
+    )
     assert output["recent_traces"][0]["agent"] == "codex"
     assert output["recent_traces"][0]["freshness_hours"] >= 0.0
     assert output["active_claims"][0]["task_id"] == "task-1"
@@ -303,8 +308,7 @@ def test_run_r_memory_packet_emits_json(capsys, monkeypatch, tmp_path: Path) -> 
         == "file-backed"
     )
     assert any(
-        item["metric"] == "coordination_backend_alignment"
-        and item["classification"] == "trendable"
+        item["metric"] == "coordination_backend_alignment" and item["classification"] == "trendable"
         for item in output["project_memory_summary"]["launch_health_trend_posture"][
             "metric_classes"
         ]

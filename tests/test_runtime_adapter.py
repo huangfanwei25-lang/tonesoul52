@@ -435,11 +435,18 @@ def test_r_memory_packet_exposes_runtime_dominance_and_recent_trace(
         "python scripts/run_task_board_preflight.py --agent"
     )
     assert packet["operator_guidance"]["preflight_chain"]["hooks"][0]["status"] == "available"
-    assert packet["operator_guidance"]["preflight_chain"]["current_recommendation"]["present"] is False
+    assert (
+        packet["operator_guidance"]["preflight_chain"]["current_recommendation"]["present"] is False
+    )
     assert packet["operator_guidance"]["session_end"][0].startswith(
         "python scripts/end_agent_session.py --agent"
     )
+    assert "--closeout-status complete" in packet["operator_guidance"]["session_end"][0]
     assert packet["operator_guidance"]["session_end"][1].startswith(
+        "python scripts/end_agent_session.py --agent"
+    )
+    assert "--closeout-status partial" in packet["operator_guidance"]["session_end"][1]
+    assert packet["operator_guidance"]["session_end"][2].startswith(
         "python scripts/save_checkpoint.py"
     )
     assert "claim" in packet["operator_guidance"]["coordination_commands"]
@@ -447,6 +454,10 @@ def test_r_memory_packet_exposes_runtime_dominance_and_recent_trace(
     assert "subject_snapshot" in packet["operator_guidance"]["coordination_commands"]
     assert "apply_subject_refresh" in packet["operator_guidance"]["coordination_commands"]
     assert "checkpoint or compaction" in packet["operator_guidance"]["completion_rule"]
+    assert (
+        "omit pending paths and next_action when the session truly ends cleanly"
+        in packet["operator_guidance"]["completion_rule"]
+    )
     assert packet["consumer_contract"]["present"] is True
     assert packet["consumer_contract"]["required_read_order"][0]["surface"] == "readiness"
     assert (
@@ -654,7 +665,11 @@ def test_compactions_use_noncanonical_resumability_lane(tmp_path: Path) -> None:
         "Latest compaction closeout is partial; do not read the handoff as completed work."
         in packet["operator_guidance"]["current_reminders"]
     )
-    assert packet["operator_guidance"]["session_end"][3].startswith(
+    assert (
+        "Use --path and --next-action only for unresolved carry-forward; omit them when the session truly closes cleanly."
+        in packet["operator_guidance"]["current_reminders"]
+    )
+    assert packet["operator_guidance"]["session_end"][4].startswith(
         "python scripts/run_task_claim.py release"
     )
 
@@ -666,6 +681,7 @@ def test_subject_snapshots_surface_durable_subject_anchor(tmp_path: Path) -> Non
         gov_path=tmp_path / "governance_state.json",
         traces_path=tmp_path / "session_traces.jsonl",
         zones_path=tmp_path / "zone_registry.json",
+        claims_path=tmp_path / ".aegis" / "task_claims.json",
         checkpoints_path=tmp_path / ".aegis" / "checkpoints.json",
         compactions_path=tmp_path / ".aegis" / "compacted.json",
         subject_snapshots_path=tmp_path / "subject_snapshots.json",
@@ -795,17 +811,20 @@ def test_subject_snapshots_surface_durable_subject_anchor(tmp_path: Path) -> Non
     assert launch_health_trend_posture["current_state"]["current_tier"] == "collaborator_beta"
     assert launch_health_trend_posture["current_state"]["launch_default_mode"] == "file-backed"
     assert any(
-        item["metric"] == "coordination_backend_alignment"
-        and item["classification"] == "trendable"
+        item["metric"] == "coordination_backend_alignment" and item["classification"] == "trendable"
         for item in launch_health_trend_posture["metric_classes"]
     )
     assert any(
-        item["metric"] == "public_launch_forecast"
-        and item["classification"] == "forecast_later"
+        item["metric"] == "public_launch_forecast" and item["classification"] == "forecast_later"
         for item in launch_health_trend_posture["metric_classes"]
     )
-    assert launch_health_trend_posture["trend_watch_cues"][0]["metric"] == "coordination_backend_alignment"
-    assert launch_health_trend_posture["forecast_blockers"][0]["metric"] == "continuity_effectiveness"
+    assert (
+        launch_health_trend_posture["trend_watch_cues"][0]["metric"]
+        == "coordination_backend_alignment"
+    )
+    assert (
+        launch_health_trend_posture["forecast_blockers"][0]["metric"] == "continuity_effectiveness"
+    )
     assert launch_health_trend_posture["operator_actions"][2] == (
         "Do not emit predictive launch numbers or success probabilities."
     )
@@ -815,7 +834,9 @@ def test_subject_snapshots_surface_durable_subject_anchor(tmp_path: Path) -> Non
     assert internal_state_observability["current_state"]["deliberation_conflict"] == "clear"
     assert internal_state_observability["current_state"]["stop_reason_pressure"] == "medium"
     assert internal_state_observability["pressure_watch_cues"][0]["signal"] == "coordination_strain"
-    assert internal_state_observability["pressure_watch_cues"][2]["signal"] == "stop_reason_pressure"
+    assert (
+        internal_state_observability["pressure_watch_cues"][2]["signal"] == "stop_reason_pressure"
+    )
     assert internal_state_observability["operator_actions"][1] == (
         "Keep continuity cues subordinate to current runtime truth."
     )
@@ -1141,6 +1162,7 @@ def test_r_memory_packet_surfaces_fresh_compaction_even_when_traces_are_older(
         gov_path=tmp_path / "governance_state.json",
         traces_path=tmp_path / "session_traces.jsonl",
         zones_path=tmp_path / "zone_registry.json",
+        claims_path=tmp_path / "task_claims.json",
         compactions_path=tmp_path / "compacted.json",
         subject_snapshots_path=tmp_path / "subject_snapshots.json",
     )
