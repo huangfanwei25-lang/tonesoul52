@@ -6,7 +6,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -86,7 +86,9 @@ def run_successor_validation(workspace: Path) -> list[dict[str, Any]]:
 
         correction_rule = str(correction.get("correction_rule", "")).strip()
         checks = [
-            _check("canonical_center_present", bool(canonical_center.get("present")), friction="high"),
+            _check(
+                "canonical_center_present", bool(canonical_center.get("present")), friction="high"
+            ),
             _check(
                 "short_board_visible",
                 bool((canonical_center.get("current_short_board") or {}).get("present")),
@@ -141,17 +143,13 @@ def run_successor_validation(workspace: Path) -> list[dict[str, Any]]:
                 "scenario": scenario["name"],
                 "passed": len(checks) - len(failed),
                 "failed": len(failed),
-                "high_friction_fails": sum(
-                    1 for item in failed if item.get("friction") == "high"
-                ),
+                "high_friction_fails": sum(1 for item in failed if item.get("friction") == "high"),
                 "findings": checks,
                 "readiness": str((session_payload.get("readiness") or {}).get("status", "unknown")),
                 "anchor_counts": anchor.get("counts") or {},
                 "anchor_summary": str(anchor.get("summary_text", "")),
                 "ladder_summary": str(ladder.get("summary_text", "")),
-                "misread_focus": str(
-                    correction.get("highest_risk_misread", "none")
-                ),
+                "misread_focus": str(correction.get("highest_risk_misread", "none")),
                 "correction_summary": str(correction.get("summary_text", "")),
             }
         )
@@ -179,7 +177,10 @@ def build_report(results: list[dict[str, Any]]) -> dict[str, Any]:
     overall_ok = total_failed == 0
 
     return {
-        "generated_at": datetime.now(UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z"),
+        "generated_at": datetime.now(timezone.utc)
+        .replace(microsecond=0)
+        .isoformat()
+        .replace("+00:00", "Z"),
         "overall_ok": overall_ok,
         "overall_status": "pass" if overall_ok else "needs_fix",
         "scenario_count": len(results),
