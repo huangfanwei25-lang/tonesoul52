@@ -392,6 +392,11 @@ def test_run_preflight_points_to_repeated_validation_after_strong_external_pass(
 
     assert result["external_cycle_status"]["classification"] == "strong external pass"
     assert result["next_bounded_move"]["step"].startswith(
-        "repeat the bounded external/non-creator cycle"
+        "run the dual-surface repeated external cycle"
     )
-    assert "repeat 1-2 varied bounded cycles" in result["next_bounded_move"]["note"]
+    assert result["next_bounded_move"]["path"] == (
+        "docs/plans/tonesoul_non_creator_external_cycle_dual_surface_pack_2026-04-10.md"
+    )
+    assert "one bounded canonical surface plus one fresh status note" in result[
+        "next_bounded_move"
+    ]["note"]

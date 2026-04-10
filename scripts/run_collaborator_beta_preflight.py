@@ -20,8 +20,14 @@ from tonesoul.safe_parse import safe_parse_json  # noqa: E402
 
 START_AGENT_SESSION = REPO_ROOT / "scripts" / "start_agent_session.py"
 RUN_PACKET = REPO_ROOT / "scripts" / "run_r_memory_packet.py"
-EXTERNAL_CYCLE_PACK = (
+INITIAL_EXTERNAL_CYCLE_PACK = (
     REPO_ROOT / "docs" / "plans" / "tonesoul_non_creator_external_cycle_pack_2026-04-10.md"
+)
+REPEATED_EXTERNAL_CYCLE_PACK = (
+    REPO_ROOT
+    / "docs"
+    / "plans"
+    / "tonesoul_non_creator_external_cycle_dual_surface_pack_2026-04-10.md"
 )
 
 
@@ -236,16 +242,16 @@ def run_preflight(
     latest_external_classification = external_cycle_status.get("classification", "")
     if latest_external_classification == "strong external pass":
         next_bounded_move = {
-            "step": "repeat the bounded external/non-creator cycle under a different operator or task shape",
-            "path": EXTERNAL_CYCLE_PACK.relative_to(REPO_ROOT).as_posix(),
+            "step": "run the dual-surface repeated external cycle under a different operator or task shape",
+            "path": REPEATED_EXTERNAL_CYCLE_PACK.relative_to(REPO_ROOT).as_posix(),
             "note": (
-                "One clean external/non-creator cycle now exists; repeat 1-2 varied bounded cycles before widening any launch claims."
+                "One clean external/non-creator cycle now exists; next repeated validation should exercise one bounded canonical surface plus one fresh status note before widening any launch claims."
             ),
         }
     elif latest_external_classification == "useful partial":
         next_bounded_move = {
             "step": "repair the remaining external-cycle seam and rerun the bounded pack",
-            "path": EXTERNAL_CYCLE_PACK.relative_to(REPO_ROOT).as_posix(),
+            "path": INITIAL_EXTERNAL_CYCLE_PACK.relative_to(REPO_ROOT).as_posix(),
             "note": (
                 "A real external/non-creator attempt exists, but it still counts only as useful partial and should not be treated as clean proof."
             ),
@@ -253,7 +259,7 @@ def run_preflight(
     else:
         next_bounded_move = {
             "step": "run one real non-creator or external-use clean cycle for Phase 722",
-            "path": EXTERNAL_CYCLE_PACK.relative_to(REPO_ROOT).as_posix(),
+            "path": INITIAL_EXTERNAL_CYCLE_PACK.relative_to(REPO_ROOT).as_posix(),
             "note": (
                 "Pack exists, but no clean non-creator / external-use governance-aware cycle is yet recorded in canonical status surfaces."
             ),

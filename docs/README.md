@@ -243,6 +243,10 @@ Treat this as a prompt-design companion. It helps later agents build better extr
   - current Phase 722 execution pack for one real non-creator / external-use bounded cycle using the official claim, preflight, note, and session-end path
 - `plans/tonesoul_non_creator_external_cycle_note_template_2026-04-10.md`
   - evidence-note template that keeps host intervention, validation, and final classification auditable instead of ad hoc
+- `plans/tonesoul_non_creator_external_cycle_dual_surface_pack_2026-04-10.md`
+  - next repeated-validation pack for Phase 722, intentionally changing the task shape to one bounded `task.md` touch plus one fresh status note under official multi-path claim/preflight/closeout
+- `plans/tonesoul_non_creator_external_cycle_dual_surface_note_template_2026-04-10.md`
+  - note template for the dual-surface repeat pack so the second external cycle stays auditable and bounded
 
 ## Current Continuation Surfaces
 

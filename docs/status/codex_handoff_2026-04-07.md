@@ -14,6 +14,7 @@
 - Honest current short board:
   - `Phase 722: run repeated live continuity validation waves`
   - Real remaining gap: repeat the external/non-creator cycle under 1-2 different lower-context task shapes before widening any launch claims
+  - Immediate next pack: `docs/plans/tonesoul_non_creator_external_cycle_dual_surface_pack_2026-04-10.md`
 
 ## 2. What Landed Most Recently
 
@@ -65,7 +66,7 @@ Most relevant status surfaces:
 
 The most important unresolved evidence gap is still:
 
-- only one clean `non-creator / external-use` governance-aware cycle is currently recorded in canonical status surfaces; repeated varied proof is still thin
+- only one clean `non-creator / external-use` governance-aware cycle is currently recorded in canonical status surfaces; repeated varied proof across different task shapes is still thin
 
 ## 4. What The Next Agent Should Not Forget
 
@@ -80,7 +81,7 @@ The most important unresolved evidence gap is still:
 - repeated continuity validation exists
 - collaborator-beta preflight exists
 - lower-context entry validation exists
-- but those do **not** by themselves equal a real external clean-cycle proof
+- but those do **not** by themselves equal repeated varied external clean-cycle proof
 
 ### Runtime boundaries
 
@@ -91,7 +92,7 @@ The most important unresolved evidence gap is still:
 ### Scope boundaries
 
 - self-improvement remains active, but it is not the current center of gravity
-- do not reopen ontology/domain-core extraction while Phase 722 still lacks the external clean-cycle proof
+- do not reopen ontology/domain-core extraction while Phase 722 still lacks repeated varied external clean-cycle proof
 - do not widen launch language just because CI and operator packaging are healthier
 
 ## 5. Recommended First 10 Minutes For The Successor
@@ -104,7 +105,7 @@ Read:
 4. `task.md`
 5. `docs/status/phase726_go_nogo_2026-04-08.md`
 6. this handoff note
-7. `docs/plans/tonesoul_non_creator_external_cycle_pack_2026-04-10.md`
+7. `docs/plans/tonesoul_non_creator_external_cycle_dual_surface_pack_2026-04-10.md`
 
 Then run:
 
@@ -115,7 +116,7 @@ python -m tonesoul.diagnose --agent <your-id>
 python scripts/run_collaborator_beta_preflight.py --agent <your-id>
 ```
 
-If the task is Phase 722-facing, continue with the external cycle pack instead of inventing a new validation flow.
+If the task is Phase 722-facing, continue with the current repeated-validation pack instead of inventing a new validation flow.
 
 ## 6. What Still Must Stay Parked
 
@@ -125,7 +126,7 @@ If the task is Phase 722-facing, continue with the external cycle pack instead o
 - `docs/plans/tonesoul_ontology_and_central_control_rethink_2026-04-08.md`
 - `docs/plans/tonesoul_ontology_and_central_control_dormant_program_2026-04-08.md`
 
-These may be useful later, but they are not the active shortest board while external clean-cycle proof is still missing.
+These may be useful later, but they are not the active shortest board while repeated varied external proof is still thin.
 
 ## 7. Best Next Move
 
@@ -138,7 +139,7 @@ Do not reopen:
 
 The best next move is:
 
-- rerun the same bounded external-cycle pack under one different lower-context or non-creator task shape
+- run the dual-surface repeated-validation pack under one different lower-context or non-creator task shape
 - keep the task small enough that the official session-end path can still end as `complete`
 - keep the claim conservative: one clean pass exists, but launch claims still need repeated validation rather than one heroic proof
 
@@ -150,4 +151,4 @@ The remaining question is no longer "can the shell start safely?"
 
 It is:
 
-`can a lower-context or non-creator operator complete one honest cycle without hidden rescue or unofficial closeout fallback?`
+`can a lower-context or non-creator operator complete another honest cycle under a different bounded task shape without hidden rescue or unofficial closeout fallback?`

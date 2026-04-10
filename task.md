@@ -16,7 +16,7 @@
   - Keep public claims bounded by evidence level: tested, runtime-present, descriptive-only, and document-backed must remain distinct.
   - One durable design center over several overlapping "overview" files.
 - Phase 721: ~~consolidate launch baseline~~ → **done** (`docs/plans/tonesoul_launch_baseline_2026-04-08.md`)
-- Phase 722: run repeated live continuity validation waves (bounded wave + 1 strong external pass exist; repeat under varied lower-context task shapes before widening claims)
+- Phase 722: run repeated live continuity validation waves (bounded wave + 1 strong external pass exist; next repeated validation should use a dual-surface lower-context task shape before any claim widening)
 - Phase 723: ~~backend decision~~ → **done** (file-backed, see `tonesoul_coordination_backend_decision_2026-03-30.md`)
 - Phase 724: consolidate one current launch-operations surface (readiness, health, rollback, freeze)
 - Phase 725: ~~public-claim honesty gate~~ → **done** (`claim_boundary` in session-start tier 0+2)
@@ -79,7 +79,7 @@
 
 **Current short board:**
 - Launch readiness: Phase 726 go/no-go review is the next meaningful milestone
-- Real-world usage validation: one strong external/non-creator bounded cycle now exists; repeat 1-2 varied lower-context cycles before widening launch claims
+- Real-world usage validation: one strong external/non-creator bounded cycle now exists; next repeat should exercise a dual-surface lower-context task shape before any claim widening
 
 **Archived programs (已歸檔):**
 - R-Memory Maturation Roadmap (Phase 654-698) — baseline-frozen
