@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 import uuid
 from pathlib import Path
@@ -28,11 +29,19 @@ def _resolve_sidecar(root: Path, name: str) -> Path:
     return canonical
 
 
+def _force_file_store_requested() -> bool:
+    value = str(os.environ.get("TONESOUL_FORCE_FILE_STORE", "")).strip().lower()
+    return value in {"1", "true", "yes", "on"}
+
+
 def _build_store(args):
-    if args.state_path is None and args.traces_path is None:
+    if args.state_path is None and args.traces_path is None and not _force_file_store_requested():
         return None
 
     from tonesoul.backends.file_store import FileStore
+
+    if args.state_path is None and args.traces_path is None:
+        return FileStore()
 
     if args.traces_path is not None:
         root = args.traces_path.parent
@@ -226,13 +235,13 @@ def main() -> None:
         status=str(payload.get("closeout_status", args.closeout_status or "")).strip(),
         stop_reason=str(payload.get("stop_reason", args.stop_reason or "")).strip(),
         unresolved_items=unresolved_items,
-        human_input_required=bool(
-            payload.get("human_input_required", args.human_input_required)
-        ),
+        human_input_required=bool(payload.get("human_input_required", args.human_input_required)),
         note=str(payload.get("closeout_note", args.closeout_note or "")).strip(),
         pending_paths=pending_paths,
         next_action=next_action,
-        closeout=dict(payload.get("closeout")) if isinstance(payload.get("closeout"), dict) else None,
+        closeout=(
+            dict(payload.get("closeout")) if isinstance(payload.get("closeout"), dict) else None
+        ),
     )
 
     store = _build_store(args)

@@ -47,6 +47,18 @@ FIELD_KEY = "ts:field"  # Experimental semantic-field synthesis surface
 
 _store_singleton = None
 _store_lock = threading.Lock()
+_DISABLED_REDIS_URL_VALUES = frozenset({"", "0", "off", "disabled", "none", "false", "file"})
+
+
+def _env_truthy(name: str) -> bool:
+    value = str(os.environ.get(name, "")).strip().lower()
+    return value in {"1", "true", "yes", "on"}
+
+
+def _redis_disabled(url: str | None) -> bool:
+    if url is None:
+        return False
+    return str(url).strip().lower() in _DISABLED_REDIS_URL_VALUES
 
 
 def get_store(redis_url: str | None = None, *, force_file: bool = False):
@@ -65,11 +77,14 @@ def get_store(redis_url: str | None = None, *, force_file: bool = False):
         if _store_singleton is not None:
             return _store_singleton
 
-        if force_file:
+        if force_file or _env_truthy("TONESOUL_FORCE_FILE_STORE"):
             _store_singleton = _make_file_store()
             return _store_singleton
 
         url = redis_url or os.environ.get("TONESOUL_REDIS_URL", "redis://localhost:6379/0")
+        if _redis_disabled(url):
+            _store_singleton = _make_file_store()
+            return _store_singleton
         _store_singleton = _try_redis(url) or _make_file_store()
         return _store_singleton
 

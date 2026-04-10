@@ -193,6 +193,46 @@ def test_save_compaction_reads_payload_from_stdin(
     assert saved[0]["closeout"]["status"] == "partial"
 
 
+def test_save_compaction_uses_cli_payload_when_stdin_is_tty(
+    capsys,
+    monkeypatch,
+    tmp_path: Path,
+) -> None:
+    module = _load_script_module()
+    state_path = tmp_path / "governance_state.json"
+    traces_path = tmp_path / "session_traces.jsonl"
+
+    class _FakeStdin:
+        def isatty(self) -> bool:
+            return True
+
+    monkeypatch.setattr(sys, "stdin", _FakeStdin())
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "save_compaction.py",
+            "--state-path",
+            str(state_path),
+            "--traces-path",
+            str(traces_path),
+            "--agent",
+            "codex",
+            "--summary",
+            "CLI payload should work when stdin is a tty.",
+            "--closeout-status",
+            "complete",
+        ],
+    )
+
+    module.main()
+    output = json.loads(capsys.readouterr().out)
+
+    assert output["agent"] == "codex"
+    assert output["summary"] == "CLI payload should work when stdin is a tty."
+    assert output["closeout"]["status"] == "complete"
+
+
 def test_save_compaction_respects_limit_and_newest_first_order(
     capsys,
     monkeypatch,
@@ -263,7 +303,9 @@ def test_save_compaction_prefers_legacy_sidecar_when_present(
     assert not (tmp_path / ".aegis" / "compacted.json").exists()
 
 
-def test_save_compaction_accepts_explicit_blocked_closeout(capsys, monkeypatch, tmp_path: Path) -> None:
+def test_save_compaction_accepts_explicit_blocked_closeout(
+    capsys, monkeypatch, tmp_path: Path
+) -> None:
     module = _load_script_module()
     state_path = tmp_path / "governance_state.json"
     traces_path = tmp_path / "session_traces.jsonl"
@@ -318,3 +360,48 @@ def test_ensure_repo_root_on_path_adds_repo_root(monkeypatch) -> None:
 
     assert str(returned) == repo_root
     assert sys.path[0] == repo_root
+
+
+def test_save_compaction_force_file_store_env_builds_explicit_store(capsys, monkeypatch) -> None:
+    module = _load_script_module()
+    captured: list[dict] = []
+
+    class _StubFileStore:
+        def __init__(self, *args, **kwargs) -> None:
+            pass
+
+        def append_compaction(self, payload, *, limit: int, ttl_seconds: int) -> None:
+            captured.append(
+                {
+                    "payload": dict(payload),
+                    "limit": limit,
+                    "ttl_seconds": ttl_seconds,
+                }
+            )
+
+    def _unexpected_get_store(*args, **kwargs):
+        raise AssertionError("save_compaction should not fall back to tonesoul.store.get_store")
+
+    monkeypatch.setenv("TONESOUL_FORCE_FILE_STORE", "1")
+    monkeypatch.setattr("tonesoul.backends.file_store.FileStore", _StubFileStore)
+    monkeypatch.setattr("tonesoul.store.get_store", _unexpected_get_store)
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "save_compaction.py",
+            "--agent",
+            "codex",
+            "--summary",
+            "Compaction through explicit file-backed store.",
+            "--closeout-status",
+            "complete",
+        ],
+    )
+
+    module.main()
+    output = json.loads(capsys.readouterr().out)
+
+    assert output["summary"] == "Compaction through explicit file-backed store."
+    assert output["closeout"]["status"] == "complete"
+    assert captured[0]["payload"]["summary"] == "Compaction through explicit file-backed store."

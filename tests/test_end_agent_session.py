@@ -495,3 +495,86 @@ def test_end_agent_session_accepts_blocked_closeout_grammar(
     ]
     assert output["compaction"]["closeout"]["status"] == "blocked"
     assert "--closeout-status blocked" in output["underlying_commands"][0]
+
+
+def test_end_agent_session_keeps_complete_closeout_when_no_pending_paths_or_next_action(
+    capsys, monkeypatch, tmp_path: Path
+) -> None:
+    module = _load_script_module()
+    state_path = tmp_path / "governance_state.json"
+    traces_path = tmp_path / "session_traces.jsonl"
+
+    _write_state(state_path)
+    _write_traces(traces_path)
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "end_agent_session.py",
+            "--state-path",
+            str(state_path),
+            "--traces-path",
+            str(traces_path),
+            "--agent",
+            "codex",
+            "--summary",
+            "Bounded task completed cleanly with no carry-forward.",
+            "--closeout-status",
+            "complete",
+        ],
+    )
+
+    module.main()
+    output = json.loads(capsys.readouterr().out)
+
+    assert output["closeout"]["status"] == "complete"
+    assert output["compaction"]["closeout"]["status"] == "complete"
+    assert "--closeout-status complete" in output["underlying_commands"][0]
+
+
+def test_end_agent_session_force_file_store_env_builds_explicit_store(capsys, monkeypatch) -> None:
+    module = _load_script_module()
+    captured: list[dict] = []
+
+    class _StubFileStore:
+        def __init__(self, *args, **kwargs) -> None:
+            self.backend_name = "file"
+
+        def append_compaction(self, payload, *, limit: int, ttl_seconds: int) -> None:
+            captured.append(
+                {
+                    "payload": dict(payload),
+                    "limit": limit,
+                    "ttl_seconds": ttl_seconds,
+                }
+            )
+
+    def _unexpected_get_store(*args, **kwargs):
+        raise AssertionError("end_agent_session should not fall back to tonesoul.store.get_store")
+
+    monkeypatch.setenv("TONESOUL_FORCE_FILE_STORE", "1")
+    monkeypatch.setattr("tonesoul.backends.file_store.FileStore", _StubFileStore)
+    monkeypatch.setattr("tonesoul.store.get_store", _unexpected_get_store)
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "end_agent_session.py",
+            "--agent",
+            "codex",
+            "--summary",
+            "Bounded task completed cleanly with explicit file-backed closeout.",
+            "--closeout-status",
+            "complete",
+            "--no-release",
+        ],
+    )
+
+    module.main()
+    output = json.loads(capsys.readouterr().out)
+
+    assert output["closeout"]["status"] == "complete"
+    assert output["compaction"]["closeout"]["status"] == "complete"
+    assert output["released_claims"]["strategy"] == "none"
+    assert captured[0]["payload"]["summary"].startswith("Bounded task completed cleanly")

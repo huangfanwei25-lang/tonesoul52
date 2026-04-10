@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -25,6 +26,11 @@ def _resolve_sidecar(root: Path, name: str) -> Path:
     if legacy.exists():
         return legacy
     return canonical
+
+
+def _force_file_store_requested() -> bool:
+    value = str(os.environ.get("TONESOUL_FORCE_FILE_STORE", "")).strip().lower()
+    return value in {"1", "true", "yes", "on"}
 
 
 def _load_payload(args) -> dict:
@@ -52,6 +58,21 @@ def _load_payload(args) -> dict:
             "closeout_note": args.closeout_note,
             "source": args.source,
         }
+    return {
+        "agent": args.agent,
+        "session_id": args.session_id,
+        "summary": args.summary,
+        "carry_forward": list(args.carry_forward or []),
+        "pending_paths": list(args.pending_paths or []),
+        "evidence_refs": list(args.evidence_refs or []),
+        "next_action": args.next_action,
+        "closeout_status": args.closeout_status,
+        "stop_reason": args.stop_reason,
+        "unresolved_items": list(args.unresolved_items or []),
+        "human_input_required": bool(args.human_input_required),
+        "closeout_note": args.closeout_note,
+        "source": args.source,
+    }
 
 
 def main() -> None:
@@ -88,10 +109,12 @@ def main() -> None:
     payload = _load_payload(args)
 
     store = None
-    if args.state_path is not None or args.traces_path is not None:
+    if args.state_path is not None or args.traces_path is not None or _force_file_store_requested():
         from tonesoul.backends.file_store import FileStore
 
-        if args.traces_path is not None:
+        if args.state_path is None and args.traces_path is None:
+            store = FileStore()
+        elif args.traces_path is not None:
             root = args.traces_path.parent
             zones_path = root / "zone_registry.json"
         elif args.state_path is not None:
@@ -101,15 +124,16 @@ def main() -> None:
             root = Path(".")
             zones_path = None
 
-        store = FileStore(
-            gov_path=args.state_path,
-            traces_path=args.traces_path,
-            zones_path=zones_path,
-            claims_path=_resolve_sidecar(root, "task_claims.json"),
-            perspectives_path=_resolve_sidecar(root, "perspectives.json"),
-            checkpoints_path=_resolve_sidecar(root, "checkpoints.json"),
-            compactions_path=_resolve_sidecar(root, "compacted.json"),
-        )
+        if store is None:
+            store = FileStore(
+                gov_path=args.state_path,
+                traces_path=args.traces_path,
+                zones_path=zones_path,
+                claims_path=_resolve_sidecar(root, "task_claims.json"),
+                perspectives_path=_resolve_sidecar(root, "perspectives.json"),
+                checkpoints_path=_resolve_sidecar(root, "checkpoints.json"),
+                compactions_path=_resolve_sidecar(root, "compacted.json"),
+            )
 
     from tonesoul.runtime_adapter import normalize_closeout_payload, write_compaction
 
@@ -117,16 +141,12 @@ def main() -> None:
         status=str(payload.get("closeout_status", args.closeout_status or "")).strip(),
         stop_reason=str(payload.get("stop_reason", args.stop_reason or "")).strip(),
         unresolved_items=list(payload.get("unresolved_items") or []),
-        human_input_required=bool(
-            payload.get("human_input_required", args.human_input_required)
-        ),
+        human_input_required=bool(payload.get("human_input_required", args.human_input_required)),
         note=str(payload.get("closeout_note", args.closeout_note or "")).strip(),
         pending_paths=list(payload.get("pending_paths") or []),
         next_action=str(payload.get("next_action", args.next_action)),
         closeout=(
-            dict(payload.get("closeout"))
-            if isinstance(payload.get("closeout"), dict)
-            else None
+            dict(payload.get("closeout")) if isinstance(payload.get("closeout"), dict) else None
         ),
     )
 

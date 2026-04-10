@@ -74,7 +74,11 @@ def _build_report(**overrides):
         },
         "status_panel_probe": {
             "present": True,
-            "summary_text": "status_panel_probe primary=yes secondary=yes telemetry=成功",
+            "summary_text": "status_panel_probe primary=yes secondary=yes telemetry=success",
+        },
+        "command_shelf_probe": {
+            "present": True,
+            "summary_text": "command_shelf_probe next_source=mutation_preflight.next_followup next_activation=yes deep_return=yes",
         },
         "operator_retrieval_contract_present": True,
         "compiled_landing_zone_spec_present": True,
@@ -91,12 +95,15 @@ def test_build_self_improvement_trial_wave_yields_expected_outcomes() -> None:
     surface_statuses = [item["result_surface"]["surface_status"] for item in report["candidates"]]
 
     assert report["status"] == "completed"
-    assert report["outcome_counts"]["promote"] == 17
+    assert report["outcome_counts"]["promote"] == 18
     assert report["outcome_counts"]["park"] == 1
-    assert report["next_short_board"] == "Phase 847: Eighteenth Trial Candidate Admission"
+    assert report["next_short_board"] == (
+        "Explicitly ratify the next active bucket; do not silently auto-open queued governance-depth work."
+    )
     assert statuses == [
         "promote",
         "park",
+        "promote",
         "promote",
         "promote",
         "promote",
@@ -152,6 +159,7 @@ def test_build_self_improvement_trial_wave_parks_consumer_candidate_on_drift() -
         ("hot_memory_pull_boundary_probe", 15, "hot_memory_pull_boundary_clarity_v1"),
         ("memory_panel_probe", 16, "memory_panel_tier_subordination_v1"),
         ("status_panel_probe", 17, "status_panel_operator_copy_clarity_v1"),
+        ("command_shelf_probe", 18, "dashboard_command_shelf_activation_clarity_v1"),
     ],
 )
 def test_build_self_improvement_trial_wave_parks_candidate_when_probe_missing(

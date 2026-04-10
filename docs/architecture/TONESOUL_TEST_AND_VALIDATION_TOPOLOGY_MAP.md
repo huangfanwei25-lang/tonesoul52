@@ -2,7 +2,7 @@
 
 > Status: architectural topology document
 > Purpose: organize the repo's validation surfaces into lanes, describe what confidence each lane actually buys, what it still does not prove, and the most dangerous false inference later agents might make
-> Last Updated: 2026-03-29
+> Last Updated: 2026-04-09
 > Produced By: Claude Opus
 > Depends On:
 >   - docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md (evidence levels)
@@ -30,7 +30,7 @@ If you are deciding whether to trust a ToneSoul claim:
 | Test files | ~363 in `tests/`, 8 in `tests/red_team/` |
 | Test functions | ~1,900+ |
 | Test code | ~65,000+ lines |
-| CI workflows | `pytest-ci.yml` (Python 3.13, `-x --tb=short`), `ci.yml` (Python 3.11, `--cov`) |
+| CI workflows | `test.yml` (`ToneSoul CI`, automatic mainline); `pytest-ci.yml` (`Pytest CI (Manual Focused Rerun)`, manual Python-only rerun); `ci.yml` (`CI (Legacy Manual Replay)`, manual legacy replay/comparison lane) |
 | Fixtures | `_isolate_soul_db` (temp SoulDB), `qa_sandbox` (isolated env), `workspace_tmpdir` |
 | Key techniques | monkeypatching, property-based testing, red team fuzzing |
 

@@ -2097,7 +2097,11 @@ def _build_operator_guidance(
     reminders: List[str] = []
     latest_compaction = compactions[0] if compactions else {}
     latest_compaction_closeout = normalize_closeout_payload(
-        latest_compaction.get("closeout") if isinstance(latest_compaction.get("closeout"), dict) else None,
+        (
+            latest_compaction.get("closeout")
+            if isinstance(latest_compaction.get("closeout"), dict)
+            else None
+        ),
         pending_paths=list(latest_compaction.get("pending_paths") or []),
         next_action=str(latest_compaction.get("next_action", "")),
     )
@@ -2126,6 +2130,9 @@ def _build_operator_guidance(
         reminders.append(
             f"Latest compaction closeout is {closeout_status}; do not read the handoff as completed work."
         )
+    reminders.append(
+        "Use --path and --next-action only for unresolved carry-forward; omit them when the session truly closes cleanly."
+    )
 
     routing_summary = project_memory_summary.get("routing_summary") or {}
     if int(routing_summary.get("total_events", 0) or 0) <= 0:
@@ -2285,9 +2292,10 @@ def _build_operator_guidance(
             "python scripts/run_task_claim.py list",
         ],
         "session_end": [
-            'python scripts/end_agent_session.py --agent <your-id> --summary "..." --path "..."',
-            'python scripts/save_checkpoint.py --checkpoint-id <id> --agent <your-id> --summary "..." --path "..."',
-            'python scripts/save_compaction.py --agent <your-id> --summary "..." --path "..."',
+            'python scripts/end_agent_session.py --agent <your-id> --summary "..." --closeout-status complete',
+            'python scripts/end_agent_session.py --agent <your-id> --summary "..." --path "..." --next-action "..." --closeout-status partial',
+            'python scripts/save_checkpoint.py --checkpoint-id <id> --agent <your-id> --summary "..." --path "..." --next-action "..."',
+            'python scripts/save_compaction.py --agent <your-id> --summary "..." --path "..." --next-action "..." --closeout-status partial',
             "python scripts/run_task_claim.py release <task_id> --agent <your-id>",
         ],
         "preflight_chain": hook_chain,
@@ -2296,8 +2304,8 @@ def _build_operator_guidance(
         "coordination_commands": {
             "claim": 'python scripts/run_task_claim.py claim <task_id> --agent <your-id> --summary "..."',
             "perspective": 'python scripts/save_perspective.py --agent <your-id> --summary "..." --stance "..."',
-            "checkpoint": 'python scripts/save_checkpoint.py --checkpoint-id <id> --agent <your-id> --summary "..." --path "..."',
-            "compaction": 'python scripts/save_compaction.py --agent <your-id> --summary "..." --path "..."',
+            "checkpoint": 'python scripts/save_checkpoint.py --checkpoint-id <id> --agent <your-id> --summary "..." --path "..." --next-action "..."',
+            "compaction": 'python scripts/save_compaction.py --agent <your-id> --summary "..." --path "..." --next-action "..." --closeout-status partial',
             "signal_router": (
                 'python scripts/route_r_memory_signal.py --agent <your-id> --summary "..." '
                 '--path "..." --next-action "..." --write'
@@ -2325,6 +2333,7 @@ def _build_operator_guidance(
         "completion_rule": (
             "Before ending a session, externalize progress with checkpoint or compaction, "
             "mark closeout as complete/partial/blocked/underdetermined honestly, "
+            "omit pending paths and next_action when the session truly ends cleanly, "
             "then release any shared claim."
         ),
     }
@@ -2585,7 +2594,9 @@ def _build_launch_health_trend_posture(
         },
         {
             "metric": "collaborator_beta_validation_health",
-            "current_value": "guided_beta_active" if current_tier == "collaborator_beta" else "not_in_beta_focus",
+            "current_value": (
+                "guided_beta_active" if current_tier == "collaborator_beta" else "not_in_beta_focus"
+            ),
             "watch_for": "repeated_validation_without_new_overclaim_pressure",
             "note": "Track repeated collaborator-beta validation quality over time before promoting any broader launch story.",
         },
@@ -2656,9 +2667,7 @@ def _build_internal_state_observability(
     }.get(risk_level, "unknown")
 
     working_style_observability = project_memory_summary.get("working_style_observability") or {}
-    continuity_drift = (
-        str(working_style_observability.get("drift_risk", "")).strip() or "unknown"
-    )
+    continuity_drift = str(working_style_observability.get("drift_risk", "")).strip() or "unknown"
 
     latest_closeout: Dict[str, Any] = {}
     for entry in compactions:
@@ -2699,16 +2708,13 @@ def _build_internal_state_observability(
                 break
 
     has_minority_report = bool(
-        council_snapshot.get("has_minority_report")
-        or council_snapshot.get("minority_report")
+        council_snapshot.get("has_minority_report") or council_snapshot.get("minority_report")
     )
     evolution_suppression_flag = bool(council_snapshot.get("evolution_suppression_flag", False))
     confidence_posture = str(council_snapshot.get("confidence_posture", "")).strip()
     deliberation_conflict = (
         "visible"
-        if has_minority_report
-        or evolution_suppression_flag
-        or confidence_posture == "contested"
+        if has_minority_report or evolution_suppression_flag or confidence_posture == "contested"
         else "clear"
     )
 
@@ -2758,7 +2764,9 @@ def _build_internal_state_observability(
             ),
         },
     ]
-    operator_actions = [str(item.get("operator_action", "")).strip() for item in pressure_watch_cues]
+    operator_actions = [
+        str(item.get("operator_action", "")).strip() for item in pressure_watch_cues
+    ]
 
     return {
         "summary_text": (
@@ -3286,7 +3294,9 @@ def r_memory_packet(
         if launch_health_summary:
             base_summary = str(project_memory_summary.get("summary_text", "")).strip()
             project_memory_summary["summary_text"] = (
-                f"{base_summary} | {launch_health_summary}" if base_summary else launch_health_summary
+                f"{base_summary} | {launch_health_summary}"
+                if base_summary
+                else launch_health_summary
             )
     internal_state_observability = _build_internal_state_observability(
         project_memory_summary=project_memory_summary,

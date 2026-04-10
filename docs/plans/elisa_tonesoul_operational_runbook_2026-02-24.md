@@ -35,7 +35,7 @@ Release is blocked if any command exits non-zero.
 ## 2. Deploy Procedure
 
 1. Push to `master` and wait for GitHub Actions to complete.
-2. Confirm `web_api_smoke` job is green (must include `--elisa-scenario` in command).
+2. Automatic release evidence now comes from `ToneSoul CI` and `post_release_monitor`; if you intentionally run the legacy manual replay lane, confirm `web_api_quality_replay` is green (must include `--elisa-scenario` in command).
 3. Deploy to Vercel production (CLI or dashboard promote).
 4. Verify these endpoints on production:
    - `GET /api/backend-health`
@@ -71,8 +71,7 @@ When integration regression is detected:
 
 - [x] Elisa payload profile contract is tested (`apiRoutes.chatTransport`, `apiRoutes.invalidJson`).
 - [x] Governance status surface exists (`GET /api/governance-status`) with route tests.
-- [x] CI web smoke includes Elisa scenario (`--elisa-scenario`) and is blocking.
+- [x] Legacy full-stack quality replay preserves the Elisa scenario (`--elisa-scenario`) for manual comparison.
 - [x] Preflight supports governance surface probing (`--probe-governance-status --web-base`).
 - [x] Memory discussion entry written for each integration phase completion.
 - [ ] Final GA artifact pending: `docs/RELEASE_NOTES_v1.0.0.md` + tag `v1.0.0`.
-

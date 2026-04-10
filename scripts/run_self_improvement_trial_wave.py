@@ -83,7 +83,9 @@ def _probe_deliberation_hint(
 
     hint = dict((payload or {}).get("deliberation_mode_hint") or {})
     active = list(hint.get("active_escalation_signals") or [])
-    conditional = list(hint.get("conditional_escalation_triggers") or hint.get("escalation_triggers") or [])
+    conditional = list(
+        hint.get("conditional_escalation_triggers") or hint.get("escalation_triggers") or []
+    )
     review_cues = list(hint.get("review_cues") or [])
     split_present = bool(
         isinstance(hint.get("active_escalation_signals"), list)
@@ -288,7 +290,9 @@ def _probe_surface_versioning_lineage() -> dict[str, Any]:
     fallback_chain = list(compatibility.get("fallback_chain") or [])
     consumer_statuses = list(compatibility.get("consumer_statuses") or [])
     consumer_labels = [str(item.get("consumer", "")).strip() for item in consumer_statuses]
-    compatibility_values = [str(item.get("compatibility", "")).strip() for item in consumer_statuses]
+    compatibility_values = [
+        str(item.get("compatibility", "")).strip() for item in consumer_statuses
+    ]
     present = (
         fallback_chain
         == [
@@ -296,10 +300,8 @@ def _probe_surface_versioning_lineage() -> dict[str, Any]:
             "observer_window:anchor_window_v1",
             "r_memory_packet:packet_v1",
         ]
-        and consumer_labels
-        == ["codex_cli", "dashboard_operator_shell", "claude_style_shell"]
-        and compatibility_values
-        == ["repo_native_entry", "bounded_adapter", "bounded_adapter"]
+        and consumer_labels == ["codex_cli", "dashboard_operator_shell", "claude_style_shell"]
+        and compatibility_values == ["repo_native_entry", "bounded_adapter", "bounded_adapter"]
     )
     return {
         "present": present,
@@ -663,7 +665,9 @@ def _probe_claude_priority_correction_clarity() -> dict[str, Any]:
         "mutation_preflight": {
             "next_followup": {"target": "shared_code_edit.path_overlap_preflight"}
         },
-        "subsystem_parity": {"next_focus": {"resolved_to": "shared_code_edit.path_overlap_preflight"}},
+        "subsystem_parity": {
+            "next_focus": {"resolved_to": "shared_code_edit.path_overlap_preflight"}
+        },
         "next_pull": {
             "receiver_rule": "Pull the full Tier-2 bundle only when shared mutation or contested governance detail is required.",
             "recommended_commands": [
@@ -808,9 +812,7 @@ def _probe_hot_memory_pull_boundary_clarity() -> dict[str, Any]:
 def _probe_memory_panel_tier_subordination() -> dict[str, Any]:
     import importlib.util
 
-    module_path = (
-        REPO_ROOT / "apps" / "dashboard" / "frontend" / "components" / "memory_panel.py"
-    )
+    module_path = REPO_ROOT / "apps" / "dashboard" / "frontend" / "components" / "memory_panel.py"
     frontend_root = module_path.parents[1]
     if str(frontend_root) not in sys.path:
         sys.path.insert(0, str(frontend_root))
@@ -853,9 +855,7 @@ def _probe_memory_panel_tier_subordination() -> dict[str, Any]:
 def _probe_status_panel_operator_copy_clarity() -> dict[str, Any]:
     import importlib.util
 
-    module_path = (
-        REPO_ROOT / "apps" / "dashboard" / "frontend" / "components" / "status_panel.py"
-    )
+    module_path = REPO_ROOT / "apps" / "dashboard" / "frontend" / "components" / "status_panel.py"
     frontend_root = module_path.parents[1]
     if str(frontend_root) not in sys.path:
         sys.path.insert(0, str(frontend_root))
@@ -871,7 +871,10 @@ def _probe_status_panel_operator_copy_clarity() -> dict[str, Any]:
 
     payload = build_status_panel_view_model(
         snapshot={
-            "conversation": {"count": 1, "last": {"status": "success", "timestamp": "2026-04-07T00:00:00+00:00"}},
+            "conversation": {
+                "count": 1,
+                "last": {"status": "success", "timestamp": "2026-04-07T00:00:00+00:00"},
+            },
             "persona": {"id": "dashboard-workspace"},
             "run_id": "run-001",
         },
@@ -885,7 +888,9 @@ def _probe_status_panel_operator_copy_clarity() -> dict[str, Any]:
             "readiness_status": "pass",
             "task_track": "feature_track",
             "deliberation_mode": "lightweight_review",
-            "next_followup": {"command": "python scripts/run_shared_edit_preflight.py --path task.md"},
+            "next_followup": {
+                "command": "python scripts/run_shared_edit_preflight.py --path task.md"
+            },
             "receiver_rule": "bounded only",
             "hook_badges": [{"name": "shared_edit_path_overlap", "status": "active"}],
         },
@@ -904,7 +909,9 @@ def _probe_status_panel_operator_copy_clarity() -> dict[str, Any]:
             "trigger_reasons": ["closeout_attention_present"],
             "active_group_names": ["Mutation And Closeout"],
             "summary_text": "tier2_drawer=recommended groups=1 triggers=1",
-            "next_pull_commands": ["python scripts/run_publish_push_preflight.py --agent dashboard-workspace"],
+            "next_pull_commands": [
+                "python scripts/run_publish_push_preflight.py --agent dashboard-workspace"
+            ],
         },
         improvement_cue={
             "present": True,
@@ -938,6 +945,66 @@ def _probe_status_panel_operator_copy_clarity() -> dict[str, Any]:
     }
 
 
+def _probe_command_shelf_activation_clarity() -> dict[str, Any]:
+    import importlib.util
+
+    module_path = REPO_ROOT / "apps" / "dashboard" / "frontend" / "utils" / "session_start.py"
+    frontend_root = module_path.parents[1]
+    if str(frontend_root) not in sys.path:
+        sys.path.insert(0, str(frontend_root))
+    spec = importlib.util.spec_from_file_location("dashboard_command_shelf_probe", module_path)
+    if spec is None or spec.loader is None:
+        return {
+            "present": False,
+            "summary_text": "command_shelf_probe loader=missing",
+        }
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    build_dashboard_command_shelf = module.build_dashboard_command_shelf
+
+    payload = build_dashboard_command_shelf(
+        agent_id="dashboard-workspace",
+        tier0_shell={
+            "next_followup": {
+                "target": "mutation_preflight.next_followup",
+                "command": "python scripts/run_shared_edit_preflight.py --agent dashboard-workspace --path task.md",
+                "reason": "Visible because Tier 0 already exposes one bounded follow-up.",
+            }
+        },
+        tier2_drawer={
+            "trigger_reasons": ["closeout_attention_present", "claim_conflict_visible"],
+            "next_pull_commands": [
+                "python scripts/run_publish_push_preflight.py --agent dashboard-workspace"
+            ],
+        },
+    )
+    commands = list(payload.get("commands") or [])
+    next_move = commands[3] if len(commands) > 3 else {}
+    deep_pull = commands[4] if len(commands) > 4 else {}
+    present = bool(
+        "source, activation, and return cues" in str(payload.get("operator_rule", "")).strip()
+        and str(next_move.get("source_surface", "")).strip() == "mutation_preflight.next_followup"
+        and str(next_move.get("activation_reason", "")).strip()
+        == "Visible because Tier 0 already exposes one bounded follow-up."
+        and str(next_move.get("return_rule", "")).strip().startswith("If this move broadens scope")
+        and str(deep_pull.get("source_surface", "")).strip()
+        == "tier2_deep_governance_drawer.next_pull_commands"
+        and "closeout_attention_present" in str(deep_pull.get("activation_reason", "")).strip()
+        and str(deep_pull.get("return_rule", ""))
+        .strip()
+        .startswith("When Tier 2 trigger reasons clear")
+    )
+    return {
+        "present": present,
+        "summary_text": (
+            "command_shelf_probe "
+            f"next_source={str(next_move.get('source_surface', '')).strip() or 'missing'} "
+            f"next_activation={'yes' if str(next_move.get('activation_reason', '')).strip() else 'no'} "
+            f"deep_return={'yes' if str(deep_pull.get('return_rule', '')).strip() else 'no'}"
+        ),
+    }
+
+
 def _render_markdown(report: dict[str, Any]) -> str:
     lines = [
         "# ToneSoul Self-Improvement Trial Wave",
@@ -960,7 +1027,9 @@ def _render_markdown(report: dict[str, Any]) -> str:
         candidate = item.get("candidate_record") or {}
         closeout = item.get("analyzer_closeout") or {}
         result_surface = item.get("result_surface") or {}
-        lines.append(f"- `{candidate.get('candidate_id', 'unknown')}` -> `{closeout.get('status', '')}`")
+        lines.append(
+            f"- `{candidate.get('candidate_id', 'unknown')}` -> `{closeout.get('status', '')}`"
+        )
         lines.append(f"  - target_surface: `{candidate.get('target_surface', '')}`")
         lines.append(f"  - success_metric: `{candidate.get('success_metric', '')}`")
         lines.append(f"  - result_story: {closeout.get('result_story', '')}")
@@ -1029,6 +1098,7 @@ def run_self_improvement_trial_wave(
     hot_memory_pull_boundary_probe = _probe_hot_memory_pull_boundary_clarity()
     memory_panel_probe = _probe_memory_panel_tier_subordination()
     status_panel_probe = _probe_status_panel_operator_copy_clarity()
+    command_shelf_probe = _probe_command_shelf_activation_clarity()
     operator_retrieval_contract_present = (
         REPO_ROOT / "docs/architecture/TONESOUL_OPERATOR_RETRIEVAL_QUERY_CONTRACT.md"
     ).exists()
@@ -1056,6 +1126,7 @@ def run_self_improvement_trial_wave(
         hot_memory_pull_boundary_probe=hot_memory_pull_boundary_probe,
         memory_panel_probe=memory_panel_probe,
         status_panel_probe=status_panel_probe,
+        command_shelf_probe=command_shelf_probe,
         operator_retrieval_contract_present=operator_retrieval_contract_present,
         compiled_landing_zone_spec_present=compiled_landing_zone_spec_present,
         retrieval_runner_present=retrieval_runner_present,

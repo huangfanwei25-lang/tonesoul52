@@ -136,7 +136,9 @@ def _build_consumer_contract(
     from tonesoul.consumer_contract import build_memory_consumer_contract
 
     compaction_surface = (import_posture.get("surfaces") or {}).get("compactions") or {}
-    closeout_status = str(compaction_surface.get("closeout_status", "") or "complete").strip() or "complete"
+    closeout_status = (
+        str(compaction_surface.get("closeout_status", "") or "complete").strip() or "complete"
+    )
     closeout_attention = {
         "status": closeout_status,
         "summary_text": (
@@ -310,6 +312,7 @@ def _build_tier0_payload(
     agent_id: str,
     no_ack: bool,
     backend_name: str,
+    aegis_status: str,
     packet: dict,
     posture,
     readiness: dict,
@@ -334,6 +337,7 @@ def _build_tier0_payload(
             backend_name=backend_name,
             packet=packet,
             posture=posture,
+            aegis_status=aegis_status,
         )
         + f" | readiness={readiness['status']}",
         "readiness": readiness,
@@ -365,6 +369,7 @@ def _build_tier1_payload(
     agent_id: str,
     no_ack: bool,
     backend_name: str,
+    aegis_status: str,
     packet: dict,
     posture,
     readiness: dict,
@@ -392,6 +397,7 @@ def _build_tier1_payload(
             backend_name=backend_name,
             packet=packet,
             posture=posture,
+            aegis_status=aegis_status,
         )
         + f" | readiness={readiness['status']}",
         "readiness": readiness,
@@ -469,7 +475,22 @@ def _quiet_call(fn, *args, **kwargs):
         return fn(*args, **kwargs)
 
 
-def _build_compact_line(*, agent_id: str, backend_name: str, packet: dict, posture) -> str:
+def _read_aegis_status(*, store) -> str:
+    if store is None:
+        return "unknown"
+    try:
+        from tonesoul.aegis_shield import AegisShield
+
+        shield = AegisShield.load(store)
+        audit = shield.audit(store)
+    except Exception:
+        return "unknown"
+    return str(audit.get("integrity", "unknown"))
+
+
+def _build_compact_line(
+    *, agent_id: str, backend_name: str, packet: dict, posture, aegis_status: str
+) -> str:
     risk_posture = (packet.get("posture") or {}).get("risk_posture") or {}
     repo_progress = (packet.get("project_memory_summary") or {}).get("repo_progress") or {}
     return (
@@ -482,6 +503,7 @@ def _build_compact_line(*, agent_id: str, backend_name: str, packet: dict, postu
         f"compactions={len(packet.get('recent_compactions', []))} "
         f"subjects={len(packet.get('recent_subject_snapshots', []))} | "
         f"git={repo_progress.get('head', 'unknown')}/dirty={int(repo_progress.get('dirty_count', 0) or 0)} | "
+        f"aegis={aegis_status} | "
         f"agent={agent_id}"
     )
 
@@ -882,13 +904,20 @@ def _build_deliberation_escalation_triggers(
             "risk_bucket_elevated_or_critical",
         ]
     elif task_track == "system_track":
-        triggers = ["system_track_scope", "claim_collision_visible", "risk_bucket_elevated_or_critical"]
+        triggers = [
+            "system_track_scope",
+            "claim_collision_visible",
+            "risk_bucket_elevated_or_critical",
+        ]
 
     if readiness_state == "blocked" and "blocked_state_requires_unblock_first" not in triggers:
         triggers.append("blocked_state_requires_unblock_first")
     if claim_collision and "claim_collision_visible" not in triggers:
         triggers.append("claim_collision_visible")
-    if risk_bucket in {"elevated", "critical"} and "risk_bucket_elevated_or_critical" not in triggers:
+    if (
+        risk_bucket in {"elevated", "critical"}
+        and "risk_bucket_elevated_or_critical" not in triggers
+    ):
         triggers.append("risk_bucket_elevated_or_critical")
     if readiness_state == "needs_clarification" and "readiness_needs_clarification" not in triggers:
         triggers.append("readiness_needs_clarification")
@@ -931,7 +960,12 @@ def _build_deliberation_review_cues(
     elif task_track == "system_track":
         cues.append("system_track_scope")
 
-    if task_track == "feature_track" and not claim_collision and readiness_state == "pass" and risk_bucket == "normal":
+    if (
+        task_track == "feature_track"
+        and not claim_collision
+        and readiness_state == "pass"
+        and risk_bucket == "normal"
+    ):
         cues.append("bounded_feature_track_can_stay_lightweight")
     if task_track == "quick_change" and not claim_collision and risk_bucket == "normal":
         cues.append("quick_change_can_stay_lightweight")
@@ -1047,16 +1081,12 @@ def _build_deliberation_mode_hint(*, task_track_hint: dict, readiness: dict) -> 
             " Clarify the task first, then treat this as the default deliberation depth."
         )
     elif base_mode == "lightweight_review" and task_track == "feature_track":
-        receiver_note += (
-            " Bounded feature work now defaults to lightweight review; pull deeper council only when risk, collision, or clarification pressure appears."
-        )
+        receiver_note += " Bounded feature work now defaults to lightweight review; pull deeper council only when risk, collision, or clarification pressure appears."
     if base_mode == "lightweight_review" and not active_escalation_signals:
         receiver_note += " No active escalation signals are currently visible."
     elif active_escalation_signals:
         receiver_note += (
-            " Current active escalation signals: "
-            + ", ".join(active_escalation_signals)
-            + "."
+            " Current active escalation signals: " + ", ".join(active_escalation_signals) + "."
         )
 
     return {
@@ -1104,7 +1134,11 @@ def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
     claim_ttl_minutes = _min_claim_ttl_minutes(claims)
     latest_compaction = compactions[0] if compactions else {}
     latest_compaction_closeout = normalize_closeout_payload(
-        latest_compaction.get("closeout") if isinstance(latest_compaction.get("closeout"), dict) else None,
+        (
+            latest_compaction.get("closeout")
+            if isinstance(latest_compaction.get("closeout"), dict)
+            else None
+        ),
         pending_paths=list(latest_compaction.get("pending_paths") or []),
         next_action=str(latest_compaction.get("next_action", "")),
     )
@@ -1204,7 +1238,8 @@ def _build_import_posture(*, packet: dict, readiness: dict) -> dict:
                 if carry_forward_hazards
                 else (
                     f"Carry-forward is resumability memory; latest closeout is {latest_compaction_closeout_status or 'complete'}, so review it before continuing."
-                    if latest_compaction_closeout_status in {"partial", "blocked", "underdetermined"}
+                    if latest_compaction_closeout_status
+                    in {"partial", "blocked", "underdetermined"}
                     else "Carry-forward is resumability memory; apply cautiously and never silently promote."
                 )
             ),
@@ -1490,7 +1525,8 @@ def run_session_start_bundle(
     store = _build_store_from_paths(state_path=state_path, traces_path=traces_path)
     if store is None:
         posture = _quiet_call(load, agent_id=agent_id, source="start_agent_session")
-        backend_name = getattr(_quiet_call(get_store), "backend_name", "unknown")
+        runtime_store = _quiet_call(get_store)
+        backend_name = getattr(runtime_store, "backend_name", "unknown")
     else:
         posture = _quiet_call(
             load,
@@ -1498,20 +1534,22 @@ def run_session_start_bundle(
             agent_id=agent_id,
             source="start_agent_session",
         )
-        backend_name = getattr(store, "backend_name", "file")
+        runtime_store = store
+        backend_name = getattr(runtime_store, "backend_name", "file")
 
     packet = _quiet_call(
         r_memory_packet,
         posture=posture,
-        store=store,
+        store=runtime_store,
         observer_id=agent_id,
         trace_limit=trace_limit,
         visitor_limit=visitor_limit,
     )
+    aegis_status = _read_aegis_status(store=runtime_store)
     if not no_ack:
-        acknowledge_observer_cursor(agent_id, packet=packet, store=store)
+        acknowledge_observer_cursor(agent_id, packet=packet, store=runtime_store)
 
-    claims = _quiet_call(list_active_claims, store=store)
+    claims = _quiet_call(list_active_claims, store=runtime_store)
     readiness = _build_readiness(agent_id=agent_id, packet=packet, claims=claims)
     working_style_anchor = (packet.get("project_memory_summary") or {}).get(
         "working_style_anchor"
@@ -1578,6 +1616,7 @@ def run_session_start_bundle(
             agent_id=agent_id,
             no_ack=no_ack,
             backend_name=backend_name,
+            aegis_status=aegis_status,
             packet=packet,
             posture=posture,
             readiness=readiness,
@@ -1613,6 +1652,7 @@ def run_session_start_bundle(
             agent_id=agent_id,
             no_ack=no_ack,
             backend_name=backend_name,
+            aegis_status=aegis_status,
             packet=packet,
             posture=posture,
             readiness=readiness,
@@ -1639,6 +1679,7 @@ def run_session_start_bundle(
             backend_name=backend_name,
             packet=packet,
             posture=posture,
+            aegis_status=aegis_status,
         )
         + f" | readiness={readiness['status']}",
         "readiness": readiness,

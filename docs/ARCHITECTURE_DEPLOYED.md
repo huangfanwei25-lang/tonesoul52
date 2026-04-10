@@ -505,7 +505,7 @@ relevance = initial × e^(-λt) + access_count × boost
 |-----|------|
 | `test` | Python 3.11 + `pytest tests/ --cov` + import 驗證 |
 | `lint` | `black --line-length 100` + `ruff check` |
-| `web_api_smoke` | Flask + Next.js 同時啟動 → `verify_web_api.py` 整合測試 |
+| `web_api_quality_replay` | Legacy manual replay：Flask + Next.js 同時啟動 → `verify_web_api.py` 整合與品質比對 |
 
 ### Import 驗證清單
 
