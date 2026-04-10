@@ -97,6 +97,11 @@ def test_run_preflight_reports_go(monkeypatch, tmp_path: Path) -> None:
         "scripts.start_agent_session.run_session_start_bundle",
         lambda **kwargs: _sample_start_payload(),
     )
+    monkeypatch.setattr(
+        module,
+        "_detect_external_cycle_status",
+        lambda: {"path": "", "classification": ""},
+    )
 
     result = module.run_preflight(agent="beta-preflight", validation_wave_path=validation_path)
 
@@ -114,6 +119,12 @@ def test_run_preflight_reports_go(monkeypatch, tmp_path: Path) -> None:
     assert result["validation_wave"]["scenario_count"] == 3
     assert result["validation_wave"]["stale_compaction_guarded"] is True
     assert result["validation_wave"]["contested_dossier_visible"] is True
+    assert result["next_bounded_move"]["step"].startswith(
+        "run one real non-creator or external-use clean cycle"
+    )
+    assert result["next_bounded_move"]["path"] == (
+        "docs/plans/tonesoul_non_creator_external_cycle_pack_2026-04-10.md"
+    )
     assert result["blocking_findings"] == []
     assert "continuity_effectiveness" in result["cautions"]
     assert "aegis_compromised" in result["cautions"]
@@ -183,6 +194,15 @@ def test_render_markdown_contains_core_sections() -> None:
                 "status": "compromised",
                 "note": "Treat aegis_compromised as a visible caution in the current beta posture, not as an implicit public-launch stop or a reason to ignore the rest of the bounded receiver checks.",
             },
+            "external_cycle_status": {
+                "path": "",
+                "classification": "",
+            },
+            "next_bounded_move": {
+                "step": "run one real non-creator or external-use clean cycle for Phase 722",
+                "path": "docs/plans/tonesoul_non_creator_external_cycle_pack_2026-04-10.md",
+                "note": "Pack exists, but no clean non-creator / external-use governance-aware cycle is yet recorded in canonical status surfaces.",
+            },
             "validation_wave": {
                 "scenario_count": 4,
                 "max_receiver_alert_count": 4,
@@ -223,6 +243,15 @@ def test_render_markdown_contains_core_sections() -> None:
         "- Aegis posture: `compromised` / `Treat aegis_compromised as a visible caution in the current beta posture, not as an implicit public-launch stop or a reason to ignore the rest of the bounded receiver checks.`"
         in markdown
     )
+    assert (
+        "- Next bounded move: `run one real non-creator or external-use clean cycle for Phase 722`"
+        in markdown
+    )
+    assert (
+        "- Pack: `docs/plans/tonesoul_non_creator_external_cycle_pack_2026-04-10.md`"
+        in markdown
+    )
+    assert "- Latest external cycle: `none`" in markdown
     assert "- Scenario count: `4`" in markdown
     assert "- `continuity_effectiveness` = `runtime_present`" in markdown
 
@@ -285,6 +314,15 @@ def test_main_writes_optional_outputs(tmp_path: Path, monkeypatch, capsys) -> No
                 "status": "compromised",
                 "note": "Treat aegis_compromised as a visible caution in the current beta posture, not as an implicit public-launch stop or a reason to ignore the rest of the bounded receiver checks.",
             },
+            "external_cycle_status": {
+                "path": "",
+                "classification": "",
+            },
+            "next_bounded_move": {
+                "step": "run one real non-creator or external-use clean cycle for Phase 722",
+                "path": "docs/plans/tonesoul_non_creator_external_cycle_pack_2026-04-10.md",
+                "note": "Pack exists, but no clean non-creator / external-use governance-aware cycle is yet recorded in canonical status surfaces.",
+            },
             "validation_wave": {
                 "scenario_count": 4,
                 "max_receiver_alert_count": 4,
@@ -315,3 +353,45 @@ def test_main_writes_optional_outputs(tmp_path: Path, monkeypatch, capsys) -> No
     assert json_out.exists()
     assert markdown_out.exists()
     assert payload["overall_status"] == "go"
+
+
+def test_run_preflight_points_to_repeated_validation_after_strong_external_pass(
+    monkeypatch, tmp_path: Path
+) -> None:
+    module = _load_script_module()
+    validation_path = tmp_path / "wave.json"
+    validation_path.write_text(
+        json.dumps(
+            [
+                {
+                    "scenario": "clean_pass",
+                    "receiver_alert_count": 1,
+                    "council_calibration_status": "absent",
+                    "compaction_receiver_obligation": "should_consider",
+                }
+            ],
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+
+    monkeypatch.setattr(
+        "scripts.start_agent_session.run_session_start_bundle",
+        lambda **kwargs: _sample_start_payload(),
+    )
+    monkeypatch.setattr(
+        module,
+        "_detect_external_cycle_status",
+        lambda: {
+            "path": "docs/status/phase722_external_operator_cycle_2026-04-10.md",
+            "classification": "strong external pass",
+        },
+    )
+
+    result = module.run_preflight(agent="beta-preflight", validation_wave_path=validation_path)
+
+    assert result["external_cycle_status"]["classification"] == "strong external pass"
+    assert result["next_bounded_move"]["step"].startswith(
+        "repeat the bounded external/non-creator cycle"
+    )
+    assert "repeat 1-2 varied bounded cycles" in result["next_bounded_move"]["note"]

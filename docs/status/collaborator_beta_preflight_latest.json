@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-03-31T01:45:52Z",
+  "generated_at": "2026-04-10T14:38:34Z",
   "overall_ok": true,
   "overall_status": "go",
   "repo_root": "C:\\Users\\user\\Desktop\\倉庫",
-  "agent": "beta-preflight",
+  "agent": "phase722-refresh",
   "commands": {
-    "session_start": "run_session_start_bundle(agent_id='beta-preflight')",
+    "session_start": "run_session_start_bundle(agent_id='phase722-refresh')",
     "packet": "extracted from session_start bundle payload['packet']",
     "diagnose": "embedded_from_session_start"
   },
@@ -13,9 +13,9 @@
     "session_start": {
       "ok": true,
       "readiness": "pass",
-      "task_track": "feature_track",
-      "claim_recommendation": "required",
-      "deliberation_mode": "standard_council"
+      "task_track": "quick_change",
+      "claim_recommendation": "not_required",
+      "deliberation_mode": "lightweight_review"
     },
     "packet": {
       "ok": true,
@@ -28,8 +28,8 @@
     "diagnose": {
       "ok": true,
       "mode": "embedded_from_session_start",
-      "compact_line": "[ToneSoul] file | SI=0.45 | vows=3 tensions=0 | R=0.04/stable | claims=0 checkpoints=0 compactions=5 subjects=1 | git=6d6538e/dirty=20 | agent=beta-preflight | readiness=pass",
-      "aegis_status": "unknown"
+      "compact_line": "[ToneSoul] file | SI=0.45 | vows=3 tensions=0 | R=0.00/stable | claims=0 checkpoints=1 compactions=5 subjects=2 | git=089bbbc/dirty=10 | aegis=compromised | agent=phase722-refresh | readiness=pass",
+      "aegis_status": "compromised"
     }
   },
   "scope_posture": {
@@ -41,13 +41,22 @@
     "target_note": "next_target_tier names the next maturity target, not current readiness or public-launch permission."
   },
   "claim_posture": {
-    "claim_recommendation": "required",
+    "claim_recommendation": "not_required",
     "claim_trigger": "claim when you are about to edit a shared path; read-only inspection can stay unclaimed"
   },
   "aegis_posture": {
-    "status": "unknown",
+    "status": "compromised",
     "blocks_beta_entry": false,
     "note": "Treat aegis_compromised as a visible caution in the current beta posture, not as an implicit public-launch stop or a reason to ignore the rest of the bounded receiver checks."
+  },
+  "external_cycle_status": {
+    "path": "docs/status/phase722_external_operator_cycle_2026-04-10.md",
+    "classification": "strong external pass"
+  },
+  "next_bounded_move": {
+    "step": "repeat the bounded external/non-creator cycle under a different operator or task shape",
+    "path": "docs/plans/tonesoul_non_creator_external_cycle_pack_2026-04-10.md",
+    "note": "One clean external/non-creator cycle now exists; repeat 1-2 varied bounded cycles before widening any launch claims."
   },
   "launch_claim_posture": {
     "current_tier": "collaborator_beta",
@@ -98,12 +107,15 @@
   "validation_wave": {
     "present": true,
     "path": "C:\\Users\\user\\Desktop\\倉庫\\docs\\status\\launch_continuity_validation_wave_latest.json",
-    "scenario_count": 4,
+    "scenario_count": 7,
     "scenario_names": [
       "clean_pass",
       "claim_conflict",
       "stale_compaction",
-      "contested_dossier"
+      "contested_dossier",
+      "session_end_lifecycle",
+      "concurrent_claims",
+      "working_style_reinforced"
     ],
     "max_receiver_alert_count": 4,
     "contested_dossier_visible": true,
@@ -113,7 +125,8 @@
   "cautions": [
     "continuity_effectiveness",
     "council_decision_quality",
-    "live_shared_memory"
+    "live_shared_memory",
+    "aegis_compromised"
   ],
-  "summary_text": "collaborator_beta_preflight=go tier=collaborator_beta backend=file-backed validation_wave=4 blocked=0"
+  "summary_text": "collaborator_beta_preflight=go tier=collaborator_beta backend=file-backed validation_wave=7 blocked=0"
 }

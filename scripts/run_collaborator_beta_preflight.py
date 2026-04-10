@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import subprocess
 import sys
 from datetime import datetime, timezone
@@ -19,6 +20,9 @@ from tonesoul.safe_parse import safe_parse_json  # noqa: E402
 
 START_AGENT_SESSION = REPO_ROOT / "scripts" / "start_agent_session.py"
 RUN_PACKET = REPO_ROOT / "scripts" / "run_r_memory_packet.py"
+EXTERNAL_CYCLE_PACK = (
+    REPO_ROOT / "docs" / "plans" / "tonesoul_non_creator_external_cycle_pack_2026-04-10.md"
+)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -120,6 +124,26 @@ def _load_validation_wave(path: Path) -> list[dict[str, Any]]:
     return [item for item in payload if isinstance(item, dict)]
 
 
+def _detect_external_cycle_status() -> dict[str, str]:
+    candidates = sorted(
+        REPO_ROOT.glob("docs/status/phase722_external_operator_cycle_*.md"),
+        reverse=True,
+    )
+    for path in candidates:
+        try:
+            text = path.read_text(encoding="utf-8")
+        except OSError:
+            continue
+        match = re.search(r"Result classification:\s*`([^`]+)`", text)
+        classification = str(match.group(1)).strip().lower() if match else ""
+        if classification:
+            return {
+                "path": str(path.relative_to(REPO_ROOT).as_posix()),
+                "classification": classification,
+            }
+    return {"path": "", "classification": ""}
+
+
 def _build_command(
     base: Path, *, agent: str, state_path: Path | None, traces_path: Path | None
 ) -> list[str]:
@@ -208,6 +232,32 @@ def run_preflight(
 
     overall_ok = not blocking_findings and bool(compact_diagnostic)
     overall_status = "go" if overall_ok else "hold"
+    external_cycle_status = _detect_external_cycle_status()
+    latest_external_classification = external_cycle_status.get("classification", "")
+    if latest_external_classification == "strong external pass":
+        next_bounded_move = {
+            "step": "repeat the bounded external/non-creator cycle under a different operator or task shape",
+            "path": EXTERNAL_CYCLE_PACK.relative_to(REPO_ROOT).as_posix(),
+            "note": (
+                "One clean external/non-creator cycle now exists; repeat 1-2 varied bounded cycles before widening any launch claims."
+            ),
+        }
+    elif latest_external_classification == "useful partial":
+        next_bounded_move = {
+            "step": "repair the remaining external-cycle seam and rerun the bounded pack",
+            "path": EXTERNAL_CYCLE_PACK.relative_to(REPO_ROOT).as_posix(),
+            "note": (
+                "A real external/non-creator attempt exists, but it still counts only as useful partial and should not be treated as clean proof."
+            ),
+        }
+    else:
+        next_bounded_move = {
+            "step": "run one real non-creator or external-use clean cycle for Phase 722",
+            "path": EXTERNAL_CYCLE_PACK.relative_to(REPO_ROOT).as_posix(),
+            "note": (
+                "Pack exists, but no clean non-creator / external-use governance-aware cycle is yet recorded in canonical status surfaces."
+            ),
+        }
 
     return {
         "generated_at": _iso_now(),
@@ -264,6 +314,8 @@ def run_preflight(
             "blocks_beta_entry": False,
             "note": "Treat aegis_compromised as a visible caution in the current beta posture, not as an implicit public-launch stop or a reason to ignore the rest of the bounded receiver checks.",
         },
+        "external_cycle_status": external_cycle_status,
+        "next_bounded_move": next_bounded_move,
         "launch_claim_posture": launch_claim_posture,
         "validation_wave": {
             "present": bool(validation_wave),
@@ -294,6 +346,8 @@ def render_markdown(payload: dict[str, Any]) -> str:
     claim_posture = payload.get("claim_posture") or {}
     scope_posture = payload.get("scope_posture") or {}
     aegis_posture = payload.get("aegis_posture") or {}
+    external_cycle_status = payload.get("external_cycle_status") or {}
+    next_bounded_move = payload.get("next_bounded_move") or {}
     validation_wave = payload.get("validation_wave") or {}
     launch_claim_posture = payload.get("launch_claim_posture") or {}
     lines = [
@@ -309,6 +363,7 @@ def render_markdown(payload: dict[str, Any]) -> str:
         f"- Target reading: `{scope_posture.get('target_note', '')}`",
         f"- Claim trigger: `{claim_posture.get('claim_trigger', '')}`",
         f"- Aegis posture: `{aegis_posture.get('status', 'unknown')}` / `{aegis_posture.get('note', '')}`",
+        f"- Next bounded move: `{next_bounded_move.get('step', '')}`",
         "",
         "## Entry Stack",
         "",
@@ -342,6 +397,17 @@ def render_markdown(payload: dict[str, Any]) -> str:
         "",
         f"- Summary: `{launch_claim_posture.get('summary_text', '')}`",
     ]
+    if next_bounded_move:
+        lines.extend(
+            [
+                "",
+                "## Next Bounded Move",
+                "",
+                f"- Latest external cycle: `{external_cycle_status.get('classification', 'none') or 'none'}`",
+                f"- Pack: `{next_bounded_move.get('path', '')}`",
+                f"- Note: `{next_bounded_move.get('note', '')}`",
+            ]
+        )
     blocked = list(launch_claim_posture.get("blocked_overclaims") or [])
     if blocked:
         lines.extend(["", "### Blocked Overclaims"])

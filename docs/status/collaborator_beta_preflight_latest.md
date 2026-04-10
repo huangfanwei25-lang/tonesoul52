@@ -1,6 +1,6 @@
 # ToneSoul Collaborator-Beta Preflight
 
-> Generated at `2026-03-30T11:37:26Z`.
+> Generated at `2026-04-10T14:38:34Z`.
 
 - Overall status: `go`
 - Current tier: `collaborator_beta`
@@ -10,18 +10,19 @@
 - Target reading: `next_target_tier names the next maturity target, not current readiness or public-launch permission.`
 - Claim trigger: `claim when you are about to edit a shared path; read-only inspection can stay unclaimed`
 - Aegis posture: `compromised` / `Treat aegis_compromised as a visible caution in the current beta posture, not as an implicit public-launch stop or a reason to ignore the rest of the bounded receiver checks.`
+- Next bounded move: `repeat the bounded external/non-creator cycle under a different operator or task shape`
 
 ## Entry Stack
 
 | Surface | Status | Key detail |
 |---|---|---|
-| session-start | ok | readiness=pass track=feature_track claim=required mode=standard_council |
+| session-start | ok | readiness=pass track=quick_change claim=not_required mode=lightweight_review |
 | packet | ok | current=collaborator_beta next=public_launch backend=file-backed |
-| diagnose | ok | [ToneSoul] file | SI=0.45 | vows=3 tensions=0 | R=0.03/stable | coord=file-backed | traces=2 claims=0 compactions=3 subjects=1 zones=9 | git=15cb9c6/dirty=10 | aegis=compromised | agent=beta-smoke (aegis=compromised) |
+| diagnose | ok | [ToneSoul] file | SI=0.45 | vows=3 tensions=0 | R=0.00/stable | claims=0 checkpoints=1 compactions=5 subjects=2 | git=089bbbc/dirty=10 | aegis=compromised | agent=phase722-refresh | readiness=pass (aegis=compromised) |
 
 ## Validation Wave
 
-- Scenario count: `4`
+- Scenario count: `7`
 - Max receiver alerts: `4`
 - Contested dossier visible: `True`
 - Stale compaction guarded: `True`
@@ -29,6 +30,12 @@
 ## Claim Posture
 
 - Summary: `launch_claims=current:collaborator_beta public_launch:deferred blocked=continuity_effectiveness,council_decision_quality,live_shared_memory`
+
+## Next Bounded Move
+
+- Latest external cycle: `strong external pass`
+- Pack: `docs/plans/tonesoul_non_creator_external_cycle_pack_2026-04-10.md`
+- Note: `One clean external/non-creator cycle now exists; repeat 1-2 varied bounded cycles before widening any launch claims.`
 
 ### Blocked Overclaims
 - `continuity_effectiveness` = `runtime_present`

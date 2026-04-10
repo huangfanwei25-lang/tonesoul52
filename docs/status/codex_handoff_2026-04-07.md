@@ -1,7 +1,7 @@
 # Codex Handoff (2026-04-07)
 
-> Purpose: preserve the current self-improvement-loop state, latest bounded trials, and the next safe continuation point without requiring chat-history reconstruction.
-> Scope: branch-local continuation handoff after the sixteenth and seventeenth bounded self-improvement trials.
+> Purpose: preserve the current launch-readiness state, the remaining Phase 722 gap, and the safest next continuation point without requiring hidden chat-history reconstruction.
+> Scope: branch-local continuation handoff after PR #5 merged the CI/file-store/dashboard cleanup bundle into `master`.
 > Status: current handoff note
 
 ---
@@ -10,87 +10,89 @@
 
 - Branch: `master`
 - Current active bucket:
-  - `ToneSoul Self-Improvement Loop v0`
+  - `Launch Readiness And Design Legibility`
 - Honest current short board:
-  - `Phase 847: Eighteenth Trial Candidate Admission`
+  - `Phase 722: run repeated live continuity validation waves`
+  - Real remaining gap: repeat the external/non-creator cycle under 1-2 different lower-context task shapes before widening any launch claims
 
 ## 2. What Landed Most Recently
 
-### Sixteenth bounded trial
+### PR #5 merged into `master`
 
-Promoted:
+Merged as:
 
-- `memory_panel_tier_subordination_v1`
-
-What changed:
-
-- dashboard memory panel now states `auxiliary_only` reference boundaries explicitly
-- closeout caution is visible when partial work is still active
-- display-layer mojibake in the memory panel was removed
-
-Most relevant surfaces:
-
-- `apps/dashboard/frontend/components/memory_panel.py`
-- `docs/status/self_improvement_trial_wave_latest.{json,md}`
-
-### Seventeenth bounded trial
-
-Promoted:
-
-- `status_panel_operator_copy_clarity_v1`
+- `089bbbc` merge commit on `master`
 
 What changed:
 
-- dashboard status panel now has clean operator-facing copy
-- primary vs secondary boundary is explicit
-- telemetry labels are readable and no longer visually noisier than the rest of the shell
+- CI lanes are now less noisy:
+  - `ToneSoul CI` remains the automatic mainline gate
+  - `Pytest CI` is manual focused rerun only
+  - legacy `CI` is manual replay only, and `web_api_smoke` is now clearly named `web_api_quality_replay`
+- Windows/file-backed closeout behavior is safer:
+  - `TONESOUL_FORCE_FILE_STORE=1` now keeps `end_agent_session`, `save_checkpoint`, and `save_compaction` out of Redis auto-detect fallback
+  - `save_compaction` no longer drops CLI payloads when `stdin` is a TTY
+- Dashboard/operator packaging improved:
+  - command shelf now exposes `source / activation / return` cues
+  - self-improvement trial wave and tests now agree on the eighteenth promoted candidate
 
 Most relevant surfaces:
 
-- `apps/dashboard/frontend/components/status_panel.py`
-- `docs/status/self_improvement_trial_wave_latest.{json,md}`
+- `scripts/run_collaborator_beta_preflight.py`
+- `scripts/end_agent_session.py`
+- `scripts/save_checkpoint.py`
+- `scripts/save_compaction.py`
+- `scripts/start_agent_session.py`
+- `tonesoul/runtime_adapter.py`
+- `tonesoul/store.py`
+- `apps/dashboard/frontend/utils/session_start.py`
+- `tonesoul/self_improvement_trial_wave.py`
 
-## 3. Current Trial-Wave Truth
+## 3. Current Launch-Readiness Truth
 
-Latest status surface now reads:
+The current safe public story is still:
 
-- `promote=17`
-- `park=1`
-- `next_short_board = Phase 847: Eighteenth Trial Candidate Admission`
+- `CONDITIONAL GO` for guided collaborator beta
+- `NO-GO` for public-launch claims
+- file-backed coordination remains the launch-default mode
 
-Still parked:
+Most relevant status surfaces:
 
-- `operator_retrieval_cueing_v1`
+- `docs/status/phase726_go_nogo_2026-04-08.md`
+- `docs/status/collaborator_beta_preflight_latest.{json,md}`
+- `docs/status/collaborator_beta_entry_validation_latest.{json,md}`
+- `docs/status/launch_continuity_validation_wave_latest.{json,md}`
 
-Why still parked:
+The most important unresolved evidence gap is still:
 
-- bounded operator-retrieval packaging exists
-- but there is still no live retrieval runner, compiled corpus health lane, or real operator validation wave
+- only one clean `non-creator / external-use` governance-aware cycle is currently recorded in canonical status surfaces; repeated varied proof is still thin
 
 ## 4. What The Next Agent Should Not Forget
 
-### Self-improvement boundaries
+### Launch boundaries
 
-- bounded trial wins are packaging wins, not cognition wins
-- promoted trial results stay in the dedicated status surface
-- they do not become governance truth, identity truth, or hot-memory authority
+- collaborator beta is the current tier
+- public launch remains deferred
+- `next_target_tier` is roadmap language, not current permission
 
-### Dashboard boundaries
+### Evidence boundaries
 
-- dashboard is an operator shell, not a second control plane
-- memory panel is reference selection only
-- status panel is a tier-aligned readout, not the parent action surface
+- repeated continuity validation exists
+- collaborator-beta preflight exists
+- lower-context entry validation exists
+- but those do **not** by themselves equal a real external clean-cycle proof
 
-### Retrieval boundaries
+### Runtime boundaries
 
-- operator retrieval remains auxiliary and parked
-- do not reopen retrieval mythology without a live bounded runner and collection-health lane
+- the file-backed launch default is intentional for current beta posture
+- `TONESOUL_FORCE_FILE_STORE=1` is a Windows/operator compatibility tool, not a new architecture claim
+- closeout must use the official `end_agent_session.py` path if the goal is to count as clean external evidence
 
-### Hot-memory compression boundaries
+### Scope boundaries
 
-- `Take E` is real and already lives in `docs/architecture/TONESOUL_HOT_MEMORY_DECAY_AND_COMPRESSION_MAP.md`
-- if the question is not merely "what survives" but "what may be compressed, recomputed, quarantined, or never compressed", read that map before trusting observer prose alone
-- compaction summary is not a substitute for the compression map, closeout grammar, or source-precedence rules
+- self-improvement remains active, but it is not the current center of gravity
+- do not reopen ontology/domain-core extraction while Phase 722 still lacks the external clean-cycle proof
+- do not widen launch language just because CI and operator packaging are healthier
 
 ## 5. Recommended First 10 Minutes For The Successor
 
@@ -100,53 +102,52 @@ Read:
 2. `docs/AI_QUICKSTART.md`
 3. `DESIGN.md`
 4. `task.md`
-5. this handoff note
-6. `docs/plans/tonesoul_self_improvement_loop_v0_program_2026-04-06.md`
-
-If compaction / resumability / hot-memory compression is in scope, also open:
-
-- `docs/architecture/TONESOUL_HOT_MEMORY_DECAY_AND_COMPRESSION_MAP.md`
+5. `docs/status/phase726_go_nogo_2026-04-08.md`
+6. this handoff note
+7. `docs/plans/tonesoul_non_creator_external_cycle_pack_2026-04-10.md`
 
 Then run:
 
 ```bash
 python scripts/start_agent_session.py --agent <your-id> --tier 0 --no-ack
-python scripts/run_self_improvement_trial_wave.py --agent <your-id>
+python scripts/run_observer_window.py --agent <your-id>
+python -m tonesoul.diagnose --agent <your-id>
+python scripts/run_collaborator_beta_preflight.py --agent <your-id>
 ```
 
-Only after that, select the next bounded candidate.
+If the task is Phase 722-facing, continue with the external cycle pack instead of inventing a new validation flow.
 
 ## 6. What Still Must Stay Parked
 
 - `.claude/`
 - `claw-code-main/`
 - `external_research/`
-- `docs/plans/tonesoul_anti_fake_completion_design_2026-04-02.md`
-- `docs/plans/tonesoul_architecture_thinning_and_tiered_flow_design_2026-04-02.md`
-- `docs/plans/tonesoul_dual_layer_numeric_design_2026-04-02.md`
-- `docs/plans/tonesoul_three_order_isolation_design_2026-04-02.md`
+- `docs/plans/tonesoul_ontology_and_central_control_rethink_2026-04-08.md`
+- `docs/plans/tonesoul_ontology_and_central_control_dormant_program_2026-04-08.md`
+
+These may be useful later, but they are not the active shortest board while external clean-cycle proof is still missing.
 
 ## 7. Best Next Move
 
 Do not reopen:
 
+- public-launch wording
+- identity/ontology rewrites
 - retrieval mythology
-- governance semantics
-- identity
-- transport claims
+- domain-core extraction
 
 The best next move is:
 
-- admit one eighteenth bounded candidate inside allowed mutation space
-- prefer another operator-workspace or consumer-packaging gap
-- avoid widening authority just because the current loop is going well
+- rerun the same bounded external-cycle pack under one different lower-context or non-creator task shape
+- keep the task small enough that the official session-end path can still end as `complete`
+- keep the claim conservative: one clean pass exists, but launch claims still need repeated validation rather than one heroic proof
 
 ## 8. Compressed Thesis
 
-ToneSoul now has a real bounded self-improvement loop.
+ToneSoul is now cleaner to operate and easier to verify.
 
-The next risk is no longer "can it improve at all?"
+The remaining question is no longer "can the shell start safely?"
 
 It is:
 
-`can it keep improving without mistaking cleaner shells for deeper truth?`
+`can a lower-context or non-creator operator complete one honest cycle without hidden rescue or unofficial closeout fallback?`
