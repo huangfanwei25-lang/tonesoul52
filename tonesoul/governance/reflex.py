@@ -36,10 +36,10 @@ logger = logging.getLogger(__name__)
 class SoulBandLevel(Enum):
     """Four bands of soul_integral, each changing system behavior."""
 
-    SERENE = "serene"       # 0.00–0.30: normal operation
-    ALERT = "alert"         # 0.30–0.55: gates tighten 10%
-    STRAINED = "strained"   # 0.55–0.80: gates tighten 25%, forced council
-    CRITICAL = "critical"   # 0.80–1.00: hard enforcement
+    SERENE = "serene"  # 0.00–0.30: normal operation
+    ALERT = "alert"  # 0.30–0.55: gates tighten 10%
+    STRAINED = "strained"  # 0.55–0.80: gates tighten 25%, forced council
+    CRITICAL = "critical"  # 0.80–1.00: hard enforcement
 
 
 @dataclass(frozen=True)
@@ -121,10 +121,10 @@ def classify_soul_band(
 class ReflexAction(Enum):
     """What the reflex arc decides to do."""
 
-    PASS = "pass"       # Normal output
-    WARN = "warn"       # Output with disclaimer
-    SOFTEN = "soften"   # Output with caution injection
-    BLOCK = "block"     # Output replaced with blocked message
+    PASS = "pass"  # Normal output
+    WARN = "warn"  # Output with disclaimer
+    SOFTEN = "soften"  # Output with caution injection
+    BLOCK = "block"  # Output replaced with blocked message
 
 
 @dataclass
@@ -268,11 +268,13 @@ def evaluate_conviction_decay(
         min_conv = min(min_conv, conviction)
 
         if conviction < decay_threshold and trajectory == "decaying":
-            decaying.append({
-                "vow_id": str(vow.get("id") or vow.get("vow_id") or "unknown"),
-                "conviction": round(conviction, 4),
-                "trajectory": trajectory,
-            })
+            decaying.append(
+                {
+                    "vow_id": str(vow.get("id") or vow.get("vow_id") or "unknown"),
+                    "conviction": round(conviction, 4),
+                    "trajectory": trajectory,
+                }
+            )
 
     return ConvictionSignal(
         decaying_vows=decaying,
@@ -389,7 +391,9 @@ class ReflexEvaluator:
             raw_thresholds = getattr(config, "soul_band_thresholds", None)
             if isinstance(raw_thresholds, dict):
                 band_thresholds = raw_thresholds
-            caution_threshold = float(getattr(config, "caution_prompt_threshold", caution_threshold))
+            caution_threshold = float(
+                getattr(config, "caution_prompt_threshold", caution_threshold)
+            )
             risk_threshold = float(getattr(config, "risk_prompt_threshold", risk_threshold))
             tension_reflection_threshold = float(
                 getattr(config, "tension_reflection_threshold", tension_reflection_threshold)
@@ -413,13 +417,15 @@ class ReflexEvaluator:
         disclaimer: Optional[str] = None
         blocked_message: Optional[str] = None
 
-        log.append({
-            "step": "soul_band",
-            "level": band.level.value,
-            "soul_integral": round(snapshot.soul_integral, 4),
-            "gate_modifier": round(gate_modifier, 4),
-            "timestamp": timestamp,
-        })
+        log.append(
+            {
+                "step": "soul_band",
+                "level": band.level.value,
+                "soul_integral": round(snapshot.soul_integral, 4),
+                "gate_modifier": round(gate_modifier, 4),
+                "timestamp": timestamp,
+            }
+        )
 
         # 2. Evaluate drift
         drift_signal = evaluate_drift(
@@ -429,11 +435,15 @@ class ReflexEvaluator:
             risk_threshold=risk_threshold,
         )
         if drift_signal.autonomy_capped:
-            log.append({
-                "step": "drift_autonomy_cap",
-                "original": round(snapshot.baseline_drift.get("autonomy_level", 0.35), 4),
-                "capped_at": round(band.max_autonomy, 4) if band.max_autonomy is not None else None,
-            })
+            log.append(
+                {
+                    "step": "drift_autonomy_cap",
+                    "original": round(snapshot.baseline_drift.get("autonomy_level", 0.35), 4),
+                    "capped_at": (
+                        round(band.max_autonomy, 4) if band.max_autonomy is not None else None
+                    ),
+                }
+            )
 
         # 3. Soul band behavioral changes
         if band.level == SoulBandLevel.ALERT:
@@ -479,19 +489,21 @@ class ReflexEvaluator:
             and snapshot.soul_integral > soul_integral_reflection_threshold
         ):
             trigger_reflection = True
-            log.append({
-                "step": "tension_reflection_trigger",
-                "tension": round(snapshot.tension, 4),
-                "soul_integral": round(snapshot.soul_integral, 4),
-            })
+            log.append(
+                {
+                    "step": "tension_reflection_trigger",
+                    "tension": round(snapshot.tension, 4),
+                    "soul_integral": round(snapshot.soul_integral, 4),
+                }
+            )
 
         # 5. Vow enforcement
         if snapshot.vow_blocked:
             if self.mode == "hard":
-                blocked_vows = ", ".join(snapshot.vow_flags[:3]) if snapshot.vow_flags else "unknown"
-                blocked_message = (
-                    f"此回應未通過誓言守護 [{blocked_vows}]，已被攔截。"
+                blocked_vows = (
+                    ", ".join(snapshot.vow_flags[:3]) if snapshot.vow_flags else "unknown"
                 )
+                blocked_message = f"此回應未通過誓言守護 [{blocked_vows}]，已被攔截。"
                 action = ReflexAction.BLOCK
                 log.append({"step": "vow_block", "flags": snapshot.vow_flags[:3]})
             else:
@@ -519,11 +531,13 @@ class ReflexEvaluator:
                     "建議進行自我評估。"
                 )
             action = max(action, ReflexAction.WARN, key=lambda a: _ACTION_SEVERITY[a])
-            log.append({
-                "step": "conviction_decay",
-                "decaying_vows": decaying[:3],
-                "min_conviction": round(snapshot.conviction_signal.min_conviction, 4),
-            })
+            log.append(
+                {
+                    "step": "conviction_decay",
+                    "decaying_vows": decaying[:3],
+                    "min_conviction": round(snapshot.conviction_signal.min_conviction, 4),
+                }
+            )
 
         # 6. Council BLOCK enforcement
         if snapshot.council_verdict == "BLOCK":
@@ -540,9 +554,16 @@ class ReflexEvaluator:
 
         # 7. Drift prompt injection signals
         if drift_signal.inject_caution_prompt:
-            log.append({"step": "drift_caution_inject", "caution_bias": round(drift_signal.caution_bias, 4)})
+            log.append(
+                {
+                    "step": "drift_caution_inject",
+                    "caution_bias": round(drift_signal.caution_bias, 4),
+                }
+            )
         if drift_signal.inject_risk_prompt:
-            log.append({"step": "drift_risk_inject", "caution_bias": round(drift_signal.caution_bias, 4)})
+            log.append(
+                {"step": "drift_risk_inject", "caution_bias": round(drift_signal.caution_bias, 4)}
+            )
 
         return ReflexDecision(
             action=action,
@@ -597,11 +618,7 @@ def enforce_vows_lightweight(
             "blocked": result.blocked,
             "repair_needed": result.repair_needed,
             "flags": list(result.flags),
-            "replacement": (
-                "此回應未通過誓言守護，已被攔截。"
-                if result.blocked
-                else None
-            ),
+            "replacement": ("此回應未通過誓言守護，已被攔截。" if result.blocked else None),
         }
     except Exception as exc:
         logger.warning("enforce_vows_lightweight failed: %s — failing closed", exc)
@@ -610,7 +627,5 @@ def enforce_vows_lightweight(
             "blocked": True,
             "repair_needed": True,
             "flags": [f"vow_check_error: {exc}"],
-            "replacement": (
-                "此回應未能通過誓言檢查（內部錯誤），已被預防性攔截。"
-            ),
+            "replacement": ("此回應未能通過誓言檢查（內部錯誤），已被預防性攔截。"),
         }

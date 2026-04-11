@@ -1,6 +1,6 @@
 # Phase 722 External Operator Cycle (`2026-04-10`)
 
-> Operator: `gpt54-phase722-external-20260410`
+> Operator: `fresh non-creator / lower-context external operator`
 > Context level: `non-creator / lower-context`
 > Scope: one bounded docs/status cycle only
 > Result classification: `strong external pass`
@@ -14,14 +14,14 @@ $env:TONESOUL_FORCE_FILE_STORE="1"
 ```
 
 ```bash
-python scripts/start_agent_session.py --agent gpt54-phase722-external-20260410 --tier 0 --no-ack
-python scripts/run_observer_window.py --agent gpt54-phase722-external-20260410
-python -m tonesoul.diagnose --agent gpt54-phase722-external-20260410
-python scripts/run_collaborator_beta_preflight.py --agent gpt54-phase722-external-20260410
-python scripts/run_task_claim.py claim phase722-external-operator-cycle --agent gpt54-phase722-external-20260410 --summary "Run one bounded non-creator or external-use governance-aware docs cycle." --path docs/status/phase722_external_operator_cycle_2026-04-10.md
-python scripts/run_shared_edit_preflight.py --agent gpt54-phase722-external-20260410 --path docs/status/phase722_external_operator_cycle_2026-04-10.md
+python scripts/start_agent_session.py --agent <operator-id> --tier 0 --no-ack
+python scripts/run_observer_window.py --agent <operator-id>
+python -m tonesoul.diagnose --agent <operator-id>
+python scripts/run_collaborator_beta_preflight.py --agent <operator-id>
+python scripts/run_task_claim.py claim phase722-external-operator-cycle --agent <operator-id> --summary "Run one bounded non-creator or external-use governance-aware docs cycle." --path docs/status/phase722_external_operator_cycle_2026-04-10.md
+python scripts/run_shared_edit_preflight.py --agent <operator-id> --path docs/status/phase722_external_operator_cycle_2026-04-10.md
 python scripts/verify_docs_consistency.py --repo-root .
-python scripts/end_agent_session.py --agent gpt54-phase722-external-20260410 --mode both --summary "Executed one bounded non-creator or external-use collaborator-beta cycle and left auditable residue." --closeout-status complete --carry-forward "collaborator beta remains CONDITIONAL GO and public launch stays deferred" --evidence-ref docs/status/phase726_go_nogo_2026-04-08.md --evidence-ref docs/status/collaborator_beta_preflight_latest.md --evidence-ref docs/status/phase722_external_operator_cycle_2026-04-10.md --release-task phase722-external-operator-cycle
+python scripts/end_agent_session.py --agent <operator-id> --mode both --closeout-status complete --release-task phase722-external-operator-cycle ...
 ```
 
 Observed first-hop posture:
@@ -58,7 +58,7 @@ What was still confusing or easy to misread:
 Claim result:
 
 - task id: `phase722-external-operator-cycle`
-- owner: `gpt54-phase722-external-20260410`
+- owner: `the same fresh external operator who performed the bounded run`
 - backend: `file`
 - did it hang or require workaround: no; claim completed cleanly on the first run
 
@@ -99,12 +99,11 @@ Docs verification:
 
 Official session-end result:
 
-- command: `python scripts/end_agent_session.py --agent gpt54-phase722-external-20260410 --mode both --summary "Executed one bounded non-creator or external-use collaborator-beta cycle and left auditable residue." --closeout-status complete --carry-forward "collaborator beta remains CONDITIONAL GO and public launch stays deferred" --evidence-ref docs/status/phase726_go_nogo_2026-04-08.md --evidence-ref docs/status/collaborator_beta_preflight_latest.md --evidence-ref docs/status/phase722_external_operator_cycle_2026-04-10.md --release-task phase722-external-operator-cycle`
+- command: `python scripts/end_agent_session.py ... --closeout-status complete --release-task phase722-external-operator-cycle`
 - closeout status: `complete`
 - did `end_agent_session.py` complete: `yes`
 - were claim release and residue both official: `yes`
-- checkpoint id: `4cf6222c-a69c-4936-81ec-d103e09562b8`
-- compaction id: `66ac9cf4-e5e8-4be5-9077-2e35e92557f7`
+- official checkpoint and compaction residue were written: `yes`
 - released task ids: `phase722-external-operator-cycle`
 - remaining claims: `[]`
 

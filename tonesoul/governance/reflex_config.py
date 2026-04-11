@@ -77,7 +77,8 @@ class ReflexConfig:
             enabled=bool(data.get("enabled", True)),
             vow_enforcement_mode=vow_mode,
             council_block_enforcement=True,  # cannot be disabled
-            soul_band_thresholds=thresholds or {
+            soul_band_thresholds=thresholds
+            or {
                 "alert": 0.30,
                 "strained": 0.55,
                 "critical": 0.80,

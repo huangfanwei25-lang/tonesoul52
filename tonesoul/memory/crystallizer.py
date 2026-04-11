@@ -39,12 +39,12 @@ _STAGE_ORDER = [s.value for s in SeedStage]
 # Ice (chaotic potential) → Water (flowing through constraints) →
 # Steam (accumulated complexity) → Crystal (refined, transferable essence)
 PHASE_TRANSITION_MAP: dict[str, str] = {
-    SeedStage.T0_DRAFT.value: "ice",         # Unactivated potential
-    SeedStage.T1_DEPOSIT.value: "ice",        # Persisted but not yet flowing
-    SeedStage.T2_RETRIEVAL.value: "water",    # Loaded and flowing through system
-    SeedStage.T3_ALIGN.value: "water",        # Being shaped by constraints
-    SeedStage.T4_APPLY.value: "steam",        # Used in output — complexity accumulates
-    SeedStage.T5_FEEDBACK.value: "steam",     # Re-deposited, refined but not yet canonical
+    SeedStage.T0_DRAFT.value: "ice",  # Unactivated potential
+    SeedStage.T1_DEPOSIT.value: "ice",  # Persisted but not yet flowing
+    SeedStage.T2_RETRIEVAL.value: "water",  # Loaded and flowing through system
+    SeedStage.T3_ALIGN.value: "water",  # Being shaped by constraints
+    SeedStage.T4_APPLY.value: "steam",  # Used in output — complexity accumulates
+    SeedStage.T5_FEEDBACK.value: "steam",  # Re-deposited, refined but not yet canonical
     SeedStage.T6_CANONICAL.value: "crystal",  # Governance-frozen, transferable essence
 }
 

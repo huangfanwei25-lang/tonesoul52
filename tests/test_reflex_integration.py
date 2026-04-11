@@ -19,7 +19,6 @@ from tonesoul.governance.reflex import (
 )
 from tonesoul.governance.reflex_config import ReflexConfig
 
-
 # ---------------------------------------------------------------------------
 # Hard mode enforcement: vow BLOCK replaces output
 # ---------------------------------------------------------------------------
@@ -284,8 +283,9 @@ class TestEnforceVowsLightweight:
 class TestModeTransition:
     """Verify that switching from soft to hard changes enforcement behavior."""
 
-    def _evaluate_with_mode(self, mode: str, *, vow_blocked: bool = False,
-                             council_verdict: str = None) -> ReflexDecision:
+    def _evaluate_with_mode(
+        self, mode: str, *, vow_blocked: bool = False, council_verdict: str = None
+    ) -> ReflexDecision:
         config = ReflexConfig(enabled=True, vow_enforcement_mode=mode)
         evaluator = ReflexEvaluator(config=config)
         snapshot = GovernanceSnapshot(

@@ -79,6 +79,12 @@ def _intentional_forgetting_gate(payload: Dict[str, object]) -> tuple[bool, List
 
     Returns (should_keep, reasons_to_forget).
     """
+    # Structured payloads with explicit type bypass the forgetting gate —
+    # handoffs, crystallizations, and audit records are always worth keeping.
+    payload_type = str(payload.get("type") or "").strip().lower()
+    if payload_type in {"handoff", "crystal", "audit", "governance_retro"}:
+        return True, []
+
     reasons: List[str] = []
 
     # Empty or trivially short content

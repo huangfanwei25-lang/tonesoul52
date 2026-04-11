@@ -15,7 +15,6 @@ from tonesoul.governance.reflex import (
 )
 from tonesoul.governance.reflex_config import ReflexConfig
 
-
 # ---------------------------------------------------------------------------
 # Conviction Decay
 # ---------------------------------------------------------------------------

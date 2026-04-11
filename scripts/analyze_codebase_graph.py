@@ -63,28 +63,51 @@ LAYER_MAP: dict[str, str] = {
 
 # Allowed downward dependencies (layer A may import layer B)
 ALLOWED_DEPS: dict[str, set[str]] = {
-    "surface": {"pipeline", "orchestration", "governance", "memory",
-                "infrastructure", "shared", "domain", "semantic",
-                "perception", "observability", "evolution"},
-    "orchestration": {"pipeline", "governance", "memory", "infrastructure",
-                      "shared", "domain", "semantic", "observability",
-                      "evolution"},
-    "pipeline": {"governance", "memory", "infrastructure", "shared",
-                 "semantic", "perception", "observability", "evolution",
-                 "domain"},
-    "domain": {"governance", "memory", "infrastructure", "shared",
-               "semantic", "observability"},
+    "surface": {
+        "pipeline",
+        "orchestration",
+        "governance",
+        "memory",
+        "infrastructure",
+        "shared",
+        "domain",
+        "semantic",
+        "perception",
+        "observability",
+        "evolution",
+    },
+    "orchestration": {
+        "pipeline",
+        "governance",
+        "memory",
+        "infrastructure",
+        "shared",
+        "domain",
+        "semantic",
+        "observability",
+        "evolution",
+    },
+    "pipeline": {
+        "governance",
+        "memory",
+        "infrastructure",
+        "shared",
+        "semantic",
+        "perception",
+        "observability",
+        "evolution",
+        "domain",
+    },
+    "domain": {"governance", "memory", "infrastructure", "shared", "semantic", "observability"},
     "governance": {"memory", "infrastructure", "shared", "observability", "semantic"},
     "memory": {"infrastructure", "shared"},
-    "evolution": {"memory", "infrastructure", "shared", "governance",
-                  "observability"},
+    "evolution": {"memory", "infrastructure", "shared", "governance", "observability"},
     "semantic": {"infrastructure", "shared", "memory"},
     "perception": {"infrastructure", "shared", "memory", "semantic"},
     "observability": {"infrastructure", "shared"},
     "infrastructure": {"shared"},
     "shared": set(),
-    "legacy": {"shared", "infrastructure", "governance", "memory",
-               "pipeline", "domain"},
+    "legacy": {"shared", "infrastructure", "governance", "memory", "pipeline", "domain"},
 }
 
 
@@ -94,6 +117,7 @@ ALLOWED_DEPS: dict[str, set[str]] = {
 @dataclass
 class ModuleInfo:
     """Parsed information about a single Python module."""
+
     repo_path: str  # e.g. "tonesoul/governance/kernel.py"
     module_name: str  # e.g. "tonesoul.governance.kernel"
     subpackage: str  # e.g. "governance" or "(root)"
@@ -108,6 +132,7 @@ class ModuleInfo:
 @dataclass
 class CycleInfo:
     """A detected import cycle."""
+
     cycle: list[str]
     length: int
 
@@ -115,6 +140,7 @@ class CycleInfo:
 @dataclass
 class LayerViolation:
     """A detected layer boundary violation."""
+
     source_module: str
     source_layer: str
     target_module: str
@@ -230,9 +256,7 @@ def scan_module(file_path: Path, root_package: str, repo_root: Path) -> ModuleIn
     )
 
 
-def scan_all_modules(
-    root_package: str, repo_root: Path
-) -> dict[str, ModuleInfo]:
+def scan_all_modules(root_package: str, repo_root: Path) -> dict[str, ModuleInfo]:
     """Scan all .py files under the root package."""
     package_dir = repo_root / root_package
     modules: dict[str, ModuleInfo] = {}
@@ -255,9 +279,7 @@ def scan_all_modules(
 # ---------------------------------------------------------------------------
 # Graph analysis
 # ---------------------------------------------------------------------------
-def resolve_import_target(
-    import_name: str, modules: dict[str, ModuleInfo]
-) -> str | None:
+def resolve_import_target(import_name: str, modules: dict[str, ModuleInfo]) -> str | None:
     """Resolve an import name to an actual module in our graph."""
     if import_name in modules:
         return import_name
@@ -385,12 +407,14 @@ def find_layer_violations(
 
         allowed = ALLOWED_DEPS.get(src_layer, set())
         if tgt_layer not in allowed:
-            violations.append(LayerViolation(
-                source_module=src,
-                source_layer=src_layer,
-                target_module=tgt,
-                target_layer=tgt_layer,
-            ))
+            violations.append(
+                LayerViolation(
+                    source_module=src,
+                    source_layer=src_layer,
+                    target_module=tgt,
+                    target_layer=tgt_layer,
+                )
+            )
 
     return violations
 
@@ -407,15 +431,13 @@ def _is_entry_point(info: ModuleInfo, repo_root: Path) -> bool:
         return True
 
     # Has `if __name__ == "__main__":` block
-    if 'if __name__ ==' in source:
+    if "if __name__ ==" in source:
         return True
 
     return False
 
 
-def _is_externally_referenced(
-    mod_name: str, root_package: str, repo_root: Path
-) -> bool:
+def _is_externally_referenced(mod_name: str, root_package: str, repo_root: Path) -> bool:
     """Check if a module is imported by scripts/, tests/, apps/, or __init__.py."""
     import re as _re
 
@@ -502,9 +524,7 @@ def detect_communities(
     Modules that are more tightly coupled to another subpackage will migrate.
     """
     # Initialize labels
-    labels: dict[str, str] = {
-        name: info.subpackage for name, info in modules.items()
-    }
+    labels: dict[str, str] = {name: info.subpackage for name, info in modules.items()}
 
     # Build adjacency (undirected)
     adj: dict[str, list[str]] = defaultdict(list)
@@ -587,8 +607,10 @@ def build_report(
     ]
 
     return {
-        "generated_at": datetime.now(timezone.utc).replace(microsecond=0)
-            .isoformat().replace("+00:00", "Z"),
+        "generated_at": datetime.now(timezone.utc)
+        .replace(microsecond=0)
+        .isoformat()
+        .replace("+00:00", "Z"),
         "source": "scripts/analyze_codebase_graph.py",
         "root_package": root_package,
         "summary": {
@@ -603,10 +625,7 @@ def build_report(
             "total_community_drifts": len(drifted),
         },
         "god_nodes": god_nodes,
-        "cycles": [
-            {"cycle": c.cycle, "length": c.length}
-            for c in cycles[:30]  # cap at 30
-        ],
+        "cycles": [{"cycle": c.cycle, "length": c.length} for c in cycles[:30]],  # cap at 30
         "layer_violations": [
             {
                 "source": v.source_module,
@@ -617,9 +636,7 @@ def build_report(
             for v in violations
         ],
         "orphans": orphans[:50],
-        "subpackage_stats": {
-            k: dict(v) for k, v in sorted(pkg_stats.items())
-        },
+        "subpackage_stats": {k: dict(v) for k, v in sorted(pkg_stats.items())},
         "subpackage_coupling": coupling,
         "community_drifts": drifted[:30],
     }
@@ -653,8 +670,9 @@ def render_markdown(report: dict[str, Any]) -> str:
     # God nodes
     lines.append("## God Nodes (Top 20 by coupling)")
     lines.append("")
-    lines.append("Modules with the highest total degree (in + out). "
-                 "High coupling = high change risk.")
+    lines.append(
+        "Modules with the highest total degree (in + out). " "High coupling = high change risk."
+    )
     lines.append("")
     lines.append("| # | Module | Layer | In | Out | Total | Lines | Funcs |")
     lines.append("| ---: | --- | --- | ---: | ---: | ---: | ---: | ---: |")
@@ -671,8 +689,10 @@ def render_markdown(report: dict[str, Any]) -> str:
     if report["cycles"]:
         lines.append("## Circular Dependencies")
         lines.append("")
-        lines.append(f"Found **{s['total_cycles']}** import cycles. "
-                     "These make testing and refactoring harder.")
+        lines.append(
+            f"Found **{s['total_cycles']}** import cycles. "
+            "These make testing and refactoring harder."
+        )
         lines.append("")
         for i, c in enumerate(report["cycles"][:15], 1):
             short = [m.removeprefix(f"{report['root_package']}.") for m in c["cycle"]]
@@ -741,8 +761,10 @@ def render_markdown(report: dict[str, Any]) -> str:
     if report["community_drifts"]:
         lines.append("## Community Drifts")
         lines.append("")
-        lines.append("Modules whose import pattern suggests they belong to "
-                     "a different subpackage than their directory.")
+        lines.append(
+            "Modules whose import pattern suggests they belong to "
+            "a different subpackage than their directory."
+        )
         lines.append("")
         lines.append("| Module | Directory | Community |")
         lines.append("| --- | --- | --- |")
@@ -758,23 +780,25 @@ def render_markdown(report: dict[str, Any]) -> str:
 # CLI
 # ---------------------------------------------------------------------------
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(
-        description="Full-AST codebase graph analyzer for ToneSoul."
-    )
+    parser = argparse.ArgumentParser(description="Full-AST codebase graph analyzer for ToneSoul.")
     parser.add_argument(
-        "--root", default="tonesoul",
+        "--root",
+        default="tonesoul",
         help="Root package to scan (default: tonesoul)",
     )
     parser.add_argument(
-        "--output-dir", default="docs/status",
+        "--output-dir",
+        default="docs/status",
         help="Output directory for reports (default: docs/status)",
     )
     parser.add_argument(
-        "--json-only", action="store_true",
+        "--json-only",
+        action="store_true",
         help="Print JSON to stdout, don't write files",
     )
     parser.add_argument(
-        "--repo-root", default=None,
+        "--repo-root",
+        default=None,
         help="Repository root (default: auto-detect)",
     )
     args = parser.parse_args(argv)
@@ -798,8 +822,15 @@ def main(argv: list[str] | None = None) -> int:
 
     # Report
     report = build_report(
-        modules, edges, degree, cycles, violations,
-        orphans, coupling, communities, args.root,
+        modules,
+        edges,
+        degree,
+        cycles,
+        violations,
+        orphans,
+        coupling,
+        communities,
+        args.root,
     )
 
     if args.json_only:
@@ -824,9 +855,12 @@ def main(argv: list[str] | None = None) -> int:
     s = report["summary"]
     print(f"Scanned {s['total_modules']} modules, {s['total_lines']:,} lines")
     print(f"  Edges: {s['total_edges']}")
-    print(f"  God node #1: {report['god_nodes'][0]['module']} "
-          f"(degree={report['god_nodes'][0]['total_degree']})"
-          if report["god_nodes"] else "  No edges found")
+    print(
+        f"  God node #1: {report['god_nodes'][0]['module']} "
+        f"(degree={report['god_nodes'][0]['total_degree']})"
+        if report["god_nodes"]
+        else "  No edges found"
+    )
     print(f"  Cycles: {s['total_cycles']}")
     print(f"  Layer violations: {s['total_layer_violations']}")
     print(f"  Orphans: {s['total_orphans']}")

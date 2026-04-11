@@ -48,24 +48,19 @@ def tiny_repo(tmp_path: Path) -> Path:
 
     # utils.py — standalone
     (pkg / "utils.py").write_text(
-        "def helper():\n"
-        "    return 42\n",
+        "def helper():\n" "    return 42\n",
         encoding="utf-8",
     )
 
     # gate.py — imports utils (creates cycle potential)
     (pkg / "gate.py").write_text(
-        "from mypkg.utils import helper\n"
-        "\n"
-        "class Gate:\n"
-        "    pass\n",
+        "from mypkg.utils import helper\n" "\n" "class Gate:\n" "    pass\n",
         encoding="utf-8",
     )
 
     # orphan.py — nobody imports this
     (pkg / "orphan.py").write_text(
-        "def unused():\n"
-        "    pass\n",
+        "def unused():\n" "    pass\n",
         encoding="utf-8",
     )
 
@@ -80,13 +75,11 @@ def cycle_repo(tmp_path: Path) -> Path:
     (pkg / "__init__.py").write_text("", encoding="utf-8")
 
     (pkg / "alpha.py").write_text(
-        "from cpkg.beta import b_func\n"
-        "def a_func(): pass\n",
+        "from cpkg.beta import b_func\n" "def a_func(): pass\n",
         encoding="utf-8",
     )
     (pkg / "beta.py").write_text(
-        "from cpkg.alpha import a_func\n"
-        "def b_func(): pass\n",
+        "from cpkg.alpha import a_func\n" "def b_func(): pass\n",
         encoding="utf-8",
     )
     return tmp_path
@@ -97,9 +90,7 @@ def cycle_repo(tmp_path: Path) -> Path:
 # ---------------------------------------------------------------------------
 class TestScanModule:
     def test_basic_scan(self, tiny_repo: Path) -> None:
-        info = acg.scan_module(
-            tiny_repo / "mypkg" / "core.py", "mypkg", tiny_repo
-        )
+        info = acg.scan_module(tiny_repo / "mypkg" / "core.py", "mypkg", tiny_repo)
         assert info.module_name == "mypkg.core"
         assert info.subpackage == "(root)"
         assert info.classes == 1
@@ -109,9 +100,7 @@ class TestScanModule:
         assert info.lines > 0
 
     def test_init_module_name(self, tiny_repo: Path) -> None:
-        info = acg.scan_module(
-            tiny_repo / "mypkg" / "__init__.py", "mypkg", tiny_repo
-        )
+        info = acg.scan_module(tiny_repo / "mypkg" / "__init__.py", "mypkg", tiny_repo)
         assert info.module_name == "mypkg"
 
     def test_syntax_error_handled(self, tmp_path: Path) -> None:
@@ -331,8 +320,15 @@ class TestFullReport:
         communities = acg.detect_communities(modules, edges)
 
         report = acg.build_report(
-            modules, edges, degree, cycles, violations,
-            orphans, coupling, communities, "mypkg",
+            modules,
+            edges,
+            degree,
+            cycles,
+            violations,
+            orphans,
+            coupling,
+            communities,
+            "mypkg",
         )
 
         assert "summary" in report
@@ -357,8 +353,15 @@ class TestFullReport:
         communities = acg.detect_communities(modules, edges)
 
         report = acg.build_report(
-            modules, edges, degree, cycles, violations,
-            orphans, coupling, communities, "mypkg",
+            modules,
+            edges,
+            degree,
+            cycles,
+            violations,
+            orphans,
+            coupling,
+            communities,
+            "mypkg",
         )
         md = acg.render_markdown(report)
         assert "# ToneSoul Codebase Graph Analysis" in md
@@ -371,11 +374,15 @@ class TestFullReport:
 # ---------------------------------------------------------------------------
 class TestCLI:
     def test_json_only_mode(self, tiny_repo: Path, capsys: pytest.CaptureFixture[str]) -> None:
-        ret = acg.main([
-            "--root", "mypkg",
-            "--repo-root", str(tiny_repo),
-            "--json-only",
-        ])
+        ret = acg.main(
+            [
+                "--root",
+                "mypkg",
+                "--repo-root",
+                str(tiny_repo),
+                "--json-only",
+            ]
+        )
         assert ret == 0
         output = capsys.readouterr().out
         data = json.loads(output)
@@ -383,11 +390,16 @@ class TestCLI:
 
     def test_file_output_mode(self, tiny_repo: Path) -> None:
         out_dir = tiny_repo / "output"
-        ret = acg.main([
-            "--root", "mypkg",
-            "--repo-root", str(tiny_repo),
-            "--output-dir", str(out_dir),
-        ])
+        ret = acg.main(
+            [
+                "--root",
+                "mypkg",
+                "--repo-root",
+                str(tiny_repo),
+                "--output-dir",
+                str(out_dir),
+            ]
+        )
         assert ret == 0
         assert (out_dir / "codebase_graph_latest.json").exists()
         assert (out_dir / "codebase_graph_latest.md").exists()
@@ -395,9 +407,13 @@ class TestCLI:
     def test_empty_package_fails(self, tmp_path: Path) -> None:
         empty = tmp_path / "emptypkg"
         empty.mkdir()
-        ret = acg.main([
-            "--root", "emptypkg",
-            "--repo-root", str(tmp_path),
-            "--json-only",
-        ])
+        ret = acg.main(
+            [
+                "--root",
+                "emptypkg",
+                "--repo-root",
+                str(tmp_path),
+                "--json-only",
+            ]
+        )
         assert ret == 1

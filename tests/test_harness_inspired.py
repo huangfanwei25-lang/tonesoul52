@@ -24,7 +24,6 @@ from tonesoul.memory.write_gateway import (
     _intentional_forgetting_gate,
 )
 
-
 # ---------------------------------------------------------------------------
 # Phase Transition Model
 # ---------------------------------------------------------------------------
@@ -38,23 +37,43 @@ class TestPhaseTransition:
         assert c.phase == "ice"
 
     def test_retrieval_is_water(self):
-        c = Crystal(rule="test", source_pattern="x", weight=0.5, created_at="2026-01-01",
-                    stage=SeedStage.T2_RETRIEVAL.value)
+        c = Crystal(
+            rule="test",
+            source_pattern="x",
+            weight=0.5,
+            created_at="2026-01-01",
+            stage=SeedStage.T2_RETRIEVAL.value,
+        )
         assert c.phase == "water"
 
     def test_apply_is_steam(self):
-        c = Crystal(rule="test", source_pattern="x", weight=0.5, created_at="2026-01-01",
-                    stage=SeedStage.T4_APPLY.value)
+        c = Crystal(
+            rule="test",
+            source_pattern="x",
+            weight=0.5,
+            created_at="2026-01-01",
+            stage=SeedStage.T4_APPLY.value,
+        )
         assert c.phase == "steam"
 
     def test_canonical_is_crystal(self):
-        c = Crystal(rule="test", source_pattern="x", weight=0.5, created_at="2026-01-01",
-                    stage=SeedStage.T6_CANONICAL.value)
+        c = Crystal(
+            rule="test",
+            source_pattern="x",
+            weight=0.5,
+            created_at="2026-01-01",
+            stage=SeedStage.T6_CANONICAL.value,
+        )
         assert c.phase == "crystal"
 
     def test_phase_in_to_dict(self):
-        c = Crystal(rule="test", source_pattern="x", weight=0.5, created_at="2026-01-01",
-                    stage=SeedStage.T3_ALIGN.value)
+        c = Crystal(
+            rule="test",
+            source_pattern="x",
+            weight=0.5,
+            created_at="2026-01-01",
+            stage=SeedStage.T3_ALIGN.value,
+        )
         d = c.to_dict()
         assert d["phase"] == "water"
 
@@ -82,26 +101,32 @@ class TestIntentionalForgetting:
         assert "content_too_short" in reasons
 
     def test_ephemeral_tag_rejected(self):
-        keep, reasons = _intentional_forgetting_gate({
-            "content": "some debug output that is long enough",
-            "tags": ["debug", "ephemeral"],
-        })
+        keep, reasons = _intentional_forgetting_gate(
+            {
+                "content": "some debug output that is long enough",
+                "tags": ["debug", "ephemeral"],
+            }
+        )
         assert not keep
         assert "ephemeral_tag" in reasons
 
     def test_passive_noise_rejected(self):
-        keep, reasons = _intentional_forgetting_gate({
-            "content": "background noise observation text",
-            "observation_mode": "passive_noise",
-        })
+        keep, reasons = _intentional_forgetting_gate(
+            {
+                "content": "background noise observation text",
+                "observation_mode": "passive_noise",
+            }
+        )
         assert not keep
         assert "passive_noise" in reasons
 
     def test_valid_content_passes(self):
-        keep, reasons = _intentional_forgetting_gate({
-            "content": "This is meaningful governance insight from council deliberation.",
-            "tags": ["governance", "council"],
-        })
+        keep, reasons = _intentional_forgetting_gate(
+            {
+                "content": "This is meaningful governance insight from council deliberation.",
+                "tags": ["governance", "council"],
+            }
+        )
         assert keep
         assert reasons == []
 
@@ -146,10 +171,22 @@ class TestGovernanceRetro:
 
     def test_run_retro_with_crystals(self):
         crystals = [
-            Crystal(rule="avoid X", source_pattern="p1", weight=0.8,
-                    created_at="2026-01-01", freshness_score=0.15, access_count=1),
-            Crystal(rule="prefer Y", source_pattern="p2", weight=0.7,
-                    created_at="2026-01-01", freshness_score=0.90, access_count=5),
+            Crystal(
+                rule="avoid X",
+                source_pattern="p1",
+                weight=0.8,
+                created_at="2026-01-01",
+                freshness_score=0.15,
+                access_count=1,
+            ),
+            Crystal(
+                rule="prefer Y",
+                source_pattern="p2",
+                weight=0.7,
+                created_at="2026-01-01",
+                freshness_score=0.90,
+                access_count=5,
+            ),
         ]
         result = run_retro(crystals=crystals, dry_run=True)
         assert result.crystals_decayed >= 1  # first crystal is stale

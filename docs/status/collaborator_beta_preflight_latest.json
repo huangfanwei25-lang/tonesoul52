@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-04-10T15:40:04Z",
+  "generated_at": "2026-04-10T16:31:50Z",
   "overall_ok": true,
   "overall_status": "go",
   "repo_root": "C:\\Users\\user\\Desktop\\倉庫",
-  "agent": "phase722-dual-surface-refresh",
+  "agent": "phase722-public-summary-refresh",
   "commands": {
-    "session_start": "run_session_start_bundle(agent_id='phase722-dual-surface-refresh')",
+    "session_start": "run_session_start_bundle(agent_id='phase722-public-summary-refresh')",
     "packet": "extracted from session_start bundle payload['packet']",
     "diagnose": "embedded_from_session_start"
   },
@@ -28,7 +28,7 @@
     "diagnose": {
       "ok": true,
       "mode": "embedded_from_session_start",
-      "compact_line": "[ToneSoul] file | SI=0.45 | vows=3 tensions=0 | R=0.00/stable | claims=0 checkpoints=1 compactions=5 subjects=2 | git=034bf2f/dirty=7 | aegis=compromised | agent=phase722-dual-surface-refresh | readiness=pass",
+      "compact_line": "embedded_from_session_start | readiness=pass | aegis=compromised",
       "aegis_status": "compromised"
     }
   },

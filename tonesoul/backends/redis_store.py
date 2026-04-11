@@ -112,9 +112,7 @@ return 1
         payload = json.dumps(entry, ensure_ascii=False)
         agent = str(claim.get("agent", ""))
         try:
-            result = self._r.eval(
-                self._CLAIM_LOCK_SCRIPT, 1, key, payload, agent, int(ttl_seconds)
-            )
+            result = self._r.eval(self._CLAIM_LOCK_SCRIPT, 1, key, payload, agent, int(ttl_seconds))
         except Exception:
             # Fallback for environments where EVAL is disabled
             existing_raw = self._r.get(key)

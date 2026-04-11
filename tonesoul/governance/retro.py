@@ -68,8 +68,8 @@ class RetroConfig:
 
     # Trigger conditions (any one triggers)
     soul_integral_threshold: float = 0.55  # run when SI crosses this
-    sessions_since_last: int = 10          # run every N sessions
-    max_stale_days: int = 14               # rules unused for this long are flagged
+    sessions_since_last: int = 10  # run every N sessions
+    max_stale_days: int = 14  # rules unused for this long are flagged
 
     # Crystal maintenance
     crystal_freshness_floor: float = 0.20  # below this → decay
@@ -99,10 +99,16 @@ def should_run_retro(
     cfg = config or RetroConfig()
 
     if soul_integral >= cfg.soul_integral_threshold:
-        return True, f"soul_integral ({soul_integral:.2f}) >= threshold ({cfg.soul_integral_threshold})"
+        return (
+            True,
+            f"soul_integral ({soul_integral:.2f}) >= threshold ({cfg.soul_integral_threshold})",
+        )
 
     if sessions_since_last_retro >= cfg.sessions_since_last:
-        return True, f"sessions since last retro ({sessions_since_last_retro}) >= {cfg.sessions_since_last}"
+        return (
+            True,
+            f"sessions since last retro ({sessions_since_last_retro}) >= {cfg.sessions_since_last}",
+        )
 
     return False, "no trigger condition met"
 
@@ -153,6 +159,7 @@ def run_retro(
                 if not dry_run and hasattr(crystal, "advance_stage"):
                     try:
                         from tonesoul.memory.crystallizer import SeedStage
+
                         crystal.advance_stage(SeedStage.T5_FEEDBACK)
                     except Exception:
                         pass
@@ -195,9 +202,7 @@ def persist_retro_result(
     payload = result.to_dict()
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text(
-        json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8"
-    )
+    output_path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
 
     history_path.parent.mkdir(parents=True, exist_ok=True)
     with history_path.open("a", encoding="utf-8") as f:

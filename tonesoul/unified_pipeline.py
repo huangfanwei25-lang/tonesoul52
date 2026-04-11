@@ -1867,9 +1867,7 @@ class UnifiedPipeline:
         governance_depth_plan = self._normalize_governance_depth_plan(
             getattr(routing_decision, "governance_depth_plan", None)
         )
-        self._current_governance_depth = getattr(
-            routing_decision, "governance_depth", "standard"
-        )
+        self._current_governance_depth = getattr(routing_decision, "governance_depth", "standard")
         governance_kernel = self._get_governance_kernel()
 
         def _base_dispatch_trace() -> Dict[str, Any]:
@@ -1892,12 +1890,16 @@ class UnifiedPipeline:
                         signature = inspect.signature(build_routing_trace)
                     except (TypeError, ValueError):
                         signature = None
-                    if signature is None or any(
-                        parameter.kind == inspect.Parameter.VAR_KEYWORD
-                        for parameter in signature.parameters.values()
-                    ) or (
-                        "governance_depth" in signature.parameters
-                        and "governance_depth_plan" in signature.parameters
+                    if (
+                        signature is None
+                        or any(
+                            parameter.kind == inspect.Parameter.VAR_KEYWORD
+                            for parameter in signature.parameters.values()
+                        )
+                        or (
+                            "governance_depth" in signature.parameters
+                            and "governance_depth_plan" in signature.parameters
+                        )
                     ):
                         routing_kwargs["governance_depth"] = getattr(
                             routing_decision, "governance_depth", "standard"
@@ -1944,13 +1946,15 @@ class UnifiedPipeline:
                 "journal_eligible": routing_trace.get("journal_eligible"),
                 "reason": routing_trace.get("reason"),
                 "governance_depth": routing_trace.get("governance_depth"),
-                "governance_depth_plan": self._build_trace_section(
-                    "governance_depth_plan",
-                    governance_depth_plan,
-                    status="ok",
-                )
-                if governance_depth_plan
-                else {},
+                "governance_depth_plan": (
+                    self._build_trace_section(
+                        "governance_depth_plan",
+                        governance_depth_plan,
+                        status="ok",
+                    )
+                    if governance_depth_plan
+                    else {}
+                ),
                 "routing_trace": dict(routing_trace),
                 "pre_gate_initial_tension": initial_tension,
                 "pre_gate_governance_friction": governance_friction,
@@ -2198,10 +2202,9 @@ class UnifiedPipeline:
         reflex_decision = self._compute_reflex_decision(initial_tension)
         reflex_force_convene = False
         if reflex_decision is not None:
-            reflex_force_convene = (
-                getattr(reflex_decision, "trigger_reflection", False)
-                and getattr(getattr(reflex_decision, "soul_band", None), "force_council", False)
-            )
+            reflex_force_convene = getattr(
+                reflex_decision, "trigger_reflection", False
+            ) and getattr(getattr(reflex_decision, "soul_band", None), "force_council", False)
             self._reflex_gate_modifier = getattr(reflex_decision, "gate_modifier", 1.0)
             reflex_status = "ok"
             reflex_action = str(getattr(reflex_decision, "action", None))
@@ -3309,7 +3312,9 @@ Respond with a clear, practical answer."""
                 final_reflex_action = str(getattr(final_reflex_decision, "action", None))
                 if "BLOCK" in final_reflex_action.upper():
                     final_reflex_status = "error"
-                elif "SOFTEN" in final_reflex_action.upper() or "WARN" in final_reflex_action.upper():
+                elif (
+                    "SOFTEN" in final_reflex_action.upper() or "WARN" in final_reflex_action.upper()
+                ):
                     final_reflex_status = "degraded"
                 dispatch_trace["reflex_arc_final"] = self._build_trace_section(
                     "reflex_arc_final",

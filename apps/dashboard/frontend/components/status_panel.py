@@ -138,14 +138,24 @@ def build_status_panel_view_model(
     tier0_shell = tier0_shell or {}
     tier1_shell = tier1_shell or {}
     tier2_drawer = tier2_drawer or {}
-    conversation = snapshot.get("conversation") if isinstance(snapshot.get("conversation"), dict) else {}
+    conversation = (
+        snapshot.get("conversation") if isinstance(snapshot.get("conversation"), dict) else {}
+    )
     last_entry = conversation.get("last") if isinstance(conversation.get("last"), dict) else {}
     intent = summary.get("intent") if isinstance((summary or {}).get("intent"), dict) else {}
     control = summary.get("control") if isinstance((summary or {}).get("control"), dict) else {}
     persona = summary.get("persona") if isinstance((summary or {}).get("persona"), dict) else {}
 
-    parity_counts = tier1_shell.get("parity_counts") if isinstance(tier1_shell.get("parity_counts"), dict) else {}
-    observer_shell = tier1_shell.get("observer_shell") if isinstance(tier1_shell.get("observer_shell"), dict) else {}
+    parity_counts = (
+        tier1_shell.get("parity_counts")
+        if isinstance(tier1_shell.get("parity_counts"), dict)
+        else {}
+    )
+    observer_shell = (
+        tier1_shell.get("observer_shell")
+        if isinstance(tier1_shell.get("observer_shell"), dict)
+        else {}
+    )
     closeout_attention = (
         tier1_shell.get("closeout_attention")
         if isinstance(tier1_shell.get("closeout_attention"), dict)
@@ -210,10 +220,16 @@ def build_status_panel_view_model(
             "receiver_rule": str(improvement_cue.get("receiver_rule", "")).strip(),
             "source_path": str(improvement_cue.get("source_path", "")).strip(),
             "outcome_counts": {
-                "promote": int(((improvement_cue.get("outcome_counts") or {}).get("promote", 0)) or 0),
+                "promote": int(
+                    ((improvement_cue.get("outcome_counts") or {}).get("promote", 0)) or 0
+                ),
                 "park": int(((improvement_cue.get("outcome_counts") or {}).get("park", 0)) or 0),
-                "retire": int(((improvement_cue.get("outcome_counts") or {}).get("retire", 0)) or 0),
-                "blocked": int(((improvement_cue.get("outcome_counts") or {}).get("blocked", 0)) or 0),
+                "retire": int(
+                    ((improvement_cue.get("outcome_counts") or {}).get("retire", 0)) or 0
+                ),
+                "blocked": int(
+                    ((improvement_cue.get("outcome_counts") or {}).get("blocked", 0)) or 0
+                ),
             },
         },
         "telemetry": {
@@ -222,7 +238,8 @@ def build_status_panel_view_model(
             "conversation_time": _format_timestamp(last_entry.get("timestamp")),
             "intent_status": _format_intent_status(intent.get("status")),
             "control_status": _format_control_status(control.get("status")),
-            "persona_id": str(persona.get("id", "")).strip() or str(snapshot.get("persona", {}).get("id", "base")),
+            "persona_id": str(persona.get("id", "")).strip()
+            or str(snapshot.get("persona", {}).get("id", "base")),
             "run_id": str((summary or {}).get("run_id") or snapshot.get("run_id") or "n/a"),
             "user_message": _truncate((summary or {}).get("user_message", "")),
             "assistant_summary": _truncate((summary or {}).get("assistant_summary", "")),
@@ -368,8 +385,18 @@ def render_status_panel(
             band = decision.soul_band
 
             band_name = band.level.value if band else "unknown"
-            band_labels = {"serene": "平靜", "alert": "警覺", "strained": "緊繃", "critical": "危機"}
-            band_colors = {"serene": "green", "alert": "orange", "strained": "red", "critical": "red"}
+            band_labels = {
+                "serene": "平靜",
+                "alert": "警覺",
+                "strained": "緊繃",
+                "critical": "危機",
+            }
+            band_colors = {
+                "serene": "green",
+                "alert": "orange",
+                "strained": "red",
+                "critical": "red",
+            }
             mode_label = "硬執行" if reflex_config.vow_enforcement_mode == "hard" else "軟執行"
 
             rc1, rc2, rc3 = st.columns(3)

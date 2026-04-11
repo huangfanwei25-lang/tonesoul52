@@ -1,6 +1,6 @@
 # ToneSoul Collaborator-Beta Preflight
 
-> Generated at `2026-04-10T15:40:04Z`.
+> Generated at `2026-04-10T16:31:50Z`.
 
 - Overall status: `go`
 - Current tier: `collaborator_beta`
@@ -18,7 +18,7 @@
 |---|---|---|
 | session-start | ok | readiness=pass track=quick_change claim=not_required mode=lightweight_review |
 | packet | ok | current=collaborator_beta next=public_launch backend=file-backed |
-| diagnose | ok | [ToneSoul] file | SI=0.45 | vows=3 tensions=0 | R=0.00/stable | claims=0 checkpoints=1 compactions=5 subjects=2 | git=034bf2f/dirty=7 | aegis=compromised | agent=phase722-dual-surface-refresh | readiness=pass (aegis=compromised) |
+| diagnose | ok | embedded_from_session_start | readiness=pass | aegis=compromised (aegis=compromised) |
 
 ## Validation Wave
 

@@ -59,9 +59,7 @@ def _load_health_snapshot() -> dict[str, Any]:
         from tonesoul.runtime_adapter import get_recent_visitors
 
         visitors = get_recent_visitors(n=3)
-        recent_visitors = [
-            str(v.get("agent", "unknown")) for v in visitors
-        ]
+        recent_visitors = [str(v.get("agent", "unknown")) for v in visitors]
     except Exception:
         recent_visitors = []
 
@@ -127,8 +125,8 @@ def _load_reflex_snapshot() -> dict[str, Any]:
 
 
 _BAND_COLORS = {
-    "serene": "#4ade80",    # green
-    "alert": "#facc15",     # yellow
+    "serene": "#4ade80",  # green
+    "alert": "#facc15",  # yellow
     "strained": "#f97316",  # orange
     "critical": "#ef4444",  # red
 }
@@ -287,8 +285,7 @@ def render() -> None:
 
     st.markdown("---")
     st.markdown("### 運作原理")
-    st.markdown(
-        """
+    st.markdown("""
         ```
         Session 開始            對話中               Session 結束
         ┌──────────┐    ┌─────────────────┐    ┌──────────────┐
@@ -304,14 +301,12 @@ def render() -> None:
         - **Council**: 對話過程中，內部 Council（多個觀點角色）對每個回應進行審議
         - **Vow Check**: 在輸出前驗證是否符合所有語義誓言
         - **Commit**: 對話結束後，將本次 session 的治理記錄寫回，更新 soul integral
-        """
-    )
+        """)
 
     # ── For developers / AI agents ────────────────────────────────────────
 
     with st.expander("開發者 / AI Agent 入口", expanded=False):
-        st.markdown(
-            """
+        st.markdown("""
             如果你是開發者或 AI agent，可以用 CLI 直接接入：
 
             ```bash
@@ -331,5 +326,4 @@ def render() -> None:
             python scripts/gateway.py --port 7700 --token YOUR_SECRET
             # POST /load, POST /commit, GET /summary, GET /audit
             ```
-            """
-        )
+            """)

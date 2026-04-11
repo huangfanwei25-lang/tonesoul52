@@ -7,10 +7,14 @@
 
 # Phase 722 External Dual-Surface Cycle (`<date>`)
 
-> Operator: `<agent-id>`
+> Operator: `public-safe operator label only`
 > Context level: `non-creator / lower-context / external-use`
 > Scope: one bounded dual-surface docs/status cycle only
 > Result classification: `strong external pass / useful partial / no-count`
+
+Public-summary rule:
+
+- do not publish raw agent ids, checkpoint ids, compaction ids, or full closeout command residue in this note
 
 ## 1. Entry Stack Actually Used
 
@@ -113,6 +117,7 @@ Official session-end result:
 - closeout status:
 - did `end_agent_session.py` complete:
 - were claim release and residue both official:
+- official checkpoint and compaction residue were written:
 
 If official closeout did not complete, explain exactly where it failed:
 

@@ -422,11 +422,13 @@ class TestReflexConfig:
         assert cfg.soul_band_thresholds["alert"] == 0.30
 
     def test_from_dict(self):
-        cfg = ReflexConfig.from_dict({
-            "enabled": False,
-            "vow_enforcement_mode": "hard",
-            "soul_band_thresholds": {"alert": 0.25, "strained": 0.50, "critical": 0.75},
-        })
+        cfg = ReflexConfig.from_dict(
+            {
+                "enabled": False,
+                "vow_enforcement_mode": "hard",
+                "soul_band_thresholds": {"alert": 0.25, "strained": 0.50, "critical": 0.75},
+            }
+        )
         assert cfg.enabled is False
         assert cfg.vow_enforcement_mode == "hard"
         assert cfg.soul_band_thresholds["alert"] == 0.25
@@ -524,9 +526,7 @@ class TestKernelForceConvene:
         from tonesoul.governance.kernel import GovernanceKernel
 
         kernel = GovernanceKernel()
-        convene, reason = kernel.should_convene_council(
-            tension=0.1, force_convene=True
-        )
+        convene, reason = kernel.should_convene_council(tension=0.1, force_convene=True)
         assert convene is True
         assert "reflex" in reason.lower()
 
