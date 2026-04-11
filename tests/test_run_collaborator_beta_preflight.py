@@ -179,7 +179,7 @@ def test_render_markdown_contains_core_sections() -> None:
                 },
                 "diagnose": {
                     "ok": True,
-                    "compact_line": "[ToneSoul] file | R=0.04/stable",
+                    "compact_line": "embedded_from_session_start | readiness=pass | aegis=compromised",
                     "aegis_status": "compromised",
                 },
             },
@@ -228,6 +228,10 @@ def test_render_markdown_contains_core_sections() -> None:
         in markdown
     )
     assert (
+        "| diagnose | ok | embedded_from_session_start | readiness=pass | aegis=compromised (aegis=compromised) |"
+        in markdown
+    )
+    assert (
         "- Scope posture: `guided collaborator beta only; file-backed remains launch default and public launch stays deferred`"
         in markdown
     )
@@ -247,10 +251,7 @@ def test_render_markdown_contains_core_sections() -> None:
         "- Next bounded move: `run one real non-creator or external-use clean cycle for Phase 722`"
         in markdown
     )
-    assert (
-        "- Pack: `docs/plans/tonesoul_non_creator_external_cycle_pack_2026-04-10.md`"
-        in markdown
-    )
+    assert "- Pack: `docs/plans/tonesoul_non_creator_external_cycle_pack_2026-04-10.md`" in markdown
     assert "- Latest external cycle: `none`" in markdown
     assert "- Scenario count: `4`" in markdown
     assert "- `continuity_effectiveness` = `runtime_present`" in markdown
@@ -278,6 +279,21 @@ def test_normalize_compact_diagnostic_strips_storage_banner() -> None:
     assert normalized == "[ToneSoul] file | R=0.04/stable | readiness=pass"
 
 
+def test_build_public_diagnose_summary_redacts_operational_residue() -> None:
+    module = _load_script_module()
+
+    summary = module._build_public_diagnose_summary(  # noqa: SLF001
+        compact_diagnostic=(
+            "[ToneSoul] file | SI=0.45 | vows=3 tensions=0 | R=0.00/stable | "
+            "claims=0 checkpoints=1 compactions=5 subjects=2 | git=034bf2f/dirty=7 | "
+            "aegis=compromised | agent=phase722-refresh | readiness=pass"
+        ),
+        readiness="pass",
+    )
+
+    assert summary == "embedded_from_session_start | readiness=pass | aegis=compromised"
+
+
 def test_main_writes_optional_outputs(tmp_path: Path, monkeypatch, capsys) -> None:
     module = _load_script_module()
     json_out = tmp_path / "preflight.json"
@@ -302,7 +318,11 @@ def test_main_writes_optional_outputs(tmp_path: Path, monkeypatch, capsys) -> No
                     "next_target_tier": "public_launch",
                     "launch_default_mode": "file-backed",
                 },
-                "diagnose": {"ok": True, "compact_line": "compact", "aegis_status": "compromised"},
+                "diagnose": {
+                    "ok": True,
+                    "compact_line": "embedded_from_session_start | readiness=pass | aegis=compromised",
+                    "aegis_status": "compromised",
+                },
             },
             "scope_posture": {
                 "scope_note": "guided collaborator beta only; file-backed remains launch default and public launch stays deferred"
@@ -397,6 +417,7 @@ def test_run_preflight_points_to_repeated_validation_after_strong_external_pass(
     assert result["next_bounded_move"]["path"] == (
         "docs/plans/tonesoul_non_creator_external_cycle_dual_surface_pack_2026-04-10.md"
     )
-    assert "one bounded canonical surface plus one fresh status note" in result[
-        "next_bounded_move"
-    ]["note"]
+    assert (
+        "one bounded canonical surface plus one fresh status note"
+        in result["next_bounded_move"]["note"]
+    )
