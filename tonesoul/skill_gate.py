@@ -42,6 +42,24 @@ def _load_policy(path: Optional[str]) -> Dict[str, object]:
     return payload if isinstance(payload, dict) else {}
 
 
+def ensure_episodes_current(
+    memory_root: Optional[str] = None,
+    policy_path: Optional[str] = None,
+) -> Dict[str, object]:
+    """Re-aggregate episodes and promote eligible skills before gating.
+
+    Calls skill_promoter.promote_skills() so that skill JSONs are up-to-date
+    before evaluate_skill() or review_skill() runs.
+    """
+    from .skill_promoter import promote_skills
+
+    return promote_skills(
+        memory_root=memory_root,
+        policy_path=policy_path,
+        dry_run=False,
+    )
+
+
 def list_skill_paths(memory_root: Optional[str] = None) -> List[str]:
     memory_root = memory_root or _default_memory_root()
     skills_dir = os.path.join(memory_root, "skills")

@@ -4,8 +4,7 @@ import os
 import re
 from typing import Dict, List, Optional
 
-from ..ystm.schema import stable_hash, utc_now
-from .capture import load_text, normalize_tags
+from .capture import load_text, normalize_tags, stable_hash, utc_now
 
 
 def _workspace_root() -> str:

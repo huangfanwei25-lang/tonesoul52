@@ -157,11 +157,12 @@ class AutonomousDreamCycleRunner:
             if self.crystal_path is not None
             else MemoryCrystallizer()
         )
+        kernel = GovernanceKernel()
         dream_engine = DreamEngine(
             soul_db=soul_db,
             write_gateway=self.write_gateway,
-            governance_kernel=GovernanceKernel(),
-            router=LLMRouter(),
+            governance_kernel=kernel,
+            router=LLMRouter(backend_resolver=kernel.resolve_llm_backend),
             crystallizer=crystallizer,
         )
         return AutonomousWakeupLoop(
@@ -174,6 +175,52 @@ class AutonomousDreamCycleRunner:
             scribe_status_path=(None if not self.enable_scribe else self.scribe_status_path),
             scribe_state_path=(None if not self.enable_scribe else self.scribe_state_path),
         )
+
+    def _check_autonomy_gate(self) -> Optional[AutonomousCycleResult]:
+        """Check if reflex arc permits autonomous operation.
+
+        Returns an early-exit result if autonomy is capped, else None.
+        """
+        try:
+            from tonesoul.governance.reflex import GovernanceSnapshot, ReflexEvaluator
+            from tonesoul.governance.reflex_config import load_reflex_config
+            from tonesoul.runtime_adapter import load as load_posture
+
+            config = load_reflex_config()
+            if not config.enabled:
+                return None
+
+            posture = load_posture()
+            snapshot = GovernanceSnapshot.from_posture(posture, tension=0.0)
+            evaluator = ReflexEvaluator(config=config)
+            decision = evaluator.evaluate(snapshot)
+            band = decision.soul_band
+
+            if band is not None and band.max_autonomy is not None:
+                drift = dict(getattr(posture, "baseline_drift", {}) or {})
+                current_autonomy = float(drift.get("autonomy_level", 0.35))
+                if current_autonomy > band.max_autonomy:
+                    return AutonomousCycleResult(
+                        generated_at=_iso_now(),
+                        urls_requested=0,
+                        urls_ingested=0,
+                        urls_failed=0,
+                        stimuli_processed=0,
+                        wakeup_overall_status="blocked_by_autonomy_gate",
+                        overall_ok=False,
+                        runtime_state={
+                            "governance_gate": {
+                                "blocked": True,
+                                "reason": "autonomy_capped",
+                                "current": round(current_autonomy, 4),
+                                "max_allowed": round(band.max_autonomy, 4),
+                                "soul_band": band.level.value,
+                            }
+                        },
+                    )
+        except Exception:
+            pass  # fail open — don't block autonomous ops on import errors
+        return None
 
     def run(
         self,
@@ -188,6 +235,11 @@ class AutonomousDreamCycleRunner:
         require_inference_ready: bool = True,
         inference_timeout_seconds: float = 10.0,
     ) -> AutonomousCycleResult:
+        # Autonomy gate: block if soul band caps autonomy level
+        gate_result = self._check_autonomy_gate()
+        if gate_result is not None:
+            return gate_result
+
         resolved_urls = [str(url).strip() for url in (urls or []) if str(url).strip()]
         # This runner is intentionally sync-only; async callers must await
         # WebIngestor.ingest_urls(...) directly instead of crossing this seam.

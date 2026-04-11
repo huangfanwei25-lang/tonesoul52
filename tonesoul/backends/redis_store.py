@@ -17,7 +17,7 @@ import json
 import uuid
 from typing import Any, Dict, Iterator, List
 
-from tonesoul.store import (
+from tonesoul.store_keys import (
     CHANNEL_EVENTS,
     CHECKPOINT_PREFIX,
     COMMIT_LOCK_KEY,

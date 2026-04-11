@@ -1,0 +1,586 @@
+{
+  "generated_at": "2026-04-11T19:40:30Z",
+  "source": "scripts/analyze_codebase_graph.py",
+  "root_package": "tonesoul",
+  "summary": {
+    "total_modules": 237,
+    "total_lines": 73218,
+    "total_classes": 459,
+    "total_functions": 2531,
+    "total_edges": 414,
+    "total_cycles": 0,
+    "total_layer_violations": 0,
+    "total_orphans": 0,
+    "total_community_drifts": 19
+  },
+  "god_nodes": [
+    {
+      "module": "tonesoul.unified_pipeline",
+      "path": "tonesoul/unified_pipeline.py",
+      "in_degree": 0,
+      "out_degree": 32,
+      "total_degree": 32,
+      "lines": 3597,
+      "classes": 2,
+      "functions": 76,
+      "layer": "uncategorized"
+    },
+    {
+      "module": "tonesoul.ystm.schema",
+      "path": "tonesoul/ystm/schema.py",
+      "in_degree": 27,
+      "out_degree": 0,
+      "total_degree": 27,
+      "lines": 160,
+      "classes": 14,
+      "functions": 5,
+      "layer": "domain"
+    },
+    {
+      "module": "tonesoul.yss_pipeline",
+      "path": "tonesoul/yss_pipeline.py",
+      "in_degree": 1,
+      "out_degree": 25,
+      "total_degree": 26,
+      "lines": 1091,
+      "classes": 5,
+      "functions": 29,
+      "layer": "uncategorized"
+    },
+    {
+      "module": "tonesoul.council.types",
+      "path": "tonesoul/council/types.py",
+      "in_degree": 19,
+      "out_degree": 0,
+      "total_degree": 19,
+      "lines": 159,
+      "classes": 7,
+      "functions": 2,
+      "layer": "governance"
+    },
+    {
+      "module": "tonesoul.council.runtime",
+      "path": "tonesoul/council/runtime.py",
+      "in_degree": 3,
+      "out_degree": 13,
+      "total_degree": 16,
+      "lines": 753,
+      "classes": 3,
+      "functions": 19,
+      "layer": "governance"
+    },
+    {
+      "module": "tonesoul.runtime_adapter",
+      "path": "tonesoul/runtime_adapter.py",
+      "in_degree": 4,
+      "out_degree": 12,
+      "total_degree": 16,
+      "lines": 3421,
+      "classes": 3,
+      "functions": 65,
+      "layer": "uncategorized"
+    },
+    {
+      "module": "tonesoul.autonomous_cycle",
+      "path": "tonesoul/autonomous_cycle.py",
+      "in_degree": 1,
+      "out_degree": 14,
+      "total_degree": 15,
+      "lines": 362,
+      "classes": 3,
+      "functions": 12,
+      "layer": "uncategorized"
+    },
+    {
+      "module": "tonesoul.memory.soul_db",
+      "path": "tonesoul/memory/soul_db.py",
+      "in_degree": 14,
+      "out_degree": 1,
+      "total_degree": 15,
+      "lines": 1175,
+      "classes": 6,
+      "functions": 64,
+      "layer": "memory"
+    },
+    {
+      "module": "tonesoul.council.perspective_factory",
+      "path": "tonesoul/council/perspective_factory.py",
+      "in_degree": 3,
+      "out_degree": 11,
+      "total_degree": 14,
+      "lines": 887,
+      "classes": 6,
+      "functions": 32,
+      "layer": "governance"
+    },
+    {
+      "module": "tonesoul.tonebridge",
+      "path": "tonesoul/tonebridge/__init__.py",
+      "in_degree": 1,
+      "out_degree": 11,
+      "total_degree": 12,
+      "lines": 119,
+      "classes": 0,
+      "functions": 0,
+      "layer": "surface"
+    },
+    {
+      "module": "tonesoul.yss_gates",
+      "path": "tonesoul/yss_gates.py",
+      "in_degree": 3,
+      "out_degree": 9,
+      "total_degree": 12,
+      "lines": 940,
+      "classes": 1,
+      "functions": 20,
+      "layer": "uncategorized"
+    },
+    {
+      "module": "tonesoul.ystm.demo",
+      "path": "tonesoul/ystm/demo.py",
+      "in_degree": 4,
+      "out_degree": 8,
+      "total_degree": 12,
+      "lines": 400,
+      "classes": 1,
+      "functions": 7,
+      "layer": "domain"
+    },
+    {
+      "module": "tonesoul.governance.kernel",
+      "path": "tonesoul/governance/kernel.py",
+      "in_degree": 4,
+      "out_degree": 7,
+      "total_degree": 11,
+      "lines": 603,
+      "classes": 1,
+      "functions": 20,
+      "layer": "governance"
+    },
+    {
+      "module": "tonesoul.council.base",
+      "path": "tonesoul/council/base.py",
+      "in_degree": 9,
+      "out_degree": 1,
+      "total_degree": 10,
+      "lines": 20,
+      "classes": 1,
+      "functions": 2,
+      "layer": "governance"
+    },
+    {
+      "module": "tonesoul.council.pre_output_council",
+      "path": "tonesoul/council/pre_output_council.py",
+      "in_degree": 2,
+      "out_degree": 8,
+      "total_degree": 10,
+      "lines": 147,
+      "classes": 1,
+      "functions": 4,
+      "layer": "governance"
+    },
+    {
+      "module": "tonesoul.dream_engine",
+      "path": "tonesoul/dream_engine.py",
+      "in_degree": 2,
+      "out_degree": 8,
+      "total_degree": 10,
+      "lines": 996,
+      "classes": 4,
+      "functions": 33,
+      "layer": "uncategorized"
+    },
+    {
+      "module": "tonesoul.memory",
+      "path": "tonesoul/memory/__init__.py",
+      "in_degree": 0,
+      "out_degree": 10,
+      "total_degree": 10,
+      "lines": 69,
+      "classes": 0,
+      "functions": 0,
+      "layer": "memory"
+    },
+    {
+      "module": "tonesoul.schemas",
+      "path": "tonesoul/schemas.py",
+      "in_degree": 9,
+      "out_degree": 0,
+      "total_degree": 9,
+      "lines": 797,
+      "classes": 30,
+      "functions": 39,
+      "layer": "uncategorized"
+    },
+    {
+      "module": "tonesoul.ystm.acceptance",
+      "path": "tonesoul/ystm/acceptance.py",
+      "in_degree": 1,
+      "out_degree": 8,
+      "total_degree": 9,
+      "lines": 146,
+      "classes": 0,
+      "functions": 7,
+      "layer": "domain"
+    },
+    {
+      "module": "tonesoul.council",
+      "path": "tonesoul/council/__init__.py",
+      "in_degree": 2,
+      "out_degree": 6,
+      "total_degree": 8,
+      "lines": 53,
+      "classes": 0,
+      "functions": 0,
+      "layer": "governance"
+    }
+  ],
+  "cycles": [],
+  "layer_violations": [],
+  "orphans": [],
+  "subpackage_stats": {
+    "(root)": {
+      "files": 92,
+      "lines": 38421,
+      "classes": 184,
+      "functions": 1144
+    },
+    "backends": {
+      "files": 2,
+      "lines": 834,
+      "classes": 2,
+      "functions": 67
+    },
+    "cli": {
+      "files": 1,
+      "lines": 1,
+      "classes": 0,
+      "functions": 0
+    },
+    "corpus": {
+      "files": 4,
+      "lines": 859,
+      "classes": 8,
+      "functions": 37
+    },
+    "council": {
+      "files": 27,
+      "lines": 6213,
+      "classes": 46,
+      "functions": 227
+    },
+    "deliberation": {
+      "files": 7,
+      "lines": 1888,
+      "classes": 18,
+      "functions": 86
+    },
+    "evolution": {
+      "files": 4,
+      "lines": 1128,
+      "classes": 5,
+      "functions": 46
+    },
+    "gates": {
+      "files": 2,
+      "lines": 398,
+      "classes": 6,
+      "functions": 13
+    },
+    "gateway": {
+      "files": 3,
+      "lines": 189,
+      "classes": 4,
+      "functions": 16
+    },
+    "governance": {
+      "files": 5,
+      "lines": 1565,
+      "classes": 12,
+      "functions": 42
+    },
+    "inter_soul": {
+      "files": 5,
+      "lines": 472,
+      "classes": 9,
+      "functions": 40
+    },
+    "llm": {
+      "files": 5,
+      "lines": 1375,
+      "classes": 7,
+      "functions": 73
+    },
+    "loop": {
+      "files": 4,
+      "lines": 622,
+      "classes": 16,
+      "functions": 23
+    },
+    "market": {
+      "files": 4,
+      "lines": 1324,
+      "classes": 16,
+      "functions": 35
+    },
+    "memory": {
+      "files": 23,
+      "lines": 7653,
+      "classes": 38,
+      "functions": 312
+    },
+    "observability": {
+      "files": 5,
+      "lines": 764,
+      "classes": 7,
+      "functions": 35
+    },
+    "perception": {
+      "files": 4,
+      "lines": 1018,
+      "classes": 5,
+      "functions": 30
+    },
+    "pipeline": {
+      "files": 1,
+      "lines": 11,
+      "classes": 0,
+      "functions": 0
+    },
+    "scribe": {
+      "files": 4,
+      "lines": 1801,
+      "classes": 7,
+      "functions": 61
+    },
+    "semantic": {
+      "files": 3,
+      "lines": 184,
+      "classes": 3,
+      "functions": 18
+    },
+    "shared": {
+      "files": 3,
+      "lines": 249,
+      "classes": 6,
+      "functions": 7
+    },
+    "tech_trace": {
+      "files": 4,
+      "lines": 578,
+      "classes": 0,
+      "functions": 29
+    },
+    "tonebridge": {
+      "files": 12,
+      "lines": 3505,
+      "classes": 39,
+      "functions": 130
+    },
+    "ystm": {
+      "files": 13,
+      "lines": 2166,
+      "classes": 21,
+      "functions": 60
+    }
+  },
+  "subpackage_coupling": {
+    "(root)": {
+      "(root)": 93,
+      "ystm": 24,
+      "governance": 9,
+      "llm": 3,
+      "memory": 16,
+      "perception": 3,
+      "scribe": 3,
+      "council": 5,
+      "gateway": 2,
+      "backends": 3,
+      "gates": 1,
+      "tonebridge": 1,
+      "deliberation": 2,
+      "tech_trace": 3
+    },
+    "backends": {
+      "(root)": 1
+    },
+    "corpus": {
+      "corpus": 5,
+      "deliberation": 1
+    },
+    "council": {
+      "council": 61,
+      "(root)": 5,
+      "llm": 1,
+      "semantic": 2,
+      "memory": 1
+    },
+    "deliberation": {
+      "deliberation": 14
+    },
+    "evolution": {
+      "evolution": 4
+    },
+    "gates": {
+      "gates": 1
+    },
+    "gateway": {
+      "gateway": 3
+    },
+    "governance": {
+      "(root)": 8,
+      "governance": 1,
+      "gates": 1,
+      "llm": 2,
+      "memory": 1
+    },
+    "inter_soul": {
+      "inter_soul": 8
+    },
+    "llm": {
+      "llm": 6,
+      "(root)": 2
+    },
+    "loop": {
+      "loop": 6,
+      "shared": 2
+    },
+    "market": {
+      "llm": 1,
+      "market": 1
+    },
+    "memory": {
+      "memory": 37,
+      "(root)": 4
+    },
+    "observability": {
+      "observability": 4
+    },
+    "perception": {
+      "perception": 2
+    },
+    "pipeline": {
+      "(root)": 3
+    },
+    "scribe": {
+      "llm": 1,
+      "scribe": 2,
+      "memory": 1
+    },
+    "semantic": {
+      "semantic": 3
+    },
+    "shared": {
+      "shared": 2
+    },
+    "tech_trace": {
+      "tech_trace": 3,
+      "(root)": 1
+    },
+    "tonebridge": {
+      "tonebridge": 14,
+      "llm": 1
+    },
+    "ystm": {
+      "ystm": 29,
+      "(root)": 1
+    }
+  },
+  "community_drifts": [
+    {
+      "module": "tonesoul.backends.file_store",
+      "directory": "backends",
+      "community": "(root)"
+    },
+    {
+      "module": "tonesoul.backends.redis_store",
+      "directory": "backends",
+      "community": "(root)"
+    },
+    {
+      "module": "tonesoul.escape_valve",
+      "directory": "(root)",
+      "community": "council"
+    },
+    {
+      "module": "tonesoul.gates",
+      "directory": "gates",
+      "community": "(root)"
+    },
+    {
+      "module": "tonesoul.gates.compute",
+      "directory": "gates",
+      "community": "(root)"
+    },
+    {
+      "module": "tonesoul.governance",
+      "directory": "governance",
+      "community": "(root)"
+    },
+    {
+      "module": "tonesoul.governance.kernel",
+      "directory": "governance",
+      "community": "(root)"
+    },
+    {
+      "module": "tonesoul.governance.reflex",
+      "directory": "governance",
+      "community": "(root)"
+    },
+    {
+      "module": "tonesoul.governance.reflex_config",
+      "directory": "governance",
+      "community": "(root)"
+    },
+    {
+      "module": "tonesoul.governance.retro",
+      "directory": "governance",
+      "community": "memory"
+    },
+    {
+      "module": "tonesoul.memory.hippocampus",
+      "directory": "memory",
+      "community": "(root)"
+    },
+    {
+      "module": "tonesoul.memory.semantic_graph",
+      "directory": "memory",
+      "community": "(root)"
+    },
+    {
+      "module": "tonesoul.memory.visual_chain",
+      "directory": "memory",
+      "community": "(root)"
+    },
+    {
+      "module": "tonesoul.perception.web_ingest",
+      "directory": "perception",
+      "community": "(root)"
+    },
+    {
+      "module": "tonesoul.pipeline",
+      "directory": "pipeline",
+      "community": "(root)"
+    },
+    {
+      "module": "tonesoul.safe_parse",
+      "directory": "(root)",
+      "community": "council"
+    },
+    {
+      "module": "tonesoul.tech_trace.validate",
+      "directory": "tech_trace",
+      "community": "(root)"
+    },
+    {
+      "module": "tonesoul.ystm.schema",
+      "directory": "ystm",
+      "community": "(root)"
+    },
+    {
+      "module": "tonesoul.ystm_demo",
+      "directory": "(root)",
+      "community": "ystm"
+    }
+  ]
+}

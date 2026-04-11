@@ -1,6 +1,6 @@
 {
   "enabled": true,
-  "vow_enforcement_mode": "soft",
+  "vow_enforcement_mode": "hard",
   "council_block_enforcement": true,
   "soul_band_thresholds": {
     "alert": 0.30,

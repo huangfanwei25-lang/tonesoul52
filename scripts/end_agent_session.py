@@ -290,6 +290,25 @@ def main() -> None:
             store=store,
         )
 
+        # Governance Retro — entropy discharge valve
+        try:
+            from tonesoul.governance.retro import should_run_retro, run_retro, persist_retro_result
+            from tonesoul.runtime_adapter import load as load_posture
+
+            posture = load_posture()
+            si = float(getattr(posture, "soul_integral", 0.0) or 0.0)
+            sessions = int(getattr(posture, "session_count", 0) or 0)
+            should, retro_reason = should_run_retro(
+                soul_integral=si, sessions_since_last_retro=sessions % 10
+            )
+            if should:
+                retro_result = run_retro(posture=posture)
+                persist_retro_result(retro_result)
+                payload_out_retro = retro_result.to_dict()
+                payload_out_retro["trigger_reason"] = retro_reason
+        except Exception:
+            pass  # Retro is best-effort, never blocks session end
+
     release_summary = {
         "strategy": "none",
         "released_task_ids": [],
@@ -316,6 +335,13 @@ def main() -> None:
     shared_args_text = " ".join(shared_args)
     closeout_args_text = " ".join(closeout_args)
 
+    # Collect retro result if it ran
+    retro_output = None
+    try:
+        retro_output = payload_out_retro  # noqa: F821 — set in retro block above
+    except NameError:
+        pass
+
     payload_out = {
         "contract_version": "v1",
         "bundle": "session_end",
@@ -325,6 +351,7 @@ def main() -> None:
         "checkpoint": checkpoint,
         "compaction": compaction,
         "subject_refresh_application": subject_refresh_application,
+        "governance_retro": retro_output,
         "released_claims": release_summary,
         "underlying_commands": [],
     }

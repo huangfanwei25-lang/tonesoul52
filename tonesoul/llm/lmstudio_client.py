@@ -7,12 +7,14 @@ Provides the same interface as OllamaClient for seamless pipeline integration.
 from __future__ import annotations
 
 import time
-from typing import Dict, List, Optional
+from typing import TYPE_CHECKING, Dict, List, Optional
 
 import requests
 
-from tonesoul.observability.token_meter import TokenMeter
 from tonesoul.schemas import LLMCallMetrics
+
+if TYPE_CHECKING:
+    from tonesoul.observability.token_meter import TokenMeter
 
 
 class LMStudioError(Exception):

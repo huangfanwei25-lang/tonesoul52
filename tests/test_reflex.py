@@ -189,9 +189,10 @@ class TestGovernanceSnapshot:
 
 
 class TestReflexEvaluatorSoftMode:
-    """Phase 1 default: soft enforcement — warnings only."""
+    """Soft enforcement — warnings only."""
 
     def _make_evaluator(self, **overrides):
+        overrides.setdefault("vow_enforcement_mode", "soft")
         config = ReflexConfig(**overrides)
         return ReflexEvaluator(config=config)
 
@@ -416,7 +417,7 @@ class TestReflexConfig:
     def test_defaults(self):
         cfg = ReflexConfig()
         assert cfg.enabled is True
-        assert cfg.vow_enforcement_mode == "soft"
+        assert cfg.vow_enforcement_mode == "hard"
         assert cfg.council_block_enforcement is True
         assert cfg.soul_band_thresholds["alert"] == 0.30
 
@@ -452,7 +453,7 @@ class TestReflexConfig:
     def test_load_missing_file_returns_defaults(self, tmp_path):
         cfg = load_reflex_config(repo_root=tmp_path)
         assert cfg.enabled is True
-        assert cfg.vow_enforcement_mode == "soft"
+        assert cfg.vow_enforcement_mode == "hard"
 
     def test_load_malformed_file_returns_defaults(self, tmp_path):
         (tmp_path / "reflex_config.json").write_text("not json!", encoding="utf-8")

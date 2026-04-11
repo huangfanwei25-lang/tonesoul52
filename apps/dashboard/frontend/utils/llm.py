@@ -418,6 +418,21 @@ Advocate: [從用戶角度考慮，用一句話]
             council, actual_response = parse_council_response(full_response)
             persona = persona_id or os.getenv("TS_PERSONA_ID", "base")
 
+            # Vow 閘門 — 輕量誓言檢查
+            try:
+                from tonesoul.governance.reflex import enforce_vows_lightweight
+
+                vow_result = enforce_vows_lightweight(
+                    actual_response, context={"user_input": user_input}
+                )
+                if vow_result.get("blocked"):
+                    actual_response = vow_result.get(
+                        "replacement", "此回應未通過誓言守護，已被攔截。"
+                    )
+                    council["vow_gate"] = "BLOCKED"
+            except Exception as vow_exc:
+                print(f"⚠️ Vow 閘門檢查失敗: {vow_exc}")
+
             # 記錄對話
             record_id = log_conversation(
                 user_input, council, actual_response, "success", persona_id=persona

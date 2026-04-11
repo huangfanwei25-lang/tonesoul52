@@ -76,6 +76,17 @@ def _extract_compact_signal(text: str, *, prefix: str) -> str:
     return ""
 
 
+def _build_public_diagnose_summary(*, compact_diagnostic: str, readiness: str) -> str:
+    readiness_value = _extract_compact_signal(compact_diagnostic, prefix="readiness") or readiness
+    aegis_value = _extract_compact_signal(compact_diagnostic, prefix="aegis") or "unknown"
+    parts = ["embedded_from_session_start"]
+    if readiness_value:
+        parts.append(f"readiness={readiness_value}")
+    if aegis_value:
+        parts.append(f"aegis={aegis_value}")
+    return " | ".join(parts)
+
+
 def _parse_json_stdout(stdout: str, *, command: list[str]) -> dict[str, Any]:
     payload = safe_parse_json(stdout)
     if payload is None:
@@ -183,6 +194,11 @@ def run_preflight(
     # spawn a separate subprocess which can hang on Windows.
     diagnose_mode = "embedded_from_session_start"
     compact_diagnostic = _normalize_compact_diagnostic(start_payload.get("compact_diagnostic", ""))
+    readiness_status = str((start_payload.get("readiness") or {}).get("status", "unknown"))
+    public_diagnose_summary = _build_public_diagnose_summary(
+        compact_diagnostic=compact_diagnostic,
+        readiness=readiness_status,
+    )
 
     task_track_hint = start_payload.get("task_track_hint") or {}
     launch_claim_posture = (packet_payload.get("project_memory_summary") or {}).get(
@@ -279,7 +295,7 @@ def run_preflight(
         "entry_stack": {
             "session_start": {
                 "ok": True,
-                "readiness": str((start_payload.get("readiness") or {}).get("status", "unknown")),
+                "readiness": readiness_status,
                 "task_track": str(task_track_hint.get("suggested_track", "unknown")),
                 "claim_recommendation": claim_recommendation,
                 "deliberation_mode": str(
@@ -299,7 +315,7 @@ def run_preflight(
             "diagnose": {
                 "ok": bool(compact_diagnostic),
                 "mode": diagnose_mode,
-                "compact_line": compact_diagnostic,
+                "compact_line": public_diagnose_summary,
                 "aegis_status": aegis_status or "unknown",
             },
         },

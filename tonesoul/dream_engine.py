@@ -145,7 +145,9 @@ class DreamEngine:
         self.soul_db = soul_db or SqliteSoulDB()
         self.write_gateway = write_gateway or MemoryWriteGateway(self.soul_db)
         self.governance_kernel = governance_kernel or GovernanceKernel()
-        self.router = router or LLMRouter()
+        self.router = router or LLMRouter(
+            backend_resolver=self.governance_kernel.resolve_llm_backend,
+        )
         self.crystallizer = crystallizer or MemoryCrystallizer()
 
     def run_cycle(
@@ -984,10 +986,11 @@ def build_dream_engine(
         if crystal_path is not None
         else MemoryCrystallizer()
     )
+    kernel = GovernanceKernel()
     return DreamEngine(
         soul_db=soul_db,
         write_gateway=MemoryWriteGateway(soul_db),
-        governance_kernel=GovernanceKernel(),
-        router=LLMRouter(),
+        governance_kernel=kernel,
+        router=LLMRouter(backend_resolver=kernel.resolve_llm_backend),
         crystallizer=crystallizer,
     )

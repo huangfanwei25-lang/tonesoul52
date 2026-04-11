@@ -185,11 +185,21 @@ class UnifiedPipeline:
             try:
                 from tonesoul.llm.router import LLMRouter
 
-                self._llm_router = LLMRouter()
+                self._llm_router = LLMRouter(
+                    backend_resolver=self._governance_llm_resolver,
+                )
             except Exception as e:
                 self._exc_trace.record("unified_pipeline", "_get_llm_router", e)
                 pass
         return self._llm_router
+
+    @staticmethod
+    def _governance_llm_resolver(*, preferred_backend: str = "auto"):
+        """Resolve LLM backend via GovernanceKernel (injected into LLMRouter)."""
+        from tonesoul.governance.kernel import GovernanceKernel
+
+        kernel = GovernanceKernel()
+        return kernel.resolve_llm_backend(preferred_backend=preferred_backend)
 
     @staticmethod
     def _normalize_council_verdict_payload(payload: Any) -> Dict[str, Any]:

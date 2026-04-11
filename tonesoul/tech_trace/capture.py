@@ -1,9 +1,17 @@
 import argparse
+import hashlib
 import json
 import os
+from datetime import datetime, timezone
 from typing import Dict, List, Optional
 
-from ..ystm.schema import stable_hash, utc_now
+
+def utc_now() -> str:
+    return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+
+
+def stable_hash(text: str) -> str:
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()[:12]
 
 
 def _workspace_root() -> str:

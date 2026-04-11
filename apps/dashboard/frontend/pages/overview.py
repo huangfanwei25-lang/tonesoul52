@@ -92,6 +92,55 @@ def _load_vow_snapshot() -> dict[str, Any]:
         }
 
 
+def _load_reflex_snapshot() -> dict[str, Any]:
+    """Load reflex arc state for the soul band indicator."""
+    try:
+        from tonesoul.governance.reflex import GovernanceSnapshot, ReflexEvaluator
+        from tonesoul.governance.reflex_config import load_reflex_config
+        from tonesoul.runtime_adapter import load as load_posture
+
+        config = load_reflex_config()
+        posture = load_posture()
+        snapshot = GovernanceSnapshot.from_posture(posture, tension=0.0)
+        evaluator = ReflexEvaluator(config=config)
+        decision = evaluator.evaluate(snapshot)
+        band = decision.soul_band
+        return {
+            "enabled": config.enabled,
+            "mode": config.vow_enforcement_mode,
+            "soul_band": band.level.value if band else "unknown",
+            "gate_modifier": band.gate_modifier if band else 1.0,
+            "force_council": band.force_council if band else False,
+            "max_autonomy": band.max_autonomy if band else None,
+            "action": decision.action.value,
+        }
+    except Exception:
+        return {
+            "enabled": False,
+            "mode": "unknown",
+            "soul_band": "unknown",
+            "gate_modifier": 1.0,
+            "force_council": False,
+            "max_autonomy": None,
+            "action": "pass",
+        }
+
+
+_BAND_COLORS = {
+    "serene": "#4ade80",    # green
+    "alert": "#facc15",     # yellow
+    "strained": "#f97316",  # orange
+    "critical": "#ef4444",  # red
+}
+
+_BAND_LABELS = {
+    "serene": "平靜",
+    "alert": "警覺",
+    "strained": "緊繃",
+    "critical": "危機",
+}
+
+
 def render() -> None:
     """Render the overview landing page."""
 
@@ -116,6 +165,7 @@ def render() -> None:
     gov = _load_governance_snapshot()
     vows = _load_vow_snapshot()
     health = _load_health_snapshot()
+    reflex = _load_reflex_snapshot()
 
     col_a, col_b, col_c = st.columns(3)
 
@@ -155,6 +205,22 @@ def render() -> None:
             st.caption(f"目前有 {gov['active_tensions']} 個活躍 tension")
         else:
             st.caption("目前沒有活躍的內部 tension")
+
+        # Soul Band indicator
+        band_name = reflex["soul_band"]
+        band_color = _BAND_COLORS.get(band_name, "#9ca3af")
+        band_label = _BAND_LABELS.get(band_name, band_name)
+        mode_label = "硬執行" if reflex["mode"] == "hard" else "軟執行"
+        st.markdown(
+            f'<div style="margin-top:8px;padding:6px 12px;border-radius:8px;'
+            f'background:{band_color}22;border:1px solid {band_color}">'
+            f'<span style="color:{band_color};font-weight:bold">'
+            f"反射弧: {band_label}</span>"
+            f' <span style="font-size:0.85em;color:#888">'
+            f"| gate {reflex['gate_modifier']:.0%} | {mode_label}</span>"
+            f"</div>",
+            unsafe_allow_html=True,
+        )
 
     with col_c:
         st.markdown(

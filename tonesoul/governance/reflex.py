@@ -224,6 +224,64 @@ def evaluate_drift(
 
 
 @dataclass
+class ConvictionSignal:
+    """Tracks vow conviction decay for reflex evaluation."""
+
+    decaying_vows: List[Dict[str, Any]] = field(default_factory=list)
+    min_conviction: float = 1.0
+    trigger_self_assessment: bool = False
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "decaying_vows": self.decaying_vows[:5],
+            "min_conviction": round(self.min_conviction, 4),
+            "trigger_self_assessment": self.trigger_self_assessment,
+        }
+
+
+def evaluate_conviction_decay(
+    vows: Any,
+    *,
+    decay_threshold: float = 0.4,
+) -> ConvictionSignal:
+    """Check if any vow's conviction has decayed below threshold.
+
+    Args:
+        vows: Vow state (list of dicts or object with .vows attribute).
+        decay_threshold: Conviction below this triggers self-assessment.
+    """
+    vow_list: List[Dict[str, Any]] = []
+    if isinstance(vows, list):
+        vow_list = [v for v in vows if isinstance(v, dict)]
+    elif hasattr(vows, "vows") and isinstance(getattr(vows, "vows", None), list):
+        vow_list = [v for v in vows.vows if isinstance(v, dict)]
+
+    if not vow_list:
+        return ConvictionSignal()
+
+    decaying: List[Dict[str, Any]] = []
+    min_conv = 1.0
+
+    for vow in vow_list:
+        conviction = float(vow.get("conviction", 1.0))
+        trajectory = str(vow.get("trajectory", "")).strip().lower()
+        min_conv = min(min_conv, conviction)
+
+        if conviction < decay_threshold and trajectory == "decaying":
+            decaying.append({
+                "vow_id": str(vow.get("id") or vow.get("vow_id") or "unknown"),
+                "conviction": round(conviction, 4),
+                "trajectory": trajectory,
+            })
+
+    return ConvictionSignal(
+        decaying_vows=decaying,
+        min_conviction=min_conv,
+        trigger_self_assessment=len(decaying) > 0,
+    )
+
+
+@dataclass
 class GovernanceSnapshot:
     """Minimal governance context needed for reflex evaluation."""
 
@@ -240,6 +298,7 @@ class GovernanceSnapshot:
     vow_repair_needed: bool = False
     vow_flags: List[str] = field(default_factory=list)
     council_verdict: Optional[str] = None  # "BLOCK", "WARN", etc.
+    conviction_signal: Optional[ConvictionSignal] = None
 
     @classmethod
     def from_posture(
@@ -255,6 +314,11 @@ class GovernanceSnapshot:
         """Build snapshot from GovernancePosture + runtime signals."""
         si = float(getattr(posture, "soul_integral", 0.0) or 0.0)
         drift = dict(getattr(posture, "baseline_drift", {}) or {})
+
+        # Extract conviction signal from vow state
+        vows = getattr(posture, "vows", None) or getattr(posture, "vow_state", None)
+        conviction = evaluate_conviction_decay(vows) if vows else None
+
         return cls(
             soul_integral=si,
             baseline_drift=drift,
@@ -263,6 +327,7 @@ class GovernanceSnapshot:
             vow_repair_needed=bool(vow_repair_needed),
             vow_flags=list(vow_flags or []),
             council_verdict=str(council_verdict).strip().upper() if council_verdict else None,
+            conviction_signal=conviction,
         )
 
 
@@ -442,6 +507,23 @@ class ReflexEvaluator:
         elif snapshot.vow_repair_needed:
             trigger_reflection = True
             log.append({"step": "vow_repair_trigger"})
+
+        # 5b. Conviction decay self-assessment
+        if snapshot.conviction_signal and snapshot.conviction_signal.trigger_self_assessment:
+            trigger_reflection = True
+            decaying = snapshot.conviction_signal.decaying_vows
+            if not disclaimer:
+                vow_ids = ", ".join(d.get("vow_id", "?") for d in decaying[:3])
+                disclaimer = (
+                    f"[誓言衰退警告] 以下誓言的 conviction 正在下降：[{vow_ids}]。"
+                    "建議進行自我評估。"
+                )
+            action = max(action, ReflexAction.WARN, key=lambda a: _ACTION_SEVERITY[a])
+            log.append({
+                "step": "conviction_decay",
+                "decaying_vows": decaying[:3],
+                "min_conviction": round(snapshot.conviction_signal.min_conviction, 4),
+            })
 
         # 6. Council BLOCK enforcement
         if snapshot.council_verdict == "BLOCK":

@@ -35,6 +35,19 @@ class SeedStage(str, Enum):
 
 _STAGE_ORDER = [s.value for s in SeedStage]
 
+# Phase transition model (inspired by Harness Engineering / Deep Holding Project)
+# Ice (chaotic potential) → Water (flowing through constraints) →
+# Steam (accumulated complexity) → Crystal (refined, transferable essence)
+PHASE_TRANSITION_MAP: dict[str, str] = {
+    SeedStage.T0_DRAFT.value: "ice",         # Unactivated potential
+    SeedStage.T1_DEPOSIT.value: "ice",        # Persisted but not yet flowing
+    SeedStage.T2_RETRIEVAL.value: "water",    # Loaded and flowing through system
+    SeedStage.T3_ALIGN.value: "water",        # Being shaped by constraints
+    SeedStage.T4_APPLY.value: "steam",        # Used in output — complexity accumulates
+    SeedStage.T5_FEEDBACK.value: "steam",     # Re-deposited, refined but not yet canonical
+    SeedStage.T6_CANONICAL.value: "crystal",  # Governance-frozen, transferable essence
+}
+
 
 def _utcnow_iso() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
@@ -98,12 +111,18 @@ class Crystal:
         self.stage = new_stage.value
         return True
 
+    @property
+    def phase(self) -> str:
+        """Phase transition state: ice → water → steam → crystal."""
+        return PHASE_TRANSITION_MAP.get(self.stage, "ice")
+
     def to_dict(self) -> Dict[str, object]:
         payload = asdict(self)
         payload["weight"] = round(_clamp_unit(float(self.weight)), 4)
         payload["access_count"] = max(0, int(self.access_count))
         payload["freshness_score"] = round(_clamp_unit(float(self.freshness_score)), 4)
         payload["freshness_status"] = str(self.freshness_status or "active")
+        payload["phase"] = self.phase
         return payload
 
     @classmethod

@@ -352,6 +352,47 @@ def render_status_panel(
                 for command in tier2["next_pull_commands"]:
                     st.code(command, language="bash")
 
+    # Reflex Arc status
+    with st.container(border=True):
+        st.markdown("**治理反射弧**")
+        try:
+            from tonesoul.governance.reflex import GovernanceSnapshot, ReflexEvaluator
+            from tonesoul.governance.reflex_config import load_reflex_config
+            from tonesoul.runtime_adapter import load as load_posture
+
+            reflex_config = load_reflex_config()
+            posture = load_posture()
+            snapshot = GovernanceSnapshot.from_posture(posture, tension=0.0)
+            evaluator = ReflexEvaluator(config=reflex_config)
+            decision = evaluator.evaluate(snapshot)
+            band = decision.soul_band
+
+            band_name = band.level.value if band else "unknown"
+            band_labels = {"serene": "平靜", "alert": "警覺", "strained": "緊繃", "critical": "危機"}
+            band_colors = {"serene": "green", "alert": "orange", "strained": "red", "critical": "red"}
+            mode_label = "硬執行" if reflex_config.vow_enforcement_mode == "hard" else "軟執行"
+
+            rc1, rc2, rc3 = st.columns(3)
+            with rc1:
+                st.metric("Soul Band", band_labels.get(band_name, band_name))
+            with rc2:
+                st.metric("Gate 倍率", f"{decision.gate_modifier:.0%}")
+            with rc3:
+                st.metric("執行模式", mode_label)
+
+            if band and band.force_council:
+                st.caption("Council 強制召集中")
+            if band and band.max_autonomy is not None:
+                st.caption(f"自主權上限: {band.max_autonomy:.0%}")
+            if decision.disclaimer:
+                st.warning(decision.disclaimer)
+
+            with st.expander("Enforcement Log", expanded=False):
+                for entry in decision.enforcement_log:
+                    st.caption(str(entry))
+        except Exception as exc:
+            st.caption(f"反射弧載入失敗: {exc}")
+
     with st.expander("遙測資料", expanded=False):
         st.markdown(
             f"- 對話: `{telemetry['conversation_status']}`"

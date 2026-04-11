@@ -504,6 +504,25 @@ class CouncilRuntime:
         except Exception as exc:
             logger.debug("Council evolution tracking skipped: %s", exc)
 
+        # ========== Structured Transcript ==========
+        try:
+            from .transcript import CouncilTranscriptLogger
+
+            _transcript_logger = CouncilTranscriptLogger(log_dir=None)
+            structured = _transcript_logger.create_transcript(
+                draft_output=request.draft_output,
+                context=context,
+                user_intent=request.user_intent,
+                votes=verdict.votes or [],
+                coherence=getattr(verdict, "coherence", None),
+                verdict=verdict,
+            )
+            transcript = verdict.transcript if isinstance(verdict.transcript, dict) else {}
+            transcript["structured_transcript"] = structured.to_json()
+            verdict.transcript = transcript
+        except Exception as exc:
+            logger.debug("Structured transcript generation skipped: %s", exc)
+
         return verdict
 
     def _resolve_perspective_config(

@@ -29,7 +29,7 @@ class ReflexConfig:
 
     # Vow enforcement: "hard" = block on violation, "soft" = warn only
     # NOTE: "off" is no longer accepted — minimum is "soft"
-    vow_enforcement_mode: str = "soft"
+    vow_enforcement_mode: str = "hard"
 
     # Council BLOCK enforcement: always True (cannot be disabled)
     council_block_enforcement: bool = True

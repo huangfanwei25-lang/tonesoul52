@@ -2,10 +2,12 @@ from __future__ import annotations
 
 import hashlib
 from dataclasses import dataclass, field
-from typing import Dict, Iterable, List, Optional, Set
+from typing import TYPE_CHECKING, Dict, Iterable, List, Optional, Set
 
-from tonesoul.perception.stimulus import EnvironmentStimulus
 from tonesoul.schemas import MemorySubjectivityPayload, SubjectivityLayer
+
+if TYPE_CHECKING:
+    from tonesoul.perception.stimulus import EnvironmentStimulus
 
 from .soul_db import MemoryLayer, MemoryRecord, MemorySource, SoulDB, SqliteSoulDB
 
@@ -67,6 +69,37 @@ def _has_provenance(payload: Dict[str, object]) -> bool:
         if isinstance(value, (list, dict)) and value:
             return True
     return False
+
+
+def _intentional_forgetting_gate(payload: Dict[str, object]) -> tuple[bool, List[str]]:
+    """Filter out content not worth remembering.
+
+    Inspired by Harness Engineering's "net" metaphor: intentional gaps
+    let unnecessary information flow through, preventing pressure buildup.
+
+    Returns (should_keep, reasons_to_forget).
+    """
+    reasons: List[str] = []
+
+    # Empty or trivially short content
+    content = str(payload.get("content") or payload.get("text") or payload.get("summary") or "")
+    if len(content.strip()) < 10:
+        reasons.append("content_too_short")
+
+    # Duplicate signal: if content_hash matches a known ephemeral pattern
+    tags = payload.get("tags")
+    if isinstance(tags, list):
+        tag_set = {str(t).strip().lower() for t in tags}
+        ephemeral_markers = {"ephemeral", "transient", "scratch", "temp", "debug"}
+        if tag_set & ephemeral_markers:
+            reasons.append("ephemeral_tag")
+
+    # Observation-only with no actionable content
+    observation_mode = str(payload.get("observation_mode") or "").strip().lower()
+    if observation_mode == "passive_noise":
+        reasons.append("passive_noise")
+
+    return len(reasons) == 0, reasons
 
 
 def _promotion_gate(payload: Dict[str, object]) -> tuple[bool, List[str]]:
@@ -151,6 +184,11 @@ class MemoryWriteGateway:
         if provenance is not None and "provenance" not in normalized_payload:
             normalized_payload["provenance"] = provenance
 
+        # Intentional forgetting — let unworthy content flow through the net
+        keep, forget_reasons = _intentional_forgetting_gate(normalized_payload)
+        if not keep:
+            raise MemoryWriteRejectedError(forget_reasons)
+
         gate_ok, reasons = _promotion_gate(normalized_payload)
         if not gate_ok:
             raise MemoryWriteRejectedError(reasons)
@@ -167,7 +205,7 @@ class MemoryWriteGateway:
         seen_hashes = self._existing_environment_hashes() if dedupe else set()
 
         for stimulus in stimuli:
-            if not isinstance(stimulus, EnvironmentStimulus):
+            if not hasattr(stimulus, "to_memory_payload") or not hasattr(stimulus, "source_url"):
                 raise TypeError("write_environment_stimuli expects EnvironmentStimulus values")
 
             content_hash = self._resolve_content_hash(stimulus)

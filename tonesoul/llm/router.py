@@ -54,12 +54,17 @@ class LLMRouter:
       - "auto"     → Ollama → LMStudio → Gemini (default)
     """
 
-    def __init__(self, preferred_backend: str = "auto") -> None:
+    def __init__(
+        self,
+        preferred_backend: str = "auto",
+        backend_resolver: Any = None,
+    ) -> None:
         import os
 
         env_backend = os.environ.get("TONESOUL_LLM_BACKEND", "").strip().lower()
         effective = env_backend or preferred_backend.strip().lower()
         self._preferred = effective
+        self._backend_resolver = backend_resolver
         self._cached_client: Any = None
         self._cached_backend: Optional[str] = None
         self._local_client: Any = None
@@ -193,15 +198,18 @@ class LLMRouter:
         if self._cached_client is not None:
             return self._cached_client
 
-        try:
-            from tonesoul.governance.kernel import GovernanceKernel
+        resolved = False
+        if callable(self._backend_resolver):
+            try:
+                decision = self._backend_resolver(preferred_backend=self._preferred)
+                if decision is not None:
+                    self._cached_client = getattr(decision, "client", decision)
+                    self._cached_backend = getattr(decision, "backend", None)
+                    resolved = True
+            except Exception:
+                pass
 
-            kernel = GovernanceKernel()
-            decision = kernel.resolve_llm_backend(preferred_backend=self._preferred)
-            self._cached_client = decision.client
-            self._cached_backend = decision.backend
-        except Exception:
-            # Fallback if GovernanceKernel is unavailable
+        if not resolved:
             self._cached_client = self._direct_resolve()
 
         return self._cached_client

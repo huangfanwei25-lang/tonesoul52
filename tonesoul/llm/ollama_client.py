@@ -6,12 +6,14 @@ Connects to local Ollama service for LLM inference.
 from __future__ import annotations
 
 import time
-from typing import Dict, List, Optional
+from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 import requests
 
-from tonesoul.observability.token_meter import TokenMeter
 from tonesoul.schemas import LLMCallMetrics
+
+if TYPE_CHECKING:
+    from tonesoul.observability.token_meter import TokenMeter
 
 
 class OllamaError(Exception):
