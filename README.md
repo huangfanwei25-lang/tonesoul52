@@ -41,7 +41,7 @@ adapter-ready architecture, LoRA-ready distillation.
 |---|---|
 | 🧠 Memory that forgets | Exponential decay + crystallization. Important patterns stay, noise fades. |
 | ⚡ Tension Engine | Every response is scored for semantic deviation before it ships. |
-| 🎭 Council Deliberation | Philosopher, Engineer, Guardian debate before final output. |
+| 🎭 Council Deliberation | Guardian, Analyst, Critic, Advocate debate before final output. |
 | 🔮 Resonance Detection | Distinguishes genuine understanding from empty agreement. |
 | 🛡️ Self-Governance | Unsafe or incoherent output is blocked or rewritten with audit traces. |
 | 📊 Live Dashboard | Real-time crystals, resonance stats, journal health, and repair signals. |
@@ -77,7 +77,7 @@ python scripts/tension_dashboard.py --work-category research
 | | Traditional AI | Prompt Engineering | ToneSoul |
 |---|---|---|---|
 | Memory | Session-only | Manual memory wiring | Auto decay + crystallize |
-| Consistency | Best effort | Prompt-dependent | Three Axioms + governance checks |
+| Consistency | Best effort | Prompt-dependent | 7 Axioms + governance checks |
 | Self-check | None | Optional | TensionEngine on every response |
 | Learning | None | Manual tuning | Resonance -> crystal rules |
 | Audit trail | Weak | Weak | Journal + provenance records |

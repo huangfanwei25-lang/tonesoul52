@@ -59,7 +59,7 @@ python scripts/tension_dashboard.py --work-category research
 | | 傳統 AI | Prompt Engineering | ToneSoul |
 |---|---|---|---|
 | 記憶 | 單次對話就忘 | 靠人手動接記憶 | 自動衰減 + 結晶 |
-| 一致性 | 看運氣 | 看 prompt 品質 | 三公理 + 治理檢查 |
+| 一致性 | 看運氣 | 看 prompt 品質 | 7 條公理 + 治理檢查 |
 | 自我檢查 | 幾乎沒有 | 可做可不做 | 每次都跑 TensionEngine |
 | 學習方式 | 沒有 | 人工調參 | 共鳴事件沉澱成規則 |
 | 稽核能力 | 弱 | 弱 | journal + provenance 可追溯 |
@@ -127,7 +127,7 @@ ToneSoul 不應只被理解成 prompt stack，而應被理解成一套 externali
     ↓
 [TensionEngine] 計算語義偏移
     ↓
-[Council] 哲學家 / 工程師 / 守門者審議
+[Council] 守護者 / 分析師 / 批評者 / 倡議者審議
     ↓
 [ComputeGate] approve / block / rewrite
     ↓
@@ -197,7 +197,9 @@ ToneSoul 不應只被理解成 prompt stack，而應被理解成一套 externali
 ## 哲學基礎（想深入再展開）
 
 <details>
-<summary>語義責任三公理</summary>
+<summary>語義責任核心公理（完整 7 條見 AXIOMS.json）</summary>
+
+以下三條是哲學基礎，完整的 7 條不可變公理定義在 <a href="AXIOMS.json">AXIOMS.json</a>。
 
 1. Resonance：回應應來自理解，不是討好。
 2. Commitment：跨回合維持可辨識的一致人格。

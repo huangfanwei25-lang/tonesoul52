@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://fan1234-1.github.io/tonesoul52/sitemap.xml
