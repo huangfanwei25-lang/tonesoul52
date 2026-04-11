@@ -5,8 +5,6 @@ Phase transition model, intentional forgetting, and governance retro.
 
 from __future__ import annotations
 
-import pytest
-
 from tonesoul.governance.retro import (
     RetroConfig,
     RetroResult,
@@ -14,13 +12,11 @@ from tonesoul.governance.retro import (
     should_run_retro,
 )
 from tonesoul.memory.crystallizer import (
-    Crystal,
-    MemoryCrystallizer,
     PHASE_TRANSITION_MAP,
+    Crystal,
     SeedStage,
 )
 from tonesoul.memory.write_gateway import (
-    MemoryWriteRejectedError,
     _intentional_forgetting_gate,
 )
 

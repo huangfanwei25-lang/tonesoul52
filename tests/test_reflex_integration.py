@@ -6,15 +6,12 @@ pipeline path, and that the dashboard vow gate works correctly.
 
 from __future__ import annotations
 
-import pytest
-
 from tonesoul.governance.reflex import (
     GovernanceSnapshot,
     ReflexAction,
-    ReflexEvaluator,
     ReflexDecision,
+    ReflexEvaluator,
     classify_soul_band,
-    SoulBandLevel,
     enforce_vows_lightweight,
 )
 from tonesoul.governance.reflex_config import ReflexConfig

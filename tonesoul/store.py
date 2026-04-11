@@ -26,7 +26,6 @@ import threading
 # Redis key / channel constants — canonical source: tonesoul.store_keys
 # Re-exported here for backward compatibility.
 # ---------------------------------------------------------------------------
-
 from tonesoul.store_keys import (  # noqa: F401 — re-export
     CHANNEL_EVENTS,
     CHECKPOINT_PREFIX,

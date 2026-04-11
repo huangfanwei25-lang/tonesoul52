@@ -2,16 +2,14 @@
 
 from __future__ import annotations
 
-import json
-from pathlib import Path
-
-import pytest
-
 # ---------------------------------------------------------------------------
 # Import the module under test
 # ---------------------------------------------------------------------------
-import importlib
+import json
 import sys
+from pathlib import Path
+
+import pytest
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS_DIR = REPO_ROOT / "scripts"

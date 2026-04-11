@@ -6,7 +6,7 @@ Connects to local Ollama service for LLM inference.
 from __future__ import annotations
 
 import time
-from typing import TYPE_CHECKING, Any, Dict, List, Optional
+from typing import TYPE_CHECKING, Dict, List, Optional
 
 import requests
 

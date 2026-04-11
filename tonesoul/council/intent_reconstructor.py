@@ -5,9 +5,9 @@ import uuid
 from dataclasses import dataclass
 from typing import Any, Dict, Iterable, Optional
 
+import tonesoul.tsr_metrics as tsr_metrics
 from memory.genesis import Genesis, resolve_responsibility_tier
 from memory.self_memory import load_recent_memory
-import tonesoul.tsr_metrics as tsr_metrics
 
 DELTA_WARNING_THRESHOLD = 0.8
 DEFAULT_BASELINE_SAMPLES = 10
