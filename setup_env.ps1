@@ -6,22 +6,21 @@ $env:PYTHONIOENCODING = "utf-8"
 Write-Host "[ToneSoul] Environment Setup" -ForegroundColor Cyan
 Write-Host "Rebuilding virtual environment in Root..." -ForegroundColor Gray
 
-# 1. Check Global Python
-try {
-    $GlobalPy = Get-Command python -ErrorAction Stop
-    Write-Host "Found Global Python: $($GlobalPy.Source)" -ForegroundColor Green
-}
-catch {
+# 1. Check Global Python (python → python3 → py launcher)
+$GlobalPy = $null
+foreach ($cmd in @("python", "python3", "py")) {
     try {
-        $GlobalPy = Get-Command python3 -ErrorAction Stop
+        $GlobalPy = Get-Command $cmd -ErrorAction Stop
         Write-Host "Found Global Python: $($GlobalPy.Source)" -ForegroundColor Green
+        break
     }
-    catch {
-        Write-Host "[Error] No global python found!" -ForegroundColor Red
-        Write-Host "Please install Python 3.10+ and add to PATH." -ForegroundColor Red
-        Read-Host "Press Enter to exit"
-        exit 1
-    }
+    catch { continue }
+}
+if ($null -eq $GlobalPy) {
+    Write-Host "[Error] No global python found! Tried: python, python3, py" -ForegroundColor Red
+    Write-Host "Please install Python 3.10+ and add to PATH." -ForegroundColor Red
+    Read-Host "Press Enter to exit"
+    exit 1
 }
 
 # 2. Create Venv

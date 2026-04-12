@@ -2,4 +2,5 @@
 
 from .unified_controller import UnifiedController
 
-__all__ = ["UnifiedController"]
+__version__ = "1.0.0"
+__all__ = ["UnifiedController", "__version__"]

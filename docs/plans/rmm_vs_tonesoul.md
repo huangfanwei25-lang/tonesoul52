@@ -52,7 +52,7 @@ graph TB
 
 | 維度 | RMM | ToneSoul | 差異分析 |
 |------|-----|----------|----------|
-| **儲存格式** | 對話語句 (utterance) | [self_journal.jsonl](file:///c:/Users/user/Desktop/%E5%80%89%E5%BA%AB/memory) 事件紀錄 | RMM 只記「說了什麼」；ToneSoul 還記**張力值、gate_decision、contradiction 標記** |
+| **儲存格式** | 對話語句 (utterance) | [self_journal.jsonl](../../memory/) 事件紀錄 | RMM 只記「說了什麼」；ToneSoul 還記**張力值、gate_decision、contradiction 標記** |
 | **粒度** | 固定（每句話一筆） | 語義事件級（一次決策一筆，含 tension/friction 數據） | ToneSoul 的粒度更粗但**更有語義密度** |
 | **觸發寫入** | 每輪對話自動寫入 | pipeline 每次決策時寫入 | 相似 |
 
@@ -60,27 +60,27 @@ graph TB
 
 | 維度 | RMM | ToneSoul | 差異分析 |
 |------|-----|----------|----------|
-| **壓縮機制** | 前瞻反思 (Prospective Reflection)：按主題分群壓縮 | [sleep_consolidate](file:///c:/Users/user/Desktop/%E5%80%89%E5%BA%AB/tonesoul/memory/consolidator.py)：依證據+出處品質閘門篩選後晉升 | ⚠️ **核心差異**。RMM 是「統計壓縮」，ToneSoul 是「公理篩選」|
+| **壓縮機制** | 前瞻反思 (Prospective Reflection)：按主題分群壓縮 | [sleep_consolidate](../../tonesoul/memory/consolidator.py)：依證據+出處品質閘門篩選後晉升 | ⚠️ **核心差異**。RMM 是「統計壓縮」，ToneSoul 是「公理篩選」|
 | **壓縮頻率** | 對話中即時壓縮 | 離線批次 (nightly "AI 睡眠") | RMM 更即時；ToneSoul 特意延遲以模擬「睡眠鞏固」 |
 | **篩選標準** | 語義相似度 + 主題聚類 | 三公理 (RFC-005)：共振、承諾、未來約束力 | ToneSoul 的篩選帶有**價值判斷**，不只是資訊論的壓縮 |
-| **晉升閘門** | 無（統計閾值） | [_promotion_gate](file:///c:/Users/user/Desktop/%E5%80%89%E5%BA%AB/tonesoul/memory/consolidator.py)：要求有證據 + 出處才能晉升 | ToneSoul 防止「幻覺記憶」汙染長期記憶 |
+| **晉升閘門** | 無（統計閾值） | [_promotion_gate](../../tonesoul/memory/consolidator.py)：要求有證據 + 出處才能晉升 | ToneSoul 防止「幻覺記憶」汙染長期記憶 |
 
 ### 第三層：長期記憶（會話/靈魂級）
 
 | 維度 | RMM | ToneSoul | 差異分析 |
 |------|-----|----------|----------|
-| **儲存** | 向量資料庫 (embedding) | [soul.db](file:///c:/Users/user/Desktop/%E5%80%89%E5%BA%AB/memory) (SQLite) + 向量索引 | ToneSoul 用結構化 DB + 向量雙軌 |
+| **儲存** | 向量資料庫 (embedding) | [soul.db](../../memory/) (SQLite) + 向量索引 | ToneSoul 用結構化 DB + 向量雙軌 |
 | **檢索** | RL 強化學習優化檢索 | 語義搜尋 + crystal rule 匹配 | RMM 的 RL 檢索在這層**更先進** |
-| **記憶品質** | 純資訊保留 | [MemoryCrystallizer](file:///c:/Users/user/Desktop/%E5%80%89%E5%BA%AB/tonesoul/memory)：記憶結晶成「核心規則」 | ToneSoul 會把記憶**蒸餾成行為規則**，RMM 不做這一步 |
+| **記憶品質** | 純資訊保留 | [MemoryCrystallizer](../../tonesoul/memory/)：記憶結晶成「核心規則」 | ToneSoul 會把記憶**蒸餾成行為規則**，RMM 不做這一步 |
 
 ### 第四層：RMM 沒有、ToneSoul 獨有的
 
 | 模組 | 功能 | RMM 對應 |
 |------|------|----------|
-| [DreamEngine](file:///c:/Users/user/Desktop/%E5%80%89%E5%BA%AB/tonesoul/dream_engine.py) | 離線碰撞引擎 — 讓外部刺激與既有記憶「做夢式撞擊」，產生建構式記憶 | **無對應。RMM 只處理「真實對話」，不做虛構記憶** |
-| [GovernanceKernel](file:///c:/Users/user/Desktop/%E5%80%89%E5%BA%AB/tonesoul/governance/kernel.py) | 張力/摩擦力治理 — 記憶寫入受 friction 閾值約束 | **無對應。RMM 的記憶管理沒有治理層** |
-| [StimulusProcessor](file:///c:/Users/user/Desktop/%E5%80%89%E5%BA%AB/tonesoul/perception/stimulus.py) | 環境感知 — 從外部資料生成記憶候選 | **無對應。RMM 只處理對話，不接收外部刺激** |
-| [RFC-005 三公理](file:///c:/Users/user/Desktop/%E5%80%89%E5%BA%AB/docs/rfc-005-memory-consolidator.md) | 共振、承諾、未來約束力 — 記憶淬鍊的價值觀篩選 | **無對應。RMM 是價值中立的** |
+| [DreamEngine](../../tonesoul/dream_engine.py) | 離線碰撞引擎 — 讓外部刺激與既有記憶「做夢式撞擊」，產生建構式記憶 | **無對應。RMM 只處理「真實對話」，不做虛構記憶** |
+| [GovernanceKernel](../../tonesoul/governance/kernel.py) | 張力/摩擦力治理 — 記憶寫入受 friction 閾值約束 | **無對應。RMM 的記憶管理沒有治理層** |
+| [StimulusProcessor](../../tonesoul/perception/stimulus.py) | 環境感知 — 從外部資料生成記憶候選 | **無對應。RMM 只處理對話，不接收外部刺激** |
+| [RFC-005 三公理](../rfc-005-memory-consolidator.md) | 共振、承諾、未來約束力 — 記憶淬鍊的價值觀篩選 | **無對應。RMM 是價值中立的** |
 
 ---
 
