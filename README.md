@@ -107,7 +107,7 @@ Latest result: **3137 passed** (Python 3.13, Windows/Ubuntu)
 | | Traditional AI | Prompt Engineering | ToneSoul |
 |---|---|---|---|
 | Memory | Session-only | Manual memory wiring | Auto decay + crystallize |
-| Consistency | Best effort | Prompt-dependent | 7 Axioms + governance checks |
+| Consistency | Best effort | Prompt-dependent | 8 Axioms + governance checks |
 | Self-check | None | Optional | TensionEngine on every response |
 | Learning | None | Manual tuning | Resonance -> crystal rules |
 | Audit trail | Weak | Weak | Journal + provenance records |
@@ -318,6 +318,34 @@ Reference:
 - `tonesoul/gates/compute.py` — approve/block/rewrite gate
 - `tonesoul/unified_pipeline.py` — end-to-end orchestration
 
+### How the Math Works
+
+ToneSoul's Tension Score is an **externalized, coarse-grained version of
+Transformer Attention** — repurposed for governance.
+
+| Inside the Transformer | ToneSoul (outside the model) |
+|---|---|
+| Query matches Keys → relevance weights | Output embedding matches Axioms/Vows/Crystals → "discomfort" score |
+| Softmax(QK^T / √d) | `Δs = 1 − cos(Intent, Generated)` |
+| Attention weights → steer generation | Tension score → approve / flag / block |
+| Residual connections (remember prior layers) | Memory decay + crystallization (remember prior sessions) |
+
+The mathematical foundations are honest about what is rigorous and what is
+heuristic. Three pieces have solid theory:
+
+- **Cosine distance** — standard linear algebra
+- **Exponential decay** — `f(t) = f₀·e^(−λt)`, well-defined ODE
+- **Shannon entropy** — information theory
+
+Everything else (weighted sums, thresholds, zone boundaries) is
+**tunable heuristic** — designed to feel right, not mathematically derived.
+
+Full audit with every formula, parameter, and honesty rating:
+[docs/MATH_FOUNDATIONS.md](docs/MATH_FOUNDATIONS.md)
+
+All behavioral parameters (single source of truth):
+[`tonesoul/soul_config.py`](tonesoul/soul_config.py)
+
 ### Self-Play and Validation
 
 - `scripts/run_self_play_resonance.py` — self-play signal generation
@@ -328,13 +356,13 @@ Reference:
 ## The Philosophy (for those who care)
 
 <details>
-<summary>Three Axioms of Semantic Responsibility</summary>
+<summary>Core Design Principles</summary>
 
 1. Resonance: respond from understanding, not compliance.
 2. Commitment: keep identity consistent across sessions.
 3. Binding Force: every output changes future behavior.
 
-Reference: `docs/philosophy/soul_landmark_2026.md`
+Full axiom set (8 axioms): [`AXIOMS.json`](AXIOMS.json)
 </details>
 
 <details>
@@ -347,11 +375,11 @@ then crystallizes repeated high-value patterns into durable rules.
 In plain words: important things are auto-kept, chatter is auto-forgotten.
 </details>
 
-## Quality Snapshot (2026-04-08)
+## Quality Snapshot (2026-04-13)
 
 | Metric | Value |
 |---|---|
-| Tests passing | 3,019 (local full regression on 2026-04-08) |
+| Tests passing | 3,137 (Python 3.13, Windows/Ubuntu) |
 | Tested `tonesoul/` modules | 166 / 204 (81%) |
 | Code lines | 72,631 across 235 files |
 | Bare `except:` / TODO / FIXME | 0 / 0 / 0 |
