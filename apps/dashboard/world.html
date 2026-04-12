@@ -420,6 +420,7 @@ let avatarMX = 10, avatarMY = 8;
 let frame = 0;
 let worldData = null, govData = null;
 let hoverZone = null;
+let particles = [];  // weather particles
 
 function initMap() {
   map = [];
@@ -739,6 +740,21 @@ function drawBuilding(b) {
     ctx.fillRect((bx-4)*S, (by-4)*S, (T*3+8)*S, (T*3+8)*S);
   }
 
+  // === Recency glow — recently visited zones pulse brighter ===
+  const lastVisited = b.zone.last_visited || b.zone.lastVisited || '';
+  if (lastVisited) {
+    const elapsed = (Date.now() - new Date(lastVisited).getTime()) / 1000;
+    if (elapsed < 3600) {  // within last hour
+      const intensity = Math.max(0, 1 - elapsed / 3600);
+      const pulse = Math.sin(frame * 0.08) * 0.1 + 0.15;
+      const alpha = Math.round((intensity * pulse + intensity * 0.05) * 255);
+      if (alpha > 0) {
+        ctx.fillStyle = '#ffffff' + alpha.toString(16).padStart(2, '0');
+        ctx.fillRect((bx-6)*S, (by-6)*S, (T*3+12)*S, (T*3+12)*S);
+      }
+    }
+  }
+
   // === Name label below building ===
   ctx.fillStyle = '#e0e0e0';
   ctx.font = `${Math.max(8, 7*S)}px monospace`;
@@ -937,6 +953,9 @@ function render() {
   // Trees in front
   trees.filter(t => t.my >= avatarMY).forEach(t => drawTree(t));
 
+  // Weather particles
+  drawWeather();
+
   requestAnimationFrame(render);
 }
 
@@ -1094,6 +1113,7 @@ window.addEventListener('load', () => {
     drawPortrait('calm');
   }
   render();
+  initWeather();
   // Animate portrait on mood change
   setInterval(() => drawPortrait(worldData?.world_mood || 'calm'), 2000);
 
@@ -1104,6 +1124,69 @@ window.addEventListener('load', () => {
 window.addEventListener('resize', () => {
   resize();
   if (worldData) loadAll(worldData, govData);
+});
+
+// ============================================================
+//  WEATHER PARTICLES
+// ============================================================
+function initWeather() {
+  particles = [];
+  const mood = worldData?.world_mood || 'calm';
+  const count = mood === 'calm' ? 0 : mood === 'focused' ? 15 : mood === 'tense' ? 30 : 8;
+  for (let i = 0; i < count; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      speed: 1 + Math.random() * 2,
+      size: mood === 'tense' ? 1 : 2,
+      drift: (Math.random() - 0.5) * 0.5,
+    });
+  }
+}
+
+function drawWeather() {
+  if (!particles.length) return;
+  const mood = worldData?.world_mood || 'calm';
+  const color = mood === 'tense' ? 'rgba(200,200,255,0.6)' :
+                mood === 'focused' ? 'rgba(220,220,240,0.4)' :
+                'rgba(200,220,255,0.3)';
+  ctx.fillStyle = color;
+  for (const p of particles) {
+    p.y += p.speed;
+    p.x += p.drift;
+    if (p.y > canvas.height) { p.y = -2; p.x = Math.random() * canvas.width; }
+    if (p.x < 0) p.x = canvas.width;
+    if (p.x > canvas.width) p.x = 0;
+    if (mood === 'tense') {
+      // Rain: vertical streaks
+      ctx.fillRect(p.x, p.y, 1, 4);
+    } else {
+      // Dust/snow: small dots
+      ctx.fillRect(p.x, p.y, p.size, p.size);
+    }
+  }
+}
+
+// ============================================================
+//  POST-MESSAGE LISTENER (dashboard → world updates)
+// ============================================================
+window.addEventListener('message', (e) => {
+  if (!e.data || typeof e.data !== 'object') return;
+  const msg = e.data;
+  if (msg.type === 'tonesoul:update') {
+    if (msg.worldData) { worldData = msg.worldData; }
+    if (msg.govData) { govData = msg.govData; }
+    if (worldData) loadAll(worldData, govData);
+    initWeather();
+  }
+  if (msg.type === 'tonesoul:visitors' && msg.visitors) {
+    __VISITORS__ = msg.visitors;
+    updateVisitors();
+  }
+  if (msg.type === 'tonesoul:aegis' && msg.aegis) {
+    __AEGIS__ = msg.aegis;
+    updateAegis();
+  }
 });
 </script>
 </body>

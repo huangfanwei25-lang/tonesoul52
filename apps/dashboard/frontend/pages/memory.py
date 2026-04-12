@@ -1,4 +1,4 @@
-﻿"""
+"""
 記憶頁面 - 瀏覽技能、筆記、對話記憶
 """
 
@@ -212,7 +212,68 @@ def render():
 
     search = st.text_input("搜尋記憶", "", placeholder="輸入關鍵字")
 
+    # ── 語魂核心概念引導 ─────────────────────────────────────────────
     workspace = Path(__file__).parent.parent.parent
+
+    # 決定是否展開：沒有記憶資料時展開，有的話收合
+    _has_any_data = any(
+        (workspace / "memory" / layer).exists()
+        and list((workspace / "memory" / layer).glob("*.json"))
+        for layer in ("seeds", "user", "session", "agent")
+    )
+
+    with st.expander("語魂核心概念", expanded=not _has_any_data):
+        # 七條公理
+        axioms_path = workspace / "AXIOMS.json"
+        if axioms_path.exists():
+            try:
+                import json as _json
+                axioms_data = _json.loads(axioms_path.read_text(encoding="utf-8"))
+                st.markdown("**七條公理** — AI 行為的不可變法則")
+                ep = axioms_data.get("existential_principle", {})
+                if ep:
+                    st.caption(f"E0 · {ep.get('name_zh', '')} — {ep.get('statement_zh', '')}")
+                for ax in axioms_data.get("axioms", []):
+                    priority = ax.get("priority", "")
+                    st.caption(
+                        f"#{ax['id']} · {ax.get('name_zh', ax.get('name', ''))} "
+                        f"[{priority}] — {ax.get('natural', '')}"
+                    )
+            except Exception:
+                st.caption("AXIOMS.json 載入失敗")
+        else:
+            st.caption("AXIOMS.json 不存在")
+
+        st.markdown("---")
+
+        # 治理循環
+        st.markdown("**治理循環** — 每次對話都經過的流程")
+        st.code(
+            "Session 開始          對話中             Session 結束\n"
+            "┌──────────┐   ┌─────────────────┐   ┌──────────────┐\n"
+            "│  Load    │──>│  Council 審議    │──>│   Commit     │\n"
+            "│ 載入治理  │   │ 多角度內部討論    │   │  寫入治理記錄  │\n"
+            "│ 狀態     │   │ Vow 誓言驗證     │   │  更新壓力指數  │\n"
+            "└──────────┘   └─────────────────┘   └──────────────┘",
+            language=None,
+        )
+
+        st.markdown("---")
+
+        # 四層記憶說明
+        st.markdown("**記憶分層** — AI 的四種記憶")
+        st.markdown(
+            "| 層 | 名稱 | 用途 |\n"
+            "|---|---|---|\n"
+            "| seeds | 專案筆記 | AI 對專案的理解和筆記 |\n"
+            "| user | 使用者記憶 | 使用者告訴 AI 要記住的事 |\n"
+            "| session | 會話記憶 | 單次對話中產生的臨時記憶 |\n"
+            "| agent | 代理記憶 | AI 自己的學習和模式記錄 |"
+        )
+
+        st.caption("👉 用右邊的「新增記憶」表單幫 AI 記住重要的事，或在對話中說「記住 XXX」。")
+
+    # ── 記憶資料載入 ─────────────────────────────────────────────────
     memory_skill_dir = workspace / "memory" / "skills"
     mistakes_dir = workspace / "memory" / "mistakes"
     patterns_dir = workspace / "memory" / "patterns"

@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
-"""Launch the ToneSoul governance dashboard with state auto-loaded.
+"""Launch the ToneSoul governance dashboard.
 
-Reads governance_state.json, injects it into the dashboard HTML,
-and opens your browser — one command, zero friction.
+Primary mode: Streamlit dashboard (apps/dashboard/frontend/app.py)
+Legacy mode:  Static HTML dashboard (apps/dashboard/index.html) with --legacy flag
 
 Usage:
     python scripts/launch_dashboard.py
-    python scripts/launch_dashboard.py --state path/to/governance_state.json
-    python scripts/launch_dashboard.py --port 8765
+    python scripts/launch_dashboard.py --port 8502
+    python scripts/launch_dashboard.py --no-browser
+    python scripts/launch_dashboard.py --legacy --state path/to/governance_state.json
 """
 
 from __future__ import annotations
@@ -15,12 +16,16 @@ from __future__ import annotations
 import argparse
 import http.server
 import json
+import subprocess
 import sys
 import threading
+import time
 import webbrowser
 from pathlib import Path
 
-DASHBOARD_HTML = Path(__file__).resolve().parent.parent / "apps" / "dashboard" / "index.html"
+REPO_ROOT = Path(__file__).resolve().parent.parent
+STREAMLIT_APP = REPO_ROOT / "apps" / "dashboard" / "frontend" / "app.py"
+DASHBOARD_HTML = REPO_ROOT / "apps" / "dashboard" / "index.html"
 
 SEARCH_PATHS = [
     Path.home() / ".gemini" / "tonesoul" / "governance_state.json",
@@ -225,22 +230,46 @@ def build_html(state_path: Path, journal_entries: list[dict]) -> str:
     return html
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser(description="Launch ToneSoul governance dashboard")
-    parser.add_argument("--state", type=Path, default=None, help="Path to governance_state.json")
-    parser.add_argument("--journal", type=Path, default=None, help="Path to self_journal.jsonl")
-    parser.add_argument(
-        "--journal-limit", type=int, default=50, help="Max journal entries to load (default: 50)"
-    )
-    parser.add_argument("--port", type=int, default=0, help="HTTP port (0 = auto)")
-    parser.add_argument("--no-browser", action="store_true", help="Don't auto-open browser")
-    args = parser.parse_args()
+def launch_streamlit(port: int, no_browser: bool) -> None:
+    """Launch the Streamlit-based dashboard (primary mode)."""
+    if not STREAMLIT_APP.exists():
+        print(f"ERROR: Streamlit app not found at {STREAMLIT_APP}")
+        sys.exit(1)
 
+    cmd = [
+        sys.executable,
+        "-m",
+        "streamlit",
+        "run",
+        str(STREAMLIT_APP),
+        f"--server.port={port}",
+        "--server.headless=true",
+    ]
+
+    print(f"Starting ToneSoul dashboard on port {port}...")
+    proc = subprocess.Popen(cmd)
+
+    if not no_browser:
+        time.sleep(2)
+        url = f"http://localhost:{port}"
+        print(f"Opening {url}")
+        webbrowser.open(url)
+
+    try:
+        proc.wait()
+    except KeyboardInterrupt:
+        proc.terminate()
+        print("\nDashboard stopped.")
+
+
+def launch_legacy(state_path_arg: Path | None, journal_path: Path | None,
+                  journal_limit: int, port: int, no_browser: bool) -> None:
+    """Launch the static HTML dashboard (legacy mode)."""
     if not DASHBOARD_HTML.exists():
         print(f"ERROR: Dashboard not found at {DASHBOARD_HTML}")
         sys.exit(1)
 
-    state_path = find_state(args.state)
+    state_path = find_state(state_path_arg)
     if state_path is None:
         print("No governance_state.json found. Searched:")
         for p in SEARCH_PATHS:
@@ -249,10 +278,9 @@ def main() -> None:
         sys.exit(1)
 
     print(f"Loading state from: {state_path}")
-    journal_entries = load_journal_entries(args.journal, limit=args.journal_limit)
+    journal_entries = load_journal_entries(journal_path, limit=journal_limit)
     html_content = build_html(state_path, journal_entries)
 
-    # Serve via simple HTTP server
     class Handler(http.server.BaseHTTPRequestHandler):
         def do_GET(self) -> None:
             self.send_response(200)
@@ -261,16 +289,16 @@ def main() -> None:
             self.wfile.write(html_content.encode("utf-8"))
 
         def log_message(self, format: str, *log_args: object) -> None:
-            pass  # Quiet
+            pass
 
-    server = http.server.HTTPServer(("127.0.0.1", args.port), Handler)
-    port = server.server_address[1]
-    url = f"http://127.0.0.1:{port}"
+    server = http.server.HTTPServer(("127.0.0.1", port), Handler)
+    actual_port = server.server_address[1]
+    url = f"http://127.0.0.1:{actual_port}"
 
     print(f"Dashboard running at: {url}")
     print("Press Ctrl+C to stop.\n")
 
-    if not args.no_browser:
+    if not no_browser:
         threading.Timer(0.5, lambda: webbrowser.open(url)).start()
 
     try:
@@ -278,6 +306,25 @@ def main() -> None:
     except KeyboardInterrupt:
         print("\nDashboard stopped.")
         server.shutdown()
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Launch ToneSoul governance dashboard")
+    parser.add_argument("--port", type=int, default=8501, help="Port (default: 8501)")
+    parser.add_argument("--no-browser", action="store_true", help="Don't auto-open browser")
+    parser.add_argument("--legacy", action="store_true", help="Use static HTML dashboard instead of Streamlit")
+    parser.add_argument("--state", type=Path, default=None, help="Path to governance_state.json (legacy mode)")
+    parser.add_argument("--journal", type=Path, default=None, help="Path to self_journal.jsonl (legacy mode)")
+    parser.add_argument(
+        "--journal-limit", type=int, default=50, help="Max journal entries (legacy mode, default: 50)"
+    )
+    args = parser.parse_args()
+
+    if args.legacy:
+        legacy_port = args.port if args.port != 8501 else 0
+        launch_legacy(args.state, args.journal, args.journal_limit, legacy_port, args.no_browser)
+    else:
+        launch_streamlit(args.port, args.no_browser)
 
 
 if __name__ == "__main__":

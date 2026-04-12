@@ -1,5 +1,6 @@
 """
 Theme helpers for the Streamlit frontend.
+Blueprint + Crystalline aesthetic — aligned with site/style.css
 """
 
 import streamlit as st
@@ -11,23 +12,26 @@ def apply_theme() -> None:
         """
         <style>
         :root {
-          --ts-ink: #1f1c16;
-          --ts-muted: #6b5d4d;
-          --ts-accent: #e76f51;
-          --ts-accent-2: #2a9d8f;
-          --ts-sand: #fdf6ed;
+          --ts-ink: #2c3e50;
+          --ts-muted: #6b7c8d;
+          --ts-accent: #3a6b9f;
+          --ts-accent-2: #5a8ec0;
+          --ts-sand: #eef1f5;
           --ts-card: rgba(255, 255, 255, 0.72);
-          --ts-border: rgba(31, 28, 22, 0.08);
-          --ts-shadow: 0 12px 30px rgba(31, 28, 22, 0.08);
+          --ts-border: rgba(90, 142, 192, 0.2);
+          --ts-shadow: 0 12px 30px rgba(44, 62, 80, 0.08);
+          --ts-blue-light: #b8d4e8;
+          --ts-blue-pale: #dce8f2;
         }
 
         .stApp {
-          background:
-            radial-gradient(1000px 520px at 8% -10%, rgba(231, 111, 81, 0.18), transparent 60%),
-            radial-gradient(900px 520px at 95% 10%, rgba(42, 157, 143, 0.14), transparent 65%),
-            linear-gradient(180deg, #f6efe4 0%, #fdfaf5 100%);
+          background-color: var(--ts-sand);
+          background-image:
+            linear-gradient(rgba(90, 142, 192, 0.06) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(90, 142, 192, 0.06) 1px, transparent 1px);
+          background-size: 40px 40px;
           color: var(--ts-ink);
-          font-family: "Noto Serif TC", "Noto Sans TC", "Microsoft JhengHei", "PingFang TC", serif;
+          font-family: 'Segoe UI', system-ui, -apple-system, 'Noto Sans TC', sans-serif;
         }
 
         h1, h2, h3, h4 {
@@ -38,7 +42,7 @@ def apply_theme() -> None:
         .ts-hero {
           padding: 20px 24px;
           border-radius: 18px;
-          background: linear-gradient(120deg, rgba(231, 111, 81, 0.14), rgba(42, 157, 143, 0.12));
+          background: linear-gradient(120deg, rgba(58, 107, 159, 0.10), rgba(90, 142, 192, 0.08));
           border: 1px solid var(--ts-border);
           box-shadow: var(--ts-shadow);
           animation: tsFade 0.6s ease-out;
@@ -47,6 +51,7 @@ def apply_theme() -> None:
         .ts-hero h1 {
           margin: 0;
           font-size: 32px;
+          color: var(--ts-accent);
         }
 
         .ts-hero p {
@@ -57,6 +62,7 @@ def apply_theme() -> None:
 
         .ts-card {
           background: var(--ts-card);
+          backdrop-filter: blur(8px);
           border: 1px solid var(--ts-border);
           border-radius: 16px;
           padding: 16px;
@@ -68,6 +74,7 @@ def apply_theme() -> None:
           font-size: 18px;
           font-weight: 600;
           margin: 6px 0 10px 0;
+          color: var(--ts-accent);
         }
 
         .ts-pill {
@@ -76,7 +83,7 @@ def apply_theme() -> None:
           align-items: center;
           padding: 4px 10px;
           border-radius: 999px;
-          background: rgba(31, 28, 22, 0.08);
+          background: rgba(58, 107, 159, 0.08);
           color: var(--ts-ink);
           font-size: 12px;
         }
@@ -87,8 +94,9 @@ def apply_theme() -> None:
           padding: 2px 8px;
           border-radius: 8px;
           font-size: 12px;
-          background: rgba(231, 111, 81, 0.12);
-          color: var(--ts-ink);
+          background: rgba(58, 107, 159, 0.10);
+          color: var(--ts-accent);
+          border: 1px solid var(--ts-border);
         }
 
         .stButton > button {
@@ -102,7 +110,7 @@ def apply_theme() -> None:
         }
 
         .stButton > button:hover {
-          background: #e05a3f;
+          background: #2d5a8a;
           color: #fff;
         }
 
@@ -132,7 +140,7 @@ def apply_theme() -> None:
           border-radius: 18px;
           background: rgba(255, 255, 255, 0.92);
           border: 1px solid var(--ts-border);
-          box-shadow: 0 8px 20px rgba(31, 28, 22, 0.08);
+          box-shadow: 0 8px 20px rgba(44, 62, 80, 0.08);
           line-height: 1.6;
         }
 
@@ -144,8 +152,8 @@ def apply_theme() -> None:
         div[data-testid="stChatMessage"].stChatMessage--user [data-testid="stChatMessageContent"],
         div[data-testid="stChatMessage"][data-author="user"] [data-testid="stChatMessageContent"],
         .stChatMessage.stChatMessage--user .stChatMessageContent {
-          background: rgba(231, 111, 81, 0.18);
-          border-color: rgba(231, 111, 81, 0.35);
+          background: rgba(58, 107, 159, 0.12);
+          border-color: rgba(58, 107, 159, 0.25);
         }
 
         div[data-testid="stChatMessage"].stChatMessage--assistant [data-testid="stChatMessageContent"],
@@ -156,6 +164,85 @@ def apply_theme() -> None:
 
         .ts-muted {
           color: var(--ts-muted);
+        }
+
+        /* Gauge & visualization styles */
+        .ts-gauge {
+          text-align: center;
+          padding: 12px;
+        }
+
+        .ts-timeline {
+          border-left: 2px solid var(--ts-blue-light);
+          padding-left: 20px;
+          margin: 12px 0;
+        }
+
+        .ts-timeline-entry {
+          position: relative;
+          margin-bottom: 16px;
+          padding: 10px 14px;
+          background: var(--ts-card);
+          border: 1px solid var(--ts-border);
+          border-radius: 10px;
+        }
+
+        .ts-timeline-entry::before {
+          content: '';
+          position: absolute;
+          left: -27px;
+          top: 14px;
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          background: var(--ts-accent);
+          border: 2px solid var(--ts-sand);
+        }
+
+        .ts-journal-entry {
+          background: var(--ts-card);
+          backdrop-filter: blur(8px);
+          border: 1px solid var(--ts-border);
+          border-radius: 12px;
+          padding: 14px 16px;
+          margin-bottom: 12px;
+        }
+
+        .ts-vow-card {
+          background: var(--ts-card);
+          backdrop-filter: blur(8px);
+          border: 1px solid var(--ts-border);
+          border-left: 4px solid var(--ts-accent);
+          border-radius: 0 10px 10px 0;
+          padding: 12px 14px;
+          margin-bottom: 8px;
+        }
+
+        .ts-demo-banner {
+          background: rgba(58, 107, 159, 0.08);
+          border: 1px solid var(--ts-border);
+          border-radius: 8px;
+          padding: 8px 16px;
+          text-align: center;
+          color: var(--ts-accent);
+          font-size: 13px;
+          letter-spacing: 0.05em;
+          margin-bottom: 12px;
+        }
+
+        .ts-explainer {
+          display: inline-block;
+          width: 16px;
+          height: 16px;
+          line-height: 16px;
+          text-align: center;
+          border-radius: 50%;
+          background: rgba(58, 107, 159, 0.10);
+          color: var(--ts-accent);
+          font-size: 11px;
+          cursor: help;
+          margin-left: 4px;
+          vertical-align: middle;
         }
 
         @keyframes tsFade {

@@ -1,0 +1,2 @@
+{"record_id": "20260412183605", "timestamp": "2026-04-12T18:36:05.453754", "type": "council_decision", "persona_id": null, "context": {"user_message": "介紹一下你自己\n\n"}, "council": {}, "response": "無法連接到 Ollama。請確認 Ollama 已啟動。", "status": "connection_error"}
+{"record_id": "20260412183730", "timestamp": "2026-04-12T18:37:30.241562", "type": "council_decision", "persona_id": null, "context": {"user_message": "介紹一下自己\n"}, "council": {}, "response": "LLM 請求失敗: 404", "status": "error"}

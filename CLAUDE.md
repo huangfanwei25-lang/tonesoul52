@@ -8,13 +8,15 @@
 ## Session 開始時必做
 
 ```bash
-python scripts/start_agent_session.py --agent claude-sonnet-4-6 --no-ack
+python scripts/start_agent_session.py --agent claude-sonnet-4-6 --no-ack --tier 0
 python scripts/run_observer_window.py --agent claude-sonnet-4-6
 python -m tonesoul.diagnose --agent claude-sonnet-4-6
 ```
 
 最小正確順序是：
-- `start_agent_session`：拿到 readiness / import_posture / working_style / task track hint
+- `start_agent_session --tier 0`：拿到 readiness / task_track_hint / deliberation_mode_hint（~6KB，快速進入）
+- `start_agent_session --tier 1`：加上 working_style + subsystem_parity + observer_shell（~35KB，需要更多 context 時）
+- `start_agent_session`（tier 2）：完整 full dump，含 import_posture / packet（~142KB，跨 agent 交接或紅隊用）
 - `run_observer_window`：快速看 stable / contested / stale
 - `diagnose`：需要更深的 runtime 狀態時再讀
 

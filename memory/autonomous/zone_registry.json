@@ -1,6 +1,22 @@
 {
   "zones": [
     {
+      "zone_id": "governance",
+      "name": "治理議會廳",
+      "icon": "shield",
+      "color": "#7c5cfc",
+      "topics": [
+        "governance"
+      ],
+      "visit_count": 3,
+      "artifact_count": 0,
+      "first_seen": "2026-03-25T05:09:48.165489+00:00",
+      "last_seen": "2026-04-12T05:20:59.353673+00:00",
+      "grid_x": 0,
+      "grid_y": 0,
+      "level": 2
+    },
+    {
       "zone_id": "memory",
       "name": "記憶圖書館",
       "icon": "book",
@@ -12,25 +28,9 @@
       "artifact_count": 1,
       "first_seen": "2026-03-25T05:09:48.165489+00:00",
       "last_seen": "2026-03-25T05:09:48.165489+00:00",
-      "grid_x": 0,
-      "grid_y": 0,
-      "level": 2
-    },
-    {
-      "zone_id": "governance",
-      "name": "治理議會廳",
-      "icon": "shield",
-      "color": "#7c5cfc",
-      "topics": [
-        "governance"
-      ],
-      "visit_count": 2,
-      "artifact_count": 0,
-      "first_seen": "2026-03-25T05:09:48.165489+00:00",
-      "last_seen": "2026-03-25T13:51:18.353536+00:00",
       "grid_x": 1,
       "grid_y": 0,
-      "level": 1
+      "level": 2
     },
     {
       "zone_id": "testing",
@@ -143,10 +143,58 @@
       "grid_x": 1,
       "grid_y": -1,
       "level": 1
+    },
+    {
+      "zone_id": "package-fix",
+      "name": "Package-Fix",
+      "icon": "star",
+      "color": "#7c5cfc",
+      "topics": [
+        "package-fix"
+      ],
+      "visit_count": 1,
+      "artifact_count": 0,
+      "first_seen": "2026-04-12T05:20:59.353673+00:00",
+      "last_seen": "2026-04-12T05:20:59.353673+00:00",
+      "grid_x": 2,
+      "grid_y": -1,
+      "level": 1
+    },
+    {
+      "zone_id": "ci-integrity",
+      "name": "Ci-Integrity",
+      "icon": "star",
+      "color": "#7c5cfc",
+      "topics": [
+        "ci-integrity"
+      ],
+      "visit_count": 1,
+      "artifact_count": 0,
+      "first_seen": "2026-04-12T05:20:59.353673+00:00",
+      "last_seen": "2026-04-12T05:20:59.353673+00:00",
+      "grid_x": 2,
+      "grid_y": 0,
+      "level": 1
+    },
+    {
+      "zone_id": "pages-deploy",
+      "name": "Pages-Deploy",
+      "icon": "star",
+      "color": "#7c5cfc",
+      "topics": [
+        "pages-deploy"
+      ],
+      "visit_count": 1,
+      "artifact_count": 0,
+      "first_seen": "2026-04-12T05:20:59.353673+00:00",
+      "last_seen": "2026-04-12T05:20:59.353673+00:00",
+      "grid_x": 2,
+      "grid_y": 1,
+      "level": 1
     }
   ],
-  "total_sessions": 2,
-  "world_mood": "calm",
+  "total_sessions": 3,
+  "world_mood": "serene",
   "weather": "clear",
-  "last_rebuilt": "2026-03-25T13:53:23.595523+00:00"
+  "last_rebuilt": "2026-04-12T05:20:59.408245+00:00"
 }

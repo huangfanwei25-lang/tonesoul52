@@ -1,4 +1,4 @@
-﻿"""
+"""
 ToneSoul 5.2 Frontend
 人性化前端入口
 

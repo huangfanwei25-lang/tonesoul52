@@ -344,6 +344,44 @@ def log_pattern(
     return pattern_id
 
 
+# ── 記憶意圖偵測 ─────────────────────────────────────────────────────
+
+_MEMORY_KEYWORDS = ["幫我記住", "幫我記", "加入記憶", "存起來", "記住", "remember"]
+
+
+def _detect_memory_intent(user_input: str) -> Optional[str]:
+    """Detect if user wants to save something to long-term memory.
+
+    Returns the content to remember, or None if no memory intent detected.
+    """
+    text = user_input.strip()
+    for keyword in _MEMORY_KEYWORDS:
+        if keyword in text:
+            # Extract content after the keyword
+            idx = text.index(keyword)
+            content = text[idx + len(keyword) :].strip()
+            # Also include text before keyword if it looks like context
+            prefix = text[:idx].strip()
+            if prefix and not content:
+                content = prefix
+            if content:
+                return content
+    return None
+
+
+def _save_memory_from_chat(user_input: str, content: str) -> Optional[str]:
+    """Save detected memory content to user layer. Returns the saved file path or None."""
+    try:
+        from utils.memory import save_memory
+
+        title = content[:30] + ("..." if len(content) > 30 else "")
+        path = save_memory(layer="user", title=title, body=content)
+        return path
+    except Exception as exc:
+        print(f"⚠️ 自動記憶儲存失敗: {exc}")
+        return None
+
+
 def chat_with_council(
     user_input: str,
     selected_memories: List[str] = None,
@@ -432,6 +470,13 @@ Advocate: [從用戶角度考慮，用一句話]
                     council["vow_gate"] = "BLOCKED"
             except Exception as vow_exc:
                 print(f"⚠️ Vow 閘門檢查失敗: {vow_exc}")
+
+            # 記憶意圖偵測 — 自動存入長期記憶
+            memory_content = _detect_memory_intent(user_input)
+            if memory_content:
+                saved_path = _save_memory_from_chat(user_input, memory_content)
+                if saved_path:
+                    actual_response += "\n\n（已記錄到長期記憶）"
 
             # 記錄對話
             record_id = log_conversation(

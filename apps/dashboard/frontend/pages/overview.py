@@ -23,6 +23,8 @@ def _load_governance_snapshot() -> dict[str, Any]:
             "active_tensions": len(posture.tension_history),
             "last_updated": posture.last_updated or "from_empty",
             "summary": summary(posture),
+            "tension_history": posture.tension_history,
+            "baseline_drift": posture.baseline_drift,
         }
     except Exception:
         return {
@@ -32,6 +34,8 @@ def _load_governance_snapshot() -> dict[str, Any]:
             "active_tensions": 0,
             "last_updated": "unavailable",
             "summary": "unable to load governance state",
+            "tension_history": [],
+            "baseline_drift": {},
         }
 
 
@@ -81,12 +85,22 @@ def _load_vow_snapshot() -> dict[str, Any]:
             "total": len(registry.all_vows()),
             "active": len(active),
             "vow_names": [v.title for v in active[:5]],
+            "raw_vows": [
+                {
+                    "id": getattr(v, "id", ""),
+                    "content": getattr(v, "title", str(v)),
+                    "source": getattr(v, "source", ""),
+                    "created": getattr(v, "created", ""),
+                }
+                for v in active
+            ],
         }
     except Exception:
         return {
             "total": 0,
             "active": 0,
             "vow_names": [],
+            "raw_vows": [],
         }
 
 
@@ -142,6 +156,14 @@ _BAND_LABELS = {
 def render() -> None:
     """Render the overview landing page."""
 
+    # ── Live data auto-refresh ───────────────────────────────────────────
+    try:
+        from utils.live_data import render_auto_refresh_toggle
+
+        render_auto_refresh_toggle()
+    except Exception:
+        pass
+
     st.markdown(
         """
         <div class="ts-hero">
@@ -154,9 +176,26 @@ def render() -> None:
 
     st.markdown("")
     st.markdown(
-        "語魂是一套**語義責任系統**：AI 在對話中做出的承諾（Vow）會被記錄、追蹤、驗證。"
-        "每次對話都經過內部 Council 審議，治理狀態跨 session 存續。"
+        "語魂是一套**語義責任系統**：AI 在對話中做出的承諾會被記錄、追蹤、驗證。"
+        "每次對話都經過內部審議，治理狀態跨 session 存續。"
     )
+
+    # ── World Map ─────────────────────────────────────────────────────────
+
+    show_world = st.checkbox("顯示世界地圖", value=False, key="show_world_map")
+    if show_world:
+        if "world_html_cache" not in st.session_state:
+            try:
+                from utils.world_bridge import build_world_html
+
+                st.session_state["world_html_cache"] = build_world_html()
+            except Exception:
+                st.session_state["world_html_cache"] = None
+
+        if st.session_state["world_html_cache"]:
+            st.components.v1.html(st.session_state["world_html_cache"], height=620, scrolling=False)
+        else:
+            st.caption("世界地圖載入失敗 — 請確認 world.html 存在")
 
     # ── Three overview cards ──────────────────────────────────────────────
 
@@ -196,13 +235,13 @@ def render() -> None:
         )
         metric_a, metric_b = st.columns(2)
         with metric_a:
-            st.metric("Soul Integral", gov["soul_integral"])
+            st.metric("壓力指數", gov["soul_integral"])
         with metric_b:
-            st.metric("Sessions", gov["session_count"])
+            st.metric("對話次數", gov["session_count"])
         if gov["active_tensions"] > 0:
-            st.caption(f"目前有 {gov['active_tensions']} 個活躍 tension")
+            st.caption(f"目前有 {gov['active_tensions']} 個活躍壓力")
         else:
-            st.caption("目前沒有活躍的內部 tension")
+            st.caption("目前狀態平穩")
 
         # Soul Band indicator
         band_name = reflex["soul_band"]
@@ -213,9 +252,9 @@ def render() -> None:
             f'<div style="margin-top:8px;padding:6px 12px;border-radius:8px;'
             f'background:{band_color}22;border:1px solid {band_color}">'
             f'<span style="color:{band_color};font-weight:bold">'
-            f"反射弧: {band_label}</span>"
+            f"目前狀態: {band_label}</span>"
             f' <span style="font-size:0.85em;color:#888">'
-            f"| gate {reflex['gate_modifier']:.0%} | {mode_label}</span>"
+            f"| 閘門 {reflex['gate_modifier']:.0%} | {mode_label}</span>"
             f"</div>",
             unsafe_allow_html=True,
         )
@@ -236,6 +275,56 @@ def render() -> None:
             st.caption("最近訪客: " + ", ".join(health["recent_visitors"]))
         else:
             st.caption("尚無訪客記錄")
+
+    # ── Quick start ───────────────────────────────────────────────────────
+
+    # ── Governance Pulse ─────────────────────────────────────────────────
+
+    st.markdown("---")
+    st.markdown("### 治理脈搏")
+
+    pulse_a, pulse_b, pulse_c = st.columns(3)
+
+    with pulse_a:
+        try:
+            from components.soul_band_gauge import render_soul_band_gauge
+
+            render_soul_band_gauge(
+                soul_integral=float(gov["soul_integral"]),
+                band_name=reflex["soul_band"],
+                gate_modifier=reflex["gate_modifier"],
+                force_council=reflex.get("force_council", False),
+            )
+        except Exception:
+            st.caption("Soul Band gauge 載入失敗")
+
+    with pulse_b:
+        try:
+            from components.tension_chart import render_tension_chart
+
+            tensions = gov.get("tension_history", [])
+            render_tension_chart(tensions)
+        except Exception:
+            st.caption("壓力歷程載入失敗")
+
+    with pulse_c:
+        try:
+            from components.drift_radar import render_drift_radar
+
+            drift = gov.get("baseline_drift", {})
+            render_drift_radar(drift)
+        except Exception:
+            st.caption("性格偏移載入失敗")
+
+    # ── Vow cards ────────────────────────────────────────────────────────
+
+    try:
+        from components.vow_cards import render_vow_cards
+
+        raw_vows = vows.get("raw_vows", [])
+        render_vow_cards(raw_vows)
+    except Exception:
+        pass  # Falls back to existing vow display in the cards above
 
     # ── Quick start ───────────────────────────────────────────────────────
 
