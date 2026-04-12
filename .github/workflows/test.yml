@@ -278,6 +278,76 @@ jobs:
         if-no-files-found: ignore
         retention-days: 30
 
+  package_integrity:
+    name: Package Integrity Gate
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+
+    - name: Install build tools
+      run: |
+        python -m pip install --upgrade pip
+        pip install build
+
+    - name: Build wheel
+      run: python -m build --wheel
+
+    - name: Verify wheel contains tonesoul code
+      run: |
+        python - <<'PY'
+        import zipfile, glob, sys
+
+        wheels = glob.glob("dist/*.whl")
+        if not wheels:
+            print("FAIL: no wheel found in dist/")
+            sys.exit(1)
+
+        with zipfile.ZipFile(wheels[0]) as z:
+            py_files = [n for n in z.namelist() if n.endswith(".py")]
+            has_init = any(n == "tonesoul/__init__.py" for n in py_files)
+            has_adapter = any("runtime_adapter" in n for n in py_files)
+
+            print(f"Wheel: {wheels[0]}")
+            print(f"Python files: {len(py_files)}")
+            print(f"Has tonesoul/__init__.py: {has_init}")
+            print(f"Has runtime_adapter: {has_adapter}")
+
+            if len(py_files) < 50:
+                print(f"FAIL: only {len(py_files)} Python files — package is likely broken")
+                sys.exit(1)
+            if not has_init or not has_adapter:
+                print("FAIL: critical files missing from wheel")
+                sys.exit(1)
+
+            # Ensure no test/script leakage
+            leaked = [n for n in py_files if n.startswith(("tests/", "scripts/", "apps/"))]
+            if leaked:
+                print(f"FAIL: non-package files leaked into wheel: {leaked[:5]}")
+                sys.exit(1)
+
+        print("PASS: wheel integrity verified")
+        PY
+
+    - name: Install wheel in clean venv and smoke-test
+      run: |
+        python -m venv /tmp/tonesoul_smoke
+        /tmp/tonesoul_smoke/bin/python -m pip install dist/*.whl
+        /tmp/tonesoul_smoke/bin/python -c "
+        from tonesoul.runtime_adapter import load
+        p = load()
+        assert hasattr(p, 'soul_integral'), 'missing soul_integral'
+        assert hasattr(p, 'active_vows'), 'missing active_vows'
+        print(f'Soul Integral: {p.soul_integral}')
+        print(f'Active Vows: {len(p.active_vows)}')
+        print('PASS: smoke test succeeded')
+        "
+
   memory_hygiene:
     name: Memory Hygiene Gate
     runs-on: ubuntu-latest
