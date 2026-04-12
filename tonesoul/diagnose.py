@@ -25,17 +25,19 @@ def _utc_now_trimmed() -> str:
 def _emit_text(text: str) -> None:
     """Write terminal output safely on Windows code pages.
 
-    Some ToneSoul data contains Unicode that a local console encoding may not
-    support. Emit bytes with replacement instead of crashing the diagnostic.
+    Always emit UTF-8 to stdout.buffer so that CJK characters (zone names,
+    vow content, etc.) survive even when the console code page is cp950/cp936.
+    Falls back to replacement encoding only when no binary buffer is available.
     """
     payload = text if text.endswith("\n") else f"{text}\n"
-    encoding = getattr(sys.stdout, "encoding", None) or "utf-8"
-    data = payload.encode(encoding, errors="replace")
+    data = payload.encode("utf-8", errors="replace")
     buffer = getattr(sys.stdout, "buffer", None)
     if buffer is not None:
         buffer.write(data)
         buffer.flush()
         return
+    # No binary buffer — fall back to console encoding with replacement
+    encoding = getattr(sys.stdout, "encoding", None) or "utf-8"
     sys.stdout.write(data.decode(encoding, errors="replace"))
     sys.stdout.flush()
 

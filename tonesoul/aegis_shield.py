@@ -98,7 +98,8 @@ def compute_hash(data: str, prev_hash: str = "") -> str:
 
 def build_chain_entry(trace_dict: Dict[str, Any], prev_hash: str) -> Dict[str, Any]:
     """Add chain metadata to a trace dict before storage."""
-    content = json.dumps(trace_dict, sort_keys=True, ensure_ascii=False)
+    hashable = {k: v for k, v in trace_dict.items() if k not in ("_chain", "_signature")}
+    content = json.dumps(hashable, sort_keys=True, ensure_ascii=False)
     entry_hash = compute_hash(content, prev_hash)
     trace_dict["_chain"] = {
         "prev_hash": prev_hash,
@@ -126,7 +127,8 @@ def verify_chain(traces: List[Dict[str, Any]]) -> Tuple[bool, List[str]]:
             )
 
         # Recompute hash to verify content integrity
-        trace_copy = {k: v for k, v in trace.items() if k != "_chain"}
+        # Exclude both _chain and _signature — signature is added after hashing
+        trace_copy = {k: v for k, v in trace.items() if k not in ("_chain", "_signature")}
         content = json.dumps(trace_copy, sort_keys=True, ensure_ascii=False)
         recomputed = compute_hash(content, chain.get("prev_hash", ""))
         if recomputed != chain.get("hash", ""):
