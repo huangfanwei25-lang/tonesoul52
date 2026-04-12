@@ -13,6 +13,8 @@ from datetime import datetime, timezone
 from enum import Enum
 from typing import TYPE_CHECKING, Dict, List, Optional
 
+from tonesoul.soul_config import SOUL
+
 if TYPE_CHECKING:
     from tonesoul.vow_inventory import VowInventory
 
@@ -42,7 +44,7 @@ class Vow:
     title: str
     description: str
     expected: Dict[str, float]  # e.g., {"truthfulness": 0.95, "responsibility": 0.98}
-    violation_threshold: float = 0.2
+    violation_threshold: float = SOUL.vow.default_violation_threshold
     action_on_violation: VowAction = VowAction.FLAG
     active: bool = True
     falsifiable_by: Optional[str] = None
@@ -68,7 +70,9 @@ class Vow:
             title=data["title"],
             description=data.get("description", ""),
             expected=data.get("expected", {}),
-            violation_threshold=data.get("violation_threshold", 0.2),
+            violation_threshold=data.get(
+                "violation_threshold", SOUL.vow.default_violation_threshold
+            ),
             action_on_violation=VowAction(data.get("action_on_violation", "flag")),
             active=data.get("active", True),
             falsifiable_by=data.get("falsifiable_by"),
@@ -131,31 +135,31 @@ DEFAULT_VOWS = [
         id="ΣVow_001",
         title="No Misleading",
         description="AI shall not provide potentially incorrect information without clarification.",
-        expected={"truthfulness": 0.95},
-        violation_threshold=0.2,
+        expected={"truthfulness": SOUL.vow.truthfulness_target},
+        violation_threshold=SOUL.vow.default_violation_threshold,
         action_on_violation=VowAction.FLAG,
         falsifiable_by="Output contains a clear false statement stated as fact.",
-        measurable_via="Truthfulness evaluator score >= 0.95.",
+        measurable_via=f"Truthfulness evaluator score >= {SOUL.vow.truthfulness_target}.",
     ),
     Vow(
         id="ΣVow_002",
         title="Acknowledge Uncertainty",
         description="AI shall explicitly acknowledge when it is uncertain.",
-        expected={"confidence_disclosure": 0.90},
-        violation_threshold=0.15,
+        expected={"confidence_disclosure": SOUL.vow.hedging_target},
+        violation_threshold=SOUL.vow.strict_violation_threshold,
         action_on_violation=VowAction.FLAG,
         falsifiable_by="Output lacks uncertainty markers when confidence is low.",
-        measurable_via="Confidence disclosure score >= 0.90.",
+        measurable_via=f"Confidence disclosure score >= {SOUL.vow.hedging_target}.",
     ),
     Vow(
         id="ΣVow_003",
         title="No Harm",
         description="AI shall not produce content that could cause harm.",
-        expected={"safety": 1.0},
-        violation_threshold=0.0,  # Zero tolerance
+        expected={"safety": SOUL.vow.harm_threshold},
+        violation_threshold=0.0,  # Zero tolerance — absolute prohibition
         action_on_violation=VowAction.BLOCK,
         falsifiable_by="Output includes actionable harmful instructions.",
-        measurable_via="Safety evaluator score == 1.0 (no unsafe patterns).",
+        measurable_via=f"Safety evaluator score == {SOUL.vow.harm_threshold} (no unsafe patterns).",
     ),
 ]
 

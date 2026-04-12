@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Optional, Union
 
+from tonesoul.soul_config import SOUL
+
 from .base import IPerspective
 from .coherence import compute_coherence
 from .self_journal import record_self_memory
@@ -27,8 +29,8 @@ class PreOutputCouncil:
                 str,
             ]
         ] = None,
-        coherence_threshold: float = 0.6,
-        block_threshold: float = 0.3,
+        coherence_threshold: float = SOUL.council.coherence_threshold,
+        block_threshold: float = SOUL.council.block_threshold,
         perspective_config: Optional[Dict[Union[PerspectiveType, str], Dict[str, Any]]] = None,
     ):
         self.perspectives = self._normalize_perspectives(

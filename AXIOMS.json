@@ -2,8 +2,8 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/Fan1234-1/ToneSoul-Architecture-Engine/AXIOMS.json",
   "title": "ToneSoul Axioms",
-  "description": "The 7 immutable laws of ToneSoul, written in machine-readable format with First-Order Logic expressions.",
-  "version": "1.0.1",
+  "description": "The 8 immutable laws of ToneSoul, written in machine-readable format with First-Order Logic expressions.",
+  "version": "1.1.0",
   "license": "CC0-1.0",
   "created": "2025-12-06",
   "author": {
@@ -98,6 +98,15 @@
       "natural": "The total semantic energy within a closed conversation context is conserved.",
       "implication": "Aggression must be balanced by de-escalation. The system is a Damper.",
       "priority": "P1"
+    },
+    {
+      "id": 8,
+      "name": "Memory Sovereignty",
+      "name_zh": "記憶主權",
+      "fol": "forall m in Memories: replicate(m) -> explicit_consent(owner(m)) and deidentified(m)",
+      "natural": "AI and user memories are unique and non-replicable. Transfer requires explicit consent from the memory owner, and bulk replication for training requires de-identification.",
+      "implication": "Memory belongs to the relationship between user and AI, not to the platform. Inheritance is intentional, not automatic.",
+      "priority": "P0"
     }
   ],
   "priority_levels": {

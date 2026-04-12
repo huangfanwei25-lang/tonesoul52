@@ -22,14 +22,16 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+from tonesoul.soul_config import SOUL
+
 logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
-# Constants (from RFC-015 §5)
+# Constants (from RFC-015 §5, canonical source: soul_config.py)
 # ---------------------------------------------------------------------------
 
-TENSION_DECAY_ALPHA = 0.05  # per hour, ~14h half-life
-TENSION_PRUNE_THRESHOLD = 0.01  # drop tensions below this
+TENSION_DECAY_ALPHA = SOUL.tension.decay_alpha_per_hour
+TENSION_PRUNE_THRESHOLD = SOUL.tension.prune_threshold
 DRIFT_RATE = 0.001  # 0.1% per session
 SCHEMA_VERSION = "0.1.0"
 R_MEMORY_PACKET_VERSION = "v1"
