@@ -64,7 +64,7 @@
 <h2>Prerequisites</h2>
 <ul>
 <li>Python 3.10 or later</li>
-<li>An LLM API key (OpenAI, Anthropic, or any compatible provider)</li>
+<li>An LLM backend: Gemini API key, local Ollama, or LM Studio (optional — rules-only mode works without)</li>
 <li>Optional: Redis (for multi-agent state sharing; file fallback works without it)</li>
 </ul>
 
@@ -103,7 +103,7 @@ posture = load()
 
 print(f"Soul Integral: {posture.soul_integral}")
 print(f"Baseline Drift: {posture.baseline_drift}")
-print(f"Active Vows: {len(posture.vows)}")
+print(f"Active Vows: {len(posture.active_vows)}")
 print(f"Session Count: {posture.session_count}")</code></pre>
 
 <h3>Start an agent session</h3>

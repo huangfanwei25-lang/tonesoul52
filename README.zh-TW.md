@@ -23,34 +23,47 @@ adapter-ready architecture、LoRA-ready distillation。
 |---|---|
 | 🧠 會遺忘的記憶系統 | 用指數衰減 + 結晶化，重點留下、雜訊淡出。 |
 | ⚡ 張力引擎 | 每次輸出都先算語義偏移，偏了就攔。 |
-| 🎭 多角色審議 | 哲學家、工程師、守門者先辯論，再給答案。 |
+| 🎭 多角色審議 | 守護者、分析師、批評者、倡議者先辯論，再給答案。 |
 | 🔮 共鳴判定 | 分得出「真的理解」和「只是附和」。 |
 | 🛡️ 自我治理 | 高風險或不一致輸出會被阻擋或改寫，且全程可稽核。 |
 | 📊 即時儀表板 | 即時看結晶規則、共鳴統計、記憶與修復訊號。 |
 
 ## 5 分鐘快速啟動
 
-### 1) 安裝依賴
+### 1) 安裝
 
 ```bash
-pip install -r requirements.txt
+pip install tonesoul52
+```
+
+或從原始碼安裝：
+
+```bash
+git clone https://github.com/Fan1234-1/tonesoul52.git
+cd tonesoul52
+pip install -e .
 ```
 
 ### 2) 建立本地環境變數檔
 
 ```bash
 cp .env.example .env.local
+# 設定 LLM 後端：GEMINI_API_KEY，或本地跑 Ollama
 ```
 
-PowerShell：
+### 3) 驗證治理載入
 
-```powershell
-Copy-Item .env.example .env.local
+```python
+from tonesoul.runtime_adapter import load
+posture = load()
+print(f"Soul Integral: {posture.soul_integral}")
+print(f"Active Vows: {len(posture.active_vows)}")
 ```
 
-### 3) 啟動儀表板
+### 4) 啟動儀表板（選用）
 
 ```bash
+pip install tonesoul52[dashboard]
 python scripts/tension_dashboard.py --work-category research
 ```
 

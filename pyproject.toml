@@ -70,14 +70,15 @@ ystm_viz = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/Fan1234-1/tonesoul52"
-Documentation = "https://github.com/Fan1234-1/tonesoul52#readme"
+Homepage = "https://fan1234-1.github.io/tonesoul52/"
+Documentation = "https://fan1234-1.github.io/tonesoul52/getting-started.html"
 Repository = "https://github.com/Fan1234-1/tonesoul52"
 Issues = "https://github.com/Fan1234-1/tonesoul52/issues"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["tonesoul52*"]
+include = ["tonesoul*"]
+exclude = ["tests*", "scripts*", "apps*", "docs*", "tonesoul_evolution*"]
 
 [tool.black]
 line-length = 100

@@ -67,7 +67,7 @@
       "name": "Can I use ToneSoul with any LLM?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yes. ToneSoul is adapter-ready and works with any LLM backend (OpenAI, Anthropic, local models). It wraps the LLM's output with governance checks rather than modifying the model itself. Install via pip install tonesoul52 and configure your preferred backend."
+        "text": "Yes. ToneSoul is adapter-ready and works with any LLM backend (Google Gemini, local Ollama, LM Studio, or rules-only mode). It wraps the LLM's output with governance checks rather than modifying the model itself. Install via pip install tonesoul52 and configure your preferred backend."
       }
     },
     {
@@ -202,7 +202,7 @@ Response (with audit trail)</code></pre>
 # Load governance posture
 posture = load()
 print(f"Soul Integral: {posture.soul_integral}")
-print(f"Active Vows: {len(posture.vows)}")
+print(f"Active Vows: {len(posture.active_vows)}")
 
 # Run the dashboard
 # python scripts/tension_dashboard.py --work-category research

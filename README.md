@@ -48,27 +48,40 @@ adapter-ready architecture, LoRA-ready distillation.
 
 ## Quick Start (5 minutes)
 
-### 1) Install dependencies
+### 1) Install
 
 ```bash
-pip install -r requirements.txt
+pip install tonesoul52
+```
+
+Or from source:
+
+```bash
+git clone https://github.com/Fan1234-1/tonesoul52.git
+cd tonesoul52
+pip install -e .
 ```
 
 ### 2) Create local env file
 
 ```bash
 cp .env.example .env.local
+# Set your LLM backend: GEMINI_API_KEY, or run Ollama locally
 ```
 
-PowerShell:
+### 3) Verify governance loads
 
-```powershell
-Copy-Item .env.example .env.local
+```python
+from tonesoul.runtime_adapter import load
+posture = load()
+print(f"Soul Integral: {posture.soul_integral}")
+print(f"Active Vows: {len(posture.active_vows)}")
 ```
 
-### 3) Run the dashboard
+### 4) Run the dashboard (optional)
 
 ```bash
+pip install tonesoul52[dashboard]
 python scripts/tension_dashboard.py --work-category research
 ```
 
