@@ -504,7 +504,9 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
             receiver_rule = str(launch_claim_posture.get("receiver_rule", "")).strip()
             if receiver_rule:
                 lines.append(f"    receiver_rule={_clip(receiver_rule, limit=120)}")
-        launch_health_trend_posture = project_memory_summary.get("launch_health_trend_posture") or {}
+        launch_health_trend_posture = (
+            project_memory_summary.get("launch_health_trend_posture") or {}
+        )
         if launch_health_trend_posture:
             lines.append("  launch_health_trend_posture:")
             summary_text = str(launch_health_trend_posture.get("summary_text", "")).strip()

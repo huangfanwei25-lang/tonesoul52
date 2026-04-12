@@ -52,9 +52,7 @@ _AGENT_ID_RE = re.compile(r"^[a-zA-Z0-9_\-]+$")
 def _validate_agent_id(agent_id: str) -> str:
     """Sanitize agent_id to prevent path traversal attacks."""
     if not agent_id or not _AGENT_ID_RE.match(agent_id):
-        raise ValueError(
-            f"Invalid agent_id: must match [a-zA-Z0-9_-]+, got {agent_id!r}"
-        )
+        raise ValueError(f"Invalid agent_id: must match [a-zA-Z0-9_-]+, got {agent_id!r}")
     return agent_id
 
 
