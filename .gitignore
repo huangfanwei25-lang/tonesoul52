@@ -23,6 +23,10 @@ zenodo_upload/
 # Private Evolution Layer (→ ToneSoul-Memory-Vault.git)
 tonesoul_evolution/
 
+# Build artifacts
+dist/
+build/
+
 # Python
 __pycache__/
 *.pyc

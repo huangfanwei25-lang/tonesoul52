@@ -9,7 +9,7 @@ description = "AI Governance Toolkit - Make LLM decisions auditable, traceable, 
 readme = "README.md"
 license = {text = "Apache-2.0"}
 authors = [
-    {name = "黃梵威", email = "tonesoul@example.com"}
+    {name = "黃梵威", email = "xsw123za@gmail.com"}
 ]
 keywords = [
     "ai-governance", "ai-alignment", "responsible-ai", "explainable-ai", "xai",

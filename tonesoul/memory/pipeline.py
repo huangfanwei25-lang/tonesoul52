@@ -275,6 +275,13 @@ def run_session_end_pipeline(
     except Exception as exc:
         result.errors.append(f"consolidation/crystallization: {exc}")
 
+    # Stage 3c: Export crystal index snapshot whenever crystals may have changed
+    if result.consolidation_ran:
+        try:
+            export_crystal_index()
+        except Exception as exc:
+            result.errors.append(f"crystal_index_export: {exc}")
+
     # Stage 4: Wisdom delta (always compute, even without consolidation)
     try:
         result.wisdom_delta = _compute_wisdom_delta(trace.get("tension_events") or [])
