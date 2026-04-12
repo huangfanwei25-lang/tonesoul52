@@ -114,6 +114,15 @@ pytest_err.txt
 memory/autonomous/
 docs/status/probe_*/
 
+# Large archival data (history — runtime reads session_traces.jsonl only)
+memory/archive/
+
+# Vector index (rebuildable via scripts/ingest_ancestral_memory.py)
+memory_base/
+
+# VRM 3D models (loaded externally at runtime)
+*.vrm
+
 # Moltbook temporary data
 moltbook_feed.json
 *_framework_latest.json
