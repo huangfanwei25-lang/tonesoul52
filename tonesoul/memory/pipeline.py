@@ -39,7 +39,7 @@ CONSOLIDATION_INTERVAL = 5  # run consolidation every N sessions
 WISDOM_BETA = 0.05  # SI blend rate for wisdom signal
 _CRYSTAL_DENSITY_CAP = 50  # crystal count for full signal
 
-# Routing lanes (inspired by SCBKR routing concept)
+# Routing lanes — classify digests by governance relevance
 _GOVERNANCE_KEYWORDS = {"vow", "axiom", "aegis", "drift", "council", "governance", "誓言", "治理"}
 _CONTINUITY_KEYWORDS = {"handoff", "checkpoint", "compaction", "session", "交接", "延續"}
 # Everything else → "learning" lane
@@ -300,21 +300,21 @@ def run_session_end_pipeline(
 
 
 # ---------------------------------------------------------------------------
-# Crystal index export (inspired by SCBKR auto_index.py)
+# Crystal index export — machine-readable snapshot of crystallized wisdom
 # ---------------------------------------------------------------------------
 
 _INDEX_PATH = Path("memory/crystal_index.json")
 
 
 def export_crystal_index(output_path: Optional[Path] = None) -> Dict[str, Any]:
-    """Generate a structured crystal index for external tools.
+    """Export a structured snapshot of all crystals to crystal_index.json.
 
-    Maps each crystal to an SCBKR-like record:
-      S (subject)  = crystal rule
-      C (cause)    = source_pattern
-      B (boundary) = ETCL stage + freshness constraints
-      K (key)      = weight + access_count
-      R (responsibility) = agent that created it (from tags)
+    Each record uses ToneSoul's native field vocabulary:
+      rule           — the crystallized decision rule (what to do / avoid)
+      origin         — source pattern that triggered crystallization
+      lifecycle      — ETCL stage + phase + freshness score
+      signal         — weight (importance) + access_count (usage history)
+      classification — routing lane tags (governance / continuity / learning)
     """
     from .crystallizer import MemoryCrystallizer
 
@@ -327,15 +327,23 @@ def export_crystal_index(output_path: Optional[Path] = None) -> Dict[str, Any]:
     records = []
     for c in crystals:
         records.append({
-            "S": c.rule,
-            "C": c.source_pattern,
-            "B": {"stage": c.stage, "phase": c.phase, "freshness": round(c.freshness_score, 3)},
-            "K": {"weight": round(c.weight, 3), "access_count": c.access_count},
-            "R": c.tags,
+            "rule": c.rule,
+            "origin": c.source_pattern,
+            "lifecycle": {
+                "stage": c.stage,
+                "phase": c.phase,
+                "freshness": round(c.freshness_score, 3),
+                "freshness_status": c.freshness_status,
+            },
+            "signal": {
+                "weight": round(c.weight, 3),
+                "access_count": c.access_count,
+            },
+            "classification": c.tags,
         })
 
     index = {
-        "version": "1.0",
+        "schema": "tonesoul-crystal-index/v1",
         "generated_at": now,
         "total": len(records),
         "summary": summary,

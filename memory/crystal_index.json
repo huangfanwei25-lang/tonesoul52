@@ -1,0 +1,76 @@
+{
+  "schema": "tonesoul-crystal-index/v1",
+  "generated_at": "2026-04-12T15:24:31Z",
+  "total": 3,
+  "summary": {
+    "total_crystals": 3,
+    "active_count": 0,
+    "needs_verification_count": 0,
+    "stale_count": 3,
+    "mean_freshness": 0.2637,
+    "stale_rules": [
+      "critical: collapse warnings escalate to fail-closed governance",
+      "avoid high-risk actions that previously triggered block outcomes",
+      "prefer interactions that produce genuine resonance (tension -> convergence -> novel output)"
+    ]
+  },
+  "records": [
+    {
+      "rule": "critical: collapse warnings escalate to fail-closed governance",
+      "origin": "collapse_warning x3",
+      "lifecycle": {
+        "stage": "T0",
+        "phase": "ice",
+        "freshness": 0.263,
+        "freshness_status": "stale"
+      },
+      "signal": {
+        "weight": 1.0,
+        "access_count": 0
+      },
+      "classification": [
+        "critical",
+        "collapse_warning",
+        "safety"
+      ]
+    },
+    {
+      "rule": "prefer interactions that produce genuine resonance (tension -> convergence -> novel output)",
+      "origin": "resonance_convergence x28",
+      "lifecycle": {
+        "stage": "T0",
+        "phase": "ice",
+        "freshness": 0.264,
+        "freshness_status": "stale"
+      },
+      "signal": {
+        "weight": 0.9,
+        "access_count": 0
+      },
+      "classification": [
+        "prefer",
+        "resonance",
+        "convergence"
+      ]
+    },
+    {
+      "rule": "avoid high-risk actions that previously triggered block outcomes",
+      "origin": "verdict:block x683",
+      "lifecycle": {
+        "stage": "T0",
+        "phase": "ice",
+        "freshness": 0.264,
+        "freshness_status": "stale"
+      },
+      "signal": {
+        "weight": 0.8,
+        "access_count": 0
+      },
+      "classification": [
+        "avoid",
+        "verdict",
+        "block"
+      ]
+    }
+  ]
+}
