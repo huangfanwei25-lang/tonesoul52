@@ -246,25 +246,34 @@ def update_soul_integral(
     last_updated: str,
     session_tensions: List[Dict[str, Any]],
     alpha: float = TENSION_DECAY_ALPHA,
+    *,
+    wisdom_delta: float = 0.0,
+    wisdom_beta: float = 0.05,
 ) -> float:
     """Update soul integral as an exponentially-weighted moving integral.
 
-    Formula: S_new = S_old * e^(-alpha * hours) + blend_rate * max_tension
+    Formula: S_new = S_old * e^(-alpha * hours)
+                    + tension_blend * max_tension
+                    + wisdom_beta * wisdom_delta
     Clamped to [0.0, 1.0].
 
-    The blend_rate (0.3) prevents a single high-tension session from
+    The tension_blend (0.3) prevents a single high-tension session from
     spiking the integral to 1.0, while preserving the decay behavior
     that gradually relaxes stress back toward zero.
 
-    When session_tensions is empty, the integral purely decays — it does
-    NOT reset to zero. The decay half-life (~14h) ensures historical
-    stress fades naturally.
+    The wisdom_delta (0.0-1.0) is an additive learning-accumulation
+    signal computed from crystal density, session coherence, and
+    rediscovery penalty.  Default 0.0 preserves backwards compatibility.
+
+    When session_tensions is empty and wisdom_delta is 0, the integral
+    purely decays — it does NOT reset to zero.  The decay half-life
+    (~14h) ensures historical stress fades naturally.
     """
     hours = _hours_since(last_updated)
     decayed = current * math.exp(-alpha * hours)
     max_t = max((float(t.get("severity", 0.0)) for t in session_tensions), default=0.0)
-    blend_rate = 0.3  # how much of max_tension is absorbed per session
-    result = decayed + blend_rate * max_t
+    tension_blend = 0.3  # how much of max_tension is absorbed per session
+    result = decayed + tension_blend * max_t + wisdom_beta * max(0.0, min(1.0, wisdom_delta))
     return round(max(0.0, min(1.0, result)), 4)
 
 
@@ -2894,11 +2903,25 @@ def commit(
             entry["timestamp"] = trace.timestamp
         posture.tension_history.append(entry)
 
-    # Update soul integral
+    # ── Crystallization pipeline (best-effort, never blocks commit) ──
+    _pipeline_result = None
+    try:
+        from tonesoul.memory.pipeline import run_session_end_pipeline
+
+        _pipeline_result = run_session_end_pipeline(
+            trace_dict,
+            posture.session_count + 1,  # +1 because we increment below
+        )
+    except Exception:
+        pass
+
+    # Update soul integral (with wisdom delta from pipeline if available)
+    _wisdom = _pipeline_result.wisdom_delta if _pipeline_result else 0.0
     posture.soul_integral = update_soul_integral(
         posture.soul_integral,
         posture.last_updated,
         trace.tension_events,
+        wisdom_delta=_wisdom,
     )
 
     # Drift baseline

@@ -348,6 +348,52 @@ body {
   white-space: nowrap;
 }
 
+/* ── Crystal / Pipeline panels ─────────────────────── */
+
+.crystal-counts {
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.crystal-counts > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+#crystal-rules {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.crystal-rule {
+  font-size: 12px;
+  color: var(--text-muted);
+  padding: 4px 8px;
+  background: var(--bg-panel);
+  border-radius: 6px;
+  border-left: 3px solid var(--accent);
+  line-height: 1.4;
+}
+
+.crystal-rule .phase-tag {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 8px;
+  margin-right: 6px;
+  text-transform: uppercase;
+}
+
+.phase-tag.ice     { background: #dbeafe; color: #1e40af; }
+.phase-tag.water   { background: #d1fae5; color: #065f46; }
+.phase-tag.steam   { background: #fef3c7; color: #92400e; }
+.phase-tag.crystal { background: #ede9fe; color: #5b21b6; }
+
 /* ── Footer ─────────────────────────────────────────── */
 
 .footer {

@@ -230,3 +230,49 @@ function escapeHtml(s) {
 // ── Init ───────────────────────────────────────────────
 
 connect();
+pullCrystals();
+pullPipeline();
+
+// Poll crystal/pipeline every 30s (slower than tier 0)
+setInterval(() => { pullCrystals(); pullPipeline(); }, 30000);
+
+
+// ── Crystal + Pipeline panels ─────────────────────────
+
+async function pullCrystals() {
+  try {
+    const res = await fetch('/api/crystals');
+    const d = await res.json();
+    if (d.error) return;
+    setText('crystal-total', d.total_crystals || 0);
+    setText('crystal-active', d.active_count || 0);
+    setText('crystal-stale', d.stale_count || 0);
+    setText('crystal-freshness', typeof d.mean_freshness === 'number'
+      ? d.mean_freshness.toFixed(2) : '—');
+
+    const list = document.getElementById('crystal-rules');
+    if (!list) return;
+    list.innerHTML = '';
+    (d.top_rules || []).forEach(r => {
+      const item = document.createElement('div');
+      item.className = 'crystal-rule';
+      const phase = r.phase || 'ice';
+      item.innerHTML = `<span class="phase-tag ${phase}">${phase}</span>${escapeHtml(r.rule)}`;
+      list.appendChild(item);
+    });
+  } catch (e) {
+    console.error('crystals fetch failed', e);
+  }
+}
+
+async function pullPipeline() {
+  try {
+    const res = await fetch('/api/pipeline');
+    const d = await res.json();
+    if (d.error) return;
+    setText('digest-count', d.digest_count || 0);
+    setText('journal-count', d.journal_entries || 0);
+  } catch (e) {
+    console.error('pipeline fetch failed', e);
+  }
+}
