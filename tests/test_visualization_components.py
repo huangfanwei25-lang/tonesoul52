@@ -1,16 +1,19 @@
 """Tests for visualization components — robustness checks."""
 
 import importlib
+import importlib.util
 import sys
 from pathlib import Path
+
+import pytest
 
 # Add the dashboard frontend to sys.path so component modules can find 'utils'
 _frontend_dir = str(Path(__file__).resolve().parents[1] / "apps" / "dashboard" / "frontend")
 if _frontend_dir not in sys.path:
     sys.path.insert(0, _frontend_dir)
 
-# Import modules directly (bypass __init__.py which pulls in all components)
-import importlib.util
+# Skip entire module when streamlit is not installed (CI environment)
+pytest.importorskip("streamlit", reason="streamlit not installed — skip dashboard component tests")
 
 
 def _import_module(name: str, filepath: str):
