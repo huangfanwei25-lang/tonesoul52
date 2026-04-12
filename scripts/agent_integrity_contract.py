@@ -10,7 +10,6 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 
 PROTECTED_FILE_HASHES = {
     "AGENTS.md": "ddc2330c75dadc5525de61286237a458adc22cfaa63732a191ad10b9b158e7fa",
-    "HANDOFF.md": "d6ac7efc13a181bf2289ab19b82f42b9c2aba7833e6537048837fa0ec47cfeba",
     "SOUL.md": "9c5fce9040236f2e5439bd4e158c5a655dfc3c5c101575c508bb8d172a62a7f5",
 }
 

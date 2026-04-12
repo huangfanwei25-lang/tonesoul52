@@ -1,6 +1,3 @@
 [submodule "OpenClaw-Memory"]
 	path = OpenClaw-Memory
 	url = https://github.com/Fan1234-1/OpenClaw-Memory.git
-[submodule "tae_fix"]
-	path = tae_fix
-	url = https://github.com/Fan1234-1/ToneSoul-Architecture-Engine.git

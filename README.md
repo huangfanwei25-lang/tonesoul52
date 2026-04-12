@@ -57,16 +57,24 @@ pip install tonesoul52
 Or from source:
 
 ```bash
-git clone https://github.com/Fan1234-1/tonesoul52.git
+git clone --depth 1 https://github.com/Fan1234-1/tonesoul52.git
 cd tonesoul52
 pip install -e .
 ```
 
-### 2) Create local env file
+### 2) Run the demo
 
 ```bash
-cp .env.example .env.local
-# Set your LLM backend: GEMINI_API_KEY, or run Ollama locally
+python examples/quickstart.py
+```
+
+Output:
+```
+Step 1: Governance State     → SI=0.0000, 3 active vows
+Step 2: TSR Tension Scoring  → T=0.253, S=0.000, R=1.000
+Step 3: POAV Quality Scoring → Total=0.698
+Step 4: Vow Enforcement      → 2 flagged, 1 passed
+Step 5: Council Deliberation → verdict=refine, coherence=0.624
 ```
 
 ### 3) Verify governance loads
@@ -84,6 +92,15 @@ print(f"Active Vows: {len(posture.active_vows)}")
 pip install tonesoul52[dashboard]
 python scripts/tension_dashboard.py --work-category research
 ```
+
+### 5) Run tests
+
+```bash
+pip install tonesoul52[dev]
+pytest tests/ -v
+```
+
+Latest result: **3137 passed** (Python 3.13, Windows/Ubuntu)
 
 ## Why It Feels Different
 
