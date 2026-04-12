@@ -1,5 +1,5 @@
 #!/bin/sh
-# ToneSoul pre-commit hook — 擋 BOM 和 CRLF
+# ToneSoul pre-commit hook — 擋 BOM、CRLF、black 格式
 # 安裝: cp scripts/hooks/pre-commit .git/hooks/pre-commit
 
 files=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(py|md|json|html|js|css|ts|yaml|yml|toml)$')
@@ -24,9 +24,20 @@ for f in $files; do
   fi
 done
 
+# 檢查 black 格式（只針對 .py 檔）
+py_files=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.py$')
+if [ -n "$py_files" ]; then
+  if command -v black >/dev/null 2>&1; then
+    if ! black --check --quiet --line-length 100 $py_files 2>/dev/null; then
+      echo "Black format drift in: $py_files"
+      echo "Fix: python -m black --line-length 100 $py_files"
+      errors=$((errors + 1))
+    fi
+  fi
+fi
+
 if [ $errors -gt 0 ]; then
   echo ""
-  echo "Blocked: $errors file(s) have BOM or CRLF."
-  echo "Fix: python -c \"p=__import__('pathlib').Path('FILE'); p.write_bytes(p.read_bytes().lstrip(b'\\xef\\xbb\\xbf').replace(b'\\r\\n',b'\\n'))\""
+  echo "Blocked: $errors issue(s) found. Fix and re-stage."
   exit 1
 fi
