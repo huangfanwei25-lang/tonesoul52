@@ -6,7 +6,10 @@ failures are logged but never block the governance commit.
 
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass, field
+from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from .session_digest import digest_session
@@ -36,6 +39,21 @@ CONSOLIDATION_INTERVAL = 5  # run consolidation every N sessions
 WISDOM_BETA = 0.05  # SI blend rate for wisdom signal
 _CRYSTAL_DENSITY_CAP = 50  # crystal count for full signal
 
+# Routing lanes (inspired by SCBKR routing concept)
+_GOVERNANCE_KEYWORDS = {"vow", "axiom", "aegis", "drift", "council", "governance", "誓言", "治理"}
+_CONTINUITY_KEYWORDS = {"handoff", "checkpoint", "compaction", "session", "交接", "延續"}
+# Everything else → "learning" lane
+
+
+def classify_lane(topics: List[str], learnings: List[str]) -> str:
+    """Classify a digest into a routing lane: governance / continuity / learning."""
+    text = " ".join(topics + learnings).lower()
+    if any(kw in text for kw in _GOVERNANCE_KEYWORDS):
+        return "governance"
+    if any(kw in text for kw in _CONTINUITY_KEYWORDS):
+        return "continuity"
+    return "learning"
+
 
 # ---------------------------------------------------------------------------
 # Stage helpers
@@ -50,6 +68,7 @@ def _write_digest(
     from .soul_db import JsonlSoulDB, MemorySource
 
     entry = digest_session(trace, compaction)
+    entry["lane"] = classify_lane(entry.get("topics", []), entry.get("learnings", []))
     db = JsonlSoulDB()
     db.append(MemorySource.SELF_JOURNAL, entry)
     return entry
@@ -278,3 +297,52 @@ def run_session_end_pipeline(
         result.errors.append(f"rag_ingest: {exc}")
 
     return result
+
+
+# ---------------------------------------------------------------------------
+# Crystal index export (inspired by SCBKR auto_index.py)
+# ---------------------------------------------------------------------------
+
+_INDEX_PATH = Path("memory/crystal_index.json")
+
+
+def export_crystal_index(output_path: Optional[Path] = None) -> Dict[str, Any]:
+    """Generate a structured crystal index for external tools.
+
+    Maps each crystal to an SCBKR-like record:
+      S (subject)  = crystal rule
+      C (cause)    = source_pattern
+      B (boundary) = ETCL stage + freshness constraints
+      K (key)      = weight + access_count
+      R (responsibility) = agent that created it (from tags)
+    """
+    from .crystallizer import MemoryCrystallizer
+
+    crystallizer = MemoryCrystallizer()
+    crystals = crystallizer.load_crystals()
+    summary = crystallizer.freshness_summary()
+
+    now = datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+
+    records = []
+    for c in crystals:
+        records.append({
+            "S": c.rule,
+            "C": c.source_pattern,
+            "B": {"stage": c.stage, "phase": c.phase, "freshness": round(c.freshness_score, 3)},
+            "K": {"weight": round(c.weight, 3), "access_count": c.access_count},
+            "R": c.tags,
+        })
+
+    index = {
+        "version": "1.0",
+        "generated_at": now,
+        "total": len(records),
+        "summary": summary,
+        "records": records,
+    }
+
+    out = Path(output_path or _INDEX_PATH)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(index, ensure_ascii=False, indent=2), encoding="utf-8")
+    return index
