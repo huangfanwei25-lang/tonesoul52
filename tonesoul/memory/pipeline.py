@@ -99,9 +99,7 @@ def _adapt_patterns(consolidation_result) -> Dict[str, Any]:
     return {
         "verdicts": verdict_counts,
         "low_tension_approvals": low_tension_approvals,
-        "autonomous_high_delta": patterns.get("genesis_counts", {}).get(
-            "autonomous", 0
-        ),
+        "autonomous_high_delta": patterns.get("genesis_counts", {}).get("autonomous", 0),
         "collapse_warnings": {},
         "resonance_convergences": 0,
     }
@@ -268,9 +266,7 @@ def run_session_end_pipeline(
     # Stage 2+3: Consolidation → Crystallization
     new_crystals = None
     try:
-        consolidation = _maybe_consolidate(
-            session_count, force=force_consolidate
-        )
+        consolidation = _maybe_consolidate(session_count, force=force_consolidate)
         if consolidation is not None:
             result.consolidation_ran = True
             adapted = _adapt_patterns(consolidation)
@@ -281,17 +277,13 @@ def run_session_end_pipeline(
 
     # Stage 4: Wisdom delta (always compute, even without consolidation)
     try:
-        result.wisdom_delta = _compute_wisdom_delta(
-            trace.get("tension_events") or []
-        )
+        result.wisdom_delta = _compute_wisdom_delta(trace.get("tension_events") or [])
     except Exception as exc:
         result.errors.append(f"wisdom_delta: {exc}")
 
     # Stage 5: RAG ingestion
     try:
-        ingested = _ingest_to_rag(
-            digest=digest_entry, crystals=new_crystals
-        )
+        ingested = _ingest_to_rag(digest=digest_entry, crystals=new_crystals)
         result.rag_ingested = ingested
     except Exception as exc:
         result.errors.append(f"rag_ingest: {exc}")
@@ -326,21 +318,23 @@ def export_crystal_index(output_path: Optional[Path] = None) -> Dict[str, Any]:
 
     records = []
     for c in crystals:
-        records.append({
-            "rule": c.rule,
-            "origin": c.source_pattern,
-            "lifecycle": {
-                "stage": c.stage,
-                "phase": c.phase,
-                "freshness": round(c.freshness_score, 3),
-                "freshness_status": c.freshness_status,
-            },
-            "signal": {
-                "weight": round(c.weight, 3),
-                "access_count": c.access_count,
-            },
-            "classification": c.tags,
-        })
+        records.append(
+            {
+                "rule": c.rule,
+                "origin": c.source_pattern,
+                "lifecycle": {
+                    "stage": c.stage,
+                    "phase": c.phase,
+                    "freshness": round(c.freshness_score, 3),
+                    "freshness_status": c.freshness_status,
+                },
+                "signal": {
+                    "weight": round(c.weight, 3),
+                    "access_count": c.access_count,
+                },
+                "classification": c.tags,
+            }
+        )
 
     index = {
         "schema": "tonesoul-crystal-index/v1",
