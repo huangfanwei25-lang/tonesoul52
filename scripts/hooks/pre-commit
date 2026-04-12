@@ -1,0 +1,32 @@
+#!/bin/sh
+# ToneSoul pre-commit hook — 擋 BOM 和 CRLF
+# 安裝: cp scripts/hooks/pre-commit .git/hooks/pre-commit
+
+files=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(py|md|json|html|js|css|ts|yaml|yml|toml)$')
+
+if [ -z "$files" ]; then
+  exit 0
+fi
+
+errors=0
+
+for f in $files; do
+  # 檢查 BOM
+  if head -c 3 "$f" 2>/dev/null | grep -qP '\xef\xbb\xbf'; then
+    echo "BOM detected: $f"
+    errors=$((errors + 1))
+  fi
+
+  # 檢查 CRLF
+  if grep -qP '\r\n' "$f" 2>/dev/null; then
+    echo "CRLF detected: $f"
+    errors=$((errors + 1))
+  fi
+done
+
+if [ $errors -gt 0 ]; then
+  echo ""
+  echo "Blocked: $errors file(s) have BOM or CRLF."
+  echo "Fix: python -c \"p=__import__('pathlib').Path('FILE'); p.write_bytes(p.read_bytes().lstrip(b'\\xef\\xbb\\xbf').replace(b'\\r\\n',b'\\n'))\""
+  exit 1
+fi

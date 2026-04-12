@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ToneSoul HUD</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+  <!-- 頂部列 -->
+  <header class="topbar">
+    <span class="topbar-title">語魂 / TONESOUL</span>
+    <div class="topbar-status">
+      <span><span class="status-dot off" id="ws-dot"></span><span id="ws-label">連線中</span></span>
+      <span id="backend-label">後端: —</span>
+      <span id="aegis-label">護盾: —</span>
+    </div>
+  </header>
+
+  <!-- HUD 面板 -->
+  <main class="hud-grid">
+
+    <!-- 靈魂積分 -->
+    <div class="card si-gauge">
+      <div class="card-label">靈魂積分</div>
+      <div class="si-ring">
+        <svg viewBox="0 0 160 160">
+          <circle class="track" cx="80" cy="80" r="70" />
+          <circle class="fill" id="si-arc" cx="80" cy="80" r="70"
+                  stroke-dasharray="439.8" stroke-dashoffset="439.8" />
+        </svg>
+        <div class="si-center">
+          <div class="si-number" id="si-value">—</div>
+          <div class="si-label">SI</div>
+        </div>
+      </div>
+      <div class="band" id="soul-band">
+        <div class="band-segment"></div>
+        <div class="band-segment"></div>
+        <div class="band-segment"></div>
+        <div class="band-segment"></div>
+      </div>
+    </div>
+
+    <!-- 就緒狀態 -->
+    <div class="card readiness">
+      <div class="card-label">就緒狀態</div>
+      <div id="readiness-badge" class="readiness-badge pass">通過</div>
+      <div class="card-sub" id="readiness-detail">—</div>
+
+      <div style="margin-top: 16px">
+        <div class="card-label">任務軌道</div>
+        <div class="card-value small" id="task-track">—</div>
+        <div class="card-sub" id="task-track-detail">—</div>
+      </div>
+
+      <div style="margin-top: 16px">
+        <div class="card-label">審議模式</div>
+        <div class="card-value small" id="delib-mode">—</div>
+      </div>
+    </div>
+
+    <!-- 誓言 + 張力 -->
+    <div class="card">
+      <div class="card-label">活躍誓言</div>
+      <div class="card-value" id="vow-count">—</div>
+      <div id="vow-list" style="margin-top: 12px"></div>
+
+      <div style="margin-top: 20px">
+        <div class="card-label">張力</div>
+        <div class="card-value small" id="tension-count">0</div>
+        <div class="tension-bar">
+          <div class="tension-fill" id="tension-fill" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <div style="margin-top: 20px">
+        <div class="card-label">對話次數</div>
+        <div class="card-value small" id="session-count">—</div>
+      </div>
+    </div>
+
+    <!-- 宣稱邊界 -->
+    <div class="card">
+      <div class="card-label">宣稱邊界</div>
+      <div class="card-value small" id="claim-tier">—</div>
+      <div class="card-sub" id="claim-note">—</div>
+    </div>
+
+    <!-- 變動預檢 -->
+    <div class="card">
+      <div class="card-label">變動預檢</div>
+      <div class="card-value small" id="mutation-status">—</div>
+      <div class="card-sub" id="mutation-next">—</div>
+    </div>
+
+    <!-- 消費者契約 -->
+    <div class="card">
+      <div class="card-label">消費者契約</div>
+      <div class="card-sub" id="consumer-summary">—</div>
+      <div class="card-sub" id="consumer-guard" style="margin-top: 6px">—</div>
+    </div>
+
+    <!-- 診斷列 -->
+    <div class="diag-line" id="diag-line">等待資料中...</div>
+
+    <!-- 資料層級 -->
+    <div class="card" style="grid-column: 1 / -1">
+      <div class="card-label">資料層級</div>
+      <div class="tier-controls">
+        <button class="tier-btn active" onclick="pullTier(0)">第 0 層（~6KB）</button>
+        <button class="tier-btn" onclick="pullTier(1)">第 1 層（~35KB）</button>
+        <button class="tier-btn" onclick="pullTier(2)">第 2 層（~142KB）</button>
+      </div>
+      <pre id="raw-json" style="margin-top: 12px; font-size: 11px; color: var(--text-dim); max-height: 300px; overflow: auto; display: none"></pre>
+    </div>
+
+  </main>
+
+  <footer class="footer">
+    語魂 — 治理狀態反射監控
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
