@@ -16,8 +16,6 @@ tests/test_math_doc_alignment.py
 
 import math
 
-import pytest
-
 
 # ────────────────────────────────────────────────────────────────────────────
 # 1. 一致性摩擦 (Consistency Friction)
