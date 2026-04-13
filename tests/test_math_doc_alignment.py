@@ -148,8 +148,13 @@ class TestMultiAxisProjection:
 
     def test_risk_weights_sum_to_one(self):
         """五個風險因子加權 = 1.0：張力(0.48)+防禦鏈(0.28)+協調(0.12)+積壓(0.07)+痕跡(0.05)"""
-        weights = {"tension": 0.48, "aegis": 0.28, "coordination": 0.12,
-                   "backlog": 0.07, "trace": 0.05}
+        weights = {
+            "tension": 0.48,
+            "aegis": 0.28,
+            "coordination": 0.12,
+            "backlog": 0.07,
+            "trace": 0.05,
+        }
         assert abs(sum(weights.values()) - 1.0) < 1e-9
 
     def test_risk_tension_dominates(self):
@@ -194,7 +199,9 @@ class TestMultiAxisProjection:
         assert t["modal_weight"] == 0.25
         assert t["caution_weight"] == 0.15
         assert t["punctuation_weight"] == 0.10
-        assert t["length_weight"] > t["modal_weight"] > t["caution_weight"] > t["punctuation_weight"]
+        assert (
+            t["length_weight"] > t["modal_weight"] > t["caution_weight"] > t["punctuation_weight"]
+        )
 
     def test_variability_unique_ratio_target(self):
         """詞彙多樣性目標：60% unique（防止機械性重複）"""
@@ -233,7 +240,7 @@ class TestTensionDeliberation:
         c = EngineConfig()
         assert c.persistence_decay == 0.995
         # 數學驗證：139 步後接近 0.5
-        remaining = c.persistence_decay ** 139
+        remaining = c.persistence_decay**139
         assert 0.49 < remaining < 0.51
 
     def test_tension_persistence_alpha(self):
@@ -295,7 +302,9 @@ class TestTensionDeliberation:
         from tonesoul.council.types import PerspectiveVote, VoteDecision
 
         votes = [
-            PerspectiveVote(perspective="A", decision=VoteDecision.OBJECT, confidence=0.85, reasoning=""),
+            PerspectiveVote(
+                perspective="A", decision=VoteDecision.OBJECT, confidence=0.85, reasoning=""
+            ),
         ]
         result = compute_coherence(votes)
         assert result.has_strong_objection is True
@@ -306,7 +315,9 @@ class TestTensionDeliberation:
         from tonesoul.council.types import PerspectiveVote, VoteDecision
 
         votes = [
-            PerspectiveVote(perspective="A", decision=VoteDecision.OBJECT, confidence=0.70, reasoning=""),
+            PerspectiveVote(
+                perspective="A", decision=VoteDecision.OBJECT, confidence=0.70, reasoning=""
+            ),
         ]
         result = compute_coherence(votes)
         assert result.has_strong_objection is False
@@ -530,8 +541,7 @@ class TestRiskClassification:
         coordination = 0.3
         backlog = 0.2
         trace = 0.1
-        score = (0.48 * tension + 0.28 * aegis + 0.12 * coordination
-                 + 0.07 * backlog + 0.05 * trace)
+        score = 0.48 * tension + 0.28 * aegis + 0.12 * coordination + 0.07 * backlog + 0.05 * trace
         # 0.240 + 0.112 + 0.036 + 0.014 + 0.005 = 0.407
         assert abs(score - 0.407) < 1e-9
         assert _calc_level(score) == "caution"
