@@ -3,7 +3,7 @@
 > Status: canonical architecture companion as of 2026-03-22
 > Audience: future AI agents, maintainers, and architecture reviews
 > Purpose: reconcile ToneSoul's six operational governance layers with the newer retrieval and model-attachment layers without implying a hidden ninth layer.
-> Last Updated: 2026-03-23
+> Last Updated: 2026-04-13 (added YUHUN Core Protocol v1.0 surface references)
 
 ## Why This Document Exists
 
@@ -35,14 +35,14 @@ They are the engineering surfaces that make ToneSoul:
 
 | Layer | Name | Primary Role | Main Surfaces |
 | --- | --- | --- | --- |
-| L1 | Interface and Context Ingress | receive requests, normalize payloads, preserve boundary metadata | `apps/web/src/app/api/chat/route.ts`, `apps/api/server.py`, request adapters |
-| L2 | Semantic Sensing and Tension Field | compute drift, tension, semantic pressure, and resonance signals | `tonesoul/tension_engine.py`, `tonesoul/semantic_control.py`, `tonesoul/drift_monitor.py`, `tonesoul/resonance.py` |
-| L3 | Deliberation and Scenario Framing | generate multi-perspective reasoning candidates before final action | `tonesoul/council/*`, `tonesoul/tonebridge/scenario_envelope.py`, `tonesoul/deliberation/*` |
-| L4 | Governance Kernel and Action Control | decide pass, rewrite, block, escalate, or constrain action sets | `tonesoul/governance/kernel.py`, `tonesoul/yss_gates.py`, `tonesoul/poav.py`, `tonesoul/dcs.py`, `tonesoul/vow_system.py`, `tonesoul/alert_escalation.py` |
-| L5 | Audit, Provenance, and Explainability | expose why a decision happened and leave replayable evidence | `tonesoul/council/transcript.py`, `tonesoul/council/summary_generator.py`, `memory/provenance_chain.py`, `tonesoul/contract_observer.py`, `tonesoul/exception_trace.py` |
-| L6 | Memory, Continuity, and Dream Loop | retain, decay, crystallize, review, and replay long-horizon continuity | `tonesoul/memory/*`, `tonesoul/dream_engine.py`, `tonesoul/stale_rule_verifier.py`, `tonesoul/vow_inventory.py` |
-| L7 | Compiled Retrieval and Verifier Surfaces | compile prose into graph, status, and enforcement artifacts that agents can open first | `docs/status/*`, `scripts/run_tonesoul_knowledge_graph.py`, `scripts/run_changed_surface_checks.py`, `scripts/verify_protected_paths.py`, `docs/architecture/KNOWLEDGE_SURFACES_BOUNDARY_MAP.md` |
-| L8 | Model Attachment and Distillation Boundary | expose only stable public-safe behavior for adapters, RL loops, or future retrieval-native interfaces | `docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md`, `docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md`, `docs/philosophy/cultural_vector_distillation.md`, distillation and adapter-facing plans |
+| L1 | Interface and Context Ingress | receive requests, normalize payloads, preserve boundary metadata | `apps/web/src/app/api/chat/route.ts`, `apps/api/server.py`, request adapters, **`tonesoul/yuhun/dpr.py`** (dynamic priority routing — decides FAST_PATH vs COUNCIL_PATH at the ingress boundary) |
+| L2 | Semantic Sensing and Tension Field | compute drift, tension, semantic pressure, and resonance signals | `tonesoul/tension_engine.py`, `tonesoul/semantic_control.py`, `tonesoul/drift_monitor.py`, `tonesoul/resonance.py`, **`tonesoul/yuhun/world_sense.py`** (integrates DriftMonitor + JumpMonitor as the sensory layer for MCC) |
+| L3 | Deliberation and Scenario Framing | generate multi-perspective reasoning candidates before final action | `tonesoul/council/*`, `tonesoul/tonebridge/scenario_envelope.py`, `tonesoul/deliberation/*`, **`.agent/agents/yuhun_*.md`** (Logician / Creator / Safety Guard / Empath — four-direction parallel deliberation), **`tonesoul/yuhun/vod.py`** (Visibility of Divergence — dual-track matrix output) |
+| L4 | Governance Kernel and Action Control | decide pass, rewrite, block, escalate, or constrain action sets | `tonesoul/governance/kernel.py`, `tonesoul/yss_gates.py`, `tonesoul/poav.py`, `tonesoul/dcs.py`, `tonesoul/vow_system.py`, `tonesoul/alert_escalation.py`, **`tonesoul/yuhun/shadow_doc.py`** (JSON Shadow Document — black-box recorder for every council deliberation) |
+| L5 | Audit, Provenance, and Explainability | expose why a decision happened and leave replayable evidence | `tonesoul/council/transcript.py`, `tonesoul/council/summary_generator.py`, `memory/provenance_chain.py`, `tonesoul/contract_observer.py`, `tonesoul/exception_trace.py`, **`memory/yuhun_shadows/*.json`** (cold-storage archive from ShadowDocument.save(), retrievable for audit) |
+| L6 | Memory, Continuity, and Dream Loop | retain, decay, crystallize, review, and replay long-horizon continuity | `tonesoul/memory/*`, `tonesoul/dream_engine.py`, `tonesoul/stale_rule_verifier.py`, `tonesoul/vow_inventory.py`, **`WorldSense.dream_candidates()`** (sleep-period extraction of high-drift + high-tension moments for Offline RL), **`WorldSense.inbreeding_risk()`** (detects synthetic data echo-chamber risk), **`WorldSense.stable_anchors()`** (wake-verification baseline) |
+| L7 | Compiled Retrieval and Verifier Surfaces | compile prose into graph, status, and enforcement artifacts that agents can open first | `docs/status/*`, `scripts/run_tonesoul_knowledge_graph.py`, `scripts/run_changed_surface_checks.py`, `scripts/verify_protected_paths.py`, `docs/architecture/KNOWLEDGE_SURFACES_BOUNDARY_MAP.md`, **`graphify-out/graph.json`** (46-node knowledge graph, rebuildable via `graphify-out/build_graph.py`) |
+| L8 | Model Attachment and Distillation Boundary | expose only stable public-safe behavior for adapters, RL loops, or future retrieval-native interfaces | `docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md`, `docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md`, `docs/philosophy/cultural_vector_distillation.md`, distillation and adapter-facing plans, **`docs/yuhun_core_protocol_v1.md`** (YUHUN behavioral specification for L8 adapters) |
 
 ## Layer Details
 
