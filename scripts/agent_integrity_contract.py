@@ -9,7 +9,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
 PROTECTED_FILE_HASHES = {
-    "AGENTS.md": "ddc2330c75dadc5525de61286237a458adc22cfaa63732a191ad10b9b158e7fa",
+    "AGENTS.md": "7120fc1e31f17d8fb9a0be312ad2035c5c6222bb40b5a003587b3b4d1840b6a2",
     "SOUL.md": "4cbc420dce02a6610275fad686476de758556a3fff67a167375fc53fd697178d",
 }
 
