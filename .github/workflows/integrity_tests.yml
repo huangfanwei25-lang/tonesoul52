@@ -7,7 +7,6 @@ on:
       - "tonesoul/**"
       - "tests/**"
       - "AXIOMS.json"
-      - "law/**"
       - "pyproject.toml"
       - "requirements*.txt"
       - ".github/workflows/integrity_tests.yml"
@@ -52,7 +51,6 @@ jobs:
     - name: Validate JSON schemas
       run: |
         python -c "import json; json.load(open('AXIOMS.json', encoding='utf-8'))"
-        python -c "import json; json.load(open('law/semantic_spine_schema.json', encoding='utf-8'))"
     
     - name: Check tonesoul module syntax
       run: |
