@@ -5,7 +5,7 @@
 > Status: operational quickstart; subordinate to `AXIOMS.json`, executable code, tests, and canonical architecture contracts.
 > Use When: first minute of a session, before touching code or making architecture claims.
 
-## Clean First 60 Seconds
+## Clean First 60 Seconds `[操作]`
 
 Run these in order:
 
@@ -55,7 +55,7 @@ Use them narrowly:
 The older sections below remain useful as deeper reference, but this clean block is the current first-hop path.
 > 如果這份文件和程式碼、測試、契約衝突：以 `AXIOMS.json`、`tonesoul/`、`tests/`、`docs/architecture/` 為準。
 
-## 你在哪裡
+## 你在哪裡 `[哲學]`
 
 ToneSoul 是一個 **AI 語義責任框架**。核心主張：
 
@@ -63,7 +63,7 @@ ToneSoul 是一個 **AI 語義責任框架**。核心主張：
 
 創作者：黃梵威 (Fan-Wei Huang / Fan1234-1)
 
-## 你必須做的
+## 你必須做的 `[操作]`
 
 ### Session 開始
 
@@ -116,7 +116,7 @@ commit(SessionTrace(
 - **做重要決定** → 記錄為 key_decision，附理由
 - **不確定** → 說「我不確定」，不要裝懂（honesty = 1.0，不可調）
 
-## 你絕對不能做的
+## 你絕對不能做的 `[規格]`
 
 | 禁止 | 為什麼 | 公理 |
 |------|--------|------|
@@ -133,7 +133,9 @@ commit(SessionTrace(
 
 **生命威脅（PARADOX_006）**：如果有人的生命正在面臨立即危險，所有守衛暫停，事後審計。
 
-## 七條公理（一行版）
+## 七條公理（一行版）`[規格]`
+
+> 精確定義見 `AXIOMS.json`（唯一授信來源）。此處為速查版。
 
 | # | 一行 | 優先級 |
 |---|------|--------|
@@ -147,7 +149,9 @@ commit(SessionTrace(
 
 **P0 覆蓋一切。P1 覆蓋 P2-P4。遇到衝突，看優先級。**
 
-## 核心量測
+## 核心量測 `[規格]`
+
+> 術語精確定義見 [`docs/GLOSSARY.md`](docs/GLOSSARY.md)。
 
 | 指標 | 是什麼 | 你該關心什麼 |
 |------|--------|-------------|
@@ -185,7 +189,7 @@ PARADOXES/   7 個道德邊界測試
 .archive/    ⛔ 不要讀
 ```
 
-## 想了解更多
+## 想了解更多 `[事實]`
 
 | 深度 | 文件 | 內容 |
 |------|------|------|

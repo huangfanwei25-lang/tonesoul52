@@ -148,3 +148,6 @@ test_results.txt
 # Temporary consolidation scripts
 _consolidate_plans.py
 .aegis/
+
+# Knowledge graph index (rebuildable artifact — run graphify-out/build_graph.py to regenerate)
+graphify-out/

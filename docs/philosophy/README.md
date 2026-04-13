@@ -39,6 +39,7 @@ Together, they ensure that no algorithm or abstraction drifts too far from its e
 - [Choice Identity Principle](./choice_identity_principle.md)
 - [Philosophical Reflection Engineering Spec](./philosophical_reflection_engineering_spec.md)
 - [AI Life Journal Protocol](./ai_life_journal_protocol.md)
+- [**原則工程 (Principle Engineering)**](./principle_engineering.md) — 工程趨於同化之後，剩下的是理念與價值觀
 
 ---
 
