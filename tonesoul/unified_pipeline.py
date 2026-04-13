@@ -1,4 +1,4 @@
-﻿"""
+"""
 ToneSoul Unified Pipeline
 Combines ToneBridge psychological analysis with Council deliberation.
 """
@@ -168,6 +168,9 @@ class UnifiedPipeline:
             "TONESOUL_ENABLE_CORRECTIVE_RECALL",
             default=True,
         )
+        # YUHUN Core Protocol v1.0 — DPR + ContextAssembler
+        self._dpr = None
+        self._context_assembler = None
 
     def _get_governance_kernel(self):
         if self._governance_kernel is None:
@@ -179,6 +182,26 @@ class UnifiedPipeline:
                 self._exc_trace.record("unified_pipeline", "_get_governance_kernel", e)
                 pass
         return self._governance_kernel
+
+    def _get_dpr(self):
+        """YUHUN DPR — 動態優先路由器（懶載入，失敗時降級）"""
+        if self._dpr is None:
+            try:
+                from tonesoul.yuhun.dpr import route as dpr_route
+                self._dpr = dpr_route
+            except Exception as e:
+                self._exc_trace.record("unified_pipeline", "_get_dpr", e)
+        return self._dpr
+
+    def _get_context_assembler(self):
+        """YUHUN ContextAssembler — Context Budget 組裝器（懶載入，失敗時降級）"""
+        if self._context_assembler is None:
+            try:
+                from tonesoul.yuhun.context_assembler import ContextAssembler
+                self._context_assembler = ContextAssembler(repo_root=self._repo_root)
+            except Exception as e:
+                self._exc_trace.record("unified_pipeline", "_get_context_assembler", e)
+        return self._context_assembler
 
     def _get_llm_router(self):
         if self._llm_router is None:

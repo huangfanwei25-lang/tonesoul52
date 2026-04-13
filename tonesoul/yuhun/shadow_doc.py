@@ -109,6 +109,22 @@ class TensionMetrics:
 
 
 @dataclass
+class TrajectoryDigest:
+    """
+    軌跡摘要 — 壓縮版的推演過程記錄
+
+    靈感來源：Hermes Agent trajectory_compressor.py
+    目的：讓 DreamEngine 的做夢材料不只是數值快照，也含「過程」
+    規格：docs/architecture/CONTEXT_BUDGET_SPEC.md（Layer 2 來源）
+    """
+    step_count: int = 0                      # 推演步驟數
+    tool_calls: list[str] = field(default_factory=list)   # 工具調用序列（壓縮名稱）
+    key_decisions: list[str] = field(default_factory=list) # 關鍵決策節點
+    compressed_summary: str = ""             # 最終壓縮摘要（< 200 tokens）
+    compression_ratio: float = 0.0           # 原始長度 / 壓縮後長度
+
+
+@dataclass
 class LegalProfile:
     applicable_laws: list[str]
     gap_detected: bool
@@ -148,6 +164,7 @@ class ShadowDocument:
     tension_metrics: TensionMetrics
     legal_profile: LegalProfile
     lifecycle: Lifecycle
+    trajectory_digest: TrajectoryDigest = field(default_factory=TrajectoryDigest)
 
     @classmethod
     def create(
@@ -181,6 +198,7 @@ class ShadowDocument:
                 judicial_precedents=[],
             ),
             lifecycle=Lifecycle(),
+            trajectory_digest=TrajectoryDigest(),
         )
 
     def to_dict(self) -> dict:
@@ -221,6 +239,11 @@ class ShadowDocument:
             "safety_verdict": self.council_outputs.get("safety", None).verdict.value
                 if self.council_outputs.get("safety") else None,
             "legal_gap": self.legal_profile.gap_detected,
+            "trajectory": {
+                "step_count": self.trajectory_digest.step_count,
+                "key_decisions": self.trajectory_digest.key_decisions,
+                "compressed_summary": self.trajectory_digest.compressed_summary,
+            },
         }
 
     def save(self, cold_storage_dir: str = "memory/yuhun_shadows") -> str:

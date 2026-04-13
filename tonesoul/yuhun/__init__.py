@@ -2,6 +2,7 @@
 YUHUN Core Protocol v1.0 — yuhun 模組入口
 """
 
+from .context_assembler import ContextAssembler, ContextPackage, ContextViolationError, validate_context_sources
 from .dpr import DPRResult, RoutingDecision, route
 from .shadow_doc import (
     BlockerSeverity,
@@ -17,6 +18,7 @@ from .shadow_doc import (
     SafetyVerdict,
     ShadowDocument,
     TensionMetrics,
+    TrajectoryDigest,
 )
 from .vod import TensionLevel, VoDResult, assess_divergence
 
@@ -27,6 +29,7 @@ __all__ = [
     "DPRResult",
     # Shadow Document
     "ShadowDocument",
+    "TrajectoryDigest",
     "LogicianOutput",
     "CreatorOutput",
     "SafetyOutput",
@@ -39,6 +42,11 @@ __all__ = [
     "L2Opportunity",
     "BlockerSeverity",
     "OutputMode",
+    # Context Assembler
+    "ContextAssembler",
+    "ContextPackage",
+    "ContextViolationError",
+    "validate_context_sources",
     # VoD
     "assess_divergence",
     "TensionLevel",
