@@ -150,6 +150,23 @@
 
 ---
 
+### context_budget
+**上下文預算**
+
+| 項目 | 內容 |
+|------|------|
+| 中文名 | 上下文預算 |
+| 英文名 | context budget |
+| 直覺描述 | 每次推演允許進入提示詞的 context 集合，由路由決策（DPR）和本規格共同決定 |
+| **規格文件** | `docs/architecture/CONTEXT_BUDGET_SPEC.md` |
+| 四個 Layer | L0=AXIOMS（必帶）/ L1=請求（必帶）/ L2=錨點記憶 / L3=契約 / L4=議會框架 |
+| **FAST_PATH** | 只帶 L0 + L1（1x token cost）|
+| **COUNCIL_PATH** | 帶 L0–L4，按衝突類型選擇（4x token cost）|
+| 永遠禁止 | chronicles/ · .archive/ · memory/*.jsonl · graphify-out/ |
+| 注意 | 本術語和「context window」不同：context window 是模型的物理限制；context budget 是系統的自我約束 |
+
+---
+
 ## 概念模型（不是計算公式）的完整清單
 
 以下公式是直覺描述，**非精確計算公式**。計算以程式碼為準。
