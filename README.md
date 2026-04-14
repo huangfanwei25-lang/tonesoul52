@@ -144,6 +144,7 @@ Response
 
 If you need one file that explains the whole stack and why each subsystem exists, open [docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md](docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md) before diving into narrower contracts.
 If you need the durable design center, invariants, and continuation logic that tie those subsystems together, open [DESIGN.md](DESIGN.md).
+If you need the smallest decision-affecting startup packet for consistent human/AI work, open [docs/foundation/README.md](docs/foundation/README.md).
 
 ## Choose Your Entry
 

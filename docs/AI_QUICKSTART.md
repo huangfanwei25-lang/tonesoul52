@@ -36,6 +36,7 @@ Then read these first:
 - `hook_chain`
 - `mutation_preflight`
 - `subsystem_parity`
+- if you need one thin project-context packet after the operational entry, open `docs/foundation/README.md`
 - if the task touches compaction, handoff survival, or "what may be compressed", open `docs/architecture/TONESOUL_HOT_MEMORY_DECAY_AND_COMPRESSION_MAP.md` before inferring a new compression story from observer prose
 
 Current bounded preflight chain:
