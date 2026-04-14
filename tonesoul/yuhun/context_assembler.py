@@ -239,14 +239,33 @@ class ContextAssembler:
         """
         Layer 2：嘗試從 WorldSense 取穩定錨點記憶
 
+        WorldSense.stable_anchors() 回傳 StableAnchor dataclass，
+        包含 home_vector, low_drift_steps, mean_drift, stability_score。
+        這裡將其轉為 LLM 可讀的字串格式。
+
+        top_n: 目前未使用（WorldSense 不支援 top_n），留作未來擴充
         失敗時靜默返回空列表（錨點記憶是可選的）
         """
         try:
             from tonesoul.yuhun.world_sense import WorldSense
 
             ws = WorldSense()
-            anchors = ws.stable_anchors(top_n=top_n)
-            return [str(a) for a in anchors]
+            anchor = ws.stable_anchors()
+
+            # 無觀測資料時不輸出錨點（穩定分數為 0 且沒有低漂移步驟）
+            if anchor.stability_score == 0.0 and not anchor.low_drift_steps:
+                return []
+
+            lines = [
+                f"穩定性分數：{anchor.stability_score:.0%}",
+                f"平均漂移值：{anchor.mean_drift:.3f}",
+                f"語義原點（home_vector）：{anchor.home_vector}",
+            ]
+            if anchor.low_drift_steps:
+                steps_str = ", ".join(str(s) for s in anchor.low_drift_steps[:top_n])
+                lines.append(f"低漂移步驟（最近 {top_n} 個）：{steps_str}")
+
+            return lines
         except Exception:
             return []
 
