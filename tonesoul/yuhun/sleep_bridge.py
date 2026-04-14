@@ -19,8 +19,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import datetime, timezone
-from typing import TYPE_CHECKING, Any, Optional
-from uuid import uuid4
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from tonesoul.dream_engine import DreamEngine
@@ -34,6 +33,7 @@ def _utcnow_iso() -> str:
 # ─────────────────────────────────────────────
 # 轉換：DreamCandidate → environment_stimulus payload
 # ─────────────────────────────────────────────
+
 
 def candidate_to_stimulus(candidate: "DreamCandidate", *, session_id: str = "") -> dict[str, Any]:
     """
@@ -53,9 +53,9 @@ def candidate_to_stimulus(candidate: "DreamCandidate", *, session_id: str = "") 
     """
     # 從候選類型推導 topic
     type_label = {
-        "high_drift":    "語義漂移事件 — 系統偏離本體中心",
+        "high_drift": "語義漂移事件 — 系統偏離本體中心",
         "lockdown_event": "奇點鎖定事件 — 推論收斂/鏈斷裂",
-        "high_tension":  "高張力分歧事件 — 議會極端分歧",
+        "high_tension": "高張力分歧事件 — 議會極端分歧",
     }.get(candidate.type, "YUHUN 感知事件")
 
     topic = f"[Step {candidate.step}] {type_label}: {candidate.reason}"
@@ -116,15 +116,17 @@ def candidate_to_stimulus(candidate: "DreamCandidate", *, session_id: str = "") 
 # 橋接函數
 # ─────────────────────────────────────────────
 
+
 @dataclass
 class SleepBridgeResult:
     """睡眠期橋接結果"""
-    injected_count: int           # 成功注入的刺激數
-    skipped_count: int            # 優先級不足而跳過的候選數
-    stimuli_ids: list[str]        # 注入成功的記錄 ID
-    inbreeding_risk: str          # 近親繁殖風險等級
-    stable_anchor_score: float    # 喚醒驗證錨點穩定分數
-    advisory: str                 # 給下游（DreamEngine）的建議
+
+    injected_count: int  # 成功注入的刺激數
+    skipped_count: int  # 優先級不足而跳過的候選數
+    stimuli_ids: list[str]  # 注入成功的記錄 ID
+    inbreeding_risk: str  # 近親繁殖風險等級
+    stable_anchor_score: float  # 喚醒驗證錨點穩定分數
+    advisory: str  # 給下游（DreamEngine）的建議
 
 
 def inject_world_sense_to_dream(
@@ -179,9 +181,8 @@ def inject_world_sense_to_dream(
         payload = candidate_to_stimulus(candidate, session_id=session_id)
         try:
             from tonesoul.memory.soul_db import MemorySource
-            record_id = dream_engine.write_gateway.write_payload(
-                MemorySource.CUSTOM, payload
-            )
+
+            record_id = dream_engine.write_gateway.write_payload(MemorySource.CUSTOM, payload)
             injected_ids.append(record_id)
         except Exception as e:
             # 注入單一失敗不阻斷整體流程（graceful degradation）
@@ -198,9 +199,7 @@ def inject_world_sense_to_dream(
             f"⚠️ 近親繁殖風險={risk.risk_level}：DreamEngine 反射前必須引入外部 L1 事實對照"
         )
     if anchors.stability_score < 0.5:
-        advisory_parts.append(
-            f"穩定性偏低（{anchors.stability_score:.0%}）：喚醒驗證標準應提高"
-        )
+        advisory_parts.append(f"穩定性偏低（{anchors.stability_score:.0%}）：喚醒驗證標準應提高")
     if not advisory_parts:
         advisory_parts.append("系統狀態正常，可安全執行 DreamEngine.run_cycle()")
 
@@ -220,9 +219,10 @@ def inject_world_sense_to_dream(
 
 if __name__ == "__main__":
     import sys
+
     sys.path.insert(0, str(__import__("pathlib").Path(__file__).parent.parent.parent))
 
-    from tonesoul.yuhun.world_sense import WorldSense, DreamCandidate
+    from tonesoul.yuhun.world_sense import DreamCandidate, WorldSense
 
     # 模擬一個有 3 個高漂移事件的 WorldSense session
     ws = WorldSense(home_vector={"deltaT": 0.5, "deltaS": 0.6, "deltaR": 0.4})
@@ -230,7 +230,7 @@ if __name__ == "__main__":
     scenarios = [
         ({"deltaT": 0.5, "deltaS": 0.6, "deltaR": 0.4}, 0.1, True),
         ({"deltaT": 0.9, "deltaS": 0.1, "deltaR": 0.9}, 0.92, False),  # 危機
-        ({"deltaT": 0.8, "deltaS": 0.2, "deltaR": 0.8}, 0.85, True),   # 高張力
+        ({"deltaT": 0.8, "deltaS": 0.2, "deltaR": 0.8}, 0.85, True),  # 高張力
         ({"deltaT": 0.5, "deltaS": 0.6, "deltaR": 0.4}, 0.2, True),
     ]
     for vec, tension, trace in scenarios:
@@ -242,7 +242,9 @@ if __name__ == "__main__":
         payload = candidate_to_stimulus(c, session_id="test-session-001")
         print(f"Step {c.step} [{c.type}] priority={c.priority:.3f}")
         print(f"  topic: {payload['topic'][:80]}...")
-        print(f"  relevance={payload['relevance_score']:.3f} novelty={payload['novelty_score']:.3f}")
+        print(
+            f"  relevance={payload['relevance_score']:.3f} novelty={payload['novelty_score']:.3f}"
+        )
         print(f"  tags: {payload['tags']}")
         print()
 

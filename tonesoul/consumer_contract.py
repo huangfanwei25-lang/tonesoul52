@@ -57,17 +57,15 @@ def _priority_misread_guard(
 ) -> dict[str, str]:
     by_name = {str(item.get("name", "")).strip(): item for item in guards}
     target_name = "observer_stable_not_verified"
-    why_now = "bounded first-hop order still starts by rejecting observer smoothness as start permission."
+    why_now = (
+        "bounded first-hop order still starts by rejecting observer smoothness as start permission."
+    )
     if closeout_status != "complete":
         target_name = "compaction_not_completion"
-        why_now = (
-            f"latest closeout is {closeout_status}; read closeout state before treating any compaction summary as finished work."
-        )
+        why_now = f"latest closeout is {closeout_status}; read closeout state before treating any compaction summary as finished work."
     elif readiness_status != "pass":
         target_name = "observer_stable_not_verified"
-        why_now = (
-            f"readiness is {readiness_status}; observer or shell stability must not be read as execution permission."
-        )
+        why_now = f"readiness is {readiness_status}; observer or shell stability must not be read as execution permission."
 
     selected = dict(by_name.get(target_name) or (guards[0] if guards else {}))
     if not selected:
@@ -189,10 +187,13 @@ def build_memory_consumer_contract(
 
     return {
         "present": True,
-        "summary_text": "consumer_order=" + " -> ".join(summary_bits[:5]) + (
-            f" | closeout={closeout_status}" if closeout_status != "complete" else ""
-        ) + (
-            f" | readiness={readiness_status}" if readiness_status and readiness_status != "unknown" else ""
+        "summary_text": "consumer_order="
+        + " -> ".join(summary_bits[:5])
+        + (f" | closeout={closeout_status}" if closeout_status != "complete" else "")
+        + (
+            f" | readiness={readiness_status}"
+            if readiness_status and readiness_status != "unknown"
+            else ""
         ),
         "compatible_consumers": list(_COMPATIBLE_CONSUMERS),
         "shell_parity_goal": (

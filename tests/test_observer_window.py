@@ -185,7 +185,10 @@ def _make_canonical_center(*short_board_items: str) -> dict:
 def _make_subsystem_parity(*, packet: dict, import_posture: dict, readiness: dict) -> dict:
     return build_subsystem_parity_readout(
         project_memory_summary=packet.get("project_memory_summary") or {},
-        import_posture={"receiver_rule": "ack/apply/promote ladder visible", "surfaces": import_posture},
+        import_posture={
+            "receiver_rule": "ack/apply/promote ladder visible",
+            "surfaces": import_posture,
+        },
         readiness=readiness,
         task_track_hint={
             "suggested_track": "feature_track",

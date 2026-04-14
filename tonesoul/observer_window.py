@@ -93,13 +93,9 @@ def _build_closeout_attention(*, import_posture: dict[str, Any]) -> dict[str, An
         attention_pressures.append("human_input_required=true")
 
     if closeout_status == "partial":
-        operator_action = (
-            "Review unresolved items, stop reason, and next-action prose before treating the handoff as resumable work."
-        )
+        operator_action = "Review unresolved items, stop reason, and next-action prose before treating the handoff as resumable work."
     else:
-        operator_action = (
-            "Do not continue shared mutation yet; resolve the blocked or underdetermined closeout before treating the handoff as resumable work."
-        )
+        operator_action = "Do not continue shared mutation yet; resolve the blocked or underdetermined closeout before treating the handoff as resumable work."
 
     return {
         "present": True,
@@ -441,9 +437,7 @@ def build_low_drift_anchor(
         contested_count=contested_count,
         stale_count=stale_count,
     )
-    hot_memory_decay_map = build_hot_memory_decay_map(
-        hot_memory_ladder=hot_memory_ladder
-    )
+    hot_memory_decay_map = build_hot_memory_decay_map(hot_memory_ladder=hot_memory_ladder)
     repo_state_awareness = build_repo_state_awareness(
         project_memory_summary=packet.get("project_memory_summary") or {},
         delta_feed=packet.get("delta_feed") or {},

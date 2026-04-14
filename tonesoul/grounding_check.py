@@ -30,11 +30,13 @@ from typing import Dict, List, Optional
 # Patterns that suggest the response contains verifiable factual claims
 _FACTUAL_CLAIM_PATTERNS: list[re.Pattern[str]] = [
     re.compile(r"\b\d{1,3}(?:,\d{3})*(?:\.\d+)?%", re.IGNORECASE),  # percentages
-    re.compile(r"\$\d", re.IGNORECASE),                                 # dollar amounts
+    re.compile(r"\$\d", re.IGNORECASE),  # dollar amounts
     re.compile(r"\b(?:billion|million|trillion|兆|億|萬)\b", re.IGNORECASE),
     re.compile(r"\b(?:according to|根據|數據顯示|研究表明)\b", re.IGNORECASE),
-    re.compile(r"\b(?:in \d{4}|於\d{4}年)\b", re.IGNORECASE),          # year references
-    re.compile(r"\b(?:increased|decreased|grew|declined|上升|下降|成長|衰退)\s+(?:by\s+)?\d", re.IGNORECASE),
+    re.compile(r"\b(?:in \d{4}|於\d{4}年)\b", re.IGNORECASE),  # year references
+    re.compile(
+        r"\b(?:increased|decreased|grew|declined|上升|下降|成長|衰退)\s+(?:by\s+)?\d", re.IGNORECASE
+    ),
     re.compile(r"\b(?:study|report|survey|analysis|調查|報告|分析)\b", re.IGNORECASE),
 ]
 
@@ -119,15 +121,8 @@ def grounding_check(
     caveat_count = 0
 
     # Build a set of significant words from user message for echo detection
-    user_words = set(
-        w.lower()
-        for w in re.findall(r"\w{2,}", user_message or "")
-    )
-    context_words = set(
-        w.lower()
-        for w in (context_keywords or [])
-        if len(w) >= 2
-    )
+    user_words = set(w.lower() for w in re.findall(r"\w{2,}", user_message or ""))
+    context_words = set(w.lower() for w in (context_keywords or []) if len(w) >= 2)
     all_ground_words = user_words | context_words
 
     for sentence in sentences:
@@ -148,9 +143,7 @@ def grounding_check(
         # continuous CJK runs (e.g. "營收" inside "營收成長了")
         if keyword_overlap < 2:
             sentence_lower = sentence.lower()
-            substr_hits = sum(
-                1 for kw in all_ground_words if kw in sentence_lower
-            )
+            substr_hits = sum(1 for kw in all_ground_words if kw in sentence_lower)
             keyword_overlap = max(keyword_overlap, substr_hits)
         has_keyword_ground = keyword_overlap >= 2
 

@@ -9,22 +9,22 @@ Dynamic Priority Router
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import Enum
 
 
 class RoutingDecision(str, Enum):
-    FAST_PATH = "FAST_PATH"        # 低複雜度 → 直接單軌秒回
+    FAST_PATH = "FAST_PATH"  # 低複雜度 → 直接單軌秒回
     COUNCIL_PATH = "COUNCIL_PATH"  # 高衝突 → 啟動完整四向平行推演
 
 
 @dataclass
 class DPRResult:
     decision: RoutingDecision
-    complexity_score: float          # 0.0 - 1.0
+    complexity_score: float  # 0.0 - 1.0
     conflict_detected: bool
-    conflict_triggers: list[str]     # 觸發升級的關鍵字/模式
-    estimated_token_cost: str        # "1x" | "4x"
+    conflict_triggers: list[str]  # 觸發升級的關鍵字/模式
+    estimated_token_cost: str  # "1x" | "4x"
     reason: str
 
 
@@ -72,9 +72,7 @@ _RESEARCH_COMPLEXITY_PATTERNS = [
 ]
 
 _ALL_HIGH_TENSION_PATTERNS = (
-    _LEGAL_ETHICS_PATTERNS
-    + _HIGH_UNCERTAINTY_PATTERNS
-    + _RESEARCH_COMPLEXITY_PATTERNS
+    _LEGAL_ETHICS_PATTERNS + _HIGH_UNCERTAINTY_PATTERNS + _RESEARCH_COMPLEXITY_PATTERNS
 )
 
 
@@ -86,15 +84,19 @@ def _estimate_complexity(input_text: str) -> float:
     """
     word_count = len(input_text.split())
     question_count = input_text.count("?") + input_text.count("？")
-    condition_words = len(re.findall(r"\b(如果|若|假設|但是|然而|if|but|however|unless)\b",
-                                     input_text, re.IGNORECASE))
+    condition_words = len(
+        re.findall(r"\b(如果|若|假設|但是|然而|if|but|however|unless)\b", input_text, re.IGNORECASE)
+    )
 
     # 簡單線性估算
-    score = min(1.0, (
-        (word_count / 200) * 0.4          # 字數貢獻 40%
-        + (question_count / 3) * 0.3       # 問句數貢獻 30%
-        + (condition_words / 5) * 0.3      # 條件詞貢獻 30%
-    ))
+    score = min(
+        1.0,
+        (
+            (word_count / 200) * 0.4  # 字數貢獻 40%
+            + (question_count / 3) * 0.3  # 問句數貢獻 30%
+            + (condition_words / 5) * 0.3  # 條件詞貢獻 30%
+        ),
+    )
     return round(score, 3)
 
 
@@ -172,7 +174,6 @@ def route(input_text: str) -> DPRResult:
 # ─────────────────────────────────────────────
 
 if __name__ == "__main__":
-    import json
 
     test_cases = [
         "幫我寫一個 Python hello world 程式",

@@ -42,8 +42,7 @@ class TestGroundingCheckBasic:
 
     def test_caveats_prevent_thin_support(self):
         response = (
-            "根據公開數據，營收可能增長了 23%，但無法確認。"
-            "報告或許顯示利潤率約 5%，請自行查核。"
+            "根據公開數據，營收可能增長了 23%，但無法確認。" "報告或許顯示利潤率約 5%，請自行查核。"
         )
         result = grounding_check(response, "告訴我情況")
         # Has caveats — should count as grounded
@@ -101,14 +100,8 @@ class TestGroundingThreshold:
         assert result.thin_support is False
 
     def test_custom_threshold(self):
-        response = (
-            "在 2024 年，營收增長了 10%。"
-            "報告顯示成長了 5%。"
-            "根據你提供的數據趨勢上升。"
-        )
+        response = "在 2024 年，營收增長了 10%。" "報告顯示成長了 5%。" "根據你提供的數據趨勢上升。"
         # With a very low threshold, even partial ungrounding triggers
-        result = grounding_check(
-            response, "看看趨勢", thin_support_threshold=0.3
-        )
+        result = grounding_check(response, "看看趨勢", thin_support_threshold=0.3)
         # At least some claims exist
         assert result.factual_claim_count >= 2

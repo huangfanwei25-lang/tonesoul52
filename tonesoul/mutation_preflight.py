@@ -80,8 +80,7 @@ def _build_next_followup(
         "target": "shared_code_edit.path_overlap_preflight",
         "classification": "existing_runtime_hook",
         "command": (
-            "python scripts/run_shared_edit_preflight.py --agent <your-id> "
-            "--path <repo-path>"
+            "python scripts/run_shared_edit_preflight.py --agent <your-id> " "--path <repo-path>"
         ),
         "reason": (
             "If the next step mutates repo paths, start with the bounded shared-edit preflight rather than assuming local isolation."
@@ -120,9 +119,7 @@ def build_mutation_preflight(
     suggested_mode = str(
         deliberation_mode_hint.get("suggested_mode", "unclassified") or "unclassified"
     )
-    short_board_present = bool(
-        (canonical_center.get("current_short_board") or {}).get("present")
-    )
+    short_board_present = bool((canonical_center.get("current_short_board") or {}).get("present"))
 
     if readiness_status == "blocked":
         shared_code_posture = "blocked"
@@ -139,9 +136,7 @@ def build_mutation_preflight(
         )
     else:
         shared_code_posture = "bounded_local_edit_first"
-        shared_code_note = (
-            "Local bounded edits may start without a claim, but claim before crossing into shared paths."
-        )
+        shared_code_note = "Local bounded edits may start without a claim, but claim before crossing into shared paths."
 
     compaction_obligation = str(
         compactions_surface.get("receiver_obligation", "unknown") or "unknown"
@@ -155,8 +150,7 @@ def build_mutation_preflight(
         compaction_posture = "bounded_resumability_handoff"
 
     subject_refresh_posture = str(
-        subject_refresh_surface.get("receiver_obligation", "must_not_promote")
-        or "must_not_promote"
+        subject_refresh_surface.get("receiver_obligation", "must_not_promote") or "must_not_promote"
     )
 
     current_tier = str(launch_claim_posture.get("current_tier", "") or "").strip()
@@ -169,8 +163,7 @@ def build_mutation_preflight(
         launch_claim_language_posture = "deferred_or_unknown"
 
     publish_push_posture = str(
-        publish_push_preflight.get("classification", "review_before_push")
-        or "review_before_push"
+        publish_push_preflight.get("classification", "review_before_push") or "review_before_push"
     )
     task_board_classification = str(
         task_board_preflight.get("classification", "human_review") or "human_review"
@@ -202,7 +195,10 @@ def build_mutation_preflight(
                 if claim_recommendation == "required"
                 else "optional_when_local"
             ),
-            source_of_truth=["import_posture.surfaces.claims", "task_track_hint.claim_recommendation"],
+            source_of_truth=[
+                "import_posture.surfaces.claims",
+                "task_track_hint.claim_recommendation",
+            ],
             current_guard="TTL-backed coordination lock via run_task_claim.py.",
             receiver_note=str(
                 claims_surface.get("note", "")

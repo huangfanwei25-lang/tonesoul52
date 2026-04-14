@@ -34,17 +34,17 @@ Design Rules:
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Any, Optional
 
-from tonesoul.drift_monitor import DriftAlert, DriftMonitor, DriftSnapshot
+from tonesoul.drift_monitor import DriftMonitor, DriftSnapshot
 from tonesoul.jump_monitor import JumpMonitor, JumpSignal, LockdownStatus
-
 
 # ─────────────────────────────────────────────
 # 感知快照結構
 # ─────────────────────────────────────────────
+
 
 @dataclass
 class WorldSenseSnapshot:
@@ -57,16 +57,17 @@ class WorldSenseSnapshot:
     jump:       JumpMonitor 信號（奇點感）
     tension_fed: 本次推演的張力值（從 VoD 輸入）
     """
+
     created_at: str
     step: int
     # 本體感
-    drift_value: float          # 0.0 = 完全在家，1.0 = 完全迷失
-    drift_alert: str            # none | warning | crisis
+    drift_value: float  # 0.0 = 完全在家，1.0 = 完全迷失
+    drift_alert: str  # none | warning | crisis
     drift_center: dict[str, float]  # 當前語境中心
     # 奇點感
-    jump_triggered: bool        # True = 系統進入 Seabed Lockdown
+    jump_triggered: bool  # True = 系統進入 Seabed Lockdown
     jump_self_reference: float  # 自我引用率（高 = 近親繁殖風險）
-    jump_chain_integrity: float # 責任鏈完整度（低 = 幻覺風險）
+    jump_chain_integrity: float  # 責任鏈完整度（低 = 幻覺風險）
     jump_reasoning_convergence: float  # 推論收斂率（低 = 自我循環）
     # 輸入的張力值
     tension_total: float = 0.0
@@ -81,13 +82,14 @@ class DreamCandidate:
 
     YUHUN 睡眠期會從這裡取出素材進行 Offline RL
     """
+
     step: int
     reason: str
     drift_at_moment: float
     tension_at_moment: float
     jump_signal: dict[str, Any]
-    priority: float              # 0.0 - 1.0，越高越值得做夢
-    type: str                    # "high_drift" | "lockdown_event" | "high_tension"
+    priority: float  # 0.0 - 1.0，越高越值得做夢
+    type: str  # "high_drift" | "lockdown_event" | "high_tension"
 
 
 @dataclass
@@ -98,10 +100,11 @@ class InbreedingRisk:
     當系統過度依賴自身合成資料時，self_reference_ratio 會升高
     這正是「高科技幻覺」（自洽但脫節現實）的前兆
     """
-    risk_level: str              # none | low | medium | high | critical
+
+    risk_level: str  # none | low | medium | high | critical
     self_reference_ratio: float  # 越高越危險
-    chain_integrity: float       # 越低越危險
-    reasoning_convergence: float # 越低越危險
+    chain_integrity: float  # 越低越危險
+    reasoning_convergence: float  # 越低越危險
     recommendation: str
     requires_external_anchor: bool  # True = 必須注入外部 L1 事實
 
@@ -113,15 +116,17 @@ class StableAnchor:
 
     來自 DriftMonitor 的 home_vector，以及低漂移時期的觀測
     """
+
     home_vector: dict[str, float]
-    low_drift_steps: list[int]   # 漂移 < warning 的步驟列表
+    low_drift_steps: list[int]  # 漂移 < warning 的步驟列表
     mean_drift: float
-    stability_score: float       # 0.0 - 1.0
+    stability_score: float  # 0.0 - 1.0
 
 
 # ─────────────────────────────────────────────
 # 主類：WorldSense
 # ─────────────────────────────────────────────
+
 
 class WorldSense:
     """
@@ -330,20 +335,22 @@ class WorldSense:
                     candidate_type = "high_tension"
 
             if priority > 0.0:
-                candidates.append(DreamCandidate(
-                    step=snap.step,
-                    reason=" & ".join(reasons),
-                    drift_at_moment=snap.drift_value,
-                    tension_at_moment=snap.tension_total,
-                    jump_signal={
-                        "triggered": snap.jump_triggered,
-                        "self_reference": snap.jump_self_reference,
-                        "chain_integrity": snap.jump_chain_integrity,
-                        "reasoning_convergence": snap.jump_reasoning_convergence,
-                    },
-                    priority=min(1.0, round(priority, 4)),
-                    type=candidate_type,
-                ))
+                candidates.append(
+                    DreamCandidate(
+                        step=snap.step,
+                        reason=" & ".join(reasons),
+                        drift_at_moment=snap.drift_value,
+                        tension_at_moment=snap.tension_total,
+                        jump_signal={
+                            "triggered": snap.jump_triggered,
+                            "self_reference": snap.jump_self_reference,
+                            "chain_integrity": snap.jump_chain_integrity,
+                            "reasoning_convergence": snap.jump_reasoning_convergence,
+                        },
+                        priority=min(1.0, round(priority, 4)),
+                        type=candidate_type,
+                    )
+                )
 
         # 按 priority 降序，取前 N 個
         candidates.sort(key=lambda c: c.priority, reverse=True)
@@ -428,7 +435,8 @@ class WorldSense:
             StableAnchor: 低漂移步驟列表和穩定分數
         """
         low_drift_steps = [
-            s.step for s in self._snapshots
+            s.step
+            for s in self._snapshots
             if s.drift_value < self._drift.theta_warning  # type: ignore[attr-defined]
         ]
         all_drifts = [s.drift_value for s in self._snapshots]
@@ -481,7 +489,6 @@ class WorldSense:
 # ─────────────────────────────────────────────
 
 if __name__ == "__main__":
-    import json
 
     # 模擬一個完整的推演流程
     ws = WorldSense(
@@ -507,13 +514,15 @@ if __name__ == "__main__":
         )
         status = ws.quick_status()
         icon = "🔴" if snap.drift_alert in ("warning", "crisis") else "🟢"
-        print(f"{icon} [{label}] drift={snap.drift_value:.3f}({snap.drift_alert}) "
-              f"tension={tension:.2f} advisory='{status['advisory']}'")
+        print(
+            f"{icon} [{label}] drift={snap.drift_value:.3f}({snap.drift_alert}) "
+            f"tension={tension:.2f} advisory='{status['advisory']}'"
+        )
 
     print("\n=== 睡眠期分析 ===\n")
 
     candidates = ws.dream_candidates(top_n=3)
-    print(f"做夢候選（Top 3）：")
+    print("做夢候選（Top 3）：")
     for c in candidates:
         print(f"  Step {c.step} [{c.type}] priority={c.priority:.3f} reason={c.reason}")
 
@@ -522,5 +531,6 @@ if __name__ == "__main__":
     print(f"建議：{risk.recommendation}")
 
     anchors = ws.stable_anchors()
-    print(f"\n穩定錨點：穩定性={anchors.stability_score:.0%} "
-          f"低漂移步驟={anchors.low_drift_steps}")
+    print(
+        f"\n穩定錨點：穩定性={anchors.stability_score:.0%} " f"低漂移步驟={anchors.low_drift_steps}"
+    )

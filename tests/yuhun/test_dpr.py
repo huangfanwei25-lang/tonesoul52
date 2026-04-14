@@ -2,7 +2,6 @@
 Tests for YUHUN Core Protocol v1.0 — DPR 動態權限路由器
 """
 
-import pytest
 from tonesoul.yuhun.dpr import COMPLEXITY_THRESHOLD, RoutingDecision, route
 
 
@@ -47,7 +46,9 @@ class TestDPRCouncilPath:
 
     def test_privacy_concern(self):
         # 使用明確觸發 privacy 關鍵字的英文模式
-        result = route("Can user personal data be used for training? Is this legal under privacy law?")
+        result = route(
+            "Can user personal data be used for training? Is this legal under privacy law?"
+        )
         assert result.decision == RoutingDecision.COUNCIL_PATH
 
     def test_high_uncertainty(self):

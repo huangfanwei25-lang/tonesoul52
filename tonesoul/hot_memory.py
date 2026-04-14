@@ -286,16 +286,14 @@ def build_hot_memory_ladder(
     working_style = import_posture.get("working_style") or {}
     council_dossier = import_posture.get("council_dossier") or {}
     traces = import_posture.get("recent_traces") or {}
-    short_board_present = bool(
-        (canonical_center.get("current_short_board") or {}).get("present")
-    )
+    short_board_present = bool((canonical_center.get("current_short_board") or {}).get("present"))
     live_coordination_present = bool(
         (import_posture.get("posture") or {}).get("present")
         and (import_posture.get("readiness") or {}).get("present")
     )
-    live_coordination_stable = live_coordination_present and str(
-        (readiness or {}).get("status", "")
-    ) == "pass"
+    live_coordination_stable = (
+        live_coordination_present and str((readiness or {}).get("status", "")) == "pass"
+    )
 
     compaction_obligation = str(compactions.get("receiver_obligation", "")).strip()
     closeout_status = str(compactions.get("closeout_status", "")).strip()
@@ -349,7 +347,9 @@ def build_hot_memory_ladder(
         _build_layer(
             layer="live_coordination",
             status=(
-                "stable" if live_coordination_stable else "contested" if live_coordination_present else "stale"
+                "stable"
+                if live_coordination_stable
+                else "contested" if live_coordination_present else "stale"
             ),
             primary_sources=["readiness", "claims", "task_track_hint", "deliberation_mode_hint"],
             receiver_rule="must_read_before_shared_edits",
@@ -362,9 +362,7 @@ def build_hot_memory_ladder(
         _build_layer(
             layer="bounded_handoff",
             status=(
-                "stale"
-                if not handoff_present
-                else "contested" if handoff_contested else "stable"
+                "stale" if not handoff_present else "contested" if handoff_contested else "stable"
             ),
             primary_sources=["compactions", "checkpoints", "delta_feed", "recent_traces"],
             receiver_rule="ack_or_review_never_self_promote",
@@ -408,9 +406,7 @@ def build_hot_memory_ladder(
     return {
         "layers": layers,
         "current_pull_boundary": current_pull_boundary,
-        "summary_text": " | ".join(
-            f"{entry['layer']}={entry['status']}" for entry in layers
-        ),
+        "summary_text": " | ".join(f"{entry['layer']}={entry['status']}" for entry in layers),
         "receiver_note": (
             "Read the ladder from canonical_center downward. Parent layers orient or constrain child layers. "
             "Child summaries do not outrank parent truth."
@@ -434,9 +430,7 @@ def build_hot_memory_decay_map(*, hot_memory_ladder: dict[str, Any]) -> dict[str
             continue
 
         use_posture = (
-            rules["stable_use_posture"]
-            if status == "stable"
-            else rules["nonstable_use_posture"]
+            rules["stable_use_posture"] if status == "stable" else rules["nonstable_use_posture"]
         )
         if use_posture == "operational":
             operational_layers.append(layer_name)
@@ -453,9 +447,7 @@ def build_hot_memory_decay_map(*, hot_memory_ladder: dict[str, Any]) -> dict[str
                 "decay_posture": rules["decay_posture"],
                 "compression_posture": rules["compression_posture"],
                 "quarantine_reason": (
-                    str(entry.get("note", "")).strip()
-                    if use_posture == "quarantine"
-                    else ""
+                    str(entry.get("note", "")).strip() if use_posture == "quarantine" else ""
                 ),
                 "note": rules["base_note"],
             }

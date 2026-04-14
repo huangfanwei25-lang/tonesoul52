@@ -8,9 +8,7 @@ from pathlib import Path
 
 def _load_script_module():
     module_name = "test_run_publish_push_preflight_module"
-    module_path = (
-        Path(__file__).resolve().parents[1] / "scripts" / "run_publish_push_preflight.py"
-    )
+    module_path = Path(__file__).resolve().parents[1] / "scripts" / "run_publish_push_preflight.py"
     spec = importlib.util.spec_from_file_location(module_name, module_path)
     assert spec is not None
     assert spec.loader is not None

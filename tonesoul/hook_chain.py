@@ -53,9 +53,7 @@ def build_hook_chain_readout(
                 "the next step pushes, deploys, or publishes outward-facing changes",
                 "mutation_preflight points to publish_push.posture_preflight",
             ],
-            "command": (
-                f"python scripts/run_publish_push_preflight.py --agent {normalized_agent}"
-            ),
+            "command": (f"python scripts/run_publish_push_preflight.py --agent {normalized_agent}"),
             "outcomes": ["clear", "review_before_push", "blocked"],
             "scope_limit": "release and launch-posture review only; not a general editing permission system",
             "receiver_note": (
@@ -101,11 +99,7 @@ def build_hook_chain_readout(
         "present": True,
         "summary_text": (
             "hook_chain=shared_edit_path_overlap -> publish_push_posture -> task_board_parking"
-            + (
-                f" recommended={recommended_stage}"
-                if recommendation_present
-                else ""
-            )
+            + (f" recommended={recommended_stage}" if recommendation_present else "")
         ),
         "receiver_rule": (
             "Run the narrowest preflight that matches the next side effect. These checks classify posture and parking discipline; they do not create sovereign permissions."

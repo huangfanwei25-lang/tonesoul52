@@ -57,9 +57,7 @@ def _make_publish_push_preflight(classification: str = "review_before_push") -> 
 
 def _make_task_board_preflight(classification: str = "docs_plans_first") -> dict:
     if classification == "human_review":
-        receiver_note = (
-            "Do not mutate task.md yet. The current short board is not visible, so the repo cannot confirm that this change belongs in the ratified board."
-        )
+        receiver_note = "Do not mutate task.md yet. The current short board is not visible, so the repo cannot confirm that this change belongs in the ratified board."
         task_md_write_allowed = False
     elif classification == "task_md_allowed":
         receiver_note = "This looks like ratified short-board follow-through."
@@ -122,7 +120,9 @@ def test_build_mutation_preflight_prefers_claim_before_shared_edits() -> None:
     assert "run_shared_edit_preflight.py" in payload["next_followup"]["command"]
 
 
-def test_build_mutation_preflight_marks_task_board_as_human_gated_when_short_board_missing() -> None:
+def test_build_mutation_preflight_marks_task_board_as_human_gated_when_short_board_missing() -> (
+    None
+):
     payload = build_mutation_preflight(
         readiness={"status": "needs_clarification", "claim_conflict_count": 1},
         task_track_hint={"suggested_track": "quick_change", "claim_recommendation": "optional"},

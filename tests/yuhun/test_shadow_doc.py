@@ -4,21 +4,10 @@ Tests for YUHUN Shadow Document — 影子文件格式驗證
 
 import json
 
-import pytest
 from tonesoul.yuhun.shadow_doc import (
-    BlockerSeverity,
-    CreatorOutput,
-    L1Blocker,
-    L2Opportunity,
-    LegalProfile,
-    Lifecycle,
-    LogicianOutput,
     OutputMode,
     RoutingDecision,
-    SafetyOutput,
-    SafetyVerdict,
     ShadowDocument,
-    TensionMetrics,
 )
 
 
@@ -58,8 +47,14 @@ class TestShadowDocSerialization:
     def test_to_dict_contains_required_keys(self):
         doc = ShadowDocument.create("test")
         d = doc.to_dict()
-        required_keys = ["session_id", "timestamp", "intent_frame",
-                         "tension_metrics", "legal_profile", "lifecycle"]
+        required_keys = [
+            "session_id",
+            "timestamp",
+            "intent_frame",
+            "tension_metrics",
+            "legal_profile",
+            "lifecycle",
+        ]
         for key in required_keys:
             assert key in d, f"缺少必要欄位：{key}"
 

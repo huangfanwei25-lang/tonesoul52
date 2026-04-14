@@ -179,8 +179,10 @@ class ComputeGate:
             )
 
         light_candidates: tuple[str, ...] = ()
-        if msg_len <= 160 and effective_tension < 0.2 and (
-            friction_score is None or friction_score < 0.2
+        if (
+            msg_len <= 160
+            and effective_tension < 0.2
+            and (friction_score is None or friction_score < 0.2)
         ):
             light_candidates = (
                 "cross_session_recovery",

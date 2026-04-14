@@ -1,0 +1,45 @@
+{
+  "event_name": "local",
+  "mode": "local_incremental",
+  "range_spec": "dc7a32398e48ab32d5777e3cf6fa8dcaa7580d03..HEAD",
+  "base_ref": "origin/master",
+  "checked_revisions": [
+    "6a20ecf1ce32c5327211d8b17b61753f171a0b22"
+  ],
+  "enforcement_anchor": null,
+  "anchor_override_used": false,
+  "checked_count": 1,
+  "missing_count": 0,
+  "missing": [],
+  "ok": true,
+  "results": [
+    {
+      "ok": true,
+      "summary": "feat(yuhun): close 3 tech debts - TrajectoryDigest + ContextAssembler + DPR hook",
+      "agent": "Antigravity",
+      "topic": "yuhun-council-v1",
+      "has_agent": true,
+      "has_topic": true,
+      "changed_files": [
+        ".agent/agents/yuhun_creator.md",
+        ".agent/agents/yuhun_empath.md",
+        ".agent/agents/yuhun_logician.md",
+        ".agent/agents/yuhun_safety_guard.md",
+        ".gitignore",
+        "tonesoul/unified_pipeline.py",
+        "tonesoul/yuhun/__init__.py",
+        "tonesoul/yuhun/context_assembler.py",
+        "tonesoul/yuhun/shadow_doc.py"
+      ],
+      "docs_only": false,
+      "exempted": false,
+      "exemption_reason": null,
+      "rev": "6a20ecf1ce32c5327211d8b17b61753f171a0b22",
+      "exit_code": 0
+    }
+  ],
+  "advice": {
+    "agent_trailer": "Agent: Codex",
+    "trace_topic_trailer": "Trace-Topic: <topic-name>"
+  }
+}

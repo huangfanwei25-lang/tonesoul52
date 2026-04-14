@@ -18,8 +18,6 @@ Trace-Topic: yuhun-council-v1
 
 from __future__ import annotations
 
-from pathlib import Path
-
 import pytest
 
 # ─────────────────────────────────────────────
@@ -288,7 +286,6 @@ class TestWorldSense:
         assert anchor.low_drift_steps == []
 
     def test_stable_anchors_after_observations(self):
-        from tonesoul.yuhun.world_sense import WorldSense
 
         ws = self._make_ws_with_observations(5)
         anchor = ws.stable_anchors()
