@@ -329,6 +329,8 @@ def test_dual_track_boundary_workflow_triggers_and_blocking_runner() -> None:
     resolve_cmd = resolve_step.get("run", "")
     assert isinstance(resolve_cmd, str)
     assert "core.quotepath=off diff --name-status --diff-filter=ACMRD" in resolve_cmd
+    assert "github.event.pull_request.base.sha" in resolve_cmd
+    assert "github.event.pull_request.head.sha" in resolve_cmd
     assert "changed_files.txt" in resolve_cmd
 
     run_step = _find_step(steps, "Run dual-track boundary check (blocking)")
@@ -421,7 +423,7 @@ def test_commit_attribution_workflow_uses_backfill_schedule_path() -> None:
     assert "python scripts/verify_incremental_commit_attribution.py --strict" in run_cmd
     run_env = run_step.get("env", {})
     assert isinstance(run_env, dict)
-    assert run_env.get("COMMIT_ATTRIBUTION_ANCHOR") == "72d8ccbf1b850bbc9d5e2abb500ff8738d42a109"
+    assert "COMMIT_ATTRIBUTION_ANCHOR" not in run_env
 
 
 def test_test_workflow_uses_black_gate_script_and_uploads_artifact() -> None:

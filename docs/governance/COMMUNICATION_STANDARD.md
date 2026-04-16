@@ -42,3 +42,25 @@ Local parity commands:
 - `python scripts/verify_incremental_commit_attribution.py --strict`
 - `python scripts/plan_commit_attribution_base_switch.py`
 - `python scripts/run_repo_healthcheck.py --strict --allow-missing-discussion`
+
+### Push / PR Memory Reads
+
+Before pushing a branch or asking CI to settle a red gate, re-read the narrow memory lane that matches the change:
+
+- attribution / commit lineage:
+  - this file
+  - `docs/plans/commit_attribution_base_switch_addendum_2026-03-08.md`
+- dual-track / public-private boundary:
+  - `docs/ADR-001-dual-track-resolution.md`
+  - `docs/plans/dual_repo_guardrails_2026-02-21.md`
+- generated status truth:
+  - `docs/status/README.md`
+
+Do not treat those reads as optional. They are the shortest path to avoiding repeat CI red lights.
+
+### Fast Triage
+
+- If `Commit Attribution Check` fails on one non-docs commit, fix the offending commit message first. Do not weaken the trailer contract to hide missing provenance.
+- If only metadata lineage is red but the trees are equivalent, use the base-switch planner instead of merging or rewriting in place.
+- Treat `push` / `pull_request` attribution as incremental commit checks. Use the scheduled backfill / planner lane for historical metadata debt, not the day-to-day CI path.
+- If `Dual-Track Boundary Gate` fails before the boundary script runs, inspect changed-file resolution first; synthetic merge refs can fail before policy evaluation even starts.
