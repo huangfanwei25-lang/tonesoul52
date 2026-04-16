@@ -19,11 +19,12 @@
 
 | Surface | Meaning |
 |---|---|
-| `knowledge/` | conceptual / identity-oriented notes |
+| `knowledge/` | human-authored concept, identity, and learning-context notes |
+| `knowledge/compiled/` | reserved future landing zone for compiled artifacts; not the same lane as top-level conceptual notes |
 | `knowledge_base/` | local structured concept store |
 | `PARADOXES/` | governance and red-team fixtures |
 
-Do not treat all three as one generic "knowledge layer."
+Do not treat all four as one generic "knowledge layer."
 
 ## Naming Patterns
 
@@ -45,3 +46,6 @@ Do not treat all three as one generic "knowledge layer."
 - [docs/DOCS_INFORMATION_ARCHITECTURE_v1.md](../DOCS_INFORMATION_ARCHITECTURE_v1.md)
 - [docs/FILE_PURPOSE_MAP.md](../FILE_PURPOSE_MAP.md)
 - [docs/architecture/KNOWLEDGE_SURFACES_BOUNDARY_MAP.md](../architecture/KNOWLEDGE_SURFACES_BOUNDARY_MAP.md)
+- [docs/architecture/TONESOUL_KNOWLEDGE_LAYER_SOURCE_TAXONOMY_AND_PARKING_CONTRACT.md](../architecture/TONESOUL_KNOWLEDGE_LAYER_SOURCE_TAXONOMY_AND_PARKING_CONTRACT.md)
+- [docs/architecture/TONESOUL_COMPILED_KNOWLEDGE_LANDING_ZONE_SPEC.md](../architecture/TONESOUL_COMPILED_KNOWLEDGE_LANDING_ZONE_SPEC.md)
+- [docs/architecture/TONESOUL_OPERATOR_RETRIEVAL_QUERY_CONTRACT.md](../architecture/TONESOUL_OPERATOR_RETRIEVAL_QUERY_CONTRACT.md)

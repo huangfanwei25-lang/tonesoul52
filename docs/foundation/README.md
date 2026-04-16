@@ -20,6 +20,31 @@
 - Not a replacement for runtime code, tests, or accepted contracts.
 - Not private memory, hot memory, or historical residue.
 
+## Entry Ownership
+
+| Need | Owner Surface | Companion Surface | Avoid Treating As Owner |
+|---|---|---|---|
+| public repo introduction | [README.md](../../README.md) | [README.zh-TW.md](../../README.zh-TW.md) | `docs/INDEX.md` |
+| AI operational start | [docs/AI_QUICKSTART.md](../AI_QUICKSTART.md) | `python scripts/start_agent_session.py --agent <your-id>` | `AI_ONBOARDING.md` |
+| AI routing after session start | [AI_ONBOARDING.md](../../AI_ONBOARDING.md) | [docs/README.md](../README.md) | bulk-opening `docs/architecture/` |
+| thin project packet | this Foundation Layer | [task.md](../../task.md) | the deep system guide |
+| design rationale | [DESIGN.md](../../DESIGN.md) | [docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md](../architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md) | `docs/README.md` |
+| docs browsing | [docs/README.md](../README.md) | [docs/INDEX.md](../INDEX.md) when exhaustive lookup is required | `README.md` |
+
+## Fixed First-Hop Paths
+
+- human/developer: `README.md` -> `docs/foundation/README.md` -> `docs/README.md` -> one chosen lane
+- AI agent: `docs/AI_QUICKSTART.md` -> `python scripts/start_agent_session.py --agent <your-id>` -> `AI_ONBOARDING.md` -> `docs/foundation/README.md` -> `task.md`
+- design / whole-system reasoning: `DESIGN.md` -> `docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md` only after the bounded packet is clear
+
+## First-Hop Guardrails
+
+- Open one owner surface per question before widening into companions.
+- Use `docs/README.md` for curated routing and `docs/INDEX.md` only for exhaustive browsing.
+- If a document mostly routes to stronger surfaces, treat it as a router, not a second authority center.
+- Formula-like notation in entry docs is orientation unless an executable owner is named; check `docs/GLOSSARY.md` and `docs/MATH_FOUNDATIONS.md` when formula posture matters.
+- If Windows terminal output renders paths noisily, use [FILENAME_AND_ENTRY_INDEX.md](FILENAME_AND_ENTRY_INDEX.md) instead of trusting shell echoes.
+
 ## Reading Order
 
 1. [SYSTEM_OVERVIEW.md](SYSTEM_OVERVIEW.md)
@@ -49,9 +74,14 @@
 - [README.md](../../README.md)
 - [DESIGN.md](../../DESIGN.md)
 - [docs/AI_QUICKSTART.md](../AI_QUICKSTART.md)
+- [docs/README.md](../README.md)
+- [docs/INDEX.md](../INDEX.md)
+- [FILENAME_AND_ENTRY_INDEX.md](FILENAME_AND_ENTRY_INDEX.md)
 - [docs/7D_AUDIT_FRAMEWORK.md](../7D_AUDIT_FRAMEWORK.md)
 - [docs/FILE_PURPOSE_MAP.md](../FILE_PURPOSE_MAP.md)
 - [docs/DOCS_INFORMATION_ARCHITECTURE_v1.md](../DOCS_INFORMATION_ARCHITECTURE_v1.md)
+- [docs/GLOSSARY.md](../GLOSSARY.md)
+- [docs/MATH_FOUNDATIONS.md](../MATH_FOUNDATIONS.md)
 - [docs/architecture/TONESOUL_TASK_TRACK_AND_READINESS_CONTRACT.md](../architecture/TONESOUL_TASK_TRACK_AND_READINESS_CONTRACT.md)
 - [docs/architecture/KNOWLEDGE_SURFACES_BOUNDARY_MAP.md](../architecture/KNOWLEDGE_SURFACES_BOUNDARY_MAP.md)
 

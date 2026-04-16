@@ -1,6 +1,6 @@
 # ToneSoul Self-Improvement Trial Wave
 
-**Summary**: `self_improvement_trial_wave promote=17 park=1 retire=0 blocked=0`
+**Summary**: `self_improvement_trial_wave promote=18 park=1 retire=0 blocked=0`
 
 > Trial-wave outcomes are bounded self-improvement results. They may inform future patches or parking decisions, but they do not become governance truth, identity truth, or hot-memory authority.
 
@@ -24,10 +24,11 @@
 - `hot_memory_pull_boundary_clarity`
 - `memory_panel_tier_subordination_clarity`
 - `status_panel_operator_copy_clarity`
+- `dashboard_command_shelf_activation_clarity`
 
 ## Outcomes
 
-- `promote`: `17`
+- `promote`: `18`
 - `park`: `1`
 - `retire`: `0`
 - `blocked`: `0`
@@ -66,7 +67,7 @@
   - target_surface: `session_start.deliberation_mode_hint`
   - success_metric: `deliberation_hint_probe.present and consumer_drift_report.status == aligned`
   - result_story: Deliberation-mode hint packaging now cleanly separates active escalation pressure from conditional escalation ladders.
-  - evidence: `deliberation_hint_probe mode=lightweight_review active=0 conditional=2 review=5 split=yes`
+  - evidence: `deliberation_hint_probe mode=elevated_council active=1 conditional=3 review=4 split=yes`
   - result_surface: `promoted_result`
   - replay_rule: `prefer_status_surface_then_probe_current_hint_shape_before_reusing_the_story`
   - residue_posture: `keep_visible_as_current_packaging_result`
@@ -170,7 +171,7 @@
   - target_surface: `hook_chain.current_recommendation`
   - success_metric: `hook_chain_probe.present and consumer_drift_report.status == aligned`
   - result_story: Hook chain now says which bounded preflight is currently relevant and why, without inventing a new hook family.
-  - evidence: `hook_chain_probe recommended=publish_push_posture target=publish_push.posture_preflight selection=yes hooks=3`
+  - evidence: `hook_chain_probe recommended=shared_edit_path_overlap target=shared_code_edit.path_overlap_preflight selection=yes hooks=3`
   - result_surface: `promoted_result`
   - replay_rule: `prefer_status_surface_then_probe_current_hook_chain_shape_before_reusing_the_story`
   - residue_posture: `keep_visible_as_current_packaging_result`
@@ -183,7 +184,7 @@
   - target_surface: `consumer_contract.priority_misread_guard`
   - success_metric: `consumer_misread_guard_probe.present and consumer_drift_report.status == aligned`
   - result_story: Consumer misread guards now say where the misread appears, what correction to apply, and which correction matters first.
-  - evidence: `consumer_misread_guard_probe guards=4 priority=compaction_not_completion surface=closeout_attention + compaction summary claude_sync=yes`
+  - evidence: `consumer_misread_guard_probe guards=4 priority=observer_stable_not_verified surface=observer_window.stable claude_sync=yes`
   - result_surface: `promoted_result`
   - replay_rule: `prefer_status_surface_then_probe_current_consumer_contract_shape_before_reusing_the_story`
   - residue_posture: `keep_visible_as_current_packaging_result`
@@ -196,7 +197,7 @@
   - target_surface: `subsystem_parity.next_focus`
   - success_metric: `subsystem_parity_focus_probe.present and consumer_drift_report.status == aligned`
   - result_story: Subsystem parity now says which family produced the current focus, what pressures made it current, and what bounded operator action follows.
-  - evidence: `subsystem_parity_focus_probe target=publish_push.posture_preflight source=mutation_preflight_hooks pressures=3 shell_sync=yes`
+  - evidence: `subsystem_parity_focus_probe target=shared_code_edit.path_overlap_preflight source=mutation_preflight_hooks pressures=3 shell_sync=yes`
   - result_surface: `promoted_result`
   - replay_rule: `prefer_status_surface_then_probe_current_subsystem_parity_shape_before_reusing_the_story`
   - residue_posture: `keep_visible_as_current_packaging_result`
@@ -270,7 +271,20 @@
     - future dashboard changes must keep primary-versus-secondary boundaries explicit
   - promotion_limit: `does not authorize new control planes, stronger runtime claims, or shell expansion`
   - next_action: `keep the status panel readable and subordinate while admitting the next candidate`
+- `dashboard_command_shelf_activation_clarity_v1` -> `promote`
+  - target_surface: `dashboard.command_shelf.commands`
+  - success_metric: `command_shelf_probe.present and consumer_drift_report.status == aligned`
+  - result_story: Dashboard command shelf now states where each command comes from, why it is visible, and when to fall back to a smaller tier.
+  - evidence: `command_shelf_probe next_source=mutation_preflight.next_followup next_activation=yes deep_return=yes`
+  - result_surface: `promoted_result`
+  - replay_rule: `prefer_status_surface_then_probe_current_command_shelf_shape_before_reusing_the_story`
+  - residue_posture: `keep_visible_as_current_packaging_result`
+  - unresolved_items:
+    - clearer command-shelf activation packaging improves operator discipline, not planning quality or automation authority
+    - future dashboard changes must keep bounded moves and deep pulls visibly subordinate to the tier model
+  - promotion_limit: `does not authorize browser-side command execution, stronger permissions, or a new operator control plane`
+  - next_action: `hold self-improvement v0 at the status surface and require explicit ratification before opening a new active bucket`
 
 ## Next Short Board
 
-- `Phase 847: Eighteenth Trial Candidate Admission`
+- `Explicitly ratify the next active bucket; do not silently auto-open queued governance-depth work.`

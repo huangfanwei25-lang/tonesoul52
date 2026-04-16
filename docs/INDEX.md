@@ -2,6 +2,8 @@
 
 > Purpose: top-level documentation index for ToneSoul authority surfaces, operational packets, and convergence maps.
 > Last Updated: 2026-03-30
+> Status: full registry, not the default first-hop gateway.
+> Use When: `docs/README.md` was not enough, or you need broader inventory coverage instead of guided routing.
 ---
 
 ## AI Reading Stack
@@ -16,7 +18,7 @@
 | **Deep Anatomy** | [narrative/TONESOUL_ANATOMY.md](narrative/TONESOUL_ANATOMY.md) | `deep_map` | before repo-wide refactor or whole-system explanation |
 | **Interpretive Lane** | [notes/TONESOUL_DEEP_READING_ANCHOR_2026-03-26.md](notes/TONESOUL_DEEP_READING_ANCHOR_2026-03-26.md), [narrative/TONESOUL_CODEX_READING.md](narrative/TONESOUL_CODEX_READING.md) | `interpretive` | when the map is clear but the load-bearing meaning still feels diffuse |
 
-Use these in order. Do not let a deep or interpretive document silently outrank code, tests, or architecture contracts.
+Use these in order if you intentionally need the fuller registry. Do not let a deep or interpretive document silently outrank code, tests, or architecture contracts.
 
 ---
 
@@ -199,7 +201,7 @@ Use this when the question is not only what should be transferred, but how the e
 
 ## Current Collaborator-Beta Surfaces
 
-- [plans/tonesoul_launch_operations_surface_2026-03-30.md](plans/tonesoul_launch_operations_surface_2026-03-30.md)
+- [status/phase724_launch_operations_surface_2026-04-15.md](status/phase724_launch_operations_surface_2026-04-15.md)
 - [status/collaborator_beta_preflight_latest.json](status/collaborator_beta_preflight_latest.json)
 - [status/collaborator_beta_preflight_latest.md](status/collaborator_beta_preflight_latest.md)
 - [status/collaborator_beta_entry_validation_latest.json](status/collaborator_beta_entry_validation_latest.json)

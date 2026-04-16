@@ -1,7 +1,7 @@
 # ToneSoul Audience Routing And Entry Contract
 
 > Purpose: define the cleanest first-hop reading path for each audience so later readers stop mistaking historical, deep, or operational surfaces for the first thing to open.
-> Last Updated: 2026-03-29
+> Last Updated: 2026-04-14
 > Authority: documentation boundary aid. Does not outrank runtime code, tests, `AXIOMS.json`, or canonical architecture contracts.
 
 ---
@@ -10,10 +10,10 @@
 
 | Audience | First Surface | Second Surface | Third Surface Or First Command | Avoid Opening First | Most Common Navigation Mistake |
 |----------|---------------|----------------|--------------------------------|---------------------|-------------------------------|
-| **Developer** | `docs/GETTING_STARTED.md` | `README.md` | `docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md` | `docs/narrative/TONESOUL_ANATOMY.md` | Reading the deep map before understanding the runtime pipeline, then assuming every philosophical concept is already code |
-| **Researcher** | `README.md` | `docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md` | `docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md` | `TONESOUL_NARRATIVE.txt`, `TONESOUL_PHILOSOPHY.txt` | Treating philosophical lineage files as the current spec, then overclaiming what the system has proven |
-| **AI Agent** | `AI_ONBOARDING.md` | `docs/AI_QUICKSTART.md` | `python scripts/start_agent_session.py --agent <id>` | `AI_ONBOARDING.md` lines 28-87 before the reading stack and first commands | Reading the full "If..." wall before orienting, then opening too many contracts without a concrete question |
-| **Curious Human** | `SOUL.md` | `LETTER_TO_AI.md` | `README.zh-TW.md` or `README.md` | `MGGI_SPEC.md`, `TAE-01_Architecture_Spec.md` | Starting with a dense spec and concluding the project is impenetrable |
+| **Developer** | `docs/GETTING_STARTED.md` | `docs/foundation/README.md` | `docs/README.md` | `docs/narrative/TONESOUL_ANATOMY.md` | Opening a deep map before the thin packet, then assuming every philosophical concept is already code |
+| **Researcher** | `DESIGN.md` | `docs/foundation/README.md` | `docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md` | `TONESOUL_NARRATIVE.txt`, `TONESOUL_PHILOSOPHY.txt` | Treating lineage files as the current spec, then overclaiming what the system has proven |
+| **AI Agent** | `docs/AI_QUICKSTART.md` | `python scripts/start_agent_session.py --agent <id>` | `AI_ONBOARDING.md` | bulk-opening `docs/architecture/` before the packet | Widening into contracts before reading `readiness`, `canonical_center`, and the bounded packet |
+| **Curious Human** | `README.zh-TW.md` | `SOUL.md` | `LETTER_TO_AI.md` or `README.md` | `docs/SEMANTIC_SPINE_SPEC.md`, `docs/TRUTH_STRUCTURE.md` | Starting with a dense historical spec and concluding the project is impenetrable |
 
 ---
 
@@ -21,13 +21,13 @@
 
 ### Lane 1: Operational Start
 
-**Surfaces**: `AI_ONBOARDING.md`, `docs/AI_QUICKSTART.md`, `docs/GETTING_STARTED.md`, `python scripts/start_agent_session.py --agent <id>`
+**Surfaces**: `docs/AI_QUICKSTART.md`, `python scripts/start_agent_session.py --agent <id>`, `AI_ONBOARDING.md`, `docs/foundation/README.md`, `docs/GETTING_STARTED.md`
 
 **Purpose**: Get a reader oriented and running within 5 minutes.
 
 **Rule**: These surfaces should make sense before any deep architecture contract is required.
 
-**Current hazard**: `docs/AI_QUICKSTART.md` still contains a long R-memory coordination block that is heavier than a true first-minute entry.
+**Current hazard**: widening into `docs/architecture/` before reading the bounded packet still creates drift, even after the first-hop cleanup.
 
 ### Lane 2: Canonical Architecture
 
@@ -71,7 +71,7 @@
 
 ### Lane 7: Historical And Lineage
 
-**Surfaces**: `MGGI_SPEC.md`, `TAE-01_Architecture_Spec.md`, `.archive/`, `docs/archive/`
+**Surfaces**: `docs/SEMANTIC_SPINE_SPEC.md`, `docs/TRUTH_STRUCTURE.md`, `docs/MGGI_MANIFESTO.md`, `.archive/`, `docs/archive/`
 
 **Purpose**: Understand where the system came from, not where it is now.
 
@@ -83,12 +83,11 @@
 
 | Hazard | Where | Who Gets Hurt | Severity |
 |--------|-------|---------------|----------|
-| AI_ONBOARDING "If wall" | `AI_ONBOARDING.md` lines 28-87 | AI agents | **high**. Causes read paralysis and contract over-opening |
 | Root lineage `.txt` files look primary | `TONESOUL_NARRATIVE.txt`, `TONESOUL_PHILOSOPHY.txt`, `TONESOUL_THEORY.txt` | Researchers, curious humans | **medium**. High-quality lineage, not current spec |
 | `README.zh-TW.md` has a long routing cascade | `README.zh-TW.md` | Chinese-reading developers | **medium**. Harder to scan than the English README |
-| `docs/README.md` and `docs/INDEX.md` overlap | both docs entry surfaces | All readers | **medium**. Their roles need clearer differentiation |
-| `TAE-01_Architecture_Spec.md` metadata overstates currentness | root historical spec | All readers | **low**. Status wording can mislead later agents |
-| Quickstart command block is too heavy | `docs/AI_QUICKSTART.md` | New AI agents | **medium**. Too much coordination detail too early |
+| Curated gateway versus full registry still gets skipped | `docs/README.md` and `docs/INDEX.md` | All readers | **medium**. Some readers still jump to the full index before the guided gateway |
+| historical-spec references can point at dense legacy prose too early | `docs/SEMANTIC_SPINE_SPEC.md`, `docs/TRUTH_STRUCTURE.md` | All readers | **low**. Correct file, wrong first hop still causes overreading |
+| Deep packet widening still happens too early | `docs/architecture/*` after session start | AI agents, developers | **medium**. Clean entry exists, but later readers may still skip the bounded packet |
 
 ---
 
@@ -96,8 +95,9 @@
 
 ```text
 Step 1: Open README.md and use "Choose Your Entry".
-Step 2: If you are an AI agent, open AI_ONBOARDING.md.
-Step 3: Read docs/AI_QUICKSTART.md.
-Step 4: Run python scripts/start_agent_session.py --agent <id>.
-Step 5: Open deeper contracts only after you have a concrete question.
+Step 2: If you are an AI agent, open docs/AI_QUICKSTART.md.
+Step 3: Run python scripts/start_agent_session.py --agent <id>.
+Step 4: Open AI_ONBOARDING.md and docs/foundation/README.md.
+Step 5: Read task.md.
+Step 6: Open deeper contracts only after you have a concrete question.
 ```

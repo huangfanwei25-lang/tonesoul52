@@ -41,7 +41,7 @@ Without this contract, a later agent seeing `??` in a shell command output will 
 
 **Current status in ToneSoul**: The repo directory `倉庫/` is a CJK name. PowerShell commands may show path artifacts. This is **not** a file problem.
 
-**Correct response**: Ignore as a file-quality concern. Optionally note it as a tooling limitation.
+**Correct response**: Ignore as a file-quality concern. Optionally note it as a tooling limitation. When a later agent needs exact high-traffic paths, use `docs/foundation/FILENAME_AND_ENTRY_INDEX.md` instead of trusting garbled terminal echoes.
 
 ### Category 3: Structural Readability Hazards
 
@@ -105,3 +105,5 @@ Without this contract, a later agent seeing `??` in a shell command output will 
 4. **If dates or counts are wrong, diagnose it as metadata drift (Category 4), not corruption.**
 
 5. **Do not re-audit encoding unless a new file type or a specific corruption report triggers it.** The current `.md` and `.txt` surfaces are clean as of 2026-03-29.
+
+6. **If path rendering is noisy, prefer the repo's filename index over shell echoes.** Use `docs/foundation/FILENAME_AND_ENTRY_INDEX.md` for high-traffic lookup.

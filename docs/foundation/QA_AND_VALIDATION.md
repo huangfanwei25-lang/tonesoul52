@@ -25,6 +25,8 @@
 
 ```bash
 python examples/quickstart.py
+python examples/quickstart.py --json
+python scripts/run_tonesoul_convergence_audit.py
 python scripts/run_test_tier.py --tier blocking
 python -m ruff check tonesoul tests scripts
 python -m pytest tests -q
@@ -49,6 +51,7 @@ Treat formulas as one of four kinds:
 - retired
 
 Do not mix those categories in one claim.
+Do not repeat a symbolic formula unless the same page also names its status and owner.
 
 ## Source Anchors
 

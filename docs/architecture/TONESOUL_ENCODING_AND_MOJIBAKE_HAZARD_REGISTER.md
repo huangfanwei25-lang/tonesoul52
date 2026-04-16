@@ -3,6 +3,7 @@
 > Purpose: register encoding hazards, garbled headers, broken section labels, and mixed-layer readability issues in high-traffic documentation so cleanup can follow a clear severity order.
 > Last Updated: 2026-03-29
 > Authority: documentation hygiene aid. Does not outrank runtime code, tests, or canonical architecture contracts.
+> Status: historical 2026-03-29 hazard snapshot. Major AI entry cleanup landed on 2026-04-14; use current entry surfaces for live routing instead of treating this register as the latest policy.
 
 ---
 
@@ -30,28 +31,25 @@ Most observed hazards are one of these instead:
 
 | ID | Surface | Hazard | Why It Matters |
 |----|---------|--------|----------------|
-| H1 | `AI_ONBOARDING.md` lines 28-87 | 60-line "If wall" | Causes read paralysis for new AI agents |
-| H2 | `AI_ONBOARDING.md` | duplicate top-matter blocks | Metadata can be parsed inconsistently |
-| H3 | `TAE-01_Architecture_Spec.md` | contradictory status versus purpose | Historical surface can be mistaken for current |
-| H4 | `MGGI_SPEC.md` | duplicate purpose/date block | Signals stale maintenance and weak metadata hygiene |
+| H1 | historical entry cleanup notes | pre-2026-04-14 AI entry hazards | Keep only as lineage; do not treat as current state |
 
 ### Severity: Medium
 
 | ID | Surface | Hazard | Why It Matters |
 |----|---------|--------|----------------|
-| M1 | `README.zh-TW.md` | long routing cascade | Harder to scan than the English README |
-| M2 | `docs/README.md` and `docs/INDEX.md` | overlapping roles | Readers cannot easily tell guided entry from flat index |
+| M1 | historical cleanup notes | may still mention removed or rewritten entry hazards | Can mislead later readers if treated as current |
+| M2 | `docs/README.md` and `docs/INDEX.md` | role split still needs to be respected by readers | Guided gateway and full registry serve different jobs |
 | M3 | `docs/INDEX.md` | stale subdirectory counts | Later agents undercount the documentation surface area |
 | M4 | root lineage `.txt` files | format mismatch | Not corruption, but unusual in a markdown-centric repo |
-| M5 | `docs/README.md` | stale footer date | Conflicting maintenance signals |
+| M5 | root historical-spec references in older notes | absent-file references may survive in older reports | Readers may chase dead lineage paths |
 
 ### Severity: Low
 
 | ID | Surface | Hazard | Why It Matters |
 |----|---------|--------|----------------|
-| L1 | `README.zh-TW.md` | stale Last Updated | Chinese public entry lags behind the English README |
+| L1 | `README.zh-TW.md` | content sync can drift again later | Chinese public entry should keep mirroring the live English entry posture |
 | L2 | `SOUL.md` | version mismatch in identity text | Mostly cosmetic, but can confuse later readers |
-| L3 | `docs/AI_QUICKSTART.md` | stale test-count prose | Snapshot drift is visible |
+| L3 | quickstart snapshots | test-count prose may drift over time | Snapshot drift is visible if counts are not refreshed |
 
 ---
 

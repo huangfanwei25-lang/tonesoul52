@@ -1,9 +1,10 @@
 # ToneSoul Historical Spec And Legacy Surface Map
 
 > Purpose: separate current canonical surfaces from historical lineage, active companions, and legacy documents so later agents stop treating old specs as current architecture.
-> Last Updated: 2026-03-29
+> Last Updated: 2026-04-14
 > Authority: documentation boundary aid. Does not outrank runtime code, tests, `AXIOMS.json`, or canonical architecture contracts.
 > Measured Snapshot: 2026-03-29 (`docs/architecture/*=55`, `docs/architecture/TONESOUL_*=45`, `docs/architecture/TONESOUL_*_CONTRACT.md=21`, `docs/*=108`, `root *.md=24`)
+> Status: partially historical classification map. Older cleanup notes may mention root files such as `MGGI_SPEC.md` and `TAE-01_Architecture_Spec.md`; those files are not present in the current repo snapshot.
 
 ---
 
@@ -26,7 +27,7 @@
 | File | Role | Notes |
 |------|------|-------|
 | `README.md` | Public entrypoint | Audience routing, evidence honesty, grouped system map |
-| `AI_ONBOARDING.md` | AI entrypoint | Canonical architecture anchor plus AI reading stack |
+| `AI_ONBOARDING.md` | AI routing map | Opens after quickstart and session-start; not the operational first-hop owner |
 | `AXIOMS.json` | Constitutional axioms | Immutable and constitutional |
 | `SOUL.md` | Identity surface | Agent-facing identity and values |
 | `AGENTS.md` | Collaboration protocol | Protected file |
@@ -49,8 +50,6 @@
 
 | File | Why It Still Exists | Current Canonical Successor | Citation Rule |
 |------|---------------------|-----------------------------|---------------|
-| `MGGI_SPEC.md` | Preserves the earlier governance-middleware framing | `docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md` | Cite only as historical lineage |
-| `TAE-01_Architecture_Spec.md` | Preserves the earlier L0-L5 layer model | `docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md` | Cite only as historical lineage |
 | `TONESOUL_NARRATIVE.txt` | Founding narrative context | `README.md`, `LETTER_TO_AI.md` | Cite as founding narrative |
 | `TONESOUL_PHILOSOPHY.txt` | Original philosophical formulation | `AXIOMS.json`, `docs/philosophy/*` | Cite as original formulation |
 | `TONESOUL_THEORY.txt` | Original mathematical/technical theory | runtime code plus `spec/` | Cite as original theory |
@@ -106,11 +105,12 @@
 
 | Surface | Why It Still Exists |
 |---------|---------------------|
+| `docs/SEMANTIC_SPINE_SPEC.md` | Earlier system-structure framing that still helps explain lineage |
+| `docs/TRUTH_STRUCTURE.md` | Earlier truth-structure framing |
+| `docs/MGGI_MANIFESTO.md` | Earlier governance / manifesto layer |
 | `docs/RFC-015_Self_Dogfooding_Runtime_Adapter.md` | Original runtime-adapter direction |
 | `docs/WHITEPAPER.md` | Research artifact with older claims |
 | `docs/PHILOSOPHY.md`, `docs/PHILOSOPHY_EN.md` | Earlier philosophy surfaces |
-| `docs/TRUTH_STRUCTURE.md` | Earlier truth-structure framing |
-| `docs/SEMANTIC_SPINE_SPEC.md` | Earlier semantic-spine spec |
 | `docs/RFC-009_Context_Engineering_Pivot.md` | Historical pivot |
 | `docs/RFC-014_Reflection_Loop_Octopus_Architecture.md` | Earlier reflection architecture |
 

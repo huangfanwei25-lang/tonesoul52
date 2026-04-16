@@ -29,6 +29,17 @@ REPEATED_EXTERNAL_CYCLE_PACK = (
     / "plans"
     / "tonesoul_non_creator_external_cycle_dual_surface_pack_2026-04-10.md"
 )
+PREFLIGHT_REFRESH_EXTERNAL_CYCLE_PACK = (
+    REPO_ROOT
+    / "docs"
+    / "plans"
+    / "tonesoul_non_creator_external_cycle_preflight_refresh_pack_2026-04-15.md"
+)
+WORK_PLAN_V2 = REPO_ROOT / "docs" / "plans" / "tonesoul_work_plan_v2_2026-04-14.md"
+PHASE726_REVIEW_ANCHOR = REPO_ROOT / "docs" / "status" / "phase726_go_nogo_2026-04-08.md"
+LAUNCH_OPERATIONS_SURFACE_ANCHOR = (
+    REPO_ROOT / "docs" / "status" / "phase724_launch_operations_surface_2026-04-15.md"
+)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -65,6 +76,36 @@ def _normalize_compact_diagnostic(text: str) -> str:
     if lines:
         return lines[0]
     return ""
+
+
+def _detect_latest_phase726_review() -> dict[str, Any]:
+    status_dir = REPO_ROOT / "docs" / "status"
+    candidates = sorted(status_dir.glob("phase726_go_nogo_*.md"))
+    if not candidates:
+        return {
+            "path": PHASE726_REVIEW_ANCHOR.relative_to(REPO_ROOT).as_posix(),
+            "is_refreshed": False,
+        }
+    latest = candidates[-1]
+    return {
+        "path": latest.relative_to(REPO_ROOT).as_posix(),
+        "is_refreshed": latest.name != PHASE726_REVIEW_ANCHOR.name,
+    }
+
+
+def _detect_latest_phase724_surface() -> dict[str, Any]:
+    status_dir = REPO_ROOT / "docs" / "status"
+    candidates = sorted(status_dir.glob("phase724_launch_operations_surface_*.md"))
+    if not candidates:
+        return {
+            "path": LAUNCH_OPERATIONS_SURFACE_ANCHOR.relative_to(REPO_ROOT).as_posix(),
+            "is_refreshed": False,
+        }
+    latest = candidates[-1]
+    return {
+        "path": latest.relative_to(REPO_ROOT).as_posix(),
+        "is_refreshed": True,
+    }
 
 
 def _extract_compact_signal(text: str, *, prefix: str) -> str:
@@ -141,12 +182,25 @@ def _load_validation_wave(path: Path) -> list[dict[str, Any]]:
     return [item for item in payload if isinstance(item, dict)]
 
 
+def _extract_phase722_cycle_date(path: Path) -> str:
+    match = re.search(r"(20\d{2}-\d{2}-\d{2})", path.name)
+    return str(match.group(1)) if match else ""
+
+
 def _detect_external_cycle_status() -> dict[str, str]:
-    candidates = sorted(
-        REPO_ROOT.glob("docs/status/phase722_external_operator_cycle_*.md"),
+    candidates: list[tuple[str, str, Path]] = []
+    for cycle_shape, pattern in (
+        ("single_surface", "docs/status/phase722_external_operator_cycle_*.md"),
+        ("dual_surface", "docs/status/phase722_external_dual_surface_cycle_*.md"),
+        ("preflight_refresh", "docs/status/phase722_external_preflight_refresh_cycle_*.md"),
+    ):
+        for path in REPO_ROOT.glob(pattern):
+            candidates.append((_extract_phase722_cycle_date(path), cycle_shape, path))
+    for _, cycle_shape, path in sorted(
+        candidates,
+        key=lambda item: (item[0], item[2].name),
         reverse=True,
-    )
-    for path in candidates:
+    ):
         try:
             text = path.read_text(encoding="utf-8")
         except OSError:
@@ -157,8 +211,9 @@ def _detect_external_cycle_status() -> dict[str, str]:
             return {
                 "path": str(path.relative_to(REPO_ROOT).as_posix()),
                 "classification": classification,
+                "cycle_shape": cycle_shape,
             }
-    return {"path": "", "classification": ""}
+    return {"path": "", "classification": "", "cycle_shape": ""}
 
 
 def _build_command(
@@ -255,8 +310,22 @@ def run_preflight(
     overall_ok = not blocking_findings and bool(compact_diagnostic)
     overall_status = "go" if overall_ok else "hold"
     external_cycle_status = _detect_external_cycle_status()
+    latest_phase726_review = _detect_latest_phase726_review()
+    latest_phase724_surface = _detect_latest_phase724_surface()
     latest_external_classification = external_cycle_status.get("classification", "")
-    if latest_external_classification == "strong external pass":
+    latest_external_cycle_shape = str(external_cycle_status.get("cycle_shape", "")).strip()
+    latest_external_path = str(external_cycle_status.get("path", "")).strip()
+    if not latest_external_cycle_shape and latest_external_path:
+        if "preflight_refresh" in latest_external_path:
+            latest_external_cycle_shape = "preflight_refresh"
+        elif "dual_surface" in latest_external_path:
+            latest_external_cycle_shape = "dual_surface"
+        else:
+            latest_external_cycle_shape = "single_surface"
+    if (
+        latest_external_classification == "strong external pass"
+        and latest_external_cycle_shape == "single_surface"
+    ):
         next_bounded_move = {
             "step": "run the dual-surface repeated external cycle under a different operator or task shape",
             "path": REPEATED_EXTERNAL_CYCLE_PACK.relative_to(REPO_ROOT).as_posix(),
@@ -264,14 +333,61 @@ def run_preflight(
                 "One clean external/non-creator cycle now exists; next repeated validation should exercise one bounded canonical surface plus one fresh status note before widening any launch claims."
             ),
         }
+    elif latest_external_classification == "strong external pass":
+        if latest_external_cycle_shape == "preflight_refresh":
+            if latest_phase726_review.get("is_refreshed"):
+                if latest_phase724_surface.get("is_refreshed"):
+                    next_bounded_move = {
+                        "step": "use the current launch-operations surface as the operator-facing anchor and keep launch claims bounded",
+                        "path": str(latest_phase724_surface.get("path", ""))
+                        or LAUNCH_OPERATIONS_SURFACE_ANCHOR.relative_to(REPO_ROOT).as_posix(),
+                        "note": (
+                            "Phase 724 is now consolidated into one current operator-facing launch surface; keep public launch deferred, keep launch claims evidence-bounded, and reopen this lane only if a new contradiction or a higher evidence tier appears."
+                        ),
+                    }
+                else:
+                    next_bounded_move = {
+                        "step": "consolidate one current launch-operations surface before any claim widening",
+                        "path": str(latest_phase724_surface.get("path", ""))
+                        or LAUNCH_OPERATIONS_SURFACE_ANCHOR.relative_to(REPO_ROOT).as_posix(),
+                        "note": (
+                            "The collaborator-beta go/no-go review has already been refreshed against three clean bounded Phase 722 cycles; keep public launch deferred, keep launch claims evidence-bounded, and move into Phase 724 launch-operations consolidation."
+                        ),
+                    }
+            else:
+                next_bounded_move = {
+                    "step": "refresh the collaborator-beta go/no-go review before any claim widening",
+                    "path": str(latest_phase726_review.get("path", ""))
+                    or PHASE726_REVIEW_ANCHOR.relative_to(REPO_ROOT).as_posix(),
+                    "note": (
+                        "A third bounded Phase 722 task shape has now landed cleanly; keep public launch deferred, keep launch claims evidence-bounded, and refresh the Phase 726 collaborator-beta review before changing wording."
+                    ),
+                }
+        else:
+            next_bounded_move = {
+                "step": "consolidate current-truth launch surfaces, then queue at least one more varied lower-context cycle before any claim widening",
+                "path": WORK_PLAN_V2.relative_to(REPO_ROOT).as_posix(),
+                "note": (
+                    "Phase 722 now has two clean bounded non-creator cycles across two task shapes; refresh current-truth surfaces, keep launch claims bounded, and require at least one more varied lower-context repetition before widening collaborator-beta language."
+                ),
+            }
     elif latest_external_classification == "useful partial":
-        next_bounded_move = {
-            "step": "repair the remaining external-cycle seam and rerun the bounded pack",
-            "path": INITIAL_EXTERNAL_CYCLE_PACK.relative_to(REPO_ROOT).as_posix(),
-            "note": (
-                "A real external/non-creator attempt exists, but it still counts only as useful partial and should not be treated as clean proof."
-            ),
-        }
+        if latest_external_cycle_shape == "preflight_refresh":
+            next_bounded_move = {
+                "step": "repair the preflight-refresh evidence seam and rerun the third bounded Phase 722 task shape",
+                "path": PREFLIGHT_REFRESH_EXTERNAL_CYCLE_PACK.relative_to(REPO_ROOT).as_posix(),
+                "note": (
+                    "The preflight-refresh task shape entered and regenerated canonical artifacts, but it still stopped short of clean proof; fix the exact blocker and rerun the same bounded pack rather than widening claims."
+                ),
+            }
+        else:
+            next_bounded_move = {
+                "step": "repair the remaining external-cycle seam and rerun the bounded pack",
+                "path": INITIAL_EXTERNAL_CYCLE_PACK.relative_to(REPO_ROOT).as_posix(),
+                "note": (
+                    "A real external/non-creator attempt exists, but it still counts only as useful partial and should not be treated as clean proof."
+                ),
+            }
     else:
         next_bounded_move = {
             "step": "run one real non-creator or external-use clean cycle for Phase 722",
@@ -372,6 +488,10 @@ def render_markdown(payload: dict[str, Any]) -> str:
     next_bounded_move = payload.get("next_bounded_move") or {}
     validation_wave = payload.get("validation_wave") or {}
     launch_claim_posture = payload.get("launch_claim_posture") or {}
+    latest_external_cycle = external_cycle_status.get("classification", "") or "none"
+    cycle_shape = external_cycle_status.get("cycle_shape", "") or ""
+    if cycle_shape:
+        latest_external_cycle = f"{latest_external_cycle} / {cycle_shape}"
     lines = [
         "# ToneSoul Collaborator-Beta Preflight",
         "",
@@ -425,8 +545,8 @@ def render_markdown(payload: dict[str, Any]) -> str:
                 "",
                 "## Next Bounded Move",
                 "",
-                f"- Latest external cycle: `{external_cycle_status.get('classification', 'none') or 'none'}`",
-                f"- Pack: `{next_bounded_move.get('path', '')}`",
+                f"- Latest external cycle: `{latest_external_cycle}`",
+                f"- Path: `{next_bounded_move.get('path', '')}`",
                 f"- Note: `{next_bounded_move.get('note', '')}`",
             ]
         )

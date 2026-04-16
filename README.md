@@ -148,12 +148,16 @@ If you need the smallest decision-affecting startup packet for consistent human/
 
 ## Choose Your Entry
 
-| Reader | Start Here | Why |
-|---|---|---|
-| Developer | [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md), [docs/README.md](docs/README.md), [docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md](docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md) | install, orient, then read one grounded whole-system map before drilling into contracts |
-| Researcher | [DESIGN.md](DESIGN.md), [docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md](docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md), [docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md](docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md) | design rationale first, then the whole-system map, then canonical architecture |
-| AI Agent | [AI_ONBOARDING.md](AI_ONBOARDING.md), [docs/AI_QUICKSTART.md](docs/AI_QUICKSTART.md), `python scripts/start_agent_session.py --agent <your-id>` | operational entry, packet-first session start, and bounded shared-memory posture |
-| Curious Human | [SOUL.md](SOUL.md), [LETTER_TO_AI.md](LETTER_TO_AI.md), [README.zh-TW.md](README.zh-TW.md) | identity layer, intent, and a more narrative introduction |
+| Reader | Start Here | Then | Why |
+|---|---|---|---|
+| Developer | [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md) | [docs/foundation/README.md](docs/foundation/README.md) -> [docs/README.md](docs/README.md) | install first, then one thin project packet, then the curated docs gateway only if the lane is still unclear |
+| Researcher | [DESIGN.md](DESIGN.md) | [docs/foundation/README.md](docs/foundation/README.md) -> [docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md](docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md) | design center first, then a bounded packet, then one grounded whole-system map |
+| AI Agent | [docs/AI_QUICKSTART.md](docs/AI_QUICKSTART.md) | `python scripts/start_agent_session.py --agent <your-id>` -> [AI_ONBOARDING.md](AI_ONBOARDING.md) | operational first-hop first, session handshake second, routing map third |
+| Curious Human | [README.zh-TW.md](README.zh-TW.md) | [SOUL.md](SOUL.md) -> [LETTER_TO_AI.md](LETTER_TO_AI.md) | public introduction first, then identity and intent surfaces |
+
+Open one owner surface first instead of the whole row at once.
+Use [docs/README.md](docs/README.md) as the curated docs gateway.
+Use [docs/INDEX.md](docs/INDEX.md) only when the curated path is not enough and you need the fuller registry.
 
 ## Five System Areas
 
@@ -331,21 +335,36 @@ Transformer Attention** — repurposed for governance.
 | Attention weights → steer generation | Tension score → approve / flag / block |
 | Residual connections (remember prior layers) | Memory decay + crystallization (remember prior sessions) |
 
+Heuristic owner for `Δs = 1 − cos(Intent, Generated)`: [`tonesoul/semantic_control.py`](tonesoul/semantic_control.py)
+
 The mathematical foundations are honest about what is rigorous and what is
 heuristic. Three pieces have solid theory:
 
 - **Cosine distance** — standard linear algebra
-- **Exponential decay** — `f(t) = f₀·e^(−λt)`, well-defined ODE
+- **Exponential decay** — `f(t) = f₀·e^(−λt)`, well-defined ODE; used in `tonesoul/runtime_adapter.py`, `tonesoul/memory/decay.py`, and `apps/web/src/lib/soulEngine.ts`
 - **Shannon entropy** — information theory
 
 Everything else (weighted sums, thresholds, zone boundaries) is
 **tunable heuristic** — designed to feel right, not mathematically derived.
+
+Read formulas in four buckets:
+
+- `rigorous` — cosine distance, exponential decay, Shannon entropy
+- `heuristic` — executable scoring rules such as `Δs`, TSR, POAV, council coherence, risk blends
+- `conceptual` — orientation aids such as `T = W × (E × D)` and `S_oul = Σ(...)`
+- `retired` — historical notation only; do not cite as current runtime truth
+
+Formula registry with status + owner:
+[docs/GLOSSARY.md](docs/GLOSSARY.md)
 
 Full audit with every formula, parameter, and honesty rating:
 [docs/MATH_FOUNDATIONS.md](docs/MATH_FOUNDATIONS.md)
 
 All behavioral parameters (single source of truth):
 [`tonesoul/soul_config.py`](tonesoul/soul_config.py)
+
+Conceptual equations in entry docs are orientation aids, not executable owners by default.
+If formula status matters, prefer [docs/GLOSSARY.md](docs/GLOSSARY.md) and [docs/MATH_FOUNDATIONS.md](docs/MATH_FOUNDATIONS.md) before repeating the equation as runtime truth.
 
 ### Self-Play and Validation
 

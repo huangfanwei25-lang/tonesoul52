@@ -1,32 +1,24 @@
-﻿# ToneSoul / 語魂
+# ToneSoul / 語魂
 
 > 這不是只會回答的 AI。它會先檢查語義偏移、記住真正重要的事，並留下可追溯紀錄。
-> 如果你要的是「AI 不會亂講話」，這個專案就是為這件事做的。
+> 如果你要的是「AI 不要一本正經亂講話」，這個專案就是為這件事做的。
 >
-> ToneSoul 也是一套給 AI 治理、倫理記憶系統、verifier-first agents、知識圖譜檢索、adapter-ready semantic governance 研究用的外部化認知架構。
+> ToneSoul 是一套外部化認知治理架構，關心的是可挑戰、可追溯、可稽核的 AI，而不是只追求更順的回答。
 >
-> Purpose: 語魂公開倉庫入口，說明整體架構、治理方向與實作入口。
-> Last Updated: 2026-03-22
+> Purpose: 語魂公開倉庫中文入口，說明整體架構、治理姿態與實作入口。
+> Last Updated: 2026-04-14
 
 [English](README.md)
 
-## 檢索關鍵字
-
-AI governance、ethical AI、semantic governance、cognitive architecture、externalized cognition、
-cognitive operating system、verifier-first agents、self-auditing AI、agent memory、memory graph、
-knowledge graph retrieval、multi-agent deliberation、runtime alignment、local-first AI、
-adapter-ready architecture、LoRA-ready distillation。
-
-## 30 秒看懂它能做什麼
+## 30 秒看懂它做什麼
 
 | 功能 | 你實際得到什麼 |
 |---|---|
-| 🧠 會遺忘的記憶系統 | 用指數衰減 + 結晶化，重點留下、雜訊淡出。 |
-| ⚡ 張力引擎 | 每次輸出都先算語義偏移，偏了就攔。 |
-| 🎭 多角色審議 | 守護者、分析師、批評者、倡議者先辯論，再給答案。 |
-| 🔮 共鳴判定 | 分得出「真的理解」和「只是附和」。 |
-| 🛡️ 自我治理 | 高風險或不一致輸出會被阻擋或改寫，且全程可稽核。 |
-| 📊 即時儀表板 | 即時看結晶規則、共鳴統計、記憶與修復訊號。 |
+| 🧠 會遺忘的記憶系統 | 指數衰減 + 結晶化，重點留下、雜訊淡出 |
+| ⚡ 張力引擎 | 每次輸出都先檢查語義偏移，偏了就攔 |
+| 🎭 多角色審議 | 守護者、分析師、批評者、倡議者先辯論，再給答案 |
+| 🛡️ 自我治理 | 高風險或不一致輸出會被阻擋或改寫，而且全程可稽核 |
+| 📊 即時儀表板 | 看結晶規則、共鳴統計、記憶與修復訊號 |
 
 ## 5 分鐘快速啟動
 
@@ -39,22 +31,22 @@ pip install tonesoul52
 或從原始碼安裝：
 
 ```bash
-git clone https://github.com/Fan1234-1/tonesoul52.git
+git clone --depth 1 https://github.com/Fan1234-1/tonesoul52.git
 cd tonesoul52
 pip install -e .
 ```
 
-### 2) 建立本地環境變數檔
+### 2) 跑 demo
 
 ```bash
-cp .env.example .env.local
-# 設定 LLM 後端：GEMINI_API_KEY，或本地跑 Ollama
+python examples/quickstart.py
 ```
 
-### 3) 驗證治理載入
+### 3) 驗證治理狀態有載入
 
 ```python
 from tonesoul.runtime_adapter import load
+
 posture = load()
 print(f"Soul Integral: {posture.soul_integral}")
 print(f"Active Vows: {len(posture.active_vows)}")
@@ -67,71 +59,17 @@ pip install tonesoul52[dashboard]
 python scripts/tension_dashboard.py --work-category research
 ```
 
-## 為什麼它跟一般 AI 不同
+### 5) 跑測試
 
-| | 傳統 AI | Prompt Engineering | ToneSoul |
-|---|---|---|---|
-| 記憶 | 單次對話就忘 | 靠人手動接記憶 | 自動衰減 + 結晶 |
-| 一致性 | 看運氣 | 看 prompt 品質 | 7 條公理 + 治理檢查 |
-| 自我檢查 | 幾乎沒有 | 可做可不做 | 每次都跑 TensionEngine |
-| 學習方式 | 沒有 | 人工調參 | 共鳴事件沉澱成規則 |
-| 稽核能力 | 弱 | 弱 | journal + provenance 可追溯 |
+```bash
+pip install tonesoul52[dev]
+pytest tests/ -v
+```
 
-## 畫面
+## 30 秒系統地圖
 
-![ToneSoul Dashboard](docs/images/dashboard_preview.png)
-
-## 2 分鐘看懂架構
-
-ToneSoul 不應只被理解成 prompt stack，而應被理解成一套 externalized cognitive operating system。
-正典架構文件在
-[`docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md`](docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md)。
-如果你要看從舊六層 runtime 到新模型外掛路線的銜接圖，請再讀
-[`docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md`](docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md)。
-如果你要看更具體的操作邊界，請再讀
-[`docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md`](docs/architecture/TONESOUL_L7_RETRIEVAL_CONTRACT.md)
-與
-[`docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md`](docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md)。
-如果你要直接看較短、可機器讀取的鏡像，請再開
-[`docs/status/l7_retrieval_contract_latest.json`](docs/status/l7_retrieval_contract_latest.json)
-與
-[`docs/status/l8_distillation_boundary_latest.json`](docs/status/l8_distillation_boundary_latest.json)。
-如果你要直接看第一版可執行的操作層 packet / gate，請再開
-[`docs/status/l7_operational_packet_latest.json`](docs/status/l7_operational_packet_latest.json)
-與
-[`docs/status/l8_adapter_dataset_gate_latest.json`](docs/status/l8_adapter_dataset_gate_latest.json)。
-如果你要看論述邊界、防止理論偷渡機制的治理規則，請再開
-[`docs/architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md`](docs/architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md)
-與
-[`docs/status/abc_firewall_latest.json`](docs/status/abc_firewall_latest.json)。
-如果你要整理同名文件、鏡像文件與缺少用途/日期的入口檔，先看
-[`docs/status/doc_convergence_inventory_latest.json`](docs/status/doc_convergence_inventory_latest.json)
-與
-[`docs/plans/doc_convergence_cleanup_plan_2026-03-22.md`](docs/plans/doc_convergence_cleanup_plan_2026-03-22.md)。
-如果你要看完整的多波次收斂總任務，請再開
-[`docs/plans/doc_convergence_master_plan_2026-03-23.md`](docs/plans/doc_convergence_master_plan_2026-03-23.md)。
-如果你需要更細的文件結構圖，想先分清 entrypoint、canonical anchor、contract、status lane，再看
-[`docs/architecture/DOC_AUTHORITY_STRUCTURE_MAP.md`](docs/architecture/DOC_AUTHORITY_STRUCTURE_MAP.md)
-與
-[`docs/status/doc_authority_structure_latest.json`](docs/status/doc_authority_structure_latest.json)。
-如果你要看這些同名異義文件被怎麼「蒸餾」成可治理規則，請看
-[`docs/architecture/BASENAME_DIVERGENCE_DISTILLATION_MAP.md`](docs/architecture/BASENAME_DIVERGENCE_DISTILLATION_MAP.md)
-與
-[`docs/status/basename_divergence_distillation_latest.json`](docs/status/basename_divergence_distillation_latest.json)。
-如果你碰到 nested private-memory shadow，先不要把它當成一般重複檔；請先開
-[`docs/architecture/PRIVATE_MEMORY_SHADOW_BOUNDARY_MAP.md`](docs/architecture/PRIVATE_MEMORY_SHADOW_BOUNDARY_MAP.md)
-與
-[`docs/status/private_memory_shadow_latest.json`](docs/status/private_memory_shadow_latest.json)。
-如果你在處理悖論案例與測試夾具，請把 [`PARADOXES/`](PARADOXES/) 視為正典案例集，並用
-[`docs/architecture/PARADOX_FIXTURE_OWNERSHIP_MAP.md`](docs/architecture/PARADOX_FIXTURE_OWNERSHIP_MAP.md)
-與
-[`docs/status/paradox_fixture_ownership_latest.json`](docs/status/paradox_fixture_ownership_latest.json)
-確認哪些是 exact mirror、哪些是 reduced projection。
-如果你在讀工程卷冊，請把 [`docs/engineering/`](docs/engineering/) 視為 canonical owner，並用
-[`docs/architecture/ENGINEERING_MIRROR_OWNERSHIP_MAP.md`](docs/architecture/ENGINEERING_MIRROR_OWNERSHIP_MAP.md)
-與
-[`docs/status/engineering_mirror_ownership_latest.json`](docs/status/engineering_mirror_ownership_latest.json)
-確認 `law/engineering/` 的 mirror 狀態。
+ToneSoul 不是單一 prompt，也不是單純的記憶外掛。
+它比較像一套把治理、審議、連續性、證據與觀測外部化的 AI 架構。
 
 ```text
 使用者輸入
@@ -144,101 +82,56 @@ ToneSoul 不應只被理解成 prompt stack，而應被理解成一套 externali
     ↓
 [ComputeGate] approve / block / rewrite
     ↓
-[ResonanceClassifier] flow / resonance / deep_resonance / divergence
-    ↓
 [Journal + Crystallizer] 重要的留下，雜訊慢慢忘掉
     ↓
 最終輸出
 ```
 
-## 規格入口順序
+如果你只想看一份能解釋整個堆疊的文件，先開 [docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md](docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md)。
+如果你要看設計中心與不該漂移的 invariant，先開 [DESIGN.md](DESIGN.md)。
+如果你要先看最薄、最適合人類與 AI 重新進場的專案 packet，先開 [docs/foundation/README.md](docs/foundation/README.md)。
 
-如果你想快速理解語魂，而不要把現行架構、代理人格設定、舊版 spec 混在一起，建議按這個順序讀：
+## 選你的入口
 
-- `docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md`
-  - 現行北極星架構與演化方向
-- `SOUL.md`
-  - agent-facing 的身份 / 操作姿態層
-- `MGGI_SPEC.md`
-  - 形式化工程與治理規格視角
-- `TAE-01_Architecture_Spec.md`
-  - 較早期的架構譜系與歷史 spec 脈絡
+| 讀者 | 先讀 | 再讀 | 為什麼 |
+|---|---|---|---|
+| 開發者 | [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md) | [docs/foundation/README.md](docs/foundation/README.md) -> [docs/README.md](docs/README.md) | 先安裝，再讀薄 packet，還不清楚時才進 curated docs gateway |
+| 研究者 | [DESIGN.md](DESIGN.md) | [docs/foundation/README.md](docs/foundation/README.md) -> [docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md](docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md) | 先抓設計中心，再補 bounded packet，最後看整體地圖 |
+| AI 代理 | [docs/AI_QUICKSTART.md](docs/AI_QUICKSTART.md) | `python scripts/start_agent_session.py --agent <your-id>` -> [AI_ONBOARDING.md](AI_ONBOARDING.md) | 先走 operational first hop，再做 session handshake，最後才進 routing map |
+| 一般讀者 | [README.md](README.md) | [SOUL.md](SOUL.md) -> [LETTER_TO_AI.md](LETTER_TO_AI.md) | 先看公共入口，再看身份與意圖層 |
 
-如果它們之間有描述差異，優先順序是：
+一次只先開一個 owner surface，不要整列一起讀。
+[docs/README.md](docs/README.md) 是策展式入口。
+[docs/INDEX.md](docs/INDEX.md) 是完整索引，只有在策展入口還不夠時再開。
 
-1. 正典架構文件
-2. 當前 README 與 docs 索引
-3. 舊 spec 作為歷史背景，不當作現況唯一依據
+## 證據誠實
 
-## 知識表面邊界
+當 README 說 ToneSoul「有某個能力」時，請用這個濾鏡讀：
 
-不要把所有看起來像「知識」的目錄都當成同一種權威來源。
+- `E1 test-backed`：有回歸測試支撐，CI 能抓到退化
+- `E3 runtime-present`：程式存在也能跑，但測試深度還不夠
+- `E4 document-backed`：有 contract / spec 描述，但 runtime 仍未完全證明
+- `E5 philosophical`：是設計命題或哲學壓力，不是已驗證機制
 
-- `knowledge/`
-  - 概念、身份、學習脈絡筆記
-- `knowledge_base/`
-  - 本地結構化概念庫與工具（如 `knowledge.db`）
-- `PARADOXES/`
-  - 治理 / 紅隊式悖論 fixture，不是一般知識庫
+如果這個差異很重要，先開 [docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md](docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md)。
 
-參考：
-[`docs/architecture/KNOWLEDGE_SURFACES_BOUNDARY_MAP.md`](docs/architecture/KNOWLEDGE_SURFACES_BOUNDARY_MAP.md)
+## 公式誠實
 
-## 核心模組
+入口文件裡出現的公式或符號，預設都只是 orientation aid，不是 executable owner。
+如果你需要知道某個公式到底是 rigorous、heuristic 還是 conceptual，先看 [docs/GLOSSARY.md](docs/GLOSSARY.md) 和 [docs/MATH_FOUNDATIONS.md](docs/MATH_FOUNDATIONS.md)。
 
-### 記憶系統
-
-- `memory/self_journal.jsonl` — 事件型記憶流
-- `memory/crystals.jsonl` — 長期規則（結晶）
-- `tonesoul/memory/crystallizer.py` — 規則自動萃取
-- `memory/consolidator.py` — 類睡眠整併機制
-
-### 張力與治理
-
-- `tonesoul/tension_engine.py` — 多訊號張力計算
-- `tonesoul/resonance.py` — 共鳴/順流分類
-- `tonesoul/gates/compute.py` — approve/block/rewrite 決策閘門
-- `tonesoul/unified_pipeline.py` — 全流程編排
-
-### 自我博弈與驗證
-
-- `scripts/run_self_play_resonance.py` — 自我博弈資料生成
-- `scripts/run_swarm_resonance_roleplay.py` — 多角色蜂群情境
-- `scripts/tension_dashboard.py` — CLI 觀測面板
-- `tests/` — 全量回歸與子系統測試
-
-## 哲學基礎（想深入再展開）
-
-<details>
-<summary>語義責任核心公理（完整 7 條見 AXIOMS.json）</summary>
-
-以下三條是哲學基礎，完整的 7 條不可變公理定義在 <a href="AXIOMS.json">AXIOMS.json</a>。
-
-1. Resonance：回應應來自理解，不是討好。
-2. Commitment：跨回合維持可辨識的一致人格。
-3. Binding Force：每次輸出都會影響下一次行為邊界。
-
-參考：`docs/philosophy/soul_landmark_2026.md`
-</details>
-
-<details>
-<summary>為什麼「會遺忘」反而更像有靈魂</summary>
-
-如果所有訊息都等重，AI 只會越記越亂。
-ToneSoul 讓低價值訊息自然衰退，把反覆驗證的重要模式結晶成規則。
-
-白話就是：重要的事自動記住，廢話自動忘。
-</details>
-
-## 數據快照（2026-03-22）
+## 品質快照（2026-04-13）
 
 | 指標 | 數值 |
 |---|---|
-| 通過測試數 | 2,610（2026-03-22 本地全量回歸） |
-| `tonesoul/` 已測模組 | 186 / 186 |
-| RDD 狀態 | `tests/red_team/` baseline 已啟用，但仍屬未升級到完整 blocking 的階段 |
-| DDD 狀態 | curated audit 與 hygiene 已啟用；freshness 仍是明確分階段規則 |
-| 機器可讀狀態 | `docs/status/repo_healthcheck_latest.json`、`docs/status/7d_snapshot.json` |
+| 通過測試數 | 3,137（Python 3.13，Windows / Ubuntu） |
+| `tonesoul/` 已測模組 | 166 / 204（81%） |
+| 程式碼行數 | 72,631 行 / 235 檔 |
+| bare `except:` / TODO / FIXME | 0 / 0 / 0 |
+| 紅隊發現 | 18 個，已修 17 個，1 個延後（semantic analysis） |
+| RDD 狀態 | `tests/red_team/` baseline 已啟用，但仍低於 full blocking maturity |
+| DDD 狀態 | hygiene + curated audit 已啟用；freshness 仍是明確分階段規則 |
+| 機器可讀狀態 | `docs/status/repo_healthcheck_latest.json`、`docs/status/7d_snapshot.json`、`docs/status/architecture_audit_2026-04-08.md` |
 | 預設 CI 檢查 | `ruff check tonesoul tests` + `pytest tests/ -x --tb=short -q` |
 
 ## 授權

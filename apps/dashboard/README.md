@@ -1,59 +1,84 @@
 # ToneSoul Dashboard
 
-語魂治理儀表板 — 讓 AI 的治理狀態一目了然。
+ToneSoul Dashboard is the repo's operator-facing Streamlit shell.
 
-## 需求
+It is not the public/demo site, and it is not a second control plane.
+It sits on top of the same CLI/runtime truth used elsewhere in the repo.
+
+## Role Boundary
+
+Use `apps/dashboard` for:
+
+- Tiered operator orientation
+- `Tier 0 / Tier 1 / Tier 2` workspace flow
+- bounded status, memory-selection, and retrieval-preview cues
+- dashboard-assisted chat that still stays subordinate to runtime truth
+
+Do not use `apps/dashboard` as:
+
+- public product truth
+- a replacement for `start_agent_session.py`, `run_observer_window.py`, or other canonical CLI entry surfaces
+- a place to invent new authority labels or hidden workflow semantics
+
+Current authority order:
+
+1. canonical/runtime truth
+2. dashboard operator shell
+3. public/demo surfaces
+
+## Start
+
+From repo root:
+
+```bash
+python apps/dashboard/run_dashboard.py
+```
+
+Equivalent direct command:
+
+```bash
+python -m streamlit run apps/dashboard/frontend/app.py
+```
+
+Legacy launcher remains available:
+
+```bash
+python scripts/launch_dashboard.py
+```
+
+## What The Dashboard Contains
+
+- `Workspace`
+  - the tiered operator shell
+  - `Tier 0` instant gate, `Tier 1` orientation shell, `Tier 2` deep-governance pull
+- `Status`
+  - tier-aligned operator status panel
+  - subordinate to the workspace shell, not a second summary authority
+- `Memory`
+  - reference-selection panel
+  - auxiliary to operator truth
+- Retrieval preview
+  - shows local/web context that fed or is about to feed a search-assisted turn
+  - never outranks `Tier 0 / Tier 1 / Tier 2`
+
+## Requirements
 
 - Python 3.10+
-- Streamlit (`pip install streamlit`)
-- Ollama（對話功能需要）
+- `streamlit`
+- whatever optional local model/search setup your current dashboard workflow expects
 
-## 安裝
+Minimal install:
 
 ```bash
-# 安裝 Python 依賴
 pip install streamlit requests pyyaml
-
-# 安裝 Ollama（對話功能需要）
-# 到 https://ollama.com 下載安裝
-# 然後拉取模型：
-ollama pull llava
 ```
 
-## 啟動
+## Current Operator Rule
 
-```bash
-# 一鍵啟動（自動開瀏覽器）
-python scripts/launch_dashboard.py
+Use the smallest tier that keeps the next move honest.
 
-# 或手動啟動
-streamlit run apps/dashboard/frontend/app.py
+- Start in `Tier 0`
+- pull `Tier 1` when the short board or orientation is unclear
+- open `Tier 2` only when mutation, closeout, or contested continuity explicitly requires it
 
-# 指定 port
-python scripts/launch_dashboard.py --port 8502
-
-# 不開瀏覽器
-python scripts/launch_dashboard.py --no-browser
-```
-
-## 功能
-
-| 頁面 | 功能 |
-|---|---|
-| 首頁 | 治理狀態總覽、壓力指數、誓言卡片 |
-| 對話工作區 | 與 AI 對話，每個回應經過 Council 審議 |
-| AI 記憶 | 查看和新增 AI 的長期記憶 |
-| 決策回顧 | 每次決策的審議記錄和追溯 |
-
-## 記憶指令
-
-在對話工作區中說「記住 XXX」或「幫我記 XXX」，AI 會自動存入長期記憶。
-
-也可以在「AI 記憶」頁面右側的表單手動新增。
-
-## 環境變數
-
-| 變數 | 預設 | 說明 |
-|---|---|---|
-| `TS_MODEL` | `llava` | Ollama 模型名稱 |
-| `TS_WEB_SEARCH_ENDPOINT` | （無） | 網路搜尋端點 |
+If the dashboard and canonical CLI/runtime surfaces disagree, trust the canonical CLI/runtime surfaces and treat the dashboard as stale until refreshed.

@@ -2,6 +2,8 @@
 
 > Purpose: documentation entrypoint and guided index for ToneSoul architecture, status artifacts, and convergence surfaces.
 > Last Updated: 2026-04-10
+> Status: guided docs entrypoint. Use this after `README.md` or `docs/foundation/README.md` when you still need help choosing a lane.
+> Not This: not the exhaustive registry. Use `docs/INDEX.md` when you already know you need broader coverage.
 ---
 
 ## AI Reading Stack
@@ -227,8 +229,8 @@ Treat this as a prompt-design companion. It helps later agents build better extr
 
 ## Current Collaborator-Beta Surfaces
 
-- `plans/tonesoul_launch_operations_surface_2026-03-30.md`
-  - current operator-facing launch posture for guided collaborator beta, freeze rules, and bounded public-claim language
+- `status/phase724_launch_operations_surface_2026-04-15.md`
+  - current operator-facing launch posture for guided collaborator beta, readiness/health/freeze/rollback rules, and bounded public-claim language
 - `status/collaborator_beta_preflight_latest.json`
   - latest one-command collaborator-beta preflight bundle showing entry-stack health, launch scope, claim trigger, and visible `aegis` caution
 - `status/collaborator_beta_preflight_latest.md`
@@ -239,21 +241,29 @@ Treat this as a prompt-design companion. It helps later agents build better extr
   - readable version of the same collaborator-beta validation result and remaining frictions
 - `status/phase722_external_operator_cycle_2026-04-10.md`
   - current canonical record of the first clean non-creator / lower-context bounded cycle, including official claim, preflight, docs verification, and official session-end residue
+- `status/phase722_external_dual_surface_cycle_2026-04-14.md`
+  - current canonical record of the second clean bounded Phase 722 pass, proving a different task shape with one bounded `task.md` touch plus one fresh status note
+- `status/phase722_external_preflight_refresh_cycle_2026-04-15_rerun.md`
+  - current canonical record of the third clean bounded Phase 722 pass, proving the preflight-refresh task shape now lands cleanly with official closeout
 - `plans/tonesoul_non_creator_external_cycle_pack_2026-04-10.md`
   - current Phase 722 execution pack for one real non-creator / external-use bounded cycle using the official claim, preflight, note, and session-end path
 - `plans/tonesoul_non_creator_external_cycle_note_template_2026-04-10.md`
   - evidence-note template that keeps host intervention, validation, and final classification auditable instead of ad hoc
 - `plans/tonesoul_non_creator_external_cycle_dual_surface_pack_2026-04-10.md`
-  - next repeated-validation pack for Phase 722, intentionally changing the task shape to one bounded `task.md` touch plus one fresh status note under official multi-path claim/preflight/closeout
+  - completed second-cycle pack for Phase 722, intentionally changing the task shape to one bounded `task.md` touch plus one fresh status note under official multi-path claim/preflight/closeout
 - `plans/tonesoul_non_creator_external_cycle_dual_surface_note_template_2026-04-10.md`
   - note template for the dual-surface repeat pack so the second external cycle stays auditable and bounded
+- `plans/tonesoul_non_creator_external_cycle_preflight_refresh_pack_2026-04-15.md`
+  - next repeated-validation pack for Phase 722, intentionally changing the task shape again by refreshing the canonical preflight artifacts plus one bounded short-board touch and one fresh status note
+- `plans/tonesoul_non_creator_external_cycle_preflight_refresh_note_template_2026-04-15.md`
+  - note template for the preflight-refresh repeat pack so the third bounded cycle stays auditable and generated-surface-safe
 
 ## Current Continuation Surfaces
 
 - `plans/tonesoul_3day_execution_program_2026-03-30.md`
   - concrete 3-day continuation program for the next agent, with bucket rotation and stop conditions
-- `status/codex_handoff_2026-04-07.md`
-  - current branch-local handoff note after PR #5 and the current Phase 722 external-cycle gap review; use this instead of older handoff notes when continuing current work
+- `status/codex_handoff_2026-04-14.md`
+  - current branch-local handoff note after the second clean Phase 722 pass and preflight refresh; use this instead of older launch-readiness handoff notes when continuing current work
 - `plans/tonesoul_successor_collaboration_and_hot_memory_program_2026-04-02.md`
   - deep planning program for making hot memory and successor collaboration legible enough that any later AI can continue safely from repo-native surfaces
 - `plans/tonesoul_subsystem_parity_and_gap_map_2026-04-02.md`

@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-04-10T16:31:50Z",
+  "generated_at": "2026-04-15T11:16:24Z",
   "overall_ok": true,
   "overall_status": "go",
   "repo_root": "C:\\Users\\user\\Desktop\\倉庫",
-  "agent": "phase722-public-summary-refresh",
+  "agent": "phase724-surface-refresh",
   "commands": {
-    "session_start": "run_session_start_bundle(agent_id='phase722-public-summary-refresh')",
+    "session_start": "run_session_start_bundle(agent_id='phase724-surface-refresh')",
     "packet": "extracted from session_start bundle payload['packet']",
     "diagnose": "embedded_from_session_start"
   },
@@ -13,9 +13,9 @@
     "session_start": {
       "ok": true,
       "readiness": "pass",
-      "task_track": "quick_change",
-      "claim_recommendation": "not_required",
-      "deliberation_mode": "lightweight_review"
+      "task_track": "system_track",
+      "claim_recommendation": "required",
+      "deliberation_mode": "elevated_council"
     },
     "packet": {
       "ok": true,
@@ -28,8 +28,8 @@
     "diagnose": {
       "ok": true,
       "mode": "embedded_from_session_start",
-      "compact_line": "embedded_from_session_start | readiness=pass | aegis=compromised",
-      "aegis_status": "compromised"
+      "compact_line": "embedded_from_session_start | readiness=pass | aegis=intact",
+      "aegis_status": "intact"
     }
   },
   "scope_posture": {
@@ -41,22 +41,23 @@
     "target_note": "next_target_tier names the next maturity target, not current readiness or public-launch permission."
   },
   "claim_posture": {
-    "claim_recommendation": "not_required",
+    "claim_recommendation": "required",
     "claim_trigger": "claim when you are about to edit a shared path; read-only inspection can stay unclaimed"
   },
   "aegis_posture": {
-    "status": "compromised",
+    "status": "intact",
     "blocks_beta_entry": false,
     "note": "Treat aegis_compromised as a visible caution in the current beta posture, not as an implicit public-launch stop or a reason to ignore the rest of the bounded receiver checks."
   },
   "external_cycle_status": {
-    "path": "docs/status/phase722_external_operator_cycle_2026-04-10.md",
-    "classification": "strong external pass"
+    "path": "docs/status/phase722_external_preflight_refresh_cycle_2026-04-15_rerun.md",
+    "classification": "strong external pass",
+    "cycle_shape": "preflight_refresh"
   },
   "next_bounded_move": {
-    "step": "run the dual-surface repeated external cycle under a different operator or task shape",
-    "path": "docs/plans/tonesoul_non_creator_external_cycle_dual_surface_pack_2026-04-10.md",
-    "note": "One clean external/non-creator cycle now exists; next repeated validation should exercise one bounded canonical surface plus one fresh status note before widening any launch claims."
+    "step": "use the current launch-operations surface as the operator-facing anchor and keep launch claims bounded",
+    "path": "docs/status/phase724_launch_operations_surface_2026-04-15.md",
+    "note": "Phase 724 is now consolidated into one current operator-facing launch surface; keep public launch deferred, keep launch claims evidence-bounded, and reopen this lane only if a new contradiction or a higher evidence tier appears."
   },
   "launch_claim_posture": {
     "current_tier": "collaborator_beta",
@@ -125,8 +126,7 @@
   "cautions": [
     "continuity_effectiveness",
     "council_decision_quality",
-    "live_shared_memory",
-    "aegis_compromised"
+    "live_shared_memory"
   ],
   "summary_text": "collaborator_beta_preflight=go tier=collaborator_beta backend=file-backed validation_wave=7 blocked=0"
 }

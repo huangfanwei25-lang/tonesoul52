@@ -22,9 +22,43 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+from tonesoul.runtime_adapter_normalization import (
+    build_council_dossier_summary as _build_council_dossier_summary,
+)
+from tonesoul.runtime_adapter_normalization import (
+    clean_string_list as _clean_string_list,
+)
+from tonesoul.runtime_adapter_normalization import (
+    derive_council_realism_note as _derive_council_realism_note,
+)
+from tonesoul.runtime_adapter_normalization import (
+    normalize_closeout_payload,
+)
+from tonesoul.runtime_adapter_normalization import (
+    normalize_council_dossier as _normalize_council_dossier,
+)
+from tonesoul.runtime_adapter_routing import (
+    build_routing_event as _build_routing_event,
+)
+from tonesoul.runtime_adapter_routing import (
+    build_routing_summary as _build_routing_summary_impl,
+)
+from tonesoul.runtime_adapter_routing import (
+    persist_routed_signal as _persist_routed_signal,
+)
+from tonesoul.runtime_adapter_routing import (
+    route_r_memory_signal as _route_r_memory_signal,
+)
+from tonesoul.runtime_adapter_routing import (
+    safe_list_routing_events as _safe_list_routing_events,
+)
+from tonesoul.runtime_adapter_subject_refresh import (
+    build_subject_refresh_summary as _build_subject_refresh_summary_impl,
+)
 from tonesoul.soul_config import SOUL
 
 logger = logging.getLogger(__name__)
+route_r_memory_signal = _route_r_memory_signal
 
 # ---------------------------------------------------------------------------
 # Constants (from RFC-015 §5, canonical source: soul_config.py)
@@ -545,94 +579,6 @@ def write_checkpoint(
     return payload
 
 
-_CLOSEOUT_STATUSES = {"complete", "partial", "blocked", "underdetermined"}
-_CLOSEOUT_STOP_REASONS = {
-    "external_blocked",
-    "internal_unstable",
-    "divergence_risk",
-    "underdetermined",
-}
-
-
-def _clean_text_list(values: Optional[List[Any]]) -> List[str]:
-    result: List[str] = []
-    for value in values or []:
-        text = str(value or "").strip()
-        if text and text not in result:
-            result.append(text)
-    return result
-
-
-def _looks_like_stop_action(text: str) -> bool:
-    return str(text or "").strip().upper().startswith("STOP:")
-
-
-def normalize_closeout_payload(
-    closeout: Optional[Dict[str, Any]] = None,
-    *,
-    status: str = "",
-    stop_reason: str = "",
-    unresolved_items: Optional[List[str]] = None,
-    human_input_required: bool = False,
-    note: str = "",
-    pending_paths: Optional[List[str]] = None,
-    next_action: str = "",
-) -> Dict[str, Any]:
-    payload = dict(closeout or {})
-    normalized_status = str(payload.get("status", status or "")).strip().lower()
-    normalized_stop_reason = str(payload.get("stop_reason", stop_reason or "")).strip().lower()
-    unresolved = _clean_text_list(
-        list(payload.get("unresolved_items") or []) + list(unresolved_items or [])
-    )
-    human_required = bool(payload.get("human_input_required", human_input_required))
-    note_text = str(payload.get("note", note or "")).strip()
-    pending = _clean_text_list(list(payload.get("pending_paths") or []) + list(pending_paths or []))
-    next_action_text = str(payload.get("next_action", next_action or "")).strip()
-
-    if normalized_status not in _CLOSEOUT_STATUSES:
-        normalized_status = ""
-    if normalized_stop_reason not in _CLOSEOUT_STOP_REASONS:
-        normalized_stop_reason = ""
-
-    if not normalized_status:
-        if normalized_stop_reason == "underdetermined":
-            normalized_status = "underdetermined"
-        elif normalized_stop_reason or human_required or _looks_like_stop_action(next_action_text):
-            normalized_status = "blocked"
-        elif unresolved or pending or next_action_text:
-            normalized_status = "partial"
-        else:
-            normalized_status = "complete"
-
-    if normalized_status == "complete":
-        if normalized_stop_reason == "underdetermined":
-            normalized_status = "underdetermined"
-        elif normalized_stop_reason or human_required or _looks_like_stop_action(next_action_text):
-            normalized_status = "blocked"
-        elif unresolved or pending or next_action_text:
-            normalized_status = "partial"
-
-    if normalized_status == "underdetermined" and not normalized_stop_reason:
-        normalized_stop_reason = "underdetermined"
-
-    if not note_text:
-        note_map = {
-            "complete": "Closeout reports no unresolved handoff items.",
-            "partial": "Closeout remains bounded but incomplete; review pending paths and next action before continuing.",
-            "blocked": "Closeout is blocked; do not treat this handoff as completed work.",
-            "underdetermined": "Closeout is underdetermined; gather stronger evidence or request human clarification before continuing.",
-        }
-        note_text = note_map[normalized_status]
-
-    return {
-        "status": normalized_status,
-        "stop_reason": normalized_stop_reason,
-        "unresolved_items": unresolved,
-        "human_input_required": human_required,
-        "note": note_text,
-    }
-
-
 def list_checkpoints(store=None) -> List[Dict[str, Any]]:
     """List active resumability checkpoints from the experimental lane."""
     if store is None:
@@ -939,459 +885,6 @@ def apply_subject_refresh(
     }
 
 
-def _clean_string_list(values: Optional[List[Any]]) -> List[str]:
-    cleaned: List[str] = []
-    seen = set()
-    for value in values or []:
-        text = str(value or "").strip()
-        if not text or text in seen:
-            continue
-        seen.add(text)
-        cleaned.append(text)
-    return cleaned
-
-
-def _find_recycled_carry_forward_hazard(
-    *,
-    newer_compactions: List[Dict[str, Any]],
-    all_compactions: List[Dict[str, Any]],
-) -> str:
-    if not newer_compactions:
-        return ""
-
-    latest = newer_compactions[0]
-    latest_carry = _clean_string_list(latest.get("carry_forward") or [])
-    if not latest_carry:
-        return ""
-
-    latest_carry_key = tuple(latest_carry)
-    latest_evidence = set(_clean_string_list(latest.get("evidence_refs") or []))
-    latest_id = str(latest.get("compaction_id", "")).strip()
-
-    for previous in all_compactions[1:]:
-        previous_id = str(previous.get("compaction_id", "")).strip()
-        if previous_id and latest_id and previous_id == latest_id:
-            continue
-
-        previous_carry = _clean_string_list(previous.get("carry_forward") or [])
-        if tuple(previous_carry) != latest_carry_key:
-            continue
-
-        previous_evidence = set(_clean_string_list(previous.get("evidence_refs") or []))
-        if latest_evidence.issubset(previous_evidence):
-            return (
-                "Do not promote recycled carry_forward into durable identity when the latest "
-                "compaction repeats the same handoff without any new evidence."
-            )
-
-    return ""
-
-
-def _normalize_council_dossier(payload: Optional[Dict[str, Any]]) -> Dict[str, Any]:
-    if not isinstance(payload, dict):
-        return {}
-    normalized: Dict[str, Any] = {}
-    dossier_version = str(payload.get("dossier_version", "")).strip()
-    final_verdict = str(payload.get("final_verdict", "")).strip()
-    confidence_posture = str(payload.get("confidence_posture", "")).strip()
-    deliberation_mode = str(payload.get("deliberation_mode", "")).strip()
-    opacity_declaration = str(payload.get("opacity_declaration", "")).strip()
-    if dossier_version:
-        normalized["dossier_version"] = dossier_version
-    if final_verdict:
-        normalized["final_verdict"] = final_verdict
-    if confidence_posture:
-        normalized["confidence_posture"] = confidence_posture
-    if deliberation_mode:
-        normalized["deliberation_mode"] = deliberation_mode
-    if opacity_declaration:
-        normalized["opacity_declaration"] = opacity_declaration
-
-    for key in ("coherence_score", "dissent_ratio"):
-        value = payload.get(key)
-        if value is None:
-            continue
-        try:
-            normalized[key] = round(float(value), 3)
-        except (TypeError, ValueError):
-            continue
-
-    minority_report: List[Dict[str, Any]] = []
-    for item in payload.get("minority_report") or []:
-        if not isinstance(item, dict):
-            continue
-        try:
-            confidence = round(float(item.get("confidence", 0.0)), 3)
-        except (TypeError, ValueError):
-            confidence = 0.0
-        entry = {
-            "perspective": str(item.get("perspective", "")).strip(),
-            "decision": str(item.get("decision", "")).strip(),
-            "confidence": confidence,
-            "reasoning": str(item.get("reasoning", "")).strip(),
-            "evidence": _clean_string_list(item.get("evidence")),
-        }
-        if entry["perspective"] and entry["decision"] and entry["reasoning"]:
-            minority_report.append(entry)
-    normalized["minority_report"] = minority_report
-
-    vote_summary: List[Dict[str, Any]] = []
-    for item in payload.get("vote_summary") or []:
-        if not isinstance(item, dict):
-            continue
-        try:
-            confidence = round(float(item.get("confidence", 0.0)), 3)
-        except (TypeError, ValueError):
-            confidence = 0.0
-        entry = {
-            "perspective": str(item.get("perspective", "")).strip(),
-            "decision": str(item.get("decision", "")).strip(),
-            "confidence": confidence,
-        }
-        reasoning = str(item.get("reasoning", "")).strip()
-        evidence = _clean_string_list(item.get("evidence"))
-        if reasoning:
-            entry["reasoning"] = reasoning
-        if evidence:
-            entry["evidence"] = evidence
-        if entry["perspective"] and entry["decision"]:
-            vote_summary.append(entry)
-    normalized["vote_summary"] = vote_summary
-
-    change_of_position: List[Dict[str, Any]] = []
-    for item in payload.get("change_of_position") or []:
-        if not isinstance(item, dict):
-            continue
-        entry = {str(key): value for key, value in item.items() if value is not None}
-        if entry:
-            change_of_position.append(entry)
-    normalized["change_of_position"] = change_of_position
-
-    normalized["evidence_refs"] = _clean_string_list(payload.get("evidence_refs"))
-    grounding = payload.get("grounding_summary")
-    if isinstance(grounding, dict):
-        normalized["grounding_summary"] = {
-            "has_ungrounded_claims": bool(grounding.get("has_ungrounded_claims", False)),
-            "total_evidence_sources": int(grounding.get("total_evidence_sources", 0) or 0),
-        }
-    decomposition = payload.get("confidence_decomposition")
-    if isinstance(decomposition, dict):
-        entry: Dict[str, Any] = {}
-        calibration_status = str(decomposition.get("calibration_status", "")).strip()
-        coverage_posture = str(decomposition.get("coverage_posture", "")).strip()
-        evidence_posture = str(decomposition.get("evidence_posture", "")).strip()
-        grounding_posture = str(decomposition.get("grounding_posture", "")).strip()
-        adversarial_posture = str(decomposition.get("adversarial_posture", "")).strip()
-        if calibration_status:
-            entry["calibration_status"] = calibration_status
-        if coverage_posture:
-            entry["coverage_posture"] = coverage_posture
-        if evidence_posture:
-            entry["evidence_posture"] = evidence_posture
-        if grounding_posture:
-            entry["grounding_posture"] = grounding_posture
-        if adversarial_posture:
-            entry["adversarial_posture"] = adversarial_posture
-        for key in ("agreement_score", "evidence_density"):
-            value = decomposition.get(key)
-            if value is None:
-                continue
-            try:
-                entry[key] = round(float(value), 3)
-            except (TypeError, ValueError):
-                continue
-        distinct_perspectives = decomposition.get("distinct_perspectives")
-        if distinct_perspectives is not None:
-            try:
-                entry["distinct_perspectives"] = max(0, int(distinct_perspectives))
-            except (TypeError, ValueError):
-                pass
-        if entry:
-            normalized["confidence_decomposition"] = entry
-    if "evolution_suppression_flag" in payload:
-        normalized["evolution_suppression_flag"] = bool(payload.get("evolution_suppression_flag"))
-    realism_note = str(payload.get("realism_note", "")).strip()
-    if not realism_note:
-        realism_note = _derive_council_realism_note_from_normalized(normalized)
-    if realism_note:
-        normalized["realism_note"] = realism_note
-    return normalized
-
-
-def _derive_council_realism_note_from_normalized(dossier: Dict[str, Any]) -> str:
-    if not dossier:
-        return ""
-
-    decomposition = dossier.get("confidence_decomposition") or {}
-    calibration_status = str(decomposition.get("calibration_status", "")).strip()
-    has_minority_report = bool(dossier.get("minority_report"))
-    adversarial_posture = str(decomposition.get("adversarial_posture", "")).strip()
-    suppression_flag = bool(dossier.get("evolution_suppression_flag"))
-
-    if calibration_status == "descriptive_only":
-        if suppression_flag and has_minority_report:
-            return (
-                "Descriptive agreement record only; dissent is visible and suppression risk is flagged, "
-                "so review minority signals before treating approval as settled."
-            )
-        if has_minority_report or adversarial_posture == "survived_dissent":
-            return (
-                "Descriptive agreement record only; visible dissent survived review, "
-                "so approval is not equivalent to proven correctness."
-            )
-        return "Descriptive agreement record only; coherence and confidence posture are not calibrated accuracy signals."
-
-    if suppression_flag and has_minority_report:
-        return "Dissent and possible suppression are both visible; review minority signals before treating the verdict as settled."
-    if has_minority_report:
-        return "Minority dissent is visible; review it before treating approval as settled."
-    return ""
-
-
-def _derive_council_realism_note(payload: Optional[Dict[str, Any]]) -> str:
-    dossier = _normalize_council_dossier(payload)
-    return _derive_council_realism_note_from_normalized(dossier)
-
-
-def _build_council_dossier_summary(payload: Optional[Dict[str, Any]]) -> Dict[str, Any]:
-    dossier = _normalize_council_dossier(payload)
-    if not dossier:
-        return {}
-    minority_report = list(dossier.get("minority_report") or [])
-    summary = {
-        "final_verdict": str(dossier.get("final_verdict", "")),
-        "confidence_posture": str(dossier.get("confidence_posture", "")),
-        "coherence_score": float(dossier.get("coherence_score", 0.0) or 0.0),
-        "dissent_ratio": float(dossier.get("dissent_ratio", 0.0) or 0.0),
-        "has_minority_report": bool(minority_report),
-    }
-    deliberation_mode = str(dossier.get("deliberation_mode", "")).strip()
-    opacity_declaration = str(dossier.get("opacity_declaration", "")).strip()
-    if deliberation_mode:
-        summary["deliberation_mode"] = deliberation_mode
-    if opacity_declaration:
-        summary["opacity_declaration"] = opacity_declaration
-    decomposition = dossier.get("confidence_decomposition")
-    if isinstance(decomposition, dict) and decomposition:
-        summary["confidence_decomposition"] = decomposition
-    if "evolution_suppression_flag" in dossier:
-        summary["evolution_suppression_flag"] = bool(dossier.get("evolution_suppression_flag"))
-    realism_note = _derive_council_realism_note(dossier)
-    if realism_note:
-        summary["realism_note"] = realism_note
-    return summary
-
-
-def _slug_from_summary(summary: str, *, fallback: str, prefix: str = "") -> str:
-    raw = str(summary or "").strip().lower()
-    chars: List[str] = []
-    previous_dash = False
-    for char in raw:
-        if char.isalnum():
-            chars.append(char)
-            previous_dash = False
-            continue
-        if previous_dash:
-            continue
-        chars.append("-")
-        previous_dash = True
-    text = "".join(chars).strip("-")
-    if not text:
-        text = fallback
-    if prefix:
-        return f"{prefix}-{text}"
-    return text
-
-
-def route_r_memory_signal(
-    *,
-    agent_id: str,
-    summary: str = "",
-    task_id: str = "",
-    session_id: str = "",
-    paths: Optional[List[str]] = None,
-    pending_paths: Optional[List[str]] = None,
-    next_action: str = "",
-    stance: str = "",
-    tensions: Optional[List[str]] = None,
-    proposed_drift: Optional[Dict[str, float]] = None,
-    proposed_vows: Optional[List[str]] = None,
-    carry_forward: Optional[List[str]] = None,
-    evidence_refs: Optional[List[str]] = None,
-    stable_vows: Optional[List[str]] = None,
-    durable_boundaries: Optional[List[str]] = None,
-    decision_preferences: Optional[List[str]] = None,
-    verified_routines: Optional[List[str]] = None,
-    active_threads: Optional[List[str]] = None,
-    refresh_signals: Optional[List[str]] = None,
-    source: str = "direct",
-    prefer_surface: str = "",
-) -> Dict[str, Any]:
-    """Route a bounded runtime signal toward the most plausible shared surface.
-
-    This does not mutate state by itself. It only classifies and normalizes the
-    signal so callers can preview or persist the result deliberately.
-    """
-
-    normalized_summary = str(summary or "").strip()
-    normalized_task_id = str(task_id or "").strip()
-    normalized_session_id = str(session_id or "").strip()
-    normalized_paths = _clean_string_list(paths)
-    normalized_pending_paths = _clean_string_list(pending_paths)
-    normalized_tensions = _clean_string_list(tensions)
-    normalized_proposed_vows = _clean_string_list(proposed_vows)
-    normalized_carry_forward = _clean_string_list(carry_forward)
-    normalized_evidence_refs = _clean_string_list(evidence_refs)
-    normalized_stable_vows = _clean_string_list(stable_vows)
-    normalized_durable_boundaries = _clean_string_list(durable_boundaries)
-    normalized_decision_preferences = _clean_string_list(decision_preferences)
-    normalized_verified_routines = _clean_string_list(verified_routines)
-    normalized_active_threads = _clean_string_list(active_threads)
-    normalized_refresh_signals = _clean_string_list(refresh_signals)
-    normalized_next_action = str(next_action or "").strip()
-    normalized_stance = str(stance or "").strip()
-    normalized_source = str(source or "direct").strip() or "direct"
-    normalized_prefer_surface = str(prefer_surface or "").strip()
-
-    has_subject_shape = any(
-        (
-            normalized_stable_vows,
-            normalized_durable_boundaries,
-            normalized_decision_preferences,
-            normalized_verified_routines,
-            normalized_active_threads,
-            normalized_refresh_signals,
-        )
-    )
-    has_compaction_shape = bool(normalized_carry_forward or normalized_evidence_refs)
-    has_perspective_shape = bool(
-        normalized_stance
-        or normalized_tensions
-        or (proposed_drift or {})
-        or normalized_proposed_vows
-    )
-    has_checkpoint_shape = bool(normalized_pending_paths or normalized_next_action)
-    has_claim_shape = bool(normalized_task_id)
-
-    valid_surfaces = {
-        "claim",
-        "perspective",
-        "checkpoint",
-        "compaction",
-        "subject_snapshot",
-    }
-    if normalized_prefer_surface and normalized_prefer_surface not in valid_surfaces:
-        raise ValueError(f"Unknown preferred surface: {normalized_prefer_surface}")
-
-    if normalized_prefer_surface:
-        surface = normalized_prefer_surface
-        reason = "preferred surface was explicitly requested"
-        confidence = "forced"
-    elif has_subject_shape:
-        surface = "subject_snapshot"
-        reason = "stable vows/boundaries/preferences indicate durable working identity"
-        confidence = "high"
-    elif has_claim_shape and not (
-        has_compaction_shape or has_perspective_shape or has_checkpoint_shape
-    ):
-        surface = "claim"
-        reason = "task_id without richer handoff fields indicates task ownership intent"
-        confidence = "high"
-    elif has_compaction_shape:
-        surface = "compaction"
-        reason = "carry-forward or evidence refs indicate bounded cross-session handoff"
-        confidence = "high"
-    elif has_perspective_shape:
-        surface = "perspective"
-        reason = "stance/tension/proposed drift indicate provisional interpretation"
-        confidence = "high"
-    elif has_checkpoint_shape:
-        surface = "checkpoint"
-        reason = "pending paths or next action indicate resumability state"
-        confidence = "high"
-    elif has_claim_shape:
-        surface = "claim"
-        reason = "task_id is the strongest remaining ownership signal"
-        confidence = "medium"
-    else:
-        surface = "checkpoint"
-        reason = "summary-only updates are safest as resumability checkpoints until a stronger shape appears"
-        confidence = "low"
-
-    payload: Dict[str, Any] = {
-        "agent": agent_id,
-        "summary": normalized_summary,
-        "session_id": normalized_session_id,
-        "source": normalized_source,
-    }
-
-    if surface == "claim":
-        payload.update(
-            {
-                "task_id": normalized_task_id
-                or _slug_from_summary(normalized_summary, fallback="task-signal"),
-                "paths": normalized_paths or normalized_pending_paths,
-            }
-        )
-    elif surface == "perspective":
-        payload.update(
-            {
-                "stance": normalized_stance or "provisional",
-                "tensions": normalized_tensions,
-                "proposed_drift": dict(proposed_drift or {}),
-                "proposed_vows": normalized_proposed_vows,
-                "evidence_refs": normalized_evidence_refs,
-            }
-        )
-    elif surface == "checkpoint":
-        payload.update(
-            {
-                "checkpoint_id": _slug_from_summary(
-                    normalized_summary,
-                    fallback="checkpoint-signal",
-                    prefix="cp",
-                ),
-                "pending_paths": normalized_pending_paths or normalized_paths,
-                "next_action": normalized_next_action,
-            }
-        )
-    elif surface == "compaction":
-        payload.update(
-            {
-                "pending_paths": normalized_pending_paths or normalized_paths,
-                "carry_forward": normalized_carry_forward,
-                "evidence_refs": normalized_evidence_refs,
-                "next_action": normalized_next_action,
-            }
-        )
-    elif surface == "subject_snapshot":
-        payload.update(
-            {
-                "stable_vows": normalized_stable_vows,
-                "durable_boundaries": normalized_durable_boundaries,
-                "decision_preferences": normalized_decision_preferences,
-                "verified_routines": normalized_verified_routines,
-                "active_threads": normalized_active_threads,
-                "evidence_refs": normalized_evidence_refs,
-                "refresh_signals": normalized_refresh_signals,
-            }
-        )
-
-    return {
-        "surface": surface,
-        "confidence": confidence,
-        "reason": reason,
-        "payload": payload,
-        "secondary_signals": {
-            "claim": has_claim_shape,
-            "checkpoint": has_checkpoint_shape,
-            "compaction": has_compaction_shape,
-            "perspective": has_perspective_shape,
-            "subject_snapshot": has_subject_shape,
-        },
-    }
-
-
 def write_routed_signal(
     route: Dict[str, Any],
     *,
@@ -1400,85 +893,17 @@ def write_routed_signal(
     limit: Optional[int] = None,
 ) -> Dict[str, Any]:
     """Persist a routed signal into the selected shared surface."""
-    payload = dict(route.get("payload") or {})
-    surface = str(route.get("surface", "")).strip()
-    if not surface:
-        raise ValueError("route.surface is required")
-
-    if surface == "claim":
-        task_id = str(payload.get("task_id", "")).strip()
-        return claim_task(
-            task_id,
-            agent_id=str(payload.get("agent", "unknown")),
-            summary=str(payload.get("summary", "")),
-            paths=list(payload.get("paths") or []),
-            source=str(payload.get("source", "direct")),
-            ttl_seconds=int(ttl_seconds) if ttl_seconds is not None else 1800,
-            store=store,
-        )
-
-    if surface == "perspective":
-        return write_perspective(
-            str(payload.get("agent", "unknown")),
-            session_id=str(payload.get("session_id", "")),
-            summary=str(payload.get("summary", "")),
-            stance=str(payload.get("stance", "")),
-            tensions=list(payload.get("tensions") or []),
-            proposed_drift=dict(payload.get("proposed_drift") or {}),
-            proposed_vows=list(payload.get("proposed_vows") or []),
-            evidence_refs=list(payload.get("evidence_refs") or []),
-            source=str(payload.get("source", "direct")),
-            ttl_seconds=int(ttl_seconds) if ttl_seconds is not None else 7200,
-            store=store,
-        )
-
-    if surface == "checkpoint":
-        return write_checkpoint(
-            str(payload.get("checkpoint_id", "")),
-            agent_id=str(payload.get("agent", "unknown")),
-            session_id=str(payload.get("session_id", "")),
-            summary=str(payload.get("summary", "")),
-            pending_paths=list(payload.get("pending_paths") or []),
-            next_action=str(payload.get("next_action", "")),
-            source=str(payload.get("source", "direct")),
-            ttl_seconds=int(ttl_seconds) if ttl_seconds is not None else 86400,
-            store=store,
-        )
-
-    if surface == "compaction":
-        return write_compaction(
-            agent_id=str(payload.get("agent", "unknown")),
-            session_id=str(payload.get("session_id", "")),
-            summary=str(payload.get("summary", "")),
-            carry_forward=list(payload.get("carry_forward") or []),
-            pending_paths=list(payload.get("pending_paths") or []),
-            evidence_refs=list(payload.get("evidence_refs") or []),
-            next_action=str(payload.get("next_action", "")),
-            source=str(payload.get("source", "direct")),
-            ttl_seconds=int(ttl_seconds) if ttl_seconds is not None else 604800,
-            limit=int(limit) if limit is not None else 20,
-            store=store,
-        )
-
-    if surface == "subject_snapshot":
-        return write_subject_snapshot(
-            agent_id=str(payload.get("agent", "unknown")),
-            session_id=str(payload.get("session_id", "")),
-            summary=str(payload.get("summary", "")),
-            stable_vows=list(payload.get("stable_vows") or []),
-            durable_boundaries=list(payload.get("durable_boundaries") or []),
-            decision_preferences=list(payload.get("decision_preferences") or []),
-            verified_routines=list(payload.get("verified_routines") or []),
-            active_threads=list(payload.get("active_threads") or []),
-            evidence_refs=list(payload.get("evidence_refs") or []),
-            refresh_signals=list(payload.get("refresh_signals") or []),
-            source=str(payload.get("source", "direct")),
-            ttl_seconds=int(ttl_seconds) if ttl_seconds is not None else 2592000,
-            limit=int(limit) if limit is not None else 12,
-            store=store,
-        )
-
-    raise ValueError(f"Unsupported routed surface: {surface}")
+    return _persist_routed_signal(
+        route,
+        claim_writer=claim_task,
+        perspective_writer=write_perspective,
+        checkpoint_writer=write_checkpoint,
+        compaction_writer=write_compaction,
+        subject_snapshot_writer=write_subject_snapshot,
+        store=store,
+        ttl_seconds=ttl_seconds,
+        limit=limit,
+    )
 
 
 def record_routing_event(
@@ -1491,39 +916,11 @@ def record_routing_event(
     limit: int = 50,
 ) -> Dict[str, Any]:
     """Persist a bounded router adoption/ambiguity event."""
-    normalized_action = str(action or "preview").strip() or "preview"
-    if normalized_action not in {"preview", "write"}:
-        raise ValueError("action must be preview or write")
     if store is None:
         from tonesoul.store import get_store
 
         store = get_store()
-
-    payload = dict(route.get("payload") or {})
-    secondary_signals = {
-        key: bool(value) for key, value in dict(route.get("secondary_signals") or {}).items()
-    }
-    secondary_signal_count = sum(1 for value in secondary_signals.values() if value)
-    forced = str(route.get("confidence", "")).strip() == "forced"
-    overlap = secondary_signal_count > 1
-    event = {
-        "event_id": str(uuid.uuid4()),
-        "agent": str(payload.get("agent", "unknown")).strip() or "unknown",
-        "session_id": str(payload.get("session_id", "")).strip(),
-        "summary": str(payload.get("summary", "")).strip(),
-        "surface": str(route.get("surface", "")).strip(),
-        "action": normalized_action,
-        "written": bool(written),
-        "confidence": str(route.get("confidence", "")).strip(),
-        "reason": str(route.get("reason", "")).strip(),
-        "forced": forced,
-        "overlap": overlap,
-        "misroute_signal": forced or overlap,
-        "secondary_signal_count": int(secondary_signal_count),
-        "secondary_signals": secondary_signals,
-        "source": str(payload.get("source", "")).strip(),
-        "updated_at": _utc_now(),
-    }
+    event = _build_routing_event(route, action=action, written=written, utc_now=_utc_now)
     store.append_routing_event(event, ttl_seconds=int(ttl_seconds), limit=int(limit))
     return event
 
@@ -1534,122 +931,11 @@ def list_routing_events(store=None, n: int = 10) -> List[Dict[str, Any]]:
         from tonesoul.store import get_store
 
         store = get_store()
-    try:
-        return list(store.get_routing_events(n=n))
-    except Exception:
-        return []
+    return _safe_list_routing_events(get_events=store.get_routing_events, n=n)
 
 
 def _build_routing_summary(events: List[Dict[str, Any]]) -> Dict[str, Any]:
-    if not events:
-        return {
-            "total_events": 0,
-            "preview_count": 0,
-            "write_count": 0,
-            "forced_count": 0,
-            "overlap_count": 0,
-            "misroute_signal_count": 0,
-            "surface_counts": {},
-            "recent_agents": [],
-            "dominant_surface": "",
-            "summary_text": "router=no recent adoption telemetry",
-            "recent_events": [],
-        }
-
-    preview_count = 0
-    write_count = 0
-    forced_count = 0
-    overlap_count = 0
-    misroute_signal_count = 0
-    surface_counts: Dict[str, int] = {}
-    recent_agents: List[str] = []
-    recent_events: List[Dict[str, Any]] = []
-
-    for event in events:
-        action = str(event.get("action", "")).strip()
-        if action == "write":
-            write_count += 1
-        else:
-            preview_count += 1
-
-        surface = str(event.get("surface", "")).strip()
-        if surface:
-            surface_counts[surface] = int(surface_counts.get(surface, 0)) + 1
-
-        if bool(event.get("forced", False)):
-            forced_count += 1
-        if bool(event.get("overlap", False)):
-            overlap_count += 1
-        if bool(event.get("misroute_signal", False)):
-            misroute_signal_count += 1
-
-        agent = str(event.get("agent", "")).strip()
-        if agent and agent not in recent_agents:
-            recent_agents.append(agent)
-
-        recent_events.append(
-            {
-                "event_id": str(event.get("event_id", "")),
-                "agent": agent,
-                "surface": surface,
-                "action": action,
-                "forced": bool(event.get("forced", False)),
-                "overlap": bool(event.get("overlap", False)),
-                "misroute_signal": bool(event.get("misroute_signal", False)),
-                "updated_at": str(event.get("updated_at", "")),
-                "summary": str(event.get("summary", "")),
-                **(
-                    {"freshness_hours": freshness}
-                    if (freshness := _freshness_hours(event.get("updated_at", ""))) is not None
-                    else {}
-                ),
-            }
-        )
-
-    dominant_surface = ""
-    if surface_counts:
-        dominant_surface = sorted(surface_counts.items(), key=lambda item: (-item[1], item[0]))[0][
-            0
-        ]
-
-    summary_text = (
-        "router="
-        f"writes={write_count} previews={preview_count} "
-        f"overrides={forced_count} overlap={overlap_count} "
-        f"misroute_signals={misroute_signal_count}"
-    )
-    if dominant_surface:
-        summary_text += f" top={dominant_surface}"
-
-    return {
-        "total_events": len(events),
-        "preview_count": preview_count,
-        "write_count": write_count,
-        "forced_count": forced_count,
-        "overlap_count": overlap_count,
-        "misroute_signal_count": misroute_signal_count,
-        "surface_counts": surface_counts,
-        "recent_agents": recent_agents[:5],
-        "dominant_surface": dominant_surface,
-        "summary_text": summary_text,
-        "recent_events": recent_events[:5],
-    }
-
-
-def _entries_newer_than(
-    entries: List[Dict[str, Any]],
-    *,
-    marker_dt: Optional[datetime],
-    timestamp_key: str = "updated_at",
-) -> List[Dict[str, Any]]:
-    if marker_dt is None:
-        return list(entries)
-    fresh: List[Dict[str, Any]] = []
-    for entry in entries:
-        entry_dt = _parse_dt(str(entry.get(timestamp_key, "")))
-        if entry_dt is not None and entry_dt > marker_dt:
-            fresh.append(entry)
-    return fresh
+    return _build_routing_summary_impl(events, freshness_hours=_freshness_hours)
 
 
 def _build_subject_refresh_summary(
@@ -1662,203 +948,16 @@ def _build_subject_refresh_summary(
     project_memory_summary: Dict[str, Any],
     risk_posture: Dict[str, Any],
 ) -> Dict[str, Any]:
-    latest_snapshot = subject_snapshots[0] if subject_snapshots else {}
-    snapshot_dt = _parse_dt(str(latest_snapshot.get("updated_at", "")))
-    newer_checkpoints = _entries_newer_than(checkpoints, marker_dt=snapshot_dt)
-    newer_compactions = _entries_newer_than(compactions, marker_dt=snapshot_dt)
-
-    existing_threads = set(_clean_string_list(latest_snapshot.get("active_threads") or []))
-    focus_topics = _clean_string_list(project_memory_summary.get("focus_topics") or [])
-    candidate_threads = [topic for topic in focus_topics if topic not in existing_threads][:4]
-
-    routing_total = int(routing_summary.get("total_events", 0) or 0)
-    routing_misroute = int(routing_summary.get("misroute_signal_count", 0) or 0)
-    dominant_surface = str(routing_summary.get("dominant_surface", "")).strip()
-    risk_level = str(risk_posture.get("level", "")).strip() or "unknown"
-    claim_count = len(claims)
-
-    field_guidance: List[Dict[str, Any]] = [
-        {
-            "field": "stable_vows",
-            "action": "must_not_auto_promote",
-            "evidence_level": "human_confirmation",
-            "candidate_values": [],
-            "reason": "Stable vows are constitutional commitments and must never be inferred from hot-state coordination residue.",
-        },
-        {
-            "field": "durable_boundaries",
-            "action": "manual_operator_only",
-            "evidence_level": "human_confirmation",
-            "candidate_values": [],
-            "reason": (
-                "Durable boundaries may be refreshed only after deliberate review; transient risk or task pressure must not rewrite them."
-            ),
-        },
-        {
-            "field": "decision_preferences",
-            "action": "may_influence_only" if routing_total > 0 else "manual_operator_only",
-            "evidence_level": "repeat_pattern" if routing_total > 0 else "human_confirmation",
-            "candidate_values": (
-                [f"dominant routing surface: {dominant_surface}"]
-                if dominant_surface and routing_total > 0
-                else []
-            ),
-            "reason": (
-                "Routing behavior can inform working preferences, but it should not auto-promote into durable preferences without operator review."
-            ),
-        },
-        {
-            "field": "verified_routines",
-            "action": (
-                "manual_operator_only"
-                if newer_compactions and newer_checkpoints and routing_misroute <= 0
-                else "may_influence_only"
-            ),
-            "evidence_level": (
-                "repeat_pattern"
-                if newer_compactions and newer_checkpoints and routing_misroute <= 0
-                else "single_signal"
-            ),
-            "candidate_values": (
-                ["checkpoint+compaction cadence remained visible across fresh shared surfaces"]
-                if newer_compactions and newer_checkpoints and routing_misroute <= 0
-                else []
-            ),
-            "reason": (
-                "Repeated clean coordination can justify reviewing verified routines, but a routine should still be deliberately named before promotion."
-            ),
-        },
-    ]
-
-    if not latest_snapshot and (compactions or checkpoints) and candidate_threads:
-        active_thread_action = "may_refresh_directly"
-        active_thread_evidence = "compaction-backed" if compactions else "single_signal"
-        active_thread_reason = "No subject snapshot exists yet; current focus topics can seed the initial active_threads lane without promoting higher-risk identity fields."
-    elif candidate_threads and newer_compactions:
-        active_thread_action = "may_refresh_directly"
-        active_thread_evidence = "compaction-backed"
-        active_thread_reason = "Fresh compactions newer than the latest snapshot confirm that current focus topics are durable enough to refresh active_threads."
-    elif candidate_threads and len(newer_checkpoints) >= 2:
-        active_thread_action = "may_refresh_directly"
-        active_thread_evidence = "repeat_pattern"
-        active_thread_reason = "Repeated newer checkpoints suggest the current work focus is persistent enough to refresh active_threads."
-    else:
-        active_thread_action = "may_influence_only"
-        active_thread_evidence = "single_signal" if candidate_threads else "subject_snapshot_only"
-        active_thread_reason = "Active threads may track current heat, but weak or stale evidence should not rewrite them automatically."
-
-    field_guidance.append(
-        {
-            "field": "active_threads",
-            "action": active_thread_action,
-            "evidence_level": active_thread_evidence,
-            "candidate_values": candidate_threads,
-            "reason": active_thread_reason,
-        }
+    return _build_subject_refresh_summary_impl(
+        subject_snapshots=subject_snapshots,
+        checkpoints=checkpoints,
+        compactions=compactions,
+        claims=claims,
+        routing_summary=routing_summary,
+        project_memory_summary=project_memory_summary,
+        risk_posture=risk_posture,
+        parse_dt=_parse_dt,
     )
-
-    promotion_hazards: List[str] = []
-    if claim_count > 0:
-        promotion_hazards.append(
-            "Do not promote active claims into durable identity; claims are ownership signals, not selfhood."
-        )
-    if routing_misroute > 0:
-        promotion_hazards.append(
-            "Do not promote routing ambiguity or forced routes into durable preferences or routines."
-        )
-    if risk_level not in {"stable", "low", "normal_operation"}:
-        promotion_hazards.append(
-            "Elevated runtime risk should not auto-promote into stable vows or durable boundaries."
-        )
-    if newer_checkpoints and not newer_compactions:
-        promotion_hazards.append(
-            "Checkpoint-only evidence is too weak for durable identity promotion without compaction-backed confirmation."
-        )
-    recycled_carry_forward_hazard = _find_recycled_carry_forward_hazard(
-        newer_compactions=newer_compactions,
-        all_compactions=compactions,
-    )
-    if recycled_carry_forward_hazard:
-        promotion_hazards.append(recycled_carry_forward_hazard)
-    if not latest_snapshot and not compactions:
-        promotion_hazards.append(
-            "Do not infer durable identity from traces alone when no subject snapshot or compaction-backed evidence exists yet."
-        )
-
-    direct_fields = [
-        item["field"] for item in field_guidance if item["action"] == "may_refresh_directly"
-    ]
-    manual_fields = [
-        item["field"]
-        for item in field_guidance
-        if item["action"] in {"manual_operator_only", "must_not_auto_promote"}
-    ]
-
-    if not latest_snapshot and not compactions and not checkpoints:
-        status = "no_snapshot"
-        refresh_recommended = False
-    elif not latest_snapshot and (compactions or checkpoints):
-        status = "seed_snapshot"
-        refresh_recommended = True
-    elif direct_fields:
-        status = "refresh_candidate"
-        refresh_recommended = True
-    elif promotion_hazards or newer_checkpoints or newer_compactions:
-        status = "manual_review"
-        refresh_recommended = False
-    elif latest_snapshot:
-        status = "stable"
-        refresh_recommended = False
-    else:
-        status = "no_snapshot"
-        refresh_recommended = False
-
-    recommended_command = ""
-    if refresh_recommended:
-        can_apply_active_threads = (
-            active_thread_action == "may_refresh_directly"
-            and active_thread_evidence == "compaction-backed"
-            and not promotion_hazards
-            and bool(candidate_threads)
-        )
-        if can_apply_active_threads:
-            recommended_command = (
-                "python scripts/apply_subject_refresh.py --agent <your-id> "
-                '--field active_threads --refresh-signal "subject-refresh heuristic reviewed"'
-            )
-        else:
-            command_parts = [
-                'python scripts/save_subject_snapshot.py --agent <your-id> --summary "..."',
-            ]
-            for thread in candidate_threads[:2]:
-                command_parts.append(f'--thread "{thread}"')
-            if direct_fields:
-                command_parts.append('--refresh-signal "subject-refresh heuristic reviewed"')
-            recommended_command = " ".join(command_parts)
-
-    summary_text = (
-        "subject_refresh="
-        f"{status} direct={len(direct_fields)} manual={len(manual_fields)} "
-        f"hazards={len(promotion_hazards)} "
-        f"evidence=c{len(newer_compactions)}/k{len(newer_checkpoints)}"
-    )
-
-    return {
-        "status": status,
-        "refresh_recommended": refresh_recommended,
-        "snapshot_present": bool(latest_snapshot),
-        "latest_snapshot_id": str(latest_snapshot.get("snapshot_id", "")),
-        "snapshot_updated_at": str(latest_snapshot.get("updated_at", "")),
-        "risk_level": risk_level,
-        "newer_compaction_count": len(newer_compactions),
-        "newer_checkpoint_count": len(newer_checkpoints),
-        "active_claim_count": claim_count,
-        "routing_misroute_signal_count": routing_misroute,
-        "field_guidance": field_guidance,
-        "promotion_hazards": promotion_hazards[:6],
-        "recommended_command": recommended_command,
-        "summary_text": summary_text,
-    }
 
 
 def get_observer_cursor(agent_id: str, store=None) -> Dict[str, Any]:
